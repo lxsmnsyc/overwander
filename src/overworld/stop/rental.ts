@@ -26,11 +26,12 @@ export function rentalOffer(stop: string): Spawn[] {
   const rng = new AleaRNG(`${stop}:rental`);
   const pool = getRentalPool();
 
-  return Array.from({ length: FRONTIER_RENTAL_OFFER }, (): Spawn => [
-    pool[Math.floor(rng.random() * pool.length)],
-    rng.int32(),
-    rng.int32(),
-  ]);
+  const offer: Spawn[] = [];
+
+  for (let at = 0; at < FRONTIER_RENTAL_OFFER; at += 1) {
+    offer.push([pool[Math.floor(rng.random() * pool.length)], rng.int32(), rng.int32()]);
+  }
+  return offer;
 }
 
 /**
@@ -41,15 +42,24 @@ export function rentalOffer(stop: string): Spawn[] {
  */
 export function rentedHand(stop: string, picks: string[]): Spawn[] | null {
   const offer = rentalOffer(stop);
-  const at = picks.map(Number);
+  const at: number[] = [];
 
+  for (const pick of picks) {
+    at.push(Number(pick));
+  }
   if (at.length !== FRONTIER_TEAM_SIZE || new Set(at).size !== at.length) {
     return null;
   }
-  if (at.some((one) => !Number.isInteger(one) || one < 0 || one >= offer.length)) {
-    return null;
+
+  const hand: Spawn[] = [];
+
+  for (const one of at) {
+    if (!Number.isInteger(one) || one < 0 || one >= offer.length) {
+      return null;
+    }
+    hand.push(offer[one]);
   }
-  return at.map((one) => offer[one]);
+  return hand;
 }
 
 /**

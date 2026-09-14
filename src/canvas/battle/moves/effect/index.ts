@@ -3,7 +3,9 @@ import { Types } from '../../../../data/constants/types';
 import { getMoveData } from '../../../../data/moves';
 import { MULTI_HIT_MOVES } from '../../../../battle/moves/multi-hit';
 import { getStageMoveEffect } from '../../../../battle/moves/stage';
-import PaintedVisual, { type Painter } from '../__painted';
+import PaintedVisual, { type LitPainter, type Painter } from '../__painted';
+import { JOLTS, LIT, reachOf } from '../lit';
+import { middleOf } from '../lit/shapes';
 import type { Painted } from '../__paint';
 import care from './care';
 import colorOf from './colors';
@@ -228,7 +230,38 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
     }
   };
 
+  const shaped = LIT[shape];
+  const lit: LitPainter | undefined =
+    shaped == null
+      ? undefined
+      : (kit, stage, share) => {
+          const landings = stage.targets.length > 0 ? stage.targets : [stage.source];
+
+          // Judged about a body nearer the camera, so it shows in front of the one it is on
+          kit.near(reachOf(stage));
+          if (OVER_A_SIDE.has(shape)) {
+            shaped(kit, { ...stage, targets: [middleOf(landings)] }, share, {
+              paint,
+              seed: move + 1,
+              weight,
+            });
+            return;
+          }
+          for (let at = 0; at < landings.length; at += 1) {
+            shaped(kit, { ...stage, targets: [landings[at]] }, share, {
+              paint,
+              seed: move + 1 + at * 97,
+              weight,
+            });
+          }
+        };
+
   // A heavy hit hangs about longer than a light one, but not in
   // proportion: doubling the power should not double the wait
-  return new PaintedVisual(SPANS[shape] * (0.8 + weight * 0.3), painter);
+  return new PaintedVisual(
+    SPANS[shape] * (0.8 + weight * 0.3),
+    painter,
+    lit,
+    (JOLTS[shape] ?? 0) * weight,
+  );
 }

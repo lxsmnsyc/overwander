@@ -42,14 +42,18 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
     async () => listMyTitles(),
   );
 
-  const choices = (): { value: Title; label: string }[] => [
-    { value: NO_TITLE, label: 'No title' },
-    ...(earned.latest ?? []).flatMap((option) => {
+  const choices = (): { value: Title; label: string }[] => {
+    const options: { value: Title; label: string }[] = [{ value: NO_TITLE, label: 'No title' }];
+
+    for (const option of earned.latest ?? []) {
       const label = getTitleName(option);
 
-      return label == null ? [] : [{ value: option, label }];
-    }),
-  ];
+      if (label != null) {
+        options.push({ value: option, label });
+      }
+    }
+    return options;
+  };
 
   // Opened on what is stored rather than on what was last typed: a
   // dialog closed without saving should not remember the refusal

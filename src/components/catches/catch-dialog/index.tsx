@@ -83,22 +83,31 @@ function CatchSheet(
    * looked up by uid as the rows draw
    */
   const [owners] = createResource(
-    () => [...new Set(view()?.history.map((entry) => entry.owner) ?? [])].sort().join(','),
+    () => {
+      const uids = new Set<string>();
+
+      for (const entry of view()?.history ?? []) {
+        uids.add(entry.owner);
+      }
+      return [...uids].sort().join(',');
+    },
     async (key): Promise<Map<string, string>> => {
       const named = new Map<string, string>();
+      const pending: Promise<void>[] = [];
 
-      await Promise.all(
-        key
-          .split(',')
-          .filter(Boolean)
-          .map(async (uid) => {
-            const profile = await getProfile(uid);
-
+      for (const uid of key.split(',')) {
+        if (uid === '') {
+          continue;
+        }
+        pending.push(
+          getProfile(uid).then((profile) => {
             if (profile != null) {
               named.set(uid, profile.nickname);
             }
           }),
-      );
+        );
+      }
+      await Promise.all(pending);
       return named;
     },
   );

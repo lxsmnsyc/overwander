@@ -98,24 +98,37 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
 
     return id == null || !rented() ? [] : rentalOffer(id);
   };
-  const crate = (): BoxEntry[] =>
-    offer().map(([species, , traitValue], at) => ({
-      id: `${at}`,
-      species,
-      shiny: false,
-      egg: false,
-      progress: 0,
-      fainted: false,
-      mark: taken().includes(at) ? ('picked' as const) : undefined,
-      label: `${getSpeciesData(species).name}, Lv. ${levelInBand(traitValue, FRONTIER_PARTY_LEVELS)}`,
-    }));
+  const crate = (): BoxEntry[] => {
+    const squares: BoxEntry[] = [];
+
+    for (const [at, [species, , traitValue]] of offer().entries()) {
+      squares.push({
+        id: `${at}`,
+        species,
+        shiny: false,
+        egg: false,
+        progress: 0,
+        fainted: false,
+        mark: taken().includes(at) ? ('picked' as const) : undefined,
+        label: `${getSpeciesData(species).name}, Lv. ${levelInBand(traitValue, FRONTIER_PARTY_LEVELS)}`,
+      });
+    }
+    return squares;
+  };
 
   const toggle = (id: string): void => {
     const at = Number(id);
 
     setTaken((held) => {
       if (held.includes(at)) {
-        return held.filter((one) => one !== at);
+        const kept: number[] = [];
+
+        for (const one of held) {
+          if (one !== at) {
+            kept.push(one);
+          }
+        }
+        return kept;
       }
       return held.length >= (props.challenger?.bring ?? FRONTIER_TEAM_SIZE) ? held : [...held, at];
     });
@@ -130,16 +143,22 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
       challenger's own, or a grunt's where nobody was named */
   const levels = (): LevelBand => props.challenger?.levels ?? ROCKET_PARTY_LEVELS;
 
-  const lineup = (record: StopRecord): BoxEntry[] =>
-    record.party.map((entry, at) => ({
-      id: `${at}`,
-      species: entry.species,
-      shiny: false,
-      egg: false,
-      progress: 0,
-      fainted: false,
-      label: `${getSpeciesData(entry.species).name}, Lv. ${levelInBand(entry.traitValue, levels())}`,
-    }));
+  const lineup = (record: StopRecord): BoxEntry[] => {
+    const squares: BoxEntry[] = [];
+
+    for (const [at, entry] of record.party.entries()) {
+      squares.push({
+        id: `${at}`,
+        species: entry.species,
+        shiny: false,
+        egg: false,
+        progress: 0,
+        fainted: false,
+        label: `${getSpeciesData(entry.species).name}, Lv. ${levelInBand(entry.traitValue, levels())}`,
+      });
+    }
+    return squares;
+  };
 
   /**
    * Who the fight is against, in a name and a face. It travels with
@@ -280,7 +299,12 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
             disabled={rented() && taken().length !== FRONTIER_TEAM_SIZE}
             onClick={() => {
               if (rented()) {
-                accept(taken().map(String));
+                const ids: string[] = [];
+
+                for (const at of taken()) {
+                  ids.push(String(at));
+                }
+                accept(ids);
                 return;
               }
               setPicking(true);

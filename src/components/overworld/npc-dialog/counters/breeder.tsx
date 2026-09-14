@@ -25,7 +25,19 @@ export default function Breeder(props: CounterProps): JSX.Element {
       return null;
     }
 
-    const found = picked.map((id) => optionsOf(props).find((entry) => entry.id === id));
+    const found: (CatchOption | undefined)[] = [];
+
+    for (const id of picked) {
+      let match: CatchOption | undefined;
+
+      for (const entry of optionsOf(props)) {
+        if (entry.id === id) {
+          match = entry;
+          break;
+        }
+      }
+      found.push(match);
+    }
 
     return found[0] == null || found[1] == null ? null : [found[0], found[1]];
   };

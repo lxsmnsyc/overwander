@@ -88,18 +88,20 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
    * a Utility Belt widens it — so the tray is the pokemon's rather
    * than the game's
    */
-  const slots = (): null[] =>
-    Array.from(
-      {
-        // Room is only worth drawing to somebody who can fill it: on a
-        // stranger's pokemon an empty slot is a button nobody may press
-        length:
-          props.owned === true
-            ? Math.max(caught().items.length, getCatchSlots(caught(), Slots.Item))
-            : caught().items.length,
-      },
-      () => null,
-    );
+  const slots = (): null[] => {
+    // Room is only worth drawing to somebody who can fill it: on a
+    // stranger's pokemon an empty slot is a button nobody may press
+    const length =
+      props.owned === true
+        ? Math.max(caught().items.length, getCatchSlots(caught(), Slots.Item))
+        : caught().items.length;
+    const made: null[] = [];
+
+    for (let slot = 0; slot < length; slot++) {
+      made.push(null);
+    }
+    return made;
+  };
 
   const stars = (): string => {
     const filled = getIVStars(caught().ivs);

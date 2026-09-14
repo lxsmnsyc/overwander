@@ -201,7 +201,7 @@ export function weightOf(move: Moves): number {
 }
 
 /** What a painter is handed besides the stage. */
-interface Draw {
+export interface Draw {
   paint: Painted;
   seed: number;
   /** How hard it hits, from about 0.85 to 1.75. */

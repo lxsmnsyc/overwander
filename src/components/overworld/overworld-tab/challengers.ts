@@ -59,7 +59,11 @@ import type { StopChallenge } from '../StopDialog';
 
 /** The types a class fields, said as a list: "Water and Fighting" */
 function saidTypes(types: Types[]): string {
-  const named = types.map((type) => TYPE_NAMES[type]);
+  const named: string[] = [];
+
+  for (const type of types) {
+    named.push(TYPE_NAMES[type]);
+  }
 
   return named.length < 2
     ? (named[0] ?? '')

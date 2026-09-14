@@ -126,7 +126,11 @@ export async function openQuestBaselines(
   slots: [slot: number, baseline: number][],
 ): Promise<Map<number, number>> {
   if (slots.length > 0) {
-    const rows = slots.map(([slot, baseline]) => ({ player: uid, quest, slot, baseline }));
+    const rows: { player: string; quest: number; slot: number; baseline: number }[] = [];
+
+    for (const [slot, baseline] of slots) {
+      rows.push({ player: uid, quest, slot, baseline });
+    }
 
     await getSql()`
       insert into quest_baselines ${getSql()(rows, 'player', 'quest', 'slot', 'baseline')}
@@ -140,7 +144,10 @@ export async function openQuestBaselines(
     select slot, baseline from quest_baselines where player = ${uid} and quest = ${quest}
   `;
 
-  return new Map(
-    rows.map((row) => [asNumber(asRecord(row).slot), asNumber(asRecord(row).baseline)]),
-  );
+  const baselines = new Map<number, number>();
+
+  for (const row of rows) {
+    baselines.set(asNumber(asRecord(row).slot), asNumber(asRecord(row).baseline));
+  }
+  return baselines;
 }

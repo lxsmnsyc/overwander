@@ -10,14 +10,28 @@ import { MOVE_LIMIT } from './traits';
  */
 export function deriveMoves(species: Species, level: number, banned?: Set<Moves>): Moves[] {
   const data = getSpeciesData(species);
-  const learned = Object.keys(data.learnSet.level)
-    .map(Number)
-    .filter((threshold) => threshold <= level)
-    .sort((a, b) => a - b)
-    .flatMap((threshold) => data.learnSet.level[threshold])
-    // Dropped before the four are taken rather than after, so a
-    // pokemon barred from one move still comes with four
-    .filter((move) => banned?.has(move) !== true);
+  const thresholds: number[] = [];
+
+  for (const key of Object.keys(data.learnSet.level)) {
+    const threshold = Number(key);
+
+    if (threshold <= level) {
+      thresholds.push(threshold);
+    }
+  }
+  thresholds.sort((a, b) => a - b);
+
+  const learned: Moves[] = [];
+
+  for (const threshold of thresholds) {
+    for (const move of data.learnSet.level[threshold]) {
+      // Dropped before the four are taken rather than after, so a
+      // pokemon barred from one move still comes with four
+      if (banned?.has(move) !== true) {
+        learned.push(move);
+      }
+    }
+  }
 
   /**
    * The same move twice is one move. A learn set lists a move at every
@@ -57,7 +71,14 @@ export function deriveEggMoves(species: Species, level: number, random: () => nu
 
   const inherited = inheritable[Math.floor(random() * inheritable.length)];
 
-  return [inherited, ...learned.filter((move) => move !== inherited)].slice(0, MOVE_LIMIT);
+  const moves: Moves[] = [inherited];
+
+  for (const move of learned) {
+    if (move !== inherited) {
+      moves.push(move);
+    }
+  }
+  return moves.slice(0, MOVE_LIMIT);
 }
 
 /**

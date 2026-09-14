@@ -65,8 +65,14 @@ export default function Filter<V>(props: {
    * What the button says: the option that is on, by the name the
    * caller gave it
    */
-  const showing = (): string =>
-    props.options.find((option) => option.value === props.value)?.label ?? props.label;
+  const showing = (): string => {
+    for (const option of props.options) {
+      if (option.value === props.value) {
+        return option.label;
+      }
+    }
+    return props.label;
+  };
   /**
    * Whether the list is down. Terracotta would keep this to itself,
    * but the fade has to be told when to run — and the options are kept

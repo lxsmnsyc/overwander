@@ -94,13 +94,23 @@ const GROUND_ITEMS: [item: Items, biomes: Biome[]][] = [
   [ItemIds.PrettyWing, [...OPEN, ...HIGHLAND, ...FOREST]],
 ];
 
-const HOMES = new Map<Items, Set<Biome>>(
-  GROUND_ITEMS.map(([item, biomes]) => [item, new Set(biomes)]),
-);
+const HOMES = (() => {
+  const homes = new Map<Items, Set<Biome>>();
+
+  for (const [item, biomes] of GROUND_ITEMS) {
+    homes.set(item, new Set(biomes));
+  }
+  return homes;
+})();
 
 /** Which biomes hide this item, empty for one the whole world buries */
 export function getItemBiomes(item: Items): Biome[] {
-  return GROUND_ITEMS.find(([one]) => one === item)?.[1] ?? [];
+  for (const [one, biomes] of GROUND_ITEMS) {
+    if (one === item) {
+      return biomes;
+    }
+  }
+  return [];
 }
 
 /** Whether this ground hides this item, true for anything homeless */
@@ -113,7 +123,14 @@ export function isItemBuriedIn(item: Items, biome: Biome): boolean {
 const POOLS = new Map<Biome, ItemRarityGroups>();
 
 function hereOnly(entries: ItemPoolEntry[], biome: Biome): ItemPoolEntry[] {
-  return entries.filter((entry) => isItemBuriedIn(entry.item, biome));
+  const here: ItemPoolEntry[] = [];
+
+  for (const entry of entries) {
+    if (isItemBuriedIn(entry.item, biome)) {
+      here.push(entry);
+    }
+  }
+  return here;
 }
 
 /**

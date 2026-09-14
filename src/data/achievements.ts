@@ -330,10 +330,11 @@ export function deriveAchievements(counters: Counters): Achievements {
   }
   for (const trade of ACHIEVEMENT_TRAINERS) {
     // The trade's own count is every region's put together
-    const beatenAcross = getTradeClasses(trade).reduce(
-      (total, trainer) => total + (beaten.get(trainer) ?? 0),
-      0,
-    );
+    let beatenAcross = 0;
+
+    for (const trainer of getTradeClasses(trade)) {
+      beatenAcross += beaten.get(trainer) ?? 0;
+    }
 
     trainers.set(trade, standingOf(beatenAcross, TRAINER_TIERS));
   }

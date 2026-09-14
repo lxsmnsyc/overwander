@@ -1,0 +1,1449 @@
+{
+  "from": "image.png",
+  "note": "One entry per terrain a biome draws. `art` is the 3x3 block and `corner` the 2x2 piece, drawn as they are with no skirt: a block keeps the rim it was drawn with. The `face` of a biome is its cliff, the ring cliff recoloured and baked over the ground of that biome. `blend` is a ring in the colour of the ground of a biome, drawn over a neighbour where two biomes meet. `deep` names the darker pool a biome mixes into a wide body of water; nothing reads it yet.",
+  "terrains": [
+    {
+      "biome": 0,
+      "of": "Deep Ocean",
+      "role": "ground",
+      "name": "deep-ocean-ground",
+      "why": "tan-island-deep, as drawn."
+    },
+    {
+      "biome": 0,
+      "of": "Deep Ocean",
+      "role": "water",
+      "name": "deep-ocean-water",
+      "why": "Open sea, a fill only: the island block draws the shore, water and all."
+    },
+    {
+      "biome": 0,
+      "of": "Deep Ocean",
+      "role": "blend",
+      "name": "deep-ocean-blend",
+      "why": "The tan-island-deep-hollow recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 0,
+      "of": "Deep Ocean",
+      "role": "face",
+      "name": "deep-ocean-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 0,
+      "of": "Deep Ocean",
+      "role": "wall",
+      "name": "deep-ocean-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 1,
+      "of": "Ocean",
+      "role": "ground",
+      "name": "ocean-ground",
+      "why": "sand-island-shallows, as drawn."
+    },
+    {
+      "biome": 1,
+      "of": "Ocean",
+      "role": "water",
+      "name": "ocean-water",
+      "why": "Open sea, a fill only: the island block draws the shore, water and all."
+    },
+    {
+      "biome": 1,
+      "of": "Ocean",
+      "role": "blend",
+      "name": "ocean-blend",
+      "why": "The sand-island-shallows-hollow recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 1,
+      "of": "Ocean",
+      "role": "face",
+      "name": "ocean-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 1,
+      "of": "Ocean",
+      "role": "wall",
+      "name": "ocean-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 2,
+      "of": "Coral Reef",
+      "role": "ground",
+      "name": "coral-reef-ground",
+      "why": "sand-island-pale, as drawn."
+    },
+    {
+      "biome": 2,
+      "of": "Coral Reef",
+      "role": "water",
+      "name": "coral-reef-water",
+      "why": "Open sea, a fill only: the island block draws the shore, water and all."
+    },
+    {
+      "biome": 2,
+      "of": "Coral Reef",
+      "role": "blend",
+      "name": "coral-reef-blend",
+      "why": "The sand-island-pale-hollow recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 2,
+      "of": "Coral Reef",
+      "role": "face",
+      "name": "coral-reef-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 2,
+      "of": "Coral Reef",
+      "role": "wall",
+      "name": "coral-reef-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 3,
+      "of": "Beach",
+      "role": "ground",
+      "name": "beach-ground",
+      "why": "sand, as drawn."
+    },
+    {
+      "biome": 3,
+      "of": "Beach",
+      "role": "paving",
+      "name": "beach-paving",
+      "why": "slate-herringbone, recoloured for this country."
+    },
+    {
+      "biome": 3,
+      "of": "Beach",
+      "role": "trail",
+      "name": "beach-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 3,
+      "of": "Beach",
+      "role": "water",
+      "name": "beach-water",
+      "why": "bright-pool, as drawn."
+    },
+    {
+      "biome": 3,
+      "of": "Beach",
+      "role": "blend",
+      "name": "beach-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 3,
+      "of": "Beach",
+      "role": "face",
+      "name": "beach-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 3,
+      "of": "Beach",
+      "role": "wall",
+      "name": "beach-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 4,
+      "of": "Mangrove",
+      "role": "ground",
+      "name": "mangrove-ground",
+      "why": "dirt, recoloured for this country."
+    },
+    {
+      "biome": 4,
+      "of": "Mangrove",
+      "role": "paving",
+      "name": "mangrove-paving",
+      "why": "parquet, recoloured for this country."
+    },
+    {
+      "biome": 4,
+      "of": "Mangrove",
+      "role": "trail",
+      "name": "mangrove-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 4,
+      "of": "Mangrove",
+      "role": "water",
+      "name": "mangrove-water",
+      "why": "banked-pool, recoloured for this country."
+    },
+    {
+      "biome": 4,
+      "of": "Mangrove",
+      "role": "blend",
+      "name": "mangrove-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 4,
+      "of": "Mangrove",
+      "role": "face",
+      "name": "mangrove-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 4,
+      "of": "Mangrove",
+      "role": "wall",
+      "name": "mangrove-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 5,
+      "of": "Swamp",
+      "role": "ground",
+      "name": "swamp-ground",
+      "why": "dirt, recoloured for this country."
+    },
+    {
+      "biome": 5,
+      "of": "Swamp",
+      "role": "paving",
+      "name": "swamp-paving",
+      "why": "dark-cobbles, recoloured for this country."
+    },
+    {
+      "biome": 5,
+      "of": "Swamp",
+      "role": "trail",
+      "name": "swamp-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 5,
+      "of": "Swamp",
+      "role": "water",
+      "name": "swamp-water",
+      "why": "banked-pool, recoloured for this country."
+    },
+    {
+      "biome": 5,
+      "of": "Swamp",
+      "role": "blend",
+      "name": "swamp-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 5,
+      "of": "Swamp",
+      "role": "face",
+      "name": "swamp-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 5,
+      "of": "Swamp",
+      "role": "wall",
+      "name": "swamp-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 6,
+      "of": "Tropical Rainforest",
+      "role": "ground",
+      "name": "tropical-rainforest-ground",
+      "why": "dry-grass, recoloured for this country."
+    },
+    {
+      "biome": 6,
+      "of": "Tropical Rainforest",
+      "role": "paving",
+      "name": "tropical-rainforest-paving",
+      "why": "dark-cobbles, recoloured for this country."
+    },
+    {
+      "biome": 6,
+      "of": "Tropical Rainforest",
+      "role": "trail",
+      "name": "tropical-rainforest-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 6,
+      "of": "Tropical Rainforest",
+      "role": "water",
+      "name": "tropical-rainforest-water",
+      "why": "bright-pool, as drawn."
+    },
+    {
+      "biome": 6,
+      "of": "Tropical Rainforest",
+      "role": "blend",
+      "name": "tropical-rainforest-blend",
+      "why": "The grass-ring-rough recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 6,
+      "of": "Tropical Rainforest",
+      "role": "face",
+      "name": "tropical-rainforest-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 6,
+      "of": "Tropical Rainforest",
+      "role": "wall",
+      "name": "tropical-rainforest-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 7,
+      "of": "Tropical Seasonal Forest",
+      "role": "ground",
+      "name": "tropical-seasonal-forest-ground",
+      "why": "dry-grass, recoloured for this country."
+    },
+    {
+      "biome": 7,
+      "of": "Tropical Seasonal Forest",
+      "role": "paving",
+      "name": "tropical-seasonal-forest-paving",
+      "why": "red-carpet, recoloured for this country."
+    },
+    {
+      "biome": 7,
+      "of": "Tropical Seasonal Forest",
+      "role": "trail",
+      "name": "tropical-seasonal-forest-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 7,
+      "of": "Tropical Seasonal Forest",
+      "role": "water",
+      "name": "tropical-seasonal-forest-water",
+      "why": "bright-pool, as drawn."
+    },
+    {
+      "biome": 7,
+      "of": "Tropical Seasonal Forest",
+      "role": "blend",
+      "name": "tropical-seasonal-forest-blend",
+      "why": "The grass-ring recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 7,
+      "of": "Tropical Seasonal Forest",
+      "role": "face",
+      "name": "tropical-seasonal-forest-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 7,
+      "of": "Tropical Seasonal Forest",
+      "role": "wall",
+      "name": "tropical-seasonal-forest-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 8,
+      "of": "Savanna",
+      "role": "ground",
+      "name": "savanna-ground",
+      "why": "dry-grass, as drawn."
+    },
+    {
+      "biome": 8,
+      "of": "Savanna",
+      "role": "paving",
+      "name": "savanna-paving",
+      "why": "red-carpet, recoloured for this country."
+    },
+    {
+      "biome": 8,
+      "of": "Savanna",
+      "role": "trail",
+      "name": "savanna-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 8,
+      "of": "Savanna",
+      "role": "water",
+      "name": "savanna-water",
+      "why": "banked-pool, as drawn."
+    },
+    {
+      "biome": 8,
+      "of": "Savanna",
+      "role": "blend",
+      "name": "savanna-blend",
+      "why": "The olive-ring recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 8,
+      "of": "Savanna",
+      "role": "face",
+      "name": "savanna-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 8,
+      "of": "Savanna",
+      "role": "wall",
+      "name": "savanna-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 9,
+      "of": "Desert",
+      "role": "ground",
+      "name": "desert-ground",
+      "why": "sand, recoloured for this country."
+    },
+    {
+      "biome": 9,
+      "of": "Desert",
+      "role": "paving",
+      "name": "desert-paving",
+      "why": "slate-herringbone, recoloured for this country."
+    },
+    {
+      "biome": 9,
+      "of": "Desert",
+      "role": "trail",
+      "name": "desert-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 9,
+      "of": "Desert",
+      "role": "water",
+      "name": "desert-water",
+      "why": "banked-pool, recoloured for this country."
+    },
+    {
+      "biome": 9,
+      "of": "Desert",
+      "role": "blend",
+      "name": "desert-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 9,
+      "of": "Desert",
+      "role": "face",
+      "name": "desert-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 9,
+      "of": "Desert",
+      "role": "wall",
+      "name": "desert-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 10,
+      "of": "Shrubland",
+      "role": "ground",
+      "name": "shrubland-ground",
+      "why": "dry-grass, recoloured for this country."
+    },
+    {
+      "biome": 10,
+      "of": "Shrubland",
+      "role": "paving",
+      "name": "shrubland-paving",
+      "why": "grey-tiles, as drawn."
+    },
+    {
+      "biome": 10,
+      "of": "Shrubland",
+      "role": "trail",
+      "name": "shrubland-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 10,
+      "of": "Shrubland",
+      "role": "water",
+      "name": "shrubland-water",
+      "why": "banked-pool, as drawn."
+    },
+    {
+      "biome": 10,
+      "of": "Shrubland",
+      "role": "blend",
+      "name": "shrubland-blend",
+      "why": "The olive-ring recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 10,
+      "of": "Shrubland",
+      "role": "face",
+      "name": "shrubland-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 10,
+      "of": "Shrubland",
+      "role": "wall",
+      "name": "shrubland-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 11,
+      "of": "Grassland",
+      "role": "ground",
+      "name": "grassland-ground",
+      "why": "dry-grass, recoloured for this country."
+    },
+    {
+      "biome": 11,
+      "of": "Grassland",
+      "role": "paving",
+      "name": "grassland-paving",
+      "why": "parquet, recoloured for this country."
+    },
+    {
+      "biome": 11,
+      "of": "Grassland",
+      "role": "trail",
+      "name": "grassland-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 11,
+      "of": "Grassland",
+      "role": "water",
+      "name": "grassland-water",
+      "why": "bright-pool, as drawn."
+    },
+    {
+      "biome": 11,
+      "of": "Grassland",
+      "role": "blend",
+      "name": "grassland-blend",
+      "why": "The grass-ring recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 11,
+      "of": "Grassland",
+      "role": "face",
+      "name": "grassland-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 11,
+      "of": "Grassland",
+      "role": "wall",
+      "name": "grassland-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 12,
+      "of": "Temperate Forest",
+      "role": "ground",
+      "name": "temperate-forest-ground",
+      "why": "dry-grass, recoloured for this country."
+    },
+    {
+      "biome": 12,
+      "of": "Temperate Forest",
+      "role": "paving",
+      "name": "temperate-forest-paving",
+      "why": "parquet, as drawn."
+    },
+    {
+      "biome": 12,
+      "of": "Temperate Forest",
+      "role": "trail",
+      "name": "temperate-forest-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 12,
+      "of": "Temperate Forest",
+      "role": "water",
+      "name": "temperate-forest-water",
+      "why": "banked-pool, as drawn."
+    },
+    {
+      "biome": 12,
+      "of": "Temperate Forest",
+      "role": "blend",
+      "name": "temperate-forest-blend",
+      "why": "The grass-ring-rough recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 12,
+      "of": "Temperate Forest",
+      "role": "face",
+      "name": "temperate-forest-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 12,
+      "of": "Temperate Forest",
+      "role": "wall",
+      "name": "temperate-forest-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 13,
+      "of": "Temperate Rainforest",
+      "role": "ground",
+      "name": "temperate-rainforest-ground",
+      "why": "dry-grass, recoloured for this country."
+    },
+    {
+      "biome": 13,
+      "of": "Temperate Rainforest",
+      "role": "paving",
+      "name": "temperate-rainforest-paving",
+      "why": "dark-cobbles, recoloured for this country."
+    },
+    {
+      "biome": 13,
+      "of": "Temperate Rainforest",
+      "role": "trail",
+      "name": "temperate-rainforest-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 13,
+      "of": "Temperate Rainforest",
+      "role": "water",
+      "name": "temperate-rainforest-water",
+      "why": "banked-pool, recoloured for this country."
+    },
+    {
+      "biome": 13,
+      "of": "Temperate Rainforest",
+      "role": "blend",
+      "name": "temperate-rainforest-blend",
+      "why": "The grass-ring-rough recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 13,
+      "of": "Temperate Rainforest",
+      "role": "face",
+      "name": "temperate-rainforest-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 13,
+      "of": "Temperate Rainforest",
+      "role": "wall",
+      "name": "temperate-rainforest-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 14,
+      "of": "Cold Desert",
+      "role": "ground",
+      "name": "cold-desert-ground",
+      "why": "dirt, recoloured for this country."
+    },
+    {
+      "biome": 14,
+      "of": "Cold Desert",
+      "role": "paving",
+      "name": "cold-desert-paving",
+      "why": "slate-herringbone, as drawn."
+    },
+    {
+      "biome": 14,
+      "of": "Cold Desert",
+      "role": "trail",
+      "name": "cold-desert-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 14,
+      "of": "Cold Desert",
+      "role": "water",
+      "name": "cold-desert-water",
+      "why": "ice-pool, as drawn."
+    },
+    {
+      "biome": 14,
+      "of": "Cold Desert",
+      "role": "blend",
+      "name": "cold-desert-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 14,
+      "of": "Cold Desert",
+      "role": "face",
+      "name": "cold-desert-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 14,
+      "of": "Cold Desert",
+      "role": "wall",
+      "name": "cold-desert-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 15,
+      "of": "Taiga",
+      "role": "ground",
+      "name": "taiga-ground",
+      "why": "snow-patch, as drawn."
+    },
+    {
+      "biome": 15,
+      "of": "Taiga",
+      "role": "paving",
+      "name": "taiga-paving",
+      "why": "parquet, recoloured for this country."
+    },
+    {
+      "biome": 15,
+      "of": "Taiga",
+      "role": "trail",
+      "name": "taiga-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 15,
+      "of": "Taiga",
+      "role": "water",
+      "name": "taiga-water",
+      "why": "ice-pool, as drawn."
+    },
+    {
+      "biome": 15,
+      "of": "Taiga",
+      "role": "blend",
+      "name": "taiga-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 15,
+      "of": "Taiga",
+      "role": "face",
+      "name": "taiga-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 15,
+      "of": "Taiga",
+      "role": "wall",
+      "name": "taiga-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 16,
+      "of": "Tundra",
+      "role": "ground",
+      "name": "tundra-ground",
+      "why": "snow-patch, recoloured for this country."
+    },
+    {
+      "biome": 16,
+      "of": "Tundra",
+      "role": "paving",
+      "name": "tundra-paving",
+      "why": "grey-tiles, as drawn."
+    },
+    {
+      "biome": 16,
+      "of": "Tundra",
+      "role": "trail",
+      "name": "tundra-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 16,
+      "of": "Tundra",
+      "role": "water",
+      "name": "tundra-water",
+      "why": "ice-pool, as drawn."
+    },
+    {
+      "biome": 16,
+      "of": "Tundra",
+      "role": "blend",
+      "name": "tundra-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 16,
+      "of": "Tundra",
+      "role": "face",
+      "name": "tundra-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 16,
+      "of": "Tundra",
+      "role": "wall",
+      "name": "tundra-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 17,
+      "of": "Mountain",
+      "role": "ground",
+      "name": "mountain-ground",
+      "why": "stone-patch, as drawn."
+    },
+    {
+      "biome": 17,
+      "of": "Mountain",
+      "role": "paving",
+      "name": "mountain-paving",
+      "why": "slate-herringbone, as drawn."
+    },
+    {
+      "biome": 17,
+      "of": "Mountain",
+      "role": "trail",
+      "name": "mountain-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 17,
+      "of": "Mountain",
+      "role": "water",
+      "name": "mountain-water",
+      "why": "banked-pool, recoloured for this country."
+    },
+    {
+      "biome": 17,
+      "of": "Mountain",
+      "role": "blend",
+      "name": "mountain-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 17,
+      "of": "Mountain",
+      "role": "face",
+      "name": "mountain-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 17,
+      "of": "Mountain",
+      "role": "wall",
+      "name": "mountain-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 18,
+      "of": "Alpine Tundra",
+      "role": "ground",
+      "name": "alpine-tundra-ground",
+      "why": "snow-patch, as drawn."
+    },
+    {
+      "biome": 18,
+      "of": "Alpine Tundra",
+      "role": "paving",
+      "name": "alpine-tundra-paving",
+      "why": "grey-tiles, recoloured for this country."
+    },
+    {
+      "biome": 18,
+      "of": "Alpine Tundra",
+      "role": "trail",
+      "name": "alpine-tundra-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 18,
+      "of": "Alpine Tundra",
+      "role": "water",
+      "name": "alpine-tundra-water",
+      "why": "ice-pool, as drawn."
+    },
+    {
+      "biome": 18,
+      "of": "Alpine Tundra",
+      "role": "blend",
+      "name": "alpine-tundra-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 18,
+      "of": "Alpine Tundra",
+      "role": "face",
+      "name": "alpine-tundra-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 18,
+      "of": "Alpine Tundra",
+      "role": "wall",
+      "name": "alpine-tundra-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 19,
+      "of": "Glacier",
+      "role": "ground",
+      "name": "glacier-ground",
+      "why": "snow-patch, recoloured for this country."
+    },
+    {
+      "biome": 19,
+      "of": "Glacier",
+      "role": "paving",
+      "name": "glacier-paving",
+      "why": "grey-tiles, recoloured for this country."
+    },
+    {
+      "biome": 19,
+      "of": "Glacier",
+      "role": "trail",
+      "name": "glacier-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 19,
+      "of": "Glacier",
+      "role": "water",
+      "name": "glacier-water",
+      "why": "ice-pool, as drawn."
+    },
+    {
+      "biome": 19,
+      "of": "Glacier",
+      "role": "blend",
+      "name": "glacier-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 19,
+      "of": "Glacier",
+      "role": "face",
+      "name": "glacier-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 19,
+      "of": "Glacier",
+      "role": "wall",
+      "name": "glacier-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 20,
+      "of": "Woodland",
+      "role": "ground",
+      "name": "woodland-ground",
+      "why": "dry-grass, recoloured for this country."
+    },
+    {
+      "biome": 20,
+      "of": "Woodland",
+      "role": "paving",
+      "name": "woodland-paving",
+      "why": "parquet, as drawn."
+    },
+    {
+      "biome": 20,
+      "of": "Woodland",
+      "role": "trail",
+      "name": "woodland-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 20,
+      "of": "Woodland",
+      "role": "water",
+      "name": "woodland-water",
+      "why": "banked-pool, as drawn."
+    },
+    {
+      "biome": 20,
+      "of": "Woodland",
+      "role": "blend",
+      "name": "woodland-blend",
+      "why": "The grass-ring recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 20,
+      "of": "Woodland",
+      "role": "face",
+      "name": "woodland-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 20,
+      "of": "Woodland",
+      "role": "wall",
+      "name": "woodland-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 21,
+      "of": "Steppe",
+      "role": "ground",
+      "name": "steppe-ground",
+      "why": "dry-grass, recoloured for this country."
+    },
+    {
+      "biome": 21,
+      "of": "Steppe",
+      "role": "paving",
+      "name": "steppe-paving",
+      "why": "red-carpet, recoloured for this country."
+    },
+    {
+      "biome": 21,
+      "of": "Steppe",
+      "role": "trail",
+      "name": "steppe-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 21,
+      "of": "Steppe",
+      "role": "water",
+      "name": "steppe-water",
+      "why": "banked-pool, as drawn."
+    },
+    {
+      "biome": 21,
+      "of": "Steppe",
+      "role": "blend",
+      "name": "steppe-blend",
+      "why": "The olive-ring recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 21,
+      "of": "Steppe",
+      "role": "face",
+      "name": "steppe-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 21,
+      "of": "Steppe",
+      "role": "wall",
+      "name": "steppe-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 22,
+      "of": "Montane Forest",
+      "role": "ground",
+      "name": "montane-forest-ground",
+      "why": "dry-grass, recoloured for this country."
+    },
+    {
+      "biome": 22,
+      "of": "Montane Forest",
+      "role": "paving",
+      "name": "montane-forest-paving",
+      "why": "dark-cobbles, as drawn."
+    },
+    {
+      "biome": 22,
+      "of": "Montane Forest",
+      "role": "trail",
+      "name": "montane-forest-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 22,
+      "of": "Montane Forest",
+      "role": "water",
+      "name": "montane-forest-water",
+      "why": "banked-pool, recoloured for this country."
+    },
+    {
+      "biome": 22,
+      "of": "Montane Forest",
+      "role": "blend",
+      "name": "montane-forest-blend",
+      "why": "The grass-ring-rough recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 22,
+      "of": "Montane Forest",
+      "role": "face",
+      "name": "montane-forest-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 22,
+      "of": "Montane Forest",
+      "role": "wall",
+      "name": "montane-forest-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 23,
+      "of": "Polar Ocean",
+      "role": "ground",
+      "name": "polar-ocean-ground",
+      "why": "sand-island-pale, recoloured for this country."
+    },
+    {
+      "biome": 23,
+      "of": "Polar Ocean",
+      "role": "water",
+      "name": "polar-ocean-water",
+      "why": "Open sea, a fill only: the island block draws the shore, water and all."
+    },
+    {
+      "biome": 23,
+      "of": "Polar Ocean",
+      "role": "blend",
+      "name": "polar-ocean-blend",
+      "why": "The sand-island-pale-hollow recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 23,
+      "of": "Polar Ocean",
+      "role": "face",
+      "name": "polar-ocean-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 23,
+      "of": "Polar Ocean",
+      "role": "wall",
+      "name": "polar-ocean-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 25,
+      "of": "Volcano",
+      "role": "ground",
+      "name": "volcano-ground",
+      "why": "dirt, recoloured for this country."
+    },
+    {
+      "biome": 25,
+      "of": "Volcano",
+      "role": "paving",
+      "name": "volcano-paving",
+      "why": "dark-cobbles, recoloured for this country."
+    },
+    {
+      "biome": 25,
+      "of": "Volcano",
+      "role": "trail",
+      "name": "volcano-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 25,
+      "of": "Volcano",
+      "role": "water",
+      "name": "volcano-water",
+      "why": "lava-pool, as drawn."
+    },
+    {
+      "biome": 25,
+      "of": "Volcano",
+      "role": "blend",
+      "name": "volcano-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 25,
+      "of": "Volcano",
+      "role": "face",
+      "name": "volcano-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 25,
+      "of": "Volcano",
+      "role": "wall",
+      "name": "volcano-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 26,
+      "of": "Badlands",
+      "role": "ground",
+      "name": "badlands-ground",
+      "why": "dirt, recoloured for this country."
+    },
+    {
+      "biome": 26,
+      "of": "Badlands",
+      "role": "paving",
+      "name": "badlands-paving",
+      "why": "red-carpet, recoloured for this country."
+    },
+    {
+      "biome": 26,
+      "of": "Badlands",
+      "role": "trail",
+      "name": "badlands-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 26,
+      "of": "Badlands",
+      "role": "water",
+      "name": "badlands-water",
+      "why": "banked-pool, recoloured for this country."
+    },
+    {
+      "biome": 26,
+      "of": "Badlands",
+      "role": "blend",
+      "name": "badlands-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 26,
+      "of": "Badlands",
+      "role": "face",
+      "name": "badlands-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 26,
+      "of": "Badlands",
+      "role": "wall",
+      "name": "badlands-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 27,
+      "of": "Rocky Coast",
+      "role": "ground",
+      "name": "rocky-coast-ground",
+      "why": "stone-patch, recoloured for this country."
+    },
+    {
+      "biome": 27,
+      "of": "Rocky Coast",
+      "role": "paving",
+      "name": "rocky-coast-paving",
+      "why": "slate-herringbone, as drawn."
+    },
+    {
+      "biome": 27,
+      "of": "Rocky Coast",
+      "role": "trail",
+      "name": "rocky-coast-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 27,
+      "of": "Rocky Coast",
+      "role": "water",
+      "name": "rocky-coast-water",
+      "why": "banked-pool, recoloured for this country."
+    },
+    {
+      "biome": 27,
+      "of": "Rocky Coast",
+      "role": "blend",
+      "name": "rocky-coast-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 27,
+      "of": "Rocky Coast",
+      "role": "face",
+      "name": "rocky-coast-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 27,
+      "of": "Rocky Coast",
+      "role": "wall",
+      "name": "rocky-coast-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 28,
+      "of": "Bog",
+      "role": "ground",
+      "name": "bog-ground",
+      "why": "tilled-earth, recoloured for this country."
+    },
+    {
+      "biome": 28,
+      "of": "Bog",
+      "role": "paving",
+      "name": "bog-paving",
+      "why": "parquet, recoloured for this country."
+    },
+    {
+      "biome": 28,
+      "of": "Bog",
+      "role": "trail",
+      "name": "bog-trail",
+      "why": "The dirt block with its grass rim cut away, recoloured to beaten earth: the trail a route between towns is drawn with."
+    },
+    {
+      "biome": 28,
+      "of": "Bog",
+      "role": "water",
+      "name": "bog-water",
+      "why": "banked-pool, recoloured for this country."
+    },
+    {
+      "biome": 28,
+      "of": "Bog",
+      "role": "blend",
+      "name": "bog-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 28,
+      "of": "Bog",
+      "role": "face",
+      "name": "bog-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 28,
+      "of": "Bog",
+      "role": "wall",
+      "name": "bog-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 29,
+      "of": "Kelp Forest",
+      "role": "ground",
+      "name": "kelp-forest-ground",
+      "why": "tan-island, recoloured for this country."
+    },
+    {
+      "biome": 29,
+      "of": "Kelp Forest",
+      "role": "water",
+      "name": "kelp-forest-water",
+      "why": "Open sea, a fill only: the island block draws the shore, water and all."
+    },
+    {
+      "biome": 29,
+      "of": "Kelp Forest",
+      "role": "blend",
+      "name": "kelp-forest-blend",
+      "why": "The tan-island-hollow recoloured to the ground of this country, laid over a neighbour to blend the seam between them."
+    },
+    {
+      "biome": 29,
+      "of": "Kelp Forest",
+      "role": "face",
+      "name": "kelp-forest-face",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    },
+    {
+      "biome": 29,
+      "of": "Kelp Forest",
+      "role": "wall",
+      "name": "kelp-forest-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim."
+    }
+  ],
+  "deep": [
+    {
+      "biome": 3,
+      "of": "Beach",
+      "name": "beach-deep-water"
+    },
+    {
+      "biome": 4,
+      "of": "Mangrove",
+      "name": "mangrove-deep-water"
+    },
+    {
+      "biome": 5,
+      "of": "Swamp",
+      "name": "swamp-deep-water"
+    },
+    {
+      "biome": 6,
+      "of": "Tropical Rainforest",
+      "name": "tropical-rainforest-deep-water"
+    },
+    {
+      "biome": 7,
+      "of": "Tropical Seasonal Forest",
+      "name": "tropical-seasonal-forest-deep-water"
+    },
+    {
+      "biome": 8,
+      "of": "Savanna",
+      "name": "savanna-deep-water"
+    },
+    {
+      "biome": 9,
+      "of": "Desert",
+      "name": "desert-deep-water"
+    },
+    {
+      "biome": 10,
+      "of": "Shrubland",
+      "name": "shrubland-deep-water"
+    },
+    {
+      "biome": 11,
+      "of": "Grassland",
+      "name": "grassland-deep-water"
+    },
+    {
+      "biome": 12,
+      "of": "Temperate Forest",
+      "name": "temperate-forest-deep-water"
+    },
+    {
+      "biome": 13,
+      "of": "Temperate Rainforest",
+      "name": "temperate-rainforest-deep-water"
+    },
+    {
+      "biome": 17,
+      "of": "Mountain",
+      "name": "mountain-deep-water"
+    },
+    {
+      "biome": 20,
+      "of": "Woodland",
+      "name": "woodland-deep-water"
+    },
+    {
+      "biome": 21,
+      "of": "Steppe",
+      "name": "steppe-deep-water"
+    },
+    {
+      "biome": 22,
+      "of": "Montane Forest",
+      "name": "montane-forest-deep-water"
+    },
+    {
+      "biome": 26,
+      "of": "Badlands",
+      "name": "badlands-deep-water"
+    },
+    {
+      "biome": 27,
+      "of": "Rocky Coast",
+      "name": "rocky-coast-deep-water"
+    },
+    {
+      "biome": 28,
+      "of": "Bog",
+      "name": "bog-deep-water"
+    }
+  ]
+}

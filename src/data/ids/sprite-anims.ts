@@ -17,6 +17,8 @@
  * there is no second table to keep in step, and the sprite scripts run
  * under `node`, which refuses a file that declares an enum
  */
+// The type below shares the name on purpose, so it reads like an enum
+// oxlint-disable-next-line eslint/no-redeclare
 export const SpriteAnim = {
   // The ten every sheet carries, see `COMMON_CAST`
   Idle: 0,
@@ -77,15 +79,32 @@ export type SpriteAnim = (typeof SpriteAnim)[keyof typeof SpriteAnim];
 /** Every animation there is, in the order they are numbered. */
 export const SPRITE_ANIMS: SpriteAnim[] = Object.values(SpriteAnim);
 
-const NAMED = new Map<number, string>(
-  Object.entries(SpriteAnim).map(([name, anim]) => [anim, name]),
-);
+const NAMED = (() => {
+  const named = new Map<number, string>();
 
-const ANIMS = new Map<number, SpriteAnim>(SPRITE_ANIMS.map((anim) => [anim, anim]));
+  for (const [name, anim] of Object.entries(SpriteAnim)) {
+    named.set(anim, name);
+  }
+  return named;
+})();
 
-const NUMBERED = new Map<string, SpriteAnim>(
-  Object.entries(SpriteAnim).map(([name, anim]) => [name.toLowerCase(), anim]),
-);
+const ANIMS = (() => {
+  const anims = new Map<number, SpriteAnim>();
+
+  for (const anim of SPRITE_ANIMS) {
+    anims.set(anim, anim);
+  }
+  return anims;
+})();
+
+const NUMBERED = (() => {
+  const numbered = new Map<string, SpriteAnim>();
+
+  for (const [name, anim] of Object.entries(SpriteAnim)) {
+    numbered.set(name.toLowerCase(), anim);
+  }
+  return numbered;
+})();
 
 /**
  * The animation a number means, or nothing where this game has no

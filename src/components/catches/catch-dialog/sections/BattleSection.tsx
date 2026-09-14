@@ -67,7 +67,15 @@ export interface BattleSectionProps {
 
 /** Whether a laid-out list stands in a different order to the stored one */
 function shifted(laid: readonly number[], held: readonly number[]): boolean {
-  return laid.length !== held.length || laid.some((entry, at) => entry !== held[at]);
+  if (laid.length !== held.length) {
+    return true;
+  }
+  for (const [at, entry] of laid.entries()) {
+    if (entry !== held[at]) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export default function BattleSection(props: BattleSectionProps): JSX.Element {

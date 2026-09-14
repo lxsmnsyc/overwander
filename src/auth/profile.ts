@@ -107,7 +107,13 @@ export async function getProfile(uid: string): Promise<Profile | null> {
  */
 export async function getProfiles(uids: string[]): Promise<Map<string, Profile>> {
   const found = new Map<string, Profile>();
-  const wanted = [...new Set(uids)].filter(Boolean);
+  const wanted: string[] = [];
+
+  for (const uid of new Set(uids)) {
+    if (uid !== '') {
+      wanted.push(uid);
+    }
+  }
 
   if (wanted.length === 0) {
     return found;

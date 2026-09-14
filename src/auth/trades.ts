@@ -65,7 +65,12 @@ export async function listTrades(uid: string): Promise<[string, TradeRecord][]> 
     .or(`proposer.eq.${uid},receiver.eq.${uid}`)
     .order('created_at', { ascending: false });
 
-  return asRecordArray(data).map((row) => [String(row.id), fromTradeRow(row)]);
+  const trades: [string, TradeRecord][] = [];
+
+  for (const row of asRecordArray(data)) {
+    trades.push([String(row.id), fromTradeRow(row)]);
+  }
+  return trades;
 }
 
 /**

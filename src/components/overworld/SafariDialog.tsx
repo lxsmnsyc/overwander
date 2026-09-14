@@ -25,7 +25,8 @@ import playEffect, { Effect } from '../app/sound';
 import InventoryPicker from '../items/InventoryPicker';
 import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
-import { SparklesIcon } from '../icons';
+import { FireIcon, SparklesIcon } from '../icons';
+import { getSpeciesDexEntry } from '../../auth/pokedex';
 import { Badge, Button, Dialog, DialogActions, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import settings, { setSetting } from '../app/settings';
@@ -155,7 +156,12 @@ export interface SafariDialogProps {
  * reading half stands under the boundary below
  */
 function SafariBody(
-  props: SafariDialogProps & { bag: Resource<InventoryEntry[]>; onSpent: () => void },
+  props: SafariDialogProps & {
+    bag: Resource<InventoryEntry[]>;
+    /** Whether this player has ever owned the species standing there */
+    owned: Resource<boolean>;
+    onSpent: () => void;
+  },
 ): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
   // Whether the bag is open over the three actions. The picker is not
@@ -300,24 +306,43 @@ function SafariBody(
     const carried = props.bag.latest;
 
     if (active != null && carried != null) {
-      active.ballsLeft = carried
-        .filter((entry) => getBall(entry.item) != null)
-        .reduce((total, entry) => total + entry.amount, 0);
+      let total = 0;
+
+      for (const entry of carried) {
+        if (getBall(entry.item) != null) {
+          total += entry.amount;
+        }
+      }
+      active.ballsLeft = total;
       setRevision((value) => value + 1);
     }
   });
 
-  const balls = (): [Balls, number][] =>
-    (props.bag.latest ?? [])
-      .map((entry): [Balls | null, number] => [getBall(entry.item), entry.amount])
-      .filter((pair): pair is [Balls, number] => pair[0] != null);
+  const balls = (): [Balls, number][] => {
+    const pairs: [Balls, number][] = [];
+
+    for (const entry of props.bag.latest ?? []) {
+      const ball = getBall(entry.item);
+
+      if (ball != null) {
+        pairs.push([ball, entry.amount]);
+      }
+    }
+    return pairs;
+  };
 
   /**
    * How many of it the player is carrying. Zero for something the bag
    * has run out of, which is the number worth showing on the button
    */
-  const stockOf = (item: Items): number =>
-    (props.bag.latest ?? []).find((entry) => entry.item === item)?.amount ?? 0;
+  const stockOf = (item: Items): number => {
+    for (const entry of props.bag.latest ?? []) {
+      if (entry.item === item) {
+        return entry.amount;
+      }
+    }
+    return 0;
+  };
 
   /**
    * Which session has already been handed its ball, so the player's
@@ -526,6 +551,15 @@ function SafariBody(
               heading and a picture says nothing to one */}
           <SparklesIcon aria-hidden="true" class="size-4 shrink-0" />
           <span class="sr-only">Shiny</span>
+        </Show>
+        <Show when={isShadow(encounter)}>
+          <FireIcon aria-hidden="true" class="size-4 shrink-0" />
+          <span class="sr-only">Shadow</span>
+        </Show>
+        {/* Latest rather than read, so the heading never waits on the dex */}
+        <Show when={props.owned.latest === true}>
+          <ItemSprite item={BALL_ITEMS[Balls.PokeBall]} size={16} label="" />
+          <span class="sr-only">Caught before</span>
         </Show>
         {said}
       </span>
@@ -798,12 +832,18 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
     () => (props.session == null ? null : props.user.uid),
     getInventory,
   );
+  const [owned] = createResource(
+    () =>
+      props.session == null ? null : ([props.user.uid, props.session.encounter.species] as const),
+    async ([uid, species]) => (await getSpeciesDexEntry(uid, species)).owned,
+  );
 
   return (
     <Suspense>
       <SafariBody
         {...props}
         bag={bag}
+        owned={owned}
         onSpent={() => {
           Promise.resolve(refetch()).catch(() => undefined);
         }}

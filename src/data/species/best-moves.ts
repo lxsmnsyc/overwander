@@ -222,14 +222,19 @@ const STATUS_KINDS: Partial<Record<Moves, StatusKind>> = {
  * The ones that raise something on the user, which is what a Baton
  * Pass has to have behind it to be worth passing
  */
-export const SETUP_MOVES: ReadonlySet<Moves> = new Set(
-  Object.entries(STATUS_KINDS)
-    .filter(([, kind]) => kind === StatusKind.Setup)
-    // tsc requires the assertion to produce Moves from the record
-    // keys; tsgolint resolves the const enum to number
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    .map(([move]) => Number(move) as Moves),
-);
+export const SETUP_MOVES: ReadonlySet<Moves> = (() => {
+  const moves = new Set<Moves>();
+
+  for (const [move, kind] of Object.entries(STATUS_KINDS)) {
+    if (kind === StatusKind.Setup) {
+      // tsc requires the assertion to produce Moves from the record
+      // keys; tsgolint resolves the const enum to number
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      moves.add(Number(move) as Moves);
+    }
+  }
+  return moves;
+})();
 
 /**
  * What each role pays for each kind, and for an attack. A core is
@@ -328,13 +333,26 @@ const SLEEP_MOVES = new Set<Moves>([
  * how the builder knows
  */
 const MOVE_PARTNERS: Partial<Record<Moves, (chosen: ReadonlySet<Moves>) => boolean>> = {
-  [Moves.DreamEater]: (chosen) => [...SLEEP_MOVES].some((move) => chosen.has(move)),
+  [Moves.DreamEater]: (chosen) => {
+    for (const move of SLEEP_MOVES) {
+      if (chosen.has(move)) {
+        return true;
+      }
+    }
+    return false;
+  },
   [Moves.FocusPunch]: (chosen) => chosen.has(Moves.Substitute),
   [Moves.SleepTalk]: (chosen) => chosen.has(Moves.Rest),
   [Moves.Rest]: (chosen) => chosen.has(Moves.SleepTalk),
   // A Baton Pass with nothing raised passes nothing
-  [Moves.BatonPass]: (chosen) =>
-    [...chosen].some((move) => STATUS_KINDS[move] === StatusKind.Setup),
+  [Moves.BatonPass]: (chosen) => {
+    for (const move of chosen) {
+      if (STATUS_KINDS[move] === StatusKind.Setup) {
+        return true;
+      }
+    }
+    return false;
+  },
 };
 
 /** What a move promising more than it can keep is worth without its partner */
@@ -438,9 +456,14 @@ function coverageWeight(type: Types): number {
     return known;
   }
 
-  const reach = Object.values(TYPE_EFFECTIVENESS[type]).filter(
-    (effect) => effect === TypeEffectiveness.Effective,
-  ).length;
+  let reach = 0;
+
+  for (const effect of Object.values(TYPE_EFFECTIVENESS[type])) {
+    if (effect === TypeEffectiveness.Effective) {
+      reach += 1;
+    }
+  }
+
   const weight = COVERAGE_FLOOR + COVERAGE_STEP * reach;
 
   COVERAGE.set(type, weight);
@@ -667,7 +690,14 @@ function moveWorth(species: Species, move: Moves, context: BuildContext): number
     // the question is whether anything of its own is waiting for one,
     // and an ability that brings the sky answers it already
     if (called != null) {
-      const brought = context.abilities.some((ability) => ABILITY_WEATHER.get(ability) === called);
+      let brought = false;
+
+      for (const ability of context.abilities) {
+        if (ABILITY_WEATHER.get(ability) === called) {
+          brought = true;
+          break;
+        }
+      }
 
       if (!context.setter || brought) {
         return 0;
@@ -730,7 +760,15 @@ export const BEST_MOVE_OVERRIDES: Partial<Record<Species, Moves[]>> = {};
 
 /** Whether a pass changed the sheet, which is what ends the loop */
 function sameMoves(one: Moves[], two: Moves[]): boolean {
-  return one.length === two.length && one.every((move, at) => move === two[at]);
+  if (one.length !== two.length) {
+    return false;
+  }
+  for (const [at, move] of one.entries()) {
+    if (move !== two[at]) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /** The sky this build fights under, whichever way it gets one */
@@ -763,10 +801,20 @@ function buildWeather(abilities: Abilities[], chosen: ReadonlySet<Moves>): Weath
  * the other side ignores
  */
 function pickMoves(species: Species, context: BuildContext): Moves[] {
-  const scored = getLearnableMoves(species)
-    .map((move) => ({ move, worth: moveWorth(species, move, context) }))
-    .sort((one, two) => two.worth - one.worth || one.move - two.move);
-  const worthwhile = scored.filter(({ worth }) => worth > 0);
+  const scored: { move: Moves; worth: number }[] = [];
+
+  for (const move of getLearnableMoves(species)) {
+    scored.push({ move, worth: moveWorth(species, move, context) });
+  }
+  scored.sort((one, two) => two.worth - one.worth || one.move - two.move);
+
+  const worthwhile: { move: Moves; worth: number }[] = [];
+
+  for (const entry of scored) {
+    if (entry.worth > 0) {
+      worthwhile.push(entry);
+    }
+  }
 
   const chosen: Moves[] = [];
   const covered = new Set<Types>();
@@ -827,12 +875,18 @@ function pickMoves(species: Species, context: BuildContext): Moves[] {
     // Anything that hits at all before anything that does not, so a
     // sheet the scoring could not price still comes out the right
     // shape rather than four quiet moves
-    const leftover = [
-      ...scored.filter(({ move }) => getMoveData(move).category !== MoveCategories.Status),
-      ...scored.filter(({ move }) => getMoveData(move).category === MoveCategories.Status),
-    ];
+    const hits: Moves[] = [];
+    const silent: Moves[] = [];
 
-    for (const { move } of leftover) {
+    for (const { move } of scored) {
+      if (getMoveData(move).category === MoveCategories.Status) {
+        silent.push(move);
+      } else {
+        hits.push(move);
+      }
+    }
+
+    for (const move of [...hits, ...silent]) {
       if (chosen.length >= BEST_MOVE_COUNT) {
         break;
       }

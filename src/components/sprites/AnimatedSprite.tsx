@@ -13,11 +13,17 @@ import settings from '../app/settings';
 import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
 import loadSpeciesSprite from '../../canvas/species-sprites';
 import {
+  SPARKLE_BURST,
   SPARKLE_COLORS,
+  SPARKLE_MIDDLE,
+  SPARKLE_RAYS,
+  SPARKLE_RAY_REACH,
+  SPARKLE_RING_REACH,
   SPARKLE_SPREAD,
   SPARKLE_STARS,
   SPARKLE_STAR_LIFE,
   SPARKLE_STAR_SIZE,
+  SPARKLE_TINTS,
   sparkleStar,
 } from '../../canvas/sparkle';
 import type { Point, SpriteDirection } from '../../canvas/sprite-sheet';
@@ -174,7 +180,27 @@ function groundOf(drawn: Drawn): JSX.CSSProperties | null {
  * glyph: a diamond with its sides pulled in, which is how a star has
  * been drawn for as long as anything has been drawn sparkling
  */
-const STAR = 'polygon(50% 0%, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0% 50%, 42% 42%)';
+const STAR = (() => {
+  // Long points on the axes and short ones between them, with a narrow
+  // waist in every gap: the canvas glint's two crossed stars as one shape
+  const corners: string[] = [];
+
+  for (let at = 0; at < 16; at += 1) {
+    const angle = (at / 16) * Math.PI * 2 - Math.PI / 2;
+    let reach = 8;
+
+    if (at % 4 === 0) {
+      reach = 50;
+    } else if (at % 2 === 0) {
+      reach = 27;
+    }
+
+    corners.push(
+      `${(50 + Math.cos(angle) * reach).toFixed(1)}% ${(50 + Math.sin(angle) * reach).toFixed(1)}%`,
+    );
+  }
+  return `polygon(${corners.join(', ')})`;
+})();
 
 /**
  * Where each star of a sparkle sits, in shares of the cell, and when it
@@ -197,21 +223,64 @@ function starsOf(drawn: Drawn, seed: number): JSX.CSSProperties[] {
     (drawn.feet == null ? drawn.cell.height : drawn.feet[1] + 0.5 - drawn.bounds.y) /
     drawn.bounds.height;
   const size = across * SPARKLE_STAR_SIZE * 2;
+  // Widths are shares of the box's width and heights of its height, so
+  // a length measured across is turned into one measured down
+  const tall = drawn.bounds.width / drawn.bounds.height;
+  const burstY = floor + SPARKLE_MIDDLE * up;
+  const pieces: JSX.CSSProperties[] = [];
 
-  return Array.from({ length: SPARKLE_STARS }, (_, star) => {
+  // The burst: a ring and the rays, each standing on the middle
+  const ring = across * SPARKLE_RING_REACH * 2;
+
+  pieces.push({
+    position: 'absolute',
+    left: `${(middle - ring / 2) * 100}%`,
+    top: `${(burstY - (ring * tall) / 2) * 100}%`,
+    width: `${ring * 100}%`,
+    'aspect-ratio': '1',
+    'border-radius': '50%',
+    border: `2px solid ${SPARKLE_COLORS.fill}`,
+    'box-shadow': `0 0 0 1px ${SPARKLE_COLORS.edge}, inset 0 0 0 1px ${SPARKLE_COLORS.edge}`,
+    animation: `sparkle-ring ${SPARKLE_BURST}ms ease-out both`,
+  });
+  for (let ray = 0; ray < SPARKLE_RAYS; ray += 1) {
+    const length = across * SPARKLE_RAY_REACH * (ray % 2 === 0 ? 1 : 0.6);
+    const thick = across * 0.05;
+
+    pieces.push({
+      position: 'absolute',
+      left: `${(middle - thick / 2) * 100}%`,
+      top: `${(burstY - length * tall) * 100}%`,
+      width: `${thick * 100}%`,
+      'aspect-ratio': `${thick / length}`,
+      'border-radius': '9999px',
+      background: `linear-gradient(to top, transparent, ${ray % 2 === 0 ? SPARKLE_COLORS.core : SPARKLE_COLORS.fill})`,
+      'box-shadow': `0 0 0 1px ${SPARKLE_COLORS.edge}`,
+      'transform-origin': '50% 100%',
+      // Off the axes, so the burst never reads as a crosshair
+      '--turn': `${((ray + 0.5) / SPARKLE_RAYS) * 360}deg`,
+      animation: `sparkle-ray ${SPARKLE_BURST}ms ease-out both`,
+    });
+  }
+
+  for (let star = 0; star < SPARKLE_STARS; star++) {
     const spot = sparkleStar(seed, star, SPARKLE_SPREAD);
 
-    return {
+    pieces.push({
       position: 'absolute',
       left: `${(middle + spot.x * across - size / 2) * 100}%`,
-      top: `${(floor + spot.y * up - size / 2) * 100}%`,
+      top: `${(floor + spot.y * up - (size * tall) / 2) * 100}%`,
       width: `${size * 100}%`,
       'aspect-ratio': '1',
-      background: SPARKLE_COLORS.fill,
+      // A clip cuts any outline off, so the dark edge is painted into
+      // the tips of the points instead
+      background: `radial-gradient(circle, ${SPARKLE_COLORS.core} 10%, ${SPARKLE_TINTS[star % SPARKLE_TINTS.length]} 28%, ${SPARKLE_TINTS[star % SPARKLE_TINTS.length]} 55%, ${SPARKLE_COLORS.edge} 75%)`,
       'clip-path': STAR,
+      '--spin': `${star % 2 === 0 ? 20 : -20}deg`,
       animation: `sparkle-star ${SPARKLE_STAR_LIFE}ms ease-out ${spot.delay}ms both`,
-    };
-  });
+    });
+  }
+  return pieces;
 }
 
 /**
@@ -220,6 +289,11 @@ function starsOf(drawn: Drawn, seed: number): JSX.CSSProperties[] {
  * at four times its sheet reads as mush
  */
 const AURA_RESOLUTION = 3;
+
+/** How far an aura reaches past its ground shadow, in the shadow's radii: across, up and down */
+const AURA_ACROSS = 2.4;
+const AURA_UP = 3.5;
+const AURA_DOWN = 2.2;
 
 /**
  * An aura painted behind the picture — a shadow's haze, or the light
@@ -239,20 +313,43 @@ function AuraCanvas(props: {
   let canvas: HTMLCanvasElement | undefined;
   let played = 0;
 
+  /**
+   * The box the aura is painted in, in box pixels: the sprite's own
+   * bounds grown to the aura's reach, since flames and a ring spill past
+   * the ground shadow the bounds were sized for
+   */
+  const reach = createMemo(() => {
+    const drawn = props.drawn();
+
+    if (drawn == null) {
+      return null;
+    }
+    const box = drawn.bounds;
+    const feet = drawn.feet ?? [drawn.cell.width / 2, drawn.cell.height - 1];
+    const x = feet[0] + 0.5;
+    const y = feet[1] + 0.5;
+    const left = Math.min(box.x, x - drawn.shadow.x * AURA_ACROSS);
+    const top = Math.min(box.y, y - drawn.shadow.x * AURA_UP);
+    const right = Math.max(box.x + box.width, x + drawn.shadow.x * AURA_ACROSS);
+    const bottom = Math.max(box.y + box.height, y + drawn.shadow.y * AURA_DOWN);
+
+    return { x: left, y: top, width: right - left, height: bottom - top, feet: [x, y] };
+  });
+
   onCleanup(
     ticking((elapsed) => {
       played += elapsed;
 
       const drawn = props.drawn();
+      const area = reach();
       const context = canvas?.getContext('2d');
 
-      if (canvas == null || context == null || drawn == null) {
+      if (canvas == null || context == null || drawn == null || area == null) {
         return;
       }
 
-      const box = drawn.bounds;
-      const width = Math.max(1, Math.round(box.width * AURA_RESOLUTION));
-      const height = Math.max(1, Math.round(box.height * AURA_RESOLUTION));
+      const width = Math.max(1, Math.round(area.width * AURA_RESOLUTION));
+      const height = Math.max(1, Math.round(area.height * AURA_RESOLUTION));
 
       if (canvas.width !== width) {
         canvas.width = width;
@@ -261,13 +358,10 @@ function AuraCanvas(props: {
         canvas.height = height;
       }
       context.clearRect(0, 0, width, height);
-
-      const feet = drawn.feet ?? [drawn.cell.width / 2, drawn.cell.height - 1];
-
       props.paint(
         context,
-        (-box.x + feet[0] + 0.5) * AURA_RESOLUTION,
-        (-box.y + feet[1] + 0.5) * AURA_RESOLUTION,
+        (area.feet[0] - area.x) * AURA_RESOLUTION,
+        (area.feet[1] - area.y) * AURA_RESOLUTION,
         drawn.shadow.x * AURA_RESOLUTION,
         drawn.shadow.y * AURA_RESOLUTION,
         played,
@@ -275,12 +369,26 @@ function AuraCanvas(props: {
     }),
   );
 
+  /** Where the grown box sits, as shares of the element it hangs out of */
+  const placed = (): JSX.CSSProperties => {
+    const drawn = props.drawn();
+    const area = reach();
+
+    if (drawn == null || area == null) {
+      return {};
+    }
+    const box = drawn.bounds;
+
+    return {
+      left: share(area.x - box.x, box.width),
+      top: share(area.y - box.y, box.height),
+      width: share(area.width, box.width),
+      height: share(area.height, box.height),
+    };
+  };
+
   return (
-    <canvas
-      ref={canvas}
-      aria-hidden="true"
-      class="pointer-events-none absolute inset-0 h-full w-full"
-    />
+    <canvas ref={canvas} aria-hidden="true" class="pointer-events-none absolute" style={placed()} />
   );
 }
 

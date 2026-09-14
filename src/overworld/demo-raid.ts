@@ -58,17 +58,17 @@ const PLACEHOLDERS = new Set<Species>([Species.Missingno, Species.Egg, Species.S
 let rollable: Species[] | null = null;
 
 function getRollableSpecies(): Species[] {
-  rollable ??= getRegisteredSpecies().filter(
-    // Fully evolved only. The parties are rolled at level 70 and up,
-    // where a Caterpie is a pokemon that would have evolved twice
-    // over long ago, and a field of finished pokemon is a field of
-    // the sprites and the movesets worth looking at.
-    //
-    // A worn shape is left out for a different reason: nothing is
-    // ever met as one, and staging a Rainy Castform would put a
-    // pokemon on the field that Forecast would immediately undress
-    (species) => !PLACEHOLDERS.has(species) && isFullyEvolved(species) && !isWornForm(species),
-  );
+  if (rollable == null) {
+    rollable = [];
+    for (const species of getRegisteredSpecies()) {
+      // Fully evolved only, since the parties are rolled at level 70 and up.
+      // A worn shape is out too: nothing is met as one, and Forecast would
+      // undress a staged Rainy Castform at once
+      if (!PLACEHOLDERS.has(species) && isFullyEvolved(species) && !isWornForm(species)) {
+        rollable.push(species);
+      }
+    }
+  }
   return rollable;
 }
 
@@ -165,7 +165,13 @@ function rollCatch(random: () => number, index: number): CatchSnapshot {
 export function createDemoRaidTeams(seed: string, shadow = false): TeamSnapshotRecord[] {
   const rng = new AleaRNG(`demo-raid:${seed}`);
   const random = (): number => rng.random();
-  const bosses = getRollableSpecies().filter(canStageBoss);
+  const bosses: Species[] = [];
+
+  for (const species of getRollableSpecies()) {
+    if (canStageBoss(species)) {
+      bosses.push(species);
+    }
+  }
   const boss = pick(bosses, random);
   const bossTrait = Math.floor(random() * 0x1_0000_0000);
   const staged = createRaidBossSnapshot(boss, bossTrait, shadow);

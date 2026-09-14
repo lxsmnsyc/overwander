@@ -18,6 +18,11 @@ async function assembleRaid(
   const teams = await sql`
     select id from teams where raid_id = ${asString(row.id)} order by joined_seq
   `;
+  const ids: string[] = [];
+
+  for (const entry of teams) {
+    ids.push(asString(entry.id));
+  }
 
   return {
     kind: row.kind,
@@ -25,7 +30,7 @@ async function assembleRaid(
     species: row.species,
     traitValue: row.trait_value,
     host: row.host,
-    teams: teams.map((entry) => asString(entry.id)),
+    teams: ids,
     battle: row.battle_id,
     timestamp: row.window_at,
     offset: row.utc_offset,
@@ -110,11 +115,16 @@ export async function readTeam(
   const catches = await sql`
     select caught_id from team_catches where team_id = ${id} order by slot
   `;
+  const queued: string[] = [];
+
+  for (const entry of catches) {
+    queued.push(asString(entry.caught_id));
+  }
 
   return {
     player: asString(rows[0].player),
     raid: asString(rows[0].raid_id),
-    catches: catches.map((entry) => asString(entry.caught_id)),
+    catches: queued,
   };
 }
 

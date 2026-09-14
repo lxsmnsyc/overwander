@@ -122,7 +122,11 @@ export async function trainEfforts(
 
   // Every point of a spread goes in, since a spread cannot take any
   // back out
-  const added = Object.values(spread).reduce((total, step) => total + Math.max(0, step), 0);
+  let added = 0;
+
+  for (const step of Object.values(spread)) {
+    added += Math.max(0, step);
+  }
 
   if (result != null && added > 0) {
     await bumpProgress(uid, [[Metric.EffortAssigned, 0, added]]);

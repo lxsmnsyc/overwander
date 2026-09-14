@@ -1,5 +1,7 @@
 import 'server-only';
+import { Depth } from '../../overworld/depth';
 import type { ItemStack } from '../../data/overworld/item-pool';
+import type { Items } from '../../data/ids/items';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { getSql } from '../db';
 import { asString } from '../read';
@@ -21,8 +23,9 @@ export async function claimItemCache(
   cell: number,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<ItemStack[] | null> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
   const stash = snapshot?.getItemCaches().get(cell);
 
   if (snapshot == null || stash == null) {
@@ -46,10 +49,12 @@ export async function claimItemCache(
  * half-land
  */
 export async function grantStash(uid: string, stash: ItemStack[]): Promise<void> {
-  await grantItems(
-    uid,
-    stash.map(({ item, amount }) => [item, amount]),
-  );
+  const granted: [Items, number][] = [];
+
+  for (const { item, amount } of stash) {
+    granted.push([item, amount]);
+  }
+  await grantItems(uid, granted);
 }
 
 function cachePrefix(snapshot: ChunkSnapshot): string {
@@ -71,8 +76,9 @@ export async function listClaimedItemCaches(
   y: number,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<number[]> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
 
   if (snapshot == null) {
     return [];
@@ -84,7 +90,14 @@ export async function listClaimedItemCaches(
     where player = ${uid} and marker like ${`${prefix}%`}
   `;
 
-  return rows
-    .map((row) => Number(asString(row.marker).slice(prefix.length)))
-    .filter((cell) => Number.isInteger(cell));
+  const cells: number[] = [];
+
+  for (const row of rows) {
+    const cell = Number(asString(row.marker).slice(prefix.length));
+
+    if (Number.isInteger(cell)) {
+      cells.push(cell);
+    }
+  }
+  return cells;
 }

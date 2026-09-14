@@ -19,7 +19,7 @@ import {
 import { REGION_DEXES, getDexRegions } from '../data/quests/dex';
 import { CHARSETS } from '../data/overworld/charsets';
 import { LEGENDS, LEGEND_HONORS } from '../data/overworld/experts';
-import { listAwards } from './awards';
+import { type AwardRecord, listAwards } from './awards';
 import { getSql } from './db';
 import { readProgress } from './quest-progress';
 
@@ -42,7 +42,7 @@ export async function readAchievements(player: string): Promise<Achievements> {
  */
 export async function listUnlockedTitles(player: string): Promise<Title[]> {
   const [standings, held] = await Promise.all([readAchievements(player), listAwards(player)]);
-  const awards = new Set(held.map((entry) => entry.award));
+  const awards = heldAwards(held);
   const titles: Title[] = [];
 
   for (const line of ACHIEVEMENT_LINES) {
@@ -75,10 +75,10 @@ export async function listUnlockedTitles(player: string): Promise<Title[]> {
       titles.push(trainerTitle(trainer, true));
     }
   }
-  if (KANTO_BADGES.every((badge) => awards.has(badge))) {
+  if (holdsEvery(awards, KANTO_BADGES)) {
     titles.push(LadderTitle.LeagueChallenger);
   }
-  if (KANTO_HONORS.every((honor) => awards.has(honor))) {
+  if (holdsEvery(awards, KANTO_HONORS)) {
     titles.push(LadderTitle.EliteConqueror);
   }
   if (awards.has(Awards.KantoChampion)) {
@@ -94,8 +94,11 @@ export async function listUnlockedTitles(player: string): Promise<Title[]> {
     titles.push(LadderTitle.SinnohChampion);
   }
   // One mark is enough: a legend is not a set to be walked through
-  if (LEGENDS.some((legend) => awards.has(LEGEND_HONORS[legend]))) {
-    titles.push(LadderTitle.LegendBreaker);
+  for (const legend of LEGENDS) {
+    if (awards.has(LEGEND_HONORS[legend])) {
+      titles.push(LadderTitle.LegendBreaker);
+      break;
+    }
   }
   // And a filled dex is worth that region's professor
   for (const region of getDexRegions()) {
@@ -135,26 +138,48 @@ export async function setTitle(uid: string, title: Title | null): Promise<boolea
  */
 export async function listUnlockedSprites(player: string): Promise<string[]> {
   const [standings, held] = await Promise.all([readAchievements(player), listAwards(player)]);
-  const awards = new Set(held.map((entry) => entry.award));
+  const awards = heldAwards(held);
+  const sheets: string[] = [];
 
-  return CHARSETS.filter((charset) => {
-    switch (charset.lock.kind) {
-      case 'free':
-        return true;
-      case 'award':
-        return awards.has(charset.lock.award);
-      case 'awards':
-        return charset.lock.awards.every((award) => awards.has(award));
-      case 'trainer':
-      default:
-        // The class' own wins rather than the trade's: beating
-        // Kanto's swimmers never dressed anybody as a Johto one
-        return (
-          (standings.variants.get(charset.lock.trainer)?.tier ?? AchievementTier.None) >=
-          AchievementTier.Bronze
-        );
+  for (const { lock, sheet } of CHARSETS) {
+    let unlocked: boolean;
+
+    if (lock.kind === 'free') {
+      unlocked = true;
+    } else if (lock.kind === 'award') {
+      unlocked = awards.has(lock.award);
+    } else if (lock.kind === 'awards') {
+      unlocked = holdsEvery(awards, lock.awards);
+    } else {
+      // The class' own wins rather than the trade's: beating
+      // Kanto's swimmers never dressed anybody as a Johto one
+      unlocked =
+        (standings.variants.get(lock.trainer)?.tier ?? AchievementTier.None) >=
+        AchievementTier.Bronze;
     }
-  }).map((charset) => charset.sheet);
+    if (unlocked) {
+      sheets.push(sheet);
+    }
+  }
+  return sheets;
+}
+
+function heldAwards(held: AwardRecord[]): Set<Awards> {
+  const awards = new Set<Awards>();
+
+  for (const entry of held) {
+    awards.add(entry.award);
+  }
+  return awards;
+}
+
+function holdsEvery(awards: Set<Awards>, wanted: Iterable<Awards>): boolean {
+  for (const award of wanted) {
+    if (!awards.has(award)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**

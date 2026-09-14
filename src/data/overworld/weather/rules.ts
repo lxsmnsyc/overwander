@@ -43,7 +43,12 @@ export function isWeatherFavored(weather: Weather, types: Types[]): boolean {
   }
   const favored = new Set(WEATHER_TYPES[weather]);
 
-  return types.some((type) => favored.has(type));
+  for (const type of types) {
+    if (favored.has(type)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**

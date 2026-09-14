@@ -172,7 +172,11 @@ export function describeMedicine(item: Items): string {
   if (effect.cures === EVERY_STATUS) {
     parts.push('Cures every status.');
   } else if (effect.cures != null) {
-    const cured = new Set([...effect.cures].map((status) => CURE_NAMES.get(status) ?? ''));
+    const cured = new Set<string>();
+
+    for (const status of effect.cures) {
+      cured.add(CURE_NAMES.get(status) ?? '');
+    }
 
     parts.push(`Cures ${[...cured].join(' and ')}.`);
   }

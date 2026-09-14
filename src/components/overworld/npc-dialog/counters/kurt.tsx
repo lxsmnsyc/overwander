@@ -24,10 +24,16 @@ export default function Kurt(props: CounterProps): JSX.Element {
     return ball == null ? '' : getItemData(ball).name;
   };
 
-  const apricorns = (): InventoryEntry[] =>
-    (props.bag.latest ?? []).filter(
-      (entry) => getApricornBall(entry.item) != null && entry.amount > 0,
-    );
+  const apricorns = (): InventoryEntry[] => {
+    const held: InventoryEntry[] = [];
+
+    for (const entry of props.bag.latest ?? []) {
+      if (getApricornBall(entry.item) != null && entry.amount > 0) {
+        held.push(entry);
+      }
+    }
+    return held;
+  };
 
   /**
    * The bag is re-read afterwards the way a trade re-reads it: the

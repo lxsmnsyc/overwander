@@ -157,6 +157,28 @@ export function isOpenSea(biome: Biome): boolean {
 }
 
 /**
+ * The country a town can be settled on: everything the world grows
+ * that is not open sea. Nothing is built on water and nothing is
+ * generated in `Beyond` at all, so those are the two the type leaves
+ * out, and anything that exists once per town has to cover exactly
+ * these
+ */
+export type SettledBiome = Exclude<
+  Biome,
+  | Biome.Beyond
+  | Biome.CoralReef
+  | Biome.DeepOcean
+  | Biome.KelpForest
+  | Biome.Ocean
+  | Biome.PolarOcean
+>;
+
+/** Whether a town can stand on this country */
+export function isSettledBiome(biome: Biome): biome is SettledBiome {
+  return !isOpenSea(biome) && biome !== Biome.Beyond;
+}
+
+/**
  * Ground nothing fruits in: bare rock, baked sand and permanent ice.
  * A berry bush wants soil and water, and these have neither
  */
@@ -286,10 +308,17 @@ export const BIOME_CONFIGS: { [key in Exclude<Biome, Biome.Beyond>]: BiomeConfig
  * the one left out, since nothing is ever generated there: a species
  * that lives everywhere lives in these
  */
-// tsc requires the assertion to produce Biomes from the record keys;
-// tsgolint resolves the const enum to number
-// oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-export const WILD_BIOMES: Biome[] = Object.keys(BIOME_CONFIGS).map(Number) as Biome[];
+export const WILD_BIOMES: Biome[] = (() => {
+  const biomes: Biome[] = [];
+
+  for (const key of Object.keys(BIOME_CONFIGS)) {
+    // tsc requires the assertion to produce Biomes from the record keys;
+    // tsgolint resolves the const enum to number
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    biomes.push(Number(key) as Biome);
+  }
+  return biomes;
+})();
 
 /**
  * Where the shoreline is on the elevation axis.
@@ -314,13 +343,32 @@ export const ELEVATION_WEIGHT = 2;
  * Classify a climate sample into the nearest biome on its own side of
  * the shoreline (squared Euclidean distance, elevation weighted)
  */
+/**
+ * The same table walked as a list, built once.
+ *
+ * The ground is classified a cell at a time now, which is a few
+ * hundred calls for one chunk, and `Object.entries` on every one of
+ * them allocated more than the arithmetic it fed
+ */
+const CLIMATE_TARGETS: [biome: Biome, config: BiomeConfig][] = (() => {
+  const targets: [biome: Biome, config: BiomeConfig][] = [];
+
+  for (const [key, config] of Object.entries(BIOME_CONFIGS)) {
+    // tsc requires the assertion to produce a Biome from the record
+    // key; tsgolint resolves the const enum to number
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    targets.push([Number(key) as Biome, config]);
+  }
+  return targets;
+})();
+
 export function getBiome(humidity: number, temperature: number, elevation: number): Biome {
   let nearest = Biome.DeepOcean;
   let nearestDistance = Number.POSITIVE_INFINITY;
 
   const submerged = elevation < SEA_LEVEL;
 
-  for (const [key, config] of Object.entries(BIOME_CONFIGS)) {
+  for (const [biome, config] of CLIMATE_TARGETS) {
     // Never across the shoreline: the two sides are separate lists
     if (config.elevation < SEA_LEVEL !== submerged) {
       continue;
@@ -333,10 +381,7 @@ export function getBiome(humidity: number, temperature: number, elevation: numbe
 
     if (distance < nearestDistance) {
       nearestDistance = distance;
-      // tsc requires the assertion to produce a Biome from the
-      // record key; tsgolint resolves the const enum to number
-      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-      nearest = Number(key) as Biome;
+      nearest = biome;
     }
   }
 

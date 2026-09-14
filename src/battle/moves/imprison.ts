@@ -17,13 +17,20 @@ export default function setupImprison(battle: Battle): void {
       return;
     }
 
-    const shared = Object.keys(event.source.moves)
+    const target = event.target.unit;
+    const shared: Moves[] = [];
+
+    for (const key of Object.keys(event.source.moves)) {
       // The move set is keyed by the enum, which comes back as a
       // string from Object.keys
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-      .map((move) => Number(move) as Moves)
-      .filter((move) => event.target.type === MoveTargetType.Unit && event.target.unit.moves[move]);
+      const move = Number(key) as Moves;
 
-    setImprisonedMoves(event.target.unit, shared);
+      if (target.moves[move]) {
+        shared.push(move);
+      }
+    }
+
+    setImprisonedMoves(target, shared);
   });
 }

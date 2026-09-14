@@ -17,6 +17,7 @@ import {
 } from '../moves/__paint';
 import type PaintedVisual from '../moves/__painted';
 import { type Cue, LIFT, REACH, bitten, orbiting, over, played, rising, stalled } from './shapes';
+import { LIT_STATUS, LIT_TRIGGERS } from './lit/status';
 
 /** What a status looks like as it lands, and again each time it bites */
 export const STATUS_CUES: Partial<Record<Statuses, Cue>> = {
@@ -753,7 +754,7 @@ const TICK_SCALE = 0.75;
 export function statusCueFor(status: Statuses): PaintedVisual | null {
   const cue = STATUS_CUES[status];
 
-  return cue == null ? null : played(cue);
+  return cue == null ? null : played(cue, 1, 1, LIT_STATUS[status]);
 }
 
 /**
@@ -764,9 +765,9 @@ export function statusTriggerFor(status: Statuses): PaintedVisual | null {
   const trigger = STATUS_TRIGGERS[status];
 
   if (trigger != null) {
-    return played(trigger);
+    return played(trigger, 1, 1, LIT_TRIGGERS[status]);
   }
   const cue = STATUS_CUES[status];
 
-  return cue == null ? null : played(cue, TICK_SCALE, TICK_ALPHA);
+  return cue == null ? null : played(cue, TICK_SCALE, TICK_ALPHA, LIT_STATUS[status]);
 }

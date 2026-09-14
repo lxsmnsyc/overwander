@@ -87,9 +87,14 @@ export async function countBalls(uid: string): Promise<number> {
   const balls = new Set<Items>(Object.values(BALL_ITEMS));
   const inventory = await getInventory(uid);
 
-  return inventory
-    .filter((entry) => balls.has(entry.item))
-    .reduce((total, entry) => total + entry.amount, 0);
+  let total = 0;
+
+  for (const entry of inventory) {
+    if (balls.has(entry.item)) {
+      total += entry.amount;
+    }
+  }
+  return total;
 }
 
 /**
@@ -100,7 +105,12 @@ export async function countBalls(uid: string): Promise<number> {
 export async function getRetiredKeys(uid: string): Promise<Set<string>> {
   const { data } = await getSupabase().from('fled_encounters').select('key').eq('player', uid);
 
-  return new Set((data ?? []).map((row) => String(row.key)));
+  const keys = new Set<string>();
+
+  for (const row of data ?? []) {
+    keys.add(String(row.key));
+  }
+  return keys;
 }
 
 /**

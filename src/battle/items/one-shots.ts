@@ -342,7 +342,13 @@ const setupAdrenalineOrb = createHeldItem(Items.AdrenalineOrb, (battle) =>
  */
 const setupWhiteHerb = createHeldItem(Items.WhiteHerb, (battle) =>
   lowering(battle, (unit) => {
-    const taken = ALL_STAGES.filter((stage) => unit.stages[stage] < 0);
+    const taken: Stages[] = [];
+
+    for (const stage of ALL_STAGES) {
+      if (unit.stages[stage] < 0) {
+        taken.push(stage);
+      }
+    }
 
     if (taken.length === 0 || !holds(unit, Items.WhiteHerb)) {
       return;
@@ -442,11 +448,21 @@ const setupPowerHerb = createHeldItem(Items.PowerHerb, (battle) => {
   };
 });
 
+function reactionSetups(): ((battle: Battle) => void)[] {
+  const setups: ((battle: Battle) => void)[] = [];
+
+  for (const reaction of REACTIONS) {
+    setups.push(setupReaction(reaction));
+  }
+
+  return setups;
+}
+
 const SETUPS: ((battle: Battle) => void)[] = [
   setupFocusSash,
   setupAirBalloon,
   setupWeaknessPolicy,
-  ...REACTIONS.map(setupReaction),
+  ...reactionSetups(),
   setupRedCard,
   setupEjectButton,
   setupEjectPack,

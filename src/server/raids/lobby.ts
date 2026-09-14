@@ -1,4 +1,5 @@
 import 'server-only';
+import { Depth } from '../../overworld/depth';
 import { asOffset, toLocalTime } from '../../auth/local-time';
 import {
   RaidAction,
@@ -48,8 +49,9 @@ export async function peekRaid(
   kind: RaidKind,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<RaidView | null> {
-  const chunk = getWorld().getChunk(x, y);
+  const chunk = getWorld(depth).getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
   const roll =
@@ -133,8 +135,9 @@ export async function enterRaid(
   kind: RaidKind,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<[string, RaidRecord] | null> {
-  const chunk = getWorld().getChunk(x, y);
+  const chunk = getWorld(depth).getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
   const roll =
@@ -229,6 +232,7 @@ export async function hostMythicalRaid(
   item: Items,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<[string, RaidRecord] | null> {
   const species = getRaidSpecies(item);
 
@@ -236,7 +240,7 @@ export async function hostMythicalRaid(
     return null;
   }
 
-  const chunk = getWorld().getChunk(x, y);
+  const chunk = getWorld(depth).getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
   const id = mythicalRaidId(snapshot.raidTimestamp, item, uid, zone);
@@ -328,10 +332,21 @@ export async function leaveRaid(uid: string, lobby: string): Promise<void> {
     const rows = await transaction`
       select id, player from teams where raid_id = ${lobby} order by joined_seq
     `;
-    const mine = new Set(
-      rows.filter((entry) => entry.player === uid).map((entry) => asString(entry.id)),
-    );
-    const left = rows.filter((entry) => !mine.has(asString(entry.id)));
+    const mine = new Set<string>();
+
+    for (const entry of rows) {
+      if (entry.player === uid) {
+        mine.add(asString(entry.id));
+      }
+    }
+
+    const left: (typeof rows)[number][] = [];
+
+    for (const entry of rows) {
+      if (!mine.has(asString(entry.id))) {
+        left.push(entry);
+      }
+    }
 
     // The last party out shuts the door behind it, and so does a host
     // who never formed one.

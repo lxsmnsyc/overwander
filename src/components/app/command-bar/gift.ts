@@ -120,9 +120,17 @@ function readEach<T>(
     return [];
   }
   const known = entries();
-  const found = asked.map((one) => findNamed(known, one));
+  const found: T[] = [];
 
-  return found.every((one): one is T => one != null) ? found : null;
+  for (const one of asked) {
+    const id = findNamed(known, one);
+
+    if (id == null) {
+      return null;
+    }
+    found.push(id);
+  }
+  return found;
 }
 
 /** Whose shelf it goes on, or null for every shelf */
@@ -195,8 +203,17 @@ function readPokemonGift(
   if (level === null) {
     return refuse(`The level has to be between ${MIN_LEVEL} and ${MAX_LEVEL}.`);
   }
-  const comes = everyGiven(parameters, 'is').map((one) => one.trim().toLowerCase());
-  const unknown = comes.find((one) => one !== SHINY && one !== SHADOW);
+  const comes: string[] = [];
+  let unknown: string | undefined;
+
+  for (const mark of everyGiven(parameters, 'is')) {
+    const word = mark.trim().toLowerCase();
+
+    comes.push(word);
+    if (unknown === undefined && word !== SHINY && word !== SHADOW) {
+      unknown = word;
+    }
+  }
 
   if (unknown != null) {
     return refuse(`A pokemon can be ${SHINY} or ${SHADOW}, not ${unknown}.`);

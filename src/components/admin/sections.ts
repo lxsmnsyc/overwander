@@ -83,9 +83,14 @@ export const ADMIN_SECTIONS: AdminSection[] = [
  * open onto a refusal is a worse answer than a shorter sidebar
  */
 export function linksFor(role: string): AdminSection[] {
-  return ADMIN_SECTIONS.filter(
-    (entry) => entry.hidden !== true && (entry.runs !== true || runsTheGame(role)),
-  );
+  const links: AdminSection[] = [];
+
+  for (const entry of ADMIN_SECTIONS) {
+    if (entry.hidden !== true && (entry.runs !== true || runsTheGame(role))) {
+      links.push(entry);
+    }
+  }
+  return links;
 }
 
 /**

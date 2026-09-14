@@ -118,13 +118,22 @@ export function getDailyQuests(now: number): RotationQuest[] {
  * lair-bound, since a legendary is a raid's to give
  */
 function huntFamilies(): Families[] {
-  const lairbound = new Set(
-    getRegisteredSpecies()
-      .filter((species) => getSpeciesLairs(species).length > 0)
-      .map((species) => getSpeciesData(species).family),
-  );
+  const lairbound = new Set<Families>();
 
-  return getRegisteredFamilies().filter((family) => !lairbound.has(family));
+  for (const species of getRegisteredSpecies()) {
+    if (getSpeciesLairs(species).length > 0) {
+      lairbound.add(getSpeciesData(species).family);
+    }
+  }
+
+  const families: Families[] = [];
+
+  for (const family of getRegisteredFamilies()) {
+    if (!lairbound.has(family)) {
+      families.push(family);
+    }
+  }
+  return families;
 }
 
 /** This week's bounty: 5 catches from one seeded family line */

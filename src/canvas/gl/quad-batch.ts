@@ -31,6 +31,41 @@ export interface QuadSource {
 /** What a sheet can be: the tilesets recolour into canvases. */
 export type QuadSheet = HTMLCanvasElement | HTMLImageElement | ImageBitmap;
 
+/**
+ * What can take the quads: this layer, or the board's own scene.
+ *
+ * The board draws its marks inside a depth-tested scene now, where a
+ * grid line on a cell can be hidden by the cliff in front of it, so
+ * whatever writes a quad is asked for rather than assumed. The
+ * signatures are this class's own
+ */
+export interface Painter {
+  begin: (width: number, height: number, ratio: number) => void;
+  carry: (x: number, y: number, alpha?: number, scale?: number) => void;
+  quad: (
+    sheet: QuadSheet,
+    source: QuadSource,
+    corners: QuadPoint[],
+    alpha?: number,
+    colour?: string,
+    sampling?: QuadSampling,
+    blend?: QuadBlend,
+  ) => void;
+  solid: (colour: string, corners: QuadPoint[], alpha?: number, blend?: QuadBlend) => void;
+  line: (
+    colour: string,
+    from: QuadPoint,
+    to: QuadPoint,
+    width: number,
+    alpha?: number,
+    blend?: QuadBlend,
+  ) => void;
+  outline: (colour: string, corners: QuadPoint[], width: number, alpha?: number) => void;
+  triangle: (colour: string, corners: QuadPoint[], alpha?: number, blend?: QuadBlend) => void;
+  end: () => void;
+  invalidate: (sheet: QuadSheet) => void;
+}
+
 const VERTEX = `#version 300 es
 in vec2 spot;
 in vec2 uv;
@@ -76,6 +111,21 @@ const SHEET_LIMIT = 64;
 
 /** How many frames a sheet may go untouched before it is let go. */
 const SHEET_PATIENCE = 600;
+
+/** Ring order in, two triangles out: the first corner is shared by both, so each starts there */
+const RING = [0, 1, 2, 0, 2, 3] as const;
+
+/**
+ * Corners reused by every line and triangle. A quad is copied into the
+ * buffer the moment it is written, so nothing holds on to these
+ */
+const EDGE: QuadPoint[] = [
+  { x: 0, y: 0 },
+  { x: 0, y: 0 },
+  { x: 0, y: 0 },
+  { x: 0, y: 0 },
+];
+const TRIANGLE: QuadPoint[] = [EDGE[0], EDGE[0], EDGE[0], EDGE[0]];
 
 interface Held {
   texture: WebGLTexture;
@@ -400,17 +450,15 @@ export default class QuadBatch {
     const nx = (-down / span) * width * 0.5;
     const ny = (across / span) * width * 0.5;
 
-    this.solid(
-      colour,
-      [
-        { x: from.x + nx, y: from.y + ny },
-        { x: to.x + nx, y: to.y + ny },
-        { x: to.x - nx, y: to.y - ny },
-        { x: from.x - nx, y: from.y - ny },
-      ],
-      alpha,
-      blend,
-    );
+    EDGE[0].x = from.x + nx;
+    EDGE[0].y = from.y + ny;
+    EDGE[1].x = to.x + nx;
+    EDGE[1].y = to.y + ny;
+    EDGE[2].x = to.x - nx;
+    EDGE[2].y = to.y - ny;
+    EDGE[3].x = from.x - nx;
+    EDGE[3].y = from.y - ny;
+    this.solid(colour, EDGE, alpha, blend);
   }
 
   /**
@@ -430,7 +478,11 @@ export default class QuadBatch {
    * all for the second
    */
   triangle(colour: string, corners: QuadPoint[], alpha = 1, blend: QuadBlend = 'over'): void {
-    this.solid(colour, [corners[0], corners[1], corners[2], corners[2]], alpha, blend);
+    TRIANGLE[0] = corners[0];
+    TRIANGLE[1] = corners[1];
+    TRIANGLE[2] = corners[2];
+    TRIANGLE[3] = corners[2];
+    this.solid(colour, TRIANGLE, alpha, blend);
   }
 
   /** Hand over whatever has been written, one call per sheet. */
@@ -528,23 +580,19 @@ export default class QuadBatch {
       this.runCount += 1;
     }
 
-    // Ring order in, two triangles out: the far corner is shared by
-    // both, so it is written first in each
-    const order = [0, 1, 2, 0, 2, 3];
-    const us = [left, right, right, left];
-    const vs = [top, top, bottom, bottom];
     // Premultiplied throughout, so what is left of a carried board is
     // taken out of the colour as well as the alpha
     const fade = this.carryAlpha;
     const zoom = this.carryScale;
 
-    for (const corner of order) {
+    for (const corner of RING) {
       const at = this.filled * STRIDE;
 
       this.vertices[at] = corners[corner].x * zoom + this.carryX;
       this.vertices[at + 1] = corners[corner].y * zoom + this.carryY;
-      this.vertices[at + 2] = us[corner];
-      this.vertices[at + 3] = vs[corner];
+      // A ring runs top left, top right, bottom right, bottom left
+      this.vertices[at + 2] = corner === 0 || corner === 3 ? left : right;
+      this.vertices[at + 3] = corner <= 1 ? top : bottom;
       this.vertices[at + 4] = red * fade;
       this.vertices[at + 5] = green * fade;
       this.vertices[at + 6] = blue * fade;

@@ -71,18 +71,25 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
   // Every party at once. Each freezes a whole team of its own and
   // none of them waits on another, so a lobby of four starts in the
   // time one takes rather than four
-  const teams = await Promise.all(raid.teams.map(async (id) => readTeam(id)));
-  const published = await Promise.all(
-    teams.map(async (team): Promise<[string, string] | null> => {
-      if (team == null) {
-        return null;
-      }
-      const snapshot = await publishTeamSnapshot(team.player, team.catches, PLAYER_ALLIANCE, now);
+  const reading: ReturnType<typeof readTeam>[] = [];
 
-      return snapshot == null ? null : [team.player, snapshot];
-    }),
-  );
-  const fielded = published.filter((entry) => entry != null);
+  for (const id of raid.teams) {
+    reading.push(readTeam(id));
+  }
+
+  const publishing: Promise<[string, string] | null>[] = [];
+
+  for (const team of await Promise.all(reading)) {
+    publishing.push(publishTeam(team, now));
+  }
+
+  const fielded: [string, string][] = [];
+
+  for (const entry of await Promise.all(publishing)) {
+    if (entry != null) {
+      fielded.push(entry);
+    }
+  }
 
   if (fielded.length === 0) {
     return null;
@@ -104,15 +111,16 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
               ${raid.biome}, ${UNLIMITED_BATTLE_LIMITS})
     `;
 
-    const rows = [
-      { battle_id: battleId, position: 0, snapshot_id: bossId, player: null as string | null },
-      ...fielded.map(([player, snapshot], at) => ({
-        battle_id: battleId,
-        position: at + 1,
-        snapshot_id: snapshot,
-        player: player as string | null,
-      })),
-    ];
+    const rows: {
+      battle_id: string;
+      position: number;
+      snapshot_id: string;
+      player: string | null;
+    }[] = [{ battle_id: battleId, position: 0, snapshot_id: bossId, player: null }];
+
+    for (const [at, [player, snapshot]] of fielded.entries()) {
+      rows.push({ battle_id: battleId, position: at + 1, snapshot_id: snapshot, player });
+    }
 
     await transaction`
       insert into battle_teams ${transaction(rows, 'battle_id', 'position', 'snapshot_id', 'player')}
@@ -129,12 +137,27 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
 
   // Everybody in the lobby has now stood in front of it, which is the
   // only way most of them will ever meet one
-  await recordSeenOpponents(
-    battleId,
-    fielded.map(([player]) => player),
-  );
+  const players: string[] = [];
+
+  for (const [player] of fielded) {
+    players.push(player);
+  }
+  await recordSeenOpponents(battleId, players);
 
   return battleId;
+}
+
+/** Freeze one party for the fight, or null when it has nothing left to field */
+async function publishTeam(
+  team: Awaited<ReturnType<typeof readTeam>>,
+  now: number,
+): Promise<[string, string] | null> {
+  if (team == null) {
+    return null;
+  }
+  const snapshot = await publishTeamSnapshot(team.player, team.catches, PLAYER_ALLIANCE, now);
+
+  return snapshot == null ? null : [team.player, snapshot];
 }
 
 /**

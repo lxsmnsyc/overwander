@@ -225,6 +225,7 @@ them.
 
 ## See also
 
+- [Open world](open-world.md), the release after this one.
 - [Johto](johto.md), the release before this one.
 - [Kanto](kanto.md), the first release.
 - [Player's guide](../mechanics.md), for the rules in full.

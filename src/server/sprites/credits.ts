@@ -75,10 +75,14 @@ export async function readCredits(): Promise<Credits> {
  * across a line per drawing is a diff nobody can read
  */
 function format(credits: Credits): string {
-  const rows = (works: CreditWorks): string =>
-    Object.entries(works)
-      .map(([name, drawn]) => `    ${JSON.stringify(name)}: ${JSON.stringify(drawn)}`)
-      .join(',\n');
+  const rows = (works: CreditWorks): string => {
+    const lines: string[] = [];
+
+    for (const [name, drawn] of Object.entries(works)) {
+      lines.push(`    ${JSON.stringify(name)}: ${JSON.stringify(drawn)}`);
+    }
+    return lines.join(',\n');
+  };
 
   return [
     '{',
@@ -124,7 +128,12 @@ function creditsOf(sheet: unknown, work: string): CreditWork[] {
       }
     }
   }
-  return [...names].map((credit) => ({ work, credit }));
+  const credited: CreditWork[] = [];
+
+  for (const credit of names) {
+    credited.push({ work, credit });
+  }
+  return credited;
 }
 
 /**
@@ -138,7 +147,10 @@ export async function readSpriteCredits(): Promise<CreditWorks> {
   const regions = await readdir(pathOf(SPRITE_ROOT), { withFileTypes: true }).catch(() => []);
   const found: CreditWork[] = [];
 
-  for (const region of regions.filter((entry) => entry.isDirectory())) {
+  for (const region of regions) {
+    if (!region.isDirectory()) {
+      continue;
+    }
     for (const folder of await readdir(pathOf(SPRITE_ROOT, region.name)).catch(() => [])) {
       const file = pathOf(SPRITE_ROOT, region.name, folder, 'sheet.json');
       const held = await readFile(file, 'utf8').catch(() => '');

@@ -288,19 +288,26 @@ export function AuctionBoard(
     now: now(),
   });
 
-  const board = (): [string, AuctionRecord][] =>
-    orderAuctions(
-      (auctions() ?? [])
-        .filter(([id, auction]) => isLive(auction, now()) || claimOf(id, auction) !== undefined)
-        .filter(
-          // A lot whose name has not arrived is still on the board,
-          // but only a search with nothing to say about it can keep it
-          ([, auction]) =>
-            nameOf(auction) == null || matchesAuction(auction, query(), contextOf(auction)),
-        ),
-      query(),
-      ([, auction]) => ({ auction, context: contextOf(auction) }),
-    );
+  const board = (): [string, AuctionRecord][] => {
+    const shown: [string, AuctionRecord][] = [];
+
+    for (const entry of auctions() ?? []) {
+      const [id, auction] = entry;
+
+      if (!isLive(auction, now()) && claimOf(id, auction) === undefined) {
+        continue;
+      }
+      // A lot whose name has not arrived is still on the board, but
+      // only a search with nothing to say about it can keep it
+      if (nameOf(auction) == null || matchesAuction(auction, query(), contextOf(auction))) {
+        shown.push(entry);
+      }
+    }
+    return orderAuctions(shown, query(), ([, auction]) => ({
+      auction,
+      context: contextOf(auction),
+    }));
+  };
 
   const running = (): number | null => {
     const mine = standing();
@@ -341,8 +348,14 @@ export function AuctionBoard(
    */
   const [bidding, setBidding] = createSignal<string | null>(null);
 
-  const bidLot = (): AuctionRecord | null =>
-    (auctions() ?? []).find(([id]) => id === bidding())?.[1] ?? null;
+  const bidLot = (): AuctionRecord | null => {
+    for (const [id, auction] of auctions() ?? []) {
+      if (id === bidding()) {
+        return auction;
+      }
+    }
+    return null;
+  };
 
   const biddingName = (): string | undefined => {
     const lot = bidLot();
@@ -435,53 +448,75 @@ export function AuctionBoard(
    * says what it is, the badge says what it stands at, and the card
    * over it says whose it is and carries the bid
    */
-  const itemLots = (): ItemCell[] =>
-    board().flatMap(([id, auction]): ItemCell[] =>
-      auction.lot === AuctionLot.Item && auction.item != null
-        ? [
-            {
-              item: auction.item,
-              note: claimOf(id, auction)?.said ?? describeStanding(auction),
-              said: `${describeItem(auction.item)} — ${describeStanding(
-                auction,
-              )}, by ${describeSeller(auction)}`,
-              card: () => lotDetails(auction),
-              actions: lotChoices(id, auction),
-            },
-          ]
-        : [],
-    );
+  const itemLots = (): ItemCell[] => {
+    const cells: ItemCell[] = [];
+
+    for (const [id, auction] of board()) {
+      if (auction.lot !== AuctionLot.Item || auction.item == null) {
+        continue;
+      }
+      cells.push({
+        item: auction.item,
+        note: claimOf(id, auction)?.said ?? describeStanding(auction),
+        said: `${describeItem(auction.item)} — ${describeStanding(
+          auction,
+        )}, by ${describeSeller(auction)}`,
+        card: () => lotDetails(auction),
+        actions: lotChoices(id, auction),
+      });
+    }
+    return cells;
+  };
 
   /**
    * And the pokemon, as a box of squares. A lot whose record has not
    * arrived yet has no square: there is nothing to draw in one
    */
-  const catchLots = (): [string, AuctionRecord][] =>
-    board().filter(([, auction]) => auction.lot === AuctionLot.Catch);
+  const catchLots = (): [string, AuctionRecord][] => {
+    const kept: [string, AuctionRecord][] = [];
 
-  const boxed = (): CatchGridEntry[] =>
-    catchLots().flatMap(([, auction]): CatchGridEntry[] => {
+    for (const entry of board()) {
+      if (entry[1].lot === AuctionLot.Catch) {
+        kept.push(entry);
+      }
+    }
+    return kept;
+  };
+
+  const boxed = (): CatchGridEntry[] => {
+    const squares: CatchGridEntry[] = [];
+
+    for (const [, auction] of catchLots()) {
       const caught = lots()?.get(auction.caught);
 
       if (caught == null) {
-        return [];
+        continue;
       }
 
       const square = asBoxEntry([auction.caught, caught]);
 
       // Whose it is, in what the square is announced as. Two sellers
       // with the same pokemon up are otherwise two identical squares
-      return [
-        { square: { ...square, label: `${square.label} — by ${describeSeller(auction)}` }, caught },
-      ];
-    });
+      squares.push({
+        square: { ...square, label: `${square.label} — by ${describeSeller(auction)}` },
+        caught,
+      });
+    }
+    return squares;
+  };
 
   /**
    * Which lot a square belongs to. The squares are named by the catch id
    * the lot is holding, since that is what a box draws
    */
-  const lotOf = (catchId: string): [string, AuctionRecord] | undefined =>
-    catchLots().find(([, auction]) => auction.caught === catchId);
+  const lotOf = (catchId: string): [string, AuctionRecord] | undefined => {
+    for (const entry of catchLots()) {
+      if (entry[1].caught === catchId) {
+        return entry;
+      }
+    }
+    return undefined;
+  };
 
   /**
    * The board: the items on one tray and the pokemon on another.

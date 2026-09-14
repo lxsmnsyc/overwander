@@ -54,10 +54,10 @@ async function byEmail(typed: string): Promise<string | null> {
     if (error != null) {
       throw new Error(error.message);
     }
-    const found = data.users.find((user) => user.email?.toLowerCase() === wanted);
-
-    if (found != null) {
-      return found.id;
+    for (const user of data.users) {
+      if (user.email?.toLowerCase() === wanted) {
+        return user.id;
+      }
     }
     if (data.users.length < SCAN_PAGE) {
       break;

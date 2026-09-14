@@ -17,7 +17,11 @@ import {
   watchBlocked,
   watchFriends,
 } from '../../auth/friends';
-import matchesFriend, { FRIEND_VOCABULARY, orderFriends } from '../../auth/friend-search';
+import matchesFriend, {
+  FRIEND_VOCABULARY,
+  type FriendRow,
+  orderFriends,
+} from '../../auth/friend-search';
 import { type Profile, getProfiles } from '../../auth/profile';
 import {
   Button,
@@ -57,7 +61,12 @@ export interface FriendsTabProps {
  * follow of the profile behind it, whenever one row moved
  */
 function uidsOf(rows: FriendLink[]): string[] {
-  return rows.map((row) => row.uid);
+  const uids: string[] = [];
+
+  for (const row of rows) {
+    uids.push(row.uid);
+  }
+  return uids;
 }
 
 /**
@@ -80,17 +89,16 @@ function Roster(props: {
   const called = (uid: string): string => props.names()?.get(uid)?.nickname ?? '';
 
   const asked = (): string[] => {
-    const rows = props.uids.map((uid) => ({
-      uid,
-      name: called(uid),
-      since: props.made.get(uid) ?? 0,
-    }));
+    const rows: FriendRow[] = [];
 
-    return orderFriends(
-      rows.filter((row) => matchesFriend(row, props.query)),
-      props.query,
-      (row) => row,
-    ).map((row) => row.uid);
+    for (const uid of props.uids) {
+      const row = { uid, name: called(uid), since: props.made.get(uid) ?? 0 };
+
+      if (matchesFriend(row, props.query)) {
+        rows.push(row);
+      }
+    }
+    return uidsOf(orderFriends(rows, props.query, (row) => row));
   };
 
   // Paged because every row follows the profile behind it: a hundred
@@ -150,7 +158,14 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
   const [error, setError] = createSignal<string | null>(null);
   const [query, setQuery] = createSignal('');
   const [adding, setAdding] = createSignal(false);
-  const made = createMemo(() => new Map((friends() ?? []).map((row) => [row.uid, row.since])));
+  const made = createMemo(() => {
+    const since = new Map<string, number>();
+
+    for (const row of friends() ?? []) {
+      since.set(row.uid, row.since);
+    }
+    return since;
+  });
   const roll = createMemo(() => uidsOf(friends() ?? []));
   // What everybody is called, in one read rather than a row at a time:
   // the list is searched by name, and a name a row has not fetched yet

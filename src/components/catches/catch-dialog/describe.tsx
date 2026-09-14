@@ -79,7 +79,12 @@ export const STAT_LABELS: Record<Stats, string> = STAT_NAMES;
  * these more than they are buying the species
  */
 export function describeIVs(ivs: number): string {
-  return STAT_ORDER.map((stat) => `${STAT_LABELS[stat]} ${getIV(ivs, stat)}`).join(' · ');
+  const parts: string[] = [];
+
+  for (const stat of STAT_ORDER) {
+    parts.push(`${STAT_LABELS[stat]} ${getIV(ivs, stat)}`);
+  }
+  return parts.join(' · ');
 }
 
 /**
@@ -150,13 +155,18 @@ export function describeHistory(caught: CaughtPokemon): string {
   // The ball is left out. It is on the record and it decides nothing
   // afterwards — what a pokemon was caught in says less about it than
   // where and when, and the line is what those two are for
-  return [
+  const parts: string[] = [];
+
+  for (const part of [
     isEgg(caught) ? 'Found' : describeMet(caught),
     describeDate(caught.caughtAt),
     describeOrigin(caught),
-  ]
-    .filter((part) => part != null)
-    .join(' · ');
+  ]) {
+    if (part != null) {
+      parts.push(part);
+    }
+  }
+  return parts.join(' · ');
 }
 
 /**
@@ -185,14 +195,15 @@ export const ITEM_SPRITE = 28;
  * it — and is only drawn for somebody who can fill it
  */
 export function itemSlots(caught: CaughtPokemon, mine: boolean): null[] {
-  return Array.from(
-    {
-      length: mine
-        ? Math.max(caught.items.length, getCatchSlots(caught, Slots.Item))
-        : caught.items.length,
-    },
-    () => null,
-  );
+  const length = mine
+    ? Math.max(caught.items.length, getCatchSlots(caught, Slots.Item))
+    : caught.items.length;
+  const slots: null[] = [];
+
+  for (let slot = 0; slot < length; slot++) {
+    slots.push(null);
+  }
+  return slots;
 }
 
 /**
@@ -348,8 +359,14 @@ export const totalOf = (caught: CaughtPokemon, stat: Stats): number =>
  * with the rest: it is the longest bar on most pokemon, which is
  * the honest picture of a stat that is bigger than the others
  */
-export const bestTotal = (caught: CaughtPokemon): number =>
-  Math.max(1, ...STAT_ORDER.map((stat) => totalOf(caught, stat)));
+export const bestTotal = (caught: CaughtPokemon): number => {
+  let best = 1;
+
+  for (const stat of STAT_ORDER) {
+    best = Math.max(best, totalOf(caught, stat));
+  }
+  return best;
+};
 
 /** What it has left, as a share of what it has */
 export const healthLeft = (caught: CaughtPokemon): number => {

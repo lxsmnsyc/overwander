@@ -61,14 +61,24 @@ const NOT_FOR_A_TRAINER = new Set<Items>([
 ]);
 
 /** The gear an expert may hand out: everything that acts in a fight. */
-const BATTLE_HELD = new Set<Items>([
-  ...TYPE_BOOSTERS.keys(),
-  ...[...MARKET_GEAR.keys()].filter((item) => !NOT_FOR_A_TRAINER.has(item)),
-  ...GENERAL_STAT_BOOSTERS.keys(),
-  ...ORBS.keys(),
-  ...SPECIES_RELICS,
-  Items.Leftovers,
-]);
+const BATTLE_HELD = (() => {
+  const held = new Set<Items>(TYPE_BOOSTERS.keys());
+
+  for (const item of MARKET_GEAR.keys()) {
+    if (!NOT_FOR_A_TRAINER.has(item)) {
+      held.add(item);
+    }
+  }
+  for (const item of [
+    ...GENERAL_STAT_BOOSTERS.keys(),
+    ...ORBS.keys(),
+    ...SPECIES_RELICS,
+    Items.Leftovers,
+  ]) {
+    held.add(item);
+  }
+  return held;
+})();
 
 export function isBattleHeldItem(item: Items): boolean {
   return BATTLE_HELD.has(item);
@@ -212,7 +222,13 @@ function castable(moves: Moves[]): number {
   if (moves.length === 0) {
     return 1;
   }
-  const quiet = moves.filter((move) => getMoveData(move).category === MoveCategories.Status).length;
+  let quiet = 0;
+
+  for (const move of moves) {
+    if (getMoveData(move).category === MoveCategories.Status) {
+      quiet += 1;
+    }
+  }
 
   return ((moves.length - quiet) / moves.length) ** 2;
 }
@@ -349,22 +365,42 @@ function preferences(species: Species, moves: Moves[]): Items[] {
     }
   }
 
-  const types =
-    swung.size > 0
-      ? [...swung].sort((one, two) => two[1] - one[1]).map(([type]) => type)
-      : getSpeciesData(species).types;
-  const boosters = types.flatMap((type) =>
-    [...TYPE_BOOSTERS].filter(([, boosted]) => boosted === type).map(([item]) => item),
-  );
+  let types: Types[] = getSpeciesData(species).types;
 
-  const own = [held?.rare, held?.uncommon, held?.common].filter(
-    (item): item is Items => item != null,
-  );
+  if (swung.size > 0) {
+    types = [];
+    for (const [type] of [...swung].sort((one, two) => two[1] - one[1])) {
+      types.push(type);
+    }
+  }
+
+  const boosters: Items[] = [];
+
+  for (const type of types) {
+    for (const [item, boosted] of TYPE_BOOSTERS) {
+      if (boosted === type) {
+        boosters.push(item);
+      }
+    }
+  }
+
+  const own: Items[] = [];
+  const relics: Items[] = [];
+
+  for (const item of [held?.rare, held?.uncommon, held?.common]) {
+    if (item == null) {
+      continue;
+    }
+    own.push(item);
+    if (SPECIES_RELICS.has(item)) {
+      relics.push(item);
+    }
+  }
 
   return [
     // A relic of its own beats everything, since it is worth nothing
     // in any other hands and a great deal in these
-    ...own.filter((item) => SPECIES_RELICS.has(item)),
+    ...relics,
     // Then the thing that answers being half-grown. A middle stage on
     // an expert's team is there because the trainer is known for it,
     // so it is worth propping up
@@ -388,11 +424,22 @@ function preferences(species: Species, moves: Moves[]): Items[] {
  */
 function candidates(species: Species): Items[] {
   const held = getSpeciesHeldItems(species);
-  const own = new Set(
-    [held?.rare, held?.uncommon, held?.common].filter((item): item is Items => item != null),
-  );
+  const own = new Set<Items>();
 
-  return [...BATTLE_HELD].filter((item) => !SPECIES_RELICS.has(item) || own.has(item));
+  for (const item of [held?.rare, held?.uncommon, held?.common]) {
+    if (item != null) {
+      own.add(item);
+    }
+  }
+
+  const offered: Items[] = [];
+
+  for (const item of BATTLE_HELD) {
+    if (!SPECIES_RELICS.has(item) || own.has(item)) {
+      offered.push(item);
+    }
+  }
+  return offered;
 }
 
 /**
@@ -452,10 +499,16 @@ export function getExpertHeldItems(
 
   const split = splitOf(species, moves);
   const role = loadout.role ?? BuildRole.Core;
-  const ranked = candidates(species)
-    .map((item) => ({ item, worth: itemWorth(species, item, split, moves, abilities, role) }))
-    .filter((entry) => entry.worth > 0)
-    .sort((one, two) => two.worth - one.worth || one.item - two.item);
+  const ranked: { item: Items; worth: number }[] = [];
+
+  for (const item of candidates(species)) {
+    const worth = itemWorth(species, item, split, moves, abilities, role);
+
+    if (worth > 0) {
+      ranked.push({ item, worth });
+    }
+  }
+  ranked.sort((one, two) => two.worth - one.worth || one.item - two.item);
 
   const chosen: Items[] = [];
   const taken = new Set<string>();

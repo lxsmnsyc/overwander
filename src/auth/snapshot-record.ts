@@ -72,12 +72,20 @@ export function asSpawnRolls(value: unknown): SpawnRoll[] {
   if (!Array.isArray(value)) {
     return [];
   }
-  return value.filter(isRecord).map((entry) => ({
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    species: asNumber(entry.species) as Species,
-    individualValue: asNumber(entry.individualValue),
-    traitValue: asNumber(entry.traitValue),
-  }));
+  const rolls: SpawnRoll[] = [];
+
+  for (const entry of value) {
+    if (!isRecord(entry)) {
+      continue;
+    }
+    rolls.push({
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      species: asNumber(entry.species) as Species,
+      individualValue: asNumber(entry.individualValue),
+      traitValue: asNumber(entry.traitValue),
+    });
+  }
+  return rolls;
 }
 
 /**

@@ -8,12 +8,17 @@
  * board asks for the same handful every frame.
  */
 
+import LRUMap from '../../core/lru-map';
+
 export type Colour = [red: number, green: number, blue: number, alpha: number];
 
-const known = new Map<string, Colour>();
+/**
+ * How many colours are remembered before the least used is let go. Room for
+ * a sky turning over its bands without pushing out the board's steady colours
+ */
+const LIMIT = 256;
 
-/** How many colours are remembered before the oldest are let go. */
-const LIMIT = 64;
+const known = new LRUMap<string, Colour>(LIMIT);
 
 function hex(css: string): Colour | null {
   const digits = css.slice(1);
@@ -45,12 +50,21 @@ function hex(css: string): Colour | null {
 
 function functional(css: string): Colour | null {
   const inside = css.slice(css.indexOf('(') + 1, css.lastIndexOf(')'));
-  const parts = inside
-    .split(/[\s,/]+/)
-    .filter((part) => part.length > 0)
-    .map((part) => (part.endsWith('%') ? Number(part.slice(0, -1)) * 2.55 : Number(part)));
+  const parts: number[] = [];
 
-  if (parts.length < 3 || parts.some((part) => !Number.isFinite(part))) {
+  for (const part of inside.split(/[\s,/]+/)) {
+    if (part.length === 0) {
+      continue;
+    }
+
+    const value = part.endsWith('%') ? Number(part.slice(0, -1)) * 2.55 : Number(part);
+
+    if (!Number.isFinite(value)) {
+      return null;
+    }
+    parts.push(value);
+  }
+  if (parts.length < 3) {
     return null;
   }
   // The channels are 0 to 255 and the alpha is 0 to 1, which is the
@@ -80,9 +94,6 @@ export default function parseColour(css: string): Colour | null {
 
   if (found == null) {
     return null;
-  }
-  if (known.size >= LIMIT) {
-    known.clear();
   }
   known.set(css, found);
   return found;

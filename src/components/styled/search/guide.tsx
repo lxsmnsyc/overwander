@@ -24,12 +24,21 @@ function Rule(props: { shows: string; children: JSX.Element }): JSX.Element {
 
 /** The values a field offers, with anything needing quotes left out */
 function plainValues(vocabulary: QueryVocabulary, named: string): string[] {
-  return (
-    vocabulary.fields
-      .find((field) => field.name === named)
-      ?.values?.()
-      .filter((value) => !/\s/.test(value)) ?? []
-  );
+  for (const field of vocabulary.fields) {
+    if (field.name !== named) {
+      continue;
+    }
+
+    const plain: string[] = [];
+
+    for (const value of field.values?.() ?? []) {
+      if (!/\s/.test(value)) {
+        plain.push(value);
+      }
+    }
+    return plain;
+  }
+  return [];
 }
 
 export interface SearchGuideProps {

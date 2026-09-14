@@ -33,15 +33,17 @@ export default function CandyGrid(props: CandyGridProps): JSX.Element {
    * The tray keeps whole rows, so a jar of seven does not draw one
    * square hanging off the end of the second row
    */
-  const empties = (): number[] =>
-    Array.from(
-      {
-        length:
-          Math.max(GRID_COLUMNS, Math.ceil(props.piles.length / GRID_COLUMNS) * GRID_COLUMNS) -
-          props.piles.length,
-      },
-      (_, at) => at,
-    );
+  const empties = (): number[] => {
+    const slots: number[] = [];
+    const count =
+      Math.max(GRID_COLUMNS, Math.ceil(props.piles.length / GRID_COLUMNS) * GRID_COLUMNS) -
+      props.piles.length;
+
+    for (let at = 0; at < count; at++) {
+      slots.push(at);
+    }
+    return slots;
+  };
 
   return (
     <div class="mx-auto flex w-full max-w-lg flex-col gap-2">

@@ -6,9 +6,27 @@ chunk and everything buried in them are all derived from one world seed at the
 moment a player looks at them, so every player sees the same world without any of
 it being saved anywhere.
 
-A **chunk** is a 16×16 grid of cells and is the unit a player walks around in.
-Each chunk belongs to one biome and holds a fixed set of landmarks, and its
-contents refresh on several independent timers.
+A **chunk** is a 16×16 grid of cells, and it is how the world is bookkept rather
+than how it is walked. Each chunk holds a fixed set of landmarks and refreshes
+its contents on several independent timers. The ground itself belongs to the
+world rather than to the chunk: a border between two countries, a lake or a
+ridge of rock runs wherever it runs, and a chunk holds whatever parts of them it
+happens to sit on.
+
+What a player sees is a **board**: a stretch of country with them in the middle
+of it, following them a cell at a time, so there is no boundary to cross and
+nothing to wait for at one. It is three distances rather than one.
+
+| Reach       | Cells | What it decides                                |
+| ----------- | ----- | ---------------------------------------------- |
+| The country | 20    | How far the ground and its scenery are drawn   |
+| The board   | 10    | How far a press reaches, and where the grid is |
+| The pokemon | 7     | How near one has to be to be standing there    |
+
+So a player looks out over a good deal more country than they can act on, and a
+field fills as they cross it rather than showing its whole hand from the far
+side. The board straddles four or nine chunks at once, and everything standing
+on it is live whichever chunk it came out of.
 
 ## Geography
 
@@ -19,6 +37,12 @@ how warm it is. Together they select one of the **25 biomes**, which range
 from deep ocean and coral reef through savanna, desert and temperate forest to
 volcano, glacier and polar ocean. Climate changes gradually, so a biome typically runs
 about two dozen chunks across before giving way to another.
+
+The climate is read a cell at a time, so a country's edge is a wandering line
+through the ground rather than a step between one chunk and the next. Standing
+on a border, a player can see both sides of it at once. Where one country's name
+is wanted for the whole chunk, which is what the map paints and what the pokemon
+in it are drawn from, it is the country in the middle of it.
 
 A twenty-sixth place, **Beyond**, exists but is nowhere on the map. Mythical
 pokemon are recorded as coming from there, and nothing else does.
@@ -31,21 +55,107 @@ start. At 16 cells to a chunk that is 65,536 cells from edge to edge.
 The edge is a wall rather than a wrap-around: walking into it stops the player
 rather than bringing them out on the opposite side of the world.
 
+### Towns
+
+The world is divided into regions of 8x8 chunks, and each one holds at most one
+**town**: a settled circle 28 cells across, sited wherever the region's own roll
+found dry ground. Regions that are all sea have none.
+
+A town is where the services are. Everything somebody stands behind a counter
+for lives in one, and the country between towns holds what a player goes out
+for: things to forage, things to fight, nests and lairs.
+
+| In a town                                        | Out in the country                     |
+| ------------------------------------------------ | -------------------------------------- |
+| Market, Auction Board, Gym Seat, Wandering NPC    | Item Cache, Berry Patch, Apricorn Tree  |
+| Gym Leader, Elite Four, Champion                  | Nest, Trainer, Team Rocket              |
+| Pokémon Center, Portal                            | Legendary and Shadow Raid lairs         |
+
+The portal stands dead centre, on the plaza, which is what keeps the network
+even and means a player stepping out of the gate is looking down every street at
+once. Around it a town holds **nine to fourteen** lots. One of them is always a
+**Pokémon Center**, since a town you cannot be patched up in is a town you would
+have to leave; the rest differ. About half have an auction board, about half a
+gym seat, a third a gym leader, and a champion sits in perhaps one town in
+twelve. The rest is trade. A place that had everything would be a place nobody
+left.
+
+### The name
+
+Every town has a **name of its own**, and no two towns anywhere share one. The
+name is built out of the country the town stands on, so it says something true
+before the map is looked at, and it ends with the **county** it stands in, which
+says roughly where in the world that is.
+
+| Name | Where |
+| ---- | ----- |
+| Rimefell Village, Ashmarch | A glacier, out west |
+| Ochrereach Town, Sedgemoor | A desert |
+| Port Saltmere City, Dunhollow | A rocky coast |
+
+The world is divided into 64 counties, so places on opposite sides of it are
+never confused for one another, and a name is worked out from where a town is
+rather than picked, so no two ever collide.
+
+Walking into a town is what puts it on the map. The register is shared: a town
+**any** player has found is a town **every** player can travel to, which is what
+makes telling a friend a name worth anything. A town nobody has been to yet
+cannot be crossed to, however well you guess at its name.
+
+A town levels the ground it stands on: no lakes, no rivers and no rock inside
+the footprint, though it stops at the shore rather than draining the sea. Its
+streets have wild pokemon of their own, the kind that live around people:
+Pidgey and Rattata by day, Meowth and Grimer after dark, and Porygon at any hour.
+Every town shares that one list, whatever country it stands in. Nothing else
+is going on there, so a town is still somewhere to put your guard down.
+
+The plaza is paved and a street runs out of it to each lot, stopping at the door
+rather than paving it, so nobody is ever standing in the road and following one
+always arrives somewhere rather than at the edge of town. No street crosses
+another lot on its way: one that would goes round, so a road never stops dead at
+somebody's back wall. Streets run north,
+south, east and west and turn square corners, never diagonally, so a town is a
+couple of avenues out of the plaza with short branches off them to the doors. A
+street is paving and nothing more: it does not decide where anybody may walk,
+and the ground under it is the same levelled ground the rest of the town is.
+
+The world map shows each chunk's country and rings every chunk a town stands in,
+so a place worth walking to is visible from across the country rather than
+found by accident. The **Detailed world map** setting draws the ground itself
+instead: water, how high the land stands and where its cliffs are, towns and the
+routes between them. It takes a moment to fill in. Either way the map shows that
+a settlement is there and nothing more: which town it is and what it holds are
+what walking to it is for.
+
 ### Inside a chunk
 
-| Area               | Size  | What may occupy it                   |
-| ------------------ | ----- | ------------------------------------ |
-| The whole chunk    | 16×16 | The player, walking                  |
-| The placement area | 14×14 | Scenery, landmarks and pokemon alike |
+Scenery, landmarks and pokemon may stand on any of a chunk's 256 cells. A clear
+cell used to run round the edge of every chunk, so that a player walking in from
+the one next door always arrived on empty ground; nobody walks in any more, and
+a rim on every chunk drew empty corridors across the world every sixteen cells.
 
-The placement area sits in the middle, so a clear cell runs all the way round
-the chunk: a player walking in from a neighbouring chunk always arrives on
-ground with nothing on it.
+### Water and rock
+
+Lakes, rivers and outcrops of rock are part of the world, not part of a chunk.
+Water is walked into and swum: a river crossing a chunk is a route, not a wall.
+Rock is not. Nothing stands in it, nothing walks through it, and a hollow small
+enough to be walled in is filled rather than left as somewhere unreachable.
+
+Nothing is ever placed against rock, so every landmark has open ground on all
+sides of it. Scenery keeps to dry land, and where a lake has taken most of a
+chunk there is simply less of it.
+
+A lake or a river running through dry country holds only what can be in water.
+The country's pokemon were chosen for the land around the water, so a Rhyhorn
+keeps to the bank and a Poliwag does not. A country that is water itself, an
+ocean or a swamp, is not held to this: everything that turns up there was chosen
+knowing where it would be standing.
 
 Scenery and landmarks keep a clear cell on every side of them, diagonals
-included: no two fixtures are ever adjacent, so there is always somewhere to
-stand beside whatever a player has walked over to. Pokemon keep no such berth.
-They take any cell a fixture is not standing on, and a walk goes straight
+included, so there is always somewhere to stand beside whatever a player has
+walked over to. Two of them either side of a chunk boundary may occasionally
+touch, since each is placed knowing only its own chunk. Pokemon keep no such
+berth. They take any cell a fixture is not standing on, and a walk goes straight
 through one rather than round it. Scenery and landmarks are walked round: both
 are standing there, so a route goes past them.
 
@@ -63,7 +173,8 @@ scenery belongs to the chunk permanently.
 
 ## Landmarks
 
-Every chunk contains **five to eight landmarks**, and they never move. The
+A chunk of open country holds **two to four landmarks**, and a chunk a town
+falls on holds that town's lots as well. They never move. The
 same chunk has the same landmarks on the same cells permanently; only their
 contents change. Most may repeat, so one chunk may hold two berry patches; a
 few are one to a chunk, marked below.
@@ -86,7 +197,8 @@ few are one to a chunk, marked below.
 | **Elite Four**      | One of the twelve, for a challenger holding their league's badges |
 | **Champion**        | Blue, Lance, Wallace or Cynthia, for whoever has beaten their league's Elite Four. They field the team they are known for, and one window in sixty-four a legend has the seat instead. One to a chunk |
 | **Frontier Brain**  | The house champion of a Battle Frontier facility, for whoever holds that region's crown. Three a side, under the house's own rule |
-| **Portal**          | A way through to another portal, for the price of a Portal Key. One to a chunk |
+| **Portal**          | A way through to another town's portal, for the price of a Portal Key. One to a region |
+| **Pokémon Center**  | Nurse Joy behind her counter. One to a town, and none in the country |
 
 Walking up to a wandering cell does not reveal in advance which specialist is
 standing there. The market, the board and the seat are fixtures: a stall is
@@ -100,7 +212,7 @@ for a champion. A player short of one badge can pick the cell out without walkin
 the chunk.
 
 **Phenomena are not landmarks.** A grotto, a dust cloud, rippling water or a
-shadow overhead is something *happening* rather than somewhere to go, so it is
+shadow overhead is something _happening_ rather than somewhere to go, so it is
 not fixed to a cell. Up to two are rolled across a chunk's open ground each
 hour and are somewhere else the next one, so a chunk you know is still worth
 looking over. They take dry ground where a chunk has any, which is why a marsh
@@ -282,14 +394,64 @@ those are worth what is met under them and nothing more. A fight keeps the sky i
 started under, so watching it back later shows the weather it was actually fought
 in.
 
+## The caves
+
+Under the world is a second layer of it, at the **same coordinates**. Step into
+a cave at a cell and you are under that cell; walk to another mouth and you come
+out exactly as far across the world as you actually walked. Nothing teleports.
+
+**Caves are inside the rock you can see.** Where the surface has a crag or a
+range, there is a chamber under it, and thin winding veins join the chambers up.
+So the network is the shape of the mountains, flat country has none at all, and
+a cave is the way **under** a ridge that the surface makes you walk around.
+
+It is a route, not a second overworld. About **a fifth** of the ground
+underground is open, against most of it on the surface, and a network runs
+roughly **seven chunks** before it dead-ends and you have to surface. Entrances
+are common, about one chunk in two in rocky country, so coming back up is never
+far.
+
+Nothing grows down there, and passages never run diagonally: two cells that
+touch only at their corners would be two dead ends, since nothing in the game
+moves diagonally, so a corner like that is squared off into a walkable one.
+
+**A cave under the open sea is its own network.** The rock is solid along every
+shore, so no tunnel runs from the hills out under the water. The sea caves are
+reached by swimming to a mouth, and three legendaries keep their lairs in them:
+Kyogre in the Marine Cave, Articuno in the Seafoam Islands and Lugia in the Whirl
+Islands. Nothing that walks out of the hills will ever meet them.
+
+### What is down there
+
+| | |
+| --- | --- |
+| **Its own pokemon** | One pool for the whole of underground, and none of it stands on the surface: Zubat, Geodude, Onix, Dunsparce, Sableye, Mawile and the rest of what lives in the dark |
+| **The same at every hour** | There is no sky down there, so no dawn, no dusk, and nothing that only comes out at night |
+| **No weather** | And so no weather bonus to a meeting's stats, and nothing crowded in by a front |
+| **Landmarks** | Item caches, nests, Team Rocket, duelling trainers and both kinds of raid lair |
+| **No town of any kind** | No market, no centre, no portal. The way out of a cave is the way back into it |
+
+### The dark
+
+A cave is dark whatever the hour: you see **2 cells** carrying nothing. A buddy
+with **Illuminate** sees **3**, and so does a buddy carrying the **Explorer Kit**,
+for a player whose buddy cannot light the way itself. They are worth the same and
+they do not stack, so it is a choice between spending the buddy or spending its
+held item, never a reason to carry both.
+
 ## Portals
 
 A **Portal** landmark does nothing until a player spends a **Portal Key**, which
 is one of the rarer items in the game. The key is consumed by the crossing.
 
-The traveller chooses a **biome** rather than a place, and arrives at the nearest
-portal in that biome to the one they left. Almost every biome in the world is
-within reach of any given portal, so a key is effectively a way to get anywhere.
+The traveller **names a town**. The box finishes a name once a few letters of it
+have been typed, and what it knows is every town anybody has ever walked into,
+so a name a friend passes on is a place that can be reached. Arriving puts the
+player on the portal in that town's plaza, whatever the distance.
+
+Every region has a portal, town or no town, so there is always one to leave
+from. A region with no town has nothing anybody could name, so it is somewhere
+to leave from and nowhere to arrive at.
 
 If a destination is refused for any reason, the key is not spent.
 
@@ -303,10 +465,13 @@ appearing in the way, or a landmark changing mid-walk, never strands anybody.
 Landmarks and pokemon are obstacles rather than destinations. Clicking one walks
 the player up **beside** it and interacts on arrival.
 
-A darker one-cell border is drawn around the chunk. Stepping onto it carries the
-player into the neighbouring chunk, entering from the opposite side. Four compass
-marks stand outside that border and turn with the map as the camera moves. Each
-one points the way it stands for, and north is the red one.
+The player stays in the middle of the board and the world scrolls under them, so
+walking is continuous: there is no boundary to step over and no wait when one is
+crossed. Anywhere inside the ruled circle can be pressed, which is ten cells in
+any direction; the country drawn past it is looked out over rather than walked
+to a square at a time. Four compass marks stand at the edge of the ruled circle
+and turn with the map as the camera moves. Each one points the way it stands
+for, and north is the red one.
 
 The board can be turned: drag it with the right button, or twist two fingers on a
 touch screen. A drag or a twist that moved the camera does not count as a press on

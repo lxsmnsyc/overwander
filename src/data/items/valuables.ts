@@ -71,9 +71,14 @@ const VALUABLES: [item: Items, name: string, icon: string, sell: number][] = [
  * registrations are read off, so a valuable added above is a valuable
  * the pool can place without being listed twice
  */
-export const VALUABLE_SELL = new Map<Items, number>(
-  VALUABLES.map(([item, , , sell]) => [item, sell]),
-);
+export const VALUABLE_SELL = (() => {
+  const sells = new Map<Items, number>();
+
+  for (const [item, , , sell] of VALUABLES) {
+    sells.set(item, sell);
+  }
+  return sells;
+})();
 
 export function isValuable(item: Items): boolean {
   return VALUABLE_SELL.has(item);

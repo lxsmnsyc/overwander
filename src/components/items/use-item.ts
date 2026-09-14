@@ -103,7 +103,12 @@ export function isUsableOn(item: Items, caught: CaughtPokemon): boolean {
   // A bottle is offered only where there is a move for it to go on
   // that has not already taken everything it will take
   if (isPPItem(item)) {
-    return caught.moves.some((move) => getMovePoints(caught, move) < PP_UP_LIMIT);
+    for (const move of caught.moves) {
+      if (getMovePoints(caught, move) < PP_UP_LIMIT) {
+        return true;
+      }
+    }
+    return false;
   }
   // A berry, a potion, a cure, a revive: offered only where it would
   // change something, since using it would spend it
@@ -135,7 +140,14 @@ export function getLevelMoves(caught: CaughtPokemon, level: number): Moves[] {
 
   const knows = new Set(caught.moves);
 
-  return getMovesLearnedAt(caught.species, level).filter((learned) => !knows.has(learned));
+  const offered: Moves[] = [];
+
+  for (const learned of getMovesLearnedAt(caught.species, level)) {
+    if (!knows.has(learned)) {
+      offered.push(learned);
+    }
+  }
+  return offered;
 }
 
 /**
@@ -162,7 +174,14 @@ export function getLevelMovesBetween(caught: CaughtPokemon, from: number, to: nu
 
   const knows = new Set(caught.moves);
 
-  return getMovesLearnedBetween(caught.species, from, to).filter((learned) => !knows.has(learned));
+  const offered: Moves[] = [];
+
+  for (const learned of getMovesLearnedBetween(caught.species, from, to)) {
+    if (!knows.has(learned)) {
+      offered.push(learned);
+    }
+  }
+  return offered;
 }
 
 /**
@@ -184,8 +203,10 @@ export function nextOfferLevel(caught: CaughtPokemon, above: number): number | n
   const knows = new Set(caught.moves);
 
   for (let level = above + 1; level <= MAX_LEVEL; level++) {
-    if (getMovesLearnedAt(caught.species, level).some((move) => !knows.has(move))) {
-      return level;
+    for (const move of getMovesLearnedAt(caught.species, level)) {
+      if (!knows.has(move)) {
+        return level;
+      }
     }
   }
   return null;

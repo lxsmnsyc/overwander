@@ -204,38 +204,67 @@ export const GYM_LEADER_SIGNATURES: Record<GymLeader, Species> = {
  * Which roster is the caller's: an elite fields their own region,
  * a gym leader every region there is
  */
-const LAIR_SPECIES = new Set(EVERY_LAIR.flatMap(getLairResidents));
+const LAIR_SPECIES = (() => {
+  const residents = new Set<Species>();
+
+  for (const lair of EVERY_LAIR) {
+    for (const species of getLairResidents(lair)) {
+      residents.add(species);
+    }
+  }
+  return residents;
+})();
+
+function inExpertPool(
+  species: Species,
+  types: Set<Types>,
+  groups: Set<EggGroups>,
+  named: Set<Species>,
+): boolean {
+  if (species === Species.Egg || LAIR_SPECIES.has(species) || !isBaseForm(species)) {
+    return false;
+  }
+  // Naming beats the band as well as the type rules. Bruno's Onix
+  // and Agatha's Golbat are middle stages now that a Steelix and a
+  // Crobat exist, and they are still the pokemon those two field
+  if (named.has(species)) {
+    return true;
+  }
+  if (!isGrownSpecies(species)) {
+    return false;
+  }
+  // An expert with no specialty takes the band whole
+  if (types.size === 0) {
+    return true;
+  }
+
+  const data = getSpeciesData(species);
+
+  for (const type of data.types) {
+    if (types.has(type)) {
+      return true;
+    }
+  }
+  for (const group of data.eggGroups) {
+    if (groups.has(group)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 function filterExpertPool(roster: Species[], pool: ExpertPool): Species[] {
   const types = new Set(pool.types);
   const groups = new Set(pool.eggGroups);
   const named = new Set(pool.also);
+  const kept: Species[] = [];
 
-  return roster.filter((species) => {
-    if (species === Species.Egg || LAIR_SPECIES.has(species) || !isBaseForm(species)) {
-      return false;
+  for (const species of roster) {
+    if (inExpertPool(species, types, groups, named)) {
+      kept.push(species);
     }
-    // Naming beats the band as well as the type rules. Bruno's Onix
-    // and Agatha's Golbat are middle stages now that a Steelix and a
-    // Crobat exist, and they are still the pokemon those two field
-    if (named.has(species)) {
-      return true;
-    }
-    if (!isGrownSpecies(species)) {
-      return false;
-    }
-    // An expert with no specialty takes the band whole
-    if (types.size === 0) {
-      return true;
-    }
-
-    const data = getSpeciesData(species);
-
-    return (
-      data.types.some((type) => types.has(type)) ||
-      data.eggGroups.some((group) => groups.has(group))
-    );
-  });
+  }
+  return kept;
 }
 
 /**

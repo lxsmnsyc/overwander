@@ -46,19 +46,18 @@ export interface Destination {
  * climb out: `..` reduces to nothing and is refused
  */
 export function overworldSlug(name: string): string {
-  const parts = name
-    .trim()
-    .toLowerCase()
-    .split('/')
-    .map((part) =>
-      part
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '')
-        .slice(0, 40),
-    );
+  const parts: string[] = [];
 
-  if (parts.some((part) => part.length === 0)) {
-    throw new Error('The sheet needs a name of letters or digits, one between each slash');
+  for (const typed of name.trim().toLowerCase().split('/')) {
+    const part = typed
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 40);
+
+    if (part.length === 0) {
+      throw new Error('The sheet needs a name of letters or digits, one between each slash');
+    }
+    parts.push(part);
   }
   return parts.join('/');
 }
@@ -75,20 +74,6 @@ export function overworldDestination(name: string): Destination {
     image: `sprites/overworld/${slug}/image.png`,
     meta: `sprites/overworld/${slug}/data.json`,
   };
-}
-
-/**
- * A biome's tileset: the atlas and the description of how it is cut,
- * filed under the biome's own number so a chunk finds its ground
- * without a table of names in between
- */
-export function biomeDestination(biome: number): Destination {
-  const id = Math.trunc(biome);
-
-  if (!Number.isFinite(id) || id < 0) {
-    throw new Error('A tileset needs a biome to belong to');
-  }
-  return { image: `sprites/biome/${id}/image.png`, meta: `sprites/biome/${id}/data.json` };
 }
 
 /**

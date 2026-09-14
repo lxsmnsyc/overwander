@@ -32,7 +32,7 @@ import sayItems from '../items/say-items';
 import CatchCard from '../catches/CatchCard';
 import type { BoxEntry } from '../catches/CatchBox';
 import CatchGrid, { type CatchGridEntry } from '../catches/CatchGrid';
-import ItemGrid from '../items/ItemGrid';
+import ItemGrid, { type ItemCell } from '../items/ItemGrid';
 import { describeItem } from '../details';
 import playEffect, { Effect } from '../app/sound';
 import {
@@ -79,6 +79,18 @@ interface ShelfRow {
   note?: string;
   /** What the ledger knows beyond the gift itself, for the box that narrows it */
   context?: GiftContext;
+}
+
+type PokemonRow = ShelfRow & { gift: CatchGift | EncounterGift };
+
+type ItemRow = ShelfRow & { gift: ItemGift };
+
+function isPokemonRow(row: ShelfRow): row is PokemonRow {
+  return row.gift.kind !== GiftKind.Item;
+}
+
+function isItemRow(row: ShelfRow): row is ItemRow {
+  return row.gift.kind === GiftKind.Item;
 }
 
 function takenTimes(claims: number): string {
@@ -226,28 +238,55 @@ function GiftShelf(props: {
     if (props.everything !== true) {
       return offered();
     }
-    return orderGifts(
-      offered().filter((row) => matchesGift(row.gift, query(), row.context)),
-      query(),
-      (row) => ({ gift: row.gift, context: row.context }),
-    );
-  });
-  const pokemon = (): (ShelfRow & { gift: CatchGift | EncounterGift })[] =>
-    gifts().filter(
-      (row): row is ShelfRow & { gift: CatchGift | EncounterGift } =>
-        row.gift.kind !== GiftKind.Item,
-    );
-  const things = (): (ShelfRow & { gift: ItemGift })[] =>
-    gifts().filter((row): row is ShelfRow & { gift: ItemGift } => row.gift.kind === GiftKind.Item);
+    const matching: ShelfRow[] = [];
 
-  const found = (id: string): (ShelfRow & { gift: CatchGift | EncounterGift }) | undefined =>
-    pokemon().find((row) => row.gift.id === id);
+    for (const row of offered()) {
+      if (matchesGift(row.gift, query(), row.context)) {
+        matching.push(row);
+      }
+    }
+    return orderGifts(matching, query(), (row) => ({ gift: row.gift, context: row.context }));
+  });
+  const pokemon = (): PokemonRow[] => {
+    const rows: PokemonRow[] = [];
+
+    for (const row of gifts()) {
+      if (isPokemonRow(row)) {
+        rows.push(row);
+      }
+    }
+    return rows;
+  };
+  const things = (): ItemRow[] => {
+    const rows: ItemRow[] = [];
+
+    for (const row of gifts()) {
+      if (isItemRow(row)) {
+        rows.push(row);
+      }
+    }
+    return rows;
+  };
+
+  const found = (id: string): PokemonRow | undefined => {
+    for (const row of pokemon()) {
+      if (row.gift.id === id) {
+        return row;
+      }
+    }
+    return undefined;
+  };
 
   // Read as the records they would become, so the grid's search speaks
   // the same syntax as every other box of squares
-  const squares = createMemo<CatchGridEntry[]>(() =>
-    pokemon().map(({ gift }) => ({ square: asSquare(gift), caught: asPreview(gift) })),
-  );
+  const squares = createMemo<CatchGridEntry[]>(() => {
+    const entries: CatchGridEntry[] = [];
+
+    for (const { gift } of pokemon()) {
+      entries.push({ square: asSquare(gift), caught: asPreview(gift) });
+    }
+    return entries;
+  });
 
   /**
    * What an empty list says. A ledger narrowed to nothing has to say so
@@ -306,6 +345,40 @@ function GiftShelf(props: {
         setTaking(null);
         props.onClaimed();
       });
+  };
+
+  const itemCells = (): ItemCell[] => {
+    const cells: ItemCell[] = [];
+
+    for (const { gift, note } of things()) {
+      cells.push({
+        item: gift.item,
+        amount: gift.amount,
+        said: `${props.viewOnly === true ? '' : 'Claim '}${describeGift(gift)}`,
+        // Claiming is the only thing a shelf square does, so the
+        // square is the button. A visited tray has none at all
+        actions:
+          props.viewOnly === true
+            ? []
+            : [
+                {
+                  label: 'Claim',
+                  tone: 'primary' as const,
+                  disabled: taking() != null,
+                  onPress: () => {
+                    take(gift.id);
+                  },
+                },
+              ],
+        card: () => (
+          <>
+            <Meta>{gift.reason}</Meta>
+            <Show when={note}>{(said) => <Meta>{said()}</Meta>}</Show>
+          </>
+        ),
+      });
+    }
+    return cells;
   };
 
   return (
@@ -382,35 +455,7 @@ function GiftShelf(props: {
 
       <Show when={things().length > 0}>
         <DialogSection title="Items">
-          <ItemGrid
-            bare
-            entries={things().map(({ gift, note }) => ({
-              item: gift.item,
-              amount: gift.amount,
-              said: `${props.viewOnly === true ? '' : 'Claim '}${describeGift(gift)}`,
-              // Claiming is the only thing a shelf square does, so the
-              // square is the button. A visited tray has none at all
-              actions:
-                props.viewOnly === true
-                  ? []
-                  : [
-                      {
-                        label: 'Claim',
-                        tone: 'primary' as const,
-                        disabled: taking() != null,
-                        onPress: () => {
-                          take(gift.id);
-                        },
-                      },
-                    ],
-              card: () => (
-                <>
-                  <Meta>{gift.reason}</Meta>
-                  <Show when={note}>{(said) => <Meta>{said()}</Meta>}</Show>
-                </>
-              ),
-            }))}
-          />
+          <ItemGrid bare entries={itemCells()} />
         </DialogSection>
       </Show>
     </div>
@@ -439,9 +484,12 @@ export interface GiftsTabProps {
 }
 
 export default function GiftsTab(props: GiftsTabProps): JSX.Element {
-  const [owed, { refetch }] = createResource<ShelfRow[]>(async () =>
-    props.everything === true
-      ? (await listAllGifts()).map((row) => ({
+  const [owed, { refetch }] = createResource<ShelfRow[]>(async () => {
+    const rows: ShelfRow[] = [];
+
+    if (props.everything === true) {
+      for (const row of await listAllGifts()) {
+        rows.push({
           gift: row.gift,
           note: describeLedger(row),
           context: {
@@ -450,9 +498,15 @@ export default function GiftsTab(props: GiftsTabProps): JSX.Element {
             expired: row.expired,
             offeredAt: row.offeredAt,
           },
-        }))
-      : (await listMysteryGifts()).map((gift) => ({ gift })),
-  );
+        });
+      }
+    } else {
+      for (const gift of await listMysteryGifts()) {
+        rows.push({ gift });
+      }
+    }
+    return rows;
+  });
 
   return (
     <Suspense fallback={looking()}>

@@ -144,8 +144,11 @@ function setupStatusTypeImmunity(battle: Battle): void {
     if (!event.immune) {
       const types = STATUS_TYPE_IMMUNITY[event.status];
 
-      if (types?.some((type) => event.source.types.has(type))) {
-        event.immune = true;
+      for (const type of types ?? []) {
+        if (event.source.types.has(type)) {
+          event.immune = true;
+          break;
+        }
       }
     }
   });

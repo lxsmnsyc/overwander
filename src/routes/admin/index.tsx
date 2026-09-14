@@ -1,6 +1,6 @@
 import { A } from '@solidjs/router';
 import { For, type JSX } from 'solid-js';
-import { linksFor } from '../../components/admin/sections';
+import { type AdminSection, linksFor } from '../../components/admin/sections';
 import useStaff from '../../components/admin/staff-context';
 import { Card, Note } from '../../components/styled';
 
@@ -12,6 +12,16 @@ import { Card, Note } from '../../components/styled';
  */
 export default function AdminOverview(): JSX.Element {
   const staff = useStaff();
+  const sections = (): AdminSection[] => {
+    const shown: AdminSection[] = [];
+
+    for (const entry of linksFor(staff.role())) {
+      if (entry.href !== '/admin') {
+        shown.push(entry);
+      }
+    }
+    return shown;
+  };
 
   return (
     <div class="flex flex-col gap-4">
@@ -23,7 +33,7 @@ export default function AdminOverview(): JSX.Element {
       </Card>
 
       <div class="grid gap-3 sm:grid-cols-2">
-        <For each={linksFor(staff.role()).filter((entry) => entry.href !== '/admin')}>
+        <For each={sections()}>
           {(entry) => (
             <A
               href={entry.href}

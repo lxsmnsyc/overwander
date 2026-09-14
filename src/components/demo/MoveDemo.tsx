@@ -59,11 +59,14 @@ export default function MoveDemo(): JSX.Element {
    * boot and the list is long enough that rebuilding it per keystroke
    * would be felt
    */
-  const moves = createMemo(() =>
-    getRegisteredMoves()
-      .map((move) => ({ value: move, label: getMoveData(move).name }))
-      .sort((left, right) => left.label.localeCompare(right.label)),
-  );
+  const moves = createMemo(() => {
+    const options: { value: Moves; label: string }[] = [];
+
+    for (const move of getRegisteredMoves()) {
+      options.push({ value: move, label: getMoveData(move).name });
+    }
+    return options.sort((left, right) => left.label.localeCompare(right.label));
+  });
 
   /**
    * Which move is being looked at. It comes out of the address by
@@ -72,7 +75,12 @@ export default function MoveDemo(): JSX.Element {
   const chosen = (): Moves | null => {
     const wanted = params.move ?? DEFAULT_MOVE;
 
-    return moves().find((entry) => entry.label === wanted)?.value ?? null;
+    for (const entry of moves()) {
+      if (entry.label === wanted) {
+        return entry.value;
+      }
+    }
+    return null;
   };
 
   /**

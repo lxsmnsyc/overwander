@@ -7,7 +7,7 @@ import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
 import { Items } from '../../ids/items';
 import { DEOXYS_FORMS, EvolutionMethod, Species } from '../../ids/species';
-import { registerSpecies } from '../__create';
+import { type EvolutionData, registerSpecies } from '../__create';
 
 /**
  * Deoxys, and the three arrangements it puts itself into. Only the
@@ -69,7 +69,17 @@ const SHAPES: { name: string; stats: Record<Stats, number> }[] = [
 export default function registerDeoxysSpecies(): void {
   for (const [at, species] of DEOXYS_FORMS.entries()) {
     const shape = SHAPES[at];
+    const evolvesInto: EvolutionData[] = [];
 
+    for (const other of DEOXYS_FORMS) {
+      if (other !== species) {
+        evolvesInto.push({
+          species: other,
+          method: EvolutionMethod.UsedItem,
+          item: Items.Meteorite,
+        });
+      }
+    }
     registerSpecies(species, {
       dexNumber: 386,
       name: shape.name,
@@ -83,11 +93,7 @@ export default function registerDeoxysSpecies(): void {
       evolvesFrom: at === 0 ? undefined : Species.Deoxys,
       // Every other arrangement, its own left out. A rock is spent on
       // each rearrangement, whichever way it goes
-      evolvesInto: DEOXYS_FORMS.filter((other) => other !== species).map((other) => ({
-        species: other,
-        method: EvolutionMethod.UsedItem,
-        item: Items.Meteorite,
-      })),
+      evolvesInto,
       stats: shape.stats,
       types: [Types.Psychic],
       abilities: [Abilities.Pressure],

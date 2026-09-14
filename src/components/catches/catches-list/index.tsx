@@ -78,7 +78,14 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
   const chosen = createMemo<CatchOption[]>(() => {
     const wanted = new Set(picked());
 
-    return offered().filter((option) => wanted.has(option.id));
+    const found: CatchOption[] = [];
+
+    for (const option of offered()) {
+      if (wanted.has(option.id)) {
+        found.push(option);
+      }
+    }
+    return found;
   });
 
   /**
@@ -121,9 +128,13 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
   const release = (): void => {
     // The bar's own count is what it offered, so it is what is sent:
     // the ones it said it would step over are never named
-    const going = chosen()
-      .filter((option) => !option.fighting)
-      .map((option) => option.id);
+    const going: string[] = [];
+
+    for (const option of chosen()) {
+      if (!option.fighting) {
+        going.push(option.id);
+      }
+    }
 
     settle(releaseCatches(going), (count) => `${count} let go`);
   };

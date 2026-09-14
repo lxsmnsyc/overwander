@@ -116,8 +116,12 @@ export function watchOpenAuctions(
       .from(AUCTION_TABLE)
       .select(AUCTION_COLUMNS)
       .eq('settled', false);
+    const auctions: [string, AuctionRecord][] = [];
 
-    return asRecordArray(data).map((row) => [String(row.id), fromAuctionRow(row)]);
+    for (const row of asRecordArray(data)) {
+      auctions.push([String(row.id), fromAuctionRow(row)]);
+    }
+    return auctions;
   };
 
   // The subscription is unfiltered on purpose: the settling of a lot
@@ -135,8 +139,12 @@ export async function listAuctionsBy(seller: string): Promise<[string, AuctionRe
     .select(AUCTION_COLUMNS)
     .eq('seller', seller)
     .order('created_at', { ascending: true });
+  const auctions: [string, AuctionRecord][] = [];
 
-  return asRecordArray(data).map((row) => [String(row.id), fromAuctionRow(row)]);
+  for (const row of asRecordArray(data)) {
+    auctions.push([String(row.id), fromAuctionRow(row)]);
+  }
+  return auctions;
 }
 
 /**
@@ -165,17 +173,23 @@ export async function listBidHistory(uid: string): Promise<BidHistoryEntry[]> {
     .from('bids')
     .select('player, auction, amount, bid_at')
     .eq('player', uid);
-  const placed = asRecordArray(bids)
-    .map((row) =>
-      asPlayerBid({
-        player: row.player,
-        auction: row.auction,
-        amount: row.amount,
-        bidAt: row.bid_at,
-      }),
-    )
-    .filter((bid) => bid.auction !== '')
-    .sort((one, other) => other.bidAt - one.bidAt);
+  const placed: PlayerBid[] = [];
+  const named = new Set<string>();
+
+  for (const row of asRecordArray(bids)) {
+    const bid = asPlayerBid({
+      player: row.player,
+      auction: row.auction,
+      amount: row.amount,
+      bidAt: row.bid_at,
+    });
+
+    if (bid.auction !== '') {
+      placed.push(bid);
+      named.add(bid.auction);
+    }
+  }
+  placed.sort((one, other) => other.bidAt - one.bidAt);
 
   if (placed.length === 0) {
     return [];
@@ -184,7 +198,7 @@ export async function listBidHistory(uid: string): Promise<BidHistoryEntry[]> {
   const { data: found } = await getSupabase()
     .from(AUCTION_TABLE)
     .select(AUCTION_COLUMNS)
-    .in('id', [...new Set(placed.map((bid) => bid.auction))]);
+    .in('id', [...named]);
   const lots = new Map<string, AuctionRecord>();
 
   for (const row of asRecordArray(found)) {
@@ -194,14 +208,16 @@ export async function listBidHistory(uid: string): Promise<BidHistoryEntry[]> {
   // A bid whose lot has vanished has nothing left to show; nothing
   // deletes an auction today, so this is only for the sake of a
   // history that outlives one
-  return placed
-    .filter((bid) => lots.has(bid.auction))
-    .map((bid) => ({
-      auction: bid.auction,
-      // The lot is present — the filter above just checked
-      lot: lots.get(bid.auction) ?? asAuctionRecord(null),
-      bid,
-    }));
+  const history: BidHistoryEntry[] = [];
+
+  for (const bid of placed) {
+    const lot = lots.get(bid.auction);
+
+    if (lot != null) {
+      history.push({ auction: bid.auction, lot, bid });
+    }
+  }
+  return history;
 }
 
 /**

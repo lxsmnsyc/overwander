@@ -285,7 +285,11 @@ export async function getFriendCode(uid: string): Promise<string> {
       return asString(held[0].code);
     }
 
-    const digits = Array.from({ length: 12 }, () => Math.floor(Math.random() * 10)).join('');
+    let digits = '';
+
+    for (let at = 0; at < 12; at++) {
+      digits += String(Math.floor(Math.random() * 10));
+    }
     // A colliding code loses to the unique index and rolls again; a
     // concurrent mint for the same player loses to the primary key
     // and reads back whichever code landed first

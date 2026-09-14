@@ -1,4 +1,5 @@
 import { EventPriority } from '../../core/event-emitter';
+import { CAVE_LAMP_CELLS } from '../../data/overworld/cave';
 import { Items } from '../../data/ids/items';
 import type Overworld from '../core';
 import { OverworldEvents } from '../events';
@@ -47,7 +48,27 @@ const setupCatchingCharm = createHeldItem(Items.CatchingCharm, (overworld) => {
   });
 });
 
-const HELD_ITEMS: ((overworld: Overworld) => void)[] = [setupShinyCharm, setupCatchingCharm];
+/**
+ * Explorer Kit: held, not used. Underground it is what the player
+ * sees by.
+ *
+ * Written as the **greater** of what is already there rather than as
+ * an override, so it cannot stack with a buddy that lights the way
+ * itself and cannot be undone by one either. Two sources of one
+ * effect is a thing this game avoids; where there have to be two,
+ * they answer to the same number and the brighter wins
+ */
+const setupExplorerKit = createHeldItem(Items.ExplorerKit, (overworld) => {
+  overworld.on(OverworldEvents.CheckLampReach, EventPriority.Exact, (event) => {
+    event.reach = Math.max(event.reach, CAVE_LAMP_CELLS);
+  });
+});
+
+const HELD_ITEMS: ((overworld: Overworld) => void)[] = [
+  setupShinyCharm,
+  setupCatchingCharm,
+  setupExplorerKit,
+];
 
 /**
  * Register every field item effect; each drops out on its own when

@@ -136,8 +136,14 @@ export interface Offer {
  */
 export async function offer(player: string | null, offers: Offer[], now: number): Promise<boolean> {
   return tx(async (transaction) => {
+    const ids: string[] = [];
+
+    for (const entry of offers) {
+      ids.push(entry.id);
+    }
+
     const stored = await transaction`
-      select 1 from gifts where id = any(${offers.map(({ id }) => id)})
+      select 1 from gifts where id = any(${ids})
     `;
 
     if (stored.length > 0) {
@@ -168,13 +174,23 @@ export async function offer(player: string | null, offers: Offer[], now: number)
  */
 async function offerEach(player: string | null, offers: Offer[], now: number): Promise<void> {
   const sql = getSql();
-  const rows = offers.map((entry) => ({
-    id: entry.id,
-    player,
-    offered_at: now,
-    gift: jsonOf(sql, entry.gift),
-    encounter: entry.encounter == null ? null : jsonOf(sql, entry.encounter),
-  }));
+  const rows: {
+    id: string;
+    player: string | null;
+    offered_at: number;
+    gift: ReturnType<typeof jsonOf>;
+    encounter: ReturnType<typeof jsonOf> | null;
+  }[] = [];
+
+  for (const entry of offers) {
+    rows.push({
+      id: entry.id,
+      player,
+      offered_at: now,
+      gift: jsonOf(sql, entry.gift),
+      encounter: entry.encounter == null ? null : jsonOf(sql, entry.encounter),
+    });
+  }
 
   await sql`
     insert into gifts ${sql(rows, 'id', 'player', 'offered_at', 'gift', 'encounter')}
@@ -262,7 +278,9 @@ function rollGift(observer: string, gift: CatchGift | EncounterGift, now: number
  * first three are already standing on
  */
 async function ensureStarterGifts(now: number): Promise<void> {
-  const offers: Offer[] = STARTER_SPECIES.map((species) => {
+  const offers: Offer[] = [];
+
+  for (const species of STARTER_SPECIES) {
     const id = starterGiftId(species);
     const gift: CatchGift = {
       kind: GiftKind.Catch,
@@ -291,7 +309,7 @@ async function ensureStarterGifts(now: number): Promise<void> {
     };
     const encounter = rollGift(id, gift, now);
 
-    return {
+    offers.push({
       id,
       gift: {
         ...gift,
@@ -299,8 +317,8 @@ async function ensureStarterGifts(now: number): Promise<void> {
         traitValue: encounter.traitValue,
       },
       encounter,
-    };
-  });
+    });
+  }
 
   await offerEach(
     null,
@@ -490,23 +508,22 @@ export async function listMysteryGifts(uid: string, now: number): Promise<Myster
         select 1 from gift_claims c where c.gift_id = g.id and c.player = ${uid}
       )
   `;
-  const standing = rows
-    .map((entry) => {
-      const row = asRecord(entry);
+  const standing: MysteryGift[] = [];
 
-      return {
-        id: asString(row.id),
-        record: asGiftRecord({
-          player: row.player,
-          gift: row.gift,
-          offeredAt: row.offered_at,
-          encounter: row.encounter,
-        }),
-      };
-    })
-    .filter(({ record }) => !expired(record.gift, now));
+  for (const entry of rows) {
+    const row = asRecord(entry);
+    const record = asGiftRecord({
+      player: row.player,
+      gift: row.gift,
+      offeredAt: row.offered_at,
+      encounter: row.encounter,
+    });
 
-  return standing.map(({ record }) => asShown(record));
+    if (!expired(record.gift, now)) {
+      standing.push(asShown(record));
+    }
+  }
+  return standing;
 }
 
 /**
@@ -577,7 +594,9 @@ export async function listAllGifts(now: number): Promise<GiftLedgerRow[]> {
     order by g.offered_at desc
   `;
 
-  return rows.map((entry) => {
+  const ledger: GiftLedgerRow[] = [];
+
+  for (const entry of rows) {
     const row = asRecord(entry);
     const record = asGiftRecord({
       player: row.player,
@@ -594,14 +613,15 @@ export async function listAllGifts(now: number): Promise<GiftLedgerRow[]> {
       recipient = named ? asString(row.nickname) : record.player;
     }
 
-    return {
+    ledger.push({
       gift: asShown(record),
       recipient,
       offeredAt: record.offeredAt,
       claims: asNumber(row.claims),
       expired: expired(record.gift, now),
-    };
-  });
+    });
+  }
+  return ledger;
 }
 
 /**

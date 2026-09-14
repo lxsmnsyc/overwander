@@ -13,7 +13,7 @@ import {
   takeItem as takeOnServer,
 } from '../server/caught';
 import { requireUid } from '../server/auth';
-import type { CatchConstraint, CatchContext, RowConstraint } from './catch-search';
+import type { CatchConstraint, CatchContext } from './catch-search';
 import type { PostgrestError } from '@supabase/supabase-js';
 import { asRecord, asRecordArray } from './__normalize';
 import type { CatchOrder, CaughtPokemon } from './caught-record';
@@ -35,7 +35,12 @@ const CAUGHT_TABLE = 'caught';
 
 /** Rows out of a dynamic select, paired as [id, record] */
 function rowsToPairs(rows: Record<string, unknown>[]): [string, CaughtPokemon][] {
-  return rows.map((row) => [String(row.id), fromCaughtRow(row)]);
+  const pairs: [string, CaughtPokemon][] = [];
+
+  for (const row of rows) {
+    pairs.push([String(row.id), fromCaughtRow(row)]);
+  }
+  return pairs;
 }
 
 /**
@@ -170,12 +175,15 @@ export async function searchCaught(
   owner: string,
   narrowing: CatchConstraint[],
 ): Promise<[string, CaughtPokemon][]> {
-  const joins = narrowing
-    .filter(
-      (narrowed): narrowed is Exclude<CatchConstraint, RowConstraint> => narrowed.on !== 'row',
-    )
-    .map((narrowed) => `${narrowed.alias}:${narrowed.table}!inner(${JOIN_KEYS[narrowed.table]})`);
-  const selection = [ROW_SELECTION, ...joins].join(', ');
+  const selected: string[] = [ROW_SELECTION];
+
+  for (const narrowed of narrowing) {
+    if (narrowed.on !== 'row') {
+      selected.push(`${narrowed.alias}:${narrowed.table}!inner(${JOIN_KEYS[narrowed.table]})`);
+    }
+  }
+
+  const selection = selected.join(', ');
 
   // Built afresh per page rather than once and re-awaited: a range is
   // a header on the request, and moving it means a new request
@@ -225,10 +233,16 @@ function applyConstraint(request: Chain, narrowed: CatchConstraint): Chain {
   switch (narrowed.op) {
     case 'in':
       return request.in(column, listed);
-    case 'nin':
+    case 'nin': {
       // Written out by hand rather than through `.in`, which has no
       // negated twin, so the quoting `.in` does is done here too
-      return request.not(column, 'in', `(${listed.map(quoted).join(',')})`);
+      const written: string[] = [];
+
+      for (const value of listed) {
+        written.push(quoted(value));
+      }
+      return request.not(column, 'in', `(${written.join(',')})`);
+    }
     case 'neq':
       return request.neq(column, narrowed.value);
     case 'gt':
@@ -399,7 +413,12 @@ export async function listOwned(owner: string, ids: string[]): Promise<Set<strin
     .in('id', ids);
 
   raise(error);
-  return new Set(((data ?? []) as { id: unknown }[]).map((row) => String(row.id)));
+  const owned = new Set<string>();
+
+  for (const row of (data ?? []) as { id: unknown }[]) {
+    owned.add(String(row.id));
+  }
+  return owned;
 }
 
 /**

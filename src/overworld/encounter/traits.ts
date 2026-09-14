@@ -127,9 +127,13 @@ export function deriveTrainedAbilities(
   count: number,
 ): Abilities[] {
   const pools = getSpeciesAbilityPools(species);
-  const rest = [...new Set([...pools.regular, ...pools.hidden])].filter(
-    (ability) => ability !== first,
-  );
+  const rest: Abilities[] = [];
+
+  for (const ability of new Set([...pools.regular, ...pools.hidden])) {
+    if (ability !== first) {
+      rest.push(ability);
+    }
+  }
   const slice = (traitValue >>> (TRAIT_BITS * 3)) & TRAIT_MASK;
   const cursor = Math.floor((slice / TRAIT_RANGE) * rest.length);
   const carried = [first];

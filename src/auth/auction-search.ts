@@ -71,11 +71,26 @@ function marked(
   wanted: boolean,
   context: AuctionContext,
 ): boolean {
-  return alternatives(value).some((word) => {
+  for (const word of alternatives(value)) {
     const mark = MARKS.get(word.trim().toLowerCase());
 
-    return mark?.(auction, context) === wanted;
-  });
+    if (mark?.(auction, context) === wanted) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** The words a pokemon lot's types are called */
+function typeNames(context: AuctionContext): string[] {
+  const names: string[] = [];
+
+  if (context.caught != null) {
+    for (const kind of getSpeciesData(context.caught.species).types) {
+      names.push(TYPE_NAMES[kind]);
+    }
+  }
+  return names;
 }
 
 /** What one field asks of one lot */
@@ -91,11 +106,7 @@ const FIELDS = new Map<string, AuctionField>(
     species: (_auction, value, context) =>
       context.caught != null && holds(getSpeciesData(context.caught.species).name, value),
     type: (_auction, value, context) =>
-      context.caught != null &&
-      holdsAny(
-        getSpeciesData(context.caught.species).types.map((kind) => TYPE_NAMES[kind]),
-        value,
-      ),
+      context.caught != null && holdsAny(typeNames(context), value),
     level: (_auction, value, context) =>
       context.caught != null && within(value, context.caught.level),
     // What it would cost to be in front of it, which is the bid where
@@ -120,14 +131,17 @@ export default function matchesAuction(
   query: string,
   context: AuctionContext = {},
 ): boolean {
-  return askedTerms(query).every((term) => {
+  for (const term of askedTerms(query)) {
     const answered =
       term.field === ''
         ? context.name != null && holds(context.name, term.value)
         : FIELDS.get(term.field)?.(auction, term.value, context) === true;
 
-    return term.negated ? !answered : answered;
-  });
+    if (term.negated ? answered : !answered) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /** What each `sort:` word reads off a lot */
@@ -175,13 +189,11 @@ const VALUES: Record<string, () => string[]> = {
 };
 
 /** What the board's box can be asked, with the arranging terms on the end */
-export const AUCTION_VOCABULARY: QueryVocabulary = {
-  fields: [...FIELDS.keys(), 'sort', 'order'].map((name) => ({
-    name,
-    hint: HINTS[name] ?? '',
-    values: VALUES[name],
-  })),
-};
+export const AUCTION_VOCABULARY: QueryVocabulary = { fields: [] };
+
+for (const name of [...FIELDS.keys(), 'sort', 'order']) {
+  AUCTION_VOCABULARY.fields.push({ name, hint: HINTS[name] ?? '', values: VALUES[name] });
+}
 
 /**
  * The lots a search asked for, in the order it asked for them. The two

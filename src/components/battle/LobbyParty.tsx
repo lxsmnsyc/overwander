@@ -12,14 +12,24 @@ export default function LobbyParty(props: { catches: string[]; class?: string })
   const [party] = createResource(
     () => props.catches.join(','),
     async (key): Promise<[string, CaughtPokemon][]> => {
-      const rows = await Promise.all(
-        key
-          .split(',')
-          .filter(Boolean)
-          .map(async (id): Promise<[string, CaughtPokemon | null]> => [id, await getCaught(id)]),
-      );
+      const pending: Promise<[string, CaughtPokemon | null]>[] = [];
 
-      return rows.filter((row): row is [string, CaughtPokemon] => row[1] != null);
+      for (const id of key.split(',')) {
+        if (id === '') {
+          continue;
+        }
+        pending.push(getCaught(id).then((caught): [string, CaughtPokemon | null] => [id, caught]));
+      }
+
+      const rows = await Promise.all(pending);
+      const found: [string, CaughtPokemon][] = [];
+
+      for (const [id, caught] of rows) {
+        if (caught != null) {
+          found.push([id, caught]);
+        }
+      }
+      return found;
     },
   );
 

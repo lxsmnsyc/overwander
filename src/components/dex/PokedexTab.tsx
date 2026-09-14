@@ -47,22 +47,30 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
     const view = props.dex();
     // Rolled up to the form's own entry: the dex prints one Unown, and
     // an Unown B in the record is that row filled in
-    const seen = new Set(view?.seen.map((tally) => getBaseFormSpecies(tally.species)) ?? []);
-    const caught = new Set(view?.caught.map((tally) => getBaseFormSpecies(tally.species)) ?? []);
+    const seen = new Set<Species>();
+    const caught = new Set<Species>();
 
-    return getBaseForms()
-      .map((species): DexEntry => {
-        const data = getSpeciesData(species);
+    for (const tally of view?.seen ?? []) {
+      seen.add(getBaseFormSpecies(tally.species));
+    }
+    for (const tally of view?.caught ?? []) {
+      caught.add(getBaseFormSpecies(tally.species));
+    }
 
-        return {
-          species,
-          dexNumber: data.dexNumber,
-          name: data.name,
-          seen: seen.has(species),
-          caught: caught.has(species),
-        };
-      })
-      .sort((one, other) => one.dexNumber - other.dexNumber);
+    const rows: DexEntry[] = [];
+
+    for (const species of getBaseForms()) {
+      const data = getSpeciesData(species);
+
+      rows.push({
+        species,
+        dexNumber: data.dexNumber,
+        name: data.name,
+        seen: seen.has(species),
+        caught: caught.has(species),
+      });
+    }
+    return rows.sort((one, other) => one.dexNumber - other.dexNumber);
   };
 
   /**

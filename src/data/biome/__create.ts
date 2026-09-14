@@ -120,7 +120,47 @@ export function registerSpawnPool(biome: Biome, pool: SpawnPool): void {
   habitatIndex = null;
 }
 
-export function getSpawnPool(biome: Biome, time: TimeOfDay): SpawnRarityGroups {
+/**
+ * What lives underground, which is one pool for the whole of it
+ * rather than one per biome. The country overhead still decides which
+ * cave a player is standing in and how far they walked to reach it,
+ * but what is living in the dark is much the same wherever the dark is
+ */
+let cavePool: SpawnPool | null = null;
+
+export function registerCavePool(pool: SpawnPool): void {
+  cavePool = pool;
+  habitatIndex = null;
+}
+
+/**
+ * What lives on a town's streets: one pool every town draws from,
+ * whatever the country around it, but with its own hours
+ */
+let townPool: SpawnPool | null = null;
+
+export function registerTownPool(pool: SpawnPool): void {
+  townPool = pool;
+}
+
+/** What may be met on a town's streets at this hour */
+export function getTownPool(time: TimeOfDay): SpawnRarityGroups {
+  return townPool?.[time] ?? EMPTY_GROUPS;
+}
+
+/**
+ * What may be met here. Underground answers from the cave's own pool
+ * whatever the country overhead, and from the same one at every hour:
+ * there is no sky down there for the time of day to come out of
+ */
+export function getSpawnPool(
+  biome: Biome,
+  time: TimeOfDay,
+  underground = false,
+): SpawnRarityGroups {
+  if (underground) {
+    return cavePool?.[time] ?? EMPTY_GROUPS;
+  }
   return SPAWN_POOLS.get(biome)?.[time] ?? EMPTY_GROUPS;
 }
 
@@ -134,11 +174,16 @@ export function boostFamilyEntries(
   family: Families,
   factor: number,
 ): SpawnEntry[] {
-  return entries.map((entry) =>
-    getSpeciesData(entry.species).family === family
-      ? { species: entry.species, weight: entry.weight * factor }
-      : entry,
-  );
+  const boosted: SpawnEntry[] = [];
+
+  for (const entry of entries) {
+    boosted.push(
+      getSpeciesData(entry.species).family === family
+        ? { species: entry.species, weight: entry.weight * factor }
+        : entry,
+    );
+  }
+  return boosted;
 }
 
 /**
@@ -172,11 +217,20 @@ export function boostTypeEntries(
 
   const favored = new Set(types);
 
-  return entries.map((entry) =>
-    getSpeciesData(entry.species).types.some((type) => favored.has(type))
-      ? { species: entry.species, weight: entry.weight * factor }
-      : entry,
-  );
+  const boosted: SpawnEntry[] = [];
+
+  for (const entry of entries) {
+    let lifted = false;
+
+    for (const type of getSpeciesData(entry.species).types) {
+      if (favored.has(type)) {
+        lifted = true;
+        break;
+      }
+    }
+    boosted.push(lifted ? { species: entry.species, weight: entry.weight * factor } : entry);
+  }
+  return boosted;
 }
 
 /**
@@ -244,7 +298,11 @@ export function getEggPool(biome: Biome, time: TimeOfDay): SpawnEntry[] {
     }
   }
 
-  const pool = [...weights].map(([species, weight]) => ({ species, weight }));
+  const pool: SpawnEntry[] = [];
+
+  for (const [species, weight] of weights) {
+    pool.push({ species, weight });
+  }
 
   EGG_POOLS.set(groups, pool);
   return pool;
@@ -368,6 +426,25 @@ function buildHabitats(): Map<Species, SpeciesHabitat[]> {
 export function listSpeciesHabitats(species: Species): SpeciesHabitat[] {
   habitatIndex ??= buildHabitats();
   return habitatIndex.get(species) ?? [];
+}
+
+/** Every hour and band this species is met on a town's streets */
+export function listTownHabitats(species: Species): { time: TimeOfDay; rarity: SpawnRarity }[] {
+  const habitats: { time: TimeOfDay; rarity: SpawnRarity }[] = [];
+
+  for (const time of TIMES_OF_DAY) {
+    const pool = getTownPool(time);
+
+    for (const [band, rarity] of BAND_RARITIES) {
+      for (const entry of spawnBand(pool, band)) {
+        if (entry.species === species) {
+          habitats.push({ time, rarity });
+          break;
+        }
+      }
+    }
+  }
+  return habitats;
 }
 
 /**
@@ -506,7 +583,14 @@ const UNOWN_SPECIES = new Set<Species>(UNOWN_FORMS);
  * alphabet is collected over months either way, and no letter is
  * cheaper because of where the player happens to live
  */
-export const UNOWN_SPAWNS: SpawnEntry[] = UNOWN_FORMS.map((species) => ({ species, weight: 1 }));
+export const UNOWN_SPAWNS: SpawnEntry[] = (() => {
+  const spawns: SpawnEntry[] = [];
+
+  for (const species of UNOWN_FORMS) {
+    spawns.push({ species, weight: 1 });
+  }
+  return spawns;
+})();
 
 /**
  * What one prized species weighs against the alphabet.
@@ -634,9 +718,13 @@ export function getLineStage(species: Species): number {
 function stagesBelow(species: Species): number {
   const own = BABY_SPECIES.has(species) ? 0 : 1;
   const dex = getSpeciesData(species).dexNumber;
-  const below = (getSpeciesData(species).evolvesInto ?? [])
-    .filter((entry) => getSpeciesData(entry.species).dexNumber !== dex)
-    .map((entry) => stagesBelow(entry.species));
+  const below: number[] = [];
+
+  for (const entry of getSpeciesData(species).evolvesInto ?? []) {
+    if (getSpeciesData(entry.species).dexNumber !== dex) {
+      below.push(stagesBelow(entry.species));
+    }
+  }
 
   if (below.length === 0) {
     return own + (isAwaitingEvolution(species) ? 1 : 0);

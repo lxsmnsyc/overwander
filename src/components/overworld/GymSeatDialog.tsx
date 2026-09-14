@@ -84,16 +84,22 @@ function SeatCounter(
    * catches: what a square needs is the species and a name to be read
    * out by, and a seated party is never hurt or hatching
    */
-  const lineup = (): BoxEntry[] =>
-    (props.party.latest?.catches ?? []).map((entry, at) => ({
-      id: `${at}`,
-      species: entry.species,
-      shiny: entry.shiny,
-      egg: false,
-      progress: 0,
-      fainted: false,
-      label: `${getSpeciesData(entry.species).name}, Lv. ${entry.level}`,
-    }));
+  const lineup = (): BoxEntry[] => {
+    const squares: BoxEntry[] = [];
+
+    for (const [at, entry] of (props.party.latest?.catches ?? []).entries()) {
+      squares.push({
+        id: `${at}`,
+        species: entry.species,
+        shiny: entry.shiny,
+        egg: false,
+        progress: 0,
+        fainted: false,
+        label: `${getSpeciesData(entry.species).name}, Lv. ${entry.level}`,
+      });
+    }
+    return squares;
+  };
 
   const act = (run: () => Promise<unknown>, said: string, failed: string): void => {
     setStatus(null);

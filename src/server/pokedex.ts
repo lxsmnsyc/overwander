@@ -60,14 +60,13 @@ type Sightings = Map<Species, { seen: number; shiny: number }>;
  * carrying a 1 in each
  */
 async function logSightings(met: Map<string, Sightings>, sql: Sql | Tx = getSql()): Promise<void> {
-  const rows = [...met].flatMap(([player, sighted]) =>
-    [...sighted].map(([species, coats]) => ({
-      player,
-      species,
-      seen: coats.seen,
-      seen_shiny: coats.shiny,
-    })),
-  );
+  const rows: { player: string; species: Species; seen: number; seen_shiny: number }[] = [];
+
+  for (const [player, sighted] of met) {
+    for (const [species, coats] of sighted) {
+      rows.push({ player, species, seen: coats.seen, seen_shiny: coats.shiny });
+    }
+  }
 
   if (rows.length === 0) {
     return;
@@ -178,10 +177,18 @@ export async function recordSeenOpponents(battleId: string, players: string[]): 
       join team_snapshots ts on ts.id = bt.snapshot_id
       where bt.battle_id = ${battleId}
     `;
-    const sides = rows.map((row) => ({
-      player: typeof row.player === 'string' ? row.player : null,
-      party: Array.isArray(row.catches) ? row.catches.map((value) => asCatchSnapshot(value)) : [],
-    }));
+    const sides: { player: string | null; party: CatchSnapshot[] }[] = [];
+
+    for (const row of rows) {
+      const party: CatchSnapshot[] = [];
+
+      if (Array.isArray(row.catches)) {
+        for (const value of row.catches) {
+          party.push(asCatchSnapshot(value));
+        }
+      }
+      sides.push({ player: typeof row.player === 'string' ? row.player : null, party });
+    }
     const met = new Map<string, Sightings>();
 
     for (const player of new Set(players)) {

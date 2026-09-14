@@ -7,7 +7,7 @@ import Abilities from '../../../data/ids/abilities';
 import type Battle from '../../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
-import { Statuses } from '../../../data/ids/status';
+import type { Statuses } from '../../../data/ids/status';
 import { MAJOR_STATUS_CONDITIONS } from '../../status';
 import type Unit from '../../unit';
 import { createAbility } from './create';

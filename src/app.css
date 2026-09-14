@@ -315,17 +315,43 @@
 @keyframes sparkle-star {
   from {
     opacity: 0;
-    transform: translateY(0) scale(0.2);
+    transform: translateY(0) rotate(calc(var(--spin, 20deg) * -1)) scale(0.2);
   }
 
   50% {
     opacity: 1;
-    transform: translateY(-30%) scale(1);
+    transform: translateY(-30%) rotate(0deg) scale(1);
   }
 
   to {
     opacity: 0;
-    transform: translateY(-65%) scale(0.3);
+    transform: translateY(-65%) rotate(var(--spin, 20deg)) scale(0.3);
+  }
+}
+
+/** The ring a shiny's burst throws out of its middle */
+@keyframes sparkle-ring {
+  from {
+    opacity: 1;
+    transform: scale(0.15);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+/** One ray of the burst, standing on the middle and turned by `--turn` */
+@keyframes sparkle-ray {
+  from {
+    opacity: 1;
+    transform: rotate(var(--turn)) translateY(-10%) scaleY(0.35);
+  }
+
+  to {
+    opacity: 0;
+    transform: rotate(var(--turn)) translateY(-45%) scaleY(0.7);
   }
 }
 

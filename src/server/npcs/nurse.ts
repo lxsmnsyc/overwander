@@ -122,11 +122,19 @@ export async function visitNurse(
     }
   });
 
-  const purified = care.filter(([, , purifies]) => purifies).length;
+  const handed: string[] = [];
+  let purified = 0;
+
+  for (const [id, , purifies] of care) {
+    handed.push(id);
+    if (purifies) {
+      purified += 1;
+    }
+  }
 
   await bumpProgress(uid, [[Metric.Purifies, 0, purified]]);
 
-  return care.map(([id]) => id);
+  return handed;
 }
 
 /**

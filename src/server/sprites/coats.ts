@@ -51,7 +51,14 @@ async function regions(): Promise<string[]> {
     withFileTypes: true,
   }).catch(() => []);
 
-  return held.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
+  const names: string[] = [];
+
+  for (const entry of held) {
+    if (entry.isDirectory()) {
+      names.push(entry.name);
+    }
+  }
+  return names;
 }
 
 /** What is on disk right now. */
@@ -64,7 +71,13 @@ export async function readCoats(): Promise<SpriteCoats> {
         continue;
       }
       const held = new Set(await listing(region, folder));
-      const coats = ORDER.filter((coat) => held.has(COAT_FILES[coat]));
+      const coats: Coat[] = [];
+
+      for (const coat of ORDER) {
+        if (held.has(COAT_FILES[coat])) {
+          coats.push(coat);
+        }
+      }
 
       if (coats.length > 0) {
         found.set(Number.parseInt(folder, 10), { region, coats });
@@ -105,11 +118,11 @@ const STAMP_LENGTH = 8;
 async function stampOf(region: string, species: number, coats: Coat[]): Promise<string> {
   const hash = createHash('sha256');
   const folder = `${ROOT}/${region}/${species}`;
-  const files = [
-    `${folder}/sheet.json`,
-    `${folder}/frames.bin`,
-    ...coats.map((coat) => `${folder}/${COAT_FILES[coat]}`),
-  ];
+  const files = [`${folder}/sheet.json`, `${folder}/frames.bin`];
+
+  for (const coat of coats) {
+    files.push(`${folder}/${COAT_FILES[coat]}`);
+  }
 
   for (const file of files) {
     const held = await readFile(join(process.cwd(), 'public', file)).catch(() => null);
@@ -129,12 +142,15 @@ async function stampOf(region: string, species: number, coats: Coat[]): Promise<
  * two thousand lines nobody can read a diff of
  */
 function formatCoats(listed: SpriteCoats): string {
-  const lines = Object.entries(listed.coats).map(
-    ([species, coats]) => `    "${species}": ${JSON.stringify(coats)}`,
-  );
-  const marks = Object.entries(listed.stamps).map(
-    ([species, stamp]) => `    "${species}": "${stamp}"`,
-  );
+  const lines: string[] = [];
+  const marks: string[] = [];
+
+  for (const [species, coats] of Object.entries(listed.coats)) {
+    lines.push(`    "${species}": ${JSON.stringify(coats)}`);
+  }
+  for (const [species, stamp] of Object.entries(listed.stamps)) {
+    marks.push(`    "${species}": "${stamp}"`);
+  }
 
   return (
     `{\n  "version": 1,\n  "coats": {\n${lines.join(',\n')}\n  },\n` +

@@ -59,7 +59,16 @@ export default function SpectatorList(props: SpectatorListProps): JSX.Element {
   const page = createPager(() => props.watching, LIST_PAGE);
   const [names] = createResource(
     () => [...new Set(props.watching)].sort().join(','),
-    async (key): Promise<Map<string, Profile>> => getProfiles(key.split(',').filter(Boolean)),
+    async (key): Promise<Map<string, Profile>> => {
+      const uids: string[] = [];
+
+      for (const uid of key.split(',')) {
+        if (uid !== '') {
+          uids.push(uid);
+        }
+      }
+      return getProfiles(uids);
+    },
   );
 
   return (

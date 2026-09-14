@@ -25,19 +25,29 @@ export interface RequestsTabProps {
 }
 
 function uidsOf(rows: FriendLink[]): string[] {
-  return rows.map((row) => row.uid);
+  const uids: string[] = [];
+
+  for (const row of rows) {
+    uids.push(row.uid);
+  }
+  return uids;
 }
 
 export default function RequestsTab(props: RequestsTabProps): JSX.Element {
   const game = useGame();
   const [busy, setBusy] = createSignal('');
   const [error, setError] = createSignal<string | null>(null);
-  const asked = createMemo(
-    () =>
-      new Map(
-        [...props.waiting.incoming, ...props.waiting.outgoing].map((row) => [row.uid, row.since]),
-      ),
-  );
+  const asked = createMemo(() => {
+    const since = new Map<string, FriendLink['since']>();
+
+    for (const row of props.waiting.incoming) {
+      since.set(row.uid, row.since);
+    }
+    for (const row of props.waiting.outgoing) {
+      since.set(row.uid, row.since);
+    }
+    return since;
+  });
   const received = createPager(() => uidsOf(props.waiting.incoming), LIST_PAGE);
   const sent = createPager(() => uidsOf(props.waiting.outgoing), LIST_PAGE);
 

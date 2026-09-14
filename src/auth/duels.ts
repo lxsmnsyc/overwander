@@ -68,21 +68,25 @@ export async function getDuel(id: string): Promise<DuelRecord | null> {
   const members = asRecordArray(row.duel_members).sort(
     (left, right) => asNumber(left.joined_seq) - asNumber(right.joined_seq),
   );
+  const seated: Record<string, unknown>[] = [];
 
+  for (const entry of members) {
+    const catches: string[] = [];
+
+    for (const [, caught] of (held.get(asString(entry.player)) ?? []).sort(
+      ([left], [right]) => left - right,
+    )) {
+      catches.push(caught);
+    }
+    seated.push({ player: entry.player, role: entry.role, ready: entry.ready, catches });
+  }
   return asDuelRecord({
     host: row.host,
     battle: row.battle_id,
     createdAt: row.created_at,
     limits: row.limits,
     teamSize: row.team_size,
-    members: members.map((entry) => ({
-      player: entry.player,
-      role: entry.role,
-      ready: entry.ready,
-      catches: (held.get(asString(entry.player)) ?? [])
-        .sort(([left], [right]) => left - right)
-        .map(([, caught]) => caught),
-    })),
+    members: seated,
   });
 }
 
@@ -112,12 +116,22 @@ export function watchDuel(id: string, onChange: (duel: DuelRecord | null) => voi
  */
 export async function listMyDuels(uid: string): Promise<[string, DuelRecord][]> {
   const { data } = await getSupabase().from('duel_members').select('duel_id').eq('player', uid);
-  const ids = asRecordArray(data).map((row) => asString(row.duel_id));
-  const found = await Promise.all(
-    ids.map(async (id): Promise<[string, DuelRecord | null]> => [id, await getDuel(id)]),
-  );
+  const pending: Promise<[string, DuelRecord | null]>[] = [];
 
-  return found.filter((entry): entry is [string, DuelRecord] => entry[1] != null);
+  for (const row of asRecordArray(data)) {
+    const id = asString(row.duel_id);
+
+    pending.push(getDuel(id).then((duel): [string, DuelRecord | null] => [id, duel]));
+  }
+
+  const duels: [string, DuelRecord][] = [];
+
+  for (const [id, duel] of await Promise.all(pending)) {
+    if (duel != null) {
+      duels.push([id, duel]);
+    }
+  }
+  return duels;
 }
 
 /** Follow that list, so a lobby opened or shut elsewhere moves it */
@@ -150,12 +164,17 @@ export function watchDuelInvites(uid: string, onChange: (invites: DuelInvite[]) 
       .eq('recipient', uid)
       .order('sent_at', { ascending: false });
 
-    return asRecordArray(data).map((row) => ({
-      duel: asString(row.duel_id),
-      sender: asString(row.sender),
-      role: asNumber(row.role) as LobbyRole,
-      sentAt: asNumber(row.sent_at),
-    }));
+    const invites: DuelInvite[] = [];
+
+    for (const row of asRecordArray(data)) {
+      invites.push({
+        duel: asString(row.duel_id),
+        sender: asString(row.sender),
+        role: asNumber(row.role) as LobbyRole,
+        sentAt: asNumber(row.sent_at),
+      });
+    }
+    return invites;
   };
 
   return watchTable('duel_invites', [`recipient=eq.${uid}`], read, onChange);

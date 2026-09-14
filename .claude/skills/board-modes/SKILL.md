@@ -10,7 +10,11 @@ description: The overworld board is drawn either laid back under the camera or f
 - **3d**, the board laid back under the camera at sixty degrees: a trapezoid, the far rows smaller than the near ones, sprites standing up out of it.
 - **2d**, the board flat from straight above: square cells, no perspective at all, nothing standing above the ground.
 
-Which one is drawn is decided by the shape of the screen, in `viewFor(width, height)`: taller than it is wide is flat, anything else is laid back. Nothing else may decide it.
+Which one is drawn is decided by the shape of the screen, in `viewFor(width, height)`: taller than it is wide is flat, anything else is laid back. The one exception is the player's Flat board setting, which the painter hands to `setBoardFlat` so every screen is drawn flat. Nothing else may decide it.
+
+## A phone is framed close
+
+A screen whose shorter side is under `CLOSE_SCREEN` pixels, either way up, gets the same projection framed round `CLOSE_RADIUS` cells instead of the whole live circle, so its cells stay large enough to read and press. The live circle itself does not shrink: what stands outside the framing is still tracked, just off the picture. Anything sized off the frame reads it from `boardView()` (`span`, `compass`), never from `BOARD_RADIUS`.
 
 ## Ask the board, do not assume
 

@@ -1,7 +1,9 @@
 import { MoveAffects, MoveCategories, MoveFlags, Moves } from '../../../data/ids/moves';
 import { TYPE_COLORS } from '../../../data/constants/types';
 import { getMoveData } from '../../../data/moves';
-import PaintedVisual, { type Painter } from './__painted';
+import PaintedVisual, { type LitPainter, type Painter } from './__painted';
+import LIT_GAPS from './lit/delay';
+import { reachOf } from './lit/shapes';
 import type { Point, Stage } from '../stage';
 import {
   type Painted,
@@ -591,6 +593,11 @@ export default function moveDelayVisual(
   const painter: Painter = (context, stage, share) => {
     PAINTERS[shape](context, stage, share, paint, move + 1);
   };
+  const lit: LitPainter = (kit, stage, share) => {
+    // Judged about a body nearer the camera, so it clears the caster it leaves
+    kit.near(reachOf(stage));
+    LIT_GAPS[shape](kit, stage, share, paint, move + 1);
+  };
 
-  return new PaintedVisual(window, painter);
+  return new PaintedVisual(window, painter, lit);
 }

@@ -19,6 +19,7 @@ import registerMints from './mints';
 import registerOneShots from './one-shots';
 import registerOrbs from './orbs';
 import registerPlates from './plates';
+import registerEscapeRope from './escape-rope';
 import registerPortalKey from './portal-key';
 import registerPowerItems from './power-items';
 import registerPurifyingGem from './purifying-gem';
@@ -77,6 +78,7 @@ export default function registerItems(): void {
   registerUtilityBelt();
   registerPurifyingGem();
   registerSacredAsh();
+  registerEscapeRope();
   registerPortalKey();
   registerKeyItems();
   registerRaidItems();

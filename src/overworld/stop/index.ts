@@ -148,17 +148,23 @@ export function createStopParty(
   // each member is built knowing both and knowing what the ones
   // before it brought. A rolled party has none of that to do, and
   // fields what it caught
-  const composed =
-    outfit.best === true
-      ? getBestParty(
-          spawns.map(([species]) => species),
-          outfit.abilities,
-        )
-      : undefined;
+  let composed: BestBuild[] | undefined;
 
-  return spawns.map((spawn, at) =>
-    createStopSnapshot(snapshot, spawn, shadow, levels, outfit, composed?.[at]),
-  );
+  if (outfit.best === true) {
+    const species: Spawn[0][] = [];
+
+    for (const [one] of spawns) {
+      species.push(one);
+    }
+    composed = getBestParty(species, outfit.abilities);
+  }
+
+  const party: CatchSnapshot[] = [];
+
+  for (const [at, spawn] of spawns.entries()) {
+    party.push(createStopSnapshot(snapshot, spawn, shadow, levels, outfit, composed?.[at]));
+  }
+  return party;
 }
 
 export {

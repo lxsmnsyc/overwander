@@ -1,4 +1,5 @@
 import 'server-only';
+import { Depth } from '../../overworld/depth';
 import AleaRNG from '../../core/alea';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import type { Spawn } from '../../overworld/chunk-snapshot';
@@ -31,8 +32,9 @@ export async function peekPhenomenonEgg(
   cell: number,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<NestOffer | null> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
   const reward = snapshot?.getPhenomenonReward(cell) ?? null;
 
   if (snapshot == null || reward?.kind !== 'egg') {
@@ -79,8 +81,9 @@ export async function listClaimedPhenomena(
   y: number,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<number[]> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
 
   if (snapshot == null) {
     return [];
@@ -92,9 +95,16 @@ export async function listClaimedPhenomena(
     where player = ${uid} and marker like ${`${prefix}%`}
   `;
 
-  return rows
-    .map((row) => Number(asString(row.marker).slice(prefix.length)))
-    .filter((cell) => Number.isInteger(cell));
+  const cells: number[] = [];
+
+  for (const row of rows) {
+    const cell = Number(asString(row.marker).slice(prefix.length));
+
+    if (Number.isInteger(cell)) {
+      cells.push(cell);
+    }
+  }
+  return cells;
 }
 
 /**
@@ -119,8 +129,9 @@ export async function claimPhenomenon(
   now: number,
   offset: number,
   locale: string,
+  depth: Depth = Depth.Surface,
 ): Promise<PhenomenonClaim | null> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
   const reward = snapshot?.getPhenomenonReward(cell) ?? null;
 
   if (snapshot == null || reward == null) {

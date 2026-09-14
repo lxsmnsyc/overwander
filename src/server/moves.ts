@@ -115,7 +115,13 @@ export async function learnMove(
     }
 
     const full = known.length >= room;
-    const moves = full ? known.map((one, at) => (at === over ? move : one)) : [...known, move];
+    const moves = [...known];
+
+    if (full) {
+      moves[over] = move;
+    } else {
+      moves.push(move);
+    }
     // What was spent on a move goes with the move. The mainline loses
     // a forgotten move's PP Ups too, and a record that kept them would
     // hand them back for free the day the same move was learned again

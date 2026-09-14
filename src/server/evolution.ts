@@ -64,9 +64,13 @@ export default async function evolveCatch(
     // Every road to that species, since one shape can be reached by
     // more than one: a Feebas turns on a Prism Scale or on being
     // raised fond enough
-    const roads = (getSpeciesData(species).evolvesInto ?? []).filter(
-      (entry) => entry.species === into,
-    );
+    const roads: EvolutionData[] = [];
+
+    for (const entry of getSpeciesData(species).evolvesInto ?? []) {
+      if (entry.species === into) {
+        roads.push(entry);
+      }
+    }
 
     if (roads.length === 0) {
       return null;

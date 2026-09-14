@@ -147,9 +147,17 @@ function fitting(entries: SpawnEntry[], groups: Set<EggGroups> | undefined): Spa
   if (groups == null) {
     return entries;
   }
-  return entries.filter((entry) =>
-    getSpeciesData(entry.species).eggGroups.some((group) => groups.has(group)),
-  );
+  const fits: SpawnEntry[] = [];
+
+  for (const entry of entries) {
+    for (const group of getSpeciesData(entry.species).eggGroups) {
+      if (groups.has(group)) {
+        fits.push(entry);
+        break;
+      }
+    }
+  }
+  return fits;
 }
 
 /**
@@ -192,7 +200,12 @@ function startled(
       ? [preferred, fallback]
       : [fitting(preferred, groups), fitting(fallback, groups)];
 
-  return pickFromEntries(bands.find((band) => band.length > 0) ?? [], random);
+  for (const band of bands) {
+    if (band.length > 0) {
+      return pickFromEntries(band, random);
+    }
+  }
+  return pickFromEntries([], random);
 }
 
 /**

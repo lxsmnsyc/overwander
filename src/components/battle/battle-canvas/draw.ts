@@ -6,8 +6,11 @@ import type { ProgressData } from '../../../battle/events';
 import type Unit from '../../../battle/unit';
 import { paintAura, paintPurifiedAura, paintShadowAura } from '../../../canvas/auras';
 import type Bakery from '../../../canvas/bakery';
-import type QuadBatch from '../../../canvas/gl/quad-batch';
-import type { QuadPoint } from '../../../canvas/gl/quad-batch';
+import type { Painter, QuadPoint } from '../../../canvas/gl/quad-batch';
+import projectField, { type FieldView, unprojectField } from '../../../canvas/battle/field';
+import type EffectBatch from '../../../canvas/three/effect-batch';
+import type { Spot } from '../../../canvas/three/effect-batch';
+import { litPurifiedAura, litShadowAura, litSparkle } from '../../../canvas/battle/decor';
 import { cornersOf, shadowCorners } from '../../../canvas/placement';
 import { facingVector } from '../../../canvas/facing';
 import { SHIM_SPANS, shimMotion } from '../../../canvas/battle/sprite-shim';
@@ -63,8 +66,12 @@ const CAST_HEIGHT = 3;
  * drawing's own coordinates the way the painted pass is
  */
 export interface SlotBatch {
-  batch: QuadBatch;
+  batch: Painter;
   bakery: Bakery;
+  /** Whether what follows hides the scene's effects behind it, where there is a scene */
+  solid?: (on: boolean) => void;
+  /** Whether auras and sparkles are built in the scene rather than stamped here */
+  lit?: boolean;
 }
 
 /** The four corners of a rectangle, for the batch */
@@ -200,10 +207,15 @@ function turned(
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);
 
-  return quad.map((corner) => ({
-    x: x + (corner.x - x) * cos - (corner.y - y) * sin,
-    y: y + (corner.x - x) * sin + (corner.y - y) * cos,
-  }));
+  const rotated: { x: number; y: number }[] = [];
+
+  for (const corner of quad) {
+    rotated.push({
+      x: x + (corner.x - x) * cos - (corner.y - y) * sin,
+      y: y + (corner.x - x) * sin + (corner.y - y) * cos,
+    });
+  }
+  return rotated;
 }
 
 /**
@@ -296,6 +308,31 @@ export function bodyOf(slot: Slot): Point {
 }
 
 /**
+ * The same body in field units, for the battle scene: the ground under
+ * its feet lifted to its middle, and how many field units one painted
+ * pixel is worth there. Null past the horizon
+ */
+export function fieldBodyOf(slot: Slot, view: FieldView): { spot: Spot; size: number } | null {
+  const footY = slot.y + slot.offset[1];
+  const foot = unprojectField(slot.x + slot.offset[0], footY, view);
+
+  if (foot == null) {
+    return null;
+  }
+  const worth = view.unit * projectField(foot, view).scale;
+
+  if (worth <= 0) {
+    return null;
+  }
+  const [, middle] = bodyOf(slot);
+
+  return {
+    spot: [foot.x, Math.max(0, (footY - middle) / worth), foot.z],
+    size: scaleOf(slot) / worth,
+  };
+}
+
+/**
  * The box a slot's pokemon was drawn in, or nothing while its sheet is
  * still coming
  */
@@ -339,6 +376,76 @@ export function withinSlot(slot: Slot, x: number, y: number): boolean {
 const shone = new WeakMap<Unit, number>();
 
 /**
+ * A name for each shiny's own sparkle picture. Both sides of a fight
+ * can be shiny at once, and one picture shared between them is one
+ * texture drawn in two places
+ */
+const named = new WeakMap<Unit, string>();
+let names = 0;
+
+function nameOf(unit: Unit): string {
+  const held = named.get(unit);
+
+  if (held != null) {
+    return held;
+  }
+
+  names += 1;
+
+  const fresh = `unit:${names}`;
+
+  named.set(unit, fresh);
+  return fresh;
+}
+
+/**
+ * A slot's aura and shiny sparkle, built in the battle scene where the
+ * pokemon's own picture hides whatever is behind it
+ */
+export function drawLitDecor(
+  kit: EffectBatch,
+  slot: Slot,
+  view: FieldView,
+  clock: number,
+  hidden: boolean,
+): void {
+  const sprite = slot.sprite;
+  const body = hidden || sprite?.ready !== true ? null : fieldBodyOf(slot, view);
+
+  if (sprite == null || body == null) {
+    return;
+  }
+  const { unit } = slot;
+  const scale = scaleOf(slot);
+  // Drawing pixels per field unit where it stands
+  const worth = scale / body.size;
+  const floor: Spot = [body.spot[0], 0, body.spot[2]];
+  const seed = Number(nameOf(unit).slice(5));
+
+  kit.near(0);
+  if (unit.hasAbility(Abilities.Shadow) || unit.hasAbility(Abilities.Purified)) {
+    const paint = unit.hasAbility(Abilities.Shadow) ? litShadowAura : litPurifiedAura;
+
+    // The ground shadow's, as the painted aura is measured
+    const radius = sprite.shadowRadius(scale).x / worth;
+
+    paint(kit, floor, radius, clock, seed, unit.alive ? 1 : 0.35);
+  }
+  if (!unit.shiny) {
+    return;
+  }
+  const arrived = shone.get(unit) ?? clock;
+
+  shone.set(unit, arrived);
+
+  const frame = sprite.sourceFrameSize;
+  const width = (frame.width * scale) / worth;
+
+  kit.near(width * 0.5);
+  litSparkle(kit, floor, width, (frame.height * scale) / worth, clock - arrived, seed);
+}
+
+/**
  * The stars a shiny throws as it arrives, the same announcement one
  * standing on a cell makes. It is over in about a second: a coat worth
  * looking twice at is worth being told about once
@@ -365,7 +472,7 @@ function sparkle(
   const seed = Math.round(slot.x + slot.y);
   const scale = scaleOf(slot);
   const frame = sprite.sourceFrameSize;
-  const glint = onto == null ? null : paintSparkle(seed, age, frame);
+  const glint = onto == null ? null : paintSparkle(nameOf(slot.unit), seed, age, frame);
 
   if (onto == null || glint == null) {
     drawSparkle(context, seed, age, x, y, frame, scale);
@@ -524,7 +631,9 @@ export function drawSlot(
       const haze = unit.hasAbility(Abilities.Shadow);
       const lit = unit.hasAbility(Abilities.Purified);
 
-      if (haze || lit) {
+      if ((haze || lit) && onto?.lit === true) {
+        // Built into the scene by `drawLitDecor`, and it stands in for the shadow
+      } else if (haze || lit) {
         const radius = sprite.shadowRadius(scaleOf(slot));
         const kind = haze ? 'shadow' : 'purified';
         const aura =
@@ -566,9 +675,12 @@ export function drawSlot(
           context.restore();
         }
       } else {
+        // The one picture that hides a move effect passing behind it
+        onto.solid?.(true);
         onto.batch.quad(quad.sheet, quad.source, turned(cornersOf(quad), x, y, slot.spin), alpha);
+        onto.solid?.(false);
       }
-      if (unit.shiny) {
+      if (unit.shiny && onto?.lit !== true) {
         sparkle(context, slot, sprite, x, y, clock, onto);
       }
     } else {

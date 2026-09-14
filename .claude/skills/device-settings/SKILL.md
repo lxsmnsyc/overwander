@@ -56,6 +56,11 @@ there by a `createEffect` in `src/app.tsx`, with the rule itself in
 `src/app.css`. That is how `reduce-motion` works and how the theme
 works. Do not reach for inline styles or a `<style>` tag.
 
+**A dev-only setting is gated twice.** Its switch sits inside
+`<Show when={import.meta.env.DEV}>` in the settings panel, and its
+reader ANDs the setting with `import.meta.env.DEV`, so a build drops
+the effect whatever a stored value says.
+
 ## The theme is not one of these
 
 Terracotta owns the colour scheme, including its own `localStorage`

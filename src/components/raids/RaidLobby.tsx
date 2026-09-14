@@ -161,8 +161,27 @@ function LobbyRows(
    * with a team. A spectator has no standing to fill somebody else's
    * lobby
    */
-  const mayInvite = (): boolean =>
-    isHost() || (teams() ?? []).some((team) => team.player === props.user.uid);
+  const mayInvite = (): boolean => {
+    if (isHost()) {
+      return true;
+    }
+    for (const team of teams() ?? []) {
+      if (team.player === props.user.uid) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  /** The player behind each team, one entry per team */
+  const teamPlayers = (): string[] => {
+    const players: string[] = [];
+
+    for (const team of teams() ?? []) {
+      players.push(team.player);
+    }
+    return players;
+  };
 
   /**
    * Whether the lobby has no place left for this player. Places are
@@ -170,7 +189,7 @@ function LobbyRows(
    * team while everyone outside is turned away
    */
   const full = (): boolean => {
-    const players = new Set((teams() ?? []).map((team) => team.player));
+    const players = new Set(teamPlayers());
 
     return players.size >= RAID_PLAYER_LIMIT && !players.has(props.user.uid);
   };
@@ -181,9 +200,15 @@ function LobbyRows(
    * subtracted here rather than by the read
    */
   const onlookers = (): string[] => {
-    const fighting = new Set((teams() ?? []).map((team) => team.player));
+    const fighting = new Set(teamPlayers());
+    const watching: string[] = [];
 
-    return props.watching().filter((uid) => !fighting.has(uid));
+    for (const uid of props.watching()) {
+      if (!fighting.has(uid)) {
+        watching.push(uid);
+      }
+    }
+    return watching;
   };
 
   /**
@@ -197,12 +222,16 @@ function LobbyRows(
     host: raid()?.host === team.player,
   });
 
-  const joined = (): TeamRecord[] =>
-    orderTeams(
-      (teams() ?? []).filter((team) => matchesTeam(team, query(), contextOf(team))),
-      query(),
-      (team) => ({ team, context: contextOf(team) }),
-    );
+  const joined = (): TeamRecord[] => {
+    const matching: TeamRecord[] = [];
+
+    for (const team of teams() ?? []) {
+      if (matchesTeam(team, query(), contextOf(team))) {
+        matching.push(team);
+      }
+    }
+    return orderTeams(matching, query(), (team) => ({ team, context: contextOf(team) }));
+  };
 
   const act = (action: () => Promise<string | null>, failure: string): void => {
     setStatus(null);
@@ -434,7 +463,7 @@ function LobbyRows(
         }}
         title="Invite to the raid"
         description="They see the call above their list of raids, and joining answers it."
-        present={(teams() ?? []).map((team) => team.player)}
+        present={teamPlayers()}
         onInvite={async (uid, role) => inviteToRaid(props.raidId, uid, role)}
       />
 
@@ -458,6 +487,18 @@ function LobbyRows(
   );
 }
 
+/** The uids packed into a resource key, without the empty one an empty lobby leaves */
+function splitKey(key: string): string[] {
+  const uids: string[] = [];
+
+  for (const uid of key.split(',')) {
+    if (uid !== '') {
+      uids.push(uid);
+    }
+  }
+  return uids;
+}
+
 /**
  * The lobby with its teams read, which is where the names are asked
  * for: who is in it decides whose profiles have to be looked up, so
@@ -479,8 +520,15 @@ function LobbyTeams(
    * is in it
    */
   const [names] = createResource(
-    () => [...new Set((props.teams() ?? []).map((team) => team.player))].sort().join(','),
-    async (key): Promise<Map<string, Profile>> => getProfiles(key.split(',').filter(Boolean)),
+    () => {
+      const players = new Set<string>();
+
+      for (const team of props.teams() ?? []) {
+        players.add(team.player);
+      }
+      return [...players].sort().join(',');
+    },
+    async (key): Promise<Map<string, Profile>> => getProfiles(splitKey(key)),
   );
 
   return (
@@ -507,8 +555,22 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
 
   const [teams] = createResource(
     () => raid()?.teams ?? null,
-    async (ids) =>
-      (await Promise.all(ids.map(getTeam))).filter((team): team is TeamRecord => team != null),
+    async (ids) => {
+      const reads: ReturnType<typeof getTeam>[] = [];
+
+      for (const id of ids) {
+        reads.push(getTeam(id));
+      }
+
+      const found: TeamRecord[] = [];
+
+      for (const team of await Promise.all(reads)) {
+        if (team != null) {
+          found.push(team);
+        }
+      }
+      return found;
+    },
   );
 
   // A player with no pokemon of their own can stand in the lobby and

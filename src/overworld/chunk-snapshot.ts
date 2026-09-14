@@ -4,15 +4,22 @@ import {
   boostFamilyWeights,
   boostTypeWeights,
   getSpawnPool,
+  getTownPool,
   pickSpawn,
   spawnRanks,
 } from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
-import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily, getShoreForm } from '../data/species';
+import {
+  SPECIES_DAY_WEIGHT_BOOST,
+  floats,
+  getFeaturedFamily,
+  getShoreForm,
+  swims,
+} from '../data/species';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { ItemStack } from '../data/overworld/item-pool';
-import { Species } from '../data/ids/species';
+import type { Species } from '../data/ids/species';
 import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
@@ -80,8 +87,8 @@ import {
 import getWorld from './current';
 import type Chunk from './chunk';
 import { canStageBoss } from './raid';
-import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells, neighborCells } from './chunk';
-import { getPortalCell } from './portal';
+import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells } from './chunk';
+import type { Depth } from './depth';
 import type { PhenomenonReward } from './landmarks';
 import {
   resolveApricornColour,
@@ -104,13 +111,15 @@ import {
  */
 function expertParty(pool: Species[], signature: Species, seed: string): Spawn[] {
   const rng = new AleaRNG(seed);
-  const rolled = Array.from({ length: EXPERT_PARTY_SIZE - 1 }, (): Spawn => {
+  const party: Spawn[] = [];
+
+  for (let at = 0; at < EXPERT_PARTY_SIZE - 1; at += 1) {
     const species = pool[Math.floor(rng.random() * pool.length)];
 
-    return [species, rng.int32(), rng.int32()];
-  });
-
-  return [...rolled, [signature, rng.int32(), rng.int32()]];
+    party.push([species, rng.int32(), rng.int32()]);
+  }
+  party.push([signature, rng.int32(), rng.int32()]);
+  return party;
 }
 
 /**
@@ -122,11 +131,12 @@ function expertParty(pool: Species[], signature: Species, seed: string): Spawn[]
 function rentedParty(pool: Species[], size: number, seed: string): Spawn[] {
   const rng = new AleaRNG(seed);
 
-  return Array.from({ length: size }, (): Spawn => [
-    pool[Math.floor(rng.random() * pool.length)],
-    rng.int32(),
-    rng.int32(),
-  ]);
+  const party: Spawn[] = [];
+
+  for (let at = 0; at < size; at += 1) {
+    party.push([pool[Math.floor(rng.random() * pool.length)], rng.int32(), rng.int32()]);
+  }
+  return party;
 }
 
 /**
@@ -136,7 +146,12 @@ function rentedParty(pool: Species[], size: number, seed: string): Spawn[] {
 function signatureParty(species: Species[], seed: string): Spawn[] {
   const rng = new AleaRNG(seed);
 
-  return species.map((one): Spawn => [one, rng.int32(), rng.int32()]);
+  const party: Spawn[] = [];
+
+  for (const one of species) {
+    party.push([one, rng.int32(), rng.int32()]);
+  }
+  return party;
 }
 
 /**
@@ -156,13 +171,6 @@ export type Spawn = [species: Species, individualValue: number, traitValue: numb
  * every player of the chunk shares one set of rolls
  */
 export const SPAWN_COUNT = 8;
-
-/**
- * How often a portal has its keeper standing beside it: Porygon, the
- * made pokemon, lives in the portal network rather than in any
- * biome's wild pool
- */
-export const PORTAL_KEEPER_CHANCE = 1 / 8;
 
 /**
  * How often a Team Rocket stop is Giovanni himself rather than a
@@ -331,6 +339,16 @@ export default class ChunkSnapshot {
   }
 
   /**
+   * Which layer of the world this window is of. It rides beside the
+   * zone wherever a call is made against a chunk, for the same reason
+   * the zone does: the server has to derive the same chunk the client
+   * was looking at, and the layer is half of saying which one that is
+   */
+  get depth(): Depth {
+    return this.chunk.world.depth;
+  }
+
+  /**
    * What the **ground** of this chunk is keyed by: the chunk alone,
    * with no zone in it.
    *
@@ -412,7 +430,15 @@ export default class ChunkSnapshot {
    * the featured family for the day, and the sky for the hour
    */
   private getPool(): SpawnRarityGroups {
-    const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp));
+    return this.crowd(getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp)));
+  }
+
+  /** What a town's streets may roll this window, crowded the same way */
+  private getStreetPool(): SpawnRarityGroups {
+    return this.crowd(getTownPool(getTimeOfDay(this.timestamp)));
+  }
+
+  private crowd(pool: SpawnRarityGroups): SpawnRarityGroups {
     const featured = getFeaturedFamily(this.timestamp);
     const dayed =
       featured == null ? pool : boostFamilyWeights(pool, featured, SPECIES_DAY_WEIGHT_BOOST);
@@ -421,8 +447,9 @@ export default class ChunkSnapshot {
   }
 
   /**
-   * Roll the window's spawns from the biome pool for this time of day
-   * and place each on a free cell.
+   * Roll the window's spawns for this time of day and place each on a
+   * free cell: a town's streets from the town pool, the country around
+   * them from the biome's.
    *
    * They are placed **last**, on whatever cell the chunk's own
    * furniture is not standing on. Spacing is the fixtures' rule and
@@ -435,41 +462,72 @@ export default class ChunkSnapshot {
     if (this.spawns == null) {
       const pool = this.getPool();
       const spawns: Spawn[] = [];
-      // Nothing spawns inside solid rock; a pool is fine, since a
-      // pokemon in the water is a pokemon in the water
+      // Nothing spawns inside solid rock or on a cliff's edge
       const occupied = new Set([
         ...this.chunk.getDecorationCells().keys(),
         ...this.chunk.getLandmarkCells().keys(),
         ...this.chunk.getRockCells(),
+        ...this.chunk.getFaceCells(),
         // Whatever is going on this hour holds its ground too. The
         // hour is the slower clock, so it takes its cells first and
         // the pokemon fit around it; sharing one would put a spawn on
         // top of a dust cloud, and the spawn would answer the press
         ...this.getPhenomena().keys(),
       ]);
-      const free = centeredCells(PLACEMENT_AREA).filter((cell) => !occupied.has(cell));
+      const streets: number[] = [];
+      const free: number[] = [];
 
-      // The portal's keeper rolls before the pool does, so it is the
-      // first published spawn and every player sees it, lure or none
-      const portal = getPortalCell(this.chunk);
-
-      if (portal != null && this.rng.random() < PORTAL_KEEPER_CHANCE) {
-        const open = new Set(free);
-        const beside = neighborCells(portal).filter((cell) => open.has(cell));
-
-        if (beside.length > 0) {
-          const spawn: Spawn = [Species.Porygon, this.rng.int32(), this.rng.int32()];
-          const cell = beside[Math.floor(this.rng.random() * beside.length)];
-
-          free.splice(free.indexOf(cell), 1);
-          this.cells[cell] = spawn;
-          spawns.push(spawn);
+      for (const cell of centeredCells(PLACEMENT_AREA)) {
+        if (!occupied.has(cell)) {
+          (this.chunk.isTownCell(cell) ? streets : free).push(cell);
         }
       }
+      // Where anything may stand, and where only what swims or flies
+      // may.
+      //
+      // A water country was given a pool written for water, so
+      // everything in it belongs on its own sea. A lake or a river
+      // running through dry country is the other case: the pool there
+      // was written for the land around it, and a Rhyhorn in the
+      // middle of a pond is that pool answering a question nobody
+      // asked it. A Zubat over the same pond is not standing in it
+      const biomes = this.chunk.getCellBiomes();
+      const standing: number[] = [];
+      const over: number[] = [];
 
-      // The keeper counts against the window, so a portal chunk never
-      // publishes more rolls than any other
-      for (let i = spawns.length; i < count && free.length > 0; i++) {
+      for (const cell of free) {
+        const water = this.chunk.getCellRole(cell) === 'water' && !isWaterBiome(biomes[cell]);
+
+        (water ? over : standing).push(cell);
+      }
+
+      // Each roll takes the streets' share of the window in turn, so any
+      // prefix of it a lure reveals keeps that share. A chunk no town
+      // touches has no share and rolls exactly as the country always has
+      const share = streets.length / Math.max(1, streets.length + free.length);
+      let streetPool: SpawnRarityGroups | null = null;
+
+      for (let i = 0; i < count && standing.length + over.length + streets.length > 0; i++) {
+        if (streets.length > 0 && Math.floor((i + 1) * share) > Math.floor(i * share)) {
+          streetPool ??= this.getStreetPool();
+
+          const found = pickSpawn(streetPool, () => this.rng.random());
+
+          if (found == null) {
+            continue;
+          }
+
+          const spawn: Spawn = [found, this.rng.int32(), this.rng.int32()];
+          const [cell] = streets.splice(Math.floor(this.rng.random() * streets.length), 1);
+
+          this.cells[cell] = spawn;
+          spawns.push(spawn);
+          continue;
+        }
+        if (standing.length + over.length === 0) {
+          continue;
+        }
+
         const rolled = pickSpawn(pool, () => this.rng.random());
 
         if (rolled == null) {
@@ -484,7 +542,21 @@ export default class ChunkSnapshot {
         // The draws land in tuple order: individual value, then the
         // trait value, then the cell placement
         const spawn: Spawn = [species, this.rng.int32(), this.rng.int32()];
-        const [cell] = free.splice(Math.floor(this.rng.random() * free.length), 1);
+        const roll = this.rng.random();
+        // Drawn over every cell the species could take at once, so a
+        // swimmer is no likelier to pick the water than the shore
+        const afloat = swims(species) || floats(species);
+        const open = standing.length + (afloat ? over.length : 0);
+
+        // Rolled by the country and refused by the ground: nothing of
+        // this one is published, and the window is simply one lighter
+        if (open === 0) {
+          continue;
+        }
+
+        const at = Math.floor(roll * open);
+        const [cell] =
+          at < standing.length ? standing.splice(at, 1) : over.splice(at - standing.length, 1);
 
         this.cells[cell] = spawn;
         spawns.push(spawn);
@@ -670,9 +742,7 @@ export default class ChunkSnapshot {
   getLegendaryLairs(): Map<number, RaidRoll> {
     if (this.raids == null) {
       const raids = new Map<number, RaidRoll>();
-      const lairs = getBiomeLairs(this.chunk.biome).filter((lair) =>
-        getLairResidents(lair).some(canStageBoss),
-      );
+      const lairs = this.stageableLairs();
 
       if (lairs.length > 0) {
         for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
@@ -695,6 +765,21 @@ export default class ChunkSnapshot {
     return this.raids;
   }
 
+  /** The biome's lairs with at least one resident a raid can stage */
+  private stageableLairs(): Lairs[] {
+    const lairs: Lairs[] = [];
+
+    for (const lair of getBiomeLairs(this.chunk.biome)) {
+      for (const resident of getLairResidents(lair)) {
+        if (canStageBoss(resident)) {
+          lairs.push(lair);
+          break;
+        }
+      }
+    }
+    return lairs;
+  }
+
   private shadowRaids: Map<number, RaidRoll> | null = null;
 
   /**
@@ -711,13 +796,18 @@ export default class ChunkSnapshot {
     if (this.shadowRaids == null) {
       const raids = new Map<number, RaidRoll>();
       const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.raidTimestamp));
-      const lairs = getBiomeLairs(this.chunk.biome).filter((lair) =>
-        getLairResidents(lair).some(canStageBoss),
-      );
-      // A species with nothing left to cast once the boss bans are
-      // applied is no boss: it is left out of the draw rather than
-      // staged with an empty move list
-      const rare = spawnRanks(pool)[2].filter((entry) => canStageBoss(entry.species));
+      const lairs = this.stageableLairs();
+      const ranked = spawnRanks(pool)[2];
+      const rare: typeof ranked = [];
+
+      for (const entry of ranked) {
+        // A species with nothing left to cast once the boss bans are
+        // applied is no boss: it is left out of the draw rather than
+        // staged with an empty move list
+        if (canStageBoss(entry.species)) {
+          rare.push(entry);
+        }
+      }
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark !== Landmark.ShadowLair) {
@@ -848,13 +938,19 @@ export default class ChunkSnapshot {
 
   /**
    * Who is standing at this cell, wherever they came from: the
-   * window's wanderer, or the vendor whose stall is fixed to a Market
-   * cell. Everything that asks "is this person really there" asks
+   * window's wanderer, or one of the two whose place is fixed rather
+   * than rolled, the vendor at his stall and Nurse Joy at her
+   * counter. Everything that asks "is this person really there" asks
    * this, so the server's refusal and the board's offer agree
    */
   getStandingNpc(cell: number): Npc | null {
-    if (this.chunk.getLandmarkCells().get(cell) === Landmark.Market) {
+    const landmark = this.chunk.getLandmarkCells().get(cell);
+
+    if (landmark === Landmark.Market) {
       return Npc.Vendor;
+    }
+    if (landmark === Landmark.PokemonCenter) {
+      return Npc.NurseJoy;
     }
     return this.getWanderingNpcs().get(cell) ?? null;
   }
@@ -925,6 +1021,8 @@ export default class ChunkSnapshot {
           }
         } else if (landmark === Landmark.Market) {
           dress(cell, npcSheets(Npc.Vendor));
+        } else if (landmark === Landmark.PokemonCenter) {
+          dress(cell, npcSheets(Npc.NurseJoy));
         }
       }
       this.coats = coats;
@@ -1002,10 +1100,21 @@ export default class ChunkSnapshot {
     for (const time of times) {
       const pool = getSpawnPool(this.chunk.biome, time);
       const bands = spawnRanks(pool);
-      const stocked = bands.find((band) => band.length > 0);
+      let stocked: SpawnRarityGroups['base'] | undefined;
 
+      for (const band of bands) {
+        if (band.length > 0) {
+          stocked = band;
+          break;
+        }
+      }
       if (stocked != null) {
-        return bands.map((band) => (band.length > 0 ? band : stocked));
+        const filled: SpawnRarityGroups['base'][] = [];
+
+        for (const band of bands) {
+          filled.push(band.length > 0 ? band : stocked);
+        }
+        return filled;
       }
     }
     return null;
@@ -1039,6 +1148,14 @@ export default class ChunkSnapshot {
 
             return [entry.species, rng.int32(), rng.int32()];
           };
+          const drawMany = (band: SpawnRarityGroups['base'], size: number): Spawn[] => {
+            const party: Spawn[] = [];
+
+            for (let at = 0; at < size; at += 1) {
+              party.push(draw(band));
+            }
+            return party;
+          };
 
           const [commons, uncommons, rares] = fielded;
           const rank = this.getRocketRank(cell);
@@ -1049,7 +1166,7 @@ export default class ChunkSnapshot {
             // legendary to have been taken from it and the boss
             // fields a sixth rare
             const homes = getBiomeLairs(this.chunk.biome);
-            const party = Array.from({ length: ROCKET_PARTY_SIZE - 1 }, () => draw(rares));
+            const party = drawMany(rares, ROCKET_PARTY_SIZE - 1);
 
             if (homes.length > 0) {
               const lair = homes[Math.floor(rng.random() * homes.length)];
@@ -1064,10 +1181,7 @@ export default class ChunkSnapshot {
             }
             stops.set(cell, party);
           } else if (rank === RocketRank.Executive) {
-            stops.set(
-              cell,
-              Array.from({ length: ROCKET_PARTY_SIZE }, () => draw(rares)),
-            );
+            stops.set(cell, drawMany(rares, ROCKET_PARTY_SIZE));
           } else {
             // Weakest first, and two out of each of the biome's three
             // bands: a grunt is the one rank that reaches the whole
@@ -1144,17 +1258,17 @@ export default class ChunkSnapshot {
           : TYPE_TRAINER_PARTY_MIN +
             Math.floor(rng.random() * (TYPE_TRAINER_PARTY_MAX - TYPE_TRAINER_PARTY_MIN + 1));
 
-        stops.set(
-          cell,
-          // Drawn with replacement, as an expert's party is: a Kanto
-          // type runs as thin as one fully-grown species, and a
-          // Channeler with three Gengar is exactly right
-          Array.from({ length: size }, (): Spawn => {
-            const species = pool[Math.floor(rng.random() * pool.length)];
+        // Drawn with replacement, as an expert's party is: a Kanto
+        // type runs as thin as one fully-grown species, and a
+        // Channeler with three Gengar is exactly right
+        const party: Spawn[] = [];
 
-            return [species, rng.int32(), rng.int32()];
-          }),
-        );
+        for (let at = 0; at < size; at += 1) {
+          const species = pool[Math.floor(rng.random() * pool.length)];
+
+          party.push([species, rng.int32(), rng.int32()]);
+        }
+        stops.set(cell, party);
       }
       this.trainerStops = stops;
     }
@@ -1527,11 +1641,12 @@ export default class ChunkSnapshot {
       const count = MIN_PHENOMENA + Math.floor(rng.random() * (MAX_PHENOMENA - MIN_PHENOMENA + 1));
       // A phenomenon may stand in water where a landmark may not: the
       // water rippling is one of the four. What it may not do is stand
-      // on somebody's stall, in a rock, or inside a tree
+      // on somebody's stall, in a rock, inside a tree or on a cliff
       const occupied = new Set([
         ...this.chunk.getDecorationCells().keys(),
         ...this.chunk.getLandmarkCells().keys(),
         ...this.chunk.getRockCells(),
+        ...this.chunk.getFaceCells(),
       ]);
       const spots = this.chunk.getSpotCells();
       const flooded = isWaterBiome(this.chunk.biome);
@@ -1541,15 +1656,45 @@ export default class ChunkSnapshot {
       // ...and water is the only thing that ripples, so the rest of
       // the biome's list is what dry ground can show. A beach hosts
       // both, and a ripple on its sand was the sea in the wrong place
-      const dry = kinds.filter((kind) => kind !== Phenomenon.RipplingWater);
-      const open = centeredCells(PLACEMENT_AREA).filter((cell) => !occupied.has(cell));
+      const dry: Phenomenon[] = [];
+
+      for (const kind of kinds) {
+        if (kind !== Phenomenon.RipplingWater) {
+          dry.push(kind);
+        }
+      }
+
+      const open: number[] = [];
+
+      for (const cell of centeredCells(PLACEMENT_AREA)) {
+        if (!occupied.has(cell) && !this.chunk.isTownCell(cell)) {
+          open.push(cell);
+        }
+      }
       // Dry ground first, so the biome's own are actually seen. A
       // wetland is mostly water, and rolling it flat would make every
       // marsh ripple and no marsh ever hide a grotto. A biome with
       // nothing but ripples in it goes the other way: its islands show
       // nothing, since nothing else happens there
-      const ground = dry.length === 0 ? [] : open.filter((cell) => !afloat(cell));
-      const free = ground.length > 0 ? ground : open.filter(afloat);
+      const ground: number[] = [];
+
+      if (dry.length > 0) {
+        for (const cell of open) {
+          if (!afloat(cell)) {
+            ground.push(cell);
+          }
+        }
+      }
+
+      const free: number[] = ground.length > 0 ? ground : [];
+
+      if (ground.length === 0) {
+        for (const cell of open) {
+          if (afloat(cell)) {
+            free.push(cell);
+          }
+        }
+      }
 
       for (let at = 0; at < count && free.length > 0; at++) {
         const [cell] = free.splice(Math.floor(rng.random() * free.length), 1);

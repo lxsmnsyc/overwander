@@ -1,11 +1,14 @@
 import {
   BIOME_NAMES,
   SPAWN_RARITY_NAMES,
+  type SpawnRarity,
   type SpeciesHabitat,
   TIMES_OF_DAY,
   TIME_OF_DAY_NAMES,
   listSpeciesHabitats,
+  listTownHabitats,
 } from '../../../data/biome';
+import type { TimeOfDay } from '../../../data/ids/biome';
 import { Stats } from '../../../data/constants/stats';
 import type Biome from '../../../data/ids/biome';
 import type { Moves } from '../../../data/ids/moves';
@@ -49,10 +52,19 @@ export const STAT_BARS: Record<Stats, string> = {
 export function listLevelMoves(species: Species): [level: number, moves: Moves[]][] {
   const { level } = getSpeciesData(species).learnSet;
 
-  return Object.keys(level)
-    .map(Number)
-    .sort((one, other) => one - other)
-    .map((threshold): [number, Moves[]] => [threshold, level[threshold]]);
+  const thresholds: number[] = [];
+
+  for (const key of Object.keys(level)) {
+    thresholds.push(Number(key));
+  }
+  thresholds.sort((one, other) => one - other);
+
+  const learnt: [level: number, moves: Moves[]][] = [];
+
+  for (const threshold of thresholds) {
+    learnt.push([threshold, level[threshold]]);
+  }
+  return learnt;
 }
 
 /**
@@ -81,23 +93,48 @@ export function groupHabitats(species: Species): Habitat[] {
     places.set(habitat.biome, [...(places.get(habitat.biome) ?? []), habitat]);
   }
 
-  return [...places]
-    .map(([biome, found]): Habitat => {
-      const bands = new Map(found.map((habitat) => [habitat.time, habitat.rarity]));
-      const met = TIMES_OF_DAY.filter((time) => bands.has(time));
-      const rarities = new Set(met.map((time) => bands.get(time)));
+  const habitats: Habitat[] = [];
 
-      if (met.length === TIMES_OF_DAY.length && rarities.size === 1) {
-        return { biome, hours: [`Anytime · ${SPAWN_RARITY_NAMES[bands.get(met[0]) ?? 0]}`] };
-      }
-      return {
-        biome,
-        hours: met.map(
-          (time) => `${TIME_OF_DAY_NAMES[time]} · ${SPAWN_RARITY_NAMES[bands.get(time) ?? 0]}`,
-        ),
-      };
-    })
-    .sort((one, other) => BIOME_NAMES[one.biome].localeCompare(BIOME_NAMES[other.biome]));
+  for (const [biome, found] of places) {
+    habitats.push({ biome, hours: hourBadges(found) });
+  }
+  return habitats.sort((one, other) =>
+    BIOME_NAMES[one.biome].localeCompare(BIOME_NAMES[other.biome]),
+  );
+}
+
+/** The badges for the hours something is met, collapsed to Anytime when every hour reads the same */
+function hourBadges(found: { time: TimeOfDay; rarity: SpawnRarity }[]): string[] {
+  const bands = new Map<TimeOfDay, SpawnRarity>();
+
+  for (const habitat of found) {
+    bands.set(habitat.time, habitat.rarity);
+  }
+
+  const met: TimeOfDay[] = [];
+  const rarities = new Set<SpawnRarity | undefined>();
+
+  for (const time of TIMES_OF_DAY) {
+    if (bands.has(time)) {
+      met.push(time);
+      rarities.add(bands.get(time));
+    }
+  }
+  if (met.length === TIMES_OF_DAY.length && rarities.size === 1) {
+    return [`Anytime · ${SPAWN_RARITY_NAMES[bands.get(met[0]) ?? 0]}`];
+  }
+
+  const badges: string[] = [];
+
+  for (const time of met) {
+    badges.push(`${TIME_OF_DAY_NAMES[time]} · ${SPAWN_RARITY_NAMES[bands.get(time) ?? 0]}`);
+  }
+  return badges;
+}
+
+/** The hours this species is met on a town's streets, as badges */
+export function townHours(species: Species): string[] {
+  return hourBadges(listTownHabitats(species));
 }
 
 /**
@@ -111,13 +148,21 @@ export function groupHabitats(species: Species): Habitat[] {
  * would travel to
  */
 export function describeLairs(species: Species): { name: string; where: string[] }[] {
-  return getSpeciesLairs(species).map((lair) => {
-    const where = (Object.keys(BIOME_NAMES).map(Number) as Biome[]).filter((biome) =>
-      new Set(getBiomeLairs(biome)).has(lair),
-    );
+  const lairs: { name: string; where: string[] }[] = [];
 
-    return { name: LAIR_NAMES[lair], where: where.map((biome) => BIOME_NAMES[biome]) };
-  });
+  for (const lair of getSpeciesLairs(species)) {
+    const where: string[] = [];
+
+    for (const key of Object.keys(BIOME_NAMES)) {
+      const biome: Biome = Number(key);
+
+      if (new Set(getBiomeLairs(biome)).has(lair)) {
+        where.push(BIOME_NAMES[biome]);
+      }
+    }
+    lairs.push({ name: LAIR_NAMES[lair], where });
+  }
+  return lairs;
 }
 
 /**

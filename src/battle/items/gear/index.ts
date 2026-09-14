@@ -47,6 +47,36 @@ import { BAND_CATEGORIES, SPECIES_LENSES, WEATHER_ROCKS } from './worths';
  * Every piece of gear, started in one pass. The parts are grouped by
  * the hook they ride rather than by the shelf they are sold on
  */
+function bandSetups(): ((battle: Battle) => void)[] {
+  const setups: ((battle: Battle) => void)[] = [];
+
+  for (const [item, category] of BAND_CATEGORIES) {
+    setups.push(setupBand(item, category));
+  }
+
+  return setups;
+}
+
+function speciesLensSetups(): ((battle: Battle) => void)[] {
+  const setups: ((battle: Battle) => void)[] = [];
+
+  for (const [item, species] of SPECIES_LENSES) {
+    setups.push(setupSpeciesLens(item, species));
+  }
+
+  return setups;
+}
+
+function weatherRockSetups(): ((battle: Battle) => void)[] {
+  const setups: ((battle: Battle) => void)[] = [];
+
+  for (const rock of WEATHER_ROCKS) {
+    setups.push(setupWeatherRock(rock));
+  }
+
+  return setups;
+}
+
 const SETUPS: ((battle: Battle) => void)[] = [
   setupLeftovers,
   setupBlackSludge,
@@ -59,14 +89,14 @@ const SETUPS: ((battle: Battle) => void)[] = [
   setupProtectivePads,
   setupShellBell,
   setupBigRoot,
-  ...[...BAND_CATEGORIES].map(([item, category]) => setupBand(item, category)),
+  ...bandSetups(),
   setupExpertBelt,
   setupMetronome,
   setupWideLens,
   setupBrightPowder,
   setupZoomLens,
   setupScopeLens,
-  ...[...SPECIES_LENSES].map(([item, species]) => setupSpeciesLens(item, species)),
+  ...speciesLensSetups(),
   setupQuickClaw,
   setupFocusBand,
   setupRockyHelmet,
@@ -75,7 +105,7 @@ const SETUPS: ((battle: Battle) => void)[] = [
   setupEscapeItem(Items.SmokeBall),
   setupEscapeItem(Items.ShedShell),
   setupDestinyKnot,
-  ...WEATHER_ROCKS.map(setupWeatherRock),
+  ...weatherRockSetups(),
   setupLightClay,
   setupGripClaw,
   setupBindingBand,

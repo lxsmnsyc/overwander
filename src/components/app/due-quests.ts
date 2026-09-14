@@ -51,7 +51,15 @@ export default function watchDueQuests(
           // Something claimed is something that may come due again:
           // a rotating ask keeps its key only for its own window
           for (const key of announced) {
-            if (!due.some((quest) => quest.key === key)) {
+            let still = false;
+
+            for (const quest of due) {
+              if (quest.key === key) {
+                still = true;
+                break;
+              }
+            }
+            if (!still) {
               announced.delete(key);
             }
           }

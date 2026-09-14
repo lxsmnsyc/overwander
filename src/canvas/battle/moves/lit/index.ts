@@ -1,0 +1,16 @@
+import type { EffectShape } from '../effect/shapes';
+import care from './care';
+import contact from './contact';
+import elements from './elements';
+import minds from './minds';
+import type { LitShapePainter } from './shapes';
+
+export { JOLTS, reachOf } from './shapes';
+
+/** Every landing, built in the battle scene */
+export const LIT: Partial<Record<EffectShape, LitShapePainter>> = {
+  ...contact,
+  ...elements,
+  ...minds,
+  ...care,
+};

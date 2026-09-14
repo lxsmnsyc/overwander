@@ -314,10 +314,14 @@ export const CHAINS: Record<number, ChainData> = (() => {
   return chains;
 })();
 
-export const CHAIN_ORDER: Chains[] = [
-  ...WRITTEN_CHAIN_ORDER,
-  ...getDexRegions().map((region) => dexChainId(region)),
-];
+export const CHAIN_ORDER: Chains[] = (() => {
+  const order: Chains[] = [...WRITTEN_CHAIN_ORDER];
+
+  for (const region of getDexRegions()) {
+    order.push(dexChainId(region));
+  }
+  return order;
+})();
 
 export const QUESTS: Record<number, QuestData> = (() => {
   const quests: Record<number, QuestData> = { ...WRITTEN_QUESTS };
@@ -372,4 +376,11 @@ export function successorOf(quest: Quests): Quests | null {
 }
 
 /** Every quest, in the order the list shows them: chain by chain */
-export const QUEST_ORDER: Quests[] = CHAIN_ORDER.flatMap((chain) => CHAINS[chain].quests);
+export const QUEST_ORDER: Quests[] = (() => {
+  const order: Quests[] = [];
+
+  for (const chain of CHAIN_ORDER) {
+    order.push(...CHAINS[chain].quests);
+  }
+  return order;
+})();

@@ -371,7 +371,12 @@ export function plantLayoutOf(value: unknown): OWPlantLayout {
   if (cellHeight != null) {
     layout.sourceFrameHeight = cellHeight;
   }
-  if (Array.isArray(base) && base.length === 2 && base.every((one) => typeof one === 'number')) {
+  if (
+    Array.isArray(base) &&
+    base.length === 2 &&
+    typeof base[0] === 'number' &&
+    typeof base[1] === 'number'
+  ) {
     layout.base = [base[0], base[1]];
   }
   return layout;

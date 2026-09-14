@@ -489,7 +489,9 @@ function asOwnershipHistory(
   if (!Array.isArray(value)) {
     return [];
   }
-  return value.map((entry, at) => {
+  const history: OwnershipRecord[] = [];
+
+  for (const [at, entry] of value.entries()) {
     const record = asRecord(entry);
     // An older entry says nothing about how it changed hands, but the
     // first is where the pokemon began and every later one can only be
@@ -500,7 +502,7 @@ function asOwnershipHistory(
     // written before re-balling existed — while a later sale is not
     const wore = at === 0 ? caughtIn : null;
 
-    return {
+    history.push({
       owner: asString(record.owner),
       // Left off rather than stored empty: a name is only there for an
       // owner no profile can name
@@ -513,8 +515,9 @@ function asOwnershipHistory(
       // which is not the same as having been won for nothing
       paid: typeof record.paid === 'number' ? asNumber(record.paid) : null,
       ball: typeof record.ball === 'number' ? (asNumber(record.ball) as Balls) : wore,
-    };
-  });
+    });
+  }
+  return history;
 }
 
 /**

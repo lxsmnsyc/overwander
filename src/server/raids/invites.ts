@@ -39,7 +39,11 @@ export async function inviteToRaid(
     sql`select 1 from friends where owner = ${uid} and friend = ${friend}`,
     sql`select player from teams where raid_id = ${lobby} and player in (${uid}, ${friend})`,
   ]);
-  const there = new Set(standing.map((row) => asString(row.player)));
+  const there = new Set<string>();
+
+  for (const row of standing) {
+    there.add(asString(row.player));
+  }
 
   if (ties.length === 0) {
     return false;

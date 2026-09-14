@@ -193,12 +193,17 @@ function setupRelic(relic: RelicBoost): (battle: Battle) => void {
   );
 }
 
-const SETUPS: ((battle: Battle) => void)[] = [
-  ...[...CHOICE_ITEMS].map(([item, stat]) => setupChoiceItem(item, stat)),
-  setupAssaultVest,
-  setupEviolite,
-  ...RELICS.map(setupRelic),
-];
+const SETUPS: ((battle: Battle) => void)[] = [];
+
+for (const [item, stat] of CHOICE_ITEMS) {
+  SETUPS.push(setupChoiceItem(item, stat));
+}
+
+SETUPS.push(setupAssaultVest, setupEviolite);
+
+for (const relic of RELICS) {
+  SETUPS.push(setupRelic(relic));
+}
 
 export default function setupStatBoosters(battle: Battle): void {
   for (const setup of SETUPS) {

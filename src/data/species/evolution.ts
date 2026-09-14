@@ -319,9 +319,14 @@ export function isFullyEvolved(species: Species): boolean {
  * species is the context's, since a handover is measured against it
  */
 export function getAvailableEvolutions(context: EvolutionContext): EvolutionData[] {
-  const evolutions = getSpeciesData(context.species).evolvesInto ?? [];
+  const available: EvolutionData[] = [];
 
-  return evolutions.filter((evolution) => meetsEvolutionCriteria(evolution, context));
+  for (const evolution of getSpeciesData(context.species).evolvesInto ?? []) {
+    if (meetsEvolutionCriteria(evolution, context)) {
+      available.push(evolution);
+    }
+  }
+  return available;
 }
 
 /**

@@ -55,13 +55,29 @@ export default function LobbyInviteDialog(props: LobbyInviteDialogProps): JSX.El
   const [typed, setTyped] = createSignal('');
 
   // Paged because every row follows the profile behind it
-  const roster = createPager(() => (friends() ?? []).map((row) => row.uid), LIST_PAGE);
+  const roster = createPager((): string[] => {
+    const uids: string[] = [];
+
+    for (const row of friends() ?? []) {
+      uids.push(row.uid);
+    }
+    return uids;
+  }, LIST_PAGE);
 
   const there = (): Set<string> => new Set(props.present);
 
   /** What is on offer: a seat and a chair, or only the chair */
   const roles = (): LobbyRole[] =>
     props.fighters === false ? [LobbyRole.Spectator] : [LobbyRole.Fighter, LobbyRole.Spectator];
+
+  const roleOptions = (): { value: LobbyRole; label: string }[] => {
+    const options: { value: LobbyRole; label: string }[] = [];
+
+    for (const one of roles()) {
+      options.push({ value: one, label: LOBBY_ROLE_NAMES[one] });
+    }
+    return options;
+  };
 
   const asking = (): LobbyRole => (props.fighters === false ? LobbyRole.Spectator : role());
 
@@ -125,7 +141,7 @@ export default function LobbyInviteDialog(props: LobbyInviteDialogProps): JSX.El
         <Select
           label="Calling them in as"
           value={asking()}
-          options={roles().map((one) => ({ value: one, label: LOBBY_ROLE_NAMES[one] }))}
+          options={roleOptions()}
           onChange={(chosen) => {
             setRole(chosen);
           }}

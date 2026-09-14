@@ -454,10 +454,11 @@ export async function recordSteps(
       // Every stack is read before anything is written, the way a
       // transaction requires
       const held = await readStacksIn(transaction, ITEM_STACKS, uid, [...found.keys()]);
-      const stacks: [Items, number][] = [...found.keys()].map((item) => [
-        item,
-        held.get(item) ?? 0,
-      ]);
+      const stacks: [Items, number][] = [];
+
+      for (const item of found.keys()) {
+        stacks.push([item, held.get(item) ?? 0]);
+      }
 
       await updateCaughtIn(transaction, catchId, {
         walked,
@@ -480,7 +481,13 @@ export async function recordSteps(
         await writeStackIn(transaction, ITEM_STACKS, uid, item, carried + (found.get(item) ?? 0));
       }
       await bumpProgress(uid, [[Metric.Steps, 0, credited]]);
-      return { egg: null, picked: [...found].map(([item, amount]) => ({ item, amount })) };
+
+      const picked: { item: Items; amount: number }[] = [];
+
+      for (const [item, amount] of found) {
+        picked.push({ item, amount });
+      }
+      return { egg: null, picked };
     }
 
     const remaining = stepsRemaining(caught);

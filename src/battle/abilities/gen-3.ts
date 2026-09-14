@@ -212,12 +212,15 @@ const setupAbilities = [
   // https://bulbapedia.bulbagarden.net/wiki/Toxic_Boost_(Ability)
   createAbility(Abilities.ToxicBoost, (battle) =>
     battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-      if (
-        event.stat === Stats.Attack &&
-        event.source.hasAbility(Abilities.ToxicBoost) &&
-        POISONS_HELD.some((status) => event.source.status[status] != null)
-      ) {
-        event.value *= TOXIC_BOOST_SCALE;
+      if (event.stat !== Stats.Attack || !event.source.hasAbility(Abilities.ToxicBoost)) {
+        return;
+      }
+
+      for (const status of POISONS_HELD) {
+        if (event.source.status[status] != null) {
+          event.value *= TOXIC_BOOST_SCALE;
+          break;
+        }
       }
     }),
   ),

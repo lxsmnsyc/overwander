@@ -151,13 +151,24 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
   const arrange = (team: Team, units: Unit[]): Unit[] => {
     const kept = arranged.get(team);
 
-    if (kept == null || kept.length !== units.length || kept.some((one) => !team.units.has(one))) {
-      const fresh = [...units];
+    if (kept != null && kept.length === units.length) {
+      let current = true;
 
-      arranged.set(team, fresh);
-      return fresh;
+      for (const one of kept) {
+        if (!team.units.has(one)) {
+          current = false;
+          break;
+        }
+      }
+      if (current) {
+        return kept;
+      }
     }
-    return kept;
+
+    const fresh = [...units];
+
+    arranged.set(team, fresh);
+    return fresh;
   };
 
   /**
@@ -319,12 +330,13 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         });
     }
 
-    Promise.allSettled(
-      [...props.battle.units()].map(async (unit) => {
-        spriteFor(unit);
-        return loads.get(unit);
-      }),
-    )
+    const settling: Promise<void>[] = [];
+
+    for (const unit of props.battle.units()) {
+      spriteFor(unit);
+      settling.push(loads.get(unit) ?? Promise.resolve());
+    }
+    Promise.allSettled(settling)
       .then(() => {
         if (live) {
           setLoading(false);
@@ -478,7 +490,11 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       }
 
       const slots = project(ringStandings(field, spriteFor), view, striking);
-      const at = new Map(slots.map((slot) => [slot.unit, slot]));
+      const at = new Map<Unit, Slot>();
+
+      for (const slot of slots) {
+        at.set(slot.unit, slot);
+      }
 
       // Whoever is throwing itself at somebody is drawn part of the
       // way there. It is done to the slot rather than to the standing
@@ -599,15 +615,18 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         if (from == null) {
           continue;
         }
+        const targets: ReturnType<typeof bodyOf>[] = [];
+
+        for (const target of cast.targets) {
+          const slot = at.get(target);
+
+          if (slot != null) {
+            targets.push(bodyOf(slot));
+          }
+        }
         cast.visual.draw(context, {
           source: bodyOf(from),
-          targets: cast.targets
-            .map((target) => at.get(target))
-            // Spelled out rather than left to be inferred: the
-            // narrowing a bare `!= null` gets is not something to
-            // hang a build on
-            .filter((slot): slot is Slot => slot != null)
-            .map(bodyOf),
+          targets,
           scale: scaleOf(from),
         });
       }
@@ -629,14 +648,19 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // was worse rather than better: a spread move in a raid is forty
       // gaps at once, and forty things in the air is a screen nobody
       // can read. One flight, at what it was pointed at
-      let crossing: Unit[] = [];
+      const crossing: Unit[] = [];
 
       if (event.target.type === MoveTargetType.Unit) {
-        crossing = [event.target.unit];
+        if (event.target.unit !== event.source) {
+          crossing.push(event.target.unit);
+        }
       } else if (event.target.type === MoveTargetType.Team) {
-        crossing = [...event.target.team.units];
+        for (const target of event.target.team.units) {
+          if (target !== event.source) {
+            crossing.push(target);
+          }
+        }
       }
-      crossing = crossing.filter((target) => target !== event.source);
 
       // The window the engine is actually holding the move open for,
       // asked of it rather than read off the data — a listener may
@@ -670,10 +694,11 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // A contact move has nothing in the air to draw, because the
       // thing crossing the gap is the pokemon itself
       if ((getMoveData(event.move).flags & MoveFlags.Contact) !== 0 && crossing.length > 0) {
-        const already = lunging.findIndex((lunge) => lunge.source === event.source);
-
-        if (already >= 0) {
-          lunging.splice(already, 1);
+        for (let index = 0; index < lunging.length; index++) {
+          if (lunging[index].source === event.source) {
+            lunging.splice(index, 1);
+            break;
+          }
         }
         lunging.push({
           source: event.source,
@@ -947,12 +972,11 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       [order[from], order[to]] = [order[to], order[from]];
 
       // A pair switched again mid-walk starts the walk over
-      const already = trades.findIndex(
-        (trade) => trade.a === event.source || trade.b === event.source,
-      );
-
-      if (already >= 0) {
-        trades.splice(already, 1);
+      for (let index = 0; index < trades.length; index++) {
+        if (trades[index].a === event.source || trades[index].b === event.source) {
+          trades.splice(index, 1);
+          break;
+        }
       }
       trades.push({ a: event.source, b: event.target, elapsed: 0, window: SWITCHING_SPAN });
     });
@@ -960,8 +984,14 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     // The walk is the engine's: its progression events move the
     // picture, so a fast-forwarded switch fast-forwards the walk
     const walking = props.battle.on(BattleEvents.UnitUpdateSwitch, EventPriority.Post, (event) => {
-      const trade = trades.find((entry) => entry.a === event.source);
+      let trade: Trade | undefined;
 
+      for (const entry of trades) {
+        if (entry.a === event.source) {
+          trade = entry;
+          break;
+        }
+      }
       if (trade == null) {
         return;
       }
@@ -971,10 +1001,11 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
     // Arrival snaps both onto their spots, however the walk got there
     const arriving = props.battle.on(BattleEvents.UnitFinishSwitch, EventPriority.Post, (event) => {
-      const already = trades.findIndex((trade) => trade.a === event.source);
-
-      if (already >= 0) {
-        trades.splice(already, 1);
+      for (let index = 0; index < trades.length; index++) {
+        if (trades[index].a === event.source) {
+          trades.splice(index, 1);
+          break;
+        }
       }
     });
 

@@ -117,12 +117,16 @@ async function writeClaim(table: string, marker: string, record: ClaimRecord): P
         on conflict do nothing
       `;
       if (inserted.count > 0) {
-        const rows = asRecordArray(extra.items).map((stack) => ({
-          marker,
-          player,
-          item: asNumber(stack.item),
-          amount: asNumber(stack.amount),
-        }));
+        const rows: { marker: string; player: typeof player; item: number; amount: number }[] = [];
+
+        for (const stack of asRecordArray(extra.items)) {
+          rows.push({
+            marker,
+            player,
+            item: asNumber(stack.item),
+            amount: asNumber(stack.amount),
+          });
+        }
 
         if (rows.length > 0) {
           await transaction`

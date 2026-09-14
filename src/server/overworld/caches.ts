@@ -1,6 +1,7 @@
 import 'server-only';
 import { Depth } from '../../overworld/depth';
 import type { ItemStack } from '../../data/overworld/item-pool';
+import type { Items } from '../../data/ids/items';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { getSql } from '../db';
 import { asString } from '../read';
@@ -48,10 +49,12 @@ export async function claimItemCache(
  * half-land
  */
 export async function grantStash(uid: string, stash: ItemStack[]): Promise<void> {
-  await grantItems(
-    uid,
-    stash.map(({ item, amount }) => [item, amount]),
-  );
+  const granted: [Items, number][] = [];
+
+  for (const { item, amount } of stash) {
+    granted.push([item, amount]);
+  }
+  await grantItems(uid, granted);
 }
 
 function cachePrefix(snapshot: ChunkSnapshot): string {
@@ -87,7 +90,14 @@ export async function listClaimedItemCaches(
     where player = ${uid} and marker like ${`${prefix}%`}
   `;
 
-  return rows
-    .map((row) => Number(asString(row.marker).slice(prefix.length)))
-    .filter((cell) => Number.isInteger(cell));
+  const cells: number[] = [];
+
+  for (const row of rows) {
+    const cell = Number(asString(row.marker).slice(prefix.length));
+
+    if (Number.isInteger(cell)) {
+      cells.push(cell);
+    }
+  }
+  return cells;
 }

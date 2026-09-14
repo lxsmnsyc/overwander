@@ -315,11 +315,11 @@ export function buildBoardView(
       visible,
     );
 
-    cells.forEach(([cell], index) => {
+    for (const [index, [cell]] of cells.entries()) {
       // Roll order and publication order are the same, so the nth
       // placed cell carries the nth published spawn
       if (index >= drawn || index >= record.record.spawns.length) {
-        return;
+        continue;
       }
 
       const seat = board(cell);
@@ -328,7 +328,7 @@ export function buildBoardView(
       // is drawn past the board is a view, and nothing is standing in
       // a view
       if (seat == null || reachOf(seat) > BOARD_RADIUS) {
-        return;
+        continue;
       }
 
       const stored = record.record.spawns[index];
@@ -338,7 +338,7 @@ export function buildBoardView(
       // window is everybody's, and it is left out of what this player
       // is shown rather than out of what was rolled
       if (fled.has(spawnKey(x, y, record.record.timestamp, stored.individualValue))) {
-        return;
+        continue;
       }
 
       // The name is derived from the window rather than stored with
@@ -362,7 +362,7 @@ export function buildBoardView(
             shinyBoost: overworld.checkEncounterShiny(id),
           }).shiny,
       });
-    });
+    }
   }
 
   const ground = readBoardGround(world, originX, originY, BOARD_MARGIN, BOARD_CELLS);

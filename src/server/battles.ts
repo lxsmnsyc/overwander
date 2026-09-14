@@ -38,7 +38,12 @@ function settleSketch(record: CaughtPokemon, sketched: Moves | undefined): Moves
     return undefined;
   }
 
-  return record.moves.map((move) => (move === Moves.Sketch ? sketched : move));
+  const moves: Moves[] = [];
+
+  for (const move of record.moves) {
+    moves.push(move === Moves.Sketch ? sketched : move);
+  }
+  return moves;
 }
 
 /**
@@ -163,7 +168,15 @@ export default async function recordAftermath(
   }
 
   const fielded = await readFielded(battleId, uid);
-  const reported = aftermath.filter((entry) => fielded.has(entry.caught));
+  const reported: BattleAftermath[] = [];
+  const reportedIds: string[] = [];
+
+  for (const entry of aftermath) {
+    if (fielded.has(entry.caught)) {
+      reported.push(entry);
+      reportedIds.push(entry.caught);
+    }
+  }
 
   // A rented fight reports nothing, since none of what it fielded
   // stands for a record: there is nothing to settle onto and nothing
@@ -176,10 +189,11 @@ export default async function recordAftermath(
   // bounded the way health is bounded by the pool: per catch, at the
   // mainline's rate for a level-100 user landing one use a turn for
   // the length of a long raid
-  const coins = reported.reduce(
-    (sum, entry) => sum + Math.min(Math.max(0, Math.floor(entry.coins)), PAY_DAY_REPORT_LIMIT),
-    0,
-  );
+  let coins = 0;
+
+  for (const entry of reported) {
+    coins += Math.min(Math.max(0, Math.floor(entry.coins)), PAY_DAY_REPORT_LIMIT);
+  }
 
   const settled = await tx(async (transaction) => {
     // The marker is the whole race: one battle settles one player
@@ -200,11 +214,7 @@ export default async function recordAftermath(
 
     // Locked together rather than one at a time: everything the fight
     // put down is read in one question before any of it is written
-    const found = await readCaughtMany(
-      transaction,
-      reported.map((target) => target.caught),
-      true,
-    );
+    const found = await readCaughtMany(transaction, reportedIds, true);
 
     for (const target of reported) {
       const data = found.get(target.caught);
@@ -246,9 +256,13 @@ export default async function recordAftermath(
       // What was spent on Sketch was spent on Sketch: the move drawn
       // over it starts on the PP it is registered with
       const sketchSlot = String(Moves.Sketch);
-      const points = Object.fromEntries(
-        Object.entries(record.movePoints).filter(([move]) => move !== sketchSlot),
-      );
+      const points: Record<string, number> = {};
+
+      for (const [move, value] of Object.entries(record.movePoints)) {
+        if (move !== sketchSlot) {
+          points[move] = value;
+        }
+      }
 
       await updateCaughtIn(transaction, target.caught, {
         health,
@@ -303,7 +317,12 @@ export default async function recordAftermath(
     earned.set(family, (earned.get(family) ?? 0) + 1);
   }
   await grantCandies(uid, earned);
-  return [...earned].map(([family, count]) => ({ family, count }));
+  const candies: CandyEarned[] = [];
+
+  for (const [family, count] of earned) {
+    candies.push({ family, count });
+  }
+  return candies;
 }
 
 /**

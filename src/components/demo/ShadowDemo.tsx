@@ -168,11 +168,14 @@ export default function ShadowDemo(): JSX.Element {
   const cast = (): ReturnType<typeof getCast> => getCast(localTime(), yaw(), latitude());
   const sun = (): ReturnType<typeof getSun> => getSun(localTime(), latitude());
 
-  const pokemon = createMemo(() =>
-    getRegisteredSpecies()
-      .map((entry) => ({ value: entry, label: getSpeciesData(entry).name }))
-      .sort((left, right) => left.label.localeCompare(right.label)),
-  );
+  const pokemon = createMemo(() => {
+    const options: { value: Species; label: string }[] = [];
+
+    for (const entry of getRegisteredSpecies()) {
+      options.push({ value: entry, label: getSpeciesData(entry).name });
+    }
+    return options.sort((left, right) => left.label.localeCompare(right.label));
+  });
 
   /** The hour as somebody would say it */
   const clock = (): string => {

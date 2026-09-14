@@ -166,9 +166,17 @@ export function isCaveFloor(world: World, x: number, y: number, biome: Biome): b
     return false;
   }
 
-  const opened = (cx: number, cy: number, country: () => Biome): boolean =>
-    isCarved(world, cx, cy, country) ||
-    ORTHOGONAL.some(([dx, dy]) => isCarved(world, cx + dx, cy + dy, country));
+  const opened = (cx: number, cy: number, country: () => Biome): boolean => {
+    if (isCarved(world, cx, cy, country)) {
+      return true;
+    }
+    for (const [dx, dy] of ORTHOGONAL) {
+      if (isCarved(world, cx + dx, cy + dy, country)) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   if (opened(x, y, () => biome)) {
     return true;
@@ -183,14 +191,19 @@ export function isCaveFloor(world: World, x: number, y: number, biome: Biome): b
     return !opened(cx, cy, country) || isShoreWall(world, cx, cy, country());
   };
 
-  return !SQUARES.some(([ox, oy]) =>
-    [
-      [0, 0],
-      [1, 0],
-      [0, 1],
-      [1, 1],
-    ].every(([dx, dy]) => solid(x + ox + dx, y + oy + dy)),
-  );
+  for (const [ox, oy] of SQUARES) {
+    let whole = true;
+
+    for (let dy = 0; whole && dy < 2; dy += 1) {
+      for (let dx = 0; whole && dx < 2; dx += 1) {
+        whole = solid(x + ox + dx, y + oy + dy);
+      }
+    }
+    if (whole) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /** Whether a river runs through this cell */
@@ -260,15 +273,21 @@ export function isIslandAt(world: World, x: number, y: number): boolean {
           whole = raised(x + ox + dx, y + oy + dy);
         }
       }
-      if (
-        whole &&
-        [
-          [0, 0],
-          [reach, 0],
-          [0, reach],
-          [reach, reach],
-        ].every(([dx, dy]) => isOpenSea(world.getCellBiome(x + ox + dx, y + oy + dy)))
-      ) {
+      if (!whole) {
+        continue;
+      }
+      for (const [dx, dy] of [
+        [0, 0],
+        [reach, 0],
+        [0, reach],
+        [reach, reach],
+      ]) {
+        if (!isOpenSea(world.getCellBiome(x + ox + dx, y + oy + dy))) {
+          whole = false;
+          break;
+        }
+      }
+      if (whole) {
         return true;
       }
     }

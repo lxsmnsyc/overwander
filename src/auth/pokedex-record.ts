@@ -125,12 +125,13 @@ export function listDexTallies(dex: unknown, spec: DexSpec): DexTally[] {
       species.add(Number(key));
     }
   }
-  return (
-    [...species]
-      .sort((one, other) => one - other)
-      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-      .map((entry) => getDexTally(dex, spec, entry as Species))
-  );
+  const tallies: DexTally[] = [];
+
+  for (const entry of [...species].sort((one, other) => one - other)) {
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    tallies.push(getDexTally(dex, spec, entry as Species));
+  }
+  return tallies;
 }
 
 /**
@@ -143,7 +144,12 @@ export function listDexTallies(dex: unknown, spec: DexSpec): DexTally[] {
  * same way the printed dex prints one row for them
  */
 export function countDexSpecies(dex: unknown, spec: DexSpec): number {
-  return new Set(listDexTallies(dex, spec).map((tally) => getBaseFormSpecies(tally.species))).size;
+  const bases = new Set<Species>();
+
+  for (const tally of listDexTallies(dex, spec)) {
+    bases.add(getBaseFormSpecies(tally.species));
+  }
+  return bases.size;
 }
 
 /**

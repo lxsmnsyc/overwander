@@ -122,8 +122,17 @@ export default function SellingList(props: SellingListProps): JSX.Element {
    * said above the list as well as on the rows, because it is the one
    * thing here a player is being asked to act on
    */
-  const stranded = (): number =>
-    listed().filter(([, lot]) => canReclaim(lot, props.player, Date.now())).length;
+  const stranded = (): number => {
+    const now = Date.now();
+    let count = 0;
+
+    for (const [, lot] of listed()) {
+      if (canReclaim(lot, props.player, now)) {
+        count += 1;
+      }
+    }
+    return count;
+  };
 
   const takeBack = (id: string): void => {
     setStatus(null);

@@ -177,7 +177,14 @@ function spendableStones(): Items[] {
       }
     }
   }
-  return listItemsByType(ItemTypes.Evolution).filter((item) => asked.has(item));
+  const items: Items[] = [];
+
+  for (const item of listItemsByType(ItemTypes.Evolution)) {
+    if (asked.has(item)) {
+      items.push(item);
+    }
+  }
+  return items;
 }
 
 /**
@@ -196,20 +203,24 @@ function spendableStones(): Items[] {
  * of it for a puddle
  */
 function weigh(items: Items[]): ItemPoolEntry[] {
-  const valuables = items.filter((item) => isValuable(item));
+  let valuables = 0;
   let ground = 0;
 
-  for (const item of valuables) {
-    ground += getItemOdds(item);
+  for (const item of items) {
+    if (isValuable(item)) {
+      valuables += 1;
+      ground += getItemOdds(item);
+    }
   }
   // Nothing to weight by leaves them as flat as everything else,
   // rather than as a pool nothing can be drawn from
-  const share = ground === 0 ? 0 : valuables.length / ground;
+  const share = ground === 0 ? 0 : valuables / ground;
+  const entries: ItemPoolEntry[] = [];
 
-  return items.map((item) => ({
-    item,
-    weight: isValuable(item) ? getItemOdds(item) * share : 1,
-  }));
+  for (const item of items) {
+    entries.push({ item, weight: isValuable(item) ? getItemOdds(item) * share : 1 });
+  }
+  return entries;
 }
 
 /**

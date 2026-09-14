@@ -143,5 +143,10 @@ export async function readPublishedSpecies(snapshotId: string): Promise<Species[
   if (!Array.isArray(data)) {
     return [];
   }
-  return data.map((value) => asCatchSnapshot(value).species);
+  const species: Species[] = [];
+
+  for (const value of data) {
+    species.push(asCatchSnapshot(value).species);
+  }
+  return species;
 }

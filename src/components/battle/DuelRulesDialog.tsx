@@ -29,13 +29,28 @@ export interface DuelRulesDialogProps {
 const slotChoices = (kind: Slots): number[] => {
   const least = leastSlots(kind);
 
-  return Array.from({ length: mostSlots(kind) - least + 1 }, (_, at) => least + at);
+  const choices: number[] = [];
+
+  for (let count = least; count <= mostSlots(kind); count++) {
+    choices.push(count);
+  }
+  return choices;
 };
 
-const TEAM_CHOICES = Array.from({ length: TEAM_SIZE }, (_, at) => at + 1);
+const TEAM_CHOICES: number[] = [];
 
-const countOptions = (counts: number[]): { value: number; label: string }[] =>
-  counts.map((count) => ({ value: count, label: String(count) }));
+for (let count = 1; count <= TEAM_SIZE; count++) {
+  TEAM_CHOICES.push(count);
+}
+
+const countOptions = (counts: number[]): { value: number; label: string }[] => {
+  const options: { value: number; label: string }[] = [];
+
+  for (const count of counts) {
+    options.push({ value: count, label: String(count) });
+  }
+  return options;
+};
 
 export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Element {
   const [draft, setDraft] = createSignal<DuelRules>(props.rules);

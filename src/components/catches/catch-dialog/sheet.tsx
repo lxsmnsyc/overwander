@@ -143,6 +143,15 @@ const CANDY_SETTLE = 500;
 /** How large a candy is drawn on the toast that says a release paid it */
 const CANDY_ART = 24;
 
+function describeItems(items: readonly Items[]): string {
+  const names: string[] = [];
+
+  for (const item of items) {
+    names.push(describeItem(item));
+  }
+  return names.join(', ');
+}
+
 /**
  * One catch in full, shown over the list it was opened from
  */
@@ -264,8 +273,21 @@ export function CatchSheetBody(
     // that flashed the full picture and then hid it, would both be
     // worse than one that fills in
     const entry = answered(props.dex);
-    const kept = entry?.caught.find((tally) => tally.species === species);
-    const seen = entry?.seen.some((tally) => tally.species === species) === true;
+    let kept: NonNullable<typeof entry>['caught'][number] | undefined;
+    let seen = false;
+
+    for (const tally of entry?.caught ?? []) {
+      if (tally.species === species) {
+        kept = tally;
+        break;
+      }
+    }
+    for (const tally of entry?.seen ?? []) {
+      if (tally.species === species) {
+        seen = true;
+        break;
+      }
+    }
 
     return {
       met: seen || kept != null,
@@ -677,8 +699,16 @@ export function CatchSheetBody(
    * What in the bag could be handed over. The button that opens the
    * bag asks this rather than opening onto an empty list
    */
-  const holdables = (): InventoryEntry[] =>
-    (props.bag.latest ?? []).filter((entry) => isHoldable(entry.item));
+  const holdables = (): InventoryEntry[] => {
+    const found: InventoryEntry[] = [];
+
+    for (const entry of props.bag.latest ?? []) {
+      if (isHoldable(entry.item)) {
+        found.push(entry);
+      }
+    }
+    return found;
+  };
 
   const moveItem = (item: Items, give: boolean): void => {
     const uid = owned();
@@ -1003,8 +1033,14 @@ export function CatchSheetBody(
    * once over the whole bag, so the menu entry that opens the picker
    * knows whether there would be a list in it
    */
-  const hasUsableItem = (): boolean =>
-    (props.bag.latest ?? []).some((entry) => entry.amount > 0 && isUsable(entry.item));
+  const hasUsableItem = (): boolean => {
+    for (const entry of props.bag.latest ?? []) {
+      if (entry.amount > 0 && isUsable(entry.item)) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   /**
    * Spend it, whatever it is.
@@ -1474,11 +1510,7 @@ export function CatchSheetBody(
                           player forgets */}
                       <Show when={releasing() && loaded().items.length > 0}>
                         <Meta>
-                          What it is holding comes back to the bag:{' '}
-                          {loaded()
-                            .items.map((item) => describeItem(item))
-                            .join(', ')}
-                          .
+                          What it is holding comes back to the bag: {describeItems(loaded().items)}.
                         </Meta>
                       </Show>
                       <Show when={isFavorite(loaded())}>

@@ -41,7 +41,16 @@ export function trainerLevels(trainer: TrainerClass): [minimum: number, maximum:
   return isAceTrainer(trainer) ? ACE_TRAINER_LEVELS : TYPE_TRAINER_LEVELS;
 }
 
-const LAIR_SPECIES = new Set(EVERY_LAIR.flatMap(getLairResidents));
+const LAIR_SPECIES = (() => {
+  const residents = new Set<Species>();
+
+  for (const lair of EVERY_LAIR) {
+    for (const species of getLairResidents(lair)) {
+      residents.add(species);
+    }
+  }
+  return residents;
+})();
 
 /**
  * What a class may field: their own region's fully-grown species of
@@ -55,17 +64,29 @@ const LAIR_SPECIES = new Set(EVERY_LAIR.flatMap(getLairResidents));
 export function getTrainerPool(trainer: TrainerClass): Species[] {
   const types = new Set(TRAINER_TYPES[trainer]);
 
-  return getSpeciesByRegion(TRAINER_REGIONS[trainer]).filter((species) => {
+  const pool: Species[] = [];
+
+  for (const species of getSpeciesByRegion(TRAINER_REGIONS[trainer])) {
     if (species === Species.Egg || LAIR_SPECIES.has(species) || !isBaseForm(species)) {
-      return false;
+      continue;
     }
     // "Rare" is the shape of the line rather than the odds of meeting
     // one: a species nothing evolves into is what a trainer this far
     // along would be walking with
     if (!isGrownSpecies(species)) {
-      return false;
+      continue;
     }
     // An empty list is every type there is, which is the Ace's
-    return types.size === 0 || getSpeciesData(species).types.some((one) => types.has(one));
-  });
+    if (types.size === 0) {
+      pool.push(species);
+      continue;
+    }
+    for (const one of getSpeciesData(species).types) {
+      if (types.has(one)) {
+        pool.push(species);
+        break;
+      }
+    }
+  }
+  return pool;
 }

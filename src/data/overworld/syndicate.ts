@@ -122,10 +122,16 @@ const SYNDICATE_BIOMES: Record<Syndicate.Magma | Syndicate.Aqua, Biome[]> = {
   ],
 };
 
-const CLAIMED = new Map<Biome, Syndicate>([
-  ...SYNDICATE_BIOMES[Syndicate.Magma].map((biome): [Biome, Syndicate] => [biome, Syndicate.Magma]),
-  ...SYNDICATE_BIOMES[Syndicate.Aqua].map((biome): [Biome, Syndicate] => [biome, Syndicate.Aqua]),
-]);
+const CLAIMED = (() => {
+  const claimed = new Map<Biome, Syndicate>();
+
+  for (const syndicate of [Syndicate.Magma, Syndicate.Aqua] as const) {
+    for (const biome of SYNDICATE_BIOMES[syndicate]) {
+      claimed.set(biome, syndicate);
+    }
+  }
+  return claimed;
+})();
 
 /** Whose cell this is, in this biome */
 export function getSyndicate(biome: Biome): Syndicate {
@@ -166,8 +172,15 @@ export function gruntName(syndicate: Syndicate): string {
 }
 
 /** Every mark the three of them pay, for the shelf that lists them */
-export const SYNDICATE_HONORS: Awards[] = SYNDICATES.flatMap((syndicate) => [
-  SYNDICATE_GRUNT_HONORS[syndicate],
-  ...SYNDICATE_EXECUTIVES[syndicate].map((executive) => EXECUTIVE_HONORS[executive]),
-  SYNDICATE_BOSS_HONORS[syndicate],
-]);
+export const SYNDICATE_HONORS: Awards[] = (() => {
+  const honors: Awards[] = [];
+
+  for (const syndicate of SYNDICATES) {
+    honors.push(SYNDICATE_GRUNT_HONORS[syndicate]);
+    for (const executive of SYNDICATE_EXECUTIVES[syndicate]) {
+      honors.push(EXECUTIVE_HONORS[executive]);
+    }
+    honors.push(SYNDICATE_BOSS_HONORS[syndicate]);
+  }
+  return honors;
+})();

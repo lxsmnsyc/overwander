@@ -331,8 +331,14 @@ export function getRecallableMoves(
   known: Iterable<Moves>,
 ): Moves[] {
   const knows = new Set(known);
+  const moves: Moves[] = [];
 
-  return getLevelUpMoves(species, level).filter((move) => !knows.has(move));
+  for (const move of getLevelUpMoves(species, level)) {
+    if (!knows.has(move)) {
+      moves.push(move);
+    }
+  }
+  return moves;
 }
 
 /**
@@ -349,8 +355,14 @@ export const TUTOR_FEE = Items.HeartScale;
  */
 export function getTutorableMoves(species: Species, known: Iterable<Moves>): Moves[] {
   const knows = new Set(known);
+  const moves: Moves[] = [];
 
-  return getTeachableMoves(species).filter((move) => !knows.has(move));
+  for (const move of getTeachableMoves(species)) {
+    if (!knows.has(move)) {
+      moves.push(move);
+    }
+  }
+  return moves;
 }
 
 /**
@@ -371,8 +383,12 @@ export const CHANNELER_FEE = Items.HeartScale;
  */
 export function getAwakenableAbilities(species: Species, known: Iterable<Abilities>): Abilities[] {
   const knows = new Set(known);
+  const abilities: Abilities[] = [];
 
-  return [...getSpeciesAbilities(species)].filter(
-    (ability) => countsAgainstSlots(ability) && !knows.has(ability),
-  );
+  for (const ability of getSpeciesAbilities(species)) {
+    if (countsAgainstSlots(ability) && !knows.has(ability)) {
+      abilities.push(ability);
+    }
+  }
+  return abilities;
 }

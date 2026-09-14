@@ -97,14 +97,20 @@ export const ADMIN_SECTIONS: AdminSection[] = [
  * open onto a refusal is a worse answer than a shorter sidebar
  */
 export function linksFor(role: string): AdminSection[] {
-  return ADMIN_SECTIONS.filter(
-    (entry) =>
+  const links: AdminSection[] = [];
+
+  for (const entry of ADMIN_SECTIONS) {
+    if (
       entry.hidden !== true &&
       (entry.runs !== true || runsTheGame(role)) &&
       // A tool that writes into the working tree is a door onto
       // nothing anywhere else, so it is not offered there
-      (entry.dev !== true || import.meta.env.DEV),
-  );
+      (entry.dev !== true || import.meta.env.DEV)
+    ) {
+      links.push(entry);
+    }
+  }
+  return links;
 }
 
 /**

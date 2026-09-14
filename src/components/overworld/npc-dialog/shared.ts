@@ -153,7 +153,12 @@ export function optionsOf(props: CounterProps): CatchOption[] {
  * reminder, a lesson and a channelling
  */
 export function scalesIn(props: CounterProps): number {
-  return (props.bag.latest ?? []).find((entry) => entry.item === REMINDER_FEE)?.amount ?? 0;
+  for (const entry of props.bag.latest ?? []) {
+    if (entry.item === REMINDER_FEE) {
+      return entry.amount;
+    }
+  }
+  return 0;
 }
 
 /** What went wrong, said the way every counter says it */

@@ -100,11 +100,13 @@ function bindKey(action: GameAction, key: string): void {
     return;
   }
 
-  const clashing = ACTION_ORDER.find((one) => binds[one] === key);
   const next = { ...binds, [action]: key };
 
-  if (clashing != null) {
-    next[clashing] = binds[action];
+  for (const one of ACTION_ORDER) {
+    if (binds[one] === key) {
+      next[one] = binds[action];
+      break;
+    }
   }
   setSetting('keys', next);
 }

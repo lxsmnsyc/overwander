@@ -66,9 +66,18 @@ function Lessons(props: {
   );
 }
 
+/** The option the counter has picked, or null */
+function pickedOf(props: MoveCounterProps): CatchOption | null {
+  for (const option of props.options) {
+    if (option.id === props.picked) {
+      return option;
+    }
+  }
+  return null;
+}
+
 export function ReminderCounter(props: MoveCounterProps): JSX.Element {
-  const standing = (): CatchOption | null =>
-    props.options.find((option) => option.id === props.picked) ?? null;
+  const standing = (): CatchOption | null => pickedOf(props);
 
   /**
    * What he could give this one back: everything its species learns by
@@ -119,8 +128,7 @@ export function ReminderCounter(props: MoveCounterProps): JSX.Element {
 }
 
 export function TutorCounter(props: MoveCounterProps): JSX.Element {
-  const standing = (): CatchOption | null =>
-    props.options.find((option) => option.id === props.picked) ?? null;
+  const standing = (): CatchOption | null => pickedOf(props);
 
   const lessons = (option: CatchOption): Moves[] =>
     getTutorableMoves(option.caught.species, option.caught.moves);

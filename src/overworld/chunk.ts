@@ -66,9 +66,17 @@ const MAX_LANDMARKS = 4;
  * the cave mouths, which are cut where the ground has a hillside to
  * cut them into rather than rolled anywhere
  */
-const WILD_LANDMARKS = LANDMARKS.filter(
-  (kind) => !new Set(TOWN_LANDMARKS).has(kind) && kind !== Landmark.CaveMouth,
-);
+const WILD_LANDMARKS = ((): Landmark[] => {
+  const town = new Set(TOWN_LANDMARKS);
+  const wild: Landmark[] = [];
+
+  for (const kind of LANDMARKS) {
+    if (!town.has(kind) && kind !== Landmark.CaveMouth) {
+      wild.push(kind);
+    }
+  }
+  return wild;
+})();
 
 /**
  * What the caves hold.
@@ -132,18 +140,20 @@ function biomeLandmarks(biome: Biome, depth: Depth): Landmark[] {
     return CAVE_LANDMARKS;
   }
 
-  const pool = WILD_LANDMARKS.filter((kind) => {
+  const pool: Landmark[] = [];
+
+  for (const kind of WILD_LANDMARKS) {
     if (isOpenSea(biome) && SEA_PEOPLE.has(kind)) {
-      return false;
+      continue;
     }
-    if (kind === Landmark.BerryPatch) {
-      return growsBerries(biome);
+    if (kind === Landmark.BerryPatch && !growsBerries(biome)) {
+      continue;
     }
-    if (kind === Landmark.ApricornTree) {
-      return growsTrees(biome);
+    if (kind === Landmark.ApricornTree && !growsTrees(biome)) {
+      continue;
     }
-    return true;
-  });
+    pool.push(kind);
+  }
 
   BIOME_LANDMARKS.set(key, pool);
   return pool;
@@ -450,9 +460,39 @@ export default class Chunk {
     const x = worldCell(this.x, cell % CHUNK_CELLS);
     const y = worldCell(this.y, Math.floor(cell / CHUNK_CELLS));
 
-    return SURROUNDING.some(
-      ([dx, dy]) => isFace(this.world, x + dx, y + dy) && isSeam(this.world, x + dx, y + dy),
-    );
+    for (const [dx, dy] of SURROUNDING) {
+      if (isFace(this.world, x + dx, y + dy) && isSeam(this.world, x + dx, y + dy)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /** The first cell in the order that scenery may still grow on */
+  private firstDecorationCell(
+    order: number[],
+    taken: Set<number>,
+    landmarks: Set<number>,
+    sea: boolean,
+  ): number | undefined {
+    for (const candidate of order) {
+      if (
+        !taken.has(candidate) &&
+        !landmarks.has(candidate) &&
+        (sea || this.getCellRole(candidate) === 'ground') &&
+        !this.getFaceCells().has(candidate) &&
+        this.isClear(candidate) &&
+        // Nothing grows in the street: a town is swept, and its
+        // scenery is the buildings on it
+        !this.isTownCell(candidate) &&
+        !this.isBesideSeam(candidate) &&
+        // nor on a route, which is walked like a street
+        !this.isRouteCell(candidate)
+      ) {
+        return candidate;
+      }
+    }
+    return undefined;
   }
 
   private decorationCells: Map<number, Decoration> | null = null;
@@ -493,20 +533,7 @@ export default class Chunk {
           const roll = rng.random();
           // On land scenery keeps to dry ground, so a chunk under a lake
           // simply has less of it
-          const cell = order.find(
-            (candidate) =>
-              !taken.has(candidate) &&
-              !landmarks.has(candidate) &&
-              (sea || this.getCellRole(candidate) === 'ground') &&
-              !this.getFaceCells().has(candidate) &&
-              this.isClear(candidate) &&
-              // Nothing grows in the street: a town is swept, and its
-              // scenery is the buildings on it
-              !this.isTownCell(candidate) &&
-              !this.isBesideSeam(candidate) &&
-              // nor on a route, which is walked like a street
-              !this.isRouteCell(candidate),
-          );
+          const cell = this.firstDecorationCell(order, taken, landmarks, sea);
 
           if (cell == null) {
             break;
@@ -614,7 +641,14 @@ export default class Chunk {
         // The draws land in pair order: the landmark, then its cell.
         // A singleton already rolled leaves the pool for the rest of
         // the chunk: a second portal, gym or champion is never rolled
-        const pool = base.filter((kind) => !(SINGLETON_LANDMARKS.has(kind) && rolled.has(kind)));
+        const pool: Landmark[] = [];
+
+        for (const kind of base) {
+          if (!(SINGLETON_LANDMARKS.has(kind) && rolled.has(kind))) {
+            pool.push(kind);
+          }
+        }
+
         const landmark = pool[Math.floor(rng.random() * pool.length)];
         // Everything that is a landmark now needs ground under it. The
         // one that did not was the phenomenon, which is no longer one:
@@ -632,10 +666,20 @@ export default class Chunk {
         // landmark stands beside the pool rather than in it, and a
         // chunk one lake covers is stood on all the same rather than
         // left with nothing on it
-        const cell =
-          order.find((candidate) => free(candidate) && this.getCellRole(candidate) === 'ground') ??
-          order.find(free);
+        let cell: number | undefined;
+        let wet: number | undefined;
 
+        for (const candidate of order) {
+          if (!free(candidate)) {
+            continue;
+          }
+          if (this.getCellRole(candidate) === 'ground') {
+            cell = candidate;
+            break;
+          }
+          wet ??= candidate;
+        }
+        cell ??= wet;
         if (cell == null) {
           break;
         }

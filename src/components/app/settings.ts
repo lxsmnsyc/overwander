@@ -92,7 +92,12 @@ function defaults(): GameSettings {
 function oneOf<V extends string>(value: unknown, allowed: readonly V[], fallback: V): V {
   const said = asString(value);
 
-  return allowed.find((option) => option === said) ?? fallback;
+  for (const option of allowed) {
+    if (option === said) {
+      return option;
+    }
+  }
+  return fallback;
 }
 
 /**

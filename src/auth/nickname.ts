@@ -74,11 +74,15 @@ export function asNickname(name: string, limit = NICKNAME_LIMIT): string {
   // becomes the space it stood for rather than vanishing and joining
   // them, and again so a dropped character does not leave a gap where
   // it was
-  const written = [...name.replace(/\s+/gu, ' ')]
-    .filter((character) => ALLOWED.test(character))
-    .join('')
-    .replace(/ +/gu, ' ')
-    .trim();
+  let stripped = '';
+
+  for (const character of name.replace(/\s+/gu, ' ')) {
+    if (ALLOWED.test(character)) {
+      stripped += character;
+    }
+  }
+
+  const written = stripped.replace(/ +/gu, ' ').trim();
 
   // Trimmed again after the cut: a name shortened mid-word can end on
   // the space before it

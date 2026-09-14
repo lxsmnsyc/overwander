@@ -84,8 +84,14 @@ function LobbyRows(
   const named = (uid: string): string => props.names()?.get(uid)?.nickname ?? uid;
   const faceOf = (uid: string): string | null => props.names()?.get(uid)?.sprite ?? null;
 
-  const mine = (): DuelMember | undefined =>
-    duel()?.members.find((member) => member.player === props.user.uid);
+  const mine = (): DuelMember | undefined => {
+    for (const member of duel()?.members ?? []) {
+      if (member.player === props.user.uid) {
+        return member;
+      }
+    }
+    return undefined;
+  };
   const fighters = (): DuelMember[] => {
     const record = duel();
 
@@ -94,7 +100,23 @@ function LobbyRows(
   const watchers = (): string[] => {
     const record = duel();
 
-    return record == null ? [] : getDuelSpectators(record).map((member) => member.player);
+    const uids: string[] = [];
+
+    if (record != null) {
+      for (const member of getDuelSpectators(record)) {
+        uids.push(member.player);
+      }
+    }
+    return uids;
+  };
+  /** Everybody in the room, fighting or watching */
+  const present = (): string[] => {
+    const uids: string[] = [];
+
+    for (const member of duel()?.members ?? []) {
+      uids.push(member.player);
+    }
+    return uids;
   };
   const isHost = (): boolean => duel()?.host === props.user.uid;
   const teamSize = (): number => duel()?.teamSize ?? DEFAULT_DUEL_RULES.teamSize;
@@ -240,8 +262,8 @@ function LobbyRows(
 
             <DialogSection title="Fighters">
               <List>
-                <For each={Array.from({ length: DUEL_FIGHTERS }, (_, at) => at)}>
-                  {(at) => seat(() => fighters().at(at), at)}
+                <For each={Array.from<null>({ length: DUEL_FIGHTERS }).fill(null)}>
+                  {(_, at) => seat(() => fighters().at(at()), at())}
                 </For>
               </List>
             </DialogSection>
@@ -341,7 +363,7 @@ function LobbyRows(
         }}
         title="Invite to the battle"
         description="They see the call in their own Battle panel, and joining answers it."
-        present={(duel()?.members ?? []).map((member) => member.player)}
+        present={present()}
         // Only the host arranges the fight itself; anybody in the room
         // may call somebody in to watch it
         fighters={isHost() && seatFree()}
@@ -404,12 +426,24 @@ export default function DuelLobby(props: DuelLobbyProps): JSX.Element {
    * it wears the name and the face that profile opens under
    */
   const [names] = createResource(
-    () =>
-      (duel()?.members ?? [])
-        .map((member) => member.player)
-        .sort()
-        .join(','),
-    async (key): Promise<Map<string, Profile>> => getProfiles(key.split(',').filter(Boolean)),
+    () => {
+      const uids: string[] = [];
+
+      for (const member of duel()?.members ?? []) {
+        uids.push(member.player);
+      }
+      return uids.sort().join(',');
+    },
+    async (key): Promise<Map<string, Profile>> => {
+      const uids: string[] = [];
+
+      for (const uid of key.split(',')) {
+        if (uid !== '') {
+          uids.push(uid);
+        }
+      }
+      return getProfiles(uids);
+    },
   );
 
   return (

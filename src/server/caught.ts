@@ -485,7 +485,14 @@ export async function takeItem(uid: string, catchId: string, item: Items): Promi
 
     // Only the one copy comes off, so a future stack of duplicates
     // still gives back exactly what it took
-    await updateCaughtIn(transaction, catchId, { items: held.filter((_, at) => at !== index) });
+    const kept: Items[] = [];
+
+    for (const [at, one] of held.entries()) {
+      if (at !== index) {
+        kept.push(one);
+      }
+    }
+    await updateCaughtIn(transaction, catchId, { items: kept });
     await writeStackIn(transaction, ITEM_STACKS, uid, item, carried + 1);
     return true;
   });
@@ -682,11 +689,11 @@ export async function releaseCatches(uid: string, catchIds: string[]): Promise<B
   });
 
   if (gone.size > 0) {
-    const bumps: ProgressBump[] = [...gone].map(([species, count]) => [
-      Metric.Releases,
-      species,
-      count,
-    ]);
+    const bumps: ProgressBump[] = [];
+
+    for (const [species, count] of gone) {
+      bumps.push([Metric.Releases, species, count]);
+    }
 
     await bumpProgress(uid, bumps);
   }

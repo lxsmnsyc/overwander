@@ -149,7 +149,12 @@ function sharesEggGroup(left: Species, right: Species): boolean {
 
   const groups = new Set(getSpeciesData(left).eggGroups);
 
-  return getSpeciesData(right).eggGroups.some((group) => groups.has(group));
+  for (const group of getSpeciesData(right).eggGroups) {
+    if (groups.has(group)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -284,7 +289,14 @@ export function inheritIVs(
     forced.set(stat, holder);
   }
 
-  const pool = STAT_ORDER.filter((stat) => !forced.has(stat));
+  const pool: Stats[] = [];
+
+  for (const stat of STAT_ORDER) {
+    if (!forced.has(stat)) {
+      pool.push(stat);
+    }
+  }
+
   const inherited = new Set<Stats>();
 
   for (let i = forced.size; i < copies && pool.length > 0; i++) {
@@ -396,23 +408,37 @@ export function inheritMoves(
   const knownLeft = new Set(left.moves);
   const knownRight = new Set(right.moves);
   const known = new Set([...left.moves, ...right.moves]);
-  const eggMoves = getEggMoves(species).filter((move) => known.has(move));
+  const eggMoves: Moves[] = [];
+
+  for (const move of getEggMoves(species)) {
+    if (known.has(move)) {
+      eggMoves.push(move);
+    }
+  }
+
   const inherited = new Set(eggMoves);
   // Early is the whole point: a move the species is owed at level 40
   // is worth a slot at level 1, so it goes ahead of what it hatches
   // with rather than competing with it
-  const shared = getLevelUpMoves(species, MAX_LEVEL).filter(
-    (move) => knownLeft.has(move) && knownRight.has(move) && !inherited.has(move),
-  );
-  const passed = new Set([...eggMoves, ...shared]);
+  const shared: Moves[] = [];
 
+  for (const move of getLevelUpMoves(species, MAX_LEVEL)) {
+    if (knownLeft.has(move) && knownRight.has(move) && !inherited.has(move)) {
+      shared.push(move);
+    }
+  }
+
+  const passed = new Set([...eggMoves, ...shared]);
   // Inherited first, so they survive the four-move limit: they are
   // the ones the pair was put together for
-  return [
-    ...eggMoves,
-    ...shared,
-    ...deriveMoves(species, level).filter((move) => !passed.has(move)),
-  ].slice(0, MOVE_LIMIT);
+  const moves: Moves[] = [...eggMoves, ...shared];
+
+  for (const move of deriveMoves(species, level)) {
+    if (!passed.has(move)) {
+      moves.push(move);
+    }
+  }
+  return moves.slice(0, MOVE_LIMIT);
 }
 
 /**

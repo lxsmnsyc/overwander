@@ -22,15 +22,29 @@ export function asBoolean(value: unknown): boolean {
 }
 
 export function asNumberArray(value: unknown): number[] {
-  return Array.isArray(value)
-    ? value.filter((entry): entry is number => typeof entry === 'number')
-    : [];
+  const numbers: number[] = [];
+
+  if (isUnknownArray(value)) {
+    for (const entry of value) {
+      if (typeof entry === 'number') {
+        numbers.push(entry);
+      }
+    }
+  }
+  return numbers;
 }
 
 export function asStringArray(value: unknown): string[] {
-  return Array.isArray(value)
-    ? value.filter((entry): entry is string => typeof entry === 'string')
-    : [];
+  const strings: string[] = [];
+
+  if (isUnknownArray(value)) {
+    for (const entry of value) {
+      if (typeof entry === 'string') {
+        strings.push(entry);
+      }
+    }
+  }
+  return strings;
 }
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
@@ -50,7 +64,16 @@ function isUnknownArray(value: unknown): value is unknown[] {
  * a result set to records, done by guard rather than assertion
  */
 export function asRecordArray(value: unknown): Record<string, unknown>[] {
-  return isUnknownArray(value) ? value.filter(isRecord) : [];
+  const records: Record<string, unknown>[] = [];
+
+  if (isUnknownArray(value)) {
+    for (const entry of value) {
+      if (isRecord(entry)) {
+        records.push(entry);
+      }
+    }
+  }
+  return records;
 }
 
 export function asStatRecord(value: unknown): Record<Stats, number> {

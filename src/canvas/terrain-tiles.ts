@@ -270,9 +270,9 @@ export function turned(near: Around, turns: number): Around {
   }
   const spun = { ...near };
 
-  CLOCKWISE.forEach((side, at) => {
+  for (const [at, side] of CLOCKWISE.entries()) {
     spun[side] = near[CLOCKWISE[(at - step + 8) % 8]];
-  });
+  }
   return spun;
 }
 
@@ -446,7 +446,13 @@ function wholeAt(
     row = near.s ? 1 : 2;
   }
   if (hasInner && column === 1 && row === 1) {
-    const short = (['nw', 'ne', 'sw', 'se'] as const).filter((one) => !near[one]);
+    const short: ('nw' | 'ne' | 'sw' | 'se')[] = [];
+
+    for (const one of ['nw', 'ne', 'sw', 'se'] as const) {
+      if (!near[one]) {
+        short.push(one);
+      }
+    }
 
     if (short.length > 0 && (short.length === 1 || !only)) {
       const one = short[0];
@@ -503,21 +509,38 @@ export default async function loadTerrainTiles(): Promise<TerrainTiles> {
   context.drawImage(image, 0, 0);
 
   const sheet = context.getImageData(0, 0, image.width, image.height);
-  const pieces = asRecordArray(root.pieces).map((one) => ({
-    from: asString(one.from),
-    tone: asTone(one.tone),
-    fill: asRect(one.fill) ?? [0, 0, 16, 16],
-    art: asRect(one.art),
-    corner: asRect(one.corner),
-    skirt: asRect(one.skirt),
-    cornerSkirt: asRect(one.cornerSkirt),
-  }));
-  const entries: Entry[] = asRecordArray(root.terrains).map((one) => ({
-    biome: asNumber(one.biome),
-    role: ROLES.find((role) => role === one.role) ?? 'ground',
-    name: asString(one.name),
-    piece: asNumber(one.piece),
-  }));
+  const pieces: Piece[] = [];
+
+  for (const one of asRecordArray(root.pieces)) {
+    pieces.push({
+      from: asString(one.from),
+      tone: asTone(one.tone),
+      fill: asRect(one.fill) ?? [0, 0, 16, 16],
+      art: asRect(one.art),
+      corner: asRect(one.corner),
+      skirt: asRect(one.skirt),
+      cornerSkirt: asRect(one.cornerSkirt),
+    });
+  }
+
+  const entries: Entry[] = [];
+
+  for (const one of asRecordArray(root.terrains)) {
+    let role: TerrainRole = 'ground';
+
+    for (const known of ROLES) {
+      if (known === one.role) {
+        role = known;
+        break;
+      }
+    }
+    entries.push({
+      biome: asNumber(one.biome),
+      role,
+      name: asString(one.name),
+      piece: asNumber(one.piece),
+    });
+  }
 
   // The deep water is listed apart, since only the countries with a pool
   // wide enough to darken carry one

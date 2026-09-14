@@ -294,10 +294,17 @@ export const BIOME_CONFIGS: { [key in Exclude<Biome, Biome.Beyond>]: BiomeConfig
  * the one left out, since nothing is ever generated there: a species
  * that lives everywhere lives in these
  */
-// tsc requires the assertion to produce Biomes from the record keys;
-// tsgolint resolves the const enum to number
-// oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-export const WILD_BIOMES: Biome[] = Object.keys(BIOME_CONFIGS).map(Number) as Biome[];
+export const WILD_BIOMES: Biome[] = (() => {
+  const biomes: Biome[] = [];
+
+  for (const key of Object.keys(BIOME_CONFIGS)) {
+    // tsc requires the assertion to produce Biomes from the record keys;
+    // tsgolint resolves the const enum to number
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    biomes.push(Number(key) as Biome);
+  }
+  return biomes;
+})();
 
 /**
  * Where the shoreline is on the elevation axis.
@@ -329,12 +336,17 @@ export const ELEVATION_WEIGHT = 2;
  * hundred calls for one chunk, and `Object.entries` on every one of
  * them allocated more than the arithmetic it fed
  */
-const CLIMATE_TARGETS: [biome: Biome, config: BiomeConfig][] = Object.entries(BIOME_CONFIGS).map(
-  // tsc requires the assertion to produce a Biome from the record
-  // key; tsgolint resolves the const enum to number
-  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-  ([key, config]) => [Number(key) as Biome, config],
-);
+const CLIMATE_TARGETS: [biome: Biome, config: BiomeConfig][] = (() => {
+  const targets: [biome: Biome, config: BiomeConfig][] = [];
+
+  for (const [key, config] of Object.entries(BIOME_CONFIGS)) {
+    // tsc requires the assertion to produce a Biome from the record
+    // key; tsgolint resolves the const enum to number
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    targets.push([Number(key) as Biome, config]);
+  }
+  return targets;
+})();
 
 export function getBiome(humidity: number, temperature: number, elevation: number): Biome {
   let nearest = Biome.DeepOcean;

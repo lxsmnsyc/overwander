@@ -52,16 +52,20 @@ function fromSnapshotRow(row: Record<string, unknown>): SnapshotRecord {
   const spawns = asRecordArray(row.snapshot_spawns).sort(
     (left, right) => Number(left.idx ?? 0) - Number(right.idx ?? 0),
   );
+  const rolls: Record<string, unknown>[] = [];
 
+  for (const entry of spawns) {
+    rolls.push({
+      species: entry.species,
+      individualValue: entry.individual_value,
+      traitValue: entry.trait_value,
+    });
+  }
   return asSnapshotRecord({
     seed: row.chunk_seed,
     offset: row.utc_offset,
     timestamp: row.window_at,
-    spawns: spawns.map((entry) => ({
-      species: entry.species,
-      individualValue: entry.individual_value,
-      traitValue: entry.trait_value,
-    })),
+    spawns: rolls,
   });
 }
 
@@ -126,17 +130,21 @@ async function resolveSnapshotWindow(
   }
 
   const timestamp = Math.floor(now / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
+  const rolled: SnapshotRecord['spawns'] = [];
+
+  for (const [species, individualValue, traitValue] of new ChunkSnapshot(
+    chunk,
+    timestamp,
+    offset,
+  ).getSpawns(count)) {
+    rolled.push({ species, individualValue, traitValue });
+  }
+
   const record: SnapshotRecord = {
     seed: chunk.seed,
     offset: asOffset(offset),
     timestamp,
-    spawns: new ChunkSnapshot(chunk, timestamp, offset)
-      .getSpawns(count)
-      .map(([species, individualValue, traitValue]) => ({
-        species,
-        individualValue,
-        traitValue,
-      })),
+    spawns: rolled,
   };
 
   // The publish is a definer function: shape-checked, and monotonic,
@@ -183,7 +191,12 @@ export async function listChunkWindows(seed: string): Promise<SnapshotRecord[]> 
     )
     .eq('chunk_seed', seed);
 
-  return asRecordArray(data).map(fromSnapshotRow);
+  const windows: SnapshotRecord[] = [];
+
+  for (const row of asRecordArray(data)) {
+    windows.push(fromSnapshotRow(row));
+  }
+  return windows;
 }
 
 /**
@@ -223,10 +236,15 @@ export async function visitChunk(
   // server re-derives the name from
   const key = new ChunkSnapshot(chunk, record.timestamp, offset).key;
 
-  return record.spawns.map((roll, index) => [
-    spawnId(key, record.timestamp, index),
-    [roll.species, roll.individualValue, roll.traitValue],
-  ]);
+  const spawns: [string, Spawn][] = [];
+
+  for (const [index, roll] of record.spawns.entries()) {
+    spawns.push([
+      spawnId(key, record.timestamp, index),
+      [roll.species, roll.individualValue, roll.traitValue],
+    ]);
+  }
+  return spawns;
 }
 
 /**

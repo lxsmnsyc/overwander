@@ -136,6 +136,30 @@ function asArray(value: unknown): unknown[] {
  */
 export function asBasicSpriteData(value: unknown): BasicSpriteData {
   const root = asRecord(value);
+  const images: BasicSpriteImage[] = [];
+
+  for (const entry of asArray(root.images)) {
+    const image = asRecord(entry);
+    const width = asNumber(image.width);
+    const height = asNumber(image.height);
+    const trim = asArray(image.trim);
+
+    images.push({
+      name: asString(image.name),
+      x: asNumber(image.x),
+      y: asNumber(image.y),
+      width,
+      height,
+      // A sheet packed before the cropping existed says nothing about
+      // a cell, and the picture is the whole of it
+      sourceWidth: asNumber(image.sourceWidth) || width,
+      sourceHeight: asNumber(image.sourceHeight) || height,
+      trim: [asNumber(trim[0]), asNumber(trim[1])],
+      ...(Array.isArray(image.base) && image.base.length === 2
+        ? { base: [asNumber(image.base[0]), asNumber(image.base[1])] satisfies [number, number] }
+        : {}),
+    });
+  }
 
   return {
     compact: root.compact === true,
@@ -144,28 +168,7 @@ export function asBasicSpriteData(value: unknown): BasicSpriteData {
     ...(typeof root.stands === 'number' && Number.isFinite(root.stands) && root.stands > 0
       ? { stands: root.stands }
       : {}),
-    images: asArray(root.images).map((entry) => {
-      const image = asRecord(entry);
-      const width = asNumber(image.width);
-      const height = asNumber(image.height);
-      const trim = asArray(image.trim);
-
-      return {
-        name: asString(image.name),
-        x: asNumber(image.x),
-        y: asNumber(image.y),
-        width,
-        height,
-        // A sheet packed before the cropping existed says nothing about
-        // a cell, and the picture is the whole of it
-        sourceWidth: asNumber(image.sourceWidth) || width,
-        sourceHeight: asNumber(image.sourceHeight) || height,
-        trim: [asNumber(trim[0]), asNumber(trim[1])],
-        ...(Array.isArray(image.base) && image.base.length === 2
-          ? { base: [asNumber(image.base[0]), asNumber(image.base[1])] satisfies [number, number] }
-          : {}),
-      };
-    }),
+    images,
   };
 }
 

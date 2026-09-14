@@ -135,16 +135,18 @@ export function drawPhenomenon(
     context.ellipse(spot.x, spot.y + size * 0.12, size * 0.5, size * 0.2, 0, 0, Math.PI * 2);
     context.fill();
 
-    const rolls = Array.from({ length: 5 }, (_, puff) => {
+    const rolls: { x: number; y: number; reach: number }[] = [];
+
+    for (let puff = 0; puff < 5; puff++) {
       const angle = turn + (puff * Math.PI * 2) / 5;
       const breath = 1 + Math.sin(now / 300 + puff * 1.7) * 0.12;
 
-      return {
+      rolls.push({
         x: spot.x + Math.cos(angle) * size * 0.34,
         y: spot.y + Math.sin(angle) * size * 0.15 - size * 0.12,
         reach: size * (0.22 + 0.07 * ((puff * 2) % 3)) * breath,
-      };
-    });
+      });
+    }
 
     rolls.push({
       x: spot.x + Math.sin(turn * 0.7) * size * 0.1,

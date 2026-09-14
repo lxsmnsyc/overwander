@@ -101,7 +101,12 @@ export function unpackIVs(packed: number): Record<Stats, number> {
  * beside the six cannot quietly read as blank
  */
 export function isZeroIVs(packed: number): boolean {
-  return STAT_ORDER.every((stat) => getIV(packed, stat) === 0);
+  for (const stat of STAT_ORDER) {
+    if (getIV(packed, stat) !== 0) {
+      return false;
+    }
+  }
+  return true;
 }
 
 export const PERFECT_IVS = packIVs({

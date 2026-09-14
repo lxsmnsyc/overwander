@@ -61,11 +61,15 @@ function fromTeamRow(row: Record<string, unknown>): TeamRecord {
   const catches = asRecordArray(row.team_catches).sort(
     (left, right) => Number(left.slot ?? 0) - Number(right.slot ?? 0),
   );
+  const ids: string[] = [];
 
+  for (const entry of catches) {
+    ids.push(asString(entry.caught_id));
+  }
   return {
     player: asString(row.player),
     raid: asString(row.raid_id),
-    catches: catches.map((entry) => asString(entry.caught_id)),
+    catches: ids,
   };
 }
 
@@ -78,7 +82,12 @@ export async function listTeams(player: string): Promise<[string, TeamRecord][]>
     .select('id, player, raid_id, team_catches(slot, caught_id)')
     .eq('player', player);
 
-  return asRecordArray(data).map((row) => [String(row.id), fromTeamRow(row)]);
+  const teams: [string, TeamRecord][] = [];
+
+  for (const row of asRecordArray(data)) {
+    teams.push([String(row.id), fromTeamRow(row)]);
+  }
+  return teams;
 }
 
 export async function getTeamSnapshot(id: string): Promise<TeamSnapshotRecord | null> {
@@ -91,11 +100,15 @@ export async function getTeamSnapshot(id: string): Promise<TeamSnapshotRecord | 
   if (data == null) {
     return null;
   }
+
+  const catches: CatchSnapshot[] = [];
+
+  for (const value of Array.isArray(data.catches) ? data.catches : []) {
+    catches.push(asCatchSnapshot(value));
+  }
   return {
     player: asString(data.player),
     alliance: asNumber(data.alliance),
-    catches: (Array.isArray(data.catches) ? data.catches : []).map((value) =>
-      asCatchSnapshot(value),
-    ),
+    catches,
   };
 }

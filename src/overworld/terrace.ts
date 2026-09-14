@@ -70,16 +70,19 @@ function rawLevelAt(world: World, x: number, y: number): number {
  * the water is held to
  */
 function broad(world: World, x: number, y: number, level: number): boolean {
-  return SQUARES.some(([ox, oy]) => {
-    for (let dy = 0; dy < 2; dy += 1) {
-      for (let dx = 0; dx < 2; dx += 1) {
-        if (rawLevelAt(world, x + ox + dx, y + oy + dy) < level) {
-          return false;
-        }
+  for (const [ox, oy] of SQUARES) {
+    let whole = true;
+
+    for (let dy = 0; whole && dy < 2; dy += 1) {
+      for (let dx = 0; whole && dx < 2; dx += 1) {
+        whole = rawLevelAt(world, x + ox + dx, y + oy + dy) >= level;
       }
     }
-    return true;
-  });
+    if (whole) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /** How high the ground stands at a cell */

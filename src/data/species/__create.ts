@@ -230,9 +230,14 @@ export function getRegisteredSpecies(): Species[] {
  * family with nothing behind it is never featured
  */
 export function getRegisteredFamilies(): Families[] {
-  familyIndex ??= [...new Set([...SPECIES_MAP.values()].map((data) => data.family))].sort(
-    (left, right) => left - right,
-  );
+  if (familyIndex == null) {
+    const families = new Set<Families>();
+
+    for (const data of SPECIES_MAP.values()) {
+      families.add(data.family);
+    }
+    familyIndex = [...families].sort((left, right) => left - right);
+  }
   return familyIndex;
 }
 
@@ -319,7 +324,14 @@ export function isBaseForm(species: Species): boolean {
  * variant would be wrong to stage
  */
 export function getBaseForms(): Species[] {
-  return [...SPECIES_MAP.keys()].filter((species) => isBaseForm(species));
+  const forms: Species[] = [];
+
+  for (const species of SPECIES_MAP.keys()) {
+    if (isBaseForm(species)) {
+      forms.push(species);
+    }
+  }
+  return forms;
 }
 
 /**
@@ -360,9 +372,14 @@ export function isWornForm(species: Species): boolean {
  * asking about any species gets back
  */
 export function getWornForms(species: Species): Species[] {
-  return getSpeciesForms(species).filter(
-    (form) => form !== species && getSpeciesData(form).worn === true,
-  );
+  const worn: Species[] = [];
+
+  for (const form of getSpeciesForms(species)) {
+    if (form !== species && getSpeciesData(form).worn === true) {
+      worn.push(form);
+    }
+  }
+  return worn;
 }
 
 export interface SpeciesAbilityPools {
@@ -457,16 +474,25 @@ export function getMovesLearnedBetween(species: Species, from: number, to: numbe
  */
 export function getLevelUpMoves(species: Species, level: number): Moves[] {
   const { level: learned } = getSpeciesData(species).learnSet;
+  const thresholds: number[] = [];
 
-  return [
-    ...new Set(
-      Object.keys(learned)
-        .map(Number)
-        .filter((threshold) => threshold <= level)
-        .sort((a, b) => a - b)
-        .flatMap((threshold) => learned[threshold]),
-    ),
-  ];
+  for (const key of Object.keys(learned)) {
+    const threshold = Number(key);
+
+    if (threshold <= level) {
+      thresholds.push(threshold);
+    }
+  }
+  thresholds.sort((a, b) => a - b);
+
+  const moves = new Set<Moves>();
+
+  for (const threshold of thresholds) {
+    for (const move of learned[threshold]) {
+      moves.add(move);
+    }
+  }
+  return [...moves];
 }
 
 /**

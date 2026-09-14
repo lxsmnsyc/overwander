@@ -455,7 +455,14 @@ for (const trainer of TRAINER_CLASSES) {
  */
 export function getBiomeTrainers(biome: Biome): TrainerClass[] {
   if (isOpenSea(biome)) {
-    return BIOME_TRAINERS[biome].filter((trainer) => SEAFARING.has(trainer));
+    const seafarers: TrainerClass[] = [];
+
+    for (const trainer of BIOME_TRAINERS[biome]) {
+      if (SEAFARING.has(trainer)) {
+        seafarers.push(trainer);
+      }
+    }
+    return seafarers;
   }
   return [
     TrainerClass.AceTrainer,

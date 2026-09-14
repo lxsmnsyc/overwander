@@ -74,7 +74,24 @@ function PortalBody(
   const [busy, setBusy] = createSignal(false);
 
   const towns = createMemo(() => props.towns() ?? []);
-  const chosen = createMemo(() => towns().find((town) => town.name === named()) ?? null);
+  const chosen = createMemo((): TownRecord | null => {
+    const name = named();
+
+    for (const town of towns()) {
+      if (town.name === name) {
+        return town;
+      }
+    }
+    return null;
+  });
+  const options = createMemo(() => {
+    const listed: { value: string; label: string }[] = [];
+
+    for (const town of towns()) {
+      listed.push({ value: town.name, label: town.name });
+    }
+    return listed;
+  });
 
   /**
    * How far the named town is, in chunks. A ring rather than as the
@@ -147,7 +164,7 @@ function PortalBody(
         <Combobox
           label="Town"
           placeholder="Start typing a name"
-          options={towns().map((town) => ({ value: town.name, label: town.name }))}
+          options={options()}
           value={named()}
           disabled={busy()}
           onChange={(name) => {

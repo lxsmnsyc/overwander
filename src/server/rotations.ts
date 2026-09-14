@@ -45,7 +45,12 @@ function questAt(scope: RotationScope, slot: number, now: number): RotationQuest
   if (scope === 'weekly') {
     return slot === 0 ? getWeeklyHunt(now) : null;
   }
-  return getDailyQuests(now).find((quest) => quest.slot === slot) ?? null;
+  for (const quest of getDailyQuests(now)) {
+    if (quest.slot === slot) {
+      return quest;
+    }
+  }
+  return null;
 }
 
 /** The stored baselines for one window, slot to counter value */
@@ -55,9 +60,12 @@ async function readBaselines(uid: string, window: string): Promise<Map<number, n
     where player = ${uid} and window_key = ${window}
   `;
 
-  return new Map(
-    rows.map((row) => [asNumber(asRecord(row).slot), asNumber(asRecord(row).baseline)]),
-  );
+  const baselines = new Map<number, number>();
+
+  for (const row of rows) {
+    baselines.set(asNumber(asRecord(row).slot), asNumber(asRecord(row).baseline));
+  }
+  return baselines;
 }
 
 /**
@@ -95,7 +103,12 @@ async function readClaimedSlots(uid: string, window: string): Promise<Set<number
     select slot from rotation_claims where player = ${uid} and window_key = ${window}
   `;
 
-  return new Set(rows.map((row) => asNumber(asRecord(row).slot)));
+  const slots = new Set<number>();
+
+  for (const row of rows) {
+    slots.add(asNumber(asRecord(row).slot));
+  }
+  return slots;
 }
 
 async function standingOf(
@@ -215,20 +228,24 @@ export async function claimRotation(
     return null;
   }
 
-  const offers = quest.rewards.map((reward, at) =>
-    makeGiftOffer(
-      {
-        reason: `${scope === 'daily' ? 'Daily' : 'Hunt'}: ${quest.name}.`,
-        player: uid,
-        expiresAt: null,
-        kind: GiftKind.Item,
-        item: reward.item,
-        amount: reward.amount,
-      },
-      giftId(`${ROTATION_GIFT}${window}-${slot}-${at}`, uid),
-      now,
-    ),
-  );
+  const offers: ReturnType<typeof makeGiftOffer>[] = [];
+
+  for (const [at, reward] of quest.rewards.entries()) {
+    offers.push(
+      makeGiftOffer(
+        {
+          reason: `${scope === 'daily' ? 'Daily' : 'Hunt'}: ${quest.name}.`,
+          player: uid,
+          expiresAt: null,
+          kind: GiftKind.Item,
+          item: reward.item,
+          amount: reward.amount,
+        },
+        giftId(`${ROTATION_GIFT}${window}-${slot}-${at}`, uid),
+        now,
+      ),
+    );
+  }
 
   await offer(uid, offers, now);
 

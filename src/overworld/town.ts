@@ -419,20 +419,32 @@ export function getTownLots(world: World, town: Town): Lot[] {
   // What this town is: its charter first, so a town short of room
   // keeps what makes it worth walking to and loses a stall. The portal
   // is no lot of theirs, it stands on the plaza
-  const chartered = CHARTER.filter(([, chance]) => rng.random() < chance).map(([kind]) => kind);
-  const wanted = [
-    ...chartered,
-    ...Array.from(
-      { length: Math.max(0, count - chartered.length) },
-      () => TRADES[Math.floor(rng.random() * TRADES.length)],
-    ),
-  ].slice(0, count);
+  const chartered: Landmark[] = [];
+
+  for (const [kind, chance] of CHARTER) {
+    if (rng.random() < chance) {
+      chartered.push(kind);
+    }
+  }
+
+  const wanted = chartered.slice(0, count);
+
+  for (let at = chartered.length; at < count; at += 1) {
+    wanted.push(TRADES[Math.floor(rng.random() * TRADES.length)]);
+  }
+
   const lots: Lot[] = [];
   const taken = new Set<string>();
 
   for (const landmark of wanted) {
-    const spot = open.find(([x, y]) => !taken.has(`${x},${y}`));
+    let spot: [number, number] | undefined;
 
+    for (const candidate of open) {
+      if (!taken.has(`${candidate[0]},${candidate[1]}`)) {
+        spot = candidate;
+        break;
+      }
+    }
     if (spot == null) {
       break;
     }
@@ -481,7 +493,11 @@ export function getTownRoads(world: World, town: Town): Set<number> {
 
   const roads = new Set<number>();
   const lots = getTownLots(world, town);
-  const doors = new Set(lots.map((lot) => pavedKey(town, lot.x, lot.y)));
+  const doors = new Set<number>();
+
+  for (const lot of lots) {
+    doors.add(pavedKey(town, lot.x, lot.y));
+  }
 
   /**
    * Whether a street may run here: inside the town, off the water for
@@ -644,9 +660,22 @@ export function getTownRoads(world: World, town: Town): Set<number> {
 
   for (const lot of lots) {
     const alongX = Math.abs(lot.x - town.x) >= Math.abs(lot.y - town.y);
-    const straight = [elbow(lot, alongX), elbow(lot, !alongX)].find((path) =>
-      path.every(([x, y]) => open(x, y)),
-    );
+    let straight: [x: number, y: number][] | undefined;
+
+    for (const path of [elbow(lot, alongX), elbow(lot, !alongX)]) {
+      let clear = true;
+
+      for (const [x, y] of path) {
+        if (!open(x, y)) {
+          clear = false;
+          break;
+        }
+      }
+      if (clear) {
+        straight = path;
+        break;
+      }
+    }
 
     lay(straight ?? around(lot) ?? []);
   }

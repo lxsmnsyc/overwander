@@ -20,8 +20,21 @@ export interface LandmarkStandings {
 }
 
 /** The cells whose row id is in `ids`, read back through the id they were asked by */
-function cellsOf(ids: Map<string, number>, found: string[]): Set<number> {
-  return new Set(found.flatMap((id) => (ids.has(id) ? [ids.get(id) ?? 0] : [])));
+function cellsOf<K extends string>(
+  ids: Map<string, number>,
+  rows: Record<K, unknown>[],
+  column: K,
+): Set<number> {
+  const cells = new Set<number>();
+
+  for (const row of rows) {
+    const cell = ids.get(asString(row[column]));
+
+    if (cell != null) {
+      cells.add(cell);
+    }
+  }
+  return cells;
 }
 
 /**
@@ -93,24 +106,15 @@ export async function readLandmarkStandings(
           .in('marker', [...visits.keys()]),
   ]);
 
+  const holders = new Map<number, string>();
+
+  for (const row of (held?.data ?? []) as { cell: unknown; holder: unknown }[]) {
+    holders.set(asNumber(row.cell), asString(row.holder));
+  }
   return {
-    cleared: cellsOf(
-      lairs,
-      ((rewards?.data ?? []) as { raid_id: unknown }[]).map((row) => asString(row.raid_id)),
-    ),
-    beaten: cellsOf(
-      stops,
-      ((defeated?.data ?? []) as { stop_id: unknown }[]).map((row) => asString(row.stop_id)),
-    ),
-    seats: new Map(
-      ((held?.data ?? []) as { cell: unknown; holder: unknown }[]).map((row) => [
-        asNumber(row.cell),
-        asString(row.holder),
-      ]),
-    ),
-    visited: cellsOf(
-      visits,
-      ((claims?.data ?? []) as { marker: unknown }[]).map((row) => asString(row.marker)),
-    ),
+    cleared: cellsOf(lairs, (rewards?.data ?? []) as { raid_id: unknown }[], 'raid_id'),
+    beaten: cellsOf(stops, (defeated?.data ?? []) as { stop_id: unknown }[], 'stop_id'),
+    seats: holders,
+    visited: cellsOf(visits, (claims?.data ?? []) as { marker: unknown }[], 'marker'),
   };
 }

@@ -12,14 +12,18 @@ import type Unit from '../unit';
  * arrived by one of these can leave by the other.
  */
 function abilitiesOf(unit: Unit): Abilities[] {
-  return (
-    Object.entries(unit.abilities)
-      .filter(([, carried]) => carried)
+  const abilities: Abilities[] = [];
+
+  for (const [ability, carried] of Object.entries(unit.abilities)) {
+    if (carried) {
       // The list is keyed by the ability enum, which comes back as a
       // string from Object.entries
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-      .map(([ability]) => Number(ability) as Abilities)
-  );
+      abilities.push(Number(ability) as Abilities);
+    }
+  }
+
+  return abilities;
 }
 
 export default function setupAbilityMoves(battle: Battle): void {

@@ -120,11 +120,14 @@ const MARK_ROOM = 0.03;
 
 /** A ring of ground points about the middle of the board */
 export function groundRing(reach: number, points: number): GroundPoint[] {
-  return Array.from({ length: points }, (_, step) => {
+  const ring: GroundPoint[] = [];
+
+  for (let step = 0; step < points; step += 1) {
     const angle = (step / points) * Math.PI * 2;
 
-    return { u: 0.5 + Math.cos(angle) * reach, v: 0.5 + Math.sin(angle) * reach };
-  });
+    ring.push({ u: 0.5 + Math.cos(angle) * reach, v: 0.5 + Math.sin(angle) * reach });
+  }
+  return ring;
 }
 
 /**
@@ -263,15 +266,24 @@ function createView(mode: BoardMode, pitch: number, focal: number | null): Board
    * marooned in empty country; turning gives way instead — see the fit
    * below
    */
-  const corners = OUTER.map((point) => raw(point));
-  const left = Math.min(...corners.map((corner) => corner.x));
-  const top = Math.min(...corners.map((corner) => corner.y));
+  const xs: number[] = [];
+  const ys: number[] = [];
+
+  for (const point of OUTER) {
+    const corner = raw(point);
+
+    xs.push(corner.x);
+    ys.push(corner.y);
+  }
+
+  const left = Math.min(...xs);
+  const top = Math.min(...ys);
   // The real extent rather than twice the furthest corner: the board
   // is not symmetric about its own middle once it is laid back, since
   // the near edge is both wider and further from the centre than the
   // far one
-  const wide = Math.max(...corners.map((corner) => corner.x)) - left;
-  const deep = Math.max(...corners.map((corner) => corner.y)) - top;
+  const wide = Math.max(...xs) - left;
+  const deep = Math.max(...ys) - top;
   // ...and then the same room on every side, measured on the picture
   // rather than on the ground, so the marks have somewhere to be
   // drawn and the board is not pushed up the screen to pay for it
@@ -733,17 +745,20 @@ export function projectCellQuad(index: number, yaw: Yaw = 0): ProjectedPoint[] {
  * is north is answered here rather than left to the order they come in
  */
 export function compassMarks(yaw: Yaw = 0): (ProjectedPoint & { north: boolean })[] {
-  return (
-    [
-      [true, 0, -1],
-      [false, 1, 0],
-      [false, 0, 1],
-      [false, -1, 0],
-    ] as const
-  ).map(([north, du, dv]) => ({
-    north,
-    ...projectGround({ u: 0.5 + du * COMPASS_REACH, v: 0.5 + dv * COMPASS_REACH }, yaw),
-  }));
+  const marks: (ProjectedPoint & { north: boolean })[] = [];
+
+  for (const [north, du, dv] of [
+    [true, 0, -1],
+    [false, 1, 0],
+    [false, 0, 1],
+    [false, -1, 0],
+  ] as const) {
+    marks.push({
+      north,
+      ...projectGround({ u: 0.5 + du * COMPASS_REACH, v: 0.5 + dv * COMPASS_REACH }, yaw),
+    });
+  }
+  return marks;
 }
 
 /**
@@ -753,19 +768,22 @@ export function compassMarks(yaw: Yaw = 0): (ProjectedPoint & { north: boolean }
  * row
  */
 export function depthOrder(cells: Iterable<number>, yaw: Yaw = 0): number[] {
-  const depth = new Map(
-    [...cells].map((index) => [index, projectBoardCell(boardCellOf(index), yaw).y]),
-  );
+  const depth = new Map<number, number>();
 
+  for (const index of cells) {
+    depth.set(index, projectBoardCell(boardCellOf(index), yaw).y);
+  }
   return [...depth.keys()].sort((one, other) => (depth.get(one) ?? 0) - (depth.get(other) ?? 0));
 }
 
 /** The same, over every cell the player may press */
 export function paintOrder(yaw: Yaw = 0): number[] {
-  return depthOrder(
-    boardCells().map((cell) => cell.y * BOARD_CELLS + cell.x),
-    yaw,
-  );
+  const cells: number[] = [];
+
+  for (const cell of boardCells()) {
+    cells.push(cell.y * BOARD_CELLS + cell.x);
+  }
+  return depthOrder(cells, yaw);
 }
 
 /**

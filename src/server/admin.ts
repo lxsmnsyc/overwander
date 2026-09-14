@@ -127,11 +127,21 @@ export async function listPlayers(search: string, page: number): Promise<Listing
   const capped = accounts.length >= SCAN_LIMIT;
 
   // The profiles in one query rather than one read each
+  const uids: string[] = [];
+
+  for (const row of accounts) {
+    uids.push(row.uid);
+  }
+
   const stored = await getSql()`
     select id, nickname, gold, role, banned, ban_reason
-    from profiles where id = any(${accounts.map((row) => row.uid)})
+    from profiles where id = any(${uids})
   `;
-  const profiles = new Map(stored.map((row) => [asString(row.id), row]));
+  const profiles = new Map<string, (typeof stored)[number]>();
+
+  for (const row of stored) {
+    profiles.set(asString(row.id), row);
+  }
 
   for (const row of accounts) {
     const data = profiles.get(row.uid);
@@ -147,13 +157,24 @@ export async function listPlayers(search: string, page: number): Promise<Listing
   }
 
   const wanted = search.trim().toLowerCase();
-  const matched = accounts
-    .filter((row) => wanted === '' || contains(row.nickname, wanted) || contains(row.email, wanted))
-    .sort((left, right) => right.createdAt - left.createdAt);
+  const matched: PlayerRow[] = [];
+
+  for (const row of accounts) {
+    if (wanted === '' || contains(row.nickname, wanted) || contains(row.email, wanted)) {
+      matched.push(row);
+    }
+  }
+  matched.sort((left, right) => right.createdAt - left.createdAt);
+
   const listing = pageOf(matched, page, capped);
+  const listed: string[] = [];
+
+  for (const row of listing.rows) {
+    listed.push(row.uid);
+  }
 
   // The page's positions in one question rather than one a row
-  const standing = await readPositions(listing.rows.map((row) => row.uid));
+  const standing = await readPositions(listed);
 
   for (const row of listing.rows) {
     row.position = standing.get(row.uid) ?? null;
@@ -225,7 +246,10 @@ export async function listRaids(search: string, page: number): Promise<Listing<R
     limit ${SCAN_LIMIT}
   `;
 
-  const raids = stored.map((entry) => {
+  const wanted = search.trim().toLowerCase();
+  const raids: RaidRow[] = [];
+
+  for (const entry of stored) {
     const row = asRecord(entry);
     const record = asRaidRecord({
       kind: row.kind,
@@ -243,9 +267,14 @@ export async function listRaids(search: string, page: number): Promise<Listing<R
       cleared: row.cleared,
     });
 
-    return {
+    const title = getRaidTitle(record);
+
+    if (wanted !== '' && !contains(title, wanted)) {
+      continue;
+    }
+    raids.push({
       id: asString(row.id),
-      title: getRaidTitle(record),
+      title,
       kind: record.kind,
       species: record.species,
       host: record.host,
@@ -256,19 +285,20 @@ export async function listRaids(search: string, page: number): Promise<Listing<R
       chunkX: record.chunk.x,
       chunkY: record.chunk.y,
       cleared: record.cleared,
-    };
-  });
+    });
+  }
 
-  const wanted = search.trim().toLowerCase();
-  const listing = pageOf(
-    raids.filter((raid) => wanted === '' || contains(raid.title, wanted)),
-    page,
-    stored.length >= SCAN_LIMIT,
-  );
+  const listing = pageOf(raids, page, stored.length >= SCAN_LIMIT);
 
   // The hosts of the page alone: naming every host of every raid ever
   // opened is a thousand reads for twenty rows
-  const hosts = [...new Set(listing.rows.map((raid) => raid.host))];
+  const hostSet = new Set<string>();
+
+  for (const raid of listing.rows) {
+    hostSet.add(raid.host);
+  }
+
+  const hosts = [...hostSet];
 
   if (hosts.length === 0) {
     return listing;
@@ -277,7 +307,11 @@ export async function listRaids(search: string, page: number): Promise<Listing<R
   const profiles = await getSql()`
     select id, nickname from profiles where id = any(${hosts})
   `;
-  const named = new Map(profiles.map((row) => [asString(row.id), asString(row.nickname)]));
+  const named = new Map<string, string>();
+
+  for (const row of profiles) {
+    named.set(asString(row.id), asString(row.nickname));
+  }
 
   for (const raid of listing.rows) {
     raid.hostName = named.get(raid.host) ?? '';

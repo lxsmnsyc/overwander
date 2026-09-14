@@ -89,8 +89,8 @@ export default async function breedCatches(
   // are read rather than read-then-written, so a BEGIN and a COMMIT
   // would be two round trips buying no lock
   const found = await readCaughtMany(getSql(), [left, right]);
-  const pair = [left, right].map((id) => asParent(found.get(id) ?? null, uid));
-  const [first, second] = pair;
+  const first = asParent(found.get(left) ?? null, uid);
+  const second = asParent(found.get(right) ?? null, uid);
 
   if (first == null || second == null) {
     return null;

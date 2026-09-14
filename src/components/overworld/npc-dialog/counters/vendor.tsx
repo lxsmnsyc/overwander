@@ -45,19 +45,27 @@ export default function Vendor(props: CounterProps): JSX.Element {
    * at once. He has as many potions as anyone wants, and the limit is
    * the trade's rather than the crate's
    */
-  const crate = (): InventoryEntry[] =>
-    stock().map((item) => ({
-      user: props.player,
-      item,
-      amount: VENDOR_TRADE_LIMIT,
-    }));
+  const crate = (): InventoryEntry[] => {
+    const entries: InventoryEntry[] = [];
+
+    for (const item of stock()) {
+      entries.push({ user: props.player, item, amount: VENDOR_TRADE_LIMIT });
+    }
+    return entries;
+  };
 
   /**
    * How many of it the player is carrying. It is what the crate cannot
    * say, and what a player buying a third potion is deciding with
    */
-  const carrying = (item: Items): number =>
-    (props.bag.latest ?? []).find((entry) => entry.item === item)?.amount ?? 0;
+  const carrying = (item: Items): number => {
+    for (const entry of props.bag.latest ?? []) {
+      if (entry.item === item) {
+        return entry.amount;
+      }
+    }
+    return 0;
+  };
 
   /**
    * One line, one transaction, however many of it: the crate takes a

@@ -37,6 +37,15 @@ const SPAN = 64;
 
 const HALF = Math.floor(SPAN / 2);
 
+function spawnNames(window: SnapshotRecord): string {
+  const names: string[] = [];
+
+  for (const spawn of window.spawns) {
+    names.push(getSpeciesData(spawn.species).name);
+  }
+  return names.join(', ');
+}
+
 /**
  * The windows themselves, which is where the read happens. A read in
  * the body that declared it throws past every boundary written there
@@ -64,9 +73,7 @@ function ChunkWindows(props: { windows: Resource<SnapshotRecord[]> }): JSX.Eleme
                   {window.spawns.length} {window.spawns.length === 1 ? 'spawn' : 'spawns'}
                 </Meta>
               </Row>
-              <Meta>
-                {window.spawns.map((spawn) => getSpeciesData(spawn.species).name).join(', ')}
-              </Meta>
+              <Meta>{spawnNames(window)}</Meta>
             </ListRow>
           )}
         </For>

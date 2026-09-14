@@ -890,9 +890,17 @@ export const APRICORN_BALLS: Partial<Record<number, Items>> = {
 };
 
 /** Every apricorn, in the order their colours are listed above. */
-export const APRICORNS: Items[] = (Object.keys(APRICORN_BALLS).map(Number) as Items[]).sort(
-  (one, other) => one - other,
-);
+export const APRICORNS: Items[] = (() => {
+  const apricorns: Items[] = [];
+
+  for (const key of Object.keys(APRICORN_BALLS)) {
+    // tsc needs the assertion to produce Items from the record keys;
+    // tsgolint resolves the const enum to number
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    apricorns.push(Number(key) as Items);
+  }
+  return apricorns.sort((one, other) => one - other);
+})();
 
 /** The ball this apricorn becomes, or null for anything that is not one. */
 export function getApricornBall(item: Items): Items | null {
@@ -959,10 +967,15 @@ export const BALL_ITEMS: Record<Balls, Items> = {
   [Balls.FastBall]: Items.FastBall,
 };
 
-const BALLS_BY_ITEM = new Map<Items, Balls>(
+const BALLS_BY_ITEM = (() => {
+  const balls = new Map<Items, Balls>();
+
   // The keys of a numeric enum record come back as strings
-  Object.entries(BALL_ITEMS).map(([ball, item]) => [item, Number(ball)]),
-);
+  for (const [ball, item] of Object.entries(BALL_ITEMS)) {
+    balls.set(item, Number(ball));
+  }
+  return balls;
+})();
 
 /**
  * The ball an item stands for, or null for anything that is not one.

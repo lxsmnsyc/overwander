@@ -34,19 +34,32 @@ export async function trade(
     const profiles = await transaction`
       select gold from profiles where id = ${uid} for update
     `;
-    const carried = await readStacksIn(
-      transaction,
-      ITEM_STACKS,
-      uid,
-      basket.map(([item]) => item),
-    );
+    const items: Items[] = [];
+
+    for (const [item] of basket) {
+      items.push(item);
+    }
+
+    const carried = await readStacksIn(transaction, ITEM_STACKS, uid, items);
     const balance = asNumber(profiles[0]?.gold) + gold;
-    const held = basket.map(([item, amount]) => (carried.get(item) ?? 0) + amount);
+    const held: number[] = [];
+    let short = false;
+    let total = 0;
+
+    for (const [item, amount] of basket) {
+      const count = (carried.get(item) ?? 0) + amount;
+
+      held.push(count);
+      total += count;
+      if (count < 0) {
+        short = true;
+      }
+    }
 
     // The player cannot pay, or is selling what they have not got.
     // The whole basket is refused rather than the affordable part of
     // it: a trade a player agreed to is one trade
-    if (balance < 0 || held.some((count) => count < 0)) {
+    if (balance < 0 || short) {
       return null;
     }
 
@@ -54,7 +67,7 @@ export async function trade(
     for (const [at, [item]] of basket.entries()) {
       await writeStackIn(transaction, ITEM_STACKS, uid, item, held[at]);
     }
-    return { gold: balance, carried: held.reduce((total, count) => total + count, 0) };
+    return { gold: balance, carried: total };
   });
 
   // Signed the way the balance moved: buying spends, selling earns
@@ -169,11 +182,14 @@ export async function sellToVendor(
   // selling them is the only thing they are for
   const paid = priced(basket, sellPrice);
 
-  return paid == null
-    ? null
-    : trade(
-        uid,
-        basket.map(([item, amount]) => [item, -amount]),
-        paid,
-      );
+  if (paid == null) {
+    return null;
+  }
+
+  const sold: [item: Items, amount: number][] = [];
+
+  for (const [item, amount] of basket) {
+    sold.push([item, -amount]);
+  }
+  return trade(uid, sold, paid);
 }

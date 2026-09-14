@@ -130,9 +130,15 @@ export function DexEntryBody(
     // would be answering a question nobody asked
     const marked = props.female() === true;
     const named = female ? 'female' : 'male';
-    const called = [name, shiny ? 'shiny' : null, marked ? named : null]
-      .filter((part) => part != null)
-      .join(', ');
+    const parts = [name];
+
+    if (shiny) {
+      parts.push('shiny');
+    }
+    if (marked) {
+      parts.push(named);
+    }
+    const called = parts.join(', ');
 
     return (
       <div class="flex flex-col items-center gap-1">

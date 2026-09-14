@@ -205,8 +205,14 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
    * Whether a town stands in a chunk: its middle against the town's reach,
    * since a town is a circle and a chunk it barely clips is not where it is
    */
-  const settledAt = (x: number, y: number): boolean =>
-    props.towns.some((town) => Math.hypot(x + 0.5 - town.x, y + 0.5 - town.y) <= town.radius);
+  const settledAt = (x: number, y: number): boolean => {
+    for (const town of props.towns) {
+      if (Math.hypot(x + 0.5 - town.x, y + 0.5 - town.y) <= town.radius) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   /**
    * Which chunk of the view a pointer at these page coordinates is

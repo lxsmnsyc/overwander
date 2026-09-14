@@ -22,8 +22,8 @@ import { getItemData } from '../../data/items';
 import CatchPicker from '../catches/catch-picker';
 import IncreasePPDialog from '../catches/IncreasePPDialog';
 import TeachMoveDialog from '../catches/TeachMoveDialog';
-import CandyGrid from './CandyGrid';
-import ItemGrid from './ItemGrid';
+import CandyGrid, { type CandyPile } from './CandyGrid';
+import ItemGrid, { type ItemCell } from './ItemGrid';
 import { describeItem } from '../details';
 import spendItemOn, { getLevelMoves, isUsableOn } from './use-item';
 import spentToast from './spent-toast';
@@ -139,9 +139,15 @@ function BagBody(
     const item = using();
     const carried = props.items.latest;
 
-    if (item != null && carried != null && !carried.some((entry) => entry.item === item)) {
-      setUsing(null);
+    if (item == null || carried == null) {
+      return;
     }
+    for (const entry of carried) {
+      if (entry.item === item) {
+        return;
+      }
+    }
+    setUsing(null);
   });
 
   /**
@@ -196,6 +202,28 @@ function BagBody(
       .catch((caught: unknown) => {
         said(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
+  };
+
+  const tray = (): ItemCell[] => {
+    const cells: ItemCell[] = [];
+
+    for (const entry of props.items.latest ?? []) {
+      cells.push({
+        item: entry.item,
+        amount: entry.amount,
+        said: `${relicVerb(entry.item)}${describeItem(entry.item)}, ${entry.amount} carried`,
+      });
+    }
+    return cells;
+  };
+
+  const piles = (): CandyPile[] => {
+    const stacks: CandyPile[] = [];
+
+    for (const stack of props.candies() ?? []) {
+      stacks.push({ family: stack.family, count: stack.count });
+    }
+    return stacks;
   };
 
   /** Move on to the next move the level offered, or shut the dialog */
@@ -266,11 +294,7 @@ function BagBody(
               nugget — it simply has no use to press. Only the ones
               that do are announced as something to use */}
         <ItemGrid
-          entries={(props.items.latest ?? []).map((entry) => ({
-            item: entry.item,
-            amount: entry.amount,
-            said: `${relicVerb(entry.item)}${describeItem(entry.item)}, ${entry.amount} carried`,
-          }))}
+          entries={tray()}
           onPress={(item) => {
             if (isRelic(item)) {
               call(item);
@@ -329,12 +353,7 @@ function BagBody(
       <h4>Candies</h4>
       {/* The same tray the items are in, in the jar's own colours: a
           pile is a picture and a number, not a line of text */}
-      <CandyGrid
-        piles={(props.candies() ?? []).map((stack) => ({
-          family: stack.family,
-          count: stack.count,
-        }))}
-      />
+      <CandyGrid piles={piles()} />
 
       {/* A machine asks which move is given up for it, and a level
           asks whether a new one is taken at all. Both are the same

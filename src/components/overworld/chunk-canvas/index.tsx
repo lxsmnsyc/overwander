@@ -179,12 +179,20 @@ const RING_SPREAD = 2;
 const SPRITE_LIFT = 0.3;
 
 /** The levels a press is read at, highest first */
-const DOWNWARD: number[] = Array.from({ length: TERRACE_TOP + 1 }, (_step, at) => TERRACE_TOP - at);
+const DOWNWARD: number[] = [];
+
+for (let step = 0; step <= TERRACE_TOP; step++) {
+  DOWNWARD.push(TERRACE_TOP - step);
+}
 
 /** A cell and the eight around it, for a reading that may have landed one cell off */
-const AROUND: [number, number][] = [-1, 0, 1].flatMap((dy) =>
-  [-1, 0, 1].map((dx): [number, number] => [dx, dy]),
-);
+const AROUND: [number, number][] = [];
+
+for (const dy of [-1, 0, 1]) {
+  for (const dx of [-1, 0, 1]) {
+    AROUND.push([dx, dy]);
+  }
+}
 
 /** Whether a point falls inside a quad, its corners given in order round it */
 function inQuad(point: { x: number; y: number }, corners: { x: number; y: number }[]): boolean {
@@ -1140,18 +1148,24 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * walking a playhead nobody is looking at costs a frame for every
    * chunk ever visited
    */
-  const drawnCoats = createMemo(
-    () => new Set([...props.spawns.values()].map((coat) => coatKey(coat))),
-  );
+  const drawnCoats = createMemo(() => {
+    const keys = new Set<string>();
+
+    for (const coat of props.spawns.values()) {
+      keys.add(coatKey(coat));
+    }
+    return keys;
+  });
 
   /** The charsets worn in this chunk, which is everybody drawn as a person */
-  const worn = createMemo(
-    () =>
-      new Set([
-        ...props.coats.values(),
-        ...[...props.wanderers.values()].map((npc) => npcSheet(npc)),
-      ]),
-  );
+  const worn = createMemo(() => {
+    const sheets = new Set<string>(props.coats.values());
+
+    for (const npc of props.wanderers.values()) {
+      sheets.add(npcSheet(npc));
+    }
+    return sheets;
+  });
 
   createEffect(() => {
     const coats = [...props.spawns.values()];
@@ -1175,20 +1189,39 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       }
     };
 
-    if (
-      coats.every((coat) => sprites.has(coatKey(coat))) &&
-      wearing.every((sheet) => people.has(sheet))
-    ) {
+    let ready = true;
+
+    for (const coat of coats) {
+      if (!sprites.has(coatKey(coat))) {
+        ready = false;
+        break;
+      }
+    }
+    if (ready) {
+      for (const sheet of wearing) {
+        if (!people.has(sheet)) {
+          ready = false;
+          break;
+        }
+      }
+    }
+    if (ready) {
       settle();
       return;
     }
     if (!arrived) {
       setLoading(true);
     }
-    Promise.all([
-      ...wearing.map(async (sheet) => loadPerson(sheet)),
-      ...coats.map(async (coat) => loadCoat(coat)),
-    ])
+
+    const loads: Promise<void>[] = [];
+
+    for (const sheet of wearing) {
+      loads.push(loadPerson(sheet));
+    }
+    for (const coat of coats) {
+      loads.push(loadCoat(coat));
+    }
+    Promise.all(loads)
       .then(settle)
       .catch(() => {
         // A sheet that will not load is drawn as the dot it always
@@ -1411,7 +1444,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       const hit = boardCellAtFraction(at.x, at.y, yaw(), camera(), level * TERRACE_LIFT);
 
       if (hit != null) {
-        candidates.push(...AROUND.map(([dx, dy]) => ({ x: hit.x + dx, y: hit.y + dy })));
+        for (const [dx, dy] of AROUND) {
+          candidates.push({ x: hit.x + dx, y: hit.y + dy });
+        }
       }
     }
 
@@ -1419,9 +1454,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     let nearest = Number.NEGATIVE_INFINITY;
 
     for (const cell of candidates) {
-      const corners = cornerLifts(cell).map(
-        (lift, corner) => projectBoardCellQuad(shifted(cell), yaw(), lift)[corner],
-      );
+      const lifts = cornerLifts(cell);
+      const corners: ProjectedPoint[] = [];
+
+      for (let corner = 0; corner < lifts.length; corner++) {
+        corners.push(projectBoardCellQuad(shifted(cell), yaw(), lifts[corner])[corner]);
+      }
       const depth = projectBoardCell(shifted(cell), yaw()).y;
 
       if (isBoardCell(cell) && depth > nearest && inQuad(at, corners)) {
@@ -1625,12 +1663,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // standing on top of
       const floor = boardView().mode === '2d' ? 0 : underfoot.at;
 
-      return [
+      const outline: ProjectedPoint[] = [];
+
+      for (const corner of [
         { u: left, v: far },
         { u: right, v: far },
         { u: right, v: near },
         { u: left, v: near },
-      ].map((corner) => at(projectAir(corner, floor, yaw())));
+      ]) {
+        outline.push(at(projectAir(corner, floor, yaw())));
+      }
+      return outline;
     };
 
     /**
@@ -2092,7 +2135,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         for (const square of painted) {
           const lift = liftOf(square);
           const spot = { x: square.x + cameraX, y: square.y + cameraY };
-          const outline = projectBoardCellQuad(spot, yaw(), lift).map(at);
+          const outline: ProjectedPoint[] = [];
+
+          for (const point of projectBoardCellQuad(spot, yaw(), lift)) {
+            outline.push(at(point));
+          }
 
           if (onScreen(outline)) {
             // Far to near by where the **ground** lies, not by where the
@@ -2133,7 +2180,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         const cell = shifted(square);
         const lifts = laidBack ? cornerLifts(square) : [0, 0, 0, 0];
 
-        return lifts.map((lift, corner) => at(projectBoardCellQuad(cell, yaw(), lift)[corner]));
+        const quad: ProjectedPoint[] = [];
+
+        for (let corner = 0; corner < lifts.length; corner++) {
+          quad.push(at(projectBoardCellQuad(cell, yaw(), lifts[corner])[corner]));
+        }
+        return quad;
       };
 
       if (show != null) {
@@ -2181,7 +2233,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         if (terrain() != null || !ground.road(square.x, square.y)) {
           continue;
         }
-        const corners = projectBoardCellQuad(shifted(square), yaw()).map(at);
+        const corners: ProjectedPoint[] = [];
+
+        for (const point of projectBoardCellQuad(shifted(square), yaw())) {
+          corners.push(at(point));
+        }
         const washed = grownQuad(corners);
 
         if (batch != null) {
@@ -2788,7 +2844,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // pass: a wall has to be able to hide whatever stands behind it,
         // which the ground, being flat, never does
         const walled = [...lifted];
-        const occupied = [
+        const occupied: number[] = [];
+
+        for (const index of [
           playerCell,
           ...props.landmarks.keys(),
           ...props.decorations.keys(),
@@ -2796,7 +2854,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           ...blocked,
           ...props.spawns.keys(),
           ...props.phenomena.keys(),
-        ].filter((index) => reachOf(boardCellOf(index)) <= VIEW_RADIUS);
+        ]) {
+          if (reachOf(boardCellOf(index)) <= VIEW_RADIUS) {
+            occupied.push(index);
+          }
+        }
 
         standOrder = {
           yaw: yaw(),

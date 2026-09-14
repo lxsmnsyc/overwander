@@ -76,18 +76,21 @@ const KEPT = 4096;
 const made = new Map<string, HTMLCanvasElement>();
 
 function keyOf(lays: Lay[]): string {
-  return lays
-    .map((one) => {
-      const near = one.near;
-      const mask =
-        near == null
-          ? 'f'
-          : `${near.n ? 1 : 0}${near.e ? 1 : 0}${near.s ? 1 : 0}${near.w ? 1 : 0}` +
-            `${near.nw ? 1 : 0}${near.ne ? 1 : 0}${near.sw ? 1 : 0}${near.se ? 1 : 0}`;
+  const parts: string[] = [];
 
-      return `${one.terrain.name}:${mask}:${one.whole ? 'w' : 'q'}:${one.over == null ? '' : one.over.join(',')}:${one.spin ?? 0}`;
-    })
-    .join('|');
+  for (const one of lays) {
+    const near = one.near;
+    const mask =
+      near == null
+        ? 'f'
+        : `${near.n ? 1 : 0}${near.e ? 1 : 0}${near.s ? 1 : 0}${near.w ? 1 : 0}` +
+          `${near.nw ? 1 : 0}${near.ne ? 1 : 0}${near.sw ? 1 : 0}${near.se ? 1 : 0}`;
+
+    parts.push(
+      `${one.terrain.name}:${mask}:${one.whole ? 'w' : 'q'}:${one.over == null ? '' : one.over.join(',')}:${one.spin ?? 0}`,
+    );
+  }
+  return parts.join('|');
 }
 
 /** The eight neighbours, for the shore test. */
@@ -151,10 +154,17 @@ export function layersAt(
   // Water in a country with no deep of its own is shallow, so the rim runs
   // along that border rather than the deep stopping dead against it
   const deep = pack.of(look.biome(x, y), 'deep');
-  const open = (cx: number, cy: number): boolean =>
-    pack.of(look.biome(cx, cy), 'deep') != null &&
-    wet(cx, cy) &&
-    ROUND.every(([dx, dy]) => wet(cx + dx, cy + dy));
+  const open = (cx: number, cy: number): boolean => {
+    if (pack.of(look.biome(cx, cy), 'deep') == null || !wet(cx, cy)) {
+      return false;
+    }
+    for (const [dx, dy] of ROUND) {
+      if (!wet(cx + dx, cy + dy)) {
+        return false;
+      }
+    }
+    return true;
+  };
 
   if (deep != null && open(x, y)) {
     lays.push({
@@ -169,7 +179,16 @@ export function layersAt(
   // draws the shore: a pool's rounded edge lets the ground show through.
   // Where the ground draws it instead, as an island does, the water beside
   // it stays water
-  const underShore = water?.drawn === true && ROUND.some(([dx, dy]) => dry(x + dx, y + dy));
+  let underShore = false;
+
+  if (water?.drawn === true) {
+    for (const [dx, dy] of ROUND) {
+      if (dry(x + dx, y + dy)) {
+        underShore = true;
+        break;
+      }
+    }
+  }
 
   if (ground != null && (dry(x, y) || underShore)) {
     lays.push({ terrain: ground, near: null, over: null, whole: false, step: stepOf('ground') });
@@ -337,20 +356,31 @@ export default function terrainCell(
   turns = 0,
   standing = false,
 ): HTMLCanvasElement | null {
-  const lays = layersAt(pack, look, x, y, standing).filter((one) => one.step <= upto);
+  const lays: Lay[] = [];
+  let shore = false;
 
+  for (const one of layersAt(pack, look, x, y, standing)) {
+    if (one.step <= upto) {
+      lays.push(one);
+      shore ||= one.step === SHORE;
+    }
+  }
   if (lays.length === 0) {
     return null;
   }
   // Nothing but a shore cares which way the camera is: a cell without
   // one is the same picture from every side, and keeping one copy of
   // it rather than four is most of what the cache holds
-  const spun = lays.some((one) => one.step === SHORE) ? ((turns % 4) + 4) % 4 : 0;
-  const turnedLays = lays.map((one) =>
-    one.near == null || one.step !== SHORE
-      ? one
-      : { ...one, near: turned(one.near, spun), spin: spun },
-  );
+  const spun = shore ? ((turns % 4) + 4) % 4 : 0;
+  const turnedLays: Lay[] = [];
+
+  for (const one of lays) {
+    turnedLays.push(
+      one.near == null || one.step !== SHORE
+        ? one
+        : { ...one, near: turned(one.near, spun), spin: spun },
+    );
+  }
   const key = `${spun}|${keyOf(turnedLays)}`;
   const known = made.get(key);
 

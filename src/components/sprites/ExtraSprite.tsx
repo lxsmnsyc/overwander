@@ -59,15 +59,18 @@ async function fetchSheet(name: string): Promise<ExtraSheet> {
 
   const described: unknown = await response.json();
 
-  return {
-    images: asRecordArray(asRecord(described).images).map((entry) => ({
+  const images: SheetImage[] = [];
+
+  for (const entry of asRecordArray(asRecord(described).images)) {
+    images.push({
       name: asString(entry.name),
       x: asNumber(entry.x),
       y: asNumber(entry.y),
       width: asNumber(entry.width),
       height: asNumber(entry.height),
-    })),
-  };
+    });
+  }
+  return { images };
 }
 
 export interface ExtraSpriteProps {
@@ -80,8 +83,14 @@ export interface ExtraSpriteProps {
 }
 
 export default function ExtraSprite(props: ExtraSpriteProps): JSX.Element {
-  const image = (): SheetImage | null =>
-    sheetOf(props.sheet)?.images.find((entry) => entry.name === props.name) ?? null;
+  const image = (): SheetImage | null => {
+    for (const entry of sheetOf(props.sheet)?.images ?? []) {
+      if (entry.name === props.name) {
+        return entry;
+      }
+    }
+    return null;
+  };
 
   return (
     <Show when={image()} keyed>

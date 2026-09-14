@@ -88,11 +88,15 @@ export async function joinRaid(
   // Read together rather than one at a time: a party of six is two
   // round trips this way and twelve the other
   const found = await readCaughtMany(getSql(), catches);
-  const records = catches.map((one) => found.get(one));
-  const owned = records.every((record) => record != null) ? records : null;
+  const owned: Record<string, unknown>[] = [];
 
-  if (owned == null || !owned.every((entry) => entry.owner === uid)) {
-    return null;
+  for (const one of catches) {
+    const record = found.get(one);
+
+    if (record == null || record.owner !== uid) {
+      return null;
+    }
+    owned.push(record);
   }
   // A pokemon already fighting elsewhere cannot be brought along: one
   // catch, one live battle
@@ -101,13 +105,17 @@ export async function joinRaid(
   }
   // Nor one that is down. Nothing revives on its own, so it is a
   // berry or a level before that pokemon fights again
-  if (owned.some((entry) => isFainted(asCaughtPokemon(entry)))) {
-    return null;
+  for (const entry of owned) {
+    if (isFainted(asCaughtPokemon(entry))) {
+      return null;
+    }
   }
   // Nor one its owner has put away. A guarded pokemon is not to be
   // disturbed, and a raid is the loudest thing that could happen to it
-  if (owned.some((entry) => isGuardedRecord(entry))) {
-    return null;
+  for (const entry of owned) {
+    if (isGuardedRecord(entry)) {
+      return null;
+    }
   }
   // Nor one already waiting in another lobby, or in this one: a party
   // that queues the same pokemon twice would have it dropped from
@@ -142,7 +150,11 @@ export async function joinRaid(
       insert into teams (id, player, raid_id) values (${teamId}, ${uid}, ${lobby})
     `;
 
-    const rows = catches.map((caught, slot) => ({ team_id: teamId, slot, caught_id: caught }));
+    const rows: { team_id: string; slot: number; caught_id: string }[] = [];
+
+    for (const [slot, caught] of catches.entries()) {
+      rows.push({ team_id: teamId, slot, caught_id: caught });
+    }
 
     await transaction`
       insert into team_catches ${transaction(rows, 'team_id', 'slot', 'caught_id')}

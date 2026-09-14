@@ -80,8 +80,14 @@ export function Written(props: {
   note?: string;
 }): JSX.Element {
   const stamp = Date.now();
-  const found = (path: string): Drawing | undefined =>
-    props.drawings.find((written) => written.path === path);
+  const found = (path: string): Drawing | undefined => {
+    for (const written of props.drawings) {
+      if (written.path === path) {
+        return written;
+      }
+    }
+    return undefined;
+  };
 
   return (
     <div class="flex flex-col gap-2">

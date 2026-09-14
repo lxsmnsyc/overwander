@@ -106,8 +106,30 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
       set(waiting);
     }),
   );
-  const knownRaid = (id: string): RaidRecord | undefined =>
-    (raids() ?? []).find(([held]) => held === id)?.[1];
+  const knownRaid = (id: string): RaidRecord | undefined => {
+    for (const [held, raid] of raids() ?? []) {
+      if (held === id) {
+        return raid;
+      }
+    }
+    return undefined;
+  };
+  const invitedIds = (): string[] => {
+    const ids: string[] = [];
+
+    for (const invite of invites() ?? []) {
+      ids.push(invite.raid);
+    }
+    return ids;
+  };
+  const inviteTo = (id: string): RaidInvite | undefined => {
+    for (const invite of invites() ?? []) {
+      if (invite.raid === id) {
+        return invite;
+      }
+    }
+    return undefined;
+  };
 
   return (
     <Panel>
@@ -118,9 +140,9 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
             <Show when={(invites() ?? []).length > 0}>
               <Note>Invited</Note>
               <List>
-                <For each={(invites() ?? []).map((invite) => invite.raid)}>
+                <For each={invitedIds()}>
                   {(id) => (
-                    <Show when={(invites() ?? []).find((invite) => invite.raid === id)}>
+                    <Show when={inviteTo(id)}>
                       {(invite) => (
                         <InvitedRow
                           invite={invite()}

@@ -18,7 +18,12 @@ import useStaff from './staff-context';
 
 /** The role as one of the four, so an unknown one reads as a player */
 function asRole(role: string): Role {
-  return ROLES.find((known) => known === role) ?? '';
+  for (const known of ROLES) {
+    if (known === role) {
+      return known;
+    }
+  }
+  return '';
 }
 
 /** The day the account was opened, said the way a date is said locally */
@@ -50,6 +55,15 @@ function PlayerCard(props: { uid: string; player: Resource<PlayerRow | null> }):
   /** Whether this account stands below the reader's own */
   const beneath = (row: PlayerRow): boolean =>
     row.uid !== staff.uid && canActOn(staff.role(), roleOf(row));
+
+  const roleOptions = (): { value: Role; label: string }[] => {
+    const options: { value: Role; label: string }[] = [];
+
+    for (const role of grantableRoles(staff.role())) {
+      options.push({ value: role, label: ROLE_NAMES[role] });
+    }
+    return options;
+  };
 
   const act = <T,>(action: Promise<T | null>, refused: string, keep: (value: T) => void): void => {
     setWrong(null);
@@ -125,10 +139,7 @@ function PlayerCard(props: { uid: string; player: Resource<PlayerRow | null> }):
                     label="Role"
                     class="grow"
                     value={roleOf(row())}
-                    options={grantableRoles(staff.role()).map((role) => ({
-                      value: role,
-                      label: ROLE_NAMES[role],
-                    }))}
+                    options={roleOptions()}
                     disabled={busy()}
                     onChange={(wanted) => {
                       act(

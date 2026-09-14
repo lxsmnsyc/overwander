@@ -16,31 +16,35 @@ import { createHeldItem, holds } from './__create';
  * [`FORM_ITEMS`](../../data/items/form-items.ts)
  */
 export default function setupFormItems(battle: Battle): void {
-  const setups = [...FORM_ITEMS].map(([item, forms]) => {
+  const setups: ((battle: Battle) => void)[] = [];
+
+  for (const [item, forms] of FORM_ITEMS) {
     // Every shape in the set belongs to one pokemon, so the base form
     // of the first is what the holder has to be
     const base = getBaseFormSpecies(forms[0]);
 
-    return createHeldItem(
-      item,
-      (inner) =>
-        new MergedLifecycle([
-          inner.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-            const unit = event.source;
+    setups.push(
+      createHeldItem(
+        item,
+        (inner) =>
+          new MergedLifecycle([
+            inner.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+              const unit = event.source;
 
-            if (getBaseFormSpecies(unit.species) !== base || !holds(unit, item)) {
-              return;
-            }
+              if (getBaseFormSpecies(unit.species) !== base || !holds(unit, item)) {
+                return;
+              }
 
-            const shape = forms[Math.floor(inner.random() * forms.length)];
+              const shape = forms[Math.floor(inner.random() * forms.length)];
 
-            if (unit.species !== shape) {
-              unit.setSpecies(shape);
-            }
-          }),
-        ]),
+              if (unit.species !== shape) {
+                unit.setSpecies(shape);
+              }
+            }),
+          ]),
+      ),
     );
-  });
+  }
 
   for (const setup of setups) {
     setup(battle);

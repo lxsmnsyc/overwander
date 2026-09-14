@@ -40,45 +40,85 @@ export function findNamed<T>(entries: Named<T>[], typed: string): T | null {
   if (wanted === '') {
     return null;
   }
-  const exact = entries.filter((entry) => entry.name.toLowerCase() === wanted);
+  let exact: T | null = null;
+  let exactCount = 0;
+  let held: T | null = null;
+  let heldCount = 0;
 
-  if (exact.length === 1) {
-    return exact[0].id;
+  for (const entry of entries) {
+    const name = entry.name.toLowerCase();
+
+    if (name === wanted) {
+      exact = entry.id;
+      exactCount++;
+    }
+    if (name.includes(wanted)) {
+      held = entry.id;
+      heldCount++;
+    }
   }
-  const held = entries.filter((entry) => entry.name.toLowerCase().includes(wanted));
-
-  return held.length === 1 ? held[0].id : null;
+  if (exactCount === 1) {
+    return exact;
+  }
+  return heldCount === 1 ? held : null;
 }
 
 /** The names alone, for the suggestion list */
 export function nameList<T>(entries: Named<T>[]): string[] {
-  return entries.map((entry) => entry.name);
+  const names: string[] = [];
+
+  for (const entry of entries) {
+    names.push(entry.name);
+  }
+  return names;
+}
+
+/** Each registered id under the name its data gives it */
+function namedIds<T>(ids: T[], nameOf: (id: T) => string): Named<T>[] {
+  const entries: Named<T>[] = [];
+
+  for (const id of ids) {
+    entries.push({ id, name: nameOf(id) });
+  }
+  return entries;
 }
 
 export function speciesEntries(): Named<Species>[] {
-  return getRegisteredSpecies().map((id) => ({ id, name: getSpeciesData(id).name }));
+  return namedIds(getRegisteredSpecies(), (id) => getSpeciesData(id).name);
 }
 
 export function moveEntries(): Named<Moves>[] {
-  return getRegisteredMoves().map((id) => ({ id, name: getMoveData(id).name }));
+  return namedIds(getRegisteredMoves(), (id) => getMoveData(id).name);
 }
 
 export function abilityEntries(): Named<Abilities>[] {
-  return getRegisteredAbilities().map((id) => ({ id, name: getAbilityData(id).name }));
+  return namedIds(getRegisteredAbilities(), (id) => getAbilityData(id).name);
 }
 
 /** Every item, in the order the dashboard's own picker lists them */
 export function itemEntries(): Named<Items>[] {
-  return ITEM_TYPE_ORDER.flatMap((type) =>
-    listItemsByType(type).map((id) => ({ id, name: getItemData(id).name })),
-  );
+  const entries: Named<Items>[] = [];
+
+  for (const type of ITEM_TYPE_ORDER) {
+    for (const id of listItemsByType(type)) {
+      entries.push({ id, name: getItemData(id).name });
+    }
+  }
+  return entries;
+}
+
+/** The numeric keys of a table, which is how a const enum's members are listed */
+function keysOf(table: object): number[] {
+  const ids: number[] = [];
+
+  for (const key of Object.keys(table)) {
+    ids.push(Number(key));
+  }
+  return ids;
 }
 
 export function ballEntries(): Named<Balls>[] {
-  return (Object.keys(BALL_ITEMS).map(Number) as Balls[]).map((id) => ({
-    id,
-    name: getItemData(BALL_ITEMS[id]).name,
-  }));
+  return namedIds(keysOf(BALL_ITEMS) as Balls[], (id) => getItemData(BALL_ITEMS[id]).name);
 }
 
 /**
@@ -87,24 +127,15 @@ export function ballEntries(): Named<Balls>[] {
  * stand in for a listing of it
  */
 export function natureEntries(): Named<Natures>[] {
-  return (Object.keys(NATURE_NAMES).map(Number) as Natures[]).map((id) => ({
-    id,
-    name: NATURE_NAMES[id],
-  }));
+  return namedIds(keysOf(NATURE_NAMES) as Natures[], (id) => NATURE_NAMES[id]);
 }
 
 export function biomeEntries(): Named<Biome>[] {
-  return (Object.keys(BIOME_NAMES).map(Number) as Biome[]).map((id) => ({
-    id,
-    name: BIOME_NAMES[id],
-  }));
+  return namedIds(keysOf(BIOME_NAMES) as Biome[], (id) => BIOME_NAMES[id]);
 }
 
 export function weatherEntries(): Named<Weather>[] {
-  return (Object.keys(WEATHER_NAMES).map(Number) as Weather[]).map((id) => ({
-    id,
-    name: WEATHER_NAMES[id],
-  }));
+  return namedIds(keysOf(WEATHER_NAMES) as Weather[], (id) => WEATHER_NAMES[id]);
 }
 
 /**

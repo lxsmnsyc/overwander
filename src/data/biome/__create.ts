@@ -174,11 +174,16 @@ export function boostFamilyEntries(
   family: Families,
   factor: number,
 ): SpawnEntry[] {
-  return entries.map((entry) =>
-    getSpeciesData(entry.species).family === family
-      ? { species: entry.species, weight: entry.weight * factor }
-      : entry,
-  );
+  const boosted: SpawnEntry[] = [];
+
+  for (const entry of entries) {
+    boosted.push(
+      getSpeciesData(entry.species).family === family
+        ? { species: entry.species, weight: entry.weight * factor }
+        : entry,
+    );
+  }
+  return boosted;
 }
 
 /**
@@ -212,11 +217,20 @@ export function boostTypeEntries(
 
   const favored = new Set(types);
 
-  return entries.map((entry) =>
-    getSpeciesData(entry.species).types.some((type) => favored.has(type))
-      ? { species: entry.species, weight: entry.weight * factor }
-      : entry,
-  );
+  const boosted: SpawnEntry[] = [];
+
+  for (const entry of entries) {
+    let lifted = false;
+
+    for (const type of getSpeciesData(entry.species).types) {
+      if (favored.has(type)) {
+        lifted = true;
+        break;
+      }
+    }
+    boosted.push(lifted ? { species: entry.species, weight: entry.weight * factor } : entry);
+  }
+  return boosted;
 }
 
 /**
@@ -284,7 +298,11 @@ export function getEggPool(biome: Biome, time: TimeOfDay): SpawnEntry[] {
     }
   }
 
-  const pool = [...weights].map(([species, weight]) => ({ species, weight }));
+  const pool: SpawnEntry[] = [];
+
+  for (const [species, weight] of weights) {
+    pool.push({ species, weight });
+  }
 
   EGG_POOLS.set(groups, pool);
   return pool;
@@ -412,11 +430,21 @@ export function listSpeciesHabitats(species: Species): SpeciesHabitat[] {
 
 /** Every hour and band this species is met on a town's streets */
 export function listTownHabitats(species: Species): { time: TimeOfDay; rarity: SpawnRarity }[] {
-  return TIMES_OF_DAY.flatMap((time) =>
-    BAND_RARITIES.filter(([band]) =>
-      spawnBand(getTownPool(time), band).some((entry) => entry.species === species),
-    ).map(([, rarity]) => ({ time, rarity })),
-  );
+  const habitats: { time: TimeOfDay; rarity: SpawnRarity }[] = [];
+
+  for (const time of TIMES_OF_DAY) {
+    const pool = getTownPool(time);
+
+    for (const [band, rarity] of BAND_RARITIES) {
+      for (const entry of spawnBand(pool, band)) {
+        if (entry.species === species) {
+          habitats.push({ time, rarity });
+          break;
+        }
+      }
+    }
+  }
+  return habitats;
 }
 
 /**
@@ -534,7 +562,14 @@ const UNOWN_SPECIES = new Set<Species>(UNOWN_FORMS);
  * alphabet is collected over months either way, and no letter is
  * cheaper because of where the player happens to live
  */
-export const UNOWN_SPAWNS: SpawnEntry[] = UNOWN_FORMS.map((species) => ({ species, weight: 1 }));
+export const UNOWN_SPAWNS: SpawnEntry[] = (() => {
+  const spawns: SpawnEntry[] = [];
+
+  for (const species of UNOWN_FORMS) {
+    spawns.push({ species, weight: 1 });
+  }
+  return spawns;
+})();
 
 /**
  * What one prized species weighs against the alphabet.
@@ -687,9 +722,13 @@ export function getLineStage(species: Species): number {
 function stagesBelow(species: Species): number {
   const own = BABY_SPECIES.has(species) ? 0 : 1;
   const dex = getSpeciesData(species).dexNumber;
-  const below = (getSpeciesData(species).evolvesInto ?? [])
-    .filter((entry) => getSpeciesData(entry.species).dexNumber !== dex)
-    .map((entry) => stagesBelow(entry.species));
+  const below: number[] = [];
+
+  for (const entry of getSpeciesData(species).evolvesInto ?? []) {
+    if (getSpeciesData(entry.species).dexNumber !== dex) {
+      below.push(stagesBelow(entry.species));
+    }
+  }
 
   if (below.length === 0) {
     return own + (isAwaitingEvolution(species) ? 1 : 0);

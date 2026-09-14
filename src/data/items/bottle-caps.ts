@@ -1,4 +1,4 @@
-import { MAX_IV, STAT_ORDER, getIV, setIV } from '../constants/stats';
+import { MAX_IV, STAT_ORDER, type Stats, getIV, setIV } from '../constants/stats';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { registerItem } from './__create';
 
@@ -41,7 +41,12 @@ export function isBottleCap(item: Items): boolean {
  * than spending one on nothing
  */
 export function isPerfectIVs(ivs: number): boolean {
-  return STAT_ORDER.every((stat) => getIV(ivs, stat) >= MAX_IV);
+  for (const stat of STAT_ORDER) {
+    if (getIV(ivs, stat) < MAX_IV) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
@@ -56,7 +61,13 @@ export function isPerfectIVs(ivs: number): boolean {
  * Answers null when there was nothing left to polish
  */
 export function polishIVs(ivs: number, count: number, random: () => number): number | null {
-  const dull = STAT_ORDER.filter((stat) => getIV(ivs, stat) < MAX_IV);
+  const dull: Stats[] = [];
+
+  for (const stat of STAT_ORDER) {
+    if (getIV(ivs, stat) < MAX_IV) {
+      dull.push(stat);
+    }
+  }
 
   if (dull.length === 0) {
     return null;

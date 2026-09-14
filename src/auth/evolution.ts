@@ -1,4 +1,5 @@
 import { getTimeOfDay } from '../data/ids/biome';
+import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import {
   canEverEvolve,
@@ -60,10 +61,18 @@ export async function listEvolutionOptions(
     return [];
   }
 
+  const carried = new Set<Items>();
+
+  for (const entry of inventory) {
+    if (entry.amount > 0) {
+      carried.add(entry.item);
+    }
+  }
+
   const context = {
     species: caught.species,
     level: caught.level,
-    carried: new Set(inventory.filter((entry) => entry.amount > 0).map((entry) => entry.item)),
+    carried,
     held: new Set(caught.items),
     canEvolve: caught.canEvolve,
     stats: getStats(caught),
@@ -72,13 +81,18 @@ export async function listEvolutionOptions(
     gender: caught.gender,
   };
 
-  return (getSpeciesData(caught.species).evolvesInto ?? [])
-    .filter((evolution) => canEverEvolve(evolution, caught.gender))
-    .map((evolution) => ({
-      evolution,
-      available: meetsEvolutionCriteria(evolution, context),
-      covered: coveredByHandover(evolution, context),
-    }));
+  const options: EvolutionOption[] = [];
+
+  for (const evolution of getSpeciesData(caught.species).evolvesInto ?? []) {
+    if (canEverEvolve(evolution, caught.gender)) {
+      options.push({
+        evolution,
+        available: meetsEvolutionCriteria(evolution, context),
+        covered: coveredByHandover(evolution, context),
+      });
+    }
+  }
+  return options;
 }
 
 /**

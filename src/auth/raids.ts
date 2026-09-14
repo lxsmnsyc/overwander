@@ -55,14 +55,18 @@ function fromRaidRow(row: Record<string, unknown>): RaidRecord {
   const teams = asRecordArray(row.teams).sort(
     (left, right) => Number(left.joined_seq ?? 0) - Number(right.joined_seq ?? 0),
   );
+  const ids: string[] = [];
 
+  for (const entry of teams) {
+    ids.push(String(entry.id));
+  }
   return asRaidRecord({
     kind: row.kind,
     lair: row.lair,
     species: row.species,
     traitValue: row.trait_value,
     host: row.host,
-    teams: teams.map((entry) => String(entry.id)),
+    teams: ids,
     battle: row.battle_id,
     timestamp: row.window_at,
     offset: row.utc_offset,
@@ -278,8 +282,12 @@ export async function listLiveRaids(
     .eq('utc_offset', asOffset(offset))
     .is('battle_id', null)
     .eq('cleared', false);
+  const raids: [string, RaidRecord][] = [];
 
-  return asRecordArray(data).map((row) => [String(row.id), fromRaidRow(row)]);
+  for (const row of asRecordArray(data)) {
+    raids.push([String(row.id), fromRaidRow(row)]);
+  }
+  return raids;
 }
 
 /**
@@ -336,8 +344,12 @@ export function watchRaidWatchers(id: string, onChange: (players: string[]) => v
       .select('player')
       .eq('raid_id', id)
       .order('seen_at');
+    const players: string[] = [];
 
-    return asRecordArray(data).map((row) => asString(row.player));
+    for (const row of asRecordArray(data)) {
+      players.push(asString(row.player));
+    }
+    return players;
   };
 
   return watchTable('raid_watchers', [`raid_id=eq.${id}`], read, onChange);
@@ -356,12 +368,17 @@ export function watchRaidInvites(uid: string, onChange: (invites: RaidInvite[]) 
       .eq('recipient', uid)
       .order('sent_at', { ascending: false });
 
-    return asRecordArray(data).map((row) => ({
-      raid: asString(row.raid_id),
-      sender: asString(row.sender),
-      role: asNumber(row.role) as LobbyRole,
-      sentAt: asNumber(row.sent_at),
-    }));
+    const invites: RaidInvite[] = [];
+
+    for (const row of asRecordArray(data)) {
+      invites.push({
+        raid: asString(row.raid_id),
+        sender: asString(row.sender),
+        role: asNumber(row.role) as LobbyRole,
+        sentAt: asNumber(row.sent_at),
+      });
+    }
+    return invites;
   };
 
   return watchTable('raid_invites', [`recipient=eq.${uid}`], read, onChange);
@@ -471,7 +488,12 @@ async function claimRewardOnServer(token: string, id: string): Promise<RaidRewar
 export async function listClaimedRaids(uid: string): Promise<Set<string>> {
   const { data } = await getSupabase().from('raid_rewards').select('raid_id').eq('player', uid);
 
-  return new Set(((data ?? []) as { raid_id: unknown }[]).map((row) => asString(row.raid_id)));
+  const claimed = new Set<string>();
+
+  for (const row of (data ?? []) as { raid_id: unknown }[]) {
+    claimed.add(asString(row.raid_id));
+  }
+  return claimed;
 }
 
 /**

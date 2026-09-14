@@ -106,7 +106,12 @@ const isWetField = remembered((world: World, x: number, y: number): boolean => {
   if (biome !== Biome.Volcano) {
     return true;
   }
-  return !SURROUNDING.some(([dx, dy]) => world.getCellBiome(x + dx, y + dy) !== Biome.Volcano);
+  for (const [dx, dy] of SURROUNDING) {
+    if (world.getCellBiome(x + dx, y + dy) !== Biome.Volcano) {
+      return false;
+    }
+  }
+  return true;
 });
 
 /** Whether all four cells of one 2x2 square answer to something. */
@@ -140,9 +145,12 @@ function spills(
 ): boolean {
   const here = levelAt(world, x, y);
 
-  return SURROUNDING.some(
-    ([dx, dy]) => levelAt(world, x + dx, y + dy) < here && !below(x + dx, y + dy),
-  );
+  for (const [dx, dy] of SURROUNDING) {
+    if (levelAt(world, x + dx, y + dy) < here && !below(x + dx, y + dy)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -163,7 +171,12 @@ const isWater = remembered((world: World, x: number, y: number): boolean => {
     isWetField(world, cx, cy) &&
     !spills(world, cx, cy, (bx, by) => isWater(world, bx, by));
 
-  return SQUARES.some(([ox, oy]) => fitsSquare(ox, oy, (cx, cy) => pools(x + cx, y + cy)));
+  for (const [ox, oy] of SQUARES) {
+    if (fitsSquare(ox, oy, (cx, cy) => pools(x + cx, y + cy))) {
+      return true;
+    }
+  }
+  return false;
 });
 
 /**

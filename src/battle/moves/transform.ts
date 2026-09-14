@@ -55,10 +55,16 @@ function heldMoves(unit: Unit): Moves[] {
 export function transformUnit(source: Unit, target: Unit): void {
   // The first transform snapshots the original state
   if (!snapshots.has(source)) {
+    const stats: [Stats, number][] = [];
+
+    for (const stat of COPIED_STATS) {
+      stats.push([stat, source.stats[StatsKind.Base][stat]]);
+    }
+
     snapshots.set(source, {
       moves: heldMoves(source),
       types: [...source.types],
-      stats: COPIED_STATS.map((stat) => [stat, source.stats[StatsKind.Base][stat]]),
+      stats,
       appearance: source.appearance,
     });
   }

@@ -70,15 +70,18 @@ export const packExtras = action(async (form: FormData): Promise<ProcessResult> 
 
   // Every file under the one name, which is what a `multiple` picker
   // posts: `get` would take the first and quietly drop the rest
-  const picked = form.getAll('images').map((value) => asFile(value, 'image'));
+  const pending: Promise<UploadedImage>[] = [];
+
+  for (const value of form.getAll('images')) {
+    const file = asFile(value, 'image');
+
+    pending.push(
+      file.arrayBuffer().then((buffer) => ({ name: file.name, bytes: new Uint8Array(buffer) })),
+    );
+  }
 
   return processExtras(
-    await Promise.all(
-      picked.map(async (file) => ({
-        name: file.name,
-        bytes: new Uint8Array(await file.arrayBuffer()),
-      })),
-    ),
+    await Promise.all(pending),
     // A sheet of loose images is about nothing in particular, so it is
     // named rather than filed under a species
     { name: String(form.get('name') ?? ''), compact: flag(form, 'compact') },

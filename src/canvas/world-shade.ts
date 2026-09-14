@@ -47,13 +47,14 @@ function colourOf(biome: Biome): Shade {
     return known;
   }
   const hex = BIOME_COLORS[biome].replace('#', '');
-  const full =
-    hex.length === 3
-      ? hex
-          .split('')
-          .map((one) => one + one)
-          .join('')
-      : hex;
+  let full = hex;
+
+  if (hex.length === 3) {
+    full = '';
+    for (const one of hex) {
+      full += one + one;
+    }
+  }
   const shade: Shade = [
     Number.parseInt(full.slice(0, 2), 16),
     Number.parseInt(full.slice(2, 4), 16),
@@ -107,8 +108,10 @@ export default function shadeCell(
   }
   const level = levelAt(world, x, y);
 
-  if (ORTHOGONAL.some(([dx, dy]) => levelAt(world, x + dx * reach, y + dy * reach) > level)) {
-    return FACE;
+  for (const [dx, dy] of ORTHOGONAL) {
+    if (levelAt(world, x + dx * reach, y + dy * reach) > level) {
+      return FACE;
+    }
   }
   const lit = 1 - LEVEL_SHADE + (level / TERRACE_TOP) * LEVEL_SHADE;
 

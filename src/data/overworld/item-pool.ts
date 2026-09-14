@@ -18,6 +18,16 @@ export interface ItemPoolEntry {
   weight: number;
 }
 
+/** One slot per item, all at the same weight */
+export function evenlyWeighted(items: Iterable<Items>, weight: number): ItemPoolEntry[] {
+  const entries: ItemPoolEntry[] = [];
+
+  for (const item of items) {
+    entries.push({ item, weight });
+  }
+  return entries;
+}
+
 /**
  * An item pool's entries, split by rarity band like a biome's spawn
  * pool
@@ -143,11 +153,11 @@ export const ITEM_POOL: ItemRarityGroups = {
     // each, and the only effort a pokemon gets that its levels did
     // not pay for. Thin slots, because they are the one thing in the
     // game that raises a stat past what a level allows
-    ...[...WING_STATS.keys()].map((item) => ({ item, weight: 3 })),
+    ...evenlyWeighted(WING_STATS.keys(), 3),
     // The one-shots, dropped where their moment ended. Each waits for
     // one thing to happen to its holder and is spent on it, which is
     // the band's own test: through the next fight and no further
-    ...[...ONE_SHOTS.keys()].map((item) => ({ item, weight: 2 })),
+    ...evenlyWeighted(ONE_SHOTS.keys(), 2),
   ],
   rare: [
     { item: Items.FireStone, weight: 10 },
@@ -193,15 +203,15 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.Leftovers, weight: 10 },
     // The plates, buried where they fell. Seventeen thin slots share
     // about what one stone is worth, so digging one up stays an event
-    ...[...PLATES.keys()].map((item) => ({ item, weight: 1 })),
+    ...evenlyWeighted(PLATES.keys(), 1),
     // The held-item shelves, on the plates' terms: whole families of
     // thin slots, so the band stays the stones' and finding a Choice
     // Band stays an event. The type boosters also drop off the wild
     // species that carry them; the rest have no source but here
-    ...[...TYPE_BOOSTERS.keys()].map((item) => ({ item, weight: 1 })),
-    ...[...MARKET_GEAR.keys()].map((item) => ({ item, weight: 1 })),
-    ...[...ORBS.keys()].map((item) => ({ item, weight: 1 })),
-    ...[...GENERAL_STAT_BOOSTERS.keys()].map((item) => ({ item, weight: 1 })),
+    ...evenlyWeighted(TYPE_BOOSTERS.keys(), 1),
+    ...evenlyWeighted(MARKET_GEAR.keys(), 1),
+    ...evenlyWeighted(ORBS.keys(), 1),
+    ...evenlyWeighted(GENERAL_STAT_BOOSTERS.keys(), 1),
     // The candy pair: a walk's worth of extra candy, hidden where the
     // Leftovers are and half as often
     { item: Items.ExpShare, weight: 2 },
@@ -269,13 +279,13 @@ export const ITEM_POOL: ItemRarityGroups = {
     // The power items: each decides what a player's next fifty eggs
     // are made of, which is the band's permanence test passed on the
     // next generation rather than on the holder
-    ...[...POWER_ITEMS.keys()].map((item) => ({ item, weight: 2 })),
+    ...evenlyWeighted(POWER_ITEMS.keys(), 2),
     // The mints. A nature is two stats for the rest of a pokemon's
     // life and nothing else touches one, which is this band exactly.
     // The thinnest weight there is, because there are twenty-one of
     // them: finding a mint is ordinary, finding the one a player came
     // for is not, and the chef is who they go to when it matters
-    ...[...MINT_NATURES.keys()].map((item) => ({ item, weight: 1 })),
+    ...evenlyWeighted(MINT_NATURES.keys(), 1),
   ],
   special: [
     { item: Items.MasterBall, weight: 10 },
@@ -591,7 +601,12 @@ export function pickItems(
       stacks.set(item, Math.min(MAX_STACK, (stacks.get(item) ?? 0) + amount));
     }
   }
-  return [...stacks].map(([item, amount]) => ({ item, amount }));
+  const haul: { item: Items; amount: number }[] = [];
+
+  for (const [item, amount] of stacks) {
+    haul.push({ item, amount });
+  }
+  return haul;
 }
 
 /**

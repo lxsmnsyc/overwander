@@ -199,10 +199,15 @@ function turned(
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);
 
-  return quad.map((corner) => ({
-    x: x + (corner.x - x) * cos - (corner.y - y) * sin,
-    y: y + (corner.x - x) * sin + (corner.y - y) * cos,
-  }));
+  const rotated: { x: number; y: number }[] = [];
+
+  for (const corner of quad) {
+    rotated.push({
+      x: x + (corner.x - x) * cos - (corner.y - y) * sin,
+      y: y + (corner.x - x) * sin + (corner.y - y) * cos,
+    });
+  }
+  return rotated;
 }
 
 /**

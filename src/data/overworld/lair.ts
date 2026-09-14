@@ -157,9 +157,19 @@ export const EVERY_LAIR: Lairs[] = [
  * since a pool that has to keep lair species out has to know about
  * every lair there is
  */
-export const EVERY_STAGED_LAIR: Lairs[] = EVERY_LAIR.filter((lair) =>
-  LAIR_SPECIES[lair].every((species) => !isMythicalSpecies(species)),
-);
+export const EVERY_STAGED_LAIR: Lairs[] = (() => {
+  const staged: Lairs[] = [];
+
+  lairs: for (const lair of EVERY_LAIR) {
+    for (const species of LAIR_SPECIES[lair]) {
+      if (isMythicalSpecies(species)) {
+        continue lairs;
+      }
+    }
+    staged.push(lair);
+  }
+  return staged;
+})();
 
 const STAGED_LAIRS = new Set<Lairs>(EVERY_STAGED_LAIR);
 
@@ -204,9 +214,14 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
  * one
  */
 export function getBiomeLairs(biome: Biome): Lairs[] {
-  const hosted = BIOME_LAIRS[biome] ?? [];
+  const lairs: Lairs[] = [];
 
-  return hosted.filter((lair) => STAGED_LAIRS.has(lair));
+  for (const lair of BIOME_LAIRS[biome] ?? []) {
+    if (STAGED_LAIRS.has(lair)) {
+      lairs.push(lair);
+    }
+  }
+  return lairs;
 }
 
 /**
@@ -226,7 +241,13 @@ export function pickLairSpecies(
   allowed: (species: Species) => boolean,
   roll: number,
 ): Species {
-  const residents = getLairResidents(lair).filter(allowed);
+  const residents: Species[] = [];
+
+  for (const species of getLairResidents(lair)) {
+    if (allowed(species)) {
+      residents.push(species);
+    }
+  }
 
   return residents[Math.abs(roll) % residents.length];
 }

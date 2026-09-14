@@ -63,6 +63,15 @@ export interface StatsSectionProps {
   onTrain: (spread: Partial<Record<Stats, number>>) => void;
 }
 
+function statusNames(statuses: number): string {
+  const names: string[] = [];
+
+  for (const carried of unpackStatuses(statuses)) {
+    names.push(STATUS_NAMES[carried]);
+  }
+  return names.join(' · ');
+}
+
 export default function StatsSection(props: StatsSectionProps): JSX.Element {
   /**
    * Points laid out but not yet saved, by stat. They are the pane's
@@ -82,7 +91,14 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
   );
 
   /** How many points are laid out across all six */
-  const spent = (): number => STAT_ORDER.reduce((total, stat) => total + (pending()[stat] ?? 0), 0);
+  const spent = (): number => {
+    let total = 0;
+
+    for (const stat of STAT_ORDER) {
+      total += pending()[stat] ?? 0;
+    }
+    return total;
+  };
 
   /** What is left of the budget once what is laid out is counted */
   const left = (): number => unusedEffort(props.caught) - spent();
@@ -209,11 +225,7 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
             </For>
           </List>
           <Show when={props.caught.statuses !== 0}>
-            <Meta>
-              {unpackStatuses(props.caught.statuses)
-                .map((carried) => STATUS_NAMES[carried])
-                .join(' · ')}
-            </Meta>
+            <Meta>{statusNames(props.caught.statuses)}</Meta>
           </Show>
         </TabPane>
 
@@ -332,9 +344,15 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
                   // mid-typing can be standing below what is saved,
                   // and the server refuses a spread that takes any
                   // back out
-                  const laid = Object.fromEntries(
-                    Object.entries(pending()).filter(([, step]) => step > 0),
-                  );
+                  const laid: Partial<Record<Stats, number>> = {};
+
+                  for (const stat of STAT_ORDER) {
+                    const step = pending()[stat];
+
+                    if (step != null && step > 0) {
+                      laid[stat] = step;
+                    }
+                  }
 
                   setPending({});
                   props.onTrain(laid);

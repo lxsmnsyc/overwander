@@ -355,15 +355,18 @@ export function grownArrow(
   const middleX = (points[0].x + points[1].x + points[2].x) / 3;
   const middleY = (points[0].y + points[1].y + points[2].y) / 3;
 
-  return points.map((point) => {
+  const grown: { x: number; y: number }[] = [];
+
+  for (const point of points) {
     const outX = point.x - middleX;
     const outY = point.y - middleY;
     const away = Math.hypot(outX, outY);
 
-    return away === 0
-      ? point
-      : { x: point.x + (outX / away) * halo, y: point.y + (outY / away) * halo };
-  });
+    grown.push(
+      away === 0 ? point : { x: point.x + (outX / away) * halo, y: point.y + (outY / away) * halo },
+    );
+  }
+  return grown;
 }
 
 /** A box on the screen, which is what a drawn sprite fills */

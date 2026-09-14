@@ -35,19 +35,18 @@ export interface Destination {
  * climb out: `..` reduces to nothing and is refused
  */
 export function overworldSlug(name: string): string {
-  const parts = name
-    .trim()
-    .toLowerCase()
-    .split('/')
-    .map((part) =>
-      part
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '')
-        .slice(0, 40),
-    );
+  const parts: string[] = [];
 
-  if (parts.some((part) => part.length === 0)) {
-    throw new Error('The sheet needs a name of letters or digits, one between each slash');
+  for (const typed of name.trim().toLowerCase().split('/')) {
+    const part = typed
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 40);
+
+    if (part.length === 0) {
+      throw new Error('The sheet needs a name of letters or digits, one between each slash');
+    }
+    parts.push(part);
   }
   return parts.join('/');
 }

@@ -100,16 +100,24 @@ export function foldCredits(works: Iterable<CreditWork>): CreditWorks {
     held.set(key, found);
   }
 
-  const listed = [...held.values()].map((found) => {
+  const listed: { name: string; drawn: string[] }[] = [];
+
+  for (const found of held.values()) {
     const [name] = [...found.spellings].sort(
       (one, other) => other[1] - one[1] || one[0].localeCompare(other[0]),
     )[0];
 
-    return { name, drawn: [...found.drawn].sort((one, other) => one.localeCompare(other)) };
-  });
+    listed.push({ name, drawn: [...found.drawn].sort((one, other) => one.localeCompare(other)) });
+  }
 
   listed.sort((one, other) => one.name.localeCompare(other.name));
-  return Object.fromEntries(listed.map((artist) => [artist.name, artist.drawn]));
+
+  const folded: CreditWorks = {};
+
+  for (const artist of listed) {
+    folded[artist.name] = artist.drawn;
+  }
+  return folded;
 }
 
 export interface Credits {
@@ -142,13 +150,16 @@ export interface CreditedArtist {
  * decides who is read first
  */
 export function groupCredits(works: CreditWorks): CreditedArtist[] {
-  return Object.entries(works)
-    .map(([name, drawn]) => ({ name, works: drawn }))
-    .sort((one, other) =>
-      one.works.length === other.works.length
-        ? one.name.localeCompare(other.name)
-        : other.works.length - one.works.length,
-    );
+  const artists: CreditedArtist[] = [];
+
+  for (const [name, drawn] of Object.entries(works)) {
+    artists.push({ name, works: drawn });
+  }
+  return artists.sort((one, other) =>
+    one.works.length === other.works.length
+      ? one.name.localeCompare(other.name)
+      : other.works.length - one.works.length,
+  );
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -161,42 +172,67 @@ function isRecord(value: unknown): value is Record<string, unknown> {
  * browser with the old one cached still shows a credits screen
  */
 export function asCreditWorks(value: unknown): CreditWorks {
+  const pairs: CreditWork[] = [];
+
   if (Array.isArray(value)) {
-    return foldCredits(
-      value.filter(isRecord).map((row) => ({ work: String(row.work), credit: String(row.credit) })),
-    );
+    for (const row of value) {
+      if (isRecord(row)) {
+        pairs.push({ work: String(row.work), credit: String(row.credit) });
+      }
+    }
+    return foldCredits(pairs);
   }
   if (!isRecord(value)) {
     return {};
   }
-  return foldCredits(
-    Object.entries(value).flatMap(([credit, drawn]) =>
-      (Array.isArray(drawn) ? drawn : []).map((work) => ({ work: String(work), credit })),
-    ),
-  );
+  for (const [credit, drawn] of Object.entries(value)) {
+    if (!Array.isArray(drawn)) {
+      continue;
+    }
+    for (const work of drawn) {
+      pairs.push({ work: String(work), credit });
+    }
+  }
+  return foldCredits(pairs);
 }
 
 /** Reads whatever was fetched, keeping only what has the right shape. */
 export function asCredits(value: unknown): Credits {
   const root = isRecord(value) ? value : {};
+  const sources: CreditSource[] = [];
+  const packages: CreditPackage[] = [];
+  const scenery: string[] = [];
 
+  for (const row of Array.isArray(root.sources) ? root.sources : []) {
+    if (isRecord(row)) {
+      sources.push({
+        what: String(row.what),
+        who: String(row.who),
+        href: String(row.href),
+        terms: String(row.terms),
+      });
+    }
+  }
+  for (const row of Array.isArray(root.packages) ? root.packages : []) {
+    if (isRecord(row)) {
+      packages.push({
+        name: String(row.name),
+        href: typeof row.href === 'string' ? row.href : undefined,
+        what: String(row.what),
+        licence: String(row.licence),
+        kind: row.kind === 'build' ? 'build' : 'runtime',
+      });
+    }
+  }
+  for (const name of Array.isArray(root.scenery) ? root.scenery : []) {
+    scenery.push(String(name));
+  }
   return {
     version: 1,
-    sources: (Array.isArray(root.sources) ? root.sources : []).filter(isRecord).map((row) => ({
-      what: String(row.what),
-      who: String(row.who),
-      href: String(row.href),
-      terms: String(row.terms),
-    })),
-    packages: (Array.isArray(root.packages) ? root.packages : []).filter(isRecord).map((row) => ({
-      name: String(row.name),
-      href: typeof row.href === 'string' ? row.href : undefined,
-      what: String(row.what),
-      licence: String(row.licence),
-      kind: row.kind === 'build' ? 'build' : 'runtime',
-    })),
+    sources,
+    packages,
     sprites: asCreditWorks(root.sprites),
     overworld: asCreditWorks(root.overworld),
-    scenery: (Array.isArray(root.scenery) ? root.scenery : []).map(String),
+    scenery,
   };
 }

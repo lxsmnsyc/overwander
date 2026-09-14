@@ -237,8 +237,26 @@ function PickerList(
    * being looked at — so the shelves offered are the ones this list
    * actually has something on
    */
-  const offered = (): InventoryEntry[] =>
-    (props.entries ?? props.bag() ?? []).filter((entry) => props.filter?.(entry) ?? true);
+  const offered = (): InventoryEntry[] => {
+    const kept: InventoryEntry[] = [];
+
+    for (const entry of props.entries ?? props.bag() ?? []) {
+      if (props.filter?.(entry) ?? true) {
+        kept.push(entry);
+      }
+    }
+    return kept;
+  };
+
+  /** The offered row for an item, or undefined where the bag has none */
+  const offeredOf = (item: Items | null): InventoryEntry | undefined => {
+    for (const entry of offered()) {
+      if (entry.item === item) {
+        return entry;
+      }
+    }
+    return undefined;
+  };
 
   const chosen = (): ItemAmount[] => (props.multiple === true ? props.value : []);
 
@@ -250,22 +268,35 @@ function PickerList(
     }
   });
 
-  const amountOf = (item: Items): number => draft().find(([picked]) => picked === item)?.[1] ?? 0;
+  const amountOf = (item: Items): number => {
+    for (const [picked, amount] of draft()) {
+      if (picked === item) {
+        return amount;
+      }
+    }
+    return 0;
+  };
 
   /**
    * The tray, square by square: what is in the bag, what the caller
    * has taken and what it refuses
    */
-  const cells = (): ItemCell[] =>
-    offered().map((entry) => ({
-      item: entry.item,
-      amount: props.counts === false ? undefined : entry.amount,
-      selected: props.multiple === true ? amountOf(entry.item) > 0 : props.value === entry.item,
-      blocked: props.blocked?.(entry) ?? null,
-      note: props.note?.(entry) ?? null,
-      card: () => props.card?.(entry),
-      carried: props.carried?.(entry) ?? entry.amount,
-    }));
+  const cells = (): ItemCell[] => {
+    const squares: ItemCell[] = [];
+
+    for (const entry of offered()) {
+      squares.push({
+        item: entry.item,
+        amount: props.counts === false ? undefined : entry.amount,
+        selected: props.multiple === true ? amountOf(entry.item) > 0 : props.value === entry.item,
+        blocked: props.blocked?.(entry) ?? null,
+        note: props.note?.(entry) ?? null,
+        card: () => props.card?.(entry),
+        carried: props.carried?.(entry) ?? entry.amount,
+      });
+    }
+    return squares;
+  };
 
   const close = (): void => {
     setPending(null);
@@ -315,11 +346,18 @@ function PickerList(
    */
   const press = (entry: InventoryEntry): void => {
     if (props.multiple === true) {
-      setDraft(
-        amountOf(entry.item) > 0
-          ? draft().filter(([picked]) => picked !== entry.item)
-          : [...draft(), [entry.item, 1]],
-      );
+      if (amountOf(entry.item) > 0) {
+        const kept: ItemAmount[] = [];
+
+        for (const pair of draft()) {
+          if (pair[0] !== entry.item) {
+            kept.push(pair);
+          }
+        }
+        setDraft(kept);
+      } else {
+        setDraft([...draft(), [entry.item, 1]]);
+      }
       return;
     }
     // A caller that deals in amounts is asked how many before
@@ -342,10 +380,20 @@ function PickerList(
    * makes the whole of it worth one
    */
   const finish = (): void => {
-    const drafted = draft().map(([item]) => item);
-    const asked = offered()
-      .filter((entry) => new Set(drafted).has(entry.item))
-      .some(asksTwice);
+    const drafted = new Set<Items>();
+
+    for (const [item] of draft()) {
+      drafted.add(item);
+    }
+
+    let asked = false;
+
+    for (const entry of offered()) {
+      if (drafted.has(entry.item) && asksTwice(entry)) {
+        asked = true;
+        break;
+      }
+    }
 
     if (asked && !confirming()) {
       setConfirming(true);
@@ -372,7 +420,7 @@ function PickerList(
           disabled={props.disabled}
           cardOnly={props.cardOnly}
           onPress={(item) => {
-            const entry = offered().find((one) => one.item === item);
+            const entry = offeredOf(item);
 
             if (entry != null) {
               press(entry);
@@ -384,7 +432,7 @@ function PickerList(
               taken. There is no room for either under a picture, so
               both stand below the tray: the count first, then the
               button that spends on it */}
-        <Show when={offered().find((entry) => entry.item === pending())} keyed>
+        <Show when={offeredOf(pending())} keyed>
           {(asked) => (
             <div class="flex flex-col gap-2 rounded-panel border-2 border-line bg-paper p-2">
               <Row class="flex-nowrap items-center gap-2">

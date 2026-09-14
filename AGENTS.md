@@ -25,6 +25,8 @@ one that covers what you are about to do:
 - `sprite-fps` - every sprite sheet animates at 24fps; count in `SPRITE_TICK` and
   let clips play at the speed they were drawn at.
 - `prefer-sets` - use `Set.has` for membership checks instead of scanning arrays.
+- `prefer-for-of` - iterate with `for...of` rather than callback Array methods
+  such as `map`, `filter`, `some` and `find`; `sort` and JSX `<For>` stay.
 - `trigger-driven-abilities` - ability effects that do not mutate their
   detection event ride `UnitTriggerAbility` at `Exact` priority.
 - `changesets` - every change against `main` ships with one, and a fix for

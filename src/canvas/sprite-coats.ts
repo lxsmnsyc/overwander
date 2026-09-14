@@ -46,6 +46,21 @@ export function coatOf(shiny: boolean, female: boolean): Coat {
   return shiny ? 'shiny' : 'regular';
 }
 
+function isCoatName(value: unknown): value is Coat {
+  return typeof value === 'string';
+}
+
+function namedCoats(values: unknown[]): Coat[] {
+  const coats: Coat[] = [];
+
+  for (const value of values) {
+    if (isCoatName(value)) {
+      coats.push(value);
+    }
+  }
+  return coats;
+}
+
 /** Reads whatever was fetched, keeping only what has the right shape. */
 export function asSpriteCoats(value: unknown): SpriteCoats {
   const listed: Record<string, Coat[]> = {};
@@ -57,7 +72,7 @@ export function asSpriteCoats(value: unknown): SpriteCoats {
   if (typeof held === 'object' && held != null) {
     for (const [species, coats] of Object.entries(held)) {
       if (Array.isArray(coats)) {
-        listed[species] = coats.filter((coat): coat is Coat => typeof coat === 'string');
+        listed[species] = namedCoats(coats);
       }
     }
   }

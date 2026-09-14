@@ -57,10 +57,14 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
     setOpen(false);
   });
   /** The name of what is chosen, or the placeholder standing in for it */
-  const showing = (): string =>
-    props.options.find((option) => option.value === props.value)?.label ??
-    props.placeholder ??
-    'Choose…';
+  const showing = (): string => {
+    for (const option of props.options) {
+      if (option.value === props.value) {
+        return option.label;
+      }
+    }
+    return props.placeholder ?? 'Choose…';
+  };
 
   return (
     <FieldFrame

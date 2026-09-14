@@ -178,48 +178,64 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
     // the object would be showing a cast that finished a second ago
     const acting = unit.casting ?? unit.channeling;
 
+    const statuses: Statuses[] = [];
+
+    for (const status of Object.keys(unit.status) as unknown as Statuses[]) {
+      if (unit.status[status] != null) {
+        statuses.push(status);
+      }
+    }
+
+    // Reduced here in the memo, because a `For` row reads its item once
+    // and a cooldown read in the markup would never move
+    const moves: { name: string; disabled: boolean; ready: number }[] = [];
+
+    for (const move of Object.values(unit.moves)) {
+      if (moves.length >= MOVE_SLOTS) {
+        break;
+      }
+      // The plain swing every unit is fielded with comes first, so
+      // listing it would push the fourth real move off the card
+      if (move.move === Moves.Attack) {
+        continue;
+      }
+      moves.push({
+        name: getMoveData(move.move).name,
+        disabled: move.disabled,
+        ready: fractionOf(move.cooldown),
+      });
+    }
+
+    // Only the enabled half: a suppressed ability or an eaten item is
+    // one the pokemon no longer has
+    const abilities: { name: string; description: string }[] = [];
+
+    for (const key of Object.keys(unit.abilities)) {
+      const ability: Abilities = Number(key);
+
+      if (unit.abilities[ability] === true) {
+        abilities.push(detailAbility(ability));
+      }
+    }
+
+    const items: { name: string; description: string }[] = [];
+
+    for (const key of Object.keys(unit.items)) {
+      const item: Items = Number(key);
+
+      if (unit.items[item] === true) {
+        items.push(detailItem(item));
+      }
+    }
+
     return {
       at: props.revision(),
       unit,
       maxHealth: unit.checkStat(Stats.HP, 0),
-      statuses: (Object.keys(unit.status) as unknown as Statuses[]).filter(
-        (status) => unit.status[status] != null,
-      ),
-      /**
-       * The four boxes, each already reduced to what it draws.
-       *
-       * Reduced **here**, in the memo, rather than read out of the
-       * move state in the markup. That is what was wrong with the
-       * cooldown bars: a `For` hands its callback the item as a plain
-       * value, so `move.cooldown` inside the row was read exactly once
-       * — the row had nothing reactive in it to re-run, and every bar
-       * sat at whatever width it had the moment the card was built.
-       * The numbers underneath were moving the whole time
-       */
-      moves: Object.values(unit.moves)
-        // The plain swing every unit is fielded with is left off. It
-        // is not one of the pokemon's four — it is what it does with
-        // its hands between them — and it is added before them, so
-        // listing it would push the fourth real move off the card
-        .filter((move) => move.move !== Moves.Attack)
-        .slice(0, MOVE_SLOTS)
-        .map((move) => ({
-          name: getMoveData(move.move).name,
-          disabled: move.disabled,
-          ready: fractionOf(move.cooldown),
-        })),
-      /**
-       * What it knows besides its moves. Both are read as the enabled
-       * half of what the engine is holding: an ability suppressed by
-       * Neutralizing Gas, or an item already eaten, is one the pokemon
-       * no longer has
-       */
-      abilities: (Object.keys(unit.abilities).map(Number) as Abilities[])
-        .filter((ability) => unit.abilities[ability] === true)
-        .map(detailAbility),
-      items: (Object.keys(unit.items).map(Number) as Items[])
-        .filter((item) => unit.items[item] === true)
-        .map(detailItem),
+      statuses,
+      moves,
+      abilities,
+      items,
       /**
        * What it is in the middle of doing, if anything. A move being
        * wound up is the one thing on a card that says what is about

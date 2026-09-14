@@ -94,8 +94,13 @@ export default async function processExtras(
   if (images.length === 0) {
     throw new Error('No images to pack');
   }
-  const entries = await Promise.all(images.map(async (image) => entryFor(image, options.compact)));
-  const layout = pack(entries);
+  const reading: Promise<Entry>[] = [];
+
+  for (const image of images) {
+    reading.push(entryFor(image, options.compact));
+  }
+
+  const layout = pack(await Promise.all(reading));
   const sheet = blank(layout.width, layout.height);
   const placed: SheetImage[] = [];
 
@@ -134,8 +139,14 @@ export default async function processExtras(
     JSON.stringify(data, null, 2),
   );
 
+  const paths: string[] = [];
+
+  for (const file of written) {
+    paths.push(file.path);
+  }
+
   return {
-    written: written.map((file) => file.path),
+    written: paths,
     width: data.width,
     height: data.height,
     images: data.images.length,

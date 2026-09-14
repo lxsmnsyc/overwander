@@ -125,6 +125,16 @@ export interface HoverCardProps extends ParentProps {
   stayOnPress?: boolean;
 }
 
+/** Corners as an SVG `points` list */
+function pointsOf(corners: { x: number; y: number }[]): string {
+  const pairs: string[] = [];
+
+  for (const corner of corners) {
+    pairs.push(`${corner.x},${corner.y}`);
+  }
+  return pairs.join(' ');
+}
+
 export default function HoverCard(props: HoverCardProps): JSX.Element {
   /** What the card is named by, since the title may be any markup */
   const titleId = createUniqueId();
@@ -594,9 +604,7 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
               class="pointer-events-none fixed inset-0 h-full w-full overflow-visible"
             >
               <polygon
-                points={drawn()
-                  .corners.map((corner) => `${corner.x},${corner.y}`)
-                  .join(' ')}
+                points={pointsOf(drawn().corners)}
                 class={drawn().live ? 'fill-leaf/15 stroke-leaf' : 'fill-ember/20 stroke-ember'}
                 stroke-width="2"
                 stroke-dasharray="6 4"

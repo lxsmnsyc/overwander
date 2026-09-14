@@ -2,6 +2,7 @@ import { Types } from '../../constants/types';
 import Awards from '../../ids/awards';
 import Biome from '../../ids/biome';
 import { type Items, getMachineItem } from '../../ids/items';
+import type { Moves } from '../../ids/moves';
 import { getTeachableMoves } from '../../items/machines';
 import { getMoveData } from '../../moves';
 
@@ -367,7 +368,13 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
  */
 export function rollGymMachine(leader: GymLeader, random: () => number): Items | null {
   const type = GYM_LEADER_TYPES[leader];
-  const moves = getTeachableMoves().filter((move) => getMoveData(move).type === type);
+  const moves: Moves[] = [];
+
+  for (const move of getTeachableMoves()) {
+    if (getMoveData(move).type === type) {
+      moves.push(move);
+    }
+  }
   const move = moves.at(Math.floor(random() * moves.length));
 
   return move == null ? null : getMachineItem(move);

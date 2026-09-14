@@ -95,9 +95,16 @@ export async function listClaimedPhenomena(
     where player = ${uid} and marker like ${`${prefix}%`}
   `;
 
-  return rows
-    .map((row) => Number(asString(row.marker).slice(prefix.length)))
-    .filter((cell) => Number.isInteger(cell));
+  const cells: number[] = [];
+
+  for (const row of rows) {
+    const cell = Number(asString(row.marker).slice(prefix.length));
+
+    if (Number.isInteger(cell)) {
+      cells.push(cell);
+    }
+  }
+  return cells;
 }
 
 /**

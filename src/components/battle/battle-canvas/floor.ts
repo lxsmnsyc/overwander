@@ -361,18 +361,32 @@ export default function drawFloor(
       corners[2] = { x: x + TILE_UNITS, z };
       corners[3] = { x, z };
 
-      const laid = corners.map((corner) => projectField(corner, view));
-
-      if (laid.some((point) => !point.visible || point.scale <= 0 || point.scale > NEAREST)) {
-        continue;
-      }
+      const laid: ReturnType<typeof projectField>[] = [];
+      let hidden = false;
       // Whether any of it is in shot. A field is deeper than the
       // picture and the camera turns inside it, so most of the ground
       // the loop walks over is off the edge
-      const left = Math.min(...laid.map((point) => point.x));
-      const right = Math.max(...laid.map((point) => point.x));
-      const top = Math.min(...laid.map((point) => point.y));
-      const bottom = Math.max(...laid.map((point) => point.y));
+      let left = Infinity;
+      let right = -Infinity;
+      let top = Infinity;
+      let bottom = -Infinity;
+
+      for (const corner of corners) {
+        const point = projectField(corner, view);
+
+        if (!point.visible || point.scale <= 0 || point.scale > NEAREST) {
+          hidden = true;
+          break;
+        }
+        laid.push(point);
+        left = Math.min(left, point.x);
+        right = Math.max(right, point.x);
+        top = Math.min(top, point.y);
+        bottom = Math.max(bottom, point.y);
+      }
+      if (hidden) {
+        continue;
+      }
 
       if (
         right < region.left ||

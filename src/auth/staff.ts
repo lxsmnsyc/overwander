@@ -27,9 +27,12 @@ export type Role = (typeof ROLES)[number];
  * than being trusted for something nobody recognises
  */
 export function rankOf(role: string): number {
-  const at = ROLES.findIndex((known) => known === role);
-
-  return at < 0 ? 0 : at;
+  for (let at = 0; at < ROLES.length; at++) {
+    if (ROLES[at] === role) {
+      return at;
+    }
+  }
+  return 0;
 }
 
 /** What each is called where somebody reads it */
@@ -105,5 +108,13 @@ export function grantableRoles(actor: string): Role[] {
  * cannot demote another admin by handing them a role they *can* grant
  */
 export function canAssign(actor: string, target: string, wanted: string): boolean {
-  return canActOn(actor, target) && grantableRoles(actor).some((role) => role === wanted);
+  if (!canActOn(actor, target)) {
+    return false;
+  }
+  for (const role of grantableRoles(actor)) {
+    if (role === wanted) {
+      return true;
+    }
+  }
+  return false;
 }

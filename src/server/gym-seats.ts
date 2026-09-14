@@ -721,5 +721,10 @@ export async function listHeldSeats(uid: string): Promise<GymSeatRecord[]> {
     select * from gym_seats where holder = ${uid} order by seated_at desc limit 50
   `;
 
-  return rows.map((row) => asGymSeatRecord(toRecord(row)));
+  const seats: GymSeatRecord[] = [];
+
+  for (const row of rows) {
+    seats.push(asGymSeatRecord(toRecord(row)));
+  }
+  return seats;
 }

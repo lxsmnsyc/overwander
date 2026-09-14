@@ -62,7 +62,12 @@ export function purifyIVs(ivs: number): number {
  * rolled — is left exactly where it was
  */
 export function purifyAbilities(abilities: Abilities[]): Abilities[] {
-  return abilities.map((ability) => (ability === Abilities.Shadow ? Abilities.Purified : ability));
+  const purified: Abilities[] = [];
+
+  for (const ability of abilities) {
+    purified.push(ability === Abilities.Shadow ? Abilities.Purified : ability);
+  }
+  return purified;
 }
 
 export default function registerPurifyingGem(): void {

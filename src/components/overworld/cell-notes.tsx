@@ -92,11 +92,27 @@ export function createCellNotes(
       timers.delete(id);
     }
     drawn.delete(id);
-    setNotes((shown) => shown.filter((note) => note.id !== id));
+    setNotes((shown) => {
+      const kept: CellNote[] = [];
+
+      for (const note of shown) {
+        if (note.id !== id) {
+          kept.push(note);
+        }
+      }
+      return kept;
+    });
   };
 
   const leave = (id: number): void => {
-    setNotes((shown) => shown.map((note) => (note.id === id ? { ...note, leaving: true } : note)));
+    setNotes((shown) => {
+      const marked: CellNote[] = [];
+
+      for (const note of shown) {
+        marked.push(note.id === id ? { ...note, leaving: true } : note);
+      }
+      return marked;
+    });
     timers.set(
       id,
       setTimeout(() => {

@@ -219,7 +219,14 @@ function buildCharsets(): Charset[] {
 
 export const CHARSETS: Charset[] = buildCharsets();
 
-const BY_SHEET = new Map(CHARSETS.map((charset) => [charset.sheet, charset]));
+const BY_SHEET = (() => {
+  const bySheet = new Map<string, Charset>();
+
+  for (const charset of CHARSETS) {
+    bySheet.set(charset.sheet, charset);
+  }
+  return bySheet;
+})();
 
 export function getCharset(sheet: string): Charset | null {
   return BY_SHEET.get(sheet) ?? null;

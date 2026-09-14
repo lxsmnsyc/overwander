@@ -50,6 +50,25 @@ const FRAMES = [
   { label: 'Desktop', width: 960, height: 560 },
 ] as const;
 
+const FRAME_OPTIONS = ((): { value: number; label: string }[] => {
+  const options: { value: number; label: string }[] = [];
+
+  for (const [index, entry] of FRAMES.entries()) {
+    options.push({ value: index, label: entry.label });
+  }
+  return options;
+})();
+
+/** A name table turned into select options, keyed by its numeric ids */
+function optionsOf(names: Record<number, string>): { value: number; label: string }[] {
+  const options: { value: number; label: string }[] = [];
+
+  for (const [key, label] of Object.entries(names)) {
+    options.push({ value: Number(key), label });
+  }
+  return options;
+}
+
 /**
  * The scene as the board sees it: whatever of it is inside the window
  * the player is standing in the middle of
@@ -159,6 +178,19 @@ function findCountry(
   return null;
 }
 
+/** The first point of a route's line on dry ground, rounded to its cell */
+function dryPointOn(
+  world: World,
+  line: Iterable<readonly [number, number]>,
+): [number, number] | null {
+  for (const [x, y] of line) {
+    if (isRouteAt(world, x, y) && readGround(world, x, y).role === 'ground') {
+      return [Math.round(x), Math.round(y)];
+    }
+  }
+  return null;
+}
+
 /** The nearest dry cell a route runs over, searched the same coarse way as a country */
 function findRoute(world: World, from: [number, number]): [number, number] | null {
   for (let ring = 0; ring <= SEARCH_RINGS; ring += 1) {
@@ -178,12 +210,10 @@ function findRoute(world: World, from: [number, number]): [number, number] | nul
 
       for (const spot of spots) {
         for (const route of routesNear(world, spot[0], spot[1])) {
-          const dry = route.line.find(
-            ([x, y]) => isRouteAt(world, x, y) && readGround(world, x, y).role === 'ground',
-          );
+          const dry = dryPointOn(world, route.line);
 
           if (dry != null) {
-            return [Math.round(dry[0]), Math.round(dry[1])];
+            return dry;
           }
         }
       }
@@ -396,12 +426,12 @@ export default function BoardDemo(): JSX.Element {
     const found =
       to == null ? null : findPathNear(BOARD_CENTER * BOARD_CELLS + BOARD_CENTER, to, passable);
 
-    setQueued(
-      (found ?? []).map((step) => [
-        originX + (step % BOARD_CELLS),
-        originY + Math.floor(step / BOARD_CELLS),
-      ]),
-    );
+    const route: [number, number][] = [];
+
+    for (const step of found ?? []) {
+      route.push([originX + (step % BOARD_CELLS), originY + Math.floor(step / BOARD_CELLS)]);
+    }
+    setQueued(route);
   };
 
   /** The next cell of the route, taken at the pace the game walks */
@@ -459,7 +489,7 @@ export default function BoardDemo(): JSX.Element {
           label="Screen"
           class="w-56"
           value={frame()}
-          options={FRAMES.map((entry, index) => ({ value: index, label: entry.label }))}
+          options={FRAME_OPTIONS}
           onChange={(chosen) => {
             setFrame(chosen);
           }}
@@ -468,10 +498,7 @@ export default function BoardDemo(): JSX.Element {
           label="Go to"
           class="w-56"
           value={wanted()}
-          options={Object.entries(BIOME_NAMES).map(([key, label]) => ({
-            value: Number(key),
-            label,
-          }))}
+          options={optionsOf(BIOME_NAMES)}
           onChange={(chosen) => {
             setWanted(chosen);
             goTo(chosen);
@@ -481,10 +508,7 @@ export default function BoardDemo(): JSX.Element {
           label="Sky"
           class="w-56"
           value={weather()}
-          options={Object.entries(WEATHER_NAMES).map(([key, label]) => ({
-            value: Number(key),
-            label,
-          }))}
+          options={optionsOf(WEATHER_NAMES)}
           onChange={(chosen) => {
             setWeather(chosen);
           }}

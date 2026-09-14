@@ -73,13 +73,22 @@ function TierBadge(props: {
     const line = titleLine(props.title);
 
     if (line != null) {
-      return sheet.lines.find(([held]) => held === line)?.[1].tier ?? AchievementTier.None;
+      for (const [held, standing] of sheet.lines) {
+        if (held === line) {
+          return standing.tier;
+        }
+      }
+      return AchievementTier.None;
     }
 
     const type = titleType(props.title);
 
     if (type != null) {
-      return sheet.types.find(([held]) => held === type)?.[1].tier ?? AchievementTier.None;
+      for (const [held, standing] of sheet.types) {
+        if (held === type) {
+          return standing.tier;
+        }
+      }
     }
     return AchievementTier.None;
   };
@@ -214,8 +223,17 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
    * Nothing else in the game ever mentions one, so this count is the
    * whole of how a player finds out
    */
-  const stranded = (): number =>
-    lots().filter(([, lot]) => canReclaim(lot, props.player, Date.now())).length;
+  const stranded = (): number => {
+    const now = Date.now();
+    let count = 0;
+
+    for (const [, lot] of lots()) {
+      if (canReclaim(lot, props.player, now)) {
+        count += 1;
+      }
+    }
+    return count;
+  };
 
   const leave = (): void => {
     setError(null);

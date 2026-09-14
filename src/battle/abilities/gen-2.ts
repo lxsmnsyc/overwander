@@ -32,7 +32,11 @@ const FLOWER_GIFT_BOOST = 1.5;
  * Every stage Moody chooses between. Accuracy and evasion are in, as
  * the mainline has them
  */
-const MOODY_STAGES = Object.keys(STAGE_NAMES).map(Number) as Stages[];
+const MOODY_STAGES: Stages[] = [];
+
+for (const stage of Object.keys(STAGE_NAMES)) {
+  MOODY_STAGES.push(Number(stage));
+}
 const MOODY_RISE = 2;
 
 /**
@@ -253,7 +257,14 @@ const setupAbilities = [
           const raised = MOODY_STAGES[Math.floor(battle.random() * MOODY_STAGES.length)];
           // The drop never lands on the stage that just rose, so the
           // two never cancel each other out
-          const rest = MOODY_STAGES.filter((stage) => stage !== raised);
+          const rest: Stages[] = [];
+
+          for (const stage of MOODY_STAGES) {
+            if (stage !== raised) {
+              rest.push(stage);
+            }
+          }
+
           const lowered = rest[Math.floor(battle.random() * rest.length)];
 
           event.source.addStage(raised, MOODY_RISE, cause);

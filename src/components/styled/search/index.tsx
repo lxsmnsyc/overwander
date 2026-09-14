@@ -120,7 +120,15 @@ const TERM_TONES: Record<TermRole, BadgeTone> = {
 function roleOf(term: string, vocabulary: QueryVocabulary): TermRole {
   const [token] = scanQuery(term);
 
-  if (!vocabulary.fields.some((one) => one.name === token.field)) {
+  let known = false;
+
+  for (const one of vocabulary.fields) {
+    if (one.name === token.field) {
+      known = true;
+      break;
+    }
+  }
+  if (!known) {
     return 'unknown';
   }
   if (isControlField(token.field)) {
@@ -166,11 +174,18 @@ export default function Search(props: SearchProps): JSX.Element {
   const optionId = (index: number): string => `${listId}-${index}`;
 
   /** The badges and the box read back as one query */
-  const query = (): string =>
-    [...terms(), typed()]
-      .map((part) => part.trim())
-      .filter((part) => part !== '')
-      .join(' ');
+  const query = (): string => {
+    const parts: string[] = [];
+
+    for (const part of [...terms(), typed()]) {
+      const trimmed = part.trim();
+
+      if (trimmed !== '') {
+        parts.push(trimmed);
+      }
+    }
+    return parts.join(' ');
+  };
 
   const cancel = (): void => {
     if (waiting != null) {
@@ -329,7 +344,13 @@ export default function Search(props: SearchProps): JSX.Element {
    */
   const complete = (offered: QuerySuggestion[]): void => {
     const span = offering();
-    const shared = sharedPrefix(offered.map((one) => one.word));
+    const words: string[] = [];
+
+    for (const one of offered) {
+      words.push(one.word);
+    }
+
+    const shared = sharedPrefix(words);
 
     if (!arrowed() && span != null && offered.length > 1 && shared.length > span.end - span.start) {
       write(shared, '');
@@ -340,7 +361,14 @@ export default function Search(props: SearchProps): JSX.Element {
 
   /** Taking a badge off asks the shorter question at once */
   const drop = (index: number): void => {
-    setTerms(terms().filter((_, one) => one !== index));
+    const kept: string[] = [];
+
+    for (const [one, term] of terms().entries()) {
+      if (one !== index) {
+        kept.push(term);
+      }
+    }
+    setTerms(kept);
     settle();
   };
 

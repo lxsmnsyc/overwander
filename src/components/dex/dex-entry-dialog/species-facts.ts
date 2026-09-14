@@ -52,10 +52,19 @@ export const STAT_BARS: Record<Stats, string> = {
 export function listLevelMoves(species: Species): [level: number, moves: Moves[]][] {
   const { level } = getSpeciesData(species).learnSet;
 
-  return Object.keys(level)
-    .map(Number)
-    .sort((one, other) => one - other)
-    .map((threshold): [number, Moves[]] => [threshold, level[threshold]]);
+  const thresholds: number[] = [];
+
+  for (const key of Object.keys(level)) {
+    thresholds.push(Number(key));
+  }
+  thresholds.sort((one, other) => one - other);
+
+  const learnt: [level: number, moves: Moves[]][] = [];
+
+  for (const threshold of thresholds) {
+    learnt.push([threshold, level[threshold]]);
+  }
+  return learnt;
 }
 
 /**
@@ -84,23 +93,43 @@ export function groupHabitats(species: Species): Habitat[] {
     places.set(habitat.biome, [...(places.get(habitat.biome) ?? []), habitat]);
   }
 
-  return [...places]
-    .map(([biome, found]): Habitat => ({ biome, hours: hourBadges(found) }))
-    .sort((one, other) => BIOME_NAMES[one.biome].localeCompare(BIOME_NAMES[other.biome]));
+  const habitats: Habitat[] = [];
+
+  for (const [biome, found] of places) {
+    habitats.push({ biome, hours: hourBadges(found) });
+  }
+  return habitats.sort((one, other) =>
+    BIOME_NAMES[one.biome].localeCompare(BIOME_NAMES[other.biome]),
+  );
 }
 
 /** The badges for the hours something is met, collapsed to Anytime when every hour reads the same */
 function hourBadges(found: { time: TimeOfDay; rarity: SpawnRarity }[]): string[] {
-  const bands = new Map(found.map((habitat) => [habitat.time, habitat.rarity]));
-  const met = TIMES_OF_DAY.filter((time) => bands.has(time));
-  const rarities = new Set(met.map((time) => bands.get(time)));
+  const bands = new Map<TimeOfDay, SpawnRarity>();
 
+  for (const habitat of found) {
+    bands.set(habitat.time, habitat.rarity);
+  }
+
+  const met: TimeOfDay[] = [];
+  const rarities = new Set<SpawnRarity | undefined>();
+
+  for (const time of TIMES_OF_DAY) {
+    if (bands.has(time)) {
+      met.push(time);
+      rarities.add(bands.get(time));
+    }
+  }
   if (met.length === TIMES_OF_DAY.length && rarities.size === 1) {
     return [`Anytime · ${SPAWN_RARITY_NAMES[bands.get(met[0]) ?? 0]}`];
   }
-  return met.map(
-    (time) => `${TIME_OF_DAY_NAMES[time]} · ${SPAWN_RARITY_NAMES[bands.get(time) ?? 0]}`,
-  );
+
+  const badges: string[] = [];
+
+  for (const time of met) {
+    badges.push(`${TIME_OF_DAY_NAMES[time]} · ${SPAWN_RARITY_NAMES[bands.get(time) ?? 0]}`);
+  }
+  return badges;
 }
 
 /** The hours this species is met on a town's streets, as badges */
@@ -125,11 +154,16 @@ export function describeLair(species: Species): { name: string; where: string[] 
     return null;
   }
 
-  const where = (Object.keys(BIOME_NAMES).map(Number) as Biome[]).filter((biome) =>
-    new Set(getBiomeLairs(biome)).has(lair),
-  );
+  const where: string[] = [];
 
-  return { name: LAIR_NAMES[lair], where: where.map((biome) => BIOME_NAMES[biome]) };
+  for (const key of Object.keys(BIOME_NAMES)) {
+    const biome: Biome = Number(key);
+
+    if (new Set(getBiomeLairs(biome)).has(lair)) {
+      where.push(BIOME_NAMES[biome]);
+    }
+  }
+  return { name: LAIR_NAMES[lair], where };
 }
 
 /**

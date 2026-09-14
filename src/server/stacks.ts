@@ -82,7 +82,12 @@ export async function readStacksIn(
     for update
   `;
 
-  return new Map(rows.map((row) => [asNumber(row[column]), asNumber(row.count)]));
+  const held = new Map<number, number>();
+
+  for (const row of rows) {
+    held.set(asNumber(row[column]), asNumber(row.count));
+  }
+  return held;
 }
 
 /**
@@ -211,15 +216,19 @@ export async function grantStacks(
   uid: string,
   granted: Iterable<[key: number, count: number]>,
 ): Promise<void> {
-  const owed = [...granted].filter(([, count]) => count > 0);
+  const { table, key: column } = tableOf(spec);
+  const rows: { [column: string]: string | number }[] = [];
 
-  if (owed.length === 0) {
+  for (const [key, count] of granted) {
+    if (count > 0) {
+      rows.push({ player: uid, [column]: key, count });
+    }
+  }
+  if (rows.length === 0) {
     return;
   }
 
-  const { table, key: column } = tableOf(spec);
   const sql = getSql();
-  const rows = owed.map(([key, count]) => ({ player: uid, [column]: key, count }));
 
   await sql`
     insert into ${sql(table)} ${sql(rows, 'player', column, 'count')}

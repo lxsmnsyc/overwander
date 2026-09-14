@@ -306,24 +306,43 @@ function SafariBody(
     const carried = props.bag.latest;
 
     if (active != null && carried != null) {
-      active.ballsLeft = carried
-        .filter((entry) => getBall(entry.item) != null)
-        .reduce((total, entry) => total + entry.amount, 0);
+      let total = 0;
+
+      for (const entry of carried) {
+        if (getBall(entry.item) != null) {
+          total += entry.amount;
+        }
+      }
+      active.ballsLeft = total;
       setRevision((value) => value + 1);
     }
   });
 
-  const balls = (): [Balls, number][] =>
-    (props.bag.latest ?? [])
-      .map((entry): [Balls | null, number] => [getBall(entry.item), entry.amount])
-      .filter((pair): pair is [Balls, number] => pair[0] != null);
+  const balls = (): [Balls, number][] => {
+    const pairs: [Balls, number][] = [];
+
+    for (const entry of props.bag.latest ?? []) {
+      const ball = getBall(entry.item);
+
+      if (ball != null) {
+        pairs.push([ball, entry.amount]);
+      }
+    }
+    return pairs;
+  };
 
   /**
    * How many of it the player is carrying. Zero for something the bag
    * has run out of, which is the number worth showing on the button
    */
-  const stockOf = (item: Items): number =>
-    (props.bag.latest ?? []).find((entry) => entry.item === item)?.amount ?? 0;
+  const stockOf = (item: Items): number => {
+    for (const entry of props.bag.latest ?? []) {
+      if (entry.item === item) {
+        return entry.amount;
+      }
+    }
+    return 0;
+  };
 
   /**
    * Which session has already been handed its ball, so the player's

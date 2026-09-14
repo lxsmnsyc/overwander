@@ -30,7 +30,13 @@ export default function setupMetronome(battle: Battle): void {
    * The callable move pool, resolved once per battle setup (the move
    * registry is filled during data registration, before any battle).
    */
-  const pool = getRegisteredMoves().filter((move) => !EXCLUDED.has(move));
+  const pool: Moves[] = [];
+
+  for (const move of getRegisteredMoves()) {
+    if (!EXCLUDED.has(move)) {
+      pool.push(move);
+    }
+  }
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.Metronome) {

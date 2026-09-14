@@ -220,8 +220,8 @@ export default function OverworldBoard(props: {
     const seats = new Set<number>();
 
     for (const key of keys) {
-      const [x, y] = key.split(',').map(Number);
-      const standing = seatOf(x, y);
+      const parts = key.split(',');
+      const standing = seatOf(Number(parts[0]), Number(parts[1]));
 
       if (standing != null) {
         seats.add(standing);
@@ -435,8 +435,17 @@ export default function OverworldBoard(props: {
    * chunks under it change every sixteen
    */
   const overlapped = createMemo(() => boardChunks(originX(), originY()), [], {
-    equals: (was, now) =>
-      was.length === now.length && was.every(([x, y], at) => x === now[at][0] && y === now[at][1]),
+    equals: (was, now) => {
+      if (was.length !== now.length) {
+        return false;
+      }
+      for (const [at, [x, y]] of was.entries()) {
+        if (x !== now[at][0] || y !== now[at][1]) {
+          return false;
+        }
+      }
+      return true;
+    },
   });
 
   /**
@@ -445,11 +454,14 @@ export default function OverworldBoard(props: {
    * once per step hangs off this: a step that changes neither is not a
    * reason to ask the server anything
    */
-  const windowKey = createMemo(() =>
-    overlapped()
-      .map(([x, y]) => `${x},${y}@${windows().get(`${x},${y}`)?.record.timestamp ?? ''}`)
-      .join(' '),
-  );
+  const windowKey = createMemo(() => {
+    const parts: string[] = [];
+
+    for (const [x, y] of overlapped()) {
+      parts.push(`${x},${y}@${windows().get(`${x},${y}`)?.record.timestamp ?? ''}`);
+    }
+    return parts.join(' ');
+  });
 
   /**
    * Seeing into a chunk publishes (or adopts) its window's spawns;
@@ -551,7 +563,11 @@ export default function OverworldBoard(props: {
     }
 
     const wanted = overlapped();
-    const keys = new Set(wanted.map(([x, y]) => `${x},${y}`));
+    const keys = new Set<string>();
+
+    for (const [x, y] of wanted) {
+      keys.add(`${x},${y}`);
+    }
 
     for (const [key, stop] of watched) {
       if (!keys.has(key)) {
@@ -561,7 +577,16 @@ export default function OverworldBoard(props: {
     }
     // What the board has walked away from is dropped rather than left
     // to be drawn if the player walks back before it is re-read
-    setWindows((held) => new Map([...held].filter(([key]) => keys.has(key))));
+    setWindows((held) => {
+      const kept = new Map<string, WatchedWindow>();
+
+      for (const [key, watching] of held) {
+        if (keys.has(key)) {
+          kept.set(key, watching);
+        }
+      }
+      return kept;
+    });
 
     for (const [x, y] of wanted) {
       const key = `${x},${y}`;
@@ -673,28 +698,45 @@ export default function OverworldBoard(props: {
     }
 
     const who = untrack(() => auth.user()?.uid ?? '');
-    const near = new Set(untrack(overlapped).map(([x, y]) => `${x},${y}`));
-    const pieces = loaded.chunks.filter((piece) => near.has(`${piece.x},${piece.y}`));
+    const near = new Set<string>();
+
+    for (const [x, y] of untrack(overlapped)) {
+      near.add(`${x},${y}`);
+    }
+
+    const lists: Promise<string[]>[] = [];
     let live = true;
 
-    Promise.all(
-      pieces.map(async (piece) => {
-        // The player is in the key because a claim is theirs: signing
-        // in as somebody else must not read back the last one's
-        const key = `${who}|${named}|${piece.x},${piece.y}|${piece.snapshot.timestamp}`;
-        const known = claimed.get(key) ?? ask(piece.snapshot);
+    for (const piece of loaded.chunks) {
+      if (!near.has(`${piece.x},${piece.y}`)) {
+        continue;
+      }
+      lists.push(
+        (async (): Promise<string[]> => {
+          // The player is in the key because a claim is theirs: signing
+          // in as somebody else must not read back the last one's
+          const key = `${who}|${named}|${piece.x},${piece.y}|${piece.snapshot.timestamp}`;
+          const known = claimed.get(key) ?? ask(piece.snapshot);
 
-        claimed.set(key, known);
-        try {
-          return (await known).map((taken) => piece.world(taken).join(','));
-        } catch (caught) {
-          // A list that failed is not the answer for the rest of the
-          // window: it is asked again the next time the board looks
-          claimed.delete(key);
-          throw caught;
-        }
-      }),
-    )
+          claimed.set(key, known);
+          try {
+            const cells: string[] = [];
+
+            for (const taken of await known) {
+              cells.push(piece.world(taken).join(','));
+            }
+            return cells;
+          } catch (caught) {
+            // A list that failed is not the answer for the rest of the
+            // window: it is asked again the next time the board looks
+            claimed.delete(key);
+            throw caught;
+          }
+        })(),
+      );
+    }
+
+    Promise.all(lists)
       .then((found) => {
         if (live) {
           take(new Set(found.flat()));
@@ -1283,7 +1325,11 @@ export default function OverworldBoard(props: {
 
       // The best band anything in it belongs to, which is what says
       // whether this was a dig worth hearing about
-      const rarest = (stash ?? []).map((held) => getItemBand(held.item));
+      const rarest: ReturnType<typeof getItemBand>[] = [];
+
+      for (const held of stash ?? []) {
+        rarest.push(getItemBand(held.item));
+      }
 
       if (rarest.includes('special')) {
         playEffect(Effect.SpecialItem);
@@ -1998,7 +2044,15 @@ export default function OverworldBoard(props: {
         return;
       }
       event.preventDefault();
-      held = [...held.filter((one) => one !== action), action];
+      const pressed: Direction[] = [];
+
+      for (const one of held) {
+        if (one !== action) {
+          pressed.push(one);
+        }
+      }
+      pressed.push(action);
+      held = pressed;
       stepBy(STEPS[action]);
       pacing ??= setInterval(onward, STEP_PACE);
     };
@@ -2009,7 +2063,14 @@ export default function OverworldBoard(props: {
       if (action == null) {
         return;
       }
-      held = held.filter((one) => one !== action);
+      const still: Direction[] = [];
+
+      for (const one of held) {
+        if (one !== action) {
+          still.push(one);
+        }
+      }
+      held = still;
       if (held.length === 0) {
         stop();
       }
@@ -2048,21 +2109,22 @@ export default function OverworldBoard(props: {
   const standingHere = createMemo(() => {
     const loaded = view();
 
-    return loaded == null
-      ? new Map<number, SpawnCoat>()
-      : new Map(
-          [...loaded.spawns].map(([at, standing]): [number, SpawnCoat] => [
-            at,
-            {
-              id: standing.id,
-              species: standing.spawn[0],
-              shiny: standing.shiny,
-              // Against the window's own instant, which is what the
-              // server weighted the pool by
-              featured: isFeaturedSpecies(standing.spawn[0], loaded.snapshot.timestamp),
-            },
-          ]),
-        );
+    const coats = new Map<number, SpawnCoat>();
+
+    if (loaded == null) {
+      return coats;
+    }
+    for (const [at, standing] of loaded.spawns) {
+      coats.set(at, {
+        id: standing.id,
+        species: standing.spawn[0],
+        shiny: standing.shiny,
+        // Against the window's own instant, which is what the
+        // server weighted the pool by
+        featured: isFeaturedSpecies(standing.spawn[0], loaded.snapshot.timestamp),
+      });
+    }
+    return coats;
   });
 
   const titleOf = (index: number): string => {

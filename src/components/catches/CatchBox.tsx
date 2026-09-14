@@ -65,7 +65,11 @@ function squaresOf(count: number): null[] {
     return known;
   }
 
-  const made: null[] = Array.from({ length: count }, () => null);
+  const made: null[] = [];
+
+  for (let square = 0; square < count; square++) {
+    made.push(null);
+  }
 
   SQUARES.set(count, made);
   return made;

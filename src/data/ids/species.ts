@@ -596,12 +596,14 @@ export const UNOWN_FORMS: Species[] = [
 /** The two marks the alphabet is followed by. */
 const UNOWN_MARKS = ['!', '?'];
 
-const UNOWN_LETTERS = new Map<Species, string>(
-  UNOWN_FORMS.map((species, at) => [
-    species,
-    at < 26 ? String.fromCharCode(65 + at) : UNOWN_MARKS[at - 26],
-  ]),
-);
+const UNOWN_LETTERS = (() => {
+  const letters = new Map<Species, string>();
+
+  for (const [at, species] of UNOWN_FORMS.entries()) {
+    letters.set(species, at < 26 ? String.fromCharCode(65 + at) : UNOWN_MARKS[at - 26]);
+  }
+  return letters;
+})();
 
 /**
  * The character an unown is shaped like: a letter, and the two marks

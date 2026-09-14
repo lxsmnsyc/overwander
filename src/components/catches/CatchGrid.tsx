@@ -55,19 +55,33 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
   const query = (): string => props.search ?? typed();
 
   /** Every species the grid holds more than one of, for `is:duplicate` */
-  const duplicates = createMemo(() => findDuplicates(props.entries.map((entry) => entry.caught)));
+  const duplicates = createMemo(() => {
+    const box: CaughtPokemon[] = [];
+
+    for (const entry of props.entries) {
+      box.push(entry.caught);
+    }
+    return findDuplicates(box);
+  });
 
   // The query is applied here even when the caller fetched against it,
   // because the store only answers half of a search
-  const matched = createMemo<BoxEntry[]>(() =>
-    orderCatches(
-      props.entries.filter((entry) =>
-        matchesCatch(entry.caught, query(), { id: entry.square.id, duplicates: duplicates() }),
-      ),
-      query(),
-      (entry) => entry.caught,
-    ).map((entry) => entry.square),
-  );
+  const matched = createMemo<BoxEntry[]>(() => {
+    const kept: CatchGridEntry[] = [];
+
+    for (const entry of props.entries) {
+      if (matchesCatch(entry.caught, query(), { id: entry.square.id, duplicates: duplicates() })) {
+        kept.push(entry);
+      }
+    }
+
+    const squares: BoxEntry[] = [];
+
+    for (const entry of orderCatches(kept, query(), (one) => one.caught)) {
+      squares.push(entry.square);
+    }
+    return squares;
+  });
 
   // A box the player has set eight wide holds forty, so the page has
   // to be the box rather than a constant beside it

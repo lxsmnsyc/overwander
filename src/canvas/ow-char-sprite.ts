@@ -275,12 +275,15 @@ export function gridLayoutOf(value: unknown): OWCharLayout {
     layout.standFrame = Math.trunc(standFrame);
   }
   if (Array.isArray(cycle)) {
-    const frames = cycle.filter(
-      (frame): frame is number => typeof frame === 'number' && Number.isFinite(frame) && frame >= 0,
-    );
+    const frames: number[] = [];
 
+    for (const frame of cycle) {
+      if (typeof frame === 'number' && Number.isFinite(frame) && frame >= 0) {
+        frames.push(Math.trunc(frame));
+      }
+    }
     if (frames.length > 0) {
-      layout.cycle = frames.map(Math.trunc);
+      layout.cycle = frames;
     }
   }
   return layout;
@@ -359,12 +362,19 @@ export default class OWCharSprite {
     this.hold = Math.max(1, layout.hold ?? WALK_HOLD);
     this.stride = Math.max(0.001, layout.stride ?? STRIDE);
 
-    const cycle = layout.cycle?.filter((frame) => frame >= 0 && frame < this.columns);
+    const cycle: number[] = [];
 
-    this.cycle =
-      cycle != null && cycle.length > 0
-        ? cycle
-        : Array.from({ length: this.columns }, (_, frame) => frame);
+    for (const frame of layout.cycle ?? []) {
+      if (frame >= 0 && frame < this.columns) {
+        cycle.push(frame);
+      }
+    }
+    if (cycle.length === 0) {
+      for (let frame = 0; frame < this.columns; frame += 1) {
+        cycle.push(frame);
+      }
+    }
+    this.cycle = cycle;
 
     for (let at = 0; at < this.directions.length; at += 1) {
       this.rowOf.set(this.directions[at], at);

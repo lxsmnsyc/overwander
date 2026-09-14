@@ -175,8 +175,13 @@ export function packSmallest<T extends Box>(boxes: T[]): Packed<T> {
   if (boxes.length === 0) {
     return best;
   }
-  const widest = Math.max(...boxes.map((box) => box.w));
-  const across = boxes.reduce((sum, box) => sum + box.w, 0);
+  let widest = -Infinity;
+  let across = 0;
+
+  for (const box of boxes) {
+    widest = Math.max(widest, box.w);
+    across += box.w;
+  }
 
   for (let width = widest; width <= across; width += 1) {
     const rows = shelve(boxes, width);

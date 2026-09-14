@@ -44,14 +44,17 @@ export default function matchesFriend(
   query: string,
   now: number = Date.now(),
 ): boolean {
-  return askedTerms(query).every((term) => {
+  for (const term of askedTerms(query)) {
     const answered =
       term.field === ''
         ? holds(row.name, term.value) || holds(row.uid, term.value)
         : FIELDS.get(term.field)?.(row, term.value, now) === true;
 
-    return term.negated ? !answered : answered;
-  });
+    if (term.negated ? answered : !answered) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /** What each `sort:` word reads off a row */
@@ -76,13 +79,11 @@ const VALUES: Record<string, () => string[]> = {
 };
 
 /** What the list's box can be asked, with the arranging terms on the end */
-export const FRIEND_VOCABULARY: QueryVocabulary = {
-  fields: [...FIELDS.keys(), 'sort', 'order'].map((name) => ({
-    name,
-    hint: HINTS[name] ?? '',
-    values: VALUES[name],
-  })),
-};
+export const FRIEND_VOCABULARY: QueryVocabulary = { fields: [] };
+
+for (const name of [...FIELDS.keys(), 'sort', 'order']) {
+  FRIEND_VOCABULARY.fields.push({ name, hint: HINTS[name] ?? '', values: VALUES[name] });
+}
 
 /** The rows a search asked for, in the order it asked for them */
 export function orderFriends<T>(rows: T[], query: string, of: (row: T) => FriendRow): T[] {

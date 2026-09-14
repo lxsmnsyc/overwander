@@ -52,12 +52,18 @@ export default function setupSleepingMoves(battle: Battle): void {
       return;
     }
 
-    const pool = Object.keys(event.source.moves)
+    const pool: Moves[] = [];
+
+    for (const key of Object.keys(event.source.moves)) {
       // The move table is keyed by the move enum, which comes back as
       // a string from Object.keys
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-      .map((move) => Number(move) as Moves)
-      .filter((move) => !NOT_CALLED.has(move));
+      const move = Number(key) as Moves;
+
+      if (!NOT_CALLED.has(move)) {
+        pool.push(move);
+      }
+    }
 
     if (pool.length === 0) {
       event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);

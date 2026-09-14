@@ -332,10 +332,21 @@ export async function leaveRaid(uid: string, lobby: string): Promise<void> {
     const rows = await transaction`
       select id, player from teams where raid_id = ${lobby} order by joined_seq
     `;
-    const mine = new Set(
-      rows.filter((entry) => entry.player === uid).map((entry) => asString(entry.id)),
-    );
-    const left = rows.filter((entry) => !mine.has(asString(entry.id)));
+    const mine = new Set<string>();
+
+    for (const entry of rows) {
+      if (entry.player === uid) {
+        mine.add(asString(entry.id));
+      }
+    }
+
+    const left: (typeof rows)[number][] = [];
+
+    for (const entry of rows) {
+      if (!mine.has(asString(entry.id))) {
+        left.push(entry);
+      }
+    }
 
     // The last party out shuts the door behind it, and so does a host
     // who never formed one.

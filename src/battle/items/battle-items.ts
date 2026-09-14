@@ -133,11 +133,13 @@ const setupGuardSpec = createHeldItem(Items.GuardSpec, (battle) => {
   });
 });
 
-const SETUPS: ((battle: Battle) => void)[] = [
-  ...[...X_ITEM_STAGES].map(([item, stage]) => setupXItem(item, stage)),
-  setupDireHit,
-  setupGuardSpec,
-];
+const SETUPS: ((battle: Battle) => void)[] = [];
+
+for (const [item, stage] of X_ITEM_STAGES) {
+  SETUPS.push(setupXItem(item, stage));
+}
+
+SETUPS.push(setupDireHit, setupGuardSpec);
 
 export default function setupBattleItems(battle: Battle): void {
   for (const setup of SETUPS) {

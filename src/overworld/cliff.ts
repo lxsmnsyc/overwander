@@ -33,14 +33,24 @@ const PASS_WIDTH = 3;
 export function isFace(world: World, x: number, y: number): boolean {
   const level = levelAt(world, x, y);
 
-  return SURROUNDING.some(([dx, dy]) => levelAt(world, x + dx, y + dy) < level);
+  for (const [dx, dy] of SURROUNDING) {
+    if (levelAt(world, x + dx, y + dy) < level) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /** Whether lower ground lies straight beside the cell, since a walk never steps across a diagonal */
 function descends(world: World, x: number, y: number): boolean {
   const here = levelAt(world, x, y);
 
-  return ORTHOGONAL.some(([dx, dy]) => levelAt(world, x + dx, y + dy) < here);
+  for (const [dx, dy] of ORTHOGONAL) {
+    if (levelAt(world, x + dx, y + dy) < here) {
+      return true;
+    }
+  }
+  return false;
 }
 
 const SEEDS = new WeakMap<World, number>();
@@ -116,11 +126,36 @@ export function leadsThrough(world: World, x: number, y: number): boolean {
   if (!descends(world, x, y)) {
     return false;
   }
-  const faces = ORTHOGONAL.filter(([dx, dy]) => isFace(world, x + dx, y + dy));
-  // Perpendicular sides: the dot product of two of the four offsets is zero only where they turn
-  const turns = faces.some(([ax, ay]) => faces.some(([bx, by]) => ax * bx + ay * by === 0));
+  const faces: [dx: number, dy: number][] = [];
 
-  return !turns || faces.every(([dx, dy]) => cuts(world, x + dx, y + dy));
+  for (const offset of ORTHOGONAL) {
+    if (isFace(world, x + offset[0], y + offset[1])) {
+      faces.push(offset);
+    }
+  }
+  // Perpendicular sides: the dot product of two of the four offsets is zero only where they turn
+  let turns = false;
+
+  for (const [ax, ay] of faces) {
+    for (const [bx, by] of faces) {
+      if (ax * bx + ay * by === 0) {
+        turns = true;
+        break;
+      }
+    }
+    if (turns) {
+      break;
+    }
+  }
+  if (!turns) {
+    return true;
+  }
+  for (const [dx, dy] of faces) {
+    if (!cuts(world, x + dx, y + dy)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**

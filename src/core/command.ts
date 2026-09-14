@@ -133,7 +133,12 @@ export default function parseCommand(line: string): CommandLine | null {
 export function commandFor(line: string, vocabulary: CommandVocabulary): CommandSpec | null {
   const asked = parseCommand(line);
 
-  return vocabulary.commands.find((one) => one.name === asked?.name) ?? null;
+  for (const one of vocabulary.commands) {
+    if (one.name === asked?.name) {
+      return one;
+    }
+  }
+  return null;
 }
 
 /**
@@ -144,7 +149,14 @@ export function commandFor(line: string, vocabulary: CommandVocabulary): Command
 function unasked(spec: CommandSpec, line: string): CommandParameter[] {
   const already = parseCommand(line)?.parameters ?? new Map<string, string[]>();
 
-  return spec.parameters.filter((one) => one.repeatable === true || !already.has(one.name));
+  const left: CommandParameter[] = [];
+
+  for (const one of spec.parameters) {
+    if (one.repeatable === true || !already.has(one.name)) {
+      left.push(one);
+    }
+  }
+  return left;
 }
 
 /**
@@ -187,57 +199,87 @@ export function completeCommand(
 
 /** The commands, offered on the word that names one */
 function commandNames(word: string, vocabulary: CommandVocabulary): QuerySuggestion[] {
-  return matching(
-    vocabulary.commands.map((one) => one.name),
-    commandName(word),
-  )
-    .slice(0, SUGGESTIONS)
-    .map((name) => ({
+  const names: string[] = [];
+  const hints = new Map<string, string>();
+
+  for (const one of vocabulary.commands) {
+    names.push(one.name);
+    if (!hints.has(one.name)) {
+      hints.set(one.name, one.hint);
+    }
+  }
+
+  const suggestions: QuerySuggestion[] = [];
+
+  for (const name of matching(names, commandName(word)).slice(0, SUGGESTIONS)) {
+    suggestions.push({
       word: name,
       label: name,
-      hint: vocabulary.commands.find((one) => one.name === name)?.hint,
+      hint: hints.get(name),
       // A command is a whole word, so the space that follows it is
       // typed for whoever took it
       partial: false,
-    }));
+    });
+  }
+  return suggestions;
 }
 
 /** The parameters this command still wants */
 function parameterNames(word: string, spec: CommandSpec, line: string): QuerySuggestion[] {
   const left = unasked(spec, line);
 
-  return matching(
-    left.map((one) => one.name),
-    word,
-  )
-    .slice(0, SUGGESTIONS)
-    .map((name) => ({
+  const names: string[] = [];
+  const hints = new Map<string, string>();
+
+  for (const one of left) {
+    names.push(one.name);
+    if (!hints.has(one.name)) {
+      hints.set(one.name, one.hint);
+    }
+  }
+
+  const suggestions: QuerySuggestion[] = [];
+
+  for (const name of matching(names, word).slice(0, SUGGESTIONS)) {
+    suggestions.push({
       word: `${name}:`,
       label: `${name}:`,
-      hint: left.find((one) => one.name === name)?.hint,
+      hint: hints.get(name),
       // Half a term: the bar stays open on the values it takes
       partial: true,
-    }));
+    });
+  }
+  return suggestions;
 }
 
 /** The values one parameter is known to take */
 function parameterValues(word: string, colon: number, spec: CommandSpec): QuerySuggestion[] {
   const asked = word.slice(0, colon).toLowerCase();
-  const parameter = spec.parameters.find((one) => one.name === asked);
+  let parameter: CommandParameter | undefined;
+
+  for (const one of spec.parameters) {
+    if (one.name === asked) {
+      parameter = one;
+      break;
+    }
+  }
+
   const known = parameter?.values?.();
 
   if (known == null) {
     return [];
   }
   const chained = parameter?.chained === true;
+  const suggestions: QuerySuggestion[] = [];
 
-  return matching(known, word.slice(colon + 1))
-    .slice(0, SUGGESTIONS)
-    .map((one) => ({
+  for (const one of matching(known, word.slice(colon + 1)).slice(0, SUGGESTIONS)) {
+    suggestions.push({
       // A chained value is followed by a colon and the number that
       // belongs to it, so it is written with the colon already there
       word: `${asked}:${asValue(chained ? `${one}:` : one)}`,
       label: one,
       partial: chained,
-    }));
+    });
+  }
+  return suggestions;
 }

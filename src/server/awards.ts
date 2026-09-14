@@ -27,11 +27,16 @@ export async function listAwards(player: string): Promise<AwardRecord[]> {
     select award, wins from awards where player = ${player} order by award
   `;
 
-  return rows.map((row) => ({
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    award: asNumber(row.award) as Awards,
-    wins: asNumber(row.wins),
-  }));
+  const awards: AwardRecord[] = [];
+
+  for (const row of rows) {
+    awards.push({
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      award: asNumber(row.award) as Awards,
+      wins: asNumber(row.wins),
+    });
+  }
+  return awards;
 }
 
 /**
@@ -39,9 +44,15 @@ export async function listAwards(player: string): Promise<AwardRecord[]> {
  * badge check, and the Champion's
  */
 export async function hasAwards(player: string, wanted: Awards[]): Promise<boolean> {
+  const ids: Awards[] = [];
+
+  for (const award of wanted) {
+    ids.push(award);
+  }
+
   const rows = await getSql()`
     select count(*)::int as held from awards
-    where player = ${player} and award = any(${wanted.map((award) => award)})
+    where player = ${player} and award = any(${ids})
   `;
 
   return asNumber(rows.at(0)?.held ?? 0) >= wanted.length;

@@ -55,6 +55,7 @@ import {
   rollGymMachine,
 } from '../data/overworld/experts';
 import type { Items } from '../data/ids/items';
+import type { Species } from '../data/ids/species';
 import AleaRNG from '../core/alea';
 import { hasAwards, recordAwardWin } from './awards';
 import { grantItem } from './inventory';
@@ -246,13 +247,15 @@ export async function enterStop(
     return existing.defeated ? 'beaten' : [stop, existing];
   }
 
+  const staged: StopRecord['party'] = [];
+
+  for (const [species, individualValue, traitValue] of party) {
+    staged.push({ species, individualValue, traitValue });
+  }
+
   const fresh: StopRecord = {
     player: uid,
-    party: party.map(([species, individualValue, traitValue]) => ({
-      species,
-      individualValue,
-      traitValue,
-    })),
+    party: staged,
     battle: null,
     timestamp: snapshot.npcTimestamp,
     offset: zone,
@@ -272,14 +275,25 @@ export async function enterStop(
       on conflict do nothing
     `;
 
-    const rows = fresh.party.map((entry, slot) => ({
-      stop_id: stop,
-      player: uid,
-      slot,
-      species: entry.species,
-      individual_value: entry.individualValue,
-      trait_value: entry.traitValue,
-    }));
+    const rows: {
+      stop_id: string;
+      player: string;
+      slot: number;
+      species: Species;
+      individual_value: number;
+      trait_value: number;
+    }[] = [];
+
+    for (const [slot, entry] of fresh.party.entries()) {
+      rows.push({
+        stop_id: stop,
+        player: uid,
+        slot,
+        species: entry.species,
+        individual_value: entry.individualValue,
+        trait_value: entry.traitValue,
+      });
+    }
 
     // The Dome stages nobody, so there is nothing to write: a
     // multi-row insert with no rows is not an empty insert, it is a
@@ -300,7 +314,16 @@ export async function enterStop(
  * them: it bars held items, and it bars them on both sides
  */
 function houseParty(party: CatchSnapshot[], rules: FrontierRule): CatchSnapshot[] {
-  return rules === FrontierRule.Bare ? party.map((one) => ({ ...one, items: [] })) : party;
+  if (rules !== FrontierRule.Bare) {
+    return party;
+  }
+
+  const bare: CatchSnapshot[] = [];
+
+  for (const one of party) {
+    bare.push({ ...one, items: [] });
+  }
+  return bare;
 }
 
 /**

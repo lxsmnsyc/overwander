@@ -198,10 +198,12 @@ function starsOf(drawn: Drawn, seed: number): JSX.CSSProperties[] {
     drawn.bounds.height;
   const size = across * SPARKLE_STAR_SIZE * 2;
 
-  return Array.from({ length: SPARKLE_STARS }, (_, star) => {
+  const stars: JSX.CSSProperties[] = [];
+
+  for (let star = 0; star < SPARKLE_STARS; star++) {
     const spot = sparkleStar(seed, star, SPARKLE_SPREAD);
 
-    return {
+    stars.push({
       position: 'absolute',
       left: `${(middle + spot.x * across - size / 2) * 100}%`,
       top: `${(floor + spot.y * up - size / 2) * 100}%`,
@@ -210,8 +212,9 @@ function starsOf(drawn: Drawn, seed: number): JSX.CSSProperties[] {
       background: SPARKLE_COLORS.fill,
       'clip-path': STAR,
       animation: `sparkle-star ${SPARKLE_STAR_LIFE}ms ease-out ${spot.delay}ms both`,
-    };
-  });
+    });
+  }
+  return stars;
 }
 
 /**

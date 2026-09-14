@@ -4,8 +4,7 @@ import projectField, {
   horizonOf,
   unprojectField,
 } from '../../../canvas/battle/field';
-import type { QuadPoint } from '../../../canvas/gl/quad-batch';
-import type QuadBatch from '../../../canvas/gl/quad-batch';
+import type { Painter, QuadPoint } from '../../../canvas/gl/quad-batch';
 
 /**
  * The ground a fight is standing on, drawn from the biome's own
@@ -291,7 +290,7 @@ export default function drawFloor(
   ground: FloorTile,
   view: FieldView,
   region: FloorRegion,
-  onto?: QuadBatch,
+  onto?: Painter,
 ): void {
   const patch = coverage(view, region);
 

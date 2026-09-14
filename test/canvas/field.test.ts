@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import projectField, {
   type FieldView,
+  fieldClipDepth,
+  fieldClipMatrix,
   ringOf,
   ringRadius,
   scaleAt,
@@ -8,6 +10,60 @@ import projectField, {
 } from '../../src/canvas/battle/field';
 
 const VIEW: FieldView = { width: 640, height: 360, unit: 12, yaw: 0 };
+
+describe("the field camera's matrix", () => {
+  const stage = { scale: 1.5, offsetX: 40, offsetY: 25 };
+  const screen = { width: 1040, height: 590 };
+
+  /** A field point put through the matrix, as the element's pixels and a clip depth */
+  function throughMatrix(
+    view: FieldView,
+    x: number,
+    y: number,
+    z: number,
+  ): { x: number; y: number; depth: number } {
+    const m = fieldClipMatrix(view, stage, screen);
+    const cx = m[0] * x + m[1] * y + m[2] * z + m[3];
+    const cy = m[4] * x + m[5] * y + m[6] * z + m[7];
+    const cz = m[8] * x + m[9] * y + m[10] * z + m[11];
+    const w = m[12] * x + m[13] * y + m[14] * z + m[15];
+
+    return {
+      x: ((cx / w + 1) / 2) * screen.width,
+      y: ((1 - cy / w) / 2) * screen.height,
+      depth: cz / w,
+    };
+  }
+
+  it('lands a point on the ground where the flat projection puts it, at every yaw', () => {
+    for (const yaw of [0, 0.7, 2.4, -1.9]) {
+      const view: FieldView = { ...VIEW, yaw };
+
+      for (const point of [
+        { x: 0, z: 0 },
+        { x: 9, z: -14 },
+        { x: -20, z: 18 },
+      ]) {
+        const flat = projectField(point, view);
+        const seen = throughMatrix(view, point.x, 0, point.z);
+
+        expect(seen.x).toBeCloseTo(stage.offsetX + flat.x * stage.scale, 6);
+        expect(seen.y).toBeCloseTo(stage.offsetY + flat.y * stage.scale, 6);
+        // And at the depth a mark standing there is given
+        expect(seen.depth).toBeCloseTo(fieldClipDepth(flat.scale), 6);
+      }
+    }
+  });
+
+  it('raises height straight up the picture at the scale of the ground under it', () => {
+    const flat = projectField({ x: 5, z: 8 }, VIEW);
+    const ground = throughMatrix(VIEW, 5, 0, 8);
+    const raised = throughMatrix(VIEW, 5, 2, 8);
+
+    expect(raised.x).toBeCloseTo(ground.x, 6);
+    expect(ground.y - raised.y).toBeCloseTo(2 * flat.scale * VIEW.unit * stage.scale, 6);
+  });
+});
 
 describe('field projection', () => {
   it('puts the middle of the field in the middle of the picture', () => {

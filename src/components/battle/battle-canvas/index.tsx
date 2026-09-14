@@ -22,7 +22,7 @@ import {
 import type { FieldView } from '../../../canvas/battle/field';
 import loadTerrainTiles, { TERRAIN_TILE } from '../../../canvas/terrain-tiles';
 import drawFloor, { type FloorRegion, type FloorTile } from './floor';
-import QuadBatch from '../../../canvas/gl/quad-batch';
+import createBattleScene from '../../../canvas/three/battle-scene';
 import Bakery from '../../../canvas/bakery';
 import Biome from '../../../data/ids/biome';
 
@@ -374,12 +374,12 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     let sized = { width: 0, height: 0, ratio: 0 };
 
     /**
-     * The ground, written into its own element under the visible one:
-     * a 2D context and a GL context cannot both be had from one
-     * canvas, and copying between two would cost a full-screen blit a
-     * frame — more than the ground costs to paint at all
+     * The field as a three.js scene, drawn into its own element under
+     * the visible one: a 2D context and a GL context cannot both be had
+     * from one canvas. Null where the browser gives no WebGL, which
+     * paints everything the way it always was
      */
-    let batch = floorCanvas == null ? null : QuadBatch.create(floorCanvas);
+    let scene = floorCanvas == null ? null : createBattleScene(floorCanvas);
 
     /**
      * The drawn art the field stamps rather than paints: the round
@@ -466,16 +466,18 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // The ground the fight is standing on, under everything on it:
       // a few hundred tiles laid on a tilted plane, which a 2D context
       // charges a transform and a blit apiece for
-      if (batch == null) {
+      const batch = scene?.marks ?? null;
+
+      if (scene == null || batch == null) {
         if (floor != null) {
           drawFloor(context, floor, view, region);
         }
       } else {
-        // Opened here and handed over once the fight is written into
-        // it. Cleared every frame whether or not there is ground to
-        // lay, since a biome that stops having one would otherwise
-        // keep the last floor it drew
-        batch.begin(sized.width, sized.height, sized.ratio);
+        // Opened here and drawn once the fight is written into it.
+        // Cleared every frame whether or not there is ground to lay,
+        // since a biome that stops having one would otherwise keep the
+        // last floor it drew
+        scene.look(view, stage, sized, sized.ratio);
         if (baked !== bakery.revision) {
           batch.invalidate(bakery.sheet);
           baked = bakery.revision;
@@ -484,6 +486,8 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         // below is written in the drawing's own coordinates the way
         // the painted pass draws it
         batch.carry(stage.offsetX, stage.offsetY, 1, stage.scale);
+        // At the back of the scene, under the whole fight
+        batch.depth(scene.depthOf(0));
         if (floor != null) {
           drawFloor(context, floor, view, region, batch);
         }
@@ -555,6 +559,9 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         const colour = slot.unit.casting == null ? COLORS.channel : COLORS.cast;
         const casts = bodyOf(slot);
 
+        // On the ground at the caster's own depth
+        batch?.depth(scene?.depthOf(slot.depth) ?? 0);
+
         for (const on of unitsOf(aim)) {
           const target = on === slot.unit ? null : at.get(on);
 
@@ -565,6 +572,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       }
 
       for (const slot of slots) {
+        // Standing at the depth of the ground under its feet
+        const near = scene?.depthOf(slot.depth) ?? 0;
+
+        batch?.standing(near, near);
         drawSlot(context, slot, striking, clock, gone.has(slot.unit), onto);
       }
 
@@ -586,6 +597,8 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
           context.restore();
         }
       } else {
+        // On the glass, in front of every pokemon
+        batch.glass();
         for (const patch of skies) {
           // Carried rather than clipped: the batch has no scissor, and
           // the painters lay their sky out from their own origin
@@ -602,7 +615,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         // is the move effects, which stay painted: they are the one
         // thing here drawn as art rather than as pictures, and there
         // is at most one of them on screen
-        batch.end();
+        scene?.draw();
       }
 
       // Move effects go on top of everything: they are the loudest
@@ -1277,8 +1290,8 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     draw();
 
     onCleanup(() => {
-      batch?.dispose();
-      batch = null;
+      scene?.dispose();
+      scene = null;
       element.removeEventListener('contextmenu', menu);
       element.removeEventListener('pointerleave', leave);
       element.removeEventListener('click', press);

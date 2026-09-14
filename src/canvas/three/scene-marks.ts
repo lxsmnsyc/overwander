@@ -472,6 +472,9 @@ export default class SceneMarks {
     // Top left rather than bottom left, so a source rectangle is the
     // same one the page was cut with
     made.flipY = false;
+    // Premultiplied on the way in, as the blending expects: left straight,
+    // every soft edge (a word's outline, an aura's glow) comes out bright
+    made.premultiplyAlpha = true;
     made.magFilter = sampling === 'smooth' ? LinearFilter : NearestFilter;
     made.minFilter = made.magFilter;
     made.generateMipmaps = false;

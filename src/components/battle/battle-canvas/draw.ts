@@ -6,8 +6,7 @@ import type { ProgressData } from '../../../battle/events';
 import type Unit from '../../../battle/unit';
 import { paintAura, paintPurifiedAura, paintShadowAura } from '../../../canvas/auras';
 import type Bakery from '../../../canvas/bakery';
-import type QuadBatch from '../../../canvas/gl/quad-batch';
-import type { QuadPoint } from '../../../canvas/gl/quad-batch';
+import type { Painter, QuadPoint } from '../../../canvas/gl/quad-batch';
 import { cornersOf, shadowCorners } from '../../../canvas/placement';
 import { facingVector } from '../../../canvas/facing';
 import { SHIM_SPANS, shimMotion } from '../../../canvas/battle/sprite-shim';
@@ -62,7 +61,7 @@ const CAST_HEIGHT = 3;
  * drawing's own coordinates the way the painted pass is
  */
 export interface SlotBatch {
-  batch: QuadBatch;
+  batch: Painter;
   bakery: Bakery;
 }
 

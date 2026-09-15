@@ -289,6 +289,18 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Gambit', Moves.FinalGambit],
   ['Buzz', Moves.StruggleBug],
   ['Techno', Moves.TechnoBlast],
+  ['Victory', Moves.VCreate],
+  ['Searing', Moves.SearingShot],
+  ['Azure', Moves.BlueFlare],
+  ['Fusion', Moves.FusionFlare],
+  ['Thunderclap', Moves.BoltStrike],
+  ['Fusion', Moves.FusionBolt],
+  ['Frostbolt', Moves.FreezeShock],
+  ['Frostfire', Moves.IceBurn],
+  ['Glaze', Moves.Glaciate],
+  ['Smite', Moves.SacredSword],
+  ['Smite', Moves.SecretSword],
+  ['Aria', Moves.RelicSong],
 ];
 
 /**
@@ -522,7 +534,6 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.Snarl)).toBe('Roar');
     expect(effectShapeFor(Moves.EchoedVoice)).toBe('Roar');
     expect(effectShapeFor(Moves.Round)).toBe('Song');
-    expect(effectShapeFor(Moves.RelicSong)).toBe('Song');
     expect(effectShapeFor(Moves.SmackDown)).toBe('Rocks');
     expect(effectShapeFor(Moves.HeartStamp)).toBe('Hearts');
   });
@@ -580,6 +591,9 @@ describe('a painted move', () => {
     expect(moveEffectVisual(Moves.Dive, 1)).toBeNull();
     expect(moveEffectVisual(Moves.Bounce, 1)).toBeNull();
     expect(moveEffectVisual(Moves.ShadowForce, 1)).toBeNull();
+    // Kyurem's two gather their cold before they land it
+    expect(moveEffectVisual(Moves.FreezeShock, 1)).toBeNull();
+    expect(moveEffectVisual(Moves.IceBurn, 1)).toBeNull();
     // A move that hits on every step keeps its picture on every step
     expect(moveEffectVisual(Moves.Thrash, 1)).not.toBeNull();
   });

@@ -202,6 +202,16 @@ export type EffectShape =
   | 'Gambit'
   | 'Buzz'
   | 'Techno'
+  | 'Victory'
+  | 'Azure'
+  | 'Thunderclap'
+  | 'Fusion'
+  | 'Frostbolt'
+  | 'Frostfire'
+  | 'Glaze'
+  | 'Searing'
+  | 'Smite'
+  | 'Aria'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -354,6 +364,16 @@ export const SPANS: Record<EffectShape, number> = {
   Gambit: 900,
   Buzz: 820,
   Techno: 760,
+  Victory: 900,
+  Azure: 900,
+  Thunderclap: 820,
+  Fusion: 900,
+  Frostbolt: 900,
+  Frostfire: 900,
+  Glaze: 1000,
+  Searing: 900,
+  Smite: 820,
+  Aria: 1000,
   Whiff: 320,
 };
 

@@ -554,7 +554,6 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Snarl]: 'Roar',
   [Moves.EchoedVoice]: 'Roar',
   [Moves.Round]: 'Song',
-  [Moves.RelicSong]: 'Song',
   [Moves.SmackDown]: 'Rocks',
   [Moves.HeartStamp]: 'Hearts',
   // The moves whose type drew them as a flower burst
@@ -565,6 +564,19 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.FinalGambit]: 'Gambit',
   [Moves.StruggleBug]: 'Buzz',
   [Moves.TechnoBlast]: 'Techno',
+  // The legendary and mythical signatures
+  [Moves.VCreate]: 'Victory',
+  [Moves.SearingShot]: 'Searing',
+  [Moves.BlueFlare]: 'Azure',
+  [Moves.FusionFlare]: 'Fusion',
+  [Moves.BoltStrike]: 'Thunderclap',
+  [Moves.FusionBolt]: 'Fusion',
+  [Moves.FreezeShock]: 'Frostbolt',
+  [Moves.IceBurn]: 'Frostfire',
+  [Moves.Glaciate]: 'Glaze',
+  [Moves.SacredSword]: 'Smite',
+  [Moves.SecretSword]: 'Smite',
+  [Moves.RelicSong]: 'Aria',
 
   // Struck and gone: the blow is the first step and the walk off the
   // field is the second, which is why the landing here is the leaving

@@ -61,6 +61,15 @@ export const JOLTS: Partial<Record<EffectShape, number>> = {
   Orbit: 1.5,
   Gambit: 3,
   Techno: 2,
+  Victory: 3.5,
+  Azure: 2,
+  Thunderclap: 3,
+  Fusion: 3,
+  Frostbolt: 2,
+  Frostfire: 2,
+  Glaze: 1,
+  Searing: 2,
+  Smite: 2.5,
 };
 
 /** Where the effect is happening: the first body it landed on. */

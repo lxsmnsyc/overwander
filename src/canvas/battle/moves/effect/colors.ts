@@ -87,6 +87,9 @@ const BY_SHAPE: Partial<Record<EffectShape, string>> = {
   Tears: '#8cc8ff',
   // Plasma, whichever drive Techno Blast carries: the move's type changes in battle and the picture cannot know
   Techno: '#a8dcff',
+  // Reshiram's blue fire, and Meloetta's green where the Normal type's grey is nothing
+  Azure: '#5aa8ff',
+  Aria: '#8fe0b0',
 };
 
 /** The shapes that picture a stat moving, and so take the stat's colour */
@@ -119,6 +122,9 @@ const MOVE_COLORS: Partial<Record<Moves, string>> = {
   // A lullaby's pink, and Perish Song's notes gone dark
   [Moves.Sing]: '#f0a8d0',
   [Moves.PerishSong]: '#6a4a8c',
+  // A gold blade for the Swords of Justice, and Keldeo's aqua one
+  [Moves.SacredSword]: '#ffd86a',
+  [Moves.SecretSword]: '#7ad8ff',
 };
 
 export default function colorOf(move: Moves, shape: EffectShape): string {

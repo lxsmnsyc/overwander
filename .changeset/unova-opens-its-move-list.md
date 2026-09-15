@@ -42,7 +42,7 @@ Some are drawn the way an earlier move that does the same thing is drawn.
 - Rage Powder is a cloud of powder, and Cotton Guard drifts cotton like Cotton Spore.
 - Heal Pulse brings health back, and Heart Stamp sends up hearts.
 - Electroweb winds round the target like Bind.
-- Snarl and Echoed Voice roll sound arcs out like Roar, and Round and Relic Song drift notes like Sing.
+- Snarl and Echoed Voice roll sound arcs out like Roar, and Round drifts notes like Sing.
 - Smack Down brings rocks down on the target.
 
 Some have a picture of their own.
@@ -53,3 +53,10 @@ Some have a picture of their own.
 - Final Gambit lights up the pokemon that used it and lands one heavy blow.
 - Struggle Bug sends tiny bugs zigzagging in on the target.
 - Techno Blast fires a line of plasma that rings out in hexagons.
+- V-create drives a V of fire down onto the target, and Searing Shot flings fireballs that burst on it.
+- Blue Flare raises a column of blue fire, and Bolt Strike brings bolts down on the target from every side.
+- Fusion Flare and Fusion Bolt drop a ball of fire or lightning out of the sky.
+- Freeze Shock and Ice Burn break ice spikes up round the target, crackling with sparks or licked by fire.
+- Glaciate spreads frost across the ground under the target.
+- Sacred Sword and Secret Sword drop a great sword point first through the target.
+- Relic Song spirals notes up round the target.

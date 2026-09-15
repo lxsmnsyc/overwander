@@ -6,7 +6,7 @@ import {
   type RaidInvite,
   type RaidRecord,
   declineRaidInvite,
-  getRaid,
+  getRaidBatched,
   getRaidTitle,
   watchLiveRaids,
   watchRaidInvites,
@@ -46,7 +46,11 @@ function InvitedRow(props: {
   known: RaidRecord | undefined;
   onOpen: () => void;
 }): JSX.Element {
-  const [fetched] = createResource(() => (props.known == null ? props.invite.raid : null), getRaid);
+  // One per invite row, so the rows on screen share a read
+  const [fetched] = createResource(
+    () => (props.known == null ? props.invite.raid : null),
+    async (id) => getRaidBatched(id),
+  );
   const raid = (): RaidRecord | null => props.known ?? fetched.latest ?? null;
   const caller = from<Profile | null>((set) =>
     watchProfile(props.invite.sender, (record) => {

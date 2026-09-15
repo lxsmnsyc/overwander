@@ -2,7 +2,7 @@
 // assertions that tsc requires but tsgolint (resolving const enums to
 // number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
+import { asNumber, asRecordArray, asString } from './__normalize';
 import { type DuelInvite, type DuelRecord, type DuelRules, asDuelRecord } from './duel-record';
 import type { LobbyRole } from './lobby-role';
 import { requireUid } from '../server/auth';
@@ -36,35 +36,57 @@ const DUEL_TABLE = 'duels';
 
 /** One lobby, its members and their parties stitched back together */
 export async function getDuel(id: string): Promise<DuelRecord | null> {
+  return (await readDuels([id])).get(id) ?? null;
+}
+
+/**
+ * Lobbies by id, with their members and parties. Two reads however many
+ * lobbies, rather than two per lobby
+ */
+async function readDuels(ids: string[]): Promise<Map<string, DuelRecord>> {
+  const found = new Map<string, DuelRecord>();
+
+  if (ids.length === 0) {
+    return found;
+  }
+
   const supabase = getSupabase();
-  const [lobby, parties] = await Promise.all([
+  const [lobbies, parties] = await Promise.all([
     supabase
       .from(DUEL_TABLE)
       .select(
-        'host, battle_id, created_at, limits, team_size, ' +
+        'id, host, battle_id, created_at, limits, team_size, ' +
           'duel_members(player, role, ready, joined_seq)',
       )
-      .eq('id', id)
-      .maybeSingle(),
-    supabase.from('duel_catches').select('player, slot, caught_id').eq('duel_id', id),
+      .in('id', ids),
+    supabase.from('duel_catches').select('duel_id, player, slot, caught_id').in('duel_id', ids),
   ]);
-
-  if (lobby.data == null) {
-    return null;
-  }
-
-  const row = asRecord(lobby.data);
-  const held = new Map<string, [number, string][]>();
+  // Each lobby's parties, by player, as slot and catch pairs
+  const held = new Map<string, Map<string, [number, string][]>>();
 
   for (const entry of asRecordArray(parties.data)) {
+    const duel = asString(entry.duel_id);
+    const players = held.get(duel) ?? new Map<string, [number, string][]>();
     const player = asString(entry.player);
 
-    held.set(player, [
-      ...(held.get(player) ?? []),
+    players.set(player, [
+      ...(players.get(player) ?? []),
       [asNumber(entry.slot), asString(entry.caught_id)],
     ]);
+    held.set(duel, players);
   }
+  for (const row of asRecordArray(lobbies.data)) {
+    const id = asString(row.id);
 
+    found.set(id, fromDuelRow(row, held.get(id) ?? new Map<string, [number, string][]>()));
+  }
+  return found;
+}
+
+function fromDuelRow(
+  row: Record<string, unknown>,
+  held: Map<string, [number, string][]>,
+): DuelRecord {
   const members = asRecordArray(row.duel_members).sort(
     (left, right) => asNumber(left.joined_seq) - asNumber(right.joined_seq),
   );
@@ -116,17 +138,18 @@ export function watchDuel(id: string, onChange: (duel: DuelRecord | null) => voi
  */
 export async function listMyDuels(uid: string): Promise<[string, DuelRecord][]> {
   const { data } = await getSupabase().from('duel_members').select('duel_id').eq('player', uid);
-  const pending: Promise<[string, DuelRecord | null]>[] = [];
+  const ids: string[] = [];
 
   for (const row of asRecordArray(data)) {
-    const id = asString(row.duel_id);
-
-    pending.push(getDuel(id).then((duel): [string, DuelRecord | null] => [id, duel]));
+    ids.push(asString(row.duel_id));
   }
 
+  const found = await readDuels(ids);
   const duels: [string, DuelRecord][] = [];
 
-  for (const [id, duel] of await Promise.all(pending)) {
+  for (const id of ids) {
+    const duel = found.get(id);
+
     if (duel != null) {
       duels.push([id, duel]);
     }

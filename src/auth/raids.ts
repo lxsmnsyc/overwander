@@ -29,6 +29,7 @@ import { syncServerClock } from './clock';
 import { asOffset } from './local-time';
 import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
 import getIdToken from './session';
+import batchedQuery from '../utils/batched-query';
 
 export {
   RAID_PLAYER_LIMIT,
@@ -86,6 +87,29 @@ export async function getRaid(id: string): Promise<RaidRecord | null> {
 
   return data == null ? null : fromRaidRow(asRecord(data));
 }
+
+/**
+ * `getRaid` for a list naming several lobbies at once, such as the raids
+ * a player was invited to: the reads made in the same moment go out as
+ * one. Browser only, since the queue is shared by everyone in the module
+ */
+export const getRaidBatched = batchedQuery(
+  async (ids: string[]): Promise<Map<string, RaidRecord>> => {
+    const { data }: { data: unknown } = await getSupabase()
+      .from(RAID_TABLE)
+      .select(RAID_EMBED)
+      .in('id', ids);
+    const found = new Map<string, RaidRecord>();
+
+    for (const row of asRecordArray(data)) {
+      found.set(asString(row.id), fromRaidRow(row));
+    }
+    return found;
+  },
+  (found, id: string): RaidRecord | null => found.get(id) ?? null,
+  // The ids travel in the request's address, which has a length limit
+  { limit: 50 },
+);
 
 /**
  * Follow a lobby: teams join and leave it, and the host's start

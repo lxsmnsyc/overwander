@@ -16,6 +16,7 @@ import legends from './legends';
 import minds from './minds';
 import { BY_TYPE, NAMED } from './named';
 import stats from './stats';
+import unova from './unova';
 
 import {
   type EffectShape,
@@ -91,6 +92,7 @@ const PAINTERS: Record<EffectShape, ShapePainter> = {
   ...care,
   ...legends,
   ...stats,
+  ...unova,
 };
 
 /**

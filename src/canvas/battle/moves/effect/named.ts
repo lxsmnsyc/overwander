@@ -557,6 +557,14 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.RelicSong]: 'Song',
   [Moves.SmackDown]: 'Rocks',
   [Moves.HeartStamp]: 'Hearts',
+  // The moves whose type drew them as a flower burst
+  [Moves.Psyshock]: 'Converge',
+  [Moves.Psystrike]: 'Converge',
+  [Moves.Synchronoise]: 'Resonance',
+  [Moves.StoredPower]: 'Orbit',
+  [Moves.FinalGambit]: 'Gambit',
+  [Moves.StruggleBug]: 'Buzz',
+  [Moves.TechnoBlast]: 'Techno',
 
   // Struck and gone: the blow is the first step and the walk off the
   // field is the second, which is why the landing here is the leaving

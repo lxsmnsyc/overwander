@@ -44,3 +44,12 @@ Some are drawn the way an earlier move that does the same thing is drawn.
 - Electroweb winds round the target like Bind.
 - Snarl and Echoed Voice roll sound arcs out like Roar, and Round and Relic Song drift notes like Sing.
 - Smack Down brings rocks down on the target.
+
+Some have a picture of their own.
+
+- Psyshock and Psystrike hang shards of psychic force round the target and drive them in.
+- Synchronoise pulses waves out of the target and the pokemon that used it together.
+- Stored Power circles orbs round the target that close in and burst.
+- Final Gambit lights up the pokemon that used it and lands one heavy blow.
+- Struggle Bug sends tiny bugs zigzagging in on the target.
+- Techno Blast fires a line of plasma that rings out in hexagons.

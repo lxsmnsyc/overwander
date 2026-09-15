@@ -85,6 +85,8 @@ const BY_SHAPE: Partial<Record<EffectShape, string>> = {
   Cotton: '#f4f4ec',
   Silk: '#f0f0f0',
   Tears: '#8cc8ff',
+  // Plasma, whichever drive Techno Blast carries: the move's type changes in battle and the picture cannot know
+  Techno: '#a8dcff',
 };
 
 /** The shapes that picture a stat moving, and so take the stat's colour */

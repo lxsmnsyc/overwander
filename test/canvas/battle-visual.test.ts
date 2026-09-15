@@ -281,6 +281,14 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Tears', Moves.FakeTears],
   ['Memento', Moves.Memento],
   ['Clear', Moves.Defog],
+  // Unova's own
+  ['Converge', Moves.Psyshock],
+  ['Converge', Moves.Psystrike],
+  ['Resonance', Moves.Synchronoise],
+  ['Orbit', Moves.StoredPower],
+  ['Gambit', Moves.FinalGambit],
+  ['Buzz', Moves.StruggleBug],
+  ['Techno', Moves.TechnoBlast],
 ];
 
 /**

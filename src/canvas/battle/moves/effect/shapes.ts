@@ -196,6 +196,12 @@ export type EffectShape =
   | 'Tears'
   | 'Memento'
   | 'Clear'
+  | 'Converge'
+  | 'Resonance'
+  | 'Orbit'
+  | 'Gambit'
+  | 'Buzz'
+  | 'Techno'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -342,6 +348,12 @@ export const SPANS: Record<EffectShape, number> = {
   Tears: 900,
   Memento: 1000,
   Clear: 900,
+  Converge: 900,
+  Resonance: 900,
+  Orbit: 900,
+  Gambit: 900,
+  Buzz: 820,
+  Techno: 760,
   Whiff: 320,
 };
 

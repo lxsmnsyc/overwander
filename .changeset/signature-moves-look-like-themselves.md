@@ -21,6 +21,13 @@ More moves land as a picture of their own:
 - Blast Burn cracks the ground under the target and erupts in fire.
 - Hydro Cannon slams a great ball of water into the target, and a ring of water spouts bursts up around it.
 - Fire Punch, Ice Punch and Thunder Punch land with flames, frost or sparks breaking off the blow.
-- Flare Blitz and Volt Tackle arrive wrapped in fire or lightning.
+- Flare Blitz and Volt Tackle arrive wrapped in fire or lightning, and Brave Bird in pale blue fire.
+- Fire Fang, Ice Fang and Thunder Fang break flames, frost or sparks off the bite.
+- Draco Meteor brings meteors streaking down onto the target.
+- Outrage, Thrash and Petal Dance land as a run of heavy blows, with petals flying for Petal Dance.
+- Earth Power splits the ground under the target and light bursts up out of it.
+- Heat Wave blows a wavering wall of hot air and embers across the target.
+- Dark Pulse sends dark rings pulsing out from the pokemon that used it.
+- Sheer Cold freezes the target in a block of ice that cracks and shatters.
 - Flame Wheel rolls into the target as a ring of fire.
 - Waterfall drives a column of water up through the target.

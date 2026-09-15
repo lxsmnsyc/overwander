@@ -385,7 +385,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.StoneEdge]: 'Rocks',
   [Moves.RockWrecker]: 'Rocks',
   [Moves.Avalanche]: 'Rocks',
-  [Moves.DracoMeteor]: 'Rocks',
+  [Moves.DracoMeteor]: 'Meteors',
 
   // Two cuts across each other, the way Cross Chop lands
   [Moves.XScissor]: 'Cross',
@@ -441,6 +441,16 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.VoltTackle]: 'Rush',
   [Moves.FlameWheel]: 'Wheel',
   [Moves.Waterfall]: 'Torrent',
+  [Moves.BraveBird]: 'Rush',
+
+  // Named attacks the rules drew as something generic
+  [Moves.Outrage]: 'Rampage',
+  [Moves.Thrash]: 'Rampage',
+  [Moves.PetalDance]: 'Rampage',
+  [Moves.EarthPower]: 'Rift',
+  [Moves.HeatWave]: 'Scorch',
+  [Moves.DarkPulse]: 'Pulse',
+  [Moves.SheerCold]: 'Freeze',
 
   // Struck and gone: the blow is the first step and the walk off the
   // field is the second, which is why the landing here is the leaving

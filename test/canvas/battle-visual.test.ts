@@ -107,7 +107,7 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Flame', Moves.Ember],
   ['Splash', Moves.WaterGun],
   ['Frost', Moves.Blizzard],
-  ['Leafy', Moves.PetalDance],
+  ['Leafy', Moves.SkyAttack],
   ['Haze', Moves.PoisonPowder],
   ['Mark', Moves.Glare],
   ['Mend', Moves.Recover],
@@ -184,6 +184,18 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Exchange', Moves.HeartSwap],
   ['Void', Moves.DarkVoid],
   ['Cannon', Moves.HydroCannon],
+  // A bite in an element, and a dive wrapped in pale fire
+  ['Jaws', Moves.FireFang],
+  ['Jaws', Moves.IceFang],
+  ['Jaws', Moves.ThunderFang],
+  ['Rush', Moves.BraveBird],
+  ['Meteors', Moves.DracoMeteor],
+  ['Rampage', Moves.Outrage],
+  ['Rampage', Moves.PetalDance],
+  ['Rift', Moves.EarthPower],
+  ['Scorch', Moves.HeatWave],
+  ['Pulse', Moves.DarkPulse],
+  ['Freeze', Moves.SheerCold],
 ];
 
 /**
@@ -388,7 +400,7 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.Gravity)).toBe('Press');
     // Every type arrives as something now that each of them has a
     // special move: a flower burst stood in for all of these
-    expect(effectShapeFor(Moves.DarkPulse)).toBe('Shade');
+    expect(effectShapeFor(Moves.DarkPulse)).toBe('Pulse');
     expect(effectShapeFor(Moves.DragonPulse)).toBe('Beam');
     expect(effectShapeFor(Moves.FocusBlast)).toBe('Blast');
     expect(effectShapeFor(Moves.PowerGem)).toBe('Dazzle');

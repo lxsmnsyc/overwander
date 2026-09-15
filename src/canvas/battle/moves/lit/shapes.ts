@@ -40,6 +40,10 @@ export const JOLTS: Partial<Record<EffectShape, number>> = {
   Grip: 2,
   Surge: 3,
   Cannon: 3,
+  Meteors: 3.5,
+  Rampage: 2.5,
+  Rift: 2.5,
+  Freeze: 1.5,
 };
 
 /** Where the effect is happening: the first body it landed on. */

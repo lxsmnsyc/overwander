@@ -3,6 +3,7 @@ import {
   beam,
   between,
   bolt,
+  box,
   bubble,
   burst,
   decay,
@@ -10,6 +11,7 @@ import {
   funnel,
   lash,
   lighten,
+  mix,
   motes,
   noise,
   orb,
@@ -23,6 +25,10 @@ import {
 } from '../__paint';
 import type { EffectShape, ShapePainter } from './shapes';
 import { CHASM_GAPE, CHASM_RUN, CHASM_STEPS, CHASM_TEAR, REACH, landing, many } from './shapes';
+
+/** Sheer Cold: the share by which the ice has grown round it, and the share at which it breaks */
+export const FREEZE_SET = 0.3;
+export const FREEZE_CRACK = 0.65;
 
 /**
  * The shapes an element arrives as: fire, water, ice, grass, lightning
@@ -602,6 +608,206 @@ const elements = {
         seed + one,
         held,
         { ...paint, alpha: 1, width: 2.6 * stage.scale },
+      );
+    }
+  },
+  // Meteors streaking down onto it one after another, each going off where it lands
+  Meteors(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const hot = mix(paint.color, '#ffb04a', 0.6);
+    const count = many(3, weight);
+
+    for (let rock = 0; rock < count; rock += 1) {
+      const raw = share * 1.8 - (rock / count) * 0.8;
+
+      if (raw <= 0) {
+        continue;
+      }
+      const ground: Point = [
+        at[0] + spread(seed, rock) * size * 1.4,
+        at[1] + size * 0.6 + spread(seed, rock + 5) * size * 0.3,
+      ];
+
+      if (raw < 0.5) {
+        const sky: Point = [ground[0] - size * 3, ground[1] - size * 8];
+        const fall = raw / 0.5;
+        const spot = between(sky, ground, fall);
+
+        lash(context, between(sky, ground, Math.max(0, fall - 0.3)), spot, 0, {
+          ...paint,
+          alpha: 0.7,
+          width: size * 0.3,
+        });
+        orb(context, spot, size * 0.45, { color: hot, alpha: 1 });
+        continue;
+      }
+      const blast = Math.min(1, (raw - 0.5) / 0.5);
+
+      orb(context, ground, size * (0.5 + blast * 1.2), { color: hot, alpha: decay(blast) });
+      ripple(context, ground, size * (0.4 + blast * 1.8), {
+        ...paint,
+        alpha: decay(blast),
+        width: 2.6 * stage.scale,
+      });
+      shards(context, ground, size * 1.4, 5, seed + rock, blast, {
+        color: mix(paint.color, '#5b4636', 0.5),
+        alpha: decay(blast),
+        width: 2.4 * stage.scale,
+      });
+    }
+  },
+
+  // The ground under it splitting, and light bursting up out of the split
+  Rift(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const foot: Point = [at[0], at[1] + size * 0.9];
+    const light = mix(paint.color, '#ffcc66', 0.6);
+    const open = Math.max(0.05, Math.min(1, share * 3));
+
+    bolt(
+      context,
+      [foot[0] - size * 1.8 * open, foot[1]],
+      [foot[0] + size * 1.8 * open, foot[1]],
+      seed,
+      {
+        color: light,
+        alpha: share < 0.7 ? 1 : decay((share - 0.7) / 0.3),
+        width: 4 * stage.scale,
+      },
+    );
+    ripple(context, foot, size * (0.8 + share * 1.6), {
+      ...paint,
+      alpha: decay(share) * 0.8,
+      width: 2.4 * stage.scale,
+    });
+    if (share <= 0.2) {
+      return;
+    }
+    const rise = (share - 0.2) / 0.8;
+
+    beam(
+      context,
+      foot,
+      [foot[0], foot[1] - size * 4],
+      Math.min(1, rise * 2.5),
+      size * 0.9 * decay(rise),
+      {
+        color: light,
+        alpha: decay(rise),
+      },
+    );
+    shards(context, foot, size * 2, many(7, weight), seed, rise, {
+      color: mix(paint.color, '#5b4636', 0.4),
+      alpha: decay(rise),
+      width: 2.6 * stage.scale,
+    });
+  },
+
+  // A wall of hot wind blowing across it from the caster's side, the air wavering and embers carried on it
+  Scorch(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const dx = at[0] - stage.source[0];
+    const dy = at[1] - stage.source[1];
+    const length = Math.max(1, Math.hypot(dx, dy));
+    const ux = dx / length;
+    const uy = dy / length;
+    const hot = mix(paint.color, '#ffb04a', 0.5);
+
+    orb(context, at, size * 1.2, { ...paint, alpha: swell(share) * 0.35 });
+    for (let band = 0; band < 5; band += 1) {
+      const held = (share * 1.4 + band * 0.2) % 1;
+      const travel = (held - 0.5) * size * 4;
+      const off = (band - 2) * size * 0.45;
+      const centre: Point = [at[0] + ux * travel - uy * off, at[1] + uy * travel + ux * off];
+
+      lash(
+        context,
+        [centre[0] + uy * size * 0.9, centre[1] - ux * size * 0.9],
+        [centre[0] - uy * size * 0.9, centre[1] + ux * size * 0.9],
+        Math.sin(share * 20 + band) * size * 0.3,
+        { color: hot, alpha: swell(held) * 0.8, width: 3 * stage.scale },
+      );
+    }
+    motes(context, at, size * 2, many(10, weight), seed, share, {
+      color: '#ffd84a',
+      alpha: swell(share),
+      width: 2 * stage.scale,
+    });
+  },
+
+  // Dark rings pulsing out of the caster and washing over it, each edged in a thin light
+  Pulse(context, stage, share, { paint, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const dark = mix(paint.color, '#120818', 0.6);
+    const rim = mix(lighten(paint.color, 0.3), '#b48cff', 0.4);
+
+    for (let pulse = 0; pulse < 3; pulse += 1) {
+      const held = (share * 1.2 + pulse * 0.33) % 1;
+      // Travelling rather than growing to the whole gap, which filled the screen on a wide field
+      const centre = between(stage.source, at, held);
+      const radius = size * (0.5 + held * 1.1);
+
+      ring(context, centre, radius, {
+        color: dark,
+        alpha: decay(held) * 0.8,
+        width: size * 0.35,
+      });
+      ring(context, centre, radius, {
+        color: rim,
+        alpha: decay(held),
+        width: 1.6 * stage.scale,
+      });
+    }
+    ring(context, at, size * (0.6 + share), {
+      color: rim,
+      alpha: swell(share),
+      width: 2 * stage.scale,
+    });
+  },
+
+  // Frozen solid in a block of ice that cracks and breaks away
+  Freeze(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const ice = lighten(paint.color, 0.45);
+    const foot: Point = [at[0], at[1] + size * 0.9];
+    const grown = Math.min(1, share / FREEZE_SET);
+    const broken = Math.max(0, (share - FREEZE_CRACK) / (1 - FREEZE_CRACK));
+
+    ripple(context, foot, size * (0.8 + grown * 1.2), {
+      color: ice,
+      alpha: decay(broken),
+      width: 3 * stage.scale,
+    });
+    if (broken > 0) {
+      shards(context, at, size * 2, many(12, weight), seed, broken, {
+        color: ice,
+        alpha: decay(broken),
+        width: 3.2 * stage.scale,
+      });
+      orb(context, at, size * (0.6 + broken), { color: '#ffffff', alpha: decay(broken) * 0.6 });
+      return;
+    }
+    box(context, foot, size * 1.2, size * 2.2 * grown, size * 0.5, {
+      color: ice,
+      alpha: 0.9,
+      width: 2 * stage.scale,
+    });
+    if (share > FREEZE_SET) {
+      bolt(
+        context,
+        [at[0] - size * 0.6, at[1] - size * 0.8],
+        [at[0] + size * 0.5, at[1] + size * 0.4],
+        seed,
+        {
+          color: '#ffffff',
+          alpha: (share - FREEZE_SET) / (FREEZE_CRACK - FREEZE_SET),
+          width: 1.6 * stage.scale,
+        },
       );
     }
   },

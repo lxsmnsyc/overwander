@@ -1,4 +1,4 @@
-import type { Types } from '../../../../data/constants/types';
+import { Types } from '../../../../data/constants/types';
 import { MoveCategories, type Moves } from '../../../../data/ids/moves';
 import { getMoveData } from '../../../../data/moves';
 import type { Point, Stage } from '../../stage';
@@ -131,6 +131,12 @@ export type EffectShape =
   | 'Exchange'
   | 'Void'
   | 'Cannon'
+  | 'Meteors'
+  | 'Rampage'
+  | 'Rift'
+  | 'Scorch'
+  | 'Pulse'
+  | 'Freeze'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -213,6 +219,12 @@ export const SPANS: Record<EffectShape, number> = {
   Exchange: 900,
   Void: 1000,
   Cannon: 820,
+  Meteors: 1000,
+  Rampage: 900,
+  Rift: 820,
+  Scorch: 820,
+  Pulse: 820,
+  Freeze: 1000,
   Whiff: 320,
 };
 
@@ -252,6 +264,9 @@ export interface Draw {
   /** The move's type, for the shapes that wrap a blow in its element */
   type: Types;
 }
+
+/** The types a blow or a bite breaks off its element for: flames, frost, sparks, or Brave Bird's pale fire */
+export const IMBUED = new Set<Types>([Types.Fire, Types.Ice, Types.Electric, Types.Flying]);
 
 /** A count scaled by weight, never below one. */
 export function many(count: number, weight: number): number {

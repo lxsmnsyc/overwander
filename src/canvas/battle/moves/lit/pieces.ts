@@ -236,8 +236,9 @@ export function imbue(
 ): void {
   const fade = decay(share);
 
-  if (type === Types.Fire) {
-    const hot = mix(colour, '#ffd84a', 0.6);
+  if (type === Types.Fire || type === Types.Flying) {
+    // Flying's fire burns pale rather than yellow
+    const hot = type === Types.Fire ? mix(colour, '#ffd84a', 0.6) : lighten(colour, 0.7);
 
     kit.pool(floorOf(at), reach * 1.4, colour, swell(share) * 0.5);
     for (let lick = 0; lick < count; lick += 1) {

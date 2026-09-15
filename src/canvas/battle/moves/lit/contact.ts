@@ -1,6 +1,8 @@
+import { Types } from '../../../../data/constants/types';
 import type { Spot } from '../../../three/effect-batch';
+import { PETAL, RAMPAGE_BLOWS } from '../effect/contact';
 import { decay, lighten, mix, noise, spread, swell } from '../__paint';
-import { type EffectShape, STRIKES, many } from '../effect/shapes';
+import { type EffectShape, IMBUED, STRIKES, many } from '../effect/shapes';
 import { TAU, bolt, bone, debris, imbue, smoke, sparks, spiral } from './pieces';
 import {
   type LitShapePainter,
@@ -209,7 +211,7 @@ const contact = {
   },
 
   // A mouth closing on it: two rows of teeth that meet
-  Jaws(kit, stage, share, { paint, weight }) {
+  Jaws(kit, stage, share, { paint, seed, weight, type }) {
     const at = landed(stage);
     const reach = reachOf(stage, weight);
     const colour = paint.color;
@@ -248,6 +250,62 @@ const contact = {
 
       kit.star(at, reach * (0.4 + snap), 0.3, lighten(colour, 0.6), decay(snap));
       sparks(kit, at, reach * (0.5 + snap * 0.5), 5, 3, snap, lighten(colour, 0.5), decay(snap));
+    }
+    // A bite in an element breaks it off as the jaws meet
+    if (share > 0.6 && IMBUED.has(type)) {
+      imbue(kit, at, reach, (share - 0.6) / 0.4, seed, type, colour, many(8, weight));
+    }
+  },
+
+  // A rampage: heavy blows landing on it one after another, and petals flying where the move is a dance of them
+  Rampage(kit, stage, share, { paint, seed, weight, type }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+
+    kit.pool(floor, reach * 1.8, '#1a120c', swell(share) * 0.35, { add: 0 });
+    for (let blow = 0; blow < RAMPAGE_BLOWS; blow += 1) {
+      const held = share * RAMPAGE_BLOWS - blow;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      const angle = noise(seed, blow) * TAU;
+      const spot = aside(kit, at, Math.cos(angle) * reach * 0.5, Math.sin(angle) * reach * 0.4);
+
+      kit.glow(
+        spot,
+        reach * (0.5 + held * 0.5),
+        lighten(colour, 0.5),
+        decay(Math.min(1, held * 2)),
+        0.9,
+      );
+      kit.star(spot, reach * (0.7 + held * 0.6), angle, lighten(colour, 0.6), decay(held));
+      kit.ring(spot, reach * (0.3 + held), 0.12, lighten(colour, 0.4), decay(held));
+      kit.ripple(floor, reach * (0.5 + held * 2), 0.09, lighten(colour, 0.3), decay(held) * 0.9);
+      sparks(
+        kit,
+        spot,
+        reach * (0.8 + held * 0.4),
+        many(6, weight),
+        seed + blow,
+        held,
+        lighten(colour, 0.5),
+        decay(held),
+      );
+    }
+    if (type !== Types.Grass) {
+      return;
+    }
+    for (let one = 0; one < many(10, weight); one += 1) {
+      kit.leaf(
+        thrown(at, seed, one + 20, share, reach * 2, reach * 1.2),
+        reach * 0.2,
+        noise(seed, one + 5) * TAU + share * 7,
+        PETAL,
+        late(share, 0.6),
+      );
     }
   },
 

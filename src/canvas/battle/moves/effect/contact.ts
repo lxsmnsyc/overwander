@@ -16,6 +16,7 @@ import {
   motes,
   noise,
   orb,
+  petal,
   ring,
   ripple,
   shards,
@@ -25,7 +26,13 @@ import {
   swell,
 } from '../__paint';
 import type { EffectShape, ShapePainter } from './shapes';
-import { REACH, STRIKES, landing, many } from './shapes';
+import { IMBUED, REACH, STRIKES, landing, many } from './shapes';
+
+/** How many blows a rampage lands */
+export const RAMPAGE_BLOWS = 3;
+
+/** The colour of Petal Dance's petals, which the Grass type's green is not */
+export const PETAL = '#f2a0c8';
 
 /** A blow's element breaking off where it lands: flames, frost or sparks, and plain spokes for any other type */
 function imbue(
@@ -40,8 +47,9 @@ function imbue(
 ): void {
   const fade = decay(share);
 
-  if (type === Types.Fire) {
-    const hot = mix(paint.color, '#ffd84a', 0.6);
+  if (type === Types.Fire || type === Types.Flying) {
+    // Flying's fire burns pale rather than yellow
+    const hot = type === Types.Fire ? mix(paint.color, '#ffd84a', 0.6) : lighten(paint.color, 0.7);
 
     for (let lick = 0; lick < 5; lick += 1) {
       const rise = (share * 1.6 + noise(seed, lick)) % 1;
@@ -215,7 +223,7 @@ const contact = {
 
   // A mouth closing on it. The two halves start apart and meet, which
   // is the whole of what a bite is
-  Jaws(context, stage, share, { paint, weight }) {
+  Jaws(context, stage, share, { paint, seed, weight, type }) {
     const at = landing(stage);
     const size = REACH * stage.scale * weight;
     const gap = size * (1 - share) * 0.9;
@@ -233,6 +241,60 @@ const contact = {
         alpha: (1 - share) * 4,
         width: 2 * stage.scale,
       });
+    }
+    // A bite in an element breaks it off as the jaws meet
+    if (share > 0.6 && IMBUED.has(type)) {
+      imbue(context, at, size, (share - 0.6) / 0.4, seed, paint, type, stage.scale);
+    }
+  },
+
+  // A rampage: heavy blows landing on it one after another, and petals flying where the move is a dance of them
+  Rampage(context, stage, share, { paint, seed, weight, type }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+
+    for (let blow = 0; blow < RAMPAGE_BLOWS; blow += 1) {
+      const held = share * RAMPAGE_BLOWS - blow;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      const angle = noise(seed, blow) * Math.PI * 2;
+      const spot: Point = [
+        at[0] + Math.cos(angle) * size * 0.5,
+        at[1] + Math.sin(angle) * size * 0.4,
+      ];
+
+      burst(context, spot, size * (0.5 + held * 0.7), many(6, weight), seed + blow, {
+        ...paint,
+        alpha: decay(held),
+        width: 3.4 * stage.scale,
+      });
+      ring(context, spot, size * (0.3 + held), {
+        ...paint,
+        alpha: decay(held),
+        width: 3 * stage.scale,
+      });
+    }
+    ripple(context, [at[0], at[1] + size * 0.9], size * (0.6 + share * 2), {
+      ...paint,
+      alpha: decay(share) * 0.8,
+      width: 3 * stage.scale,
+    });
+    if (type !== Types.Grass) {
+      return;
+    }
+    for (let one = 0; one < many(8, weight); one += 1) {
+      const angle = noise(seed, one + 20) * Math.PI * 2;
+      const out = size * (0.4 + share * 1.8) * (0.5 + noise(seed, one + 30) * 0.5);
+
+      petal(
+        context,
+        [at[0] + Math.cos(angle) * out, at[1] + Math.sin(angle) * out * 0.7],
+        size * 0.2,
+        share * 6 + one,
+        { color: PETAL, alpha: decay(share) },
+      );
     }
   },
 

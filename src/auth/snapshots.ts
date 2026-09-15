@@ -16,14 +16,14 @@ import { requireUid } from '../server/auth';
 import {
   CLAIM_CHUNK_LIMIT,
   type ChunkClaims,
-  type ClaimedChunk,
+  type ClaimQuery,
   type NestOffer,
   claimApricornTree as claimApricornOnServerSide,
   claimBerryPatch as claimBerryOnServerSide,
   claimItemCache as claimCacheOnServerSide,
   claimNest as claimNestOnServerSide,
   claimPhenomenon as claimPhenomenonOnServerSide,
-  listChunkClaims as listChunkClaimsOnServerSide,
+  listClaimsFor as listClaimsForOnServerSide,
   meetSpawn,
   peekNest as peekNestOnServerSide,
   peekPhenomenonEgg as peekPhenomenonEggOnServerSide,
@@ -468,32 +468,13 @@ async function peekPhenomenonEggOnServer(
   );
 }
 
-/** One chunk's claims, as the board asks for them */
-interface ChunkClaimQuery {
-  x: number;
-  y: number;
-  offset: number;
-  depth: Depth;
-}
-
-function claimKey(query: ChunkClaimQuery): string {
+function claimKey(query: ClaimQuery): string {
   return `${query.depth}|${query.offset}|${query.x},${query.y}`;
 }
 
-async function listClaimsOnServer(
-  token: string,
-  chunks: ClaimedChunk[],
-  offset: number,
-  depth: Depth,
-): Promise<ChunkClaims[]> {
+async function listClaimsOnServer(token: string, queries: ClaimQuery[]): Promise<ChunkClaims[]> {
   'use server';
-  return listChunkClaimsOnServerSide(
-    await requireUid(token),
-    chunks,
-    await syncServerClock(),
-    offset,
-    depth,
-  );
+  return listClaimsForOnServerSide(await requireUid(token), queries, await syncServerClock());
 }
 
 /**
@@ -502,48 +483,11 @@ async function listClaimsOnServer(
  * so they all land here together and a chunk's three share one answer
  */
 const readChunkClaims = batchedQuery(
-  async (queries: ChunkClaimQuery[]): Promise<Map<string, ChunkClaims>> => {
-    // Windows are resolved per zone and layer, which is one group in practice
-    const groups = new Map<string, { offset: number; depth: Depth; queries: ChunkClaimQuery[] }>();
-
-    for (const query of queries) {
-      const key = `${query.depth}|${query.offset}`;
-      const group = groups.get(key);
-
-      if (group == null) {
-        groups.set(key, { offset: query.offset, depth: query.depth, queries: [query] });
-      } else {
-        group.queries.push(query);
-      }
-    }
-
-    const token = await getIdToken();
-    const found = new Map<string, ChunkClaims>();
-    const reads: Promise<void>[] = [];
-
-    for (const group of groups.values()) {
-      const chunks: ClaimedChunk[] = [];
-
-      for (const { x, y } of group.queries) {
-        chunks.push({ x, y });
-      }
-      reads.push(
-        listClaimsOnServer(token, chunks, group.offset, group.depth).then((answers) => {
-          for (const [at, query] of group.queries.entries()) {
-            const answer = answers.at(at);
-
-            if (answer != null) {
-              found.set(claimKey(query), answer);
-            }
-          }
-        }),
-      );
-    }
-    await Promise.all(reads);
-    return found;
-  },
-  (found, query): ChunkClaims =>
-    found.get(claimKey(query)) ?? { phenomena: [], patches: [], caches: [] },
+  async (queries: ClaimQuery[]): Promise<ChunkClaims[]> =>
+    listClaimsOnServer(await getIdToken(), queries),
+  // Answered in the order asked, so a query's place in the batch is its answer
+  (answers, _query, index): ChunkClaims =>
+    answers.at(index) ?? { phenomena: [], patches: [], caches: [] },
   { key: claimKey, limit: CLAIM_CHUNK_LIMIT },
 );
 

@@ -146,3 +146,53 @@ export async function listChunkClaims(
   }
   return answers;
 }
+
+/** A chunk asked about with the zone and layer its window is read in */
+export interface ClaimQuery extends ClaimedChunk {
+  offset: number;
+  depth: Depth;
+}
+
+/**
+ * `listChunkClaims` for chunks that may differ in zone or layer, answered
+ * in the order asked. A board asks in one zone and layer, so this is one
+ * group in practice
+ */
+export async function listClaimsFor(
+  uid: string,
+  queries: ClaimQuery[],
+  now: number,
+): Promise<ChunkClaims[]> {
+  if (queries.length > CLAIM_CHUNK_LIMIT) {
+    throw new Error('Too many chunks asked about at once.');
+  }
+
+  const groups = new Map<
+    string,
+    { offset: number; depth: Depth; at: number[]; chunks: ClaimedChunk[] }
+  >();
+
+  for (const [at, { x, y, offset, depth }] of queries.entries()) {
+    const key = `${depth}|${offset}`;
+    const group = groups.get(key) ?? { offset, depth, at: [], chunks: [] };
+
+    group.at.push(at);
+    group.chunks.push({ x, y });
+    groups.set(key, group);
+  }
+
+  const answers: ChunkClaims[] = [];
+  const reads: Promise<void>[] = [];
+
+  for (const group of groups.values()) {
+    reads.push(
+      listChunkClaims(uid, group.chunks, now, group.offset, group.depth).then((found) => {
+        for (const [index, answer] of found.entries()) {
+          answers[group.at[index]] = answer;
+        }
+      }),
+    );
+  }
+  await Promise.all(reads);
+  return answers;
+}

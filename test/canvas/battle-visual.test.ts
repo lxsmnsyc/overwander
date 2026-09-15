@@ -135,7 +135,7 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Rocks', Moves.RockSlide],
   ['Warp', Moves.Psychic],
   ['Lash', Moves.VineWhip],
-  ['Boost', Moves.Agility],
+  ['Boost', Moves.Meditate],
   ['Drop', Moves.Leer],
   ['Nerve', Moves.FocusEnergy],
   ['Drum', Moves.BellyDrum],
@@ -255,6 +255,32 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Applause', Moves.Encore],
   ['Vein', Moves.Taunt],
   ['Nail', Moves.Curse],
+  // Stat moves drawn as what the pokemon does
+  ['Haste', Moves.Agility],
+  ['Polish', Moves.RockPolish],
+  ['Flex', Moves.BulkUp],
+  ['Howl', Moves.Howl],
+  ['Blank', Moves.Amnesia],
+  ['Cosmos', Moves.CosmicPower],
+  ['Screen', Moves.Barrier],
+  ['Hive', Moves.DefendOrder],
+  ['Crackle', Moves.Charge],
+  ['Lantern', Moves.TailGlow],
+  ['Stack', Moves.Stockpile],
+  ['Sprout', Moves.Growth],
+  ['Curl', Moves.Withdraw],
+  ['Roar', Moves.Growl],
+  ['Screech', Moves.Screech],
+  ['Screech', Moves.MetalSound],
+  ['Stare', Moves.ScaryFace],
+  ['Hearts', Moves.Charm],
+  ['Tickle', Moves.Tickle],
+  ['Feathers', Moves.FeatherDance],
+  ['Cotton', Moves.CottonSpore],
+  ['Silk', Moves.StringShot],
+  ['Tears', Moves.FakeTears],
+  ['Memento', Moves.Memento],
+  ['Clear', Moves.Defog],
 ];
 
 /**
@@ -413,11 +439,10 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.Uproar)).toBe('Wave');
     expect(effectShapeFor(Moves.Supersonic)).toBe('Wave');
 
-    // Unless it moved a stat, which is drawn as the stat. What the
-    // move was is the gap it crossed, so a growl still carries as
-    // sound on the way over
-    expect(effectShapeFor(Moves.Growl)).toBe('Drop');
-    expect(effectShapeFor(Moves.MetalSound)).toBe('Drop');
+    // A stat move with a picture of its own keeps it, and a growl
+    // still carries as sound on the way over
+    expect(effectShapeFor(Moves.Growl)).toBe('Roar');
+    expect(effectShapeFor(Moves.MetalSound)).toBe('Screech');
     expect(delayShapeFor(Moves.Growl, 0)).toBe('Call');
   });
 
@@ -561,12 +586,12 @@ describe('a painted move', () => {
   it('draws a stat move as the stat, on whoever it landed on', () => {
     // One picture for every rise and the same turned over for every
     // drop, ahead of whatever else the move looks like
-    expect(effectShapeFor(Moves.Agility)).toBe('Boost');
-    expect(effectShapeFor(Moves.Withdraw)).toBe('Boost');
-    expect(effectShapeFor(Moves.Amnesia)).toBe('Boost');
+    expect(effectShapeFor(Moves.Meditate)).toBe('Boost');
+    expect(effectShapeFor(Moves.Sharpen)).toBe('Boost');
+    expect(effectShapeFor(Moves.AcidArmor)).toBe('Boost');
     expect(effectShapeFor(Moves.Leer)).toBe('Drop');
-    expect(effectShapeFor(Moves.Growl)).toBe('Drop');
-    expect(effectShapeFor(Moves.Charm)).toBe('Drop');
+    expect(effectShapeFor(Moves.TailWhip)).toBe('Drop');
+    expect(effectShapeFor(Moves.Kinesis)).toBe('Drop');
     // Raising the target's Attack is still a rise, and it is drawn on
     // the target rather than on whoever cast it
     expect(effectShapeFor(Moves.Swagger)).toBe('Boost');
@@ -591,7 +616,7 @@ describe('a painted move', () => {
     };
 
     expect(on(Moves.Leer, [[300, 100]])).not.toBe(on(Moves.Leer, [[500, 400]]));
-    expect(on(Moves.Agility, [])).not.toBe(on(Moves.Agility, [[300, 100]]));
+    expect(on(Moves.Meditate, [])).not.toBe(on(Moves.Meditate, [[300, 100]]));
   });
 
   it('colours a stat move by which stat it moved', () => {
@@ -607,9 +632,9 @@ describe('a painted move', () => {
     };
 
     // The same picture in two colours
-    expect(shade(Moves.Agility)).not.toBe(shade(Moves.Withdraw));
+    expect(shade(Moves.Meditate)).not.toBe(shade(Moves.AcidArmor));
     // And two moves that move the same stat the same way match
-    expect(shade(Moves.Withdraw)).toBe(shade(Moves.AcidArmor));
+    expect(shade(Moves.Meditate)).toBe(shade(Moves.Sharpen));
   });
 
   it('puts a screen over the side rather than on each of them', () => {

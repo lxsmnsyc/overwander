@@ -123,6 +123,38 @@ export function bolt(
   kit.ribbon([fork, bend, tip], width * 0.5, lighten(colour, 0.5), alpha * 0.8);
 }
 
+/** A blade bent round a circle on the picture, up positive, tapered to a point at both ends */
+export function sickle(
+  kit: EffectBatch,
+  at: Spot,
+  radius: number,
+  start: number,
+  end: number,
+  width: number,
+  colour: string,
+  alpha: number,
+  add = 1,
+): void {
+  const steps = 10;
+
+  for (let step = 0; step < steps; step += 1) {
+    const from = start + (end - start) * (step / steps);
+    const to = start + (end - start) * ((step + 1) / steps);
+
+    kit.ribbon(
+      [
+        aside(kit, at, Math.cos(from) * radius, Math.sin(from) * radius),
+        aside(kit, at, Math.cos(to) * radius, Math.sin(to) * radius),
+      ],
+      width * Math.sin(Math.PI * ((step + 0.5) / steps)),
+      colour,
+      alpha,
+      0,
+      { add },
+    );
+  }
+}
+
 /** A bone tumbling: a shaft across the picture with a knob at each end. */
 export function bone(
   kit: EffectBatch,

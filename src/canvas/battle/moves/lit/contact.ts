@@ -1,5 +1,4 @@
 import { Types } from '../../../../data/constants/types';
-import type EffectBatch from '../../../three/effect-batch';
 import type { Spot } from '../../../three/effect-batch';
 import {
   CRASH_AURA,
@@ -11,7 +10,7 @@ import {
 } from '../effect/contact';
 import { decay, lighten, mix, noise, spread, swell } from '../__paint';
 import { type EffectShape, IMBUED, STRIKES, many } from '../effect/shapes';
-import { TAU, bolt, bone, debris, gathering, imbue, smoke, sparks, spiral } from './pieces';
+import { TAU, bolt, bone, debris, gathering, imbue, sickle, smoke, sparks, spiral } from './pieces';
 import {
   type LitShapePainter,
   aside,
@@ -31,38 +30,6 @@ export function backToward(at: Spot, from: Spot, distance: number): Spot {
   const length = Math.max(1e-3, Math.hypot(dx, dz));
 
   return [at[0] + (dx / length) * distance, at[1], at[2] + (dz / length) * distance];
-}
-
-/** A blade bent round a circle on the picture, up positive, tapered to a point at both ends */
-function sickle(
-  kit: EffectBatch,
-  at: Spot,
-  radius: number,
-  start: number,
-  end: number,
-  width: number,
-  colour: string,
-  alpha: number,
-  add = 1,
-): void {
-  const steps = 10;
-
-  for (let step = 0; step < steps; step += 1) {
-    const from = start + (end - start) * (step / steps);
-    const to = start + (end - start) * ((step + 1) / steps);
-
-    kit.ribbon(
-      [
-        aside(kit, at, Math.cos(from) * radius, Math.sin(from) * radius),
-        aside(kit, at, Math.cos(to) * radius, Math.sin(to) * radius),
-      ],
-      width * Math.sin(Math.PI * ((step + 0.5) / steps)),
-      colour,
-      alpha,
-      0,
-      { add },
-    );
-  }
 }
 
 /**

@@ -177,6 +177,25 @@ export type EffectShape =
   | 'Applause'
   | 'Vein'
   | 'Nail'
+  | 'Haste'
+  | 'Polish'
+  | 'Flex'
+  | 'Howl'
+  | 'Blank'
+  | 'Cosmos'
+  | 'Hive'
+  | 'Crackle'
+  | 'Lantern'
+  | 'Stack'
+  | 'Sprout'
+  | 'Curl'
+  | 'Screech'
+  | 'Tickle'
+  | 'Cotton'
+  | 'Silk'
+  | 'Tears'
+  | 'Memento'
+  | 'Clear'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -304,6 +323,25 @@ export const SPANS: Record<EffectShape, number> = {
   Applause: 1000,
   Vein: 900,
   Nail: 1000,
+  Haste: 700,
+  Polish: 900,
+  Flex: 820,
+  Howl: 820,
+  Blank: 900,
+  Cosmos: 1000,
+  Hive: 1000,
+  Crackle: 900,
+  Lantern: 900,
+  Stack: 1000,
+  Sprout: 900,
+  Curl: 820,
+  Screech: 820,
+  Tickle: 820,
+  Cotton: 900,
+  Silk: 900,
+  Tears: 900,
+  Memento: 1000,
+  Clear: 900,
   Whiff: 320,
 };
 

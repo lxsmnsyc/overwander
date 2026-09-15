@@ -56,6 +56,7 @@ export const JOLTS: Partial<Record<EffectShape, number>> = {
   Sickles: 1,
   Cutter: 1,
   Nail: 1,
+  Flex: 1,
 };
 
 /** Where the effect is happening: the first body it landed on. */

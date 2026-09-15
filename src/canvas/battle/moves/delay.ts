@@ -484,6 +484,9 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
   [Moves.SweetScent]: [undefined, 'Charge'],
   // Petals too, but health coming back, so it waits the way healing does
   [Moves.Aromatherapy]: [undefined, 'Gather'],
+  // Drawn as a screen and as Roost's feathers, but still a raise and a drop on the way
+  [Moves.Barrier]: [undefined, 'Focus'],
+  [Moves.FeatherDance]: [undefined, 'Reach'],
 
   // Sinnoh. Out of the world and back out of it behind whatever it is
   // hitting, which is the wait Dig and Fly spend
@@ -548,6 +551,18 @@ const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
   // The wind-ups Toxic and Taunt had while they landed as a cloud and a sound
   Toxin: 'Drift',
   Vein: 'Call',
+  // The wind-up every stat raise had while it landed as rising arrows
+  Haste: 'Focus',
+  Polish: 'Focus',
+  Flex: 'Focus',
+  Blank: 'Focus',
+  Cosmos: 'Focus',
+  Hive: 'Focus',
+  Crackle: 'Focus',
+  Lantern: 'Focus',
+  Stack: 'Focus',
+  Sprout: 'Focus',
+  Curl: 'Focus',
 };
 
 /**

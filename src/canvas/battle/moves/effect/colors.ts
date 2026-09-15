@@ -75,6 +75,16 @@ const BY_SHAPE: Partial<Record<EffectShape, string>> = {
   Applause: '#ffe07a',
   Vein: '#e8404a',
   Nail: '#8a5ab0',
+  // Night sky, bees, a tail light, stored orbs, a sprout, feathers, cotton, silk and tears
+  Cosmos: '#b8a8ff',
+  Hive: '#f0c040',
+  Lantern: '#fff27a',
+  Stack: '#f0c890',
+  Sprout: '#7cd67a',
+  Tickle: '#f0e6d8',
+  Cotton: '#f4f4ec',
+  Silk: '#f0f0f0',
+  Tears: '#8cc8ff',
 };
 
 /** The shapes that picture a stat moving, and so take the stat's colour */
@@ -86,11 +96,18 @@ const STAGED = new Set<EffectShape>([
   'Sheen',
   'Mirage',
   'Scheme',
+  'Haste',
+  'Polish',
+  'Flex',
+  'Howl',
+  'Blank',
+  'Curl',
 ]);
 
 const MOVE_COLORS: Partial<Record<Moves, string>> = {
   [Moves.Reflect]: STAGE_COLORS[Stages.Defense],
   [Moves.LightScreen]: STAGE_COLORS[Stages.SpecialDefense],
+  [Moves.Barrier]: STAGE_COLORS[Stages.Defense],
   // Protect's green shell; Detect keeps its type's orange
   [Moves.Protect]: '#8fe39a',
   // Hyper Beam's orange, Solar Beam's sunlight and Aura Sphere's blue, which their types' colours are not

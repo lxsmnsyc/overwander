@@ -65,6 +65,25 @@ More moves land as a picture of their own:
 - Encore claps sparkles together over the target's head.
 - Taunt throbs an anger mark on the target's head.
 - Curse drives a nail into the target in three blows.
+- Agility streaks speed lines past the pokemon and leaves afterimages behind.
+- Rock Polish rubs the pokemon to a shine with glints popping.
+- Bulk Up throbs twice with power, and Howl sends rings up off the pokemon's head.
+- Amnesia floats empty thought bubbles off the pokemon's head.
+- Cosmic Power circles stars round the pokemon.
+- Barrier puts up a pane of glass the way Reflect does.
+- Defend Order lines bees up into a wall in front of the pokemon.
+- Charge crackles electricity in over the body, and Tail Glow lights a pulsing light at the tail.
+- Stockpile stacks orbs over the pokemon one at a time.
+- Growth pushes a sprout up out of the ground.
+- Withdraw and Defense Curl close a shell round the pokemon.
+- Growl rolls sound arcs out toward the target, and Screech and Metal Sound send jagged ones.
+- Scary Face opens an eye over the target, and Charm sends up hearts.
+- Tickle brushes feathers at the target's sides, and Feather Dance drifts feathers down on it.
+- Cotton Spore drifts cotton puffs down that stick to the target.
+- String Shot shoots strands of silk that wind round the target.
+- Fake Tears drops tears from the target's eyes.
+- Memento sends the pokemon that used it up in dark smoke.
+- Defog blows the fog away from the target.
 - Tri Attack turns three orbs of fire, ice and lightning in on the target, each bursting as its element.
 - Flame Wheel rolls into the target as a ring of fire.
 - Waterfall drives a column of water up through the target.

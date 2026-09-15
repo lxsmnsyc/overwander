@@ -1,6 +1,7 @@
 import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import { type CatchSnapshot, asCatchSnapshot } from './catch-snapshot';
 import getSupabase from './supabase';
+import batchedQuery from '../utils/batched-query';
 
 /**
  * The most catches a team can field
@@ -56,6 +57,29 @@ export async function getTeam(id: string): Promise<TeamRecord | null> {
 
   return data == null ? null : fromTeamRow(asRecord(data));
 }
+
+/**
+ * `getTeam` for a lobby reading every team in it at once: the reads made
+ * in the same moment go out as one. Browser only, since the queue is
+ * shared by everyone in the module
+ */
+export const getTeamBatched = batchedQuery(
+  async (ids: string[]): Promise<Map<string, TeamRecord>> => {
+    const { data } = await getSupabase()
+      .from('teams')
+      .select('id, player, raid_id, team_catches(slot, caught_id)')
+      .in('id', ids);
+    const found = new Map<string, TeamRecord>();
+
+    for (const row of asRecordArray(data)) {
+      found.set(String(row.id), fromTeamRow(row));
+    }
+    return found;
+  },
+  (found, id: string): TeamRecord | null => found.get(id) ?? null,
+  // The ids travel in the request's address, which has a length limit
+  { limit: 50 },
+);
 
 function fromTeamRow(row: Record<string, unknown>): TeamRecord {
   const catches = asRecordArray(row.team_catches).sort(

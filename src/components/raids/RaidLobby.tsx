@@ -29,7 +29,7 @@ import {
 import { type Profile, getProfiles } from '../../auth/profile';
 import { settled } from '../app/resource-reads';
 import PlayerPlate from '../profile/PlayerPlate';
-import { type TeamRecord, getTeam } from '../../auth/teams';
+import { type TeamRecord, getTeamBatched } from '../../auth/teams';
 import { getSpeciesData } from '../../data/species';
 import { RAID_BOSS_LEVEL } from '../../overworld/raid';
 import AnimatedSprite from '../sprites/AnimatedSprite';
@@ -116,12 +116,13 @@ function LobbyRows(
   });
 
   // And whether it is theirs, for the same reason: the panel around
-  // this is what the overlay closes
+  // this is what the overlay closes. Cleared only on the way out, since
+  // clearing it per lobby update flickered the panel's hold on every join
   createEffect(() => {
     props.onHosting?.(isHost());
-    onCleanup(() => {
-      props.onHosting?.(false);
-    });
+  });
+  onCleanup(() => {
+    props.onHosting?.(false);
   });
 
   /**
@@ -566,10 +567,11 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
   const [teams] = createResource(
     () => raid()?.teams.join(',') ?? null,
     async (key, { value }): Promise<TeamRecord[]> => {
-      const reads: ReturnType<typeof getTeam>[] = [];
+      const reads: ReturnType<typeof getTeamBatched>[] = [];
 
+      // One read for the whole lobby rather than one per team
       for (const id of splitKey(key)) {
-        reads.push(getTeam(id));
+        reads.push(getTeamBatched(id));
       }
 
       // A team that did not change keeps its object, so its row and the

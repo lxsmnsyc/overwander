@@ -241,9 +241,13 @@ async function readClaims(uid: string): Promise<Set<Quests>> {
  * chain predecessor is claimed. Requirements come back with where the
  * player stands on each
  */
-export async function listQuests(uid: string): Promise<QuestStanding[]> {
+export async function listQuests(
+  uid: string,
+  // Handed in by a caller that read them for something else as well
+  progress?: Awaited<ReturnType<typeof readProgress>>,
+): Promise<QuestStanding[]> {
   const [counters, claims, baselines] = await Promise.all([
-    readProgress(uid),
+    progress ?? readProgress(uid),
     readClaims(uid),
     readQuestBaselines(uid),
   ]);

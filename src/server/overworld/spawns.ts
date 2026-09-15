@@ -240,11 +240,12 @@ function spawnIndex(spawnId: string): number {
 export async function retireSpawn(uid: string, spawnId: string): Promise<boolean> {
   const stored = await readEncounter(spawnId, uid);
 
-  if (stored == null) {
-    return false;
-  }
+  return stored == null ? false : retireEncounter(uid, asEncounterRecord(stored));
+}
 
-  const key = encounterKey(asEncounterRecord(stored));
+/** `retireSpawn` for a caller already holding the stored encounter, such as a catch */
+export async function retireEncounter(uid: string, encounter: EncounterRecord): Promise<boolean> {
+  const key = encounterKey(encounter);
   // What comes back says whether this is the first time: a meeting
   // already retired pays nothing a second time, which is what stops a
   // client reporting the same flight over and over

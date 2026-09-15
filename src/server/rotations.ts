@@ -150,8 +150,13 @@ async function forgetOldWindows(uid: string, daily: string, weekly: string): Pro
 }
 
 /** The whole rotating board as it stands for this player right now */
-export async function listRotations(uid: string, now: number): Promise<RotationBoard> {
-  const counters = await readProgress(uid);
+export async function listRotations(
+  uid: string,
+  now: number,
+  // Handed in by a caller that read them for something else as well
+  progress?: Awaited<ReturnType<typeof readProgress>>,
+): Promise<RotationBoard> {
+  const counters = progress ?? (await readProgress(uid));
   const today = dailyWindow(now);
   const thisWeek = weeklyWindow(now);
   const [dailyBase, weeklyBase, dailyClaims, weeklyClaims] = await Promise.all([

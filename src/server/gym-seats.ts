@@ -388,17 +388,6 @@ export async function takeGymSeat(
 }
 
 /**
- * Whether the cell is standing empty. A row with no holder is a seat
- * somebody was beaten out of; no row at all is one nobody has ever
- * taken. Both are free to sit down on
- */
-async function isSeatFree(seat: string): Promise<boolean> {
-  const row = await readSeatRow(seat);
-
-  return row?.holder == null;
-}
-
-/**
  * Give up a seat. It goes back to being empty for whoever walks up
  * next; the snapshot is left where it is, since a battle already
  * fought against it still has to replay
@@ -468,14 +457,11 @@ export async function challengeGymSeat(
     return null;
   }
 
-  // An empty cell is sat down on rather than fought over
-  if (await isSeatFree(seat)) {
-    return null;
-  }
-
   const stored = await readSeat(seat);
 
-  if (stored == null) {
+  // An empty cell is sat down on rather than fought over, and one read
+  // says so: no row, or a row nobody holds
+  if (stored == null || asString(stored.holder) === '') {
     return null;
   }
 

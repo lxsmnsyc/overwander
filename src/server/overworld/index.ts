@@ -14,4 +14,11 @@ export type { ChunkClaims, ClaimQuery, ClaimedChunk } from './claim-lists';
 export { claimNest, peekNest } from './nests';
 export type { NestOffer, PhenomenonClaim } from './nests';
 export { claimPhenomenon, peekPhenomenonEgg } from './phenomena';
-export { FLED_MEMORY, meetSpawn, pocketFled, retireSpawn, startEncounter } from './spawns';
+export {
+  FLED_MEMORY,
+  meetSpawn,
+  pocketFled,
+  retireEncounter,
+  retireSpawn,
+  startEncounter,
+} from './spawns';

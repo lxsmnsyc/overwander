@@ -15,7 +15,7 @@ import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { settleHandover } from '../data/species';
 import { isEggRecord, isFavoriteRecord, withoutHeld } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
-import { hasSpareCatch } from './caught';
+import { hasSpareCatchIn } from './caught';
 import { type Tx, getSql, newDocId, tx } from './db';
 import { readFriendTie } from './friends';
 import { isCatchLocked } from './locks';
@@ -124,12 +124,6 @@ export async function offerTrade(
   if (await isAnyCatchQueued(uid, [offer.caught])) {
     return null;
   }
-  // Nor their last one: the catch leaves their hands the moment the
-  // offer is written, for as long as the friend takes to answer
-  if (!(await hasSpareCatch(uid))) {
-    return null;
-  }
-
   const gold = asTradeGold(offer.gold);
 
   return tx(async (transaction) => {
@@ -140,6 +134,11 @@ export async function offerTrade(
     `;
 
     if (profiles.at(0) == null || profiles[0].buddy_id === offer.caught) {
+      return null;
+    }
+    // Nor their last one: the catch leaves their hands the moment the
+    // offer is written. Counted inside, so two offers cannot both pass
+    if (!(await hasSpareCatchIn(transaction, uid))) {
       return null;
     }
     if (gold > 0 && asNumber(profiles[0].gold) < gold) {

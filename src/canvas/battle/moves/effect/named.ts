@@ -539,6 +539,25 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Memento]: 'Memento',
   [Moves.Defog]: 'Clear',
 
+  // Unova. Moves that are an earlier move's picture in all but name
+  [Moves.DrillRun]: 'Drill',
+  [Moves.WildCharge]: 'Rush',
+  [Moves.Hurricane]: 'Gale',
+  [Moves.WideGuard]: 'Shell',
+  [Moves.QuickGuard]: 'Shell',
+  [Moves.WonderRoom]: 'Grid',
+  [Moves.MagicRoom]: 'Grid',
+  [Moves.RagePowder]: 'Haze',
+  [Moves.HealPulse]: 'Mend',
+  [Moves.CottonGuard]: 'Cotton',
+  [Moves.Electroweb]: 'Coil',
+  [Moves.Snarl]: 'Roar',
+  [Moves.EchoedVoice]: 'Roar',
+  [Moves.Round]: 'Song',
+  [Moves.RelicSong]: 'Song',
+  [Moves.SmackDown]: 'Rocks',
+  [Moves.HeartStamp]: 'Hearts',
+
   // Struck and gone: the blow is the first step and the walk off the
   // field is the second, which is why the landing here is the leaving
   [Moves.UTurn]: 'Relay',

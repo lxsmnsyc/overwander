@@ -32,3 +32,15 @@ Some moves read the real-time fight rather than a turn.
 - Quick Guard turns away moves with a shortened wind-up.
 - Flame Burst splashes the target's own team.
 - Wonder Room and Magic Room end when cast a second time.
+
+Some are drawn the way an earlier move that does the same thing is drawn.
+
+- Drill Run turns like Horn Drill, and Wild Charge arrives crackling like Volt Tackle.
+- Hurricane blows like Aeroblast.
+- Wide Guard and Quick Guard put up Protect's shell.
+- Wonder Room and Magic Room lay a room over the field like Trick Room.
+- Rage Powder is a cloud of powder, and Cotton Guard drifts cotton like Cotton Spore.
+- Heal Pulse brings health back, and Heart Stamp sends up hearts.
+- Electroweb winds round the target like Bind.
+- Snarl and Echoed Voice roll sound arcs out like Roar, and Round and Relic Song drift notes like Sing.
+- Smack Down brings rocks down on the target.

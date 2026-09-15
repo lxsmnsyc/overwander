@@ -499,6 +499,26 @@ describe('a painted move', () => {
     expect(delayShapeFor(Moves.ShadowForce, 1)).toBe('Vanish');
   });
 
+  it('draws the Unova moves that are an earlier move in all but name', () => {
+    expect(effectShapeFor(Moves.DrillRun)).toBe('Drill');
+    expect(effectShapeFor(Moves.WildCharge)).toBe('Rush');
+    expect(effectShapeFor(Moves.Hurricane)).toBe('Gale');
+    expect(effectShapeFor(Moves.WideGuard)).toBe('Shell');
+    expect(effectShapeFor(Moves.QuickGuard)).toBe('Shell');
+    expect(effectShapeFor(Moves.WonderRoom)).toBe('Grid');
+    expect(effectShapeFor(Moves.MagicRoom)).toBe('Grid');
+    expect(effectShapeFor(Moves.RagePowder)).toBe('Haze');
+    expect(effectShapeFor(Moves.HealPulse)).toBe('Mend');
+    expect(effectShapeFor(Moves.CottonGuard)).toBe('Cotton');
+    expect(effectShapeFor(Moves.Electroweb)).toBe('Coil');
+    expect(effectShapeFor(Moves.Snarl)).toBe('Roar');
+    expect(effectShapeFor(Moves.EchoedVoice)).toBe('Roar');
+    expect(effectShapeFor(Moves.Round)).toBe('Song');
+    expect(effectShapeFor(Moves.RelicSong)).toBe('Song');
+    expect(effectShapeFor(Moves.SmackDown)).toBe('Rocks');
+    expect(effectShapeFor(Moves.HeartStamp)).toBe('Hearts');
+  });
+
   it('draws a U-turn as the blow and then as the leaving', () => {
     // The engine deals the damage on the wind-up step and swaps the
     // pokemon out on the last one, so the two steps are two pictures

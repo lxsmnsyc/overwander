@@ -81,8 +81,30 @@ Sinnoh.
   both sides.
 - **Healing Wish and Lunar Dance** are spent on a teammate already on the
   field. Lunar Dance also makes every move ready at once.
-- **Every move has its own picture.** Aqua Ring puts hoops of water round the
-  pokemon, Trick Room builds a room over the field, and Gravity weighs it down.
+
+## Moves look like themselves
+
+Sinnoh's moves, and dozens of older ones, land as a picture of their own.
+
+- **Roar of Time** throws out rings that freeze and shatter, and **Spacial
+  Rend** tears a pink gash in the air.
+- **Judgment** brings shafts of light down round the target, and **Draco
+  Meteor** brings meteors down on it.
+- **Crush Grip** closes two great hands on the target, and **Magma Storm** winds
+  a vortex of lava round it.
+- **Swords Dance** crosses swords overhead, **Protect** throws up a shell of
+  hexagons, and **Splash** flops about while nothing happens.
+- **Pin Missile, Bullet Seed and Rock Blast** fly in one piece at a time.
+- **Aqua Ring** puts hoops of water round the pokemon, **Trick Room** builds a
+  room over the field, and **Gravity** weighs it down.
+- **A substitute stands in front** of the pokemon behind it, which dims until it
+  breaks. The doll drops in from above.
+- **U-turn hits and then leaves**, drawn as a throw out and back.
+- **X-Scissor and Cross Chop cross into an X**, and every slash is a straight
+  blade.
+- **Sweet Scent blows petals** and **Aeroblast is a storm**.
+- **The mark each blow leaves** is drawn in the field, in front of the pokemon
+  it hit.
 
 ## A fourth league
 
@@ -130,6 +152,16 @@ Five more houses, and a **print** for each.
   comes one time in five, it knows two egg moves, and it hatches in half the
   steps with room for a second ability and a second held item.
 
+## Water and ice have their own spawns
+
+- **Ponds, rivers and seas** spawn what lives in water, and a sea's islands
+  spawn what lives on land.
+- **Frozen water** in cold biomes has spawns of its own, and it can still be
+  walked on.
+- **Nothing that only swims turns up on land**, and nothing that only walks
+  turns up in water.
+- **Uxie, Mesprit and Azelf** can also be met in the waters of their lakes.
+
 ## Legends in more places
 
 - **Seventeen new lairs**, from Spear Pillar and Turnback Cave to the three
@@ -161,13 +193,8 @@ Five more houses, and a **print** for each.
 
 ## Fixes along the way
 
-- **A substitute stands in front** of the pokemon behind it, which dims until it
-  breaks.
-- **U-turn hits and then leaves**, drawn as a throw out and back.
-- **X-Scissor and Cross Chop cross into an X**, and every slash is a straight
-  blade.
-- **Sweet Scent blows petals** and **Aeroblast is a storm**, rather than a stat
-  drop and an orb.
+- **A volcano's lava can no longer be walked on**, and nothing spawns or stands
+  on it.
 - **A confused pokemon hitting itself** no longer breaks the fight.
 - **Follow Me outranks** the abilities that pull a move elsewhere.
 - **A rental support** is no longer given a nature that raises its attack.

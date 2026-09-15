@@ -1,7 +1,10 @@
+import { WEATHER_BALL_TYPES } from '../../../../battle/moves/conditional-power';
+import { TYPE_COLORS, Types } from '../../../../data/constants/types';
+import { Weathers } from '../../../../data/ids/status';
 import type EffectBatch from '../../../three/effect-batch';
 import type { Spot } from '../../../three/effect-batch';
 import { decay, lighten, mix, noise, spread, swell } from '../__paint';
-import { FREEZE_CRACK, FREEZE_SET } from '../effect/elements';
+import { FREEZE_CRACK, FREEZE_SET, TRI_MEET, TRI_TYPES, WEATHER_FALL } from '../effect/elements';
 import { CHASM_RUN, CHASM_TEAR, type EffectShape, many } from '../effect/shapes';
 import {
   type LitShapePainter,
@@ -14,7 +17,7 @@ import {
   thrown,
   toward,
 } from './shapes';
-import { TAU, bolt, debris, smoke, sparks } from './pieces';
+import { TAU, bolt, debris, imbue, smoke, sparks } from './pieces';
 
 /**
  * The elements arriving in the battle scene: the same shapes as the
@@ -1226,6 +1229,92 @@ const elements = {
         '#ffffff',
         (share - FREEZE_SET) / (FREEZE_CRACK - FREEZE_SET),
       );
+    }
+  },
+  // A ball made of whatever the sky is doing, dropping onto it and going off as that
+  Weather(kit, stage, share, { paint, seed, weight, weather }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage, weight);
+    const type = WEATHER_BALL_TYPES.get(weather ?? Weathers.None);
+    const colour = type == null ? paint.color : TYPE_COLORS[type];
+    const light = lighten(colour, 0.5);
+
+    if (share < WEATHER_FALL) {
+      const sky = aside(kit, at, 0, reach * 6);
+      const fall = (share / WEATHER_FALL) ** 2;
+      const spot = toward(sky, at, fall);
+
+      kit.pool(floor, reach * fall, colour, fall * 0.4);
+      kit.trail(toward(sky, at, Math.max(0, fall - 0.2)), spot, reach * 0.3, colour, 0.5);
+      kit.glow(spot, reach * 0.6, colour, 0.9, 0.7);
+      return;
+    }
+    const pop = (share - WEATHER_FALL) / (1 - WEATHER_FALL);
+
+    kit.pool(floor, reach * (1.4 + pop * 1.2), colour, decay(pop) * 0.6);
+    kit.glow(at, reach * (0.6 + pop * 0.9), light, decay(Math.min(1, pop * 1.6)), 0.9);
+    kit.ring(at, reach * (0.5 + pop * 1.8), 0.08, light, decay(pop));
+    if (type === Types.Water) {
+      kit.ripple(floor, reach * (0.5 + pop * 2), 0.1, light, decay(pop) * 0.9);
+      for (let drop = 0; drop < many(12, weight); drop += 1) {
+        kit.trail(
+          thrown(at, seed, drop, Math.max(0, pop - 0.07), reach * 1.8, reach * 1.1),
+          thrown(at, seed, drop, pop, reach * 1.8, reach * 1.1),
+          reach * 0.06,
+          light,
+          late(pop, 0.6),
+        );
+      }
+      return;
+    }
+    if (type === Types.Rock) {
+      debris(
+        kit,
+        at,
+        reach,
+        many(8, weight),
+        seed,
+        pop,
+        mix(colour, '#6b5440', 0.4),
+        late(pop, 0.6),
+      );
+      return;
+    }
+    if (type != null) {
+      imbue(kit, at, reach, pop, seed, type, colour, many(8, weight));
+      return;
+    }
+    sparks(kit, at, reach, 6, seed, pop, light, decay(pop));
+  },
+
+  // Three orbs of fire, ice and lightning turning in on it, then each going off as its own element
+  Tri(kit, stage, share, { seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const meet = Math.min(1, share / TRI_MEET);
+    const corners: Spot[] = [];
+
+    for (let corner = 0; corner < 3; corner += 1) {
+      const angle = share * TAU + (corner / 3) * TAU + Math.PI / 2;
+      const round = reach * 1.6 * (1 - meet * 0.6);
+
+      corners.push(aside(kit, at, Math.cos(angle) * round, Math.sin(angle) * round));
+    }
+    if (share < TRI_MEET) {
+      kit.ribbon([...corners, corners[0]], reach * 0.06, '#ffffff', meet * 0.6);
+    }
+    for (const [corner, type] of TRI_TYPES.entries()) {
+      const colour = TYPE_COLORS[type];
+
+      if (share < TRI_MEET) {
+        kit.glow(corners[corner], reach * 0.35, colour, 0.95, 0.7);
+        continue;
+      }
+      const pop = (share - TRI_MEET) / (1 - TRI_MEET);
+
+      kit.glow(corners[corner], reach * (0.35 + pop * 0.5), colour, decay(pop), 0.8);
+      imbue(kit, corners[corner], reach * 0.9, pop, seed + corner, type, colour, many(6, weight));
     }
   },
 } satisfies Partial<Record<EffectShape, LitShapePainter>>;

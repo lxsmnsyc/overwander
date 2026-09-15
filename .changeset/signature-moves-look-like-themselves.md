@@ -29,5 +29,17 @@ More moves land as a picture of their own:
 - Heat Wave blows a wavering wall of hot air and embers across the target.
 - Dark Pulse sends dark rings pulsing out from the pokemon that used it.
 - Sheer Cold freezes the target in a block of ice that cracks and shatters.
+- Protect and Detect throw up a shell of hexagons that flashes as it rises.
+- Substitute drops a doll into place with a bounce.
+- Splash flops about in a few hops of spray, and nothing happens.
+- Metronome ticks over the pokemon's head, then scatters colour as it picks.
+- Transform runs bands of light up the pokemon that is changing.
+- Swords Dance circles the pokemon with swords that close in and cross overhead.
+- Dragon Dance winds two strands of aura up around the pokemon.
+- Iron Defense and Harden run a metal sheen across the body.
+- Double Team and Minimize slide copies of the pokemon out to either side.
+- Calm Mind and Nasty Plot gather light into the head under a halo.
+- Weather Ball drops a ball made of the current weather that bursts as fire, water, ice or rock.
+- Tri Attack turns three orbs of fire, ice and lightning in on the target, each bursting as its element.
 - Flame Wheel rolls into the target as a ring of fire.
 - Waterfall drives a column of water up through the target.

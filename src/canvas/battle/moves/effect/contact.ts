@@ -35,7 +35,7 @@ export const RAMPAGE_BLOWS = 3;
 export const PETAL = '#f2a0c8';
 
 /** A blow's element breaking off where it lands: flames, frost or sparks, and plain spokes for any other type */
-function imbue(
+export function imbue(
   context: CanvasRenderingContext2D,
   at: Point,
   size: number,

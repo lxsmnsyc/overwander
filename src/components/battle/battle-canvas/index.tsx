@@ -896,7 +896,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
         // Nothing on a step that was only the wind-up: what happened
         // is that the caster went underground, which the gap drew
-        const landing = moveEffectVisual(event.move, event.steps);
+        // The sky is read only by a shape made of it, and only as it lands
+        const landing = moveEffectVisual(event.move, event.steps, () =>
+          event.source.checkWeather(),
+        );
 
         if (landing != null) {
           paint(landing, event.source, struck);

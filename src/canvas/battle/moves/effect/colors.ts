@@ -54,20 +54,38 @@ const BY_SHAPE: Partial<Record<EffectShape, string>> = {
   Starfall: '#ffe27a',
   Grip: '#e2dcc0',
   Moonlit: '#e0d4ff',
+  // A plush doll, water, a brass metronome and Mew's pink, where the type's colour is grey
+  Doll: '#e6d3a3',
+  Flop: '#7cc4f0',
+  Wag: '#e8c86a',
+  Shimmer: '#f0a8e0',
 };
 
-const SCREEN_COLORS: Partial<Record<Moves, string>> = {
+/** The shapes that picture a stat moving, and so take the stat's colour */
+const STAGED = new Set<EffectShape>([
+  'Boost',
+  'Drop',
+  'Blades',
+  'Dance',
+  'Sheen',
+  'Mirage',
+  'Scheme',
+]);
+
+const MOVE_COLORS: Partial<Record<Moves, string>> = {
   [Moves.Reflect]: STAGE_COLORS[Stages.Defense],
   [Moves.LightScreen]: STAGE_COLORS[Stages.SpecialDefense],
+  // Protect's green shell; Detect keeps its type's orange
+  [Moves.Protect]: '#8fe39a',
 };
 
 export default function colorOf(move: Moves, shape: EffectShape): string {
-  const screen = SCREEN_COLORS[move];
+  const named = MOVE_COLORS[move];
 
-  if (screen != null) {
-    return screen;
+  if (named != null) {
+    return named;
   }
-  if (shape === 'Boost' || shape === 'Drop') {
+  if (STAGED.has(shape)) {
     const stage = getStageMoveEffect(move);
 
     if (stage != null) {

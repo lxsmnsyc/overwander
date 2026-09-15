@@ -1,4 +1,5 @@
 import { Types } from '../../../../data/constants/types';
+import type { Weathers } from '../../../../data/ids/status';
 import { MoveCategories, type Moves } from '../../../../data/ids/moves';
 import { getMoveData } from '../../../../data/moves';
 import type { Point, Stage } from '../../stage';
@@ -137,6 +138,18 @@ export type EffectShape =
   | 'Scorch'
   | 'Pulse'
   | 'Freeze'
+  | 'Shell'
+  | 'Doll'
+  | 'Flop'
+  | 'Wag'
+  | 'Shimmer'
+  | 'Blades'
+  | 'Dance'
+  | 'Sheen'
+  | 'Mirage'
+  | 'Scheme'
+  | 'Weather'
+  | 'Tri'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -225,6 +238,18 @@ export const SPANS: Record<EffectShape, number> = {
   Scorch: 820,
   Pulse: 820,
   Freeze: 1000,
+  Shell: 900,
+  Doll: 900,
+  Flop: 900,
+  Wag: 1000,
+  Shimmer: 900,
+  Blades: 1000,
+  Dance: 900,
+  Sheen: 820,
+  Mirage: 820,
+  Scheme: 900,
+  Weather: 820,
+  Tri: 900,
   Whiff: 320,
 };
 
@@ -263,6 +288,8 @@ export interface Draw {
   weight: number;
   /** The move's type, for the shapes that wrap a blow in its element */
   type: Types;
+  /** The sky it landed under, handed only to the shape made of it */
+  weather?: Weathers;
 }
 
 /** The types a blow or a bite breaks off its element for: flames, frost, sparks, or Brave Bird's pale fire */

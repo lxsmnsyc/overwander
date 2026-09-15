@@ -1,5 +1,6 @@
 import { MoveAffects, MoveCategories, MoveFlags, Moves } from '../../../../data/ids/moves';
 import { Types } from '../../../../data/constants/types';
+import type { Weathers } from '../../../../data/ids/status';
 import { getMoveData } from '../../../../data/moves';
 import { MULTI_HIT_MOVES } from '../../../../battle/moves/multi-hit';
 import { getStageMoveEffect } from '../../../../battle/moves/stage';
@@ -174,7 +175,11 @@ export function effectShapeFor(move: Moves): EffectShape {
  * The picture of this move landing, or nothing where the step that
  * resolved was only the wind-up
  */
-export default function moveEffectVisual(move: Moves, steps = 0): PaintedVisual | null {
+export default function moveEffectVisual(
+  move: Moves,
+  steps = 0,
+  weatherOf?: () => Weathers,
+): PaintedVisual | null {
   if (steps > 0) {
     if (WINDING_UP.has(move)) {
       return null;
@@ -182,10 +187,10 @@ export default function moveEffectVisual(move: Moves, steps = 0): PaintedVisual 
     const early = WINDING_AS[move];
 
     if (early != null) {
-      return painted(early, move, weightOf(move));
+      return painted(early, move, weightOf(move), weatherOf);
     }
   }
-  return painted(effectShapeFor(move), move, weightOf(move));
+  return painted(effectShapeFor(move), move, weightOf(move), weatherOf);
 }
 
 /**
@@ -199,9 +204,16 @@ export function moveMissVisual(move: Moves): PaintedVisual {
   return painted('Whiff', move, 1);
 }
 
-function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual {
+function painted(
+  shape: EffectShape,
+  move: Moves,
+  weight: number,
+  weatherOf?: () => Weathers,
+): PaintedVisual {
   const paint: Painted = { color: colorOf(move, shape) };
   const { type } = getMoveData(move);
+  // Asked once, as it lands, and only by the shape made of the sky
+  const weather = shape === 'Weather' ? weatherOf?.() : undefined;
   const painter: Painter = (context, stage, share) => {
     // Once per pokemon it reached. A move aimed at a whole team lands
     // on all of them at once, and the shape has no idea how many that
@@ -217,6 +229,7 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
         seed: move + 1,
         weight,
         type,
+        weather,
       });
       return;
     }
@@ -229,7 +242,7 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
         // The move itself, so a scatter is the same scatter every time
         // it goes off: two Embers look like the same move rather than
         // like two accidents
-        { paint, seed: move + 1 + at * 97, weight, type },
+        { paint, seed: move + 1 + at * 97, weight, type, weather },
       );
     }
   };
@@ -249,6 +262,7 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
               seed: move + 1,
               weight,
               type,
+              weather,
             });
             return;
           }
@@ -258,6 +272,7 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
               seed: move + 1 + at * 97,
               weight,
               type,
+              weather,
             });
           }
         };

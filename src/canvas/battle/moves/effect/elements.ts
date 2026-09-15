@@ -1,4 +1,8 @@
+import { WEATHER_BALL_TYPES } from '../../../../battle/moves/conditional-power';
+import { TYPE_COLORS, Types } from '../../../../data/constants/types';
+import { Weathers } from '../../../../data/ids/status';
 import type { Point } from '../../stage';
+import { imbue } from './contact';
 import {
   beam,
   between,
@@ -29,6 +33,13 @@ import { CHASM_GAPE, CHASM_RUN, CHASM_STEPS, CHASM_TEAR, REACH, landing, many } 
 /** Sheer Cold: the share by which the ice has grown round it, and the share at which it breaks */
 export const FREEZE_SET = 0.3;
 export const FREEZE_CRACK = 0.65;
+
+/** Weather Ball: the share spent dropping before it goes off */
+export const WEATHER_FALL = 0.3;
+
+/** Tri Attack: its three elements, and the share spent turning in before they go off */
+export const TRI_TYPES = [Types.Fire, Types.Ice, Types.Electric] as const;
+export const TRI_MEET = 0.45;
 
 /**
  * The shapes an element arrives as: fire, water, ice, grass, lightning
@@ -809,6 +820,97 @@ const elements = {
           width: 1.6 * stage.scale,
         },
       );
+    }
+  },
+  // A ball made of whatever the sky is doing, dropping onto it and going off as that
+  Weather(context, stage, share, { paint, seed, weight, weather }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const type = WEATHER_BALL_TYPES.get(weather ?? Weathers.None);
+    const color = type == null ? paint.color : TYPE_COLORS[type];
+    const light = lighten(color, 0.5);
+
+    if (share < WEATHER_FALL) {
+      const top: Point = [at[0], at[1] - size * 6];
+      const fall = (share / WEATHER_FALL) ** 2;
+      const spot = between(top, at, fall);
+
+      lash(context, between(top, at, Math.max(0, fall - 0.2)), spot, 0, {
+        color,
+        alpha: 0.5,
+        width: size * 0.3,
+      });
+      orb(context, spot, size * 0.6, { color, alpha: 0.95 });
+      return;
+    }
+    const pop = (share - WEATHER_FALL) / (1 - WEATHER_FALL);
+
+    orb(context, at, size * (0.6 + pop * 0.9), {
+      color: light,
+      alpha: decay(Math.min(1, pop * 1.6)),
+    });
+    ring(context, at, size * (0.5 + pop * 1.8), {
+      color: light,
+      alpha: decay(pop),
+      width: 2.4 * stage.scale,
+    });
+    if (type === Types.Water) {
+      motes(context, at, size * 1.8, many(10, weight), seed, pop, {
+        color: light,
+        alpha: decay(pop),
+        width: 2.2 * stage.scale,
+      });
+      return;
+    }
+    if (type === Types.Rock) {
+      shards(context, at, size * 1.6, many(7, weight), seed, pop, {
+        color: mix(color, '#6b5440', 0.4),
+        alpha: decay(pop),
+        width: 2.6 * stage.scale,
+      });
+      return;
+    }
+    if (type != null) {
+      imbue(context, at, size, pop, seed, { color }, type, stage.scale);
+      return;
+    }
+    burst(context, at, size * (0.5 + pop), 6, seed, {
+      color: light,
+      alpha: decay(pop),
+      width: 2 * stage.scale,
+    });
+  },
+
+  // Three orbs of fire, ice and lightning turning in on it, then each going off as its own element
+  Tri(context, stage, share, { seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const meet = Math.min(1, share / TRI_MEET);
+    const corners: Point[] = [];
+
+    for (let corner = 0; corner < 3; corner += 1) {
+      const angle = share * Math.PI * 2 + (corner / 3) * Math.PI * 2 - Math.PI / 2;
+      const round = size * 1.6 * (1 - meet * 0.6);
+
+      corners.push([at[0] + Math.cos(angle) * round, at[1] + Math.sin(angle) * round]);
+    }
+    for (const [corner, type] of TRI_TYPES.entries()) {
+      const color = TYPE_COLORS[type];
+      const spot = corners[corner];
+
+      if (share < TRI_MEET) {
+        orb(context, spot, size * 0.35, { color, alpha: 0.95 });
+        lash(context, spot, corners[(corner + 1) % 3], 0, {
+          color: '#ffffff',
+          alpha: meet * 0.6,
+          width: 1.6 * stage.scale,
+        });
+        continue;
+      }
+      const pop = (share - TRI_MEET) / (1 - TRI_MEET);
+
+      orb(context, spot, size * (0.35 + pop * 0.5), { color, alpha: decay(pop) });
+      imbue(context, spot, size * 0.9, pop, seed + corner, { color }, type, stage.scale);
     }
   },
 } satisfies Partial<Record<EffectShape, ShapePainter>>;

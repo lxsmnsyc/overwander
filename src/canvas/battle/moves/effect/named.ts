@@ -164,7 +164,6 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Reflect]: 'Screen',
   [Moves.LightScreen]: 'Screen',
   [Moves.Safeguard]: 'Screen',
-  [Moves.Substitute]: 'Ward',
   [Moves.Surf]: 'Splash',
   [Moves.Blizzard]: 'Frost',
   [Moves.FireBlast]: 'Flame',
@@ -451,6 +450,26 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.HeatWave]: 'Scorch',
   [Moves.DarkPulse]: 'Pulse',
   [Moves.SheerCold]: 'Freeze',
+
+  // Put up or done to itself, which a dome or a stat's chevrons drew for all of them
+  [Moves.Protect]: 'Shell',
+  [Moves.Detect]: 'Shell',
+  [Moves.Substitute]: 'Doll',
+  [Moves.Splash]: 'Flop',
+  [Moves.Metronome]: 'Wag',
+  [Moves.Transform]: 'Shimmer',
+  [Moves.SwordsDance]: 'Blades',
+  [Moves.DragonDance]: 'Dance',
+  [Moves.IronDefense]: 'Sheen',
+  [Moves.Harden]: 'Sheen',
+  [Moves.DoubleTeam]: 'Mirage',
+  [Moves.Minimize]: 'Mirage',
+  [Moves.CalmMind]: 'Scheme',
+  [Moves.NastyPlot]: 'Scheme',
+
+  // Made of whatever the sky is doing, and three elements at once
+  [Moves.WeatherBall]: 'Weather',
+  [Moves.TriAttack]: 'Tri',
 
   // Struck and gone: the blow is the first step and the walk off the
   // field is the second, which is why the landing here is the leaving

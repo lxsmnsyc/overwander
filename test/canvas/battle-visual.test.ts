@@ -111,7 +111,7 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Haze', Moves.PoisonPowder],
   ['Mark', Moves.Glare],
   ['Mend', Moves.Recover],
-  ['Ward', Moves.Substitute],
+  ['Ward', Moves.Endure],
   ['Screen', Moves.Reflect],
   ['Sky', Moves.RainDance],
   ['Quake', Moves.Earthquake],
@@ -135,7 +135,7 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Rocks', Moves.RockSlide],
   ['Warp', Moves.Psychic],
   ['Lash', Moves.VineWhip],
-  ['Boost', Moves.SwordsDance],
+  ['Boost', Moves.Agility],
   ['Drop', Moves.Leer],
   ['Nerve', Moves.FocusEnergy],
   ['Drum', Moves.BellyDrum],
@@ -196,6 +196,23 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Scorch', Moves.HeatWave],
   ['Pulse', Moves.DarkPulse],
   ['Freeze', Moves.SheerCold],
+  // Put up or done to itself
+  ['Shell', Moves.Protect],
+  ['Shell', Moves.Detect],
+  ['Doll', Moves.Substitute],
+  ['Flop', Moves.Splash],
+  ['Wag', Moves.Metronome],
+  ['Shimmer', Moves.Transform],
+  ['Blades', Moves.SwordsDance],
+  ['Dance', Moves.DragonDance],
+  ['Sheen', Moves.IronDefense],
+  ['Sheen', Moves.Harden],
+  ['Mirage', Moves.DoubleTeam],
+  ['Mirage', Moves.Minimize],
+  ['Scheme', Moves.CalmMind],
+  ['Scheme', Moves.NastyPlot],
+  ['Weather', Moves.WeatherBall],
+  ['Tri', Moves.TriAttack],
 ];
 
 /**
@@ -502,8 +519,8 @@ describe('a painted move', () => {
   it('draws a stat move as the stat, on whoever it landed on', () => {
     // One picture for every rise and the same turned over for every
     // drop, ahead of whatever else the move looks like
-    expect(effectShapeFor(Moves.SwordsDance)).toBe('Boost');
-    expect(effectShapeFor(Moves.Harden)).toBe('Boost');
+    expect(effectShapeFor(Moves.Agility)).toBe('Boost');
+    expect(effectShapeFor(Moves.Withdraw)).toBe('Boost');
     expect(effectShapeFor(Moves.Amnesia)).toBe('Boost');
     expect(effectShapeFor(Moves.Leer)).toBe('Drop');
     expect(effectShapeFor(Moves.Growl)).toBe('Drop');
@@ -532,7 +549,7 @@ describe('a painted move', () => {
     };
 
     expect(on(Moves.Leer, [[300, 100]])).not.toBe(on(Moves.Leer, [[500, 400]]));
-    expect(on(Moves.SwordsDance, [])).not.toBe(on(Moves.SwordsDance, [[300, 100]]));
+    expect(on(Moves.Agility, [])).not.toBe(on(Moves.Agility, [[300, 100]]));
   });
 
   it('colours a stat move by which stat it moved', () => {
@@ -548,9 +565,9 @@ describe('a painted move', () => {
     };
 
     // The same picture in two colours
-    expect(shade(Moves.SwordsDance)).not.toBe(shade(Moves.Harden));
+    expect(shade(Moves.Agility)).not.toBe(shade(Moves.Withdraw));
     // And two moves that move the same stat the same way match
-    expect(shade(Moves.Harden)).toBe(shade(Moves.Withdraw));
+    expect(shade(Moves.Withdraw)).toBe(shade(Moves.AcidArmor));
   });
 
   it('puts a screen over the side rather than on each of them', () => {
@@ -611,7 +628,7 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.FurySwipes)).toBe('Claw');
     expect(effectShapeFor(Moves.PinMissile)).toBe('Volley');
     expect(effectShapeFor(Moves.Glare)).toBe('Mark');
-    expect(effectShapeFor(Moves.Substitute)).toBe('Ward');
+    expect(effectShapeFor(Moves.Substitute)).toBe('Doll');
     // A screen is a pane put up rather than a shell closing in, and
     // it is coloured by the stat it stands in for
     expect(effectShapeFor(Moves.Reflect)).toBe('Screen');

@@ -12,7 +12,7 @@ import { finishBattle as finishOnServer } from '../server/raids';
 import type BattleAftermath from './battle-aftermath';
 
 import getIdToken from './session';
-import { type TeamSnapshotRecord, getTeamSnapshot } from './teams';
+import { type TeamSnapshotRecord, getTeamSnapshotBatched } from './teams';
 
 export { default as BattleOutcome } from './battle-outcome';
 export type { CandyEarned } from '../server/battles';
@@ -273,7 +273,7 @@ export async function listBattleTeams(record: BattleRecord): Promise<TeamSnapsho
   const pending: Promise<TeamSnapshotRecord | null>[] = [];
 
   for (const id of record.teams) {
-    pending.push(getTeamSnapshot(id));
+    pending.push(getTeamSnapshotBatched(id));
   }
 
   const found: TeamSnapshotRecord[] = [];

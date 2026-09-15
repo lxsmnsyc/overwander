@@ -2,7 +2,7 @@ import { For, type JSX, type Resource, Show, Suspense, createResource } from 'so
 import type { CaughtPokemon } from '../../auth/caught';
 import { previewSnapshot } from '../../auth/catch-snapshot';
 import { type Profile, getProfiles } from '../../auth/profile';
-import { type TeamSnapshotRecord, getTeamSnapshot } from '../../auth/teams';
+import { type TeamSnapshotRecord, getTeamSnapshotBatched } from '../../auth/teams';
 import { getSpeciesData } from '../../data/species';
 import TeamStrip from '../catches/TeamStrip';
 import PlayerPlate from '../profile/PlayerPlate';
@@ -72,7 +72,7 @@ export default function TeamsPreview(props: TeamsPreviewProps): JSX.Element {
       const pending: Promise<TeamSnapshotRecord | null>[] = [];
 
       for (const id of key.split(',')) {
-        pending.push(getTeamSnapshot(id));
+        pending.push(getTeamSnapshotBatched(id));
       }
 
       const found = await Promise.all(pending);

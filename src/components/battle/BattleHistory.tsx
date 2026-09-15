@@ -30,8 +30,8 @@ import {
 import { GameDialog, useGame } from '../app/game-context';
 import type { CaughtPokemon } from '../../auth/caught';
 import { previewSnapshot } from '../../auth/catch-snapshot';
-import { getProfiles } from '../../auth/profile';
-import { type TeamSnapshotRecord, getTeamSnapshot } from '../../auth/teams';
+import { getProfileBatched } from '../../auth/profile';
+import { type TeamSnapshotRecord, getTeamSnapshotBatched } from '../../auth/teams';
 import Npc, { NPC_NAMES } from '../../data/overworld/npc';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import AnimatedSprite from '../sprites/AnimatedSprite';
@@ -108,9 +108,10 @@ async function loadFought(key: string): Promise<FoughtLine> {
   const [joined, owner] = key.split('|');
   const pending: Promise<TeamSnapshotRecord | null>[] = [];
 
+  // Every row on the page asks in the same moment, so the page is one read
   for (const id of joined.split(',')) {
     if (id !== '') {
-      pending.push(getTeamSnapshot(id));
+      pending.push(getTeamSnapshotBatched(id));
     }
   }
 
@@ -130,8 +131,7 @@ async function loadFought(key: string): Promise<FoughtLine> {
     }
   }
 
-  const profiles = other == null ? null : await getProfiles([other.player]);
-  const profile = profiles?.get(other?.player ?? '');
+  const profile = other == null ? null : await getProfileBatched(other.player);
   const team: [string, CaughtPokemon][] = [];
 
   for (const [at, caught] of (mine?.catches ?? []).entries()) {

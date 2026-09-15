@@ -136,7 +136,7 @@ export async function getProfiles(uids: string[]): Promise<Map<string, Profile>>
  * reads made in the same moment go out as one `getProfiles`. Browser
  * only, since the queue is shared by everyone in the module
  */
-const getProfileBatched = batchedQuery(
+export const getProfileBatched = batchedQuery(
   getProfiles,
   (found, uid: string): Profile | null => found.get(uid) ?? null,
   // The uids travel in the request's address, which has a length limit

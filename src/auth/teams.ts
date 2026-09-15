@@ -121,18 +121,41 @@ export async function getTeamSnapshot(id: string): Promise<TeamSnapshotRecord | 
     .eq('id', id)
     .maybeSingle();
 
-  if (data == null) {
-    return null;
-  }
+  return data == null ? null : fromSnapshotRow(asRecord(data));
+}
 
+/**
+ * `getTeamSnapshot` for a page of battles reading every team in them at
+ * once: the reads made in the same moment go out as one. Browser only,
+ * since the queue is shared by everyone in the module
+ */
+export const getTeamSnapshotBatched = batchedQuery(
+  async (ids: string[]): Promise<Map<string, TeamSnapshotRecord>> => {
+    const { data } = await getSupabase()
+      .from('team_snapshots')
+      .select('id, player, alliance, catches')
+      .in('id', ids);
+    const found = new Map<string, TeamSnapshotRecord>();
+
+    for (const row of asRecordArray(data)) {
+      found.set(String(row.id), fromSnapshotRow(row));
+    }
+    return found;
+  },
+  (found, id: string): TeamSnapshotRecord | null => found.get(id) ?? null,
+  // The ids travel in the request's address, which has a length limit
+  { limit: 50 },
+);
+
+function fromSnapshotRow(row: Record<string, unknown>): TeamSnapshotRecord {
   const catches: CatchSnapshot[] = [];
 
-  for (const value of Array.isArray(data.catches) ? data.catches : []) {
+  for (const value of Array.isArray(row.catches) ? row.catches : []) {
     catches.push(asCatchSnapshot(value));
   }
   return {
-    player: asString(data.player),
-    alliance: asNumber(data.alliance),
+    player: asString(row.player),
+    alliance: asNumber(row.alliance),
     catches,
   };
 }

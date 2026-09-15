@@ -85,8 +85,7 @@ export async function requireAdmin(token: string): Promise<string> {
  * Resolves what the account now holds, or null when it was refused
  */
 export async function setRole(caller: string, uid: string, wanted: string): Promise<string | null> {
-  const mine = await readRole(caller);
-  const theirs = await readRole(uid);
+  const [mine, theirs] = await Promise.all([readRole(caller), readRole(uid)]);
 
   if (caller === uid || !canAssign(mine, theirs, wanted)) {
     return null;
@@ -113,8 +112,7 @@ export async function setBan(
   banned: boolean,
   reason: string,
 ): Promise<boolean | null> {
-  const mine = await readRole(caller);
-  const theirs = await readRole(uid);
+  const [mine, theirs] = await Promise.all([readRole(caller), readRole(uid)]);
 
   if (caller === uid || !canBan(mine) || !canActOn(mine, theirs)) {
     return null;

@@ -30,6 +30,9 @@ one that covers what you are about to do:
 - `batched-queries` - `batchedQuery` is for the browser, where many rows each read
   one key at once; the server reads many keys with one query instead, and never
   merges separate requests or batches inside a transaction.
+- `server-function-order` - a `'use server'` function is addressed by its place
+  in its file, so new ones go at the end and existing ones are never removed,
+  reordered or given different parameters.
 - `trigger-driven-abilities` - ability effects that do not mutate their
   detection event ride `UnitTriggerAbility` at `Exact` priority.
 - `changesets` - every change against `main` ships with one, and a fix for

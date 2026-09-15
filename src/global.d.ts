@@ -13,6 +13,11 @@ interface ImportMetaEnv {
    * The overworld's seed; defaults to 'overworld' when unset
    */
   readonly VITE_WORLD_SEED: string;
+  /**
+   * The build this bundle came from, the same on the client and the
+   * server. Set by `vite.config.ts` rather than by the environment
+   */
+  readonly VITE_BUILD_ID: string;
 }
 
 interface Window {

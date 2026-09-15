@@ -9,3 +9,4 @@
 - A shiny's sparkle on the overworld plays through instead of stopping halfway and vanishing.
 - A position that fails to load no longer replaces your saved spot with a new starting point.
 - A tab left open across an update no longer sends nest, phenomenon and spawn claims to the wrong action.
+- A tab left open across an update reloads on its next action instead of running it against the new version.

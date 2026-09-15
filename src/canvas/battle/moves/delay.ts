@@ -545,6 +545,9 @@ const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
   Void: 'Gaze',
   Moonlit: 'Gather',
   Wave: 'Call',
+  // The wind-ups Toxic and Taunt had while they landed as a cloud and a sound
+  Toxin: 'Drift',
+  Vein: 'Call',
 };
 
 /**

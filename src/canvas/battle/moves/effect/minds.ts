@@ -2,9 +2,11 @@ import type { Point } from '../../stage';
 import {
   between,
   box,
+  bubble,
   burst,
   chevrons,
   decay,
+  edge,
   fade,
   heart,
   lighten,
@@ -69,6 +71,86 @@ function bell(
   context.lineWidth = 2 * scale;
   context.stroke();
   context.restore();
+}
+
+/** Curse: the nail's steel */
+export const NAIL = '#c8c8d4';
+
+/** Curse: when each of its three blows lands, as shares of the span */
+export const NAIL_BLOWS = [0.2, 0.4, 0.6];
+
+/** How far Curse's nail has been driven in, from 0 to 1 */
+export function nailDriven(share: number): number {
+  let driven = 0;
+
+  for (const blow of NAIL_BLOWS) {
+    driven += Math.max(0, Math.min(1, (share - blow) / 0.05)) / NAIL_BLOWS.length;
+  }
+  return driven;
+}
+
+/** An eye from the front: almond lids `open` from 0 to 1, a coloured iris and a slit pupil */
+function eye(
+  context: CanvasRenderingContext2D,
+  [x, y]: Point,
+  size: number,
+  open: number,
+  color: string,
+  alpha: number,
+  scale: number,
+): void {
+  const lid = size * 0.55 * open;
+  const tall = Math.min(size * 0.42, lid * 0.75);
+
+  context.beginPath();
+  context.moveTo(x - size, y);
+  context.quadraticCurveTo(x, y - lid * 2, x + size, y);
+  context.quadraticCurveTo(x, y + lid * 2, x - size, y);
+  context.closePath();
+  context.fillStyle = fade('#fffbe8', alpha * 0.9);
+  context.fill();
+  context.strokeStyle = fade('#2a1a10', alpha);
+  context.lineWidth = 2.4 * scale;
+  context.stroke();
+  if (tall <= 0) {
+    return;
+  }
+  context.beginPath();
+  context.ellipse(x, y, size * 0.42, tall, 0, 0, Math.PI * 2);
+  context.fillStyle = fade(color, alpha);
+  context.fill();
+  context.beginPath();
+  context.ellipse(x, y, size * 0.09, tall * 0.9, 0, 0, Math.PI * 2);
+  context.fillStyle = fade('#1a1010', alpha);
+  context.fill();
+}
+
+/** The anger mark: four arcs bowed in toward a middle */
+function vein(
+  context: CanvasRenderingContext2D,
+  [x, y]: Point,
+  size: number,
+  color: string,
+  alpha: number,
+  scale: number,
+): void {
+  context.strokeStyle = fade(color, alpha);
+  context.lineWidth = 3.2 * scale;
+  context.lineCap = 'round';
+  for (let quarter = 0; quarter < 4; quarter += 1) {
+    const angle = Math.PI / 4 + (quarter * Math.PI) / 2;
+
+    context.beginPath();
+    context.arc(
+      x + Math.cos(angle) * size,
+      y + Math.sin(angle) * size,
+      size * 0.7,
+      angle + Math.PI - 0.75,
+      angle + Math.PI + 0.75,
+    );
+    context.stroke();
+  }
+  context.lineCap = 'butt';
 }
 
 /**
@@ -420,6 +502,227 @@ const minds = {
         0,
         { color: '#ffffff', alpha: swell((share * 2 + noise(seed, glint)) % 1) * shown },
       );
+    }
+  },
+
+  // Poison welling up round it: bubbles rising off a sickly pool and popping
+  Toxin(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const shown = Math.min(1, share * 5) * (share < 0.75 ? 1 : decay((share - 0.75) / 0.25));
+    const light = lighten(paint.color, 0.3);
+
+    ripple(context, [at[0], at[1] + size * 0.9], size * (1.2 + swell(share) * 0.6), {
+      ...paint,
+      alpha: shown * 0.7,
+      width: 3 * stage.scale,
+    });
+    for (let one = 0; one < many(10, weight); one += 1) {
+      const held = (share * 1.5 + noise(seed, one)) % 1;
+      const spot: Point = [
+        at[0] + spread(seed, one + 10) * size * 1.3,
+        at[1] + size * 0.9 - held * size * 2.4,
+      ];
+      const radius = size * (0.12 + noise(seed, one + 20) * 0.14) * (0.5 + held);
+
+      if (held < 0.85) {
+        bubble(context, spot, radius, { color: light, alpha: shown, width: 1.6 * stage.scale });
+        continue;
+      }
+      const pop = (held - 0.85) / 0.15;
+
+      ring(context, spot, radius * (1 + pop), {
+        color: light,
+        alpha: shown * decay(pop),
+        width: 1.4 * stage.scale,
+      });
+    }
+  },
+
+  // Spores drifting down over it, crackling where they settle
+  Spores(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const shown = Math.min(1, share * 4) * (share < 0.7 ? 1 : decay((share - 0.7) / 0.3));
+
+    for (let one = 0; one < many(16, weight); one += 1) {
+      const fall = (share * 1.2 + noise(seed, one)) % 1;
+      const radius = stage.scale * (1.6 + noise(seed, one + 20) * 1.6);
+
+      context.beginPath();
+      context.ellipse(
+        at[0] + spread(seed, one + 10) * size * 1.6 + Math.sin(fall * 6 + one) * size * 0.25,
+        at[1] - size * 2 + fall * size * 2.8,
+        radius,
+        radius,
+        0,
+        0,
+        Math.PI * 2,
+      );
+      context.fillStyle = fade(paint.color, shown * swell(fall));
+      context.fill();
+    }
+    if (share < 0.3) {
+      return;
+    }
+    // A new flicker every twelfth of the span, so the crackle jumps about rather than sliding
+    const flicker = Math.floor(share * 12);
+
+    for (let zap = 0; zap < 2; zap += 1) {
+      burst(
+        context,
+        [
+          at[0] + spread(seed, flicker * 7 + zap) * size * 0.9,
+          at[1] + spread(seed, flicker * 7 + zap + 3) * size * 0.8,
+        ],
+        size * 0.4,
+        4,
+        seed + flicker + zap,
+        { color: '#fff6a0', alpha: shown * 0.9, width: 1.8 * stage.scale },
+      );
+    }
+  },
+
+  // An eye opening over it and flashing, the look that freezes something in place
+  Stare(context, stage, share, { paint, seed }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const open = Math.min(1, share / 0.25) * (share < 0.8 ? 1 : decay((share - 0.8) / 0.2));
+    const centre: Point = [at[0], at[1] - size * 0.4];
+    const light = lighten(paint.color, 0.5);
+    const flash = (share - 0.25) / 0.3;
+
+    eye(context, centre, size * 1.2, open, paint.color, Math.min(1, open * 3), stage.scale);
+    if (flash > 0 && flash < 1) {
+      burst(context, centre, size * (1.4 + flash * 1.6), 12, seed, {
+        color: light,
+        alpha: decay(flash),
+        width: 2.4 * stage.scale,
+      });
+      ring(context, at, size * (0.6 + flash * 1.4), {
+        color: light,
+        alpha: decay(flash) * 0.8,
+        width: 2.4 * stage.scale,
+      });
+    }
+  },
+
+  // Sparkles clapping together over its head three times, calling for more
+  Applause(context, stage, share, { paint, seed }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const meet: Point = [at[0], at[1] - size * 1.4];
+    const light = lighten(paint.color, 0.5);
+
+    for (let beat = 0; beat < 3; beat += 1) {
+      const held = share * 3 - beat;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      const closing = Math.min(1, held / 0.35);
+
+      if (closing < 1) {
+        for (const side of [-1, 1]) {
+          star(
+            context,
+            [meet[0] + side * size * 1.3 * (1 - closing), meet[1] + size * 0.3 * (1 - closing)],
+            size * 0.28,
+            closing * 3 * side,
+            { color: paint.color, alpha: 0.95 },
+          );
+        }
+        continue;
+      }
+      const pop = (held - 0.35) / 0.65;
+
+      star(context, meet, size * (0.35 + pop * 0.4), pop, { color: '#ffffff', alpha: decay(pop) });
+      ring(context, meet, size * (0.2 + pop * 1.1), {
+        color: light,
+        alpha: decay(pop),
+        width: 2.2 * stage.scale,
+      });
+      for (let bit = 0; bit < 5; bit += 1) {
+        const angle = (bit / 5) * Math.PI * 2 + noise(seed, beat * 5 + bit);
+
+        star(
+          context,
+          [
+            meet[0] + Math.cos(angle) * size * pop * 1.2,
+            meet[1] + Math.sin(angle) * size * pop * 1.2 + pop * pop * size * 0.6,
+          ],
+          size * 0.14,
+          angle,
+          { color: paint.color, alpha: decay(pop) },
+        );
+      }
+    }
+  },
+
+  // An anger mark throbbing on its head
+  Vein(context, stage, share, { paint }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const shown = Math.min(1, share * 6) * (share < 0.8 ? 1 : decay((share - 0.8) / 0.2));
+    const spot: Point = [at[0] + size * 0.8, at[1] - size * 1.2];
+    const throb = 1 + Math.abs(Math.sin(share * Math.PI * 3)) * 0.35;
+
+    vein(context, spot, size * 0.42 * throb, paint.color, shown, stage.scale);
+    for (let beat = 0; beat < 3; beat += 1) {
+      const held = share * 3 - beat;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      ring(context, spot, size * (0.5 + held * 0.9), {
+        color: lighten(paint.color, 0.3),
+        alpha: decay(held) * shown * 0.7,
+        width: 2 * stage.scale,
+      });
+    }
+  },
+
+  // A nail driven into it in three blows, under a closing ring of dark
+  Nail(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const shown = Math.min(1, share * 6) * (share < 0.8 ? 1 : decay((share - 0.8) / 0.2));
+    const tip: Point = [at[0], at[1] - size * 0.2 + nailDriven(share) * size * 0.7];
+    const head: Point = [tip[0], tip[1] - size * 1.4];
+
+    ring(context, at, size * (1.9 - share * 1.1), {
+      ...paint,
+      alpha: swell(share) * 0.7,
+      width: 2.4 * stage.scale,
+    });
+    edge(context, head, tip, size * 0.09, 0, { color: NAIL, alpha: shown });
+    edge(
+      context,
+      [head[0] - size * 0.32, head[1]],
+      [head[0] + size * 0.32, head[1]],
+      size * 0.08,
+      0,
+      {
+        color: NAIL,
+        alpha: shown,
+      },
+    );
+    for (const [one, blow] of NAIL_BLOWS.entries()) {
+      const since = (share - blow - 0.05) / 0.25;
+
+      if (since <= 0 || since >= 1) {
+        continue;
+      }
+      ring(context, head, size * (0.2 + since * 0.8), {
+        color: lighten(paint.color, 0.4),
+        alpha: decay(since),
+        width: 2.4 * stage.scale,
+      });
+      burst(context, head, size * (0.4 + since * 0.6), 6, seed + one, {
+        color: '#ffffff',
+        alpha: decay(since),
+        width: 2 * stage.scale,
+      });
     }
   },
 } satisfies Partial<Record<EffectShape, ShapePainter>>;

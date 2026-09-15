@@ -202,7 +202,6 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   // Ghost: something closing on it rather than something thrown
   [Moves.ShadowBall]: 'Shade',
   [Moves.Nightmare]: 'Shade',
-  [Moves.Curse]: 'Shade',
   [Moves.DestinyBond]: 'Shade',
   [Moves.Spite]: 'Shade',
 
@@ -282,8 +281,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Snatch]: 'Shade',
   [Moves.Torment]: 'Shade',
 
-  // Said to it rather than done to it
-  [Moves.Taunt]: 'Wave',
+  // Wanting what it holds
   [Moves.Covet]: 'Hearts',
 
   // Something turning in front of its eyes
@@ -497,6 +495,21 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.HyperVoice]: 'Roar',
   [Moves.BugBuzz]: 'Roar',
   [Moves.HealBell]: 'Chime',
+
+  // Blades that each cut their own way, where the rake of claws drew all of them alike
+  [Moves.LeafBlade]: 'Sweep',
+  [Moves.NightSlash]: 'Crescent',
+  [Moves.PsychoCut]: 'Sickles',
+  [Moves.AirSlash]: 'Sickles',
+  [Moves.FuryCutter]: 'Cutter',
+
+  // Statuses drawn as what they are: poison welling up, spores, an eye, applause, anger, a nail
+  [Moves.Toxic]: 'Toxin',
+  [Moves.StunSpore]: 'Spores',
+  [Moves.Glare]: 'Stare',
+  [Moves.Encore]: 'Applause',
+  [Moves.Taunt]: 'Vein',
+  [Moves.Curse]: 'Nail',
 
   // Struck and gone: the blow is the first step and the walk off the
   // field is the second, which is why the landing here is the leaving

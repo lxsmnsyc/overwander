@@ -1,6 +1,14 @@
 import { Types } from '../../../../data/constants/types';
+import type EffectBatch from '../../../three/effect-batch';
 import type { Spot } from '../../../three/effect-batch';
-import { CRASH_AURA, FLURRY_BLOWS, HAYMAKER_CHARGE, PETAL, RAMPAGE_BLOWS } from '../effect/contact';
+import {
+  CRASH_AURA,
+  CUTTER_CUTS,
+  FLURRY_BLOWS,
+  HAYMAKER_CHARGE,
+  PETAL,
+  RAMPAGE_BLOWS,
+} from '../effect/contact';
 import { decay, lighten, mix, noise, spread, swell } from '../__paint';
 import { type EffectShape, IMBUED, STRIKES, many } from '../effect/shapes';
 import { TAU, bolt, bone, debris, gathering, imbue, smoke, sparks, spiral } from './pieces';
@@ -23,6 +31,38 @@ export function backToward(at: Spot, from: Spot, distance: number): Spot {
   const length = Math.max(1e-3, Math.hypot(dx, dz));
 
   return [at[0] + (dx / length) * distance, at[1], at[2] + (dz / length) * distance];
+}
+
+/** A blade bent round a circle on the picture, up positive, tapered to a point at both ends */
+function sickle(
+  kit: EffectBatch,
+  at: Spot,
+  radius: number,
+  start: number,
+  end: number,
+  width: number,
+  colour: string,
+  alpha: number,
+  add = 1,
+): void {
+  const steps = 10;
+
+  for (let step = 0; step < steps; step += 1) {
+    const from = start + (end - start) * (step / steps);
+    const to = start + (end - start) * ((step + 1) / steps);
+
+    kit.ribbon(
+      [
+        aside(kit, at, Math.cos(from) * radius, Math.sin(from) * radius),
+        aside(kit, at, Math.cos(to) * radius, Math.sin(to) * radius),
+      ],
+      width * Math.sin(Math.PI * ((step + 0.5) / steps)),
+      colour,
+      alpha,
+      0,
+      { add },
+    );
+  }
 }
 
 /**
@@ -864,6 +904,154 @@ const contact = {
       kit.glow(at, big * 0.5, light, decay(hit), 0.9);
       kit.star(at, big * (0.6 + hit * 0.5), side, lighten(colour, 0.6), decay(hit));
       sparks(kit, at, big * (0.6 + hit * 0.5), 5, seed + kick, hit, light, decay(hit));
+    }
+  },
+
+  // One long blade drawn across it, shedding leaves off the cut
+  Sweep(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const drawn = Math.min(1, share * 3);
+    const shown = late(share, 0.55);
+    const from = aside(kit, at, -reach * 1.5, reach * 0.7);
+    const to = aside(kit, at, reach * 1.5, -reach * 0.7);
+    const middle = toward(from, toward(from, to, drawn), 0.5);
+    const angle = kit.angleOn(from, to);
+
+    // A streak is pointed at both ends, which is the blade's taper
+    kit.streak(middle, reach * 1.65 * drawn, reach * 0.24, angle, colour, shown, { add: 0.4 });
+    kit.streak(middle, reach * 1.65 * drawn, reach * 0.08, angle, lighten(colour, 0.7), shown);
+    for (let one = 0; one < many(6, weight); one += 1) {
+      const along = noise(seed, one);
+      // Shed only once the blade has passed that point
+      const held = (share - along / 3) / (1 - along / 3);
+
+      if (held <= 0 || along > drawn) {
+        continue;
+      }
+      kit.leaf(
+        aside(
+          kit,
+          toward(from, to, along),
+          spread(seed, one + 10) * reach * held,
+          -reach * (held * 1.6 - 0.5) * held,
+        ),
+        reach * 0.2,
+        held * 6 + one,
+        colour,
+        decay(held),
+      );
+    }
+  },
+
+  // A dark crescent swept round it in one stroke, with a pale edge
+  Crescent(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const cut = Math.min(1, share / 0.3);
+    const shown = late(share, 0.55);
+    const start = Math.PI * 0.85;
+    const end = start - Math.PI * 1.2 * cut;
+    const dark = mix(colour, '#0a0610', 0.55);
+
+    sickle(kit, at, reach * 1.2, start, end, reach * 0.6, dark, shown * 0.9, 0);
+    sickle(kit, at, reach * 1.38, start, end, reach * 0.16, lighten(colour, 0.6), shown);
+    if (cut >= 1) {
+      const since = (share - 0.3) / 0.7;
+
+      kit.star(at, reach * (0.8 + since), 0.4, lighten(colour, 0.6), decay(since));
+      sparks(
+        kit,
+        at,
+        reach * (0.8 + since * 1.2),
+        8,
+        seed,
+        since,
+        lighten(colour, 0.5),
+        decay(since),
+      );
+      smoke(kit, at, reach * 0.6, 4, seed, since, dark, decay(since) * 0.5);
+    }
+  },
+
+  // Crescent blades thrown from the pokemon: psychic ones spin, wind ones fly flat with air trailing
+  Sickles(kit, stage, share, { paint, seed, weight, type }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const light = lighten(paint.color, 0.4);
+    const heading = kit.angleOn(stage.source, at);
+    const spins = type !== Types.Flying;
+
+    for (let blade = 0; blade < 3; blade += 1) {
+      const held = staged(share, 1.6, blade * 0.25);
+
+      if (held <= 0) {
+        continue;
+      }
+      const travel = Math.min(1, held * 1.6);
+
+      if (travel < 1) {
+        const centre = aside(
+          kit,
+          toward(stage.source, at, travel),
+          0,
+          spread(seed, blade) * reach * 0.7 * (1 - travel),
+        );
+        const turn = spins ? heading + travel * TAU * 2 : heading;
+
+        sickle(kit, centre, reach * 0.55, turn - 1, turn + 1, reach * 0.3, light, 0.95);
+        if (!spins) {
+          kit.trail(
+            aside(kit, centre, -Math.cos(heading) * reach * 1.4, -Math.sin(heading) * reach * 1.4),
+            centre,
+            reach * 0.05,
+            '#ffffff',
+            0.5,
+          );
+        }
+        continue;
+      }
+      const hit = (held - 1 / 1.6) / (1 - 1 / 1.6);
+
+      kit.streak(at, reach * (1.1 - blade * 0.25), reach * 0.14, 0.6, light, decay(hit));
+      kit.glow(at, reach * 0.5, light, decay(hit) * 0.6, 0.8);
+      sparks(kit, at, reach * (0.5 + hit * 0.8), 6, seed + blade, hit, light, decay(hit));
+    }
+  },
+
+  // Cuts that come round again and again, each bigger and brighter than the last
+  Cutter(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+
+    for (let cut = 0; cut < CUTTER_CUTS; cut += 1) {
+      const held = share * CUTTER_CUTS - cut;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      const big = reach * (0.7 + cut * 0.35);
+      const way = cut % 2 === 0 ? 1 : -1;
+      const start = way > 0 ? Math.PI * 0.9 : Math.PI * 0.1;
+      const drawn = Math.min(1, held * 3);
+
+      sickle(
+        kit,
+        at,
+        big,
+        start,
+        start - way * Math.PI * 1.1 * drawn,
+        big * 0.35,
+        lighten(colour, 0.2 + cut * 0.2),
+        decay(held),
+      );
+      if (cut === CUTTER_CUTS - 1 && drawn >= 1) {
+        kit.star(at, big * (0.6 + held), 0.3, lighten(colour, 0.6), decay(held));
+        sparks(kit, at, big * (0.6 + held), 8, seed, held, lighten(colour, 0.6), decay(held));
+      }
     }
   },
 } satisfies Partial<Record<EffectShape, LitShapePainter>>;

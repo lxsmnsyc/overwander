@@ -483,6 +483,35 @@ export function edge(
   context.fill();
 }
 
+/** A blade bent round a circle: pointed at both ends and widest in the middle, filled */
+export function sickle(
+  context: CanvasRenderingContext2D,
+  [x, y]: Point,
+  radius: number,
+  start: number,
+  end: number,
+  width: number,
+  painted: Painted,
+): void {
+  const steps = 12;
+
+  context.beginPath();
+  for (let step = 0; step <= steps * 2; step += 1) {
+    // Out along the outer edge, then back along the inner one
+    const along = step <= steps ? step / steps : 2 - step / steps;
+    const angle = start + (end - start) * along;
+    const half = (width / 2) * Math.sin(Math.PI * along) * (step <= steps ? 1 : -1);
+
+    context[step === 0 ? 'moveTo' : 'lineTo'](
+      x + Math.cos(angle) * (radius + half),
+      y + Math.sin(angle) * (radius + half),
+    );
+  }
+  context.closePath();
+  context.fillStyle = fade(painted.color, painted.alpha ?? 1);
+  context.fill();
+}
+
 /** A curved cut through a point: a claw, a blade, a gust. */
 export function slash(
   context: CanvasRenderingContext2D,

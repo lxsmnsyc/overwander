@@ -167,6 +167,16 @@ export type EffectShape =
   | 'Song'
   | 'Roar'
   | 'Chime'
+  | 'Sweep'
+  | 'Crescent'
+  | 'Sickles'
+  | 'Cutter'
+  | 'Toxin'
+  | 'Spores'
+  | 'Stare'
+  | 'Applause'
+  | 'Vein'
+  | 'Nail'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -284,6 +294,16 @@ export const SPANS: Record<EffectShape, number> = {
   Song: 1000,
   Roar: 820,
   Chime: 1000,
+  Sweep: 620,
+  Crescent: 700,
+  Sickles: 820,
+  Cutter: 760,
+  Toxin: 900,
+  Spores: 900,
+  Stare: 820,
+  Applause: 1000,
+  Vein: 900,
+  Nail: 1000,
   Whiff: 320,
 };
 

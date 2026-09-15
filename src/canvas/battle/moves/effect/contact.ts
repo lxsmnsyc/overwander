@@ -20,6 +20,7 @@ import {
   ring,
   ripple,
   shards,
+  sickle,
   slash,
   spiral,
   spread,
@@ -42,6 +43,9 @@ export const HAYMAKER_CHARGE = 0.35;
 
 /** How many quick blows Close Combat lands before its last one */
 export const FLURRY_BLOWS = 7;
+
+/** Fury Cutter: how many cuts it lands, each bigger than the last */
+export const CUTTER_CUTS = 3;
 
 /** A blow's element breaking off where it lands: flames, frost or sparks, and plain spokes for any other type */
 export function imbue(
@@ -812,6 +816,170 @@ const contact = {
         burst(context, at, big * (0.5 + hit * 0.5), 6, seed + kick, {
           color: light,
           alpha: decay(hit),
+          width: 2.6 * stage.scale,
+        });
+      }
+    }
+  },
+
+  // One long blade drawn across it, shedding leaves off the cut
+  Sweep(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const drawn = Math.min(1, share * 3);
+    const shown = share < 0.55 ? 1 : decay((share - 0.55) / 0.45);
+    const from: Point = [at[0] - size * 1.5, at[1] - size * 0.7];
+    const tip = between(from, [at[0] + size * 1.5, at[1] + size * 0.7], drawn);
+
+    edge(context, from, tip, size * 0.24, -size * 0.3 * drawn, { ...paint, alpha: shown });
+    edge(context, from, tip, size * 0.08, -size * 0.3 * drawn, {
+      color: lighten(paint.color, 0.7),
+      alpha: shown,
+    });
+    for (let one = 0; one < many(6, weight); one += 1) {
+      const along = noise(seed, one);
+      // Shed only once the blade has passed that point
+      const held = (share - along / 3) / (1 - along / 3);
+
+      if (held <= 0 || along > drawn) {
+        continue;
+      }
+      const spot = between(from, [at[0] + size * 1.5, at[1] + size * 0.7], along);
+
+      petal(
+        context,
+        [
+          spot[0] + spread(seed, one + 10) * size * held,
+          spot[1] + size * (held * 1.6 - 0.5) * held,
+        ],
+        size * 0.2,
+        held * 6 + one,
+        { color: paint.color, alpha: decay(held) },
+      );
+    }
+  },
+
+  // A dark crescent swept round it in one stroke, with a pale edge
+  Crescent(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const cut = Math.min(1, share / 0.3);
+    const shown = share < 0.55 ? 1 : decay((share - 0.55) / 0.45);
+    const start = -Math.PI * 0.85;
+    const end = start + Math.PI * 1.2 * cut;
+    const dark = mix(paint.color, '#0a0610', 0.55);
+
+    sickle(context, at, size * 1.2, start, end, size * 0.6, { color: dark, alpha: shown * 0.9 });
+    sickle(context, at, size * 1.38, start, end, size * 0.16, {
+      color: lighten(paint.color, 0.6),
+      alpha: shown,
+    });
+    if (cut >= 1) {
+      const since = (share - 0.3) / 0.7;
+
+      burst(context, at, size * (0.8 + since * 1.2), 8, seed, {
+        color: lighten(paint.color, 0.5),
+        alpha: decay(since),
+        width: 2.4 * stage.scale,
+      });
+      motes(context, at, size * 1.4, many(6, weight), seed, since, {
+        color: dark,
+        alpha: decay(since) * 0.8,
+        width: 2.6 * stage.scale,
+      });
+    }
+  },
+
+  // Crescent blades thrown from the pokemon: psychic ones spin, wind ones fly flat with air trailing
+  Sickles(context, stage, share, { paint, seed, weight, type }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const light = lighten(paint.color, 0.4);
+    const heading = Math.atan2(at[1] - stage.source[1], at[0] - stage.source[0]);
+    const spins = type !== Types.Flying;
+
+    for (let blade = 0; blade < 3; blade += 1) {
+      const held = Math.max(0, Math.min(1, share * 1.6 - blade * 0.25));
+
+      if (held <= 0) {
+        continue;
+      }
+      const travel = Math.min(1, held * 1.6);
+
+      if (travel < 1) {
+        const off = spread(seed, blade) * size * 0.7 * (1 - travel);
+        const spot = between(stage.source, at, travel);
+        const centre: Point = [
+          spot[0] - Math.sin(heading) * off,
+          spot[1] + Math.cos(heading) * off,
+        ];
+        const turn = spins ? heading + travel * Math.PI * 4 : heading;
+
+        sickle(context, centre, size * 0.55, turn - 1, turn + 1, size * 0.3, {
+          color: light,
+          alpha: 0.95,
+        });
+        if (!spins) {
+          for (const side of [-1, 1]) {
+            const [x, y] = [
+              centre[0] + Math.sin(heading) * side * size * 0.3,
+              centre[1] - Math.cos(heading) * side * size * 0.3,
+            ];
+
+            edge(
+              context,
+              [x - Math.cos(heading) * size * 0.2, y - Math.sin(heading) * size * 0.2],
+              [x - Math.cos(heading) * size * 1.4, y - Math.sin(heading) * size * 1.4],
+              size * 0.05,
+              0,
+              { color: '#ffffff', alpha: 0.5 },
+            );
+          }
+        }
+        continue;
+      }
+      const hit = (held - 1 / 1.6) / (1 - 1 / 1.6);
+
+      edge(
+        context,
+        [at[0] - size * (0.9 - blade * 0.2), at[1] - size * 0.6],
+        [at[0] + size * (0.9 - blade * 0.2), at[1] + size * 0.6],
+        size * 0.14,
+        0,
+        { color: light, alpha: decay(hit) },
+      );
+      burst(context, at, size * (0.5 + hit * 0.8), 6, seed + blade, {
+        color: light,
+        alpha: decay(hit),
+        width: 2.2 * stage.scale,
+      });
+    }
+  },
+
+  // Cuts that come round again and again, each bigger and brighter than the last
+  Cutter(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+
+    for (let cut = 0; cut < CUTTER_CUTS; cut += 1) {
+      const held = share * CUTTER_CUTS - cut;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      const big = size * (0.7 + cut * 0.35);
+      const way = cut % 2 === 0 ? 1 : -1;
+      const start = way > 0 ? -Math.PI * 0.9 : -Math.PI * 0.1;
+      const drawn = Math.min(1, held * 3);
+
+      sickle(context, at, big, start, start + way * Math.PI * 1.1 * drawn, big * 0.35, {
+        color: lighten(paint.color, 0.2 + cut * 0.2),
+        alpha: decay(held),
+      });
+      if (cut === CUTTER_CUTS - 1 && drawn >= 1) {
+        burst(context, at, big * (0.6 + held), 8, seed, {
+          color: lighten(paint.color, 0.6),
+          alpha: decay(held),
           width: 2.6 * stage.scale,
         });
       }

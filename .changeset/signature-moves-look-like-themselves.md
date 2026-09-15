@@ -55,6 +55,16 @@ More moves land as a picture of their own:
 - Sing, Grass Whistle and Perish Song drift music notes round the target, dark ones for Perish Song.
 - Roar, Hyper Voice and Bug Buzz roll shock arcs out toward the target.
 - Heal Bell swings a golden bell that rings out.
+- Leaf Blade draws one long blade across the target that sheds leaves.
+- Night Slash sweeps a dark crescent round the target.
+- Psycho Cut throws spinning psychic blades, and Air Slash throws blades of wind.
+- Fury Cutter cuts again and again, each cut bigger than the last.
+- Toxic bubbles up round the target from a pool of poison.
+- Stun Spore drifts yellow spores down that crackle.
+- Glare opens an eye over the target that flashes.
+- Encore claps sparkles together over the target's head.
+- Taunt throbs an anger mark on the target's head.
+- Curse drives a nail into the target in three blows.
 - Tri Attack turns three orbs of fire, ice and lightning in on the target, each bursting as its element.
 - Flame Wheel rolls into the target as a ring of fire.
 - Waterfall drives a column of water up through the target.

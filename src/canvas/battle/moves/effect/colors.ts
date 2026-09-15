@@ -69,6 +69,12 @@ const BY_SHAPE: Partial<Record<EffectShape, string>> = {
   Swarm: '#4cc46a',
   // A brass bell
   Chime: '#ffd86a',
+  // Yellow spores and eyes, gold applause, an anger mark's red and a curse's purple, where the types' colours say none of them
+  Spores: '#f0d84a',
+  Stare: '#f0c830',
+  Applause: '#ffe07a',
+  Vein: '#e8404a',
+  Nail: '#8a5ab0',
 };
 
 /** The shapes that picture a stat moving, and so take the stat's colour */

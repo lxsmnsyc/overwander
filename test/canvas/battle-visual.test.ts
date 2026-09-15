@@ -109,7 +109,7 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Frost', Moves.Blizzard],
   ['Leafy', Moves.SkyAttack],
   ['Haze', Moves.PoisonPowder],
-  ['Mark', Moves.Glare],
+  ['Mark', Moves.Disable],
   ['Mend', Moves.Recover],
   ['Ward', Moves.Endure],
   ['Screen', Moves.Reflect],
@@ -243,6 +243,18 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Roar', Moves.Roar],
   ['Roar', Moves.BugBuzz],
   ['Chime', Moves.HealBell],
+  // Blades that each cut their own way, and statuses drawn as what they are
+  ['Sweep', Moves.LeafBlade],
+  ['Crescent', Moves.NightSlash],
+  ['Sickles', Moves.PsychoCut],
+  ['Sickles', Moves.AirSlash],
+  ['Cutter', Moves.FuryCutter],
+  ['Toxin', Moves.Toxic],
+  ['Spores', Moves.StunSpore],
+  ['Stare', Moves.Glare],
+  ['Applause', Moves.Encore],
+  ['Vein', Moves.Taunt],
+  ['Nail', Moves.Curse],
 ];
 
 /**
@@ -657,7 +669,7 @@ describe('a painted move', () => {
     // barrage shape is for the moves whose repeat is the whole point
     expect(effectShapeFor(Moves.FurySwipes)).toBe('Claw');
     expect(effectShapeFor(Moves.FuryAttack)).toBe('Volley');
-    expect(effectShapeFor(Moves.Glare)).toBe('Mark');
+    expect(effectShapeFor(Moves.Disable)).toBe('Mark');
     expect(effectShapeFor(Moves.Substitute)).toBe('Doll');
     // A screen is a pane put up rather than a shell closing in, and
     // it is coloured by the stat it stands in for

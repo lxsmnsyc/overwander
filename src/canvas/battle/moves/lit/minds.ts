@@ -1,6 +1,7 @@
 import type EffectBatch from '../../../three/effect-batch';
 import type { Spot } from '../../../three/effect-batch';
 import { decay, lighten, mix, noise, spread, swell } from '../__paint';
+import { NAIL, NAIL_BLOWS, nailDriven } from '../effect/minds';
 import { type EffectShape, many } from '../effect/shapes';
 import { TAU, chevron, sparks, spiral } from './pieces';
 import {
@@ -63,6 +64,59 @@ function bell(
     },
   );
   kit.glow(turned(0, -size * 1.15), size * 0.14, lighten(colour, 0.4), alpha, 0.8);
+}
+
+/** An eye on the picture: almond lids `open` from 0 to 1, a coloured iris and a slit pupil */
+function eye(
+  kit: EffectBatch,
+  at: Spot,
+  size: number,
+  open: number,
+  colour: string,
+  alpha: number,
+): void {
+  const lid = size * 0.55 * open;
+  const tall = Math.min(size * 0.42, lid * 0.75);
+  const upper: Spot[] = [];
+  const lower: Spot[] = [];
+
+  for (let step = 0; step <= 10; step += 1) {
+    const across = (step / 10) * 2 - 1;
+    const bulge = (1 - across * across) * lid;
+
+    upper.push(aside(kit, at, across * size, bulge));
+    lower.push(aside(kit, at, across * size, -bulge));
+  }
+  kit.glow(at, size * 0.7, '#fffbe8', alpha * open * 0.5, 0.2);
+  kit.ribbon(upper, size * 0.1, '#2a1a10', alpha, 0, { add: 0 });
+  kit.ribbon(lower, size * 0.1, '#2a1a10', alpha, 0, { add: 0 });
+  if (tall <= 0) {
+    return;
+  }
+  kit.glow(at, tall, colour, alpha, 0.3, { add: 0.3 });
+  kit.streak(at, tall * 0.9, size * 0.08, Math.PI / 2, '#1a1010', alpha, { add: 0 });
+}
+
+/** The anger mark on the picture: four arcs bowed in toward a middle */
+function vein(kit: EffectBatch, at: Spot, size: number, colour: string, alpha: number): void {
+  for (let quarter = 0; quarter < 4; quarter += 1) {
+    const angle = Math.PI / 4 + (quarter * Math.PI) / 2;
+    const path: Spot[] = [];
+
+    for (let step = 0; step <= 6; step += 1) {
+      const turn = angle + Math.PI + (step / 6 - 0.5) * 1.5;
+
+      path.push(
+        aside(
+          kit,
+          at,
+          Math.cos(angle) * size + Math.cos(turn) * size * 0.7,
+          Math.sin(angle) * size + Math.sin(turn) * size * 0.7,
+        ),
+      );
+    }
+    kit.ribbon(path, size * 0.22, colour, alpha, 0, { add: 0.2 });
+  }
 }
 
 /**
@@ -484,6 +538,206 @@ const minds = {
         '#ffffff',
         swell((share * 2 + noise(seed, glint)) % 1) * shown,
       );
+    }
+  },
+
+  // Poison welling up round it: bubbles rising off a sickly pool and popping
+  Toxin(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage);
+    const colour = paint.color;
+    const light = lighten(colour, 0.3);
+    const shown = Math.min(1, share * 5) * late(share, 0.75);
+
+    kit.pool(floor, reach * (1.4 + swell(share) * 0.6), colour, shown * 0.6);
+    kit.ripple(floor, reach * (1.2 + swell(share) * 0.6), 0.1, light, shown * 0.6);
+    for (let one = 0; one < many(10, weight); one += 1) {
+      const held = (share * 1.5 + noise(seed, one)) % 1;
+      const spot = aside(
+        kit,
+        floor,
+        spread(seed, one + 10) * reach * 1.3,
+        held * reach * 2.4,
+        spread(seed, one + 30) * reach * 0.8,
+      );
+      const radius = reach * (0.12 + noise(seed, one + 20) * 0.14) * (0.5 + held);
+
+      if (held < 0.85) {
+        kit.bubble(spot, radius, light, shown);
+        continue;
+      }
+      const pop = (held - 0.85) / 0.15;
+
+      kit.ring(spot, radius * (1 + pop), 0.1, light, shown * decay(pop));
+    }
+  },
+
+  // Spores drifting down over it, crackling where they settle
+  Spores(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const shown = Math.min(1, share * 4) * late(share, 0.7);
+
+    for (let one = 0; one < many(16, weight); one += 1) {
+      const fall = (share * 1.2 + noise(seed, one)) % 1;
+      const spot = aside(
+        kit,
+        at,
+        spread(seed, one + 10) * reach * 1.6 + Math.sin(fall * 6 + one) * reach * 0.25,
+        reach * 2 - fall * reach * 2.8,
+        spread(seed, one + 30) * reach * 0.8,
+      );
+
+      kit.glow(
+        [spot[0], Math.max(0.05, spot[1]), spot[2]],
+        reach * 0.08 * (0.7 + noise(seed, one + 20)),
+        paint.color,
+        shown * swell(fall),
+        0.6,
+      );
+    }
+    if (share < 0.3) {
+      return;
+    }
+    // A new flicker every twelfth of the span, so the crackle jumps about rather than sliding
+    const flicker = Math.floor(share * 12);
+
+    for (let zap = 0; zap < 2; zap += 1) {
+      sparks(
+        kit,
+        aside(
+          kit,
+          at,
+          spread(seed, flicker * 7 + zap) * reach * 0.9,
+          -spread(seed, flicker * 7 + zap + 3) * reach * 0.8,
+        ),
+        reach * 0.4,
+        4,
+        seed + flicker + zap,
+        0.3,
+        '#fff6a0',
+        shown * 0.9,
+      );
+    }
+  },
+
+  // An eye opening over it and flashing, the look that freezes something in place
+  Stare(kit, stage, share, { paint, seed }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const open = Math.min(1, share / 0.25) * late(share, 0.8);
+    const centre = aside(kit, at, 0, reach * 0.4);
+    const light = lighten(paint.color, 0.5);
+    const flash = (share - 0.25) / 0.3;
+
+    eye(kit, centre, reach * 1.2, open, paint.color, Math.min(1, open * 3));
+    if (flash > 0 && flash < 1) {
+      kit.star(centre, reach * (1.4 + flash * 1.6), 0.2, light, decay(flash));
+      sparks(kit, centre, reach * (1.4 + flash * 1.6), 12, seed, flash, light, decay(flash));
+      kit.ring(at, reach * (0.6 + flash * 1.4), 0.06, light, decay(flash) * 0.8);
+    }
+  },
+
+  // Sparkles clapping together over its head three times, calling for more
+  Applause(kit, stage, share, { paint, seed }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const colour = paint.color;
+    const meet = aside(kit, at, 0, reach * 1.4);
+
+    for (let beat = 0; beat < 3; beat += 1) {
+      const held = share * 3 - beat;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      const closing = Math.min(1, held / 0.35);
+
+      if (closing < 1) {
+        for (const side of [-1, 1]) {
+          kit.star(
+            aside(kit, meet, side * reach * 1.3 * (1 - closing), -reach * 0.3 * (1 - closing)),
+            reach * 0.28,
+            closing * 3 * side,
+            colour,
+            0.95,
+          );
+        }
+        continue;
+      }
+      const pop = (held - 0.35) / 0.65;
+
+      kit.star(meet, reach * (0.35 + pop * 0.4), pop, '#ffffff', decay(pop));
+      kit.ring(meet, reach * (0.2 + pop * 1.1), 0.08, lighten(colour, 0.5), decay(pop));
+      for (let bit = 0; bit < 5; bit += 1) {
+        const angle = (bit / 5) * TAU + noise(seed, beat * 5 + bit);
+
+        kit.star(
+          aside(
+            kit,
+            meet,
+            Math.cos(angle) * reach * pop * 1.2,
+            Math.sin(angle) * reach * pop * 1.2 - pop * pop * reach * 0.6,
+          ),
+          reach * 0.14,
+          angle,
+          colour,
+          decay(pop),
+        );
+      }
+    }
+  },
+
+  // An anger mark throbbing on its head
+  Vein(kit, stage, share, { paint }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const colour = paint.color;
+    const shown = Math.min(1, share * 6) * late(share, 0.8);
+    const spot = aside(kit, at, reach * 0.8, reach * 1.2);
+    const throb = 1 + Math.abs(Math.sin(share * Math.PI * 3)) * 0.35;
+
+    vein(kit, spot, reach * 0.42 * throb, colour, shown);
+    for (let beat = 0; beat < 3; beat += 1) {
+      const held = share * 3 - beat;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      kit.ring(
+        spot,
+        reach * (0.5 + held * 0.9),
+        0.06,
+        lighten(colour, 0.3),
+        decay(held) * shown * 0.7,
+      );
+    }
+  },
+
+  // A nail driven into it in three blows, under a closing ring of dark
+  Nail(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const shown = Math.min(1, share * 6) * late(share, 0.8);
+    const tip = aside(kit, at, 0, reach * 0.2 - nailDriven(share) * reach * 0.7);
+    const head = aside(kit, tip, 0, reach * 1.4);
+
+    kit.glow(at, reach * 0.8, mix(colour, '#0a0612', 0.5), swell(share) * 0.5, 0, { add: 0 });
+    kit.ring(at, reach * (1.9 - share * 1.1), 0.08, lighten(colour, 0.3), swell(share) * 0.7);
+    kit.streak(toward(head, tip, 0.5), reach * 0.7, reach * 0.09, Math.PI / 2, NAIL, shown, {
+      add: 0,
+    });
+    kit.streak(head, reach * 0.32, reach * 0.08, 0, NAIL, shown, { add: 0 });
+    for (const [one, blow] of NAIL_BLOWS.entries()) {
+      const since = (share - blow - 0.05) / 0.25;
+
+      if (since <= 0 || since >= 1) {
+        continue;
+      }
+      kit.ring(head, reach * (0.2 + since * 0.8), 0.08, lighten(colour, 0.4), decay(since));
+      sparks(kit, head, reach * (0.4 + since * 0.6), 6, seed + one, since, '#ffffff', decay(since));
     }
   },
 } satisfies Partial<Record<EffectShape, LitShapePainter>>;

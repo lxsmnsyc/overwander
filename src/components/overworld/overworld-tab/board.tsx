@@ -1808,6 +1808,17 @@ export default function OverworldBoard(props: {
    */
   const [journey, setJourney] = createSignal<Journey | null>(null);
 
+  /** Where a walk to open ground is heading, for the board to mark */
+  const walkGoal = createMemo<[number, number] | null>(
+    () => {
+      const plan = journey();
+
+      return plan == null || plan.act ? null : [plan.goalX, plan.goalY];
+    },
+    null,
+    { equals: (was, now) => was?.[0] === now?.[0] && was?.[1] === now?.[1] },
+  );
+
   /**
    * When the last cell of a walk was stepped. The pace is measured from
    * it rather than from the press, so pressing again mid-walk changes
@@ -2345,6 +2356,7 @@ export default function OverworldBoard(props: {
                 auras={auras()}
                 decorations={loaded().decorations}
                 spawns={standingHere()}
+                goal={walkGoal()}
                 label={titleOf}
                 // Said when one is actually drawn rather than when a
                 // window says one was rolled: the board straddles

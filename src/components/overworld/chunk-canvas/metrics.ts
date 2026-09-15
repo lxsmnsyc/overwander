@@ -203,6 +203,8 @@ export const RIPPLE_WEIGHT = 3;
 /** How many points one ring is drawn round. A ground circle, projected */
 export const RIPPLE_POINTS = 16;
 
+/** How long the ring a press throws out of the square it asked for takes to fade */
+export const GOAL_PULSE = 500;
 /**
  * How much light the cell under the cursor takes. Enough to be found
  * on snow, light enough that whatever is standing on the cell is
@@ -222,6 +224,8 @@ export const COLORS = {
    * cells. Whatever is inside it is theirs to press
    */
   highlight: '#ffffff',
+  /** The square a pressed walk is heading for, mint so it is never the hover's white */
+  goal: '#7ee8a2',
   spawn: '#2b2b2b',
   /**
    * The ripple under a pokemon of the day's featured family. Gold,

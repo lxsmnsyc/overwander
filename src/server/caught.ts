@@ -119,6 +119,41 @@ export async function writeCaughtRecord(
   locale: string,
   from = '',
 ): Promise<string> {
+  const id = await tx(async (transaction) =>
+    insertCaughtIn(transaction, uid, encounter, ball, kind, now, offset, locale, from),
+  );
+
+  // Every arrival ends here, so this is the one place the dex has to
+  // be told a pokemon became this player's. An egg is the exception
+  // and writes its own record; it is logged when it hatches, since
+  // what is in the shell is not something the player has met yet
+  await recordCaughtSpecies(uid, encounter.species, encounter.shiny);
+  await bumpProgress(uid, [
+    [Metric.Catches, encounter.species, 1],
+    ...(encounter.shiny
+      ? [[Metric.ShinyCatches, encounter.species, 1] satisfies ProgressBump]
+      : []),
+  ]);
+  return id;
+}
+
+/**
+ * The row itself, inside a transaction the caller holds, for an
+ * arrival that has to land with something else: an evolution writes the
+ * husk it leaves in the same one that spends the ball. The dex and the
+ * quest counters are the caller's to tell
+ */
+export async function insertCaughtIn(
+  transaction: Tx,
+  uid: string,
+  encounter: EncounterRecord,
+  ball: Balls,
+  kind: Acquisition,
+  now: number,
+  offset: number,
+  locale: string,
+  from = '',
+): Promise<string> {
   const id = newDocId();
   const room =
     encounter.slots ?? packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS);
@@ -146,58 +181,44 @@ export async function writeCaughtRecord(
     effortValues: zeroEffortValues(),
   });
 
-  await tx(async (transaction) => {
-    await transaction`
-      insert into caught (
-        id, owner, type, species, nickname, level, individual_value, trait_value,
-        ivs, gender, nature, shiny, shadow, egg, favorite, guarded, traded,
-        auctionable, slots, locked_at, steps, hatch_steps, stepped_at, health,
-        max_health, statuses, lair, ball, caught_at_local, caught_at_offset, locale,
-        effort_bonus, walked, friendship,
-        origin_timestamp, origin_x, origin_y, origin_biome, origin_place
-      ) values (
-        ${id}, ${uid}, ${encounter.type}, ${encounter.species}, '',
-        ${encounter.level}, ${encounter.individualValue}, ${encounter.traitValue},
-        ${encounter.ivs}, ${encounter.gender}, ${encounter.nature},
-        ${encounter.shiny}, ${shadow}, false, false, false, false,
-        ${isAuctionableCatch(encounter)}, ${room}, 0, 0, 0, 0,
-        ${whole}, ${whole},
-        0, ${encounter.lair}, ${ball},
-        ${new Date(toLocalTime(now, zone))}, ${zone}, ${asLocale(locale)},
-        0, 0, ${caughtFriendship(ball, shadow)},
-        ${encounter.timestamp}, ${encounter.x}, ${encounter.y},
-        ${encounter.biome}, ${encounter.place ?? null}
-      )
-    `;
+  await transaction`
+    insert into caught (
+      id, owner, type, species, nickname, level, individual_value, trait_value,
+      ivs, gender, nature, shiny, shadow, egg, favorite, guarded, traded,
+      auctionable, slots, locked_at, steps, hatch_steps, stepped_at, health,
+      max_health, statuses, lair, ball, caught_at_local, caught_at_offset, locale,
+      effort_bonus, walked, friendship,
+      origin_timestamp, origin_x, origin_y, origin_biome, origin_place
+    ) values (
+      ${id}, ${uid}, ${encounter.type}, ${encounter.species}, '',
+      ${encounter.level}, ${encounter.individualValue}, ${encounter.traitValue},
+      ${encounter.ivs}, ${encounter.gender}, ${encounter.nature},
+      ${encounter.shiny}, ${shadow}, false, false, false, false,
+      ${isAuctionableCatch(encounter)}, ${room}, 0, 0, 0, 0,
+      ${whole}, ${whole},
+      0, ${encounter.lair}, ${ball},
+      ${new Date(toLocalTime(now, zone))}, ${zone}, ${asLocale(locale)},
+      0, 0, ${caughtFriendship(ball, shadow)},
+      ${encounter.timestamp}, ${encounter.x}, ${encounter.y},
+      ${encounter.biome}, ${encounter.place ?? null}
+    )
+  `;
 
-    await updateCaughtIn(transaction, id, {
-      // Cut to the room: a record that knew more moves than it has
-      // slots for would be one the sheet could not draw
-      moves: encounter.moves.slice(0, getSlots(room, Slots.Move)),
-      movePoints: {},
-      abilities,
-      items: encounter.items.slice(0, getSlots(room, Slots.Item)),
-      // The ball is on the entry as well as on the pokemon: this is
-      // the one it arrived in, and a later owner may put it in another.
-      // Whoever had it first holds no uid: nobody signs in as Red
-      history: [
-        ...(from === '' ? [] : [{ owner: '', name: from, acquiredAt: caughtAt, kind, ball }]),
-        { owner: uid, acquiredAt: caughtAt, kind, ball },
-      ],
-    });
+  await updateCaughtIn(transaction, id, {
+    // Cut to the room: a record that knew more moves than it has
+    // slots for would be one the sheet could not draw
+    moves: encounter.moves.slice(0, getSlots(room, Slots.Move)),
+    movePoints: {},
+    abilities,
+    items: encounter.items.slice(0, getSlots(room, Slots.Item)),
+    // The ball is on the entry as well as on the pokemon: this is
+    // the one it arrived in, and a later owner may put it in another.
+    // Whoever had it first holds no uid: nobody signs in as Red
+    history: [
+      ...(from === '' ? [] : [{ owner: '', name: from, acquiredAt: caughtAt, kind, ball }]),
+      { owner: uid, acquiredAt: caughtAt, kind, ball },
+    ],
   });
-
-  // Every arrival ends here, so this is the one place the dex has to
-  // be told a pokemon became this player's. An egg is the exception
-  // and writes its own record; it is logged when it hatches, since
-  // what is in the shell is not something the player has met yet
-  await recordCaughtSpecies(uid, encounter.species, encounter.shiny);
-  await bumpProgress(uid, [
-    [Metric.Catches, encounter.species, 1],
-    ...(encounter.shiny
-      ? [[Metric.ShinyCatches, encounter.species, 1] satisfies ProgressBump]
-      : []),
-  ]);
   return id;
 }
 

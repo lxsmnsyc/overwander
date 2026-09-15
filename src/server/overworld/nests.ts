@@ -2,7 +2,6 @@ import 'server-only';
 import { Depth } from '../../overworld/depth';
 import type { EncounterRecord } from '../../auth/encounter-record';
 import type { ItemStack } from '../../data/overworld/item-pool';
-import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { grantNestEgg } from '../eggs';
 import { getSql } from '../db';
 import { Landmark, Metric } from '../../auth/quest-record';
@@ -10,14 +9,6 @@ import { bumpProgress } from '../quest-progress';
 import { claim, resolveSnapshot } from './claims';
 
 /** The nests, looked into and then taken */
-/**
- * The claim marker one player's visit to one nest, in one half-day
- * window, is written against. Both the peek and the claim name it, so
- * looking and taking cannot disagree about which egg is in question
- */
-function nestClaimId(snapshot: ChunkSnapshot, cell: number): string {
-  return `${snapshot.groundKey}@${snapshot.nestTimestamp}$nest${cell}`;
-}
 
 /**
  * What is lying in a nest, without taking it.
@@ -45,7 +36,7 @@ export async function peekNest(
   if (snapshot == null || species == null) {
     return null;
   }
-  const marker = nestClaimId(snapshot, cell);
+  const marker = snapshot.nestMarker(cell);
   const rows = await getSql()`
     select 1 from nest_claims where marker = ${marker} and player = ${uid}
   `;
@@ -97,7 +88,7 @@ export async function claimNest(
     return null;
   }
 
-  const id = nestClaimId(snapshot, cell);
+  const id = snapshot.nestMarker(cell);
 
   if (!(await claim('nest_claims', id, { player: uid, species }))) {
     return null;

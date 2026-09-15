@@ -44,6 +44,7 @@ export {
   coversHandover,
   coveredByHandover,
   getAvailableEvolutions,
+  getShedEvolutions,
   getConsumedItem,
   getSpentHeldItem,
   isFullyEvolved,

@@ -917,6 +917,10 @@ export default function OverworldBoard(props: {
             if (standing != null && NPC_VISIT_TAGS.has(standing) && !standings.visited.has(at)) {
               next.set(at, CellAura.Fresh);
             }
+          } else if (landmark === Landmark.Nest) {
+            if (snapshot.getNests().has(at) && !standings.taken.has(at)) {
+              next.set(at, CellAura.Fresh);
+            }
           }
         }
         setAuras(next);
@@ -1148,6 +1152,9 @@ export default function OverworldBoard(props: {
         if (offer.from === 'grotto') {
           setSpent((cells) => new Set(cells).add(keyAt(offer.spot)));
           forgetClaims();
+        } else {
+          // Its ring goes once the egg is taken
+          recheck();
         }
       })
       .catch((caught: unknown) => {

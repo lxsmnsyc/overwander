@@ -43,10 +43,8 @@ const FAMILY_TEACHABLE = [
 export default function registerNincadaSpecies(): void {
   registerSpecies(Species.Nincada, {
     dexNumber: 290,
-    // The mainline hands over both at once, and an evolution here
-    // spends the pokemon it was. So the shed husk is the other
-    // choice rather than a second prize, and it costs the ball the
-    // mainline asks to be carrying
+    // Both at once, as in the mainline: the husk is left in the Poke
+    // Ball the bag has to be carrying when the Ninjask emerges
     evolvesInto: [
       {
         species: Species.Ninjask,
@@ -58,6 +56,7 @@ export default function registerNincadaSpecies(): void {
         method: EvolutionMethod.Level | EvolutionMethod.UsedItem,
         level: 20,
         item: Items.PokeBall,
+        shed: true,
       },
     ],
     name: 'Nincada',

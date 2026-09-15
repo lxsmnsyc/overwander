@@ -1,10 +1,10 @@
 import 'server-only';
-import { asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
+import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
 import { ITEM_STACKS } from '../auth/stacks';
 import { getMaxHealth, getStats, rescaleHealth } from '../auth/health';
 import { getTimeOfDay } from '../data/ids/biome';
-import type { Items } from '../data/ids/items';
-import type { Genders, Species } from '../data/ids/species';
+import { Balls, type Items } from '../data/ids/items';
+import { Genders, type Species } from '../data/ids/species';
 import type { EvolutionContext, EvolutionData } from '../data/species';
 import {
   getConsumedItem,
@@ -18,6 +18,7 @@ import { recordFoundSpecies } from './pokedex';
 import { type ProgressBump, bumpProgress } from './quest-progress';
 import { readStackIn, writeStackIn } from './stacks';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { insertCaughtIn } from './caught';
 import { tx } from './db';
 import { isCatchLocked } from './locks';
 import { asNumber, asNumberArray } from './read';
@@ -37,10 +38,14 @@ export default async function evolveCatch(
   uid: string,
   catchId: string,
   into: Species,
+  offset = 0,
+  locale = '',
 ): Promise<Species | null> {
   let spent: Items | null = null;
   let from: Species | null = null;
   let sparkles = false;
+  const husks: Species[] = [];
+  const huskBalls: Items[] = [];
   const evolved = await tx(async (transaction) => {
     const caught = await readCaughtIn(transaction, catchId);
 
@@ -66,7 +71,8 @@ export default async function evolveCatch(
     const roads: EvolutionData[] = [];
 
     for (const entry of getSpeciesData(species).evolvesInto ?? []) {
-      if (entry.species === into) {
+      // A husk is only ever left beside another evolution
+      if (entry.species === into && entry.shed !== true) {
         roads.push(entry);
       }
     }
@@ -161,6 +167,64 @@ export default async function evolveCatch(
       health: rescaleHealth(record.health, getMaxHealth(record), whole),
       maxHealth: whole,
     });
+
+    // What comes out beside it, in the same transaction as the ball it
+    // is left in: a Nincada becoming a Ninjask leaves a Shedinja
+    for (const entry of getSpeciesData(species).evolvesInto ?? []) {
+      if (entry.shed !== true) {
+        continue;
+      }
+      const wanted = getConsumedItem(entry);
+      const stocked = wanted == null ? 0 : await readStackIn(transaction, ITEM_STACKS, uid, wanted);
+      const carried = wanted != null && stocked > 0 ? new Set([wanted]) : new Set<Items>();
+
+      if (!meetsEvolutionCriteria(entry, { ...context, carried })) {
+        continue;
+      }
+      if (wanted != null) {
+        await writeStackIn(transaction, ITEM_STACKS, uid, wanted, stocked - 1);
+        huskBalls.push(wanted);
+      }
+
+      const husk = getSpeciesData(entry.species);
+
+      // The mainline copies the level, values, nature, moves and
+      // sparkle, and nothing it held; the ability is the husk's own
+      await insertCaughtIn(
+        transaction,
+        uid,
+        {
+          spawn: '',
+          player: uid,
+          type: record.type,
+          species: entry.species,
+          level: record.level,
+          individualValue: record.individualValue,
+          traitValue: record.traitValue,
+          ivs: record.ivs,
+          nature: record.nature,
+          ability: husk.abilities[0],
+          abilities: [...husk.abilities],
+          gender: husk.genderRatio == null ? Genders.Genderless : record.gender,
+          lair: null,
+          shiny: record.shiny,
+          shadow: false,
+          moves: record.moves,
+          items: [],
+          timestamp: record.origin.timestamp,
+          x: record.origin.x,
+          y: record.origin.y,
+          biome: record.origin.biome,
+          ...(record.origin.place == null ? {} : { place: record.origin.place }),
+        },
+        Balls.PokeBall,
+        Acquisition.Shed,
+        Date.now(),
+        offset,
+        locale,
+      );
+      husks.push(entry.species);
+    }
     return into;
   });
 
@@ -170,11 +234,20 @@ export default async function evolveCatch(
     // hold one of these. Seen is written alongside caught: nothing
     // ever staged a meeting with the shape it just became
     await recordFoundSpecies(uid, evolved, sparkles);
-    await bumpProgress(uid, [
-      [Metric.Evolutions, from, 1],
-      // oxlint-disable-next-line typescript/no-unnecessary-condition
-      ...(spent == null ? [] : [[Metric.ItemUses, spent, 1] satisfies ProgressBump]),
-    ]);
+    for (const husk of husks) {
+      await recordFoundSpecies(uid, husk, sparkles);
+    }
+
+    const bumps: ProgressBump[] = [[Metric.Evolutions, from, 1]];
+
+    // oxlint-disable-next-line typescript/no-unnecessary-condition
+    if (spent != null) {
+      bumps.push([Metric.ItemUses, spent, 1]);
+    }
+    for (const ball of huskBalls) {
+      bumps.push([Metric.ItemUses, ball, 1]);
+    }
+    await bumpProgress(uid, bumps);
   }
   return evolved;
 }

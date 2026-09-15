@@ -361,7 +361,7 @@ export const enum CellAura {
   Fight = 1,
   /** The seat this player is holding */
   Mine = 2,
-  /** A wanderer who has not done their one thing for this player yet */
+  /** A wanderer who has not done their one thing for this player yet, or a nest whose egg they have not taken */
   Fresh = 3,
   /** A hidden grotto this player has not claimed this hour */
   Grotto = 4,

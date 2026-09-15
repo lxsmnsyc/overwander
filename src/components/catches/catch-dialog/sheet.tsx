@@ -836,12 +836,40 @@ export function CatchSheetBody(
     if (uid == null || catchId == null) {
       return;
     }
+
+    // Read before the write, off what the server checks the husk against: its level and the bag
+    const before = view();
+    const carried = new Set<Items>();
+    let husk: string | null = null;
+
+    for (const entry of props.bag.latest ?? []) {
+      if (entry.amount > 0) {
+        carried.add(entry.item);
+      }
+    }
+    for (const entry of before == null ? [] : (getSpeciesData(before.species).evolvesInto ?? [])) {
+      if (
+        entry.shed === true &&
+        before != null &&
+        before.level >= (entry.level ?? 0) &&
+        (entry.item == null || carried.has(entry.item))
+      ) {
+        husk = getSpeciesData(entry.species).name;
+      }
+    }
+
     evolveCatch(catchId, into)
       .then((species) => {
         if (species != null) {
           playEffect(Effect.PokemonGet);
         }
-        say(species == null ? 'That evolution is no longer available.' : 'Evolution complete.');
+        if (species == null) {
+          say('That evolution is no longer available.');
+        } else {
+          say(
+            husk == null ? 'Evolution complete.' : `Evolution complete. A ${husk} was left behind.`,
+          );
+        }
         props.onRecordChanged();
         props.onEvolutionsChanged();
         props.onChange?.();

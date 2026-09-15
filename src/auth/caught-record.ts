@@ -413,6 +413,11 @@ export const enum Acquisition {
    * it began here, but what they handed over was a rock
    */
   Revived = 5,
+  /**
+   * Left behind in a ball by another pokemon evolving: the Shedinja a
+   * Nincada sheds
+   */
+  Shed = 6,
 }
 
 /**
@@ -425,6 +430,7 @@ export const ACQUISITION_NAMES: Record<Acquisition, string> = {
   [Acquisition.Trade]: 'Traded for',
   [Acquisition.Gift]: 'Received as a gift',
   [Acquisition.Revived]: 'Revived from a fossil',
+  [Acquisition.Shed]: 'Left behind by an evolution',
 };
 
 /**

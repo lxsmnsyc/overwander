@@ -11,9 +11,16 @@ import ChunkSnapshot, {
   type Spawn,
 } from '../overworld/chunk-snapshot';
 import { LURE_SPAWN_BONUS } from '../overworld/abilities/__create';
-import { type SnapshotRecord, asSnapshotRecord, spawnId } from './snapshot-record';
+import {
+  CLAIM_CHUNK_LIMIT,
+  type SnapshotRecord,
+  asSnapshotRecord,
+  spawnId,
+} from './snapshot-record';
 import { requireUid } from '../server/auth';
 import {
+  type ChunkClaims,
+  type ClaimQuery,
   type LatherResult,
   type NestOffer,
   claimApricornTree as claimApricornOnServerSide,
@@ -22,14 +29,13 @@ import {
   claimNest as claimNestOnServerSide,
   claimPhenomenon as claimPhenomenonOnServerSide,
   latherHoneyTree as latherHoneyTreeOnServerSide,
-  listClaimedItemCaches as listClaimedItemCachesOnServerSide,
-  listClaimedPhenomena as listClaimedPhenomenaOnServerSide,
+  listClaimsFor as listClaimsForOnServerSide,
   listLatheredHoneyTrees as listLatheredHoneyTreesOnServerSide,
-  listPickedBerryPatches as listPickedBerryPatchesOnServerSide,
   meetSpawn,
   peekNest as peekNestOnServerSide,
   peekPhenomenonEgg as peekPhenomenonEggOnServerSide,
 } from '../server/overworld';
+import batchedQuery from '../utils/batched-query';
 import { serverNow, syncServerClock } from './clock';
 import { asRecord, asRecordArray } from './__normalize';
 import { asOffset, getLocale, toLocalTime, toZoneKey } from './local-time';
@@ -471,22 +477,13 @@ async function peekPhenomenonEggOnServer(
   );
 }
 
-/**
- * Which of this chunk's happenings this player has already walked
- * into this hour. The board stops drawing them: a cloud already dug
- * through is a cell that would answer nothing
+/*
+ * A server function is addressed by its place in this file, so a tab
+ * loaded before a deploy calls these three by position. They keep
+ * their slots and answer from the batched read; new ones go at the end
  */
-export async function listClaimedPhenomena(snapshot: ChunkSnapshot): Promise<number[]> {
-  return listClaimedOnServer(
-    await getIdToken(),
-    snapshot.chunk.x,
-    snapshot.chunk.y,
-    snapshot.offset,
-    snapshot.depth,
-  );
-}
 
-async function listClaimedOnServer(
+export async function listClaimedOnServer(
   token: string,
   x: number,
   y: number,
@@ -494,32 +491,16 @@ async function listClaimedOnServer(
   depth: Depth,
 ): Promise<number[]> {
   'use server';
-  return listClaimedPhenomenaOnServerSide(
+  const claims = await listClaimsForOnServerSide(
     await requireUid(token),
-    x,
-    y,
+    [{ x, y, offset, depth }],
     await syncServerClock(),
-    offset,
-    depth,
   );
+
+  return claims.at(0)?.phenomena ?? [];
 }
 
-/**
- * Which of this chunk's patches this player has already picked this
- * window. The board draws those as bare bushes: a patch that would
- * answer nothing should not be drawn in fruit
- */
-export async function listPickedBerryPatches(snapshot: ChunkSnapshot): Promise<number[]> {
-  return listPickedOnServer(
-    await getIdToken(),
-    snapshot.chunk.x,
-    snapshot.chunk.y,
-    snapshot.offset,
-    snapshot.depth,
-  );
-}
-
-async function listPickedOnServer(
+export async function listPickedOnServer(
   token: string,
   x: number,
   y: number,
@@ -527,32 +508,16 @@ async function listPickedOnServer(
   depth: Depth,
 ): Promise<number[]> {
   'use server';
-  return listPickedBerryPatchesOnServerSide(
+  const claims = await listClaimsForOnServerSide(
     await requireUid(token),
-    x,
-    y,
+    [{ x, y, offset, depth }],
     await syncServerClock(),
-    offset,
-    depth,
   );
+
+  return claims.at(0)?.patches ?? [];
 }
 
-/**
- * Which of this chunk's caches this player has already dug up this
- * window. The board draws those open and empty, for the same reason it
- * draws a picked patch bare
- */
-export async function listClaimedItemCaches(snapshot: ChunkSnapshot): Promise<number[]> {
-  return listDugCachesOnServer(
-    await getIdToken(),
-    snapshot.chunk.x,
-    snapshot.chunk.y,
-    snapshot.offset,
-    snapshot.depth,
-  );
-}
-
-async function listDugCachesOnServer(
+export async function listDugCachesOnServer(
   token: string,
   x: number,
   y: number,
@@ -560,14 +525,13 @@ async function listDugCachesOnServer(
   depth: Depth,
 ): Promise<number[]> {
   'use server';
-  return listClaimedItemCachesOnServerSide(
+  const claims = await listClaimsForOnServerSide(
     await requireUid(token),
-    x,
-    y,
+    [{ x, y, offset, depth }],
     await syncServerClock(),
-    offset,
-    depth,
   );
+
+  return claims.at(0)?.caches ?? [];
 }
 
 /**
@@ -706,6 +670,66 @@ async function meetSpawnOnServer(
   return meetSpawn(await requireUid(token), x, y, spawn, await syncServerClock(), offset, depth);
 }
 
+function claimKey(query: ClaimQuery): string {
+  return `${query.depth}|${query.offset}|${query.x},${query.y}`;
+}
+
+// Last in the file, so adding it moved no other server function's place
+async function listClaimsOnServer(token: string, queries: ClaimQuery[]): Promise<ChunkClaims[]> {
+  'use server';
+  return listClaimsForOnServerSide(await requireUid(token), queries, await syncServerClock());
+}
+
+/**
+ * Every claim list the board asks for in the same moment, in one server
+ * call. A window turning over asks three lists of every chunk in range,
+ * so they all land here together and a chunk's three share one answer
+ */
+const readChunkClaims = batchedQuery(
+  async (queries: ClaimQuery[]): Promise<ChunkClaims[]> =>
+    listClaimsOnServer(await getIdToken(), queries),
+  // Answered in the order asked, so a query's place in the batch is its answer
+  (answers, _query, index): ChunkClaims =>
+    answers.at(index) ?? { phenomena: [], patches: [], caches: [] },
+  { key: claimKey, limit: CLAIM_CHUNK_LIMIT },
+);
+
+async function claimsOf(snapshot: ChunkSnapshot): Promise<ChunkClaims> {
+  return readChunkClaims({
+    x: snapshot.chunk.x,
+    y: snapshot.chunk.y,
+    offset: snapshot.offset,
+    depth: snapshot.depth,
+  });
+}
+
+/**
+ * Which of this chunk's happenings this player has already walked
+ * into this hour. The board stops drawing them: a cloud already dug
+ * through is a cell that would answer nothing
+ */
+export async function listClaimedPhenomena(snapshot: ChunkSnapshot): Promise<number[]> {
+  return (await claimsOf(snapshot)).phenomena;
+}
+
+/**
+ * Which of this chunk's patches this player has already picked this
+ * window. The board draws those as bare bushes: a patch that would
+ * answer nothing should not be drawn in fruit
+ */
+export async function listPickedBerryPatches(snapshot: ChunkSnapshot): Promise<number[]> {
+  return (await claimsOf(snapshot)).patches;
+}
+
+/**
+ * Which of this chunk's caches this player has already dug up this
+ * window. The board draws those open and empty, for the same reason it
+ * draws a picked patch bare
+ */
+export async function listClaimedItemCaches(snapshot: ChunkSnapshot): Promise<number[]> {
+  return (await claimsOf(snapshot)).caches;
+}
+
 /** Which of this chunk's honey trees this player has lathered this window */
 export async function listLatheredHoneyTrees(snapshot: ChunkSnapshot): Promise<number[]> {
   return listLatheredOnServer(
@@ -716,6 +740,7 @@ export async function listLatheredHoneyTrees(snapshot: ChunkSnapshot): Promise<n
   );
 }
 
+// After the claim lists, since main's server functions already hold the earlier places
 async function listLatheredOnServer(
   token: string,
   x: number,

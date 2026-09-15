@@ -316,6 +316,7 @@ import {
   getMovesLearnedAt,
   getRegisteredFamilies,
   getRegisteredSpecies,
+  getShedEvolutions,
   getShoreForm,
   getSpeciesAbilities,
   getSpeciesAbilityPools,
@@ -1813,6 +1814,37 @@ describe('evolution data', () => {
     [Stats.SpecialDefense]: 100,
     [Stats.Speed]: 100,
   };
+
+  it('leaves a Shedinja beside a Ninjask rather than offering it instead', () => {
+    const context = {
+      species: Species.Nincada,
+      level: 20,
+      carried: new Set([Items.PokeBall]),
+      held: new Set<Items>(),
+      canEvolve: false,
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
+      time: TimeOfDay.Day,
+      moves: new Set<Moves>(),
+    };
+    const named = (roads: { species: Species }[]): Species[] => {
+      const species: Species[] = [];
+
+      for (const road of roads) {
+        species.push(road.species);
+      }
+      return species;
+    };
+
+    // The only choice is the Ninjask, whatever the bag holds
+    expect(named(getAvailableEvolutions(context))).toEqual([Species.Ninjask]);
+    expect(named(getShedEvolutions(context))).toEqual([Species.Shedinja]);
+
+    // No ball to leave it in, or not grown yet, and there is no husk
+    expect(getShedEvolutions({ ...context, carried: new Set<Items>() })).toEqual([]);
+    expect(getShedEvolutions({ ...context, level: 19 })).toEqual([]);
+  });
 
   it('gives a Feebas two roads to the same shape', () => {
     const roads = getSpeciesData(Species.Feebas).evolvesInto ?? [];

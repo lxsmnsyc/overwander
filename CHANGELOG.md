@@ -1,5 +1,83 @@
 # overwander
 
+## 3.3.1
+
+### Patch Changes
+
+- 0ab5847: - A shiny's sparkle has a new sound.
+  - The game plays no other sound effects for now.
+- 8af2008: - Stopping on the overworld saves your position and steps in one request, and a save is no longer read back again.
+  - The overworld board only asks for a chunk's spawns when its window is missing or has run out, instead of every few seconds of walking.
+  - Quest completion checks pause while the game's tab is hidden, and run once when you come back.
+  - A shiny's sparkle in battle waits for the fight to start instead of sitting frozen through the countdown.
+  - A shiny's sparkle on the overworld plays through instead of stopping halfway and vanishing.
+  - A position that fails to load no longer replaces your saved spot with a new starting point.
+  - A tab left open across an update no longer sends nest, phenomenon and spawn claims to the wrong action.
+  - A tab left open across an update reloads on its next action instead of running it against the new version.
+
+## 3.3.0
+
+### Minor Changes
+
+- 8583a37: - Settings can turn the overworld's grid lines on. They are off by default.
+  - Settings can draw the board flat on wide screens too.
+- c873fb8: Pressing open ground marks that square with a ring and an outline until the walk there ends.
+
+### Patch Changes
+
+- 8c6b4a2: The site's icon is a grass tile standing on a cliff, sharp at every size and on phone home screens.
+- debb944: Shadow and purified auras are redrawn and stand out in the dark theme:
+  - A shadow pokemon stands in dark violet flames with rising embers.
+  - A purified pokemon stands in a golden ring with pillars of light and rising stars.
+- 0c3d514: An Illuminate buddy or a held Explorer Kit lights the dark 5 cells out, up from 3.
+- fecce21: - A shiny's sparkle opens with a ring and rays of light, then scatters turning glints in gold, white and pale blue.
+  - On the board the sparkle is drawn at full strength rather than shrunk below a pixel.
+- 57f2488: The board picks up a new buddy, a hatched one, or an item given to or taken from a catch straight away, rather than after a reload.
+- 484ceb9: - A pokemon met right after going into or out of a cave is the one drawn on the board.
+  - A pokemon caught there leaves the board.
+- 0c3d514: Every cell of cave floor can be walked to from a cave mouth.
+- 6eff42c: On a phone, the game bar shows only the menu and a details button, which opens the place, weather, world clock and gold.
+- 0f1c5cb: Moves are drawn in the battle field with depth:
+
+  - A move in the air and a move landing both cross the field in perspective, and pass behind whoever stands nearer the camera.
+  - Sparks, spray and debris fly around the pokemon and fall back to the ground.
+  - Fire, lightning, beams and healing light up the ground under them.
+  - Coils wrap round a pokemon, shields rise as a dome, and screens stand up as panes of glass.
+  - Heavy hits such as Earthquake, Explosion and Fissure shake the field.
+  - Statuses landing and biting are drawn round the pokemon in depth, from rising poison bubbles to a cage of bars.
+  - Shadow and purified auras stand round the pokemon in battle, and a shiny's sparkle bursts in the field.
+  - A shadow pokemon's aura is a dark purple storm cloud that swells out from its feet, with arcs of purple lightning.
+  - Weather falls through the battle field in depth: rain splashes on the ground, hail bounces, sand and fog drift between the pokemon, and sunlight falls in shafts.
+
+- 76a54d9: Releasing, trading or listing pokemon at the same moment can no longer leave you with none.
+- 6d1dba8: - The raid lobby no longer reloads when a player forms a team or walks in; only what changed is added.
+  - A raid lobby reads its teams, and every party's pokemon, in one request each instead of one per team or pokemon.
+  - Battle history reads a page's teams and opponents in one request each instead of one per battle.
+  - The auction board, auction lot lists and trade lists read their pokemon in one request instead of one per lot or trade.
+  - The overworld board reads its landmark glows once per chunk and window instead of on every step.
+  - Landmark glows sit on the landmark they describe.
+  - Auction notifications follow only the lots you sell or bid on, instead of re-reading every auction on each bid anywhere.
+  - Won and unsold auction notifications appear when the lot ends, without waiting for another bid somewhere.
+  - The overworld board reads which caches, berry patches and happenings you have already claimed in one request instead of three per chunk.
+  - A catch's previous owners, the raids you were invited to, and your duel lobbies are each read in one request instead of one per entry.
+  - Friend, request, notification and invite lists, and the auction board, read their players' profiles in one request instead of one per row.
+- b28c728: A nest whose egg you have not taken yet glows blue on the board, the way a wanderer you have not met does.
+- b28c728: A Nincada that evolves into a Ninjask while you carry a Poke Ball also leaves a Shedinja, instead of Shedinja being a choice in the Ninjask's place.
+- 82ff3e6: On a phone the overworld board shows a smaller area around the player, so each cell is drawn larger.
+- d4caf2f: - Scenery no longer has a shadow drawn into its picture, so pieces of the same kind look alike.
+  - The round bush is no longer cut off at its right edge.
+- 5040e61: Soft-edged pictures on the overworld board, such as auras, sparkles and labels, no longer show bright fringes along their edges.
+- 60817e7: Pokemon leave the board when their spawn window runs out, and the next window is fetched right away, even while the player stands still.
+- c8e26e7: - A road or route that meets a cliff always cuts a way up it.
+  - The safari heading marks a shadow pokemon, and a species you have caught before.
+- 7ce3f64: The site loads again instead of answering every page with a server error.
+- d6124e3: - Walking into a town shows just its name, and pacing along its edge no longer repeats it.
+  - A change of weather fades in over a few seconds instead of switching at once.
+  - What a cache, patch or tree gave stays over the tile it came from while the player walks away.
+- 5954a14: - The overworld no longer slows down the longer a player walks.
+  - The board frees its graphics when a battle takes over the screen.
+  - Each step and each frame of the board does less work, and moving the pointer within a cell no longer redraws it.
+
 ## 3.2.0
 
 ### Minor Changes

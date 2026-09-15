@@ -908,6 +908,15 @@ export default class ChunkSnapshot {
     return `${this.key}@${this.npcTimestamp}$${tag}${cell}`;
   }
 
+  /**
+   * The claim marker one player's egg from one nest writes, per nest
+   * window. Derived here for the same reason as `visitMarker`: the peek,
+   * the claim and the board's ring all have to spell it the same way
+   */
+  nestMarker(cell: number): string {
+    return `${this.groundKey}@${this.nestTimestamp}$nest${cell}`;
+  }
+
   private wanderers: Map<number, Npc> | null = null;
 
   /**

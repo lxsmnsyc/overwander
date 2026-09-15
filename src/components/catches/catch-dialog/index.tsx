@@ -6,7 +6,7 @@ import { syncServerClock } from '../../../auth/clock';
 import { type CaughtPokemon, countCaught, getCaught } from '../../../auth/caught';
 
 import { type PokedexView, getPokedex } from '../../../auth/pokedex';
-import { getProfile } from '../../../auth/profile';
+import { getProfiles } from '../../../auth/profile';
 
 import { type InventoryEntry, getInventory } from '../../../auth/inventory';
 import { getSellerStanding } from '../../../auth/auctions';
@@ -93,21 +93,11 @@ function CatchSheet(
     },
     async (key): Promise<Map<string, string>> => {
       const named = new Map<string, string>();
-      const pending: Promise<void>[] = [];
 
-      for (const uid of key.split(',')) {
-        if (uid === '') {
-          continue;
-        }
-        pending.push(
-          getProfile(uid).then((profile) => {
-            if (profile != null) {
-              named.set(uid, profile.nickname);
-            }
-          }),
-        );
+      // Every previous owner in one read
+      for (const [uid, profile] of await getProfiles(key.split(','))) {
+        named.set(uid, profile.nickname);
       }
-      await Promise.all(pending);
       return named;
     },
   );

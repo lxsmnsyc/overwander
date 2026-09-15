@@ -1,11 +1,4 @@
-import {
-  type AuctionRecord,
-  type BidHistoryEntry,
-  canClaim,
-  canReclaim,
-  listBidHistory,
-  watchOpenAuctions,
-} from './auctions';
+import { type AuctionRecord, canClaim, canReclaim, watchMyAuctions } from './auctions';
 import { watchDuelInvites } from './duels';
 import { watchFriendRequests } from './friends';
 import { watchRaidInvites } from './raids';
@@ -66,16 +59,11 @@ function byNewest(one: Notice, other: Notice): number {
  */
 function auctionNotices(
   lots: [string, AuctionRecord][],
-  bids: BidHistoryEntry[],
+  mine: Set<string>,
   uid: string,
   now: number,
 ): Notice[] {
   const found: Notice[] = [];
-  const mine = new Set<string>();
-
-  for (const entry of bids) {
-    mine.add(entry.auction);
-  }
 
   for (const [id, lot] of lots) {
     if (canClaim(lot, uid, now)) {
@@ -119,11 +107,35 @@ export function watchNotifications(uid: string, onChange: (notices: Notice[]) =>
   let friends: Notice[] = [];
   let trades: Notice[] = [];
   let auctions: Notice[] = [];
-  /** The player's own bids, re-read whenever a lot moves */
-  let bids: BidHistoryEntry[] = [];
+  let lots: [string, AuctionRecord][] = [];
+  let bidOn = new Set<string>();
+  let ending: ReturnType<typeof setTimeout> | undefined;
 
   const report = (): void => {
     onChange([...raids, ...duels, ...friends, ...trades, ...auctions].sort(byNewest));
+  };
+  // A lot ending changes nothing in its row, so won and unsold wait on the clock
+  const noticeAuctions = (): void => {
+    const now = Date.now();
+    let next = Number.POSITIVE_INFINITY;
+
+    auctions = auctionNotices(lots, bidOn, uid, now);
+    clearTimeout(ending);
+    for (const [, lot] of lots) {
+      if (lot.endsAt > now && lot.endsAt < next) {
+        next = lot.endsAt;
+      }
+    }
+    if (next !== Number.POSITIVE_INFINITY) {
+      // A second late, so the lot reads as ended when the timer fires
+      ending = setTimeout(
+        () => {
+          noticeAuctions();
+          report();
+        },
+        next - now + 1000,
+      );
+    }
   };
 
   const closers: Unwatch[] = [
@@ -183,25 +195,16 @@ export function watchNotifications(uid: string, onChange: (notices: Notice[]) =>
       }
       report();
     }),
-    watchOpenAuctions((lots) => {
-      // The bids are the player's own rows rather than the lot's, so
-      // they are read beside the lots rather than derived from them
-      listBidHistory(uid)
-        .then((placed) => {
-          bids = placed;
-        })
-        .catch(() => {
-          // A bid history that will not load leaves the lots saying
-          // what they can on their own: won and unsold need no bids
-        })
-        .finally(() => {
-          auctions = auctionNotices(lots, bids, uid, Date.now());
-          report();
-        });
+    watchMyAuctions(uid, (mine) => {
+      lots = mine.lots;
+      bidOn = new Set(mine.bidOn);
+      noticeAuctions();
+      report();
     }),
   ];
 
   return () => {
+    clearTimeout(ending);
     for (const close of closers) {
       close();
     }

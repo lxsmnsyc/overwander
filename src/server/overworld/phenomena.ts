@@ -5,7 +5,6 @@ import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import type { Spawn } from '../../overworld/chunk-snapshot';
 import { grantNestEgg } from '../eggs';
 import { getSql } from '../db';
-import { asString } from '../read';
 import { Landmark, Metric } from '../../auth/quest-record';
 import { bumpProgress } from '../quest-progress';
 import { grantStash } from './caches';
@@ -62,49 +61,8 @@ function phenomenonKey(snapshot: ChunkSnapshot, cell: number): string {
  * cell. It is what lets one query ask which of them a player has
  * already had
  */
-function phenomenonPrefix(snapshot: ChunkSnapshot): string {
+export function phenomenonPrefix(snapshot: ChunkSnapshot): string {
   return `${snapshot.groundKey}@${snapshot.phenomenonTimestamp}$happening`;
-}
-
-/**
- * Which cells of this chunk this player has already taken what was
- * happening on, inside the hour it is happening in.
- *
- * The board draws a phenomenon only until its player has had it: a
- * cloud somebody has already dug through is a cell they would press
- * for nothing. It is per player, so what one walks into is still
- * there for the next
- */
-export async function listClaimedPhenomena(
-  uid: string,
-  x: number,
-  y: number,
-  now: number,
-  offset: number,
-  depth: Depth = Depth.Surface,
-): Promise<number[]> {
-  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
-
-  if (snapshot == null) {
-    return [];
-  }
-
-  const prefix = phenomenonPrefix(snapshot);
-  const rows = await getSql()`
-    select marker from phenomenon_claims
-    where player = ${uid} and marker like ${`${prefix}%`}
-  `;
-
-  const cells: number[] = [];
-
-  for (const row of rows) {
-    const cell = Number(asString(row.marker).slice(prefix.length));
-
-    if (Number.isInteger(cell)) {
-      cells.push(cell);
-    }
-  }
-  return cells;
 }
 
 /**

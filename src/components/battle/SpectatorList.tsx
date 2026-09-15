@@ -3,6 +3,7 @@ import { type Profile, getProfiles } from '../../auth/profile';
 import PlayerPlate from '../profile/PlayerPlate';
 import { LIST_PAGE, List, ListRow, Note, type Pager, createPager } from '../styled';
 import { useGame } from '../app/game-context';
+import { settled } from '../app/resource-reads';
 
 /**
  * Who is in the room without a party: a raid lobby's onlookers, a
@@ -25,7 +26,10 @@ function Watchers(
   props: SpectatorListProps & { names: Resource<Map<string, Profile>>; page: Pager<string> },
 ): JSX.Element {
   const game = useGame();
-  const named = (uid: string): string => props.names()?.get(uid)?.nickname ?? uid;
+  // Settled, so somebody walking in keeps the names already shown rather
+  // than blanking the list to "Reading the room…"
+  const names = (): Map<string, Profile> | undefined => settled(props.names);
+  const named = (uid: string): string => names()?.get(uid)?.nickname ?? uid;
 
   return (
     <>
@@ -35,7 +39,7 @@ function Watchers(
             <ListRow selected={uid === props.player}>
               <PlayerPlate
                 name={uid === props.player ? 'You' : named(uid)}
-                sprite={props.names()?.get(uid)?.sprite ?? null}
+                sprite={names()?.get(uid)?.sprite ?? null}
                 onOpen={
                   uid === props.player
                     ? undefined

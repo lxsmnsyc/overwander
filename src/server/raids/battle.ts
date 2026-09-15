@@ -4,7 +4,7 @@ import { UNLIMITED_BATTLE_LIMITS } from '../../data/constants/battle-limits';
 import { RaidKind, type RaidRecord, asRaidRecord, mythicalRelicOf } from '../../auth/raid-record';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossSnapshot } from '../../overworld/raid';
 import { getSql, jsonOf, newDocId, tx } from '../db';
-import { foughtBattle, readBattle, readRaid, readTeam } from '../raid-io';
+import { foughtBattle, readBattle, readRaid, type readTeam, readTeams } from '../raid-io';
 import { consumeItem } from '../inventory';
 import { releaseBattleLocks } from '../locks';
 import { recordSeenOpponents } from '../pokedex';
@@ -71,15 +71,10 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
   // Every party at once. Each freezes a whole team of its own and
   // none of them waits on another, so a lobby of four starts in the
   // time one takes rather than four
-  const reading: ReturnType<typeof readTeam>[] = [];
-
-  for (const id of raid.teams) {
-    reading.push(readTeam(id));
-  }
-
   const publishing: Promise<[string, string] | null>[] = [];
 
-  for (const team of await Promise.all(reading)) {
+  // The whole lobby's teams in two queries, rather than two per team
+  for (const team of await readTeams(raid.teams)) {
     publishing.push(publishTeam(team, now));
   }
 

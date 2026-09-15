@@ -1,4 +1,5 @@
 import { isEgg } from './egg';
+import { announceBuddyChange } from './buddy-changes';
 import type { Buddy } from '../overworld/core';
 import { type CaughtPokemon, getCaught } from './caught';
 import { getProfile, setBuddyField } from './profile';
@@ -35,6 +36,7 @@ export async function setBuddy(uid: string, catchId: string): Promise<boolean> {
     return false;
   }
   await setBuddyField(uid, catchId);
+  announceBuddyChange();
   return true;
 }
 
@@ -43,6 +45,7 @@ export async function setBuddy(uid: string, catchId: string): Promise<boolean> {
  */
 export async function clearBuddy(uid: string): Promise<void> {
   await setBuddyField(uid, '');
+  announceBuddyChange();
 }
 
 /**

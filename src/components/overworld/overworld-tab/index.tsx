@@ -1,6 +1,7 @@
-import { type JSX, Suspense, createResource } from 'solid-js';
+import { type JSX, Suspense, createResource, onCleanup } from 'solid-js';
 
 import { getBuddyEffects } from '../../../auth/buddy';
+import { onBuddyChange } from '../../../auth/buddy-changes';
 import { useAuth } from '../../../auth/context';
 
 import { getRetiredKeys } from '../../../auth/safari';
@@ -20,7 +21,17 @@ import OverworldBoard from './board';
 export default function OverworldTab(): JSX.Element {
   const auth = useAuth();
 
-  const [buddy] = createResource(() => auth.user()?.uid ?? null, getBuddyEffects);
+  const [buddy, { refetch: refetchBuddy }] = createResource(
+    () => auth.user()?.uid ?? null,
+    getBuddyEffects,
+  );
+
+  // Swapped or re-equipped in a dialog over the board, which never unmounts
+  onCleanup(
+    onBuddyChange(() => {
+      Promise.resolve(refetchBuddy()).catch(() => undefined);
+    }),
+  );
 
   /**
    * What has run from this player. Re-read when a meeting ends, since

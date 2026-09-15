@@ -1,6 +1,7 @@
 import 'server-only';
 import { QUESTS } from '../data/quests';
 import { dailyWindow, weeklyWindow } from '../data/quests/rotations';
+import { readProgress } from './quest-progress';
 import { listQuests } from './quests';
 import { listRotations } from './rotations';
 
@@ -21,7 +22,13 @@ export interface DueQuest {
 }
 
 export default async function listDueQuests(uid: string, now: number): Promise<DueQuest[]> {
-  const [board, rotations] = await Promise.all([listQuests(uid), listRotations(uid, now)]);
+  // Both boards count the same progress, and every signed-in player
+  // polls this, so it is read once and handed to both
+  const progress = await readProgress(uid);
+  const [board, rotations] = await Promise.all([
+    listQuests(uid, progress),
+    listRotations(uid, now, progress),
+  ]);
   const due: DueQuest[] = [];
 
   for (const standing of board) {

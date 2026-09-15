@@ -13,6 +13,7 @@ import { requireUid } from '../server/auth';
 import { getCaught } from './caught';
 import { getStats } from './health';
 import { getInventory } from './inventory';
+import { getLocalOffset, getLocale } from './local-time';
 import getIdToken from './session';
 
 /**
@@ -85,7 +86,8 @@ export async function listEvolutionOptions(
   const options: EvolutionOption[] = [];
 
   for (const evolution of getSpeciesData(caught.species).evolvesInto ?? []) {
-    if (canEverEvolve(evolution, caught.gender)) {
+    // A husk comes out beside another evolution, so it is no row of its own
+    if (evolution.shed !== true && canEverEvolve(evolution, caught.gender)) {
       options.push({
         evolution,
         available: meetsEvolutionCriteria(evolution, context),
@@ -107,14 +109,16 @@ export async function listEvolutionOptions(
  * evolutions, a condition is unmet, or the required item is gone
  */
 export async function evolveCatch(catchId: string, into: Species): Promise<Species | null> {
-  return evolveOnServer(await getIdToken(), catchId, into);
+  return evolveOnServer(await getIdToken(), catchId, into, getLocalOffset(), getLocale());
 }
 
 async function evolveOnServer(
   token: string,
   catchId: string,
   into: Species,
+  offset: number,
+  locale: string,
 ): Promise<Species | null> {
   'use server';
-  return evolveOnServerSide(await requireUid(token), catchId, into);
+  return evolveOnServerSide(await requireUid(token), catchId, into, offset, locale);
 }

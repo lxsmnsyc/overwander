@@ -221,6 +221,24 @@ function everShown(key: string, timestamp: number, visible: number): number {
 }
 
 /**
+ * The windows still running at this local instant. One that has run out
+ * is standing nothing, so its spawns leave the board until the next lands
+ */
+export function runningWindows(
+  records: Map<string, WatchedWindow>,
+  now: number,
+): Map<string, WatchedWindow> {
+  const running = new Map<string, WatchedWindow>();
+
+  for (const [key, held] of records) {
+    if (held.record.timestamp + SNAPSHOT_INTERVAL > now) {
+      running.set(key, held);
+    }
+  }
+  return running;
+}
+
+/**
  * Build the board's view from the windows the store currently holds.
  *
  * Everything but the spawns re-derives from the chunk seeds and the

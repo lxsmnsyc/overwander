@@ -17,6 +17,8 @@ export interface LandmarkStandings {
   seats: Map<number, string>;
   /** Wanderers who have already done their one thing for this player */
   visited: Set<number>;
+  /** Nests whose egg this player has already taken this nest window */
+  taken: Set<number>;
 }
 
 /** The cells whose row id is in `ids`, read back through the id they were asked by */
@@ -72,9 +74,14 @@ export async function readLandmarkStandings(
       visits.set(snapshot.visitMarker(tag, cell), cell);
     }
   }
+  const nests = new Map<string, number>();
+
+  for (const cell of snapshot.getNests().keys()) {
+    nests.set(snapshot.nestMarker(cell), cell);
+  }
 
   const supabase = getSupabase();
-  const [rewards, defeated, held, claims] = await Promise.all([
+  const [rewards, defeated, held, claims, eggs] = await Promise.all([
     lairs.size === 0
       ? null
       : supabase
@@ -104,6 +111,13 @@ export async function readLandmarkStandings(
           .select('marker')
           .eq('player', uid)
           .in('marker', [...visits.keys()]),
+    nests.size === 0
+      ? null
+      : supabase
+          .from('nest_claims')
+          .select('marker')
+          .eq('player', uid)
+          .in('marker', [...nests.keys()]),
   ]);
 
   const holders = new Map<number, string>();
@@ -116,5 +130,6 @@ export async function readLandmarkStandings(
     beaten: cellsOf(stops, (defeated?.data ?? []) as { stop_id: unknown }[], 'stop_id'),
     seats: holders,
     visited: cellsOf(visits, (claims?.data ?? []) as { marker: unknown }[], 'marker'),
+    taken: cellsOf(nests, (eggs?.data ?? []) as { marker: unknown }[], 'marker'),
   };
 }

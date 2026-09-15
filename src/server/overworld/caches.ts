@@ -3,8 +3,6 @@ import { Depth } from '../../overworld/depth';
 import type { ItemStack } from '../../data/overworld/item-pool';
 import type { Items } from '../../data/ids/items';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
-import { getSql } from '../db';
-import { asString } from '../read';
 import { grantItems } from '../inventory';
 import { Landmark, Metric } from '../../auth/quest-record';
 import { bumpProgress } from '../quest-progress';
@@ -57,47 +55,6 @@ export async function grantStash(uid: string, stash: ItemStack[]): Promise<void>
   await grantItems(uid, granted);
 }
 
-function cachePrefix(snapshot: ChunkSnapshot): string {
+export function cachePrefix(snapshot: ChunkSnapshot): string {
   return `${snapshot.groundKey}@${snapshot.landmarkTimestamp}$`;
-}
-
-/**
- * Which of this chunk's caches this player has already dug up, inside
- * the window they were buried in.
- *
- * The board draws one of those open and empty, which is the same thing
- * the refusal says in words. Per player and keyed by the window, so a
- * stash one trainer carried off is still buried for the next and the
- * answer empties itself when the window turns over
- */
-export async function listClaimedItemCaches(
-  uid: string,
-  x: number,
-  y: number,
-  now: number,
-  offset: number,
-  depth: Depth = Depth.Surface,
-): Promise<number[]> {
-  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
-
-  if (snapshot == null) {
-    return [];
-  }
-
-  const prefix = cachePrefix(snapshot);
-  const rows = await getSql()`
-    select marker from cache_claims
-    where player = ${uid} and marker like ${`${prefix}%`}
-  `;
-
-  const cells: number[] = [];
-
-  for (const row of rows) {
-    const cell = Number(asString(row.marker).slice(prefix.length));
-
-    if (Number.isInteger(cell)) {
-      cells.push(cell);
-    }
-  }
-  return cells;
 }

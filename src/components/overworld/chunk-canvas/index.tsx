@@ -106,8 +106,10 @@ import type { ItemStack } from '../../../data/overworld/item-pool';
 import {
   CELL,
   CELL_STRIDE,
+  CLOCK_STEP,
   COLORS,
   DRAW_PACE,
+  GOAL_PULSE,
   HOVER_GLOW,
   IDLE_PACE,
   LOADING_LABEL,
@@ -375,6 +377,11 @@ export interface ChunkCanvasProps {
    */
   onPress: (cell: BoardCell) => void;
   /**
+   * The world cell a pressed walk to open ground is heading for, marked
+   * until the walk ends so the player can see which square they asked for
+   */
+  goal?: [number, number] | null;
+  /**
    * A shiny has just been drawn that was not being drawn before.
    *
    * Handed up rather than worked out by the caller, because the two
@@ -495,6 +502,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * standing on it is what starts a sparkle over
    */
   const SPARKLE_MEMORY = 512;
+
+  /** Which goal is marked, and when it was pressed, so a new press pulses and a replan does not */
+  let markedGoal = '';
+  let goalAt = 0;
 
   /** A published name as a number, for the stars a shiny throws */
   const nameSeed = (name: string): number => {
@@ -1724,7 +1735,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       const elapsed = last === 0 ? 0 : now - last;
 
       last = now;
-      clock += elapsed;
+      // Capped, so a stalled frame or a tab coming back picks animations up where they were
+      clock += Math.min(elapsed, CLOCK_STEP);
 
       // Only what is standing here. The cache outlives the chunk, so
       // walking every playhead in it means paying for every chunk
@@ -2534,6 +2546,19 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       let hoveredOutline: ProjectedPoint[] | null = null;
       let hoveredFloor = 0;
       const stepHighlight = import.meta.env.DEV && settings().stepHighlight;
+      // The square a pressed walk is heading for, in the board's own cells
+      const goal = props.goal ?? null;
+      const goalKey = goal == null ? '' : `${goal[0]},${goal[1]}`;
+
+      if (goalKey !== markedGoal) {
+        markedGoal = goalKey;
+        goalAt = clock;
+      }
+
+      const goalX = goal == null ? -1 : goal[0] - props.origin[0];
+      const goalY = goal == null ? -1 : goal[1] - props.origin[1];
+      let goalOutline: ProjectedPoint[] | null = null;
+      let goalFloor = 0;
 
       for (const { square, outline, lift } of drawn) {
         const hot = beneath(square);
@@ -2563,6 +2588,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         if (hot) {
           hoveredOutline = outline;
           hoveredFloor = floorOf(square, lift);
+        }
+        if (square.x === goalX && square.y === goalY) {
+          goalOutline = outline;
+          goalFloor = floorOf(square, lift);
         }
 
         const index = square.y * BOARD_CELLS + square.x;
@@ -2656,7 +2685,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * turns when the camera does. Under whatever is standing there,
        * since it is a fact about the ground
        */
-      const ripple = (index: number, spread: number, alpha: number): void => {
+      const ripple = (
+        index: number,
+        spread: number,
+        alpha: number,
+        colour: string = COLORS.featured,
+      ): void => {
         const cell = boardCellOf(index);
         const spot = shifted(cell);
         const floor = liftOf(cell);
@@ -2681,7 +2715,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           );
         }
         if (batch != null) {
-          batch.outline(COLORS.featured, ring, RIPPLE_WEIGHT, alpha);
+          batch.outline(colour, ring, RIPPLE_WEIGHT, alpha);
           return;
         }
         context.beginPath();
@@ -2694,7 +2728,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         const prior = context.globalAlpha;
 
         context.globalAlpha = prior * alpha;
-        context.strokeStyle = COLORS.featured;
+        context.strokeStyle = colour;
         context.lineWidth = RIPPLE_WEIGHT;
         context.stroke();
         context.lineWidth = 1;
@@ -2721,6 +2755,23 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       if (hoveredOutline != null) {
         marks?.depth(hoveredFloor);
         callOut(hoveredOutline, COLORS.highlight);
+      }
+      if (goalOutline != null) {
+        marks?.depth(goalFloor);
+        callOut(goalOutline, COLORS.goal);
+
+        // One ring out of the square as it is pressed, so the tap itself shows
+        const pulsed = (clock - goalAt) / GOAL_PULSE;
+
+        if (pulsed < 1) {
+          animating = true;
+          ripple(
+            goalY * BOARD_CELLS + goalX,
+            0.2 + pulsed * RIPPLE_SPREAD * 0.6,
+            (1 - pulsed) * RIPPLE_ALPHA,
+            COLORS.goal,
+          );
+        }
       }
 
       const reach = reachOutline();
@@ -3145,17 +3196,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               const glint =
                 batch == null || spent
                   ? null
-                  : paintSparkle(standing.id, seed, age, sprite.sourceFrameSize);
+                  : paintSparkle(standing.id, seed, age, sprite.sourceFrameSize, scale * ratio);
 
               if (!spent && (batch == null || glint == null)) {
                 drawSparkle(context, seed, age, middle.x, middle.y, sprite.sourceFrameSize, scale);
               } else if (batch != null && glint != null) {
-                // Painted in the sheet's own pixels around the point
-                // the pokemon stands on, so it is stamped over the box
-                // the pokemon fills, grown by the room the stars need
+                // Painted in screen pixels around the point the pokemon
+                // stands on, so it is stamped at the size it was painted
                 const half = {
-                  x: (glint.width * scale) / 2,
-                  y: (glint.height * scale) / 2,
+                  x: glint.width / ratio / 2,
+                  y: glint.height / ratio / 2,
                 };
 
                 batch.invalidate(glint);

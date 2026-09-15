@@ -361,7 +361,7 @@ export const enum CellAura {
   Fight = 1,
   /** The seat this player is holding */
   Mine = 2,
-  /** A wanderer who has not done their one thing for this player yet */
+  /** A wanderer who has not done their one thing for this player yet, or a nest whose egg they have not taken */
   Fresh = 3,
   /** A hidden grotto this player has not claimed this hour */
   Grotto = 4,
@@ -689,7 +689,7 @@ const SPARKLE_ROOM = SPARKLE_SPREAD / 4 + SPARKLE_STAR_SIZE;
 export const SPARKLE_SPAN = 1 + SPARKLE_ROOM * 2;
 
 /** The largest a sparkle's picture is painted, in either direction */
-const SPARKLE_LIMIT = 192;
+const SPARKLE_LIMIT = 512;
 
 /**
  * One picture per shiny, by the name its window published it under.
@@ -710,20 +710,28 @@ const sparkled = new Map<string, { canvas: HTMLCanvasElement; key: string }>();
 const SPARKLE_PICTURES = 16;
 
 /**
- * The picture of one sparkle at this moment, in the sheet's own
- * pixels, painted around the point the pokemon stands on.
+ * The picture of one sparkle at this moment, painted around the point
+ * the pokemon stands on.
  *
- * The stars are a share of the sprite, so this is painted at the
- * sheet's scale and stamped at whatever the pokemon is drawn at
+ * `density` is how many canvas pixels it is stamped at per sheet pixel.
+ * Painted at the sheet's own size and shrunk onto a small board sprite,
+ * its outlines and smallest glints fell under a pixel and all but vanished
  */
 export function paintSparkle(
   name: string,
   seed: number,
   age: number,
   frame: { width: number; height: number },
+  density = 1,
 ): HTMLCanvasElement | null {
-  const across = Math.min(SPARKLE_LIMIT, Math.max(1, Math.round(frame.width * SPARKLE_SPAN)));
-  const down = Math.min(SPARKLE_LIMIT, Math.max(1, Math.round(frame.height * SPARKLE_SPAN)));
+  const across = Math.min(
+    SPARKLE_LIMIT,
+    Math.max(1, Math.round(frame.width * density * SPARKLE_SPAN)),
+  );
+  const down = Math.min(
+    SPARKLE_LIMIT,
+    Math.max(1, Math.round(frame.height * density * SPARKLE_SPAN)),
+  );
   const key = `${seed}:${Math.round(age)}:${across}:${down}`;
   const held = sparkled.get(name);
 

@@ -2,6 +2,7 @@ import claimDevAdmin from './roles';
 import { DEFAULT_CHARSET } from '../data/overworld/charsets';
 import { DEFAULT_PLAYER_NAME, asPlayerName } from './nickname';
 import getSupabase, { type Unwatch, watchRow } from './supabase';
+import batchedQuery from '../utils/batched-query';
 import type { PlayerIdentity } from './user';
 
 /**
@@ -131,11 +132,23 @@ export async function getProfiles(uids: string[]): Promise<Map<string, Profile>>
 }
 
 /**
+ * `getProfile` for a list whose every row watches its own player: the
+ * reads made in the same moment go out as one `getProfiles`. Browser
+ * only, since the queue is shared by everyone in the module
+ */
+export const getProfileBatched = batchedQuery(
+  getProfiles,
+  (found, uid: string): Profile | null => found.get(uid) ?? null,
+  // The uids travel in the request's address, which has a length limit
+  { limit: 50 },
+);
+
+/**
  * Follow the profile as it changes. Gold moves whenever the player
  * earns or spends, and the balance should not wait for a reload
  */
 export function watchProfile(uid: string, onChange: (profile: Profile | null) => void): Unwatch {
-  return watchRow(PROFILE_TABLE, `id=eq.${uid}`, async () => getProfile(uid), onChange);
+  return watchRow(PROFILE_TABLE, `id=eq.${uid}`, async () => getProfileBatched(uid), onChange);
 }
 
 /**

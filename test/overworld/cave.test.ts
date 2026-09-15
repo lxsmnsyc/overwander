@@ -162,6 +162,72 @@ describe('the caves', () => {
     expect(biggest).toBeGreaterThan(800);
   });
 
+  it('leads a way in to every cell of floor', () => {
+    const cave = new World('overworld').at(Depth.Cave);
+    // Whole blocks of four chunks, so no floor is kept by a mouth outside the square
+    const chunks = 16;
+    const originX = -48;
+    const originY = -48;
+    const span = chunks * CHUNK_CELLS;
+    const reached = new Uint8Array(span * span);
+    const stack: number[] = [];
+    const open = (at: number): boolean =>
+      roleAt(
+        cave,
+        originX * CHUNK_CELLS + (at % span),
+        originY * CHUNK_CELLS + Math.floor(at / span),
+      ) === 'ground';
+
+    for (let y = originY; y < originY + chunks; y++) {
+      for (let x = originX; x < originX + chunks; x++) {
+        const mouth = caveMouth(cave, x, y);
+
+        if (mouth == null) {
+          continue;
+        }
+        const at =
+          (worldCell(y, Math.floor(mouth.cave / CHUNK_CELLS)) - originY * CHUNK_CELLS) * span +
+          (worldCell(x, mouth.cave % CHUNK_CELLS) - originX * CHUNK_CELLS);
+
+        reached[at] = 1;
+        stack.push(at);
+      }
+    }
+    expect(stack.length).toBeGreaterThan(0);
+    while (stack.length > 0) {
+      const at = stack.pop() ?? 0;
+
+      for (const [dx, dy] of [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ]) {
+        const x = (at % span) + dx;
+        const y = Math.floor(at / span) + dy;
+        const next = y * span + x;
+
+        if (x >= 0 && y >= 0 && x < span && y < span && reached[next] === 0 && open(next)) {
+          reached[next] = 1;
+          stack.push(next);
+        }
+      }
+    }
+
+    let floor = 0;
+
+    for (let at = 0; at < span * span; at++) {
+      if (open(at)) {
+        floor++;
+        expect(
+          reached[at],
+          `${originX * CHUNK_CELLS + (at % span)}, ${originY * CHUNK_CELLS + Math.floor(at / span)}`,
+        ).toBe(1);
+      }
+    }
+    expect(floor).toBeGreaterThan(1000);
+  });
+
   it('climbs every step', () => {
     const cave = new World('overworld').at(Depth.Cave);
     let steps = 0;

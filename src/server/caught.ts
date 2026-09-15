@@ -49,7 +49,7 @@ import { readStackIn, readStacksIn, spendStackIn, writeStackIn } from './stacks'
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import { isCatchLocked } from './locks';
 import { asNumber, asNumberArray, asRecord } from './read';
-import { retireSpawn } from './overworld';
+import { retireEncounter } from './overworld';
 
 /**
  * Catch records, written over the owner connection. A catch is the
@@ -77,21 +77,25 @@ export async function hasAnyCaught(uid: string): Promise<boolean> {
 }
 
 /**
- * Whether the player has a pokemon to spare, that is, more than the
- * one.
+ * How many of the player's pokemon may leave their hands, which is all
+ * but one.
  *
- * Nothing may take somebody's last one. Releasing it or selling it
- * leaves a player who cannot join a raid, cannot answer a grunt and
- * cannot throw a ball at anything, which is not a decision so much as
- * a way of ending the game by accident.
- *
- * Two rows at most, since the question is "more than one" rather
- * than "how many"
+ * Nothing may take somebody's last one: releasing it or selling it
+ * leaves a player who cannot join a raid, answer a grunt or throw a
+ * ball. Counted under a lock on their profile, so two of these at once
+ * cannot both see a spare and together take the last
  */
-export async function hasSpareCatch(uid: string): Promise<boolean> {
-  const rows = await getSql()`select 1 from caught where owner = ${uid} limit 2`;
+async function spareRoomIn(transaction: Tx, uid: string): Promise<number> {
+  await transaction`select 1 from profiles where id = ${uid} for update`;
 
-  return rows.length > 1;
+  const held = await transaction`select count(*)::int as count from caught where owner = ${uid}`;
+
+  return Math.max(0, asNumber(held.at(0)?.count) - 1);
+}
+
+/** Whether the player has a pokemon to spare, asked inside the transaction that takes it */
+export async function hasSpareCatchIn(transaction: Tx, uid: string): Promise<boolean> {
+  return (await spareRoomIn(transaction, uid)) > 0;
 }
 
 /**
@@ -110,6 +114,41 @@ export async function hasSpareCatch(uid: string): Promise<boolean> {
  * the entry is there so the sheet can say where the pokemon came from
  */
 export async function writeCaughtRecord(
+  uid: string,
+  encounter: EncounterRecord,
+  ball: Balls,
+  kind: Acquisition,
+  now: number,
+  offset: number,
+  locale: string,
+  from = '',
+): Promise<string> {
+  const id = await tx(async (transaction) =>
+    insertCaughtIn(transaction, uid, encounter, ball, kind, now, offset, locale, from),
+  );
+
+  // Every arrival ends here, so this is the one place the dex has to
+  // be told a pokemon became this player's. An egg is the exception
+  // and writes its own record; it is logged when it hatches, since
+  // what is in the shell is not something the player has met yet
+  await recordCaughtSpecies(uid, encounter.species, encounter.shiny);
+  await bumpProgress(uid, [
+    [Metric.Catches, encounter.species, 1],
+    ...(encounter.shiny
+      ? [[Metric.ShinyCatches, encounter.species, 1] satisfies ProgressBump]
+      : []),
+  ]);
+  return id;
+}
+
+/**
+ * The row itself, inside a transaction the caller holds, for an
+ * arrival that has to land with something else: an evolution writes the
+ * husk it leaves in the same one that spends the ball. The dex and the
+ * quest counters are the caller's to tell
+ */
+export async function insertCaughtIn(
+  transaction: Tx,
   uid: string,
   encounter: EncounterRecord,
   ball: Balls,
@@ -146,58 +185,44 @@ export async function writeCaughtRecord(
     effortValues: zeroEffortValues(),
   });
 
-  await tx(async (transaction) => {
-    await transaction`
-      insert into caught (
-        id, owner, type, species, nickname, level, individual_value, trait_value,
-        ivs, gender, nature, shiny, shadow, egg, favorite, guarded, traded,
-        auctionable, slots, locked_at, steps, hatch_steps, stepped_at, health,
-        max_health, statuses, lair, ball, caught_at_local, caught_at_offset, locale,
-        effort_bonus, walked, friendship,
-        origin_timestamp, origin_x, origin_y, origin_biome, origin_place
-      ) values (
-        ${id}, ${uid}, ${encounter.type}, ${encounter.species}, '',
-        ${encounter.level}, ${encounter.individualValue}, ${encounter.traitValue},
-        ${encounter.ivs}, ${encounter.gender}, ${encounter.nature},
-        ${encounter.shiny}, ${shadow}, false, false, false, false,
-        ${isAuctionableCatch(encounter)}, ${room}, 0, 0, 0, 0,
-        ${whole}, ${whole},
-        0, ${encounter.lair}, ${ball},
-        ${new Date(toLocalTime(now, zone))}, ${zone}, ${asLocale(locale)},
-        0, 0, ${caughtFriendship(ball, shadow)},
-        ${encounter.timestamp}, ${encounter.x}, ${encounter.y},
-        ${encounter.biome}, ${encounter.place ?? null}
-      )
-    `;
+  await transaction`
+    insert into caught (
+      id, owner, type, species, nickname, level, individual_value, trait_value,
+      ivs, gender, nature, shiny, shadow, egg, favorite, guarded, traded,
+      auctionable, slots, locked_at, steps, hatch_steps, stepped_at, health,
+      max_health, statuses, lair, ball, caught_at_local, caught_at_offset, locale,
+      effort_bonus, walked, friendship,
+      origin_timestamp, origin_x, origin_y, origin_biome, origin_place
+    ) values (
+      ${id}, ${uid}, ${encounter.type}, ${encounter.species}, '',
+      ${encounter.level}, ${encounter.individualValue}, ${encounter.traitValue},
+      ${encounter.ivs}, ${encounter.gender}, ${encounter.nature},
+      ${encounter.shiny}, ${shadow}, false, false, false, false,
+      ${isAuctionableCatch(encounter)}, ${room}, 0, 0, 0, 0,
+      ${whole}, ${whole},
+      0, ${encounter.lair}, ${ball},
+      ${new Date(toLocalTime(now, zone))}, ${zone}, ${asLocale(locale)},
+      0, 0, ${caughtFriendship(ball, shadow)},
+      ${encounter.timestamp}, ${encounter.x}, ${encounter.y},
+      ${encounter.biome}, ${encounter.place ?? null}
+    )
+  `;
 
-    await updateCaughtIn(transaction, id, {
-      // Cut to the room: a record that knew more moves than it has
-      // slots for would be one the sheet could not draw
-      moves: encounter.moves.slice(0, getSlots(room, Slots.Move)),
-      movePoints: {},
-      abilities,
-      items: encounter.items.slice(0, getSlots(room, Slots.Item)),
-      // The ball is on the entry as well as on the pokemon: this is
-      // the one it arrived in, and a later owner may put it in another.
-      // Whoever had it first holds no uid: nobody signs in as Red
-      history: [
-        ...(from === '' ? [] : [{ owner: '', name: from, acquiredAt: caughtAt, kind, ball }]),
-        { owner: uid, acquiredAt: caughtAt, kind, ball },
-      ],
-    });
+  await updateCaughtIn(transaction, id, {
+    // Cut to the room: a record that knew more moves than it has
+    // slots for would be one the sheet could not draw
+    moves: encounter.moves.slice(0, getSlots(room, Slots.Move)),
+    movePoints: {},
+    abilities,
+    items: encounter.items.slice(0, getSlots(room, Slots.Item)),
+    // The ball is on the entry as well as on the pokemon: this is
+    // the one it arrived in, and a later owner may put it in another.
+    // Whoever had it first holds no uid: nobody signs in as Red
+    history: [
+      ...(from === '' ? [] : [{ owner: '', name: from, acquiredAt: caughtAt, kind, ball }]),
+      { owner: uid, acquiredAt: caughtAt, kind, ball },
+    ],
   });
-
-  // Every arrival ends here, so this is the one place the dex has to
-  // be told a pokemon became this player's. An egg is the exception
-  // and writes its own record; it is logged when it hatches, since
-  // what is in the shell is not something the player has met yet
-  await recordCaughtSpecies(uid, encounter.species, encounter.shiny);
-  await bumpProgress(uid, [
-    [Metric.Catches, encounter.species, 1],
-    ...(encounter.shiny
-      ? [[Metric.ShinyCatches, encounter.species, 1] satisfies ProgressBump]
-      : []),
-  ]);
   return id;
 }
 
@@ -266,7 +291,8 @@ export async function recordCatch(
   // belongs to the window and the window is everybody's, so it is
   // retired the same way one that ran off is: left in the world, left
   // out of what this player is shown
-  await retireSpawn(uid, spawnId);
+  // Handed the encounter already read above rather than reading it again
+  await retireEncounter(uid, encounter);
 
   return id;
 }
@@ -562,90 +588,6 @@ export async function arrangeCatch(
 }
 
 /**
- * Let one pokemon go, inside a transaction somebody else opened.
- *
- * The row is deleted outright rather than flagged: a released pokemon
- * is gone, and nothing in the game reads a catch it no longer owns.
- * Whatever it was holding goes back to the bag in the same transaction
- * (the item was the player's, not the pokemon's), and its family's
- * candy is paid for the levels it took, one per 25 of them. The buddy field clears itself: it
- * is a foreign key that nulls on delete.
- *
- * A **favorite** and a **locked** one are both refused. Releasing
- * cannot be undone, and both marks are a player saying so about this
- * pokemon in particular.
- *
- * Resolves the species that went, or null when it was refused. The
- * caller checks there is a spare one to lose
- */
-async function releaseCatchIn(
-  transaction: Tx,
-  uid: string,
-  catchId: string,
-): Promise<Species | null> {
-  const caught = await readCaughtIn(transaction, catchId);
-
-  if (
-    caught == null ||
-    caught.owner !== uid ||
-    isCatchLocked(caught) ||
-    isFavoriteRecord(caught) ||
-    isGuardedRecord(caught)
-  ) {
-    return null;
-  }
-
-  // One copy back per copy held: two of the same item share a
-  // stack, and giving them back one write at a time would clobber
-  const returning = new Map<Items, number>();
-
-  for (const item of asHeldItems(caught.items)) {
-    returning.set(item, (returning.get(item) ?? 0) + 1);
-  }
-
-  // What the raising it took is worth, paid back as it goes
-  const record = asCaughtPokemon(caught);
-  const { family } = getSpeciesData(record.species);
-
-  // Read in one question before any of them is written, the way a
-  // transaction wants: what is going back is a whole belt at once
-  const carried = await readStacksIn(transaction, ITEM_STACKS, uid, [...returning.keys()]);
-
-  for (const [item, count] of returning) {
-    await writeStackIn(transaction, ITEM_STACKS, uid, item, (carried.get(item) ?? 0) + count);
-  }
-
-  const candies = await readStackIn(transaction, CANDY_STACKS, uid, family);
-
-  await writeStackIn(transaction, CANDY_STACKS, uid, family, candies + getReleaseCandy(record));
-  await transaction`delete from caught where id = ${catchId}`;
-  return record.species;
-}
-
-/**
- * Let a pokemon go.
- *
- * The **last** one is refused whatever it is: see `hasSpareCatch`. What
- * else is refused, and what letting one go is worth, is
- * `releaseCatchIn` above.
- *
- * Resolves false when the catch is not the player's, is fighting, is
- * a favorite, is locked, or is the only pokemon they have
- */
-export async function releaseCatch(uid: string, catchId: string): Promise<boolean> {
-  if (!(await hasSpareCatch(uid))) {
-    return false;
-  }
-
-  const gone = await tx(async (transaction) => releaseCatchIn(transaction, uid, catchId));
-
-  if (gone != null) {
-    await bumpProgress(uid, [[Metric.Releases, gone, 1]]);
-  }
-  return gone != null;
-}
-
-/**
  * What a run of catches came to: the ones that changed, and the ones
  * that would not. A caller says what actually happened rather than
  * assuming the whole selection went through
@@ -656,36 +598,92 @@ export interface BulkOutcome {
 }
 
 /**
- * Let several go at once.
+ * Whether a pokemon may be let go: it is the player's and is not
+ * fighting, a favorite or locked. Release cannot be undone, and both
+ * marks are a player saying so about this pokemon in particular
+ */
+function isReleasable(
+  caught: Record<string, unknown> | undefined,
+  uid: string,
+): caught is Record<string, unknown> {
+  return (
+    caught?.owner === uid &&
+    !isCatchLocked(caught) &&
+    !isFavoriteRecord(caught) &&
+    !isGuardedRecord(caught)
+  );
+}
+
+/**
+ * Let several go at once, in one transaction: the records in one read,
+ * each stack they pay into read and written once, and one delete.
  *
- * One transaction over the lot, so a batch either lands or does not,
- * and one round trip rather than one per pokemon. Each is refused on
- * its own terms — see `releaseCatchIn` — and a refusal leaves its
- * neighbours alone rather than failing the batch.
- *
- * **The last pokemon is still safe.** `hasSpareCatch` answers about one
- * release; a batch has to hold the same promise across all of them, so
- * the collection is counted first and at most one short of it goes
+ * A released pokemon's held items go back to the bag and its family is
+ * paid candy for the levels it took. A refusal (see `isReleasable`)
+ * leaves its neighbours alone, and the last pokemon is counted under
+ * `spareRoomIn`'s lock, so it is never let go
  */
 export async function releaseCatches(uid: string, catchIds: string[]): Promise<BulkOutcome> {
-  const held = await getSql()`select count(*)::int as count from caught where owner = ${uid}`;
-  const room = Math.max(0, asNumber(held.at(0)?.count) - 1);
   const outcome: BulkOutcome = { done: [], refused: [] };
   /** How many of each species went, so the quest board is told once */
   const gone = new Map<Species, number>();
 
   await tx(async (transaction) => {
-    for (const catchId of catchIds) {
-      const species =
-        outcome.done.length < room ? await releaseCatchIn(transaction, uid, catchId) : null;
+    const room = await spareRoomIn(transaction, uid);
+    const stored = await readCaughtMany(transaction, catchIds, true, ['items']);
+    const released = new Set<string>();
+    // Totals rather than a write per pokemon: two holding the same item,
+    // or of one family, share a stack and would clobber each other
+    const returning = new Map<Items, number>();
+    const candy = new Map<Families, number>();
 
-      if (species == null) {
+    for (const catchId of catchIds) {
+      const caught = stored.get(catchId);
+
+      // A repeated id is refused the second time, as one already gone
+      if (released.size >= room || released.has(catchId) || !isReleasable(caught, uid)) {
         outcome.refused.push(catchId);
-      } else {
-        outcome.done.push(catchId);
-        gone.set(species, (gone.get(species) ?? 0) + 1);
+        continue;
       }
+      released.add(catchId);
+      outcome.done.push(catchId);
+
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      const species = asNumber(caught.species) as Species;
+      const { family } = getSpeciesData(species);
+
+      for (const item of asHeldItems(caught.items)) {
+        returning.set(item, (returning.get(item) ?? 0) + 1);
+      }
+      candy.set(
+        family,
+        (candy.get(family) ?? 0) + getReleaseCandy({ level: asNumber(caught.level) }),
+      );
+      gone.set(species, (gone.get(species) ?? 0) + 1);
     }
+    if (outcome.done.length === 0) {
+      return;
+    }
+
+    const carried = await readStacksIn(transaction, ITEM_STACKS, uid, [...returning.keys()]);
+
+    for (const [item, count] of returning) {
+      await writeStackIn(transaction, ITEM_STACKS, uid, item, (carried.get(item) ?? 0) + count);
+    }
+
+    const candies = await readStacksIn(transaction, CANDY_STACKS, uid, [...candy.keys()]);
+
+    for (const [family, count] of candy) {
+      await writeStackIn(
+        transaction,
+        CANDY_STACKS,
+        uid,
+        family,
+        (candies.get(family) ?? 0) + count,
+      );
+    }
+    // The buddy field clears itself, as a foreign key that nulls on delete
+    await transaction`delete from caught where id = any(${transaction.array(outcome.done)})`;
   });
 
   if (gone.size > 0) {
@@ -698,6 +696,17 @@ export async function releaseCatches(uid: string, catchIds: string[]): Promise<B
     await bumpProgress(uid, bumps);
   }
   return outcome;
+}
+
+/**
+ * Let a pokemon go. The last one is refused whatever it is, and so is
+ * anything a batch would refuse.
+ *
+ * Resolves false when the catch is not the player's, is fighting, is
+ * a favorite, is locked, or is the only pokemon they have
+ */
+export async function releaseCatch(uid: string, catchId: string): Promise<boolean> {
+  return (await releaseCatches(uid, [catchId])).done.length > 0;
 }
 
 /**

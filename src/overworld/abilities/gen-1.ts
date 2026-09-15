@@ -122,7 +122,7 @@ const setupPickup = createBuddyAbility(Abilities.Pickup, (overworld) => {
  * side, in cells. It replaces what they would see alone rather than
  * multiplying it, so the reach is one number wherever it is read
  */
-export const ILLUMINATE_LAMP_CELLS = 3;
+export const ILLUMINATE_LAMP_CELLS = 5;
 
 /**
  * Illuminate, out here, is a lantern as well as a lure: under a sky

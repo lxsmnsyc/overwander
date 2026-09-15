@@ -128,4 +128,46 @@ export async function readTeam(
   };
 }
 
+/**
+ * `readTeam` for a whole lobby: two queries however many teams, in the
+ * order the ids came, with null where a team has gone
+ */
+export async function readTeams(ids: string[]): Promise<Awaited<ReturnType<typeof readTeam>>[]> {
+  if (ids.length === 0) {
+    return [];
+  }
+
+  const sql = getSql();
+  const [rows, catches] = await Promise.all([
+    sql`select id, player, raid_id from teams where id = any(${ids})`,
+    sql`select team_id, caught_id from team_catches where team_id = any(${ids}) order by team_id, slot`,
+  ]);
+  const queued = new Map<string, string[]>();
+
+  for (const entry of catches) {
+    const team = asString(entry.team_id);
+
+    queued.set(team, [...(queued.get(team) ?? []), asString(entry.caught_id)]);
+  }
+
+  const byId = new Map<string, { player: string; raid: string; catches: string[] }>();
+
+  for (const row of rows) {
+    const id = asString(row.id);
+
+    byId.set(id, {
+      player: asString(row.player),
+      raid: asString(row.raid_id),
+      catches: queued.get(id) ?? [],
+    });
+  }
+
+  const teams: Awaited<ReturnType<typeof readTeam>>[] = [];
+
+  for (const id of ids) {
+    teams.push(byId.get(id) ?? null);
+  }
+  return teams;
+}
+
 export { asNumber };

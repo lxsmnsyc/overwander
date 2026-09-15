@@ -548,7 +548,7 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.Illuminate, {
     name: 'Illuminate',
     description:
-      'Refuses accuracy drops from anybody else. As a buddy, 3 more wild pokemon appear and the dark is lit 3 cells out.',
+      'Refuses accuracy drops from anybody else. As a buddy, 3 more wild pokemon appear and the dark is lit 5 cells out.',
   });
 
   // MrMime

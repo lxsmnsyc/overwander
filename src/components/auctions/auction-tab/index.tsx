@@ -8,9 +8,14 @@ import {
 import { isLockLive } from '../../../auth/battle-lock';
 import { getBuddy } from '../../../auth/buddy';
 import { syncServerClock } from '../../../auth/clock';
-import { type CaughtPokemon, countCaught, getCaught, listCaughtMarked } from '../../../auth/caught';
+import {
+  type CaughtPokemon,
+  countCaught,
+  getCaughtBatched,
+  listCaughtMarked,
+} from '../../../auth/caught';
 
-import { getProfile } from '../../../auth/profile';
+import { getProfiles } from '../../../auth/profile';
 
 import type { CatchOption } from '../../catches/catch-picker';
 
@@ -68,7 +73,8 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
         }
         reads.push(
           (async (): Promise<void> => {
-            const caught = await getCaught(id);
+            // Every lot on the board in the same moment, so one read
+            const caught = await getCaughtBatched(id);
 
             if (caught != null) {
               found.set(id, caught);
@@ -97,23 +103,11 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
     },
     async (key): Promise<Map<string, string>> => {
       const named = new Map<string, string>();
-      const reads: Promise<void>[] = [];
 
-      for (const uid of key.split(',')) {
-        if (uid === '') {
-          continue;
-        }
-        reads.push(
-          (async (): Promise<void> => {
-            const seller = await getProfile(uid);
-
-            if (seller != null) {
-              named.set(uid, seller.nickname);
-            }
-          })(),
-        );
+      // Every seller on the board in one read
+      for (const [uid, seller] of await getProfiles(key.split(','))) {
+        named.set(uid, seller.nickname);
       }
-      await Promise.all(reads);
       return named;
     },
   );

@@ -55,6 +55,9 @@ export interface SnapshotRecord {
   spawns: SpawnRoll[];
 }
 
+/** The most chunks one claims call may ask about, so a caller cannot ask for the whole world */
+export const CLAIM_CHUNK_LIMIT = 32;
+
 /**
  * What a spawn is called, for the encounter that is staged from it.
  * Derived rather than stored: the chunk, the zone, the window and

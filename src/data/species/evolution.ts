@@ -334,11 +334,27 @@ export function getAvailableEvolutions(context: EvolutionContext): EvolutionData
   const available: EvolutionData[] = [];
 
   for (const evolution of getSpeciesData(context.species).evolvesInto ?? []) {
-    if (meetsEvolutionCriteria(evolution, context)) {
+    if (evolution.shed !== true && meetsEvolutionCriteria(evolution, context)) {
       available.push(evolution);
     }
   }
   return available;
+}
+
+/**
+ * What an evolution taken right now leaves behind beside it: a
+ * Shedinja, for a Nincada carrying a Poke Ball. The context's carried
+ * items are what decides it, the same as for the evolution itself
+ */
+export function getShedEvolutions(context: EvolutionContext): EvolutionData[] {
+  const shed: EvolutionData[] = [];
+
+  for (const evolution of getSpeciesData(context.species).evolvesInto ?? []) {
+    if (evolution.shed === true && meetsEvolutionCriteria(evolution, context)) {
+      shed.push(evolution);
+    }
+  }
+  return shed;
 }
 
 /**

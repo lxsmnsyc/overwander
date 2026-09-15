@@ -628,6 +628,7 @@ export default function BoardDemo(): JSX.Element {
           auras={NOTHING_MAPPED}
           decorations={decorations()}
           spawns={windowed(spawns(), at())}
+          goal={queued().at(-1) ?? null}
           label={(index) => `Cell ${index}`}
           onPress={(cell) => {
             headFor(cell);

@@ -1,6 +1,7 @@
 import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import { type CatchSnapshot, asCatchSnapshot } from './catch-snapshot';
 import getSupabase from './supabase';
+import batchedQuery from '../utils/batched-query';
 
 /**
  * The most catches a team can field
@@ -57,6 +58,29 @@ export async function getTeam(id: string): Promise<TeamRecord | null> {
   return data == null ? null : fromTeamRow(asRecord(data));
 }
 
+/**
+ * `getTeam` for a lobby reading every team in it at once: the reads made
+ * in the same moment go out as one. Browser only, since the queue is
+ * shared by everyone in the module
+ */
+export const getTeamBatched = batchedQuery(
+  async (ids: string[]): Promise<Map<string, TeamRecord>> => {
+    const { data } = await getSupabase()
+      .from('teams')
+      .select('id, player, raid_id, team_catches(slot, caught_id)')
+      .in('id', ids);
+    const found = new Map<string, TeamRecord>();
+
+    for (const row of asRecordArray(data)) {
+      found.set(String(row.id), fromTeamRow(row));
+    }
+    return found;
+  },
+  (found, id: string): TeamRecord | null => found.get(id) ?? null,
+  // The ids travel in the request's address, which has a length limit
+  { limit: 50 },
+);
+
 function fromTeamRow(row: Record<string, unknown>): TeamRecord {
   const catches = asRecordArray(row.team_catches).sort(
     (left, right) => Number(left.slot ?? 0) - Number(right.slot ?? 0),
@@ -97,18 +121,41 @@ export async function getTeamSnapshot(id: string): Promise<TeamSnapshotRecord | 
     .eq('id', id)
     .maybeSingle();
 
-  if (data == null) {
-    return null;
-  }
+  return data == null ? null : fromSnapshotRow(asRecord(data));
+}
 
+/**
+ * `getTeamSnapshot` for a page of battles reading every team in them at
+ * once: the reads made in the same moment go out as one. Browser only,
+ * since the queue is shared by everyone in the module
+ */
+export const getTeamSnapshotBatched = batchedQuery(
+  async (ids: string[]): Promise<Map<string, TeamSnapshotRecord>> => {
+    const { data } = await getSupabase()
+      .from('team_snapshots')
+      .select('id, player, alliance, catches')
+      .in('id', ids);
+    const found = new Map<string, TeamSnapshotRecord>();
+
+    for (const row of asRecordArray(data)) {
+      found.set(String(row.id), fromSnapshotRow(row));
+    }
+    return found;
+  },
+  (found, id: string): TeamSnapshotRecord | null => found.get(id) ?? null,
+  // The ids travel in the request's address, which has a length limit
+  { limit: 50 },
+);
+
+function fromSnapshotRow(row: Record<string, unknown>): TeamSnapshotRecord {
   const catches: CatchSnapshot[] = [];
 
-  for (const value of Array.isArray(data.catches) ? data.catches : []) {
+  for (const value of Array.isArray(row.catches) ? row.catches : []) {
     catches.push(asCatchSnapshot(value));
   }
   return {
-    player: asString(data.player),
-    alliance: asNumber(data.alliance),
+    player: asString(row.player),
+    alliance: asNumber(row.alliance),
     catches,
   };
 }

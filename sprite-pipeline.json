@@ -4574,15 +4574,15 @@
       }
     },
     "public/sprites/overworld/decorations/image.png": {
-      "digest": "70ac98fc3830e840",
-      "bytes": 11222,
-      "width": 160,
-      "height": 157,
+      "digest": "dc2948800d43ae14",
+      "bytes": 10868,
+      "width": 170,
+      "height": 142,
       "compact": {
-        "at": "2026-08-27T17:43:04Z",
+        "at": "2026-09-15T02:21:41Z",
         "as": "already compact",
-        "was": 11222,
-        "bytes": 11222
+        "was": 10868,
+        "bytes": 10868
       }
     },
     "public/sprites/overworld/landmarks-apricorn/black/image.png": {

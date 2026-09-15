@@ -49,22 +49,27 @@ export const enum Effect {
   BallClick = 14,
 }
 
-const FILES: Record<Effect, string> = {
-  [Effect.ShinySparkle]: '/sounds/effects/shiny_sparkle.wav',
-  [Effect.NurseHeal]: '/sounds/effects/nurse_heal.wav',
-  [Effect.BallShake]: '/sounds/effects/ball_shake.wav',
-  [Effect.CatchFailed]: '/sounds/effects/catch_failed.wav',
-  [Effect.Flight]: '/sounds/effects/flight.wav',
-  [Effect.LevelUp]: '/sounds/effects/level_up.wav',
-  [Effect.BattleStart]: '/sounds/effects/battle_start.wav',
-  [Effect.BattleWon]: '/sounds/effects/battle_won.wav',
-  [Effect.BattleLost]: '/sounds/effects/battle_lost.wav',
-  [Effect.EggGet]: '/sounds/effects/egg_get.wav',
-  [Effect.ItemGet]: '/sounds/effects/item_get.wav',
-  [Effect.PokemonGet]: '/sounds/effects/pokemon_get.wav',
-  [Effect.PrizedItem]: '/sounds/effects/prized_item.wav',
-  [Effect.SpecialItem]: '/sounds/effects/special_item.wav',
-  [Effect.BallClick]: '/sounds/effects/ball_click.wav',
+/**
+ * The files each sound plays. Only the sparkle has one: the rest were
+ * removed until there are files the game is licensed to use, and stay
+ * silent until they are uncommented
+ */
+const FILES: Partial<Record<Effect, string>> = {
+  [Effect.ShinySparkle]: '/sounds/effects/shiny_sparkle.mp3',
+  // [Effect.NurseHeal]: '/sounds/effects/nurse_heal.wav',
+  // [Effect.BallShake]: '/sounds/effects/ball_shake.wav',
+  // [Effect.CatchFailed]: '/sounds/effects/catch_failed.wav',
+  // [Effect.Flight]: '/sounds/effects/flight.wav',
+  // [Effect.LevelUp]: '/sounds/effects/level_up.wav',
+  // [Effect.BattleStart]: '/sounds/effects/battle_start.wav',
+  // [Effect.BattleWon]: '/sounds/effects/battle_won.wav',
+  // [Effect.BattleLost]: '/sounds/effects/battle_lost.wav',
+  // [Effect.EggGet]: '/sounds/effects/egg_get.wav',
+  // [Effect.ItemGet]: '/sounds/effects/item_get.wav',
+  // [Effect.PokemonGet]: '/sounds/effects/pokemon_get.wav',
+  // [Effect.PrizedItem]: '/sounds/effects/prized_item.wav',
+  // [Effect.SpecialItem]: '/sounds/effects/special_item.wav',
+  // [Effect.BallClick]: '/sounds/effects/ball_click.wav',
 };
 
 /**
@@ -85,7 +90,9 @@ const loaded = new Map<Effect, HTMLAudioElement>();
  * never downloads the sparkle
  */
 function sourceOf(effect: Effect): HTMLAudioElement | null {
-  if (typeof Audio === 'undefined') {
+  const file = FILES[effect];
+
+  if (typeof Audio === 'undefined' || file == null) {
     return null;
   }
 
@@ -95,7 +102,7 @@ function sourceOf(effect: Effect): HTMLAudioElement | null {
     return held;
   }
 
-  const made = new Audio(FILES[effect]);
+  const made = new Audio(file);
 
   made.preload = 'auto';
   loaded.set(effect, made);
@@ -104,9 +111,9 @@ function sourceOf(effect: Effect): HTMLAudioElement | null {
 
 /**
  * Play one of the world's sounds, at whatever the player has the
- * slider at. Silent at zero, and silent where the browser refuses:
- * audio before the page has been interacted with is blocked, and a
- * blocked sound is not something to tell anybody about
+ * slider at. Silent at zero, for a sound with no file, and where the
+ * browser refuses: audio before the page has been interacted with is
+ * blocked, and a blocked sound is not something to tell anybody about
  */
 export default function playEffect(effect: Effect): void {
   const level = settings().sound;

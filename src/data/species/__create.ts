@@ -66,6 +66,12 @@ export interface EvolutionData {
    * fallback
    */
   compare?: StatComparison;
+  /**
+   * Left behind beside whichever evolution is taken, rather than taken
+   * instead of one: a Nincada that becomes a Ninjask with a Poke Ball in
+   * the bag leaves a Shedinja too, the way the mainline hands over both
+   */
+  shed?: boolean;
 }
 
 /**

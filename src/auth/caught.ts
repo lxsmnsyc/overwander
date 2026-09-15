@@ -16,6 +16,7 @@ import { requireUid } from '../server/auth';
 import type { CatchConstraint, CatchContext } from './catch-search';
 import type { PostgrestError } from '@supabase/supabase-js';
 import { asRecord, asRecordArray } from './__normalize';
+import { announceBuddyChange } from './buddy-changes';
 import type { CatchOrder, CaughtPokemon } from './caught-record';
 import { CAUGHT_EMBED, fromCaughtRow } from './caught-rows';
 import getSupabase from './supabase';
@@ -459,7 +460,13 @@ export async function hasCaughtSpecies(owner: string, species: Species): Promise
  * its limit, or the item is not holdable
  */
 export async function giveItem(catchId: string, item: Items): Promise<boolean> {
-  return giveItemOnServer(await getIdToken(), catchId, item);
+  const given = await giveItemOnServer(await getIdToken(), catchId, item);
+
+  // Announced whichever catch it was: telling whether it is the buddy costs the same read
+  if (given) {
+    announceBuddyChange();
+  }
+  return given;
 }
 
 async function giveItemOnServer(token: string, catchId: string, item: Items): Promise<boolean> {
@@ -472,7 +479,12 @@ async function giveItemOnServer(token: string, catchId: string, item: Items): Pr
  * is not the user's or is not holding that item
  */
 export async function takeItem(catchId: string, item: Items): Promise<boolean> {
-  return takeItemOnServer(await getIdToken(), catchId, item);
+  const taken = await takeItemOnServer(await getIdToken(), catchId, item);
+
+  if (taken) {
+    announceBuddyChange();
+  }
+  return taken;
 }
 
 async function takeItemOnServer(token: string, catchId: string, item: Items): Promise<boolean> {

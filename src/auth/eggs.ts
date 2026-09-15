@@ -1,6 +1,7 @@
 import type { Species } from '../data/ids/species';
 import { type WalkReport, hatchEgg as hatchOnServerSide, recordSteps } from '../server/eggs';
 import { requireUid } from '../server/auth';
+import { announceBuddyChange } from './buddy-changes';
 import { syncServerClock } from './clock';
 import { getLocalOffset } from './local-time';
 import getIdToken from './session';
@@ -44,7 +45,13 @@ async function walkOnServer(token: string, steps: number): Promise<WalkReport | 
  * player's or has not been walked far enough
  */
 export async function hatchEgg(catchId: string): Promise<Species | null> {
-  return hatchOnServer(await getIdToken(), catchId, getLocalOffset());
+  const hatched = await hatchOnServer(await getIdToken(), catchId, getLocalOffset());
+
+  // A buddy that was an egg lends nothing until it hatches
+  if (hatched != null) {
+    announceBuddyChange();
+  }
+  return hatched;
 }
 
 async function hatchOnServer(

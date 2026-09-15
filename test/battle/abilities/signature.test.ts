@@ -3646,24 +3646,60 @@ describe('Escort', () => {
 });
 
 describe('Steelmolt', () => {
-  it('sheds a layer onto the enemy side for every hit taken', () => {
+  it('sheds a layer only as a hit takes it past 3/4 and past 1/2 HP', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 0);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
     holder.addAbility(Abilities.Steelmolt);
 
-    enemy.damage({ type: EffectType.Move, move: Moves.Pound, unit: enemy }, holder, 20, 0);
-    // The cast move takes its own flight time to arrive
-    battle.tick(turns(1));
+    const whole = holder.checkStat(Stats.HP, 0);
+    const hit = (to: number): void => {
+      enemy.damage(
+        { type: EffectType.Move, move: Moves.Pound, unit: enemy },
+        holder,
+        holder.health - Math.floor(whole * to),
+        0,
+      );
+      // The cast move takes its own flight time to arrive
+      battle.tick(turns(1));
+    };
 
+    // A scratch above the first mark sheds nothing
+    hit(0.9);
+    expect(layersUnder(teamB)).toBe(0);
+
+    hit(0.7);
     expect(layersUnder(teamB)).toBe(1);
 
-    enemy.damage({ type: EffectType.Move, move: Moves.Pound, unit: enemy }, holder, 20, 0);
+    // Still between the marks, however many hits land
+    hit(0.6);
+    hit(0.55);
+    expect(layersUnder(teamB)).toBe(1);
+
+    hit(0.4);
+    expect(layersUnder(teamB)).toBe(2);
+    expect(layersUnder(teamA)).toBe(0);
+  });
+
+  it('sheds both layers from one hit that crosses both marks', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Steelmolt);
+
+    const whole = holder.checkStat(Stats.HP, 0);
+
+    enemy.damage(
+      { type: EffectType.Move, move: Moves.Pound, unit: enemy },
+      holder,
+      Math.ceil(whole * 0.6),
+      0,
+    );
     battle.tick(turns(1));
 
     expect(layersUnder(teamB)).toBe(2);
-    expect(layersUnder(teamA)).toBe(0);
   });
 });
 

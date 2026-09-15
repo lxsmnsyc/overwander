@@ -908,6 +908,68 @@ const elements = {
       }
     }
   },
+
+  // Wind that keeps coming: strands turning out of the caster and widening onto it, the far end turning rather than bursting
+  Gale(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const wind = lighten(paint.color, 0.3);
+    const out = Math.min(1, share * 2.4);
+    const fading = share < 0.75 ? 1 : decay(share) * 4;
+    const strands = many(3, weight);
+
+    for (let strand = 0; strand < strands; strand += 1) {
+      const path: Spot[] = [];
+
+      for (let step = 0; step <= 22; step += 1) {
+        const along = (step / 22) * out;
+        const phase = along * Math.PI * 2.5 + share * Math.PI * 6 + (strand / strands) * TAU;
+        // Wider the further it has blown, so the pokemon at the far end stands in the mouth of it
+        const swing = reach * 0.9 * (0.25 + along);
+
+        path.push(
+          aside(
+            kit,
+            toward(stage.source, at, along),
+            Math.cos(phase) * swing,
+            Math.sin(phase) * swing * 0.6,
+          ),
+        );
+      }
+      kit.ribbon(path, reach * 0.09, wind, fading * 0.9, share * 8, { add: 0.7 });
+    }
+    if (out >= 1) {
+      for (let spin = 0; spin < 2; spin += 1) {
+        const radius = reach * (0.8 + spin * 0.4);
+        const start = share * Math.PI * 5 + spin * 2.2;
+        const arc: Spot[] = [];
+
+        for (let step = 0; step <= 8; step += 1) {
+          const angle = start - 0.9 + (step / 8) * 1.8;
+
+          arc.push(aside(kit, at, Math.cos(angle) * radius, Math.sin(angle) * radius * 0.75));
+        }
+        kit.ribbon(arc, reach * 0.1, wind, fading * 0.8);
+      }
+    }
+    for (let mote = 0; mote < many(4, weight); mote += 1) {
+      const held = (share + noise(seed, mote)) % 1;
+
+      kit.glow(
+        aside(
+          kit,
+          at,
+          spread(seed, mote + 10) * reach * 1.6 * held,
+          spread(seed, mote + 20) * reach * held,
+          spread(seed, mote + 30) * reach,
+        ),
+        reach * 0.07,
+        wind,
+        fading * 0.6 * swell(held),
+        0.6,
+      );
+    }
+  },
 } satisfies Partial<Record<EffectShape, LitShapePainter>>;
 
 export default elements;

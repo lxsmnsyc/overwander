@@ -1,7 +1,7 @@
 import type { Spot } from '../../../three/effect-batch';
 import { decay, lighten, mix, noise, spread, swell } from '../__paint';
 import { type EffectShape, many } from '../effect/shapes';
-import { TAU, sparks, spiral } from './pieces';
+import { TAU, chevron, sparks, spiral } from './pieces';
 import { type LitShapePainter, aside, floorOf, landed, reachOf, staged } from './shapes';
 
 /**
@@ -249,6 +249,93 @@ const minds = {
         swell(held) * 0.9,
       );
     }
+  },
+
+  // A breeze of petals crossing over it, each turning as it goes, which is what separates blown from thrown
+  Petals(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+
+    for (let one = 0; one < many(9, weight); one += 1) {
+      // Staggered, so petals keep arriving for the whole of it rather than crossing as one row
+      const held = (share * 1.25 + noise(seed, one)) % 1;
+
+      kit.leaf(
+        aside(
+          kit,
+          at,
+          (held - 0.5) * reach * 4.4,
+          spread(seed, one + 30) * reach + Math.sin(held * Math.PI * 2.2 + one) * reach * 0.55,
+          spread(seed, one + 45) * reach * 0.8,
+        ),
+        reach * (0.22 + noise(seed, one + 60) * 0.12),
+        held * Math.PI * 3 + one,
+        paint.color,
+        0.35 + swell(held) * 0.65,
+      );
+    }
+  },
+
+  // A room laid over the field. It goes up and stands, as a screen does: what it changes lasts
+  Grid(kit, stage, share, { paint }) {
+    const floor = floorOf(landed(stage));
+    const reach = reachOf(stage);
+    const up = Math.min(1, share * 3);
+    const alpha = share < 0.8 ? 0.4 + up * 0.4 : decay(share) * 4;
+    const line = lighten(paint.color, 0.3);
+    const low: Spot[] = [];
+    const high: Spot[] = [];
+
+    // Ring order from the far left, as a panel takes its corners
+    for (const [right, away] of [
+      [-1, 1],
+      [1, 1],
+      [1, -1],
+      [-1, -1],
+    ] as const) {
+      low.push(aside(kit, floor, right * reach * 3.4 * up, 0.02, away * reach * 2.2 * up));
+      high.push(
+        aside(kit, floor, right * reach * 3.4 * up, reach * 2.6 * up, away * reach * 2.2 * up),
+      );
+    }
+    kit.panel([low[0], low[1], low[2], low[3]], paint.color, alpha * 0.5);
+    kit.ribbon([...low, low[0]], reach * 0.08, line, alpha);
+    kit.ribbon([...high, high[0]], reach * 0.08, line, alpha);
+    for (let post = 0; post < 4; post += 1) {
+      kit.ribbon([low[post], high[post]], reach * 0.08, line, alpha);
+    }
+  },
+
+  // Weight coming down over everything: chevrons falling rather than rising, and the ground pressed flat
+  Press(kit, stage, share, { paint, seed }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const colour = lighten(paint.color, 0.2);
+    const shown = swell(share) * 0.85;
+
+    for (let column = 0; column < 3; column += 1) {
+      for (let mark = 0; mark < 2; mark += 1) {
+        const held = (((share + noise(seed, column) * 0.2) % 1) + mark / 2) % 1;
+        const spot = aside(kit, at, (column - 1) * reach * 1.9, reach * (1.2 - held * 2));
+
+        chevron(
+          kit,
+          [spot[0], Math.max(0.1, spot[1]), spot[2]],
+          reach * 0.7,
+          -1,
+          colour,
+          shown * Math.min(1, swell(held) * 1.8),
+          reach * 0.1,
+        );
+      }
+    }
+    kit.ripple(
+      floorOf(at),
+      reach * (1.6 + swell(share) * 1.4),
+      0.06,
+      paint.color,
+      swell(share) * 0.5,
+    );
   },
 } satisfies Partial<Record<EffectShape, LitShapePainter>>;
 

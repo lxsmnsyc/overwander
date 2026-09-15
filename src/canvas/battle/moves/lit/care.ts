@@ -154,6 +154,38 @@ const care = {
     }
   },
 
+  // Water turning about the pokemon: three hoops on three axes, each passing through the flat at a different moment
+  Gyro(kit, stage, share, { paint }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    // Up quickly and held: what it puts round the pokemon stays there
+    const up = Math.min(1, share * 4);
+    const alpha = share < 0.85 ? 0.55 + up * 0.4 : decay(share) * 6;
+    const radius = reach * 1.3 * up;
+    const water = lighten(paint.color, 0.25);
+
+    for (let hoop = 0; hoop < 3; hoop += 1) {
+      const axis = (hoop / 3) * Math.PI;
+      const tilt = share * Math.PI * 2.4 + (hoop / 3) * Math.PI;
+      const ux = Math.cos(axis);
+      const uz = Math.sin(axis);
+      const path: Spot[] = [];
+
+      for (let step = 0; step <= 24; step += 1) {
+        const turn = (step / 24) * TAU;
+        const along = Math.cos(turn) * radius;
+        const round = Math.sin(turn) * radius;
+
+        path.push([
+          at[0] + ux * along - uz * round * Math.cos(tilt),
+          Math.max(0.05, at[1] + round * Math.sin(tilt)),
+          at[2] + uz * along + ux * round * Math.cos(tilt),
+        ]);
+      }
+      kit.ribbon(path, reach * 0.1, water, alpha);
+    }
+  },
+
   // A stat going up, on whoever it went up on
   Boost(kit, stage, share, { paint }) {
     stepping(kit, stage, share, paint.color, 1);

@@ -15,6 +15,7 @@ import {
   weightOf,
 } from '../../src/canvas/battle/moves';
 import attackMarkVisual from '../../src/canvas/battle/attack';
+import { LIT } from '../../src/canvas/battle/moves/lit';
 import type { Stage } from '../../src/canvas/battle/stage';
 import { Types } from '../../src/data/constants/types';
 import Abilities from '../../src/data/ids/abilities';
@@ -180,6 +181,28 @@ describe('a painted move', () => {
     ]);
 
     expect([...Object.keys(SPANS)].filter((shape) => !covered.has(shape))).toEqual([]);
+  });
+
+  it('builds every shape in the battle scene as well as painting it', () => {
+    // A shape without one is still drawn flat over the scene, in front of everything
+    const missing: string[] = [];
+
+    for (const shape of Object.keys(SPANS)) {
+      if (!(shape in LIT)) {
+        missing.push(shape);
+      }
+    }
+    expect(missing).toEqual([]);
+    expect(
+      attackMarkVisual({
+        move: Moves.Tackle,
+        type: Types.Normal,
+        share: 0.3,
+        effectiveness: 1,
+        critical: true,
+        struck: true,
+      }).drawLit,
+    ).toBeDefined();
   });
 
   it('draws something at every instant of every shape it can land as', () => {

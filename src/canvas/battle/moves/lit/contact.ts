@@ -450,6 +450,56 @@ const contact = {
       );
     }
   },
+
+  // Out and back: thrown, strikes where it turns, and comes home
+  Dart(kit, stage, share, { paint, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const held = share < 0.5 ? share * 2 : (1 - share) * 2;
+    // Behind it is toward the caster on the way out and toward the target on the way home
+    const behind = Math.min(1, Math.max(0, held - (share < 0.5 ? 0.24 : -0.24)));
+
+    kit.trail(
+      toward(stage.source, at, behind),
+      toward(stage.source, at, held),
+      reach * 0.3,
+      lighten(colour, 0.2),
+      0.45,
+    );
+    kit.glow(toward(stage.source, at, held), reach * 0.4, colour, 1, 0.7);
+
+    const since = (share - 0.45) / 0.2;
+
+    if (since > 0 && since < 1) {
+      kit.star(at, reach * (0.5 + since), 0.3, lighten(colour, 0.6), decay(since));
+      sparks(kit, at, reach * (0.5 + since), 6, 41, since, lighten(colour, 0.4), decay(since));
+    }
+  },
+
+  // Two cuts across each other, held until they go together so an X is read rather than two rakes
+  Cross(kit, stage, share, { paint, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const edge = lighten(paint.color, 0.45);
+    const alpha = share < 0.6 ? 1 : Math.min(1, decay(share) * 2.5);
+
+    for (const [cut, way] of [
+      [0, 1],
+      [1, -1],
+    ] as const) {
+      if (share - cut * 0.18 <= 0) {
+        continue;
+      }
+      // A streak is pointed at both ends, which is the blade's taper
+      const angle = kit.angleOn(
+        aside(kit, at, -reach * way, reach),
+        aside(kit, at, reach * way, -reach),
+      );
+
+      kit.streak(at, reach * 1.41, reach * 0.15, angle, edge, alpha);
+    }
+  },
 } satisfies Partial<Record<EffectShape, LitShapePainter>>;
 
 export default contact;

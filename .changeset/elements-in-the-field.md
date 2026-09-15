@@ -6,6 +6,7 @@ Moves are drawn in the battle field with depth:
 
 - A move in the air and a move landing both cross the field in perspective, and pass behind whoever stands nearer the camera.
 - Sparks, spray and debris fly around the pokemon and fall back to the ground.
+- The mark each blow leaves is drawn in the field, in front of the pokemon it hit.
 - Fire, lightning, beams and healing light up the ground under them.
 - Coils wrap round a pokemon, shields rise as a dome, and screens stand up as panes of glass.
 - Heavy hits such as Earthquake, Explosion and Fissure shake the field.

@@ -8,7 +8,12 @@ import {
 import { isLockLive } from '../../../auth/battle-lock';
 import { getBuddy } from '../../../auth/buddy';
 import { syncServerClock } from '../../../auth/clock';
-import { type CaughtPokemon, countCaught, getCaught, listCaughtMarked } from '../../../auth/caught';
+import {
+  type CaughtPokemon,
+  countCaught,
+  getCaughtBatched,
+  listCaughtMarked,
+} from '../../../auth/caught';
 
 import { getProfiles } from '../../../auth/profile';
 
@@ -68,7 +73,8 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
         }
         reads.push(
           (async (): Promise<void> => {
-            const caught = await getCaught(id);
+            // Every lot on the board in the same moment, so one read
+            const caught = await getCaughtBatched(id);
 
             if (caught != null) {
               found.set(id, caught);

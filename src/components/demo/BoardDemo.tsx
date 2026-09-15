@@ -18,7 +18,7 @@ import { Depth } from '../../overworld/depth';
 import { nearestMouth } from '../../overworld/cave';
 import { CAVE_DARK_CELLS } from '../../data/overworld/cave';
 import { type BoardGround, readBoardGround } from '../../overworld/board-ground';
-import { readGround } from '../../overworld/ground';
+import { isLavaAt, readGround } from '../../overworld/ground';
 import { isRouteAt, routesNear } from '../../overworld/route';
 import { blocksWalk } from '../../overworld/cliff';
 import { TERRACE_TOP, levelAt } from '../../overworld/terrace';
@@ -393,17 +393,19 @@ export default function BoardDemo(): JSX.Element {
   /**
    * Whether a board cell can be stood on here.
    *
-   * The rock and the cliff faces stop a walk as they do in the game,
-   * and the water does not: this page is for looking at the ground,
-   * and a shore drawn from the far side of a lake is a shore nobody
-   * can inspect. A player in the real world swims nowhere
+   * The rock, the cliff faces and a volcano's lava stop a walk as they
+   * do in the game, and the water does not
    */
   const passable = (cell: number): boolean => {
     const x = cell % BOARD_CELLS;
     const y = Math.floor(cell / BOARD_CELLS);
     const [originX, originY] = origin();
 
-    return ground().role(x, y) !== 'wall' && !blocksWalk(world(), originX + x, originY + y);
+    return (
+      ground().role(x, y) !== 'wall' &&
+      !blocksWalk(world(), originX + x, originY + y) &&
+      !isLavaAt(world(), originX + x, originY + y)
+    );
   };
 
   /** One step, where the world allows it */

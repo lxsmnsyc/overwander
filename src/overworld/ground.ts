@@ -1,5 +1,4 @@
-import type Biome from '../data/ids/biome';
-import { isWaterBiome } from '../data/ids/biome';
+import Biome, { isWaterBiome } from '../data/ids/biome';
 import { isCaveOpen } from './cave';
 import { STONE_FREQUENCY, rockLevel } from './fields';
 import { isSurfaceWater } from './surface';
@@ -55,6 +54,13 @@ export function readGround(world: World, x: number, y: number): { biome: Biome; 
 /** What a player finds underfoot at one cell */
 export function roleAt(world: World, x: number, y: number): GroundRole {
   return readGround(world, x, y).role;
+}
+
+/** Whether this water is a volcano's lava, which nobody walks on and nothing stands on */
+export function isLavaAt(world: World, x: number, y: number): boolean {
+  const { biome, role } = readGround(world, x, y);
+
+  return role === 'water' && biome === Biome.Volcano;
 }
 
 /**

@@ -1,7 +1,6 @@
 import AleaRNG from '../core/alea';
 import { CELL_COUNT, CHUNK_CELLS, SURROUNDING, worldCell } from './grid';
-import type Biome from '../data/ids/biome';
-import {
+import Biome, {
   growsBerries,
   growsHoneyTrees,
   growsTrees,
@@ -321,6 +320,26 @@ export default class Chunk {
   getWaterCells(): Set<number> {
     this.waterCells ??= this.cellsWhere('water');
     return this.waterCells;
+  }
+
+  private lavaCells: Set<number> | null = null;
+
+  /** The water cells that are a volcano's lava, which nothing walks on or stands on */
+  getLavaCells(): Set<number> {
+    if (this.lavaCells == null) {
+      const biomes = this.getCellBiomes();
+      const lava = new Set<number>();
+
+      for (const cell of this.getWaterCells()) {
+        // The cell biomes are a byte array, so the enum is widened to compare
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+        if (biomes[cell] === (Biome.Volcano as number)) {
+          lava.add(cell);
+        }
+      }
+      this.lavaCells = lava;
+    }
+    return this.lavaCells;
   }
 
   private spotCells: Set<number> | null = null;
@@ -669,6 +688,7 @@ export default class Chunk {
           !taken.has(candidate) &&
           this.isClear(candidate) &&
           !this.getFaceCells().has(candidate) &&
+          !this.getLavaCells().has(candidate) &&
           !this.isTownCell(candidate) &&
           !this.isRouteCell(candidate);
         // Dry ground first and the water only where there is none: a

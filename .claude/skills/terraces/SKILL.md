@@ -15,6 +15,10 @@ A cell standing higher than **any** of its eight neighbours is a face (`isFace` 
 - Underground every face is a seam (`isSeam` answers yes at `Depth.Cave`), corners included, so no cliff ever crosses a cave passage. A cave's rock walls are not faces: they are `wall` cells, raised a level only for drawing.
 - Nothing is placed on a face, seamed or not: no scenery, no rolled landmark, no spawn, no phenomenon and no player start. `Chunk.getFaceCells()` is the set to leave out.
 
+## Lava
+
+A volcano's water is lava (`isLavaAt` in `src/overworld/ground.ts`, `Chunk.getLavaCells()`). Nobody walks on it, whatever the cliffs around it say, and nothing is placed on it: no landmark, spawn, phenomenon or player start. Any other water stays walkable, and ice pools are water that happens to be drawn as ice.
+
 ## Water at a step
 
 Water is never a cliff unless the lower ground beside it, diagonals included, is water too. Then the two are one fall. Water that would stand at the lip of a dry drop is dried to ground by the lip rule in `src/overworld/ground.ts`. Every 2x2 block of water stands on one level, so a cell's water depends only on the water below it and the lip rule reads the finished answer there.

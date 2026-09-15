@@ -61,7 +61,11 @@ export function pickFreeCell(
   rng: AleaRNG,
 ): { cellX: number; cellY: number } {
   const chunk = world.getChunk(chunkX, chunkY);
-  const occupied = new Set([...fixtureCells(chunk), ...chunk.getFaceCells()]);
+  const occupied = new Set([
+    ...fixtureCells(chunk),
+    ...chunk.getFaceCells(),
+    ...chunk.getLavaCells(),
+  ]);
   const free: number[] = [];
 
   for (let cell = 0; cell < CELL_COUNT; cell++) {
@@ -100,6 +104,7 @@ export function nearestFreeCell(
   const chunk = world.getChunk(chunkX, chunkY);
   const fixtures = fixtureCells(chunk);
   const faces = chunk.getFaceCells();
+  const lava = chunk.getLavaCells();
   let best = { cellX, cellY };
   let bestDistance = Number.POSITIVE_INFINITY;
 
@@ -110,6 +115,7 @@ export function nearestFreeCell(
     // A seamed face is a road up the cliff, so standing on one is fine
     if (
       fixtures.has(cell) ||
+      lava.has(cell) ||
       (faces.has(cell) && blocksWalk(world, worldCell(chunk.x, x), worldCell(chunk.y, y)))
     ) {
       continue;

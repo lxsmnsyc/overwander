@@ -15,6 +15,7 @@ import ChunkSnapshot, {
 import { CHUNK_CELLS, cellInChunk, chunkOfCell } from '../../../overworld/chunk';
 import { type BoardGround, readBoardGround } from '../../../overworld/board-ground';
 import { blocksWalk } from '../../../overworld/cliff';
+import { isLavaAt } from '../../../overworld/ground';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
 import deriveEncounter from '../../../overworld/encounter';
@@ -414,8 +415,13 @@ export function buildBoardView(
     }
     // A tree stops a walk, and so does the face of a cliff: the cell
     // the rim is drawn on is the cliff itself, and only a road cut
-    // through it opens a way up
-    if (ground.role(x, y) === 'wall' || blocksWalk(world, originX + x, originY + y)) {
+    // through it opens a way up. A volcano's water is lava, and
+    // stops one too
+    if (
+      ground.role(x, y) === 'wall' ||
+      blocksWalk(world, originX + x, originY + y) ||
+      (ground.role(x, y) === 'water' && isLavaAt(world, originX + x, originY + y))
+    ) {
       walls.add(cell);
     }
   }

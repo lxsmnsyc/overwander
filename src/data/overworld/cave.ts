@@ -25,7 +25,7 @@ export const CAVE_DARK_CELLS = 2;
  * either, for the same reason: the brighter of the two is what the
  * dark gives way to
  */
-export const CAVE_LAMP_CELLS = 3;
+export const CAVE_LAMP_CELLS = 5;
 
 /**
  * How far a rope looks for a way out, in chunks. Three chunks in five

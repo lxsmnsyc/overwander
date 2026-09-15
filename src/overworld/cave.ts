@@ -1,5 +1,5 @@
 import { CHUNK_CELLS, ORTHOGONAL, worldCell } from './grid';
-import { isHillside, roleAt } from './ground';
+import { isHillside, isSurfaceWater } from './surface';
 import { portalCellIn } from './town';
 import { isCaveFloor, isRock } from './fields';
 import type Biome from '../data/ids/biome';
@@ -135,7 +135,7 @@ export default function caveMouth(world: World, chunkX: number, chunkY: number):
       // left it, so rock inside one is no hillside at all
       if (
         isCaveFloor(above, intoWorldX, intoWorldY, intoBiome) &&
-        roleAt(above, x, y) === 'ground' &&
+        !isSurfaceWater(above, x, y, biomeOf(cell, x, y)) &&
         isHillside(above, intoWorldX, intoWorldY)
       ) {
         mouth = { surface: cell, cave: into };
@@ -160,6 +160,101 @@ export function caveMouthCellIn(world: World, chunkX: number, chunkY: number): n
     return null;
   }
   return world.depth === Depth.Cave ? mouth.cave : mouth.surface;
+}
+
+/** How many chunks a side a stretch of cave is judged in, for what can be walked to */
+const REACH_BLOCK = 4;
+const BLOCK_CELLS = REACH_BLOCK * CHUNK_CELLS;
+
+/** How many judged blocks a world keeps, oldest let go first */
+const HELD_BLOCKS = 64;
+
+const judged = new WeakMap<World, Map<string, Uint8Array>>();
+
+/** The floor of one block a player can walk to from a mouth inside that same block */
+function reachBlock(world: World, blockX: number, blockY: number): Uint8Array {
+  const originX = blockX * BLOCK_CELLS;
+  const originY = blockY * BLOCK_CELLS;
+  const open = new Uint8Array(BLOCK_CELLS * BLOCK_CELLS);
+  const kept = new Uint8Array(BLOCK_CELLS * BLOCK_CELLS);
+  const stack: number[] = [];
+
+  for (let at = 0; at < open.length; at++) {
+    const x = originX + (at % BLOCK_CELLS);
+    const y = originY + Math.floor(at / BLOCK_CELLS);
+
+    open[at] = isCaveFloor(world, x, y, world.getCellBiome(x, y)) ? 1 : 0;
+  }
+  for (let chunkY = blockY * REACH_BLOCK; chunkY < (blockY + 1) * REACH_BLOCK; chunkY++) {
+    for (let chunkX = blockX * REACH_BLOCK; chunkX < (blockX + 1) * REACH_BLOCK; chunkX++) {
+      const mouth = caveMouth(world, chunkX, chunkY);
+
+      if (mouth == null) {
+        continue;
+      }
+      const at =
+        (worldCell(chunkY, Math.floor(mouth.cave / CHUNK_CELLS)) - originY) * BLOCK_CELLS +
+        (worldCell(chunkX, mouth.cave % CHUNK_CELLS) - originX);
+
+      kept[at] = 1;
+      stack.push(at);
+    }
+  }
+  while (stack.length > 0) {
+    const at = stack.pop() ?? 0;
+    const column = at % BLOCK_CELLS;
+    const row = Math.floor(at / BLOCK_CELLS);
+
+    for (const [dx, dy] of ORTHOGONAL) {
+      const x = column + dx;
+      const y = row + dy;
+      const next = y * BLOCK_CELLS + x;
+
+      if (
+        x >= 0 &&
+        y >= 0 &&
+        x < BLOCK_CELLS &&
+        y < BLOCK_CELLS &&
+        open[next] === 1 &&
+        kept[next] === 0
+      ) {
+        kept[next] = 1;
+        stack.push(next);
+      }
+    }
+  }
+  return kept;
+}
+
+/**
+ * Whether a cave's floor runs here and a player can walk to it.
+ *
+ * The carving leaves pockets no mouth leads to, so floor only counts
+ * where it joins a mouth without leaving its block. Judged per block
+ * rather than across the network so the answer stays local, and
+ * filling a sealed pocket in never leaves rock thinner than 2x2
+ */
+export function isCaveOpen(world: World, x: number, y: number): boolean {
+  const blockX = Math.floor(x / BLOCK_CELLS);
+  const blockY = Math.floor(y / BLOCK_CELLS);
+  const key = `${blockX},${blockY}`;
+  const held = judged.get(world) ?? new Map<string, Uint8Array>();
+  let block = held.get(key);
+
+  judged.set(world, held);
+  if (block == null) {
+    block = reachBlock(world, blockX, blockY);
+    // A map keeps insertion order, so the first key is the block read longest ago
+    const oldest = held.keys().next().value;
+
+    if (held.size >= HELD_BLOCKS && oldest != null) {
+      held.delete(oldest);
+    }
+  } else {
+    held.delete(key);
+  }
+  held.set(key, block);
+  return block[(y - blockY * BLOCK_CELLS) * BLOCK_CELLS + (x - blockX * BLOCK_CELLS)] === 1;
 }
 
 /** A way out, and the chunk it was found in */

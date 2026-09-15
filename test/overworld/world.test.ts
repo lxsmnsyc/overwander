@@ -2389,7 +2389,7 @@ describe('world', () => {
       ).toBe(DARK_DAY_LAMP_CELLS);
     }
     // A lantern is a reach of its own rather than a multiple of the
-    // one it replaces: three cells, whatever a player walking alone
+    // one it replaces: five cells, whatever a player walking alone
     // sees
     expect(
       createOverworld('player-uid', buddyWith([Abilities.Illuminate])).checkLampReach(
@@ -5547,7 +5547,7 @@ describe('buddy copy', () => {
     [Abilities.ArenaTrap, '3 more', LURE_SPAWN_BONUS],
     [Abilities.Illuminate, '3 more', LURE_SPAWN_BONUS],
     [Abilities.NoGuard, '3 more', LURE_SPAWN_BONUS],
-    [Abilities.Illuminate, 'lit 3 cells out', ILLUMINATE_LAMP_CELLS],
+    [Abilities.Illuminate, 'lit 5 cells out', ILLUMINATE_LAMP_CELLS],
     [Abilities.Stench, '2 fewer', STENCH_QUIET],
     [Abilities.CompoundEyes, '2.5x', COMPOUND_EYES_HELD_BOOST],
     [Abilities.Pickup, 'every 512 steps', PICKUP_STEP_INTERVAL],

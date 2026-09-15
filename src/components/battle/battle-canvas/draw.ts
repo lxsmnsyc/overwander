@@ -502,6 +502,24 @@ const BEHIND = 0.3;
 const STAND_RISE = 0.35;
 
 /**
+ * Substitute coming in: how high it falls from in frame heights, the
+ * share of the way in it lands at, and how high it bounces
+ */
+const STAND_DROP = 1.2;
+const STAND_LANDS = 0.75;
+const STAND_BOUNCE = 0.08;
+
+/** How far above its spot the doll is, in frame heights, as it drops in and bounces once */
+function dropOf(share: number): number {
+  if (share < STAND_LANDS) {
+    const fall = share / STAND_LANDS;
+
+    return STAND_DROP * (1 - fall * fall);
+  }
+  return Math.sin(((share - STAND_LANDS) / (1 - STAND_LANDS)) * Math.PI) * STAND_BOUNCE;
+}
+
+/**
  * The doll a substituted pokemon is standing behind.
  *
  * Drawn after the pokemon and on the same spot, so the two crossfade
@@ -521,8 +539,11 @@ function drawStand(context: CanvasRenderingContext2D, slot: Slot, onto?: SlotBat
   const [x, y] = [slot.x + slot.offset[0], slot.y + slot.offset[1]];
   const scale = scaleOf(slot);
   const placement = { scale, anchor: 'shadow' } as const;
-  // Back and up while it is coming, nothing once it has arrived
-  const back = (1 - stand.share) * sprite.frameSize.height * scale * STAND_RISE;
+  // Dropped in from above as it arrives; back and up as it steps off
+  const back =
+    sprite.frameSize.height *
+    scale *
+    (stand.arriving === false ? (1 - stand.share) * STAND_RISE : dropOf(stand.share));
   const spot: [number, number] = [x, y - back];
 
   sprite.play(SpriteAnim.Idle, { direction: slot.facing, loop: true });

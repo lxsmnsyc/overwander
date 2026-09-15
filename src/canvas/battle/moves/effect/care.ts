@@ -26,7 +26,7 @@ import { REACH, landing, many } from './shapes';
 /** Protect: a shell hexagon's size, as a share of the shell's radius */
 export const SHELL_CELL = 0.3;
 
-/** Substitute: the share spent dropping before the doll lands */
+/** Substitute: the share before the field's doll sprite lands, when the dust goes up */
 export const DOLL_DROP = 0.3;
 
 /** Splash: how many times it flops */
@@ -61,18 +61,6 @@ export function shellFlash(share: number, out: number): number {
   return Math.max(0, 1 - Math.abs(share * 3 - out) * 3);
 }
 
-/** How high the doll still is, in sizes, as it drops and then bounces once */
-export function dollLift(share: number): number {
-  if (share < DOLL_DROP) {
-    const drop = share / DOLL_DROP;
-
-    return 4 * (1 - drop * drop);
-  }
-  const bounce = (share - DOLL_DROP) / 0.2;
-
-  return bounce < 1 ? Math.sin(bounce * Math.PI) * 0.4 : 0;
-}
-
 /** Which way the metronome's arm leans, in radians from upright */
 export function wagOf(share: number): number {
   return Math.sin(share * Math.PI * 5) * 0.7;
@@ -99,7 +87,7 @@ function hexagon(
   context.stroke();
 }
 
-/** A filled ellipse, for the parts of a doll */
+/** A filled ellipse, for a shadow on the ground */
 function blob(
   context: CanvasRenderingContext2D,
   [x, y]: Point,
@@ -299,42 +287,36 @@ const care = {
     }
   },
 
-  // A doll dropped into place, landing with a bounce
-  Doll(context, stage, share, { paint }) {
+  // The ground under the substitute's own sprite as the field drops it in: its shadow gathering, then dust as it lands
+  Doll(context, stage, share, { paint, seed }) {
     const at = landing(stage);
     const size = REACH * stage.scale;
-    const shown = share < 0.85 ? 1 : decay((share - 0.85) / 0.15);
-    const body: Point = [at[0], at[1] + size * 0.2 - dollLift(share) * size];
-    const shade = mix(paint.color, '#6b5a3a', 0.35);
+    const foot: Point = [at[0], at[1] + size * 0.9];
+    const drop = Math.min(1, share / DOLL_DROP);
 
     blob(
       context,
-      [at[0], at[1] + size * 0.9],
-      size * 0.8,
-      size * 0.25,
+      foot,
+      size * 0.8 * drop,
+      size * 0.25 * drop,
       '#140e0a',
-      Math.min(1, share / DOLL_DROP) * 0.4 * shown,
+      drop * 0.4 * decay(share),
     );
-    blob(context, body, size * 0.7, size * 0.7, paint.color, shown);
-    blob(context, [body[0], body[1] - size * 0.95], size * 0.5, size * 0.5, paint.color, shown);
-    for (const side of [-1, 1]) {
-      blob(
-        context,
-        [body[0] + side * size * 0.35, body[1] - size * 1.45],
-        size * 0.2,
-        size * 0.28,
-        shade,
-        shown,
-      );
-      blob(
-        context,
-        [body[0] + side * size * 0.18, body[1] - size],
-        size * 0.06,
-        size * 0.06,
-        '#2a2016',
-        shown,
-      );
+    if (share <= DOLL_DROP) {
+      return;
     }
+    const settled = (share - DOLL_DROP) / (1 - DOLL_DROP);
+
+    ripple(context, foot, size * (0.6 + settled * 1.2), {
+      ...paint,
+      alpha: decay(settled),
+      width: 2 * stage.scale,
+    });
+    motes(context, foot, size * 1.2, 6, seed, settled, {
+      ...paint,
+      alpha: decay(settled) * 0.8,
+      width: 2 * stage.scale,
+    });
   },
 
   // Flopping about and nothing happening: a few hops of spray at its feet

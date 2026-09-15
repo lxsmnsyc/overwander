@@ -264,7 +264,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
    * An entry outlives the status by as long as the fade out takes,
    * which is what lets the pokemon come back rather than reappear
    */
-  const dolls = new Map<Unit, { sprite: SpeciesSpriteAnimation | null; share: number }>();
+  const dolls = new Map<Unit, Stand>();
 
   const standFor = (unit: Unit): Stand | null => {
     const held = dolls.get(unit);
@@ -276,7 +276,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       return null;
     }
 
-    const waiting = { sprite: null as SpeciesSpriteAnimation | null, share: 0 };
+    const waiting: Stand = { sprite: null, share: 0, arriving: true };
 
     dolls.set(unit, waiting);
     // The doll is the doll whoever is behind it: never shiny, never
@@ -1208,6 +1208,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         const wanted = unit.status[Statuses.Substituted] == null ? 0 : 1;
         const step = event.duration / STAND_FADE;
 
+        doll.arriving = wanted === 1;
         doll.share =
           wanted > doll.share
             ? Math.min(wanted, doll.share + step)

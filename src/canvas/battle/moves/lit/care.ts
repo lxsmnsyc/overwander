@@ -8,7 +8,6 @@ import {
   FLOP_HOPS,
   SCHEME_GATHER,
   SHELL_CELL,
-  dollLift,
   shellCells,
   shellFlash,
   wagOf,
@@ -295,36 +294,27 @@ const care = {
     }
   },
 
-  // A doll dropped into place, landing with a bounce and a puff of dust
+  // The ground under the substitute's own sprite as the field drops it in: its shadow gathering, then dust as it lands
   Doll(kit, stage, share, { paint, seed }) {
     const floor = floorOf(landed(stage));
     const reach = reachOf(stage);
     const colour = paint.color;
-    const shade = mix(colour, '#6b5a3a', 0.35);
-    const shown = late(share, 0.85);
-    const body = aside(kit, floor, 0, reach * (0.7 + dollLift(share)));
+    const drop = Math.min(1, share / DOLL_DROP);
 
-    kit.pool(floor, reach * 0.9, '#140e0a', Math.min(1, share / DOLL_DROP) * 0.4 * shown, {
-      add: 0,
-    });
-    kit.puff(body, reach * 0.7, colour, shown);
-    kit.puff(aside(kit, body, 0, reach * 0.95), reach * 0.5, colour, shown);
-    for (const side of [-1, 1]) {
-      kit.puff(aside(kit, body, side * reach * 0.35, reach * 1.45), reach * 0.2, shade, shown);
-      kit.glow(
-        aside(kit, body, side * reach * 0.18, reach, -reach * 0.5),
-        reach * 0.07,
-        '#2a2016',
-        shown,
-        0,
-        { add: 0 },
-      );
+    kit.pool(floor, reach * 0.9 * drop, '#140e0a', drop * 0.4 * decay(share), { add: 0 });
+    if (share <= DOLL_DROP) {
+      return;
     }
-    if (share > DOLL_DROP) {
-      const settled = (share - DOLL_DROP) / (1 - DOLL_DROP);
+    const settled = (share - DOLL_DROP) / (1 - DOLL_DROP);
 
-      smoke(kit, floor, reach, 4, seed, settled, mix(colour, '#b9a58a', 0.5), decay(settled) * 0.5);
-    }
+    kit.ripple(
+      floor,
+      reach * (0.6 + settled * 1.2),
+      0.08,
+      lighten(colour, 0.2),
+      decay(settled) * 0.8,
+    );
+    smoke(kit, floor, reach, 4, seed, settled, mix(colour, '#b9a58a', 0.5), decay(settled) * 0.5);
   },
 
   // Flopping about and nothing happening: a few hops of spray at its feet, and a bead of sweat

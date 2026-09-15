@@ -30,7 +30,7 @@ More moves land as a picture of their own:
 - Dark Pulse sends dark rings pulsing out from the pokemon that used it.
 - Sheer Cold freezes the target in a block of ice that cracks and shatters.
 - Protect and Detect throw up a shell of hexagons that flashes as it rises.
-- Substitute drops a doll into place with a bounce.
+- Substitute's doll drops into place from above with a bounce and a puff of dust.
 - Splash flops about in a few hops of spray, and nothing happens.
 - Metronome ticks over the pokemon's head, then scatters colour as it picks.
 - Transform runs bands of light up the pokemon that is changing.

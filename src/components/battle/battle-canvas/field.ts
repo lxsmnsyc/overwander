@@ -33,6 +33,8 @@ import type { Point, SpriteDirection } from '../../../canvas/sprite-sheet';
 export interface Stand {
   sprite: SpeciesSpriteAnimation | null;
   share: number;
+  /** Coming in rather than stepping back off, which drops it into place instead */
+  arriving?: boolean;
 }
 
 export interface Slot {

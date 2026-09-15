@@ -3,6 +3,7 @@ import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../overworld/chunk-snapshot
 import getWorld from '../../overworld/current';
 import { Depth } from '../../overworld/depth';
 import { asOffset, toLocalTime, toZoneKey } from '../../auth/local-time';
+import { CLAIM_CHUNK_LIMIT } from '../../auth/snapshot-record';
 import { getSql } from '../db';
 import { asNumber, asString } from '../read';
 import { berryPrefix } from './berries';
@@ -21,9 +22,6 @@ export interface ClaimedChunk {
   x: number;
   y: number;
 }
-
-/** The most chunks one call may ask about, so a caller cannot ask for the whole world */
-export const CLAIM_CHUNK_LIMIT = 32;
 
 /** The cells of the markers under one chunk's prefix */
 function cellsUnder(markers: string[], prefix: string): number[] {

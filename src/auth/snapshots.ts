@@ -11,10 +11,14 @@ import ChunkSnapshot, {
   type Spawn,
 } from '../overworld/chunk-snapshot';
 import { LURE_SPAWN_BONUS } from '../overworld/abilities/__create';
-import { type SnapshotRecord, asSnapshotRecord, spawnId } from './snapshot-record';
-import { requireUid } from '../server/auth';
 import {
   CLAIM_CHUNK_LIMIT,
+  type SnapshotRecord,
+  asSnapshotRecord,
+  spawnId,
+} from './snapshot-record';
+import { requireUid } from '../server/auth';
+import {
   type ChunkClaims,
   type ClaimQuery,
   type NestOffer,

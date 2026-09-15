@@ -1,5 +1,6 @@
 import type { Depth } from '../overworld/depth';
 import { requireUid } from '../server/auth';
+import { type WalkReport, recordSteps } from '../server/eggs';
 import savePositionOnServerSide, { readPosition } from '../server/positions';
 import { syncServerClock } from './clock';
 import getSupabase, { type Unwatch, watchRow } from './supabase';
@@ -18,6 +19,19 @@ export type { PositionRecord } from './position-record';
  * survive a reload.
  */
 
+/** A positions row in the record shape. The change stream may send the bigint stamp as a string */
+function fromPositionRow(row: Record<string, unknown>): PositionRecord {
+  return asPositionRecord({
+    player: row.player,
+    chunkX: row.chunk_x,
+    chunkY: row.chunk_y,
+    cellX: row.cell_x,
+    cellY: row.cell_y,
+    depth: row.depth,
+    movedAt: typeof row.moved_at === 'string' ? Number(row.moved_at) : row.moved_at,
+  });
+}
+
 /**
  * The player's last position, or null when they have never walked
  * anywhere — a new player is placed by `pickStartPosition` instead
@@ -29,21 +43,7 @@ export async function getPosition(uid: string): Promise<PositionRecord | null> {
     .eq('player', uid)
     .maybeSingle();
 
-  if (data == null) {
-    return null;
-  }
-
-  const row = asRecord(data);
-
-  return asPositionRecord({
-    player: row.player,
-    chunkX: row.chunk_x,
-    chunkY: row.chunk_y,
-    cellX: row.cell_x,
-    cellY: row.cell_y,
-    depth: row.depth,
-    movedAt: row.moved_at,
-  });
+  return data == null ? null : fromPositionRow(asRecord(data));
 }
 
 /**
@@ -73,44 +73,49 @@ export function watchPosition(
   uid: string,
   onChange: (position: PositionRecord | null) => void,
 ): Unwatch {
-  return watchRow('positions', `player=eq.${uid}`, async () => getPosition(uid), onChange);
+  // A change carries the whole row, so a save is not read back again
+  return watchRow(
+    'positions',
+    `player=eq.${uid}`,
+    async () => getPosition(uid),
+    onChange,
+    fromPositionRow,
+  );
 }
 
 /**
- * Remember where the player is standing. Called as they walk, every
- * few seconds rather than every step, since a step is a keypress and
- * a write is a write.
+ * Remember where the player stopped, with the paces walked since the
+ * last step report riding the same call.
  *
- * Answers with the stamp it was written under. The caller keeps it so
- * it can tell its own write from somebody else's when the row comes
- * back around the subscription
+ * Answers the stamp it was written under, so the caller can tell its own
+ * write coming back around the subscription, and what the paces came to
  */
-export async function savePosition(
+export async function settleWalk(
+  steps: number,
   chunkX: number,
   chunkY: number,
   cellX: number,
   cellY: number,
   depth: Depth,
-): Promise<number> {
-  return savePositionOnServer(await getIdToken(), chunkX, chunkY, cellX, cellY, depth);
+): Promise<{ stamp: number; report: WalkReport | null }> {
+  return settleWalkOnServer(await getIdToken(), steps, chunkX, chunkY, cellX, cellY, depth);
 }
 
-async function savePositionOnServer(
+async function settleWalkOnServer(
   token: string,
+  steps: number,
   chunkX: number,
   chunkY: number,
   cellX: number,
   cellY: number,
   depth: Depth,
-): Promise<number> {
+): Promise<{ stamp: number; report: WalkReport | null }> {
   'use server';
-  return savePositionOnServerSide(
-    await requireUid(token),
-    chunkX,
-    chunkY,
-    cellX,
-    cellY,
-    depth,
-    await syncServerClock(),
-  );
+  const uid = await requireUid(token);
+  const now = await syncServerClock();
+  // The paces land first, so a saved position never runs ahead of the egg
+  const report = steps > 0 ? await recordSteps(uid, steps, now) : null;
+  const stamp = await savePositionOnServerSide(uid, chunkX, chunkY, cellX, cellY, depth, now);
+
+  return { stamp, report };
 }

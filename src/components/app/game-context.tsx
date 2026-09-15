@@ -19,7 +19,8 @@ import { claimStopReward } from '../../auth/stops';
 import { settleGymChallenge } from '../../auth/gym-seats';
 import type { PositionRecord } from '../../auth/position-record';
 import type { Species } from '../../data/ids/species';
-import { getPosition, savePosition, watchPosition } from '../../auth/positions';
+import type { WalkReport } from '../../auth/eggs';
+import { getPosition, watchPosition, settleWalk as writeWalk } from '../../auth/positions';
 import { AWARD_NAMES } from '../../data/ids/awards';
 import { getItemData } from '../../data/items';
 import ItemSprite from '../items/ItemSprite';
@@ -212,6 +213,15 @@ export interface GameState {
    * subscription would stand itself down mid-walk
    */
   saveWalk: (chunkX: number, chunkY: number, cellX: number, cellY: number, depth: Depth) => void;
+  /** `saveWalk` with the paces walked since the last step report, resolving what they came to */
+  settleWalk: (
+    chunkX: number,
+    chunkY: number,
+    cellX: number,
+    cellY: number,
+    depth: Depth,
+    steps: number,
+  ) => Promise<WalkReport | null>;
   /**
    * Where that is, in words: the country and the chunk's coordinates.
    *
@@ -384,6 +394,20 @@ export default function GameProvider(props: ParentProps): JSX.Element {
    */
   let wroteAt = 0;
 
+  const settleWalk = async (
+    chunkX: number,
+    chunkY: number,
+    cellX: number,
+    cellY: number,
+    depth: Depth,
+    steps: number,
+  ): Promise<WalkReport | null> => {
+    const { stamp, report } = await writeWalk(steps, chunkX, chunkY, cellX, cellY, depth);
+
+    wroteAt = Math.max(wroteAt, stamp);
+    return report;
+  };
+
   const saveWalk = (
     chunkX: number,
     chunkY: number,
@@ -391,14 +415,10 @@ export default function GameProvider(props: ParentProps): JSX.Element {
     cellY: number,
     depth: Depth,
   ): void => {
-    savePosition(chunkX, chunkY, cellX, cellY, depth)
-      .then((stamp) => {
-        wroteAt = Math.max(wroteAt, stamp);
-      })
-      .catch(() => {
-        // A position that did not save is a walk that will save it,
-        // and there is nothing here worth interrupting a walk for
-      });
+    settleWalk(chunkX, chunkY, cellX, cellY, depth, 0).catch(() => {
+      // A position that did not save is a walk that will save it,
+      // and there is nothing here worth interrupting a walk for
+    });
   };
 
   const [moved, setMoved] = createSignal<PositionRecord | null>(null);
@@ -719,6 +739,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         moved,
         takeWalk,
         saveWalk,
+        settleWalk,
         place,
         weather,
         setWeather,

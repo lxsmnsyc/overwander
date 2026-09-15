@@ -18,7 +18,7 @@ import { type Direction, actionOf, forTheGame } from '../../app/keys';
 import settings from '../../app/settings';
 import { DEFAULT_CHARSET } from '../../../data/overworld/charsets';
 import { watchProfile } from '../../../auth/profile';
-import { type EggWalk, walk } from '../../../auth/eggs';
+import { type EggWalk, type WalkReport, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../auth/encounter-record';
 import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
 import { serverNow } from '../../../auth/clock';
@@ -476,13 +476,46 @@ export default function OverworldBoard(props: {
    * quarter of the board left unrolled would be a field with nothing
    * in it until the player crossed into it
    */
-  const refreshWindow = (): void => {
-    for (const [x, y] of overlapped()) {
-      // The window always rolls the lure's extras, so every player of
-      // the chunk shares one set of rolls whoever publishes them
-      visitChunk(around().getChunk(x, y), PUBLISHED_SPAWNS, zone).catch((caught: unknown) => {
+  /** Chunks with a visit on its way, so a second ask for one waits on the first */
+  const visiting = new Set<string>();
+
+  const visit = (x: number, y: number): void => {
+    const key = `${x},${y}`;
+
+    if (visiting.has(key)) {
+      return;
+    }
+    visiting.add(key);
+    // The window always rolls the lure's extras, so every player of
+    // the chunk shares one set of rolls whoever publishes them
+    visitChunk(around().getChunk(x, y), PUBLISHED_SPAWNS, zone)
+      .catch((caught: unknown) => {
         remark(caught instanceof Error ? caught.message : String(caught), 'ember');
+      })
+      .finally(() => {
+        visiting.delete(key);
       });
+  };
+
+  /** Whether a window still stands, which is when visiting its chunk would only read it again */
+  const isLive = (record: WatchedWindow['record']): boolean =>
+    record.spawns.length > 0 &&
+    toLocalTime(serverNow(), zone) < record.timestamp + SNAPSHOT_INTERVAL;
+
+  /**
+   * Visit the chunks whose window is missing or has run out; the watch
+   * below already carries a live one's changes. `everything` is for a
+   * board caught behind the world, which may be wrong about what is live
+   */
+  const refreshWindow = (everything = false): void => {
+    const held = windows();
+
+    for (const [x, y] of overlapped()) {
+      const record = held.get(`${x},${y}`)?.record;
+
+      if (everything || record == null || !isLive(record)) {
+        visit(x, y);
+      }
     }
   };
 
@@ -494,33 +527,19 @@ export default function OverworldBoard(props: {
   let askedAt = 0;
 
   /**
-   * Ask for the chunk, unless it was just asked for.
-   *
-   * Coming back to the page always asks — the window has very likely
-   * turned over while it was in the background, and that is the moment
-   * a player wants to see what is standing there now. Everything else
-   * a player does asks at most every five seconds
+   * Ask for the chunk, unless it was just asked for. `whatever` skips
+   * the five-second wait, for coming back to the page or a window
+   * running out. A chunk walked into is asked for by its watch instead
    */
-  const askForWindow = (whatever = false): void => {
+  const askForWindow = (whatever = false, everything = false): void => {
     const at = Date.now();
 
     if (!whatever && at - askedAt < REFRESH_DEBOUNCE) {
       return;
     }
     askedAt = at;
-    refreshWindow();
+    refreshWindow(everything);
   };
-
-  // Arriving somewhere is always worth a look: this runs on being
-  // placed and again on every chunk walked into, since `refreshWindow`
-  // reads the coordinates
-  createEffect(() => {
-    if (!placed()) {
-      return;
-    }
-    askedAt = Date.now();
-    refreshWindow();
-  });
 
   /**
    * The page coming back to the front.
@@ -628,6 +647,11 @@ export default function OverworldBoard(props: {
             }
             return next;
           });
+          // Nobody has published this window yet, so this board does,
+          // and the publish comes back around this same watch
+          if (record == null || !isLive(record)) {
+            visit(x, y);
+          }
         }),
       );
     }
@@ -1232,6 +1256,17 @@ export default function OverworldBoard(props: {
    * written down — where the last few paces are worth keeping even
    * though they are not a batch
    */
+  const takeReport = (report: WalkReport | null): void => {
+    setCarried(report?.egg ?? null);
+
+    // A find is worth saying out loud: it lands in the bag while
+    // the player is looking at the map rather than at their
+    // inventory, and nothing else would tell them
+    if (report != null && report.picked.length > 0) {
+      sayItems(toast, report.picked, 'Your buddy found');
+    }
+  };
+
   const reportSteps = (force = false): void => {
     if (reporting || pending === 0 || (!force && pending < STEP_REPORT_SIZE)) {
       return;
@@ -1242,16 +1277,7 @@ export default function OverworldBoard(props: {
     pending = 0;
     reporting = true;
     walk(steps)
-      .then((report) => {
-        setCarried(report?.egg ?? null);
-
-        // A find is worth saying out loud: it lands in the bag while
-        // the player is looking at the map rather than at their
-        // inventory, and nothing else would tell them
-        if (report != null && report.picked.length > 0) {
-          sayItems(toast, report.picked, 'Your buddy found');
-        }
-      })
+      .then(takeReport)
       .catch(() => {
         // A dropped report is a few paces, not an error worth
         // interrupting the walk over; the next one carries on
@@ -1276,7 +1302,13 @@ export default function OverworldBoard(props: {
     if (game.elsewhere() != null) {
       return;
     }
-    reportSteps(true);
+    // The paces ride the save, unless a report is already out with them
+    const steps = reporting ? 0 : pending;
+
+    if (steps > 0) {
+      pending = 0;
+      reporting = true;
+    }
     // What the rest of the game is told, so the world map's camera is
     // looking at the chunk the player is actually in — and so a
     // remount of this tab picks the walk up rather than the record
@@ -1289,7 +1321,21 @@ export default function OverworldBoard(props: {
       depth: atDepth(),
       movedAt: Date.now(),
     });
-    game.saveWalk(chunk, row, x, y, atDepth());
+    game
+      .settleWalk(chunk, row, x, y, atDepth(), steps)
+      .then((report) => {
+        if (steps > 0) {
+          takeReport(report);
+        }
+      })
+      .catch(() => {
+        // A position that did not save is a walk that will save it
+      })
+      .finally(() => {
+        if (steps > 0) {
+          reporting = false;
+        }
+      });
   };
 
   /**
@@ -1539,7 +1585,7 @@ export default function OverworldBoard(props: {
         // world — a window rolled over, or the game was updated
         // under an open tab — so it is asked for again rather than
         // blamed on a fight that was never won
-        askForWindow(true);
+        askForWindow(true, true);
         return 'Nobody is standing there any more.';
       }
       if (!(await canJoinRaids(user.uid))) {
@@ -1566,7 +1612,7 @@ export default function OverworldBoard(props: {
       if (standing === 'absent') {
         // The board is behind the world: the seat is a fixture, so
         // this is a stale chunk rather than a seat that moved
-        askForWindow(true);
+        askForWindow(true, true);
         return 'There is no seat there any more.';
       }
       setSeat([spot, standing]);
@@ -1657,7 +1703,7 @@ export default function OverworldBoard(props: {
       if (through == null) {
         // The board is behind the world: a mouth is cut into the
         // ground rather than rolled onto it, so this is a stale chunk
-        askForWindow(true);
+        askForWindow(true, true);
         return 'There is no way through there any more.';
       }
 

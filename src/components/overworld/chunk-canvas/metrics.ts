@@ -132,6 +132,13 @@ export const DRAW_PACE = 1000 / 60;
 export const IDLE_PACE = 500;
 
 /**
+ * The most the board's own clock moves in one frame, in milliseconds. A
+ * long frame (a chunk being built, a sheet decoding) would otherwise
+ * skip a sparkle to its end, so it vanished halfway through
+ */
+export const CLOCK_STEP = 50;
+
+/**
  * How far the slide moves this frame, in cells, with `span` still to
  * cover and `elapsed` milliseconds gone.
  *

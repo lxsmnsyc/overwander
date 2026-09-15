@@ -106,6 +106,7 @@ import type { ItemStack } from '../../../data/overworld/item-pool';
 import {
   CELL,
   CELL_STRIDE,
+  CLOCK_STEP,
   COLORS,
   DRAW_PACE,
   GOAL_PULSE,
@@ -1734,7 +1735,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       const elapsed = last === 0 ? 0 : now - last;
 
       last = now;
-      clock += elapsed;
+      // Capped, so a stalled frame or a tab coming back picks animations up where they were
+      clock += Math.min(elapsed, CLOCK_STEP);
 
       // Only what is standing here. The cache outlives the chunk, so
       // walking every playhead in it means paying for every chunk

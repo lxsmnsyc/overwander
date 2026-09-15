@@ -430,7 +430,9 @@ export function drawLitDecor(
 
     paint(kit, floor, radius, clock, seed, unit.alive ? 1 : 0.35);
   }
-  if (!unit.shiny) {
+  // Held until the fight's first tick: nothing moves before it, so a
+  // sparkle started then sat still through the countdown
+  if (!unit.shiny || clock <= 0) {
     return;
   }
   const arrived = shone.get(unit) ?? clock;
@@ -458,6 +460,10 @@ function sparkle(
   clock: number,
   onto?: SlotBatch,
 ): void {
+  // Held until the fight's first tick, the same as the lit sparkle
+  if (clock <= 0) {
+    return;
+  }
   const arrived = shone.get(slot.unit) ?? clock;
 
   shone.set(slot.unit, arrived);

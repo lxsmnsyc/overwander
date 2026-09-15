@@ -36,7 +36,11 @@ export default createHandler(() => (
         <head>
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="icon" href="/favicon.ico" />
+          {/* The SVG for browsers that take one, the ico for those that do not */}
+          <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+          <link rel="icon" href="/favicon.ico" sizes="32x32" />
+          <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+          <meta name="theme-color" content="#2a75bb" />
           {/* Before the stylesheet rather than after it, so the first
               paint is already in the right theme */}
           <script innerHTML={THEME_SCRIPT} />

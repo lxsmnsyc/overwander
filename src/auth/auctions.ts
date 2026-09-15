@@ -130,6 +130,109 @@ export function watchOpenAuctions(
   return watchTable(AUCTION_TABLE, [], read, onChange);
 }
 
+/** The open lots one player has a stake in: the ones they sell, and the ones they bid on */
+export interface MyAuctions {
+  lots: [string, AuctionRecord][];
+  /** The lots among them this player has bid on, in id order */
+  bidOn: string[];
+}
+
+/** Realtime takes at most 100 values in one `in` filter */
+const FILTER_IDS = 100;
+
+/** Word from this device that it bid, which no filter on the lot carries to a new bidder */
+const bidListeners = new Set<() => void>();
+
+async function readMyAuctions(uid: string): Promise<MyAuctions> {
+  const supabase = getSupabase();
+  const [selling, bidding] = await Promise.all([
+    supabase.from(AUCTION_TABLE).select(AUCTION_COLUMNS).eq('seller', uid).eq('settled', false),
+    supabase
+      .from('bids')
+      .select(`auction, auctions!inner(${AUCTION_COLUMNS})`)
+      .eq('player', uid)
+      .eq('auctions.settled', false)
+      .order('auction'),
+  ]);
+
+  // Thrown rather than read as empty, so the watch keeps its lots and filter
+  if (selling.error != null) {
+    throw new Error(selling.error.message);
+  }
+  if (bidding.error != null) {
+    throw new Error(bidding.error.message);
+  }
+
+  const lots: [string, AuctionRecord][] = [];
+  const bidOn: string[] = [];
+
+  for (const row of asRecordArray(selling.data)) {
+    lots.push([String(row.id), fromAuctionRow(row)]);
+  }
+  for (const row of asRecordArray(bidding.data)) {
+    const auction = asString(row.auction);
+
+    lots.push([auction, fromAuctionRow(asRecord(row.auctions))]);
+    bidOn.push(auction);
+  }
+  return { lots, bidOn };
+}
+
+/**
+ * Follow only the lots this player has a stake in, so a bid elsewhere
+ * wakes nobody. The filter names the lots they bid on, so it is rebuilt
+ * whenever that list changes
+ */
+export function watchMyAuctions(uid: string, onChange: (mine: MyAuctions) => void): Unwatch {
+  let unwatch: Unwatch | null = null;
+  let followed: string | null = null;
+  let following: string[] = [];
+  let generation = 0;
+
+  const follow = (ids: string[]): void => {
+    const key = ids.join(',');
+
+    if (key === followed) {
+      return;
+    }
+    followed = key;
+    following = ids;
+    unwatch?.();
+
+    const own = ++generation;
+    const filters = [`seller=eq.${uid}`];
+
+    // Ids are alphanumeric, so they sit in the filter unquoted
+    for (let at = 0; at < ids.length; at += FILTER_IDS) {
+      filters.push(`id=in.(${ids.slice(at, at + FILTER_IDS).join(',')})`);
+    }
+    unwatch = watchTable(
+      AUCTION_TABLE,
+      filters,
+      async () => readMyAuctions(uid),
+      (mine) => {
+        if (own === generation) {
+          onChange(mine);
+          follow(mine.bidOn);
+        }
+      },
+    );
+  };
+  const refresh = (): void => {
+    followed = null;
+    follow(following);
+  };
+
+  bidListeners.add(refresh);
+  follow([]);
+
+  return () => {
+    generation++;
+    bidListeners.delete(refresh);
+    unwatch?.();
+  };
+}
+
 /**
  * Everything this player has ever put up, newest last
  */
@@ -300,7 +403,14 @@ async function openAuctionOnServer(
  * or the balance cannot cover it
  */
 export async function placeBid(id: string, amount: number): Promise<number | null> {
-  return placeBidOnServer(await getIdToken(), id, amount);
+  const standing = await placeBidOnServer(await getIdToken(), id, amount);
+
+  if (standing != null) {
+    for (const listener of bidListeners) {
+      listener();
+    }
+  }
+  return standing;
 }
 
 async function placeBidOnServer(token: string, id: string, amount: number): Promise<number | null> {

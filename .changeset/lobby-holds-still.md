@@ -8,6 +8,8 @@
 - The auction board, auction lot lists and trade lists read their pokemon in one request instead of one per lot or trade.
 - The overworld board reads its landmark glows once per chunk and window instead of on every step.
 - Landmark glows sit on the landmark they describe.
+- Auction notifications follow only the lots you sell or bid on, instead of re-reading every auction on each bid anywhere.
+- Won and unsold auction notifications appear when the lot ends, without waiting for another bid somewhere.
 - The overworld board reads which caches, berry patches and happenings you have already claimed in one request instead of three per chunk.
 - A catch's previous owners, the raids you were invited to, and your duel lobbies are each read in one request instead of one per entry.
 - Friend, request, notification and invite lists, and the auction board, read their players' profiles in one request instead of one per row.

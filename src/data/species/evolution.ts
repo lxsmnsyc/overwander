@@ -374,17 +374,11 @@ export function getConsumedItem(evolution: EvolutionData, covered = false): Item
  * evolved out of the bag would otherwise arrive a Kingdra still
  * holding the Dragon Scale the trade would have eaten.
  *
- * A held item asked for without a swap is left alone, the way the
- * mainline leaves one: nothing registered asks for that yet
+ * A held item asked for without a swap is spent by the evolution too, the
+ * way the mainline takes a Sneasel's Razor Claw
  */
 export function getSpentHeldItem(evolution: EvolutionData, covered = false): Items | null {
-  const { method } = evolution;
-
-  if (
-    covered ||
-    (method & EvolutionMethod.HeldItem) === 0 ||
-    (method & EvolutionMethod.Trade) === 0
-  ) {
+  if (covered || (evolution.method & EvolutionMethod.HeldItem) === 0) {
     return null;
   }
   return evolution.item ?? null;

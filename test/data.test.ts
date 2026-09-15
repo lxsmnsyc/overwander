@@ -2463,6 +2463,20 @@ describe('evolution data', () => {
     ).toBeNull();
   });
 
+  it('spends the held item a levelling evolution asks for', () => {
+    for (const [species, item] of [
+      [Species.Sneasel, Items.RazorClaw],
+      [Species.Gligar, Items.RazorFang],
+      [Species.Happiny, Items.OvalStone],
+    ] as const) {
+      const [evolution] = getSpeciesData(species).evolvesInto ?? [];
+
+      // Nothing in the bag pays for it: the pokemon gives up what it held
+      expect(getConsumedItem(evolution), getSpeciesData(species).name).toBeNull();
+      expect(getSpentHeldItem(evolution), getSpeciesData(species).name).toBe(item);
+    }
+  });
+
   it('spends the used item and leaves a held one alone', () => {
     const [stone] = getSpeciesData(Species.Vulpix).evolvesInto ?? [];
     const [level] = getSpeciesData(Species.Charmander).evolvesInto ?? [];

@@ -6,7 +6,7 @@ Twelve Kanto families reach the stages Sinnoh added to them.
 
 - Mime Jr. hatches from a Mr. Mime and becomes one at 20 knowing Mimic.
 - Happiny hatches from a Chansey and becomes one at 15 in daylight, holding an
-  Oval Stone.
+  Oval Stone, which the evolution uses up.
 - Munchlax hatches from a Snorlax and becomes one at high friendship.
 - Magneton becomes Magnezone with a Thunder Stone.
 - Lickitung becomes Lickilicky at 33 knowing Rollout, and Tangela becomes

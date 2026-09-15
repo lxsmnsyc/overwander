@@ -118,6 +118,7 @@ Every biome has its own ground, cliff, water and paving.
 
 ## See also
 
+- [Sinnoh](sinnoh.md), the release after this one.
 - [Hoenn](hoenn.md), the release before this one.
 - [Player's guide](../mechanics.md), for the rules in full.
 - [Credits](../credits.md), for the people, libraries and art behind it.

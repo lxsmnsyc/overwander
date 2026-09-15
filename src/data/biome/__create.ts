@@ -1,9 +1,9 @@
 import type Biome from '../ids/biome';
-import { TimeOfDay } from '../ids/biome';
+import { SpawnSurface, TimeOfDay } from '../ids/biome';
 import type Families from '../ids/families';
-import { DEOXYS_FORMS, Species, UNOWN_FORMS } from '../ids/species';
+import { DEOXYS_FORMS, Habitat, Species, UNOWN_FORMS } from '../ids/species';
 import type { Types } from '../constants/types';
-import { getBaseSpecies, getSpeciesData } from '../species';
+import { getBaseSpecies, getHabitat, getSpeciesData } from '../species';
 
 /**
  * One weighted slot of a biome's spawn pool
@@ -106,7 +106,21 @@ export type SpawnPool = { [key in TimeOfDay]: SpawnRarityGroups };
 
 const EMPTY_GROUPS: SpawnRarityGroups = { base: [], uncommon: [], rare: [], special: [] };
 
+/** What stands on each biome's dry ground, an open sea's islands included */
 const SPAWN_POOLS = new Map<Biome, SpawnPool>();
+
+/** What swims in each biome's water */
+const WATER_POOLS = new Map<Biome, SpawnPool>();
+
+/** What stands on each biome's frozen water */
+const ICE_POOLS = new Map<Biome, SpawnPool>();
+
+/** Every surface's pools, land first */
+const SURFACE_POOLS: [SpawnSurface, Map<Biome, SpawnPool>][] = [
+  [SpawnSurface.Land, SPAWN_POOLS],
+  [SpawnSurface.Water, WATER_POOLS],
+  [SpawnSurface.Ice, ICE_POOLS],
+];
 
 /**
  * The pools read backwards: which species is in which of them. Built
@@ -115,13 +129,137 @@ const SPAWN_POOLS = new Map<Biome, SpawnPool>();
  */
 let habitatIndex: Map<Species, SpeciesHabitat[]> | null = null;
 
+/** Each biome and hour's pools merged, built on demand; see `getBiomeRoster` */
+const ROSTERS = new Map<string, SpawnRarityGroups>();
+
+function forgetPools(): void {
+  habitatIndex = null;
+  ROSTERS.clear();
+}
+
 export function registerSpawnPool(biome: Biome, pool: SpawnPool): void {
   SPAWN_POOLS.set(biome, pool);
+  forgetPools();
+}
+
+/** What swims in the biome's water, which for a sea is everything off its islands */
+export function registerWaterPool(biome: Biome, pool: SpawnPool): void {
+  WATER_POOLS.set(biome, pool);
+  forgetPools();
+}
+
+/** What stands on the biome's frozen water */
+export function registerIcePool(biome: Biome, pool: SpawnPool): void {
+  ICE_POOLS.set(biome, pool);
+  forgetPools();
+}
+
+/**
+ * What lives underground, which is one pool for the whole of it
+ * rather than one per biome. The country overhead still decides which
+ * cave a player is standing in and how far they walked to reach it,
+ * but what is living in the dark is much the same wherever the dark is
+ */
+let cavePool: SpawnPool | null = null;
+
+export function registerCavePool(pool: SpawnPool): void {
+  cavePool = pool;
   habitatIndex = null;
 }
 
-export function getSpawnPool(biome: Biome, time: TimeOfDay): SpawnRarityGroups {
-  return SPAWN_POOLS.get(biome)?.[time] ?? EMPTY_GROUPS;
+/**
+ * What lives on a town's streets: one pool every town draws from,
+ * whatever the country around it, but with its own hours
+ */
+let townPool: SpawnPool | null = null;
+
+export function registerTownPool(pool: SpawnPool): void {
+  townPool = pool;
+}
+
+/** What may be met on a town's streets at this hour */
+export function getTownPool(time: TimeOfDay): SpawnRarityGroups {
+  return townPool?.[time] ?? EMPTY_GROUPS;
+}
+
+/**
+ * What may be met here. Underground answers from the cave's own pool
+ * whatever the country overhead, and from the same one at every hour:
+ * there is no sky down there for the time of day to come out of
+ */
+export function getSpawnPool(
+  biome: Biome,
+  time: TimeOfDay,
+  underground = false,
+  surface = SpawnSurface.Land,
+): SpawnRarityGroups {
+  if (underground) {
+    return cavePool?.[time] ?? EMPTY_GROUPS;
+  }
+  return poolsOn(surface).get(biome)?.[time] ?? EMPTY_GROUPS;
+}
+
+function poolsOn(surface: SpawnSurface): Map<Biome, SpawnPool> {
+  if (surface === SpawnSurface.Water) {
+    return WATER_POOLS;
+  }
+  return surface === SpawnSurface.Ice ? ICE_POOLS : SPAWN_POOLS;
+}
+
+/** Whether the biome registered a pool for this surface at all */
+export function hasSpawnPool(biome: Biome, surface: SpawnSurface): boolean {
+  return poolsOn(surface).has(biome);
+}
+
+/**
+ * Whether a species may stand in a pool on this surface: nothing that
+ * only swims on land or ice, and nothing of the ground in water
+ */
+export function fitsSurface(species: Species, surface: SpawnSurface): boolean {
+  const habitat = getHabitat(species);
+
+  return surface === SpawnSurface.Water ? habitat !== Habitat.Ground : habitat !== Habitat.Water;
+}
+
+/**
+ * Everything the biome's land, water and ice pools hold at this hour,
+ * for what reads the biome rather than one cell: raids, nests and
+ * trainers. A species in two pools counts once, at its heavier weight
+ */
+export function getBiomeRoster(biome: Biome, time: TimeOfDay): SpawnRarityGroups {
+  const land = getSpawnPool(biome, time);
+
+  if (!WATER_POOLS.has(biome) && !ICE_POOLS.has(biome)) {
+    return land;
+  }
+
+  const key = `${biome}:${time}`;
+  const known = ROSTERS.get(key);
+
+  if (known != null) {
+    return known;
+  }
+
+  const roster = { base: [], uncommon: [], rare: [], special: [] } as SpawnRarityGroups;
+
+  for (const band of SPAWN_BAND_KEYS) {
+    const weights = new Map<Species, number>();
+
+    for (const [surface] of SURFACE_POOLS) {
+      for (const entry of spawnBand(getSpawnPool(biome, time, false, surface), band)) {
+        weights.set(entry.species, Math.max(weights.get(entry.species) ?? 0, entry.weight));
+      }
+    }
+
+    const entries: SpawnEntry[] = [];
+
+    for (const [species, weight] of weights) {
+      entries.push({ species, weight });
+    }
+    roster[band] = entries;
+  }
+  ROSTERS.set(key, roster);
+  return roster;
 }
 
 /**
@@ -134,11 +272,16 @@ export function boostFamilyEntries(
   family: Families,
   factor: number,
 ): SpawnEntry[] {
-  return entries.map((entry) =>
-    getSpeciesData(entry.species).family === family
-      ? { species: entry.species, weight: entry.weight * factor }
-      : entry,
-  );
+  const boosted: SpawnEntry[] = [];
+
+  for (const entry of entries) {
+    boosted.push(
+      getSpeciesData(entry.species).family === family
+        ? { species: entry.species, weight: entry.weight * factor }
+        : entry,
+    );
+  }
+  return boosted;
 }
 
 /**
@@ -172,11 +315,20 @@ export function boostTypeEntries(
 
   const favored = new Set(types);
 
-  return entries.map((entry) =>
-    getSpeciesData(entry.species).types.some((type) => favored.has(type))
-      ? { species: entry.species, weight: entry.weight * factor }
-      : entry,
-  );
+  const boosted: SpawnEntry[] = [];
+
+  for (const entry of entries) {
+    let lifted = false;
+
+    for (const type of getSpeciesData(entry.species).types) {
+      if (favored.has(type)) {
+        lifted = true;
+        break;
+      }
+    }
+    boosted.push(lifted ? { species: entry.species, weight: entry.weight * factor } : entry);
+  }
+  return boosted;
 }
 
 /**
@@ -221,7 +373,7 @@ const EGG_POOLS = new WeakMap<SpawnRarityGroups, SpawnEntry[]>();
  * the reason `AWAITING_BABY_SPECIES` gives
  */
 export function getEggPool(biome: Biome, time: TimeOfDay): SpawnEntry[] {
-  const groups = getSpawnPool(biome, time);
+  const groups = getBiomeRoster(biome, time);
   const built = EGG_POOLS.get(groups);
 
   if (built != null) {
@@ -244,7 +396,11 @@ export function getEggPool(biome: Biome, time: TimeOfDay): SpawnEntry[] {
     }
   }
 
-  const pool = [...weights].map(([species, weight]) => ({ species, weight }));
+  const pool: SpawnEntry[] = [];
+
+  for (const [species, weight] of weights) {
+    pool.push({ species, weight });
+  }
 
   EGG_POOLS.set(groups, pool);
   return pool;
@@ -338,7 +494,12 @@ export interface SpeciesHabitat {
 function buildHabitats(): Map<Species, SpeciesHabitat[]> {
   const found = new Map<Species, SpeciesHabitat[]>();
 
-  for (const [biome, pool] of SPAWN_POOLS) {
+  const registered: [Biome, SpawnPool][] = [];
+
+  for (const [, pools] of SURFACE_POOLS) {
+    registered.push(...pools);
+  }
+  for (const [biome, pool] of registered) {
     for (const time of TIMES_OF_DAY) {
       const groups = pool[time];
 
@@ -358,7 +519,7 @@ function buildHabitats(): Map<Species, SpeciesHabitat[]> {
 /**
  * Everywhere this species is met in the wild, as the dex lists it.
  *
- * A species is listed once per biome, hour and band it appears in, so
+ * A species is listed once per biome, surface, hour and band it appears in, so
  * something that lives in a grassland all day answers four entries and
  * something that only comes out at night answers one. A species that
  * spawns nowhere — a legendary staged by a lair, a mythical called by
@@ -368,6 +529,25 @@ function buildHabitats(): Map<Species, SpeciesHabitat[]> {
 export function listSpeciesHabitats(species: Species): SpeciesHabitat[] {
   habitatIndex ??= buildHabitats();
   return habitatIndex.get(species) ?? [];
+}
+
+/** Every hour and band this species is met on a town's streets */
+export function listTownHabitats(species: Species): { time: TimeOfDay; rarity: SpawnRarity }[] {
+  const habitats: { time: TimeOfDay; rarity: SpawnRarity }[] = [];
+
+  for (const time of TIMES_OF_DAY) {
+    const pool = getTownPool(time);
+
+    for (const [band, rarity] of BAND_RARITIES) {
+      for (const entry of spawnBand(pool, band)) {
+        if (entry.species === species) {
+          habitats.push({ time, rarity });
+          break;
+        }
+      }
+    }
+  }
+  return habitats;
 }
 
 /**
@@ -506,7 +686,14 @@ const UNOWN_SPECIES = new Set<Species>(UNOWN_FORMS);
  * alphabet is collected over months either way, and no letter is
  * cheaper because of where the player happens to live
  */
-export const UNOWN_SPAWNS: SpawnEntry[] = UNOWN_FORMS.map((species) => ({ species, weight: 1 }));
+export const UNOWN_SPAWNS: SpawnEntry[] = (() => {
+  const spawns: SpawnEntry[] = [];
+
+  for (const species of UNOWN_FORMS) {
+    spawns.push({ species, weight: 1 });
+  }
+  return spawns;
+})();
 
 /**
  * What one prized species weighs against the alphabet.
@@ -634,9 +821,13 @@ export function getLineStage(species: Species): number {
 function stagesBelow(species: Species): number {
   const own = BABY_SPECIES.has(species) ? 0 : 1;
   const dex = getSpeciesData(species).dexNumber;
-  const below = (getSpeciesData(species).evolvesInto ?? [])
-    .filter((entry) => getSpeciesData(entry.species).dexNumber !== dex)
-    .map((entry) => stagesBelow(entry.species));
+  const below: number[] = [];
+
+  for (const entry of getSpeciesData(species).evolvesInto ?? []) {
+    if (getSpeciesData(entry.species).dexNumber !== dex) {
+      below.push(stagesBelow(entry.species));
+    }
+  }
 
   if (below.length === 0) {
     return own + (isAwaitingEvolution(species) ? 1 : 0);

@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerMantineSpecies(): void {
@@ -26,6 +26,7 @@ export default function registerMantineSpecies(): void {
       [Stats.Speed]: 70,
     },
     types: [Types.Water, Types.Flying],
+    habitat: Habitat.Water,
     abilities: [Abilities.SwiftSwim, Abilities.WaterAbsorb],
     // Hydration is this registry's rather than the mainline's,
     // filling it to four: rain is the water it already lives in

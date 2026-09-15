@@ -1,11 +1,4 @@
-import {
-  type AuctionRecord,
-  type BidHistoryEntry,
-  canClaim,
-  canReclaim,
-  listBidHistory,
-  watchOpenAuctions,
-} from './auctions';
+import { type AuctionRecord, canClaim, canReclaim, watchMyAuctions } from './auctions';
 import { watchDuelInvites } from './duels';
 import { watchFriendRequests } from './friends';
 import { watchRaidInvites } from './raids';
@@ -66,12 +59,11 @@ function byNewest(one: Notice, other: Notice): number {
  */
 function auctionNotices(
   lots: [string, AuctionRecord][],
-  bids: BidHistoryEntry[],
+  mine: Set<string>,
   uid: string,
   now: number,
 ): Notice[] {
   const found: Notice[] = [];
-  const mine = new Set(bids.map((entry) => entry.auction));
 
   for (const [id, lot] of lots) {
     if (canClaim(lot, uid, now)) {
@@ -115,77 +107,104 @@ export function watchNotifications(uid: string, onChange: (notices: Notice[]) =>
   let friends: Notice[] = [];
   let trades: Notice[] = [];
   let auctions: Notice[] = [];
-  /** The player's own bids, re-read whenever a lot moves */
-  let bids: BidHistoryEntry[] = [];
+  let lots: [string, AuctionRecord][] = [];
+  let bidOn = new Set<string>();
+  let ending: ReturnType<typeof setTimeout> | undefined;
 
   const report = (): void => {
     onChange([...raids, ...duels, ...friends, ...trades, ...auctions].sort(byNewest));
   };
+  // A lot ending changes nothing in its row, so won and unsold wait on the clock
+  const noticeAuctions = (): void => {
+    const now = Date.now();
+    let next = Number.POSITIVE_INFINITY;
+
+    auctions = auctionNotices(lots, bidOn, uid, now);
+    clearTimeout(ending);
+    for (const [, lot] of lots) {
+      if (lot.endsAt > now && lot.endsAt < next) {
+        next = lot.endsAt;
+      }
+    }
+    if (next !== Number.POSITIVE_INFINITY) {
+      // A second late, so the lot reads as ended when the timer fires
+      ending = setTimeout(
+        () => {
+          noticeAuctions();
+          report();
+        },
+        next - now + 1000,
+      );
+    }
+  };
 
   const closers: Unwatch[] = [
     watchRaidInvites(uid, (invites) => {
-      raids = invites.map((invite) => ({
-        id: `raid:${invite.raid}`,
-        kind: NoticeKind.RaidInvite,
-        from: invite.sender,
-        subject: invite.raid,
-        at: invite.sentAt,
-      }));
+      raids = [];
+      for (const invite of invites) {
+        raids.push({
+          id: `raid:${invite.raid}`,
+          kind: NoticeKind.RaidInvite,
+          from: invite.sender,
+          subject: invite.raid,
+          at: invite.sentAt,
+        });
+      }
       report();
     }),
     watchDuelInvites(uid, (invites) => {
-      duels = invites.map((invite) => ({
-        id: `duel:${invite.duel}`,
-        kind: NoticeKind.DuelInvite,
-        from: invite.sender,
-        subject: invite.duel,
-        at: invite.sentAt,
-      }));
+      duels = [];
+      for (const invite of invites) {
+        duels.push({
+          id: `duel:${invite.duel}`,
+          kind: NoticeKind.DuelInvite,
+          from: invite.sender,
+          subject: invite.duel,
+          at: invite.sentAt,
+        });
+      }
       report();
     }),
     watchFriendRequests(uid, (waiting) => {
       // Only what is asked of them: what they asked of somebody else
       // is not waiting on them
-      friends = waiting.incoming.map((request) => ({
-        id: `friend:${request.uid}`,
-        kind: NoticeKind.FriendRequest,
-        from: request.uid,
-        subject: request.uid,
-        at: request.since,
-      }));
+      friends = [];
+      for (const request of waiting.incoming) {
+        friends.push({
+          id: `friend:${request.uid}`,
+          kind: NoticeKind.FriendRequest,
+          from: request.uid,
+          subject: request.uid,
+          at: request.since,
+        });
+      }
       report();
     }),
     watchTrades(uid, (offers) => {
-      trades = offers
-        .filter(([, trade]) => trade.status === TradeStatus.Open && trade.receiver === uid)
-        .map(([id, trade]) => ({
-          id: `trade:${id}`,
-          kind: NoticeKind.TradeOffer,
-          from: trade.proposer,
-          subject: id,
-          at: trade.createdAt,
-        }));
+      trades = [];
+      for (const [id, trade] of offers) {
+        if (trade.status === TradeStatus.Open && trade.receiver === uid) {
+          trades.push({
+            id: `trade:${id}`,
+            kind: NoticeKind.TradeOffer,
+            from: trade.proposer,
+            subject: id,
+            at: trade.createdAt,
+          });
+        }
+      }
       report();
     }),
-    watchOpenAuctions((lots) => {
-      // The bids are the player's own rows rather than the lot's, so
-      // they are read beside the lots rather than derived from them
-      listBidHistory(uid)
-        .then((placed) => {
-          bids = placed;
-        })
-        .catch(() => {
-          // A bid history that will not load leaves the lots saying
-          // what they can on their own: won and unsold need no bids
-        })
-        .finally(() => {
-          auctions = auctionNotices(lots, bids, uid, Date.now());
-          report();
-        });
+    watchMyAuctions(uid, (mine) => {
+      lots = mine.lots;
+      bidOn = new Set(mine.bidOn);
+      noticeAuctions();
+      report();
     }),
   ];
 
   return () => {
+    clearTimeout(ending);
     for (const close of closers) {
       close();
     }

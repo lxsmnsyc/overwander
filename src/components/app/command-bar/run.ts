@@ -14,6 +14,7 @@ import type { Origin } from './locate';
 import type { PositionRecord } from '../../../auth/position-record';
 import locate, { LOCATE_RADIUS, readLocate } from './locate';
 import namePlace from '../../../overworld/place';
+import { worldCell } from '../../../overworld/grid';
 import parseCommand from '../../../core/command';
 import readGift from './gift';
 import readPlayer from './player';
@@ -85,7 +86,7 @@ async function runTeleport(parameters: CommandArguments): Promise<CommandResult>
 
     return {
       ...done(
-        `${landed.nickname} is in ${namePlace(landed.chunkX, landed.chunkY)}, ` +
+        `${landed.nickname} is in ${namePlace(landed.chunkX, landed.chunkY, worldCell(landed.chunkX, landed.cellX), worldCell(landed.chunkY, landed.cellY))}, ` +
           `cell ${landed.cellX}, ${landed.cellY}.`,
       ),
       moved: landed,

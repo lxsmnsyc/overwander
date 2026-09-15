@@ -1,4 +1,5 @@
 import 'server-only';
+import { Depth } from '../overworld/depth';
 import BattleOutcome from '../auth/battle-outcome';
 import { NPC_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
@@ -62,6 +63,7 @@ import {
   rollGymMachine,
 } from '../data/overworld/experts';
 import type { Items } from '../data/ids/items';
+import type { Species } from '../data/ids/species';
 import AleaRNG from '../core/alea';
 import { hasAwards, recordAwardWin } from './awards';
 import { grantItem } from './inventory';
@@ -195,8 +197,9 @@ export async function enterStop(
   cell: number,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<StopEntry> {
-  const chunk = getWorld().getChunk(x, y);
+  const chunk = getWorld(depth).getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
   // The cell's landmark says whose stop this is: Team Rocket's, the
@@ -252,13 +255,15 @@ export async function enterStop(
     return existing.defeated ? 'beaten' : [stop, existing];
   }
 
+  const staged: StopRecord['party'] = [];
+
+  for (const [species, individualValue, traitValue] of party) {
+    staged.push({ species, individualValue, traitValue });
+  }
+
   const fresh: StopRecord = {
     player: uid,
-    party: party.map(([species, individualValue, traitValue]) => ({
-      species,
-      individualValue,
-      traitValue,
-    })),
+    party: staged,
     battle: null,
     timestamp: snapshot.npcTimestamp,
     offset: zone,
@@ -278,14 +283,25 @@ export async function enterStop(
       on conflict do nothing
     `;
 
-    const rows = fresh.party.map((entry, slot) => ({
-      stop_id: stop,
-      player: uid,
-      slot,
-      species: entry.species,
-      individual_value: entry.individualValue,
-      trait_value: entry.traitValue,
-    }));
+    const rows: {
+      stop_id: string;
+      player: string;
+      slot: number;
+      species: Species;
+      individual_value: number;
+      trait_value: number;
+    }[] = [];
+
+    for (const [slot, entry] of fresh.party.entries()) {
+      rows.push({
+        stop_id: stop,
+        player: uid,
+        slot,
+        species: entry.species,
+        individual_value: entry.individualValue,
+        trait_value: entry.traitValue,
+      });
+    }
 
     // The Dome stages nobody, so there is nothing to write: a
     // multi-row insert with no rows is not an empty insert, it is a
@@ -312,21 +328,22 @@ function houseParty(
   party: CatchSnapshot[],
   options: { stripped: boolean; panel: ArcadePanel | undefined },
 ): CatchSnapshot[] {
-  const carried = options.stripped ? party.map((one) => ({ ...one, items: [] })) : party;
   const room = arcadeCurtain(options.panel);
+  const status =
+    room == null || room === PikeCurtain.Healed ? undefined : PIKE_CURTAIN_STATUSES[room];
+  const housed: CatchSnapshot[] = [];
 
-  if (room == null) {
-    return carried;
+  for (const one of party) {
+    let kept: CatchSnapshot = options.stripped ? { ...one, items: [] } : one;
+
+    if (room === PikeCurtain.Healed) {
+      kept = { ...kept, health: getMaxHealth(kept), statuses: 0 };
+    } else if (status != null) {
+      kept = { ...kept, statuses: kept.statuses | packStatuses([status]) };
+    }
+    housed.push(kept);
   }
-  if (room === PikeCurtain.Healed) {
-    return carried.map((one) => ({ ...one, health: getMaxHealth(one), statuses: 0 }));
-  }
-
-  const status = PIKE_CURTAIN_STATUSES[room];
-
-  return status == null
-    ? carried
-    : carried.map((one) => ({ ...one, statuses: one.statuses | packStatuses([status]) }));
+  return housed;
 }
 
 /**

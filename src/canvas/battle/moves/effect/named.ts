@@ -37,8 +37,9 @@ export const BY_TYPE: Partial<Record<Types, EffectShape>> = {
  */
 export const NAMED: Partial<Record<Moves, EffectShape>> = {
   // Beams: the picture is the line between the two of them
-  [Moves.HyperBeam]: 'Beam',
-  [Moves.SolarBeam]: 'Beam',
+  // The two that hold far longer and far thicker than any other
+  [Moves.HyperBeam]: 'Blaster',
+  [Moves.SolarBeam]: 'Blaster',
   [Moves.Psybeam]: 'Beam',
   [Moves.IceBeam]: 'Beam',
   [Moves.AuroraBeam]: 'Beam',
@@ -159,12 +160,11 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.SelfDestruct]: 'Blast',
   [Moves.Earthquake]: 'Quake',
   [Moves.Recover]: 'Mend',
-  [Moves.Rest]: 'Mend',
+  [Moves.Rest]: 'Slumber',
   [Moves.SoftBoiled]: 'Mend',
   [Moves.Reflect]: 'Screen',
   [Moves.LightScreen]: 'Screen',
   [Moves.Safeguard]: 'Screen',
-  [Moves.Substitute]: 'Ward',
   [Moves.Surf]: 'Splash',
   [Moves.Blizzard]: 'Frost',
   [Moves.FireBlast]: 'Flame',
@@ -193,15 +193,15 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.GigaDrain]: 'Drain',
   [Moves.PainSplit]: 'Drain',
   [Moves.MilkDrink]: 'Mend',
-  [Moves.MorningSun]: 'Mend',
-  [Moves.Synthesis]: 'Mend',
-  [Moves.Moonlight]: 'Mend',
+  // Healing drawn as where it comes from: the sun, the leaves, the moon
+  [Moves.MorningSun]: 'Sunbeam',
+  [Moves.Synthesis]: 'Greening',
+  [Moves.Moonlight]: 'Moonbeam',
   [Moves.HiddenPower]: 'Dazzle',
 
   // Ghost: something closing on it rather than something thrown
   [Moves.ShadowBall]: 'Shade',
   [Moves.Nightmare]: 'Shade',
-  [Moves.Curse]: 'Shade',
   [Moves.DestinyBond]: 'Shade',
   [Moves.Spite]: 'Shade',
 
@@ -233,12 +233,14 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.FrenzyPlant]: 'Roots',
 
   // Jets and light, which the type alone would have drawn as a cloud
-  [Moves.HydroCannon]: 'Beam',
   [Moves.SignalBeam]: 'Beam',
-  [Moves.LusterPurge]: 'Dazzle',
-  [Moves.DoomDesire]: 'Dazzle',
   [Moves.Extrasensory]: 'Warp',
-  [Moves.PsychoBoost]: 'Blast',
+  // The mythical and legendary signatures: a ball of down and a flare of light for the Eon pair,
+  // a falling star, and a psychic blast
+  [Moves.MistBall]: 'Plume',
+  [Moves.LusterPurge]: 'Lustre',
+  [Moves.DoomDesire]: 'Starfall',
+  [Moves.PsychoBoost]: 'Surge',
   [Moves.SpitUp]: 'Blast',
 
   // Fire that is fire wherever it comes from
@@ -279,8 +281,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Snatch]: 'Shade',
   [Moves.Torment]: 'Shade',
 
-  // Said to it rather than done to it
-  [Moves.Taunt]: 'Wave',
+  // Wanting what it holds
   [Moves.Covet]: 'Hearts',
 
   // Something turning in front of its eyes
@@ -297,8 +298,9 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Swallow]: 'Mend',
   [Moves.SlackOff]: 'Mend',
   [Moves.Refresh]: 'Mend',
-  [Moves.Aromatherapy]: 'Mend',
-  [Moves.Wish]: 'Mend',
+  // A scent is petals on the air, the way Sweet Scent is, and a wish is a star
+  [Moves.Aromatherapy]: 'Petals',
+  [Moves.Wish]: 'Wishing',
 
   // Something the pokemon did for itself that moves no stat, so the
   // stat rule above never sees it
@@ -309,13 +311,15 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   // the rules underneath would have drawn wrong
 
   // Health coming back, whatever the move is called
-  [Moves.Roost]: 'Mend',
+  [Moves.Roost]: 'Feathers',
   // Water put round it and left turning there, which is what the move
   // is: the healing comes later, a turn at a time
   [Moves.AquaRing]: 'Gyro',
-  [Moves.HealOrder]: 'Mend',
+  [Moves.HealOrder]: 'Swarm',
   [Moves.HealingWish]: 'Mend',
-  [Moves.LunarDance]: 'Mend',
+  // Moonlight and the dark it answers, for the Lunar pair
+  [Moves.LunarDance]: 'Moonlit',
+  [Moves.DarkVoid]: 'Void',
 
   // Laid on the ground for whatever walks in next, the way Spikes is
   [Moves.StealthRock]: 'Caltrops',
@@ -326,28 +330,29 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Switcheroo]: 'Warp',
   [Moves.GuardSwap]: 'Warp',
   [Moves.PowerSwap]: 'Warp',
-  [Moves.HeartSwap]: 'Warp',
+  // Two hearts trading places between them
+  [Moves.HeartSwap]: 'Exchange',
   [Moves.PsychoShift]: 'Warp',
   [Moves.PowerTrick]: 'Warp',
   [Moves.Copycat]: 'Warp',
   [Moves.MeFirst]: 'Warp',
 
-  // Time and space themselves, which bend rather than strike
-  [Moves.RoarOfTime]: 'Warp',
-  [Moves.SpacialRend]: 'Warp',
+  // Time stopping and space torn open
+  [Moves.RoarOfTime]: 'Stall',
+  [Moves.SpacialRend]: 'Rend',
   // A room laid over the field, and a weight put on it
   [Moves.TrickRoom]: 'Grid',
   [Moves.Gravity]: 'Press',
 
   // Something turning in front of its eyes
-  [Moves.DarkVoid]: 'Trance',
   [Moves.MiracleEye]: 'Trance',
   [Moves.Captivate]: 'Hearts',
 
   // Wound round it, or closing on it
-  [Moves.MagmaStorm]: 'Coil',
+  [Moves.MagmaStorm]: 'Vortex',
   [Moves.WorrySeed]: 'Coil',
-  [Moves.CrushGrip]: 'Coil',
+  // Two great hands closing on it
+  [Moves.CrushGrip]: 'Grip',
   [Moves.WringOut]: 'Coil',
 
   // Jets and beams, which the type alone would have drawn as a cloud
@@ -355,9 +360,10 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.DragonPulse]: 'Beam',
   [Moves.FlashCannon]: 'Beam',
 
+  // Light coming down on it, and light bursting up off it
+  [Moves.Judgment]: 'Verdict',
+  [Moves.SeedFlare]: 'Sunburst',
   // Light rather than an element
-  [Moves.Judgment]: 'Dazzle',
-  [Moves.SeedFlare]: 'Dazzle',
   [Moves.MirrorShot]: 'Dazzle',
   [Moves.PowerGem]: 'Dazzle',
 
@@ -366,8 +372,8 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Fling]: 'Impact',
 
   // Thrown and going off where it lands
-  [Moves.AuraSphere]: 'Blast',
-  [Moves.FocusBlast]: 'Blast',
+  [Moves.AuraSphere]: 'Aura',
+  [Moves.FocusBlast]: 'Aura',
   [Moves.EnergyBall]: 'Blast',
   [Moves.SeedBomb]: 'Blast',
   [Moves.MudBomb]: 'Blast',
@@ -379,7 +385,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.StoneEdge]: 'Rocks',
   [Moves.RockWrecker]: 'Rocks',
   [Moves.Avalanche]: 'Rocks',
-  [Moves.DracoMeteor]: 'Rocks',
+  [Moves.DracoMeteor]: 'Meteors',
 
   // Two cuts across each other, the way Cross Chop lands
   [Moves.XScissor]: 'Cross',
@@ -417,6 +423,121 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   // A stat that rises without the move naming which one, so the stage
   // rule above never sees it
   [Moves.Acupressure]: 'Boost',
+
+  // Out of the dark behind whatever it hits
+  [Moves.ShadowForce]: 'Ambush',
+
+  // Fire that stands as a pillar
+  [Moves.SacredFire]: 'Pyre',
+  // The starter trio's strongest moves each burst out of the ground round it, the way Frenzy Plant's roots do
+  [Moves.BlastBurn]: 'Upheaval',
+  [Moves.HydroCannon]: 'Cannon',
+
+  // A blow wrapped in its element, which a plain hit in the type's colour did not say
+  [Moves.FirePunch]: 'Punch',
+  [Moves.IcePunch]: 'Punch',
+  [Moves.ThunderPunch]: 'Punch',
+  [Moves.FlareBlitz]: 'Rush',
+  [Moves.VoltTackle]: 'Rush',
+  [Moves.FlameWheel]: 'Wheel',
+  [Moves.Waterfall]: 'Torrent',
+  [Moves.BraveBird]: 'Rush',
+
+  // Named attacks the rules drew as something generic
+  [Moves.Outrage]: 'Rampage',
+  [Moves.Thrash]: 'Rampage',
+  [Moves.PetalDance]: 'Rampage',
+  [Moves.EarthPower]: 'Rift',
+  [Moves.HeatWave]: 'Scorch',
+  [Moves.DarkPulse]: 'Pulse',
+  [Moves.SheerCold]: 'Freeze',
+
+  // Put up or done to itself, which a dome or a stat's chevrons drew for all of them
+  [Moves.Protect]: 'Shell',
+  [Moves.Detect]: 'Shell',
+  [Moves.Substitute]: 'Doll',
+  [Moves.Splash]: 'Flop',
+  [Moves.Metronome]: 'Wag',
+  [Moves.Transform]: 'Shimmer',
+  [Moves.SwordsDance]: 'Blades',
+  [Moves.DragonDance]: 'Dance',
+  [Moves.IronDefense]: 'Sheen',
+  [Moves.Harden]: 'Sheen',
+  [Moves.DoubleTeam]: 'Mirage',
+  [Moves.Minimize]: 'Mirage',
+  [Moves.CalmMind]: 'Scheme',
+  [Moves.NastyPlot]: 'Scheme',
+
+  // The heaviest blows, drawn as what they are rather than as a bigger ordinary hit
+  [Moves.GigaImpact]: 'Crash',
+  [Moves.FocusPunch]: 'Haymaker',
+  [Moves.DynamicPunch]: 'Haymaker',
+  [Moves.CloseCombat]: 'Flurry',
+
+  // Several of something flying in, where the scatter of hits said nothing about what was thrown
+  [Moves.PinMissile]: 'Stream',
+  [Moves.BulletSeed]: 'Stream',
+  [Moves.IcicleSpear]: 'Stream',
+  [Moves.RockBlast]: 'Stream',
+  [Moves.BoneRush]: 'Stream',
+  [Moves.DoubleKick]: 'Kicks',
+  [Moves.TripleKick]: 'Kicks',
+
+  // Made of whatever the sky is doing, and three elements at once
+  [Moves.WeatherBall]: 'Weather',
+  [Moves.TriAttack]: 'Tri',
+
+  // Heard as what it is: a song, a roar, a bell
+  [Moves.Sing]: 'Song',
+  [Moves.GrassWhistle]: 'Song',
+  [Moves.PerishSong]: 'Song',
+  [Moves.Roar]: 'Roar',
+  [Moves.HyperVoice]: 'Roar',
+  [Moves.BugBuzz]: 'Roar',
+  [Moves.HealBell]: 'Chime',
+
+  // Blades that each cut their own way, where the rake of claws drew all of them alike
+  [Moves.LeafBlade]: 'Sweep',
+  [Moves.NightSlash]: 'Crescent',
+  [Moves.PsychoCut]: 'Sickles',
+  [Moves.AirSlash]: 'Sickles',
+  [Moves.FuryCutter]: 'Cutter',
+
+  // Statuses drawn as what they are: poison welling up, spores, an eye, applause, anger, a nail
+  [Moves.Toxic]: 'Toxin',
+  [Moves.StunSpore]: 'Spores',
+  [Moves.Glare]: 'Stare',
+  [Moves.Encore]: 'Applause',
+  [Moves.Taunt]: 'Vein',
+  [Moves.Curse]: 'Nail',
+
+  // Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+  [Moves.Agility]: 'Haste',
+  [Moves.RockPolish]: 'Polish',
+  [Moves.BulkUp]: 'Flex',
+  [Moves.Howl]: 'Howl',
+  [Moves.Amnesia]: 'Blank',
+  [Moves.CosmicPower]: 'Cosmos',
+  [Moves.Barrier]: 'Screen',
+  [Moves.DefendOrder]: 'Hive',
+  [Moves.Charge]: 'Crackle',
+  [Moves.TailGlow]: 'Lantern',
+  [Moves.Stockpile]: 'Stack',
+  [Moves.Growth]: 'Sprout',
+  [Moves.Withdraw]: 'Curl',
+  [Moves.DefenseCurl]: 'Curl',
+  [Moves.Growl]: 'Roar',
+  [Moves.Screech]: 'Screech',
+  [Moves.MetalSound]: 'Screech',
+  [Moves.ScaryFace]: 'Stare',
+  [Moves.Charm]: 'Hearts',
+  [Moves.Tickle]: 'Tickle',
+  [Moves.FeatherDance]: 'Feathers',
+  [Moves.CottonSpore]: 'Cotton',
+  [Moves.StringShot]: 'Silk',
+  [Moves.FakeTears]: 'Tears',
+  [Moves.Memento]: 'Memento',
+  [Moves.Defog]: 'Clear',
 
   // Struck and gone: the blow is the first step and the walk off the
   // field is the second, which is why the landing here is the leaving

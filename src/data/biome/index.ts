@@ -2,6 +2,7 @@ import registerAlpineTundraSpawns from './alpine-tundra';
 import registerBadlandsSpawns from './badlands';
 import registerBeachSpawns from './beach';
 import registerBogSpawns from './bog';
+import registerCaveSpawns from './cave';
 import registerColdDesertSpawns from './cold-desert';
 import registerCoralReefSpawns from './coral-reef';
 import registerDeepOceanSpawns from './deep-ocean';
@@ -24,6 +25,7 @@ import registerTemperateForestSpawns from './temperate-forest';
 import registerTemperateRainforestSpawns from './temperate-rainforest';
 import registerTropicalRainforestSpawns from './tropical-rainforest';
 import registerTropicalSeasonalForestSpawns from './tropical-seasonal-forest';
+import registerTownSpawns from './town';
 import registerTundraSpawns from './tundra';
 import registerVolcanoSpawns from './volcano';
 import registerWoodlandSpawns from './woodland';
@@ -34,15 +36,20 @@ export {
   boostTypeEntries,
   boostTypeWeights,
   countLineStages,
+  fitsSurface,
+  getBiomeRoster,
   getLineStage,
   getEggPool,
   getSpawnPool,
+  hasSpawnPool,
   getSpawnRarity,
+  getTownPool,
   isAwaitingBaby,
   isAwaitingEvolution,
   isGrownSpecies,
   isLegendarySpecies,
   listSpeciesHabitats,
+  listTownHabitats,
   TIMES_OF_DAY,
   isMythicalSpecies,
   isPrizedSpecies,
@@ -52,7 +59,11 @@ export {
   PRIZED_SPAWN_ODDS,
   PRIZED_WEIGHT,
   RARE_SPAWN_ODDS,
+  registerCavePool,
+  registerIcePool,
   registerSpawnPool,
+  registerTownPool,
+  registerWaterPool,
   spawnBand,
   spawnRanks,
   SPAWN_BAND_KEYS,
@@ -67,6 +78,10 @@ export default function registerBiomeSpawns(): void {
   registerBadlandsSpawns();
   registerBeachSpawns();
   registerBogSpawns();
+  // Not a biome: the one pool the whole of underground draws from
+  registerCaveSpawns();
+  // Nor this: the one pool every town's streets draw from
+  registerTownSpawns();
   registerColdDesertSpawns();
   registerCoralReefSpawns();
   registerDeepOceanSpawns();

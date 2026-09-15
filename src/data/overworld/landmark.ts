@@ -115,24 +115,28 @@ const enum Landmark {
    * the crown of the region the house stands in
    */
   FrontierBrain = 17,
-
-  //
-  // TODO: Honey Tree, with Sinnoh. Honey is slathered on and the tree
-  // left alone; something is waiting at it hours later, which makes
-  // it the one landmark a player arms rather than claims. `Items.Honey`
-  // has an id and no registration, and the pokemon it draws are a
-  // Sinnoh pool that does not exist.
-  //
-  // TODO: five more Frontier Brains, with the rest of Hoenn's
-  // facilities. Brandon's Pyramid and Greta's Arena are open; the
-  // Factory rents a party, the Palace gives no orders, the Dome shows
-  // its six first, the Pike opens with a rolled condition, and the
-  // Tower asks nothing at all. Each brings a silver symbol and a gold
-  // one, and a rule in `FrontierRule`.
-  //
-  // Both take the next free numbers and want a row in `LANDMARKS`,
-  // `LANDMARK_NAMES`, `SEA_PEOPLE` (neither stands on water) and a
-  // resolver in `chunk-snapshot.ts`.
+  /**
+   * A Pokémon Center: Nurse Joy behind her own counter, fixed to the
+   * spot. She used to be one of the faces a wandering cell drew, which
+   * meant the one service a player cannot do without was a 3-hour roll
+   * somewhere out in the country. Every town has exactly one of these
+   * and the country has none, so being patched up is a reason to walk
+   * back into town
+   */
+  PokemonCenter = 18,
+  /**
+   * A way into the caves, and back out of them. Not rolled like the
+   * rest: a mouth is cut where the ground already has a hillside to
+   * cut it into, so it stands at the same pair of cells for both
+   * layers and a player who goes down can always come back up
+   */
+  CaveMouth = 19,
+  /**
+   * A tree in the forest that honey can be lathered on, once per
+   * player per landmark window. Whatever the honey draws out is met on
+   * the spot, and nothing in its pool spawns anywhere else
+   */
+  HoneyTree = 20,
 }
 
 export default Landmark;
@@ -158,6 +162,9 @@ export const LANDMARKS: Landmark[] = [
   Landmark.AuctionBoard,
   Landmark.ApricornTree,
   Landmark.FrontierBrain,
+  Landmark.PokemonCenter,
+  Landmark.CaveMouth,
+  Landmark.HoneyTree,
 ];
 
 /**
@@ -181,4 +188,7 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.AuctionBoard]: 'Auction Board',
   [Landmark.ApricornTree]: 'Apricorn Tree',
   [Landmark.FrontierBrain]: 'Frontier Brain',
+  [Landmark.PokemonCenter]: 'Pokémon Center',
+  [Landmark.CaveMouth]: 'Cave',
+  [Landmark.HoneyTree]: 'Honey Tree',
 };

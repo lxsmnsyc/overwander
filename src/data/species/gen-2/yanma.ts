@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerYanmaSpecies(): void {
@@ -33,6 +33,7 @@ export default function registerYanmaSpecies(): void {
       [Stats.Speed]: 95,
     },
     types: [Types.Bug, Types.Flying],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.SpeedBoost, Abilities.CompoundEyes],
     hiddenAbilities: [Abilities.Frisk],
     eggGroups: [EggGroups.Bug],

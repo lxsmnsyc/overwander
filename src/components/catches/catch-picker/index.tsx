@@ -98,7 +98,12 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
       // as free rather than as whatever this device believes
       const [records, now] = await Promise.all([searchCaught(player, narrowed), syncServerClock()]);
 
-      return records.map(([id, caught]) => ({ id, caught, fighting: isLockLive(caught, now) }));
+      const options: CatchOption[] = [];
+
+      for (const [id, caught] of records) {
+        options.push({ id, caught, fighting: isLockLive(caught, now) });
+      }
+      return options;
     },
   );
 

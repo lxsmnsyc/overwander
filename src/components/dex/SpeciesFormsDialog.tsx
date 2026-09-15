@@ -42,24 +42,43 @@ function FormsBox(props: {
 }): JSX.Element {
   const entries = (): DexEntry[] => {
     const view = props.dex();
-    const seen = new Set(view?.seen.map((tally) => tally.species) ?? []);
-    const caught = new Set(view?.caught.map((tally) => tally.species) ?? []);
+    const seen = new Set<Species>();
+    const caught = new Set<Species>();
 
-    return getSpeciesForms(props.species).map((species): DexEntry => {
+    for (const tally of view?.seen ?? []) {
+      seen.add(tally.species);
+    }
+    for (const tally of view?.caught ?? []) {
+      caught.add(tally.species);
+    }
+
+    const forms: DexEntry[] = [];
+
+    for (const species of getSpeciesForms(props.species)) {
       const data = getSpeciesData(species);
 
-      return {
+      forms.push({
         species,
         dexNumber: data.dexNumber,
         name: data.name,
         seen: seen.has(species),
         caught: caught.has(species),
         label: formLabel(species),
-      };
-    });
+      });
+    }
+    return forms;
   };
 
-  const found = (): number => entries().filter((entry) => entry.seen || entry.caught).length;
+  const found = (): number => {
+    let count = 0;
+
+    for (const entry of entries()) {
+      if (entry.seen || entry.caught) {
+        count += 1;
+      }
+    }
+    return count;
+  };
 
   return (
     <>

@@ -1,0 +1,5635 @@
+{
+  "tile": 16,
+  "sheet": {
+    "width": 864,
+    "height": 864
+  },
+  "pieces": [
+    {
+      "from": "tan-island-deep",
+      "tone": [
+        44.159,
+        0.56,
+        0.73
+      ],
+      "fill": [
+        80,
+        0,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        0,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        0,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dark-sea",
+      "tone": [
+        201.062,
+        0.401,
+        0.402
+      ],
+      "fill": [
+        176,
+        0,
+        16,
+        16
+      ],
+      "art": null,
+      "corner": null,
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "tan-island-deep-hollow",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        272,
+        0,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        0,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        0,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        44.159,
+        0.56,
+        0.73
+      ],
+      "fill": [
+        368,
+        0,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        0,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        0,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "sand-island-shallows",
+      "tone": [
+        58.549,
+        0.716,
+        0.901
+      ],
+      "fill": [
+        464,
+        0,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        0,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        0,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "sea",
+      "tone": [
+        200.483,
+        0.41,
+        0.548
+      ],
+      "fill": [
+        560,
+        0,
+        16,
+        16
+      ],
+      "art": null,
+      "corner": null,
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "sand-island-shallows-hollow",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        656,
+        0,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        0,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        0,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        58.549,
+        0.716,
+        0.901
+      ],
+      "fill": [
+        752,
+        0,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        0,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        0,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "sand-island-pale",
+      "tone": [
+        58.549,
+        0.716,
+        0.901
+      ],
+      "fill": [
+        848,
+        0,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        0,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        0,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "sea",
+      "tone": [
+        176.458,
+        0.439,
+        0.483
+      ],
+      "fill": [
+        80,
+        48,
+        16,
+        16
+      ],
+      "art": null,
+      "corner": null,
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "sand-island-pale-hollow",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        176,
+        48,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        48,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        48,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        58.549,
+        0.716,
+        0.901
+      ],
+      "fill": [
+        272,
+        48,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        48,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        48,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "sand",
+      "tone": [
+        46.529,
+        0.58,
+        0.793
+      ],
+      "fill": [
+        368,
+        48,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        48,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        48,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "slate-herringbone",
+      "tone": [
+        40.693,
+        0.38,
+        0.674
+      ],
+      "fill": [
+        464,
+        48,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        48,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        48,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        37.73,
+        0.423,
+        0.637
+      ],
+      "fill": [
+        560,
+        48,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        48,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        48,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "bright-pool",
+      "tone": [
+        199.709,
+        0.863,
+        0.57
+      ],
+      "fill": [
+        656,
+        48,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        48,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        48,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        752,
+        48,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        48,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        48,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        46.529,
+        0.58,
+        0.793
+      ],
+      "fill": [
+        848,
+        48,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        48,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        48,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        199.491,
+        0.86,
+        0.392
+      ],
+      "fill": [
+        80,
+        96,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        96,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        96,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        36.95,
+        0.265,
+        0.332
+      ],
+      "fill": [
+        176,
+        96,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        96,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        96,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "parquet",
+      "tone": [
+        32.45,
+        0.405,
+        0.354
+      ],
+      "fill": [
+        272,
+        96,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        96,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        96,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        36.528,
+        0.232,
+        0.439
+      ],
+      "fill": [
+        368,
+        96,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        96,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        96,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        171.322,
+        0.335,
+        0.374
+      ],
+      "fill": [
+        464,
+        96,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        96,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        96,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        560,
+        96,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        96,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        96,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        36.95,
+        0.265,
+        0.332
+      ],
+      "fill": [
+        656,
+        96,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        96,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        96,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        172.278,
+        0.333,
+        0.218
+      ],
+      "fill": [
+        752,
+        96,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        96,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        96,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        71.216,
+        0.218,
+        0.322
+      ],
+      "fill": [
+        848,
+        96,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        96,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        96,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dark-cobbles",
+      "tone": [
+        81.318,
+        0.127,
+        0.333
+      ],
+      "fill": [
+        80,
+        144,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        144,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        144,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        49.581,
+        0.17,
+        0.416
+      ],
+      "fill": [
+        176,
+        144,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        144,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        144,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        114.959,
+        0.181,
+        0.356
+      ],
+      "fill": [
+        272,
+        144,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        144,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        144,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        368,
+        144,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        144,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        144,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        71.216,
+        0.218,
+        0.322
+      ],
+      "fill": [
+        464,
+        144,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        144,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        144,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        112.747,
+        0.184,
+        0.202
+      ],
+      "fill": [
+        560,
+        144,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        144,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        144,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        117.696,
+        0.394,
+        0.389
+      ],
+      "fill": [
+        656,
+        144,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        144,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        144,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dark-cobbles",
+      "tone": [
+        91.78,
+        0.172,
+        0.359
+      ],
+      "fill": [
+        752,
+        144,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        144,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        144,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        29.621,
+        0.353,
+        0.353
+      ],
+      "fill": [
+        848,
+        144,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        144,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        144,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-rough",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        192,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        192,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        192,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        117.696,
+        0.394,
+        0.389
+      ],
+      "fill": [
+        176,
+        192,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        192,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        192,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        80.71,
+        0.414,
+        0.497
+      ],
+      "fill": [
+        272,
+        192,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        192,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        192,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "red-carpet",
+      "tone": [
+        15.298,
+        0.475,
+        0.446
+      ],
+      "fill": [
+        368,
+        192,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        192,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        192,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        30.306,
+        0.332,
+        0.471
+      ],
+      "fill": [
+        464,
+        192,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        192,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        192,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        560,
+        192,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        192,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        192,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        80.71,
+        0.414,
+        0.497
+      ],
+      "fill": [
+        656,
+        192,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        192,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        192,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        52.436,
+        0.621,
+        0.722
+      ],
+      "fill": [
+        752,
+        192,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        192,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        192,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "red-carpet",
+      "tone": [
+        29.768,
+        0.453,
+        0.545
+      ],
+      "fill": [
+        848,
+        192,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        192,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        192,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        33.726,
+        0.353,
+        0.522
+      ],
+      "fill": [
+        80,
+        240,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        240,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        240,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        212.268,
+        0.87,
+        0.546
+      ],
+      "fill": [
+        176,
+        240,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        240,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        240,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "olive-ring",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        272,
+        240,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        240,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        240,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        52.436,
+        0.621,
+        0.722
+      ],
+      "fill": [
+        368,
+        240,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        240,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        240,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        212.326,
+        0.87,
+        0.392
+      ],
+      "fill": [
+        464,
+        240,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        240,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        240,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "sand",
+      "tone": [
+        40.244,
+        0.624,
+        0.707
+      ],
+      "fill": [
+        560,
+        240,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        240,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        240,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "slate-herringbone",
+      "tone": [
+        36.149,
+        0.493,
+        0.61
+      ],
+      "fill": [
+        656,
+        240,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        240,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        240,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        34.391,
+        0.459,
+        0.577
+      ],
+      "fill": [
+        752,
+        240,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        240,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        240,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        184.05,
+        0.473,
+        0.466
+      ],
+      "fill": [
+        848,
+        240,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        240,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        240,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        288,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        288,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        288,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        40.244,
+        0.624,
+        0.707
+      ],
+      "fill": [
+        176,
+        288,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        288,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        288,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        183.666,
+        0.473,
+        0.313
+      ],
+      "fill": [
+        272,
+        288,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        288,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        288,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        60.946,
+        0.239,
+        0.528
+      ],
+      "fill": [
+        368,
+        288,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        288,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        288,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grey-tiles",
+      "tone": [
+        135.088,
+        0.022,
+        0.761
+      ],
+      "fill": [
+        464,
+        288,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        288,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        288,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        36.884,
+        0.228,
+        0.498
+      ],
+      "fill": [
+        560,
+        288,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        288,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        288,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "olive-ring",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        656,
+        288,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        288,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        288,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        60.946,
+        0.239,
+        0.528
+      ],
+      "fill": [
+        752,
+        288,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        288,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        288,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        100.56,
+        0.467,
+        0.55
+      ],
+      "fill": [
+        848,
+        288,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        288,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        288,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "parquet",
+      "tone": [
+        30.561,
+        0.331,
+        0.416
+      ],
+      "fill": [
+        80,
+        336,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        336,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        336,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        34.617,
+        0.303,
+        0.496
+      ],
+      "fill": [
+        176,
+        336,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        336,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        336,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        272,
+        336,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        336,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        336,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        100.56,
+        0.467,
+        0.55
+      ],
+      "fill": [
+        368,
+        336,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        336,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        336,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        116.251,
+        0.351,
+        0.447
+      ],
+      "fill": [
+        464,
+        336,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        336,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        336,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "parquet",
+      "tone": [
+        44.012,
+        0.347,
+        0.585
+      ],
+      "fill": [
+        560,
+        336,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        336,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        336,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        30.534,
+        0.313,
+        0.412
+      ],
+      "fill": [
+        656,
+        336,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        336,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        336,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-rough",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        752,
+        336,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        336,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        336,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        116.251,
+        0.351,
+        0.447
+      ],
+      "fill": [
+        848,
+        336,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        336,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        336,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        130.748,
+        0.32,
+        0.363
+      ],
+      "fill": [
+        80,
+        384,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        384,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        384,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dark-cobbles",
+      "tone": [
+        122.96,
+        0.075,
+        0.408
+      ],
+      "fill": [
+        176,
+        384,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        384,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        384,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        31.59,
+        0.253,
+        0.347
+      ],
+      "fill": [
+        272,
+        384,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        384,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        384,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        198.546,
+        0.392,
+        0.378
+      ],
+      "fill": [
+        368,
+        384,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        384,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        384,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-rough",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        464,
+        384,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        384,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        384,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        130.748,
+        0.32,
+        0.363
+      ],
+      "fill": [
+        560,
+        384,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        384,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        384,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        197.999,
+        0.386,
+        0.224
+      ],
+      "fill": [
+        656,
+        384,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        384,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        384,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        37.762,
+        0.195,
+        0.661
+      ],
+      "fill": [
+        752,
+        384,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        384,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        384,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "slate-herringbone",
+      "tone": [
+        52.399,
+        0.09,
+        0.656
+      ],
+      "fill": [
+        848,
+        384,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        384,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        384,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        39.461,
+        0.248,
+        0.757
+      ],
+      "fill": [
+        80,
+        432,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        432,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        432,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ice-pool",
+      "tone": [
+        194.835,
+        0.402,
+        0.855
+      ],
+      "fill": [
+        176,
+        432,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        432,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        432,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        272,
+        432,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        432,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        432,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        37.762,
+        0.195,
+        0.661
+      ],
+      "fill": [
+        368,
+        432,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        432,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        432,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "snow-patch",
+      "tone": [
+        180,
+        0.193,
+        0.923
+      ],
+      "fill": [
+        464,
+        432,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        432,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        432,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "parquet",
+      "tone": [
+        28.912,
+        0.302,
+        0.335
+      ],
+      "fill": [
+        560,
+        432,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        432,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        432,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        38.094,
+        0.077,
+        0.632
+      ],
+      "fill": [
+        656,
+        432,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        432,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        432,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        752,
+        432,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        432,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        432,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        180,
+        0.193,
+        0.923
+      ],
+      "fill": [
+        848,
+        432,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        432,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        432,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "snow-patch",
+      "tone": [
+        180,
+        0.13,
+        0.888
+      ],
+      "fill": [
+        80,
+        480,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        480,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        480,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        42.262,
+        0.089,
+        0.679
+      ],
+      "fill": [
+        176,
+        480,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        480,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        480,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        272,
+        480,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        480,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        480,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        180,
+        0.13,
+        0.888
+      ],
+      "fill": [
+        368,
+        480,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        480,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        480,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "stone-patch",
+      "tone": [
+        224.596,
+        0.031,
+        0.722
+      ],
+      "fill": [
+        464,
+        480,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        480,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        480,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        35.596,
+        0.131,
+        0.545
+      ],
+      "fill": [
+        560,
+        480,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        480,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        480,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        204.026,
+        0.308,
+        0.45
+      ],
+      "fill": [
+        656,
+        480,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        480,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        480,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        752,
+        480,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        480,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        480,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        224.596,
+        0.031,
+        0.722
+      ],
+      "fill": [
+        848,
+        480,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        480,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        480,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        203.621,
+        0.307,
+        0.294
+      ],
+      "fill": [
+        80,
+        528,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        528,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        528,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grey-tiles",
+      "tone": [
+        208.337,
+        0.2,
+        0.765
+      ],
+      "fill": [
+        176,
+        528,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        528,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        528,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        205.382,
+        0.055,
+        0.739
+      ],
+      "fill": [
+        272,
+        528,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        528,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        528,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        180,
+        0.193,
+        0.923
+      ],
+      "fill": [
+        368,
+        528,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        528,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        528,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "snow-patch",
+      "tone": [
+        198.056,
+        0.629,
+        0.902
+      ],
+      "fill": [
+        464,
+        528,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        528,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        528,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grey-tiles",
+      "tone": [
+        198.575,
+        0.457,
+        0.82
+      ],
+      "fill": [
+        560,
+        528,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        528,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        528,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        197.151,
+        0.316,
+        0.785
+      ],
+      "fill": [
+        656,
+        528,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        528,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        528,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        752,
+        528,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        528,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        528,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        198.056,
+        0.629,
+        0.902
+      ],
+      "fill": [
+        848,
+        528,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        528,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        528,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        91.566,
+        0.397,
+        0.536
+      ],
+      "fill": [
+        80,
+        576,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        576,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        576,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        33.723,
+        0.304,
+        0.463
+      ],
+      "fill": [
+        176,
+        576,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        576,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        576,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        272,
+        576,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        576,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        576,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        91.566,
+        0.397,
+        0.536
+      ],
+      "fill": [
+        368,
+        576,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        576,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        576,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        52.441,
+        0.398,
+        0.648
+      ],
+      "fill": [
+        464,
+        576,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        576,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        576,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "red-carpet",
+      "tone": [
+        29.73,
+        0.384,
+        0.552
+      ],
+      "fill": [
+        560,
+        576,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        576,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        576,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        38.987,
+        0.31,
+        0.571
+      ],
+      "fill": [
+        656,
+        576,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        576,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        576,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "olive-ring",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        752,
+        576,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        576,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        576,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        52.441,
+        0.398,
+        0.648
+      ],
+      "fill": [
+        848,
+        576,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        576,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        576,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        130.608,
+        0.245,
+        0.395
+      ],
+      "fill": [
+        80,
+        624,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        624,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        624,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dark-cobbles",
+      "tone": [
+        41.275,
+        0.138,
+        0.39
+      ],
+      "fill": [
+        176,
+        624,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        624,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        624,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        32.508,
+        0.216,
+        0.381
+      ],
+      "fill": [
+        272,
+        624,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        624,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        624,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        196.22,
+        0.338,
+        0.376
+      ],
+      "fill": [
+        368,
+        624,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        624,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        624,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-rough",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        464,
+        624,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        624,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        624,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        130.608,
+        0.245,
+        0.395
+      ],
+      "fill": [
+        560,
+        624,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        624,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        624,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        196.166,
+        0.339,
+        0.22
+      ],
+      "fill": [
+        656,
+        624,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        624,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        624,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "sand-island-pale",
+      "tone": [
+        195.443,
+        0.37,
+        0.92
+      ],
+      "fill": [
+        752,
+        624,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        624,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        624,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-sea",
+      "tone": [
+        204.447,
+        0.293,
+        0.386
+      ],
+      "fill": [
+        848,
+        624,
+        16,
+        16
+      ],
+      "art": null,
+      "corner": null,
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "sand-island-pale-hollow",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        672,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        672,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        672,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        195.443,
+        0.37,
+        0.92
+      ],
+      "fill": [
+        176,
+        672,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        672,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        672,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        13.355,
+        0.097,
+        0.265
+      ],
+      "fill": [
+        272,
+        672,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        672,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        672,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dark-cobbles",
+      "tone": [
+        354.665,
+        0.043,
+        0.229
+      ],
+      "fill": [
+        368,
+        672,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        672,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        672,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        19.686,
+        0.094,
+        0.381
+      ],
+      "fill": [
+        464,
+        672,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        672,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        672,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "lava-pool",
+      "tone": [
+        7.018,
+        0.876,
+        0.43
+      ],
+      "fill": [
+        560,
+        672,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        672,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        672,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        656,
+        672,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        672,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        672,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        13.355,
+        0.097,
+        0.265
+      ],
+      "fill": [
+        752,
+        672,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        672,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        672,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        20.917,
+        0.434,
+        0.48
+      ],
+      "fill": [
+        848,
+        672,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        672,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        672,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "red-carpet",
+      "tone": [
+        18.266,
+        0.447,
+        0.423
+      ],
+      "fill": [
+        80,
+        720,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        720,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        720,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        24.855,
+        0.492,
+        0.581
+      ],
+      "fill": [
+        176,
+        720,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        720,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        720,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        169.991,
+        0.108,
+        0.49
+      ],
+      "fill": [
+        272,
+        720,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        720,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        720,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        368,
+        720,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        720,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        720,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        20.917,
+        0.434,
+        0.48
+      ],
+      "fill": [
+        464,
+        720,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        720,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        720,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        172.344,
+        0.106,
+        0.333
+      ],
+      "fill": [
+        560,
+        720,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        720,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        720,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "stone-patch",
+      "tone": [
+        200.124,
+        0.049,
+        0.622
+      ],
+      "fill": [
+        656,
+        720,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        720,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        720,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        39.475,
+        0.131,
+        0.586
+      ],
+      "fill": [
+        752,
+        720,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        720,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        720,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        201.009,
+        0.319,
+        0.428
+      ],
+      "fill": [
+        848,
+        720,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        720,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        720,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        768,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        768,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        768,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        200.124,
+        0.049,
+        0.622
+      ],
+      "fill": [
+        176,
+        768,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        768,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        768,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        200.146,
+        0.324,
+        0.273
+      ],
+      "fill": [
+        272,
+        768,
+        16,
+        16
+      ],
+      "art": [
+        192,
+        768,
+        48,
+        48
+      ],
+      "corner": [
+        240,
+        768,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "tilled-earth",
+      "tone": [
+        37.323,
+        0.191,
+        0.258
+      ],
+      "fill": [
+        368,
+        768,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        768,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        768,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "parquet",
+      "tone": [
+        31.366,
+        0.296,
+        0.29
+      ],
+      "fill": [
+        464,
+        768,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        768,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        768,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        35.559,
+        0.158,
+        0.373
+      ],
+      "fill": [
+        560,
+        768,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        768,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        768,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        95.041,
+        0.183,
+        0.299
+      ],
+      "fill": [
+        656,
+        768,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        768,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        768,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        752,
+        768,
+        16,
+        16
+      ],
+      "art": [
+        672,
+        768,
+        48,
+        48
+      ],
+      "corner": [
+        720,
+        768,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        37.323,
+        0.191,
+        0.258
+      ],
+      "fill": [
+        848,
+        768,
+        16,
+        16
+      ],
+      "art": [
+        768,
+        768,
+        48,
+        48
+      ],
+      "corner": [
+        816,
+        768,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        91.532,
+        0.178,
+        0.143
+      ],
+      "fill": [
+        80,
+        816,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        816,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        816,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "tan-island",
+      "tone": [
+        43.485,
+        0.242,
+        0.55
+      ],
+      "fill": [
+        176,
+        816,
+        16,
+        16
+      ],
+      "art": [
+        96,
+        816,
+        48,
+        48
+      ],
+      "corner": [
+        144,
+        816,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-sea",
+      "tone": [
+        169.086,
+        0.406,
+        0.31
+      ],
+      "fill": [
+        272,
+        816,
+        16,
+        16
+      ],
+      "art": null,
+      "corner": null,
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "tan-island-hollow",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        368,
+        816,
+        16,
+        16
+      ],
+      "art": [
+        288,
+        816,
+        48,
+        48
+      ],
+      "corner": [
+        336,
+        816,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        43.485,
+        0.242,
+        0.55
+      ],
+      "fill": [
+        464,
+        816,
+        16,
+        16
+      ],
+      "art": [
+        384,
+        816,
+        48,
+        48
+      ],
+      "corner": [
+        432,
+        816,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    }
+  ],
+  "terrains": [
+    {
+      "biome": 0,
+      "role": "ground",
+      "name": "deep-ocean-ground",
+      "piece": 0
+    },
+    {
+      "biome": 0,
+      "role": "water",
+      "name": "deep-ocean-water",
+      "piece": 1
+    },
+    {
+      "biome": 0,
+      "role": "blend",
+      "name": "deep-ocean-blend",
+      "piece": 2
+    },
+    {
+      "biome": 0,
+      "role": "face",
+      "name": "deep-ocean-face",
+      "piece": 3
+    },
+    {
+      "biome": 0,
+      "role": "wall",
+      "name": "deep-ocean-wall",
+      "piece": 3
+    },
+    {
+      "biome": 1,
+      "role": "ground",
+      "name": "ocean-ground",
+      "piece": 4
+    },
+    {
+      "biome": 1,
+      "role": "water",
+      "name": "ocean-water",
+      "piece": 5
+    },
+    {
+      "biome": 1,
+      "role": "blend",
+      "name": "ocean-blend",
+      "piece": 6
+    },
+    {
+      "biome": 1,
+      "role": "face",
+      "name": "ocean-face",
+      "piece": 7
+    },
+    {
+      "biome": 1,
+      "role": "wall",
+      "name": "ocean-wall",
+      "piece": 7
+    },
+    {
+      "biome": 2,
+      "role": "ground",
+      "name": "coral-reef-ground",
+      "piece": 8
+    },
+    {
+      "biome": 2,
+      "role": "water",
+      "name": "coral-reef-water",
+      "piece": 9
+    },
+    {
+      "biome": 2,
+      "role": "blend",
+      "name": "coral-reef-blend",
+      "piece": 10
+    },
+    {
+      "biome": 2,
+      "role": "face",
+      "name": "coral-reef-face",
+      "piece": 11
+    },
+    {
+      "biome": 2,
+      "role": "wall",
+      "name": "coral-reef-wall",
+      "piece": 11
+    },
+    {
+      "biome": 3,
+      "role": "ground",
+      "name": "beach-ground",
+      "piece": 12
+    },
+    {
+      "biome": 3,
+      "role": "paving",
+      "name": "beach-paving",
+      "piece": 13
+    },
+    {
+      "biome": 3,
+      "role": "trail",
+      "name": "beach-trail",
+      "piece": 14
+    },
+    {
+      "biome": 3,
+      "role": "water",
+      "name": "beach-water",
+      "piece": 15
+    },
+    {
+      "biome": 3,
+      "role": "blend",
+      "name": "beach-blend",
+      "piece": 16
+    },
+    {
+      "biome": 3,
+      "role": "face",
+      "name": "beach-face",
+      "piece": 17
+    },
+    {
+      "biome": 3,
+      "role": "wall",
+      "name": "beach-wall",
+      "piece": 17
+    },
+    {
+      "biome": 4,
+      "role": "ground",
+      "name": "mangrove-ground",
+      "piece": 19
+    },
+    {
+      "biome": 4,
+      "role": "paving",
+      "name": "mangrove-paving",
+      "piece": 20
+    },
+    {
+      "biome": 4,
+      "role": "trail",
+      "name": "mangrove-trail",
+      "piece": 21
+    },
+    {
+      "biome": 4,
+      "role": "water",
+      "name": "mangrove-water",
+      "piece": 22
+    },
+    {
+      "biome": 4,
+      "role": "blend",
+      "name": "mangrove-blend",
+      "piece": 23
+    },
+    {
+      "biome": 4,
+      "role": "face",
+      "name": "mangrove-face",
+      "piece": 24
+    },
+    {
+      "biome": 4,
+      "role": "wall",
+      "name": "mangrove-wall",
+      "piece": 24
+    },
+    {
+      "biome": 5,
+      "role": "ground",
+      "name": "swamp-ground",
+      "piece": 26
+    },
+    {
+      "biome": 5,
+      "role": "paving",
+      "name": "swamp-paving",
+      "piece": 27
+    },
+    {
+      "biome": 5,
+      "role": "trail",
+      "name": "swamp-trail",
+      "piece": 28
+    },
+    {
+      "biome": 5,
+      "role": "water",
+      "name": "swamp-water",
+      "piece": 29
+    },
+    {
+      "biome": 5,
+      "role": "blend",
+      "name": "swamp-blend",
+      "piece": 30
+    },
+    {
+      "biome": 5,
+      "role": "face",
+      "name": "swamp-face",
+      "piece": 31
+    },
+    {
+      "biome": 5,
+      "role": "wall",
+      "name": "swamp-wall",
+      "piece": 31
+    },
+    {
+      "biome": 6,
+      "role": "ground",
+      "name": "tropical-rainforest-ground",
+      "piece": 33
+    },
+    {
+      "biome": 6,
+      "role": "paving",
+      "name": "tropical-rainforest-paving",
+      "piece": 34
+    },
+    {
+      "biome": 6,
+      "role": "trail",
+      "name": "tropical-rainforest-trail",
+      "piece": 35
+    },
+    {
+      "biome": 6,
+      "role": "water",
+      "name": "tropical-rainforest-water",
+      "piece": 15
+    },
+    {
+      "biome": 6,
+      "role": "blend",
+      "name": "tropical-rainforest-blend",
+      "piece": 36
+    },
+    {
+      "biome": 6,
+      "role": "face",
+      "name": "tropical-rainforest-face",
+      "piece": 37
+    },
+    {
+      "biome": 6,
+      "role": "wall",
+      "name": "tropical-rainforest-wall",
+      "piece": 37
+    },
+    {
+      "biome": 7,
+      "role": "ground",
+      "name": "tropical-seasonal-forest-ground",
+      "piece": 38
+    },
+    {
+      "biome": 7,
+      "role": "paving",
+      "name": "tropical-seasonal-forest-paving",
+      "piece": 39
+    },
+    {
+      "biome": 7,
+      "role": "trail",
+      "name": "tropical-seasonal-forest-trail",
+      "piece": 40
+    },
+    {
+      "biome": 7,
+      "role": "water",
+      "name": "tropical-seasonal-forest-water",
+      "piece": 15
+    },
+    {
+      "biome": 7,
+      "role": "blend",
+      "name": "tropical-seasonal-forest-blend",
+      "piece": 41
+    },
+    {
+      "biome": 7,
+      "role": "face",
+      "name": "tropical-seasonal-forest-face",
+      "piece": 42
+    },
+    {
+      "biome": 7,
+      "role": "wall",
+      "name": "tropical-seasonal-forest-wall",
+      "piece": 42
+    },
+    {
+      "biome": 8,
+      "role": "ground",
+      "name": "savanna-ground",
+      "piece": 43
+    },
+    {
+      "biome": 8,
+      "role": "paving",
+      "name": "savanna-paving",
+      "piece": 44
+    },
+    {
+      "biome": 8,
+      "role": "trail",
+      "name": "savanna-trail",
+      "piece": 45
+    },
+    {
+      "biome": 8,
+      "role": "water",
+      "name": "savanna-water",
+      "piece": 46
+    },
+    {
+      "biome": 8,
+      "role": "blend",
+      "name": "savanna-blend",
+      "piece": 47
+    },
+    {
+      "biome": 8,
+      "role": "face",
+      "name": "savanna-face",
+      "piece": 48
+    },
+    {
+      "biome": 8,
+      "role": "wall",
+      "name": "savanna-wall",
+      "piece": 48
+    },
+    {
+      "biome": 9,
+      "role": "ground",
+      "name": "desert-ground",
+      "piece": 50
+    },
+    {
+      "biome": 9,
+      "role": "paving",
+      "name": "desert-paving",
+      "piece": 51
+    },
+    {
+      "biome": 9,
+      "role": "trail",
+      "name": "desert-trail",
+      "piece": 52
+    },
+    {
+      "biome": 9,
+      "role": "water",
+      "name": "desert-water",
+      "piece": 53
+    },
+    {
+      "biome": 9,
+      "role": "blend",
+      "name": "desert-blend",
+      "piece": 54
+    },
+    {
+      "biome": 9,
+      "role": "face",
+      "name": "desert-face",
+      "piece": 55
+    },
+    {
+      "biome": 9,
+      "role": "wall",
+      "name": "desert-wall",
+      "piece": 55
+    },
+    {
+      "biome": 10,
+      "role": "ground",
+      "name": "shrubland-ground",
+      "piece": 57
+    },
+    {
+      "biome": 10,
+      "role": "paving",
+      "name": "shrubland-paving",
+      "piece": 58
+    },
+    {
+      "biome": 10,
+      "role": "trail",
+      "name": "shrubland-trail",
+      "piece": 59
+    },
+    {
+      "biome": 10,
+      "role": "water",
+      "name": "shrubland-water",
+      "piece": 46
+    },
+    {
+      "biome": 10,
+      "role": "blend",
+      "name": "shrubland-blend",
+      "piece": 60
+    },
+    {
+      "biome": 10,
+      "role": "face",
+      "name": "shrubland-face",
+      "piece": 61
+    },
+    {
+      "biome": 10,
+      "role": "wall",
+      "name": "shrubland-wall",
+      "piece": 61
+    },
+    {
+      "biome": 11,
+      "role": "ground",
+      "name": "grassland-ground",
+      "piece": 62
+    },
+    {
+      "biome": 11,
+      "role": "paving",
+      "name": "grassland-paving",
+      "piece": 63
+    },
+    {
+      "biome": 11,
+      "role": "trail",
+      "name": "grassland-trail",
+      "piece": 64
+    },
+    {
+      "biome": 11,
+      "role": "water",
+      "name": "grassland-water",
+      "piece": 15
+    },
+    {
+      "biome": 11,
+      "role": "blend",
+      "name": "grassland-blend",
+      "piece": 65
+    },
+    {
+      "biome": 11,
+      "role": "face",
+      "name": "grassland-face",
+      "piece": 66
+    },
+    {
+      "biome": 11,
+      "role": "wall",
+      "name": "grassland-wall",
+      "piece": 66
+    },
+    {
+      "biome": 12,
+      "role": "ground",
+      "name": "temperate-forest-ground",
+      "piece": 67
+    },
+    {
+      "biome": 12,
+      "role": "paving",
+      "name": "temperate-forest-paving",
+      "piece": 68
+    },
+    {
+      "biome": 12,
+      "role": "trail",
+      "name": "temperate-forest-trail",
+      "piece": 69
+    },
+    {
+      "biome": 12,
+      "role": "water",
+      "name": "temperate-forest-water",
+      "piece": 46
+    },
+    {
+      "biome": 12,
+      "role": "blend",
+      "name": "temperate-forest-blend",
+      "piece": 70
+    },
+    {
+      "biome": 12,
+      "role": "face",
+      "name": "temperate-forest-face",
+      "piece": 71
+    },
+    {
+      "biome": 12,
+      "role": "wall",
+      "name": "temperate-forest-wall",
+      "piece": 71
+    },
+    {
+      "biome": 13,
+      "role": "ground",
+      "name": "temperate-rainforest-ground",
+      "piece": 72
+    },
+    {
+      "biome": 13,
+      "role": "paving",
+      "name": "temperate-rainforest-paving",
+      "piece": 73
+    },
+    {
+      "biome": 13,
+      "role": "trail",
+      "name": "temperate-rainforest-trail",
+      "piece": 74
+    },
+    {
+      "biome": 13,
+      "role": "water",
+      "name": "temperate-rainforest-water",
+      "piece": 75
+    },
+    {
+      "biome": 13,
+      "role": "blend",
+      "name": "temperate-rainforest-blend",
+      "piece": 76
+    },
+    {
+      "biome": 13,
+      "role": "face",
+      "name": "temperate-rainforest-face",
+      "piece": 77
+    },
+    {
+      "biome": 13,
+      "role": "wall",
+      "name": "temperate-rainforest-wall",
+      "piece": 77
+    },
+    {
+      "biome": 14,
+      "role": "ground",
+      "name": "cold-desert-ground",
+      "piece": 79
+    },
+    {
+      "biome": 14,
+      "role": "paving",
+      "name": "cold-desert-paving",
+      "piece": 80
+    },
+    {
+      "biome": 14,
+      "role": "trail",
+      "name": "cold-desert-trail",
+      "piece": 81
+    },
+    {
+      "biome": 14,
+      "role": "water",
+      "name": "cold-desert-water",
+      "piece": 82
+    },
+    {
+      "biome": 14,
+      "role": "blend",
+      "name": "cold-desert-blend",
+      "piece": 83
+    },
+    {
+      "biome": 14,
+      "role": "face",
+      "name": "cold-desert-face",
+      "piece": 84
+    },
+    {
+      "biome": 14,
+      "role": "wall",
+      "name": "cold-desert-wall",
+      "piece": 84
+    },
+    {
+      "biome": 15,
+      "role": "ground",
+      "name": "taiga-ground",
+      "piece": 85
+    },
+    {
+      "biome": 15,
+      "role": "paving",
+      "name": "taiga-paving",
+      "piece": 86
+    },
+    {
+      "biome": 15,
+      "role": "trail",
+      "name": "taiga-trail",
+      "piece": 87
+    },
+    {
+      "biome": 15,
+      "role": "water",
+      "name": "taiga-water",
+      "piece": 82
+    },
+    {
+      "biome": 15,
+      "role": "blend",
+      "name": "taiga-blend",
+      "piece": 88
+    },
+    {
+      "biome": 15,
+      "role": "face",
+      "name": "taiga-face",
+      "piece": 89
+    },
+    {
+      "biome": 15,
+      "role": "wall",
+      "name": "taiga-wall",
+      "piece": 89
+    },
+    {
+      "biome": 16,
+      "role": "ground",
+      "name": "tundra-ground",
+      "piece": 90
+    },
+    {
+      "biome": 16,
+      "role": "paving",
+      "name": "tundra-paving",
+      "piece": 58
+    },
+    {
+      "biome": 16,
+      "role": "trail",
+      "name": "tundra-trail",
+      "piece": 91
+    },
+    {
+      "biome": 16,
+      "role": "water",
+      "name": "tundra-water",
+      "piece": 82
+    },
+    {
+      "biome": 16,
+      "role": "blend",
+      "name": "tundra-blend",
+      "piece": 92
+    },
+    {
+      "biome": 16,
+      "role": "face",
+      "name": "tundra-face",
+      "piece": 93
+    },
+    {
+      "biome": 16,
+      "role": "wall",
+      "name": "tundra-wall",
+      "piece": 93
+    },
+    {
+      "biome": 17,
+      "role": "ground",
+      "name": "mountain-ground",
+      "piece": 94
+    },
+    {
+      "biome": 17,
+      "role": "paving",
+      "name": "mountain-paving",
+      "piece": 80
+    },
+    {
+      "biome": 17,
+      "role": "trail",
+      "name": "mountain-trail",
+      "piece": 95
+    },
+    {
+      "biome": 17,
+      "role": "water",
+      "name": "mountain-water",
+      "piece": 96
+    },
+    {
+      "biome": 17,
+      "role": "blend",
+      "name": "mountain-blend",
+      "piece": 97
+    },
+    {
+      "biome": 17,
+      "role": "face",
+      "name": "mountain-face",
+      "piece": 98
+    },
+    {
+      "biome": 17,
+      "role": "wall",
+      "name": "mountain-wall",
+      "piece": 98
+    },
+    {
+      "biome": 18,
+      "role": "ground",
+      "name": "alpine-tundra-ground",
+      "piece": 85
+    },
+    {
+      "biome": 18,
+      "role": "paving",
+      "name": "alpine-tundra-paving",
+      "piece": 100
+    },
+    {
+      "biome": 18,
+      "role": "trail",
+      "name": "alpine-tundra-trail",
+      "piece": 101
+    },
+    {
+      "biome": 18,
+      "role": "water",
+      "name": "alpine-tundra-water",
+      "piece": 82
+    },
+    {
+      "biome": 18,
+      "role": "blend",
+      "name": "alpine-tundra-blend",
+      "piece": 88
+    },
+    {
+      "biome": 18,
+      "role": "face",
+      "name": "alpine-tundra-face",
+      "piece": 102
+    },
+    {
+      "biome": 18,
+      "role": "wall",
+      "name": "alpine-tundra-wall",
+      "piece": 102
+    },
+    {
+      "biome": 19,
+      "role": "ground",
+      "name": "glacier-ground",
+      "piece": 103
+    },
+    {
+      "biome": 19,
+      "role": "paving",
+      "name": "glacier-paving",
+      "piece": 104
+    },
+    {
+      "biome": 19,
+      "role": "trail",
+      "name": "glacier-trail",
+      "piece": 105
+    },
+    {
+      "biome": 19,
+      "role": "water",
+      "name": "glacier-water",
+      "piece": 82
+    },
+    {
+      "biome": 19,
+      "role": "blend",
+      "name": "glacier-blend",
+      "piece": 106
+    },
+    {
+      "biome": 19,
+      "role": "face",
+      "name": "glacier-face",
+      "piece": 107
+    },
+    {
+      "biome": 19,
+      "role": "wall",
+      "name": "glacier-wall",
+      "piece": 107
+    },
+    {
+      "biome": 20,
+      "role": "ground",
+      "name": "woodland-ground",
+      "piece": 108
+    },
+    {
+      "biome": 20,
+      "role": "paving",
+      "name": "woodland-paving",
+      "piece": 68
+    },
+    {
+      "biome": 20,
+      "role": "trail",
+      "name": "woodland-trail",
+      "piece": 109
+    },
+    {
+      "biome": 20,
+      "role": "water",
+      "name": "woodland-water",
+      "piece": 46
+    },
+    {
+      "biome": 20,
+      "role": "blend",
+      "name": "woodland-blend",
+      "piece": 110
+    },
+    {
+      "biome": 20,
+      "role": "face",
+      "name": "woodland-face",
+      "piece": 111
+    },
+    {
+      "biome": 20,
+      "role": "wall",
+      "name": "woodland-wall",
+      "piece": 111
+    },
+    {
+      "biome": 21,
+      "role": "ground",
+      "name": "steppe-ground",
+      "piece": 112
+    },
+    {
+      "biome": 21,
+      "role": "paving",
+      "name": "steppe-paving",
+      "piece": 113
+    },
+    {
+      "biome": 21,
+      "role": "trail",
+      "name": "steppe-trail",
+      "piece": 114
+    },
+    {
+      "biome": 21,
+      "role": "water",
+      "name": "steppe-water",
+      "piece": 46
+    },
+    {
+      "biome": 21,
+      "role": "blend",
+      "name": "steppe-blend",
+      "piece": 115
+    },
+    {
+      "biome": 21,
+      "role": "face",
+      "name": "steppe-face",
+      "piece": 116
+    },
+    {
+      "biome": 21,
+      "role": "wall",
+      "name": "steppe-wall",
+      "piece": 116
+    },
+    {
+      "biome": 22,
+      "role": "ground",
+      "name": "montane-forest-ground",
+      "piece": 117
+    },
+    {
+      "biome": 22,
+      "role": "paving",
+      "name": "montane-forest-paving",
+      "piece": 118
+    },
+    {
+      "biome": 22,
+      "role": "trail",
+      "name": "montane-forest-trail",
+      "piece": 119
+    },
+    {
+      "biome": 22,
+      "role": "water",
+      "name": "montane-forest-water",
+      "piece": 120
+    },
+    {
+      "biome": 22,
+      "role": "blend",
+      "name": "montane-forest-blend",
+      "piece": 121
+    },
+    {
+      "biome": 22,
+      "role": "face",
+      "name": "montane-forest-face",
+      "piece": 122
+    },
+    {
+      "biome": 22,
+      "role": "wall",
+      "name": "montane-forest-wall",
+      "piece": 122
+    },
+    {
+      "biome": 23,
+      "role": "ground",
+      "name": "polar-ocean-ground",
+      "piece": 124
+    },
+    {
+      "biome": 23,
+      "role": "water",
+      "name": "polar-ocean-water",
+      "piece": 125
+    },
+    {
+      "biome": 23,
+      "role": "blend",
+      "name": "polar-ocean-blend",
+      "piece": 126
+    },
+    {
+      "biome": 23,
+      "role": "face",
+      "name": "polar-ocean-face",
+      "piece": 127
+    },
+    {
+      "biome": 23,
+      "role": "wall",
+      "name": "polar-ocean-wall",
+      "piece": 127
+    },
+    {
+      "biome": 25,
+      "role": "ground",
+      "name": "volcano-ground",
+      "piece": 128
+    },
+    {
+      "biome": 25,
+      "role": "paving",
+      "name": "volcano-paving",
+      "piece": 129
+    },
+    {
+      "biome": 25,
+      "role": "trail",
+      "name": "volcano-trail",
+      "piece": 130
+    },
+    {
+      "biome": 25,
+      "role": "water",
+      "name": "volcano-water",
+      "piece": 131
+    },
+    {
+      "biome": 25,
+      "role": "blend",
+      "name": "volcano-blend",
+      "piece": 132
+    },
+    {
+      "biome": 25,
+      "role": "face",
+      "name": "volcano-face",
+      "piece": 133
+    },
+    {
+      "biome": 25,
+      "role": "wall",
+      "name": "volcano-wall",
+      "piece": 133
+    },
+    {
+      "biome": 26,
+      "role": "ground",
+      "name": "badlands-ground",
+      "piece": 134
+    },
+    {
+      "biome": 26,
+      "role": "paving",
+      "name": "badlands-paving",
+      "piece": 135
+    },
+    {
+      "biome": 26,
+      "role": "trail",
+      "name": "badlands-trail",
+      "piece": 136
+    },
+    {
+      "biome": 26,
+      "role": "water",
+      "name": "badlands-water",
+      "piece": 137
+    },
+    {
+      "biome": 26,
+      "role": "blend",
+      "name": "badlands-blend",
+      "piece": 138
+    },
+    {
+      "biome": 26,
+      "role": "face",
+      "name": "badlands-face",
+      "piece": 139
+    },
+    {
+      "biome": 26,
+      "role": "wall",
+      "name": "badlands-wall",
+      "piece": 139
+    },
+    {
+      "biome": 27,
+      "role": "ground",
+      "name": "rocky-coast-ground",
+      "piece": 141
+    },
+    {
+      "biome": 27,
+      "role": "paving",
+      "name": "rocky-coast-paving",
+      "piece": 80
+    },
+    {
+      "biome": 27,
+      "role": "trail",
+      "name": "rocky-coast-trail",
+      "piece": 142
+    },
+    {
+      "biome": 27,
+      "role": "water",
+      "name": "rocky-coast-water",
+      "piece": 143
+    },
+    {
+      "biome": 27,
+      "role": "blend",
+      "name": "rocky-coast-blend",
+      "piece": 144
+    },
+    {
+      "biome": 27,
+      "role": "face",
+      "name": "rocky-coast-face",
+      "piece": 145
+    },
+    {
+      "biome": 27,
+      "role": "wall",
+      "name": "rocky-coast-wall",
+      "piece": 145
+    },
+    {
+      "biome": 28,
+      "role": "ground",
+      "name": "bog-ground",
+      "piece": 147
+    },
+    {
+      "biome": 28,
+      "role": "paving",
+      "name": "bog-paving",
+      "piece": 148
+    },
+    {
+      "biome": 28,
+      "role": "trail",
+      "name": "bog-trail",
+      "piece": 149
+    },
+    {
+      "biome": 28,
+      "role": "water",
+      "name": "bog-water",
+      "piece": 150
+    },
+    {
+      "biome": 28,
+      "role": "blend",
+      "name": "bog-blend",
+      "piece": 151
+    },
+    {
+      "biome": 28,
+      "role": "face",
+      "name": "bog-face",
+      "piece": 152
+    },
+    {
+      "biome": 28,
+      "role": "wall",
+      "name": "bog-wall",
+      "piece": 152
+    },
+    {
+      "biome": 29,
+      "role": "ground",
+      "name": "kelp-forest-ground",
+      "piece": 154
+    },
+    {
+      "biome": 29,
+      "role": "water",
+      "name": "kelp-forest-water",
+      "piece": 155
+    },
+    {
+      "biome": 29,
+      "role": "blend",
+      "name": "kelp-forest-blend",
+      "piece": 156
+    },
+    {
+      "biome": 29,
+      "role": "face",
+      "name": "kelp-forest-face",
+      "piece": 157
+    },
+    {
+      "biome": 29,
+      "role": "wall",
+      "name": "kelp-forest-wall",
+      "piece": 157
+    }
+  ],
+  "deep": [
+    {
+      "biome": 3,
+      "name": "beach-deep-water",
+      "piece": 18
+    },
+    {
+      "biome": 4,
+      "name": "mangrove-deep-water",
+      "piece": 25
+    },
+    {
+      "biome": 5,
+      "name": "swamp-deep-water",
+      "piece": 32
+    },
+    {
+      "biome": 6,
+      "name": "tropical-rainforest-deep-water",
+      "piece": 18
+    },
+    {
+      "biome": 7,
+      "name": "tropical-seasonal-forest-deep-water",
+      "piece": 18
+    },
+    {
+      "biome": 8,
+      "name": "savanna-deep-water",
+      "piece": 49
+    },
+    {
+      "biome": 9,
+      "name": "desert-deep-water",
+      "piece": 56
+    },
+    {
+      "biome": 10,
+      "name": "shrubland-deep-water",
+      "piece": 49
+    },
+    {
+      "biome": 11,
+      "name": "grassland-deep-water",
+      "piece": 18
+    },
+    {
+      "biome": 12,
+      "name": "temperate-forest-deep-water",
+      "piece": 49
+    },
+    {
+      "biome": 13,
+      "name": "temperate-rainforest-deep-water",
+      "piece": 78
+    },
+    {
+      "biome": 17,
+      "name": "mountain-deep-water",
+      "piece": 99
+    },
+    {
+      "biome": 20,
+      "name": "woodland-deep-water",
+      "piece": 49
+    },
+    {
+      "biome": 21,
+      "name": "steppe-deep-water",
+      "piece": 49
+    },
+    {
+      "biome": 22,
+      "name": "montane-forest-deep-water",
+      "piece": 123
+    },
+    {
+      "biome": 26,
+      "name": "badlands-deep-water",
+      "piece": 140
+    },
+    {
+      "biome": 27,
+      "name": "rocky-coast-deep-water",
+      "piece": 146
+    },
+    {
+      "biome": 28,
+      "name": "bog-deep-water",
+      "piece": 153
+    }
+  ]
+}

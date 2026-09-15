@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerCorsolaSpecies(): void {
@@ -25,6 +25,7 @@ export default function registerCorsolaSpecies(): void {
       [Stats.Speed]: 35,
     },
     types: [Types.Water, Types.Rock],
+    habitat: Habitat.Water,
     abilities: [Abilities.Hustle, Abilities.NaturalCure],
     // Storm Drain is this registry's rather than the mainline's,
     // filling it to four: a reef is what the current runs into
@@ -32,7 +33,7 @@ export default function registerCorsolaSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
     genderRatio: [1, 3],
     catchRate: 60,
-    biomes: [Biome.CoralReef, Biome.Ocean, Biome.Beach],
+    biomes: [Biome.CoralReef, Biome.Ocean, Biome.Beach, Biome.RockyCoast],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

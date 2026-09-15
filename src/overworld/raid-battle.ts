@@ -177,7 +177,11 @@ export function fieldTeams(
     alliance.addTeam(team);
 
     const fielded = units.get(record.alliance) ?? [];
-    const party = record.catches.map((snapshot) => addUnit(battle, team, snapshot));
+    const party: Unit[] = [];
+
+    for (const snapshot of record.catches) {
+      party.push(addUnit(battle, team, snapshot));
+    }
 
     parties.push(party);
     fielded.push(...party);
@@ -274,9 +278,14 @@ export function countDefeated(built: RaidBattle, player: string): number {
  * effects) ends with the battle
  */
 function carriedStatuses(unit: Unit): number {
-  return settleStatuses(
-    packStatuses(NON_VOLATILE_STATUSES.filter((status) => unit.getStatus(status) != null)),
-  );
+  const carried: (typeof NON_VOLATILE_STATUSES)[number][] = [];
+
+  for (const status of NON_VOLATILE_STATUSES) {
+    if (unit.getStatus(status) != null) {
+      carried.push(status);
+    }
+  }
+  return settleStatuses(packStatuses(carried));
 }
 
 /**
@@ -284,5 +293,13 @@ function carriedStatuses(unit: Unit): number {
  * (the boss' alliance) or lost (the players')
  */
 export function isAllianceDown(units: Unit[]): boolean {
-  return units.length > 0 && units.every((unit) => unit.health <= 0);
+  if (units.length === 0) {
+    return false;
+  }
+  for (const unit of units) {
+    if (unit.health > 0) {
+      return false;
+    }
+  }
+  return true;
 }

@@ -42,10 +42,13 @@ const YOUNG_CEILING = 30;
 
 /** The highest level named on a set of evolution roads, if any names one */
 function namedLevel(roads: EvolutionData[]): number | null {
-  const levels = roads
-    .filter((road) => (road.method & EvolutionMethod.Level) !== 0 && road.level != null)
-    .map((road) => road.level ?? 0);
+  const levels: number[] = [];
 
+  for (const road of roads) {
+    if ((road.method & EvolutionMethod.Level) !== 0 && road.level != null) {
+      levels.push(road.level);
+    }
+  }
   return levels.length === 0 ? null : Math.max(...levels);
 }
 
@@ -56,9 +59,14 @@ function arrivalLevel(species: Species): number | null {
   if (from == null) {
     return null;
   }
-  return namedLevel(
-    (getSpeciesData(from).evolvesInto ?? []).filter((road) => road.species === species),
-  );
+  const roads: EvolutionData[] = [];
+
+  for (const road of getSpeciesData(from).evolvesInto ?? []) {
+    if (road.species === species) {
+      roads.push(road);
+    }
+  }
+  return namedLevel(roads);
 }
 
 /**

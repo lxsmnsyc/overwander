@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerLaprasSpecies(): void {
@@ -25,6 +25,7 @@ export default function registerLaprasSpecies(): void {
       [Stats.Speed]: 60,
     },
     types: [Types.Water, Types.Ice],
+    habitat: Habitat.Water,
     abilities: [Abilities.WaterAbsorb, Abilities.ShellArmor],
     hiddenAbilities: [Abilities.Hydration, Abilities.FriendGuard],
     eggGroups: [EggGroups.Monster, EggGroups.Water1],

@@ -194,7 +194,12 @@ export function describeReward(reward: QuestReward): string {
 
 /** What claiming paid, said back in a sentence */
 export function describePayout(payout: QuestPayout): string {
-  return payout.rewards.map(describeReward).join(', ');
+  const said: string[] = [];
+
+  for (const reward of payout.rewards) {
+    said.push(describeReward(reward));
+  }
+  return said.join(', ');
 }
 
 /**

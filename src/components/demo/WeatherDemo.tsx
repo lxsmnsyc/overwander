@@ -177,10 +177,12 @@ function marksOn(
 ): { x: number; y: number; wide: number; reach: number }[] {
   const cell = placed.width / boardView().span / CELLS;
 
-  return MARKS.map((mark) => {
+  const marks: { x: number; y: number; wide: number; reach: number }[] = [];
+
+  for (const mark of MARKS) {
     const point = projectAir({ u: mark.x, v: mark.y }, 0, yaw);
 
-    return {
+    marks.push({
       x: placed.x + point.x * placed.width,
       y: placed.y + point.y * placed.height,
       // A mark on a near cell is a larger mark, the same as everything
@@ -191,8 +193,19 @@ function marksOn(
       // pinhole beside it
       wide: cell * 0.5 * point.scale,
       reach: cell * DARK_DAY_LAMP_CELLS * point.scale,
-    };
-  });
+    });
+  }
+  return marks;
+}
+
+/** A name table turned into select options, keyed by its numeric ids */
+function optionsOf(names: Record<number, string>): { value: number; label: string }[] {
+  const options: { value: number; label: string }[] = [];
+
+  for (const [key, label] of Object.entries(names)) {
+    options.push({ value: Number(key), label });
+  }
+  return options;
 }
 
 export interface SkyStageProps {
@@ -290,22 +303,28 @@ function SkyStage(props: SkyStageProps): JSX.Element {
        */
       const camera: SkyCamera | undefined = props.board ? { yaw: props.yaw, ...placed } : undefined;
       const cells = props.board ? boardCells(placed, props.yaw) : [];
-      const marks = props.board
-        ? marksOn(placed, props.yaw)
-        : MARKS.map((mark) => ({
-            x: mark.x * width,
-            y: mark.y * height,
-            wide,
-            reach: wide * MARK_REACH,
-          }));
+      let marks: { x: number; y: number; wide: number; reach: number }[];
+
+      if (props.board) {
+        marks = marksOn(placed, props.yaw);
+      } else {
+        marks = [];
+        for (const mark of MARKS) {
+          marks.push({ x: mark.x * width, y: mark.y * height, wide, reach: wide * MARK_REACH });
+        }
+      }
       // Laid back with the ground where there is a board under them,
       // and round where the sky is being drawn on the glass
-      const lamps: Lamp[] = marks.map((mark) => ({
-        x: mark.x,
-        y: mark.y,
-        reach: mark.reach,
-        squash: props.board ? GROUND_DEPTH : 1,
-      }));
+      const lamps: Lamp[] = [];
+
+      for (const mark of marks) {
+        lamps.push({
+          x: mark.x,
+          y: mark.y,
+          reach: mark.reach,
+          squash: props.board ? GROUND_DEPTH : 1,
+        });
+      }
 
       if (batch != null) {
         batch.begin(width, height, ratio);
@@ -527,26 +546,36 @@ export default function WeatherDemo(): JSX.Element {
   const [params, setParams] = useSearchParams<{ sky?: string; ground?: string }>();
 
   /** Every sky, read off the table that has to name them all */
-  const skies = (): { value: Weather; label: string }[] =>
-    Object.entries(WEATHER_NAMES).map(([key, label]) => ({ value: Number(key), label }));
+  const skies = (): { value: Weather; label: string }[] => optionsOf(WEATHER_NAMES);
 
   /**
    * Which one is being looked at. It comes out of the address by name
    * rather than by number, so a link says what it shows
    */
-  const chosen = (): Weather =>
-    skies().find((entry) => entry.label === params.sky)?.value ?? DEFAULT_SKY;
+  const chosen = (): Weather => {
+    for (const entry of skies()) {
+      if (entry.label === params.sky) {
+        return entry.value;
+      }
+    }
+    return DEFAULT_SKY;
+  };
 
   const show = (sky: Weather): void => {
     setParams({ sky: WEATHER_NAMES[sky] });
   };
 
   /** The country under it, in the address for the same reason the sky is */
-  const grounds = (): { value: Biome; label: string }[] =>
-    Object.entries(BIOME_NAMES).map(([key, label]) => ({ value: Number(key), label }));
+  const grounds = (): { value: Biome; label: string }[] => optionsOf(BIOME_NAMES);
 
-  const ground = (): Biome =>
-    grounds().find((entry) => entry.label === params.ground)?.value ?? DEFAULT_GROUND;
+  const ground = (): Biome => {
+    for (const entry of grounds()) {
+      if (entry.label === params.ground) {
+        return entry.value;
+      }
+    }
+    return DEFAULT_GROUND;
+  };
 
   const stand = (biome: Biome): void => {
     setParams({ ground: BIOME_NAMES[biome] });
@@ -555,8 +584,15 @@ export default function WeatherDemo(): JSX.Element {
   /** The next or previous sky, for sweeping the whole list */
   const shift = (by: number): void => {
     const all = skies();
-    const at = all.findIndex((entry) => entry.value === chosen());
+    const current = chosen();
+    let at = -1;
 
+    for (const [index, entry] of all.entries()) {
+      if (entry.value === current) {
+        at = index;
+        break;
+      }
+    }
     show(all[(at + by + all.length) % all.length].value);
   };
 
@@ -583,7 +619,12 @@ export default function WeatherDemo(): JSX.Element {
     if (favorsEverything(sky)) {
       said.push('favours every type');
     } else if (WEATHER_TYPES[sky].length > 0) {
-      said.push(`favours ${WEATHER_TYPES[sky].map((type) => TYPE_NAMES[type]).join(', ')}`);
+      const types: string[] = [];
+
+      for (const type of WEATHER_TYPES[sky]) {
+        types.push(TYPE_NAMES[type]);
+      }
+      said.push(`favours ${types.join(', ')}`);
     }
     if (shiny > 1) {
       said.push(`shinies ×${shiny}`);

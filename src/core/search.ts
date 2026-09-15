@@ -12,13 +12,12 @@
  * that they cannot see the result of
  */
 export default function matches(text: string, query: string): boolean {
-  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
-
-  if (terms.length === 0) {
-    return true;
-  }
-
   const haystack = text.toLowerCase();
 
-  return terms.every((term) => haystack.includes(term));
+  for (const term of query.toLowerCase().split(/\s+/)) {
+    if (term !== '' && !haystack.includes(term)) {
+      return false;
+    }
+  }
+  return true;
 }

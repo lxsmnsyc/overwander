@@ -54,9 +54,14 @@ export function readLocate(parameters: CommandArguments): Arguments<LocateAsk> {
   const species = given(parameters, 'species');
   const biome = given(parameters, 'biome');
   const weather = given(parameters, 'weather');
-  const asked = [species, biome, weather].filter((one) => one != null);
+  let asked = 0;
 
-  if (asked.length !== 1) {
+  for (const one of [species, biome, weather]) {
+    if (one != null) {
+      asked++;
+    }
+  }
+  if (asked !== 1) {
     return refuse('Ask for one of species:, biome: or weather:.');
   }
   if (species != null) {
@@ -102,7 +107,12 @@ function* rings(origin: Origin, limit: number): Generator<Origin> {
 
 /** The biomes a species is ever met in */
 function habitatBiomes(species: Species): Set<Biome> {
-  return new Set(listSpeciesHabitats(species).map((one) => one.biome));
+  const biomes = new Set<Biome>();
+
+  for (const one of listSpeciesHabitats(species)) {
+    biomes.add(one.biome);
+  }
+  return biomes;
 }
 
 /** The nearest chunk the test accepts, or null for none within reach */
@@ -133,9 +143,18 @@ function placed(found: Origin): string {
 
 /** When a species can be met in a biome, and how lucky a walk has to be */
 function metThere(species: Species, biome: Biome): string {
-  const here = listSpeciesHabitats(species).filter((one) => one.biome === biome);
-  const times = [...new Set(here.map((one) => TIME_OF_DAY_NAMES[one.time]))].join(', ');
-  const rarity = [...new Set(here.map((one) => SPAWN_RARITY_NAMES[one.rarity]))].join(', ');
+  const hours = new Set<string>();
+  const odds = new Set<string>();
+
+  for (const one of listSpeciesHabitats(species)) {
+    if (one.biome === biome) {
+      hours.add(TIME_OF_DAY_NAMES[one.time]);
+      odds.add(SPAWN_RARITY_NAMES[one.rarity]);
+    }
+  }
+
+  const times = [...hours].join(', ');
+  const rarity = [...odds].join(', ');
 
   return `${times === '' ? 'any hour' : times} (${rarity})`;
 }

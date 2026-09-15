@@ -109,16 +109,26 @@ export const GRID_NAME = 'grid';
  */
 export function parseOrder(text: string): Facing[] {
   const known = new Set<string>(FACINGS);
-  const order = text
+  const order: Facing[] = [];
+  const typed = text
     .trim()
     .toLowerCase()
-    .split(/[\s,]+/)
-    .filter((name): name is Facing => known.has(name));
+    .split(/[\s,]+/);
+
+  for (const name of typed) {
+    if (isFacing(known, name)) {
+      order.push(name);
+    }
+  }
 
   if (order.length !== FACINGS.length || new Set(order).size !== FACINGS.length) {
     throw new Error(`The row order needs each of ${FACINGS.join(', ')} exactly once`);
   }
   return order;
+}
+
+function isFacing(known: Set<string>, name: string): name is Facing {
+  return known.has(name);
 }
 
 /**
@@ -255,9 +265,15 @@ export default async function processPokengine(
   );
 
   const listed = await writeCredits(credited);
+  const paths: string[] = [];
+
+  for (const file of written) {
+    paths.push(file.path);
+  }
+  paths.push(listed);
 
   return {
-    written: [...written.map((file) => file.path), listed],
+    written: paths,
     width: data.width,
     height: data.height,
     grid: data.grid,

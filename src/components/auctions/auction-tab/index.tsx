@@ -8,9 +8,14 @@ import {
 import { isLockLive } from '../../../auth/battle-lock';
 import { getBuddy } from '../../../auth/buddy';
 import { syncServerClock } from '../../../auth/clock';
-import { type CaughtPokemon, countCaught, getCaught, listCaughtMarked } from '../../../auth/caught';
+import {
+  type CaughtPokemon,
+  countCaught,
+  getCaughtBatched,
+  listCaughtMarked,
+} from '../../../auth/caught';
 
-import { getProfile } from '../../../auth/profile';
+import { getProfiles } from '../../../auth/profile';
 
 import type { CatchOption } from '../../catches/catch-picker';
 
@@ -48,31 +53,36 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
    * read every pokemon on it again
    */
   const [lots] = createResource(
-    () =>
-      [
-        ...new Set(
-          (auctions() ?? [])
-            .filter(([, auction]) => auction.lot === AuctionLot.Catch)
-            .map(([, auction]) => auction.caught),
-        ),
-      ]
-        .sort()
-        .join(','),
+    () => {
+      const caught = new Set<string>();
+
+      for (const [, auction] of auctions() ?? []) {
+        if (auction.lot === AuctionLot.Catch) {
+          caught.add(auction.caught);
+        }
+      }
+      return [...caught].sort().join(',');
+    },
     async (key): Promise<Map<string, CaughtPokemon>> => {
       const found = new Map<string, CaughtPokemon>();
+      const reads: Promise<void>[] = [];
 
-      await Promise.all(
-        key
-          .split(',')
-          .filter(Boolean)
-          .map(async (id) => {
-            const caught = await getCaught(id);
+      for (const id of key.split(',')) {
+        if (id === '') {
+          continue;
+        }
+        reads.push(
+          (async (): Promise<void> => {
+            // Every lot on the board in the same moment, so one read
+            const caught = await getCaughtBatched(id);
 
             if (caught != null) {
               found.set(id, caught);
             }
-          }),
-      );
+          })(),
+        );
+      }
+      await Promise.all(reads);
       return found;
     },
   );
@@ -83,22 +93,21 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
    * lots with no sellers on it is a shop with the labels torn off
    */
   const [sellers] = createResource(
-    () => [...new Set((auctions() ?? []).map(([, auction]) => auction.seller))].sort().join(','),
+    () => {
+      const selling = new Set<string>();
+
+      for (const [, auction] of auctions() ?? []) {
+        selling.add(auction.seller);
+      }
+      return [...selling].sort().join(',');
+    },
     async (key): Promise<Map<string, string>> => {
       const named = new Map<string, string>();
 
-      await Promise.all(
-        key
-          .split(',')
-          .filter(Boolean)
-          .map(async (uid) => {
-            const seller = await getProfile(uid);
-
-            if (seller != null) {
-              named.set(uid, seller.nickname);
-            }
-          }),
-      );
+      // Every seller on the board in one read
+      for (const [uid, seller] of await getProfiles(key.split(','))) {
+        named.set(uid, seller.nickname);
+      }
       return named;
     },
   );
@@ -156,7 +165,12 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
         syncServerClock(),
       ]);
 
-      return records.map(([id, caught]) => ({ id, caught, fighting: isLockLive(caught, clock) }));
+      const options: CatchOption[] = [];
+
+      for (const [id, caught] of records) {
+        options.push({ id, caught, fighting: isLockLive(caught, clock) });
+      }
+      return options;
     },
   );
 

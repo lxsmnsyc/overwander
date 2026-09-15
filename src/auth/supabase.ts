@@ -70,13 +70,16 @@ export type Unwatch = () => void;
 
 /**
  * Follow one row. `read` is the initial and recovery fetch; `filter`
- * is the change stream's own condition, e.g. `id=eq.abc`
+ * is the change stream's own condition, e.g. `id=eq.abc`. `fromChange`
+ * takes a change's own row instead of reading it again, for a row that
+ * is the whole answer
  */
 export function watchRow<T>(
   table: string,
   filter: string,
   read: () => Promise<T>,
   onChange: (value: T) => void,
+  fromChange?: (row: Record<string, unknown>) => T,
 ): Unwatch {
   const supabase = getSupabase();
   const refetch = (): void => {
@@ -87,13 +90,30 @@ export function watchRow<T>(
         // the next change or reconnect tries again
       });
   };
+  // The first subscribe is the socket catching up with the read below
+  // rather than a second reason to run it. Only a resubscribe is: a
+  // dropped socket may have missed a change while it was away
+  let connected = false;
   const channel = supabase
     .channel(`row:${table}:${filter}:${Math.random().toString(36).slice(2)}`)
-    .on('postgres_changes', { event: '*', schema: 'public', table, filter }, refetch)
+    .on('postgres_changes', { event: '*', schema: 'public', table, filter }, (payload) => {
+      const row: Record<string, unknown> = payload.new;
+
+      // A delete carries no new row, so it is read like a reconnect
+      if (fromChange == null || Object.keys(row).length === 0) {
+        refetch();
+        return;
+      }
+      onChange(fromChange(row));
+    })
     .subscribe((status) => {
-      if (status === REALTIME_SUBSCRIBE_STATES.SUBSCRIBED) {
+      if (status !== REALTIME_SUBSCRIBE_STATES.SUBSCRIBED) {
+        return;
+      }
+      if (connected) {
         refetch();
       }
+      connected = true;
     });
 
   // The first paint cannot wait for the socket
@@ -136,10 +156,18 @@ export function watchTable<T>(
       refetch,
     );
   }
+  // As above: the first subscribe rides the read below, and only a
+  // resubscribe is worth another
+  let connected = false;
+
   channel.subscribe((status) => {
-    if (status === REALTIME_SUBSCRIBE_STATES.SUBSCRIBED) {
+    if (status !== REALTIME_SUBSCRIBE_STATES.SUBSCRIBED) {
+      return;
+    }
+    if (connected) {
       refetch();
     }
+    connected = true;
   });
 
   refetch();

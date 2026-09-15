@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -136,6 +136,7 @@ export default function registerBidoofSpecies(): void {
       [Stats.Speed]: 71,
     },
     types: [Types.Normal, Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.Simple, Abilities.Unaware],
     // Sturdy is this registry's rather than the mainline's: a dam is
     // built to hold, and this line has no stat that stands out instead
@@ -143,7 +144,7 @@ export default function registerBidoofSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 127,
-    biomes: [Biome.Bog, Biome.Swamp, Biome.TemperateForest],
+    biomes: [Biome.Bog, Biome.Swamp, Biome.TemperateForest, Biome.Woodland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

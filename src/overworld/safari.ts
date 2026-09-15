@@ -641,7 +641,12 @@ export default class SafariSession<
       case Balls.HeavyBall: {
         const { weight } = getSpeciesData(this.encounter.species);
 
-        return HEAVY_BALL_BANDS.find(([kilograms]) => weight >= kilograms)?.[1] ?? 1;
+        for (const [kilograms, modifier] of HEAVY_BALL_BANDS) {
+          if (weight >= kilograms) {
+            return modifier;
+          }
+        }
+        return 1;
       }
       case Balls.LevelBall: {
         const { buddy } = this.context;

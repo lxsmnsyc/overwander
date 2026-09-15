@@ -144,10 +144,15 @@ export default function setupSwitchOutMoves(battle: Battle): void {
 
     // What the user had built up goes with the baton, so the
     // replacement walks in on the stages rather than on nothing
-    const passed =
-      event.move === Moves.BatonPass
-        ? PASSED_STAGES.map((stage) => switched.unit.stages[stage])
-        : undefined;
+    let passed: number[] | undefined;
+
+    if (event.move === Moves.BatonPass) {
+      passed = [];
+
+      for (const stage of PASSED_STAGES) {
+        passed.push(switched.unit.stages[stage]);
+      }
+    }
 
     // The move goes with them: a Teleport is a vanishing and a Roar
     // is a shove, and what tells the two apart afterwards is this

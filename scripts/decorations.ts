@@ -42,7 +42,7 @@ const SOURCE = process.argv[2] ?? 'image.png';
  */
 const DECORATION_CUTS: Cut[] = [
   { name: 'cactus', x: 321, y: 195, width: 30, height: 29 },
-  { name: 'shrub', x: 210, y: 202, width: 27, height: 25 },
+  { name: 'shrub', x: 210, y: 202, width: 28, height: 25 },
   { name: 'grass', x: 48, y: 320, width: 16, height: 16, crowded: true },
   { name: 'flower', x: 192, y: 336, width: 16, height: 16, crowded: true },
   { name: 'rock', x: 481, y: 369, width: 14, height: 14 },
@@ -177,7 +177,27 @@ for (const area of ALL) {
   assertWhole(sheet, area);
 }
 
-const boxes = new Map<string, Image>(ALL.map((area) => [area.name, cut(sheet, area)]));
+/**
+ * The rip lays its pieces over a flat shadow: pure black, half
+ * transparent (alpha 89 under most, 77 under the small ones), and the
+ * only half-transparent colour on any of them. Only some pieces carry
+ * one, so a rock beside a rock looked lit two ways; every baked shadow
+ * is cleared before anything is measured
+ */
+function withoutShadow(image: Image): Image {
+  for (let at = 0; at < image.rgba.length; at += 4) {
+    const { rgba } = image;
+
+    if (rgba[at] === 0 && rgba[at + 1] === 0 && rgba[at + 2] === 0 && rgba[at + 3] < 255) {
+      rgba[at + 3] = 0;
+    }
+  }
+  return image;
+}
+
+const boxes = new Map<string, Image>(
+  ALL.map((area) => [area.name, withoutShadow(cut(sheet, area))]),
+);
 
 /** The cut of that name, which the tables above have or the run is wrong. */
 function boxOf(name: string): Image {

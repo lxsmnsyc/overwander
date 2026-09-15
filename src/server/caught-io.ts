@@ -223,6 +223,41 @@ export function assembleCaught(
     }
   }
 
+  const moveIds: number[] = [];
+  const abilityIds: number[] = [];
+  const itemIds: number[] = [];
+  const owners: Record<string, unknown>[] = [];
+
+  if (parts.has('moves')) {
+    for (const entry of moves) {
+      moveIds.push(asNumber(entry.move));
+    }
+  }
+  if (parts.has('abilities')) {
+    for (const entry of abilities) {
+      abilityIds.push(asNumber(entry.ability));
+    }
+  }
+  if (parts.has('items')) {
+    for (const entry of items) {
+      itemIds.push(asNumber(entry.item));
+    }
+  }
+  if (parts.has('history')) {
+    for (const entry of history) {
+      owners.push({
+        owner: entry.owner == null ? asString(entry.owner_name) : asString(entry.owner),
+        ...(entry.owner == null && entry.owner_name != null
+          ? { name: asString(entry.owner_name) }
+          : {}),
+        acquiredAt: toStoredISO(entry.acquired_at_local, asNumber(entry.acquired_at_offset)),
+        kind: entry.kind,
+        paid: entry.paid == null ? null : asNumber(entry.paid),
+        ball: entry.ball == null ? null : asNumber(entry.ball),
+      });
+    }
+  }
+
   return {
     owner: row.owner == null ? ESCROW : asString(row.owner),
     type: row.type,
@@ -242,28 +277,11 @@ export function assembleCaught(
     traded: row.traded,
     canEvolve: row.can_evolve,
     auctionable: row.auctionable,
-    ...(parts.has('moves')
-      ? { moves: moves.map((entry) => asNumber(entry.move)), movePoints }
-      : {}),
-    ...(parts.has('abilities')
-      ? { abilities: abilities.map((entry) => asNumber(entry.ability)) }
-      : {}),
+    ...(parts.has('moves') ? { moves: moveIds, movePoints } : {}),
+    ...(parts.has('abilities') ? { abilities: abilityIds } : {}),
     slots: row.slots,
-    ...(parts.has('items') ? { items: items.map((entry) => asNumber(entry.item)) } : {}),
-    ...(parts.has('history')
-      ? {
-          history: history.map((entry) => ({
-            owner: entry.owner == null ? asString(entry.owner_name) : asString(entry.owner),
-            ...(entry.owner == null && entry.owner_name != null
-              ? { name: asString(entry.owner_name) }
-              : {}),
-            acquiredAt: toStoredISO(entry.acquired_at_local, asNumber(entry.acquired_at_offset)),
-            kind: entry.kind,
-            paid: entry.paid == null ? null : asNumber(entry.paid),
-            ball: entry.ball == null ? null : asNumber(entry.ball),
-          })),
-        }
-      : {}),
+    ...(parts.has('items') ? { items: itemIds } : {}),
+    ...(parts.has('history') ? { history: owners } : {}),
     lockedAt: row.locked_at,
     steps: row.steps,
     hatchSteps: row.hatch_steps,
@@ -387,12 +405,11 @@ export async function updateCaughtIn(
 
     await transaction`delete from caught_moves where caught_id = ${id}`;
     if (moves.length > 0) {
-      const rows = moves.map((move, slot) => ({
-        caught_id: id,
-        slot,
-        move,
-        points: asNumber(points[String(move)]),
-      }));
+      const rows: { caught_id: string; slot: number; move: number; points: number }[] = [];
+
+      for (const [slot, move] of moves.entries()) {
+        rows.push({ caught_id: id, slot, move, points: asNumber(points[String(move)]) });
+      }
 
       await transaction`
         insert into caught_moves ${transaction(rows, 'caught_id', 'slot', 'move', 'points')}
@@ -400,9 +417,17 @@ export async function updateCaughtIn(
     }
   } else if ('movePoints' in fields) {
     const points = asRecord(fields.movePoints);
-    const spent = Object.entries(points)
-      .map(([move, value]) => [Number(move), asNumber(value)] as const)
-      .filter(([, value]) => value > 0);
+    const spentMoves: number[] = [];
+    const spentPoints: number[] = [];
+
+    for (const [move, stored] of Object.entries(points)) {
+      const value = asNumber(stored);
+
+      if (value > 0) {
+        spentMoves.push(Number(move));
+        spentPoints.push(value);
+      }
+    }
 
     await transaction`
       update caught_moves set points = 0 where caught_id = ${id} and points <> 0
@@ -410,12 +435,12 @@ export async function updateCaughtIn(
 
     // The counts land in one statement rather than one a move: a move
     // list is short, but this is written on every PP Up
-    if (spent.length > 0) {
+    if (spentMoves.length > 0) {
       await transaction`
         update caught_moves set points = spent.points
         from unnest(
-          ${transaction.array(spent.map(([move]) => move))}::integer[],
-          ${transaction.array(spent.map(([, value]) => value))}::smallint[]
+          ${transaction.array(spentMoves)}::integer[],
+          ${transaction.array(spentPoints)}::smallint[]
         ) as spent(move, points)
         where caught_moves.caught_id = ${id} and caught_moves.move = spent.move
       `;
@@ -427,7 +452,11 @@ export async function updateCaughtIn(
 
     await transaction`delete from caught_abilities where caught_id = ${id}`;
     if (abilities.length > 0) {
-      const rows = abilities.map((ability, slot) => ({ caught_id: id, slot, ability }));
+      const rows: { caught_id: string; slot: number; ability: number }[] = [];
+
+      for (const [slot, ability] of abilities.entries()) {
+        rows.push({ caught_id: id, slot, ability });
+      }
 
       await transaction`
         insert into caught_abilities ${transaction(rows, 'caught_id', 'slot', 'ability')}
@@ -440,7 +469,11 @@ export async function updateCaughtIn(
 
     await transaction`delete from caught_items where caught_id = ${id}`;
     if (items.length > 0) {
-      const rows = items.map((item, slot) => ({ caught_id: id, slot, item }));
+      const rows: { caught_id: string; slot: number; item: number }[] = [];
+
+      for (const [slot, item] of items.entries()) {
+        rows.push({ caught_id: id, slot, item });
+      }
 
       await transaction`
         insert into caught_items ${transaction(rows, 'caught_id', 'slot', 'item')}
@@ -457,7 +490,19 @@ export async function updateCaughtIn(
       select count(*)::int as seq from caught_history where caught_id = ${id}
     `;
     const from = asNumber(counted[0]?.seq);
-    const rows = history.slice(from).map((entry, at) => {
+    const rows: {
+      caught_id: string;
+      seq: number;
+      owner: string | null;
+      owner_name: string | null;
+      acquired_at_local: ReturnType<typeof fromStoredISO>['local'];
+      acquired_at_offset: ReturnType<typeof fromStoredISO>['offset'];
+      kind: number;
+      paid: number | null;
+      ball: number | null;
+    }[] = [];
+
+    for (const [at, entry] of history.slice(from).entries()) {
       const { local, offset } = fromStoredISO(asString(entry.acquiredAt));
       const owner = asString(entry.owner);
       const named = 'name' in entry && entry.name != null;
@@ -471,7 +516,7 @@ export async function updateCaughtIn(
         ownerName = owner;
       }
 
-      return {
+      rows.push({
         caught_id: id,
         seq: from + at,
         owner: named || !isUuid(owner) ? null : owner,
@@ -481,8 +526,8 @@ export async function updateCaughtIn(
         kind: asNumber(entry.kind),
         paid: entry.paid == null ? null : asNumber(entry.paid),
         ball: entry.ball == null ? null : asNumber(entry.ball),
-      };
-    });
+      });
+    }
 
     if (rows.length > 0) {
       await transaction`

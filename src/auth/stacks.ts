@@ -68,5 +68,10 @@ export function getStack(bag: unknown, spec: StackSpec, key: number): number {
  * map rather than left sitting at nothing
  */
 export function listStacks(bag: unknown, spec: StackSpec): [number, number][] {
-  return Object.entries(asStackMap(bag, spec)).map(([key, count]) => [Number(key), count]);
+  const stacks: [number, number][] = [];
+
+  for (const [key, count] of Object.entries(asStackMap(bag, spec))) {
+    stacks.push([Number(key), count]);
+  }
+  return stacks;
 }

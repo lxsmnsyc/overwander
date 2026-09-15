@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -91,12 +91,19 @@ export default function registerLotadSpecies(): void {
       [Stats.Speed]: 30,
     },
     types: [Types.Water, Types.Grass],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.SwiftSwim, Abilities.RainDish],
     hiddenAbilities: [Abilities.OwnTempo],
     eggGroups: [EggGroups.Water1, EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Bog, Biome.Mangrove],
+    biomes: [
+      Biome.Bog,
+      Biome.Mangrove,
+      Biome.TropicalRainforest,
+      Biome.TropicalSeasonalForest,
+      Biome.TemperateRainforest,
+    ],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -146,12 +153,19 @@ export default function registerLotadSpecies(): void {
       [Stats.Speed]: 50,
     },
     types: [Types.Water, Types.Grass],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.SwiftSwim, Abilities.RainDish],
     hiddenAbilities: [Abilities.OwnTempo],
     eggGroups: [EggGroups.Water1, EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.Bog, Biome.Mangrove],
+    biomes: [
+      Biome.Bog,
+      Biome.Mangrove,
+      Biome.TropicalRainforest,
+      Biome.TropicalSeasonalForest,
+      Biome.TemperateRainforest,
+    ],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -195,6 +209,7 @@ export default function registerLotadSpecies(): void {
       [Stats.Speed]: 70,
     },
     types: [Types.Water, Types.Grass],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.SwiftSwim, Abilities.RainDish],
     // Hydration is this registry's rather than the mainline's: it
     // dances in its own Rain Dance beside Rain Dish, and a final
@@ -203,7 +218,13 @@ export default function registerLotadSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Bog, Biome.Mangrove],
+    biomes: [
+      Biome.Bog,
+      Biome.Mangrove,
+      Biome.TropicalRainforest,
+      Biome.TropicalSeasonalForest,
+      Biome.TemperateRainforest,
+    ],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

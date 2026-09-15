@@ -114,10 +114,11 @@ function setupAfflictionOrb(item: Items, status: Statuses): (battle: Battle) => 
   });
 }
 
-const SETUPS: ((battle: Battle) => void)[] = [
-  setupLifeOrb,
-  ...[...AFFLICTIONS].map(([item, status]) => setupAfflictionOrb(item, status)),
-];
+const SETUPS: ((battle: Battle) => void)[] = [setupLifeOrb];
+
+for (const [item, status] of AFFLICTIONS) {
+  SETUPS.push(setupAfflictionOrb(item, status));
+}
 
 export default function setupOrbs(battle: Battle): void {
   for (const setup of SETUPS) {

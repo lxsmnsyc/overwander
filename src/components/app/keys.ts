@@ -89,7 +89,12 @@ export function actionOf(event: KeyboardEvent, binds: KeyBinds): GameAction | nu
 
   const pressed = keyOf(event);
 
-  return ACTION_ORDER.find((action) => binds[action] === pressed) ?? null;
+  for (const action of ACTION_ORDER) {
+    if (binds[action] === pressed) {
+      return action;
+    }
+  }
+  return null;
 }
 
 /** What owns its own keys because the player is typing into it */

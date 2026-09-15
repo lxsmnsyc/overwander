@@ -22,7 +22,18 @@ import { defineConfig } from 'vite';
  */
 const forTests = process.env.VITEST != null;
 
+/**
+ * One id per build, shared by the client and server bundles. A tab
+ * names it on every server call, and a call from a build that is no
+ * longer live is refused: server functions are addressed by their
+ * place in a file, so an old tab's arguments would reach the wrong one
+ */
+const BUILD_ID = process.env.VERCEL_GIT_COMMIT_SHA ?? String(Date.now());
+
 export default defineConfig({
+  define: {
+    'import.meta.env.VITE_BUILD_ID': JSON.stringify(BUILD_ID),
+  },
   // Tailwind reads its configuration out of src/app.css rather than a
   // config file of its own, so the plugin is all the wiring there is
   plugins: [
@@ -34,6 +45,7 @@ export default defineConfig({
     solidMarked({}),
     solidStart({
       devOverlay: false,
+      middleware: 'src/middleware/index.ts',
     }),
     ...(forTests ? [] : [nitro()]),
   ],
@@ -66,6 +78,9 @@ export default defineConfig({
     noExternal: ['server-only'],
   },
   test: {
+    // The world tests generate thousands of chunks and sit near 5 seconds alone,
+    // so the default timeout fails them whenever the machine is busy
+    testTimeout: 20_000,
     /**
      * The battle engine and the modules that field it are
      * `client-only`: they are played in a browser and nothing on the

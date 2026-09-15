@@ -114,7 +114,12 @@ function readWord(word: string): QueryTerm {
  * is what lets a box draw its own terms as it is being typed into
  */
 export function scanQuery(query: string): QueryToken[] {
-  return split(query).map(({ word, start, end }) => ({ ...readWord(word), start, end }));
+  const tokens: QueryToken[] = [];
+
+  for (const { word, start, end } of split(query)) {
+    tokens.push({ ...readWord(word), start, end });
+  }
+  return tokens;
 }
 
 /**
@@ -124,7 +129,12 @@ export function scanQuery(query: string): QueryToken[] {
  * the whole list
  */
 export default function parseQuery(query: string): QueryTerm[] {
-  return split(query).map(({ word }) => readWord(word));
+  const terms: QueryTerm[] = [];
+
+  for (const { word } of split(query)) {
+    terms.push(readWord(word));
+  }
+  return terms;
 }
 
 /**
@@ -132,7 +142,14 @@ export default function parseQuery(query: string): QueryTerm[] {
  * how the list is arranged
  */
 export function askedTerms(query: string): QueryTerm[] {
-  return parseQuery(query).filter((term) => !isControlField(term.field));
+  const terms: QueryTerm[] = [];
+
+  for (const term of parseQuery(query)) {
+    if (!isControlField(term.field)) {
+      terms.push(term);
+    }
+  }
+  return terms;
 }
 
 /**
@@ -140,10 +157,16 @@ export function askedTerms(query: string): QueryTerm[] {
  * one alternative, which is why every field gets this for free
  */
 export function alternatives(value: string): string[] {
-  return value
-    .split('|')
-    .map((part) => part.trim())
-    .filter((part) => part !== '');
+  const parts: string[] = [];
+
+  for (const part of value.split('|')) {
+    const trimmed = part.trim();
+
+    if (trimmed !== '') {
+      parts.push(trimmed);
+    }
+  }
+  return parts;
 }
 
 /**
@@ -156,12 +179,22 @@ export function holds(name: string, value: string): boolean {
   if (wanted.length === 0) {
     return true;
   }
-  return wanted.some((part) => name.toLowerCase().includes(part.toLowerCase()));
+  for (const part of wanted) {
+    if (name.toLowerCase().includes(part.toLowerCase())) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /** Whether any of a list of names holds it */
 export function holdsAny(names: string[], value: string): boolean {
-  return names.some((name) => holds(name, value));
+  for (const name of names) {
+    if (holds(name, value)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -234,9 +267,16 @@ function bounds(value: string): Bounds | null {
  * which is what refuses the term rather than widening it
  */
 export function ranges(value: string): Bounds[] {
-  return alternatives(value)
-    .map(bounds)
-    .filter((band): band is Bounds => band != null);
+  const bands: Bounds[] = [];
+
+  for (const part of alternatives(value)) {
+    const band = bounds(part);
+
+    if (band != null) {
+      bands.push(band);
+    }
+  }
+  return bands;
 }
 
 /** Whether a number falls inside one band */
@@ -254,7 +294,12 @@ export function inside(band: Bounds, actual: number): boolean {
  * nothing, which refuses the term
  */
 export function within(value: string, actual: number): boolean {
-  return ranges(value).some((band) => inside(band, actual));
+  for (const band of ranges(value)) {
+    if (inside(band, actual)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -270,9 +315,14 @@ export function only<T>(found: T[]): T | null {
 
 /** Every id in a table of names whose name holds one of the words */
 export function namedAll(table: Record<number, string>, wanted: string): number[] {
-  return Object.entries(table)
-    .filter(([, name]) => holds(name, wanted))
-    .map(([id]) => Number(id));
+  const ids: number[] = [];
+
+  for (const [id, name] of Object.entries(table)) {
+    if (holds(name, wanted)) {
+      ids.push(Number(id));
+    }
+  }
+  return ids;
 }
 
 /**
@@ -379,11 +429,18 @@ export function matching(words: string[], typed: string): string[] {
   if (wanted === '') {
     return words;
   }
-  const starting = words.filter((word) => word.toLowerCase().startsWith(wanted));
-  const holding = words.filter(
-    (word) => !word.toLowerCase().startsWith(wanted) && word.toLowerCase().includes(wanted),
-  );
+  const starting: string[] = [];
+  const holding: string[] = [];
 
+  for (const word of words) {
+    const lower = word.toLowerCase();
+
+    if (lower.startsWith(wanted)) {
+      starting.push(word);
+    } else if (lower.includes(wanted)) {
+      holding.push(word);
+    }
+  }
   return [...starting, ...holding];
 }
 
@@ -431,23 +488,40 @@ export function completeQuery(
   const colon = rest.indexOf(':');
 
   if (colon <= 0) {
-    const suggestions = matching(
-      vocabulary.fields.map((field) => field.name),
-      rest,
-    )
-      .slice(0, SUGGESTIONS)
-      .map((name) => ({
+    const names: string[] = [];
+    const hints = new Map<string, string>();
+
+    for (const field of vocabulary.fields) {
+      names.push(field.name);
+      // The first field of a name wins, as a find would
+      if (!hints.has(field.name)) {
+        hints.set(field.name, field.hint);
+      }
+    }
+
+    const suggestions: QuerySuggestion[] = [];
+
+    for (const name of matching(names, rest).slice(0, SUGGESTIONS)) {
+      suggestions.push({
         word: `${bang}${name}:`,
         label: `${name}:`,
-        hint: vocabulary.fields.find((field) => field.name === name)?.hint,
+        hint: hints.get(name),
         partial: true,
-      }));
-
+      });
+    }
     return { start, end, suggestions };
   }
 
   const asked = rest.slice(0, colon).toLowerCase();
-  const field = vocabulary.fields.find((one) => one.name === asked);
+  let field: QueryField | undefined;
+
+  for (const one of vocabulary.fields) {
+    if (one.name === asked) {
+      field = one;
+      break;
+    }
+  }
+
   const known = field?.values?.();
 
   if (known == null) {
@@ -459,14 +533,15 @@ export function completeQuery(
   const value = rest.slice(colon + 1);
   const bar = value.lastIndexOf('|');
   const held = bar < 0 ? '' : value.slice(0, bar + 1);
-  const suggestions = matching(known, value.slice(bar + 1))
-    .slice(0, SUGGESTIONS)
-    .map((one) => ({
+  const suggestions: QuerySuggestion[] = [];
+
+  for (const one of matching(known, value.slice(bar + 1)).slice(0, SUGGESTIONS)) {
+    suggestions.push({
       word: `${bang}${asked}:${asValue(`${held}${one}`)}`,
       label: one,
       partial: false,
-    }));
-
+    });
+  }
   return { start, end, suggestions };
 }
 

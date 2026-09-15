@@ -49,23 +49,29 @@ async function readBag(uid: string): Promise<unknown> {
     .select('family, count')
     .eq('player', uid);
 
-  return {
-    candies: Object.fromEntries(
-      asRecordArray(data).map((row) => [asNumber(row.family), asNumber(row.count)]),
-    ),
-  };
+  const candies: Record<number, number> = {};
+
+  for (const row of asRecordArray(data)) {
+    candies[asNumber(row.family)] = asNumber(row.count);
+  }
+  return { candies };
 }
 
 /**
  * Every candy stack the user holds
  */
 export async function getCandies(uid: string): Promise<CandyStack[]> {
-  return listStacks(await readBag(uid), CANDY_STACKS).map(([family, count]) => ({
-    user: uid,
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    family: family as Families,
-    count,
-  }));
+  const stacks: CandyStack[] = [];
+
+  for (const [family, count] of listStacks(await readBag(uid), CANDY_STACKS)) {
+    stacks.push({
+      user: uid,
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      family: family as Families,
+      count,
+    });
+  }
+  return stacks;
 }
 
 /**

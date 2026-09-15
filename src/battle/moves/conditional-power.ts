@@ -28,7 +28,7 @@ const FACADE_STATUSES = new Set<Statuses>([
 ]);
 
 /** What a Weather Ball becomes, and what it is worth, under each sky */
-const WEATHER_BALL_TYPES = new Map<Weathers, Types>([
+export const WEATHER_BALL_TYPES = new Map<Weathers, Types>([
   [Weathers.Sunny, Types.Fire],
   [Weathers.ExtremeSunny, Types.Fire],
   [Weathers.Rain, Types.Water],

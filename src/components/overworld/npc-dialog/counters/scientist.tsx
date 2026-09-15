@@ -30,8 +30,16 @@ export default function Scientist(props: CounterProps): JSX.Element {
   const [bench, setBench] = createSignal(false);
 
   /** What is in the bag that he can open */
-  const fossils = (): InventoryEntry[] =>
-    (props.bag.latest ?? []).filter((entry) => isFossil(entry.item) && entry.amount > 0);
+  const fossils = (): InventoryEntry[] => {
+    const held: InventoryEntry[] = [];
+
+    for (const entry of props.bag.latest ?? []) {
+      if (isFossil(entry.item) && entry.amount > 0) {
+        held.push(entry);
+      }
+    }
+    return held;
+  };
 
   /** What is inside this rock, which is the whole of what a player is choosing */
   const inside = (item: Items): string => {

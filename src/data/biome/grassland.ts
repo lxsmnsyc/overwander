@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
 
 /**
  * Grassland spawn pool, grouped by day-cycle period and rarity band
@@ -41,7 +41,6 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Togetic, weight: 5 },
         { species: Species.Roselia, weight: 20 },
-        { species: Species.Combee, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
       ],
@@ -115,12 +114,15 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Budew, weight: PRIZED_WEIGHT },
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
-        { species: Species.Munchlax, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Raikou, weight: 10 },
         { species: Species.Azelf, weight: 10 },
+        { species: Species.Zapdos, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.Suicune, weight: 10 },
       ],
+      mythical: [{ species: Species.Shaymin, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -158,7 +160,6 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Togetic, weight: 5 },
         { species: Species.Roselia, weight: 20 },
-        { species: Species.Combee, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
       ],
@@ -236,12 +237,15 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Budew, weight: PRIZED_WEIGHT },
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
-        { species: Species.Munchlax, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Raikou, weight: 10 },
         { species: Species.Azelf, weight: 10 },
+        { species: Species.Zapdos, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.Suicune, weight: 10 },
       ],
+      mythical: [{ species: Species.Shaymin, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -259,7 +263,6 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Electabuzz, weight: 5 },
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Roselia, weight: 20 },
-        { species: Species.Combee, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
         { species: Species.Stunky, weight: 22 },
@@ -304,12 +307,15 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Budew, weight: PRIZED_WEIGHT },
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
-        { species: Species.Munchlax, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Raikou, weight: 10 },
         { species: Species.Azelf, weight: 10 },
+        { species: Species.Zapdos, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.Suicune, weight: 10 },
       ],
+      mythical: [{ species: Species.Shaymin, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -329,7 +335,6 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Electabuzz, weight: 5 },
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Roselia, weight: 20 },
-        { species: Species.Combee, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
         { species: Species.Stunky, weight: 22 },
@@ -376,12 +381,101 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Budew, weight: PRIZED_WEIGHT },
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
-        { species: Species.Munchlax, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Raikou, weight: 10 },
         { species: Species.Azelf, weight: 10 },
+        { species: Species.Zapdos, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.Suicune, weight: 10 },
       ],
+      mythical: [{ species: Species.Shaymin, weight: 10 }],
+    },
+  });
+  registerWaterPool(Biome.Grassland, {
+    [TimeOfDay.Morning]: {
+      base: [{ species: Species.Poliwag, weight: 20 }],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Goldeen, weight: 20 },
+        { species: Species.Marill, weight: 20 },
+        { species: Species.Psyduck, weight: 20 },
+        { species: Species.Surskit, weight: 25 },
+      ],
+      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      scarce: [
+        { species: Species.Seaking, weight: 10 },
+        { species: Species.Azumarill, weight: 5 },
+        { species: Species.Golduck, weight: 10 },
+        { species: Species.Masquerain, weight: 10 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      elusive: [
+        { species: Species.Poliwrath, weight: 5 },
+        { species: Species.Politoed, weight: 5 },
+      ],
+      special: [{ species: Species.Azelf, weight: 10 }],
+    },
+    [TimeOfDay.Day]: {
+      base: [{ species: Species.Poliwag, weight: 20 }],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Goldeen, weight: 20 },
+        { species: Species.Marill, weight: 20 },
+        { species: Species.Psyduck, weight: 20 },
+        { species: Species.Surskit, weight: 25 },
+      ],
+      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      scarce: [
+        { species: Species.Seaking, weight: 10 },
+        { species: Species.Azumarill, weight: 5 },
+        { species: Species.Golduck, weight: 10 },
+        { species: Species.Masquerain, weight: 10 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      elusive: [
+        { species: Species.Poliwrath, weight: 5 },
+        { species: Species.Politoed, weight: 5 },
+      ],
+      special: [{ species: Species.Azelf, weight: 10 }],
+    },
+    [TimeOfDay.Evening]: {
+      base: [{ species: Species.Poliwag, weight: 20 }],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Goldeen, weight: 20 },
+        { species: Species.Marill, weight: 20 },
+      ],
+      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      scarce: [
+        { species: Species.Seaking, weight: 10 },
+        { species: Species.Azumarill, weight: 5 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      elusive: [
+        { species: Species.Poliwrath, weight: 5 },
+        { species: Species.Politoed, weight: 5 },
+      ],
+      special: [{ species: Species.Azelf, weight: 10 }],
+    },
+    [TimeOfDay.Night]: {
+      base: [{ species: Species.Poliwag, weight: 20 }],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Goldeen, weight: 20 },
+        { species: Species.Marill, weight: 20 },
+      ],
+      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      scarce: [
+        { species: Species.Seaking, weight: 10 },
+        { species: Species.Azumarill, weight: 5 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      elusive: [
+        { species: Species.Poliwrath, weight: 5 },
+        { species: Species.Politoed, weight: 5 },
+      ],
+      special: [{ species: Species.Azelf, weight: 10 }],
     },
   });
 }

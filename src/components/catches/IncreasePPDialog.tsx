@@ -122,7 +122,14 @@ function BottleBody(
    * every move is full is told so rather than shown a list it cannot
    * choose from
    */
-  const anywhere = (): boolean => known().some((move) => refused(move) == null);
+  const anywhere = (): boolean => {
+    for (const move of known()) {
+      if (refused(move) == null) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   const close = (): void => {
     setStatus(null);
@@ -144,10 +151,11 @@ function BottleBody(
   // button refused reads as broken
   createEffect(() => {
     if (known().length > 0 && refused(picked()) != null) {
-      const first = known().findIndex((move) => refused(move) == null);
-
-      if (first >= 0) {
-        setChosen(first);
+      for (const [at, move] of known().entries()) {
+        if (refused(move) == null) {
+          setChosen(at);
+          break;
+        }
       }
     }
   });

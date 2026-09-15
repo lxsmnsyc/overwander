@@ -254,7 +254,12 @@ function abilityFit(ability: Abilities, moves: Moves[]): number {
   if (needs == null || moves.length === 0) {
     return 1;
   }
-  return moves.some((move) => needs(move)) ? 1 : UNASKED_ABILITY;
+  for (const move of moves) {
+    if (needs(move)) {
+      return 1;
+    }
+  }
+  return UNASKED_ABILITY;
 }
 
 /** What a role pays for each kind of ability */
@@ -297,18 +302,26 @@ export function getBestAbilities(
     return waiting === sky ? WOKEN_ABILITY : SLEEPING_ABILITY;
   };
 
-  return [...new Set([...pools.regular, ...pools.hidden])]
-    .map((ability) => ({
+  const ranked: { ability: Abilities; worth: number }[] = [];
+
+  for (const ability of new Set([...pools.regular, ...pools.hidden])) {
+    ranked.push({
       ability,
       worth:
         (ABILITY_WORTH[ability] ?? ORDINARY_ABILITY) *
         leaning(ability) *
         weather(ability) *
         abilityFit(ability, moves),
-    }))
-    .sort((one, two) => two.worth - one.worth || one.ability - two.ability)
-    .slice(0, Math.max(0, count))
-    .map(({ ability }) => ability);
+    });
+  }
+  ranked.sort((one, two) => two.worth - one.worth || one.ability - two.ability);
+
+  const best: Abilities[] = [];
+
+  for (const { ability } of ranked.slice(0, Math.max(0, count))) {
+    best.push(ability);
+  }
+  return best;
 }
 
 /**
@@ -388,7 +401,12 @@ export function getBestNature(species: Species, role: BuildRole, moves: Moves[] 
   let best = Natures.Hardy;
   let bestWorth = Number.NEGATIVE_INFINITY;
 
-  for (const nature of Object.keys(NATURE_EFFECTS).map(Number) as Natures[]) {
+  for (const key of Object.keys(NATURE_EFFECTS)) {
+    // tsc needs the assertion to produce Natures from the record keys;
+    // tsgolint resolves the const enum to number
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    const nature = Number(key) as Natures;
+
     // A support is bought for what it can stand and how often it acts,
     // so it never buys power: a lopsided attacker like Rampardos would
     // otherwise outbid its own defence with the stat it is not there
@@ -424,22 +442,31 @@ export function getBestNature(species: Species, role: BuildRole, moves: Moves[] 
  */
 export function assignBuildRoles(party: Species[]): BuildRole[] {
   const cores = Math.min(CORE_COUNT, Math.max(1, Math.round(party.length / CORE_SHARE)));
-  const ranked = party
-    .map((species, at) => {
-      const stats = getSpeciesData(species).stats;
-      // What it hits with, and how often it gets to: the two halves
-      // of taking something off the field
-      const reach =
-        Math.max(stats[Stats.Attack], stats[Stats.SpecialAttack]) + stats[Stats.Speed] / 2;
+  const ranked: { at: number; species: Species; reach: number }[] = [];
 
-      return { at, species, reach };
-    })
-    .sort((one, two) => two.reach - one.reach || one.species - two.species)
-    .slice(0, cores);
+  for (const [at, species] of party.entries()) {
+    const stats = getSpeciesData(species).stats;
+    // What it hits with, and how often it gets to: the two halves
+    // of taking something off the field
+    const reach =
+      Math.max(stats[Stats.Attack], stats[Stats.SpecialAttack]) + stats[Stats.Speed] / 2;
 
-  const core = new Set(ranked.map(({ at }) => at));
+    ranked.push({ at, species, reach });
+  }
+  ranked.sort((one, two) => two.reach - one.reach || one.species - two.species);
 
-  return party.map((_, at) => (core.has(at) ? BuildRole.Core : BuildRole.Support));
+  const core = new Set<number>();
+
+  for (const { at } of ranked.slice(0, cores)) {
+    core.add(at);
+  }
+
+  const roles: BuildRole[] = [];
+
+  for (let at = 0; at < party.length; at++) {
+    roles.push(core.has(at) ? BuildRole.Core : BuildRole.Support);
+  }
+  return roles;
 }
 
 /**
@@ -561,6 +588,15 @@ const WORN_SHARE = 0.5;
  * is best at, which is worth as much as a waiting ability gains; a
  * type the weather merely wears down pays half that
  */
+function sandstormSafe(types: Types[]): boolean {
+  for (const type of types) {
+    if (SANDSTORM_SAFE.has(type)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function skyCost(party: Species[], roles: BuildRole[], weather: Weathers): number {
   const damped = WEATHER_TYPES.get(weather)?.down;
   let cost = 0;
@@ -572,7 +608,7 @@ function skyCost(party: Species[], roles: BuildRole[], weather: Weathers): numbe
     if (damped != null && types.includes(damped)) {
       cost += DAMPED_SHARE * vote;
     }
-    if (weather === Weathers.Sandstorm && !types.some((type) => SANDSTORM_SAFE.has(type))) {
+    if (weather === Weathers.Sandstorm && !sandstormSafe(types)) {
       cost += WORN_SHARE * vote;
     }
     if (weather === Weathers.Hail && !types.includes(Types.Ice)) {
@@ -594,20 +630,47 @@ function pickSetter(
   weather: Weathers,
   waiting: number[],
 ): number {
-  const setter = [...MOVE_WEATHERS].find(([, called]) => called === weather)?.[0];
+  let setter: Moves | undefined;
 
+  for (const [move, called] of MOVE_WEATHERS) {
+    if (called === weather) {
+      setter = move;
+      break;
+    }
+  }
   if (setter == null) {
     return -1;
   }
-  const learns = party.map((species) => new Set(getLearnableMoves(species)).has(setter));
-  const order = [
-    ...waiting.filter((at) => roles[at] === BuildRole.Support),
-    ...waiting,
-    ...party.map((_, at) => at).filter((at) => roles[at] === BuildRole.Support),
-    ...party.map((_, at) => at),
-  ];
 
-  return order.find((at) => learns[at]) ?? -1;
+  const learns: boolean[] = [];
+
+  for (const species of party) {
+    learns.push(getLearnableMoves(species).includes(setter));
+  }
+
+  const order: number[] = [];
+
+  for (const at of waiting) {
+    if (roles[at] === BuildRole.Support) {
+      order.push(at);
+    }
+  }
+  order.push(...waiting);
+  for (let at = 0; at < party.length; at++) {
+    if (roles[at] === BuildRole.Support) {
+      order.push(at);
+    }
+  }
+  for (let at = 0; at < party.length; at++) {
+    order.push(at);
+  }
+
+  for (const at of order) {
+    if (learns[at]) {
+      return at;
+    }
+  }
+  return -1;
 }
 
 /** Everything about one built pokemon that is chosen rather than rolled */
@@ -640,8 +703,11 @@ export function getBestBuild(
   const guessed = getBestAbilities(species, abilityCount, role, sky?.weather);
   const draft = getBestMoves(species, guessed, options);
   const abilities = getBestAbilities(species, abilityCount, role, sky?.weather, draft);
-  const settled =
-    abilities.length === guessed.length && abilities.every((one, at) => one === guessed[at]);
+  let settled = abilities.length === guessed.length;
+
+  for (let at = 0; settled && at < abilities.length; at++) {
+    settled = abilities[at] === guessed[at];
+  }
   const moves = settled ? draft : getBestMoves(species, abilities, options);
 
   return { role, abilities, moves, nature: getBestNature(species, role, moves) };
@@ -662,7 +728,11 @@ export function getBestParty(party: Species[], abilityCount: number): BestBuild[
   // waiting on a sun that is not coming is a wasted slot. The second
   // pass cannot unsettle the plan, because the abilities that asked
   // for that sky are the ones it lifts
-  const wanted = party.map((species, at) => getBestAbilities(species, abilityCount, roles[at]));
+  const wanted: Abilities[][] = [];
+
+  for (const [at, species] of party.entries()) {
+    wanted.push(getBestAbilities(species, abilityCount, roles[at]));
+  }
   const sky = planPartyWeather(party, roles, wanted);
   const taken = new Map<Moves, number>();
   const built: BestBuild[] = [];

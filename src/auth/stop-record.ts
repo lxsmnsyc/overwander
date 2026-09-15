@@ -75,15 +75,18 @@ function asStopParty(value: unknown): StopPokemon[] {
   if (!Array.isArray(value)) {
     return [];
   }
-  return value.map((entry) => {
+  const party: StopPokemon[] = [];
+
+  for (const entry of value) {
     const data = asRecord(entry);
 
-    return {
+    party.push({
       species: asNumber(data.species) as Species,
       individualValue: asNumber(data.individualValue),
       traitValue: asNumber(data.traitValue),
-    };
-  });
+    });
+  }
+  return party;
 }
 
 /**
@@ -111,7 +114,12 @@ export function asStopRecord(value: unknown): StopRecord {
  * or an encounter
  */
 export function toSpawns(party: StopPokemon[]): Spawn[] {
-  return party.map((entry): Spawn => [entry.species, entry.individualValue, entry.traitValue]);
+  const spawns: Spawn[] = [];
+
+  for (const entry of party) {
+    spawns.push([entry.species, entry.individualValue, entry.traitValue]);
+  }
+  return spawns;
 }
 
 /**

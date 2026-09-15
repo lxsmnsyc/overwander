@@ -48,9 +48,12 @@ export const REGIONS: Regions[] = [
 
 /** The dex numbers one region covers, ends included, or null for Unknown */
 export function getRegionSpan(region: Regions): [from: number, to: number] | null {
-  const range = RANGES.find((one) => one.region === region);
-
-  return range == null ? null : [range.from, range.to];
+  for (const range of RANGES) {
+    if (range.region === region) {
+      return [range.from, range.to];
+    }
+  }
+  return null;
 }
 
 export function getSpeciesRegion(species: Species): Regions {
@@ -58,7 +61,12 @@ export function getSpeciesRegion(species: Species): Regions {
   // the ranges are asked about the dex number rather than the id
   const dex = speciesDexNumber(species);
 
-  return RANGES.find((range) => dex >= range.from && dex <= range.to)?.region ?? Regions.Unknown;
+  for (const range of RANGES) {
+    if (dex >= range.from && dex <= range.to) {
+      return range.region;
+    }
+  }
+  return Regions.Unknown;
 }
 
 /**
@@ -67,7 +75,12 @@ export function getSpeciesRegion(species: Species): Regions {
  * are not all written yet lists what there is
  */
 export function getSpeciesByRegion(region: Regions): Species[] {
-  return getRegisteredSpecies()
-    .filter((species) => getSpeciesRegion(species) === region)
-    .sort((one, two) => one - two);
+  const found: Species[] = [];
+
+  for (const species of getRegisteredSpecies()) {
+    if (getSpeciesRegion(species) === region) {
+      found.push(species);
+    }
+  }
+  return found.sort((one, two) => one - two);
 }

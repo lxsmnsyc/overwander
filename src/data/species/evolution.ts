@@ -331,9 +331,30 @@ export function isFullyEvolved(species: Species): boolean {
  * species is the context's, since a handover is measured against it
  */
 export function getAvailableEvolutions(context: EvolutionContext): EvolutionData[] {
-  const evolutions = getSpeciesData(context.species).evolvesInto ?? [];
+  const available: EvolutionData[] = [];
 
-  return evolutions.filter((evolution) => meetsEvolutionCriteria(evolution, context));
+  for (const evolution of getSpeciesData(context.species).evolvesInto ?? []) {
+    if (evolution.shed !== true && meetsEvolutionCriteria(evolution, context)) {
+      available.push(evolution);
+    }
+  }
+  return available;
+}
+
+/**
+ * What an evolution taken right now leaves behind beside it: a
+ * Shedinja, for a Nincada carrying a Poke Ball. The context's carried
+ * items are what decides it, the same as for the evolution itself
+ */
+export function getShedEvolutions(context: EvolutionContext): EvolutionData[] {
+  const shed: EvolutionData[] = [];
+
+  for (const evolution of getSpeciesData(context.species).evolvesInto ?? []) {
+    if (evolution.shed === true && meetsEvolutionCriteria(evolution, context)) {
+      shed.push(evolution);
+    }
+  }
+  return shed;
 }
 
 /**
@@ -369,17 +390,11 @@ export function getConsumedItem(evolution: EvolutionData, covered = false): Item
  * evolved out of the bag would otherwise arrive a Kingdra still
  * holding the Dragon Scale the trade would have eaten.
  *
- * A held item asked for without a swap is left alone, the way the
- * mainline leaves one: nothing registered asks for that yet
+ * A held item asked for without a swap is spent by the evolution too, the
+ * way the mainline takes a Sneasel's Razor Claw
  */
 export function getSpentHeldItem(evolution: EvolutionData, covered = false): Items | null {
-  const { method } = evolution;
-
-  if (
-    covered ||
-    (method & EvolutionMethod.HeldItem) === 0 ||
-    (method & EvolutionMethod.Trade) === 0
-  ) {
+  if (covered || (evolution.method & EvolutionMethod.HeldItem) === 0) {
     return null;
   }
   return evolution.item ?? null;

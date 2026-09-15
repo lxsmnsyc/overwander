@@ -1,17 +1,16 @@
-import { CELL_COUNT, CHUNK_CELLS } from './chunk';
+import { BOARD_CELLS, BOARD_COUNT } from './board';
 
 /**
- * How a player crosses a chunk: pressed a cell, and walked to it.
+ * How a player crosses the board: pressed a cell, and walked to it.
  *
- * Walking used to be the arrow keys — one press, one cell — which made
- * the whole chunk a thing a player typed their way across, and made the
- * far corner of it twenty presses away. Pressing where you want to be
- * is what the picture already invites, since it is a board being looked
- * at rather than a form being filled in.
+ * Walking used to be the arrow keys, one press one cell, which made
+ * the whole board a thing a player typed their way across. Pressing
+ * where you want to be is what the picture already invites, since it
+ * is a board being looked at rather than a form being filled in.
  *
  * What that needs is the route, and the route has to be walked rather
  * than teleported along: a step is a step, and the egg being carried
- * counts them. This is that route — plain A* over the chunk's own grid.
+ * counts them. This is that route, plain A* over the board's own grid.
  *
  * Straight steps only. Nothing in this game moves diagonally: a cell is
  * north, south, east or west of its neighbour, which is also what makes
@@ -34,22 +33,22 @@ export const CARDINALS: readonly [number, number][] = [
 /**
  * Whether a cell may be walked on. What counts is the caller's:
  * landmarks are fixtures and are walked round, while a pokemon is
- * walked straight through — nothing springs by being passed over, and
- * a route that bent round every spawn made a busy chunk a maze
+ * walked straight through: nothing springs by being passed over, and a
+ * route that bent round every spawn made a busy field a maze
  */
 export type Passable = (cell: number) => boolean;
 
 function neighbors(cell: number): number[] {
-  const x = cell % CHUNK_CELLS;
-  const y = Math.floor(cell / CHUNK_CELLS);
+  const x = cell % BOARD_CELLS;
+  const y = Math.floor(cell / BOARD_CELLS);
   const found: number[] = [];
 
   for (const [dx, dy] of CARDINALS) {
     const nx = x + dx;
     const ny = y + dy;
 
-    if (nx >= 0 && ny >= 0 && nx < CHUNK_CELLS && ny < CHUNK_CELLS) {
-      found.push(ny * CHUNK_CELLS + nx);
+    if (nx >= 0 && ny >= 0 && nx < BOARD_CELLS && ny < BOARD_CELLS) {
+      found.push(ny * BOARD_CELLS + nx);
     }
   }
   return found;
@@ -63,24 +62,44 @@ function neighbors(cell: number): number[] {
  */
 export function stepsBetween(one: number, other: number): number {
   return (
-    Math.abs((one % CHUNK_CELLS) - (other % CHUNK_CELLS)) +
-    Math.abs(Math.floor(one / CHUNK_CELLS) - Math.floor(other / CHUNK_CELLS))
+    Math.abs((one % BOARD_CELLS) - (other % BOARD_CELLS)) +
+    Math.abs(Math.floor(one / BOARD_CELLS) - Math.floor(other / BOARD_CELLS))
   );
 }
 
 /**
- * A* over the chunk, with the goal given as a test rather than as a
- * cell — because two different things are asked for: the cell itself,
- * and any cell beside it.
+ * How far a cell strays from the straight line between the start and
+ * the goal. Many routes on open ground are equally short, and the one
+ * hugging this line reads as heading there rather than as one leg and
+ * then the other
+ */
+function strayFrom(start: number, goal: number): (cell: number) => number {
+  const goalX = goal % BOARD_CELLS;
+  const goalY = Math.floor(goal / BOARD_CELLS);
+  const lineX = (start % BOARD_CELLS) - goalX;
+  const lineY = Math.floor(start / BOARD_CELLS) - goalY;
+
+  return (cell) =>
+    Math.abs(
+      ((cell % BOARD_CELLS) - goalX) * lineY - (Math.floor(cell / BOARD_CELLS) - goalY) * lineX,
+    );
+}
+
+/**
+ * A* over the board, with the goal given as a test rather than as a
+ * cell, because two different things are asked for: the cell itself,
+ * and any cell beside it. Ties between equally short routes go to the
+ * one that strays least, which never makes a route longer.
  *
- * The open set is a plain array scanned for its best entry. A chunk is
- * 256 cells; a heap would be more code than the search it is speeding
- * up
+ * The open set is a plain array scanned for its best entry. The board
+ * is a few hundred cells; a heap would be more code than the search it
+ * is speeding up
  */
 function search(
   from: number,
   arrived: (cell: number) => boolean,
   estimate: (cell: number) => number,
+  stray: (cell: number) => number,
   passable: Passable,
 ): number[] | null {
   if (arrived(from)) {
@@ -98,7 +117,7 @@ function search(
       const one = (cost.get(open[at]) ?? 0) + estimate(open[at]);
       const other = (cost.get(open[best]) ?? 0) + estimate(open[best]);
 
-      if (one < other) {
+      if (one < other || (one === other && stray(open[at]) < stray(open[best]))) {
         best = at;
       }
     }
@@ -125,7 +144,17 @@ function search(
       // The cell being walked to is checked for what is standing on it
       // rather than the one being left, so a player who somehow ends up
       // on an occupied cell can still walk off it
-      if (!passable(next) || spent >= (cost.get(next) ?? Number.POSITIVE_INFINITY)) {
+      if (!passable(next)) {
+        continue;
+      }
+      const known = cost.get(next) ?? Number.POSITIVE_INFINITY;
+      const parent = cameFrom.get(next);
+
+      // An equally short way in keeps whichever comes from nearer the line
+      if (spent === known && parent != null && stray(cell) < stray(parent)) {
+        cameFrom.set(next, cell);
+      }
+      if (spent >= known) {
         continue;
       }
       cost.set(next, spent);
@@ -142,13 +171,14 @@ function search(
  * no way through, and empty when the walker is already there
  */
 export function findPath(from: number, to: number, passable: Passable): number[] | null {
-  if (from < 0 || to < 0 || from >= CELL_COUNT || to >= CELL_COUNT || !passable(to)) {
+  if (from < 0 || to < 0 || from >= BOARD_COUNT || to >= BOARD_COUNT || !passable(to)) {
     return null;
   }
   return search(
     from,
     (cell) => cell === to,
     (cell) => stepsBetween(cell, to),
+    strayFrom(from, to),
     passable,
   );
 }
@@ -168,7 +198,7 @@ export function findPath(from: number, to: number, passable: Passable): number[]
  * per ring around a cell that may be sealed off entirely
  */
 export function findPathNear(from: number, to: number, passable: Passable): number[] | null {
-  if (from < 0 || to < 0 || from >= CELL_COUNT || to >= CELL_COUNT) {
+  if (from < 0 || to < 0 || from >= BOARD_COUNT || to >= BOARD_COUNT) {
     return null;
   }
   if (passable(to)) {
@@ -215,13 +245,13 @@ export function findPathNear(from: number, to: number, passable: Passable): numb
  * not what the game means by walking up to it
  */
 export function findPathBeside(from: number, to: number, passable: Passable): number[] | null {
-  if (from < 0 || to < 0 || from >= CELL_COUNT || to >= CELL_COUNT) {
+  if (from < 0 || to < 0 || from >= BOARD_COUNT || to >= BOARD_COUNT) {
     return null;
   }
 
   const beside = (cell: number): boolean =>
-    Math.abs((cell % CHUNK_CELLS) - (to % CHUNK_CELLS)) <= 1 &&
-    Math.abs(Math.floor(cell / CHUNK_CELLS) - Math.floor(to / CHUNK_CELLS)) <= 1;
+    Math.abs((cell % BOARD_CELLS) - (to % BOARD_CELLS)) <= 1 &&
+    Math.abs(Math.floor(cell / BOARD_CELLS) - Math.floor(to / BOARD_CELLS)) <= 1;
 
   return search(
     from,
@@ -230,6 +260,7 @@ export function findPathBeside(from: number, to: number, passable: Passable): nu
     // counts as beside is the diagonal one — and a guess that is too
     // high is a route that is not the shortest
     (cell) => Math.max(0, stepsBetween(cell, to) - 2),
+    strayFrom(from, to),
     passable,
   );
 }

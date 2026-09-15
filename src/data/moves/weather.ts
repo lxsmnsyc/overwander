@@ -80,9 +80,14 @@ const WEATHER_MOVES: {
  * by the abilities that do the same thing without a move — a Drought
  * is a Sunny Day nobody had to cast — so the pairing is written once
  */
-export const MOVE_WEATHERS = new Map<Moves, Weathers>(
-  WEATHER_MOVES.map(({ move, weather }) => [move, weather]),
-);
+export const MOVE_WEATHERS = (() => {
+  const weathers = new Map<Moves, Weathers>();
+
+  for (const { move, weather } of WEATHER_MOVES) {
+    weathers.set(move, weather);
+  }
+  return weathers;
+})();
 
 export function getWeatherMove(weather: Weathers): Moves | undefined {
   for (const [move, called] of MOVE_WEATHERS) {

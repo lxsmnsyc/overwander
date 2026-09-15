@@ -41,7 +41,12 @@ export function isCatchLocked(caught: Record<string, unknown>): boolean {
  * party at once
  */
 export function isAnyCatchLocked(caught: (Record<string, unknown> | null)[]): boolean {
-  return caught.some((entry) => entry != null && isCatchLocked(entry));
+  for (const entry of caught) {
+    if (entry != null && isCatchLocked(entry)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**

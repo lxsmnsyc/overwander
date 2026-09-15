@@ -1,0 +1,89 @@
+---
+'overwander': patch
+---
+
+More moves land as a picture of their own:
+
+- Roar of Time throws out rings that freeze in place and then shatter.
+- Spacial Rend tears a pink gash in the air that gapes open and snaps shut.
+- Judgment brings shafts of light down all around the target.
+- Seed Flare bursts upward in a green-white flash.
+- Shadow Force darkens the target, then cuts it from behind with a heavy hit.
+- Mist Ball bursts into a cloud of down, and Luster Purge draws light in before it flares out.
+- Doom Desire drops a falling star that bursts on the target.
+- Crush Grip closes two great hands on the target and squeezes.
+- Psycho Boost spirals psychic light into the target, then blasts out of it.
+- Lunar Dance raises a crescent moon with smaller ones circling.
+- Heart Swap sends two hearts trading places between the pokemon.
+- Dark Void swallows the target in a black sphere ringed in red.
+- Magma Storm winds a vortex of lava up around the target.
+- Sacred Fire stands on the target as a pillar of fire with rainbow edges.
+- Blast Burn cracks the ground under the target and erupts in fire.
+- Hydro Cannon slams a great ball of water into the target, and a ring of water spouts bursts up around it.
+- Fire Punch, Ice Punch and Thunder Punch land with flames, frost or sparks breaking off the blow.
+- Flare Blitz and Volt Tackle arrive wrapped in fire or lightning, and Brave Bird in pale blue fire.
+- Fire Fang, Ice Fang and Thunder Fang break flames, frost or sparks off the bite.
+- Draco Meteor brings meteors streaking down onto the target.
+- Outrage, Thrash and Petal Dance land as a run of heavy blows, with petals flying for Petal Dance.
+- Earth Power splits the ground under the target and light bursts up out of it.
+- Heat Wave blows a wavering wall of hot air and embers across the target.
+- Dark Pulse sends dark rings pulsing out from the pokemon that used it.
+- Sheer Cold freezes the target in a block of ice that cracks and shatters.
+- Protect and Detect throw up a shell of hexagons that flashes as it rises.
+- Substitute's doll drops into place from above with a bounce and a puff of dust.
+- Splash flops about in a few hops of spray, and nothing happens.
+- Metronome ticks over the pokemon's head, then scatters colour as it picks.
+- Transform runs bands of light up the pokemon that is changing.
+- Swords Dance circles the pokemon with swords that close in and cross overhead.
+- Dragon Dance winds two strands of aura up around the pokemon.
+- Iron Defense and Harden run a metal sheen across the body.
+- Double Team and Minimize slide copies of the pokemon out to either side.
+- Calm Mind and Nasty Plot gather light into the head under a halo.
+- Weather Ball drops a ball made of the current weather that bursts as fire, water, ice or rock.
+- Hyper Beam and Solar Beam fire a far thicker beam that holds on the target while shockwaves roll off it.
+- Giga Impact arrives wrapped in a dark purple aura and sends a wide wave along the ground.
+- Focus Punch and Dynamic Punch charge a glowing fist, then land a blow that goes off like a blast.
+- Close Combat lands a flurry of quick blows, then one last heavy one.
+- Aura Sphere and Focus Blast burst on the target into rings of aura.
+- Pin Missile, Bullet Seed, Icicle Spear, Rock Blast and Bone Rush fly in one piece at a time, as needles, seeds, icicles, rocks or bones.
+- Double Kick and Triple Kick land their kicks from alternating sides.
+- Rest blows a sleep bubble with Zs drifting up.
+- Morning Sun and Moonlight bring a shaft of warm sunlight or cool moonlight down on the pokemon.
+- Synthesis draws leaves spiralling in, and Aromatherapy drifts petals over the pokemon.
+- Wish sends a star up into the sky that comes back down on the pokemon.
+- Roost lets feathers drift down and settle, and Heal Order brings a swarm of bees.
+- Sing, Grass Whistle and Perish Song drift music notes round the target, dark ones for Perish Song.
+- Roar, Hyper Voice and Bug Buzz roll shock arcs out toward the target.
+- Heal Bell swings a golden bell that rings out.
+- Leaf Blade draws one long blade across the target that sheds leaves.
+- Night Slash sweeps a dark crescent round the target.
+- Psycho Cut throws spinning psychic blades, and Air Slash throws blades of wind.
+- Fury Cutter cuts again and again, each cut bigger than the last.
+- Toxic bubbles up round the target from a pool of poison.
+- Stun Spore drifts yellow spores down that crackle.
+- Glare opens an eye over the target that flashes.
+- Encore claps sparkles together over the target's head.
+- Taunt throbs an anger mark on the target's head.
+- Curse drives a nail into the target in three blows.
+- Agility streaks speed lines past the pokemon and leaves afterimages behind.
+- Rock Polish rubs the pokemon to a shine with glints popping.
+- Bulk Up throbs twice with power, and Howl sends rings up off the pokemon's head.
+- Amnesia floats empty thought bubbles off the pokemon's head.
+- Cosmic Power circles stars round the pokemon.
+- Barrier puts up a pane of glass the way Reflect does.
+- Defend Order lines bees up into a wall in front of the pokemon.
+- Charge crackles electricity in over the body, and Tail Glow lights a pulsing light at the tail.
+- Stockpile stacks orbs over the pokemon one at a time.
+- Growth pushes a sprout up out of the ground.
+- Withdraw and Defense Curl close a shell round the pokemon.
+- Growl rolls sound arcs out toward the target, and Screech and Metal Sound send jagged ones.
+- Scary Face opens an eye over the target, and Charm sends up hearts.
+- Tickle brushes feathers at the target's sides, and Feather Dance drifts feathers down on it.
+- Cotton Spore drifts cotton puffs down that stick to the target.
+- String Shot shoots strands of silk that wind round the target.
+- Fake Tears drops tears from the target's eyes.
+- Memento sends the pokemon that used it up in dark smoke.
+- Defog blows the fog away from the target.
+- Tri Attack turns three orbs of fire, ice and lightning in on the target, each bursting as its element.
+- Flame Wheel rolls into the target as a ring of fire.
+- Waterfall drives a column of water up through the target.

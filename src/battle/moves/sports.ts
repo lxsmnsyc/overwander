@@ -26,8 +26,11 @@ export default function setupSports(battle: Battle): void {
   const remaining = new Map<Moves, number>();
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
-    if (SPORTS.some((sport) => sport.move === event.move)) {
-      remaining.set(event.move, DURATION);
+    for (const sport of SPORTS) {
+      if (sport.move === event.move) {
+        remaining.set(event.move, DURATION);
+        break;
+      }
     }
   });
 

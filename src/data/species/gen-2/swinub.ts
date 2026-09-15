@@ -82,7 +82,7 @@ export default function registerSwinubSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 225,
-    biomes: [Biome.Tundra, Biome.Glacier, Biome.AlpineTundra],
+    biomes: [Biome.Tundra, Biome.Glacier, Biome.AlpineTundra, Biome.ColdDesert, Biome.Taiga],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -141,7 +141,7 @@ export default function registerSwinubSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Tundra, Biome.Glacier, Biome.AlpineTundra],
+    biomes: [Biome.Tundra, Biome.Glacier, Biome.AlpineTundra, Biome.ColdDesert, Biome.Taiga],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

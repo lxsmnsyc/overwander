@@ -184,11 +184,15 @@ function curtainRamp(curtain: Curtain, band: number, shift: number): Float32Arra
   const ramp = ramps[band] ?? new Float32Array(CURTAIN_STEPS * 4);
   // The middle of the band breathes up and down it, which is what
   // keeps a curtain from being a picture that happens to move
-  const stops = curtain.stops.map((stop) => ({
-    at: stop.at <= 0 || stop.at >= 1 ? stop.at : Math.min(0.98, stop.at + shift * 0.08),
-    rgb: tintOf(stop.colour),
-    alpha: stop.alpha,
-  }));
+  const stops: { at: number; rgb: ReturnType<typeof tintOf>; alpha: CurtainStop['alpha'] }[] = [];
+
+  for (const stop of curtain.stops) {
+    stops.push({
+      at: stop.at <= 0 || stop.at >= 1 ? stop.at : Math.min(0.98, stop.at + shift * 0.08),
+      rgb: tintOf(stop.colour),
+      alpha: stop.alpha,
+    });
+  }
 
   ramps[band] = ramp;
   for (let step = 0; step < CURTAIN_STEPS; step++) {

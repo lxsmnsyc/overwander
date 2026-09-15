@@ -1,6 +1,7 @@
 import 'server-only';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../overworld/chunk-snapshot';
 import getWorld from '../../overworld/current';
+import { Depth } from '../../overworld/depth';
 import { getSql, jsonOf, tx } from '../db';
 import { asOffset, toLocalTime, toZoneKey } from '../../auth/local-time';
 import { asNumber, asRecordArray } from '../read';
@@ -25,8 +26,9 @@ export async function resolveSnapshot(
   y: number,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<ChunkSnapshot | null> {
-  const chunk = getWorld().getChunk(x, y);
+  const chunk = getWorld(depth).getChunk(x, y);
   const zone = asOffset(offset);
   const rows = await getSql()`
     select window_at from snapshots
@@ -60,10 +62,16 @@ export async function resolveSnapshot(
  * open: a counter held open across a boundary would otherwise find no
  * window at all and quietly stop working until it was closed
  */
-export function liveSnapshot(x: number, y: number, now: number, offset: number): ChunkSnapshot {
+export function liveSnapshot(
+  x: number,
+  y: number,
+  now: number,
+  offset: number,
+  depth: Depth = Depth.Surface,
+): ChunkSnapshot {
   const zone = asOffset(offset);
 
-  return new ChunkSnapshot(getWorld().getChunk(x, y), toLocalTime(now, zone), zone);
+  return new ChunkSnapshot(getWorld(depth).getChunk(x, y), toLocalTime(now, zone), zone);
 }
 
 /**
@@ -109,12 +117,16 @@ async function writeClaim(table: string, marker: string, record: ClaimRecord): P
         on conflict do nothing
       `;
       if (inserted.count > 0) {
-        const rows = asRecordArray(extra.items).map((stack) => ({
-          marker,
-          player,
-          item: asNumber(stack.item),
-          amount: asNumber(stack.amount),
-        }));
+        const rows: { marker: string; player: typeof player; item: number; amount: number }[] = [];
+
+        for (const stack of asRecordArray(extra.items)) {
+          rows.push({
+            marker,
+            player,
+            item: asNumber(stack.item),
+            amount: asNumber(stack.amount),
+          });
+        }
 
         if (rows.length > 0) {
           await transaction`

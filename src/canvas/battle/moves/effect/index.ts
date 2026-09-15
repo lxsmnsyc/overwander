@@ -1,16 +1,21 @@
 import { MoveAffects, MoveCategories, MoveFlags, Moves } from '../../../../data/ids/moves';
 import { Types } from '../../../../data/constants/types';
+import type { Weathers } from '../../../../data/ids/status';
 import { getMoveData } from '../../../../data/moves';
-import { MULTI_HIT_MOVES } from '../../../../battle/moves/multi-hit';
+import { MULTI_HIT_MOVES, estimateMoveHits } from '../../../../battle/moves/multi-hit';
 import { getStageMoveEffect } from '../../../../battle/moves/stage';
-import PaintedVisual, { type Painter } from '../__painted';
+import PaintedVisual, { type LitPainter, type Painter } from '../__painted';
+import { JOLTS, LIT, reachOf } from '../lit';
+import { middleOf } from '../lit/shapes';
 import type { Painted } from '../__paint';
 import care from './care';
 import colorOf from './colors';
 import contact from './contact';
 import elements from './elements';
+import legends from './legends';
 import minds from './minds';
 import { BY_TYPE, NAMED } from './named';
+import stats from './stats';
 
 import {
   type EffectShape,
@@ -84,6 +89,8 @@ const PAINTERS: Record<EffectShape, ShapePainter> = {
   ...elements,
   ...minds,
   ...care,
+  ...legends,
+  ...stats,
 };
 
 /**
@@ -170,7 +177,11 @@ export function effectShapeFor(move: Moves): EffectShape {
  * The picture of this move landing, or nothing where the step that
  * resolved was only the wind-up
  */
-export default function moveEffectVisual(move: Moves, steps = 0): PaintedVisual | null {
+export default function moveEffectVisual(
+  move: Moves,
+  steps = 0,
+  weatherOf?: () => Weathers,
+): PaintedVisual | null {
   if (steps > 0) {
     if (WINDING_UP.has(move)) {
       return null;
@@ -178,10 +189,10 @@ export default function moveEffectVisual(move: Moves, steps = 0): PaintedVisual 
     const early = WINDING_AS[move];
 
     if (early != null) {
-      return painted(early, move, weightOf(move));
+      return painted(early, move, weightOf(move), weatherOf);
     }
   }
-  return painted(effectShapeFor(move), move, weightOf(move));
+  return painted(effectShapeFor(move), move, weightOf(move), weatherOf);
 }
 
 /**
@@ -195,8 +206,17 @@ export function moveMissVisual(move: Moves): PaintedVisual {
   return painted('Whiff', move, 1);
 }
 
-function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual {
+function painted(
+  shape: EffectShape,
+  move: Moves,
+  weight: number,
+  weatherOf?: () => Weathers,
+): PaintedVisual {
   const paint: Painted = { color: colorOf(move, shape) };
+  const { type } = getMoveData(move);
+  // Asked once, as it lands, and only by the shape made of the sky
+  const weather = shape === 'Weather' ? weatherOf?.() : undefined;
+  const hits = estimateMoveHits(move);
   const painter: Painter = (context, stage, share) => {
     // Once per pokemon it reached. A move aimed at a whole team lands
     // on all of them at once, and the shape has no idea how many that
@@ -211,6 +231,9 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
         paint,
         seed: move + 1,
         weight,
+        type,
+        weather,
+        hits,
       });
       return;
     }
@@ -223,12 +246,49 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
         // The move itself, so a scatter is the same scatter every time
         // it goes off: two Embers look like the same move rather than
         // like two accidents
-        { paint, seed: move + 1 + at * 97, weight },
+        { paint, seed: move + 1 + at * 97, weight, type, weather, hits },
       );
     }
   };
 
+  const shaped = LIT[shape];
+  const lit: LitPainter | undefined =
+    shaped == null
+      ? undefined
+      : (kit, stage, share) => {
+          const landings = stage.targets.length > 0 ? stage.targets : [stage.source];
+
+          // Judged about a body nearer the camera, so it shows in front of the one it is on
+          kit.near(reachOf(stage));
+          if (OVER_A_SIDE.has(shape)) {
+            shaped(kit, { ...stage, targets: [middleOf(landings)] }, share, {
+              paint,
+              seed: move + 1,
+              weight,
+              type,
+              weather,
+              hits,
+            });
+            return;
+          }
+          for (let at = 0; at < landings.length; at += 1) {
+            shaped(kit, { ...stage, targets: [landings[at]] }, share, {
+              paint,
+              seed: move + 1 + at * 97,
+              weight,
+              type,
+              weather,
+              hits,
+            });
+          }
+        };
+
   // A heavy hit hangs about longer than a light one, but not in
   // proportion: doubling the power should not double the wait
-  return new PaintedVisual(SPANS[shape] * (0.8 + weight * 0.3), painter);
+  return new PaintedVisual(
+    SPANS[shape] * (0.8 + weight * 0.3),
+    painter,
+    lit,
+    (JOLTS[shape] ?? 0) * weight,
+  );
 }

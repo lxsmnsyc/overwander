@@ -1,5 +1,4 @@
-import { BORDER_CELLS, boardView } from '../../../canvas/board';
-import { CHUNK_CELLS } from '../../../overworld/chunk';
+import { BOARD_SPAN, boardView } from '../../../canvas/board';
 
 /**
  * The board's reference measurements, its colours, and the few facts
@@ -19,24 +18,18 @@ import { CHUNK_CELLS } from '../../../overworld/chunk';
 export const CELL = 26;
 
 /**
- * The reference picture's width. It is wider than the chunk: there is
- * an apron of threshold cells around it and the compass marks stand
- * off that again.
+ * The reference picture's width. It is the span the projection is
+ * calibrated to rather than the square the cells are indexed in: the
+ * country runs off the picture on every side, and how big a sprite is
+ * drawn is a fact about the picture.
  *
  * Asked rather than kept, because the two boards are not the same
  * shape: the flat one is squarer than the laid-back one, and a painter
  * measuring against the wrong one draws every cell the wrong size
  */
 export function pictureWidth(): number {
-  return CELL * CHUNK_CELLS * boardView().span;
+  return CELL * BOARD_SPAN * boardView().span;
 }
-
-/**
- * How far past the chunk the apron of thresholds reaches, in board
- * fractions — the units the ground is measured in, where the chunk
- * itself runs from 0 to 1
- */
-export const APRON = BORDER_CELLS / CHUNK_CELLS;
 
 /**
  * How many source pixels of a pokemon sheet stand on one cell of
@@ -132,6 +125,19 @@ export const PLAYER_SHEET = 'characters/frlg/red';
  */
 export const SLIDE_PACE = 250;
 
+/** The shortest gap between two redraws, in milliseconds: nothing on the board wants more than 60 a second */
+export const DRAW_PACE = 1000 / 60;
+
+/** How often a picture with nothing moving in it is redrawn anyway, for the hour's light, in milliseconds */
+export const IDLE_PACE = 500;
+
+/**
+ * The most the board's own clock moves in one frame, in milliseconds. A
+ * long frame (a chunk being built, a sheet decoding) would otherwise
+ * skip a sparkle to its end, so it vanished halfway through
+ */
+export const CLOCK_STEP = 50;
+
 /**
  * How far the slide moves this frame, in cells, with `span` still to
  * cover and `elapsed` milliseconds gone.
@@ -204,6 +210,8 @@ export const RIPPLE_WEIGHT = 3;
 /** How many points one ring is drawn round. A ground circle, projected */
 export const RIPPLE_POINTS = 16;
 
+/** How long the ring a press throws out of the square it asked for takes to fade */
+export const GOAL_PULSE = 500;
 /**
  * How much light the cell under the cursor takes. Enough to be found
  * on snow, light enough that whatever is standing on the cell is
@@ -223,6 +231,8 @@ export const COLORS = {
    * cells. Whatever is inside it is theirs to press
    */
   highlight: '#ffffff',
+  /** The square a pressed walk is heading for, mint so it is never the hover's white */
+  goal: '#7ee8a2',
   spawn: '#2b2b2b',
   /**
    * The ripple under a pokemon of the day's featured family. Gold,
@@ -268,11 +278,6 @@ export const COLORS = {
   /** Under every mark, so one reads on pale ground as well as on dark */
   ringShade: 'rgba(0, 0, 0, 0.28)',
   /**
-   * The line round the board while it has the keyboard, which is what
-   * says the camera keys will answer
-   */
-  cursor: '#3b82f6',
-  /**
    * The compass, which is four marks standing on the ground off the
    * edges of the board, each pointing the way it stands for. They are
    * read against whatever country the chunk is made of, so each is
@@ -300,11 +305,12 @@ export const COLORS = {
    */
   shadow: 'rgba(0, 0, 0, 0.35)',
   /**
-   * What lifts the board off the country it lies in. The ground
-   * beyond it is the same colour — it is the same country — so the
-   * board is the part of it with the light on
+   * A town's streets, washed over whatever ground they run across
+   * rather than tiled. Warm and half-clear, so it darkens a pale
+   * country and warms a dark one and every biome keeps its own floor
+   * showing through the paving
    */
-  surface: 'rgba(255, 255, 255, 0.10)',
+  road: 'rgba(122, 92, 58, 0.42)',
 } as const;
 
 /**
@@ -360,15 +366,18 @@ export function grownArrow(
   const middleX = (points[0].x + points[1].x + points[2].x) / 3;
   const middleY = (points[0].y + points[1].y + points[2].y) / 3;
 
-  return points.map((point) => {
+  const grown: { x: number; y: number }[] = [];
+
+  for (const point of points) {
     const outX = point.x - middleX;
     const outY = point.y - middleY;
     const away = Math.hypot(outX, outY);
 
-    return away === 0
-      ? point
-      : { x: point.x + (outX / away) * halo, y: point.y + (outY / away) * halo };
-  });
+    grown.push(
+      away === 0 ? point : { x: point.x + (outX / away) * halo, y: point.y + (outY / away) * halo },
+    );
+  }
+  return grown;
 }
 
 /** A box on the screen, which is what a drawn sprite fills */
@@ -416,6 +425,9 @@ export const VEIL_ALPHA = 0.35;
  * switching between the two as a walk crosses a line reads as a fault
  */
 export const VEIL_FADE = 140;
+
+/** How long one weather takes to give way to the next, in milliseconds */
+export const WEATHER_FADE = 3000;
 
 /**
  * How flat the shadow lies. It is on the ground, and the ground is
@@ -505,15 +517,3 @@ export const QUARTER_TURN = Math.PI / 2;
 export function isTurningPress(event: { button: number; ctrlKey: boolean }): boolean {
   return event.button === RIGHT_BUTTON || (event.button === 0 && event.ctrlKey);
 }
-
-/**
- * Which way a step off the board goes, in the world's own words. North
- * is the far edge of the chunk however the camera has been walked
- * round, which is the same north the compass marks are drawn from
- */
-export const BEARINGS = new Map<string, string>([
-  ['0,-1', 'north'],
-  ['1,0', 'east'],
-  ['0,1', 'south'],
-  ['-1,0', 'west'],
-]);

@@ -193,8 +193,22 @@ export default function decode(file: Buffer): Image {
     throw new Error('not a png');
   }
 
-  const chunks = readChunks(file);
-  const header = chunks.find((chunk) => chunk.type === 'IHDR')?.data;
+  let header: Chunk['data'] | undefined;
+  let palette: Chunk['data'] | undefined;
+  let alphas: Chunk['data'] | undefined;
+  const compressed: Chunk['data'][] = [];
+
+  for (const chunk of readChunks(file)) {
+    if (chunk.type === 'IDAT') {
+      compressed.push(chunk.data);
+    } else if (chunk.type === 'IHDR') {
+      header ??= chunk.data;
+    } else if (chunk.type === 'PLTE') {
+      palette ??= chunk.data;
+    } else if (chunk.type === 'tRNS') {
+      alphas ??= chunk.data;
+    }
+  }
 
   if (header == null) {
     throw new Error('png with no header');
@@ -219,15 +233,11 @@ export default function decode(file: Buffer): Image {
   const perByte = 8 / depth;
   const stride = depth < 8 ? Math.ceil(width / perByte) : width * channels;
   const bytes = unfilter(
-    inflateSync(
-      Buffer.concat(chunks.filter((chunk) => chunk.type === 'IDAT').map((chunk) => chunk.data)),
-    ),
+    inflateSync(Buffer.concat(compressed)),
     stride,
     height,
     filterStep(depth, channels),
   );
-  const palette = chunks.find((chunk) => chunk.type === 'PLTE')?.data;
-  const alphas = chunks.find((chunk) => chunk.type === 'tRNS')?.data;
   const rgba = Buffer.alloc(width * height * 4);
 
   for (let y = 0; y < height; y++) {
@@ -468,29 +478,32 @@ export function encodeIndexed(image: Image, palette: Palette, filtering: Filteri
   const depth = depthFor(palette.colors.length);
   const plte = Buffer.alloc(palette.colors.length * 3);
 
-  palette.colors.forEach((color, index) => {
+  for (const [index, color] of palette.colors.entries()) {
     plte[index * 3] = color[0];
     plte[index * 3 + 1] = color[1];
     plte[index * 3 + 2] = color[2];
-  });
+  }
 
   // tRNS runs from the front of the palette, so it only has to be as
   // long as the last entry that is not fully opaque — which for these
   // sheets is the single transparent entry
   let last = -1;
 
-  palette.colors.forEach((color, index) => {
+  for (const [index, color] of palette.colors.entries()) {
     if (color[3] !== 0xff) {
       last = index;
     }
-  });
+  }
 
   const extra = [writeChunk('PLTE', plte)];
 
   if (last >= 0) {
-    extra.push(
-      writeChunk('tRNS', Buffer.from(palette.colors.slice(0, last + 1).map((color) => color[3]))),
-    );
+    const alphas: number[] = [];
+
+    for (const color of palette.colors.slice(0, last + 1)) {
+      alphas.push(color[3]);
+    }
+    extra.push(writeChunk('tRNS', Buffer.from(alphas)));
   }
 
   const stride = depth < 8 ? Math.ceil(image.width / (8 / depth)) : image.width;

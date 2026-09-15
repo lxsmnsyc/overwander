@@ -1,6 +1,6 @@
 import { Items } from '../ids/items';
 import { BERRY_EFFORT_DROPS, BERRY_RESIST_TYPES } from '../items/berries';
-import type { ItemRarityGroups } from './item-pool';
+import { type ItemRarityGroups, evenlyWeighted } from './item-pool';
 
 /**
  * What a berry patch grows, split by rarity the way a biome's spawn
@@ -28,7 +28,7 @@ const BERRY_POOL: ItemRarityGroups = {
     // The bitter ones a pokemon is fed to take training back off a
     // stat. They are how a player changes their mind about where a
     // pokemon's effort went, so they grow where they will be found
-    ...[...BERRY_EFFORT_DROPS.keys()].map((item) => ({ item, weight: 4 })),
+    ...evenlyWeighted(BERRY_EFFORT_DROPS.keys(), 4),
     // A third of the holder's health back is worth more than any of
     // the cures, and the ones whose nature cannot stand the taste pay
     // for it in confusion
@@ -49,7 +49,7 @@ const BERRY_POOL: ItemRarityGroups = {
     { item: Items.RowapBerry, weight: 4 },
     // One per type, and one type is what a raid is: a party that knows
     // what it is walking into can dig for the berry that answers it
-    ...[...BERRY_RESIST_TYPES.keys()].map((item) => ({ item, weight: 2 })),
+    ...evenlyWeighted(BERRY_RESIST_TYPES.keys(), 2),
   ],
   // A bush grows nothing permanent. The prized band is for the things
   // that change a pokemon for good — a cap, a gem — and a berry is

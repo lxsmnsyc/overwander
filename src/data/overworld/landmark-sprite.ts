@@ -3,7 +3,6 @@
 // assertion back, tsgolint resolves the enum to number and calls it
 // redundant
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import Biome from '../ids/biome';
 import Landmark from './landmark';
 
 /**
@@ -30,6 +29,20 @@ const PICTURES: Partial<Record<Landmark, string>> = {
   [Landmark.Portal]: 'portal',
   [Landmark.GymSeat]: 'seat',
   [Landmark.AuctionBoard]: 'board',
+  [Landmark.HoneyTree]: 'honey-tree',
+  [Landmark.CaveMouth]: 'cave',
+};
+
+/**
+ * What a landmark is drawn as from underneath, where it differs.
+ *
+ * Only the cave mouth does, and it is the only landmark that stands on
+ * both layers at once: a hole in the hillside seen from the country
+ * above, and the lit way out seen from the dark below. Everything else
+ * underground is the same thing whichever side of it you are on
+ */
+const UNDERGROUND: Partial<Record<Landmark, string>> = {
+  [Landmark.CaveMouth]: 'cave-exit',
 };
 
 /**
@@ -42,46 +55,18 @@ const TAKEN: Partial<Record<Landmark, string>> = {
 };
 
 /**
- * The mouth a biome's lairs are drawn with.
+ * The picture one landmark is drawn as, in the state this player left
+ * it in and on the layer they are standing on. Null for a landmark
+ * that is drawn some other way.
  *
- * Only the lair varies, and only by what grows over a cave there: a
- * board reads a lair as somewhere to go in, and a mouth hung with ice
- * says which somewhere without a word of text. Everything else on the
- * sheet is the same object wherever it stands
- */
-const BY_BIOME: Partial<Record<Biome, string>> = {
-  // Cold enough for the mouth to hang with ice
-  [Biome.Taiga]: 'lair-ice',
-  [Biome.Tundra]: 'lair-ice',
-  [Biome.AlpineTundra]: 'lair-ice',
-  [Biome.Glacier]: 'lair-ice',
-  [Biome.PolarOcean]: 'lair-ice',
-  // Wet enough for the mouth to grow over
-  [Biome.TropicalRainforest]: 'lair-moss',
-  [Biome.TemperateRainforest]: 'lair-moss',
-  [Biome.Mangrove]: 'lair-moss',
-  [Biome.Swamp]: 'lair-moss',
-  [Biome.Bog]: 'lair-moss',
-};
-
-/**
- * The two states a shadow lair is found in: choked with rubble, or
- * boarded over. Which of them a cell shows is the cell's own low bit,
- * so a lair keeps the mouth it had rather than changing every frame,
- * and two of them on one chunk are unlikely to match
- */
-const SHADOW_MOUTHS = [PICTURES[Landmark.ShadowLair] ?? 'lair-rubble', 'lair-sealed'];
-
-/**
- * The picture one landmark is drawn as, in the biome it stands in, the
- * cell it stands on and the state this player left it in. Null for a
- * landmark that is drawn some other way
+ * It used to read the biome and the cell as well, for the mouths a
+ * lair was drawn with in cold or wet country and the two a shadow one
+ * alternated between. A lair is one statue now, so neither is asked
  */
 export default function landmarkPicture(
   kind: Landmark,
-  biome: Biome,
   taken = false,
-  cell = 0,
+  underground = false,
 ): string | null {
   if (taken) {
     const gone = TAKEN[kind];
@@ -90,11 +75,12 @@ export default function landmarkPicture(
       return gone;
     }
   }
-  if (kind === Landmark.LegendaryLair) {
-    return BY_BIOME[biome] ?? PICTURES[kind] ?? null;
-  }
-  if (kind === Landmark.ShadowLair) {
-    return SHADOW_MOUTHS[Math.abs(cell) % SHADOW_MOUTHS.length];
+  if (underground) {
+    const below = UNDERGROUND[kind];
+
+    if (below != null) {
+      return below;
+    }
   }
   return PICTURES[kind] ?? null;
 }
@@ -105,8 +91,7 @@ export function landmarkPictures(): string[] {
     ...new Set([
       ...Object.values(PICTURES),
       ...Object.values(TAKEN),
-      ...Object.values(BY_BIOME),
-      ...SHADOW_MOUTHS,
+      ...Object.values(UNDERGROUND),
     ]),
   ];
 }

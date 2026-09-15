@@ -45,9 +45,20 @@ function resolveWinner(battle: Battle, standing: Set<Alliance>): Alliance | null
     return null;
   }
 
-  const parties = [...battle.alliances].filter((alliance) => !alliance.boss);
+  let party: Alliance | null = null;
 
-  return parties.length === 1 ? parties[0] : null;
+  for (const alliance of battle.alliances) {
+    if (alliance.boss) {
+      continue;
+    }
+    // A second party means no single side won
+    if (party != null) {
+      return null;
+    }
+    party = alliance;
+  }
+
+  return party;
 }
 
 /**

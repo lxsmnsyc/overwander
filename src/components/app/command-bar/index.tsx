@@ -173,7 +173,13 @@ export default function CommandBar(props: CommandBarProps): JSX.Element {
    */
   const complete = (offered: QuerySuggestion[]): void => {
     const span = offering();
-    const shared = sharedPrefix(offered.map((one) => one.word));
+    const words: string[] = [];
+
+    for (const one of offered) {
+      words.push(one.word);
+    }
+
+    const shared = sharedPrefix(words);
 
     if (!arrowed() && span != null && offered.length > 1 && shared.length > span.end - span.start) {
       write(shared, '');

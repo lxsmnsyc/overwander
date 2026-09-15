@@ -6,7 +6,8 @@ import type Unit from '../../../src/battle/unit';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { Moves } from '../../../src/data/ids/moves';
-import { Statuses } from '../../../src/data/ids/status';
+import { Species } from '../../../src/data/ids/species';
+import { Statuses, Weathers } from '../../../src/data/ids/status';
 import { createBattle, createUnit } from '../harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -135,5 +136,34 @@ describe('Comatose', () => {
     holder.removeAbility(Abilities.Comatose);
 
     expect(holder.status[Statuses.Comatose]).toBeUndefined();
+  });
+});
+
+describe('Flower Gift', () => {
+  it('opens a Cherrim in the sun and shuts it when the sun goes', () => {
+    const { battle, teamA } = createBattle();
+    const blossom = createUnit(battle, teamA);
+    blossom.setSpecies(Species.Cherrim);
+    blossom.addAbility(Abilities.FlowerGift);
+
+    battle.setWeather(Weathers.Sunny);
+
+    expect(blossom.species).toBe(Species.CherrimSunshine);
+    expect([...blossom.types]).toEqual([Types.Grass]);
+
+    battle.setWeather(Weathers.Sandstorm);
+
+    expect(blossom.species).toBe(Species.Cherrim);
+  });
+
+  it('leaves anybody who is not a Cherrim as they are', () => {
+    const { battle, teamA } = createBattle();
+    const other = createUnit(battle, teamA);
+    other.setSpecies(Species.Bellossom);
+    other.addAbility(Abilities.FlowerGift);
+
+    battle.setWeather(Weathers.Sunny);
+
+    expect(other.species).toBe(Species.Bellossom);
   });
 });

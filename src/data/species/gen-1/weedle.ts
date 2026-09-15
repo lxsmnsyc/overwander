@@ -37,7 +37,7 @@ export default function registerWeedleSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.TemperateForest, Biome.Woodland],
+    biomes: [],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -76,7 +76,7 @@ export default function registerWeedleSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.TemperateForest, Biome.Woodland],
+    biomes: [],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

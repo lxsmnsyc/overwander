@@ -61,6 +61,9 @@ export const HIT_REACH = 1.4;
  */
 export const TURN_SLOP = 4;
 
+/** How long a shaking scene holds each jolt before the next, in milliseconds */
+export const JOLT_BEAT = 34;
+
 /**
  * What the field says while the fight's sheets are still coming
  */

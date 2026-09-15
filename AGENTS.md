@@ -25,6 +25,16 @@ one that covers what you are about to do:
 - `sprite-fps` - every sprite sheet animates at 24fps; count in `SPRITE_TICK` and
   let clips play at the speed they were drawn at.
 - `prefer-sets` - use `Set.has` for membership checks instead of scanning arrays.
+- `prefer-for-of` - iterate with `for...of` rather than callback Array methods
+  such as `map`, `filter`, `some` and `find`; `sort` and JSX `<For>` stay.
+- `batched-queries` - `batchedQuery` is for the browser, where many rows each read
+  one key at once; the server reads many keys with one query instead, and never
+  merges separate requests or batches inside a transaction.
+- `server-function-order` - a `'use server'` function is addressed by its place
+  in its file, so new ones go at the end and existing ones are never removed,
+  reordered or given different parameters.
+- `spawn-surfaces` - a spawn rolls from the land, water or ice pool of the cell
+  under it, and a species' `habitat` decides which of those pools may list it.
 - `trigger-driven-abilities` - ability effects that do not mutate their
   detection event ride `UnitTriggerAbility` at `Exact` priority.
 - `changesets` - every change against `main` ships with one, and a fix for

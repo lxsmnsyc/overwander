@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 /**
@@ -69,6 +69,7 @@ export default function registerWeatherTrioSpecies(): void {
       [Stats.Speed]: 90,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.Drizzle],
     // All three are this registry's: it swims in the rain it brought,
     // drinks what is thrown at it, and is expensive to fight at all
@@ -76,7 +77,7 @@ export default function registerWeatherTrioSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.DeepOcean],
+    biomes: [Biome.DeepOcean, Biome.Beach],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -140,7 +141,7 @@ export default function registerWeatherTrioSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Volcano],
+    biomes: [Biome.Volcano, Biome.Beach],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -228,7 +229,7 @@ export default function registerWeatherTrioSpecies(): void {
     // The one of the three the mainline lets a player face on level
     // terms, and the only reason it is not a 3
     catchRate: 45,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Ocean, Biome.Beach],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

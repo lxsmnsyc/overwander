@@ -413,6 +413,11 @@ export const enum Acquisition {
    * it began here, but what they handed over was a rock
    */
   Revived = 5,
+  /**
+   * Left behind in a ball by another pokemon evolving: the Shedinja a
+   * Nincada sheds
+   */
+  Shed = 6,
 }
 
 /**
@@ -425,6 +430,7 @@ export const ACQUISITION_NAMES: Record<Acquisition, string> = {
   [Acquisition.Trade]: 'Traded for',
   [Acquisition.Gift]: 'Received as a gift',
   [Acquisition.Revived]: 'Revived from a fossil',
+  [Acquisition.Shed]: 'Left behind by an evolution',
 };
 
 /**
@@ -489,7 +495,9 @@ function asOwnershipHistory(
   if (!Array.isArray(value)) {
     return [];
   }
-  return value.map((entry, at) => {
+  const history: OwnershipRecord[] = [];
+
+  for (const [at, entry] of value.entries()) {
     const record = asRecord(entry);
     // An older entry says nothing about how it changed hands, but the
     // first is where the pokemon began and every later one can only be
@@ -500,7 +508,7 @@ function asOwnershipHistory(
     // written before re-balling existed — while a later sale is not
     const wore = at === 0 ? caughtIn : null;
 
-    return {
+    history.push({
       owner: asString(record.owner),
       // Left off rather than stored empty: a name is only there for an
       // owner no profile can name
@@ -513,8 +521,9 @@ function asOwnershipHistory(
       // which is not the same as having been won for nothing
       paid: typeof record.paid === 'number' ? asNumber(record.paid) : null,
       ball: typeof record.ball === 'number' ? (asNumber(record.ball) as Balls) : wore,
-    };
-  });
+    });
+  }
+  return history;
 }
 
 /**

@@ -105,7 +105,14 @@ function rungRewards(medal: Awards, rung: number, rungs: number): QuestData['rew
 
 /** Every region that has a dex chain, in region order */
 export function getDexRegions(): Regions[] {
-  return REGIONS.filter((region) => REGION_DEXES[region] != null);
+  const regions: Regions[] = [];
+
+  for (const region of REGIONS) {
+    if (REGION_DEXES[region] != null) {
+      regions.push(region);
+    }
+  }
+  return regions;
 }
 
 /** One region's dex quests, keyed by the id their claim rows carry */
@@ -134,8 +141,13 @@ export function getDexChain(region: Regions): ChainData | null {
   if (dex == null) {
     return null;
   }
+  const quests: Quests[] = [];
+
+  for (let rung = 0; rung < dex.milestones.length; rung++) {
+    quests.push(dexQuestId(region, rung));
+  }
   return {
     name: `${regionTitle(region)} Pokedex`,
-    quests: dex.milestones.map((_, rung) => dexQuestId(region, rung)),
+    quests,
   };
 }

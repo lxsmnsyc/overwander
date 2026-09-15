@@ -18,6 +18,11 @@ async function assembleRaid(
   const teams = await sql`
     select id from teams where raid_id = ${asString(row.id)} order by joined_seq
   `;
+  const ids: string[] = [];
+
+  for (const entry of teams) {
+    ids.push(asString(entry.id));
+  }
 
   return {
     kind: row.kind,
@@ -25,7 +30,7 @@ async function assembleRaid(
     species: row.species,
     traitValue: row.trait_value,
     host: row.host,
-    teams: teams.map((entry) => asString(entry.id)),
+    teams: ids,
     battle: row.battle_id,
     timestamp: row.window_at,
     offset: row.utc_offset,
@@ -110,12 +115,59 @@ export async function readTeam(
   const catches = await sql`
     select caught_id from team_catches where team_id = ${id} order by slot
   `;
+  const queued: string[] = [];
+
+  for (const entry of catches) {
+    queued.push(asString(entry.caught_id));
+  }
 
   return {
     player: asString(rows[0].player),
     raid: asString(rows[0].raid_id),
-    catches: catches.map((entry) => asString(entry.caught_id)),
+    catches: queued,
   };
+}
+
+/**
+ * `readTeam` for a whole lobby: two queries however many teams, in the
+ * order the ids came, with null where a team has gone
+ */
+export async function readTeams(ids: string[]): Promise<Awaited<ReturnType<typeof readTeam>>[]> {
+  if (ids.length === 0) {
+    return [];
+  }
+
+  const sql = getSql();
+  const [rows, catches] = await Promise.all([
+    sql`select id, player, raid_id from teams where id = any(${ids})`,
+    sql`select team_id, caught_id from team_catches where team_id = any(${ids}) order by team_id, slot`,
+  ]);
+  const queued = new Map<string, string[]>();
+
+  for (const entry of catches) {
+    const team = asString(entry.team_id);
+
+    queued.set(team, [...(queued.get(team) ?? []), asString(entry.caught_id)]);
+  }
+
+  const byId = new Map<string, { player: string; raid: string; catches: string[] }>();
+
+  for (const row of rows) {
+    const id = asString(row.id);
+
+    byId.set(id, {
+      player: asString(row.player),
+      raid: asString(row.raid_id),
+      catches: queued.get(id) ?? [],
+    });
+  }
+
+  const teams: Awaited<ReturnType<typeof readTeam>>[] = [];
+
+  for (const id of ids) {
+    teams.push(byId.get(id) ?? null);
+  }
+  return teams;
 }
 
 export { asNumber };

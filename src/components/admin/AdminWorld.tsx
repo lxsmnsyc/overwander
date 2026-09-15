@@ -14,7 +14,7 @@ import type Biome from '../../data/ids/biome';
 import { LANDMARK_NAMES } from '../../data/overworld/landmark';
 import type { SnapshotRecord } from '../../auth/snapshot-record';
 import { WORLD_MAX, WORLD_MIN, isInWorld } from '../../overworld/world';
-import WorldMapCanvas from '../overworld/WorldMapCanvas';
+import WorldMapCanvas, { townsInView } from '../overworld/WorldMapCanvas';
 import { getSpeciesData } from '../../data/species';
 import getWorld from '../../overworld/current';
 import { listChunkWindows } from '../../auth/snapshots';
@@ -36,6 +36,15 @@ import wallClock from './clock';
 const SPAN = 64;
 
 const HALF = Math.floor(SPAN / 2);
+
+function spawnNames(window: SnapshotRecord): string {
+  const names: string[] = [];
+
+  for (const spawn of window.spawns) {
+    names.push(getSpeciesData(spawn.species).name);
+  }
+  return names.join(', ');
+}
 
 /**
  * The windows themselves, which is where the read happens. A read in
@@ -64,9 +73,7 @@ function ChunkWindows(props: { windows: Resource<SnapshotRecord[]> }): JSX.Eleme
                   {window.spawns.length} {window.spawns.length === 1 ? 'spawn' : 'spawns'}
                 </Meta>
               </Row>
-              <Meta>
-                {window.spawns.map((spawn) => getSpeciesData(spawn.species).name).join(', ')}
-              </Meta>
+              <Meta>{spawnNames(window)}</Meta>
             </ListRow>
           )}
         </For>
@@ -171,6 +178,7 @@ export default function AdminWorld(): JSX.Element {
           originX={centerX() - HALF}
           originY={centerY() - HALF}
           biomes={biomes()}
+          towns={townsInView(centerX() - HALF, centerY() - HALF, SPAN)}
           playerX={standing()?.chunkX ?? Number.NaN}
           playerY={standing()?.chunkY ?? Number.NaN}
           pickedX={picked()?.x}

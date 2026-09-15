@@ -33,7 +33,12 @@ export interface AdminShellProps extends ParentProps {
 
 /** The role as one of the four, so an unknown one reads as a player */
 function asRole(role: string): Role {
-  return ROLES.find((known) => known === role) ?? '';
+  for (const known of ROLES) {
+    if (known === role) {
+      return known;
+    }
+  }
+  return '';
 }
 
 export default function AdminShell(props: AdminShellProps): JSX.Element {

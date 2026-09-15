@@ -1,4 +1,7 @@
+import type EffectBatch from '../../three/effect-batch';
+import type { Spot } from '../../three/effect-batch';
 import type { Stage } from '../stage';
+import { decay } from './__paint';
 
 /**
  * A move's picture, drawn rather than played.
@@ -17,24 +20,51 @@ import type { Stage } from '../stage';
 /** What a phase draws at one instant. */
 export type Painter = (context: CanvasRenderingContext2D, stage: Stage, share: number) => void;
 
+/** Where a picture in the battle scene happens, in field units. */
+export interface LitStage {
+  /** The middle of the body it is about */
+  source: Spot;
+  /** The middle of every body it reached */
+  targets: Spot[];
+  /** How many field units one of the painted picture's pixels is worth */
+  size: number;
+}
+
+/** The same instant, built in the battle scene. */
+export type LitPainter = (kit: EffectBatch, stage: LitStage, share: number) => void;
+
 /** What the field holds: either kind of picture answers this. */
 export interface FieldVisual {
   readonly duration: number;
   readonly finished: boolean;
   advance(elapsed: number): void;
   draw(context: CanvasRenderingContext2D, stage: Stage): void;
+  /** Present where the picture has a scene version, which is drawn instead where there is a scene */
+  readonly drawLit?: (kit: EffectBatch, stage: LitStage) => void;
+  /** How hard it shakes the scene right now, in drawing pixels */
+  readonly jolt?: number;
 }
 
 export default class PaintedVisual implements FieldVisual {
   readonly duration: number;
 
+  readonly drawLit?: (kit: EffectBatch, stage: LitStage) => void;
+
   private readonly painter: Painter;
+
+  private readonly shake: number;
 
   private elapsed = 0;
 
-  constructor(duration: number, painter: Painter) {
+  constructor(duration: number, painter: Painter, lit?: LitPainter, shake = 0) {
     this.duration = Math.max(1, duration);
     this.painter = painter;
+    this.shake = shake;
+    if (lit != null) {
+      this.drawLit = (kit, stage): void => {
+        lit(kit, stage, this.progress);
+      };
+    }
   }
 
   get finished(): boolean {
@@ -43,6 +73,10 @@ export default class PaintedVisual implements FieldVisual {
 
   get progress(): number {
     return Math.min(1, this.elapsed / this.duration);
+  }
+
+  get jolt(): number {
+    return this.shake * decay(this.progress) ** 2;
   }
 
   advance(elapsed: number): void {

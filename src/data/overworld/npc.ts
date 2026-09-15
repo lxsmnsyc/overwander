@@ -12,7 +12,8 @@ import { getLevelUpMoves, getSpeciesAbilities, getTeachableMoves } from '../spec
  * the way every landmark is, but who is standing on it is not — every
  * 3 hours brings somebody else, so the spot is a crossroads rather
  * than a shop. The two who fight, Team Rocket and the duelling
- * trainer, stand at landmarks of their own instead
+ * trainer, stand at landmarks of their own instead, and so do the
+ * vendor and Nurse Joy, who keep a stall and a counter
  */
 const enum Npc {
   /**
@@ -25,9 +26,10 @@ const enum Npc {
    */
   DaycareLady = 1,
   /**
-   * Looks a party over and hands it back whole: health, statuses and
-   * — for a shadow — the shadow itself. She charges nothing and turns
-   * nobody away, however often they come back
+   * Looks a party over and hands it back whole: health, statuses and,
+   * for a shadow, the shadow itself. She charges nothing and turns
+   * nobody away, however often they come back. She does not wander:
+   * her counter is the Pokémon Center, one to a town
    */
   NurseJoy = 2,
   /**
@@ -113,16 +115,16 @@ export default Npc;
 /**
  * Everyone who wanders, for uniform rolls over the variants.
  *
- * Three of them are not in it. The grunt and the trainer stand at
+ * Four of them are not in it. The grunt and the trainer stand at
  * landmarks of their own; so does the vendor, whose stall is the
- * Market. Every service left here rotates, and the list is short on
- * purpose — each name added to it makes every other name rarer, and
- * Nurse Joy is the one a player cannot do without
+ * Market, and so does Nurse Joy, whose counter is the Pokémon Center.
+ * Every service left here rotates, and the list is short on purpose:
+ * each name added to it makes every other name rarer, which is why
+ * the one service a player cannot do without was taken out of it
  */
 export const NPCS: Npc[] = [
   Npc.Breeder,
   Npc.DaycareLady,
-  Npc.NurseJoy,
   Npc.Groomer,
   Npc.MoveReminder,
   Npc.FossilManiac,
@@ -132,6 +134,18 @@ export const NPCS: Npc[] = [
   Npc.Channeler,
   Npc.Kurt,
 ];
+
+/**
+ * The wanderers who serve a player once a window, and the visit marker
+ * the server takes for it. Everyone else can be visited again
+ */
+export const NPC_VISIT_TAGS = new Map<Npc, string>([
+  [Npc.Breeder, 'breed'],
+  [Npc.DaycareLady, 'daycare'],
+  [Npc.Groomer, 'groom'],
+  [Npc.FossilManiac, 'fossil'],
+  [Npc.Channeler, 'channel'],
+]);
 
 /**
  * The charsets a role may turn up wearing: the community packs' takes
@@ -332,8 +346,14 @@ export function getRecallableMoves(
   known: Iterable<Moves>,
 ): Moves[] {
   const knows = new Set(known);
+  const moves: Moves[] = [];
 
-  return getLevelUpMoves(species, level).filter((move) => !knows.has(move));
+  for (const move of getLevelUpMoves(species, level)) {
+    if (!knows.has(move)) {
+      moves.push(move);
+    }
+  }
+  return moves;
 }
 
 /**
@@ -350,8 +370,14 @@ export const TUTOR_FEE = Items.HeartScale;
  */
 export function getTutorableMoves(species: Species, known: Iterable<Moves>): Moves[] {
   const knows = new Set(known);
+  const moves: Moves[] = [];
 
-  return getTeachableMoves(species).filter((move) => !knows.has(move));
+  for (const move of getTeachableMoves(species)) {
+    if (!knows.has(move)) {
+      moves.push(move);
+    }
+  }
+  return moves;
 }
 
 /**
@@ -372,8 +398,12 @@ export const CHANNELER_FEE = Items.HeartScale;
  */
 export function getAwakenableAbilities(species: Species, known: Iterable<Abilities>): Abilities[] {
   const knows = new Set(known);
+  const abilities: Abilities[] = [];
 
-  return [...getSpeciesAbilities(species)].filter(
-    (ability) => countsAgainstSlots(ability) && !knows.has(ability),
-  );
+  for (const ability of getSpeciesAbilities(species)) {
+    if (countsAgainstSlots(ability) && !knows.has(ability)) {
+      abilities.push(ability);
+    }
+  }
+  return abilities;
 }

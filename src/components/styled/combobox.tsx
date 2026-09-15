@@ -98,8 +98,24 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
   const [panel, setPanel] = createSignal<HTMLElement>();
   const [spot, setSpot] = createSignal<{ left: number; top: number; width: number } | null>(null);
 
-  const named = (value: V | null): string =>
-    props.options.find((option) => option.value === value)?.label ?? '';
+  const named = (value: V | null): string => {
+    for (const option of props.options) {
+      if (option.value === value) {
+        return option.label;
+      }
+    }
+    return '';
+  };
+
+  /** Whether the query has left no option standing */
+  const nothingMatches = (matches: (value: V) => boolean): boolean => {
+    for (const option of props.options) {
+      if (matches(option.value)) {
+        return false;
+      }
+    }
+    return true;
+  };
 
   /** Everything picked, whichever mode this is in */
   const picked = (): V[] => {
@@ -209,7 +225,7 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
                   itself */}
                 <AutocompleteStateChild>
                   {(state) => (
-                    <Show when={props.options.every((option) => !state.matches(option.value))}>
+                    <Show when={nothingMatches((value) => state.matches(value))}>
                       <li class="px-2 py-1 text-sm text-muted">Nothing matches that.</li>
                     </Show>
                   )}
@@ -234,7 +250,14 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
                 label={`Remove ${named(value)}`}
                 disabled={props.disabled}
                 onDismiss={() => {
-                  many.onChange(many.value.filter((kept) => kept !== value));
+                  const kept: V[] = [];
+
+                  for (const one of many.value) {
+                    if (one !== value) {
+                      kept.push(one);
+                    }
+                  }
+                  many.onChange(kept);
                 }}
               />
             </Badge>

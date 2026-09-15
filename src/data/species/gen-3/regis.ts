@@ -149,7 +149,7 @@ export default function registerRegiSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Glacier, Biome.PolarOcean],
+    biomes: [Biome.Glacier, Biome.PolarOcean, Biome.Taiga, Biome.Tundra],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -209,7 +209,7 @@ export default function registerRegiSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Mountain, Biome.Badlands],
+    biomes: [Biome.Mountain, Biome.Badlands, Biome.Ocean],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

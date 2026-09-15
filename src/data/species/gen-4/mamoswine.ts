@@ -38,7 +38,7 @@ export default function registerMamoswineSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 50,
-    biomes: [Biome.Tundra, Biome.Glacier, Biome.AlpineTundra],
+    biomes: [Biome.Tundra, Biome.Glacier, Biome.AlpineTundra, Biome.ColdDesert, Biome.Taiga],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

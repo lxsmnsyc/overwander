@@ -145,14 +145,16 @@ const EFFECT_STATUS_MOVES: {
  * table rather than written out again, so a binding move added there
  * is one a Binding Band and a Grip Claw already know about
  */
-export const TRAPPING_MOVES = new Set<Moves>(
-  Object.entries(EFFECT_STATUS_MOVES)
-    .filter(([, effect]) => effect.status === Statuses.Trapped)
+export const TRAPPING_MOVES = new Set<Moves>();
+
+for (const [move, effect] of Object.entries(EFFECT_STATUS_MOVES)) {
+  if (effect.status === Statuses.Trapped) {
     // The table is keyed by the move enum, which comes back as a
     // string from Object.entries
     // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    .map(([move]) => Number(move) as Moves),
-);
+    TRAPPING_MOVES.add(Number(move) as Moves);
+  }
+}
 
 /**
  * A stage a move pushes on the side as it lands. `self` is which side:

@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
 
 /**
  * TropicalRainforest spawn pool, grouped by day-cycle period and rarity band
@@ -15,7 +15,6 @@ export default function registerTropicalRainforestSpawns(): void {
       uncommon: [
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Pineco, weight: 20 },
-        { species: Species.Aipom, weight: 5 },
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [
@@ -36,7 +35,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Kecleon, weight: 10 },
         { species: Species.Tropius, weight: 8 },
       ],
-      prized: [...UNOWN_SPAWNS, { species: Species.Munchlax, weight: PRIZED_WEIGHT }],
+      prized: [...UNOWN_SPAWNS],
       special: [],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
@@ -48,7 +47,6 @@ export default function registerTropicalRainforestSpawns(): void {
       uncommon: [
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Pineco, weight: 20 },
-        { species: Species.Aipom, weight: 5 },
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [
@@ -69,7 +67,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Kecleon, weight: 10 },
         { species: Species.Tropius, weight: 8 },
       ],
-      prized: [...UNOWN_SPAWNS, { species: Species.Munchlax, weight: PRIZED_WEIGHT }],
+      prized: [...UNOWN_SPAWNS],
       special: [],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
@@ -80,7 +78,6 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Spinarak, weight: 20 },
         { species: Species.Pineco, weight: 20 },
         { species: Species.Shroomish, weight: 25 },
-        { species: Species.Aipom, weight: 5 },
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [],
@@ -94,7 +91,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [{ species: Species.Carnivine, weight: 6 }],
-      prized: [...UNOWN_SPAWNS, { species: Species.Munchlax, weight: PRIZED_WEIGHT }],
+      prized: [...UNOWN_SPAWNS],
       special: [],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
@@ -105,7 +102,6 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Spinarak, weight: 20 },
         { species: Species.Pineco, weight: 20 },
         { species: Species.Shroomish, weight: 25 },
-        { species: Species.Aipom, weight: 5 },
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [],
@@ -119,9 +115,97 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [{ species: Species.Carnivine, weight: 6 }],
-      prized: [...UNOWN_SPAWNS, { species: Species.Munchlax, weight: PRIZED_WEIGHT }],
+      prized: [...UNOWN_SPAWNS],
       special: [],
       mythical: [{ species: Species.Mew, weight: 10 }],
+    },
+  });
+  registerWaterPool(Biome.TropicalRainforest, {
+    [TimeOfDay.Morning]: {
+      base: [
+        { species: Species.Poliwag, weight: 20 },
+        { species: Species.Lotad, weight: 20 },
+        { species: Species.Mudkip, weight: 2 },
+      ],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Surskit, weight: 25 },
+        { species: Species.Yanma, weight: 5 },
+      ],
+      rare: [
+        { species: Species.Lombre, weight: 10 },
+        { species: Species.Marshtomp, weight: 1 },
+      ],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Yanmega, weight: 6 },
+        { species: Species.Masquerain, weight: 10 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      elusive: [
+        { species: Species.Ludicolo, weight: 5 },
+        { species: Species.Swampert, weight: 2 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Day]: {
+      base: [
+        { species: Species.Poliwag, weight: 20 },
+        { species: Species.Lotad, weight: 20 },
+        { species: Species.Mudkip, weight: 2 },
+      ],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Surskit, weight: 25 },
+        { species: Species.Yanma, weight: 5 },
+      ],
+      rare: [
+        { species: Species.Lombre, weight: 10 },
+        { species: Species.Marshtomp, weight: 1 },
+      ],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Yanmega, weight: 6 },
+        { species: Species.Masquerain, weight: 10 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      elusive: [
+        { species: Species.Ludicolo, weight: 5 },
+        { species: Species.Swampert, weight: 2 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Evening]: {
+      base: [{ species: Species.Poliwag, weight: 20 }],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Yanma, weight: 5 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Yanmega, weight: 6 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Night]: {
+      base: [{ species: Species.Poliwag, weight: 20 }],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Yanma, weight: 5 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Yanmega, weight: 6 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      special: [],
     },
   });
 }

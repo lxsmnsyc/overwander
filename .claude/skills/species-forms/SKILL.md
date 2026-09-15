@@ -33,6 +33,14 @@ Pressing a dex row with several forms behind it opens `SpeciesFormsDialog`, not 
 
 So a form's entry is an ordinary species page. It answers for itself, and its arrows walk the **forms** rather than the dex, since that is the list it was reached through. The default form has no page of its own beyond the one its first square opens.
 
+## A form's own ability
+
+A shape worn in battle (an Origin forme with its orb, Sky Shaymin with a Gracidea) brings its own ability as a **bonus**. The form item grants it with `unit.wearAbility` when the holder takes the shape, on top of whatever the catch carries. The list lives in `SHAPE_ABILITIES` in [`src/battle/items/forms.ts`](../../../src/battle/items/forms.ts).
+
+- It takes no ability slot, and Role Play, Skill Swap, Gastro Acid and Worry Seed cannot touch it, the way Shadow is exempt.
+- It never trades away one of the catch's abilities mid-fight.
+- It never goes in the base species' pool: a base species is not handed its form's ability.
+
 ## Adding one
 
 1. An id in `Species`, written directly after the species' own and inside the band.

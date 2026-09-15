@@ -117,21 +117,38 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
   /** The open ask being answered, while the box is open for it */
   const [answering, setAnswering] = createSignal<string | null>(null);
 
-  const idsOf = (kept: (trade: TradeRecord) => boolean): string[] =>
-    (trades() ?? []).filter(([, trade]) => kept(trade)).map(([id]) => id);
+  const idsOf = (kept: (trade: TradeRecord) => boolean): string[] => {
+    const ids: string[] = [];
+
+    for (const [id, trade] of trades() ?? []) {
+      if (kept(trade)) {
+        ids.push(id);
+      }
+    }
+    return ids;
+  };
 
   const toAnswer = (): string[] =>
     idsOf((trade) => trade.status === TradeStatus.Open && trade.receiver === props.player);
   const waiting = (): string[] =>
     idsOf((trade) => trade.status === TradeStatus.Open && trade.proposer === props.player);
-  const settled = createPager(
-    () =>
-      (trades() ?? [])
-        .filter(([, trade]) => trade.status !== TradeStatus.Open)
-        .sort(([, one], [, other]) => other.resolvedAt - one.resolvedAt)
-        .map(([id]) => id),
-    LIST_PAGE,
-  );
+  const settled = createPager(() => {
+    const closed: [string, TradeRecord][] = [];
+
+    for (const entry of trades() ?? []) {
+      if (entry[1].status !== TradeStatus.Open) {
+        closed.push(entry);
+      }
+    }
+    closed.sort(([, one], [, other]) => other.resolvedAt - one.resolvedAt);
+
+    const ids: string[] = [];
+
+    for (const [id] of closed) {
+      ids.push(id);
+    }
+    return ids;
+  }, LIST_PAGE);
 
   const [buddy] = createResource(
     () => (answering() == null ? null : props.player),

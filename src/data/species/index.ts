@@ -23,6 +23,7 @@ export {
   getWornForms,
   isWornForm,
   getTeachableMoves,
+  getHabitat,
   isBaseForm,
 } from './__create';
 export type { EvolutionData, LearnSetData, SpeciesAbilityPools, SpeciesData } from './__create';
@@ -44,6 +45,7 @@ export {
   coversHandover,
   coveredByHandover,
   getAvailableEvolutions,
+  getShedEvolutions,
   getConsumedItem,
   getSpentHeldItem,
   isFullyEvolved,

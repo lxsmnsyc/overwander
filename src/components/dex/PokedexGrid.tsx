@@ -38,7 +38,7 @@ export const DEX_PAGE = DEX_COLUMNS * DEX_ROWS;
  * move the paging buttons under the player's finger as they reached the
  * end
  */
-const SQUARES: null[] = Array.from({ length: DEX_PAGE }, () => null);
+const SQUARES: null[] = Array.from<null>({ length: DEX_PAGE }).fill(null);
 
 /**
  * The frame of a square. Every one of them is pressable — a species
@@ -132,7 +132,7 @@ export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
   const entryAt = (index: number): DexEntry | undefined => props.entries.at(index);
 
   const squares = (): null[] =>
-    props.squares == null ? SQUARES : Array.from({ length: props.squares }, () => null);
+    props.squares == null ? SQUARES : Array.from<null>({ length: props.squares }).fill(null);
 
   return (
     // Narrower than the catch box, because the dex carries two rows of

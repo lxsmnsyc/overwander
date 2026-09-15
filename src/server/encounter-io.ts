@@ -38,6 +38,20 @@ export async function readEncounter(
         where spawn_id = ${spawnId} and player = ${player} order by slot`,
   ]);
 
+  const moveIds: number[] = [];
+  const itemIds: number[] = [];
+  const abilityIds: number[] = [];
+
+  for (const entry of moves) {
+    moveIds.push(asNumber(entry.move));
+  }
+  for (const entry of items) {
+    itemIds.push(asNumber(entry.item));
+  }
+  for (const entry of abilities) {
+    abilityIds.push(asNumber(entry.ability));
+  }
+
   return {
     spawn: spawnId,
     player,
@@ -53,17 +67,15 @@ export async function readEncounter(
     gender: row.gender,
     shiny: row.shiny,
     shadow: row.shadow,
-    moves: moves.map((entry) => asNumber(entry.move)),
-    items: items.map((entry) => asNumber(entry.item)),
+    moves: moveIds,
+    items: itemIds,
     timestamp: row.window_at,
     x: row.x,
     y: row.y,
     biome: row.biome,
     ...(row.place == null ? {} : { place: row.place }),
     ...(row.slots == null ? {} : { slots: row.slots }),
-    ...(abilities.length > 0
-      ? { abilities: abilities.map((entry) => asNumber(entry.ability)) }
-      : {}),
+    ...(abilityIds.length > 0 ? { abilities: abilityIds } : {}),
     ...(row.fed == null ? {} : { fed: row.fed }),
   };
 }
@@ -110,9 +122,19 @@ export async function writeEncounter(transaction: Tx, record: EncounterRecord): 
   }
 
   const key = { spawn_id: record.spawn, player: record.player };
-  const moves = record.moves.map((move, slot) => ({ ...key, slot, move }));
-  const items = record.items.map((item, slot) => ({ ...key, slot, item }));
-  const abilities = (record.abilities ?? []).map((ability, slot) => ({ ...key, slot, ability }));
+  const moves: (typeof key & { slot: number; move: number })[] = [];
+  const items: (typeof key & { slot: number; item: number })[] = [];
+  const abilities: (typeof key & { slot: number; ability: number })[] = [];
+
+  for (const [slot, move] of record.moves.entries()) {
+    moves.push({ ...key, slot, move });
+  }
+  for (const [slot, item] of record.items.entries()) {
+    items.push({ ...key, slot, item });
+  }
+  for (const [slot, ability] of (record.abilities ?? []).entries()) {
+    abilities.push({ ...key, slot, ability });
+  }
 
   if (moves.length > 0) {
     await transaction`

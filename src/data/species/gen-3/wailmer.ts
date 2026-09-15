@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves both stages share
@@ -77,6 +77,7 @@ export default function registerWailmerSpecies(): void {
       [Stats.Speed]: 60,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.WaterVeil, Abilities.Oblivious],
     hiddenAbilities: [Abilities.Pressure],
     eggGroups: [EggGroups.Field, EggGroups.Water2],
@@ -122,6 +123,7 @@ export default function registerWailmerSpecies(): void {
       [Stats.Speed]: 60,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.WaterVeil, Abilities.Oblivious],
     // One the mainline never gave it: nothing goes off with that much
     // water spouting over it

@@ -15,6 +15,7 @@ import {
   weightOf,
 } from '../../src/canvas/battle/moves';
 import attackMarkVisual from '../../src/canvas/battle/attack';
+import { LIT } from '../../src/canvas/battle/moves/lit';
 import type { Stage } from '../../src/canvas/battle/stage';
 import { Types } from '../../src/data/constants/types';
 import Abilities from '../../src/data/ids/abilities';
@@ -100,22 +101,22 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Brawl', Moves.KarateChop],
   ['Blast', Moves.Explosion],
   ['Bloom', Moves.DragonRage],
-  ['Beam', Moves.HyperBeam],
+  ['Beam', Moves.IceBeam],
   ['Zap', Moves.Thunderbolt],
   ['Strike', Moves.Thunder],
   ['Flame', Moves.Ember],
   ['Splash', Moves.WaterGun],
   ['Frost', Moves.Blizzard],
-  ['Leafy', Moves.PetalDance],
+  ['Leafy', Moves.SkyAttack],
   ['Haze', Moves.PoisonPowder],
-  ['Mark', Moves.Glare],
+  ['Mark', Moves.Disable],
   ['Mend', Moves.Recover],
-  ['Ward', Moves.Substitute],
+  ['Ward', Moves.Endure],
   ['Screen', Moves.Reflect],
   ['Sky', Moves.RainDance],
   ['Quake', Moves.Earthquake],
   ['Drain', Moves.Absorb],
-  ['Volley', Moves.PinMissile],
+  ['Volley', Moves.FuryAttack],
   ['Bubbles', Moves.BubbleBeam],
   ['Boomerang', Moves.Bonemerang],
   ['Dazzle', Moves.HiddenPower],
@@ -134,7 +135,7 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Rocks', Moves.RockSlide],
   ['Warp', Moves.Psychic],
   ['Lash', Moves.VineWhip],
-  ['Boost', Moves.SwordsDance],
+  ['Boost', Moves.Meditate],
   ['Drop', Moves.Leer],
   ['Nerve', Moves.FocusEnergy],
   ['Drum', Moves.BellyDrum],
@@ -157,6 +158,129 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Petals', Moves.SweetScent],
   // Two cuts across each other
   ['Cross', Moves.XScissor],
+  // A blow wrapped in its element, once for each element it is drawn with
+  ['Punch', Moves.FirePunch],
+  ['Punch', Moves.IcePunch],
+  ['Punch', Moves.ThunderPunch],
+  ['Rush', Moves.FlareBlitz],
+  ['Rush', Moves.VoltTackle],
+  ['Wheel', Moves.FlameWheel],
+  ['Torrent', Moves.Waterfall],
+  // The legendary signatures
+  ['Stall', Moves.RoarOfTime],
+  ['Rend', Moves.SpacialRend],
+  ['Verdict', Moves.Judgment],
+  ['Sunburst', Moves.SeedFlare],
+  ['Ambush', Moves.ShadowForce],
+  ['Vortex', Moves.MagmaStorm],
+  ['Pyre', Moves.SacredFire],
+  ['Upheaval', Moves.BlastBurn],
+  ['Plume', Moves.MistBall],
+  ['Lustre', Moves.LusterPurge],
+  ['Starfall', Moves.DoomDesire],
+  ['Grip', Moves.CrushGrip],
+  ['Surge', Moves.PsychoBoost],
+  ['Moonlit', Moves.LunarDance],
+  ['Exchange', Moves.HeartSwap],
+  ['Void', Moves.DarkVoid],
+  ['Cannon', Moves.HydroCannon],
+  // A bite in an element, and a dive wrapped in pale fire
+  ['Jaws', Moves.FireFang],
+  ['Jaws', Moves.IceFang],
+  ['Jaws', Moves.ThunderFang],
+  ['Rush', Moves.BraveBird],
+  ['Meteors', Moves.DracoMeteor],
+  ['Rampage', Moves.Outrage],
+  ['Rampage', Moves.PetalDance],
+  ['Rift', Moves.EarthPower],
+  ['Scorch', Moves.HeatWave],
+  ['Pulse', Moves.DarkPulse],
+  ['Freeze', Moves.SheerCold],
+  // Put up or done to itself
+  ['Shell', Moves.Protect],
+  ['Shell', Moves.Detect],
+  ['Doll', Moves.Substitute],
+  ['Flop', Moves.Splash],
+  ['Wag', Moves.Metronome],
+  ['Shimmer', Moves.Transform],
+  ['Blades', Moves.SwordsDance],
+  ['Dance', Moves.DragonDance],
+  ['Sheen', Moves.IronDefense],
+  ['Sheen', Moves.Harden],
+  ['Mirage', Moves.DoubleTeam],
+  ['Mirage', Moves.Minimize],
+  ['Scheme', Moves.CalmMind],
+  ['Scheme', Moves.NastyPlot],
+  ['Weather', Moves.WeatherBall],
+  ['Tri', Moves.TriAttack],
+  // The heaviest blows, and several of something flying in
+  ['Blaster', Moves.HyperBeam],
+  ['Blaster', Moves.SolarBeam],
+  ['Crash', Moves.GigaImpact],
+  ['Haymaker', Moves.FocusPunch],
+  ['Haymaker', Moves.DynamicPunch],
+  ['Flurry', Moves.CloseCombat],
+  ['Aura', Moves.AuraSphere],
+  ['Aura', Moves.FocusBlast],
+  ['Stream', Moves.PinMissile],
+  ['Stream', Moves.BulletSeed],
+  ['Stream', Moves.IcicleSpear],
+  ['Stream', Moves.RockBlast],
+  ['Stream', Moves.BoneRush],
+  ['Kicks', Moves.DoubleKick],
+  ['Kicks', Moves.TripleKick],
+  // Healing drawn as where it comes from, and sound heard as what it is
+  ['Slumber', Moves.Rest],
+  ['Sunbeam', Moves.MorningSun],
+  ['Moonbeam', Moves.Moonlight],
+  ['Greening', Moves.Synthesis],
+  ['Wishing', Moves.Wish],
+  ['Feathers', Moves.Roost],
+  ['Swarm', Moves.HealOrder],
+  ['Petals', Moves.Aromatherapy],
+  ['Song', Moves.Sing],
+  ['Song', Moves.PerishSong],
+  ['Roar', Moves.Roar],
+  ['Roar', Moves.BugBuzz],
+  ['Chime', Moves.HealBell],
+  // Blades that each cut their own way, and statuses drawn as what they are
+  ['Sweep', Moves.LeafBlade],
+  ['Crescent', Moves.NightSlash],
+  ['Sickles', Moves.PsychoCut],
+  ['Sickles', Moves.AirSlash],
+  ['Cutter', Moves.FuryCutter],
+  ['Toxin', Moves.Toxic],
+  ['Spores', Moves.StunSpore],
+  ['Stare', Moves.Glare],
+  ['Applause', Moves.Encore],
+  ['Vein', Moves.Taunt],
+  ['Nail', Moves.Curse],
+  // Stat moves drawn as what the pokemon does
+  ['Haste', Moves.Agility],
+  ['Polish', Moves.RockPolish],
+  ['Flex', Moves.BulkUp],
+  ['Howl', Moves.Howl],
+  ['Blank', Moves.Amnesia],
+  ['Cosmos', Moves.CosmicPower],
+  ['Screen', Moves.Barrier],
+  ['Hive', Moves.DefendOrder],
+  ['Crackle', Moves.Charge],
+  ['Lantern', Moves.TailGlow],
+  ['Stack', Moves.Stockpile],
+  ['Sprout', Moves.Growth],
+  ['Curl', Moves.Withdraw],
+  ['Roar', Moves.Growl],
+  ['Screech', Moves.Screech],
+  ['Screech', Moves.MetalSound],
+  ['Stare', Moves.ScaryFace],
+  ['Hearts', Moves.Charm],
+  ['Tickle', Moves.Tickle],
+  ['Feathers', Moves.FeatherDance],
+  ['Cotton', Moves.CottonSpore],
+  ['Silk', Moves.StringShot],
+  ['Tears', Moves.FakeTears],
+  ['Memento', Moves.Memento],
+  ['Clear', Moves.Defog],
 ];
 
 /**
@@ -180,6 +304,28 @@ describe('a painted move', () => {
     ]);
 
     expect([...Object.keys(SPANS)].filter((shape) => !covered.has(shape))).toEqual([]);
+  });
+
+  it('builds every shape in the battle scene as well as painting it', () => {
+    // A shape without one is still drawn flat over the scene, in front of everything
+    const missing: string[] = [];
+
+    for (const shape of Object.keys(SPANS)) {
+      if (!(shape in LIT)) {
+        missing.push(shape);
+      }
+    }
+    expect(missing).toEqual([]);
+    expect(
+      attackMarkVisual({
+        move: Moves.Tackle,
+        type: Types.Normal,
+        share: 0.3,
+        effectiveness: 1,
+        critical: true,
+        struck: true,
+      }).drawLit,
+    ).toBeDefined();
   });
 
   it('draws something at every instant of every shape it can land as', () => {
@@ -290,14 +436,13 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.FalseSwipe)).toBe('Claw');
     // Sound answers status moves as well, which the other two do not:
     // a song that puts something to sleep is still a song
-    expect(effectShapeFor(Moves.HyperVoice)).toBe('Wave');
-    expect(effectShapeFor(Moves.GrassWhistle)).toBe('Wave');
+    expect(effectShapeFor(Moves.Uproar)).toBe('Wave');
+    expect(effectShapeFor(Moves.Supersonic)).toBe('Wave');
 
-    // Unless it moved a stat, which is drawn as the stat. What the
-    // move was is the gap it crossed, so a growl still carries as
-    // sound on the way over
-    expect(effectShapeFor(Moves.Growl)).toBe('Drop');
-    expect(effectShapeFor(Moves.MetalSound)).toBe('Drop');
+    // A stat move with a picture of its own keeps it, and a growl
+    // still carries as sound on the way over
+    expect(effectShapeFor(Moves.Growl)).toBe('Roar');
+    expect(effectShapeFor(Moves.MetalSound)).toBe('Screech');
     expect(delayShapeFor(Moves.Growl, 0)).toBe('Call');
   });
 
@@ -309,8 +454,8 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.Ingrain)).toBe('Roots');
     expect(effectShapeFor(Moves.FrenzyPlant)).toBe('Roots');
     // A jet rather than a cloud, and light rather than a shadow
-    expect(effectShapeFor(Moves.HydroCannon)).toBe('Beam');
-    expect(effectShapeFor(Moves.LusterPurge)).toBe('Dazzle');
+    expect(effectShapeFor(Moves.SignalBeam)).toBe('Beam');
+    expect(effectShapeFor(Moves.LusterPurge)).toBe('Lustre');
     // Under the water and up under it, up out of reach and down on it
     expect(delayShapeFor(Moves.Dive, 1)).toBe('Vanish');
     expect(delayShapeFor(Moves.Dive, 0)).toBe('Surface');
@@ -325,26 +470,26 @@ describe('a painted move', () => {
 
   it('draws the Sinnoh moves the rules alone would have drawn wrong', () => {
     // Health coming back, whatever the move is called
-    expect(effectShapeFor(Moves.Roost)).toBe('Mend');
-    expect(effectShapeFor(Moves.LunarDance)).toBe('Mend');
+    expect(effectShapeFor(Moves.SlackOff)).toBe('Mend');
+    expect(effectShapeFor(Moves.HealingWish)).toBe('Mend');
     // Laid on the ground rather than marked on whoever is standing there
     expect(effectShapeFor(Moves.StealthRock)).toBe('Caltrops');
     expect(effectShapeFor(Moves.ToxicSpikes)).toBe('Caltrops');
     // Held between the two of them, the way Trick and Skill Swap are
     expect(effectShapeFor(Moves.Switcheroo)).toBe('Warp');
-    expect(effectShapeFor(Moves.HeartSwap)).toBe('Warp');
+    expect(effectShapeFor(Moves.GuardSwap)).toBe('Warp');
     // A room over the field and a weight on it: the two moves that
     // change the rules everybody is fighting under
     expect(effectShapeFor(Moves.TrickRoom)).toBe('Grid');
     expect(effectShapeFor(Moves.Gravity)).toBe('Press');
     // Every type arrives as something now that each of them has a
     // special move: a flower burst stood in for all of these
-    expect(effectShapeFor(Moves.DarkPulse)).toBe('Shade');
+    expect(effectShapeFor(Moves.DarkPulse)).toBe('Pulse');
     expect(effectShapeFor(Moves.DragonPulse)).toBe('Beam');
-    expect(effectShapeFor(Moves.FocusBlast)).toBe('Blast');
-    expect(effectShapeFor(Moves.Judgment)).toBe('Dazzle');
+    expect(effectShapeFor(Moves.SeedBomb)).toBe('Blast');
+    expect(effectShapeFor(Moves.PowerGem)).toBe('Dazzle');
     // What traps is drawn as what traps, whatever it is made of
-    expect(effectShapeFor(Moves.MagmaStorm)).toBe('Coil');
+    expect(effectShapeFor(Moves.WringOut)).toBe('Coil');
     // Lobbed rather than shot flat, and laid rather than thrown at
     expect(delayShapeFor(Moves.SeedBomb, 0)).toBe('Lobbed');
     expect(delayShapeFor(Moves.StealthRock, 0)).toBe('Lobbed');
@@ -441,12 +586,12 @@ describe('a painted move', () => {
   it('draws a stat move as the stat, on whoever it landed on', () => {
     // One picture for every rise and the same turned over for every
     // drop, ahead of whatever else the move looks like
-    expect(effectShapeFor(Moves.SwordsDance)).toBe('Boost');
-    expect(effectShapeFor(Moves.Harden)).toBe('Boost');
-    expect(effectShapeFor(Moves.Amnesia)).toBe('Boost');
+    expect(effectShapeFor(Moves.Meditate)).toBe('Boost');
+    expect(effectShapeFor(Moves.Sharpen)).toBe('Boost');
+    expect(effectShapeFor(Moves.AcidArmor)).toBe('Boost');
     expect(effectShapeFor(Moves.Leer)).toBe('Drop');
-    expect(effectShapeFor(Moves.Growl)).toBe('Drop');
-    expect(effectShapeFor(Moves.Charm)).toBe('Drop');
+    expect(effectShapeFor(Moves.TailWhip)).toBe('Drop');
+    expect(effectShapeFor(Moves.Kinesis)).toBe('Drop');
     // Raising the target's Attack is still a rise, and it is drawn on
     // the target rather than on whoever cast it
     expect(effectShapeFor(Moves.Swagger)).toBe('Boost');
@@ -471,7 +616,7 @@ describe('a painted move', () => {
     };
 
     expect(on(Moves.Leer, [[300, 100]])).not.toBe(on(Moves.Leer, [[500, 400]]));
-    expect(on(Moves.SwordsDance, [])).not.toBe(on(Moves.SwordsDance, [[300, 100]]));
+    expect(on(Moves.Meditate, [])).not.toBe(on(Moves.Meditate, [[300, 100]]));
   });
 
   it('colours a stat move by which stat it moved', () => {
@@ -487,9 +632,9 @@ describe('a painted move', () => {
     };
 
     // The same picture in two colours
-    expect(shade(Moves.SwordsDance)).not.toBe(shade(Moves.Harden));
+    expect(shade(Moves.Meditate)).not.toBe(shade(Moves.AcidArmor));
     // And two moves that move the same stat the same way match
-    expect(shade(Moves.Harden)).toBe(shade(Moves.Withdraw));
+    expect(shade(Moves.Meditate)).toBe(shade(Moves.Sharpen));
   });
 
   it('puts a screen over the side rather than on each of them', () => {
@@ -548,9 +693,9 @@ describe('a painted move', () => {
     // A fury of swipes is claws, drawn several times over — the
     // barrage shape is for the moves whose repeat is the whole point
     expect(effectShapeFor(Moves.FurySwipes)).toBe('Claw');
-    expect(effectShapeFor(Moves.PinMissile)).toBe('Volley');
-    expect(effectShapeFor(Moves.Glare)).toBe('Mark');
-    expect(effectShapeFor(Moves.Substitute)).toBe('Ward');
+    expect(effectShapeFor(Moves.FuryAttack)).toBe('Volley');
+    expect(effectShapeFor(Moves.Disable)).toBe('Mark');
+    expect(effectShapeFor(Moves.Substitute)).toBe('Doll');
     // A screen is a pane put up rather than a shell closing in, and
     // it is coloured by the stat it stands in for
     expect(effectShapeFor(Moves.Reflect)).toBe('Screen');

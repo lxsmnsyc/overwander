@@ -127,9 +127,12 @@ export function shimFor(wanted: SpriteAnim, has: (anim: SpriteAnim) => boolean):
   // that will not play leaves the playhead unset, and a sprite with no
   // playhead draws no body and no shadow, so the pokemon is absent
   // from the fight rather than approximated in it
-  const anything = COMMON_CAST.find((name) => has(name));
-
-  return { animation: anything ?? wanted, shim, still: false };
+  for (const name of COMMON_CAST) {
+    if (has(name)) {
+      return { animation: name, shim, still: false };
+    }
+  }
+  return { animation: wanted, shim, still: false };
 }
 
 /** What each movement looks like, a share of the way through it. */

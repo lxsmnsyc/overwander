@@ -183,10 +183,14 @@ function middleOf(points: Point[]): Point | null {
   if (points.length === 0) {
     return null;
   }
-  return [
-    points.reduce((total, point) => total + point[0], 0) / points.length,
-    points.reduce((total, point) => total + point[1], 0) / points.length,
-  ];
+  let x = 0;
+  let y = 0;
+
+  for (const point of points) {
+    x += point[0];
+    y += point[1];
+  }
+  return [x / points.length, y / points.length];
 }
 
 /**
@@ -207,9 +211,14 @@ function pointsOf(
   frameHeight: number,
 ): Record<SpriteAnchor, Point> {
   const shadow: Point = frame.shadow ?? [(frameWidth - 1) / 2, frameHeight - 1];
-  const marked = [frame.head, frame.left, frame.right].filter(
-    (point): point is Point => point != null,
-  );
+  const marked: Point[] = [];
+
+  for (const point of [frame.head, frame.left, frame.right]) {
+    if (point != null) {
+      marked.push(point);
+    }
+  }
+
   const center = frame.center ?? middleOf(marked) ?? [(frameWidth - 1) / 2, (frameHeight - 1) / 2];
 
   return {

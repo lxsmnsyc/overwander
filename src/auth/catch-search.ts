@@ -106,7 +106,12 @@ function hidden(field: CatchField): CatchField {
 
 /** Whether a number answers a numeric term */
 function numeric(value: string, actual: number): boolean {
-  return ranges(value).some((bounds) => inside(bounds, actual));
+  for (const bounds of ranges(value)) {
+    if (inside(bounds, actual)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -282,10 +287,16 @@ const MARKS = new Map<string, Mark>(
     // Whether it knows a move of its own type, which is what makes a
     // move hit harder
     stab: {
-      of: (caught) =>
-        caught.moves.some((move) =>
-          getSpeciesData(caught.species).types.includes(getMoveData(move).type),
-        ),
+      of: (caught) => {
+        const { types } = getSpeciesData(caught.species);
+
+        for (const move of caught.moves) {
+          if (types.includes(getMoveData(move).type)) {
+            return true;
+          }
+        }
+        return false;
+      },
       secret: true,
       constrain: () => [],
     },
@@ -294,7 +305,12 @@ const MARKS = new Map<string, Mark>(
       of: (caught) => {
         const rare = new Set(getSpeciesData(caught.species).hiddenAbilities);
 
-        return caught.abilities.some((ability) => rare.has(ability));
+        for (const ability of caught.abilities) {
+          if (rare.has(ability)) {
+            return true;
+          }
+        }
+        return false;
       },
       secret: true,
       constrain: () => [],
@@ -360,7 +376,12 @@ function markedAny(
   wanted: boolean,
   context: CatchContext,
 ): boolean {
-  return alternatives(value).some((word) => marked(caught, word, wanted, context));
+  for (const word of alternatives(value)) {
+    if (marked(caught, word, wanted, context)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -373,7 +394,11 @@ const IV_WORDS = ['hp', 'atk', 'def', 'spa', 'spd', 'spe'];
 /** The column each value is stored in, in the same order */
 const IV_COLUMNS = ['iv_hp', 'iv_atk', 'iv_def', 'iv_spa', 'iv_spd', 'iv_spe'];
 
-const IV_STATS = new Map<string, Stats>(IV_WORDS.map((word, at) => [word, STAT_ORDER[at]]));
+const IV_STATS = new Map<string, Stats>();
+
+for (const [at, word] of IV_WORDS.entries()) {
+  IV_STATS.set(word, STAT_ORDER[at]);
+}
 
 /**
  * A value term, which may name a stat before its number: `iv:atk:31`,
@@ -410,7 +435,12 @@ function readStat(value: string): { stat: Stats | null; wanted: string } {
 
 /** The six added up, which is what a value term with no stat asks about */
 function totalIVs(packed: number): number {
-  return STAT_ORDER.reduce((sum, stat) => sum + getIV(packed, stat), 0);
+  let sum = 0;
+
+  for (const stat of STAT_ORDER) {
+    sum += getIV(packed, stat);
+  }
+  return sum;
 }
 
 /**
@@ -455,11 +485,16 @@ function struckBy(
   value: string,
   keep: (factor: number) => boolean,
 ): boolean {
-  return alternatives(value).some((word) =>
-    idsFor(TYPE_NAMES, word).some((type) =>
-      keep(effectiveness(getSpeciesData(caught.species).types, type)),
-    ),
-  );
+  const { types } = getSpeciesData(caught.species);
+
+  for (const word of alternatives(value)) {
+    for (const type of idsFor(TYPE_NAMES, word)) {
+      if (keep(effectiveness(types, type))) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 /** How far an egg still has to be carried */
@@ -507,6 +542,16 @@ function localStamp(at: Date): string {
   );
 }
 
+/** A written date's dash-separated parts as numbers */
+function dateParts(text: string): number[] {
+  const parts: number[] = [];
+
+  for (const part of text.split('-')) {
+    parts.push(Number(part));
+  }
+  return parts;
+}
+
 /** The first instant of a day, as the stamp writes it */
 function dayStart(year: number, month: number, day: number): string {
   const pad = (value: number): string => String(value).padStart(2, '0');
@@ -536,7 +581,7 @@ function period(text: string): { low: string; high: string } | null {
     return { low: dayStart(year, 1, 1), high: dayStart(year + 1, 1, 1) };
   }
   if (/^\d{4}-\d{2}$/.test(wanted)) {
-    const [year, month] = wanted.split('-').map(Number);
+    const [year, month] = dateParts(wanted);
 
     return {
       low: dayStart(year, month, 1),
@@ -544,7 +589,7 @@ function period(text: string): { low: string; high: string } | null {
     };
   }
   if (/^\d{4}-\d{2}-\d{2}$/.test(wanted)) {
-    const [year, month, day] = wanted.split('-').map(Number);
+    const [year, month, day] = dateParts(wanted);
     // Rolled over by the calendar rather than by hand: the last day of
     // a month is the one place hand-rolling goes wrong
     const after = new Date(Date.UTC(year, month - 1, day + 1));
@@ -616,9 +661,16 @@ function stamp(text: string): Span | null {
 
 /** Every span a date term accepts */
 function stamps(value: string): Span[] {
-  return alternatives(value)
-    .map(stamp)
-    .filter((span): span is Span => span != null);
+  const spans: Span[] = [];
+
+  for (const word of alternatives(value)) {
+    const span = stamp(word);
+
+    if (span != null) {
+      spans.push(span);
+    }
+  }
+  return spans;
 }
 
 /** Whether a stored stamp falls inside one span */
@@ -635,30 +687,38 @@ const FIELDS = new Map<string, CatchField>(
       holds(getFamilyName(getSpeciesData(caught.species).family), value),
     ),
     species: hidden((caught, value) => holds(getSpeciesData(caught.species).name, value)),
-    type: hidden((caught, value) =>
-      holdsAny(
-        getSpeciesData(caught.species).types.map((kind) => TYPE_NAMES[kind]),
-        value,
-      ),
-    ),
-    move: hidden((caught, value) =>
-      holdsAny(
-        caught.moves.map((move) => getMoveData(move).name),
-        value,
-      ),
-    ),
-    ability: hidden((caught, value) =>
-      holdsAny(
-        caught.abilities.map((ability) => getAbilityData(ability).name),
-        value,
-      ),
-    ),
-    item: hidden((caught, value) =>
-      holdsAny(
-        caught.items.map((item) => getItemData(item).name),
-        value,
-      ),
-    ),
+    type: hidden((caught, value) => {
+      const names: string[] = [];
+
+      for (const kind of getSpeciesData(caught.species).types) {
+        names.push(TYPE_NAMES[kind]);
+      }
+      return holdsAny(names, value);
+    }),
+    move: hidden((caught, value) => {
+      const names: string[] = [];
+
+      for (const move of caught.moves) {
+        names.push(getMoveData(move).name);
+      }
+      return holdsAny(names, value);
+    }),
+    ability: hidden((caught, value) => {
+      const names: string[] = [];
+
+      for (const ability of caught.abilities) {
+        names.push(getAbilityData(ability).name);
+      }
+      return holdsAny(names, value);
+    }),
+    item: hidden((caught, value) => {
+      const names: string[] = [];
+
+      for (const item of caught.items) {
+        names.push(getItemData(item).name);
+      }
+      return holdsAny(names, value);
+    }),
     nature: hidden((caught, value) => holds(NATURE_NAMES[caught.nature], value)),
     gender: hidden((caught, value) => holds(GENDER_NAMES[caught.gender], value)),
     ball: (caught, value) => holds(getItemData(BALL_ITEMS[caught.ball]).name, value),
@@ -677,24 +737,30 @@ const FIELDS = new Map<string, CatchField>(
     not: (caught, value, context) => markedAny(caught, value, false, context),
     // What it walked out of its last fight carrying, by the word for
     // the status rather than the mask it is stored in
-    status: (caught, value) =>
-      alternatives(value).some((word) => {
+    status: (caught, value) => {
+      for (const word of alternatives(value)) {
         const stored = STORED_STATUSES.get(word.toLowerCase());
 
-        return stored != null && (caught.statuses & stored.bit) !== 0;
-      }),
+        if (stored != null && (caught.statuses & stored.bit) !== 0) {
+          return true;
+        }
+      }
+      return false;
+    },
 
     // What the species is, as the dex says it: the number, the line
     // under the name, the company it breeds with and how hard it was
     // to catch
     dex: hidden((caught, value) => numeric(value, getSpeciesData(caught.species).dexNumber)),
     category: hidden((caught, value) => holds(getSpeciesData(caught.species).category, value)),
-    'egg-group': hidden((caught, value) =>
-      holdsAny(
-        getSpeciesData(caught.species).eggGroups.map((group) => EGG_GROUP_NAMES[group]),
-        value,
-      ),
-    ),
+    'egg-group': hidden((caught, value) => {
+      const names: string[] = [];
+
+      for (const group of getSpeciesData(caught.species).eggGroups) {
+        names.push(EGG_GROUP_NAMES[group]);
+      }
+      return holdsAny(names, value);
+    }),
     'catch-rate': hidden((caught, value) =>
       numeric(value, getSpeciesData(caught.species).catchRate),
     ),
@@ -704,34 +770,45 @@ const FIELDS = new Map<string, CatchField>(
     // Where and when the **species** lives, which is not where this one
     // was met: `spawns:cave` is a fact about Zubat, `biome:cave` is a
     // fact about this Zubat
-    spawns: hidden((caught, value) =>
-      holdsAny(
-        getSpeciesData(caught.species).biomes.map((biome) => BIOME_NAMES[biome]),
-        value,
-      ),
-    ),
+    spawns: hidden((caught, value) => {
+      const names: string[] = [];
+
+      for (const biome of getSpeciesData(caught.species).biomes) {
+        names.push(BIOME_NAMES[biome]);
+      }
+      return holdsAny(names, value);
+    }),
     active: hidden((caught, value) => {
       const { activeTimes } = getSpeciesData(caught.species);
 
-      return alternatives(value).some((word) =>
-        idsFor(TIME_OF_DAY_NAMES, word).some((time) => (activeTimes & time) !== 0),
-      );
+      for (const word of alternatives(value)) {
+        for (const time of idsFor(TIME_OF_DAY_NAMES, word)) {
+          if ((activeTimes & time) !== 0) {
+            return true;
+          }
+        }
+      }
+      return false;
     }),
     // What it could ever know, against the `move:` it does know
-    learns: hidden((caught, value) =>
-      holdsAny(
-        getLearnableMoves(caught.species).map((move) => getMoveData(move).name),
-        value,
-      ),
-    ),
+    learns: hidden((caught, value) => {
+      const names: string[] = [];
+
+      for (const move of getLearnableMoves(caught.species)) {
+        names.push(getMoveData(move).name);
+      }
+      return holdsAny(names, value);
+    }),
     // The types of the moves it knows, which is what somebody building
     // a party against one type is looking for
-    'move-type': hidden((caught, value) =>
-      holdsAny(
-        caught.moves.map((move) => TYPE_NAMES[getMoveData(move).type]),
-        value,
-      ),
-    ),
+    'move-type': hidden((caught, value) => {
+      const names: string[] = [];
+
+      for (const move of caught.moves) {
+        names.push(TYPE_NAMES[getMoveData(move).type]);
+      }
+      return holdsAny(names, value);
+    }),
     // How a type lands on it, worked out over its own types the way a
     // hit is: `weak:` is anything over neutral, `resists:` anything
     // under it that still lands, `immune:` nothing at all
@@ -777,27 +854,55 @@ const FIELDS = new Map<string, CatchField>(
     }),
     // How much has been spent on any one of its moves, which is what
     // somebody looking for the ones still worth a PP Up means
-    pp: hidden((caught, value) =>
-      caught.moves.some((move) => numeric(value, caught.movePoints[String(move)] ?? 0)),
-    ),
+    pp: hidden((caught, value) => {
+      for (const move of caught.moves) {
+        if (numeric(value, caught.movePoints[String(move)] ?? 0)) {
+          return true;
+        }
+      }
+      return false;
+    }),
     moves: hidden((caught, value) => numeric(value, caught.moves.length)),
 
     // Whose hands it has been through, how it got there and what it
     // went for
-    from: (caught, value) =>
-      caught.history.some((entry) => holds(entry.name ?? entry.owner, value)),
+    from: (caught, value) => {
+      for (const entry of caught.history) {
+        if (holds(entry.name ?? entry.owner, value)) {
+          return true;
+        }
+      }
+      return false;
+    },
     hands: (caught, value) => numeric(value, caught.history.length),
-    paid: (caught, value) =>
-      caught.history.some((entry) => entry.paid != null && numeric(value, entry.paid)),
-    got: (caught, value) =>
-      caught.history.some((entry) => holds(ACQUISITION_NAMES[entry.kind], value)),
+    paid: (caught, value) => {
+      for (const entry of caught.history) {
+        if (entry.paid != null && numeric(value, entry.paid)) {
+          return true;
+        }
+      }
+      return false;
+    },
+    got: (caught, value) => {
+      for (const entry of caught.history) {
+        if (holds(ACQUISITION_NAMES[entry.kind], value)) {
+          return true;
+        }
+      }
+      return false;
+    },
 
     // When it was caught, on its catcher's own calendar: a year, a
     // month, a day, a span of them or a comparison against one
     caught: (caught, value) => {
       const at = caught.caughtAt.slice(0, LOCAL_STAMP);
 
-      return stamps(value).some((span) => insideSpan(span, at));
+      for (const span of stamps(value)) {
+        if (insideSpan(span, at)) {
+          return true;
+        }
+      }
+      return false;
     },
   }),
 );
@@ -809,7 +914,12 @@ function idsFor(table: Record<number, string>, value: string): number[] {
 
 /** Every registered item, which is the tray in one list */
 function everyItem(): Items[] {
-  return ITEM_TYPE_ORDER.flatMap((type) => listItemsByType(type));
+  const items: Items[] = [];
+
+  for (const type of ITEM_TYPE_ORDER) {
+    items.push(...listItemsByType(type));
+  }
+  return items;
 }
 
 /**
@@ -869,10 +979,14 @@ function comparisons(bounds: Bounds): { op: CatchOp; value: number }[] {
  */
 function pushRange(column: string, value: string): CatchConstraint[] {
   const bounds = ranges(value);
+  const pushed: CatchConstraint[] = [];
 
-  return bounds.length === 1
-    ? comparisons(bounds[0]).map((asked) => ({ on: 'row', column, ...asked }))
-    : [];
+  if (bounds.length === 1) {
+    for (const asked of comparisons(bounds[0])) {
+      pushed.push({ on: 'row', column, ...asked });
+    }
+  }
+  return pushed;
 }
 
 /** The same, for a band over a child table's column */
@@ -884,10 +998,14 @@ function pushChildRange(
 ): CatchConstraint[] {
   const bounds = ranges(value);
 
-  if (bounds.length !== 1) {
-    return [];
+  const pushed: CatchConstraint[] = [];
+
+  if (bounds.length === 1) {
+    for (const asked of comparisons(bounds[0])) {
+      pushed.push({ on: 'child', alias, table, column, ...asked });
+    }
   }
-  return comparisons(bounds[0]).map((asked) => ({ on: 'child', alias, table, column, ...asked }));
+  return pushed;
 }
 
 /** A date term as bounds on the stored stamp */
@@ -950,7 +1068,14 @@ function ballNames(): Record<number, string> {
 
 /** Every registered thing of a kind whose name holds the word */
 function idsNamed<T extends number>(every: T[], name: (entry: T) => string, value: string): T[] {
-  return every.filter((entry) => holds(name(entry), value));
+  const named: T[] = [];
+
+  for (const entry of every) {
+    if (holds(name(entry), value)) {
+      named.push(entry);
+    }
+  }
+  return named;
 }
 
 /**
@@ -1067,13 +1192,16 @@ function constrain(term: QueryTerm, alias: string): CatchConstraint[] {
 
       return pushRange(stat == null ? 'iv_total' : IV_COLUMNS[stat], number);
     }
-    case 'dex':
-      return oneOf(
-        'species',
-        getRegisteredSpecies().filter((species) =>
-          numeric(value, getSpeciesData(species).dexNumber),
-        ),
-      );
+    case 'dex': {
+      const numbered: Species[] = [];
+
+      for (const species of getRegisteredSpecies()) {
+        if (numeric(value, getSpeciesData(species).dexNumber)) {
+          numbered.push(species);
+        }
+      }
+      return oneOf('species', numbered);
+    }
     case 'caught':
       return pushSpan('caught_at_local', value);
     default:
@@ -1153,14 +1281,17 @@ export default function matchesCatch(
   query: string,
   context: CatchContext = {},
 ): boolean {
-  return askedTerms(query).every((term) => {
+  for (const term of askedTerms(query)) {
     const answered =
       term.field === ''
         ? byName(caught, term.value)
         : FIELDS.get(term.field)?.(caught, term.value, context) === true;
 
-    return term.negated ? !answered : answered;
-  });
+    if (term.negated ? answered : !answered) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
@@ -1259,7 +1390,14 @@ const VALUES: Record<string, () => string[]> = {
   is: () => [...MARKS.keys()],
   not: () => [...MARKS.keys()],
   status: () => [...STORED_STATUSES.keys()],
-  ball: () => Object.values(BALL_ITEMS).map((ball) => getItemData(ball).name),
+  ball: () => {
+    const names: string[] = [];
+
+    for (const ball of Object.values(BALL_ITEMS)) {
+      names.push(getItemData(ball).name);
+    }
+    return names;
+  },
   met: () => Object.values(ENCOUNTER_TYPE_NAMES),
   biome: () => Object.values(BIOME_NAMES),
   spawns: () => Object.values(BIOME_NAMES),
@@ -1279,13 +1417,11 @@ const VALUES: Record<string, () => string[]> = {
  * the end because they are asked for in the same box, though nothing
  * answers them
  */
-export const CATCH_VOCABULARY: QueryVocabulary = {
-  fields: [...FIELDS.keys(), 'sort', 'order'].map((name) => ({
-    name,
-    hint: HINTS[name] ?? '',
-    values: VALUES[name],
-  })),
-};
+export const CATCH_VOCABULARY: QueryVocabulary = { fields: [] };
+
+for (const name of [...FIELDS.keys(), 'sort', 'order']) {
+  CATCH_VOCABULARY.fields.push({ name, hint: HINTS[name] ?? '', values: VALUES[name] });
+}
 
 /**
  * The rows a search asked for, in the order it asked for them.

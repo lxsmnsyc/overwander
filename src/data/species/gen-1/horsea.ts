@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -78,12 +78,20 @@ export default function registerHorseaSpecies(): void {
       [Stats.Speed]: 60,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.SwiftSwim, Abilities.Sniper],
     hiddenAbilities: [Abilities.Damp],
     eggGroups: [EggGroups.Water1, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 225,
-    biomes: [Biome.Ocean, Biome.CoralReef, Biome.DeepOcean, Biome.KelpForest],
+    biomes: [
+      Biome.Ocean,
+      Biome.CoralReef,
+      Biome.DeepOcean,
+      Biome.KelpForest,
+      Biome.Beach,
+      Biome.RockyCoast,
+    ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -135,12 +143,13 @@ export default function registerHorseaSpecies(): void {
       [Stats.Speed]: 85,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.PoisonPoint, Abilities.Sniper],
     hiddenAbilities: [Abilities.Damp],
     eggGroups: [EggGroups.Water1, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Ocean, Biome.CoralReef, Biome.KelpForest],
+    biomes: [Biome.Ocean, Biome.CoralReef, Biome.KelpForest, Biome.Beach, Biome.RockyCoast],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

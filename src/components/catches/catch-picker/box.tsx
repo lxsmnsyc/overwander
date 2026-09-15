@@ -1,5 +1,5 @@
 import matchesCatch, { type CatchContext, orderCatches } from '../../../auth/catch-search';
-import { findDuplicates, giveItem, takeItem } from '../../../auth/caught';
+import { type CaughtPokemon, findDuplicates, giveItem, takeItem } from '../../../auth/caught';
 import { useAuth } from '../../../auth/context';
 import { ItemFlags, type Items } from '../../../data/ids/items';
 import { getItemData } from '../../../data/items';
@@ -91,11 +91,16 @@ export default function PickerBox(
    * back, so a plain read took the page down for the length of the
    * round trip
    */
-  const offered = createMemo<CatchOption[]>(() =>
-    (props.options ?? props.owned.latest ?? [])
-      .filter((option) => props.filter?.(option) ?? true)
-      .sort((one, other) => other.caught.caughtAt.localeCompare(one.caught.caughtAt)),
-  );
+  const offered = createMemo<CatchOption[]>(() => {
+    const kept: CatchOption[] = [];
+
+    for (const option of props.options ?? props.owned.latest ?? []) {
+      if (props.filter?.(option) ?? true) {
+        kept.push(option);
+      }
+    }
+    return kept.sort((one, other) => other.caught.caughtAt.localeCompare(one.caught.caughtAt));
+  });
 
   const query = (): string => props.search;
   /**
@@ -142,7 +147,14 @@ export default function PickerBox(
    * offered rather than the page being shown, so narrowing the search
    * cannot change what counts as a duplicate
    */
-  const duplicates = createMemo(() => findDuplicates(offered().map((option) => option.caught)));
+  const duplicates = createMemo(() => {
+    const box: CaughtPokemon[] = [];
+
+    for (const option of offered()) {
+      box.push(option.caught);
+    }
+    return findDuplicates(box);
+  });
 
   /**
    * How the squares are laid out, which is every pokemon on offer
@@ -157,24 +169,36 @@ export default function PickerBox(
     orderCatches(offered(), query(), (option) => option.caught, props.sort),
   );
 
-  const options = createMemo<CatchOption[]>(() =>
-    arranged().filter((option) =>
-      matchesCatch(option.caught, query(), {
-        ...props.around.latest,
-        id: option.id,
-        duplicates: duplicates(),
-      }),
-    ),
-  );
+  const options = createMemo<CatchOption[]>(() => {
+    const kept: CatchOption[] = [];
+
+    for (const option of arranged()) {
+      if (
+        matchesCatch(option.caught, query(), {
+          ...props.around.latest,
+          id: option.id,
+          duplicates: duplicates(),
+        })
+      ) {
+        kept.push(option);
+      }
+    }
+    return kept;
+  });
 
   /**
    * The same list by id. Every square looks its own record up to draw
    * the card over it, and a scan each was the box searching itself
    * once per square
    */
-  const optionById = createMemo(
-    () => new Map(options().map((option) => [option.id, option] as const)),
-  );
+  const optionById = createMemo(() => {
+    const byId = new Map<string, CatchOption>();
+
+    for (const option of options()) {
+      byId.set(option.id, option);
+    }
+    return byId;
+  });
 
   const chosen = (): string[] => (props.multiple === true ? props.value : []);
 
@@ -189,8 +213,17 @@ export default function PickerBox(
     props.multiple === true ? (props.max ?? Number.POSITIVE_INFINITY) : 1;
 
   /** Whether two runs of ids are the same run, in the same order */
-  const sameRun = (one: string[], other: string[]): boolean =>
-    one.length === other.length && one.every((id, at) => id === other[at]);
+  const sameRun = (one: string[], other: string[]): boolean => {
+    if (one.length !== other.length) {
+      return false;
+    }
+    for (const [at, id] of one.entries()) {
+      if (id !== other[at]) {
+        return false;
+      }
+    }
+    return true;
+  };
 
   createEffect(() => {
     if (!showing()) {
@@ -275,7 +308,14 @@ export default function PickerBox(
     }
     if (props.multiple === true) {
       if (isDrafted(option.id)) {
-        setDraft(draft().filter((id) => id !== option.id));
+        const rest: string[] = [];
+
+        for (const id of draft()) {
+          if (id !== option.id) {
+            rest.push(id);
+          }
+        }
+        setDraft(rest);
       } else if (draft().length < limit()) {
         setDraft([...draft(), option.id]);
       }
@@ -315,24 +355,28 @@ export default function PickerBox(
    * wants to be told it is fighting somewhere else, not left to
    * wonder where it went
    */
-  const entries = createMemo<CatchGridEntry[]>(() =>
-    arranged().map((option) => {
+  const entries = createMemo<CatchGridEntry[]>(() => {
+    const made: CatchGridEntry[] = [];
+
+    for (const option of arranged()) {
       const refused = props.reason?.(option) ?? null;
       const taken = props.multiple === true ? isDrafted(option.id) : props.value === option.id;
       const square = asBoxEntry([option.id, option.caught]);
 
       if (refused != null) {
-        return {
+        made.push({
           square: { ...square, mark: 'refused' as const, label: `${square.label} — ${refused}` },
           caught: option.caught,
-        };
+        });
+        continue;
       }
-      return {
+      made.push({
         square: taken ? { ...square, mark: 'picked' as const } : square,
         caught: option.caught,
-      };
-    }),
-  );
+      });
+    }
+    return made;
+  });
 
   /**
    * What the button on a card says it will do. A box being browsed

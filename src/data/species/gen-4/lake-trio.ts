@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 /**
@@ -90,6 +90,7 @@ export default function registerLakeTrioSpecies(): void {
       [Stats.Speed]: 95,
     },
     types: [Types.Psychic],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.Levitate],
     // Levitate is all the mainline gives it, so the other three
     // are this registry's, each of them the thing it stands for
@@ -132,6 +133,7 @@ export default function registerLakeTrioSpecies(): void {
       [Stats.Speed]: 80,
     },
     types: [Types.Psychic],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.Levitate],
     // Levitate is all the mainline gives it, so the other three
     // are this registry's, each of them the thing it stands for
@@ -174,6 +176,7 @@ export default function registerLakeTrioSpecies(): void {
       [Stats.Speed]: 115,
     },
     types: [Types.Psychic],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.Levitate],
     // Levitate is all the mainline gives it, so the other three
     // are this registry's, each of them the thing it stands for

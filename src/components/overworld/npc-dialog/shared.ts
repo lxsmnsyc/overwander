@@ -30,7 +30,7 @@ export const NPC_QUOTES: Record<Npc, string> = {
   [Npc.Breeder]: 'Two that get along, that is all I ask. I do the matching, you do the walking.',
   [Npc.DaycareLady]:
     'Leave the egg with me a while, dear. Half of what it has left, gone like that.',
-  [Npc.NurseJoy]: 'Oh, hand them over, all of them. No charge. I am here until the day turns.',
+  [Npc.NurseJoy]: 'Oh, hand them over, all of them. No charge. The counter is always open.',
   [Npc.Groomer]: 'One good brushing and it will think the world of you. Shadows? Out of my hands.',
   [Npc.Vendor]:
     'Step up, step up. I sell what is in the crate and buy near anything, long as your purse holds.',
@@ -153,7 +153,12 @@ export function optionsOf(props: CounterProps): CatchOption[] {
  * reminder, a lesson and a channelling
  */
 export function scalesIn(props: CounterProps): number {
-  return (props.bag.latest ?? []).find((entry) => entry.item === REMINDER_FEE)?.amount ?? 0;
+  for (const entry of props.bag.latest ?? []) {
+    if (entry.item === REMINDER_FEE) {
+      return entry.amount;
+    }
+  }
+  return 0;
 }
 
 /** What went wrong, said the way every counter says it */

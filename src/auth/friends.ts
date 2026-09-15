@@ -54,9 +54,12 @@ function watchLinks(
   const read = async (): Promise<FriendLink[]> => {
     const { data } = await getSupabase().from(table).select('*').eq(mine, uid);
 
-    return asRecordArray(data)
-      .map((row) => ({ uid: asString(row[theirs]), since: asNumber(row[stamp]) }))
-      .sort(byNewest);
+    const links: FriendLink[] = [];
+
+    for (const row of asRecordArray(data)) {
+      links.push({ uid: asString(row[theirs]), since: asNumber(row[stamp]) });
+    }
+    return links.sort(byNewest);
   };
 
   return watchTable(table, [`${mine}=eq.${uid}`], read, onChange);
@@ -85,18 +88,18 @@ export function watchFriendRequests(
       .from('friend_requests')
       .select('sender, recipient, sent_at')
       .or(`sender.eq.${uid},recipient.eq.${uid}`);
-    const rows = asRecordArray(data);
+    const incoming: FriendLink[] = [];
+    const outgoing: FriendLink[] = [];
 
-    return {
-      incoming: rows
-        .filter((row) => row.recipient === uid)
-        .map((row) => ({ uid: asString(row.sender), since: asNumber(row.sent_at) }))
-        .sort(byNewest),
-      outgoing: rows
-        .filter((row) => row.sender === uid)
-        .map((row) => ({ uid: asString(row.recipient), since: asNumber(row.sent_at) }))
-        .sort(byNewest),
-    };
+    for (const row of asRecordArray(data)) {
+      if (row.recipient === uid) {
+        incoming.push({ uid: asString(row.sender), since: asNumber(row.sent_at) });
+      }
+      if (row.sender === uid) {
+        outgoing.push({ uid: asString(row.recipient), since: asNumber(row.sent_at) });
+      }
+    }
+    return { incoming: incoming.sort(byNewest), outgoing: outgoing.sort(byNewest) };
   };
 
   return watchTable('friend_requests', [`sender=eq.${uid}`, `recipient=eq.${uid}`], read, onChange);

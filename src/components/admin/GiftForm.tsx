@@ -41,7 +41,7 @@ import {
   MAX_SLOTS,
   packSlots,
 } from '../../data/constants/slots';
-import ItemGrid from '../items/ItemGrid';
+import ItemGrid, { type ItemCell } from '../items/ItemGrid';
 import ItemSprite from '../items/ItemSprite';
 import type { StaffGift } from '../../auth/admin';
 import { offerGift } from '../../auth/admin';
@@ -129,7 +129,7 @@ export default function GiftForm(props: GiftFormProps): JSX.Element {
   const [abilities, setAbilities] = createSignal<Abilities[]>([]);
   const [moves, setMoves] = createSignal<Moves[]>([]);
   const [held, setHeld] = createSignal<(Items | null)[]>(
-    Array.from({ length: MAX_SLOTS }, () => null),
+    Array.from<null>({ length: MAX_SLOTS }).fill(null),
   );
   /** Which held-item square is being filled, or null while none is */
   const [filling, setFilling] = createSignal<number | null>(null);
@@ -147,19 +147,32 @@ export default function GiftForm(props: GiftFormProps): JSX.Element {
 
   // Built once: the registries are fixed at boot, and both lists are
   // long enough that rebuilding them per keystroke would be felt
-  const items = createMemo(() =>
-    ITEM_TYPE_ORDER.flatMap((type) =>
-      listItemsByType(type).map((entry) => ({ value: entry, label: getItemData(entry).name })),
-    ),
-  );
-  const pokemon = createMemo(() =>
-    getRegisteredSpecies().map((entry) => ({ value: entry, label: getSpeciesData(entry).name })),
-  );
-  const everyMove = createMemo(() =>
-    getRegisteredMoves()
-      .map((entry) => ({ value: entry, label: getMoveData(entry).name }))
-      .sort((left, right) => left.label.localeCompare(right.label)),
-  );
+  const items = createMemo(() => {
+    const options: { value: Items; label: string }[] = [];
+
+    for (const type of ITEM_TYPE_ORDER) {
+      for (const entry of listItemsByType(type)) {
+        options.push({ value: entry, label: getItemData(entry).name });
+      }
+    }
+    return options;
+  });
+  const pokemon = createMemo(() => {
+    const options: { value: Species; label: string }[] = [];
+
+    for (const entry of getRegisteredSpecies()) {
+      options.push({ value: entry, label: getSpeciesData(entry).name });
+    }
+    return options;
+  });
+  const everyMove = createMemo(() => {
+    const options: { value: Moves; label: string }[] = [];
+
+    for (const entry of getRegisteredMoves()) {
+      options.push({ value: entry, label: getMoveData(entry).name });
+    }
+    return options.sort((left, right) => left.label.localeCompare(right.label));
+  });
   /**
    * What this line can carry. It is the species' own pool plus its
    * pre-evolutions', which is what the roll draws from — a gift may be
@@ -167,20 +180,36 @@ export default function GiftForm(props: GiftFormProps): JSX.Element {
    */
   const abilityOptions = createMemo(() => {
     const which = species();
+    const options: { value: Abilities; label: string }[] = [];
 
-    return which == null
-      ? []
-      : [...getSpeciesAbilities(which)].map((entry) => ({
-          value: entry,
-          label: getAbilityData(entry).name,
-        }));
+    if (which != null) {
+      for (const entry of getSpeciesAbilities(which)) {
+        options.push({ value: entry, label: getAbilityData(entry).name });
+      }
+    }
+    return options;
   });
-  const balls = createMemo(() =>
-    (Object.keys(BALL_ITEMS).map(Number) as Balls[]).map((entry) => ({
-      value: entry,
-      label: getItemData(BALL_ITEMS[entry]).name,
-    })),
-  );
+  const balls = createMemo(() => {
+    const options: { value: Balls; label: string }[] = [];
+
+    for (const key of Object.keys(BALL_ITEMS)) {
+      const entry: Balls = Number(key);
+
+      options.push({ value: entry, label: getItemData(BALL_ITEMS[entry]).name });
+    }
+    return options;
+  });
+  const genders: { value: Genders; label: string }[] = [];
+
+  for (const entry of [Genders.Genderless, Genders.Male, Genders.Female]) {
+    genders.push({ value: entry, label: GENDER_NAMES[entry] });
+  }
+
+  const natures: { value: Natures; label: string }[] = [];
+
+  for (const [entry, label] of Object.entries(NATURE_NAMES)) {
+    natures.push({ value: Number(entry), label });
+  }
 
   const count = (): number => Math.floor(Number(amount()));
   const rank = (): number => Math.floor(Number(level()));
@@ -220,14 +249,36 @@ export default function GiftForm(props: GiftFormProps): JSX.Element {
   const known = (): Moves[] => moves().slice(0, room(moveRoom()));
 
   const setCarried = (slot: number, carried: Items | null): void => {
-    setHeld((current) => current.map((entry, at) => (at === slot ? carried : entry)));
+    setHeld((current) => {
+      const next: (Items | null)[] = [];
+
+      for (const [at, entry] of current.entries()) {
+        next.push(at === slot ? carried : entry);
+      }
+      return next;
+    });
   };
 
   /** What it walks in carrying, in slot order and without the gaps */
-  const carrying = (): Items[] =>
-    held()
-      .slice(0, room(itemRoom()))
-      .filter((carried): carried is Items => carried != null);
+  const carrying = (): Items[] => {
+    const kept: Items[] = [];
+
+    for (const carried of held().slice(0, room(itemRoom()))) {
+      if (carried != null) {
+        kept.push(carried);
+      }
+    }
+    return kept;
+  };
+
+  const itemCells = (): ItemCell[] => {
+    const cells: ItemCell[] = [];
+
+    for (const entry of items()) {
+      cells.push({ item: entry.value });
+    }
+    return cells;
+  };
 
   const setValue = (stat: Stats, value: string): void => {
     const wanted = Math.max(0, Math.min(MAX_IV, Math.floor(Number(value))));
@@ -462,10 +513,7 @@ export default function GiftForm(props: GiftFormProps): JSX.Element {
                 label="Gender"
                 value={gender()}
                 placeholder="Whatever it rolls"
-                options={[Genders.Genderless, Genders.Male, Genders.Female].map((entry) => ({
-                  value: entry,
-                  label: GENDER_NAMES[entry],
-                }))}
+                options={genders}
                 onChange={(value) => {
                   setGender(value);
                 }}
@@ -474,10 +522,7 @@ export default function GiftForm(props: GiftFormProps): JSX.Element {
                 label="Nature"
                 value={nature()}
                 placeholder="Whatever it rolls"
-                options={Object.entries(NATURE_NAMES).map(([entry, label]) => ({
-                  value: Number(entry),
-                  label,
-                }))}
+                options={natures}
                 onChange={(value) => {
                   setNature(value);
                 }}
@@ -689,7 +734,7 @@ export default function GiftForm(props: GiftFormProps): JSX.Element {
       >
         <ItemGrid
           verb="Choose"
-          entries={items().map((entry) => ({ item: entry.value }))}
+          entries={itemCells()}
           onPress={(chosen) => {
             setCarried(filling() ?? 0, chosen);
             setFilling(null);

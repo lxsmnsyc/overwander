@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
 
 /**
  * TemperateRainforest spawn pool, grouped by day-cycle period and rarity band
@@ -91,6 +91,94 @@ export default function registerTemperateRainforestSpawns(): void {
       ],
       elusive: [],
       prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
+      special: [],
+    },
+  });
+  registerWaterPool(Biome.TemperateRainforest, {
+    [TimeOfDay.Morning]: {
+      base: [
+        { species: Species.Poliwag, weight: 20 },
+        { species: Species.Lotad, weight: 20 },
+      ],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Marill, weight: 20 },
+        { species: Species.Wooper, weight: 25 },
+        { species: Species.Surskit, weight: 25 },
+      ],
+      rare: [
+        { species: Species.Poliwhirl, weight: 5 },
+        { species: Species.Lombre, weight: 10 },
+      ],
+      scarce: [
+        { species: Species.Azumarill, weight: 5 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Masquerain, weight: 10 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      elusive: [
+        { species: Species.Politoed, weight: 5 },
+        { species: Species.Ludicolo, weight: 5 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Day]: {
+      base: [
+        { species: Species.Poliwag, weight: 20 },
+        { species: Species.Lotad, weight: 20 },
+      ],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Marill, weight: 20 },
+        { species: Species.Wooper, weight: 25 },
+        { species: Species.Surskit, weight: 25 },
+      ],
+      rare: [
+        { species: Species.Poliwhirl, weight: 5 },
+        { species: Species.Lombre, weight: 10 },
+      ],
+      scarce: [
+        { species: Species.Azumarill, weight: 5 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Masquerain, weight: 10 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      elusive: [
+        { species: Species.Politoed, weight: 5 },
+        { species: Species.Ludicolo, weight: 5 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Evening]: {
+      base: [{ species: Species.Poliwag, weight: 20 }],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Marill, weight: 20 },
+        { species: Species.Wooper, weight: 25 },
+      ],
+      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      scarce: [
+        { species: Species.Azumarill, weight: 5 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      elusive: [{ species: Species.Politoed, weight: 5 }],
+      special: [],
+    },
+    [TimeOfDay.Night]: {
+      base: [{ species: Species.Poliwag, weight: 20 }],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Marill, weight: 20 },
+        { species: Species.Wooper, weight: 25 },
+      ],
+      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      scarce: [
+        { species: Species.Azumarill, weight: 5 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      elusive: [{ species: Species.Politoed, weight: 5 }],
       special: [],
     },
   });

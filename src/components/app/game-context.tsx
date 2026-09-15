@@ -19,7 +19,13 @@ import { claimStopReward } from '../../auth/stops';
 import { settleGymChallenge } from '../../auth/gym-seats';
 import type { PositionRecord } from '../../auth/position-record';
 import type { Species } from '../../data/ids/species';
-import { getPosition, savePosition, watchPosition } from '../../auth/positions';
+import type { WalkReport } from '../../auth/eggs';
+import {
+  getPosition,
+  savePosition,
+  watchPosition,
+  settleWalk as writeWalk,
+} from '../../auth/positions';
 import { AWARD_NAMES } from '../../data/ids/awards';
 import { getItemData } from '../../data/items';
 import ItemSprite from '../items/ItemSprite';
@@ -29,7 +35,8 @@ import type { AuctionSubject } from '../auctions/AuctionDialog';
 import type ProfileSection from '../profile/sections';
 import { ensureProfile } from '../../auth/profile';
 import getWorld from '../../overworld/current';
-import pickStartPosition, { type StartPosition } from '../../overworld/start';
+import { Depth } from '../../overworld/depth';
+import pickStartPosition, { type StartPosition, nearestFreeCell } from '../../overworld/start';
 /**
  * What is open over the world.
  *
@@ -210,7 +217,16 @@ export interface GameState {
    * that could not recognise its own writes coming back around the
    * subscription would stand itself down mid-walk
    */
-  saveWalk: (chunkX: number, chunkY: number, cellX: number, cellY: number) => void;
+  saveWalk: (chunkX: number, chunkY: number, cellX: number, cellY: number, depth: Depth) => void;
+  /** `saveWalk` with the paces walked since the last step report, resolving what they came to */
+  settleWalk: (
+    chunkX: number,
+    chunkY: number,
+    cellX: number,
+    cellY: number,
+    depth: Depth,
+    steps: number,
+  ) => Promise<WalkReport | null>;
   /**
    * Where that is, in words: the country and the chunk's coordinates.
    *
@@ -383,15 +399,77 @@ export default function GameProvider(props: ParentProps): JSX.Element {
    */
   let wroteAt = 0;
 
-  const saveWalk = (chunkX: number, chunkY: number, cellX: number, cellY: number): void => {
-    savePosition(chunkX, chunkY, cellX, cellY)
-      .then((stamp) => {
-        wroteAt = Math.max(wroteAt, stamp);
-      })
-      .catch(() => {
-        // A position that did not save is a walk that will save it,
-        // and there is nothing here worth interrupting a walk for
-      });
+  /** Saves still on their way, and the news that arrived while one was */
+  let saving = 0;
+  let heldNews: PositionRecord | null = null;
+
+  const hearPosition = (record: PositionRecord | null): void => {
+    // A save's own change can arrive before its stamp does, so news is
+    // held until every save out has come back
+    if (record != null && saving > 0) {
+      heldNews = record;
+      return;
+    }
+
+    const here = position();
+
+    // A row nobody has written yet, this screen's own coming back
+    // around, or news that arrived before there was anything to
+    // compare it against
+    if (record == null || record.movedAt <= wroteAt || here == null || elsewhere() != null) {
+      return;
+    }
+    if (record.chunkX !== here.chunkX || record.chunkY !== here.chunkY) {
+      setElsewhere(record);
+    }
+  };
+
+  /** One save out and back, keeping its stamp and holding news that lands before it */
+  const track = async (save: () => Promise<number>): Promise<void> => {
+    saving += 1;
+    try {
+      wroteAt = Math.max(wroteAt, await save());
+    } finally {
+      saving -= 1;
+      if (saving === 0 && heldNews != null) {
+        const news = heldNews;
+
+        heldNews = null;
+        hearPosition(news);
+      }
+    }
+  };
+
+  const settleWalk = async (
+    chunkX: number,
+    chunkY: number,
+    cellX: number,
+    cellY: number,
+    depth: Depth,
+    steps: number,
+  ): Promise<WalkReport | null> => {
+    let report: WalkReport | null = null;
+
+    await track(async () => {
+      const settled = await writeWalk(steps, chunkX, chunkY, cellX, cellY, depth);
+
+      report = settled.report;
+      return settled.stamp;
+    });
+    return report;
+  };
+
+  const saveWalk = (
+    chunkX: number,
+    chunkY: number,
+    cellX: number,
+    cellY: number,
+    depth: Depth,
+  ): void => {
+    track(async () => savePosition(chunkX, chunkY, cellX, cellY, depth)).catch(() => {
+      // A position that did not save is a walk that will save it,
+      // and there is nothing here worth interrupting a walk for
+    });
   };
 
   const [moved, setMoved] = createSignal<PositionRecord | null>(null);
@@ -411,7 +489,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
     }
     setElsewhere(null);
     setPosition(at);
-    saveWalk(at.chunkX, at.chunkY, at.cellX, at.cellY);
+    saveWalk(at.chunkX, at.chunkY, at.cellX, at.cellY, at.depth);
   };
   const [place, setPlace] = createSignal<string | null>(null);
   const [weather, setWeather] = createSignal<Weather | null>(null);
@@ -455,18 +533,39 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         chunkY: at.chunkY,
         cellX: at.cellX,
         cellY: at.cellY,
+        // A player put down for the first time is put down outside, and
+        // a start position has no layer of its own to carry
+        depth: 'depth' in at ? at.depth : Depth.Surface,
         movedAt: 'movedAt' in at ? at.movedAt : 0,
       });
 
       if (store) {
-        saveWalk(at.chunkX, at.chunkY, at.cellX, at.cellY);
+        saveWalk(
+          at.chunkX,
+          at.chunkY,
+          at.cellX,
+          at.cellY,
+          'depth' in at ? at.depth : Depth.Surface,
+        );
       }
     };
 
     getPosition(user.uid)
       .then((stored) => {
         if (stored != null) {
-          standAt(stored, false);
+          // Scenery can have moved onto a saved cell since, so step off it and keep the new spot
+          const open = nearestFreeCell(
+            getWorld(),
+            stored.chunkX,
+            stored.chunkY,
+            stored.cellX,
+            stored.cellY,
+          );
+
+          standAt(
+            { ...stored, ...open },
+            open.cellX !== stored.cellX || open.cellY !== stored.cellY,
+          );
           return;
         }
         standAt(pickStartPosition(getWorld(), `${user.uid}:${Date.now()}:${Math.random()}`), true);
@@ -506,19 +605,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
       return;
     }
 
-    const stop = watchPosition(user.uid, (record) => {
-      const here = position();
-
-      // A row nobody has written yet, this screen's own coming back
-      // around, or news that arrived before there was anything to
-      // compare it against
-      if (record == null || record.movedAt <= wroteAt || here == null || elsewhere() != null) {
-        return;
-      }
-      if (record.chunkX !== here.chunkX || record.chunkY !== here.chunkY) {
-        setElsewhere(record);
-      }
-    });
+    const stop = watchPosition(user.uid, hearPosition);
 
     onCleanup(stop);
   });
@@ -691,6 +778,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         moved,
         takeWalk,
         saveWalk,
+        settleWalk,
         place,
         weather,
         setWeather,

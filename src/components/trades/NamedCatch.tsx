@@ -1,5 +1,5 @@
 import { type JSX, type Resource, Suspense, createResource } from 'solid-js';
-import { type CaughtPokemon, getCaught } from '../../auth/caught';
+import { type CaughtPokemon, getCaughtBatched } from '../../auth/caught';
 import { describeCatch } from '../catches/catch-summary';
 
 /**
@@ -14,7 +14,11 @@ function Named(props: { caught: Resource<CaughtPokemon | null> }): JSX.Element {
 }
 
 export default function NamedCatch(props: { id: string }): JSX.Element {
-  const [caught] = createResource(() => props.id, getCaught);
+  // One per trade row, so the rows on screen share a read
+  const [caught] = createResource(
+    () => props.id,
+    async (id) => getCaughtBatched(id),
+  );
 
   return (
     <Suspense fallback={<span>a pokemon</span>}>

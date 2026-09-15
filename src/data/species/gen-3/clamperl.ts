@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves the whole line shares
@@ -78,6 +78,7 @@ export default function registerClamperlSpecies(): void {
       [Stats.Speed]: 32,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.ShellArmor],
     hiddenAbilities: [Abilities.Rattled],
     eggGroups: [EggGroups.Water1],
@@ -119,6 +120,7 @@ export default function registerClamperlSpecies(): void {
       [Stats.Speed]: 52,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.SwiftSwim],
     hiddenAbilities: [Abilities.WaterVeil],
     eggGroups: [EggGroups.Water1],
@@ -169,6 +171,7 @@ export default function registerClamperlSpecies(): void {
       [Stats.Speed]: 52,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.SwiftSwim],
     hiddenAbilities: [Abilities.Hydration],
     eggGroups: [EggGroups.Water1],

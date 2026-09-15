@@ -1,4 +1,4 @@
-import { For, type JSX } from 'solid-js';
+import { For, type JSX, Show } from 'solid-js';
 import { useColorScheme, usePreferredColorScheme } from 'terracotta';
 import settings, {
   type BoxColumns,
@@ -100,11 +100,13 @@ function bindKey(action: GameAction, key: string): void {
     return;
   }
 
-  const clashing = ACTION_ORDER.find((one) => binds[one] === key);
   const next = { ...binds, [action]: key };
 
-  if (clashing != null) {
-    next[clashing] = binds[action];
+  for (const one of ACTION_ORDER) {
+    if (binds[one] === key) {
+      next[one] = binds[action];
+      break;
+    }
   }
   setSetting('keys', next);
 }
@@ -152,6 +154,51 @@ function GeneralPane(): JSX.Element {
           checked={settings().keepBall}
           onChange={(on) => {
             setSetting('keepBall', on);
+          }}
+        />
+      </Card>
+
+      <Card title="Overworld">
+        <Switch
+          label="Grid lines"
+          description="Rules a line round every cell of the board."
+          checked={settings().gridLines}
+          onChange={(on) => {
+            setSetting('gridLines', on);
+          }}
+        />
+        <Switch
+          label="Flat board"
+          description="Draws the board flat from straight above on a wide screen too, the way an
+            upright screen always shows it."
+          checked={settings().flatBoard}
+          onChange={(on) => {
+            setSetting('flatBoard', on);
+          }}
+        />
+      </Card>
+
+      <Show when={import.meta.env.DEV}>
+        <Card title="Development">
+          <Switch
+            label="Highlight cliffs and seams"
+            description="Tints cliff tiles red and seamed tiles green on the board."
+            checked={settings().stepHighlight}
+            onChange={(on) => {
+              setSetting('stepHighlight', on);
+            }}
+          />
+        </Card>
+      </Show>
+
+      <Card title="World map">
+        <Switch
+          label="Detailed world map"
+          description="Draws water, cliffs, towns and routes on the map, and takes a moment to fill
+            in. Off, the map shows each chunk's country at once, with towns picked out."
+          checked={settings().detailedMap}
+          onChange={(on) => {
+            setSetting('detailedMap', on);
           }}
         />
       </Card>

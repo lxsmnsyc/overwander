@@ -33,11 +33,14 @@ const MARKS = new Map<string, (team: TeamRecord, context: TeamContext) => boolea
 );
 
 function marked(team: TeamRecord, value: string, wanted: boolean, context: TeamContext): boolean {
-  return alternatives(value).some((word) => {
+  for (const word of alternatives(value)) {
     const mark = MARKS.get(word.trim().toLowerCase());
 
-    return mark?.(team, context) === wanted;
-  });
+    if (mark?.(team, context) === wanted) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /** What one field asks of one row */
@@ -64,15 +67,18 @@ export default function matchesTeam(
   query: string,
   context: TeamContext = {},
 ): boolean {
-  return askedTerms(query).every((term) => {
+  for (const term of askedTerms(query)) {
     const answered =
       term.field === ''
         ? holds(team.player, term.value) ||
           (context.name != null && holds(context.name, term.value))
         : FIELDS.get(term.field)?.(team, term.value, context) === true;
 
-    return term.negated ? !answered : answered;
-  });
+    if (term.negated ? answered : !answered) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /** What each `sort:` word reads off a row */
@@ -101,13 +107,11 @@ const VALUES: Record<string, () => string[]> = {
 };
 
 /** What the lobby's box can be asked, with the arranging terms on the end */
-export const TEAM_VOCABULARY: QueryVocabulary = {
-  fields: [...FIELDS.keys(), 'sort', 'order'].map((name) => ({
-    name,
-    hint: HINTS[name] ?? '',
-    values: VALUES[name],
-  })),
-};
+export const TEAM_VOCABULARY: QueryVocabulary = { fields: [] };
+
+for (const name of [...FIELDS.keys(), 'sort', 'order']) {
+  TEAM_VOCABULARY.fields.push({ name, hint: HINTS[name] ?? '', values: VALUES[name] });
+}
 
 /**
  * The rows a search asked for, in the order it asked for them. The

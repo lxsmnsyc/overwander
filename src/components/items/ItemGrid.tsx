@@ -151,14 +151,19 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
   const [query, setQuery] = createSignal('');
 
   // A `sort:` is applied last, over whatever the search left
-  const narrowed = (): ItemCell[] =>
-    orderItems(
-      props.entries.filter((cell) =>
-        matchesItem(cell.item, query(), { amount: cell.amount ?? cell.carried }),
-      ),
-      query(),
-      (cell) => ({ item: cell.item, holding: { amount: cell.amount ?? cell.carried } }),
-    );
+  const narrowed = (): ItemCell[] => {
+    const matched: ItemCell[] = [];
+
+    for (const cell of props.entries) {
+      if (matchesItem(cell.item, query(), { amount: cell.amount ?? cell.carried })) {
+        matched.push(cell);
+      }
+    }
+    return orderItems(matched, query(), (cell) => ({
+      item: cell.item,
+      holding: { amount: cell.amount ?? cell.carried },
+    }));
+  };
 
   const pages = (): number => Math.max(1, Math.ceil(narrowed().length / GRID_SIZE));
 
@@ -181,7 +186,15 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
       ? GRID_SIZE
       : Math.max(GRID_COLUMNS, Math.ceil(shown().length / GRID_COLUMNS) * GRID_COLUMNS);
 
-  const empties = (): number[] => Array.from({ length: squares() - shown().length }, (_, at) => at);
+  const empties = (): number[] => {
+    const slots: number[] = [];
+    const count = squares() - shown().length;
+
+    for (let at = 0; at < count; at++) {
+      slots.push(at);
+    }
+    return slots;
+  };
 
   /**
    * Whether this square's own buttons need a window to stand in. One

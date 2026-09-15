@@ -199,12 +199,17 @@ const BY_BIOME: Partial<Record<Biome, Partial<Record<Decoration, string[]>>>> = 
  */
 export const SNOW_LINE = -0.3;
 
-const SNOWY = new Set<Biome>(
-  Object.entries(BIOME_CONFIGS)
-    .filter(([, config]) => config.temperature <= SNOW_LINE)
-    // The keys of a numeric-enum record come back as strings
-    .map(([biome]) => Number(biome) as Biome),
-);
+const SNOWY = (() => {
+  const snowy = new Set<Biome>();
+
+  for (const [biome, config] of Object.entries(BIOME_CONFIGS)) {
+    if (config.temperature <= SNOW_LINE) {
+      // The keys of a numeric-enum record come back as strings
+      snowy.add(Number(biome) as Biome);
+    }
+  }
+  return snowy;
+})();
 
 /**
  * What each tree is drawn as where it snows.
@@ -248,8 +253,14 @@ export function grottoPicture(biome: Biome, cell = 0): DecorationPicture {
   // tree: a taiga grows pines and nothing else, so a grotto standing
   // there as a broadleaf would be the one tree on the chunk that stood
   // out. A biome that grows no tree at all falls back to the plain one
-  const kind = TREE_KINDS.find((one) => grown.has(one)) ?? Decoration.Tree;
+  let kind = Decoration.Tree;
 
+  for (const one of TREE_KINDS) {
+    if (grown.has(one)) {
+      kind = one;
+      break;
+    }
+  }
   return decorationPicture(kind, biome, cell);
 }
 
@@ -317,5 +328,10 @@ export function isSnowy(biome: Biome): boolean {
  * the biome does not actually grow is a row nothing ever reads
  */
 export function biomeVariants(biome: Biome): Decoration[] {
-  return Object.keys(BY_BIOME[biome] ?? {}).map(Number) as Decoration[];
+  const kinds: Decoration[] = [];
+
+  for (const kind of Object.keys(BY_BIOME[biome] ?? {})) {
+    kinds.push(Number(kind) as Decoration);
+  }
+  return kinds;
 }

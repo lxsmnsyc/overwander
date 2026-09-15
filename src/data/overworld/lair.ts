@@ -124,6 +124,23 @@ const enum Lairs {
    * standing at the top of it. A mythical's lair, so no biome hosts it
    */
   HallOfOrigin = 29,
+  /**
+   * The three ruins the golems turn up in again in Sinnoh, one apiece.
+   * Each keeps its Hoenn chamber too, so either place stages it
+   */
+  RockPeakRuins = 30,
+  IcebergRuins = 31,
+  IronRuins = 32,
+  /**
+   * The rock far out at sea the tower duo meet at, one at its foot and
+   * one at its peak, so which of them answers is a roll
+   */
+  NavelRock = 33,
+  /**
+   * The tower set into the sea cliffs, where an orb calls down any of
+   * the weather trio, so which of them answers is a roll
+   */
+  EmbeddedTower = 34,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -157,13 +174,19 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.SnowpointTemple]: 'Snowpoint Temple',
   [Lairs.FlowerParadise]: 'Flower Paradise',
   [Lairs.HallOfOrigin]: 'Hall of Origin',
+  [Lairs.RockPeakRuins]: 'Rock Peak Ruins',
+  [Lairs.IcebergRuins]: 'Iceberg Ruins',
+  [Lairs.IronRuins]: 'Iron Ruins',
+  [Lairs.NavelRock]: 'Navel Rock',
+  [Lairs.EmbeddedTower]: 'Embedded Tower',
 };
 
 /**
  * Who lives in each one. A lair stages its own residents and no
  * others, which is what makes travelling to a particular lair worth
  * doing. Nearly all of them hold a single legendary; the Burned Tower
- * holds the three beasts, so which one is at home is a roll
+ * holds the three beasts, so which one is at home is a roll. A
+ * legendary may be at home in more than one lair
  */
 export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.SeafoamIslands]: [Species.Articuno],
@@ -196,6 +219,11 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.SnowpointTemple]: [Species.Regigigas],
   [Lairs.FlowerParadise]: [Species.Shaymin],
   [Lairs.HallOfOrigin]: [Species.Arceus],
+  [Lairs.RockPeakRuins]: [Species.Regirock],
+  [Lairs.IcebergRuins]: [Species.Regice],
+  [Lairs.IronRuins]: [Species.Registeel],
+  [Lairs.NavelRock]: [Species.Lugia, Species.HoOh],
+  [Lairs.EmbeddedTower]: [Species.Kyogre, Species.Groudon, Species.Rayquaza],
 };
 
 /**
@@ -232,6 +260,11 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.SnowpointTemple,
   Lairs.FlowerParadise,
   Lairs.HallOfOrigin,
+  Lairs.RockPeakRuins,
+  Lairs.IcebergRuins,
+  Lairs.IronRuins,
+  Lairs.NavelRock,
+  Lairs.EmbeddedTower,
 ];
 
 /**
@@ -244,9 +277,19 @@ export const EVERY_LAIR: Lairs[] = [
  * since a pool that has to keep lair species out has to know about
  * every lair there is
  */
-export const EVERY_STAGED_LAIR: Lairs[] = EVERY_LAIR.filter((lair) =>
-  LAIR_SPECIES[lair].every((species) => !isMythicalSpecies(species)),
-);
+export const EVERY_STAGED_LAIR: Lairs[] = (() => {
+  const staged: Lairs[] = [];
+
+  lairs: for (const lair of EVERY_LAIR) {
+    for (const species of LAIR_SPECIES[lair]) {
+      if (isMythicalSpecies(species)) {
+        continue lairs;
+      }
+    }
+    staged.push(lair);
+  }
+  return staged;
+})();
 
 const STAGED_LAIRS = new Set<Lairs>(EVERY_STAGED_LAIR);
 
@@ -257,37 +300,41 @@ const STAGED_LAIRS = new Set<Lairs>(EVERY_STAGED_LAIR);
  * mountain, and the Power Plant is the one building among them,
  * abandoned on flat ground, which is where the plains are. The three
  * sealed chambers sit where their doors were cut: ruins in the sand,
- * a cave in the ice, a tomb under the rock.
+ * a cave in the ice, a tomb under the rock. Their Sinnoh ruins sit on
+ * a sandstorm route, a snowbound one and an island mine.
  *
  * The three lakes sit in the country each of them was found in: the
  * cold one in the north, the wooded one and the one on open ground.
  *
  * A biome with no lair stages no legendary lair at all, which is most
  * of them: a legendary the whole world could walk to is not a
- * legendary
+ * legendary.
+ *
+ * A lair is also a wild spawn: a biome that hosts one lists each
+ * resident in its special band, mythicals aside
  */
 const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
-  [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands, Lairs.MarineCave],
-  [Biome.Ocean]: [Lairs.WhirlIslands, Lairs.SouthernIsland, Lairs.FullmoonIsland],
+  [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands, Lairs.MarineCave, Lairs.NavelRock],
+  [Biome.Ocean]: [
+    Lairs.WhirlIslands,
+    Lairs.SouthernIsland,
+    Lairs.FullmoonIsland,
+    Lairs.IronRuins,
+    Lairs.SkyPillar,
+  ],
+  [Biome.Beach]: [Lairs.EmbeddedTower],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave, Lairs.SnowpointTemple],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor],
   [Biome.Bog]: [Lairs.LakeValor, Lairs.TurnbackCave],
   [Biome.TemperateForest]: [Lairs.LakeVerity],
   [Biome.Woodland]: [Lairs.BurnedTower, Lairs.LakeVerity],
-  [Biome.Taiga]: [Lairs.LakeAcuity],
-  [Biome.Tundra]: [Lairs.LakeAcuity, Lairs.SnowpointTemple],
+  [Biome.Taiga]: [Lairs.LakeAcuity, Lairs.IcebergRuins],
+  [Biome.Tundra]: [Lairs.LakeAcuity, Lairs.SnowpointTemple, Lairs.IcebergRuins],
   [Biome.Steppe]: [Lairs.PowerPlant],
-  [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins],
-  [Biome.Badlands]: [Lairs.DesertRuins, Lairs.AncientTomb, Lairs.TurnbackCave],
-  [Biome.Mountain]: [
-    Lairs.MtEmber,
-    Lairs.CeruleanCave,
-    Lairs.BellTower,
-    Lairs.AncientTomb,
-    Lairs.SkyPillar,
-    Lairs.SpearPillar,
-  ],
+  [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins, Lairs.RockPeakRuins],
+  [Biome.Badlands]: [Lairs.DesertRuins, Lairs.AncientTomb, Lairs.TurnbackCave, Lairs.RockPeakRuins],
+  [Biome.Mountain]: [Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower, Lairs.AncientTomb],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave, Lairs.SpearPillar],
   [Biome.Volcano]: [Lairs.TerraCave, Lairs.StarkMountain],
 };
@@ -299,9 +346,14 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
  * one
  */
 export function getBiomeLairs(biome: Biome): Lairs[] {
-  const hosted = BIOME_LAIRS[biome] ?? [];
+  const lairs: Lairs[] = [];
 
-  return hosted.filter((lair) => STAGED_LAIRS.has(lair));
+  for (const lair of BIOME_LAIRS[biome] ?? []) {
+    if (STAGED_LAIRS.has(lair)) {
+      lairs.push(lair);
+    }
+  }
+  return lairs;
 }
 
 /**
@@ -321,24 +373,23 @@ export function pickLairSpecies(
   allowed: (species: Species) => boolean,
   roll: number,
 ): Species {
-  const residents = getLairResidents(lair).filter(allowed);
+  const residents: Species[] = [];
+
+  for (const species of getLairResidents(lair)) {
+    if (allowed(species)) {
+      residents.push(species);
+    }
+  }
 
   return residents[Math.abs(roll) % residents.length];
 }
 
 /**
- * The lair a species is at home in, or null for anything that has no
- * place of its own. It is the mythical raid's question: a relic calls
- * its pokemon out to where it has always been called from, wherever
- * the player happens to be standing
+ * Every lair a species is at home in, in the order they are numbered,
+ * and empty for anything that has no place of its own
  */
-export function getSpeciesLair(species: Species): Lairs | null {
-  for (const lair of EVERY_LAIR) {
-    if (LAIR_SPECIES[lair].includes(species)) {
-      return lair;
-    }
-  }
-  return null;
+export function getSpeciesLairs(species: Species): Lairs[] {
+  return EVERY_LAIR.filter((lair) => LAIR_SPECIES[lair].includes(species));
 }
 
 /**

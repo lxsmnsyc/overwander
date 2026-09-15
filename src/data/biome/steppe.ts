@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
 
 /**
  * Steppe spawn pool, grouped by day-cycle period and rarity band
@@ -55,7 +55,10 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Rhyperior, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Raikou, weight: 10 }],
+      special: [
+        { species: Species.Raikou, weight: 10 },
+        { species: Species.Zapdos, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -107,7 +110,10 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Rhyperior, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Raikou, weight: 10 }],
+      special: [
+        { species: Species.Raikou, weight: 10 },
+        { species: Species.Zapdos, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Magnemite, weight: 20 }],
@@ -136,7 +142,10 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Rhyperior, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Raikou, weight: 10 }],
+      special: [
+        { species: Species.Raikou, weight: 10 },
+        { species: Species.Zapdos, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Magnemite, weight: 20 }],
@@ -165,7 +174,72 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Rhyperior, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Raikou, weight: 10 }],
+      special: [
+        { species: Species.Raikou, weight: 10 },
+        { species: Species.Zapdos, weight: 10 },
+      ],
+    },
+  });
+  registerWaterPool(Biome.Steppe, {
+    [TimeOfDay.Morning]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Goldeen, weight: 20 },
+        { species: Species.Wooper, weight: 25 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Seaking, weight: 10 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Day]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Goldeen, weight: 20 },
+        { species: Species.Wooper, weight: 25 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Seaking, weight: 10 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Evening]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Goldeen, weight: 20 },
+        { species: Species.Wooper, weight: 25 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Seaking, weight: 10 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Night]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Goldeen, weight: 20 },
+        { species: Species.Wooper, weight: 25 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Seaking, weight: 10 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      special: [],
     },
   });
 }

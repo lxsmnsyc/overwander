@@ -17,7 +17,7 @@ export class EventEngine<T extends EventMap, K extends keyof T = keyof T> {
     priority: D[1],
     listener: EventEmitterListener<D[0]>,
   ): EventListenerLifecycle<D[0]> {
-    const emitter = (this.emitters[type] ||= new EventEmitter());
+    const emitter = this.emitterOf(type);
     // The emitter store is untyped (any); the signature restores D[0]
     // oxlint-disable-next-line typescript/no-unsafe-return
     return emitter.on(priority, listener);
@@ -28,12 +28,20 @@ export class EventEngine<T extends EventMap, K extends keyof T = keyof T> {
     priority: D[1],
     listener: EventEmitterListener<D[0]>,
   ): void {
-    const emitter = (this.emitters[type] ||= new EventEmitter());
-    emitter.off(priority, listener);
+    this.emitterOf(type).off(priority, listener);
   }
 
   emit<E extends K>(type: E, event: T[E][0]): void {
-    const emitter = (this.emitters[type] ||= new EventEmitter());
-    emitter.emit(event);
+    this.emitterOf(type).emit(event);
+  }
+
+  private emitterOf(type: K): EventEmitter<any, any> {
+    let emitter = this.emitters[type];
+
+    if (emitter == null) {
+      emitter = new EventEmitter();
+      this.emitters[type] = emitter;
+    }
+    return emitter;
   }
 }

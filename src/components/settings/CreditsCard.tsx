@@ -46,8 +46,14 @@ function sheetName(work: string): string {
  * counting the work instead of crediting it
  */
 function Artist(props: { artist: CreditedArtist; name?: (work: string) => string }): JSX.Element {
-  const named = (): string =>
-    props.artist.works.map((work) => props.name?.(work) ?? work).join(', ');
+  const named = (): string => {
+    const names: string[] = [];
+
+    for (const work of props.artist.works) {
+      names.push(props.name?.(work) ?? work);
+    }
+    return names.join(', ');
+  };
 
   return (
     <li class="flex flex-col gap-0.5 border-b border-line-soft pb-2 last:border-b-0">
@@ -75,8 +81,24 @@ function Artists(props: {
 function CreditsList(props: { credits: Resource<Credits> }): JSX.Element {
   const held = (): Credits => props.credits() ?? asCredits(null);
 
-  const packages = (kind: 'runtime' | 'build'): Credits['packages'] =>
-    held().packages.filter((one) => one.kind === kind);
+  const packages = (kind: 'runtime' | 'build'): Credits['packages'] => {
+    const kept: Credits['packages'] = [];
+
+    for (const one of held().packages) {
+      if (one.kind === kind) {
+        kept.push(one);
+      }
+    }
+    return kept;
+  };
+  const buildNames = (): string => {
+    const names: string[] = [];
+
+    for (const one of packages('build')) {
+      names.push(one.name);
+    }
+    return names.join(', ');
+  };
 
   return (
     <>
@@ -135,13 +157,7 @@ function CreditsList(props: { credits: Resource<Credits> }): JSX.Element {
             )}
           </For>
         </ul>
-        <p class="max-w-prose text-sm text-muted">
-          And what only builds it:{' '}
-          {packages('build')
-            .map((one) => one.name)
-            .join(', ')}
-          .
-        </p>
+        <p class="max-w-prose text-sm text-muted">And what only builds it: {buildNames()}.</p>
       </Card>
     </>
   );

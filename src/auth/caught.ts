@@ -13,13 +13,15 @@ import {
   takeItem as takeOnServer,
 } from '../server/caught';
 import { requireUid } from '../server/auth';
-import type { CatchConstraint, CatchContext, RowConstraint } from './catch-search';
+import type { CatchConstraint, CatchContext } from './catch-search';
 import type { PostgrestError } from '@supabase/supabase-js';
 import { asRecord, asRecordArray } from './__normalize';
+import { announceBuddyChange } from './buddy-changes';
 import type { CatchOrder, CaughtPokemon } from './caught-record';
 import { CAUGHT_EMBED, fromCaughtRow } from './caught-rows';
 import getSupabase from './supabase';
 import getIdToken from './session';
+import batchedQuery from '../utils/batched-query';
 
 export {
   HELD_ITEM_LIMIT,
@@ -35,7 +37,12 @@ const CAUGHT_TABLE = 'caught';
 
 /** Rows out of a dynamic select, paired as [id, record] */
 function rowsToPairs(rows: Record<string, unknown>[]): [string, CaughtPokemon][] {
-  return rows.map((row) => [String(row.id), fromCaughtRow(row)]);
+  const pairs: [string, CaughtPokemon][] = [];
+
+  for (const row of rows) {
+    pairs.push([String(row.id), fromCaughtRow(row)]);
+  }
+  return pairs;
 }
 
 /**
@@ -122,6 +129,32 @@ export async function getCaught(id: string): Promise<CaughtPokemon | null> {
 const ROW_SELECTION: string = `id, ${CAUGHT_EMBED}`;
 
 /**
+ * `getCaught` for a screen reading many at once, such as a lobby of
+ * parties: every call made in the same moment goes out as one read.
+ * Browser only, since the queue is shared by everyone in the module
+ */
+export const getCaughtBatched = batchedQuery(
+  async (ids: string[]): Promise<Map<string, CaughtPokemon>> => {
+    const { data, error } = await getSupabase()
+      .from(CAUGHT_TABLE)
+      .select(ROW_SELECTION)
+      .in('id', ids);
+
+    raise(error);
+
+    const found = new Map<string, CaughtPokemon>();
+
+    for (const [id, caught] of rowsToPairs(asRecordArray(data))) {
+      found.set(id, caught);
+    }
+    return found;
+  },
+  (found, id): CaughtPokemon | null => found.get(id) ?? null,
+  // The ids travel in the request's address, which has a length limit
+  { limit: 50 },
+);
+
+/**
  * The rows of one owner's box, with the embeds along. An arrow with
  * its type left to inference: the builder's type is the anchor the
  * constraint chain below is checked against, and nobody can write it
@@ -170,12 +203,15 @@ export async function searchCaught(
   owner: string,
   narrowing: CatchConstraint[],
 ): Promise<[string, CaughtPokemon][]> {
-  const joins = narrowing
-    .filter(
-      (narrowed): narrowed is Exclude<CatchConstraint, RowConstraint> => narrowed.on !== 'row',
-    )
-    .map((narrowed) => `${narrowed.alias}:${narrowed.table}!inner(${JOIN_KEYS[narrowed.table]})`);
-  const selection = [ROW_SELECTION, ...joins].join(', ');
+  const selected: string[] = [ROW_SELECTION];
+
+  for (const narrowed of narrowing) {
+    if (narrowed.on !== 'row') {
+      selected.push(`${narrowed.alias}:${narrowed.table}!inner(${JOIN_KEYS[narrowed.table]})`);
+    }
+  }
+
+  const selection = selected.join(', ');
 
   // Built afresh per page rather than once and re-awaited: a range is
   // a header on the request, and moving it means a new request
@@ -225,10 +261,16 @@ function applyConstraint(request: Chain, narrowed: CatchConstraint): Chain {
   switch (narrowed.op) {
     case 'in':
       return request.in(column, listed);
-    case 'nin':
+    case 'nin': {
       // Written out by hand rather than through `.in`, which has no
       // negated twin, so the quoting `.in` does is done here too
-      return request.not(column, 'in', `(${listed.map(quoted).join(',')})`);
+      const written: string[] = [];
+
+      for (const value of listed) {
+        written.push(quoted(value));
+      }
+      return request.not(column, 'in', `(${written.join(',')})`);
+    }
     case 'neq':
       return request.neq(column, narrowed.value);
     case 'gt':
@@ -399,7 +441,12 @@ export async function listOwned(owner: string, ids: string[]): Promise<Set<strin
     .in('id', ids);
 
   raise(error);
-  return new Set(((data ?? []) as { id: unknown }[]).map((row) => String(row.id)));
+  const owned = new Set<string>();
+
+  for (const row of (data ?? []) as { id: unknown }[]) {
+    owned.add(String(row.id));
+  }
+  return owned;
 }
 
 /**
@@ -440,7 +487,13 @@ export async function hasCaughtSpecies(owner: string, species: Species): Promise
  * its limit, or the item is not holdable
  */
 export async function giveItem(catchId: string, item: Items): Promise<boolean> {
-  return giveItemOnServer(await getIdToken(), catchId, item);
+  const given = await giveItemOnServer(await getIdToken(), catchId, item);
+
+  // Announced whichever catch it was: telling whether it is the buddy costs the same read
+  if (given) {
+    announceBuddyChange();
+  }
+  return given;
 }
 
 async function giveItemOnServer(token: string, catchId: string, item: Items): Promise<boolean> {
@@ -453,7 +506,12 @@ async function giveItemOnServer(token: string, catchId: string, item: Items): Pr
  * is not the user's or is not holding that item
  */
 export async function takeItem(catchId: string, item: Items): Promise<boolean> {
-  return takeItemOnServer(await getIdToken(), catchId, item);
+  const taken = await takeItemOnServer(await getIdToken(), catchId, item);
+
+  if (taken) {
+    announceBuddyChange();
+  }
+  return taken;
 }
 
 async function takeItemOnServer(token: string, catchId: string, item: Items): Promise<boolean> {

@@ -1,5 +1,5 @@
 import { AuctionLot, type AuctionRecord } from '../../../auth/auctions';
-import { type CaughtPokemon, getCaught } from '../../../auth/caught';
+import { type CaughtPokemon, getCaughtBatched } from '../../../auth/caught';
 import { describeCatch } from '../../catches/catch-summary';
 import { describeItem } from '../../details';
 import { type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
@@ -19,7 +19,11 @@ function CatchLotName(props: { caught: Resource<CaughtPokemon | null> }): JSX.El
 }
 
 function CatchLot(props: { catchId: string }): JSX.Element {
-  const [caught] = createResource(() => props.catchId, getCaught);
+  // One per lot row, so the rows on screen share a read
+  const [caught] = createResource(
+    () => props.catchId,
+    async (id) => getCaughtBatched(id),
+  );
 
   return (
     <Suspense fallback={<span>A pokemon</span>}>

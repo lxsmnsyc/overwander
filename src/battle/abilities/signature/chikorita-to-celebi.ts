@@ -48,6 +48,9 @@ export const SAND_RIDER_SCALE = 0.75;
 /** What a target that has already been cowed is worth */
 export const BULLY_SCALE = 1.3;
 
+/** The shares of its HP a Steelmolt holder sheds a layer of Spikes at */
+export const STEELMOLT_MARKS = [3 / 4, 1 / 2] as const;
+
 /** What a paw licked clean between blows gives back */
 export const SWEET_PAW_SHARE = 1 / 8;
 
@@ -1127,7 +1130,8 @@ const chikoritaToCelebi = [
   ),
 
   // Skarmory: the feathers it loses are steel, and where they land is
-  // Spikes' business
+  // Spikes' business. Only crossing a mark sheds, since a raid's many
+  // hitters laid Spikes without pause when every hit did
   createAbility(Abilities.Steelmolt, (battle) =>
     battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
       const target = event.target;
@@ -1140,10 +1144,18 @@ const chikoritaToCelebi = [
         return;
       }
 
-      target.triggerAbility(Abilities.Steelmolt);
+      const whole = target.checkStat(Stats.HP, 0);
 
-      for (const team of battle.teams(target.team.alliance)) {
-        target.triggerMove(Moves.Spikes, { type: MoveTargetType.Team, team }, 0);
+      for (const mark of STEELMOLT_MARKS) {
+        const line = whole * mark;
+
+        if (target.health > line || target.health + event.value <= line) {
+          continue;
+        }
+        target.triggerAbility(Abilities.Steelmolt);
+        for (const team of battle.teams(target.team.alliance)) {
+          target.triggerMove(Moves.Spikes, { type: MoveTargetType.Team, team }, 0);
+        }
       }
     }),
   ),

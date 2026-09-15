@@ -4,7 +4,7 @@ import type { QuestStanding } from '../../../auth/quest-record';
 import { claimQuest } from '../../../auth/quests';
 import { type RotationBoard, type RotationScope, claimRotation } from '../../../auth/rotations';
 import { CHAINS, CHAIN_ORDER, type Chains, type Quests } from '../../../data/quests';
-import { QuestRewardKind } from '../../../data/quests/types';
+import { type QuestReward, QuestRewardKind } from '../../../data/quests/types';
 import { GameDialog, useGame } from '../../app/game-context';
 import { Badge, DialogSection, type ToastTone, useToast } from '../../styled';
 import { For, Index, type JSX, type Resource, Show, createEffect, createSignal } from 'solid-js';
@@ -40,32 +40,78 @@ export default function QuestBoard(props: {
    * first read has nothing to keep and suspends as usual
    */
   const all = (): QuestStanding[] => props.standings.latest ?? [];
-  const standingOf = (quest: Quests): QuestStanding | undefined =>
-    all().find((one) => one.quest === quest);
+  const standingOf = (quest: Quests): QuestStanding | undefined => {
+    for (const one of all()) {
+      if (one.quest === quest) {
+        return one;
+      }
+    }
+    return undefined;
+  };
   /** The quests that belong to some chain, kept out of the flat lists */
-  const chained = new Set<Quests>(CHAIN_ORDER.flatMap((chain) => CHAINS[chain].quests));
-  const open = (): QuestStanding[] =>
-    all().filter((one) => !one.claimed && !chained.has(one.quest));
-  const done = (): QuestStanding[] => all().filter((one) => one.claimed && !chained.has(one.quest));
-  const claimedIn = (chain: Chains): number =>
-    CHAINS[chain].quests.filter((quest) => standingOf(quest)?.claimed === true).length;
-  const claimableIn = (chain: Chains): number =>
-    CHAINS[chain].quests.filter((quest) => standingOf(quest)?.claimable === true).length;
+  const chained = new Set<Quests>();
+
+  for (const chain of CHAIN_ORDER) {
+    for (const quest of CHAINS[chain].quests) {
+      chained.add(quest);
+    }
+  }
+  /** Unchained standings, either claimed or not */
+  const unchained = (claimed: boolean): QuestStanding[] => {
+    const kept: QuestStanding[] = [];
+
+    for (const one of all()) {
+      if (one.claimed === claimed && !chained.has(one.quest)) {
+        kept.push(one);
+      }
+    }
+    return kept;
+  };
+  const open = (): QuestStanding[] => unchained(false);
+  const done = (): QuestStanding[] => unchained(true);
+  const claimedIn = (chain: Chains): number => {
+    let count = 0;
+
+    for (const quest of CHAINS[chain].quests) {
+      if (standingOf(quest)?.claimed === true) {
+        count += 1;
+      }
+    }
+    return count;
+  };
+  const claimableIn = (chain: Chains): number => {
+    let count = 0;
+
+    for (const quest of CHAINS[chain].quests) {
+      if (standingOf(quest)?.claimable === true) {
+        count += 1;
+      }
+    }
+    return count;
+  };
   /**
    * The chains that open with the board: the ones holding something
    * to claim, or the first unfinished one for a player who is between
    * rewards
    */
   const ready = (): Chains[] => {
-    const owed = CHAIN_ORDER.filter((chain) => claimableIn(chain) > 0);
+    const owed: Chains[] = [];
 
+    for (const chain of CHAIN_ORDER) {
+      if (claimableIn(chain) > 0) {
+        owed.push(chain);
+      }
+    }
     if (owed.length > 0) {
       return owed;
     }
 
-    const next = CHAIN_ORDER.find((chain) => claimedIn(chain) < CHAINS[chain].quests.length);
-
-    return next == null ? [] : [next];
+    for (const chain of CHAIN_ORDER) {
+      if (claimedIn(chain) < CHAINS[chain].quests.length) {
+        return [chain];
+      }
+    }
+    return [];
   };
 
   /**
@@ -130,12 +176,19 @@ export default function QuestBoard(props: {
         // The items are drawn rather than listed; whatever else a quest
         // pays is a sentence, since a meeting and an egg arrive by
         // themselves anyway
-        const paid = payout.rewards.filter((one) => one.kind === QuestRewardKind.Item);
-        const rest = payout.rewards.filter((one) => one.kind !== QuestRewardKind.Item);
+        const paid: Extract<QuestReward, { kind: QuestRewardKind.Item }>[] = [];
+        const rest: string[] = [];
 
+        for (const one of payout.rewards) {
+          if (one.kind === QuestRewardKind.Item) {
+            paid.push(one);
+          } else {
+            rest.push(describeReward(one));
+          }
+        }
         sayItems(toast, paid, 'Quest reward');
         if (rest.length > 0) {
-          say(`Received ${rest.map(describeReward).join(', ')}.`, 'leaf');
+          say(`Received ${rest.join(', ')}.`, 'leaf');
         }
 
         if (payout.egg != null) {

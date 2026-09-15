@@ -53,9 +53,11 @@ export function describeCatch(caught: CaughtPokemon): string {
   // decides whether it can be brought into the next one
   const hurt =
     caught.health < getMaxHealth(caught) ? ` · ${caught.health}/${getMaxHealth(caught)} HP` : '';
-  const carried = unpackStatuses(caught.statuses)
-    .map((status) => ` · ${STATUS_NAMES[status]}`)
-    .join('');
+  let carried = '';
+
+  for (const status of unpackStatuses(caught.statuses)) {
+    carried += ` · ${STATUS_NAMES[status]}`;
+  }
   const condition = isFainted(caught) ? ' · fainted' : `${hurt}${carried}`;
 
   return `${shiny}${name} · Lv. ${caught.level}${stands}${condition}`;

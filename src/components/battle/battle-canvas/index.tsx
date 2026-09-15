@@ -12,7 +12,8 @@ import abilityCueFor, {
 import pixelRatio from '../../../canvas/ratio';
 import createTwist from '../../../canvas/twist';
 import createLongPress from '../../styled/long-press';
-import paintWeather, { batchWeather } from '../../../canvas/battle/weather';
+import paintWeather, { batchHaze } from '../../../canvas/battle/weather';
+import buildWeather from '../../../canvas/battle/field-weather';
 import {
   delayShapeFor,
   moveDelayVisual,
@@ -20,10 +21,9 @@ import {
   moveMissVisual,
 } from '../../../canvas/battle/moves';
 import type { FieldView } from '../../../canvas/battle/field';
-import loadBiomeTileset from '../../../canvas/biome-tilesets';
-import type BiomeTileset from '../../../canvas/biome-tileset';
-import drawFloor, { type FloorRegion } from './floor';
-import QuadBatch from '../../../canvas/gl/quad-batch';
+import loadTerrainTiles, { TERRAIN_TILE } from '../../../canvas/terrain-tiles';
+import drawFloor, { type FloorRegion, type FloorTile } from './floor';
+import createBattleScene from '../../../canvas/three/battle-scene';
 import Bakery from '../../../canvas/bakery';
 import Biome from '../../../data/ids/biome';
 
@@ -43,7 +43,18 @@ import { Genders, Species } from '../../../data/ids/species';
 
 import { Statuses } from '../../../data/ids/status';
 import { getMoveData } from '../../../data/moves';
-import { bodyOf, boxOf, drawAim, drawSlot, scaleOf, withinSlot } from './draw';
+import {
+  bodyOf,
+  boxOf,
+  drawAim,
+  drawLitDecor,
+  drawSlot,
+  fieldBodyOf,
+  scaleOf,
+  withinSlot,
+} from './draw';
+import type { Spot } from '../../../canvas/three/effect-batch';
+import { spread } from '../../../canvas/battle/moves/__paint';
 import {
   type Slot,
   type Stand,
@@ -55,7 +66,7 @@ import {
   skiesOver,
   unitsOf,
 } from './field';
-import { COLORS, FIELD_UNIT, HEIGHT, LOADING_LABEL, TURN_SLOP, WIDTH } from './metrics';
+import { COLORS, FIELD_UNIT, HEIGHT, JOLT_BEAT, LOADING_LABEL, TURN_SLOP, WIDTH } from './metrics';
 import {
   CUE_GAP,
   type Casting,
@@ -159,13 +170,24 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
   const arrange = (team: Team, units: Unit[]): Unit[] => {
     const kept = arranged.get(team);
 
-    if (kept == null || kept.length !== units.length || kept.some((one) => !team.units.has(one))) {
-      const fresh = [...units];
+    if (kept != null && kept.length === units.length) {
+      let current = true;
 
-      arranged.set(team, fresh);
-      return fresh;
+      for (const one of kept) {
+        if (!team.units.has(one)) {
+          current = false;
+          break;
+        }
+      }
+      if (current) {
+        return kept;
+      }
     }
-    return kept;
+
+    const fresh = [...units];
+
+    arranged.set(team, fresh);
+    return fresh;
   };
 
   /**
@@ -242,7 +264,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
    * An entry outlives the status by as long as the fade out takes,
    * which is what lets the pokemon come back rather than reappear
    */
-  const dolls = new Map<Unit, { sprite: SpeciesSpriteAnimation | null; share: number }>();
+  const dolls = new Map<Unit, Stand>();
 
   const standFor = (unit: Unit): Stand | null => {
     const held = dolls.get(unit);
@@ -254,7 +276,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       return null;
     }
 
-    const waiting = { sprite: null as SpeciesSpriteAnimation | null, share: 0 };
+    const waiting: Stand = { sprite: null, share: 0, arriving: true };
 
     dolls.set(unit, waiting);
     // The doll is the doll whoever is behind it: never shiny, never
@@ -347,14 +369,18 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
      * appears under a fight already under way, which is better than a
      * fight that waited for scenery
      */
-    let floor: BiomeTileset | null = null;
+    let floor: FloorTile | null = null;
     const standing = props.biome ?? Biome.Beyond;
 
     if (standing !== Biome.Beyond) {
-      loadBiomeTileset(standing)
-        .then((loaded) => {
-          if (live) {
-            floor = loaded;
+      loadTerrainTiles()
+        .then((pack) => {
+          const country = pack.of(standing, 'ground');
+
+          if (live && country != null) {
+            // The country's plain fill, which is the tile a chunk lays
+            // where the ground is its own on every side
+            floor = { sheet: country.fill(), x: 0, y: 0, tile: TERRAIN_TILE };
           }
         })
         .catch(() => {
@@ -362,12 +388,13 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         });
     }
 
-    Promise.allSettled(
-      [...props.battle.units()].map(async (unit) => {
-        spriteFor(unit);
-        return loads.get(unit);
-      }),
-    )
+    const settling: Promise<void>[] = [];
+
+    for (const unit of props.battle.units()) {
+      spriteFor(unit);
+      settling.push(loads.get(unit) ?? Promise.resolve());
+    }
+    Promise.allSettled(settling)
       .then(() => {
         if (live) {
           setLoading(false);
@@ -405,12 +432,12 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     let sized = { width: 0, height: 0, ratio: 0 };
 
     /**
-     * The ground, written into its own element under the visible one:
-     * a 2D context and a GL context cannot both be had from one
-     * canvas, and copying between two would cost a full-screen blit a
-     * frame — more than the ground costs to paint at all
+     * The field as a three.js scene, drawn into its own element under
+     * the visible one: a 2D context and a GL context cannot both be had
+     * from one canvas. Null where the browser gives no WebGL, which
+     * paints everything the way it always was
      */
-    let batch = floorCanvas == null ? null : QuadBatch.create(floorCanvas);
+    let scene = floorCanvas == null ? null : createBattleScene(floorCanvas);
 
     /**
      * The drawn art the field stamps rather than paints: the round
@@ -480,6 +507,30 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         return;
       }
 
+      // A heavy landing shakes the scene. Only there: the painted
+      // fallback keeps the look it had
+      if (scene != null) {
+        let jolt = 0;
+
+        for (const cast of casting) {
+          if (cast.visual.drawLit != null) {
+            jolt = Math.max(jolt, cast.visual.jolt ?? 0);
+          }
+        }
+        if (jolt > 0) {
+          const beat = Math.floor(clock / JOLT_BEAT);
+          const dx = spread(beat, 1) * jolt;
+          const dy = spread(beat, 2) * jolt;
+
+          stage = {
+            scale: stage.scale,
+            offsetX: stage.offsetX + dx * stage.scale,
+            offsetY: stage.offsetY + dy * stage.scale,
+          };
+          context.translate(dx, dy);
+        }
+      }
+
       const field = readField(props.battle, props.player, arrange);
 
       // The camera. It starts behind whoever is looking at the fight,
@@ -497,16 +548,18 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // The ground the fight is standing on, under everything on it:
       // a few hundred tiles laid on a tilted plane, which a 2D context
       // charges a transform and a blit apiece for
-      if (batch == null) {
+      const batch = scene?.marks ?? null;
+
+      if (scene == null || batch == null) {
         if (floor != null) {
-          drawFloor(context, floor, view, region, clock);
+          drawFloor(context, floor, view, region);
         }
       } else {
-        // Opened here and handed over once the fight is written into
-        // it. Cleared every frame whether or not there is ground to
-        // lay, since a biome that stops having one would otherwise
-        // keep the last floor it drew
-        batch.begin(sized.width, sized.height, sized.ratio);
+        // Opened here and drawn once the fight is written into it.
+        // Cleared every frame whether or not there is ground to lay,
+        // since a biome that stops having one would otherwise keep the
+        // last floor it drew
+        scene.look(view, stage, sized, sized.ratio);
         if (baked !== bakery.revision) {
           batch.invalidate(bakery.sheet);
           baked = bakery.revision;
@@ -515,13 +568,19 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         // below is written in the drawing's own coordinates the way
         // the painted pass draws it
         batch.carry(stage.offsetX, stage.offsetY, 1, stage.scale);
+        // At the back of the scene, under the whole fight
+        batch.depth(scene.depthOf(0));
         if (floor != null) {
-          drawFloor(context, floor, view, region, clock, batch);
+          drawFloor(context, floor, view, region, batch);
         }
       }
 
       const slots = project(ringStandings(field, spriteFor, standFor), view, striking);
-      const at = new Map(slots.map((slot) => [slot.unit, slot]));
+      const at = new Map<Unit, Slot>();
+
+      for (const slot of slots) {
+        at.set(slot.unit, slot);
+      }
 
       // Whoever is throwing itself at somebody is drawn part of the
       // way there. It is done to the slot rather than to the standing
@@ -565,7 +624,17 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // drawing is this list
       placed = slots;
 
-      const onto = batch == null ? undefined : { batch, bakery };
+      const onto =
+        batch == null
+          ? undefined
+          : {
+              batch,
+              bakery,
+              lit: true,
+              solid: (on: boolean): void => {
+                batch.opaque(on);
+              },
+            };
 
       // Who is aiming at whom, under the bodies: a field of four
       // winding up says who is busy and nothing about who is about to
@@ -582,6 +651,9 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         const colour = slot.unit.casting == null ? COLORS.channel : COLORS.cast;
         const casts = bodyOf(slot);
 
+        // On the ground at the caster's own depth
+        batch?.depth(scene?.depthOf(slot.depth) ?? 0);
+
         for (const on of unitsOf(aim)) {
           const target = on === slot.unit ? null : at.get(on);
 
@@ -592,6 +664,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       }
 
       for (const slot of slots) {
+        // Standing at the depth of the ground under its feet
+        const near = scene?.depthOf(slot.depth) ?? 0;
+
+        batch?.standing(near, near);
         drawSlot(context, slot, striking, clock, gone.has(slot.unit), onto);
       }
 
@@ -613,6 +689,8 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
           context.restore();
         }
       } else {
+        // On the glass, in front of every pokemon
+        batch.glass();
         for (const patch of skies) {
           // Carried rather than clipped: the batch has no scissor, and
           // the painters lay their sky out from their own origin
@@ -622,14 +700,56 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
             1,
             stage.scale,
           );
-          batchWeather(batch, patch.weather, patch, clock);
+          batchHaze(batch, patch.weather, patch, clock);
         }
         batch.carry(stage.offsetX, stage.offsetY, 1, stage.scale);
-        // Everything the field is made of is written now. What follows
-        // is the move effects, which stay painted: they are the one
-        // thing here drawn as art rather than as pictures, and there
-        // is at most one of them on screen
-        batch.end();
+      }
+      if (scene != null) {
+        for (const slot of slots) {
+          drawLitDecor(scene.effects, slot, view, clock, gone.has(slot.unit));
+        }
+        // What falls and drifts, in the field among the pokemon
+        for (const patch of skies) {
+          const whole = patch.width >= WIDTH;
+
+          // The field's own sky runs on into the margins round the drawing
+          buildWeather(
+            scene.effects,
+            patch.weather,
+            view,
+            {
+              left: whole ? region.left : patch.x,
+              top: patch.y <= 0 ? region.top : patch.y,
+              right: whole ? region.right : patch.x + patch.width,
+              bottom: patch.y + patch.height >= HEIGHT ? region.bottom : patch.y + patch.height,
+              bleed: whole ? 40 : 0,
+            },
+            clock,
+          );
+        }
+        // Effects with a scene version are built into it, in field units,
+        // where one passing behind a pokemon is hidden by it
+        for (const cast of casting) {
+          const from = at.get(cast.source);
+          const source =
+            from == null || cast.visual.drawLit == null ? null : fieldBodyOf(from, view);
+
+          if (source == null) {
+            continue;
+          }
+          const targets: Spot[] = [];
+
+          for (const target of cast.targets) {
+            const slot = at.get(target);
+            const body = slot == null ? null : fieldBodyOf(slot, view);
+
+            if (body != null) {
+              targets.push(body.spot);
+            }
+          }
+          cast.visual.drawLit?.(scene.effects, { source: source.spot, targets, size: source.size });
+        }
+        scene.draw();
       }
 
       // Move effects go on top of everything: they are the loudest
@@ -639,18 +759,22 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       for (const cast of casting) {
         const from = at.get(cast.source);
 
-        if (from == null) {
+        // Built into the scene above instead
+        if (from == null || (scene != null && cast.visual.drawLit != null)) {
           continue;
+        }
+        const targets: ReturnType<typeof bodyOf>[] = [];
+
+        for (const target of cast.targets) {
+          const slot = at.get(target);
+
+          if (slot != null) {
+            targets.push(bodyOf(slot));
+          }
         }
         cast.visual.draw(context, {
           source: bodyOf(from),
-          targets: cast.targets
-            .map((target) => at.get(target))
-            // Spelled out rather than left to be inferred: the
-            // narrowing a bare `!= null` gets is not something to
-            // hang a build on
-            .filter((slot): slot is Slot => slot != null)
-            .map(bodyOf),
+          targets,
           scale: scaleOf(from),
         });
       }
@@ -672,14 +796,19 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // was worse rather than better: a spread move in a raid is forty
       // gaps at once, and forty things in the air is a screen nobody
       // can read. One flight, at what it was pointed at
-      let crossing: Unit[] = [];
+      const crossing: Unit[] = [];
 
       if (event.target.type === MoveTargetType.Unit) {
-        crossing = [event.target.unit];
+        if (event.target.unit !== event.source) {
+          crossing.push(event.target.unit);
+        }
       } else if (event.target.type === MoveTargetType.Team) {
-        crossing = [...event.target.team.units];
+        for (const target of event.target.team.units) {
+          if (target !== event.source) {
+            crossing.push(target);
+          }
+        }
       }
-      crossing = crossing.filter((target) => target !== event.source);
 
       // The window the engine is actually holding the move open for,
       // asked of it rather than read off the data — a listener may
@@ -713,10 +842,11 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // A contact move has nothing in the air to draw, because the
       // thing crossing the gap is the pokemon itself
       if ((getMoveData(event.move).flags & MoveFlags.Contact) !== 0 && crossing.length > 0) {
-        const already = lunging.findIndex((lunge) => lunge.source === event.source);
-
-        if (already >= 0) {
-          lunging.splice(already, 1);
+        for (let index = 0; index < lunging.length; index++) {
+          if (lunging[index].source === event.source) {
+            lunging.splice(index, 1);
+            break;
+          }
         }
         lunging.push({
           source: event.source,
@@ -766,7 +896,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
         // Nothing on a step that was only the wind-up: what happened
         // is that the caster went underground, which the gap drew
-        const landing = moveEffectVisual(event.move, event.steps);
+        // The sky is read only by a shape made of it, and only as it lands
+        const landing = moveEffectVisual(event.move, event.steps, () =>
+          event.source.checkWeather(),
+        );
 
         if (landing != null) {
           paint(landing, event.source, struck);
@@ -990,12 +1123,11 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       [order[from], order[to]] = [order[to], order[from]];
 
       // A pair switched again mid-walk starts the walk over
-      const already = trades.findIndex(
-        (trade) => trade.a === event.source || trade.b === event.source,
-      );
-
-      if (already >= 0) {
-        trades.splice(already, 1);
+      for (let index = 0; index < trades.length; index++) {
+        if (trades[index].a === event.source || trades[index].b === event.source) {
+          trades.splice(index, 1);
+          break;
+        }
       }
       trades.push({ a: event.source, b: event.target, elapsed: 0, window: SWITCHING_SPAN });
     });
@@ -1003,8 +1135,14 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     // The walk is the engine's: its progression events move the
     // picture, so a fast-forwarded switch fast-forwards the walk
     const walking = props.battle.on(BattleEvents.UnitUpdateSwitch, EventPriority.Post, (event) => {
-      const trade = trades.find((entry) => entry.a === event.source);
+      let trade: Trade | undefined;
 
+      for (const entry of trades) {
+        if (entry.a === event.source) {
+          trade = entry;
+          break;
+        }
+      }
       if (trade == null) {
         return;
       }
@@ -1014,10 +1152,11 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
     // Arrival snaps both onto their spots, however the walk got there
     const arriving = props.battle.on(BattleEvents.UnitFinishSwitch, EventPriority.Post, (event) => {
-      const already = trades.findIndex((trade) => trade.a === event.source);
-
-      if (already >= 0) {
-        trades.splice(already, 1);
+      for (let index = 0; index < trades.length; index++) {
+        if (trades[index].a === event.source) {
+          trades.splice(index, 1);
+          break;
+        }
       }
     });
 
@@ -1069,6 +1208,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         const wanted = unit.status[Statuses.Substituted] == null ? 0 : 1;
         const step = event.duration / STAND_FADE;
 
+        doll.arriving = wanted === 1;
         doll.share =
           wanted > doll.share
             ? Math.min(wanted, doll.share + step)
@@ -1307,8 +1447,8 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     draw();
 
     onCleanup(() => {
-      batch?.dispose();
-      batch = null;
+      scene?.dispose();
+      scene = null;
       element.removeEventListener('contextmenu', menu);
       element.removeEventListener('pointerleave', leave);
       element.removeEventListener('click', press);

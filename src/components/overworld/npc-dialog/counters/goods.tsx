@@ -2,7 +2,7 @@ import { type JSX, Show } from 'solid-js';
 import type { InventoryEntry } from '../../../../auth/inventory';
 import type { Items } from '../../../../data/ids/items';
 import { FOSSIL_REVIVE_LEVEL, getFossilPrice } from '../../../../data/overworld/fossil';
-import ItemGrid from '../../../items/ItemGrid';
+import ItemGrid, { type ItemCell } from '../../../items/ItemGrid';
 import InventoryPicker from '../../../items/InventoryPicker';
 import { describeItem } from '../../../details';
 import { Badge, Detail, DialogSection, Meta, Note, Row } from '../../../styled';
@@ -35,6 +35,21 @@ export interface FossilCounterProps {
 }
 
 export function FossilCounter(props: FossilCounterProps): JSX.Element {
+  const shelf = (): ItemCell[] => {
+    const cells: ItemCell[] = [];
+
+    for (const item of props.offer) {
+      cells.push({
+        item,
+        note: `${getFossilPrice(item)} gold`,
+        said: `Buy ${describeItem(item)}, ${getFossilPrice(item)} gold`,
+        blocked: getFossilPrice(item) > props.gold ? 'More than you hold' : null,
+        card: () => <Detail label="Costs">{getFossilPrice(item)} gold</Detail>,
+      });
+    }
+    return cells;
+  };
+
   return (
     <DialogSection class={CENTRED}>
       <Purse gold={props.gold} />
@@ -52,19 +67,7 @@ export function FossilCounter(props: FossilCounterProps): JSX.Element {
               does: the press is the purchase, with the price on the
               square and the purse greying what it will not stretch
               to */}
-          <ItemGrid
-            bare
-            verb="Buy"
-            disabled={props.busy}
-            entries={props.offer.map((item) => ({
-              item,
-              note: `${getFossilPrice(item)} gold`,
-              said: `Buy ${describeItem(item)}, ${getFossilPrice(item)} gold`,
-              blocked: getFossilPrice(item) > props.gold ? 'More than you hold' : null,
-              card: () => <Detail label="Costs">{getFossilPrice(item)} gold</Detail>,
-            }))}
-            onPress={props.onBuy}
-          />
+          <ItemGrid bare verb="Buy" disabled={props.busy} entries={shelf()} onPress={props.onBuy} />
         </Show>
       </Show>
     </DialogSection>
@@ -112,7 +115,14 @@ export interface KurtCounterProps {
  * square was pressed
  */
 export function KurtCounter(props: KurtCounterProps): JSX.Element {
-  const carrying = (): number => props.apricorns.reduce((total, entry) => total + entry.amount, 0);
+  const carrying = (): number => {
+    let total = 0;
+
+    for (const entry of props.apricorns) {
+      total += entry.amount;
+    }
+    return total;
+  };
 
   return (
     <DialogSection class={CENTRED}>

@@ -11,19 +11,29 @@ import registerBiomeSpawns, {
   TIMES_OF_DAY,
   boostFamilyWeights,
   boostTypeWeights,
+  fitsSurface,
+  getBiomeRoster,
   getEggPool,
   getSpawnPool,
   getSpawnRarity,
+  getTownPool,
   isAwaitingBaby,
   isGrownSpecies,
   isLegendarySpecies,
   isMythicalSpecies,
   isPrizedSpecies,
   listSpeciesHabitats,
+  listTownHabitats,
   pickSpawn,
   spawnBand,
 } from '../src/data/biome';
 import EggGroups from '../src/data/ids/egg-groups';
+import { getBiomeLairs, getLairResidents } from '../src/data/overworld/lair';
+import {
+  HONEY_TREE_POOL,
+  HONEY_TREE_SPECIES,
+  rollHoneyTree,
+} from '../src/data/overworld/honey-tree';
 import Families from '../src/data/ids/families';
 import registerAbilities, { getAbilityData, getSignatureAbility } from '../src/data/abilities';
 import Abilities from '../src/data/ids/abilities';
@@ -38,12 +48,26 @@ import {
 } from '../src/data/constants/types';
 import Biome, {
   AnyTimeOfDay,
+  SpawnSurface,
   TimeOfDay,
   WILD_BIOMES,
   getBiome,
   isOpenSea,
+  isSettledBiome,
   isWaterBiome,
 } from '../src/data/ids/biome';
+import type { SettledBiome } from '../src/data/ids/biome';
+import { CAVE_DARK_CELLS, CAVE_LAMP_CELLS } from '../src/data/overworld/cave';
+import { ILLUMINATE_LAMP_CELLS } from '../src/overworld/abilities/gen-1';
+import nameTown, {
+  COUNTY_REGIONS,
+  HEADS_PER_BIOME,
+  NAMES_PER_BIOME,
+  TOWN_HEADS,
+} from '../src/data/overworld/town-names';
+import { WORLD_MAX, WORLD_MIN } from '../src/overworld/world';
+import { CHUNK_CELLS } from '../src/overworld/grid';
+import { TOWN_REGION } from '../src/overworld/town';
 import {
   APRICORNS,
   BALL_ITEMS,
@@ -74,21 +98,21 @@ import {
   unpackStatuses,
 } from '../src/data/ids/status';
 import {
+  ARCEUS_FORMS,
   BURMY_FORMS,
   CASTFORM_FORMS,
   CHERRIM_FORMS,
   DEOXYS_FORMS,
   DIALGA_FORMS,
+  EvolutionMethod,
+  GASTRODON_FORMS,
   GIRATINA_FORMS,
-  ARCEUS_FORMS,
+  Genders,
+  PALKIA_FORMS,
   ROTOM_FORMS,
   SHAYMIN_FORMS,
-  PALKIA_FORMS,
-  GASTRODON_FORMS,
-  EvolutionMethod,
-  Genders,
-  Species,
   SHELLOS_FORMS,
+  Species,
   UNOWN_FORMS,
   WORMADAM_FORMS,
   getBaseFormSpecies,
@@ -294,9 +318,10 @@ import {
   getMovesLearnedAt,
   getRegisteredFamilies,
   getRegisteredSpecies,
+  getShedEvolutions,
+  getShoreForm,
   getSpeciesAbilities,
   getSpeciesAbilityPools,
-  getShoreForm,
   getSpeciesByBiome,
   getSpeciesData,
   getSpeciesForms,
@@ -1000,6 +1025,70 @@ describe('the unowns', () => {
   });
 });
 
+const SURFACES = [SpawnSurface.Land, SpawnSurface.Water, SpawnSurface.Ice];
+
+/** Every biome, hour and surface that can hold a pool, as one flat walk */
+function* everyPool(): Generator<[Biome, TimeOfDay, SpawnSurface]> {
+  for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+    for (const time of TIMES_OF_DAY) {
+      for (const surface of SURFACES) {
+        yield [biome, time, surface];
+      }
+    }
+  }
+}
+
+describe('which pool a species may stand in', () => {
+  it('keeps what only swims off land and ice, and what walks out of the water', () => {
+    expect(fitsSurface(Species.Magikarp, SpawnSurface.Water)).toBe(true);
+    expect(fitsSurface(Species.Magikarp, SpawnSurface.Land)).toBe(false);
+    expect(fitsSurface(Species.Magikarp, SpawnSurface.Ice)).toBe(false);
+    expect(fitsSurface(Species.Rhyhorn, SpawnSurface.Water)).toBe(false);
+    expect(fitsSurface(Species.Rhyhorn, SpawnSurface.Ice)).toBe(true);
+    // A flier is ground unless its data says otherwise
+    expect(fitsSurface(Species.Pidgey, SpawnSurface.Water)).toBe(false);
+    // Something at home on both stands in either
+    expect(fitsSurface(Species.Psyduck, SpawnSurface.Land)).toBe(true);
+    expect(fitsSurface(Species.Psyduck, SpawnSurface.Water)).toBe(true);
+  });
+
+  it('gives every Water type a place in the water', () => {
+    // Palkia is Water by type and lives nowhere near it, and Wash Rotom
+    // is only ever reached through a Catalog
+    const dry = new Set<Species>();
+
+    for (const species of getRegisteredSpecies()) {
+      const data = getSpeciesData(species);
+
+      if (
+        data.types.includes(Types.Water) &&
+        data.worn !== true &&
+        !fitsSurface(species, SpawnSurface.Water)
+      ) {
+        dry.add(species);
+      }
+    }
+    expect(dry).toEqual(new Set([Species.Palkia, Species.RotomWash]));
+  });
+
+  it('writes every pool for the surface it stands on', () => {
+    for (const [biome, time, surface] of everyPool()) {
+      const groups = getSpawnPool(biome, time, false, surface);
+
+      for (const band of SPAWN_BAND_KEYS) {
+        for (const entry of spawnBand(groups, band)) {
+          const { name } = getSpeciesData(entry.species);
+
+          expect(
+            fitsSurface(entry.species, surface),
+            `${name} in ${BIOME_NAMES[biome]} (surface ${surface})`,
+          ).toBe(true);
+        }
+      }
+    }
+  });
+});
+
 describe('where a species lives', () => {
   it('reads the pools backwards, one entry per biome, hour and band', () => {
     const habitats = listSpeciesHabitats(Species.Rattata);
@@ -1053,7 +1142,16 @@ describe('where a species lives', () => {
     // A mythical stands in a band of its own, one place apiece and as
     // thin as the legendary band. The relic is the other way to one,
     // not the only way
-    for (const species of [Species.Mew, Species.Celebi, Species.Jirachi, Species.Deoxys]) {
+    for (const species of [
+      Species.Mew,
+      Species.Celebi,
+      Species.Jirachi,
+      Species.Deoxys,
+      Species.Darkrai,
+      Species.Manaphy,
+      Species.Shaymin,
+      Species.Arceus,
+    ]) {
       expect(isMythicalSpecies(species)).toBe(true);
 
       const mythical = listSpeciesHabitats(species);
@@ -1066,20 +1164,47 @@ describe('where a species lives', () => {
     expect(MYTHICAL_SPAWN_ODDS).toBe(SPECIAL_SPAWN_ODDS);
   });
 
+  it('stages a legendary wild wherever its lair stands', () => {
+    // A lair equates to a wild spawn: a biome that hosts one lists each
+    // resident in its special band whenever that resident is about.
+    // Mythical lairs are never hosted, so they never reach this list
+    const homes = (Object.keys(BIOME_NAMES).map(Number) as Biome[]).flatMap((biome) =>
+      getBiomeLairs(biome).flatMap((lair) =>
+        getLairResidents(lair).map((species) => ({ biome, species })),
+      ),
+    );
+
+    expect(homes.length).toBeGreaterThan(0);
+    for (const { biome, species } of homes) {
+      const { activeTimes, name } = getSpeciesData(species);
+
+      for (const time of TIMES_OF_DAY.filter((period) => (activeTimes & period) !== 0)) {
+        // Any of the biome's surfaces will do, since Kyogre lives in the water
+        const band = new Set(
+          SURFACES.flatMap((surface) =>
+            spawnBand(getSpawnPool(biome, time, false, surface), 'special').map(
+              (entry) => entry.species,
+            ),
+          ),
+        );
+
+        expect(band.has(species), `${name} in ${BIOME_NAMES[biome]}`).toBe(true);
+      }
+    }
+  });
+
   it('says the same thing the pools do about every species', () => {
     // Nothing is invented and nothing is dropped: the number of
     // habitat entries is exactly the number of times the registry
     // lists that species anywhere
     const counted = new Map<Species, number>();
 
-    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
-      for (const time of TIMES_OF_DAY) {
-        const groups = getSpawnPool(biome, time);
+    for (const [biome, time, surface] of everyPool()) {
+      const groups = getSpawnPool(biome, time, false, surface);
 
-        for (const band of SPAWN_BAND_KEYS) {
-          for (const entry of spawnBand(groups, band)) {
-            counted.set(entry.species, (counted.get(entry.species) ?? 0) + 1);
-          }
+      for (const band of SPAWN_BAND_KEYS) {
+        for (const entry of spawnBand(groups, band)) {
+          counted.set(entry.species, (counted.get(entry.species) ?? 0) + 1);
         }
       }
     }
@@ -1090,19 +1215,17 @@ describe('where a species lives', () => {
   });
 
   it('stages nothing where or when its species does not live', () => {
-    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
-      for (const time of TIMES_OF_DAY) {
-        const groups = getSpawnPool(biome, time);
+    for (const [biome, time, surface] of everyPool()) {
+      const groups = getSpawnPool(biome, time, false, surface);
 
-        // The prized band is the alphabet and the babies, which stand
-        // in every biome by design
-        for (const band of SPAWN_BAND_KEYS.filter((key) => key !== 'prized')) {
-          for (const entry of spawnBand(groups, band)) {
-            const data = getSpeciesData(entry.species);
+      // The prized band is the alphabet and the babies, which stand
+      // in every biome by design
+      for (const band of SPAWN_BAND_KEYS.filter((key) => key !== 'prized')) {
+        for (const entry of spawnBand(groups, band)) {
+          const data = getSpeciesData(entry.species);
 
-            expect(data.biomes, `${data.name} in ${BIOME_NAMES[biome]}`).toContain(biome);
-            expect(data.activeTimes & time, `${data.name} at ${time}`).not.toBe(0);
-          }
+          expect(data.biomes, `${data.name} in ${BIOME_NAMES[biome]}`).toContain(biome);
+          expect(data.activeTimes & time, `${data.name} at ${time}`).not.toBe(0);
         }
       }
     }
@@ -1131,11 +1254,10 @@ describe('where a species lives', () => {
     // one there is, so no pool stages it though it names the water it
     // drifts in.
     //
-    // Porygon is made rather than met: it stands beside a portal and
-    // in no pool, and what it evolves into is met the same way. The
-    // far shore's shell is staged by the pool its west counterpart
-    // sits in, and swapped for as the world hands it over, so no pool
-    // names it either
+    // Porygon is met on town streets, which no biome pool holds, and
+    // what it evolves into is made rather than met. The far shore's
+    // shell is staged by the pool its west counterpart sits in, and
+    // swapped for as the world hands it over, so no pool names it either
     const unstaged = new Set<Species>([
       Species.Phione,
       ...ROTOM_FORMS.slice(1),
@@ -1147,14 +1269,12 @@ describe('where a species lives', () => {
     ]);
     const staged = new Set<Species>();
 
-    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
-      for (const time of TIMES_OF_DAY) {
-        const groups = getSpawnPool(biome, time);
+    for (const [biome, time, surface] of everyPool()) {
+      const groups = getSpawnPool(biome, time, false, surface);
 
-        for (const band of SPAWN_BAND_KEYS) {
-          for (const entry of spawnBand(groups, band)) {
-            staged.add(entry.species);
-          }
+      for (const band of SPAWN_BAND_KEYS) {
+        for (const entry of spawnBand(groups, band)) {
+          staged.add(entry.species);
         }
       }
     }
@@ -1737,6 +1857,37 @@ describe('evolution data', () => {
     [Stats.SpecialDefense]: 100,
     [Stats.Speed]: 100,
   };
+
+  it('leaves a Shedinja beside a Ninjask rather than offering it instead', () => {
+    const context = {
+      species: Species.Nincada,
+      level: 20,
+      carried: new Set([Items.PokeBall]),
+      held: new Set<Items>(),
+      canEvolve: false,
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
+      time: TimeOfDay.Day,
+      moves: new Set<Moves>(),
+    };
+    const named = (roads: { species: Species }[]): Species[] => {
+      const species: Species[] = [];
+
+      for (const road of roads) {
+        species.push(road.species);
+      }
+      return species;
+    };
+
+    // The only choice is the Ninjask, whatever the bag holds
+    expect(named(getAvailableEvolutions(context))).toEqual([Species.Ninjask]);
+    expect(named(getShedEvolutions(context))).toEqual([Species.Shedinja]);
+
+    // No ball to leave it in, or not grown yet, and there is no husk
+    expect(getShedEvolutions({ ...context, carried: new Set<Items>() })).toEqual([]);
+    expect(getShedEvolutions({ ...context, level: 19 })).toEqual([]);
+  });
 
   it('gives a Feebas two roads to the same shape', () => {
     const roads = getSpeciesData(Species.Feebas).evolvesInto ?? [];
@@ -2387,6 +2538,20 @@ describe('evolution data', () => {
     ).toBeNull();
   });
 
+  it('spends the held item a levelling evolution asks for', () => {
+    for (const [species, item] of [
+      [Species.Sneasel, Items.RazorClaw],
+      [Species.Gligar, Items.RazorFang],
+      [Species.Happiny, Items.OvalStone],
+    ] as const) {
+      const [evolution] = getSpeciesData(species).evolvesInto ?? [];
+
+      // Nothing in the bag pays for it: the pokemon gives up what it held
+      expect(getConsumedItem(evolution), getSpeciesData(species).name).toBeNull();
+      expect(getSpentHeldItem(evolution), getSpeciesData(species).name).toBe(item);
+    }
+  });
+
   it('spends the used item and leaves a held one alone', () => {
     const [stone] = getSpeciesData(Species.Vulpix).evolvesInto ?? [];
     const [level] = getSpeciesData(Species.Charmander).evolvesInto ?? [];
@@ -2505,7 +2670,8 @@ describe('species day', () => {
   });
 
   it('reduces a biome to the eggs a nest could be holding', () => {
-    const pool = getSpawnPool(Biome.Grassland, TimeOfDay.Morning);
+    // Every surface's pool, so a grassland nest may lay what lives in its ponds
+    const pool = getBiomeRoster(Biome.Grassland, TimeOfDay.Morning);
     const eggs = getEggPool(Biome.Grassland, TimeOfDay.Morning);
 
     // Everything that hatches is a first stage, and nothing appears
@@ -2803,7 +2969,13 @@ describe('item data', () => {
       expect(getItemData(item).type, getItemData(item).name).toBe(ItemTypes.PokeBall);
       expect(medicine.has(item)).toBe(false);
     }
+    // Honey is the one held item on the medicine shelf: it is food, and
+    // the jar a honey tree wants
+    expect(medicine.has(Items.Honey)).toBe(true);
     for (const item of medicine) {
+      if (item === Items.Honey) {
+        continue;
+      }
       expect(getItemData(item).type, getItemData(item).name).toBe(ItemTypes.Medicine);
       expect(balls.has(item)).toBe(false);
     }
@@ -4997,23 +5169,54 @@ describe('biome data', () => {
     // A species that gains an evolution moves down a band, and the
     // pools have to move with it or the dex describes a Steelix's
     // Onix as the end of its line
-    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
-      for (const time of [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night]) {
-        const groups = getSpawnPool(biome, time);
+    for (const [biome, time, surface] of everyPool()) {
+      const groups = getSpawnPool(biome, time, false, surface);
 
-        for (const [band, rarity] of [
-          ['base', SpawnRarity.Base],
-          ['uncommon', SpawnRarity.Uncommon],
-          ['rare', SpawnRarity.Rare],
-          ['prized', SpawnRarity.Prized],
-          ['special', SpawnRarity.Special],
-        ] as const) {
-          for (const entry of groups[band] ?? []) {
-            expect(getSpawnRarity(entry.species), getSpeciesData(entry.species).name).toBe(rarity);
-          }
+      for (const [band, rarity] of [
+        ['base', SpawnRarity.Base],
+        ['uncommon', SpawnRarity.Uncommon],
+        ['rare', SpawnRarity.Rare],
+        ['prized', SpawnRarity.Prized],
+        ['special', SpawnRarity.Special],
+      ] as const) {
+        for (const entry of groups[band] ?? []) {
+          expect(getSpawnRarity(entry.species), getSpeciesData(entry.species).name).toBe(rarity);
         }
       }
     }
+  });
+
+  it('files the town pool by the same rules as the country', () => {
+    // One pool every town's streets draw from: each entry sits in the
+    // band its line puts it in, at an hour it is about
+    const bands = [
+      ['base', SpawnRarity.Base],
+      ['uncommon', SpawnRarity.Uncommon],
+      ['rare', SpawnRarity.Rare],
+      ['scarce', SpawnRarity.Scarce],
+      ['elusive', SpawnRarity.Elusive],
+      ['prized', SpawnRarity.Prized],
+      ['special', SpawnRarity.Special],
+    ] as const;
+    let held = 0;
+
+    for (const time of TIMES_OF_DAY) {
+      for (const [band, rarity] of bands) {
+        for (const entry of getTownPool(time)[band] ?? []) {
+          const { activeTimes, name } = getSpeciesData(entry.species);
+
+          held += 1;
+          expect(getSpawnRarity(entry.species), name).toBe(rarity);
+          expect(activeTimes & time, name).not.toBe(0);
+        }
+      }
+    }
+    expect(held).toBeGreaterThan(0);
+
+    // Porygon is met on the streets at every hour, and what it evolves
+    // into is made rather than met
+    expect(listTownHabitats(Species.Porygon)).toHaveLength(TIMES_OF_DAY.length);
+    expect(listTownHabitats(Species.Porygon2)).toEqual([]);
   });
 
   it('knows which finds are worth stopping a player over', () => {
@@ -7183,5 +7386,196 @@ describe('a region’s pokedex chain', () => {
         ids.add(id);
       }
     }
+  });
+});
+
+describe('honey trees', () => {
+  it('keeps what a honey tree draws out out of every wild pool', () => {
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const time of TIMES_OF_DAY) {
+        const groups = getBiomeRoster(biome, time);
+
+        for (const band of SPAWN_BAND_KEYS) {
+          for (const entry of spawnBand(groups, band)) {
+            expect(
+              HONEY_TREE_SPECIES.has(entry.species),
+              `${getSpeciesData(entry.species).name} in ${BIOME_NAMES[biome]}`,
+            ).toBe(false);
+          }
+        }
+      }
+    }
+    for (const species of HONEY_TREE_SPECIES) {
+      expect(getSpeciesData(species).biomes).toEqual([]);
+    }
+  });
+
+  it('bands each pokemon where its line puts it', () => {
+    const rarities: Record<string, SpawnRarity> = {
+      base: SpawnRarity.Base,
+      uncommon: SpawnRarity.Uncommon,
+      rare: SpawnRarity.Rare,
+      scarce: SpawnRarity.Scarce,
+      elusive: SpawnRarity.Elusive,
+      prized: SpawnRarity.Prized,
+    };
+
+    for (const band of SPAWN_BAND_KEYS) {
+      for (const entry of spawnBand(HONEY_TREE_POOL, band)) {
+        expect(getSpawnRarity(entry.species), getSpeciesData(entry.species).name).toBe(
+          rarities[band],
+        );
+      }
+    }
+  });
+
+  it('only ever draws out one of its own', () => {
+    for (const roll of [0, 0.1, 0.3, 0.6, 0.9, 0.999]) {
+      const drawn = rollHoneyTree(() => roll);
+
+      expect(drawn).not.toBeNull();
+      expect(HONEY_TREE_SPECIES.has(drawn ?? Species.Missingno)).toBe(true);
+    }
+  });
+});
+
+describe('town names', () => {
+  it('dresses every country a town can stand on, and nothing else', () => {
+    const dressed = (Object.keys(TOWN_HEADS).map(Number) as SettledBiome[]).sort(
+      (left, right) => left - right,
+    );
+
+    // Exactly the biomes a town can be settled on. Words for a biome
+    // no town can stand on would be words nothing ever reaches
+    expect(dressed).toEqual(WILD_BIOMES.filter(isSettledBiome));
+    for (const biome of dressed) {
+      expect(isOpenSea(biome), BIOME_NAMES[biome]).toBe(false);
+    }
+
+    const seen = new Map<string, Biome>();
+
+    for (const biome of dressed) {
+      const heads = TOWN_HEADS[biome];
+
+      expect(heads.length, BIOME_NAMES[biome]).toBe(HEADS_PER_BIOME);
+      for (const head of heads) {
+        // Two biomes sharing a word is two towns that could be called
+        // the same thing, which is a name the store has to re-roll
+        expect(seen.get(head) ?? biome, head).toBe(biome);
+        seen.set(head, biome);
+        expect(head).toMatch(/^[A-Z][a-z]+$/);
+      }
+    }
+  });
+
+  it('gives a county’s regions a name each, and never two the same', () => {
+    const names = new Set<string>();
+
+    // A whole county, which is the set a name has to be unique inside.
+    // Exhaustive on purpose: this is the claim the whole scheme rests
+    // on, and it is only 4,096 names
+    for (let y = 0; y < COUNTY_REGIONS; y++) {
+      for (let x = 0; x < COUNTY_REGIONS; x++) {
+        names.add(nameTown(x, y, Biome.Glacier));
+      }
+    }
+    expect(names.size).toBe(COUNTY_REGIONS * COUNTY_REGIONS);
+    // And the county has room left over, which is what lets the marks
+    // stay rare
+    expect(NAMES_PER_BIOME).toBe(49_920);
+    expect(NAMES_PER_BIOME).toBeGreaterThan(COUNTY_REGIONS * COUNTY_REGIONS);
+  });
+
+  it('keeps a mark a flourish rather than a fixture', () => {
+    let marked = 0;
+
+    for (let y = 0; y < COUNTY_REGIONS; y++) {
+      for (let x = 0; x < COUNTY_REGIONS; x++) {
+        // A mark is a word in front, so a marked name is the one with
+        // three words before the county rather than two
+        if (nameTown(x, y, Biome.Glacier).split(',')[0].split(' ').length === 3) {
+          marked++;
+        }
+      }
+    }
+    // The 3,840 unmarked names are spent first, so only what is left
+    // of the county's 4,096 regions reaches for one
+    expect(marked).toBe(COUNTY_REGIONS * COUNTY_REGIONS - 8 * 40 * 12);
+    expect(marked / (COUNTY_REGIONS * COUNTY_REGIONS)).toBeLessThan(0.07);
+  });
+
+  it('names a town for the county it stands in', () => {
+    const name = nameTown(3, -2, Biome.Glacier);
+    const [local, county] = name.split(', ');
+
+    expect(county).not.toBeUndefined();
+    // The head is the glacier's own, which is what makes the name
+    // worth reading before the map is looked at
+    const words = local.split(' ');
+
+    expect(
+      TOWN_HEADS[Biome.Glacier].some((head) => words[words.length - 2].startsWith(head)),
+      name,
+    ).toBe(true);
+
+    // Everywhere in one county shares its second half, and a region a
+    // county over does not
+    expect(nameTown(4, -2, Biome.Glacier).split(', ')[1]).toBe(county);
+    expect(nameTown(3 + COUNTY_REGIONS, -2, Biome.Glacier).split(', ')[1]).not.toBe(county);
+  });
+
+  it('never depends on how big the world is', () => {
+    // A county is floor(region / 64) and nothing else, so growing the
+    // world leaves every town that already existed under the name it
+    // already had. Every region the world has today must land inside
+    // the county names, which is what would fail if it grew
+    const lowest = Math.floor((WORLD_MIN * CHUNK_CELLS) / (TOWN_REGION * CHUNK_CELLS));
+    const highest = Math.floor(((WORLD_MAX + 1) * CHUNK_CELLS - 1) / (TOWN_REGION * CHUNK_CELLS));
+
+    for (const y of [lowest, -1, 0, highest]) {
+      for (const x of [lowest, -1, 0, highest]) {
+        expect(() => nameTown(x, y, Biome.Glacier)).not.toThrow();
+      }
+    }
+    // ...and a region past the world's edge is the thing that says so,
+    // rather than quietly sharing a name with somewhere real
+    expect(() => nameTown(lowest - 1, 0, Biome.Glacier)).toThrow();
+    expect(() => nameTown(0, highest + 1, Biome.Glacier)).toThrow();
+  });
+});
+
+describe('what lives underground', () => {
+  it('draws from its own pool, not the country overhead', () => {
+    const surface = getSpawnPool(Biome.Grassland, TimeOfDay.Day);
+    const cave = getSpawnPool(Biome.Grassland, TimeOfDay.Day, true);
+
+    expect(cave.base.length).toBeGreaterThan(0);
+    expect(cave).not.toEqual(surface);
+    // Zubat is what a cave is, and it stands in no biome pool
+    expect(cave.base.some((entry) => entry.species === Species.Zubat)).toBe(true);
+  });
+
+  it('is the same pool under every country and at every hour', () => {
+    const day = getSpawnPool(Biome.Grassland, TimeOfDay.Day, true);
+
+    // There is no sky down there for an hour to come out of, and a
+    // cave under a desert is the same cave as one under a taiga
+    for (const time of TIMES_OF_DAY) {
+      expect(getSpawnPool(Biome.Glacier, time, true)).toEqual(day);
+      expect(getSpawnPool(Biome.Desert, time, true)).toEqual(day);
+    }
+  });
+
+  it('stages no legendary in a passage', () => {
+    // A legendary underground is at home in a lair rather than
+    // standing about in a tunnel
+    expect(getSpawnPool(Biome.Mountain, TimeOfDay.Day, true).special).toEqual([]);
+  });
+
+  it('lights the dark the same way from either source', () => {
+    // Two ways to buy one effect, so they must arrive at the same
+    // place and must not stack into a third
+    expect(CAVE_LAMP_CELLS).toBe(ILLUMINATE_LAMP_CELLS);
+    expect(CAVE_DARK_CELLS).toBeLessThan(CAVE_LAMP_CELLS);
   });
 });

@@ -14,7 +14,7 @@
  */
 
 import { WORLD_MAX } from '../overworld/world';
-import type QuadBatch from './gl/quad-batch';
+import type { Painter } from './gl/quad-batch';
 import { boardView } from './board';
 
 const HOUR = 3_600_000;
@@ -178,6 +178,101 @@ export function getAmbient(localTime: number, latitude = 0): Ambient {
   };
 }
 
+/** The sky overhead and at the horizon: at night, with the sun on the horizon, and by day */
+const NIGHT_SKY = ['#0a1024', '#1d2b4f'];
+const DUSK_SKY = ['#3a4a80', '#f4a172'];
+const DAY_SKY = ['#3f86d6', '#b4dcf5'];
+
+/** How high or low the sun is once the sky has finished turning */
+const SKY_TURN = 0.3;
+
+/** How many bands the batch lays the sky in, since it has no gradient */
+const SKY_BANDS = 32;
+
+/** The colours behind the board, top of the picture and bottom */
+export interface Skybox {
+  zenith: string;
+  horizon: string;
+}
+
+/** Read off the sun alone, so every country shares the hour's sky */
+export function getSkybox(localTime: number, latitude = 0): Skybox {
+  const { elevation } = getSun(localTime, latitude);
+  const turned = Math.min(1, Math.abs(elevation) / SKY_TURN);
+  const far = elevation >= 0 ? DAY_SKY : NIGHT_SKY;
+
+  return {
+    zenith: mixHex(DUSK_SKY[0], far[0], turned),
+    horizon: mixHex(DUSK_SKY[1], far[1], turned),
+  };
+}
+
+/** Paint the hour's sky over the whole canvas, before anything stands on it */
+export function paintSkybox(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  localTime: number,
+  latitude = 0,
+): void {
+  const { zenith, horizon } = getSkybox(localTime, latitude);
+  const fade = context.createLinearGradient(0, 0, 0, height);
+
+  fade.addColorStop(0, zenith);
+  fade.addColorStop(1, horizon);
+  context.fillStyle = fade;
+  context.fillRect(0, 0, width, height);
+}
+
+/** The band colours of the last sky laid, since the hour's sky changes far slower than frames */
+const bands: { zenith: string; horizon: string; colours: string[] } = {
+  zenith: '',
+  horizon: '',
+  colours: [],
+};
+
+/** Corners reused by every band: a batch copies a quad the moment it is written */
+const BAND = [
+  { x: 0, y: 0 },
+  { x: 0, y: 0 },
+  { x: 0, y: 0 },
+  { x: 0, y: 0 },
+];
+
+/** The same sky, written into a batch */
+export function batchSkybox(
+  batch: Painter,
+  width: number,
+  height: number,
+  localTime: number,
+  latitude = 0,
+): void {
+  const { zenith, horizon } = getSkybox(localTime, latitude);
+
+  if (bands.zenith !== zenith || bands.horizon !== horizon) {
+    bands.zenith = zenith;
+    bands.horizon = horizon;
+    bands.colours.length = 0;
+    for (let band = 0; band < SKY_BANDS; band += 1) {
+      bands.colours.push(mixHex(zenith, horizon, (band + 0.5) / SKY_BANDS));
+    }
+  }
+  for (let band = 0; band < SKY_BANDS; band += 1) {
+    const top = (band / SKY_BANDS) * height;
+    const bottom = ((band + 1) / SKY_BANDS) * height;
+
+    BAND[0].x = 0;
+    BAND[0].y = top;
+    BAND[1].x = width;
+    BAND[1].y = top;
+    BAND[2].x = width;
+    BAND[2].y = bottom;
+    BAND[3].x = 0;
+    BAND[3].y = bottom;
+    batch.solid(bands.colours[band], BAND);
+  }
+}
+
 /** `from` and `to` mixed by `amount`, as the `#rrggbb` the canvas takes */
 function mixHex(from: string, to: string, amount: number): string {
   const a = Number.parseInt(from.slice(1), 16);
@@ -331,7 +426,7 @@ export function paintAmbient(
  * canvas. Answers whether it wrote anything
  */
 export function batchAmbient(
-  batch: QuadBatch,
+  batch: Painter,
   width: number,
   height: number,
   localTime: number,

@@ -150,12 +150,34 @@ export function sellPrice(item: Items): number {
  */
 const SHELVES = new Map<VendorKind, () => Items[]>([
   [VendorKind.Balls, () => Object.values(BALL_ITEMS)],
-  [VendorKind.Medicine, () => [...MEDICINES.keys()]],
+  // Honey rides with the medicine: it is food, and the jar a honey tree wants
+  [VendorKind.Medicine, () => [...MEDICINES.keys(), Items.Honey]],
   [VendorKind.Vitamins, () => [...VITAMIN_STATS.keys(), ...PP_ITEMS.keys()]],
   [VendorKind.Incenses, () => [...INCENSES]],
   [VendorKind.BattleItems, () => [...BATTLE_ITEMS]],
-  [VendorKind.Moves, () => getTeachableMoves().map((move) => getMachineItem(move))],
+  [
+    VendorKind.Moves,
+    () => {
+      const machines: Items[] = [];
+
+      for (const move of getTeachableMoves()) {
+        machines.push(getMachineItem(move));
+      }
+      return machines;
+    },
+  ],
 ]);
+
+function marketableOnly(items: Iterable<Items>): Items[] {
+  const marketable: Items[] = [];
+
+  for (const item of items) {
+    if (isMarketable(item)) {
+      marketable.push(item);
+    }
+  }
+  return marketable;
+}
 
 const stocked = new Map<VendorKind, Items[]>();
 
@@ -166,7 +188,7 @@ export function getVendorGoods(kind: VendorKind = VendorKind.Balls): Items[] {
     return built;
   }
 
-  const goods = (SHELVES.get(kind)?.() ?? []).filter(isMarketable);
+  const goods = marketableOnly(SHELVES.get(kind)?.() ?? []);
 
   stocked.set(kind, goods);
   return goods;
@@ -200,7 +222,7 @@ export function rollVendorStock(
 let larder: Items[] | null = null;
 
 export function getChefGoods(): Items[] {
-  larder ??= [...DRINKS.keys(), ...TREATS.keys(), ...MINT_NATURES.keys()].filter(isMarketable);
+  larder ??= marketableOnly([...DRINKS.keys(), ...TREATS.keys(), ...MINT_NATURES.keys()]);
   return larder;
 }
 
@@ -218,7 +240,13 @@ export function rollChefStock(random: () => number): Items[] {
  */
 function fillCrate(staples: Items[], goods: Items[], random: () => number, size: number): Items[] {
   const held = new Set(staples);
-  const rest = goods.filter((item) => !held.has(item));
+  const rest: Items[] = [];
+
+  for (const item of goods) {
+    if (!held.has(item)) {
+      rest.push(item);
+    }
+  }
   const stock = [...staples];
 
   while (stock.length < size && rest.length > 0) {

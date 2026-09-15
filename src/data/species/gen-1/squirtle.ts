@@ -5,7 +5,7 @@ import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -98,6 +98,7 @@ export default function registerSquirtleSpecies(): void {
       [Stats.Speed]: 43,
     },
     types: [Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.Torrent],
     hiddenAbilities: [Abilities.RainDish],
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
@@ -160,6 +161,7 @@ export default function registerSquirtleSpecies(): void {
       [Stats.Speed]: 58,
     },
     types: [Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.Torrent],
     hiddenAbilities: [Abilities.RainDish],
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
@@ -201,6 +203,7 @@ export default function registerSquirtleSpecies(): void {
       [Stats.Speed]: 78,
     },
     types: [Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.Torrent],
     hiddenAbilities: [Abilities.RainDish, Abilities.ShellArmor, Abilities.Sniper],
     eggGroups: [EggGroups.Monster, EggGroups.Water1],

@@ -194,7 +194,16 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
       clearTimeout(timer);
       timers.delete(id);
     }
-    setToasts((shown) => shown.filter((toast) => toast.id !== id));
+    setToasts((shown) => {
+      const kept: typeof shown = [];
+
+      for (const toast of shown) {
+        if (toast.id !== id) {
+          kept.push(toast);
+        }
+      }
+      return kept;
+    });
   };
 
   /**
@@ -203,7 +212,14 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
    * already going
    */
   const dismiss = (id: number): void => {
-    const going = toasts().find((toast) => toast.id === id);
+    let going: ReturnType<typeof toasts>[number] | undefined;
+
+    for (const toast of toasts()) {
+      if (toast.id === id) {
+        going = toast;
+        break;
+      }
+    }
 
     // Asked twice is nothing to answer: the timer already running is
     // the one that drops it
@@ -215,9 +231,14 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
     if (timer != null) {
       clearTimeout(timer);
     }
-    setToasts((shown) =>
-      shown.map((toast) => (toast.id === id ? { ...toast, leaving: true } : toast)),
-    );
+    setToasts((shown) => {
+      const marked: typeof shown = [];
+
+      for (const toast of shown) {
+        marked.push(toast.id === id ? { ...toast, leaving: true } : toast);
+      }
+      return marked;
+    });
     timers.set(
       id,
       setTimeout(() => {
@@ -234,9 +255,14 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
     setToasts((shown) => [...shown, { ...toast, id }]);
     // Anything past the stack is sent on its way rather than cut, so
     // the oldest leaves the way everything else does
-    for (const older of toasts()
-      .filter((one) => one.leaving !== true)
-      .slice(0, -STACK)) {
+    const staying: ReturnType<typeof toasts> = [];
+
+    for (const one of toasts()) {
+      if (one.leaving !== true) {
+        staying.push(one);
+      }
+    }
+    for (const older of staying.slice(0, -STACK)) {
       dismiss(older.id);
     }
     timers.set(

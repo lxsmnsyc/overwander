@@ -3,6 +3,7 @@ import type { PositionRecord } from '../../auth/position-record';
 import { Badge, Meta, Note, Row } from '../styled';
 import { getPlayerPosition } from '../../auth/positions';
 import namePlace from '../../overworld/place';
+import { worldCell } from '../../overworld/grid';
 
 /**
  * Where a trainer is standing.
@@ -30,7 +31,14 @@ function PlaceLine(props: { place: Resource<PositionRecord | null> }): JSX.Eleme
     <Show when={props.place()} fallback={<Note>They have not walked anywhere yet.</Note>}>
       {(at) => (
         <Row>
-          <Badge tone="leaf">{namePlace(at().chunkX, at().chunkY)}</Badge>
+          <Badge tone="leaf">
+            {namePlace(
+              at().chunkX,
+              at().chunkY,
+              worldCell(at().chunkX, at().cellX),
+              worldCell(at().chunkY, at().cellY),
+            )}
+          </Badge>
           <Meta>
             cell {at().cellX}, {at().cellY}
           </Meta>

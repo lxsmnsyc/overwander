@@ -39,11 +39,14 @@ const MARKS = new Map<string, (item: Items) => boolean>(
 );
 
 function marked(item: Items, value: string, wanted: boolean): boolean {
-  return alternatives(value).some((word) => {
+  for (const word of alternatives(value)) {
     const mark = MARKS.get(word.trim().toLowerCase());
 
-    return mark?.(item) === wanted;
-  });
+    if (mark?.(item) === wanted) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /** What one field asks of one item */
@@ -84,14 +87,17 @@ export default function matchesItem(
   query: string,
   holding: ItemHolding = {},
 ): boolean {
-  return askedTerms(query).every((term) => {
+  for (const term of askedTerms(query)) {
     const answered =
       term.field === ''
         ? holds(getItemData(item).name, term.value)
         : FIELDS.get(term.field)?.(item, term.value, holding) === true;
 
-    return term.negated ? !answered : answered;
-  });
+    if (term.negated ? answered : !answered) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
@@ -140,13 +146,14 @@ const VALUES: Record<string, () => string[]> = {
 };
 
 /** What the bag's box can be asked, with the arranging terms on the end */
-export const ITEM_VOCABULARY: QueryVocabulary = {
-  fields: [...FIELDS.keys(), 'sort', 'order'].map((name) => ({
-    name,
-    hint: HINTS[name] ?? '',
-    values: VALUES[name],
-  })),
-};
+export const ITEM_VOCABULARY: QueryVocabulary = (() => {
+  const fields: QueryVocabulary['fields'] = [];
+
+  for (const name of [...FIELDS.keys(), 'sort', 'order']) {
+    fields.push({ name, hint: HINTS[name] ?? '', values: VALUES[name] });
+  }
+  return { fields };
+})();
 
 /**
  * The rows a search asked for, in the order it asked for them. The two

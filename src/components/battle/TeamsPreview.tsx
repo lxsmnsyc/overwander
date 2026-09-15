@@ -2,7 +2,7 @@ import { For, type JSX, type Resource, Show, Suspense, createResource } from 'so
 import type { CaughtPokemon } from '../../auth/caught';
 import { previewSnapshot } from '../../auth/catch-snapshot';
 import { type Profile, getProfiles } from '../../auth/profile';
-import { type TeamSnapshotRecord, getTeamSnapshot } from '../../auth/teams';
+import { type TeamSnapshotRecord, getTeamSnapshotBatched } from '../../auth/teams';
 import { getSpeciesData } from '../../data/species';
 import TeamStrip from '../catches/TeamStrip';
 import PlayerPlate from '../profile/PlayerPlate';
@@ -69,28 +69,44 @@ export default function TeamsPreview(props: TeamsPreviewProps): JSX.Element {
   const [loaded] = createResource(
     () => (props.teams.length === 0 ? null : props.teams.join(',')),
     async (key): Promise<PreviewRow[]> => {
-      const found = await Promise.all(key.split(',').map(async (id) => getTeamSnapshot(id)));
-      const snapshots = found.filter(
-        (snapshot): snapshot is TeamSnapshotRecord => snapshot != null,
-      );
-      const profiles = await getProfiles(snapshots.map((snapshot) => snapshot.player));
+      const pending: Promise<TeamSnapshotRecord | null>[] = [];
 
-      return snapshots.map((snapshot) => {
+      for (const id of key.split(',')) {
+        pending.push(getTeamSnapshotBatched(id));
+      }
+
+      const found = await Promise.all(pending);
+      const snapshots: TeamSnapshotRecord[] = [];
+      const players: string[] = [];
+
+      for (const snapshot of found) {
+        if (snapshot != null) {
+          snapshots.push(snapshot);
+          players.push(snapshot.player);
+        }
+      }
+
+      const profiles = await getProfiles(players);
+      const rows: PreviewRow[] = [];
+
+      for (const snapshot of snapshots) {
         const lead = snapshot.catches.at(0);
         const profile: Profile | undefined = profiles.get(snapshot.player);
         // A side no player owns is named for what led it out
         const wild = lead == null ? 'Wild' : getSpeciesData(lead.species).name;
+        const catches: [string, CaughtPokemon][] = [];
 
-        return {
+        for (const [at, caught] of snapshot.catches.entries()) {
+          catches.push([caught.caught === '' ? `${at}` : caught.caught, previewSnapshot(caught)]);
+        }
+        rows.push({
           player: snapshot.player,
           name: snapshot.player === '' ? wild : (profile?.nickname ?? 'A trainer'),
           sprite: profile?.sprite ?? null,
-          catches: snapshot.catches.map((caught, at): [string, CaughtPokemon] => [
-            caught.caught === '' ? `${at}` : caught.caught,
-            previewSnapshot(caught),
-          ]),
-        };
-      });
+          catches,
+        });
+      }
+      return rows;
     },
   );
 

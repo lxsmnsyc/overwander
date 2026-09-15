@@ -1,0 +1,75 @@
+/**
+ * How the world is squared off.
+ *
+ * The numbers a chunk is measured in, kept apart from the chunk
+ * itself: what a chunk *holds* is derived from the ground and the
+ * towns, and both of those have to be able to say where a cell is
+ * without waiting on the chunk that would ask them.
+ */
+
+/**
+ * A chunk is a 16x16 grid of cells; scenery, landmarks and snapshot
+ * spawns each occupy one cell, never sharing
+ */
+export const CHUNK_CELLS = 16;
+
+export const CELL_COUNT = CHUNK_CELLS * CHUNK_CELLS;
+
+/**
+ * Where one of a chunk's cells sits in the world's own cell grid.
+ * The fields the ground is read from know nothing about chunks, so
+ * everything that asks them speaks in these
+ */
+export function worldCell(chunk: number, cell: number): number {
+  return chunk * CHUNK_CELLS + cell;
+}
+
+/**
+ * Which chunk a world cell falls in, and where in that chunk it sits.
+ * The board is a window on world cells now, so anything it wants from
+ * a chunk has to be asked for in the chunk's own numbering
+ */
+export function chunkOfCell(cell: number): number {
+  return Math.floor(cell / CHUNK_CELLS);
+}
+
+export function cellInChunk(cell: number): number {
+  return ((cell % CHUNK_CELLS) + CHUNK_CELLS) % CHUNK_CELLS;
+}
+
+/** The four cells straight out of one, for anything that walks a square grid */
+export const ORTHOGONAL: [dx: number, dy: number][] = [
+  [0, -1],
+  [1, 0],
+  [0, 1],
+  [-1, 0],
+];
+
+/** The eight cells round one, for anything that counts a corner too. */
+export const SURROUNDING: [dx: number, dy: number][] = [
+  [0, -1],
+  [1, -1],
+  [1, 0],
+  [1, 1],
+  [0, 1],
+  [-1, 1],
+  [-1, 0],
+  [-1, -1],
+];
+
+/**
+ * The four 2x2 squares a cell belongs to, as their top-left corners.
+ *
+ * What "two cells wide" is asked with: a thing counts as broad where
+ * the cell belongs to a 2x2 block of it, which is a morphological
+ * opening of whatever field is being read and rubs out every spur and
+ * hairline. The cliffs and the water are both held to it, because the
+ * art is a ring of edges and corners and a single cell asks for all
+ * four corners at once
+ */
+export const SQUARES: [dx: number, dy: number][] = [
+  [0, 0],
+  [-1, 0],
+  [0, -1],
+  [-1, -1],
+];

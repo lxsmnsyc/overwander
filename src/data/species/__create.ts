@@ -8,7 +8,7 @@ import type Families from '../ids/families';
 import { FAMILY_NAMES } from '../ids/families';
 import type { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
-import { type Genders, type Species, getBaseFormSpecies } from '../ids/species';
+import { type Genders, Habitat, type Species, getBaseFormSpecies } from '../ids/species';
 
 /**
  * One way a species evolves: the target species and the required
@@ -66,6 +66,12 @@ export interface EvolutionData {
    * fallback
    */
   compare?: StatComparison;
+  /**
+   * Left behind beside whichever evolution is taken, rather than taken
+   * instead of one: a Nincada that becomes a Ninjask with a Poke Ball in
+   * the bag leaves a Shedinja too, the way the mainline hands over both
+   */
+  shed?: boolean;
 }
 
 /**
@@ -166,6 +172,11 @@ export interface SpeciesData {
    */
   types: Types[];
   /**
+   * Whether it is met in water, on the ground or on both, which
+   * decides the spawn pools it may stand in. Ground when absent
+   */
+  habitat?: Habitat;
+  /**
    * Possible regular abilities of this pokemon
    */
   abilities: Abilities[];
@@ -242,9 +253,14 @@ export function getRegisteredSpecies(): Species[] {
  * family with nothing behind it is never featured
  */
 export function getRegisteredFamilies(): Families[] {
-  familyIndex ??= [...new Set([...SPECIES_MAP.values()].map((data) => data.family))].sort(
-    (left, right) => left - right,
-  );
+  if (familyIndex == null) {
+    const families = new Set<Families>();
+
+    for (const data of SPECIES_MAP.values()) {
+      families.add(data.family);
+    }
+    familyIndex = [...families].sort((left, right) => left - right);
+  }
   return familyIndex;
 }
 
@@ -279,6 +295,11 @@ export function getSpeciesData(species: Species): SpeciesData {
   throw new Error('Missing species data for ' + species);
 }
 
+/** Where the species is met, ground unless its data says otherwise */
+export function getHabitat(species: Species): Habitat {
+  return getSpeciesData(species).habitat ?? Habitat.Ground;
+}
+
 /**
  * Whether the species is a default form rather than a variant of
  * another one. A registration that says nothing is one: variants are
@@ -295,7 +316,14 @@ export function isBaseForm(species: Species): boolean {
  * variant would be wrong to stage
  */
 export function getBaseForms(): Species[] {
-  return [...SPECIES_MAP.keys()].filter((species) => isBaseForm(species));
+  const forms: Species[] = [];
+
+  for (const species of SPECIES_MAP.keys()) {
+    if (isBaseForm(species)) {
+      forms.push(species);
+    }
+  }
+  return forms;
 }
 
 /**
@@ -336,9 +364,14 @@ export function isWornForm(species: Species): boolean {
  * asking about any species gets back
  */
 export function getWornForms(species: Species): Species[] {
-  return getSpeciesForms(species).filter(
-    (form) => form !== species && getSpeciesData(form).worn === true,
-  );
+  const worn: Species[] = [];
+
+  for (const form of getSpeciesForms(species)) {
+    if (form !== species && getSpeciesData(form).worn === true) {
+      worn.push(form);
+    }
+  }
+  return worn;
 }
 
 export interface SpeciesAbilityPools {
@@ -433,16 +466,25 @@ export function getMovesLearnedBetween(species: Species, from: number, to: numbe
  */
 export function getLevelUpMoves(species: Species, level: number): Moves[] {
   const { level: learned } = getSpeciesData(species).learnSet;
+  const thresholds: number[] = [];
 
-  return [
-    ...new Set(
-      Object.keys(learned)
-        .map(Number)
-        .filter((threshold) => threshold <= level)
-        .sort((a, b) => a - b)
-        .flatMap((threshold) => learned[threshold]),
-    ),
-  ];
+  for (const key of Object.keys(learned)) {
+    const threshold = Number(key);
+
+    if (threshold <= level) {
+      thresholds.push(threshold);
+    }
+  }
+  thresholds.sort((a, b) => a - b);
+
+  const moves = new Set<Moves>();
+
+  for (const threshold of thresholds) {
+    for (const move of learned[threshold]) {
+      moves.add(move);
+    }
+  }
+  return [...moves];
 }
 
 /**

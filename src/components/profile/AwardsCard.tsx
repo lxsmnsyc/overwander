@@ -123,21 +123,24 @@ const AWARD_SPRITES: Partial<Record<Awards, [sheet: string, name: string]>> = {
  * portrait the challenge dialog uses: the Elite Four, the legends and
  * Team Rocket's boss all pay one
  */
-const PERSON_AWARD_SHEETS: Partial<Record<Awards, string>> = Object.fromEntries([
-  ...ELITE_MEMBERS.map((member): [Awards, string] => [
-    ELITE_MEMBER_HONORS[member],
-    ELITE_MEMBER_CHARSETS[member][0],
-  ]),
-  ...LEGENDS.map((legend): [Awards, string] => [LEGEND_HONORS[legend], LEGEND_CHARSETS[legend][0]]),
-  ...SYNDICATES.flatMap((syndicate): [Awards, string][] => [
-    [SYNDICATE_BOSS_HONORS[syndicate], SYNDICATE_BOSS_CHARSETS[syndicate][0]],
-    [SYNDICATE_GRUNT_HONORS[syndicate], SYNDICATE_GRUNT_CHARSETS[syndicate][0]],
-    ...SYNDICATE_EXECUTIVES[syndicate].map((executive): [Awards, string] => [
-      EXECUTIVE_HONORS[executive],
-      EXECUTIVE_CHARSETS[executive][0],
-    ]),
-  ]),
-]);
+const PERSON_AWARD_SHEETS = ((): Partial<Record<Awards, string>> => {
+  const sheets: Partial<Record<Awards, string>> = {};
+
+  for (const member of ELITE_MEMBERS) {
+    sheets[ELITE_MEMBER_HONORS[member]] = ELITE_MEMBER_CHARSETS[member][0];
+  }
+  for (const legend of LEGENDS) {
+    sheets[LEGEND_HONORS[legend]] = LEGEND_CHARSETS[legend][0];
+  }
+  for (const syndicate of SYNDICATES) {
+    sheets[SYNDICATE_BOSS_HONORS[syndicate]] = SYNDICATE_BOSS_CHARSETS[syndicate][0];
+    sheets[SYNDICATE_GRUNT_HONORS[syndicate]] = SYNDICATE_GRUNT_CHARSETS[syndicate][0];
+    for (const executive of SYNDICATE_EXECUTIVES[syndicate]) {
+      sheets[EXECUTIVE_HONORS[executive]] = EXECUTIVE_CHARSETS[executive][0];
+    }
+  }
+  return sheets;
+})();
 
 /** The titles that read as a star rather than as a letter */
 const CHAMPION_TITLES_SET = new Set<Awards>(Object.values(CHAMPION_TITLES));
@@ -260,8 +263,8 @@ const AWARD_COLORS: Record<Awards, string> = {
  * region's walk: Team Rocket's, from the rank and file up, and the
  * legends'. The walk itself, left to right, a region at a time
  */
-const SHELF: Awards[] = [
-  ...new Set([
+const SHELF = ((): Awards[] => {
+  const walk = new Set<Awards>([
     ...KANTO_BADGES,
     ...KANTO_HONORS,
     Awards.KantoChampion,
@@ -280,9 +283,13 @@ const SHELF: Awards[] = [
     Awards.SinnohDexMedal,
     ...FRONTIER_SYMBOLS,
     ...SYNDICATE_HONORS,
-    ...LEGENDS.map((legend) => LEGEND_HONORS[legend]),
-  ]),
-];
+  ]);
+
+  for (const legend of LEGENDS) {
+    walk.add(LEGEND_HONORS[legend]);
+  }
+  return [...walk];
+})();
 
 const GRID_COLUMNS = 6;
 
@@ -381,21 +388,35 @@ function Slot(props: { award: Awards; wins: number | null }): JSX.Element {
  * suspends the card's body rather than the page
  */
 function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
-  const wins = (): Map<Awards, number> =>
-    new Map((props.held() ?? []).map((entry) => [entry.award, entry.wins]));
-  const badges = (): number => KANTO_BADGES.filter((badge) => wins().has(badge)).length;
-  const honors = (): number => KANTO_HONORS.filter((honor) => wins().has(honor)).length;
-  const johto = (): number => JOHTO_BADGES.filter((badge) => wins().has(badge)).length;
-  const marks = (): number => JOHTO_HONORS.filter((honor) => wins().has(honor)).length;
-  const hoenn = (): number => HOENN_BADGES.filter((badge) => wins().has(badge)).length;
-  const sinnoh = (): number => SINNOH_BADGES.filter((badge) => wins().has(badge)).length;
-  const seats = (): number => SINNOH_HONORS.filter((honor) => wins().has(honor)).length;
+  const wins = (): Map<Awards, number> => {
+    const held = new Map<Awards, number>();
 
-  const empties = (): number[] =>
-    Array.from(
-      { length: Math.ceil(SHELF.length / GRID_COLUMNS) * GRID_COLUMNS - SHELF.length },
-      (_, at) => at,
-    );
+    for (const entry of props.held() ?? []) {
+      held.set(entry.award, entry.wins);
+    }
+    return held;
+  };
+  /** How many of these awards the shelf holds */
+  const won = (awards: Iterable<Awards>): number => {
+    const held = wins();
+    let count = 0;
+
+    for (const award of awards) {
+      if (held.has(award)) {
+        count += 1;
+      }
+    }
+    return count;
+  };
+  const badges = (): number => won(KANTO_BADGES);
+  const honors = (): number => won(KANTO_HONORS);
+  const johto = (): number => won(JOHTO_BADGES);
+  const marks = (): number => won(JOHTO_HONORS);
+  const hoenn = (): number => won(HOENN_BADGES);
+  const sinnoh = (): number => won(SINNOH_BADGES);
+  const seats = (): number => won(SINNOH_HONORS);
+
+  const empties = (): number[] => fillers(SHELF.length);
 
   return (
     <div class="mx-auto flex w-full max-w-lg flex-col gap-2">
@@ -497,7 +518,12 @@ function LineSlot(props: {
 function fillers(count: number): number[] {
   const short = Math.ceil(count / GRID_COLUMNS) * GRID_COLUMNS - count;
 
-  return Array.from({ length: short }, (_, at) => at);
+  const slots: number[] = [];
+
+  for (let at = 0; at < short; at += 1) {
+    slots.push(at);
+  }
+  return slots;
 }
 
 function Filler(): JSX.Element {

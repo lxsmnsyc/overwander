@@ -1,5 +1,8 @@
 import AleaRNG from '../core/alea';
+import type Chunk from './chunk';
 import { CELL_COUNT, CHUNK_CELLS } from './chunk';
+import { blocksWalk } from './cliff';
+import { worldCell } from './grid';
 import type World from './world';
 
 /**
@@ -59,9 +62,9 @@ export function pickFreeCell(
 ): { cellX: number; cellY: number } {
   const chunk = world.getChunk(chunkX, chunkY);
   const occupied = new Set([
-    ...chunk.getLandmarkCells().keys(),
-    ...chunk.getDecorationCells().keys(),
-    ...chunk.getRockCells(),
+    ...fixtureCells(chunk),
+    ...chunk.getFaceCells(),
+    ...chunk.getLavaCells(),
   ]);
   const free: number[] = [];
 
@@ -75,4 +78,54 @@ export function pickFreeCell(
   const cell = free.length === 0 ? middle : free[Math.floor(rng.random() * free.length)];
 
   return { cellX: cell % CHUNK_CELLS, cellY: Math.floor(cell / CHUNK_CELLS) };
+}
+
+/** The cells a walk goes round, cliffs aside */
+function fixtureCells(chunk: Chunk): Set<number> {
+  return new Set([
+    ...chunk.getLandmarkCells().keys(),
+    ...chunk.getDecorationCells().keys(),
+    ...chunk.getRockCells(),
+  ]);
+}
+
+/**
+ * The walkable cell nearest this one, or the cell itself when it is walkable.
+ * A saved position can sit under scenery or a cliff once generation changes,
+ * so it is moved off rather than trusted
+ */
+export function nearestFreeCell(
+  world: World,
+  chunkX: number,
+  chunkY: number,
+  cellX: number,
+  cellY: number,
+): { cellX: number; cellY: number } {
+  const chunk = world.getChunk(chunkX, chunkY);
+  const fixtures = fixtureCells(chunk);
+  const faces = chunk.getFaceCells();
+  const lava = chunk.getLavaCells();
+  let best = { cellX, cellY };
+  let bestDistance = Number.POSITIVE_INFINITY;
+
+  for (let cell = 0; cell < CELL_COUNT; cell++) {
+    const x = cell % CHUNK_CELLS;
+    const y = Math.floor(cell / CHUNK_CELLS);
+
+    // A seamed face is a road up the cliff, so standing on one is fine
+    if (
+      fixtures.has(cell) ||
+      lava.has(cell) ||
+      (faces.has(cell) && blocksWalk(world, worldCell(chunk.x, x), worldCell(chunk.y, y)))
+    ) {
+      continue;
+    }
+    const distance = Math.abs(x - cellX) + Math.abs(y - cellY);
+
+    if (distance < bestDistance) {
+      best = { cellX: x, cellY: y };
+      bestDistance = distance;
+    }
+  }
+  return best;
 }

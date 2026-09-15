@@ -93,7 +93,7 @@ export function countOf(counters: Counters, requirement: QuestRequirement): numb
         if (requirement.family != null && species.family !== requirement.family) {
           continue;
         }
-        if (requirement.type != null && !species.types.some((one) => one === requirement.type)) {
+        if (requirement.type != null && !species.types.includes(requirement.type)) {
           continue;
         }
       } catch {
@@ -128,7 +128,12 @@ function opensAtUnlock(quest: Quests, requirement: QuestRequirement): boolean {
   if (requirement.kind !== RequirementKind.Dex) {
     return false;
   }
-  return !QUESTS[before].requirements.some((one) => one.kind === RequirementKind.Dex);
+  for (const one of QUESTS[before].requirements) {
+    if (one.kind === RequirementKind.Dex) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
@@ -222,8 +227,13 @@ function asGiftSpec(uid: string, data: QuestData, reward: QuestReward): StaffGif
 async function readClaims(uid: string): Promise<Set<Quests>> {
   const rows = await getSql()`select quest from quest_claims where player = ${uid}`;
 
-  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-  return new Set(rows.map((row) => asNumber(asRecord(row).quest) as Quests));
+  const claims = new Set<Quests>();
+
+  for (const row of rows) {
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    claims.add(asNumber(asRecord(row).quest) as Quests);
+  }
+  return claims;
 }
 
 /**
@@ -231,9 +241,13 @@ async function readClaims(uid: string): Promise<Set<Quests>> {
  * chain predecessor is claimed. Requirements come back with where the
  * player stands on each
  */
-export async function listQuests(uid: string): Promise<QuestStanding[]> {
+export async function listQuests(
+  uid: string,
+  // Handed in by a caller that read them for something else as well
+  progress?: Awaited<ReturnType<typeof readProgress>>,
+): Promise<QuestStanding[]> {
   const [counters, claims, baselines] = await Promise.all([
-    readProgress(uid),
+    progress ?? readProgress(uid),
     readClaims(uid),
     readQuestBaselines(uid),
   ]);
@@ -263,6 +277,7 @@ export async function listQuests(uid: string): Promise<QuestStanding[]> {
     }
 
     const requirements: RequirementStanding[] = [];
+    let allMet = true;
     const opened = await baselinedCounts(uid, quest, data.requirements, counters, baselines, dexOf);
 
     for (const [slot, requirement] of data.requirements.entries()) {
@@ -276,13 +291,16 @@ export async function listQuests(uid: string): Promise<QuestStanding[]> {
         have = progressOf(counters, requirement, slot, opened);
       }
 
-      requirements.push({ requirement, have, met: have >= requirement.count });
+      const met = have >= requirement.count;
+
+      allMet &&= met;
+      requirements.push({ requirement, have, met });
     }
 
     standings.push({
       quest,
       claimed: claims.has(quest),
-      claimable: !claims.has(quest) && requirements.every((one) => one.met),
+      claimable: !claims.has(quest) && allMet,
       requirements,
     });
   }
@@ -343,13 +361,21 @@ export async function claimQuest(
     return count;
   };
   const opened = await baselinedCounts(uid, quest, data.requirements, counters, baselines, dexOf);
-  const turnIns = data.requirements.filter(
-    (one): one is TurnInRequirement => one.kind === RequirementKind.TurnIn,
-  );
-  const metricsMet = data.requirements.every(
-    (one, slot) =>
-      one.kind !== RequirementKind.Counter || progressOf(counters, one, slot, opened) >= one.count,
-  );
+  const turnIns: TurnInRequirement[] = [];
+  let metricsMet = true;
+
+  for (const [slot, one] of data.requirements.entries()) {
+    if (one.kind === RequirementKind.TurnIn) {
+      turnIns.push(one);
+    }
+    if (
+      metricsMet &&
+      one.kind === RequirementKind.Counter &&
+      progressOf(counters, one, slot, opened) < one.count
+    ) {
+      metricsMet = false;
+    }
+  }
 
   if (!metricsMet) {
     return null;

@@ -10,7 +10,7 @@ Ten Johto families reach the stages Sinnoh added to them.
 - Misdreavus becomes Mismagius with a Dusk Stone, and Murkrow becomes
   Honchkrow with one.
 - Sneasel becomes Weavile at 35 holding a Razor Claw, in the evening or at
-  night. Gligar becomes Gliscor the same way with a Razor Fang.
+  night, and gives up the claw. Gligar becomes Gliscor the same way with a Razor Fang.
 - Togetic becomes Togekiss with a Shiny Stone.
 - Yanma becomes Yanmega at 33 knowing Ancient Power, and Piloswine becomes
   Mamoswine at 45 knowing it.

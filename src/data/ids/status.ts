@@ -279,7 +279,14 @@ export function packStatuses(statuses: Statuses[]): number {
  * numbered
  */
 export function unpackStatuses(mask: number): Statuses[] {
-  return NON_VOLATILE_STATUSES.filter((status) => (mask & statusFlag(status)) !== 0);
+  const statuses: Statuses[] = [];
+
+  for (const status of NON_VOLATILE_STATUSES) {
+    if ((mask & statusFlag(status)) !== 0) {
+      statuses.push(status);
+    }
+  }
+  return statuses;
 }
 
 /**

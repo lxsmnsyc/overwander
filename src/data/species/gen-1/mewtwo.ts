@@ -30,7 +30,7 @@ export default function registerMewtwoSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Mountain, Biome.AlpineTundra],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {

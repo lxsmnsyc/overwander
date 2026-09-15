@@ -51,7 +51,15 @@ export default function watchDueQuests(
           // Something claimed is something that may come due again:
           // a rotating ask keeps its key only for its own window
           for (const key of announced) {
-            if (!due.some((quest) => quest.key === key)) {
+            let still = false;
+
+            for (const quest of due) {
+              if (quest.key === key) {
+                still = true;
+                break;
+              }
+            }
+            if (!still) {
               announced.delete(key);
             }
           }
@@ -63,13 +71,34 @@ export default function watchDueQuests(
         });
     };
 
-    sweep();
+    /** Whether a sweep was skipped while the tab was hidden */
+    let missed = false;
 
-    const timer = setInterval(sweep, SWEEP_INTERVAL);
+    // A hidden tab has nobody to show a toast to, so it asks once it is looked at again
+    const tick = (): void => {
+      if (document.visibilityState === 'hidden') {
+        missed = true;
+        return;
+      }
+      sweep();
+    };
+    const onVisible = (): void => {
+      if (missed && document.visibilityState === 'visible') {
+        missed = false;
+        sweep();
+      }
+    };
+
+    tick();
+
+    const timer = setInterval(tick, SWEEP_INTERVAL);
+
+    document.addEventListener('visibilitychange', onVisible);
 
     onCleanup(() => {
       cancelled = true;
       clearInterval(timer);
+      document.removeEventListener('visibilitychange', onVisible);
     });
   });
 }

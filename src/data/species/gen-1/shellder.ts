@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -78,6 +78,7 @@ export default function registerShellderSpecies(): void {
       [Stats.Speed]: 40,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.Overcoat],
     eggGroups: [EggGroups.Water3],
@@ -122,12 +123,13 @@ export default function registerShellderSpecies(): void {
       [Stats.Speed]: 70,
     },
     types: [Types.Water, Types.Ice],
+    habitat: Habitat.Water,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.Overcoat, Abilities.Sturdy],
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 60,
-    biomes: [Biome.Ocean, Biome.PolarOcean, Biome.RockyCoast],
+    biomes: [Biome.Ocean, Biome.PolarOcean, Biome.RockyCoast, Biome.Beach],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

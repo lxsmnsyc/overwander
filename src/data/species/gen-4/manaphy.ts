@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 /**
@@ -74,6 +74,7 @@ export default function registerManaphySpecies(): void {
       [Stats.Speed]: 80,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.Hydration],
     // The other three are this registry's: it goes where the water
     // goes, and the sac on its head is what keeps it up
@@ -118,6 +119,7 @@ export default function registerManaphySpecies(): void {
       [Stats.Speed]: 100,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.Hydration],
     // The other three are this registry's: the sea does it no harm,
     // and Heart Swap is a bond read two ways

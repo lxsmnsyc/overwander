@@ -190,6 +190,79 @@ export default function projectField(point: FieldPoint, view: FieldView): FieldP
 }
 
 /**
+ * How near the viewer something is at a perspective scale, in clip
+ * space: -1 in front of the scene and 1 at the back. It is the depth
+ * `fieldClipMatrix` gives a point at that scale, so a flat mark and a
+ * mesh standing in the same place agree
+ */
+export function fieldClipDepth(scale: number): number {
+  return Math.max(-0.99, Math.min(0.99, 1 - scale / 2));
+}
+
+/**
+ * The field camera's focal length in element pixels: a field unit at
+ * camera distance `w` (the matrix's last row) is `lens / w` pixels across
+ */
+export function fieldLens(view: FieldView, stage: { scale: number }): number {
+  return FOCAL * view.unit * stage.scale;
+}
+
+/**
+ * The field's projection as a 4x4 matrix written row by row, taking a
+ * point in field units (`x` across, `y` up, `z` away) to clip space on
+ * the element the fight is drawn into.
+ *
+ * `stage` is how the drawing's own coordinates sit on that element and
+ * `screen` is its size. Height rises straight up the picture at the
+ * scale of the ground under it, which is how a sprite standing there
+ * is drawn
+ */
+export function fieldClipMatrix(
+  view: FieldView,
+  stage: { scale: number; offsetX: number; offsetY: number },
+  screen: { width: number; height: number },
+): number[] {
+  const middle = view.height * (view.horizon ?? DEFAULT_HORIZON);
+  const lens = FOCAL * view.unit;
+  // The drawing's own coordinates multiplied through by w, from a point
+  // already turned by the yaw: [x, y, z, 1]
+  const across = [lens, 0, (view.width / 2) * DEPTH, (view.width / 2) * FOCAL];
+  const down = [0, -lens, middle * DEPTH - lens * DEPTH, middle * FOCAL];
+  const near = [0, 0, DEPTH, FOCAL / 2];
+  const w = [0, 0, DEPTH, FOCAL];
+  const cos = Math.cos(view.yaw);
+  const sin = Math.sin(view.yaw);
+  const rows: number[][] = [];
+
+  for (const row of [across, down]) {
+    const placed: number[] = [];
+
+    for (const [at, value] of row.entries()) {
+      // Onto the element the way the stage carries the drawing
+      placed.push(stage.scale * value + (row === across ? stage.offsetX : stage.offsetY) * w[at]);
+    }
+    const clipped: number[] = [];
+
+    for (const [at, value] of placed.entries()) {
+      // And into clip space, the page counting down and clip space up
+      clipped.push(
+        row === across ? (2 * value) / screen.width - w[at] : w[at] - (2 * value) / screen.height,
+      );
+    }
+    rows.push(clipped);
+  }
+  rows.push(near, w);
+
+  const matrix: number[] = [];
+
+  for (const row of rows) {
+    // The turn taken before the tilt, as `turn` does it
+    matrix.push(row[0] * cos + row[2] * sin, row[1], row[2] * cos - row[0] * sin, row[3]);
+  }
+  return matrix;
+}
+
+/**
  * How far down the picture the ground runs out, in canvas pixels.
  *
  * Depth is worth less and less as it goes, and never quite reaches

@@ -24,7 +24,7 @@ import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { type Tx, newDocId, tx } from './db';
 import { readStackIn, spendStackIn, writeStackIn } from './stacks';
 import { ITEM_STACKS } from '../auth/stacks';
-import { hasSpareCatch } from './caught';
+import { hasSpareCatchIn } from './caught';
 import { isAnyCatchQueued } from './raids';
 import { isCatchLocked } from './locks';
 import { Metric } from '../auth/quest-record';
@@ -102,14 +102,6 @@ export async function openAuction(
     return null;
   }
 
-  // Nor their last one. A lot leaves the seller's hands the moment it
-  // is listed, so a player could put up the only pokemon they have
-  // and be left with nothing for the day it takes to find out whether
-  // anybody wanted it
-  if (offer.lot === AuctionLot.Catch && !(await hasSpareCatch(uid))) {
-    return null;
-  }
-
   const asked = asAuctionTerms(terms.startingBid, terms.increment);
 
   return tx(async (transaction) => {
@@ -153,6 +145,12 @@ export async function openAuction(
         return null;
       }
     } else {
+      // Nor their last one: a lot leaves the seller's hands the moment it
+      // is listed. Counted inside, so two listings cannot both pass
+      if (!(await hasSpareCatchIn(transaction, uid))) {
+        return null;
+      }
+
       const caught = await readCaughtIn(transaction, offer.caught);
       const profiles = await transaction`
         select buddy_id from profiles where id = ${uid}

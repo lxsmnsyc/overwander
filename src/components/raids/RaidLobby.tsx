@@ -27,8 +27,9 @@ import {
   watchRaidWatchers,
 } from '../../auth/raids';
 import { type Profile, getProfiles } from '../../auth/profile';
+import { settled } from '../app/resource-reads';
 import PlayerPlate from '../profile/PlayerPlate';
-import { type TeamRecord, getTeam } from '../../auth/teams';
+import { type TeamRecord, getTeamBatched } from '../../auth/teams';
 import { getSpeciesData } from '../../data/species';
 import { RAID_BOSS_LEVEL } from '../../overworld/raid';
 import AnimatedSprite from '../sprites/AnimatedSprite';
@@ -95,12 +96,14 @@ function LobbyRows(
 
   const raid = (): RaidRecord | null => props.raid();
 
-  const teams = (): TeamRecord[] | undefined => props.teams();
+  // Settled rather than read: a team joining re-reads all three, and a
+  // plain read put the whole lobby back to "Loading raid…" meanwhile
+  const teams = (): TeamRecord[] | undefined => settled(props.teams);
 
-  const canJoin = (): boolean | undefined => props.canJoin();
+  const canJoin = (): boolean | undefined => settled(props.canJoin);
 
-  const named = (uid: string): string => props.names()?.get(uid)?.nickname ?? uid;
-  const faceOf = (uid: string): string | null => props.names()?.get(uid)?.sprite ?? null;
+  const named = (uid: string): string => settled(props.names)?.get(uid)?.nickname ?? uid;
+  const faceOf = (uid: string): string | null => settled(props.names)?.get(uid)?.sprite ?? null;
 
   const isHost = (): boolean => raid()?.host === props.user.uid;
 
@@ -113,12 +116,13 @@ function LobbyRows(
   });
 
   // And whether it is theirs, for the same reason: the panel around
-  // this is what the overlay closes
+  // this is what the overlay closes. Cleared only on the way out, since
+  // clearing it per lobby update flickered the panel's hold on every join
   createEffect(() => {
     props.onHosting?.(isHost());
-    onCleanup(() => {
-      props.onHosting?.(false);
-    });
+  });
+  onCleanup(() => {
+    props.onHosting?.(false);
   });
 
   /**
@@ -161,8 +165,27 @@ function LobbyRows(
    * with a team. A spectator has no standing to fill somebody else's
    * lobby
    */
-  const mayInvite = (): boolean =>
-    isHost() || (teams() ?? []).some((team) => team.player === props.user.uid);
+  const mayInvite = (): boolean => {
+    if (isHost()) {
+      return true;
+    }
+    for (const team of teams() ?? []) {
+      if (team.player === props.user.uid) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  /** The player behind each team, one entry per team */
+  const teamPlayers = (): string[] => {
+    const players: string[] = [];
+
+    for (const team of teams() ?? []) {
+      players.push(team.player);
+    }
+    return players;
+  };
 
   /**
    * Whether the lobby has no place left for this player. Places are
@@ -170,7 +193,7 @@ function LobbyRows(
    * team while everyone outside is turned away
    */
   const full = (): boolean => {
-    const players = new Set((teams() ?? []).map((team) => team.player));
+    const players = new Set(teamPlayers());
 
     return players.size >= RAID_PLAYER_LIMIT && !players.has(props.user.uid);
   };
@@ -181,9 +204,15 @@ function LobbyRows(
    * subtracted here rather than by the read
    */
   const onlookers = (): string[] => {
-    const fighting = new Set((teams() ?? []).map((team) => team.player));
+    const fighting = new Set(teamPlayers());
+    const watching: string[] = [];
 
-    return props.watching().filter((uid) => !fighting.has(uid));
+    for (const uid of props.watching()) {
+      if (!fighting.has(uid)) {
+        watching.push(uid);
+      }
+    }
+    return watching;
   };
 
   /**
@@ -197,12 +226,16 @@ function LobbyRows(
     host: raid()?.host === team.player,
   });
 
-  const joined = (): TeamRecord[] =>
-    orderTeams(
-      (teams() ?? []).filter((team) => matchesTeam(team, query(), contextOf(team))),
-      query(),
-      (team) => ({ team, context: contextOf(team) }),
-    );
+  const joined = (): TeamRecord[] => {
+    const matching: TeamRecord[] = [];
+
+    for (const team of teams() ?? []) {
+      if (matchesTeam(team, query(), contextOf(team))) {
+        matching.push(team);
+      }
+    }
+    return orderTeams(matching, query(), (team) => ({ team, context: contextOf(team) }));
+  };
 
   const act = (action: () => Promise<string | null>, failure: string): void => {
     setStatus(null);
@@ -434,7 +467,7 @@ function LobbyRows(
         }}
         title="Invite to the raid"
         description="They see the call above their list of raids, and joining answers it."
-        present={(teams() ?? []).map((team) => team.player)}
+        present={teamPlayers()}
         onInvite={async (uid, role) => inviteToRaid(props.raidId, uid, role)}
       />
 
@@ -458,6 +491,23 @@ function LobbyRows(
   );
 }
 
+/** What a team is, for telling one that changed from one that did not */
+function teamKey(team: TeamRecord): string {
+  return `${team.player}:${team.catches.join(',')}`;
+}
+
+/** The uids packed into a resource key, without the empty one an empty lobby leaves */
+function splitKey(key: string): string[] {
+  const uids: string[] = [];
+
+  for (const uid of key.split(',')) {
+    if (uid !== '') {
+      uids.push(uid);
+    }
+  }
+  return uids;
+}
+
 /**
  * The lobby with its teams read, which is where the names are asked
  * for: who is in it decides whose profiles have to be looked up, so
@@ -479,8 +529,15 @@ function LobbyTeams(
    * is in it
    */
   const [names] = createResource(
-    () => [...new Set((props.teams() ?? []).map((team) => team.player))].sort().join(','),
-    async (key): Promise<Map<string, Profile>> => getProfiles(key.split(',').filter(Boolean)),
+    () => {
+      const players = new Set<string>();
+
+      for (const team of settled(props.teams) ?? []) {
+        players.add(team.player);
+      }
+      return [...players].sort().join(',');
+    },
+    async (key): Promise<Map<string, Profile>> => getProfiles(splitKey(key)),
   );
 
   return (
@@ -505,10 +562,35 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
     }),
   );
 
+  // Keyed on the ids, since every lobby ping hands over a fresh array of
+  // the same ones
   const [teams] = createResource(
-    () => raid()?.teams ?? null,
-    async (ids) =>
-      (await Promise.all(ids.map(getTeam))).filter((team): team is TeamRecord => team != null),
+    () => raid()?.teams.join(',') ?? null,
+    async (key, { value }): Promise<TeamRecord[]> => {
+      const reads: ReturnType<typeof getTeamBatched>[] = [];
+
+      // One read for the whole lobby rather than one per team
+      for (const id of splitKey(key)) {
+        reads.push(getTeamBatched(id));
+      }
+
+      // A team that did not change keeps its object, so its row and the
+      // party strip in it are not built again
+      const before = new Map<string, TeamRecord>();
+
+      for (const team of value ?? []) {
+        before.set(teamKey(team), team);
+      }
+
+      const found: TeamRecord[] = [];
+
+      for (const team of await Promise.all(reads)) {
+        if (team != null) {
+          found.push(before.get(teamKey(team)) ?? team);
+        }
+      }
+      return found;
+    },
   );
 
   // A player with no pokemon of their own can stand in the lobby and

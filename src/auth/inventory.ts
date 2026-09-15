@@ -31,23 +31,29 @@ export interface InventoryEntry {
 async function readBag(uid: string): Promise<unknown> {
   const { data } = await getSupabase().from('bag_items').select('item, count').eq('player', uid);
 
-  return {
-    items: Object.fromEntries(
-      asRecordArray(data).map((row) => [asNumber(row.item), asNumber(row.count)]),
-    ),
-  };
+  const items: Record<number, number> = {};
+
+  for (const row of asRecordArray(data)) {
+    items[asNumber(row.item)] = asNumber(row.count);
+  }
+  return { items };
 }
 
 /**
  * Every stack the user carries
  */
 export async function getInventory(uid: string): Promise<InventoryEntry[]> {
-  return listStacks(await readBag(uid), ITEM_STACKS).map(([item, amount]) => ({
-    user: uid,
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    item: item as Items,
-    amount,
-  }));
+  const entries: InventoryEntry[] = [];
+
+  for (const [item, amount] of listStacks(await readBag(uid), ITEM_STACKS)) {
+    entries.push({
+      user: uid,
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      item: item as Items,
+      amount,
+    });
+  }
+  return entries;
 }
 
 /**

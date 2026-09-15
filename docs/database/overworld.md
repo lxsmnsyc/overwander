@@ -358,7 +358,10 @@ be charged to be told so, and both the gold and the visit go back if the write
 behind them fails.
 
 Nurse Joy takes no marker at all: she heals as often as she is asked, so there
-is no visit to spend.
+is no visit to spend. She is not a wanderer either. A `PokemonCenter` landmark
+is chartered into every town at a chance of 1 and is rolled nowhere in the open
+country, so `getStandingNpc` answers `Npc.NurseJoy` for that cell the way it
+answers `Npc.Vendor` for a `Market` one.
 
 - **Breeder** takes two of the player's pokemon and `BREEDING_FEE` gold, and
   writes an egg. Neither parent is consumed, held or locked: they are handed back
@@ -467,26 +470,142 @@ A `Portal` landmark is a way through to another one. It does nothing on its own:
 opening it takes a **Portal Key**, the rarest band's newest entry, and the key is
 **spent in the crossing**.
 
-The traveller names a **biome**, never a destination. Where they come out is the
-nearest portal of that biome to the one they are standing in, derived in
-[`src/overworld/portal.ts`](../../src/overworld/portal.ts) from the chunk seeds
-alone. So the client lists every destination on offer without asking anything of
-the server, and the server re-derives the same answer when the crossing is asked
-for. There is nothing in the request to lie about except which way to go.
+The traveller names a **town**, never a destination. Where they come out is that
+town's own portal, on its plaza, derived in
+[`src/overworld/portal.ts`](../../src/overworld/portal.ts) by `portalInRegion`
+from the region's seed alone. The client already knows where it is going and the
+server sites the region again when the crossing is asked for, so there is
+nothing in the request to lie about except which way to go.
 
-`findPortals` walks outward ring by ring and answers for **every biome at once**.
-The first portal of a biome it meets is that biome's nearest, and a biome already
-answered for is not looked at again, so a chunk is only rolled for its landmarks
-where its biome is still wanted. It stops at `PORTAL_RANGE` (96 chunks) or once
-every biome the world grows has been found, whichever comes first. Measured, that
-is about 13ms cold from a standing start, and a fraction of that against a warm
-biome cache. Roughly all 25 biomes are reachable from a typical portal.
+The **name** is derived too, so nothing here asks a store what a place is
+called. See [Naming a town](#naming-a-town). What is stored is only which towns
+anybody has walked into, which is what the crossing is checked against. A region
+with no town has a portal out in the country: somewhere to leave from, and
+nowhere to arrive at, since nothing names it.
 
 `usePortal` ([`src/server/portals.ts`](../../src/server/portals.ts)) checks that
-the cell really is a portal in a live window, derives the far end, and takes the
-key **last**, so a player refused a destination keeps it. It cannot move anybody:
+the cell really is a portal in a live window, checks the named region is on the
+register, sites it again, and takes the key **last**, so a player refused a
+destination keeps it. It cannot move anybody:
 the game stores no position for it, so it answers with the chunk and cell and the
 client walks through.
+
+## Naming a town
+
+A town's name is **worked out from where it stands**, never rolled and never
+stored, and two towns can never share one.
+
+`nameTown` ([`src/data/overworld/town-names.ts`](../../src/data/overworld/town-names.ts))
+builds it from five parts: an optional mark, a head drawn from the town's **own
+biome's** word list, a tail welded onto it, a title, and the **county**. So a
+full name reads `Rimefell Village, Ashmarch`.
+
+The county is what makes it work. Without one, a name would have to be unique
+across the world's 262,144 regions, and one biome's words only make 49,920
+names, five times less world than words. A county is 64x64 regions, so a name
+only has to be unique inside **one county and one biome**: 4,096 regions against
+49,920 names, which leaves room to spend the 3,840 unmarked names first, so only
+about 1 town in 16 carries a mark.
+
+Two towns of different biomes can never collide anyway, since no two biomes
+share a head word and a test pins that. Within a county, the region's local
+index is run through a bijection (`SPIN`, odd, so multiplying is a permutation)
+and read off as digits, so neighbouring towns do not read as a numbered
+sequence.
+
+`floor(region / 64)` reads a town's own coordinates and nothing else, so **none
+of this depends on how big the world is**. Growing `WORLD_SIZE` leaves every
+existing town in the county it was already in, under the name it already had,
+and only wants more county names at the new edges. `nameTown` throws for a
+region outside the county names rather than folding it onto a county that
+exists, and a test walks the world's corners to prove it cannot.
+
+## The register
+
+`towns` holds the one fact no derivation can reach: **whether anybody has walked
+in**. Just `(region_x, region_y, found_by, found_at)`, no name column and no
+unique index, because there is nothing to reserve.
+
+Every row is public, and that is the point. A town one player found is a town
+everybody can cross to, so the portal's name box is a shared register rather
+than each player's own list. A portal crossing names a **region**, and
+`usePortal` refuses one nobody has walked into, so guessing a name is not a way
+to reach a town that has never been found.
+
+## The caves
+
+A cave is the same `World` at another `Depth`, not a subsystem. The pair shares
+every noise field and every coordinate, and a cave world changes exactly two
+things:
+
+- **chunk seeds** become `` `${seed}cave(x, y)` ``, so landmarks, spawns and
+  window rows all re-derive underground for free. `chunk_seed` is `text`, so
+  `snapshots` and `snapshot_spawns` needed **no migration**.
+- **`roleAt`** reads the depth: underground a cell is `ground` where
+  `isCaveFloor` says so and `wall` everywhere else. There is no water below.
+
+`isCaveFloor` ([`src/overworld/fields.ts`](../../src/overworld/fields.ts)) is
+three things: **chambers** where the surface has rock, **veins** joining them,
+and **elbows** making the veins walkable.
+
+A vein is a ridge read off `world.stone` at a coarser step and a different
+corner of itself, the way `isRiver` reads the lake field. Its width is what
+stops a cave being a second overworld, and it is tuned against what a player can
+actually walk, counting **orthogonal steps only**, over the most mountainous
+country the world grows in a 300-cell square:
+
+| vein width | open | biggest walkable | reach |
+| ---------- | ---- | ---------------- | ----- |
+| chambers only | 16.5% | 195 | 34 |
+| **0.008** | **21.3%** | **1,562** | **115** |
+| 0.02 | 23.8% | 2,771 | 220 |
+| 0.03 | 25.8% | 16,518 | 299 (the whole square) |
+
+An **elbow** is the fix for a passage that steps diagonally. A vein corners
+wherever the field does, and nothing in this game moves diagonally, so two cells
+touching only at their corners are two dead ends. Where a diagonal pair has both
+of its connecting cells solid, the **westerly** one opens: the two candidates
+see the same pair with both offsets negated, so exactly one of them acts without
+either having to ask. It is not exhaustive, since an elbow can meet another
+elbow, but those are under 1% of floor cells and a second pass would widen the
+passages more than it is worth.
+
+Measuring this before the elbows existed gave a reach of 79 cells, which was an
+artifact: the field was that connected all along and simply could not be walked.
+
+Nothing is decorated underground. `getDecorationCells` takes an empty kind list
+at depth, since a cave carries the biome overhead so its spawns and lairs know
+where they are, not so it can sprout that biome's trees.
+
+Every cell where the surface crosses between sea and land is solid, so the sea
+caves are a separate network.
+
+### Mouths
+
+A mouth is a **pair of cells**, derived rather than rolled
+([`src/overworld/cave.ts`](../../src/overworld/cave.ts)): surface ground with
+rock beside it, and that rock, which is floor below. Both layers stage
+`Landmark.CaveMouth` on their own half, placed in `getLandmarkCells` outside the
+roll the way `portalCellIn` places the portal. The region's portal keeps its ring
+and is refused a mouth **in the scan itself**, so a mouth the surface had no room
+for is not staged underground either: a way in is always a way back out.
+
+The scan is cheap-first, because every chunk in the world runs it: one `isRock`
+sample per cell, cached per chunk, and the full `roleAt` reading only for the
+pairs that get past it.
+
+### Which layer a call is about
+
+`depth` rides beside `offset` through every call that resolves a chunk, for the
+same reason `offset` does: the server has to derive the chunk the client was
+looking at. It is optional and defaults to `Depth.Surface`, so the paths that can
+only ever happen above ground (the NPCs, the gyms, the portals) are untouched.
+`ChunkSnapshot.depth` is what the client hands over, so no client-facing
+signature changed. A player who lies about their layer stands somewhere they are
+not and finds exactly what is there, which is the rule positions already follow.
+
+`positions.depth` is the one stored fact: the same cell is open ground above and
+solid rock below, so a reload that guessed would put somebody inside a mountain.
 
 ## Derived, never stored
 

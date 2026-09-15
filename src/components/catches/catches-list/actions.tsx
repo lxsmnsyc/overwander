@@ -52,7 +52,12 @@ function tally(chosen: CatchOption[]): string {
       counts.set(why, (counts.get(why) ?? 0) + 1);
     }
   }
-  return [...counts].map(([why, count]) => `${count} ${why}`).join(', ');
+  const parts: string[] = [];
+
+  for (const [why, count] of counts) {
+    parts.push(`${count} ${why}`);
+  }
+  return parts.join(', ');
 }
 
 /**
@@ -73,7 +78,12 @@ function candyPiles(going: CatchOption[]): [Families, number][] {
 
 /** How many of them are carrying something that would come back */
 function holding(going: CatchOption[]): number {
-  return going.reduce((total, option) => total + option.caught.items.length, 0);
+  let total = 0;
+
+  for (const option of going) {
+    total += option.caught.items.length;
+  }
+  return total;
 }
 
 export default function CatchActions(props: CatchActionsProps): JSX.Element {
@@ -82,9 +92,32 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
 
   const count = (): number => props.chosen.length;
   /** Marking is off only when every one of them already carries the mark */
-  const favoriting = (): boolean => !props.chosen.every((option) => isFavorite(option.caught));
-  const guarding = (): boolean => !props.chosen.every((option) => isGuarded(option.caught));
-  const going = (): CatchOption[] => props.chosen.filter((option) => heldBack(option) == null);
+  const favoriting = (): boolean => {
+    for (const option of props.chosen) {
+      if (!isFavorite(option.caught)) {
+        return true;
+      }
+    }
+    return false;
+  };
+  const guarding = (): boolean => {
+    for (const option of props.chosen) {
+      if (!isGuarded(option.caught)) {
+        return true;
+      }
+    }
+    return false;
+  };
+  const going = (): CatchOption[] => {
+    const kept: CatchOption[] = [];
+
+    for (const option of props.chosen) {
+      if (heldBack(option) == null) {
+        kept.push(option);
+      }
+    }
+    return kept;
+  };
 
   const release = (): void => {
     if (!releasing()) {

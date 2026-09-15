@@ -1,5 +1,6 @@
 import { BOSS_RADIUS, COLORS, MIN_RADIUS, PARTY_SLOT } from './metrics';
 import type { Striking } from './motion';
+import type Alliance from '../../../battle/alliance';
 import type Battle from '../../../battle/core';
 import { type MoveTarget, MoveTargetType } from '../../../battle/events';
 import type Team from '../../../battle/team';
@@ -32,6 +33,8 @@ import type { Point, SpriteDirection } from '../../../canvas/sprite-sheet';
 export interface Stand {
   sprite: SpeciesSpriteAnimation | null;
   share: number;
+  /** Coming in rather than stepping back off, which drops it into place instead */
+  arriving?: boolean;
 }
 
 export interface Slot {
@@ -122,9 +125,19 @@ export function readField(
    * told friend from foe. A spectator is in none of them, and is shown
    * every party as one of the fight's own
    */
-  const own = [...battle.alliances].find((alliance) =>
-    [...alliance.teams].some((team) => team.player === player && player !== ''),
-  );
+  let own: Alliance | undefined;
+
+  for (const alliance of battle.alliances) {
+    for (const team of alliance.teams) {
+      if (team.player === player && player !== '') {
+        own = alliance;
+        break;
+      }
+    }
+    if (own != null) {
+      break;
+    }
+  }
 
   for (const alliance of battle.alliances) {
     for (const team of alliance.teams) {
@@ -241,15 +254,20 @@ export function side(
   spriteFor: (unit: Unit) => SpeciesSpriteAnimation | null,
   standFor: (unit: Unit) => Stand | null = () => null,
 ): Standing[] {
-  return ringOf(units.length, centre, radius).map((place, at) => ({
-    unit: units[at],
-    place,
-    look,
-    radius: slotRadius,
-    color,
-    sprite: spriteFor(units[at]),
-    stand: standFor(units[at]),
-  }));
+  const standings: Standing[] = [];
+
+  for (const [at, place] of ringOf(units.length, centre, radius).entries()) {
+    standings.push({
+      unit: units[at],
+      place,
+      look,
+      radius: slotRadius,
+      color,
+      sprite: spriteFor(units[at]),
+      stand: standFor(units[at]),
+    });
+  }
+  return standings;
 }
 
 /**
@@ -275,7 +293,7 @@ export function ringStandings(
 
   // Normally one. Two would be a raid nothing stages yet, so they
   // stand side by side rather than on top of one another
-  field.middle.forEach((unit, at) => {
+  for (const [at, unit] of field.middle.entries()) {
     standings.push({
       unit,
       place: { x: (at - (field.middle.length - 1) / 2) * 4, z: 0 },
@@ -287,7 +305,7 @@ export function ringStandings(
       sprite: spriteFor(unit),
       stand: standFor(unit),
     });
-  });
+  }
 
   // Where the ring starts. Whoever is looking at the fight is stood at
   // the front of it — their own team nearest the camera, biggest and
@@ -296,7 +314,7 @@ export function ringStandings(
   const step = (Math.PI * 2) / field.teams.length;
   const start = field.mine == null ? Math.PI / 2 : NEAREST - field.mine * step;
 
-  field.teams.forEach((team, at) => {
+  for (const [at, team] of field.teams.entries()) {
     const around = at * step + start;
     const centre: FieldPoint = {
       x: Math.cos(around) * radius,
@@ -317,7 +335,7 @@ export function ringStandings(
         standFor,
       ),
     );
-  });
+  }
   return standings;
 }
 
@@ -339,9 +357,18 @@ export function unitsOf(target: MoveTarget): Unit[] {
 
 /** Whichever of a team the caster looks at, preferring one still up. */
 function oneOf(team: Team, besides: Unit): Unit | null {
-  const others = [...team.units].filter((other) => other !== besides);
+  let first: Unit | null = null;
 
-  return others.find((other) => other.alive) ?? others.at(0) ?? null;
+  for (const other of team.units) {
+    if (other === besides) {
+      continue;
+    }
+    if (other.alive) {
+      return other;
+    }
+    first ??= other;
+  }
+  return first;
 }
 
 /**
@@ -425,13 +452,25 @@ export function skiesOver(
       continue;
     }
 
-    const reach = Math.max(...its.map((slot) => slot.radius)) * SKY_MARGIN;
-    const left = Math.max(0, Math.min(...its.map((slot) => slot.x)) - reach);
-    const right = Math.min(picture.width, Math.max(...its.map((slot) => slot.x)) + reach);
+    let widest = -Infinity;
+    let leftmost = Infinity;
+    let rightmost = -Infinity;
+    let lowest = -Infinity;
+
+    for (const slot of its) {
+      widest = Math.max(widest, slot.radius);
+      leftmost = Math.min(leftmost, slot.x);
+      rightmost = Math.max(rightmost, slot.x);
+      lowest = Math.max(lowest, slot.y);
+    }
+
+    const reach = widest * SKY_MARGIN;
+    const left = Math.max(0, leftmost - reach);
+    const right = Math.min(picture.width, rightmost + reach);
     // From the top of the picture down past their feet: weather comes
     // out of the sky, so a patch floating in the middle of the field
     // reads as a cloud rather than as the weather over them
-    const bottom = Math.min(picture.height, Math.max(...its.map((slot) => slot.y)) + reach);
+    const bottom = Math.min(picture.height, lowest + reach);
 
     if (right > left && bottom > 0) {
       patches.push({ weather, x: left, y: 0, width: right - left, height: bottom });
@@ -455,32 +494,38 @@ export function project(
 ): Slot[] {
   // Where everybody is, so a unit can be turned to look at whichever
   // of them it is aiming at
-  const places = new Map(standings.map((standing) => [standing.unit, standing.place]));
+  const places = new Map<Unit, FieldPoint>();
 
-  return standings
-    .map((standing) => {
-      const on = projectField(standing.place, view);
-      const watched = watchedBy(standing.unit, striking.get(standing.unit));
-      const at = projectField(
-        (watched == null ? null : places.get(watched)) ?? standing.look,
-        view,
-      );
+  for (const standing of standings) {
+    places.set(standing.unit, standing.place);
+  }
 
-      return {
-        unit: standing.unit,
-        x: on.x,
-        y: on.y,
-        radius: Math.max(MIN_RADIUS, standing.radius * on.scale),
-        color: standing.color,
-        sprite: standing.sprite,
-        stand: standing.stand,
-        facing: facingToward(on.x, on.y, at.x, at.y),
-        depth: on.scale,
-        offset: [0, 0] as Point,
-        spin: 0,
-        visible: on.visible,
-      };
-    })
-    .filter((slot) => slot.visible)
-    .sort((one, two) => one.depth - two.depth);
+  const slots: Slot[] = [];
+
+  for (const standing of standings) {
+    const on = projectField(standing.place, view);
+
+    if (!on.visible) {
+      continue;
+    }
+
+    const watched = watchedBy(standing.unit, striking.get(standing.unit));
+    const at = projectField((watched == null ? null : places.get(watched)) ?? standing.look, view);
+
+    slots.push({
+      unit: standing.unit,
+      x: on.x,
+      y: on.y,
+      radius: Math.max(MIN_RADIUS, standing.radius * on.scale),
+      color: standing.color,
+      sprite: standing.sprite,
+      stand: standing.stand,
+      facing: facingToward(on.x, on.y, at.x, at.y),
+      depth: on.scale,
+      offset: [0, 0] as Point,
+      spin: 0,
+      visible: on.visible,
+    });
+  }
+  return slots.sort((one, two) => one.depth - two.depth);
 }

@@ -77,7 +77,12 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     async (player): Promise<CatchOption[]> => {
       const [owned, now] = await Promise.all([listCaught(player), syncServerClock()]);
 
-      return owned.map(([id, caught]) => ({ id, caught, fighting: isLockLive(caught, now) }));
+      const options: CatchOption[] = [];
+
+      for (const [id, caught] of owned) {
+        options.push({ id, caught, fighting: isLockLive(caught, now) });
+      }
+      return options;
     },
   );
 

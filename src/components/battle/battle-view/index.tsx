@@ -392,9 +392,14 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
    */
   const [names] = createResource(
     () => {
-      const players = [...new Set(contributions().map((row) => row.player))].filter(Boolean);
+      const unique = new Set<string>();
 
-      return players.length > 0 ? players.sort().join(',') : null;
+      for (const row of contributions()) {
+        if (row.player !== '') {
+          unique.add(row.player);
+        }
+      }
+      return unique.size > 0 ? [...unique].sort().join(',') : null;
     },
     async (key): Promise<Map<string, Profile>> => getProfiles(key.split(',')),
   );
@@ -403,8 +408,14 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   const raiding = (): boolean => instance()?.battle.mode === BattleModes.Raid;
 
   /** The raid's damage shares, keyed by who dealt them — the boss under '' */
-  const shares = (): Map<string, number> =>
-    new Map(contributions().map((row) => [row.player, row.dealt]));
+  const shares = (): Map<string, number> => {
+    const dealt = new Map<string, number>();
+
+    for (const row of contributions()) {
+      dealt.set(row.player, row.dealt);
+    }
+    return dealt;
+  };
 
   /**
    * Whether the end has been heard. `outcome` is read on every nudge

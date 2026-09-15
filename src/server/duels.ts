@@ -59,18 +59,24 @@ export async function readDuel(id: string): Promise<DuelRecord | null> {
     held.set(player, [...(held.get(player) ?? []), asString(entry.caught_id)]);
   }
 
+  const seated: { player: string; role: number; ready: boolean; catches: string[] }[] = [];
+
+  for (const entry of members) {
+    seated.push({
+      player: asString(entry.player),
+      role: asNumber(entry.role),
+      ready: entry.ready === true,
+      catches: held.get(asString(entry.player)) ?? [],
+    });
+  }
+
   return asDuelRecord({
     host: asString(row.host),
     battle: row.battle_id == null ? null : asString(row.battle_id),
     createdAt: asNumber(row.created_at),
     limits: asNumber(row.limits),
     teamSize: asNumber(row.team_size),
-    members: members.map((entry) => ({
-      player: asString(entry.player),
-      role: asNumber(entry.role),
-      ready: entry.ready === true,
-      catches: held.get(asString(entry.player)) ?? [],
-    })),
+    members: seated,
   });
 }
 
@@ -173,8 +179,10 @@ export async function inviteToDuel(
     return false;
   }
   // Already in it, whichever seat they took
-  if (duel.members.some((member) => member.player === target)) {
-    return false;
+  for (const member of duel.members) {
+    if (member.player === target) {
+      return false;
+    }
   }
   if (await isBlocked(uid, target)) {
     return false;
@@ -371,7 +379,14 @@ export async function setDuelParty(uid: string, id: string, catches: string[]): 
   }
 
   const duel = await readDuel(id);
-  const mine = duel?.members.find((member) => member.player === uid);
+  let mine: DuelRecord['members'][number] | undefined;
+
+  for (const member of duel?.members ?? []) {
+    if (member.player === uid) {
+      mine = member;
+      break;
+    }
+  }
 
   if (duel == null || duel.battle != null || mine == null || mine.role !== LobbyRole.Fighter) {
     return false;
@@ -385,23 +400,33 @@ export async function setDuelParty(uid: string, id: string, catches: string[]): 
   // Read together rather than one at a time: a party of six is two
   // round trips this way and twelve the other
   const found = await readCaughtMany(getSql(), catches);
-  const records = catches.map((one) => found.get(one));
-  const owned = records.every((record) => record != null) ? records : null;
+  const owned: Record<string, unknown>[] = [];
 
-  if (owned == null || !owned.every((entry) => entry.owner === uid)) {
-    return false;
+  for (const one of catches) {
+    const record = found.get(one);
+
+    if (record == null || record.owner !== uid) {
+      return false;
+    }
+    owned.push(record);
   }
   if (isAnyCatchLocked(owned)) {
     return false;
   }
-  if (owned.some((entry) => isEggRecord(entry))) {
-    return false;
+  for (const entry of owned) {
+    if (isEggRecord(entry)) {
+      return false;
+    }
   }
-  if (owned.some((entry) => isFainted(asCaughtPokemon(entry)))) {
-    return false;
+  for (const entry of owned) {
+    if (isFainted(asCaughtPokemon(entry))) {
+      return false;
+    }
   }
-  if (owned.some((entry) => isGuardedRecord(entry))) {
-    return false;
+  for (const entry of owned) {
+    if (isGuardedRecord(entry)) {
+      return false;
+    }
   }
   if (await isAnyCatchQueued(uid, catches, id)) {
     return false;
@@ -410,12 +435,11 @@ export async function setDuelParty(uid: string, id: string, catches: string[]): 
   await tx(async (transaction) => {
     await transaction`delete from duel_catches where duel_id = ${id} and player = ${uid}`;
 
-    const rows = catches.map((caught, slot) => ({
-      duel_id: id,
-      player: uid,
-      slot,
-      caught_id: caught,
-    }));
+    const rows: { duel_id: string; player: string; slot: number; caught_id: string }[] = [];
+
+    for (const [slot, caught] of catches.entries()) {
+      rows.push({ duel_id: id, player: uid, slot, caught_id: caught });
+    }
 
     await transaction`
       insert into duel_catches ${transaction(rows, 'duel_id', 'player', 'slot', 'caught_id')}
@@ -487,12 +511,20 @@ export async function startDuel(uid: string, id: string, now: number): Promise<s
     return duel.battle;
   }
 
-  const fighters = duel.members.filter((member) => member.role === LobbyRole.Fighter);
+  const fighters: DuelRecord['members'][number][] = [];
+  let unready = false;
+
+  for (const member of duel.members) {
+    if (member.role === LobbyRole.Fighter) {
+      fighters.push(member);
+      unready ||= !member.ready || member.catches.length === 0;
+    }
+  }
 
   if (fighters.length !== DUEL_FIGHTERS) {
     return null;
   }
-  if (fighters.some((member) => !member.ready || member.catches.length === 0)) {
+  if (unready) {
     return null;
   }
 
@@ -510,14 +542,19 @@ export async function startDuel(uid: string, id: string, now: number): Promise<s
   // like
   // Both sides at once: neither freeze waits on the other, and the
   // host is standing on the Start button for both of them
-  const published = await Promise.all(
-    fighters.map(async (member, side): Promise<[string, string] | null> => {
-      const snapshot = await publishTeamSnapshot(member.player, member.catches, side, now);
+  const freezing: ReturnType<typeof publishTeamSnapshot>[] = [];
 
-      return snapshot == null ? null : [member.player, snapshot];
-    }),
-  );
-  const fielded = published.filter((entry) => entry != null);
+  for (const [side, member] of fighters.entries()) {
+    freezing.push(publishTeamSnapshot(member.player, member.catches, side, now));
+  }
+
+  const fielded: [string, string][] = [];
+
+  for (const [side, snapshot] of (await Promise.all(freezing)).entries()) {
+    if (snapshot != null) {
+      fielded.push([fighters[side].player, snapshot]);
+    }
+  }
 
   // A side that fields nothing is not a fight. The claim stands, which
   // reads as a lobby whose battle never landed, and the host restages
@@ -531,12 +568,11 @@ export async function startDuel(uid: string, id: string, now: number): Promise<s
       values (${battleId}, null, 0, ${BattleOutcome.Unfinished}, ${now}, ${duel.limits})
     `;
 
-    const rows = fielded.map(([player, snapshot], position) => ({
-      battle_id: battleId,
-      position,
-      snapshot_id: snapshot,
-      player,
-    }));
+    const rows: { battle_id: string; position: number; snapshot_id: string; player: string }[] = [];
+
+    for (const [position, [player, snapshot]] of fielded.entries()) {
+      rows.push({ battle_id: battleId, position, snapshot_id: snapshot, player });
+    }
 
     await transaction`
       insert into battle_teams ${transaction(rows, 'battle_id', 'position', 'snapshot_id', 'player')}
@@ -544,10 +580,12 @@ export async function startDuel(uid: string, id: string, now: number): Promise<s
   });
 
   // Each side has met whatever the other brought
-  await recordSeenOpponents(
-    battleId,
-    fielded.map(([player]) => player),
-  );
+  const players: string[] = [];
+
+  for (const [player] of fielded) {
+    players.push(player);
+  }
+  await recordSeenOpponents(battleId, players);
 
   return battleId;
 }

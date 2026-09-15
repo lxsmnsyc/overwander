@@ -1,4 +1,5 @@
 import { getTimeOfDay } from '../data/ids/biome';
+import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import {
   canEverEvolve,
@@ -12,6 +13,7 @@ import { requireUid } from '../server/auth';
 import { getCaught } from './caught';
 import { getStats } from './health';
 import { getInventory } from './inventory';
+import { getLocalOffset, getLocale } from './local-time';
 import getIdToken from './session';
 
 /**
@@ -60,10 +62,18 @@ export async function listEvolutionOptions(
     return [];
   }
 
+  const carried = new Set<Items>();
+
+  for (const entry of inventory) {
+    if (entry.amount > 0) {
+      carried.add(entry.item);
+    }
+  }
+
   const context = {
     species: caught.species,
     level: caught.level,
-    carried: new Set(inventory.filter((entry) => entry.amount > 0).map((entry) => entry.item)),
+    carried,
     held: new Set(caught.items),
     moves: new Set(caught.moves),
     canEvolve: caught.canEvolve,
@@ -73,13 +83,19 @@ export async function listEvolutionOptions(
     gender: caught.gender,
   };
 
-  return (getSpeciesData(caught.species).evolvesInto ?? [])
-    .filter((evolution) => canEverEvolve(evolution, caught.gender))
-    .map((evolution) => ({
-      evolution,
-      available: meetsEvolutionCriteria(evolution, context),
-      covered: coveredByHandover(evolution, context),
-    }));
+  const options: EvolutionOption[] = [];
+
+  for (const evolution of getSpeciesData(caught.species).evolvesInto ?? []) {
+    // A husk comes out beside another evolution, so it is no row of its own
+    if (evolution.shed !== true && canEverEvolve(evolution, caught.gender)) {
+      options.push({
+        evolution,
+        available: meetsEvolutionCriteria(evolution, context),
+        covered: coveredByHandover(evolution, context),
+      });
+    }
+  }
+  return options;
 }
 
 /**
@@ -93,14 +109,16 @@ export async function listEvolutionOptions(
  * evolutions, a condition is unmet, or the required item is gone
  */
 export async function evolveCatch(catchId: string, into: Species): Promise<Species | null> {
-  return evolveOnServer(await getIdToken(), catchId, into);
+  return evolveOnServer(await getIdToken(), catchId, into, getLocalOffset(), getLocale());
 }
 
 async function evolveOnServer(
   token: string,
   catchId: string,
   into: Species,
+  offset: number,
+  locale: string,
 ): Promise<Species | null> {
   'use server';
-  return evolveOnServerSide(await requireUid(token), catchId, into);
+  return evolveOnServerSide(await requireUid(token), catchId, into, offset, locale);
 }

@@ -30,8 +30,8 @@ import {
 import { GameDialog, useGame } from '../app/game-context';
 import type { CaughtPokemon } from '../../auth/caught';
 import { previewSnapshot } from '../../auth/catch-snapshot';
-import { getProfiles } from '../../auth/profile';
-import { type TeamSnapshotRecord, getTeamSnapshot } from '../../auth/teams';
+import { getProfileBatched } from '../../auth/profile';
+import { type TeamSnapshotRecord, getTeamSnapshotBatched } from '../../auth/teams';
 import Npc, { NPC_NAMES } from '../../data/overworld/npc';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import AnimatedSprite from '../sprites/AnimatedSprite';
@@ -68,14 +68,20 @@ type KindFilter = BattleKind | typeof EVERY_KIND;
  * of nothing but raids offers nothing to filter
  */
 function listKinds(records: BattleRecord[]): FilterOption<KindFilter>[] {
-  const fought = new Set(records.map(getBattleKind));
+  const fought = new Set<BattleKind>();
 
-  return [
-    { value: EVERY_KIND, label: 'All' },
-    ...[BattleKind.Raid, BattleKind.Npc, BattleKind.Player]
-      .filter((kind) => fought.has(kind))
-      .map((kind) => ({ value: kind, label: BATTLE_KIND_NAMES[kind] })),
-  ];
+  for (const record of records) {
+    fought.add(getBattleKind(record));
+  }
+
+  const options: FilterOption<KindFilter>[] = [{ value: EVERY_KIND, label: 'All' }];
+
+  for (const kind of [BattleKind.Raid, BattleKind.Npc, BattleKind.Player]) {
+    if (fought.has(kind)) {
+      options.push({ value: kind, label: BATTLE_KIND_NAMES[kind] });
+    }
+  }
+  return options;
 }
 
 export interface BattleHistoryProps {
@@ -100,23 +106,40 @@ interface FoughtLine {
 
 async function loadFought(key: string): Promise<FoughtLine> {
   const [joined, owner] = key.split('|');
-  const found = await Promise.all(
-    joined
-      .split(',')
-      .filter(Boolean)
-      .map(async (id) => getTeamSnapshot(id)),
-  );
-  const snapshots = found.filter((snapshot): snapshot is TeamSnapshotRecord => snapshot != null);
-  const mine = snapshots.find((snapshot) => snapshot.player === owner);
-  const other = snapshots.find((snapshot) => snapshot.player !== '' && snapshot.player !== owner);
-  const profiles = other == null ? null : await getProfiles([other.player]);
-  const profile = profiles?.get(other?.player ?? '');
+  const pending: Promise<TeamSnapshotRecord | null>[] = [];
+
+  // Every row on the page asks in the same moment, so the page is one read
+  for (const id of joined.split(',')) {
+    if (id !== '') {
+      pending.push(getTeamSnapshotBatched(id));
+    }
+  }
+
+  const found = await Promise.all(pending);
+  let mine: TeamSnapshotRecord | undefined;
+  let other: TeamSnapshotRecord | undefined;
+
+  for (const snapshot of found) {
+    if (snapshot == null) {
+      continue;
+    }
+    if (mine == null && snapshot.player === owner) {
+      mine = snapshot;
+    }
+    if (other == null && snapshot.player !== '' && snapshot.player !== owner) {
+      other = snapshot;
+    }
+  }
+
+  const profile = other == null ? null : await getProfileBatched(other.player);
+  const team: [string, CaughtPokemon][] = [];
+
+  for (const [at, caught] of (mine?.catches ?? []).entries()) {
+    team.push([caught.caught === '' ? `${at}` : caught.caught, previewSnapshot(caught)]);
+  }
 
   return {
-    mine: (mine?.catches ?? []).map((caught, at): [string, CaughtPokemon] => [
-      caught.caught === '' ? `${at}` : caught.caught,
-      previewSnapshot(caught),
-    ]),
+    mine: team,
     rival:
       other == null
         ? null
@@ -292,8 +315,14 @@ function BattleList(
    */
   const [kind, setKind] = createSignal<KindFilter>(EVERY_KIND);
 
-  const kinds = (): FilterOption<KindFilter>[] =>
-    listKinds((battles() ?? []).map(([, record]) => record));
+  const kinds = (): FilterOption<KindFilter>[] => {
+    const records: BattleRecord[] = [];
+
+    for (const [, record] of battles() ?? []) {
+      records.push(record);
+    }
+    return listKinds(records);
+  };
 
   /**
    * The kind being looked at, if it is still one this history has. The
@@ -301,13 +330,25 @@ function BattleList(
    * from under the filter — a filter pointing at nothing would read as
    * a player who has fought nothing
    */
-  const only = (): KindFilter =>
-    kinds().some((option) => option.value === kind()) ? kind() : EVERY_KIND;
+  const only = (): KindFilter => {
+    for (const option of kinds()) {
+      if (option.value === kind()) {
+        return kind();
+      }
+    }
+    return EVERY_KIND;
+  };
 
-  const shown = (): [string, BattleRecord][] =>
-    (battles() ?? []).filter(
-      ([, record]) => only() === EVERY_KIND || getBattleKind(record) === only(),
-    );
+  const shown = (): [string, BattleRecord][] => {
+    const rows: [string, BattleRecord][] = [];
+
+    for (const row of battles() ?? []) {
+      if (only() === EVERY_KIND || getBattleKind(row[1]) === only()) {
+        rows.push(row);
+      }
+    }
+    return rows;
+  };
 
   // Paged under the filter, so narrowing the kind snaps back to a page
   // that exists

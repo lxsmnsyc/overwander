@@ -25,6 +25,13 @@ import { CELL, COLORS } from './metrics';
  * the species rather than being worked out here
  */
 export interface SpawnCoat {
+  /**
+   * The name the window published it under, which is the one thing
+   * about a pokemon that does not move. A cell of the board is where
+   * something is *now*: the board follows the player, so the square a
+   * Rattata stands on is a different number after every step
+   */
+  id: string;
   species: Species;
   shiny: boolean;
   /**
@@ -128,16 +135,18 @@ export function drawPhenomenon(
     context.ellipse(spot.x, spot.y + size * 0.12, size * 0.5, size * 0.2, 0, 0, Math.PI * 2);
     context.fill();
 
-    const rolls = Array.from({ length: 5 }, (_, puff) => {
+    const rolls: { x: number; y: number; reach: number }[] = [];
+
+    for (let puff = 0; puff < 5; puff++) {
       const angle = turn + (puff * Math.PI * 2) / 5;
       const breath = 1 + Math.sin(now / 300 + puff * 1.7) * 0.12;
 
-      return {
+      rolls.push({
         x: spot.x + Math.cos(angle) * size * 0.34,
         y: spot.y + Math.sin(angle) * size * 0.15 - size * 0.12,
         reach: size * (0.22 + 0.07 * ((puff * 2) % 3)) * breath,
-      };
-    });
+      });
+    }
 
     rolls.push({
       x: spot.x + Math.sin(turn * 0.7) * size * 0.1,
@@ -309,8 +318,11 @@ export function paintPhenomenon(phenomenon: Phenomenon, now: number): HTMLCanvas
 
   const canvas = held?.canvas ?? document.createElement('canvas');
 
-  canvas.width = PAINTED;
-  canvas.height = PAINTED;
+  // Only when it differs: setting a size reallocates the bitmap even when it is the same
+  if (canvas.width !== PAINTED || canvas.height !== PAINTED) {
+    canvas.width = PAINTED;
+    canvas.height = PAINTED;
+  }
 
   const context = canvas.getContext('2d');
 
@@ -336,6 +348,247 @@ export function paintPhenomenon(phenomenon: Phenomenon, now: number): HTMLCanvas
 /** How wide on the board that picture is drawn, for one cell */
 export function phenomenonSpan(spot: { scale: number }, magnify: number): number {
   return PHENOMENON_SPAN * CELL * spot.scale * magnify;
+}
+
+/**
+ * What the ground under a landmark says about this player's standing
+ * with it. The colour is the state, the same on every kind of landmark
+ */
+export const enum CellAura {
+  /** A raid this player has won this window */
+  Cleared = 0,
+  /** A fight waiting: a trainer or grunt not yet beaten, or a seat somebody else holds */
+  Fight = 1,
+  /** The seat this player is holding */
+  Mine = 2,
+  /** A wanderer who has not done their one thing for this player yet, or a nest whose egg they have not taken */
+  Fresh = 3,
+  /** A hidden grotto this player has not claimed this hour */
+  Grotto = 4,
+}
+
+type Ink = readonly [number, number, number];
+
+const AURA_INKS: Record<CellAura, Ink> = {
+  [CellAura.Cleared]: [255, 196, 64],
+  [CellAura.Fight]: [236, 56, 48],
+  [CellAura.Mine]: [80, 214, 104],
+  [CellAura.Fresh]: [56, 146, 255],
+  [CellAura.Grotto]: [64, 224, 200],
+};
+
+/** The two halves of an aura: what lies under a landmark, and what rises over it */
+export type AuraPart = 'ground' | 'air';
+
+/** How wide an aura is repainted, and where its ground point sits in it */
+const AURA_PAINTED = 128;
+const AURA_ORIGIN_Y = 0.72;
+
+/** The painted ring's radius, and the one it is drawn at on the board, in cells */
+const AURA_RADIUS = 28;
+const AURA_REACH = 0.62;
+
+/** How long the ring takes to turn once, a pulse to spread and a glint to rise, in ms */
+const RING_TURN = 6000;
+const PULSE = 1600;
+const GLINT_RISE = 1800;
+
+const DASHES = 6;
+const GLINTS = 3;
+
+function rgba([red, green, blue]: Ink, alpha: number): string {
+  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+}
+
+/** Halfway to white, for the bright core of the ring and the glints */
+function paler([red, green, blue]: Ink): Ink {
+  return [Math.round((red + 255) / 2), Math.round((green + 255) / 2), Math.round((blue + 255) / 2)];
+}
+
+/** A four-point glint, pinched at the waist */
+function fillGlint(context: CanvasRenderingContext2D, x: number, y: number, size: number): void {
+  const waist = size * 0.25;
+
+  context.beginPath();
+  context.moveTo(x, y - size);
+  context.quadraticCurveTo(x + waist, y - waist, x + size, y);
+  context.quadraticCurveTo(x + waist, y + waist, x, y + size);
+  context.quadraticCurveTo(x - waist, y + waist, x - size, y);
+  context.quadraticCurveTo(x - waist, y - waist, x, y - size);
+  context.fill();
+}
+
+/**
+ * A landmark's aura at a ground point: a turning dashed ring with a
+ * pulse spreading out of it under a column of light, or the glints
+ * rising up that column. Deliberately unlike a pokemon's aura, so the
+ * two are never read as the same thing
+ */
+function paintLandmarkAura(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  radius: number,
+  squash: number,
+  now: number,
+  ink: Ink,
+  part: AuraPart,
+): void {
+  if (!(radius > 0)) {
+    return;
+  }
+  const light = paler(ink);
+
+  context.save();
+  if (part === 'air') {
+    for (let glint = 0; glint < GLINTS; glint += 1) {
+      const phase = (now / GLINT_RISE + glint / GLINTS) % 1;
+
+      context.globalAlpha = Math.sin(phase * Math.PI);
+      context.fillStyle = rgba(light, 1);
+      fillGlint(
+        context,
+        x + Math.sin(now / 700 + glint * 2.1) * radius * 0.45,
+        y - phase * radius * 2.4,
+        radius * 0.3 * (1 - phase * 0.5),
+      );
+    }
+    context.restore();
+    return;
+  }
+
+  // The column first, so the ring reads as its base
+  const top = y - radius * 2.6;
+  const column = context.createLinearGradient(0, y, 0, top);
+
+  column.addColorStop(0, rgba(ink, 0.6));
+  column.addColorStop(1, rgba(ink, 0));
+  context.fillStyle = column;
+  context.beginPath();
+  context.moveTo(x - radius * 0.75, y);
+  context.lineTo(x - radius * 0.35, top);
+  context.lineTo(x + radius * 0.35, top);
+  context.lineTo(x + radius * 0.75, y);
+  context.closePath();
+  context.fill();
+
+  // The rest lies on the ground, so it is squashed the way the ground is
+  context.translate(x, y);
+  context.scale(1, squash);
+
+  const floor = context.createRadialGradient(0, 0, 0, 0, 0, radius);
+
+  floor.addColorStop(0, rgba(ink, 0.6));
+  floor.addColorStop(1, rgba(ink, 0));
+  context.fillStyle = floor;
+  context.beginPath();
+  context.arc(0, 0, radius, 0, Math.PI * 2);
+  context.fill();
+
+  const pulse = (now / PULSE) % 1;
+
+  context.strokeStyle = rgba(light, 0.8 * (1 - pulse));
+  context.lineWidth = radius * 0.06;
+  context.beginPath();
+  context.arc(0, 0, radius * (0.3 + pulse * 0.9), 0, Math.PI * 2);
+  context.stroke();
+
+  const turn = (now / RING_TURN) * Math.PI * 2;
+  const dash = (Math.PI * 2) / DASHES;
+
+  // A dark-edged stroke under a bright core, so the ring holds on pale ground
+  for (const [width, style] of [
+    [radius * 0.2, rgba(ink, 0.95)],
+    [radius * 0.09, rgba(light, 1)],
+  ] as const) {
+    context.lineWidth = width;
+    context.strokeStyle = style;
+    for (let at = 0; at < DASHES; at += 1) {
+      context.beginPath();
+      context.arc(0, 0, radius, turn + at * dash, turn + at * dash + dash * 0.62);
+      context.stroke();
+    }
+  }
+  context.restore();
+}
+
+const auraPainted = new Map<string, { canvas: HTMLCanvasElement; at: number; squash: number }>();
+
+/**
+ * The picture of one aura's part at this moment. One canvas per kind
+ * and part rather than per cell, so a chunk of trainers repaints once
+ * a frame
+ */
+export function paintCellAura(
+  aura: CellAura,
+  part: AuraPart,
+  now: number,
+  squash: number,
+): HTMLCanvasElement | null {
+  const key = `${aura}:${part}`;
+  const held = auraPainted.get(key);
+
+  if (held?.at === now && held.squash === squash) {
+    return held.canvas;
+  }
+
+  const canvas = held?.canvas ?? document.createElement('canvas');
+
+  if (canvas.width !== AURA_PAINTED || canvas.height !== AURA_PAINTED) {
+    canvas.width = AURA_PAINTED;
+    canvas.height = AURA_PAINTED;
+  }
+
+  const context = canvas.getContext('2d');
+
+  if (context == null) {
+    return null;
+  }
+  context.clearRect(0, 0, AURA_PAINTED, AURA_PAINTED);
+  paintLandmarkAura(
+    context,
+    AURA_PAINTED / 2,
+    AURA_PAINTED * AURA_ORIGIN_Y,
+    AURA_RADIUS,
+    squash,
+    now,
+    AURA_INKS[aura],
+    part,
+  );
+  auraPainted.set(key, { canvas, at: now, squash });
+  return canvas;
+}
+
+/** Where that picture is stamped so its ring sits on the cell's middle */
+export function auraCorners(
+  spot: { x: number; y: number; scale: number },
+  magnify: number,
+): { x: number; y: number }[] {
+  const span = (AURA_PAINTED * AURA_REACH * CELL * spot.scale * magnify) / AURA_RADIUS;
+  const left = spot.x - span / 2;
+  const top = spot.y - span * AURA_ORIGIN_Y;
+
+  return [
+    { x: left, y: top },
+    { x: left + span, y: top },
+    { x: left + span, y: top + span },
+    { x: left, y: top + span },
+  ];
+}
+
+/** The same aura painted straight onto the board, where there is no batch */
+export function drawCellAura(
+  context: CanvasRenderingContext2D,
+  spot: { x: number; y: number; scale: number },
+  aura: CellAura,
+  part: AuraPart,
+  now: number,
+  magnify: number,
+  squash: number,
+): void {
+  const radius = AURA_REACH * CELL * spot.scale * magnify;
+
+  paintLandmarkAura(context, spot.x, spot.y, radius, squash, now, AURA_INKS[aura], part);
 }
 
 /**
@@ -436,36 +689,62 @@ const SPARKLE_ROOM = SPARKLE_SPREAD / 4 + SPARKLE_STAR_SIZE;
 export const SPARKLE_SPAN = 1 + SPARKLE_ROOM * 2;
 
 /** The largest a sparkle's picture is painted, in either direction */
-const SPARKLE_LIMIT = 192;
-
-const sparkled = { canvas: null as HTMLCanvasElement | null, key: '' };
+const SPARKLE_LIMIT = 512;
 
 /**
- * The picture of one sparkle at this moment, in the sheet's own
- * pixels, painted around the point the pokemon stands on.
+ * One picture per shiny, by the name its window published it under.
  *
- * The stars are a share of the sprite, so this is painted at the
- * sheet's scale and stamped at whatever the pokemon is drawn at. One
- * picture, repainted: two shinies seen in the same frame is not a
- * thing that happens, and a stale one is a glint out of step with the
- * pokemon it belongs to
+ * It used to be a single canvas repainted for whoever asked, on the
+ * grounds that two shinies are never on screen at once. A board that
+ * reaches over several chunks made that false, and a shared canvas
+ * handed to the batch several times over is one texture drawn in
+ * several places: every shiny showed whichever glint was painted last,
+ * so they all sparkled together and a new one showed a spent glint
+ */
+const sparkled = new Map<string, { canvas: HTMLCanvasElement; key: string }>();
+
+/**
+ * How many are kept. A sparkle lasts about a second, so only a handful
+ * are ever being painted; the rest are canvases nobody is asking about
+ */
+const SPARKLE_PICTURES = 16;
+
+/**
+ * The picture of one sparkle at this moment, painted around the point
+ * the pokemon stands on.
+ *
+ * `density` is how many canvas pixels it is stamped at per sheet pixel.
+ * Painted at the sheet's own size and shrunk onto a small board sprite,
+ * its outlines and smallest glints fell under a pixel and all but vanished
  */
 export function paintSparkle(
+  name: string,
   seed: number,
   age: number,
   frame: { width: number; height: number },
+  density = 1,
 ): HTMLCanvasElement | null {
-  const across = Math.min(SPARKLE_LIMIT, Math.max(1, Math.round(frame.width * SPARKLE_SPAN)));
-  const down = Math.min(SPARKLE_LIMIT, Math.max(1, Math.round(frame.height * SPARKLE_SPAN)));
+  const across = Math.min(
+    SPARKLE_LIMIT,
+    Math.max(1, Math.round(frame.width * density * SPARKLE_SPAN)),
+  );
+  const down = Math.min(
+    SPARKLE_LIMIT,
+    Math.max(1, Math.round(frame.height * density * SPARKLE_SPAN)),
+  );
   const key = `${seed}:${Math.round(age)}:${across}:${down}`;
+  const held = sparkled.get(name);
 
-  if (sparkled.canvas != null && sparkled.key === key) {
-    return sparkled.canvas;
+  if (held?.key === key) {
+    return held.canvas;
   }
-  const canvas = sparkled.canvas ?? document.createElement('canvas');
 
-  canvas.width = across;
-  canvas.height = down;
+  const canvas = held?.canvas ?? document.createElement('canvas');
+
+  if (canvas.width !== across || canvas.height !== down) {
+    canvas.width = across;
+    canvas.height = down;
+  }
 
   const context = canvas.getContext('2d');
 
@@ -485,7 +764,10 @@ export function paintSparkle(
     1,
   );
   context.restore();
-  sparkled.canvas = canvas;
-  sparkled.key = key;
+  // Oldest first, which is insertion order
+  if (held == null && sparkled.size >= SPARKLE_PICTURES) {
+    sparkled.delete(sparkled.keys().next().value ?? '');
+  }
+  sparkled.set(name, { canvas, key });
   return canvas;
 }

@@ -65,11 +65,14 @@ const MARKS = new Map<string, (gift: MysteryGift, context: GiftContext) => boole
 );
 
 function marked(gift: MysteryGift, value: string, wanted: boolean, context: GiftContext): boolean {
-  return alternatives(value).some((word) => {
+  for (const word of alternatives(value)) {
     const mark = MARKS.get(word.trim().toLowerCase());
 
-    return mark?.(gift, context) === wanted;
-  });
+    if (mark?.(gift, context) === wanted) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /** What one field asks of one row */
@@ -109,7 +112,7 @@ export default function matchesGift(
   query: string,
   context: GiftContext = {},
 ): boolean {
-  return askedTerms(query).every((term) => {
+  for (const term of askedTerms(query)) {
     const answered =
       term.field === ''
         ? holds(describeGiftName(gift), term.value) ||
@@ -117,8 +120,11 @@ export default function matchesGift(
           holds(context.recipient ?? 'everybody', term.value)
         : FIELDS.get(term.field)?.(gift, term.value, context) === true;
 
-    return term.negated ? !answered : answered;
-  });
+    if (term.negated ? answered : !answered) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /** What each `sort:` word reads off a row */
@@ -159,13 +165,11 @@ const VALUES: Record<string, () => string[]> = {
 };
 
 /** What the ledger's box can be asked, with the arranging terms on the end */
-export const GIFT_VOCABULARY: QueryVocabulary = {
-  fields: [...FIELDS.keys(), 'sort', 'order'].map((name) => ({
-    name,
-    hint: HINTS[name] ?? '',
-    values: VALUES[name],
-  })),
-};
+export const GIFT_VOCABULARY: QueryVocabulary = { fields: [] };
+
+for (const name of [...FIELDS.keys(), 'sort', 'order']) {
+  GIFT_VOCABULARY.fields.push({ name, hint: HINTS[name] ?? '', values: VALUES[name] });
+}
 
 /**
  * The rows a search asked for, in the order it asked for them. The two

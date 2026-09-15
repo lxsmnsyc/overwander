@@ -109,7 +109,7 @@ export default function registerTeddiursaSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.Taiga, Biome.MontaneForest, Biome.TemperateForest],
+    biomes: [],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

@@ -12,7 +12,7 @@ import { finishBattle as finishOnServer } from '../server/raids';
 import type BattleAftermath from './battle-aftermath';
 
 import getIdToken from './session';
-import { type TeamSnapshotRecord, getTeamSnapshot } from './teams';
+import { type TeamSnapshotRecord, getTeamSnapshotBatched } from './teams';
 
 export { default as BattleOutcome } from './battle-outcome';
 export type { CandyEarned } from '../server/battles';
@@ -109,16 +109,19 @@ function fromBattleRow(row: Record<string, unknown>): BattleRecord {
   const teams = asRecordArray(row.battle_teams).sort(
     (left, right) => Number(left.position ?? 0) - Number(right.position ?? 0),
   );
+  const snapshots: string[] = [];
+  const players = new Set<string>();
+
+  for (const entry of teams) {
+    snapshots.push(asString(entry.snapshot_id));
+    if (typeof entry.player === 'string') {
+      players.add(entry.player);
+    }
+  }
 
   return {
-    teams: teams.map((entry) => asString(entry.snapshot_id)),
-    players: [
-      ...new Set(
-        teams
-          .map((entry) => entry.player)
-          .filter((player): player is string => typeof player === 'string'),
-      ),
-    ],
+    teams: snapshots,
+    players: [...players],
     raid: asString(row.raid_id),
     // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
     species: asNumber(row.species) as Species,
@@ -174,13 +177,7 @@ export function watchBattleHistory(
       .select('battle_id, battles(*, battle_teams(position, snapshot_id, player))')
       .eq('player', player);
 
-    return asRecordArray(data)
-      .map((entry): [string, BattleRecord] => [
-        String(entry.battle_id),
-        fromBattleRow(asRecord(entry.battles)),
-      ])
-      .filter(([, record]) => record.outcome !== BattleOutcome.Unfinished)
-      .sort((left, right) => right[1].startedAt - left[1].startedAt);
+    return finishedBattles(data);
   };
 
   // The junction row filtered to this player is the invalidation
@@ -251,13 +248,21 @@ export async function listBattleHistory(player: string): Promise<[string, Battle
     .select('battle_id, battles(*, battle_teams(position, snapshot_id, player))')
     .eq('player', player);
 
-  return asRecordArray(data)
-    .map((entry): [string, BattleRecord] => [
-      String(entry.battle_id),
-      fromBattleRow(asRecord(entry.battles)),
-    ])
-    .filter(([, record]) => record.outcome !== BattleOutcome.Unfinished)
-    .sort((left, right) => right[1].startedAt - left[1].startedAt);
+  return finishedBattles(data);
+}
+
+/** Junction rows to their finished battles, newest first */
+function finishedBattles(data: unknown): [string, BattleRecord][] {
+  const battles: [string, BattleRecord][] = [];
+
+  for (const entry of asRecordArray(data)) {
+    const record = fromBattleRow(asRecord(entry.battles));
+
+    if (record.outcome !== BattleOutcome.Unfinished) {
+      battles.push([String(entry.battle_id), record]);
+    }
+  }
+  return battles.sort((left, right) => right[1].startedAt - left[1].startedAt);
 }
 
 /**
@@ -265,7 +270,18 @@ export async function listBattleHistory(player: string): Promise<[string, Battle
  * that have gone missing are left out
  */
 export async function listBattleTeams(record: BattleRecord): Promise<TeamSnapshotRecord[]> {
-  const teams = await Promise.all(record.teams.map(getTeamSnapshot));
+  const pending: Promise<TeamSnapshotRecord | null>[] = [];
 
-  return teams.filter((team): team is TeamSnapshotRecord => team != null);
+  for (const id of record.teams) {
+    pending.push(getTeamSnapshotBatched(id));
+  }
+
+  const found: TeamSnapshotRecord[] = [];
+
+  for (const team of await Promise.all(pending)) {
+    if (team != null) {
+      found.push(team);
+    }
+  }
+  return found;
 }

@@ -278,10 +278,19 @@ function asPoint(value: unknown): Point | null {
 
 const COAT_NAMES = new Set<string>(['regular', 'shiny', 'female', 'shinyFemale']);
 
+function isCoat(value: unknown): value is Coat {
+  return typeof value === 'string' && COAT_NAMES.has(value);
+}
+
 function asCoats(value: unknown): Coat[] {
-  return asArray(value).filter(
-    (coat): coat is Coat => typeof coat === 'string' && COAT_NAMES.has(coat),
-  );
+  const coats: Coat[] = [];
+
+  for (const coat of asArray(value)) {
+    if (isCoat(coat)) {
+      coats.push(coat);
+    }
+  }
+  return coats;
 }
 
 /**
@@ -459,6 +468,40 @@ export default function asSpriteSheetJSON(value: unknown, table: FrameTable): Sp
     };
   }
 
+  const pictures: SheetRect[] = [];
+
+  for (const entry of asArray(sheet.pictures)) {
+    const rect = asArray(entry);
+
+    pictures.push({
+      x: asNumber(rect[0]),
+      y: asNumber(rect[1]),
+      width: asNumber(rect[2]),
+      height: asNumber(rect[3]),
+    });
+  }
+
+  const anims: AnimData[] = [];
+
+  for (const entry of asArray(root.anims)) {
+    const anim = asRecord(entry);
+    const name = asSpriteAnim(asNumber(anim.anim));
+    const index = asNumber(anim.index);
+    const durations: number[] = [];
+
+    for (const duration of asArray(anim.durations)) {
+      durations.push(asNumber(duration));
+    }
+    // An anim with no target of its own plays from the grid
+    // named after it, which is how a file leaves the two out
+    // where they agree
+    const target = anim.target == null ? name : asSpriteAnim(asNumber(anim.target));
+
+    if (name != null && target != null) {
+      anims.push({ name, index, durations, target });
+    }
+  }
+
   return {
     version: asNumber(root.version),
     coats: asCoats(root.coats),
@@ -466,33 +509,9 @@ export default function asSpriteSheetJSON(value: unknown, table: FrameTable): Sp
     sheet: {
       width: asNumber(sheet.width),
       height: asNumber(sheet.height),
-      pictures: asArray(sheet.pictures).map((entry) => {
-        const rect = asArray(entry);
-
-        return {
-          x: asNumber(rect[0]),
-          y: asNumber(rect[1]),
-          width: asNumber(rect[2]),
-          height: asNumber(rect[3]),
-        };
-      }),
+      pictures,
     },
-    anims: asArray(root.anims)
-      .map((entry) => {
-        const anim = asRecord(entry);
-        const name = asSpriteAnim(asNumber(anim.anim));
-
-        return {
-          name,
-          index: asNumber(anim.index),
-          durations: asArray(anim.durations).map(asNumber),
-          // An anim with no target of its own plays from the grid
-          // named after it, which is how a file leaves the two out
-          // where they agree
-          target: anim.target == null ? name : asSpriteAnim(asNumber(anim.target)),
-        };
-      })
-      .filter((anim): anim is AnimData => anim.name != null && anim.target != null),
+    anims,
     sprites,
   };
 }

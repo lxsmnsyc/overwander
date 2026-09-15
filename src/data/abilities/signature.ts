@@ -653,7 +653,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Skarmory, Abilities.Steelmolt, {
     name: 'Steelmolt',
-    description: 'Each hit it takes lays a layer of Spikes on the enemy side.',
+    description: 'Lays a layer of Spikes on the enemy side as a hit drops it to 3/4 and to 1/2 HP.',
   });
 
   registerSignature(Families.Houndour, Abilities.PackHowl, {

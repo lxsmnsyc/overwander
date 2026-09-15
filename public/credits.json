@@ -24,6 +24,12 @@
       "who": "Fan tileset artists",
       "href": "https://pokengine.org",
       "terms": "Used with credit and not commercially; the rights to each tile stay with the artist who drew it"
+    },
+    {
+      "what": "The shiny sparkle sound under public/sounds/effects",
+      "who": "BenKirb",
+      "href": "https://pixabay.com/sound-effects/shine-11-268907/",
+      "terms": "Pixabay Content License: free to use, credit not required"
     }
   ],
   "packages": [

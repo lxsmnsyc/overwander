@@ -1,3 +1,5 @@
+import { Types } from '../../../../data/constants/types';
+import type { Weathers } from '../../../../data/ids/status';
 import { MoveCategories, type Moves } from '../../../../data/ids/moves';
 import { getMoveData } from '../../../../data/moves';
 import type { Point, Stage } from '../../stage';
@@ -109,6 +111,91 @@ export type EffectShape =
   | 'Gyro'
   | 'Petals'
   | 'Cross'
+  | 'Punch'
+  | 'Wheel'
+  | 'Torrent'
+  | 'Rush'
+  | 'Stall'
+  | 'Rend'
+  | 'Verdict'
+  | 'Sunburst'
+  | 'Ambush'
+  | 'Vortex'
+  | 'Pyre'
+  | 'Upheaval'
+  | 'Plume'
+  | 'Lustre'
+  | 'Starfall'
+  | 'Grip'
+  | 'Surge'
+  | 'Moonlit'
+  | 'Exchange'
+  | 'Void'
+  | 'Cannon'
+  | 'Meteors'
+  | 'Rampage'
+  | 'Rift'
+  | 'Scorch'
+  | 'Pulse'
+  | 'Freeze'
+  | 'Shell'
+  | 'Doll'
+  | 'Flop'
+  | 'Wag'
+  | 'Shimmer'
+  | 'Blades'
+  | 'Dance'
+  | 'Sheen'
+  | 'Mirage'
+  | 'Scheme'
+  | 'Weather'
+  | 'Tri'
+  | 'Blaster'
+  | 'Crash'
+  | 'Haymaker'
+  | 'Flurry'
+  | 'Aura'
+  | 'Stream'
+  | 'Kicks'
+  | 'Slumber'
+  | 'Sunbeam'
+  | 'Moonbeam'
+  | 'Greening'
+  | 'Wishing'
+  | 'Feathers'
+  | 'Swarm'
+  | 'Song'
+  | 'Roar'
+  | 'Chime'
+  | 'Sweep'
+  | 'Crescent'
+  | 'Sickles'
+  | 'Cutter'
+  | 'Toxin'
+  | 'Spores'
+  | 'Stare'
+  | 'Applause'
+  | 'Vein'
+  | 'Nail'
+  | 'Haste'
+  | 'Polish'
+  | 'Flex'
+  | 'Howl'
+  | 'Blank'
+  | 'Cosmos'
+  | 'Hive'
+  | 'Crackle'
+  | 'Lantern'
+  | 'Stack'
+  | 'Sprout'
+  | 'Curl'
+  | 'Screech'
+  | 'Tickle'
+  | 'Cotton'
+  | 'Silk'
+  | 'Tears'
+  | 'Memento'
+  | 'Clear'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -170,6 +257,91 @@ export const SPANS: Record<EffectShape, number> = {
   Gyro: 900,
   Petals: 760,
   Cross: 460,
+  Punch: 460,
+  Wheel: 620,
+  Torrent: 700,
+  Rush: 620,
+  Stall: 1000,
+  Rend: 820,
+  Verdict: 900,
+  Sunburst: 760,
+  Ambush: 720,
+  Vortex: 900,
+  Pyre: 900,
+  Upheaval: 820,
+  Plume: 820,
+  Lustre: 820,
+  Starfall: 900,
+  Grip: 900,
+  Surge: 900,
+  Moonlit: 1000,
+  Exchange: 900,
+  Void: 1000,
+  Cannon: 820,
+  Meteors: 1000,
+  Rampage: 900,
+  Rift: 820,
+  Scorch: 820,
+  Pulse: 820,
+  Freeze: 1000,
+  Shell: 900,
+  Doll: 900,
+  Flop: 900,
+  Wag: 1000,
+  Shimmer: 900,
+  Blades: 1000,
+  Dance: 900,
+  Sheen: 820,
+  Mirage: 820,
+  Scheme: 900,
+  Weather: 820,
+  Tri: 900,
+  Blaster: 900,
+  Crash: 820,
+  Haymaker: 900,
+  Flurry: 900,
+  Aura: 760,
+  Stream: 1000,
+  Kicks: 700,
+  Slumber: 1000,
+  Sunbeam: 900,
+  Moonbeam: 900,
+  Greening: 900,
+  Wishing: 1200,
+  Feathers: 1000,
+  Swarm: 1000,
+  Song: 1000,
+  Roar: 820,
+  Chime: 1000,
+  Sweep: 620,
+  Crescent: 700,
+  Sickles: 820,
+  Cutter: 760,
+  Toxin: 900,
+  Spores: 900,
+  Stare: 820,
+  Applause: 1000,
+  Vein: 900,
+  Nail: 1000,
+  Haste: 700,
+  Polish: 900,
+  Flex: 820,
+  Howl: 820,
+  Blank: 900,
+  Cosmos: 1000,
+  Hive: 1000,
+  Crackle: 900,
+  Lantern: 900,
+  Stack: 1000,
+  Sprout: 900,
+  Curl: 820,
+  Screech: 820,
+  Tickle: 820,
+  Cotton: 900,
+  Silk: 900,
+  Tears: 900,
+  Memento: 1000,
+  Clear: 900,
   Whiff: 320,
 };
 
@@ -201,12 +373,21 @@ export function weightOf(move: Moves): number {
 }
 
 /** What a painter is handed besides the stage. */
-interface Draw {
+export interface Draw {
   paint: Painted;
   seed: number;
   /** How hard it hits, from about 0.85 to 1.75. */
   weight: number;
+  /** The move's type, for the shapes that wrap a blow in its element */
+  type: Types;
+  /** The sky it landed under, handed only to the shape made of it */
+  weather?: Weathers;
+  /** How many times it strikes: the count where it is fixed, the expected count where it is rolled */
+  hits?: number;
 }
+
+/** The types a blow or a bite breaks off its element for: flames, frost, sparks, or Brave Bird's pale fire */
+export const IMBUED = new Set<Types>([Types.Fire, Types.Ice, Types.Electric, Types.Flying]);
 
 /** A count scaled by weight, never below one. */
 export function many(count: number, weight: number): number {

@@ -6,7 +6,7 @@ import { syncServerClock } from '../../../auth/clock';
 import { type CaughtPokemon, countCaught, getCaught } from '../../../auth/caught';
 
 import { type PokedexView, getPokedex } from '../../../auth/pokedex';
-import { getProfile } from '../../../auth/profile';
+import { getProfiles } from '../../../auth/profile';
 
 import { type InventoryEntry, getInventory } from '../../../auth/inventory';
 import { getSellerStanding } from '../../../auth/auctions';
@@ -83,22 +83,21 @@ function CatchSheet(
    * looked up by uid as the rows draw
    */
   const [owners] = createResource(
-    () => [...new Set(view()?.history.map((entry) => entry.owner) ?? [])].sort().join(','),
+    () => {
+      const uids = new Set<string>();
+
+      for (const entry of view()?.history ?? []) {
+        uids.add(entry.owner);
+      }
+      return [...uids].sort().join(',');
+    },
     async (key): Promise<Map<string, string>> => {
       const named = new Map<string, string>();
 
-      await Promise.all(
-        key
-          .split(',')
-          .filter(Boolean)
-          .map(async (uid) => {
-            const profile = await getProfile(uid);
-
-            if (profile != null) {
-              named.set(uid, profile.nickname);
-            }
-          }),
-      );
+      // Every previous owner in one read
+      for (const [uid, profile] of await getProfiles(key.split(','))) {
+        named.set(uid, profile.nickname);
+      }
       return named;
     },
   );

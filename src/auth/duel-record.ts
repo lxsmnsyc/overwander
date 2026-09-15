@@ -96,28 +96,43 @@ export interface DuelInvite {
 
 export function asDuelRecord(value: unknown): DuelRecord {
   const data = asRecord(value);
+  const members: DuelMember[] = [];
 
+  for (const entry of asRecordArray(data.members)) {
+    members.push({
+      player: asString(entry.player),
+      role: asNumber(entry.role) as LobbyRole,
+      ready: entry.ready === true,
+      catches: asStringArray(entry.catches),
+    });
+  }
   return {
     ...asDuelRules(data),
     host: asString(data.host),
     battle: typeof data.battle === 'string' ? data.battle : null,
     createdAt: asNumber(data.createdAt),
-    members: asRecordArray(data.members).map((entry) => ({
-      player: asString(entry.player),
-      role: asNumber(entry.role) as LobbyRole,
-      ready: entry.ready === true,
-      catches: asStringArray(entry.catches),
-    })),
+    members,
   };
+}
+
+function membersIn(duel: DuelRecord, role: LobbyRole): DuelMember[] {
+  const members: DuelMember[] = [];
+
+  for (const member of duel.members) {
+    if (member.role === role) {
+      members.push(member);
+    }
+  }
+  return members;
 }
 
 /** The two who are fighting, in the order they took the seats */
 export function getDuelFighters(duel: DuelRecord): DuelMember[] {
-  return duel.members.filter((member) => member.role === LobbyRole.Fighter);
+  return membersIn(duel, LobbyRole.Fighter);
 }
 
 export function getDuelSpectators(duel: DuelRecord): DuelMember[] {
-  return duel.members.filter((member) => member.role === LobbyRole.Spectator);
+  return membersIn(duel, LobbyRole.Spectator);
 }
 
 /**
@@ -131,11 +146,15 @@ export function getDuelBlocker(duel: DuelRecord): string | null {
   if (fighters.length < DUEL_FIGHTERS) {
     return 'Waiting for a second trainer.';
   }
-  if (fighters.some((member) => member.catches.length === 0)) {
-    return 'Both sides need a party.';
+  let unready = false;
+
+  for (const member of fighters) {
+    if (member.catches.length === 0) {
+      return 'Both sides need a party.';
+    }
+    if (!member.ready) {
+      unready = true;
+    }
   }
-  if (fighters.some((member) => !member.ready)) {
-    return 'Both sides have to be ready.';
-  }
-  return null;
+  return unready ? 'Both sides have to be ready.' : null;
 }

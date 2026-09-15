@@ -53,6 +53,31 @@ export function fromCaughtRow(row: Record<string, unknown>): CaughtPokemon {
     }
   }
 
+  const known: number[] = [];
+  const rolled: number[] = [];
+  const held: number[] = [];
+  const hands: Record<string, unknown>[] = [];
+
+  for (const entry of moves) {
+    known.push(Number(entry.move));
+  }
+  for (const entry of abilities) {
+    rolled.push(Number(entry.ability));
+  }
+  for (const entry of items) {
+    held.push(Number(entry.item));
+  }
+  for (const entry of history) {
+    hands.push({
+      owner: entry.owner ?? entry.owner_name ?? '',
+      ...(entry.owner == null && entry.owner_name != null ? { name: entry.owner_name } : {}),
+      acquiredAt: toStoredISO(entry.acquired_at_local, entry.acquired_at_offset),
+      kind: entry.kind,
+      paid: entry.paid,
+      ball: entry.ball,
+    });
+  }
+
   return asCaughtPokemon({
     owner: row.owner ?? '',
     type: row.type,
@@ -72,19 +97,12 @@ export function fromCaughtRow(row: Record<string, unknown>): CaughtPokemon {
     traded: row.traded,
     canEvolve: row.can_evolve,
     auctionable: row.auctionable,
-    moves: moves.map((entry) => Number(entry.move)),
+    moves: known,
     movePoints,
-    abilities: abilities.map((entry) => Number(entry.ability)),
+    abilities: rolled,
     slots: row.slots,
-    items: items.map((entry) => Number(entry.item)),
-    history: history.map((entry) => ({
-      owner: entry.owner ?? entry.owner_name ?? '',
-      ...(entry.owner == null && entry.owner_name != null ? { name: entry.owner_name } : {}),
-      acquiredAt: toStoredISO(entry.acquired_at_local, entry.acquired_at_offset),
-      kind: entry.kind,
-      paid: entry.paid,
-      ball: entry.ball,
-    })),
+    items: held,
+    history: hands,
     lockedAt: row.locked_at,
     steps: row.steps,
     hatchSteps: row.hatch_steps,

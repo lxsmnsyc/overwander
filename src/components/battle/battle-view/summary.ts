@@ -92,10 +92,13 @@ export function readSides(built: RaidBattle): SideSummary[] {
       side.units.push({ species: unit.species, dealt: unit.dealt });
     }
   }
-  return [...teams.values()]
-    .map((side) => ({
+  const sides: SideSummary[] = [];
+
+  for (const side of teams.values()) {
+    sides.push({
       ...side,
       units: side.units.sort((one, other) => other.dealt - one.dealt),
-    }))
-    .sort((one, other) => other.dealt - one.dealt);
+    });
+  }
+  return sides.sort((one, other) => other.dealt - one.dealt);
 }

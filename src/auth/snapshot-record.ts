@@ -55,6 +55,9 @@ export interface SnapshotRecord {
   spawns: SpawnRoll[];
 }
 
+/** The most chunks one claims call may ask about, so a caller cannot ask for the whole world */
+export const CLAIM_CHUNK_LIMIT = 32;
+
 /**
  * What a spawn is called, for the encounter that is staged from it.
  * Derived rather than stored: the chunk, the zone, the window and
@@ -72,12 +75,20 @@ export function asSpawnRolls(value: unknown): SpawnRoll[] {
   if (!Array.isArray(value)) {
     return [];
   }
-  return value.filter(isRecord).map((entry) => ({
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    species: asNumber(entry.species) as Species,
-    individualValue: asNumber(entry.individualValue),
-    traitValue: asNumber(entry.traitValue),
-  }));
+  const rolls: SpawnRoll[] = [];
+
+  for (const entry of value) {
+    if (!isRecord(entry)) {
+      continue;
+    }
+    rolls.push({
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      species: asNumber(entry.species) as Species,
+      individualValue: asNumber(entry.individualValue),
+      traitValue: asNumber(entry.traitValue),
+    });
+  }
+  return rolls;
 }
 
 /**

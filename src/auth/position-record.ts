@@ -1,5 +1,5 @@
 import { CHUNK_CELLS } from '../overworld/chunk';
-import { WORLD_MAX, WORLD_MIN } from '../overworld/world';
+import { Depth, WORLD_MAX, WORLD_MIN } from '../overworld/world';
 import { asNumber, asRecord, asString } from './__normalize';
 
 /**
@@ -29,9 +29,26 @@ export interface PositionRecord {
   cellX: number;
   cellY: number;
   /**
+   * Which layer they are on. The caves are the same coordinates one
+   * layer down, so a cell alone no longer says where somebody is
+   */
+  depth: Depth;
+  /**
    * When it was last written, on the server's clock
    */
   movedAt: number;
+}
+
+/**
+ * A layer that exists, whatever arrived. Anything that is not the
+ * caves is the surface, which is where every row written before there
+ * were caves belongs
+ */
+export function asDepth(value: unknown): Depth {
+  // tsc needs the widening to compare a number against a const enum;
+  // tsgolint resolves the enum to number and calls it redundant
+  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+  return asNumber(value) === (Depth.Cave as number) ? Depth.Cave : Depth.Surface;
 }
 
 /**
@@ -62,6 +79,7 @@ export function asPositionRecord(value: unknown): PositionRecord {
     chunkY: asChunkCoordinate(data.chunkY),
     cellX: asCellCoordinate(data.cellX),
     cellY: asCellCoordinate(data.cellY),
+    depth: asDepth(data.depth),
     movedAt: asNumber(data.movedAt),
   };
 }

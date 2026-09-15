@@ -312,6 +312,17 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Pledge', Moves.FirePledge],
   ['Pledge', Moves.WaterPledge],
   ['Pledge', Moves.GrassPledge],
+  ['Aerial', Moves.Acrobatics],
+  ['Plummet', Moves.SkyDrop],
+  ['Lash', Moves.DragonTail],
+  ['Roller', Moves.Steamroller],
+  ['Turnabout', Moves.FoulPlay],
+  ['Leech', Moves.HornLeech],
+  ['Ram', Moves.HeadCharge],
+  ['Blaze', Moves.Inferno],
+  ['Firedance', Moves.FieryDance],
+  ['Scorch', Moves.Incinerate],
+  ['Spatter', Moves.FlameBurst],
 ];
 
 /**
@@ -605,6 +616,8 @@ describe('a painted move', () => {
     // Kyurem's two gather their cold before they land it
     expect(moveEffectVisual(Moves.FreezeShock, 1)).toBeNull();
     expect(moveEffectVisual(Moves.IceBurn, 1)).toBeNull();
+    // Sky Drop carries its target up first and drops it on the second step
+    expect(moveEffectVisual(Moves.SkyDrop, 1)).toBeNull();
     // A move that hits on every step keeps its picture on every step
     expect(moveEffectVisual(Moves.Thrash, 1)).not.toBeNull();
   });

@@ -219,6 +219,15 @@ export type EffectShape =
   | 'Shed'
   | 'Tonnage'
   | 'Pledge'
+  | 'Aerial'
+  | 'Plummet'
+  | 'Roller'
+  | 'Turnabout'
+  | 'Leech'
+  | 'Ram'
+  | 'Blaze'
+  | 'Firedance'
+  | 'Spatter'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -388,6 +397,15 @@ export const SPANS: Record<EffectShape, number> = {
   Shed: 820,
   Tonnage: 900,
   Pledge: 900,
+  Aerial: 760,
+  Plummet: 900,
+  Roller: 900,
+  Turnabout: 900,
+  Leech: 900,
+  Ram: 820,
+  Blaze: 1000,
+  Firedance: 900,
+  Spatter: 700,
   Whiff: 320,
 };
 

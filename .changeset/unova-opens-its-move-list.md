@@ -66,3 +66,10 @@ Some have a picture of their own.
 - Autotomize drops pieces off the pokemon as it speeds away, and Work Up throbs with power like Bulk Up.
 - Heavy Slam and Heat Crash spread a shadow under the target before the ground gives way.
 - Fire, Water and Grass Pledge raise a column of fire, water or leaves out of the ground.
+- Acrobatics swoops in on quick loops, and Sky Drop streaks down onto the ground.
+- Dragon Tail swings like Iron Tail, and Steamroller rolls a spiked wheel over the target.
+- Foul Play draws the target's strength out of it and turns it back in a dark blow.
+- Horn Leech drives a horn in and draws green light back to the pokemon that used it.
+- Head Charge rushes in behind speed lines and lands a hard hit.
+- Inferno closes a ring of fire on the target, and Fiery Dance swirls flames in on it.
+- Incinerate blows hot air across the target like Heat Wave, and Flame Burst flings embers out to either side.

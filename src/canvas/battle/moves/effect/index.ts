@@ -51,6 +51,7 @@ const WINDING_UP = new Set<Moves>([
   Moves.Bide,
   Moves.FreezeShock,
   Moves.IceBurn,
+  Moves.SkyDrop,
 ]);
 
 /**

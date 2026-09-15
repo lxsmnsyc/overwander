@@ -23,7 +23,7 @@ import {
   star,
   swell,
 } from '../__paint';
-import { imbue } from './contact';
+import { backToward, imbue } from './contact';
 import { note } from './minds';
 import type { EffectShape, ShapePainter } from './shapes';
 import { REACH, landing, many } from './shapes';
@@ -37,6 +37,11 @@ export const SMITE_LANDS = 0.3;
 /** Shell Smash: the share the shell strains before it breaks; Heavy Slam: the share before the weight lands */
 export const SMASH_BREAKS = 0.45;
 export const TONNAGE_LANDS = 0.25;
+
+/** Sky Drop, Foul Play and Head Charge: the share at which the blow lands */
+export const PLUMMET_LANDS = 0.35;
+export const TURN_BACK = 0.55;
+export const RAM_HITS = 0.33;
 
 /** Kyurem's other halves: Zekrom's spark on Freeze Shock and Reshiram's fire on Ice Burn */
 export const KYUREM_SPARK = '#fac000';
@@ -942,6 +947,360 @@ const unova = {
           alpha,
         });
       }
+    }
+  },
+
+  // Quick strikes swooping in on loops, from one side and then the other
+  Aerial(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const light = lighten(paint.color, 0.5);
+
+    for (let pass = 0; pass < 3; pass += 1) {
+      const held = share * 3 - pass;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      const side = pass % 2 === 0 ? -1 : 1;
+      const swoop = Math.min(1, held * 2);
+      const centre: Point = [at[0] + side * size * 0.8, at[1] - size * 0.8];
+      const radius = size * 1.13;
+      // Round a circle that ends on it, so the loop comes down onto the target
+      const end = Math.atan2(size * 0.8, -side * size * 0.8);
+      const start = end - side * Math.PI * 1.4;
+
+      context.beginPath();
+      for (let step = 0; step <= 12; step += 1) {
+        const angle = start + (end - start) * (step / 12) * swoop;
+
+        context[step === 0 ? 'moveTo' : 'lineTo'](
+          centre[0] + Math.cos(angle) * radius,
+          centre[1] + Math.sin(angle) * radius,
+        );
+      }
+      context.strokeStyle = fade(light, decay(held));
+      context.lineWidth = 3 * stage.scale;
+      context.stroke();
+      if (swoop < 1) {
+        continue;
+      }
+      const hit = (held - 0.5) / 0.5;
+
+      burst(context, at, size * (0.4 + hit * 0.6), 5, seed + pass, {
+        color: light,
+        alpha: decay(hit),
+        width: 2.4 * stage.scale,
+      });
+    }
+  },
+
+  // Dropped from high above: wind streaking down past it, then the ground slammed
+  Plummet(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const foot: Point = [at[0], at[1] + size * 0.9];
+    const light = lighten(paint.color, 0.5);
+
+    if (share < PLUMMET_LANDS) {
+      const fall = share / PLUMMET_LANDS;
+
+      for (let line = 0; line < 5; line += 1) {
+        const x = at[0] + (line - 2) * size * 0.45;
+        const y = at[1] - size * 4 * (1 - fall) - noise(seed, line) * size * 0.6;
+
+        edge(context, [x, y - size * 1.6], [x, y], size * 0.05, 0, { color: light, alpha: fall });
+      }
+      return;
+    }
+    const hit = (share - PLUMMET_LANDS) / (1 - PLUMMET_LANDS);
+
+    for (let wave = 0; wave < 2; wave += 1) {
+      ripple(context, foot, size * (0.6 + hit * (2 + wave)), {
+        ...paint,
+        alpha: decay(hit) * (1 - wave * 0.4),
+        width: 3.4 * stage.scale,
+      });
+    }
+    burst(context, at, size * (0.8 + hit), 8, seed, {
+      color: light,
+      alpha: decay(hit),
+      width: 2.6 * stage.scale,
+    });
+    motes(context, foot, size * 1.8, 10, seed, hit, {
+      color: mix(paint.color, '#b9a58a', 0.6),
+      alpha: decay(hit) * 0.8,
+      width: 2.4 * stage.scale,
+    });
+  },
+
+  // A great spiked wheel rolling in over it and pressing it into the ground
+  Roller(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const light = lighten(paint.color, 0.4);
+    const roll = Math.min(1, share * 1.6);
+    const centre = backToward(at, stage.source, size * 2.5 * (1 - roll));
+    // Turning forward, toward whichever side it is rolling
+    const turn = roll * Math.PI * 6 * (at[0] >= stage.source[0] ? 1 : -1);
+    const kept = share < 0.7 ? 1 : decay((share - 0.7) / 0.3);
+    const foot: Point = [at[0], at[1] + size * 0.9];
+
+    ring(context, centre, size * 0.9, { ...paint, alpha: kept, width: 4 * stage.scale });
+    for (let spike = 0; spike < 10; spike += 1) {
+      const angle = turn + (spike / 10) * Math.PI * 2;
+
+      edge(
+        context,
+        [centre[0] + Math.cos(angle) * size * 0.9, centre[1] + Math.sin(angle) * size * 0.9],
+        [centre[0] + Math.cos(angle) * size * 1.3, centre[1] + Math.sin(angle) * size * 1.3],
+        size * 0.12,
+        0,
+        { color: light, alpha: kept },
+      );
+    }
+    if (roll < 1) {
+      return;
+    }
+    const hit = (share * 1.6 - 1) / 0.6;
+
+    ripple(context, foot, size * (0.8 + hit * 1.6), {
+      ...paint,
+      alpha: decay(hit),
+      width: 3 * stage.scale,
+    });
+    motes(context, foot, size * 1.6, 8, seed, hit, {
+      ...paint,
+      alpha: decay(hit) * 0.8,
+      width: 2.2 * stage.scale,
+    });
+  },
+
+  // Its own strength drawn out of it in a ring of light and turned back on it in a dark blow
+  Turnabout(context, stage, share, { paint, seed }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const dark = mix(paint.color, '#0a0610', 0.5);
+    const light = lighten(paint.color, 0.6);
+
+    if (share < TURN_BACK) {
+      const pull = share / TURN_BACK;
+
+      ring(context, at, size * (0.4 + pull * 1.2), {
+        color: dark,
+        alpha: pull * 0.8,
+        width: 3 * stage.scale,
+      });
+      for (let mote = 0; mote < 8; mote += 1) {
+        const angle = (mote / 8) * Math.PI * 2 + pull * Math.PI * 2;
+        const out = size * (0.4 + pull * 1.2);
+
+        orb(
+          context,
+          [at[0] + Math.cos(angle) * out, at[1] + Math.sin(angle) * out * 0.7],
+          size * 0.14,
+          { color: light, alpha: swell(pull) },
+        );
+      }
+      return;
+    }
+    const hit = (share - TURN_BACK) / (1 - TURN_BACK);
+
+    burst(context, at, size * (0.6 + hit * 1.2), 10, seed, {
+      color: dark,
+      alpha: decay(hit),
+      width: 4 * stage.scale,
+    });
+    ring(context, at, size * (1.6 - hit * 1.2), {
+      color: light,
+      alpha: decay(hit),
+      width: 2.6 * stage.scale,
+    });
+    star(context, at, size * 0.9 * decay(hit), hit, { color: light, alpha: decay(hit) });
+  },
+
+  // A horn driven into it, and green light flowing back out of it to the pokemon that used it
+  Leech(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const light = lighten(paint.color, 0.4);
+    const stab = Math.min(1, share * 4);
+    const drawing = Math.min(1, Math.max(0, (share - 0.2) * 5));
+
+    edge(
+      context,
+      backToward(at, stage.source, size * (2.2 - stab * 0.8)),
+      backToward(at, stage.source, size * (0.8 - stab * 0.8)),
+      size * 0.22,
+      0,
+      { color: light, alpha: Math.max(0, 1 - share * 2) },
+    );
+    ring(context, at, size * (0.4 + share), {
+      ...paint,
+      alpha: decay(share),
+      width: 2.4 * stage.scale,
+    });
+    for (let mote = 0; mote < many(6, weight); mote += 1) {
+      const held = (share * 1.3 + noise(seed, mote) * 0.5) % 1;
+      const [x, y] = between(at, stage.source, held);
+
+      orb(context, [x, y - Math.sin(Math.PI * held) * size * 0.5], size * 0.12, {
+        ...paint,
+        alpha: swell(held) * drawing,
+      });
+    }
+  },
+
+  // Rushing in behind speed lines, a hard hit, and the jolt of it thrown back at the pokemon that rammed it
+  Ram(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const light = lighten(paint.color, 0.5);
+    const angle = Math.atan2(at[1] - stage.source[1], at[0] - stage.source[0]);
+
+    if (share < RAM_HITS + 0.15) {
+      const rush = Math.min(1, share / RAM_HITS);
+      const front = backToward(at, stage.source, size * (3 - rush * 2.4));
+      const tail = backToward(at, stage.source, size * (4.4 - rush * 2.4));
+      const alpha = Math.max(0, 1 - Math.max(0, share - RAM_HITS) / 0.15);
+
+      for (let line = 0; line < 5; line += 1) {
+        const off = (line - 2) * size * 0.35;
+        const across = -Math.sin(angle) * off;
+        const down = Math.cos(angle) * off;
+
+        edge(
+          context,
+          [tail[0] + across, tail[1] + down],
+          [front[0] + across, front[1] + down],
+          size * 0.05,
+          0,
+          { color: light, alpha },
+        );
+      }
+    }
+    if (share < RAM_HITS) {
+      return;
+    }
+    const hit = (share - RAM_HITS) / (1 - RAM_HITS);
+
+    star(context, at, size * (1 + hit) * decay(hit), 0, { color: '#ffffff', alpha: decay(hit) });
+    burst(context, at, size * (1.2 + hit * 1.4), 12, seed, {
+      ...paint,
+      alpha: decay(hit),
+      width: 3.4 * stage.scale,
+    });
+    ring(context, at, size * (0.6 + hit * 1.8), {
+      color: light,
+      alpha: decay(hit),
+      width: 3 * stage.scale,
+    });
+    burst(
+      context,
+      backToward(at, stage.source, size * 1.2),
+      size * (0.4 + hit * 0.6),
+      5,
+      seed + 1,
+      {
+        color: light,
+        alpha: decay(hit),
+        width: 2 * stage.scale,
+      },
+    );
+  },
+
+  // A ring of fire closing in on it and flaring up round it
+  Blaze(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const hot = mix(paint.color, '#ffd84a', 0.6);
+    const close = settle(share * 2);
+    const shown = showing(share, 6, 0.75);
+    const base: Point = [at[0], at[1] + size * 0.6];
+    const round = size * (2 - close * 1.3);
+    const count = many(14, weight);
+
+    ripple(context, base, round, { ...paint, alpha: shown * 0.7, width: 3 * stage.scale });
+    if (close > 0.8) {
+      orb(context, at, size * (0.8 + swell(share) * 0.6), { color: hot, alpha: shown * 0.6 });
+    }
+    for (let lick = 0; lick < count; lick += 1) {
+      const angle = (lick / count) * Math.PI * 2 + share * Math.PI * 2;
+      const rise = (share * 2 + noise(seed, lick)) % 1;
+
+      orb(
+        context,
+        [
+          base[0] + Math.cos(angle) * round,
+          base[1] + Math.sin(angle) * round * 0.34 - rise * size * close * 2.2,
+        ],
+        size * 0.35 * (1 - rise * 0.5),
+        { color: rise < 0.4 ? hot : paint.color, alpha: swell(rise) * shown },
+      );
+    }
+  },
+
+  // Flames swirling in on it like wings in a dance, and flaring as they all arrive
+  Firedance(context, stage, share, { paint, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const hot = mix(paint.color, '#ffd84a', 0.6);
+    const count = many(8, weight);
+    const land = Math.max(0, (share - 0.6) / 0.4);
+
+    for (let flame = 0; flame < count; flame += 1) {
+      const held = share * 1.5 - (flame / count) * 0.5;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      const angle = flame * 2.3 + held * Math.PI * 3;
+      const round = size * 2 * (1 - held);
+
+      petal(
+        context,
+        [
+          at[0] + Math.cos(angle) * round,
+          at[1] + Math.sin(angle) * round * 0.6 - Math.sin(held * Math.PI) * size * 0.6,
+        ],
+        size * 0.35 * (1 - held * 0.4),
+        angle * 2,
+        { color: flame % 2 === 0 ? hot : paint.color, alpha: 1 },
+      );
+    }
+    if (land > 0) {
+      orb(context, at, size * (0.6 + land * 0.8), { color: hot, alpha: decay(land) });
+      ring(context, at, size * (0.5 + land * 1.6), {
+        ...paint,
+        alpha: decay(land),
+        width: 2.6 * stage.scale,
+      });
+    }
+  },
+
+  // A fireball bursting on it, flinging embers out to either side
+  Spatter(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const hot = mix(paint.color, '#ffd84a', 0.6);
+
+    orb(context, at, size * (0.6 + share * 1.2), { color: hot, alpha: decay(share) });
+    ring(context, at, size * (0.4 + share * 1.6), {
+      ...paint,
+      alpha: decay(share),
+      width: 3 * stage.scale,
+    });
+    for (let ember = 0; ember < many(8, weight); ember += 1) {
+      const side = ember % 2 === 0 ? -1 : 1;
+      const out = size * (0.6 + noise(seed, ember) * 2.4) * share;
+      const lift = Math.sin(share * Math.PI) * size * (0.6 + noise(seed, ember + 10) * 1.2);
+
+      orb(
+        context,
+        [at[0] + side * out, at[1] - lift + share * size * 0.6],
+        size * 0.18 * (1 - share * 0.5),
+        { color: ember % 3 === 0 ? hot : paint.color, alpha: decay(share) },
+      );
     }
   },
 } satisfies Partial<Record<EffectShape, ShapePainter>>;

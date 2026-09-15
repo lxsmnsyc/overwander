@@ -589,6 +589,18 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.FirePledge]: 'Pledge',
   [Moves.WaterPledge]: 'Pledge',
   [Moves.GrassPledge]: 'Pledge',
+  // The rest of Unova's attacks the rules drew as a plain hit or a plain flame
+  [Moves.Acrobatics]: 'Aerial',
+  [Moves.SkyDrop]: 'Plummet',
+  [Moves.DragonTail]: 'Lash',
+  [Moves.Steamroller]: 'Roller',
+  [Moves.FoulPlay]: 'Turnabout',
+  [Moves.HornLeech]: 'Leech',
+  [Moves.HeadCharge]: 'Ram',
+  [Moves.Inferno]: 'Blaze',
+  [Moves.FieryDance]: 'Firedance',
+  [Moves.Incinerate]: 'Scorch',
+  [Moves.FlameBurst]: 'Spatter',
 
   // Struck and gone: the blow is the first step and the walk off the
   // field is the second, which is why the landing here is the leaving

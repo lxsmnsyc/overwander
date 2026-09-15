@@ -558,7 +558,9 @@ function SafariBody(
         </Show>
         {/* Latest rather than read, so the heading never waits on the dex */}
         <Show when={props.owned.latest === true}>
-          <ItemSprite item={BALL_ITEMS[Balls.PokeBall]} size={16} label="" />
+          {/* The ball fills 18 of its 32-pixel cell, so the cell is drawn at 28 to bring
+              the ball up to the icons beside it, and pulled in so the line keeps their height */}
+          <ItemSprite item={BALL_ITEMS[Balls.PokeBall]} size={28} label="" class="-m-1.5" />
           <span class="sr-only">Caught before</span>
         </Show>
         {said}

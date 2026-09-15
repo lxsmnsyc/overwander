@@ -5,6 +5,7 @@ import {
   boardChunks,
   buildBoardView,
   naming,
+  runningWindows,
 } from './board-view';
 import challengerOf, { championGate, eliteGate, frontierGate } from './challengers';
 import { describeItem } from '../../details';
@@ -66,6 +67,7 @@ import { getSpeciesData } from '../../../data/species';
 import { isFeaturedSpecies } from '../../../data/species/day';
 import { CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from '../../../overworld/chunk';
 import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
+import { SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
 import type World from '../../../overworld/world';
@@ -638,6 +640,48 @@ export default function OverworldBoard(props: {
     watched.clear();
   });
 
+  /** Bumped when a window the board is showing runs out */
+  const [expiries, setExpiries] = createSignal(0);
+
+  // Nothing else asks for a window while the player stands still, so the
+  // soonest one to run out is what wakes the board to ask for the next
+  createEffect(() => {
+    const held = windows();
+
+    if (!placed()) {
+      return;
+    }
+
+    const now = toLocalTime(serverNow(), zone);
+    let soonest = Number.POSITIVE_INFINITY;
+
+    for (const { record } of held.values()) {
+      const ends = record.timestamp + SNAPSHOT_INTERVAL;
+
+      if (ends > now) {
+        soonest = Math.min(soonest, ends);
+      }
+    }
+    if (!Number.isFinite(soonest)) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setExpiries((count) => count + 1);
+      askForWindow(true);
+    }, soonest - now);
+
+    onCleanup(() => {
+      clearTimeout(timer);
+    });
+  });
+
+  // Rather than staying pressable and answering "too late"
+  const liveWindows = createMemo(() => {
+    expiries();
+    return runningWindows(windows(), toLocalTime(serverNow(), zone));
+  });
+
   // What walks beside the player changes what the chunk holds, so the
   // buddy's effects are read alongside it
   const buddy = (): Buddy | null | undefined => settled(props.buddy);
@@ -665,7 +709,7 @@ export default function OverworldBoard(props: {
       ? buildBoardView(
           originX(),
           originY(),
-          windows(),
+          liveWindows(),
           zone,
           auth.user()?.uid ?? null,
           buddy() ?? null,

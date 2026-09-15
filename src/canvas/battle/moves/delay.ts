@@ -568,6 +568,11 @@ const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
   Stack: 'Focus',
   Sprout: 'Focus',
   Curl: 'Focus',
+  Flutter: 'Focus',
+  Smash: 'Focus',
+  Gears: 'Focus',
+  Windup: 'Focus',
+  Shed: 'Focus',
 };
 
 /**

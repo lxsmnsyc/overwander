@@ -3,6 +3,7 @@ import type { Point } from '../../stage';
 import {
   between,
   bolt,
+  bubble,
   burst,
   decay,
   edge,
@@ -10,10 +11,14 @@ import {
   hoop,
   lighten,
   mix,
+  motes,
   noise,
   orb,
+  petal,
   ring,
   ripple,
+  shards,
+  sickle,
   spread,
   star,
   swell,
@@ -28,6 +33,10 @@ import { settle, showing } from './stats';
 export const VICTORY_LANDS = 0.35;
 export const FUSION_LANDS = 0.3;
 export const SMITE_LANDS = 0.3;
+
+/** Shell Smash: the share the shell strains before it breaks; Heavy Slam: the share before the weight lands */
+export const SMASH_BREAKS = 0.45;
+export const TONNAGE_LANDS = 0.25;
 
 /** Kyurem's other halves: Zekrom's spark on Freeze Shock and Reshiram's fire on Ice Burn */
 export const KYUREM_SPARK = '#fac000';
@@ -96,6 +105,33 @@ function polygon(
   context.strokeStyle = fade(color, alpha);
   context.lineWidth = width;
   context.stroke();
+}
+
+/** A gear: a ring with square teeth round it, turned by `turn` */
+function gear(
+  context: CanvasRenderingContext2D,
+  [x, y]: Point,
+  radius: number,
+  teeth: number,
+  turn: number,
+  color: string,
+  alpha: number,
+  scale: number,
+): void {
+  const steps = teeth * 4;
+
+  context.beginPath();
+  for (let step = 0; step <= steps; step += 1) {
+    const angle = turn + (step / steps) * Math.PI * 2;
+    // Two points out on a tooth and two back in the gap after it
+    const out = step % 4 < 2 ? radius * 1.22 : radius;
+
+    context[step === 0 ? 'moveTo' : 'lineTo'](x + Math.cos(angle) * out, y + Math.sin(angle) * out);
+  }
+  context.strokeStyle = fade(color, alpha);
+  context.lineWidth = 2.6 * scale;
+  context.stroke();
+  ring(context, [x, y], radius * 0.4, { color, alpha, width: 2 * scale });
 }
 
 /** The Unova moves with a picture of their own */
@@ -634,6 +670,278 @@ const unova = {
         swell(held) * shown,
         stage.scale,
       );
+    }
+  },
+
+  // Glittering wings fluttering up round it in a spiral
+  Flutter(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const shown = showing(share, 4, 0.8);
+
+    for (let one = 0; one < many(6, weight); one += 1) {
+      const held = (share * 1.3 + noise(seed, one)) % 1;
+      const angle = held * Math.PI * 4 + one * 1.3;
+      const round = size * (1.2 - held * 0.4);
+      const x = at[0] + Math.cos(angle) * round;
+      const y = at[1] + size * 0.7 - held * size * 2.4;
+      // Wings opening and closing, so the pair reads as a flutter rather than two leaves
+      const beat = Math.abs(Math.sin(share * Math.PI * 10 + one));
+
+      for (const side of [-1, 1]) {
+        petal(context, [x + side * size * 0.15 * beat, y], size * 0.22, side * (0.4 + beat * 0.8), {
+          ...paint,
+          alpha: swell(held) * shown,
+        });
+      }
+    }
+    motes(context, at, size * 1.4, 8, seed, share, {
+      color: lighten(paint.color, 0.6),
+      alpha: shown,
+      width: 1.8 * stage.scale,
+    });
+  },
+
+  // Its shell straining and cracking, then bursting off in pieces with the light under it shining out
+  Smash(context, stage, share, { paint, seed }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const light = lighten(paint.color, 0.5);
+
+    if (share < SMASH_BREAKS) {
+      const strain = share / SMASH_BREAKS;
+      const shake = Math.sin(strain * Math.PI * 12) * size * 0.04 * strain;
+
+      for (const side of [-1, 1]) {
+        sickle(
+          context,
+          [at[0] + shake, at[1]],
+          size * 1.2,
+          Math.PI / 2,
+          Math.PI / 2 - side * Math.PI,
+          size * 0.45,
+          { ...paint, alpha: 0.9 },
+        );
+      }
+      edge(
+        context,
+        [at[0], at[1] - size * 1.2],
+        [at[0] + size * 0.3 * strain, at[1] - size * (1.2 - 0.8 * strain)],
+        size * 0.05,
+        0,
+        { color: '#2a2018', alpha: strain },
+      );
+      return;
+    }
+    const broken = (share - SMASH_BREAKS) / (1 - SMASH_BREAKS);
+
+    orb(context, at, size * (0.8 + broken * 0.8), { color: light, alpha: decay(broken) });
+    shards(context, at, size * 2.4, 10, seed, broken, {
+      ...paint,
+      alpha: decay(broken),
+      width: size * 0.18,
+    });
+    ring(context, at, size * (0.8 + broken * 1.6), {
+      color: light,
+      alpha: decay(broken),
+      width: 2.6 * stage.scale,
+    });
+  },
+
+  // Two gears meshing over it, turning faster as they go
+  Gears(context, stage, share, { paint }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const shown = showing(share, 5, 0.8);
+    const turn = share * share * Math.PI * 6;
+
+    orb(context, at, size * 1.1, { ...paint, alpha: shown * 0.3 });
+    gear(
+      context,
+      [at[0] - size * 0.55, at[1] - size * 0.3],
+      size * 0.7,
+      8,
+      turn,
+      lighten(paint.color, 0.3),
+      shown,
+      stage.scale,
+    );
+    gear(
+      context,
+      [at[0] + size * 0.55, at[1] + size * 0.35],
+      size * 0.5,
+      6,
+      0.3 - turn * 1.4,
+      lighten(paint.color, 0.5),
+      shown,
+      stage.scale,
+    );
+  },
+
+  // A spiral winding up round its body and drawing tight
+  Windup(context, stage, share, { paint }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const shown = showing(share, 4, 0.8);
+    const round = size * (1.4 - settle(share * 1.5) * 0.5);
+
+    context.beginPath();
+    for (let step = 0; step <= 48; step += 1) {
+      const along = step / 48;
+      const angle = along * Math.PI * 6 + share * Math.PI * 2;
+
+      context[step === 0 ? 'moveTo' : 'lineTo'](
+        at[0] + Math.cos(angle) * round,
+        at[1] + size * 0.9 - along * size * 2.2 + Math.sin(angle) * round * 0.25,
+      );
+    }
+    context.strokeStyle = fade(lighten(paint.color, 0.3), shown);
+    context.lineWidth = 3 * stage.scale;
+    context.stroke();
+    if (share > 0.6) {
+      orb(context, at, size * 0.7, { ...paint, alpha: swell((share - 0.6) / 0.4) * 0.6 });
+    }
+  },
+
+  // Pieces of its body dropping away, and it streaking off lighter
+  Shed(context, stage, share, { paint, seed }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const light = lighten(paint.color, 0.5);
+
+    orb(context, at, size * 0.9, { ...paint, alpha: swell(share) * 0.3 });
+    for (let piece = 0; piece < 8; piece += 1) {
+      const held = Math.min(1, share * 1.5 - noise(seed, piece) * 0.4);
+
+      if (held <= 0) {
+        continue;
+      }
+      const x = at[0] + spread(seed, piece + 10) * size * 0.8;
+      const y = at[1] + spread(seed, piece + 20) * size * 0.6 + held * held * size * 2.2;
+      const turn = held * 6 + piece;
+
+      edge(
+        context,
+        [x, y],
+        [x + Math.cos(turn) * size * 0.3, y + Math.sin(turn) * size * 0.3],
+        size * 0.12,
+        0,
+        { ...paint, alpha: decay(held) },
+      );
+    }
+    if (share < 0.4) {
+      return;
+    }
+    const fast = Math.min(1, (share - 0.4) * 4) * decay((share - 0.4) / 0.6);
+
+    for (let line = 0; line < 4; line += 1) {
+      const held = (share * 3 + noise(seed, line + 30)) % 1;
+      const x = at[0] - size * 1.6 + held * size * 3.2;
+      const y = at[1] + spread(seed, line + 40) * size;
+
+      edge(context, [x - size * 0.9, y], [x, y], size * 0.05, 0, {
+        color: light,
+        alpha: fast * swell(held),
+      });
+    }
+  },
+
+  // A shadow spreading under it as something heavy comes down, then the ground giving way
+  Tonnage(context, stage, share, { paint, seed, weight, type }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const foot: Point = [at[0], at[1] + size * 0.9];
+
+    if (share < TONNAGE_LANDS) {
+      const near = share / TONNAGE_LANDS;
+
+      context.beginPath();
+      context.ellipse(
+        foot[0],
+        foot[1],
+        size * (0.6 + near * 1.2),
+        size * (0.2 + near * 0.4),
+        0,
+        0,
+        Math.PI * 2,
+      );
+      context.fillStyle = fade('#140c08', near * 0.5);
+      context.fill();
+      return;
+    }
+    const hit = (share - TONNAGE_LANDS) / (1 - TONNAGE_LANDS);
+
+    for (let wave = 0; wave < 2; wave += 1) {
+      ripple(context, foot, size * (0.6 + hit * (2.4 + wave)), {
+        ...paint,
+        alpha: decay(hit) * (1 - wave * 0.4),
+        width: 4 * stage.scale,
+      });
+    }
+    for (let crack = 0; crack < 6; crack += 1) {
+      const angle = (crack / 6) * Math.PI * 2 + noise(seed, crack);
+      const length = size * (0.8 + noise(seed, crack + 10) * 0.8) * Math.min(1, hit * 4);
+
+      edge(
+        context,
+        foot,
+        [foot[0] + Math.cos(angle) * length, foot[1] + Math.sin(angle) * length * 0.34],
+        size * 0.07,
+        0,
+        { color: '#2a1a10', alpha: decay(hit) },
+      );
+    }
+    motes(context, foot, size * 2, 10, seed, hit, {
+      color: mix(paint.color, '#b9a58a', 0.6),
+      alpha: decay(hit) * 0.8,
+      width: 2.4 * stage.scale,
+    });
+    imbue(context, at, size, hit, seed, paint, type, stage.scale);
+  },
+
+  // A column of its element bursting up out of the ground under it: fire, a geyser, or a whirl of leaves
+  Pledge(context, stage, share, { paint, seed, weight, type }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const foot: Point = [at[0], at[1] + size * 0.9];
+    const shown = showing(share, 6, 0.7);
+    const height = size * 3.6 * settle(share * 3);
+    const light = lighten(paint.color, 0.5);
+
+    ripple(context, foot, size * (1 + swell(share) * 0.6), {
+      ...paint,
+      alpha: shown * 0.7,
+      width: 3 * stage.scale,
+    });
+    edge(context, foot, [foot[0], foot[1] - height], size * 0.9, 0, {
+      ...paint,
+      alpha: shown * 0.35,
+    });
+    for (let piece = 0; piece < many(10, weight); piece += 1) {
+      const rise = (share * 1.8 + noise(seed, piece)) % 1;
+      const x = foot[0] + spread(seed, piece + 10) * size * 0.7;
+      const y = foot[1] - rise * height;
+      const alpha = swell(rise) * shown;
+
+      if (type === Types.Fire) {
+        orb(context, [x, y], size * 0.35 * (1 - rise * 0.5), {
+          color: rise < 0.4 ? light : paint.color,
+          alpha,
+        });
+      } else if (type === Types.Water) {
+        bubble(context, [x, y], size * 0.2 * (0.6 + noise(seed, piece + 20)), {
+          color: light,
+          alpha,
+          width: 1.6 * stage.scale,
+        });
+      } else {
+        const turn = rise * Math.PI * 4 + piece;
+
+        petal(context, [foot[0] + Math.cos(turn) * size * 0.7, y], size * 0.25, turn, {
+          ...paint,
+          alpha,
+        });
+      }
     }
   },
 } satisfies Partial<Record<EffectShape, ShapePainter>>;

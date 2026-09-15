@@ -212,6 +212,13 @@ export type EffectShape =
   | 'Searing'
   | 'Smite'
   | 'Aria'
+  | 'Flutter'
+  | 'Smash'
+  | 'Gears'
+  | 'Windup'
+  | 'Shed'
+  | 'Tonnage'
+  | 'Pledge'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -374,6 +381,13 @@ export const SPANS: Record<EffectShape, number> = {
   Searing: 900,
   Smite: 820,
   Aria: 1000,
+  Flutter: 1000,
+  Smash: 900,
+  Gears: 900,
+  Windup: 900,
+  Shed: 820,
+  Tonnage: 900,
+  Pledge: 900,
   Whiff: 320,
 };
 

@@ -60,3 +60,9 @@ Some have a picture of their own.
 - Glaciate spreads frost across the ground under the target.
 - Sacred Sword and Secret Sword drop a great sword point first through the target.
 - Relic Song spirals notes up round the target.
+- Quiver Dance flutters glittering wings up round the pokemon.
+- Shell Smash cracks the pokemon's shell and bursts it off in pieces.
+- Shift Gear turns two meshing gears, and Coil winds a spiral up round the body.
+- Autotomize drops pieces off the pokemon as it speeds away, and Work Up throbs with power like Bulk Up.
+- Heavy Slam and Heat Crash spread a shadow under the target before the ground gives way.
+- Fire, Water and Grass Pledge raise a column of fire, water or leaves out of the ground.

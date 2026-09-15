@@ -70,6 +70,9 @@ export const JOLTS: Partial<Record<EffectShape, number>> = {
   Glaze: 1,
   Searing: 2,
   Smite: 2.5,
+  Smash: 1.5,
+  Tonnage: 4,
+  Pledge: 2,
 };
 
 /** Where the effect is happening: the first body it landed on. */

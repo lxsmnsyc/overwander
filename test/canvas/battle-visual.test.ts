@@ -301,6 +301,17 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Smite', Moves.SacredSword],
   ['Smite', Moves.SecretSword],
   ['Aria', Moves.RelicSong],
+  ['Flutter', Moves.QuiverDance],
+  ['Smash', Moves.ShellSmash],
+  ['Gears', Moves.ShiftGear],
+  ['Windup', Moves.Coil],
+  ['Shed', Moves.Autotomize],
+  ['Flex', Moves.WorkUp],
+  ['Tonnage', Moves.HeavySlam],
+  ['Tonnage', Moves.HeatCrash],
+  ['Pledge', Moves.FirePledge],
+  ['Pledge', Moves.WaterPledge],
+  ['Pledge', Moves.GrassPledge],
 ];
 
 /**

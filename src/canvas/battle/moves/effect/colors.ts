@@ -90,6 +90,8 @@ const BY_SHAPE: Partial<Record<EffectShape, string>> = {
   // Reshiram's blue fire, and Meloetta's green where the Normal type's grey is nothing
   Azure: '#5aa8ff',
   Aria: '#8fe0b0',
+  // A shell's pale cream, where the Normal type's grey reads as stone
+  Smash: '#d8c8a8',
 };
 
 /** The shapes that picture a stat moving, and so take the stat's colour */
@@ -107,6 +109,8 @@ const STAGED = new Set<EffectShape>([
   'Howl',
   'Blank',
   'Curl',
+  'Flutter',
+  'Windup',
 ]);
 
 const MOVE_COLORS: Partial<Record<Moves, string>> = {

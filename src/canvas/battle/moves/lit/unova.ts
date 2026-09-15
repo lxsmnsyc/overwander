@@ -14,11 +14,13 @@ import {
   KYUREM_SPARK,
   ORBIT_CLOSE,
   ORBIT_ORBS,
+  SMASH_BREAKS,
   SMITE_LANDS,
+  TONNAGE_LANDS,
   VICTORY_LANDS,
 } from '../effect/unova';
 import { note } from './minds';
-import { TAU, bolt, imbue, sparks } from './pieces';
+import { TAU, bolt, debris, imbue, sickle, smoke, sparks } from './pieces';
 import { type LitShapePainter, aside, floorOf, landed, late, reachOf, toward } from './shapes';
 
 /** Ice spikes standing up out of the floor round a spot, `grow` from 0 to 1 */
@@ -57,6 +59,30 @@ function iceSpikes(
       },
     );
   }
+}
+
+/** A gear on the picture: a ring with square teeth round it, turned by `turn` */
+function gear(
+  kit: EffectBatch,
+  at: Spot,
+  radius: number,
+  teeth: number,
+  turn: number,
+  colour: string,
+  alpha: number,
+): void {
+  const steps = teeth * 4;
+  const path: Spot[] = [];
+
+  for (let step = 0; step <= steps; step += 1) {
+    const angle = turn + (step / steps) * TAU;
+    // Two points out on a tooth and two back in the gap after it
+    const out = step % 4 < 2 ? radius * 1.22 : radius;
+
+    path.push(aside(kit, at, Math.cos(angle) * out, Math.sin(angle) * out));
+  }
+  kit.ribbon(path, radius * 0.14, colour, alpha, 0, { add: 0.4 });
+  kit.ring(at, radius * 0.4, 0.2, colour, alpha);
 }
 
 /** The Unova moves with a picture of their own, in the battle scene */
@@ -571,6 +597,306 @@ const unova = {
         ARIA_TONES[one % ARIA_TONES.length],
         swell(held) * shown,
       );
+    }
+  },
+
+  // Glittering wings fluttering up round it in a spiral
+  Flutter(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const colour = paint.color;
+    const shown = showing(share, 4, 0.8);
+
+    for (let one = 0; one < many(6, weight); one += 1) {
+      const held = (share * 1.3 + noise(seed, one)) % 1;
+      const angle = held * TAU * 2 + one * 1.3;
+      const round = reach * (1.2 - held * 0.4);
+      const spot: Spot = [
+        at[0] + Math.cos(angle) * round,
+        at[1] - reach * 0.7 + held * reach * 2.4,
+        at[2] + Math.sin(angle) * round,
+      ];
+      // Wings opening and closing, so the pair reads as a flutter rather than two leaves
+      const beat = Math.abs(Math.sin(share * Math.PI * 10 + one));
+
+      for (const side of [-1, 1]) {
+        kit.leaf(
+          aside(kit, spot, side * reach * 0.15 * beat),
+          reach * 0.22,
+          side * (0.4 + beat * 0.8),
+          colour,
+          swell(held) * shown,
+        );
+      }
+    }
+    for (let mote = 0; mote < 8; mote += 1) {
+      kit.glow(
+        aside(
+          kit,
+          at,
+          spread(seed, mote + 40) * reach * 1.4 * (0.4 + share),
+          spread(seed, mote + 50) * reach + share * reach * 0.7,
+          spread(seed, mote + 60) * reach * 0.8,
+        ),
+        reach * 0.06,
+        lighten(colour, 0.6),
+        shown,
+        0.8,
+      );
+    }
+  },
+
+  // Its shell straining and cracking, then bursting off in pieces with the light under it shining out
+  Smash(kit, stage, share, { paint, seed }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const colour = paint.color;
+    const light = lighten(colour, 0.5);
+
+    if (share < SMASH_BREAKS) {
+      const strain = share / SMASH_BREAKS;
+      const centre = aside(kit, at, Math.sin(strain * Math.PI * 12) * reach * 0.04 * strain);
+      const top = aside(kit, centre, 0, reach * 1.2);
+      const end = aside(kit, centre, reach * 0.3 * strain, reach * (1.2 - 0.8 * strain));
+
+      for (const side of [-1, 1]) {
+        sickle(
+          kit,
+          centre,
+          reach * 1.2,
+          -Math.PI / 2,
+          -Math.PI / 2 + side * Math.PI,
+          reach * 0.45,
+          colour,
+          0.9,
+          0.3,
+        );
+      }
+      kit.streak(
+        toward(top, end, 0.5),
+        reach * 0.45 * strain,
+        reach * 0.05,
+        kit.angleOn(top, end),
+        '#2a2018',
+        strain,
+        { add: 0 },
+      );
+      return;
+    }
+    const broken = (share - SMASH_BREAKS) / (1 - SMASH_BREAKS);
+
+    kit.glow(at, reach * (0.8 + broken * 0.8), light, decay(broken));
+    kit.ring(at, reach * (0.8 + broken * 1.6), 0.08, light, decay(broken));
+    debris(kit, at, reach * 1.2, 10, seed, broken, colour, decay(broken));
+  },
+
+  // Two gears meshing over it, turning faster as they go
+  Gears(kit, stage, share, { paint }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const colour = paint.color;
+    const shown = showing(share, 5, 0.8);
+    const turn = share * share * Math.PI * 6;
+
+    kit.glow(at, reach * 1.1, colour, shown * 0.3, 0.2);
+    gear(
+      kit,
+      aside(kit, at, -reach * 0.55, reach * 0.3),
+      reach * 0.7,
+      8,
+      turn,
+      lighten(colour, 0.3),
+      shown,
+    );
+    gear(
+      kit,
+      aside(kit, at, reach * 0.55, -reach * 0.35),
+      reach * 0.5,
+      6,
+      0.3 - turn * 1.4,
+      lighten(colour, 0.5),
+      shown,
+    );
+  },
+
+  // A spiral winding up round its body and drawing tight
+  Windup(kit, stage, share, { paint }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const colour = paint.color;
+    const shown = showing(share, 4, 0.8);
+    const round = reach * (1.4 - settle(share * 1.5) * 0.5);
+    const path: Spot[] = [];
+
+    for (let step = 0; step <= 48; step += 1) {
+      const along = step / 48;
+      const angle = along * TAU * 3 + share * TAU;
+
+      path.push([
+        at[0] + Math.cos(angle) * round,
+        Math.max(0.05, at[1] - reach * 0.9 + along * reach * 2.2),
+        at[2] + Math.sin(angle) * round,
+      ]);
+    }
+    kit.ribbon(path, reach * 0.1, lighten(colour, 0.3), shown);
+    if (share > 0.6) {
+      kit.glow(at, reach * 0.7, colour, swell((share - 0.6) / 0.4) * 0.6, 0.6);
+    }
+  },
+
+  // Pieces of its body dropping away, and it streaking off lighter
+  Shed(kit, stage, share, { paint, seed }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const colour = paint.color;
+    const light = lighten(colour, 0.5);
+
+    kit.glow(at, reach * 0.9, colour, swell(share) * 0.3, 0.2);
+    for (let piece = 0; piece < 8; piece += 1) {
+      const held = Math.min(1, share * 1.5 - noise(seed, piece) * 0.4);
+
+      if (held <= 0) {
+        continue;
+      }
+      const spot = aside(
+        kit,
+        at,
+        spread(seed, piece + 10) * reach * 0.8,
+        spread(seed, piece + 20) * reach * 0.6 - held * held * reach * 2.2,
+        spread(seed, piece + 30) * reach * 0.4,
+      );
+
+      kit.shard(
+        [spot[0], Math.max(0.05, spot[1]), spot[2]],
+        reach * 0.14,
+        held * 6 + piece,
+        colour,
+        decay(held),
+      );
+    }
+    if (share < 0.4) {
+      return;
+    }
+    const fast = Math.min(1, (share - 0.4) * 4) * decay((share - 0.4) / 0.6);
+
+    for (let line = 0; line < 4; line += 1) {
+      const held = (share * 3 + noise(seed, line + 30)) % 1;
+      const x = -reach * 1.6 + held * reach * 3.2;
+      const up = spread(seed, line + 40) * reach;
+
+      kit.trail(
+        aside(kit, at, x - reach * 0.9, up),
+        aside(kit, at, x, up),
+        reach * 0.05,
+        light,
+        fast * swell(held),
+      );
+    }
+  },
+
+  // A shadow spreading under it as something heavy comes down, then the ground giving way
+  Tonnage(kit, stage, share, { paint, seed, weight, type }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+
+    if (share < TONNAGE_LANDS) {
+      const near = share / TONNAGE_LANDS;
+
+      kit.pool(floor, reach * (0.6 + near * 1.2), '#140c08', near * 0.5, { add: 0 });
+      return;
+    }
+    const hit = (share - TONNAGE_LANDS) / (1 - TONNAGE_LANDS);
+    const dust = mix(colour, '#b9a58a', 0.6);
+
+    for (let wave = 0; wave < 2; wave += 1) {
+      kit.ripple(
+        floor,
+        reach * (0.6 + hit * (2.4 + wave)),
+        0.1,
+        colour,
+        decay(hit) * (1 - wave * 0.4),
+      );
+    }
+    for (let crack = 0; crack < 6; crack += 1) {
+      const angle = (crack / 6) * TAU + noise(seed, crack);
+      const length = reach * (0.8 + noise(seed, crack + 10) * 0.8) * Math.min(1, hit * 4);
+
+      kit.ribbon(
+        [
+          [floor[0], 0.03, floor[2]],
+          [floor[0] + Math.cos(angle) * length, 0.03, floor[2] + Math.sin(angle) * length],
+        ],
+        reach * 0.07,
+        '#2a1a10',
+        decay(hit),
+        0,
+        { add: 0 },
+      );
+    }
+    smoke(kit, floor, reach, 6, seed, hit, dust, decay(hit) * 0.5);
+    debris(kit, floor, reach * 0.8, 8, seed, hit, dust, decay(hit));
+    imbue(kit, at, reach, hit, seed, type, colour, 6);
+  },
+
+  // A column of its element bursting up out of the ground under it: fire, a geyser, or a whirl of leaves
+  Pledge(kit, stage, share, { paint, seed, weight, type }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const light = lighten(colour, 0.5);
+    const shown = showing(share, 6, 0.7);
+    const height = reach * 3.6 * settle(share * 3);
+
+    kit.pool(floor, reach * (1 + swell(share) * 0.6), colour, shown * 0.6);
+    kit.ripple(floor, reach * (1 + swell(share) * 0.6), 0.08, light, shown * 0.7);
+    if (height > 0) {
+      kit.ribbon(
+        [floor, aside(kit, floor, 0, height)],
+        reach * 1.8,
+        colour,
+        shown * 0.3,
+        share * 6,
+      );
+    }
+    for (let piece = 0; piece < many(10, weight); piece += 1) {
+      const rise = (share * 1.8 + noise(seed, piece)) % 1;
+      const spot = aside(
+        kit,
+        floor,
+        spread(seed, piece + 10) * reach * 0.7,
+        rise * height,
+        spread(seed, piece + 30) * reach * 0.5,
+      );
+      const alpha = swell(rise) * shown;
+
+      if (type === Types.Fire) {
+        kit.glow(
+          spot,
+          reach * 0.35 * (1 - rise * 0.5),
+          rise < 0.4 ? light : colour,
+          alpha,
+          rise < 0.4 ? 0.6 : 0.1,
+        );
+      } else if (type === Types.Water) {
+        kit.bubble(spot, reach * 0.2 * (0.6 + noise(seed, piece + 20)), light, alpha);
+      } else {
+        const turn = rise * TAU * 2 + piece;
+
+        kit.leaf(
+          [
+            floor[0] + Math.cos(turn) * reach * 0.7,
+            rise * height,
+            floor[2] + Math.sin(turn) * reach * 0.7,
+          ],
+          reach * 0.25,
+          turn,
+          colour,
+          alpha,
+        );
+      }
     }
   },
 } satisfies Partial<Record<EffectShape, LitShapePainter>>;

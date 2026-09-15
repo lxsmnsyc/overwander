@@ -577,6 +577,18 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.SacredSword]: 'Smite',
   [Moves.SecretSword]: 'Smite',
   [Moves.RelicSong]: 'Aria',
+  // Stat moves drawn as what the pokemon does, a body coming down with its weight, and the Pledges
+  [Moves.QuiverDance]: 'Flutter',
+  [Moves.ShellSmash]: 'Smash',
+  [Moves.ShiftGear]: 'Gears',
+  [Moves.Coil]: 'Windup',
+  [Moves.Autotomize]: 'Shed',
+  [Moves.WorkUp]: 'Flex',
+  [Moves.HeavySlam]: 'Tonnage',
+  [Moves.HeatCrash]: 'Tonnage',
+  [Moves.FirePledge]: 'Pledge',
+  [Moves.WaterPledge]: 'Pledge',
+  [Moves.GrassPledge]: 'Pledge',
 
   // Struck and gone: the blow is the first step and the walk off the
   // field is the second, which is why the landing here is the leaving

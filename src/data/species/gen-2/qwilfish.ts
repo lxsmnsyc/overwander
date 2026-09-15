@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerQwilfishSpecies(): void {
@@ -25,6 +25,7 @@ export default function registerQwilfishSpecies(): void {
       [Stats.Speed]: 85,
     },
     types: [Types.Water, Types.Poison],
+    habitat: Habitat.Water,
     abilities: [Abilities.PoisonPoint, Abilities.SwiftSwim],
     // Rough Skin is this registry's rather than the mainline's,
     // filling it to four: the spines are the whole animal, and

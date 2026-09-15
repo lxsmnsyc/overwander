@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerMagikarpSpecies(): void {
@@ -32,6 +32,7 @@ export default function registerMagikarpSpecies(): void {
       [Stats.Speed]: 80,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.SwiftSwim],
     hiddenAbilities: [Abilities.Rattled],
     eggGroups: [EggGroups.Water2, EggGroups.Dragon],
@@ -44,6 +45,19 @@ export default function registerMagikarpSpecies(): void {
       Biome.RockyCoast,
       Biome.Bog,
       Biome.KelpForest,
+      Biome.TropicalRainforest,
+      Biome.TropicalSeasonalForest,
+      Biome.Savanna,
+      Biome.Desert,
+      Biome.Shrubland,
+      Biome.Grassland,
+      Biome.TemperateForest,
+      Biome.TemperateRainforest,
+      Biome.Mountain,
+      Biome.Woodland,
+      Biome.Steppe,
+      Biome.MontaneForest,
+      Biome.Badlands,
     ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
@@ -73,12 +87,29 @@ export default function registerMagikarpSpecies(): void {
       [Stats.Speed]: 81,
     },
     types: [Types.Water, Types.Flying],
+    habitat: Habitat.Water,
     abilities: [Abilities.Intimidate],
     hiddenAbilities: [Abilities.Moxie],
     eggGroups: [EggGroups.Water2, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Ocean, Biome.DeepOcean],
+    biomes: [
+      Biome.Ocean,
+      Biome.DeepOcean,
+      Biome.TropicalRainforest,
+      Biome.TropicalSeasonalForest,
+      Biome.Savanna,
+      Biome.Desert,
+      Biome.Shrubland,
+      Biome.Grassland,
+      Biome.TemperateForest,
+      Biome.TemperateRainforest,
+      Biome.Mountain,
+      Biome.Woodland,
+      Biome.Steppe,
+      Biome.MontaneForest,
+      Biome.Badlands,
+    ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

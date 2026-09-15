@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
 
 /**
  * Savanna spawn pool, grouped by day-cycle period and rarity band
@@ -175,6 +175,72 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Luxray, weight: 4 },
       ],
       prized: [...UNOWN_SPAWNS],
+      special: [],
+    },
+  });
+  registerWaterPool(Biome.Savanna, {
+    [TimeOfDay.Morning]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Wooper, weight: 25 },
+        { species: Species.Psyduck, weight: 20 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Golduck, weight: 10 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Day]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Wooper, weight: 25 },
+        { species: Species.Psyduck, weight: 20 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Golduck, weight: 10 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Evening]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Wooper, weight: 25 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Night]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Wooper, weight: 25 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
       special: [],
     },
   });

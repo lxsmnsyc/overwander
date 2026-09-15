@@ -35,7 +35,7 @@ export default function registerFroslassSpecies(): void {
     eggGroups: [EggGroups.Fairy, EggGroups.Mineral],
     genderRatio: [0, 1],
     catchRate: 75,
-    biomes: [Biome.Glacier, Biome.AlpineTundra],
+    biomes: [Biome.Glacier, Biome.AlpineTundra, Biome.ColdDesert, Biome.Tundra],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

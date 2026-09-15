@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
 
 /**
  * Desert spawn pool, grouped by day-cycle period and rarity band
@@ -138,6 +138,68 @@ export default function registerDesertSpawns(): void {
         { species: Species.Regirock, weight: 10 },
         { species: Species.Moltres, weight: 10 },
       ],
+    },
+  });
+  registerWaterPool(Biome.Desert, {
+    [TimeOfDay.Morning]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Feebas, weight: 10 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Milotic, weight: 3 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Day]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Feebas, weight: 10 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Milotic, weight: 3 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Evening]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Feebas, weight: 10 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Milotic, weight: 3 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Night]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Feebas, weight: 10 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Milotic, weight: 3 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      special: [],
     },
   });
 }

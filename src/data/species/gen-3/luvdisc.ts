@@ -5,7 +5,7 @@ import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerLuvdiscSpecies(): void {
@@ -25,6 +25,7 @@ export default function registerLuvdiscSpecies(): void {
       [Stats.Speed]: 97,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.SwiftSwim],
     hiddenAbilities: [Abilities.Hydration, Abilities.CuteCharm, Abilities.Healer],
     eggGroups: [EggGroups.Water2],

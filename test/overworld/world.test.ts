@@ -8,10 +8,13 @@ import PerlinNoise from '../../src/core/perlin';
 import registerBiomeSpawns, {
   BIOME_NAMES,
   SpawnRarity,
+  fitsSurface,
+  getBiomeRoster,
   getSpawnPool,
   getSpawnRarity,
   getTownPool,
   isGrownSpecies,
+  pickSpawn,
   spawnRanks,
 } from '../../src/data/biome';
 import { BuildRole } from '../../src/data/species/best-moves';
@@ -23,6 +26,7 @@ import {
 } from '../../src/data/species/best-build';
 import Biome, {
   BIOME_CONFIGS,
+  SpawnSurface,
   TimeOfDay,
   getTimeOfDay,
   growsBerries,
@@ -56,13 +60,11 @@ import EggGroups from '../../src/data/ids/egg-groups';
 import { Genders, Species } from '../../src/data/ids/species';
 import {
   SPECIES_DAY_HIDDEN_ABILITY_BOOST,
-  floats,
   getBaseSpecies,
   getRegisteredSpecies,
   getSpeciesAbilityPools,
   getSpeciesData,
   registerSpecies,
-  swims,
 } from '../../src/data/species';
 import { MAX_LEVEL } from '../../src/data/constants/levels';
 import { WILD_HELD_COMMON, WILD_HELD_UNCOMMON } from '../../src/data/species/held-items';
@@ -1229,7 +1231,7 @@ describe('world', () => {
 
     const snapshot = new ChunkSnapshot(chunk, 0);
     const stops = snapshot.getRocketStops();
-    const pool = getSpawnPool(chunk.biome, getTimeOfDay(0));
+    const pool = getBiomeRoster(chunk.biome, getTimeOfDay(0));
 
     expect(stops.size).toBeGreaterThan(0);
     for (const [cell, party] of stops) {
@@ -1596,7 +1598,10 @@ describe('world', () => {
     const party = executive.snapshot.getRocketStops().get(executive.cell) ?? [];
     const rares = new Set(
       spawnRanks(
-        getSpawnPool(executive.snapshot.chunk.biome, getTimeOfDay(executive.snapshot.npcTimestamp)),
+        getBiomeRoster(
+          executive.snapshot.chunk.biome,
+          getTimeOfDay(executive.snapshot.npcTimestamp),
+        ),
       )[2].map((entry) => entry.species),
     );
 
@@ -2272,7 +2277,7 @@ describe('world', () => {
     }
 
     const time = getTimeOfDay(0);
-    const pool = getSpawnPool(chunk.biome, time);
+    const pool = getBiomeRoster(chunk.biome, time);
     const hosted = new Set(getBiomeLairs(chunk.biome));
     const raids = new ChunkSnapshot(chunk, 0).getShadowLairs();
 
@@ -2977,7 +2982,7 @@ describe('world', () => {
 
     const snapshot = new ChunkSnapshot(chunk, 0);
     const nests = snapshot.getNests();
-    const pool = getSpawnPool(chunk.biome, getTimeOfDay(0));
+    const pool = getBiomeRoster(chunk.biome, getTimeOfDay(0));
     const ordinary = new Set(
       [...pool.base, ...pool.uncommon, ...pool.rare].map((entry) => getBaseSpecies(entry.species)),
     );
@@ -3970,6 +3975,21 @@ describe('world', () => {
     );
 
     expect(landlocked?.kind).toBe('item');
+
+    // ...but a pond in the same grassland draws from its water pool
+    const pond = resolvePhenomenon(
+      Phenomenon.RipplingWater,
+      Biome.Grassland,
+      TimeOfDay.Morning,
+      (() => {
+        const values = [0.9, 0.5, 0];
+        return () => values.shift() ?? 0.999;
+      })(),
+      null,
+      SpawnSurface.Water,
+    );
+
+    expect(pond?.kind).toBe('pokemon');
   });
 
   it('produces varied biomes across a region', () => {
@@ -4126,10 +4146,8 @@ describe('chunk snapshot', () => {
     // fixtures are not standing on and stops
     const packed = new ChunkSnapshot(chunk, NOON);
     // Whatever is going on this hour holds its cell too, so the room
-    // left is what nothing else is standing on. The water is not room
-    // for everybody: a lake in dry country takes swimmers only, so it
-    // is what stops this filling the grid corner to corner
-    const biomes = chunk.getCellBiomes();
+    // left is what nothing else is standing on. A cell whose surface
+    // has no pool here, such as a pond with no water pool, stays empty
     const room = centeredCells(PLACEMENT_AREA).filter(
       (cell) =>
         !chunk.getLandmarkCells().has(cell) &&
@@ -4138,53 +4156,72 @@ describe('chunk snapshot', () => {
         !chunk.getFaceCells().has(cell) &&
         !packed.getPhenomena().has(cell),
     );
-    const dry = room.filter(
-      (cell) => chunk.getCellRole(cell) !== 'water' || isWaterBiome(biomes[cell]),
-    );
+    const stocked = room.filter((cell) => pickSpawn(packed.getCellPool(cell), () => 0) != null);
 
     packed.getSpawns(1000);
 
     const filled = [...packed.getSpawnCells().keys()];
 
-    expect(filled.length).toBeGreaterThanOrEqual(dry.length);
+    expect(filled.length).toBeGreaterThanOrEqual(stocked.length);
     expect(filled.length).toBeLessThanOrEqual(room.length);
-    for (const cell of dry) {
+    for (const cell of stocked) {
       expect(filled).toContain(cell);
     }
   });
 
-  it('leaves a lake in dry country to what swims in it or flies over it', () => {
+  it('stands every spawn on a surface its species lives on', () => {
     const world = new World('overworld');
     const NOON = 12 * 60 * 60 * 1000;
-    let checked = 0;
-    let airborne = 0;
+    let swimming = 0;
 
-    // A Rhyhorn standing in the middle of a pond is the country's pool
-    // answering a question nobody asked it. A country that is itself
-    // water is not asked: everything in its pool was chosen knowing so
+    // Neither a Rhyhorn in the middle of a pond nor a Magikarp on the sand
     for (let x = -12; x < 12; x++) {
       for (let y = -12; y < 12; y++) {
         const chunk = world.getChunk(x, y);
-        const biomes = chunk.getCellBiomes();
         const snapshot = new ChunkSnapshot(chunk, NOON);
 
         snapshot.getSpawns(SPAWN_COUNT);
         for (const [cell, spawn] of snapshot.getSpawnCells()) {
-          if (chunk.getCellRole(cell) !== 'water' || isWaterBiome(biomes[cell])) {
-            continue;
-          }
-          checked++;
-          expect(swims(spawn[0]) || floats(spawn[0])).toBe(true);
-          if (!swims(spawn[0])) {
-            airborne++;
+          const surface = chunk.getCellSurface(cell);
+
+          expect(fitsSurface(spawn[0], surface), getSpeciesData(spawn[0]).name).toBe(true);
+          if (surface === SpawnSurface.Water) {
+            swimming++;
           }
         }
       }
     }
-    expect(checked).toBeGreaterThan(0);
-    // And the water is not the swimmers' alone: a pond with nothing
-    // over it would mean the rule was written and never reached
-    expect(airborne).toBeGreaterThan(0);
+    // A pond with nothing in it would mean the water pools were never reached
+    expect(swimming).toBeGreaterThan(0);
+  });
+
+  it("keeps a sea's islands to what lives on land", () => {
+    const world = new World('overworld');
+    const NOON = 12 * 60 * 60 * 1000;
+    let ashore = 0;
+
+    for (let y = -80; y <= 80 && ashore === 0; y += 2) {
+      for (let x = -80; x <= 80 && ashore === 0; x += 2) {
+        const chunk = world.getChunk(x, y);
+
+        if (!isOpenSea(chunk.biome)) {
+          continue;
+        }
+
+        const snapshot = new ChunkSnapshot(chunk, NOON);
+
+        snapshot.getSpawns(SPAWN_COUNT);
+        for (const [cell, spawn] of snapshot.getSpawnCells()) {
+          if (chunk.getCellSurface(cell) === SpawnSurface.Land) {
+            ashore++;
+            expect(fitsSurface(spawn[0], SpawnSurface.Land), getSpeciesData(spawn[0]).name).toBe(
+              true,
+            );
+          }
+        }
+      }
+    }
+    expect(ashore).toBeGreaterThan(0);
   });
 
   it('places fixtures right up to the chunk edge, leaving no lattice of bare corridors', () => {

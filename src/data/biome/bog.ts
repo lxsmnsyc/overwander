@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
 
 /**
  * Bog spawn pool, grouped by day-cycle period and rarity band
@@ -16,12 +16,8 @@ export default function registerBogSpawns(): void {
       ],
       uncommon: [
         { species: Species.Gulpin, weight: 22 },
-        { species: Species.Barboach, weight: 25 },
-        { species: Species.Feebas, weight: 10 },
-        { species: Species.Magikarp, weight: 30 },
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
-        { species: Species.Surskit, weight: 25 },
         { species: Species.Yanma, weight: 5 },
         { species: Species.Bidoof, weight: 25 },
         { species: Species.Buizel, weight: 25 },
@@ -35,7 +31,6 @@ export default function registerBogSpawns(): void {
       ],
       scarce: [
         { species: Species.Swalot, weight: 7 },
-        { species: Species.Whiscash, weight: 8 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Masquerain, weight: 10 },
         { species: Species.Quagsire, weight: 5 },
@@ -65,12 +60,8 @@ export default function registerBogSpawns(): void {
       ],
       uncommon: [
         { species: Species.Gulpin, weight: 22 },
-        { species: Species.Barboach, weight: 25 },
-        { species: Species.Feebas, weight: 10 },
-        { species: Species.Magikarp, weight: 30 },
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
-        { species: Species.Surskit, weight: 25 },
         { species: Species.Yanma, weight: 5 },
         { species: Species.Bidoof, weight: 25 },
         { species: Species.Buizel, weight: 25 },
@@ -84,7 +75,6 @@ export default function registerBogSpawns(): void {
       ],
       scarce: [
         { species: Species.Swalot, weight: 7 },
-        { species: Species.Whiscash, weight: 8 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Masquerain, weight: 10 },
         { species: Species.Quagsire, weight: 5 },
@@ -109,10 +99,7 @@ export default function registerBogSpawns(): void {
       base: [{ species: Species.Poliwag, weight: 20 }],
       uncommon: [
         { species: Species.Gulpin, weight: 22 },
-        { species: Species.Barboach, weight: 25 },
-        { species: Species.Feebas, weight: 10 },
         { species: Species.Venonat, weight: 20 },
-        { species: Species.Magikarp, weight: 30 },
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
         { species: Species.Yanma, weight: 5 },
@@ -124,7 +111,6 @@ export default function registerBogSpawns(): void {
       rare: [{ species: Species.Poliwhirl, weight: 5 }],
       scarce: [
         { species: Species.Swalot, weight: 7 },
-        { species: Species.Whiscash, weight: 8 },
         { species: Species.Venomoth, weight: 10 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Quagsire, weight: 5 },
@@ -153,10 +139,7 @@ export default function registerBogSpawns(): void {
       ],
       uncommon: [
         { species: Species.Gulpin, weight: 22 },
-        { species: Species.Barboach, weight: 25 },
-        { species: Species.Feebas, weight: 10 },
         { species: Species.Grimer, weight: 20 },
-        { species: Species.Magikarp, weight: 30 },
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
         { species: Species.Yanma, weight: 5 },
@@ -172,7 +155,6 @@ export default function registerBogSpawns(): void {
       ],
       scarce: [
         { species: Species.Swalot, weight: 7 },
-        { species: Species.Whiscash, weight: 8 },
         { species: Species.Muk, weight: 10 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Quagsire, weight: 5 },
@@ -195,6 +177,128 @@ export default function registerBogSpawns(): void {
         { species: Species.Azelf, weight: 10 },
         { species: Species.Giratina, weight: 10 },
       ],
+    },
+  });
+  registerWaterPool(Biome.Bog, {
+    [TimeOfDay.Morning]: {
+      base: [
+        { species: Species.Poliwag, weight: 20 },
+        { species: Species.Mudkip, weight: 2 },
+        { species: Species.Lotad, weight: 20 },
+      ],
+      uncommon: [
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Feebas, weight: 10 },
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wooper, weight: 25 },
+        { species: Species.Marill, weight: 20 },
+        { species: Species.Surskit, weight: 25 },
+        { species: Species.Yanma, weight: 5 },
+        { species: Species.Buizel, weight: 25 },
+      ],
+      rare: [
+        { species: Species.Poliwhirl, weight: 5 },
+        { species: Species.Marshtomp, weight: 1 },
+        { species: Species.Lombre, weight: 10 },
+      ],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Azumarill, weight: 5 },
+        { species: Species.Masquerain, weight: 10 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Bibarel, weight: 10 },
+        { species: Species.Floatzel, weight: 8 },
+        { species: Species.Yanmega, weight: 6 },
+      ],
+      elusive: [
+        { species: Species.Poliwrath, weight: 5 },
+        { species: Species.Swampert, weight: 2 },
+        { species: Species.Ludicolo, weight: 5 },
+      ],
+      special: [{ species: Species.Azelf, weight: 10 }],
+    },
+    [TimeOfDay.Day]: {
+      base: [
+        { species: Species.Poliwag, weight: 20 },
+        { species: Species.Mudkip, weight: 2 },
+        { species: Species.Lotad, weight: 20 },
+      ],
+      uncommon: [
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Feebas, weight: 10 },
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wooper, weight: 25 },
+        { species: Species.Marill, weight: 20 },
+        { species: Species.Surskit, weight: 25 },
+        { species: Species.Yanma, weight: 5 },
+        { species: Species.Buizel, weight: 25 },
+      ],
+      rare: [
+        { species: Species.Poliwhirl, weight: 5 },
+        { species: Species.Marshtomp, weight: 1 },
+        { species: Species.Lombre, weight: 10 },
+      ],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Azumarill, weight: 5 },
+        { species: Species.Masquerain, weight: 10 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Bibarel, weight: 10 },
+        { species: Species.Floatzel, weight: 8 },
+        { species: Species.Yanmega, weight: 6 },
+      ],
+      elusive: [
+        { species: Species.Poliwrath, weight: 5 },
+        { species: Species.Swampert, weight: 2 },
+        { species: Species.Ludicolo, weight: 5 },
+      ],
+      special: [{ species: Species.Azelf, weight: 10 }],
+    },
+    [TimeOfDay.Evening]: {
+      base: [{ species: Species.Poliwag, weight: 20 }],
+      uncommon: [
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Feebas, weight: 10 },
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wooper, weight: 25 },
+        { species: Species.Marill, weight: 20 },
+        { species: Species.Yanma, weight: 5 },
+        { species: Species.Buizel, weight: 25 },
+      ],
+      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Azumarill, weight: 5 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Bibarel, weight: 10 },
+        { species: Species.Floatzel, weight: 8 },
+        { species: Species.Yanmega, weight: 6 },
+      ],
+      elusive: [],
+      special: [{ species: Species.Azelf, weight: 10 }],
+    },
+    [TimeOfDay.Night]: {
+      base: [{ species: Species.Poliwag, weight: 20 }],
+      uncommon: [
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Feebas, weight: 10 },
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wooper, weight: 25 },
+        { species: Species.Marill, weight: 20 },
+        { species: Species.Yanma, weight: 5 },
+        { species: Species.Buizel, weight: 25 },
+      ],
+      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      scarce: [
+        { species: Species.Whiscash, weight: 8 },
+        { species: Species.Azumarill, weight: 5 },
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Bibarel, weight: 10 },
+        { species: Species.Floatzel, weight: 8 },
+        { species: Species.Yanmega, weight: 6 },
+      ],
+      elusive: [{ species: Species.Poliwrath, weight: 5 }],
+      special: [{ species: Species.Azelf, weight: 10 }],
     },
   });
 }

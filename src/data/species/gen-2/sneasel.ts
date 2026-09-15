@@ -40,7 +40,7 @@ export default function registerSneaselSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 60,
-    biomes: [Biome.AlpineTundra, Biome.Tundra, Biome.Glacier],
+    biomes: [Biome.AlpineTundra, Biome.Tundra, Biome.Glacier, Biome.ColdDesert, Biome.Taiga],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {

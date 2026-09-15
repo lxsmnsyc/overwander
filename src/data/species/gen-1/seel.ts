@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -81,12 +81,20 @@ export default function registerSeelSpecies(): void {
       [Stats.Speed]: 45,
     },
     types: [Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.IceBody],
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Ocean, Biome.PolarOcean, Biome.RockyCoast],
+    biomes: [
+      Biome.Ocean,
+      Biome.PolarOcean,
+      Biome.RockyCoast,
+      Biome.Taiga,
+      Biome.Tundra,
+      Biome.Glacier,
+    ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -134,12 +142,20 @@ export default function registerSeelSpecies(): void {
       [Stats.Speed]: 70,
     },
     types: [Types.Water, Types.Ice],
+    habitat: Habitat.Amphibious,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.IceBody, Abilities.SlushRush],
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Ocean, Biome.PolarOcean, Biome.Tundra, Biome.RockyCoast],
+    biomes: [
+      Biome.Ocean,
+      Biome.PolarOcean,
+      Biome.Tundra,
+      Biome.RockyCoast,
+      Biome.Taiga,
+      Biome.Glacier,
+    ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

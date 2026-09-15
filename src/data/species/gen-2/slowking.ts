@@ -5,7 +5,7 @@ import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerSlowkingSpecies(): void {
@@ -26,6 +26,7 @@ export default function registerSlowkingSpecies(): void {
       [Stats.Speed]: 30,
     },
     types: [Types.Water, Types.Psychic],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.Oblivious, Abilities.OwnTempo],
     // Analytic is this registry's rather than the mainline's,
     // filling it to four: 30 Speed means it is always the one thinking

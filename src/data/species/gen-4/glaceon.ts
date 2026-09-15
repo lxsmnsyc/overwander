@@ -35,7 +35,7 @@ export default function registerGlaceonSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [7, 1],
     catchRate: 45,
-    biomes: [Biome.Glacier, Biome.Tundra, Biome.AlpineTundra],
+    biomes: [Biome.Glacier, Biome.Tundra, Biome.AlpineTundra, Biome.Taiga],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

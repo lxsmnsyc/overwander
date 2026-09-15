@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves the whole line shares
@@ -76,12 +76,13 @@ export default function registerSphealSpecies(): void {
       [Stats.Speed]: 25,
     },
     types: [Types.Ice, Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.ThickFat, Abilities.IceBody],
     hiddenAbilities: [Abilities.Oblivious],
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Glacier, Biome.PolarOcean],
+    biomes: [Biome.Glacier, Biome.PolarOcean, Biome.Tundra],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -133,12 +134,13 @@ export default function registerSphealSpecies(): void {
       [Stats.Speed]: 45,
     },
     types: [Types.Ice, Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.ThickFat, Abilities.IceBody],
     hiddenAbilities: [Abilities.Oblivious],
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.Glacier, Biome.PolarOcean],
+    biomes: [Biome.Glacier, Biome.PolarOcean, Biome.Tundra],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -172,6 +174,7 @@ export default function registerSphealSpecies(): void {
       [Stats.Speed]: 65,
     },
     types: [Types.Ice, Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.ThickFat, Abilities.IceBody],
     // One the mainline never gave it: the sky its line already feeds
     // on is one a bulk that size can move through
@@ -179,7 +182,7 @@ export default function registerSphealSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Glacier, Biome.PolarOcean],
+    biomes: [Biome.Glacier, Biome.PolarOcean, Biome.Tundra],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
 
 /**
  * Mountain spawn pool, grouped by day-cycle period and rarity band
@@ -319,6 +319,64 @@ export default function registerMountainSpawns(): void {
         { species: Species.Mewtwo, weight: 10 },
         { species: Species.HoOh, weight: 10 },
       ],
+    },
+  });
+  registerWaterPool(Biome.Mountain, {
+    [TimeOfDay.Morning]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Goldeen, weight: 20 },
+        { species: Species.Psyduck, weight: 20 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Seaking, weight: 10 },
+        { species: Species.Golduck, weight: 10 },
+        { species: Species.Gyarados, weight: 6 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Day]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Goldeen, weight: 20 },
+        { species: Species.Psyduck, weight: 20 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Seaking, weight: 10 },
+        { species: Species.Golduck, weight: 10 },
+        { species: Species.Gyarados, weight: 6 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Evening]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Goldeen, weight: 20 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Seaking, weight: 10 },
+        { species: Species.Gyarados, weight: 6 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Night]: {
+      base: [],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Goldeen, weight: 20 },
+      ],
+      rare: [],
+      scarce: [
+        { species: Species.Seaking, weight: 10 },
+        { species: Species.Gyarados, weight: 6 },
+      ],
+      special: [],
     },
   });
 }

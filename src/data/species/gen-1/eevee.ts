@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -142,6 +142,7 @@ export default function registerEeveeSpecies(): void {
       [Stats.Speed]: 65,
     },
     types: [Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.WaterAbsorb],
     hiddenAbilities: [Abilities.Hydration],
     eggGroups: [EggGroups.Field],

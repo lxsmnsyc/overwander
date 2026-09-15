@@ -11,6 +11,8 @@ import registerBiomeSpawns, {
   TIMES_OF_DAY,
   boostFamilyWeights,
   boostTypeWeights,
+  fitsSurface,
+  getBiomeRoster,
   getEggPool,
   getSpawnPool,
   getSpawnRarity,
@@ -46,6 +48,7 @@ import {
 } from '../src/data/constants/types';
 import Biome, {
   AnyTimeOfDay,
+  SpawnSurface,
   TimeOfDay,
   WILD_BIOMES,
   getBiome,
@@ -301,7 +304,6 @@ import {
   SPECIES_DAY_WEIGHT_BOOST,
   canEverEvolve,
   coversHandover,
-  floats,
   getAvailableEvolutions,
   getBaseForms,
   getBaseSpecies,
@@ -330,7 +332,6 @@ import {
   meetsEvolutionCriteria,
   registerSpecies,
   settleHandover,
-  swims,
 } from '../src/data/species';
 import { registerSpecies as registerSpeciesData } from '../src/data/species/__create';
 import Awards, {
@@ -1024,30 +1025,67 @@ describe('the unowns', () => {
   });
 });
 
-describe('what a pond is open to', () => {
-  it('counts a swimmer by its type', () => {
-    expect(swims(Species.Magikarp)).toBe(true);
-    expect(swims(Species.Rhyhorn)).toBe(false);
+const SURFACES = [SpawnSurface.Land, SpawnSurface.Water, SpawnSurface.Ice];
+
+/** Every biome, hour and surface that can hold a pool, as one flat walk */
+function* everyPool(): Generator<[Biome, TimeOfDay, SpawnSurface]> {
+  for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+    for (const time of TIMES_OF_DAY) {
+      for (const surface of SURFACES) {
+        yield [biome, time, surface];
+      }
+    }
+  }
+}
+
+describe('which pool a species may stand in', () => {
+  it('keeps what only swims off land and ice, and what walks out of the water', () => {
+    expect(fitsSurface(Species.Magikarp, SpawnSurface.Water)).toBe(true);
+    expect(fitsSurface(Species.Magikarp, SpawnSurface.Land)).toBe(false);
+    expect(fitsSurface(Species.Magikarp, SpawnSurface.Ice)).toBe(false);
+    expect(fitsSurface(Species.Rhyhorn, SpawnSurface.Water)).toBe(false);
+    expect(fitsSurface(Species.Rhyhorn, SpawnSurface.Ice)).toBe(true);
+    // A flier is ground unless its data says otherwise
+    expect(fitsSurface(Species.Pidgey, SpawnSurface.Water)).toBe(false);
+    // Something at home on both stands in either
+    expect(fitsSurface(Species.Psyduck, SpawnSurface.Land)).toBe(true);
+    expect(fitsSurface(Species.Psyduck, SpawnSurface.Water)).toBe(true);
   });
 
-  it('counts anything in the air as over the water rather than in it', () => {
-    // A Flying type is off the ground whether or not it is much of a
-    // flier, which is the same rule that gives it its Ground immunity
-    expect(floats(Species.Pidgey)).toBe(true);
-    expect(floats(Species.Hoppip)).toBe(true);
-    expect(floats(Species.Doduo)).toBe(true);
-    // And so is a hoverer, read off its own abilities
-    expect(floats(Species.Koffing)).toBe(true);
-    // What the rule keeps out of the pond
-    expect(floats(Species.Rhyhorn)).toBe(false);
-    expect(floats(Species.Magikarp)).toBe(false);
+  it('gives every Water type a place in the water', () => {
+    // Palkia is Water by type and lives nowhere near it, and Wash Rotom
+    // is only ever reached through a Catalog
+    const dry = new Set<Species>();
+
+    for (const species of getRegisteredSpecies()) {
+      const data = getSpeciesData(species);
+
+      if (
+        data.types.includes(Types.Water) &&
+        data.worn !== true &&
+        !fitsSurface(species, SpawnSurface.Water)
+      ) {
+        dry.add(species);
+      }
+    }
+    expect(dry).toEqual(new Set([Species.Palkia, Species.RotomWash]));
   });
 
-  it('reads each stage on its own, rather than the whole line', () => {
-    // Off the species' own abilities and not the walk up its chain, so
-    // a line whose stages differ is answered a stage at a time
-    expect(floats(Species.Gastly)).toBe(true);
-    expect(floats(Species.Magnemite)).toBe(false);
+  it('writes every pool for the surface it stands on', () => {
+    for (const [biome, time, surface] of everyPool()) {
+      const groups = getSpawnPool(biome, time, false, surface);
+
+      for (const band of SPAWN_BAND_KEYS) {
+        for (const entry of spawnBand(groups, band)) {
+          const { name } = getSpeciesData(entry.species);
+
+          expect(
+            fitsSurface(entry.species, surface),
+            `${name} in ${BIOME_NAMES[biome]} (surface ${surface})`,
+          ).toBe(true);
+        }
+      }
+    }
   });
 });
 
@@ -1141,8 +1179,13 @@ describe('where a species lives', () => {
       const { activeTimes, name } = getSpeciesData(species);
 
       for (const time of TIMES_OF_DAY.filter((period) => (activeTimes & period) !== 0)) {
+        // Any of the biome's surfaces will do, since Kyogre lives in the water
         const band = new Set(
-          spawnBand(getSpawnPool(biome, time), 'special').map((entry) => entry.species),
+          SURFACES.flatMap((surface) =>
+            spawnBand(getSpawnPool(biome, time, false, surface), 'special').map(
+              (entry) => entry.species,
+            ),
+          ),
         );
 
         expect(band.has(species), `${name} in ${BIOME_NAMES[biome]}`).toBe(true);
@@ -1156,14 +1199,12 @@ describe('where a species lives', () => {
     // lists that species anywhere
     const counted = new Map<Species, number>();
 
-    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
-      for (const time of TIMES_OF_DAY) {
-        const groups = getSpawnPool(biome, time);
+    for (const [biome, time, surface] of everyPool()) {
+      const groups = getSpawnPool(biome, time, false, surface);
 
-        for (const band of SPAWN_BAND_KEYS) {
-          for (const entry of spawnBand(groups, band)) {
-            counted.set(entry.species, (counted.get(entry.species) ?? 0) + 1);
-          }
+      for (const band of SPAWN_BAND_KEYS) {
+        for (const entry of spawnBand(groups, band)) {
+          counted.set(entry.species, (counted.get(entry.species) ?? 0) + 1);
         }
       }
     }
@@ -1174,19 +1215,17 @@ describe('where a species lives', () => {
   });
 
   it('stages nothing where or when its species does not live', () => {
-    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
-      for (const time of TIMES_OF_DAY) {
-        const groups = getSpawnPool(biome, time);
+    for (const [biome, time, surface] of everyPool()) {
+      const groups = getSpawnPool(biome, time, false, surface);
 
-        // The prized band is the alphabet and the babies, which stand
-        // in every biome by design
-        for (const band of SPAWN_BAND_KEYS.filter((key) => key !== 'prized')) {
-          for (const entry of spawnBand(groups, band)) {
-            const data = getSpeciesData(entry.species);
+      // The prized band is the alphabet and the babies, which stand
+      // in every biome by design
+      for (const band of SPAWN_BAND_KEYS.filter((key) => key !== 'prized')) {
+        for (const entry of spawnBand(groups, band)) {
+          const data = getSpeciesData(entry.species);
 
-            expect(data.biomes, `${data.name} in ${BIOME_NAMES[biome]}`).toContain(biome);
-            expect(data.activeTimes & time, `${data.name} at ${time}`).not.toBe(0);
-          }
+          expect(data.biomes, `${data.name} in ${BIOME_NAMES[biome]}`).toContain(biome);
+          expect(data.activeTimes & time, `${data.name} at ${time}`).not.toBe(0);
         }
       }
     }
@@ -1230,14 +1269,12 @@ describe('where a species lives', () => {
     ]);
     const staged = new Set<Species>();
 
-    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
-      for (const time of TIMES_OF_DAY) {
-        const groups = getSpawnPool(biome, time);
+    for (const [biome, time, surface] of everyPool()) {
+      const groups = getSpawnPool(biome, time, false, surface);
 
-        for (const band of SPAWN_BAND_KEYS) {
-          for (const entry of spawnBand(groups, band)) {
-            staged.add(entry.species);
-          }
+      for (const band of SPAWN_BAND_KEYS) {
+        for (const entry of spawnBand(groups, band)) {
+          staged.add(entry.species);
         }
       }
     }
@@ -2627,7 +2664,8 @@ describe('species day', () => {
   });
 
   it('reduces a biome to the eggs a nest could be holding', () => {
-    const pool = getSpawnPool(Biome.Grassland, TimeOfDay.Morning);
+    // Every surface's pool, so a grassland nest may lay what lives in its ponds
+    const pool = getBiomeRoster(Biome.Grassland, TimeOfDay.Morning);
     const eggs = getEggPool(Biome.Grassland, TimeOfDay.Morning);
 
     // Everything that hatches is a first stage, and nothing appears
@@ -5125,20 +5163,18 @@ describe('biome data', () => {
     // A species that gains an evolution moves down a band, and the
     // pools have to move with it or the dex describes a Steelix's
     // Onix as the end of its line
-    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
-      for (const time of [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night]) {
-        const groups = getSpawnPool(biome, time);
+    for (const [biome, time, surface] of everyPool()) {
+      const groups = getSpawnPool(biome, time, false, surface);
 
-        for (const [band, rarity] of [
-          ['base', SpawnRarity.Base],
-          ['uncommon', SpawnRarity.Uncommon],
-          ['rare', SpawnRarity.Rare],
-          ['prized', SpawnRarity.Prized],
-          ['special', SpawnRarity.Special],
-        ] as const) {
-          for (const entry of groups[band] ?? []) {
-            expect(getSpawnRarity(entry.species), getSpeciesData(entry.species).name).toBe(rarity);
-          }
+      for (const [band, rarity] of [
+        ['base', SpawnRarity.Base],
+        ['uncommon', SpawnRarity.Uncommon],
+        ['rare', SpawnRarity.Rare],
+        ['prized', SpawnRarity.Prized],
+        ['special', SpawnRarity.Special],
+      ] as const) {
+        for (const entry of groups[band] ?? []) {
+          expect(getSpawnRarity(entry.species), getSpeciesData(entry.species).name).toBe(rarity);
         }
       }
     }
@@ -7351,7 +7387,7 @@ describe('honey trees', () => {
   it('keeps what a honey tree draws out out of every wild pool', () => {
     for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
       for (const time of TIMES_OF_DAY) {
-        const groups = getSpawnPool(biome, time);
+        const groups = getBiomeRoster(biome, time);
 
         for (const band of SPAWN_BAND_KEYS) {
           for (const entry of spawnBand(groups, band)) {

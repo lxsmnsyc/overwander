@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -95,12 +95,24 @@ export default function registerPoliwagSpecies(): void {
       [Stats.Speed]: 90,
     },
     types: [Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.WaterAbsorb, Abilities.Damp],
     hiddenAbilities: [Abilities.SwiftSwim],
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Swamp, Biome.Bog],
+    biomes: [
+      Biome.Swamp,
+      Biome.Bog,
+      Biome.TropicalRainforest,
+      Biome.TropicalSeasonalForest,
+      Biome.Shrubland,
+      Biome.Grassland,
+      Biome.TemperateForest,
+      Biome.TemperateRainforest,
+      Biome.Woodland,
+      Biome.MontaneForest,
+    ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -158,12 +170,23 @@ export default function registerPoliwagSpecies(): void {
       [Stats.Speed]: 90,
     },
     types: [Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.WaterAbsorb, Abilities.Damp],
     hiddenAbilities: [Abilities.SwiftSwim],
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.Swamp, Biome.Bog],
+    biomes: [
+      Biome.Swamp,
+      Biome.Bog,
+      Biome.TropicalSeasonalForest,
+      Biome.Shrubland,
+      Biome.Grassland,
+      Biome.TemperateForest,
+      Biome.TemperateRainforest,
+      Biome.Woodland,
+      Biome.MontaneForest,
+    ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -203,12 +226,13 @@ export default function registerPoliwagSpecies(): void {
       [Stats.Speed]: 70,
     },
     types: [Types.Water, Types.Fighting],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.WaterAbsorb, Abilities.Damp],
     hiddenAbilities: [Abilities.SwiftSwim, Abilities.Guts],
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Swamp, Biome.Bog],
+    biomes: [Biome.Swamp, Biome.Bog, Biome.Shrubland, Biome.Grassland, Biome.MontaneForest],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

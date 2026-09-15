@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 /**
@@ -67,6 +67,7 @@ export default function registerWeatherTrioSpecies(): void {
       [Stats.Speed]: 90,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.Drizzle],
     // All three are this registry's: it swims in the rain it brought,
     // drinks what is thrown at it, and is expensive to fight at all

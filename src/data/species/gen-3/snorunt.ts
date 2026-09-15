@@ -79,7 +79,7 @@ export default function registerSnoruntSpecies(): void {
     eggGroups: [EggGroups.Fairy, EggGroups.Mineral],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Glacier, Biome.AlpineTundra],
+    biomes: [Biome.Glacier, Biome.AlpineTundra, Biome.ColdDesert, Biome.Tundra],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -123,7 +123,7 @@ export default function registerSnoruntSpecies(): void {
     eggGroups: [EggGroups.Fairy, EggGroups.Mineral],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Glacier, Biome.AlpineTundra],
+    biomes: [Biome.Glacier, Biome.AlpineTundra, Biome.ColdDesert, Biome.Tundra],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
 
 /**
  * DeepOcean spawn pool, grouped by day-cycle period and rarity band.
@@ -18,17 +18,72 @@ import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerDeepOceanSpawns(): void {
   registerSpawnPool(Biome.DeepOcean, {
     [TimeOfDay.Morning]: {
-      base: [
-        { species: Species.Horsea, weight: 20 },
-        { species: Species.Dratini, weight: 4 },
+      base: [{ species: Species.Dratini, weight: 4 }],
+      uncommon: [],
+      rare: [{ species: Species.Dragonair, weight: 2 }],
+      scarce: [],
+      elusive: [{ species: Species.Dragonite, weight: 2 }],
+      prized: [...UNOWN_SPAWNS],
+      special: [
+        { species: Species.Lugia, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
       ],
+      mythical: [],
+    },
+    [TimeOfDay.Day]: {
+      base: [{ species: Species.Dratini, weight: 4 }],
+      uncommon: [],
+      rare: [{ species: Species.Dragonair, weight: 2 }],
+      scarce: [],
+      elusive: [{ species: Species.Dragonite, weight: 2 }],
+      prized: [...UNOWN_SPAWNS],
+      special: [
+        { species: Species.Lugia, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
+      ],
+      mythical: [],
+    },
+    [TimeOfDay.Evening]: {
+      base: [{ species: Species.Dratini, weight: 4 }],
+      uncommon: [],
+      rare: [{ species: Species.Dragonair, weight: 2 }],
+      scarce: [],
+      elusive: [{ species: Species.Dragonite, weight: 2 }],
+      prized: [...UNOWN_SPAWNS],
+      special: [
+        { species: Species.Lugia, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
+      ],
+      mythical: [],
+    },
+    [TimeOfDay.Night]: {
+      base: [{ species: Species.Dratini, weight: 4 }],
+      uncommon: [],
+      rare: [{ species: Species.Dragonair, weight: 2 }],
+      scarce: [],
+      elusive: [{ species: Species.Dragonite, weight: 2 }],
+      prized: [...UNOWN_SPAWNS],
+      special: [
+        { species: Species.Lugia, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
+      ],
+      mythical: [],
+    },
+  });
+  registerWaterPool(Biome.DeepOcean, {
+    [TimeOfDay.Morning]: {
+      base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
         { species: Species.Wailmer, weight: 15 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      rare: [{ species: Species.Dragonair, weight: 2 }],
+      rare: [],
       scarce: [
         { species: Species.Wailord, weight: 4 },
         { species: Species.Huntail, weight: 5 },
@@ -38,30 +93,20 @@ export default function registerDeepOceanSpawns(): void {
       ],
       elusive: [
         { species: Species.Lapras, weight: 5 },
-        { species: Species.Dragonite, weight: 2 },
         { species: Species.Relicanth, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
-      special: [
-        { species: Species.Kyogre, weight: 10 },
-        { species: Species.Lugia, weight: 10 },
-        { species: Species.Articuno, weight: 10 },
-        { species: Species.HoOh, weight: 10 },
-      ],
+      special: [{ species: Species.Kyogre, weight: 10 }],
       mythical: [{ species: Species.Manaphy, weight: 10 }],
     },
     [TimeOfDay.Day]: {
-      base: [
-        { species: Species.Horsea, weight: 20 },
-        { species: Species.Dratini, weight: 4 },
-      ],
+      base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
         { species: Species.Wailmer, weight: 15 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      rare: [{ species: Species.Dragonair, weight: 2 }],
+      rare: [],
       scarce: [
         { species: Species.Wailord, weight: 4 },
         { species: Species.Huntail, weight: 5 },
@@ -71,30 +116,20 @@ export default function registerDeepOceanSpawns(): void {
       ],
       elusive: [
         { species: Species.Lapras, weight: 5 },
-        { species: Species.Dragonite, weight: 2 },
         { species: Species.Relicanth, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
-      special: [
-        { species: Species.Kyogre, weight: 10 },
-        { species: Species.Lugia, weight: 10 },
-        { species: Species.Articuno, weight: 10 },
-        { species: Species.HoOh, weight: 10 },
-      ],
+      special: [{ species: Species.Kyogre, weight: 10 }],
       mythical: [{ species: Species.Manaphy, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
-      base: [
-        { species: Species.Horsea, weight: 20 },
-        { species: Species.Dratini, weight: 4 },
-      ],
+      base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
         { species: Species.Wailmer, weight: 15 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      rare: [{ species: Species.Dragonair, weight: 2 }],
+      rare: [],
       scarce: [
         { species: Species.Wailord, weight: 4 },
         { species: Species.Huntail, weight: 5 },
@@ -102,31 +137,19 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Gyarados, weight: 10 },
         { species: Species.Lanturn, weight: 10 },
       ],
-      elusive: [
-        { species: Species.Lapras, weight: 5 },
-        { species: Species.Dragonite, weight: 2 },
-      ],
-      prized: [...UNOWN_SPAWNS],
-      special: [
-        { species: Species.Kyogre, weight: 10 },
-        { species: Species.Lugia, weight: 10 },
-        { species: Species.Articuno, weight: 10 },
-        { species: Species.HoOh, weight: 10 },
-      ],
+      elusive: [{ species: Species.Lapras, weight: 5 }],
+      special: [{ species: Species.Kyogre, weight: 10 }],
       mythical: [{ species: Species.Manaphy, weight: 10 }],
     },
     [TimeOfDay.Night]: {
-      base: [
-        { species: Species.Horsea, weight: 20 },
-        { species: Species.Dratini, weight: 4 },
-      ],
+      base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
         { species: Species.Wailmer, weight: 15 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      rare: [{ species: Species.Dragonair, weight: 2 }],
+      rare: [],
       scarce: [
         { species: Species.Wailord, weight: 4 },
         { species: Species.Huntail, weight: 5 },
@@ -134,17 +157,8 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Gyarados, weight: 10 },
         { species: Species.Lanturn, weight: 10 },
       ],
-      elusive: [
-        { species: Species.Lapras, weight: 5 },
-        { species: Species.Dragonite, weight: 2 },
-      ],
-      prized: [...UNOWN_SPAWNS],
-      special: [
-        { species: Species.Kyogre, weight: 10 },
-        { species: Species.Lugia, weight: 10 },
-        { species: Species.Articuno, weight: 10 },
-        { species: Species.HoOh, weight: 10 },
-      ],
+      elusive: [{ species: Species.Lapras, weight: 5 }],
+      special: [{ species: Species.Kyogre, weight: 10 }],
       mythical: [{ species: Species.Manaphy, weight: 10 }],
     },
   });

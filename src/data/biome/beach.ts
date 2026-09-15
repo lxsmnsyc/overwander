@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
 
 /**
  * Beach spawn pool, grouped by day-cycle period and rarity band
@@ -12,9 +12,7 @@ export default function registerBeachSpawns(): void {
       uncommon: [
         { species: Species.Psyduck, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
-        { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
-        { species: Species.Goldeen, weight: 20 },
         { species: Species.Wingull, weight: 25 },
         { species: Species.Shellos, weight: 25 },
         { species: Species.BurmySandy, weight: 20 },
@@ -25,7 +23,6 @@ export default function registerBeachSpawns(): void {
         { species: Species.Golduck, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Kingler, weight: 10 },
-        { species: Species.Seaking, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Slowking, weight: 5 },
         { species: Species.Pelipper, weight: 10 },
@@ -33,14 +30,9 @@ export default function registerBeachSpawns(): void {
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Floatzel, weight: 8 },
       ],
-      elusive: [
-        { species: Species.Blastoise, weight: 2 },
-        { species: Species.Corsola, weight: 20 },
-        { species: Species.Luvdisc, weight: 15 },
-      ],
+      elusive: [{ species: Species.Blastoise, weight: 2 }],
       prized: [...UNOWN_SPAWNS],
       special: [
-        { species: Species.Kyogre, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Rayquaza, weight: 10 },
       ],
@@ -51,9 +43,7 @@ export default function registerBeachSpawns(): void {
       uncommon: [
         { species: Species.Psyduck, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
-        { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
-        { species: Species.Goldeen, weight: 20 },
         { species: Species.Wingull, weight: 25 },
         { species: Species.Shellos, weight: 25 },
         { species: Species.BurmySandy, weight: 20 },
@@ -64,7 +54,6 @@ export default function registerBeachSpawns(): void {
         { species: Species.Golduck, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Kingler, weight: 10 },
-        { species: Species.Seaking, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Slowking, weight: 5 },
         { species: Species.Pelipper, weight: 10 },
@@ -72,14 +61,9 @@ export default function registerBeachSpawns(): void {
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Floatzel, weight: 8 },
       ],
-      elusive: [
-        { species: Species.Blastoise, weight: 2 },
-        { species: Species.Corsola, weight: 20 },
-        { species: Species.Luvdisc, weight: 15 },
-      ],
+      elusive: [{ species: Species.Blastoise, weight: 2 }],
       prized: [...UNOWN_SPAWNS],
       special: [
-        { species: Species.Kyogre, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Rayquaza, weight: 10 },
       ],
@@ -88,10 +72,7 @@ export default function registerBeachSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [],
       uncommon: [
-        { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
-        { species: Species.Goldeen, weight: 20 },
-        { species: Species.Staryu, weight: 20 },
         { species: Species.Shellos, weight: 25 },
         { species: Species.BurmySandy, weight: 20 },
         { species: Species.Buizel, weight: 25 },
@@ -99,17 +80,14 @@ export default function registerBeachSpawns(): void {
       rare: [],
       scarce: [
         { species: Species.Kingler, weight: 10 },
-        { species: Species.Seaking, weight: 10 },
-        { species: Species.Starmie, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Gastrodon, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Floatzel, weight: 8 },
       ],
-      elusive: [{ species: Species.Corsola, weight: 20 }],
+      elusive: [],
       prized: [...UNOWN_SPAWNS],
       special: [
-        { species: Species.Kyogre, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Rayquaza, weight: 10 },
       ],
@@ -118,10 +96,7 @@ export default function registerBeachSpawns(): void {
     [TimeOfDay.Night]: {
       base: [],
       uncommon: [
-        { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
-        { species: Species.Goldeen, weight: 20 },
-        { species: Species.Staryu, weight: 20 },
         { species: Species.Shellos, weight: 25 },
         { species: Species.BurmySandy, weight: 20 },
         { species: Species.Buizel, weight: 25 },
@@ -129,21 +104,122 @@ export default function registerBeachSpawns(): void {
       rare: [],
       scarce: [
         { species: Species.Kingler, weight: 10 },
-        { species: Species.Seaking, weight: 10 },
-        { species: Species.Starmie, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Gastrodon, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Floatzel, weight: 8 },
       ],
-      elusive: [{ species: Species.Corsola, weight: 20 }],
+      elusive: [],
       prized: [...UNOWN_SPAWNS],
       special: [
-        { species: Species.Kyogre, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Rayquaza, weight: 10 },
       ],
       mythical: [{ species: Species.Deoxys, weight: 10 }],
+    },
+  });
+  registerWaterPool(Biome.Beach, {
+    [TimeOfDay.Morning]: {
+      base: [{ species: Species.Horsea, weight: 10 }],
+      uncommon: [
+        { species: Species.Shellder, weight: 20 },
+        { species: Species.Krabby, weight: 20 },
+        { species: Species.Tentacool, weight: 20 },
+        { species: Species.Shellos, weight: 25 },
+        { species: Species.Wingull, weight: 25 },
+        { species: Species.Goldeen, weight: 20 },
+      ],
+      rare: [{ species: Species.Seadra, weight: 5 }],
+      scarce: [
+        { species: Species.Cloyster, weight: 10 },
+        { species: Species.Kingler, weight: 10 },
+        { species: Species.Tentacruel, weight: 8 },
+        { species: Species.Gastrodon, weight: 10 },
+        { species: Species.Pelipper, weight: 10 },
+        { species: Species.Seaking, weight: 10 },
+      ],
+      elusive: [
+        { species: Species.Corsola, weight: 20 },
+        { species: Species.Kingdra, weight: 2 },
+        { species: Species.Luvdisc, weight: 15 },
+      ],
+      special: [{ species: Species.Kyogre, weight: 10 }],
+    },
+    [TimeOfDay.Day]: {
+      base: [{ species: Species.Horsea, weight: 10 }],
+      uncommon: [
+        { species: Species.Shellder, weight: 20 },
+        { species: Species.Krabby, weight: 20 },
+        { species: Species.Tentacool, weight: 20 },
+        { species: Species.Shellos, weight: 25 },
+        { species: Species.Wingull, weight: 25 },
+        { species: Species.Goldeen, weight: 20 },
+      ],
+      rare: [{ species: Species.Seadra, weight: 5 }],
+      scarce: [
+        { species: Species.Cloyster, weight: 10 },
+        { species: Species.Kingler, weight: 10 },
+        { species: Species.Tentacruel, weight: 8 },
+        { species: Species.Gastrodon, weight: 10 },
+        { species: Species.Pelipper, weight: 10 },
+        { species: Species.Seaking, weight: 10 },
+      ],
+      elusive: [
+        { species: Species.Corsola, weight: 20 },
+        { species: Species.Kingdra, weight: 2 },
+        { species: Species.Luvdisc, weight: 15 },
+      ],
+      special: [{ species: Species.Kyogre, weight: 10 }],
+    },
+    [TimeOfDay.Evening]: {
+      base: [{ species: Species.Horsea, weight: 10 }],
+      uncommon: [
+        { species: Species.Shellder, weight: 20 },
+        { species: Species.Krabby, weight: 20 },
+        { species: Species.Tentacool, weight: 20 },
+        { species: Species.Shellos, weight: 25 },
+        { species: Species.Staryu, weight: 20 },
+        { species: Species.Goldeen, weight: 20 },
+      ],
+      rare: [{ species: Species.Seadra, weight: 5 }],
+      scarce: [
+        { species: Species.Cloyster, weight: 10 },
+        { species: Species.Kingler, weight: 10 },
+        { species: Species.Tentacruel, weight: 8 },
+        { species: Species.Gastrodon, weight: 10 },
+        { species: Species.Starmie, weight: 10 },
+        { species: Species.Seaking, weight: 10 },
+      ],
+      elusive: [
+        { species: Species.Corsola, weight: 20 },
+        { species: Species.Kingdra, weight: 2 },
+      ],
+      special: [{ species: Species.Kyogre, weight: 10 }],
+    },
+    [TimeOfDay.Night]: {
+      base: [{ species: Species.Horsea, weight: 10 }],
+      uncommon: [
+        { species: Species.Shellder, weight: 20 },
+        { species: Species.Krabby, weight: 20 },
+        { species: Species.Tentacool, weight: 20 },
+        { species: Species.Shellos, weight: 25 },
+        { species: Species.Staryu, weight: 20 },
+        { species: Species.Goldeen, weight: 20 },
+      ],
+      rare: [{ species: Species.Seadra, weight: 5 }],
+      scarce: [
+        { species: Species.Cloyster, weight: 10 },
+        { species: Species.Kingler, weight: 10 },
+        { species: Species.Tentacruel, weight: 8 },
+        { species: Species.Gastrodon, weight: 10 },
+        { species: Species.Starmie, weight: 10 },
+        { species: Species.Seaking, weight: 10 },
+      ],
+      elusive: [
+        { species: Species.Corsola, weight: 20 },
+        { species: Species.Kingdra, weight: 2 },
+      ],
+      special: [{ species: Species.Kyogre, weight: 10 }],
     },
   });
 }

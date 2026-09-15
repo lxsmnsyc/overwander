@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves both stages share
@@ -74,6 +74,7 @@ export default function registerCarvanhaSpecies(): void {
       [Stats.Speed]: 65,
     },
     types: [Types.Water, Types.Dark],
+    habitat: Habitat.Water,
     abilities: [Abilities.RoughSkin],
     hiddenAbilities: [Abilities.SpeedBoost],
     eggGroups: [EggGroups.Water2],
@@ -116,6 +117,7 @@ export default function registerCarvanhaSpecies(): void {
       [Stats.Speed]: 95,
     },
     types: [Types.Water, Types.Dark],
+    habitat: Habitat.Water,
     abilities: [Abilities.RoughSkin],
     // Two the mainline never gave it: what surfaces beside it thinks
     // better of swinging, and nothing eats while it is circling

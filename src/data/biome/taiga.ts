@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerIcePool, registerSpawnPool } from './__create';
 
 /**
  * Taiga spawn pool, grouped by day-cycle period and rarity band
@@ -94,6 +94,72 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regice, weight: 10 },
       ],
+    },
+  });
+  registerIcePool(Biome.Taiga, {
+    [TimeOfDay.Morning]: {
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [{ species: Species.Seel, weight: 20 }],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      scarce: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
+      elusive: [
+        { species: Species.Mamoswine, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+      ],
+      special: [{ species: Species.Uxie, weight: 10 }],
+    },
+    [TimeOfDay.Day]: {
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [{ species: Species.Seel, weight: 20 }],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      scarce: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
+      elusive: [
+        { species: Species.Mamoswine, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+      ],
+      special: [{ species: Species.Uxie, weight: 10 }],
+    },
+    [TimeOfDay.Evening]: {
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [
+        { species: Species.Seel, weight: 20 },
+        { species: Species.Sneasel, weight: 5 },
+      ],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      scarce: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Glaceon, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
+      ],
+      elusive: [
+        { species: Species.Mamoswine, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+      ],
+      special: [{ species: Species.Uxie, weight: 10 }],
+    },
+    [TimeOfDay.Night]: {
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [
+        { species: Species.Seel, weight: 20 },
+        { species: Species.Sneasel, weight: 5 },
+      ],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      scarce: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Glaceon, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
+      ],
+      elusive: [
+        { species: Species.Mamoswine, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+      ],
+      special: [{ species: Species.Uxie, weight: 10 }],
     },
   });
 }

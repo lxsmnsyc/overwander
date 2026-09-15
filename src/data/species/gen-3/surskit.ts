@@ -5,7 +5,7 @@ import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -69,12 +69,20 @@ export default function registerSurskitSpecies(): void {
       [Stats.Speed]: 65,
     },
     types: [Types.Bug, Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.SwiftSwim],
     hiddenAbilities: [Abilities.RainDish],
     eggGroups: [EggGroups.Water1, EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 200,
-    biomes: [Biome.Swamp, Biome.Bog],
+    biomes: [
+      Biome.Swamp,
+      Biome.Bog,
+      Biome.TropicalRainforest,
+      Biome.Shrubland,
+      Biome.Grassland,
+      Biome.TemperateRainforest,
+    ],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -108,12 +116,20 @@ export default function registerSurskitSpecies(): void {
       [Stats.Speed]: 80,
     },
     types: [Types.Bug, Types.Flying],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.Intimidate],
     hiddenAbilities: [Abilities.Unnerve],
     eggGroups: [EggGroups.Water1, EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Swamp, Biome.Bog],
+    biomes: [
+      Biome.Swamp,
+      Biome.Bog,
+      Biome.TropicalRainforest,
+      Biome.Shrubland,
+      Biome.Grassland,
+      Biome.TemperateRainforest,
+    ],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

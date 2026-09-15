@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -88,6 +88,7 @@ export default function registerStaryuSpecies(): void {
       [Stats.Speed]: 85,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.Analytic],
     eggGroups: [EggGroups.Water3],
@@ -130,6 +131,7 @@ export default function registerStaryuSpecies(): void {
       [Stats.Speed]: 115,
     },
     types: [Types.Water, Types.Psychic],
+    habitat: Habitat.Water,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.Analytic, Abilities.Regenerator],
     eggGroups: [EggGroups.Water3],

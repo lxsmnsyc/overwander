@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
 
 /**
  * MontaneForest spawn pool, grouped by day-cycle period and rarity band
@@ -133,6 +133,64 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Chimecho, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Chingling, weight: PRIZED_WEIGHT }],
+      special: [],
+    },
+  });
+  registerWaterPool(Biome.MontaneForest, {
+    [TimeOfDay.Morning]: {
+      base: [{ species: Species.Poliwag, weight: 20 }],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wooper, weight: 25 },
+      ],
+      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      scarce: [
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      elusive: [{ species: Species.Poliwrath, weight: 5 }],
+      special: [],
+    },
+    [TimeOfDay.Day]: {
+      base: [{ species: Species.Poliwag, weight: 20 }],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wooper, weight: 25 },
+      ],
+      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      scarce: [
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      elusive: [{ species: Species.Poliwrath, weight: 5 }],
+      special: [],
+    },
+    [TimeOfDay.Evening]: {
+      base: [{ species: Species.Poliwag, weight: 20 }],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wooper, weight: 25 },
+      ],
+      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      scarce: [
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      elusive: [{ species: Species.Poliwrath, weight: 5 }],
+      special: [],
+    },
+    [TimeOfDay.Night]: {
+      base: [{ species: Species.Poliwag, weight: 20 }],
+      uncommon: [
+        { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wooper, weight: 25 },
+      ],
+      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      scarce: [
+        { species: Species.Quagsire, weight: 5 },
+        { species: Species.Gyarados, weight: 4 },
+      ],
+      elusive: [{ species: Species.Poliwrath, weight: 5 }],
       special: [],
     },
   });

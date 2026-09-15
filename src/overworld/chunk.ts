@@ -1,9 +1,11 @@
 import AleaRNG from '../core/alea';
 import { CELL_COUNT, CHUNK_CELLS, SURROUNDING, worldCell } from './grid';
 import Biome, {
+  SpawnSurface,
   growsBerries,
   growsHoneyTrees,
   growsTrees,
+  isIceBiome,
   isOpenSea,
   isWaterBiome,
 } from '../data/ids/biome';
@@ -320,6 +322,14 @@ export default class Chunk {
   getWaterCells(): Set<number> {
     this.waterCells ??= this.cellsWhere('water');
     return this.waterCells;
+  }
+
+  /** Which pool a spawn on this cell draws from, read off the water drawn there */
+  getCellSurface(cell: number): SpawnSurface {
+    if (this.getCellRole(cell) !== 'water') {
+      return SpawnSurface.Land;
+    }
+    return isIceBiome(this.getCellBiomes()[cell]) ? SpawnSurface.Ice : SpawnSurface.Water;
   }
 
   private lavaCells: Set<number> | null = null;

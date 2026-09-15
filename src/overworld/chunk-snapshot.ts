@@ -3,20 +3,16 @@ import AleaRNG from '../core/alea';
 import {
   boostFamilyWeights,
   boostTypeWeights,
+  getBiomeRoster,
   getSpawnPool,
   getTownPool,
+  hasSpawnPool,
   pickSpawn,
   spawnRanks,
 } from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
-import {
-  SPECIES_DAY_WEIGHT_BOOST,
-  floats,
-  getFeaturedFamily,
-  getShoreForm,
-  swims,
-} from '../data/species';
-import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
+import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily, getShoreForm } from '../data/species';
+import { SpawnSurface, TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { ItemStack } from '../data/overworld/item-pool';
 import type { Species } from '../data/ids/species';
@@ -429,8 +425,29 @@ export default class ChunkSnapshot {
    * What the window may roll, crowded by the two things that crowd it:
    * the featured family for the day, and the sky for the hour
    */
-  private getPool(): SpawnRarityGroups {
-    return this.crowd(getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp)));
+  private readonly pools = new Map<SpawnSurface, SpawnRarityGroups>();
+
+  /** What a spawn on this cell may roll, crowded the same way */
+  getCellPool(cell: number): SpawnRarityGroups {
+    const surface = this.drawnSurface(cell);
+    let pool = this.pools.get(surface);
+
+    if (pool == null) {
+      pool = this.crowd(
+        getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp), false, surface),
+      );
+      this.pools.set(surface, pool);
+    }
+    return pool;
+  }
+
+  /** The cell's surface, with ice that has no pool of its own walked like the land around it */
+  private drawnSurface(cell: number): SpawnSurface {
+    const surface = this.chunk.getCellSurface(cell);
+
+    return surface === SpawnSurface.Ice && !hasSpawnPool(this.chunk.biome, SpawnSurface.Ice)
+      ? SpawnSurface.Land
+      : surface;
   }
 
   /** What a town's streets may roll this window, crowded the same way */
@@ -460,7 +477,6 @@ export default class ChunkSnapshot {
    */
   getSpawns(count: number): Spawn[] {
     if (this.spawns == null) {
-      const pool = this.getPool();
       const spawns: Spawn[] = [];
       // Nothing spawns inside solid rock, on a cliff's edge or in lava
       const occupied = new Set([
@@ -483,32 +499,13 @@ export default class ChunkSnapshot {
           (this.chunk.isTownCell(cell) ? streets : free).push(cell);
         }
       }
-      // Where anything may stand, and where only what swims or flies
-      // may.
-      //
-      // A water country was given a pool written for water, so
-      // everything in it belongs on its own sea. A lake or a river
-      // running through dry country is the other case: the pool there
-      // was written for the land around it, and a Rhyhorn in the
-      // middle of a pond is that pool answering a question nobody
-      // asked it. A Zubat over the same pond is not standing in it
-      const biomes = this.chunk.getCellBiomes();
-      const standing: number[] = [];
-      const over: number[] = [];
-
-      for (const cell of free) {
-        const water = this.chunk.getCellRole(cell) === 'water' && !isWaterBiome(biomes[cell]);
-
-        (water ? over : standing).push(cell);
-      }
-
       // Each roll takes the streets' share of the window in turn, so any
       // prefix of it a lure reveals keeps that share. A chunk no town
       // touches has no share and rolls exactly as the country always has
       const share = streets.length / Math.max(1, streets.length + free.length);
       let streetPool: SpawnRarityGroups | null = null;
 
-      for (let i = 0; i < count && standing.length + over.length + streets.length > 0; i++) {
+      for (let i = 0; i < count && free.length + streets.length > 0; i++) {
         if (streets.length > 0 && Math.floor((i + 1) * share) > Math.floor(i * share)) {
           streetPool ??= this.getStreetPool();
 
@@ -525,14 +522,18 @@ export default class ChunkSnapshot {
           spawns.push(spawn);
           continue;
         }
-        if (standing.length + over.length === 0) {
+        if (free.length === 0) {
           continue;
         }
 
-        const rolled = pickSpawn(pool, () => this.rng.random());
+        // The cell is drawn first and its surface picks the pool, so a
+        // pond rolls what swims and a sea's island what walks
+        const [cell] = free.splice(Math.floor(this.rng.random() * free.length), 1);
+        const rolled = pickSpawn(this.getCellPool(cell), () => this.rng.random());
 
+        // Nothing lives on this surface here: the window is one lighter
         if (rolled == null) {
-          break;
+          continue;
         }
 
         // Which shell a Shellos wears is the world's own longitude,
@@ -541,23 +542,8 @@ export default class ChunkSnapshot {
         const species = getShoreForm(rolled, this.chunk.x);
 
         // The draws land in tuple order: individual value, then the
-        // trait value, then the cell placement
+        // trait value
         const spawn: Spawn = [species, this.rng.int32(), this.rng.int32()];
-        const roll = this.rng.random();
-        // Drawn over every cell the species could take at once, so a
-        // swimmer is no likelier to pick the water than the shore
-        const afloat = swims(species) || floats(species);
-        const open = standing.length + (afloat ? over.length : 0);
-
-        // Rolled by the country and refused by the ground: nothing of
-        // this one is published, and the window is simply one lighter
-        if (open === 0) {
-          continue;
-        }
-
-        const at = Math.floor(roll * open);
-        const [cell] =
-          at < standing.length ? standing.splice(at, 1) : over.splice(at - standing.length, 1);
 
         this.cells[cell] = spawn;
         spawns.push(spawn);
@@ -796,7 +782,7 @@ export default class ChunkSnapshot {
   getShadowLairs(): Map<number, RaidRoll> {
     if (this.shadowRaids == null) {
       const raids = new Map<number, RaidRoll>();
-      const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.raidTimestamp));
+      const pool = getBiomeRoster(this.chunk.biome, getTimeOfDay(this.raidTimestamp));
       const lairs = this.stageableLairs();
       const ranked = spawnRanks(pool)[2];
       const rare: typeof ranked = [];
@@ -1108,7 +1094,7 @@ export default class ChunkSnapshot {
     ];
 
     for (const time of times) {
-      const pool = getSpawnPool(this.chunk.biome, time);
+      const pool = getBiomeRoster(this.chunk.biome, time);
       const bands = spawnRanks(pool);
       let stocked: SpawnRarityGroups['base'] | undefined;
 
@@ -1744,6 +1730,8 @@ export default class ChunkSnapshot {
       getTimeOfDay(this.phenomenonTimestamp),
       () => rng.random(),
       getFeaturedFamily(this.phenomenonTimestamp),
+      // Only a ripple is the water's; the rest are over dry ground
+      phenomenon === Phenomenon.RipplingWater ? this.drawnSurface(cell) : SpawnSurface.Land,
     );
 
     // A pokemon out of a phenomenon answers the meridian too

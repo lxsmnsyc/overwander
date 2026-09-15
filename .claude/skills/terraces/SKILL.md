@@ -17,7 +17,7 @@ A cell standing higher than **any** of its eight neighbours is a face (`isFace` 
 
 ## Lava
 
-A volcano's water is lava (`isLavaAt` in `src/overworld/ground.ts`, `Chunk.getLavaCells()`). Nobody walks on it, whatever the cliffs around it say, and nothing is placed on it: no landmark, spawn, phenomenon or player start. Any other water stays walkable, and ice pools are water that happens to be drawn as ice.
+A volcano's water is lava (`isLavaAt` in `src/overworld/ground.ts`, `Chunk.getLavaCells()`). Nobody walks on it, whatever the cliffs around it say, and nothing is placed on it: no landmark, spawn, phenomenon or player start. Any other water stays walkable. Ice pools are water drawn as ice, and a spawn on one draws from the biome's ice pool (see `spawn-surfaces`).
 
 ## Water at a step
 

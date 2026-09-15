@@ -74,6 +74,13 @@ export const enum EvolutionMethod {
   Special = 0b1000000000000,
 }
 
+/** Where a species can be met: on the ground, in the water, or either */
+export const enum Habitat {
+  Ground = 0,
+  Water = 1,
+  Amphibious = 2,
+}
+
 export const enum Species {
   Missingno = 100000,
   Egg = 100001,

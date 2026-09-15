@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by all three beasts
@@ -178,6 +178,7 @@ export default function registerLegendaryBeastSpecies(): void {
       [Stats.Speed]: 85,
     },
     types: [Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.Pressure],
     // Water Absorb and Storm Drain are this registry's rather than the
     // mainline's: the north wind runs on the water it goes to purify

@@ -23,9 +23,8 @@ export {
   getWornForms,
   isWornForm,
   getTeachableMoves,
-  floats,
+  getHabitat,
   isBaseForm,
-  swims,
 } from './__create';
 export type { EvolutionData, LearnSetData, SpeciesAbilityPools, SpeciesData } from './__create';
 export { DEFAULT_EGG_CYCLES, getEggCycles } from './egg-cycles';

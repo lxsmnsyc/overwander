@@ -33,6 +33,8 @@ one that covers what you are about to do:
 - `server-function-order` - a `'use server'` function is addressed by its place
   in its file, so new ones go at the end and existing ones are never removed,
   reordered or given different parameters.
+- `spawn-surfaces` - a spawn rolls from the land, water or ice pool of the cell
+  under it, and a species' `habitat` decides which of those pools may list it.
 - `trigger-driven-abilities` - ability effects that do not mutate their
   detection event ride `UnitTriggerAbility` at `Exact` priority.
 - `changesets` - every change against `main` ships with one, and a fix for

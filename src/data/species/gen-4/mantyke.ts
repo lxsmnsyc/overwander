@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 /**
@@ -36,6 +36,7 @@ export default function registerMantykeSpecies(): void {
       [Stats.Speed]: 50,
     },
     types: [Types.Water, Types.Flying],
+    habitat: Habitat.Water,
     abilities: [Abilities.SwiftSwim, Abilities.WaterAbsorb],
     hiddenAbilities: [Abilities.WaterVeil],
     eggGroups: [EggGroups.NoEggsDiscovered],

@@ -27,6 +27,7 @@ import {
   watchRaidWatchers,
 } from '../../auth/raids';
 import { type Profile, getProfiles } from '../../auth/profile';
+import { settled } from '../app/resource-reads';
 import PlayerPlate from '../profile/PlayerPlate';
 import { type TeamRecord, getTeam } from '../../auth/teams';
 import { getSpeciesData } from '../../data/species';
@@ -95,12 +96,14 @@ function LobbyRows(
 
   const raid = (): RaidRecord | null => props.raid();
 
-  const teams = (): TeamRecord[] | undefined => props.teams();
+  // Settled rather than read: a team joining re-reads all three, and a
+  // plain read put the whole lobby back to "Loading raid…" meanwhile
+  const teams = (): TeamRecord[] | undefined => settled(props.teams);
 
-  const canJoin = (): boolean | undefined => props.canJoin();
+  const canJoin = (): boolean | undefined => settled(props.canJoin);
 
-  const named = (uid: string): string => props.names()?.get(uid)?.nickname ?? uid;
-  const faceOf = (uid: string): string | null => props.names()?.get(uid)?.sprite ?? null;
+  const named = (uid: string): string => settled(props.names)?.get(uid)?.nickname ?? uid;
+  const faceOf = (uid: string): string | null => settled(props.names)?.get(uid)?.sprite ?? null;
 
   const isHost = (): boolean => raid()?.host === props.user.uid;
 
@@ -487,6 +490,11 @@ function LobbyRows(
   );
 }
 
+/** What a team is, for telling one that changed from one that did not */
+function teamKey(team: TeamRecord): string {
+  return `${team.player}:${team.catches.join(',')}`;
+}
+
 /** The uids packed into a resource key, without the empty one an empty lobby leaves */
 function splitKey(key: string): string[] {
   const uids: string[] = [];
@@ -523,7 +531,7 @@ function LobbyTeams(
     () => {
       const players = new Set<string>();
 
-      for (const team of props.teams() ?? []) {
+      for (const team of settled(props.teams) ?? []) {
         players.add(team.player);
       }
       return [...players].sort().join(',');
@@ -553,20 +561,30 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
     }),
   );
 
+  // Keyed on the ids, since every lobby ping hands over a fresh array of
+  // the same ones
   const [teams] = createResource(
-    () => raid()?.teams ?? null,
-    async (ids) => {
+    () => raid()?.teams.join(',') ?? null,
+    async (key, { value }): Promise<TeamRecord[]> => {
       const reads: ReturnType<typeof getTeam>[] = [];
 
-      for (const id of ids) {
+      for (const id of splitKey(key)) {
         reads.push(getTeam(id));
+      }
+
+      // A team that did not change keeps its object, so its row and the
+      // party strip in it are not built again
+      const before = new Map<string, TeamRecord>();
+
+      for (const team of value ?? []) {
+        before.set(teamKey(team), team);
       }
 
       const found: TeamRecord[] = [];
 
       for (const team of await Promise.all(reads)) {
         if (team != null) {
-          found.push(team);
+          found.push(before.get(teamKey(team)) ?? team);
         }
       }
       return found;

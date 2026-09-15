@@ -21,6 +21,7 @@ import type { CatchOrder, CaughtPokemon } from './caught-record';
 import { CAUGHT_EMBED, fromCaughtRow } from './caught-rows';
 import getSupabase from './supabase';
 import getIdToken from './session';
+import batchedQuery from '../utils/batched-query';
 
 export {
   HELD_ITEM_LIMIT,
@@ -126,6 +127,32 @@ export async function getCaught(id: string): Promise<CaughtPokemon | null> {
  */
 // oxlint-disable-next-line typescript/no-inferrable-types
 const ROW_SELECTION: string = `id, ${CAUGHT_EMBED}`;
+
+/**
+ * `getCaught` for a screen reading many at once, such as a lobby of
+ * parties: every call made in the same moment goes out as one read.
+ * Browser only, since the queue is shared by everyone in the module
+ */
+export const getCaughtBatched = batchedQuery(
+  async (ids: string[]): Promise<Map<string, CaughtPokemon>> => {
+    const { data, error } = await getSupabase()
+      .from(CAUGHT_TABLE)
+      .select(ROW_SELECTION)
+      .in('id', ids);
+
+    raise(error);
+
+    const found = new Map<string, CaughtPokemon>();
+
+    for (const [id, caught] of rowsToPairs(asRecordArray(data))) {
+      found.set(id, caught);
+    }
+    return found;
+  },
+  (found, id): CaughtPokemon | null => found.get(id) ?? null,
+  // The ids travel in the request's address, which has a length limit
+  { limit: 50 },
+);
 
 /**
  * The rows of one owner's box, with the embeds along. An arrow with

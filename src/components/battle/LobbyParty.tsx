@@ -1,5 +1,6 @@
 import { type JSX, type Resource, Suspense, createResource } from 'solid-js';
-import { type CaughtPokemon, getCaught } from '../../auth/caught';
+import { type CaughtPokemon, getCaughtBatched } from '../../auth/caught';
+import { settled } from '../app/resource-reads';
 import TeamStrip from '../catches/TeamStrip';
 import { Note } from '../styled';
 
@@ -14,11 +15,14 @@ export default function LobbyParty(props: { catches: string[]; class?: string })
     async (key): Promise<[string, CaughtPokemon][]> => {
       const pending: Promise<[string, CaughtPokemon | null]>[] = [];
 
+      // Every party on screen asks in the same moment, so the whole lobby is one read
       for (const id of key.split(',')) {
         if (id === '') {
           continue;
         }
-        pending.push(getCaught(id).then((caught): [string, CaughtPokemon | null] => [id, caught]));
+        pending.push(
+          getCaughtBatched(id).then((caught): [string, CaughtPokemon | null] => [id, caught]),
+        );
       }
 
       const rows = await Promise.all(pending);
@@ -44,5 +48,6 @@ function PartyStrip(props: {
   party: Resource<[string, CaughtPokemon][]>;
   class?: string;
 }): JSX.Element {
-  return <TeamStrip catches={props.party() ?? []} class={props.class} />;
+  // Held through a re-read, so a party that changed does not blink back to "Reading"
+  return <TeamStrip catches={settled(props.party) ?? []} class={props.class} />;
 }

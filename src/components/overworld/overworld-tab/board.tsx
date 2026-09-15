@@ -57,7 +57,7 @@ import Landmark, { LANDMARK_NAMES } from '../../../data/overworld/landmark';
 import Npc, { NPC_NAMES, NPC_VISIT_TAGS } from '../../../data/overworld/npc';
 import type { GymSeatStanding } from '../../../auth/gym-seat-record';
 import { enterGymSeat } from '../../../auth/gym-seats';
-import { readLandmarkStandings } from '../../../auth/landmark-standings';
+import { type LandmarkStandings, readLandmarkStandings } from '../../../auth/landmark-standings';
 import { CellAura } from '../chunk-canvas/scenery';
 import GymSeatDialog from '../GymSeatDialog';
 import { VENDOR_KIND_NAMES } from '../../../data/overworld/vendor';
@@ -868,62 +868,51 @@ export default function OverworldBoard(props: {
    * it. Re-read when a dialog that can change it closes; a battle
    * unmounts the board, so coming back from one reads it afresh
    */
-  const [auras, setAuras] = createSignal<Map<number, CellAura>>(new Map());
   const [rechecked, setRechecked] = createSignal(0);
   const recheck = (): void => {
     setRechecked((count) => count + 1);
   };
 
-  createEffect(() => {
-    const loaded = view();
-    const user = auth.user();
+  // A step inside the same chunk and windows asks nothing new, so the
+  // read waits for one of those, or a recheck, to change
+  const standingsAsk = createMemo(
+    (): { snapshot: ChunkSnapshot; uid: string; key: string } | null => {
+      const loaded = view();
+      const user = auth.user();
 
-    rechecked();
-    if (loaded == null || user == null) {
+      if (loaded == null || user == null) {
+        return null;
+      }
+      const { snapshot } = loaded;
+
+      return {
+        snapshot,
+        uid: user.uid,
+        key: `${user.uid}|${snapshot.key}|${snapshot.raidTimestamp}|${snapshot.npcTimestamp}|${snapshot.nestTimestamp}|${rechecked()}`,
+      };
+    },
+    null,
+    { equals: (before, after) => before?.key === after?.key },
+  );
+  const [standings, setStandings] = createSignal<{
+    snapshot: ChunkSnapshot;
+    read: LandmarkStandings;
+  } | null>(null);
+
+  createEffect(() => {
+    const ask = standingsAsk();
+
+    if (ask == null) {
       return;
     }
 
     let live = true;
-    const { snapshot } = loaded;
 
-    readLandmarkStandings(snapshot, user.uid)
-      .then((standings) => {
-        if (!live) {
-          return;
+    readLandmarkStandings(ask.snapshot, ask.uid)
+      .then((read) => {
+        if (live) {
+          setStandings({ snapshot: ask.snapshot, read });
         }
-
-        const next = new Map<number, CellAura>();
-
-        for (const [at, landmark] of loaded.landmarks) {
-          if (landmark === Landmark.LegendaryLair || landmark === Landmark.ShadowLair) {
-            if (standings.cleared.has(at)) {
-              next.set(at, CellAura.Cleared);
-            }
-          } else if (landmark === Landmark.GymSeat) {
-            const holder = standings.seats.get(at);
-
-            if (holder != null) {
-              next.set(at, holder === user.uid ? CellAura.Mine : CellAura.Fight);
-            }
-          } else if (landmark === Landmark.Trainer || landmark === Landmark.TeamRocket) {
-            const staged = snapshot.getTrainerStops().has(at) || snapshot.getRocketStops().has(at);
-
-            if (staged && !standings.beaten.has(at)) {
-              next.set(at, CellAura.Fight);
-            }
-          } else if (landmark === Landmark.WanderingNpc) {
-            const standing = snapshot.getStandingNpc(at);
-
-            if (standing != null && NPC_VISIT_TAGS.has(standing) && !standings.visited.has(at)) {
-              next.set(at, CellAura.Fresh);
-            }
-          } else if (landmark === Landmark.Nest) {
-            if (snapshot.getNests().has(at) && !standings.taken.has(at)) {
-              next.set(at, CellAura.Fresh);
-            }
-          }
-        }
-        setAuras(next);
       })
       .catch(() => {
         // No glow is the board as it was: every press still asks
@@ -931,6 +920,59 @@ export default function OverworldBoard(props: {
     onCleanup(() => {
       live = false;
     });
+  });
+
+  // The standings name chunk cells and the glow sits on board cells,
+  // so each landmark is placed back into the chunk it was read for
+  const auras = createMemo(() => {
+    const loaded = view();
+    const held = standings();
+    const uid = auth.user()?.uid;
+    const next = new Map<number, CellAura>();
+
+    if (loaded == null || held == null || uid == null) {
+      return next;
+    }
+    const { snapshot, read } = held;
+
+    for (const [at, landmark] of loaded.landmarks) {
+      const spot = loaded.at(at);
+
+      if (spot == null || spot.snapshot.key !== snapshot.key) {
+        continue;
+      }
+      const inChunk = spot.cell;
+
+      if (landmark === Landmark.LegendaryLair || landmark === Landmark.ShadowLair) {
+        if (read.cleared.has(inChunk)) {
+          next.set(at, CellAura.Cleared);
+        }
+      } else if (landmark === Landmark.GymSeat) {
+        const holder = read.seats.get(inChunk);
+
+        if (holder != null) {
+          next.set(at, holder === uid ? CellAura.Mine : CellAura.Fight);
+        }
+      } else if (landmark === Landmark.Trainer || landmark === Landmark.TeamRocket) {
+        const staged =
+          snapshot.getTrainerStops().has(inChunk) || snapshot.getRocketStops().has(inChunk);
+
+        if (staged && !read.beaten.has(inChunk)) {
+          next.set(at, CellAura.Fight);
+        }
+      } else if (landmark === Landmark.WanderingNpc) {
+        const standing = snapshot.getStandingNpc(inChunk);
+
+        if (standing != null && NPC_VISIT_TAGS.has(standing) && !read.visited.has(inChunk)) {
+          next.set(at, CellAura.Fresh);
+        }
+      } else if (landmark === Landmark.Nest) {
+        if (snapshot.getNests().has(inChunk) && !read.taken.has(inChunk)) {
+          next.set(at, CellAura.Fresh);
+        }
+      }
+    }
+    return next;
   });
 
   /**

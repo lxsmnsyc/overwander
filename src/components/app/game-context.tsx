@@ -20,7 +20,12 @@ import { settleGymChallenge } from '../../auth/gym-seats';
 import type { PositionRecord } from '../../auth/position-record';
 import type { Species } from '../../data/ids/species';
 import type { WalkReport } from '../../auth/eggs';
-import { getPosition, watchPosition, settleWalk as writeWalk } from '../../auth/positions';
+import {
+  getPosition,
+  savePosition,
+  watchPosition,
+  settleWalk as writeWalk,
+} from '../../auth/positions';
 import { AWARD_NAMES } from '../../data/ids/awards';
 import { getItemData } from '../../data/items';
 import ItemSprite from '../items/ItemSprite';
@@ -394,6 +399,47 @@ export default function GameProvider(props: ParentProps): JSX.Element {
    */
   let wroteAt = 0;
 
+  /** Saves still on their way, and the news that arrived while one was */
+  let saving = 0;
+  let heldNews: PositionRecord | null = null;
+
+  const hearPosition = (record: PositionRecord | null): void => {
+    // A save's own change can arrive before its stamp does, so news is
+    // held until every save out has come back
+    if (record != null && saving > 0) {
+      heldNews = record;
+      return;
+    }
+
+    const here = position();
+
+    // A row nobody has written yet, this screen's own coming back
+    // around, or news that arrived before there was anything to
+    // compare it against
+    if (record == null || record.movedAt <= wroteAt || here == null || elsewhere() != null) {
+      return;
+    }
+    if (record.chunkX !== here.chunkX || record.chunkY !== here.chunkY) {
+      setElsewhere(record);
+    }
+  };
+
+  /** One save out and back, keeping its stamp and holding news that lands before it */
+  const track = async (save: () => Promise<number>): Promise<void> => {
+    saving += 1;
+    try {
+      wroteAt = Math.max(wroteAt, await save());
+    } finally {
+      saving -= 1;
+      if (saving === 0 && heldNews != null) {
+        const news = heldNews;
+
+        heldNews = null;
+        hearPosition(news);
+      }
+    }
+  };
+
   const settleWalk = async (
     chunkX: number,
     chunkY: number,
@@ -402,9 +448,14 @@ export default function GameProvider(props: ParentProps): JSX.Element {
     depth: Depth,
     steps: number,
   ): Promise<WalkReport | null> => {
-    const { stamp, report } = await writeWalk(steps, chunkX, chunkY, cellX, cellY, depth);
+    let report: WalkReport | null = null;
 
-    wroteAt = Math.max(wroteAt, stamp);
+    await track(async () => {
+      const settled = await writeWalk(steps, chunkX, chunkY, cellX, cellY, depth);
+
+      report = settled.report;
+      return settled.stamp;
+    });
     return report;
   };
 
@@ -415,7 +466,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
     cellY: number,
     depth: Depth,
   ): void => {
-    settleWalk(chunkX, chunkY, cellX, cellY, depth, 0).catch(() => {
+    track(async () => savePosition(chunkX, chunkY, cellX, cellY, depth)).catch(() => {
       // A position that did not save is a walk that will save it,
       // and there is nothing here worth interrupting a walk for
     });
@@ -554,19 +605,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
       return;
     }
 
-    const stop = watchPosition(user.uid, (record) => {
-      const here = position();
-
-      // A row nobody has written yet, this screen's own coming back
-      // around, or news that arrived before there was anything to
-      // compare it against
-      if (record == null || record.movedAt <= wroteAt || here == null || elsewhere() != null) {
-        return;
-      }
-      if (record.chunkX !== here.chunkX || record.chunkY !== here.chunkY) {
-        setElsewhere(record);
-      }
-    });
+    const stop = watchPosition(user.uid, hearPosition);
 
     onCleanup(stop);
   });

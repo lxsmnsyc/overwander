@@ -472,63 +472,61 @@ async function peekPhenomenonEggOnServer(
   );
 }
 
-function claimKey(query: ClaimQuery): string {
-  return `${query.depth}|${query.offset}|${query.x},${query.y}`;
-}
+/*
+ * A server function is addressed by its place in this file, so a tab
+ * loaded before a deploy calls these three by position. They keep
+ * their slots and answer from the batched read; new ones go at the end
+ */
 
-async function listClaimsOnServer(token: string, queries: ClaimQuery[]): Promise<ChunkClaims[]> {
+export async function listClaimedOnServer(
+  token: string,
+  x: number,
+  y: number,
+  offset: number,
+  depth: Depth,
+): Promise<number[]> {
   'use server';
-  return listClaimsForOnServerSide(await requireUid(token), queries, await syncServerClock());
+  const claims = await listClaimsForOnServerSide(
+    await requireUid(token),
+    [{ x, y, offset, depth }],
+    await syncServerClock(),
+  );
+
+  return claims.at(0)?.phenomena ?? [];
 }
 
-/**
- * Every claim list the board asks for in the same moment, in one server
- * call. A window turning over asks three lists of every chunk in range,
- * so they all land here together and a chunk's three share one answer
- */
-const readChunkClaims = batchedQuery(
-  async (queries: ClaimQuery[]): Promise<ChunkClaims[]> =>
-    listClaimsOnServer(await getIdToken(), queries),
-  // Answered in the order asked, so a query's place in the batch is its answer
-  (answers, _query, index): ChunkClaims =>
-    answers.at(index) ?? { phenomena: [], patches: [], caches: [] },
-  { key: claimKey, limit: CLAIM_CHUNK_LIMIT },
-);
+export async function listPickedOnServer(
+  token: string,
+  x: number,
+  y: number,
+  offset: number,
+  depth: Depth,
+): Promise<number[]> {
+  'use server';
+  const claims = await listClaimsForOnServerSide(
+    await requireUid(token),
+    [{ x, y, offset, depth }],
+    await syncServerClock(),
+  );
 
-async function claimsOf(snapshot: ChunkSnapshot): Promise<ChunkClaims> {
-  return readChunkClaims({
-    x: snapshot.chunk.x,
-    y: snapshot.chunk.y,
-    offset: snapshot.offset,
-    depth: snapshot.depth,
-  });
+  return claims.at(0)?.patches ?? [];
 }
 
-/**
- * Which of this chunk's happenings this player has already walked
- * into this hour. The board stops drawing them: a cloud already dug
- * through is a cell that would answer nothing
- */
-export async function listClaimedPhenomena(snapshot: ChunkSnapshot): Promise<number[]> {
-  return (await claimsOf(snapshot)).phenomena;
-}
+export async function listDugCachesOnServer(
+  token: string,
+  x: number,
+  y: number,
+  offset: number,
+  depth: Depth,
+): Promise<number[]> {
+  'use server';
+  const claims = await listClaimsForOnServerSide(
+    await requireUid(token),
+    [{ x, y, offset, depth }],
+    await syncServerClock(),
+  );
 
-/**
- * Which of this chunk's patches this player has already picked this
- * window. The board draws those as bare bushes: a patch that would
- * answer nothing should not be drawn in fruit
- */
-export async function listPickedBerryPatches(snapshot: ChunkSnapshot): Promise<number[]> {
-  return (await claimsOf(snapshot)).patches;
-}
-
-/**
- * Which of this chunk's caches this player has already dug up this
- * window. The board draws those open and empty, for the same reason it
- * draws a picked patch bare
- */
-export async function listClaimedItemCaches(snapshot: ChunkSnapshot): Promise<number[]> {
-  return (await claimsOf(snapshot)).caches;
+  return claims.at(0)?.caches ?? [];
 }
 
 /**
@@ -665,4 +663,64 @@ async function meetSpawnOnServer(
 ): Promise<EncounterRecord | null> {
   'use server';
   return meetSpawn(await requireUid(token), x, y, spawn, await syncServerClock(), offset, depth);
+}
+
+function claimKey(query: ClaimQuery): string {
+  return `${query.depth}|${query.offset}|${query.x},${query.y}`;
+}
+
+// Last in the file, so adding it moved no other server function's place
+async function listClaimsOnServer(token: string, queries: ClaimQuery[]): Promise<ChunkClaims[]> {
+  'use server';
+  return listClaimsForOnServerSide(await requireUid(token), queries, await syncServerClock());
+}
+
+/**
+ * Every claim list the board asks for in the same moment, in one server
+ * call. A window turning over asks three lists of every chunk in range,
+ * so they all land here together and a chunk's three share one answer
+ */
+const readChunkClaims = batchedQuery(
+  async (queries: ClaimQuery[]): Promise<ChunkClaims[]> =>
+    listClaimsOnServer(await getIdToken(), queries),
+  // Answered in the order asked, so a query's place in the batch is its answer
+  (answers, _query, index): ChunkClaims =>
+    answers.at(index) ?? { phenomena: [], patches: [], caches: [] },
+  { key: claimKey, limit: CLAIM_CHUNK_LIMIT },
+);
+
+async function claimsOf(snapshot: ChunkSnapshot): Promise<ChunkClaims> {
+  return readChunkClaims({
+    x: snapshot.chunk.x,
+    y: snapshot.chunk.y,
+    offset: snapshot.offset,
+    depth: snapshot.depth,
+  });
+}
+
+/**
+ * Which of this chunk's happenings this player has already walked
+ * into this hour. The board stops drawing them: a cloud already dug
+ * through is a cell that would answer nothing
+ */
+export async function listClaimedPhenomena(snapshot: ChunkSnapshot): Promise<number[]> {
+  return (await claimsOf(snapshot)).phenomena;
+}
+
+/**
+ * Which of this chunk's patches this player has already picked this
+ * window. The board draws those as bare bushes: a patch that would
+ * answer nothing should not be drawn in fruit
+ */
+export async function listPickedBerryPatches(snapshot: ChunkSnapshot): Promise<number[]> {
+  return (await claimsOf(snapshot)).patches;
+}
+
+/**
+ * Which of this chunk's caches this player has already dug up this
+ * window. The board draws those open and empty, for the same reason it
+ * draws a picked patch bare
+ */
+export async function listClaimedItemCaches(snapshot: ChunkSnapshot): Promise<number[]> {
+  return (await claimsOf(snapshot)).caches;
 }

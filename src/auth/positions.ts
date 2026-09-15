@@ -37,12 +37,16 @@ function fromPositionRow(row: Record<string, unknown>): PositionRecord {
  * anywhere — a new player is placed by `pickStartPosition` instead
  */
 export async function getPosition(uid: string): Promise<PositionRecord | null> {
-  const { data } = await getSupabase()
+  const { data, error } = await getSupabase()
     .from('positions')
     .select('player, chunk_x, chunk_y, cell_x, cell_y, depth, moved_at')
     .eq('player', uid)
     .maybeSingle();
 
+  // Thrown rather than read as "never walked", which would put a start position over the real one
+  if (error != null) {
+    throw new Error(error.message);
+  }
   return data == null ? null : fromPositionRow(asRecord(data));
 }
 
@@ -80,6 +84,43 @@ export function watchPosition(
     async () => getPosition(uid),
     onChange,
     fromPositionRow,
+  );
+}
+
+/**
+ * Remember where the player is standing. Answers the stamp it was
+ * written under, so the caller can tell its own write coming back
+ * around the subscription
+ */
+export async function savePosition(
+  chunkX: number,
+  chunkY: number,
+  cellX: number,
+  cellY: number,
+  depth: Depth,
+): Promise<number> {
+  return savePositionOnServer(await getIdToken(), chunkX, chunkY, cellX, cellY, depth);
+}
+
+// A server function is addressed by its place in this file, so this one
+// keeps its slot and its arguments for tabs loaded before a deploy
+async function savePositionOnServer(
+  token: string,
+  chunkX: number,
+  chunkY: number,
+  cellX: number,
+  cellY: number,
+  depth: Depth,
+): Promise<number> {
+  'use server';
+  return savePositionOnServerSide(
+    await requireUid(token),
+    chunkX,
+    chunkY,
+    cellX,
+    cellY,
+    depth,
+    await syncServerClock(),
   );
 }
 

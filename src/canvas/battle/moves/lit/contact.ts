@@ -1,8 +1,27 @@
 import type { Spot } from '../../../three/effect-batch';
 import { decay, lighten, mix, noise, spread, swell } from '../__paint';
 import { type EffectShape, STRIKES, many } from '../effect/shapes';
-import { TAU, bolt, bone, debris, smoke, sparks, spiral } from './pieces';
-import { type LitShapePainter, aside, floorOf, landed, reachOf, staged, toward } from './shapes';
+import { TAU, bolt, bone, debris, imbue, smoke, sparks, spiral } from './pieces';
+import {
+  type LitShapePainter,
+  aside,
+  floorOf,
+  landed,
+  late,
+  reachOf,
+  staged,
+  thrown,
+  toward,
+} from './shapes';
+
+/** A spot `distance` back from `at` along the ground toward the caster */
+export function backToward(at: Spot, from: Spot, distance: number): Spot {
+  const dx = from[0] - at[0];
+  const dz = from[2] - at[2];
+  const length = Math.max(1e-3, Math.hypot(dx, dz));
+
+  return [at[0] + (dx / length) * distance, at[1], at[2] + (dz / length) * distance];
+}
 
 /**
  * The blows that touch, in the battle scene: the same shapes as the
@@ -388,6 +407,142 @@ const contact = {
         decay(since),
       );
     }
+  },
+
+  // A fist that lands with its element breaking off it
+  Punch(kit, stage, share, { paint, seed, weight, type }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const out = Math.min(1, share * 2.5);
+
+    kit.glow(
+      at,
+      reach * (0.4 + out * 0.4),
+      lighten(colour, 0.5),
+      decay(Math.min(1, share * 2)),
+      0.9,
+    );
+    kit.ring(at, reach * (0.2 + out * 0.8), 0.14, lighten(colour, 0.4), decay(share));
+    kit.star(
+      at,
+      reach * (0.6 + out * 0.5),
+      0.4,
+      lighten(colour, 0.6),
+      decay(Math.min(1, share * 1.6)),
+    );
+    imbue(kit, at, reach, share, seed, type, colour, many(8, weight));
+  },
+
+  // A ring of fire rolled in from the caster's side, bursting as it arrives
+  Wheel(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const hot = mix(colour, '#ffd84a', 0.6);
+    const roll = Math.min(1, share * 2);
+    const centre = backToward(at, stage.source, reach * 2.5 * (1 - roll));
+    const rim = share < 0.5 ? 1 : decay((share - 0.5) * 2);
+    // Turning forward, toward whichever side of the picture the target is on
+    const way = Math.cos(kit.angleOn(stage.source, at)) < 0 ? 1 : -1;
+
+    kit.glow(centre, reach * 0.9, colour, rim * 0.35, 0.2);
+    kit.ring(centre, reach * 0.8, 0.18, hot, rim * 0.8);
+    for (let lick = 0; lick < 12; lick += 1) {
+      const angle = (lick / 12) * TAU + share * TAU * 3 * way;
+
+      kit.glow(
+        aside(kit, centre, Math.cos(angle) * reach * 0.8, Math.sin(angle) * reach * 0.8),
+        reach * 0.3,
+        lick % 2 === 0 ? hot : colour,
+        rim * 0.9,
+        0.4,
+      );
+    }
+    if (roll < 1) {
+      return;
+    }
+    const hit = (share - 0.5) * 2;
+
+    kit.pool(floorOf(at), reach * 1.6, colour, decay(hit) * 0.6);
+    kit.ring(at, reach * (0.8 + hit * 1.6), 0.1, hot, decay(hit));
+    sparks(kit, at, reach * 1.4, many(8, weight), seed, hit, hot, decay(hit));
+  },
+
+  // A column of water driven up through it from the ground, and the spray coming back down
+  Torrent(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const foam = lighten(colour, 0.55);
+    const up = Math.min(1, share * 2.5);
+    const fade = late(share, 0.55);
+    const top: Spot = [floor[0], reach * 4.2 * up, floor[2]];
+    const width = reach * 0.7 * (1 - share * 0.3);
+    const fall = Math.max(0, (share - 0.25) / 0.75);
+    const path: Spot[] = [];
+
+    for (let step = 0; step <= 8; step += 1) {
+      path.push(toward(floor, top, step / 8));
+    }
+    kit.pool(floor, reach * (1 + share * 1.2), colour, fade * 0.5, { add: 0.4 });
+    kit.ribbon(path, width * 2, colour, fade * 0.35, share * 12);
+    kit.ribbon(path, width, lighten(colour, 0.25), fade, share * 16);
+    kit.glow(top, reach * 0.6 * up, foam, fade * 0.6, 0.6);
+    for (let wave = 0; wave < 2; wave += 1) {
+      const held = staged(share, 1.4, wave * 0.3);
+
+      if (held > 0) {
+        kit.ripple(floor, reach * (0.4 + held * 2), 0.1, foam, decay(held) * 0.9);
+      }
+    }
+    for (let drop = 0; drop < many(12, weight); drop += 1) {
+      kit.trail(
+        thrown(top, seed, drop, Math.max(0, fall - 0.07), reach * 1.8, reach * 0.8),
+        thrown(top, seed, drop, fall, reach * 1.8, reach * 0.8),
+        reach * 0.06,
+        foam,
+        late(fall, 0.6) * 0.9 * Math.min(1, fall * 10),
+      );
+    }
+  },
+
+  // The whole body arriving wrapped in its element, with the rush that brought it still behind it
+  Rush(kit, stage, share, { paint, seed, weight, type }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const fade = decay(share);
+    const tail = backToward(at, stage.source, reach * 3);
+    const head = backToward(at, stage.source, reach * 0.8);
+
+    for (let line = 0; line < 4; line += 1) {
+      const up = (line - 1.5) * reach * 0.4;
+
+      kit.trail(
+        aside(kit, tail, 0, up),
+        aside(kit, head, 0, up),
+        reach * 0.05,
+        lighten(colour, 0.4),
+        decay(Math.min(1, share * 2.5)) * 0.8,
+      );
+    }
+    kit.pool(floor, reach * 1.6, '#1a120c', swell(share) * 0.35, { add: 0 });
+    kit.ripple(floor, reach * (0.5 + share * 2.2), 0.09, lighten(colour, 0.3), fade * 0.9);
+    kit.glow(at, reach * (0.9 + swell(share) * 0.5), colour, fade * 0.5, 0.3);
+    debris(
+      kit,
+      floor,
+      reach * 0.8,
+      many(6, weight),
+      seed,
+      share,
+      mix(colour, '#6b5440', 0.45),
+      fade,
+    );
+    imbue(kit, at, reach * 1.3, share, seed, type, colour, many(10, weight));
   },
 
   // Several strikes rather than one, each landing a little apart

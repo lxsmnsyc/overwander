@@ -1,3 +1,4 @@
+import type { Types } from '../../../../data/constants/types';
 import { MoveCategories, type Moves } from '../../../../data/ids/moves';
 import { getMoveData } from '../../../../data/moves';
 import type { Point, Stage } from '../../stage';
@@ -109,6 +110,27 @@ export type EffectShape =
   | 'Gyro'
   | 'Petals'
   | 'Cross'
+  | 'Punch'
+  | 'Wheel'
+  | 'Torrent'
+  | 'Rush'
+  | 'Stall'
+  | 'Rend'
+  | 'Verdict'
+  | 'Sunburst'
+  | 'Ambush'
+  | 'Vortex'
+  | 'Pyre'
+  | 'Upheaval'
+  | 'Plume'
+  | 'Lustre'
+  | 'Starfall'
+  | 'Grip'
+  | 'Surge'
+  | 'Moonlit'
+  | 'Exchange'
+  | 'Void'
+  | 'Cannon'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -170,6 +192,27 @@ export const SPANS: Record<EffectShape, number> = {
   Gyro: 900,
   Petals: 760,
   Cross: 460,
+  Punch: 460,
+  Wheel: 620,
+  Torrent: 700,
+  Rush: 620,
+  Stall: 1000,
+  Rend: 820,
+  Verdict: 900,
+  Sunburst: 760,
+  Ambush: 720,
+  Vortex: 900,
+  Pyre: 900,
+  Upheaval: 820,
+  Plume: 820,
+  Lustre: 820,
+  Starfall: 900,
+  Grip: 900,
+  Surge: 900,
+  Moonlit: 1000,
+  Exchange: 900,
+  Void: 1000,
+  Cannon: 820,
   Whiff: 320,
 };
 
@@ -206,6 +249,8 @@ export interface Draw {
   seed: number;
   /** How hard it hits, from about 0.85 to 1.75. */
   weight: number;
+  /** The move's type, for the shapes that wrap a blow in its element */
+  type: Types;
 }
 
 /** A count scaled by weight, never below one. */

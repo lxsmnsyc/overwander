@@ -521,6 +521,11 @@ const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
   Boost: 'Focus',
   Trance: 'Gaze',
   Warp: 'Gaze',
+  Stall: 'Gaze',
+  Rend: 'Gaze',
+  Exchange: 'Gaze',
+  Void: 'Gaze',
+  Moonlit: 'Gather',
   Wave: 'Call',
 };
 

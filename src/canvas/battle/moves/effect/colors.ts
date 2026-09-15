@@ -42,6 +42,18 @@ const BY_SHAPE: Partial<Record<EffectShape, string>> = {
   // dust blowing past rather than of a scent
   Petals: '#f2a0c8',
   Whiff: '#c8ccd4',
+  // Dialga's steel blue and Palkia's pink, which the Dragon type's colour is neither of
+  Stall: '#8fb0f0',
+  Rend: '#f07ccf',
+  // Light whatever plate it carries: the move's type changes in battle and the picture cannot know
+  Verdict: '#fff2b4',
+  // Latias' red-white down and Latios' blue light, so the pair read as each other's counterpart
+  Plume: '#f6a9bd',
+  Lustre: '#8cc8ff',
+  // Jirachi's gold, Regigigas' pale stone and Cresselia's moonlight, where the type's colour is grey
+  Starfall: '#ffe27a',
+  Grip: '#e2dcc0',
+  Moonlit: '#e0d4ff',
 };
 
 const SCREEN_COLORS: Partial<Record<Moves, string>> = {

@@ -233,12 +233,14 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.FrenzyPlant]: 'Roots',
 
   // Jets and light, which the type alone would have drawn as a cloud
-  [Moves.HydroCannon]: 'Beam',
   [Moves.SignalBeam]: 'Beam',
-  [Moves.LusterPurge]: 'Dazzle',
-  [Moves.DoomDesire]: 'Dazzle',
   [Moves.Extrasensory]: 'Warp',
-  [Moves.PsychoBoost]: 'Blast',
+  // The mythical and legendary signatures: a ball of down and a flare of light for the Eon pair,
+  // a falling star, and a psychic blast
+  [Moves.MistBall]: 'Plume',
+  [Moves.LusterPurge]: 'Lustre',
+  [Moves.DoomDesire]: 'Starfall',
+  [Moves.PsychoBoost]: 'Surge',
   [Moves.SpitUp]: 'Blast',
 
   // Fire that is fire wherever it comes from
@@ -315,7 +317,9 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.AquaRing]: 'Gyro',
   [Moves.HealOrder]: 'Mend',
   [Moves.HealingWish]: 'Mend',
-  [Moves.LunarDance]: 'Mend',
+  // Moonlight and the dark it answers, for the Lunar pair
+  [Moves.LunarDance]: 'Moonlit',
+  [Moves.DarkVoid]: 'Void',
 
   // Laid on the ground for whatever walks in next, the way Spikes is
   [Moves.StealthRock]: 'Caltrops',
@@ -326,28 +330,29 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Switcheroo]: 'Warp',
   [Moves.GuardSwap]: 'Warp',
   [Moves.PowerSwap]: 'Warp',
-  [Moves.HeartSwap]: 'Warp',
+  // Two hearts trading places between them
+  [Moves.HeartSwap]: 'Exchange',
   [Moves.PsychoShift]: 'Warp',
   [Moves.PowerTrick]: 'Warp',
   [Moves.Copycat]: 'Warp',
   [Moves.MeFirst]: 'Warp',
 
-  // Time and space themselves, which bend rather than strike
-  [Moves.RoarOfTime]: 'Warp',
-  [Moves.SpacialRend]: 'Warp',
+  // Time stopping and space torn open
+  [Moves.RoarOfTime]: 'Stall',
+  [Moves.SpacialRend]: 'Rend',
   // A room laid over the field, and a weight put on it
   [Moves.TrickRoom]: 'Grid',
   [Moves.Gravity]: 'Press',
 
   // Something turning in front of its eyes
-  [Moves.DarkVoid]: 'Trance',
   [Moves.MiracleEye]: 'Trance',
   [Moves.Captivate]: 'Hearts',
 
   // Wound round it, or closing on it
-  [Moves.MagmaStorm]: 'Coil',
+  [Moves.MagmaStorm]: 'Vortex',
   [Moves.WorrySeed]: 'Coil',
-  [Moves.CrushGrip]: 'Coil',
+  // Two great hands closing on it
+  [Moves.CrushGrip]: 'Grip',
   [Moves.WringOut]: 'Coil',
 
   // Jets and beams, which the type alone would have drawn as a cloud
@@ -355,9 +360,10 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.DragonPulse]: 'Beam',
   [Moves.FlashCannon]: 'Beam',
 
+  // Light coming down on it, and light bursting up off it
+  [Moves.Judgment]: 'Verdict',
+  [Moves.SeedFlare]: 'Sunburst',
   // Light rather than an element
-  [Moves.Judgment]: 'Dazzle',
-  [Moves.SeedFlare]: 'Dazzle',
   [Moves.MirrorShot]: 'Dazzle',
   [Moves.PowerGem]: 'Dazzle',
 
@@ -417,6 +423,24 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   // A stat that rises without the move naming which one, so the stage
   // rule above never sees it
   [Moves.Acupressure]: 'Boost',
+
+  // Out of the dark behind whatever it hits
+  [Moves.ShadowForce]: 'Ambush',
+
+  // Fire that stands as a pillar
+  [Moves.SacredFire]: 'Pyre',
+  // The starter trio's strongest moves each burst out of the ground round it, the way Frenzy Plant's roots do
+  [Moves.BlastBurn]: 'Upheaval',
+  [Moves.HydroCannon]: 'Cannon',
+
+  // A blow wrapped in its element, which a plain hit in the type's colour did not say
+  [Moves.FirePunch]: 'Punch',
+  [Moves.IcePunch]: 'Punch',
+  [Moves.ThunderPunch]: 'Punch',
+  [Moves.FlareBlitz]: 'Rush',
+  [Moves.VoltTackle]: 'Rush',
+  [Moves.FlameWheel]: 'Wheel',
+  [Moves.Waterfall]: 'Torrent',
 
   // Struck and gone: the blow is the first step and the walk off the
   // field is the second, which is why the landing here is the leaving

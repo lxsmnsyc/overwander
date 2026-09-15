@@ -1,5 +1,8 @@
+import { Types } from '../../../../data/constants/types';
 import type { Point } from '../../stage';
 import {
+  type Painted,
+  beam,
   between,
   bolt,
   bone,
@@ -8,6 +11,8 @@ import {
   edge,
   jaw,
   lash,
+  lighten,
+  mix,
   motes,
   noise,
   orb,
@@ -16,10 +21,79 @@ import {
   shards,
   slash,
   spiral,
+  spread,
   swell,
 } from '../__paint';
 import type { EffectShape, ShapePainter } from './shapes';
 import { REACH, STRIKES, landing, many } from './shapes';
+
+/** A blow's element breaking off where it lands: flames, frost or sparks, and plain spokes for any other type */
+function imbue(
+  context: CanvasRenderingContext2D,
+  at: Point,
+  size: number,
+  share: number,
+  seed: number,
+  paint: Painted,
+  type: Types,
+  scale: number,
+): void {
+  const fade = decay(share);
+
+  if (type === Types.Fire) {
+    const hot = mix(paint.color, '#ffd84a', 0.6);
+
+    for (let lick = 0; lick < 5; lick += 1) {
+      const rise = (share * 1.6 + noise(seed, lick)) % 1;
+
+      orb(
+        context,
+        [at[0] + spread(seed, lick + 5) * size * 0.6, at[1] + size * 0.3 - rise * size * 1.6],
+        size * 0.35 * (1 - rise * 0.6),
+        { color: rise < 0.4 ? hot : paint.color, alpha: swell(rise) * fade },
+      );
+    }
+    return;
+  }
+  if (type === Types.Ice) {
+    shards(context, at, size * 1.4, 7, seed, share, {
+      color: lighten(paint.color, 0.45),
+      alpha: fade,
+      width: 2.6 * scale,
+    });
+    return;
+  }
+  if (type === Types.Electric) {
+    const flick = Math.floor(share * 16);
+
+    for (let arc = 0; arc < 3; arc += 1) {
+      const angle = noise(seed + flick, arc) * Math.PI * 2;
+
+      bolt(
+        context,
+        at,
+        [at[0] + Math.cos(angle) * size * 1.3, at[1] + Math.sin(angle) * size * 1.3],
+        seed + flick * 7 + arc,
+        { ...paint, alpha: fade * (flick % 3 === 2 ? 0.5 : 1), width: 2 * scale },
+      );
+    }
+    return;
+  }
+  burst(context, at, size * (0.5 + share * 0.8), 6, seed, {
+    ...paint,
+    alpha: fade,
+    width: 2.4 * scale,
+  });
+}
+
+/** A point `distance` back from `at` toward the caster */
+export function backToward(at: Point, from: Point, distance: number): Point {
+  const dx = from[0] - at[0];
+  const dy = from[1] - at[1];
+  const length = Math.max(1, Math.hypot(dx, dy));
+
+  return [at[0] + (dx / length) * distance, at[1] + (dy / length) * distance];
+}
 
 /**
  * The shapes a blow lands as when it touches: a fist, a tooth, a
@@ -361,6 +435,115 @@ const contact = {
         alpha: share < 0.6 ? 1 : Math.min(1, decay(share) * 2.5),
       });
     }
+  },
+
+  // A fist that lands with its element breaking off it
+  Punch(context, stage, share, { paint, seed, weight, type }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const out = Math.min(1, share * 2.5);
+
+    orb(context, at, size * 0.4 * decay(out), { ...paint, alpha: decay(share) });
+    ring(context, at, size * (0.2 + out * 0.8), {
+      ...paint,
+      alpha: decay(share),
+      width: 3.6 * stage.scale,
+    });
+    imbue(context, at, size, share, seed, paint, type, stage.scale);
+  },
+
+  // A ring of fire rolled in from the caster's side, bursting as it arrives
+  Wheel(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const roll = Math.min(1, share * 2);
+    const centre = backToward(at, stage.source, size * 2.5 * (1 - roll));
+    const rim = share < 0.5 ? 1 : decay((share - 0.5) * 2);
+    const hot = mix(paint.color, '#ffd84a', 0.6);
+    // Turning forward, toward whichever side the target is on
+    const way = at[0] < stage.source[0] ? -1 : 1;
+
+    for (let lick = 0; lick < 10; lick += 1) {
+      const angle = (lick / 10) * Math.PI * 2 + share * Math.PI * 6 * way;
+
+      orb(
+        context,
+        [centre[0] + Math.cos(angle) * size * 0.8, centre[1] + Math.sin(angle) * size * 0.8],
+        size * 0.24,
+        { color: lick % 2 === 0 ? hot : paint.color, alpha: rim * 0.9 },
+      );
+    }
+    if (roll < 1) {
+      return;
+    }
+    const hit = (share - 0.5) * 2;
+
+    ring(context, at, size * (0.8 + hit * 1.6), {
+      color: hot,
+      alpha: decay(hit),
+      width: 3 * stage.scale,
+    });
+    motes(context, at, size * 1.6, many(8, weight), seed, hit, {
+      color: hot,
+      alpha: decay(hit),
+      width: 2.2 * stage.scale,
+    });
+  },
+
+  // A column of water driven up through it from the ground, and the spray coming back down
+  Torrent(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const foot: Point = [at[0], at[1] + size * 0.8];
+
+    beam(
+      context,
+      foot,
+      [at[0], at[1] - size * 3.2],
+      Math.min(1, share * 2.5),
+      size * 0.6 * (1 - share * 0.4),
+      { ...paint, alpha: decay(share) },
+    );
+    ripple(context, foot, size * (0.5 + share * 1.6), {
+      ...paint,
+      alpha: decay(share),
+      width: 3 * stage.scale,
+    });
+    motes(context, [at[0], at[1] - size * 1.6], size * 1.8, many(10, weight), seed, share, {
+      color: lighten(paint.color, 0.4),
+      alpha: decay(share) * 0.9,
+      width: 2.2 * stage.scale,
+    });
+  },
+
+  // The whole body arriving wrapped in its element, with the rush that brought it still behind it
+  Rush(context, stage, share, { paint, seed, weight, type }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const tail = backToward(at, stage.source, size * 3);
+    const head = backToward(at, stage.source, size * 0.8);
+    const dx = head[0] - tail[0];
+    const dy = head[1] - tail[1];
+    const length = Math.max(1, Math.hypot(dx, dy));
+
+    for (let line = 0; line < 4; line += 1) {
+      const off = (line - 1.5) * size * 0.4;
+      const ox = (-dy / length) * off;
+      const oy = (dx / length) * off;
+
+      lash(context, [tail[0] + ox, tail[1] + oy], [head[0] + ox, head[1] + oy], 0, {
+        ...paint,
+        alpha: decay(Math.min(1, share * 2.5)) * 0.8,
+        width: 2 * stage.scale,
+      });
+    }
+    orb(context, at, size * (0.8 + swell(share) * 0.5), { ...paint, alpha: decay(share) * 0.7 });
+    ripple(context, at, size * (0.5 + share * 2.2), {
+      ...paint,
+      alpha: decay(share) * 0.9,
+      width: 3.4 * stage.scale,
+    });
+    imbue(context, at, size * 1.3, share, seed, paint, type, stage.scale);
   },
 
   // Several strikes rather than one: the move lands two to five

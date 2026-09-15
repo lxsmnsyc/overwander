@@ -1,7 +1,8 @@
+import { Types } from '../../../../data/constants/types';
 import type EffectBatch from '../../../three/effect-batch';
 import type { Spot } from '../../../three/effect-batch';
-import { lighten, noise, spread } from '../__paint';
-import { aside, thrown, toward } from './shapes';
+import { decay, lighten, mix, noise, spread, swell } from '../__paint';
+import { aside, floorOf, thrown, toward } from './shapes';
 
 /**
  * Pieces more than one scene picture is built from: sparks, debris,
@@ -220,6 +221,93 @@ export function dome(
     }
     kit.ribbon(path, radius * 0.04, colour, alpha * 0.5);
   }
+}
+
+/** A blow's element breaking off where it lands: flames, frost or sparks, and plain sparks for any other type */
+export function imbue(
+  kit: EffectBatch,
+  at: Spot,
+  reach: number,
+  share: number,
+  seed: number,
+  type: Types,
+  colour: string,
+  count: number,
+): void {
+  const fade = decay(share);
+
+  if (type === Types.Fire) {
+    const hot = mix(colour, '#ffd84a', 0.6);
+
+    kit.pool(floorOf(at), reach * 1.4, colour, swell(share) * 0.5);
+    for (let lick = 0; lick < count; lick += 1) {
+      const rise = (share * 1.8 + noise(seed, lick)) % 1;
+      const angle = noise(seed, lick + 5) * TAU;
+      const round = reach * 0.6 * (1 - rise * 0.5);
+
+      kit.glow(
+        aside(
+          kit,
+          at,
+          Math.cos(angle) * round,
+          -reach * 0.2 + rise * reach * 1.4,
+          Math.sin(angle) * round * 0.6,
+        ),
+        reach * 0.3 * (1 - rise * 0.6),
+        rise < 0.4 ? hot : colour,
+        swell(rise) * fade,
+        rise < 0.4 ? 0.5 : 0.1,
+      );
+    }
+    return;
+  }
+  if (type === Types.Ice) {
+    const ice = lighten(colour, 0.45);
+
+    kit.glow(at, reach * (0.6 + share * 0.6), ice, swell(share) * 0.35, 0, { add: 0.3 });
+    for (let piece = 0; piece < count; piece += 1) {
+      kit.shard(
+        thrown(at, seed, piece, share, reach * 1.4, reach * 0.8),
+        reach * 0.16 * (0.7 + noise(seed, piece + 60) * 0.6),
+        noise(seed, piece) * TAU + share * 4,
+        ice,
+        fade,
+        { add: 0.25 },
+      );
+    }
+    for (let glint = 0; glint < 3; glint += 1) {
+      kit.star(
+        aside(kit, at, spread(seed, glint + 71) * reach, spread(seed, glint + 72) * reach),
+        reach * 0.22,
+        0,
+        '#ffffff',
+        swell((share * 2 + noise(seed, glint + 70)) % 1) * fade,
+      );
+    }
+    return;
+  }
+  if (type === Types.Electric) {
+    const flick = Math.floor(share * 16);
+    const bright = fade * (flick % 3 === 2 ? 0.5 : 1);
+
+    kit.pool(floorOf(at), reach * 1.4, colour, bright * 0.4);
+    for (let arc = 0; arc < 3; arc += 1) {
+      const angle = noise(seed + flick, arc) * TAU;
+
+      bolt(
+        kit,
+        at,
+        aside(kit, at, Math.cos(angle) * reach * 1.3, Math.sin(angle) * reach * 1.3),
+        seed + flick * 7 + arc,
+        reach * 0.5,
+        reach * 0.06,
+        colour,
+        bright,
+      );
+    }
+    return;
+  }
+  sparks(kit, at, reach, count, seed, share, lighten(colour, 0.5), fade);
 }
 
 /** Where a spot a share of the way along a line is, lifted into an arc. */

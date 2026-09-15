@@ -158,6 +158,32 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Petals', Moves.SweetScent],
   // Two cuts across each other
   ['Cross', Moves.XScissor],
+  // A blow wrapped in its element, once for each element it is drawn with
+  ['Punch', Moves.FirePunch],
+  ['Punch', Moves.IcePunch],
+  ['Punch', Moves.ThunderPunch],
+  ['Rush', Moves.FlareBlitz],
+  ['Rush', Moves.VoltTackle],
+  ['Wheel', Moves.FlameWheel],
+  ['Torrent', Moves.Waterfall],
+  // The legendary signatures
+  ['Stall', Moves.RoarOfTime],
+  ['Rend', Moves.SpacialRend],
+  ['Verdict', Moves.Judgment],
+  ['Sunburst', Moves.SeedFlare],
+  ['Ambush', Moves.ShadowForce],
+  ['Vortex', Moves.MagmaStorm],
+  ['Pyre', Moves.SacredFire],
+  ['Upheaval', Moves.BlastBurn],
+  ['Plume', Moves.MistBall],
+  ['Lustre', Moves.LusterPurge],
+  ['Starfall', Moves.DoomDesire],
+  ['Grip', Moves.CrushGrip],
+  ['Surge', Moves.PsychoBoost],
+  ['Moonlit', Moves.LunarDance],
+  ['Exchange', Moves.HeartSwap],
+  ['Void', Moves.DarkVoid],
+  ['Cannon', Moves.HydroCannon],
 ];
 
 /**
@@ -332,8 +358,8 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.Ingrain)).toBe('Roots');
     expect(effectShapeFor(Moves.FrenzyPlant)).toBe('Roots');
     // A jet rather than a cloud, and light rather than a shadow
-    expect(effectShapeFor(Moves.HydroCannon)).toBe('Beam');
-    expect(effectShapeFor(Moves.LusterPurge)).toBe('Dazzle');
+    expect(effectShapeFor(Moves.SignalBeam)).toBe('Beam');
+    expect(effectShapeFor(Moves.LusterPurge)).toBe('Lustre');
     // Under the water and up under it, up out of reach and down on it
     expect(delayShapeFor(Moves.Dive, 1)).toBe('Vanish');
     expect(delayShapeFor(Moves.Dive, 0)).toBe('Surface');
@@ -349,13 +375,13 @@ describe('a painted move', () => {
   it('draws the Sinnoh moves the rules alone would have drawn wrong', () => {
     // Health coming back, whatever the move is called
     expect(effectShapeFor(Moves.Roost)).toBe('Mend');
-    expect(effectShapeFor(Moves.LunarDance)).toBe('Mend');
+    expect(effectShapeFor(Moves.HealingWish)).toBe('Mend');
     // Laid on the ground rather than marked on whoever is standing there
     expect(effectShapeFor(Moves.StealthRock)).toBe('Caltrops');
     expect(effectShapeFor(Moves.ToxicSpikes)).toBe('Caltrops');
     // Held between the two of them, the way Trick and Skill Swap are
     expect(effectShapeFor(Moves.Switcheroo)).toBe('Warp');
-    expect(effectShapeFor(Moves.HeartSwap)).toBe('Warp');
+    expect(effectShapeFor(Moves.GuardSwap)).toBe('Warp');
     // A room over the field and a weight on it: the two moves that
     // change the rules everybody is fighting under
     expect(effectShapeFor(Moves.TrickRoom)).toBe('Grid');
@@ -365,9 +391,9 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.DarkPulse)).toBe('Shade');
     expect(effectShapeFor(Moves.DragonPulse)).toBe('Beam');
     expect(effectShapeFor(Moves.FocusBlast)).toBe('Blast');
-    expect(effectShapeFor(Moves.Judgment)).toBe('Dazzle');
+    expect(effectShapeFor(Moves.PowerGem)).toBe('Dazzle');
     // What traps is drawn as what traps, whatever it is made of
-    expect(effectShapeFor(Moves.MagmaStorm)).toBe('Coil');
+    expect(effectShapeFor(Moves.WringOut)).toBe('Coil');
     // Lobbed rather than shot flat, and laid rather than thrown at
     expect(delayShapeFor(Moves.SeedBomb, 0)).toBe('Lobbed');
     expect(delayShapeFor(Moves.StealthRock, 0)).toBe('Lobbed');

@@ -11,6 +11,7 @@ import care from './care';
 import colorOf from './colors';
 import contact from './contact';
 import elements from './elements';
+import legends from './legends';
 import minds from './minds';
 import { BY_TYPE, NAMED } from './named';
 
@@ -86,6 +87,7 @@ const PAINTERS: Record<EffectShape, ShapePainter> = {
   ...elements,
   ...minds,
   ...care,
+  ...legends,
 };
 
 /**
@@ -199,6 +201,7 @@ export function moveMissVisual(move: Moves): PaintedVisual {
 
 function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual {
   const paint: Painted = { color: colorOf(move, shape) };
+  const { type } = getMoveData(move);
   const painter: Painter = (context, stage, share) => {
     // Once per pokemon it reached. A move aimed at a whole team lands
     // on all of them at once, and the shape has no idea how many that
@@ -213,6 +216,7 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
         paint,
         seed: move + 1,
         weight,
+        type,
       });
       return;
     }
@@ -225,7 +229,7 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
         // The move itself, so a scatter is the same scatter every time
         // it goes off: two Embers look like the same move rather than
         // like two accidents
-        { paint, seed: move + 1 + at * 97, weight },
+        { paint, seed: move + 1 + at * 97, weight, type },
       );
     }
   };
@@ -244,6 +248,7 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
               paint,
               seed: move + 1,
               weight,
+              type,
             });
             return;
           }
@@ -252,6 +257,7 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
               paint,
               seed: move + 1 + at * 97,
               weight,
+              type,
             });
           }
         };

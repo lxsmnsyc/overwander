@@ -157,6 +157,16 @@ export type EffectShape =
   | 'Aura'
   | 'Stream'
   | 'Kicks'
+  | 'Slumber'
+  | 'Sunbeam'
+  | 'Moonbeam'
+  | 'Greening'
+  | 'Wishing'
+  | 'Feathers'
+  | 'Swarm'
+  | 'Song'
+  | 'Roar'
+  | 'Chime'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -264,6 +274,16 @@ export const SPANS: Record<EffectShape, number> = {
   Aura: 760,
   Stream: 1000,
   Kicks: 700,
+  Slumber: 1000,
+  Sunbeam: 900,
+  Moonbeam: 900,
+  Greening: 900,
+  Wishing: 1200,
+  Feathers: 1000,
+  Swarm: 1000,
+  Song: 1000,
+  Roar: 820,
+  Chime: 1000,
   Whiff: 320,
 };
 

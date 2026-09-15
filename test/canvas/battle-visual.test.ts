@@ -229,6 +229,20 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Stream', Moves.BoneRush],
   ['Kicks', Moves.DoubleKick],
   ['Kicks', Moves.TripleKick],
+  // Healing drawn as where it comes from, and sound heard as what it is
+  ['Slumber', Moves.Rest],
+  ['Sunbeam', Moves.MorningSun],
+  ['Moonbeam', Moves.Moonlight],
+  ['Greening', Moves.Synthesis],
+  ['Wishing', Moves.Wish],
+  ['Feathers', Moves.Roost],
+  ['Swarm', Moves.HealOrder],
+  ['Petals', Moves.Aromatherapy],
+  ['Song', Moves.Sing],
+  ['Song', Moves.PerishSong],
+  ['Roar', Moves.Roar],
+  ['Roar', Moves.BugBuzz],
+  ['Chime', Moves.HealBell],
 ];
 
 /**
@@ -384,8 +398,8 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.FalseSwipe)).toBe('Claw');
     // Sound answers status moves as well, which the other two do not:
     // a song that puts something to sleep is still a song
-    expect(effectShapeFor(Moves.HyperVoice)).toBe('Wave');
-    expect(effectShapeFor(Moves.GrassWhistle)).toBe('Wave');
+    expect(effectShapeFor(Moves.Uproar)).toBe('Wave');
+    expect(effectShapeFor(Moves.Supersonic)).toBe('Wave');
 
     // Unless it moved a stat, which is drawn as the stat. What the
     // move was is the gap it crossed, so a growl still carries as
@@ -419,7 +433,7 @@ describe('a painted move', () => {
 
   it('draws the Sinnoh moves the rules alone would have drawn wrong', () => {
     // Health coming back, whatever the move is called
-    expect(effectShapeFor(Moves.Roost)).toBe('Mend');
+    expect(effectShapeFor(Moves.SlackOff)).toBe('Mend');
     expect(effectShapeFor(Moves.HealingWish)).toBe('Mend');
     // Laid on the ground rather than marked on whoever is standing there
     expect(effectShapeFor(Moves.StealthRock)).toBe('Caltrops');

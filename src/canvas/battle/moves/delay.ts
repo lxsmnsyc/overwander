@@ -482,6 +482,8 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
   // Nothing crosses here either: the scent is given off where it
   // stands, and the petals are what arrives
   [Moves.SweetScent]: [undefined, 'Charge'],
+  // Petals too, but health coming back, so it waits the way healing does
+  [Moves.Aromatherapy]: [undefined, 'Gather'],
 
   // Sinnoh. Out of the world and back out of it behind whatever it is
   // hitting, which is the wait Dig and Fly spend
@@ -514,6 +516,13 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
 const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
   Haze: 'Drift',
   Mend: 'Gather',
+  Slumber: 'Gather',
+  Sunbeam: 'Gather',
+  Moonbeam: 'Gather',
+  Greening: 'Gather',
+  Wishing: 'Gather',
+  Feathers: 'Gather',
+  Swarm: 'Gather',
   Gyro: 'Gather',
   Drain: 'Gather',
   Ward: 'Brace',

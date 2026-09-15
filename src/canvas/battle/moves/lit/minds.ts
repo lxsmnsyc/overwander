@@ -1,8 +1,69 @@
+import type EffectBatch from '../../../three/effect-batch';
 import type { Spot } from '../../../three/effect-batch';
 import { decay, lighten, mix, noise, spread, swell } from '../__paint';
 import { type EffectShape, many } from '../effect/shapes';
 import { TAU, chevron, sparks, spiral } from './pieces';
-import { type LitShapePainter, aside, floorOf, landed, reachOf, staged } from './shapes';
+import {
+  type LitShapePainter,
+  aside,
+  floorOf,
+  landed,
+  late,
+  reachOf,
+  staged,
+  toward,
+} from './shapes';
+
+/** A music note on the picture: a round head, a stem and a flag */
+function note(kit: EffectBatch, at: Spot, size: number, colour: string, alpha: number): void {
+  const foot = aside(kit, at, size * 0.3);
+  const top = aside(kit, foot, 0, size * 1.1);
+
+  kit.puff(at, size * 0.35, colour, alpha);
+  kit.ribbon([foot, top], size * 0.12, colour, alpha, 0, { add: 0.3 });
+  kit.ribbon([top, aside(kit, top, size * 0.4, -size * 0.35)], size * 0.12, colour, alpha, 0, {
+    add: 0.3,
+  });
+}
+
+/** A bell on the picture hanging from its crown, turned by `tilt` */
+function bell(
+  kit: EffectBatch,
+  crown: Spot,
+  size: number,
+  tilt: number,
+  colour: string,
+  alpha: number,
+): void {
+  const turned = (x: number, y: number): Spot =>
+    aside(
+      kit,
+      crown,
+      x * Math.cos(tilt) - y * Math.sin(tilt),
+      x * Math.sin(tilt) + y * Math.cos(tilt),
+    );
+  const dome: Spot[] = [];
+
+  for (let step = 0; step <= 12; step += 1) {
+    const angle = Math.PI * (step / 12);
+    // Widening toward the lip, which is what makes a dome a bell
+    const flare = 1 + (1 - Math.sin(angle)) * 0.35;
+
+    dome.push(turned(Math.cos(angle) * size * 0.5 * flare, (Math.sin(angle) - 1) * size));
+  }
+  kit.ribbon(dome, size * 0.14, colour, alpha, 0, { add: 0.4 });
+  kit.ribbon(
+    [turned(-size * 0.7, -size), turned(size * 0.7, -size)],
+    size * 0.14,
+    colour,
+    alpha,
+    0,
+    {
+      add: 0.4,
+    },
+  );
+  kit.glow(turned(0, -size * 1.15), size * 0.14, lighten(colour, 0.4), alpha, 0.8);
+}
 
 /**
  * The shapes done to a mind rather than a body, in the battle scene:
@@ -336,6 +397,94 @@ const minds = {
       paint.color,
       swell(share) * 0.5,
     );
+  },
+  // Music notes drifting round it
+  Song(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const colour = lighten(paint.color, 0.2);
+
+    kit.ring(at, reach * (0.8 + share), 0.06, colour, swell(share) * 0.5);
+    for (let one = 0; one < many(6, weight); one += 1) {
+      const held = (share * 1.3 + noise(seed, one)) % 1;
+      const angle = noise(seed, one + 10) * TAU + share * TAU;
+      const round = reach * (1.3 - held * 0.4);
+
+      note(
+        kit,
+        [
+          at[0] + Math.cos(angle) * round,
+          at[1] + reach * (held * 1.4 - 0.2),
+          at[2] + Math.sin(angle) * round,
+        ],
+        reach * 0.35,
+        colour,
+        swell(held),
+      );
+    }
+  },
+
+  // Shock arcs rolling out of the caster toward it, widening as they go
+  Roar(kit, stage, share, { paint, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const light = lighten(paint.color, 0.4);
+    const angle = kit.angleOn(stage.source, at);
+
+    for (let pulse = 0; pulse < 3; pulse += 1) {
+      const held = (share * 1.4 + pulse * 0.33) % 1;
+      const front = toward(stage.source, at, held * 0.9);
+      const radius = reach * (0.5 + held * 1.6);
+      const arc: Spot[] = [];
+
+      for (let step = 0; step <= 10; step += 1) {
+        const turn = angle + (step / 10 - 0.5) * 1.8;
+
+        // Round a middle behind the front, so the arc's crown leads
+        arc.push(
+          aside(
+            kit,
+            front,
+            (Math.cos(turn) - Math.cos(angle)) * radius,
+            (Math.sin(turn) - Math.sin(angle)) * radius,
+          ),
+        );
+      }
+      kit.ribbon(arc, reach * 0.12 * (1 + held), light, decay(held) * 0.9);
+    }
+    kit.ring(at, reach * (0.6 + share * 1.2), 0.06, light, swell(share) * 0.6);
+  },
+
+  // A golden bell swinging over it, ringing out
+  Chime(kit, stage, share, { paint, seed }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const colour = paint.color;
+    const light = lighten(colour, 0.4);
+    const shown = Math.min(1, share * 4) * late(share, 0.8);
+    const crown = aside(kit, at, 0, reach * 1.8);
+
+    bell(kit, crown, reach * 0.9, Math.sin(share * TAU * 2) * 0.5, colour, shown);
+    for (let wave = 0; wave < 3; wave += 1) {
+      const held = (share * 2 + wave / 3) % 1;
+
+      kit.ring(
+        aside(kit, crown, 0, -reach * 0.5),
+        reach * (0.4 + held * 2),
+        0.05,
+        light,
+        decay(held) * shown,
+      );
+    }
+    for (let glint = 0; glint < 6; glint += 1) {
+      kit.star(
+        aside(kit, at, spread(seed, glint) * reach * 1.4, spread(seed, glint + 10) * reach * 1.2),
+        reach * 0.2,
+        0,
+        '#ffffff',
+        swell((share * 2 + noise(seed, glint)) % 1) * shown,
+      );
+    }
   },
 } satisfies Partial<Record<EffectShape, LitShapePainter>>;
 

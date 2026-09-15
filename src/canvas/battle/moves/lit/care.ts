@@ -3,18 +3,21 @@ import type { Spot } from '../../../three/effect-batch';
 import type { LitStage } from '../__painted';
 import { decay, lighten, mix, noise, spread, swell } from '../__paint';
 import {
+  BEE,
   BLADES,
   DOLL_DROP,
   FLOP_HOPS,
   SCHEME_GATHER,
   SHELL_CELL,
+  WISH_LANDS,
   shellCells,
   shellFlash,
   wagOf,
+  wishHeight,
 } from '../effect/care';
 import { RAINBOW } from '../effect/legends';
 import { type EffectShape, many } from '../effect/shapes';
-import { TAU, chevron, dome, gathering, smoke } from './pieces';
+import { TAU, chevron, dome, gathering, smoke, sparks } from './pieces';
 import {
   type LitShapePainter,
   aside,
@@ -59,6 +62,57 @@ function sword(kit: EffectBatch, at: Spot, length: number, colour: string, alpha
   );
   kit.streak(aside(kit, at, 0, -length * 0.3), length * 0.16, length * 0.035, 0, colour, alpha);
   kit.glow(aside(kit, at, 0, length * 0.65), length * 0.08, '#ffffff', alpha, 1);
+}
+
+/** A shaft of light coming down onto a spot on the floor from above, with motes rising in it */
+function skyBeam(
+  kit: EffectBatch,
+  floor: Spot,
+  reach: number,
+  share: number,
+  seed: number,
+  colour: string,
+  alpha: number,
+): void {
+  const top: Spot = [floor[0], reach * 7, floor[2]];
+  const down = Math.min(1, share * 3);
+  const head = toward(top, floor, down);
+
+  kit.ribbon([top, head], reach * 2.2, colour, alpha * 0.25, share * 6);
+  kit.ribbon([top, head], reach, lighten(colour, 0.4), alpha * 0.5, share * 9);
+  kit.pool(floor, reach * 1.6, colour, alpha * down * 0.6);
+  for (let mote = 0; mote < 10; mote += 1) {
+    const held = (share * 1.2 + noise(seed, mote)) % 1;
+
+    kit.glow(
+      aside(
+        kit,
+        floor,
+        spread(seed, mote + 10) * reach * 0.8,
+        held * reach * 3.5,
+        spread(seed, mote + 20) * reach * 0.5,
+      ),
+      reach * 0.07,
+      lighten(colour, 0.6),
+      alpha * swell(held),
+      0.9,
+    );
+  }
+}
+
+/** A Z on the picture, for a pokemon asleep */
+function zed(kit: EffectBatch, at: Spot, size: number, colour: string, alpha: number): void {
+  kit.ribbon(
+    [
+      aside(kit, at, -size, size),
+      aside(kit, at, size, size),
+      aside(kit, at, -size, -size),
+      aside(kit, at, size, -size),
+    ],
+    size * 0.25,
+    colour,
+    alpha,
+  );
 }
 
 /** Chevrons climbing (or, turned over, falling) in columns round the body. */
@@ -600,6 +654,175 @@ const care = {
 
     kit.ring(head, reach * (0.3 + pulse * 1.6), 0.08, light, decay(pulse));
     kit.star(head, reach * (0.5 + pulse * 0.5), 0, '#ffffff', decay(pulse));
+  },
+  // Asleep where it stands: a bubble breathing at its nose and Zs drifting up off it
+  Slumber(kit, stage, share, { paint }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const colour = paint.color;
+    const shown = Math.min(1, share * 4) * late(share, 0.8);
+    const head = aside(kit, at, reach * 0.3, reach * 0.5);
+
+    kit.glow(at, reach, colour, shown * 0.25, 0.2);
+    kit.bubble(
+      aside(kit, head, reach * 0.3),
+      reach * (0.18 + 0.1 * Math.sin(share * TAU * 2)),
+      lighten(colour, 0.3),
+      shown,
+    );
+    for (let z = 0; z < 3; z += 1) {
+      const held = (share * 1.2 + z / 3) % 1;
+
+      zed(
+        kit,
+        aside(kit, head, reach * (0.4 + held * 0.8), reach * held * 1.8),
+        reach * (0.12 + held * 0.1),
+        colour,
+        swell(held) * shown,
+      );
+    }
+  },
+
+  // Warm sunlight coming down on it
+  Sunbeam(kit, stage, share, { paint, seed }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const shown = Math.min(1, share * 3) * late(share, 0.7);
+
+    skyBeam(kit, floorOf(at), reach, share, seed, paint.color, shown);
+    kit.star(
+      at,
+      reach * (1 + swell(share) * 0.8),
+      share,
+      lighten(paint.color, 0.6),
+      swell(share) * 0.8,
+    );
+  },
+
+  // Cool moonlight coming down on it, glinting
+  Moonbeam(kit, stage, share, { paint, seed }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const shown = Math.min(1, share * 3) * late(share, 0.7);
+
+    skyBeam(kit, floorOf(at), reach, share, seed, paint.color, shown);
+    for (let glint = 0; glint < 5; glint += 1) {
+      kit.star(
+        aside(
+          kit,
+          at,
+          spread(seed, glint + 30) * reach * 1.3,
+          spread(seed, glint + 40) * reach * 1.3,
+        ),
+        reach * 0.22,
+        0,
+        '#ffffff',
+        swell((share * 2 + noise(seed, glint)) % 1) * shown,
+      );
+    }
+  },
+
+  // Leaves drawn in round it, and the green gathering in them
+  Greening(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const colour = paint.color;
+    const shown = Math.min(1, share * 3) * late(share, 0.75);
+
+    kit.pool(floorOf(at), reach * 1.5, colour, shown * 0.5);
+    kit.glow(at, reach * (0.6 + share * 0.6), colour, shown * 0.5, 0.6);
+    for (let leaf = 0; leaf < many(10, weight); leaf += 1) {
+      const held = (share * 1.3 + noise(seed, leaf)) % 1;
+      const angle = noise(seed, leaf + 5) * TAU + held * TAU * 1.5;
+      const round = reach * 1.8 * (1 - held);
+
+      kit.leaf(
+        [
+          at[0] + Math.cos(angle) * round,
+          at[1] + spread(seed, leaf + 10) * reach * 0.6 * (1 - held),
+          at[2] + Math.sin(angle) * round,
+        ],
+        reach * 0.2,
+        angle * 2,
+        colour,
+        swell(held) * shown,
+      );
+    }
+  },
+
+  // A star rising off it into the sky and coming back down onto it
+  Wishing(kit, stage, share, { paint, seed }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const colour = paint.color;
+    const shown = late(share, WISH_LANDS);
+    const spot = aside(kit, at, 0, reach * (0.4 + wishHeight(share) * 5));
+    const was = aside(kit, at, 0, reach * (0.4 + wishHeight(Math.max(0, share - 0.05)) * 5));
+
+    kit.trail(was, spot, reach * 0.2, colour, shown * 0.6);
+    kit.glow(spot, reach * 0.5, colour, shown, 0.9);
+    kit.star(spot, reach * 0.6, share * 8, '#ffffff', shown);
+    if (share <= WISH_LANDS) {
+      return;
+    }
+    const land = (share - WISH_LANDS) / (1 - WISH_LANDS);
+
+    kit.pool(floorOf(at), reach * 1.6, colour, decay(land) * 0.6);
+    kit.ring(at, reach * (0.4 + land * 1.4), 0.08, lighten(colour, 0.3), decay(land));
+    sparks(kit, at, reach * 1.2, 8, seed, land, lighten(colour, 0.5), decay(land));
+  },
+
+  // Feathers drifting down round it and settling
+  Feathers(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage);
+    const colour = paint.color;
+
+    kit.pool(floor, reach * 1.3, colour, swell(share) * 0.4);
+    kit.glow(at, reach * 0.9, colour, swell(share) * 0.35, 0.3);
+    for (let one = 0; one < many(8, weight); one += 1) {
+      const held = staged(share, 1.3, noise(seed, one) * 0.3);
+
+      if (held <= 0) {
+        continue;
+      }
+      kit.leaf(
+        aside(
+          kit,
+          floor,
+          spread(seed, one + 10) * reach * 1.2 + Math.sin(held * TAU * 1.5 + one) * reach * 0.4,
+          Math.max(0.05, reach * 2.6 * (1 - held)),
+          spread(seed, one + 20) * reach * 0.6,
+        ),
+        reach * 0.24,
+        Math.sin(held * TAU + one) * 0.8,
+        lighten(colour, 0.2),
+        late(held, 0.8) * Math.min(1, held * 5),
+      );
+    }
+  },
+
+  // A swarm of bees buzzing round it and settling in
+  Swarm(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const shown = Math.min(1, share * 4) * late(share, 0.75);
+
+    kit.glow(at, reach * 0.9, paint.color, swell(share) * 0.3, 0.3);
+    for (let bee = 0; bee < many(10, weight); bee += 1) {
+      const angle = noise(seed, bee) * TAU + share * TAU * (1.5 + noise(seed, bee + 5));
+      const round = reach * 1.4 * (1 - share * 0.5);
+      const spot: Spot = [
+        at[0] + Math.cos(angle) * round,
+        at[1] + Math.sin(share * TAU * 3 + bee) * reach * 0.5,
+        at[2] + Math.sin(angle) * round,
+      ];
+
+      kit.glow(spot, reach * 0.1, BEE, shown, 0.4);
+      kit.glow(spot, reach * 0.045, '#2a2010', shown, 0, { add: 0 });
+      kit.glow(aside(kit, spot, 0, reach * 0.07), reach * 0.06, '#ffffff', shown * 0.6, 0.8);
+    }
   },
 } satisfies Partial<Record<EffectShape, LitShapePainter>>;
 

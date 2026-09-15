@@ -1,9 +1,13 @@
+import type { Point } from '../../stage';
 import {
+  between,
   box,
   burst,
   chevrons,
   decay,
+  fade,
   heart,
+  lighten,
   motes,
   noise,
   orb,
@@ -13,10 +17,59 @@ import {
   slash,
   spiral,
   spread,
+  star,
   swell,
 } from '../__paint';
 import type { EffectShape, ShapePainter } from './shapes';
 import { REACH, landing, many } from './shapes';
+
+/** A music note: a round head, a stem and a flag */
+function note(
+  context: CanvasRenderingContext2D,
+  [x, y]: Point,
+  size: number,
+  color: string,
+  alpha: number,
+  scale: number,
+): void {
+  context.beginPath();
+  context.ellipse(x, y, size * 0.35, size * 0.28, -0.4, 0, Math.PI * 2);
+  context.fillStyle = fade(color, alpha);
+  context.fill();
+  context.beginPath();
+  context.moveTo(x + size * 0.3, y);
+  context.lineTo(x + size * 0.3, y - size * 1.1);
+  context.lineTo(x + size * 0.7, y - size * 0.75);
+  context.strokeStyle = fade(color, alpha);
+  context.lineWidth = 1.8 * scale;
+  context.stroke();
+}
+
+/** A bell hanging from its crown, turned by `tilt` */
+function bell(
+  context: CanvasRenderingContext2D,
+  [x, y]: Point,
+  size: number,
+  tilt: number,
+  color: string,
+  alpha: number,
+  scale: number,
+): void {
+  context.save();
+  context.translate(x, y);
+  context.rotate(tilt);
+  context.beginPath();
+  context.moveTo(-size * 0.7, size);
+  context.quadraticCurveTo(-size * 0.5, -size * 0.2, 0, 0);
+  context.quadraticCurveTo(size * 0.5, -size * 0.2, size * 0.7, size);
+  context.closePath();
+  context.fillStyle = fade(color, alpha * 0.35);
+  context.fill();
+  context.strokeStyle = fade(color, alpha);
+  context.lineWidth = 2 * scale;
+  context.stroke();
+  context.restore();
+}
 
 /**
  * The shapes that are done to a mind rather than to a body: a haze, a
@@ -271,6 +324,103 @@ const minds = {
       alpha: swell(share) * 0.5,
       width: 2.4 * stage.scale,
     });
+  },
+  // Music notes drifting round it
+  Song(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const color = lighten(paint.color, 0.2);
+
+    ring(context, at, size * (0.8 + share), {
+      color,
+      alpha: swell(share) * 0.5,
+      width: 2 * stage.scale,
+    });
+    for (let one = 0; one < many(6, weight); one += 1) {
+      const held = (share * 1.3 + noise(seed, one)) % 1;
+      const angle = noise(seed, one + 10) * Math.PI * 2 + share * Math.PI * 2;
+      const round = size * (1.3 - held * 0.4);
+
+      note(
+        context,
+        [
+          at[0] + Math.cos(angle) * round,
+          at[1] - size * (held * 1.4 - 0.2) + Math.sin(angle) * round * 0.3,
+        ],
+        size * 0.35,
+        color,
+        swell(held),
+        stage.scale,
+      );
+    }
+  },
+
+  // Shock arcs rolling out of the caster toward it, widening as they go
+  Roar(context, stage, share, { paint, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const angle = Math.atan2(at[1] - stage.source[1], at[0] - stage.source[0]);
+    const light = lighten(paint.color, 0.4);
+
+    for (let pulse = 0; pulse < 3; pulse += 1) {
+      const held = (share * 1.4 + pulse * 0.33) % 1;
+      const front = between(stage.source, at, held * 0.9);
+      const radius = size * (0.5 + held * 1.6);
+
+      context.beginPath();
+      context.arc(
+        front[0] - Math.cos(angle) * radius,
+        front[1] - Math.sin(angle) * radius,
+        radius,
+        angle - 0.9,
+        angle + 0.9,
+      );
+      context.strokeStyle = fade(light, decay(held) * 0.9);
+      context.lineWidth = (2.4 + held * 2) * stage.scale;
+      context.stroke();
+    }
+    ring(context, at, size * (0.6 + share * 1.2), {
+      color: light,
+      alpha: swell(share) * 0.6,
+      width: 2 * stage.scale,
+    });
+  },
+
+  // A golden bell swinging over it, ringing out
+  Chime(context, stage, share, { paint, seed }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const light = lighten(paint.color, 0.4);
+    const shown = Math.min(1, share * 4) * (share < 0.8 ? 1 : decay((share - 0.8) / 0.2));
+    const crown: Point = [at[0], at[1] - size * 1.8];
+
+    bell(
+      context,
+      crown,
+      size * 0.9,
+      Math.sin(share * Math.PI * 4) * 0.5,
+      paint.color,
+      shown,
+      stage.scale,
+    );
+    for (let wave = 0; wave < 3; wave += 1) {
+      const held = (share * 2 + wave / 3) % 1;
+
+      ring(context, [crown[0], crown[1] + size * 0.5], size * (0.4 + held * 2), {
+        color: light,
+        alpha: decay(held) * shown,
+        width: 2 * stage.scale,
+      });
+    }
+    for (let glint = 0; glint < 6; glint += 1) {
+      star(
+        context,
+        [at[0] + spread(seed, glint) * size * 1.4, at[1] + spread(seed, glint + 10) * size * 1.2],
+        size * 0.2,
+        0,
+        { color: '#ffffff', alpha: swell((share * 2 + noise(seed, glint)) % 1) * shown },
+      );
+    }
   },
 } satisfies Partial<Record<EffectShape, ShapePainter>>;
 

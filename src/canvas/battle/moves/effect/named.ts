@@ -160,7 +160,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.SelfDestruct]: 'Blast',
   [Moves.Earthquake]: 'Quake',
   [Moves.Recover]: 'Mend',
-  [Moves.Rest]: 'Mend',
+  [Moves.Rest]: 'Slumber',
   [Moves.SoftBoiled]: 'Mend',
   [Moves.Reflect]: 'Screen',
   [Moves.LightScreen]: 'Screen',
@@ -193,9 +193,10 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.GigaDrain]: 'Drain',
   [Moves.PainSplit]: 'Drain',
   [Moves.MilkDrink]: 'Mend',
-  [Moves.MorningSun]: 'Mend',
-  [Moves.Synthesis]: 'Mend',
-  [Moves.Moonlight]: 'Mend',
+  // Healing drawn as where it comes from: the sun, the leaves, the moon
+  [Moves.MorningSun]: 'Sunbeam',
+  [Moves.Synthesis]: 'Greening',
+  [Moves.Moonlight]: 'Moonbeam',
   [Moves.HiddenPower]: 'Dazzle',
 
   // Ghost: something closing on it rather than something thrown
@@ -299,8 +300,9 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Swallow]: 'Mend',
   [Moves.SlackOff]: 'Mend',
   [Moves.Refresh]: 'Mend',
-  [Moves.Aromatherapy]: 'Mend',
-  [Moves.Wish]: 'Mend',
+  // A scent is petals on the air, the way Sweet Scent is, and a wish is a star
+  [Moves.Aromatherapy]: 'Petals',
+  [Moves.Wish]: 'Wishing',
 
   // Something the pokemon did for itself that moves no stat, so the
   // stat rule above never sees it
@@ -311,11 +313,11 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   // the rules underneath would have drawn wrong
 
   // Health coming back, whatever the move is called
-  [Moves.Roost]: 'Mend',
+  [Moves.Roost]: 'Feathers',
   // Water put round it and left turning there, which is what the move
   // is: the healing comes later, a turn at a time
   [Moves.AquaRing]: 'Gyro',
-  [Moves.HealOrder]: 'Mend',
+  [Moves.HealOrder]: 'Swarm',
   [Moves.HealingWish]: 'Mend',
   // Moonlight and the dark it answers, for the Lunar pair
   [Moves.LunarDance]: 'Moonlit',
@@ -486,6 +488,15 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   // Made of whatever the sky is doing, and three elements at once
   [Moves.WeatherBall]: 'Weather',
   [Moves.TriAttack]: 'Tri',
+
+  // Heard as what it is: a song, a roar, a bell
+  [Moves.Sing]: 'Song',
+  [Moves.GrassWhistle]: 'Song',
+  [Moves.PerishSong]: 'Song',
+  [Moves.Roar]: 'Roar',
+  [Moves.HyperVoice]: 'Roar',
+  [Moves.BugBuzz]: 'Roar',
+  [Moves.HealBell]: 'Chime',
 
   // Struck and gone: the blow is the first step and the walk off the
   // field is the second, which is why the landing here is the leaving

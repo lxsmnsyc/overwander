@@ -47,6 +47,14 @@ More moves land as a picture of their own:
 - Aura Sphere and Focus Blast burst on the target into rings of aura.
 - Pin Missile, Bullet Seed, Icicle Spear, Rock Blast and Bone Rush fly in one piece at a time, as needles, seeds, icicles, rocks or bones.
 - Double Kick and Triple Kick land their kicks from alternating sides.
+- Rest blows a sleep bubble with Zs drifting up.
+- Morning Sun and Moonlight bring a shaft of warm sunlight or cool moonlight down on the pokemon.
+- Synthesis draws leaves spiralling in, and Aromatherapy drifts petals over the pokemon.
+- Wish sends a star up into the sky that comes back down on the pokemon.
+- Roost lets feathers drift down and settle, and Heal Order brings a swarm of bees.
+- Sing, Grass Whistle and Perish Song drift music notes round the target, dark ones for Perish Song.
+- Roar, Hyper Voice and Bug Buzz roll shock arcs out toward the target.
+- Heal Bell swings a golden bell that rings out.
 - Tri Attack turns three orbs of fire, ice and lightning in on the target, each bursting as its element.
 - Flame Wheel rolls into the target as a ring of fire.
 - Waterfall drives a column of water up through the target.

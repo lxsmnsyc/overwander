@@ -3,6 +3,7 @@ import {
   type Painted,
   beam,
   between,
+  bubble,
   chevrons,
   decay,
   fade,
@@ -14,8 +15,10 @@ import {
   noise,
   orb,
   pane,
+  petal,
   ring,
   ripple,
+  spread,
   star,
   swell,
 } from '../__paint';
@@ -37,6 +40,23 @@ export const BLADES = 4;
 
 /** Calm Mind: the share spent gathering before the pulse */
 export const SCHEME_GATHER = 0.6;
+
+/** Wish: the share by which its star is back down on it */
+export const WISH_LANDS = 0.85;
+
+/** A worker bee's yellow, for Heal Order */
+export const BEE = '#f0c040';
+
+/** How high Wish's star is, as a share of its climb: up, held a moment, and back down */
+export function wishHeight(share: number): number {
+  if (share < 0.4) {
+    return 1 - (1 - share / 0.4) ** 2;
+  }
+  if (share < 0.55) {
+    return 1;
+  }
+  return Math.max(0, 1 - ((share - 0.55) / (WISH_LANDS - 0.55)) ** 2);
+}
 
 /** The middles of a shell's hexagons inside `radius`, laid out in axial rows */
 export function shellCells(radius: number): [x: number, y: number][] {
@@ -64,6 +84,47 @@ export function shellFlash(share: number, out: number): number {
 /** Which way the metronome's arm leans, in radians from upright */
 export function wagOf(share: number): number {
   return Math.sin(share * Math.PI * 5) * 0.7;
+}
+
+/** A shaft of light coming down onto a point from above, with motes rising in it */
+function shaft(
+  context: CanvasRenderingContext2D,
+  foot: Point,
+  size: number,
+  share: number,
+  seed: number,
+  color: string,
+  alpha: number,
+  scale: number,
+): void {
+  beam(context, [foot[0], foot[1] - size * 7], foot, Math.min(1, share * 3), size * 1.6, {
+    color,
+    alpha: alpha * 0.5,
+  });
+  motes(context, [foot[0], foot[1] - size * 1.4], size * 1.2, 10, seed, share, {
+    color: lighten(color, 0.6),
+    alpha,
+    width: 2 * scale,
+  });
+}
+
+/** A Z, for a pokemon asleep */
+function zed(
+  context: CanvasRenderingContext2D,
+  [x, y]: Point,
+  size: number,
+  color: string,
+  alpha: number,
+  scale: number,
+): void {
+  context.beginPath();
+  context.moveTo(x - size, y - size);
+  context.lineTo(x + size, y - size);
+  context.lineTo(x - size, y + size);
+  context.lineTo(x + size, y + size);
+  context.strokeStyle = fade(color, alpha);
+  context.lineWidth = 2 * scale;
+  context.stroke();
 }
 
 /** A hexagon's outline round a point, flat along its top */
@@ -564,6 +625,166 @@ const care = {
         alpha: decay((share - SCHEME_GATHER) / (1 - SCHEME_GATHER)),
         width: 2 * stage.scale,
       });
+    }
+  },
+  // Asleep where it stands: a bubble breathing at its nose and Zs drifting up off it
+  Slumber(context, stage, share, { paint }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const shown = Math.min(1, share * 4) * (share < 0.8 ? 1 : decay((share - 0.8) / 0.2));
+    const head: Point = [at[0] + size * 0.3, at[1] - size * 0.5];
+
+    bubble(
+      context,
+      [head[0] + size * 0.3, head[1]],
+      size * (0.18 + 0.1 * Math.sin(share * Math.PI * 4)),
+      {
+        color: lighten(paint.color, 0.3),
+        alpha: shown,
+        width: 1.6 * stage.scale,
+      },
+    );
+    for (let z = 0; z < 3; z += 1) {
+      const held = (share * 1.2 + z / 3) % 1;
+
+      zed(
+        context,
+        [head[0] + size * (0.4 + held * 0.8), head[1] - size * held * 1.8],
+        size * (0.12 + held * 0.1),
+        paint.color,
+        swell(held) * shown,
+        stage.scale,
+      );
+    }
+  },
+
+  // Warm sunlight coming down on it
+  Sunbeam(context, stage, share, { paint, seed }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const shown = Math.min(1, share * 3) * (share < 0.7 ? 1 : decay((share - 0.7) / 0.3));
+
+    shaft(context, [at[0], at[1] + size * 0.9], size, share, seed, paint.color, shown, stage.scale);
+    star(context, at, size * (1 + swell(share) * 0.8), share, {
+      color: lighten(paint.color, 0.6),
+      alpha: swell(share) * 0.8,
+    });
+  },
+
+  // Cool moonlight coming down on it, glinting
+  Moonbeam(context, stage, share, { paint, seed }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const shown = Math.min(1, share * 3) * (share < 0.7 ? 1 : decay((share - 0.7) / 0.3));
+
+    shaft(context, [at[0], at[1] + size * 0.9], size, share, seed, paint.color, shown, stage.scale);
+    for (let glint = 0; glint < 5; glint += 1) {
+      star(
+        context,
+        [
+          at[0] + spread(seed, glint + 30) * size * 1.3,
+          at[1] + spread(seed, glint + 40) * size * 1.3,
+        ],
+        size * 0.22,
+        0,
+        { color: '#ffffff', alpha: swell((share * 2 + noise(seed, glint)) % 1) * shown },
+      );
+    }
+  },
+
+  // Leaves drawn in round it, and the green gathering in them
+  Greening(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const shown = Math.min(1, share * 3) * (share < 0.75 ? 1 : decay((share - 0.75) / 0.25));
+
+    orb(context, at, size * (0.6 + share * 0.6), { ...paint, alpha: shown * 0.5 });
+    for (let leaf = 0; leaf < many(10, weight); leaf += 1) {
+      const held = (share * 1.3 + noise(seed, leaf)) % 1;
+      const angle = noise(seed, leaf + 5) * Math.PI * 2 + held * Math.PI * 3;
+      const round = size * 1.8 * (1 - held);
+
+      petal(
+        context,
+        [at[0] + Math.cos(angle) * round, at[1] + Math.sin(angle) * round * 0.4],
+        size * 0.2,
+        angle * 2,
+        { ...paint, alpha: swell(held) * shown },
+      );
+    }
+  },
+
+  // A star rising off it into the sky and coming back down onto it
+  Wishing(context, stage, share, { paint }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const shown = share < WISH_LANDS ? 1 : decay((share - WISH_LANDS) / (1 - WISH_LANDS));
+    const spot: Point = [at[0], at[1] - size * (0.4 + wishHeight(share) * 5)];
+    const was: Point = [at[0], at[1] - size * (0.4 + wishHeight(Math.max(0, share - 0.05)) * 5)];
+
+    lash(context, was, spot, 0, { ...paint, alpha: shown * 0.6, width: 3 * stage.scale });
+    orb(context, spot, size * 0.45, { ...paint, alpha: shown });
+    star(context, spot, size * 0.55, share * 8, { color: '#ffffff', alpha: shown });
+    if (share > WISH_LANDS) {
+      ring(context, at, size * (0.4 + ((share - WISH_LANDS) / (1 - WISH_LANDS)) * 1.4), {
+        color: lighten(paint.color, 0.3),
+        alpha: shown,
+        width: 2.4 * stage.scale,
+      });
+    }
+  },
+
+  // Feathers drifting down round it and settling
+  Feathers(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+
+    orb(context, at, size * 0.9, { ...paint, alpha: swell(share) * 0.35 });
+    for (let one = 0; one < many(8, weight); one += 1) {
+      const held = Math.max(0, Math.min(1, share * 1.3 - noise(seed, one) * 0.3));
+
+      if (held <= 0) {
+        continue;
+      }
+      petal(
+        context,
+        [
+          at[0] +
+            spread(seed, one + 10) * size * 1.2 +
+            Math.sin(held * Math.PI * 3 + one) * size * 0.4,
+          at[1] + size * 0.9 - size * 2.6 * (1 - held),
+        ],
+        size * 0.24,
+        Math.sin(held * Math.PI * 2 + one) * 0.8,
+        {
+          color: lighten(paint.color, 0.2),
+          alpha: Math.min(1, held * 5) * (held < 0.8 ? 1 : decay((held - 0.8) / 0.2)),
+        },
+      );
+    }
+  },
+
+  // A swarm of bees buzzing round it and settling in
+  Swarm(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const shown = Math.min(1, share * 4) * (share < 0.75 ? 1 : decay((share - 0.75) / 0.25));
+
+    orb(context, at, size * 0.9, { ...paint, alpha: swell(share) * 0.3 });
+    for (let bee = 0; bee < many(10, weight); bee += 1) {
+      const angle =
+        noise(seed, bee) * Math.PI * 2 + share * Math.PI * 2 * (1.5 + noise(seed, bee + 5));
+      const round = size * 1.4 * (1 - share * 0.5);
+
+      orb(
+        context,
+        [
+          at[0] + Math.cos(angle) * round,
+          at[1] + Math.sin(angle) * round * 0.35 + Math.sin(share * Math.PI * 6 + bee) * size * 0.4,
+        ],
+        size * 0.1,
+        { color: BEE, alpha: shown },
+      );
     }
   },
 } satisfies Partial<Record<EffectShape, ShapePainter>>;

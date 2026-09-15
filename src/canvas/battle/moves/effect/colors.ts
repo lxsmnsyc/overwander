@@ -59,6 +59,16 @@ const BY_SHAPE: Partial<Record<EffectShape, string>> = {
   Flop: '#7cc4f0',
   Wag: '#e8c86a',
   Shimmer: '#f0a8e0',
+  // Sleep's blue, sunlight, moonlight, leaves, a wishing star, feathers, and the health bar's green under a swarm
+  Slumber: '#bcd4ff',
+  Sunbeam: '#ffd27a',
+  Moonbeam: '#d8dcff',
+  Greening: '#7cd67a',
+  Wishing: '#ffe27a',
+  Feathers: '#e8e0d0',
+  Swarm: '#4cc46a',
+  // A brass bell
+  Chime: '#ffd86a',
 };
 
 /** The shapes that picture a stat moving, and so take the stat's colour */
@@ -81,6 +91,9 @@ const MOVE_COLORS: Partial<Record<Moves, string>> = {
   [Moves.HyperBeam]: '#ffb04a',
   [Moves.SolarBeam]: '#fff0a0',
   [Moves.AuraSphere]: '#5aa8ff',
+  // A lullaby's pink, and Perish Song's notes gone dark
+  [Moves.Sing]: '#f0a8d0',
+  [Moves.PerishSong]: '#6a4a8c',
 };
 
 export default function colorOf(move: Moves, shape: EffectShape): string {

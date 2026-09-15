@@ -5,7 +5,7 @@
  * The queue belongs to the module, so on the server it gathers calls from
  * concurrent requests too. Never use it inside a transaction: the read runs
  * a moment later on another connection, without the transaction's locks or
- * writes.
+ * writes. Where it belongs: `.agents/skills/batched-queries/SKILL.md`.
  */
 
 export interface BatchOptions<Query> {

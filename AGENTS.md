@@ -27,6 +27,9 @@ one that covers what you are about to do:
 - `prefer-sets` - use `Set.has` for membership checks instead of scanning arrays.
 - `prefer-for-of` - iterate with `for...of` rather than callback Array methods
   such as `map`, `filter`, `some` and `find`; `sort` and JSX `<For>` stay.
+- `batched-queries` - `batchedQuery` is for the browser, where many rows each read
+  one key at once; the server reads many keys with one query instead, and never
+  merges separate requests or batches inside a transaction.
 - `trigger-driven-abilities` - ability effects that do not mutate their
   detection event ride `UnitTriggerAbility` at `Exact` priority.
 - `changesets` - every change against `main` ships with one, and a fix for

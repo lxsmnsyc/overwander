@@ -2,58 +2,14 @@ import 'server-only';
 import { Depth } from '../../overworld/depth';
 import type { ItemStack } from '../../data/overworld/item-pool';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
-import { getSql } from '../db';
-import { asString } from '../read';
 import { grantItem } from '../inventory';
 import { Landmark, Metric } from '../../auth/quest-record';
 import { bumpProgress } from '../quest-progress';
 import { claim, resolveSnapshot } from './claims';
 
 /** The berry patches, and the apricorn trees beside them */
-function berryPrefix(snapshot: ChunkSnapshot): string {
+export function berryPrefix(snapshot: ChunkSnapshot): string {
   return `${snapshot.groundKey}@${snapshot.landmarkTimestamp}$berry`;
-}
-
-/**
- * Which of this chunk's patches this player has already picked, inside
- * the window they grew in.
- *
- * The board draws a picked patch as the bare bush it now is, which is
- * the same thing the refusal says in words. It is per player, so a
- * bush one trainer stripped is still in fruit for the next, and the
- * markers are keyed by the window, so the answer empties itself when
- * the patches grow again
- */
-export async function listPickedBerryPatches(
-  uid: string,
-  x: number,
-  y: number,
-  now: number,
-  offset: number,
-  depth: Depth = Depth.Surface,
-): Promise<number[]> {
-  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
-
-  if (snapshot == null) {
-    return [];
-  }
-
-  const prefix = berryPrefix(snapshot);
-  const rows = await getSql()`
-    select marker from berry_claims
-    where player = ${uid} and marker like ${`${prefix}%`}
-  `;
-
-  const cells: number[] = [];
-
-  for (const row of rows) {
-    const cell = Number(asString(row.marker).slice(prefix.length));
-
-    if (Number.isInteger(cell)) {
-      cells.push(cell);
-    }
-  }
-  return cells;
 }
 
 /**

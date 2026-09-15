@@ -7,9 +7,11 @@ import 'server-only';
 
 export { claim, liveSnapshot, resolveSnapshot } from './claims';
 export type { ClaimRecord } from './claims';
-export { claimItemCache, listClaimedItemCaches } from './caches';
-export { claimApricornTree, claimBerryPatch, listPickedBerryPatches } from './berries';
+export { claimItemCache } from './caches';
+export { claimApricornTree, claimBerryPatch } from './berries';
+export { CLAIM_CHUNK_LIMIT, listChunkClaims } from './claim-lists';
+export type { ChunkClaims, ClaimedChunk } from './claim-lists';
 export { claimNest, peekNest } from './nests';
 export type { NestOffer, PhenomenonClaim } from './nests';
-export { claimPhenomenon, listClaimedPhenomena, peekPhenomenonEgg } from './phenomena';
+export { claimPhenomenon, peekPhenomenonEgg } from './phenomena';
 export { FLED_MEMORY, meetSpawn, pocketFled, retireSpawn, startEncounter } from './spawns';

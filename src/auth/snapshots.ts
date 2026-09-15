@@ -14,19 +14,21 @@ import { LURE_SPAWN_BONUS } from '../overworld/abilities/__create';
 import { type SnapshotRecord, asSnapshotRecord, spawnId } from './snapshot-record';
 import { requireUid } from '../server/auth';
 import {
+  CLAIM_CHUNK_LIMIT,
+  type ChunkClaims,
+  type ClaimedChunk,
   type NestOffer,
   claimApricornTree as claimApricornOnServerSide,
   claimBerryPatch as claimBerryOnServerSide,
   claimItemCache as claimCacheOnServerSide,
   claimNest as claimNestOnServerSide,
   claimPhenomenon as claimPhenomenonOnServerSide,
-  listClaimedItemCaches as listClaimedItemCachesOnServerSide,
-  listClaimedPhenomena as listClaimedPhenomenaOnServerSide,
-  listPickedBerryPatches as listPickedBerryPatchesOnServerSide,
+  listChunkClaims as listChunkClaimsOnServerSide,
   meetSpawn,
   peekNest as peekNestOnServerSide,
   peekPhenomenonEgg as peekPhenomenonEggOnServerSide,
 } from '../server/overworld';
+import batchedQuery from '../utils/batched-query';
 import { serverNow, syncServerClock } from './clock';
 import { asRecord, asRecordArray } from './__normalize';
 import { asOffset, getLocale, toLocalTime, toZoneKey } from './local-time';
@@ -466,37 +468,101 @@ async function peekPhenomenonEggOnServer(
   );
 }
 
+/** One chunk's claims, as the board asks for them */
+interface ChunkClaimQuery {
+  x: number;
+  y: number;
+  offset: number;
+  depth: Depth;
+}
+
+function claimKey(query: ChunkClaimQuery): string {
+  return `${query.depth}|${query.offset}|${query.x},${query.y}`;
+}
+
+async function listClaimsOnServer(
+  token: string,
+  chunks: ClaimedChunk[],
+  offset: number,
+  depth: Depth,
+): Promise<ChunkClaims[]> {
+  'use server';
+  return listChunkClaimsOnServerSide(
+    await requireUid(token),
+    chunks,
+    await syncServerClock(),
+    offset,
+    depth,
+  );
+}
+
+/**
+ * Every claim list the board asks for in the same moment, in one server
+ * call. A window turning over asks three lists of every chunk in range,
+ * so they all land here together and a chunk's three share one answer
+ */
+const readChunkClaims = batchedQuery(
+  async (queries: ChunkClaimQuery[]): Promise<Map<string, ChunkClaims>> => {
+    // Windows are resolved per zone and layer, which is one group in practice
+    const groups = new Map<string, { offset: number; depth: Depth; queries: ChunkClaimQuery[] }>();
+
+    for (const query of queries) {
+      const key = `${query.depth}|${query.offset}`;
+      const group = groups.get(key);
+
+      if (group == null) {
+        groups.set(key, { offset: query.offset, depth: query.depth, queries: [query] });
+      } else {
+        group.queries.push(query);
+      }
+    }
+
+    const token = await getIdToken();
+    const found = new Map<string, ChunkClaims>();
+    const reads: Promise<void>[] = [];
+
+    for (const group of groups.values()) {
+      const chunks: ClaimedChunk[] = [];
+
+      for (const { x, y } of group.queries) {
+        chunks.push({ x, y });
+      }
+      reads.push(
+        listClaimsOnServer(token, chunks, group.offset, group.depth).then((answers) => {
+          for (const [at, query] of group.queries.entries()) {
+            const answer = answers.at(at);
+
+            if (answer != null) {
+              found.set(claimKey(query), answer);
+            }
+          }
+        }),
+      );
+    }
+    await Promise.all(reads);
+    return found;
+  },
+  (found, query): ChunkClaims =>
+    found.get(claimKey(query)) ?? { phenomena: [], patches: [], caches: [] },
+  { key: claimKey, limit: CLAIM_CHUNK_LIMIT },
+);
+
+async function claimsOf(snapshot: ChunkSnapshot): Promise<ChunkClaims> {
+  return readChunkClaims({
+    x: snapshot.chunk.x,
+    y: snapshot.chunk.y,
+    offset: snapshot.offset,
+    depth: snapshot.depth,
+  });
+}
+
 /**
  * Which of this chunk's happenings this player has already walked
  * into this hour. The board stops drawing them: a cloud already dug
  * through is a cell that would answer nothing
  */
 export async function listClaimedPhenomena(snapshot: ChunkSnapshot): Promise<number[]> {
-  return listClaimedOnServer(
-    await getIdToken(),
-    snapshot.chunk.x,
-    snapshot.chunk.y,
-    snapshot.offset,
-    snapshot.depth,
-  );
-}
-
-async function listClaimedOnServer(
-  token: string,
-  x: number,
-  y: number,
-  offset: number,
-  depth: Depth,
-): Promise<number[]> {
-  'use server';
-  return listClaimedPhenomenaOnServerSide(
-    await requireUid(token),
-    x,
-    y,
-    await syncServerClock(),
-    offset,
-    depth,
-  );
+  return (await claimsOf(snapshot)).phenomena;
 }
 
 /**
@@ -505,31 +571,7 @@ async function listClaimedOnServer(
  * answer nothing should not be drawn in fruit
  */
 export async function listPickedBerryPatches(snapshot: ChunkSnapshot): Promise<number[]> {
-  return listPickedOnServer(
-    await getIdToken(),
-    snapshot.chunk.x,
-    snapshot.chunk.y,
-    snapshot.offset,
-    snapshot.depth,
-  );
-}
-
-async function listPickedOnServer(
-  token: string,
-  x: number,
-  y: number,
-  offset: number,
-  depth: Depth,
-): Promise<number[]> {
-  'use server';
-  return listPickedBerryPatchesOnServerSide(
-    await requireUid(token),
-    x,
-    y,
-    await syncServerClock(),
-    offset,
-    depth,
-  );
+  return (await claimsOf(snapshot)).patches;
 }
 
 /**
@@ -538,31 +580,7 @@ async function listPickedOnServer(
  * draws a picked patch bare
  */
 export async function listClaimedItemCaches(snapshot: ChunkSnapshot): Promise<number[]> {
-  return listDugCachesOnServer(
-    await getIdToken(),
-    snapshot.chunk.x,
-    snapshot.chunk.y,
-    snapshot.offset,
-    snapshot.depth,
-  );
-}
-
-async function listDugCachesOnServer(
-  token: string,
-  x: number,
-  y: number,
-  offset: number,
-  depth: Depth,
-): Promise<number[]> {
-  'use server';
-  return listClaimedItemCachesOnServerSide(
-    await requireUid(token),
-    x,
-    y,
-    await syncServerClock(),
-    offset,
-    depth,
-  );
+  return (await claimsOf(snapshot)).caches;
 }
 
 /**

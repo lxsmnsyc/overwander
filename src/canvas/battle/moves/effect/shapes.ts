@@ -150,6 +150,13 @@ export type EffectShape =
   | 'Scheme'
   | 'Weather'
   | 'Tri'
+  | 'Blaster'
+  | 'Crash'
+  | 'Haymaker'
+  | 'Flurry'
+  | 'Aura'
+  | 'Stream'
+  | 'Kicks'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -250,6 +257,13 @@ export const SPANS: Record<EffectShape, number> = {
   Scheme: 900,
   Weather: 820,
   Tri: 900,
+  Blaster: 900,
+  Crash: 820,
+  Haymaker: 900,
+  Flurry: 900,
+  Aura: 760,
+  Stream: 1000,
+  Kicks: 700,
   Whiff: 320,
 };
 
@@ -290,6 +304,8 @@ export interface Draw {
   type: Types;
   /** The sky it landed under, handed only to the shape made of it */
   weather?: Weathers;
+  /** How many times it strikes: the count where it is fixed, the expected count where it is rolled */
+  hits?: number;
 }
 
 /** The types a blow or a bite breaks off its element for: flames, frost, sparks, or Brave Bird's pale fire */

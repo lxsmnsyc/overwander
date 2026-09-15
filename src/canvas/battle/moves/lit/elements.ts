@@ -5,7 +5,8 @@ import type EffectBatch from '../../../three/effect-batch';
 import type { Spot } from '../../../three/effect-batch';
 import { decay, lighten, mix, noise, spread, swell } from '../__paint';
 import { FREEZE_CRACK, FREEZE_SET, TRI_MEET, TRI_TYPES, WEATHER_FALL } from '../effect/elements';
-import { CHASM_RUN, CHASM_TEAR, type EffectShape, many } from '../effect/shapes';
+import { CHASM_RUN, CHASM_TEAR, type EffectShape, STRIKES, many } from '../effect/shapes';
+import { backToward } from './contact';
 import {
   type LitShapePainter,
   aside,
@@ -17,7 +18,7 @@ import {
   thrown,
   toward,
 } from './shapes';
-import { TAU, bolt, debris, imbue, smoke, sparks } from './pieces';
+import { TAU, bolt, bone, debris, imbue, smoke, sparks } from './pieces';
 
 /**
  * The elements arriving in the battle scene: the same shapes as the
@@ -98,6 +99,35 @@ function iceBlock(kit: EffectBatch, floor: Spot, reach: number, grown: number, i
   }
   kit.panel([high[0], high[1], high[2], high[3]], ice, 0.4);
   kit.ribbon([...high, high[0]], reach * 0.06, '#ffffff', 0.7);
+}
+
+/** One piece of a stream flying in, by type: a seed, an icicle, a rock, a bone, or a needle */
+function missile(
+  kit: EffectBatch,
+  at: Spot,
+  reach: number,
+  angle: number,
+  spin: number,
+  type: Types,
+  colour: string,
+): void {
+  if (type === Types.Grass) {
+    kit.puff(at, reach * 0.12, mix(colour, '#3a5a1a', 0.3), 1);
+    return;
+  }
+  if (type === Types.Ice) {
+    kit.streak(at, reach * 0.35, reach * 0.08, angle, lighten(colour, 0.5), 1, { add: 0.4 });
+    return;
+  }
+  if (type === Types.Rock) {
+    kit.shard(at, reach * 0.22, spin, mix(colour, '#7a6650', 0.4), 1);
+    return;
+  }
+  if (type === Types.Ground) {
+    bone(kit, at, reach * 0.8, spin, lighten(colour, 0.5), 1, reach * 0.1);
+    return;
+  }
+  kit.streak(at, reach * 0.3, reach * 0.035, angle, lighten(colour, 0.4), 1);
 }
 
 const elements = {
@@ -1315,6 +1345,140 @@ const elements = {
 
       kit.glow(corners[corner], reach * (0.35 + pop * 0.5), colour, decay(pop), 0.8);
       imbue(kit, corners[corner], reach * 0.9, pop, seed + corner, type, colour, many(6, weight));
+    }
+  },
+  // A beam far thicker than an ordinary one, held on it while shockwaves roll off where it lands
+  Blaster(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const out = Math.min(1, share * 4);
+    const fading = share < 0.75 ? 1 : decay(share) * 4;
+    const head = toward(stage.source, at, out);
+    const width = reach * 0.7 * fading;
+    const path: Spot[] = [];
+
+    for (let step = 0; step <= 12; step += 1) {
+      path.push(toward(stage.source, head, step / 12));
+    }
+    kit.ribbon(path, width * 2.6, colour, 0.3 * fading, share * 12);
+    kit.ribbon(path, width, lighten(colour, 0.3), fading, share * 18);
+    kit.ribbon(path, width * 0.35, '#ffffff', fading, share * 24);
+    kit.glow(stage.source, reach * 0.9 * fading, lighten(colour, 0.4), fading, 0.9);
+    if (out < 1) {
+      return;
+    }
+    const struck = (share - 0.25) / 0.75;
+
+    kit.pool(floor, reach * (2 + struck), colour, fading * 0.7);
+    kit.glow(at, reach * (1 + swell(share) * 0.6), lighten(colour, 0.3), fading, 1);
+    for (let wave = 0; wave < 3; wave += 1) {
+      const held = (struck * 2 + wave / 3) % 1;
+
+      kit.ring(at, reach * (0.6 + held * 2.4), 0.06, lighten(colour, 0.5), decay(held) * fading);
+      kit.ripple(
+        floor,
+        reach * (0.6 + held * 3),
+        0.06,
+        lighten(colour, 0.4),
+        decay(held) * fading * 0.8,
+      );
+    }
+    sparks(
+      kit,
+      at,
+      reach * 1.8,
+      many(10, weight),
+      seed + Math.floor(share * 10),
+      (share * 10) % 1,
+      lighten(colour, 0.6),
+      fading,
+    );
+  },
+
+  // A sphere of aura that bursts on it into rings turning outward
+  Aura(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const light = lighten(colour, 0.5);
+    const pop = Math.min(1, share / 0.25);
+
+    kit.pool(floor, reach * (1.4 + share * 1.6), colour, decay(share) * 0.7);
+    kit.glow(at, reach * (0.9 - pop * 0.3 + share * 0.8), colour, decay(share), 0.6);
+    kit.glow(at, reach * 0.5 * decay(pop), '#ffffff', decay(pop), 1);
+    for (let shell = 0; shell < 3; shell += 1) {
+      const held = staged(share, 1.5, shell * 0.2);
+
+      if (held <= 0) {
+        continue;
+      }
+      const radius = reach * (0.6 + held * 2.2);
+
+      kit.oval(
+        at,
+        radius,
+        radius * (0.35 + shell * 0.2),
+        shell * 1.2 + share * 2,
+        0.07,
+        light,
+        decay(held),
+      );
+    }
+    sparks(kit, at, reach * 1.5, many(8, weight), seed, share, light, decay(share));
+  },
+
+  // Several pieces flying in one after another, each landing its own small hit
+  Stream(kit, stage, share, { paint, seed, weight, type, hits = STRIKES }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const count = Math.max(2, Math.min(5, Math.round(hits)));
+
+    for (let one = 0; one < count; one += 1) {
+      const flight = (share - (one / count) * 0.7) / 0.3;
+
+      if (flight <= 0) {
+        continue;
+      }
+      const spot = aside(
+        kit,
+        at,
+        spread(seed, one) * reach * 0.5,
+        spread(seed, one + 5) * reach * 0.4,
+      );
+      const from = backToward(spot, stage.source, reach * 4);
+
+      if (flight < 1) {
+        missile(
+          kit,
+          toward(from, spot, flight),
+          reach,
+          kit.angleOn(from, spot),
+          share * TAU * 3 + one,
+          type,
+          colour,
+        );
+        continue;
+      }
+      const hit = (flight - 1) / 0.5;
+
+      if (hit >= 1) {
+        continue;
+      }
+      kit.star(spot, reach * (0.4 + hit * 0.4), one, lighten(colour, 0.6), decay(hit));
+      sparks(
+        kit,
+        spot,
+        reach * (0.4 + hit * 0.5),
+        5,
+        seed + one,
+        hit,
+        lighten(colour, 0.4),
+        decay(hit),
+      );
     }
   },
 } satisfies Partial<Record<EffectShape, LitShapePainter>>;

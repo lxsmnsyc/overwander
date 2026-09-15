@@ -2,17 +2,19 @@ import { WEATHER_BALL_TYPES } from '../../../../battle/moves/conditional-power';
 import { TYPE_COLORS, Types } from '../../../../data/constants/types';
 import { Weathers } from '../../../../data/ids/status';
 import type { Point } from '../../stage';
-import { imbue } from './contact';
+import { backToward, imbue } from './contact';
 import {
   beam,
   between,
   bolt,
+  bone,
   box,
   bubble,
   burst,
   decay,
   fade,
   funnel,
+  hoop,
   lash,
   lighten,
   mix,
@@ -28,7 +30,16 @@ import {
   swell,
 } from '../__paint';
 import type { EffectShape, ShapePainter } from './shapes';
-import { CHASM_GAPE, CHASM_RUN, CHASM_STEPS, CHASM_TEAR, REACH, landing, many } from './shapes';
+import {
+  CHASM_GAPE,
+  CHASM_RUN,
+  CHASM_STEPS,
+  CHASM_TEAR,
+  REACH,
+  STRIKES,
+  landing,
+  many,
+} from './shapes';
 
 /** Sheer Cold: the share by which the ice has grown round it, and the share at which it breaks */
 export const FREEZE_SET = 0.3;
@@ -40,6 +51,38 @@ export const WEATHER_FALL = 0.3;
 /** Tri Attack: its three elements, and the share spent turning in before they go off */
 export const TRI_TYPES = [Types.Fire, Types.Ice, Types.Electric] as const;
 export const TRI_MEET = 0.45;
+
+/** One piece of a stream flying in, by type: a bone, a rock, an icicle or needle, or a seed */
+function piece(
+  context: CanvasRenderingContext2D,
+  spot: Point,
+  back: Point,
+  size: number,
+  type: Types,
+  color: string,
+  scale: number,
+  spin: number,
+): void {
+  if (type === Types.Ground) {
+    bone(context, spot, size * 0.8, spin, { color: lighten(color, 0.5), width: 2.4 * scale });
+    return;
+  }
+  if (type === Types.Rock) {
+    shards(context, spot, size * 0.2, 1, Math.round(spin), 0.5, {
+      color: mix(color, '#7a6650', 0.4),
+      width: 3 * scale,
+    });
+    return;
+  }
+  if (type === Types.Ice || type === Types.Bug) {
+    lash(context, back, spot, 0, {
+      color: lighten(color, 0.4),
+      width: (type === Types.Ice ? 3.4 : 1.8) * scale,
+    });
+    return;
+  }
+  orb(context, spot, size * 0.16, { color });
+}
 
 /**
  * The shapes an element arrives as: fire, water, ice, grass, lightning
@@ -911,6 +954,106 @@ const elements = {
 
       orb(context, spot, size * (0.35 + pop * 0.5), { color, alpha: decay(pop) });
       imbue(context, spot, size * 0.9, pop, seed + corner, { color }, type, stage.scale);
+    }
+  },
+  // A beam far thicker than an ordinary one, held on it while shockwaves roll off where it lands
+  Blaster(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const light = lighten(paint.color, 0.5);
+    const out = Math.min(1, share * 4);
+    const fading = share < 0.75 ? 1 : decay(share) * 4;
+
+    beam(context, stage.source, at, out, size * 0.9 * fading, { ...paint, alpha: fading * 0.5 });
+    beam(context, stage.source, at, out, size * 0.45 * fading, { ...paint, alpha: fading });
+    if (out < 1) {
+      return;
+    }
+    const struck = (share - 0.25) / 0.75;
+
+    orb(context, at, size * (1 + swell(share) * 0.6), { ...paint, alpha: fading });
+    for (let wave = 0; wave < 3; wave += 1) {
+      const held = (struck * 2 + wave / 3) % 1;
+
+      ring(context, at, size * (0.6 + held * 2.4), {
+        color: light,
+        alpha: decay(held) * fading,
+        width: 2.4 * stage.scale,
+      });
+    }
+    burst(context, at, size * 1.6, many(8, weight), seed + Math.floor(share * 10), {
+      color: lighten(paint.color, 0.6),
+      alpha: fading,
+      width: 2 * stage.scale,
+    });
+  },
+
+  // A sphere of aura that bursts on it into rings turning outward
+  Aura(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const light = lighten(paint.color, 0.5);
+
+    orb(context, at, size * (0.9 + share * 0.8), { ...paint, alpha: decay(share) });
+    for (let shell = 0; shell < 3; shell += 1) {
+      const held = Math.max(0, Math.min(1, share * 1.5 - shell * 0.2));
+
+      if (held <= 0) {
+        continue;
+      }
+      hoop(context, at, size * (0.6 + held * 2.2), 0.35 + shell * 0.2, shell * 1.2 + share * 2, {
+        color: light,
+        alpha: decay(held),
+        width: 2.4 * stage.scale,
+      });
+    }
+    burst(context, at, size * (0.6 + share * 1.2), many(8, weight), seed, {
+      color: light,
+      alpha: decay(share),
+      width: 2 * stage.scale,
+    });
+  },
+
+  // Several pieces flying in one after another, each landing its own small hit
+  Stream(context, stage, share, { paint, seed, weight, type, hits = STRIKES }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const count = Math.max(2, Math.min(5, Math.round(hits)));
+
+    for (let one = 0; one < count; one += 1) {
+      const flight = (share - (one / count) * 0.7) / 0.3;
+
+      if (flight <= 0) {
+        continue;
+      }
+      const spot: Point = [
+        at[0] + spread(seed, one) * size * 0.5,
+        at[1] + spread(seed, one + 5) * size * 0.4,
+      ];
+      const from = backToward(spot, stage.source, size * 4);
+
+      if (flight < 1) {
+        piece(
+          context,
+          between(from, spot, flight),
+          between(from, spot, Math.max(0, flight - 0.15)),
+          size,
+          type,
+          paint.color,
+          stage.scale,
+          share * Math.PI * 6,
+        );
+        continue;
+      }
+      const hit = (flight - 1) / 0.5;
+
+      if (hit < 1) {
+        burst(context, spot, size * (0.4 + hit * 0.5), 5, seed + one, {
+          color: lighten(paint.color, 0.5),
+          alpha: decay(hit),
+          width: 2 * stage.scale,
+        });
+      }
     }
   },
 } satisfies Partial<Record<EffectShape, ShapePainter>>;

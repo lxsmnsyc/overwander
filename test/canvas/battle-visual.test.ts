@@ -101,7 +101,7 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Brawl', Moves.KarateChop],
   ['Blast', Moves.Explosion],
   ['Bloom', Moves.DragonRage],
-  ['Beam', Moves.HyperBeam],
+  ['Beam', Moves.IceBeam],
   ['Zap', Moves.Thunderbolt],
   ['Strike', Moves.Thunder],
   ['Flame', Moves.Ember],
@@ -116,7 +116,7 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Sky', Moves.RainDance],
   ['Quake', Moves.Earthquake],
   ['Drain', Moves.Absorb],
-  ['Volley', Moves.PinMissile],
+  ['Volley', Moves.FuryAttack],
   ['Bubbles', Moves.BubbleBeam],
   ['Boomerang', Moves.Bonemerang],
   ['Dazzle', Moves.HiddenPower],
@@ -213,6 +213,22 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Scheme', Moves.NastyPlot],
   ['Weather', Moves.WeatherBall],
   ['Tri', Moves.TriAttack],
+  // The heaviest blows, and several of something flying in
+  ['Blaster', Moves.HyperBeam],
+  ['Blaster', Moves.SolarBeam],
+  ['Crash', Moves.GigaImpact],
+  ['Haymaker', Moves.FocusPunch],
+  ['Haymaker', Moves.DynamicPunch],
+  ['Flurry', Moves.CloseCombat],
+  ['Aura', Moves.AuraSphere],
+  ['Aura', Moves.FocusBlast],
+  ['Stream', Moves.PinMissile],
+  ['Stream', Moves.BulletSeed],
+  ['Stream', Moves.IcicleSpear],
+  ['Stream', Moves.RockBlast],
+  ['Stream', Moves.BoneRush],
+  ['Kicks', Moves.DoubleKick],
+  ['Kicks', Moves.TripleKick],
 ];
 
 /**
@@ -419,7 +435,7 @@ describe('a painted move', () => {
     // special move: a flower burst stood in for all of these
     expect(effectShapeFor(Moves.DarkPulse)).toBe('Pulse');
     expect(effectShapeFor(Moves.DragonPulse)).toBe('Beam');
-    expect(effectShapeFor(Moves.FocusBlast)).toBe('Blast');
+    expect(effectShapeFor(Moves.SeedBomb)).toBe('Blast');
     expect(effectShapeFor(Moves.PowerGem)).toBe('Dazzle');
     // What traps is drawn as what traps, whatever it is made of
     expect(effectShapeFor(Moves.WringOut)).toBe('Coil');
@@ -626,7 +642,7 @@ describe('a painted move', () => {
     // A fury of swipes is claws, drawn several times over — the
     // barrage shape is for the moves whose repeat is the whole point
     expect(effectShapeFor(Moves.FurySwipes)).toBe('Claw');
-    expect(effectShapeFor(Moves.PinMissile)).toBe('Volley');
+    expect(effectShapeFor(Moves.FuryAttack)).toBe('Volley');
     expect(effectShapeFor(Moves.Glare)).toBe('Mark');
     expect(effectShapeFor(Moves.Substitute)).toBe('Doll');
     // A screen is a pane put up rather than a shell closing in, and

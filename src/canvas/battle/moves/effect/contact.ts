@@ -34,6 +34,15 @@ export const RAMPAGE_BLOWS = 3;
 /** The colour of Petal Dance's petals, which the Grass type's green is not */
 export const PETAL = '#f2a0c8';
 
+/** The dark purple Giga Impact is wrapped in */
+export const CRASH_AURA = '#7a3ad0';
+
+/** Focus Punch: the share spent charging the fist before the blow */
+export const HAYMAKER_CHARGE = 0.35;
+
+/** How many quick blows Close Combat lands before its last one */
+export const FLURRY_BLOWS = 7;
+
 /** A blow's element breaking off where it lands: flames, frost or sparks, and plain spokes for any other type */
 export function imbue(
   context: CanvasRenderingContext2D,
@@ -662,6 +671,150 @@ const contact = {
         alpha: swell(held) * 0.9,
         width: 2.4 * stage.scale,
       });
+    }
+  },
+  // Everything it has thrown into one blow: wrapped in a dark aura, and the floor answering with a wide wave
+  Crash(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const tail = backToward(at, stage.source, size * 3.4);
+    const head = backToward(at, stage.source, size * 0.6);
+
+    for (let line = 0; line < 5; line += 1) {
+      const off = (line - 2) * size * 0.4;
+
+      lash(context, [tail[0], tail[1] + off], [head[0], head[1] + off], 0, {
+        color: CRASH_AURA,
+        alpha: decay(Math.min(1, share * 2.5)) * 0.8,
+        width: 2.4 * stage.scale,
+      });
+    }
+    orb(context, at, size * (1.2 + swell(share) * 0.8), {
+      color: CRASH_AURA,
+      alpha: decay(share) * 0.7,
+    });
+    orb(context, at, size * (0.5 + share * 0.6), {
+      color: lighten(paint.color, 0.6),
+      alpha: decay(Math.min(1, share * 2)),
+    });
+    ripple(context, [at[0], at[1] + size * 0.9], size * (0.6 + share * 3.2), {
+      color: lighten(CRASH_AURA, 0.4),
+      alpha: decay(share) * 0.9,
+      width: 3.4 * stage.scale,
+    });
+    burst(context, at, size * (0.6 + share * 1.2), many(8, weight), seed, {
+      color: lighten(CRASH_AURA, 0.5),
+      alpha: decay(share),
+      width: 3 * stage.scale,
+    });
+  },
+
+  // A fist charged until it glows, then a blow that goes off like a blast
+  Haymaker(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const light = lighten(paint.color, 0.5);
+
+    if (share < HAYMAKER_CHARGE) {
+      const charge = share / HAYMAKER_CHARGE;
+
+      orb(context, at, size * (0.2 + charge * 0.5), { color: light, alpha: 0.4 + charge * 0.6 });
+      ring(context, at, size * (1.4 - charge), {
+        ...paint,
+        alpha: charge,
+        width: 2.4 * stage.scale,
+      });
+      return;
+    }
+    const hit = (share - HAYMAKER_CHARGE) / (1 - HAYMAKER_CHARGE);
+
+    orb(context, at, size * (0.6 + hit * 1.4), { color: light, alpha: decay(hit) });
+    ring(context, at, size * (0.5 + hit * 2.4), {
+      color: light,
+      alpha: decay(hit),
+      width: 3 * stage.scale,
+    });
+    ripple(context, [at[0], at[1] + size * 0.9], size * (0.6 + hit * 2.8), {
+      ...paint,
+      alpha: decay(hit) * 0.9,
+      width: 3 * stage.scale,
+    });
+    shards(context, at, size * 1.8, many(7, weight), seed, hit, {
+      ...paint,
+      alpha: decay(hit),
+      width: 2.4 * stage.scale,
+    });
+  },
+
+  // A flurry of quick blows all over it, then a last one that throws it back
+  Flurry(context, stage, share, { paint, seed }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const light = lighten(paint.color, 0.5);
+
+    for (let blow = 0; blow < FLURRY_BLOWS; blow += 1) {
+      const held = (share - (blow / FLURRY_BLOWS) * 0.7) / 0.15;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      const spot: Point = [
+        at[0] + spread(seed, blow) * size * 0.7,
+        at[1] + spread(seed, blow + 5) * size * 0.6,
+      ];
+
+      burst(context, spot, size * (0.3 + held * 0.4), 5, seed + blow, {
+        color: light,
+        alpha: decay(held),
+        width: 2.4 * stage.scale,
+      });
+      orb(context, spot, size * 0.3 * decay(held), { color: light, alpha: decay(held) });
+    }
+    if (share > 0.75) {
+      const last = (share - 0.75) / 0.25;
+
+      orb(context, at, size * (0.8 + last), { color: light, alpha: decay(last) });
+      ring(context, at, size * (0.5 + last * 2), {
+        color: light,
+        alpha: decay(last),
+        width: 3 * stage.scale,
+      });
+    }
+  },
+
+  // Kicks landing from alternating sides, one a strike, each swinging in on its own arc
+  Kicks(context, stage, share, { paint, seed, hits = 2 }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const light = lighten(paint.color, 0.5);
+    const count = Math.max(2, Math.round(hits));
+
+    for (let kick = 0; kick < count; kick += 1) {
+      const held = share * count - kick;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      const side = kick % 2 === 0 ? -1 : 1;
+      // Each one harder than the last, the way Triple Kick's power climbs
+      const big = size * (1 + kick * 0.25);
+      const start: Point = [at[0] + side * big * 1.4, at[1] + big * 0.5];
+      const swing = Math.min(1, held * 2.5);
+
+      lash(context, start, between(start, at, swing), side * big * 0.5, {
+        color: light,
+        alpha: decay(held) * 0.9,
+        width: 3 * stage.scale,
+      });
+      if (swing >= 1) {
+        const hit = (held - 0.4) / 0.6;
+
+        burst(context, at, big * (0.5 + hit * 0.5), 6, seed + kick, {
+          color: light,
+          alpha: decay(hit),
+          width: 2.6 * stage.scale,
+        });
+      }
     }
   },
 } satisfies Partial<Record<EffectShape, ShapePainter>>;

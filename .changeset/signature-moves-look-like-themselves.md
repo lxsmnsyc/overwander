@@ -40,6 +40,13 @@ More moves land as a picture of their own:
 - Double Team and Minimize slide copies of the pokemon out to either side.
 - Calm Mind and Nasty Plot gather light into the head under a halo.
 - Weather Ball drops a ball made of the current weather that bursts as fire, water, ice or rock.
+- Hyper Beam and Solar Beam fire a far thicker beam that holds on the target while shockwaves roll off it.
+- Giga Impact arrives wrapped in a dark purple aura and sends a wide wave along the ground.
+- Focus Punch and Dynamic Punch charge a glowing fist, then land a blow that goes off like a blast.
+- Close Combat lands a flurry of quick blows, then one last heavy one.
+- Aura Sphere and Focus Blast burst on the target into rings of aura.
+- Pin Missile, Bullet Seed, Icicle Spear, Rock Blast and Bone Rush fly in one piece at a time, as needles, seeds, icicles, rocks or bones.
+- Double Kick and Triple Kick land their kicks from alternating sides.
 - Tri Attack turns three orbs of fire, ice and lightning in on the target, each bursting as its element.
 - Flame Wheel rolls into the target as a ring of fire.
 - Waterfall drives a column of water up through the target.

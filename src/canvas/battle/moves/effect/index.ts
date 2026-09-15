@@ -2,7 +2,7 @@ import { MoveAffects, MoveCategories, MoveFlags, Moves } from '../../../../data/
 import { Types } from '../../../../data/constants/types';
 import type { Weathers } from '../../../../data/ids/status';
 import { getMoveData } from '../../../../data/moves';
-import { MULTI_HIT_MOVES } from '../../../../battle/moves/multi-hit';
+import { MULTI_HIT_MOVES, estimateMoveHits } from '../../../../battle/moves/multi-hit';
 import { getStageMoveEffect } from '../../../../battle/moves/stage';
 import PaintedVisual, { type LitPainter, type Painter } from '../__painted';
 import { JOLTS, LIT, reachOf } from '../lit';
@@ -214,6 +214,7 @@ function painted(
   const { type } = getMoveData(move);
   // Asked once, as it lands, and only by the shape made of the sky
   const weather = shape === 'Weather' ? weatherOf?.() : undefined;
+  const hits = estimateMoveHits(move);
   const painter: Painter = (context, stage, share) => {
     // Once per pokemon it reached. A move aimed at a whole team lands
     // on all of them at once, and the shape has no idea how many that
@@ -230,6 +231,7 @@ function painted(
         weight,
         type,
         weather,
+        hits,
       });
       return;
     }
@@ -242,7 +244,7 @@ function painted(
         // The move itself, so a scatter is the same scatter every time
         // it goes off: two Embers look like the same move rather than
         // like two accidents
-        { paint, seed: move + 1 + at * 97, weight, type, weather },
+        { paint, seed: move + 1 + at * 97, weight, type, weather, hits },
       );
     }
   };
@@ -263,6 +265,7 @@ function painted(
               weight,
               type,
               weather,
+              hits,
             });
             return;
           }
@@ -273,6 +276,7 @@ function painted(
               weight,
               type,
               weather,
+              hits,
             });
           }
         };

@@ -77,6 +77,10 @@ const MOVE_COLORS: Partial<Record<Moves, string>> = {
   [Moves.LightScreen]: STAGE_COLORS[Stages.SpecialDefense],
   // Protect's green shell; Detect keeps its type's orange
   [Moves.Protect]: '#8fe39a',
+  // Hyper Beam's orange, Solar Beam's sunlight and Aura Sphere's blue, which their types' colours are not
+  [Moves.HyperBeam]: '#ffb04a',
+  [Moves.SolarBeam]: '#fff0a0',
+  [Moves.AuraSphere]: '#5aa8ff',
 };
 
 export default function colorOf(move: Moves, shape: EffectShape): string {

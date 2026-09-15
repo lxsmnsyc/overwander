@@ -1,9 +1,9 @@
 import { Types } from '../../../../data/constants/types';
 import type { Spot } from '../../../three/effect-batch';
-import { PETAL, RAMPAGE_BLOWS } from '../effect/contact';
+import { CRASH_AURA, FLURRY_BLOWS, HAYMAKER_CHARGE, PETAL, RAMPAGE_BLOWS } from '../effect/contact';
 import { decay, lighten, mix, noise, spread, swell } from '../__paint';
 import { type EffectShape, IMBUED, STRIKES, many } from '../effect/shapes';
-import { TAU, bolt, bone, debris, imbue, smoke, sparks, spiral } from './pieces';
+import { TAU, bolt, bone, debris, gathering, imbue, smoke, sparks, spiral } from './pieces';
 import {
   type LitShapePainter,
   aside,
@@ -711,6 +711,159 @@ const contact = {
       );
 
       kit.streak(at, reach * 1.41, reach * 0.15, angle, edge, alpha);
+    }
+  },
+  // Everything it has thrown into one blow: wrapped in a dark aura, and the floor answering with a wide wave
+  Crash(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const fade = decay(share);
+    const tail = backToward(at, stage.source, reach * 3.4);
+    const head = backToward(at, stage.source, reach * 0.6);
+
+    for (let line = 0; line < 5; line += 1) {
+      const up = (line - 2) * reach * 0.4;
+
+      kit.trail(
+        aside(kit, tail, 0, up),
+        aside(kit, head, 0, up),
+        reach * 0.08,
+        CRASH_AURA,
+        decay(Math.min(1, share * 2.5)) * 0.8,
+      );
+    }
+    kit.pool(floor, reach * 2.2, '#140a1c', swell(share) * 0.5, { add: 0 });
+    kit.glow(at, reach * (1.2 + swell(share) * 0.8), CRASH_AURA, fade * 0.7, 0.2);
+    kit.glow(
+      at,
+      reach * (0.5 + share * 0.6),
+      lighten(colour, 0.6),
+      decay(Math.min(1, share * 2)),
+      1,
+    );
+    for (let wave = 0; wave < 3; wave += 1) {
+      const held = staged(share, 1.3, wave * 0.2);
+
+      if (held > 0) {
+        kit.ripple(
+          floor,
+          reach * (0.6 + held * 3.2),
+          0.08,
+          lighten(CRASH_AURA, 0.4),
+          decay(held) * 0.9,
+        );
+      }
+    }
+    debris(kit, floor, reach, many(10, weight), seed, share, mix(colour, '#6b5440', 0.45), fade);
+    sparks(kit, at, reach * 1.6, many(8, weight), seed, share, lighten(CRASH_AURA, 0.5), fade);
+  },
+
+  // A fist charged until it glows, then a blow that goes off like a blast
+  Haymaker(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const light = lighten(colour, 0.5);
+
+    if (share < HAYMAKER_CHARGE) {
+      const charge = share / HAYMAKER_CHARGE;
+
+      gathering(kit, at, reach * 1.8, 12, seed, share * 2, light);
+      kit.glow(at, reach * (0.2 + charge * 0.5), light, 0.4 + charge * 0.6, 0.9);
+      kit.ring(at, reach * (1.4 - charge), 0.08, colour, charge);
+      return;
+    }
+    const hit = (share - HAYMAKER_CHARGE) / (1 - HAYMAKER_CHARGE);
+
+    kit.pool(floor, reach * (1.6 + hit * 1.4), colour, decay(hit) * 0.7);
+    kit.glow(at, reach * (0.6 + hit * 1.4), light, decay(hit), 0.9);
+    kit.star(at, reach * (1 + hit * 1.5), 0.4, '#ffffff', decay(Math.min(1, hit * 1.5)));
+    kit.ring(at, reach * (0.5 + hit * 2.4), 0.07, light, decay(hit));
+    kit.ripple(floor, reach * (0.6 + hit * 2.8), 0.07, lighten(colour, 0.3), decay(hit) * 0.9);
+    smoke(kit, at, reach, 4, seed, hit, mix(colour, '#2a2424', 0.8), swell(hit) * 0.4);
+    debris(kit, at, reach, many(8, weight), seed, hit, mix(colour, '#5b4636', 0.5), decay(hit));
+    sparks(kit, at, reach * 1.6, many(8, weight), seed, hit, lighten(colour, 0.6), decay(hit));
+  },
+
+  // A flurry of quick blows all over it, then a last one that throws it back
+  Flurry(kit, stage, share, { paint, seed }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage);
+    const colour = paint.color;
+    const light = lighten(colour, 0.5);
+
+    for (let blow = 0; blow < FLURRY_BLOWS; blow += 1) {
+      const held = (share - (blow / FLURRY_BLOWS) * 0.7) / 0.15;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      const spot = aside(
+        kit,
+        at,
+        spread(seed, blow) * reach * 0.7,
+        spread(seed, blow + 5) * reach * 0.6,
+      );
+
+      kit.glow(spot, reach * 0.4 * decay(held), light, decay(held), 0.9);
+      kit.star(spot, reach * (0.4 + held * 0.4), blow, '#ffffff', decay(held));
+      sparks(kit, spot, reach * (0.4 + held * 0.4), 4, seed + blow, held, light, decay(held));
+    }
+    if (share <= 0.75) {
+      return;
+    }
+    const last = (share - 0.75) / 0.25;
+
+    kit.glow(at, reach * (0.8 + last), light, decay(last), 0.9);
+    kit.ring(at, reach * (0.5 + last * 2), 0.1, light, decay(last));
+    kit.ripple(floor, reach * (0.6 + last * 2.4), 0.08, lighten(colour, 0.3), decay(last) * 0.9);
+  },
+
+  // Kicks landing from alternating sides, one a strike, each swinging in on its own arc
+  Kicks(kit, stage, share, { paint, seed, hits = 2 }) {
+    const at = landed(stage);
+    const reach = reachOf(stage);
+    const colour = paint.color;
+    const light = lighten(colour, 0.5);
+    const count = Math.max(2, Math.round(hits));
+
+    for (let kick = 0; kick < count; kick += 1) {
+      const held = share * count - kick;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      const side = kick % 2 === 0 ? -1 : 1;
+      // Each one harder than the last, the way Triple Kick's power climbs
+      const big = reach * (1 + kick * 0.25);
+      const swing = Math.min(1, held * 2.5);
+      const path: Spot[] = [];
+
+      for (let step = 0; step <= 8; step += 1) {
+        const along = (step / 8) * swing;
+
+        path.push(
+          aside(
+            kit,
+            at,
+            side * big * 1.4 * (1 - along),
+            big * (-0.5 + along * 0.5) - Math.sin(along * Math.PI) * big * 0.4,
+          ),
+        );
+      }
+      kit.ribbon(path, big * 0.14, light, decay(held) * 0.8);
+      if (swing < 1) {
+        continue;
+      }
+      const hit = (held - 0.4) / 0.6;
+
+      kit.glow(at, big * 0.5, light, decay(hit), 0.9);
+      kit.star(at, big * (0.6 + hit * 0.5), side, lighten(colour, 0.6), decay(hit));
+      sparks(kit, at, big * (0.6 + hit * 0.5), 5, seed + kick, hit, light, decay(hit));
     }
   },
 } satisfies Partial<Record<EffectShape, LitShapePainter>>;

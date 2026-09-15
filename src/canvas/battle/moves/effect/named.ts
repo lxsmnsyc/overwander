@@ -37,8 +37,9 @@ export const BY_TYPE: Partial<Record<Types, EffectShape>> = {
  */
 export const NAMED: Partial<Record<Moves, EffectShape>> = {
   // Beams: the picture is the line between the two of them
-  [Moves.HyperBeam]: 'Beam',
-  [Moves.SolarBeam]: 'Beam',
+  // The two that hold far longer and far thicker than any other
+  [Moves.HyperBeam]: 'Blaster',
+  [Moves.SolarBeam]: 'Blaster',
   [Moves.Psybeam]: 'Beam',
   [Moves.IceBeam]: 'Beam',
   [Moves.AuroraBeam]: 'Beam',
@@ -371,8 +372,8 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Fling]: 'Impact',
 
   // Thrown and going off where it lands
-  [Moves.AuraSphere]: 'Blast',
-  [Moves.FocusBlast]: 'Blast',
+  [Moves.AuraSphere]: 'Aura',
+  [Moves.FocusBlast]: 'Aura',
   [Moves.EnergyBall]: 'Blast',
   [Moves.SeedBomb]: 'Blast',
   [Moves.MudBomb]: 'Blast',
@@ -466,6 +467,21 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Minimize]: 'Mirage',
   [Moves.CalmMind]: 'Scheme',
   [Moves.NastyPlot]: 'Scheme',
+
+  // The heaviest blows, drawn as what they are rather than as a bigger ordinary hit
+  [Moves.GigaImpact]: 'Crash',
+  [Moves.FocusPunch]: 'Haymaker',
+  [Moves.DynamicPunch]: 'Haymaker',
+  [Moves.CloseCombat]: 'Flurry',
+
+  // Several of something flying in, where the scatter of hits said nothing about what was thrown
+  [Moves.PinMissile]: 'Stream',
+  [Moves.BulletSeed]: 'Stream',
+  [Moves.IcicleSpear]: 'Stream',
+  [Moves.RockBlast]: 'Stream',
+  [Moves.BoneRush]: 'Stream',
+  [Moves.DoubleKick]: 'Kicks',
+  [Moves.TripleKick]: 'Kicks',
 
   // Made of whatever the sky is doing, and three elements at once
   [Moves.WeatherBall]: 'Weather',

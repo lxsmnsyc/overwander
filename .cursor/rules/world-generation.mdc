@@ -10,3 +10,5 @@ The world is read with one `Generation` (`src/overworld/world.ts`). **First** is
 - A helper that wants a plain source takes `sourceOf(draws, name)`.
 - Clock-driven content (spawns, raids, NPCs, caches, nests) and the battle engine keep their own `AleaRNG` seeds.
 - A second-generation field is `SimplexNoise(hashString(seed), salt, octaves)`, mapped onto the first generation's spread so thresholds cut the same proportions.
+- Read climate through `world.getCellBiome`, `getCellClimate` or `getCellElevation`, which remember each chunk; never sample the climate or warp fields directly or memo in front of them. Second-generation fields read at one shared point go through a `SimplexStack`.
+- Rows tied to the ground (positions, towns, gym seats, raids, stops, snapshots, encounters, claims) carry a `generation` column with no default and in their key. Filter every read and write every insert with `WORLD_GENERATION`; a later generation's raid id starts with `#<generation>`.

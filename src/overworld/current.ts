@@ -8,10 +8,10 @@ import World, { Depth, Generation } from './world';
 export const WORLD_SEED = import.meta.env.VITE_WORLD_SEED || 'overworld';
 
 /**
- * Which generation that world is read with. The live world was made
- * on the first and stays on it; only a new world, on a new seed, may
- * be started on the second, since switching an existing one moves
- * every town, gym seat and catch origin already written against it
+ * Which generation that world is read with. Every row tied to the
+ * ground is stamped with it, and a build reads and writes only its
+ * own, so switching hides the other world's towns, seats and claims
+ * rather than moving them onto ground they no longer match
  */
 export const WORLD_GENERATION: Generation =
   import.meta.env.VITE_WORLD_GENERATION === '2' ? Generation.Second : Generation.First;

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import AleaRNG from '../../src/core/alea';
 import { type Draws, KeyedDraws, StreamDraws, sourceOf } from '../../src/core/draws';
-import { hash2, hash3, hash4, hashString, toUnit } from '../../src/core/hash';
+import { hash2, hash3, hashString, toUnit } from '../../src/core/hash';
 import PerlinNoise from '../../src/core/perlin';
-import SimplexNoise from '../../src/core/simplex';
+import SimplexNoise, { SimplexStack } from '../../src/core/simplex';
 import registerGameData from '../../src/data/index';
 import World, { Depth, Generation } from '../../src/overworld/world';
 
@@ -51,7 +51,7 @@ describe('world hashing', () => {
   it('answers the same for the same numbers, and differently for their order', () => {
     expect(hash3(1, 2, 3)).toBe(hash3(1, 2, 3));
     expect(hash3(1, 2, 3)).not.toBe(hash3(3, 2, 1));
-    expect(hash2(1, 2)).not.toBe(hash4(1, 2, 0, 0));
+    expect(hash2(1, 2)).not.toBe(hash3(1, 2, 0));
     expect(hashString('overworld')).toBe(hashString('overworld'));
     expect(hashString('overworld')).not.toBe(hashString('overworle'));
   });
@@ -178,6 +178,24 @@ describe('second generation noise', () => {
         (value: number): boolean => value > 0.6667,
       ]) {
         expect(Math.abs(share(simplex, cut) - share(perlin, cut))).toBeLessThan(0.75);
+      }
+    }
+  });
+});
+
+describe('second generation noise, read together', () => {
+  it('answers each field exactly as the field alone would', () => {
+    const fields = [new SimplexNoise(9, 1), new SimplexNoise(9, 2), new SimplexNoise(9, 3)];
+    const stack = new SimplexStack(fields);
+    const out = new Float64Array(3);
+
+    for (let at = 0; at < 5000; at++) {
+      const x = at * 0.137 - 300;
+      const y = at * 0.071 + 40;
+
+      stack.noiseInto(x, y, out);
+      for (const [index, field] of fields.entries()) {
+        expect(out[index]).toBe(field.noise(x, y));
       }
     }
   });

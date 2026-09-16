@@ -4,7 +4,7 @@ import { Depth } from './depth';
 import { type Draws, KeyedDraws, StreamDraws } from '../core/draws';
 import { hashString } from '../core/hash';
 import PerlinNoise from '../core/perlin';
-import SimplexNoise, { type Noise2D } from '../core/simplex';
+import SimplexNoise, { type Noise2D, SimplexStack } from '../core/simplex';
 import type Biome from '../data/ids/biome';
 import { getBiome } from '../data/ids/biome';
 import type Weather from '../data/overworld/weather';
@@ -163,6 +163,23 @@ export function clampToWorldCell(value: number): number {
  */
 const BIOME_CACHE_LIMIT = 1 << 20;
 
+/**
+ * How many chunks of cell climate one generation of the cache holds. A
+ * cell's climate is asked for several times as its neighbours are
+ * worked out, and a map view covers about this many chunks
+ */
+const CLIMATE_CHUNKS = 1536;
+const CELLS_PER_CHUNK = CHUNK_CELLS * CHUNK_CELLS;
+/** Picks a cell's place inside its chunk; kept local since this runs for every cell */
+const CELL_MASK = CHUNK_CELLS - 1;
+
+/** One chunk's remembered climate: three values a cell, and its biome plus one (0 is unread) */
+interface ClimateBlock {
+  key: number;
+  values: Float64Array;
+  biomes: Uint8Array;
+}
+
 /** How many built chunks a world keeps, comfortably more than a board and its windows touch */
 const CHUNKS_KEPT = 64;
 
@@ -200,6 +217,21 @@ export default class World {
    * again. Safe because everything a chunk holds is derived and never written
    */
   private readonly chunks = new LRUMap<number, Chunk>(CHUNKS_KEPT);
+  /**
+   * The second generation's warp pair and climate trio, each read in
+   * one lattice pass since every cell samples them at a shared point
+   */
+  private readonly warp: SimplexStack | null = null;
+  private readonly climate: SimplexStack | null = null;
+  private readonly sampled = new Float64Array(3);
+  /**
+   * Remembered climate by chunk, in two generations so the chunks in
+   * view survive a turnover, and the last block read, since neighbouring
+   * cells mostly share one
+   */
+  private climates = new Map<number, ClimateBlock>();
+  private agedClimates = new Map<number, ClimateBlock>();
+  private lastClimate: ClimateBlock | null = null;
 
   constructor(
     public seed: string,
@@ -225,18 +257,26 @@ export default class World {
     // others is part of the world any more
     const key = hashString(seed);
 
-    this.humidity = new SimplexNoise(key, FieldSalt.Humidity);
-    this.elevation = new SimplexNoise(key, FieldSalt.Elevation);
-    this.temperature = new SimplexNoise(key, FieldSalt.Temperature);
+    const humidity = new SimplexNoise(key, FieldSalt.Humidity);
+    const elevation = new SimplexNoise(key, FieldSalt.Elevation);
+    const temperature = new SimplexNoise(key, FieldSalt.Temperature);
+    const warpX = new SimplexNoise(key, FieldSalt.WarpX);
+    const warpY = new SimplexNoise(key, FieldSalt.WarpY);
+
+    this.humidity = humidity;
+    this.elevation = elevation;
+    this.temperature = temperature;
     this.wetness = new SimplexNoise(key, FieldSalt.Wetness);
     this.energy = new SimplexNoise(key, FieldSalt.Energy);
-    this.warpX = new SimplexNoise(key, FieldSalt.WarpX);
-    this.warpY = new SimplexNoise(key, FieldSalt.WarpY);
+    this.warpX = warpX;
+    this.warpY = warpY;
     // The two whose edges a player walks along, so they carry a finer
     // octave: a shore and a crag read as ragged up close, where a
     // climate border only ever reads from far away
     this.lakes = new SimplexNoise(key, FieldSalt.Lakes, 2);
     this.stone = new SimplexNoise(key, FieldSalt.Stone, 2);
+    this.warp = new SimplexStack([warpX, warpY]);
+    this.climate = new SimplexStack([humidity, temperature, elevation]);
   }
 
   /**
@@ -258,9 +298,15 @@ export default class World {
    * chunk wherever the field says it does
    */
   getCellBiome(cellX: number, cellY: number): Biome {
-    const { humidity, temperature, elevation } = this.getCellClimate(cellX, cellY);
+    const x = clampToWorldCell(cellX);
+    const y = clampToWorldCell(cellY);
+    const block = this.climateBlock(x, y);
+    const cell = (x & CELL_MASK) | ((y & CELL_MASK) << 4);
 
-    return getBiome(humidity, temperature, elevation);
+    if (block.biomes[cell] === 0) {
+      this.readClimate(x, y, block, cell);
+    }
+    return block.biomes[cell] - 1;
   }
 
   /**
@@ -274,18 +320,93 @@ export default class World {
   ): { humidity: number; temperature: number; elevation: number } {
     const x = clampToWorldCell(cellX);
     const y = clampToWorldCell(cellY);
-    const drift = (x + CLIMATE_OFFSET) * WARP_FREQUENCY;
-    const wander = (y + CLIMATE_OFFSET) * WARP_FREQUENCY;
-    const sampleX =
-      (x + CLIMATE_OFFSET + this.warpX.noise(drift, wander) * WARP_REACH) * CELL_CLIMATE_FREQUENCY;
-    const sampleY =
-      (y + CLIMATE_OFFSET + this.warpY.noise(drift, wander) * WARP_REACH) * CELL_CLIMATE_FREQUENCY;
+    const block = this.climateBlock(x, y);
+    const cell = (x & CELL_MASK) | ((y & CELL_MASK) << 4);
+
+    if (block.biomes[cell] === 0) {
+      this.readClimate(x, y, block, cell);
+    }
+
+    const at = cell * 3;
 
     return {
-      humidity: spreadNoise(this.humidity.noise(sampleX, sampleY)),
-      temperature: spreadNoise(this.temperature.noise(sampleX, sampleY)),
-      elevation: spreadNoise(this.elevation.noise(sampleX, sampleY)),
+      humidity: block.values[at],
+      temperature: block.values[at + 1],
+      elevation: block.values[at + 2],
     };
+  }
+
+  /** The elevation field alone, for the terraces, which ask for it a great deal */
+  getCellElevation(cellX: number, cellY: number): number {
+    const x = clampToWorldCell(cellX);
+    const y = clampToWorldCell(cellY);
+    const block = this.climateBlock(x, y);
+    const cell = (x & CELL_MASK) | ((y & CELL_MASK) << 4);
+
+    if (block.biomes[cell] === 0) {
+      this.readClimate(x, y, block, cell);
+    }
+    return block.values[cell * 3 + 2];
+  }
+
+  /** The block a cell's climate is remembered in */
+  private climateBlock(x: number, y: number): ClimateBlock {
+    // Cells are clamped inside the world, so the shifts floor correctly
+    const key = ((x >> 4) - WORLD_MIN) * WORLD_SIZE + ((y >> 4) - WORLD_MIN);
+    const last = this.lastClimate;
+
+    if (last?.key === key) {
+      return last;
+    }
+
+    let block = this.climates.get(key);
+
+    if (block == null) {
+      block = this.agedClimates.get(key) ?? {
+        key,
+        values: new Float64Array(CELLS_PER_CHUNK * 3),
+        biomes: new Uint8Array(CELLS_PER_CHUNK),
+      };
+      if (this.climates.size >= CLIMATE_CHUNKS) {
+        this.agedClimates = this.climates;
+        this.climates = new Map();
+      }
+      this.climates.set(key, block);
+    }
+    this.lastClimate = block;
+    return block;
+  }
+
+  /** Samples a cell's climate fields into its block */
+  private readClimate(x: number, y: number, block: ClimateBlock, cell: number): void {
+    const at = cell * 3;
+    const drift = (x + CLIMATE_OFFSET) * WARP_FREQUENCY;
+    const wander = (y + CLIMATE_OFFSET) * WARP_FREQUENCY;
+
+    if (this.warp != null && this.climate != null) {
+      const { sampled } = this;
+
+      this.warp.noiseInto(drift, wander, sampled);
+      const sampleX = (x + CLIMATE_OFFSET + sampled[0] * WARP_REACH) * CELL_CLIMATE_FREQUENCY;
+      const sampleY = (y + CLIMATE_OFFSET + sampled[1] * WARP_REACH) * CELL_CLIMATE_FREQUENCY;
+
+      this.climate.noiseInto(sampleX, sampleY, sampled);
+      block.values[at] = spreadNoise(sampled[0]);
+      block.values[at + 1] = spreadNoise(sampled[1]);
+      block.values[at + 2] = spreadNoise(sampled[2]);
+    } else {
+      const sampleX =
+        (x + CLIMATE_OFFSET + this.warpX.noise(drift, wander) * WARP_REACH) *
+        CELL_CLIMATE_FREQUENCY;
+      const sampleY =
+        (y + CLIMATE_OFFSET + this.warpY.noise(drift, wander) * WARP_REACH) *
+        CELL_CLIMATE_FREQUENCY;
+
+      block.values[at] = spreadNoise(this.humidity.noise(sampleX, sampleY));
+      block.values[at + 1] = spreadNoise(this.temperature.noise(sampleX, sampleY));
+      block.values[at + 2] = spreadNoise(this.elevation.noise(sampleX, sampleY));
+    }
+    block.biomes[cell] = getBiome(block.values[at], block.values[at + 1], block.values[at + 2]) + 1;
   }
 
   /**

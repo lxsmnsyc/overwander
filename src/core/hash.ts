@@ -41,11 +41,6 @@ export function hash3(a: number, b: number, c: number): number {
   return finish(round(round(round(0, a), b), c), 3);
 }
 
-/** An unsigned 32-bit hash of four integers */
-export function hash4(a: number, b: number, c: number, d: number): number {
-  return finish(round(round(round(round(0, a), b), c), d), 4);
-}
-
 /** FNV-1a over a string, for folding a text key into an integer once */
 export function hashString(text: string): number {
   let hash = 0x811c9dc5;

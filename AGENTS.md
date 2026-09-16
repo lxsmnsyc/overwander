@@ -37,7 +37,8 @@ one that covers what you are about to do:
   under it, and a species' `habitat` decides which of those pools may list it.
 - `world-generation` - the live world's generation is frozen and pinned by a
   fingerprint test; every roll that places something on the ground goes through
-  `world.draws(key)` with a name, and existing calls are never reordered.
+  `world.draws(key)` with a name, and existing calls are never reordered; rows
+  tied to the ground carry a `generation` column that every query filters on.
 - `trigger-driven-abilities` - ability effects that do not mutate their
   detection event ride `UnitTriggerAbility` at `Exact` priority.
 - `changesets` - every change against `main` ships with one, and a fix for

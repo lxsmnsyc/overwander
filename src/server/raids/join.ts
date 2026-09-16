@@ -2,6 +2,7 @@ import 'server-only';
 import { asCaughtPokemon } from '../../auth/caught-record';
 import { isFainted } from '../../auth/health';
 import { RAID_PLAYER_LIMIT } from '../../auth/raid-record';
+import { WORLD_GENERATION } from '../../overworld/current';
 import { TEAM_SIZE } from '../../auth/teams';
 import { isGuardedRecord } from '../catch-fields';
 import { getSql, newDocId, tx } from '../db';
@@ -41,6 +42,7 @@ export async function isAnyCatchQueued(
     join raids r on r.id = t.raid_id
     where t.player = ${uid}
       and tc.caught_id = any(${catches})
+      and r.generation = ${WORLD_GENERATION}
       and r.battle_id is null
       and not r.cleared
     union all

@@ -1,6 +1,6 @@
 import 'server-only';
 import type { TownRecord } from '../auth/town-record';
-import getWorld from '../overworld/current';
+import getWorld, { WORLD_GENERATION } from '../overworld/current';
 import { townName, townOfRegion } from '../overworld/town';
 import { getSql } from './db';
 import { asNumber } from './read';
@@ -60,9 +60,9 @@ export async function discoverTown(
   // The no-op update is what makes a second walk-in return the row
   // rather than nothing: the finder stays whoever got there first
   const rows = await getSql()`
-    insert into towns (region_x, region_y, found_by, found_at)
-    values (${regionX}, ${regionY}, ${uid}, ${now})
-    on conflict (region_x, region_y) do update set region_x = excluded.region_x
+    insert into towns (generation, region_x, region_y, found_by, found_at)
+    values (${WORLD_GENERATION}, ${regionX}, ${regionY}, ${uid}, ${now})
+    on conflict (generation, region_x, region_y) do update set region_x = excluded.region_x
     returning found_at as "foundAt"
   `;
 
@@ -78,7 +78,7 @@ export async function discoverTown(
 export async function listTowns(): Promise<TownRecord[]> {
   const rows = await getSql()`
     select region_x as "regionX", region_y as "regionY", found_at as "foundAt"
-    from towns
+    from towns where generation = ${WORLD_GENERATION}
   `;
   const towns: TownRecord[] = [];
 
@@ -101,7 +101,8 @@ export async function listTowns(): Promise<TownRecord[]> {
 /** Whether anybody has walked into the town of this region */
 export async function isTownFound(regionX: number, regionY: number): Promise<boolean> {
   const rows = await getSql()`
-    select 1 from towns where region_x = ${regionX} and region_y = ${regionY}
+    select 1 from towns
+    where generation = ${WORLD_GENERATION} and region_x = ${regionX} and region_y = ${regionY}
   `;
 
   return rows.at(0) != null;

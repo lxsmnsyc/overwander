@@ -1,4 +1,4 @@
-import { hash4 } from './hash';
+import { hash2 } from './hash';
 
 /** Anything a field of the world is sampled from */
 export interface Noise2D {
@@ -67,29 +67,66 @@ function distanceToTriangle(px: number, py: number, corners: [number, number][])
 }
 
 /**
- * The lattice points that can reach anywhere in one of the two
- * triangles a cell of the lattice splits into, as (step, step, x, y)
- * runs. Worked out exactly from the geometry rather than listed by
- * hand, so no point that could reach a sample is ever left out
+ * How many rows and columns a lattice cell is cut into for listing the
+ * points that reach it. Finer regions list fewer points, and a sample
+ * then tests four or five rather than ten
  */
-function reachingPoints(corners: [number, number][]): Float64Array {
+const REGIONS = 8;
+
+/**
+ * The lattice points that can reach anywhere in one region of a cell,
+ * as (step, step, x, y) runs. Worked out exactly from the geometry
+ * rather than listed by hand, so no point that could reach a sample is
+ * ever left out
+ */
+function reachingPoints(triangles: [number, number][][]): Float64Array {
   const found: number[] = [];
-  const reach = Math.sqrt(RADIUS_SQUARED);
+  // A hair wider than the kernel, so rounding never drops a point
+  const reach = Math.sqrt(RADIUS_SQUARED) + 1e-9;
 
   for (let b = -2; b <= 3; b++) {
     for (let a = -2; a <= 3; a++) {
       const [x, y] = unskewed(a, b);
 
-      if (distanceToTriangle(x, y, corners) < reach) {
-        found.push(a, b, x, y);
+      for (const corners of triangles) {
+        if (distanceToTriangle(x, y, corners) < reach) {
+          found.push(a, b, x, y);
+          break;
+        }
       }
     }
   }
   return new Float64Array(found);
 }
 
-const LOWER = reachingPoints([unskewed(0, 0), unskewed(1, 0), unskewed(1, 1)]);
-const UPPER = reachingPoints([unskewed(0, 0), unskewed(0, 1), unskewed(1, 1)]);
+/** Each region's reaching points, row by column of the skewed cell */
+const NEAR: Float64Array[] = [];
+
+for (let row = 0; row < REGIONS; row++) {
+  for (let column = 0; column < REGIONS; column++) {
+    const left = column / REGIONS;
+    const right = (column + 1) / REGIONS;
+    const top = row / REGIONS;
+    const bottom = (row + 1) / REGIONS;
+    const corner = unskewed(left, top);
+    const far = unskewed(right, bottom);
+
+    NEAR.push(
+      reachingPoints([
+        [corner, unskewed(right, top), far],
+        [corner, unskewed(left, bottom), far],
+      ]),
+    );
+  }
+}
+
+/** The reaching points for a sample, from its place inside its skewed cell */
+function nearPoints(skewedX: number, skewedY: number, i: number, j: number): Float64Array {
+  const column = Math.min(REGIONS - 1, Math.floor((skewedX - i) * REGIONS));
+  const row = Math.min(REGIONS - 1, Math.floor((skewedY - j) * REGIONS));
+
+  return NEAR[row * REGIONS + column];
+}
 
 /**
  * The spread of a raw sum and the spread the first generation's Perlin
@@ -138,31 +175,107 @@ const FRACTAL_KNOTS = new Float64Array([
   0.0635899, 0.0658577, 0.0679624, 0.0719122, 0.0804963,
 ]);
 
-/** A raw sum moved onto the Perlin spread, keeping its sign */
-function matchSpread(raw: number, knots: Float64Array): number {
-  const size = Math.abs(raw);
+/** How many buckets a spread's knots are indexed by */
+const BUCKETS = 1024;
+
+/**
+ * A matched spread: its knots, plus the knot each bucket of raw size
+ * starts from, so a sample walks one or two knots instead of searching
+ * all of them. The answer is the same as a search's
+ */
+interface Spread {
+  knots: Float64Array;
+  starts: Uint8Array;
+  scale: number;
+}
+
+function indexSpread(knots: Float64Array): Spread {
   const last = knots.length - 1;
+  const scale = BUCKETS / knots[last];
+  const starts = new Uint8Array(BUCKETS);
+  let low = 0;
+
+  for (let bucket = 0; bucket < BUCKETS; bucket++) {
+    while (low < last - 1 && knots[low + 1] <= bucket / scale) {
+      low++;
+    }
+    starts[bucket] = low;
+  }
+  return { knots, starts, scale };
+}
+
+const RAW_SPREAD = indexSpread(RAW_KNOTS);
+const FRACTAL_SPREAD = indexSpread(FRACTAL_KNOTS);
+
+/** A raw sum moved onto the Perlin spread, keeping its sign */
+function matchSpread(raw: number, { knots, starts, scale }: Spread): number {
+  const size = raw < 0 ? -raw : raw;
+  const last = knots.length - 1;
+  let matched: number;
 
   if (size >= knots[last]) {
-    return Math.sign(raw) * PERLIN_KNOTS[last];
-  }
+    matched = PERLIN_KNOTS[last];
+  } else {
+    let low = starts[Math.floor(size * scale)];
 
-  let low = 0;
-  let high = last;
-
-  while (high - low > 1) {
-    const middle = (low + high) >> 1;
-
-    if (knots[middle] <= size) {
-      low = middle;
-    } else {
-      high = middle;
+    while (knots[low + 1] <= size) {
+      low++;
     }
+    const along = (size - knots[low]) / (knots[low + 1] - knots[low]);
+
+    matched = PERLIN_KNOTS[low] + along * (PERLIN_KNOTS[low + 1] - PERLIN_KNOTS[low]);
   }
+  return raw < 0 ? -matched : matched;
+}
 
-  const along = (size - knots[low]) / (knots[high] - knots[low]);
+/** Large odd multipliers that spread a lattice step across the whole word */
+const PRIME_X = 0x5205402b;
+const PRIME_Y = 0x598cd327;
+const PRIME_MIX = 0x27d4eb2d;
 
-  return Math.sign(raw) * (PERLIN_KNOTS[low] + along * (PERLIN_KNOTS[high] - PERLIN_KNOTS[low]));
+/**
+ * Where a lattice point's gradient sits in `GRADIENTS`. One multiply
+ * rather than a full hash per point, the way OpenSimplex2 picks its
+ * gradients: this runs a few times for every sample of every field,
+ * and a Murmur hash here made the second generation twice as slow as
+ * the first. The top 16 bits are scaled onto the 24 directions, which
+ * spreads them evenly without a modulo
+ */
+function gradientAt(key: number, i: number, j: number): number {
+  let hash = Math.imul(key ^ Math.imul(i, PRIME_X) ^ Math.imul(j, PRIME_Y), PRIME_MIX);
+
+  hash ^= hash >>> 15;
+  return (((hash >>> 16) * GRADIENT_COUNT) >>> 16) * 2;
+}
+
+/** One octave's raw sum, before its spread is matched */
+function latticeSum(x: number, y: number, key: number): number {
+  const skew = (x + y) * SKEW;
+  const skewedX = x + skew;
+  const skewedY = y + skew;
+  const i = Math.floor(skewedX);
+  const j = Math.floor(skewedY);
+  const unskew = (i + j) * UNSKEW;
+  const x0 = x - (i - unskew);
+  const y0 = y - (j - unskew);
+  const points = nearPoints(skewedX, skewedY, i, j);
+  let value = 0;
+
+  for (let at = 0; at < points.length; at += 4) {
+    const dx = x0 - points[at + 2];
+    const dy = y0 - points[at + 3];
+    const falloff = RADIUS_SQUARED - dx * dx - dy * dy;
+
+    if (falloff <= 0) {
+      continue;
+    }
+
+    const gradient = gradientAt(key, i + points[at], j + points[at + 1]);
+    const squared = falloff * falloff;
+
+    value += squared * squared * (GRADIENTS[gradient] * dx + GRADIENTS[gradient + 1] * dy);
+  }
+  return value;
 }
 
 /** How much quieter each octave is than the one below it */
@@ -183,37 +296,62 @@ const OCTAVE_SALT = 0x9e3779b1;
  * from afar
  */
 export default class SimplexNoise implements Noise2D {
+  /** Each octave's lattice key, folded from the seed and salt once */
+  readonly first: number;
+  private readonly second: number;
+
   constructor(
-    private readonly seed: number,
-    private readonly salt: number,
+    seed: number,
+    salt: number,
     private readonly octaves: 1 | 2 = 1,
-  ) {}
+  ) {
+    this.first = hash2(seed, salt) | 0;
+    this.second = hash2(seed, salt ^ OCTAVE_SALT) | 0;
+  }
 
   noise(x: number, y: number): number {
     if (this.octaves === 1) {
-      return matchSpread(this.sum(x, y, this.salt), RAW_KNOTS);
+      return matchSpread(latticeSum(x, y, this.first), RAW_SPREAD);
     }
-    return matchSpread(this.fractal(x, y), FRACTAL_KNOTS);
+    return matchSpread(this.fractal(x, y), FRACTAL_SPREAD);
   }
 
   /** The raw two-octave sum, before its spread is matched */
   fractal(x: number, y: number): number {
-    return (
-      this.sum(x, y, this.salt) + PERSISTENCE * this.sum(x * 2, y * 2, this.salt ^ OCTAVE_SALT)
-    );
+    return latticeSum(x, y, this.first) + PERSISTENCE * latticeSum(x * 2, y * 2, this.second);
+  }
+}
+
+/**
+ * Several one-octave fields read at the same point, in one pass over
+ * the lattice. Only the gradients differ between them, so the climate's
+ * three fields cost little more than one. Each value is what that
+ * field's own `noise` would answer
+ */
+export class SimplexStack {
+  private readonly keys: Int32Array;
+
+  constructor(fields: SimplexNoise[]) {
+    this.keys = new Int32Array(fields.length);
+    for (const [at, field] of fields.entries()) {
+      this.keys[at] = field.first;
+    }
   }
 
-  /** One octave's raw sum, before its spread is matched */
-  sum(x: number, y: number, salt: number): number {
+  /** Writes each field's value at the point into `out`, in the order the fields were given */
+  noiseInto(x: number, y: number, out: Float64Array): void {
+    const { keys } = this;
     const skew = (x + y) * SKEW;
-    const i = Math.floor(x + skew);
-    const j = Math.floor(y + skew);
+    const skewedX = x + skew;
+    const skewedY = y + skew;
+    const i = Math.floor(skewedX);
+    const j = Math.floor(skewedY);
     const unskew = (i + j) * UNSKEW;
     const x0 = x - (i - unskew);
     const y0 = y - (j - unskew);
-    const points = x0 >= y0 ? LOWER : UPPER;
-    let value = 0;
+    const points = nearPoints(skewedX, skewedY, i, j);
 
+    out.fill(0, 0, keys.length);
     for (let at = 0; at < points.length; at += 4) {
       const dx = x0 - points[at + 2];
       const dy = y0 - points[at + 3];
@@ -223,12 +361,19 @@ export default class SimplexNoise implements Noise2D {
         continue;
       }
 
-      const gradient =
-        (hash4(this.seed, salt, i + points[at], j + points[at + 1]) % GRADIENT_COUNT) * 2;
       const squared = falloff * falloff;
+      const weight = squared * squared;
+      const pointI = i + points[at];
+      const pointJ = j + points[at + 1];
 
-      value += squared * squared * (GRADIENTS[gradient] * dx + GRADIENTS[gradient + 1] * dy);
+      for (let field = 0; field < keys.length; field++) {
+        const gradient = gradientAt(keys[field], pointI, pointJ);
+
+        out[field] += weight * (GRADIENTS[gradient] * dx + GRADIENTS[gradient + 1] * dy);
+      }
     }
-    return value;
+    for (let field = 0; field < keys.length; field++) {
+      out[field] = matchSpread(out[field], RAW_SPREAD);
+    }
   }
 }

@@ -5,7 +5,7 @@ import { asSpawnRolls, spawnId as nameSpawn } from '../../auth/snapshot-record';
 import AleaRNG from '../../core/alea';
 import type { Spawn } from '../../overworld/chunk-snapshot';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
-import getWorld from '../../overworld/current';
+import getWorld, { WORLD_GENERATION } from '../../overworld/current';
 import deriveEncounter, {
   type EncounterOptions,
   EncounterType,
@@ -192,7 +192,8 @@ export async function meetSpawn(
     getSql()`
       select species, individual_value as "individualValue", trait_value as "traitValue"
       from snapshot_spawns
-      where chunk_seed = ${snapshot.chunk.seed} and zone = ${toZoneKey(snapshot.offset)}
+      where generation = ${WORLD_GENERATION} and chunk_seed = ${snapshot.chunk.seed}
+        and zone = ${toZoneKey(snapshot.offset)}
       order by idx
     `,
   ]);
@@ -250,8 +251,8 @@ export async function retireEncounter(uid: string, encounter: EncounterRecord): 
   // already retired pays nothing a second time, which is what stops a
   // client reporting the same flight over and over
   const rows = await getSql()`
-    insert into fled_encounters (player, key, window_at)
-    values (${uid}, ${key}, ${encounterWindow(key)})
+    insert into fled_encounters (player, generation, key, window_at)
+    values (${uid}, ${WORLD_GENERATION}, ${key}, ${encounterWindow(key)})
     on conflict do nothing
     returning key
   `;

@@ -8,20 +8,20 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
 export default function registerKelpForestSpawns(): void {
   registerSpawnPool(Biome.KelpForest, {
     [TimeOfDay.Morning]: {
-      base: [],
+      base: [{ species: Species.Oshawott, weight: 3 }],
       uncommon: [{ species: Species.Tangela, weight: 5 }],
-      rare: [],
+      rare: [{ species: Species.Dewott, weight: 2 }],
       scarce: [],
-      elusive: [],
+      elusive: [{ species: Species.Samurott, weight: 2 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [],
+      base: [{ species: Species.Oshawott, weight: 3 }],
       uncommon: [{ species: Species.Tangela, weight: 5 }],
-      rare: [],
+      rare: [{ species: Species.Dewott, weight: 2 }],
       scarce: [],
-      elusive: [],
+      elusive: [{ species: Species.Samurott, weight: 2 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
@@ -46,7 +46,10 @@ export default function registerKelpForestSpawns(): void {
   });
   registerWaterPool(Biome.KelpForest, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Horsea, weight: 20 }],
+      base: [
+        { species: Species.Oshawott, weight: 3 },
+        { species: Species.Horsea, weight: 20 },
+      ],
       uncommon: [
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
@@ -54,7 +57,10 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Remoraid, weight: 20 },
         { species: Species.Finneon, weight: 20 },
       ],
-      rare: [{ species: Species.Seadra, weight: 10 }],
+      rare: [
+        { species: Species.Dewott, weight: 2 },
+        { species: Species.Seadra, weight: 10 },
+      ],
       scarce: [
         { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
@@ -63,6 +69,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Samurott, weight: 2 },
         { species: Species.Mantine, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
       ],
@@ -70,7 +77,10 @@ export default function registerKelpForestSpawns(): void {
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Horsea, weight: 20 }],
+      base: [
+        { species: Species.Oshawott, weight: 3 },
+        { species: Species.Horsea, weight: 20 },
+      ],
       uncommon: [
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
@@ -78,7 +88,10 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Remoraid, weight: 20 },
         { species: Species.Finneon, weight: 20 },
       ],
-      rare: [{ species: Species.Seadra, weight: 10 }],
+      rare: [
+        { species: Species.Dewott, weight: 2 },
+        { species: Species.Seadra, weight: 10 },
+      ],
       scarce: [
         { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
@@ -87,6 +100,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Samurott, weight: 2 },
         { species: Species.Mantine, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
       ],

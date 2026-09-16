@@ -9,6 +9,7 @@ export default function registerDesertSpawns(): void {
   registerSpawnPool(Biome.Desert, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Tepig, weight: 3 },
         { species: Species.Trapinch, weight: 20 },
         { species: Species.Gible, weight: 2 },
       ],
@@ -21,6 +22,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
+        { species: Species.Pignite, weight: 2 },
         { species: Species.Vibrava, weight: 10 },
         { species: Species.Gabite, weight: 1 },
       ],
@@ -32,6 +34,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emboar, weight: 2 },
         { species: Species.Flygon, weight: 5 },
         { species: Species.Solrock, weight: 5 },
         { species: Species.Garchomp, weight: 2 },
@@ -44,6 +47,7 @@ export default function registerDesertSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Tepig, weight: 3 },
         { species: Species.Rhyhorn, weight: 20 },
         { species: Species.Trapinch, weight: 20 },
         { species: Species.Gible, weight: 2 },
@@ -58,6 +62,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
+        { species: Species.Pignite, weight: 2 },
         { species: Species.Vibrava, weight: 10 },
         { species: Species.Rhydon, weight: 10 },
         { species: Species.Gabite, weight: 1 },
@@ -71,6 +76,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emboar, weight: 2 },
         { species: Species.Flygon, weight: 5 },
         { species: Species.Solrock, weight: 5 },
         { species: Species.Garchomp, weight: 2 },

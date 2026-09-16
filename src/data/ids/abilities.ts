@@ -828,6 +828,9 @@ const enum Abilities {
   Soulwell = 200244,
   Snapvine = 200245,
   Firstlight = 200246,
+  LeafOpening = 200247,
+  EmberOpening = 200248,
+  ShellOpening = 200249,
 }
 
 export default Abilities;

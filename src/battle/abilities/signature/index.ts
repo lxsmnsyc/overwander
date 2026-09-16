@@ -26,6 +26,7 @@ import shinxToShieldon from './shinx-to-shieldon';
 import starlyToKricketot from './starly-to-kricketot';
 import stunkyToGible from './stunky-to-gible';
 import turtwigToPiplup from './turtwig-to-piplup';
+import snivyToOshawott from './snivy-to-oshawott';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -59,6 +60,7 @@ const setupAbilities = [
   ...manaphy,
   ...shaymin,
   ...arceus,
+  ...snivyToOshawott,
 ];
 
 /**

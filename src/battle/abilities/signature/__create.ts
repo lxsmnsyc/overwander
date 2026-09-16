@@ -13,7 +13,13 @@ import {
 import { getMoveData, getWeatherMove } from '../../../data/moves';
 import { Statuses, TeamStatuses, type Weathers } from '../../../data/ids/status';
 import type Battle from '../../core';
-import { BattleEvents, EffectType, MoveTargetType, type UnitDamageEvent } from '../../events';
+import {
+  BattleEvents,
+  EffectType,
+  MoveTargetType,
+  type UnitAttackResolveAmountEvent,
+  type UnitDamageEvent,
+} from '../../events';
 import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { isPrimalWeather, onUnitActs } from '../../utils';
@@ -539,6 +545,39 @@ export function createBraceAbility(
       }),
       ...lifecycles,
     ]);
+  });
+}
+
+/**
+ * What the three Unova starters share: the **first** move each lands in
+ * a fight carries something extra, and every move after it is an
+ * ordinary one. What the extra is belongs to the family.
+ *
+ * The opening is spent on real damage only, so a speculative resolve
+ * never uses it up
+ */
+export function createOpeningAbility(
+  ability: Abilities,
+  open: (hit: { event: UnitAttackResolveAmountEvent; source: Unit; target: Unit }) => void,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) => {
+    /** Who has already opened its fight */
+    const opened = new Set<Unit>();
+
+    return battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const parent = event.parent;
+
+      if (
+        event.value > 0 &&
+        !(parent.flags & MoveAttackFlags.Simulated) &&
+        !opened.has(parent.source) &&
+        parent.source.hasAbility(ability)
+      ) {
+        opened.add(parent.source);
+        parent.source.triggerAbility(ability);
+        open({ event, source: parent.source, target: parent.target });
+      }
+    });
   });
 }
 

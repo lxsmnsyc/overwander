@@ -9,6 +9,7 @@ export default function registerBadlandsSpawns(): void {
   registerSpawnPool(Biome.Badlands, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Tepig, weight: 3 },
         { species: Species.Beldum, weight: 2 },
         { species: Species.Mankey, weight: 20 },
         { species: Species.Geodude, weight: 20 },
@@ -30,6 +31,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
+        { species: Species.Pignite, weight: 2 },
         { species: Species.Metang, weight: 1 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
@@ -51,6 +53,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emboar, weight: 2 },
         { species: Species.Metagross, weight: 1 },
         { species: Species.Kangaskhan, weight: 5 },
         { species: Species.Tyranitar, weight: 2 },
@@ -76,6 +79,7 @@ export default function registerBadlandsSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Tepig, weight: 3 },
         { species: Species.Beldum, weight: 2 },
         { species: Species.Mankey, weight: 20 },
         { species: Species.Geodude, weight: 20 },
@@ -100,6 +104,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
+        { species: Species.Pignite, weight: 2 },
         { species: Species.Metang, weight: 1 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
@@ -124,6 +129,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emboar, weight: 2 },
         { species: Species.Metagross, weight: 1 },
         { species: Species.Kangaskhan, weight: 5 },
         { species: Species.Tyranitar, weight: 2 },

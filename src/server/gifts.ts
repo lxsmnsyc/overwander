@@ -73,6 +73,9 @@ export const STARTER_SPECIES: Species[] = [
   Species.Turtwig,
   Species.Chimchar,
   Species.Piplup,
+  Species.Snivy,
+  Species.Tepig,
+  Species.Oshawott,
 ];
 
 /**

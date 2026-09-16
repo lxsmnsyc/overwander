@@ -1486,4 +1486,23 @@ export default function registerSignatureAbilities(): void {
     name: 'Purebloom',
     description: 'Poison costs its teammates no HP while it stands.',
   });
+
+  /**
+   * The Unova starters share one signature: each opens the fight its
+   * own way, on the first move it lands, and nothing after that
+   */
+  registerSignature(Families.Snivy, Abilities.LeafOpening, {
+    name: 'Leaf Opening',
+    description: 'The first move it lands each fight takes 1 stage of Speed off the target.',
+  });
+
+  registerSignature(Families.Tepig, Abilities.EmberOpening, {
+    name: 'Ember Opening',
+    description: 'The first move it lands each fight hits 1.5x.',
+  });
+
+  registerSignature(Families.Oshawott, Abilities.ShellOpening, {
+    name: 'Shell Opening',
+    description: 'The first move it lands each fight raises its own Defense 2 stages.',
+  });
 }

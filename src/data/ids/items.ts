@@ -689,6 +689,10 @@ export const enum Items {
    * is doing
    */
   RareCandy = 324,
+  /**
+   * The two that work on a pokemon's abilities: one widens the slot,
+   * the other writes its family's signature into one
+   */
   AbilityCapsule = 325,
   AbilityPatch = 326,
   MaxHoney = 327,

@@ -242,6 +242,14 @@ export const ITEM_POOL: ItemRarityGroups = {
     // Thin: a second held item is a whole build, and one belt is one
     // pokemon's worth of it
     { item: Items.UtilityBelt, weight: 4 },
+    // Room for another ability, which the Channeler then has
+    // something to fill. Commoner than the belt: a species that
+    // cannot reach four on its own needs one before she is any use
+    { item: Items.AbilityCapsule, weight: 6 },
+    // The one ability nothing rolls, written into a pokemon that
+    // already has everything its line can be born with. Thin, and
+    // the thinnest thing in the band: it cannot be taken back
+    { item: Items.AbilityPatch, weight: 3 },
     // The one item that brings a pokemon back from nothing at full
     // health. The Revive and the Revival Herb are the rare band's
     // answer to a lost fight; this is the answer to a lost party

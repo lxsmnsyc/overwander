@@ -242,6 +242,11 @@ import { BOTTLE_CAPS, isBottleCap, isPerfectIVs, polishIVs } from '../src/data/i
 import { MINT_NATURES, describeMint, getMintNature, isMint } from '../src/data/items/mints';
 import { UTILITY_BELT_SLOT, isUtilityBelt } from '../src/data/items/utility-belt';
 import {
+  ABILITY_CAPSULE_SLOT,
+  isAbilityCapsule,
+  isAbilityPatch,
+} from '../src/data/items/ability-items';
+import {
   NPC_BATTLE_LIMITS,
   PVP_BATTLE_LIMITS,
   UNLIMITED_BATTLE_LIMITS,
@@ -3353,6 +3358,33 @@ describe('item data', () => {
     expect(getSlots(withSlots(roomier, UTILITY_BELT_SLOT, MAX_SLOTS + 1), Slots.Item)).toBe(
       MAX_SLOTS,
     );
+  });
+
+  it('buries the two that work on abilities beside it', () => {
+    const prized = new Set(ITEM_POOL.prized.map((entry) => entry.item));
+
+    for (const item of [Items.AbilityCapsule, Items.AbilityPatch]) {
+      const data = getItemData(item);
+
+      // Spent on a pokemon and gone, and found rather than sold: a
+      // shop stocking either would sell every pokemon a wider record
+      expect(data.type).toBe(ItemTypes.Training);
+      expect(data.flags & ItemFlags.Usable).not.toBe(0);
+      expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+      expect(data.flags & ItemFlags.Holdable).toBe(0);
+      expect(data.flags & ItemFlags.Marketable).toBe(0);
+      expect(data.buy).toBe(0);
+      expect(prized.has(item)).toBe(true);
+      expect(isPreciousItem(item)).toBe(true);
+    }
+    expect(isAbilityCapsule(Items.AbilityCapsule)).toBe(true);
+    expect(isAbilityCapsule(Items.AbilityPatch)).toBe(false);
+    expect(isAbilityPatch(Items.AbilityPatch)).toBe(true);
+
+    // A capsule widens the one thing the Channeler fills, and stops
+    // where the field does
+    expect(ABILITY_CAPSULE_SLOT).toBe(Slots.Ability);
+    expect(mostSlots(ABILITY_CAPSULE_SLOT)).toBe(4);
   });
 
   it('buries the bottle caps rather than stocking them', () => {

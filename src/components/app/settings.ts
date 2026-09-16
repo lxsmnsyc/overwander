@@ -70,6 +70,8 @@ export interface GameSettings {
   flatBoard: boolean;
   /** Dev only: whether cliff tiles are tinted red and seamed ones green */
   stepHighlight: boolean;
+  /** Dev only: whether shinies roll at the development run's boosted odds */
+  devShinyBoost: boolean;
   /** Both 0 to 1 */
   sound: number;
   music: number;
@@ -93,6 +95,7 @@ function defaults(): GameSettings {
     gridLines: false,
     flatBoard: false,
     stepHighlight: true,
+    devShinyBoost: true,
     sound: 0.7,
     music: 0.5,
   };
@@ -175,6 +178,7 @@ function stored(): GameSettings {
       gridLines: said.gridLines === true,
       flatBoard: said.flatBoard === true,
       stepHighlight: said.stepHighlight !== false,
+      devShinyBoost: said.devShinyBoost !== false,
       sound: volume(said.sound, base.sound),
       music: volume(said.music, base.music),
     };

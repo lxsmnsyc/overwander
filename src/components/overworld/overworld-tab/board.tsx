@@ -2001,6 +2001,28 @@ export default function OverworldBoard(props: {
     }
   });
 
+  /** Whether Surf can be pressed here: to start beside water, or to stop on dry ground */
+  const surfOffered = (loaded: BoardView): boolean => {
+    if (!knows(Moves.Surf)) {
+      return false;
+    }
+    if (travel() === 'surf') {
+      return !factsAt(loaded, cell()).water;
+    }
+    return travel() === 'walk' && besideWater(loaded);
+  };
+
+  /** Whether Fly can be pressed here: to take off above ground, or to land where a walk could stand */
+  const flyOffered = (loaded: BoardView): boolean => {
+    if (!knows(Moves.Fly)) {
+      return false;
+    }
+    if (travel() === 'fly') {
+      return canLand(factsAt(loaded, cell()));
+    }
+    return travel() === 'walk' && !loaded.underground;
+  };
+
   /** Start or stop surfing. It starts beside water and stops on dry ground */
   const toggleSurf = (): void => {
     const loaded = view();
@@ -2668,37 +2690,21 @@ export default function OverworldBoard(props: {
             </div>
 
             {/* The buddy's field moves, in thumb's reach. Only the ones
-                it can learn are offered at all */}
+                it can use right here are offered at all */}
             <div class="absolute right-2 bottom-2 flex flex-col items-end gap-1">
-              <Show when={knows(Moves.Surf)}>
-                <Button
-                  tone={travel() === 'surf' ? 'primary' : undefined}
-                  disabled={
-                    travel() === 'surf'
-                      ? factsAt(loaded(), cell()).water
-                      : travel() === 'fly' || !besideWater(loaded())
-                  }
-                  onClick={toggleSurf}
-                >
+              <Show when={surfOffered(loaded())}>
+                <Button tone={travel() === 'surf' ? 'primary' : undefined} onClick={toggleSurf}>
                   Surf
                 </Button>
               </Show>
-              <Show when={knows(Moves.Fly)}>
-                <Button
-                  tone={travel() === 'fly' ? 'primary' : undefined}
-                  disabled={
-                    travel() === 'fly'
-                      ? !canLand(factsAt(loaded(), cell()))
-                      : travel() === 'surf' || loaded().underground
-                  }
-                  onClick={toggleFly}
-                >
+              <Show when={flyOffered(loaded())}>
+                <Button tone={travel() === 'fly' ? 'primary' : undefined} onClick={toggleFly}>
                   Fly
                 </Button>
               </Show>
-              <Show when={knows(Moves.Dig)}>
+              <Show when={knows(Moves.Dig) && loaded().underground}>
                 <Button
-                  disabled={warping() || !loaded().underground}
+                  disabled={warping()}
                   onClick={() => {
                     warp(Moves.Dig);
                   }}

@@ -86,6 +86,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Terrakion, weight: 10 },
+        { species: Species.Cobalion, weight: 10 },
         { species: Species.Registeel, weight: 10 },
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
@@ -174,6 +176,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Terrakion, weight: 10 },
+        { species: Species.Cobalion, weight: 10 },
         { species: Species.Registeel, weight: 10 },
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
@@ -240,6 +244,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Terrakion, weight: 10 },
+        { species: Species.Cobalion, weight: 10 },
         { species: Species.Registeel, weight: 10 },
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
@@ -313,6 +319,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Terrakion, weight: 10 },
+        { species: Species.Cobalion, weight: 10 },
         { species: Species.Registeel, weight: 10 },
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },

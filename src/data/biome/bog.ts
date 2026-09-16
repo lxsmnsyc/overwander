@@ -50,6 +50,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Azelf, weight: 10 },
         { species: Species.Giratina, weight: 10 },
       ],
+      mythical: [{ species: Species.Keldeo, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -94,6 +95,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Azelf, weight: 10 },
         { species: Species.Giratina, weight: 10 },
       ],
+      mythical: [{ species: Species.Keldeo, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Poliwag, weight: 20 }],
@@ -130,6 +132,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Azelf, weight: 10 },
         { species: Species.Giratina, weight: 10 },
       ],
+      mythical: [{ species: Species.Keldeo, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -177,6 +180,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Azelf, weight: 10 },
         { species: Species.Giratina, weight: 10 },
       ],
+      mythical: [{ species: Species.Keldeo, weight: 10 }],
     },
   });
   registerWaterPool(Biome.Bog, {

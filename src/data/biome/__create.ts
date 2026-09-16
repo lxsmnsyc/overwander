@@ -607,6 +607,9 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Cresselia,
   Species.Heatran,
   Species.Regigigas,
+  Species.Cobalion,
+  Species.Terrakion,
+  Species.Virizion,
 ]);
 
 /**
@@ -625,6 +628,7 @@ const MYTHICAL_SPECIES = new Set<Species>([
   Species.Manaphy,
   Species.Shaymin,
   Species.Arceus,
+  Species.Keldeo,
 ]);
 
 /**

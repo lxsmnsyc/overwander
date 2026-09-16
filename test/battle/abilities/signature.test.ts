@@ -7313,3 +7313,89 @@ describe('the Unova starters', () => {
     expect(otter.stages[Stages.Defense]).toBe(2);
   });
 });
+
+describe('the swords of justice', () => {
+  /** What one blow takes off a teammate, with a sword standing beside it or without */
+  function blow(ability: Abilities | null, category: MoveCategories): number {
+    const { battle, teamA, teamB } = createBattle();
+    const ally = createUnit(battle, teamA);
+    const sword = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    if (ability != null) {
+      sword.addAbility(ability);
+    }
+    ally.enter();
+    sword.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    return dealDamage(enemy, ally, Moves.Tackle, 40, Types.Normal, category);
+  }
+
+  it('cuts the physical blows its team takes, and leaves the special ones alone', () => {
+    const guarded = blow(Abilities.IronVigil, MoveCategories.Physical);
+
+    expect(guarded / blow(null, MoveCategories.Physical)).toBeCloseTo(0.8, 1);
+    expect(blow(Abilities.IronVigil, MoveCategories.Special)).toBe(
+      blow(null, MoveCategories.Special),
+    );
+  });
+
+  it('cuts the special blows its team takes, and leaves the physical ones alone', () => {
+    const guarded = blow(Abilities.StoneVigil, MoveCategories.Special);
+
+    expect(guarded / blow(null, MoveCategories.Special)).toBeCloseTo(0.8, 1);
+    expect(blow(Abilities.StoneVigil, MoveCategories.Physical)).toBe(
+      blow(null, MoveCategories.Physical),
+    );
+  });
+
+  it('keeps poison off its team', () => {
+    const { battle, teamA } = createBattle();
+    const ally = createUnit(battle, teamA);
+    const sword = createUnit(battle, teamA);
+
+    sword.addAbility(Abilities.LeafVigil);
+    ally.enter();
+    sword.enter();
+    battle.tick(1);
+    ally.addStatus(Statuses.Poisoned, NONE_CAUSE);
+
+    expect(ally.status[Statuses.Poisoned]).toBeUndefined();
+  });
+
+  it('refuses an enemy stat drop and a flinch for its team, its own side aside', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ally = createUnit(battle, teamA);
+    const sword = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    sword.addAbility(Abilities.TideVigil);
+    ally.enter();
+    sword.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    ally.addStage(Stages.Attack, -1, {
+      type: EffectType.Ability,
+      ability: Abilities.Intimidate,
+      unit: enemy,
+    });
+
+    expect(ally.stages[Stages.Attack]).toBe(0);
+
+    // What its own side hands it is welcome, up or down
+    ally.addStage(Stages.Attack, -1, {
+      type: EffectType.Ability,
+      ability: Abilities.Intimidate,
+      unit: sword,
+    });
+
+    expect(ally.stages[Stages.Attack]).toBe(-1);
+
+    ally.addStatus(Statuses.Flinched, NONE_CAUSE);
+
+    expect(ally.status[Statuses.Flinched]).toBeUndefined();
+  });
+});

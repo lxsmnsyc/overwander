@@ -831,6 +831,10 @@ const enum Abilities {
   LeafOpening = 200247,
   EmberOpening = 200248,
   ShellOpening = 200249,
+  IronVigil = 200250,
+  StoneVigil = 200251,
+  LeafVigil = 200252,
+  TideVigil = 200253,
 }
 
 export default Abilities;

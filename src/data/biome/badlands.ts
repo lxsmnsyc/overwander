@@ -70,6 +70,7 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },
         { species: Species.Entei, weight: 10 },
@@ -146,6 +147,7 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },
         { species: Species.Entei, weight: 10 },
@@ -207,6 +209,7 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },
         { species: Species.Entei, weight: 10 },
@@ -274,6 +277,7 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },
         { species: Species.Entei, weight: 10 },

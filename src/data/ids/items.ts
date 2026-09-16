@@ -905,6 +905,13 @@ export const enum Items {
   ShockDrive = 430,
   BurnDrive = 431,
   ChillDrive = 432,
+
+  /**
+   * The petal left where the colt drank, which is this game's own:
+   * the mainline handed Keldeo over at an event and gave nobody an
+   * item for it
+   */
+  ColtsPetal = 433,
 }
 
 /**

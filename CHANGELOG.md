@@ -1,5 +1,12 @@
 # overwander
 
+## 3.3.2
+
+### Patch Changes
+
+- b336a09: Cave and dark-day lamps keep their shape and place after the screen changes size, such as when a phone's address bar hides.
+- 7a99fa0: A pokemon taken in a trade or won at auction now counts as caught in the pokedex.
+
 ## 3.3.1
 
 ### Patch Changes

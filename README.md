@@ -12,7 +12,8 @@ players are holding, quests and badges to collect, an auction house and
 friend-to-friend trades, and a real-time battle engine both sides replay from a
 seed.
 
-The dex runs to 251, Kanto and Johto, with their moves, abilities and items.
+The dex runs to 493: Kanto, Johto, Hoenn and Sinnoh, with their moves,
+abilities and items.
 Where the old games and the modern ones disagree, the mechanics follow the
 modern ones.
 

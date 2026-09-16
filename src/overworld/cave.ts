@@ -1,9 +1,10 @@
+import AleaRNG from '../core/alea';
 import { CHUNK_CELLS, ORTHOGONAL, worldCell } from './grid';
 import { isHillside, isSurfaceWater } from './surface';
 import { portalCellIn } from './town';
 import { isCaveFloor, isRock } from './fields';
 import type Biome from '../data/ids/biome';
-import { MOUTH_SEARCH } from '../data/overworld/cave';
+import { MOUTH_GAP, MOUTH_SEARCH } from '../data/overworld/cave';
 import type World from './world';
 import { Depth } from './depth';
 
@@ -40,18 +41,19 @@ export interface CaveMouth {
 const cut = new WeakMap<World, Map<string, CaveMouth | null>>();
 
 /**
- * The mouth in a chunk, or null where the ground gives none.
+ * Where a chunk's ground would take a mouth, before the chunks around
+ * it have their say.
  *
  * One to a chunk at most. A hillside is riddled with places a cave
  * could be entered and drawing them all would put a mouth against
  * every crag in sight, so the first the scan meets is the one that
- * counts, which keeps them about as far apart as the chunks are.
+ * counts.
  *
  * Both cells have to be in the same chunk. A mouth straddling a
  * boundary would be a landmark one chunk staged and the next one
  * answered for, and the few that fall on an edge are not worth that
  */
-export default function caveMouth(world: World, chunkX: number, chunkY: number): CaveMouth | null {
+function scanCaveMouth(world: World, chunkX: number, chunkY: number): CaveMouth | null {
   // Read off the surface whichever layer is asking: the two layers
   // have to name the same pair of cells or a player could go down
   // somewhere they could not come back up
@@ -140,6 +142,85 @@ export default function caveMouth(world: World, chunkX: number, chunkY: number):
       ) {
         mouth = { surface: cell, cave: into };
         break;
+      }
+    }
+  }
+
+  held.set(key, mouth);
+  return mouth;
+}
+
+/** The world cell a chunk's mouth stands on, for measuring the gap between two */
+function mouthSpot(chunkX: number, chunkY: number, mouth: CaveMouth): { x: number; y: number } {
+  return {
+    x: worldCell(chunkX, mouth.surface % CHUNK_CELLS),
+    y: worldCell(chunkY, Math.floor(mouth.surface / CHUNK_CELLS)),
+  };
+}
+
+/** What the filtered answer is held against, once a chunk has been judged */
+const cutOrNot = new WeakMap<World, Map<string, CaveMouth | null>>();
+
+/**
+ * Where a chunk stands in the queue for a mouth. A draw off the seed
+ * and the coordinates, so every chunk agrees on who wins without any
+ * of them being generated first
+ */
+function mouthRank(world: World, chunkX: number, chunkY: number): number {
+  return new AleaRNG(`${world.seed}mouth(${chunkX}, ${chunkY})`).random();
+}
+
+/**
+ * The mouth in a chunk, or null where the ground gives none.
+ *
+ * A mouth keeps the chunks around it clear of one, diagonals
+ * included. The ground offers far more hillsides than the world wants
+ * doors: two chunks that both cut one put a pair of entrances within
+ * sight of each other, and the second is a walk to somewhere the
+ * first already goes. Which of two neighbours keeps its own is a draw
+ * off the seed rather than whichever was asked for first, so the
+ * network is the same however a player walks into it
+ */
+export default function caveMouth(world: World, chunkX: number, chunkY: number): CaveMouth | null {
+  const above = world.at(Depth.Surface);
+  const held = cutOrNot.get(above) ?? new Map<string, CaveMouth | null>();
+  const key = `${chunkX},${chunkY}`;
+
+  cutOrNot.set(above, held);
+  if (held.has(key)) {
+    return held.get(key) ?? null;
+  }
+  // Held before the neighbours are read: nothing here asks for this
+  // chunk again, and a miss is the common answer by far
+  held.set(key, null);
+
+  const mouth = scanCaveMouth(world, chunkX, chunkY);
+
+  if (mouth == null) {
+    return null;
+  }
+
+  const rank = mouthRank(world, chunkX, chunkY);
+  const here = mouthSpot(chunkX, chunkY, mouth);
+
+  for (let dy = -1; dy <= 1; dy++) {
+    for (let dx = -1; dx <= 1; dx++) {
+      if (dx === 0 && dy === 0) {
+        continue;
+      }
+      // The neighbour's own ground only: asking for its finished
+      // answer would ask this chunk for one right back
+      const other = scanCaveMouth(world, chunkX + dx, chunkY + dy);
+
+      if (other == null || mouthRank(world, chunkX + dx, chunkY + dy) <= rank) {
+        continue;
+      }
+      const spot = mouthSpot(chunkX + dx, chunkY + dy, other);
+
+      if (
+        Math.max(Math.abs(spot.x - here.x), Math.abs(spot.y - here.y)) < MOUTH_GAP
+      ) {
+        return null;
       }
     }
   }

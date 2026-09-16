@@ -235,20 +235,21 @@ Who turns up decides what they bring:
 | **Ace Trainer**   | Five fully-grown pokemon of any type, levels 60-80, raised the way the Elite Four raise theirs. Pays 25,000 to 60,000 |
 | **A type expert** | Three to five of their own type, levels 40-60. Pays 5,000 to 15,000 |
 
-The type experts are the trainer classes, and both regions' are on the road:
-Kanto's Bug Catcher, Swimmer, Black Belt, Bird Keeper, Biker, Hiker, Poké Maniac,
-Channeler, Burglar, Rocker, Psychic, Lass, Beauty, Fisherman, Sailor, Gentleman,
-Super Nerd, Juggler, Tamer, Engineer and Gambler.
+The type experts are the trainer classes, and every region's are on the road.
+Kanto's are the Bug Catcher, Swimmer, Black Belt, Bird Keeper, Biker, Hiker,
+Poké Maniac, Channeler, Burglar, Rocker, Psychic, Lass, Beauty, Fisherman,
+Sailor, Gentleman, Super Nerd, Juggler, Tamer, Engineer and Gambler.
 
 **A class is not one type only.** Most field one, some field the pair the
 mainline gives them (a Sailor brings water and fighting, an Engineer steel and
 electric), and two trades may want the same type: what tells a Beauty from a Lass
 is who they are rather than what they carry.
 
-**A class belongs to a region.** The trades both regions put on the road are on
-it twice: a Swimmer (Kanto) and a Swimmer (Johto) are the same trade in two
-places, drawn differently, fielding what their own region grows. Their wins climb
-one line between them and pay one title, and their coats are earned apart.
+**A class belongs to a region.** A trade more than one region puts on the road
+stands on it once for each: a Swimmer (Kanto) and a Swimmer (Johto) are the same
+trade in two places, drawn differently, fielding what their own region grows.
+Their wins climb one line between them and pay one title, and their coats are
+earned apart.
 
 Johto brings a dozen trades Kanto has none of as well: the **Sage**, who fields
 grass, the **Skier** and the **Boarder**, ice, the **Scientist**, steel, the

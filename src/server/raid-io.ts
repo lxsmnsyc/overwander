@@ -1,5 +1,6 @@
 import 'server-only';
 import type { RaidRecord } from '../auth/raid-record';
+import { WORLD_GENERATION } from '../overworld/current';
 import { type Tx, getSql } from './db';
 import { asNumber, asString } from './read';
 
@@ -63,10 +64,10 @@ export async function readRaidIn(
 export async function writeRaid(transaction: Tx, id: string, fresh: RaidRecord): Promise<void> {
   await transaction`
     insert into raids (
-      id, kind, lair, species, trait_value, host, battle_id, window_at,
+      id, generation, kind, lair, species, trait_value, host, battle_id, window_at,
       utc_offset, chunk_seed, chunk_x, chunk_y, biome, cell, cleared
     ) values (
-      ${id}, ${fresh.kind}, ${fresh.lair}, ${fresh.species}, ${fresh.traitValue},
+      ${id}, ${WORLD_GENERATION}, ${fresh.kind}, ${fresh.lair}, ${fresh.species}, ${fresh.traitValue},
       ${fresh.host}, ${fresh.battle}, ${fresh.timestamp}, ${fresh.offset},
       ${fresh.chunk.seed}, ${fresh.chunk.x}, ${fresh.chunk.y}, ${fresh.biome},
       ${fresh.cell}, ${fresh.cleared}

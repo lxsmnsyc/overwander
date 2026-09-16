@@ -14,6 +14,8 @@ const enum ProfileSection {
   Trades = 4,
   Awards = 5,
   Selling = 6,
+  /** Bids and selling, which open under it */
+  Auction = 7,
 }
 
 export default ProfileSection;

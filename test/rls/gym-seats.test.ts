@@ -58,8 +58,8 @@ async function seatAlice(): Promise<void> {
   `;
   await sql`
     insert into gym_seats
-      (seat_id, holder, snapshot_id, chunk_seed, chunk_x, chunk_y, cell, seated_at)
-    values (${SEAT}, ${alice.uid}, 'test-seat-party', 'seed', 0, 0, 5, 1000)
+      (generation, seat_id, holder, snapshot_id, chunk_seed, chunk_x, chunk_y, cell, seated_at)
+    values (1, ${SEAT}, ${alice.uid}, 'test-seat-party', 'seed', 0, 0, 5, 1000)
   `;
 }
 
@@ -72,8 +72,8 @@ async function challenge(outcome: BattleOutcome): Promise<void> {
     values (${BATTLE}, null, 0, ${outcome}, 1000, 0)
   `;
   await sql`
-    insert into gym_challenges (seat_id, challenger, battle_id, held_by, started_at)
-    values (${SEAT}, ${bob.uid}, ${BATTLE}, ${alice.uid}, 1000)
+    insert into gym_challenges (generation, seat_id, challenger, battle_id, held_by, started_at)
+    values (1, ${SEAT}, ${bob.uid}, ${BATTLE}, ${alice.uid}, 1000)
   `;
 }
 

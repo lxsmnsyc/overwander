@@ -1,6 +1,7 @@
 import Landmark from '../data/overworld/landmark';
 import { NPC_VISIT_TAGS } from '../data/overworld/npc';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
+import { WORLD_GENERATION } from '../overworld/current';
 import { asNumber, asString } from './__normalize';
 import { RaidKind, raidId } from './raid-record';
 import { seatId } from './gym-seat-record';
@@ -94,6 +95,7 @@ export async function readLandmarkStandings(
       : supabase
           .from('rocket_stops')
           .select('stop_id')
+          .eq('generation', WORLD_GENERATION)
           .eq('player', uid)
           .eq('defeated', true)
           .in('stop_id', [...stops.keys()]),
@@ -102,6 +104,7 @@ export async function readLandmarkStandings(
       : supabase
           .from('gym_seats')
           .select('cell, holder')
+          .eq('generation', WORLD_GENERATION)
           .in('seat_id', [...seats.keys()])
           .not('holder', 'is', null),
     visits.size === 0
@@ -109,6 +112,7 @@ export async function readLandmarkStandings(
       : supabase
           .from('npc_claims')
           .select('marker')
+          .eq('generation', WORLD_GENERATION)
           .eq('player', uid)
           .in('marker', [...visits.keys()]),
     nests.size === 0
@@ -116,6 +120,7 @@ export async function readLandmarkStandings(
       : supabase
           .from('nest_claims')
           .select('marker')
+          .eq('generation', WORLD_GENERATION)
           .eq('player', uid)
           .in('marker', [...nests.keys()]),
   ]);

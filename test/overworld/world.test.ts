@@ -416,6 +416,7 @@ function findChunk(world: World, matches: (chunk: Chunk) => boolean): Chunk | nu
 function buddyWith(abilities: Abilities[]): Buddy {
   return {
     species: Species.Bulbasaur,
+    shiny: false,
     abilities,
     items: [],
     nature: Natures.Adamant,

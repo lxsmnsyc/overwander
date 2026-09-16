@@ -44,6 +44,9 @@ export const admin = createClient<StageDatabase>(SUPABASE_URL, SERVICE_KEY, {
  * A real confirmed account, so the app can sign in as it and a friend
  * can find it by address. Resolves the uid
  */
+/** The world generation the dev server under test reads and writes */
+export const GENERATION = process.env.VITE_WORLD_GENERATION === '2' ? 2 : 1;
+
 export async function stageAccount(email: string, password: string): Promise<string> {
   const { data, error } = await admin.auth.admin.createUser({
     email,

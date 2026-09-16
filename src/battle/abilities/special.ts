@@ -134,6 +134,9 @@ const BOSS_BLOCKED_STATUSES = new Set<Statuses>([
   Statuses.Encored,
 ]);
 
+/** Moves that fail outright when aimed at a boss */
+const BOSS_FAILED_MOVES = new Set<Moves>([...FORCED_SWITCH_MOVES, Moves.Spite]);
+
 /**
  * What a boss refuses from itself as well. A Perish Song is a timer
  * on a fight whose only clock is the pool, so one that landed would
@@ -162,7 +165,7 @@ const setupAbilities = [
   /**
    * Boss: a raid-style stat wall, twentyfold HP and doubled
    * everything else, immune to damage measured as a share of its
-   * pool, to forced switch-outs, to
+   * pool, to forced switch-outs and Spite, to
    * trapping and disruption statuses (unless self-inflicted), to the
    * moves that move abilities or stages about, to a Perish Song
    * whoever sang it, and to anything that would fell it while its
@@ -396,12 +399,13 @@ const setupAbilities = [
         }
       }),
       // None of these is worth casting at a boss, so the AI is told
-      // before it picks one: a forced switch-out fails outright, and
-      // nothing that holds a pokemon to part of its move set sticks
+      // before it picks one: a forced switch-out and a Spite fail
+      // outright, and nothing that holds a pokemon to part of its move
+      // set sticks
       battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Post, (event) => {
         if (
           event.usable &&
-          (FORCED_SWITCH_MOVES.has(event.move) ||
+          (BOSS_FAILED_MOVES.has(event.move) ||
             MOVE_HOLDS.has(event.move) ||
             BOSS_IMMUNE_MOVES.has(event.move)) &&
           event.target.type === MoveTargetType.Unit &&
@@ -411,11 +415,12 @@ const setupAbilities = [
           event.usable = false;
         }
       }),
-      // Unfriendly switch-outs (e.g. Roar, Whirlwind) fail outright
+      // Unfriendly switch-outs (e.g. Roar, Whirlwind) fail outright,
+      // and so does a Spite, which locks a move away like Disable does
       battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Pre, (event) => {
         if (
           event.steps === 0 &&
-          FORCED_SWITCH_MOVES.has(event.move) &&
+          BOSS_FAILED_MOVES.has(event.move) &&
           event.target.type === MoveTargetType.Unit &&
           event.target.unit !== event.source &&
           event.target.unit.hasAbility(Abilities.Boss)

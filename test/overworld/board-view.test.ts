@@ -115,6 +115,7 @@ describe('the spawns a board draws', () => {
   it("keeps a lure's extras for the rest of their window, and lets them go with it", () => {
     const lure: Buddy = {
       species: Species.Staryu,
+      shiny: false,
       abilities: [Abilities.Illuminate],
       items: [],
       nature: Natures.Hardy,

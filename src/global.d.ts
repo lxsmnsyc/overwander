@@ -14,6 +14,11 @@ interface ImportMetaEnv {
    */
   readonly VITE_WORLD_SEED: string;
   /**
+   * `'2'` to read the world with the second generation; anything else
+   * is the first. Only ever set for a new seed, never an existing one
+   */
+  readonly VITE_WORLD_GENERATION?: string;
+  /**
    * The build this bundle came from, the same on the client and the
    * server. Set by `vite.config.ts` rather than by the environment
    */

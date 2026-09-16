@@ -13,7 +13,7 @@ import type Natures from '../data/ids/natures';
 import type { Genders } from '../data/ids/species';
 import { Species } from '../data/ids/species';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../overworld/chunk-snapshot';
-import getWorld from '../overworld/current';
+import getWorld, { WORLD_GENERATION } from '../overworld/current';
 import deriveEncounter, { EncounterType } from '../overworld/encounter';
 import { writeCaughtRecord } from './caught';
 import { grantItem } from './inventory';
@@ -655,7 +655,8 @@ async function stageGiftEncounter(
   // nothing, so a retry cannot re-roll or double-count
   const staged = await tx(async (transaction) => {
     const rows = await transaction`
-      select 1 from encounters where spawn_id = ${gift} and player = ${uid}
+      select 1 from encounters
+      where generation = ${WORLD_GENERATION} and spawn_id = ${gift} and player = ${uid}
     `;
 
     if (rows.length > 0) {

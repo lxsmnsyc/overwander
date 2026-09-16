@@ -1,6 +1,7 @@
 import 'server-only';
 import { type RaidKind, asRaidRecord, getRaidTitle } from '../auth/raid-record';
 import type { Species } from '../data/ids/species';
+import { WORLD_GENERATION } from '../overworld/current';
 import getAdminApi from './admin-api';
 import { getSql } from './db';
 import type { PositionRecord } from '../auth/position-record';
@@ -242,6 +243,7 @@ export async function listRaids(search: string, page: number): Promise<Listing<R
     left join (
       select raid_id, count(*) as teams from teams group by raid_id
     ) t on t.raid_id = r.id
+    where r.generation = ${WORLD_GENERATION}
     order by r.window_at desc
     limit ${SCAN_LIMIT}
   `;

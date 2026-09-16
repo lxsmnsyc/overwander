@@ -4,6 +4,7 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { ItemStack } from '../data/overworld/item-pool';
 import type Chunk from '../overworld/chunk';
+import { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
 import ChunkSnapshot, {
   SNAPSHOT_INTERVAL,
@@ -62,6 +63,7 @@ async function readSnapshotWindow(chunk: Chunk, offset: number): Promise<Snapsho
     .select(
       'chunk_seed, zone, utc_offset, window_at, snapshot_spawns(idx, species, individual_value, trait_value)',
     )
+    .eq('generation', WORLD_GENERATION)
     .eq('chunk_seed', chunk.seed)
     .eq('zone', toZoneKey(asOffset(offset)))
     .maybeSingle();
@@ -173,6 +175,7 @@ async function resolveSnapshotWindow(
   // stale one changes nothing. What is stored is re-read afterwards
   // rather than assumed, since the race may have been lost
   await getSupabase().rpc('publish_snapshot', {
+    p_generation: WORLD_GENERATION,
     p_seed: chunk.seed,
     p_zone: toZoneKey(asOffset(offset)),
     p_offset: asOffset(offset),
@@ -210,6 +213,7 @@ export async function listChunkWindows(seed: string): Promise<SnapshotRecord[]> 
     .select(
       'chunk_seed, zone, utc_offset, window_at, snapshot_spawns(idx, species, individual_value, trait_value)',
     )
+    .eq('generation', WORLD_GENERATION)
     .eq('chunk_seed', seed);
 
   const windows: SnapshotRecord[] = [];

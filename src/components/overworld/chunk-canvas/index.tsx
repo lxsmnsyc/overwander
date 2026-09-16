@@ -149,6 +149,7 @@ import {
 import {
   type AuraPart,
   CellAura,
+  type RiddenCoat,
   SHADOW_STAMP,
   type SpawnCoat,
   auraCorners,
@@ -216,7 +217,7 @@ function inQuad(point: { x: number; y: number }, corners: { x: number; y: number
   return inside;
 }
 
-export { type SpawnCoat, isTurningPress, slideGain };
+export { type RiddenCoat, type SpawnCoat, isTurningPress, slideGain };
 
 /**
  * The chunk the player is standing in, drawn rather than laid out.
@@ -269,6 +270,11 @@ export interface ChunkCanvasProps {
    * Left out, the default red-trainer sheet
    */
   charset?: string;
+  /**
+   * The pokemon the player is riding while they surf or fly. While it
+   * is set the player is drawn as that pokemon instead of the charset
+   */
+  mount?: RiddenCoat | null;
   landmarks: Map<number, Landmark>;
   /**
    * What each phenomenon cell is showing this hour. The kind decides
@@ -591,6 +597,41 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   });
 
   const coatKey = (coat: SpawnCoat): string => `${coat.species}:${coat.shiny ? 'shiny' : 'plain'}`;
+
+  /**
+   * The ridden pokemon's own sheet. Kept apart from the spawns' shared
+   * ones, since a spawn of the same species would otherwise turn with
+   * the player
+   */
+  let ridden: { key: string; sprite: SpeciesSpriteAnimation | null } | null = null;
+
+  createEffect(() => {
+    const coat = props.mount;
+    const key = coat == null ? '' : `${coat.species}:${coat.shiny}:${coat.female}`;
+
+    if (key === (ridden?.key ?? '')) {
+      return;
+    }
+    dirty = true;
+    if (coat == null) {
+      ridden = null;
+      return;
+    }
+
+    const loading = { key, sprite: null };
+
+    ridden = loading;
+    loadSpeciesSprite(coat.species, { shiny: coat.shiny, female: coat.female })
+      .then((sprite) => {
+        if (ridden === loading) {
+          ridden = { key, sprite };
+          dirty = true;
+        }
+      })
+      .catch(() => {
+        // The charset stands in until a sheet does
+      });
+  });
 
   /**
    * Ask for a coat's sheet, and answer when it has landed one way or
@@ -1810,6 +1851,24 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       if (heading !== facing) {
         dirty = true;
       }
+
+      // The ridden pokemon walks while the slide moves and idles once it stops
+      const mounted = ridden?.sprite;
+
+      if (mounted?.ready === true) {
+        const direction = SPRITE_DIRECTIONS[facingFrom(SPRITE_DIRECTIONS.indexOf(heading), yaw())];
+
+        if (!(sliding && mounted.play(SpriteAnim.Walk, { direction }))) {
+          mounted.play(SpriteAnim.Idle, { direction });
+        }
+
+        const before = mounted.frame;
+
+        mounted.update(elapsed);
+        if (mounted.frame !== before) {
+          dirty = true;
+        }
+      }
       // Everything above keeps time every tick, but a 120 Hz screen redraws
       // only every other one. Half a tick of slack keeps a 60 Hz screen on every one.
       // A picture with nothing moving is only redrawn at the slow pace, for the hour's light
@@ -2827,6 +2886,20 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       lamps.push(lampAt(afoot));
 
       const walker = playerPerson();
+      const mount = ridden?.sprite?.ready === true ? ridden.sprite : null;
+      /** How the ridden pokemon stands, sized the way a spawn of it would be */
+      const riding =
+        mount == null || props.mount == null
+          ? null
+          : ({
+              scale:
+                (CELL *
+                  sizeOf(getSpeciesData(props.mount.species).height) *
+                  afoot.scale *
+                  magnify) /
+                SPRITE_STANDS,
+              anchor: 'shadow',
+            } as const);
       /**
        * How the player is drawn, and the box that comes to on the
        * screen.
@@ -2842,7 +2915,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               scale: (CELL * NPC_CELLS * afoot.scale * magnify) / walker.sourceFrameHeight,
               anchor: 'foot',
             } as const);
-      const playerBox = walking == null ? null : walker?.quadOf(afoot.x, afoot.y, walking);
+      let playerBox = walking == null ? null : walker?.quadOf(afoot.x, afoot.y, walking);
+
+      if (mount != null && riding != null) {
+        playerBox = mount.quadOf(afoot.x, afoot.y, riding);
+      }
       /** Whether the painting has reached the player's own row yet */
       let passed = false;
 
@@ -3242,7 +3319,25 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           };
           marks?.depth(standingOn.floor);
 
-          if (walker == null || walking == null) {
+          if (mount != null && riding != null) {
+            const thrown = {
+              ...riding,
+              color: COLORS.shadow,
+              squash: shadowSquash(),
+              cast: throwing(),
+            };
+
+            if (
+              !shade(mount.shadowOf(spot.x, spot.y, thrown), (fallen) =>
+                mount.facedQuadOf(spot.x, spot.y, litFrame(mount.direction, fallen), riding),
+              )
+            ) {
+              mount.drawShadow(context, spot.x, spot.y, thrown);
+            }
+            if (!place(mount.quadOf(spot.x, spot.y, riding))) {
+              mount.draw(context, spot.x, spot.y, riding);
+            }
+          } else if (walker == null || walking == null) {
             // The dot it was before the sheet landed, on its own line
             const radius = CELL * 0.3 * spot.scale * magnify;
 

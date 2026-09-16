@@ -74,6 +74,7 @@ export function buddyEffectsOf(caught: CaughtPokemon): Buddy | null {
 
   return {
     species: caught.species,
+    shiny: caught.shiny,
     abilities: caught.abilities,
     items: caught.items,
     nature: caught.nature,

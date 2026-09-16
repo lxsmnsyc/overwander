@@ -118,6 +118,20 @@ Sinnoh's moves, and dozens of older ones, land as a picture of their own.
 - **The mark each blow leaves** is drawn in the field, in front of the pokemon
   it hit.
 
+## Your buddy takes you places
+
+A buddy can use the field moves it is able to learn, from buttons at the
+bottom-right of the board.
+
+- **Surf** rides the buddy across open water, which can no longer be walked
+  onto. It starts beside the water and ends on the first step ashore.
+- **Fly** crosses water, trees and cliffs, never lava, and comes down only where
+  a walk could stand. It works above ground only.
+- **Dig** climbs out of a cave to the nearest mouth, like an Escape Rope that is
+  never spent.
+- **Teleport** sends you to the portal of the nearest town, found or not.
+- **While surfing or flying**, you are drawn as your buddy.
+
 ## A fourth league
 
 **Thirty-two gyms**, eight badges in each region, and four champions.
@@ -213,6 +227,13 @@ Five more houses, and a **print** for each.
 - **Big raids run lighter.** Asking whether a pokemon has an ability no longer
   sweeps the whole field.
 - **The sprite processor** is its own page at /sprite-processor.
+- **Every server call checks what it is sent.** A coordinate outside the world,
+  a list longer than the game allows, or a field of the wrong kind is refused
+  rather than read.
+- **Working out the ground is faster.**
+- **A second world generation is ready** for a later reseed. Its terrain never
+  repeats, and adding a roll no longer moves anything already placed. The live
+  world is unchanged.
 
 ## See also
 

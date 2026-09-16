@@ -11,7 +11,7 @@ import { BOARD_CELLS, BOARD_CENTER, boardIndexOf, viewFor } from '../../canvas/b
 import { SLIDE_PACE } from '../overworld/chunk-canvas/metrics';
 import { findPathNear } from '../../overworld/path';
 import { BOARD_MARGIN } from '../overworld/overworld-tab/metrics';
-import World from '../../overworld/world';
+import World, { Generation } from '../../overworld/world';
 import { WORLD_SEED } from '../../overworld/current';
 import { CHUNK_CELLS, chunkOfCell, worldCell } from '../../overworld/chunk';
 import { Depth } from '../../overworld/depth';
@@ -49,6 +49,12 @@ const FRAMES = [
   { label: 'Tablet, upright', width: 560, height: 760 },
   { label: 'Desktop', width: 960, height: 560 },
 ] as const;
+
+/** The two ways the ground can be read, so the second can be walked beside the first */
+const GENERATION_OPTIONS: { value: Generation; label: string }[] = [
+  { value: Generation.First, label: 'First (live)' },
+  { value: Generation.Second, label: 'Second' },
+];
 
 const FRAME_OPTIONS = ((): { value: number; label: string }[] => {
   const options: { value: number; label: string }[] = [];
@@ -313,6 +319,7 @@ export default function BoardDemo(): JSX.Element {
   const [wanted, setWanted] = createSignal<Biome>(BiomeId.TemperateForest);
   const [weather, setWeather] = createSignal<Weather>(Weather.Clear);
   const [seed, setSeed] = createSignal(WORLD_SEED);
+  const [generation, setGeneration] = createSignal(Generation.First);
   const [depth, setDepth] = createSignal<Depth>(Depth.Surface);
   /** Whether the caves are drawn dark, the way the game draws them */
   const [dark, setDark] = createSignal(false);
@@ -330,7 +337,7 @@ export default function BoardDemo(): JSX.Element {
   const shape = (): (typeof FRAMES)[number] => FRAMES[frame()];
   const mode = (): string => viewFor(shape().width, shape().height).mode;
   /** The world itself, rebuilt only when another one is asked for */
-  const surface = createMemo(() => new World(seed()));
+  const surface = createMemo(() => new World(seed(), undefined, generation()));
   /** The same world at the layer in hand: a cave is the ground one layer down */
   const world = (): World => surface().at(depth());
   const origin = (): [number, number] => [at()[0] - BOARD_CENTER, at()[1] - BOARD_CENTER];
@@ -496,6 +503,16 @@ export default function BoardDemo(): JSX.Element {
           options={FRAME_OPTIONS}
           onChange={(chosen) => {
             setFrame(chosen);
+          }}
+        />
+        <Select
+          label="Generation"
+          class="w-56"
+          value={generation()}
+          options={GENERATION_OPTIONS}
+          onChange={(chosen) => {
+            setGeneration(chosen);
+            goTo(wanted());
           }}
         />
         <Select

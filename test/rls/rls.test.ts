@@ -168,7 +168,10 @@ describe('owner-only stores', () => {
   });
 
   it('scopes claim markers to their player', async () => {
-    await sql`insert into nest_claims (marker, player, species) values ('m1', ${alice.uid}, 25)`;
+    await sql`
+      insert into nest_claims (generation, marker, player, species)
+      values (1, 'm1', ${alice.uid}, 25)
+    `;
 
     const mine = await alice.client.from('nest_claims').select('marker');
 
@@ -246,8 +249,8 @@ describe('gifts', () => {
 describe('towns', () => {
   it('is readable by anybody and writable by nobody', async () => {
     await sql`
-      insert into towns (region_x, region_y, found_by, found_at)
-      values (3, -2, ${alice.uid}, 1000)
+      insert into towns (generation, region_x, region_y, found_by, found_at)
+      values (1, 3, -2, ${alice.uid}, 1000)
     `;
 
     // A town one player found is a town everybody can cross to, so the
@@ -262,6 +265,7 @@ describe('towns', () => {
     // Finding one is the server's to write. A browser that could insert
     // here could put anywhere on the map without walking to it
     const forged = await bob.client.from('towns').insert({
+      generation: 1,
       region_x: 4,
       region_y: -2,
       found_by: bob.uid,
@@ -293,8 +297,8 @@ describe('gym seats', () => {
     `;
     await sql`
       insert into gym_seats
-        (seat_id, holder, snapshot_id, chunk_seed, chunk_x, chunk_y, cell, seated_at)
-      values ('rls-seat', ${alice.uid}, 'rls-seat-party', 'rls-seed', 0, 0, 5, 1000)
+        (generation, seat_id, holder, snapshot_id, chunk_seed, chunk_x, chunk_y, cell, seated_at)
+      values (1, 'rls-seat', ${alice.uid}, 'rls-seat-party', 'rls-seed', 0, 0, 5, 1000)
     `;
 
     // Who is holding a seat is the whole reason to walk to it, so
@@ -308,6 +312,7 @@ describe('gym seats', () => {
     // But taking one is the server's to write: a browser cannot seat
     // itself, move a seat, or turn a holder out
     const forged = await bob.client.from('gym_seats').insert({
+      generation: 1,
       seat_id: 'rls-seat-2',
       holder: bob.uid,
       snapshot_id: 'rls-seat-party',
@@ -344,16 +349,16 @@ describe('gym seats', () => {
     `;
     await sql`
       insert into gym_seats
-        (seat_id, holder, snapshot_id, chunk_seed, chunk_x, chunk_y, cell, seated_at)
-      values ('rls-seat', ${alice.uid}, 'rls-seat-party', 'rls-seed', 0, 0, 5, 1000)
+        (generation, seat_id, holder, snapshot_id, chunk_seed, chunk_x, chunk_y, cell, seated_at)
+      values (1, 'rls-seat', ${alice.uid}, 'rls-seat-party', 'rls-seed', 0, 0, 5, 1000)
     `;
     await sql`
       insert into battles (id, raid_id, species, outcome, started_at, limits)
       values ('rls-seat-battle', null, 0, 0, 1000, 0)
     `;
     await sql`
-      insert into gym_challenges (seat_id, challenger, battle_id, held_by, started_at)
-      values ('rls-seat', ${bob.uid}, 'rls-seat-battle', ${alice.uid}, 1000)
+      insert into gym_challenges (generation, seat_id, challenger, battle_id, held_by, started_at)
+      values (1, 'rls-seat', ${bob.uid}, 'rls-seat-battle', ${alice.uid}, 1000)
     `;
 
     // The challenger and the holder are both in it, so both see it
@@ -421,9 +426,9 @@ describe('battle lobbies', () => {
   it('shows who is watching a raid to anybody', async () => {
     await sql`
       insert into raids
-        (id, kind, lair, species, trait_value, host, window_at, utc_offset,
+        (id, generation, kind, lair, species, trait_value, host, window_at, utc_offset,
          chunk_seed, chunk_x, chunk_y, biome, cell)
-      values ('rls-raid', 0, null, 1, 0, ${alice.uid}, 1000, 0, 'rls-seed', 0, 0, 0, 5)
+      values ('rls-raid', 1, 0, null, 1, 0, ${alice.uid}, 1000, 0, 'rls-seed', 0, 0, 0, 5)
     `;
     await sql`
       insert into raid_watchers (raid_id, player, seen_at)
@@ -449,6 +454,7 @@ describe('the snapshot publish', () => {
   it('publishes through the definer function, shape-checked', async () => {
     const spawns = [{ species: 25, individualValue: 1, traitValue: 2 }];
     const published = await alice.client.rpc('publish_snapshot', {
+      p_generation: 1,
       p_seed: 'rls-seed',
       p_zone: '+08:00',
       p_offset: 480,
@@ -474,6 +480,7 @@ describe('the snapshot publish', () => {
 
     // A stale publisher changes nothing
     const stale = await bob.client.rpc('publish_snapshot', {
+      p_generation: 1,
       p_seed: 'rls-seed',
       p_zone: '+08:00',
       p_offset: 480,
@@ -491,8 +498,48 @@ describe('the snapshot publish', () => {
     expect(kept.data?.[0]?.window_at).toBe(1000);
   });
 
+  it('keeps each generation of the world to its own window', async () => {
+    const spawns = [{ species: 25, individualValue: 1, traitValue: 2 }];
+
+    for (const [generation, window] of [
+      [1, 1000],
+      [2, 2000],
+    ]) {
+      const published = await alice.client.rpc('publish_snapshot', {
+        p_generation: generation,
+        p_seed: 'rls-both',
+        p_zone: '+08:00',
+        p_offset: 480,
+        p_window: window,
+        p_spawns: spawns,
+      });
+
+      expect(published.error).toBeNull();
+    }
+
+    const first = await alice.client
+      .from('snapshots')
+      .select('window_at')
+      .eq('generation', 1)
+      .eq('chunk_seed', 'rls-both');
+
+    expect(first.data?.[0]?.window_at).toBe(1000);
+
+    const unknown = await alice.client.rpc('publish_snapshot', {
+      p_generation: 3,
+      p_seed: 'rls-both',
+      p_zone: '+08:00',
+      p_offset: 480,
+      p_window: 3000,
+      p_spawns: spawns,
+    });
+
+    expect(unknown.error).not.toBeNull();
+  });
+
   it('refuses a guest and a direct write', async () => {
     const anonymous = await guest().rpc('publish_snapshot', {
+      p_generation: 1,
       p_seed: 'rls-guest',
       p_zone: '+08:00',
       p_offset: 480,
@@ -502,9 +549,13 @@ describe('the snapshot publish', () => {
 
     expect(anonymous.error).not.toBeNull();
 
-    const direct = await alice.client
-      .from('snapshots')
-      .insert({ chunk_seed: 'rls-direct', zone: '+08:00', utc_offset: 480, window_at: 1 });
+    const direct = await alice.client.from('snapshots').insert({
+      generation: 1,
+      chunk_seed: 'rls-direct',
+      zone: '+08:00',
+      utc_offset: 480,
+      window_at: 1,
+    });
 
     expect(direct.error).not.toBeNull();
   });

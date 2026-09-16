@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { admin, uidOf } from './admin';
+import { GENERATION, admin, uidOf } from './admin';
 import { newPlayer, settled, signIn } from './game';
 
 /**
@@ -22,7 +22,12 @@ test('a screen stands down when the walk moves elsewhere', async ({ page }) => {
   await settled(page);
 
   const uid = await uidOf(player);
-  const { data } = await admin.from('positions').select('chunk_x').eq('player', uid).maybeSingle();
+  const { data } = await admin
+    .from('positions')
+    .select('chunk_x')
+    .eq('player', uid)
+    .eq('generation', GENERATION)
+    .maybeSingle();
 
   expect(data).not.toBeNull();
 
@@ -41,7 +46,8 @@ test('a screen stands down when the walk moves elsewhere', async ({ page }) => {
       chunk_x: startedAt + AWAY,
       moved_at: Date.now() + 60_000,
     })
-    .eq('player', uid);
+    .eq('player', uid)
+    .eq('generation', GENERATION);
 
   expect(error).toBeNull();
   await expect(takeOver).toBeVisible({ timeout: 30_000 });
@@ -57,6 +63,7 @@ test('a screen stands down when the walk moves elsewhere', async ({ page }) => {
         .from('positions')
         .select('chunk_x')
         .eq('player', uid)
+        .eq('generation', GENERATION)
         .maybeSingle();
 
       return Number(after?.chunk_x);

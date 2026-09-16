@@ -284,7 +284,7 @@ as a nest's is.
 ## `nest_claims`
 
 Written by `claimNest` in
-[`src/server/overworld.ts`](../../src/server/overworld.ts), the same
+[`src/server/overworld/index.ts`](../../src/server/overworld/index.ts), the same
 one-claim-per-window marker as an item cache, on
 `{chunkSeed}{zone}@{nestTimestamp}$nest{cell}`, except that a nest's window is
 `NEST_INTERVAL`, **twelve local hours**. A nest refills at midnight and at noon
@@ -334,7 +334,7 @@ stop table every fighting landmark shares, rather
 than in a claim marker. The
 eight who do something to a pokemon are below.
 
-None of them trusts the caller about who they are talking to: `src/server/npcs.ts`
+None of them trusts the caller about who they are talking to: `src/server/npcs/index.ts`
 re-derives the chunk, the zone and the window and checks the NPC standing there
 **before** doing anything.
 

@@ -18,6 +18,16 @@ import {
   spawnId,
 } from './snapshot-record';
 import { requireUid } from '../server/auth';
+import check, {
+  CELL,
+  CHUNK_COORDINATE,
+  CLAIM_QUERIES,
+  DEPTH,
+  ID,
+  LOCALE,
+  OFFSET,
+  TOKEN,
+} from '../server/validate';
 import {
   type ChunkClaims,
   type ClaimQuery,
@@ -304,6 +314,12 @@ async function claimCacheOnServer(
   depth: Depth,
 ): Promise<ItemStack[] | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return claimCacheOnServerSide(
     await requireUid(token),
     x,
@@ -344,6 +360,12 @@ async function claimBerryOnServer(
   depth: Depth,
 ): Promise<ItemStack | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return claimBerryOnServerSide(
     await requireUid(token),
     x,
@@ -383,6 +405,12 @@ async function claimApricornOnServer(
   depth: Depth,
 ): Promise<ItemStack | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return claimApricornOnServerSide(
     await requireUid(token),
     x,
@@ -427,6 +455,12 @@ async function peekNestOnServer(
   depth: Depth,
 ): Promise<NestOffer | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return peekNestOnServerSide(
     await requireUid(token),
     x,
@@ -466,6 +500,12 @@ async function peekPhenomenonEggOnServer(
   depth: Depth,
 ): Promise<NestOffer | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return peekPhenomenonEggOnServerSide(
     await requireUid(token),
     x,
@@ -491,6 +531,11 @@ export async function listClaimedOnServer(
   depth: Depth,
 ): Promise<number[]> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   const claims = await listClaimsForOnServerSide(
     await requireUid(token),
     [{ x, y, offset, depth }],
@@ -508,6 +553,11 @@ export async function listPickedOnServer(
   depth: Depth,
 ): Promise<number[]> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   const claims = await listClaimsForOnServerSide(
     await requireUid(token),
     [{ x, y, offset, depth }],
@@ -525,6 +575,11 @@ export async function listDugCachesOnServer(
   depth: Depth,
 ): Promise<number[]> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   const claims = await listClaimsForOnServerSide(
     await requireUid(token),
     [{ x, y, offset, depth }],
@@ -565,6 +620,13 @@ async function claimNestOnServer(
   depth: Depth,
 ): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  check(LOCALE, locale);
+  check(DEPTH, depth);
   return claimNestOnServerSide(
     await requireUid(token),
     x,
@@ -622,6 +684,13 @@ async function claimPhenomenonOnServer(
   depth: Depth,
 ): Promise<PhenomenonClaim | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  check(LOCALE, locale);
+  check(DEPTH, depth);
   return claimPhenomenonOnServerSide(
     await requireUid(token),
     x,
@@ -667,6 +736,12 @@ async function meetSpawnOnServer(
   depth: Depth,
 ): Promise<EncounterRecord | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(ID, spawn);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return meetSpawn(await requireUid(token), x, y, spawn, await syncServerClock(), offset, depth);
 }
 
@@ -677,6 +752,8 @@ function claimKey(query: ClaimQuery): string {
 // Last in the file, so adding it moved no other server function's place
 async function listClaimsOnServer(token: string, queries: ClaimQuery[]): Promise<ChunkClaims[]> {
   'use server';
+  check(TOKEN, token);
+  check(CLAIM_QUERIES, queries);
   return listClaimsForOnServerSide(await requireUid(token), queries, await syncServerClock());
 }
 
@@ -748,6 +825,10 @@ async function listLatheredOnServer(
   offset: number,
 ): Promise<number[]> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(OFFSET, offset);
   return listLatheredHoneyTreesOnServerSide(
     await requireUid(token),
     x,
@@ -780,6 +861,11 @@ async function latherOnServer(
   offset: number,
 ): Promise<LatherResult | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
   return latherHoneyTreeOnServerSide(
     await requireUid(token),
     x,

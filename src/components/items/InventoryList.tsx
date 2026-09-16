@@ -11,6 +11,7 @@ import { type CandyStack, getCandies } from '../../auth/candy';
 import { getCaught } from '../../auth/caught';
 import { ItemFlags, type Items, getMachineMove, isMachineItem } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
+import { isAbilityPatch } from '../../data/items/ability-items';
 import { isPPItem } from '../../data/items/vitamins';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
 import { getLocalOffset } from '../../auth/local-time';
@@ -20,6 +21,7 @@ import { isEscapeRope } from '../../data/items/escape-rope';
 import { getRaidSpecies } from '../../data/items/raid-items';
 import { getItemData } from '../../data/items';
 import CatchPicker from '../catches/catch-picker';
+import AbilityPatchDialog from '../catches/AbilityPatchDialog';
 import IncreasePPDialog from '../catches/IncreasePPDialog';
 import TeachMoveDialog from '../catches/TeachMoveDialog';
 import CandyGrid, { type CandyPile } from './CandyGrid';
@@ -115,6 +117,8 @@ function BagBody(
   let repeating = false;
   const [teaching, setTeaching] = createSignal<Teaching | null>(null);
   const [bottling, setBottling] = createSignal<{ catchId: string; item: Items } | null>(null);
+  /** Whoever is having its signature written, while the patch asks what gives way */
+  const [patching, setPatching] = createSignal<string | null>(null);
 
   const said = (message: string, tone: 'neutral' | 'ember' | 'leaf' = 'neutral'): void => {
     toast.push({ message, tone });
@@ -257,6 +261,10 @@ function BagBody(
       setBottling({ catchId, item });
       return;
     }
+    if (isAbilityPatch(item)) {
+      setPatching(catchId);
+      return;
+    }
 
     spendItemOn(catchId, item)
       .then(async (result) => {
@@ -364,6 +372,19 @@ function BagBody(
         onClose={nextTeaching}
         onTaught={() => {
           said('Taught.');
+          changed();
+        }}
+      />
+
+      {/* And a patch asks which ability the signature is written over,
+          which is the one question here nothing undoes */}
+      <AbilityPatchDialog
+        catchId={patching()}
+        onClose={() => {
+          setPatching(null);
+        }}
+        onUsed={(message) => {
+          said(message);
           changed();
         }}
       />

@@ -1,6 +1,7 @@
 import type { QuestStanding } from './quest-record';
 import type { Quests } from '../data/quests';
 import { requireUid } from '../server/auth';
+import check, { GAME_ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
 import listDue, { type DueQuest } from '../server/due';
 import type { QuestPayout } from '../server/quests';
 import { claimQuest as claimOnServer, listQuests as listOnServer } from '../server/quests';
@@ -29,6 +30,7 @@ export async function getDueQuests(): Promise<DueQuest[]> {
 
 async function listDueOnServer(token: string): Promise<DueQuest[]> {
   'use server';
+  check(TOKEN, token);
   return listDue(await requireUid(token), await syncServerClock());
 }
 
@@ -38,6 +40,7 @@ export async function getQuests(): Promise<QuestStanding[]> {
 
 async function listOnServer2(token: string): Promise<QuestStanding[]> {
   'use server';
+  check(TOKEN, token);
   return listOnServer(await requireUid(token));
 }
 
@@ -56,5 +59,9 @@ async function claimOnServer2(
   locale: string,
 ): Promise<QuestPayout | null> {
   'use server';
+  check(TOKEN, token);
+  check(GAME_ID, quest);
+  check(OFFSET, offset);
+  check(LOCALE, locale);
   return claimOnServer(await requireUid(token), quest, await syncServerClock(), offset, locale);
 }

@@ -2,6 +2,7 @@ import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type { LearnResult } from './learn-refusal';
 import { requireUid } from '../server/auth';
+import check, { GAME_ID, ID, REPLACED_SLOT, TOKEN } from '../server/validate';
 import teachOnServerSide, { learnLevelUpMove as learnOnServerSide } from '../server/moves';
 import getIdToken from './session';
 
@@ -36,6 +37,10 @@ async function teachOnServer(
   replaces: number,
 ): Promise<LearnResult> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(GAME_ID, item);
+  check(REPLACED_SLOT, replaces);
   return teachOnServerSide(await requireUid(token), catchId, item, replaces);
 }
 
@@ -65,5 +70,9 @@ async function learnOnServer(
   replaces: number,
 ): Promise<LearnResult> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(GAME_ID, move);
+  check(REPLACED_SLOT, replaces);
   return learnOnServerSide(await requireUid(token), catchId, move, replaces);
 }

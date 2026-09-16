@@ -1,5 +1,6 @@
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { requireUid } from '../server/auth';
+import check, { CELL, CHUNK_COORDINATE, ID, OFFSET, PARTY, TOKEN, UID } from '../server/validate';
 import {
   type GymSeatResult,
   type GymSeatView,
@@ -46,6 +47,11 @@ async function enterSeatOnServer(
   offset: number,
 ): Promise<GymSeatView> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
   // Personalised: who is asking decides what the cooldown, the daily
   // take and the ousted bar come to
   return enterOnServer(await requireUid(token), x, y, cell, await syncServerClock(), offset);
@@ -79,6 +85,12 @@ async function takeSeatOnServer(
   offset: number,
 ): Promise<GymSeatRecord | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(PARTY, catches);
+  check(OFFSET, offset);
   return takeOnServer(
     await requireUid(token),
     x,
@@ -111,6 +123,11 @@ async function leaveSeatOnServer(
   offset: number,
 ): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
   return leaveOnServer(await requireUid(token), x, y, cell, await syncServerClock(), offset);
 }
 
@@ -143,6 +160,12 @@ async function challengeSeatOnServer(
   offset: number,
 ): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(PARTY, catches);
+  check(OFFSET, offset);
   return challengeOnServer(
     await requireUid(token),
     x,
@@ -164,6 +187,8 @@ export async function settleGymChallenge(seat: string): Promise<GymSeatResult | 
 
 async function settleChallengeOnServer(token: string, seat: string): Promise<GymSeatResult | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, seat);
   return settleOnServer(await requireUid(token), seat);
 }
 
@@ -176,5 +201,6 @@ export async function listHeldSeats(player: string): Promise<GymSeatRecord[]> {
 
 async function listSeatsOnServer(player: string): Promise<GymSeatRecord[]> {
   'use server';
+  check(UID, player);
   return listOnServer(player);
 }

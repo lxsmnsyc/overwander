@@ -1,4 +1,5 @@
 import { type AwardRecord, listAwards as listOnServer } from '../server/awards';
+import check, { UID } from '../server/validate';
 
 export type { AwardRecord } from '../server/awards';
 
@@ -13,5 +14,6 @@ export default async function listAwards(player: string): Promise<AwardRecord[]>
 
 async function listAwardsOnServer(player: string): Promise<AwardRecord[]> {
   'use server';
+  check(UID, player);
   return listOnServer(player);
 }

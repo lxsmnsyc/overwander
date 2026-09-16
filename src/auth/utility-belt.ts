@@ -1,5 +1,6 @@
 import useUtilityBeltOnServerSide from '../server/utility-belt';
 import { requireUid } from '../server/auth';
+import check, { ID, TOKEN } from '../server/validate';
 import getIdToken from './session';
 
 /**
@@ -24,5 +25,7 @@ export default async function useUtilityBelt(catchId: string): Promise<number | 
 
 async function useUtilityBeltOnServer(token: string, catchId: string): Promise<number | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
   return useUtilityBeltOnServerSide(await requireUid(token), catchId);
 }

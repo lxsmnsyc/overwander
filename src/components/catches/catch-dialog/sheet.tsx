@@ -46,6 +46,7 @@ import type { Species } from '../../../data/ids/species';
 
 import { isPPItem } from '../../../data/items/vitamins';
 import { isPreciousItem } from '../../../data/overworld/item-pool';
+import { isAbilityPatch } from '../../../data/items/ability-items';
 import { isPurifyingGem } from '../../../data/items/purifying-gem';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
 
@@ -75,6 +76,7 @@ import {
   type ToastTone,
   useToast,
 } from '../../styled';
+import AbilityPatchDialog from '../AbilityPatchDialog';
 import IncreasePPDialog from '../IncreasePPDialog';
 import TeachMoveDialog from '../TeachMoveDialog';
 
@@ -343,6 +345,9 @@ export function CatchSheetBody(
    * question is answered
    */
   const [bottle, setBottle] = createSignal<{ item: Items; catchId: string } | null>(null);
+
+  /** Whoever is having its signature written, while the patch asks what gives way */
+  const [patching, setPatching] = createSignal<string | null>(null);
 
   /**
    * Whoever is waiting for the last question to be answered.
@@ -1096,6 +1101,12 @@ export function CatchSheetBody(
       setBottle({ item, catchId });
       return;
     }
+    // A signature takes the place of something on a full pokemon, and
+    // which ability that is has to be asked before the patch is spent
+    if (isAbilityPatch(item)) {
+      setPatching(catchId);
+      return;
+    }
 
     spendItemOn(catchId, item)
       .then((result) => {
@@ -1687,6 +1698,9 @@ export function CatchSheetBody(
         warn={(entry) => {
           const loaded = view();
 
+          if (isAbilityPatch(entry.item)) {
+            return 'A signature cannot be taken back off, and neither can the ability it replaces.';
+          }
           return isPurifyingGem(entry.item) && loaded != null && isShadow(loaded)
             ? 'Purifying cannot be undone. The Shadow ability goes for good, and it stops being a shadow.'
             : null;
@@ -1705,6 +1719,21 @@ export function CatchSheetBody(
       {/* And the same shape for a bottle: a PP Up is spent on one move
           and nothing takes the points back, so it asks which before it
           leaves the bag */}
+      {/* And the same shape again for a patch, which asks what gives
+          way before the signature is written over it */}
+      <AbilityPatchDialog
+        catchId={patching()}
+        onClose={() => {
+          setPatching(null);
+        }}
+        onUsed={(said) => {
+          say(said, 'leaf');
+          props.onRecordChanged();
+          props.onBagChanged();
+          props.onChange?.();
+        }}
+      />
+
       <IncreasePPDialog
         catchId={bottle()?.catchId ?? null}
         item={bottle()?.item ?? null}

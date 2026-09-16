@@ -307,14 +307,27 @@ abilities and what it is carrying.
 ## Abilities
 
 A pokemon's ability is decided before you ever meet it, and most carry exactly
-one. Nothing you own can change it.
+one. Nothing takes that first ability away.
 
-The **Channeler**, one of the people who wander, is the single exception. For one
-Heart Scale she opens a second ability slot and fills it at once, drawing from
-everything the pokemon's family is capable of. Which ability answers is hers to
-decide. Ask her again on a later window and the pokemon widens again, until
-either its family has nothing left it does not already carry or it runs out of
-room.
+The **Channeler**, one of the people who wander, is how a pokemon comes to have
+more. For one Heart Scale she opens an ability slot and fills it at once,
+drawing from everything the pokemon's family is capable of. Which ability
+answers is hers to decide. Ask her again on a later window and the pokemon
+widens again, until either its family has nothing left it does not already carry
+or it runs out of room.
+
+Two rare finds do ability work of their own:
+
+- An **Ability Capsule** does exactly what she does, out of the bag: it widens
+  the pokemon and draws one more of the abilities its line can reach into the
+  new slot. Which one comes up is a roll, the same as hers. What a capsule is
+  worth is not something she cannot do, it is not having to find her and not
+  having to wait for her next window.
+- An **Ability Patch** writes that family's **signature** into a slot. A
+  signature is the one ability no pokemon is ever born with and the Channeler
+  never calls up, so a patch is the only way to one. A pokemon with a slot
+  standing empty simply gains it; one that is full gives up an ability you
+  choose, and neither the signature nor the ability it replaced can be put back.
 
 No pokemon holds more than **four** abilities however many its family is capable
 of, and most Kanto families hold three or fewer between all their stages, so a

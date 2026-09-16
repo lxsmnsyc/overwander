@@ -1,4 +1,4 @@
-import AleaRNG from '../core/alea';
+import { type RandomSource, sourceOf } from '../core/draws';
 import type Chunk from './chunk';
 import { CELL_COUNT, CHUNK_CELLS } from './chunk';
 import { blocksWalk } from './cliff';
@@ -34,13 +34,13 @@ export interface StartPosition {
  * boulder
  */
 export default function pickStartPosition(world: World, seed: string): StartPosition {
-  const rng = new AleaRNG(`${seed}start`);
+  const draws = world.draws(`${seed}start`);
   const half = START_AREA / 2;
   // The draws land in order: the chunk coordinates, then the cell
-  const chunkX = Math.floor(rng.random() * START_AREA) - half;
-  const chunkY = Math.floor(rng.random() * START_AREA) - half;
+  const chunkX = Math.floor(draws.random('chunkX') * START_AREA) - half;
+  const chunkY = Math.floor(draws.random('chunkY') * START_AREA) - half;
 
-  return { chunkX, chunkY, ...pickFreeCell(world, chunkX, chunkY, rng) };
+  return { chunkX, chunkY, ...pickFreeCell(world, chunkX, chunkY, sourceOf(draws, 'cell')) };
 }
 
 /**
@@ -58,7 +58,7 @@ export function pickFreeCell(
   world: World,
   chunkX: number,
   chunkY: number,
-  rng: AleaRNG,
+  rng: RandomSource,
 ): { cellX: number; cellY: number } {
   const chunk = world.getChunk(chunkX, chunkY);
   const occupied = new Set([

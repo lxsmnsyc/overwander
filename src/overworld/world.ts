@@ -1,7 +1,10 @@
 import AleaRNG from '../core/alea';
 import LRUMap from '../core/lru-map';
 import { Depth } from './depth';
+import { type Draws, KeyedDraws, StreamDraws } from '../core/draws';
+import { hashString } from '../core/hash';
 import PerlinNoise from '../core/perlin';
+import SimplexNoise, { type Noise2D } from '../core/simplex';
 import type Biome from '../data/ids/biome';
 import { getBiome } from '../data/ids/biome';
 import type Weather from '../data/overworld/weather';
@@ -81,6 +84,33 @@ const WEATHER_DRIFT_X = 0.35;
 const WEATHER_DRIFT_Y = 0.14;
 
 /**
+ * Which way a world's ground is worked out from its seed.
+ *
+ * The live world stands on the first, and every map a player has seen
+ * is its output, so it is never changed. The second draws from hashed
+ * simplex fields and keyed rolls instead: its fields never repeat and
+ * a roll added to it moves nothing already rolled. A world is only
+ * ever read with the generation it was made on
+ */
+export const enum Generation {
+  First = 1,
+  Second = 2,
+}
+
+/** What keeps each field of a second-generation world apart */
+const enum FieldSalt {
+  Humidity = 1,
+  Elevation = 2,
+  Temperature = 3,
+  Wetness = 4,
+  Energy = 5,
+  WarpX = 6,
+  WarpY = 7,
+  Lakes = 8,
+  Stone = 9,
+}
+
+/**
  * How wide the world is, in chunks. It is square and finite: at
  * 4096 chunks a side, with 16 cells to a chunk, that is 65,536 cells
  * across — far more ground than a population can wear out, but
@@ -137,17 +167,17 @@ const BIOME_CACHE_LIMIT = 1 << 20;
 const CHUNKS_KEPT = 64;
 
 export default class World {
-  readonly humidity: PerlinNoise;
-  readonly elevation: PerlinNoise;
-  readonly temperature: PerlinNoise;
+  readonly humidity: Noise2D;
+  readonly elevation: Noise2D;
+  readonly temperature: Noise2D;
   /**
    * The two channels the sky is read from: how much is falling, and
    * how hard. Drawn **after** the climate ones, since the draw order
    * is part of the world format and inserting a channel among them
    * would reshape every world that exists
    */
-  readonly wetness: PerlinNoise;
-  readonly energy: PerlinNoise;
+  readonly wetness: Noise2D;
+  readonly energy: Noise2D;
   /**
    * The two the climate sample is dragged by, and then the two the
    * ground is cut from: where water gathers, and where the rock comes
@@ -155,10 +185,10 @@ export default class World {
    * the draw order is the world format and inserting one among the
    * others would reshape every world
    */
-  readonly warpX: PerlinNoise;
-  readonly warpY: PerlinNoise;
-  readonly lakes: PerlinNoise;
-  readonly stone: PerlinNoise;
+  readonly warpX: Noise2D;
+  readonly warpY: Noise2D;
+  readonly lakes: Noise2D;
+  readonly stone: Noise2D;
   /**
    * Chunk coordinates to the biome their climate classified as. A
    * biome is a pure function of the seed and the coordinates, so a
@@ -174,18 +204,50 @@ export default class World {
   constructor(
     public seed: string,
     public readonly depth: Depth = Depth.Surface,
+    public readonly generation: Generation = Generation.First,
   ) {
-    const rng = new AleaRNG(seed);
+    if (generation === Generation.First) {
+      const rng = new AleaRNG(seed);
 
-    this.humidity = new PerlinNoise(String(rng.int32()));
-    this.elevation = new PerlinNoise(String(rng.int32()));
-    this.temperature = new PerlinNoise(String(rng.int32()));
-    this.wetness = new PerlinNoise(String(rng.int32()));
-    this.energy = new PerlinNoise(String(rng.int32()));
-    this.warpX = new PerlinNoise(String(rng.int32()));
-    this.warpY = new PerlinNoise(String(rng.int32()));
-    this.lakes = new PerlinNoise(String(rng.int32()));
-    this.stone = new PerlinNoise(String(rng.int32()));
+      this.humidity = new PerlinNoise(String(rng.int32()));
+      this.elevation = new PerlinNoise(String(rng.int32()));
+      this.temperature = new PerlinNoise(String(rng.int32()));
+      this.wetness = new PerlinNoise(String(rng.int32()));
+      this.energy = new PerlinNoise(String(rng.int32()));
+      this.warpX = new PerlinNoise(String(rng.int32()));
+      this.warpY = new PerlinNoise(String(rng.int32()));
+      this.lakes = new PerlinNoise(String(rng.int32()));
+      this.stone = new PerlinNoise(String(rng.int32()));
+      return;
+    }
+
+    // One seed and a salt a field, so no field's order among the
+    // others is part of the world any more
+    const key = hashString(seed);
+
+    this.humidity = new SimplexNoise(key, FieldSalt.Humidity);
+    this.elevation = new SimplexNoise(key, FieldSalt.Elevation);
+    this.temperature = new SimplexNoise(key, FieldSalt.Temperature);
+    this.wetness = new SimplexNoise(key, FieldSalt.Wetness);
+    this.energy = new SimplexNoise(key, FieldSalt.Energy);
+    this.warpX = new SimplexNoise(key, FieldSalt.WarpX);
+    this.warpY = new SimplexNoise(key, FieldSalt.WarpY);
+    // The two whose edges a player walks along, so they carry a finer
+    // octave: a shore and a crag read as ragged up close, where a
+    // climate border only ever reads from far away
+    this.lakes = new SimplexNoise(key, FieldSalt.Lakes, 2);
+    this.stone = new SimplexNoise(key, FieldSalt.Stone, 2);
+  }
+
+  /**
+   * The rolls one decision of the world takes, keyed by `key`. The
+   * first generation reads them as the stream it always did; the
+   * second keys each on the name the roll is asked by
+   */
+  draws(key: string): Draws {
+    return this.generation === Generation.First
+      ? new StreamDraws(new AleaRNG(key))
+      : new KeyedDraws(key);
   }
 
   /**
@@ -329,7 +391,7 @@ export default class World {
       return this;
     }
     if (this.other == null) {
-      this.other = new World(this.seed, depth);
+      this.other = new World(this.seed, depth, this.generation);
       // Pointed back, so the pair is two objects however many times
       // either of them is asked for the other
       this.other.other = this;

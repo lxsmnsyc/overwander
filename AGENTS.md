@@ -35,6 +35,9 @@ one that covers what you are about to do:
   reordered or given different parameters.
 - `spawn-surfaces` - a spawn rolls from the land, water or ice pool of the cell
   under it, and a species' `habitat` decides which of those pools may list it.
+- `world-generation` - the live world's generation is frozen and pinned by a
+  fingerprint test; every roll that places something on the ground goes through
+  `world.draws(key)` with a name, and existing calls are never reordered.
 - `trigger-driven-abilities` - ability effects that do not mutate their
   detection event ride `UnitTriggerAbility` at `Exact` priority.
 - `changesets` - every change against `main` ships with one, and a fix for

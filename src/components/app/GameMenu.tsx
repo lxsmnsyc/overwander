@@ -27,6 +27,7 @@ import {
 import { GameDialog, useGame } from './game-context';
 import { watchProfile } from '../../auth/profile';
 import {
+  ActionsIcon,
   BagIcon,
   BellIcon,
   FireIcon,
@@ -225,6 +226,8 @@ export default function GameMenu(): JSX.Element {
   const [open, setOpen] = createSignal(false);
   /** The readings on a phone, behind their own button beside the menu */
   const [details, setDetails] = createSignal(false);
+  /** The buddy's field moves, behind their own button on the bar */
+  const [moves, setMoves] = createSignal(false);
   const [now, setNow] = createSignal(toLocalTime(serverNow(), getLocalOffset()));
   const [gold, setGold] = createSignal<number | null>(null);
 
@@ -320,9 +323,10 @@ export default function GameMenu(): JSX.Element {
         isOpen={open()}
         onChange={(state: boolean) => {
           setOpen(state);
-          // One panel at a time: both open out of the top of the bar
+          // One panel at a time: all of them open out of the top of the bar
           if (state) {
             setDetails(false);
+            setMoves(false);
           }
         }}
         // No `overflow-hidden` however tempting: the panel opens out
@@ -350,6 +354,7 @@ export default function GameMenu(): JSX.Element {
             setDetails(state);
             if (state) {
               setOpen(false);
+              setMoves(false);
             }
           }}
           class="flex sm:hidden"
@@ -468,12 +473,67 @@ export default function GameMenu(): JSX.Element {
           <span class="shrink-0 text-sm font-bold whitespace-nowrap text-gold">
             {gold() ?? 0} gold
           </span>
+        </div>
 
-          {/* On the bar rather than behind the button: taking the screen
-              is what a player does as they start walking, and a phone is
-              where the browser's own bars cost the most. The divider is
-              asked the same question the switch is, since a browser that
-              will not fill the screen draws neither */}
+        {/* The buddy's field moves, only while there is one to use here.
+            Outside the readings so a phone gets the button too */}
+        <Show when={game.fieldMoves().length > 0}>
+          <span class="hidden sm:flex">
+            <Divider />
+          </span>
+          <Popover
+            isOpen={moves()}
+            onChange={(state: boolean) => {
+              setMoves(state);
+              if (state) {
+                setOpen(false);
+                setDetails(false);
+              }
+            }}
+            class="flex"
+          >
+            <PopoverButton
+              aria-label="Field moves"
+              class="flex shrink-0 cursor-pointer items-center rounded-full border-2
+                border-transparent bg-transparent p-1.5 text-ink shadow-none transition-colors
+                hover:bg-tide hover:text-on-accent focus-visible:outline-2
+                focus-visible:outline-offset-2 focus-visible:outline-tide"
+            >
+              <ActionsIcon class="size-5" aria-hidden="true" />
+            </PopoverButton>
+            <Transition
+              show={moves()}
+              {...SHEER}
+              class="absolute bottom-full left-1/2 z-30 mb-2 w-max -translate-x-1/2"
+            >
+              <PopoverPanel class="flex gap-1 rounded-panel border-2 border-tide bg-paper p-2 shadow-pop">
+                <For each={game.fieldMoves()}>
+                  {(offer) => (
+                    <button
+                      type="button"
+                      class={`${TILE} w-20 ${offer.active ? 'border-tide bg-tide-soft text-tide-dark' : ''}`}
+                      aria-pressed={offer.active}
+                      disabled={offer.busy}
+                      onClick={() => {
+                        setMoves(false);
+                        offer.use();
+                      }}
+                    >
+                      {offer.name}
+                    </button>
+                  )}
+                </For>
+              </PopoverPanel>
+            </Transition>
+          </Popover>
+        </Show>
+
+        {/* On the bar rather than behind the button: taking the screen
+            is what a player does as they start walking, and a phone is
+            where the browser's own bars cost the most. The divider is
+            asked the same question the switch is, since a browser that
+            will not fill the screen draws neither */}
+        <div class="hidden items-center gap-2 sm:flex">
           <Show when={fullscreenOffered()}>
             <Divider />
           </Show>

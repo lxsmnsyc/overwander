@@ -91,7 +91,7 @@ import {
   canUseFieldMove,
 } from '../../../overworld/field-moves';
 import { useDig, useTeleport } from '../../../auth/field-moves';
-import { GameDialog, useGame } from '../../app/game-context';
+import { type FieldMoveOffer, GameDialog, useGame } from '../../app/game-context';
 import { createCellNotes } from '../cell-notes';
 import ItemSprite from '../../items/ItemSprite';
 import sayItems from '../../items/say-items';
@@ -2093,6 +2093,45 @@ export default function OverworldBoard(props: {
       });
   };
 
+  // The moves usable where the player stands, handed to the menu bar
+  createEffect(() => {
+    const loaded = view();
+    const offers: FieldMoveOffer[] = [];
+
+    if (loaded != null) {
+      if (surfOffered(loaded)) {
+        offers.push({ name: 'Surf', active: travel() === 'surf', busy: false, use: toggleSurf });
+      }
+      if (flyOffered(loaded)) {
+        offers.push({ name: 'Fly', active: travel() === 'fly', busy: false, use: toggleFly });
+      }
+      if (knows(Moves.Dig) && loaded.underground) {
+        offers.push({
+          name: 'Dig',
+          active: false,
+          busy: warping(),
+          use: () => {
+            warp(Moves.Dig);
+          },
+        });
+      }
+      if (knows(Moves.Teleport)) {
+        offers.push({
+          name: 'Teleport',
+          active: false,
+          busy: warping(),
+          use: () => {
+            warp(Moves.Teleport);
+          },
+        });
+      }
+    }
+    game.setFieldMoves(offers);
+  });
+  onCleanup(() => {
+    game.setFieldMoves([]);
+  });
+
   /** The buddy as the player is drawn riding it */
   const mount = (): RiddenCoat | null => {
     const riding = buddy();
@@ -2686,41 +2725,6 @@ export default function OverworldBoard(props: {
                     {egg().steps >= egg().hatchSteps ? ' · ready' : ''}
                   </Badge>
                 )}
-              </Show>
-            </div>
-
-            {/* The buddy's field moves, in thumb's reach. Only the ones
-                it can use right here are offered at all */}
-            <div class="absolute right-2 bottom-2 flex flex-col items-end gap-1">
-              <Show when={surfOffered(loaded())}>
-                <Button tone={travel() === 'surf' ? 'primary' : undefined} onClick={toggleSurf}>
-                  Surf
-                </Button>
-              </Show>
-              <Show when={flyOffered(loaded())}>
-                <Button tone={travel() === 'fly' ? 'primary' : undefined} onClick={toggleFly}>
-                  Fly
-                </Button>
-              </Show>
-              <Show when={knows(Moves.Dig) && loaded().underground}>
-                <Button
-                  disabled={warping()}
-                  onClick={() => {
-                    warp(Moves.Dig);
-                  }}
-                >
-                  Dig
-                </Button>
-              </Show>
-              <Show when={knows(Moves.Teleport)}>
-                <Button
-                  disabled={warping()}
-                  onClick={() => {
-                    warp(Moves.Teleport);
-                  }}
-                >
-                  Teleport
-                </Button>
               </Show>
             </div>
           </>

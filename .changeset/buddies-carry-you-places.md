@@ -2,7 +2,7 @@
 'overwander': minor
 ---
 
-A buddy can use field moves it is able to learn, from buttons at the bottom-right of the board that appear only where a move can be used.
+A buddy can use field moves it is able to learn, from a button on the menu bar that lists only the moves usable where the player stands.
 
 - Open water can no longer be walked onto. Surf rides the buddy across it, starting beside water and ending on the first step ashore.
 - Fly crosses water, trees and cliffs, never lava, and comes down only where a walk could stand. It works above ground only.

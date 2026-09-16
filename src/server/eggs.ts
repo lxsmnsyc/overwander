@@ -436,6 +436,7 @@ export async function recordSteps(
       // answers nothing
       const overworld = createOverworld(uid, {
         species: caught.species,
+        shiny: caught.shiny,
         abilities: caught.abilities,
         items: caught.items,
         nature: caught.nature,

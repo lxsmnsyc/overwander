@@ -198,6 +198,47 @@ export function regionOfCell(cell: number): number {
   return regionOf(cell);
 }
 
+/** How many regions out a search for the nearest town looks, on each side */
+export const NEAREST_TOWN_REACH = 8;
+
+/**
+ * The town whose middle is closest to a world cell, or null when none
+ * stands within reach. Searched ring by ring, and stopped once a ring
+ * is too far out to hold anything closer than the best found
+ */
+export function nearestTown(world: World, x: number, y: number): Town | null {
+  const surface = world.at(Depth.Surface);
+  const originX = regionOf(x);
+  const originY = regionOf(y);
+  let best: Town | null = null;
+  let bestDistance = Number.POSITIVE_INFINITY;
+
+  for (let ring = 0; ring <= NEAREST_TOWN_REACH; ring++) {
+    // Anything in this ring is at least this far off
+    if ((ring - 1) * REGION_CELLS > bestDistance) {
+      break;
+    }
+    for (let regionY = originY - ring; regionY <= originY + ring; regionY++) {
+      for (let regionX = originX - ring; regionX <= originX + ring; regionX++) {
+        const onRing = Math.abs(regionX - originX) === ring || Math.abs(regionY - originY) === ring;
+        const town = onRing ? townIn(surface, regionX, regionY) : null;
+
+        if (town == null) {
+          continue;
+        }
+
+        const distance = Math.hypot(town.x - x, town.y - y);
+
+        if (distance < bestDistance) {
+          best = town;
+          bestDistance = distance;
+        }
+      }
+    }
+  }
+  return best;
+}
+
 function townIn(world: World, regionX: number, regionY: number): Town | null {
   // Nobody has built anything underground. A cave has no towns, so it
   // has no lots, no streets and no portal in a plaza either

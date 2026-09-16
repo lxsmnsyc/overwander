@@ -42,6 +42,8 @@ export interface Buddy {
    * and only the species says which family that is
    */
   species: Species;
+  /** Which coat it wears, for the board that draws the player riding it */
+  shiny: boolean;
   abilities: Abilities[];
   items: Items[];
   nature: Natures;

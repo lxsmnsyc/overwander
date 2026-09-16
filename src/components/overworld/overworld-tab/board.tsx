@@ -79,6 +79,18 @@ import { discoverTown } from '../../../auth/towns';
 import { findPathBeside, findPathNear } from '../../../overworld/path';
 import type SafariSession from '../../../overworld/safari';
 import { isInWorld } from '../../../overworld/world';
+import Biome, { isIceBiome } from '../../../data/ids/biome';
+import { Moves } from '../../../data/ids/moves';
+import { Genders } from '../../../data/ids/species';
+import {
+  type CellFacts,
+  type FieldMove,
+  type Travel,
+  canEnter,
+  canLand,
+  canUseFieldMove,
+} from '../../../overworld/field-moves';
+import { useDig, useTeleport } from '../../../auth/field-moves';
 import { GameDialog, useGame } from '../../app/game-context';
 import { createCellNotes } from '../cell-notes';
 import ItemSprite from '../../items/ItemSprite';
@@ -90,7 +102,7 @@ import PortalDialog from '../PortalDialog';
 import HoneyTreeDialog from '../HoneyTreeDialog';
 import StopDialog, { type StopChallenge } from '../StopDialog';
 import SafariDialog from '../SafariDialog';
-import ChunkCanvas, { type CellSpot, type SpawnCoat } from '../chunk-canvas';
+import ChunkCanvas, { type CellSpot, type RiddenCoat, type SpawnCoat } from '../chunk-canvas';
 import NpcDialog from '../npc-dialog';
 import {
   type JSX,
@@ -1896,14 +1908,6 @@ export default function OverworldBoard(props: {
   const [facing, setFacing] = createSignal<[number, number]>([0, 1]);
 
   /**
-   * Whether the ground at a cell can be stood on. The chunk's fixtures
-   * are what stop a walk, and it is the same answer whether the walk
-   * was pressed for or walked with the keyboard
-   */
-  const standable = (loaded: BoardView, index: number): boolean =>
-    !loaded.landmarks.has(index) && !loaded.decorations.has(index) && !loaded.walls.has(index);
-
-  /**
    * The cell one step from where the player stands. Always on the
    * board: they stand in the middle of it, and the middle is eight
    * cells from every edge
@@ -1922,6 +1926,163 @@ export default function OverworldBoard(props: {
    * whatever arrived after it was drawn
    */
   const [journey, setJourney] = createSignal<Journey | null>(null);
+
+  /** How the player is getting about: on foot, or riding the buddy over water or through the air */
+  const [travel, setTravel] = createSignal<Travel>('walk');
+
+  /** What stands on a board cell, as far as a step onto it cares */
+  const factsAt = (loaded: BoardView, index: number): CellFacts => {
+    const x = index % BOARD_CELLS;
+    const y = Math.floor(index / BOARD_CELLS);
+    const wet = loaded.ground.role(x, y) === 'water';
+    const biome = loaded.ground.biome(x, y);
+
+    return {
+      fixture: loaded.landmarks.has(index),
+      scenery: loaded.decorations.has(index),
+      solid: loaded.walls.has(index),
+      // A frozen lake is walked like ground, so only open water needs Surf
+      water: wet && biome !== Biome.Volcano && !isIceBiome(biome),
+      lava: wet && biome === Biome.Volcano,
+    };
+  };
+
+  /**
+   * Whether a step onto a cell is allowed, from where the player stands
+   * and however they are getting about. It is the same answer whether
+   * the walk was pressed for or walked with the keyboard
+   */
+  const standable = (loaded: BoardView, index: number): boolean =>
+    canEnter(travel(), factsAt(loaded, cell()), factsAt(loaded, index));
+
+  /** Whether the buddy can learn a field move, which is all a field move asks */
+  const knows = (field: FieldMove): boolean => canUseFieldMove(buddy()?.species, field);
+
+  /** Whether open water touches the player's cell, which is where Surf starts */
+  const besideWater = (loaded: BoardView): boolean => {
+    for (const [dx, dy] of [
+      [0, -1],
+      [1, 0],
+      [0, 1],
+      [-1, 0],
+    ] as const) {
+      if (factsAt(loaded, ahead([dx, dy])).water) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  /** Whether the last step was taken on water, so the first one ashore ends a surf */
+  let afloat = false;
+
+  createEffect(() => {
+    const loaded = view();
+    const mode = travel();
+
+    if (loaded == null || mode === 'walk') {
+      return;
+    }
+    // A buddy put away takes the ride with it, and nothing flies underground
+    if (
+      !knows(mode === 'surf' ? Moves.Surf : Moves.Fly) ||
+      (mode === 'fly' && loaded.underground)
+    ) {
+      setTravel('walk');
+      return;
+    }
+    if (mode === 'surf') {
+      const wet = factsAt(loaded, cell()).water;
+
+      if (afloat && !wet) {
+        setTravel('walk');
+      }
+      afloat = wet;
+    }
+  });
+
+  /** Start or stop surfing. It starts beside water and stops on dry ground */
+  const toggleSurf = (): void => {
+    const loaded = view();
+
+    if (loaded == null) {
+      return;
+    }
+    if (travel() === 'surf') {
+      if (!factsAt(loaded, cell()).water) {
+        setTravel('walk');
+      }
+      return;
+    }
+    if (knows(Moves.Surf) && besideWater(loaded)) {
+      afloat = false;
+      setTravel('surf');
+    }
+  };
+
+  /** Take off, or come down where a walk could stand */
+  const toggleFly = (): void => {
+    const loaded = view();
+
+    if (loaded == null) {
+      return;
+    }
+    if (travel() === 'fly') {
+      if (canLand(factsAt(loaded, cell()))) {
+        setTravel('walk');
+      }
+      return;
+    }
+    if (knows(Moves.Fly) && !loaded.underground) {
+      setTravel('fly');
+    }
+  };
+
+  /** Whether a Dig or Teleport is on its way to the server */
+  const [warping, setWarping] = createSignal(false);
+
+  /** Dig or Teleport: the server moves the player, and the board follows */
+  const warp = (field: Moves.Dig | Moves.Teleport): void => {
+    if (warping()) {
+      return;
+    }
+    setWarping(true);
+    (field === Moves.Dig ? useDig() : useTeleport())
+      .then((at) => {
+        setWarping(false);
+        if (at == null) {
+          toast.push({
+            message:
+              field === Moves.Dig ? 'There is no way up within reach.' : 'No town is near enough.',
+            tone: 'ember',
+          });
+          return;
+        }
+        setJourney(null);
+        setTravel('walk');
+        game.standHere(at);
+      })
+      .catch((caught: unknown) => {
+        setWarping(false);
+        toast.push({
+          message: caught instanceof Error ? caught.message : String(caught),
+          tone: 'ember',
+        });
+      });
+  };
+
+  /** The buddy as the player is drawn riding it */
+  const mount = (): RiddenCoat | null => {
+    const riding = buddy();
+
+    return travel() === 'walk' || riding == null
+      ? null
+      : {
+          species: riding.species,
+          shiny: riding.shiny,
+          female: riding.gender === Genders.Female,
+        };
+  };
 
   /** Where a walk to open ground is heading, for the board to mark */
   const walkGoal = createMemo<[number, number] | null>(
@@ -2008,8 +2169,7 @@ export default function OverworldBoard(props: {
     // the ground, and a route that bent round every spawn made a busy
     // chunk feel like a maze
     // Solid rock stops a walk the way a fixture does
-    const passable = (index: number): boolean =>
-      !loaded.landmarks.has(index) && !loaded.decorations.has(index) && !loaded.walls.has(index);
+    const passable = (index: number): boolean => standable(loaded, index);
     // A goal nothing can stand on is walked up to instead of refused,
     // so a press on a boulder still takes the player over to it
     const route = plan.act
@@ -2442,6 +2602,7 @@ export default function OverworldBoard(props: {
                 lamp={loaded().lamp}
                 underground={loaded().underground}
                 charset={charset()}
+                mount={mount()}
                 // The camera belongs to the player rather than to the
                 // chunk: walking over a boundary swaps the board out
                 // and a camera living down there would face front
@@ -2503,6 +2664,57 @@ export default function OverworldBoard(props: {
                     {egg().steps >= egg().hatchSteps ? ' · ready' : ''}
                   </Badge>
                 )}
+              </Show>
+            </div>
+
+            {/* The buddy's field moves, in thumb's reach. Only the ones
+                it can learn are offered at all */}
+            <div class="absolute right-2 bottom-2 flex flex-col items-end gap-1">
+              <Show when={knows(Moves.Surf)}>
+                <Button
+                  tone={travel() === 'surf' ? 'primary' : undefined}
+                  disabled={
+                    travel() === 'surf'
+                      ? factsAt(loaded(), cell()).water
+                      : travel() === 'fly' || !besideWater(loaded())
+                  }
+                  onClick={toggleSurf}
+                >
+                  Surf
+                </Button>
+              </Show>
+              <Show when={knows(Moves.Fly)}>
+                <Button
+                  tone={travel() === 'fly' ? 'primary' : undefined}
+                  disabled={
+                    travel() === 'fly'
+                      ? !canLand(factsAt(loaded(), cell()))
+                      : travel() === 'surf' || loaded().underground
+                  }
+                  onClick={toggleFly}
+                >
+                  Fly
+                </Button>
+              </Show>
+              <Show when={knows(Moves.Dig)}>
+                <Button
+                  disabled={warping() || !loaded().underground}
+                  onClick={() => {
+                    warp(Moves.Dig);
+                  }}
+                >
+                  Dig
+                </Button>
+              </Show>
+              <Show when={knows(Moves.Teleport)}>
+                <Button
+                  disabled={warping()}
+                  onClick={() => {
+                    warp(Moves.Teleport);
+                  }}
+                >
+                  Teleport
+                </Button>
               </Show>
             </div>
           </>

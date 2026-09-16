@@ -19,12 +19,14 @@ import { asOffset, toLocalISO } from '../auth/local-time';
 import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
 import { isEggRecord, isFavoriteRecord, withoutHeld } from './catch-fields';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
+import type { Species } from '../data/ids/species';
 import { settleHandover } from '../data/species';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { type Tx, newDocId, tx } from './db';
 import { readStackIn, spendStackIn, writeStackIn } from './stacks';
 import { ITEM_STACKS } from '../auth/stacks';
 import { hasSpareCatchIn } from './caught';
+import { recordFoundSpecies } from './pokedex';
 import { isAnyCatchQueued } from './raids';
 import { isCatchLocked } from './locks';
 import { Metric } from '../auth/quest-record';
@@ -313,6 +315,8 @@ export async function claimAuction(
 ): Promise<boolean> {
   let seller = '';
   let price = 0;
+  // The pokemon that came out of escrow, for the dex once the sale has committed
+  const won: { species: Species; shiny: boolean }[] = [];
   const claimed = await tx(async (transaction) => {
     const stored = await readAuctionIn(transaction, auctionId);
 
@@ -348,6 +352,8 @@ export async function claimAuction(
         return false;
       }
       const sale = settleHandover(record.species, null, new Set(record.items));
+
+      won.push({ species: record.species, shiny: record.shiny });
       // A pokemon carries who it has passed through, so a sale is an
       // entry in it — written in the new owner's own zone, the way a
       // catch date is.
@@ -399,6 +405,9 @@ export async function claimAuction(
   // seller. The winning bid left the winner's purse when it was
   // placed, but it only stops being theirs here, so this is where it
   // counts as spent and as the seller's earnings
+  for (const arrival of claimed ? won : []) {
+    await recordFoundSpecies(uid, arrival.species, arrival.shiny);
+  }
   if (claimed && seller !== '') {
     await bumpProgress(uid, [
       [Metric.Auctions, 0, 1],

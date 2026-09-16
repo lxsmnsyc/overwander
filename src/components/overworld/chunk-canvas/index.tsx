@@ -1770,6 +1770,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     let drewAt = 0;
     /** Whether the player was still sliding last tick */
     let sliding = false;
+    /**
+     * Until when a ridden pokemon keeps its walk going. Held a slide past
+     * the last movement, so the pause between two steps does not drop it
+     * to idle and restart the walk from its first frame every step
+     */
+    let strideUntil = 0;
     let frame = requestAnimationFrame(function step(now: number): void {
       frame = requestAnimationFrame(step);
 
@@ -1844,6 +1850,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         slide.x += (dx / span) * gain;
         slide.y += (dy / span) * gain;
         walker?.advanceBy(gain * CELL_STRIDE);
+        strideUntil = clock + SLIDE_PACE;
       } else {
         heading = facingToward(0, 0, props.facing[0], props.facing[1]);
         walker?.stop();
@@ -1852,13 +1859,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         dirty = true;
       }
 
-      // The ridden pokemon walks while the slide moves and idles once it stops
+      // The ridden pokemon walks while a walk is under way and idles once it stops
       const mounted = ridden?.sprite;
 
       if (mounted?.ready === true) {
         const direction = SPRITE_DIRECTIONS[facingFrom(SPRITE_DIRECTIONS.indexOf(heading), yaw())];
 
-        if (!(sliding && mounted.play(SpriteAnim.Walk, { direction }))) {
+        if (!(clock < strideUntil && mounted.play(SpriteAnim.Walk, { direction }))) {
           mounted.play(SpriteAnim.Idle, { direction });
         }
 

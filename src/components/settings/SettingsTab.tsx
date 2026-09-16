@@ -188,6 +188,14 @@ function GeneralPane(): JSX.Element {
               setSetting('stepHighlight', on);
             }}
           />
+          <Switch
+            label="Boosted shiny odds"
+            description="Rolls about half of all spawns shiny. Off, spawns roll at the real odds."
+            checked={settings().devShinyBoost}
+            onChange={(on) => {
+              setSetting('devShinyBoost', on);
+            }}
+          />
         </Card>
       </Show>
 

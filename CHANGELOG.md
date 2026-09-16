@@ -1,5 +1,13 @@
 # overwander
 
+## 3.3.4
+
+### Patch Changes
+
+- fbd7cae: - Nurse Joy heals a whole party in one go, instead of sometimes refusing it right after the server starts.
+  - Releasing several pokemon and spending points on moves no longer fail at random right after the server starts.
+- d338a5f: Spite fails against a raid boss, the same way Disable does.
+
 ## 3.3.3
 
 ### Patch Changes

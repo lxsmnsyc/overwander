@@ -11,7 +11,7 @@ import {
   getBiomeDecorations,
   getIslandDecorations,
 } from '../data/overworld/decoration';
-import Landmark, { LANDMARKS } from '../data/overworld/landmark';
+import Landmark, { LANDMARKS, LANDMARK_WEIGHTS } from '../data/overworld/landmark';
 import { TOWN_LANDMARKS, getTownLots, isTownAt, portalCellIn, townOverChunk } from './town';
 import { caveMouthCellIn } from './cave';
 import { isFace, isSeam } from './cliff';
@@ -642,14 +642,29 @@ export default class Chunk {
         // A singleton already rolled leaves the pool for the rest of
         // the chunk: a second portal, gym or champion is never rolled
         const pool: Landmark[] = [];
+        let total = 0;
 
         for (const kind of base) {
           if (!(SINGLETON_LANDMARKS.has(kind) && rolled.has(kind))) {
             pool.push(kind);
+            total += LANDMARK_WEIGHTS[kind];
           }
         }
 
-        const landmark = pool[Math.floor(rng.random() * pool.length)];
+        // Weighted rather than flat: a raid is worth travelling for
+        // and a bush is what a walk turns up, and a flat roll made
+        // them equally common
+        let target = rng.random() * total;
+        let landmark = pool[pool.length - 1];
+
+        for (const kind of pool) {
+          target -= LANDMARK_WEIGHTS[kind];
+
+          if (target < 0) {
+            landmark = kind;
+            break;
+          }
+        }
         // Everything that is a landmark now needs ground under it. The
         // one that did not was the phenomenon, which is no longer one:
         // something happening is rolled over the chunk by the hour

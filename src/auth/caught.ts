@@ -162,7 +162,7 @@ export const getCaughtBatched = batchedQuery(
  */
 // oxlint-disable-next-line typescript/explicit-function-return-type
 const caughtRows = (owner: string) =>
-  getSupabase().from(CAUGHT_TABLE).select(ROW_SELECTION).eq('owner', owner);
+  getSupabase().from(CAUGHT_TABLE).select(ROW_SELECTION).eq('owner', owner).eq('hidden', false);
 
 export async function listCaught(owner: string): Promise<[string, CaughtPokemon][]> {
   return rowsToPairs(await everyRow((from, to) => caughtRows(owner).order('id').range(from, to)));
@@ -217,7 +217,11 @@ export async function searchCaught(
   // a header on the request, and moving it means a new request
   return rowsToPairs(
     await everyRow((from, to) => {
-      let request = getSupabase().from(CAUGHT_TABLE).select(selection).eq('owner', owner);
+      let request = getSupabase()
+        .from(CAUGHT_TABLE)
+        .select(selection)
+        .eq('owner', owner)
+        .eq('hidden', false);
 
       for (const narrowed of narrowing) {
         request = applyConstraint(request, narrowed);
@@ -361,7 +365,8 @@ export async function countCaught(owner: string): Promise<number> {
   const { count, error } = await getSupabase()
     .from(CAUGHT_TABLE)
     .select('id', { count: 'exact', head: true })
-    .eq('owner', owner);
+    .eq('owner', owner)
+    .eq('hidden', false);
 
   raise(error);
   return count ?? 0;
@@ -408,6 +413,7 @@ export async function listCaughtMarked(
         .from(CAUGHT_TABLE)
         .select(`id, ${CAUGHT_EMBED}`)
         .eq('owner', owner)
+        .eq('hidden', false)
         .eq(mark, true)
         .order('id')
         .range(from, to),
@@ -438,6 +444,7 @@ export async function listOwned(owner: string, ids: string[]): Promise<Set<strin
     .from(CAUGHT_TABLE)
     .select('id')
     .eq('owner', owner)
+    .eq('hidden', false)
     .in('id', ids);
 
   raise(error);
@@ -458,7 +465,8 @@ export async function hasAnyCaught(owner: string): Promise<boolean> {
   const { count, error } = await getSupabase()
     .from(CAUGHT_TABLE)
     .select('id', { count: 'exact', head: true })
-    .eq('owner', owner);
+    .eq('owner', owner)
+    .eq('hidden', false);
 
   raise(error);
   return (count ?? 0) > 0;

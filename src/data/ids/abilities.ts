@@ -831,6 +831,9 @@ const enum Abilities {
   LeafOpening = 200247,
   EmberOpening = 200248,
   ShellOpening = 200249,
+  TruthCreed = 200250,
+  IdealCreed = 200251,
+  HollowCreed = 200252,
 }
 
 export default Abilities;

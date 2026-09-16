@@ -607,6 +607,9 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Cresselia,
   Species.Heatran,
   Species.Regigigas,
+  Species.Reshiram,
+  Species.Zekrom,
+  Species.Kyurem,
 ]);
 
 /**

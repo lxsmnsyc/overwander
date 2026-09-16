@@ -905,6 +905,9 @@ export const enum Items {
   ShockDrive = 430,
   BurnDrive = 431,
   ChillDrive = 432,
+
+  /** The pair that folds a dragon into the husk, and pulls it back out */
+  DnaSplicers = 433,
 }
 
 /**

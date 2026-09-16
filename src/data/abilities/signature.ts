@@ -1505,4 +1505,24 @@ export default function registerSignatureAbilities(): void {
     name: 'Shell Opening',
     description: 'The first move it lands each fight raises its own Defense 2 stages.',
   });
+
+  /**
+   * The tao trio: each holds one conviction and asks the target
+   * whether it answers to it. The three tests cannot both fail and
+   * both pass, so a fused Kyurem carrying two of them never stacks
+   */
+  registerSignature(Families.Reshiram, Abilities.TruthCreed, {
+    name: 'Truth Creed',
+    description: 'Hits 1.3x an enemy carrying a status condition.',
+  });
+
+  registerSignature(Families.Zekrom, Abilities.IdealCreed, {
+    name: 'Ideal Creed',
+    description: 'Hits 1.3x an enemy carrying a raised stat stage.',
+  });
+
+  registerSignature(Families.Kyurem, Abilities.HollowCreed, {
+    name: 'Hollow Creed',
+    description: 'Hits 1.3x an enemy carrying neither a status nor a raised stat stage.',
+  });
 }

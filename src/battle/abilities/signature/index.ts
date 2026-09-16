@@ -27,6 +27,7 @@ import starlyToKricketot from './starly-to-kricketot';
 import stunkyToGible from './stunky-to-gible';
 import turtwigToPiplup from './turtwig-to-piplup';
 import snivyToOshawott from './snivy-to-oshawott';
+import taoTrio from './tao-trio';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -61,6 +62,7 @@ const setupAbilities = [
   ...shaymin,
   ...arceus,
   ...snivyToOshawott,
+  ...taoTrio,
 ];
 
 /**

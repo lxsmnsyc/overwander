@@ -1067,6 +1067,9 @@ export const ARCEUS_FORMS: Species[] = [
 /** Shaymin and the shape the Gracidea opens it into */
 export const SHAYMIN_FORMS: Species[] = [Species.Shaymin, Species.ShayminSky];
 
+/** The husk and the two shapes a dragon folded into it puts it in */
+export const KYUREM_FORMS: Species[] = [Species.Kyurem, Species.KyuremBlack, Species.KyuremWhite];
+
 export const DEOXYS_FORMS: Species[] = [
   Species.Deoxys,
   Species.DeoxysAttack,

@@ -108,6 +108,7 @@ import {
   GASTRODON_FORMS,
   GIRATINA_FORMS,
   Genders,
+  KYUREM_FORMS,
   PALKIA_FORMS,
   ROTOM_FORMS,
   SHAYMIN_FORMS,
@@ -333,6 +334,8 @@ import {
   registerSpecies,
   settleHandover,
 } from '../src/data/species';
+import type { EvolutionData } from '../src/data/species';
+import { getFoldedDragon, getFusedShape, isFusedSpecies } from '../src/data/species/fusion';
 import { registerSpecies as registerSpeciesData } from '../src/data/species/__create';
 import Awards, {
   AWARD_NAMES,
@@ -834,6 +837,7 @@ describe('species forms', () => {
       ...SHAYMIN_FORMS.slice(1),
       ...ROTOM_FORMS.slice(1),
       ...ARCEUS_FORMS.slice(1),
+      ...KYUREM_FORMS.slice(1),
     ]);
 
     expect(registered.length).toBeGreaterThan(0);
@@ -7577,5 +7581,42 @@ describe('what lives underground', () => {
     // place and must not stack into a third
     expect(CAVE_LAMP_CELLS).toBe(ILLUMINATE_LAMP_CELLS);
     expect(CAVE_DARK_CELLS).toBeLessThan(CAVE_LAMP_CELLS);
+  });
+});
+
+describe('fusions', () => {
+  it('joins each dragon to the shape it makes, and back again', () => {
+    for (const shape of KYUREM_FORMS.slice(1)) {
+      const dragon = getFoldedDragon(shape);
+
+      expect(dragon).not.toBeNull();
+      expect(isFusedSpecies(shape)).toBe(true);
+      // oxlint-disable-next-line typescript/no-non-null-assertion
+      expect(getFusedShape(dragon!)).toBe(shape);
+    }
+    expect(isFusedSpecies(Species.Kyurem)).toBe(false);
+    expect(getFoldedDragon(Species.Kyurem)).toBeNull();
+  });
+
+  it('puts the splicers on every road into a fusion and out of one', () => {
+    const roads: EvolutionData[] = [...(getSpeciesData(Species.Kyurem).evolvesInto ?? [])];
+
+    for (const shape of KYUREM_FORMS.slice(1)) {
+      roads.push(...(getSpeciesData(shape).evolvesInto ?? []));
+    }
+
+    // Two ways in from the husk, and one way back out of each shape
+    expect(roads.length).toBe(4);
+    for (const road of roads) {
+      expect(road.method).toBe(EvolutionMethod.UsedItem);
+      expect(road.item).toBe(Items.DnaSplicers);
+    }
+  });
+
+  it('gives a fused shape the ability of the dragon inside it', () => {
+    expect(getSpeciesData(Species.KyuremBlack).abilities).toEqual([Abilities.Teravolt]);
+    expect(getSpeciesData(Species.KyuremWhite).abilities).toEqual([Abilities.Turboblaze]);
+    expect(getSpeciesData(Species.Zekrom).abilities).toEqual([Abilities.Teravolt]);
+    expect(getSpeciesData(Species.Reshiram).abilities).toEqual([Abilities.Turboblaze]);
   });
 });

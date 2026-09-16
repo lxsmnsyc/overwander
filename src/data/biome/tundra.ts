@@ -22,6 +22,9 @@ export default function registerTundraSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Reshiram, weight: 10 },
+        { species: Species.Zekrom, weight: 10 },
+        { species: Species.Kyurem, weight: 10 },
         { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regigigas, weight: 10 },
@@ -43,6 +46,9 @@ export default function registerTundraSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Reshiram, weight: 10 },
+        { species: Species.Zekrom, weight: 10 },
+        { species: Species.Kyurem, weight: 10 },
         { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regigigas, weight: 10 },
@@ -69,6 +75,9 @@ export default function registerTundraSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [
+        { species: Species.Reshiram, weight: 10 },
+        { species: Species.Zekrom, weight: 10 },
+        { species: Species.Kyurem, weight: 10 },
         { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regigigas, weight: 10 },
@@ -95,6 +104,9 @@ export default function registerTundraSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [
+        { species: Species.Reshiram, weight: 10 },
+        { species: Species.Zekrom, weight: 10 },
+        { species: Species.Kyurem, weight: 10 },
         { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regigigas, weight: 10 },

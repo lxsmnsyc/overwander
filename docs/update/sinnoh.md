@@ -118,6 +118,20 @@ Sinnoh's moves, and dozens of older ones, land as a picture of their own.
 - **The mark each blow leaves** is drawn in the field, in front of the pokemon
   it hit.
 
+## Your buddy takes you places
+
+A buddy can use the field moves it is able to learn, from buttons at the
+bottom-right of the board.
+
+- **Surf** rides the buddy across open water, which can no longer be walked
+  onto. It starts beside the water and ends on the first step ashore.
+- **Fly** crosses water, trees and cliffs, never lava, and comes down only where
+  a walk could stand. It works above ground only.
+- **Dig** climbs out of a cave to the nearest mouth, like an Escape Rope that is
+  never spent.
+- **Teleport** sends you to the portal of the nearest town, found or not.
+- **While surfing or flying**, you are drawn as your buddy.
+
 ## A fourth league
 
 **Thirty-two gyms**, eight badges in each region, and four champions.

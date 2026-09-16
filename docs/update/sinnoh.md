@@ -213,6 +213,13 @@ Five more houses, and a **print** for each.
 - **Big raids run lighter.** Asking whether a pokemon has an ability no longer
   sweeps the whole field.
 - **The sprite processor** is its own page at /sprite-processor.
+- **Every server call checks what it is sent.** A coordinate outside the world,
+  a list longer than the game allows, or a field of the wrong kind is refused
+  rather than read.
+- **Working out the ground is faster.**
+- **A second world generation is ready** for a later reseed. Its terrain never
+  repeats, and adding a roll no longer moves anything already placed. The live
+  world is unchanged.
 
 ## See also
 

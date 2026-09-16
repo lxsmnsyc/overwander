@@ -16,6 +16,7 @@ import {
   SHADOW_OFFENSE_SCALE,
 } from '../../../src/battle/abilities/special';
 import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
+import { RESIDUAL_TICK } from '../../../src/battle/status/__create';
 import turns from '../../../src/battle/turn';
 import type Unit from '../../../src/battle/unit';
 import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
@@ -2097,6 +2098,43 @@ describe('Boss', () => {
     expect(boss.health).toBe(pool - 510 - BOSS_INDIRECT_DAMAGE_CAP);
   });
 
+  it('takes a bad poisoning for no more than the cap, however far it has climbed', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+
+    const pool = boss.checkStat(Stats.HP, 0);
+
+    boss.setHealth(pool);
+    attacker.triggerMoveEffect(Moves.Toxic, { type: MoveTargetType.Unit, unit: boss }, 0);
+    expect(boss.status[Statuses.BadlyPoisoned]).toBeDefined();
+
+    // A sixteenth of a raid pool is already past the cap, and every
+    // bite after climbs further
+    for (let bite = 1; bite <= 4; bite += 1) {
+      battle.tick(RESIDUAL_TICK);
+      expect(boss.health).toBe(pool - bite * BOSS_INDIRECT_DAMAGE_CAP);
+    }
+  });
+
+  it('takes a curse for no more than the cap each time it acts', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ghost = createUnit(battle, teamA, [Types.Ghost]);
+    const boss = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+
+    const pool = boss.checkStat(Stats.HP, 0);
+
+    boss.setHealth(pool);
+    ghost.triggerMoveEffect(Moves.Curse, { type: MoveTargetType.Unit, unit: boss }, 0);
+    expect(boss.status[Statuses.Cursed]).toBeDefined();
+
+    boss.addMove(Moves.Tackle);
+    boss.cast(Moves.Tackle, { type: MoveTargetType.Unit, unit: ghost });
+    expect(boss.health).toBe(pool - BOSS_INDIRECT_DAMAGE_CAP);
+  });
+
   it('shrugs off disruption statuses unless self-inflicted', () => {
     const { battle, teamA, teamB } = createBattle();
     const boss = createUnit(battle, teamA);
@@ -2178,6 +2216,19 @@ describe('Boss', () => {
     enemy.triggerMoveEffect(Moves.Roar, { type: MoveTargetType.Unit, unit: boss }, 0);
 
     expect(switches).toBe(0);
+  });
+
+  it('shrugs off a Spite, which would lock its move away', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const spiteful = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+    boss.addMove(Moves.Tackle);
+    boss.triggerMove(Moves.Tackle, { type: MoveTargetType.Unit, unit: spiteful }, 0);
+
+    spiteful.triggerMoveEffect(Moves.Spite, { type: MoveTargetType.Unit, unit: boss }, 0);
+
+    expect(boss.moves[Moves.Tackle]?.cooldown).toBeUndefined();
   });
 
   it('casts twice as slowly but cannot be interrupted', () => {

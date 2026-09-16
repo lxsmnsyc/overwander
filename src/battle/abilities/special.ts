@@ -83,6 +83,9 @@ const BOSS_BLOCKED_STATUSES = new Set<Statuses>([
   Statuses.Infatuated,
 ]);
 
+/** Moves that fail outright when aimed at a boss */
+const BOSS_FAILED_MOVES = new Set<Moves>([...FORCED_SWITCH_MOVES, Moves.Spite]);
+
 /**
  * What a boss refuses from itself as well. A Perish Song is a timer
  * on a fight whose only clock is the pool, so one that landed would
@@ -111,7 +114,7 @@ const setupAbilities = [
   /**
    * Boss: a raid-style stat wall — twentyfold HP, doubled everything
    * else, immune to negative stage applications, to damage measured
-   * as a share of its pool, to forced switch-outs, trapping and
+   * as a share of its pool, to forced switch-outs, Spite, trapping and
    * disruption statuses (unless self-inflicted), and to a Perish Song
    * whoever sang it. Indirect damage lands for at most
    * `BOSS_INDIRECT_DAMAGE_CAP`, and it heals at most
@@ -302,13 +305,13 @@ const setupAbilities = [
           event.source.triggerAbility(Abilities.Boss);
         }
       }),
-      // Neither of the two above is worth casting at a boss, so the
-      // AI is told before it picks one: a forced switch-out fails
+      // None of these is worth casting at a boss, so the AI is told
+      // before it picks one: a forced switch-out and a Spite fail
       // outright, and a disabling never sticks
       battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Post, (event) => {
         if (
           event.usable &&
-          (FORCED_SWITCH_MOVES.has(event.move) || event.move === Moves.Disable) &&
+          (BOSS_FAILED_MOVES.has(event.move) || event.move === Moves.Disable) &&
           event.target.type === MoveTargetType.Unit &&
           event.target.unit !== event.source &&
           event.target.unit.hasAbility(Abilities.Boss)
@@ -316,11 +319,12 @@ const setupAbilities = [
           event.usable = false;
         }
       }),
-      // Unfriendly switch-outs (e.g. Roar, Whirlwind) fail outright
+      // Unfriendly switch-outs (e.g. Roar, Whirlwind) fail outright,
+      // and so does a Spite, which locks a move away like Disable does
       battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Pre, (event) => {
         if (
           event.steps === 0 &&
-          FORCED_SWITCH_MOVES.has(event.move) &&
+          BOSS_FAILED_MOVES.has(event.move) &&
           event.target.type === MoveTargetType.Unit &&
           event.target.unit !== event.source &&
           event.target.unit.hasAbility(Abilities.Boss)

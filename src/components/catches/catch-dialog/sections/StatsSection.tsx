@@ -21,34 +21,13 @@ import { MAX_EFFORT_PER_STAT, MAX_IV, STAT_ORDER, getIV } from '../../../../data
 
 import { unpackStatuses } from '../../../../data/ids/status';
 
-import {
-  Button,
-  DialogSection,
-  List,
-  ListRow,
-  Meta,
-  Row,
-  TabBar,
-  TabButton,
-  TabGroup,
-  TabPane,
-} from '../../../styled';
+import { Button, Meta } from '../../../styled';
 
 import { For, type JSX, Show, createEffect, createSignal, on } from 'solid-js';
 
 /**
- * The three readings of one set of six numbers: what the pokemon has
- * now, what it was born with, and what has been trained into it
- */
-const enum StatView {
-  Total = 0,
-  IV = 1,
-  EV = 2,
-}
-
-/**
- * The same six numbers read three ways: what the pokemon has, what it
- * was born with, and what has been trained into it.
+ * The six stats, each read three ways side by side: what the pokemon
+ * has, what it was born with, and what has been trained into it.
  */
 export interface StatsSectionProps {
   caught: CaughtPokemon;
@@ -142,228 +121,134 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
     setPending((laid) => ({ ...laid, [stat]: held - floorOf(stat) }));
   };
 
+  /** A nature's mark and colour for one stat */
+  const shift = (stat: Stats): number => natureShift(props.caught.nature, stat);
+
   return (
-    <DialogSection title="Stats">
-      <TabGroup horizontal defaultValue={StatView.Total} class="flex flex-col gap-2">
-        <TabBar>
-          <TabButton value={StatView.Total}>Total</TabButton>
-          <TabButton value={StatView.IV}>IV</TabButton>
-          <TabButton value={StatView.EV}>EV</TabButton>
-        </TabBar>
+    <section class="flex flex-col gap-1">
+      {/* Columns sized to their content with real gaps between them, so
+          the headings and the numbers under them never run together */}
+      <div
+        class="grid grid-cols-[0.75rem_max-content_minmax(3rem,1fr)_2.5rem_2rem_4rem]
+          items-center gap-x-3 gap-y-0.5 text-sm"
+      >
+        <h3 class="col-span-3 text-left">Stats</h3>
+        <span class="text-right text-xs font-semibold text-muted uppercase">Total</span>
+        <span class="text-right text-xs font-semibold text-muted uppercase">IV</span>
+        <span class="text-right text-xs font-semibold text-muted uppercase">EV</span>
 
-        <TabPane value={StatView.Total}>
-          <List>
-            {/* All six, health included: what it is worth
-                in a fight is the whole set, and what it
-                has left of its health is said under the
-                sprite. No nature moves health, so its
-                mark column simply comes out empty */}
-            <For each={STAT_ORDER}>
-              {(stat) => (
-                <ListRow>
-                  {/* The arrow the games have always used,
-    in a column of its own at the head of
-    the row — the mirror of the number at
-    the far end of it. Written after the
-    name it pushed the labels out of line
-    with each other, since only two of
-    the six carry one; given its own
-    width it marks the row without moving
-    anything. The bar and the number are
-    already tinted, and a colour is not
-    something everybody can read */}
-                  <span
-                    class={`w-3 shrink-0 text-left ${
-                      NATURE_NUMBERS[natureShift(props.caught.nature, stat)]
-                    }`}
-                    title={
-                      NATURE_MARKS[natureShift(props.caught.nature, stat)] === ''
-                        ? undefined
-                        : `${STAT_LABELS[stat]} is ${
-                            NATURE_WORDS[natureShift(props.caught.nature, stat)]
-                          }`
-                    }
-                    aria-label={
-                      NATURE_MARKS[natureShift(props.caught.nature, stat)] === ''
-                        ? undefined
-                        : NATURE_WORDS[natureShift(props.caught.nature, stat)]
-                    }
-                    role={
-                      NATURE_MARKS[natureShift(props.caught.nature, stat)] === ''
-                        ? undefined
-                        : 'img'
-                    }
-                  >
-                    {NATURE_MARKS[natureShift(props.caught.nature, stat)]}
-                  </span>
-                  <span class="w-24 shrink-0 text-left">{STAT_LABELS[stat]}</span>
-                  {/* Measured against its own best rather
-    than against a ceiling: what a player
-    wants off this list is which end of
-    the pokemon is the sharp one, and the
-    bar the nature moved is the colour of
-    the way it moved it */}
-                  <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
-                    <div
-                      class={`h-full rounded-full ${
-                        NATURE_BARS[natureShift(props.caught.nature, stat)]
-                      }`}
-                      style={{
-                        width: `${(totalOf(props.caught, stat) / bestTotal(props.caught)) * 100}%`,
-                      }}
-                    />
-                  </div>
-                  <Meta
-                    class={`w-12 text-right tabular-nums ${
-                      NATURE_NUMBERS[natureShift(props.caught.nature, stat)]
-                    }`}
-                  >
-                    {totalOf(props.caught, stat)}
-                  </Meta>
-                </ListRow>
-              )}
-            </For>
-          </List>
-          <Show when={props.caught.statuses !== 0}>
-            <Meta>{statusNames(props.caught.statuses)}</Meta>
-          </Show>
-        </TabPane>
-
-        <TabPane value={StatView.IV}>
-          <List>
-            <For each={STAT_ORDER}>
-              {(stat) => (
-                <ListRow>
-                  {/* The column the Total tab marks a
-    nature in, empty here: a stat's name
-    should not move when the tab under
-    it changes */}
-                  <span class="w-3 shrink-0" />
-                  <span class="w-24 shrink-0 text-left">{STAT_LABELS[stat]}</span>
-                  <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
-                    <div
-                      class="h-full rounded-full bg-gold"
-                      style={{
-                        width: `${(getIV(props.caught.ivs, stat) / MAX_IV) * 100}%`,
-                      }}
-                    />
-                  </div>
-                  <Meta class="w-12 text-right tabular-nums">{getIV(props.caught.ivs, stat)}</Meta>
-                </ListRow>
-              )}
-            </For>
-          </List>
-        </TabPane>
-
-        <TabPane value={StatView.EV}>
-          <List>
-            <For each={STAT_ORDER}>
-              {(stat) => (
-                <ListRow>
-                  {/* The column the Total tab marks a
-    nature in, empty here: a stat's name
-    should not move when the tab under
-    it changes */}
-                  <span class="w-3 shrink-0" />
-                  <span class="w-24 shrink-0 text-left">{STAT_LABELS[stat]}</span>
-                  <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
-                    <div
-                      class="h-full rounded-full bg-leaf"
-                      style={{
-                        width: `${(laidOut()[stat] / MAX_EFFORT_PER_STAT) * 100}%`,
-                      }}
-                    />
-                  </div>
-                  {/* Typed rather than stepped: two hundred and
-                      fifty-two points is sixty-three presses of a
-                      button, and a player filling one stat out knows
-                      the number they are after before they start. The
-                      arrows still move in fours, which is what one
-                      point of the stat costs */}
-                  <Show
-                    when={props.owned}
-                    fallback={
-                      <Meta class="w-12 text-right tabular-nums">
-                        {props.caught.effortValues[stat]}
-                      </Meta>
-                    }
-                  >
-                    <input
-                      type="number"
-                      class="w-16 text-center tabular-nums"
-                      min={floorOf(stat)}
-                      max={ceilingOf(stat)}
-                      step={EFFORT_STEP}
-                      value={laidOut()[stat]}
-                      disabled={props.frozen}
-                      aria-label={`${STAT_LABELS[stat]} effort, ${floorOf(stat)} saved`}
-                      onInput={(event) => {
-                        aim(stat, Number(event.currentTarget.value), false);
-                      }}
-                      onChange={(event) => {
-                        aim(stat, Number(event.currentTarget.value), true);
-                      }}
-                    />
-                    {/* What is laid out but not saved, kept apart from
-                        the box: the box says where the stat is headed
-                        and this says how much of that is unpaid */}
-                    <Meta class="w-10 text-left tabular-nums text-leaf-dark">
-                      <Show when={(pending()[stat] ?? 0) > 0}>+{pending()[stat]}</Show>
-                    </Meta>
-                  </Show>
-                </ListRow>
-              )}
-            </For>
-          </List>
-          {/* What is left to spend, under the rows it
-              would be spent on. It sits at the end
-              because it is the answer to "can I press
-              these", which is a question asked after
-              reading them rather than before */}
-          <Meta class="block text-right">Remaining: {left()}</Meta>
-
-          {/* Nothing has left the sheet until this is pressed. The
-              points are laid out first and saved once, so a player
-              filling out six stats waits on one answer rather than
-              thirty — and can change their mind for free until then */}
-          <Show when={props.owned && spent() > 0}>
-            <Row class="justify-end">
-              <Meta>{spent()} to spend</Meta>
-              <Button
-                onClick={() => {
-                  setPending({});
-                }}
+        <For each={STAT_ORDER}>
+          {(stat) => (
+            <>
+              {/* The arrow in its own column keeps the names in line,
+                  and a colour is not something everybody can read */}
+              <span
+                class={NATURE_NUMBERS[shift(stat)]}
+                title={
+                  NATURE_MARKS[shift(stat)] === ''
+                    ? undefined
+                    : `${STAT_LABELS[stat]} is ${NATURE_WORDS[shift(stat)]}`
+                }
+                aria-label={
+                  NATURE_MARKS[shift(stat)] === '' ? undefined : NATURE_WORDS[shift(stat)]
+                }
               >
-                Undo
-              </Button>
-              <Button
-                tone="primary"
-                disabled={props.frozen}
-                onClick={() => {
-                  // Only what is actually going in: a box left
-                  // mid-typing can be standing below what is saved,
-                  // and the server refuses a spread that takes any
-                  // back out
-                  const laid: Partial<Record<Stats, number>> = {};
+                {NATURE_MARKS[shift(stat)]}
+              </span>
+              <span class="text-left whitespace-nowrap">{STAT_LABELS[stat]}</span>
+              {/* Measured against its own best stat, so the bar says which
+                  end of the pokemon is the sharp one */}
+              <div class="h-2 overflow-hidden rounded-full bg-line-soft">
+                <div
+                  class={`h-full rounded-full ${NATURE_BARS[shift(stat)]}`}
+                  style={{
+                    width: `${(totalOf(props.caught, stat) / bestTotal(props.caught)) * 100}%`,
+                  }}
+                />
+              </div>
+              <span class={`text-right tabular-nums ${NATURE_NUMBERS[shift(stat)]}`}>
+                {totalOf(props.caught, stat)}
+              </span>
+              <span
+                class={`text-right tabular-nums ${
+                  getIV(props.caught.ivs, stat) === MAX_IV
+                    ? 'font-semibold text-gold'
+                    : 'text-muted'
+                }`}
+              >
+                {getIV(props.caught.ivs, stat)}
+              </span>
+              {/* Typed rather than stepped: a full stat is sixty-three
+                  presses. The arrows still move in fours, which is what
+                  one point of the stat costs */}
+              <Show
+                when={props.owned}
+                fallback={<span class="text-right tabular-nums text-muted">{laidOut()[stat]}</span>}
+              >
+                <input
+                  type="number"
+                  class="w-full px-1 py-0 text-right tabular-nums"
+                  min={floorOf(stat)}
+                  max={ceilingOf(stat)}
+                  step={EFFORT_STEP}
+                  value={laidOut()[stat]}
+                  disabled={props.frozen}
+                  aria-label={`${STAT_LABELS[stat]} effort, ${floorOf(stat)} saved`}
+                  onInput={(event) => {
+                    aim(stat, Number(event.currentTarget.value), false);
+                  }}
+                  onChange={(event) => {
+                    aim(stat, Number(event.currentTarget.value), true);
+                  }}
+                />
+              </Show>
+            </>
+          )}
+        </For>
+      </div>
 
-                  for (const stat of STAT_ORDER) {
-                    const step = pending()[stat];
+      {/* Points are laid out first and saved on one press, so six
+          stats are one round trip and free to change until then */}
+      <div class="flex items-center justify-end gap-2">
+        <Show when={props.caught.statuses !== 0}>
+          <Meta class="mr-auto">{statusNames(props.caught.statuses)}</Meta>
+        </Show>
+        <Show when={props.owned}>
+          <Meta class="tabular-nums">Remaining: {left()}</Meta>
+          <Show when={spent() > 0}>
+            <Button
+              onClick={() => {
+                setPending({});
+              }}
+            >
+              Undo
+            </Button>
+            <Button
+              tone="primary"
+              disabled={props.frozen || spent() === 0}
+              onClick={() => {
+                // Only what is going in: a box left mid-typing can
+                // stand below what is saved, and the server refuses
+                // a spread that takes any back out
+                const laid: Partial<Record<Stats, number>> = {};
 
-                    if (step != null && step > 0) {
-                      laid[stat] = step;
-                    }
+                for (const each of STAT_ORDER) {
+                  const step = pending()[each];
+
+                  if (step != null && step > 0) {
+                    laid[each] = step;
                   }
+                }
 
-                  setPending({});
-                  props.onTrain(laid);
-                }}
-              >
-                Save
-              </Button>
-            </Row>
+                setPending({});
+                props.onTrain(laid);
+              }}
+            >
+              Save
+            </Button>
           </Show>
-        </TabPane>
-      </TabGroup>
-    </DialogSection>
+        </Show>
+      </div>
+    </section>
   );
 }

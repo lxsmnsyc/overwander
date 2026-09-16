@@ -185,7 +185,7 @@ function isMeasurableEvolution(evolution: EvolutionData): boolean {
 
 /**
  * How big a held-item picture is drawn in the tray. Small enough that
- * four of them fit across a third of the sheet
+ * eight of them fit in one row beside the abilities
  */
 export const ITEM_SPRITE = 28;
 
@@ -214,11 +214,13 @@ export function itemSlots(caught: CaughtPokemon, mine: boolean): null[] {
 const CONDITION_ICON = 24;
 
 /**
- * And how big the ball on a history row is: the same size as the text
- * beside it, since it is read as part of the line rather than as a
- * picture of its own
+ * How big a ball beside a line of history is drawn. A ball is about
+ * 18px of art in a 32px cell, so it is drawn at the cell's size and
+ * `HISTORY_BALL_INSET` pulls the empty edge in, keeping the line its
+ * usual height
  */
-export const HISTORY_BALL = 20;
+export const HISTORY_BALL = 32;
+export const HISTORY_BALL_INSET = '-m-1.5';
 
 /**
  * What an evolution asks for, read straight off the row after the

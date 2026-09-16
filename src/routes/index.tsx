@@ -438,6 +438,10 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onTrainer={(uid) => {
               game.setVisiting(uid);
             }}
+            // The entry opens over the sheet, the way a profile does
+            onDex={(species) => {
+              game.setDexEntry(species);
+            }}
           />
 
           {/* Which form was meant, for a row that stands for several.

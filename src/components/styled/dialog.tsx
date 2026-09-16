@@ -38,11 +38,13 @@ import { PortalHost, usePortalHost } from './portal-host';
  * a few — the catch sheet, the world map — are a page of detail, and
  * asking for room is better than every one of them being that wide
  */
-export type DialogWidth = 'narrow' | 'wide';
+export type DialogWidth = 'narrow' | 'wide' | 'broad';
 
 const WIDTHS: Record<DialogWidth, string> = {
   narrow: 'w-[min(92vw,26rem)]',
   wide: 'w-[min(92vw,44rem)]',
+  // Room for two columns, so a sheet can be read without scrolling
+  broad: 'w-[min(96vw,64rem)]',
 };
 
 /**
@@ -53,6 +55,16 @@ const WIDTHS: Record<DialogWidth, string> = {
 const PANEL =
   'fixed left-1/2 top-[8%] max-h-[84vh] -translate-x-1/2 overflow-y-auto rounded-panel' +
   ' border-4 border-tide bg-paper px-4 text-left shadow-window sm:px-5';
+
+/**
+ * A sheet: one screen of fixed height that is laid out to fit rather
+ * than scrolled. Below `md` there is no room for its columns, so it
+ * falls back to scrolling like any other panel
+ */
+const SHEET_PANEL =
+  'fixed left-1/2 top-[4vh] max-h-[92vh] -translate-x-1/2 overflow-y-auto rounded-panel' +
+  ' border-4 border-tide bg-paper px-4 text-left shadow-window sm:px-5' +
+  ' md:h-[min(92vh,46rem)] md:overflow-hidden';
 
 /**
  * The panel's vertical padding, which lives on the **content** rather
@@ -194,6 +206,12 @@ export interface DialogProps extends ParentProps {
    * competing with the first
    */
   bar?: JSX.Element;
+  /**
+   * `sheet` fixes the panel's height and hands the column under the
+   * heading all of it, for a dialog laid out to be read without
+   * scrolling. The caller's content has to fit
+   */
+  layout?: 'page' | 'sheet';
 }
 
 /**
@@ -277,7 +295,11 @@ export function Dialog(props: DialogProps): JSX.Element {
     const bar = children(() => props.bar);
 
     return (
-      <div class={`flex flex-col gap-3 ${INSET} ${props.class ?? ''}`}>
+      <div
+        class={`flex flex-col gap-3 ${INSET} ${props.layout === 'sheet' ? 'md:h-full' : ''} ${
+          props.class ?? ''
+        }`}
+      >
         {/* Both stuck rows travel together: a second `sticky` under
           the first would have to be told how tall the first is,
           and the heading is a line taller when it carries its
@@ -381,7 +403,12 @@ export function Dialog(props: DialogProps): JSX.Element {
               when it goes */}
           <PortalHost>
             <Suspense>
-              <TransitionChild {...FADE} class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}>
+              <TransitionChild
+                {...FADE}
+                class={`${props.layout === 'sheet' ? SHEET_PANEL : PANEL} ${
+                  WIDTHS[props.width ?? 'narrow']
+                }`}
+              >
                 <DialogPanel class="contents">
                   <Frame />
                 </DialogPanel>

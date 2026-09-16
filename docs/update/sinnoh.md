@@ -68,6 +68,18 @@ belongs to its family and nobody else.
   lasts. Relicanth has no weaknesses and no resistances.
 - **The raid demo** grants every pokemon its signature, so you can watch them.
 
+### Two ways into an ability slot
+
+Two items, both dug out of the prized band and sold by nobody.
+
+- **The Ability Capsule** does what the Channeler does, without her. It widens a
+  pokemon and draws one more of the abilities its line can reach into the new
+  slot, up to the four a pokemon may hold. Which one comes up is a roll.
+- **The Ability Patch** writes that family's signature into a pokemon, and it is
+  the only way to one: a signature is never rolled at birth and the Channeler
+  never calls one up. A pokemon with a slot standing empty gains it, and a full
+  one gives up an ability you choose. Neither can be undone.
+
 ## 113 new moves
 
 Every Diamond, Pearl and Platinum move, merged into every learnset from Kanto to

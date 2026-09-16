@@ -1,5 +1,11 @@
 # overwander
 
+## 3.3.3
+
+### Patch Changes
+
+- 383c9c6: Nurse Joy heals a pokemon that is not a shadow to its own maximum health, instead of a few points past it.
+
 ## 3.3.2
 
 ### Patch Changes

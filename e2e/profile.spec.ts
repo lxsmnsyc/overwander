@@ -33,7 +33,7 @@ test.describe('the profile', () => {
 
     // What is left under the tabs: the catches and the bag are behind
     // the menu now, since neither is a fact about who somebody is
-    for (const tab of ['Battles', 'Friends', 'Friend Requests', 'Bids']) {
+    for (const tab of ['Battles', 'Friends', 'Friend Requests', 'Auction']) {
       await expect(profile.getByRole('tab', { name: tab })).toBeVisible();
     }
   });
@@ -44,7 +44,7 @@ test.describe('the profile', () => {
   test('names each panel after the tab that opens it', async ({ page }) => {
     const profile = await openPanel(page, 'Profile');
 
-    for (const tab of ['Battles', 'Friends', 'Bids']) {
+    for (const tab of ['Battles', 'Friends', 'Auction']) {
       await profile.getByRole('tab', { name: tab, exact: true }).click();
       await expect(profile.getByRole('tabpanel', { name: tab, exact: true })).toBeVisible();
     }
@@ -74,7 +74,9 @@ test.describe('the profile', () => {
     await profile.getByRole('tab', { name: 'Battles' }).click();
     await expect(profile.getByText('No battles fought yet.')).toBeVisible();
 
-    await profile.getByRole('tab', { name: 'Bids' }).click();
+    // Bids are under the auction tab, beside what is being sold
+    await profile.getByRole('tab', { name: 'Auction' }).click();
+    await profile.getByRole('tab', { name: 'Bids', exact: true }).click();
     await expect(profile.getByText('You have not bid on anything.')).toBeVisible();
   });
 

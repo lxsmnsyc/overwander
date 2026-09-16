@@ -333,13 +333,13 @@ export default function GameMenu(): JSX.Element {
       >
         <PopoverButton
           ref={button}
+          aria-label="Menu"
           class="flex shrink-0 cursor-pointer items-center gap-2 rounded-full border-2
-            border-transparent bg-transparent px-3 py-1 text-sm font-bold text-ink shadow-none
+            border-transparent bg-transparent p-1.5 text-sm font-bold text-ink shadow-none
             transition-colors hover:bg-tide hover:text-on-accent focus-visible:outline-2
             focus-visible:outline-offset-2 focus-visible:outline-tide"
         >
           <MenuIcon class="size-5" aria-hidden="true" />
-          Menu
         </PopoverButton>
 
         {/* On a phone. Not positioned itself, so its panel hangs off the

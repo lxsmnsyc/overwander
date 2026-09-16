@@ -1,15 +1,23 @@
 import {
+  For,
   type JSX,
   type Resource,
   Show,
   Suspense,
   createEffect,
+  createMemo,
   createResource,
   createSignal,
 } from 'solid-js';
 import { type CandyStack, getCandies } from '../../auth/candy';
 import { getCaught } from '../../auth/caught';
-import { ItemFlags, type Items, getMachineMove, isMachineItem } from '../../data/ids/items';
+import {
+  ItemFlags,
+  type ItemTypes,
+  type Items,
+  getMachineMove,
+  isMachineItem,
+} from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
 import { isAbilityPatch } from '../../data/items/ability-items';
 import { isPPItem } from '../../data/items/vitamins';
@@ -20,6 +28,7 @@ import { hostMythicalRaid } from '../../auth/raids';
 import { isEscapeRope } from '../../data/items/escape-rope';
 import { getRaidSpecies } from '../../data/items/raid-items';
 import { getItemData } from '../../data/items';
+import { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER } from '../../data/items/names';
 import CatchPicker from '../catches/catch-picker';
 import AbilityPatchDialog from '../catches/AbilityPatchDialog';
 import IncreasePPDialog from '../catches/IncreasePPDialog';
@@ -30,10 +39,28 @@ import { describeItem } from '../details';
 import spendItemOn, { getLevelMoves, isUsableOn } from './use-item';
 import spentToast from './spent-toast';
 import { GameDialog, useGame } from '../app/game-context';
-import { Note, useToast } from '../styled';
+import { Note, TabBar, TabButton, TabGroup, TabPane, useToast } from '../styled';
 
 export interface InventoryListProps {
   player: string;
+}
+
+/** The bag's two tabs */
+const enum BagView {
+  Items = 0,
+  Candies = 1,
+}
+
+/** The items tab that holds every type at once, beside one tab per type */
+const ALL_ITEMS = -1;
+
+/** An item's type, or null for one the registry does not know */
+function typeOf(item: Items): ItemTypes | null {
+  try {
+    return getItemData(item).type;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -208,10 +235,14 @@ function BagBody(
       });
   };
 
-  const tray = (): ItemCell[] => {
+  /** The squares of one type, or of everything for `null` */
+  const tray = (type: ItemTypes | null): ItemCell[] => {
     const cells: ItemCell[] = [];
 
     for (const entry of props.items.latest ?? []) {
+      if (type != null && typeOf(entry.item) !== type) {
+        continue;
+      }
       cells.push({
         item: entry.item,
         amount: entry.amount,
@@ -219,6 +250,51 @@ function BagBody(
       });
     }
     return cells;
+  };
+
+  /** The types the bag holds, in the order the bag is read */
+  const types = createMemo((): ItemTypes[] => {
+    const held = new Set<ItemTypes | null>();
+
+    for (const entry of props.items.latest ?? []) {
+      held.add(typeOf(entry.item));
+    }
+    const order: ItemTypes[] = [];
+
+    for (const type of ITEM_TYPE_ORDER) {
+      if (held.has(type)) {
+        order.push(type);
+      }
+    }
+    return order;
+  });
+  const [shelf, setShelf] = createSignal<number>(ALL_ITEMS);
+
+  // A type the bag no longer holds has no tab left to stand on
+  createEffect(() => {
+    const at = shelf();
+
+    if (at !== ALL_ITEMS && !types().includes(at)) {
+      setShelf(ALL_ITEMS);
+    }
+  });
+
+  /**
+   * Pressing a square. Nothing is refused: an item with no use has
+   * nothing to press, and only the ones that do are announced as usable
+   */
+  const press = (item: Items): void => {
+    if (isRelic(item)) {
+      call(item);
+      return;
+    }
+    if (isEscapeRope(item)) {
+      climb();
+      return;
+    }
+    if (isUsable(item)) {
+      setUsing(item);
+    }
   };
 
   const piles = (): CandyPile[] => {
@@ -291,77 +367,82 @@ function BagBody(
 
   return (
     <>
-      <h4>Items</h4>
-      <Show when={props.items.latest?.length} fallback={<Note>Carrying nothing.</Note>}>
-        {/* The same tray the picker uses: what the bag holds is a
-              thing to look at rather than read, and the search and the
-              shelves come with it.
+      <TabGroup horizontal defaultValue={BagView.Items} class="flex flex-col gap-3">
+        <TabBar>
+          <TabButton value={BagView.Items}>Items</TabButton>
+          <TabButton value={BagView.Candies}>Candies</TabButton>
+        </TabBar>
+        <TabPane value={BagView.Items}>
+          <Show when={props.items.latest?.length} fallback={<Note>Carrying nothing.</Note>}>
+            <TabGroup
+              horizontal
+              value={shelf()}
+              onChange={(value) => {
+                setShelf(value);
+              }}
+              class="flex flex-col gap-3"
+            >
+              <TabBar>
+                <TabButton value={ALL_ITEMS}>All</TabButton>
+                <For each={types()}>
+                  {(type) => <TabButton value={type}>{ITEM_TYPE_NAMES[type]}</TabButton>}
+                </For>
+              </TabBar>
+              <TabPane value={ALL_ITEMS}>
+                <ItemGrid entries={tray(null)} onPress={press} />
+              </TabPane>
+              <For each={types()}>
+                {(type) => (
+                  <TabPane value={type}>
+                    <ItemGrid entries={tray(type)} onPress={press} />
+                  </TabPane>
+                )}
+              </For>
+            </TabGroup>
+          </Show>
+        </TabPane>
+        {/* A pile is a picture and a number in the jar's own colours */}
+        <TabPane value={BagView.Candies}>
+          <CandyGrid piles={piles()} />
+        </TabPane>
+      </TabGroup>
 
-              Nothing here is refused. A bag is what the player is
-              carrying, and a nugget is not unavailable for being a
-              nugget — it simply has no use to press. Only the ones
-              that do are announced as something to use */}
-        <ItemGrid
-          entries={tray()}
-          onPress={(item) => {
-            if (isRelic(item)) {
-              call(item);
-              return;
-            }
-            if (isEscapeRope(item)) {
-              climb();
-              return;
-            }
-            if (isUsable(item)) {
-              setUsing(item);
-            }
-          }}
-        />
+      {/* Which pokemon it goes on, and the last press: the item is spent
+          here rather than on a screen about the pokemon. Only the ones it
+          would do some good are offered */}
+      <CatchPicker
+        player={props.player}
+        open={using() != null}
+        value={null}
+        title="Use it on"
+        verb="Use"
+        empty="You have nothing to use it on."
+        filter={(option) => {
+          const item = using();
 
-        {/* Which pokemon it goes on, and the last press: the item is
-              spent here rather than on a screen about the pokemon.
-              Only the ones it would do some good are offered */}
-        <CatchPicker
-          player={props.player}
-          open={using() != null}
-          value={null}
-          title="Use it on"
-          verb="Use"
-          empty="You have nothing to use it on."
-          filter={(option) => {
-            const item = using();
+          return item != null && !option.fighting && isUsableOn(item, option.caught);
+        }}
+        revision={spent()}
+        // A potion is used on one pokemon after another, so the list
+        // stays up rather than closing after each
+        onClose={() => {
+          if (repeating) {
+            repeating = false;
+            return;
+          }
+          setUsing(null);
+        }}
+        onPick={(catchId) => {
+          const item = using();
 
-            return item != null && !option.fighting && isUsableOn(item, option.caught);
-          }}
-          revision={spent()}
-          // A potion is used on one pokemon after another, so the list
-          // stays up: it is the same question with a different answer,
-          // and closing it after each meant reopening the bag, finding
-          // the same square and pressing it again for every one
-          onClose={() => {
-            if (repeating) {
-              repeating = false;
-              return;
-            }
+          if (catchId == null || item == null) {
             setUsing(null);
-          }}
-          onPick={(catchId) => {
-            const item = using();
-
-            if (catchId == null || item == null) {
-              setUsing(null);
-              return;
-            }
-            repeating = repeatable(item);
-            spend(catchId, item);
-          }}
-        />
-      </Show>
-
-      <h4>Candies</h4>
-      {/* The same tray the items are in, in the jar's own colours: a
-          pile is a picture and a number, not a line of text */}
-      <CandyGrid piles={piles()} />
+            return;
+          }
+          repeating = repeatable(item);
+          spend(catchId, item);
+        }}
+      />
 
       {/* A machine asks which move is given up for it, and a level
           asks whether a new one is taken at all. Both are the same

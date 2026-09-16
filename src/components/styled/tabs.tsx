@@ -18,13 +18,38 @@ import { Note } from './feedback';
  * divided into tabs is a blank screen — is refused in one place
  */
 export interface TabGroupProps extends ParentProps {
-  /** Which tab is open to begin with */
-  defaultValue: number;
+  /** Which tab is open to begin with, for a group that keeps its own place */
+  defaultValue?: number;
+  /**
+   * Which tab is open, for a caller that holds it. With `onChange` it
+   * survives the group being built again, which a `defaultValue` does not
+   */
+  value?: number;
+  onChange?: (value: number) => void;
   horizontal?: boolean;
   class?: string;
 }
 
 export function TabGroup(props: TabGroupProps): JSX.Element {
+  const change = props.onChange;
+
+  if (change != null) {
+    return (
+      <HeadlessTabGroup
+        horizontal={props.horizontal === true}
+        value={props.value}
+        onChange={(value?: number) => {
+          if (value != null) {
+            change(value);
+          }
+        }}
+        toggleable={false}
+        class={props.class}
+      >
+        {props.children}
+      </HeadlessTabGroup>
+    );
+  }
   return (
     <HeadlessTabGroup
       horizontal={props.horizontal === true}
@@ -66,7 +91,18 @@ export function TabBar(props: ParentProps & { class?: string }): JSX.Element {
  */
 export function TabButton(props: ParentProps<{ value: number }>): JSX.Element {
   return (
-    <Tab value={props.value} class={TAB}>
+    <Tab
+      value={props.value}
+      class={TAB}
+      // Focused on press: terracotta selects a tab again when it loses
+      // focus, and a browser that leaves focus on the old tab after a
+      // click would hand the selection back to it later
+      onPointerDown={(event: PointerEvent) => {
+        if (event.currentTarget instanceof HTMLElement) {
+          event.currentTarget.focus();
+        }
+      }}
+    >
       {props.children}
     </Tab>
   );

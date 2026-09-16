@@ -233,7 +233,7 @@ Who turns up decides what they bring:
 | **Ace Trainer**   | Five fully-grown pokemon of any type, levels 60-80, raised the way the Elite Four raise theirs. Pays 25,000 to 60,000 |
 | **A type expert** | Three to five of their own type, levels 40-60. Pays 5,000 to 15,000 |
 
-The type experts are the trainer classes, and both regions' are on the road:
+The type experts are the trainer classes, and every region's are on the road:
 Kanto's Bug Catcher, Swimmer, Black Belt, Bird Keeper, Biker, Hiker, Poké Maniac,
 Channeler, Burglar, Rocker, Psychic, Lass, Beauty, Fisherman, Sailor, Gentleman,
 Super Nerd, Juggler, Tamer, Engineer and Gambler.
@@ -243,9 +243,10 @@ mainline gives them (a Sailor brings water and fighting, an Engineer steel and
 electric), and two trades may want the same type: what tells a Beauty from a Lass
 is who they are rather than what they carry.
 
-**A class belongs to a region.** The trades both regions put on the road are on
-it twice: a Swimmer (Kanto) and a Swimmer (Johto) are the same trade in two
-places, drawn differently, fielding what their own region grows. Their wins climb
+**A class belongs to a region.** A trade more than one region puts on the road
+stands on it once for each: a Swimmer (Kanto), a Swimmer (Johto) and a Swimmer
+(Hoenn) are the same trade in three places, drawn differently, fielding what
+their own region grows. Their wins climb
 one line between them and pay one title, and their coats are earned apart.
 
 Johto brings a dozen trades Kanto has none of as well: the **Sage**, who fields
@@ -255,6 +256,12 @@ grass, the **Skier** and the **Boarder**, ice, the **Scientist**, steel, the
 its own **Poké Maniac** and **Burglar**, who field the dragons of the Dragon's
 Den and the dark that works the roads outside it. Johto's road covers every type
 the game grows; Kanto's covers what Kanto grows.
+
+Hoenn brings 24 more. Eleven are trades nobody had before: the **Ninja Boy**,
+the **Tuber**, the **Poké Fan**, the **Guitarist**, the **Kindler**, the
+**Battle Girl**, the **Expert**, the **Ruin Maniac**, the **Street Thug**, the
+**Dragon Tamer** and the **Aroma Lady**. The other thirteen are Hoenn's own of
+trades already on the road. Hoenn's road covers every type the region grows.
 
 Which of them may be standing on a cell is the country's own: a Swimmer is met on
 the water, a Hiker on hard ground, a Skier in the snow, the same rule the gyms

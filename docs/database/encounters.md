@@ -1,6 +1,6 @@
 # Encounter kinds
 
-`EncounterType` ([`src/overworld/encounter.ts`](../../src/overworld/encounter.ts))
+`EncounterType` ([`src/overworld/encounter/index.ts`](../../src/overworld/encounter/index.ts))
 is stored on both the encounter and the catch it becomes. Every way of meeting a
 pokemon is its own kind, because a record should say where it actually came from:
 

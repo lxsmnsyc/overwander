@@ -1,3 +1,4 @@
+import { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
 import { requireUid } from '../server/auth';
 import check, {
@@ -49,6 +50,7 @@ export async function getPosition(uid: string): Promise<PositionRecord | null> {
     .from('positions')
     .select('player, chunk_x, chunk_y, cell_x, cell_y, depth, moved_at')
     .eq('player', uid)
+    .eq('generation', WORLD_GENERATION)
     .maybeSingle();
 
   // Thrown rather than read as "never walked", which would put a start position over the real one
@@ -87,13 +89,15 @@ export function watchPosition(
   uid: string,
   onChange: (position: PositionRecord | null) => void,
 ): Unwatch {
-  // A change carries the whole row, so a save is not read back again
+  // A change carries the whole row, so a save is not read back again.
+  // The stream cannot filter on two columns, so another world's row is
+  // skipped here and read back instead
   return watchRow(
     'positions',
     `player=eq.${uid}`,
     async () => getPosition(uid),
     onChange,
-    fromPositionRow,
+    (row) => (row.generation === WORLD_GENERATION ? fromPositionRow(row) : undefined),
   );
 }
 

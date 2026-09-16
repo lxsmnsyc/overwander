@@ -5,6 +5,7 @@ import { Items } from '../../data/ids/items';
 import { LATHER_COST, rollHoneyTree } from '../../data/overworld/honey-tree';
 import Landmark from '../../data/overworld/landmark';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
+import { WORLD_GENERATION } from '../../overworld/current';
 import type { Spawn } from '../../overworld/chunk-snapshot';
 import { getSql } from '../db';
 import { consumeItem } from '../inventory';
@@ -43,7 +44,7 @@ export async function listLatheredHoneyTrees(
   const prefix = honeyPrefix(snapshot);
   const rows = await getSql()`
     select marker from berry_claims
-    where player = ${uid} and marker like ${`${prefix}%`}
+    where generation = ${WORLD_GENERATION} and player = ${uid} and marker like ${`${prefix}%`}
   `;
 
   return rows
@@ -78,7 +79,10 @@ export async function latherHoneyTree(
   // The marker goes back when there was no jar, so a player who buys
   // one can still lather this window
   if (!(await consumeItem(uid, Items.Honey, LATHER_COST))) {
-    await getSql()`delete from berry_claims where marker = ${id} and player = ${uid}`;
+    await getSql()`
+      delete from berry_claims
+      where generation = ${WORLD_GENERATION} and marker = ${id} and player = ${uid}
+    `;
     return { kind: 'no-honey' };
   }
 

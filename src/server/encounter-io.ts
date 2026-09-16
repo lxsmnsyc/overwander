@@ -1,6 +1,7 @@
 import 'server-only';
 import type { Items } from '../data/ids/items';
 import type { EncounterRecord } from '../auth/encounter-record';
+import { WORLD_GENERATION } from '../overworld/current';
 import { type Tx, getSql } from './db';
 import { asNumber } from './read';
 
@@ -21,7 +22,8 @@ export async function readEncounter(
 ): Promise<Record<string, unknown> | null> {
   const sql = getSql();
   const rows = await sql`
-    select * from encounters where spawn_id = ${spawnId} and player = ${player}
+    select * from encounters
+    where generation = ${WORLD_GENERATION} and spawn_id = ${spawnId} and player = ${player}
   `;
   const row = rows.at(0);
 
@@ -31,11 +33,14 @@ export async function readEncounter(
 
   const [moves, items, abilities] = await Promise.all([
     sql`select move from encounter_moves
-        where spawn_id = ${spawnId} and player = ${player} order by slot`,
+        where generation = ${WORLD_GENERATION} and spawn_id = ${spawnId} and player = ${player}
+        order by slot`,
     sql`select item from encounter_items
-        where spawn_id = ${spawnId} and player = ${player} order by slot`,
+        where generation = ${WORLD_GENERATION} and spawn_id = ${spawnId} and player = ${player}
+        order by slot`,
     sql`select ability from encounter_abilities
-        where spawn_id = ${spawnId} and player = ${player} order by slot`,
+        where generation = ${WORLD_GENERATION} and spawn_id = ${spawnId} and player = ${player}
+        order by slot`,
   ]);
 
   const moveIds: number[] = [];
@@ -92,7 +97,8 @@ export async function stampFeed(spawnId: string, player: string, item: Items): P
   const sql = getSql();
 
   await sql`
-    update encounters set fed = ${item} where spawn_id = ${spawnId} and player = ${player}
+    update encounters set fed = ${item}
+    where generation = ${WORLD_GENERATION} and spawn_id = ${spawnId} and player = ${player}
   `;
 }
 
@@ -104,24 +110,24 @@ export async function stampFeed(spawnId: string, player: string, item: Items): P
 export async function writeEncounter(transaction: Tx, record: EncounterRecord): Promise<void> {
   const inserted = await transaction`
     insert into encounters
-      (spawn_id, player, type, species, level, individual_value, trait_value,
+      (generation, spawn_id, player, type, species, level, individual_value, trait_value,
        ivs, lair, nature, ability, gender, shiny, shadow, window_at, x, y,
        biome, place, slots)
     values
-      (${record.spawn}, ${record.player}, ${record.type}, ${record.species},
+      (${WORLD_GENERATION}, ${record.spawn}, ${record.player}, ${record.type}, ${record.species},
        ${record.level}, ${record.individualValue}, ${record.traitValue},
        ${record.ivs}, ${record.lair}, ${record.nature}, ${record.ability},
        ${record.gender}, ${record.shiny}, ${record.shadow}, ${record.timestamp},
        ${record.x}, ${record.y}, ${record.biome},
        ${record.place ?? null}, ${record.slots ?? null})
-    on conflict (spawn_id, player) do nothing
+    on conflict (generation, spawn_id, player) do nothing
   `;
 
   if (inserted.count === 0) {
     return;
   }
 
-  const key = { spawn_id: record.spawn, player: record.player };
+  const key = { generation: WORLD_GENERATION, spawn_id: record.spawn, player: record.player };
   const moves: (typeof key & { slot: number; move: number })[] = [];
   const items: (typeof key & { slot: number; item: number })[] = [];
   const abilities: (typeof key & { slot: number; ability: number })[] = [];
@@ -138,17 +144,17 @@ export async function writeEncounter(transaction: Tx, record: EncounterRecord): 
 
   if (moves.length > 0) {
     await transaction`
-      insert into encounter_moves ${transaction(moves, 'spawn_id', 'player', 'slot', 'move')}
+      insert into encounter_moves ${transaction(moves, 'generation', 'spawn_id', 'player', 'slot', 'move')}
     `;
   }
   if (items.length > 0) {
     await transaction`
-      insert into encounter_items ${transaction(items, 'spawn_id', 'player', 'slot', 'item')}
+      insert into encounter_items ${transaction(items, 'generation', 'spawn_id', 'player', 'slot', 'item')}
     `;
   }
   if (abilities.length > 0) {
     await transaction`
-      insert into encounter_abilities ${transaction(abilities, 'spawn_id', 'player', 'slot', 'ability')}
+      insert into encounter_abilities ${transaction(abilities, 'generation', 'spawn_id', 'player', 'slot', 'ability')}
     `;
   }
 }

@@ -1,6 +1,7 @@
 import 'server-only';
 import type Npc from '../../data/overworld/npc';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
+import { WORLD_GENERATION } from '../../overworld/current';
 import { getSql } from '../db';
 import { isRefusal } from '../../auth/learn-refusal';
 import { claim, liveSnapshot } from '../overworld';
@@ -105,6 +106,7 @@ export async function releaseVisit(id: string): Promise<void> {
 
   await getSql()`
     delete from npc_claims
-    where marker = ${id.slice(0, at)} and player = ${id.slice(at + 1)}
+    where generation = ${WORLD_GENERATION} and marker = ${id.slice(0, at)}
+      and player = ${id.slice(at + 1)}
   `;
 }

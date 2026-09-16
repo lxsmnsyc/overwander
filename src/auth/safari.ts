@@ -15,6 +15,7 @@ import check, { GAME_ID, ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
 import { consumeItem } from '../server/inventory';
 import { stampFeed } from '../server/encounter-io';
 import { pocketFled, retireSpawn } from '../server/overworld';
+import { WORLD_GENERATION } from '../overworld/current';
 import createOverworld from '../overworld/setup';
 import { buddyEffectsOf, resolveBuddy } from './buddy';
 import { hasCaughtSpecies } from './caught';
@@ -104,7 +105,11 @@ export async function countBalls(uid: string): Promise<number> {
  * checks every spawn it is about to draw against the set
  */
 export async function getRetiredKeys(uid: string): Promise<Set<string>> {
-  const { data } = await getSupabase().from('fled_encounters').select('key').eq('player', uid);
+  const { data } = await getSupabase()
+    .from('fled_encounters')
+    .select('key')
+    .eq('player', uid)
+    .eq('generation', WORLD_GENERATION);
 
   const keys = new Set<string>();
 

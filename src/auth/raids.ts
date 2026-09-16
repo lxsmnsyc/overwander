@@ -4,6 +4,7 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { Items } from '../data/ids/items';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
+import { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
 import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import { RaidKind, type RaidRecord, type RaidView, asRaidRecord } from './raid-record';
@@ -334,6 +335,7 @@ export async function listLiveRaids(
   const { data } = await getSupabase()
     .from(RAID_TABLE)
     .select(RAID_EMBED)
+    .eq('generation', WORLD_GENERATION)
     .eq('window_at', raidTimestamp)
     .eq('utc_offset', asOffset(offset))
     .is('battle_id', null)

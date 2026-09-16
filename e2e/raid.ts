@@ -4,7 +4,7 @@ import Biome from '../src/data/ids/biome';
 import { Species } from '../src/data/ids/species';
 import { RaidKind } from '../src/auth/raid-record';
 import { RAID_INTERVAL } from '../src/overworld/chunk-snapshot';
-import { clearIdleRaids, insertRow, uidOf } from './admin';
+import { GENERATION, clearIdleRaids, insertRow, uidOf } from './admin';
 import { type Player, pressBoxSquare } from './game';
 
 /**
@@ -59,6 +59,7 @@ function raidFields(
   window: { timestamp: number; offset: number },
 ): Record<string, unknown> {
   return {
+    generation: GENERATION,
     kind: RaidKind.Legendary,
     lair: null,
     species: Species.Articuno,

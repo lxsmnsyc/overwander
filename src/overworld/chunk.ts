@@ -1,4 +1,4 @@
-import AleaRNG from '../core/alea';
+import { type RandomSource, sourceOf } from '../core/draws';
 import { CELL_COUNT, CHUNK_CELLS, SURROUNDING, worldCell } from './grid';
 import Biome, {
   SpawnSurface,
@@ -18,7 +18,7 @@ import {
   getBiomeDecorations,
   getIslandDecorations,
 } from '../data/overworld/decoration';
-import Landmark, { LANDMARKS } from '../data/overworld/landmark';
+import Landmark, { LANDMARKS, LANDMARK_WEIGHTS } from '../data/overworld/landmark';
 import { TOWN_LANDMARKS, getTownLots, isTownAt, portalCellIn, townOverChunk } from './town';
 import { caveMouthCellIn } from './cave';
 import { isFace, isSeam } from './cliff';
@@ -210,7 +210,7 @@ export function neighborCells(cell: number): number[] {
  * inheriting a pruned list from the stage before — so a change to one
  * stage shifts the others only where a collision actually moves
  */
-function shuffled(rng: AleaRNG, cells: number[]): number[] {
+function shuffled(rng: RandomSource, cells: number[]): number[] {
   const order = [...cells];
 
   for (let at = order.length - 1; at > 0; at -= 1) {
@@ -553,14 +553,15 @@ export default class Chunk {
       const cells = new Map<number, Decoration>();
 
       if (kinds.length > 0) {
-        const rng = new AleaRNG(`${this.seed}decorations`);
+        const draws = this.world.draws(`${this.seed}decorations`);
         const count =
-          MIN_DECORATIONS + Math.floor(rng.random() * (MAX_DECORATIONS - MIN_DECORATIONS + 1));
+          MIN_DECORATIONS +
+          Math.floor(draws.random('count') * (MAX_DECORATIONS - MIN_DECORATIONS + 1));
         // Nothing grows out of a pool, a rock's reach, or a
         // landmark's approach
         const landmarks = this.getLandmarkArea();
         const taken = new Set<number>();
-        const order = shuffled(rng, centeredCells(PLACEMENT_AREA));
+        const order = shuffled(sourceOf(draws, 'order'), centeredCells(PLACEMENT_AREA));
 
         // Out at sea the scenery stands in the water, and an island grows
         // its own rather than coral on the sand
@@ -568,7 +569,7 @@ export default class Chunk {
 
         for (let i = 0; i < count; i++) {
           // The draws land in pair order: the kind, then its cell
-          const roll = rng.random();
+          const roll = draws.random('kind');
           // On land scenery keeps to dry ground, so a chunk under a lake
           // simply has less of it
           const cell = this.firstDecorationCell(order, taken, landmarks, sea);
@@ -618,12 +619,13 @@ export default class Chunk {
    */
   getLandmarkCells(): Map<number, Landmark> {
     if (this.landmarkCells == null) {
-      const rng = new AleaRNG(`${this.seed}landmarks`);
-      const count = MIN_LANDMARKS + Math.floor(rng.random() * (MAX_LANDMARKS - MIN_LANDMARKS + 1));
+      const draws = this.world.draws(`${this.seed}landmarks`);
+      const count =
+        MIN_LANDMARKS + Math.floor(draws.random('count') * (MAX_LANDMARKS - MIN_LANDMARKS + 1));
       // Nothing stands in a rock's reach, and each biome rolls from a
       // pool without the landmarks that cannot be there
       const base = biomeLandmarks(this.biome, this.world.depth);
-      const order = shuffled(rng, centeredCells(PLACEMENT_AREA));
+      const order = shuffled(sourceOf(draws, 'order'), centeredCells(PLACEMENT_AREA));
       const cells = new Map<number, Landmark>();
       const taken = new Set<number>();
       const rolled = new Set<Landmark>();
@@ -680,14 +682,29 @@ export default class Chunk {
         // A singleton already rolled leaves the pool for the rest of
         // the chunk: a second portal, gym or champion is never rolled
         const pool: Landmark[] = [];
+        let total = 0;
 
         for (const kind of base) {
           if (!(SINGLETON_LANDMARKS.has(kind) && rolled.has(kind))) {
             pool.push(kind);
+            total += LANDMARK_WEIGHTS[kind];
           }
         }
 
-        const landmark = pool[Math.floor(rng.random() * pool.length)];
+        // Weighted rather than flat: a raid is worth travelling for
+        // and a bush is what a walk turns up, and a flat roll made
+        // them equally common
+        let target = draws.random('kind') * total;
+        let landmark = pool[pool.length - 1];
+
+        for (const kind of pool) {
+          target -= LANDMARK_WEIGHTS[kind];
+
+          if (target < 0) {
+            landmark = kind;
+            break;
+          }
+        }
         // Everything that is a landmark now needs ground under it. The
         // one that did not was the phenomenon, which is no longer one:
         // something happening is rolled over the chunk by the hour

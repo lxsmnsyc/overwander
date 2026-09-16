@@ -1,6 +1,6 @@
 import 'server-only';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../overworld/chunk-snapshot';
-import getWorld from '../../overworld/current';
+import getWorld, { WORLD_GENERATION } from '../../overworld/current';
 import { Depth } from '../../overworld/depth';
 import { asOffset, toLocalTime, toZoneKey } from '../../auth/local-time';
 import { CLAIM_CHUNK_LIMIT } from '../../auth/snapshot-record';
@@ -80,7 +80,8 @@ export async function listChunkClaims(
 
   for (const row of await sql`
     select chunk_seed, window_at from snapshots
-    where zone = ${toZoneKey(zone)} and chunk_seed = any(${seeds})
+    where generation = ${WORLD_GENERATION} and zone = ${toZoneKey(zone)}
+      and chunk_seed = any(${seeds})
   `) {
     windows.set(asString(row.chunk_seed), asNumber(row.window_at));
   }
@@ -117,7 +118,7 @@ export async function listChunkClaims(
 
     for (const row of await sql`
       select marker from ${sql(table)}
-      where player = ${uid} and marker like any(${patterns})
+      where generation = ${WORLD_GENERATION} and player = ${uid} and marker like any(${patterns})
     `) {
       found.push(asString(row.marker));
     }

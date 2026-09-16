@@ -163,7 +163,7 @@ freezes them.
 
 Catch ids are readable by any signed-in player, so a submitted party cannot be
 trusted on its word. `joinRaid` in
-[`src/server/raids.ts`](../../src/server/raids.ts) rejects one that repeats a
+[`src/server/raids/index.ts`](../../src/server/raids/index.ts) rejects one that repeats a
 catch or names a catch the player does not own, and nothing but the server writes
 `teams`, so there is no way around that check.
 
@@ -259,7 +259,7 @@ units already fighting.
 `height` and `weight` are the individual's own rather than the species' listed
 ones, and they are **not** stored on the `caught` row.
 `deriveSize(species, traitValue)` in
-[`src/overworld/encounter.ts`](../../src/overworld/encounter.ts) reads them off the
+[`src/overworld/encounter/index.ts`](../../src/overworld/encounter/index.ts) reads them off the
 trait value against the species as it stands, so evolving grows the pokemon while
 keeping its place in the band. The snapshot freezes the result at battle start, and
 the battle unit carries it through `setHeight` / `setWeight`.
@@ -323,11 +323,11 @@ ends and a stop is a row of the player's own, so a battle that had to
 chase either would lose its setting the moment somebody watched it back.
 
 `rules` is the house rule a Battle Frontier fight was held under, and 0 for every
-other fight in the game. A rule changes what the engine does — the Battle Arena
-stops a fight on the clock — so it is stored for the reason `limits` is: the
+other fight in the game. A rule changes what the engine does, since the Battle
+Arena stops a fight on the clock, so it is stored for the reason `limits` is: the
 window that staged the Brain who set it is gone within the hour, and a fight
 replays as the fight it was. See `FrontierRule` in
-[`src/data/overworld/experts.ts`](../../src/data/overworld/experts.ts).
+[`src/data/overworld/experts/index.ts`](../../src/data/overworld/experts/index.ts).
 
 `weather` is the sky the fight was started under, and only an overworld trainer's
 fight carries one. It is stored for the reason `biome` is and for one of its own:

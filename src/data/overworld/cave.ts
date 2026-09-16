@@ -28,8 +28,19 @@ export const CAVE_DARK_CELLS = 2;
 export const CAVE_LAMP_CELLS = 5;
 
 /**
- * How far a rope looks for a way out, in chunks. Three chunks in five
- * hold a mouth of their own, so the cap is really for the sea, where
- * the network runs under water that never breaks the surface.
+ * How far a rope looks for a way out, in chunks. The cap is really
+ * for the sea, where the network runs under water that never breaks
+ * the surface.
  */
 export const MOUTH_SEARCH = 8;
+
+/**
+ * The least ground between two mouths, in cells.
+ *
+ * The hillsides offer far more doors than the world wants: left
+ * alone, two thirds of the chunks cut one and a great many of them
+ * stand within sight of the next. A door close enough to see from
+ * another is a second way into the same stretch of cave, so the one
+ * with the weaker draw is not cut at all
+ */
+export const MOUTH_GAP = 12;

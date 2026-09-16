@@ -79,7 +79,7 @@ export function watchRow<T>(
   filter: string,
   read: () => Promise<T>,
   onChange: (value: T) => void,
-  fromChange?: (row: Record<string, unknown>) => T,
+  fromChange?: (row: Record<string, unknown>) => T | undefined,
 ): Unwatch {
   const supabase = getSupabase();
   const refetch = (): void => {
@@ -99,12 +99,15 @@ export function watchRow<T>(
     .on('postgres_changes', { event: '*', schema: 'public', table, filter }, (payload) => {
       const row: Record<string, unknown> = payload.new;
 
-      // A delete carries no new row, so it is read like a reconnect
-      if (fromChange == null || Object.keys(row).length === 0) {
+      // A delete carries no new row, so it is read like a reconnect,
+      // and so is a row the reader declines to take as it stands
+      const value = Object.keys(row).length === 0 ? undefined : fromChange?.(row);
+
+      if (value === undefined) {
         refetch();
         return;
       }
-      onChange(fromChange(row));
+      onChange(value);
     })
     .subscribe((status) => {
       if (status !== REALTIME_SUBSCRIBE_STATES.SUBSCRIBED) {

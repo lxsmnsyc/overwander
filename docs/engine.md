@@ -50,7 +50,7 @@ halvings in and within half a point of the floor, which is past everything the
 roster reaches short of stacking every multiplier it owns.
 
 A subtraction was the obvious shape and the wrong one: at 5% per 32 points the
-cut hit its cap at 576 Speed, which 410 of 419 species clear at +6 stages, so
+cut hit its cap at 576 Speed, which 540 of 559 species clear at +6 stages, so
 most of the roster stood on a wall. `CheckUnitMoveCooldown` carries the curve:
 the mechanic answers the PP wait at `Exact` and the Speed cut at `Post`, reading
 `resolveStat` so stages count, which is what makes Agility, Swift Swim, Speed
@@ -315,7 +315,7 @@ counts what happens rather than only checking that it was built.
 
 The parties are rolled between `DEMO_MIN_LEVEL` (70) and `DEMO_MAX_LEVEL` (80),
 high enough that a field of them lasts long enough against a maxed boss to be
-worth watching, and out of the **fully evolved** species only (165 of the 278),
+worth watching, and out of the **fully evolved** species only (317 of the 559),
 since at level 70 a Caterpie would have evolved twice over long ago. Eight full
 parties is a lobby the canvas can draw as eight points of a circle, and a crowd
 besides: whatever the canvas does with a busy field, it does here first.

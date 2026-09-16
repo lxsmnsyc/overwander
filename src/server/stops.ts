@@ -13,7 +13,7 @@ import {
 } from '../auth/stop-record';
 import { TEAM_SIZE } from '../auth/teams';
 import ChunkSnapshot, { NPC_INTERVAL, RocketRank, type Spawn } from '../overworld/chunk-snapshot';
-import getWorld from '../overworld/current';
+import getWorld, { WORLD_GENERATION } from '../overworld/current';
 import { EncounterType } from '../overworld/encounter';
 import { PLAYER_ALLIANCE } from '../overworld/raid';
 import { getMaxHealth } from '../auth/health';
@@ -125,7 +125,8 @@ const asOutcome = (value: unknown): BattleOutcome => asNumber(value) as BattleOu
 async function readStop(stop: string, player: string): Promise<Record<string, unknown> | null> {
   const sql = getSql();
   const rows = await sql`
-    select * from rocket_stops where stop_id = ${stop} and player = ${player}
+    select * from rocket_stops
+    where generation = ${WORLD_GENERATION} and stop_id = ${stop} and player = ${player}
   `;
   const row = rows.at(0);
 
@@ -136,7 +137,7 @@ async function readStop(stop: string, player: string): Promise<Record<string, un
   const party = await sql`
     select species, individual_value as "individualValue", trait_value as "traitValue"
     from rocket_party
-    where stop_id = ${stop} and player = ${player}
+    where generation = ${WORLD_GENERATION} and stop_id = ${stop} and player = ${player}
     order by slot
   `;
 
@@ -275,15 +276,16 @@ export async function enterStop(
   await tx(async (transaction) => {
     await transaction`
       insert into rocket_stops
-        (stop_id, player, battle_id, window_at, utc_offset,
+        (generation, stop_id, player, battle_id, window_at, utc_offset,
          chunk_seed, chunk_x, chunk_y, cell, defeated)
       values
-        (${stop}, ${uid}, null, ${fresh.timestamp}, ${fresh.offset},
+        (${WORLD_GENERATION}, ${stop}, ${uid}, null, ${fresh.timestamp}, ${fresh.offset},
          ${chunk.seed}, ${chunk.x}, ${chunk.y}, ${cell}, false)
       on conflict do nothing
     `;
 
     const rows: {
+      generation: number;
       stop_id: string;
       player: string;
       slot: number;
@@ -294,6 +296,7 @@ export async function enterStop(
 
     for (const [slot, entry] of fresh.party.entries()) {
       rows.push({
+        generation: WORLD_GENERATION,
         stop_id: stop,
         player: uid,
         slot,
@@ -309,7 +312,7 @@ export async function enterStop(
     if (rows.length > 0) {
       await transaction`
         insert into rocket_party
-          ${transaction(rows, 'stop_id', 'player', 'slot', 'species', 'individual_value', 'trait_value')}
+          ${transaction(rows, 'generation', 'stop_id', 'player', 'slot', 'species', 'individual_value', 'trait_value')}
         on conflict do nothing
       `;
     }
@@ -557,7 +560,7 @@ export async function startStopBattle(
     `;
     await transaction`
       update rocket_stops set battle_id = ${battleId}
-      where stop_id = ${stop} and player = ${uid}
+      where generation = ${WORLD_GENERATION} and stop_id = ${stop} and player = ${uid}
     `;
   });
 
@@ -640,7 +643,7 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
   // First claim pays; the guard rides in the statement
   const claimed = await getSql()`
     update rocket_stops set defeated = true
-    where stop_id = ${stop} and player = ${uid} and not defeated
+    where generation = ${WORLD_GENERATION} and stop_id = ${stop} and player = ${uid} and not defeated
   `;
 
   const [spawnId, spawn] = deriveStopReward(record, stop, uid);
@@ -661,7 +664,7 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
     const encounter = asEncounterRecord(existing);
     const gone = await getSql()`
       select 1 from fled_encounters
-      where player = ${uid} and key = ${encounterKey(encounter)}
+      where player = ${uid} and generation = ${WORLD_GENERATION} and key = ${encounterKey(encounter)}
     `;
 
     return gone.length > 0 ? null : { encounter, gold: 0, award: null, item: null };

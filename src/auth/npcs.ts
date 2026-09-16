@@ -2,6 +2,7 @@ import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import Npc from '../data/overworld/npc';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
+import { WORLD_GENERATION } from '../overworld/current';
 import { requireUid } from '../server/auth';
 import check, {
   BASKET,
@@ -749,6 +750,7 @@ export async function hasVisited(
   const { data } = await getSupabase()
     .from('npc_claims')
     .select('marker')
+    .eq('generation', WORLD_GENERATION)
     .eq('marker', snapshot.visitMarker(tag, cell));
 
   return (data ?? []).length > 0;

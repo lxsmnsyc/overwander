@@ -51,9 +51,6 @@ export async function readStackIn(
   return rows.at(0) == null ? 0 : asNumber(rows[0].count);
 }
 
-/** Postgres' own oid for int4, so a key list is sent as numbers. */
-const INT4 = 23;
-
 /**
  * Several counts at once, keyed by whatever the spec keys on, and
  * missing rows left out. One round trip however many are asked for.
@@ -77,7 +74,7 @@ export async function readStacksIn(
   const { table, key: column } = tableOf(spec);
   const rows = await transaction`
     select ${transaction(column)}, count from ${transaction(table)}
-    where player = ${uid} and ${transaction(column)} = any(${transaction.array(wanted, INT4)})
+    where player = ${uid} and ${transaction(column)} in ${transaction(wanted)}
     order by ${transaction(column)}
     for update
   `;

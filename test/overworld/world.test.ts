@@ -1035,6 +1035,15 @@ describe('world', () => {
       Moves.PowerSwap,
       Moves.GuardSwap,
       Moves.HeartSwap,
+      Moves.GuardSplit,
+      Moves.PowerSplit,
+      // The whole pool thrown at every enemy at once
+      Moves.FinalGambit,
+      // Every enemy's wind-up sent back to the start at once
+      Moves.Quash,
+      Moves.AfterYou,
+      Moves.AllySwitch,
+      Moves.Bestow,
     ]) {
       expect(BANNED_BOSS_MOVES.has(move)).toBe(true);
     }

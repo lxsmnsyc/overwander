@@ -77,9 +77,23 @@ export { default as BANNED_BOSS_MOVES, getBannedBossMoves } from '../../data/ove
  * What a boss refuses at either end. Nothing may move its ability
  * about, and a stage swap leaks whichever way it is cast: the boss
  * turns away the negative half and the positive half lands on its
- * own, so whoever swapped keeps a copy of what the other side had
+ * own, so whoever swapped keeps a copy of what the other side had.
+ * A split averages the stats before a boss' own doubling, so the boss
+ * drops to the average and the other side climbs to it
  */
-const BOSS_REFUSED_MOVES = new Set<Moves>([...ABILITY_MOVES, ...STAGE_SWAP_MOVES]);
+const BOSS_REFUSED_MOVES = new Set<Moves>([
+  ...ABILITY_MOVES,
+  ...STAGE_SWAP_MOVES,
+  Moves.GuardSplit,
+  Moves.PowerSplit,
+]);
+
+/**
+ * What a boss shrugs off when it is aimed at. Quash restarts its
+ * wind-up and Sky Drop carries it where it cannot act, so a lobby
+ * taking turns with either would keep it out of the fight
+ */
+const BOSS_IMMUNE_MOVES = new Set<Moves>([Moves.Quash, Moves.SkyDrop]);
 
 /**
  * The moves that hold a pokemon to part of its move set. A boss
@@ -259,6 +273,18 @@ const setupAbilities = [
 
           event.source.triggerAbility(Abilities.Boss);
         }
+        if (
+          event.success &&
+          BOSS_IMMUNE_MOVES.has(event.move) &&
+          event.target.type === MoveTargetType.Unit &&
+          event.target.unit !== event.source &&
+          event.target.unit.hasAbility(Abilities.Boss)
+        ) {
+          event.success = false;
+
+          // For visual cues
+          event.target.unit.triggerAbility(Abilities.Boss);
+        }
       }),
       // And the AI is told rather than left to spend a cast finding out
       battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Post, (event) => {
@@ -375,7 +401,9 @@ const setupAbilities = [
       battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Post, (event) => {
         if (
           event.usable &&
-          (FORCED_SWITCH_MOVES.has(event.move) || MOVE_HOLDS.has(event.move)) &&
+          (FORCED_SWITCH_MOVES.has(event.move) ||
+            MOVE_HOLDS.has(event.move) ||
+            BOSS_IMMUNE_MOVES.has(event.move)) &&
           event.target.type === MoveTargetType.Unit &&
           event.target.unit !== event.source &&
           event.target.unit.hasAbility(Abilities.Boss)

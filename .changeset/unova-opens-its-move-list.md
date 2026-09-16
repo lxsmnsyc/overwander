@@ -33,6 +33,11 @@ Some moves read the real-time fight rather than a turn.
 - Flame Burst splashes the target's own team.
 - Wonder Room and Magic Room end when cast a second time.
 
+A raid boss is kept out of the ones a raid breaks.
+
+- A boss is never staged with Final Gambit, Quash, Guard Split, Power Split, After You, Ally Switch or Bestow.
+- A boss shrugs off Quash, Sky Drop, Guard Split and Power Split aimed at it.
+
 Some are drawn the way an earlier move that does the same thing is drawn.
 
 - Drill Run turns like Horn Drill, and Wild Charge arrives crackling like Volt Tackle.

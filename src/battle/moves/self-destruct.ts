@@ -1,8 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
-import { Stats } from '../../data/constants/stats';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
-import { RISKY_PENALTY, USELESS_PENALTY } from '../ai/score';
+import { sacrificeCost } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
@@ -11,9 +10,6 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
  * forbids casting them)
  */
 export const SELF_DESTRUCT_MOVES = new Set<Moves>([Moves.SelfDestruct, Moves.Explosion]);
-
-/** The share of its health below which a unit has little left to lose */
-const LAST_LEGS = 0.5;
 
 // https://bulbapedia.bulbagarden.net/wiki/Explosion_(move)
 export default function setupSelfDestructMoves(battle: Battle): void {
@@ -53,9 +49,6 @@ export default function setupSelfDestructMoves(battle: Battle): void {
       return;
     }
 
-    const source = event.source;
-    const ratio = source.health / Math.max(1, source.checkStat(Stats.HP, 0));
-
-    event.score -= ratio > LAST_LEGS ? USELESS_PENALTY : RISKY_PENALTY;
+    event.score -= sacrificeCost(event.source);
   });
 }

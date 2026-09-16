@@ -171,7 +171,10 @@ const chikoritaToCelebi = [
       if (lookout) {
         event.critical = false;
 
-        lookout.triggerAbility(Abilities.Sentry);
+        // A cue is for a real attempt, not for the AI weighing one
+        if (!(event.parent.flags & MoveAttackFlags.Simulated)) {
+          lookout.triggerAbility(Abilities.Sentry);
+        }
       }
     }),
   ),

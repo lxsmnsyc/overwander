@@ -161,7 +161,8 @@ export default function setupAttackMechanics(battle: Battle): void {
   }
 
   battle.on(BattleEvents.UnitAttackResolveCriticalHit, EventPriority.Exact, (event) => {
-    if (!event.critical) {
+    // A simulation counts only a critical that is certain, never a lucky one
+    if (!event.critical && !(event.parent.flags & MoveAttackFlags.Simulated)) {
       const chance = resolveCriticalHitChance(event.parent);
       event.critical = battle.random() <= chance;
     }

@@ -10,6 +10,19 @@ import { RaidKind, type RaidRecord, type RaidView, asRaidRecord } from './raid-r
 import { hasAnyCaught } from './caught';
 import { LobbyRole } from './lobby-role';
 import { requireUid } from '../server/auth';
+import check, {
+  CELL,
+  CHUNK_COORDINATE,
+  DEPTH,
+  GAME_ID,
+  ID,
+  LOBBY_ROLE,
+  OFFSET,
+  PARTY,
+  RAID_KIND,
+  TOKEN,
+  UID,
+} from '../server/validate';
 import type { RaidReward } from '../server/raids';
 import {
   claimRaidReward as claimRewardOnServerSide,
@@ -188,6 +201,13 @@ async function peekRaidOnServer(
   depth: Depth,
 ): Promise<RaidView | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(RAID_KIND, kind);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return peekOnServer(
     await requireUid(token),
     x,
@@ -236,6 +256,13 @@ async function enterRaidOnServer(
   depth: Depth,
 ): Promise<[string, RaidRecord] | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(RAID_KIND, kind);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return enterOnServer(
     await requireUid(token),
     x,
@@ -279,6 +306,11 @@ async function hostMythicalOnServer(
   offset: number,
 ): Promise<[string, RaidRecord] | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(GAME_ID, item);
+  check(OFFSET, offset);
   return hostMythicalOnServerSide(
     await requireUid(token),
     x,
@@ -339,6 +371,8 @@ export async function watchRaidLobby(id: string): Promise<void> {
 
 async function watchRaidLobbyOnServer(token: string, id: string): Promise<void> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   await watchLobbyOnServer(await requireUid(token), id, await syncServerClock());
 }
 
@@ -352,6 +386,8 @@ export async function unwatchRaidLobby(id: string): Promise<void> {
 
 async function unwatchRaidLobbyOnServer(token: string, id: string): Promise<void> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   await unwatchLobbyOnServer(await requireUid(token), id);
 }
 
@@ -428,6 +464,10 @@ async function inviteToRaidOnServer(
   role: LobbyRole,
 ): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(UID, friend);
+  check(LOBBY_ROLE, role);
   return inviteOnServer(await requireUid(token), id, friend, await syncServerClock(), role);
 }
 
@@ -438,6 +478,8 @@ export async function declineRaidInvite(id: string): Promise<void> {
 
 async function declineRaidInviteOnServer(token: string, id: string): Promise<void> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   await declineInviteOnServer(await requireUid(token), id);
 }
 
@@ -447,6 +489,8 @@ export async function leaveRaid(id: string): Promise<void> {
 
 async function leaveRaidOnServer(token: string, id: string): Promise<void> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   await leaveOnServer(await requireUid(token), id);
 }
 
@@ -462,6 +506,8 @@ export async function clearRaid(id: string): Promise<boolean> {
 
 async function clearRaidOnServer(token: string, id: string): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   return clearOnServer(await requireUid(token), id);
 }
 
@@ -482,6 +528,9 @@ async function joinRaidOnServer(
   catches: string[],
 ): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(PARTY, catches);
   return joinOnServer(await requireUid(token), id, catches);
 }
 
@@ -503,6 +552,8 @@ export async function claimRaidReward(id: string): Promise<RaidReward | null> {
 
 async function claimRewardOnServer(token: string, id: string): Promise<RaidReward | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   return claimRewardOnServerSide(await requireUid(token), id);
 }
 
@@ -534,5 +585,7 @@ export async function startRaid(id: string): Promise<string | null> {
 
 async function startRaidOnServer(token: string, id: string): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   return startOnServer(await requireUid(token), id, await syncServerClock());
 }

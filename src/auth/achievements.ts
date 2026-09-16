@@ -3,6 +3,7 @@ import type { Types } from '../data/constants/types';
 import type { TrainerClass } from '../data/overworld/trainers';
 import type { Title } from '../data/ids/titles';
 import { requireUid } from '../server/auth';
+import check, { MAYBE_GAME_ID, MAYBE_ID, TOKEN, UID } from '../server/validate';
 import {
   listUnlockedSprites as listSpritesOnServer,
   listUnlockedTitles as listTitlesOnServer,
@@ -31,6 +32,7 @@ export async function listAchievements(player: string): Promise<AchievementSheet
 
 async function listAchievementsOnServer(player: string): Promise<AchievementSheet> {
   'use server';
+  check(UID, player);
   const standings = await readOnServer(player);
 
   return {
@@ -47,6 +49,7 @@ export async function listMyTitles(): Promise<Title[]> {
 
 async function listTitlesFor(token: string): Promise<Title[]> {
   'use server';
+  check(TOKEN, token);
   return listTitlesOnServer(await requireUid(token));
 }
 
@@ -57,6 +60,8 @@ export async function saveTitle(title: Title | null): Promise<boolean> {
 
 async function saveTitleOnServer(token: string, title: Title | null): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(MAYBE_GAME_ID, title);
   return setTitleOnServer(await requireUid(token), title);
 }
 
@@ -67,6 +72,7 @@ export async function listMySprites(): Promise<string[]> {
 
 async function listSpritesFor(token: string): Promise<string[]> {
   'use server';
+  check(TOKEN, token);
   return listSpritesOnServer(await requireUid(token));
 }
 
@@ -77,5 +83,7 @@ export async function saveSprite(sprite: string): Promise<boolean> {
 
 async function saveSpriteOnServer(token: string, sprite: string): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(MAYBE_ID, sprite);
   return setSpriteOnServer(await requireUid(token), sprite);
 }

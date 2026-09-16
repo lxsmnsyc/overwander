@@ -38,6 +38,7 @@ modern ones.
 | Tailwind CSS 4 | Styling, configured in `src/app.css` rather than a config file |
 | Supabase       | Postgres, auth, row-level security and the realtime stream     |
 | postgres.js    | The direct connection every privileged write travels over      |
+| valibot        | The schemas every server function checks its arguments against |
 | Vitest         | The tests, which run the real engines rather than mocks        |
 | oxlint / oxfmt | Linting and formatting                                         |
 

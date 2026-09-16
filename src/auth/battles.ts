@@ -3,6 +3,7 @@ import type { Species } from '../data/ids/species';
 import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
 import { requireUid } from '../server/auth';
+import check, { AFTERMATHS, BATTLE_OUTCOME, COUNT, ID, TOKEN } from '../server/validate';
 import BattleOutcome from './battle-outcome';
 import Biome from '../data/ids/biome';
 import Weather from '../data/overworld/weather';
@@ -202,6 +203,9 @@ async function finishBattleOnServer(
   outcome: BattleOutcome,
 ): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(BATTLE_OUTCOME, outcome);
   return finishOnServer(await requireUid(token), id, outcome);
 }
 
@@ -235,6 +239,10 @@ async function recordAftermathOnServer(
   defeated: number,
 ): Promise<CandyEarned[]> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(AFTERMATHS, aftermath);
+  check(COUNT, defeated);
   return recordOnServer(await requireUid(token), id, aftermath, defeated);
 }
 

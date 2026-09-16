@@ -6,6 +6,16 @@ import { asNumber, asRecordArray, asString } from './__normalize';
 import { type DuelInvite, type DuelRecord, type DuelRules, asDuelRecord } from './duel-record';
 import type { LobbyRole } from './lobby-role';
 import { requireUid } from '../server/auth';
+import check, {
+  DUEL_RULES,
+  FLAG,
+  ID,
+  LOBBY_ROLE,
+  PARTY,
+  TEXT,
+  TOKEN,
+  UID,
+} from '../server/validate';
 import {
   declineDuelInvite as declineOnServer,
   hostDuel as hostOnServer,
@@ -214,6 +224,8 @@ export async function hostDuel(watching = false): Promise<string> {
 
 async function hostDuelOnServer(token: string, watching: boolean): Promise<string> {
   'use server';
+  check(TOKEN, token);
+  check(FLAG, watching);
   return hostOnServer(await requireUid(token), watching, await syncServerClock());
 }
 
@@ -229,6 +241,10 @@ async function inviteToDuelOnServer(
   role: LobbyRole,
 ): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(UID, target);
+  check(LOBBY_ROLE, role);
   return inviteOnServer(await requireUid(token), id, target, role, await syncServerClock());
 }
 
@@ -248,6 +264,10 @@ async function inviteByCodeOnServer(
   role: LobbyRole,
 ): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(TEXT, code);
+  check(LOBBY_ROLE, role);
   return inviteByCodeOnServerSide(await requireUid(token), id, code, role, await syncServerClock());
 }
 
@@ -257,6 +277,8 @@ export async function declineDuelInvite(id: string): Promise<void> {
 
 async function declineDuelInviteOnServer(token: string, id: string): Promise<void> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   await declineOnServer(await requireUid(token), id);
 }
 
@@ -267,6 +289,8 @@ export async function joinDuel(id: string): Promise<boolean> {
 
 async function joinDuelOnServer(token: string, id: string): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   return joinOnServer(await requireUid(token), id);
 }
 
@@ -277,6 +301,9 @@ export async function setDuelRole(id: string, role: LobbyRole): Promise<boolean>
 
 async function setDuelRoleOnServer(token: string, id: string, role: LobbyRole): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(LOBBY_ROLE, role);
   return setRoleOnServer(await requireUid(token), id, role);
 }
 
@@ -291,6 +318,9 @@ export async function setDuelRules(id: string, rules: DuelRules): Promise<boolea
 
 async function setDuelRulesOnServer(token: string, id: string, rules: DuelRules): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(DUEL_RULES, rules);
   return setRulesOnServer(await requireUid(token), id, rules);
 }
 
@@ -308,6 +338,9 @@ async function setDuelPartyOnServer(
   catches: string[],
 ): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(PARTY, catches);
   return setPartyOnServer(await requireUid(token), id, catches);
 }
 
@@ -317,6 +350,9 @@ export async function setDuelReady(id: string, ready: boolean): Promise<boolean>
 
 async function setDuelReadyOnServer(token: string, id: string, ready: boolean): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(FLAG, ready);
   return setReadyOnServer(await requireUid(token), id, ready);
 }
 
@@ -327,6 +363,8 @@ export async function leaveDuel(id: string): Promise<void> {
 
 async function leaveDuelOnServer(token: string, id: string): Promise<void> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   await leaveOnServer(await requireUid(token), id);
 }
 
@@ -340,5 +378,7 @@ export async function startDuel(id: string): Promise<string | null> {
 
 async function startDuelOnServer(token: string, id: string): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   return startOnServer(await requireUid(token), id, await syncServerClock());
 }

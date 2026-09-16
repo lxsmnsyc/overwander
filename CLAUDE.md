@@ -53,7 +53,7 @@ The map is never stored. A chunk's terrain, landmarks, spawns, stashes and raids
 - `src/auth/` runs in the browser: Supabase reads under row-level security, plus thin wrappers around the writes.
 - `src/server/` is privileged. Every module starts with `import 'server-only'` and writes over the table-owner connection ([src/server/db.ts](src/server/db.ts)), which RLS does not bind. That is why the policies in `supabase/` only ever describe browsers.
 
-The wrapper shape is fixed: an exported client function calls an inner function whose body opens with `'use server'`, passing an id token, and that inner function calls `requireUid(token)` before anything in `src/server/`. SolidStart's transform strips module-level imports that only the server function uses, so import server modules statically at the top of the file rather than dynamically inside it.
+The wrapper shape is fixed: an exported client function calls an inner function whose body opens with `'use server'`, passing an id token, and that inner function checks each of its arguments with `check` from [src/server/validate.ts](src/server/validate.ts) and then calls `requireUid(token)` before anything in `src/server/`. SolidStart's transform strips module-level imports that only the server function uses, so import server modules statically at the top of the file rather than dynamically inside it.
 
 ## UI
 

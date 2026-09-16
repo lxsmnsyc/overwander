@@ -1,5 +1,13 @@
 import type { Depth } from '../overworld/depth';
 import { requireUid } from '../server/auth';
+import check, {
+  CELL_COORDINATE,
+  CHUNK_COORDINATE,
+  COUNT,
+  DEPTH,
+  TOKEN,
+  UID,
+} from '../server/validate';
 import { type WalkReport, recordSteps } from '../server/eggs';
 import savePositionOnServerSide, { readPosition } from '../server/positions';
 import { syncServerClock } from './clock';
@@ -64,6 +72,8 @@ export async function getPlayerPosition(uid: string): Promise<PositionRecord | n
 
 async function positionOnServer(token: string, uid: string): Promise<PositionRecord | null> {
   'use server';
+  check(TOKEN, token);
+  check(UID, uid);
   await requireUid(token);
   return readPosition(uid);
 }
@@ -113,6 +123,12 @@ async function savePositionOnServer(
   depth: Depth,
 ): Promise<number> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, chunkX);
+  check(CHUNK_COORDINATE, chunkY);
+  check(CELL_COORDINATE, cellX);
+  check(CELL_COORDINATE, cellY);
+  check(DEPTH, depth);
   return savePositionOnServerSide(
     await requireUid(token),
     chunkX,
@@ -152,6 +168,13 @@ async function settleWalkOnServer(
   depth: Depth,
 ): Promise<{ stamp: number; report: WalkReport | null }> {
   'use server';
+  check(TOKEN, token);
+  check(COUNT, steps);
+  check(CHUNK_COORDINATE, chunkX);
+  check(CHUNK_COORDINATE, chunkY);
+  check(CELL_COORDINATE, cellX);
+  check(CELL_COORDINATE, cellY);
+  check(DEPTH, depth);
   const uid = await requireUid(token);
   const now = await syncServerClock();
   // The paces land first, so a saved position never runs ahead of the egg

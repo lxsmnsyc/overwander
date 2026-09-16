@@ -1,5 +1,6 @@
 import type { Items } from '../data/ids/items';
 import { requireUid } from '../server/auth';
+import check, { GAME_ID, ID, TOKEN } from '../server/validate';
 import usePurifyingGemOnServerSide from '../server/purify';
 import getIdToken from './session';
 
@@ -33,5 +34,8 @@ export default async function usePurifyingGem(
 
 async function purifyOnServer(token: string, catchId: string, item: Items): Promise<number | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(GAME_ID, item);
   return usePurifyingGemOnServerSide(await requireUid(token), catchId, item);
 }

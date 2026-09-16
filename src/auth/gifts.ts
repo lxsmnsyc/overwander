@@ -1,5 +1,6 @@
 import type { MysteryGift } from './gift-record';
 import { requireUid } from '../server/auth';
+import check, { ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
 import type { GiftClaim } from '../server/gifts';
 import { claimMysteryGift as claimOne, listMysteryGifts as listOwed } from '../server/gifts';
 import { bumpProgress } from '../server/quest-progress';
@@ -21,6 +22,7 @@ export async function listMysteryGifts(): Promise<MysteryGift[]> {
 
 async function listOnServer(token: string): Promise<MysteryGift[]> {
   'use server';
+  check(TOKEN, token);
   return listOwed(await requireUid(token), await syncServerClock());
 }
 
@@ -39,6 +41,10 @@ async function claimOnServer(
   locale: string,
 ): Promise<GiftClaim | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, gift);
+  check(OFFSET, offset);
+  check(LOCALE, locale);
 
   const uid = await requireUid(token);
   const paid = await claimOne(uid, gift, await syncServerClock(), offset, locale);

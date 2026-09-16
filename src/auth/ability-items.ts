@@ -5,6 +5,7 @@ import {
   useAbilityPatch as usePatchOnServerSide,
 } from '../server/ability-items';
 import { requireUid } from '../server/auth';
+import check, { ID, MAYBE_GAME_ID, TOKEN } from '../server/validate';
 import getIdToken from './session';
 
 /**
@@ -39,6 +40,8 @@ export async function useAbilityPatch(
 
 async function capsuleOnServer(token: string, catchId: string): Promise<Awakening | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
   return useCapsuleOnServerSide(await requireUid(token), catchId);
 }
 
@@ -48,5 +51,8 @@ async function patchOnServer(
   dropped: Abilities | null,
 ): Promise<Abilities | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(MAYBE_GAME_ID, dropped);
   return usePatchOnServerSide(await requireUid(token), catchId, dropped);
 }

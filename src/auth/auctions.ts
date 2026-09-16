@@ -6,6 +6,7 @@ import {
   reclaimAuction as reclaimOnServerSide,
 } from '../server/auctions';
 import { requireUid } from '../server/auth';
+import check, { AUCTION_OFFER, AUCTION_TERMS, GOLD, ID, OFFSET, TOKEN } from '../server/validate';
 import {
   AuctionLot,
   type AuctionOffer,
@@ -390,6 +391,10 @@ async function openAuctionOnServer(
   offset: number,
 ): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(AUCTION_OFFER, offer);
+  check(AUCTION_TERMS, terms);
+  check(OFFSET, offset);
   return openOnServerSide(await requireUid(token), offer, terms, await syncServerClock(), offset);
 }
 
@@ -415,6 +420,9 @@ export async function placeBid(id: string, amount: number): Promise<number | nul
 
 async function placeBidOnServer(token: string, id: string, amount: number): Promise<number | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(GOLD, amount);
   return bidOnServerSide(await requireUid(token), id, amount, await syncServerClock());
 }
 
@@ -432,6 +440,9 @@ export async function claimAuction(id: string): Promise<boolean> {
 
 async function claimAuctionOnServer(token: string, id: string, offset: number): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(OFFSET, offset);
   return claimOnServerSide(await requireUid(token), id, await syncServerClock(), offset);
 }
 
@@ -449,5 +460,7 @@ export async function reclaimAuction(id: string): Promise<boolean> {
 
 async function reclaimAuctionOnServer(token: string, id: string): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   return reclaimOnServerSide(await requireUid(token), id, await syncServerClock());
 }

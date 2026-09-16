@@ -1,6 +1,7 @@
 import type { Balls, Items } from '../data/ids/items';
 import useBallOnServerSide from '../server/balls';
 import { requireUid } from '../server/auth';
+import check, { GAME_ID, ID, TOKEN } from '../server/validate';
 import getIdToken from './session';
 
 /**
@@ -22,5 +23,8 @@ export default async function useBall(catchId: string, item: Items): Promise<Bal
 
 async function useBallOnServer(token: string, catchId: string, item: Items): Promise<Balls | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(GAME_ID, item);
   return useBallOnServerSide(await requireUid(token), catchId, item);
 }

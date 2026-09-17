@@ -1,5 +1,27 @@
 # overwander
 
+## 4.0.1
+
+### Patch Changes
+
+- 1274683: Pokemon are drawn to their real heights in battle and on the board, so a Tyranitar stands taller than a Houndoom in both.
+- b25219c: - The catch sheet's two columns size apart, so a long block on one side no longer stretches the other.
+  - A catch's nature is shown in the Stats header.
+- b82a80c: A new player starts in a random town rather than anywhere in the open country.
+- b82a80c: Nurse Joy heals as many pokemon as you bring in one handover, rather than six at a time.
+- 52453e7: Pressing things on the board is more reliable while walking:
+
+  - The highlight follows the board as it slides, so it always shows the cell a press would reach.
+  - A press acts on what was under the pointer when it went down, not where the board had moved by the time it came up.
+  - Pressing a pokemon, a person or a landmark on its body selects it, rather than the ground behind it.
+
+- c676474: Tab labels sit centred in their tabs.
+- b25219c: - A row of tabs that does not fit scrolls sideways instead of wrapping onto a second line.
+  - Releasing a pokemon closes its sheet without it flashing back up first.
+- 57754bd: Buying and selling at the market stall works again, instead of being refused with "Invalid input".
+- 93a7b4c: A trainer is named for the look they are met in, so a Black Belt dressed as a Crush Girl is called a Crush Girl, and the same goes for the Picnicker, Cowgirl, Lady, Waitress, Idol, Socialite, Battle Girl and Cameraman.
+- b25219c: A trainer's challenge dialog shows their greeting under them.
+
 ## 4.0.0
 
 ### Major Changes

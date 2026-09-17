@@ -578,12 +578,11 @@ export default function OverworldBoard(props: {
       }
     };
 
+    // Only a return from hidden: a tab that was merely unfocused kept its timers running
     document.addEventListener('visibilitychange', onReturn);
-    globalThis.addEventListener('focus', onReturn);
 
     onCleanup(() => {
       document.removeEventListener('visibilitychange', onReturn);
-      globalThis.removeEventListener('focus', onReturn);
     });
   });
 
@@ -715,7 +714,10 @@ export default function OverworldBoard(props: {
 
     const timer = setTimeout(() => {
       setExpiries((count) => count + 1);
-      askForWindow(true);
+      // A hidden tab asks nothing: coming back to the page catches up
+      if (document.visibilityState === 'visible') {
+        askForWindow(true);
+      }
     }, soonest - now);
 
     onCleanup(() => {

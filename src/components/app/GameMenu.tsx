@@ -249,7 +249,12 @@ export default function GameMenu(): JSX.Element {
    */
   const local = (at: number): number => toLocalTime(at, getLocalOffset());
 
-  const beat = setInterval(() => {
+  /** Read the hour again, measuring the clock only for a tab somebody is looking at */
+  const tick = (): void => {
+    if (document.visibilityState !== 'visible') {
+      setNow(local(serverNow()));
+      return;
+    }
     syncServerClock()
       .then((at) => {
         setNow(local(at));
@@ -257,10 +262,16 @@ export default function GameMenu(): JSX.Element {
       .catch(() => {
         setNow(local(serverNow()));
       });
-  }, CLOCK_TICK);
+  };
+  onMount(() => {
+    const beat = setInterval(tick, CLOCK_TICK);
 
-  onCleanup(() => {
-    clearInterval(beat);
+    document.addEventListener('visibilitychange', tick);
+
+    onCleanup(() => {
+      clearInterval(beat);
+      document.removeEventListener('visibilitychange', tick);
+    });
   });
 
   syncServerClock()

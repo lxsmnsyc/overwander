@@ -9,9 +9,9 @@ import {
   type UnitAttackResolveCriticalEvent,
 } from '../../../src/battle/events';
 import {
-  BOSS_HEAL_FRACTION,
+  BOSS_DAMAGE_CAP,
+  BOSS_HEAL_CAP,
   BOSS_HEAL_WINDOW,
-  BOSS_INDIRECT_DAMAGE_CAP,
   SHADOW_DEFENSE_SCALE,
   SHADOW_OFFENSE_SCALE,
 } from '../../../src/battle/abilities/special';
@@ -1987,7 +1987,7 @@ describe('Boss', () => {
     expect(boss.stages[Stages.Attack]).toBe(0);
   });
 
-  it('heals an eighth of its pool a second, however many heals land', () => {
+  it('heals up to the cap a second, however many heals land', () => {
     const { battle, teamA, teamB } = createBattle();
     const boss = createUnit(battle, teamA);
     const ally = createUnit(battle, teamB);
@@ -1996,13 +1996,13 @@ describe('Boss', () => {
     boss.addAbility(Abilities.Boss);
 
     const pool = boss.checkStat(Stats.HP, 0);
-    const rate = pool * BOSS_HEAL_FRACTION;
+    const rate = BOSS_HEAL_CAP;
 
-    boss.setHealth(pool - 1000);
+    boss.setHealth(pool - 3000);
 
     const hurt = boss.health;
 
-    // A Recover asks for half the pool and is answered with an eighth:
+    // A Recover asks for half the pool and is answered with the cap:
     // the pool is the fight's clock, so a boss winds it back rather
     // than resetting it
     boss.heal(cause, boss, pool / 2, 0);
@@ -2038,9 +2038,9 @@ describe('Boss', () => {
     boss.addAbility(Abilities.Boss);
 
     const pool = boss.checkStat(Stats.HP, 0);
-    const rate = pool * BOSS_HEAL_FRACTION;
+    const rate = BOSS_HEAL_CAP;
 
-    boss.setHealth(pool - 1000);
+    boss.setHealth(pool - 3000);
 
     const hurt = boss.health;
 
@@ -2053,7 +2053,7 @@ describe('Boss', () => {
     expect(boss.health).toBe(hurt + rate);
   });
 
-  it('is immune to damage measured as a share of its pool', () => {
+  it('takes damage measured as a share of its pool, capped at what a hit is worth', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 1);
     const attacker = createUnit(battle, teamA);
@@ -2064,13 +2064,17 @@ describe('Boss', () => {
 
     boss.setHealth(pool);
 
-    // Super Fang halves health; the boss shrugs it off
+    // Super Fang asks for half its health and lands for the cap
     attacker.triggerMoveEffect(Moves.SuperFang, { type: MoveTargetType.Unit, unit: boss }, 0);
-    expect(boss.health).toBe(pool);
+    expect(boss.health).toBe(pool - BOSS_DAMAGE_CAP);
 
-    // Plain damage still lands
-    attacker.damage(NONE_CAUSE, boss, 10, 0);
-    expect(boss.health).toBe(pool - 10);
+    // And so does a one-hit KO
+    attacker.triggerMoveEffect(Moves.Guillotine, { type: MoveTargetType.Unit, unit: boss }, 0);
+    expect(boss.health).toBe(pool - 2 * BOSS_DAMAGE_CAP);
+
+    // Plain damage lands in full
+    attacker.damage(NONE_CAUSE, boss, 500, 0);
+    expect(boss.health).toBe(pool - 2 * BOSS_DAMAGE_CAP - 500);
   });
 
   it('takes indirect damage, capped at what a hit is worth', () => {
@@ -2090,12 +2094,12 @@ describe('Boss', () => {
     expect(boss.health).toBe(pool - 10);
 
     attacker.damage(NONE_CAUSE, boss, pool / 8, DamageFlags.Indirect | DamageFlags.HealthScaled);
-    expect(boss.health).toBe(pool - 10 - BOSS_INDIRECT_DAMAGE_CAP);
+    expect(boss.health).toBe(pool - 10 - BOSS_DAMAGE_CAP);
 
     // What a boss spends on purpose it pays in full: a Substitute's
     // price and an Explosion's own life are costs, not damage
     boss.damage(NONE_CAUSE, boss, 500, DamageFlags.Indirect | DamageFlags.Cost);
-    expect(boss.health).toBe(pool - 510 - BOSS_INDIRECT_DAMAGE_CAP);
+    expect(boss.health).toBe(pool - 510 - BOSS_DAMAGE_CAP);
   });
 
   it('takes a bad poisoning for no more than the cap, however far it has climbed', () => {
@@ -2114,7 +2118,7 @@ describe('Boss', () => {
     // bite after climbs further
     for (let bite = 1; bite <= 4; bite += 1) {
       battle.tick(RESIDUAL_TICK);
-      expect(boss.health).toBe(pool - bite * BOSS_INDIRECT_DAMAGE_CAP);
+      expect(boss.health).toBe(pool - bite * BOSS_DAMAGE_CAP);
     }
   });
 
@@ -2132,7 +2136,7 @@ describe('Boss', () => {
 
     boss.addMove(Moves.Tackle);
     boss.cast(Moves.Tackle, { type: MoveTargetType.Unit, unit: ghost });
-    expect(boss.health).toBe(pool - BOSS_INDIRECT_DAMAGE_CAP);
+    expect(boss.health).toBe(pool - BOSS_DAMAGE_CAP);
   });
 
   it('shrugs off disruption statuses unless self-inflicted', () => {

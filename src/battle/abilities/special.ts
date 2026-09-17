@@ -1,7 +1,13 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
-import { DamageFlags, MoveTargets, Moves, affectsFoesOnly } from '../../data/ids/moves';
+import {
+  DamageFlags,
+  MoveAttackFlags,
+  MoveTargets,
+  Moves,
+  affectsFoesOnly,
+} from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import {
@@ -37,21 +43,18 @@ export const BOSS_HEALTH_SCALE = 20;
 export const BOSS_STAT_SCALE = 2;
 
 /**
- * The most one indirect hit takes off a boss. A burn, a seed or a
- * sandstorm counts for something now, and counts the same whatever
- * pool it is chipping at: a share of a raid pool would be worth more
- * than the hits the party is landing
+ * The most one indirect or share-of-HP hit takes off a boss, whatever
+ * its pool: a share of a raid pool would be worth more than the hits
+ * the party is landing
  */
-export const BOSS_INDIRECT_DAMAGE_CAP = 100;
+export const BOSS_DAMAGE_CAP = 200;
 
 /**
- * The most a boss puts back in a second, as a share of its pool. The
- * pool is the fight's clock, so a boss may wind it back a little and
- * never reset it, and a stack of heals landing together is worth no
- * more than one: the allowance refills as the fight runs rather than
- * being handed out per heal
+ * The most a boss puts back in a second. A flat figure rather than a
+ * share, so a bulky boss heals no more than a frail one, and a stack
+ * of heals landing together is worth no more than one
  */
-export const BOSS_HEAL_FRACTION = 1 / 8;
+export const BOSS_HEAL_CAP = 1000;
 export const BOSS_HEAL_WINDOW = 1000;
 
 /**
@@ -131,11 +134,6 @@ const BOSS_FAILED_MOVES = new Set<Moves>([...FORCED_SWITCH_MOVES, Moves.Spite]);
  */
 const BOSS_REFUSED_STATUSES = new Set<Statuses>([Statuses.Perishing]);
 
-/** The most this boss may put back in a second */
-function healingRate(unit: Unit): number {
-  return unit.checkStat(Stats.HP, 0) * BOSS_HEAL_FRACTION;
-}
-
 function isSelfInflicted(cause: EffectCause, source: unknown): boolean {
   return 'unit' in cause && cause.unit === source;
 }
@@ -150,14 +148,13 @@ function refusesStatus(status: Statuses, cause: EffectCause, source: unknown): b
 const setupAbilities = [
   /**
    * Boss: a raid-style stat wall, twentyfold HP and doubled
-   * everything else, immune to damage measured as a share of its
-   * pool, to forced switch-outs and Spite, to
+   * everything else, immune to forced switch-outs and Spite, to
    * trapping and disruption statuses (unless self-inflicted), to the
    * moves that move abilities or stages about, to a Perish Song
    * whoever sang it, and to anything that would fell it while its
-   * pool still holds. Indirect damage lands for at most
-   * `BOSS_INDIRECT_DAMAGE_CAP`, and it heals at most
-   * `BOSS_HEAL_FRACTION` of its pool at a time. Its single-target
+   * pool still holds. Indirect and share-of-HP damage lands for at
+   * most `BOSS_DAMAGE_CAP`, and it heals at most `BOSS_HEAL_CAP` a
+   * second. Its single-target
    * enemy moves strike every enemy instead.
    */
   createAbility(Abilities.Boss, (battle) => {
@@ -178,7 +175,7 @@ const setupAbilities = [
 
     /** What this boss may still take back, and what taking it costs */
     function takeHealing(unit: Unit, wanted: number): number {
-      const taken = Math.max(0, Math.min(wanted, healingRate(unit) - (spent.get(unit) ?? 0)));
+      const taken = Math.max(0, Math.min(wanted, BOSS_HEAL_CAP - (spent.get(unit) ?? 0)));
 
       spent.set(unit, (spent.get(unit) ?? 0) + taken);
       return taken;
@@ -187,7 +184,7 @@ const setupAbilities = [
     return new MergedLifecycle([
       battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
         for (const [unit, used] of spent) {
-          const refilled = used - (healingRate(unit) * event.duration) / BOSS_HEAL_WINDOW;
+          const refilled = used - (BOSS_HEAL_CAP * event.duration) / BOSS_HEAL_WINDOW;
 
           if (refilled <= 0) {
             spent.delete(unit);
@@ -270,37 +267,20 @@ const setupAbilities = [
         }
       }),
 
-      // A share of a raid pool is worth more than anything the party
-      // is landing, so nothing may take one: an OHKO move and a Super
-      // Fang are refused outright.
-      //
-      // A **cost** is exempt, and always was: a boss that explodes
-      // still dies by it, and one that puts up a Substitute still
-      // pays for it. So is a negative amount, which is a heal riding
-      // the damage event the way the drains do
-      battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
-        const refused =
-          event.flags & DamageFlags.HealthScaled &&
-          !(event.flags & (DamageFlags.Indirect | DamageFlags.Cost));
-
+      // An OHKO move or a Super Fang resolves to the cap, so the AI
+      // weighs it at what it will really take off
+      battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
         if (
-          event.success &&
-          refused &&
-          event.value > 0 &&
-          event.target.hasAbility(Abilities.Boss)
+          event.parent.flags & MoveAttackFlags.HealthScaled &&
+          event.parent.target.hasAbility(Abilities.Boss)
         ) {
-          event.success = false;
-
-          // For visual cues
-          event.target.triggerAbility(Abilities.Boss);
+          event.value = Math.min(event.value, BOSS_DAMAGE_CAP);
         }
       }),
-      // What is indirect lands, but only for what a hit is worth: a
-      // burn, a seed, the weather and a crash off a missed Jump Kick
-      // all count, and none of them counts as a share of the pool. A
-      // cost is what the boss chose to spend, so it is paid in full,
-      // and a negative amount is a heal, held to the same fraction as
-      // any other
+      // Indirect and share-of-HP damage lands only for what a hit is
+      // worth. A cost is what the boss chose to spend, so it is paid in
+      // full, and a negative amount is a heal, held to the same
+      // allowance as any other
       battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
         if (event.flags & DamageFlags.Cost || !event.target.hasAbility(Abilities.Boss)) {
           return;
@@ -309,11 +289,11 @@ const setupAbilities = [
           event.value = -takeHealing(event.target, -event.value);
           return;
         }
-        if (event.flags & DamageFlags.Indirect) {
-          event.value = Math.min(event.value, BOSS_INDIRECT_DAMAGE_CAP);
+        if (event.flags & (DamageFlags.Indirect | DamageFlags.HealthScaled)) {
+          event.value = Math.min(event.value, BOSS_DAMAGE_CAP);
         }
       }),
-      // A boss may put health back, an eighth of its pool a second.
+      // A boss may put health back, up to the heal cap a second.
       // The pool is the fight's clock, so winding it back is allowed
       // and resetting it is not: a party that stops hitting loses
       // ground, and one that keeps hitting still gets there

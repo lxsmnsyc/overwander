@@ -614,7 +614,10 @@ export function drawSlot(
       // a spot on the floor is the pokemon's feet. Centring the body
       // there instead buries half of a tall pokemon under the ground and
       // leaves a short one hovering
-      const placement = { scale: scaleOf(slot), anchor: 'shadow' } as const;
+      const placement = {
+        scale: scaleOf(slot) * (1 + (slot.swell ?? 0)),
+        anchor: 'shadow',
+      } as const;
       const [x, y] = [slot.x + slot.offset[0], slot.y + slot.offset[1]];
 
       // A shadow pokemon stands in its haze and a purified one in its
@@ -665,13 +668,40 @@ export function drawSlot(
           context.translate(-x, -y);
         }
         sprite.draw(context, x, y, placement);
+        // A transformation's flash, laid over the body it is lighting
+        if ((slot.glow ?? 0) > 0) {
+          context.save();
+          context.globalCompositeOperation = 'lighter';
+          context.globalAlpha = alpha * (slot.glow ?? 0);
+          sprite.draw(context, x, y, placement);
+          context.restore();
+        }
         if (slot.spin !== 0) {
           context.restore();
         }
       } else {
         // The one picture that hides a move effect passing behind it
         onto.solid?.(true);
-        onto.batch.quad(quad.sheet, quad.source, turned(cornersOf(quad), x, y, slot.spin), alpha);
+        const body = turned(cornersOf(quad), x, y, slot.spin);
+
+        onto.batch.quad(quad.sheet, quad.source, body, alpha);
+        // A transformation's flash: the body screened over itself, twice
+        // at the peak, so it reads as a burst of light
+        for (let pass = 0; pass < 2; pass += 1) {
+          const glow = (slot.glow ?? 0) * 2 - pass;
+
+          if (glow > 0) {
+            onto.batch.quad(
+              quad.sheet,
+              quad.source,
+              body,
+              alpha * Math.min(1, glow),
+              undefined,
+              'pixels',
+              'screen',
+            );
+          }
+        }
         onto.solid?.(false);
       }
       if (unit.shiny && onto?.lit !== true) {

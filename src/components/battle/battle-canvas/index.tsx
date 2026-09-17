@@ -141,6 +141,38 @@ export interface UnitSpot {
   bottom: number;
 }
 
+/** What a unit is drawn as, and the look it is transforming out of */
+interface Appearance {
+  appearance: Species;
+  sprite: SpeciesSpriteAnimation | null;
+  /** The sheet it wore before, shown until the new one arrives and through the first half */
+  from: SpeciesSpriteAnimation | null;
+  /** When the transformation started on the battle clock, or null for none */
+  morphAt: number | null;
+}
+
+/** How long a transformation takes, in milliseconds */
+const MORPH = 600;
+
+/**
+ * How far through a transformation a unit is: a flash that brightens
+ * the old look, swaps at the peak, and settles on the new one. Also a
+ * small swell, so the body pops as it changes
+ */
+function morphOf(held: Appearance | undefined, clock: number): { glow: number; swell: number } {
+  if (held?.morphAt == null) {
+    return { glow: 0, swell: 0 };
+  }
+  const t = (clock - held.morphAt) / MORPH;
+
+  if (t >= 1) {
+    held.morphAt = null;
+    held.from = null;
+    return { glow: 0, swell: 0 };
+  }
+  return { glow: 1 - Math.abs(t * 2 - 1), swell: 0.1 * Math.sin(Math.PI * t) };
+}
+
 /**
  * How long a substitute takes to step in front of the pokemon it is
  * standing in for, and to step back off when it breaks
@@ -251,7 +283,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
    * frame it changed, and the sheet it changed away from stays cached
    * for whoever else is wearing it
    */
-  const sprites = new Map<Unit, { appearance: Species; sprite: SpeciesSpriteAnimation | null }>();
+  const sprites = new Map<Unit, Appearance>();
 
   /**
    * The load behind each unit's current sheet, so the opening wait can
@@ -311,12 +343,23 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     const known = sprites.get(unit);
 
     if (known != null && known.appearance === unit.appearance) {
-      return known.sprite;
+      // The old look until the new sheet is in, then the swap half way
+      // through the transformation
+      if (known.sprite == null || known.morphAt == null) {
+        return known.sprite ?? known.from;
+      }
+      return clock - known.morphAt < MORPH / 2 ? known.from : known.sprite;
     }
 
     // Held before the sheet arrives, so a unit is asked for once
-    // rather than once per frame it is drawn in
-    const waiting = { appearance: unit.appearance, sprite: null as SpeciesSpriteAnimation | null };
+    // rather than once per frame it is drawn in. What it looked like
+    // before is kept to transform out of
+    const waiting: Appearance = {
+      appearance: unit.appearance,
+      sprite: null,
+      from: known?.sprite ?? known?.from ?? null,
+      morphAt: null,
+    };
 
     sprites.set(unit, waiting);
     loads.set(
@@ -334,6 +377,9 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
           // arrives after a Transform belongs to nobody
           if (sprites.get(unit) === waiting) {
             waiting.sprite = loaded;
+            if (waiting.from != null) {
+              waiting.morphAt = clock;
+            }
           }
         })
         .catch(() => {
@@ -674,6 +720,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
         batch?.standing(near, near);
         trackCast(labels, slot.unit, clock);
+        const morph = morphOf(sprites.get(slot.unit), clock);
+
+        slot.glow = morph.glow;
+        slot.swell = morph.swell;
         drawSlot(context, slot, striking, clock, labels, gone.has(slot.unit), onto);
       }
 

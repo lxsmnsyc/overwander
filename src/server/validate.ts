@@ -13,7 +13,7 @@ import { GiftKind } from '../auth/gift-record';
 import { LobbyRole } from '../auth/lobby-role';
 import { MAX_EFFORT_PER_STAT } from '../data/constants/stats';
 import { MAX_LEVEL } from '../data/constants/levels';
-import { NPCS } from '../data/overworld/npc';
+import Npc from '../data/overworld/npc';
 import { RaidKind } from '../auth/raid-record';
 import { TEAM_SIZE } from '../auth/teams';
 import { TRADE_GOLD_LIMIT } from '../auth/trade-record';
@@ -89,14 +89,6 @@ function listOf(
   most: number,
 ): v.BaseSchema<unknown, unknown, v.BaseIssue<unknown>> {
   return v.pipe(v.array(item), v.maxLength(most));
-}
-
-/** One of a set of numbers the data already keeps a list of */
-function oneOf(values: readonly number[]): v.BaseSchema<unknown, unknown, v.BaseIssue<unknown>> {
-  return v.pipe(
-    v.number(),
-    v.check((value) => values.includes(value)),
-  );
 }
 
 /** A whole number between two bounds */
@@ -198,7 +190,8 @@ export const MARK_FIELD = v.picklist(['favorite', 'guarded']);
 export const ROTATION_SCOPE = v.picklist(['daily', 'weekly']);
 
 /** Who stands at a counter */
-export const NPC = oneOf(NPCS);
+/** Who a basket is bought from or sold to: the market stall or the Chef */
+export const NPC = v.picklist([Npc.Vendor, Npc.Chef]);
 
 /** What somebody is in a lobby for */
 export const LOBBY_ROLE = v.picklist([LobbyRole.Fighter, LobbyRole.Spectator]);

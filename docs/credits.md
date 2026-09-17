@@ -88,6 +88,13 @@ longer matches its entry has been re-exported since, and the tests say so. The
 import restamps `coats.json` itself, without which a browser draws yesterday's
 sheet against today's description.
 
+Every sheet is asked for at `?v=<stamp>`, a digest of the files it is drawn from,
+so a sheet may be cached for a year and a repacked one is a new address rather
+than whatever the browser kept. The pokemon sheets take their stamp from
+`coats.json`; everything else takes one from `stamps.json`, which
+`pnpm sprite-stamps` writes and `pnpm build` rewrites, so what ships is always a
+digest of what shipped beside it.
+
 ### Where the sheets come from
 
 Each body of somebody else's work, and its terms, is listed in

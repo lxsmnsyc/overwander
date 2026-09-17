@@ -1,5 +1,6 @@
 import type Biome from '../data/ids/biome';
 import { asNumber, asNumberArray, asRecord, asRecordArray, asString } from '../auth/__normalize';
+import sheetStamp, { stampedFile } from './sprite-stamps';
 
 /**
  * The ground, drawn from one sheet of thirteen tiles a terrain.
@@ -19,6 +20,8 @@ import { asNumber, asNumberArray, asRecord, asRecordArray, asString } from '../a
  */
 
 /** Where the pack lives. */
+/** The pair the pack is drawn from, and the sheet they are stamped as */
+const TERRAIN_SHEET = '/sprites/terrain/biome-tiles';
 const SHEET = '/sprites/terrain/biome-tiles.png';
 const DATA = '/sprites/terrain/biome-tiles.json';
 
@@ -498,7 +501,11 @@ async function pictureOf(source: string): Promise<HTMLImageElement> {
 
 /** Load the pack, once, and read it into memory for the board. */
 export default async function loadTerrainTiles(): Promise<TerrainTiles> {
-  const [image, response] = await Promise.all([pictureOf(SHEET), fetch(DATA)]);
+  const stamp = await sheetStamp(TERRAIN_SHEET);
+  const [image, response] = await Promise.all([
+    pictureOf(stampedFile(SHEET, stamp)),
+    fetch(stampedFile(DATA, stamp)),
+  ]);
   const root = asRecord(await response.json());
   const canvas = canvasOf(image.width, image.height);
   const context = canvas.getContext('2d', { willReadFrequently: true });

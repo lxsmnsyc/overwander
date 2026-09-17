@@ -159,6 +159,7 @@ hands every account it creates the `admin` role, granted on the server.
 | `pnpm import-sprites`  | Copy the pokemon sheets in from `../SpriteCollab`   |
 | `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel    |
 | `pnpm sprite-coats`    | Restamp `coats.json` after anything writes a sheet  |
+| `pnpm sprite-stamps`   | Restamp every other sheet, which `pnpm build` also does |
 | `pnpm test`            | The whole test suite, once                          |
 | `pnpm test:rules`      | The row-level security suite, against a local stack |
 | `pnpm test:e2e`        | The Playwright suites under `e2e/`                  |

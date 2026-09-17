@@ -93,10 +93,11 @@ const BOSS_REFUSED_MOVES = new Set<Moves>([
 
 /**
  * What a boss shrugs off when it is aimed at. Quash restarts its
- * wind-up and Sky Drop carries it where it cannot act, so a lobby
- * taking turns with either would keep it out of the fight
+ * wind-up, Me First cuts it off and Sky Drop carries it where it cannot
+ * act, so a lobby taking turns with any of them would keep it out of
+ * the fight
  */
-const BOSS_IMMUNE_MOVES = new Set<Moves>([Moves.Quash, Moves.SkyDrop]);
+const BOSS_IMMUNE_MOVES = new Set<Moves>([Moves.Quash, Moves.MeFirst, Moves.SkyDrop]);
 
 /**
  * The moves that hold a pokemon to part of its move set. A boss

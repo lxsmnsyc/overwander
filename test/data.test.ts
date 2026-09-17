@@ -6532,6 +6532,43 @@ describe('type experts', () => {
     expect(arcanine).not.toContain(Moves.Overheat);
   });
 
+  it('reads what its own ability does to a move', () => {
+    // Contrary turns every raise into a drop, so Latios stops calming its mind
+    expect(getBestMoves(Species.Latios)).toContain(Moves.CalmMind);
+    expect(getBestMoves(Species.Latios, [Abilities.Contrary])).not.toContain(Moves.CalmMind);
+
+    // A rampage strikes every step, and Own Tempo takes away the confusion it ends in
+    expect(getBestMoves(Species.Dratini)).not.toContain(Moves.Outrage);
+    expect(getBestMoves(Species.Dratini, [Abilities.OwnTempo])).toContain(Moves.Outrage);
+  });
+
+  it('aims a move at the teammate its ability turns it into a gift for', () => {
+    const tempo = {
+      species: Species.Lickilicky,
+      abilities: [Abilities.OwnTempo],
+      role: BuildRole.Core,
+    };
+    const support = { role: BuildRole.Support };
+
+    // A Swagger is 2 stages of Attack for a teammate that cannot be confused
+    expect(getBestMoves(Species.Umbreon, [], support)).not.toContain(Moves.Swagger);
+    expect(getBestMoves(Species.Umbreon, [], { ...support, allies: [tempo] })).toContain(
+      Moves.Swagger,
+    );
+    expect(
+      getBestMoves(Species.Umbreon, [], { ...support, allies: [{ ...tempo, abilities: [] }] }),
+    ).not.toContain(Moves.Swagger);
+
+    // And a Charm is 2 stages of Attack for one whose Contrary turns it round
+    expect(getBestMoves(Species.Bulbasaur, [], support)).not.toContain(Moves.Charm);
+    expect(
+      getBestMoves(Species.Bulbasaur, [], {
+        ...support,
+        allies: [{ ...tempo, abilities: [Abilities.Contrary] }],
+      }),
+    ).toContain(Moves.Charm);
+  });
+
   it('never awakens an ability the sheet never asks for', () => {
     // Reckless lifts a move that hurts its user, and a sheet with
     // none is a sheet it does nothing on. The two are picked apart,

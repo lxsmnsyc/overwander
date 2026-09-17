@@ -11,6 +11,7 @@ import {
 import { type AuraKind, paintPurifiedAura, paintShadowAura } from '../../canvas/auras';
 import settings from '../app/settings';
 import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
+import speciesSize from '../../canvas/species-size';
 import loadSpeciesSprite from '../../canvas/species-sprites';
 import {
   SPARKLE_BURST,
@@ -129,6 +130,13 @@ function centredOn(
 
   return { x: middle - half, y: bounds.y, width: half * 2, height: bounds.height };
 }
+
+/**
+ * How many sheet pixels a sized box stands for. Below the tallest idle
+ * pose, so most species read at a useful size and only the giants are
+ * shrunk to fit
+ */
+const SIZED_SPAN = 64;
 
 const share = (part: number, whole: number): string => `${whole <= 0 ? 0 : (part / whole) * 100}%`;
 
@@ -514,6 +522,13 @@ export interface AnimatedSpriteProps {
    * tall pokemon by its height and a wide one by its width
    */
   fill?: boolean;
+  /**
+   * With `fill`, whether the species is drawn at its real height rather
+   * than stretched to the box, standing on the box's floor. The box then
+   * stands for `SIZED_SPAN` sheet pixels, and anything taller is shrunk
+   * to fit
+   */
+  sized?: boolean;
   /** Whether to draw the ground under it */
   shadow?: boolean;
   /**
@@ -699,6 +714,22 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
   const box = (): JSX.CSSProperties => {
     const bounds = drawn()?.bounds ?? { width: DEFAULT_CELL, height: DEFAULT_CELL };
     const longest = Math.max(1, bounds.width, bounds.height);
+
+    const playing = sprite();
+
+    if (props.fill === true && props.sized === true && playing != null && drawn() != null) {
+      const size = speciesSize(props.species, playing);
+      const span = Math.max(SIZED_SPAN, bounds.width * size, bounds.height * size);
+
+      return {
+        position: 'absolute',
+        bottom: '0',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: share(bounds.width * size, span),
+        height: share(bounds.height * size, span),
+      };
+    }
 
     if (props.fill === true) {
       return {

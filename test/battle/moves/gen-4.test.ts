@@ -484,6 +484,27 @@ describe("Sinnoh's moves", () => {
     expect(usable(battle, swapper, Moves.GuardSwap, boss)).toBe(false);
   });
 
+  it('lets a raid boss finish the cast a Me First reaches for', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const taker = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+
+    taker.enter();
+    boss.enter();
+    boss.addAbility(Abilities.Boss);
+    boss.addMove(Moves.Tackle);
+    boss.cast(Moves.Tackle, unitTarget(taker));
+    battle.tick(500);
+
+    const progress = boss.casting?.time.progress;
+
+    taker.triggerMoveEffect(Moves.MeFirst, unitTarget(boss), 0);
+
+    expect(boss.casting?.move).toBe(Moves.Tackle);
+    expect(boss.casting?.time.progress).toBe(progress);
+    expect(usable(battle, taker, Moves.MeFirst, boss)).toBe(false);
+  });
+
   it('holds nothing on a raid boss', () => {
     const { battle, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);

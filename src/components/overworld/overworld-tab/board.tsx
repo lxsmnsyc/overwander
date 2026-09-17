@@ -25,7 +25,7 @@ import { type EggWalk, type WalkReport, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../auth/encounter-record';
 import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
 import { serverNow } from '../../../auth/clock';
-import { RaidKind, type RaidView, canJoinRaids, peekRaid } from '../../../auth/raids';
+import { RaidAction, RaidKind, type RaidView, canJoinRaids, peekRaid } from '../../../auth/raids';
 import { type StopRecord, stopIdOf } from '../../../auth/stop-record';
 import { claimStopReward, enterStop } from '../../../auth/stops';
 import { createSafariSession, isEncounterRetired } from '../../../auth/safari';
@@ -1874,8 +1874,9 @@ export default function OverworldBoard(props: {
       // the lair to somebody deciding about it, and a host has already
       // decided: it opened with a Join button on a raid they were
       // standing in. Straight through to the lobby, or to the fight
-      // where they have already started it
-      if (standing?.hosting === true) {
+      // where they have already started it. A fight they lost is not
+      // theirs any more: the lair is open to host again
+      if (standing?.hosting === true && standing.action !== RaidAction.Host) {
         if (standing.battle != null) {
           game.setBattle({ id: standing.battle, replay: true });
           return null;

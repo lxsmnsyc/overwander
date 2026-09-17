@@ -293,7 +293,7 @@ export function DexEntryBody(
           >
             {/* A fixed square the sprite is fitted to, so every species
                 takes the same room */}
-            <div class="size-36 shrink-0">
+            <div class="relative size-36 shrink-0">
               <SpeciesCoat
                 species={entry().species}
                 met={known().met}
@@ -304,6 +304,7 @@ export function DexEntryBody(
                 duration={ROTATION}
                 direction="DownLeft"
                 fill
+                sized
                 called={[
                   entry().data.name,
                   ...(shiny() ? ['shiny'] : []),

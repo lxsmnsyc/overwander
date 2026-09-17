@@ -53,5 +53,15 @@ export const VIEW_RADIUS = 20;
  * number cannot be negative
  */
 export const BOARD_CELLS = VIEW_RADIUS * 2 + 1;
+
+/**
+ * How far the full board draws the ground, in cells: past the corners
+ * of the widest screen, so the sky is never seen. Only the ground goes
+ * that far, and nothing out there can be pressed
+ */
+export const FULL_BOARD_REACH = 48;
+
+/** How many cells the full board adds on each side of the ordinary one */
+export const FULL_BOARD_EXTRA = FULL_BOARD_REACH - VIEW_RADIUS;
 export const BOARD_CENTER = VIEW_RADIUS;
 export const BOARD_COUNT = BOARD_CELLS * BOARD_CELLS;

@@ -1,5 +1,11 @@
 import Landmark from '../../../data/overworld/landmark';
-import { BOARD_CELLS, BOARD_CENTER, BOARD_RADIUS } from '../../../overworld/board';
+import {
+  BOARD_CELLS,
+  BOARD_CENTER,
+  BOARD_RADIUS,
+  FULL_BOARD_EXTRA,
+} from '../../../overworld/board';
+import type { BoardEdge } from '../../app/settings';
 import { CHUNK_CELLS } from '../../../overworld/chunk';
 
 /**
@@ -50,6 +56,11 @@ export const PLAYER_CELL = BOARD_CENTER * BOARD_CELLS + BOARD_CENTER;
  * read is a seam
  */
 export const BOARD_MARGIN = 1;
+
+/** The same, for a board edge setting: the full board reads the ground it draws past the board */
+export function boardMargin(edge: BoardEdge): number {
+  return edge === 'full' ? BOARD_MARGIN + FULL_BOARD_EXTRA : BOARD_MARGIN;
+}
 
 /**
  * Where a player entering a chunk without a stored position starts

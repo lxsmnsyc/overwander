@@ -6,6 +6,7 @@
  * same dialog
  */
 export { default as Button } from './button';
+export { default as CloseButton } from './close-button';
 export type { ButtonProps, ButtonTone } from './button';
 export { default as Checkbox } from './checkbox';
 export type { CheckboxProps } from './checkbox';

@@ -8,7 +8,7 @@ import {
   townHours,
 } from './species-facts';
 import { EGG_HATCH_STEPS } from '../../../auth/egg';
-import type { SpeciesDexEntry } from '../../../auth/pokedex';
+import type { PokedexView, SpeciesDexEntry } from '../../../auth/pokedex';
 import { BIOME_NAMES } from '../../../data/biome';
 import { STAT_ORDER } from '../../../data/constants/stats';
 import type { Moves } from '../../../data/ids/moves';
@@ -16,28 +16,87 @@ import type { Species } from '../../../data/ids/species';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
 import { getItemData, getSpeciesFossil } from '../../../data/items';
 import { getMoveData } from '../../../data/moves';
-import { type SpeciesData, getFamilyName, getSpeciesData } from '../../../data/species';
-import { STAT_LABELS } from '../../catches/catch-dialog/describe';
+import {
+  type EvolutionData,
+  type SpeciesData,
+  getBaseSpecies,
+  getFamilyName,
+  getSpeciesData,
+} from '../../../data/species';
+import {
+  EvolutionCondition,
+  STAT_LABELS,
+  describeEvolutionMethod,
+} from '../../catches/catch-dialog/describe';
+import MoveHoverCard from '../../moves/MoveHoverCard';
+import { getSignatureAbility } from '../../../data/abilities';
 import { describeAbility, detailAbility } from '../../details';
 import MoveCategorySprite from '../../sprites/MoveCategorySprite';
 import SpeciesCoat from '../../sprites/SpeciesCoat';
-import TypeBadge from '../../sprites/TypeBadge';
+import { Sigil } from '../../sprites/TypeBadge';
+import { ArrowRightIcon } from '../../icons';
 import {
   Badge,
   DialogSection,
+  Hint,
+  HintList,
   List,
   ListRow,
   Meta,
   Note,
-  Row,
   TabBar,
   TabButton,
   TabGroup,
   TabPane,
   TooltipHost,
 } from '../../styled';
-import { dexLabel } from '../PokedexGrid';
-import { For, type JSX, type Resource, Show } from 'solid-js';
+import { For, type JSX, type Resource, Show, createEffect, createSignal, on } from 'solid-js';
+import { answered } from '../../app/resource-reads';
+
+/** How many stages a line is walked to, so a data loop cannot run away */
+const LINE_LIMIT = 24;
+
+/** One stage of an evolution line, and what it takes to reach it */
+interface LineStage {
+  species: Species;
+  depth: number;
+  from?: EvolutionData;
+}
+
+/** The sum of a species' base stats */
+function totalOf(data: SpeciesData): number {
+  let total = 0;
+
+  for (const stat of STAT_ORDER) {
+    total += data.stats[stat];
+  }
+  return total;
+}
+
+/** One half of a two-way switch, pressed or not */
+function Toggle(props: {
+  pressed: boolean;
+  onPress: () => void;
+  children: JSX.Element;
+}): JSX.Element {
+  return (
+    <button
+      type="button"
+      aria-pressed={props.pressed}
+      class={`rounded-none border-2 px-2 py-0.5 text-xs font-bold shadow-none first:rounded-l-lg
+        last:rounded-r-lg active:translate-y-0 ${
+          props.pressed
+            ? 'border-tide bg-tide text-on-accent hover:text-on-accent'
+            : 'border-line bg-paper text-ink'
+        }`}
+      onClick={() => {
+        props.onPress();
+      }}
+    >
+      {props.children}
+    </button>
+  );
+}
 
 /**
  * Which list of moves is being read
@@ -65,6 +124,18 @@ export interface DexEntryDialogProps {
    * the one after it
    */
   onSpecies: (species: Species) => void;
+  /**
+   * Where the reader's dex and candy come from. Left out, they are the
+   * player's own; a demo hands in made-up answers instead
+   */
+  reads?: DexReads;
+}
+
+/** The three things an entry reads about its reader */
+export interface DexReads {
+  entry: (player: string, species: Species) => SpeciesDexEntry | Promise<SpeciesDexEntry>;
+  candy: (player: string, species: Species) => number | Promise<number>;
+  pokedex: (player: string) => PokedexView | Promise<PokedexView>;
 }
 
 /**
@@ -80,6 +151,8 @@ export function DexEntryBody(
     candy: Resource<number>;
     /** Whether this species was drawn a second time for its females. */
     female: Resource<boolean>;
+    /** The reader's whole dex, for drawing the rest of the line */
+    pokedex: Resource<PokedexView>;
   },
 ): JSX.Element {
   /**
@@ -115,54 +188,64 @@ export function DexEntryBody(
     };
   };
 
+  /** Which coat the portrait shows. Both reset when the entry turns to another species */
+  const [shiny, setShiny] = createSignal(false);
+  const [female, setFemale] = createSignal(false);
+
+  createEffect(
+    on(
+      () => props.species,
+      () => {
+        setShiny(false);
+        setFemale(false);
+      },
+    ),
+  );
+
   /**
-   * One coat of the pokemon. A coat the reader has not earned is drawn
-   * as a shadow rather than left out: the shape is the half of a dex
-   * entry that sends somebody out looking
+   * What the reader's dex says about any species, for the evolution
+   * line. Read without waiting, so an unarrived dex draws silhouettes
+   * that fill in rather than holding the entry up
    */
-  const coat = (species: Species, shiny: boolean, female = false): JSX.Element => {
-    const met = known().met;
-    const revealed = shiny ? known().shiny : known().owned;
-    const name = getSpeciesData(species).name;
-    const sex = female ? '♀' : '♂';
-    // Only worth marking which sex it is where the two were drawn
-    // differently; everywhere else it is one picture and the mark
-    // would be answering a question nobody asked
-    const marked = props.female() === true;
-    const named = female ? 'female' : 'male';
-    const parts = [name];
+  const dexKnows = (species: Species): { met: boolean; owned: boolean; shiny: boolean } => {
+    const view = answered(props.pokedex);
+    let owned = false;
+    let sparkled = false;
+    let seen = false;
 
-    if (shiny) {
-      parts.push('shiny');
+    for (const tally of view?.caught ?? []) {
+      if (tally.species === species) {
+        owned = true;
+        sparkled = tally.shiny > 0;
+        break;
+      }
     }
-    if (marked) {
-      parts.push(named);
+    for (const tally of view?.seen ?? []) {
+      if (tally.species === species) {
+        seen = true;
+        break;
+      }
     }
-    const called = parts.join(', ');
+    return { met: seen || owned, owned, shiny: sparkled };
+  };
 
-    return (
-      <div class="flex flex-col items-center gap-1">
-        <SpeciesCoat
-          species={species}
-          met={met}
-          revealed={revealed}
-          shiny={shiny}
-          female={female}
-          // Turning on the spot, the way a dex shows off what it has
-          // on file — a pokemon walking on a page it cannot walk off
-          // is a pokemon going nowhere
-          animation={SpriteAnim.Rotate}
-          duration={ROTATION}
-          direction="DownLeft"
-          scale={3}
-          called={called}
-        />
-        <Meta>
-          {shiny ? 'Shiny' : 'Regular'}
-          {marked ? ` ${sex}` : ''}
-        </Meta>
-      </div>
-    );
+  /** The whole line this species belongs to, from its first stage down */
+  const lineOf = (species: Species): LineStage[] => {
+    const stages: LineStage[] = [];
+    const walk = (at: Species, depth: number, from?: EvolutionData): void => {
+      if (stages.length > LINE_LIMIT) {
+        return;
+      }
+      stages.push({ species: at, depth, from });
+      for (const next of getSpeciesData(at).evolvesInto ?? []) {
+        if (next.species !== at) {
+          walk(next.species, depth + 1, next);
+        }
+      }
+    };
+
+    walk(getBaseSpecies(species), 0);
+    return stages;
   };
 
   /**
@@ -173,117 +256,231 @@ export function DexEntryBody(
    * each other
    */
   const moveRow = (move: Moves, level?: number): JSX.Element => (
-    <ListRow class="justify-between">
-      <span class="flex items-center gap-2">
-        <Show when={level != null}>
-          <span class="w-6 shrink-0 text-right text-sm font-semibold">{level}</span>
-        </Show>
-        <TypeBadge type={getMoveData(move).type} />
-        <MoveCategorySprite category={getMoveData(move).category} />
-        <span class="font-medium">{getMoveData(move).name}</span>
-      </span>
-      <Meta>
-        {getMoveData(move).power == null ? '' : `${getMoveData(move).power} power · `}
-        {getMoveData(move).pp} PP
-      </Meta>
-    </ListRow>
+    <li class="list-none">
+      {/* The whole row opens the move's card, so its type mark is a plain
+          picture rather than a tooltip of its own */}
+      <MoveHoverCard class="block" move={move}>
+        <span class="flex items-center justify-between gap-2 rounded-lg px-1 py-0.5 hover:bg-tide-soft">
+          <span class="flex items-center gap-2">
+            <Show when={level != null}>
+              <span class="w-6 shrink-0 text-right text-sm font-semibold">{level}</span>
+            </Show>
+            <Sigil type={getMoveData(move).type} />
+            <MoveCategorySprite category={getMoveData(move).category} />
+            <span class="font-medium">{getMoveData(move).name}</span>
+          </span>
+          <Meta>
+            {getMoveData(move).power == null ? '' : `${getMoveData(move).power} power · `}
+            {getMoveData(move).pp} PP
+          </Meta>
+        </span>
+      </MoveHoverCard>
+    </li>
   );
 
   return (
-    <>
-      <Show when={showing()} fallback={<Note>No such species.</Note>}>
-        {(entry) => (
+    <Show when={showing()} fallback={<Note>No such species.</Note>}>
+      {(entry) => (
+        // The left column holds still and the right one scrolls, so the
+        // pokemon stays in view while its lists are read
+        <div
+          class="flex flex-col gap-4 md:grid md:min-h-0 md:flex-1
+            md:grid-cols-[16rem_minmax(0,1fr)] md:gap-0"
+        >
           <div
-            class="flex flex-col items-center gap-4 text-center [&>section]:w-full
-              [&>section]:border-t [&>section]:border-line-soft [&>section]:pt-4"
+            class="flex min-h-0 flex-col items-center gap-2 text-center md:border-r-2
+              md:border-line-soft md:pr-4"
           >
-            {/* Both coats, standing on the floor of a box with room
-                above them, so a tall pokemon and a short one put their
-                feet on the same line */}
-            <div class="-mb-2 flex min-h-28 flex-wrap items-end justify-center gap-4 pt-2">
-              {coat(entry().species, false)}
-              {/* Beside its own coat rather than after both of them: a
-                  female Venusaur belongs next to the Venusaur it
-                  differs from, not at the end of a row of four */}
-              <Show when={props.female() === true}>{coat(entry().species, false, true)}</Show>
-              {coat(entry().species, true)}
-              <Show when={props.female() === true}>{coat(entry().species, true, true)}</Show>
+            {/* A fixed square the sprite is fitted to, so every species
+                takes the same room */}
+            <div class="size-36 shrink-0">
+              <SpeciesCoat
+                species={entry().species}
+                met={known().met}
+                revealed={shiny() ? known().shiny : known().owned}
+                shiny={shiny()}
+                female={female()}
+                animation={SpriteAnim.Rotate}
+                duration={ROTATION}
+                direction="DownLeft"
+                fill
+                called={[
+                  entry().data.name,
+                  ...(shiny() ? ['shiny'] : []),
+                  ...(props.female() === true ? [female() ? 'female' : 'male'] : []),
+                ].join(', ')}
+              />
             </div>
 
-            {/* The number is the dex's own and it is known before the
-                pokemon is; everything else about an unmet species is
-                held back. A page that named it, said what kind of
-                pokemon it was and then hid its stats would be a page
-                that had given the answer away and was pretending
-                otherwise */}
-            <div class="flex flex-col items-center gap-1">
-              <h3>
-                {dexLabel(entry().data.dexNumber)} {known().met ? entry().data.name : '???'}
-              </h3>
-              {/* The dex's own word for what it is, where a catch sheet
-                  carries the sigil: a sigil tells one individual from
-                  another, and an entry is about all of them */}
-              <Meta>{known().met ? entry().data.category : '??? Pokemon'}</Meta>
-              <Show when={known().met}>
-                <div class="flex flex-wrap justify-center gap-1">
-                  <For each={entry().data.types}>{(type) => <TypeBadge type={type} />}</For>
+            <div class="flex flex-wrap items-center justify-center gap-1.5">
+              <div class="flex" role="group" aria-label="Coat">
+                <Toggle
+                  pressed={!shiny()}
+                  onPress={() => {
+                    setShiny(false);
+                  }}
+                >
+                  Regular
+                </Toggle>
+                <Toggle
+                  pressed={shiny()}
+                  onPress={() => {
+                    setShiny(true);
+                  }}
+                >
+                  Shiny
+                </Toggle>
+              </div>
+              {/* Only where the females were drawn differently */}
+              <Show when={props.female() === true}>
+                <div class="flex" role="group" aria-label="Sex">
+                  <Toggle
+                    pressed={!female()}
+                    onPress={() => {
+                      setFemale(false);
+                    }}
+                  >
+                    ♂
+                  </Toggle>
+                  <Toggle
+                    pressed={female()}
+                    onPress={() => {
+                      setFemale(true);
+                    }}
+                  >
+                    ♀
+                  </Toggle>
                 </div>
-                {/* How many, which is the count the dex is actually
-                    kept for: the first of a species is a discovery and
-                    the hundredth is a habit, and the two read very
-                    differently against a species somebody is hunting */}
-                <Row class="justify-center">
-                  <Badge tone="tide">{known().seen} seen</Badge>
-                  <Badge tone="leaf">{known().caught} caught</Badge>
-                </Row>
               </Show>
             </div>
 
-            {/* Everything below is what having met one buys. It is not
-                a secret being kept for its own sake — a dex that read
-                the same whether or not you had been out looking would
-                not be worth filling in */}
             <Show when={known().met}>
-              <DialogSection>
-                <Row class="justify-center">
-                  <Badge>{entry().data.height} m</Badge>
-                  <Badge>{entry().data.weight} kg</Badge>
-                  <Badge>{EGG_HATCH_STEPS} steps to hatch</Badge>
-                  {/* The one number here that is the reader's rather
-                      than the species': candy is held per family, and
-                      it is what a level costs */}
-                  <Badge tone="gold">
-                    {props.candy() ?? 0} {getFamilyName(entry().data.family)} candy
-                  </Badge>
-                </Row>
-              </DialogSection>
+              <div class="flex flex-wrap items-center justify-center gap-1.5">
+                <Badge>{entry().data.height} m</Badge>
+                <Badge>{entry().data.weight} kg</Badge>
+                <Badge tone="gold">
+                  {props.candy() ?? 0} {getFamilyName(entry().data.family)} candy
+                </Badge>
+                <Badge>{EGG_HATCH_STEPS} steps to hatch</Badge>
+              </div>
 
-              <DialogSection title="Abilities">
-                {/* Names in a row, with what each does on the card that
-                    comes up over it */}
-                <Row class="justify-center">
-                  <For each={entry().data.abilities}>
-                    {(ability) => (
-                      <TooltipHost {...detailAbility(ability)}>
-                        <Badge>{describeAbility(ability)}</Badge>
-                      </TooltipHost>
+              <section class="flex min-h-0 w-full flex-1 flex-col gap-1 border-t border-line-soft pt-2">
+                <span class="flex items-center gap-1.5">
+                  <h3 class="text-left">Evolution line</h3>
+                  <Hint title="About the evolution line">
+                    <HintList>
+                      <li>Hover a stage to see what it takes to evolve into it.</li>
+                      <li>Press a stage to open its entry.</li>
+                      <li>A stage you have not met is a silhouette.</li>
+                    </HintList>
+                  </Hint>
+                </span>
+                {/* A long branching line scrolls inside its own box */}
+                <ul class="m-0 flex min-h-0 list-none flex-col gap-1 overflow-y-auto p-0">
+                  <For each={lineOf(entry().species)}>
+                    {(stage) => (
+                      <li
+                        class={`flex items-center gap-2 rounded-lg px-1 text-left text-sm ${
+                          stage.species === entry().species ? 'bg-tide-soft' : ''
+                        }`}
+                        style={{ 'padding-left': `${stage.depth * 12 + 4}px` }}
+                      >
+                        {/* What it takes is on the tooltip, so the line stays one
+                            name a row */}
+                        <TooltipHost
+                          class="flex min-w-0 items-center gap-2"
+                          name={
+                            dexKnows(stage.species).met ? getSpeciesData(stage.species).name : '???'
+                          }
+                          description={
+                            stage.from == null
+                              ? 'The start of the line.'
+                              : describeEvolutionMethod(stage.from)
+                          }
+                          extra={() => (
+                            <Show when={stage.from}>
+                              {(from) => (
+                                <span class="text-xs">
+                                  <EvolutionCondition evolution={from()} />
+                                </span>
+                              )}
+                            </Show>
+                          )}
+                        >
+                          <Show when={stage.depth > 0}>
+                            <ArrowRightIcon
+                              class="size-3.5 shrink-0 text-muted"
+                              aria-hidden="true"
+                            />
+                          </Show>
+                          {/* Centred in its square: a sheet whose cell is not square
+                              is fitted by its longer side and would otherwise sit
+                              against one edge, leaving a gap before the name */}
+                          <span class="flex size-9 shrink-0 items-center justify-center">
+                            <SpeciesCoat
+                              species={stage.species}
+                              met={dexKnows(stage.species).met}
+                              revealed={dexKnows(stage.species).owned}
+                              centred
+                              animation={SpriteAnim.Idle}
+                              unmet={SpriteAnim.Idle}
+                              direction="DownLeft"
+                              fill
+                            />
+                          </span>
+                          <span class="flex min-w-0 flex-col">
+                            <Show
+                              when={stage.species !== entry().species}
+                              fallback={<span class="truncate font-bold">{entry().data.name}</span>}
+                            >
+                              <button
+                                type="button"
+                                class="truncate border-0 bg-transparent p-0 text-left text-sm
+                                font-medium text-ink shadow-none hover:text-tide-dark"
+                                onClick={() => {
+                                  props.onSpecies(stage.species);
+                                }}
+                              >
+                                {dexKnows(stage.species).met
+                                  ? getSpeciesData(stage.species).name
+                                  : '???'}
+                              </button>
+                            </Show>
+                          </span>
+                        </TooltipHost>
+                      </li>
                     )}
                   </For>
-                  <For each={entry().data.hiddenAbilities}>
-                    {(hidden) => (
-                      // Said rather than left to be worked out from the
-                      // order: a hidden ability is rolled far less
-                      // often, which is the whole of what makes one
-                      // worth hunting
-                      <TooltipHost {...detailAbility(hidden)}>
-                        <Badge tone="tide">{describeAbility(hidden)} · Hidden</Badge>
-                      </TooltipHost>
-                    )}
-                  </For>
-                </Row>
-              </DialogSection>
+                </ul>
+              </section>
+            </Show>
+          </div>
 
-              <DialogSection title="Base stats">
+          {/* Everything that runs long, scrolling on its own */}
+          <div class="flex min-h-0 flex-col gap-4 md:overflow-y-auto md:pl-4">
+            <Show
+              when={known().met}
+              fallback={<Note>Meet this pokemon to fill in its entry.</Note>}
+            >
+              <DialogSection
+                title="Base stats"
+                hint={
+                  <Hint title="About base stats">
+                    <HintList>
+                      <li>
+                        What every one of this species starts from, before level and training.
+                      </li>
+                      <li>
+                        A caught pokemon's own stats also depend on its IVs, its EVs and its nature.
+                      </li>
+                      <li>
+                        Bars are measured against {STAT_CEILING}, so species can be compared at a
+                        glance.
+                      </li>
+                    </HintList>
+                  </Hint>
+                }
+              >
                 <div class="flex flex-col gap-1">
                   <For each={STAT_ORDER}>
                     {(stat) => (
@@ -306,79 +503,158 @@ export function DexEntryBody(
                       </div>
                     )}
                   </For>
+                  <Meta class="text-right">{totalOf(entry().data)} total</Meta>
                 </div>
               </DialogSection>
 
-              {/* Where to go looking, and when. Everything registered
-                today stands in some pool — what makes a legendary rare
-                is the band it is drawn from rather than the absence of
-                a home — but a species that stands in none says so
-                rather than showing an empty list */}
-              <DialogSection title="Where it lives">
-                <Show
-                  when={
-                    groupHabitats(entry().species).length ||
-                    townHours(entry().species).length ||
-                    describeLairs(entry().species).length
-                  }
-                  fallback={
-                    // Nowhere at all is the answer for two kinds of
-                    // species, and they are not the same answer: one
-                    // is extinct and comes out of a rock, and the
-                    // other simply is not staged anywhere yet
-                    <Show
-                      when={getSpeciesFossil(entry().species)}
-                      fallback={<Note>It is not met in the wild.</Note>}
-                    >
-                      {(fossil) => (
-                        <Note>
-                          Extinct. It is only ever met by reviving a {getItemData(fossil()).name}.
-                        </Note>
-                      )}
-                    </Show>
+              <div class="grid gap-4 sm:grid-cols-2">
+                <DialogSection
+                  title="Abilities"
+                  hint={
+                    <Hint title="About abilities">
+                      <HintList>
+                        <li>A pokemon is born with one of the grey abilities.</li>
+                        <li>Blue ones are hidden: rarer, but a birth can still roll one.</li>
+                        <li>
+                          Gold is the family's signature ability. Nothing rolls it; an Ability Patch
+                          writes it in.
+                        </li>
+                        <li>
+                          An Ability Capsule or the Channeler adds another ability the line can
+                          reach.
+                        </li>
+                      </HintList>
+                    </Hint>
                   }
                 >
-                  <List>
-                    {/* The place it is at home in, first: a player who
-                      came to this entry for a legendary came for the
-                      name of the lair rather than for the odds of
-                      walking into one */}
-                    <For each={describeLairs(entry().species)}>
-                      {(lair) => (
-                        <ListRow class="flex-col items-start gap-0.5 sm:flex-row sm:items-center">
-                          <span class="grow text-left font-medium">{lair.name}</span>
-                          <span class="flex flex-wrap justify-end gap-1">
-                            <Badge tone="tide">Lair</Badge>
-                            <For each={lair.where}>{(biome) => <Badge>{biome}</Badge>}</For>
-                          </span>
-                        </ListRow>
+                  <ul class="m-0 grid list-none grid-cols-2 gap-1 p-0">
+                    <For each={entry().data.abilities}>
+                      {(ability) => (
+                        <li>
+                          <TooltipHost class="block" {...detailAbility(ability)}>
+                            <Badge class="w-full justify-center" wrap>
+                              {describeAbility(ability)}
+                            </Badge>
+                          </TooltipHost>
+                        </li>
                       )}
                     </For>
-                    <For each={groupHabitats(entry().species)}>
-                      {(place) => (
-                        <ListRow class="flex-col items-start gap-0.5 sm:flex-row sm:items-center">
-                          <span class="grow text-left font-medium">{BIOME_NAMES[place.biome]}</span>
-                          <span class="flex flex-wrap justify-end gap-1">
-                            <For each={place.hours}>{(hour) => <Badge>{hour}</Badge>}</For>
-                          </span>
-                        </ListRow>
+                    <For each={entry().data.hiddenAbilities}>
+                      {(hidden) => (
+                        <li>
+                          <TooltipHost class="block" {...detailAbility(hidden)}>
+                            <Badge tone="tide" class="w-full justify-center" wrap>
+                              {describeAbility(hidden)}
+                            </Badge>
+                          </TooltipHost>
+                        </li>
                       )}
                     </For>
-                    <Show when={townHours(entry().species).length}>
-                      <ListRow class="flex-col items-start gap-0.5 sm:flex-row sm:items-center">
-                        <span class="grow text-left font-medium">Towns</span>
-                        <span class="flex flex-wrap justify-end gap-1">
-                          <For each={townHours(entry().species)}>
-                            {(hour) => <Badge>{hour}</Badge>}
-                          </For>
-                        </span>
-                      </ListRow>
+                    <Show when={getSignatureAbility(entry().data.family)}>
+                      {(signature) => (
+                        <li>
+                          <TooltipHost class="block" {...detailAbility(signature())}>
+                            <Badge tone="gold" class="w-full justify-center" wrap>
+                              {describeAbility(signature())}
+                            </Badge>
+                          </TooltipHost>
+                        </li>
+                      )}
                     </Show>
-                  </List>
-                </Show>
-              </DialogSection>
+                  </ul>
+                </DialogSection>
 
-              <DialogSection title="Moves">
+                <DialogSection
+                  title="Where it lives"
+                  hint={
+                    <Hint title="About where it lives">
+                      <HintList>
+                        <li>Each biome it appears in, with the times of day it is out.</li>
+                        <li>Towns list the hours it walks their streets.</li>
+                        <li>A legendary waits in its lair rather than roaming.</li>
+                      </HintList>
+                    </Hint>
+                  }
+                >
+                  <Show
+                    when={
+                      groupHabitats(entry().species).length ||
+                      townHours(entry().species).length ||
+                      describeLairs(entry().species).length
+                    }
+                    fallback={
+                      // Nowhere at all is the answer for two kinds of
+                      // species, and they are not the same answer: one
+                      // is extinct and comes out of a rock, and the
+                      // other simply is not staged anywhere yet
+                      <Show
+                        when={getSpeciesFossil(entry().species)}
+                        fallback={<Note>It is not met in the wild.</Note>}
+                      >
+                        {(fossil) => (
+                          <Note>
+                            Extinct. It is only ever met by reviving a {getItemData(fossil()).name}.
+                          </Note>
+                        )}
+                      </Show>
+                    }
+                  >
+                    <List>
+                      {/* The place it is at home in, first: a player who
+                        came to this entry for a legendary came for the
+                        name of the lair rather than for the odds of
+                        walking into one */}
+                      <For each={describeLairs(entry().species)}>
+                        {(lair) => (
+                          <ListRow class="flex-col items-start gap-0.5 sm:flex-row sm:items-center">
+                            <span class="grow text-left font-medium">{lair.name}</span>
+                            <span class="flex flex-wrap justify-end gap-1">
+                              <Badge tone="tide">Lair</Badge>
+                              <For each={lair.where}>{(biome) => <Badge>{biome}</Badge>}</For>
+                            </span>
+                          </ListRow>
+                        )}
+                      </For>
+                      <For each={groupHabitats(entry().species)}>
+                        {(place) => (
+                          <ListRow class="flex-col items-start gap-0.5 sm:flex-row sm:items-center">
+                            <span class="grow text-left font-medium">
+                              {BIOME_NAMES[place.biome]}
+                            </span>
+                            <span class="flex flex-wrap justify-end gap-1">
+                              <For each={place.hours}>{(hour) => <Badge>{hour}</Badge>}</For>
+                            </span>
+                          </ListRow>
+                        )}
+                      </For>
+                      <Show when={townHours(entry().species).length}>
+                        <ListRow class="flex-col items-start gap-0.5 sm:flex-row sm:items-center">
+                          <span class="grow text-left font-medium">Towns</span>
+                          <span class="flex flex-wrap justify-end gap-1">
+                            <For each={townHours(entry().species)}>
+                              {(hour) => <Badge>{hour}</Badge>}
+                            </For>
+                          </span>
+                        </ListRow>
+                      </Show>
+                    </List>
+                  </Show>
+                </DialogSection>
+              </div>
+
+              <DialogSection
+                title="Moves"
+                hint={
+                  <Hint title="About moves">
+                    <HintList>
+                      <li>Level moves are offered as it levels up.</li>
+                      <li>Machines are taught from the bag or by the Move Tutor.</li>
+                      <li>Egg moves are only inherited, from parents at the Breeder.</li>
+                      <li>Hover a move to see what it does.</li>
+                    </HintList>
+                  </Hint>
+                }
+              >
                 <TabGroup horizontal defaultValue={MoveTab.Level} class="flex flex-col gap-3">
                   <TabBar>
                     <TabButton value={MoveTab.Level}>Level</TabButton>
@@ -428,8 +704,8 @@ export function DexEntryBody(
               </DialogSection>
             </Show>
           </div>
-        )}
-      </Show>
-    </>
+        </div>
+      )}
+    </Show>
   );
 }

@@ -53,7 +53,7 @@ import { isAbilityPatch } from '../../../data/items/ability-items';
 import { isPurifyingGem } from '../../../data/items/purifying-gem';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
 
-import { ActionsIcon, CloseIcon, LockIcon, SparklesIcon, StarIcon } from '../../icons';
+import { ActionsIcon, HeartIcon, LockIcon, SparklesIcon, StarIcon } from '../../icons';
 import TypeBadge from '../../sprites/TypeBadge';
 import { GENDER_LABELS, GENDER_MARKS } from '../catch-summary';
 import InventoryPicker from '../../items/InventoryPicker';
@@ -69,6 +69,7 @@ import spendItemOn, {
 import {
   Badge,
   Button,
+  CloseButton,
   Dialog,
   DialogActions,
   Divider,
@@ -1401,20 +1402,14 @@ export function CatchSheetBody(
             <Show when={owned() != null || props.onDex != null}>
               <Menu label="Actions" icon={ActionsIcon} actions={menuActions()} />
             </Show>
-            <button
-              type="button"
-              aria-label="Close"
-              class="inline-flex items-center rounded-xl border-2 border-line bg-paper px-2 py-1
-                text-ink shadow-pop hover:border-tide hover:text-tide-dark"
-              onClick={() => {
+            <CloseButton
+              onPress={() => {
                 setReleasing(false);
                 setTracing(false);
                 setPanel(null);
                 props.onClose();
               }}
-            >
-              <CloseIcon class="size-5" aria-hidden="true" />
-            </button>
+            />
           </>
         }
         description={
@@ -1530,7 +1525,10 @@ export function CatchSheetBody(
                           name="Friendship"
                           description={`${loaded().friendship} of ${MAX_FRIENDSHIP}`}
                         >
-                          <Badge tone="leaf">♥ {describeFriendship(loaded().friendship)}</Badge>
+                          <Badge tone="leaf">
+                            <HeartIcon class="size-3.5" aria-hidden="true" />
+                            {describeFriendship(loaded().friendship)}
+                          </Badge>
                         </TooltipHost>
                         <Badge>
                           {loaded().walked} {loaded().walked === 1 ? 'step' : 'steps'}

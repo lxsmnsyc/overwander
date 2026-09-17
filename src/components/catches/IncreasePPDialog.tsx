@@ -22,6 +22,7 @@ import MovePicker from './MovePicker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
+import { ArrowRightIcon } from '../icons';
 
 /**
  * Spending a PP Up or a PP Max on one move.
@@ -224,8 +225,10 @@ function BottleBody(
             // What the move is worth today and what the bottle would
             // make of it: the number a player is actually buying
             aside={(move) => (
-              <Meta class="whitespace-nowrap">
-                {getMovePP(move, spent(move))} → {getMovePP(move, after(move))} PP
+              <Meta class="inline-flex items-center gap-1 whitespace-nowrap">
+                {getMovePP(move, spent(move))}
+                <ArrowRightIcon class="size-3.5" aria-label="to" />
+                {getMovePP(move, after(move))} PP
               </Meta>
             )}
           />

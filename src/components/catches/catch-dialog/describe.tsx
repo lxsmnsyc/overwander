@@ -2,10 +2,12 @@ import type { CaughtPokemon } from '../../../auth/caught';
 import { getCatchSlots } from '../../../auth/caught-record';
 import { isEgg } from '../../../auth/egg';
 import describeDate from '../../../core/dates';
-import { BIOME_NAMES } from '../../../data/biome';
+import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../../../data/biome';
+import { EVOLUTION_FRIENDSHIP } from '../../../data/constants/friendship';
+import { getMoveData } from '../../../data/moves';
 import { Slots } from '../../../data/constants/slots';
 import { STAT_NAMES, STAT_ORDER, Stats, getIV, getOtherStat } from '../../../data/constants/stats';
-import Biome from '../../../data/ids/biome';
+import Biome, { TimeOfDay } from '../../../data/ids/biome';
 import type Natures from '../../../data/ids/natures';
 import { getNatureFactor } from '../../../data/ids/natures';
 import { EvolutionMethod, GENDER_NAMES } from '../../../data/ids/species';
@@ -19,6 +21,7 @@ import {
 } from '../../../overworld/encounter';
 import { describeItem } from '../../details';
 import ItemSprite from '../../items/ItemSprite';
+import { HeartIcon } from '../../icons';
 import { type JSX, Show } from 'solid-js';
 import { getMaxHealth } from '../../../auth/health';
 import { ItemFlags, Items } from '../../../data/ids/items';
@@ -222,6 +225,23 @@ const CONDITION_ICON = 24;
 export const HISTORY_BALL = 32;
 export const HISTORY_BALL_INSET = '-m-1.5';
 
+const TIMES: TimeOfDay[] = [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night];
+
+/** The periods of the day a time condition allows, as words */
+function timesOf(time: TimeOfDay | undefined): string {
+  const names: string[] = [];
+
+  for (const period of TIMES) {
+    if (time != null && (time & period) !== 0) {
+      names.push(TIME_OF_DAY_NAMES[period]);
+    }
+  }
+  return names.join(' or ');
+}
+
+const COMPARE_MARKS = { greater: '>', lesser: '<', equal: '=' } as const;
+const COMPARE_WORDS = { greater: 'higher than', lesser: 'lower than', equal: 'equal to' } as const;
+
 /**
  * What an evolution asks for, read straight off the row after the
  * picture it leads to: a Haunter's says `+ Trade`, an Eevee's shows
@@ -252,10 +272,28 @@ export function EvolutionCondition(props: { evolution: EvolutionData }): JSX.Ele
         <Show when={has(EvolutionMethod.Gender) ? props.evolution.gender : null}>
           {(gender) => <span>{GENDER_NAMES[gender()]}</span>}
         </Show>
+        <Show when={has(EvolutionMethod.Friendship)}>
+          <span class="inline-flex items-center gap-0.5">
+            <HeartIcon class="size-3.5 text-ember" aria-hidden="true" />
+            {EVOLUTION_FRIENDSHIP} friendship
+          </span>
+        </Show>
+        <Show when={has(EvolutionMethod.KnownMove) ? props.evolution.move : null}>
+          {(move) => <span>knowing {getMoveData(move()).name}</span>}
+        </Show>
+        <Show when={has(EvolutionMethod.StatComparison) ? props.evolution.compare : null}>
+          {(compare) => (
+            <span>
+              {STAT_LABELS[compare().stat]} {COMPARE_MARKS[compare().order]}{' '}
+              {STAT_LABELS[compare().against]}
+            </span>
+          )}
+        </Show>
         <Show when={has(EvolutionMethod.UsedItem) ? item() : null} keyed>
           {(stone) => (
             <>
-              <span>use</span>
+              {/* A shed is not spent on: it appears if one is in the bag */}
+              <span>{props.evolution.shed === true ? 'with' : 'use'}</span>
               <ItemSprite item={stone} size={CONDITION_ICON} label={describeItem(stone)} />
             </>
           )}
@@ -269,11 +307,15 @@ export function EvolutionCondition(props: { evolution: EvolutionData }): JSX.Ele
           )}
         </Show>
         <Show when={has(EvolutionMethod.Trade)}>
-          <span>Trade</span>
-          {/* The cord is an alternative rather than a second
-          condition, and it is only one where no stone is
-          being spent as well */}
-          <Show when={!has(EvolutionMethod.UsedItem)}>
+          <span>
+            Trade
+            {props.evolution.partner == null
+              ? ''
+              : ` for ${getSpeciesData(props.evolution.partner).name}`}
+          </span>
+          {/* The cord is an alternative rather than a second condition,
+              and only where no stone is spent and no partner is named */}
+          <Show when={!has(EvolutionMethod.UsedItem) && props.evolution.partner == null}>
             <span>or use</span>
             <ItemSprite
               item={Items.LinkingCord}
@@ -281,6 +323,9 @@ export function EvolutionCondition(props: { evolution: EvolutionData }): JSX.Ele
               label={describeItem(Items.LinkingCord)}
             />
           </Show>
+        </Show>
+        <Show when={has(EvolutionMethod.TimeOfDay) ? timesOf(props.evolution.time) : null}>
+          {(when) => <span>at {when()}</span>}
         </Show>
       </span>
     </Show>
@@ -313,18 +358,42 @@ export function describeEvolutionMethod(evolution: EvolutionData, covered = fals
   if ((method & EvolutionMethod.Gender) !== 0 && evolution.gender != null) {
     steps.push(`be ${GENDER_NAMES[evolution.gender].toLowerCase()}`);
   }
+  if ((method & EvolutionMethod.Friendship) !== 0) {
+    steps.push(`reach ${EVOLUTION_FRIENDSHIP} friendship`);
+  }
+  if ((method & EvolutionMethod.KnownMove) !== 0 && evolution.move != null) {
+    steps.push(`know ${getMoveData(evolution.move).name}`);
+  }
+  if ((method & EvolutionMethod.StatComparison) !== 0 && evolution.compare != null) {
+    const { compare } = evolution;
+
+    steps.push(
+      `have ${STAT_LABELS[compare.stat]} ${COMPARE_WORDS[compare.order]} ${STAT_LABELS[compare.against]}`,
+    );
+  }
   if ((method & EvolutionMethod.UsedItem) !== 0 && item != null) {
-    steps.push(`use ${withArticle(describeItem(item))}`);
+    steps.push(
+      evolution.shed === true
+        ? `carry ${withArticle(describeItem(item))} in the bag`
+        : `use ${withArticle(describeItem(item))}`,
+    );
   }
   if ((method & EvolutionMethod.HeldItem) !== 0 && item != null) {
     steps.push(`have it hold ${withArticle(describeItem(item))}`);
   }
   if ((method & EvolutionMethod.Trade) !== 0) {
-    steps.push(
-      (method & EvolutionMethod.UsedItem) === 0
-        ? `trade it away or use ${withArticle(describeItem(Items.LinkingCord))}`
-        : 'trade it away',
-    );
+    if (evolution.partner == null) {
+      steps.push(
+        (method & EvolutionMethod.UsedItem) === 0
+          ? `trade it away or use ${withArticle(describeItem(Items.LinkingCord))}`
+          : 'trade it away',
+      );
+    } else {
+      steps.push(`trade it for ${withArticle(getSpeciesData(evolution.partner).name)}`);
+    }
+  }
+  if ((method & EvolutionMethod.TimeOfDay) !== 0 && evolution.time != null) {
+    steps.push(`do it at ${timesOf(evolution.time).toLowerCase()}`);
   }
   if (steps.length === 0) {
     return 'It evolves on its own.';

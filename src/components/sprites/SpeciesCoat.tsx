@@ -64,6 +64,8 @@ export interface SpeciesCoatProps {
    * their own sheets comes out ragged. **The box has to be square**
    */
   fill?: boolean;
+  /** Whether to stand the body in the middle of its square, for a small icon */
+  centred?: boolean;
   /** What it should be doing */
   animation?: SpriteAnim;
   /**
@@ -104,6 +106,7 @@ export default function SpeciesCoat(props: SpeciesCoatProps): JSX.Element {
       direction={props.direction ?? 'Down'}
       scale={props.scale}
       fill={props.fill}
+      centred={props.centred}
       shadow
       // Black in either theme: a silhouette is the shape with the
       // colour taken out of it, and one that turned white by night

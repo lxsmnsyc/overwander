@@ -129,3 +129,10 @@ export const TOWN_NAME_PACE = 60_000;
  * a chunk and back into it without asking the server again
  */
 export const CLAIM_MEMORY = 64;
+
+/**
+ * How long a chunk's landmark standings are trusted, in milliseconds.
+ * Long enough that pacing across a chunk line reads nothing, short
+ * enough that a seat another player took shows up soon after
+ */
+export const STANDINGS_MEMORY = 2 * 60 * 1000;

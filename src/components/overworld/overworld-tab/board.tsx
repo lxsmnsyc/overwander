@@ -128,6 +128,7 @@ import {
   PUBLISHED_SPAWNS,
   REFRESH_DEBOUNCE,
   SAVE_DELAY,
+  STANDINGS_MEMORY,
   START_CELL,
   STEP_PACE,
   STEP_REPORT_SIZE,
@@ -966,14 +967,23 @@ export default function OverworldBoard(props: {
    * unmounts the board, so coming back from one reads it afresh
    */
   const [rechecked, setRechecked] = createSignal(0);
+  /**
+   * Standings already read, by chunk and window, so walking back into a
+   * chunk asks nothing. Kept briefly, since a seat can change hands
+   * without this player doing anything
+   */
+  const standingsRead = new LRUMap<string, { at: number; read: Promise<LandmarkStandings> }>(
+    CLAIM_MEMORY,
+  );
   const recheck = (): void => {
+    standingsRead.clear();
     setRechecked((count) => count + 1);
   };
 
   // A step inside the same chunk and windows asks nothing new, so the
   // read waits for one of those, or a recheck, to change
   const standingsAsk = createMemo(
-    (): { snapshot: ChunkSnapshot; uid: string; key: string } | null => {
+    (): { snapshot: ChunkSnapshot; uid: string; key: string; rechecked: number } | null => {
       const loaded = view();
       const user = auth.user();
 
@@ -985,11 +995,15 @@ export default function OverworldBoard(props: {
       return {
         snapshot,
         uid: user.uid,
-        key: `${user.uid}|${snapshot.key}|${snapshot.raidTimestamp}|${snapshot.npcTimestamp}|${snapshot.nestTimestamp}|${rechecked()}`,
+        key: `${user.uid}|${snapshot.key}|${snapshot.raidTimestamp}|${snapshot.npcTimestamp}|${snapshot.nestTimestamp}`,
+        rechecked: rechecked(),
       };
     },
     null,
-    { equals: (before, after) => before?.key === after?.key },
+    {
+      equals: (before, after) =>
+        before?.key === after?.key && before?.rechecked === after?.rechecked,
+    },
   );
   const [standings, setStandings] = createSignal<{
     snapshot: ChunkSnapshot;
@@ -1004,15 +1018,25 @@ export default function OverworldBoard(props: {
     }
 
     let live = true;
+    const now = Date.now();
+    let known = standingsRead.get(ask.key);
 
-    readLandmarkStandings(ask.snapshot, ask.uid)
+    if (known == null || now - known.at > STANDINGS_MEMORY) {
+      known = { at: now, read: readLandmarkStandings(ask.snapshot, ask.uid) };
+      standingsRead.set(ask.key, known);
+    }
+
+    const { read: reading } = known;
+
+    reading
       .then((read) => {
         if (live) {
           setStandings({ snapshot: ask.snapshot, read });
         }
       })
       .catch(() => {
-        // No glow is the board as it was: every press still asks
+        // No glow is the board as it was: every press still asks, and the next look reads again
+        standingsRead.delete(ask.key);
       });
     onCleanup(() => {
       live = false;

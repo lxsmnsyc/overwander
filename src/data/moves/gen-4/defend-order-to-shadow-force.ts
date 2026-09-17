@@ -54,7 +54,7 @@ export default function registerDefendOrderToShadowForce(): void {
   });
   registerMove(Moves.RoarOfTime, {
     name: 'Roar of Time',
-    description: 'The user has to recharge afterwards.',
+    description: 'The user must recharge for 2 seconds after it lands.',
     type: Types.Dragon,
     category: MoveCategories.Special,
     power: 150,
@@ -102,7 +102,7 @@ export default function registerDefendOrderToShadowForce(): void {
   });
   registerMove(Moves.MagmaStorm, {
     name: 'Magma Storm',
-    description: 'Traps the target in a ring of fire.',
+    description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape.',
     type: Types.Fire,
     category: MoveCategories.Special,
     power: 100,
@@ -150,7 +150,8 @@ export default function registerDefendOrderToShadowForce(): void {
   });
   registerMove(Moves.ShadowForce, {
     name: 'Shadow Force',
-    description: 'Vanishes, then strikes through anything the target is hiding behind.',
+    description:
+      'Vanishes, then strikes through Protect and Detect and breaks the guard. A Substitute still blocks it.',
     type: Types.Ghost,
     category: MoveCategories.Physical,
     power: 120,

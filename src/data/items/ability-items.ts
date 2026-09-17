@@ -47,7 +47,7 @@ export default function registerAbilityItems(): void {
   registerItem(Items.AbilityPatch, {
     name: 'Ability Patch',
     description:
-      "Writes its family's signature ability into one pokemon, which cannot be undone. Spent on use.",
+      "Writes its family's signature ability into one pokemon for good, replacing an ability you choose when no slot is free. Spent on use.",
     type: ItemTypes.Training,
     // Drawn on the other sheet, beside the bottle caps
     icon: 'other/ability-patch',

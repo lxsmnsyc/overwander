@@ -13,7 +13,8 @@ import { registerItem } from './__create';
 export default function registerRareCandy(): void {
   registerItem(Items.RareCandy, {
     name: 'Rare Candy',
-    description: 'Raises any pokemon 1 level, whatever candy its family takes.',
+    description:
+      'Raises any pokemon 1 level, whatever candy its family takes. The level restores full HP, clears status and revives a fainted pokemon.',
     type: ItemTypes.Medicine,
     icon: 'medicine/rare-candy',
     flags: ItemFlags.Consumable | ItemFlags.Usable,

@@ -36,7 +36,8 @@ export default function registerWorrySeedToFlareBlitz(): void {
   });
   registerMove(Moves.ToxicSpikes, {
     name: 'Toxic Spikes',
-    description: 'Poisons anything that walks onto the far side. Two layers badly poison.',
+    description:
+      'Poisons anything grounded that comes in on the far side, badly at two layers. A grounded Poison type clears them.',
     type: Types.Poison,
     category: MoveCategories.Status,
     pp: 20,

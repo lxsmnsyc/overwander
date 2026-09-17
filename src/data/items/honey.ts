@@ -22,7 +22,7 @@ export const HONEY_RESTORE = 40;
 export default function registerHoney(): void {
   registerItem(Items.Honey, {
     name: 'Honey',
-    description: `Restores ${HONEY_RESTORE} HP to the pokemon holding it once it drops to a quarter.`,
+    description: `Restores ${HONEY_RESTORE} HP to the pokemon holding it once it drops to a quarter. Also spread on a Honey Tree to draw out what lives there.`,
     type: ItemTypes.Held,
     icon: 'other/honey',
     flags: ItemFlags.Holdable | ItemFlags.Consumable | ItemFlags.Marketable,

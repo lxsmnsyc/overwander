@@ -44,7 +44,8 @@ export default function registerPluckToCloseCombat(): void {
   });
   registerMove(Moves.MetalBurst, {
     name: 'Metal Burst',
-    description: 'Strikes back for 1.5x the damage the user has taken in the last 2 seconds.',
+    description:
+      'Returns 1.5x the last hit taken from a move, at whoever landed it. Fails if nothing has hit the user.',
     type: Types.Steel,
     category: MoveCategories.Physical,
     pp: 10,

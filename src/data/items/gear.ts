@@ -31,10 +31,13 @@ export const MARKET_GEAR: Map<Items, [name: string, description: string]> = new 
   [Items.ExpertBelt, ['Expert Belt', '1.2x damage, but only from super-effective blows.']],
   [
     Items.Metronome,
-    ['Metronome', '1.2x damage for each repeat of the same move, up to 2x. Resets on a change.'],
+    [
+      'Metronome',
+      '+0.2x damage for each repeat cast of the same move, up to 2x. Resets on a change.',
+    ],
   ],
   [Items.WideLens, ['Wide Lens', '1.1x accuracy on everything its holder throws.']],
-  [Items.ScopeLens, ['Scope Lens', '2x its holder’s odds of a critical.']],
+  [Items.ScopeLens, ['Scope Lens', 'Sharpens its holder’s criticals by 1 stage.']],
   [Items.BrightPowder, ['Bright Powder', 'Anything aimed at its holder is 10% likelier to miss.']],
   [
     Items.QuickClaw,
@@ -50,8 +53,14 @@ export const MARKET_GEAR: Map<Items, [name: string, description: string]> = new 
     Items.UtilityUmbrella,
     ['Utility Umbrella', 'Its holder stands under clear sky: sun and rain change nothing for it.'],
   ],
-  [Items.SmokeBall, ['Smoke Ball', 'Its holder can always flee a wild encounter.']],
-  [Items.DestinyKnot, ['Destiny Knot', 'Whoever infatuates its holder is infatuated back.']],
+  [Items.SmokeBall, ['Smoke Ball', 'Its holder can always switch out, even when trapped.']],
+  [
+    Items.DestinyKnot,
+    [
+      'Destiny Knot',
+      'Whoever infatuates its holder is infatuated back. An egg bred from it copies 5 values instead of 3.',
+    ],
+  ],
   [Items.GripClaw, ['Grip Claw', 'Binds its holder lands hold 1.75x as long.']],
   [Items.BindingBand, ['Binding Band', 'Binds its holder lands chip 1/3 harder.']],
   [Items.ZoomLens, ['Zoom Lens', '1.2x accuracy against a target already casting or channelling.']],
@@ -83,7 +92,10 @@ export const MARKET_GEAR: Map<Items, [name: string, description: string]> = new 
 export const FOUND_GEAR: Map<Items, [name: string, description: string]> = new Map([
   [
     Items.BlackSludge,
-    ['Black Sludge', 'Feeds a Poison type 1/8 of its HP per move; costs anybody else 1/8.'],
+    [
+      'Black Sludge',
+      'A Poison type gets 1/16 of its HP back each time it acts. Anybody else loses 1/8.',
+    ],
   ],
   [
     Items.LuckyPunch,
@@ -93,7 +105,7 @@ export const FOUND_GEAR: Map<Items, [name: string, description: string]> = new M
     Items.Stick,
     ['Stick', 'Sharpens a Farfetch’d’s criticals by 2 stages. Nothing to anybody else.'],
   ],
-  [Items.ShedShell, ['Shed Shell', 'Its holder can always flee, whatever is holding it.']],
+  [Items.ShedShell, ['Shed Shell', 'Its holder can always switch out, even when trapped.']],
   [Items.Leftovers, ['Leftovers', 'Hands its holder 1/16 of its HP back every time it acts.']],
   [Items.DampRock, ['Damp Rock', 'Rain its holder calls lasts 1.6x as long.']],
   [Items.HeatRock, ['Heat Rock', 'Sun its holder calls lasts 1.6x as long.']],

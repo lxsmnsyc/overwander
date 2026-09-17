@@ -1,4 +1,4 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
@@ -26,9 +26,6 @@ const BURN_HELD = new Set([Statuses.Burned]);
 
 /** Either poison is what the pincers were waiting for. */
 const POISONS_HELD = new Set([Statuses.Poisoned, Statuses.BadlyPoisoned]);
-
-/** What standing beside a friend is worth. */
-const FRIEND_GUARD_SCALE = 0.75;
 
 /** What a mind is taken away from its owner with. */
 const AROMA_VEIL_STATUSES = new Set([
@@ -102,34 +99,6 @@ const setupAbilities = [
         hasAnyStatus(event.parent.target, POISONS_HELD)
       ) {
         event.critical = true;
-      }
-    }),
-  ),
-
-  /**
-   * Friend Guard covers the holder's own team and never the holder,
-   * so two of them stand behind each other rather than behind
-   * themselves
-   * https://bulbapedia.bulbagarden.net/wiki/Friend_Guard_(Ability)
-   */
-  createAbility(Abilities.FriendGuard, (battle) =>
-    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-      const target = event.target;
-
-      if (event.value <= 0) {
-        return;
-      }
-
-      for (const guard of getAbilityHolders(battle, Abilities.FriendGuard)) {
-        if (
-          guard !== target &&
-          guard.alive &&
-          guard.team === target.team &&
-          guard.hasAbility(Abilities.FriendGuard)
-        ) {
-          event.value *= FRIEND_GUARD_SCALE;
-          return;
-        }
       }
     }),
   ),

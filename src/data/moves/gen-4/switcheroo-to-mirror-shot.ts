@@ -21,7 +21,7 @@ export default function registerSwitcherooToMirrorShot(): void {
   });
   registerMove(Moves.GigaImpact, {
     name: 'Giga Impact',
-    description: 'The user has to recharge afterwards.',
+    description: 'The user must recharge for 2 seconds after it lands.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     power: 150,

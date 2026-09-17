@@ -56,7 +56,7 @@ export default function registerSketchToProtect(): void {
   });
   registerMove(Moves.MindReader, {
     name: 'Mind Reader',
-    description: "The user's next move against the target cannot miss.",
+    description: "For 4 seconds, the user's next move against the target cannot miss.",
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 5,

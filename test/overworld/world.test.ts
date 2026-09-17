@@ -5635,7 +5635,7 @@ describe('buddy copy', () => {
     [Abilities.CompoundEyes, '2.5x', COMPOUND_EYES_HELD_BOOST],
     [Abilities.Pickup, 'every 512 steps', PICKUP_STEP_INTERVAL],
     [Abilities.HoneyGather, 'every 384 steps', HONEY_STEP_INTERVAL],
-    [Abilities.Gluttony, '1.5x as long', GLUTTONY_FEAST],
+    [Abilities.Gluttony, '1.5x as far', GLUTTONY_FEAST],
     [Abilities.SuperLuck, 'critical 2x as often', KEEN_CRITICAL_BOOST],
     [Abilities.Sniper, '2 chances', SNIPER_AIMS],
     [Abilities.KeenEye, 'lifts by 3', LEVEL_FLOOR_LIFT],

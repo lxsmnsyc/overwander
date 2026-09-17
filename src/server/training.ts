@@ -238,6 +238,17 @@ export interface MovePointsResult {
 }
 
 /**
+ * The points a move would carry after a bottle worth `worth`, or null
+ * when its PP would not change: a 1 PP move's floored fifth is nothing,
+ * so a bottle spent on it would buy nothing
+ */
+export function raisedMovePoints(move: Moves, current: number, worth: number): number | null {
+  const points = Math.min(PP_UP_LIMIT, current + worth);
+
+  return getMovePP(move, points) === getMovePP(move, current) ? null : points;
+}
+
+/**
  * Spend a PP Up or a PP Max on one of a pokemon's moves.
  *
  * The points are permanent, and what they buy here is a **shorter
@@ -246,8 +257,8 @@ export interface MovePointsResult {
  *
  * Resolves what the move now carries, or null when it is refused: the
  * catch is not the player's, it is fighting, it is still an egg, it
- * does not know that move, none of the item is carried, or the move is
- * already at the limit
+ * does not know that move, none of the item is carried, or the move's
+ * PP would not change
  */
 export async function usePPItem(
   uid: string,
@@ -289,10 +300,11 @@ export async function usePPItem(
       return null;
     }
 
-    const points = Math.min(PP_UP_LIMIT, getMovePoints(record, move) + worth);
+    const points = raisedMovePoints(move, getMovePoints(record, move), worth);
 
-    // Already as far as it goes, so nothing is spent
-    if (points === getMovePoints(record, move)) {
+    // Already as far as it goes, or too small a move to gain, so
+    // nothing is spent
+    if (points == null) {
       return null;
     }
 

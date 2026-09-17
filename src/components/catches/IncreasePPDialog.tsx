@@ -104,7 +104,11 @@ function BottleBody(
     if (move == null) {
       return 'Nothing chosen';
     }
-    return spent(move) >= PP_UP_LIMIT ? 'Full' : null;
+    if (spent(move) >= PP_UP_LIMIT) {
+      return 'Full';
+    }
+    // A move with 1 PP gains nothing, and the server refuses it
+    return getMovePP(move, after(move)) === getMovePP(move, spent(move)) ? 'No effect' : null;
   };
 
   const named = (): string => {

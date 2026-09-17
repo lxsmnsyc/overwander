@@ -24,7 +24,8 @@ export function isHeartScale(item: Items): boolean {
 export default function registerHeartScale(): void {
   registerItem(Items.HeartScale, {
     name: 'Heart Scale',
-    description: 'Traded to the move reminder for a move a pokemon has forgotten.',
+    description:
+      'Paid to the move reminder or the move tutor for a move, or to the Channeler for an ability.',
     type: ItemTypes.Valuable,
     icon: 'other/heart-scale',
     flags: ItemFlags.Consumable,

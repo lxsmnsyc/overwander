@@ -58,7 +58,11 @@ test.describe('friends', () => {
 
     // And it is waiting under the requests tab, on the outgoing half.
     // The lists follow the store, so nothing had to be reopened
-    await profile.getByRole('tab', { name: /Friend Requests/ }).click();
+    await profile
+      .getByRole('tab', { name: /^Friends/ })
+      .first()
+      .click();
+    await profile.getByRole('tab', { name: /^Requests/ }).click();
     await expect(profile.getByText('Waiting on an answer')).toBeVisible({ timeout: 20_000 });
     // Inside the pane rather than anywhere in the panel: the closed
     // finder stays mounted in the profile's portal container, still
@@ -140,9 +144,13 @@ test.describe('friends', () => {
 
     // The tab wears the count, and it arrived while the panel was
     // open: the lists follow the store rather than being fetched once
-    const tab = profile.getByRole('tab', { name: /Friend Requests/ });
+    // The count rides on the Friends tab and on its Requests tab inside
+    const friends = profile.getByRole('tab', { name: /^Friends/ }).first();
+    const tab = profile.getByRole('tab', { name: /^Requests/ });
 
-    await expect(tab).toContainText('1', { timeout: 20_000 });
+    await expect(friends).toContainText('1', { timeout: 20_000 });
+    await friends.click();
+    await expect(tab).toContainText('1');
     await tab.click();
 
     const asking = profile.getByRole('listitem').filter({ hasText: stranger.nickname });
@@ -152,7 +160,7 @@ test.describe('friends', () => {
 
     // And they are on the list, which is the read that proves both
     // halves of the friendship were written
-    await profile.getByRole('tab', { name: 'Friends', exact: true }).click();
+    await profile.getByRole('tab', { name: 'Friends', exact: true }).last().click();
     await expect(profile.getByText(stranger.nickname)).toBeVisible({ timeout: 20_000 });
     await expect(
       profile.getByRole('listitem').filter({ hasText: stranger.nickname }).getByRole('button', {
@@ -204,7 +212,7 @@ test.describe('friends', () => {
     // a block can be found again once the profile is shut
     const profile = await openPanel(page, 'Profile');
 
-    await profile.getByRole('tab', { name: 'Friends', exact: true }).click();
+    await profile.getByRole('tab', { name: 'Friends', exact: true }).first().click();
     await expect(profile.getByText(/Blocked\./)).toBeVisible({ timeout: 20_000 });
     await expect(
       profile

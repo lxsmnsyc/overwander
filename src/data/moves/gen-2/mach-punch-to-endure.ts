@@ -198,7 +198,7 @@ export default function registerMachPunchToEndure(): void {
   });
   registerMove(Moves.LockOn, {
     name: 'Lock-On',
-    description: "The user's next move against the target cannot miss.",
+    description: "For 4 seconds, the user's next move against the target cannot miss.",
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 5,

@@ -132,13 +132,15 @@ async function resolveSnapshotWindow(
   chunk: Chunk,
   offset: number,
   count: number,
+  /** The stored window, when the caller has just read it, so it is not read again */
+  known?: SnapshotRecord | null,
 ): Promise<SnapshotRecord> {
   // The instant must come from the server's clock: a player whose
   // device is skewed would otherwise refresh a live window early or
   // hold an expired one. Only the zone it is read in is the player's
   await syncServerClock();
 
-  const existing = await readSnapshotWindow(chunk, offset);
+  const existing = known === undefined ? await readSnapshotWindow(chunk, offset) : known;
   const now = toLocalTime(serverNow(), offset);
 
   // A live window is adopted whole; its spawns are what everybody in
@@ -171,9 +173,10 @@ async function resolveSnapshotWindow(
   };
 
   // The publish is a definer function: shape-checked, and monotonic,
-  // so two racing publishers converge on one stored window and a
-  // stale one changes nothing. What is stored is re-read afterwards
-  // rather than assumed, since the race may have been lost
+  // so two racing publishers converge on one stored window. Not read
+  // back: a publisher that lost the race lost it to the same window,
+  // and a window's spawns are rolled from the chunk, the window and
+  // the zone alone, so what was stored is what was rolled here
   await getSupabase().rpc('publish_snapshot', {
     p_generation: WORLD_GENERATION,
     p_seed: chunk.seed,
@@ -183,7 +186,7 @@ async function resolveSnapshotWindow(
     p_spawns: record.spawns,
   });
 
-  return (await readSnapshotWindow(chunk, offset)) ?? record;
+  return record;
 }
 
 /**
@@ -233,13 +236,38 @@ export function watchSnapshotWindow(
   chunk: Chunk,
   offset: number,
   onChange: (record: SnapshotRecord | null) => void,
+  /** The window already held, so a change announcing that same window is not read */
+  heldAt?: () => number | undefined,
+  /** A window kept from before, which stands in for the first read */
+  kept?: SnapshotRecord,
 ): Unwatch {
+  const zone = toZoneKey(asOffset(offset));
+
+  // The filter can only name the chunk, so another zone's window is turned away here
   return watchTable(
     'snapshots',
     [`chunk_seed=eq.${chunk.seed}`],
     async () => readSnapshotWindow(chunk, offset),
     onChange,
+    {
+      wanted: (row) => row.zone === zone && Number(row.window_at) !== heldAt?.(),
+      initial: kept == null ? undefined : { value: kept },
+    },
   );
+}
+
+/**
+ * Visit a chunk and hand back its current window, publishing it when it
+ * is missing or has run out. `known` is the stored window the caller
+ * already holds, which spares reading it again
+ */
+export async function visitChunkWindow(
+  chunk: Chunk,
+  count: number,
+  offset: number,
+  known?: SnapshotRecord | null,
+): Promise<SnapshotRecord> {
+  return resolveSnapshotWindow(chunk, offset, count, known);
 }
 
 /**
@@ -256,7 +284,7 @@ export async function visitChunk(
   count: number,
   offset: number,
 ): Promise<[string, Spawn][]> {
-  const record = await resolveSnapshotWindow(chunk, offset, count);
+  const record = await visitChunkWindow(chunk, count, offset);
   // A spawn is named after the snapshot's key, which is what the
   // server re-derives the name from
   const key = new ChunkSnapshot(chunk, record.timestamp, offset).key;
@@ -771,7 +799,7 @@ const readChunkClaims = batchedQuery(
     listClaimsOnServer(await getIdToken(), queries),
   // Answered in the order asked, so a query's place in the batch is its answer
   (answers, _query, index): ChunkClaims =>
-    answers.at(index) ?? { phenomena: [], patches: [], caches: [] },
+    answers.at(index) ?? { phenomena: [], patches: [], caches: [], honey: [] },
   { key: claimKey, limit: CLAIM_CHUNK_LIMIT },
 );
 
@@ -813,16 +841,11 @@ export async function listClaimedItemCaches(snapshot: ChunkSnapshot): Promise<nu
 
 /** Which of this chunk's honey trees this player has lathered this window */
 export async function listLatheredHoneyTrees(snapshot: ChunkSnapshot): Promise<number[]> {
-  return listLatheredOnServer(
-    await getIdToken(),
-    snapshot.chunk.x,
-    snapshot.chunk.y,
-    snapshot.offset,
-  );
+  return (await claimsOf(snapshot)).honey;
 }
 
-// After the claim lists, since main's server functions already hold the earlier places
-async function listLatheredOnServer(
+// Nothing calls it since honey joined the batched claim lists, but it keeps its place
+export async function listLatheredOnServer(
   token: string,
   x: number,
   y: number,

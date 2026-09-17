@@ -3,6 +3,7 @@
 // to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { Items } from '../data/ids/items';
+import { RAID_INTERVAL } from '../overworld/chunk-snapshot';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
@@ -39,8 +40,8 @@ import {
   unwatchRaidLobby as unwatchLobbyOnServer,
   watchRaidLobby as watchLobbyOnServer,
 } from '../server/raids';
-import { syncServerClock } from './clock';
-import { asOffset } from './local-time';
+import { serverNow, syncServerClock } from './clock';
+import { asOffset, toLocalTime } from './local-time';
 import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
 import getIdToken from './session';
 import batchedQuery from '../utils/batched-query';
@@ -151,8 +152,14 @@ export function watchLiveRaids(
   onChange: (raids: [string, RaidRecord][]) => void,
 ): Unwatch {
   // Unfiltered on purpose: a lobby starting or clearing leaves the
-  // set by UPDATE, which the set's own filter would never deliver
-  return watchTable(RAID_TABLE, [], async () => listLiveRaids(raidTimestamp, offset), onChange);
+  // set by UPDATE, which the set's own filter would never deliver.
+  // A lobby of another window or zone is never in the set either way
+  return watchTable(RAID_TABLE, [], async () => listLiveRaids(raidTimestamp, offset), onChange, {
+    wanted: (row) =>
+      row.generation === WORLD_GENERATION &&
+      Number(row.window_at) === raidTimestamp &&
+      Number(row.utc_offset) === asOffset(offset),
+  });
 }
 
 /**
@@ -423,27 +430,70 @@ export function watchRaidWatchers(id: string, onChange: (players: string[]) => v
  * list
  */
 export function watchRaidInvites(uid: string, onChange: (invites: RaidInvite[]) => void): Unwatch {
-  const read = async (): Promise<RaidInvite[]> => {
-    const { data } = await getSupabase()
-      .from('raid_invites')
-      .select('raid_id, sender, role, sent_at')
-      .eq('recipient', uid)
-      .order('sent_at', { ascending: false });
+  /** Every call into a lobby still open, with the instant its raid window closes */
+  let held: [invite: RaidInvite, endsAt: number][] = [];
+  let closing: ReturnType<typeof setTimeout> | undefined;
 
-    const invites: RaidInvite[] = [];
+  // A lobby whose window has closed can no longer be joined, and nothing
+  // in its row changes when that happens, so the clock drops it
+  const report = (): void => {
+    const now = serverNow();
+    const open: RaidInvite[] = [];
+    let next = Number.POSITIVE_INFINITY;
 
-    for (const row of asRecordArray(data)) {
-      invites.push({
-        raid: asString(row.raid_id),
-        sender: asString(row.sender),
-        role: asNumber(row.role) as LobbyRole,
-        sentAt: asNumber(row.sent_at),
-      });
+    for (const [invite, endsAt] of held) {
+      if (now < endsAt) {
+        open.push(invite);
+        next = Math.min(next, endsAt);
+      }
     }
-    return invites;
+    clearTimeout(closing);
+    if (Number.isFinite(next)) {
+      // A second late, so the window reads as closed when the timer fires
+      closing = setTimeout(report, next - now + 1000);
+    }
+    onChange(open);
   };
 
-  return watchTable('raid_invites', [`recipient=eq.${uid}`], read, onChange);
+  const read = async (): Promise<[RaidInvite, number][]> => {
+    const { data } = await getSupabase()
+      .from('raid_invites')
+      .select('raid_id, sender, role, sent_at, raids(battle_id, cleared, window_at, utc_offset)')
+      .eq('recipient', uid)
+      .order('sent_at', { ascending: false });
+    const found: [RaidInvite, number][] = [];
+
+    for (const row of asRecordArray(data)) {
+      const raid = asRecord(row.raids);
+
+      // A call into a lobby that has started or been cleared answers nothing
+      if (raid.battle_id != null || raid.cleared === true) {
+        continue;
+      }
+      found.push([
+        {
+          raid: asString(row.raid_id),
+          sender: asString(row.sender),
+          role: asNumber(row.role) as LobbyRole,
+          sentAt: asNumber(row.sent_at),
+        },
+        // The window is counted in the raid's own zone, so its close is
+        // taken back onto the server's clock
+        asNumber(raid.window_at) + RAID_INTERVAL - toLocalTime(0, asNumber(raid.utc_offset)),
+      ]);
+    }
+    return found;
+  };
+
+  const unwatch = watchTable('raid_invites', [`recipient=eq.${uid}`], read, (found) => {
+    held = found;
+    report();
+  });
+
+  return () => {
+    clearTimeout(closing);
+    unwatch();
+  };
 }
 
 /**

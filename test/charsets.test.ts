@@ -35,7 +35,13 @@ import {
   executiveName,
   gruntName,
 } from '../src/data/overworld/syndicate';
-import { TRAINER_CHARSETS, TRAINER_CLASSES } from '../src/data/overworld/trainers';
+import {
+  TRAINER_CHARSETS,
+  TRAINER_CLASSES,
+  TRAINER_SHEET_NAMES,
+  TrainerClass,
+  trainerNameIn,
+} from '../src/data/overworld/trainers';
 
 /**
  * The characters a trainer may go about as, and what unlocks each.
@@ -102,6 +108,28 @@ describe('the characters a trainer may wear', () => {
         expect(getCharset(sheet)?.lock).toEqual({ kind: 'trainer', trainer });
       }
     }
+  });
+
+  it('names a trainer after the sheet they stand in', () => {
+    const worn = new Set<string>();
+
+    for (const trainer of TRAINER_CLASSES) {
+      for (const sheet of TRAINER_CHARSETS[trainer]) {
+        worn.add(sheet);
+      }
+    }
+    // Every renamed sheet is one some class actually stands in
+    for (const sheet of Object.keys(TRAINER_SHEET_NAMES)) {
+      expect(worn.has(sheet)).toBe(true);
+    }
+
+    expect(trainerNameIn(TrainerClass.BlackBelt, 'characters/frlg/crush-girl')).toBe(
+      'Crush Girl (Kanto)',
+    );
+    expect(trainerNameIn(TrainerClass.BlackBelt, 'characters/lgpe/black-belt')).toBe(
+      trainerNameIn(TrainerClass.BlackBelt, undefined),
+    );
+    expect(getCharset('characters/dppt/picnicker')?.name).toBe('Picnicker');
   });
 
   it('pays Kanto’s title in the champion’s own coats', () => {

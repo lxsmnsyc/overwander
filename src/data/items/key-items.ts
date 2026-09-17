@@ -28,7 +28,7 @@ export default function registerKeyItems(): void {
   // brighter of the two is what the dark gives way to
   registerItem(Items.ExplorerKit, {
     name: 'Explorer Kit',
-    description: `See ${CAVE_LAMP_CELLS} cells in the dark underground, while your buddy carries it.`,
+    description: `See ${CAVE_LAMP_CELLS} cells in the dark underground and under a Dark Day, while your buddy carries it.`,
     type: ItemTypes.KeyItem,
     icon: 'key/explorer-kit',
     flags: ItemFlags.Holdable,

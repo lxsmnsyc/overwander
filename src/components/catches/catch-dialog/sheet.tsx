@@ -1,4 +1,4 @@
-import { isHoldable } from './describe';
+import { HISTORY_BALL, HISTORY_BALL_INSET, describeHistory, isHoldable } from './describe';
 import BattleData from '../../app/battle-data';
 import CandySprite from '../../sprites/CandySprite';
 import BattleSection from './sections/BattleSection';
@@ -29,6 +29,7 @@ import { answered } from '../../app/resource-reads';
 
 import { canHatch, isEgg } from '../../../auth/egg';
 import { hatchEgg } from '../../../auth/eggs';
+import { deriveSize } from '../../../overworld/encounter';
 import { type EvolutionOption, evolveCatch } from '../../../auth/evolution';
 import type { InventoryEntry } from '../../../auth/inventory';
 import { learnLevelUpMove } from '../../../auth/moves';
@@ -39,9 +40,10 @@ import { trainEfforts } from '../../../auth/training';
 import { MAX_LEVEL } from '../../../data/constants/levels';
 
 import type { Stats } from '../../../data/constants/stats';
-import { type Items, getMachineMove, isMachineItem } from '../../../data/ids/items';
+import { BALL_ITEMS, type Items, getMachineMove, isMachineItem } from '../../../data/ids/items';
+import { MAX_FRIENDSHIP, describeFriendship } from '../../../data/constants/friendship';
+import ItemSprite from '../../items/ItemSprite';
 import type { Moves } from '../../../data/ids/moves';
-import { NATURE_NAMES } from '../../../data/ids/natures';
 import type { Species } from '../../../data/ids/species';
 
 import { isPPItem } from '../../../data/items/vitamins';
@@ -50,7 +52,9 @@ import { isAbilityPatch } from '../../../data/items/ability-items';
 import { isPurifyingGem } from '../../../data/items/purifying-gem';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
 
-import { ActionsIcon, LockIcon, StarIcon } from '../../icons';
+import { ActionsIcon, HeartIcon, LockIcon, SparklesIcon, StarIcon } from '../../icons';
+import TypeBadge from '../../sprites/TypeBadge';
+import { GENDER_LABELS, GENDER_MARKS } from '../catch-summary';
 import InventoryPicker from '../../items/InventoryPicker';
 
 import { describeItem } from '../../details';
@@ -64,9 +68,10 @@ import spendItemOn, {
 import {
   Badge,
   Button,
+  CloseButton,
   Dialog,
   DialogActions,
-  DialogSection,
+  Divider,
   Field,
   Menu,
   type MenuAction,
@@ -74,13 +79,23 @@ import {
   Note,
   Row,
   type ToastTone,
+  TooltipHost,
   useToast,
 } from '../../styled';
 import AbilityPatchDialog from '../AbilityPatchDialog';
 import IncreasePPDialog from '../IncreasePPDialog';
 import TeachMoveDialog from '../TeachMoveDialog';
 
-import { type JSX, type Resource, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import {
+  For,
+  type JSX,
+  type Resource,
+  Show,
+  batch,
+  createEffect,
+  createSignal,
+  onCleanup,
+} from 'solid-js';
 
 /**
  * Re-exported from where the battle card reads them too: an ability on
@@ -120,6 +135,11 @@ export interface CatchDialogProps {
    */
   onTrainer?: (uid: string) => void;
   /**
+   * Open the dex entry for its species. The menu's entry is left out
+   * where nobody is listening
+   */
+  onDex?: (species: Species) => void;
+  /**
    * Show the record and offer nothing.
    *
    * It is for looking at a pokemon that is not the reader's: an
@@ -141,6 +161,12 @@ export interface CatchDialogProps {
  * player who pressed once and looked away is not left wondering
  */
 const CANDY_SETTLE = 500;
+
+/**
+ * A candy's art is a 16px picture centred in a 32px cell, so the margin
+ * is pulled in to keep a badge as tight as its text
+ */
+const CANDY_BADGE = '-m-2';
 
 /** How large a candy is drawn on the toast that says a release paid it */
 const CANDY_ART = 24;
@@ -991,6 +1017,8 @@ export function CatchSheetBody(
    * second one says what it is doing
    */
   const [releasing, setReleasing] = createSignal(false);
+  /** Whether the full ownership history is open over the sheet */
+  const [tracing, setTracing] = createSignal(false);
 
   const release = (): void => {
     const catchId = props.catchId;
@@ -1013,9 +1041,8 @@ export function CatchSheetBody(
     }
     releaseCatch(catchId)
       .then((released) => {
-        setReleasing(false);
-
         if (!released) {
+          setReleasing(false);
           say('It could not be released.', 'ember');
           return;
         }
@@ -1033,12 +1060,35 @@ export function CatchSheetBody(
         // The record is gone, so there is nothing left for this
         // dialog to show
         props.onChange?.();
-        props.onClose();
+        // Together, or the sheet reopens for a frame between the
+        // confirmation closing and the sheet being told to
+        batch(() => {
+          setReleasing(false);
+          props.onClose();
+        });
       })
       .catch((caught: unknown) => {
         setReleasing(false);
         say(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
+  };
+
+  /** Why this pokemon cannot be released right now, if it cannot */
+  const blockedRelease = (loaded: CaughtPokemon): string | null => {
+    if (props.fighting.latest === true) {
+      return 'It is in a raid, so it cannot be released.';
+    }
+    if (props.onlyOne() === true) {
+      // A player with no pokemon has no way back into the game
+      return 'The only pokemon you have cannot be released.';
+    }
+    if (isFavorite(loaded)) {
+      return 'A favorite cannot be released. Unfavorite it first.';
+    }
+    if (isGuarded(loaded)) {
+      return 'A locked pokemon cannot be released. Unlock it first.';
+    }
+    return null;
   };
 
   /**
@@ -1235,13 +1285,47 @@ export function CatchSheetBody(
   const menuActions = (): MenuAction[] => {
     const loaded = view();
 
-    return loaded == null ? [] : actions(loaded);
+    if (loaded == null) {
+      return [];
+    }
+    const lookup: MenuAction[] =
+      props.onDex == null
+        ? []
+        : [
+            {
+              label: 'View in Pokedex',
+              // What is inside a shell has not been met yet
+              disabled: isEgg(loaded),
+              onSelect: () => {
+                props.onDex?.(loaded.species);
+              },
+            },
+          ];
+
+    if (owned() == null) {
+      return lookup;
+    }
+    return [
+      ...actions(loaded),
+      ...lookup,
+      {
+        label: 'Release',
+        tone: 'danger',
+        separated: true,
+        // Opened even when refused, so the dialog can say why
+        disabled: props.fighting.latest === true,
+        onSelect: () => {
+          setReleasing(true);
+        },
+      },
+    ];
   };
 
   return (
     <>
       <Dialog
-        width="wide"
+        width="broad"
+        layout="sheet"
         // The sheet steps aside while the teaching dialog is up rather
         // than sitting open behind it: two modals at once fight for the
         // click that closes them, and the sheet is what the player comes
@@ -1251,47 +1335,43 @@ export function CatchSheetBody(
           teaching() == null &&
           bottle() == null &&
           naming() == null &&
+          !releasing() &&
           panel() !== 'items'
         }
         onClose={() => {
           // A release half-confirmed is a release declined
           setReleasing(false);
+          setTracing(false);
           setPanel(null);
           props.onClose();
         }}
-        // The panel is named for what it is rather than for what is on
-        // it: the pokemon's own name is written under its sprite, where
-        // it belongs to the pokemon rather than to the window
+        // Announced by what it is; the pokemon's own name heads the
+        // top row, where the mockup's title bar would have been
         title="Pokemon Info"
-        // What can be done to it, on a bar of its own under the name:
-        // what a player does to a pokemon deserves more room than a
-        // corner of the heading
+        quiet
         bar={
-          // Kept on a condition that does not flap. The menu used to
-          // hang off the record itself, so every re-read of it — and
-          // this sheet re-reads after everything it writes — threw the
-          // menu away and built a new one, which **closes** it: the
-          // open state lives in the instance. A player who pressed
-          // Actions while the record was still settling watched the
-          // menu shut itself, and pressing it the instant the sheet
-          // opened often did nothing at all.
-          //
-          // Whose sheet it is cannot change under a player, so the
-          // button stands from the first frame and the entries fill in
-          // when the record arrives
+          // The menu stands from the first frame rather than hanging off
+          // the record: every re-read of the record would rebuild it,
+          // which closes it under the player's finger
           <>
-            {/* The two marks a player puts on one themselves, at the
-                other end of the same row: they are about the record
-                rather than about the pokemon, which is what the row
-                is for */}
             <Show when={view()}>
               {(record) => (
-                <span class="mr-auto flex items-center gap-1.5">
-                  <Show when={isGuarded(record())}>
-                    <Badge tone="tide">
-                      <LockIcon class="size-3.5" aria-hidden="true" />
-                      Locked
-                    </Badge>
+                <span class="mr-auto flex min-w-0 flex-wrap items-center gap-2 text-left">
+                  <h3 class="truncate">{named()}</h3>
+                  {/* The species only where a nickname took its place */}
+                  <Show when={!isEgg(record()) && record().nickname !== ''}>
+                    <Meta>
+                      (<span>{getSpeciesData(record().species).name}</span>)
+                    </Meta>
+                  </Show>
+                  <Show when={!isEgg(record()) && GENDER_MARKS[record().gender] !== ''}>
+                    <span
+                      class="text-lg leading-none"
+                      title={GENDER_LABELS[record().gender]}
+                      aria-label={GENDER_LABELS[record().gender]}
+                    >
+                      {GENDER_MARKS[record().gender]}
+                    </span>
                   </Show>
                   <Show when={isFavorite(record())}>
                     <Badge tone="gold">
@@ -1299,29 +1379,53 @@ export function CatchSheetBody(
                       Favorite
                     </Badge>
                   </Show>
+                  <Show when={isGuarded(record())}>
+                    <Badge tone="tide">
+                      <LockIcon class="size-3.5" aria-hidden="true" />
+                      Locked
+                    </Badge>
+                  </Show>
+                  <Show when={!isEgg(record()) && isShiny(record())}>
+                    <Badge tone="gold">
+                      <SparklesIcon class="size-3.5" aria-hidden="true" />
+                      Shiny
+                    </Badge>
+                  </Show>
+                  <Show when={isShadow(record())}>
+                    <Badge>Shadow</Badge>
+                  </Show>
+                  <Show when={props.buddy.latest === props.catchId}>
+                    <Badge tone="leaf">Buddy</Badge>
+                  </Show>
+                  <Show when={owned() != null && props.fighting.latest === true}>
+                    <Badge tone="ember">In a raid</Badge>
+                  </Show>
                 </span>
               )}
             </Show>
-            <Show when={owned() != null}>
+            <Show when={owned() != null || props.onDex != null}>
               <Menu label="Actions" icon={ActionsIcon} actions={menuActions()} />
             </Show>
+            <CloseButton
+              onPress={() => {
+                setReleasing(false);
+                setTracing(false);
+                setPanel(null);
+                props.onClose();
+              }}
+            />
           </>
         }
-        terse
         description={
           props.readOnly === true
-            ? 'One pokemon in full, as it stands. Nothing here can be changed — it is not yours to change.'
-            : `One pokemon in full: what it is, what it is carrying, and everything that can be
-            done to it while it is not fighting.`
+            ? 'One pokemon in full, as it stands. Nothing here can be changed, since it is not yours.'
+            : 'One pokemon in full: what it is, what it is carrying, and what can be done to it.'
         }
       >
-        {/* The record is read through `latest`, so a write that
-            re-reads it keeps showing what it had while the read is in
-            flight. Suspending instead tears the panel down and takes
-            the page with it: marking a favorite would blink the whole
-            screen for the length of one round trip */}
-        {/* The sheet reads moves, held items and the ability, so it
-            waits for the registries the overworld does not carry */}
+        {/* The record is read through `latest`, so a write that re-reads
+            it keeps showing the old record instead of suspending, which
+            would tear the panel and the page down. The sheet also waits
+            for the move, item and ability registries */}
         <BattleData fallback={<Note>Loading catch…</Note>}>
           <Show
             when={view()}
@@ -1331,257 +1435,304 @@ export function CatchSheetBody(
           >
             {(loaded) => (
               <>
-                {/* Whether anything is holding the record still. A lock
-                  and a favorite say so through the Actions menu, which
-                  is where they are turned on and off; a raid is the one
-                  nobody chose, so it is the one worth a sentence */}
-                <Show when={owned() != null && props.fighting.latest === true}>
-                  <Meta class="text-center">In a raid — nothing about it can be changed.</Meta>
-                </Show>
-
-                {/* The sheet itself, read down the middle: the pokemon
-                  first, then what it is, then what it can do, then
-                  where it has been.
-
-                  Every section is ruled off from the one above it. The
-                  sheet is a long column of headings and lists, and
-                  without a line between them a player scrolling it
-                  cannot tell where the moves stop and the abilities
-                  start */}
+                {/* Fitted to one screen: who it is and what it becomes on
+                    the left, what it fights with and what it is made of on
+                    the right. The columns size apart, so a tall block on
+                    one side never pushes the other. One scrolling column
+                    on a phone, portrait, moves, evolutions, then stats */}
                 <div
-                  class="flex flex-col items-center gap-4 text-center [&>section]:w-full
-                    [&>section]:border-t [&>section]:border-line-soft [&>section]:pt-4"
+                  class="flex flex-col gap-3 border-y-2 border-line-soft md:grid md:min-h-0
+                    md:flex-1 md:grid-cols-[16rem_minmax(0,1fr)] md:gap-0"
                 >
-                  {/* What the record is about, walking. An egg is drawn
-                    as an egg: what is inside it is not the player's to
-                    see until it hatches.
+                  <div
+                    class="contents md:flex md:min-h-0 md:flex-col md:border-r-2
+                      md:border-line-soft md:pr-4"
+                  >
+                    <div class="flex flex-col items-center gap-2 py-3 text-center md:flex-1">
+                      <PortraitSection caught={loaded()} named={named()} />
 
-                    It stands on the floor of a box with room above it.
-                    The header is stuck to the top of the panel, so a
-                    sprite drawn tight against it was clipped by the
-                    bar the moment anything scrolled — and the space
-                    that was above the pokemon is better spent under
-                    the header than between the pokemon and its name */}
-                  <PortraitSection caught={loaded()} named={named()} />
-
-                  <Row class="justify-center">
-                    {/* The level and the thing that raises it are one
-                      control, not a label beside a button: what a
-                      player wants to know is where it stands and what
-                      the next step costs, and those are one thought.
-                      For a pokemon that is nobody's to raise — an egg,
-                      somebody else's — it is only the label */}
-                    <Show
-                      when={owned() != null && !isEgg(loaded())}
-                      fallback={<Badge tone="leaf">Lv. {loaded().level}</Badge>}
-                    >
-                      {/* Pressed as often as the player likes: the
-                        level and the pile move at once and the
-                        presses are sent together when they stop */}
-                      <Button
-                        tone="primary"
-                        disabled={
-                          shownCandies() < getCandyCost(loaded()) ||
-                          shownLevel() >= MAX_LEVEL ||
-                          // A level already paid for is waiting on an
-                          // answer, and pressing past it would take
-                          // the offer away
-                          teaching()?.levelled === true ||
-                          frozen()
-                        }
-                        onClick={feedCandy}
-                      >
-                        {shownLevel() >= MAX_LEVEL
-                          ? `Lv. ${shownLevel()} — at the cap`
-                          : `Lv. ${shownLevel()} → ${shownLevel() + 1} (${getCandyCost(loaded())})`}
-                      </Button>
-                    </Show>
-                    <Show when={!isEgg(loaded())}>
-                      <Badge>{NATURE_NAMES[loaded().nature]}</Badge>
-                    </Show>
-                    {/* The family's own sweets, drawn: a number beside
-                      the word said neither which family nor what a
-                      pile of them looks like */}
-                    <Badge tone="gold">
-                      <CandySprite family={getSpeciesData(loaded().species).family} label="" />
-                      {shownCandies()} {shownCandies() === 1 ? 'candy' : 'candies'}
-                    </Badge>
-                  </Row>
-
-                  {/* An egg has no evolution to offer, so the section
-                    that would hold one holds the way out of the shell
-                    instead: how far along the walk is, and the button
-                    that ends it */}
-                  <Show when={isEgg(loaded())}>
-                    <DialogSection title="Hatching">
-                      <div class="h-2 overflow-hidden rounded-full bg-line-soft">
-                        <div
-                          class="h-full rounded-full bg-leaf transition-[width]"
-                          style={{
-                            width: `${Math.min(100, (loaded().steps / Math.max(1, loaded().hatchSteps)) * 100)}%`,
-                          }}
-                        />
-                      </div>
-                      <Note>
-                        {loaded().steps} / {loaded().hatchSteps} steps
-                        {props.buddy.latest === props.catchId
-                          ? '.'
-                          : ' — it only moves while it is the one being carried.'}
-                      </Note>
-                      <Show when={owned()}>
-                        <Row class="justify-center">
-                          <Button tone="primary" disabled={!canHatch(loaded())} onClick={hatch}>
-                            Hatch it
-                          </Button>
-                        </Row>
-                      </Show>
-                    </DialogSection>
-                  </Show>
-
-                  <Show when={!isEgg(loaded())}>
-                    {/* Everything it could ever become, with the ones
-                      it cannot become yet left in and refused. A row
-                      that is out of reach says what it is waiting for,
-                      so the sheet is also where a player finds out
-                      what they are working towards.
-
-                      A pokemon at the end of its line has no section at
-                      all rather than a heading over the words "It does
-                      not evolve": most of a full-grown box would carry
-                      a ruled-off paragraph saying nothing was going to
-                      happen */}
-                    <EvolutionSection
-                      options={props.evolutions.latest}
-                      owned={owned() != null}
-                      frozen={frozen()}
-                      shiny={isShiny(loaded())}
-                      dexKnows={dexKnows}
-                      onEvolve={evolve}
-                    />
-
-                    {/* Three readings of the same six numbers: what the
-                      pokemon has, what it was born with, and what has
-                      been trained into it. They are tabs rather than
-                      three lists, because a player compares one stat
-                      across them rather than reading all eighteen */}
-                    <StatsSection
-                      caught={loaded()}
-                      owned={owned() != null}
-                      frozen={frozen()}
-                      onTrain={train}
-                    />
-
-                    {/* What it brings to a fight, in one row: what it
-                      knows, what it is, and what it carries. They were
-                      three sections down a long sheet, which put the
-                      three answers to "can it win this" three scrolls
-                      apart */}
-                    <BattleSection
-                      caught={loaded()}
-                      owned={owned() != null}
-                      frozen={frozen()}
-                      holdables={holdables()}
-                      bag={props.bag.latest}
-                      giving={panel() === 'give'}
-                      onGiving={(open) => {
-                        setPanel(open ? 'give' : null);
-                      }}
-                      onGive={(item) => {
-                        moveItem(item, true);
-                      }}
-                      onTake={(item) => {
-                        moveItem(item, false);
-                      }}
-                      onArrange={arrange}
-                    />
-                  </Show>
-
-                  {/* Whose hands it has passed through, oldest first, and
-                    where it came from before any of them */}
-                  <HistorySection
-                    caught={loaded()}
-                    player={auth.user()?.uid ?? ''}
-                    nameOf={describeOwner}
-                    onTrainer={props.onTrainer}
-                  />
-
-                  {/* There is no undoing it, so it takes two presses —
-                    and whatever it is holding comes back to the bag,
-                    along with the candy the pokemon was worth. The
-                    second press names that candy: what a player gets
-                    for it is part of the decision, and a number that
-                    only turns up afterwards is a number they had to
-                    make the decision without */}
-                  <Show when={owned()}>
-                    <DialogSection>
-                      <Row class="justify-center">
-                        <Button
-                          tone="danger"
-                          // A favorite and a locked one are both marks a
-                          // player put on the record to stop exactly
-                          // this, so the button is dead rather than
-                          // pressable and refused
-                          disabled={
-                            props.fighting.latest === true ||
-                            props.onlyOne() === true ||
-                            isFavorite(loaded()) ||
-                            isGuarded(loaded())
-                          }
-                          onClick={release}
+                      <div class="flex flex-wrap items-center justify-center gap-1.5">
+                        <Badge tone="gold">
+                          <CandySprite
+                            family={getSpeciesData(loaded().species).family}
+                            label=""
+                            class={CANDY_BADGE}
+                          />
+                          <span class="tabular-nums">{shownCandies()}</span>
+                        </Badge>
+                        {/* The level and what raises it are one control:
+                          where it stands and what the next step costs */}
+                        <Show
+                          when={owned() != null && !isEgg(loaded())}
+                          fallback={<Badge tone="leaf">Lv. {loaded().level}</Badge>}
                         >
-                          {releasing()
-                            ? `Let it go for ${getReleaseCandy(loaded())} candy?`
-                            : 'Release'}
-                        </Button>
-                        <Show when={releasing()}>
+                          {/* Presses are gathered and sent together once they stop */}
                           <Button
-                            onClick={() => {
-                              setReleasing(false);
-                            }}
+                            tone="primary"
+                            disabled={
+                              shownCandies() < getCandyCost(loaded()) ||
+                              shownLevel() >= MAX_LEVEL ||
+                              // A level already paid for is waiting on an
+                              // answer, and pressing past it would take the
+                              // offer away
+                              teaching()?.levelled === true ||
+                              frozen()
+                            }
+                            onClick={feedCandy}
                           >
-                            Keep it
+                            {/* The cost in candy, drawn, as a badge on the button */}
+                            {shownLevel() >= MAX_LEVEL ? (
+                              `Lv. ${shownLevel()}`
+                            ) : (
+                              <>
+                                Level Up
+                                <Badge tone="gold">
+                                  <CandySprite
+                                    family={getSpeciesData(loaded().species).family}
+                                    label="Candy"
+                                    class={CANDY_BADGE}
+                                  />
+                                  x {getCandyCost(loaded())}
+                                </Badge>
+                              </>
+                            )}
                           </Button>
                         </Show>
-                      </Row>
-                      {/* What letting it go pays, before the second
-                          press rather than after it. What it is
-                          holding comes back too, which is the half a
-                          player forgets */}
-                      <Show when={releasing() && loaded().items.length > 0}>
-                        <Meta>
-                          What it is holding comes back to the bag: {describeItems(loaded().items)}.
-                        </Meta>
+                      </div>
+
+                      <Show when={!isEgg(loaded())}>
+                        <div class="flex flex-wrap items-center justify-center gap-1.5">
+                          <span class="text-sm font-medium">
+                            {getSpeciesData(loaded().species).category}
+                          </span>
+                          <Divider />
+                          <For each={getSpeciesData(loaded().species).types}>
+                            {(type) => <TypeBadge type={type} />}
+                          </For>
+                        </div>
+                        {/* This individual's own size, rolled from its trait
+                          value against the species as it stands now */}
+                        <div class="flex flex-wrap items-center justify-center gap-1.5">
+                          <Badge>
+                            {deriveSize(loaded().species, loaded().traitValue).height.toFixed(2)} m
+                          </Badge>
+                          <Badge>
+                            {deriveSize(loaded().species, loaded().traitValue).weight.toFixed(1)} kg
+                          </Badge>
+                        </div>
+                        {/* What walking with it has earned: how close it is,
+                          which friendship evolutions and Return read, and
+                          how far it has gone as a buddy */}
+                        <div class="flex flex-wrap items-center justify-center gap-1.5">
+                          <TooltipHost
+                            name="Friendship"
+                            description={`${loaded().friendship} of ${MAX_FRIENDSHIP}`}
+                          >
+                            <Badge tone="leaf">
+                              <HeartIcon class="size-3.5" aria-hidden="true" />
+                              {describeFriendship(loaded().friendship)}
+                            </Badge>
+                          </TooltipHost>
+                          <Badge>
+                            {loaded().walked} {loaded().walked === 1 ? 'step' : 'steps'}
+                          </Badge>
+                        </div>
                       </Show>
-                      <Show when={isFavorite(loaded())}>
-                        <Meta>A favorite cannot be released. Unfavorite it first.</Meta>
+                    </div>
+
+                    <Show when={!isEgg(loaded())}>
+                      <div
+                        class="order-3 flex min-h-0 flex-col border-t-2 border-line-soft py-3 md:order-none
+                        md:h-48 md:shrink-0"
+                      >
+                        <EvolutionSection
+                          options={props.evolutions.latest}
+                          owned={owned() != null}
+                          frozen={frozen()}
+                          shiny={isShiny(loaded())}
+                          dexKnows={dexKnows}
+                          onEvolve={evolve}
+                        />
+                      </div>
+                    </Show>
+                  </div>
+
+                  <div class="contents md:flex md:min-h-0 md:flex-col md:pl-4">
+                    <div class="order-2 py-3 md:order-none md:min-h-0 md:flex-1 md:overflow-y-auto">
+                      {/* An egg has nothing to fight with yet, so its side
+                        holds the way out of the shell */}
+                      <Show
+                        when={!isEgg(loaded())}
+                        fallback={
+                          <section class="flex flex-col gap-2">
+                            <h3 class="text-left">Hatching</h3>
+                            <div class="h-2 overflow-hidden rounded-full bg-line-soft">
+                              <div
+                                class="h-full rounded-full bg-leaf transition-[width]"
+                                style={{
+                                  width: `${Math.min(100, (loaded().steps / Math.max(1, loaded().hatchSteps)) * 100)}%`,
+                                }}
+                              />
+                            </div>
+                            <Note>
+                              {loaded().steps} / {loaded().hatchSteps} steps
+                              {props.buddy.latest === props.catchId
+                                ? '.'
+                                : '. It only moves while it is the one being carried.'}
+                            </Note>
+                            <Show when={owned()}>
+                              <Row>
+                                <Button
+                                  tone="primary"
+                                  disabled={!canHatch(loaded())}
+                                  onClick={hatch}
+                                >
+                                  Hatch it
+                                </Button>
+                              </Row>
+                            </Show>
+                          </section>
+                        }
+                      >
+                        <BattleSection
+                          caught={loaded()}
+                          owned={owned() != null}
+                          frozen={frozen()}
+                          holdables={holdables()}
+                          bag={props.bag.latest}
+                          giving={panel() === 'give'}
+                          onGiving={(open) => {
+                            setPanel(open ? 'give' : null);
+                          }}
+                          onGive={(item) => {
+                            moveItem(item, true);
+                          }}
+                          onTake={(item) => {
+                            moveItem(item, false);
+                          }}
+                          onArrange={arrange}
+                        />
                       </Show>
-                      <Show when={isGuarded(loaded())}>
-                        <Meta>A locked pokemon cannot be released. Unlock it first.</Meta>
-                      </Show>
-                      {/* Nothing takes the last one: a player with an
-                          empty collection has no way back into the
-                          game except the gift that would replace it */}
-                      <Show when={props.onlyOne()}>
-                        <Meta>The only pokemon you have cannot be released.</Meta>
-                      </Show>
-                    </DialogSection>
+                    </div>
+
+                    <Show when={!isEgg(loaded())}>
+                      <div class="order-4 border-t-2 border-line-soft py-3 md:order-none md:shrink-0">
+                        <StatsSection
+                          caught={loaded()}
+                          owned={owned() != null}
+                          frozen={frozen()}
+                          onTrain={train}
+                        />
+                      </div>
+                    </Show>
+                  </div>
+                </div>
+
+                {/* Where it came from in one line. The full chain opens in
+                    its own dialog, since a traded pokemon's can run long */}
+                <div class="flex items-center gap-2">
+                  <ItemSprite
+                    item={BALL_ITEMS[loaded().ball]}
+                    size={HISTORY_BALL}
+                    class={HISTORY_BALL_INSET}
+                    label={describeItem(BALL_ITEMS[loaded().ball])}
+                  />
+                  <Meta class="grow truncate text-left">{describeHistory(loaded())}</Meta>
+                  <Show when={loaded().history.length > 0}>
+                    <Button
+                      onClick={() => {
+                        setTracing(true);
+                      }}
+                    >
+                      History ({loaded().history.length})
+                    </Button>
                   </Show>
                 </div>
               </>
             )}
           </Show>
         </BattleData>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setReleasing(false);
-              setPanel(null);
-              props.onClose();
-            }}
-          >
-            Close
-          </Button>
-        </DialogActions>
+
+        {/* Opened over the sheet from inside it, so the sheet stays
+            where it is underneath */}
+        <Dialog
+          width="wide"
+          isOpen={props.catchId != null && tracing()}
+          onClose={() => {
+            setTracing(false);
+          }}
+          title="History"
+          description="Everyone who has owned this pokemon, oldest first."
+          terse
+        >
+          <Show when={view()}>
+            {(loaded) => (
+              <HistorySection
+                caught={loaded()}
+                player={auth.user()?.uid ?? ''}
+                nameOf={describeOwner}
+                onTrainer={(uid) => {
+                  setTracing(false);
+                  props.onTrainer?.(uid);
+                }}
+              />
+            )}
+          </Show>
+          <DialogActions>
+            <Button
+              onClick={() => {
+                setTracing(false);
+              }}
+            >
+              Back
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Dialog>
+
+      {/* There is no undoing it, so it asks first and names what
+          letting it go pays, held items included */}
+      <Dialog
+        isOpen={props.catchId != null && releasing()}
+        onClose={() => {
+          setReleasing(false);
+        }}
+        title="Release it?"
+        description="Letting a pokemon go cannot be undone."
+        terse
+      >
+        <Show when={view()}>
+          {(loaded) => (
+            <>
+              <Show
+                when={blockedRelease(loaded())}
+                fallback={
+                  <Note>
+                    {named()} will be let go for {getReleaseCandy(loaded())} candy.
+                    <Show when={loaded().items.length > 0}>
+                      {' '}
+                      What it is holding comes back to the bag: {describeItems(loaded().items)}.
+                    </Show>
+                  </Note>
+                }
+              >
+                {(reason) => <Note>{reason()}</Note>}
+              </Show>
+              <DialogActions>
+                <Button tone="danger" disabled={blockedRelease(loaded()) != null} onClick={release}>
+                  Release
+                </Button>
+                <Button
+                  onClick={() => {
+                    setReleasing(false);
+                  }}
+                >
+                  Keep it
+                </Button>
+              </DialogActions>
+            </>
+          )}
+        </Show>
       </Dialog>
 
       {/* Learning is its own dialog because what it costs is a

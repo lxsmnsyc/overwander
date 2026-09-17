@@ -104,7 +104,8 @@ export default function registerEvolutionStones(): void {
    */
   registerItem(Items.RotomCatalog, {
     name: 'Rotom Catalog',
-    description: 'Moves the Rotom it is used on into another of its machines.',
+    description:
+      'Moves the Rotom it is used on into another of its machines. Spent on each change.',
     type: ItemTypes.Evolution,
     // Drawn on the key sheet, which is where the collection packed it
     icon: 'key/rotom-catalog',

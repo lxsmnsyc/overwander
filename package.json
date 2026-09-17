@@ -1,6 +1,6 @@
 {
   "name": "overwander",
-  "version": "3.3.3",
+  "version": "4.0.1",
   "private": true,
   "type": "module",
   "publishConfig": {

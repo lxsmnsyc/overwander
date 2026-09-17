@@ -138,6 +138,8 @@ export type EffectShape =
   | 'Scorch'
   | 'Pulse'
   | 'Freeze'
+  | 'Shears'
+  | 'Auger'
   | 'Shell'
   | 'Doll'
   | 'Flop'
@@ -316,6 +318,8 @@ export const SPANS: Record<EffectShape, number> = {
   Scorch: 820,
   Pulse: 820,
   Freeze: 1000,
+  Shears: 900,
+  Auger: 950,
   Shell: 900,
   Doll: 900,
   Flop: 900,

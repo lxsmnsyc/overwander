@@ -24,7 +24,7 @@ export default function registerGen4Abilities(): void {
   // Togepi
   registerAbility(Abilities.FriendGuard, {
     name: 'Friend Guard',
-    description: 'Its teammates take 0.75x from everything while it stands.',
+    description: 'Its teammates take 0.75x from every attack while it stands.',
   });
   // Regigigas
   registerAbility(Abilities.SlowStart, {
@@ -44,7 +44,8 @@ export default function registerGen4Abilities(): void {
   // Cresselia
   registerAbility(Abilities.AromaVeil, {
     name: 'Aroma Veil',
-    description: 'Its teammates cannot be taunted, tormented, encored, charmed or heal blocked.',
+    description:
+      'It and its teammates cannot be taunted, tormented, encored, charmed or heal blocked.',
   });
   // Bronzor
   registerAbility(Abilities.Heatproof, {

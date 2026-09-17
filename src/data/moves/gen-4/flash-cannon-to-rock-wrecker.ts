@@ -36,7 +36,7 @@ export default function registerFlashCannonToRockWrecker(): void {
   registerMove(Moves.Defog, {
     name: 'Defog',
     description:
-      "Clears spikes from both sides and the target side's screens, and drops the target's Evasion 1 stage.",
+      "Clears Spikes, Toxic Spikes and Stealth Rock from both sides, and Reflect, Light Screen, Mist, Safeguard and Lucky Chant from the target's. Drops its Evasion 1 stage.",
     type: Types.Flying,
     category: MoveCategories.Status,
     pp: 15,
@@ -46,7 +46,8 @@ export default function registerFlashCannonToRockWrecker(): void {
   });
   registerMove(Moves.TrickRoom, {
     name: 'Trick Room',
-    description: 'For 10 seconds every wind-up on the field is read the other way round.',
+    description:
+      'For 10 seconds every wind-up on the field is read the other way round. Casting it again ends it.',
     type: Types.Psychic,
     category: MoveCategories.Status,
     pp: 5,
@@ -118,7 +119,7 @@ export default function registerFlashCannonToRockWrecker(): void {
   });
   registerMove(Moves.RockWrecker, {
     name: 'Rock Wrecker',
-    description: 'The user has to recharge afterwards.',
+    description: 'The user must recharge for 2 seconds after it lands.',
     type: Types.Rock,
     category: MoveCategories.Physical,
     power: 150,

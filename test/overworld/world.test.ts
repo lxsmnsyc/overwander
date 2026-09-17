@@ -2378,6 +2378,19 @@ describe('world', () => {
     const chunk = world.getChunk(start.chunkX, start.chunkY);
 
     expect(chunk.getLandmarkAt(start.cellX, start.cellY)).toBeNull();
+
+    // In a town, so a first step is somewhere with a Pokémon Center and a way out
+    for (const uid of ['player-uid', 'other-uid', 'third-uid']) {
+      const placed = pickStartPosition(world, uid);
+
+      expect(
+        townAt(
+          world,
+          worldCell(placed.chunkX, placed.cellX),
+          worldCell(placed.chunkY, placed.cellY),
+        ),
+      ).not.toBeNull();
+    }
     // The same holds wherever anything is put down without walking
     // there, which is what a teleport is
     for (let at = 0; at < 100; at++) {
@@ -5644,7 +5657,7 @@ describe('buddy copy', () => {
     [Abilities.CompoundEyes, '2.5x', COMPOUND_EYES_HELD_BOOST],
     [Abilities.Pickup, 'every 512 steps', PICKUP_STEP_INTERVAL],
     [Abilities.HoneyGather, 'every 384 steps', HONEY_STEP_INTERVAL],
-    [Abilities.Gluttony, '1.5x as long', GLUTTONY_FEAST],
+    [Abilities.Gluttony, '1.5x as far', GLUTTONY_FEAST],
     [Abilities.SuperLuck, 'critical 2x as often', KEEN_CRITICAL_BOOST],
     [Abilities.Sniper, '2 chances', SNIPER_AIMS],
     [Abilities.KeenEye, 'lifts by 3', LEVEL_FLOOR_LIFT],

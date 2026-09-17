@@ -39,7 +39,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Weedle, Abilities.TwinStinger, {
     name: 'Twin Stinger',
     description:
-      'Each physical move it uses strikes twice at 60% power, so anything that answers a landed blow answers both.',
+      'Each single-hit physical move it uses strikes twice at 60% power, so anything that answers a landed blow answers both.',
   });
 
   registerSignature(Families.Pidgey, Abilities.Slipstream, {
@@ -49,7 +49,8 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Rattata, Abilities.Nibble, {
     name: 'Nibble',
-    description: "Every move it lands takes another 1/32 of the target's HP, whatever its armour.",
+    description:
+      "Every damaging move it lands takes another 1/32 of the target's HP, whatever its armour.",
   });
 
   registerSignature(Families.Spearow, Abilities.Relentless, {
@@ -84,13 +85,13 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.NidoranF, Abilities.QueensCourt, {
     name: "Queen's Court",
     description:
-      'Her Defense and Special Defense are 1.15x for each poisoned enemy on the field, counting up to 3.',
+      'Her Defense and Special Defense rise 15% for each poisoned enemy on the field, counting up to 3.',
   });
 
   registerSignature(Families.NidoranM, Abilities.KingsCourt, {
     name: "King's Court",
     description:
-      'His Attack and Special Attack are 1.15x for each poisoned enemy on the field, counting up to 3.',
+      'His Attack and Special Attack rise 15% for each poisoned enemy on the field, counting up to 3.',
   });
 
   registerSignature(Families.Clefairy, Abilities.WishingWell, {
@@ -195,7 +196,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Ponyta, Abilities.Gallop, {
     name: 'Gallop',
     description:
-      'Its Speed rises 10% each time it acts, up to 1.5x. Any hit it takes brings it back to a standstill.',
+      'Its Speed rises 10% each time it acts, up to 1.5x. Any damage it takes, poison and weather included, brings it back to a standstill.',
   });
 
   registerSignature(Families.Slowpoke, Abilities.DelayedReaction, {
@@ -314,7 +315,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Goldeen, Abilities.Upstream, {
     name: 'Upstream',
-    description: 'Its moves hit 1.35x against any target with more HP than its own.',
+    description: 'Its moves hit 1.35x against any target whose max HP is higher than its own.',
   });
 
   registerSignature(Families.Staryu, Abilities.CoreReset, {
@@ -497,7 +498,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Togepi, Abilities.FairShare, {
     name: 'Fair Share',
     description:
-      'A move under 100% accuracy that just hit somebody in its party cannot hit that one again next time.',
+      'When a move under 100% accuracy lands on somebody in its party, the next such move aimed at them misses.',
   });
 
   registerSignature(Families.Natu, Abilities.Prophecy, {
@@ -701,7 +702,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Suicune, Abilities.RisenTide, {
     name: 'Risen Tide',
     description:
-      'The first blow that would finish it leaves it on 1 HP, cured, and a stage harder to hurt. Once per battle.',
+      'The first blow that would finish it leaves it on 1 HP, cured, and a stage up in Defense. Once per battle.',
   });
 
   registerSignature(Families.Larvitar, Abilities.Tyrant, {
@@ -1094,7 +1095,8 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Relicanth, Abilities.Unchanged, {
     name: 'Unchanged',
-    description: 'Every move hits it for neutral damage: it has no weaknesses and no resistances.',
+    description:
+      'Every move hits it for neutral damage: it has no weaknesses, resistances or immunities.',
   });
 
   registerSignature(Families.Luvdisc, Abilities.SharedHeart, {
@@ -1194,7 +1196,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Turtwig, Abilities.BarkBrace, {
     name: 'Bark Brace',
     description:
-      'The first physical blow it takes each fight lands at 1/2, and it roots: 1/16 of its HP back each time it acts.',
+      'The first physical blow it takes each fight lands at 1/2 and roots it, so it heals 1/16 of its HP each time it acts but cannot leave the field.',
   });
 
   registerSignature(Families.Chimchar, Abilities.CinderBrace, {
@@ -1235,7 +1237,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Shinx, Abilities.GleamEyes, {
     name: 'Gleam Eyes',
     description:
-      "Its attacks ignore the target's raised evasion, and reach one that is in the air or underground.",
+      "Its attacks ignore the target's raised evasion, and reach one hidden by Fly, Dig, Dive, Bounce or Shadow Force.",
   });
 
   /**
@@ -1279,7 +1281,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Buizel, Abilities.FloatSac, {
     name: 'Float Sac',
-    description: 'It floats above Ground moves and hazards until a blow takes it under 1/2 HP.',
+    description: 'It floats above Ground moves and hazards until any damage takes it under 1/2 HP.',
   });
 
   registerSignature(Families.Cherubi, Abilities.SecondBloom, {
@@ -1305,7 +1307,8 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Glameow, Abilities.VelvetClaws, {
     name: 'Velvet Claws',
-    description: 'Its contact moves hit 1.25x against anything that has raised a stat this fight.',
+    description:
+      'Its contact moves hit 1.25x against anything that has gained a stat stage this fight.',
   });
 
   /**
@@ -1371,7 +1374,7 @@ export default function registerSignatureAbilities(): void {
   // The squirrel, whose charge is in the fur of whoever it lives with
   registerSignature(Families.Pachirisu, Abilities.Sparkfur, {
     name: 'Sparkfur',
-    description: 'Anything that touches one of its teammates is paralyzed 30% of the time.',
+    description: 'Anything that touches it or one of its teammates is paralyzed 30% of the time.',
   });
 
   // The bird, whose noise is somebody else's and louder
@@ -1461,12 +1464,13 @@ export default function registerSignatureAbilities(): void {
    */
   registerSignature(Families.Cresselia, Abilities.WaningLight, {
     name: 'Waning Light',
-    description: 'A status on its teammates runs 0.5x as long.',
+    description:
+      'Every timed status on its team runs 0.5x as long, its own and the helpful ones included.',
   });
 
   registerSignature(Families.Darkrai, Abilities.WaxingDark, {
     name: 'Waxing Dark',
-    description: 'A status it puts on an enemy runs 1.5x as long.',
+    description: 'Every timed status it puts on an enemy runs 1.5x as long.',
   });
 
   // The prince of the sea, whose own move is a swap of hearts

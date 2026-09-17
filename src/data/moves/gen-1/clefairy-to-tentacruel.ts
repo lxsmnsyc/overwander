@@ -56,7 +56,8 @@ export default function registerClefairyToTentacruelMoves(): void {
   });
   registerMove(Moves.Metronome, {
     name: 'Metronome',
-    description: 'Casts a move at random, bar itself, Mirror Move and the two nobody learns.',
+    description:
+      'Casts a move at random, bar itself, Mirror Move, Sketch and the three nobody learns.',
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 10,
@@ -112,7 +113,7 @@ export default function registerClefairyToTentacruelMoves(): void {
   registerMove(Moves.Disable, {
     name: 'Disable',
     description:
-      'Shuts off the move the target is using — interrupting it — or its last, for 5 seconds.',
+      'Shuts off the move the target is using or last used, for 8 seconds. A move in progress is interrupted.',
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 20,

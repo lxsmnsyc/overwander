@@ -86,7 +86,7 @@ export function polishIVs(ivs: number, count: number, random: () => number): num
 export default function registerBottleCaps(): void {
   registerItem(Items.GoldenBottleCap, {
     name: 'Golden Bottle Cap',
-    description: 'Perfects every one of a pokemon’s values. Spent on use.',
+    description: `Raises every one of a pokemon’s values to ${MAX_IV}. Spent on use.`,
     type: ItemTypes.Training,
     icon: 'other/gold-bottle-cap',
     flags: ItemFlags.Usable | ItemFlags.Consumable,
@@ -96,7 +96,7 @@ export default function registerBottleCaps(): void {
 
   registerItem(Items.BottleCap, {
     name: 'Bottle Cap',
-    description: 'Perfects one of a pokemon’s values. Spent on use.',
+    description: `Raises one random value that is not yet ${MAX_IV} to ${MAX_IV}. Spent on use.`,
     type: ItemTypes.Training,
     icon: 'other/bottle-cap',
     flags: ItemFlags.Usable | ItemFlags.Consumable,

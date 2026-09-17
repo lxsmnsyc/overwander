@@ -1,6 +1,7 @@
 import { For, type JSX, Show } from 'solid-js';
 import { useColorScheme, usePreferredColorScheme } from 'terracotta';
 import settings, {
+  type BoardEdge,
   type BoxColumns,
   type ClockFormat,
   type WorldTimeFace,
@@ -68,6 +69,20 @@ const WORLD_TIMES: { value: WorldTimeFace; label: string; description: string }[
     description: 'Dawn, Day, Dusk or Night: what actually decides what walks about.',
   },
   { value: 'clock', label: 'Clock', description: 'The hour itself. The period is on hover.' },
+];
+
+const BOARD_EDGES: { value: BoardEdge; label: string; description: string }[] = [
+  { value: 'haze', label: 'Haze', description: 'The country fades into the sky toward the edge.' },
+  {
+    value: 'full',
+    label: 'Full board',
+    description: 'The ground reaches every corner of the screen. Heavier to draw.',
+  },
+  {
+    value: 'plain',
+    label: 'Plain',
+    description: 'The board stops at its edge, with the sky past it.',
+  },
 ];
 
 const BOX_WIDTHS: { value: BoxColumns; label: string; description: string }[] = [
@@ -174,6 +189,14 @@ function GeneralPane(): JSX.Element {
           checked={settings().flatBoard}
           onChange={(on) => {
             setSetting('flatBoard', on);
+          }}
+        />
+        <RadioGroup
+          label="Board edge"
+          value={settings().boardEdge}
+          options={BOARD_EDGES}
+          onChange={(edge) => {
+            setSetting('boardEdge', edge);
           }}
         />
       </Card>

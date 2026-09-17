@@ -127,6 +127,27 @@ export const TRAINER_BASE_NAMES: Record<TrainerClass, string> = {
 };
 
 /**
+ * The sheets a class stands in that the mainline names differently,
+ * which is the other half of a pair: a Black Belt met in the Crush
+ * Girl's sheet is a Crush Girl
+ */
+export const TRAINER_SHEET_NAMES: Record<string, string> = {
+  'characters/frlg/crush-girl': 'Crush Girl',
+  'characters/lgpe/picnicker': 'Picnicker',
+  'characters/oras/picnicker': 'Picnicker',
+  'characters/dppt/picnicker': 'Picnicker',
+  'characters/dppt/cowgirl': 'Cowgirl',
+  'characters/oras/lady': 'Lady',
+  'characters/dppt/lady': 'Lady',
+  'characters/dppt/waitress': 'Waitress',
+  'characters/dppt/idol': 'Idol',
+  'characters/dppt/socialite': 'Socialite',
+  'characters/dppt/battle-girl': 'Battle Girl',
+  'characters/oras/cameraman': 'Cameraman',
+  'characters/dppt/cameraman': 'Cameraman',
+};
+
+/**
  * What a screen calls each class: the mainline name, with the region
  * after it only where more than one region puts that name on the
  * road. A name nobody shares is the mainline's own
@@ -157,4 +178,16 @@ function buildTrainerNames(): Record<TrainerClass, string> {
     }
   }
   return named;
+}
+
+/**
+ * What a screen calls a trainer standing in this sheet: the class' own
+ * name, or the name its sheet goes by, with the same region after it
+ */
+export function trainerNameIn(trainer: TrainerClass, sheet: string | undefined): string {
+  const own = sheet == null ? undefined : TRAINER_SHEET_NAMES[sheet];
+
+  return own == null
+    ? TRAINER_NAMES[trainer]
+    : TRAINER_NAMES[trainer].replace(TRAINER_BASE_NAMES[trainer], own);
 }

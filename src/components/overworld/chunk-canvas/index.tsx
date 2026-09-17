@@ -1,4 +1,13 @@
-import { type JSX, createEffect, createMemo, createSignal, onCleanup, onMount } from 'solid-js';
+import {
+  For,
+  type JSX,
+  createEffect,
+  createMemo,
+  createSignal,
+  onCleanup,
+  onMount,
+} from 'solid-js';
+import { FULL_BOARD_EXTRA } from '../../../overworld/board';
 import { SQUARES } from '../../../overworld/grid';
 import LRUMap from '../../../core/lru-map';
 import {
@@ -42,11 +51,13 @@ import {
   litFrame,
 } from '../../../canvas/sprite-sheet';
 import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/sparkle';
+import speciesSize from '../../../canvas/species-size';
 import {
   type Cast,
   batchAmbient,
   batchSkybox,
   getCast,
+  getSkybox,
   paintAmbient,
   paintSkybox,
 } from '../../../canvas/daylight';
@@ -70,6 +81,7 @@ import loadTerrainTiles, { type TerrainTiles } from '../../../canvas/terrain-til
 import createBoardScene, {
   type BoardScene,
   type SceneSpot,
+  hazeAt,
 } from '../../../canvas/three/board-scene';
 import { TERRACE_TOP } from '../../../overworld/terrace';
 import terrainCell from '../../../canvas/terrain-cell';
@@ -90,7 +102,6 @@ import { getBlocker } from '../../../data/overworld/decoration';
 import Landmark from '../../../data/overworld/landmark';
 import Phenomenon from '../../../data/overworld/phenomenon';
 import Npc, { npcSheet } from '../../../data/overworld/npc';
-import { getSpeciesData } from '../../../data/species';
 import facingToward from '../../../canvas/facing';
 import type OWCharSprite from '../../../canvas/ow-char-sprite';
 import loadOWChar, { OW_SPRITE_ROOT } from '../../../canvas/ow-char-sprites';
@@ -117,9 +128,12 @@ import {
   MARK_WEIGHT,
   NPC_CELLS,
   PICKED_STAGE,
+  PICK_INSET_SIDE,
+  PICK_INSET_TOP,
   PLANT_CELLS,
   PLANT_PHASES,
   PLAYER_SHEET,
+  PRESS_SLOP,
   QUARTER_TURN,
   RIPPLE_ALPHA,
   RIPPLE_FADE,
@@ -143,7 +157,6 @@ import {
   lampSquash,
   pictureWidth,
   shadowSquash,
-  sizeOf,
   slideGain,
 } from './metrics';
 import {
@@ -1130,9 +1143,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     order: number[];
   } | null = null;
 
+  /** How many cells the scene reaches past the board on each side: only the full board reaches further */
+  const edgeExtra = createMemo(() => (settings().boardEdge === 'full' ? FULL_BOARD_EXTRA : 0));
+
   createEffect(() => {
     let live = true;
     let scene: BoardScene | null = null;
+    const extra = edgeExtra();
 
     // The tilesets the ground is drawn from: one pack for every biome
     // rather than a rip apiece, so it is asked for once
@@ -1146,7 +1163,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         const surface = stage;
 
         if (surface != null) {
-          scene = createBoardScene(surface, pack, BOARD_CELLS);
+          scene = createBoardScene(surface, pack, BOARD_CELLS + extra * 2, extra);
           setStaged(scene);
           built = null;
         }
@@ -1388,6 +1405,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * and on the Mac the two arrive as the same gesture
    */
   let turned = false;
+  /** Where the mouse last was over the board, so the hover can follow a board sliding under it */
+  let pointer: { clientX: number; clientY: number } | null = null;
+  /** The cell a press went down on, and where, which is what its click acts on */
+  let pressed: { cell: BoardCell | null; clientX: number; clientY: number } | null = null;
+  /**
+   * What the last frame stood up that can be pressed, far to near, in the
+   * canvas' own pixels. A pokemon is drawn upward from its cell, so a
+   * press on its body lands on the ground behind it without these
+   */
+  let pickable: { index: number; left: number; top: number; right: number; bottom: number }[] = [];
   /**
    * The cell the player is looking at, which is where the interact key
    * acts. It is a board cell rather than a chunk one, so a player
@@ -1415,7 +1442,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * top corners lands on no cell at all now, which is honest — there
    * is no board there
    */
-  const fractionAt = (event: MouseEvent): { x: number; y: number } | null => {
+  const fractionAt = (event: {
+    clientX: number;
+    clientY: number;
+  }): { x: number; y: number } | null => {
     const element = canvas;
 
     if (element == null) {
@@ -1479,7 +1509,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     props.onPlaced?.(spotOf);
   });
 
-  const cellAt = (event: MouseEvent): BoardCell | null => {
+  const cellAt = (event: { clientX: number; clientY: number }): BoardCell | null => {
     const at = fractionAt(event);
 
     if (at == null) {
@@ -1522,6 +1552,28 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       }
     }
     return found ?? boardCellAtFraction(at.x, at.y, yaw(), camera());
+  };
+
+  /**
+   * The cell a point is aiming at: whatever pressable thing is drawn
+   * under it, front first, and otherwise the ground under it
+   */
+  const aimAt = (event: { clientX: number; clientY: number }): BoardCell | null => {
+    const bounds = canvas?.getBoundingClientRect();
+
+    if (bounds != null) {
+      const x = event.clientX - bounds.left;
+      const y = event.clientY - bounds.top;
+
+      for (let at = pickable.length - 1; at >= 0; at--) {
+        const pick = pickable[at];
+
+        if (x >= pick.left && x <= pick.right && y >= pick.top && y <= pick.bottom) {
+          return boardCellOf(pick.index);
+        }
+      }
+    }
+    return cellAt(event);
   };
 
   /**
@@ -1858,6 +1910,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       if (heading !== facing) {
         dirty = true;
       }
+      // The board slides under a cursor that holds still, so what it is
+      // over is read again rather than left where the last move put it
+      if (pointer != null && turning == null && (sliding || dirty)) {
+        setHovered(aimAt(pointer));
+      }
 
       // The ridden pokemon walks while a walk is under way and idles once it stops
       const mounted = ridden?.sprite;
@@ -1968,6 +2025,20 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // handed the page it is drawn on rather than placed to look like
       // it: what is ruled on the ground lands on the ground
       show?.look(yaw(), screen, placed, ratio, camera());
+
+      const hazy = settings().boardEdge === 'haze';
+
+      if (show != null) {
+        if (!hazy) {
+          show.haze(null);
+        } else if (props.underground) {
+          show.haze({ top: CAVERN.colour, bottom: CAVERN.colour });
+        } else {
+          const { zenith, horizon } = getSkybox(worldTime(), props.latitude);
+
+          show.haze({ top: zenith, bottom: horizon });
+        }
+      }
 
       /** The light's throw, which the flat board has nowhere to put */
       const throwing = (): Cast | undefined => (flat ? undefined : cast());
@@ -2278,18 +2349,19 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // The shape of the screen is part of it, since the flat board
         // stands no elevation, and so is the quarter the camera is
         // round to, since that is what picks the edge tiles
+        const extra = edgeExtra();
         const window = `${props.origin[0]},${props.origin[1]}|${flat ? '2d' : '3d'}|${turns}|${
           props.underground ? 'cave' : 'day'
-        }`;
+        }|${extra}`;
 
         if (built !== window) {
           // Asked in the board's own cells, which is what the look
           // answers: the window it covers is already the world's
           show.ground(
             look,
-            [0, 0],
+            [-extra, -extra],
             turns,
-            [props.origin[0], props.origin[1]],
+            [props.origin[0] - extra, props.origin[1] - extra],
             `${flat ? '2d' : '3d'}|${props.underground ? 'cave' : 'day'}`,
           );
           built = window;
@@ -2900,10 +2972,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           ? null
           : ({
               scale:
-                (CELL *
-                  sizeOf(getSpeciesData(props.mount.species).height) *
-                  afoot.scale *
-                  magnify) /
+                (CELL * speciesSize(props.mount.species, mount) * afoot.scale * magnify) /
                 SPRITE_STANDS,
               anchor: 'shadow',
             } as const);
@@ -3026,10 +3095,30 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         };
       }
 
+      const picks: typeof pickable = [];
+      /** A pressable picture this frame, trimmed to the body where the frame is padded */
+      const pickOn = (index: number, quad: SpriteQuad | null, padded: boolean): void => {
+        if (quad == null) {
+          return;
+        }
+        const side = padded ? quad.width * PICK_INSET_SIDE : 0;
+
+        picks.push({
+          index,
+          left: quad.left + side,
+          right: quad.left + quad.width - side,
+          top: quad.top + (padded ? quad.height * PICK_INSET_TOP : 0),
+          bottom: quad.top + quad.height,
+        });
+      };
+
       for (const index of standOrder.order) {
         const cell = boardCellOf(index);
         const middle = at(groundPoint(index));
         const drawnAt = shifted(cell);
+
+        // What stands in the haze fades in the same steps as the ground under it
+        marks?.carry(0, 0, hazy ? 1 - hazeAt(reachOf(drawnAt)) : 1);
 
         const floor = floorOf(cell, liftOf(cell));
 
@@ -3071,9 +3160,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           standPiece(context, grottoOn(index), middle, magnify, place, (quad) =>
             veil(index, Standing.Grotto, quad),
           );
-          standPiece(context, landmarkOn(index), middle, magnify, place, (quad) =>
-            veil(index, Standing.Mark, quad),
-          );
+          standPiece(context, landmarkOn(index), middle, magnify, place, (quad) => {
+            pickOn(index, quad, false);
+            return veil(index, Standing.Mark, quad);
+          });
         }
 
         // A bush is drawn before whatever is standing beside it: it is
@@ -3164,6 +3254,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           const stood = person.quadOf(middle.x, middle.y, standingPerson);
           const alpha = veil(index, Standing.Person, stood);
 
+          pickOn(index, stood, true);
+
           if (!place(stood, alpha)) {
             person.draw(
               context,
@@ -3195,7 +3287,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // the sheet stand on one cell, with the dex height saying
             // how far this one is off ordinary
             const scale =
-              (CELL * sizeOf(getSpeciesData(standing.species).height) * middle.scale * magnify) /
+              (CELL * speciesSize(standing.species, sprite) * middle.scale * magnify) /
               SPRITE_STANDS;
             // The sheet's own shadow marker is the point that stands on
             // the ground, so putting it on the middle of the cell is
@@ -3242,6 +3334,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // of the board
             const stood = sprite.quadOf(middle.x, middle.y, placement);
             const alpha = veil(index, Standing.Spawn, stood);
+
+            pickOn(index, stood, true);
 
             if (!place(stood, alpha)) {
               sprite.draw(
@@ -3379,6 +3473,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           passed = true;
         }
       }
+
+      pickable = picks;
 
       if (announced) {
         props.onShiny?.();
@@ -3540,11 +3636,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       {/* The scene: the ground, the cliffs and everything standing on
           them, drawn with a depth buffer so a step up hides what is
           behind it however the camera is walked round */}
-      <canvas
-        ref={stage}
-        aria-hidden="true"
-        class="pointer-events-none absolute inset-0 block h-full w-full"
-      />
+      {/* A fresh canvas whenever the scene changes size, since a disposed scene loses its context */}
+      <For each={[edgeExtra()]}>
+        {() => (
+          <canvas
+            ref={stage}
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-0 block h-full w-full"
+          />
+        )}
+      </For>
       <canvas
         ref={canvas}
         // Focusable, so the chunk is still reachable by keyboard now
@@ -3607,6 +3708,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           }
           twist.down(event);
           if (!isTurningPress(event)) {
+            // Aimed now, while the board is where the player saw it: by
+            // the time the button comes up a walk has slid it along
+            if (event.isPrimary) {
+              pressed = { cell: aimAt(event), clientX: event.clientX, clientY: event.clientY };
+            }
             return;
           }
           event.preventDefault();
@@ -3644,7 +3750,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           }
           // A finger is not a cursor: a tap ends with the board lit
           // under wherever it landed, and nothing takes it away again
-          setHovered(event.pointerType === 'touch' ? null : cellAt(event));
+          pointer = event.pointerType === 'touch' ? null : event;
+          setHovered(pointer == null ? null : aimAt(pointer));
         }}
         onPointerUp={(event) => {
           twist.up(event);
@@ -3658,6 +3765,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           turning = null;
         }}
         onMouseLeave={() => {
+          pointer = null;
           setHovered(null);
         }}
         onKeyDown={(event) => {
@@ -3690,7 +3798,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             return;
           }
 
-          const cell = cellAt(event);
+          const held = pressed;
+
+          pressed = null;
+
+          // The cell the press went down on, unless the pointer wandered
+          // off it first, in which case it is wherever it came up
+          const cell =
+            held != null &&
+            Math.hypot(event.clientX - held.clientX, event.clientY - held.clientY) <= PRESS_SLOP
+              ? held.cell
+              : aimAt(event);
 
           if (cell != null) {
             props.onPress(cell);

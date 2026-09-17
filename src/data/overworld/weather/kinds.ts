@@ -111,7 +111,7 @@ export const WEATHER_DESCRIPTIONS: Record<Weather, string> = {
   [Weather.Rainbow]: 'An arc over open water, and one of the rarest skies there is.',
   [Weather.PollenDrift]: 'Pollen carried through the trees.',
   [Weather.MeteorShower]:
-    'The rarest sky there is. It favours every type, and doubles the odds of a shiny coat.',
+    'The rarest sky there is. It favours every type, and makes a shiny coat 8x as likely.',
   [Weather.FataMorgana]:
     'A mirage on dead-still air. It favours every type, and doubles hidden ability odds.',
   [Weather.DarkDay]:

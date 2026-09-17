@@ -11,7 +11,8 @@ import { registerMove } from '../__create';
 export default function registerGastroAcidToLastResort(): void {
   registerMove(Moves.GastroAcid, {
     name: 'Gastro Acid',
-    description: "Shuts off 1 of the target's abilities until it leaves the field.",
+    description:
+      "Shuts off 1 of the target's abilities, picked at random, for the rest of the fight.",
     type: Types.Poison,
     category: MoveCategories.Status,
     pp: 10,

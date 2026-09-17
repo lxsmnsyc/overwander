@@ -1,13 +1,8 @@
 import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
 import { Badge, Meta, Note, Row, Select, Slider, Switch } from '../styled';
-import {
-  CELL,
-  COLORS,
-  SPRITE_STANDS,
-  pictureWidth,
-  sizeOf,
-} from '../overworld/chunk-canvas/metrics';
+import { CELL, COLORS, SPRITE_STANDS, pictureWidth } from '../overworld/chunk-canvas/metrics';
 import { fitPicture, projectAir } from '../../canvas/board';
+import speciesSize from '../../canvas/species-size';
 import { SHADOW_STAMP, bakeShadowDisc } from '../overworld/chunk-canvas/scenery';
 import { castCorners, shadowCorners } from '../../canvas/placement';
 import { directionOf, litFrame } from '../../canvas/sprite-sheet';
@@ -299,8 +294,7 @@ export default function ShadowDemo(): JSX.Element {
         sprite.play(SpriteAnim.Idle, { direction: 'Down', loop: true });
 
         const scale =
-          (CELL * sizeOf(getSpeciesData(species()).height) * middle.scale * magnify * zoomed) /
-          SPRITE_STANDS;
+          (CELL * speciesSize(species(), sprite) * middle.scale * magnify * zoomed) / SPRITE_STANDS;
         const placement = { scale, anchor: 'shadow' } as const;
         const patch = sprite.shadowOf(middle.x, middle.y, {
           ...placement,

@@ -8,7 +8,7 @@ import {
 import Landmark from '../../data/overworld/landmark';
 import Npc, { npcSheet } from '../../data/overworld/npc';
 import { bossName, executiveName, gruntName } from '../../data/overworld/syndicate';
-import { TRAINER_NAMES, TYPE_TRAINER_LEVELS } from '../../data/overworld/trainers';
+import { TYPE_TRAINER_LEVELS, trainerNameIn } from '../../data/overworld/trainers';
 import type ChunkSnapshot from '../chunk-snapshot';
 import { RocketRank } from '../chunk-snapshot';
 
@@ -137,7 +137,7 @@ export function stopChallenger(
   if (landmark === Landmark.Trainer) {
     const trainer = snapshot.getTrainerClass(cell);
 
-    return named(trainer == null ? null : TRAINER_NAMES[trainer]);
+    return named(trainer == null ? null : trainerNameIn(trainer, sprite));
   }
   if (landmark === Landmark.GymLeader) {
     const leader = snapshot.getGymLeader(cell);

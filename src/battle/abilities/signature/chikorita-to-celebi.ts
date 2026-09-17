@@ -7,6 +7,7 @@ import { TeamStatuses } from '../../../data/ids/status';
 import {
   DamageFlags,
   MoveAttackFlags,
+  MoveCategories,
   MoveFlags,
   MoveTargets,
   Moves,
@@ -1023,18 +1024,22 @@ const chikoritaToCelebi = [
   }),
 
   // Swinub: the tusks go through the wall rather than round it, so the
-  // screen is gone for everybody afterwards. Torn down before the blow
-  // lands, the way Brick Break does it
+  // screen is gone for everybody afterwards. Torn down once the hit
+  // roll has passed but before the damage resolves, so a miss leaves
+  // the screens standing and the blow that lands is not reduced by them
   createAbility(Abilities.Icebreaker, (battle) =>
-    battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Pre, (event) => {
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Pre, (event) => {
+      const team = event.target.team;
+
       if (
-        event.target.type !== MoveTargetType.Unit ||
+        event.category === MoveCategories.Status ||
+        event.flags & MoveAttackFlags.Simulated ||
+        team.alliance === event.source.team.alliance ||
         !event.source.hasAbility(Abilities.Icebreaker)
       ) {
         return;
       }
 
-      const team = event.target.unit.team;
       const cause = {
         type: EffectType.Ability,
         ability: Abilities.Icebreaker,

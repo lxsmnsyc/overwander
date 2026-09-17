@@ -23,7 +23,7 @@ export type LatherResult =
  * The honey trees keep their markers in the berry ledger: a marker is a
  * cell in a landmark window, and what is written is the jar spent on it
  */
-function honeyPrefix(snapshot: ChunkSnapshot): string {
+export function honeyPrefix(snapshot: ChunkSnapshot): string {
   return `${snapshot.groundKey}@${snapshot.landmarkTimestamp}$honey`;
 }
 

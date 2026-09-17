@@ -24,7 +24,8 @@ const CANDY_ITEM_RESALE = 0.5;
 export default function registerCandyItems(): void {
   registerItem(Items.ExpShare, {
     name: 'Exp. Share',
-    description: 'Half the catches you make also feed the buddy carrying it a candy.',
+    description:
+      'While your buddy holds it, half the pokemon you catch also earn a candy for your buddy’s family.',
     type: ItemTypes.Held,
     icon: 'key/exp-share',
     flags: ItemFlags.Holdable | ItemFlags.Marketable,
@@ -34,7 +35,7 @@ export default function registerCandyItems(): void {
 
   registerItem(Items.LuckyEgg, {
     name: 'Lucky Egg',
-    description: 'Half the catches you make are worth an extra candy.',
+    description: 'While your buddy holds it, half the pokemon you catch earn an extra candy.',
     type: ItemTypes.Held,
     icon: 'held/lucky-egg',
     flags: ItemFlags.Holdable | ItemFlags.Marketable,

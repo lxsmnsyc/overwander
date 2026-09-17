@@ -3554,6 +3554,52 @@ describe('Icebreaker', () => {
     expect(teamB.status[TeamStatuses.Reflect]).toBeUndefined();
     expect(teamB.status[TeamStatuses.LightScreen]).toBeUndefined();
   });
+
+  it('leaves the screens up when it misses or aims a status move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    // Past Mega Punch's 85 accuracy, so the swing misses
+    pinRandom(battle, 0.99);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Icebreaker);
+
+    const screen = { type: EffectType.None } as const;
+    teamB.addStatus(TeamStatuses.Reflect, screen);
+    teamB.addStatus(TeamStatuses.LightScreen, screen);
+
+    holder.triggerMove(Moves.MegaPunch, unitTarget(enemy), 0);
+    battle.tick(turns(1));
+    holder.triggerMove(Moves.Growl, unitTarget(enemy), 0);
+    battle.tick(turns(1));
+
+    expect(enemy.health).toBe(enemy.checkStat(Stats.HP, 0));
+    expect(teamB.status[TeamStatuses.Reflect]).toBeDefined();
+    expect(teamB.status[TeamStatuses.LightScreen]).toBeDefined();
+  });
+
+  it('hits through the screens it tears down', () => {
+    const screened = createBattle();
+    const bare = createBattle();
+    const damage: number[] = [];
+
+    for (const [index, { battle, teamA, teamB }] of [screened, bare].entries()) {
+      pinRandom(battle, 0);
+      const holder = createUnit(battle, teamA);
+      const enemy = createUnit(battle, teamB);
+      holder.addAbility(Abilities.Icebreaker);
+
+      if (index === 0) {
+        teamB.addStatus(TeamStatuses.Reflect, { type: EffectType.None });
+      }
+
+      holder.triggerMove(Moves.Pound, unitTarget(enemy), 0);
+      battle.tick(turns(1));
+      damage.push(enemy.checkStat(Stats.HP, 0) - enemy.health);
+    }
+
+    expect(damage[0]).toBeGreaterThan(0);
+    expect(damage[0]).toBeCloseTo(damage[1], 5);
+  });
 });
 
 describe('Coral Bloom', () => {

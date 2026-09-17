@@ -35,7 +35,7 @@ export default function registerGen3Abilities(): void {
   // Electrike
   registerAbility(Abilities.Minus, {
     name: 'Minus',
-    description: '1.5x Special Attack while a teammate carries Plus or Minus.',
+    description: '1.5x Special Attack while a living teammate has Plus or Minus.',
   });
   // Sableye
   registerAbility(Abilities.Stall, {

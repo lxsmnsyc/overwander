@@ -39,7 +39,7 @@ import { describeItem } from '../details';
 import spendItemOn, { getLevelMoves, isUsableOn } from './use-item';
 import spentToast from './spent-toast';
 import { GameDialog, useGame } from '../app/game-context';
-import { Note, TabBar, TabButton, TabGroup, TabPane, useToast } from '../styled';
+import { Hint, HintList, Note, TabBar, TabButton, TabGroup, TabPane, useToast } from '../styled';
 
 export interface InventoryListProps {
   player: string;
@@ -368,10 +368,32 @@ function BagBody(
   return (
     <>
       <TabGroup horizontal defaultValue={BagView.Items} class="flex flex-col gap-3">
-        <TabBar>
-          <TabButton value={BagView.Items}>Items</TabButton>
-          <TabButton value={BagView.Candies}>Candies</TabButton>
-        </TabBar>
+        <div class="flex items-center gap-2">
+          <TabBar>
+            <TabButton value={BagView.Items}>Items</TabButton>
+            <TabButton value={BagView.Candies}>Candies</TabButton>
+          </TabBar>
+          <span class="ml-auto">
+            <Hint title="About the bag">
+              <HintList>
+                <li>Press an item you can use to pick the pokemon to use it on.</li>
+                <li>Medicine heals and cures. Poke Balls are thrown at wild pokemon.</li>
+                <li>Held items are given to a pokemon from its sheet.</li>
+                <li>
+                  Machines teach a move, and evolution items evolve the pokemon that need them.
+                </li>
+                <li>Training items change a pokemon's values or effort.</li>
+                <li>
+                  Fossils are revived by the Fossil Scientist, and valuables are only worth selling.
+                </li>
+                <li>
+                  Candies belong to a family. Every pokemon in that line spends the same pile to
+                  level up, and releasing one gives some back.
+                </li>
+              </HintList>
+            </Hint>
+          </span>
+        </div>
         <TabPane value={BagView.Items}>
           <Show when={props.items.latest?.length} fallback={<Note>Carrying nothing.</Note>}>
             <TabGroup

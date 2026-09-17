@@ -23,7 +23,7 @@ export default function registerGeodudeToMewMoves(): void {
   });
   registerMove(Moves.SelfDestruct, {
     name: 'Self-Destruct',
-    description: 'Hits everything opposite, and costs the user its own life.',
+    description: "Hits everything opposite and the user's teammates, and costs the user 200 HP.",
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 5,
@@ -36,7 +36,7 @@ export default function registerGeodudeToMewMoves(): void {
   });
   registerMove(Moves.Explosion, {
     name: 'Explosion',
-    description: 'Hits everything opposite, and costs the user its own life.',
+    description: "Hits everything opposite and the user's teammates, and costs the user 250 HP.",
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 5,
@@ -134,7 +134,7 @@ export default function registerGeodudeToMewMoves(): void {
   });
   registerMove(Moves.Clamp, {
     name: 'Clamp',
-    description: 'Binds the target: 1/8 of its HP a second for 4 seconds, and no escape.',
+    description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape.',
     type: Types.Water,
     category: MoveCategories.Physical,
     pp: 15,
@@ -194,7 +194,7 @@ export default function registerGeodudeToMewMoves(): void {
   });
   registerMove(Moves.Bind, {
     name: 'Bind',
-    description: 'Binds the target: 1/8 of its HP a second for 4 seconds, and no escape.',
+    description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 20,

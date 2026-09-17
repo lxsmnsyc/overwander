@@ -55,11 +55,12 @@ export default function registerBalls(): void {
     buy: 200,
     sell: 100,
   });
-  // Heals the catch on capture
+  // Heals the buddy on a catch
   registerItem(Items.HealBall, {
     name: 'Heal Ball',
     type: ItemTypes.PokeBall,
-    description: 'Catches like a plain ball, and the catch arrives whole.',
+    description:
+      'Catches like a plain ball, and restores your buddy to full HP with its status cleared.',
     icon: 'balls/heal',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 300,
@@ -115,21 +116,21 @@ export default function registerBalls(): void {
     buy: 1000,
     sell: 500,
   });
-  // Grows stronger the longer the encounter runs
+  // Grows with every throw or feeding at the encounter
   registerItem(Items.TimerBall, {
     name: 'Timer Ball',
     type: ItemTypes.PokeBall,
-    description: 'Grows every turn the encounter runs, up to 4x.',
+    description: 'Grows about 0.3x with each throw or feeding at this encounter, up to 4x.',
     icon: 'balls/timer',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
     sell: 500,
   });
-  // Strongest on the opening turn
+  // Strongest before anything has been thrown or fed
   registerItem(Items.QuickBall, {
     name: 'Quick Ball',
     type: ItemTypes.PokeBall,
-    description: '5x on the opening turn, plain afterwards.',
+    description: '5x before anything has been thrown or fed at this encounter, plain afterwards.',
     icon: 'balls/quick',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
@@ -162,7 +163,7 @@ export default function registerBalls(): void {
   registerItem(Items.MoonBall, {
     name: 'Moon Ball',
     type: ItemTypes.PokeBall,
-    description: '4x on a species a Moon Stone evolves.',
+    description: '4x on any member of a line that evolves with a Moon Stone.',
     icon: 'balls/moon',
     flags: ItemFlags.Usable | ItemFlags.Consumable,
     buy: 0,
@@ -172,7 +173,8 @@ export default function registerBalls(): void {
   registerItem(Items.FriendBall, {
     name: 'Friend Ball',
     type: ItemTypes.PokeBall,
-    description: 'Catches like a Poke Ball; what it holds arrives at 200 friendship.',
+    description:
+      'Catches like a plain ball. What it holds arrives at 200 friendship, unless it is a shadow.',
     icon: 'balls/friend',
     flags: ItemFlags.Usable | ItemFlags.Consumable,
     buy: 0,

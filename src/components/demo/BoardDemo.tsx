@@ -10,7 +10,8 @@ import type { SpawnCoat } from '../overworld/chunk-canvas/scenery';
 import { BOARD_CELLS, BOARD_CENTER, boardIndexOf, viewFor } from '../../canvas/board';
 import { SLIDE_PACE } from '../overworld/chunk-canvas/metrics';
 import { findPathNear } from '../../overworld/path';
-import { BOARD_MARGIN } from '../overworld/overworld-tab/metrics';
+import { boardMargin } from '../overworld/overworld-tab/metrics';
+import settings, { type BoardEdge, setSetting } from '../app/settings';
 import World, { Generation } from '../../overworld/world';
 import { WORLD_SEED } from '../../overworld/current';
 import { CHUNK_CELLS, chunkOfCell, worldCell } from '../../overworld/chunk';
@@ -314,6 +315,12 @@ const STEPS = new Map<string, [number, number]>([
   ['d', [1, 0]],
 ]);
 
+const EDGE_OPTIONS: { value: BoardEdge; label: string }[] = [
+  { value: 'haze', label: 'Haze' },
+  { value: 'full', label: 'Full board' },
+  { value: 'plain', label: 'Plain' },
+];
+
 export default function BoardDemo(): JSX.Element {
   const [frame, setFrame] = createSignal(0);
   const [wanted, setWanted] = createSignal<Biome>(BiomeId.TemperateForest);
@@ -348,7 +355,13 @@ export default function BoardDemo(): JSX.Element {
   const ground = createMemo<BoardGround>(() => {
     const [originX, originY] = origin();
 
-    return readBoardGround(world(), originX, originY, BOARD_MARGIN, BOARD_CELLS);
+    return readBoardGround(
+      world(),
+      originX,
+      originY,
+      boardMargin(settings().boardEdge),
+      BOARD_CELLS,
+    );
   });
   const decorations = createMemo(() => {
     const [originX, originY] = origin();
@@ -523,6 +536,15 @@ export default function BoardDemo(): JSX.Element {
           onChange={(chosen) => {
             setWanted(chosen);
             goTo(chosen);
+          }}
+        />
+        <Select
+          label="Board edge"
+          class="w-56"
+          value={settings().boardEdge}
+          options={EDGE_OPTIONS}
+          onChange={(chosen) => {
+            setSetting('boardEdge', chosen);
           }}
         />
         <Select

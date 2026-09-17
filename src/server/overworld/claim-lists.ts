@@ -2,12 +2,13 @@ import 'server-only';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../overworld/chunk-snapshot';
 import getWorld, { WORLD_GENERATION } from '../../overworld/current';
 import { Depth } from '../../overworld/depth';
-import { asOffset, toLocalTime, toZoneKey } from '../../auth/local-time';
+import { asOffset, toLocalTime } from '../../auth/local-time';
 import { CLAIM_CHUNK_LIMIT } from '../../auth/snapshot-record';
 import { getSql } from '../db';
-import { asNumber, asString } from '../read';
+import { asString } from '../read';
 import { berryPrefix } from './berries';
 import { cachePrefix } from './caches';
+import { honeyPrefix } from './honey';
 import { phenomenonPrefix } from './phenomena';
 
 /** What a player has already taken out of one chunk this window, by cell */
@@ -15,6 +16,8 @@ export interface ChunkClaims {
   phenomena: number[];
   patches: number[];
   caches: number[];
+  /** Honey trees lathered, kept in the berry ledger under their own prefix */
+  honey: number[];
 }
 
 /** A chunk whose claims are asked for */
@@ -43,11 +46,13 @@ function cellsUnder(markers: string[], prefix: string): number[] {
 
 /**
  * Which cells of many chunks this player has already taken something
- * from, inside each chunk's live window.
+ * from this window.
  *
- * One read for the windows and one per kind of claim, whatever the number
- * of chunks. Answers in the order asked, and empty for a chunk with no
- * live window, since nothing in it can have been claimed
+ * One read per kind of claim, whatever the number of chunks. A claim is
+ * stamped with its landmark or phenomenon window, which the clock alone
+ * decides, so a chunk nobody has published this quarter hour still
+ * answers: the board draws its caches and honey trees all the same.
+ * Answers in the order asked
  */
 export async function listChunkClaims(
   uid: string,
@@ -63,40 +68,14 @@ export async function listChunkClaims(
   const zone = asOffset(offset);
   const world = getWorld(depth);
   const sql = getSql();
-  const seeds: string[] = [];
-  const pieces = [];
+  const current = Math.floor(toLocalTime(now, zone) / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
+  const snapshots: ChunkSnapshot[] = [];
 
   for (const { x, y } of chunks) {
-    const chunk = world.getChunk(x, y);
-
-    pieces.push(chunk);
-    seeds.push(chunk.seed);
+    snapshots.push(new ChunkSnapshot(world.getChunk(x, y), current, zone));
   }
-  if (seeds.length === 0) {
+  if (snapshots.length === 0) {
     return [];
-  }
-
-  const windows = new Map<string, number>();
-
-  for (const row of await sql`
-    select chunk_seed, window_at from snapshots
-    where generation = ${WORLD_GENERATION} and zone = ${toZoneKey(zone)}
-      and chunk_seed = any(${seeds})
-  `) {
-    windows.set(asString(row.chunk_seed), asNumber(row.window_at));
-  }
-
-  // The same expiry `resolveSnapshot` applies to one chunk
-  const snapshots: (ChunkSnapshot | null)[] = [];
-
-  for (const chunk of pieces) {
-    const timestamp = windows.get(chunk.seed) ?? 0;
-
-    snapshots.push(
-      timestamp === 0 || toLocalTime(now, zone) >= timestamp + SNAPSHOT_INTERVAL
-        ? null
-        : new ChunkSnapshot(chunk, timestamp, zone),
-    );
   }
 
   const markers = async (
@@ -106,12 +85,7 @@ export async function listChunkClaims(
     const patterns: string[] = [];
 
     for (const snapshot of snapshots) {
-      if (snapshot != null) {
-        patterns.push(`${prefixOf(snapshot)}%`);
-      }
-    }
-    if (patterns.length === 0) {
-      return [];
+      patterns.push(`${prefixOf(snapshot)}%`);
     }
 
     const found: string[] = [];
@@ -125,23 +99,21 @@ export async function listChunkClaims(
     return found;
   };
 
-  const [phenomena, patches, caches] = await Promise.all([
+  const [phenomena, patches, caches, honey] = await Promise.all([
     markers('phenomenon_claims', phenomenonPrefix),
     markers('berry_claims', berryPrefix),
     markers('cache_claims', cachePrefix),
+    markers('berry_claims', honeyPrefix),
   ]);
   const answers: ChunkClaims[] = [];
 
   for (const snapshot of snapshots) {
-    answers.push(
-      snapshot == null
-        ? { phenomena: [], patches: [], caches: [] }
-        : {
-            phenomena: cellsUnder(phenomena, phenomenonPrefix(snapshot)),
-            patches: cellsUnder(patches, berryPrefix(snapshot)),
-            caches: cellsUnder(caches, cachePrefix(snapshot)),
-          },
-    );
+    answers.push({
+      phenomena: cellsUnder(phenomena, phenomenonPrefix(snapshot)),
+      patches: cellsUnder(patches, berryPrefix(snapshot)),
+      caches: cellsUnder(caches, cachePrefix(snapshot)),
+      honey: cellsUnder(honey, honeyPrefix(snapshot)),
+    });
   }
   return answers;
 }

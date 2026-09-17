@@ -376,6 +376,11 @@ export default class SpeciesSpriteAnimation {
     return this.clips.has(name);
   }
 
+  /** How tall a clip is painted before scaling, or 0 for one this sheet lacks */
+  heightOf(name: SpriteAnim): number {
+    return this.clips.get(name)?.target.frameHeight ?? 0;
+  }
+
   /**
    * What is playing, or null before anything has been asked for
    */

@@ -143,6 +143,17 @@ export interface ProfileTabProps {
   section?: ProfileSection;
 }
 
+/** The top-level tab a section opens under: the sub-tabs open their parent */
+function outerSection(section: ProfileSection | undefined): ProfileSection {
+  if (section === ProfileSection.Bids || section === ProfileSection.Selling) {
+    return ProfileSection.Auction;
+  }
+  if (section === ProfileSection.Requests) {
+    return ProfileSection.Friends;
+  }
+  return section ?? ProfileSection.Battles;
+}
+
 /**
  * Who the player is: their details and balance, who is walking with
  * them, and — under an inner tab — what they have fought and what they
@@ -228,13 +239,10 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
 
   /**
    * The open tab, held here rather than by the group so a group built
-   * again keeps its place. Bids and selling open under the auction tab
+   * again keeps its place. Bids and selling open under the auction tab,
+   * and requests under the friends tab
    */
-  const [open, setOpen] = createSignal(
-    props.section === ProfileSection.Bids || props.section === ProfileSection.Selling
-      ? ProfileSection.Auction
-      : (props.section ?? ProfileSection.Battles),
-  );
+  const [open, setOpen] = createSignal(outerSection(props.section));
 
   const leave = (): void => {
     setError(null);
@@ -415,9 +423,8 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           <TabBar>
             <TabButton value={ProfileSection.Battles}>Battles</TabButton>
             <TabButton value={ProfileSection.Awards}>Awards</TabButton>
-            <TabButton value={ProfileSection.Friends}>Friends</TabButton>
-            <TabButton value={ProfileSection.Requests}>
-              Friend Requests
+            <TabButton value={ProfileSection.Friends}>
+              Friends
               {/* The count of what is waiting, on the tab itself:
                   a request nobody is told about is one nobody
                   answers */}
@@ -465,14 +472,35 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                 </Button>
               }
             >
-              <FriendsTab player={props.player} />
-            </Card>
-          </TabPane>
-          {/* Both directions: what has been asked of the player, and
-              what they have asked and can still take back */}
-          <TabPane value={ProfileSection.Requests}>
-            <Card title="Friend Requests">
-              <RequestsTab waiting={asking()} />
+              <TabGroup
+                horizontal
+                defaultValue={
+                  props.section === ProfileSection.Requests
+                    ? ProfileSection.Requests
+                    : ProfileSection.Friends
+                }
+                class="flex flex-col gap-3"
+              >
+                <TabBar>
+                  <TabButton value={ProfileSection.Friends}>Friends</TabButton>
+                  <TabButton value={ProfileSection.Requests}>
+                    Requests
+                    <Show when={asking().incoming.length > 0}>
+                      <Badge tone="ember" class="ml-1.5">
+                        {asking().incoming.length}
+                      </Badge>
+                    </Show>
+                  </TabButton>
+                </TabBar>
+                <TabPane value={ProfileSection.Friends}>
+                  <FriendsTab player={props.player} />
+                </TabPane>
+                {/* Both directions: what has been asked of the player,
+                    and what they have asked and can still take back */}
+                <TabPane value={ProfileSection.Requests}>
+                  <RequestsTab waiting={asking()} />
+                </TabPane>
+              </TabGroup>
             </Card>
           </TabPane>
           {/* What the player has bid on, and what they have put on the

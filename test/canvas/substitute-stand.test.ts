@@ -66,6 +66,8 @@ function sheet(
     finished: false,
     playing: null,
     frameSize: { width: 40, height: 40 },
+    // No idle pose to measure, so it is drawn at the slot's own scale
+    heightOf: () => 0,
     has: () => true,
     play: () => true,
     stop: () => {},
@@ -109,7 +111,7 @@ describe('a substituted pokemon', () => {
     const dolls: { at: [number, number]; alpha: number }[] = [];
 
     // Nothing standing in front: the pokemon is drawn whole and alone
-    drawSlot(context, slotOf(unit, sheet(bodies, context), null), new Map(), 0);
+    drawSlot(context, slotOf(unit, sheet(bodies, context), null), new Map(), 0, new Map());
     expect(bodies).toHaveLength(1);
     expect(bodies[0].alpha).toBe(1);
     expect(dolls).toHaveLength(0);
@@ -122,6 +124,7 @@ describe('a substituted pokemon', () => {
       slotOf(unit, sheet(bodies, context), { sprite: sheet(dolls, context), share: 0.5 }),
       new Map(),
       0,
+      new Map(),
     );
     expect(bodies).toHaveLength(1);
     expect(dolls).toHaveLength(1);
@@ -138,6 +141,7 @@ describe('a substituted pokemon', () => {
       slotOf(unit, sheet(bodies, context), { sprite: sheet(dolls, context), share: 1 }),
       new Map(),
       0,
+      new Map(),
     );
     expect(dolls[0].alpha).toBe(1);
     expect(bodies[0].alpha).toBeGreaterThan(0);

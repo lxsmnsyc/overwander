@@ -22,7 +22,7 @@ export default function registerDragonClawToPsychoBoost(): void {
   });
   registerMove(Moves.FrenzyPlant, {
     name: 'Frenzy Plant',
-    description: 'The user has to recharge afterwards.',
+    description: 'The user has to recharge for 2 seconds afterwards.',
     type: Types.Grass,
     category: MoveCategories.Special,
     power: 150,
@@ -44,7 +44,8 @@ export default function registerDragonClawToPsychoBoost(): void {
   });
   registerMove(Moves.Bounce, {
     name: 'Bounce',
-    description: 'Springs up out of reach, then comes down on the target. 30% to paralyse.',
+    description:
+      'Springs up out of reach, like Fly, then comes down on the target. 30% to paralyse.',
     type: Types.Flying,
     category: MoveCategories.Physical,
     power: 85,
@@ -197,7 +198,7 @@ export default function registerDragonClawToPsychoBoost(): void {
   });
   registerMove(Moves.DoomDesire, {
     name: 'Doom Desire',
-    description: 'Lands on the target 4 seconds later, whatever is standing there by then.',
+    description: 'Lands 4 seconds after it is cast, wherever the target is by then.',
     type: Types.Steel,
     category: MoveCategories.Special,
     power: 140,

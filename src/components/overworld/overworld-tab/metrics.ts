@@ -1,6 +1,13 @@
 import Landmark from '../../../data/overworld/landmark';
-import { BOARD_CELLS, BOARD_CENTER, BOARD_RADIUS } from '../../../overworld/board';
+import {
+  BOARD_CELLS,
+  BOARD_CENTER,
+  BOARD_RADIUS,
+  FULL_BOARD_EXTRA,
+} from '../../../overworld/board';
+import type { BoardEdge } from '../../app/settings';
 import { CHUNK_CELLS } from '../../../overworld/chunk';
+import { MAX_STEP_REPORT } from '../../../auth/egg';
 
 /**
  * The landmarks a player fights somebody at, all served by the one
@@ -51,6 +58,11 @@ export const PLAYER_CELL = BOARD_CENTER * BOARD_CELLS + BOARD_CENTER;
  */
 export const BOARD_MARGIN = 1;
 
+/** The same, for a board edge setting: the full board reads the ground it draws past the board */
+export function boardMargin(edge: BoardEdge): number {
+  return edge === 'full' ? BOARD_MARGIN + FULL_BOARD_EXTRA : BOARD_MARGIN;
+}
+
 /**
  * Where a player entering a chunk without a stored position starts
  */
@@ -65,12 +77,11 @@ export const SAVE_DELAY = 1500;
 
 /**
  * How many paces are walked before the egg being carried is told
- * about them. Reporting every cell would be a write per keypress;
- * reporting in batches costs the walker nothing, since the server
- * credits against the time that passed rather than the moment the
- * report arrived
+ * about them: as many as the server credits in one report. Batching
+ * costs the walker nothing, since the server credits against the time
+ * that passed, and a stop sends whatever is left with the position
  */
-export const STEP_REPORT_SIZE = 8;
+export const STEP_REPORT_SIZE = MAX_STEP_REPORT;
 
 /**
  * How often the chunk may be asked for while the player is playing.
@@ -118,3 +129,10 @@ export const TOWN_NAME_PACE = 60_000;
  * a chunk and back into it without asking the server again
  */
 export const CLAIM_MEMORY = 64;
+
+/**
+ * How long a chunk's landmark standings are trusted, in milliseconds.
+ * Long enough that pacing across a chunk line reads nothing, short
+ * enough that a seat another player took shows up soon after
+ */
+export const STANDINGS_MEMORY = 2 * 60 * 1000;

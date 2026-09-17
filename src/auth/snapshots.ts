@@ -771,7 +771,7 @@ const readChunkClaims = batchedQuery(
     listClaimsOnServer(await getIdToken(), queries),
   // Answered in the order asked, so a query's place in the batch is its answer
   (answers, _query, index): ChunkClaims =>
-    answers.at(index) ?? { phenomena: [], patches: [], caches: [] },
+    answers.at(index) ?? { phenomena: [], patches: [], caches: [], honey: [] },
   { key: claimKey, limit: CLAIM_CHUNK_LIMIT },
 );
 
@@ -813,16 +813,11 @@ export async function listClaimedItemCaches(snapshot: ChunkSnapshot): Promise<nu
 
 /** Which of this chunk's honey trees this player has lathered this window */
 export async function listLatheredHoneyTrees(snapshot: ChunkSnapshot): Promise<number[]> {
-  return listLatheredOnServer(
-    await getIdToken(),
-    snapshot.chunk.x,
-    snapshot.chunk.y,
-    snapshot.offset,
-  );
+  return (await claimsOf(snapshot)).honey;
 }
 
-// After the claim lists, since main's server functions already hold the earlier places
-async function listLatheredOnServer(
+// Nothing calls it since honey joined the batched claim lists, but it keeps its place
+export async function listLatheredOnServer(
   token: string,
   x: number,
   y: number,

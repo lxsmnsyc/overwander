@@ -8,6 +8,7 @@ import { getSql } from '../db';
 import { asNumber, asString } from '../read';
 import { berryPrefix } from './berries';
 import { cachePrefix } from './caches';
+import { honeyPrefix } from './honey';
 import { phenomenonPrefix } from './phenomena';
 
 /** What a player has already taken out of one chunk this window, by cell */
@@ -15,6 +16,8 @@ export interface ChunkClaims {
   phenomena: number[];
   patches: number[];
   caches: number[];
+  /** Honey trees lathered, kept in the berry ledger under their own prefix */
+  honey: number[];
 }
 
 /** A chunk whose claims are asked for */
@@ -125,21 +128,23 @@ export async function listChunkClaims(
     return found;
   };
 
-  const [phenomena, patches, caches] = await Promise.all([
+  const [phenomena, patches, caches, honey] = await Promise.all([
     markers('phenomenon_claims', phenomenonPrefix),
     markers('berry_claims', berryPrefix),
     markers('cache_claims', cachePrefix),
+    markers('berry_claims', honeyPrefix),
   ]);
   const answers: ChunkClaims[] = [];
 
   for (const snapshot of snapshots) {
     answers.push(
       snapshot == null
-        ? { phenomena: [], patches: [], caches: [] }
+        ? { phenomena: [], patches: [], caches: [], honey: [] }
         : {
             phenomena: cellsUnder(phenomena, phenomenonPrefix(snapshot)),
             patches: cellsUnder(patches, berryPrefix(snapshot)),
             caches: cellsUnder(caches, cachePrefix(snapshot)),
+            honey: cellsUnder(honey, honeyPrefix(snapshot)),
           },
     );
   }

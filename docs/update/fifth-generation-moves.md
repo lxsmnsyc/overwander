@@ -32,6 +32,13 @@ Techno Blast comes out as: Douse, Shock, Burn and Chill.
 - **Quick Guard** turns away moves with a shortened wind-up.
 - **Wonder Room and Magic Room** end when they are cast a second time.
 
+### A raid boss keeps its footing
+
+- **A boss is never staged** with Final Gambit, Quash, Guard Split, Power Split,
+  After You, Ally Switch or Bestow.
+- **It shrugs off** Quash, Sky Drop, Guard Split and Power Split aimed at it.
+- **Me First** no longer cuts a boss's move off.
+
 ## Three more starters
 
 Nine species, each with its learnset, its sprites and a candy of its own. **A
@@ -46,6 +53,18 @@ new trainer now picks a starter from fifteen.**
   stages when its first move lands.
 - Serperior also reaches Infiltrator and Unnerve, Emboar reaches Iron Fist, and
   Samurott reaches Swift Swim and Sniper. None of those is in the mainline.
+
+## Trainers play them better
+
+- **A move that raises several stats**, such as Dragon Dance or Calm Mind, is
+  still worth using once one of those stats is full.
+- **Follow Me, Role Play and Skill Swap** are left alone when there is nobody to
+  pull for and nothing to copy.
+- **A built expert team reads its own abilities.** It counts a rampage at full
+  power, skips a drawback its ability prevents, drops a move its ability ruins,
+  and carries a move that suits a teammate, such as Swagger for Own Tempo.
+- **An expert weighs recoil** against the HP the pokemon has, for Flare Blitz,
+  Brave Bird, Wood Hammer and Head Smash.
 
 ## Moves look like themselves
 
@@ -74,6 +93,18 @@ does.
 
 **Kanto, Johto and Hoenn** learn the new moves by level, machine, tutor and egg,
 the way Black, White, Black 2 and White 2 teach them.
+
+## Fixes along the way
+
+- **A fight's top bar fits a phone.** The health bars take a row of their own,
+  so the speed buttons and Leave stay reachable.
+- **A catch sheet and a dex entry** draw a pokemon at its real height, standing
+  on the portrait's floor, and a move's category badge stands as tall as its
+  name.
+- **Sprite sheets are kept by the browser** instead of being checked on every
+  visit, and a repacked sheet is still picked up.
+- **A raid host who lost can host the lair again**, rather than being sent back
+  to the fight they lost.
 
 ## See also
 

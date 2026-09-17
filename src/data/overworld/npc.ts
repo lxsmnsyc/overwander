@@ -306,12 +306,6 @@ export const DAYCARE_FEE = 2500;
 export const GROOMING_FEE = 2500;
 
 /**
- * The most Nurse Joy takes in one handover: a party's worth. The cap
- * is the request's, not hers — she heals as often as she is asked
- */
-export const NURSE_CARE_LIMIT = 6;
-
-/**
  * What the Move Reminder charges, and the only thing he takes. He is
  * the one wanderer whose price is not gold: a scale is dug out of the
  * ground and nothing sells one, so what paces him is walking rather

@@ -2,7 +2,7 @@ import 'server-only';
 import { asCaughtPokemon } from '../../auth/caught-record';
 import { boostedSteps, stepsRemaining } from '../../auth/egg';
 import { getMaxHealth, needsCare } from '../../auth/health';
-import Npc, { DAYCARE_FEE, NURSE_CARE_LIMIT } from '../../data/overworld/npc';
+import Npc, { DAYCARE_FEE } from '../../data/overworld/npc';
 import { isPurifiable, purifyIVs } from '../../data/items/purifying-gem';
 import { isEggRecord, isGuardedRecord } from '../catch-fields';
 import { readCaughtIn, readCaughtMany, updateCaughtIn } from '../caught-io';
@@ -65,11 +65,9 @@ function tended(
 }
 
 /**
- * Walk a party up to Nurse Joy. She takes up to `NURSE_CARE_LIMIT` in
- * one handover, hands every one back at full health with nothing left
- * on it, and purifies any shadow among them — all of it for nothing,
- * as often as she is asked. The cap is the handover's, not hers: she
- * turns nobody away while she is standing there.
+ * Walk any number of pokemon up to Nurse Joy. She hands every one back
+ * at full health with nothing left on it, and purifies any shadow among
+ * them, all of it for nothing and as often as she is asked.
  *
  * Resolves the ids she tended, or null when she is not standing there,
  * none of them are the player's to hand over, or there was nothing to
@@ -84,7 +82,7 @@ export async function visitNurse(
   now: number,
   offset: number,
 ): Promise<string[] | null> {
-  if (catches.length === 0 || catches.length > NURSE_CARE_LIMIT) {
+  if (catches.length === 0) {
     return null;
   }
   // The same pokemon twice would be one write racing another
@@ -98,8 +96,7 @@ export async function visitNurse(
     return null;
   }
 
-  // The whole handover in one read: she takes six at once, and asking
-  // for them one at a time is two round trips each
+  // The whole handover in one read, however many she is handed
   const stored = await readCaughtMany(getSql(), catches);
   const care: [string, Record<string, unknown>, boolean][] = [];
 

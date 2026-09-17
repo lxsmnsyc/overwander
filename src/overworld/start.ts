@@ -2,7 +2,8 @@ import { type RandomSource, sourceOf } from '../core/draws';
 import type Chunk from './chunk';
 import { CELL_COUNT, CHUNK_CELLS } from './chunk';
 import { blocksWalk } from './cliff';
-import { worldCell } from './grid';
+import { cellInChunk, chunkOfCell, worldCell } from './grid';
+import { TOWN_REGION, townOfRegion } from './town';
 import type World from './world';
 
 /**
@@ -13,6 +14,12 @@ import type World from './world';
  */
 export const START_AREA = 1000;
 
+/**
+ * How many regions are tried for a town before the start falls back to
+ * open country. Most regions hold one, so this is a guard, not a budget
+ */
+const TOWN_TRIES = 64;
+
 export interface StartPosition {
   chunkX: number;
   chunkY: number;
@@ -21,7 +28,8 @@ export interface StartPosition {
 }
 
 /**
- * Where a player first steps into the overworld.
+ * Where a player first steps into the overworld: beside the plaza of a
+ * random town in the starting area.
  *
  * The draw is whatever seed the caller hands it, and the caller hands
  * it a **random** one: two players who start on the same day start in
@@ -36,6 +44,28 @@ export interface StartPosition {
 export default function pickStartPosition(world: World, seed: string): StartPosition {
   const draws = world.draws(`${seed}start`);
   const half = START_AREA / 2;
+  const regions = Math.floor(START_AREA / TOWN_REGION);
+  const regionHalf = Math.floor(regions / 2);
+
+  // A random town, which has a Pokémon Center and a portal and is never
+  // built at sea. Open country only if no town turns up
+  for (let tried = 0; tried < TOWN_TRIES; tried++) {
+    const regionX = Math.floor(draws.random('regionX') * regions) - regionHalf;
+    const regionY = Math.floor(draws.random('regionY') * regions) - regionHalf;
+    const town = townOfRegion(world, regionX, regionY);
+
+    if (town != null) {
+      const chunkX = chunkOfCell(town.x);
+      const chunkY = chunkOfCell(town.y);
+
+      // The plaza's middle is the portal, so the nearest free cell to it
+      return {
+        chunkX,
+        chunkY,
+        ...nearestFreeCell(world, chunkX, chunkY, cellInChunk(town.x), cellInChunk(town.y)),
+      };
+    }
+  }
   // The draws land in order: the chunk coordinates, then the cell
   const chunkX = Math.floor(draws.random('chunkX') * START_AREA) - half;
   const chunkY = Math.floor(draws.random('chunkY') * START_AREA) - half;

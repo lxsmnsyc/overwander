@@ -381,8 +381,8 @@ answers `Npc.Vendor` for a `Market` one.
   with the jump, since those steps were not walked and the time they would have
   taken must not be banked for the next report.
 
-- **Nurse Joy** takes the player's pokemon a press at a time, up to
-  `NURSE_CARE_LIMIT` (6) per handover, and charges **nothing**. Each comes back
+- **Nurse Joy** takes any number of the player's pokemon in one handover (up to
+  the 200 a single call may carry) and charges **nothing**. Each comes back
   at full health with its statuses cleared, and a shadow is
   [purified](catches.md#purifying-a-shadow) on the way. Nothing paces her: she
   takes no marker and turns nobody away, and one that needed nothing is handed

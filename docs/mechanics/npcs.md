@@ -87,8 +87,8 @@ evolution stones, by contrast, do carry a price, so a spare one is worth gold.
 and she is standing behind its counter whatever the hour. The open country has
 none at all, so being patched up is a reason to walk back into town.
 
-She charges nothing, takes up to six pokemon in one handover, and turns nobody
-away however often they come back. What she hands back is at full health with
+She charges nothing, takes as many pokemon as you bring in one handover, and
+turns nobody away however often they come back. What she hands back is at full health with
 nothing left on it, and a shadow among them is purified on the way.
 
 ## The specialists
@@ -97,7 +97,7 @@ nothing left on it, and a shadow among them is purified on the way.
 | -------------------- | ---------------------------------------- | ------------------------------------------ |
 | **Breeder**          | Two pokemon, 5,000 gold                  | An egg; both parents returned immediately  |
 | **Daycare Lady**     | An egg, 2,500 gold                       | Half of the walk that remained             |
-| **Nurse Joy**        | Any number, one at a time, free          | Each healed, and any shadow purified       |
+| **Nurse Joy**        | Any number at once, free                 | Each healed, and any shadow purified       |
 | **Groomer**          | One pokemon, 2,500 gold                  | Half of the friendship it had left to gain |
 | **Move Reminder**    | One Heart Scale                          | A level-up move the pokemon has lost       |
 | **Move Tutor**       | One Heart Scale                          | Any move a machine could teach it          |
@@ -108,8 +108,8 @@ nothing left on it, and a shadow among them is purified on the way.
 | **Kurt**             | A basket of apricorns, free              | One ball per apricorn, of that colour      |
 
 **Nurse Joy** charges nothing and heals everything: full health, statuses
-cleared, and any shadow pokemon purified on the way. Six pokemon to a handover,
-and as many handovers as you like while she is standing there.
+cleared, and any shadow pokemon purified on the way. As many pokemon as you
+bring, and as many handovers as you like while she is standing there.
 
 **The Groomer** always adds half of what friendship remains, so he is worth a
 great deal to a pokemon fresh out of a ball and almost nothing to one that is

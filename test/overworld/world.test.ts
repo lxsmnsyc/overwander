@@ -2369,6 +2369,19 @@ describe('world', () => {
     const chunk = world.getChunk(start.chunkX, start.chunkY);
 
     expect(chunk.getLandmarkAt(start.cellX, start.cellY)).toBeNull();
+
+    // In a town, so a first step is somewhere with a Pokémon Center and a way out
+    for (const uid of ['player-uid', 'other-uid', 'third-uid']) {
+      const placed = pickStartPosition(world, uid);
+
+      expect(
+        townAt(
+          world,
+          worldCell(placed.chunkX, placed.cellX),
+          worldCell(placed.chunkY, placed.cellY),
+        ),
+      ).not.toBeNull();
+    }
     // The same holds wherever anything is put down without walking
     // there, which is what a teleport is
     for (let at = 0; at < 100; at++) {

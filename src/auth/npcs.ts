@@ -6,6 +6,7 @@ import { WORLD_GENERATION } from '../overworld/current';
 import { requireUid } from '../server/auth';
 import check, {
   BASKET,
+  CATCH_LIST,
   CELL,
   CHUNK_COORDINATE,
   COUNT,
@@ -15,7 +16,6 @@ import check, {
   NPC,
   OFFSET,
   PARENTS,
-  PARTY,
   REPLACED_SLOT,
   TOKEN,
 } from '../server/validate';
@@ -162,14 +162,13 @@ async function boostOnServer(
 }
 
 /**
- * Hand a party to Nurse Joy. Up to `NURSE_CARE_LIMIT` of them per
- * handover come back at full health with nothing left on them, and
- * any shadow among them comes back purified — the Shadow ability
- * replaced, the doubled candy cost gone, every value 2 higher, and
- * the friendship a shadow never arrived with handed over.
+ * Hand pokemon to Nurse Joy, as many as the player likes. They come
+ * back at full health with nothing left on them, and any shadow among
+ * them comes back purified: the Shadow ability replaced, the doubled
+ * candy cost gone, every value 2 higher, and the friendship a shadow
+ * never arrived with handed over.
  *
- * She takes nothing for it and turns nobody away: the cap is the
- * handover's, and there is no limit on how often she is asked.
+ * She takes nothing for it and turns nobody away.
  *
  * Resolves the ids she actually tended, or null when she is not
  * standing there or there was nothing to do
@@ -202,7 +201,7 @@ async function visitNurseOnServer(
   check(CHUNK_COORDINATE, x);
   check(CHUNK_COORDINATE, y);
   check(CELL, cell);
-  check(PARTY, catches);
+  check(CATCH_LIST, catches);
   check(OFFSET, offset);
   const uid = await requireUid(token);
 

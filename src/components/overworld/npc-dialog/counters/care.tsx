@@ -97,7 +97,7 @@ export function NurseCounter(props: NurseCounterProps): JSX.Element {
 
           A shadow is left out entirely: purifying one is permanent and
           is the Purifying Gem's business, not something to be swept up
-          in a heal of six */}
+          in a heal */}
       <CatchPicker
         inline
         multiple

@@ -41,6 +41,12 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.ShadowBall,
   Moves.Substitute,
+  Moves.Captivate,
+  Moves.Defog,
+  Moves.NaturalGift,
+  Moves.OminousWind,
+  Moves.Pluck,
+  Moves.Tailwind,
 ];
 
 export default function registerHoothootSpecies(): void {
@@ -82,7 +88,11 @@ export default function registerHoothootSpecies(): void {
         16: [Moves.Hypnosis],
         22: [Moves.Reflect],
         28: [Moves.TakeDown],
+        29: [Moves.AirSlash],
+        33: [Moves.ZenHeadbutt],
         34: [Moves.Confusion],
+        41: [Moves.PsychoShift],
+        45: [Moves.Roost],
         48: [Moves.DreamEater],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -131,11 +141,15 @@ export default function registerHoothootSpecies(): void {
         1: [Moves.Tackle, Moves.Growl, Moves.Foresight, Moves.Peck],
         16: [Moves.Hypnosis],
         25: [Moves.Reflect],
+        32: [Moves.AirSlash],
         33: [Moves.TakeDown],
+        37: [Moves.ZenHeadbutt],
         41: [Moves.Confusion],
+        47: [Moves.PsychoShift],
+        52: [Moves.Roost],
         57: [Moves.DreamEater],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

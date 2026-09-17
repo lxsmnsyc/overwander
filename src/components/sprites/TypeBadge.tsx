@@ -82,7 +82,7 @@ interface SigilProps {
  * out of whole badges, so a sigil on a card does not carry a card of
  * its own
  */
-function Sigil(props: SigilProps): JSX.Element {
+export function Sigil(props: SigilProps): JSX.Element {
   return (
     <Show
       when={PICTURES[props.type]}

@@ -1,4 +1,13 @@
 import type { StaffGift } from '../server/gifts';
+import check, {
+  COMMAND_GIFT,
+  FLAG,
+  MAYBE_PLAYER_NAME,
+  PLAYER_NAME,
+  TELEPORT_WANTED,
+  TEXT,
+  TOKEN,
+} from '../server/validate';
 import type { TeleportOutcome, TeleportWanted } from '../server/teleport';
 import findPlayerOnServerSide, { nameOf } from '../server/players';
 import { giveGift } from '../server/gifts';
@@ -55,6 +64,9 @@ async function teleportOnServer(
   wanted: TeleportWanted,
 ): Promise<TeleportOutcome> {
   'use server';
+  check(TOKEN, token);
+  check(PLAYER_NAME, player);
+  check(TELEPORT_WANTED, wanted);
   return teleportOnServerSide(await requireAdmin(token), player, wanted, await syncServerClock());
 }
 
@@ -68,6 +80,8 @@ export async function findPlayer(named: string): Promise<FoundTrainer> {
 
 async function findOnServer(token: string, named: string): Promise<FoundTrainer> {
   'use server';
+  check(TOKEN, token);
+  check(PLAYER_NAME, named);
 
   const caller = await requireAdmin(token);
   const player = await findPlayerOnServerSide(caller, named);
@@ -95,6 +109,9 @@ async function giftOnServer(
   gift: CommandGift,
 ): Promise<FoundTrainer | null> {
   'use server';
+  check(TOKEN, token);
+  check(MAYBE_PLAYER_NAME, to);
+  check(COMMAND_GIFT, gift);
 
   const caller = await requireAdmin(token);
   const player = to == null ? null : await findPlayerOnServerSide(caller, to);
@@ -130,6 +147,10 @@ async function banOnServer(
   reason: string,
 ): Promise<FoundTrainer> {
   'use server';
+  check(TOKEN, token);
+  check(PLAYER_NAME, named);
+  check(FLAG, banned);
+  check(TEXT, reason);
 
   const caller = await requireAdmin(token);
   const player = await findPlayerOnServerSide(caller, named);

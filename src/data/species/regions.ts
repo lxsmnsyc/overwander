@@ -22,6 +22,7 @@ const RANGES: { region: Regions; from: number; to: number }[] = [
   { region: Regions.Kanto, from: 1, to: 151 },
   { region: Regions.Johto, from: 152, to: 251 },
   { region: Regions.Hoenn, from: 252, to: 386 },
+  { region: Regions.Sinnoh, from: 387, to: 493 },
 ];
 
 /**
@@ -33,10 +34,17 @@ export const REGION_NAMES: Record<Regions, string> = {
   [Regions.Kanto]: 'kanto',
   [Regions.Johto]: 'johto',
   [Regions.Hoenn]: 'hoenn',
+  [Regions.Sinnoh]: 'sinnoh',
 };
 
 /** Every region there is, in order. */
-export const REGIONS: Regions[] = [Regions.Unknown, Regions.Kanto, Regions.Johto, Regions.Hoenn];
+export const REGIONS: Regions[] = [
+  Regions.Unknown,
+  Regions.Kanto,
+  Regions.Johto,
+  Regions.Hoenn,
+  Regions.Sinnoh,
+];
 
 /** The dex numbers one region covers, ends included, or null for Unknown */
 export function getRegionSpan(region: Regions): [from: number, to: number] | null {

@@ -3,13 +3,28 @@
 // to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { Items } from '../data/ids/items';
+import { RAID_INTERVAL } from '../overworld/chunk-snapshot';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
+import { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
 import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import { RaidKind, type RaidRecord, type RaidView, asRaidRecord } from './raid-record';
 import { hasAnyCaught } from './caught';
 import { LobbyRole } from './lobby-role';
 import { requireUid } from '../server/auth';
+import check, {
+  CELL,
+  CHUNK_COORDINATE,
+  DEPTH,
+  GAME_ID,
+  ID,
+  LOBBY_ROLE,
+  OFFSET,
+  PARTY,
+  RAID_KIND,
+  TOKEN,
+  UID,
+} from '../server/validate';
 import type { RaidReward } from '../server/raids';
 import {
   claimRaidReward as claimRewardOnServerSide,
@@ -25,8 +40,8 @@ import {
   unwatchRaidLobby as unwatchLobbyOnServer,
   watchRaidLobby as watchLobbyOnServer,
 } from '../server/raids';
-import { syncServerClock } from './clock';
-import { asOffset } from './local-time';
+import { serverNow, syncServerClock } from './clock';
+import { asOffset, toLocalTime } from './local-time';
 import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
 import getIdToken from './session';
 import batchedQuery from '../utils/batched-query';
@@ -137,8 +152,14 @@ export function watchLiveRaids(
   onChange: (raids: [string, RaidRecord][]) => void,
 ): Unwatch {
   // Unfiltered on purpose: a lobby starting or clearing leaves the
-  // set by UPDATE, which the set's own filter would never deliver
-  return watchTable(RAID_TABLE, [], async () => listLiveRaids(raidTimestamp, offset), onChange);
+  // set by UPDATE, which the set's own filter would never deliver.
+  // A lobby of another window or zone is never in the set either way
+  return watchTable(RAID_TABLE, [], async () => listLiveRaids(raidTimestamp, offset), onChange, {
+    wanted: (row) =>
+      row.generation === WORLD_GENERATION &&
+      Number(row.window_at) === raidTimestamp &&
+      Number(row.utc_offset) === asOffset(offset),
+  });
 }
 
 /**
@@ -188,6 +209,13 @@ async function peekRaidOnServer(
   depth: Depth,
 ): Promise<RaidView | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(RAID_KIND, kind);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return peekOnServer(
     await requireUid(token),
     x,
@@ -236,6 +264,13 @@ async function enterRaidOnServer(
   depth: Depth,
 ): Promise<[string, RaidRecord] | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(RAID_KIND, kind);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return enterOnServer(
     await requireUid(token),
     x,
@@ -279,6 +314,11 @@ async function hostMythicalOnServer(
   offset: number,
 ): Promise<[string, RaidRecord] | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(GAME_ID, item);
+  check(OFFSET, offset);
   return hostMythicalOnServerSide(
     await requireUid(token),
     x,
@@ -302,6 +342,7 @@ export async function listLiveRaids(
   const { data } = await getSupabase()
     .from(RAID_TABLE)
     .select(RAID_EMBED)
+    .eq('generation', WORLD_GENERATION)
     .eq('window_at', raidTimestamp)
     .eq('utc_offset', asOffset(offset))
     .is('battle_id', null)
@@ -339,6 +380,8 @@ export async function watchRaidLobby(id: string): Promise<void> {
 
 async function watchRaidLobbyOnServer(token: string, id: string): Promise<void> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   await watchLobbyOnServer(await requireUid(token), id, await syncServerClock());
 }
 
@@ -352,6 +395,8 @@ export async function unwatchRaidLobby(id: string): Promise<void> {
 
 async function unwatchRaidLobbyOnServer(token: string, id: string): Promise<void> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   await unwatchLobbyOnServer(await requireUid(token), id);
 }
 
@@ -385,27 +430,70 @@ export function watchRaidWatchers(id: string, onChange: (players: string[]) => v
  * list
  */
 export function watchRaidInvites(uid: string, onChange: (invites: RaidInvite[]) => void): Unwatch {
-  const read = async (): Promise<RaidInvite[]> => {
-    const { data } = await getSupabase()
-      .from('raid_invites')
-      .select('raid_id, sender, role, sent_at')
-      .eq('recipient', uid)
-      .order('sent_at', { ascending: false });
+  /** Every call into a lobby still open, with the instant its raid window closes */
+  let held: [invite: RaidInvite, endsAt: number][] = [];
+  let closing: ReturnType<typeof setTimeout> | undefined;
 
-    const invites: RaidInvite[] = [];
+  // A lobby whose window has closed can no longer be joined, and nothing
+  // in its row changes when that happens, so the clock drops it
+  const report = (): void => {
+    const now = serverNow();
+    const open: RaidInvite[] = [];
+    let next = Number.POSITIVE_INFINITY;
 
-    for (const row of asRecordArray(data)) {
-      invites.push({
-        raid: asString(row.raid_id),
-        sender: asString(row.sender),
-        role: asNumber(row.role) as LobbyRole,
-        sentAt: asNumber(row.sent_at),
-      });
+    for (const [invite, endsAt] of held) {
+      if (now < endsAt) {
+        open.push(invite);
+        next = Math.min(next, endsAt);
+      }
     }
-    return invites;
+    clearTimeout(closing);
+    if (Number.isFinite(next)) {
+      // A second late, so the window reads as closed when the timer fires
+      closing = setTimeout(report, next - now + 1000);
+    }
+    onChange(open);
   };
 
-  return watchTable('raid_invites', [`recipient=eq.${uid}`], read, onChange);
+  const read = async (): Promise<[RaidInvite, number][]> => {
+    const { data } = await getSupabase()
+      .from('raid_invites')
+      .select('raid_id, sender, role, sent_at, raids(battle_id, cleared, window_at, utc_offset)')
+      .eq('recipient', uid)
+      .order('sent_at', { ascending: false });
+    const found: [RaidInvite, number][] = [];
+
+    for (const row of asRecordArray(data)) {
+      const raid = asRecord(row.raids);
+
+      // A call into a lobby that has started or been cleared answers nothing
+      if (raid.battle_id != null || raid.cleared === true) {
+        continue;
+      }
+      found.push([
+        {
+          raid: asString(row.raid_id),
+          sender: asString(row.sender),
+          role: asNumber(row.role) as LobbyRole,
+          sentAt: asNumber(row.sent_at),
+        },
+        // The window is counted in the raid's own zone, so its close is
+        // taken back onto the server's clock
+        asNumber(raid.window_at) + RAID_INTERVAL - toLocalTime(0, asNumber(raid.utc_offset)),
+      ]);
+    }
+    return found;
+  };
+
+  const unwatch = watchTable('raid_invites', [`recipient=eq.${uid}`], read, (found) => {
+    held = found;
+    report();
+  });
+
+  return () => {
+    clearTimeout(closing);
+    unwatch();
+  };
 }
 
 /**
@@ -428,6 +516,10 @@ async function inviteToRaidOnServer(
   role: LobbyRole,
 ): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(UID, friend);
+  check(LOBBY_ROLE, role);
   return inviteOnServer(await requireUid(token), id, friend, await syncServerClock(), role);
 }
 
@@ -438,6 +530,8 @@ export async function declineRaidInvite(id: string): Promise<void> {
 
 async function declineRaidInviteOnServer(token: string, id: string): Promise<void> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   await declineInviteOnServer(await requireUid(token), id);
 }
 
@@ -447,6 +541,8 @@ export async function leaveRaid(id: string): Promise<void> {
 
 async function leaveRaidOnServer(token: string, id: string): Promise<void> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   await leaveOnServer(await requireUid(token), id);
 }
 
@@ -462,6 +558,8 @@ export async function clearRaid(id: string): Promise<boolean> {
 
 async function clearRaidOnServer(token: string, id: string): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   return clearOnServer(await requireUid(token), id);
 }
 
@@ -482,6 +580,9 @@ async function joinRaidOnServer(
   catches: string[],
 ): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(PARTY, catches);
   return joinOnServer(await requireUid(token), id, catches);
 }
 
@@ -503,6 +604,8 @@ export async function claimRaidReward(id: string): Promise<RaidReward | null> {
 
 async function claimRewardOnServer(token: string, id: string): Promise<RaidReward | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   return claimRewardOnServerSide(await requireUid(token), id);
 }
 
@@ -534,5 +637,7 @@ export async function startRaid(id: string): Promise<string | null> {
 
 async function startRaidOnServer(token: string, id: string): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   return startOnServer(await requireUid(token), id, await syncServerClock());
 }

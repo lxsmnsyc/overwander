@@ -43,6 +43,9 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.SeismicToss,
   Moves.Substitute,
+  Moves.Captivate,
+  Moves.NaturalGift,
+  Moves.VacuumWave,
 ];
 
 // Which of the three it becomes, decided the way the games decide it
@@ -104,6 +107,7 @@ export default function registerTyrogueSpecies(): void {
         Moves.MindReader,
         Moves.RapidSpin,
         Moves.HelpingHand,
+        Moves.BulletPunch,
       ],
     },
   });
@@ -142,11 +146,14 @@ export default function registerTyrogueSpecies(): void {
         19: [Moves.QuickAttack],
         25: [Moves.RapidSpin],
         31: [Moves.Counter],
+        33: [Moves.Feint],
         37: [Moves.Agility],
+        42: [Moves.GyroBall],
         43: [Moves.Detect],
         49: [Moves.TripleKick, Moves.Endeavor],
+        51: [Moves.CloseCombat],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Dig],
+      teachable: [...FAMILY_TEACHABLE, Moves.Dig, Moves.StoneEdge, Moves.SuckerPunch],
     },
   });
 }

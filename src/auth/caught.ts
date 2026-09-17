@@ -13,6 +13,16 @@ import {
   takeItem as takeOnServer,
 } from '../server/caught';
 import { requireUid } from '../server/auth';
+import check, {
+  CATCH_LIST,
+  CATCH_ORDER,
+  FLAG,
+  GAME_ID,
+  ID,
+  MARK_FIELD,
+  NICKNAME,
+  TOKEN,
+} from '../server/validate';
 import type { CatchConstraint, CatchContext } from './catch-search';
 import type { PostgrestError } from '@supabase/supabase-js';
 import { asRecord, asRecordArray } from './__normalize';
@@ -498,6 +508,9 @@ export async function giveItem(catchId: string, item: Items): Promise<boolean> {
 
 async function giveItemOnServer(token: string, catchId: string, item: Items): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(GAME_ID, item);
   return giveOnServer(await requireUid(token), catchId, item);
 }
 
@@ -516,6 +529,9 @@ export async function takeItem(catchId: string, item: Items): Promise<boolean> {
 
 async function takeItemOnServer(token: string, catchId: string, item: Items): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(GAME_ID, item);
   return takeOnServer(await requireUid(token), catchId, item);
 }
 
@@ -542,6 +558,9 @@ async function arrangeCatchOnServer(
   order: CatchOrder,
 ): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(CATCH_ORDER, order);
   return arrangeOnServer(await requireUid(token), catchId, order);
 }
 
@@ -558,6 +577,8 @@ export async function releaseCatch(catchId: string): Promise<boolean> {
 
 async function releaseOnServer(token: string, catchId: string): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
   return releaseOnServerSide(await requireUid(token), catchId);
 }
 
@@ -580,6 +601,9 @@ async function setFavoriteOnServer(
   favorite: boolean,
 ): Promise<boolean | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(FLAG, favorite);
   return favoriteOnServerSide(await requireUid(token), catchId, favorite);
 }
 
@@ -603,6 +627,9 @@ async function setNicknameOnServer(
   nickname: string,
 ): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(NICKNAME, nickname);
   return nicknameOnServerSide(await requireUid(token), catchId, nickname);
 }
 
@@ -627,6 +654,9 @@ async function setGuardedOnServer(
   guarded: boolean,
 ): Promise<boolean | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(FLAG, guarded);
   return guardedOnServerSide(await requireUid(token), catchId, guarded);
 }
 
@@ -647,6 +677,8 @@ export async function releaseCatches(catchIds: string[]): Promise<BulkOutcome> {
 
 async function releaseManyOnServer(token: string, catchIds: string[]): Promise<BulkOutcome> {
   'use server';
+  check(TOKEN, token);
+  check(CATCH_LIST, catchIds);
   return releaseManyOnServerSide(await requireUid(token), catchIds);
 }
 
@@ -673,5 +705,9 @@ async function markManyOnServer(
   on: boolean,
 ): Promise<BulkOutcome> {
   'use server';
+  check(TOKEN, token);
+  check(CATCH_LIST, catchIds);
+  check(MARK_FIELD, field);
+  check(FLAG, on);
   return markOnServerSide(await requireUid(token), catchIds, field, on);
 }

@@ -45,7 +45,7 @@ export default function registerCleffaSpecies(): void {
         1: [Moves.Charm, Moves.Pound],
         4: [Moves.Encore],
         8: [Moves.Sing],
-        13: [Moves.SweetKiss],
+        13: [Moves.SweetKiss, Moves.Copycat],
       },
       teachable: [
         Moves.Attract,
@@ -97,6 +97,13 @@ export default function registerCleffaSpecies(): void {
         Moves.SoftBoiled,
         Moves.ThunderWave,
         Moves.WaterPulse,
+        Moves.Captivate,
+        Moves.Fling,
+        Moves.GrassKnot,
+        Moves.Gravity,
+        Moves.LastResort,
+        Moves.NaturalGift,
+        Moves.ZenHeadbutt,
       ],
       egg: [
         Moves.Amnesia,

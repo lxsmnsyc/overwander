@@ -689,6 +689,10 @@ export const enum Items {
    * is doing
    */
   RareCandy = 324,
+  /**
+   * The two that work on a pokemon's abilities: one widens the slot,
+   * the other writes its family's signature into one
+   */
   AbilityCapsule = 325,
   AbilityPatch = 326,
   MaxHoney = 327,
@@ -864,6 +868,34 @@ export const enum Items {
   GentleMint = 413,
   SassyMint = 414,
   CarefulMint = 415,
+
+  /** Sinnoh's two, the skull that charged and the face that held */
+  SkullFossil = 416,
+  ArmorFossil = 417,
+
+  /** What a Happiny carries about as though it were an egg */
+  OvalStone = 418,
+
+  /** The three the creation trio are held in their other shape by */
+  AdamantOrb = 419,
+  LustrousOrb = 420,
+  GriseousOrb = 421,
+
+  /** The pass that gets somebody into the inn a Darkrai is reached from */
+  MemberCard = 422,
+
+  /** The egg somebody carried in from the sea, which is not theirs */
+  ManaphyEgg = 423,
+
+  /** The flower a Shaymin opens with, and the letter that leads to one */
+  Gracidea = 424,
+  OaksLetter = 425,
+
+  /** The list of machines a Rotom picks its next one out of */
+  RotomCatalog = 426,
+
+  /** The flute that opens the stair at the top of the mountain */
+  AzureFlute = 427,
 
   /**
    * The kit a player goes underground with. In the mainline it is

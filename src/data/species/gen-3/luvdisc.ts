@@ -5,7 +5,7 @@ import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerLuvdiscSpecies(): void {
@@ -25,6 +25,7 @@ export default function registerLuvdiscSpecies(): void {
       [Stats.Speed]: 97,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.SwiftSwim],
     hiddenAbilities: [Abilities.Hydration, Abilities.CuteCharm, Abilities.Healer],
     eggGroups: [EggGroups.Water2],
@@ -38,10 +39,12 @@ export default function registerLuvdiscSpecies(): void {
         4: [Moves.Charm],
         12: [Moves.WaterGun],
         16: [Moves.Agility],
+        17: [Moves.LuckyChant],
         24: [Moves.TakeDown],
         28: [Moves.Attract],
         36: [Moves.SweetKiss],
-        40: [Moves.Flail],
+        37: [Moves.AquaRing],
+        40: [Moves.Flail, Moves.Captivate],
         48: [Moves.Safeguard],
       },
       teachable: [
@@ -74,8 +77,10 @@ export default function registerLuvdiscSpecies(): void {
         Moves.Swagger,
         Moves.SleepTalk,
         Moves.Swift,
+        Moves.Brine,
+        Moves.NaturalGift,
       ],
-      egg: [Moves.Splash, Moves.Supersonic, Moves.WaterSport, Moves.MudSport],
+      egg: [Moves.Splash, Moves.Supersonic, Moves.WaterSport, Moves.MudSport, Moves.AquaJet],
     },
   });
 }

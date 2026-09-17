@@ -5,12 +5,20 @@ import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerTangelaSpecies(): void {
   registerSpecies(Species.Tangela, {
     dexNumber: 114,
+    evolvesInto: [
+      {
+        species: Species.Tangrowth,
+        method: EvolutionMethod.Level | EvolutionMethod.KnownMove,
+        level: 38,
+        move: Moves.AncientPower,
+      },
+    ],
     name: 'Tangela',
     category: 'Vine Pokemon',
     height: 1,
@@ -41,8 +49,10 @@ export default function registerTangelaSpecies(): void {
         19: [Moves.VineWhip],
         31: [Moves.MegaDrain],
         34: [Moves.StunSpore],
-        40: [Moves.Slam],
+        40: [Moves.Slam, Moves.NaturalGift],
         46: [Moves.Growth, Moves.Tickle],
+        50: [Moves.WringOut],
+        54: [Moves.PowerWhip],
       },
       teachable: [
         Moves.Toxic,
@@ -83,6 +93,12 @@ export default function registerTangelaSpecies(): void {
         Moves.Facade,
         Moves.RockSmash,
         Moves.SecretPower,
+        Moves.Captivate,
+        Moves.EnergyBall,
+        Moves.GigaImpact,
+        Moves.GrassKnot,
+        Moves.SeedBomb,
+        Moves.WorrySeed,
       ],
       egg: [
         Moves.MegaDrain,
@@ -92,6 +108,8 @@ export default function registerTangelaSpecies(): void {
         Moves.Flail,
         Moves.LeechSeed,
         Moves.NaturePower,
+        Moves.LeafStorm,
+        Moves.PowerSwap,
       ],
     },
   });

@@ -78,6 +78,75 @@ const TRAINER_QUOTES: Record<TrainerClass, string> = {
   [TrainerClass.DragonTamer]:
     'Raised from an egg out in the sand. It listens to me and nobody else.',
   [TrainerClass.AromaLady]: 'Breathe in. My pokemon grew up in this, and they are stronger for it.',
+  [TrainerClass.Ranger]:
+    'I look after this stretch of country. That includes deciding who crosses it.',
+  [TrainerClass.Worker]:
+    'We dug this tunnel through the mountain. You are the easy part of my day.',
+  [TrainerClass.Rancher]: 'I raised every one of these from the herd. They do as they are told.',
+  [TrainerClass.Cyclist]: 'I came down that hill at speed. Keeping up is your problem.',
+  [TrainerClass.PokeKid]: 'Mine are cuter than yours. They also hit harder. Want to see?',
+  [TrainerClass.Collector]:
+    'I have one of everything odd in this country. Beating you would round it off.',
+  [TrainerClass.Artist]: 'Hold still. I want to paint the moment you realise.',
+  [TrainerClass.Reporter]: 'Local trainer loses on camera. I have the headline, I just need you.',
+  [TrainerClass.RichBoy]: 'Money cannot buy a good pokemon. It can buy a great deal of training.',
+  [TrainerClass.Waiter]: 'The kitchen runs hot and so do my pokemon. Order something.',
+  [TrainerClass.ParasolLady]: 'Rain does not touch me. Neither will anything you send out.',
+  [TrainerClass.Twins]: 'We think the same thing at the same time. You are outnumbered twice.',
+  [TrainerClass.Policeman]: 'I keep this road quiet. Battling you counts as keeping it quiet.',
+  [TrainerClass.Jogger]: 'Twelve miles before breakfast. A battle is my cooldown.',
+  [TrainerClass.Breeder]:
+    'Every one of these hatched in my hands. They fight for me because of it.',
+  [TrainerClass.SinnohAceTrainer]:
+    'I have walked every road north of here. None of them stopped me either.',
+  [TrainerClass.SinnohLass]: 'It is freezing out here and I am still winning. Your turn.',
+  [TrainerClass.SinnohBugCatcher]: 'The forest here is full of them, and I got up earliest.',
+  [TrainerClass.SinnohSwimmer]: 'This lake is snowmelt. I swam it anyway. You warm up first.',
+  [TrainerClass.SinnohYoungster]: 'I dug through half a mountain to find this one. Look at it!',
+  [TrainerClass.SinnohSchoolKid]:
+    'We are graphing battle outcomes this term. You are one data point.',
+  [TrainerClass.SinnohCamper]: 'Slept on a slab of rock last night. Found this under it.',
+  [TrainerClass.SinnohBeauty]: 'I do contests as well as battles. You only have to lose the one.',
+  [TrainerClass.SinnohFisherman]:
+    'Cut a hole in the ice and waited four hours. You are the better catch.',
+  [TrainerClass.SinnohSailor]: 'I run the boat across the bay. The crossing is rougher than I am.',
+  [TrainerClass.SinnohGentleman]: 'A little sport before dinner. Do try to make it interesting.',
+  [TrainerClass.SinnohScientist]:
+    'We study the pokemon that come out of the mountain. Yours will do as a control.',
+  [TrainerClass.SinnohBirdKeeper]: 'Mine fly over the whole range. Nothing down here worries them.',
+  [TrainerClass.SinnohHiker]:
+    'Up the pass and back before noon. You are in the way of the descent.',
+  [TrainerClass.SinnohPsychic]:
+    'The lake spirits leave a sort of hum behind. I have been listening for years.',
+  [TrainerClass.SinnohSkier]: 'The powder up here is the best there is. So is my team.',
+  [TrainerClass.SinnohBlackBelt]:
+    'The dojo in Veilstone turns nobody away. It also lets nobody off.',
+  [TrainerClass.SinnohDragonTamer]:
+    'Found the egg in a cave under the peak. Raised what came out of it.',
+  [TrainerClass.SinnohGuitarist]:
+    'Sunyshore runs on solar power. So does this amplifier. Stand back.',
+  [TrainerClass.SinnohAromaLady]: 'Everything here grows slowly and holds on hard. Mine included.',
+  [TrainerClass.SinnohRuinManiac]:
+    'There are chambers under this country older than the league. I dig them out.',
+  [TrainerClass.SinnohNinjaBoy]:
+    'You walked straight past me twice. The third time costs you a battle.',
+  [TrainerClass.SinnohTuber]: 'The water is cold and I am not getting out. Battle me from there.',
+  [TrainerClass.SinnohPokeFan]:
+    'I have photographs of every one of these. Now I want one of you losing.',
+  [TrainerClass.SinnohRoughneck]: 'We hold this stretch of road. Toll is one battle, win or lose.',
+  [TrainerClass.SinnohClown]: 'Watch the hands. No, the other hands. Too late.',
+  [TrainerClass.Couple]: 'We battle together or not at all. You are welcome to try the pair of us.',
+  [TrainerClass.HoennBreeder]:
+    'The eggs hatch faster on the cycling road. These three were this morning.',
+  [TrainerClass.HoennRanger]: 'This route is mine to keep. Nothing crosses it without meeting me.',
+  [TrainerClass.HoennCollector]:
+    'I have dug up every oddity on this coast. You would round out the shelf.',
+  [TrainerClass.HoennReporter]:
+    'We are filming a piece on roadside battles. Say something for the camera.',
+  [TrainerClass.HoennRichBoy]: 'Father keeps a yacht at Lilycove. I keep a team worth rather more.',
+  [TrainerClass.HoennParasolLady]: 'It rains here six days in seven. I have never once been wet.',
+  [TrainerClass.SinnohCouple]:
+    'We walked the whole route together. We will take you together as well.',
 };
 
 export default TRAINER_QUOTES;

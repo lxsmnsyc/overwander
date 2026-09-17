@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerIcePool, registerSpawnPool } from './__create';
 
 /**
  * Glacier spawn pool, grouped by day-cycle period and rarity band
@@ -11,42 +11,60 @@ export default function registerGlacierSpawns(): void {
       base: [
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
+        { species: Species.Piplup, weight: 3 },
       ],
       uncommon: [{ species: Species.Snorunt, weight: 22 }],
       rare: [
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Piloswine, weight: 5 },
+        { species: Species.Prinplup, weight: 2 },
       ],
-      scarce: [{ species: Species.Glalie, weight: 6 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
       elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },
+        { species: Species.Empoleon, weight: 2 },
+        { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Regice, weight: 10 },
         { species: Species.Articuno, weight: 10 },
+        { species: Species.Regigigas, weight: 10 },
       ],
     },
     [TimeOfDay.Day]: {
       base: [
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
+        { species: Species.Piplup, weight: 3 },
       ],
       uncommon: [{ species: Species.Snorunt, weight: 22 }],
       rare: [
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Piloswine, weight: 5 },
+        { species: Species.Prinplup, weight: 2 },
       ],
-      scarce: [{ species: Species.Glalie, weight: 6 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
       elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },
+        { species: Species.Empoleon, weight: 2 },
+        { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Regice, weight: 10 },
         { species: Species.Articuno, weight: 10 },
+        { species: Species.Regigigas, weight: 10 },
       ],
     },
     [TimeOfDay.Evening]: {
@@ -62,16 +80,23 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Piloswine, weight: 5 },
       ],
-      scarce: [{ species: Species.Glalie, weight: 6 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
       elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [
         { species: Species.Regice, weight: 10 },
         { species: Species.Articuno, weight: 10 },
+        { species: Species.Regigigas, weight: 10 },
       ],
     },
     [TimeOfDay.Night]: {
@@ -87,17 +112,104 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Piloswine, weight: 5 },
       ],
-      scarce: [{ species: Species.Glalie, weight: 6 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
       elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [
         { species: Species.Regice, weight: 10 },
         { species: Species.Articuno, weight: 10 },
+        { species: Species.Regigigas, weight: 10 },
       ],
+    },
+  });
+  registerIcePool(Biome.Glacier, {
+    [TimeOfDay.Morning]: {
+      base: [
+        { species: Species.Spheal, weight: 25 },
+        { species: Species.Piplup, weight: 3 },
+      ],
+      uncommon: [
+        { species: Species.Seel, weight: 20 },
+        { species: Species.Snorunt, weight: 22 },
+      ],
+      rare: [
+        { species: Species.Sealeo, weight: 8 },
+        { species: Species.Prinplup, weight: 2 },
+      ],
+      scarce: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+      ],
+      elusive: [
+        { species: Species.Walrein, weight: 5 },
+        { species: Species.Empoleon, weight: 2 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Day]: {
+      base: [
+        { species: Species.Spheal, weight: 25 },
+        { species: Species.Piplup, weight: 3 },
+      ],
+      uncommon: [
+        { species: Species.Seel, weight: 20 },
+        { species: Species.Snorunt, weight: 22 },
+      ],
+      rare: [
+        { species: Species.Sealeo, weight: 8 },
+        { species: Species.Prinplup, weight: 2 },
+      ],
+      scarce: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+      ],
+      elusive: [
+        { species: Species.Walrein, weight: 5 },
+        { species: Species.Empoleon, weight: 2 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Evening]: {
+      base: [{ species: Species.Spheal, weight: 25 }],
+      uncommon: [
+        { species: Species.Seel, weight: 20 },
+        { species: Species.Snorunt, weight: 22 },
+      ],
+      rare: [{ species: Species.Sealeo, weight: 8 }],
+      scarce: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+      ],
+      elusive: [{ species: Species.Walrein, weight: 5 }],
+      special: [],
+    },
+    [TimeOfDay.Night]: {
+      base: [{ species: Species.Spheal, weight: 25 }],
+      uncommon: [
+        { species: Species.Seel, weight: 20 },
+        { species: Species.Snorunt, weight: 22 },
+      ],
+      rare: [{ species: Species.Sealeo, weight: 8 }],
+      scarce: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+      ],
+      elusive: [{ species: Species.Walrein, weight: 5 }],
+      special: [],
     },
   });
 }

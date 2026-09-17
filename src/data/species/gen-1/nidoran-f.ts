@@ -53,6 +53,9 @@ const FAMILY_TEACHABLE = [
   Moves.ShockWave,
   Moves.SludgeBomb,
   Moves.WaterPulse,
+  Moves.NaturalGift,
+  Moves.PoisonJab,
+  Moves.ShadowClaw,
 ];
 
 // Additional TM/HM moves for the fully evolved form
@@ -112,9 +115,11 @@ export default function registerNidoranFSpecies(): void {
         21: [Moves.TailWhip],
         23: [Moves.HelpingHand],
         29: [Moves.Bite],
+        31: [Moves.ToxicSpikes],
         36: [Moves.FurySwipes],
-        47: [Moves.Crunch],
         38: [Moves.Flatter],
+        43: [Moves.Captivate],
+        47: [Moves.Crunch],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Dig, Moves.IceBeam, Moves.RockSmash, Moves.Strength],
       egg: [
@@ -168,9 +173,11 @@ export default function registerNidoranFSpecies(): void {
         23: [Moves.TailWhip],
         26: [Moves.HelpingHand],
         32: [Moves.Bite],
+        35: [Moves.ToxicSpikes],
         41: [Moves.FurySwipes],
-        53: [Moves.Crunch],
         43: [Moves.Flatter],
+        50: [Moves.Captivate],
+        53: [Moves.Crunch],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -212,7 +219,7 @@ export default function registerNidoranFSpecies(): void {
         1: [Moves.Tackle, Moves.Scratch, Moves.TailWhip, Moves.DoubleKick],
         14: [Moves.PoisonSting],
         23: [Moves.BodySlam],
-        43: [Moves.Superpower],
+        43: [Moves.Superpower, Moves.EarthPower],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -235,6 +242,16 @@ export default function registerNidoranFSpecies(): void {
         Moves.RockTomb,
         Moves.Taunt,
         Moves.Torment,
+        Moves.AquaTail,
+        Moves.Avalanche,
+        Moves.Captivate,
+        Moves.DragonPulse,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.RockClimb,
+        Moves.StealthRock,
+        Moves.StoneEdge,
       ],
     },
   });

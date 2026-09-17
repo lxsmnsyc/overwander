@@ -59,6 +59,14 @@ const FAMILY_TEACHABLE = [
   Moves.FocusPunch,
   Moves.RockTomb,
   Moves.SecretPower,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.Fling,
+  Moves.GyroBall,
+  Moves.NaturalGift,
+  Moves.RockClimb,
+  Moves.StealthRock,
+  Moves.SuckerPunch,
 ];
 
 const FAMILY_ABILITIES = [Abilities.RockHead, Abilities.Sturdy];
@@ -98,15 +106,17 @@ export default function registerGeodudeSpecies(): void {
       level: {
         1: [Moves.Tackle],
         6: [Moves.DefenseCurl, Moves.MudSport],
+        8: [Moves.RockPolish],
         11: [Moves.RockThrow],
         16: [Moves.Magnitude],
         21: [Moves.SelfDestruct],
         26: [Moves.Harden],
         31: [Moves.Earthquake, Moves.Rollout, Moves.RockBlast],
         36: [Moves.Explosion],
+        39: [Moves.StoneEdge],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.MegaPunch, Moves.RockSlide, Moves.Block],
+      egg: [Moves.MegaPunch, Moves.RockSlide, Moves.Block, Moves.HammerArm],
     },
   });
 
@@ -142,7 +152,7 @@ export default function registerGeodudeSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.DefenseCurl, Moves.RockThrow, Moves.MudSport],
+        1: [Moves.Tackle, Moves.DefenseCurl, Moves.RockThrow, Moves.MudSport, Moves.RockPolish],
         16: [Moves.Magnitude],
         21: [Moves.SelfDestruct],
         27: [Moves.Harden],
@@ -150,6 +160,7 @@ export default function registerGeodudeSpecies(): void {
         36: [Moves.Earthquake],
         37: [Moves.RockBlast],
         43: [Moves.Explosion],
+        49: [Moves.StoneEdge],
       },
       teachable: [...FAMILY_TEACHABLE],
     },
@@ -181,15 +192,31 @@ export default function registerGeodudeSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.DefenseCurl, Moves.RockThrow, Moves.Magnitude, Moves.MudSport],
+        1: [
+          Moves.Tackle,
+          Moves.DefenseCurl,
+          Moves.RockThrow,
+          Moves.Magnitude,
+          Moves.MudSport,
+          Moves.RockPolish,
+        ],
         21: [Moves.SelfDestruct],
         27: [Moves.Harden],
         34: [Moves.Rollout],
         36: [Moves.Earthquake],
         37: [Moves.RockBlast],
         43: [Moves.Explosion],
+        49: [Moves.StoneEdge],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Roar, Moves.FuryCutter],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Roar,
+        Moves.FuryCutter,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.IronHead,
+      ],
     },
   });
 }

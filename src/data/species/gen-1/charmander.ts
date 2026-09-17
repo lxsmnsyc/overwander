@@ -62,6 +62,9 @@ const FAMILY_TEACHABLE = [
   Moves.FocusPunch,
   Moves.Overheat,
   Moves.SecretPower,
+  Moves.Captivate,
+  Moves.Fling,
+  Moves.NaturalGift,
 ];
 
 export default function registerCharmanderSpecies(): void {
@@ -102,13 +105,13 @@ export default function registerCharmanderSpecies(): void {
         13: [Moves.SmokeScreen, Moves.MetalClaw],
         15: [Moves.Leer],
         19: [Moves.Rage],
-        25: [Moves.ScaryFace],
+        25: [Moves.ScaryFace, Moves.FireFang],
         30: [Moves.Slash],
         31: [Moves.Flamethrower],
         43: [Moves.DragonRage],
         46: [Moves.FireSpin],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.ShadowClaw],
       egg: [
         Moves.RockSlide,
         Moves.Bite,
@@ -118,6 +121,8 @@ export default function registerCharmanderSpecies(): void {
         Moves.BeatUp,
 
         Moves.DragonDance,
+        Moves.DragonRush,
+        Moves.FlareBlitz,
       ],
     },
   });
@@ -160,12 +165,13 @@ export default function registerCharmanderSpecies(): void {
         15: [Moves.Leer],
         20: [Moves.Rage],
         27: [Moves.ScaryFace],
+        28: [Moves.FireFang],
         33: [Moves.Slash],
         34: [Moves.Flamethrower],
         48: [Moves.DragonRage],
         55: [Moves.FireSpin],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.RockSlide],
+      teachable: [...FAMILY_TEACHABLE, Moves.RockSlide, Moves.ShadowClaw],
     },
   });
 
@@ -203,13 +209,17 @@ export default function registerCharmanderSpecies(): void {
           Moves.SmokeScreen,
           Moves.HeatWave,
           Moves.MetalClaw,
+          Moves.AirSlash,
+          Moves.ShadowClaw,
         ],
         20: [Moves.Rage],
         27: [Moves.ScaryFace],
+        28: [Moves.FireFang],
         34: [Moves.Flamethrower],
         36: [Moves.Slash, Moves.WingAttack],
         54: [Moves.DragonRage],
         55: [Moves.FireSpin],
+        66: [Moves.FlareBlitz],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -223,6 +233,13 @@ export default function registerCharmanderSpecies(): void {
 
         Moves.BlastBurn,
         Moves.RockSlide,
+        Moves.Defog,
+        Moves.DragonPulse,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.OminousWind,
+        Moves.Roost,
+        Moves.Tailwind,
       ],
     },
   });

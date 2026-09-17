@@ -187,7 +187,7 @@ const DAY_SKY = ['#3f86d6', '#b4dcf5'];
 const SKY_TURN = 0.3;
 
 /** How many bands the batch lays the sky in, since it has no gradient */
-const SKY_BANDS = 32;
+export const SKY_BANDS = 32;
 
 /** The colours behind the board, top of the picture and bottom */
 export interface Skybox {

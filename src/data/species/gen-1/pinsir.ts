@@ -1,7 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
-import Biome, { TimeOfDay } from '../../ids/biome';
+import { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -30,7 +30,7 @@ export default function registerPinsirSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.TemperateForest, Biome.TropicalSeasonalForest, Biome.MontaneForest],
+    biomes: [],
     activeTimes: TimeOfDay.Day,
     learnSet: {
       level: {
@@ -39,7 +39,7 @@ export default function registerPinsirSpecies(): void {
         13: [Moves.Bind],
         19: [Moves.SeismicToss],
         25: [Moves.Harden, Moves.Revenge],
-        30: [Moves.Guillotine],
+        30: [Moves.Guillotine, Moves.XScissor],
         31: [Moves.BrickBreak],
         37: [Moves.Submission],
         43: [Moves.SwordsDance],
@@ -86,8 +86,23 @@ export default function registerPinsirSpecies(): void {
         Moves.RockSlide,
         Moves.RockTomb,
         Moves.SecretPower,
+        Moves.Captivate,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.RockClimb,
+        Moves.StealthRock,
+        Moves.StoneEdge,
       ],
-      egg: [Moves.FuryAttack, Moves.Flail, Moves.FalseSwipe, Moves.FeintAttack],
+      egg: [
+        Moves.FuryAttack,
+        Moves.Flail,
+        Moves.FalseSwipe,
+        Moves.FeintAttack,
+        Moves.CloseCombat,
+        Moves.Feint,
+      ],
     },
   });
 }

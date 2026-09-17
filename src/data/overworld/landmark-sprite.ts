@@ -29,6 +29,7 @@ const PICTURES: Partial<Record<Landmark, string>> = {
   [Landmark.Portal]: 'portal',
   [Landmark.GymSeat]: 'seat',
   [Landmark.AuctionBoard]: 'board',
+  [Landmark.HoneyTree]: 'honey-tree',
   [Landmark.CaveMouth]: 'cave',
 };
 

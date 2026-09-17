@@ -2,6 +2,7 @@ import { EVOLUTION_FRIENDSHIP } from '../constants/friendship';
 import type { TimeOfDay } from '../ids/biome';
 import type { Stats } from '../constants/stats';
 import { Items } from '../ids/items';
+import type { Moves } from '../ids/moves';
 import { EvolutionMethod, type Genders, type Species } from '../ids/species';
 import {
   type EvolutionData,
@@ -24,6 +25,7 @@ export const SUPPORTED_METHODS =
   EvolutionMethod.Friendship |
   EvolutionMethod.TimeOfDay |
   EvolutionMethod.Gender |
+  EvolutionMethod.KnownMove |
   EvolutionMethod.StatComparison;
 
 /**
@@ -70,6 +72,11 @@ export interface EvolutionContext {
    * line that reads it
    */
   time: TimeOfDay;
+  /**
+   * The moves it knows right now. Four lines ask for one: an Aipom
+   * that has learned Double Hit is the one that becomes an Ambipom
+   */
+  moves: ReadonlySet<Moves>;
   /**
    * What it was born as. Wurmple is the only line that reads it, and
    * every stage of that line is an even split, so the branch a
@@ -185,6 +192,11 @@ export function meetsEvolutionCriteria(
   }
   if ((method & EvolutionMethod.TimeOfDay) !== 0) {
     if (evolution.time == null || (evolution.time & context.time) === 0) {
+      return false;
+    }
+  }
+  if ((method & EvolutionMethod.KnownMove) !== 0) {
+    if (evolution.move == null || !context.moves.has(evolution.move)) {
       return false;
     }
   }
@@ -378,17 +390,11 @@ export function getConsumedItem(evolution: EvolutionData, covered = false): Item
  * evolved out of the bag would otherwise arrive a Kingdra still
  * holding the Dragon Scale the trade would have eaten.
  *
- * A held item asked for without a swap is left alone, the way the
- * mainline leaves one: nothing registered asks for that yet
+ * A held item asked for without a swap is spent by the evolution too, the
+ * way the mainline takes a Sneasel's Razor Claw
  */
 export function getSpentHeldItem(evolution: EvolutionData, covered = false): Items | null {
-  const { method } = evolution;
-
-  if (
-    covered ||
-    (method & EvolutionMethod.HeldItem) === 0 ||
-    (method & EvolutionMethod.Trade) === 0
-  ) {
+  if (covered || (evolution.method & EvolutionMethod.HeldItem) === 0) {
     return null;
   }
   return evolution.item ?? null;

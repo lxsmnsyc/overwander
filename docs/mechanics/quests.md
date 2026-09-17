@@ -71,10 +71,11 @@ opening with something a new trainer would do anyway:
 
 One more chain is the **dex** itself, and there is one per region. Kanto's asks
 for 25 caught, then 75, then 150. Johto's asks for 20, then 50, then 99. Hoenn's
-asks for 27, then 68, then 133. The last rung of each hangs that region's medal
-on the shelf along with a Master Ball. The last rung is every species of the
-region but its mythicals: Mew, Celebi, Jirachi and Deoxys are nobody's to walk
-into.
+asks for 27, then 68, then 133. Sinnoh's asks for 21, then 54, then 103. The
+last rung of each hangs that region's medal on the shelf along with a Master
+Ball. The last rung is every species of the region but its mythicals: Mew,
+Celebi, Jirachi, Deoxys, Darkrai, Manaphy, Shaymin and Arceus are nobody's to
+walk into.
 
 ## See also
 

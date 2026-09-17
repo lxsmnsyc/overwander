@@ -4,13 +4,21 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerElectabuzzSpecies(): void {
   registerSpecies(Species.Electabuzz, {
     dexNumber: 125,
+    evolvesInto: [
+      {
+        species: Species.Electivire,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.Electirizer,
+      },
+    ],
     name: 'Electabuzz',
     category: 'Electric Pokemon',
     height: 1.1,
@@ -40,6 +48,7 @@ export default function registerElectabuzzSpecies(): void {
         25: [Moves.Swift],
         34: [Moves.ThunderShock],
         36: [Moves.Screech],
+        37: [Moves.Discharge],
         47: [Moves.Thunderbolt],
         54: [Moves.Thunder],
       },
@@ -98,6 +107,14 @@ export default function registerElectabuzzSpecies(): void {
         Moves.FocusPunch,
         Moves.SecretPower,
         Moves.ShockWave,
+        Moves.Captivate,
+        Moves.ChargeBeam,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.MagnetRise,
+        Moves.NaturalGift,
+        Moves.RockClimb,
       ],
     },
   });

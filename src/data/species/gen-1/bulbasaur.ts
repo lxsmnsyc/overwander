@@ -49,6 +49,10 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.SludgeBomb,
   Moves.Strength,
+  Moves.Captivate,
+  Moves.EnergyBall,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
 ];
 
 export default function registerBulbasaurSpecies(): void {
@@ -90,7 +94,9 @@ export default function registerBulbasaurSpecies(): void {
         15: [Moves.PoisonPowder, Moves.SleepPowder],
         20: [Moves.RazorLeaf],
         25: [Moves.SweetScent],
+        31: [Moves.WorrySeed],
         32: [Moves.Growth],
+        37: [Moves.SeedBomb],
         39: [Moves.Synthesis],
         46: [Moves.SolarBeam],
       },
@@ -105,6 +111,8 @@ export default function registerBulbasaurSpecies(): void {
 
         Moves.GrassWhistle,
         Moves.MagicalLeaf,
+        Moves.LeafStorm,
+        Moves.PowerWhip,
       ],
     },
   });
@@ -147,11 +155,12 @@ export default function registerBulbasaurSpecies(): void {
         15: [Moves.PoisonPowder, Moves.SleepPowder],
         22: [Moves.RazorLeaf],
         29: [Moves.SweetScent],
+        36: [Moves.WorrySeed],
         38: [Moves.Growth],
         47: [Moves.Synthesis],
         54: [Moves.SolarBeam],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.SeedBomb],
     },
   });
 
@@ -185,6 +194,7 @@ export default function registerBulbasaurSpecies(): void {
         15: [Moves.PoisonPowder, Moves.SleepPowder],
         22: [Moves.RazorLeaf],
         29: [Moves.SweetScent],
+        39: [Moves.WorrySeed],
         41: [Moves.Growth],
         53: [Moves.Synthesis],
         65: [Moves.SolarBeam],
@@ -195,6 +205,9 @@ export default function registerBulbasaurSpecies(): void {
         Moves.Roar,
         Moves.Earthquake,
         Moves.FrenzyPlant,
+        Moves.GigaImpact,
+        Moves.RockClimb,
+        Moves.SeedBomb,
       ],
     },
   });

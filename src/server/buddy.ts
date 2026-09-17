@@ -55,6 +55,7 @@ export function asBuddy(stored: Record<string, unknown>): Buddy | null {
 
   return {
     species: caught.species,
+    shiny: caught.shiny,
     abilities: caught.abilities,
     nature: caught.nature,
     gender: caught.gender,

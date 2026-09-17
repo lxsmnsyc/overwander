@@ -156,6 +156,26 @@ export function isOpenSea(biome: Biome): boolean {
   return OPEN_SEAS.has(biome);
 }
 
+/** The biomes whose water is drawn frozen, so it is walked like ground */
+const ICE_BIOMES = new Set<Biome>([
+  Biome.ColdDesert,
+  Biome.Taiga,
+  Biome.Tundra,
+  Biome.AlpineTundra,
+  Biome.Glacier,
+]);
+
+export function isIceBiome(biome: Biome): boolean {
+  return ICE_BIOMES.has(biome);
+}
+
+/** Which of a biome's pools a spawn draws from: its ground, its water or its ice */
+export const enum SpawnSurface {
+  Land = 0,
+  Water = 1,
+  Ice = 2,
+}
+
 /**
  * The country a town can be settled on: everything the world grows
  * that is not open sea. Nothing is built on water and nothing is
@@ -205,6 +225,20 @@ const TREELESS_BIOMES = new Set<Biome>([Biome.Tundra, Biome.Steppe, Biome.Mounta
 /** Whether an apricorn tree grows there */
 export function growsTrees(biome: Biome): boolean {
   return growsBerries(biome) && !TREELESS_BIOMES.has(biome);
+}
+
+/** The forests a honey tree stands in */
+const HONEY_TREE_BIOMES = new Set<Biome>([
+  Biome.Woodland,
+  Biome.TemperateForest,
+  Biome.MontaneForest,
+  Biome.TropicalRainforest,
+  Biome.TropicalSeasonalForest,
+]);
+
+/** Whether a honey tree grows there */
+export function growsHoneyTrees(biome: Biome): boolean {
+  return HONEY_TREE_BIOMES.has(biome);
 }
 
 export interface BiomeConfig {

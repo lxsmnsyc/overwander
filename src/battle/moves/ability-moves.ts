@@ -1,21 +1,43 @@
 import { AttackPriority } from '../../core/event-emitter';
-import type Abilities from '../../data/ids/abilities';
+import { countsAgainstSlots } from '../../data/constants/slots';
+import Abilities from '../../data/ids/abilities';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
 
 /**
- * The two moves that move abilities about: one copies the target's,
- * the other trades. Both work on what each is actually carrying
- * rather than on what its species is known for, so an ability that
- * arrived by one of these can leave by the other.
+ * The four moves that move abilities about: two copy or trade, two
+ * take one away
+ */
+export const ABILITY_MOVES = new Set<Moves>([
+  Moves.RolePlay,
+  Moves.SkillSwap,
+  Moves.GastroAcid,
+  Moves.WorrySeed,
+]);
+
+/**
+ * What these moves can actually take hold of: what the unit is
+ * carrying rather than what its species is known for, so an ability
+ * that arrived by one of these can leave by the other.
+ *
+ * The special tier is left out. A Boss, a shadow and the mark left
+ * where a shadow was are marks of what a pokemon **is**, so they are
+ * not a thing to copy, trade or shut off: a raid whose boss had been
+ * talked out of being one would lose its health pool mid-fight. An
+ * ability worn with a form is left out for the same reason
  */
 function abilitiesOf(unit: Unit): Abilities[] {
   const abilities: Abilities[] = [];
 
   for (const [ability, carried] of Object.entries(unit.abilities)) {
-    if (carried) {
+    if (
+      carried &&
+      countsAgainstSlots(Number(ability)) &&
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      unit.worn[Number(ability) as Abilities] == null
+    ) {
       // The list is keyed by the ability enum, which comes back as a
       // string from Object.entries
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
@@ -47,6 +69,29 @@ export default function setupAbilityMoves(battle: Battle): void {
       }
       for (const ability of copying) {
         event.source.addAbility(ability);
+      }
+      return;
+    }
+
+    // Gastro Acid takes one of the target's abilities and gives
+    // nothing back; Worry Seed puts Insomnia where the one it took
+    // was, so a sleeper is worth nothing to whatever was counting on
+    // it sleeping.
+    //
+    // One rather than the lot: a unit here may hold several, and a
+    // move that stripped a pokemon bare would be a different move
+    if (event.move === Moves.GastroAcid || event.move === Moves.WorrySeed) {
+      const held = abilitiesOf(target);
+
+      if (held.length > 0) {
+        target.removeAbility(held[Math.floor(battle.random() * held.length)]);
+      } else if (event.move === Moves.GastroAcid) {
+        // Nothing to shut off is nothing done
+        event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
+        return;
+      }
+      if (event.move === Moves.WorrySeed) {
+        target.addAbility(Abilities.Insomnia);
       }
       return;
     }

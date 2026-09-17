@@ -1,8 +1,10 @@
 import type { Moves } from '../../data/ids/moves';
 import { TYPE_COLORS, type Types } from '../../data/constants/types';
-import PaintedVisual, { type Painter } from './moves/__painted';
+import PaintedVisual, { type LitPainter, type Painter } from './moves/__painted';
 import type { Point, Stage } from './stage';
 import { burst, decay, lighten, mix, ring, star, swell } from './moves/__paint';
+import { sparks } from './moves/lit/pieces';
+import { aside } from './moves/lit/shapes';
 
 /**
  * What one blow looks like where it lands.
@@ -103,6 +105,33 @@ export default function attackMarkVisual(landed: Landed): PaintedVisual {
       });
     }
   };
+  const lit: LitPainter = (kit, stage, share) => {
+    const at = stage.targets[0] ?? stage.source;
+    const reach = REACH * stage.size * size;
 
-  return new PaintedVisual(SPAN, painter);
+    // Judged in front of the body it landed on
+    kit.near(reach);
+    kit.ring(at, reach * (0.4 + share * 1.3), landed.critical ? 0.14 : 0.1, color, decay(share));
+    sparks(
+      kit,
+      at,
+      reach * (0.5 + share * 0.7),
+      landed.critical ? 8 : 5,
+      landed.move + 1,
+      share,
+      color,
+      decay(share),
+    );
+    if (landed.critical) {
+      kit.star(
+        aside(kit, at, 0, reach),
+        reach * 0.32 * swell(share),
+        share * 2,
+        '#f0d264',
+        swell(share) + 0.2,
+      );
+    }
+  };
+
+  return new PaintedVisual(SPAN, painter, lit);
 }

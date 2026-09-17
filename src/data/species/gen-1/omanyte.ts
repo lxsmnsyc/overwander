@@ -5,7 +5,7 @@ import { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -50,6 +50,12 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.WaterPulse,
   Moves.Waterfall,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.GyroBall,
+  Moves.NaturalGift,
+  Moves.RockPolish,
+  Moves.StealthRock,
 ];
 
 const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.ShellArmor];
@@ -78,6 +84,7 @@ export default function registerOmanyteSpecies(): void {
       [Stats.Speed]: 35,
     },
     types: [Types.Rock, Types.Water],
+    habitat: Habitat.Water,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.WeakArmor],
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
@@ -92,6 +99,7 @@ export default function registerOmanyteSpecies(): void {
         1: [Moves.WaterGun, Moves.Withdraw, Moves.Constrict],
         13: [Moves.Bite],
         25: [Moves.MudShot],
+        28: [Moves.Brine],
         31: [Moves.Leer],
         34: [Moves.HornAttack],
         37: [Moves.Protect],
@@ -109,6 +117,8 @@ export default function registerOmanyteSpecies(): void {
         Moves.Haze,
         Moves.RockSlide,
         Moves.Spikes,
+        Moves.ToxicSpikes,
+        Moves.WringOut,
       ],
     },
   });
@@ -130,6 +140,7 @@ export default function registerOmanyteSpecies(): void {
       [Stats.Speed]: 55,
     },
     types: [Types.Rock, Types.Water],
+    habitat: Habitat.Water,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.WeakArmor, Abilities.Sniper],
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
@@ -143,6 +154,7 @@ export default function registerOmanyteSpecies(): void {
       level: {
         1: [Moves.WaterGun, Moves.Withdraw, Moves.HornAttack, Moves.Bite, Moves.Constrict],
         25: [Moves.MudShot],
+        28: [Moves.Brine],
         31: [Moves.Leer],
         37: [Moves.Protect],
         40: [Moves.SpikeCannon],
@@ -158,6 +170,9 @@ export default function registerOmanyteSpecies(): void {
         Moves.Submission,
 
         Moves.RockSlide,
+        Moves.GigaImpact,
+        Moves.RockClimb,
+        Moves.StoneEdge,
       ],
     },
   });

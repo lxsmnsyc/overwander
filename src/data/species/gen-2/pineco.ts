@@ -41,6 +41,9 @@ const FAMILY_TEACHABLE = [
   Moves.RockSlide,
   Moves.SecretPower,
   Moves.Substitute,
+  Moves.Captivate,
+  Moves.Gravity,
+  Moves.StealthRock,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Sturdy];
@@ -80,10 +83,14 @@ export default function registerPinecoSpecies(): void {
       level: {
         1: [Moves.Protect, Moves.Tackle],
         8: [Moves.SelfDestruct],
+        9: [Moves.BugBite],
         15: [Moves.TakeDown],
+        20: [Moves.NaturalGift],
         22: [Moves.RapidSpin],
+        28: [Moves.Payback],
         29: [Moves.Bide],
         36: [Moves.Explosion],
+        39: [Moves.GyroBall],
         43: [Moves.Spikes],
         50: [Moves.DoubleEdge],
       },
@@ -95,6 +102,8 @@ export default function registerPinecoSpecies(): void {
         Moves.Swift,
         Moves.Counter,
         Moves.SandTomb,
+        Moves.PowerTrick,
+        Moves.ToxicSpikes,
       ],
     },
   });
@@ -128,13 +137,17 @@ export default function registerPinecoSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        31: [Moves.ZapCannon],
-        1: [Moves.Protect, Moves.Tackle, Moves.SelfDestruct],
+        20: [Moves.NaturalGift],
+        28: [Moves.Payback],
+        31: [Moves.ZapCannon, Moves.MirrorShot],
+        1: [Moves.Protect, Moves.Tackle, Moves.SelfDestruct, Moves.BugBite, Moves.ToxicSpikes],
         15: [Moves.TakeDown],
         22: [Moves.RapidSpin],
         29: [Moves.Bide],
         39: [Moves.Explosion],
+        45: [Moves.GyroBall],
         49: [Moves.Spikes],
+        57: [Moves.MagnetRise],
         59: [Moves.DoubleEdge],
       },
       teachable: [
@@ -143,6 +156,9 @@ export default function registerPinecoSpecies(): void {
         Moves.HyperBeam,
         Moves.Counter,
         Moves.Reflect,
+        Moves.FlashCannon,
+        Moves.GigaImpact,
+        Moves.RockPolish,
       ],
     },
   });

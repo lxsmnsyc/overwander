@@ -42,7 +42,7 @@ export default function registerScytherSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.QuickAttack, Moves.Leer],
+        1: [Moves.QuickAttack, Moves.Leer, Moves.VacuumWave],
         6: [Moves.FocusEnergy],
         12: [Moves.Pursuit],
         18: [Moves.FalseSwipe],
@@ -50,6 +50,11 @@ export default function registerScytherSpecies(): void {
         29: [Moves.Slash],
         30: [Moves.WingAttack],
         35: [Moves.SwordsDance],
+        41: [Moves.XScissor],
+        45: [Moves.NightSlash],
+        49: [Moves.DoubleHit],
+        53: [Moves.AirSlash],
+        61: [Moves.Feint],
       },
       teachable: [
         Moves.Toxic,
@@ -86,6 +91,15 @@ export default function registerScytherSpecies(): void {
         Moves.DoubleEdge,
         Moves.Facade,
         Moves.SecretPower,
+        Moves.BugBite,
+        Moves.Captivate,
+        Moves.Defog,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.OminousWind,
+        Moves.Roost,
+        Moves.Tailwind,
+        Moves.UTurn,
       ],
       egg: [
         Moves.Counter,
@@ -96,6 +110,7 @@ export default function registerScytherSpecies(): void {
         Moves.BatonPass,
 
         Moves.SilverWind,
+        Moves.BugBuzz,
       ],
     },
   });

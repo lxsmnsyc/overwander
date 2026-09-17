@@ -1,5 +1,6 @@
 import turns from '../../../battle/turn';
 import Awards from '../../ids/awards';
+import Weather from '../weather/kinds';
 import { Species } from '../../ids/species';
 import { Statuses } from '../../ids/status';
 import { getWorldExpertPool } from './pools';
@@ -22,6 +23,14 @@ const enum FrontierBrain {
   Anabel = 4,
   Spenser = 5,
   Tucker = 6,
+  Palmer = 7,
+  Thorton = 8,
+  Dahlia = 9,
+  // The Castle is kept by two: the lady who owns it and the valet who
+  // fights for her, and either of them pays the one print
+  Darach = 10,
+  Caitlin = 11,
+  Argenta = 12,
 }
 
 export { FrontierBrain };
@@ -34,6 +43,12 @@ export const FRONTIER_BRAINS: FrontierBrain[] = [
   FrontierBrain.Anabel,
   FrontierBrain.Spenser,
   FrontierBrain.Tucker,
+  FrontierBrain.Palmer,
+  FrontierBrain.Thorton,
+  FrontierBrain.Dahlia,
+  FrontierBrain.Darach,
+  FrontierBrain.Caitlin,
+  FrontierBrain.Argenta,
 ];
 
 export const FRONTIER_BRAIN_NAMES: Record<FrontierBrain, string> = {
@@ -44,6 +59,12 @@ export const FRONTIER_BRAIN_NAMES: Record<FrontierBrain, string> = {
   [FrontierBrain.Anabel]: 'Anabel',
   [FrontierBrain.Spenser]: 'Spenser',
   [FrontierBrain.Tucker]: 'Tucker',
+  [FrontierBrain.Palmer]: 'Palmer',
+  [FrontierBrain.Thorton]: 'Thorton',
+  [FrontierBrain.Dahlia]: 'Dahlia',
+  [FrontierBrain.Darach]: 'Darach',
+  [FrontierBrain.Caitlin]: 'Caitlin',
+  [FrontierBrain.Argenta]: 'Argenta',
 };
 
 /** The house each of them keeps, which is what the rule is named for */
@@ -55,6 +76,12 @@ export const FRONTIER_FACILITY_NAMES: Record<FrontierBrain, string> = {
   [FrontierBrain.Anabel]: 'Battle Tower',
   [FrontierBrain.Spenser]: 'Battle Palace',
   [FrontierBrain.Tucker]: 'Battle Dome',
+  [FrontierBrain.Palmer]: 'Battle Tower',
+  [FrontierBrain.Thorton]: 'Battle Factory',
+  [FrontierBrain.Dahlia]: 'Battle Arcade',
+  [FrontierBrain.Darach]: 'Battle Castle',
+  [FrontierBrain.Caitlin]: 'Battle Castle',
+  [FrontierBrain.Argenta]: 'Battle Hall',
 };
 
 export const FRONTIER_BRAIN_CHARSETS: Record<FrontierBrain, string[]> = {
@@ -65,6 +92,12 @@ export const FRONTIER_BRAIN_CHARSETS: Record<FrontierBrain, string[]> = {
   [FrontierBrain.Anabel]: ['characters/rse/anabel'],
   [FrontierBrain.Spenser]: ['characters/rse/spenser'],
   [FrontierBrain.Tucker]: ['characters/rse/tucker'],
+  [FrontierBrain.Palmer]: ['characters/dppt/palmer'],
+  [FrontierBrain.Thorton]: ['characters/dppt/thorton'],
+  [FrontierBrain.Dahlia]: ['characters/dppt/dahlia'],
+  [FrontierBrain.Darach]: ['characters/dppt/darach'],
+  [FrontierBrain.Caitlin]: ['characters/dppt/caitlin'],
+  [FrontierBrain.Argenta]: ['characters/dppt/argenta'],
 };
 
 /**
@@ -83,6 +116,14 @@ export const FRONTIER_BRAIN_SYMBOLS: Record<FrontierBrain, [silver: Awards, gold
   [FrontierBrain.Anabel]: [Awards.SilverAbilitySymbol, Awards.GoldAbilitySymbol],
   [FrontierBrain.Spenser]: [Awards.SilverSpiritsSymbol, Awards.GoldSpiritsSymbol],
   [FrontierBrain.Tucker]: [Awards.SilverTacticsSymbol, Awards.GoldTacticsSymbol],
+  [FrontierBrain.Palmer]: [Awards.SilverTowerPrint, Awards.GoldTowerPrint],
+  [FrontierBrain.Thorton]: [Awards.SilverFactoryPrint, Awards.GoldFactoryPrint],
+  [FrontierBrain.Dahlia]: [Awards.SilverArcadePrint, Awards.GoldArcadePrint],
+  // One house, two keepers: whichever of them a chunk seats, the
+  // Castle Print is what it pays
+  [FrontierBrain.Darach]: [Awards.SilverCastlePrint, Awards.GoldCastlePrint],
+  [FrontierBrain.Caitlin]: [Awards.SilverCastlePrint, Awards.GoldCastlePrint],
+  [FrontierBrain.Argenta]: [Awards.SilverHallPrint, Awards.GoldHallPrint],
 };
 
 /**
@@ -112,6 +153,21 @@ export const FRONTIER_BRAIN_PARTIES: Record<FrontierBrain, Species[]> = {
   // Nobody's either, and for the opposite reason to Noland's: the
   // Dome names nobody until the challenger has, and then answers them
   [FrontierBrain.Tucker]: [],
+  // The Tower's own three either time. What its keeper changes
+  // between the two meetings is how they are built, not who they are
+  [FrontierBrain.Palmer]: [Species.Rhyperior, Species.Dragonite, Species.Milotic],
+  // Nobody's: the Factory rents to its own keeper here too
+  [FrontierBrain.Thorton]: [],
+  // Three built on chance, which is what the Arcade is about: a
+  // Serene Grace flincher, a ghost that carries Aftermath and a
+  // Rattled runner
+  [FrontierBrain.Dahlia]: [Species.Togekiss, Species.Drifblim, Species.Lopunny],
+  // The valet's three, and the lady's, since he is the one who
+  // fights for the house
+  [FrontierBrain.Darach]: [Species.Staraptor, Species.Houndoom, Species.Gallade],
+  [FrontierBrain.Caitlin]: [Species.Staraptor, Species.Houndoom, Species.Gallade],
+  // Nobody's: the Hall answers the one that walked in
+  [FrontierBrain.Argenta]: [],
 };
 
 /**
@@ -133,6 +189,12 @@ export const FRONTIER_BRAIN_GOLD_PARTIES: Record<FrontierBrain, Species[]> = {
   [FrontierBrain.Anabel]: [Species.Raikou, Species.Snorlax, Species.Latios],
   [FrontierBrain.Spenser]: [Species.Arcanine, Species.Slaking, Species.Suicune],
   [FrontierBrain.Tucker]: [],
+  [FrontierBrain.Palmer]: [Species.Rhyperior, Species.Dragonite, Species.Milotic],
+  [FrontierBrain.Thorton]: [],
+  [FrontierBrain.Dahlia]: [Species.Togekiss, Species.Gengar, Species.Gliscor],
+  [FrontierBrain.Darach]: [Species.Staraptor, Species.Milotic, Species.Roserade],
+  [FrontierBrain.Caitlin]: [Species.Staraptor, Species.Milotic, Species.Roserade],
+  [FrontierBrain.Argenta]: [],
 };
 
 /**
@@ -198,6 +260,27 @@ export const enum FrontierRule {
    * nothing here
    */
   Countered = 6,
+  /**
+   * The Arcade, rolled. One panel is drawn when the challenge is
+   * taken and lands on **both** sides as the fight opens: a sky for
+   * the whole fight, every held item on the field shut off, everybody
+   * poisoned, or everybody mended. Stored with the fight the way the
+   * curtain is, so a replay is the fight that happened
+   */
+  Rolled = 7,
+  /**
+   * The Castle, where the service is the house's. Nothing puts health
+   * back on the challenger's three: no potion, no berry, no drain and
+   * no held item, for the whole fight. The house's own heal normally,
+   * which is the point of it
+   */
+  Unhealed = 8,
+  /**
+   * The Hall, one against one. A single pokemon a side, and the
+   * house's is drawn against whatever walked in, so nothing can cover
+   * for anything else
+   */
+  Singled = 9,
 }
 
 export const FRONTIER_BRAIN_RULES: Record<FrontierBrain, FrontierRule> = {
@@ -210,6 +293,14 @@ export const FRONTIER_BRAIN_RULES: Record<FrontierBrain, FrontierRule> = {
   [FrontierBrain.Anabel]: FrontierRule.None,
   [FrontierBrain.Spenser]: FrontierRule.Natured,
   [FrontierBrain.Tucker]: FrontierRule.Countered,
+  // Sinnoh's Tower asks nothing either, and its Factory rents the
+  // same way Hoenn's does
+  [FrontierBrain.Palmer]: FrontierRule.None,
+  [FrontierBrain.Thorton]: FrontierRule.Rented,
+  [FrontierBrain.Dahlia]: FrontierRule.Rolled,
+  [FrontierBrain.Darach]: FrontierRule.Unhealed,
+  [FrontierBrain.Caitlin]: FrontierRule.Unhealed,
+  [FrontierBrain.Argenta]: FrontierRule.Singled,
 };
 
 /**
@@ -234,6 +325,12 @@ export const FRONTIER_BRAIN_TITLES: Record<FrontierBrain, Awards> = {
   [FrontierBrain.Anabel]: Awards.HoennChampion,
   [FrontierBrain.Spenser]: Awards.HoennChampion,
   [FrontierBrain.Tucker]: Awards.HoennChampion,
+  [FrontierBrain.Palmer]: Awards.SinnohChampion,
+  [FrontierBrain.Thorton]: Awards.SinnohChampion,
+  [FrontierBrain.Dahlia]: Awards.SinnohChampion,
+  [FrontierBrain.Darach]: Awards.SinnohChampion,
+  [FrontierBrain.Caitlin]: Awards.SinnohChampion,
+  [FrontierBrain.Argenta]: Awards.SinnohChampion,
 };
 
 /**
@@ -295,6 +392,89 @@ export function pickPikeCurtain(roll: number): PikeCurtain {
   const at = Math.floor(Math.abs(roll) * PIKE_CURTAINS.length);
 
   return PIKE_CURTAINS[Math.min(at, PIKE_CURTAINS.length - 1)];
+}
+
+/**
+ * What the Arcade's roulette lands on.
+ *
+ * The panel is rolled when the challenge is taken and it lands on
+ * both sides, which is what tells it from the Pike's curtain: the
+ * Arcade changes the fight, the Pike changes the challenger
+ */
+export const enum ArcadePanel {
+  Sun = 0,
+  Rain = 1,
+  Sandstorm = 2,
+  Hail = 3,
+  /** Every held item on the field is left at the door */
+  Stripped = 4,
+  /** Everybody on the field walks in poisoned */
+  Poisoned = 5,
+  /** And the kind panel: everybody walks in whole */
+  Mended = 6,
+}
+
+export const ARCADE_PANELS: ArcadePanel[] = [
+  ArcadePanel.Sun,
+  ArcadePanel.Rain,
+  ArcadePanel.Sandstorm,
+  ArcadePanel.Hail,
+  ArcadePanel.Stripped,
+  ArcadePanel.Poisoned,
+  ArcadePanel.Mended,
+];
+
+/** The sky a panel puts over the fight, or null for one that is not weather */
+export const ARCADE_PANEL_WEATHER: Record<ArcadePanel, Weather | null> = {
+  [ArcadePanel.Sun]: Weather.Heatwave,
+  [ArcadePanel.Rain]: Weather.Rain,
+  [ArcadePanel.Sandstorm]: Weather.Sandstorm,
+  [ArcadePanel.Hail]: Weather.Hail,
+  [ArcadePanel.Stripped]: null,
+  [ArcadePanel.Poisoned]: null,
+  [ArcadePanel.Mended]: null,
+};
+
+/** What each panel is called, for the line the fight is announced with */
+export const ARCADE_PANEL_NAMES: Record<ArcadePanel, string> = {
+  [ArcadePanel.Sun]: 'the sun comes out',
+  [ArcadePanel.Rain]: 'the rain comes down',
+  [ArcadePanel.Sandstorm]: 'the sand comes up',
+  [ArcadePanel.Hail]: 'the hail comes down',
+  [ArcadePanel.Stripped]: 'every held item is left at the door',
+  [ArcadePanel.Poisoned]: 'everybody is poisoned',
+  [ArcadePanel.Mended]: 'everybody is mended',
+};
+
+/**
+ * Which panel a roll in [0, 1) lands on. Taken from the stop rather
+ * than from the clock, the way the Pike's room is, so the same
+ * challenge is the same fight however many times it is watched
+ */
+export function pickArcadePanel(roll: number): ArcadePanel {
+  const at = Math.floor(Math.abs(roll) * ARCADE_PANELS.length);
+
+  return ARCADE_PANELS[Math.min(at, ARCADE_PANELS.length - 1)];
+}
+
+/**
+ * What a panel does to a party on the way in, said in the Pike's own
+ * terms so both houses bake their room into the frozen snapshot the
+ * same way. Null for a panel that leaves the parties alone
+ */
+export function arcadeCurtain(panel: ArcadePanel | undefined): PikeCurtain | undefined {
+  if (panel === ArcadePanel.Poisoned) {
+    return PikeCurtain.Poisoned;
+  }
+  return panel === ArcadePanel.Mended ? PikeCurtain.Healed : undefined;
+}
+
+/**
+ * How many a side this house fights with: one at the Hall, three
+ * everywhere else
+ */
+export function frontierTeamSize(rules: FrontierRule): number {
+  return rules === FrontierRule.Singled ? 1 : FRONTIER_TEAM_SIZE;
 }
 
 /**

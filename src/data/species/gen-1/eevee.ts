@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -44,6 +44,8 @@ const FAMILY_TEACHABLE = [
   Moves.Dig,
   Moves.Facade,
   Moves.SecretPower,
+  Moves.Captivate,
+  Moves.NaturalGift,
 ];
 
 export default function registerEeveeSpecies(): void {
@@ -69,6 +71,16 @@ export default function registerEeveeSpecies(): void {
         species: Species.Espeon,
         method: EvolutionMethod.Friendship | EvolutionMethod.TimeOfDay,
         time: TimeOfDay.Morning | TimeOfDay.Day,
+      },
+      {
+        species: Species.Leafeon,
+        method: EvolutionMethod.UsedItem,
+        item: Items.LeafStone,
+      },
+      {
+        species: Species.Glaceon,
+        method: EvolutionMethod.UsedItem,
+        item: Items.IceStone,
       },
       {
         species: Species.Umbreon,
@@ -105,6 +117,8 @@ export default function registerEeveeSpecies(): void {
         30: [Moves.Bite],
         36: [Moves.FocusEnergy, Moves.BatonPass],
         42: [Moves.TakeDown],
+        50: [Moves.LastResort],
+        57: [Moves.TrumpCard],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [Moves.Flail, Moves.Charm, Moves.Tickle, Moves.Wish],
@@ -128,6 +142,7 @@ export default function registerEeveeSpecies(): void {
       [Stats.Speed]: 65,
     },
     types: [Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.WaterAbsorb],
     hiddenAbilities: [Abilities.Hydration],
     eggGroups: [EggGroups.Field],
@@ -148,7 +163,9 @@ export default function registerEeveeSpecies(): void {
         30: [Moves.Bite],
         36: [Moves.AuroraBeam],
         42: [Moves.AcidArmor, Moves.Haze],
+        43: [Moves.AquaRing],
         48: [Moves.Mist],
+        50: [Moves.LastResort],
         52: [Moves.HydroPump],
       },
       teachable: [
@@ -166,6 +183,9 @@ export default function registerEeveeSpecies(): void {
 
         Moves.Dive,
         Moves.WaterPulse,
+        Moves.AquaTail,
+        Moves.Brine,
+        Moves.GigaImpact,
       ],
     },
   });
@@ -207,8 +227,11 @@ export default function registerEeveeSpecies(): void {
         30: [Moves.DoubleKick],
         36: [Moves.PinMissile],
         42: [Moves.ThunderWave],
+        43: [Moves.ThunderFang],
         44: [Moves.Agility],
+        50: [Moves.LastResort],
         52: [Moves.Thunder],
+        78: [Moves.Discharge],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -221,6 +244,9 @@ export default function registerEeveeSpecies(): void {
         Moves.ZapCannon,
 
         Moves.ShockWave,
+        Moves.ChargeBeam,
+        Moves.GigaImpact,
+        Moves.MagnetRise,
       ],
     },
   });
@@ -262,8 +288,11 @@ export default function registerEeveeSpecies(): void {
         30: [Moves.Bite],
         36: [Moves.FireSpin],
         42: [Moves.Leer, Moves.Smog],
+        43: [Moves.FireFang],
         48: [Moves.Rage],
+        50: [Moves.LastResort],
         52: [Moves.Flamethrower],
+        78: [Moves.LavaPlume],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -274,6 +303,7 @@ export default function registerEeveeSpecies(): void {
         Moves.Flamethrower,
 
         Moves.Overheat,
+        Moves.GigaImpact,
       ],
     },
   });

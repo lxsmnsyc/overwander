@@ -80,6 +80,28 @@ import setupSports from './sports';
 import setupStockpile from './stockpile';
 import setupUproar from './uproar';
 import setupWish from './wish';
+import setupPayback from './payback';
+import setupLockouts from './lockouts';
+import setupPsychoShift from './psycho-shift';
+import setupPowerTrick from './power-trick';
+import setupGravity from './gravity';
+import setupTailwind from './tailwind';
+import setupAcupressure from './acupressure';
+import setupBerryMoves from './berry-moves';
+import setupHealingWish from './healing-wish';
+import setupFling from './fling';
+import setupStageSwaps from './stage-swaps';
+import setupToxicSpikes from './toxic-spikes';
+import setupAquaRing from './aqua-ring';
+import setupLuckyChant from './lucky-chant';
+import setupReadingTheField from './reading-the-field';
+import setupLastResort from './last-resort';
+import setupFangs from './fangs';
+import setupTrickRoom from './trick-room';
+import setupStealthRock from './stealth-rock';
+import setupDefog from './defog';
+import setupCaptivate from './captivate';
+import setupJudgment from './judgment';
 
 export default function setupMoves(battle: Battle): void {
   // Overarching groups
@@ -172,6 +194,30 @@ export default function setupMoves(battle: Battle): void {
   setupAssist(battle);
   setupWish(battle);
   setupGroundMoves(battle);
+
+  // Sinnoh
+  setupPayback(battle);
+  setupLockouts(battle);
+  setupPsychoShift(battle);
+  setupPowerTrick(battle);
+  setupGravity(battle);
+  setupTailwind(battle);
+  setupAcupressure(battle);
+  setupBerryMoves(battle);
+  setupHealingWish(battle);
+  setupFling(battle);
+  setupStageSwaps(battle);
+  setupToxicSpikes(battle);
+  setupAquaRing(battle);
+  setupLuckyChant(battle);
+  setupReadingTheField(battle);
+  setupLastResort(battle);
+  setupFangs(battle);
+  setupTrickRoom(battle);
+  setupStealthRock(battle);
+  setupDefog(battle);
+  setupCaptivate(battle);
+  setupJudgment(battle);
 
   // Last, because they are what is left: both fallbacks only answer
   // when every resolver above has declined to pick anything. Attack

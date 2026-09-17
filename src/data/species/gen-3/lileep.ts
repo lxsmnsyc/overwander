@@ -37,6 +37,14 @@ const FAMILY_TEACHABLE = [
   Moves.MudSlap,
   Moves.Swagger,
   Moves.SleepTalk,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
+  Moves.RockPolish,
+  Moves.SeedBomb,
+  Moves.StealthRock,
+  Moves.WorrySeed,
 ];
 
 export default function registerLileepSpecies(): void {
@@ -78,9 +86,10 @@ export default function registerLileepSpecies(): void {
         15: [Moves.Acid],
         22: [Moves.Ingrain],
         29: [Moves.ConfuseRay],
-        36: [Moves.Amnesia],
+        36: [Moves.Amnesia, Moves.GastroAcid],
         43: [Moves.AncientPower],
-        50: [Moves.Stockpile, Moves.SpitUp, Moves.Swallow],
+        50: [Moves.Stockpile, Moves.SpitUp, Moves.Swallow, Moves.EnergyBall],
+        64: [Moves.WringOut],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [Moves.Barrier, Moves.MirrorCoat, Moves.Recover],
@@ -119,8 +128,11 @@ export default function registerLileepSpecies(): void {
         1: [Moves.Astonish, Moves.Constrict, Moves.Acid, Moves.Ingrain],
         29: [Moves.ConfuseRay],
         36: [Moves.Amnesia],
+        46: [Moves.GastroAcid],
         48: [Moves.AncientPower],
+        56: [Moves.EnergyBall],
         60: [Moves.Stockpile, Moves.SpitUp, Moves.Swallow],
+        76: [Moves.WringOut],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -129,6 +141,8 @@ export default function registerLileepSpecies(): void {
         Moves.RockTomb,
         Moves.Strength,
         Moves.RockSmash,
+        Moves.GigaImpact,
+        Moves.StoneEdge,
       ],
     },
   });

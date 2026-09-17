@@ -42,6 +42,7 @@ export default function registerCaterpieSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.StringShot],
+        15: [Moves.BugBite],
       },
       teachable: [],
     },
@@ -81,7 +82,7 @@ export default function registerCaterpieSpecies(): void {
       level: {
         1: [Moves.Harden],
       },
-      teachable: [],
+      teachable: [Moves.BugBite],
     },
   });
 
@@ -118,8 +119,10 @@ export default function registerCaterpieSpecies(): void {
         18: [Moves.Supersonic],
         23: [Moves.Whirlwind],
         28: [Moves.Gust],
+        30: [Moves.Tailwind],
         32: [Moves.Psybeam],
-        40: [Moves.Safeguard],
+        36: [Moves.Captivate],
+        40: [Moves.Safeguard, Moves.BugBuzz],
         47: [Moves.SilverWind],
       },
       teachable: [
@@ -163,6 +166,14 @@ export default function registerCaterpieSpecies(): void {
         Moves.ShadowBall,
         Moves.SkillSwap,
         Moves.Thief,
+        Moves.BugBite,
+        Moves.Defog,
+        Moves.EnergyBall,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.OminousWind,
+        Moves.Roost,
+        Moves.UTurn,
       ],
     },
   });

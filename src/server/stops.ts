@@ -13,9 +13,11 @@ import {
 } from '../auth/stop-record';
 import { TEAM_SIZE } from '../auth/teams';
 import ChunkSnapshot, { NPC_INTERVAL, RocketRank, type Spawn } from '../overworld/chunk-snapshot';
-import getWorld from '../overworld/current';
+import getWorld, { WORLD_GENERATION } from '../overworld/current';
 import { EncounterType } from '../overworld/encounter';
 import { PLAYER_ALLIANCE } from '../overworld/raid';
+import { getMaxHealth } from '../auth/health';
+import { packStatuses } from '../data/ids/status';
 import {
   FRONTIER_OUTFIT,
   FRONTIER_PARTY_LEVELS,
@@ -40,17 +42,23 @@ import { trainerLevels } from '../data/overworld/trainers';
 import type Awards from '../data/ids/awards';
 import type { CatchSnapshot } from '../auth/catch-snapshot';
 import {
+  ARCADE_PANEL_WEATHER,
+  ArcadePanel,
   CHAMPION_HONORS,
   CHAMPION_TITLES,
   ELITE_MEMBER_HONORS,
   FRONTIER_BRAIN_RULES,
   FRONTIER_BRAIN_SYMBOLS,
   FRONTIER_BRAIN_TITLES,
-  FRONTIER_TEAM_SIZE,
   FrontierRule,
   GYM_LEADER_BADGES,
   LEGEND_HONORS,
+  PIKE_CURTAIN_STATUSES,
+  PikeCurtain,
+  arcadeCurtain,
+  frontierTeamSize,
   getEliteBadges,
+  pickArcadePanel,
   pickPikeCurtain,
   rollGymMachine,
 } from '../data/overworld/experts';
@@ -117,7 +125,8 @@ const asOutcome = (value: unknown): BattleOutcome => asNumber(value) as BattleOu
 async function readStop(stop: string, player: string): Promise<Record<string, unknown> | null> {
   const sql = getSql();
   const rows = await sql`
-    select * from rocket_stops where stop_id = ${stop} and player = ${player}
+    select * from rocket_stops
+    where generation = ${WORLD_GENERATION} and stop_id = ${stop} and player = ${player}
   `;
   const row = rows.at(0);
 
@@ -128,7 +137,7 @@ async function readStop(stop: string, player: string): Promise<Record<string, un
   const party = await sql`
     select species, individual_value as "individualValue", trait_value as "traitValue"
     from rocket_party
-    where stop_id = ${stop} and player = ${player}
+    where generation = ${WORLD_GENERATION} and stop_id = ${stop} and player = ${player}
     order by slot
   `;
 
@@ -267,15 +276,16 @@ export async function enterStop(
   await tx(async (transaction) => {
     await transaction`
       insert into rocket_stops
-        (stop_id, player, battle_id, window_at, utc_offset,
+        (generation, stop_id, player, battle_id, window_at, utc_offset,
          chunk_seed, chunk_x, chunk_y, cell, defeated)
       values
-        (${stop}, ${uid}, null, ${fresh.timestamp}, ${fresh.offset},
+        (${WORLD_GENERATION}, ${stop}, ${uid}, null, ${fresh.timestamp}, ${fresh.offset},
          ${chunk.seed}, ${chunk.x}, ${chunk.y}, ${cell}, false)
       on conflict do nothing
     `;
 
     const rows: {
+      generation: number;
       stop_id: string;
       player: string;
       slot: number;
@@ -286,6 +296,7 @@ export async function enterStop(
 
     for (const [slot, entry] of fresh.party.entries()) {
       rows.push({
+        generation: WORLD_GENERATION,
         stop_id: stop,
         player: uid,
         slot,
@@ -301,7 +312,7 @@ export async function enterStop(
     if (rows.length > 0) {
       await transaction`
         insert into rocket_party
-          ${transaction(rows, 'stop_id', 'player', 'slot', 'species', 'individual_value', 'trait_value')}
+          ${transaction(rows, 'generation', 'stop_id', 'player', 'slot', 'species', 'individual_value', 'trait_value')}
         on conflict do nothing
       `;
     }
@@ -310,20 +321,32 @@ export async function enterStop(
 }
 
 /**
- * The house's own three, under its own rule. Only the Pyramid changes
- * them: it bars held items, and it bars them on both sides
+ * The house's own three, as its rule leaves them.
+ *
+ * Two houses reach this side of the field: the Pyramid bars held
+ * items, and the Arcade's panel lands on everybody, so whatever it
+ * did to the challenger it did here too
  */
-function houseParty(party: CatchSnapshot[], rules: FrontierRule): CatchSnapshot[] {
-  if (rules !== FrontierRule.Bare) {
-    return party;
-  }
-
-  const bare: CatchSnapshot[] = [];
+function houseParty(
+  party: CatchSnapshot[],
+  options: { stripped: boolean; panel: ArcadePanel | undefined },
+): CatchSnapshot[] {
+  const room = arcadeCurtain(options.panel);
+  const status =
+    room == null || room === PikeCurtain.Healed ? undefined : PIKE_CURTAIN_STATUSES[room];
+  const housed: CatchSnapshot[] = [];
 
   for (const one of party) {
-    bare.push({ ...one, items: [] });
+    let kept: CatchSnapshot = options.stripped ? { ...one, items: [] } : one;
+
+    if (room === PikeCurtain.Healed) {
+      kept = { ...kept, health: getMaxHealth(kept), statuses: 0 };
+    } else if (status != null) {
+      kept = { ...kept, statuses: kept.statuses | packStatuses([status]) };
+    }
+    housed.push(kept);
   }
-  return bare;
+  return housed;
 }
 
 /**
@@ -399,7 +422,7 @@ export async function startStopBattle(
   // A house fight is three a side. The cap is refused rather than
   // trimmed: which three were brought is the player's decision, and
   // silently dropping the rest would field a party they did not pick
-  if (brain != null && catches.length > FRONTIER_TEAM_SIZE) {
+  if (brain != null && catches.length > frontierTeamSize(rules)) {
     return null;
   }
 
@@ -418,6 +441,13 @@ export async function startStopBattle(
     rules === FrontierRule.Curtained
       ? pickPikeCurtain(new AleaRNG(`${stop}:curtain`).random())
       : undefined;
+  // And the Arcade's panel, drawn the same way and landing on both
+  // sides rather than on the challenger alone
+  const panel =
+    rules === FrontierRule.Rolled
+      ? pickArcadePanel(new AleaRNG(`${stop}:panel`).random())
+      : undefined;
+  const stripped = rules === FrontierRule.Bare || panel === ArcadePanel.Stripped;
   // The Factory lends both sides their three, so there is nothing of
   // the player's to freeze: the crate is drawn from once for the
   // challenge and the row belongs to them without standing for any
@@ -435,8 +465,8 @@ export async function startStopBattle(
   const party =
     rented == null
       ? await publishTeamSnapshot(uid, catches, PLAYER_ALLIANCE, now, {
-          bare: rules === FrontierRule.Bare,
-          curtain,
+          bare: stripped,
+          curtain: curtain ?? arcadeCurtain(panel),
         })
       : newDocId();
 
@@ -447,7 +477,7 @@ export async function startStopBattle(
   // freeze leaves behind anything already fighting, so its three are
   // drawn against the party that actually made the field
   const fielded =
-    rules === FrontierRule.Countered
+    rules === FrontierRule.Countered || rules === FrontierRule.Singled
       ? counterParty(stop, await readPublishedSpecies(party))
       : toSpawns(record.party);
   // The cell's landmark decides what they field: only Team Rocket
@@ -473,7 +503,11 @@ export async function startStopBattle(
   // The sky over the cell when the fight was accepted, read here
   // rather than trusted from the client and kept on the row, since
   // the world's own moves on within the hour
-  const weather = getWorld().getWeather(record.chunk.x, record.chunk.y, snapshot.weatherWindow);
+  // The Arcade puts its own sky over the fight where the panel is a
+  // weather one; everywhere else it is the sky over the cell
+  const weather =
+    (panel == null ? null : ARCADE_PANEL_WEATHER[panel]) ??
+    getWorld().getWeather(record.chunk.x, record.chunk.y, snapshot.weatherWindow);
 
   await tx(async (transaction) => {
     // A rented party is the player's to field and nobody's to keep:
@@ -503,7 +537,7 @@ export async function startStopBattle(
                       duellist ?? undefined,
                     ),
                   ),
-                  rules,
+                  { stripped, panel },
                 ),
               )})
     `;
@@ -526,7 +560,7 @@ export async function startStopBattle(
     `;
     await transaction`
       update rocket_stops set battle_id = ${battleId}
-      where stop_id = ${stop} and player = ${uid}
+      where generation = ${WORLD_GENERATION} and stop_id = ${stop} and player = ${uid}
     `;
   });
 
@@ -609,7 +643,7 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
   // First claim pays; the guard rides in the statement
   const claimed = await getSql()`
     update rocket_stops set defeated = true
-    where stop_id = ${stop} and player = ${uid} and not defeated
+    where generation = ${WORLD_GENERATION} and stop_id = ${stop} and player = ${uid} and not defeated
   `;
 
   const [spawnId, spawn] = deriveStopReward(record, stop, uid);
@@ -630,7 +664,7 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
     const encounter = asEncounterRecord(existing);
     const gone = await getSql()`
       select 1 from fled_encounters
-      where player = ${uid} and key = ${encounterKey(encounter)}
+      where player = ${uid} and generation = ${WORLD_GENERATION} and key = ${encounterKey(encounter)}
     `;
 
     return gone.length > 0 ? null : { encounter, gold: 0, award: null, item: null };

@@ -1,4 +1,5 @@
 import { requireUid } from '../server/auth';
+import check, { TOKEN } from '../server/validate';
 import { grantDevAdmin } from '../server/roles';
 import getIdToken from './session';
 
@@ -13,5 +14,6 @@ export default async function claimDevAdmin(): Promise<string> {
 
 async function grantOnServer(token: string): Promise<string> {
   'use server';
+  check(TOKEN, token);
   return grantDevAdmin(await requireUid(token));
 }

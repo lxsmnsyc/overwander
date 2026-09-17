@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves both stages share
@@ -42,6 +42,12 @@ const FAMILY_TEACHABLE = [
   Moves.FuryCutter,
   Moves.SleepTalk,
   Moves.Swift,
+  Moves.Brine,
+  Moves.Captivate,
+  Moves.DarkPulse,
+  Moves.NaturalGift,
+  Moves.Payback,
+  Moves.ZenHeadbutt,
 ];
 
 export default function registerCarvanhaSpecies(): void {
@@ -68,6 +74,7 @@ export default function registerCarvanhaSpecies(): void {
       [Stats.Speed]: 65,
     },
     types: [Types.Water, Types.Dark],
+    habitat: Habitat.Water,
     abilities: [Abilities.RoughSkin],
     hiddenAbilities: [Abilities.SpeedBoost],
     eggGroups: [EggGroups.Water2],
@@ -80,10 +87,11 @@ export default function registerCarvanhaSpecies(): void {
         1: [Moves.Leer, Moves.Bite],
         7: [Moves.Rage],
         13: [Moves.FocusEnergy],
-        16: [Moves.ScaryFace],
+        16: [Moves.ScaryFace, Moves.IceFang],
         22: [Moves.Crunch],
+        26: [Moves.Assurance],
         28: [Moves.Screech],
-        31: [Moves.TakeDown],
+        31: [Moves.TakeDown, Moves.AquaJet],
         37: [Moves.Swagger],
         43: [Moves.Agility],
       },
@@ -109,6 +117,7 @@ export default function registerCarvanhaSpecies(): void {
       [Stats.Speed]: 95,
     },
     types: [Types.Water, Types.Dark],
+    habitat: Habitat.Water,
     abilities: [Abilities.RoughSkin],
     // Two the mainline never gave it: what surfaces beside it thinks
     // better of swinging, and nothing eats while it is circling
@@ -120,15 +129,18 @@ export default function registerCarvanhaSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Leer, Moves.Bite, Moves.Rage, Moves.FocusEnergy],
-        16: [Moves.ScaryFace],
+        1: [Moves.Leer, Moves.Bite, Moves.Rage, Moves.FocusEnergy, Moves.Feint],
+        16: [Moves.ScaryFace, Moves.IceFang],
         22: [Moves.Crunch],
+        26: [Moves.Assurance],
         28: [Moves.Screech],
         33: [Moves.Slash],
+        34: [Moves.AquaJet],
         38: [Moves.Taunt],
         43: [Moves.Swagger],
         48: [Moves.SkullBash],
         53: [Moves.Agility],
+        56: [Moves.NightSlash],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -138,6 +150,9 @@ export default function registerCarvanhaSpecies(): void {
         Moves.RockTomb,
         Moves.Strength,
         Moves.RockSmash,
+        Moves.Avalanche,
+        Moves.GigaImpact,
+        Moves.PoisonJab,
       ],
     },
   });

@@ -5,7 +5,7 @@ import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -40,6 +40,9 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.Swift,
+  Moves.BugBite,
+  Moves.Captivate,
+  Moves.NaturalGift,
 ];
 
 export default function registerSurskitSpecies(): void {
@@ -66,12 +69,20 @@ export default function registerSurskitSpecies(): void {
       [Stats.Speed]: 65,
     },
     types: [Types.Bug, Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.SwiftSwim],
     hiddenAbilities: [Abilities.RainDish],
     eggGroups: [EggGroups.Water1, EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 200,
-    biomes: [Biome.Swamp, Biome.Bog],
+    biomes: [
+      Biome.Swamp,
+      Biome.Bog,
+      Biome.TropicalRainforest,
+      Biome.Shrubland,
+      Biome.Grassland,
+      Biome.TemperateRainforest,
+    ],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -105,23 +116,42 @@ export default function registerSurskitSpecies(): void {
       [Stats.Speed]: 80,
     },
     types: [Types.Bug, Types.Flying],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.Intimidate],
     hiddenAbilities: [Abilities.Unnerve],
     eggGroups: [EggGroups.Water1, EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Swamp, Biome.Bog],
+    biomes: [
+      Biome.Swamp,
+      Biome.Bog,
+      Biome.TropicalRainforest,
+      Biome.Shrubland,
+      Biome.Grassland,
+      Biome.TemperateRainforest,
+    ],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Bubble, Moves.QuickAttack, Moves.SweetScent, Moves.WaterSport],
+        1: [Moves.Bubble, Moves.QuickAttack, Moves.SweetScent, Moves.WaterSport, Moves.OminousWind],
         26: [Moves.Gust],
         33: [Moves.ScaryFace],
         40: [Moves.StunSpore],
-        47: [Moves.SilverWind],
+        47: [Moves.SilverWind, Moves.AirSlash],
         53: [Moves.Whirlwind],
+        61: [Moves.BugBuzz],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.AerialAce, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.AerialAce,
+        Moves.HyperBeam,
+        Moves.Defog,
+        Moves.EnergyBall,
+        Moves.GigaImpact,
+        Moves.Roost,
+        Moves.Tailwind,
+        Moves.UTurn,
+      ],
     },
   });
 }

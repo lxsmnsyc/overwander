@@ -116,6 +116,20 @@ function boundsOf(
   };
 }
 
+/** The same bounds widened evenly either side of the feet, where there are any */
+function centredOn(
+  bounds: { x: number; y: number; width: number; height: number },
+  feet: Point | null,
+): { x: number; y: number; width: number; height: number } {
+  if (feet == null) {
+    return bounds;
+  }
+  const middle = feet[0] + 0.5;
+  const half = Math.max(middle - bounds.x, bounds.x + bounds.width - middle);
+
+  return { x: middle - half, y: bounds.y, width: half * 2, height: bounds.height };
+}
+
 const share = (part: number, whole: number): string => `${whole <= 0 ? 0 : (part / whole) * 100}%`;
 
 /**
@@ -503,6 +517,13 @@ export interface AnimatedSpriteProps {
   /** Whether to draw the ground under it */
   shadow?: boolean;
   /**
+   * Whether the box is widened to stand the pokemon's feet in its middle.
+   * A clip's box covers every frame and facing, so one facing can sit
+   * well to one side of it; a small icon beside a name wants the body
+   * in the centre instead
+   */
+  centred?: boolean;
+  /**
    * The aura it stands in, which **replaces** the ground shadow: a
    * shadow pokemon's dark haze, or the light of one put right. Left
    * out, the pokemon casts its plain shadow like anything else
@@ -660,7 +681,10 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
       shadow,
       // Grown for the aura the way it is for the shadow: the pool is
       // painted from the same measurements and needs the same room
-      bounds: boundsOf(cell, props.shadow === true || props.aura != null ? feet : null, shadow),
+      bounds: centredOn(
+        boundsOf(cell, props.shadow === true || props.aura != null ? feet : null, shadow),
+        props.centred === true ? feet : null,
+      ),
     };
   });
 

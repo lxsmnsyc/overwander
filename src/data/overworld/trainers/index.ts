@@ -19,5 +19,6 @@ export {
   TYPE_TRAINER_PARTY_MIN,
   getTrainerPool,
   isAceTrainer,
+  isGrownInRegion,
   trainerLevels,
 } from './parties';

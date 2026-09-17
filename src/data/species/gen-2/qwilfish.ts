@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerQwilfishSpecies(): void {
@@ -25,6 +25,7 @@ export default function registerQwilfishSpecies(): void {
       [Stats.Speed]: 85,
     },
     types: [Types.Water, Types.Poison],
+    habitat: Habitat.Water,
     abilities: [Abilities.PoisonPoint, Abilities.SwiftSwim],
     // Rough Skin is this registry's rather than the mainline's,
     // filling it to four: the spines are the whole animal, and
@@ -37,14 +38,17 @@ export default function registerQwilfishSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        21: [Moves.ToxicSpikes],
         25: [Moves.Revenge],
-        45: [Moves.DestinyBond],
+        33: [Moves.Brine],
+        45: [Moves.DestinyBond, Moves.AquaTail],
         1: [Moves.PoisonSting, Moves.Spikes, Moves.Tackle],
         10: [Moves.Harden, Moves.Minimize],
         19: [Moves.WaterGun],
         28: [Moves.PinMissile],
         37: [Moves.TakeDown],
         46: [Moves.HydroPump],
+        49: [Moves.PoisonJab],
       },
       teachable: [
         Moves.Toxic,
@@ -84,8 +88,19 @@ export default function registerQwilfishSpecies(): void {
         Moves.SwordsDance,
         Moves.ThunderWave,
         Moves.WaterPulse,
+        Moves.Captivate,
+        Moves.GyroBall,
+        Moves.NaturalGift,
+        Moves.Payback,
       ],
-      egg: [Moves.BubbleBeam, Moves.Flail, Moves.Haze, Moves.Supersonic, Moves.Astonish],
+      egg: [
+        Moves.BubbleBeam,
+        Moves.Flail,
+        Moves.Haze,
+        Moves.Supersonic,
+        Moves.Astonish,
+        Moves.AquaJet,
+      ],
     },
   });
 }

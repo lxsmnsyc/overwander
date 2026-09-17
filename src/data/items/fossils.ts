@@ -28,6 +28,8 @@ export const FOSSIL_SPECIES = new Map<Items, Species>([
   [Items.OldAmber, Species.Aerodactyl],
   [Items.RootFossil, Species.Lileep],
   [Items.ClawFossil, Species.Anorith],
+  [Items.SkullFossil, Species.Cranidos],
+  [Items.ArmorFossil, Species.Shieldon],
 ]);
 
 export function isFossil(item: Items): boolean {
@@ -61,6 +63,8 @@ const NAMES: { [key in Items]?: string } = {
   [Items.OldAmber]: 'Old Amber',
   [Items.RootFossil]: 'Root Fossil',
   [Items.ClawFossil]: 'Claw Fossil',
+  [Items.SkullFossil]: 'Skull Fossil',
+  [Items.ArmorFossil]: 'Armor Fossil',
 };
 
 /**
@@ -74,6 +78,8 @@ const ICONS: { [key in Items]?: string } = {
   [Items.OldAmber]: 'fossils/old-amber',
   [Items.RootFossil]: 'fossils/root',
   [Items.ClawFossil]: 'fossils/claw',
+  [Items.SkullFossil]: 'fossils/skull',
+  [Items.ArmorFossil]: 'fossils/armor',
 };
 
 export default function registerFossils(): void {
@@ -83,7 +89,8 @@ export default function registerFossils(): void {
       // What is in the rock is not written on it. The bench is where
       // a player finds out, and a description that named the species
       // would settle it before they ever paid for one
-      description: 'Something ancient is still in the rock. Spent bringing it back.',
+      description:
+        'Something ancient is still in the rock. The Fossil Scientist revives it at level 20, spending the fossil.',
       type: ItemTypes.Fossil,
       icon: ICONS[item] ?? 'fossils/old-amber',
       // Spent when it is revived, and worth nothing to anybody else:

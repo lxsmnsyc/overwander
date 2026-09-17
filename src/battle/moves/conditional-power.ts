@@ -6,6 +6,7 @@ import { Statuses, Weathers } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
+import { ASLEEP_STATUSES } from '../status';
 import { hasAnyStatus } from '../utils';
 
 /**
@@ -27,7 +28,7 @@ const FACADE_STATUSES = new Set<Statuses>([
 ]);
 
 /** What a Weather Ball becomes, and what it is worth, under each sky */
-const WEATHER_BALL_TYPES = new Map<Weathers, Types>([
+export const WEATHER_BALL_TYPES = new Map<Weathers, Types>([
   [Weathers.Sunny, Types.Fire],
   [Weathers.ExtremeSunny, Types.Fire],
   [Weathers.Rain, Types.Water],
@@ -42,6 +43,9 @@ const WEATHER_BALL_TYPES = new Map<Weathers, Types>([
  * power at full health, and next to nothing on its last legs
  */
 const HEALTH_SCALED = new Set<Moves>([Moves.Eruption, Moves.WaterSpout]);
+
+/** How little is left of a target before the salt gets into the wound */
+const BRINE_SHARE = 0.5;
 
 function healthShare(unit: Unit): number {
   const whole = unit.checkStat(Stats.HP, 0);
@@ -69,6 +73,22 @@ export default function setupConditionalPowerMoves(battle: Battle): void {
       event.move === Moves.SmellingSalts &&
       event.target.type === MoveTargetType.Unit &&
       event.target.unit.status[Statuses.Paralyzed] != null
+    ) {
+      event.power *= 2;
+    }
+    // The Sinnoh pair that read the target rather than the user: one
+    // catches it sleeping, the other catches it already hurt
+    if (
+      event.move === Moves.WakeUpSlap &&
+      event.target.type === MoveTargetType.Unit &&
+      hasAnyStatus(event.target.unit, ASLEEP_STATUSES)
+    ) {
+      event.power *= 2;
+    }
+    if (
+      event.move === Moves.Brine &&
+      event.target.type === MoveTargetType.Unit &&
+      healthShare(event.target.unit) < BRINE_SHARE
     ) {
       event.power *= 2;
     }

@@ -1,7 +1,8 @@
 import { MoveAffects, MoveCategories, MoveFlags, Moves } from '../../../../data/ids/moves';
 import { Types } from '../../../../data/constants/types';
+import type { Weathers } from '../../../../data/ids/status';
 import { getMoveData } from '../../../../data/moves';
-import { MULTI_HIT_MOVES } from '../../../../battle/moves/multi-hit';
+import { MULTI_HIT_MOVES, estimateMoveHits } from '../../../../battle/moves/multi-hit';
 import { getStageMoveEffect } from '../../../../battle/moves/stage';
 import PaintedVisual, { type LitPainter, type Painter } from '../__painted';
 import { JOLTS, LIT, reachOf } from '../lit';
@@ -11,11 +12,15 @@ import care from './care';
 import colorOf from './colors';
 import contact from './contact';
 import elements from './elements';
+import legends from './legends';
+import ohko from './ohko';
 import minds from './minds';
 import { BY_TYPE, NAMED } from './named';
+import stats from './stats';
 
 import {
   type EffectShape,
+  ON_THE_CASTER,
   OVER_A_SIDE,
   SPANS,
   type ShapePainter,
@@ -39,9 +44,22 @@ const WINDING_UP = new Set<Moves>([
   Moves.RazorWind,
   Moves.Dig,
   Moves.Fly,
+  Moves.Dive,
+  Moves.Bounce,
+  Moves.ShadowForce,
   Moves.Teleport,
   Moves.Bide,
 ]);
+
+/**
+ * The moves whose first step is the blow and whose second is
+ * something else. U-turn strikes and then leaves, so the hit belongs
+ * to the step the engine deals it on and the landing table holds what
+ * the move does at the end of it
+ */
+const WINDING_AS: Partial<Record<Moves, EffectShape>> = {
+  [Moves.UTurn]: 'Dart',
+};
 
 /**
  * Where a contact hit stops being a jab and where it becomes a whole
@@ -72,6 +90,9 @@ const PAINTERS: Record<EffectShape, ShapePainter> = {
   ...elements,
   ...minds,
   ...care,
+  ...legends,
+  ...ohko,
+  ...stats,
 };
 
 /**
@@ -97,19 +118,22 @@ function contactShape(move: Moves, type: Types): EffectShape {
 
 /** What this move does when it lands. */
 export function effectShapeFor(move: Moves): EffectShape {
-  // A move that moves a stat is drawn by what it did to it, ahead of
-  // anything else it looks like: one picture for every rise and the
-  // same turned over for every drop, on whoever it landed on. What
-  // the move was, a growl or a flash, is the gap it crossed
+  const named = NAMED[move];
+
+  // A move with a picture of its own keeps it, stat or no stat: a
+  // breeze of petals is what Sweet Scent is, and the evasion it takes
+  // off is what the move does rather than what it looks like
+  if (named != null) {
+    return named;
+  }
+  // Everything else that moves a stat is drawn by what it did to it:
+  // one picture for every rise and the same turned over for every
+  // drop, on whoever it landed on. What the move was, a growl or a
+  // flash, is the gap it crossed
   const stage = getStageMoveEffect(move);
 
   if (stage != null) {
     return stage.value > 0 ? 'Boost' : 'Drop';
-  }
-  const named = NAMED[move];
-
-  if (named != null) {
-    return named;
   }
 
   const data = getMoveData(move);
@@ -155,11 +179,22 @@ export function effectShapeFor(move: Moves): EffectShape {
  * The picture of this move landing, or nothing where the step that
  * resolved was only the wind-up
  */
-export default function moveEffectVisual(move: Moves, steps = 0): PaintedVisual | null {
-  if (steps > 0 && WINDING_UP.has(move)) {
-    return null;
+export default function moveEffectVisual(
+  move: Moves,
+  steps = 0,
+  weatherOf?: () => Weathers,
+): PaintedVisual | null {
+  if (steps > 0) {
+    if (WINDING_UP.has(move)) {
+      return null;
+    }
+    const early = WINDING_AS[move];
+
+    if (early != null) {
+      return painted(early, move, weightOf(move), weatherOf);
+    }
   }
-  return painted(effectShapeFor(move), move, weightOf(move));
+  return painted(effectShapeFor(move), move, weightOf(move), weatherOf);
 }
 
 /**
@@ -173,21 +208,34 @@ export function moveMissVisual(move: Moves): PaintedVisual {
   return painted('Whiff', move, 1);
 }
 
-function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual {
+function painted(
+  shape: EffectShape,
+  move: Moves,
+  weight: number,
+  weatherOf?: () => Weathers,
+): PaintedVisual {
   const paint: Painted = { color: colorOf(move, shape) };
+  const { type } = getMoveData(move);
+  // Asked once, as it lands, and only by the shape made of the sky
+  const weather = shape === 'Weather' ? weatherOf?.() : undefined;
+  const hits = estimateMoveHits(move);
   const painter: Painter = (context, stage, share) => {
     // Once per pokemon it reached. A move aimed at a whole team lands
     // on all of them at once, and the shape has no idea how many that
     // is — it draws one landing and this runs it for each. The seed
     // moves with the target so a spread move scatters differently on
     // each of them rather than stamping the same picture out
-    const landings = stage.targets.length > 0 ? stage.targets : [stage.source];
+    const landings =
+      stage.targets.length > 0 && !ON_THE_CASTER.has(shape) ? stage.targets : [stage.source];
 
     if (OVER_A_SIDE.has(shape)) {
       PAINTERS[shape](context, { ...stage, targets: [middle(landings)] }, share, {
         paint,
         seed: move + 1,
         weight,
+        type,
+        weather,
+        hits,
       });
       return;
     }
@@ -200,7 +248,7 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
         // The move itself, so a scatter is the same scatter every time
         // it goes off: two Embers look like the same move rather than
         // like two accidents
-        { paint, seed: move + 1 + at * 97, weight },
+        { paint, seed: move + 1 + at * 97, weight, type, weather, hits },
       );
     }
   };
@@ -219,6 +267,9 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
               paint,
               seed: move + 1,
               weight,
+              type,
+              weather,
+              hits,
             });
             return;
           }
@@ -227,6 +278,9 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
               paint,
               seed: move + 1 + at * 97,
               weight,
+              type,
+              weather,
+              hits,
             });
           }
         };

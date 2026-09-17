@@ -42,6 +42,9 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.DefenseCurl,
+  Moves.Captivate,
+  Moves.NaturalGift,
+  Moves.StealthRock,
 ];
 
 export default function registerNumelSpecies(): void {
@@ -82,13 +85,13 @@ export default function registerNumelSpecies(): void {
         19: [Moves.Magnitude],
         25: [Moves.FocusEnergy],
         29: [Moves.TakeDown],
-        31: [Moves.Amnesia],
-        35: [Moves.Earthquake],
+        31: [Moves.Amnesia, Moves.LavaPlume],
+        35: [Moves.Earthquake, Moves.EarthPower],
         41: [Moves.Flamethrower],
         49: [Moves.DoubleEdge],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Howl, Moves.ScaryFace, Moves.Stomp],
+      egg: [Moves.Howl, Moves.ScaryFace, Moves.Stomp, Moves.MudBomb],
     },
   });
 
@@ -121,13 +124,24 @@ export default function registerNumelSpecies(): void {
         1: [Moves.Tackle, Moves.Growl, Moves.Ember, Moves.Magnitude],
         25: [Moves.FocusEnergy],
         29: [Moves.TakeDown],
-        31: [Moves.Amnesia],
+        31: [Moves.Amnesia, Moves.LavaPlume],
         33: [Moves.RockSlide],
         37: [Moves.Earthquake],
+        39: [Moves.EarthPower],
         45: [Moves.Eruption],
         55: [Moves.Fissure],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Roar, Moves.HyperBeam, Moves.Explosion],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Roar,
+        Moves.HyperBeam,
+        Moves.Explosion,
+        Moves.FlashCannon,
+        Moves.GigaImpact,
+        Moves.IronHead,
+        Moves.RockPolish,
+        Moves.StoneEdge,
+      ],
     },
   });
 }

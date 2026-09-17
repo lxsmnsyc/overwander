@@ -30,6 +30,10 @@ export interface MenuAction {
   label: string;
   onSelect: () => void;
   disabled?: boolean;
+  /** `danger` draws it red, for an action that cannot be undone */
+  tone?: 'danger';
+  /** Whether a rule sets it apart from the entries above it */
+  separated?: boolean;
 }
 
 export interface MenuProps {
@@ -94,21 +98,30 @@ export default function Menu(props: MenuProps): JSX.Element {
           <HeadlessMenu class="flex list-none flex-col gap-0.5">
             <For each={props.actions}>
               {(action) => (
-                <MenuItem
-                  as="button"
-                  type="button"
-                  class={ITEM}
-                  aria-disabled={action.disabled === true}
-                  onClick={() => {
-                    if (action.disabled === true) {
-                      return;
+                <>
+                  <Show when={action.separated === true}>
+                    <div aria-hidden="true" class="my-0.5 h-px bg-line-soft" />
+                  </Show>
+                  <MenuItem
+                    as="button"
+                    type="button"
+                    class={
+                      action.tone === 'danger'
+                        ? `${ITEM} text-ember-dark hover:bg-ember-soft hover:text-ember-dark [&[tc-active]]:bg-ember-soft [&[tc-active]]:text-ember-dark`
+                        : ITEM
                     }
-                    setOpen(false);
-                    action.onSelect();
-                  }}
-                >
-                  {action.label}
-                </MenuItem>
+                    aria-disabled={action.disabled === true}
+                    onClick={() => {
+                      if (action.disabled === true) {
+                        return;
+                      }
+                      setOpen(false);
+                      action.onSelect();
+                    }}
+                  >
+                    {action.label}
+                  </MenuItem>
+                </>
               )}
             </For>
           </HeadlessMenu>

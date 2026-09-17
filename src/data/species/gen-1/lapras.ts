@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerLaprasSpecies(): void {
@@ -25,6 +25,7 @@ export default function registerLaprasSpecies(): void {
       [Stats.Speed]: 60,
     },
     types: [Types.Water, Types.Ice],
+    habitat: Habitat.Water,
     abilities: [Abilities.WaterAbsorb, Abilities.ShellArmor],
     hiddenAbilities: [Abilities.Hydration, Abilities.FriendGuard],
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
@@ -36,10 +37,12 @@ export default function registerLaprasSpecies(): void {
       level: {
         1: [Moves.WaterGun, Moves.Growl, Moves.Sing],
         8: [Moves.Mist],
+        10: [Moves.IceShard],
         15: [Moves.BodySlam],
         22: [Moves.ConfuseRay],
         29: [Moves.PerishSong],
         36: [Moves.IceBeam],
+        37: [Moves.Brine],
         43: [Moves.RainDance],
         46: [Moves.HydroPump],
         50: [Moves.Safeguard],
@@ -98,6 +101,14 @@ export default function registerLaprasSpecies(): void {
         Moves.ShockWave,
         Moves.WaterPulse,
         Moves.Waterfall,
+        Moves.AquaTail,
+        Moves.Avalanche,
+        Moves.Captivate,
+        Moves.DragonPulse,
+        Moves.GigaImpact,
+        Moves.IronHead,
+        Moves.NaturalGift,
+        Moves.ZenHeadbutt,
       ],
       egg: [
         Moves.AuroraBeam,

@@ -43,6 +43,8 @@ export const FOSSIL_PRICES = new Map<Items, number>([
   [Items.OldAmber, 30_000],
   [Items.RootFossil, 12_000],
   [Items.ClawFossil, 12_000],
+  [Items.SkullFossil, 12_000],
+  [Items.ArmorFossil, 12_000],
 ]);
 
 /**

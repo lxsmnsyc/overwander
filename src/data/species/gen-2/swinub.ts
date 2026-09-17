@@ -43,6 +43,10 @@ const FAMILY_TEACHABLE = [
   Moves.RockTomb,
   Moves.SecretPower,
   Moves.Substitute,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.NaturalGift,
+  Moves.StealthRock,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Oblivious, Abilities.SnowCloak];
@@ -76,14 +80,15 @@ export default function registerSwinubSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 225,
-    biomes: [Biome.Tundra, Biome.Glacier, Biome.AlpineTundra],
+    biomes: [Biome.Tundra, Biome.Glacier, Biome.AlpineTundra, Biome.ColdDesert, Biome.Taiga],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.OdorSleuth],
         10: [Moves.PowderSnow],
         19: [Moves.Endure],
-        28: [Moves.TakeDown],
+        20: [Moves.MudBomb],
+        28: [Moves.TakeDown, Moves.IceShard],
         37: [Moves.Mist],
         46: [Moves.Blizzard],
         55: [Moves.Amnesia],
@@ -103,6 +108,14 @@ export default function registerSwinubSpecies(): void {
 
   registerSpecies(Species.Piloswine, {
     dexNumber: 221,
+    evolvesInto: [
+      {
+        species: Species.Mamoswine,
+        method: EvolutionMethod.Level | EvolutionMethod.KnownMove,
+        level: 45,
+        move: Moves.AncientPower,
+      },
+    ],
     name: 'Piloswine',
     category: 'Swine Pokemon',
     height: 1.1,
@@ -125,12 +138,13 @@ export default function registerSwinubSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Tundra, Biome.Glacier, Biome.AlpineTundra],
+    biomes: [Biome.Tundra, Biome.Glacier, Biome.AlpineTundra, Biome.ColdDesert, Biome.Taiga],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.HornAttack, Moves.PowderSnow, Moves.Endure, Moves.OdorSleuth],
-        28: [Moves.TakeDown],
+        20: [Moves.MudBomb],
+        28: [Moves.TakeDown, Moves.IceFang],
         33: [Moves.FuryAttack],
         42: [Moves.Mist],
         56: [Moves.Blizzard],
@@ -142,6 +156,9 @@ export default function registerSwinubSpecies(): void {
         Moves.BodySlam,
         Moves.DoubleEdge,
         Moves.RockSlide,
+        Moves.Avalanche,
+        Moves.GigaImpact,
+        Moves.StoneEdge,
       ],
     },
   });

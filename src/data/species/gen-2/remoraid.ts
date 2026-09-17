@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -44,6 +44,11 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
   Moves.WaterPulse,
   Moves.Waterfall,
+  Moves.Brine,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.NaturalGift,
+  Moves.SeedBomb,
 ];
 
 // The three beams all land together, at the same level up the line
@@ -73,12 +78,13 @@ export default function registerRemoraidSpecies(): void {
       [Stats.Speed]: 65,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.Hustle, Abilities.Sniper],
     hiddenAbilities: [Abilities.Moody],
     eggGroups: [EggGroups.Water1, EggGroups.Water2],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Ocean, Biome.KelpForest, Biome.CoralReef],
+    biomes: [Biome.Ocean, Biome.KelpForest, Biome.CoralReef, Biome.RockyCoast],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -89,7 +95,7 @@ export default function registerRemoraidSpecies(): void {
         44: [Moves.IceBeam],
         55: [Moves.HyperBeam],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.GunkShot],
       egg: [
         Moves.Haze,
         Moves.Octazooka,
@@ -118,19 +124,21 @@ export default function registerRemoraidSpecies(): void {
       [Stats.Speed]: 45,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.SuctionCups, Abilities.Sniper],
     hiddenAbilities: [Abilities.Moody],
     eggGroups: [EggGroups.Water1, EggGroups.Water2],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Ocean, Biome.KelpForest, Biome.CoralReef],
+    biomes: [Biome.Ocean, Biome.KelpForest, Biome.CoralReef, Biome.RockyCoast],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.WaterGun],
+        1: [Moves.WaterGun, Moves.GunkShot],
         11: [Moves.Constrict],
         ...BEAMS,
         25: [Moves.Octazooka],
+        36: [Moves.WringOut],
         38: [Moves.FocusEnergy],
         54: [Moves.IceBeam],
         70: [Moves.HyperBeam],
@@ -141,6 +149,10 @@ export default function registerRemoraidSpecies(): void {
         Moves.SeismicToss,
         Moves.SludgeBomb,
         Moves.ThunderWave,
+        Moves.EnergyBall,
+        Moves.FlashCannon,
+        Moves.GigaImpact,
+        Moves.Payback,
       ],
     },
   });

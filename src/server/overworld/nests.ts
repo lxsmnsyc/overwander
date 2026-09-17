@@ -1,4 +1,5 @@
 import 'server-only';
+import { WORLD_GENERATION } from '../../overworld/current';
 import { Depth } from '../../overworld/depth';
 import type { EncounterRecord } from '../../auth/encounter-record';
 import type { ItemStack } from '../../data/overworld/item-pool';
@@ -38,7 +39,8 @@ export async function peekNest(
   }
   const marker = snapshot.nestMarker(cell);
   const rows = await getSql()`
-    select 1 from nest_claims where marker = ${marker} and player = ${uid}
+    select 1 from nest_claims
+    where generation = ${WORLD_GENERATION} and marker = ${marker} and player = ${uid}
   `;
 
   return { taken: rows.length > 0 };

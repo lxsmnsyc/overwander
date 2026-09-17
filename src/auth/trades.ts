@@ -6,6 +6,7 @@ import {
   offerTrade as offerOnServerSide,
 } from '../server/trades';
 import { requireUid } from '../server/auth';
+import check, { ID, MAYBE_ID, OFFSET, TOKEN, TRADE_OFFER } from '../server/validate';
 import { type TradeRecord, asTradeRecord } from './trade-record';
 import { syncServerClock } from './clock';
 import getSupabase, { type Unwatch, watchTable } from './supabase';
@@ -114,6 +115,9 @@ async function offerTradeOnServer(
   offset: number,
 ): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(TRADE_OFFER, offer);
+  check(OFFSET, offset);
   return offerOnServerSide(await requireUid(token), offer, await syncServerClock(), offset);
 }
 
@@ -137,6 +141,10 @@ async function acceptTradeOnServer(
   offset: number,
 ): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(MAYBE_ID, pick);
+  check(OFFSET, offset);
   return acceptOnServerSide(await requireUid(token), id, pick, await syncServerClock(), offset);
 }
 
@@ -150,6 +158,8 @@ export async function declineTrade(id: string): Promise<boolean> {
 
 async function declineTradeOnServer(token: string, id: string): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   return declineOnServerSide(await requireUid(token), id, await syncServerClock());
 }
 
@@ -163,5 +173,7 @@ export async function cancelTrade(id: string): Promise<boolean> {
 
 async function cancelTradeOnServer(token: string, id: string): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   return cancelOnServerSide(await requireUid(token), id, await syncServerClock());
 }

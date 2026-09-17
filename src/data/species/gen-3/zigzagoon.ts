@@ -50,6 +50,13 @@ const FAMILY_TEACHABLE = [
   Moves.SleepTalk,
   Moves.DefenseCurl,
   Moves.Swift,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.GrassKnot,
+  Moves.GunkShot,
+  Moves.LastResort,
+  Moves.NaturalGift,
+  Moves.SeedBomb,
 ];
 
 export default function registerZigzagoonSpecies(): void {
@@ -96,6 +103,7 @@ export default function registerZigzagoonSpecies(): void {
         33: [Moves.Flail],
         37: [Moves.Rest],
         41: [Moves.BellyDrum],
+        45: [Moves.Fling],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [Moves.Charm, Moves.Pursuit, Moves.Tickle, Moves.Trick],
@@ -131,7 +139,7 @@ export default function registerZigzagoonSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.Growl, Moves.TailWhip, Moves.Headbutt],
+        1: [Moves.Tackle, Moves.Growl, Moves.TailWhip, Moves.Headbutt, Moves.Switcheroo],
         13: [Moves.SandAttack],
         17: [Moves.OdorSleuth],
         23: [Moves.MudSport],
@@ -140,8 +148,16 @@ export default function registerZigzagoonSpecies(): void {
         41: [Moves.Slash],
         47: [Moves.Rest],
         53: [Moves.BellyDrum],
+        59: [Moves.Fling],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Roar, Moves.HyperBeam, Moves.Strength],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Roar,
+        Moves.HyperBeam,
+        Moves.Strength,
+        Moves.GigaImpact,
+        Moves.ShadowClaw,
+      ],
     },
   });
 }

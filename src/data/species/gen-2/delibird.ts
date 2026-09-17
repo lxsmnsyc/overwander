@@ -33,7 +33,7 @@ export default function registerDelibirdSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Tundra, Biome.Glacier, Biome.AlpineTundra],
+    biomes: [Biome.Tundra, Biome.Glacier, Biome.AlpineTundra, Biome.Taiga],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       // Present is the whole of it, which is the joke: everything else
@@ -79,6 +79,14 @@ export default function registerDelibirdSpecies(): void {
         Moves.SeismicToss,
         Moves.Substitute,
         Moves.WaterPulse,
+        Moves.Avalanche,
+        Moves.Captivate,
+        Moves.Defog,
+        Moves.Fling,
+        Moves.GunkShot,
+        Moves.NaturalGift,
+        Moves.Pluck,
+        Moves.SeedBomb,
       ],
       egg: [
         Moves.AuroraBeam,
@@ -87,6 +95,7 @@ export default function registerDelibirdSpecies(): void {
         Moves.RapidSpin,
         Moves.Splash,
         Moves.IceBall,
+        Moves.IceShard,
       ],
     },
   });

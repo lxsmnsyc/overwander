@@ -105,6 +105,8 @@ export interface EncounterOptions {
    * anything in it
    */
   itemSlots?: number;
+  /** How much wider its hidden ability band is, on top of the day's and the sky's */
+  hiddenBoost?: number;
 }
 
 export default function deriveEncounter(
@@ -157,7 +159,8 @@ export default function deriveEncounter(
     species,
     traitValue,
     (featured ? SPECIES_DAY_HIDDEN_ABILITY_BOOST : 1) *
-      (sky == null ? 1 : hiddenAbilityBoostOf(sky)),
+      (sky == null ? 1 : hiddenAbilityBoostOf(sky)) *
+      (options.hiddenBoost ?? 1),
   );
 
   // Modern mechanics: gender is a pure ratio roll independent of any

@@ -10,7 +10,7 @@ import SpeciesCoat from '../../../sprites/SpeciesCoat';
 
 import { SpriteAnim } from '../../../../data/ids/sprite-anims';
 
-import { Button, DialogSection, List, ListRow } from '../../../styled';
+import { Button, List, ListRow, Note } from '../../../styled';
 
 import { Index, type JSX, Show } from 'solid-js';
 
@@ -37,14 +37,23 @@ export interface EvolutionSectionProps {
 
 export default function EvolutionSection(props: EvolutionSectionProps): JSX.Element {
   return (
-    <Show when={props.options?.length}>
-      <DialogSection title="Evolution">
-        {/* `items-center`: a row is as wide as what it
-        says, and stands in the middle of the sheet.
-        Stretched, the button ended up an inch of
-        empty paper away from the picture it acts on,
-        which reads as belonging to nothing */}
-        <List class="items-center">
+    <section class="flex min-h-0 flex-1 flex-col gap-1">
+      {/* Said only once the answer is in, so a line still loading is
+          not briefly told it has nowhere to go */}
+      <Show
+        when={props.options?.length}
+        fallback={
+          <Show when={props.options != null}>
+            <Note class="flex flex-1 items-center justify-center text-center">
+              No evolutions or forms
+            </Note>
+          </Show>
+        }
+      >
+        <h3 class="text-left">Evolves into</h3>
+        {/* A line with many branches scrolls inside its own box
+            rather than pushing the rest of the sheet down */}
+        <List class="min-h-0 gap-1 overflow-y-auto">
           {/* `Index` rather than `For`: the list is
           re-read after everything this sheet writes,
           and each read hands back fresh objects — so
@@ -61,7 +70,7 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
 
               return (
                 <ListRow
-                  class="items-center gap-3"
+                  class="items-center gap-2 py-1"
                   // The shorthand on the row spelled out,
                   // for anyone who stops on it and for
                   // anything that reads it aloud
@@ -78,7 +87,7 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                       own sheets came out a different height on every
                       row, with the condition beside it in a different
                       place each time */}
-                  <span class="flex size-16 shrink-0 items-center justify-center">
+                  <span class="flex size-12 shrink-0 items-center justify-center">
                     <SpeciesCoat
                       species={becomes()}
                       met={known().met}
@@ -116,8 +125,11 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                 a condition still asking for the coat
                 the swap already took would be asking
                 for something the pokemon cannot have */}
-                  <Show when={!option().covered} fallback={<span class="text-muted">ready</span>}>
-                    <span class="flex items-center gap-1 text-muted">
+                  <Show
+                    when={!option().covered}
+                    fallback={<span class="grow text-left text-sm text-muted">ready</span>}
+                  >
+                    <span class="flex grow items-center gap-1 text-left text-sm text-muted">
                       <span>+</span>
                       <EvolutionCondition evolution={option().evolution} />
                     </span>
@@ -138,7 +150,7 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
             }}
           </Index>
         </List>
-      </DialogSection>
-    </Show>
+      </Show>
+    </section>
   );
 }

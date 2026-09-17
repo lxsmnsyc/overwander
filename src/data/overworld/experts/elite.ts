@@ -6,14 +6,17 @@ import Awards, {
   JOHTO_HONORS,
   KANTO_BADGES,
   KANTO_HONORS,
+  SINNOH_BADGES,
+  SINNOH_HONORS,
 } from '../../ids/awards';
 import Biome from '../../ids/biome';
 
 /**
- * The two leagues' Elite Four, numbered Kanto's then Johto's. Bruno
- * is here twice because he keeps a seat in each: two fights, two
- * marks, and a challenger who has only walked one region's gyms is
- * taken by the Bruno of that region alone
+ * The four leagues' Elite Four, numbered Kanto's, Johto's, Hoenn's
+ * then Sinnoh's. Bruno is here twice because he keeps a seat in each
+ * of the first two: two fights, two marks, and a challenger who has
+ * only walked one region's gyms is taken by the Bruno of that region
+ * alone
  */
 const enum EliteMember {
   Lorelei = 0,
@@ -28,6 +31,10 @@ const enum EliteMember {
   Phoebe = 9,
   Glacia = 10,
   Drake = 11,
+  Aaron = 12,
+  Bertha = 13,
+  Flint = 14,
+  Lucian = 15,
 }
 
 export { EliteMember };
@@ -45,6 +52,10 @@ export const ELITE_MEMBERS: EliteMember[] = [
   EliteMember.Phoebe,
   EliteMember.Glacia,
   EliteMember.Drake,
+  EliteMember.Aaron,
+  EliteMember.Bertha,
+  EliteMember.Flint,
+  EliteMember.Lucian,
 ];
 
 export const ELITE_MEMBER_NAMES: Record<EliteMember, string> = {
@@ -60,6 +71,10 @@ export const ELITE_MEMBER_NAMES: Record<EliteMember, string> = {
   [EliteMember.Phoebe]: 'Phoebe',
   [EliteMember.Glacia]: 'Glacia',
   [EliteMember.Drake]: 'Drake',
+  [EliteMember.Aaron]: 'Aaron',
+  [EliteMember.Bertha]: 'Bertha',
+  [EliteMember.Flint]: 'Flint',
+  [EliteMember.Lucian]: 'Lucian',
 };
 
 export const ELITE_MEMBER_TYPES: Record<EliteMember, Types> = {
@@ -75,6 +90,10 @@ export const ELITE_MEMBER_TYPES: Record<EliteMember, Types> = {
   [EliteMember.Phoebe]: Types.Ghost,
   [EliteMember.Glacia]: Types.Ice,
   [EliteMember.Drake]: Types.Dragon,
+  [EliteMember.Aaron]: Types.Bug,
+  [EliteMember.Bertha]: Types.Ground,
+  [EliteMember.Flint]: Types.Fire,
+  [EliteMember.Lucian]: Types.Psychic,
 };
 
 export const ELITE_MEMBER_HONORS: Record<EliteMember, Awards> = {
@@ -90,6 +109,10 @@ export const ELITE_MEMBER_HONORS: Record<EliteMember, Awards> = {
   [EliteMember.Phoebe]: Awards.PhoebeDefeated,
   [EliteMember.Glacia]: Awards.GlaciaDefeated,
   [EliteMember.Drake]: Awards.DrakeDefeated,
+  [EliteMember.Aaron]: Awards.AaronDefeated,
+  [EliteMember.Bertha]: Awards.BerthaDefeated,
+  [EliteMember.Flint]: Awards.FlintDefeated,
+  [EliteMember.Lucian]: Awards.LucianDefeated,
 };
 
 /**
@@ -105,6 +128,7 @@ export function getEliteBadges(member: EliteMember): Awards[] {
     ...(KANTO_HONORS.includes(honor) ? KANTO_BADGES : []),
     ...(JOHTO_HONORS.includes(honor) ? JOHTO_BADGES : []),
     ...(HOENN_HONORS.includes(honor) ? HOENN_BADGES : []),
+    ...(SINNOH_HONORS.includes(honor) ? SINNOH_BADGES : []),
   ];
 }
 
@@ -126,37 +150,58 @@ export const ELITE_MEMBER_CHARSETS: Record<EliteMember, string[]> = {
   [EliteMember.Phoebe]: ['characters/oras/phoebe'],
   [EliteMember.Glacia]: ['characters/oras/glacia'],
   [EliteMember.Drake]: ['characters/oras/drake'],
+  [EliteMember.Aaron]: ['characters/dppt/aaron'],
+  [EliteMember.Bertha]: ['characters/dppt/bertha'],
+  [EliteMember.Flint]: ['characters/dppt/flint'],
+  [EliteMember.Lucian]: ['characters/dppt/lucian'],
 };
 
 /**
  * Which of the Elite Four hold each biome's seats, by the same rule
  * the gyms follow: ice country is Lorelei's, hard dry ground is
  * Bruno's, the damp is Agatha's, and everything green or under water
- * is Lance's. Johto's three take the countries their own kind
- * answers to, so a seat holds seven names between two leagues and the
- * chunk's fixture roll says whose it is
+ * is Lance's. The later leagues take the countries their own kind
+ * answers to, so a seat holds several names across four leagues and
+ * the chunk's fixture roll says whose it is
  */
 export const BIOME_ELITE_MEMBERS: Record<Biome, EliteMember[]> = {
   [Biome.Glacier]: [EliteMember.Lorelei, EliteMember.Glacia],
   [Biome.Tundra]: [EliteMember.Lorelei, EliteMember.Glacia],
-  [Biome.ColdDesert]: [EliteMember.Lorelei, EliteMember.Glacia],
+  [Biome.ColdDesert]: [EliteMember.Lorelei, EliteMember.Glacia, EliteMember.Bertha],
   [Biome.AlpineTundra]: [EliteMember.Lorelei, EliteMember.Glacia],
-  [Biome.Taiga]: [EliteMember.Lorelei, EliteMember.Karen, EliteMember.Glacia, EliteMember.Sidney],
+  [Biome.Taiga]: [
+    EliteMember.Lorelei,
+    EliteMember.Karen,
+    EliteMember.Glacia,
+    EliteMember.Sidney,
+    EliteMember.Aaron,
+  ],
   [Biome.PolarOcean]: [EliteMember.Lorelei, EliteMember.Glacia],
-  [Biome.Mountain]: [EliteMember.Bruno, EliteMember.JohtoBruno],
+  [Biome.Mountain]: [EliteMember.Bruno, EliteMember.JohtoBruno, EliteMember.Bertha],
   [Biome.Badlands]: [
     EliteMember.Bruno,
     EliteMember.JohtoBruno,
     EliteMember.Koga,
     EliteMember.Karen,
     EliteMember.Sidney,
+    EliteMember.Bertha,
   ],
-  [Biome.Desert]: [EliteMember.Bruno, EliteMember.JohtoBruno],
-  [Biome.Steppe]: [EliteMember.Bruno, EliteMember.JohtoBruno],
-  [Biome.Shrubland]: [EliteMember.Bruno, EliteMember.JohtoBruno],
-  [Biome.Savanna]: [EliteMember.Bruno, EliteMember.JohtoBruno],
-  [Biome.RockyCoast]: [EliteMember.Bruno, EliteMember.JohtoBruno],
-  [Biome.Swamp]: [EliteMember.Agatha, EliteMember.Koga, EliteMember.Phoebe],
+  [Biome.Desert]: [
+    EliteMember.Bruno,
+    EliteMember.JohtoBruno,
+    EliteMember.Bertha,
+    EliteMember.Flint,
+  ],
+  [Biome.Steppe]: [EliteMember.Bruno, EliteMember.JohtoBruno, EliteMember.Bertha],
+  [Biome.Shrubland]: [
+    EliteMember.Bruno,
+    EliteMember.JohtoBruno,
+    EliteMember.Bertha,
+    EliteMember.Aaron,
+  ],
+  [Biome.Savanna]: [EliteMember.Bruno, EliteMember.JohtoBruno, EliteMember.Bertha],
+  [Biome.RockyCoast]: [EliteMember.Bruno, EliteMember.JohtoBruno, EliteMember.Bertha],
+  [Biome.Swamp]: [EliteMember.Agatha, EliteMember.Koga, EliteMember.Phoebe, EliteMember.Aaron],
   [Biome.Bog]: [
     EliteMember.Agatha,
     EliteMember.Koga,
@@ -164,13 +209,15 @@ export const BIOME_ELITE_MEMBERS: Record<Biome, EliteMember[]> = {
     EliteMember.Sidney,
     EliteMember.Phoebe,
   ],
-  [Biome.Mangrove]: [EliteMember.Agatha, EliteMember.Koga, EliteMember.Phoebe],
+  [Biome.Mangrove]: [EliteMember.Agatha, EliteMember.Koga, EliteMember.Phoebe, EliteMember.Aaron],
   [Biome.TemperateRainforest]: [
     EliteMember.Agatha,
     EliteMember.Will,
     EliteMember.Karen,
     EliteMember.Sidney,
     EliteMember.Phoebe,
+    EliteMember.Aaron,
+    EliteMember.Lucian,
   ],
   [Biome.Beyond]: [
     EliteMember.Agatha,
@@ -178,22 +225,31 @@ export const BIOME_ELITE_MEMBERS: Record<Biome, EliteMember[]> = {
     EliteMember.Karen,
     EliteMember.Sidney,
     EliteMember.Phoebe,
+    EliteMember.Lucian,
   ],
   [Biome.DeepOcean]: [EliteMember.Lance, EliteMember.Drake],
   [Biome.Ocean]: [EliteMember.Lance, EliteMember.Drake],
   [Biome.CoralReef]: [EliteMember.Lance, EliteMember.Drake],
   [Biome.Beach]: [EliteMember.Lance, EliteMember.Drake],
-  [Biome.KelpForest]: [EliteMember.Lance, EliteMember.Will, EliteMember.Drake],
+  [Biome.KelpForest]: [EliteMember.Lance, EliteMember.Will, EliteMember.Drake, EliteMember.Lucian],
   [Biome.TropicalRainforest]: [
     EliteMember.Lance,
     EliteMember.Koga,
     EliteMember.Will,
     EliteMember.Drake,
+    EliteMember.Aaron,
+    EliteMember.Lucian,
   ],
-  [Biome.TropicalSeasonalForest]: [EliteMember.Lance, EliteMember.Drake],
-  [Biome.Grassland]: [EliteMember.Lance, EliteMember.Drake],
-  [Biome.TemperateForest]: [EliteMember.Lance, EliteMember.Drake],
-  [Biome.Woodland]: [EliteMember.Lance, EliteMember.Drake],
-  [Biome.MontaneForest]: [EliteMember.Lance, EliteMember.Will, EliteMember.Drake],
-  [Biome.Volcano]: [EliteMember.Lance, EliteMember.Drake],
+  [Biome.TropicalSeasonalForest]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Aaron],
+  [Biome.Grassland]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Aaron],
+  [Biome.TemperateForest]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Aaron],
+  [Biome.Woodland]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Aaron],
+  [Biome.MontaneForest]: [
+    EliteMember.Lance,
+    EliteMember.Will,
+    EliteMember.Drake,
+    EliteMember.Aaron,
+    EliteMember.Lucian,
+  ],
+  [Biome.Volcano]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Flint],
 };

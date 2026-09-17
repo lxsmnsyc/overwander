@@ -35,6 +35,7 @@ export default function registerDunsparceSpecies(): void {
     learnSet: {
       level: {
         11: [Moves.Yawn],
+        33: [Moves.Roost],
         41: [Moves.Endeavor],
         44: [Moves.Flail],
         1: [Moves.Rage],
@@ -96,6 +97,15 @@ export default function registerDunsparceSpecies(): void {
         Moves.Substitute,
         Moves.ThunderWave,
         Moves.WaterPulse,
+        Moves.AquaTail,
+        Moves.Captivate,
+        Moves.ChargeBeam,
+        Moves.GyroBall,
+        Moves.LastResort,
+        Moves.NaturalGift,
+        Moves.PoisonJab,
+        Moves.StealthRock,
+        Moves.ZenHeadbutt,
       ],
       egg: [
         Moves.AncientPower,
@@ -104,6 +114,7 @@ export default function registerDunsparceSpecies(): void {
         Moves.Rage,
         Moves.RockSlide,
         Moves.Astonish,
+        Moves.TrumpCard,
       ],
     },
   });

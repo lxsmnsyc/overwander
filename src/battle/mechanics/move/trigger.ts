@@ -1,6 +1,6 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages } from '../../../data/constants/stats';
-import { StatFlags } from '../../../data/ids/moves';
+import { MoveTargets, StatFlags } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
 import type Battle from '../../core';
 import type {
@@ -13,6 +13,18 @@ import { BattleEvents, MoveTargetType } from '../../events';
 import resolveMoveTargets from './targeting';
 
 /** A move going off: what it is aimed at, whether it lands, and what it sets off */
+/** The clamp a combined accuracy stage sits in, either way from zero */
+export const ACCURACY_STAGE_LIMIT = 6;
+
+/**
+ * What a combined accuracy stage is worth as a multiplier. Exported
+ * because an effect that leaves part of the stage out, an ability
+ * that ignores evasion for instance, has to weigh it the same way
+ */
+export function accuracyScale(stage: number): number {
+  return stage < 0 ? 3 / (3 - stage) : (3 + stage) / 3;
+}
+
 export default function setupTriggerMoveMechanics(battle: Battle): void {
   const triggerMoveData = new Set<TriggerMoveData>();
 
@@ -122,8 +134,16 @@ export default function setupTriggerMoveMechanics(battle: Battle): void {
       targeting.affects,
     );
 
+    // Only a move aimed at one thing can be put onto somebody else:
+    // one that goes out to a whole side already reaches everybody
+    const single = targeting.target !== MoveTargets.None;
+
     for (const target of targets) {
-      event.source.triggerMoveTarget(event.move, target, event.steps);
+      event.source.triggerMoveTarget(
+        event.move,
+        single ? event.source.checkMoveRedirect(event.move, target) : target,
+        event.steps,
+      );
     }
   });
 
@@ -139,10 +159,12 @@ export default function setupTriggerMoveMechanics(battle: Battle): void {
       if (parent.target.type === MoveTargetType.Unit) {
         accuracyStage -= parent.target.unit.checkStage(Stages.Evasion, StatFlags.Attack);
 
-        accuracyStage = Math.max(-6, Math.min(accuracyStage, 6));
+        accuracyStage = Math.max(
+          -ACCURACY_STAGE_LIMIT,
+          Math.min(accuracyStage, ACCURACY_STAGE_LIMIT),
+        );
       }
-      event.accuracy =
-        baseAccuracy * (accuracyStage < 0 ? 3 / (3 - accuracyStage) : (3 + accuracyStage) / 3);
+      event.accuracy = baseAccuracy * accuracyScale(accuracyStage);
     }
   });
 

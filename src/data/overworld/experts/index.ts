@@ -57,6 +57,10 @@ export {
 } from './pools';
 export type { ExpertPool } from './pools';
 export {
+  ARCADE_PANELS,
+  ARCADE_PANEL_NAMES,
+  ARCADE_PANEL_WEATHER,
+  ArcadePanel,
   FRONTIER_BRAINS,
   FRONTIER_BRAIN_CHARSETS,
   FRONTIER_BRAIN_GOLD_PARTIES,
@@ -76,7 +80,10 @@ export {
   PIKE_CURTAIN_NAMES,
   PIKE_CURTAIN_STATUSES,
   PikeCurtain,
+  arcadeCurtain,
+  frontierTeamSize,
   getFrontierParty,
   getRentalPool,
+  pickArcadePanel,
   pickPikeCurtain,
 } from './frontier';

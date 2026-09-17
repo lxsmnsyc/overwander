@@ -67,6 +67,16 @@ const FAMILY_TEACHABLE = [
   Moves.RockTomb,
   Moves.SecretPower,
   Moves.Taunt,
+  Moves.Captivate,
+  Moves.FocusBlast,
+  Moves.GunkShot,
+  Moves.NaturalGift,
+  Moves.Payback,
+  Moves.PoisonJab,
+  Moves.RockClimb,
+  Moves.SeedBomb,
+  Moves.UTurn,
+  Moves.VacuumWave,
 ];
 
 export default function registerMankeySpecies(): void {
@@ -106,12 +116,14 @@ export default function registerMankeySpecies(): void {
         9: [Moves.LowKick],
         15: [Moves.KarateChop],
         21: [Moves.FurySwipes],
+        25: [Moves.Assurance],
         27: [Moves.FocusEnergy],
         33: [Moves.SeismicToss],
         39: [Moves.Thrash, Moves.CrossChop],
-        45: [Moves.Screech],
+        45: [Moves.Screech, Moves.Punishment],
+        49: [Moves.CloseCombat],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.Fling],
       egg: [
         Moves.RockSlide,
         Moves.Meditate,
@@ -152,15 +164,18 @@ export default function registerMankeySpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Scratch, Moves.Leer, Moves.KarateChop, Moves.LowKick, Moves.Rage],
+        1: [Moves.Scratch, Moves.Leer, Moves.KarateChop, Moves.LowKick, Moves.Rage, Moves.Fling],
         21: [Moves.FurySwipes],
+        25: [Moves.Assurance],
         27: [Moves.FocusEnergy],
         36: [Moves.SeismicToss],
         45: [Moves.CrossChop],
         46: [Moves.Thrash],
+        53: [Moves.Punishment],
         54: [Moves.Screech],
+        59: [Moves.CloseCombat],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.StoneEdge],
     },
   });
 }

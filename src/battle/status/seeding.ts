@@ -5,7 +5,7 @@ import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
 import type Unit from '../unit';
-import { RESIDUAL_TICK } from './__create';
+import { RESIDUAL_TICK, checkStatusDamage } from './__create';
 
 interface SeedingData {
   progress: number;
@@ -60,7 +60,12 @@ export default function setupSeedingStatus(battle: Battle): void {
 
   battle.on(BattleEvents.UnitTriggerStatus, EventPriority.Exact, (event) => {
     if (event.status === Statuses.Seeding) {
-      const amount = event.source.checkStat(Stats.HP, 0) / 8;
+      const amount = checkStatusDamage(
+        battle,
+        event.source,
+        Statuses.Seeding,
+        event.source.checkStat(Stats.HP, 0) / 8,
+      );
 
       if (event.cause.type !== EffectType.None) {
         const seeder = event.cause.unit;

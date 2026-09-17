@@ -4,9 +4,10 @@ import { getMaxHealth } from '../auth/health';
 import type { TeamSnapshotRecord } from '../auth/teams';
 import { defaultSlots } from '../data/constants/slots';
 import { PERFECT_IVS, Stats } from '../data/constants/stats';
-import { MoveAffects, MoveTargets, type Moves } from '../data/ids/moves';
+import { MoveAffects, MoveTargets, Moves } from '../data/ids/moves';
 import { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
+import { getBaseForms } from '../data/species';
 import { deriveGender, deriveNature, deriveSize } from '../overworld/encounter';
 import { fieldTeams } from '../overworld/raid-battle';
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
@@ -88,6 +89,13 @@ export const TARGET_ALLIANCE = 1;
  */
 export function needsAlly(move: Moves): boolean {
   return (getMoveData(move).affects & MoveAffects.Enemy) === 0;
+}
+
+/** Any base-form pokemon, for a dummy that has to look like something */
+function randomAppearance(): Species {
+  const forms = getBaseForms();
+
+  return forms[Math.floor(Math.random() * forms.length)] ?? DEMO_APPEARANCE;
 }
 
 /** One dummy, in the shape a battle fields */
@@ -223,7 +231,10 @@ export function createMoveDemo(move: Moves, rules: DemoRules = { alwaysHits: tru
     throw new Error('The demo could not be staged');
   }
   casting.setAppearance(DEMO_APPEARANCE);
-  receiving.setAppearance(DEMO_APPEARANCE);
+  // A Transform copies what its target looks like, so a doll copying
+  // a doll would show nothing changing. That target wears a random
+  // pokemon instead, a different one each time the move is staged
+  receiving.setAppearance(move === Moves.Transform ? randomAppearance() : DEMO_APPEARANCE);
   // Enough of it to keep pressing. Answered after the ordinary rule
   // rather than instead of it, so a move that has already been cast
   // still spends what it spends

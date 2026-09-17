@@ -356,8 +356,9 @@ export default class EffectBatch {
     angle: number,
     colour: string,
     alpha: number,
+    light: Light = {},
   ): void {
-    this.quad(at, length, width, angle, packed(Shape.Streak, 0), colour, alpha, 1);
+    this.quad(at, length, width, angle, packed(Shape.Streak, 0), colour, alpha, light.add ?? 1);
   }
 
   /** A streak drawn from where something was a moment ago to where it is */

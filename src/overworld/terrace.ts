@@ -1,4 +1,3 @@
-import CellMemo from '../core/cell-memo';
 import { SQUARES } from './grid';
 import type World from './world';
 
@@ -24,31 +23,10 @@ export const TERRACE_STEPS = [0.1, 0.3, 0.55] as const;
 /** The highest level the world reaches, which is the last step */
 export const TERRACE_TOP = TERRACE_STEPS.length;
 
-/**
- * Every raw level read so far, per world.
- *
- * The climate behind it is five noise samples warped through two
- * more, and the opening below asks for sixteen cells to answer one, so
- * a board window would read the field a hundred thousand times over
- * without this. Held against the world rather than beside it, so a
- * world nobody is standing in is collected with its readings
- */
-const READ = new WeakMap<World, CellMemo<number>>();
-
 /** How high the ground stands at a cell, before the thin parts go */
 function rawLevelAt(world: World, x: number, y: number): number {
-  let kept = READ.get(world);
-
-  if (kept == null) {
-    kept = new CellMemo<number>();
-    READ.set(world, kept);
-  }
-  const known = kept.get(x, y);
-
-  if (known != null) {
-    return known;
-  }
-  const { elevation } = world.getCellClimate(x, y);
+  // The world remembers each cell's climate, so this is a lookup
+  const elevation = world.getCellElevation(x, y);
   let level = 0;
 
   for (const step of TERRACE_STEPS) {
@@ -56,7 +34,6 @@ function rawLevelAt(world: World, x: number, y: number): number {
       level++;
     }
   }
-  kept.set(x, y, level);
   return level;
 }
 

@@ -42,6 +42,13 @@ export interface SpawnCoat {
   featured: boolean;
 }
 
+/** The pokemon a player rides while surfing or flying, in the coat it wears */
+export interface RiddenCoat {
+  species: Species;
+  shiny: boolean;
+  female: boolean;
+}
+
 /**
  * Which way a pokemon standing on a cell happens to be facing.
  *

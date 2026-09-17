@@ -1,5 +1,6 @@
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
 import type { Slot } from './field';
+import { type CastLabels, drawCastLabel } from './cast-label';
 import { COLORS, HIT_REACH, NAMED_RADIUS } from './metrics';
 import { type Striking, animationFor } from './motion';
 import type { ProgressData } from '../../../battle/events';
@@ -14,17 +15,12 @@ import { litPurifiedAura, litShadowAura, litSparkle } from '../../../canvas/batt
 import { cornersOf, shadowCorners } from '../../../canvas/placement';
 import { facingVector } from '../../../canvas/facing';
 import { SHIM_SPANS, shimMotion } from '../../../canvas/battle/sprite-shim';
-import {
-  SHADOW_STAMP,
-  bakeShadowDisc,
-  bakeWord,
-  paintSparkle,
-} from '../../overworld/chunk-canvas/scenery';
+import { SHADOW_STAMP, bakeShadowDisc, paintSparkle } from '../../overworld/chunk-canvas/scenery';
 import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/sparkle';
 import type { Point } from '../../../canvas/sprite-sheet';
 import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
-import { getMoveData } from '../../../data/moves';
+import { SpriteAnim } from '../../../data/ids/sprite-anims';
 
 /**
  * Painting one slot: the pokemon, the bars over it and the words under
@@ -71,6 +67,8 @@ export interface SlotBatch {
   solid?: (on: boolean) => void;
   /** Whether auras and sparkles are built in the scene rather than stamped here */
   lit?: boolean;
+  /** Screen pixels per drawing unit, for art that has to stay sharp */
+  density?: number;
 }
 
 /** The four corners of a rectangle, for the batch */
@@ -152,37 +150,6 @@ function fractionOf(progress: ProgressData): number {
   return progress.duration <= 0
     ? 1
     : Math.min(1, Math.max(0, progress.progress / progress.duration));
-}
-
-/**
- * The font a move's name is written in. Fixed rather than fitted to
- * the slot, so a word is baked once and stamped from then on
- */
-const LABEL_FONT = '12px sans-serif';
-
-function drawLabel(
-  context: CanvasRenderingContext2D,
-  text: string,
-  x: number,
-  y: number,
-  color: string,
-  onto?: SlotBatch,
-  alpha = 1,
-): void {
-  const word = onto == null ? null : bakeWord(onto.bakery, text, LABEL_FONT, color);
-
-  if (onto == null || word == null) {
-    context.fillStyle = color;
-    context.textAlign = 'center';
-    context.fillText(text, x, y);
-    return;
-  }
-  onto.batch.quad(
-    onto.bakery.sheet,
-    word,
-    corners(x - word.width / 2, y - word.height / 2, word.width, word.height),
-    alpha,
-  );
 }
 
 /**
@@ -499,20 +466,94 @@ function sparkle(
   );
 }
 
+/**
+ * How much of a substituted pokemon is left showing behind its doll,
+ * and how far back the doll comes in from as it goes up
+ */
+const BEHIND = 0.3;
+const STAND_RISE = 0.35;
+
+/**
+ * Substitute coming in: how high it falls from in frame heights, the
+ * share of the way in it lands at, and how high it bounces
+ */
+const STAND_DROP = 1.2;
+const STAND_LANDS = 0.75;
+const STAND_BOUNCE = 0.08;
+
+/** How far above its spot the doll is, in frame heights, as it drops in and bounces once */
+function dropOf(share: number): number {
+  if (share < STAND_LANDS) {
+    const fall = share / STAND_LANDS;
+
+    return STAND_DROP * (1 - fall * fall);
+  }
+  return Math.sin(((share - STAND_LANDS) / (1 - STAND_LANDS)) * Math.PI) * STAND_BOUNCE;
+}
+
+/**
+ * The doll a substituted pokemon is standing behind.
+ *
+ * Drawn after the pokemon and on the same spot, so the two crossfade
+ * in place: the substitute is what is taking the hits, and what a
+ * watcher is meant to be looking at while it is up. It arrives from
+ * a little behind and settles, which is what reads as something
+ * stepping in front rather than fading up out of the floor
+ */
+function drawStand(context: CanvasRenderingContext2D, slot: Slot, onto?: SlotBatch): void {
+  const stand = slot.stand;
+  const sprite = stand?.sprite;
+
+  if (stand == null || sprite?.ready !== true || stand.share <= 0) {
+    return;
+  }
+
+  const [x, y] = [slot.x + slot.offset[0], slot.y + slot.offset[1]];
+  const scale = scaleOf(slot);
+  const placement = { scale, anchor: 'shadow' } as const;
+  // Dropped in from above as it arrives; back and up as it steps off
+  const back =
+    sprite.frameSize.height *
+    scale *
+    (stand.arriving === false ? (1 - stand.share) * STAND_RISE : dropOf(stand.share));
+  const spot: [number, number] = [x, y - back];
+
+  sprite.play(SpriteAnim.Idle, { direction: slot.facing, loop: true });
+  context.globalAlpha = stand.share;
+
+  const quad = onto == null ? null : sprite.quadOf(spot[0], spot[1], placement);
+
+  if (onto == null || quad == null) {
+    sprite.drawShadow(context, spot[0], spot[1], placement);
+    sprite.draw(context, spot[0], spot[1], placement);
+    return;
+  }
+  shade(sprite.shadowOf(spot[0], spot[1], placement), onto, stand.share);
+  onto.batch.quad(quad.sheet, quad.source, cornersOf(quad), stand.share);
+}
+
 export function drawSlot(
   context: CanvasRenderingContext2D,
   slot: Slot,
   striking: Map<Unit, Striking>,
   clock: number,
+  labels: CastLabels,
   hidden = false,
   onto?: SlotBatch,
 ): void {
   const { unit } = slot;
   const maxHealth = unit.checkStat(Stats.HP, 0);
   const share = maxHealth <= 0 ? 0 : unit.health / maxHealth;
+  /**
+   * How much of the pokemon itself is showing. A substituted one is
+   * standing behind its doll rather than gone: it is dimmed to
+   * `BEHIND` as the doll comes up, so a watcher can still see whose
+   * substitute it is
+   */
+  const stood = slot.stand?.share ?? 0;
   // What a downed pokemon is left drawn at. The painted pass sets it
   // on the context; the batch takes it a quad at a time
-  const alpha = unit.alive ? 1 : 0.35;
+  const alpha = (unit.alive ? 1 : 0.35) * (1 - stood * (1 - BEHIND));
 
   context.globalAlpha = alpha;
 
@@ -573,7 +614,10 @@ export function drawSlot(
       // a spot on the floor is the pokemon's feet. Centring the body
       // there instead buries half of a tall pokemon under the ground and
       // leaves a short one hovering
-      const placement = { scale: scaleOf(slot), anchor: 'shadow' } as const;
+      const placement = {
+        scale: scaleOf(slot) * (1 + (slot.swell ?? 0)),
+        anchor: 'shadow',
+      } as const;
       const [x, y] = [slot.x + slot.offset[0], slot.y + slot.offset[1]];
 
       // A shadow pokemon stands in its haze and a purified one in its
@@ -624,13 +668,40 @@ export function drawSlot(
           context.translate(-x, -y);
         }
         sprite.draw(context, x, y, placement);
+        // A transformation's flash, laid over the body it is lighting
+        if ((slot.glow ?? 0) > 0) {
+          context.save();
+          context.globalCompositeOperation = 'lighter';
+          context.globalAlpha = alpha * (slot.glow ?? 0);
+          sprite.draw(context, x, y, placement);
+          context.restore();
+        }
         if (slot.spin !== 0) {
           context.restore();
         }
       } else {
         // The one picture that hides a move effect passing behind it
         onto.solid?.(true);
-        onto.batch.quad(quad.sheet, quad.source, turned(cornersOf(quad), x, y, slot.spin), alpha);
+        const body = turned(cornersOf(quad), x, y, slot.spin);
+
+        onto.batch.quad(quad.sheet, quad.source, body, alpha);
+        // A transformation's flash: the body screened over itself, twice
+        // at the peak, so it reads as a burst of light
+        for (let pass = 0; pass < 2; pass += 1) {
+          const glow = (slot.glow ?? 0) * 2 - pass;
+
+          if (glow > 0) {
+            onto.batch.quad(
+              quad.sheet,
+              quad.source,
+              body,
+              alpha * Math.min(1, glow),
+              undefined,
+              'pixels',
+              'screen',
+            );
+          }
+        }
         onto.solid?.(false);
       }
       if (unit.shiny && onto?.lit !== true) {
@@ -659,6 +730,10 @@ export function drawSlot(
         );
       }
     }
+    // After the body and on the same spot, whether or not the body
+    // itself had a sheet to draw
+    drawStand(context, slot, onto);
+    context.globalAlpha = alpha;
   }
 
   // A bar no wider than the pokemon has room for. A crowded field —
@@ -669,8 +744,6 @@ export function drawSlot(
   // crowded far side is one where forty-eight overlapping words say
   // less than none
   const roomy = slot.radius >= NAMED_RADIUS;
-
-  context.font = LABEL_FONT;
 
   // No name and no level. The field says who is still up and what is
   // landing on them; **which** pokemon each one is belongs to the card
@@ -702,18 +775,13 @@ export function drawSlot(
     alpha,
   );
 
-  // What it is in the middle of, named above its head: a cast the
-  // other side can still interrupt, or a channel already landing
-  if (busy != null && unit.alive && roomy) {
-    drawLabel(
-      context,
-      getMoveData(busy.move).name,
-      slot.x,
-      slot.y - slot.radius * 2 - 8,
-      COLORS.text,
-      onto,
-      alpha,
-    );
+  // What it is in the middle of, named on a plate above its head. The
+  // plate outlives the cast by its exit animation, so it is read from
+  // the tracked labels rather than from the unit
+  const label = labels.get(unit);
+
+  if (label != null && roomy) {
+    drawCastLabel(context, label, slot.x, slot.y - slot.radius * 2 - 14, clock, onto, alpha);
   }
   context.globalAlpha = 1;
 }

@@ -5,6 +5,7 @@ import projectField, {
   unprojectField,
 } from '../../../canvas/battle/field';
 import type { Painter, QuadPoint } from '../../../canvas/gl/quad-batch';
+import { COLORS } from './metrics';
 
 /**
  * The ground a fight is standing on, drawn from the biome's own
@@ -425,5 +426,192 @@ export default function drawFloor(
         'smooth',
       );
     }
+  }
+}
+
+/** A patch of ground one side of the fight stands on, in field units */
+export interface Arena {
+  x: number;
+  z: number;
+  radius: number;
+}
+
+/** How dark the far field is at the horizon, and how far down the fog reaches */
+const FOG_ALPHA = 0.85;
+const FOG_DEPTH = 0.45;
+const FOG_BANDS = 10;
+
+/** How dark the picture's edges get, and how far in the darkening runs */
+const VIGNETTE_ALPHA = 0.4;
+const VIGNETTE_REACH = 0.18;
+const VIGNETTE_BANDS = 8;
+
+const SHADE = '#05080d';
+const ARENA_SEGMENTS = 48;
+/** The ring's width as a share of its radius */
+const ARENA_BAND = 0.06;
+
+/** One flat-coloured quad, on whichever surface is drawing */
+function fillQuad(
+  context: CanvasRenderingContext2D,
+  corners: { x: number; y: number }[],
+  colour: string,
+  alpha: number,
+  onto?: Painter,
+): void {
+  if (alpha <= 0) {
+    return;
+  }
+  if (onto != null) {
+    onto.solid(colour, corners, alpha);
+    return;
+  }
+  context.save();
+  context.globalAlpha = alpha;
+  context.fillStyle = colour;
+  context.beginPath();
+  for (const [index, corner] of corners.entries()) {
+    context[index === 0 ? 'moveTo' : 'lineTo'](corner.x, corner.y);
+  }
+  context.closePath();
+  context.fill();
+  context.restore();
+}
+
+/** A band of the picture from one height to another, full width */
+function rowOf(region: FloorRegion, top: number, bottom: number): { x: number; y: number }[] {
+  return [
+    { x: region.left, y: top },
+    { x: region.right, y: top },
+    { x: region.right, y: bottom },
+    { x: region.left, y: bottom },
+  ];
+}
+
+/**
+ * What makes the ground sit behind the fight rather than compete with
+ * it: a fog that thickens toward the horizon, darker edges, and a faint
+ * ring under each side so the arena has a shape. Stepped in bands, since
+ * the batch draws flat colour only.
+ */
+export function drawGroundShade(
+  context: CanvasRenderingContext2D,
+  view: FieldView,
+  region: FloorRegion,
+  arenas: Arena[],
+  onto?: Painter,
+): void {
+  // A ring under each side, drawn first so the fog lies over the far ones
+  for (const arena of arenas) {
+    const inner = arena.radius * (1 - ARENA_BAND);
+
+    for (let segment = 0; segment < ARENA_SEGMENTS; segment += 1) {
+      const from = (segment / ARENA_SEGMENTS) * Math.PI * 2;
+      const to = ((segment + 1) / ARENA_SEGMENTS) * Math.PI * 2;
+      const points = [
+        { x: arena.x + Math.cos(from) * arena.radius, z: arena.z + Math.sin(from) * arena.radius },
+        { x: arena.x + Math.cos(to) * arena.radius, z: arena.z + Math.sin(to) * arena.radius },
+        { x: arena.x + Math.cos(to) * inner, z: arena.z + Math.sin(to) * inner },
+        { x: arena.x + Math.cos(from) * inner, z: arena.z + Math.sin(from) * inner },
+      ];
+      const laid: { x: number; y: number }[] = [];
+
+      for (const point of points) {
+        const projected = projectField(point, view);
+
+        if (!projected.visible || projected.scale <= 0 || projected.scale > NEAREST) {
+          break;
+        }
+        laid.push({ x: projected.x, y: projected.y });
+      }
+      if (laid.length === 4) {
+        fillQuad(context, laid, '#ffffff', 0.16, onto);
+      }
+    }
+    // A soft dark floor inside the ring, so the side's bars read on it
+    const middle: { x: number; y: number }[] = [];
+
+    for (let segment = 0; segment < ARENA_SEGMENTS; segment += 1) {
+      const angle = (segment / ARENA_SEGMENTS) * Math.PI * 2;
+      const projected = projectField(
+        { x: arena.x + Math.cos(angle) * inner, z: arena.z + Math.sin(angle) * inner },
+        view,
+      );
+
+      if (projected.visible && projected.scale > 0 && projected.scale <= NEAREST) {
+        middle.push({ x: projected.x, y: projected.y });
+      }
+    }
+    const centre = projectField({ x: arena.x, z: arena.z }, view);
+
+    if (centre.visible && middle.length === ARENA_SEGMENTS) {
+      for (let segment = 0; segment < ARENA_SEGMENTS; segment += 1) {
+        const next = middle[(segment + 1) % ARENA_SEGMENTS];
+
+        fillQuad(
+          context,
+          [{ x: centre.x, y: centre.y }, middle[segment], next, next],
+          SHADE,
+          0.18,
+          onto,
+        );
+      }
+    }
+  }
+
+  // Fog from the horizon down, thinning as the ground comes nearer
+  const skyline = Math.max(region.top, horizonOf(view));
+  const depth = (region.bottom - skyline) * FOG_DEPTH;
+
+  for (let band = 0; band < FOG_BANDS; band += 1) {
+    const top = skyline + (depth * band) / FOG_BANDS;
+    const bottom = skyline + (depth * (band + 1)) / FOG_BANDS;
+
+    fillQuad(
+      context,
+      rowOf(region, top, bottom),
+      COLORS.field,
+      FOG_ALPHA * (1 - band / FOG_BANDS) ** 2,
+      onto,
+    );
+  }
+
+  // The edges of the picture, darkest at the rim
+  const across = (region.right - region.left) * VIGNETTE_REACH;
+  const down = (region.bottom - region.top) * VIGNETTE_REACH;
+
+  for (let band = 0; band < VIGNETTE_BANDS; band += 1) {
+    const alpha = VIGNETTE_ALPHA * (1 - band / VIGNETTE_BANDS) ** 2;
+    const inX = (across * band) / VIGNETTE_BANDS;
+    const outX = (across * (band + 1)) / VIGNETTE_BANDS;
+    const inY = (down * band) / VIGNETTE_BANDS;
+    const outY = (down * (band + 1)) / VIGNETTE_BANDS;
+
+    fillQuad(context, rowOf(region, region.top + inY, region.top + outY), SHADE, alpha, onto);
+    fillQuad(context, rowOf(region, region.bottom - outY, region.bottom - inY), SHADE, alpha, onto);
+    fillQuad(
+      context,
+      [
+        { x: region.left + inX, y: region.top },
+        { x: region.left + outX, y: region.top },
+        { x: region.left + outX, y: region.bottom },
+        { x: region.left + inX, y: region.bottom },
+      ],
+      SHADE,
+      alpha,
+      onto,
+    );
+    fillQuad(
+      context,
+      [
+        { x: region.right - outX, y: region.top },
+        { x: region.right - inX, y: region.top },
+        { x: region.right - inX, y: region.bottom },
+        { x: region.right - outX, y: region.bottom },
+      ],
+      SHADE,
+      alpha,
+      onto,
+    );
   }
 }

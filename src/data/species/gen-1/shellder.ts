@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -46,6 +46,9 @@ const FAMILY_TEACHABLE = [
   Moves.Facade,
   Moves.SecretPower,
   Moves.WaterPulse,
+  Moves.Captivate,
+  Moves.NaturalGift,
+  Moves.Payback,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ShellArmor, Abilities.SkillLink];
@@ -74,6 +77,7 @@ export default function registerShellderSpecies(): void {
       [Stats.Speed]: 40,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.Overcoat],
     eggGroups: [EggGroups.Water3],
@@ -89,7 +93,9 @@ export default function registerShellderSpecies(): void {
         17: [Moves.AuroraBeam],
         23: [Moves.Clamp],
         25: [Moves.Protect],
+        28: [Moves.IceShard],
         33: [Moves.Leer],
+        44: [Moves.Brine],
         49: [Moves.IceBeam],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -114,20 +120,36 @@ export default function registerShellderSpecies(): void {
       [Stats.Speed]: 70,
     },
     types: [Types.Water, Types.Ice],
+    habitat: Habitat.Water,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.Overcoat, Abilities.Sturdy],
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 60,
-    biomes: [Biome.Ocean, Biome.PolarOcean, Biome.RockyCoast],
+    biomes: [Biome.Ocean, Biome.PolarOcean, Biome.RockyCoast, Biome.Beach],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Withdraw, Moves.Supersonic, Moves.Clamp, Moves.AuroraBeam, Moves.Protect],
+        1: [
+          Moves.Withdraw,
+          Moves.Supersonic,
+          Moves.Clamp,
+          Moves.AuroraBeam,
+          Moves.Protect,
+          Moves.ToxicSpikes,
+        ],
         33: [Moves.Spikes],
         41: [Moves.SpikeCannon],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Torment],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Torment,
+        Moves.Avalanche,
+        Moves.Brine,
+        Moves.GigaImpact,
+        Moves.PoisonJab,
+      ],
     },
   });
 }

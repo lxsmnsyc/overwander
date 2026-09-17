@@ -17,6 +17,7 @@ import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import PlayerPlate from '../profile/PlayerPlate';
 import NamedCatch from './NamedCatch';
 import {
+  Badge,
   Button,
   Divider,
   LIST_PAGE,
@@ -24,6 +25,10 @@ import {
   ListRow,
   Meta,
   Note,
+  TabBar,
+  TabButton,
+  TabGroup,
+  TabPane,
   createPager,
   useToast,
 } from '../styled';
@@ -39,6 +44,12 @@ import {
  */
 export interface TradesTabProps {
   player: string;
+}
+
+/** The two halves of the trades: what is still open, and what is done */
+const enum TradesView {
+  Pending = 0,
+  Settled = 1,
 }
 
 /** What a settled trade came to */
@@ -246,87 +257,107 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
   );
 
   return (
-    <div class="flex flex-col gap-3">
-      <Show
-        when={toAnswer().length > 0}
-        fallback={<Note>Nobody is offering you anything right now.</Note>}
-      >
-        <Note>Offered to you.</Note>
-        <List>
-          <For each={toAnswer()}>
-            {(id) =>
-              row(
-                id,
-                false,
-                <>
-                  <Button
-                    tone="primary"
-                    disabled={busy() != null}
-                    onClick={() => {
-                      accept(id);
-                    }}
-                  >
-                    {acceptLabel(id)}
-                  </Button>
-                  <Button
-                    tone="danger"
-                    disabled={busy() != null}
-                    onClick={() => {
-                      settle(id, declineTrade(id), 'Offer declined.');
-                    }}
-                  >
-                    Decline
-                  </Button>
-                </>,
-              )
-            }
-          </For>
-        </List>
-      </Show>
+    <>
+      <TabGroup horizontal defaultValue={TradesView.Pending} class="flex flex-col gap-3">
+        <TabBar>
+          <TabButton value={TradesView.Pending}>
+            Pending
+            {/* What is waiting on the player's answer, counted on the tab */}
+            <Show when={toAnswer().length > 0}>
+              <Badge tone="ember" class="ml-1.5">
+                {toAnswer().length}
+              </Badge>
+            </Show>
+          </TabButton>
+          <TabButton value={TradesView.Settled}>Settled</TabButton>
+        </TabBar>
+        <TabPane value={TradesView.Pending}>
+          <div class="flex flex-col gap-3">
+            <Show
+              when={toAnswer().length > 0}
+              fallback={<Note>Nobody is offering you anything right now.</Note>}
+            >
+              <Note>Offered to you.</Note>
+              <List>
+                <For each={toAnswer()}>
+                  {(id) =>
+                    row(
+                      id,
+                      false,
+                      <>
+                        <Button
+                          tone="primary"
+                          disabled={busy() != null}
+                          onClick={() => {
+                            accept(id);
+                          }}
+                        >
+                          {acceptLabel(id)}
+                        </Button>
+                        <Button
+                          tone="danger"
+                          disabled={busy() != null}
+                          onClick={() => {
+                            settle(id, declineTrade(id), 'Offer declined.');
+                          }}
+                        >
+                          Decline
+                        </Button>
+                      </>,
+                    )
+                  }
+                </For>
+              </List>
+            </Show>
 
-      <Show when={waiting().length > 0}>
-        <Divider />
-        <Note>Waiting on an answer. The pokemon is held until they give one.</Note>
-        <List>
-          <For each={waiting()}>
-            {(id) =>
-              row(
-                id,
-                true,
-                <Button
-                  disabled={busy() != null}
-                  onClick={() => {
-                    withdraw(id);
-                  }}
-                >
-                  {sure() === id ? 'Sure?' : 'Take back'}
-                </Button>,
-              )
-            }
-          </For>
-        </List>
-      </Show>
-
-      <Show when={settled.shown().length > 0}>
-        <Divider />
-        <Note>Settled.</Note>
-        <List>
-          <For each={settled.shown()}>
-            {(id) =>
-              row(
-                id,
-                held().get(id)?.proposer === props.player,
-                <Meta>
-                  {SETTLED_WORDS[held().get(id)?.status ?? TradeStatus.Open] ?? ''}
-                  {' · '}
-                  {new Date(held().get(id)?.resolvedAt ?? 0).toLocaleDateString()}
-                </Meta>,
-              )
-            }
-          </For>
-        </List>
-        {settled.controls()}
-      </Show>
+            <Show when={waiting().length > 0}>
+              <Divider />
+              <Note>Waiting on an answer. The pokemon is held until they give one.</Note>
+              <List>
+                <For each={waiting()}>
+                  {(id) =>
+                    row(
+                      id,
+                      true,
+                      <Button
+                        disabled={busy() != null}
+                        onClick={() => {
+                          withdraw(id);
+                        }}
+                      >
+                        {sure() === id ? 'Sure?' : 'Take back'}
+                      </Button>,
+                    )
+                  }
+                </For>
+              </List>
+            </Show>
+          </div>
+        </TabPane>
+        <TabPane value={TradesView.Settled}>
+          <Show
+            when={settled.shown().length > 0}
+            fallback={<Note>Nothing has been settled yet.</Note>}
+          >
+            <List>
+              <For each={settled.shown()}>
+                {(id) =>
+                  row(
+                    id,
+                    held().get(id)?.proposer === props.player,
+                    <Meta>
+                      {SETTLED_WORDS[held().get(id)?.status ?? TradeStatus.Open] ?? ''}
+                      {' · '}
+                      {new Date(held().get(id)?.resolvedAt ?? 0).toLocaleDateString()}
+                    </Meta>,
+                  )
+                }
+              </For>
+            </List>
+            {settled.controls()}
+          </Show>
+        </TabPane>
+      </TabGroup>
 
       {/* Answering an open ask: the box opens in the panel's place,
           and the pick is the agreement */}
@@ -350,6 +381,6 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
           }
         }}
       />
-    </div>
+    </>
   );
 }

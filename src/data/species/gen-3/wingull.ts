@@ -5,7 +5,7 @@ import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -40,6 +40,13 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.Swift,
+  Moves.Brine,
+  Moves.Captivate,
+  Moves.Defog,
+  Moves.NaturalGift,
+  Moves.OminousWind,
+  Moves.Pluck,
+  Moves.UTurn,
 ];
 
 export default function registerWingullSpecies(): void {
@@ -66,6 +73,7 @@ export default function registerWingullSpecies(): void {
       [Stats.Speed]: 85,
     },
     types: [Types.Water, Types.Flying],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.KeenEye, Abilities.Hydration],
     hiddenAbilities: [Abilities.RainDish],
     eggGroups: [EggGroups.Water1, EggGroups.Flying],
@@ -79,12 +87,14 @@ export default function registerWingullSpecies(): void {
         7: [Moves.Supersonic],
         13: [Moves.WingAttack],
         21: [Moves.Mist],
+        29: [Moves.Roost],
         31: [Moves.QuickAttack],
         43: [Moves.Pursuit],
+        47: [Moves.AirSlash],
         55: [Moves.Agility],
       },
-      teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Gust, Moves.WaterSport, Moves.Twister],
+      teachable: [...FAMILY_TEACHABLE, Moves.Tailwind],
+      egg: [Moves.Gust, Moves.WaterSport, Moves.Twister, Moves.AquaRing],
     },
   });
 
@@ -105,6 +115,7 @@ export default function registerWingullSpecies(): void {
       [Stats.Speed]: 65,
     },
     types: [Types.Water, Types.Flying],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.KeenEye, Abilities.Drizzle],
     hiddenAbilities: [Abilities.RainDish],
     eggGroups: [EggGroups.Water1, EggGroups.Flying],
@@ -117,12 +128,23 @@ export default function registerWingullSpecies(): void {
         1: [Moves.Growl, Moves.WaterGun, Moves.WaterSport, Moves.WingAttack],
         7: [Moves.Supersonic],
         21: [Moves.Mist],
+        24: [Moves.Payback],
         25: [Moves.Protect],
+        31: [Moves.Roost],
         33: [Moves.Stockpile, Moves.Swallow],
+        43: [Moves.Fling],
         47: [Moves.SpitUp],
+        50: [Moves.Tailwind],
         61: [Moves.HydroPump],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Surf, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Surf,
+        Moves.HyperBeam,
+        Moves.GigaImpact,
+        Moves.GunkShot,
+        Moves.SeedBomb,
+      ],
     },
   });
 }

@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves both stages share
@@ -38,6 +38,7 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.Swift,
+  Moves.NaturalGift,
 ];
 
 export default function registerFeebasSpecies(): void {
@@ -76,12 +77,13 @@ export default function registerFeebasSpecies(): void {
       [Stats.Speed]: 80,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.SwiftSwim, Abilities.Oblivious],
     hiddenAbilities: [Abilities.Adaptability],
     eggGroups: [EggGroups.Water1, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Bog, Biome.Swamp],
+    biomes: [Biome.Bog, Biome.Swamp, Biome.Desert],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -89,7 +91,7 @@ export default function registerFeebasSpecies(): void {
         15: [Moves.Tackle],
         30: [Moves.Flail],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.Captivate],
       egg: [
         Moves.ConfuseRay,
         Moves.DragonBreath,
@@ -118,12 +120,13 @@ export default function registerFeebasSpecies(): void {
       [Stats.Speed]: 81,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.MarvelScale, Abilities.Competitive],
     hiddenAbilities: [Abilities.CuteCharm],
     eggGroups: [EggGroups.Water1, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 60,
-    biomes: [Biome.KelpForest],
+    biomes: [Biome.KelpForest, Biome.Desert],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -132,11 +135,13 @@ export default function registerFeebasSpecies(): void {
         10: [Moves.WaterSport],
         15: [Moves.Refresh],
         20: [Moves.WaterPulse],
-        25: [Moves.Twister],
+        25: [Moves.Twister, Moves.Captivate],
+        29: [Moves.AquaTail],
         30: [Moves.Recover],
         35: [Moves.RainDance],
         40: [Moves.HydroPump],
         45: [Moves.Attract],
+        49: [Moves.AquaRing],
         50: [Moves.Safeguard],
       },
       teachable: [
@@ -147,6 +152,10 @@ export default function registerFeebasSpecies(): void {
         Moves.BodySlam,
         Moves.PsychUp,
         Moves.MudSlap,
+        Moves.Avalanche,
+        Moves.DragonPulse,
+        Moves.GigaImpact,
+        Moves.IronHead,
       ],
     },
   });

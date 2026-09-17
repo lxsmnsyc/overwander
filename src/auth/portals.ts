@@ -1,6 +1,13 @@
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { PortalDestination } from '../overworld/portal';
 import { requireUid } from '../server/auth';
+import check, {
+  CELL,
+  CHUNK_COORDINATE,
+  OFFSET,
+  REGION_COORDINATE,
+  TOKEN,
+} from '../server/validate';
 import usePortalOnServerSide from '../server/portals';
 import { syncServerClock } from './clock';
 import getIdToken from './session';
@@ -50,6 +57,13 @@ async function usePortalOnServer(
   offset: number,
 ): Promise<PortalDestination | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(REGION_COORDINATE, regionX);
+  check(REGION_COORDINATE, regionY);
+  check(OFFSET, offset);
   return usePortalOnServerSide(
     await requireUid(token),
     x,

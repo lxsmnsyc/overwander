@@ -4,6 +4,8 @@ import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js'
 import type Battle from '../../battle/core';
 import BattleField from '../../components/battle/BattleField';
 import BattleParty from '../../components/battle/BattleParty';
+import BattleTopBar from '../../components/battle/BattleTopBar';
+import BiomePicker, { biomeFrom } from './BiomePicker';
 import { Badge, Button, Meta, Note, Switch } from '../../components/styled';
 import { DEMO_TEAMS, DEMO_TEAM_SIZE, createDemoRaidTeams } from '../../overworld/demo-raid';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE } from '../../overworld/raid';
@@ -68,7 +70,7 @@ export default function RaidDemoBoard(): JSX.Element {
   // The seed lives in the URL rather than in a signal, so the fight
   // on screen is a link somebody else can open and watch the same
   // frames of
-  const [params, setParams] = useSearchParams<{ seed?: string; shadow?: string }>();
+  const [params, setParams] = useSearchParams<{ seed?: string; shadow?: string; biome?: string }>();
   const seed = (): string => params.seed ?? DEFAULT_SEED;
   // The shadow raid, staged on request: it is the fight the field
   // paints a haze under, and nothing else on this page is a shadow
@@ -162,6 +164,13 @@ export default function RaidDemoBoard(): JSX.Element {
         }}
       />
 
+      <BiomePicker
+        value={biomeFrom(params.biome)}
+        onChange={(biome) => {
+          setParams({ biome: String(biome) });
+        }}
+      />
+
       <Meta>The seed is in the address — the same one is the same fight, frame for frame.</Meta>
 
       {/* Keyed, and it has to be: the canvas and the readout both
@@ -182,15 +191,17 @@ export default function RaidDemoBoard(): JSX.Element {
                 "as tall as its contents" is a field nought pixels
                 high */}
             <div
-              class="h-[60vh] w-full overflow-hidden rounded-panel border-4 border-tide
+              class="relative h-[60vh] w-full overflow-hidden rounded-panel border-4 border-tide
               shadow-pop"
             >
+              <BattleTopBar battle={staged.battle} player="" title="Raid demo" />
               {/* The same field the game plays on, cards and all:
                   hovering a pokemon reads it in full. Nothing is
                   opened by pressing one — a demo's pokemon stand for
                   no record, so there is no sheet behind them */}
               <BattleField
                 battle={staged.battle}
+                biome={biomeFrom(params.biome)}
                 player=""
                 onReady={() => {
                   staged.battle.start();

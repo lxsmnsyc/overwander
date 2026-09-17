@@ -17,30 +17,28 @@ import savePosition, { readPosition } from './positions';
 
 /**
  * Come up at the nearest mouth, or null where they are not
- * underground, nothing is in reach, or no rope is carried. Taken last,
- * so a player with no way out above them keeps theirs.
+ * underground or nothing is in reach. `pay` is asked last, so a player
+ * with no way out above them keeps whatever it would have cost.
  *
  * Where they are is read from the register, which lags a walk by a
  * cell or two. The search is by chunk, so either side of a boundary
  * finds the same way up
  */
-export default async function useEscapeRope(
+export async function climbOut(
   uid: string,
   now: number,
+  pay: () => Promise<boolean>,
 ): Promise<PositionRecord | null> {
   const at = await readPosition(uid);
 
-  // A rope is for the dark: above ground the walk home is the walk
+  // Climbing is for the dark: above ground the walk home is the walk
   if (at == null || at.depth !== Depth.Cave) {
     return null;
   }
 
   const found = nearestMouth(getWorld(Depth.Cave), at.chunkX, at.chunkY);
 
-  if (found == null) {
-    return null;
-  }
-  if (!(await consumeItem(uid, Items.EscapeRope))) {
+  if (found == null || !(await pay())) {
     return null;
   }
 
@@ -65,4 +63,12 @@ export default async function useEscapeRope(
     depth: Depth.Surface,
     movedAt,
   };
+}
+
+/** Climb out on a rope, which is spent */
+export default async function useEscapeRope(
+  uid: string,
+  now: number,
+): Promise<PositionRecord | null> {
+  return climbOut(uid, now, async () => consumeItem(uid, Items.EscapeRope));
 }

@@ -17,9 +17,10 @@
 
 /**
  * How long a measured offset is trusted before the next read
- * re-measures it
+ * re-measures it. Two clocks barely drift apart in half an hour, and
+ * every measurement is a server call
  */
-export const CLOCK_RESYNC_INTERVAL = 60 * 1000;
+export const CLOCK_RESYNC_INTERVAL = 30 * 60 * 1000;
 
 /**
  * The server's clock, in milliseconds. Runs on the server whether

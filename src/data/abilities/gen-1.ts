@@ -92,11 +92,11 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.KeenEye, {
     name: 'Keen Eye',
     description:
-      'Refuses accuracy drops from anybody else. As a buddy, the bottom of the wild level band lifts by 3.',
+      "Refuses accuracy drops from anybody else, and its moves ignore the target's evasion boosts. As a buddy, the bottom of the wild level band lifts by 3.",
   });
   registerAbility(Abilities.TangledFeet, {
     name: 'Tangled Feet',
-    description: '2x evasion while confused.',
+    description: 'Doubles its evasion boosts and drops while confused.',
   });
   registerAbility(Abilities.BigPecks, {
     name: 'Big Pecks',
@@ -179,10 +179,6 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.MagicGuard, {
     name: 'Magic Guard',
     description: 'Takes no indirect damage at all.',
-  });
-  registerAbility(Abilities.FriendGuard, {
-    name: 'Friend Guard',
-    description: 'Allies take 1/4 less damage.',
   });
   registerAbility(Abilities.Unaware, {
     name: 'Unaware',
@@ -329,7 +325,7 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.Gluttony, {
     name: 'Gluttony',
     description:
-      'Eats its pinch items at 2x the usual HP threshold. As a buddy, treats fed to a wild pokemon keep working 1.5x as long.',
+      'Eats its pinch items at 2x the usual HP threshold. As a buddy, treats can lift a throw 1.5x as far as usual.',
   });
 
   // Tentacool
@@ -552,7 +548,7 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.Illuminate, {
     name: 'Illuminate',
     description:
-      'Refuses accuracy drops from anybody else. As a buddy, 3 more wild pokemon appear and the dark is lit 5 cells out.',
+      "Refuses accuracy drops from anybody else, and its moves ignore the target's evasion boosts. As a buddy, 3 more wild pokemon appear and the dark is lit 5 cells out.",
   });
 
   // MrMime
@@ -602,7 +598,7 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.QuickFeet, {
     name: 'Quick Feet',
-    description: '1.5x Speed while statused.',
+    description: '1.5x Speed while statused, and paralysis does not halve it.',
   });
 
   // Porygon
@@ -679,7 +675,7 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.Boss, {
     name: 'Boss',
     description:
-      '20x its own HP, every other stat 2x. Shrugs off disabling statuses, takes at most 100 from any indirect hit, and heals at most 1/8 of its HP each second.',
+      '60x its own HP and 2x every other stat, but its casts wind up 2x slower. A move aimed at one enemy hits them all, only fainting interrupts it, and it takes at most 200 from an indirect or share-of-HP hit and heals at most 1,000 HP a second.',
   });
   registerAbility(Abilities.Shadow, {
     name: 'Shadow',

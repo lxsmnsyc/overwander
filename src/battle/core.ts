@@ -83,6 +83,12 @@ export default class Battle extends EventEngine<BattleEventMap> {
    */
   timeLimit: number;
 
+  /**
+   * How many times real time the fight is played at. Only a replay
+   * changes it: the steps stay the same size, so the fight is the same
+   */
+  speed = 1;
+
   constructor(seed: string, mode = BattleModes.PvP, limits?: number, biome?: Biome, timeLimit = 0) {
     super();
     this.rng = new AleaRNG(seed);

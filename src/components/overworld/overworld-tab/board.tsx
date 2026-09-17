@@ -6,6 +6,7 @@ import {
   buildBoardView,
   naming,
   runningWindows,
+  viewChunks,
 } from './board-view';
 import challengerOf, { championGate, eliteGate, frontierGate } from './challengers';
 import { describeItem } from '../../details';
@@ -18,6 +19,8 @@ import { type Direction, actionOf, forTheGame } from '../../app/keys';
 import settings from '../../app/settings';
 import { DEFAULT_CHARSET } from '../../../data/overworld/charsets';
 import { watchProfile } from '../../../auth/profile';
+import { MAX_STEP_REPORT } from '../../../auth/egg';
+import type { SnapshotRecord } from '../../../auth/snapshot-record';
 import { type EggWalk, type WalkReport, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../auth/encounter-record';
 import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
@@ -34,11 +37,12 @@ import {
   claimPhenomenon,
   listClaimedItemCaches,
   listClaimedPhenomena,
+  listLatheredHoneyTrees,
   listPickedBerryPatches,
   peekNest,
   peekPhenomenonEgg,
   startEncounter,
-  visitChunk,
+  visitChunkWindow,
   watchSnapshotWindow,
 } from '../../../auth/snapshots';
 import type { PlayerIdentity } from '../../../auth/user';
@@ -66,8 +70,7 @@ import { PHENOMENON_NAMES } from '../../../data/overworld/phenomenon';
 import { getSpeciesData } from '../../../data/species';
 import { isFeaturedSpecies } from '../../../data/species/day';
 import { CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from '../../../overworld/chunk';
-import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
-import { SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
+import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
 import type World from '../../../overworld/world';
@@ -78,7 +81,19 @@ import { discoverTown } from '../../../auth/towns';
 import { findPathBeside, findPathNear } from '../../../overworld/path';
 import type SafariSession from '../../../overworld/safari';
 import { isInWorld } from '../../../overworld/world';
-import { GameDialog, useGame } from '../../app/game-context';
+import Biome, { isIceBiome } from '../../../data/ids/biome';
+import { Moves } from '../../../data/ids/moves';
+import { Genders } from '../../../data/ids/species';
+import {
+  type CellFacts,
+  type FieldMove,
+  type Travel,
+  canEnter,
+  canLand,
+  canUseFieldMove,
+} from '../../../overworld/field-moves';
+import { useDig, useTeleport } from '../../../auth/field-moves';
+import { type FieldMoveOffer, GameDialog, useGame } from '../../app/game-context';
 import { createCellNotes } from '../cell-notes';
 import ItemSprite from '../../items/ItemSprite';
 import sayItems from '../../items/say-items';
@@ -86,9 +101,10 @@ import RaidDialog from '../../raids/RaidDialog';
 import { Badge, Button, Note, useToast } from '../../styled';
 import NestDialog, { type EggSource, type EggState } from '../NestDialog';
 import PortalDialog from '../PortalDialog';
+import HoneyTreeDialog from '../HoneyTreeDialog';
 import StopDialog, { type StopChallenge } from '../StopDialog';
 import SafariDialog from '../SafariDialog';
-import ChunkCanvas, { type CellSpot, type SpawnCoat } from '../chunk-canvas';
+import ChunkCanvas, { type CellSpot, type RiddenCoat, type SpawnCoat } from '../chunk-canvas';
 import NpcDialog from '../npc-dialog';
 import {
   type JSX,
@@ -112,6 +128,7 @@ import {
   PUBLISHED_SPAWNS,
   REFRESH_DEBOUNCE,
   SAVE_DELAY,
+  STANDINGS_MEMORY,
   START_CELL,
   STEP_PACE,
   STEP_REPORT_SIZE,
@@ -126,6 +143,21 @@ import playEffect, { Effect } from '../../app/sound';
  * through turns them to face it, and the interact key is what reaches
  * for whatever they are facing
  */
+/**
+ * What each claim list answered, by player, list, chunk and window.
+ *
+ * A claim changes when the player takes something or the window turns
+ * over, and neither happens because they walked a square. Kept outside
+ * the board, so coming back from a battle or another tab asks nothing
+ */
+const claimed = new LRUMap<string, Promise<number[]>>(CLAIM_MEMORY);
+
+/**
+ * The chunk windows last seen, by layer, zone and chunk. A board mounted
+ * again starts from any that are still live instead of reading each one
+ */
+const keptWindows = new LRUMap<string, SnapshotRecord>(CLAIM_MEMORY);
+
 /**
  * The world itself, which is where the buddy and what has fled are
  * both read.
@@ -349,6 +381,14 @@ export default function OverworldBoard(props: {
    * onto is derived in the dialog rather than here
    */
   const [portal, setPortal] = createSignal<Placed | null>(null);
+  /** The honey tree the player is standing at, or null */
+  const [honeyTree, setHoneyTree] = createSignal<Placed | null>(null);
+  /** Its world cell, as the lathered list names it */
+  const treeKey = (): string => {
+    const tree = honeyTree();
+
+    return tree == null ? '' : keyAt(tree);
+  };
   /**
    * The gym seat the player has walked up to: the cell, and where
    * this player stands with it — who holds it, when they may
@@ -465,6 +505,24 @@ export default function OverworldBoard(props: {
     return parts.join(' ');
   });
 
+  /** Every chunk the board draws, which is further out than the ones it watches */
+  const seen = createMemo(() => viewChunks(originX(), originY()), [], {
+    equals: (was, now) => was.join(' ') === now.join(' '),
+  });
+
+  /**
+   * The subscription open on each chunk the board is watching.
+   *
+   * Held across the effect rather than inside it, so a step that
+   * changes which chunks are in range stops the ones that left and
+   * starts the ones that arrived instead of closing every socket and
+   * opening it again. The set turns over every eight cells or so,
+   * and each fresh watcher costs a read
+   */
+  const watched = new Map<string, Unwatch>();
+  /** Which layer those subscriptions are open on */
+  const watchedLayer: { depth: Depth | null } = { depth: null };
+
   /**
    * Seeing into a chunk publishes (or adopts) its window's spawns;
    * everything after that arrives through the subscriptions below,
@@ -479,16 +537,27 @@ export default function OverworldBoard(props: {
   /** Chunks with a visit on its way, so a second ask for one waits on the first */
   const visiting = new Set<string>();
 
-  const visit = (x: number, y: number): void => {
+  const visit = (x: number, y: number, known?: SnapshotRecord | null): void => {
     const key = `${x},${y}`;
 
     if (visiting.has(key)) {
       return;
     }
     visiting.add(key);
+
+    const depth = untrack(atDepth);
+
     // The window always rolls the lure's extras, so every player of
     // the chunk shares one set of rolls whoever publishes them
-    visitChunk(around().getChunk(x, y), PUBLISHED_SPAWNS, zone)
+    visitChunkWindow(around().getChunk(x, y), PUBLISHED_SPAWNS, zone, known)
+      .then((record) => {
+        // Taken as it was published, since the watch lets its own window's echo pass unread
+        if (watchedLayer.depth !== depth || !watched.has(key)) {
+          return;
+        }
+        keptWindows.set(`${depth}|${zone}|${key}`, record);
+        setWindows((held) => new Map(held).set(key, { x, y, record }));
+      })
       .catch((caught: unknown) => {
         remark(caught instanceof Error ? caught.message : String(caught), 'ember');
       })
@@ -514,7 +583,8 @@ export default function OverworldBoard(props: {
       const record = held.get(`${x},${y}`)?.record;
 
       if (everything || record == null || !isLive(record)) {
-        visit(x, y);
+        // A board caught behind the world cannot trust what it holds, so that is read again
+        visit(x, y, everything ? undefined : record);
       }
     }
   };
@@ -555,27 +625,13 @@ export default function OverworldBoard(props: {
       }
     };
 
+    // Only a return from hidden: a tab that was merely unfocused kept its timers running
     document.addEventListener('visibilitychange', onReturn);
-    globalThis.addEventListener('focus', onReturn);
 
     onCleanup(() => {
       document.removeEventListener('visibilitychange', onReturn);
-      globalThis.removeEventListener('focus', onReturn);
     });
   });
-
-  /**
-   * The subscription open on each chunk the board is watching.
-   *
-   * Held across the effect rather than inside it, so a step that
-   * changes which chunks are in range stops the ones that left and
-   * starts the ones that arrived instead of closing every socket and
-   * opening it again. The set turns over every eight cells or so,
-   * and each fresh watcher costs a read
-   */
-  const watched = new Map<string, Unwatch>();
-  /** Which layer those subscriptions are open on */
-  const watchedLayer: { depth: Depth | null } = { depth: null };
 
   createEffect(() => {
     // Nothing is watched until the player has been put somewhere:
@@ -630,29 +686,43 @@ export default function OverworldBoard(props: {
       if (watched.has(key)) {
         continue;
       }
+
+      const kept = keptWindows.get(`${depth}|${zone}|${key}`);
+
       watched.set(
         key,
-        watchSnapshotWindow(around().getChunk(x, y), zone, (record) => {
-          // A read that was already on its way when the layer changed
-          if (watchedLayer.depth !== depth) {
-            return;
-          }
-          setWindows((held) => {
-            const next = new Map(held);
-
-            if (record == null) {
-              next.delete(key);
-            } else {
-              next.set(key, { x, y, record });
+        watchSnapshotWindow(
+          around().getChunk(x, y),
+          zone,
+          (record) => {
+            // A read that was already on its way when the layer changed
+            if (watchedLayer.depth !== depth) {
+              return;
             }
-            return next;
-          });
-          // Nobody has published this window yet, so this board does,
-          // and the publish comes back around this same watch
-          if (record == null || !isLive(record)) {
-            visit(x, y);
-          }
-        }),
+            if (record == null) {
+              keptWindows.delete(`${depth}|${zone}|${key}`);
+            } else {
+              keptWindows.set(`${depth}|${zone}|${key}`, record);
+            }
+            setWindows((held) => {
+              const next = new Map(held);
+
+              if (record == null) {
+                next.delete(key);
+              } else {
+                next.set(key, { x, y, record });
+              }
+              return next;
+            });
+            // Nobody has published this window yet, so this board does
+            // and keeps what it published
+            if (record == null || !isLive(record)) {
+              visit(x, y, record);
+            }
+          },
+          () => untrack(windows).get(key)?.record.timestamp,
+          kept == null || !isLive(kept) ? undefined : kept,
+        ),
       );
     }
   });
@@ -692,7 +762,10 @@ export default function OverworldBoard(props: {
 
     const timer = setTimeout(() => {
       setExpiries((count) => count + 1);
-      askForWindow(true);
+      // A hidden tab asks nothing: coming back to the page catches up
+      if (document.visibilityState === 'visible') {
+        askForWindow(true);
+      }
     }, soonest - now);
 
     onCleanup(() => {
@@ -755,28 +828,18 @@ export default function OverworldBoard(props: {
   const [spent, setSpent] = createSignal<Set<string>>(new Set());
 
   /**
-   * What each claim list answered, by list, chunk and window.
-   *
-   * A claim changes when the player takes something or the window
-   * turns over, and neither happens because they walked a square. The
-   * set of chunks in range turns over every eight cells or so, and
-   * without this every turnover re-asked the server for chunks it had
-   * already been told about, three lists apiece
-   */
-  const claimed = new LRUMap<string, Promise<number[]>>(CLAIM_MEMORY);
-
-  /**
-   * A claim list read from every window the board overlaps, gathered
-   * into one set of world cells.
-   *
-   * Only the chunks the board itself covers, not the wider country it
-   * draws: what is out there is a view, and nothing in a view can be
-   * pressed, so nothing in it can have been claimed
+   * A claim list read from every chunk the board draws, gathered into
+   * one set of world cells. Out past the watched chunks there is no
+   * window to hand the server, so the current one stands in: a claim is
+   * stamped with its landmark or phenomenon window, which the clock
+   * alone decides
    */
   const gather = (
     named: string,
     ask: (snapshot: ChunkSnapshot) => Promise<number[]>,
     take: (cells: Set<string>) => void,
+    /** The window the list's claims are stamped with, which is what makes a remembered answer stale */
+    stamp: (snapshot: ChunkSnapshot) => number,
   ): void => {
     const loaded = untrack(view);
 
@@ -785,24 +848,33 @@ export default function OverworldBoard(props: {
     }
 
     const who = untrack(() => auth.user()?.uid ?? '');
-    const near = new Set<string>();
+    const held = new Map<string, (typeof loaded.chunks)[number]>();
 
-    for (const [x, y] of untrack(overlapped)) {
-      near.add(`${x},${y}`);
+    for (const piece of loaded.chunks) {
+      held.set(`${piece.x},${piece.y}`, piece);
     }
 
+    const current =
+      Math.floor(toLocalTime(serverNow(), zone) / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
     const lists: Promise<string[]>[] = [];
     let live = true;
 
-    for (const piece of loaded.chunks) {
-      if (!near.has(`${piece.x},${piece.y}`)) {
-        continue;
-      }
+    for (const [x, y] of untrack(seen)) {
+      const piece = held.get(`${x},${y}`) ?? {
+        x,
+        y,
+        snapshot: new ChunkSnapshot(untrack(around).getChunk(x, y), current, zone),
+        world: (at: number): [number, number] => [
+          x * CHUNK_CELLS + (at % CHUNK_CELLS),
+          y * CHUNK_CELLS + Math.floor(at / CHUNK_CELLS),
+        ],
+      };
+
       lists.push(
         (async (): Promise<string[]> => {
           // The player is in the key because a claim is theirs: signing
           // in as somebody else must not read back the last one's
-          const key = `${who}|${named}|${piece.snapshot.depth}|${piece.x},${piece.y}|${piece.snapshot.timestamp}`;
+          const key = `${who}|${named}|${piece.snapshot.depth}|${piece.x},${piece.y}|${stamp(piece.snapshot)}`;
           const known = claimed.get(key) ?? ask(piece.snapshot);
 
           claimed.set(key, known);
@@ -838,6 +910,9 @@ export default function OverworldBoard(props: {
     });
   };
 
+  /** Patches, caches and honey trees refill with the landmarks, not with the spawns */
+  const landmarkWindow = (snapshot: ChunkSnapshot): number => snapshot.landmarkTimestamp;
+
   /**
    * Forget what the server said about claims.
    *
@@ -854,9 +929,15 @@ export default function OverworldBoard(props: {
     // Read again when a window turns over, and not when the player
     // takes a step: the board moves under them constantly
     windowKey();
-    gather('phenomena', listClaimedPhenomena, (cells) => {
-      setSpent(cells);
-    });
+    seen();
+    gather(
+      'phenomena',
+      listClaimedPhenomena,
+      (cells) => {
+        setSpent(cells);
+      },
+      (snapshot) => snapshot.phenomenonTimestamp,
+    );
   });
 
   /**
@@ -877,14 +958,36 @@ export default function OverworldBoard(props: {
    */
   const [dug, setDug] = createSignal<Set<string>>(new Set());
 
+  /** The honey trees this player has lathered this window, by world cell */
+  const [lathered, setLathered] = createSignal<Set<string>>(new Set());
+
   createEffect(() => {
     windowKey();
-    gather('patches', listPickedBerryPatches, (cells) => {
-      setPicked(cells);
-    });
-    gather('caches', listClaimedItemCaches, (cells) => {
-      setDug(cells);
-    });
+    seen();
+    gather(
+      'patches',
+      listPickedBerryPatches,
+      (cells) => {
+        setPicked(cells);
+      },
+      landmarkWindow,
+    );
+    gather(
+      'caches',
+      listClaimedItemCaches,
+      (cells) => {
+        setDug(cells);
+      },
+      landmarkWindow,
+    );
+    gather(
+      'honey',
+      listLatheredHoneyTrees,
+      (cells) => {
+        setLathered(cells);
+      },
+      landmarkWindow,
+    );
   });
 
   /**
@@ -893,14 +996,23 @@ export default function OverworldBoard(props: {
    * unmounts the board, so coming back from one reads it afresh
    */
   const [rechecked, setRechecked] = createSignal(0);
+  /**
+   * Standings already read, by chunk and window, so walking back into a
+   * chunk asks nothing. Kept briefly, since a seat can change hands
+   * without this player doing anything
+   */
+  const standingsRead = new LRUMap<string, { at: number; read: Promise<LandmarkStandings> }>(
+    CLAIM_MEMORY,
+  );
   const recheck = (): void => {
+    standingsRead.clear();
     setRechecked((count) => count + 1);
   };
 
   // A step inside the same chunk and windows asks nothing new, so the
   // read waits for one of those, or a recheck, to change
   const standingsAsk = createMemo(
-    (): { snapshot: ChunkSnapshot; uid: string; key: string } | null => {
+    (): { snapshot: ChunkSnapshot; uid: string; key: string; rechecked: number } | null => {
       const loaded = view();
       const user = auth.user();
 
@@ -912,11 +1024,15 @@ export default function OverworldBoard(props: {
       return {
         snapshot,
         uid: user.uid,
-        key: `${user.uid}|${snapshot.key}|${snapshot.raidTimestamp}|${snapshot.npcTimestamp}|${snapshot.nestTimestamp}|${rechecked()}`,
+        key: `${user.uid}|${snapshot.key}|${snapshot.raidTimestamp}|${snapshot.npcTimestamp}|${snapshot.nestTimestamp}`,
+        rechecked: rechecked(),
       };
     },
     null,
-    { equals: (before, after) => before?.key === after?.key },
+    {
+      equals: (before, after) =>
+        before?.key === after?.key && before?.rechecked === after?.rechecked,
+    },
   );
   const [standings, setStandings] = createSignal<{
     snapshot: ChunkSnapshot;
@@ -931,15 +1047,25 @@ export default function OverworldBoard(props: {
     }
 
     let live = true;
+    const now = Date.now();
+    let known = standingsRead.get(ask.key);
 
-    readLandmarkStandings(ask.snapshot, ask.uid)
+    if (known == null || now - known.at > STANDINGS_MEMORY) {
+      known = { at: now, read: readLandmarkStandings(ask.snapshot, ask.uid) };
+      standingsRead.set(ask.key, known);
+    }
+
+    const { read: reading } = known;
+
+    reading
       .then((read) => {
         if (live) {
           setStandings({ snapshot: ask.snapshot, read });
         }
       })
       .catch(() => {
-        // No glow is the board as it was: every press still asks
+        // No glow is the board as it was: every press still asks, and the next look reads again
+        standingsRead.delete(ask.key);
       });
     onCleanup(() => {
       live = false;
@@ -1271,10 +1397,16 @@ export default function OverworldBoard(props: {
     if (reporting || pending === 0 || (!force && pending < STEP_REPORT_SIZE)) {
       return;
     }
+    // Nobody walking alongside means nothing on the server to credit
+    if (buddy() === null) {
+      pending = 0;
+      return;
+    }
 
-    const steps = pending;
+    // Past the cap the server would drop them, so the rest wait for the next report
+    const steps = Math.min(pending, MAX_STEP_REPORT);
 
-    pending = 0;
+    pending -= steps;
     reporting = true;
     walk(steps)
       .then(takeReport)
@@ -1697,6 +1829,10 @@ export default function OverworldBoard(props: {
       }
       return meet(user, claim.encounter, true);
     }
+    if (landmark === Landmark.HoneyTree) {
+      setHoneyTree(spot);
+      return null;
+    }
     if (landmark === Landmark.CaveMouth) {
       const through = throughMouth(around(), spot.snapshot.chunk.x, spot.snapshot.chunk.y);
 
@@ -1876,14 +2012,6 @@ export default function OverworldBoard(props: {
   const [facing, setFacing] = createSignal<[number, number]>([0, 1]);
 
   /**
-   * Whether the ground at a cell can be stood on. The chunk's fixtures
-   * are what stop a walk, and it is the same answer whether the walk
-   * was pressed for or walked with the keyboard
-   */
-  const standable = (loaded: BoardView, index: number): boolean =>
-    !loaded.landmarks.has(index) && !loaded.decorations.has(index) && !loaded.walls.has(index);
-
-  /**
    * The cell one step from where the player stands. Always on the
    * board: they stand in the middle of it, and the middle is eight
    * cells from every edge
@@ -1902,6 +2030,224 @@ export default function OverworldBoard(props: {
    * whatever arrived after it was drawn
    */
   const [journey, setJourney] = createSignal<Journey | null>(null);
+
+  /** How the player is getting about: on foot, or riding the buddy over water or through the air */
+  const [travel, setTravel] = createSignal<Travel>('walk');
+
+  /** What stands on a board cell, as far as a step onto it cares */
+  const factsAt = (loaded: BoardView, index: number): CellFacts => {
+    const x = index % BOARD_CELLS;
+    const y = Math.floor(index / BOARD_CELLS);
+    const wet = loaded.ground.role(x, y) === 'water';
+    const biome = loaded.ground.biome(x, y);
+
+    return {
+      fixture: loaded.landmarks.has(index),
+      scenery: loaded.decorations.has(index),
+      solid: loaded.walls.has(index),
+      // A frozen lake is walked like ground, so only open water needs Surf
+      water: wet && biome !== Biome.Volcano && !isIceBiome(biome),
+      lava: wet && biome === Biome.Volcano,
+    };
+  };
+
+  /**
+   * Whether a step onto a cell is allowed, from where the player stands
+   * and however they are getting about. It is the same answer whether
+   * the walk was pressed for or walked with the keyboard
+   */
+  const standable = (loaded: BoardView, index: number): boolean =>
+    canEnter(travel(), factsAt(loaded, cell()), factsAt(loaded, index));
+
+  /** Whether the buddy can learn a field move, which is all a field move asks */
+  const knows = (field: FieldMove): boolean => canUseFieldMove(buddy()?.species, field);
+
+  /** Whether open water touches the player's cell, which is where Surf starts */
+  const besideWater = (loaded: BoardView): boolean => {
+    for (const [dx, dy] of [
+      [0, -1],
+      [1, 0],
+      [0, 1],
+      [-1, 0],
+    ] as const) {
+      if (factsAt(loaded, ahead([dx, dy])).water) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  /** Whether the last step was taken on water, so the first one ashore ends a surf */
+  let afloat = false;
+
+  createEffect(() => {
+    const loaded = view();
+    const mode = travel();
+
+    if (loaded == null || mode === 'walk') {
+      return;
+    }
+    // A buddy put away takes the ride with it, and nothing flies underground
+    if (
+      !knows(mode === 'surf' ? Moves.Surf : Moves.Fly) ||
+      (mode === 'fly' && loaded.underground)
+    ) {
+      setTravel('walk');
+      return;
+    }
+    if (mode === 'surf') {
+      const wet = factsAt(loaded, cell()).water;
+
+      if (afloat && !wet) {
+        setTravel('walk');
+      }
+      afloat = wet;
+    }
+  });
+
+  /** Whether Surf can be pressed here: to start beside water, or to stop on dry ground */
+  const surfOffered = (loaded: BoardView): boolean => {
+    if (!knows(Moves.Surf)) {
+      return false;
+    }
+    if (travel() === 'surf') {
+      return !factsAt(loaded, cell()).water;
+    }
+    return travel() === 'walk' && besideWater(loaded);
+  };
+
+  /** Whether Fly can be pressed here: to take off above ground, or to land where a walk could stand */
+  const flyOffered = (loaded: BoardView): boolean => {
+    if (!knows(Moves.Fly)) {
+      return false;
+    }
+    if (travel() === 'fly') {
+      return canLand(factsAt(loaded, cell()));
+    }
+    return travel() === 'walk' && !loaded.underground;
+  };
+
+  /** Start or stop surfing. It starts beside water and stops on dry ground */
+  const toggleSurf = (): void => {
+    const loaded = view();
+
+    if (loaded == null) {
+      return;
+    }
+    if (travel() === 'surf') {
+      if (!factsAt(loaded, cell()).water) {
+        setTravel('walk');
+      }
+      return;
+    }
+    if (knows(Moves.Surf) && besideWater(loaded)) {
+      afloat = false;
+      setTravel('surf');
+    }
+  };
+
+  /** Take off, or come down where a walk could stand */
+  const toggleFly = (): void => {
+    const loaded = view();
+
+    if (loaded == null) {
+      return;
+    }
+    if (travel() === 'fly') {
+      if (canLand(factsAt(loaded, cell()))) {
+        setTravel('walk');
+      }
+      return;
+    }
+    if (knows(Moves.Fly) && !loaded.underground) {
+      setTravel('fly');
+    }
+  };
+
+  /** Whether a Dig or Teleport is on its way to the server */
+  const [warping, setWarping] = createSignal(false);
+
+  /** Dig or Teleport: the server moves the player, and the board follows */
+  const warp = (field: Moves.Dig | Moves.Teleport): void => {
+    if (warping()) {
+      return;
+    }
+    setWarping(true);
+    (field === Moves.Dig ? useDig() : useTeleport())
+      .then((at) => {
+        setWarping(false);
+        if (at == null) {
+          toast.push({
+            message:
+              field === Moves.Dig ? 'There is no way up within reach.' : 'No town is near enough.',
+            tone: 'ember',
+          });
+          return;
+        }
+        setJourney(null);
+        setTravel('walk');
+        game.standHere(at);
+      })
+      .catch((caught: unknown) => {
+        setWarping(false);
+        toast.push({
+          message: caught instanceof Error ? caught.message : String(caught),
+          tone: 'ember',
+        });
+      });
+  };
+
+  // The moves usable where the player stands, handed to the menu bar
+  createEffect(() => {
+    const loaded = view();
+    const offers: FieldMoveOffer[] = [];
+
+    if (loaded != null) {
+      if (surfOffered(loaded)) {
+        offers.push({ name: 'Surf', active: travel() === 'surf', busy: false, use: toggleSurf });
+      }
+      if (flyOffered(loaded)) {
+        offers.push({ name: 'Fly', active: travel() === 'fly', busy: false, use: toggleFly });
+      }
+      if (knows(Moves.Dig) && loaded.underground) {
+        offers.push({
+          name: 'Dig',
+          active: false,
+          busy: warping(),
+          use: () => {
+            warp(Moves.Dig);
+          },
+        });
+      }
+      if (knows(Moves.Teleport)) {
+        offers.push({
+          name: 'Teleport',
+          active: false,
+          busy: warping(),
+          use: () => {
+            warp(Moves.Teleport);
+          },
+        });
+      }
+    }
+    game.setFieldMoves(offers);
+  });
+  onCleanup(() => {
+    game.setFieldMoves([]);
+  });
+
+  /** The buddy as the player is drawn riding it */
+  const mount = (): RiddenCoat | null => {
+    const riding = buddy();
+
+    return travel() === 'walk' || riding == null
+      ? null
+      : {
+          species: riding.species,
+          shiny: riding.shiny,
+          female: riding.gender === Genders.Female,
+        };
+  };
 
   /** Where a walk to open ground is heading, for the board to mark */
   const walkGoal = createMemo<[number, number] | null>(
@@ -1988,8 +2334,7 @@ export default function OverworldBoard(props: {
     // the ground, and a route that bent round every spawn made a busy
     // chunk feel like a maze
     // Solid rock stops a walk the way a fixture does
-    const passable = (index: number): boolean =>
-      !loaded.landmarks.has(index) && !loaded.decorations.has(index) && !loaded.walls.has(index);
+    const passable = (index: number): boolean => standable(loaded, index);
     // A goal nothing can stand on is walked up to instead of refused,
     // so a press on a boulder still takes the player over to it
     const route = plan.act
@@ -2422,6 +2767,7 @@ export default function OverworldBoard(props: {
                 lamp={loaded().lamp}
                 underground={loaded().underground}
                 charset={charset()}
+                mount={mount()}
                 // The camera belongs to the player rather than to the
                 // chunk: walking over a boundary swaps the board out
                 // and a camera living down there would face front
@@ -2604,6 +2950,28 @@ export default function OverworldBoard(props: {
               reason={lairReason()}
               onClose={() => {
                 setLair(null);
+              }}
+            />
+            <HoneyTreeDialog
+              player={user().uid}
+              snapshot={honeyTree()?.snapshot ?? null}
+              cell={honeyTree()?.cell ?? null}
+              lathered={lathered().has(treeKey())}
+              onClose={() => {
+                setHoneyTree(null);
+              }}
+              onLathered={(_, encounter) => {
+                setLathered((cells) => new Set(cells).add(treeKey()));
+                if (encounter == null) {
+                  return;
+                }
+                meet(user(), encounter, true)
+                  .then((said) => {
+                    if (said != null) {
+                      remark(said);
+                    }
+                  })
+                  .catch(() => undefined);
               }}
             />
             <PortalDialog

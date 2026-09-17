@@ -1,4 +1,13 @@
-import { type JSX, createEffect, createMemo, createSignal, onCleanup, onMount } from 'solid-js';
+import {
+  For,
+  type JSX,
+  createEffect,
+  createMemo,
+  createSignal,
+  onCleanup,
+  onMount,
+} from 'solid-js';
+import { FULL_BOARD_EXTRA } from '../../../overworld/board';
 import { SQUARES } from '../../../overworld/grid';
 import LRUMap from '../../../core/lru-map';
 import {
@@ -47,6 +56,7 @@ import {
   batchAmbient,
   batchSkybox,
   getCast,
+  getSkybox,
   paintAmbient,
   paintSkybox,
 } from '../../../canvas/daylight';
@@ -70,6 +80,7 @@ import loadTerrainTiles, { type TerrainTiles } from '../../../canvas/terrain-til
 import createBoardScene, {
   type BoardScene,
   type SceneSpot,
+  hazeAt,
 } from '../../../canvas/three/board-scene';
 import { TERRACE_TOP } from '../../../overworld/terrace';
 import terrainCell from '../../../canvas/terrain-cell';
@@ -149,6 +160,7 @@ import {
 import {
   type AuraPart,
   CellAura,
+  type RiddenCoat,
   SHADOW_STAMP,
   type SpawnCoat,
   auraCorners,
@@ -216,7 +228,7 @@ function inQuad(point: { x: number; y: number }, corners: { x: number; y: number
   return inside;
 }
 
-export { type SpawnCoat, isTurningPress, slideGain };
+export { type RiddenCoat, type SpawnCoat, isTurningPress, slideGain };
 
 /**
  * The chunk the player is standing in, drawn rather than laid out.
@@ -269,6 +281,11 @@ export interface ChunkCanvasProps {
    * Left out, the default red-trainer sheet
    */
   charset?: string;
+  /**
+   * The pokemon the player is riding while they surf or fly. While it
+   * is set the player is drawn as that pokemon instead of the charset
+   */
+  mount?: RiddenCoat | null;
   landmarks: Map<number, Landmark>;
   /**
    * What each phenomenon cell is showing this hour. The kind decides
@@ -591,6 +608,41 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   });
 
   const coatKey = (coat: SpawnCoat): string => `${coat.species}:${coat.shiny ? 'shiny' : 'plain'}`;
+
+  /**
+   * The ridden pokemon's own sheet. Kept apart from the spawns' shared
+   * ones, since a spawn of the same species would otherwise turn with
+   * the player
+   */
+  let ridden: { key: string; sprite: SpeciesSpriteAnimation | null } | null = null;
+
+  createEffect(() => {
+    const coat = props.mount;
+    const key = coat == null ? '' : `${coat.species}:${coat.shiny}:${coat.female}`;
+
+    if (key === (ridden?.key ?? '')) {
+      return;
+    }
+    dirty = true;
+    if (coat == null) {
+      ridden = null;
+      return;
+    }
+
+    const loading = { key, sprite: null };
+
+    ridden = loading;
+    loadSpeciesSprite(coat.species, { shiny: coat.shiny, female: coat.female })
+      .then((sprite) => {
+        if (ridden === loading) {
+          ridden = { key, sprite };
+          dirty = true;
+        }
+      })
+      .catch(() => {
+        // The charset stands in until a sheet does
+      });
+  });
 
   /**
    * Ask for a coat's sheet, and answer when it has landed one way or
@@ -1089,9 +1141,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     order: number[];
   } | null = null;
 
+  /** How many cells the scene reaches past the board on each side: only the full board reaches further */
+  const edgeExtra = createMemo(() => (settings().boardEdge === 'full' ? FULL_BOARD_EXTRA : 0));
+
   createEffect(() => {
     let live = true;
     let scene: BoardScene | null = null;
+    const extra = edgeExtra();
 
     // The tilesets the ground is drawn from: one pack for every biome
     // rather than a rip apiece, so it is asked for once
@@ -1105,7 +1161,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         const surface = stage;
 
         if (surface != null) {
-          scene = createBoardScene(surface, pack, BOARD_CELLS);
+          scene = createBoardScene(surface, pack, BOARD_CELLS + extra * 2, extra);
           setStaged(scene);
           built = null;
         }
@@ -1729,6 +1785,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     let drewAt = 0;
     /** Whether the player was still sliding last tick */
     let sliding = false;
+    /**
+     * Until when a ridden pokemon keeps its walk going. Held a slide past
+     * the last movement, so the pause between two steps does not drop it
+     * to idle and restart the walk from its first frame every step
+     */
+    let strideUntil = 0;
     let frame = requestAnimationFrame(function step(now: number): void {
       frame = requestAnimationFrame(step);
 
@@ -1803,12 +1865,31 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         slide.x += (dx / span) * gain;
         slide.y += (dy / span) * gain;
         walker?.advanceBy(gain * CELL_STRIDE);
+        strideUntil = clock + SLIDE_PACE;
       } else {
         heading = facingToward(0, 0, props.facing[0], props.facing[1]);
         walker?.stop();
       }
       if (heading !== facing) {
         dirty = true;
+      }
+
+      // The ridden pokemon walks while a walk is under way and idles once it stops
+      const mounted = ridden?.sprite;
+
+      if (mounted?.ready === true) {
+        const direction = SPRITE_DIRECTIONS[facingFrom(SPRITE_DIRECTIONS.indexOf(heading), yaw())];
+
+        if (!(clock < strideUntil && mounted.play(SpriteAnim.Walk, { direction }))) {
+          mounted.play(SpriteAnim.Idle, { direction });
+        }
+
+        const before = mounted.frame;
+
+        mounted.update(elapsed);
+        if (mounted.frame !== before) {
+          dirty = true;
+        }
       }
       // Everything above keeps time every tick, but a 120 Hz screen redraws
       // only every other one. Half a tick of slack keeps a 60 Hz screen on every one.
@@ -1902,6 +1983,20 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // handed the page it is drawn on rather than placed to look like
       // it: what is ruled on the ground lands on the ground
       show?.look(yaw(), screen, placed, ratio, camera());
+
+      const hazy = settings().boardEdge === 'haze';
+
+      if (show != null) {
+        if (!hazy) {
+          show.haze(null);
+        } else if (props.underground) {
+          show.haze({ top: CAVERN.colour, bottom: CAVERN.colour });
+        } else {
+          const { zenith, horizon } = getSkybox(worldTime(), props.latitude);
+
+          show.haze({ top: zenith, bottom: horizon });
+        }
+      }
 
       /** The light's throw, which the flat board has nowhere to put */
       const throwing = (): Cast | undefined => (flat ? undefined : cast());
@@ -2212,18 +2307,19 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // The shape of the screen is part of it, since the flat board
         // stands no elevation, and so is the quarter the camera is
         // round to, since that is what picks the edge tiles
+        const extra = edgeExtra();
         const window = `${props.origin[0]},${props.origin[1]}|${flat ? '2d' : '3d'}|${turns}|${
           props.underground ? 'cave' : 'day'
-        }`;
+        }|${extra}`;
 
         if (built !== window) {
           // Asked in the board's own cells, which is what the look
           // answers: the window it covers is already the world's
           show.ground(
             look,
-            [0, 0],
+            [-extra, -extra],
             turns,
-            [props.origin[0], props.origin[1]],
+            [props.origin[0] - extra, props.origin[1] - extra],
             `${flat ? '2d' : '3d'}|${props.underground ? 'cave' : 'day'}`,
           );
           built = window;
@@ -2827,6 +2923,20 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       lamps.push(lampAt(afoot));
 
       const walker = playerPerson();
+      const mount = ridden?.sprite?.ready === true ? ridden.sprite : null;
+      /** How the ridden pokemon stands, sized the way a spawn of it would be */
+      const riding =
+        mount == null || props.mount == null
+          ? null
+          : ({
+              scale:
+                (CELL *
+                  sizeOf(getSpeciesData(props.mount.species).height) *
+                  afoot.scale *
+                  magnify) /
+                SPRITE_STANDS,
+              anchor: 'shadow',
+            } as const);
       /**
        * How the player is drawn, and the box that comes to on the
        * screen.
@@ -2842,7 +2952,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               scale: (CELL * NPC_CELLS * afoot.scale * magnify) / walker.sourceFrameHeight,
               anchor: 'foot',
             } as const);
-      const playerBox = walking == null ? null : walker?.quadOf(afoot.x, afoot.y, walking);
+      let playerBox = walking == null ? null : walker?.quadOf(afoot.x, afoot.y, walking);
+
+      if (mount != null && riding != null) {
+        playerBox = mount.quadOf(afoot.x, afoot.y, riding);
+      }
       /** Whether the painting has reached the player's own row yet */
       let passed = false;
 
@@ -2946,6 +3060,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         const cell = boardCellOf(index);
         const middle = at(groundPoint(index));
         const drawnAt = shifted(cell);
+
+        // What stands in the haze fades in the same steps as the ground under it
+        marks?.carry(0, 0, hazy ? 1 - hazeAt(reachOf(drawnAt)) : 1);
 
         const floor = floorOf(cell, liftOf(cell));
 
@@ -3242,7 +3359,25 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           };
           marks?.depth(standingOn.floor);
 
-          if (walker == null || walking == null) {
+          if (mount != null && riding != null) {
+            const thrown = {
+              ...riding,
+              color: COLORS.shadow,
+              squash: shadowSquash(),
+              cast: throwing(),
+            };
+
+            if (
+              !shade(mount.shadowOf(spot.x, spot.y, thrown), (fallen) =>
+                mount.facedQuadOf(spot.x, spot.y, litFrame(mount.direction, fallen), riding),
+              )
+            ) {
+              mount.drawShadow(context, spot.x, spot.y, thrown);
+            }
+            if (!place(mount.quadOf(spot.x, spot.y, riding))) {
+              mount.draw(context, spot.x, spot.y, riding);
+            }
+          } else if (walker == null || walking == null) {
             // The dot it was before the sheet landed, on its own line
             const radius = CELL * 0.3 * spot.scale * magnify;
 
@@ -3438,11 +3573,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       {/* The scene: the ground, the cliffs and everything standing on
           them, drawn with a depth buffer so a step up hides what is
           behind it however the camera is walked round */}
-      <canvas
-        ref={stage}
-        aria-hidden="true"
-        class="pointer-events-none absolute inset-0 block h-full w-full"
-      />
+      {/* A fresh canvas whenever the scene changes size, since a disposed scene loses its context */}
+      <For each={[edgeExtra()]}>
+        {() => (
+          <canvas
+            ref={stage}
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-0 block h-full w-full"
+          />
+        )}
+      </For>
       <canvas
         ref={canvas}
         // Focusable, so the chunk is still reachable by keyboard now

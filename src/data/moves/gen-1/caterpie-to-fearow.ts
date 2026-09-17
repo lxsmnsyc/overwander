@@ -209,7 +209,7 @@ export default function registerBugAndBirdMoves(): void {
   });
   registerMove(Moves.Gust, {
     name: 'Gust',
-    description: '2x on anything in the air from Fly.',
+    description: '2x on anything in the air from Fly or Bounce.',
     type: Types.Flying,
     category: MoveCategories.Special,
     pp: 35,

@@ -5,7 +5,7 @@ import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerRelicanthSpecies(): void {
@@ -25,8 +25,9 @@ export default function registerRelicanthSpecies(): void {
       [Stats.Speed]: 55,
     },
     types: [Types.Water, Types.Rock],
+    habitat: Habitat.Water,
     abilities: [Abilities.SwiftSwim, Abilities.RockHead],
-    hiddenAbilities: [Abilities.Sturdy, Abilities.SolidRock],
+    hiddenAbilities: [Abilities.Sturdy, Abilities.Multiscale],
     eggGroups: [EggGroups.Water1, EggGroups.Water2],
     genderRatio: [7, 1],
     catchRate: 25,
@@ -44,6 +45,7 @@ export default function registerRelicanthSpecies(): void {
         50: [Moves.Rest],
         57: [Moves.DoubleEdge],
         64: [Moves.HydroPump],
+        78: [Moves.HeadSmash],
       },
       teachable: [
         Moves.WaterPulse,
@@ -83,6 +85,15 @@ export default function registerRelicanthSpecies(): void {
         Moves.MudSlap,
         Moves.Swagger,
         Moves.SleepTalk,
+        Moves.AquaTail,
+        Moves.Brine,
+        Moves.Captivate,
+        Moves.EarthPower,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.RockPolish,
+        Moves.StealthRock,
+        Moves.StoneEdge,
       ],
       egg: [Moves.Amnesia, Moves.SkullBash, Moves.Magnitude, Moves.WaterSport],
     },

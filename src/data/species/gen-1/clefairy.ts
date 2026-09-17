@@ -82,6 +82,15 @@ const FAMILY_TEACHABLE = [
   Moves.Snatch,
   Moves.SoftBoiled,
   Moves.WaterPulse,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.DrainPunch,
+  Moves.Fling,
+  Moves.GrassKnot,
+  Moves.LastResort,
+  Moves.NaturalGift,
+  Moves.StealthRock,
+  Moves.ZenHeadbutt,
 ];
 
 export default function registerClefairySpecies(): void {
@@ -124,11 +133,15 @@ export default function registerClefairySpecies(): void {
         13: [Moves.DoubleSlap],
         17: [Moves.FollowMe],
         19: [Moves.Minimize],
+        22: [Moves.WakeUpSlap],
         26: [Moves.DefenseCurl],
+        28: [Moves.LuckyChant],
         31: [Moves.Metronome],
         33: [Moves.CosmicPower],
+        34: [Moves.Gravity],
         43: [Moves.Moonlight],
         45: [Moves.MeteorMash],
+        46: [Moves.HealingWish],
         48: [Moves.LightScreen],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -163,7 +176,14 @@ export default function registerClefairySpecies(): void {
       level: {
         1: [Moves.Sing, Moves.DoubleSlap, Moves.Minimize, Moves.Metronome, Moves.Moonlight],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.LightScreen],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.LightScreen,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.Gravity,
+      ],
     },
   });
 }

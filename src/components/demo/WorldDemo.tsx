@@ -3,7 +3,7 @@ import WorldMapCanvas, { townsInView } from '../overworld/WorldMapCanvas';
 import getWorld from '../../overworld/current';
 import { BIOME_NAMES } from '../../data/biome';
 import { Badge, Button, Meta, Note, Row, Switch } from '../styled';
-import World, { isInWorld } from '../../overworld/world';
+import World, { Generation, isInWorld } from '../../overworld/world';
 import { CHUNK_CELLS } from '../../overworld/chunk';
 import shadeCell from '../../canvas/world-shade';
 import { TERRACE_TOP, levelAt } from '../../overworld/terrace';
@@ -43,6 +43,10 @@ const MAP_SPAN = 64;
 
 export default function WorldDemo(): JSX.Element {
   const [seed, setSeed] = createSignal(DEFAULT_SEED);
+  // Which generation the ground is read with, so the second can be
+  // looked at beside the first on the same seed
+  const [second, setSecond] = createSignal(false);
+  const generation = (): Generation => (second() ? Generation.Second : Generation.First);
   const [left, setLeft] = createSignal(-SPAN / 2);
   const [top, setTop] = createSignal(-SPAN / 2);
   const [zoom, setZoom] = createSignal(1);
@@ -73,7 +77,7 @@ export default function WorldDemo(): JSX.Element {
   });
 
   createEffect(() => {
-    const world = new World(seed());
+    const world = new World(seed(), undefined, generation());
     const scale = zoom();
     const x0 = left();
     const y0 = top();
@@ -164,7 +168,7 @@ export default function WorldDemo(): JSX.Element {
     const x = left() + Math.floor(((event.clientX - box.left) / box.width) * (SPAN / zoom()));
     const y = top() + Math.floor(((event.clientY - box.top) / box.height) * (SPAN / zoom()));
 
-    setUnder({ x, y, biome: new World(seed()).getCellBiome(x, y) });
+    setUnder({ x, y, biome: new World(seed(), undefined, generation()).getCellBiome(x, y) });
   };
 
   return (
@@ -247,6 +251,13 @@ export default function WorldDemo(): JSX.Element {
             setLevels(checked);
           }}
         />
+        <Switch
+          label="Second generation"
+          checked={second()}
+          onChange={(checked) => {
+            setSecond(checked);
+          }}
+        />
         <Button
           onClick={() => {
             setSeed(`${DEFAULT_SEED}-${Math.floor(Math.random() * 1000)}`);
@@ -267,8 +278,8 @@ export default function WorldDemo(): JSX.Element {
         {(spot) => (
           <Note>
             Cell {spot.x}, {spot.y} is {BIOME_NAMES[spot.biome]} at level{' '}
-            {levelAt(new World(seed()), spot.x, spot.y)} of {TERRACE_TOP}, in chunk{' '}
-            {Math.floor(spot.x / CHUNK_CELLS)}, {Math.floor(spot.y / CHUNK_CELLS)}
+            {levelAt(new World(seed(), undefined, generation()), spot.x, spot.y)} of {TERRACE_TOP},
+            in chunk {Math.floor(spot.x / CHUNK_CELLS)}, {Math.floor(spot.y / CHUNK_CELLS)}
           </Note>
         )}
       </Show>

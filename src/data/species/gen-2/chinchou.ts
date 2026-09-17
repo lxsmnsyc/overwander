@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -41,6 +41,11 @@ const FAMILY_TEACHABLE = [
   Moves.ShockWave,
   Moves.Substitute,
   Moves.WaterPulse,
+  Moves.Brine,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.NaturalGift,
+  Moves.SuckerPunch,
 ];
 
 const FAMILY_ABILITIES = [Abilities.VoltAbsorb, Abilities.Illuminate];
@@ -69,6 +74,7 @@ export default function registerChinchouSpecies(): void {
       [Stats.Speed]: 67,
     },
     types: [Types.Water, Types.Electric],
+    habitat: Habitat.Water,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.WaterAbsorb],
     eggGroups: [EggGroups.Water2],
@@ -78,6 +84,8 @@ export default function registerChinchouSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        34: [Moves.Discharge],
+        39: [Moves.AquaRing],
         49: [Moves.Charge],
         1: [Moves.Bubble, Moves.ThunderWave],
         5: [Moves.Supersonic],
@@ -110,6 +118,7 @@ export default function registerChinchouSpecies(): void {
       [Stats.Speed]: 67,
     },
     types: [Types.Water, Types.Electric],
+    habitat: Habitat.Water,
     abilities: [...FAMILY_ABILITIES],
     // Hydration is this registry's rather than the mainline's,
     // filling a final evolution to four: the deep water it lives in
@@ -122,6 +131,8 @@ export default function registerChinchouSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        40: [Moves.Discharge],
+        47: [Moves.AquaRing],
         61: [Moves.Charge],
         1: [Moves.Bubble, Moves.Supersonic, Moves.ThunderWave],
         13: [Moves.Flail],
@@ -131,7 +142,7 @@ export default function registerChinchouSpecies(): void {
         45: [Moves.TakeDown],
         53: [Moves.HydroPump],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.AquaTail, Moves.GigaImpact],
     },
   });
 }

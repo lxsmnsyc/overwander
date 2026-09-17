@@ -38,6 +38,10 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.ShockWave,
   Moves.Substitute,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.MagnetRise,
+  Moves.NaturalGift,
 ];
 
 // What the two evolved stages pick up once they stand on two legs
@@ -86,8 +90,10 @@ export default function registerMareepSpecies(): void {
         9: [Moves.ThunderShock],
         16: [Moves.ThunderWave],
         23: [Moves.CottonSpore],
+        28: [Moves.Discharge],
         30: [Moves.LightScreen],
         37: [Moves.Thunder],
+        41: [Moves.PowerGem],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -138,8 +144,10 @@ export default function registerMareepSpecies(): void {
         1: [Moves.Tackle, Moves.Growl, Moves.ThunderShock],
         18: [Moves.ThunderWave],
         27: [Moves.CottonSpore],
+        31: [Moves.Discharge],
         36: [Moves.LightScreen],
         45: [Moves.Thunder],
+        47: [Moves.PowerGem],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -151,6 +159,7 @@ export default function registerMareepSpecies(): void {
         Moves.MegaKick,
         Moves.MegaPunch,
         Moves.SeismicToss,
+        Moves.Fling,
       ],
     },
   });
@@ -188,8 +197,10 @@ export default function registerMareepSpecies(): void {
         1: [Moves.Tackle, Moves.Growl, Moves.ThunderShock, Moves.ThunderWave],
         27: [Moves.CottonSpore],
         30: [Moves.ThunderPunch],
+        34: [Moves.Discharge],
         42: [Moves.LightScreen],
         57: [Moves.Thunder],
+        59: [Moves.PowerGem],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -202,6 +213,10 @@ export default function registerMareepSpecies(): void {
         Moves.MegaKick,
         Moves.MegaPunch,
         Moves.SeismicToss,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.RockClimb,
       ],
     },
   });

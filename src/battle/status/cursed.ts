@@ -4,6 +4,7 @@ import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { EffectType } from '../events';
 import { onUnitActs } from '../utils';
+import { checkStatusDamage } from './__create';
 
 /**
  * What the curse takes every time the cursed unit acts
@@ -26,7 +27,12 @@ export default function setupCursedStatus(battle: Battle): void {
 
     unit.triggerStatus(Statuses.Cursed, cause);
 
-    const amount = unit.checkStat(Stats.HP, 0) * CURSE_FRACTION;
+    const amount = checkStatusDamage(
+      battle,
+      unit,
+      Statuses.Cursed,
+      unit.checkStat(Stats.HP, 0) * CURSE_FRACTION,
+    );
     const source = cause.type === EffectType.None ? unit : cause.unit;
 
     source.damage(cause, unit, amount, DamageFlags.Indirect | DamageFlags.HealthScaled);

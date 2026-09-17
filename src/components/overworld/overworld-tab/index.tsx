@@ -1,11 +1,13 @@
-import { type JSX, Suspense, createResource, onCleanup } from 'solid-js';
+import { type JSX, Suspense, createEffect, createResource, onCleanup } from 'solid-js';
 
 import { getBuddyEffects } from '../../../auth/buddy';
 import { onBuddyChange } from '../../../auth/buddy-changes';
 import { useAuth } from '../../../auth/context';
+import syncDevShinyBoost from '../../../auth/dev-shiny';
 
 import { getRetiredKeys } from '../../../auth/safari';
 
+import settings from '../../app/settings';
 import { Note } from '../../styled';
 
 import OverworldBoard from './board';
@@ -25,6 +27,16 @@ export default function OverworldTab(): JSX.Element {
     () => auth.user()?.uid ?? null,
     getBuddyEffects,
   );
+
+  // A development run's shiny odds, told to the dev server too once
+  // somebody is signed in to ask it
+  createEffect(() => {
+    const on = settings().devShinyBoost;
+
+    if (import.meta.env.DEV && auth.user() != null) {
+      syncDevShinyBoost(on).catch(() => undefined);
+    }
+  });
 
   // Swapped or re-equipped in a dialog over the board, which never unmounts
   onCleanup(

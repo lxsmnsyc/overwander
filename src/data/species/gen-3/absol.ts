@@ -34,7 +34,7 @@ export default function registerAbsolSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Scratch],
+        1: [Moves.Scratch, Moves.Feint],
         5: [Moves.Leer],
         9: [Moves.Taunt],
         13: [Moves.QuickAttack],
@@ -44,7 +44,11 @@ export default function registerAbsolSpecies(): void {
         31: [Moves.DoubleTeam],
         36: [Moves.Slash],
         41: [Moves.FutureSight],
+        44: [Moves.SuckerPunch],
         46: [Moves.PerishSong],
+        52: [Moves.NightSlash],
+        57: [Moves.MeFirst],
+        60: [Moves.PsychoCut],
       },
       teachable: [
         Moves.WaterPulse,
@@ -100,8 +104,25 @@ export default function registerAbsolSpecies(): void {
         Moves.FuryCutter,
         Moves.SleepTalk,
         Moves.Swift,
+        Moves.Captivate,
+        Moves.ChargeBeam,
+        Moves.DarkPulse,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.Payback,
+        Moves.ShadowClaw,
+        Moves.StoneEdge,
+        Moves.XScissor,
+        Moves.ZenHeadbutt,
       ],
-      egg: [Moves.Curse, Moves.FeintAttack, Moves.BatonPass, Moves.MagicCoat],
+      egg: [
+        Moves.Curse,
+        Moves.FeintAttack,
+        Moves.BatonPass,
+        Moves.MagicCoat,
+        Moves.Assurance,
+        Moves.Punishment,
+      ],
     },
   });
 }

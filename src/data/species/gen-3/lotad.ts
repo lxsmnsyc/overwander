@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -43,6 +43,9 @@ const FAMILY_TEACHABLE = [
   Moves.Endure,
   Moves.Swagger,
   Moves.SleepTalk,
+  Moves.Captivate,
+  Moves.GrassKnot,
+  Moves.SeedBomb,
 ];
 
 // What the two above the base pick up: a lily pad has no arms to
@@ -84,12 +87,19 @@ export default function registerLotadSpecies(): void {
       [Stats.Speed]: 30,
     },
     types: [Types.Water, Types.Grass],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.SwiftSwim, Abilities.RainDish],
     hiddenAbilities: [Abilities.OwnTempo],
     eggGroups: [EggGroups.Water1, EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Bog, Biome.Mangrove],
+    biomes: [
+      Biome.Bog,
+      Biome.Mangrove,
+      Biome.TropicalRainforest,
+      Biome.TropicalSeasonalForest,
+      Biome.TemperateRainforest,
+    ],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -97,9 +107,11 @@ export default function registerLotadSpecies(): void {
         3: [Moves.Growl],
         7: [Moves.Absorb],
         13: [Moves.NaturePower],
+        15: [Moves.NaturalGift],
         21: [Moves.Mist],
+        27: [Moves.ZenHeadbutt],
         31: [Moves.RainDance],
-        43: [Moves.MegaDrain],
+        43: [Moves.MegaDrain, Moves.EnergyBall],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -137,12 +149,19 @@ export default function registerLotadSpecies(): void {
       [Stats.Speed]: 50,
     },
     types: [Types.Water, Types.Grass],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.SwiftSwim, Abilities.RainDish],
     hiddenAbilities: [Abilities.OwnTempo],
     eggGroups: [EggGroups.Water1, EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.Bog, Biome.Mangrove],
+    biomes: [
+      Biome.Bog,
+      Biome.Mangrove,
+      Biome.TropicalRainforest,
+      Biome.TropicalSeasonalForest,
+      Biome.TemperateRainforest,
+    ],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -152,12 +171,20 @@ export default function registerLotadSpecies(): void {
         13: [Moves.NaturePower],
         19: [Moves.FakeOut],
         25: [Moves.FurySwipes],
+        27: [Moves.ZenHeadbutt],
         31: [Moves.WaterSport],
         37: [Moves.Thief],
         43: [Moves.Uproar],
         49: [Moves.HydroPump],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...GROWN_TEACHABLE,
+        Moves.DrainPunch,
+        Moves.EnergyBall,
+        Moves.Fling,
+        Moves.NaturalGift,
+      ],
     },
   });
 
@@ -178,6 +205,7 @@ export default function registerLotadSpecies(): void {
       [Stats.Speed]: 70,
     },
     types: [Types.Water, Types.Grass],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.SwiftSwim, Abilities.RainDish],
     // Hydration is this registry's rather than the mainline's: it
     // dances in its own Rain Dance beside Rain Dish, and a final
@@ -186,7 +214,13 @@ export default function registerLotadSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Bog, Biome.Mangrove],
+    biomes: [
+      Biome.Bog,
+      Biome.Mangrove,
+      Biome.TropicalRainforest,
+      Biome.TropicalSeasonalForest,
+      Biome.TemperateRainforest,
+    ],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -202,6 +236,14 @@ export default function registerLotadSpecies(): void {
         Moves.Counter,
         Moves.SeismicToss,
         Moves.Metronome,
+        Moves.DrainPunch,
+        Moves.EnergyBall,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.RockClimb,
+        Moves.ZenHeadbutt,
       ],
     },
   });

@@ -14,7 +14,6 @@ import { FRONTIER_TEAM_SIZE } from '../../data/overworld/experts';
 import type { Spawn } from '../../overworld/chunk-snapshot';
 import { levelInBand } from '../../overworld/encounter';
 import { NPC_QUOTES } from './npc-dialog/shared';
-import { saidLevels } from './overworld-tab/challengers';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
 import NpcSprite from './NpcSprite';
@@ -130,7 +129,7 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
         }
         return kept;
       }
-      return held.length >= FRONTIER_TEAM_SIZE ? held : [...held, at];
+      return held.length >= (props.challenger?.bring ?? FRONTIER_TEAM_SIZE) ? held : [...held, at];
     });
   };
 
@@ -180,17 +179,6 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
       return challenger.greeting;
     }
     return `A Team Rocket grunt blocks the way. “${NPC_QUOTES[Npc.RocketGrunt]}”`;
-  };
-
-  const stakes = (): string => {
-    const challenger = props.challenger;
-
-    if (challenger != null) {
-      return challenger.stakes;
-    }
-    return `Six of theirs at ${saidLevels(levels())} against as many as you bring. Win and the
-      grunt drops a purse and whatever they were carrying. Lose and you lose nothing but the
-      fight. They will be here all window.`;
   };
 
   /** What a challenge that can no longer be taken says */
@@ -273,10 +261,6 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
                   cardOnly
                 />
               </Show>
-
-              {/* And what the fight is worth, which is the decision the
-                  buttons below are asking about */}
-              <Meta class="max-w-prose">{stakes()}</Meta>
             </div>
           )}
         </Show>

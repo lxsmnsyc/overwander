@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerCorsolaSpecies(): void {
@@ -25,6 +25,7 @@ export default function registerCorsolaSpecies(): void {
       [Stats.Speed]: 35,
     },
     types: [Types.Water, Types.Rock],
+    habitat: Habitat.Water,
     abilities: [Abilities.Hustle, Abilities.NaturalCure],
     // Storm Drain is this registry's rather than the mainline's,
     // filling it to four: a reef is what the current runs into
@@ -32,11 +33,12 @@ export default function registerCorsolaSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
     genderRatio: [1, 3],
     catchRate: 60,
-    biomes: [Biome.CoralReef, Biome.Ocean, Biome.Beach],
+    biomes: [Biome.CoralReef, Biome.Ocean, Biome.Beach, Biome.RockyCoast],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         17: [Moves.Refresh],
+        28: [Moves.LuckyChant],
         34: [Moves.RockBlast],
         1: [Moves.Tackle],
         7: [Moves.Harden],
@@ -44,8 +46,10 @@ export default function registerCorsolaSpecies(): void {
         19: [Moves.Recover],
         25: [Moves.BubbleBeam],
         31: [Moves.SpikeCannon],
-        37: [Moves.MirrorCoat],
+        37: [Moves.MirrorCoat, Moves.AquaRing],
         43: [Moves.AncientPower],
+        44: [Moves.PowerGem],
+        53: [Moves.EarthPower],
       },
       teachable: [
         Moves.Toxic,
@@ -91,6 +95,13 @@ export default function registerCorsolaSpecies(): void {
         Moves.ShadowBall,
         Moves.Substitute,
         Moves.WaterPulse,
+        Moves.Brine,
+        Moves.Captivate,
+        Moves.NaturalGift,
+        Moves.RockPolish,
+        Moves.StealthRock,
+        Moves.StoneEdge,
+        Moves.SuckerPunch,
       ],
       egg: [
         Moves.Amnesia,

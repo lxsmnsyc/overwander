@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -50,6 +50,10 @@ const FAMILY_TEACHABLE = [
   Moves.Thief,
   Moves.WaterPulse,
   Moves.Waterfall,
+  Moves.Brine,
+  Moves.Captivate,
+  Moves.NaturalGift,
+  Moves.Payback,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ClearBody, Abilities.LiquidOoze];
@@ -78,12 +82,13 @@ export default function registerTentacoolSpecies(): void {
       [Stats.Speed]: 70,
     },
     types: [Types.Water, Types.Poison],
+    habitat: Habitat.Water,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.RainDish],
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Ocean, Biome.DeepOcean, Biome.KelpForest],
+    biomes: [Biome.Ocean, Biome.DeepOcean, Biome.KelpForest, Biome.Beach, Biome.RockyCoast],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -91,10 +96,12 @@ export default function registerTentacoolSpecies(): void {
         6: [Moves.Supersonic],
         12: [Moves.Constrict],
         13: [Moves.Wrap],
+        15: [Moves.ToxicSpikes],
         22: [Moves.WaterGun],
         25: [Moves.BubbleBeam],
-        33: [Moves.Barrier],
+        33: [Moves.Barrier, Moves.PoisonJab],
         40: [Moves.Screech],
+        43: [Moves.WringOut],
         48: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -105,6 +112,7 @@ export default function registerTentacoolSpecies(): void {
         Moves.Safeguard,
         Moves.RapidSpin,
         Moves.MirrorCoat,
+        Moves.Acupressure,
       ],
     },
   });
@@ -126,23 +134,27 @@ export default function registerTentacoolSpecies(): void {
       [Stats.Speed]: 100,
     },
     types: [Types.Water, Types.Poison],
+    habitat: Habitat.Water,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.RainDish, Abilities.PoisonTouch],
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 60,
-    biomes: [Biome.Ocean, Biome.KelpForest],
+    biomes: [Biome.Ocean, Biome.KelpForest, Biome.Beach, Biome.RockyCoast],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Acid, Moves.Supersonic, Moves.Wrap, Moves.PoisonSting, Moves.Constrict],
+        15: [Moves.ToxicSpikes],
         22: [Moves.WaterGun],
         25: [Moves.BubbleBeam],
         35: [Moves.Barrier],
+        36: [Moves.PoisonJab],
         43: [Moves.Screech],
         50: [Moves.HydroPump],
+        55: [Moves.WringOut],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

@@ -28,6 +28,9 @@ export type WorldTimeFace = 'period' | 'clock';
 
 export type BoxColumns = 5 | 6 | 8;
 
+/** What the board shows past the country it keeps track of */
+export type BoardEdge = 'haze' | 'full' | 'plain';
+
 export interface GameSettings {
   /**
    * Whether the decoration holds still: transitions, the fades a dialog
@@ -68,8 +71,12 @@ export interface GameSettings {
   gridLines: boolean;
   /** Whether a wide screen draws the board flat too, as an upright one always does */
   flatBoard: boolean;
+  /** How the edge of the board meets the sky */
+  boardEdge: BoardEdge;
   /** Dev only: whether cliff tiles are tinted red and seamed ones green */
   stepHighlight: boolean;
+  /** Dev only: whether shinies roll at the development run's boosted odds */
+  devShinyBoost: boolean;
   /** Both 0 to 1 */
   sound: number;
   music: number;
@@ -92,7 +99,9 @@ function defaults(): GameSettings {
     detailedMap: false,
     gridLines: false,
     flatBoard: false,
+    boardEdge: 'haze',
     stepHighlight: true,
+    devShinyBoost: true,
     sound: 0.7,
     music: 0.5,
   };
@@ -174,7 +183,9 @@ function stored(): GameSettings {
       detailedMap: said.detailedMap === true,
       gridLines: said.gridLines === true,
       flatBoard: said.flatBoard === true,
+      boardEdge: oneOf(said.boardEdge, ['haze', 'full', 'plain'] as const, base.boardEdge),
       stepHighlight: said.stepHighlight !== false,
+      devShinyBoost: said.devShinyBoost !== false,
       sound: volume(said.sound, base.sound),
       music: volume(said.music, base.music),
     };

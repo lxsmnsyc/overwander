@@ -1,4 +1,5 @@
 import { requireUid } from '../server/auth';
+import check, { REGION_COORDINATE, TOKEN } from '../server/validate';
 import {
   discoverTown as discoverOnServerSide,
   listTowns as listOnServerSide,
@@ -39,6 +40,9 @@ async function discoverOnServer(
   regionY: number,
 ): Promise<TownRecord | null> {
   'use server';
+  check(TOKEN, token);
+  check(REGION_COORDINATE, regionX);
+  check(REGION_COORDINATE, regionY);
   return discoverOnServerSide(await requireUid(token), regionX, regionY, await syncServerClock());
 }
 
@@ -53,6 +57,7 @@ export async function listTowns(): Promise<TownRecord[]> {
 
 async function listOnServer(token: string): Promise<TownRecord[]> {
   'use server';
+  check(TOKEN, token);
   await requireUid(token);
   return listOnServerSide();
 }

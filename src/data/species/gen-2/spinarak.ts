@@ -37,6 +37,8 @@ const FAMILY_TEACHABLE = [
   Moves.Mimic,
   Moves.SecretPower,
   Moves.Substitute,
+  Moves.Captivate,
+  Moves.NaturalGift,
 ];
 
 export default function registerSpinarakSpecies(): void {
@@ -76,13 +78,16 @@ export default function registerSpinarakSpecies(): void {
         6: [Moves.ScaryFace],
         11: [Moves.Constrict],
         17: [Moves.NightShade],
+        19: [Moves.ShadowSneak],
         23: [Moves.LeechLife],
+        26: [Moves.SuckerPunch],
         30: [Moves.FurySwipes],
         37: [Moves.SpiderWeb],
+        43: [Moves.PoisonJab],
         45: [Moves.Screech, Moves.Agility],
         53: [Moves.Psychic],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.BugBite],
       egg: [
         Moves.SonicBoom,
         Moves.Disable,
@@ -90,6 +95,7 @@ export default function registerSpinarakSpecies(): void {
         Moves.BatonPass,
         Moves.Pursuit,
         Moves.SignalBeam,
+        Moves.ToxicSpikes,
       ],
     },
   });
@@ -123,15 +129,18 @@ export default function registerSpinarakSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.PoisonSting, Moves.StringShot, Moves.Constrict, Moves.ScaryFace],
+        1: [Moves.PoisonSting, Moves.StringShot, Moves.Constrict, Moves.ScaryFace, Moves.BugBite],
         17: [Moves.NightShade],
+        19: [Moves.ShadowSneak],
         25: [Moves.LeechLife],
+        28: [Moves.SuckerPunch],
         34: [Moves.FurySwipes],
         43: [Moves.SpiderWeb],
+        50: [Moves.PoisonJab],
         53: [Moves.Screech, Moves.Agility],
         63: [Moves.Psychic],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

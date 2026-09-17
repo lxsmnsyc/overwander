@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerKingdraSpecies(): void {
@@ -26,15 +26,18 @@ export default function registerKingdraSpecies(): void {
       [Stats.Speed]: 85,
     },
     types: [Types.Water, Types.Dragon],
+    habitat: Habitat.Water,
     abilities: [Abilities.SwiftSwim, Abilities.Sniper],
     hiddenAbilities: [Abilities.Damp],
     eggGroups: [EggGroups.Water1, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Ocean, Biome.CoralReef],
+    biomes: [Biome.Ocean, Biome.CoralReef, Biome.Beach, Biome.RockyCoast],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        30: [Moves.Brine],
+        57: [Moves.DragonPulse],
         62: [Moves.DragonDance],
         1: [Moves.Bubble, Moves.Leer, Moves.SmokeScreen, Moves.WaterGun],
         8: [Moves.SmokeScreen],
@@ -78,6 +81,12 @@ export default function registerKingdraSpecies(): void {
         Moves.SecretPower,
         Moves.Substitute,
         Moves.WaterPulse,
+        Moves.Captivate,
+        Moves.DracoMeteor,
+        Moves.FlashCannon,
+        Moves.GigaImpact,
+        Moves.IronHead,
+        Moves.NaturalGift,
       ],
     },
   });

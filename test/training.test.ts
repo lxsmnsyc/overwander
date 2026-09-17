@@ -38,6 +38,7 @@ import { PP_UP_LIMIT, getMovePP, registerMoves } from '../src/data/moves';
 import { getItemBand } from '../src/data/overworld/item-pool';
 import { registerSpecies } from '../src/data/species';
 import { Species } from '../src/data/ids/species';
+import { raisedMovePoints } from '../src/server/training';
 
 // The registries the assertions below read: what a move's PP is, and
 // what the market makes of a vitamin
@@ -311,6 +312,14 @@ describe('move points', () => {
     expect(getMovePoints(caught, Moves.Growl)).toBe(0);
     expect(getMovePoints(caught, Moves.Ember)).toBe(0);
     expect(caught.movePoints[String(Moves.TailWhip)]).toBeUndefined();
+  });
+
+  it('refuses a bottle that would not change the move', () => {
+    // A fifth of Sketch's 1 PP floors to nothing at any count
+    expect(raisedMovePoints(Moves.Sketch, 0, PP_UP_LIMIT)).toBeNull();
+    expect(raisedMovePoints(Moves.Tackle, PP_UP_LIMIT, 1)).toBeNull();
+    expect(raisedMovePoints(Moves.Tackle, 0, 1)).toBe(1);
+    expect(raisedMovePoints(Moves.Tackle, 2, PP_UP_LIMIT)).toBe(PP_UP_LIMIT);
   });
 
   it('reads a record written before moves could be trained as untrained', () => {

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { AttackPriority } from '../../../src/core/event-emitter';
 import {
   BattleEvents,
   type CheckUnitAIMoveScoreEvent,
@@ -12,7 +13,7 @@ import { Stages, Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import { Items } from '../../../src/data/ids/items';
 import { Moves } from '../../../src/data/ids/moves';
-import { Statuses, Weathers } from '../../../src/data/ids/status';
+import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import Abilities from '../../../src/data/ids/abilities';
 import turns from '../../../src/battle/turn';
 import Biome from '../../../src/data/ids/biome';
@@ -399,6 +400,28 @@ describe('what Hoenn does to abilities', () => {
   });
 });
 
+describe('what Hoenn does to a raid boss', () => {
+  it('leaves a boss out of a Role Play and a Skill Swap', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const mimic = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+
+    mimic.addAbility(Abilities.Overgrow);
+    boss.addAbility(Abilities.Boss);
+    boss.addAbility(Abilities.Blaze);
+
+    mimic.triggerMoveEffect(Moves.RolePlay, unitTarget(boss), 0);
+    mimic.triggerMoveEffect(Moves.SkillSwap, unitTarget(boss), 0);
+
+    // Neither end moved: what makes it a raid cannot be worn by
+    // somebody else, and the boss keeps what it came with
+    expect(mimic.hasAbility(Abilities.Boss)).toBe(false);
+    expect(mimic.hasAbility(Abilities.Overgrow)).toBe(true);
+    expect(boss.hasAbility(Abilities.Boss)).toBe(true);
+    expect(boss.hasAbility(Abilities.Blaze)).toBe(true);
+  });
+});
+
 describe('the moves that stand in somebody else’s way', () => {
   it('turns a cast already winding up onto whoever called for it', () => {
     const { battle, teamA, teamB } = createBattle();
@@ -431,6 +454,41 @@ describe('the moves that stand in somebody else’s way', () => {
     battle.tick(turns(2));
     attacker.cast(Moves.Tackle, unitTarget(ally));
     expect(attacker.casting?.target).toEqual(unitTarget(ally));
+  });
+
+  it('keeps what it drew when an ability would draw it instead', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const guard = createUnit(battle, teamA);
+    const rod = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    rod.addAbility(Abilities.LightningRod);
+    attacker.addMove(Moves.ThunderShock);
+    guard.enter();
+    rod.enter();
+    ally.enter();
+    attacker.enter();
+    battle.tick(1);
+
+    guard.triggerMoveEffect(Moves.FollowMe, NONE_TARGET, 0);
+    attacker.cast(Moves.ThunderShock, unitTarget(ally));
+
+    expect(attacker.casting?.target).toEqual(unitTarget(guard));
+
+    const landed: Unit[] = [];
+
+    battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Post, (event) => {
+      if (event.source === attacker && event.target.type === MoveTargetType.Unit) {
+        landed.push(event.target.unit);
+      }
+    });
+
+    battle.tick(turns(4));
+
+    // The rod stands down: a Follow Me cost a cast and a rod costs
+    // nothing
+    expect(landed).toEqual([guard]);
   });
 
   it('turns a status move back on whoever cast it', () => {
@@ -536,14 +594,28 @@ describe('the moves that are paid for later', () => {
 
   it('breaks the screens before it hits', () => {
     const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
+    pinRandom(battle, 0);
     const breaker = createUnit(battle, teamA);
     const target = createUnit(battle, teamB);
 
     target.triggerMoveEffect(Moves.Reflect, NONE_TARGET, 0);
-    breaker.triggerMoveTarget(Moves.BrickBreak, unitTarget(target), 0);
+    breaker.triggerMove(Moves.BrickBreak, unitTarget(target), 0);
+    battle.tick(turns(1));
 
-    expect(target.team.status[0]).toBeUndefined();
+    expect(target.team.status[TeamStatuses.Reflect]).toBeUndefined();
+  });
+
+  it('leaves the screens up when it does not land', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const breaker = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB, [Types.Ghost]);
+
+    target.triggerMoveEffect(Moves.Reflect, NONE_TARGET, 0);
+    breaker.triggerMove(Moves.BrickBreak, unitTarget(target), 0);
+    battle.tick(turns(1));
+
+    expect(target.team.status[TeamStatuses.Reflect]).toBeDefined();
   });
 
   it('takes the user down with a Memento', () => {

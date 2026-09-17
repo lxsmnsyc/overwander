@@ -36,12 +36,13 @@ import {
 import Npc from '../../../data/overworld/npc';
 import { createTrainerBattle } from '../../../overworld/stop-battle';
 import BattleField from '../BattleField';
+import BattleTopBar from '../BattleTopBar';
 import CandySprite from '../../sprites/CandySprite';
 import VerdictDialog from './VerdictDialog';
 import { type Contribution, type SideSummary, readContributions, readSides } from './summary';
 import CatchDialog from '../../catches/catch-dialog';
 import { getFamilyName } from '../../../data/species';
-import { Badge, Button, Dialog, DialogActions, Note, Status, useToast } from '../../styled';
+import { Button, Dialog, DialogActions, Note, Status, useToast } from '../../styled';
 import { type ActiveBattle, GameDialog, useGame } from '../../app/game-context';
 import { type Profile, getProfiles } from '../../../auth/profile';
 
@@ -701,25 +702,18 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
           )}
         </Show>
 
-        {/* What the fight is, in the corner it is least in the way */}
-        <div class="pointer-events-none absolute top-3 left-3 flex items-center gap-2">
-          <span
-            class="rounded-full border-2 border-tide bg-paper/95 px-3 py-1 text-sm font-bold
-            shadow-pop backdrop-blur-sm"
-          >
-            {props.active.replay ? 'Replay' : title()}
-          </span>
-          <Show when={props.active.replay}>
-            <Badge>Awards nothing</Badge>
-          </Show>
-        </div>
-
-        {/* And the way out, in the other one */}
-        <div class="absolute top-3 right-3">
-          <Button tone="primary" onClick={askToLeave}>
-            Leave
-          </Button>
-        </div>
+        {/* What the fight is, how each side stands, and the way out */}
+        <Show when={instance()}>
+          {(built) => (
+            <BattleTopBar
+              battle={built().battle}
+              player={auth.user()?.uid ?? ''}
+              title={title()}
+              replay={props.active.replay}
+              onLeave={askToLeave}
+            />
+          )}
+        </Show>
 
         {/* Three seconds to look at the field before anything happens
             in it. It is drawn over the middle of the fight because the

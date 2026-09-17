@@ -31,11 +31,11 @@ import { createAbility } from './__create';
 export const PROTECTED_ABILITIES = new Set<Abilities>([Abilities.Boss, Abilities.Shadow]);
 
 /**
- * A Boss' health is twentyfold what the species would otherwise have,
+ * A Boss' health is sixtyfold what the species would otherwise have,
  * so a raid takes a party to bring down and a bulky boss is a longer
  * fight than a frail one all the way up
  */
-export const BOSS_HEALTH_SCALE = 20;
+export const BOSS_HEALTH_SCALE = 60;
 
 /**
  * Every other stat simply doubles
@@ -147,7 +147,7 @@ function refusesStatus(status: Statuses, cause: EffectCause, source: unknown): b
 
 const setupAbilities = [
   /**
-   * Boss: a raid-style stat wall, twentyfold HP and doubled
+   * Boss: a raid-style stat wall, sixtyfold HP and doubled
    * everything else, immune to forced switch-outs and Spite, to
    * trapping and disruption statuses (unless self-inflicted), to the
    * moves that move abilities or stages about, to a Perish Song

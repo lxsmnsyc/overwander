@@ -248,7 +248,7 @@ A boss is a **maxed legendary, perfect in every individual stat and trained to
 the cap in every one**, and every player
 in the lobby fights exactly the same one. Its raid form gives it:
 
-- A raid-sized health pool: twenty times what the species would have had.
+- A raid-sized health pool: sixty times what the species would have had.
 - Double every other stat.
 - Wind-ups that take twice as long, and that nothing short of fainting can
   interrupt.

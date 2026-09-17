@@ -20,9 +20,9 @@ import {
   moveEffectVisual,
   moveMissVisual,
 } from '../../../canvas/battle/moves';
-import type { FieldView } from '../../../canvas/battle/field';
+import type { FieldPoint, FieldView } from '../../../canvas/battle/field';
 import loadTerrainTiles, { TERRAIN_TILE } from '../../../canvas/terrain-tiles';
-import drawFloor, { type FloorRegion, type FloorTile } from './floor';
+import drawFloor, { type Arena, type FloorRegion, type FloorTile, drawGroundShade } from './floor';
 import createBattleScene from '../../../canvas/three/battle-scene';
 import Bakery from '../../../canvas/bakery';
 import Biome from '../../../data/ids/biome';
@@ -58,6 +58,7 @@ import { spread } from '../../../canvas/battle/moves/__paint';
 import {
   type Slot,
   type Stand,
+  type Standing,
   aimedAt,
   lobbyCamera,
   project,
@@ -139,6 +140,44 @@ export interface UnitSpot {
   x: number;
   top: number;
   bottom: number;
+}
+
+/** How far past its outermost pokemon a side's ring reaches, in field units */
+const ARENA_MARGIN = 6;
+
+/** The ground each side stands on: the boss's, and each party's */
+function arenasOf(standings: Standing[], field: { middle: Unit[] }): Arena[] {
+  const groups = new Map<unknown, FieldPoint[]>();
+
+  for (const standing of standings) {
+    const key = field.middle.includes(standing.unit) ? 'middle' : standing.unit.team;
+    const held = groups.get(key) ?? [];
+
+    held.push(standing.place);
+    groups.set(key, held);
+  }
+
+  const arenas: Arena[] = [];
+
+  for (const places of groups.values()) {
+    let x = 0;
+    let z = 0;
+
+    for (const place of places) {
+      x += place.x;
+      z += place.z;
+    }
+    x /= places.length;
+    z /= places.length;
+
+    let radius = 0;
+
+    for (const place of places) {
+      radius = Math.max(radius, Math.hypot(place.x - x, place.z - z));
+    }
+    arenas.push({ x, z, radius: radius + ARENA_MARGIN });
+  }
+  return arenas;
 }
 
 /** What a unit is drawn as, and the look it is transforming out of */
@@ -600,10 +639,14 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // charges a transform and a blit apiece for
       const batch = scene?.marks ?? null;
 
+      const standings = ringStandings(field, spriteFor, standFor);
+      const arenas = arenasOf(standings, field);
+
       if (scene == null || batch == null) {
         if (floor != null) {
           drawFloor(context, floor, view, region);
         }
+        drawGroundShade(context, view, region, arenas);
       } else {
         // Opened here and drawn once the fight is written into it.
         // Cleared every frame whether or not there is ground to lay,
@@ -623,9 +666,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         if (floor != null) {
           drawFloor(context, floor, view, region, batch);
         }
+        drawGroundShade(context, view, region, arenas, batch);
       }
 
-      const slots = project(ringStandings(field, spriteFor, standFor), view, striking);
+      const slots = project(standings, view, striking);
       const at = new Map<Unit, Slot>();
 
       for (const slot of slots) {

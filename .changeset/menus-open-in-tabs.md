@@ -6,6 +6,8 @@
 - A profile shows the gold and the worn title on the same row.
 - Opening the Friends tab on a profile no longer jumps back to Battles.
 - The Add friend button sits beside the Friends heading.
+- Friend requests are a Requests tab inside Friends, and the Friends tab shows how many are waiting.
+- Awards are split into Badges, Achievements, Type specialists and Trainers beaten tabs.
 - Trades are split into Pending and Settled tabs.
 - Bids and Selling are one Auction tab, with a tab for each.
 - Gifts are split into Catches, Items and Encounters tabs, each with its own search.

@@ -33,7 +33,7 @@ test.describe('the profile', () => {
 
     // What is left under the tabs: the catches and the bag are behind
     // the menu now, since neither is a fact about who somebody is
-    for (const tab of ['Battles', 'Friends', 'Friend Requests', 'Auction']) {
+    for (const tab of ['Battles', 'Awards', 'Friends', 'Auction']) {
       await expect(profile.getByRole('tab', { name: tab })).toBeVisible();
     }
   });

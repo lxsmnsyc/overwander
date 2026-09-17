@@ -409,6 +409,8 @@ export interface BuildContext {
   chosen: ReadonlySet<Moves>;
   /** How many of the party already bring each move */
   taken: ReadonlyMap<Moves, number>;
+  /** The rest of the party, which a move may be aimed at */
+  allies: readonly BuildAlly[];
   /**
    * Whether this pokemon may spend a slot calling a sky up. A party
    * calls one up once: the other five fight under it and spend their
@@ -443,11 +445,20 @@ const REPEATED_SUPPORT = 0.55;
 const REPEATED_ATTACK = 0.6;
 const REPEATED_STAB = 0.88;
 
+/** A teammate as the build sees it: what it is and what it fights with */
+export interface BuildAlly {
+  species: Species;
+  abilities: Abilities[];
+  role: BuildRole;
+}
+
 /** How this pokemon is being built, and what its team already holds */
 export interface BuildOptions {
   role?: BuildRole;
   /** How many of the party already bring each move */
   taken?: ReadonlyMap<Moves, number>;
+  /** The rest of the party, which a move may be aimed at */
+  allies?: readonly BuildAlly[];
   /**
    * The sky the whole party fights under, where the party settled one:
    * an ally's Drought, or an ally's Sunny Day. Left out, the pokemon
@@ -549,6 +560,103 @@ const MOVE_DRAWBACKS: Partial<Record<Moves, number>> = {
   [Moves.Superpower]: 0.75,
 };
 
+/** The abilities that spare the user each kind of cost */
+const CONFUSION_PROOF = new Set<Abilities>([Abilities.OwnTempo]);
+const RECOIL_PROOF = new Set<Abilities>([Abilities.RockHead, Abilities.MagicGuard]);
+const SLEEP_PROOF = new Set<Abilities>([Abilities.Insomnia, Abilities.VitalSpirit]);
+
+function holdsAny(abilities: readonly Abilities[], wanted: ReadonlySet<Abilities>): boolean {
+  for (const ability of abilities) {
+    if (wanted.has(ability)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** The drawbacks that are a drop on the user, which Contrary turns into a rise */
+const SELF_DROPPING = new Set<Moves>([Moves.Overheat, Moves.PsychoBoost, Moves.Superpower]);
+
+/**
+ * The moves aimed at an enemy that a teammate's ability turns into a
+ * gift: a flattery for one that cannot be confused, and a drop for one
+ * whose Contrary turns it round. Each names the stat it moves and by
+ * how much, as written for an enemy
+ */
+const ALLY_STAGE_MOVES: Partial<Record<Moves, { stat: Stats; stages: number }>> = {
+  [Moves.Swagger]: { stat: Stats.Attack, stages: 2 },
+  [Moves.Flatter]: { stat: Stats.SpecialAttack, stages: 1 },
+  [Moves.Charm]: { stat: Stats.Attack, stages: -2 },
+  [Moves.FeatherDance]: { stat: Stats.Attack, stages: -2 },
+  [Moves.Tickle]: { stat: Stats.Attack, stages: -1 },
+  [Moves.Screech]: { stat: Stats.Defense, stages: -2 },
+  [Moves.MetalSound]: { stat: Stats.SpecialDefense, stages: -2 },
+  [Moves.FakeTears]: { stat: Stats.SpecialDefense, stages: -2 },
+  [Moves.ScaryFace]: { stat: Stats.Speed, stages: -2 },
+};
+
+/** The ones that confuse as well, which only a teammate that cannot be confused wants */
+const FLATTERY_MOVES = new Set<Moves>([Moves.Swagger, Moves.Flatter]);
+
+/** What 2 stages of a stat are worth, priced as the setup move that raises them */
+const RAISE_WORTH: Partial<Record<Stats, number>> = {
+  [Stats.Attack]: 120,
+  [Stats.SpecialAttack]: 115,
+  [Stats.Defense]: 88,
+  [Stats.SpecialDefense]: 90,
+  [Stats.Speed]: 85,
+};
+
+/** The attacking stats, and the half of the split each one serves */
+const STAT_CATEGORY: Partial<Record<Stats, MoveCategories>> = {
+  [Stats.Attack]: MoveCategories.Physical,
+  [Stats.SpecialAttack]: MoveCategories.Special,
+};
+
+/** What the move is worth cast at the teammate it helps most */
+function allyWorth(move: Moves, allies: readonly BuildAlly[]): number {
+  const raised = ALLY_STAGE_MOVES[move];
+
+  if (raised == null) {
+    return 0;
+  }
+
+  let best = 0;
+
+  for (const ally of allies) {
+    if (FLATTERY_MOVES.has(move) && !holdsAny(ally.abilities, CONFUSION_PROOF)) {
+      continue;
+    }
+
+    const stages = ally.abilities.includes(Abilities.Contrary) ? -raised.stages : raised.stages;
+
+    if (stages <= 0) {
+      continue;
+    }
+
+    const category = STAT_CATEGORY[raised.stat];
+    const share = category == null ? 1 : categoryShare(ally.species, category, ally.abilities);
+
+    // Worth to the teammate what setup is worth to its own role
+    const worth =
+      (((RAISE_WORTH[raised.stat] ?? 0) * Math.min(stages, 2) * share) / 2) *
+      ROLE_WEIGHTS[ally.role][StatusKind.Setup];
+
+    best = Math.max(best, worth);
+  }
+  return best;
+}
+
+/** Whether the user's own ability makes the move do nothing, or worse */
+function selfDefeating(move: Moves, abilities: Abilities[]): boolean {
+  // Every setup move raises the user, which Contrary turns into a drop
+  if (STATUS_KINDS[move] === StatusKind.Setup && abilities.includes(Abilities.Contrary)) {
+    return true;
+  }
+  // Rest heals by sleeping, and a user that cannot sleep cannot rest
+  return move === Moves.Rest && holdsAny(abilities, SLEEP_PROOF);
+}
+
 /**
  * The moves that hurt their user, whether by recoil or by the
  * confusion at the end of a rampage. They are priced against the
@@ -569,8 +677,17 @@ const SELF_HURTING = new Set<Moves>([
 const SELF_HURT_FACTOR = 0.7;
 const SELF_HURT_HEALTH = 70;
 
-function selfHurtFactor(species: Species, move: Moves): number {
-  if (!SELF_HURTING.has(move)) {
+/** The rampages, whose cost is the confusion rather than a recoil */
+const FATIGUING = new Set<Moves>([Moves.Thrash, Moves.PetalDance, Moves.Outrage]);
+
+/** The moves that strike on every step, so their steps are not a wind-up */
+const RAMPAGES = new Set<Moves>([...FATIGUING, Moves.Uproar]);
+
+function selfHurtFactor(species: Species, move: Moves, abilities: Abilities[]): number {
+  if (
+    !SELF_HURTING.has(move) ||
+    holdsAny(abilities, FATIGUING.has(move) ? CONFUSION_PROOF : RECOIL_PROOF)
+  ) {
     return 1;
   }
   const health = getSpeciesData(species).stats[Stats.HP];
@@ -745,16 +862,17 @@ function moveWorth(species: Species, move: Moves, context: BuildContext): number
         return 0;
       }
     }
-    const worth =
-      (STATUS_WORTH[move] ?? 0) *
-      weights[STATUS_KINDS[move] ?? StatusKind.Cripple] *
-      REPEATED_SUPPORT ** (context.taken.get(move) ?? 0);
     const serves = SETUP_CATEGORY[move];
-
     // A boost is worth what the stat it raises is worth in these hands
-    return (
-      promise * (serves == null ? worth : worth * categoryShare(species, serves, context.abilities))
-    );
+    const own = selfDefeating(move, context.abilities)
+      ? 0
+      : (STATUS_WORTH[move] ?? 0) *
+        weights[STATUS_KINDS[move] ?? StatusKind.Cripple] *
+        (serves == null ? 1 : categoryShare(species, serves, context.abilities));
+    // Or what it is worth cast at the teammate it helps, where it helps one
+    const aimed = allyWorth(move, context.allies) * weights[StatusKind.Ally];
+
+    return promise * Math.max(own, aimed) * REPEATED_SUPPORT ** (context.taken.get(move) ?? 0);
   }
 
   const share = categoryShare(species, data.category, context.abilities);
@@ -768,7 +886,10 @@ function moveWorth(species: Species, move: Moves, context: BuildContext): number
   // A move that winds up first lands once for every cast it spends
   // getting there, so its power is spread across them. Solar Beam
   // under its own sun does not wind up at all
-  const charged = move === Moves.SolarBeam && context.weather === Weathers.Sunny ? 0 : data.steps;
+  const charged =
+    (move === Moves.SolarBeam && context.weather === Weathers.Sunny) || RAMPAGES.has(move)
+      ? 0
+      : data.steps;
   const winding = 1 + (charged ?? 0);
 
   // What the party already throws, docked so the sixth sheet reaches
@@ -782,8 +903,10 @@ function moveWorth(species: Species, move: Moves, context: BuildContext): number
       coverageWeight(data.type) *
       abilityFactor(move, context, types)) /
       winding) *
-    (MOVE_DRAWBACKS[move] ?? 1) *
-    selfHurtFactor(species, move) *
+    (SELF_DROPPING.has(move) && context.abilities.includes(Abilities.Contrary)
+      ? 1
+      : (MOVE_DRAWBACKS[move] ?? 1)) *
+    selfHurtFactor(species, move, context.abilities) *
     weights.attack *
     promise *
     repeated
@@ -981,6 +1104,7 @@ export function getBestMoves(
       weather: planned ?? buildWeather(abilities, held),
       chosen: held,
       taken,
+      allies: options.allies ?? [],
       setter: planned == null || options.setter === true,
       planned: planned != null,
     });

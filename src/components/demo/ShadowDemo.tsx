@@ -299,8 +299,7 @@ export default function ShadowDemo(): JSX.Element {
         sprite.play(SpriteAnim.Idle, { direction: 'Down', loop: true });
 
         const scale =
-          (CELL * sizeOf(getSpeciesData(species()).height) * middle.scale * magnify * zoomed) /
-          SPRITE_STANDS;
+          (CELL * sizeOf(species(), sprite) * middle.scale * magnify * zoomed) / SPRITE_STANDS;
         const placement = { scale, anchor: 'shadow' } as const;
         const patch = sprite.shadowOf(middle.x, middle.y, {
           ...placement,

@@ -1,16 +1,8 @@
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
 import type { Slot } from './field';
 import { type CastLabels, drawCastLabel } from './cast-label';
-import {
-  COLORS,
-  HIT_REACH,
-  NAMED_RADIUS,
-  SIZE_MAX,
-  SIZE_MIN,
-  SIZE_POWER,
-  SIZE_REFERENCE_HEIGHT,
-  SIZE_REFERENCE_PIXELS,
-} from './metrics';
+import { BATTLE_SIZE, COLORS, HIT_REACH, NAMED_RADIUS } from './metrics';
+import speciesSize from '../../../canvas/species-size';
 import { type Striking, animationFor } from './motion';
 import type { ProgressData } from '../../../battle/events';
 import type Unit from '../../../battle/unit';
@@ -30,8 +22,6 @@ import type { Point } from '../../../canvas/sprite-sheet';
 import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
-import type { Species } from '../../../data/ids/species';
-import { getSpeciesData } from '../../../data/species';
 
 /**
  * Painting one slot: the pokemon, the bars over it and the words under
@@ -263,42 +253,12 @@ function baseScaleOf(slot: Slot): number {
   return slot.radius / SPRITE_SCALE_DIVISOR;
 }
 
-/** Sizes already worked out, by species and sheet */
-const SIZES = new Map<string, number>();
-
-/**
- * How much to resize a species' sheet so its idle pose stands as tall
- * as its real height says, the same for every clip it plays
- */
-function sizeOf(species: Species, sprite: SpeciesSpriteAnimation): number {
-  const key = `${species}:${sprite.source}`;
-  const known = SIZES.get(key);
-
-  if (known != null) {
-    return known;
-  }
-
-  const drawn = sprite.heightOf(SpriteAnim.Idle);
-
-  // A sheet with no idle pose has nothing to measure, so it keeps its own size
-  if (drawn <= 0) {
-    return 1;
-  }
-
-  const ratio = (getSpeciesData(species).height / SIZE_REFERENCE_HEIGHT) ** SIZE_POWER;
-  const target = SIZE_REFERENCE_PIXELS * Math.min(SIZE_MAX, Math.max(SIZE_MIN, ratio));
-  const size = target / drawn;
-
-  SIZES.set(key, size);
-  return size;
-}
-
 export function scaleOf(slot: Slot): number {
   const sprite = slot.sprite;
 
   return sprite == null
     ? baseScaleOf(slot)
-    : baseScaleOf(slot) * sizeOf(slot.unit.appearance, sprite);
+    : baseScaleOf(slot) * speciesSize(slot.unit.appearance, sprite, BATTLE_SIZE);
 }
 
 /**

@@ -101,7 +101,6 @@ import { getBlocker } from '../../../data/overworld/decoration';
 import Landmark from '../../../data/overworld/landmark';
 import Phenomenon from '../../../data/overworld/phenomenon';
 import Npc, { npcSheet } from '../../../data/overworld/npc';
-import { getSpeciesData } from '../../../data/species';
 import facingToward from '../../../canvas/facing';
 import type OWCharSprite from '../../../canvas/ow-char-sprite';
 import loadOWChar, { OW_SPRITE_ROOT } from '../../../canvas/ow-char-sprites';
@@ -2973,11 +2972,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           ? null
           : ({
               scale:
-                (CELL *
-                  sizeOf(getSpeciesData(props.mount.species).height) *
-                  afoot.scale *
-                  magnify) /
-                SPRITE_STANDS,
+                (CELL * sizeOf(props.mount.species, mount) * afoot.scale * magnify) / SPRITE_STANDS,
               anchor: 'shadow',
             } as const);
       /**
@@ -3291,8 +3286,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // the sheet stand on one cell, with the dex height saying
             // how far this one is off ordinary
             const scale =
-              (CELL * sizeOf(getSpeciesData(standing.species).height) * middle.scale * magnify) /
-              SPRITE_STANDS;
+              (CELL * sizeOf(standing.species, sprite) * middle.scale * magnify) / SPRITE_STANDS;
             // The sheet's own shadow marker is the point that stands on
             // the ground, so putting it on the middle of the cell is
             // the whole of standing a pokemon there — whatever is drawn

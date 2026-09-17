@@ -1,4 +1,7 @@
 import { BOARD_SPAN, boardView } from '../../../canvas/board';
+import speciesSize, { type SizeCurve } from '../../../canvas/species-size';
+import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
+import type { Species } from '../../../data/ids/species';
 
 /**
  * The board's reference measurements, its colours, and the few facts
@@ -45,31 +48,16 @@ export function pictureWidth(): number {
  */
 export const SPRITE_STANDS = 21;
 
-/** The height a pokemon is drawn at its sheet's own size, in meters */
-const ORDINARY_HEIGHT = 1;
-
 /**
- * How much of the difference in height survives, and how far it is
- * allowed to carry. Onix is forty Digletts tall, so the ratio is
- * pulled through a root and clamped
+ * How much a species' real height shows on the board. Onix is forty
+ * Digletts tall, so it is kept gentle and tight: a spawn stands in one
+ * cell and must not bury the rows behind it
  */
-const HEIGHT_CURVE = 0.18;
+const BOARD_SIZE: SizeCurve = { power: 0.18, min: 0.85, max: 1.25 };
 
-const MIN_SIZE = 0.85;
-
-const MAX_SIZE = 1.25;
-
-/**
- * How much bigger or smaller than its sheet a pokemon of this height,
- * in meters, is drawn.
- *
- * The sheets are a poor measure of size: PMD art fills much the same
- * box whatever it is drawing, and the `shadowSize` beside it calls a
- * Ponyta small, so a horse came out shorter than a Rattata. The dex
- * height is the game's own answer to how big something is
- */
-export function sizeOf(height: number): number {
-  return Math.min(MAX_SIZE, Math.max(MIN_SIZE, (height / ORDINARY_HEIGHT) ** HEIGHT_CURVE));
+/** How much bigger or smaller than its sheet a species is drawn on the board */
+export function sizeOf(species: Species, sprite: SpeciesSpriteAnimation): number {
+  return speciesSize(species, sprite, BOARD_SIZE);
 }
 
 /**

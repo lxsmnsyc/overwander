@@ -1,3 +1,5 @@
+import type { SizeCurve } from '../../../canvas/species-size';
+
 /**
  * The picture's own measurements and colours. Everything drawn is laid
  * out in these coordinates whatever the element is sized to.
@@ -12,18 +14,10 @@ export const WIDTH = 640;
 export const HEIGHT = 360;
 
 /**
- * How a species' real height becomes its idle height in sheet pixels.
- * The art is not drawn to scale, so each sprite is resized to this
- * target. The power softens the range: a 2m pokemon is about a third
- * taller than a 1m one, not twice. The reference pixels are about the
- * median idle height across the sheets, so the field keeps its size
+ * How much a species' real height shows in battle. Wider than the
+ * board's: a fight has room for a Wailord to tower
  */
-export const SIZE_REFERENCE_HEIGHT = 1;
-export const SIZE_REFERENCE_PIXELS = 30;
-export const SIZE_POWER = 0.4;
-/** How far the target may stray from the reference, so the extremes stay readable */
-export const SIZE_MIN = 0.6;
-export const SIZE_MAX = 2.4;
+export const BATTLE_SIZE: SizeCurve = { power: 0.4, min: 0.6, max: 2.4 };
 
 /**
  * How many pixels a field unit is worth at the middle of the field.

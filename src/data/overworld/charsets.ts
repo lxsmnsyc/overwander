@@ -36,6 +36,7 @@ import {
   TRAINER_BASE_NAMES,
   TRAINER_CHARSETS,
   TRAINER_CLASSES,
+  TRAINER_SHEET_NAMES,
   type TrainerClass,
 } from './trainers';
 
@@ -214,7 +215,10 @@ function buildCharsets(): Charset[] {
   // and it is that region's wins that open it
   for (const trainer of TRAINER_CLASSES) {
     for (const sheet of TRAINER_CHARSETS[trainer]) {
-      add(sheet, TRAINER_BASE_NAMES[trainer], { kind: 'trainer', trainer });
+      add(sheet, TRAINER_SHEET_NAMES[sheet] ?? TRAINER_BASE_NAMES[trainer], {
+        kind: 'trainer',
+        trainer,
+      });
     }
   }
   return [...found.values()];

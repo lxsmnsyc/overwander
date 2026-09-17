@@ -5,7 +5,7 @@
  */
 
 export { TRAINER_CLASSES, TRAINER_REGIONS, TrainerClass } from './classes';
-export { TRAINER_BASE_NAMES, TRAINER_NAMES } from './names';
+export { TRAINER_BASE_NAMES, TRAINER_NAMES, TRAINER_SHEET_NAMES, trainerNameIn } from './names';
 export { TRAINER_TRADE, TRAINER_TRADES, getTradeClasses } from './trades';
 export { default as TRAINER_TYPES } from './types';
 export { default as TRAINER_CHARSETS } from './charsets';

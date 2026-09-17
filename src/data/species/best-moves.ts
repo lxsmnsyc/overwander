@@ -6,6 +6,7 @@ import { TYPE_EFFECTIVENESS, TypeEffectiveness, Types } from '../constants/types
 import { Weathers } from '../ids/status';
 import { getLearnableMoves, getSpeciesData } from './__create';
 import { getMoveData } from '../moves/__create';
+import { isRecoilMove } from '../moves/recoil';
 import { MOVE_WEATHERS, getWeatherMove } from '../moves/weather';
 
 /**
@@ -110,6 +111,14 @@ const STATUS_WORTH: Partial<Record<Moves, number>> = {
   [Moves.DefendOrder]: 86,
   [Moves.DoubleTeam]: 85,
   [Moves.Acupressure]: 80,
+  [Moves.QuiverDance]: 120,
+  [Moves.ShellSmash]: 120,
+  [Moves.ShiftGear]: 115,
+  [Moves.Coil]: 110,
+  [Moves.HoneClaws]: 105,
+  [Moves.WorkUp]: 100,
+  [Moves.CottonGuard]: 88,
+  [Moves.Autotomize]: 85,
 
   // Health back, which is worth about what a hit takes off
   [Moves.Recover]: 105,
@@ -149,6 +158,13 @@ const STATUS_WORTH: Partial<Record<Moves, number>> = {
   [Moves.Protect]: 85,
   [Moves.Yawn]: 85,
   [Moves.Sing]: 80,
+  // Changing what the target is rather than what it has, which only
+  // sometimes matters
+  [Moves.Soak]: 70,
+  [Moves.PowerSplit]: 65,
+  [Moves.GuardSplit]: 65,
+  [Moves.SimpleBeam]: 60,
+  [Moves.Entrainment]: 60,
 
   // What a support lays over its own side or under the other's. They
   // are priced low here and lifted by the role that wants them
@@ -164,6 +180,10 @@ const STATUS_WORTH: Partial<Record<Moves, number>> = {
   [Moves.Aromatherapy]: 85,
   [Moves.Haze]: 80,
   [Moves.Mist]: 70,
+  [Moves.WideGuard]: 75,
+  [Moves.QuickGuard]: 70,
+  [Moves.WonderRoom]: 60,
+  [Moves.MagicRoom]: 60,
 
   // Sleeping off everything at once, which is only a plan with
   // something to do while asleep
@@ -174,6 +194,9 @@ const STATUS_WORTH: Partial<Record<Moves, number>> = {
   // behind two cores is the pokemon these were written for
   [Moves.HelpingHand]: 105,
   [Moves.FollowMe]: 100,
+  [Moves.RagePowder]: 100,
+  [Moves.HealPulse]: 95,
+  [Moves.AfterYou]: 70,
   // Twice as often for the whole side while it blows
   [Moves.Tailwind]: 100,
   [Moves.BatonPass]: 90,
@@ -211,6 +234,14 @@ const STATUS_KINDS: Partial<Record<Moves, StatusKind>> = {
   [Moves.DefendOrder]: StatusKind.Setup,
   [Moves.DoubleTeam]: StatusKind.Setup,
   [Moves.Acupressure]: StatusKind.Setup,
+  [Moves.QuiverDance]: StatusKind.Setup,
+  [Moves.ShellSmash]: StatusKind.Setup,
+  [Moves.ShiftGear]: StatusKind.Setup,
+  [Moves.Coil]: StatusKind.Setup,
+  [Moves.HoneClaws]: StatusKind.Setup,
+  [Moves.WorkUp]: StatusKind.Setup,
+  [Moves.CottonGuard]: StatusKind.Setup,
+  [Moves.Autotomize]: StatusKind.Setup,
 
   [Moves.Recover]: StatusKind.Heal,
   [Moves.SoftBoiled]: StatusKind.Heal,
@@ -241,6 +272,10 @@ const STATUS_KINDS: Partial<Record<Moves, StatusKind>> = {
   [Moves.TrickRoom]: StatusKind.Guard,
   [Moves.LuckyChant]: StatusKind.Guard,
   [Moves.SleepTalk]: StatusKind.Guard,
+  [Moves.WideGuard]: StatusKind.Guard,
+  [Moves.QuickGuard]: StatusKind.Guard,
+  [Moves.WonderRoom]: StatusKind.Guard,
+  [Moves.MagicRoom]: StatusKind.Guard,
 
   [Moves.HelpingHand]: StatusKind.Ally,
   [Moves.FollowMe]: StatusKind.Ally,
@@ -248,6 +283,9 @@ const STATUS_KINDS: Partial<Record<Moves, StatusKind>> = {
   [Moves.Tailwind]: StatusKind.Ally,
   [Moves.HealingWish]: StatusKind.Ally,
   [Moves.LunarDance]: StatusKind.Ally,
+  [Moves.RagePowder]: StatusKind.Ally,
+  [Moves.HealPulse]: StatusKind.Ally,
+  [Moves.AfterYou]: StatusKind.Ally,
 
   [Moves.SunnyDay]: StatusKind.Weather,
   [Moves.RainDance]: StatusKind.Weather,
@@ -364,6 +402,29 @@ const SLEEP_MOVES = new Set<Moves>([
   Moves.Yawn,
 ]);
 
+/** The moves that poison, which is what Venoshock waits for */
+const POISON_MOVES = new Set<Moves>([Moves.Toxic, Moves.PoisonPowder, Moves.PoisonGas]);
+
+/** The moves that leave a status condition, which is what Hex waits for */
+const STATUS_MOVES = new Set<Moves>([
+  ...SLEEP_MOVES,
+  ...POISON_MOVES,
+  Moves.ThunderWave,
+  Moves.StunSpore,
+  Moves.Glare,
+  Moves.WillOWisp,
+]);
+
+/** Whether the sheet holds any of these */
+function holdsAny(chosen: ReadonlySet<Moves>, wanted: ReadonlySet<Moves>): boolean {
+  for (const move of wanted) {
+    if (chosen.has(move)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * The moves whose worth is a promise the rest of the sheet has to
  * keep, and what keeps it. A Focus Punch behind a Substitute is a
@@ -382,6 +443,10 @@ const MOVE_PARTNERS: Partial<Record<Moves, (chosen: ReadonlySet<Moves>) => boole
   [Moves.FocusPunch]: (chosen) => chosen.has(Moves.Substitute),
   [Moves.SleepTalk]: (chosen) => chosen.has(Moves.Rest),
   [Moves.Rest]: (chosen) => chosen.has(Moves.SleepTalk),
+  [Moves.Hex]: (chosen) => holdsAny(chosen, STATUS_MOVES),
+  [Moves.Venoshock]: (chosen) => holdsAny(chosen, POISON_MOVES),
+  // A Stored Power with nothing raised is a 20 power move
+  [Moves.StoredPower]: (chosen) => holdsAny(chosen, SETUP_MOVES),
   // A Baton Pass with nothing raised passes nothing
   [Moves.BatonPass]: (chosen) => {
     for (const move of chosen) {
@@ -472,6 +537,10 @@ const SETUP_CATEGORY: Partial<Record<Moves, MoveCategories>> = {
   [Moves.BellyDrum]: MoveCategories.Physical,
   [Moves.BulkUp]: MoveCategories.Physical,
   [Moves.DragonDance]: MoveCategories.Physical,
+  [Moves.ShiftGear]: MoveCategories.Physical,
+  [Moves.Coil]: MoveCategories.Physical,
+  [Moves.HoneClaws]: MoveCategories.Physical,
+  [Moves.QuiverDance]: MoveCategories.Special,
   [Moves.CalmMind]: MoveCategories.Special,
   [Moves.NastyPlot]: MoveCategories.Special,
   [Moves.TailGlow]: MoveCategories.Special,
@@ -547,6 +616,8 @@ const MOVE_DRAWBACKS: Partial<Record<Moves, number>> = {
   // Both of its drops are a stage rather than two, and one of them is
   // a defence it may not have been using anyway
   [Moves.Superpower]: 0.75,
+  // Its drops land on defences and Speed rather than the stat it fired from
+  [Moves.VCreate]: 0.75,
 };
 
 /**
@@ -555,22 +626,15 @@ const MOVE_DRAWBACKS: Partial<Record<Moves, number>> = {
  * pokemon rather than flatly: the same recoil that a Snorlax shrugs
  * off is most of a Gengar and the whole of a Shedinja
  */
-const SELF_HURTING = new Set<Moves>([
-  Moves.DoubleEdge,
-  Moves.TakeDown,
-  Moves.Submission,
-  Moves.VoltTackle,
-  Moves.Thrash,
-  Moves.PetalDance,
-  Moves.Outrage,
-]);
+const RAMPAGES = new Set<Moves>([Moves.Thrash, Moves.PetalDance, Moves.Outrage]);
 
 /** What one of those costs at its cheapest, and the HP that buys it */
 const SELF_HURT_FACTOR = 0.7;
 const SELF_HURT_HEALTH = 70;
 
 function selfHurtFactor(species: Species, move: Moves): number {
-  if (!SELF_HURTING.has(move)) {
+  // The recoil table is shared with the mechanic, so a move added there is priced here too
+  if (!isRecoilMove(move) && !RAMPAGES.has(move)) {
     return 1;
   }
   const health = getSpeciesData(species).stats[Stats.HP];

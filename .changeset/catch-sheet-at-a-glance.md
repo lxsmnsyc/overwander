@@ -10,3 +10,4 @@
 - "View in Pokedex" and a red Release entry are in the Actions menu.
 - The level button reads "Level Up" with its candy cost in a badge.
 - The full ownership history opens in its own dialog.
+- Moves, abilities, held items and stats each have an info icon that explains how they work.

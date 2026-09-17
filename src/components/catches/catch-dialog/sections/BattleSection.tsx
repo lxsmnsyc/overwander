@@ -4,7 +4,13 @@ import type { CatchOrder, CaughtPokemon } from '../../../../auth/caught';
 
 import { getMovePoints } from '../../../../auth/caught-record';
 import { getStats } from '../../../../auth/health';
-import { Slots, mostSlots } from '../../../../data/constants/slots';
+import {
+  DEFAULT_ABILITY_SLOTS,
+  DEFAULT_ITEM_SLOTS,
+  DEFAULT_MOVE_SLOTS,
+  Slots,
+  mostSlots,
+} from '../../../../data/constants/slots';
 import { Stats } from '../../../../data/constants/stats';
 
 import type { InventoryEntry } from '../../../../auth/inventory';
@@ -17,7 +23,8 @@ import type { Moves } from '../../../../data/ids/moves';
 
 import { getMoveData } from '../../../../data/moves';
 
-import { describeAbility, detailAbility } from '../../../details';
+import { describeAbility, describeItem, detailAbility } from '../../../details';
+import { CHANNELER_FEE } from '../../../../data/overworld/npc';
 
 import InventoryPicker from '../../../items/InventoryPicker';
 import ItemCard from '../../../items/ItemCard';
@@ -27,7 +34,16 @@ import MoveHoverCard from '../../../moves/MoveHoverCard';
 import MoveCategorySprite from '../../../sprites/MoveCategorySprite';
 import { Sigil } from '../../../sprites/TypeBadge';
 
-import { Badge, Button, HoverCard, TooltipHost, carried, createReorder } from '../../../styled';
+import {
+  Badge,
+  Button,
+  Hint,
+  HintList,
+  HoverCard,
+  TooltipHost,
+  carried,
+  createReorder,
+} from '../../../styled';
 
 import { Index, type JSX, Show, createEffect, createSignal, on } from 'solid-js';
 
@@ -84,6 +100,8 @@ function unfilled(shown: number, kind: Slots): null[] {
  */
 function Heading(props: {
   title: string;
+  /** What the info icon beside the title explains */
+  hint: JSX.Element;
   shifted: boolean;
   frozen: boolean;
   onUndo: () => void;
@@ -91,7 +109,10 @@ function Heading(props: {
 }): JSX.Element {
   return (
     <div class="flex min-h-9 items-center justify-between gap-2">
-      <h3 class="text-left">{props.title}</h3>
+      <span class="flex items-center gap-1.5">
+        <h3 class="text-left">{props.title}</h3>
+        {props.hint}
+      </span>
       <Show when={props.shifted}>
         <div class="flex gap-1">
           <Button onClick={props.onUndo}>Undo</Button>
@@ -182,6 +203,27 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
         <div class="flex min-w-0 flex-col gap-1 pb-3">
           <Heading
             title="Moves"
+            hint={
+              <Hint title="About moves">
+                <HintList>
+                  <li>
+                    A pokemon knows up to {DEFAULT_MOVE_SLOTS} moves to start, and never more than{' '}
+                    {mostSlots(Slots.Move)}.
+                  </li>
+                  <li>
+                    Drag to reorder, or hold Alt and press the arrows. A fight that allows fewer
+                    moves takes them from the top.
+                  </li>
+                  <li>
+                    PP is how quickly a move comes back after use, not a count that runs out. PP Ups
+                    raise it for good.
+                  </li>
+                  <li>
+                    Speed shortens every cooldown. Hover a move to see its wait for this pokemon.
+                  </li>
+                </HintList>
+              </Hint>
+            }
             shifted={shifted(moves(), props.caught.moves)}
             frozen={props.frozen}
             onUndo={() => {
@@ -231,6 +273,28 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
           <div class="flex min-w-0 flex-col gap-1 border-r border-line-soft py-3 pr-3">
             <Heading
               title="Abilities"
+              hint={
+                <Hint title="About abilities">
+                  <HintList>
+                    <li>
+                      A pokemon has room for {DEFAULT_ABILITY_SLOTS} ability to start, and up to{' '}
+                      {mostSlots(Slots.Ability)}.
+                    </li>
+                    <li>
+                      An Ability Capsule draws another ability its line can reach. An Ability Patch
+                      writes in its family's signature ability.
+                    </li>
+                    <li>
+                      The Channeler, a wandering NPC, calls up another ability its line can reach
+                      and adds a slot for it. She charges one {describeItem(CHANNELER_FEE)} and
+                      helps once each time she appears.
+                    </li>
+                    <li>
+                      Drag to reorder. A fight that allows fewer abilities takes them from the top.
+                    </li>
+                  </HintList>
+                </Hint>
+              }
               shifted={shifted(abilities(), props.caught.abilities)}
               frozen={props.frozen}
               onUndo={() => {
@@ -263,6 +327,23 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
           <div class="flex min-w-0 flex-col gap-1 py-3 pl-3">
             <Heading
               title="Held items"
+              hint={
+                <Hint title="About held items">
+                  <HintList>
+                    <li>
+                      A pokemon holds {DEFAULT_ITEM_SLOTS} item to start. A Utility Belt adds a slot
+                      for good, up to {mostSlots(Slots.Item)}.
+                    </li>
+                    <li>
+                      Press an empty square to give an item from the bag. Hover an item to take it
+                      back.
+                    </li>
+                    <li>
+                      Drag to reorder. A fight that allows fewer items takes them from the top.
+                    </li>
+                  </HintList>
+                </Hint>
+              }
               shifted={shifted(items(), props.caught.items)}
               frozen={props.frozen}
               onUndo={() => {

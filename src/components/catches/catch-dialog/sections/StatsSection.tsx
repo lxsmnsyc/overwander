@@ -17,11 +17,19 @@ import { unusedEffort } from '../../../../auth/effort';
 import { STATUS_NAMES } from '../../../../auth/health';
 
 import type { Stats } from '../../../../data/constants/stats';
-import { MAX_EFFORT_PER_STAT, MAX_IV, STAT_ORDER, getIV } from '../../../../data/constants/stats';
+import {
+  EFFORT_PER_LEVEL,
+  MAX_EFFORT_PER_STAT,
+  MAX_IV,
+  STAT_ORDER,
+  getIV,
+} from '../../../../data/constants/stats';
 
 import { unpackStatuses } from '../../../../data/ids/status';
+import { VITAMIN_EFFORT } from '../../../../data/items/vitamins';
+import { WING_EFFORT } from '../../../../data/items/wings';
 
-import { Button, Meta } from '../../../styled';
+import { Button, Hint, HintList, Meta } from '../../../styled';
 
 import { For, type JSX, Show, createEffect, createSignal, on } from 'solid-js';
 
@@ -132,7 +140,25 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
         class="grid grid-cols-[0.75rem_max-content_minmax(3rem,1fr)_2.5rem_2rem_4rem]
           items-center gap-x-3 gap-y-0.5 text-sm"
       >
-        <h3 class="col-span-3 text-left">Stats</h3>
+        <span class="col-span-3 flex items-center gap-1.5">
+          <h3 class="text-left">Stats</h3>
+          <Hint title="About stats">
+            <HintList>
+              <li>IVs are what it was born with, from 0 to {MAX_IV}. They never change.</li>
+              <li>
+                EVs are trained in. It earns {EFFORT_PER_LEVEL} points a level to spend in this
+                table. A stat takes at most {MAX_EFFORT_PER_STAT}.
+              </li>
+              <li>
+                Wings add {WING_EFFORT} and vitamins add {VITAMIN_EFFORT} to one stat, on top of the
+                level points rather than out of them.
+              </li>
+              <li>Some berries take effort back out of a stat, so it can be spent again.</li>
+              <li>The nature raises one stat by 10% (▲) and lowers another by 10% (▼).</li>
+              <li>Each bar is measured against this pokemon's best stat.</li>
+            </HintList>
+          </Hint>
+        </span>
         <span class="text-right text-xs font-semibold text-muted uppercase">Total</span>
         <span class="text-right text-xs font-semibold text-muted uppercase">IV</span>
         <span class="text-right text-xs font-semibold text-muted uppercase">EV</span>

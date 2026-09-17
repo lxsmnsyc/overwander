@@ -128,9 +128,12 @@ import {
   MARK_WEIGHT,
   NPC_CELLS,
   PICKED_STAGE,
+  PICK_INSET_SIDE,
+  PICK_INSET_TOP,
   PLANT_CELLS,
   PLANT_PHASES,
   PLAYER_SHEET,
+  PRESS_SLOP,
   QUARTER_TURN,
   RIPPLE_ALPHA,
   RIPPLE_FADE,
@@ -1403,6 +1406,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * and on the Mac the two arrive as the same gesture
    */
   let turned = false;
+  /** Where the mouse last was over the board, so the hover can follow a board sliding under it */
+  let pointer: { clientX: number; clientY: number } | null = null;
+  /** The cell a press went down on, and where, which is what its click acts on */
+  let pressed: { cell: BoardCell | null; clientX: number; clientY: number } | null = null;
+  /**
+   * What the last frame stood up that can be pressed, far to near, in the
+   * canvas' own pixels. A pokemon is drawn upward from its cell, so a
+   * press on its body lands on the ground behind it without these
+   */
+  let pickable: { index: number; left: number; top: number; right: number; bottom: number }[] = [];
   /**
    * The cell the player is looking at, which is where the interact key
    * acts. It is a board cell rather than a chunk one, so a player
@@ -1430,7 +1443,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * top corners lands on no cell at all now, which is honest — there
    * is no board there
    */
-  const fractionAt = (event: MouseEvent): { x: number; y: number } | null => {
+  const fractionAt = (event: {
+    clientX: number;
+    clientY: number;
+  }): { x: number; y: number } | null => {
     const element = canvas;
 
     if (element == null) {
@@ -1494,7 +1510,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     props.onPlaced?.(spotOf);
   });
 
-  const cellAt = (event: MouseEvent): BoardCell | null => {
+  const cellAt = (event: { clientX: number; clientY: number }): BoardCell | null => {
     const at = fractionAt(event);
 
     if (at == null) {
@@ -1537,6 +1553,28 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       }
     }
     return found ?? boardCellAtFraction(at.x, at.y, yaw(), camera());
+  };
+
+  /**
+   * The cell a point is aiming at: whatever pressable thing is drawn
+   * under it, front first, and otherwise the ground under it
+   */
+  const aimAt = (event: { clientX: number; clientY: number }): BoardCell | null => {
+    const bounds = canvas?.getBoundingClientRect();
+
+    if (bounds != null) {
+      const x = event.clientX - bounds.left;
+      const y = event.clientY - bounds.top;
+
+      for (let at = pickable.length - 1; at >= 0; at--) {
+        const pick = pickable[at];
+
+        if (x >= pick.left && x <= pick.right && y >= pick.top && y <= pick.bottom) {
+          return boardCellOf(pick.index);
+        }
+      }
+    }
+    return cellAt(event);
   };
 
   /**
@@ -1872,6 +1910,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       }
       if (heading !== facing) {
         dirty = true;
+      }
+      // The board slides under a cursor that holds still, so what it is
+      // over is read again rather than left where the last move put it
+      if (pointer != null && turning == null && (sliding || dirty)) {
+        setHovered(aimAt(pointer));
       }
 
       // The ridden pokemon walks while a walk is under way and idles once it stops
@@ -3056,6 +3099,23 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         };
       }
 
+      const picks: typeof pickable = [];
+      /** A pressable picture this frame, trimmed to the body where the frame is padded */
+      const pickOn = (index: number, quad: SpriteQuad | null, padded: boolean): void => {
+        if (quad == null) {
+          return;
+        }
+        const side = padded ? quad.width * PICK_INSET_SIDE : 0;
+
+        picks.push({
+          index,
+          left: quad.left + side,
+          right: quad.left + quad.width - side,
+          top: quad.top + (padded ? quad.height * PICK_INSET_TOP : 0),
+          bottom: quad.top + quad.height,
+        });
+      };
+
       for (const index of standOrder.order) {
         const cell = boardCellOf(index);
         const middle = at(groundPoint(index));
@@ -3104,9 +3164,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           standPiece(context, grottoOn(index), middle, magnify, place, (quad) =>
             veil(index, Standing.Grotto, quad),
           );
-          standPiece(context, landmarkOn(index), middle, magnify, place, (quad) =>
-            veil(index, Standing.Mark, quad),
-          );
+          standPiece(context, landmarkOn(index), middle, magnify, place, (quad) => {
+            pickOn(index, quad, false);
+            return veil(index, Standing.Mark, quad);
+          });
         }
 
         // A bush is drawn before whatever is standing beside it: it is
@@ -3197,6 +3258,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           const stood = person.quadOf(middle.x, middle.y, standingPerson);
           const alpha = veil(index, Standing.Person, stood);
 
+          pickOn(index, stood, true);
+
           if (!place(stood, alpha)) {
             person.draw(
               context,
@@ -3275,6 +3338,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // of the board
             const stood = sprite.quadOf(middle.x, middle.y, placement);
             const alpha = veil(index, Standing.Spawn, stood);
+
+            pickOn(index, stood, true);
 
             if (!place(stood, alpha)) {
               sprite.draw(
@@ -3412,6 +3477,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           passed = true;
         }
       }
+
+      pickable = picks;
 
       if (announced) {
         props.onShiny?.();
@@ -3645,6 +3712,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           }
           twist.down(event);
           if (!isTurningPress(event)) {
+            // Aimed now, while the board is where the player saw it: by
+            // the time the button comes up a walk has slid it along
+            if (event.isPrimary) {
+              pressed = { cell: aimAt(event), clientX: event.clientX, clientY: event.clientY };
+            }
             return;
           }
           event.preventDefault();
@@ -3682,7 +3754,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           }
           // A finger is not a cursor: a tap ends with the board lit
           // under wherever it landed, and nothing takes it away again
-          setHovered(event.pointerType === 'touch' ? null : cellAt(event));
+          pointer = event.pointerType === 'touch' ? null : event;
+          setHovered(pointer == null ? null : aimAt(pointer));
         }}
         onPointerUp={(event) => {
           twist.up(event);
@@ -3696,6 +3769,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           turning = null;
         }}
         onMouseLeave={() => {
+          pointer = null;
           setHovered(null);
         }}
         onKeyDown={(event) => {
@@ -3728,7 +3802,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             return;
           }
 
-          const cell = cellAt(event);
+          const held = pressed;
+
+          pressed = null;
+
+          // The cell the press went down on, unless the pointer wandered
+          // off it first, in which case it is wherever it came up
+          const cell =
+            held != null &&
+            Math.hypot(event.clientX - held.clientX, event.clientY - held.clientY) <= PRESS_SLOP
+              ? held.cell
+              : aimAt(event);
 
           if (cell != null) {
             props.onPress(cell);

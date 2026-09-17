@@ -426,6 +426,20 @@ export const VEIL_ALPHA = 0.35;
  */
 export const VEIL_FADE = 140;
 
+/**
+ * How far a pointer may travel between pressing and letting go, in CSS
+ * pixels, and still count as a press on the cell it went down on
+ */
+export const PRESS_SLOP = 8;
+
+/**
+ * How much of a creature's frame a press may land in, as the share cut
+ * off each side and off the top: a sheet's frame is padded well past
+ * the body, and a padded box would take presses meant for the cells beside it
+ */
+export const PICK_INSET_SIDE = 0.25;
+export const PICK_INSET_TOP = 0.2;
+
 /** How long one weather takes to give way to the next, in milliseconds */
 export const WEATHER_FADE = 3000;
 

@@ -19,6 +19,7 @@ import settings from '../../app/settings';
 import { DEFAULT_CHARSET } from '../../../data/overworld/charsets';
 import { watchProfile } from '../../../auth/profile';
 import { MAX_STEP_REPORT } from '../../../auth/egg';
+import type { SnapshotRecord } from '../../../auth/snapshot-record';
 import { type EggWalk, type WalkReport, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../auth/encounter-record';
 import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
@@ -40,7 +41,7 @@ import {
   peekNest,
   peekPhenomenonEgg,
   startEncounter,
-  visitChunk,
+  visitChunkWindow,
   watchSnapshotWindow,
 } from '../../../auth/snapshots';
 import type { PlayerIdentity } from '../../../auth/user';
@@ -489,6 +490,19 @@ export default function OverworldBoard(props: {
   });
 
   /**
+   * The subscription open on each chunk the board is watching.
+   *
+   * Held across the effect rather than inside it, so a step that
+   * changes which chunks are in range stops the ones that left and
+   * starts the ones that arrived instead of closing every socket and
+   * opening it again. The set turns over every eight cells or so,
+   * and each fresh watcher costs a read
+   */
+  const watched = new Map<string, Unwatch>();
+  /** Which layer those subscriptions are open on */
+  const watchedLayer: { depth: Depth | null } = { depth: null };
+
+  /**
    * Seeing into a chunk publishes (or adopts) its window's spawns;
    * everything after that arrives through the subscriptions below,
    * so a window rolling over or a spawn another player caught shows
@@ -502,16 +516,26 @@ export default function OverworldBoard(props: {
   /** Chunks with a visit on its way, so a second ask for one waits on the first */
   const visiting = new Set<string>();
 
-  const visit = (x: number, y: number): void => {
+  const visit = (x: number, y: number, known?: SnapshotRecord | null): void => {
     const key = `${x},${y}`;
 
     if (visiting.has(key)) {
       return;
     }
     visiting.add(key);
+
+    const depth = untrack(atDepth);
+
     // The window always rolls the lure's extras, so every player of
     // the chunk shares one set of rolls whoever publishes them
-    visitChunk(around().getChunk(x, y), PUBLISHED_SPAWNS, zone)
+    visitChunkWindow(around().getChunk(x, y), PUBLISHED_SPAWNS, zone, known)
+      .then((record) => {
+        // Taken as it was published, since the watch lets its own window's echo pass unread
+        if (watchedLayer.depth !== depth || !watched.has(key)) {
+          return;
+        }
+        setWindows((held) => new Map(held).set(key, { x, y, record }));
+      })
       .catch((caught: unknown) => {
         remark(caught instanceof Error ? caught.message : String(caught), 'ember');
       })
@@ -537,7 +561,8 @@ export default function OverworldBoard(props: {
       const record = held.get(`${x},${y}`)?.record;
 
       if (everything || record == null || !isLive(record)) {
-        visit(x, y);
+        // A board caught behind the world cannot trust what it holds, so that is read again
+        visit(x, y, everything ? undefined : record);
       }
     }
   };
@@ -585,19 +610,6 @@ export default function OverworldBoard(props: {
       document.removeEventListener('visibilitychange', onReturn);
     });
   });
-
-  /**
-   * The subscription open on each chunk the board is watching.
-   *
-   * Held across the effect rather than inside it, so a step that
-   * changes which chunks are in range stops the ones that left and
-   * starts the ones that arrived instead of closing every socket and
-   * opening it again. The set turns over every eight cells or so,
-   * and each fresh watcher costs a read
-   */
-  const watched = new Map<string, Unwatch>();
-  /** Which layer those subscriptions are open on */
-  const watchedLayer: { depth: Depth | null } = { depth: null };
 
   createEffect(() => {
     // Nothing is watched until the player has been put somewhere:
@@ -654,27 +666,32 @@ export default function OverworldBoard(props: {
       }
       watched.set(
         key,
-        watchSnapshotWindow(around().getChunk(x, y), zone, (record) => {
-          // A read that was already on its way when the layer changed
-          if (watchedLayer.depth !== depth) {
-            return;
-          }
-          setWindows((held) => {
-            const next = new Map(held);
-
-            if (record == null) {
-              next.delete(key);
-            } else {
-              next.set(key, { x, y, record });
+        watchSnapshotWindow(
+          around().getChunk(x, y),
+          zone,
+          (record) => {
+            // A read that was already on its way when the layer changed
+            if (watchedLayer.depth !== depth) {
+              return;
             }
-            return next;
-          });
-          // Nobody has published this window yet, so this board does,
-          // and the publish comes back around this same watch
-          if (record == null || !isLive(record)) {
-            visit(x, y);
-          }
-        }),
+            setWindows((held) => {
+              const next = new Map(held);
+
+              if (record == null) {
+                next.delete(key);
+              } else {
+                next.set(key, { x, y, record });
+              }
+              return next;
+            });
+            // Nobody has published this window yet, so this board does
+            // and keeps what it published
+            if (record == null || !isLive(record)) {
+              visit(x, y, record);
+            }
+          },
+          () => untrack(windows).get(key)?.record.timestamp,
+        ),
       );
     }
   });

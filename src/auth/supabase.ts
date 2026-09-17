@@ -140,6 +140,8 @@ export function watchTable<T>(
   filters: (string | undefined)[],
   read: () => Promise<T>,
   onChange: (value: T) => void,
+  /** Whether a changed row is worth a read, for a change the filter could not rule out */
+  wanted?: (row: Record<string, unknown>) => boolean,
 ): Unwatch {
   const supabase = getSupabase();
   const refetch = (): void => {
@@ -156,7 +158,15 @@ export function watchTable<T>(
     channel = channel.on(
       'postgres_changes',
       { event: '*', schema: 'public', table, ...(filter == null ? {} : { filter }) },
-      refetch,
+      (payload) => {
+        const row: Record<string, unknown> = payload.new;
+
+        // A delete carries no row to judge, so it is always read
+        if (wanted != null && Object.keys(row).length > 0 && !wanted(row)) {
+          return;
+        }
+        refetch();
+      },
     );
   }
   // As above: the first subscribe rides the read below, and only a

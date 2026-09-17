@@ -98,24 +98,31 @@ const STATUS_WORTH: Partial<Record<Moves, number>> = {
   [Moves.DragonDance]: 120,
   [Moves.TailGlow]: 120,
   [Moves.CalmMind]: 115,
+  [Moves.NastyPlot]: 115,
   [Moves.BellyDrum]: 110,
   [Moves.BulkUp]: 110,
   [Moves.Agility]: 85,
+  [Moves.RockPolish]: 85,
   [Moves.Growth]: 90,
   [Moves.Amnesia]: 90,
   [Moves.IronDefense]: 88,
   [Moves.CosmicPower]: 86,
+  [Moves.DefendOrder]: 86,
   [Moves.DoubleTeam]: 85,
+  [Moves.Acupressure]: 80,
 
   // Health back, which is worth about what a hit takes off
   [Moves.Recover]: 105,
   [Moves.SoftBoiled]: 105,
   [Moves.MilkDrink]: 105,
   [Moves.SlackOff]: 105,
+  [Moves.Roost]: 105,
+  [Moves.HealOrder]: 105,
   [Moves.Synthesis]: 95,
   [Moves.MorningSun]: 95,
   [Moves.Moonlight]: 95,
   [Moves.Wish]: 85,
+  [Moves.AquaRing]: 85,
 
   // And taking somebody out of the fight without hitting them
   [Moves.Spore]: 115,
@@ -131,6 +138,10 @@ const STATUS_WORTH: Partial<Record<Moves, number>> = {
   [Moves.Reflect]: 90,
   [Moves.LightScreen]: 90,
   [Moves.LovelyKiss]: 90,
+  [Moves.DarkVoid]: 90,
+  [Moves.GastroAcid]: 80,
+  [Moves.WorrySeed]: 75,
+  [Moves.Captivate]: 70,
   [Moves.Hypnosis]: 85,
   [Moves.Encore]: 85,
   [Moves.Taunt]: 85,
@@ -142,6 +153,12 @@ const STATUS_WORTH: Partial<Record<Moves, number>> = {
   // What a support lays over its own side or under the other's. They
   // are priced low here and lifted by the role that wants them
   [Moves.Spikes]: 90,
+  [Moves.StealthRock]: 90,
+  [Moves.ToxicSpikes]: 85,
+  // It changes who lands first rather than who acts more, and it
+  // slows its own side's quick moves as much as the far side's
+  [Moves.TrickRoom]: 70,
+  [Moves.LuckyChant]: 70,
   [Moves.Safeguard]: 80,
   [Moves.HealBell]: 85,
   [Moves.Aromatherapy]: 85,
@@ -157,7 +174,13 @@ const STATUS_WORTH: Partial<Record<Moves, number>> = {
   // behind two cores is the pokemon these were written for
   [Moves.HelpingHand]: 105,
   [Moves.FollowMe]: 100,
+  // Twice as often for the whole side while it blows
+  [Moves.Tailwind]: 100,
   [Moves.BatonPass]: 90,
+  // The user is spent to make a teammate whole, which only a support
+  // standing behind two cores can afford
+  [Moves.LunarDance]: 85,
+  [Moves.HealingWish]: 80,
 
   // The skies. Worth nothing on their own: what prices one is what
   // the build is waiting to do under it
@@ -176,14 +199,18 @@ const STATUS_KINDS: Partial<Record<Moves, StatusKind>> = {
   [Moves.DragonDance]: StatusKind.Setup,
   [Moves.TailGlow]: StatusKind.Setup,
   [Moves.CalmMind]: StatusKind.Setup,
+  [Moves.NastyPlot]: StatusKind.Setup,
   [Moves.BellyDrum]: StatusKind.Setup,
   [Moves.BulkUp]: StatusKind.Setup,
   [Moves.Agility]: StatusKind.Setup,
+  [Moves.RockPolish]: StatusKind.Setup,
   [Moves.Growth]: StatusKind.Setup,
   [Moves.Amnesia]: StatusKind.Setup,
   [Moves.IronDefense]: StatusKind.Setup,
   [Moves.CosmicPower]: StatusKind.Setup,
+  [Moves.DefendOrder]: StatusKind.Setup,
   [Moves.DoubleTeam]: StatusKind.Setup,
+  [Moves.Acupressure]: StatusKind.Setup,
 
   [Moves.Recover]: StatusKind.Heal,
   [Moves.SoftBoiled]: StatusKind.Heal,
@@ -193,6 +220,9 @@ const STATUS_KINDS: Partial<Record<Moves, StatusKind>> = {
   [Moves.MorningSun]: StatusKind.Heal,
   [Moves.Moonlight]: StatusKind.Heal,
   [Moves.Wish]: StatusKind.Heal,
+  [Moves.Roost]: StatusKind.Heal,
+  [Moves.HealOrder]: StatusKind.Heal,
+  [Moves.AquaRing]: StatusKind.Heal,
   [Moves.Rest]: StatusKind.Heal,
   [Moves.LeechSeed]: StatusKind.Heal,
 
@@ -206,11 +236,18 @@ const STATUS_KINDS: Partial<Record<Moves, StatusKind>> = {
   [Moves.Mist]: StatusKind.Guard,
   [Moves.Haze]: StatusKind.Guard,
   [Moves.Spikes]: StatusKind.Guard,
+  [Moves.StealthRock]: StatusKind.Guard,
+  [Moves.ToxicSpikes]: StatusKind.Guard,
+  [Moves.TrickRoom]: StatusKind.Guard,
+  [Moves.LuckyChant]: StatusKind.Guard,
   [Moves.SleepTalk]: StatusKind.Guard,
 
   [Moves.HelpingHand]: StatusKind.Ally,
   [Moves.FollowMe]: StatusKind.Ally,
   [Moves.BatonPass]: StatusKind.Ally,
+  [Moves.Tailwind]: StatusKind.Ally,
+  [Moves.HealingWish]: StatusKind.Ally,
+  [Moves.LunarDance]: StatusKind.Ally,
 
   [Moves.SunnyDay]: StatusKind.Weather,
   [Moves.RainDance]: StatusKind.Weather,
@@ -322,6 +359,7 @@ const SLEEP_MOVES = new Set<Moves>([
   Moves.SleepPowder,
   Moves.Hypnosis,
   Moves.LovelyKiss,
+  Moves.DarkVoid,
   Moves.Sing,
   Moves.Yawn,
 ]);
@@ -435,6 +473,7 @@ const SETUP_CATEGORY: Partial<Record<Moves, MoveCategories>> = {
   [Moves.BulkUp]: MoveCategories.Physical,
   [Moves.DragonDance]: MoveCategories.Physical,
   [Moves.CalmMind]: MoveCategories.Special,
+  [Moves.NastyPlot]: MoveCategories.Special,
   [Moves.TailGlow]: MoveCategories.Special,
   [Moves.Growth]: MoveCategories.Special,
 };

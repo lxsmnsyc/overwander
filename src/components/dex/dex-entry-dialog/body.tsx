@@ -619,7 +619,7 @@ export function DexEntryBody(
                         {(place) => (
                           <ListRow class="flex-col items-start gap-0.5 sm:flex-row sm:items-center">
                             <span class="grow text-left font-medium">
-                              {BIOME_NAMES[place.biome]}
+                              {place.biome == null ? 'All biomes' : BIOME_NAMES[place.biome]}
                             </span>
                             <span class="flex flex-wrap justify-end gap-1">
                               <For each={place.hours}>{(hour) => <Badge>{hour}</Badge>}</For>

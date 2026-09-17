@@ -325,7 +325,7 @@ two touch the same part of what a pokemon is.
 
 | Sky               | What it is                                                                       | What it is worth                                  |
 | ----------------- | -------------------------------------------------------------------------------- | ------------------------------------------------- |
-| **Meteor shower** | The old rarest sky, moved to a band of its own                                   | Double the odds of a **shiny coat**               |
+| **Meteor shower** | The old rarest sky, moved to a band of its own                                   | 8x the odds of a **shiny coat**                   |
 | **Fata morgana**  | The mirage that rises off dead-still air, stacking a coastline into cliffs       | Double the odds of a **hidden ability**           |
 | **Dark day**      | Noon gone dark under carried smoke, in air bone dry and moving hard              | About a third of what is met is a **shadow**      |
 | **Fogbow**        | A rainbow with the colour gone, formed in fog fine enough to scatter light white | What is met knows one of its line's **egg moves** |

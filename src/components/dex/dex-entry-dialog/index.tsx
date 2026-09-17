@@ -3,7 +3,7 @@ import BattleData from '../../app/battle-data';
 import { getCandyCount } from '../../../auth/candy';
 import { getPokedex, getSpeciesDexEntry } from '../../../auth/pokedex';
 import type { Species } from '../../../data/ids/species';
-import { getSpeciesData, getSpeciesForms } from '../../../data/species';
+import { getSpeciesData, getSpeciesForms, isBaseForm } from '../../../data/species';
 import { hasFemaleSheet } from '../../../canvas/species-sprites';
 import { Badge, CloseButton, Dialog, Divider, Meta, Note, StepButton } from '../../styled';
 import TypeBadge from '../../sprites/TypeBadge';
@@ -90,10 +90,9 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
    * at the last one instead of finding themselves back at the first
    * wondering what they missed.
    *
-   * **Which list is being walked depends on what was opened.** A
-   * pokemon with forms was reached through its forms grid, so the
-   * arrows walk the alphabet and stop at either end of it; everything
-   * else walks the printed dex
+   * **Which list is being walked depends on what is showing.** A base
+   * form is a dex entry like any other, so it walks the printed dex; an
+   * alternate form walks its own set of forms and stops at either end
    */
   const neighbour = (step: number): Species | null => {
     const species = props.species;
@@ -102,8 +101,7 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
       return null;
     }
 
-    const shapes = getSpeciesForms(species);
-    const listed = shapes.length > 1 ? shapes : dexOrder();
+    const listed = isBaseForm(species) ? dexOrder() : getSpeciesForms(species);
     const at = listed.indexOf(species);
     const wanted = at + step;
 

@@ -66,6 +66,8 @@ function sheet(
     finished: false,
     playing: null,
     frameSize: { width: 40, height: 40 },
+    // No idle pose to measure, so it is drawn at the slot's own scale
+    heightOf: () => 0,
     has: () => true,
     play: () => true,
     stop: () => {},

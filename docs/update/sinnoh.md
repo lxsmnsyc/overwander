@@ -120,8 +120,8 @@ Sinnoh's moves, and dozens of older ones, land as a picture of their own.
 
 ## Your buddy takes you places
 
-A buddy can use the field moves it is able to learn, from buttons at the
-bottom-right of the board.
+A buddy can use the field moves it is able to learn, from a button on the menu
+bar that lists only the ones usable where you stand.
 
 - **Surf** rides the buddy across open water, which can no longer be walked
   onto. It starts beside the water and ends on the first step ashore.
@@ -130,7 +130,7 @@ bottom-right of the board.
 - **Dig** climbs out of a cave to the nearest mouth, like an Escape Rope that is
   never spent.
 - **Teleport** sends you to the portal of the nearest town, found or not.
-- **While surfing or flying**, you are drawn as your buddy.
+- **While surfing or flying**, you are drawn as your buddy, walking as you walk.
 
 ## A fourth league
 
@@ -206,6 +206,28 @@ Five more houses, and a **print** for each.
 - **Seven Hoenn classes** that shipped without anyone wearing them stand at the
   stops now, from the Pokémon Breeder to the Young Couple.
 - Every class is drawn in its own coat, which its own wins unlock.
+
+## A sheet you can read at a glance
+
+- **The pokemon sheet fits on one screen**: the portrait beside its moves,
+  abilities and held items, then its evolutions beside its stats.
+- **The name, gender and shiny mark head the sheet**, and the portrait is the
+  same size for every species.
+- **Each move shows its type and category** beside its name.
+- **Stats show the total, IVs and EVs side by side**, with EVs typed into the
+  same table.
+- **Level Up** carries its candy cost in a badge, and **View in Pokedex** and
+  **Release** sit in the Actions menu.
+- **The full ownership history** opens in its own dialog.
+
+## Menus in tabs
+
+- **Trades** split into Pending and Settled, and **Bids and Selling** are one
+  Auction tab.
+- **Gifts** split into Catches, Items and Encounters, each with its own search.
+- **The bag** splits into Items and Candies, with a tab for each kind of item.
+- **A profile** shows gold and the worn title on one row, and its Friends tab no
+  longer jumps back to Battles.
 
 ## Raids play fair
 

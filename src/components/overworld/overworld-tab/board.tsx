@@ -802,6 +802,8 @@ export default function OverworldBoard(props: {
     named: string,
     ask: (snapshot: ChunkSnapshot) => Promise<number[]>,
     take: (cells: Set<string>) => void,
+    /** The window the list's claims are stamped with, which is what makes a remembered answer stale */
+    stamp: (snapshot: ChunkSnapshot) => number,
   ): void => {
     const loaded = untrack(view);
 
@@ -827,7 +829,7 @@ export default function OverworldBoard(props: {
         (async (): Promise<string[]> => {
           // The player is in the key because a claim is theirs: signing
           // in as somebody else must not read back the last one's
-          const key = `${who}|${named}|${piece.snapshot.depth}|${piece.x},${piece.y}|${piece.snapshot.timestamp}`;
+          const key = `${who}|${named}|${piece.snapshot.depth}|${piece.x},${piece.y}|${stamp(piece.snapshot)}`;
           const known = claimed.get(key) ?? ask(piece.snapshot);
 
           claimed.set(key, known);
@@ -863,6 +865,9 @@ export default function OverworldBoard(props: {
     });
   };
 
+  /** Patches, caches and honey trees refill with the landmarks, not with the spawns */
+  const landmarkWindow = (snapshot: ChunkSnapshot): number => snapshot.landmarkTimestamp;
+
   /**
    * Forget what the server said about claims.
    *
@@ -879,9 +884,14 @@ export default function OverworldBoard(props: {
     // Read again when a window turns over, and not when the player
     // takes a step: the board moves under them constantly
     windowKey();
-    gather('phenomena', listClaimedPhenomena, (cells) => {
-      setSpent(cells);
-    });
+    gather(
+      'phenomena',
+      listClaimedPhenomena,
+      (cells) => {
+        setSpent(cells);
+      },
+      (snapshot) => snapshot.phenomenonTimestamp,
+    );
   });
 
   /**
@@ -907,15 +917,30 @@ export default function OverworldBoard(props: {
 
   createEffect(() => {
     windowKey();
-    gather('patches', listPickedBerryPatches, (cells) => {
-      setPicked(cells);
-    });
-    gather('caches', listClaimedItemCaches, (cells) => {
-      setDug(cells);
-    });
-    gather('honey', listLatheredHoneyTrees, (cells) => {
-      setLathered(cells);
-    });
+    gather(
+      'patches',
+      listPickedBerryPatches,
+      (cells) => {
+        setPicked(cells);
+      },
+      landmarkWindow,
+    );
+    gather(
+      'caches',
+      listClaimedItemCaches,
+      (cells) => {
+        setDug(cells);
+      },
+      landmarkWindow,
+    );
+    gather(
+      'honey',
+      listLatheredHoneyTrees,
+      (cells) => {
+        setLathered(cells);
+      },
+      landmarkWindow,
+    );
   });
 
   /**

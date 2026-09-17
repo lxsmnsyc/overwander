@@ -536,6 +536,8 @@ export async function startDuel(uid: string, id: string, now: number): Promise<s
   if (claimed.count === 0) {
     return (await readDuel(id))?.battle ?? null;
   }
+  // A started lobby takes nobody else in, so a call into it is answered
+  await getSql()`delete from duel_invites where duel_id = ${id}`;
 
   // One alliance each, numbered by which seat they took. Neither side
   // is marked as the boss, so a mutual knockout is the draw it looks

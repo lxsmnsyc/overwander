@@ -2,7 +2,7 @@
 // assertions that tsc requires but tsgolint (resolving const enums to
 // number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import { asNumber, asRecordArray, asString } from './__normalize';
+import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import { type DuelInvite, type DuelRecord, type DuelRules, asDuelRecord } from './duel-record';
 import type { LobbyRole } from './lobby-role';
 import { requireUid } from '../server/auth';
@@ -203,13 +203,17 @@ export function watchDuelInvites(uid: string, onChange: (invites: DuelInvite[]) 
   const read = async (): Promise<DuelInvite[]> => {
     const { data } = await getSupabase()
       .from('duel_invites')
-      .select('duel_id, sender, role, sent_at')
+      .select('duel_id, sender, role, sent_at, duels(battle_id)')
       .eq('recipient', uid)
       .order('sent_at', { ascending: false });
 
     const invites: DuelInvite[] = [];
 
     for (const row of asRecordArray(data)) {
+      // A call into a lobby that has started answers nothing
+      if (asRecord(row.duels).battle_id != null) {
+        continue;
+      }
       invites.push({
         duel: asString(row.duel_id),
         sender: asString(row.sender),

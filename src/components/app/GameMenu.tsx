@@ -26,6 +26,9 @@ import {
 } from '../../overworld/chunk-snapshot';
 import { GameDialog, useGame } from './game-context';
 import { watchProfile } from '../../auth/profile';
+import { listMysteryGifts } from '../../auth/gifts';
+import { NoticeKind } from '../../auth/notifications';
+import { getDueQuests } from '../../auth/quests';
 import {
   ActionsIcon,
   BagIcon,
@@ -93,6 +96,14 @@ interface MenuEntry {
    */
   icon: (props: ComponentProps<'svg'>) => JSX.Element;
 }
+
+/** The notices a player settles from their profile rather than elsewhere */
+const PROFILE_NOTICES = new Set<NoticeKind>([
+  NoticeKind.FriendRequest,
+  NoticeKind.TradeOffer,
+  NoticeKind.AuctionWon,
+  NoticeKind.AuctionUnsold,
+]);
 
 const ENTRIES: MenuEntry[] = [
   { label: 'World', dialog: GameDialog.Map, icon: MapIcon },
@@ -237,6 +248,44 @@ export default function GameMenu(): JSX.Element {
   /** How many things are waiting on the player, for the key's own badge */
   const waiting = (): number => game.notices().length;
 
+  /** Gifts waiting on the shelf and quests ready to claim, read when the menu opens */
+  const [shelf, setShelf] = createSignal({ gifts: 0, quests: 0 });
+
+  const readShelf = (): void => {
+    Promise.all([listMysteryGifts(), getDueQuests()])
+      .then(([gifts, quests]) => {
+        setShelf({ gifts: gifts.length, quests: quests.length });
+      })
+      .catch(() => {
+        // A count that could not be read shows no badge rather than a wrong one
+      });
+  };
+
+  /** How many things each entry has waiting behind it */
+  const countFor = (dialog: GameDialog | undefined): number => {
+    if (dialog === GameDialog.Notifications) {
+      return waiting();
+    }
+    if (dialog === GameDialog.Gifts) {
+      return shelf().gifts;
+    }
+    if (dialog === GameDialog.Quests) {
+      return shelf().quests;
+    }
+    if (dialog !== GameDialog.Profile) {
+      return 0;
+    }
+    // What the profile's own tabs resolve: requests, trades and lots
+    let count = 0;
+
+    for (const notice of game.notices()) {
+      if (PROFILE_NOTICES.has(notice.kind)) {
+        count += 1;
+      }
+    }
+    return count;
+  };
+
   const period = (): string => TIME_OF_DAY_NAMES[getTimeOfDay(now())];
   const clock = (): string => worldClock(now(), settings().clock);
 
@@ -334,6 +383,9 @@ export default function GameMenu(): JSX.Element {
         isOpen={open()}
         onChange={(state: boolean) => {
           setOpen(state);
+          if (state) {
+            readShelf();
+          }
           // One panel at a time: all of them open out of the top of the bar
           if (state) {
             setDetails(false);
@@ -599,13 +651,13 @@ export default function GameMenu(): JSX.Element {
                       {/* How many things are waiting, on the key that
                           opens them: whether to look is the whole of
                           what a player needs off the bar */}
-                      <Show when={entry.dialog === GameDialog.Notifications && waiting() > 0}>
+                      <Show when={countFor(entry.dialog) > 0}>
                         <span
                           class="absolute -top-1 -right-2 min-w-4 rounded-full border-2
                             border-ember bg-ember-soft px-1 text-[0.65rem] leading-4
                             text-ember-dark"
                         >
-                          {waiting()}
+                          {countFor(entry.dialog)}
                         </span>
                       </Show>
                     </span>

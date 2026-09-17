@@ -1,6 +1,7 @@
 import {
   type JSX,
   type ParentProps,
+  Show,
   Suspense,
   children,
   createEffect,
@@ -426,11 +427,30 @@ export function Dialog(props: DialogProps): JSX.Element {
  * above it — set apart from the run before it
  */
 export function DialogSection(
-  props: ParentProps & { title?: string; class?: string },
+  props: ParentProps & {
+    title?: string;
+    class?: string;
+    /** An info icon beside the title, such as a `Hint` */
+    hint?: JSX.Element;
+  },
 ): JSX.Element {
+  // Resolved once, so reading it to decide the layout does not build a second copy
+  const hint = children(() => props.hint);
+
   return (
     <section class={`flex flex-col gap-2 ${props.class ?? ''}`}>
-      {props.title == null ? null : <h3>{props.title}</h3>}
+      <Show when={props.title}>
+        {(title) => (
+          // Wrapped only when there is a hint, so a plain heading lays
+          // out exactly as it always has
+          <Show when={hint()} fallback={<h3>{title()}</h3>}>
+            <span class="flex items-center gap-1.5">
+              <h3>{title()}</h3>
+              {hint()}
+            </span>
+          </Show>
+        )}
+      </Show>
       {props.children}
     </section>
   );

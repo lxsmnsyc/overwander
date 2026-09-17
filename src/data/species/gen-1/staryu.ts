@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -56,6 +56,10 @@ const FAMILY_TEACHABLE = [
   Moves.Facade,
   Moves.SecretPower,
   Moves.WaterPulse,
+  Moves.Brine,
+  Moves.FlashCannon,
+  Moves.Gravity,
+  Moves.NaturalGift,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Illuminate, Abilities.NaturalCure];
@@ -84,6 +88,7 @@ export default function registerStaryuSpecies(): void {
       [Stats.Speed]: 85,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.Analytic],
     eggGroups: [EggGroups.Water3],
@@ -99,8 +104,9 @@ export default function registerStaryuSpecies(): void {
         19: [Moves.Recover, Moves.Camouflage],
         25: [Moves.Swift],
         31: [Moves.BubbleBeam],
-        37: [Moves.Minimize],
+        37: [Moves.Minimize, Moves.GyroBall],
         42: [Moves.LightScreen, Moves.CosmicPower],
+        46: [Moves.PowerGem],
         47: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -125,6 +131,7 @@ export default function registerStaryuSpecies(): void {
       [Stats.Speed]: 115,
     },
     types: [Types.Water, Types.Psychic],
+    habitat: Habitat.Water,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.Analytic, Abilities.Regenerator],
     eggGroups: [EggGroups.Water3],
@@ -151,6 +158,11 @@ export default function registerStaryuSpecies(): void {
         Moves.Nightmare,
         Moves.LightScreen,
         Moves.SkillSwap,
+        Moves.Avalanche,
+        Moves.GigaImpact,
+        Moves.GrassKnot,
+        Moves.GyroBall,
+        Moves.TrickRoom,
       ],
     },
   });

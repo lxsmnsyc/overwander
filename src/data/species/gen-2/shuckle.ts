@@ -42,7 +42,10 @@ export default function registerShuckleSpecies(): void {
         14: [Moves.Encore],
         23: [Moves.Safeguard],
         28: [Moves.Bide],
+        35: [Moves.GastroAcid],
         37: [Moves.Rest],
+        40: [Moves.BugBite],
+        48: [Moves.PowerTrick],
       },
       teachable: [
         Moves.Toxic,
@@ -79,8 +82,15 @@ export default function registerShuckleSpecies(): void {
         Moves.RockTomb,
         Moves.SecretPower,
         Moves.Substitute,
+        Moves.Captivate,
+        Moves.EarthPower,
+        Moves.GyroBall,
+        Moves.NaturalGift,
+        Moves.RockPolish,
+        Moves.StealthRock,
+        Moves.StoneEdge,
       ],
-      egg: [Moves.SweetScent],
+      egg: [Moves.SweetScent, Moves.Acupressure],
     },
   });
 }

@@ -1,4 +1,4 @@
-import { HISTORY_BALL, describeHistory } from '../describe';
+import { HISTORY_BALL, HISTORY_BALL_INSET, describeHistory } from '../describe';
 import type { OwnershipRecord } from '../../../../auth/caught-record';
 
 import type { CaughtPokemon } from '../../../../auth/caught';
@@ -30,7 +30,7 @@ export interface HistorySectionProps {
 
 export default function HistorySection(props: HistorySectionProps): JSX.Element {
   return (
-    <DialogSection title="History">
+    <DialogSection>
       <Show when={props.caught.history.length}>
         <List>
           <For each={props.caught.history}>
@@ -44,6 +44,7 @@ export default function HistorySection(props: HistorySectionProps): JSX.Element 
                   <ItemSprite
                     item={BALL_ITEMS[entry.ball ?? Balls.PokeBall]}
                     size={HISTORY_BALL}
+                    class={HISTORY_BALL_INSET}
                     label={describeItem(BALL_ITEMS[entry.ball ?? Balls.PokeBall])}
                   />
                 </Show>

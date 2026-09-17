@@ -1,9 +1,9 @@
 import type Biome from '../ids/biome';
-import { TimeOfDay } from '../ids/biome';
+import { SpawnSurface, TimeOfDay } from '../ids/biome';
 import type Families from '../ids/families';
-import { DEOXYS_FORMS, Species, UNOWN_FORMS } from '../ids/species';
+import { DEOXYS_FORMS, Habitat, Species, UNOWN_FORMS } from '../ids/species';
 import type { Types } from '../constants/types';
-import { getBaseSpecies, getSpeciesData } from '../species';
+import { getBaseSpecies, getHabitat, getSpeciesData } from '../species';
 
 /**
  * One weighted slot of a biome's spawn pool
@@ -106,7 +106,21 @@ export type SpawnPool = { [key in TimeOfDay]: SpawnRarityGroups };
 
 const EMPTY_GROUPS: SpawnRarityGroups = { base: [], uncommon: [], rare: [], special: [] };
 
+/** What stands on each biome's dry ground, an open sea's islands included */
 const SPAWN_POOLS = new Map<Biome, SpawnPool>();
+
+/** What swims in each biome's water */
+const WATER_POOLS = new Map<Biome, SpawnPool>();
+
+/** What stands on each biome's frozen water */
+const ICE_POOLS = new Map<Biome, SpawnPool>();
+
+/** Every surface's pools, land first */
+const SURFACE_POOLS: [SpawnSurface, Map<Biome, SpawnPool>][] = [
+  [SpawnSurface.Land, SPAWN_POOLS],
+  [SpawnSurface.Water, WATER_POOLS],
+  [SpawnSurface.Ice, ICE_POOLS],
+];
 
 /**
  * The pools read backwards: which species is in which of them. Built
@@ -115,9 +129,29 @@ const SPAWN_POOLS = new Map<Biome, SpawnPool>();
  */
 let habitatIndex: Map<Species, SpeciesHabitat[]> | null = null;
 
+/** Each biome and hour's pools merged, built on demand; see `getBiomeRoster` */
+const ROSTERS = new Map<string, SpawnRarityGroups>();
+
+function forgetPools(): void {
+  habitatIndex = null;
+  ROSTERS.clear();
+}
+
 export function registerSpawnPool(biome: Biome, pool: SpawnPool): void {
   SPAWN_POOLS.set(biome, pool);
-  habitatIndex = null;
+  forgetPools();
+}
+
+/** What swims in the biome's water, which for a sea is everything off its islands */
+export function registerWaterPool(biome: Biome, pool: SpawnPool): void {
+  WATER_POOLS.set(biome, pool);
+  forgetPools();
+}
+
+/** What stands on the biome's frozen water */
+export function registerIcePool(biome: Biome, pool: SpawnPool): void {
+  ICE_POOLS.set(biome, pool);
+  forgetPools();
 }
 
 /**
@@ -157,11 +191,75 @@ export function getSpawnPool(
   biome: Biome,
   time: TimeOfDay,
   underground = false,
+  surface = SpawnSurface.Land,
 ): SpawnRarityGroups {
   if (underground) {
     return cavePool?.[time] ?? EMPTY_GROUPS;
   }
-  return SPAWN_POOLS.get(biome)?.[time] ?? EMPTY_GROUPS;
+  return poolsOn(surface).get(biome)?.[time] ?? EMPTY_GROUPS;
+}
+
+function poolsOn(surface: SpawnSurface): Map<Biome, SpawnPool> {
+  if (surface === SpawnSurface.Water) {
+    return WATER_POOLS;
+  }
+  return surface === SpawnSurface.Ice ? ICE_POOLS : SPAWN_POOLS;
+}
+
+/** Whether the biome registered a pool for this surface at all */
+export function hasSpawnPool(biome: Biome, surface: SpawnSurface): boolean {
+  return poolsOn(surface).has(biome);
+}
+
+/**
+ * Whether a species may stand in a pool on this surface: nothing that
+ * only swims on land or ice, and nothing of the ground in water
+ */
+export function fitsSurface(species: Species, surface: SpawnSurface): boolean {
+  const habitat = getHabitat(species);
+
+  return surface === SpawnSurface.Water ? habitat !== Habitat.Ground : habitat !== Habitat.Water;
+}
+
+/**
+ * Everything the biome's land, water and ice pools hold at this hour,
+ * for what reads the biome rather than one cell: raids, nests and
+ * trainers. A species in two pools counts once, at its heavier weight
+ */
+export function getBiomeRoster(biome: Biome, time: TimeOfDay): SpawnRarityGroups {
+  const land = getSpawnPool(biome, time);
+
+  if (!WATER_POOLS.has(biome) && !ICE_POOLS.has(biome)) {
+    return land;
+  }
+
+  const key = `${biome}:${time}`;
+  const known = ROSTERS.get(key);
+
+  if (known != null) {
+    return known;
+  }
+
+  const roster = { base: [], uncommon: [], rare: [], special: [] } as SpawnRarityGroups;
+
+  for (const band of SPAWN_BAND_KEYS) {
+    const weights = new Map<Species, number>();
+
+    for (const [surface] of SURFACE_POOLS) {
+      for (const entry of spawnBand(getSpawnPool(biome, time, false, surface), band)) {
+        weights.set(entry.species, Math.max(weights.get(entry.species) ?? 0, entry.weight));
+      }
+    }
+
+    const entries: SpawnEntry[] = [];
+
+    for (const [species, weight] of weights) {
+      entries.push({ species, weight });
+    }
+    roster[band] = entries;
+  }
+  ROSTERS.set(key, roster);
+  return roster;
 }
 
 /**
@@ -275,7 +373,7 @@ const EGG_POOLS = new WeakMap<SpawnRarityGroups, SpawnEntry[]>();
  * the reason `AWAITING_BABY_SPECIES` gives
  */
 export function getEggPool(biome: Biome, time: TimeOfDay): SpawnEntry[] {
-  const groups = getSpawnPool(biome, time);
+  const groups = getBiomeRoster(biome, time);
   const built = EGG_POOLS.get(groups);
 
   if (built != null) {
@@ -396,7 +494,12 @@ export interface SpeciesHabitat {
 function buildHabitats(): Map<Species, SpeciesHabitat[]> {
   const found = new Map<Species, SpeciesHabitat[]>();
 
-  for (const [biome, pool] of SPAWN_POOLS) {
+  const registered: [Biome, SpawnPool][] = [];
+
+  for (const [, pools] of SURFACE_POOLS) {
+    registered.push(...pools);
+  }
+  for (const [biome, pool] of registered) {
     for (const time of TIMES_OF_DAY) {
       const groups = pool[time];
 
@@ -416,7 +519,7 @@ function buildHabitats(): Map<Species, SpeciesHabitat[]> {
 /**
  * Everywhere this species is met in the wild, as the dex lists it.
  *
- * A species is listed once per biome, hour and band it appears in, so
+ * A species is listed once per biome, surface, hour and band it appears in, so
  * something that lives in a grassland all day answers four entries and
  * something that only comes out at night answers one. A species that
  * spawns nowhere — a legendary staged by a lair, a mythical called by
@@ -495,6 +598,15 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Kyogre,
   Species.Groudon,
   Species.Rayquaza,
+  Species.Uxie,
+  Species.Mesprit,
+  Species.Azelf,
+  Species.Dialga,
+  Species.Palkia,
+  Species.Giratina,
+  Species.Cresselia,
+  Species.Heatran,
+  Species.Regigigas,
 ]);
 
 /**
@@ -506,9 +618,13 @@ const MYTHICAL_SPECIES = new Set<Species>([
   Species.Mew,
   Species.Celebi,
   Species.Jirachi,
-  // Every arrangement of it, since each is a Deoxys a player owns
+  // Every arrangement of Deoxys, since each is one a player owns
   // rather than a shape one wears for a fight
   ...DEOXYS_FORMS,
+  Species.Darkrai,
+  Species.Manaphy,
+  Species.Shaymin,
+  Species.Arceus,
 ]);
 
 /**
@@ -546,6 +662,14 @@ const BABY_SPECIES = new Set<Species>([
   Species.Magby,
   Species.Azurill,
   Species.Wynaut,
+  Species.Bonsly,
+  Species.MimeJr,
+  Species.Happiny,
+  Species.Munchlax,
+  Species.Mantyke,
+  Species.Budew,
+  Species.Chingling,
+  Species.Riolu,
 ]);
 
 /**
@@ -597,14 +721,8 @@ export const PRIZED_WEIGHT = UNOWN_SPAWNS.length;
  * is about what a nest holds and nothing else
  */
 const AWAITING_BABY_SPECIES = new Set<Species>([
-  // Gen 4 babies
-  Species.Roselia,
-  Species.Chimecho,
-  Species.Sudowoodo,
-  Species.Mantine,
-  Species.Chansey,
-  Species.MrMime,
-  Species.Snorlax,
+  // Every baby the game knows about is registered. A later
+  // generation's babies belong here as they are written down
 ]);
 
 /**
@@ -629,25 +747,6 @@ export function isAwaitingBaby(species: Species): boolean {
  * registered
  */
 const AWAITING_EVOLUTION_SPECIES = new Set<Species>([
-  // Gen 4 evolutions
-  Species.Magneton,
-  Species.Lickitung,
-  Species.Rhydon,
-  Species.Tangela,
-  Species.Electabuzz,
-  Species.Magmar,
-  Species.Togetic,
-  Species.Aipom,
-  Species.Yanma,
-  Species.Murkrow,
-  Species.Misdreavus,
-  Species.Gligar,
-  Species.Sneasel,
-  Species.Piloswine,
-  Species.Porygon2,
-  Species.Nosepass,
-  Species.Roselia,
-  Species.Dusclops,
   // Gen 8 evolutions
   Species.Ursaring,
   Species.Stantler,
@@ -714,10 +813,10 @@ export function getLineStage(species: Species): number {
  * later gen counts that evolution, since the line is what it is
  * whether or not this game has the last of it yet.
  *
- * A change of shape is not a stage. A Deoxys rearranges itself the
- * same way an evolution happens, and its arrangements carry its own
- * dex number, so they are stepped over: the line is one stage long
- * however many shapes it puts itself into
+ * A change of shape is not a stage. A Deoxys rearranges itself and a
+ * Rotom gets into a machine the same way an evolution happens, and
+ * both shapes carry their own dex number, so they are stepped over:
+ * the line is one stage long however many shapes it takes
  */
 function stagesBelow(species: Species): number {
   const own = BABY_SPECIES.has(species) ? 0 : 1;

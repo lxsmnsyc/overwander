@@ -1,7 +1,14 @@
-import AleaRNG from '../core/alea';
+import { type RandomSource, sourceOf } from '../core/draws';
 import { CELL_COUNT, CHUNK_CELLS, SURROUNDING, worldCell } from './grid';
-import type Biome from '../data/ids/biome';
-import { growsBerries, growsTrees, isOpenSea, isWaterBiome } from '../data/ids/biome';
+import Biome, {
+  SpawnSurface,
+  growsBerries,
+  growsHoneyTrees,
+  growsTrees,
+  isIceBiome,
+  isOpenSea,
+  isWaterBiome,
+} from '../data/ids/biome';
 import { type GroundRole, isShelfAt, roleAt } from './ground';
 import type World from './world';
 import type Decoration from '../data/overworld/decoration';
@@ -152,6 +159,9 @@ function biomeLandmarks(biome: Biome, depth: Depth): Landmark[] {
     if (kind === Landmark.ApricornTree && !growsTrees(biome)) {
       continue;
     }
+    if (kind === Landmark.HoneyTree && !growsHoneyTrees(biome)) {
+      continue;
+    }
     pool.push(kind);
   }
 
@@ -200,7 +210,7 @@ export function neighborCells(cell: number): number[] {
  * inheriting a pruned list from the stage before — so a change to one
  * stage shifts the others only where a collision actually moves
  */
-function shuffled(rng: AleaRNG, cells: number[]): number[] {
+function shuffled(rng: RandomSource, cells: number[]): number[] {
   const order = [...cells];
 
   for (let at = order.length - 1; at > 0; at -= 1) {
@@ -312,6 +322,34 @@ export default class Chunk {
   getWaterCells(): Set<number> {
     this.waterCells ??= this.cellsWhere('water');
     return this.waterCells;
+  }
+
+  /** Which pool a spawn on this cell draws from, read off the water drawn there */
+  getCellSurface(cell: number): SpawnSurface {
+    if (this.getCellRole(cell) !== 'water') {
+      return SpawnSurface.Land;
+    }
+    return isIceBiome(this.getCellBiomes()[cell]) ? SpawnSurface.Ice : SpawnSurface.Water;
+  }
+
+  private lavaCells: Set<number> | null = null;
+
+  /** The water cells that are a volcano's lava, which nothing walks on or stands on */
+  getLavaCells(): Set<number> {
+    if (this.lavaCells == null) {
+      const biomes = this.getCellBiomes();
+      const lava = new Set<number>();
+
+      for (const cell of this.getWaterCells()) {
+        // The cell biomes are a byte array, so the enum is widened to compare
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+        if (biomes[cell] === (Biome.Volcano as number)) {
+          lava.add(cell);
+        }
+      }
+      this.lavaCells = lava;
+    }
+    return this.lavaCells;
   }
 
   private spotCells: Set<number> | null = null;
@@ -515,14 +553,15 @@ export default class Chunk {
       const cells = new Map<number, Decoration>();
 
       if (kinds.length > 0) {
-        const rng = new AleaRNG(`${this.seed}decorations`);
+        const draws = this.world.draws(`${this.seed}decorations`);
         const count =
-          MIN_DECORATIONS + Math.floor(rng.random() * (MAX_DECORATIONS - MIN_DECORATIONS + 1));
+          MIN_DECORATIONS +
+          Math.floor(draws.random('count') * (MAX_DECORATIONS - MIN_DECORATIONS + 1));
         // Nothing grows out of a pool, a rock's reach, or a
         // landmark's approach
         const landmarks = this.getLandmarkArea();
         const taken = new Set<number>();
-        const order = shuffled(rng, centeredCells(PLACEMENT_AREA));
+        const order = shuffled(sourceOf(draws, 'order'), centeredCells(PLACEMENT_AREA));
 
         // Out at sea the scenery stands in the water, and an island grows
         // its own rather than coral on the sand
@@ -530,7 +569,7 @@ export default class Chunk {
 
         for (let i = 0; i < count; i++) {
           // The draws land in pair order: the kind, then its cell
-          const roll = rng.random();
+          const roll = draws.random('kind');
           // On land scenery keeps to dry ground, so a chunk under a lake
           // simply has less of it
           const cell = this.firstDecorationCell(order, taken, landmarks, sea);
@@ -580,12 +619,13 @@ export default class Chunk {
    */
   getLandmarkCells(): Map<number, Landmark> {
     if (this.landmarkCells == null) {
-      const rng = new AleaRNG(`${this.seed}landmarks`);
-      const count = MIN_LANDMARKS + Math.floor(rng.random() * (MAX_LANDMARKS - MIN_LANDMARKS + 1));
+      const draws = this.world.draws(`${this.seed}landmarks`);
+      const count =
+        MIN_LANDMARKS + Math.floor(draws.random('count') * (MAX_LANDMARKS - MIN_LANDMARKS + 1));
       // Nothing stands in a rock's reach, and each biome rolls from a
       // pool without the landmarks that cannot be there
       const base = biomeLandmarks(this.biome, this.world.depth);
-      const order = shuffled(rng, centeredCells(PLACEMENT_AREA));
+      const order = shuffled(sourceOf(draws, 'order'), centeredCells(PLACEMENT_AREA));
       const cells = new Map<number, Landmark>();
       const taken = new Set<number>();
       const rolled = new Set<Landmark>();
@@ -654,7 +694,7 @@ export default class Chunk {
         // Weighted rather than flat: a raid is worth travelling for
         // and a bush is what a walk turns up, and a flat roll made
         // them equally common
-        let target = rng.random() * total;
+        let target = draws.random('kind') * total;
         let landmark = pool[pool.length - 1];
 
         for (const kind of pool) {
@@ -675,6 +715,7 @@ export default class Chunk {
           !taken.has(candidate) &&
           this.isClear(candidate) &&
           !this.getFaceCells().has(candidate) &&
+          !this.getLavaCells().has(candidate) &&
           !this.isTownCell(candidate) &&
           !this.isRouteCell(candidate);
         // Dry ground first and the water only where there is none: a

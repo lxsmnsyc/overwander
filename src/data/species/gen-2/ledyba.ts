@@ -45,6 +45,15 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.Substitute,
   Moves.SwordsDance,
+  Moves.BugBite,
+  Moves.Captivate,
+  Moves.DrainPunch,
+  Moves.Fling,
+  Moves.NaturalGift,
+  Moves.OminousWind,
+  Moves.Roost,
+  Moves.Tailwind,
+  Moves.UTurn,
 ];
 
 export default function registerLedybaSpecies(): void {
@@ -86,6 +95,7 @@ export default function registerLedybaSpecies(): void {
         22: [Moves.LightScreen, Moves.Reflect, Moves.Safeguard],
         29: [Moves.BatonPass],
         36: [Moves.Swift],
+        41: [Moves.BugBuzz],
         43: [Moves.Agility],
         50: [Moves.DoubleEdge],
       },
@@ -128,9 +138,10 @@ export default function registerLedybaSpecies(): void {
         33: [Moves.BatonPass],
         42: [Moves.Swift],
         51: [Moves.Agility],
+        53: [Moves.BugBuzz],
         60: [Moves.DoubleEdge],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.FocusBlast, Moves.GigaImpact],
     },
   });
 }

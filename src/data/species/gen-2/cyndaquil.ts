@@ -42,6 +42,8 @@ const FAMILY_TEACHABLE = [
   Moves.Overheat,
   Moves.SecretPower,
   Moves.Substitute,
+  Moves.Captivate,
+  Moves.NaturalGift,
 ];
 
 // What the two above the base pick up: the machines that ask for a
@@ -86,6 +88,7 @@ export default function registerCyndaquilSpecies(): void {
         12: [Moves.Ember],
         19: [Moves.QuickAttack],
         27: [Moves.FlameWheel],
+        31: [Moves.LavaPlume],
         36: [Moves.Swift],
         46: [Moves.Flamethrower],
       },
@@ -98,6 +101,7 @@ export default function registerCyndaquilSpecies(): void {
         Moves.Covet,
         Moves.CrushClaw,
         Moves.Howl,
+        Moves.FlareBlitz,
       ],
     },
   });
@@ -139,6 +143,7 @@ export default function registerCyndaquilSpecies(): void {
         12: [Moves.Ember],
         21: [Moves.QuickAttack],
         31: [Moves.FlameWheel],
+        35: [Moves.LavaPlume],
         42: [Moves.Swift],
         54: [Moves.Flamethrower],
       },
@@ -175,9 +180,10 @@ export default function registerCyndaquilSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.Leer, Moves.Ember, Moves.SmokeScreen],
+        1: [Moves.Tackle, Moves.Leer, Moves.Ember, Moves.SmokeScreen, Moves.GyroBall],
         21: [Moves.QuickAttack],
         31: [Moves.FlameWheel],
+        35: [Moves.LavaPlume],
         45: [Moves.Swift],
         60: [Moves.Flamethrower],
       },
@@ -197,6 +203,11 @@ export default function registerCyndaquilSpecies(): void {
         Moves.MegaPunch,
         Moves.RockSlide,
         Moves.SeismicToss,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.RockClimb,
+        Moves.ShadowClaw,
       ],
     },
   });

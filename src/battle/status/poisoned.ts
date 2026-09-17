@@ -5,7 +5,7 @@ import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
 import type Unit from '../unit';
-import { RESIDUAL_TICK } from './__create';
+import { RESIDUAL_TICK, checkStatusDamage } from './__create';
 
 interface PoisonedData {
   progress: number;
@@ -54,7 +54,12 @@ export function setupPoisonedStatus(battle: Battle): void {
 
   battle.on(BattleEvents.UnitTriggerStatus, EventPriority.Exact, (event) => {
     if (event.status === Statuses.Poisoned) {
-      const amount = event.source.checkStat(Stats.HP, 0) / 8;
+      const amount = checkStatusDamage(
+        battle,
+        event.source,
+        Statuses.Poisoned,
+        event.source.checkStat(Stats.HP, 0) / 8,
+      );
 
       if (event.cause.type !== EffectType.None) {
         // Deal damage to the target first
@@ -126,7 +131,12 @@ export function setupBadlyPoisonedStatus(battle: Battle): void {
       const instance = instances.get(event.source);
 
       if (instance) {
-        const amount = event.source.checkStat(Stats.HP, 0) / 16;
+        const amount = checkStatusDamage(
+          battle,
+          event.source,
+          Statuses.BadlyPoisoned,
+          event.source.checkStat(Stats.HP, 0) / 16,
+        );
 
         const cause = event.cause.type === EffectType.None ? event.source : event.cause.unit;
 

@@ -474,6 +474,39 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
   [Moves.SandAttack]: [undefined, 'Drift'],
   [Moves.SmokeScreen]: [undefined, 'Drift'],
   [Moves.Flash]: [undefined, 'Flare'],
+
+  // Nothing is thrown: the wind itself is what crosses, so the wait
+  // is spent drawing it up the way Hydro Pump's is
+  [Moves.Aeroblast]: [undefined, 'Charge'],
+
+  // Nothing crosses here either: the scent is given off where it
+  // stands, and the petals are what arrives
+  [Moves.SweetScent]: [undefined, 'Charge'],
+  // Petals too, but health coming back, so it waits the way healing does
+  [Moves.Aromatherapy]: [undefined, 'Gather'],
+  // Drawn as a screen and as Roost's feathers, but still a raise and a drop on the way
+  [Moves.Barrier]: [undefined, 'Focus'],
+  [Moves.FeatherDance]: [undefined, 'Reach'],
+
+  // Sinnoh. Out of the world and back out of it behind whatever it is
+  // hitting, which is the wait Dig and Fly spend
+  [Moves.ShadowForce]: ['Vanish'],
+  // Lobbed rather than shot flat: a bomb, a thrown item, a stone
+  [Moves.SeedBomb]: [undefined, 'Lobbed'],
+  [Moves.MudBomb]: [undefined, 'Lobbed'],
+  [Moves.MagnetBomb]: [undefined, 'Lobbed'],
+  [Moves.GunkShot]: [undefined, 'Lobbed'],
+  [Moves.Fling]: [undefined, 'Lobbed'],
+  [Moves.NaturalGift]: [undefined, 'Lobbed'],
+  [Moves.RockWrecker]: [undefined, 'Lobbed'],
+  [Moves.StoneEdge]: [undefined, 'Lobbed'],
+  [Moves.DracoMeteor]: [undefined, 'Lobbed'],
+  // Laid rather than thrown at, the way Spikes is
+  [Moves.StealthRock]: [undefined, 'Lobbed'],
+  [Moves.ToxicSpikes]: [undefined, 'Lobbed'],
+  // The ground answers it the way it answers an Earthquake: the knot
+  // comes up under whatever is standing on it
+  [Moves.GrassKnot]: [undefined, 'Rise'],
 };
 
 /**
@@ -486,13 +519,50 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
 const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
   Haze: 'Drift',
   Mend: 'Gather',
+  Slumber: 'Gather',
+  Sunbeam: 'Gather',
+  Moonbeam: 'Gather',
+  Greening: 'Gather',
+  Wishing: 'Gather',
+  Feathers: 'Gather',
+  Swarm: 'Gather',
+  Gyro: 'Gather',
   Drain: 'Gather',
   Ward: 'Brace',
   Screen: 'Brace',
   Boost: 'Focus',
+  Blades: 'Focus',
+  Dance: 'Focus',
+  Sheen: 'Focus',
+  Mirage: 'Focus',
+  Scheme: 'Focus',
+  Shell: 'Brace',
+  Doll: 'Brace',
+  Flop: 'Brace',
+  Wag: 'Brace',
   Trance: 'Gaze',
   Warp: 'Gaze',
+  Stall: 'Gaze',
+  Rend: 'Gaze',
+  Exchange: 'Gaze',
+  Void: 'Gaze',
+  Moonlit: 'Gather',
   Wave: 'Call',
+  // The wind-ups Toxic and Taunt had while they landed as a cloud and a sound
+  Toxin: 'Drift',
+  Vein: 'Call',
+  // The wind-up every stat raise had while it landed as rising arrows
+  Haste: 'Focus',
+  Polish: 'Focus',
+  Flex: 'Focus',
+  Blank: 'Focus',
+  Cosmos: 'Focus',
+  Hive: 'Focus',
+  Crackle: 'Focus',
+  Lantern: 'Focus',
+  Stack: 'Focus',
+  Sprout: 'Focus',
+  Curl: 'Focus',
 };
 
 /**

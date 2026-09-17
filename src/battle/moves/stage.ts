@@ -53,6 +53,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
     {
       [Moves.Growth]: 1,
       [Moves.TailGlow]: 3,
+      [Moves.NastyPlot]: 2,
       [Moves.CalmMind]: 1,
       // Flattery: the target is talked into leaning on a stat it
       // cannot aim with
@@ -64,6 +65,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
     Stages.SpecialDefense,
     {
       [Moves.Amnesia]: 2,
+      [Moves.DefendOrder]: 1,
       [Moves.CalmMind]: 1,
       [Moves.CosmicPower]: 1,
       [Moves.Stockpile]: 1,
@@ -76,6 +78,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
     Stages.Defense,
     {
       [Moves.Leer]: -1,
+      [Moves.DefendOrder]: 1,
       [Moves.TailWhip]: -1,
       [Moves.Withdraw]: 1,
       [Moves.Harden]: 1,
@@ -94,6 +97,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
     Stages.Speed,
     {
       [Moves.StringShot]: -2,
+      [Moves.RockPolish]: 2,
       [Moves.Agility]: 2,
       [Moves.ScaryFace]: -2,
       [Moves.CottonSpore]: -2,
@@ -115,6 +119,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.DoubleTeam]: 1,
       [Moves.Minimize]: 2,
       [Moves.SweetScent]: -2,
+      [Moves.Defog]: -1,
     },
   ],
 ];

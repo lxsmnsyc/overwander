@@ -79,7 +79,7 @@ export function watchRow<T>(
   filter: string,
   read: () => Promise<T>,
   onChange: (value: T) => void,
-  fromChange?: (row: Record<string, unknown>) => T,
+  fromChange?: (row: Record<string, unknown>) => T | undefined,
 ): Unwatch {
   const supabase = getSupabase();
   const refetch = (): void => {
@@ -99,12 +99,15 @@ export function watchRow<T>(
     .on('postgres_changes', { event: '*', schema: 'public', table, filter }, (payload) => {
       const row: Record<string, unknown> = payload.new;
 
-      // A delete carries no new row, so it is read like a reconnect
-      if (fromChange == null || Object.keys(row).length === 0) {
+      // A delete carries no new row, so it is read like a reconnect,
+      // and so is a row the reader declines to take as it stands
+      const value = Object.keys(row).length === 0 ? undefined : fromChange?.(row);
+
+      if (value === undefined) {
         refetch();
         return;
       }
-      onChange(fromChange(row));
+      onChange(value);
     })
     .subscribe((status) => {
       if (status !== REALTIME_SUBSCRIBE_STATES.SUBSCRIBED) {
@@ -132,11 +135,21 @@ export function watchRow<T>(
  * UPDATE the set's own filter would not match; every ping simply
  * re-runs the read
  */
+export interface WatchTableOptions<T> {
+  /** Whether a changed row matters at all, for a change the filter could not rule out */
+  wanted?: (row: Record<string, unknown>) => boolean;
+  /** The set with a changed row folded in, where the row says enough; undefined reads instead */
+  fromChange?: (row: Record<string, unknown>) => T | undefined;
+  /** What the caller already holds, which stands in for the first read */
+  initial?: { value: T };
+}
+
 export function watchTable<T>(
   table: string,
   filters: (string | undefined)[],
   read: () => Promise<T>,
   onChange: (value: T) => void,
+  { wanted, fromChange, initial }: WatchTableOptions<T> = {},
 ): Unwatch {
   const supabase = getSupabase();
   const refetch = (): void => {
@@ -153,7 +166,26 @@ export function watchTable<T>(
     channel = channel.on(
       'postgres_changes',
       { event: '*', schema: 'public', table, ...(filter == null ? {} : { filter }) },
-      refetch,
+      (payload) => {
+        const row: Record<string, unknown> = payload.new;
+
+        // A delete carries no row to judge, so it is always read
+        if (Object.keys(row).length === 0) {
+          refetch();
+          return;
+        }
+        if (wanted != null && !wanted(row)) {
+          return;
+        }
+
+        const folded = fromChange?.(row);
+
+        if (folded === undefined) {
+          refetch();
+          return;
+        }
+        onChange(folded);
+      },
     );
   }
   // As above: the first subscribe rides the read below, and only a
@@ -170,7 +202,11 @@ export function watchTable<T>(
     connected = true;
   });
 
-  refetch();
+  if (initial == null) {
+    refetch();
+  } else {
+    onChange(initial.value);
+  }
 
   return () => {
     supabase.removeChannel(channel).catch(() => {

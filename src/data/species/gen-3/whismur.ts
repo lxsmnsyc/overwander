@@ -52,6 +52,10 @@ const FAMILY_TEACHABLE = [
   Moves.FirePunch,
   Moves.SleepTalk,
   Moves.DefenseCurl,
+  Moves.Captivate,
+  Moves.Fling,
+  Moves.NaturalGift,
+  Moves.ZenHeadbutt,
 ];
 
 // What the two above the base pick up: a whisper has nothing to swing
@@ -113,7 +117,7 @@ export default function registerWhismurSpecies(): void {
         45: [Moves.HyperVoice],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.TakeDown, Moves.Extrasensory, Moves.SmellingSalts],
+      egg: [Moves.TakeDown, Moves.Extrasensory, Moves.SmellingSalts, Moves.HammerArm],
     },
   });
 
@@ -191,7 +195,15 @@ export default function registerWhismurSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Pound, Moves.Uproar, Moves.Astonish, Moves.Howl],
+        1: [
+          Moves.Pound,
+          Moves.Uproar,
+          Moves.Astonish,
+          Moves.Howl,
+          Moves.FireFang,
+          Moves.IceFang,
+          Moves.ThunderFang,
+        ],
         23: [Moves.Supersonic],
         29: [Moves.Stomp],
         37: [Moves.Screech],
@@ -200,7 +212,15 @@ export default function registerWhismurSpecies(): void {
         55: [Moves.Rest, Moves.SleepTalk],
         63: [Moves.HyperVoice],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...GROWN_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Avalanche,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.RockClimb,
+      ],
     },
   });
 }

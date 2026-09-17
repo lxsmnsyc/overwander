@@ -70,7 +70,7 @@ export default function registerPlates(): void {
     registerItem(item, {
       name: NAMES[item] ?? `Item #${item}`,
       type: ItemTypes.Held,
-      description: `${TYPE_NAMES[type]} moves hit 1.2x for as long as it is held.`,
+      description: `${TYPE_NAMES[type]} moves hit 1.2x for as long as it is held. Also makes Judgment ${TYPE_NAMES[type]} and puts an Arceus in its ${TYPE_NAMES[type]} shape.`,
       // A plate is not named for its type — a Fist Plate is Fighting
       // — so the picture is taken from the plate's own first word,
       // which is what the `plates` sheet names them by

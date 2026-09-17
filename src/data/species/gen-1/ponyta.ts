@@ -43,6 +43,8 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.SolarBeam,
   Moves.Strength,
+  Moves.Captivate,
+  Moves.NaturalGift,
 ];
 
 const FAMILY_ABILITIES = [Abilities.RunAway, Abilities.FlashFire];
@@ -88,6 +90,7 @@ export default function registerPonytaSpecies(): void {
         34: [Moves.TakeDown],
         43: [Moves.Agility],
         45: [Moves.Bounce],
+        46: [Moves.FlareBlitz],
         53: [Moves.FireBlast],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -128,15 +131,24 @@ export default function registerPonytaSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Ember, Moves.TailWhip, Moves.Stomp, Moves.Growl, Moves.Tackle, Moves.QuickAttack],
+        1: [
+          Moves.Ember,
+          Moves.TailWhip,
+          Moves.Stomp,
+          Moves.Growl,
+          Moves.Tackle,
+          Moves.QuickAttack,
+          Moves.PoisonJab,
+        ],
         26: [Moves.FireSpin],
         34: [Moves.TakeDown],
         40: [Moves.FuryAttack],
         47: [Moves.Agility],
         50: [Moves.Bounce],
+        56: [Moves.FlareBlitz],
         61: [Moves.FireBlast],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

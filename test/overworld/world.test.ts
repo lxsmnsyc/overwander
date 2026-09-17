@@ -8,10 +8,13 @@ import PerlinNoise from '../../src/core/perlin';
 import registerBiomeSpawns, {
   BIOME_NAMES,
   SpawnRarity,
+  fitsSurface,
+  getBiomeRoster,
   getSpawnPool,
   getSpawnRarity,
   getTownPool,
   isGrownSpecies,
+  pickSpawn,
   spawnRanks,
 } from '../../src/data/biome';
 import { BuildRole } from '../../src/data/species/best-moves';
@@ -23,9 +26,11 @@ import {
 } from '../../src/data/species/best-build';
 import Biome, {
   BIOME_CONFIGS,
+  SpawnSurface,
   TimeOfDay,
   getTimeOfDay,
   growsBerries,
+  growsHoneyTrees,
   growsTrees,
   isOpenSea,
   isWaterBiome,
@@ -35,7 +40,7 @@ import Lairs, {
   getBiomeLairs,
   getLairResidents,
   getLairTitle,
-  getSpeciesLair,
+  getSpeciesLairs,
 } from '../../src/data/overworld/lair';
 import Natures from '../../src/data/ids/natures';
 import { APRICORNS, ItemTypes, Items } from '../../src/data/ids/items';
@@ -55,13 +60,11 @@ import EggGroups from '../../src/data/ids/egg-groups';
 import { Genders, Species } from '../../src/data/ids/species';
 import {
   SPECIES_DAY_HIDDEN_ABILITY_BOOST,
-  floats,
   getBaseSpecies,
   getRegisteredSpecies,
   getSpeciesAbilityPools,
   getSpeciesData,
   registerSpecies,
-  swims,
 } from '../../src/data/species';
 import { MAX_LEVEL } from '../../src/data/constants/levels';
 import { WILD_HELD_COMMON, WILD_HELD_UNCOMMON } from '../../src/data/species/held-items';
@@ -189,6 +192,7 @@ import {
   TRAINER_CHARSETS,
   TRAINER_CLASSES,
   TRAINER_NAMES,
+  TRAINER_REGIONS,
   TRAINER_TYPES,
   TYPE_TRAINER_LEVELS,
   TYPE_TRAINER_PARTY_MAX,
@@ -197,6 +201,7 @@ import {
   getBiomeTrainers,
   getTrainerPool,
   isAceTrainer,
+  isGrownInRegion,
   trainerLevels,
 } from '../../src/data/overworld/trainers';
 import pickStartPosition, { START_AREA, pickFreeCell } from '../../src/overworld/start';
@@ -411,6 +416,7 @@ function findChunk(world: World, matches: (chunk: Chunk) => boolean): Chunk | nu
 function buddyWith(abilities: Abilities[]): Buddy {
   return {
     species: Species.Bulbasaur,
+    shiny: false,
     abilities,
     items: [],
     nature: Natures.Adamant,
@@ -761,7 +767,7 @@ describe('world', () => {
     // Mew's island is a lair like any other, but no biome lists it:
     // the world stages no mythical, so the rainforest it lives in
     // holds no lair at all
-    expect(getSpeciesLair(Species.Mew)).toBe(Lairs.FarawayIsland);
+    expect(getSpeciesLairs(Species.Mew)).toEqual([Lairs.FarawayIsland]);
     for (const key of Object.keys(BIOME_NAMES)) {
       expect(getBiomeLairs(Number(key))).not.toContain(Lairs.FarawayIsland);
     }
@@ -770,6 +776,26 @@ describe('world', () => {
 
     expect(chunk).not.toBeNull();
     expect(chunk == null ? -1 : new ChunkSnapshot(chunk, 0).getLegendaryLairs().size).toBe(0);
+  });
+
+  it('lets a legendary be at home in more than one lair', () => {
+    // The golems keep their Hoenn chambers and turn up again in
+    // Sinnoh's ruins, and the world stages either
+    expect(getSpeciesLairs(Species.Regirock)).toEqual([Lairs.DesertRuins, Lairs.RockPeakRuins]);
+    expect(getSpeciesLairs(Species.Regice)).toEqual([Lairs.IslandCave, Lairs.IcebergRuins]);
+    expect(getSpeciesLairs(Species.Registeel)).toEqual([Lairs.AncientTomb, Lairs.IronRuins]);
+    // The tower duo each keep their Johto home and share the rock
+    expect(getSpeciesLairs(Species.Lugia)).toEqual([Lairs.WhirlIslands, Lairs.NavelRock]);
+    expect(getSpeciesLairs(Species.HoOh)).toEqual([Lairs.BellTower, Lairs.NavelRock]);
+    expect(getBiomeLairs(Biome.DeepOcean)).toContain(Lairs.NavelRock);
+    // And the weather trio share the tower in the sea cliffs
+    expect(getSpeciesLairs(Species.Kyogre)).toEqual([Lairs.MarineCave, Lairs.EmbeddedTower]);
+    expect(getSpeciesLairs(Species.Groudon)).toEqual([Lairs.TerraCave, Lairs.EmbeddedTower]);
+    expect(getSpeciesLairs(Species.Rayquaza)).toEqual([Lairs.SkyPillar, Lairs.EmbeddedTower]);
+    expect(getBiomeLairs(Biome.Beach)).toEqual([Lairs.EmbeddedTower]);
+    expect(getBiomeLairs(Biome.Badlands)).toContain(Lairs.RockPeakRuins);
+    expect(getBiomeLairs(Biome.Tundra)).toContain(Lairs.IcebergRuins);
+    expect(getBiomeLairs(Biome.Ocean)).toContain(Lairs.IronRuins);
   });
 
   it('draws a lair from the biome rather than from its spawn pool', () => {
@@ -786,19 +812,13 @@ describe('world', () => {
       return;
     }
 
-    // A mountain holds five: the volcano, the cave under it, the two
-    // towers on it and the tomb cut into it. Every window stages one
-    // of them, and whoever is at home in it
+    // A mountain holds four: the volcano, the cave under it, the tower
+    // on it and the tomb cut into it. Every window stages one of them,
+    // and whoever is at home in it
     const hosted = new Set(getBiomeLairs(Biome.Mountain));
 
     expect(hosted).toEqual(
-      new Set([
-        Lairs.MtEmber,
-        Lairs.CeruleanCave,
-        Lairs.BellTower,
-        Lairs.AncientTomb,
-        Lairs.SkyPillar,
-      ]),
+      new Set([Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower, Lairs.AncientTomb]),
     );
 
     for (let window = 0; window < 12; window++) {
@@ -1005,6 +1025,17 @@ describe('world', () => {
       // Temporary: a boss is immune to Perishing, so the song would
       // only be a slot it wastes
       Moves.PerishSong,
+      // Spent on a teammate a lone boss does not have, and the first
+      // two spend the whole pool doing it
+      Moves.HealingWish,
+      Moves.LunarDance,
+      Moves.HelpingHand,
+      Moves.FollowMe,
+      // A swap leaks whichever way it is cast, since a boss refuses
+      // the half that would cost it anything
+      Moves.PowerSwap,
+      Moves.GuardSwap,
+      Moves.HeartSwap,
     ]) {
       expect(BANNED_BOSS_MOVES.has(move)).toBe(true);
     }
@@ -1201,7 +1232,7 @@ describe('world', () => {
 
     const snapshot = new ChunkSnapshot(chunk, 0);
     const stops = snapshot.getRocketStops();
-    const pool = getSpawnPool(chunk.biome, getTimeOfDay(0));
+    const pool = getBiomeRoster(chunk.biome, getTimeOfDay(0));
 
     expect(stops.size).toBeGreaterThan(0);
     for (const [cell, party] of stops) {
@@ -1339,8 +1370,13 @@ describe('world', () => {
         expect(party.length).toBeLessThanOrEqual(TYPE_TRAINER_PARTY_MAX);
       }
       for (const [species] of party) {
-        // Fully grown, never a legendary, and of the class' type
-        expect(isGrownSpecies(species), getSpeciesData(species).name).toBe(true);
+        // As grown as its own region goes, never a legendary, and of
+        // the class' type. A later region often holds the last stage
+        // of an older line, and that stage is not this trainer's
+        expect(
+          isGrownInRegion(species, TRAINER_REGIONS[trainer]),
+          getSpeciesData(species).name,
+        ).toBe(true);
         expect(lairSpecies.has(species)).toBe(false);
         if (types.size > 0) {
           expect(
@@ -1563,7 +1599,10 @@ describe('world', () => {
     const party = executive.snapshot.getRocketStops().get(executive.cell) ?? [];
     const rares = new Set(
       spawnRanks(
-        getSpawnPool(executive.snapshot.chunk.biome, getTimeOfDay(executive.snapshot.npcTimestamp)),
+        getBiomeRoster(
+          executive.snapshot.chunk.biome,
+          getTimeOfDay(executive.snapshot.npcTimestamp),
+        ),
       )[2].map((entry) => entry.species),
     );
 
@@ -2239,7 +2278,7 @@ describe('world', () => {
     }
 
     const time = getTimeOfDay(0);
-    const pool = getSpawnPool(chunk.biome, time);
+    const pool = getBiomeRoster(chunk.biome, time);
     const hosted = new Set(getBiomeLairs(chunk.biome));
     const raids = new ChunkSnapshot(chunk, 0).getShadowLairs();
 
@@ -2944,7 +2983,7 @@ describe('world', () => {
 
     const snapshot = new ChunkSnapshot(chunk, 0);
     const nests = snapshot.getNests();
-    const pool = getSpawnPool(chunk.biome, getTimeOfDay(0));
+    const pool = getBiomeRoster(chunk.biome, getTimeOfDay(0));
     const ordinary = new Set(
       [...pool.base, ...pool.uncommon, ...pool.rare].map((entry) => getBaseSpecies(entry.species)),
     );
@@ -3689,6 +3728,18 @@ describe('world', () => {
     expect(snapshot.getApricornTree(elsewhere?.[0] ?? 0)).toBeNull();
   });
 
+  it('grows honey trees in the forests and nowhere else', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.HoneyTree),
+    );
+
+    expect(chunk).not.toBeNull();
+    expect(growsHoneyTrees(chunk?.biome ?? Biome.Desert)).toBe(true);
+    expect(growsHoneyTrees(Biome.Grassland)).toBe(false);
+    expect(growsHoneyTrees(Biome.Taiga)).toBe(false);
+  });
+
   it('bears one apricorn colour a tree, and a handful of it', () => {
     const draw = (value: number) => () => value;
 
@@ -3925,6 +3976,21 @@ describe('world', () => {
     );
 
     expect(landlocked?.kind).toBe('item');
+
+    // ...but a pond in the same grassland draws from its water pool
+    const pond = resolvePhenomenon(
+      Phenomenon.RipplingWater,
+      Biome.Grassland,
+      TimeOfDay.Morning,
+      (() => {
+        const values = [0.9, 0.5, 0];
+        return () => values.shift() ?? 0.999;
+      })(),
+      null,
+      SpawnSurface.Water,
+    );
+
+    expect(pond?.kind).toBe('pokemon');
   });
 
   it('produces varied biomes across a region', () => {
@@ -4081,10 +4147,8 @@ describe('chunk snapshot', () => {
     // fixtures are not standing on and stops
     const packed = new ChunkSnapshot(chunk, NOON);
     // Whatever is going on this hour holds its cell too, so the room
-    // left is what nothing else is standing on. The water is not room
-    // for everybody: a lake in dry country takes swimmers only, so it
-    // is what stops this filling the grid corner to corner
-    const biomes = chunk.getCellBiomes();
+    // left is what nothing else is standing on. A cell whose surface
+    // has no pool here, such as a pond with no water pool, stays empty
     const room = centeredCells(PLACEMENT_AREA).filter(
       (cell) =>
         !chunk.getLandmarkCells().has(cell) &&
@@ -4093,53 +4157,72 @@ describe('chunk snapshot', () => {
         !chunk.getFaceCells().has(cell) &&
         !packed.getPhenomena().has(cell),
     );
-    const dry = room.filter(
-      (cell) => chunk.getCellRole(cell) !== 'water' || isWaterBiome(biomes[cell]),
-    );
+    const stocked = room.filter((cell) => pickSpawn(packed.getCellPool(cell), () => 0) != null);
 
     packed.getSpawns(1000);
 
     const filled = [...packed.getSpawnCells().keys()];
 
-    expect(filled.length).toBeGreaterThanOrEqual(dry.length);
+    expect(filled.length).toBeGreaterThanOrEqual(stocked.length);
     expect(filled.length).toBeLessThanOrEqual(room.length);
-    for (const cell of dry) {
+    for (const cell of stocked) {
       expect(filled).toContain(cell);
     }
   });
 
-  it('leaves a lake in dry country to what swims in it or flies over it', () => {
+  it('stands every spawn on a surface its species lives on', () => {
     const world = new World('overworld');
     const NOON = 12 * 60 * 60 * 1000;
-    let checked = 0;
-    let airborne = 0;
+    let swimming = 0;
 
-    // A Rhyhorn standing in the middle of a pond is the country's pool
-    // answering a question nobody asked it. A country that is itself
-    // water is not asked: everything in its pool was chosen knowing so
+    // Neither a Rhyhorn in the middle of a pond nor a Magikarp on the sand
     for (let x = -12; x < 12; x++) {
       for (let y = -12; y < 12; y++) {
         const chunk = world.getChunk(x, y);
-        const biomes = chunk.getCellBiomes();
         const snapshot = new ChunkSnapshot(chunk, NOON);
 
         snapshot.getSpawns(SPAWN_COUNT);
         for (const [cell, spawn] of snapshot.getSpawnCells()) {
-          if (chunk.getCellRole(cell) !== 'water' || isWaterBiome(biomes[cell])) {
-            continue;
-          }
-          checked++;
-          expect(swims(spawn[0]) || floats(spawn[0])).toBe(true);
-          if (!swims(spawn[0])) {
-            airborne++;
+          const surface = chunk.getCellSurface(cell);
+
+          expect(fitsSurface(spawn[0], surface), getSpeciesData(spawn[0]).name).toBe(true);
+          if (surface === SpawnSurface.Water) {
+            swimming++;
           }
         }
       }
     }
-    expect(checked).toBeGreaterThan(0);
-    // And the water is not the swimmers' alone: a pond with nothing
-    // over it would mean the rule was written and never reached
-    expect(airborne).toBeGreaterThan(0);
+    // A pond with nothing in it would mean the water pools were never reached
+    expect(swimming).toBeGreaterThan(0);
+  });
+
+  it("keeps a sea's islands to what lives on land", () => {
+    const world = new World('overworld');
+    const NOON = 12 * 60 * 60 * 1000;
+    let ashore = 0;
+
+    for (let y = -80; y <= 80 && ashore === 0; y += 2) {
+      for (let x = -80; x <= 80 && ashore === 0; x += 2) {
+        const chunk = world.getChunk(x, y);
+
+        if (!isOpenSea(chunk.biome)) {
+          continue;
+        }
+
+        const snapshot = new ChunkSnapshot(chunk, NOON);
+
+        snapshot.getSpawns(SPAWN_COUNT);
+        for (const [cell, spawn] of snapshot.getSpawnCells()) {
+          if (chunk.getCellSurface(cell) === SpawnSurface.Land) {
+            ashore++;
+            expect(fitsSurface(spawn[0], SpawnSurface.Land), getSpeciesData(spawn[0]).name).toBe(
+              true,
+            );
+          }
+        }
+      }
+    }
+    expect(ashore).toBeGreaterThan(0);
   });
 
   it('places fixtures right up to the chunk edge, leaving no lattice of bare corridors', () => {
@@ -5552,7 +5635,7 @@ describe('buddy copy', () => {
     [Abilities.CompoundEyes, '2.5x', COMPOUND_EYES_HELD_BOOST],
     [Abilities.Pickup, 'every 512 steps', PICKUP_STEP_INTERVAL],
     [Abilities.HoneyGather, 'every 384 steps', HONEY_STEP_INTERVAL],
-    [Abilities.Gluttony, '1.5x as long', GLUTTONY_FEAST],
+    [Abilities.Gluttony, '1.5x as far', GLUTTONY_FEAST],
     [Abilities.SuperLuck, 'critical 2x as often', KEEN_CRITICAL_BOOST],
     [Abilities.Sniper, '2 chances', SNIPER_AIMS],
     [Abilities.KeenEye, 'lifts by 3', LEVEL_FLOOR_LIFT],

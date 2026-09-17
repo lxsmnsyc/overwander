@@ -165,6 +165,18 @@ export interface OpenSheet {
   readOnly?: boolean;
 }
 
+/**
+ * One field move the board can use where the player stands, handed to
+ * the menu bar to offer. `active` is Surf or Fly in use, and `busy` is
+ * a Dig or Teleport still on its way
+ */
+export interface FieldMoveOffer {
+  name: string;
+  active: boolean;
+  busy: boolean;
+  use: () => void;
+}
+
 export interface GameState {
   dialog: Accessor<GameDialog>;
   setDialog: Setter<GameDialog>;
@@ -248,6 +260,12 @@ export interface GameState {
    */
   weather: Accessor<Weather | null>;
   setWeather: Setter<Weather | null>;
+  /**
+   * The buddy's field moves usable right here, travelling from the board
+   * to the menu bar the way the place's name does. Empty off the board
+   */
+  fieldMoves: Accessor<FieldMoveOffer[]>;
+  setFieldMoves: Setter<FieldMoveOffer[]>;
   /**
    * The raid lobby the player is in, shown inside the raids dialog
    */
@@ -493,6 +511,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   };
   const [place, setPlace] = createSignal<string | null>(null);
   const [weather, setWeather] = createSignal<Weather | null>(null);
+  const [fieldMoves, setFieldMoves] = createSignal<FieldMoveOffer[]>([]);
 
   // A profile on first sight, seeded from whatever the sign-in
   // already knows. The game reads a profile everywhere, so a player
@@ -783,6 +802,8 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         weather,
         setWeather,
         setPlace,
+        fieldMoves,
+        setFieldMoves,
         raid,
         setRaid,
         duel,

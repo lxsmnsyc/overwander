@@ -4,13 +4,23 @@ import Abilities from '../../ids/abilities';
 import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerGligarSpecies(): void {
   registerSpecies(Species.Gligar, {
     dexNumber: 207,
+    evolvesInto: [
+      {
+        species: Species.Gliscor,
+        method: EvolutionMethod.Level | EvolutionMethod.HeldItem | EvolutionMethod.TimeOfDay,
+        level: 35,
+        item: Items.RazorFang,
+        time: TimeOfDay.Evening | TimeOfDay.Night,
+      },
+    ],
     name: 'Gligar',
     category: 'Fly Scorpion Pokemon',
     height: 1.1,
@@ -40,6 +50,8 @@ export default function registerGligarSpecies(): void {
         20: [Moves.QuickAttack],
         28: [Moves.FeintAttack],
         36: [Moves.Slash],
+        38: [Moves.UTurn],
+        42: [Moves.XScissor],
         44: [Moves.Screech],
         52: [Moves.Guillotine],
       },
@@ -83,8 +95,32 @@ export default function registerGligarSpecies(): void {
         Moves.SteelWing,
         Moves.Substitute,
         Moves.SwordsDance,
+        Moves.AquaTail,
+        Moves.Captivate,
+        Moves.DarkPulse,
+        Moves.Defog,
+        Moves.EarthPower,
+        Moves.Fling,
+        Moves.NaturalGift,
+        Moves.Payback,
+        Moves.PoisonJab,
+        Moves.RockPolish,
+        Moves.Roost,
+        Moves.StealthRock,
+        Moves.StoneEdge,
+        Moves.Tailwind,
       ],
-      egg: [Moves.Counter, Moves.MetalClaw, Moves.RazorWind, Moves.WingAttack, Moves.SandTomb],
+      egg: [
+        Moves.Counter,
+        Moves.MetalClaw,
+        Moves.RazorWind,
+        Moves.WingAttack,
+        Moves.SandTomb,
+        Moves.CrossPoison,
+        Moves.Feint,
+        Moves.NightSlash,
+        Moves.PowerTrick,
+      ],
     },
   });
 }

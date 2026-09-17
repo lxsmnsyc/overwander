@@ -37,6 +37,10 @@ const FAMILY_TEACHABLE = [
   Moves.Endure,
   Moves.Swagger,
   Moves.SleepTalk,
+  Moves.Captivate,
+  Moves.EnergyBall,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
 ];
 
 export default function registerShroomishSpecies(): void {
@@ -79,12 +83,14 @@ export default function registerShroomishSpecies(): void {
         16: [Moves.MegaDrain],
         22: [Moves.Headbutt],
         28: [Moves.PoisonPowder],
+        29: [Moves.WorrySeed],
         36: [Moves.Growth],
+        41: [Moves.SeedBomb],
         45: [Moves.GigaDrain],
         54: [Moves.Spore],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Charm, Moves.HelpingHand, Moves.FalseSwipe, Moves.FakeTears],
+      egg: [Moves.Charm, Moves.HelpingHand, Moves.FalseSwipe, Moves.FakeTears, Moves.WakeUpSlap],
     },
   });
 
@@ -119,7 +125,9 @@ export default function registerShroomishSpecies(): void {
         22: [Moves.Headbutt],
         23: [Moves.MachPunch],
         28: [Moves.Counter],
+        29: [Moves.ForcePalm],
         36: [Moves.SkyUppercut],
+        41: [Moves.SeedBomb],
         45: [Moves.MindReader],
         54: [Moves.DynamicPunch],
       },
@@ -141,6 +149,13 @@ export default function registerShroomishSpecies(): void {
         Moves.MudSlap,
         Moves.FuryCutter,
         Moves.ThunderPunch,
+        Moves.DrainPunch,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.StoneEdge,
+        Moves.VacuumWave,
+        Moves.WorrySeed,
       ],
     },
   });

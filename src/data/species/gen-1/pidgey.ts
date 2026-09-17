@@ -43,6 +43,12 @@ const FAMILY_TEACHABLE = [
   Moves.AerialAce,
   Moves.Facade,
   Moves.SecretPower,
+  Moves.Captivate,
+  Moves.Defog,
+  Moves.NaturalGift,
+  Moves.OminousWind,
+  Moves.Pluck,
+  Moves.UTurn,
 ];
 
 export default function registerPidgeySpecies(): void {
@@ -85,10 +91,20 @@ export default function registerPidgeySpecies(): void {
         28: [Moves.WingAttack],
         31: [Moves.FeatherDance],
         36: [Moves.Agility],
+        37: [Moves.Roost],
+        41: [Moves.Tailwind],
         44: [Moves.MirrorMove],
+        49: [Moves.AirSlash],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.FeintAttack, Moves.Foresight, Moves.SteelWing, Moves.Pursuit, Moves.AirCutter],
+      egg: [
+        Moves.FeintAttack,
+        Moves.Foresight,
+        Moves.SteelWing,
+        Moves.Pursuit,
+        Moves.AirCutter,
+        Moves.BraveBird,
+      ],
     },
   });
 
@@ -131,7 +147,10 @@ export default function registerPidgeySpecies(): void {
         31: [Moves.WingAttack],
         34: [Moves.FeatherDance],
         40: [Moves.Agility],
+        42: [Moves.Roost],
+        47: [Moves.Tailwind],
         49: [Moves.MirrorMove],
+        57: [Moves.AirSlash],
       },
       teachable: [...FAMILY_TEACHABLE],
     },
@@ -167,10 +186,12 @@ export default function registerPidgeySpecies(): void {
         21: [Moves.Whirlwind],
         31: [Moves.WingAttack],
         34: [Moves.FeatherDance],
-        44: [Moves.Agility],
+        44: [Moves.Agility, Moves.Roost],
+        50: [Moves.Tailwind],
         54: [Moves.MirrorMove],
+        62: [Moves.AirSlash],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

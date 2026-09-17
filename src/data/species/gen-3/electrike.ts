@@ -40,6 +40,10 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.Swift,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.MagnetRise,
+  Moves.NaturalGift,
 ];
 
 export default function registerElectrikeSpecies(): void {
@@ -83,12 +87,20 @@ export default function registerElectrikeSpecies(): void {
         20: [Moves.Spark],
         25: [Moves.OdorSleuth],
         28: [Moves.Roar],
-        33: [Moves.Bite],
+        33: [Moves.Bite, Moves.ThunderFang],
         36: [Moves.Thunder],
-        41: [Moves.Charge],
+        41: [Moves.Charge, Moves.Discharge],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Headbutt, Moves.Crunch, Moves.Uproar, Moves.Curse],
+      egg: [
+        Moves.Headbutt,
+        Moves.Crunch,
+        Moves.Uproar,
+        Moves.Curse,
+        Moves.FireFang,
+        Moves.IceFang,
+        Moves.Switcheroo,
+      ],
     },
   });
 
@@ -120,16 +132,18 @@ export default function registerElectrikeSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.ThunderWave, Moves.Leer, Moves.Howl],
+        1: [Moves.Tackle, Moves.ThunderWave, Moves.Leer, Moves.Howl, Moves.FireFang],
         17: [Moves.QuickAttack],
         20: [Moves.Spark],
         25: [Moves.OdorSleuth],
         31: [Moves.Roar],
+        37: [Moves.ThunderFang],
         39: [Moves.Bite],
         45: [Moves.Thunder],
+        49: [Moves.Discharge],
         53: [Moves.Charge],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

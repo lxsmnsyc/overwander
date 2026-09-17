@@ -16,7 +16,7 @@ import AleaRNG from '../../core/alea';
 import type { Items } from '../../data/ids/items';
 import { getRaidSpecies } from '../../data/items/raid-items';
 import Biome from '../../data/ids/biome';
-import { getSpeciesLair } from '../../data/overworld/lair';
+import { getSpeciesLairs } from '../../data/overworld/lair';
 import { getSql, tx } from '../db';
 import { readBattle, readRaid, readRaidIn, writeRaid } from '../raid-io';
 import { holdsItem } from '../inventory';
@@ -271,7 +271,7 @@ export async function hostMythicalRaid(
     // The relic calls the mythical out to the place it has always
     // been called from, whatever ground the player is standing on —
     // which is nowhere the world contains
-    lair: getSpeciesLair(species),
+    lair: getSpeciesLairs(species)[0] ?? null,
     species,
     traitValue: new AleaRNG(`${id}:mythical`).int32(),
     host: uid,

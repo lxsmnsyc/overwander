@@ -1,0 +1,10 @@
+Every cell is a spawn surface (`Chunk.getCellSurface`): land, water, or ice (water in a biome whose water is drawn frozen, `isIceBiome`). An open sea's islands are land. A spawn draws its cell first, then rolls from the biome's pool for that surface: `registerSpawnPool`, `registerWaterPool` or `registerIcePool` in `src/data/biome/`.
+
+- A species' `habitat` is `Water`, `Amphibious`, or ground when left out.
+- A water-only species goes only in water pools, a ground species only in land and ice pools, and an amphibious one in any of them.
+- A flier is ground unless its data says otherwise.
+- A new Water type needs a habitat. `test/data.test.ts` fails when one is missing or when a pool breaks the rule (`fitsSurface`).
+- Whole-biome readers (raids, nests, trainers) use `getBiomeRoster`, every surface merged.
+- An ice cell with no ice pool rolls from land, and a water cell with no water pool stays empty.
+
+Full convention: `.agents/skills/spawn-surfaces/SKILL.md`.

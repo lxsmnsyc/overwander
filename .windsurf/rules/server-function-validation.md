@@ -1,0 +1,10 @@
+A `'use server'` function is an HTTP endpoint: its parameter types are erased at build time, so the arguments that arrive are whatever the caller sent, and `src/server/` acts on them over a connection row-level security does not bind.
+
+- Check every parameter at the top of the body, one line each, in declaration order, before `requireUid`.
+- `check` and the schemas come from `src/server/validate.ts`: `ID` for a row key, `GAME_ID` for a registry id, `CHUNK_COORDINATE` and `CELL` for where somebody says they are, `OFFSET` and `LOCALE` for their zone, `UID` for an account.
+- A new shape gets a new exported schema in `validate.ts`, never an inline one at the call site.
+- Every array schema carries a `maxLength`, since an unbounded list is a request to do unbounded work.
+- Check the shape, not the rule: whether the player owns the catch or may reach the landmark stays in `src/server/`.
+- Nothing is coerced; the argument comes back as it arrived.
+
+Full convention: `.agents/skills/server-function-validation/SKILL.md`.

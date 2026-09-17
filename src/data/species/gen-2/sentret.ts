@@ -53,6 +53,15 @@ const FAMILY_TEACHABLE = [
   Moves.SolarBeam,
   Moves.Thunderbolt,
   Moves.WaterPulse,
+  Moves.AquaTail,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.Fling,
+  Moves.GrassKnot,
+  Moves.LastResort,
+  Moves.NaturalGift,
+  Moves.ShadowClaw,
+  Moves.UTurn,
 ];
 
 export default function registerSentretSpecies(): void {
@@ -88,7 +97,7 @@ export default function registerSentretSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        31: [Moves.FollowMe],
+        31: [Moves.FollowMe, Moves.SuckerPunch],
         1: [Moves.Tackle, Moves.Scratch],
         5: [Moves.DefenseCurl],
         11: [Moves.QuickAttack],
@@ -96,6 +105,7 @@ export default function registerSentretSpecies(): void {
         25: [Moves.Slam],
         33: [Moves.Rest],
         41: [Moves.Amnesia],
+        42: [Moves.MeFirst],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -142,12 +152,14 @@ export default function registerSentretSpecies(): void {
     learnSet: {
       level: {
         19: [Moves.HelpingHand],
+        36: [Moves.SuckerPunch],
         37: [Moves.FollowMe],
         1: [Moves.Scratch, Moves.QuickAttack, Moves.DefenseCurl],
         18: [Moves.FurySwipes],
         28: [Moves.Slam],
         38: [Moves.Rest],
         48: [Moves.Amnesia],
+        50: [Moves.MeFirst],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -158,6 +170,8 @@ export default function registerSentretSpecies(): void {
         Moves.RockSmash,
         Moves.Substitute,
         Moves.Thunder,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
       ],
     },
   });

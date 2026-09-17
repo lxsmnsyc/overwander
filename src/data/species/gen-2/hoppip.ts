@@ -37,6 +37,11 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.Substitute,
   Moves.SwordsDance,
+  Moves.Captivate,
+  Moves.EnergyBall,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
+  Moves.SeedBomb,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll, Abilities.LeafGuard];
@@ -88,6 +93,8 @@ export default function registerHoppipSpecies(): void {
         20: [Moves.LeechSeed],
         25: [Moves.CottonSpore],
         30: [Moves.MegaDrain],
+        31: [Moves.UTurn],
+        34: [Moves.WorrySeed],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -142,7 +149,8 @@ export default function registerHoppipSpecies(): void {
         ...POWDERS,
         22: [Moves.LeechSeed],
         29: [Moves.CottonSpore],
-        36: [Moves.MegaDrain],
+        36: [Moves.MegaDrain, Moves.UTurn],
+        40: [Moves.WorrySeed],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.DoubleEdge],
     },
@@ -181,9 +189,11 @@ export default function registerHoppipSpecies(): void {
         ...POWDERS,
         22: [Moves.LeechSeed],
         33: [Moves.CottonSpore],
+        36: [Moves.UTurn],
+        40: [Moves.WorrySeed],
         44: [Moves.MegaDrain],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.DoubleEdge],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.DoubleEdge, Moves.GigaImpact],
     },
   });
 }

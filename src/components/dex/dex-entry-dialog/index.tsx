@@ -1,15 +1,18 @@
-import { type JSX, Suspense, createResource } from 'solid-js';
+import { For, type JSX, Show, Suspense, createResource } from 'solid-js';
 import BattleData from '../../app/battle-data';
 import { getCandyCount } from '../../../auth/candy';
-import { getSpeciesDexEntry } from '../../../auth/pokedex';
+import { getPokedex, getSpeciesDexEntry } from '../../../auth/pokedex';
 import type { Species } from '../../../data/ids/species';
-import { getSpeciesData, getSpeciesForms } from '../../../data/species';
+import { getSpeciesData, getSpeciesForms, isBaseForm } from '../../../data/species';
 import { hasFemaleSheet } from '../../../canvas/species-sprites';
-import { Button, Dialog, DialogActions, Note, StepButton } from '../../styled';
-import { DexEntryBody, type DexEntryDialogProps } from './body';
+import { Badge, CloseButton, Dialog, Divider, Meta, Note, StepButton } from '../../styled';
+import TypeBadge from '../../sprites/TypeBadge';
+import { dexLabel } from '../PokedexGrid';
+import { answered } from '../../app/resource-reads';
+import { DexEntryBody, type DexEntryDialogProps, type DexReads } from './body';
 import { dexOrder } from './species-facts';
 
-export type { DexEntryDialogProps };
+export type { DexEntryDialogProps, DexReads };
 
 /**
  * One species in full: what it is, where it lives and what it can do.
@@ -40,12 +43,15 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
   // full and nothing else on the page
   const [dex] = createResource(
     () => (props.species == null ? null : ([props.player, props.species] as const)),
-    async ([player, species]) => getSpeciesDexEntry(player, species),
+    async ([player, species]) => (props.reads?.entry ?? getSpeciesDexEntry)(player, species),
   );
 
   const [candy] = createResource(
     () => (props.species == null ? null : ([props.player, props.species] as const)),
-    async ([player, species]) => getCandyCount(player, getSpeciesData(species).family),
+    async ([player, species]) =>
+      props.reads == null
+        ? getCandyCount(player, getSpeciesData(species).family)
+        : props.reads.candy(player, species),
   );
 
   /**
@@ -53,6 +59,26 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
    * the body, so the page waits for the answer with everything else
    * rather than growing a column halfway through being looked at
    */
+  // The whole dex, for the stages of the line other than this one
+  const [pokedex] = createResource(
+    () => (props.species == null ? null : props.player),
+    async (player) => (props.reads?.pokedex ?? getPokedex)(player),
+  );
+
+  /**
+   * Whether the reader has met this species, read without waiting so the
+   * top row never holds the panel up
+   */
+  const tally = (): { met: boolean; seen: number; caught: number } => {
+    const entry = answered(dex);
+
+    if (entry == null || entry.species !== props.species) {
+      return { met: false, seen: 0, caught: 0 };
+    }
+    return { met: entry.met, seen: entry.seen.total, caught: entry.caught.total };
+  };
+  const met = (): boolean => tally().met;
+
   const [female] = createResource(
     () => props.species ?? null,
     async (species) => hasFemaleSheet(species),
@@ -64,10 +90,9 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
    * at the last one instead of finding themselves back at the first
    * wondering what they missed.
    *
-   * **Which list is being walked depends on what was opened.** A
-   * pokemon with forms was reached through its forms grid, so the
-   * arrows walk the alphabet and stop at either end of it; everything
-   * else walks the printed dex
+   * **Which list is being walked depends on what is showing.** A base
+   * form is a dex entry like any other, so it walks the printed dex; an
+   * alternate form walks its own set of forms and stops at either end
    */
   const neighbour = (step: number): Species | null => {
     const species = props.species;
@@ -76,8 +101,7 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
       return null;
     }
 
-    const shapes = getSpeciesForms(species);
-    const listed = shapes.length > 1 ? shapes : dexOrder();
+    const listed = isBaseForm(species) ? dexOrder() : getSpeciesForms(species);
     const at = listed.indexOf(species);
     const wanted = at + step;
 
@@ -97,32 +121,51 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
 
   return (
     <Dialog
-      width="wide"
+      width="broad"
+      layout="sheet"
       isOpen={props.species != null}
       onClose={props.onClose}
-      // Named apart from the dex it was opened out of: two dialogs
-      // both called "Pokedex" are two panels a player cannot tell
-      // apart when one is standing on the other
+      // Named apart from the dex it was opened out of, and announced by
+      // that name; the species itself heads the top row
       title="Dex Entry"
-      // The dex either side of this entry. In the top bar rather than
-      // beside the sprite: they walk the dex rather than the pokemon,
-      // and they stay put however far down the entry is scrolled
-      lead={<StepButton label="Previous pokemon" way="previous" onPress={walk(-1)} />}
-      aside={<StepButton label="Next pokemon" way="next" onPress={walk(1)} />}
-      terse
+      quiet
+      bar={
+        <>
+          <StepButton label="Previous pokemon" way="previous" onPress={walk(-1)} />
+          <span class="mr-auto flex min-w-0 flex-wrap items-center gap-2 text-left">
+            <Show when={props.species}>
+              {(species) => (
+                <>
+                  <h3 class="truncate">
+                    {dexLabel(getSpeciesData(species()).dexNumber)}{' '}
+                    {met() ? getSpeciesData(species()).name : '???'}
+                  </h3>
+                  <Meta>{met() ? getSpeciesData(species()).category : '??? Pokemon'}</Meta>
+                  <Show when={met()}>
+                    <Divider />
+                    <For each={getSpeciesData(species()).types}>
+                      {(type) => <TypeBadge type={type} />}
+                    </For>
+                    <Badge tone="tide">{tally().seen} seen</Badge>
+                    <Badge tone="leaf">{tally().caught} caught</Badge>
+                  </Show>
+                </>
+              )}
+            </Show>
+          </span>
+          <StepButton label="Next pokemon" way="next" onPress={walk(1)} />
+          <CloseButton onPress={props.onClose} />
+        </>
+      }
       description="One species in full: what it is, where it lives, and everything it can learn."
     >
       <Suspense fallback={<Note>Reading the dex…</Note>}>
         {/* An entry lists what it can learn and what it can hold, so
             it waits for the two registries the walk does not */}
         <BattleData fallback={<Note>Reading the dex…</Note>}>
-          <DexEntryBody {...props} dex={dex} candy={candy} female={female} />
+          <DexEntryBody {...props} dex={dex} candy={candy} female={female} pokedex={pokedex} />
         </BattleData>
       </Suspense>
-
-      <DialogActions>
-        <Button onClick={props.onClose}>Close</Button>
-      </DialogActions>
     </Dialog>
   );
 }

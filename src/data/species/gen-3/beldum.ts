@@ -94,7 +94,7 @@ export default function registerBeldumSpecies(): void {
       level: {
         1: [Moves.TakeDown],
       },
-      teachable: [],
+      teachable: [Moves.IronHead, Moves.ZenHeadbutt],
     },
   });
 
@@ -131,17 +131,28 @@ export default function registerBeldumSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.TakeDown],
+        1: [Moves.TakeDown, Moves.MagnetRise],
         20: [Moves.Confusion, Moves.MetalClaw],
         26: [Moves.ScaryFace],
-        32: [Moves.Pursuit],
+        32: [Moves.Pursuit, Moves.BulletPunch],
         38: [Moves.Psychic],
         44: [Moves.IronDefense],
         50: [Moves.MeteorMash],
+        52: [Moves.ZenHeadbutt],
         56: [Moves.Agility],
         62: [Moves.HyperBeam],
       },
-      teachable: [...ARMED_TEACHABLE],
+      teachable: [
+        ...ARMED_TEACHABLE,
+        Moves.FlashCannon,
+        Moves.GrassKnot,
+        Moves.Gravity,
+        Moves.GyroBall,
+        Moves.IronHead,
+        Moves.NaturalGift,
+        Moves.RockPolish,
+        Moves.StealthRock,
+      ],
     },
   });
 
@@ -174,15 +185,28 @@ export default function registerBeldumSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.TakeDown, Moves.Confusion, Moves.MetalClaw, Moves.ScaryFace],
-        32: [Moves.Pursuit],
+        1: [Moves.TakeDown, Moves.Confusion, Moves.MetalClaw, Moves.ScaryFace, Moves.MagnetRise],
+        32: [Moves.Pursuit, Moves.BulletPunch],
         38: [Moves.Psychic],
         44: [Moves.IronDefense],
+        45: [Moves.HammerArm],
         55: [Moves.MeteorMash],
+        62: [Moves.ZenHeadbutt],
         66: [Moves.Agility],
         77: [Moves.HyperBeam],
       },
-      teachable: [...ARMED_TEACHABLE],
+      teachable: [
+        ...ARMED_TEACHABLE,
+        Moves.FlashCannon,
+        Moves.GigaImpact,
+        Moves.GrassKnot,
+        Moves.Gravity,
+        Moves.GyroBall,
+        Moves.IronHead,
+        Moves.NaturalGift,
+        Moves.RockPolish,
+        Moves.StealthRock,
+      ],
     },
   });
 }

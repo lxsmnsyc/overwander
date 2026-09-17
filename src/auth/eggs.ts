@@ -1,6 +1,7 @@
 import type { Species } from '../data/ids/species';
 import { type WalkReport, hatchEgg as hatchOnServerSide, recordSteps } from '../server/eggs';
 import { requireUid } from '../server/auth';
+import check, { COUNT, ID, OFFSET, TOKEN } from '../server/validate';
 import { announceBuddyChange } from './buddy-changes';
 import { syncServerClock } from './clock';
 import { getLocalOffset } from './local-time';
@@ -32,6 +33,8 @@ export async function walk(steps: number): Promise<WalkReport | null> {
 
 async function walkOnServer(token: string, steps: number): Promise<WalkReport | null> {
   'use server';
+  check(TOKEN, token);
+  check(COUNT, steps);
   return recordSteps(await requireUid(token), steps, await syncServerClock());
 }
 
@@ -60,5 +63,8 @@ async function hatchOnServer(
   offset: number,
 ): Promise<Species | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(OFFSET, offset);
   return hatchOnServerSide(await requireUid(token), catchId, await syncServerClock(), offset);
 }

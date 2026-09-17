@@ -1,6 +1,7 @@
 import { EventPriority } from '../../../core/event-emitter';
-import { Stages } from '../../../data/constants/stats';
+import { Stages, Stats } from '../../../data/constants/stats';
 import { StatFlags } from '../../../data/ids/moves';
+import type { Types } from '../../../data/constants/types';
 import type { UnitAttackEvent } from '../../events';
 import type Unit from '../../unit';
 import type Abilities from '../../../data/ids/abilities';
@@ -132,6 +133,33 @@ export function createShellArmorAbility(targetAbility: Abilities): (battle: Batt
     battle.on(BattleEvents.UnitAttackResolveCriticalHit, EventPriority.Post, (event) => {
       if (event.critical && event.parent.target.hasAbility(targetAbility)) {
         event.critical = false;
+      }
+    }),
+  );
+}
+
+/**
+ * Meta ability for the ones that shrug off whole types (Thick Fat,
+ * Heatproof): the attacker's stat is what is cut, so the type chart,
+ * same-type bonus and everything else keep their own say
+ * https://bulbapedia.bulbagarden.net/wiki/Thick_Fat_(Ability)
+ * https://bulbapedia.bulbagarden.net/wiki/Heatproof_(Ability)
+ */
+export function createThickFatAbility(
+  targetAbility: Abilities,
+  types: ReadonlySet<Types>,
+): (battle: Battle) => void {
+  const FACTOR = 0.5;
+
+  return createAbility(targetAbility, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+      if (
+        types.has(event.parent.type) &&
+        event.unit === event.parent.source &&
+        (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+        event.parent.target.hasAbility(targetAbility)
+      ) {
+        event.value *= FACTOR;
       }
     }),
   );

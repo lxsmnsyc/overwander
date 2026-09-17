@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerIcePool, registerSpawnPool } from './__create';
 
 /**
  * ColdDesert spawn pool, grouped by day-cycle period and rarity band
@@ -75,6 +75,7 @@ export default function registerColdDesertSpawns(): void {
         { species: Species.Cacturne, weight: 6 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Steelix, weight: 5 },
+        { species: Species.Gliscor, weight: 6 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },
@@ -104,6 +105,7 @@ export default function registerColdDesertSpawns(): void {
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Marowak, weight: 10 },
         { species: Species.Steelix, weight: 5 },
+        { species: Species.Gliscor, weight: 6 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },
@@ -111,6 +113,60 @@ export default function registerColdDesertSpawns(): void {
         { species: Species.Lunatone, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
+      special: [],
+    },
+  });
+  registerIcePool(Biome.ColdDesert, {
+    [TimeOfDay.Morning]: {
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [{ species: Species.Snorunt, weight: 22 }],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+      ],
+      elusive: [{ species: Species.Mamoswine, weight: 5 }],
+      special: [],
+    },
+    [TimeOfDay.Day]: {
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [{ species: Species.Snorunt, weight: 22 }],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+      ],
+      elusive: [{ species: Species.Mamoswine, weight: 5 }],
+      special: [],
+    },
+    [TimeOfDay.Evening]: {
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [
+        { species: Species.Snorunt, weight: 22 },
+        { species: Species.Sneasel, weight: 5 },
+      ],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
+      ],
+      elusive: [{ species: Species.Mamoswine, weight: 5 }],
+      special: [],
+    },
+    [TimeOfDay.Night]: {
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [
+        { species: Species.Snorunt, weight: 22 },
+        { species: Species.Sneasel, weight: 5 },
+      ],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
+      ],
+      elusive: [{ species: Species.Mamoswine, weight: 5 }],
       special: [],
     },
   });

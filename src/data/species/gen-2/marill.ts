@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -50,6 +50,10 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.SeismicToss,
   Moves.WaterPulse,
+  Moves.Captivate,
+  Moves.Fling,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ThickFat, Abilities.HugePower];
@@ -81,15 +85,18 @@ export default function registerMarillSpecies(): void {
       [Stats.Speed]: 40,
     },
     types: [Types.Water, Types.Fairy],
+    habitat: Habitat.Amphibious,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.SapSipper],
     eggGroups: [EggGroups.Water1, EggGroups.Fairy],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [...FAMILY_BIOMES],
+    biomes: [...FAMILY_BIOMES, Biome.Grassland, Biome.Woodland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        23: [Moves.AquaRing],
+        37: [Moves.AquaTail],
         45: [Moves.HydroPump],
         1: [Moves.Tackle],
         3: [Moves.DefenseCurl],
@@ -121,6 +128,7 @@ export default function registerMarillSpecies(): void {
       [Stats.Speed]: 50,
     },
     types: [Types.Water, Types.Fairy],
+    habitat: Habitat.Amphibious,
     abilities: [...FAMILY_ABILITIES],
     // Water Veil is this registry's rather than the mainline's,
     // filling a final evolution to four: a body of water this full
@@ -129,10 +137,12 @@ export default function registerMarillSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Fairy],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [...FAMILY_BIOMES],
+    biomes: [...FAMILY_BIOMES, Biome.Grassland, Biome.Woodland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        27: [Moves.AquaRing],
+        47: [Moves.AquaTail],
         57: [Moves.HydroPump],
         1: [Moves.Tackle, Moves.DefenseCurl, Moves.TailWhip, Moves.WaterGun],
         15: [Moves.Rollout],
@@ -146,6 +156,8 @@ export default function registerMarillSpecies(): void {
         Moves.RockSmash,
         Moves.HyperBeam,
         Moves.Substitute,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
       ],
     },
   });

@@ -8,7 +8,7 @@ import {
 } from '../data/biome';
 import type { SpawnEntry } from '../data/biome';
 import type Biome from '../data/ids/biome';
-import type { TimeOfDay } from '../data/ids/biome';
+import { SpawnSurface, type TimeOfDay } from '../data/ids/biome';
 import EggGroups from '../data/ids/egg-groups';
 import { APRICORNS, type Items } from '../data/ids/items';
 import type Families from '../data/ids/families';
@@ -182,8 +182,9 @@ function startled(
   time: TimeOfDay,
   random: () => number,
   featured: Families | null,
+  surface: SpawnSurface,
 ): Species | null {
-  const biomePool = getSpawnPool(biome, time);
+  const biomePool = getSpawnPool(biome, time, false, surface);
   const pool =
     featured == null
       ? biomePool
@@ -220,7 +221,8 @@ function startled(
  * any landmark hands over without a fee or a walk.
  *
  * Answers null when the biome has nothing in the bands a phenomenon
- * draws from
+ * draws from. The surface is the pool it startles out of, so a ripple
+ * on a pond draws from the biome's water
  */
 export function resolvePhenomenon(
   phenomenon: Phenomenon,
@@ -228,6 +230,7 @@ export function resolvePhenomenon(
   time: TimeOfDay,
   random: () => number,
   featured: Families | null = null,
+  surface = SpawnSurface.Land,
 ): PhenomenonReward | null {
   // One piece. Everything a phenomenon leaves is worth carrying home
   // on its own, so a handful of them would be a different landmark
@@ -247,7 +250,7 @@ export function resolvePhenomenon(
     return dropped();
   }
 
-  const species = startled(phenomenon, biome, time, random, featured);
+  const species = startled(phenomenon, biome, time, random, featured, surface);
 
   // A shadow over a biome with nothing that flies drops what it was
   // carrying rather than turning out to be nothing at all

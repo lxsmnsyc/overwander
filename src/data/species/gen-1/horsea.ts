@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -47,6 +47,9 @@ const FAMILY_TEACHABLE = [
   Moves.Facade,
   Moves.SecretPower,
   Moves.WaterPulse,
+  Moves.Captivate,
+  Moves.FlashCannon,
+  Moves.NaturalGift,
 ];
 
 export default function registerHorseaSpecies(): void {
@@ -73,12 +76,20 @@ export default function registerHorseaSpecies(): void {
       [Stats.Speed]: 60,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.SwiftSwim, Abilities.Sniper],
     hiddenAbilities: [Abilities.Damp],
     eggGroups: [EggGroups.Water1, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 225,
-    biomes: [Biome.Ocean, Biome.CoralReef, Biome.DeepOcean, Biome.KelpForest],
+    biomes: [
+      Biome.Ocean,
+      Biome.CoralReef,
+      Biome.DeepOcean,
+      Biome.KelpForest,
+      Biome.Beach,
+      Biome.RockyCoast,
+    ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -87,7 +98,9 @@ export default function registerHorseaSpecies(): void {
         15: [Moves.Leer],
         22: [Moves.WaterGun],
         29: [Moves.Twister],
+        30: [Moves.Brine],
         36: [Moves.Agility],
+        42: [Moves.DragonPulse],
         43: [Moves.HydroPump],
         50: [Moves.DragonDance],
       },
@@ -127,22 +140,25 @@ export default function registerHorseaSpecies(): void {
       [Stats.Speed]: 85,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.PoisonPoint, Abilities.Sniper],
     hiddenAbilities: [Abilities.Damp],
     eggGroups: [EggGroups.Water1, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Ocean, Biome.CoralReef, Biome.KelpForest],
+    biomes: [Biome.Ocean, Biome.CoralReef, Biome.KelpForest, Biome.Beach, Biome.RockyCoast],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Bubble, Moves.SmokeScreen, Moves.Leer, Moves.WaterGun],
         29: [Moves.Twister],
+        30: [Moves.Brine],
         40: [Moves.Agility],
         51: [Moves.HydroPump],
+        57: [Moves.DragonPulse],
         62: [Moves.DragonDance],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

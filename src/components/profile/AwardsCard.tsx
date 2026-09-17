@@ -25,6 +25,8 @@ import Awards, {
   JOHTO_HONORS,
   KANTO_BADGES,
   KANTO_HONORS,
+  SINNOH_BADGES,
+  SINNOH_HONORS,
 } from '../../data/ids/awards';
 import Npc, { EXECUTIVE_CHARSETS, EXECUTIVE_HONORS } from '../../data/overworld/npc';
 import {
@@ -47,7 +49,17 @@ import {
 } from '../../data/overworld/experts';
 import NpcSprite from '../overworld/NpcSprite';
 import ExtraSprite from '../sprites/ExtraSprite';
-import { Card, Detail, HoverCard, Meta, Note } from '../styled';
+import {
+  Card,
+  Detail,
+  HoverCard,
+  Meta,
+  Note,
+  TabBar,
+  TabButton,
+  TabGroup,
+  TabPane,
+} from '../styled';
 
 /**
  * The trainer's shelf, laid out the way the bag's tray is: a grid of
@@ -104,6 +116,16 @@ const AWARD_SPRITES: Partial<Record<Awards, [sheet: string, name: string]>> = {
   [Awards.GoldSpiritsSymbol]: ['badges/frontier-emerald', 'spirits-gold'],
   [Awards.SilverTacticsSymbol]: ['badges/frontier-emerald', 'tactics-silver'],
   [Awards.GoldTacticsSymbol]: ['badges/frontier-emerald', 'tactics-gold'],
+  // Sinnoh's sheet names its badges by number rather than by region,
+  // and the numbers are the gym order
+  [Awards.CoalBadge]: ['badges/sinnoh', '1'],
+  [Awards.ForestBadge]: ['badges/sinnoh', '2'],
+  [Awards.CobbleBadge]: ['badges/sinnoh', '3'],
+  [Awards.FenBadge]: ['badges/sinnoh', '4'],
+  [Awards.RelicBadge]: ['badges/sinnoh', '5'],
+  [Awards.MineBadge]: ['badges/sinnoh', '6'],
+  [Awards.IcicleBadge]: ['badges/sinnoh', '7'],
+  [Awards.BeaconBadge]: ['badges/sinnoh', '8'],
 };
 
 /**
@@ -212,15 +234,44 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.MattDefeated]: '#3c7ab0',
   [Awards.ShellyDefeated]: '#5a95c9',
   [Awards.ArchieDefeated]: '#2a4a9e',
+  [Awards.CoalBadge]: '#6f747c',
+  [Awards.ForestBadge]: '#5aa46a',
+  [Awards.CobbleBadge]: '#c98a4b',
+  [Awards.FenBadge]: '#4aa3b8',
+  [Awards.RelicBadge]: '#8a6fb8',
+  [Awards.MineBadge]: '#8f9aa8',
+  [Awards.IcicleBadge]: '#9fd7e8',
+  [Awards.BeaconBadge]: '#f2c14a',
+  [Awards.AaronDefeated]: '#6fae5a',
+  [Awards.BerthaDefeated]: '#b8935a',
+  [Awards.FlintDefeated]: '#d9542f',
+  [Awards.LucianDefeated]: '#7f6fc9',
+  [Awards.SinnohChampion]: '#e0b64f',
+  [Awards.SinnohDexMedal]: '#4a7fc9',
+  [Awards.GalacticGruntDefeated]: '#4a4f6a',
+  [Awards.MarsDefeated]: '#c9536f',
+  [Awards.JupiterDefeated]: '#8f5fa8',
+  [Awards.SaturnDefeated]: '#4a8fa8',
+  [Awards.CyrusDefeated]: '#3c5a8c',
+  [Awards.SilverTowerPrint]: '#b9c0c9',
+  [Awards.GoldTowerPrint]: '#e0b64f',
+  [Awards.SilverFactoryPrint]: '#b9c0c9',
+  [Awards.GoldFactoryPrint]: '#e0b64f',
+  [Awards.SilverArcadePrint]: '#b9c0c9',
+  [Awards.GoldArcadePrint]: '#e0b64f',
+  [Awards.SilverCastlePrint]: '#b9c0c9',
+  [Awards.GoldCastlePrint]: '#e0b64f',
+  [Awards.SilverHallPrint]: '#b9c0c9',
+  [Awards.GoldHallPrint]: '#e0b64f',
 };
 
 /**
  * The shelf's order: Kanto's 8 badges, its 4 elite marks, the title
  * and the dex medal, then Johto's 8 badges, its 4 marks and its
- * title and its medal, then Hoenn's 8 badges, which is all that
- * region pays so far, then the marks that belong to no region's
- * walk: Team Rocket's, from the rank and file up, and the legends'.
- * The walk itself, left to right, a region at a time
+ * title and its medal, then Hoenn's, then Sinnoh's 8 badges, its 4
+ * marks, its title and its medal, then the marks that belong to no
+ * region's walk: Team Rocket's, from the rank and file up, and the
+ * legends'. The walk itself, left to right, a region at a time
  */
 const SHELF = ((): Awards[] => {
   const walk = new Set<Awards>([
@@ -236,6 +287,10 @@ const SHELF = ((): Awards[] => {
     ...HOENN_HONORS,
     Awards.HoennChampion,
     Awards.HoennDexMedal,
+    ...SINNOH_BADGES,
+    ...SINNOH_HONORS,
+    Awards.SinnohChampion,
+    Awards.SinnohDexMedal,
     ...FRONTIER_SYMBOLS,
     ...SYNDICATE_HONORS,
   ]);
@@ -368,6 +423,8 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
   const johto = (): number => won(JOHTO_BADGES);
   const marks = (): number => won(JOHTO_HONORS);
   const hoenn = (): number => won(HOENN_BADGES);
+  const sinnoh = (): number => won(SINNOH_BADGES);
+  const seats = (): number => won(SINNOH_HONORS);
 
   const empties = (): number[] => fillers(SHELF.length);
 
@@ -394,7 +451,9 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
         the Elite Four{wins().has(Awards.KantoChampion) ? ', Champion' : ''}. Johto: {johto()} of{' '}
         {JOHTO_BADGES.length} badges, {marks()} of {JOHTO_HONORS.length} of the Elite Four
         {wins().has(Awards.JohtoChampion) ? ', Champion' : ''}. Hoenn: {hoenn()} of{' '}
-        {HOENN_BADGES.length} badges.
+        {HOENN_BADGES.length} badges. Sinnoh: {sinnoh()} of {SINNOH_BADGES.length} badges, {seats()}{' '}
+        of {SINNOH_HONORS.length} of the Elite Four
+        {wins().has(Awards.SinnohChampion) ? ', Champion' : ''}.
       </Meta>
     </div>
   );
@@ -498,57 +557,73 @@ function tintOf(trainer: TrainerClass): string | undefined {
   return TRAINER_TYPES[trainer].length === 0 ? undefined : TYPE_COLORS[type];
 }
 
-function AchievementShelves(props: { sheet: Resource<AchievementSheet> }): JSX.Element {
+/** One tray of achievement slots, filled out to whole rows */
+function Tray(props: { count: number; children: JSX.Element }): JSX.Element {
   return (
-    <div class="mx-auto flex w-full max-w-lg flex-col gap-2">
-      <Meta>Achievements</Meta>
+    <div class="mx-auto w-full max-w-lg">
       <div
         class="grid w-full grid-cols-6 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
           shadow-pop"
       >
-        <For each={props.sheet()?.lines ?? []}>
-          {([line, standing]) => (
-            <LineSlot name={LINE_NAMES[line]} deed={LINE_DEEDS[line]} standing={standing} />
-          )}
-        </For>
-        <For each={fillers((props.sheet()?.lines ?? []).length)}>{() => <Filler />}</For>
-      </div>
-      <Meta>Type specialists</Meta>
-      <div
-        class="grid w-full grid-cols-6 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
-          shadow-pop"
-      >
-        <For each={props.sheet()?.types ?? []}>
-          {([type, standing]) => (
-            <LineSlot
-              name={TYPE_NAMES[type]}
-              deed={`${TYPE_NAMES[type]} pokemon caught`}
-              standing={standing}
-              tint={TYPE_COLORS[type]}
-            />
-          )}
-        </For>
-        <For each={fillers((props.sheet()?.types ?? []).length)}>{() => <Filler />}</For>
-      </div>
-      <Meta>Trainers beaten</Meta>
-      <div
-        class="grid w-full grid-cols-6 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
-          shadow-pop"
-      >
-        <For each={props.sheet()?.trainers ?? []}>
-          {([trainer, standing]) => (
-            <LineSlot
-              name={TRAINER_BASE_NAMES[trainer]}
-              deed={`${TRAINER_BASE_NAMES[trainer]}s beaten`}
-              standing={standing}
-              tint={tintOf(trainer)}
-            />
-          )}
-        </For>
-        <For each={fillers((props.sheet()?.trainers ?? []).length)}>{() => <Filler />}</For>
+        {props.children}
+        <For each={fillers(props.count)}>{() => <Filler />}</For>
       </div>
     </div>
   );
+}
+
+function LineShelf(props: { sheet: Resource<AchievementSheet> }): JSX.Element {
+  return (
+    <Tray count={(props.sheet()?.lines ?? []).length}>
+      <For each={props.sheet()?.lines ?? []}>
+        {([line, standing]) => (
+          <LineSlot name={LINE_NAMES[line]} deed={LINE_DEEDS[line]} standing={standing} />
+        )}
+      </For>
+    </Tray>
+  );
+}
+
+function TypeShelf(props: { sheet: Resource<AchievementSheet> }): JSX.Element {
+  return (
+    <Tray count={(props.sheet()?.types ?? []).length}>
+      <For each={props.sheet()?.types ?? []}>
+        {([type, standing]) => (
+          <LineSlot
+            name={TYPE_NAMES[type]}
+            deed={`${TYPE_NAMES[type]} pokemon caught`}
+            standing={standing}
+            tint={TYPE_COLORS[type]}
+          />
+        )}
+      </For>
+    </Tray>
+  );
+}
+
+function TrainerShelf(props: { sheet: Resource<AchievementSheet> }): JSX.Element {
+  return (
+    <Tray count={(props.sheet()?.trainers ?? []).length}>
+      <For each={props.sheet()?.trainers ?? []}>
+        {([trainer, standing]) => (
+          <LineSlot
+            name={TRAINER_BASE_NAMES[trainer]}
+            deed={`${TRAINER_BASE_NAMES[trainer]}s beaten`}
+            standing={standing}
+            tint={tintOf(trainer)}
+          />
+        )}
+      </For>
+    </Tray>
+  );
+}
+
+/** Which shelf of the card is open */
+const enum AwardShelf {
+  Badges = 0,
+  Achievements = 1,
+  Types = 2,
+  Trainers = 3,
 }
 
 export interface AwardsCardProps {
@@ -561,12 +636,35 @@ export default function AwardsCard(props: AwardsCardProps): JSX.Element {
 
   return (
     <Card title="Awards">
-      <Suspense fallback={<Note>Reading the shelf…</Note>}>
-        <Shelf held={held} />
-      </Suspense>
-      <Suspense fallback={<Note>Counting the lifetime…</Note>}>
-        <AchievementShelves sheet={sheet} />
-      </Suspense>
+      {/* A shelf per tab, so none of them is a scroll away */}
+      <TabGroup horizontal defaultValue={AwardShelf.Badges} class="flex flex-col gap-3">
+        <TabBar>
+          <TabButton value={AwardShelf.Badges}>Badges</TabButton>
+          <TabButton value={AwardShelf.Achievements}>Achievements</TabButton>
+          <TabButton value={AwardShelf.Types}>Type specialists</TabButton>
+          <TabButton value={AwardShelf.Trainers}>Trainers beaten</TabButton>
+        </TabBar>
+        <TabPane value={AwardShelf.Badges}>
+          <Suspense fallback={<Note>Reading the shelf…</Note>}>
+            <Shelf held={held} />
+          </Suspense>
+        </TabPane>
+        <TabPane value={AwardShelf.Achievements}>
+          <Suspense fallback={<Note>Counting the lifetime…</Note>}>
+            <LineShelf sheet={sheet} />
+          </Suspense>
+        </TabPane>
+        <TabPane value={AwardShelf.Types}>
+          <Suspense fallback={<Note>Counting the lifetime…</Note>}>
+            <TypeShelf sheet={sheet} />
+          </Suspense>
+        </TabPane>
+        <TabPane value={AwardShelf.Trainers}>
+          <Suspense fallback={<Note>Counting the lifetime…</Note>}>
+            <TrainerShelf sheet={sheet} />
+          </Suspense>
+        </TabPane>
+      </TabGroup>
     </Card>
   );
 }

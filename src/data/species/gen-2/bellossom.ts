@@ -36,6 +36,7 @@ export default function registerBellossomSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Absorb, Moves.PetalDance, Moves.StunSpore, Moves.SweetScent, Moves.MagicalLeaf],
+        53: [Moves.LeafStorm],
         55: [Moves.SolarBeam],
       },
       teachable: [
@@ -69,6 +70,16 @@ export default function registerBellossomSpecies(): void {
         Moves.SludgeBomb,
         Moves.Substitute,
         Moves.SwordsDance,
+        Moves.Captivate,
+        Moves.DrainPunch,
+        Moves.EnergyBall,
+        Moves.Fling,
+        Moves.GastroAcid,
+        Moves.GigaImpact,
+        Moves.GrassKnot,
+        Moves.NaturalGift,
+        Moves.SeedBomb,
+        Moves.WorrySeed,
       ],
     },
   });

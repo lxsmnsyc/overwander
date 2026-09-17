@@ -44,6 +44,10 @@ const FAMILY_TEACHABLE = [
   Moves.Facade,
   Moves.RockTomb,
   Moves.SecretPower,
+  Moves.Captivate,
+  Moves.NaturalGift,
+  Moves.ShadowClaw,
+  Moves.StealthRock,
 ];
 
 export default function registerDiglettSpecies(): void {
@@ -84,7 +88,10 @@ export default function registerDiglettSpecies(): void {
         9: [Moves.Magnitude],
         17: [Moves.Dig],
         21: [Moves.FurySwipes],
+        23: [Moves.SuckerPunch],
         24: [Moves.SandAttack],
+        26: [Moves.EarthPower],
+        29: [Moves.MudBomb],
         31: [Moves.Slash],
         40: [Moves.Earthquake],
         49: [Moves.Fissure],
@@ -127,15 +134,25 @@ export default function registerDiglettSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Scratch, Moves.Growl, Moves.Dig, Moves.TriAttack, Moves.Magnitude],
+        1: [
+          Moves.Scratch,
+          Moves.Growl,
+          Moves.Dig,
+          Moves.TriAttack,
+          Moves.Magnitude,
+          Moves.NightSlash,
+        ],
         21: [Moves.FurySwipes],
+        23: [Moves.SuckerPunch],
         24: [Moves.SandAttack],
         26: [Moves.SandTomb],
+        28: [Moves.EarthPower],
+        33: [Moves.MudBomb],
         35: [Moves.Slash],
         47: [Moves.Earthquake],
         61: [Moves.Fissure],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.StoneEdge],
     },
   });
 }

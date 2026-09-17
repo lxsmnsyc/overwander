@@ -1,4 +1,5 @@
 import type { Listing, PlayerRow, RaidRow } from '../server/admin';
+import check, { FLAG, PAGE, STAFF_GIFT, TEXT, TOKEN, UID } from '../server/validate';
 import {
   listPlayers as listPlayersOnServer,
   listRaids as listRaidsOnServer,
@@ -30,6 +31,9 @@ async function playersOnServer(
   page: number,
 ): Promise<Listing<PlayerRow>> {
   'use server';
+  check(TOKEN, token);
+  check(TEXT, search);
+  check(PAGE, page);
   await requireStaff(token);
   return listPlayersOnServer(search, page);
 }
@@ -43,6 +47,8 @@ export async function getPlayer(uid: string): Promise<PlayerRow | null> {
 
 async function playerOnServer(token: string, uid: string): Promise<PlayerRow | null> {
   'use server';
+  check(TOKEN, token);
+  check(UID, uid);
   await requireStaff(token);
   return readPlayerOnServer(uid);
 }
@@ -58,6 +64,9 @@ export async function setPlayerRole(uid: string, role: string): Promise<string |
 
 async function roleOnServer(token: string, uid: string, role: string): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(UID, uid);
+  check(TEXT, role);
   return setRole(await requireStaff(token), uid, role);
 }
 
@@ -80,6 +89,10 @@ async function banOnServer(
   reason: string,
 ): Promise<boolean | null> {
   'use server';
+  check(TOKEN, token);
+  check(UID, uid);
+  check(FLAG, banned);
+  check(TEXT, reason);
   return setBan(await requireStaff(token), uid, banned, reason);
 }
 
@@ -93,6 +106,9 @@ async function raidsOnServer(
   page: number,
 ): Promise<Listing<RaidRow>> {
   'use server';
+  check(TOKEN, token);
+  check(TEXT, search);
+  check(PAGE, page);
   await requireStaff(token);
   return listRaidsOnServer(search, page);
 }
@@ -108,6 +124,8 @@ export async function offerGift(gift: StaffGift): Promise<boolean> {
 
 async function giftOnServer(token: string, gift: StaffGift): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(STAFF_GIFT, gift);
   await requireAdmin(token);
   return giveGift(gift, await syncServerClock());
 }
@@ -122,6 +140,7 @@ export async function listAllGifts(): Promise<GiftLedgerRow[]> {
 
 async function allGiftsOnServer(token: string): Promise<GiftLedgerRow[]> {
   'use server';
+  check(TOKEN, token);
   await requireAdmin(token);
   return listAllOnServer(await syncServerClock());
 }

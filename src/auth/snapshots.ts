@@ -4,6 +4,7 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { ItemStack } from '../data/overworld/item-pool';
 import type Chunk from '../overworld/chunk';
+import { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
 import ChunkSnapshot, {
   SNAPSHOT_INTERVAL,
@@ -18,16 +19,29 @@ import {
   spawnId,
 } from './snapshot-record';
 import { requireUid } from '../server/auth';
+import check, {
+  CELL,
+  CHUNK_COORDINATE,
+  CLAIM_QUERIES,
+  DEPTH,
+  ID,
+  LOCALE,
+  OFFSET,
+  TOKEN,
+} from '../server/validate';
 import {
   type ChunkClaims,
   type ClaimQuery,
+  type LatherResult,
   type NestOffer,
   claimApricornTree as claimApricornOnServerSide,
   claimBerryPatch as claimBerryOnServerSide,
   claimItemCache as claimCacheOnServerSide,
   claimNest as claimNestOnServerSide,
   claimPhenomenon as claimPhenomenonOnServerSide,
+  latherHoneyTree as latherHoneyTreeOnServerSide,
   listClaimsFor as listClaimsForOnServerSide,
+  listLatheredHoneyTrees as listLatheredHoneyTreesOnServerSide,
   meetSpawn,
   peekNest as peekNestOnServerSide,
   peekPhenomenonEgg as peekPhenomenonEggOnServerSide,
@@ -40,6 +54,8 @@ import type { EncounterRecord } from './encounter-record';
 import getSupabase, { type Unwatch, watchTable } from './supabase';
 import getIdToken from './session';
 
+export type { LatherResult } from '../server/overworld';
+
 /** The stored window plus its spawn rows, in the record shape */
 async function readSnapshotWindow(chunk: Chunk, offset: number): Promise<SnapshotRecord | null> {
   const { data } = await getSupabase()
@@ -47,6 +63,7 @@ async function readSnapshotWindow(chunk: Chunk, offset: number): Promise<Snapsho
     .select(
       'chunk_seed, zone, utc_offset, window_at, snapshot_spawns(idx, species, individual_value, trait_value)',
     )
+    .eq('generation', WORLD_GENERATION)
     .eq('chunk_seed', chunk.seed)
     .eq('zone', toZoneKey(asOffset(offset)))
     .maybeSingle();
@@ -115,13 +132,15 @@ async function resolveSnapshotWindow(
   chunk: Chunk,
   offset: number,
   count: number,
+  /** The stored window, when the caller has just read it, so it is not read again */
+  known?: SnapshotRecord | null,
 ): Promise<SnapshotRecord> {
   // The instant must come from the server's clock: a player whose
   // device is skewed would otherwise refresh a live window early or
   // hold an expired one. Only the zone it is read in is the player's
   await syncServerClock();
 
-  const existing = await readSnapshotWindow(chunk, offset);
+  const existing = known === undefined ? await readSnapshotWindow(chunk, offset) : known;
   const now = toLocalTime(serverNow(), offset);
 
   // A live window is adopted whole; its spawns are what everybody in
@@ -154,10 +173,12 @@ async function resolveSnapshotWindow(
   };
 
   // The publish is a definer function: shape-checked, and monotonic,
-  // so two racing publishers converge on one stored window and a
-  // stale one changes nothing. What is stored is re-read afterwards
-  // rather than assumed, since the race may have been lost
+  // so two racing publishers converge on one stored window. Not read
+  // back: a publisher that lost the race lost it to the same window,
+  // and a window's spawns are rolled from the chunk, the window and
+  // the zone alone, so what was stored is what was rolled here
   await getSupabase().rpc('publish_snapshot', {
+    p_generation: WORLD_GENERATION,
     p_seed: chunk.seed,
     p_zone: toZoneKey(asOffset(offset)),
     p_offset: asOffset(offset),
@@ -165,7 +186,7 @@ async function resolveSnapshotWindow(
     p_spawns: record.spawns,
   });
 
-  return (await readSnapshotWindow(chunk, offset)) ?? record;
+  return record;
 }
 
 /**
@@ -195,6 +216,7 @@ export async function listChunkWindows(seed: string): Promise<SnapshotRecord[]> 
     .select(
       'chunk_seed, zone, utc_offset, window_at, snapshot_spawns(idx, species, individual_value, trait_value)',
     )
+    .eq('generation', WORLD_GENERATION)
     .eq('chunk_seed', seed);
 
   const windows: SnapshotRecord[] = [];
@@ -214,13 +236,38 @@ export function watchSnapshotWindow(
   chunk: Chunk,
   offset: number,
   onChange: (record: SnapshotRecord | null) => void,
+  /** The window already held, so a change announcing that same window is not read */
+  heldAt?: () => number | undefined,
+  /** A window kept from before, which stands in for the first read */
+  kept?: SnapshotRecord,
 ): Unwatch {
+  const zone = toZoneKey(asOffset(offset));
+
+  // The filter can only name the chunk, so another zone's window is turned away here
   return watchTable(
     'snapshots',
     [`chunk_seed=eq.${chunk.seed}`],
     async () => readSnapshotWindow(chunk, offset),
     onChange,
+    {
+      wanted: (row) => row.zone === zone && Number(row.window_at) !== heldAt?.(),
+      initial: kept == null ? undefined : { value: kept },
+    },
   );
+}
+
+/**
+ * Visit a chunk and hand back its current window, publishing it when it
+ * is missing or has run out. `known` is the stored window the caller
+ * already holds, which spares reading it again
+ */
+export async function visitChunkWindow(
+  chunk: Chunk,
+  count: number,
+  offset: number,
+  known?: SnapshotRecord | null,
+): Promise<SnapshotRecord> {
+  return resolveSnapshotWindow(chunk, offset, count, known);
 }
 
 /**
@@ -237,7 +284,7 @@ export async function visitChunk(
   count: number,
   offset: number,
 ): Promise<[string, Spawn][]> {
-  const record = await resolveSnapshotWindow(chunk, offset, count);
+  const record = await visitChunkWindow(chunk, count, offset);
   // A spawn is named after the snapshot's key, which is what the
   // server re-derives the name from
   const key = new ChunkSnapshot(chunk, record.timestamp, offset).key;
@@ -299,6 +346,12 @@ async function claimCacheOnServer(
   depth: Depth,
 ): Promise<ItemStack[] | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return claimCacheOnServerSide(
     await requireUid(token),
     x,
@@ -339,6 +392,12 @@ async function claimBerryOnServer(
   depth: Depth,
 ): Promise<ItemStack | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return claimBerryOnServerSide(
     await requireUid(token),
     x,
@@ -378,6 +437,12 @@ async function claimApricornOnServer(
   depth: Depth,
 ): Promise<ItemStack | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return claimApricornOnServerSide(
     await requireUid(token),
     x,
@@ -422,6 +487,12 @@ async function peekNestOnServer(
   depth: Depth,
 ): Promise<NestOffer | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return peekNestOnServerSide(
     await requireUid(token),
     x,
@@ -461,6 +532,12 @@ async function peekPhenomenonEggOnServer(
   depth: Depth,
 ): Promise<NestOffer | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return peekPhenomenonEggOnServerSide(
     await requireUid(token),
     x,
@@ -486,6 +563,11 @@ export async function listClaimedOnServer(
   depth: Depth,
 ): Promise<number[]> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   const claims = await listClaimsForOnServerSide(
     await requireUid(token),
     [{ x, y, offset, depth }],
@@ -503,6 +585,11 @@ export async function listPickedOnServer(
   depth: Depth,
 ): Promise<number[]> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   const claims = await listClaimsForOnServerSide(
     await requireUid(token),
     [{ x, y, offset, depth }],
@@ -520,6 +607,11 @@ export async function listDugCachesOnServer(
   depth: Depth,
 ): Promise<number[]> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   const claims = await listClaimsForOnServerSide(
     await requireUid(token),
     [{ x, y, offset, depth }],
@@ -560,6 +652,13 @@ async function claimNestOnServer(
   depth: Depth,
 ): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  check(LOCALE, locale);
+  check(DEPTH, depth);
   return claimNestOnServerSide(
     await requireUid(token),
     x,
@@ -617,6 +716,13 @@ async function claimPhenomenonOnServer(
   depth: Depth,
 ): Promise<PhenomenonClaim | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  check(LOCALE, locale);
+  check(DEPTH, depth);
   return claimPhenomenonOnServerSide(
     await requireUid(token),
     x,
@@ -662,6 +768,12 @@ async function meetSpawnOnServer(
   depth: Depth,
 ): Promise<EncounterRecord | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(ID, spawn);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return meetSpawn(await requireUid(token), x, y, spawn, await syncServerClock(), offset, depth);
 }
 
@@ -672,6 +784,8 @@ function claimKey(query: ClaimQuery): string {
 // Last in the file, so adding it moved no other server function's place
 async function listClaimsOnServer(token: string, queries: ClaimQuery[]): Promise<ChunkClaims[]> {
   'use server';
+  check(TOKEN, token);
+  check(CLAIM_QUERIES, queries);
   return listClaimsForOnServerSide(await requireUid(token), queries, await syncServerClock());
 }
 
@@ -685,7 +799,7 @@ const readChunkClaims = batchedQuery(
     listClaimsOnServer(await getIdToken(), queries),
   // Answered in the order asked, so a query's place in the batch is its answer
   (answers, _query, index): ChunkClaims =>
-    answers.at(index) ?? { phenomena: [], patches: [], caches: [] },
+    answers.at(index) ?? { phenomena: [], patches: [], caches: [], honey: [] },
   { key: claimKey, limit: CLAIM_CHUNK_LIMIT },
 );
 
@@ -723,4 +837,68 @@ export async function listPickedBerryPatches(snapshot: ChunkSnapshot): Promise<n
  */
 export async function listClaimedItemCaches(snapshot: ChunkSnapshot): Promise<number[]> {
   return (await claimsOf(snapshot)).caches;
+}
+
+/** Which of this chunk's honey trees this player has lathered this window */
+export async function listLatheredHoneyTrees(snapshot: ChunkSnapshot): Promise<number[]> {
+  return (await claimsOf(snapshot)).honey;
+}
+
+// Nothing calls it since honey joined the batched claim lists, but it keeps its place
+export async function listLatheredOnServer(
+  token: string,
+  x: number,
+  y: number,
+  offset: number,
+): Promise<number[]> {
+  'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(OFFSET, offset);
+  return listLatheredHoneyTreesOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    await syncServerClock(),
+    offset,
+  );
+}
+
+/** Lather a honey tree: one jar spent, and whatever it draws out met on the spot */
+export async function latherHoneyTree(
+  snapshot: ChunkSnapshot,
+  cell: number,
+): Promise<LatherResult | null> {
+  await freshenWindow(snapshot);
+  return latherOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    snapshot.offset,
+  );
+}
+
+async function latherOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  offset: number,
+): Promise<LatherResult | null> {
+  'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  return latherHoneyTreeOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    await syncServerClock(),
+    offset,
+  );
 }

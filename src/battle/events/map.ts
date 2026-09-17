@@ -14,11 +14,13 @@ import type {
   CheckUnitCanChannelEvent,
   CheckUnitMoveAccuracyEvent,
   CheckUnitMoveContactEvent,
+  CheckUnitMoveGuardEvent,
   CheckUnitMoveHitsEvent,
   CheckUnitMoveImmunityEvent,
   CheckUnitMovePPEvent,
   CheckUnitMovePowerEvent,
   CheckUnitMovePriorityEvent,
+  CheckUnitMoveRedirectEvent,
   CheckUnitMoveStepsEvent,
   CheckUnitMoveTargetingEvent,
   CheckUnitMoveTimeEvent,
@@ -67,6 +69,7 @@ import type {
   CheckUnitItemThresholdEvent,
   CheckUnitStageEvent,
   CheckUnitStatEvent,
+  CheckUnitStatusDamageEvent,
   CheckUnitStatusDurationEvent,
   CheckUnitStatusImmunityEvent,
   CheckUnitWeightEvent,
@@ -121,6 +124,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitGrounded]: [CheckUnitGroundedEvent, EventPriority];
   [BattleEvents.CheckUnitWeight]: [CheckUnitWeightEvent, EventPriority];
   [BattleEvents.CheckUnitMoveContact]: [CheckUnitMoveContactEvent, EventPriority];
+  [BattleEvents.CheckUnitMoveGuard]: [CheckUnitMoveGuardEvent, EventPriority];
   [BattleEvents.UnitRevives]: [UnitSetValueEvent, EventPriority];
   [BattleEvents.UnitSetSlots]: [UnitSetValueEvent, EventPriority];
   [BattleEvents.CheckUnitMoveTargeting]: [CheckUnitMoveTargetingEvent, EventPriority];
@@ -281,6 +285,8 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitItemThreshold]: [CheckUnitItemThresholdEvent, EventPriority];
   [BattleEvents.CheckUnitDrain]: [CheckUnitDrainEvent, EventPriority];
   [BattleEvents.CheckUnitStatusDuration]: [CheckUnitStatusDurationEvent, EventPriority];
+  [BattleEvents.CheckUnitStatusDamage]: [CheckUnitStatusDamageEvent, EventPriority];
+  [BattleEvents.CheckUnitMoveRedirect]: [CheckUnitMoveRedirectEvent, EventPriority];
   [BattleEvents.CheckTeamStatusDuration]: [CheckTeamStatusDurationEvent, EventPriority];
   [BattleEvents.CheckUnitWeatherDuration]: [CheckUnitWeatherDurationEvent, EventPriority];
   [BattleEvents.UnitUpdateStatusTimer]: [UnitUpdateStatusTimerEvent, EventPriority];

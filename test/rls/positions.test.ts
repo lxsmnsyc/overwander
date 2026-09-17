@@ -18,8 +18,8 @@ beforeAll(async () => {
   stayer = await actor('stayer');
 
   await sql`
-    insert into positions (player, chunk_x, chunk_y, cell_x, cell_y, moved_at)
-    values (${walker.uid}, 3, -4, 5, 6, 1000)
+    insert into positions (player, generation, chunk_x, chunk_y, cell_x, cell_y, moved_at)
+    values (${walker.uid}, 1, 3, -4, 5, 6, 1000)
   `;
 });
 

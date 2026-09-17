@@ -50,6 +50,13 @@ const FAMILY_TEACHABLE = [
   Moves.ThunderPunch,
   Moves.FirePunch,
   Moves.SleepTalk,
+  Moves.Captivate,
+  Moves.Fling,
+  Moves.FocusBlast,
+  Moves.NaturalGift,
+  Moves.PoisonJab,
+  Moves.RockClimb,
+  Moves.VacuumWave,
 ];
 
 export default function registerMakuhitaSpecies(): void {
@@ -91,10 +98,11 @@ export default function registerMakuhitaSpecies(): void {
         13: [Moves.VitalThrow],
         19: [Moves.FakeOut],
         22: [Moves.Whirlwind],
-        28: [Moves.KnockOff],
+        28: [Moves.KnockOff, Moves.ForcePalm],
         31: [Moves.SmellingSalts],
+        34: [Moves.WakeUpSlap],
         37: [Moves.BellyDrum],
-        40: [Moves.Endure],
+        40: [Moves.Endure, Moves.CloseCombat],
         46: [Moves.SeismicToss],
         49: [Moves.Reversal],
       },
@@ -106,6 +114,8 @@ export default function registerMakuhitaSpecies(): void {
         Moves.Foresight,
         Moves.HelpingHand,
         Moves.Revenge,
+        Moves.BulletPunch,
+        Moves.Feint,
       ],
     },
   });
@@ -138,18 +148,28 @@ export default function registerMakuhitaSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.FocusEnergy, Moves.SandAttack, Moves.ArmThrust],
+        1: [Moves.Tackle, Moves.FocusEnergy, Moves.SandAttack, Moves.ArmThrust, Moves.Brine],
         13: [Moves.VitalThrow],
         19: [Moves.FakeOut],
         22: [Moves.Whirlwind],
         29: [Moves.KnockOff],
+        32: [Moves.ForcePalm],
         33: [Moves.SmellingSalts],
         40: [Moves.BellyDrum],
+        42: [Moves.WakeUpSlap],
         44: [Moves.Endure],
         51: [Moves.SeismicToss],
+        52: [Moves.CloseCombat],
         55: [Moves.Reversal],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.GigaImpact,
+        Moves.IronHead,
+        Moves.Payback,
+        Moves.StoneEdge,
+      ],
     },
   });
 }

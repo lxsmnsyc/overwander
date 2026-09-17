@@ -12,10 +12,11 @@ import {
   MoveTargetType,
 } from '../../src/battle/events';
 import { BASE_SCORE, HEAL_BONUS, STEP_PENALTY, USELESS_PENALTY } from '../../src/battle/ai/score';
+import { PERISH_TRADE_BONUS } from '../../src/battle/moves/perish-song';
 import type Unit from '../../src/battle/unit';
 import { EventPriority } from '../../src/core/event-emitter';
 import Abilities from '../../src/data/ids/abilities';
-import { Stages } from '../../src/data/constants/stats';
+import { Stages, Stats } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import { MoveTargetPriorities, Moves } from '../../src/data/ids/moves';
 import { Items } from '../../src/data/ids/items';
@@ -739,6 +740,7 @@ describe('weighing a move', () => {
     const open = createAIBattle();
     const singer = createUnit(open.battle, open.teamA);
     createUnit(open.battle, open.teamB);
+    createUnit(open.battle, open.teamB);
 
     expect(usableMove(open.battle, singer, Moves.PerishSong, target)).toBe(true);
 
@@ -752,6 +754,38 @@ describe('weighing a move', () => {
 
     expect(usableMove(raid.battle, partyMember, Moves.PerishSong, target)).toBe(false);
     expect(usableMove(raid.battle, boss, Moves.PerishSong, target)).toBe(false);
+  });
+
+  it('sings a Perish Song only when the enemy loses more than its own side', () => {
+    const target: MoveTarget = { type: MoveTargetType.None };
+    const { battle, teamA, teamB } = createAIBattle();
+    const singer = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+
+    // One for one at full HP is no trade at all
+    expect(usableMove(battle, singer, Moves.PerishSong, target)).toBe(false);
+
+    // A singer with little left to lose trades up
+    singer.setHealth(40);
+    expect(usableMove(battle, singer, Moves.PerishSong, target)).toBe(true);
+    expect(scoreMove(battle, singer, Moves.PerishSong, target)).toBe(
+      BASE_SCORE + Math.round(PERISH_TRADE_BONUS * 0.75),
+    );
+
+    // Two enemies against one singer is worth the whole bonus
+    singer.setHealth(singer.checkStat(Stats.HP, 0));
+    const second = createUnit(battle, teamB);
+    expect(scoreMove(battle, singer, Moves.PerishSong, target)).toBe(
+      BASE_SCORE + PERISH_TRADE_BONUS,
+    );
+
+    // Enemies already counting, or deaf to it, lose nothing new
+    const cause = { type: EffectType.Move, move: Moves.PerishSong, unit: singer } as const;
+    singer.setHealth(40);
+    first.addStatus(Statuses.Perishing, cause);
+    expect(usableMove(battle, singer, Moves.PerishSong, target)).toBe(true);
+    second.addAbility(Abilities.Soundproof);
+    expect(usableMove(battle, singer, Moves.PerishSong, target)).toBe(false);
   });
 
   it('will not call up a sky that answers to nobody', () => {
@@ -786,7 +820,7 @@ describe('weighing a move', () => {
     expect(open - scoreMove(battle, unit, Moves.Screech, target)).toBe(USELESS_PENALTY);
   });
 
-  it('declines a stat drop a boss will not take', () => {
+  it('spends a stat drop on a boss like any other target', () => {
     const { battle, teamA, teamB } = createAIBattle(BattleModes.Raid);
     pinRandom(battle, 0.99);
     const unit = createUnit(battle, teamA);
@@ -795,10 +829,9 @@ describe('weighing a move', () => {
 
     boss.addAbility(Abilities.Boss);
 
-    // Under the base score rather than a fixed distance from it: a
-    // boss draws the focus its bulk earns as well as the refusal, and
-    // the refusal is the larger of the two
-    expect(scoreMove(battle, unit, Moves.Screech, target)).toBeLessThan(BASE_SCORE);
+    // A boss takes what lowers it now, so the drop is worth what it
+    // is worth anywhere, plus the focus the bulk earns
+    expect(scoreMove(battle, unit, Moves.Screech, target)).toBeGreaterThanOrEqual(BASE_SCORE);
   });
 
   it('asks about a stage without setting off what refuses it', () => {

@@ -43,6 +43,10 @@ const FAMILY_TEACHABLE = [
   Moves.Facade,
   Moves.Overheat,
   Moves.SecretPower,
+  Moves.DarkPulse,
+  Moves.NaturalGift,
+  Moves.OminousWind,
+  Moves.ZenHeadbutt,
 ];
 
 export default function registerVulpixSpecies(): void {
@@ -84,8 +88,8 @@ export default function registerVulpixSpecies(): void {
         17: [Moves.WillOWisp],
         19: [Moves.ConfuseRay],
         25: [Moves.Safeguard, Moves.Imprison],
-        31: [Moves.Flamethrower],
-        37: [Moves.FireSpin, Moves.Grudge],
+        31: [Moves.Flamethrower, Moves.Payback],
+        37: [Moves.FireSpin, Moves.Grudge, Moves.Captivate],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -97,6 +101,9 @@ export default function registerVulpixSpecies(): void {
         Moves.HeatWave,
         Moves.Howl,
         Moves.PsychUp,
+        Moves.EnergyBall,
+        Moves.FlareBlitz,
+        Moves.PowerSwap,
       ],
     },
   });
@@ -134,10 +141,18 @@ export default function registerVulpixSpecies(): void {
           Moves.Roar,
           Moves.ConfuseRay,
           Moves.Safeguard,
+          Moves.NastyPlot,
         ],
         43: [Moves.FireSpin],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Roar],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Roar,
+        Moves.Captivate,
+        Moves.GigaImpact,
+        Moves.Payback,
+      ],
     },
   });
 }

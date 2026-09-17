@@ -53,6 +53,13 @@ const FAMILY_TEACHABLE = [
   Moves.ThunderPunch,
   Moves.SleepTalk,
   Moves.Swift,
+  Moves.Captivate,
+  Moves.DrainPunch,
+  Moves.Fling,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
+  Moves.SeedBomb,
+  Moves.WorrySeed,
 ];
 
 export default function registerTreeckoSpecies(): void {
@@ -98,6 +105,7 @@ export default function registerTreeckoSpecies(): void {
         36: [Moves.Slam],
         41: [Moves.Detect],
         46: [Moves.GigaDrain],
+        51: [Moves.EnergyBall],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -107,6 +115,7 @@ export default function registerTreeckoSpecies(): void {
         Moves.DragonBreath,
         Moves.Endeavor,
         Moves.CrushClaw,
+        Moves.LeafStorm,
       ],
     },
   });
@@ -153,8 +162,9 @@ export default function registerTreeckoSpecies(): void {
         41: [Moves.Slam],
         47: [Moves.Detect],
         53: [Moves.FalseSwipe],
+        59: [Moves.LeafStorm],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.EnergyBall, Moves.XScissor],
     },
   });
 
@@ -187,8 +197,8 @@ export default function registerTreeckoSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Pound, Moves.Leer, Moves.Absorb, Moves.QuickAttack],
-        16: [Moves.FuryCutter],
+        1: [Moves.Pound, Moves.Leer, Moves.Absorb, Moves.QuickAttack, Moves.NightSlash],
+        16: [Moves.FuryCutter, Moves.XScissor],
         17: [Moves.Pursuit],
         23: [Moves.Screech],
         29: [Moves.LeafBlade],
@@ -196,6 +206,7 @@ export default function registerTreeckoSpecies(): void {
         43: [Moves.Slam],
         51: [Moves.Detect],
         59: [Moves.FalseSwipe],
+        67: [Moves.LeafStorm],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -203,6 +214,11 @@ export default function registerTreeckoSpecies(): void {
         Moves.Roar,
         Moves.HyperBeam,
         Moves.Earthquake,
+        Moves.DragonPulse,
+        Moves.EnergyBall,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.RockClimb,
       ],
     },
   });

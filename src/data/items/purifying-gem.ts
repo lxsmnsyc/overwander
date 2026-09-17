@@ -1,3 +1,4 @@
+import { PURIFIED_FRIENDSHIP_BONUS } from '../constants/friendship';
 import { MAX_IV, STAT_ORDER, getIV, setIV } from '../constants/stats';
 import Abilities from '../ids/abilities';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
@@ -73,8 +74,7 @@ export function purifyAbilities(abilities: Abilities[]): Abilities[] {
 export default function registerPurifyingGem(): void {
   registerItem(Items.PurifyingGem, {
     name: 'Purifying Gem',
-    description:
-      'Purifies one shadow: the Shadow ability goes, every value rises by 2, candy costs are halved.',
+    description: `Turns a shadow's Shadow ability into Purified, raises every value by ${PURIFY_IV_BOOST} up to ${MAX_IV}, adds ${PURIFIED_FRIENDSHIP_BONUS} friendship and halves its candy costs.`,
     // Spent on a pokemon to change what it is rather than what it can
     // do, the way a bottle cap is
     type: ItemTypes.Training,

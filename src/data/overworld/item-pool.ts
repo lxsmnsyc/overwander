@@ -110,6 +110,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     // bought, and the pokemon that swallows one settles the bill
     { item: Items.EnergyPowder, weight: 8 },
     { item: Items.HealPowder, weight: 8 },
+    // A jar for a honey tree, left where the trees are
+    { item: Items.Honey, weight: 6 },
   ],
   uncommon: [
     { item: Items.UltraBall, weight: 15 },
@@ -166,6 +168,16 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LeafStone, weight: 10 },
     { item: Items.MoonStone, weight: 10 },
     { item: Items.SunStone, weight: 10 },
+    // Sinnoh's four, buried like the six above them now that a line
+    // asks for each
+    { item: Items.ShinyStone, weight: 8 },
+    { item: Items.DuskStone, weight: 8 },
+    { item: Items.DawnStone, weight: 8 },
+    { item: Items.IceStone, weight: 8 },
+    // Not a stone, and here for the same reason they are: it is used
+    // on a pokemon and spent. Thinner, because a Rotom wants more
+    // than one of them and nobody sells any
+    { item: Items.RotomCatalog, weight: 6 },
     { item: Items.Nugget, weight: 8 },
     // The middle of the ladder, thinning as it climbs
     // Cut off a Slowpoke, and worth more than the nugget it is found
@@ -230,6 +242,14 @@ export const ITEM_POOL: ItemRarityGroups = {
     // Thin: a second held item is a whole build, and one belt is one
     // pokemon's worth of it
     { item: Items.UtilityBelt, weight: 4 },
+    // Room for another ability, which the Channeler then has
+    // something to fill. Commoner than the belt: a species that
+    // cannot reach four on its own needs one before she is any use
+    { item: Items.AbilityCapsule, weight: 6 },
+    // The one ability nothing rolls, written into a pokemon that
+    // already has everything its line can be born with. Thin, and
+    // the thinnest thing in the band: it cannot be taken back
+    { item: Items.AbilityPatch, weight: 3 },
     // The one item that brings a pokemon back from nothing at full
     // health. The Revive and the Revival Herb are the rare band's
     // answer to a lost fight; this is the answer to a lost party
@@ -256,10 +276,22 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.OldAmber, weight: 5 },
     { item: Items.RootFossil, weight: 8 },
     { item: Items.ClawFossil, weight: 8 },
-    // The rock a Deoxys rearranges itself around. Prized rather than
-    // special: it is worth nothing to anybody who has not been to
-    // the island, and everything to whoever has
+    { item: Items.SkullFossil, weight: 8 },
+    { item: Items.ArmorFossil, weight: 8 },
+    // The rock a Deoxys rearranges itself with, spent on each
+    // rearrangement. Prized rather than special: it is worth nothing
+    // to anybody who has not been to the island, and everything to
+    // whoever has
     { item: Items.Meteorite, weight: 4 },
+    // The orbs and the flower, which the meteorite is the first of:
+    // each is worth nothing at all until its own legendary has been
+    // caught, and everything the moment one has. Thinner than the
+    // rock, since each names one pokemon where the rock names four
+    // shapes of the same one
+    { item: Items.AdamantOrb, weight: 3 },
+    { item: Items.LustrousOrb, weight: 3 },
+    { item: Items.GriseousOrb, weight: 3 },
+    { item: Items.Gracidea, weight: 3 },
     // Three purses instead of one, for good, and nothing sells one.
     // Here rather than in rare so that parting with it is asked about
     // twice
@@ -300,6 +332,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.GSBall, weight: 6 },
     { item: Items.AuroraTicket, weight: 6 },
     { item: Items.WishTag, weight: 6 },
+    { item: Items.MemberCard, weight: 6 },
+    { item: Items.ManaphyEgg, weight: 6 },
+    { item: Items.OaksLetter, weight: 6 },
+    { item: Items.AzureFlute, weight: 6 },
     // Six stats made perfect at once. Nothing else undoes a bad roll,
     // so it belongs with the things gold cannot buy
     { item: Items.GoldenBottleCap, weight: 8 },

@@ -41,6 +41,14 @@ export interface CheckUnitMoveEvent extends UnitMoveEvent {
   target: MoveTarget;
 }
 
+/**
+ * `target` is who the move was aimed at and `redirect` is who it
+ * lands on, which opens as the same thing
+ */
+export interface CheckUnitMoveRedirectEvent extends CheckUnitMoveEvent {
+  redirect: MoveTarget;
+}
+
 export interface CheckUnitMoveTypeEvent extends CheckUnitMoveEvent {
   type: Types;
 }
@@ -96,6 +104,10 @@ export interface CheckUnitMoveTargetingEvent extends UnitMoveEvent {
 
 export interface CheckUnitMoveContactEvent extends CheckUnitMoveEvent {
   contact: boolean;
+}
+
+export interface CheckUnitMoveGuardEvent extends CheckUnitMoveEvent {
+  walks: boolean;
 }
 
 export interface UnitChannelEvent extends UnitCastEvent {

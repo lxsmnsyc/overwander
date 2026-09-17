@@ -2,10 +2,20 @@
 // assertions that tsc requires but tsgolint (resolving const enums to
 // number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import { asNumber, asRecordArray, asString } from './__normalize';
+import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import { type DuelInvite, type DuelRecord, type DuelRules, asDuelRecord } from './duel-record';
 import type { LobbyRole } from './lobby-role';
 import { requireUid } from '../server/auth';
+import check, {
+  DUEL_RULES,
+  FLAG,
+  ID,
+  LOBBY_ROLE,
+  PARTY,
+  TEXT,
+  TOKEN,
+  UID,
+} from '../server/validate';
 import {
   declineDuelInvite as declineOnServer,
   hostDuel as hostOnServer,
@@ -162,12 +172,22 @@ export function watchMyDuels(
   uid: string,
   onChange: (duels: [string, DuelRecord][]) => void,
 ): Unwatch {
-  const read = async (): Promise<[string, DuelRecord][]> => listMyDuels(uid);
+  let mine = new Set<string>();
+  const read = async (): Promise<[string, DuelRecord][]> => {
+    const duels = await listMyDuels(uid);
+
+    mine = new Set<string>();
+    for (const [id] of duels) {
+      mine.add(id);
+    }
+    return duels;
+  };
   const closers = [
     // Unfiltered on the lobby table: a lobby starting or being taken
     // down leaves the set by UPDATE or DELETE, which the set's own
-    // filter would not deliver
-    watchTable(DUEL_TABLE, [], read, onChange),
+    // filter would not deliver. A lobby joined arrives as a member row
+    // below, so only a change to one already in the list is read
+    watchTable(DUEL_TABLE, [], read, onChange, { wanted: (row) => mine.has(String(row.id)) }),
     watchTable('duel_members', [`player=eq.${uid}`], read, onChange),
   ];
 
@@ -183,13 +203,17 @@ export function watchDuelInvites(uid: string, onChange: (invites: DuelInvite[]) 
   const read = async (): Promise<DuelInvite[]> => {
     const { data } = await getSupabase()
       .from('duel_invites')
-      .select('duel_id, sender, role, sent_at')
+      .select('duel_id, sender, role, sent_at, duels(battle_id)')
       .eq('recipient', uid)
       .order('sent_at', { ascending: false });
 
     const invites: DuelInvite[] = [];
 
     for (const row of asRecordArray(data)) {
+      // A call into a lobby that has started answers nothing
+      if (asRecord(row.duels).battle_id != null) {
+        continue;
+      }
       invites.push({
         duel: asString(row.duel_id),
         sender: asString(row.sender),
@@ -214,6 +238,8 @@ export async function hostDuel(watching = false): Promise<string> {
 
 async function hostDuelOnServer(token: string, watching: boolean): Promise<string> {
   'use server';
+  check(TOKEN, token);
+  check(FLAG, watching);
   return hostOnServer(await requireUid(token), watching, await syncServerClock());
 }
 
@@ -229,6 +255,10 @@ async function inviteToDuelOnServer(
   role: LobbyRole,
 ): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(UID, target);
+  check(LOBBY_ROLE, role);
   return inviteOnServer(await requireUid(token), id, target, role, await syncServerClock());
 }
 
@@ -248,6 +278,10 @@ async function inviteByCodeOnServer(
   role: LobbyRole,
 ): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(TEXT, code);
+  check(LOBBY_ROLE, role);
   return inviteByCodeOnServerSide(await requireUid(token), id, code, role, await syncServerClock());
 }
 
@@ -257,6 +291,8 @@ export async function declineDuelInvite(id: string): Promise<void> {
 
 async function declineDuelInviteOnServer(token: string, id: string): Promise<void> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   await declineOnServer(await requireUid(token), id);
 }
 
@@ -267,6 +303,8 @@ export async function joinDuel(id: string): Promise<boolean> {
 
 async function joinDuelOnServer(token: string, id: string): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   return joinOnServer(await requireUid(token), id);
 }
 
@@ -277,6 +315,9 @@ export async function setDuelRole(id: string, role: LobbyRole): Promise<boolean>
 
 async function setDuelRoleOnServer(token: string, id: string, role: LobbyRole): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(LOBBY_ROLE, role);
   return setRoleOnServer(await requireUid(token), id, role);
 }
 
@@ -291,6 +332,9 @@ export async function setDuelRules(id: string, rules: DuelRules): Promise<boolea
 
 async function setDuelRulesOnServer(token: string, id: string, rules: DuelRules): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(DUEL_RULES, rules);
   return setRulesOnServer(await requireUid(token), id, rules);
 }
 
@@ -308,6 +352,9 @@ async function setDuelPartyOnServer(
   catches: string[],
 ): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(PARTY, catches);
   return setPartyOnServer(await requireUid(token), id, catches);
 }
 
@@ -317,6 +364,9 @@ export async function setDuelReady(id: string, ready: boolean): Promise<boolean>
 
 async function setDuelReadyOnServer(token: string, id: string, ready: boolean): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(FLAG, ready);
   return setReadyOnServer(await requireUid(token), id, ready);
 }
 
@@ -327,6 +377,8 @@ export async function leaveDuel(id: string): Promise<void> {
 
 async function leaveDuelOnServer(token: string, id: string): Promise<void> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   await leaveOnServer(await requireUid(token), id);
 }
 
@@ -340,5 +392,7 @@ export async function startDuel(id: string): Promise<string | null> {
 
 async function startDuelOnServer(token: string, id: string): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   return startOnServer(await requireUid(token), id, await syncServerClock());
 }

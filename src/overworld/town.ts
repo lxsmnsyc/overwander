@@ -1,4 +1,3 @@
-import AleaRNG from '../core/alea';
 import type { SettledBiome } from '../data/ids/biome';
 import { isOpenSea, isSettledBiome } from '../data/ids/biome';
 import nameTown from '../data/overworld/town-names';
@@ -199,6 +198,47 @@ export function regionOfCell(cell: number): number {
   return regionOf(cell);
 }
 
+/** How many regions out a search for the nearest town looks, on each side */
+export const NEAREST_TOWN_REACH = 8;
+
+/**
+ * The town whose middle is closest to a world cell, or null when none
+ * stands within reach. Searched ring by ring, and stopped once a ring
+ * is too far out to hold anything closer than the best found
+ */
+export function nearestTown(world: World, x: number, y: number): Town | null {
+  const surface = world.at(Depth.Surface);
+  const originX = regionOf(x);
+  const originY = regionOf(y);
+  let best: Town | null = null;
+  let bestDistance = Number.POSITIVE_INFINITY;
+
+  for (let ring = 0; ring <= NEAREST_TOWN_REACH; ring++) {
+    // Anything in this ring is at least this far off
+    if ((ring - 1) * REGION_CELLS > bestDistance) {
+      break;
+    }
+    for (let regionY = originY - ring; regionY <= originY + ring; regionY++) {
+      for (let regionX = originX - ring; regionX <= originX + ring; regionX++) {
+        const onRing = Math.abs(regionX - originX) === ring || Math.abs(regionY - originY) === ring;
+        const town = onRing ? townIn(surface, regionX, regionY) : null;
+
+        if (town == null) {
+          continue;
+        }
+
+        const distance = Math.hypot(town.x - x, town.y - y);
+
+        if (distance < bestDistance) {
+          best = town;
+          bestDistance = distance;
+        }
+      }
+    }
+  }
+  return best;
+}
+
 function townIn(world: World, regionX: number, regionY: number): Town | null {
   // Nobody has built anything underground. A cave has no towns, so it
   // has no lots, no streets and no portal in a plaza either
@@ -215,15 +255,15 @@ function townIn(world: World, regionX: number, regionY: number): Town | null {
   }
 
   const seed = `${world.seed}town(${regionX}, ${regionY})`;
-  const rng = new AleaRNG(seed);
+  const draws = world.draws(seed);
   const spread = REGION_CELLS - SITE_INSET * 2;
   let town: Town | null = null;
 
   // Every draw is taken whether or not it is used, so the ground
   // deciding a site is unbuildable does not shift the ones after it
   for (let tried = 0; tried < SITE_TRIES; tried++) {
-    const x = regionX * REGION_CELLS + SITE_INSET + Math.floor(rng.random() * spread);
-    const y = regionY * REGION_CELLS + SITE_INSET + Math.floor(rng.random() * spread);
+    const x = regionX * REGION_CELLS + SITE_INSET + Math.floor(draws.random('x') * spread);
+    const y = regionY * REGION_CELLS + SITE_INSET + Math.floor(draws.random('y') * spread);
 
     const biome = world.getCellBiome(x, y);
 
@@ -276,13 +316,13 @@ export function portalSpot(world: World, regionX: number, regionY: number): [x: 
     return [town.x, town.y];
   }
 
-  const rng = new AleaRNG(`${world.seed}portal(${regionX}, ${regionY})`);
+  const draws = world.draws(`${world.seed}portal(${regionX}, ${regionY})`);
   const spread = REGION_CELLS - SITE_INSET * 2;
   let spot: [number, number] = [regionX * REGION_CELLS, regionY * REGION_CELLS];
 
   for (let tried = 0; tried < PORTAL_TRIES; tried++) {
-    const x = regionX * REGION_CELLS + SITE_INSET + Math.floor(rng.random() * spread);
-    const y = regionY * REGION_CELLS + SITE_INSET + Math.floor(rng.random() * spread);
+    const x = regionX * REGION_CELLS + SITE_INSET + Math.floor(draws.random('x') * spread);
+    const y = regionY * REGION_CELLS + SITE_INSET + Math.floor(draws.random('y') * spread);
 
     spot = [x, y];
     if (!isRock(world, x, y, world.getCellBiome(x, y))) {
@@ -383,7 +423,7 @@ export function getTownLots(world: World, town: Town): Lot[] {
     return known;
   }
 
-  const rng = new AleaRNG(`${town.seed}lots`);
+  const draws = world.draws(`${town.seed}lots`);
   const open: [number, number][] = [];
 
   for (let dy = -TOWN_RADIUS; dy <= TOWN_RADIUS; dy++) {
@@ -410,19 +450,19 @@ export function getTownLots(world: World, town: Town): Lot[] {
     }
   }
   for (let at = open.length - 1; at > 0; at -= 1) {
-    const pick = Math.floor(rng.random() * (at + 1));
+    const pick = Math.floor(draws.random('order') * (at + 1));
 
     [open[at], open[pick]] = [open[pick], open[at]];
   }
 
-  const count = MIN_LOTS + Math.floor(rng.random() * (MAX_LOTS - MIN_LOTS + 1));
+  const count = MIN_LOTS + Math.floor(draws.random('count') * (MAX_LOTS - MIN_LOTS + 1));
   // What this town is: its charter first, so a town short of room
   // keeps what makes it worth walking to and loses a stall. The portal
   // is no lot of theirs, it stands on the plaza
   const chartered: Landmark[] = [];
 
   for (const [kind, chance] of CHARTER) {
-    if (rng.random() < chance) {
+    if (draws.random('charter') < chance) {
       chartered.push(kind);
     }
   }
@@ -430,7 +470,7 @@ export function getTownLots(world: World, town: Town): Lot[] {
   const wanted = chartered.slice(0, count);
 
   for (let at = chartered.length; at < count; at += 1) {
-    wanted.push(TRADES[Math.floor(rng.random() * TRADES.length)]);
+    wanted.push(TRADES[Math.floor(draws.random('trade') * TRADES.length)]);
   }
 
   const lots: Lot[] = [];

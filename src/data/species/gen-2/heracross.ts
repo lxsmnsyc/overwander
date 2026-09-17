@@ -1,7 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
-import Biome, { AnyTimeOfDay } from '../../ids/biome';
+import { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -33,18 +33,20 @@ export default function registerHeracrossSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Woodland, Biome.TemperateForest, Biome.MontaneForest],
+    biomes: [],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         23: [Moves.BrickBreak],
-        1: [Moves.Leer, Moves.Tackle],
+        1: [Moves.Leer, Moves.Tackle, Moves.NightSlash],
         6: [Moves.HornAttack],
         12: [Moves.Endure],
         19: [Moves.FuryAttack],
         27: [Moves.Counter],
         35: [Moves.TakeDown],
+        37: [Moves.CloseCombat],
         44: [Moves.Reversal],
+        49: [Moves.Feint],
         54: [Moves.Megahorn],
       },
       teachable: [
@@ -85,6 +87,15 @@ export default function registerHeracrossSpecies(): void {
         Moves.SeismicToss,
         Moves.Substitute,
         Moves.SwordsDance,
+        Moves.BugBite,
+        Moves.Captivate,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.ShadowClaw,
+        Moves.StoneEdge,
+        Moves.VacuumWave,
       ],
       egg: [Moves.Bide, Moves.Flail, Moves.Harden, Moves.FalseSwipe],
     },

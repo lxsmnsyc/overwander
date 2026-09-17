@@ -36,6 +36,13 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.Swift,
+  Moves.Captivate,
+  Moves.Defog,
+  Moves.NaturalGift,
+  Moves.OminousWind,
+  Moves.Roost,
+  Moves.Tailwind,
+  Moves.UTurn,
 ];
 
 export default function registerTaillowSpecies(): void {
@@ -79,8 +86,9 @@ export default function registerTaillowSpecies(): void {
         26: [Moves.Endeavor],
         34: [Moves.AerialAce],
         43: [Moves.Agility],
+        53: [Moves.AirSlash],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.Pluck],
       egg: [
         Moves.Supersonic,
         Moves.MirrorMove,
@@ -88,6 +96,7 @@ export default function registerTaillowSpecies(): void {
         Moves.Refresh,
         Moves.Rage,
         Moves.SkyAttack,
+        Moves.BraveBird,
       ],
     },
   });
@@ -121,14 +130,15 @@ export default function registerTaillowSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Peck, Moves.Growl, Moves.FocusEnergy, Moves.QuickAttack],
+        1: [Moves.Peck, Moves.Growl, Moves.FocusEnergy, Moves.QuickAttack, Moves.Pluck],
         13: [Moves.WingAttack],
         19: [Moves.DoubleTeam],
         28: [Moves.Endeavor],
         38: [Moves.AerialAce],
         49: [Moves.Agility],
+        61: [Moves.AirSlash],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

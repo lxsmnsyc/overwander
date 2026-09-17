@@ -61,6 +61,12 @@ const FAMILY_TEACHABLE = [
   Moves.RockSmash,
   Moves.SecretPower,
   Moves.ShockWave,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.Fling,
+  Moves.GrassKnot,
+  Moves.MagnetRise,
+  Moves.NaturalGift,
 ];
 
 export default function registerPikachuSpecies(): void {
@@ -104,7 +110,9 @@ export default function registerPikachuSpecies(): void {
         15: [Moves.DoubleTeam],
         20: [Moves.Slam],
         26: [Moves.Swift, Moves.Thunderbolt],
+        29: [Moves.Feint],
         33: [Moves.Agility],
+        37: [Moves.Discharge],
         41: [Moves.Thunder],
         50: [Moves.LightScreen],
       },
@@ -147,7 +155,14 @@ export default function registerPikachuSpecies(): void {
           Moves.QuickAttack,
         ],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Thief, Moves.LightScreen],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Thief,
+        Moves.LightScreen,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+      ],
     },
   });
 }

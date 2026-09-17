@@ -4,13 +4,21 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerPorygon2Species(): void {
   registerSpecies(Species.Porygon2, {
     dexNumber: 233,
+    evolvesInto: [
+      {
+        species: Species.PorygonZ,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.DubiousDisc,
+      },
+    ],
     name: 'Porygon2',
     category: 'Virtual Pokemon',
     height: 0.6,
@@ -39,9 +47,11 @@ export default function registerPorygon2Species(): void {
         9: [Moves.Agility],
         12: [Moves.Psybeam],
         20: [Moves.Recover],
+        23: [Moves.MagnetRise],
         24: [Moves.DefenseCurl],
         32: [Moves.LockOn],
         36: [Moves.TriAttack],
+        40: [Moves.Discharge],
         44: [Moves.ZapCannon, Moves.Recycle],
       },
       teachable: [
@@ -86,6 +96,13 @@ export default function registerPorygon2Species(): void {
         Moves.SolarBeam,
         Moves.Substitute,
         Moves.ThunderWave,
+        Moves.ChargeBeam,
+        Moves.GigaImpact,
+        Moves.Gravity,
+        Moves.LastResort,
+        Moves.NaturalGift,
+        Moves.TrickRoom,
+        Moves.ZenHeadbutt,
       ],
     },
   });

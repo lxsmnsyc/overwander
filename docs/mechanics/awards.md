@@ -10,25 +10,28 @@ own, and beating one is kept for good.
 
 | Award               | How many | Earned by                              |
 | ------------------- | -------- | -------------------------------------- |
-| **Gym badge**       | 24       | Beating that gym's leader              |
-| **Elite Four mark** | 12       | Beating that member of the Elite Four  |
-| **Champion**        | 3        | Beating that league's Champion          |
+| **Gym badge**       | 32       | Beating that gym's leader              |
+| **Elite Four mark** | 16       | Beating that member of the Elite Four  |
+| **Champion**        | 4        | Beating that league's Champion          |
 | **Legend's mark**   | 2        | Beating a legend, who asks for nothing |
-| **Frontier symbol** | 14       | Taking a facility: silver for the win, gold for its second three |
-| **Syndicate marks** | 14       | Beating a grunt, an executive or the boss of Team Rocket, Team Magma or Team Aqua |
-| **Dex medal**       | 3        | Filling that region's dex                |
+| **Frontier symbol** | 24       | Taking a facility: silver for the win, gold for its second three. Hoenn hangs symbols, Sinnoh prints |
+| **Syndicate marks** | 19       | Beating a grunt, an executive or the boss of Team Rocket, Team Magma, Team Aqua or Team Galactic |
+| **Dex medal**       | 4        | Filling that region's dex                |
 
-Kanto, Johto and Hoenn keep eight gyms apiece, and their leaders share the
-world's countries: which of them keeps a given gym is fixed for that gym, so a
-badge is always in the same place. Hoenn seats nine people for its eight, since
-Tate and Liza keep one gym between them and pay the one badge either way.
+Kanto, Johto, Hoenn and Sinnoh keep eight gyms apiece, and their leaders share
+the world's countries: which of them keeps a given gym is fixed for that gym, so
+a badge is always in the same place. Hoenn seats nine people for its eight,
+since Tate and Liza keep one gym between them and pay the one badge either way.
+Sinnoh's eight are Roark, Gardenia, Maylene, Crasher Wake, Fantina, Byron,
+Candice and Volkner.
 
 Kanto's and Johto's Elite Fours come to seven people rather than eight, four
 apiece. Bruno keeps a seat in each, and each is its own fight with its own mark:
 walking only one region's gyms earns you the Bruno of that region and that mark
-alone. Hoenn's four are its own four people. Each of the **Elite Four asks to
-see all eight of their own league's badges** before they will fight, and each
-**Champion asks for all four of their own league's marks**.
+alone. Hoenn's four are its own four people, and so are Sinnoh's: Aaron, Bertha,
+Flint and Lucian. Each of the **Elite Four asks to see all eight of their own
+league's badges** before they will fight, and each **Champion asks for all four
+of their own league's marks**. Sinnoh's champion is Cynthia.
 
 A **legend** stands outside all of that. One turns up in a champion's seat one
 window in sixty-four, and under the rarest skies for certain; no badge case is
@@ -106,6 +109,7 @@ titles come from.
 | **Professor Oak**         | Kanto's dex filled              |
 | **Professor Elm**         | Johto's dex filled              |
 | **Professor Birch**       | Hoenn's dex filled              |
+| **Professor Rowan**       | Sinnoh's dex filled, in both his looks |
 | Oak in Johto              | Both dexes filled               |
 | A Kanto leader's later look | That badge **and** Johto's crown |
 | A class of trainer        | That region's class at **Bronze** |
@@ -125,7 +129,8 @@ Janine's rather than her father's, so the Soul Badge is what pays her.
 
 The professors are earned by filling a dex rather than by fighting: Kanto's pays
 Oak in the two looks he is drawn in there, Johto's pays Elm, Hoenn's pays Birch,
-and holding both of the first two pays Oak as he is drawn in Johto.
+Sinnoh's pays Rowan in both of his, and holding both of the first two pays Oak as
+he is drawn in Johto.
 
 ## See also
 

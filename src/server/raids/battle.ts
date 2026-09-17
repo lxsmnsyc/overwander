@@ -68,6 +68,9 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
     }
   }
 
+  // A started lobby takes nobody else in, so a call into it is answered
+  await getSql()`delete from raid_invites where raid_id = ${lobby}`;
+
   // Every party at once. Each freezes a whole team of its own and
   // none of them waits on another, so a lobby of four starts in the
   // time one takes rather than four

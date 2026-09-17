@@ -38,21 +38,94 @@ const BY_SHAPE: Partial<Record<EffectShape, string>> = {
   // The light itself. A Normal-type grey would be a picture of a
   // shadow rather than of a flash
   Dazzle: '#fff2b4',
+  // The petals themselves. A Normal-type grey would be a picture of
+  // dust blowing past rather than of a scent
+  Petals: '#f2a0c8',
   Whiff: '#c8ccd4',
+  // Dialga's steel blue and Palkia's pink, which the Dragon type's colour is neither of
+  Stall: '#8fb0f0',
+  Rend: '#f07ccf',
+  // Light whatever plate it carries: the move's type changes in battle and the picture cannot know
+  Verdict: '#fff2b4',
+  // Latias' red-white down and Latios' blue light, so the pair read as each other's counterpart
+  Plume: '#f6a9bd',
+  Lustre: '#8cc8ff',
+  // Jirachi's gold, Regigigas' pale stone and Cresselia's moonlight, where the type's colour is grey
+  Starfall: '#ffe27a',
+  Grip: '#e2dcc0',
+  Moonlit: '#e0d4ff',
+  // A plush doll, water, a brass metronome and Mew's pink, where the type's colour is grey
+  Doll: '#e6d3a3',
+  Flop: '#7cc4f0',
+  Wag: '#e8c86a',
+  Shimmer: '#f0a8e0',
+  // Sleep's blue, sunlight, moonlight, leaves, a wishing star, feathers, and the health bar's green under a swarm
+  Slumber: '#bcd4ff',
+  Sunbeam: '#ffd27a',
+  Moonbeam: '#d8dcff',
+  Greening: '#7cd67a',
+  Wishing: '#ffe27a',
+  Feathers: '#e8e0d0',
+  Swarm: '#4cc46a',
+  // A brass bell
+  Chime: '#ffd86a',
+  // Yellow spores and eyes, gold applause, an anger mark's red and a curse's purple, where the types' colours say none of them
+  Spores: '#f0d84a',
+  Stare: '#f0c830',
+  Applause: '#ffe07a',
+  Vein: '#e8404a',
+  Nail: '#8a5ab0',
+  // Night sky, bees, a tail light, stored orbs, a sprout, feathers, cotton, silk and tears
+  Cosmos: '#b8a8ff',
+  Hive: '#f0c040',
+  Lantern: '#fff27a',
+  Stack: '#f0c890',
+  Sprout: '#7cd67a',
+  Tickle: '#f0e6d8',
+  Cotton: '#f4f4ec',
+  Silk: '#f0f0f0',
+  Tears: '#8cc8ff',
 };
 
-const SCREEN_COLORS: Partial<Record<Moves, string>> = {
+/** The shapes that picture a stat moving, and so take the stat's colour */
+const STAGED = new Set<EffectShape>([
+  'Boost',
+  'Drop',
+  'Blades',
+  'Dance',
+  'Sheen',
+  'Mirage',
+  'Scheme',
+  'Haste',
+  'Polish',
+  'Flex',
+  'Howl',
+  'Blank',
+  'Curl',
+]);
+
+const MOVE_COLORS: Partial<Record<Moves, string>> = {
   [Moves.Reflect]: STAGE_COLORS[Stages.Defense],
   [Moves.LightScreen]: STAGE_COLORS[Stages.SpecialDefense],
+  [Moves.Barrier]: STAGE_COLORS[Stages.Defense],
+  // Protect's green shell; Detect keeps its type's orange
+  [Moves.Protect]: '#8fe39a',
+  // Hyper Beam's orange, Solar Beam's sunlight and Aura Sphere's blue, which their types' colours are not
+  [Moves.HyperBeam]: '#ffb04a',
+  [Moves.SolarBeam]: '#fff0a0',
+  [Moves.AuraSphere]: '#5aa8ff',
+  // A lullaby's pink, and Perish Song's notes gone dark
+  [Moves.Sing]: '#f0a8d0',
+  [Moves.PerishSong]: '#6a4a8c',
 };
 
 export default function colorOf(move: Moves, shape: EffectShape): string {
-  const screen = SCREEN_COLORS[move];
+  const named = MOVE_COLORS[move];
 
-  if (screen != null) {
-    return screen;
+  if (named != null) {
+    return named;
   }
-  if (shape === 'Boost' || shape === 'Drop') {
+  if (STAGED.has(shape)) {
     const stage = getStageMoveEffect(move);
 
     if (stage != null) {

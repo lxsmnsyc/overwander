@@ -19,7 +19,7 @@ export default function registerGen2Abilities(): void {
   // Mareep
   registerAbility(Abilities.Plus, {
     name: 'Plus',
-    description: '1.5x Special Attack while a living ally also has Plus.',
+    description: '1.5x Special Attack while a living teammate has Plus or Minus.',
   });
   registerAbility(Abilities.MotorDrive, {
     name: 'Motor Drive',
@@ -75,7 +75,7 @@ export default function registerGen2Abilities(): void {
   // Smeargle
   registerAbility(Abilities.Prankster, {
     name: 'Prankster',
-    description: 'Its status moves go before anything of ordinary priority.',
+    description: 'Its status moves get 1 more priority, so they wind up faster.',
   });
   // Larvitar
   registerAbility(Abilities.SandStream, {
@@ -128,7 +128,8 @@ export default function registerGen2Abilities(): void {
   // Unown
   registerAbility(Abilities.QueenlyMajesty, {
     name: 'Queenly Majesty',
-    description: 'Nothing on its side can be struck by a move that cuts ahead of the queue.',
+    description:
+      'Nothing on its side can be struck by an enemy move whose priority quickens its wind-up.',
   });
   registerAbility(Abilities.Comatose, {
     name: 'Comatose',

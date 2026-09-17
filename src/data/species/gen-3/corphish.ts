@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves both stages share
@@ -49,6 +49,11 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.FuryCutter,
   Moves.SleepTalk,
+  Moves.Captivate,
+  Moves.Fling,
+  Moves.NaturalGift,
+  Moves.Payback,
+  Moves.XScissor,
 ];
 
 export default function registerCorphishSpecies(): void {
@@ -75,12 +80,13 @@ export default function registerCorphishSpecies(): void {
       [Stats.Speed]: 35,
     },
     types: [Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.HyperCutter, Abilities.ShellArmor],
     hiddenAbilities: [Abilities.Adaptability],
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 205,
-    biomes: [Biome.Mangrove, Biome.Swamp],
+    biomes: [Biome.Mangrove, Biome.Swamp, Biome.TropicalSeasonalForest, Biome.Badlands],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -92,7 +98,7 @@ export default function registerCorphishSpecies(): void {
         23: [Moves.Protect],
         26: [Moves.KnockOff],
         32: [Moves.Taunt],
-        35: [Moves.Crabhammer],
+        35: [Moves.Crabhammer, Moves.NightSlash],
         38: [Moves.SwordsDance],
         44: [Moves.Guillotine],
       },
@@ -118,6 +124,7 @@ export default function registerCorphishSpecies(): void {
       [Stats.Speed]: 55,
     },
     types: [Types.Water, Types.Dark],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.HyperCutter, Abilities.ShellArmor],
     // One the mainline never gave it: those pincers are most of what
     // it is, and Crabhammer is most of what it does with them
@@ -125,7 +132,7 @@ export default function registerCorphishSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 155,
-    biomes: [Biome.Mangrove, Biome.Swamp],
+    biomes: [Biome.Mangrove, Biome.Swamp, Biome.TropicalSeasonalForest, Biome.Badlands],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -134,11 +141,19 @@ export default function registerCorphishSpecies(): void {
         23: [Moves.Protect],
         26: [Moves.KnockOff],
         34: [Moves.Taunt],
-        39: [Moves.Crabhammer],
+        39: [Moves.Crabhammer, Moves.NightSlash],
         44: [Moves.SwordsDance],
         52: [Moves.Guillotine],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Dive, Moves.Swift],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Dive,
+        Moves.Swift,
+        Moves.Avalanche,
+        Moves.DarkPulse,
+        Moves.GigaImpact,
+      ],
     },
   });
 }

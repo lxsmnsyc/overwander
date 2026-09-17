@@ -25,6 +25,18 @@ import type { Point, SpriteDirection } from '../../../canvas/sprite-sheet';
  * One unit as it is drawn: where it sits, how big it is, and which
  * side of the field it is on
  */
+/**
+ * The doll a substituted pokemon is standing behind, and how far in it
+ * is. `share` runs from nothing to one as the substitute goes up and
+ * back down as it breaks, so both bodies are only ever crossfading
+ */
+export interface Stand {
+  sprite: SpeciesSpriteAnimation | null;
+  share: number;
+  /** Coming in rather than stepping back off, which drops it into place instead */
+  arriving?: boolean;
+}
+
 export interface Slot {
   unit: Unit;
   x: number;
@@ -37,6 +49,10 @@ export interface Slot {
    * circle this used to be, so the fight is watchable either way
    */
   sprite: SpeciesSpriteAnimation | null;
+  /** How bright a transformation is flashing it, from 0 to 1 */
+  glow?: number;
+  /** How much a transformation is swelling it, as a share of its size */
+  swell?: number;
   /**
    * Which way it is facing: at whatever it is aiming at, worked out
    * after the camera has turned rather than fixed to a side of the
@@ -63,6 +79,8 @@ export interface Slot {
   spin: number;
   /** Whether it is in front of the camera at all. */
   visible: boolean;
+  /** The substitute in front of it, where one is up */
+  stand?: Stand | null;
 }
 
 /**
@@ -167,6 +185,7 @@ export interface Standing {
   radius: number;
   color: string;
   sprite: SpeciesSpriteAnimation | null;
+  stand?: Stand | null;
 }
 
 /**
@@ -237,6 +256,7 @@ export function side(
   slotRadius: number,
   color: string,
   spriteFor: (unit: Unit) => SpeciesSpriteAnimation | null,
+  standFor: (unit: Unit) => Stand | null = () => null,
 ): Standing[] {
   const standings: Standing[] = [];
 
@@ -248,6 +268,7 @@ export function side(
       radius: slotRadius,
       color,
       sprite: spriteFor(units[at]),
+      stand: standFor(units[at]),
     });
   }
   return standings;
@@ -266,6 +287,7 @@ export function side(
 export function ringStandings(
   field: Field,
   spriteFor: (unit: Unit) => SpeciesSpriteAnimation | null,
+  standFor: (unit: Unit) => Stand | null = () => null,
 ): Standing[] {
   const origin: FieldPoint = { x: 0, z: 0 };
   const standings: Standing[] = [];
@@ -285,6 +307,7 @@ export function ringStandings(
       radius: BOSS_RADIUS * zoom,
       color: COLORS.boss,
       sprite: spriteFor(unit),
+      stand: standFor(unit),
     });
   }
 
@@ -313,6 +336,7 @@ export function ringStandings(
         PARTY_SLOT * zoom,
         team.friendly ? COLORS.mine : COLORS.theirs,
         spriteFor,
+        standFor,
       ),
     );
   }
@@ -499,6 +523,7 @@ export function project(
       radius: Math.max(MIN_RADIUS, standing.radius * on.scale),
       color: standing.color,
       sprite: standing.sprite,
+      stand: standing.stand,
       facing: facingToward(on.x, on.y, at.x, at.y),
       depth: on.scale,
       offset: [0, 0] as Point,

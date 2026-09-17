@@ -325,7 +325,7 @@ describe('what weather is worth', () => {
     expect(valuesOf(Weather.MeteorShower)).toEqual(STAT_ORDER.map(() => WEATHER_MIN_IV));
   });
 
-  it('doubles the odds of a shiny under a meteor shower', () => {
+  it('multiplies the odds of a shiny under a meteor shower', () => {
     // Counted rather than sampled. A trait value's low half is what
     // decides the sparkle, so walking all 65536 of them is the whole
     // population rather than a sample of it: the count is exact, and

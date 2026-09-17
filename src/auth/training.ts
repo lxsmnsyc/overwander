@@ -2,6 +2,7 @@ import type { Stats } from '../data/constants/stats';
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import { requireUid } from '../server/auth';
+import check, { EFFORT_SPREAD, GAME_ID, ID, TOKEN } from '../server/validate';
 import {
   type MovePointsResult,
   type TrainingResult,
@@ -43,6 +44,9 @@ async function trainEffortsOnServer(
   spread: Partial<Record<Stats, number>>,
 ): Promise<TrainingResult | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(EFFORT_SPREAD, spread);
   return trainOnServerSide(await requireUid(token), catchId, spread);
 }
 
@@ -60,6 +64,9 @@ async function useEffortItemOnServer(
   item: Items,
 ): Promise<TrainingResult | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(GAME_ID, item);
   return useEffortItemOnServerSide(await requireUid(token), catchId, item);
 }
 
@@ -83,6 +90,10 @@ async function usePPItemOnServer(
   item: Items,
 ): Promise<MovePointsResult | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(GAME_ID, move);
+  check(GAME_ID, item);
   return usePPItemOnServerSide(await requireUid(token), catchId, move, item);
 }
 
@@ -103,5 +114,8 @@ async function feedEffortBerryOnServer(
   item: Items,
 ): Promise<TrainingResult | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(GAME_ID, item);
   return feedOnServerSide(await requireUid(token), catchId, item);
 }

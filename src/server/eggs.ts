@@ -44,7 +44,7 @@ import {
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
 import { Metric } from '../auth/quest-record';
-import deriveEncounter, { EncounterType, deriveEggMoves } from '../overworld/encounter';
+import deriveEncounter, { EncounterType } from '../overworld/encounter';
 import { grantCatchCandy } from './candy';
 import { bumpProgress } from './quest-progress';
 import { newDocId, tx } from './db';
@@ -61,6 +61,7 @@ import {
   gainFriendship,
 } from '../data/constants/friendship';
 import createOverworld from '../overworld/setup';
+import deriveNestEgg, { NEST_HATCH_FACTOR } from '../overworld/nest-egg';
 import resolveBuddy from './buddy';
 import { isCatchLocked } from './locks';
 import { recordFoundSpecies } from './pokedex';
@@ -143,6 +144,8 @@ interface EggFields {
    * The window the egg belongs to, recorded as its origin
    */
   timestamp: number;
+  /** The room it hatches with, where that is more than any catch starts with */
+  slots?: number;
 }
 
 /**
@@ -200,7 +203,7 @@ async function writeEgg(
           shiny: fields.shiny,
           species: fields.species,
         })},
-        ${packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS)},
+        ${fields.slots ?? packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS)},
         0, 0, ${hatchSteps}, ${now},
         ${whole}, ${whole},
         0, null, ${fields.ball},
@@ -244,14 +247,7 @@ export async function grantNestEgg(
   offset: number,
   locale: string,
 ): Promise<string> {
-  // The draws land in order: the individual value, the trait value,
-  // then the move the hatchling inherits
-  const rng = new AleaRNG(`${snapshot.groundKey}${snapshot.nestTimestamp}nest${cell}egg:${uid}`);
-  const spawn: Spawn = [species, rng.int32(), rng.int32()];
-  const hatchling = deriveEncounter(snapshot, spawn, uid, {
-    type: EncounterType.Hatched,
-    level: EGG_LEVEL,
-  });
+  const hatchling = deriveNestEgg(snapshot, cell, species, uid, EGG_LEVEL);
 
   return writeEgg(
     uid,
@@ -265,17 +261,16 @@ export async function grantNestEgg(
       // a nest
       shiny: hatchling.shiny,
       shadow: false,
-      // A nest guarantees the inherited move; the rest is what the
-      // species knows at the level it hatches
-      moves: deriveEggMoves(species, EGG_LEVEL, () => rng.random()),
+      moves: hatchling.moves,
       ability: hatchling.ability,
       individualValue: hatchling.individualValue,
       traitValue: hatchling.traitValue,
-      hatchSteps: getEggHatchSteps(species),
+      hatchSteps: Math.ceil(getEggHatchSteps(species) * NEST_HATCH_FACTOR),
       // Nothing laid it: the ball is the one named for where eggs
       // come from
       ball: Balls.NestBall,
       timestamp: snapshot.nestTimestamp,
+      slots: hatchling.slots,
     },
     now,
     offset,
@@ -441,6 +436,7 @@ export async function recordSteps(
       // answers nothing
       const overworld = createOverworld(uid, {
         species: caught.species,
+        shiny: caught.shiny,
         abilities: caught.abilities,
         items: caught.items,
         nature: caught.nature,

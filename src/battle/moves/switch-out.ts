@@ -23,12 +23,15 @@ import type Unit from '../unit';
  * MoveTargetPriorities.Random.
  */
 export const FORCED_SWITCH_MOVES = new Set<Moves>([Moves.Whirlwind, Moves.Roar]);
-const SELF_SWITCH_MOVES = new Set<Moves>([Moves.Teleport, Moves.BatonPass]);
+// U-turn is one of these that hits on the way out: the blow lands on
+// the wind-up step, which the shared resolver deals, and the walk off
+// the field is this module's on the step after it
+const SELF_SWITCH_MOVES = new Set<Moves>([Moves.Teleport, Moves.BatonPass, Moves.UTurn]);
 
 /**
  * Every stage a Baton Pass hands over
  */
-const PASSED_STAGES = [
+export const PASSED_STAGES = [
   Stages.Attack,
   Stages.Defense,
   Stages.SpecialAttack,

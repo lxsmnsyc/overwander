@@ -25,9 +25,11 @@ const SPECIES_EGG_CYCLES: Map<Species, number> = new Map([
   // anything else has started
   [Species.Magikarp, 5],
 
-  [Species.Pikachu, 10],
-  [Species.Clefairy, 10],
-  [Species.Jigglypuff, 10],
+  // Keyed at the stage the line hatches at, which for these is the
+  // baby a later generation put underneath them
+  [Species.Pichu, 10],
+  [Species.Cleffa, 10],
+  [Species.Igglybuff, 10],
 
   // The early-route lines, which is what makes them early-route
   [Species.Caterpie, 15],
@@ -39,13 +41,12 @@ const SPECIES_EGG_CYCLES: Map<Species, number> = new Map([
   [Species.Geodude, 15],
 
   [Species.Onix, 25],
-  [Species.Hitmonlee, 25],
-  [Species.Hitmonchan, 25],
-  [Species.MrMime, 25],
+  [Species.Tyrogue, 25],
+  [Species.MimeJr, 25],
   [Species.Scyther, 25],
-  [Species.Jynx, 25],
-  [Species.Electabuzz, 25],
-  [Species.Magmar, 25],
+  [Species.Smoochum, 25],
+  [Species.Elekid, 25],
+  [Species.Magby, 25],
   [Species.Pinsir, 25],
 
   // Revived rather than born, and priced accordingly
@@ -55,9 +56,9 @@ const SPECIES_EGG_CYCLES: Map<Species, number> = new Map([
   [Species.Eevee, 35],
   [Species.Aerodactyl, 35],
 
-  [Species.Chansey, 40],
+  [Species.Happiny, 40],
   [Species.Lapras, 40],
-  [Species.Snorlax, 40],
+  [Species.Munchlax, 40],
   [Species.Dratini, 40],
 
   // Nothing lays these, so the figures only ever reach a nest egg or a

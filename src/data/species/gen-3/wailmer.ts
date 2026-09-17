@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves both stages share
@@ -44,6 +44,9 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.DefenseCurl,
+  Moves.Avalanche,
+  Moves.Captivate,
+  Moves.NaturalGift,
 ];
 
 export default function registerWailmerSpecies(): void {
@@ -70,6 +73,7 @@ export default function registerWailmerSpecies(): void {
       [Stats.Speed]: 60,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.WaterVeil, Abilities.Oblivious],
     hiddenAbilities: [Abilities.Pressure],
     eggGroups: [EggGroups.Field, EggGroups.Water2],
@@ -86,6 +90,7 @@ export default function registerWailmerSpecies(): void {
         19: [Moves.Whirlpool],
         23: [Moves.Astonish],
         28: [Moves.WaterPulse],
+        31: [Moves.Brine],
         32: [Moves.Mist],
         37: [Moves.Rest],
         41: [Moves.WaterSpout],
@@ -93,7 +98,7 @@ export default function registerWailmerSpecies(): void {
         50: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Curse, Moves.Fissure, Moves.Thrash, Moves.Tickle],
+      egg: [Moves.Curse, Moves.Fissure, Moves.Thrash, Moves.Tickle, Moves.AquaRing],
     },
   });
 
@@ -114,6 +119,7 @@ export default function registerWailmerSpecies(): void {
       [Stats.Speed]: 60,
     },
     types: [Types.Water],
+    habitat: Habitat.Water,
     abilities: [Abilities.WaterVeil, Abilities.Oblivious],
     // One the mainline never gave it: nothing goes off with that much
     // water spouting over it
@@ -129,13 +135,14 @@ export default function registerWailmerSpecies(): void {
         19: [Moves.Whirlpool],
         23: [Moves.Astonish],
         28: [Moves.WaterPulse],
+        31: [Moves.Brine],
         32: [Moves.Mist],
         37: [Moves.Rest],
         44: [Moves.WaterSpout],
         52: [Moves.Amnesia],
         59: [Moves.HydroPump],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.IronHead],
     },
   });
 }

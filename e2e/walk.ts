@@ -12,7 +12,7 @@ import {
 import { CHUNK_CELLS } from '../src/overworld/chunk';
 import Landmark, { LANDMARK_NAMES } from '../src/data/overworld/landmark';
 import World from '../src/overworld/world';
-import { uidOf, upsertRow } from './admin';
+import { GENERATION, uidOf, upsertRow } from './admin';
 import { type Player, dialogNamed, expectOpen } from './game';
 
 /**
@@ -35,7 +35,7 @@ import { type Player, dialogNamed, expectOpen } from './game';
  * the fallback is the one development and the tests share
  */
 export function world(): World {
-  return new World(process.env.VITE_WORLD_SEED ?? 'overworld');
+  return new World(process.env.VITE_WORLD_SEED ?? 'overworld', undefined, GENERATION);
 }
 
 /**
@@ -221,6 +221,7 @@ export async function standBeside(player: Player, at: Standing): Promise<number>
 
   await upsertRow('positions', {
     player: await uidOf(player),
+    generation: GENERATION,
     chunk_x: at.chunkX,
     chunk_y: at.chunkY,
     cell_x: stoodX,

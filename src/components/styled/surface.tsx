@@ -1,4 +1,4 @@
-import type { JSX, ParentProps } from 'solid-js';
+import { type JSX, type ParentProps, children } from 'solid-js';
 
 /**
  * The things the game is written on.
@@ -39,6 +39,8 @@ export function Panel(props: PanelProps): JSX.Element {
 
 export interface CardProps extends ParentProps {
   title?: string;
+  /** Something to press, standing opposite the title */
+  aside?: JSX.Element;
   class?: string;
 }
 
@@ -48,12 +50,20 @@ export interface CardProps extends ParentProps {
  * without a rule between them
  */
 export function Card(props: CardProps): JSX.Element {
+  // Resolved once: a JSX prop is a getter, and each read builds it again
+  const aside = children(() => props.aside);
+
   return (
     <section
       class={`flex flex-col gap-2 rounded-panel border-2 border-line bg-paper p-3 shadow-pop
         sm:p-4 ${props.class ?? ''}`}
     >
-      {props.title == null ? null : <h3>{props.title}</h3>}
+      {props.title == null ? null : (
+        <div class="flex items-center justify-between gap-2">
+          <h3>{props.title}</h3>
+          {aside()}
+        </div>
+      )}
       {props.children}
     </section>
   );

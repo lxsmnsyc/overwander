@@ -222,6 +222,9 @@ describe('the characters a trainer may wear', () => {
       award: Awards.HoennDexMedal,
     });
     expect(getCharset('characters/oras/birch')?.name).toBe('Professor Birch');
+    // Both of Rowan's, off the one medal
+    expect(getCharset('characters/dppt/rowan')?.name).toBe('Professor Rowan');
+    expect(getCharset('characters/dppt/rowan-2')?.name).toBe('Professor Rowan');
   });
 
   it('says who a sheet is, and which game it is drawn from', () => {

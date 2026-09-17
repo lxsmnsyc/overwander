@@ -42,6 +42,12 @@ const FAMILY_TEACHABLE = [
   Moves.BulletSeed,
   Moves.Facade,
   Moves.SecretPower,
+  Moves.Captivate,
+  Moves.EnergyBall,
+  Moves.GastroAcid,
+  Moves.GrassKnot,
+  Moves.SeedBomb,
+  Moves.WorrySeed,
 ];
 
 export default function registerOddishSpecies(): void {
@@ -83,6 +89,8 @@ export default function registerOddishSpecies(): void {
         16: [Moves.StunSpore],
         18: [Moves.SleepPowder],
         23: [Moves.Acid],
+        25: [Moves.LuckyChant],
+        29: [Moves.NaturalGift],
         32: [Moves.Moonlight],
         33: [Moves.PetalDance],
         46: [Moves.SolarBeam],
@@ -140,11 +148,12 @@ export default function registerOddishSpecies(): void {
         1: [Moves.Absorb, Moves.PoisonPowder, Moves.StunSpore, Moves.SweetScent],
         18: [Moves.SleepPowder],
         24: [Moves.Acid],
-        35: [Moves.Moonlight],
+        29: [Moves.LuckyChant],
+        35: [Moves.Moonlight, Moves.NaturalGift],
         38: [Moves.PetalDance],
         52: [Moves.SolarBeam],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.DrainPunch, Moves.Fling],
     },
   });
 
@@ -183,7 +192,15 @@ export default function registerOddishSpecies(): void {
           Moves.Aromatherapy,
         ],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.BodySlam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.BodySlam,
+        Moves.DrainPunch,
+        Moves.Fling,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+      ],
     },
   });
 }

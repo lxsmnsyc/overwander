@@ -1,4 +1,3 @@
-import AleaRNG from '../core/alea';
 import { CHUNK_CELLS, ORTHOGONAL, worldCell } from './grid';
 import { isHillside, isSurfaceWater } from './surface';
 import { portalCellIn } from './town';
@@ -167,7 +166,7 @@ const cutOrNot = new WeakMap<World, Map<string, CaveMouth | null>>();
  * of them being generated first
  */
 function mouthRank(world: World, chunkX: number, chunkY: number): number {
-  return new AleaRNG(`${world.seed}mouth(${chunkX}, ${chunkY})`).random();
+  return world.draws(`${world.seed}mouth(${chunkX}, ${chunkY})`).random('rank');
 }
 
 /**
@@ -217,9 +216,7 @@ export default function caveMouth(world: World, chunkX: number, chunkY: number):
       }
       const spot = mouthSpot(chunkX + dx, chunkY + dy, other);
 
-      if (
-        Math.max(Math.abs(spot.x - here.x), Math.abs(spot.y - here.y)) < MOUTH_GAP
-      ) {
+      if (Math.max(Math.abs(spot.x - here.x), Math.abs(spot.y - here.y)) < MOUTH_GAP) {
         return null;
       }
     }

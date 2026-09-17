@@ -2,7 +2,7 @@ import { Foe, Landmark, Metric } from '../../auth/quest-record';
 import AleaRNG from '../../core/alea';
 import type Families from '../ids/families';
 import { Items } from '../ids/items';
-import { getSpeciesLair } from '../overworld/lair';
+import { getSpeciesLairs } from '../overworld/lair';
 import { getRegisteredFamilies } from '../species/__create';
 import { getFamilyName, getRegisteredSpecies, getSpeciesData } from '../species';
 import { getFeaturedFamily } from '../species/day';
@@ -121,7 +121,7 @@ function huntFamilies(): Families[] {
   const lairbound = new Set<Families>();
 
   for (const species of getRegisteredSpecies()) {
-    if (getSpeciesLair(species) != null) {
+    if (getSpeciesLairs(species).length > 0) {
       lairbound.add(getSpeciesData(species).family);
     }
   }

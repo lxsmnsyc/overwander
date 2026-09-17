@@ -1,5 +1,1352 @@
 # overwander
 
+## 4.0.0
+
+### Major Changes
+
+- c1bebbd: Sinnoh.
+
+  All 107 of it, the 113 moves it brought, and a signature ability for every one
+  of the 246 families, which nothing outside the family can have. With them:
+
+  - The eight gym leaders, Roark to Volkner, and the Elite Four and Cynthia behind
+    them, which makes a fourth league and a fourth crown.
+  - Sinnoh's Battle Frontier: five more houses, each fought under its own rule,
+    with a silver print and a gold one to take from each.
+  - Uxie, Mesprit and Azelf, Dialga, Palkia and Giratina, Heatran, Regigigas and
+    Cresselia, with Manaphy, Darkrai, Shaymin and Arceus.
+  - Team Galactic, who keep the crime landmark in the cold country.
+  - Rotom in six shapes and Arceus in eighteen, with the Origin Formes, the cloaks
+    and the shells, each one chosen with an item rather than rolled.
+  - New stages for 28 older lines, so a Magneton, a Rhydon and a Togetic are no
+    longer the end of theirs.
+  - The Ability Capsule and the Ability Patch, which is the only way to a
+    signature.
+  - Honey Trees in the forests, and a nest egg worth more than a wild catch.
+
+  The world changes under all of it. Sinnoh's species join the biomes they belong
+  to, the towns and the caves, 17 lairs and 42 more duelling stops stand in the country, water and ice
+  carry spawns of their own, and every legendary can be met in the wild where its
+  lair sits. What a chunk holds has changed everywhere.
+
+### Minor Changes
+
+- ece2eaf: Verdant Field, the Bulbasaur line's signature ability: Grass moves hit 1.2x and
+  Water moves 0.8x for everybody on the field while it stands.
+- a1db2ac: Sinnoh's pokedex chain, and the professor it pays.
+
+  - **Sinnoh Pokedex** on the quest board, asking for 21 caught, then 54, then
+    103, which is every species of the region but Darkrai, Manaphy, Shaymin and
+    Arceus.
+  - The last rung hangs the **Sinnoh Dex Medal** on the shelf and hands over a
+    Master Ball, the way the other three regions' do.
+  - Filling it unlocks **Professor Rowan** in both of the looks he is drawn in.
+
+- c2f6cef: Shaymin can be met, in both of its shapes.
+
+  - Flower Paradise holds Shaymin, and Shaymin is a mythical, so Oak's Letter
+    found in the special band of the item pool is the only way to one.
+  - Purebloom is its signature. Poison costs its teammates no HP while it stands,
+    itself included. The poison is still on them and still runs its clock, so
+    anything that reads a poisoned target still reads one.
+  - The Gracidea is new. A Shaymin holding it fights in its Sky Forme, which is
+    worn rather than met: the dex fills the shape in the day the one it lies down
+    in is. Nobody sells one, so the prized band of the overworld item pool is the
+    only way to one.
+  - Sky Forme carries Serene Grace, which is the shape's own ability and stays
+    with the shape.
+  - The mainline gives Shaymin only Natural Cure, so it carries three of this
+    registry's own: Chlorophyll, Harvest and Leaf Guard.
+  - Changes world generation.
+
+- 7dcdbbd: Team Galactic keeps the crime landmark in the cold country.
+
+  - **Cyrus** at the top, with **Mars**, **Jupiter** and **Saturn** under him, and
+    a uniform for the rank and file.
+  - Their country is the glaciers, the tundra, the taiga, the montane forest and
+    the Beyond, which Team Rocket held before.
+  - Each of them pays their own mark, and the uniform pays one for clearing a cell
+    of grunts.
+  - Everybody is named team and rank first, as in **Team Galactic Commander Mars**.
+  - Changes world generation.
+
+- a30e3b7: Rotom can be met, and it can be moved between all six of its shapes.
+
+  - Rotom is found in woodland and temperate forest.
+  - The Rotom Catalog is new. Using one on a Rotom offers every one of its shapes
+    but the one it is in, so a player picks the machine rather than rolling for
+    it, and the Catalog is spent doing it. Nobody sells one, so a second shape
+    costs a second Catalog found in the ground.
+  - Appliance is the family's signature. Its moves of the type its shape gives
+    it, Electric aside, hit 1.3x: Ghost as it is met, then Fire, Water, Ice,
+    Flying or Grass in a machine.
+  - Each machine keeps the move the mainline gives it: Overheat, Hydro Pump,
+    Blizzard, Air Slash and Leaf Storm.
+  - The mainline gives Rotom only Levitate, so it carries three of this
+    registry's own: Motor Drive, Static and Magnet Pull.
+  - A change of shape no longer counts as a stage when a species' spawn band is
+    worked out, so a Rotom stands in the same band whichever machine it is in.
+  - Changes world generation.
+
+- 1f7fd02: A world can be grown with a second generation, which never repeats and keeps its placements steady.
+
+  - The live world is unchanged. A deployment can switch to the second with `VITE_WORLD_GENERATION=2`.
+  - Positions, found towns, gym seats, raids, stops and claims are kept per generation, so switching hides the other world's instead of losing them.
+  - The second generation's terrain fields do not tile, where the first repeats every 6,144 chunks.
+  - Its rock and water edges carry a finer octave, and every biome keeps the share of the world it has now.
+  - Adding a roll to how the second generation places things no longer moves anything already placed.
+  - Working out the ground is faster on both generations.
+  - The board and world demos can show either generation.
+
+- bfeb925: A pokemon behind a substitute is drawn behind it: the doll steps in front and the pokemon dims to a shadow of itself while it is up, and the two swap back when it breaks.
+- 4158e03: Ember Field, the Charmander line's signature ability: Fire moves hit 1.2x and
+  Grass moves 0.8x for everybody on the field while it stands.
+- a05e08a: Manaphy and Phione can be met.
+
+  - The Sea Temple holds Manaphy, and Manaphy is a mythical, so the Manaphy Egg
+    found in the special band of the item pool is the only way to one.
+  - A Manaphy's egg hatches into a Phione and never into another Manaphy, which
+    is the only way a Phione is reached. Nothing else in the registry lays
+    something other than the bottom of its own line, and no pool stages a Phione.
+  - Heartcurrent is the family's signature. Every stat stage an enemy gains is
+    written onto the holder as well, the same stage and the same size. It takes
+    nothing off the enemy, so nothing refuses it, and a copy is never copied
+    back.
+  - The mainline gives both only Hydration, so each carries three of this
+    registry's own: Water Absorb, Healer and Friend Guard for Manaphy, Swift
+    Swim, Rain Dish and Storm Drain for Phione.
+  - The Manaphy Egg's picture is the egg's own art, shrunk to an item's cell.
+
+- a9a4f14: A buddy can use field moves it is able to learn, from a button on the menu bar that lists only the moves usable where the player stands.
+
+  - Open water can no longer be walked onto. Surf rides the buddy across it, starting beside water and ending on the first step ashore.
+  - Fly crosses water, trees and cliffs, never lava, and comes down only where a walk could stand. It works above ground only.
+  - Dig climbs out of a cave to the nearest mouth, like an escape rope that is never spent.
+  - Teleport sends the player to the portal of the nearest town, found or not.
+  - While surfing or flying the player is drawn as the buddy, walking as they walk.
+
+- e478792: Deluge Field, the Squirtle line's signature ability: Water moves hit 1.2x and
+  Fire moves 0.8x for everybody on the field while it stands.
+- b4e7334: - The Embedded Tower is a new lair on beaches, home to Kyogre, Groudon and Rayquaza.
+  - Kyogre, Groudon and Rayquaza can be met in the wild on beaches.
+- 0a02e80: Four more Kanto families have a signature ability.
+
+  - Powder Burst on Caterpie. Its status moves reach every enemy on the field, not
+    only the one it aimed at.
+  - Twin Stinger on Weedle. Each physical move it uses strikes twice at 60% power.
+  - Slipstream on Pidgey. Cast and channel times are 20% shorter for its party
+    while it stands.
+  - Nibble on Rattata. Every move it lands takes another 1/32 of the target's HP,
+    whatever its armour.
+
+- e10b093: Pachirisu, Chatot, Spiritomb and Carnivine can be met.
+
+  - Pachirisu lives in temperate forest, woodland and taiga. Chatot lives in
+    tropical seasonal forest, temperate forest and woodland by day. Spiritomb
+    lives in badlands, bog and woodland after dark. Carnivine lives in swamp,
+    mangrove and tropical rainforest.
+  - Sparkfur is Pachirisu's signature. Anything that touches one of its teammates
+    is paralyzed 30% of the time, itself included.
+  - Birdsong is Chatot's. Its damaging sound moves confuse the target 20% of the
+    time.
+  - Soulwell is Spiritomb's. It heals 1/4 of its HP whenever anybody on the field
+    faints, either side.
+  - Snapvine is Carnivine's. The first move it lands on each enemy binds them as
+    well, cast as the move rather than written as a hold of its own.
+  - Cheek Pouch is new. Eating a berry also puts 1/3 of the eater's HP back,
+    whatever the berry was for, and only a berry it ate itself counts.
+  - The mainline leaves each of the four short, so they carry some of this
+    registry's own: Cheek Pouch for Pachirisu, Soundproof for Chatot, Cursed Body
+    and Shadow Tag for Spiritomb, and Strong Jaw, Gluttony and Unnerve for
+    Carnivine.
+  - Changes world generation.
+
+- f8ba0f5: Seven more of Hoenn's trainer classes stand at duelling stops: the Pokémon
+  Breeder, the Pokémon Ranger, the Collector, the Reporter, the Rich Boy, the
+  Parasol Lady and the Young Couple.
+
+  - Their coats shipped with Hoenn and were worn by nobody. Each is unlocked by
+    beating enough of that class, like every other coat.
+  - Six of them are trades Sinnoh brought, so Hoenn's wins and Sinnoh's climb the
+    one line and pay the one title.
+  - Changes world generation.
+
+- a20c6ee: Honey Trees grow in forests:
+
+  - Lather one with Honey once per window to draw out a pokemon and meet it on the spot.
+  - Weedle, Kakuna, Wurmple, Silcoon, Cascoon, Combee, Burmy, Aipom, Teddiursa, Heracross, Pinsir and Munchlax now come only from Honey Trees.
+  - Honey is sold at the medicine stall and turns up in forest caches.
+
+- 12bc343: - Navel Rock is a new lair in the deep ocean, home to Lugia and Ho-Oh.
+  - Ho-Oh can be met in the wild in the deep ocean.
+- 43ea9bc: A new overworld setting picks how the edge of the board meets the sky:
+
+  - Haze, the default, dissolves the country into the sky pixel by pixel toward the edge.
+  - Full board draws the ground to every corner of the screen.
+  - Plain keeps the board as it was.
+
+- 40c4f35: - A legendary can be at home in more than one lair, and its dex entry lists every one.
+  - Regirock, Regice and Registeel can also be raided at Rock Peak Ruins, Iceberg Ruins and Iron Ruins.
+- 4e2919c: - Battle history rows watch a replay and copy a link to the battle from two icon buttons.
+  - A replay can be played at 1x, 2x or 3x speed from its top bar.
+- 61accf0: Five more Hoenn families have a signature ability.
+
+  - Ore Hunger on Aron. Steel and Rock moves deal it no damage and heal it 1/4 of
+    what they would have.
+  - Mind Over Body on Meditite. It takes 0.5x damage while it is casting or
+    channelling a move.
+  - Jolt Start on Electrike. Its first move of a battle goes off a step ahead of
+    everything and hits 1.5x.
+  - Cheer On on Plusle. Each time it acts, the teammate lowest on HP gains a stage
+    in its best stat, up to 3 times a battle.
+  - Jeer At on Minun. Each time it acts, the enemy highest on HP loses a stage in
+    its best stat, up to 3 times a battle.
+
+- 66c6f7b: Five more Hoenn families have a signature ability.
+
+  - Silt Bed on Barboach. Every grounded pokemon on the field, its own side
+    included, has Speed count 0.9x.
+  - Dirty Fighter on Corphish. Its moves hit 1.3x against a target still at full
+    HP.
+  - Spin Balance on Baltoy. It cannot be flinched, cannot be forced off the field,
+    and its stages cannot be lowered.
+  - Root Hold on Lileep. A move it lands stops that target fleeing for 6 seconds
+    and counts their Speed 0.7x meanwhile.
+  - Claw Rush on Anorith. Its moves hit 1.3x against any target slower than it.
+
+- dc36690: The three legendary beasts and Larvitar have a signature ability. The beasts
+  share one, told three ways.
+
+  - Risen Thunder on Raikou. The first blow that would finish it leaves it on 1
+    HP, cured, and a stage faster. Once per battle.
+  - Risen Flame on Entei. The same, and a stage stronger.
+  - Risen Tide on Suicune. The same, and a stage harder to hurt.
+  - Tyrant on Larvitar. Nothing on the enemy side can raise a stat while it
+    stands.
+
+- 26c1b85: Four more Hoenn families have a signature ability.
+
+  - Feeding Frenzy on Carvanha. It gains a stage of Attack whenever any enemy
+    faints, up to 3 of them.
+  - Spout on Wailmer. Its Water moves reach every enemy on the field, not only the
+    one it aimed at.
+  - Magma Vent on Numel. The first time it drops below 1/2 HP, every enemy loses
+    1/8 of their HP, once per battle.
+  - Body Heat on Torkoal. Its Defense and Special Defense count 1.3x while the Sun
+    is up.
+
+- f6e8326: The first four Johto families have a signature ability.
+
+  - Sapmark on Chikorita. Anything it lands a move on loses 1/16 of its HP each
+    time it acts, and Chikorita drinks the same.
+  - Embermark on Cyndaquil. Anything it lands a move on loses 1/16 of its HP each
+    time it acts, or 1/8 while it is burned.
+  - Jawmark on Totodile. The one thing it has its jaws in loses 1/8 of its HP each
+    time it acts, only ever one at a time.
+  - Sentry on Sentret. Nobody in its party can be hit by a critical hit while it
+    stands.
+
+- ba062b6: Four more Johto families have a signature ability.
+
+  - Delivery on Delibird. It hands a Berry Juice to the teammate lowest on HP as
+    it arrives on the field.
+  - Escort on Mantine. Its teammates' Special Defense counts 1.3x while it stands.
+  - Steelmolt on Skarmory. It lays a layer of Spikes on the enemy side as a hit
+    drops it to 3/4 and to 1/2 HP.
+  - Pack Howl on Houndour. Every teammate gains a stage of Attack as it arrives on
+    the field.
+
+- a9abdd8: Four more Kanto families have a signature ability.
+
+  - Second Head on Doduo. Every third move it lands strikes again at once for 50%
+    power.
+  - Sleek Hide on Seel. Contact moves hit it at 0.75x and everything else at 1.1x.
+  - Corrosive Ooze on Grimer. Whoever lands a contact move on it has their held
+    item destroyed.
+  - Spike Shell on Shellder. Contact moves hit it at 0.5x, and whoever lands one
+    takes 1/8 of their own HP.
+
+- f457749: The last three Kanto families have a signature ability, which completes Kanto.
+
+  - Serene Storm on Dratini. Weather it calls up never clears on its own, and its
+    party takes no damage from any weather.
+  - Genetic Apex on Mewtwo. Its highest battle stat counts 1.25x and its lowest
+    counts 0.8x.
+  - Ancestral Memory on Mew. Any type that has already hit it once hits it at
+    0.85x thereafter.
+
+- 1366919: Four more Johto families have a signature ability.
+
+  - Hidden Den on Dunsparce. While anybody else in its party stands, enemies
+    cannot aim a single-target move at it.
+  - Sand Rider on Gligar. While sand blows, its moves cannot miss and everything
+    hits it at 0.75x.
+  - Bully on Snubbull. Its moves hit 1.3x against a target whose Attack has been
+    lowered.
+  - Last Barb on Qwilfish. When it faints, it casts Toxic at whoever finished it.
+
+- 4d2b066: Four more Hoenn families have a signature ability.
+
+  - Soul Harvest on Duskull. It heals 1/4 of its HP whenever anything on the field
+    faints, either side.
+  - Fruit Crop on Tropius. Every 8 seconds it grows a Sitrus Berry, if its hands
+    are empty.
+  - Ringing Head on Chimecho. Enemy cast and channel times run 25% longer while it
+    stands.
+  - Doom Mark on Absol. A move it lands marks that target, and the next blow
+    anybody lands on them within 4 seconds hits 1.3x.
+
+- 739e945: Four more Kanto families have a signature ability.
+
+  - Static Field on Electabuzz. Its Speed rises 15% for each contact hit it has
+    taken, up to 4 of them.
+  - Blast Furnace on Magmar. Its Fire moves burn the target 30% of the time.
+  - Snapjaw on Pinsir. Its moves hit 1.5x against a target that is casting or
+    channelling.
+  - Bullheaded on Tauros. Its contact moves hit 1.3x, and everything hits it 1.15x
+    in return.
+
+- 82096f7: Four more Hoenn families have a signature ability.
+
+  - Scarred Beauty on Feebas. Its Special Attack counts 1.4x while it carries
+    poison, sleep, paralysis, a burn or a freeze.
+  - Weather Worn on Castform. Under any weather its moves deal 1.3x and everything
+    hits it at 0.85x.
+  - Blend In on Kecleon. While it has stood still for 2 seconds, moves aimed at it
+    are half as accurate.
+  - Malice Pool on Shuppet. Its moves hit 10% harder for each lowered stage on the
+    target, up to 50%.
+
+- 67ddfb9: Four more Kanto families have a signature ability.
+
+  - Night Terror on Gastly. An enemy it damages cannot be healed for the next 4
+    seconds.
+  - Living Tunnel on Onix. Its teammates take 0.8x from Rock and Ground moves
+    while it stands, and it takes those at 1.2x.
+  - Dream Feast on Drowzee. Landing a move on a sleeping target heals it 1/8 of
+    its HP.
+  - Heavy Pincer on Krabby. Its contact moves hit 1.45x while it is at or above
+    1/2 HP.
+
+- 94150a7: The first four Hoenn families have a signature ability. The three starters share
+  one, each growing in the stat its line is built on.
+
+  - Sap Surge on Treecko. It gains a stage of Speed each time it acts, up to 3 of
+    its own.
+  - Ember Surge on Torchic. It gains a stage of Attack each time it lands a move,
+    up to 3 of its own.
+  - Silt Surge on Mudkip. It gains a stage of Special Defense each time it takes a
+    hit, up to 3 of its own.
+  - Pack Hunt on Poochyena. Its moves hit 1.2x against anything a teammate has
+    already damaged.
+
+- 69b7503: Four more Johto families have a signature ability.
+
+  - Watchful Roost on Hoothoot. It casts Reflect over its party as it arrives on
+    the field.
+  - Relay on Ledyba. Whenever it is switched out, its stat stages carry to the
+    teammate coming in.
+  - Silk Snare on Spinarak. It casts String Shot at every standing enemy as it
+    arrives on the field.
+  - Lantern Lure on Chinchou. It casts Confuse Ray at an enemy as it arrives on
+    the field.
+
+- 6b19cc2: Four more Kanto families have a signature ability.
+
+  - Lullaby on Jigglypuff. Sleep it inflicts lasts 1.5x as long, and its moves hit
+    1.5x against a sleeping target.
+  - Bloodthirst on Zubat. Draining moves and Leech Seed restore 1.5x for it, and
+    every other heal on it is halved.
+  - Deep Roots on Oddish. It casts Ingrain on itself as it arrives on the field.
+  - Fungal Bloom on Paras. Heals 1/8 of its HP each time it lands a status
+    condition on an enemy.
+
+- 060e8f4: Four more Kanto families have a signature ability.
+
+  - Taste Everything on Lickitung. A contact move it lands on a berry holder eats
+    that berry, healing or curing it as the berry would.
+  - Smog Screen on Koffing. Enemy moves are 15% less accurate while it stands.
+  - Corkscrew on Rhyhorn. Its contact moves hit 1.15x and ignore any Defense the
+    target has raised.
+  - Cushioned on Chansey. No single hit takes more than 1/4 of its HP off it.
+
+- 655421d: Three more Hoenn families have a signature ability.
+
+  - Shared Heart on Luvdisc. Whenever a teammate is healed, it heals half of that
+    amount as well.
+  - Skull Charge on Bagon. Its contact moves deal 1.4x, and it takes 1/8 of the
+    damage they deal back.
+  - Hive Mind on Beldum. Its moves hit 10% harder for each teammate standing with
+    it, up to 3 of them.
+
+- fe89caa: Four more Kanto families have a signature ability.
+
+  - Overhead Throw on Machop. Its contact moves hit 1.4x against a heavier target
+    and 1.1x against a lighter one.
+  - Digest on Bellsprout. Landing a move on a target at or below 1/4 HP heals it
+    1/4 of its own HP.
+  - Tentacle Grasp on Tentacool. No enemy it has landed a move on may flee while
+    it is still standing.
+  - Solid Core on Geodude. Physical moves hit it at 0.7x and special moves at
+    1.3x.
+
+- 65287b2: Four more Kanto families have a signature ability.
+
+  - Late Bloomer on Magikarp. Its moves hit 5% harder for every 10 seconds it has
+    been in the fight, up to 1.5x.
+  - Safe Passage on Lapras. It casts Safeguard over its party as it arrives, and
+    its teammates cannot be stopped from fleeing.
+  - Formless on Ditto. Critical hits land on it as ordinary hits, and its stages
+    cannot be lowered.
+  - Latent Potential on Eevee. Whichever of its five battle stats is lowest counts
+    1.3x.
+
+- e6adad6: Five more Hoenn families have a signature ability.
+
+  - Shove on Makuhita. A contact move it lands on an enemy winding a move up
+    flinches them, costing them that cast.
+  - Magnetize on Nosepass. Enemy moves aimed at one of its teammates are pulled
+    onto it instead.
+  - Kitten Pace on Skitty. Its Speed counts 1.3x while it is at full HP.
+  - Shadow Tax on Sableye. A move it lands removes one raised stage from the
+    target.
+  - Jaw Claim on Mawile. A move it lands moves one raised stage from the target
+    onto itself.
+
+- 4dc8672: Four more Kanto families have a signature ability.
+
+  - Blind Rage on Mankey. 1.4x Attack and 15% less accuracy, and nothing can heal
+    it.
+  - Chase Down on Growlithe. Its moves hit 1.5x against a target at or below 1/3
+    HP, and that target cannot flee from it.
+  - Hypnotic Spiral on Poliwag. Whoever lands a contact move on it takes 30%
+    longer over their next cast.
+  - Teleport Guard on Abra. It blinks away from the first attack that would land,
+    then needs 10 seconds to do it again.
+
+- 09aedc0: Four more Kanto families have a signature ability.
+
+  - Queen's Court on Nidoran female. Her Defense and Special Defense are 1.15x for
+    each poisoned enemy on the field, counting up to 3.
+  - King's Court on Nidoran male. His Attack and Special Attack are 1.15x for each
+    poisoned enemy on the field, counting up to 3.
+  - Wishing Well on Clefairy. Each time it acts, it casts Wish on the teammate
+    lowest on HP.
+  - Nine Tails on Vulpix. Its Special Attack rises 8% for each hit it has taken,
+    up to 9 hits.
+
+- 0a18837: Four more Johto families have a signature ability.
+
+  - Momentum on Phanpy. Its moves hit 1.1x for each move it has landed since
+    taking the field, up to 1.5x.
+  - Mind Fog on Stantler. Enemy Special Attack counts 0.85x while it stands.
+  - Palette on Smeargle. Its moves take the type of the last move that hit it.
+  - Cowbell on Miltank. It casts Heal Bell over its party as it arrives on the
+    field.
+
+- ddcfed5: Four more Kanto families have a signature ability.
+
+  - Gallop on Ponyta. Its Speed rises 10% each time it acts, up to 1.5x, and any
+    hit it takes clears it.
+  - Delayed Reaction on Slowpoke. It feels half of each hit at once and the other
+    half 4 seconds later.
+  - Repulsion Field on Magnemite. Special moves hit at 0.9x for everybody on the
+    field, its own included.
+  - Leek Duelist on Farfetch'd. Critical stage 2 higher and criticals 1.25x
+    harder, and everything hits it 1.25x in return.
+
+- 5651f2e: Four more Kanto families have a signature ability.
+
+  - Rollback on Porygon. The first time it drops below 1/2 HP, its health goes
+    back to what it was 4 seconds earlier.
+  - Helix Shell on Omanyte. Its Defense and Special Defense count as 1.25x against
+    every blow it takes.
+  - Dome Blade on Kabuto. Its blows count the target's Defense or Special Defense
+    as 0.75x.
+  - Predator's Dive on Aerodactyl. Its first move against each enemy hits 1.5x.
+
+- 495e83f: The Regi trio and the Eon pair have a signature ability.
+
+  - Stone Seal on Regirock. For 8 seconds it deals and takes 0.5x, then deals
+    1.25x and gains 2 stages of Defense.
+  - Frost Seal on Regice. The same seal, waking into 2 stages of Special Defense.
+  - Iron Seal on Registeel. The same seal, waking into 2 stages of Attack.
+  - Eon Shield on Latias. Its teammates take 0.8x damage while it stands, itself
+    excluded.
+  - Eon Lance on Latios. Its moves deal 1.25x and count Reflect and Light Screen
+    for nothing.
+
+- cecc3b6: Four more Hoenn families have a signature ability.
+
+  - Mycelium on Shroomish. Anything carrying poison, sleep, paralysis, a burn or a
+    freeze takes 1.2x from every blow while it stands.
+  - Wide Swing on Slakoth. Its physical moves reach every enemy on the field, not
+    only the one it aimed at.
+  - Vanishing Act on Nincada. For 1 second after it lands a move, single-target
+    moves aimed at it miss.
+  - Echo Chamber on Whismur. A sound move it lands echoes 2 seconds later for 1/4
+    of the damage it dealt.
+
+- eaa7335: Four more Johto families have a signature ability.
+
+  - Fermenter on Shuckle. Each time it acts with a free hand, a Berry Juice
+    appears in it.
+  - Heave on Heracross. The first contact move it lands on each enemy casts
+    Whirlwind at them.
+  - Sharp Claw on Sneasel. Each contact move it lands drops the target's Defense
+    by a stage.
+  - Sweet Paw on Teddiursa. Its contact moves heal it 1/8 of the damage they deal.
+
+- 8894e66: Four more Johto families have a signature ability.
+
+  - Magma Trail on Slugma. An enemy it has landed a move on loses 1/16 of its HP
+    each time it acts, while it stands.
+  - Icebreaker on Swinub. A move it lands tears Reflect and Light Screen off the
+    target's side.
+  - Coral Bloom on Corsola. Whenever it is healed, the teammate lowest on HP is
+    healed the same amount.
+  - Standoff on Remoraid. Nothing it uses counts as contact, so it never sets off
+    what answers a touch.
+
+- eaeb532: Four more Kanto families have a signature ability.
+
+  - Full Belly on Snorlax. It heals 1/16 of its HP every time it acts, and its
+    cast times are 25% longer.
+  - Frostwing on Articuno. Every enemy loses a stage of Speed as it arrives on the
+    field.
+  - Stormwing on Zapdos. Every enemy loses a stage of Special Defense as it
+    arrives on the field.
+  - Emberwing on Moltres. Every enemy loses a stage of Defense as it arrives on
+    the field.
+
+- 1f2f045: Four more Hoenn families have a signature ability.
+
+  - Cold Snap on Snorunt. Whoever lands a contact move on it is frozen 20% of the
+    time.
+  - Applause on Spheal. It heals 1/16 of its HP each time a teammate lands a move.
+  - Pearl Guard on Clamperl. Its Special Attack and Special Defense count 1.5x
+    while it holds an item.
+  - Unchanged on Relicanth. Every move hits it for neutral damage, so it has no
+    weaknesses and no resistances. Relicanth's fourth ability is now Multiscale
+    rather than Solid Rock.
+
+- 00b5d68: Four more Kanto families have a signature ability.
+
+  - Relentless on Spearow. Each move it lands on the same target as the last hits
+    10% harder, up to 1.4x.
+  - Squeeze on Ekans. While it casts or channels, the last enemy it touched loses
+    1/16 of its HP each second.
+  - Chain Lightning on Pikachu. An Electric move it lands arcs to one other
+    standing enemy for 1/3 of the damage.
+  - Curl Up on Sandshrew. Each hit it takes casts Defense Curl on itself.
+
+- af40b8f: Four more Hoenn families have a signature ability.
+
+  - Stored Bounce on Spoink. Half of each hit it takes is stored, up to 1/2 its
+    HP, and the next move it lands deals the lot on top.
+  - Unique Spots on Spinda. It arrives with 2 stages in one random stat and 1
+    stage off another, rolled fresh each time.
+  - Antlion Pit on Trapinch. Any enemy move that misses it costs that enemy 1/8 of
+    their HP.
+  - Patient Stalk on Cacnea. Its moves hit 10% harder for each second it has stood
+    idle, up to 50%, spent on the next one it lands.
+
+- 4705c3b: Four more Kanto families have a signature ability.
+
+  - Core Reset on Staryu. Each time it acts, one stat drop on it is undone.
+  - Mimed Barrier on Mr. Mime. It casts Light Screen over its party as it arrives,
+    and physical moves hit it at 1.15x itself.
+  - Clean Cut on Scyther. Its critical hits ignore every stage on the target's
+    defending stat.
+  - Icy Charm on Jynx. Its moves hit 1.5x against a target that is infatuated or
+    confused.
+
+- 95f2283: Four more Johto families have a signature ability.
+
+  - False Wood on Sudowoodo. It counts as a Grass type for working out what hurts
+    it, until the first hit lands on it.
+  - Updraft on Hoppip. It cannot be trapped, its Speed cannot be lowered, and it
+    always gets away.
+  - Tailthrow on Aipom. It casts Fling as it arrives on the field, throwing its
+    held item at an enemy.
+  - Sunlit Charge on Sunkern. Its channelled moves hit 1.3x and cannot be
+    interrupted.
+
+- 1f19363: Five more Hoenn families have a signature ability.
+
+  - Cloud Step on Swablu. The first move aimed at it each battle deals no damage
+    to it.
+  - Feud Claws on Zangoose. Its moves hit 1.4x against a poisoned target.
+  - Deepening Venom on Seviper. A move it lands on a poisoned target turns that
+    poison into the badly-poisoned kind.
+  - Moon Pull on Lunatone. Its party takes 0.85x damage while it stands, unless a
+    Sun Glare holder stands too.
+  - Sun Glare on Solrock. Enemies take 1.15x damage while it stands, unless a Moon
+    Pull holder stands too.
+
+- 0e5b269: Four more Hoenn families have a signature ability.
+
+  - Migrant's Wind on Taillow. It casts Tailwind over its party as it arrives on
+    the field.
+  - Gull's Greed on Wingull. Every heal an enemy receives is 0.75x, and it takes
+    the quarter for itself.
+  - Empath on Ralts. Its Special Attack counts 1.3x while a teammate is below 1/2
+    HP.
+  - Surface Walk on Surskit. It takes no damage from hazards or from weather.
+
+- 9b199e7: Four more Kanto families have a signature ability.
+
+  - Vine Web on Tangela. It lays a layer of Spikes on the enemy side each time it
+    arrives.
+  - Mother's Shield on Kangaskhan. Enemy moves aimed at a teammate below 1/2 HP
+    are aimed at her instead.
+  - Whirl Current on Horsea. Enemy cast times are 20% longer while rain is
+    falling.
+  - Upstream on Goldeen. Its moves hit 1.35x against any target with more HP than
+    its own.
+
+- d3a6e64: Four more Johto families have a signature ability.
+
+  - Fair Share on Togepi. A move under 100% accuracy that just hit somebody in its
+    party cannot hit that one again next time.
+  - Prophecy on Natu. It casts Future Sight at an enemy as it arrives on the
+    field.
+  - Live Wire on Mareep. It casts Thunder Wave at an enemy as it arrives on the
+    field.
+  - Spillover on Marill. Healing past its full HP is thrown at an enemy as damage
+    rather than wasted.
+
+- 79b597d: The last three Johto families have a signature ability, which finishes the
+  region. The tower duo share one, told either side of a fall.
+
+  - Silver Aegis on Lugia. The first blow that would finish a teammate leaves it
+    on 1 HP instead. Once per battle.
+  - Rainbow Rekindling on Ho-Oh. The first teammate to fall gets back up on 1/3 of
+    its HP. Once per battle.
+  - Timeline Split on Celebi. The first time it drops below 1/2 HP, every stat
+    drop on it is undone and every status cleared.
+
+- 91eabf5: Four more Johto families have a signature ability.
+
+  - Ruinous Script on Unown. Held items do nothing on the enemy side while it
+    stands.
+  - Backlash on Wobbuffet. It banks 1/4 of every hit it takes, and pays the bank
+    back to whoever last struck it when it next acts.
+  - Ambidextrous on Girafarig. Its moves are worked out from whichever of its
+    Attack and Special Attack is higher.
+  - Shrapnel on Pineco. When it faints, it casts Spikes and Toxic Spikes onto the
+    enemy side.
+
+- 4bf05cf: Four more Kanto families have a signature ability.
+
+  - Dust Storm on Venonat. Its Special Attack rises 12% for every enemy carrying a
+    status, up to 4 of them.
+  - Undermine on Diglett. Each move it lands leaves that enemy taking 5% more from
+    everybody, up to 25%, for the rest of the fight.
+  - Cutpurse on Meowth. The first move it lands on each enemy knocks their held
+    item away.
+  - Headache Burst on Psyduck. At or below 1/2 HP its Special Attack is 1.5x and
+    its Psychic moves cannot miss.
+
+- 07023c5: Four more Hoenn families have a signature ability.
+
+  - Tail Light on Volbeat. Evasion counts for nothing on the enemy side while it
+    stands.
+  - Lure Scent on Illumise. Enemy Speed counts 0.85x while it stands.
+  - Perennial on Roselia. The first time it drops below 1/4 HP it heals 1/3 of its
+    HP and is cured, once per battle.
+  - Bottomless on Gulpin. It heals 1/8 of its HP whenever any held item is
+    consumed on the field.
+
+- ae187ac: Four more Kanto families have a signature ability.
+
+  - Overload on Voltorb. Its Speed doubles below 1/2 HP.
+  - Psyseed on Exeggcute. An enemy its Psychic moves damage has Leech Seed cast on
+    it.
+  - Mourning Bone on Cubone. Its moves hit 1.4x while it is the only one left
+    standing in its party.
+  - Second Wind on Tyrogue. The first time it falls below 1/4 HP it heals 1/3 of
+    its HP, once per battle.
+
+- 739d0b3: The last five Hoenn families have a signature ability.
+
+  - Primal Sea on Kyogre. Below 1/2 HP it gains 2 stages of Special Attack and its
+    Water moves deal 1.3x, for good.
+  - Primal Land on Groudon. The same waking, in Attack and Ground moves.
+  - Primal Sky on Rayquaza. The same waking, in Special Attack and Dragon moves.
+  - Seven Wishes on Jirachi. Every 7 times it acts, its whole party heals 1/4 of
+    their HP and it alone is cured.
+  - Form Drift on Deoxys. Every 6 seconds it gains a stage in its highest battle
+    stat and loses one in its lowest.
+
+- 40c981e: Four more Johto families have a signature ability.
+
+  - Resonance on Yanma. Its sound moves reach every enemy on the field, not only
+    the one it aimed at.
+  - Contagious Yawn on Wooper. It casts Yawn at an enemy as it arrives on the
+    field.
+  - Magpie on Murkrow. Any held item taken off somebody else on the field goes
+    into its empty hands.
+  - Shared Misery on Misdreavus. The first time it drops below 1/3 of its HP it
+    casts Pain Split at the healthiest enemy.
+
+- e276b45: Four more Hoenn families have a signature ability.
+
+  - Crooked Run on Zigzagoon. Each time it acts, moves aimed at it are 0.9x as
+    accurate, stacking 3 times, and a landed blow clears it.
+  - Cocoon on Wurmple. The first time it drops below 1/2 HP, it shells over for 4
+    seconds and both deals and takes 0.5x damage.
+  - Water Bloom on Lotad. It calls up Rain as it takes the field, and heals 1/16
+    of its HP each time it acts in Rain.
+  - Sun Root on Seedot. It calls up Sun as it takes the field, and its moves deal
+    1.3x damage in Sun.
+
+- 0f53068: Sinnoh's 113 moves are in.
+
+  - Roost, Gravity, Miracle Eye, Wake-Up Slap, Hammer Arm
+  - Gyro Ball, Healing Wish, Brine, Natural Gift, Feint
+  - Pluck, Tailwind, Acupressure, Metal Burst, U-turn, Close Combat
+  - Payback, Assurance, Embargo, Fling, Psycho Shift, Trump Card
+  - Heal Block, Wring Out, Power Trick
+  - Gastro Acid, Lucky Chant, Me First, Copycat, Power Swap, Guard Swap
+  - Punishment, Last Resort, Worry Seed, Sucker Punch, Toxic Spikes, Heart Swap
+  - Aqua Ring, Magnet Rise, Flare Blitz, Force Palm, Aura Sphere, Rock Polish
+  - Poison Jab, Dark Pulse, Night Slash, Aqua Tail, Seed Bomb, Air Slash,
+    X-Scissor
+  - Bug Buzz, Dragon Pulse, Dragon Rush, Power Gem, Drain Punch, Vacuum Wave
+  - Focus Blast, Energy Ball, Brave Bird, Earth Power, Switcheroo, Giga Impact
+  - Nasty Plot, Bullet Punch, Avalanche, Ice Shard, Shadow Claw, Shadow Sneak
+  - Thunder Fang, Ice Fang, Fire Fang, Mud Bomb, Psycho Cut, Zen Headbutt, Mirror
+    Shot
+  - Flash Cannon, Rock Climb, Defog, Trick Room, Draco Meteor, Discharge, Lava
+    Plume
+  - Leaf Storm, Power Whip, Rock Wrecker, Cross Poison, Gunk Shot, Iron Head,
+    Magnet Bomb
+  - Stone Edge, Captivate, Stealth Rock, Grass Knot, Chatter, Judgment, Bug Bite
+  - Charge Beam, Wood Hammer, Aqua Jet, Attack Order
+  - Defend Order, Heal Order, Head Smash, Double Hit, Roar of Time, Spacial Rend
+  - Lunar Dance, Crush Grip, Magma Storm, Dark Void, Seed Flare, Ominous Wind,
+    Shadow Force
+
+  Some moves read the real-time fight rather than a turn.
+
+  - Payback and Assurance double their power against a target that has cast or
+    been hurt in the last 2 seconds.
+  - Trump Card gets stronger with every one played this fight, rather than as its
+    PP runs down.
+  - Sucker Punch and Me First wait for a target that is mid-cast on a damaging
+    move. Me First cuts that cast off.
+  - Last Resort waits until every other move the user knows has been cast this
+    fight.
+  - Avalanche answers for a wound the user took in the last 2 seconds.
+  - Trick Room reverses cast times instead of turn order. Cooldowns are left to
+    Speed.
+  - Defog clears hazards from both sides, which is the modern rule.
+  - Stealth Rock costs an eighth of a pokemon's HP, scaled by how it takes a Rock
+    move.
+  - Healing Wish and Lunar Dance are spent on a teammate already on the field,
+    since nothing is sent in to replace a fallen pokemon. Lunar Dance also clears
+    what its target is waiting on, so every move is ready at once.
+
+- 7e094d8: - Sinnoh's three starters can be caught, with their evolutions. That is nine
+  species, with learnsets, sprites and a candy each. A new trainer picks a
+  starter from twelve.
+  - Bark Brace halves the first physical blow a Turtwig takes each fight and roots
+    it.
+  - Cinder Brace halves the first special blow a Chimchar takes each fight and
+    adds 1.5x to its next move that lands.
+  - Crest Brace fails the first status move aimed at a Piplup each fight and
+    raises its Special Attack 1 stage.
+  - Torterra also reaches Sturdy and Harvest, Infernape reaches Vital Spirit and
+    Flash Fire, and Empoleon reaches Defiant and Filter. These are not in the
+    mainline.
+  - Turtwig appears in the temperate rainforests, montane forests and woodlands.
+    Chimchar appears in the montane forests and mountains. Piplup appears in the
+    polar oceans, rocky coasts and glaciers.
+  - Changes world generation.
+- 6c6a420: Sinnoh's trainer classes stand at duelling stops: 42 of them, covering every
+  type the region grows.
+
+  - 16 are trades nobody had before, among them the Pokémon Ranger, the Worker,
+    the Rancher, the Pokémon Breeder, the Cyclist, the Policeman, the Parasol
+    Lady, the Collector, the Twins and the Young Couple. Each climbs its own
+    achievement line and pays its own pair of titles.
+  - The other 26 are Sinnoh's own of trades already on the road, under Sinnoh's
+    names for them: a Guitarist is a Rocker, an Aroma Lady a Sage, a Roughneck a
+    Biker, a Clown a Juggler.
+  - Every class is drawn in its Diamond and Pearl coat, which its own wins unlock.
+  - Changes world generation.
+
+- 76ad50f: Cynthia takes Sinnoh's champion seat.
+
+  - She asks to see all four of Sinnoh's Elite Four beaten, and pays the **Sinnoh
+    Champion** title.
+  - She fields the six she is known for: Spiritomb, Roserade, Togekiss, Lucario,
+    Milotic and Garchomp, in that order.
+  - Her coat is on the shelf for whoever takes the seat.
+  - Changes world generation: a champion's seat rolls between four people now
+    rather than three.
+
+- 5ecc949: Sinnoh's gym leaders, and the eight badges they pay.
+
+  - **Roark**, **Gardenia**, **Maylene**, **Crasher Wake**, **Fantina**, **Byron**,
+    **Candice** and **Volkner**, seated in the countries their own type answers
+    to alongside the leaders of the other three regions.
+  - The **Coal**, **Forest**, **Cobble**, **Fen**, **Relic**, **Mine**, **Icicle**
+    and **Beacon** badges, on the shelf after Hoenn's.
+  - Each of them is drawn in their Diamond and Pearl coat, unlocked by their
+    badge.
+  - Sinnoh has no Elite Four or Champion yet, so its badges open no seat.
+  - Hoenn's and Sinnoh's badges are drawn from their own art on the shelf, where
+    Hoenn's was a lettered disc before.
+  - Changes world generation.
+
+- 0708df0: Sinnoh's Elite Four, seated above its gyms.
+
+  - **Aaron**, **Bertha**, **Flint** and **Lucian**, each keeping the seats of the
+    country their own type answers to.
+  - Each asks to see all eight of Sinnoh's badges before they will fight, and
+    leaves their mark on the shelf when they lose.
+  - Aaron fields the Drapion he closes with in his own games, which is neither a
+    bug nor reachable by any rule; Bertha fields the Sudowoodo.
+  - Sinnoh has no champion yet, so its four marks open no seat above them.
+  - Changes world generation.
+
+- 6604ae0: Sinnoh's Battle Frontier: five houses, six keepers, and a print apiece.
+
+  - **Palmer** keeps the Battle Tower and asks nothing, and **Thorton** keeps the
+    Battle Factory and rents both sides, the way Hoenn's Tower and Factory do.
+  - **Dahlia** keeps the Battle Arcade. A panel is spun as the challenge is taken
+    and lands on both sides: a sky for the whole fight, every held item left at
+    the door, everybody poisoned, or everybody mended.
+  - **Darach** and **Caitlin** keep the Battle Castle between them. Nothing puts
+    health back on the challenger's side for the whole fight, while the house
+    heals as usual. Whichever of them a chunk seats, the Castle Print is what it
+    pays.
+  - **Argenta** keeps the Battle Hall, which is one pokemon a side. Hers is drawn
+    against yours the moment your party is frozen.
+  - Each house hangs a silver print for the win and a gold one for beating its
+    second three.
+  - Changes world generation.
+
+- 6160982: Riolu, Hippopotas and Skorupi can be caught, with their evolutions.
+
+  - Riolu is a baby, so it turns up in the prized band the way Pichu and Wynaut
+    do. It evolves into Lucario by friendship in the morning or during the day.
+  - Riolu and Lucario appear in mountains, montane forest and alpine tundra.
+  - Hippopotas and Hippowdon appear in deserts, badlands and savanna.
+  - Skorupi and Drapion appear in the evening and at night, in deserts, shrubland
+    and steppe.
+  - Aura Match makes a Riolu's moves hit 1.25x against a target holding a larger
+    share of its HP than the Riolu has.
+  - Dust Bath heals a Hippopotas 1/16 of its HP every time it reaches for a move
+    while sand blows.
+  - Ambush makes the first move a Skorupi lands on each enemy hit 1.3x.
+  - Merciless lands a critical on a poisoned target. Battle Armor and Shell Armor
+    still refuse it.
+  - Changes world generation.
+
+- 2bd251d: Burmy and Shellos can be caught, with their evolutions. Both come in more than
+  one form.
+
+  - A Burmy wears the cloak of the biome it is met in and keeps it through
+    evolution.
+  - Plant cloaks appear in the forests, sandy cloaks on the beaches and deserts,
+    trash cloaks in the badlands, mountains and steppe.
+  - Each Wormadam cloak has its own types and its own hidden ability.
+  - A male Burmy evolves into Mothim instead.
+  - Patchwork raises a Burmy's Defense and Special Defense 1 stage for the first
+    hit of each type it takes, 3 times a fight.
+  - Shellos and Gastrodon come in a west and an east shell. Which one the world
+    stages depends on the side of the map.
+  - Two Seas gives the west shell 1.25x on Water moves and the east shell 1.25x on
+    Ground moves.
+  - Changes world generation.
+
+- 4d4b205: Drifloon, Buneary and Glameow can be caught, with their evolutions.
+
+  - Drifloon and Drifblim appear in the evening and at night.
+  - Buneary evolves into Lopunny by friendship.
+  - Carry Off gives a Drifloon a 20% chance to blow the target away when it lands
+    an attack.
+  - Springheel raises a Buneary's Speed 1 stage for each of the first 3 attacks it
+    lands.
+  - Velvet Claws make a Glameow's contact moves hit 1.25x against anything that
+    has raised a stat that fight.
+  - Flare Boost gives a burned holder 1.5x Special Attack.
+  - Klutz stops a holder's item from doing anything.
+  - Changes world generation.
+
+- afb2bdd: Combee, Buizel and Cherubi can be caught, with their evolutions.
+
+  - Only a female Combee evolves into Vespiquen.
+  - Cherrim's open blossom is a worn form, the way Castform's skies are.
+  - Pollen Dole heals the worst hurt teammate for 1/16 of its HP each time a
+    Combee lands an attack.
+  - Float Sac keeps a Buizel above Ground moves and hazards until a blow takes it
+    under 1/2 HP.
+  - Second Bloom heals a Cherubi for 1/4 of its HP and raises its Special Attack 1
+    stage, once a fight.
+  - Changes world generation.
+
+- 67502ba: Heatran and Regigigas can be met.
+
+  - Stark Mountain sits in volcanoes and holds Heatran. Snowpoint Temple sits in
+    glaciers and tundra and holds Regigigas.
+  - Lavadome is Heatran's signature. A burned enemy takes 1.25x from everything
+    while Heatran stands, whoever the blow came from, and its own side burns at
+    the usual rate.
+  - Titan Seal is Regigigas', and it is the fourth of the Regis' seals. For 8
+    seconds it takes 0.5x, and it then deals 1.25x and gains 2 stages of Attack.
+    Unlike the other three it deals its damage whole while sealed, because Slow
+    Start is already halving the Attack behind it.
+  - Slow Start is new. Attack and Speed are halved for a holder's first 8
+    seconds on the field, which is the same window its seal covers it for.
+  - The mainline gives Heatran only Flash Fire and Flame Body and Regigigas only
+    Slow Start, so each carries more of this registry's own: Magma Armor and
+    White Smoke for Heatran, Iron Fist, Sturdy and Intimidate for Regigigas.
+  - Changes world generation.
+
+- 2601cf6: Croagunk, Finneon and Snover can be caught, with their evolutions.
+
+  - Croagunk and Toxicroak appear in swamp, bog and mangrove.
+  - Finneon and Lumineon appear in ocean, coral reef and kelp forest.
+  - Snover and Abomasnow appear in alpine tundra, taiga and tundra.
+  - Finisher makes a Croagunk's moves wind up 25% faster against a target at or
+    below 1/4 HP. Cooldowns are untouched.
+  - False Eyes brings a single-target move aimed at a Finneon's teammate below
+    1/2 HP to the Finneon instead. A move that teammate was immune to anyway is
+    left alone, so a Storm Drain or Water Absorb teammate keeps what it draws.
+  - A Follow Me now outranks the abilities that pull a move somewhere else.
+    Lightning Rod no longer takes a move off the pokemon that called for it, and
+    draws a move through the same rule everything else that redirects does.
+  - Evergreen makes Fire moves hit a Snover at 0.5x while hail or snow falls,
+    which is the weather its own Snow Warning brings.
+  - Changes world generation.
+
+- 0e8999f: Shinx, Cranidos and Shieldon can be caught, with their evolutions.
+
+  - The Skull Fossil and the Armor Fossil are dug up and sold like the other five.
+    Cranidos and Shieldon are revived from them.
+  - Gleam Eyes let a Shinx ignore raised evasion and hit a target that is in the
+    air or underground.
+  - Ramrod lets a Cranidos strike through Protect, Detect and a Substitute.
+  - Bulwark gives a Shieldon's guard to its whole team for as long as its own
+    lasts.
+  - Changes world generation.
+
+- a6ecd30: Arceus can be met, in all eighteen of its shapes.
+
+  - The Hall of Origin holds Arceus, and Arceus is a mythical, so the Azure Flute
+    found in the special band of the item pool is the only way to one.
+  - Multitype needs no battle code. Each of the seventeen Plates names one shape,
+    the way each orb names one Origin Forme, and the shape's own data carries the
+    type the Plate lifts. So a Plate both paints an Arceus and boosts what it
+    throws, which is what the mainline does.
+  - The shapes are worn rather than met: the dex fills all seventeen in the day
+    the bare one is.
+  - Firstlight is the signature. Its moves of the type it is wearing are never
+    resisted: a resistance is read as no resistance, a weakness is still a
+    weakness, and an immunity still holds.
+  - The mainline gives Arceus only Multitype, so it carries three of this
+    registry's own: Mold Breaker, Filter and Adaptability.
+  - Changes world generation.
+
+- 5ce2cad: Stunky, Bronzor and Gible can be caught, with their evolutions.
+
+  - Stunky and Skuntank appear in the evening and at night, in shrubland,
+    grassland and woodland.
+  - Bronzor and Bronzong appear in mountains, badlands and alpine tundra.
+  - Gible, Gabite and Garchomp appear in mountains, badlands and deserts, as
+    rarely as the other pseudo-legendaries.
+  - Rank Air makes a Stunky's moves hit 1.25x against a poisoned target.
+  - Deep Toll costs each enemy 1/16 of their HP every time a Bronzor reaches for
+    a move.
+  - Skyhunt lets a Gible's Ground moves reach a target that is off the ground,
+    and hit it 1.2x.
+  - Heatproof halves what a Fire move and a burn take off its holder.
+  - Changes world generation.
+
+- 8ad7ab0: Dialga, Palkia and Giratina can be met, each in its other shape as well.
+
+  - Spear Pillar sits on mountains and alpine tundra and holds Dialga and Palkia,
+    so which of the two answers is a roll. Turnback Cave sits in badlands and bog
+    and holds Giratina alone.
+  - Time Drag, Space Drift and Void Weight make every enemy read one stage a step
+    lower while the holder stands: Speed for Dialga, accuracy for Palkia, Attack
+    for Giratina. Nothing is written to the enemy, so it lifts the moment the
+    holder leaves the field and two of them never stack.
+  - The Adamant, Lustrous and Griseous Orbs are new. A member of the trio holding
+    its own orb fights in its Origin Forme, which is worn rather than met: the
+    dex fills the shape in the day its own is. Nobody sells one, so the prized
+    band of the overworld item pool is the only way to one.
+  - Origin Forme carries an ability of its own. Giratina Origin has Levitate, as
+    it does in the mainline, Dialga Origin has Unaware and Palkia Origin has
+    Shadow Tag.
+  - The mainline gives all three only Pressure and Telepathy, so each carries two
+    of this registry's own: Speed Boost and Analytic for Dialga, Infiltrator and
+    Magic Guard for Palkia, Contrary and Cursed Body for Giratina.
+  - Changes world generation.
+
+- e966e01: Uxie, Mesprit and Azelf can be met.
+
+  - Each sleeps under its own lake. Lake Acuity sits in taiga and tundra, Lake
+    Verity in temperate forest and woodland, and Lake Valor in grassland and bog.
+    A lair holds one of them, the way the sealed chambers hold one golem each.
+  - Mindgift, Heartgift and Willgift give the holder's whole team 1 stage as it
+    takes the field: accuracy for Uxie, Special Attack for Mesprit, Attack for
+    Azelf. It is the Kanto birds' wingbeat aimed at its own side.
+  - The mainline gives all three only Levitate, so each carries three of this
+    registry's own: Anticipation, Frisk and Forewarn for Uxie, Synchronize,
+    Serene Grace and Healer for Mesprit, Inner Focus, Own Tempo and Clear Body
+    for Azelf.
+  - Changes world generation.
+
+- f8c372c: Starly, Bidoof and Kricketot can be caught, with their evolutions.
+
+  - Murmuration raises a Starly's damage 1.05x for each teammate still standing,
+    up to 1.25x.
+  - Lodgework cuts indirect damage to a Bidoof's team by 25%.
+  - Chorus raises the damage of sound moves from a Kricketot's team by 1.2x.
+  - Changes world generation.
+
+- 9792f37: Cresselia and Darkrai can be met, one off each of two islands.
+
+  - Fullmoon Island sits in the ocean and holds Cresselia, which the world stages
+    in the evening and at night. Newmoon Island holds Darkrai, and Darkrai is a
+    mythical, so the Member Card is the only way to that one.
+  - Waning Light halves how long a status runs on Cresselia's own team, itself
+    included. Waxing Dark makes a status Darkrai puts on an enemy run 1.5x as
+    long. Both are asked at the same question, so meeting each other leaves a
+    night shorter than it started, and neither compounds with a second holder.
+  - Aroma Veil is new. Its holder's teammates cannot be taunted, tormented,
+    encored, charmed or heal blocked.
+  - The mainline gives Cresselia only Levitate and Darkrai only Bad Dreams, so
+    each carries three of this registry's own: Healer, Illuminate and Aroma Veil
+    for Cresselia, Unnerve, Prankster and Infiltrator for Darkrai.
+  - Changes world generation.
+
+- 9cfb247: Two new items work on a pokemon's abilities, both found in the prized band.
+
+  - The **Ability Capsule** does what the Channeler does, without her: it widens
+    a pokemon and draws one more of the abilities its line can reach into the new
+    slot, up to the four a pokemon may hold. Which ability comes up is a roll.
+  - The **Ability Patch** writes that family's signature ability into a pokemon.
+    A signature is never rolled at birth and the Channeler never calls one up, so
+    a patch is the only way to one. A pokemon with a slot standing empty gains it;
+    a full one gives up an ability the player chooses, and neither can be undone.
+  - Both are found in the prized band and neither is sold.
+
+- 4e2919c: Any battle can be watched from `/battle/{battleId}` by a signed-in player, played back from its record.
+- 8985eae: Water and ice have spawns of their own.
+
+  - Ponds, rivers and seas spawn what lives in water, and a sea's islands spawn what lives on land.
+  - Frozen water in cold biomes has its own spawns, and it can still be walked on.
+  - Nothing that only swims appears on land, and nothing that only walks appears in water.
+  - Uxie, Mesprit and Azelf can also be met in the waters of their lakes.
+  - Changes world generation.
+
+- e7892a3: Six Hoenn families reach the stages Sinnoh added to them.
+
+  - Budew hatches from a Roselia and turns into one at high friendship in the
+    morning or during the day. Roselia becomes Roserade with a Shiny Stone.
+  - Chingling hatches from a Chimecho and turns into one at high friendship in
+    the evening or at night.
+  - Kirlia becomes Gallade with a Dawn Stone, if it is male.
+  - Nosepass becomes Probopass with a Thunder Stone, which is what the newer
+    games ask for instead of a magnetic field.
+  - Dusclops becomes Dusknoir when it is handed over holding a Reaper Cloth.
+  - Snorunt becomes Froslass with a Dawn Stone, if it is female.
+  - Levitate is on Probopass here, for the three small noses it keeps in the air.
+  - Iron Fist is on Dusknoir here, for the punches it is the only one of its line
+    to throw.
+  - Roselia and Chimecho now hatch from their babies, so their egg moves belong
+    to Budew and Chingling.
+  - Changes world generation.
+
+- ace462b: Ten Johto families reach the stages Sinnoh added to them.
+
+  - Bonsly hatches from a Sudowoodo and becomes one at 20 knowing Mimic.
+  - Mantyke hatches from a Mantine and becomes one at 32.
+  - Aipom becomes Ambipom at 32 knowing Double Hit.
+  - Misdreavus becomes Mismagius with a Dusk Stone, and Murkrow becomes
+    Honchkrow with one.
+  - Sneasel becomes Weavile at 35 holding a Razor Claw, in the evening or at
+    night, and gives up the claw. Gligar becomes Gliscor the same way with a Razor Fang.
+  - Togetic becomes Togekiss with a Shiny Stone.
+  - Yanma becomes Yanmega at 33 knowing Ancient Power, and Piloswine becomes
+    Mamoswine at 45 knowing it.
+  - An evolution can now ask for a move the pokemon knows. Four lines use it.
+  - Cursed Body, Infiltrator and Magic Bounce are on Mismagius here, Friend Guard
+    on Togekiss, and Slush Rush on Mamoswine.
+  - Friend Guard is new: its teammates take 0.75x from everything while it
+    stands.
+  - Sudowoodo and Mantine now hatch from their babies, so their egg moves belong
+    to Bonsly and Mantyke.
+  - A trainer fields the last stage of a line their own region holds. A Johto
+    Medium walks a Misdreavus, because Mismagius is Sinnoh's.
+  - Changes world generation.
+
+- 7393d3c: Twelve Kanto families reach the stages Sinnoh added to them.
+
+  - Mime Jr. hatches from a Mr. Mime and becomes one at 20 knowing Mimic.
+  - Happiny hatches from a Chansey and becomes one at 15 in daylight, holding an
+    Oval Stone, which the evolution uses up.
+  - Munchlax hatches from a Snorlax and becomes one at high friendship.
+  - Magneton becomes Magnezone with a Thunder Stone.
+  - Lickitung becomes Lickilicky at 33 knowing Rollout, and Tangela becomes
+    Tangrowth at 38 knowing Ancient Power.
+  - Rhydon becomes Rhyperior when it is handed over holding a Protector.
+    Electabuzz, Magmar and Porygon2 do the same with an Electirizer, a Magmarizer
+    and a Dubious Disc.
+  - Eevee has two more ways to go: a Leaf Stone for Leafeon and an Ice Stone for
+    Glaceon.
+  - The Oval Stone is new, and the Shiny, Dusk, Dawn and Ice Stones are stocked
+    and buried now that lines ask for them. So are the Protector, Electirizer,
+    Magmarizer, Reaper Cloth, Dubious Disc, Razor Claw and Razor Fang.
+  - Levitate is on Magnezone here, Thick Fat on Lickilicky, Sap Sipper on
+    Tangrowth, Iron Fist on Electivire, and Flash Fire with Solar Power on
+    Magmortar.
+  - Magic Bounce is on Mr. Mime here. Mime Jr. brings nothing the adult did not
+    already have, so the line was a stage short of four abilities.
+  - Chansey, Mr. Mime and Snorlax now hatch from their babies, so their egg moves
+    and their hatch costs belong to Happiny, Mime Jr. and Munchlax. The Pichu,
+    Cleffa, Igglybuff, Tyrogue, Smoochum, Elekid and Magby lines were reading the
+    default hatch cost for the same reason, and now read their own.
+  - Changes world generation.
+
+### Patch Changes
+
+- 54cc800: A raid boss no longer faints to Destiny Bond. A boss faints only when its HP
+  reaches zero.
+- dae72bc: Stat drops now land on a raid boss. Growl, Screech, Intimidate and everything
+  else that lowers a stat were refused before.
+- f9fcd82: - The battle ground fades into fog toward the horizon and darkens at the edges, so the fight stands out from bright biomes.
+  - Each side stands inside a faint ring on the ground.
+  - One bar across the top of a battle shows its name, each side's health and how many are still standing, and the Leave button.
+  - In a raid, the boss has a wide health bar of its own in that bar.
+- 0e8999f: A rental support is no longer given a nature that raises its attacking stat.
+- 34b375d: A confused pokemon hitting itself no longer breaks the fight. The self-hit is
+  not a registered move, so the confusion status now answers for it: typeless,
+  unmissable, no contact and no steps.
+- bfeb925: Aeroblast is drawn as a storm aimed at something: wind winding out of the caster and widening onto whatever it is pointed at, held for as long as the move lasts, rather than an orb thrown across the field and a beam at the end of it.
+- bfeb925: X-Scissor and Cross Chop land as two cuts crossing into an X. Every slash in the game is drawn as a straight tapered blade rather than a rounded curve, so an edge reads as an edge.
+- 34b375d: Asking whether a pokemon has an ability is cheaper, which a raid of 49 pokemon
+  felt.
+
+  - A unit that does not carry the ability answers on its own instead of asking
+    the whole field.
+  - Effects that ask whether a holder is standing read the ability's own holder
+    list instead of sweeping every unit.
+
+- ae21751: Brick Break breaks screens only when it lands, so a miss or a Ghost type leaves them standing.
+- 644489f: - The pokemon sheet fits on one screen: portrait beside moves, abilities and held items, then evolutions beside stats.
+  - The pokemon's name, gender and shiny mark head the sheet in place of a title bar.
+  - Each move shows its type and category next to its name.
+  - Stats show the total, IV and EV side by side, with EVs typed into the same table.
+  - The portrait is the same size for every species.
+  - "View in Pokedex" and a red Release entry are in the Actions menu.
+  - The level button reads "Level Up" with its candy cost in a badge.
+  - The full ownership history opens in its own dialog.
+  - Moves, abilities, held items and stats each have an info icon that explains how they work.
+- ae21751: Move, ability and item descriptions now match how they work. Among them:
+
+  - Binding moves say 1/8 of HP every 2 seconds for 8 seconds, and Hyper Beam's recharge is 2 seconds.
+  - Self-Destruct and Explosion cost their power in HP and hit teammates too, as do Earthquake and Surf.
+  - Black Sludge heals a Poison type 1/16, and Blunder Policy gives +2 Speed.
+  - Luck Incense and Amulet Coin say they work while your buddy carries them.
+  - Plus, Prankster, Tangled Feet, Quick Feet and Keen Eye say what they do here.
+
+- 43640f6: - The dex entry is headed by the species' number, name, category, types and seen and caught counts, with the arrows and an × to close.
+  - Its portrait, sizes, candy and evolution line stay in view on the left while stats, abilities, where it lives and moves scroll on the right.
+  - One portrait with Regular and Shiny toggles, and male and female toggles where the two differ, replaces the row of coats.
+  - The evolution line shows every stage, with what each takes on hover and unmet stages as silhouettes; pressing a stage opens its entry.
+  - Base stats show their total.
+  - Abilities sit in two columns, with hidden ones in blue and the family's signature in gold.
+  - Each move opens its card on hover.
+  - Each section has an info icon explaining it.
+- 10155a5: An item cache or honey tree already used this window is drawn that way across the whole board, not only near the player.
+- 43640f6: - Evolutions that need friendship, a time of day, a known move or a stat comparison now say so, such as Espeon and Umbreon, Ambipom and Hitmonlee.
+  - Shedinja's evolution says a Poke Ball is carried rather than used.
+- 0cd82ac: Every legendary can be met in the wild in each biome that hosts its lair.
+- 6f53d12: Forms bring what is theirs in battle:
+
+  - Holding its orb, Origin Dialga gains Unaware, Origin Palkia gains Shadow Tag and Origin Giratina gains Levitate.
+  - Holding a Gracidea, Sky Shaymin gains Serene Grace.
+  - A form's ability takes no ability slot and cannot be copied, traded or taken.
+  - Cherrim opens into its Sunshine Form in the sun and closes when the sun goes.
+
+- 8c856c7: - Guillotine closes two great pincers on the target and snaps them shut, cutting a line of light through it.
+  - Horn Drill grinds a spinning drill into the target, throwing sparks, and punches straight through it.
+- dd04bb5: - The bag, quests, duel rules and the auction's Sell card each have an info icon that explains how they work.
+  - The menu shows a count on Profile for requests, trades and auction lots waiting, on Gifts for gifts to claim, and on Quests for quests ready to claim.
+- The mark each blow leaves is drawn in the battle field, in front of the pokemon it hit.
+- 9bedebe: Hoenn's 135 pokemon learn Sinnoh's moves. That is 264 level-up entries, 543
+  teachable moves per species, 204 family-wide ones and 63 egg moves, taken from
+  Diamond, Pearl, Platinum and HeartGold/SoulSilver.
+- 4e7a29a: Johto's 100 pokemon learn Sinnoh's moves. That is 238 level-up entries, 430
+  teachable moves per species, 122 family-wide ones and 44 egg moves, taken from
+  Diamond, Pearl, Platinum and HeartGold/SoulSilver.
+- 1fd2691: Kanto's 151 pokemon learn Sinnoh's moves. That is 324 level-up entries, 449
+  teachable moves per species, 281 family-wide ones and 53 egg moves, taken from
+  Diamond, Pearl, Platinum and HeartGold/SoulSilver.
+- fa874db: A volcano's lava can no longer be walked on, and nothing spawns, stands or lands on it.
+- dc2a981: - The menu button on the overworld shows its icon without the word "Menu".
+  - A profile shows the gold and the worn title on the same row.
+  - Opening the Friends tab on a profile no longer jumps back to Battles.
+  - The Add friend button sits beside the Friends heading.
+  - Friend requests are a Requests tab inside Friends, and the Friends tab shows how many are waiting.
+  - Awards are split into Badges, Achievements, Type specialists and Trainers beaten tabs.
+  - Trades are split into Pending and Settled tabs.
+  - Bids and Selling are one Auction tab, with a tab for each.
+  - Gifts are split into Catches, Items and Encounters tabs, each with its own search.
+  - The bag is split into Items and Candies tabs, with a tab for each type of item.
+- 7eefb56: A meteor shower makes a shiny 8x as likely, up from 2x.
+- 84b6512: - In battle, the name of a move being cast shows sharp on a plate in the move's type colour, so its type reads at a glance.
+  - The plate pops in when a cast starts, floats away when it lands, and shakes off in red when it is interrupted.
+- 32ec624: A nest egg is worth more than a wild catch of the same species:
+
+  - Two of its six stats hatch perfect, and it has a hidden ability one time in five.
+  - It knows two egg moves, the first one its line can otherwise only get through chain breeding.
+  - The weather you take it under counts, the way it does for a wild meeting.
+  - It hatches in half the steps.
+  - It hatches with room for a second ability and a second held item.
+
+- 34b375d: - A raid boss is immune to Power Swap, Guard Swap and Heart Swap. A landed swap
+  used to copy stages onto one side rather than trade them.
+  - Taunt, Torment, Imprison and Encore no longer hold a boss to part of its move
+    set. Disable already did not.
+  - A boss is no longer staged with those three swaps, or with Healing Wish, Lunar
+    Dance, Helping Hand and Follow Me. All four are spent on a teammate a lone
+    boss does not have.
+- 34b375d: A raid boss is immune to Role Play, Skill Swap, Gastro Acid and Worry Seed, and
+  the AI no longer picks them against one. They could take the Boss ability off
+  it, which is what carries the raid's HP pool and its immunities. A shadow can no
+  longer be copied off a pokemon either.
+- af20025: The battle AI sings Perish Song only when the other side stands to lose more HP to it than its own side, the singer included.
+- ae21751: A PP Up or PP Max can no longer be spent on a move whose PP it would not raise, such as Sketch.
+- ccb2661: Raid bosses take and heal fixed amounts rather than shares of their HP:
+
+  - Super Fang, Endeavor and one-hit KO moves now land on a boss for up to 200 damage.
+  - Burns, poison, seeds, weather and other indirect damage take up to 200 a hit, up from 100.
+  - A boss heals up to 1,000 HP a second, rather than 1/8 of its HP.
+  - A boss has 60x its species' HP, up from 20x.
+
+- 211a36a: Rayquaza and the Sky Pillar are found in the ocean rather than on mountains.
+- 739e945: Every signature ability now carries its name and description in the ability
+  registry, so the ones added after the Rattata line are no longer nameless in the
+  dex, the search box and the command bar. A test checks the registry against the
+  abilities the battle engine implements.
+- 35ca919: Every server call now checks its arguments before it acts. A request with a
+  coordinate outside the world, a list longer than the game allows, or a field of
+  the wrong kind is refused instead of being read.
+- f61c24a: More moves land as a picture of their own:
+
+  - Roar of Time throws out rings that freeze in place and then shatter.
+  - Spacial Rend tears a pink gash in the air that gapes open and snaps shut.
+  - Judgment brings shafts of light down all around the target.
+  - Seed Flare bursts upward in a green-white flash.
+  - Shadow Force darkens the target, then cuts it from behind with a heavy hit.
+  - Mist Ball bursts into a cloud of down, and Luster Purge draws light in before it flares out.
+  - Doom Desire drops a falling star that bursts on the target.
+  - Crush Grip closes two great hands on the target and squeezes.
+  - Psycho Boost spirals psychic light into the target, then blasts out of it.
+  - Lunar Dance raises a crescent moon with smaller ones circling.
+  - Heart Swap sends two hearts trading places between the pokemon.
+  - Dark Void swallows the target in a black sphere ringed in red.
+  - Magma Storm winds a vortex of lava up around the target.
+  - Sacred Fire stands on the target as a pillar of fire with rainbow edges.
+  - Blast Burn cracks the ground under the target and erupts in fire.
+  - Hydro Cannon slams a great ball of water into the target, and a ring of water spouts bursts up around it.
+  - Fire Punch, Ice Punch and Thunder Punch land with flames, frost or sparks breaking off the blow.
+  - Flare Blitz and Volt Tackle arrive wrapped in fire or lightning, and Brave Bird in pale blue fire.
+  - Fire Fang, Ice Fang and Thunder Fang break flames, frost or sparks off the bite.
+  - Draco Meteor brings meteors streaking down onto the target.
+  - Outrage, Thrash and Petal Dance land as a run of heavy blows, with petals flying for Petal Dance.
+  - Earth Power splits the ground under the target and light bursts up out of it.
+  - Heat Wave blows a wavering wall of hot air and embers across the target.
+  - Dark Pulse sends dark rings pulsing out from the pokemon that used it.
+  - Sheer Cold freezes the target in a block of ice that cracks and shatters.
+  - Protect and Detect throw up a shell of hexagons that flashes as it rises.
+  - Substitute's doll drops into place from above with a bounce and a puff of dust.
+  - Splash flops about in a few hops of spray, and nothing happens.
+  - Metronome ticks over the pokemon's head, then scatters colour as it picks.
+  - Transform runs bands of light up the pokemon that is changing.
+  - Swords Dance circles the pokemon with swords that close in and cross overhead.
+  - Dragon Dance winds two strands of aura up around the pokemon.
+  - Iron Defense and Harden run a metal sheen across the body.
+  - Double Team and Minimize slide copies of the pokemon out to either side.
+  - Calm Mind and Nasty Plot gather light into the head under a halo.
+  - Weather Ball drops a ball made of the current weather that bursts as fire, water, ice or rock.
+  - Hyper Beam and Solar Beam fire a far thicker beam that holds on the target while shockwaves roll off it.
+  - Giga Impact arrives wrapped in a dark purple aura and sends a wide wave along the ground.
+  - Focus Punch and Dynamic Punch charge a glowing fist, then land a blow that goes off like a blast.
+  - Close Combat lands a flurry of quick blows, then one last heavy one.
+  - Aura Sphere and Focus Blast burst on the target into rings of aura.
+  - Pin Missile, Bullet Seed, Icicle Spear, Rock Blast and Bone Rush fly in one piece at a time, as needles, seeds, icicles, rocks or bones.
+  - Double Kick and Triple Kick land their kicks from alternating sides.
+  - Rest blows a sleep bubble with Zs drifting up.
+  - Morning Sun and Moonlight bring a shaft of warm sunlight or cool moonlight down on the pokemon.
+  - Synthesis draws leaves spiralling in, and Aromatherapy drifts petals over the pokemon.
+  - Wish sends a star up into the sky that comes back down on the pokemon.
+  - Roost lets feathers drift down and settle, and Heal Order brings a swarm of bees.
+  - Sing, Grass Whistle and Perish Song drift music notes round the target, dark ones for Perish Song.
+  - Roar, Hyper Voice and Bug Buzz roll shock arcs out toward the target.
+  - Heal Bell swings a golden bell that rings out.
+  - Leaf Blade draws one long blade across the target that sheds leaves.
+  - Night Slash sweeps a dark crescent round the target.
+  - Psycho Cut throws spinning psychic blades, and Air Slash throws blades of wind.
+  - Fury Cutter cuts again and again, each cut bigger than the last.
+  - Toxic bubbles up round the target from a pool of poison.
+  - Stun Spore drifts yellow spores down that crackle.
+  - Glare opens an eye over the target that flashes.
+  - Encore claps sparkles together over the target's head.
+  - Taunt throbs an anger mark on the target's head.
+  - Curse drives a nail into the target in three blows.
+  - Agility streaks speed lines past the pokemon and leaves afterimages behind.
+  - Rock Polish rubs the pokemon to a shine with glints popping.
+  - Bulk Up throbs twice with power, and Howl sends rings up off the pokemon's head.
+  - Amnesia floats empty thought bubbles off the pokemon's head.
+  - Cosmic Power circles stars round the pokemon.
+  - Barrier puts up a pane of glass the way Reflect does.
+  - Defend Order lines bees up into a wall in front of the pokemon.
+  - Charge crackles electricity in over the body, and Tail Glow lights a pulsing light at the tail.
+  - Stockpile stacks orbs over the pokemon one at a time.
+  - Growth pushes a sprout up out of the ground.
+  - Withdraw and Defense Curl close a shell round the pokemon.
+  - Growl rolls sound arcs out toward the target, and Screech and Metal Sound send jagged ones.
+  - Scary Face opens an eye over the target, and Charm sends up hearts.
+  - Tickle brushes feathers at the target's sides, and Feather Dance drifts feathers down on it.
+  - Cotton Spore drifts cotton puffs down that stick to the target.
+  - String Shot shoots strands of silk that wind round the target.
+  - Fake Tears drops tears from the target's eyes.
+  - Memento sends the pokemon that used it up in dark smoke.
+  - Defog blows the fog away from the target.
+  - Tri Attack turns three orbs of fire, ice and lightning in on the target, each bursting as its element.
+  - Flame Wheel rolls into the target as a ring of fire.
+  - Waterfall drives a column of water up through the target.
+
+- f5786b2: The raid demo grants each pokemon its family's signature ability instead of the
+  one it would have rolled, boss included, so the signatures can be watched
+  somewhere. Every signature is now registered under the family it was written
+  for, which is what the demo asks for one by.
+- bfeb925: The Sinnoh moves are drawn as themselves rather than by their type alone:
+
+  - Roost, Heal Order, Healing Wish and Lunar Dance draw health coming back.
+  - Aqua Ring puts three turning hoops of water round the pokemon and leaves them there.
+  - Stealth Rock and Toxic Spikes are laid on the ground, the way Spikes is.
+  - Trick Room is a room over the field and Gravity is a weight on it, both new pictures.
+  - Every special move of a type that had none before now arrives as something: Dark Pulse, Dragon Pulse, Focus Blast, Judgment and nine others shared one flower burst.
+  - Dive, Bounce and Shadow Force no longer draw a hit on the target while the caster is out of reach.
+
+- dd04bb5: A raid or duel invitation disappears once its lobby has started, been cleared or, for a raid, its window has closed.
+- bfeb925: Sweet Scent is drawn as a breeze of pink petals over everything it reaches, rather than as the evasion it takes off, and nothing crosses the field before it any more. A move with a picture of its own now keeps it even where it moves a stat.
+- 195acc5: The sprite processor is its own page at /sprite-processor now, rather than a section of the admin dashboard, and asks nobody to sign in. It still only runs on a development build, which is the whole of what guards it.
+- 0ec290b: A trainer's challenge dialog shows their team without a paragraph of stakes under it.
+- bfeb925: U-turn lands its blow on the first step and swaps out on the second, rather than doing both at once after a step that did nothing. It is drawn as what it is now: something thrown out to the target and back to where it started, and then the leaving.
+- ccb2661: - In battle, a pokemon that changes how it looks, such as a Transform or a form change, flashes and swells as it swaps to the new look.
+  - It keeps its old look until the new one has loaded, instead of vanishing for a moment.
+
 ## 3.3.4
 
 ### Patch Changes

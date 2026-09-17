@@ -41,6 +41,12 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.DefenseCurl,
+  Moves.Captivate,
+  Moves.EnergyBall,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
+  Moves.SeedBomb,
+  Moves.WorrySeed,
 ];
 
 // What the two above the base pick up: an acorn hanging in a tree
@@ -109,6 +115,8 @@ export default function registerSeedotSpecies(): void {
         Moves.Amnesia,
         Moves.RazorWind,
         Moves.FalseSwipe,
+        Moves.NastyPlot,
+        Moves.PowerSwap,
       ],
     },
   });
@@ -157,7 +165,14 @@ export default function registerSeedotSpecies(): void {
         43: [Moves.Swagger],
         49: [Moves.Extrasensory],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...GROWN_TEACHABLE,
+        Moves.DarkPulse,
+        Moves.Embargo,
+        Moves.Fling,
+        Moves.Payback,
+      ],
     },
   });
 
@@ -189,9 +204,25 @@ export default function registerSeedotSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Pound, Moves.Harden, Moves.Growth, Moves.NaturePower],
+        1: [Moves.Pound, Moves.Harden, Moves.Growth, Moves.NaturePower, Moves.NastyPlot],
+        49: [Moves.LeafStorm],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE, Moves.AerialAce],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...GROWN_TEACHABLE,
+        Moves.AerialAce,
+        Moves.DarkPulse,
+        Moves.Defog,
+        Moves.Embargo,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.OminousWind,
+        Moves.Payback,
+        Moves.SuckerPunch,
+        Moves.Tailwind,
+        Moves.XScissor,
+      ],
     },
   });
 }

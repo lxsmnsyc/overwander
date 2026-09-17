@@ -1,0 +1,188 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { EvolutionMethod, Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM, HM and tutor moves shared by the whole family
+const FAMILY_TEACHABLE = [
+  Moves.Bounce,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.Cut,
+  Moves.Dig,
+  Moves.DoubleTeam,
+  Moves.DrainPunch,
+  Moves.Endeavor,
+  Moves.Endure,
+  Moves.Facade,
+  Moves.Fling,
+  Moves.FocusPunch,
+  Moves.Frustration,
+  Moves.GrassKnot,
+  Moves.Headbutt,
+  Moves.HealBell,
+  Moves.HelpingHand,
+  Moves.HiddenPower,
+  Moves.IceBeam,
+  Moves.IronTail,
+  Moves.LastResort,
+  Moves.MagicCoat,
+  Moves.MudSlap,
+  Moves.NaturalGift,
+  Moves.Protect,
+  Moves.RainDance,
+  Moves.Rest,
+  Moves.Return,
+  Moves.RockSmash,
+  Moves.SecretPower,
+  Moves.ShadowBall,
+  Moves.ShockWave,
+  Moves.SleepTalk,
+  Moves.Snore,
+  Moves.SolarBeam,
+  Moves.Substitute,
+  Moves.SunnyDay,
+  Moves.Swagger,
+  Moves.Swift,
+  Moves.ThunderWave,
+  Moves.Thunderbolt,
+  Moves.Toxic,
+  Moves.Uproar,
+  Moves.WaterPulse,
+];
+
+/**
+ * The rabbit that keeps its ears rolled up until it trusts whoever is
+ * holding the other end of the walk: it is friendship rather than
+ * levels that unrolls them
+ */
+export default function registerBunearySpecies(): void {
+  registerSpecies(Species.Buneary, {
+    dexNumber: 427,
+    evolvesInto: [
+      {
+        species: Species.Lopunny,
+        method: EvolutionMethod.Friendship,
+      },
+    ],
+    name: 'Buneary',
+    category: 'Rabbit Pokemon',
+    height: 0.4,
+    weight: 5.5,
+    family: Families.Buneary,
+    stats: {
+      [Stats.HP]: 55,
+      [Stats.Attack]: 66,
+      [Stats.Defense]: 44,
+      [Stats.SpecialAttack]: 44,
+      [Stats.SpecialDefense]: 56,
+      [Stats.Speed]: 85,
+    },
+    types: [Types.Normal],
+    abilities: [Abilities.RunAway, Abilities.Klutz],
+    hiddenAbilities: [Abilities.Limber],
+    eggGroups: [EggGroups.Field, EggGroups.HumanLike],
+    genderRatio: [1, 1],
+    catchRate: 190,
+    biomes: [Biome.Grassland, Biome.Woodland, Biome.TemperateForest],
+    activeTimes: AnyTimeOfDay,
+    learnSet: {
+      level: {
+        1: [Moves.DefenseCurl, Moves.Foresight, Moves.Pound, Moves.Splash],
+        6: [Moves.Endure],
+        13: [Moves.Frustration],
+        16: [Moves.QuickAttack],
+        23: [Moves.JumpKick],
+        26: [Moves.BatonPass],
+        33: [Moves.Agility],
+        36: [Moves.DizzyPunch],
+        43: [Moves.Charm],
+        46: [Moves.Bounce],
+        53: [Moves.HealingWish],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+      egg: [
+        Moves.Attract,
+        Moves.DoubleHit,
+        Moves.Encore,
+        Moves.FakeOut,
+        Moves.FakeTears,
+        Moves.FirePunch,
+        Moves.Flail,
+        Moves.IcePunch,
+        Moves.LowKick,
+        Moves.SkyUppercut,
+        Moves.SweetKiss,
+        Moves.Switcheroo,
+        Moves.ThunderPunch,
+      ],
+    },
+  });
+  registerSpecies(Species.Lopunny, {
+    dexNumber: 428,
+    name: 'Lopunny',
+    category: 'Rabbit Pokemon',
+    height: 1.2,
+    weight: 33.3,
+    family: Families.Buneary,
+    evolvesFrom: Species.Buneary,
+    stats: {
+      [Stats.HP]: 65,
+      [Stats.Attack]: 76,
+      [Stats.Defense]: 84,
+      [Stats.SpecialAttack]: 54,
+      [Stats.SpecialDefense]: 96,
+      [Stats.Speed]: 105,
+    },
+    types: [Types.Normal],
+    abilities: [Abilities.CuteCharm, Abilities.Klutz],
+    hiddenAbilities: [Abilities.Limber],
+    eggGroups: [EggGroups.Field, EggGroups.HumanLike],
+    genderRatio: [1, 1],
+    catchRate: 60,
+    biomes: [Biome.Grassland, Biome.Woodland, Biome.TemperateForest],
+    activeTimes: AnyTimeOfDay,
+    learnSet: {
+      level: {
+        1: [
+          Moves.DefenseCurl,
+          Moves.Foresight,
+          Moves.MagicCoat,
+          Moves.MirrorCoat,
+          Moves.Pound,
+          Moves.Splash,
+        ],
+        6: [Moves.Endure],
+        13: [Moves.Return],
+        16: [Moves.QuickAttack],
+        23: [Moves.JumpKick],
+        26: [Moves.BatonPass],
+        33: [Moves.Agility],
+        36: [Moves.DizzyPunch],
+        43: [Moves.Charm],
+        46: [Moves.Bounce],
+        53: [Moves.HealingWish],
+      },
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Attract,
+        Moves.Blizzard,
+        Moves.FirePunch,
+        Moves.FocusBlast,
+        Moves.FuryCutter,
+        Moves.GigaImpact,
+        Moves.HyperBeam,
+        Moves.IcePunch,
+        Moves.LowKick,
+        Moves.Strength,
+        Moves.Thunder,
+        Moves.ThunderPunch,
+      ],
+    },
+  });
+}

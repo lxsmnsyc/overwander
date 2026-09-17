@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -67,6 +67,12 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.SkillSwap,
   Moves.WaterPulse,
+  Moves.AquaTail,
+  Moves.Brine,
+  Moves.Captivate,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
+  Moves.TrickRoom,
 ];
 
 // Slowbro's claws open up the fighting-style TMs
@@ -109,6 +115,7 @@ export default function registerSlowpokeSpecies(): void {
       [Stats.Speed]: 15,
     },
     types: [Types.Water, Types.Psychic],
+    habitat: Habitat.Amphibious,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.Regenerator],
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
@@ -123,11 +130,19 @@ export default function registerSlowpokeSpecies(): void {
         15: [Moves.WaterGun],
         18: [Moves.Disable],
         22: [Moves.Headbutt],
+        34: [Moves.ZenHeadbutt],
         40: [Moves.Amnesia],
         48: [Moves.Psychic],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Stomp, Moves.BellyDrum, Moves.Safeguard, Moves.FutureSight, Moves.MudSport],
+      egg: [
+        Moves.Stomp,
+        Moves.BellyDrum,
+        Moves.Safeguard,
+        Moves.FutureSight,
+        Moves.MudSport,
+        Moves.MeFirst,
+      ],
     },
   });
 
@@ -148,6 +163,7 @@ export default function registerSlowpokeSpecies(): void {
       [Stats.Speed]: 30,
     },
     types: [Types.Water, Types.Psychic],
+    habitat: Habitat.Amphibious,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.Regenerator, Abilities.Unaware],
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
@@ -167,6 +183,7 @@ export default function registerSlowpokeSpecies(): void {
           Moves.Curse,
           Moves.Yawn,
         ],
+        34: [Moves.ZenHeadbutt],
         37: [Moves.Withdraw],
         44: [Moves.Amnesia],
         54: [Moves.Psychic],
@@ -183,6 +200,11 @@ export default function registerSlowpokeSpecies(): void {
         Moves.BrickBreak,
         Moves.FocusPunch,
         Moves.Safeguard,
+        Moves.Avalanche,
+        Moves.DrainPunch,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
       ],
     },
   });

@@ -37,11 +37,12 @@ export default function registerWeedleSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.TemperateForest, Biome.Woodland],
+    biomes: [],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.PoisonSting, Moves.StringShot],
+        15: [Moves.BugBite],
       },
       teachable: [],
     },
@@ -75,13 +76,13 @@ export default function registerWeedleSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.TemperateForest, Biome.Woodland],
+    biomes: [],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.Harden],
       },
-      teachable: [],
+      teachable: [Moves.BugBite],
     },
   });
 
@@ -114,9 +115,11 @@ export default function registerWeedleSpecies(): void {
         1: [Moves.FuryAttack],
         15: [Moves.FocusEnergy],
         20: [Moves.Twineedle],
-        25: [Moves.Rage],
+        25: [Moves.Rage, Moves.ToxicSpikes],
         30: [Moves.PinMissile, Moves.Pursuit],
+        34: [Moves.Assurance],
         35: [Moves.Agility],
+        37: [Moves.PoisonJab],
         45: [Moves.Endeavor],
       },
       teachable: [
@@ -158,6 +161,17 @@ export default function registerWeedleSpecies(): void {
         Moves.SecretPower,
         Moves.SolarBeam,
         Moves.Thief,
+        Moves.BugBite,
+        Moves.Captivate,
+        Moves.Defog,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.OminousWind,
+        Moves.Payback,
+        Moves.Roost,
+        Moves.Tailwind,
+        Moves.UTurn,
+        Moves.XScissor,
       ],
     },
   });

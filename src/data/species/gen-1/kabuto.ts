@@ -5,7 +5,7 @@ import { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -50,6 +50,12 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.WaterPulse,
   Moves.Waterfall,
+  Moves.Brine,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.NaturalGift,
+  Moves.RockPolish,
+  Moves.StealthRock,
 ];
 
 const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.BattleArmor];
@@ -78,6 +84,7 @@ export default function registerKabutoSpecies(): void {
       [Stats.Speed]: 55,
     },
     types: [Types.Rock, Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.WeakArmor],
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
@@ -94,11 +101,13 @@ export default function registerKabutoSpecies(): void {
         19: [Moves.Leer],
         25: [Moves.MudShot],
         28: [Moves.SandAttack],
+        31: [Moves.AquaJet],
         37: [Moves.Endure],
         39: [Moves.Slash],
         43: [Moves.MetalSound],
         46: [Moves.MegaDrain],
         49: [Moves.HydroPump],
+        51: [Moves.WringOut],
         55: [Moves.AncientPower],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.BodySlam],
@@ -131,6 +140,7 @@ export default function registerKabutoSpecies(): void {
       [Stats.Speed]: 80,
     },
     types: [Types.Rock, Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.WeakArmor, Abilities.Sharpness],
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
@@ -142,16 +152,19 @@ export default function registerKabutoSpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Scratch, Moves.Harden, Moves.Absorb],
+        1: [Moves.Scratch, Moves.Harden, Moves.Absorb, Moves.Feint],
         19: [Moves.Leer],
         25: [Moves.MudShot],
         28: [Moves.SandAttack],
+        31: [Moves.AquaJet],
         37: [Moves.Endure],
         39: [Moves.Slash],
         46: [Moves.MetalSound],
         51: [Moves.MegaDrain],
         53: [Moves.HydroPump],
+        63: [Moves.WringOut],
         65: [Moves.AncientPower],
+        72: [Moves.NightSlash],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -169,6 +182,11 @@ export default function registerKabutoSpecies(): void {
         Moves.Dig,
         Moves.Dive,
         Moves.MegaKick,
+        Moves.AquaTail,
+        Moves.GigaImpact,
+        Moves.RockClimb,
+        Moves.StoneEdge,
+        Moves.XScissor,
       ],
     },
   });

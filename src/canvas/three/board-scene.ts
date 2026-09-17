@@ -11,9 +11,13 @@ import {
   NearestFilter,
   SRGBColorSpace,
   Scene,
+  Vector3,
   WebGLRenderer,
 } from 'three';
 import { WALL_BANDS, boardClipDepth, boardClipMatrix, boardView } from '../board';
+import { SKY_BANDS } from '../daylight';
+import parseColour from '../gl/colour';
+import { VIEW_RADIUS } from '../../overworld/board';
 import { SQUARES } from '../../overworld/grid';
 import { FLAT_PITCH, PITCH } from '../tilt';
 import { TERRAIN_TILE, type TerrainTiles } from '../terrain-tiles';
@@ -68,6 +72,47 @@ const MARK_NUDGE = 1;
  */
 const SLIDE_STRIP = 2;
 
+/** How far from the player the haze begins, in cells. It is whole sky by `VIEW_RADIUS` */
+const HAZE_START = VIEW_RADIUS - 6;
+
+/** How many steps the haze takes, so what stands in it fades the way the ground's pixels do */
+const HAZE_STEPS = 4;
+
+/** How much of the haze a spot this far from the player carries, from 0 to 1 */
+export function hazeAt(reach: number): number {
+  const share = Math.min(1, Math.max(0, (reach - HAZE_START) / (VIEW_RADIUS - HAZE_START)));
+
+  return Math.ceil(share * HAZE_STEPS) / HAZE_STEPS;
+}
+
+/**
+ * The haze written into the ground's shader. Each pixel of tile art is
+ * sky or ground, never a blend: a 4x4 ordered dither decides which, so
+ * the rim breaks up in the art's own pixels. The sky is the backdrop's
+ * own bands, so a pixel gone to sky matches what is behind it
+ */
+const HAZE_VERTEX = `
+varying vec2 hazeLocal;
+varying vec2 hazeShift;
+`;
+
+const HAZE_FRAGMENT = `
+uniform vec3 hazeTop;
+uniform vec3 hazeBottom;
+uniform float hazeScreen;
+uniform float hazeOn;
+varying vec2 hazeLocal;
+varying vec2 hazeShift;
+
+float hazeBayer(vec2 texel) {
+  vec2 at = mod(texel, 4.0);
+  int index = int(at.y) * 4 + int(at.x);
+  int[16] order = int[16](0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5);
+
+  return (float(order[index]) + 0.5) / 16.0;
+}
+`;
+
 /** Where something stands: a board cell, and how high the ground is */
 export interface SceneSpot {
   x: number;
@@ -101,6 +146,11 @@ export interface BoardScene {
     ratio: number,
     shift: [number, number],
   ) => void;
+  /**
+   * The colours the ground's rim dissolves into, the sky at the top of
+   * the screen and at the bottom, or nothing to leave the rim hard
+   */
+  haze: (sky: { top: string; bottom: string } | null) => void;
   /** The flat marks, written in the page's own coordinates */
   marks: SceneMarks;
   /**
@@ -116,6 +166,8 @@ export default function createBoardScene(
   canvas: HTMLCanvasElement,
   pack: TerrainTiles,
   cells: number,
+  /** How many cells the scene reaches past the board on each side */
+  extra = 0,
 ): BoardScene {
   const renderer = new WebGLRenderer({ canvas, alpha: true, antialias: false });
   const scene = new Scene();
@@ -150,6 +202,39 @@ export default function createBoardScene(
    * backdrop everything else is depth-tested against
    */
   const rock = new MeshBasicMaterial({ map: texture, alphaTest: 0.5, side: DoubleSide });
+  const hazeTop = new Vector3();
+  const hazeBottom = new Vector3();
+  const hazeScreen = { value: 1 };
+  const hazeOn = { value: 0 };
+
+  rock.onBeforeCompile = (shader): void => {
+    shader.uniforms.hazeTop = { value: hazeTop };
+    shader.uniforms.hazeBottom = { value: hazeBottom };
+    shader.uniforms.hazeScreen = hazeScreen;
+    shader.uniforms.hazeOn = hazeOn;
+    shader.vertexShader = `${HAZE_VERTEX}${shader.vertexShader.replace(
+      '#include <project_vertex>',
+      `#include <project_vertex>
+      hazeLocal = transformed.xz;
+      hazeShift = vec2(modelMatrix[3][0], modelMatrix[3][2]);`,
+    )}`;
+    // After the colour space, since the backdrop's bands are mixed in the page's own colours
+    shader.fragmentShader = `${HAZE_FRAGMENT}${shader.fragmentShader.replace(
+      '#include <colorspace_fragment>',
+      `#include <colorspace_fragment>
+      if (hazeOn > 0.5) {
+        vec2 hazeTexel = floor(hazeLocal * ${TILE.toFixed(1)});
+        vec2 hazeSpot = (hazeTexel + 0.5) / ${TILE.toFixed(1)} + hazeShift;
+        float hazeShare = clamp((length(hazeSpot) - ${HAZE_START.toFixed(1)}) / ${(VIEW_RADIUS - HAZE_START).toFixed(1)}, 0.0, 1.0);
+
+        if (hazeShare > hazeBayer(hazeTexel)) {
+          float hazeBand = (floor((1.0 - gl_FragCoord.y / hazeScreen) * ${SKY_BANDS.toFixed(1)}) + 0.5) / ${SKY_BANDS.toFixed(1)};
+
+          gl_FragColor.rgb = mix(hazeTop, hazeBottom, clamp(hazeBand, 0.0, 1.0));
+        }
+      }`,
+    )}`;
+  };
   /**
    * One quad per cell, written in place on every build. The tile a quad samples
    * never moves, since the page slides under the quads rather than the other way
@@ -375,6 +460,16 @@ export default function createBoardScene(
 
   return {
     ground,
+    haze: (sky): void => {
+      const upper = sky == null ? null : parseColour(sky.top);
+      const lower = sky == null ? null : parseColour(sky.bottom);
+
+      hazeOn.value = upper == null || lower == null ? 0 : 1;
+      if (upper != null && lower != null) {
+        hazeTop.set(upper[0], upper[1], upper[2]);
+        hazeBottom.set(lower[0], lower[1], lower[2]);
+      }
+    },
     marks,
     look: (yaw, screen, picture, ratio, shift): void => {
       lean = ((boardView().mode === '2d' ? FLAT_PITCH : PITCH) * Math.PI) / 180;
@@ -391,6 +486,7 @@ export default function createBoardScene(
       if (sized.width !== screen.width || sized.height !== screen.height || sized.ratio !== ratio) {
         renderer.setPixelRatio(ratio);
         renderer.setSize(screen.width, screen.height, false);
+        hazeScreen.value = screen.height * ratio;
         sized.width = screen.width;
         sized.height = screen.height;
         sized.ratio = ratio;
@@ -401,9 +497,9 @@ export default function createBoardScene(
       // the ground it is drawn over nor behind the ground in front
       boardClipDepth(
         clip,
-        spot.x - cells / 2 + 0.5,
+        spot.x + extra - cells / 2 + 0.5,
         spot.y + spread * away,
-        spot.z - cells / 2 + 0.5 + spread * rise,
+        spot.z + extra - cells / 2 + 0.5 + spread * rise,
       ),
     draw: (): void => {
       marks.end();

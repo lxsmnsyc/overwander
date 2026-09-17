@@ -15,8 +15,20 @@ import { nameToIcon, registerItem } from './__create';
  * [`src/battle/items/orbs.ts`](../../battle/items/orbs.ts).
  */
 export const ORBS = new Map<Items, [name: string, description: string]>([
-  [Items.FlameOrb, ['Flame Orb', 'Burns its holder 5 seconds into the fight.']],
-  [Items.ToxicOrb, ['Toxic Orb', 'Badly poisons its holder 5 seconds into the fight.']],
+  [
+    Items.FlameOrb,
+    [
+      'Flame Orb',
+      'Burns its holder after 5 seconds of holding it, and again once the burn is cured.',
+    ],
+  ],
+  [
+    Items.ToxicOrb,
+    [
+      'Toxic Orb',
+      'Badly poisons its holder after 5 seconds of holding it, and again once the poison is cured.',
+    ],
+  ],
   [
     Items.LifeOrb,
     ['Life Orb', '1.3x damage, and its holder pays 1/10 of its own HP for every blow.'],

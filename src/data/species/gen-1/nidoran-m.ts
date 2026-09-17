@@ -53,6 +53,9 @@ const FAMILY_TEACHABLE = [
   Moves.ShockWave,
   Moves.SludgeBomb,
   Moves.WaterPulse,
+  Moves.NaturalGift,
+  Moves.ShadowClaw,
+  Moves.SuckerPunch,
 ];
 
 // Additional TM/HM moves for the fully evolved form
@@ -112,8 +115,11 @@ export default function registerNidoranMSpecies(): void {
         21: [Moves.FocusEnergy],
         23: [Moves.HelpingHand],
         29: [Moves.FuryAttack],
+        31: [Moves.ToxicSpikes],
         36: [Moves.HornDrill],
+        37: [Moves.PoisonJab],
         38: [Moves.Flatter],
+        43: [Moves.Captivate],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Dig, Moves.IceBeam, Moves.RockSmash, Moves.Strength],
       egg: [
@@ -124,6 +130,7 @@ export default function registerNidoranMSpecies(): void {
         Moves.Confusion,
         Moves.Amnesia,
         Moves.BeatUp,
+        Moves.HeadSmash,
       ],
     },
   });
@@ -167,8 +174,10 @@ export default function registerNidoranMSpecies(): void {
         23: [Moves.FocusEnergy],
         26: [Moves.HelpingHand],
         32: [Moves.FuryAttack],
+        35: [Moves.ToxicSpikes],
         41: [Moves.HornDrill],
-        43: [Moves.Flatter],
+        43: [Moves.Flatter, Moves.PoisonJab],
+        50: [Moves.Captivate],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -216,7 +225,7 @@ export default function registerNidoranMSpecies(): void {
           Moves.Peck,
         ],
         23: [Moves.Thrash],
-        43: [Moves.Megahorn],
+        43: [Moves.Megahorn, Moves.EarthPower],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -239,6 +248,17 @@ export default function registerNidoranMSpecies(): void {
         Moves.RockTomb,
         Moves.Taunt,
         Moves.Torment,
+        Moves.AquaTail,
+        Moves.Avalanche,
+        Moves.Captivate,
+        Moves.DragonPulse,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.PoisonJab,
+        Moves.RockClimb,
+        Moves.StealthRock,
+        Moves.StoneEdge,
       ],
     },
   });

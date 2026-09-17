@@ -1,0 +1,133 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { EvolutionMethod, Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+/**
+ * A Mr. Mime still learning the routine: a Mime Jr. copies whoever it
+ * is watching and does not stop when they notice
+ */
+export default function registerMimeJrSpecies(): void {
+  registerSpecies(Species.MimeJr, {
+    dexNumber: 439,
+    evolvesInto: [
+      {
+        species: Species.MrMime,
+        method: EvolutionMethod.Level | EvolutionMethod.KnownMove,
+        level: 20,
+        move: Moves.Mimic,
+      },
+    ],
+    name: 'MimeJr',
+    category: 'Mime Pokemon',
+    height: 0.6,
+    weight: 13.0,
+    family: Families.MrMime,
+    stats: {
+      [Stats.HP]: 20,
+      [Stats.Attack]: 25,
+      [Stats.Defense]: 45,
+      [Stats.SpecialAttack]: 70,
+      [Stats.SpecialDefense]: 90,
+      [Stats.Speed]: 60,
+    },
+    types: [Types.Psychic, Types.Fairy],
+    abilities: [Abilities.Soundproof, Abilities.Filter],
+    hiddenAbilities: [Abilities.Technician],
+    eggGroups: [EggGroups.NoEggsDiscovered],
+    genderRatio: [1, 1],
+    catchRate: 145,
+    biomes: [Biome.Grassland, Biome.TemperateForest, Biome.Woodland],
+    activeTimes: AnyTimeOfDay,
+    learnSet: {
+      level: {
+        1: [Moves.Barrier, Moves.Confusion, Moves.Tickle],
+        4: [Moves.Copycat],
+        8: [Moves.Meditate],
+        11: [Moves.Encore],
+        15: [Moves.DoubleSlap],
+        18: [Moves.Mimic],
+        22: [Moves.LightScreen, Moves.Reflect],
+        25: [Moves.Psybeam],
+        29: [Moves.Substitute],
+        32: [Moves.Recycle],
+        36: [Moves.Trick],
+        39: [Moves.Psychic],
+        43: [Moves.RolePlay],
+        46: [Moves.BatonPass],
+        50: [Moves.Safeguard],
+      },
+      teachable: [
+        Moves.Attract,
+        Moves.BrickBreak,
+        Moves.CalmMind,
+        Moves.Captivate,
+        Moves.ChargeBeam,
+        Moves.DoubleTeam,
+        Moves.DrainPunch,
+        Moves.DreamEater,
+        Moves.Endure,
+        Moves.Facade,
+        Moves.Flash,
+        Moves.Fling,
+        Moves.FocusPunch,
+        Moves.Frustration,
+        Moves.GrassKnot,
+        Moves.HelpingHand,
+        Moves.HiddenPower,
+        Moves.LightScreen,
+        Moves.MudSlap,
+        Moves.NaturalGift,
+        Moves.Protect,
+        Moves.PsychUp,
+        Moves.Psychic,
+        Moves.RainDance,
+        Moves.Recycle,
+        Moves.Reflect,
+        Moves.Rest,
+        Moves.Return,
+        Moves.Safeguard,
+        Moves.SecretPower,
+        Moves.ShadowBall,
+        Moves.ShockWave,
+        Moves.SignalBeam,
+        Moves.SkillSwap,
+        Moves.SleepTalk,
+        Moves.Snatch,
+        Moves.Snore,
+        Moves.SolarBeam,
+        Moves.Substitute,
+        Moves.SunnyDay,
+        Moves.Swagger,
+        Moves.Taunt,
+        Moves.Thief,
+        Moves.Thunder,
+        Moves.ThunderWave,
+        Moves.Thunderbolt,
+        Moves.Torment,
+        Moves.Toxic,
+        Moves.Trick,
+        Moves.TrickRoom,
+        Moves.Uproar,
+      ],
+      egg: [
+        Moves.Charm,
+        Moves.ConfuseRay,
+        Moves.FakeOut,
+        Moves.FutureSight,
+        Moves.HealingWish,
+        Moves.Hypnosis,
+        Moves.Mimic,
+        Moves.PsychUp,
+        Moves.TeeterDance,
+        Moves.Trick,
+        Moves.WakeUpSlap,
+      ],
+    },
+  });
+}

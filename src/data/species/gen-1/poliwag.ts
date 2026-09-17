@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -51,6 +51,8 @@ const FAMILY_TEACHABLE = [
   Moves.Facade,
   Moves.SecretPower,
   Moves.WaterPulse,
+  Moves.Captivate,
+  Moves.NaturalGift,
 ];
 
 // The evolved forms grow arms: fighting-style TMs and HM Strength
@@ -93,12 +95,24 @@ export default function registerPoliwagSpecies(): void {
       [Stats.Speed]: 90,
     },
     types: [Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.WaterAbsorb, Abilities.Damp],
     hiddenAbilities: [Abilities.SwiftSwim],
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Swamp, Biome.Bog],
+    biomes: [
+      Biome.Swamp,
+      Biome.Bog,
+      Biome.TropicalRainforest,
+      Biome.TropicalSeasonalForest,
+      Biome.Shrubland,
+      Biome.Grassland,
+      Biome.TemperateForest,
+      Biome.TemperateRainforest,
+      Biome.Woodland,
+      Biome.MontaneForest,
+    ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -108,8 +122,10 @@ export default function registerPoliwagSpecies(): void {
         19: [Moves.DoubleSlap],
         25: [Moves.RainDance],
         31: [Moves.BodySlam],
+        35: [Moves.WakeUpSlap],
         37: [Moves.BellyDrum],
         38: [Moves.Amnesia],
+        41: [Moves.MudBomb],
         43: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -154,12 +170,23 @@ export default function registerPoliwagSpecies(): void {
       [Stats.Speed]: 90,
     },
     types: [Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.WaterAbsorb, Abilities.Damp],
     hiddenAbilities: [Abilities.SwiftSwim],
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.Swamp, Biome.Bog],
+    biomes: [
+      Biome.Swamp,
+      Biome.Bog,
+      Biome.TropicalSeasonalForest,
+      Biome.Shrubland,
+      Biome.Grassland,
+      Biome.TemperateForest,
+      Biome.TemperateRainforest,
+      Biome.Woodland,
+      Biome.MontaneForest,
+    ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -168,10 +195,17 @@ export default function registerPoliwagSpecies(): void {
         27: [Moves.RainDance],
         33: [Moves.BodySlam],
         41: [Moves.Amnesia],
-        43: [Moves.BellyDrum],
+        43: [Moves.BellyDrum, Moves.WakeUpSlap],
         49: [Moves.HydroPump],
+        53: [Moves.MudBomb],
       },
-      teachable: [...FAMILY_TEACHABLE, ...EVOLVED_TEACHABLE, Moves.BrickBreak, Moves.FocusPunch],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...EVOLVED_TEACHABLE,
+        Moves.BrickBreak,
+        Moves.FocusPunch,
+        Moves.Fling,
+      ],
     },
   });
 
@@ -192,12 +226,13 @@ export default function registerPoliwagSpecies(): void {
       [Stats.Speed]: 70,
     },
     types: [Types.Water, Types.Fighting],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.WaterAbsorb, Abilities.Damp],
     hiddenAbilities: [Abilities.SwiftSwim, Abilities.Guts],
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Swamp, Biome.Bog],
+    biomes: [Biome.Swamp, Biome.Bog, Biome.Shrubland, Biome.Grassland, Biome.MontaneForest],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -213,6 +248,13 @@ export default function registerPoliwagSpecies(): void {
         Moves.BulkUp,
         Moves.FocusPunch,
         Moves.RockTomb,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.Payback,
+        Moves.PoisonJab,
+        Moves.RockClimb,
+        Moves.VacuumWave,
       ],
     },
   });

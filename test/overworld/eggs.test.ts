@@ -224,6 +224,21 @@ describe('breeding pairs', () => {
     expect(getEggSpecies(ditto, parent(Species.Ditto, Genders.Genderless, 0))).toBeNull();
   });
 
+  it('lays a Phione where a Manaphy is the mother', () => {
+    const ditto = parent(Species.Ditto, Genders.Genderless, 0);
+
+    // The one mother in the registry that lays something other than
+    // her own first stage, and the only way a Phione is ever met
+    expect(getEggSpecies(ditto, parent(Species.Manaphy, Genders.Genderless, 0))).toBe(
+      Species.Phione,
+    );
+    // What it lays lays itself, so the second generation is Phione
+    // again rather than a way back to a Manaphy
+    expect(getEggSpecies(ditto, parent(Species.Phione, Genders.Genderless, 0))).toBe(
+      Species.Phione,
+    );
+  });
+
   it('refuses what cannot breed', () => {
     // Same gender
     expect(

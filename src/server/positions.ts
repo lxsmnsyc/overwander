@@ -7,7 +7,7 @@ import {
   asPositionRecord,
 } from '../auth/position-record';
 import type Biome from '../data/ids/biome';
-import getWorld from '../overworld/current';
+import getWorld, { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
 import { Metric } from '../auth/quest-record';
 import { getSql } from './db';
@@ -54,10 +54,10 @@ export default async function savePosition(
   now: number,
 ): Promise<number> {
   await getSql()`
-    insert into positions (player, chunk_x, chunk_y, cell_x, cell_y, depth, moved_at)
-    values (${uid}, ${asChunkCoordinate(chunkX)}, ${asChunkCoordinate(chunkY)},
+    insert into positions (player, generation, chunk_x, chunk_y, cell_x, cell_y, depth, moved_at)
+    values (${uid}, ${WORLD_GENERATION}, ${asChunkCoordinate(chunkX)}, ${asChunkCoordinate(chunkY)},
             ${asCellCoordinate(cellX)}, ${asCellCoordinate(cellY)}, ${asDepth(depth)}, ${now})
-    on conflict (player) do update set
+    on conflict (player, generation) do update set
       chunk_x = excluded.chunk_x, chunk_y = excluded.chunk_y,
       cell_x = excluded.cell_x, cell_y = excluded.cell_y,
       depth = excluded.depth,
@@ -84,7 +84,7 @@ export async function readPosition(uid: string): Promise<PositionRecord | null> 
   const rows = await getSql()`
     select player, chunk_x as "chunkX", chunk_y as "chunkY",
            cell_x as "cellX", cell_y as "cellY", depth, moved_at as "movedAt"
-    from positions where player = ${uid}
+    from positions where player = ${uid} and generation = ${WORLD_GENERATION}
   `;
 
   return rows.at(0) == null ? null : asPositionRecord(rows[0]);
@@ -106,7 +106,7 @@ export async function readPositions(uids: readonly string[]): Promise<Map<string
   const rows = await sql`
     select player, chunk_x as "chunkX", chunk_y as "chunkY",
            cell_x as "cellX", cell_y as "cellY", depth, moved_at as "movedAt"
-    from positions where player in ${sql(wanted)}
+    from positions where player in ${sql(wanted)} and generation = ${WORLD_GENERATION}
   `;
   const found = new Map<string, PositionRecord>();
 

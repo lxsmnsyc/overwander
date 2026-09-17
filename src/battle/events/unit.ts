@@ -157,6 +157,14 @@ export interface CheckUnitStatusDurationEvent extends UnitStatusEvent {
 }
 
 /**
+ * How much health a residual status takes this time round. The value
+ * arrives as the status' own share, and a listener scales it
+ */
+export interface CheckUnitStatusDamageEvent extends UnitStatusEvent {
+  value: number;
+}
+
+/**
  * A timed status advanced, structured like UnitUpdateCast: emitted
  * every tick with the new progress so visual cues can render it, and
  * authoritative — the timed status applies the data on Exact
@@ -202,6 +210,11 @@ export interface UnitFaintsEvent extends UnitEvent {
 
 export interface UnitAbilityEvent extends UnitEvent {
   ability: Abilities;
+  /**
+   * Worn with a form rather than carried: it takes no slot and cannot
+   * be copied, traded or taken, the way a Shadow cannot
+   */
+  worn?: boolean;
 }
 
 export interface CheckUnitCanConsumeItemEvent extends UnitEvent {

@@ -6,7 +6,7 @@ balls at them, dig items out of the ground, hatch eggs, fight raids, trainers
 and Team Rocket grunts, hold gym seats against other players, and trade rare
 finds at an auction house.
 
-The pokemon are the first 386, Kanto, Johto and Hoenn, with the moves,
+The pokemon are the first 493, Kanto, Johto, Hoenn and Sinnoh, with the moves,
 abilities and items of the modern games. Battles run in real time rather than in turns, and pokemon grow on candy
 rather than on experience.
 

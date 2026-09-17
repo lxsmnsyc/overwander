@@ -12,6 +12,9 @@ const RECHARGE_MOVES = new Set<Moves>([
   Moves.BlastBurn,
   Moves.HydroCannon,
   Moves.FrenzyPlant,
+  Moves.GigaImpact,
+  Moves.RockWrecker,
+  Moves.RoarOfTime,
 ]);
 
 export default function setupRechargeMoves(battle: Battle): void {

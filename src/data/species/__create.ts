@@ -1,6 +1,6 @@
 import type { Stats } from '../constants/stats';
-import { Types } from '../constants/types';
-import Abilities from '../ids/abilities';
+import type { Types } from '../constants/types';
+import type Abilities from '../ids/abilities';
 import type Biome from '../ids/biome';
 import type { TimeOfDay } from '../ids/biome';
 import type EggGroups from '../ids/egg-groups';
@@ -8,7 +8,7 @@ import type Families from '../ids/families';
 import { FAMILY_NAMES } from '../ids/families';
 import type { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
-import { type Genders, type Species, getBaseFormSpecies } from '../ids/species';
+import { type Genders, Habitat, type Species, getBaseFormSpecies } from '../ids/species';
 
 /**
  * One way a species evolves: the target species and the required
@@ -52,6 +52,12 @@ export interface EvolutionData {
    * instead
    */
   gender?: Genders;
+  /**
+   * The move it has to know (EvolutionMethod.KnownMove). Four lines
+   * ask, and each of them asks for a move the mainline teaches that
+   * stage and nothing above it
+   */
+  move?: Moves;
   /**
    * Two of its own stats set against each other
    * (EvolutionMethod.StatComparison). Tyrogue is the only line that
@@ -152,6 +158,12 @@ export interface SpeciesData {
    */
   evolvesInto?: EvolutionData[];
   /**
+   * What this pokemon's egg hatches into, when that is not the bottom
+   * of its own line. A Manaphy lays a Phione and never another
+   * Manaphy, which is the only way one is ever reached
+   */
+  eggSpecies?: Species;
+  /**
    * Base stats of the pokemon
    */
   stats: Record<Stats, number>;
@@ -159,6 +171,11 @@ export interface SpeciesData {
    * Primary (and secondary) types of this pokemon
    */
   types: Types[];
+  /**
+   * Whether it is met in water, on the ground or on both, which
+   * decides the spawn pools it may stand in. Ground when absent
+   */
+  habitat?: Habitat;
   /**
    * Possible regular abilities of this pokemon
    */
@@ -278,47 +295,16 @@ export function getSpeciesData(species: Species): SpeciesData {
   throw new Error('Missing species data for ' + species);
 }
 
+/** Where the species is met, ground unless its data says otherwise */
+export function getHabitat(species: Species): Habitat {
+  return getSpeciesData(species).habitat ?? Habitat.Ground;
+}
+
 /**
  * Whether the species is a default form rather than a variant of
  * another one. A registration that says nothing is one: variants are
  * the exception, and the exception is what gets written down
  */
-/**
- * Whether a species can be in the water rather than only beside it.
- *
- * Asked of the overworld when a lake or a river runs through dry
- * country: the pool there was written for the land around it, and a
- * Rhyhorn standing in the middle of a pond is the pool answering a
- * question nobody asked it. A country that is itself water is not
- * asked, since everything in its pool was chosen knowing that
- */
-export function swims(species: Species): boolean {
-  return getSpeciesData(species).types.includes(Types.Water);
-}
-
-/**
- * Whether a species is over the ground rather than on it: the Flying
- * types, and the hoverers the mainline hands Levitate to.
- *
- * Asked beside `swims` for the same pond. Something in the air is no
- * more standing in the water than something swimming is, so a Zubat
- * over a river is the pool answering the question it was asked. What
- * the rule keeps out is the Rhyhorn.
- *
- * Read off the species' own abilities rather than the walk up its
- * line, since what hovers is this stage rather than whatever its
- * pre-evolution could be born with
- */
-export function floats(species: Species): boolean {
-  const data = getSpeciesData(species);
-
-  return (
-    data.types.includes(Types.Flying) ||
-    data.abilities.includes(Abilities.Levitate) ||
-    (data.hiddenAbilities ?? []).includes(Abilities.Levitate)
-  );
-}
-
 export function isBaseForm(species: Species): boolean {
   return getSpeciesData(species).baseForm !== false;
 }
@@ -519,6 +505,14 @@ export function getBaseSpecies(species: Species): Species {
     previous = getSpeciesData(current).evolvesFrom;
   }
   return current;
+}
+
+/**
+ * What a mother of this species lays: the bottom of her own line,
+ * unless she is one of the few that lay something else
+ */
+export function getEggBaseSpecies(species: Species): Species {
+  return getSpeciesData(species).eggSpecies ?? getBaseSpecies(species);
 }
 
 /**

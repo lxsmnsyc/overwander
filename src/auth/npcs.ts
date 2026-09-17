@@ -2,7 +2,23 @@ import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import Npc from '../data/overworld/npc';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
+import { WORLD_GENERATION } from '../overworld/current';
 import { requireUid } from '../server/auth';
+import check, {
+  BASKET,
+  CELL,
+  CHUNK_COORDINATE,
+  COUNT,
+  GAME_ID,
+  ID,
+  LOCALE,
+  NPC,
+  OFFSET,
+  PARENTS,
+  PARTY,
+  REPLACED_SLOT,
+  TOKEN,
+} from '../server/validate';
 import type { Awakening } from '../server/awaken';
 import {
   type RevivedFossil,
@@ -80,6 +96,13 @@ async function breedOnServer(
   locale: string,
 ): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(PARENTS, parents);
+  check(OFFSET, offset);
+  check(LOCALE, locale);
   const uid = await requireUid(token);
 
   return countVisit(
@@ -123,6 +146,12 @@ async function boostOnServer(
   offset: number,
 ): Promise<number | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(ID, catchId);
+  check(OFFSET, offset);
   const uid = await requireUid(token);
 
   return countVisit(
@@ -169,6 +198,12 @@ async function visitNurseOnServer(
   offset: number,
 ): Promise<string[] | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(PARTY, catches);
+  check(OFFSET, offset);
   const uid = await requireUid(token);
 
   return countVisit(
@@ -211,6 +246,12 @@ async function groomOnServer(
   offset: number,
 ): Promise<number | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(ID, catchId);
+  check(OFFSET, offset);
   const uid = await requireUid(token);
 
   return countVisit(
@@ -265,6 +306,14 @@ async function remindOnServer(
   offset: number,
 ): Promise<LearnResult> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(ID, catchId);
+  check(GAME_ID, move);
+  check(REPLACED_SLOT, replaces);
+  check(OFFSET, offset);
   const uid = await requireUid(token);
 
   return countVisit(
@@ -322,6 +371,14 @@ async function tutorOnServer(
   offset: number,
 ): Promise<LearnResult> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(ID, catchId);
+  check(GAME_ID, move);
+  check(REPLACED_SLOT, replaces);
+  check(OFFSET, offset);
   const uid = await requireUid(token);
 
   return countVisit(
@@ -378,6 +435,12 @@ async function channelOnServer(
   offset: number,
 ): Promise<Awakening | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(ID, catchId);
+  check(OFFSET, offset);
   const uid = await requireUid(token);
 
   return countVisit(
@@ -428,6 +491,13 @@ async function buyOnServer(
   trader: Npc,
 ): Promise<TradeResult | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(BASKET, basket);
+  check(OFFSET, offset);
+  check(NPC, trader);
   const uid = await requireUid(token);
 
   // The server refuses a trader that is not one, and refuses a cell
@@ -478,6 +548,13 @@ async function sellOnServer(
   trader: Npc,
 ): Promise<TradeResult | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(BASKET, basket);
+  check(OFFSET, offset);
+  check(NPC, trader);
   const uid = await requireUid(token);
 
   return countVisit(
@@ -523,6 +600,12 @@ async function buyFossilOnServer(
   offset: number,
 ): Promise<TradeResult | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(GAME_ID, item);
+  check(OFFSET, offset);
   const uid = await requireUid(token);
 
   return countVisit(
@@ -581,6 +664,13 @@ async function carveOnServer(
   offset: number,
 ): Promise<{ ball: Items; amount: number } | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(GAME_ID, item);
+  check(COUNT, amount);
+  check(OFFSET, offset);
   const uid = await requireUid(token);
 
   return countVisit(
@@ -619,6 +709,14 @@ async function reviveOnServer(
   locale: string,
 ): Promise<RevivedFossil[] | null> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(GAME_ID, item);
+  check(COUNT, amount);
+  check(OFFSET, offset);
+  check(LOCALE, locale);
   const uid = await requireUid(token);
 
   return countVisit(
@@ -652,6 +750,7 @@ export async function hasVisited(
   const { data } = await getSupabase()
     .from('npc_claims')
     .select('marker')
+    .eq('generation', WORLD_GENERATION)
     .eq('marker', snapshot.visitMarker(tag, cell));
 
   return (data ?? []).length > 0;

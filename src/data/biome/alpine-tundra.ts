@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerIcePool, registerSpawnPool } from './__create';
 
 /**
  * AlpineTundra spawn pool, grouped by day-cycle period and rarity band
@@ -12,19 +12,36 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Machop, weight: 20 },
         { species: Species.Swinub, weight: 25 },
       ],
-      uncommon: [{ species: Species.Snorunt, weight: 22 }],
+      uncommon: [
+        { species: Species.Snorunt, weight: 22 },
+        { species: Species.Bronzor, weight: 20 },
+        { species: Species.Snover, weight: 20 },
+      ],
       rare: [
         { species: Species.Machoke, weight: 5 },
         { species: Species.Piloswine, weight: 5 },
       ],
-      scarce: [{ species: Species.Glalie, weight: 6 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Bronzong, weight: 6 },
+        { species: Species.Abomasnow, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
       elusive: [
         { species: Species.Machamp, weight: 5 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Skarmory, weight: 5 },
+        { species: Species.Lucario, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      prized: [...UNOWN_SPAWNS, { species: Species.Riolu, weight: PRIZED_WEIGHT }],
+      special: [
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.Dialga, weight: 10 },
+        { species: Species.Palkia, weight: 10 },
+      ],
+      mythical: [{ species: Species.Arceus, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -32,21 +49,38 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Machop, weight: 20 },
         { species: Species.Swinub, weight: 25 },
       ],
-      uncommon: [{ species: Species.Snorunt, weight: 22 }],
+      uncommon: [
+        { species: Species.Snorunt, weight: 22 },
+        { species: Species.Bronzor, weight: 20 },
+        { species: Species.Snover, weight: 20 },
+      ],
       rare: [
         { species: Species.Shelgon, weight: 1 },
         { species: Species.Machoke, weight: 5 },
         { species: Species.Piloswine, weight: 5 },
       ],
-      scarce: [{ species: Species.Glalie, weight: 6 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Bronzong, weight: 6 },
+        { species: Species.Abomasnow, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
       elusive: [
         { species: Species.Salamence, weight: 2 },
         { species: Species.Machamp, weight: 5 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Skarmory, weight: 5 },
+        { species: Species.Lucario, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      prized: [...UNOWN_SPAWNS, { species: Species.Riolu, weight: PRIZED_WEIGHT }],
+      special: [
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.Dialga, weight: 10 },
+        { species: Species.Palkia, weight: 10 },
+      ],
+      mythical: [{ species: Species.Arceus, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -56,19 +90,116 @@ export default function registerAlpineTundraSpawns(): void {
       uncommon: [
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Sneasel, weight: 5 },
+        { species: Species.Bronzor, weight: 20 },
+        { species: Species.Snover, weight: 20 },
       ],
       rare: [
         { species: Species.Shelgon, weight: 1 },
         { species: Species.Piloswine, weight: 5 },
       ],
-      scarce: [{ species: Species.Glalie, weight: 6 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Bronzong, weight: 6 },
+        { species: Species.Abomasnow, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
       elusive: [
         { species: Species.Salamence, weight: 2 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Absol, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.Dialga, weight: 10 },
+        { species: Species.Palkia, weight: 10 },
+      ],
+      mythical: [{ species: Species.Arceus, weight: 10 }],
+    },
+    [TimeOfDay.Night]: {
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [
+        { species: Species.Snorunt, weight: 22 },
+        { species: Species.Sneasel, weight: 5 },
+        { species: Species.Bronzor, weight: 20 },
+        { species: Species.Snover, weight: 20 },
+      ],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Bronzong, weight: 6 },
+        { species: Species.Abomasnow, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
+      elusive: [
+        { species: Species.Delibird, weight: 5 },
+        { species: Species.Absol, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
+      ],
+      prized: [...UNOWN_SPAWNS],
+      special: [
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.Dialga, weight: 10 },
+        { species: Species.Palkia, weight: 10 },
+        { species: Species.Mewtwo, weight: 10 },
+      ],
+      mythical: [{ species: Species.Arceus, weight: 10 }],
+    },
+  });
+  registerIcePool(Biome.AlpineTundra, {
+    [TimeOfDay.Morning]: {
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [{ species: Species.Snorunt, weight: 22 }],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
+      elusive: [
+        { species: Species.Mamoswine, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Day]: {
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [{ species: Species.Snorunt, weight: 22 }],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
+      elusive: [
+        { species: Species.Mamoswine, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Evening]: {
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [
+        { species: Species.Snorunt, weight: 22 },
+        { species: Species.Sneasel, weight: 5 },
+      ],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
+      ],
+      elusive: [
+        { species: Species.Mamoswine, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+      ],
+      special: [],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Swinub, weight: 25 }],
@@ -77,13 +208,17 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Sneasel, weight: 5 },
       ],
       rare: [{ species: Species.Piloswine, weight: 5 }],
-      scarce: [{ species: Species.Glalie, weight: 6 }],
-      elusive: [
-        { species: Species.Delibird, weight: 5 },
-        { species: Species.Absol, weight: 5 },
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
       ],
-      prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      elusive: [
+        { species: Species.Mamoswine, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+      ],
+      special: [],
     },
   });
 }

@@ -25,7 +25,8 @@ export function isPortalKey(item: Items): boolean {
 export default function registerPortalKey(): void {
   registerItem(Items.PortalKey, {
     name: 'Portal Key',
-    description: 'Pays for one crossing at a portal you are standing on. Spent on use.',
+    description:
+      'Pays for one crossing from a portal you are standing on to a town some player has found. Spent on use.',
     type: ItemTypes.KeyItem,
     // Its own picture, tinted out of the Intriguing Stone by
     // `scripts/item-icons.ts`: no rip drew a portal key, and the two

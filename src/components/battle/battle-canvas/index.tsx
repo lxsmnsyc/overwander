@@ -20,9 +20,9 @@ import {
   moveEffectVisual,
   moveMissVisual,
 } from '../../../canvas/battle/moves';
-import type { FieldView } from '../../../canvas/battle/field';
+import type { FieldPoint, FieldView } from '../../../canvas/battle/field';
 import loadTerrainTiles, { TERRAIN_TILE } from '../../../canvas/terrain-tiles';
-import drawFloor, { type FloorRegion, type FloorTile } from './floor';
+import drawFloor, { type Arena, type FloorRegion, type FloorTile, drawGroundShade } from './floor';
 import createBattleScene from '../../../canvas/three/battle-scene';
 import Bakery from '../../../canvas/bakery';
 import Biome from '../../../data/ids/biome';
@@ -39,9 +39,9 @@ import { isLoopingCast, pickCast } from '../../../data/constants/cast';
 
 import { Stats } from '../../../data/constants/stats';
 import { MoveFlags } from '../../../data/ids/moves';
-import { Genders, type Species } from '../../../data/ids/species';
+import { Genders, Species } from '../../../data/ids/species';
 
-import type { Statuses } from '../../../data/ids/status';
+import { Statuses } from '../../../data/ids/status';
 import { getMoveData } from '../../../data/moves';
 import {
   bodyOf,
@@ -57,6 +57,8 @@ import type { Spot } from '../../../canvas/three/effect-batch';
 import { spread } from '../../../canvas/battle/moves/__paint';
 import {
   type Slot,
+  type Stand,
+  type Standing,
   aimedAt,
   lobbyCamera,
   project,
@@ -65,6 +67,7 @@ import {
   skiesOver,
   unitsOf,
 } from './field';
+import { type CastLabels, interruptCast, trackCast } from './cast-label';
 import { COLORS, FIELD_UNIT, HEIGHT, JOLT_BEAT, LOADING_LABEL, TURN_SLOP, WIDTH } from './metrics';
 import {
   CUE_GAP,
@@ -139,6 +142,82 @@ export interface UnitSpot {
   bottom: number;
 }
 
+/** How far past its outermost pokemon a side's ring reaches, in field units */
+const ARENA_MARGIN = 6;
+
+/** The ground each side stands on: the boss's, and each party's */
+function arenasOf(standings: Standing[], field: { middle: Unit[] }): Arena[] {
+  const groups = new Map<unknown, FieldPoint[]>();
+
+  for (const standing of standings) {
+    const key = field.middle.includes(standing.unit) ? 'middle' : standing.unit.team;
+    const held = groups.get(key) ?? [];
+
+    held.push(standing.place);
+    groups.set(key, held);
+  }
+
+  const arenas: Arena[] = [];
+
+  for (const places of groups.values()) {
+    let x = 0;
+    let z = 0;
+
+    for (const place of places) {
+      x += place.x;
+      z += place.z;
+    }
+    x /= places.length;
+    z /= places.length;
+
+    let radius = 0;
+
+    for (const place of places) {
+      radius = Math.max(radius, Math.hypot(place.x - x, place.z - z));
+    }
+    arenas.push({ x, z, radius: radius + ARENA_MARGIN });
+  }
+  return arenas;
+}
+
+/** What a unit is drawn as, and the look it is transforming out of */
+interface Appearance {
+  appearance: Species;
+  sprite: SpeciesSpriteAnimation | null;
+  /** The sheet it wore before, shown until the new one arrives and through the first half */
+  from: SpeciesSpriteAnimation | null;
+  /** When the transformation started on the battle clock, or null for none */
+  morphAt: number | null;
+}
+
+/** How long a transformation takes, in milliseconds */
+const MORPH = 600;
+
+/**
+ * How far through a transformation a unit is: a flash that brightens
+ * the old look, swaps at the peak, and settles on the new one. Also a
+ * small swell, so the body pops as it changes
+ */
+function morphOf(held: Appearance | undefined, clock: number): { glow: number; swell: number } {
+  if (held?.morphAt == null) {
+    return { glow: 0, swell: 0 };
+  }
+  const t = (clock - held.morphAt) / MORPH;
+
+  if (t >= 1) {
+    held.morphAt = null;
+    held.from = null;
+    return { glow: 0, swell: 0 };
+  }
+  return { glow: 1 - Math.abs(t * 2 - 1), swell: 0.1 * Math.sin(Math.PI * t) };
+}
+
+/**
+ * How long a substitute takes to step in front of the pokemon it is
+ * standing in for, and to step back off when it breaks
+ */
+const STAND_FADE = 320;
+
 export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
   let canvas: HTMLCanvasElement | undefined;
   let floorCanvas: HTMLCanvasElement | undefined;
@@ -188,6 +267,9 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
    * than the wall's — what spaces out a cue that keeps firing
    */
   let clock = 0;
+
+  /** The move-name plates on the field, kept past a cast for their exit */
+  const labels: CastLabels = new Map();
 
   /**
    * The move effects playing right now. Not a signal: nothing renders
@@ -240,13 +322,52 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
    * frame it changed, and the sheet it changed away from stays cached
    * for whoever else is wearing it
    */
-  const sprites = new Map<Unit, { appearance: Species; sprite: SpeciesSpriteAnimation | null }>();
+  const sprites = new Map<Unit, Appearance>();
 
   /**
    * The load behind each unit's current sheet, so the opening wait can
    * be told when the field is drawable
    */
   const loads = new Map<Unit, Promise<void>>();
+
+  /**
+   * The doll in front of each substituted pokemon, and how far in it
+   * is. One animation per unit rather than one shared between them:
+   * an animation carries where it is in its own clip, and two dolls
+   * sharing one would breathe in step.
+   *
+   * An entry outlives the status by as long as the fade out takes,
+   * which is what lets the pokemon come back rather than reappear
+   */
+  const dolls = new Map<Unit, Stand>();
+
+  const standFor = (unit: Unit): Stand | null => {
+    const held = dolls.get(unit);
+
+    if (held != null) {
+      return held;
+    }
+    if (unit.status[Statuses.Substituted] == null) {
+      return null;
+    }
+
+    const waiting: Stand = { sprite: null, share: 0, arriving: true };
+
+    dolls.set(unit, waiting);
+    // The doll is the doll whoever is behind it: never shiny, never
+    // the female sheet, since neither is a fact about the substitute
+    loadSpeciesSprite(Species.Substitute, { female: false, shiny: false })
+      .then((loaded) => {
+        if (dolls.get(unit) === waiting) {
+          waiting.sprite = loaded;
+        }
+      })
+      .catch(() => {
+        // Nothing to stand in front of it, so the pokemon stays as it
+        // is: the rings the status draws still say a substitute is up
+      });
+    return waiting;
+  };
 
   /**
    * Whether the sheets for everybody on the field are still coming.
@@ -261,12 +382,23 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     const known = sprites.get(unit);
 
     if (known != null && known.appearance === unit.appearance) {
-      return known.sprite;
+      // The old look until the new sheet is in, then the swap half way
+      // through the transformation
+      if (known.sprite == null || known.morphAt == null) {
+        return known.sprite ?? known.from;
+      }
+      return clock - known.morphAt < MORPH / 2 ? known.from : known.sprite;
     }
 
     // Held before the sheet arrives, so a unit is asked for once
-    // rather than once per frame it is drawn in
-    const waiting = { appearance: unit.appearance, sprite: null as SpeciesSpriteAnimation | null };
+    // rather than once per frame it is drawn in. What it looked like
+    // before is kept to transform out of
+    const waiting: Appearance = {
+      appearance: unit.appearance,
+      sprite: null,
+      from: known?.sprite ?? known?.from ?? null,
+      morphAt: null,
+    };
 
     sprites.set(unit, waiting);
     loads.set(
@@ -284,6 +416,9 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
           // arrives after a Transform belongs to nobody
           if (sprites.get(unit) === waiting) {
             waiting.sprite = loaded;
+            if (waiting.from != null) {
+              waiting.morphAt = clock;
+            }
           }
         })
         .catch(() => {
@@ -504,10 +639,14 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // charges a transform and a blit apiece for
       const batch = scene?.marks ?? null;
 
+      const standings = ringStandings(field, spriteFor, standFor);
+      const arenas = arenasOf(standings, field);
+
       if (scene == null || batch == null) {
         if (floor != null) {
           drawFloor(context, floor, view, region);
         }
+        drawGroundShade(context, view, region, arenas);
       } else {
         // Opened here and drawn once the fight is written into it.
         // Cleared every frame whether or not there is ground to lay,
@@ -527,9 +666,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         if (floor != null) {
           drawFloor(context, floor, view, region, batch);
         }
+        drawGroundShade(context, view, region, arenas, batch);
       }
 
-      const slots = project(ringStandings(field, spriteFor), view, striking);
+      const slots = project(standings, view, striking);
       const at = new Map<Unit, Slot>();
 
       for (const slot of slots) {
@@ -585,6 +725,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
               batch,
               bakery,
               lit: true,
+              density: stage.scale * sized.ratio,
               solid: (on: boolean): void => {
                 batch.opaque(on);
               },
@@ -622,7 +763,12 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         const near = scene?.depthOf(slot.depth) ?? 0;
 
         batch?.standing(near, near);
-        drawSlot(context, slot, striking, clock, gone.has(slot.unit), onto);
+        trackCast(labels, slot.unit, clock);
+        const morph = morphOf(sprites.get(slot.unit), clock);
+
+        slot.glow = morph.glow;
+        slot.swell = morph.swell;
+        drawSlot(context, slot, striking, clock, labels, gone.has(slot.unit), onto);
       }
 
       // The sky, over the pokemon and under whatever is going off:
@@ -850,7 +996,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
         // Nothing on a step that was only the wind-up: what happened
         // is that the caster went underground, which the gap drew
-        const landing = moveEffectVisual(event.move, event.steps);
+        // The sky is read only by a shape made of it, and only as it lands
+        const landing = moveEffectVisual(event.move, event.steps, () =>
+          event.source.checkWeather(),
+        );
 
         if (landing != null) {
           paint(landing, event.source, struck);
@@ -1047,6 +1196,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     // whatever it was doing
     const stopping = props.battle.on(BattleEvents.UnitInterrupt, EventPriority.Post, (event) => {
       striking.delete(event.source);
+      interruptCast(labels, event.source, clock);
       // Whatever took it off the field was interrupted, so it is back
       gone.delete(event.source);
     });
@@ -1150,6 +1300,25 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       }
       for (const held of sprites.values()) {
         held.sprite?.update(event.duration);
+      }
+      // The doll steps in front while the substitute is up and steps
+      // off once it has broken, which is the same crossfade run either
+      // way. It is dropped only once it is all the way off, so the
+      // pokemon is never seen popping back
+      for (const [unit, doll] of dolls) {
+        const wanted = unit.status[Statuses.Substituted] == null ? 0 : 1;
+        const step = event.duration / STAND_FADE;
+
+        doll.arriving = wanted === 1;
+        doll.share =
+          wanted > doll.share
+            ? Math.min(wanted, doll.share + step)
+            : Math.max(wanted, doll.share - step);
+        doll.sprite?.update(event.duration);
+
+        if (doll.share <= 0 && wanted === 0) {
+          dolls.delete(unit);
+        }
       }
       // Move effects run on the same clock as everything else, and one
       // that has run its course is dropped after the frame that shows

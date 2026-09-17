@@ -1,177 +1,194 @@
 {
   "compact": true,
-  "width": 124,
-  "height": 83,
+  "width": 120,
+  "height": 111,
   "stands": 24,
   "images": [
     {
       "name": "board.png",
-      "x": 89,
-      "y": 0,
+      "x": 0,
+      "y": 86,
       "width": 34,
       "height": 24,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        3,
-        17
+        5,
+        20
       ],
       "base": [
-        20,
-        32
+        22,
+        35
       ]
     },
     {
       "name": "cache-taken.png",
-      "x": 105,
-      "y": 25,
+      "x": 103,
+      "y": 42,
       "width": 15,
       "height": 14,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        13,
-        27
+        14,
+        30
       ],
       "base": [
-        20,
-        36
+        21,
+        39
       ]
     },
     {
       "name": "cache.png",
-      "x": 89,
-      "y": 41,
+      "x": 103,
+      "y": 57,
       "width": 15,
       "height": 12,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        13,
-        29
+        14,
+        32
       ],
       "base": [
-        20,
-        36
+        21,
+        39
       ]
     },
     {
       "name": "cave-exit.png",
-      "x": 0,
-      "y": 42,
+      "x": 41,
+      "y": 45,
       "width": 40,
       "height": 40,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        0,
-        1
+        2,
+        4
       ],
       "base": [
-        20,
-        30
+        22,
+        33
       ]
     },
     {
       "name": "cave.png",
-      "x": 48,
-      "y": 0,
+      "x": 0,
+      "y": 45,
       "width": 40,
       "height": 40,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        0,
-        1
+        2,
+        4
       ],
       "base": [
-        20,
-        30
+        22,
+        33
+      ]
+    },
+    {
+      "name": "honey-tree.png",
+      "x": 0,
+      "y": 0,
+      "width": 38,
+      "height": 44,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
+      "trim": [
+        3,
+        0
+      ],
+      "base": [
+        22,
+        40
       ]
     },
     {
       "name": "lair-rubble.png",
-      "x": 24,
+      "x": 63,
       "y": 0,
       "width": 23,
       "height": 41,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        9,
-        0
+        10,
+        3
       ],
       "base": [
-        20,
-        34
-      ]
-    },
-    {
-      "name": "lair.png",
-      "x": 0,
-      "y": 0,
-      "width": 23,
-      "height": 41,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
-      "trim": [
-        9,
-        0
-      ],
-      "base": [
-        20,
-        34
-      ]
-    },
-    {
-      "name": "nest.png",
-      "x": 89,
-      "y": 25,
-      "width": 15,
-      "height": 15,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
-      "trim": [
-        13,
-        26
-      ],
-      "base": [
-        20,
+        21,
         37
       ]
     },
     {
-      "name": "portal.png",
-      "x": 41,
-      "y": 42,
-      "width": 15,
-      "height": 32,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "name": "lair.png",
+      "x": 39,
+      "y": 0,
+      "width": 23,
+      "height": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        13,
-        9
+        10,
+        3
       ],
       "base": [
-        20,
-        36
+        21,
+        37
+      ]
+    },
+    {
+      "name": "nest.png",
+      "x": 103,
+      "y": 26,
+      "width": 15,
+      "height": 15,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
+      "trim": [
+        14,
+        29
+      ],
+      "base": [
+        21,
+        40
+      ]
+    },
+    {
+      "name": "portal.png",
+      "x": 87,
+      "y": 0,
+      "width": 15,
+      "height": 32,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
+      "trim": [
+        14,
+        12
+      ],
+      "base": [
+        21,
+        39
       ]
     },
     {
       "name": "seat.png",
-      "x": 57,
-      "y": 42,
+      "x": 103,
+      "y": 0,
       "width": 16,
       "height": 25,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        12,
-        16
+        14,
+        19
       ],
       "base": [
-        20,
-        33
+        22,
+        36
       ]
     }
   ]

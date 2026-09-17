@@ -11,6 +11,8 @@ import registerBiomeSpawns, {
   TIMES_OF_DAY,
   boostFamilyWeights,
   boostTypeWeights,
+  fitsSurface,
+  getBiomeRoster,
   getEggPool,
   getSpawnPool,
   getSpawnRarity,
@@ -26,8 +28,14 @@ import registerBiomeSpawns, {
   spawnBand,
 } from '../src/data/biome';
 import EggGroups from '../src/data/ids/egg-groups';
+import { getBiomeLairs, getLairResidents } from '../src/data/overworld/lair';
+import {
+  HONEY_TREE_POOL,
+  HONEY_TREE_SPECIES,
+  rollHoneyTree,
+} from '../src/data/overworld/honey-tree';
 import Families from '../src/data/ids/families';
-import registerAbilities, { getAbilityData } from '../src/data/abilities';
+import registerAbilities, { getAbilityData, getSignatureAbility } from '../src/data/abilities';
 import Abilities from '../src/data/ids/abilities';
 import {
   TYPE_COLORS,
@@ -40,6 +48,7 @@ import {
 } from '../src/data/constants/types';
 import Biome, {
   AnyTimeOfDay,
+  SpawnSurface,
   TimeOfDay,
   WILD_BIOMES,
   getBiome,
@@ -89,12 +98,23 @@ import {
   unpackStatuses,
 } from '../src/data/ids/status';
 import {
+  ARCEUS_FORMS,
+  BURMY_FORMS,
   CASTFORM_FORMS,
+  CHERRIM_FORMS,
   DEOXYS_FORMS,
+  DIALGA_FORMS,
   EvolutionMethod,
+  GASTRODON_FORMS,
+  GIRATINA_FORMS,
   Genders,
+  PALKIA_FORMS,
+  ROTOM_FORMS,
+  SHAYMIN_FORMS,
+  SHELLOS_FORMS,
   Species,
   UNOWN_FORMS,
+  WORMADAM_FORMS,
   getBaseFormSpecies,
   speciesDexNumber,
   speciesFormIndex,
@@ -222,6 +242,11 @@ import { BOTTLE_CAPS, isBottleCap, isPerfectIVs, polishIVs } from '../src/data/i
 import { MINT_NATURES, describeMint, getMintNature, isMint } from '../src/data/items/mints';
 import { UTILITY_BELT_SLOT, isUtilityBelt } from '../src/data/items/utility-belt';
 import {
+  ABILITY_CAPSULE_SLOT,
+  isAbilityCapsule,
+  isAbilityPatch,
+} from '../src/data/items/ability-items';
+import {
   NPC_BATTLE_LIMITS,
   PVP_BATTLE_LIMITS,
   UNLIMITED_BATTLE_LIMITS,
@@ -272,6 +297,7 @@ import { AMULET_COIN_BONUS } from '../src/overworld/items/trinkets';
 import { FEED_CATCH_BONUS, MAX_CATCH_BONUS } from '../src/overworld/safari';
 import { ORBS, ORB_PRICE } from '../src/data/items/orbs';
 import { PLATES, PLATE_RESALE } from '../src/data/items/plates';
+import { FORM_ITEMS, getItemForms } from '../src/data/items/form-items';
 import { RAID_ITEMS, getRaidSpecies } from '../src/data/items/raid-items';
 import {
   GENERAL_STAT_BOOSTERS,
@@ -283,7 +309,6 @@ import {
   SPECIES_DAY_WEIGHT_BOOST,
   canEverEvolve,
   coversHandover,
-  floats,
   getAvailableEvolutions,
   getBaseForms,
   getBaseSpecies,
@@ -299,6 +324,7 @@ import {
   getRegisteredFamilies,
   getRegisteredSpecies,
   getShedEvolutions,
+  getShoreForm,
   getSpeciesAbilities,
   getSpeciesAbilityPools,
   getSpeciesByBiome,
@@ -311,7 +337,6 @@ import {
   meetsEvolutionCriteria,
   registerSpecies,
   settleHandover,
-  swims,
 } from '../src/data/species';
 import { registerSpecies as registerSpeciesData } from '../src/data/species/__create';
 import Awards, {
@@ -323,8 +348,14 @@ import Awards, {
   JOHTO_HONORS,
   KANTO_BADGES,
   KANTO_HONORS,
+  SINNOH_BADGES,
+  SINNOH_HONORS,
 } from '../src/data/ids/awards';
 import {
+  ARCADE_PANELS,
+  ARCADE_PANEL_NAMES,
+  ARCADE_PANEL_WEATHER,
+  ArcadePanel,
   BIOME_ELITE_MEMBERS,
   BIOME_GYM_LEADERS,
   CHAMPIONS,
@@ -373,12 +404,15 @@ import {
   PIKE_CURTAIN_NAMES,
   PIKE_CURTAIN_STATUSES,
   PikeCurtain,
+  arcadeCurtain,
+  frontierTeamSize,
   getEliteBadges,
   getEliteMemberRoster,
   getFrontierParty,
   getGymLeaderRoster,
   getRentalPool,
   getWorldExpertPool,
+  pickArcadePanel,
   pickPikeCurtain,
   rollGymMachine,
 } from '../src/data/overworld/experts';
@@ -420,7 +454,7 @@ import {
 } from '../src/data/species/best-build';
 import Natures, { NATURE_EFFECTS, NATURE_NAMES } from '../src/data/ids/natures';
 import { isRecoilMove } from '../src/data/moves/recoil';
-import { getRegionSpan, getSpeciesRegion } from '../src/data/species/regions';
+import { REGIONS, getRegionSpan, getSpeciesRegion } from '../src/data/species/regions';
 import {
   ACHIEVEMENT_LINES,
   ACHIEVEMENT_TRAINERS,
@@ -440,6 +474,7 @@ import {
   getTitleName,
   lineTitle,
   professorTitle,
+  titleProfessor,
   titleTrainer,
   trainerTitle,
   typeTitle,
@@ -781,14 +816,29 @@ describe('species measurements', () => {
 describe('species forms', () => {
   it('treats every registered species but the unowns and the worn shapes as a default form', () => {
     // The flag is absent almost everywhere and answers true rather
-    // than being written out three hundred times; the twenty-seven
-    // unowns past A, the three skies a Castform wears and the three
-    // shapes a Deoxys rearranges into are the only variants so far
+    // than being written out three hundred times. The variants are
+    // the twenty-seven unowns past A, the three skies a Castform
+    // wears, the three shapes a Deoxys rearranges into, and the ones
+    // that are met rather than worn: a Burmy's other two cloaks with
+    // the Wormadam they grow into, and the far shore's shell. A
+    // Cherrim's open blossom is worn, the way a Castform's sky is, and
+    // so is each of the creation trio's other shape
     const registered = getRegisteredSpecies();
     const variants = new Set<Species>([
       ...UNOWN_FORMS.slice(1),
       ...CASTFORM_FORMS.slice(1),
       ...DEOXYS_FORMS.slice(1),
+      ...BURMY_FORMS.slice(1),
+      ...WORMADAM_FORMS.slice(1),
+      ...SHELLOS_FORMS.slice(1),
+      ...GASTRODON_FORMS.slice(1),
+      ...CHERRIM_FORMS.slice(1),
+      ...DIALGA_FORMS.slice(1),
+      ...PALKIA_FORMS.slice(1),
+      ...GIRATINA_FORMS.slice(1),
+      ...SHAYMIN_FORMS.slice(1),
+      ...ROTOM_FORMS.slice(1),
+      ...ARCEUS_FORMS.slice(1),
     ]);
 
     expect(registered.length).toBeGreaterThan(0);
@@ -980,30 +1030,67 @@ describe('the unowns', () => {
   });
 });
 
-describe('what a pond is open to', () => {
-  it('counts a swimmer by its type', () => {
-    expect(swims(Species.Magikarp)).toBe(true);
-    expect(swims(Species.Rhyhorn)).toBe(false);
+const SURFACES = [SpawnSurface.Land, SpawnSurface.Water, SpawnSurface.Ice];
+
+/** Every biome, hour and surface that can hold a pool, as one flat walk */
+function* everyPool(): Generator<[Biome, TimeOfDay, SpawnSurface]> {
+  for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+    for (const time of TIMES_OF_DAY) {
+      for (const surface of SURFACES) {
+        yield [biome, time, surface];
+      }
+    }
+  }
+}
+
+describe('which pool a species may stand in', () => {
+  it('keeps what only swims off land and ice, and what walks out of the water', () => {
+    expect(fitsSurface(Species.Magikarp, SpawnSurface.Water)).toBe(true);
+    expect(fitsSurface(Species.Magikarp, SpawnSurface.Land)).toBe(false);
+    expect(fitsSurface(Species.Magikarp, SpawnSurface.Ice)).toBe(false);
+    expect(fitsSurface(Species.Rhyhorn, SpawnSurface.Water)).toBe(false);
+    expect(fitsSurface(Species.Rhyhorn, SpawnSurface.Ice)).toBe(true);
+    // A flier is ground unless its data says otherwise
+    expect(fitsSurface(Species.Pidgey, SpawnSurface.Water)).toBe(false);
+    // Something at home on both stands in either
+    expect(fitsSurface(Species.Psyduck, SpawnSurface.Land)).toBe(true);
+    expect(fitsSurface(Species.Psyduck, SpawnSurface.Water)).toBe(true);
   });
 
-  it('counts anything in the air as over the water rather than in it', () => {
-    // A Flying type is off the ground whether or not it is much of a
-    // flier, which is the same rule that gives it its Ground immunity
-    expect(floats(Species.Pidgey)).toBe(true);
-    expect(floats(Species.Hoppip)).toBe(true);
-    expect(floats(Species.Doduo)).toBe(true);
-    // And so is a hoverer, read off its own abilities
-    expect(floats(Species.Koffing)).toBe(true);
-    // What the rule keeps out of the pond
-    expect(floats(Species.Rhyhorn)).toBe(false);
-    expect(floats(Species.Magikarp)).toBe(false);
+  it('gives every Water type a place in the water', () => {
+    // Palkia is Water by type and lives nowhere near it, and Wash Rotom
+    // is only ever reached through a Catalog
+    const dry = new Set<Species>();
+
+    for (const species of getRegisteredSpecies()) {
+      const data = getSpeciesData(species);
+
+      if (
+        data.types.includes(Types.Water) &&
+        data.worn !== true &&
+        !fitsSurface(species, SpawnSurface.Water)
+      ) {
+        dry.add(species);
+      }
+    }
+    expect(dry).toEqual(new Set([Species.Palkia, Species.RotomWash]));
   });
 
-  it('reads each stage on its own, rather than the whole line', () => {
-    // Off the species' own abilities and not the walk up its chain, so
-    // a line whose stages differ is answered a stage at a time
-    expect(floats(Species.Gastly)).toBe(true);
-    expect(floats(Species.Magnemite)).toBe(false);
+  it('writes every pool for the surface it stands on', () => {
+    for (const [biome, time, surface] of everyPool()) {
+      const groups = getSpawnPool(biome, time, false, surface);
+
+      for (const band of SPAWN_BAND_KEYS) {
+        for (const entry of spawnBand(groups, band)) {
+          const { name } = getSpeciesData(entry.species);
+
+          expect(
+            fitsSurface(entry.species, surface),
+            `${name} in ${BIOME_NAMES[biome]} (surface ${surface})`,
+          ).toBe(true);
+        }
+      }
+    }
   });
 });
 
@@ -1060,7 +1147,16 @@ describe('where a species lives', () => {
     // A mythical stands in a band of its own, one place apiece and as
     // thin as the legendary band. The relic is the other way to one,
     // not the only way
-    for (const species of [Species.Mew, Species.Celebi, Species.Jirachi, Species.Deoxys]) {
+    for (const species of [
+      Species.Mew,
+      Species.Celebi,
+      Species.Jirachi,
+      Species.Deoxys,
+      Species.Darkrai,
+      Species.Manaphy,
+      Species.Shaymin,
+      Species.Arceus,
+    ]) {
       expect(isMythicalSpecies(species)).toBe(true);
 
       const mythical = listSpeciesHabitats(species);
@@ -1073,20 +1169,47 @@ describe('where a species lives', () => {
     expect(MYTHICAL_SPAWN_ODDS).toBe(SPECIAL_SPAWN_ODDS);
   });
 
+  it('stages a legendary wild wherever its lair stands', () => {
+    // A lair equates to a wild spawn: a biome that hosts one lists each
+    // resident in its special band whenever that resident is about.
+    // Mythical lairs are never hosted, so they never reach this list
+    const homes = (Object.keys(BIOME_NAMES).map(Number) as Biome[]).flatMap((biome) =>
+      getBiomeLairs(biome).flatMap((lair) =>
+        getLairResidents(lair).map((species) => ({ biome, species })),
+      ),
+    );
+
+    expect(homes.length).toBeGreaterThan(0);
+    for (const { biome, species } of homes) {
+      const { activeTimes, name } = getSpeciesData(species);
+
+      for (const time of TIMES_OF_DAY.filter((period) => (activeTimes & period) !== 0)) {
+        // Any of the biome's surfaces will do, since Kyogre lives in the water
+        const band = new Set(
+          SURFACES.flatMap((surface) =>
+            spawnBand(getSpawnPool(biome, time, false, surface), 'special').map(
+              (entry) => entry.species,
+            ),
+          ),
+        );
+
+        expect(band.has(species), `${name} in ${BIOME_NAMES[biome]}`).toBe(true);
+      }
+    }
+  });
+
   it('says the same thing the pools do about every species', () => {
     // Nothing is invented and nothing is dropped: the number of
     // habitat entries is exactly the number of times the registry
     // lists that species anywhere
     const counted = new Map<Species, number>();
 
-    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
-      for (const time of TIMES_OF_DAY) {
-        const groups = getSpawnPool(biome, time);
+    for (const [biome, time, surface] of everyPool()) {
+      const groups = getSpawnPool(biome, time, false, surface);
 
-        for (const band of SPAWN_BAND_KEYS) {
-          for (const entry of spawnBand(groups, band)) {
-            counted.set(entry.species, (counted.get(entry.species) ?? 0) + 1);
-          }
+      for (const band of SPAWN_BAND_KEYS) {
+        for (const entry of spawnBand(groups, band)) {
+          counted.set(entry.species, (counted.get(entry.species) ?? 0) + 1);
         }
       }
     }
@@ -1097,38 +1220,66 @@ describe('where a species lives', () => {
   });
 
   it('stages nothing where or when its species does not live', () => {
-    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
-      for (const time of TIMES_OF_DAY) {
-        const groups = getSpawnPool(biome, time);
+    for (const [biome, time, surface] of everyPool()) {
+      const groups = getSpawnPool(biome, time, false, surface);
 
-        // The prized band is the alphabet and the babies, which stand
-        // in every biome by design
-        for (const band of SPAWN_BAND_KEYS.filter((key) => key !== 'prized')) {
-          for (const entry of spawnBand(groups, band)) {
-            const data = getSpeciesData(entry.species);
+      // The prized band is the alphabet and the babies, which stand
+      // in every biome by design
+      for (const band of SPAWN_BAND_KEYS.filter((key) => key !== 'prized')) {
+        for (const entry of spawnBand(groups, band)) {
+          const data = getSpeciesData(entry.species);
 
-            expect(data.biomes, `${data.name} in ${BIOME_NAMES[biome]}`).toContain(biome);
-            expect(data.activeTimes & time, `${data.name} at ${time}`).not.toBe(0);
-          }
+          expect(data.biomes, `${data.name} in ${BIOME_NAMES[biome]}`).toContain(biome);
+          expect(data.activeTimes & time, `${data.name} at ${time}`).not.toBe(0);
         }
       }
     }
   });
 
+  it('hands over the shell the side of the world asks for', () => {
+    // West of the meridian is the pink one, east of it the blue, and
+    // the rule is the chunk's own x rather than anything about the
+    // shore it is standing on
+    expect(getShoreForm(Species.Shellos, -1)).toBe(Species.Shellos);
+    expect(getShoreForm(Species.Shellos, 0)).toBe(Species.ShellosEast);
+    expect(getShoreForm(Species.Shellos, 12)).toBe(Species.ShellosEast);
+    expect(getShoreForm(Species.Gastrodon, -400)).toBe(Species.Gastrodon);
+    expect(getShoreForm(Species.Gastrodon, 400)).toBe(Species.GastrodonEast);
+
+    // Everything else is handed back as it came
+    expect(getShoreForm(Species.Bulbasaur, 400)).toBe(Species.Bulbasaur);
+    expect(getShoreForm(Species.ShellosEast, -400)).toBe(Species.ShellosEast);
+  });
+
   it('stages every species that says it lives somewhere', () => {
+    // A Rotom in a machine lives where a Rotom does, but a Catalog
+    // is the only way into one of those shapes, so no pool names one.
+    //
+    // Phione is laid rather than met: a Manaphy's egg is the only
+    // one there is, so no pool stages it though it names the water it
+    // drifts in.
+    //
     // Porygon is met on town streets, which no biome pool holds, and
-    // what it evolves into is made rather than met
-    const unstaged = new Set<Species>([Species.Porygon, Species.Porygon2]);
+    // what it evolves into is made rather than met. The far shore's
+    // shell is staged by the pool its west counterpart sits in, and
+    // swapped for as the world hands it over, so no pool names it either
+    const unstaged = new Set<Species>([
+      Species.Phione,
+      ...ROTOM_FORMS.slice(1),
+      Species.Porygon,
+      Species.Porygon2,
+      Species.PorygonZ,
+      Species.ShellosEast,
+      Species.GastrodonEast,
+    ]);
     const staged = new Set<Species>();
 
-    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
-      for (const time of TIMES_OF_DAY) {
-        const groups = getSpawnPool(biome, time);
+    for (const [biome, time, surface] of everyPool()) {
+      const groups = getSpawnPool(biome, time, false, surface);
 
-        for (const band of SPAWN_BAND_KEYS) {
-          for (const entry of spawnBand(groups, band)) {
-            staged.add(entry.species);
-          }
+      for (const band of SPAWN_BAND_KEYS) {
+        for (const entry of spawnBand(groups, band)) {
+          staged.add(entry.species);
         }
       }
     }
@@ -1397,6 +1548,18 @@ describe('move damage', () => {
     Moves.SpitUp,
     Moves.Endeavor,
     Moves.SheerCold,
+    // Sinnoh's own: power read off the Speed between the two sides,
+    // off what either of them is carrying, off the damage just taken,
+    // off the PP left and off what the target has left
+    Moves.GyroBall,
+    Moves.NaturalGift,
+    Moves.MetalBurst,
+    Moves.Fling,
+    Moves.TrumpCard,
+    Moves.WringOut,
+    Moves.CrushGrip,
+    // And the one read off how far the target has pulled ahead
+    Moves.Punishment,
   ]);
 
   it('gives every damaging move something to hit with', () => {
@@ -1641,6 +1804,24 @@ describe('ability data', () => {
     expect(getAbilityData(Abilities.Boss).name).toBe('Boss');
     expect(getAbilityData(Abilities.Shadow).name).toBe('Shadow');
   });
+
+  it('owes every family one signature, and none of them the same one', () => {
+    const signatures = new Set<Abilities>();
+
+    for (const family of getRegisteredFamilies()) {
+      const signature = getSignatureAbility(family);
+
+      expect(signature, `${getFamilyName(family)} has no signature`).not.toBeNull();
+
+      if (signature == null) {
+        continue;
+      }
+      expect(signatures.has(signature), `${getFamilyName(family)} repeats a signature`).toBe(false);
+      signatures.add(signature);
+      expect(getAbilityData(signature).name.length).toBeGreaterThan(0);
+    }
+    expect(signatures.size).toBe(getRegisteredFamilies().length);
+  });
 });
 
 describe('evolution data', () => {
@@ -1649,7 +1830,8 @@ describe('evolution data', () => {
       { species: Species.Ivysaur, method: EvolutionMethod.Level, level: 16 },
     ]);
 
-    expect(getSpeciesData(Species.Eevee).evolvesInto).toHaveLength(5);
+    // Seven roads out of one Eevee: five stones and two friendships
+    expect(getSpeciesData(Species.Eevee).evolvesInto).toHaveLength(7);
     expect(getSpeciesData(Species.Eevee).evolvesInto?.[0]).toEqual({
       species: Species.Vaporeon,
       method: EvolutionMethod.UsedItem,
@@ -1686,6 +1868,7 @@ describe('evolution data', () => {
       friendship: BASE_FRIENDSHIP,
       gender: Genders.Male,
       time: TimeOfDay.Day,
+      moves: new Set<Moves>(),
     };
     const named = (roads: { species: Species }[]): Species[] => {
       const species: Species[] = [];
@@ -1716,6 +1899,7 @@ describe('evolution data', () => {
       carried: new Set<Items>(),
       held: new Set<Items>(),
       canEvolve: false,
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: EVOLUTION_FRIENDSHIP,
       gender: Genders.Female,
@@ -1744,6 +1928,7 @@ describe('evolution data', () => {
       carried: new Set<Items>(),
       held: new Set<Items>(),
       canEvolve: false,
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       gender: Genders.Male,
@@ -1763,6 +1948,7 @@ describe('evolution data', () => {
       level: 50,
       held: new Set<Items>(),
       canEvolve: false,
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       gender: Genders.Male,
@@ -1788,6 +1974,43 @@ describe('evolution data', () => {
     ).toEqual([
       { species: Species.Ninetales, method: EvolutionMethod.UsedItem, item: Items.FireStone },
     ]);
+  });
+
+  it('walks a Rotom between its machines on a Catalog, never into itself', () => {
+    const context = {
+      level: 50,
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      gender: Genders.Genderless,
+      time: TimeOfDay.Day,
+    };
+    const catalog = new Set([Items.RotomCatalog]);
+
+    // No Catalog, no machine
+    expect(
+      getAvailableEvolutions({ species: Species.Rotom, ...context, carried: new Set() }),
+    ).toEqual([]);
+
+    for (const shape of ROTOM_FORMS) {
+      const offered = getAvailableEvolutions({ species: shape, ...context, carried: catalog });
+
+      // Every other shape, its own left out, and each spends a Catalog
+      expect(offered.map((entry) => entry.species).sort()).toEqual(
+        ROTOM_FORMS.filter((other) => other !== shape).sort(),
+      );
+      for (const entry of offered) {
+        expect(getConsumedItem(entry)).toBe(Items.RotomCatalog);
+      }
+    }
+
+    // A machine is a shape rather than a stage, so the line stays one
+    // stage long and every shape reads the same band
+    for (const shape of ROTOM_FORMS) {
+      expect(getSpawnRarity(shape)).toBe(SpawnRarity.Elusive);
+    }
   });
 
   it('rearranges a Deoxys on a Meteorite, never into the shape it is in', () => {
@@ -1847,6 +2070,7 @@ describe('evolution data', () => {
         species: Species.Charmander,
         ...context,
         held: new Set([Items.Everstone]),
+        moves: new Set<Moves>(),
       }),
     ).toEqual([]);
     expect(
@@ -1854,6 +2078,7 @@ describe('evolution data', () => {
         species: Species.Vulpix,
         ...context,
         held: new Set([Items.Everstone]),
+        moves: new Set<Moves>(),
       }),
     ).toEqual([]);
     expect(
@@ -1861,6 +2086,7 @@ describe('evolution data', () => {
         species: Species.Machoke,
         ...context,
         held: new Set([Items.Everstone]),
+        moves: new Set<Moves>(),
       }),
     ).toEqual([]);
 
@@ -1870,6 +2096,7 @@ describe('evolution data', () => {
         species: Species.Machoke,
         ...context,
         held: new Set([Items.Leftovers]),
+        moves: new Set<Moves>(),
       }),
     ).toEqual([{ species: Species.Machamp, method: EvolutionMethod.Trade }]);
   });
@@ -1925,6 +2152,7 @@ describe('evolution data', () => {
       level: 50,
       carried: new Set<Items>(),
       held: new Set<Items>(),
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       gender: Genders.Male,
@@ -1954,6 +2182,7 @@ describe('evolution data', () => {
         canEvolve: false,
         carried: new Set([Items.LinkingCord]),
         held: new Set([Items.MetalCoat]),
+        moves: new Set<Moves>(),
       }),
     ).toEqual([
       {
@@ -1969,6 +2198,7 @@ describe('evolution data', () => {
       level: 100,
       carried: new Set<Items>(),
       held: new Set<Items>(),
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       gender: Genders.Male,
@@ -2061,6 +2291,7 @@ describe('evolution data', () => {
       level: 100,
       carried: new Set<Items>(),
       held: new Set<Items>(),
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       gender: Genders.Male,
@@ -2096,6 +2327,7 @@ describe('evolution data', () => {
       level: 100,
       held: new Set<Items>(),
       canEvolve: false,
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       gender: Genders.Male,
@@ -2132,6 +2364,7 @@ describe('evolution data', () => {
         level: 100,
         carried,
         held: new Set(),
+        moves: new Set<Moves>(),
         canEvolve: false,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
@@ -2148,6 +2381,7 @@ describe('evolution data', () => {
       level: 20,
       carried: new Set<Items>(),
       held: new Set<Items>(),
+      moves: new Set<Moves>(),
       canEvolve: false,
       friendship: BASE_FRIENDSHIP,
       gender: Genders.Male,
@@ -2178,6 +2412,7 @@ describe('evolution data', () => {
       carried: new Set<Items>(),
       held: new Set<Items>(),
       canEvolve: false,
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       time: TimeOfDay.Day,
       gender: Genders.Male,
@@ -2198,6 +2433,7 @@ describe('evolution data', () => {
       carried: new Set<Items>(),
       held: new Set<Items>(),
       canEvolve: false,
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: EVOLUTION_FRIENDSHIP,
       gender: Genders.Male,
@@ -2229,6 +2465,7 @@ describe('evolution data', () => {
       carried: new Set<Items>(),
       held: new Set<Items>(),
       canEvolve: false,
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       time: TimeOfDay.Day,
@@ -2272,6 +2509,7 @@ describe('evolution data', () => {
           level: 100,
           carried: new Set(),
           held: new Set(),
+          moves: new Set<Moves>(),
           canEvolve: true,
           stats: EVEN_STATS,
           friendship: BASE_FRIENDSHIP,
@@ -2297,6 +2535,20 @@ describe('evolution data', () => {
     expect(
       getSpentHeldItem({ species: Species.Machamp, method: EvolutionMethod.Trade }, false),
     ).toBeNull();
+  });
+
+  it('spends the held item a levelling evolution asks for', () => {
+    for (const [species, item] of [
+      [Species.Sneasel, Items.RazorClaw],
+      [Species.Gligar, Items.RazorFang],
+      [Species.Happiny, Items.OvalStone],
+    ] as const) {
+      const [evolution] = getSpeciesData(species).evolvesInto ?? [];
+
+      // Nothing in the bag pays for it: the pokemon gives up what it held
+      expect(getConsumedItem(evolution), getSpeciesData(species).name).toBeNull();
+      expect(getSpentHeldItem(evolution), getSpeciesData(species).name).toBe(item);
+    }
   });
 
   it('spends the used item and leaves a held one alone', () => {
@@ -2417,7 +2669,8 @@ describe('species day', () => {
   });
 
   it('reduces a biome to the eggs a nest could be holding', () => {
-    const pool = getSpawnPool(Biome.Grassland, TimeOfDay.Morning);
+    // Every surface's pool, so a grassland nest may lay what lives in its ponds
+    const pool = getBiomeRoster(Biome.Grassland, TimeOfDay.Morning);
     const eggs = getEggPool(Biome.Grassland, TimeOfDay.Morning);
 
     // Everything that hatches is a first stage, and nothing appears
@@ -2630,6 +2883,8 @@ describe('item data', () => {
       Species.Aerodactyl,
       Species.Lileep,
       Species.Anorith,
+      Species.Cranidos,
+      Species.Shieldon,
     ]);
 
     for (const [item, species] of FOSSIL_SPECIES) {
@@ -2684,7 +2939,7 @@ describe('item data', () => {
     const rng = new AleaRNG('fossils');
     const pairs = new Set<string>();
 
-    for (let at = 0; at < 50; at++) {
+    for (let at = 0; at < 400; at++) {
       const offer = rollFossilOffer(() => rng.random());
 
       expect(offer.length).toBe(FOSSIL_OFFER_KINDS);
@@ -2713,7 +2968,13 @@ describe('item data', () => {
       expect(getItemData(item).type, getItemData(item).name).toBe(ItemTypes.PokeBall);
       expect(medicine.has(item)).toBe(false);
     }
+    // Honey is the one held item on the medicine shelf: it is food, and
+    // the jar a honey tree wants
+    expect(medicine.has(Items.Honey)).toBe(true);
     for (const item of medicine) {
+      if (item === Items.Honey) {
+        continue;
+      }
       expect(getItemData(item).type, getItemData(item).name).toBe(ItemTypes.Medicine);
       expect(balls.has(item)).toBe(false);
     }
@@ -3097,6 +3358,33 @@ describe('item data', () => {
     expect(getSlots(withSlots(roomier, UTILITY_BELT_SLOT, MAX_SLOTS + 1), Slots.Item)).toBe(
       MAX_SLOTS,
     );
+  });
+
+  it('buries the two that work on abilities beside it', () => {
+    const prized = new Set(ITEM_POOL.prized.map((entry) => entry.item));
+
+    for (const item of [Items.AbilityCapsule, Items.AbilityPatch]) {
+      const data = getItemData(item);
+
+      // Spent on a pokemon and gone, and found rather than sold: a
+      // shop stocking either would sell every pokemon a wider record
+      expect(data.type).toBe(ItemTypes.Training);
+      expect(data.flags & ItemFlags.Usable).not.toBe(0);
+      expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+      expect(data.flags & ItemFlags.Holdable).toBe(0);
+      expect(data.flags & ItemFlags.Marketable).toBe(0);
+      expect(data.buy).toBe(0);
+      expect(prized.has(item)).toBe(true);
+      expect(isPreciousItem(item)).toBe(true);
+    }
+    expect(isAbilityCapsule(Items.AbilityCapsule)).toBe(true);
+    expect(isAbilityCapsule(Items.AbilityPatch)).toBe(false);
+    expect(isAbilityPatch(Items.AbilityPatch)).toBe(true);
+
+    // A capsule widens the one thing the Channeler fills, and stops
+    // where the field does
+    expect(ABILITY_CAPSULE_SLOT).toBe(Slots.Ability);
+    expect(mostSlots(ABILITY_CAPSULE_SLOT)).toBe(4);
   });
 
   it('buries the bottle caps rather than stocking them', () => {
@@ -3590,6 +3878,10 @@ describe('item data', () => {
       Items.GSBall,
       Items.AuroraTicket,
       Items.WishTag,
+      Items.MemberCard,
+      Items.ManaphyEgg,
+      Items.OaksLetter,
+      Items.AzureFlute,
       Items.GoldenBottleCap,
       // The one thing in the band that is only gold, and there because
       // it is more of it than anything else in the game pays
@@ -3733,42 +4025,52 @@ describe('item data', () => {
     // not gold
     expect(sellPrice(Items.HeartScale)).toBe(0);
     expect(sellPrice(Items.PortalKey)).toBe(0);
-    expect(sellPrice(Items.IceStone)).toBe(0);
+    expect(sellPrice(Items.WishTag)).toBe(0);
   });
 
-  it('registers the stones and trade items nothing can spend yet', () => {
-    // Every line that asks for one belongs to a generation this game
-    // has not registered, so they are named, drawn and priceless
-    // rather than stocked or buried
+  it('stocks the evolution items whose lines are registered, and holds the rest back', () => {
+    // A stone or a token is sold and buried once something can spend
+    // it. The four Sinnoh stones and the five tokens below them all
+    // have a line asking now
     const stones = [Items.ShinyStone, Items.DuskStone, Items.DawnStone, Items.IceStone];
-    const traded = [
-      Items.KingsRock,
-      Items.DragonScale,
-      Items.UpGrade,
+    const carried = [
       Items.DubiousDisc,
       Items.Protector,
       Items.Electirizer,
       Items.Magmarizer,
       Items.ReaperCloth,
+      Items.RazorClaw,
+      Items.RazorFang,
+      Items.OvalStone,
+    ];
+
+    for (const item of [...stones, ...carried]) {
+      const data = getItemData(item);
+
+      expect(data.flags & ItemFlags.Marketable, data.name).not.toBe(0);
+      expect(data.buy, data.name).toBeGreaterThan(0);
+      expect(data.sell, data.name).toBeGreaterThan(0);
+    }
+
+    // The ones still waiting on a generation this game has not
+    // registered are named, drawn and priceless rather than stocked
+    const latent = [
+      Items.KingsRock,
+      Items.DragonScale,
+      Items.UpGrade,
       Items.Sachet,
       Items.WhippedDream,
     ];
-    const latent = [...stones, ...traded];
 
     for (const item of latent) {
       const data = getItemData(item);
 
       expect(data.type).toBe(ItemTypes.Evolution);
-      // Nothing stocks one, nothing buys one back, and the ground
-      // hides none of them
-      expect(data.flags & ItemFlags.Marketable).toBe(0);
-      expect(data.buy).toBe(0);
-      expect(data.sell).toBe(0);
+      expect(data.flags & ItemFlags.Marketable, data.name).toBe(0);
+      expect(data.buy, data.name).toBe(0);
+      expect(data.sell, data.name).toBe(0);
       expect(getItemBand(item)).toBeNull();
-    }
-    expect(new Set(getVendorGoods().map((item) => item)).size).toBeGreaterThan(0);
-    for (const item of latent) {
-      expect(new Set(getVendorGoods()).has(item)).toBe(false);
+      expect(new Set(getVendorGoods()).has(item), data.name).toBe(false);
     }
 
     // A stone is spent on the pokemon, the way the five Kanto ones are
@@ -3776,29 +4078,21 @@ describe('item data', () => {
       expect(getItemData(item).flags & ItemFlags.Usable, getItemData(item).name).not.toBe(0);
     }
 
-    // A trade item is held rather than spent: the evolution asks what
-    // the pokemon is holding, and only a holdable item can be handed
-    // to one at all
-    for (const item of traded) {
+    // Everything carried is held rather than spent: the evolution asks
+    // what the pokemon is holding, and only a holdable item can be
+    // handed to one at all
+    for (const item of [...carried, ...latent]) {
       const data = getItemData(item);
 
       expect(data.flags & ItemFlags.Holdable, data.name).not.toBe(0);
       expect(data.flags & ItemFlags.Usable, data.name).toBe(0);
     }
 
-    // A Razor Claw and a Razor Fang are not trade items at all: what
-    // a Weavile and a Gliscor want is a level at night with one in
-    // hand, so both are held and neither is ever spent
-    for (const item of [Items.RazorClaw, Items.RazorFang]) {
-      const data = getItemData(item);
-
-      expect(data.type, data.name).toBe(ItemTypes.Held);
-      expect(data.flags & ItemFlags.Holdable, data.name).not.toBe(0);
-      expect(data.flags & ItemFlags.Usable, data.name).toBe(0);
-      expect(data.flags & ItemFlags.Marketable, data.name).toBe(0);
-      // Their lines are a later generation's, so the line says the
-      // fight and nothing about an evolution nothing can reach
-      expect(data.description).not.toContain('volve');
+    // A Razor Claw, a Razor Fang and an Oval Stone are not trade items
+    // at all: what a Weavile, a Gliscor and a Chansey want is a level
+    // with one in hand, so all three are held and none is ever spent
+    for (const item of [Items.RazorClaw, Items.RazorFang, Items.OvalStone]) {
+      expect(getItemData(item).type, getItemData(item).name).toBe(ItemTypes.Held);
     }
 
     // Metal Coat is not duplicated: the Steel booster already
@@ -3888,6 +4182,57 @@ describe('item data', () => {
     // A relic that named a legendary would call nothing: the world
     // stages those itself
     expect(getRaidSpecies(Items.MasterBall)).toBeNull();
+  });
+
+  it('paints an Arceus with every Plate it can hold', () => {
+    // Multitype is not battle machinery: a Plate names one shape, and
+    // the shape's own species data carries the type the Plate lifts
+    for (const [plate, type] of PLATES) {
+      const shapes = getItemForms(plate);
+
+      expect(shapes.length, getItemData(plate).name).toBe(1);
+
+      const shape = getSpeciesData(shapes[0]);
+
+      expect(shape.types).toEqual([type]);
+      expect(shape.dexNumber).toBe(493);
+      expect(shape.baseForm).toBe(false);
+      expect(shape.worn).toBe(true);
+      // Every shape has the six numbers the bare one has
+      expect(shape.stats).toEqual(getSpeciesData(Species.Arceus).stats);
+    }
+
+    // Seventeen Plates and the shape it is met in
+    expect(ARCEUS_FORMS.length).toBe(PLATES.size + 1);
+  });
+
+  it('buries every form item, and no shop stocks one', () => {
+    for (const [item, forms] of FORM_ITEMS) {
+      const data = getItemData(item);
+      const buried = (['base', 'uncommon', 'rare', 'prized', 'special'] as const).some((band) =>
+        ITEM_POOL[band].some((entry) => entry.item === item),
+      );
+
+      // Held for the shape it puts its holder into, and nothing sells
+      // one, so the pool is the only way to it
+      expect(forms.length).toBeGreaterThan(0);
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      expect(data.flags & ItemFlags.Marketable).toBe(0);
+      expect(data.buy).toBe(0);
+      expect(buried, data.name).toBe(true);
+    }
+
+    // A form item whose only use is the shape sits in the prized band,
+    // where the rest of the once-in-a-run things are. A Plate is in
+    // the rare band with the held items instead, since lifting a type
+    // is what it does for everybody who is not an Arceus
+    for (const item of [Items.AdamantOrb, Items.LustrousOrb, Items.Gracidea]) {
+      expect(ITEM_POOL.prized.some((entry) => entry.item === item)).toBe(true);
+    }
+    for (const item of PLATES.keys()) {
+      expect(ITEM_POOL.rare.some((entry) => entry.item === item)).toBe(true);
+    }
   });
 
   it('registers every berry as a held, consumable berry', () => {
@@ -4658,6 +5003,7 @@ describe('wandering NPCs', () => {
       Moves.LeechSeed,
       Moves.SleepPowder,
       Moves.SweetScent,
+      Moves.WorrySeed,
     ]);
     // A pokemon that never dropped anything has nothing to remember
     expect(getRecallableMoves(Species.Bulbasaur, 6, [Moves.Tackle, Moves.Growl])).toEqual([]);
@@ -4849,20 +5195,18 @@ describe('biome data', () => {
     // A species that gains an evolution moves down a band, and the
     // pools have to move with it or the dex describes a Steelix's
     // Onix as the end of its line
-    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
-      for (const time of [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night]) {
-        const groups = getSpawnPool(biome, time);
+    for (const [biome, time, surface] of everyPool()) {
+      const groups = getSpawnPool(biome, time, false, surface);
 
-        for (const [band, rarity] of [
-          ['base', SpawnRarity.Base],
-          ['uncommon', SpawnRarity.Uncommon],
-          ['rare', SpawnRarity.Rare],
-          ['prized', SpawnRarity.Prized],
-          ['special', SpawnRarity.Special],
-        ] as const) {
-          for (const entry of groups[band] ?? []) {
-            expect(getSpawnRarity(entry.species), getSpeciesData(entry.species).name).toBe(rarity);
-          }
+      for (const [band, rarity] of [
+        ['base', SpawnRarity.Base],
+        ['uncommon', SpawnRarity.Uncommon],
+        ['rare', SpawnRarity.Rare],
+        ['prized', SpawnRarity.Prized],
+        ['special', SpawnRarity.Special],
+      ] as const) {
+        for (const entry of groups[band] ?? []) {
+          expect(getSpawnRarity(entry.species), getSpeciesData(entry.species).name).toBe(rarity);
         }
       }
     }
@@ -5313,13 +5657,15 @@ describe('the syndicates', () => {
       seen.set(syndicate, (seen.get(syndicate) ?? 0) + 1);
     }
 
-    // All three are somewhere, and the water and the fire are the two
-    // that were claimed
+    // All four are somewhere, and the water, the fire and the cold are
+    // the three that were claimed
     for (const syndicate of SYNDICATES) {
       expect(seen.get(syndicate) ?? 0, SYNDICATE_NAMES[syndicate]).toBeGreaterThan(0);
     }
     expect(getSyndicate(Biome.Ocean)).toBe(Syndicate.Aqua);
     expect(getSyndicate(Biome.Volcano)).toBe(Syndicate.Magma);
+    expect(getSyndicate(Biome.Glacier)).toBe(Syndicate.Galactic);
+    expect(getSyndicate(Biome.Beyond)).toBe(Syndicate.Galactic);
     expect(getSyndicate(Biome.Grassland)).toBe(Syndicate.Rocket);
   });
 });
@@ -5327,9 +5673,9 @@ describe('the syndicates', () => {
 describe('type experts', () => {
   it('gives every leader a name, a badge and a shipped wardrobe', () => {
     const badges = GYM_LEADERS.map((leader) => GYM_LEADER_BADGES[leader]);
-    const cases = [...KANTO_BADGES, ...JOHTO_BADGES, ...HOENN_BADGES];
+    const cases = [...KANTO_BADGES, ...JOHTO_BADGES, ...HOENN_BADGES, ...SINNOH_BADGES];
 
-    // Every leader carries a badge, and between the three regions the
+    // Every leader carries a badge, and between the four regions the
     // leaders account for every badge there is. There is one leader
     // more than there are badges, because Mossdeep is kept by two
     // people who pay the same one
@@ -5348,7 +5694,7 @@ describe('type experts', () => {
     // one Blue used to take all comers at, and no region runs the
     // same fight twice. Across regions they repeat: Roxanne's gym is
     // Brock's fight in another country
-    for (const region of [KANTO_BADGES, JOHTO_BADGES, HOENN_BADGES]) {
+    for (const region of [KANTO_BADGES, JOHTO_BADGES, HOENN_BADGES, SINNOH_BADGES]) {
       const held = new Map<Awards, Set<Types>>();
 
       for (const leader of GYM_LEADERS.filter((one) => region.includes(GYM_LEADER_BADGES[one]))) {
@@ -5368,13 +5714,15 @@ describe('type experts', () => {
 
   it('gives every elite a mark and the champion a title', () => {
     const honors = ELITE_MEMBERS.map((member) => ELITE_MEMBER_HONORS[member]);
-    const marks = new Set([...KANTO_HONORS, ...JOHTO_HONORS, ...HOENN_HONORS]);
+    const marks = new Set([...KANTO_HONORS, ...JOHTO_HONORS, ...HOENN_HONORS, ...SINNOH_HONORS]);
 
-    // Twelve seats between three leagues, four apiece: Bruno keeps one
+    // Sixteen seats between four leagues, four apiece: Bruno keeps one
     // in each of the first two, and no mark is shared between them
     expect(new Set(honors).size).toBe(marks.size);
     expect(honors.every((honor) => marks.has(honor))).toBe(true);
-    expect(marks.size).toBe(KANTO_HONORS.length + JOHTO_HONORS.length + HOENN_HONORS.length);
+    expect(marks.size).toBe(
+      KANTO_HONORS.length + JOHTO_HONORS.length + HOENN_HONORS.length + SINNOH_HONORS.length,
+    );
 
     for (const member of ELITE_MEMBERS) {
       expect(ELITE_MEMBER_NAMES[member].length).toBeGreaterThan(0);
@@ -5392,9 +5740,11 @@ describe('type experts', () => {
       ...KANTO_BADGES,
       ...JOHTO_BADGES,
       ...HOENN_BADGES,
+      ...SINNOH_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
       ...HOENN_HONORS,
+      ...SINNOH_HONORS,
       Awards.KantoChampion,
     ]) {
       expect(AWARD_NAMES[award].length).toBeGreaterThan(0);
@@ -5515,6 +5865,7 @@ describe('type experts', () => {
       [KANTO_HONORS, KANTO_BADGES],
       [JOHTO_HONORS, JOHTO_BADGES],
       [HOENN_HONORS, HOENN_BADGES],
+      [SINNOH_HONORS, SINNOH_BADGES],
     ] as const;
 
     for (const member of ELITE_MEMBERS) {
@@ -5541,24 +5892,48 @@ describe('type experts', () => {
     expect(CHAMPION_TITLES[Champion.Wallace]).toBe(Awards.HoennChampion);
   });
 
+  it('seats Sinnoh’s four on Sinnoh’s badges, with Cynthia above them', () => {
+    for (const member of [
+      EliteMember.Aaron,
+      EliteMember.Bertha,
+      EliteMember.Flint,
+      EliteMember.Lucian,
+    ]) {
+      expect(SINNOH_HONORS).toContain(ELITE_MEMBER_HONORS[member]);
+      expect(getEliteBadges(member), ELITE_MEMBER_NAMES[member]).toEqual(SINNOH_BADGES);
+    }
+    // And Cynthia stands above them, asking for all four
+    expect(CHAMPION_HONORS[Champion.Cynthia]).toEqual(SINNOH_HONORS);
+    expect(CHAMPION_TITLES[Champion.Cynthia]).toBe(Awards.SinnohChampion);
+  });
+
   it('gives every Frontier Brain a house, a rule and a pair of symbols', () => {
     const symbols = FRONTIER_BRAINS.flatMap((brain) => FRONTIER_BRAIN_SYMBOLS[brain]);
 
-    // Two apiece and no sharing: a facility is its own pair
-    expect(new Set(symbols).size).toBe(symbols.length);
+    // Two apiece, and the only sharing is the Castle: its lady and
+    // her valet keep one house between them and pay the one pair
+    expect(FRONTIER_BRAIN_SYMBOLS[FrontierBrain.Caitlin]).toEqual(
+      FRONTIER_BRAIN_SYMBOLS[FrontierBrain.Darach],
+    );
+    expect(new Set(symbols).size).toBe(symbols.length - 2);
     expect(symbols.every((symbol) => FRONTIER_SYMBOLS.includes(symbol))).toBe(true);
 
     for (const brain of FRONTIER_BRAINS) {
       expect(FRONTIER_BRAIN_NAMES[brain].length).toBeGreaterThan(0);
       expect(FRONTIER_FACILITY_NAMES[brain].length).toBeGreaterThan(0);
       // Three a side is the Frontier's shape, and what makes a house
-      // rule bite rather than merely annoy. Two houses name nobody:
-      // the Factory draws out of the crate like the challenger, and
-      // the Dome waits to be shown a party before it answers one
+      // rule bite rather than merely annoy. The Hall is the one that
+      // fights one against one. Some houses name nobody: the Factory
+      // draws out of the crate like the challenger, and the Dome and
+      // the Hall wait to be shown a party before they answer one
       const named = FRONTIER_BRAIN_PARTIES[brain];
       const rules = FRONTIER_BRAIN_RULES[brain];
-      const drawn = rules === FrontierRule.Rented || rules === FrontierRule.Countered;
+      const drawn =
+        rules === FrontierRule.Rented ||
+        rules === FrontierRule.Countered ||
+        rules === FrontierRule.Singled;
 
+      expect(frontierTeamSize(rules)).toBe(rules === FrontierRule.Singled ? 1 : FRONTIER_TEAM_SIZE);
       expect(named).toHaveLength(drawn ? 0 : FRONTIER_TEAM_SIZE);
       for (const species of named) {
         expect(getSpeciesData(species).name.length).toBeGreaterThan(0);
@@ -5566,26 +5941,83 @@ describe('type experts', () => {
       for (const sheet of FRONTIER_BRAIN_CHARSETS[brain]) {
         expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
       }
-      // Every house but the Tower is a rule of its own, and the
-      // Tower's asking nothing is what the others are read against
+      // A Tower is the house that asks nothing, and it is what the
+      // rest of its own Frontier is read against. Both regions keep one
       expect(FRONTIER_BRAIN_RULES[brain] === FrontierRule.None).toBe(
-        brain === FrontierBrain.Anabel,
+        brain === FrontierBrain.Anabel || brain === FrontierBrain.Palmer,
       );
       // And the Frontier stands past a league, so each asks for a crown
       expect(CHAMPIONS.map((champion) => CHAMPION_TITLES[champion])).toContain(
         FRONTIER_BRAIN_TITLES[brain],
       );
     }
-    // No two houses run the same fight
-    const rules = FRONTIER_BRAINS.map((one) => FRONTIER_BRAIN_RULES[one]);
+    // No two houses of one Frontier run the same fight. Caitlin is
+    // left out of the count: she keeps Darach's house, so she keeps
+    // his rule
+    const houses = [
+      [
+        FrontierBrain.Brandon,
+        FrontierBrain.Greta,
+        FrontierBrain.Lucy,
+        FrontierBrain.Noland,
+        FrontierBrain.Anabel,
+        FrontierBrain.Spenser,
+        FrontierBrain.Tucker,
+      ],
+      [
+        FrontierBrain.Palmer,
+        FrontierBrain.Thorton,
+        FrontierBrain.Dahlia,
+        FrontierBrain.Darach,
+        FrontierBrain.Argenta,
+      ],
+    ];
 
-    expect(new Set(rules).size).toBe(rules.length);
+    for (const frontier of houses) {
+      const rules = frontier.map((one) => FRONTIER_BRAIN_RULES[one]);
+
+      expect(new Set(rules).size).toBe(rules.length);
+    }
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Caitlin]).toBe(
+      FRONTIER_BRAIN_RULES[FrontierBrain.Darach],
+    );
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Brandon]).toBe(FrontierRule.Bare);
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Greta]).toBe(FrontierRule.Timed);
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Lucy]).toBe(FrontierRule.Curtained);
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Noland]).toBe(FrontierRule.Rented);
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Spenser]).toBe(FrontierRule.Natured);
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Tucker]).toBe(FrontierRule.Countered);
+    // The two houses that repeat across the regions, and only those:
+    // a Tower asks nothing and a Factory rents, wherever it stands
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Thorton]).toBe(FrontierRule.Rented);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Dahlia]).toBe(FrontierRule.Rolled);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Darach]).toBe(FrontierRule.Unhealed);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Argenta]).toBe(FrontierRule.Singled);
+  });
+
+  it('spins the Arcade onto both sides, and the same panel every watch', () => {
+    // Every panel is drawn by some roll, and a roll at either end
+    // lands inside the wheel rather than off it
+    const drawn = new Set(Array.from({ length: 200 }, (_, at) => pickArcadePanel(at / 200)));
+
+    expect(drawn.size).toBe(ARCADE_PANELS.length);
+    expect(pickArcadePanel(0)).toBe(ARCADE_PANELS[0]);
+    expect(pickArcadePanel(0.999999)).toBe(ARCADE_PANELS[ARCADE_PANELS.length - 1]);
+    // Four panels are a sky, and the other three are what the parties
+    // walk in as. A panel is one or the other, never both
+    for (const panel of ARCADE_PANELS) {
+      const sky = ARCADE_PANEL_WEATHER[panel];
+      const room = arcadeCurtain(panel);
+
+      expect(sky == null || room == null, ARCADE_PANEL_NAMES[panel]).toBe(true);
+      expect(ARCADE_PANEL_NAMES[panel].length).toBeGreaterThan(0);
+    }
+    expect(arcadeCurtain(ArcadePanel.Poisoned)).toBe(PikeCurtain.Poisoned);
+    expect(arcadeCurtain(ArcadePanel.Mended)).toBe(PikeCurtain.Healed);
+    // The stripped panel bares both sides rather than mending or
+    // hurting anybody, so it carries neither a sky nor a room
+    expect(ARCADE_PANEL_WEATHER[ArcadePanel.Stripped]).toBeNull();
+    expect(arcadeCurtain(ArcadePanel.Stripped)).toBeUndefined();
   });
 
   it('answers a party the Dome is shown with three drawn against it', () => {
@@ -5687,16 +6119,19 @@ describe('type experts', () => {
     }
     // The Pyramid brings the same three either time, which is the
     // mainline's own answer: what changes is the level and the
-    // loadout rather than who is in the crate
-    expect(FRONTIER_BRAIN_GOLD_PARTIES[FrontierBrain.Brandon]).toEqual(
-      FRONTIER_BRAIN_PARTIES[FrontierBrain.Brandon],
-    );
+    // loadout rather than who is in the crate. Sinnoh's Tower is the
+    // same, and for the same reason
+    for (const brain of [FrontierBrain.Brandon, FrontierBrain.Palmer]) {
+      expect(FRONTIER_BRAIN_GOLD_PARTIES[brain], FRONTIER_BRAIN_NAMES[brain]).toEqual(
+        FRONTIER_BRAIN_PARTIES[brain],
+      );
+    }
     // Everybody else's second hand is a different fight
     for (const brain of FRONTIER_BRAINS) {
       if (
         brain === FrontierBrain.Brandon ||
-        brain === FrontierBrain.Noland ||
-        brain === FrontierBrain.Tucker
+        brain === FrontierBrain.Palmer ||
+        FRONTIER_BRAIN_PARTIES[brain].length === 0
       ) {
         continue;
       }
@@ -5905,10 +6340,10 @@ describe('type experts', () => {
     // Accuracy is rolled against evasion, so a written 100 is a
     // promise a Double Team breaks and a move with no accuracy is
     // not. Read flat the two tied, and the older move id won
-    const charizard = getBestMoves(Species.Charizard, [Abilities.Blaze]);
+    const scyther = getBestMoves(Species.Scyther, [Abilities.Swarm]);
 
-    expect(charizard).toContain(Moves.AerialAce);
-    expect(charizard).not.toContain(Moves.WingAttack);
+    expect(scyther).toContain(Moves.AerialAce);
+    expect(scyther).not.toContain(Moves.WingAttack);
   });
 
   it('does not hand the same move to half the party', () => {
@@ -6316,9 +6751,11 @@ describe('type experts', () => {
       ...KANTO_BADGES,
       ...JOHTO_BADGES,
       ...HOENN_BADGES,
+      ...SINNOH_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
       ...HOENN_HONORS,
+      ...SINNOH_HONORS,
       ...CHAMPIONS.map((champion) => CHAMPION_TITLES[champion]),
     ]);
 
@@ -6501,6 +6938,7 @@ describe('achievements', () => {
       TrainerClass.Swimmer,
       TrainerClass.JohtoSwimmer,
       TrainerClass.HoennSwimmer,
+      TrainerClass.SinnohSwimmer,
     ]);
     expect(TRAINER_TRADES).not.toContain(TrainerClass.JohtoSwimmer);
     expect(ACHIEVEMENT_TRAINERS).toEqual(TRAINER_TRADES);
@@ -6648,6 +7086,7 @@ describe('achievements', () => {
           TrainerClass.AceTrainer,
           TrainerClass.JohtoAceTrainer,
           TrainerClass.HoennAceTrainer,
+          TrainerClass.SinnohAceTrainer,
           ...standing,
         ]);
       }
@@ -6693,11 +7132,59 @@ describe('achievements', () => {
   });
 
   it('numbers every trade inside the band its title is read from', () => {
-    // A title is `300 + trade * 2`, and the professors' start at 400,
-    // so a trade numbered past 49 would answer to one of theirs
+    // The first 50 trades are titled `300 + trade * 2`; the rest, which
+    // Sinnoh's own are the first of, carry on at 500, above the
+    // professors rather than through them
     for (const trade of TRAINER_TRADES) {
       expect(titleTrainer(trainerTitle(trade, false)), TRAINER_NAMES[trade]).toBe(trade);
       expect(titleTrainer(trainerTitle(trade, true)), TRAINER_NAMES[trade]).toBe(trade);
+      expect(titleProfessor(trainerTitle(trade, false)), TRAINER_NAMES[trade]).toBeNull();
+    }
+    // And the professors keep the numbers they were stored under
+    for (const region of REGIONS) {
+      if (region !== Regions.Unknown) {
+        expect(titleProfessor(professorTitle(region))).toBe(region);
+        expect(titleTrainer(professorTitle(region))).toBeNull();
+      }
+    }
+    expect(trainerTitle(TrainerClass.Ranger, false)).toBeGreaterThanOrEqual(500);
+    expect(getTitleName(trainerTitle(TrainerClass.Ranger, true))).toBe('Master Pokémon Ranger');
+  });
+
+  it('puts somebody of Sinnoh’s on the road for every type it grows', () => {
+    const sinnoh: [TrainerClass, Types][] = [
+      [TrainerClass.SinnohAromaLady, Types.Grass],
+      [TrainerClass.SinnohSkier, Types.Ice],
+      [TrainerClass.SinnohScientist, Types.Steel],
+      [TrainerClass.SinnohDragonTamer, Types.Dragon],
+      [TrainerClass.Policeman, Types.Dark],
+      [TrainerClass.Waiter, Types.Fire],
+      [TrainerClass.SinnohNinjaBoy, Types.Ghost],
+      [TrainerClass.SinnohPsychic, Types.Psychic],
+      [TrainerClass.Cyclist, Types.Electric],
+      [TrainerClass.SinnohHiker, Types.Ground],
+      [TrainerClass.Jogger, Types.Fighting],
+      [TrainerClass.Worker, Types.Rock],
+      [TrainerClass.ParasolLady, Types.Water],
+      [TrainerClass.Ranger, Types.Bug],
+      [TrainerClass.RichBoy, Types.Flying],
+      [TrainerClass.Rancher, Types.Normal],
+      [TrainerClass.SinnohRoughneck, Types.Poison],
+    ];
+
+    for (const [trainer, type] of sinnoh) {
+      expect(TRAINER_TYPES[trainer], TRAINER_NAMES[trainer]).toContain(type);
+      expect(TRAINER_REGIONS[trainer], TRAINER_NAMES[trainer]).toBe(Regions.Sinnoh);
+    }
+
+    const covered = new Set(
+      TRAINER_CLASSES.filter((trainer) => TRAINER_REGIONS[trainer] === Regions.Sinnoh).flatMap(
+        (trainer) => TRAINER_TYPES[trainer],
+      ),
+    );
+
+    for (const type of ACHIEVEMENT_TYPES) {
+      expect(covered.has(type), TYPE_NAMES[type]).toBe(true);
     }
   });
 
@@ -6870,6 +7357,31 @@ describe('a region’s pokedex chain', () => {
     expect(REGION_DEXES[Regions.Hoenn]?.milestones.at(-1)).toBe(walked.length);
   });
 
+  it('gives Sinnoh its own ladder, all but the four mythicals', () => {
+    expect(getDexRegions()).toContain(Regions.Sinnoh);
+    expect(CHAINS[dexChainId(Regions.Sinnoh)].name).toBe('Sinnoh Pokedex');
+
+    const last = getDexQuests(Regions.Sinnoh).get(dexQuestId(Regions.Sinnoh, 2));
+
+    expect(last?.name).toBe('Sinnoh Complete');
+    expect(
+      last?.rewards.some(
+        (reward) => reward.kind === QuestRewardKind.Award && reward.award === Awards.SinnohDexMedal,
+      ),
+    ).toBe(true);
+
+    // Darkrai, Manaphy, Shaymin and Arceus are the four left out, and
+    // every one of them is called by a relic rather than walked into
+    const [from, to] = getRegionSpan(Regions.Sinnoh) ?? [0, 0];
+    const walked = getRegisteredSpecies().filter((species) => {
+      const dex = getSpeciesData(species).dexNumber;
+
+      return isBaseForm(species) && !isMythicalSpecies(species) && dex >= from && dex <= to;
+    });
+
+    expect(REGION_DEXES[Regions.Sinnoh]?.milestones.at(-1)).toBe(walked.length);
+  });
+
   it('leaves a region with no dex alone rather than inventing one', () => {
     // Nothing is written for it, so it stands no chain at all. This is
     // what a generation that has not landed yet looks like
@@ -6899,6 +7411,56 @@ describe('a region’s pokedex chain', () => {
         expect(ids.has(id)).toBe(false);
         ids.add(id);
       }
+    }
+  });
+});
+
+describe('honey trees', () => {
+  it('keeps what a honey tree draws out out of every wild pool', () => {
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const time of TIMES_OF_DAY) {
+        const groups = getBiomeRoster(biome, time);
+
+        for (const band of SPAWN_BAND_KEYS) {
+          for (const entry of spawnBand(groups, band)) {
+            expect(
+              HONEY_TREE_SPECIES.has(entry.species),
+              `${getSpeciesData(entry.species).name} in ${BIOME_NAMES[biome]}`,
+            ).toBe(false);
+          }
+        }
+      }
+    }
+    for (const species of HONEY_TREE_SPECIES) {
+      expect(getSpeciesData(species).biomes).toEqual([]);
+    }
+  });
+
+  it('bands each pokemon where its line puts it', () => {
+    const rarities: Record<string, SpawnRarity> = {
+      base: SpawnRarity.Base,
+      uncommon: SpawnRarity.Uncommon,
+      rare: SpawnRarity.Rare,
+      scarce: SpawnRarity.Scarce,
+      elusive: SpawnRarity.Elusive,
+      prized: SpawnRarity.Prized,
+    };
+
+    for (const band of SPAWN_BAND_KEYS) {
+      for (const entry of spawnBand(HONEY_TREE_POOL, band)) {
+        expect(getSpawnRarity(entry.species), getSpeciesData(entry.species).name).toBe(
+          rarities[band],
+        );
+      }
+    }
+  });
+
+  it('only ever draws out one of its own', () => {
+    for (const roll of [0, 0.1, 0.3, 0.6, 0.9, 0.999]) {
+      const drawn = rollHoneyTree(() => roll);
+
+      expect(drawn).not.toBeNull();
+      expect(HONEY_TREE_SPECIES.has(drawn ?? Species.Missingno)).toBe(true);
     }
   });
 });

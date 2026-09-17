@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerPolitoedSpecies(): void {
@@ -26,12 +26,20 @@ export default function registerPolitoedSpecies(): void {
       [Stats.Speed]: 70,
     },
     types: [Types.Water],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.WaterAbsorb, Abilities.Damp],
     hiddenAbilities: [Abilities.Drizzle],
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Swamp],
+    biomes: [
+      Biome.Swamp,
+      Biome.TropicalSeasonalForest,
+      Biome.Grassland,
+      Biome.TemperateForest,
+      Biome.TemperateRainforest,
+      Biome.Woodland,
+    ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -89,6 +97,12 @@ export default function registerPolitoedSpecies(): void {
         Moves.SeismicToss,
         Moves.Substitute,
         Moves.WaterPulse,
+        Moves.Captivate,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.Payback,
       ],
     },
   });

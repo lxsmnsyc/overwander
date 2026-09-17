@@ -42,6 +42,12 @@ const FAMILY_TEACHABLE = [
   Moves.SunnyDay,
   Moves.Facade,
   Moves.SecretPower,
+  Moves.Captivate,
+  Moves.Defog,
+  Moves.NaturalGift,
+  Moves.OminousWind,
+  Moves.Tailwind,
+  Moves.UTurn,
 ];
 
 export default function registerSpearowSpecies(): void {
@@ -82,10 +88,11 @@ export default function registerSpearowSpecies(): void {
         13: [Moves.FuryAttack],
         22: [Moves.MirrorMove],
         25: [Moves.Pursuit, Moves.AerialAce],
-        29: [Moves.DrillPeck],
+        29: [Moves.DrillPeck, Moves.Assurance],
+        33: [Moves.Roost],
         36: [Moves.Agility],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.Pluck],
       egg: [
         Moves.QuickAttack,
         Moves.TriAttack,
@@ -124,13 +131,15 @@ export default function registerSpearowSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Peck, Moves.Growl, Moves.Leer, Moves.FuryAttack],
+        1: [Moves.Peck, Moves.Growl, Moves.Leer, Moves.FuryAttack, Moves.Pluck],
         25: [Moves.MirrorMove],
         26: [Moves.Pursuit],
         34: [Moves.DrillPeck],
+        35: [Moves.Assurance],
+        41: [Moves.Roost],
         43: [Moves.Agility],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.AerialAce],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.AerialAce, Moves.GigaImpact],
     },
   });
 }

@@ -6,6 +6,7 @@ import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
 import turns from '../turn';
 import type Unit from '../unit';
+import { checkStatusDamage } from './__create';
 
 interface TrappedData {
   duration: number;
@@ -80,7 +81,12 @@ export default function setupTrappedStatus(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerStatus, EventPriority.Exact, (event) => {
     if (event.status === Statuses.Trapped) {
       // Modern residual damage: 1/8 of max HP
-      const amount = event.source.checkStat(Stats.HP, 0) / 8;
+      const amount = checkStatusDamage(
+        battle,
+        event.source,
+        Statuses.Trapped,
+        event.source.checkStat(Stats.HP, 0) / 8,
+      );
 
       if (event.cause.type !== EffectType.None) {
         event.cause.unit.damage(event.cause, event.source, amount, DamageFlags.Indirect);

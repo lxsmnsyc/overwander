@@ -5,6 +5,7 @@ showing what it brought and what to go and look at first.
 
 | Release                  | What it brought                                                                                                                |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| [Sinnoh](update/sinnoh.md) | 107 more pokemon, a signature ability for 246 families, 113 new moves, a fourth league and Frontier, and Team Galactic |
 | [Open world](update/open-world.md) | A map with no edges, caves under the world, named towns with streets, and ground drawn from tilesets |
 | [Hoenn](update/hoenn.md) | 135 more pokemon, 102 new moves, the Battle Frontier, a third league, and Team Aqua and Team Magma |
 | [Johto](update/johto.md) | The other hundred pokemon, 83 new moves, a second league, the Legend tier, Team Rocket's executives, and Kurt's apricorn balls |

@@ -248,12 +248,11 @@ A boss is a **maxed legendary, perfect in every individual stat and trained to
 the cap in every one**, and every player
 in the lobby fights exactly the same one. Its raid form gives it:
 
-- A raid-sized health pool: twenty times what the species would have had.
+- A raid-sized health pool: sixty times what the species would have had.
 - Double every other stat.
 - Wind-ups that take twice as long, and that nothing short of fainting can
   interrupt.
 - Single-target moves that strike every enemy at once.
-- Immunity to attempts to lower its stats.
 
 A boss opens the fight **dormant**: for the first ten seconds it stands there and
 cannot act, which is the party's window to arrive, buff up and land the opening
@@ -268,13 +267,14 @@ party. Infatuation is excluded twice
 over: a large lobby always contains somebody the boss would fall for, and a
 landed Attract would turn the raid into a queue.
 
-**Indirect damage counts, up to 100 a time.** Poison, burns, seeds, weather and
+**Indirect damage counts, up to 200 a time.** Poison, burns, seeds, weather and
 crash damage from a missed Jump Kick all chip at a boss, and none of them chips
-for more than 100 however large the pool is. Damage measured as a share of its
-health, such as Super Fang, is refused outright. A cost the boss pays itself is
-paid in full, so one that uses Explosion still dies by it.
+for more than 200 however large the pool is. Damage measured as a share of its
+health, such as Super Fang, Endeavor and one-hit KO moves, lands for up to 200
+as well. A cost the boss pays itself is paid in full, so one that uses Explosion
+still dies by it.
 
-**A boss heals an eighth of its pool a second.** Recover, Synthesis and the rest
+**A boss heals up to 1,000 HP a second.** Recover, Synthesis and the rest
 are moves it may know again, and the allowance is what it can take back in a
 second rather than per heal, so several drains landing together are worth one of
 them. It refills as the fight runs, so a boss winds the clock back without

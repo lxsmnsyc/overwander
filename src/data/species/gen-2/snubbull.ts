@@ -66,6 +66,10 @@ const FAMILY_TEACHABLE = [
   Moves.ThunderWave,
   Moves.Torment,
   Moves.WaterPulse,
+  Moves.Captivate,
+  Moves.Fling,
+  Moves.LastResort,
+  Moves.NaturalGift,
 ];
 
 const FAMILY_LEVEL = {
@@ -110,9 +114,10 @@ export default function registerSnubbullSpecies(): void {
     learnSet: {
       level: {
         ...FAMILY_LEVEL,
+        1: [Moves.FireFang, Moves.IceFang, Moves.ThunderFang],
         26: [Moves.Roar],
         34: [Moves.Rage],
-        43: [Moves.TakeDown],
+        43: [Moves.TakeDown, Moves.Payback],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -125,6 +130,7 @@ export default function registerSnubbullSpecies(): void {
         Moves.Reflect,
 
         Moves.SmellingSalts,
+        Moves.CloseCombat,
       ],
     },
   });
@@ -156,10 +162,11 @@ export default function registerSnubbullSpecies(): void {
     learnSet: {
       level: {
         ...FAMILY_LEVEL,
+        1: [Moves.FireFang, Moves.IceFang, Moves.ThunderFang],
         61: [Moves.Crunch],
         28: [Moves.Roar],
         38: [Moves.Rage],
-        51: [Moves.TakeDown],
+        51: [Moves.TakeDown, Moves.Payback],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -168,6 +175,10 @@ export default function registerSnubbullSpecies(): void {
         Moves.Metronome,
         Moves.RockSlide,
         Moves.RockTomb,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.RockClimb,
+        Moves.StoneEdge,
       ],
     },
   });

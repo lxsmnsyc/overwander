@@ -9,7 +9,7 @@ import { BattleEvents, MoveTargetType } from '../events';
  *
  * https://bulbapedia.bulbagarden.net/wiki/Low_Kick_(move)
  */
-const WEIGHT_MOVES = new Set<Moves>([Moves.LowKick]);
+const WEIGHT_MOVES = new Set<Moves>([Moves.LowKick, Moves.GrassKnot]);
 
 /**
  * What each weight is worth, lightest first: the ceiling in kilograms

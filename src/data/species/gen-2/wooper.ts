@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
@@ -49,6 +49,10 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
   Moves.WaterPulse,
   Moves.Waterfall,
+  Moves.AquaTail,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.NaturalGift,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Damp, Abilities.WaterAbsorb];
@@ -77,18 +81,29 @@ export default function registerWooperSpecies(): void {
       [Stats.Speed]: 15,
     },
     types: [Types.Water, Types.Ground],
+    habitat: Habitat.Amphibious,
     abilities: [...FAMILY_ABILITIES],
     hiddenAbilities: [Abilities.Unaware],
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Swamp, Biome.Bog, Biome.Mangrove],
+    biomes: [
+      Biome.Swamp,
+      Biome.Bog,
+      Biome.Mangrove,
+      Biome.Savanna,
+      Biome.TemperateForest,
+      Biome.TemperateRainforest,
+      Biome.Steppe,
+      Biome.MontaneForest,
+    ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         16: [Moves.MudShot],
         1: [Moves.TailWhip, Moves.WaterGun],
         11: [Moves.Slam],
+        19: [Moves.MudBomb],
         21: [Moves.Amnesia],
         31: [Moves.Earthquake, Moves.Yawn],
         41: [Moves.RainDance],
@@ -124,6 +139,7 @@ export default function registerWooperSpecies(): void {
       [Stats.Speed]: 35,
     },
     types: [Types.Water, Types.Ground],
+    habitat: Habitat.Amphibious,
     abilities: [...FAMILY_ABILITIES],
     // Oblivious is this registry's rather than the mainline's,
     // filling a final evolution to four: nothing it is told and
@@ -132,13 +148,23 @@ export default function registerWooperSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 90,
-    biomes: [Biome.Swamp, Biome.Bog, Biome.Mangrove],
+    biomes: [
+      Biome.Swamp,
+      Biome.Bog,
+      Biome.Mangrove,
+      Biome.Savanna,
+      Biome.TemperateForest,
+      Biome.TemperateRainforest,
+      Biome.Steppe,
+      Biome.MontaneForest,
+    ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         16: [Moves.MudShot],
         1: [Moves.TailWhip, Moves.WaterGun],
         11: [Moves.Slam],
+        19: [Moves.MudBomb],
         23: [Moves.Amnesia],
         35: [Moves.Earthquake, Moves.Yawn],
         47: [Moves.RainDance],
@@ -156,6 +182,10 @@ export default function registerWooperSpecies(): void {
         Moves.MegaPunch,
         Moves.RockTomb,
         Moves.SeismicToss,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.StoneEdge,
       ],
     },
   });

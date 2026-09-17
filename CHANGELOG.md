@@ -1,5 +1,19 @@
 # overwander
 
+## 4.0.2
+
+### Patch Changes
+
+- 20d80eb: Built expert teams:
+  - Count a rampage move at its full power.
+  - Skip a move's drawback when the pokemon's ability prevents it, such as a rampage for Own Tempo or recoil for Rock Head.
+  - Leave out moves the pokemon's ability ruins, such as a stat raise with Contrary or Rest when it cannot sleep.
+  - Carry moves that help a teammate with the right ability, such as Swagger for Own Tempo or Charm for Contrary.
+- ef04fd2: A raid host who lost can host the lair again, instead of being sent back to the lost fight.
+- 5d71772: - The catch sheet and dex entry draw a pokemon at its real height, standing on the portrait's floor.
+  - A move's category badge on the catch sheet stands as tall as its name.
+- 5d71772: Me First no longer cuts off a raid boss's move.
+
 ## 4.0.1
 
 ### Patch Changes

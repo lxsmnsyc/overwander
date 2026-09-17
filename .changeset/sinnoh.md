@@ -23,6 +23,6 @@ of the 246 families, which nothing outside the family can have. With them:
 - Honey Trees in the forests, and a nest egg worth more than a wild catch.
 
 The world changes under all of it. Sinnoh's species join the biomes they belong
-to, 17 lairs and 42 more duelling stops stand in the country, water and ice
+to, the towns and the caves, 17 lairs and 42 more duelling stops stand in the country, water and ice
 carry spawns of their own, and every legendary can be met in the wild where its
 lair sits. What a chunk holds has changed everywhere.

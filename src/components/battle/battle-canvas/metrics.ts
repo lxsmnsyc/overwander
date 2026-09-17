@@ -1,5 +1,3 @@
-import type { SizeCurve } from '../../../canvas/species-size';
-
 /**
  * The picture's own measurements and colours. Everything drawn is laid
  * out in these coordinates whatever the element is sized to.
@@ -12,12 +10,6 @@ import type { SizeCurve } from '../../../canvas/species-size';
 export const WIDTH = 640;
 
 export const HEIGHT = 360;
-
-/**
- * How much a species' real height shows in battle. Wider than the
- * board's: a fight has room for a Wailord to tower
- */
-export const BATTLE_SIZE: SizeCurve = { power: 0.4, min: 0.6, max: 2.4 };
 
 /**
  * How many pixels a field unit is worth at the middle of the field.

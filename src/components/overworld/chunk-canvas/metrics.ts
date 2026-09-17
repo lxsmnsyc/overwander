@@ -1,7 +1,4 @@
 import { BOARD_SPAN, boardView } from '../../../canvas/board';
-import speciesSize, { type SizeCurve } from '../../../canvas/species-size';
-import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
-import type { Species } from '../../../data/ids/species';
 
 /**
  * The board's reference measurements, its colours, and the few facts
@@ -47,18 +44,6 @@ export function pictureWidth(): number {
  * with things on it rather than a chart with pictures in it
  */
 export const SPRITE_STANDS = 21;
-
-/**
- * How much a species' real height shows on the board. Onix is forty
- * Digletts tall, so it is kept gentle and tight: a spawn stands in one
- * cell and must not bury the rows behind it
- */
-const BOARD_SIZE: SizeCurve = { power: 0.18, min: 0.85, max: 1.25 };
-
-/** How much bigger or smaller than its sheet a species is drawn on the board */
-export function sizeOf(species: Species, sprite: SpeciesSpriteAnimation): number {
-  return speciesSize(species, sprite, BOARD_SIZE);
-}
 
 /**
  * How many cells tall a charset's own cell is drawn.

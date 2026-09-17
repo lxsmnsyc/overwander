@@ -1,7 +1,7 @@
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
 import type { Slot } from './field';
 import { type CastLabels, drawCastLabel } from './cast-label';
-import { BATTLE_SIZE, COLORS, HIT_REACH, NAMED_RADIUS } from './metrics';
+import { COLORS, HIT_REACH, NAMED_RADIUS } from './metrics';
 import speciesSize from '../../../canvas/species-size';
 import { type Striking, animationFor } from './motion';
 import type { ProgressData } from '../../../battle/events';
@@ -258,7 +258,7 @@ export function scaleOf(slot: Slot): number {
 
   return sprite == null
     ? baseScaleOf(slot)
-    : baseScaleOf(slot) * speciesSize(slot.unit.appearance, sprite, BATTLE_SIZE);
+    : baseScaleOf(slot) * speciesSize(slot.unit.appearance, sprite);
 }
 
 /**

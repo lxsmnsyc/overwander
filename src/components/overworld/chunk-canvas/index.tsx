@@ -51,6 +51,7 @@ import {
   litFrame,
 } from '../../../canvas/sprite-sheet';
 import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/sparkle';
+import speciesSize from '../../../canvas/species-size';
 import {
   type Cast,
   batchAmbient,
@@ -156,7 +157,6 @@ import {
   lampSquash,
   pictureWidth,
   shadowSquash,
-  sizeOf,
   slideGain,
 } from './metrics';
 import {
@@ -2972,7 +2972,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           ? null
           : ({
               scale:
-                (CELL * sizeOf(props.mount.species, mount) * afoot.scale * magnify) / SPRITE_STANDS,
+                (CELL * speciesSize(props.mount.species, mount) * afoot.scale * magnify) /
+                SPRITE_STANDS,
               anchor: 'shadow',
             } as const);
       /**
@@ -3286,7 +3287,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // the sheet stand on one cell, with the dex height saying
             // how far this one is off ordinary
             const scale =
-              (CELL * sizeOf(standing.species, sprite) * middle.scale * magnify) / SPRITE_STANDS;
+              (CELL * speciesSize(standing.species, sprite) * middle.scale * magnify) /
+              SPRITE_STANDS;
             // The sheet's own shadow marker is the point that stands on
             // the ground, so putting it on the middle of the cell is
             // the whole of standing a pokemon there — whatever is drawn

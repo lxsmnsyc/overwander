@@ -112,6 +112,8 @@ export function watchAuction(
 export function watchOpenAuctions(
   onChange: (auctions: [string, AuctionRecord][]) => void,
 ): Unwatch {
+  let held: [string, AuctionRecord][] = [];
+
   const read = async (): Promise<[string, AuctionRecord][]> => {
     const { data } = await getSupabase()
       .from(AUCTION_TABLE)
@@ -122,13 +124,31 @@ export function watchOpenAuctions(
     for (const row of asRecordArray(data)) {
       auctions.push([String(row.id), fromAuctionRow(row)]);
     }
+    held = auctions;
     return auctions;
   };
 
   // The subscription is unfiltered on purpose: the settling of a lot
   // is an UPDATE that leaves the set, which a settled=false filter
-  // would never deliver
-  return watchTable(AUCTION_TABLE, [], read, onChange);
+  // would never deliver. A change carries every column the list reads,
+  // so a bid or a settling is folded in rather than read again
+  return watchTable(AUCTION_TABLE, [], read, onChange, {
+    fromChange: (row) => {
+      const id = String(row.id);
+      const next: [string, AuctionRecord][] = [];
+
+      for (const entry of held) {
+        if (entry[0] !== id) {
+          next.push(entry);
+        }
+      }
+      if (row.settled !== true) {
+        next.push([id, fromAuctionRow(row)]);
+      }
+      held = next;
+      return next;
+    },
+  });
 }
 
 /** The open lots one player has a stake in: the ones they sell, and the ones they bid on */

@@ -172,12 +172,22 @@ export function watchMyDuels(
   uid: string,
   onChange: (duels: [string, DuelRecord][]) => void,
 ): Unwatch {
-  const read = async (): Promise<[string, DuelRecord][]> => listMyDuels(uid);
+  let mine = new Set<string>();
+  const read = async (): Promise<[string, DuelRecord][]> => {
+    const duels = await listMyDuels(uid);
+
+    mine = new Set<string>();
+    for (const [id] of duels) {
+      mine.add(id);
+    }
+    return duels;
+  };
   const closers = [
     // Unfiltered on the lobby table: a lobby starting or being taken
     // down leaves the set by UPDATE or DELETE, which the set's own
-    // filter would not deliver
-    watchTable(DUEL_TABLE, [], read, onChange),
+    // filter would not deliver. A lobby joined arrives as a member row
+    // below, so only a change to one already in the list is read
+    watchTable(DUEL_TABLE, [], read, onChange, { wanted: (row) => mine.has(String(row.id)) }),
     watchTable('duel_members', [`player=eq.${uid}`], read, onChange),
   ];
 

@@ -144,6 +144,21 @@ import playEffect, { Effect } from '../../app/sound';
  * for whatever they are facing
  */
 /**
+ * What each claim list answered, by player, list, chunk and window.
+ *
+ * A claim changes when the player takes something or the window turns
+ * over, and neither happens because they walked a square. Kept outside
+ * the board, so coming back from a battle or another tab asks nothing
+ */
+const claimed = new LRUMap<string, Promise<number[]>>(CLAIM_MEMORY);
+
+/**
+ * The chunk windows last seen, by layer, zone and chunk. A board mounted
+ * again starts from any that are still live instead of reading each one
+ */
+const keptWindows = new LRUMap<string, SnapshotRecord>(CLAIM_MEMORY);
+
+/**
  * The world itself, which is where the buddy and what has fled are
  * both read.
  *
@@ -535,6 +550,7 @@ export default function OverworldBoard(props: {
         if (watchedLayer.depth !== depth || !watched.has(key)) {
           return;
         }
+        keptWindows.set(`${depth}|${zone}|${key}`, record);
         setWindows((held) => new Map(held).set(key, { x, y, record }));
       })
       .catch((caught: unknown) => {
@@ -665,6 +681,9 @@ export default function OverworldBoard(props: {
       if (watched.has(key)) {
         continue;
       }
+
+      const kept = keptWindows.get(`${depth}|${zone}|${key}`);
+
       watched.set(
         key,
         watchSnapshotWindow(
@@ -674,6 +693,11 @@ export default function OverworldBoard(props: {
             // A read that was already on its way when the layer changed
             if (watchedLayer.depth !== depth) {
               return;
+            }
+            if (record == null) {
+              keptWindows.delete(`${depth}|${zone}|${key}`);
+            } else {
+              keptWindows.set(`${depth}|${zone}|${key}`, record);
             }
             setWindows((held) => {
               const next = new Map(held);
@@ -692,6 +716,7 @@ export default function OverworldBoard(props: {
             }
           },
           () => untrack(windows).get(key)?.record.timestamp,
+          kept == null || !isLive(kept) ? undefined : kept,
         ),
       );
     }
@@ -796,17 +821,6 @@ export default function OverworldBoard(props: {
    * dropped across a reload or a walk back into the chunk
    */
   const [spent, setSpent] = createSignal<Set<string>>(new Set());
-
-  /**
-   * What each claim list answered, by list, chunk and window.
-   *
-   * A claim changes when the player takes something or the window
-   * turns over, and neither happens because they walked a square. The
-   * set of chunks in range turns over every eight cells or so, and
-   * without this every turnover re-asked the server for chunks it had
-   * already been told about, three lists apiece
-   */
-  const claimed = new LRUMap<string, Promise<number[]>>(CLAIM_MEMORY);
 
   /**
    * A claim list read from every window the board overlaps, gathered

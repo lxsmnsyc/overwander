@@ -238,6 +238,8 @@ export function watchSnapshotWindow(
   onChange: (record: SnapshotRecord | null) => void,
   /** The window already held, so a change announcing that same window is not read */
   heldAt?: () => number | undefined,
+  /** A window kept from before, which stands in for the first read */
+  kept?: SnapshotRecord,
 ): Unwatch {
   const zone = toZoneKey(asOffset(offset));
 
@@ -247,7 +249,10 @@ export function watchSnapshotWindow(
     [`chunk_seed=eq.${chunk.seed}`],
     async () => readSnapshotWindow(chunk, offset),
     onChange,
-    (row) => row.zone === zone && Number(row.window_at) !== heldAt?.(),
+    {
+      wanted: (row) => row.zone === zone && Number(row.window_at) !== heldAt?.(),
+      initial: kept == null ? undefined : { value: kept },
+    },
   );
 }
 

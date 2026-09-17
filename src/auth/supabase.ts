@@ -135,13 +135,21 @@ export function watchRow<T>(
  * UPDATE the set's own filter would not match; every ping simply
  * re-runs the read
  */
+export interface WatchTableOptions<T> {
+  /** Whether a changed row matters at all, for a change the filter could not rule out */
+  wanted?: (row: Record<string, unknown>) => boolean;
+  /** The set with a changed row folded in, where the row says enough; undefined reads instead */
+  fromChange?: (row: Record<string, unknown>) => T | undefined;
+  /** What the caller already holds, which stands in for the first read */
+  initial?: { value: T };
+}
+
 export function watchTable<T>(
   table: string,
   filters: (string | undefined)[],
   read: () => Promise<T>,
   onChange: (value: T) => void,
-  /** Whether a changed row is worth a read, for a change the filter could not rule out */
-  wanted?: (row: Record<string, unknown>) => boolean,
+  { wanted, fromChange, initial }: WatchTableOptions<T> = {},
 ): Unwatch {
   const supabase = getSupabase();
   const refetch = (): void => {
@@ -162,10 +170,21 @@ export function watchTable<T>(
         const row: Record<string, unknown> = payload.new;
 
         // A delete carries no row to judge, so it is always read
-        if (wanted != null && Object.keys(row).length > 0 && !wanted(row)) {
+        if (Object.keys(row).length === 0) {
+          refetch();
           return;
         }
-        refetch();
+        if (wanted != null && !wanted(row)) {
+          return;
+        }
+
+        const folded = fromChange?.(row);
+
+        if (folded === undefined) {
+          refetch();
+          return;
+        }
+        onChange(folded);
       },
     );
   }
@@ -183,7 +202,11 @@ export function watchTable<T>(
     connected = true;
   });
 
-  refetch();
+  if (initial == null) {
+    refetch();
+  } else {
+    onChange(initial.value);
+  }
 
   return () => {
     supabase.removeChannel(channel).catch(() => {

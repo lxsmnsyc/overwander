@@ -151,8 +151,14 @@ export function watchLiveRaids(
   onChange: (raids: [string, RaidRecord][]) => void,
 ): Unwatch {
   // Unfiltered on purpose: a lobby starting or clearing leaves the
-  // set by UPDATE, which the set's own filter would never deliver
-  return watchTable(RAID_TABLE, [], async () => listLiveRaids(raidTimestamp, offset), onChange);
+  // set by UPDATE, which the set's own filter would never deliver.
+  // A lobby of another window or zone is never in the set either way
+  return watchTable(RAID_TABLE, [], async () => listLiveRaids(raidTimestamp, offset), onChange, {
+    wanted: (row) =>
+      row.generation === WORLD_GENERATION &&
+      Number(row.window_at) === raidTimestamp &&
+      Number(row.utc_offset) === asOffset(offset),
+  });
 }
 
 /**

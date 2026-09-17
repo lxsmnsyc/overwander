@@ -7,6 +7,7 @@ import {
 } from '../../../overworld/board';
 import type { BoardEdge } from '../../app/settings';
 import { CHUNK_CELLS } from '../../../overworld/chunk';
+import { MAX_STEP_REPORT } from '../../../auth/egg';
 
 /**
  * The landmarks a player fights somebody at, all served by the one
@@ -76,12 +77,11 @@ export const SAVE_DELAY = 1500;
 
 /**
  * How many paces are walked before the egg being carried is told
- * about them. Reporting every cell would be a write per keypress;
- * reporting in batches costs the walker nothing, since the server
- * credits against the time that passed rather than the moment the
- * report arrived
+ * about them: as many as the server credits in one report. Batching
+ * costs the walker nothing, since the server credits against the time
+ * that passed, and a stop sends whatever is left with the position
  */
-export const STEP_REPORT_SIZE = 8;
+export const STEP_REPORT_SIZE = MAX_STEP_REPORT;
 
 /**
  * How often the chunk may be asked for while the player is playing.

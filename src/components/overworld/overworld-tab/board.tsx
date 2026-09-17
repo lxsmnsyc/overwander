@@ -18,6 +18,7 @@ import { type Direction, actionOf, forTheGame } from '../../app/keys';
 import settings from '../../app/settings';
 import { DEFAULT_CHARSET } from '../../../data/overworld/charsets';
 import { watchProfile } from '../../../auth/profile';
+import { MAX_STEP_REPORT } from '../../../auth/egg';
 import { type EggWalk, type WalkReport, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../auth/encounter-record';
 import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
@@ -1299,10 +1300,16 @@ export default function OverworldBoard(props: {
     if (reporting || pending === 0 || (!force && pending < STEP_REPORT_SIZE)) {
       return;
     }
+    // Nobody walking alongside means nothing on the server to credit
+    if (buddy() === null) {
+      pending = 0;
+      return;
+    }
 
-    const steps = pending;
+    // Past the cap the server would drop them, so the rest wait for the next report
+    const steps = Math.min(pending, MAX_STEP_REPORT);
 
-    pending = 0;
+    pending -= steps;
     reporting = true;
     walk(steps)
       .then(takeReport)

@@ -58,6 +58,9 @@ function unitsIn(alliance: Alliance): Unit[] {
   return units;
 }
 
+/** The speeds a replay may be played at */
+const SPEEDS = [1, 2, 3] as const;
+
 /** A side's bar: its name, the health it has left, and how many are up */
 function Meter(props: { side: SideStanding; wide?: boolean }): JSX.Element {
   return (
@@ -88,6 +91,9 @@ export interface BattleTopBarProps {
   player: string;
   title: string;
   replay?: boolean;
+  /** How fast a replay plays, offered only where `onSpeed` is given */
+  speed?: number;
+  onSpeed?: (speed: number) => void;
   /** The way out. Left out where there is nowhere to leave to, like a demo */
   onLeave?: () => void;
 }
@@ -167,6 +173,32 @@ export default function BattleTopBar(props: BattleTopBarProps): JSX.Element {
           <Show when={read().boss}>{(boss) => <Meter side={boss()} wide />}</Show>
           <Index each={read().sides}>{(side) => <Meter side={side()} />}</Index>
         </div>
+
+        <Show when={props.onSpeed}>
+          {(choose) => (
+            <div class="pointer-events-auto flex shrink-0" role="group" aria-label="Replay speed">
+              <Index each={SPEEDS}>
+                {(speed) => (
+                  <button
+                    type="button"
+                    aria-pressed={props.speed === speed()}
+                    class={`rounded-none border-2 px-2 py-0.5 text-xs font-bold tabular-nums
+                      shadow-none first:rounded-l-lg last:rounded-r-lg active:translate-y-0 ${
+                        props.speed === speed()
+                          ? 'border-tide bg-tide text-on-accent hover:text-on-accent'
+                          : 'border-line bg-paper text-ink'
+                      }`}
+                    onClick={() => {
+                      choose()(speed());
+                    }}
+                  >
+                    {speed()}x
+                  </button>
+                )}
+              </Index>
+            </div>
+          )}
+        </Show>
 
         <Show when={props.onLeave}>
           {(leave) => (

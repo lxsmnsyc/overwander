@@ -508,7 +508,21 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           the world is when one is not */}
       {(active) => (
         <BattleData>
-          <BattleView active={active} />
+          <BattleView
+            active={active}
+            onLeave={() => {
+              // The lobby goes too, since one watching its own record
+              // reopens the fight, and so does the panel Start was
+              // pressed in: leaving means standing in the overworld
+              game.setRaid(null);
+              game.setDuel(null);
+              game.setDialog(GameDialog.None);
+              game.setBattle(null);
+            }}
+            onReward={(reward) => {
+              game.setReward(reward);
+            }}
+          />
         </BattleData>
       )}
     </Show>

@@ -61,14 +61,18 @@ function unitsIn(alliance: Alliance): Unit[] {
 /** The speeds a replay may be played at */
 const SPEEDS = [1, 2, 3] as const;
 
-/** A side's bar: its name, the health it has left, and how many are up */
+/**
+ * A side's bar: its name, the health it has left, and how many are up.
+ * It fills the width it is given on a phone, where the bar is the thing
+ * worth reading, and settles at a fixed width once there is room
+ */
 function Meter(props: { side: SideStanding; wide?: boolean }): JSX.Element {
   return (
-    <div class={`flex min-w-0 items-center gap-2 ${props.wide === true ? 'grow' : ''}`}>
-      <span class="truncate text-xs font-bold">{props.side.label}</span>
+    <div class={`flex min-w-0 grow items-center gap-2 ${props.wide === true ? '' : 'sm:grow-0'}`}>
+      <span class="shrink-0 text-xs font-bold">{props.side.label}</span>
       <div
-        class={`h-2.5 overflow-hidden rounded-full border border-line bg-line-soft
-          ${props.wide === true ? 'min-w-24 grow' : 'w-24 shrink-0'}`}
+        class={`h-2.5 min-w-12 grow overflow-hidden rounded-full border border-line bg-line-soft
+          ${props.wide === true ? 'min-w-24' : 'sm:w-24 sm:grow-0'}`}
         role="img"
         aria-label={`${Math.round(props.side.health * 100)}% health left`}
       >
@@ -157,52 +161,78 @@ export default function BattleTopBar(props: BattleTopBarProps): JSX.Element {
   };
 
   return (
-    <div class="pointer-events-none absolute inset-x-3 top-3 z-10">
+    <div class="pointer-events-none absolute inset-x-2 top-2 z-10 sm:inset-x-3 sm:top-3">
+      {/* Two rows on a phone, one from a screen wide enough: what the
+          fight is and the way out above, the health below, so a bar is
+          never squeezed to nothing by the buttons beside it */}
       <div
-        class="flex items-center gap-3 rounded-full border-2 border-tide bg-paper/95 py-1 pr-1 pl-3
-          shadow-pop backdrop-blur-sm"
+        class="flex flex-col gap-1.5 rounded-panel border-2 border-tide bg-paper/95 px-2 py-1.5
+          shadow-pop backdrop-blur-sm sm:flex-row sm:items-center sm:gap-3 sm:py-1 sm:pr-1 sm:pl-3"
       >
-        <span class="flex shrink-0 items-center gap-2">
-          <span class="text-sm font-bold">{props.replay === true ? 'Replay' : props.title}</span>
-          <Show when={props.replay}>
-            <Badge>Awards nothing</Badge>
-          </Show>
-        </span>
+        <div class="flex min-w-0 items-center gap-2">
+          <span class="flex min-w-0 shrink items-center gap-2">
+            <span class="truncate text-sm font-bold">
+              {props.replay === true ? 'Replay' : props.title}
+            </span>
+            <Show when={props.replay}>
+              <Badge>Awards nothing</Badge>
+            </Show>
+          </span>
 
-        <div class="flex min-w-0 grow items-center justify-center gap-4">
+          {/* The row's own spacer, so the controls keep to the end of it
+              while the title keeps to the start */}
+          <span class="grow sm:hidden" />
+
+          <Show when={props.onSpeed}>
+            {(choose) => (
+              <div class="pointer-events-auto flex shrink-0" role="group" aria-label="Replay speed">
+                <Index each={SPEEDS}>
+                  {(speed) => (
+                    <button
+                      type="button"
+                      aria-pressed={props.speed === speed()}
+                      class={`rounded-none border-2 px-2.5 py-1 text-xs font-bold tabular-nums
+                        shadow-none first:rounded-l-lg last:rounded-r-lg active:translate-y-0 ${
+                          props.speed === speed()
+                            ? 'border-tide bg-tide text-on-accent hover:text-on-accent'
+                            : 'border-line bg-paper text-ink'
+                        }`}
+                      onClick={() => {
+                        choose()(speed());
+                      }}
+                    >
+                      {speed()}x
+                    </button>
+                  )}
+                </Index>
+              </div>
+            )}
+          </Show>
+
+          <Show when={props.onLeave}>
+            {(leave) => (
+              <span class="pointer-events-auto shrink-0 sm:hidden">
+                <Button
+                  tone="primary"
+                  onClick={() => {
+                    leave()();
+                  }}
+                >
+                  Leave
+                </Button>
+              </span>
+            )}
+          </Show>
+        </div>
+
+        <div class="flex min-w-0 grow flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
           <Show when={read().boss}>{(boss) => <Meter side={boss()} wide />}</Show>
           <Index each={read().sides}>{(side) => <Meter side={side()} />}</Index>
         </div>
 
-        <Show when={props.onSpeed}>
-          {(choose) => (
-            <div class="pointer-events-auto flex shrink-0" role="group" aria-label="Replay speed">
-              <Index each={SPEEDS}>
-                {(speed) => (
-                  <button
-                    type="button"
-                    aria-pressed={props.speed === speed()}
-                    class={`rounded-none border-2 px-2 py-0.5 text-xs font-bold tabular-nums
-                      shadow-none first:rounded-l-lg last:rounded-r-lg active:translate-y-0 ${
-                        props.speed === speed()
-                          ? 'border-tide bg-tide text-on-accent hover:text-on-accent'
-                          : 'border-line bg-paper text-ink'
-                      }`}
-                    onClick={() => {
-                      choose()(speed());
-                    }}
-                  >
-                    {speed()}x
-                  </button>
-                )}
-              </Index>
-            </div>
-          )}
-        </Show>
-
         <Show when={props.onLeave}>
           {(leave) => (
-            <span class="pointer-events-auto shrink-0">
+            <span class="pointer-events-auto hidden shrink-0 sm:block">
               <Button
                 tone="primary"
                 onClick={() => {

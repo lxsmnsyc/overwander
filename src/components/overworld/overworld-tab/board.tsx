@@ -6,6 +6,7 @@ import {
   buildBoardView,
   naming,
   runningWindows,
+  viewChunks,
 } from './board-view';
 import challengerOf, { championGate, eliteGate, frontierGate } from './challengers';
 import { describeItem } from '../../details';
@@ -69,8 +70,7 @@ import { PHENOMENON_NAMES } from '../../../data/overworld/phenomenon';
 import { getSpeciesData } from '../../../data/species';
 import { isFeaturedSpecies } from '../../../data/species/day';
 import { CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from '../../../overworld/chunk';
-import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
-import { SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
+import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
 import type World from '../../../overworld/world';
@@ -505,6 +505,11 @@ export default function OverworldBoard(props: {
     return parts.join(' ');
   });
 
+  /** Every chunk the board draws, which is further out than the ones it watches */
+  const seen = createMemo(() => viewChunks(originX(), originY()), [], {
+    equals: (was, now) => was.join(' ') === now.join(' '),
+  });
+
   /**
    * The subscription open on each chunk the board is watching.
    *
@@ -823,12 +828,11 @@ export default function OverworldBoard(props: {
   const [spent, setSpent] = createSignal<Set<string>>(new Set());
 
   /**
-   * A claim list read from every window the board overlaps, gathered
-   * into one set of world cells.
-   *
-   * Only the chunks the board itself covers, not the wider country it
-   * draws: what is out there is a view, and nothing in a view can be
-   * pressed, so nothing in it can have been claimed
+   * A claim list read from every chunk the board draws, gathered into
+   * one set of world cells. Out past the watched chunks there is no
+   * window to hand the server, so the current one stands in: a claim is
+   * stamped with its landmark or phenomenon window, which the clock
+   * alone decides
    */
   const gather = (
     named: string,
@@ -844,19 +848,28 @@ export default function OverworldBoard(props: {
     }
 
     const who = untrack(() => auth.user()?.uid ?? '');
-    const near = new Set<string>();
+    const held = new Map<string, (typeof loaded.chunks)[number]>();
 
-    for (const [x, y] of untrack(overlapped)) {
-      near.add(`${x},${y}`);
+    for (const piece of loaded.chunks) {
+      held.set(`${piece.x},${piece.y}`, piece);
     }
 
+    const current =
+      Math.floor(toLocalTime(serverNow(), zone) / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
     const lists: Promise<string[]>[] = [];
     let live = true;
 
-    for (const piece of loaded.chunks) {
-      if (!near.has(`${piece.x},${piece.y}`)) {
-        continue;
-      }
+    for (const [x, y] of untrack(seen)) {
+      const piece = held.get(`${x},${y}`) ?? {
+        x,
+        y,
+        snapshot: new ChunkSnapshot(untrack(around).getChunk(x, y), current, zone),
+        world: (at: number): [number, number] => [
+          x * CHUNK_CELLS + (at % CHUNK_CELLS),
+          y * CHUNK_CELLS + Math.floor(at / CHUNK_CELLS),
+        ],
+      };
+
       lists.push(
         (async (): Promise<string[]> => {
           // The player is in the key because a claim is theirs: signing
@@ -916,6 +929,7 @@ export default function OverworldBoard(props: {
     // Read again when a window turns over, and not when the player
     // takes a step: the board moves under them constantly
     windowKey();
+    seen();
     gather(
       'phenomena',
       listClaimedPhenomena,
@@ -949,6 +963,7 @@ export default function OverworldBoard(props: {
 
   createEffect(() => {
     windowKey();
+    seen();
     gather(
       'patches',
       listPickedBerryPatches,

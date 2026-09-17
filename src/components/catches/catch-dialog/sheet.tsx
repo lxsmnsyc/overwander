@@ -44,7 +44,6 @@ import { BALL_ITEMS, type Items, getMachineMove, isMachineItem } from '../../../
 import { MAX_FRIENDSHIP, describeFriendship } from '../../../data/constants/friendship';
 import ItemSprite from '../../items/ItemSprite';
 import type { Moves } from '../../../data/ids/moves';
-import { NATURE_NAMES } from '../../../data/ids/natures';
 import type { Species } from '../../../data/ids/species';
 
 import { isPPItem } from '../../../data/items/vitamins';
@@ -92,6 +91,7 @@ import {
   type JSX,
   type Resource,
   Show,
+  batch,
   createEffect,
   createSignal,
   onCleanup,
@@ -1041,9 +1041,8 @@ export function CatchSheetBody(
     }
     releaseCatch(catchId)
       .then((released) => {
-        setReleasing(false);
-
         if (!released) {
+          setReleasing(false);
           say('It could not be released.', 'ember');
           return;
         }
@@ -1061,7 +1060,12 @@ export function CatchSheetBody(
         // The record is gone, so there is nothing left for this
         // dialog to show
         props.onChange?.();
-        props.onClose();
+        // Together, or the sheet reopens for a frame between the
+        // confirmation closing and the sheet being told to
+        batch(() => {
+          setReleasing(false);
+          props.onClose();
+        });
       })
       .catch((caught: unknown) => {
         setReleasing(false);
@@ -1431,189 +1435,197 @@ export function CatchSheetBody(
           >
             {(loaded) => (
               <>
-                {/* Fitted to one screen: who it is beside what it fights
-                    with, then what it becomes beside what it is made of.
-                    One scrolling column on a phone, in the same order */}
+                {/* Fitted to one screen: who it is and what it becomes on
+                    the left, what it fights with and what it is made of on
+                    the right. The columns size apart, so a tall block on
+                    one side never pushes the other. One scrolling column
+                    on a phone, portrait, moves, evolutions, then stats */}
                 <div
                   class="flex flex-col gap-3 border-y-2 border-line-soft md:grid md:min-h-0
-                    md:flex-1 md:grid-cols-[16rem_minmax(0,1fr)]
-                    md:grid-rows-[auto_minmax(0,1fr)] md:gap-0"
+                    md:flex-1 md:grid-cols-[16rem_minmax(0,1fr)] md:gap-0"
                 >
                   <div
-                    class="flex flex-col items-center gap-2 py-3 text-center md:border-r-2
+                    class="contents md:flex md:min-h-0 md:flex-col md:border-r-2
                       md:border-line-soft md:pr-4"
                   >
-                    <PortraitSection caught={loaded()} named={named()} />
+                    <div class="flex flex-col items-center gap-2 py-3 text-center md:flex-1">
+                      <PortraitSection caught={loaded()} named={named()} />
 
-                    <div class="flex flex-wrap items-center justify-center gap-1.5">
-                      <Badge tone="gold">
-                        <CandySprite
-                          family={getSpeciesData(loaded().species).family}
-                          label=""
-                          class={CANDY_BADGE}
-                        />
-                        <span class="tabular-nums">{shownCandies()}</span>
-                      </Badge>
-                      {/* The level and what raises it are one control:
+                      <div class="flex flex-wrap items-center justify-center gap-1.5">
+                        <Badge tone="gold">
+                          <CandySprite
+                            family={getSpeciesData(loaded().species).family}
+                            label=""
+                            class={CANDY_BADGE}
+                          />
+                          <span class="tabular-nums">{shownCandies()}</span>
+                        </Badge>
+                        {/* The level and what raises it are one control:
                           where it stands and what the next step costs */}
-                      <Show
-                        when={owned() != null && !isEgg(loaded())}
-                        fallback={<Badge tone="leaf">Lv. {loaded().level}</Badge>}
-                      >
-                        {/* Presses are gathered and sent together once they stop */}
-                        <Button
-                          tone="primary"
-                          disabled={
-                            shownCandies() < getCandyCost(loaded()) ||
-                            shownLevel() >= MAX_LEVEL ||
-                            // A level already paid for is waiting on an
-                            // answer, and pressing past it would take the
-                            // offer away
-                            teaching()?.levelled === true ||
-                            frozen()
-                          }
-                          onClick={feedCandy}
+                        <Show
+                          when={owned() != null && !isEgg(loaded())}
+                          fallback={<Badge tone="leaf">Lv. {loaded().level}</Badge>}
                         >
-                          {/* The cost in candy, drawn, as a badge on the button */}
-                          {shownLevel() >= MAX_LEVEL ? (
-                            `Lv. ${shownLevel()}`
-                          ) : (
-                            <>
-                              Level Up
-                              <Badge tone="gold">
-                                <CandySprite
-                                  family={getSpeciesData(loaded().species).family}
-                                  label="Candy"
-                                  class={CANDY_BADGE}
-                                />
-                                x {getCandyCost(loaded())}
-                              </Badge>
-                            </>
-                          )}
-                        </Button>
-                      </Show>
+                          {/* Presses are gathered and sent together once they stop */}
+                          <Button
+                            tone="primary"
+                            disabled={
+                              shownCandies() < getCandyCost(loaded()) ||
+                              shownLevel() >= MAX_LEVEL ||
+                              // A level already paid for is waiting on an
+                              // answer, and pressing past it would take the
+                              // offer away
+                              teaching()?.levelled === true ||
+                              frozen()
+                            }
+                            onClick={feedCandy}
+                          >
+                            {/* The cost in candy, drawn, as a badge on the button */}
+                            {shownLevel() >= MAX_LEVEL ? (
+                              `Lv. ${shownLevel()}`
+                            ) : (
+                              <>
+                                Level Up
+                                <Badge tone="gold">
+                                  <CandySprite
+                                    family={getSpeciesData(loaded().species).family}
+                                    label="Candy"
+                                    class={CANDY_BADGE}
+                                  />
+                                  x {getCandyCost(loaded())}
+                                </Badge>
+                              </>
+                            )}
+                          </Button>
+                        </Show>
+                      </div>
+
                       <Show when={!isEgg(loaded())}>
-                        <Badge>{NATURE_NAMES[loaded().nature]}</Badge>
+                        <div class="flex flex-wrap items-center justify-center gap-1.5">
+                          <span class="text-sm font-medium">
+                            {getSpeciesData(loaded().species).category}
+                          </span>
+                          <Divider />
+                          <For each={getSpeciesData(loaded().species).types}>
+                            {(type) => <TypeBadge type={type} />}
+                          </For>
+                        </div>
+                        {/* This individual's own size, rolled from its trait
+                          value against the species as it stands now */}
+                        <div class="flex flex-wrap items-center justify-center gap-1.5">
+                          <Badge>
+                            {deriveSize(loaded().species, loaded().traitValue).height.toFixed(2)} m
+                          </Badge>
+                          <Badge>
+                            {deriveSize(loaded().species, loaded().traitValue).weight.toFixed(1)} kg
+                          </Badge>
+                        </div>
+                        {/* What walking with it has earned: how close it is,
+                          which friendship evolutions and Return read, and
+                          how far it has gone as a buddy */}
+                        <div class="flex flex-wrap items-center justify-center gap-1.5">
+                          <TooltipHost
+                            name="Friendship"
+                            description={`${loaded().friendship} of ${MAX_FRIENDSHIP}`}
+                          >
+                            <Badge tone="leaf">
+                              <HeartIcon class="size-3.5" aria-hidden="true" />
+                              {describeFriendship(loaded().friendship)}
+                            </Badge>
+                          </TooltipHost>
+                          <Badge>
+                            {loaded().walked} {loaded().walked === 1 ? 'step' : 'steps'}
+                          </Badge>
+                        </div>
                       </Show>
                     </div>
 
                     <Show when={!isEgg(loaded())}>
-                      <div class="flex flex-wrap items-center justify-center gap-1.5">
-                        <span class="text-sm font-medium">
-                          {getSpeciesData(loaded().species).category}
-                        </span>
-                        <Divider />
-                        <For each={getSpeciesData(loaded().species).types}>
-                          {(type) => <TypeBadge type={type} />}
-                        </For>
-                      </div>
-                      {/* This individual's own size, rolled from its trait
-                          value against the species as it stands now */}
-                      <div class="flex flex-wrap items-center justify-center gap-1.5">
-                        <Badge>
-                          {deriveSize(loaded().species, loaded().traitValue).height.toFixed(2)} m
-                        </Badge>
-                        <Badge>
-                          {deriveSize(loaded().species, loaded().traitValue).weight.toFixed(1)} kg
-                        </Badge>
-                      </div>
-                      {/* What walking with it has earned: how close it is,
-                          which friendship evolutions and Return read, and
-                          how far it has gone as a buddy */}
-                      <div class="flex flex-wrap items-center justify-center gap-1.5">
-                        <TooltipHost
-                          name="Friendship"
-                          description={`${loaded().friendship} of ${MAX_FRIENDSHIP}`}
-                        >
-                          <Badge tone="leaf">
-                            <HeartIcon class="size-3.5" aria-hidden="true" />
-                            {describeFriendship(loaded().friendship)}
-                          </Badge>
-                        </TooltipHost>
-                        <Badge>
-                          {loaded().walked} {loaded().walked === 1 ? 'step' : 'steps'}
-                        </Badge>
+                      <div
+                        class="order-3 flex min-h-0 flex-col border-t-2 border-line-soft py-3 md:order-none
+                        md:h-48 md:shrink-0"
+                      >
+                        <EvolutionSection
+                          options={props.evolutions.latest}
+                          owned={owned() != null}
+                          frozen={frozen()}
+                          shiny={isShiny(loaded())}
+                          dexKnows={dexKnows}
+                          onEvolve={evolve}
+                        />
                       </div>
                     </Show>
                   </div>
 
-                  <div class="py-3 md:pl-4">
-                    {/* An egg has nothing to fight with yet, so its side
+                  <div class="contents md:flex md:min-h-0 md:flex-col md:pl-4">
+                    <div class="order-2 py-3 md:order-none md:min-h-0 md:flex-1 md:overflow-y-auto">
+                      {/* An egg has nothing to fight with yet, so its side
                         holds the way out of the shell */}
-                    <Show
-                      when={!isEgg(loaded())}
-                      fallback={
-                        <section class="flex flex-col gap-2">
-                          <h3 class="text-left">Hatching</h3>
-                          <div class="h-2 overflow-hidden rounded-full bg-line-soft">
-                            <div
-                              class="h-full rounded-full bg-leaf transition-[width]"
-                              style={{
-                                width: `${Math.min(100, (loaded().steps / Math.max(1, loaded().hatchSteps)) * 100)}%`,
-                              }}
-                            />
-                          </div>
-                          <Note>
-                            {loaded().steps} / {loaded().hatchSteps} steps
-                            {props.buddy.latest === props.catchId
-                              ? '.'
-                              : '. It only moves while it is the one being carried.'}
-                          </Note>
-                          <Show when={owned()}>
-                            <Row>
-                              <Button tone="primary" disabled={!canHatch(loaded())} onClick={hatch}>
-                                Hatch it
-                              </Button>
-                            </Row>
-                          </Show>
-                        </section>
-                      }
-                    >
-                      <BattleSection
-                        caught={loaded()}
-                        owned={owned() != null}
-                        frozen={frozen()}
-                        holdables={holdables()}
-                        bag={props.bag.latest}
-                        giving={panel() === 'give'}
-                        onGiving={(open) => {
-                          setPanel(open ? 'give' : null);
-                        }}
-                        onGive={(item) => {
-                          moveItem(item, true);
-                        }}
-                        onTake={(item) => {
-                          moveItem(item, false);
-                        }}
-                        onArrange={arrange}
-                      />
+                      <Show
+                        when={!isEgg(loaded())}
+                        fallback={
+                          <section class="flex flex-col gap-2">
+                            <h3 class="text-left">Hatching</h3>
+                            <div class="h-2 overflow-hidden rounded-full bg-line-soft">
+                              <div
+                                class="h-full rounded-full bg-leaf transition-[width]"
+                                style={{
+                                  width: `${Math.min(100, (loaded().steps / Math.max(1, loaded().hatchSteps)) * 100)}%`,
+                                }}
+                              />
+                            </div>
+                            <Note>
+                              {loaded().steps} / {loaded().hatchSteps} steps
+                              {props.buddy.latest === props.catchId
+                                ? '.'
+                                : '. It only moves while it is the one being carried.'}
+                            </Note>
+                            <Show when={owned()}>
+                              <Row>
+                                <Button
+                                  tone="primary"
+                                  disabled={!canHatch(loaded())}
+                                  onClick={hatch}
+                                >
+                                  Hatch it
+                                </Button>
+                              </Row>
+                            </Show>
+                          </section>
+                        }
+                      >
+                        <BattleSection
+                          caught={loaded()}
+                          owned={owned() != null}
+                          frozen={frozen()}
+                          holdables={holdables()}
+                          bag={props.bag.latest}
+                          giving={panel() === 'give'}
+                          onGiving={(open) => {
+                            setPanel(open ? 'give' : null);
+                          }}
+                          onGive={(item) => {
+                            moveItem(item, true);
+                          }}
+                          onTake={(item) => {
+                            moveItem(item, false);
+                          }}
+                          onArrange={arrange}
+                        />
+                      </Show>
+                    </div>
+
+                    <Show when={!isEgg(loaded())}>
+                      <div class="order-4 border-t-2 border-line-soft py-3 md:order-none md:shrink-0">
+                        <StatsSection
+                          caught={loaded()}
+                          owned={owned() != null}
+                          frozen={frozen()}
+                          onTrain={train}
+                        />
+                      </div>
                     </Show>
                   </div>
-
-                  <Show when={!isEgg(loaded())}>
-                    <div
-                      class="flex min-h-0 flex-col border-t-2 border-line-soft py-3 md:border-r-2
-                        md:pr-4"
-                    >
-                      <EvolutionSection
-                        options={props.evolutions.latest}
-                        owned={owned() != null}
-                        frozen={frozen()}
-                        shiny={isShiny(loaded())}
-                        dexKnows={dexKnows}
-                        onEvolve={evolve}
-                      />
-                    </div>
-
-                    <div class="min-h-0 border-t-2 border-line-soft py-3 md:pl-4">
-                      <StatsSection
-                        caught={loaded()}
-                        owned={owned() != null}
-                        frozen={frozen()}
-                        onTrain={train}
-                      />
-                    </div>
-                  </Show>
                 </div>
 
                 {/* Where it came from in one line. The full chain opens in

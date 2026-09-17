@@ -69,17 +69,18 @@ export function TabGroup(props: TabGroupProps): JSX.Element {
  * the bar stretches the others to match
  */
 const TAB =
-  'inline-flex cursor-pointer items-center justify-center rounded-lg border-2' +
-  ' border-transparent bg-transparent px-3 py-1 text-sm font-bold text-muted shadow-none' +
-  ' transition-colors hover:border-transparent hover:text-ink active:translate-y-0' +
+  'inline-flex shrink-0 cursor-pointer items-center justify-center rounded-lg border-2' +
+  ' border-transparent bg-transparent px-3 py-1 text-sm font-bold whitespace-nowrap text-muted' +
+  ' shadow-none transition-colors hover:border-transparent hover:text-ink active:translate-y-0' +
   ' focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide' +
   ' aria-selected:border-tide-dark aria-selected:bg-tide aria-selected:text-on-accent' +
   ' aria-selected:shadow-pop-sm';
 
+/** One row however many tabs there are: it scrolls sideways rather than wrapping */
 export function TabBar(props: ParentProps & { class?: string }): JSX.Element {
   return (
     <TabList
-      class={`flex flex-wrap gap-1 rounded-panel border-2 border-line bg-parchment p-1 ${
+      class={`flex flex-nowrap gap-1 overflow-x-auto rounded-panel border-2 border-line bg-parchment p-1 ${
         props.class ?? ''
       }`}
     >

@@ -242,6 +242,10 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
                   charset: the dialog already names them, so the
                   picture is not read out */}
               <NpcSprite npc={props.npc} sheet={props.sheet} label="" />
+              {/* Their line under them, the way a counter's is */}
+              <blockquote class="m-0 max-w-prose text-sm text-muted italic">
+                {greeting()}
+              </blockquote>
 
               {/* What they are fielding, in the same box of squares
                   the player reads their own pokemon in: a lineup laid

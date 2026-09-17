@@ -29,7 +29,8 @@ import { unpackStatuses } from '../../../../data/ids/status';
 import { VITAMIN_EFFORT } from '../../../../data/items/vitamins';
 import { WING_EFFORT } from '../../../../data/items/wings';
 
-import { Button, Hint, HintList, Meta } from '../../../styled';
+import { NATURE_NAMES } from '../../../../data/ids/natures';
+import { Badge, Button, Hint, HintList, Meta } from '../../../styled';
 
 import { For, type JSX, Show, createEffect, createSignal, on } from 'solid-js';
 
@@ -158,6 +159,8 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
               <li>Each bar is measured against this pokemon's best stat.</li>
             </HintList>
           </Hint>
+          {/* Beside the arrows it explains */}
+          <Badge>{NATURE_NAMES[props.caught.nature]}</Badge>
         </span>
         <span class="text-right text-xs font-semibold text-muted uppercase">Total</span>
         <span class="text-right text-xs font-semibold text-muted uppercase">IV</span>

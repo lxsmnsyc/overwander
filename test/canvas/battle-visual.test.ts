@@ -129,7 +129,7 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Stars', Moves.Swift],
   ['Blow', Moves.Whirlwind],
   ['Spike', Moves.Peck],
-  ['Drill', Moves.HornDrill],
+  ['Drill', Moves.DrillPeck],
   ['Swirl', Moves.Gust],
   ['Trance', Moves.Hypnosis],
   ['Rocks', Moves.RockSlide],
@@ -196,6 +196,8 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Scorch', Moves.HeatWave],
   ['Pulse', Moves.DarkPulse],
   ['Freeze', Moves.SheerCold],
+  ['Shears', Moves.Guillotine],
+  ['Auger', Moves.HornDrill],
   // Put up or done to itself
   ['Shell', Moves.Protect],
   ['Shell', Moves.Detect],

@@ -44,6 +44,8 @@ export const JOLTS: Partial<Record<EffectShape, number>> = {
   Rampage: 2.5,
   Rift: 2.5,
   Freeze: 1.5,
+  Shears: 3,
+  Auger: 3.5,
   Blaster: 3,
   Crash: 3.5,
   Haymaker: 3,

@@ -59,7 +59,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Crabhammer]: 'Jaws',
   [Moves.ViceGrip]: 'Jaws',
   [Moves.Clamp]: 'Jaws',
-  [Moves.Guillotine]: 'Jaws',
+  [Moves.Guillotine]: 'Shears',
 
   // Claws and blades, which differ by how many marks and how big
   [Moves.Scratch]: 'Claw',
@@ -90,7 +90,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.DreamEater]: 'Drain',
 
   // The same point, turning
-  [Moves.HornDrill]: 'Drill',
+  [Moves.HornDrill]: 'Auger',
   [Moves.DrillPeck]: 'Drill',
 
   // What the mainline draws for these, rather than what their type

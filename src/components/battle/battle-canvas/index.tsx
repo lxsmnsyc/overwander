@@ -66,6 +66,7 @@ import {
   skiesOver,
   unitsOf,
 } from './field';
+import { type CastLabels, interruptCast, trackCast } from './cast-label';
 import { COLORS, FIELD_UNIT, HEIGHT, JOLT_BEAT, LOADING_LABEL, TURN_SLOP, WIDTH } from './metrics';
 import {
   CUE_GAP,
@@ -195,6 +196,9 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
    * than the wall's — what spaces out a cue that keeps firing
    */
   let clock = 0;
+
+  /** The move-name plates on the field, kept past a cast for their exit */
+  const labels: CastLabels = new Map();
 
   /**
    * The move effects playing right now. Not a signal: nothing renders
@@ -631,6 +635,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
               batch,
               bakery,
               lit: true,
+              density: stage.scale * sized.ratio,
               solid: (on: boolean): void => {
                 batch.opaque(on);
               },
@@ -668,7 +673,8 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         const near = scene?.depthOf(slot.depth) ?? 0;
 
         batch?.standing(near, near);
-        drawSlot(context, slot, striking, clock, gone.has(slot.unit), onto);
+        trackCast(labels, slot.unit, clock);
+        drawSlot(context, slot, striking, clock, labels, gone.has(slot.unit), onto);
       }
 
       // The sky, over the pokemon and under whatever is going off:
@@ -1096,6 +1102,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     // whatever it was doing
     const stopping = props.battle.on(BattleEvents.UnitInterrupt, EventPriority.Post, (event) => {
       striking.delete(event.source);
+      interruptCast(labels, event.source, clock);
       // Whatever took it off the field was interrupted, so it is back
       gone.delete(event.source);
     });

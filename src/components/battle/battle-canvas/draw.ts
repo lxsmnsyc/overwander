@@ -1,5 +1,6 @@
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
 import type { Slot } from './field';
+import { type CastLabels, drawCastLabel } from './cast-label';
 import { COLORS, HIT_REACH, NAMED_RADIUS } from './metrics';
 import { type Striking, animationFor } from './motion';
 import type { ProgressData } from '../../../battle/events';
@@ -14,17 +15,11 @@ import { litPurifiedAura, litShadowAura, litSparkle } from '../../../canvas/batt
 import { cornersOf, shadowCorners } from '../../../canvas/placement';
 import { facingVector } from '../../../canvas/facing';
 import { SHIM_SPANS, shimMotion } from '../../../canvas/battle/sprite-shim';
-import {
-  SHADOW_STAMP,
-  bakeShadowDisc,
-  bakeWord,
-  paintSparkle,
-} from '../../overworld/chunk-canvas/scenery';
+import { SHADOW_STAMP, bakeShadowDisc, paintSparkle } from '../../overworld/chunk-canvas/scenery';
 import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/sparkle';
 import type { Point } from '../../../canvas/sprite-sheet';
 import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
-import { getMoveData } from '../../../data/moves';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
 
 /**
@@ -72,6 +67,8 @@ export interface SlotBatch {
   solid?: (on: boolean) => void;
   /** Whether auras and sparkles are built in the scene rather than stamped here */
   lit?: boolean;
+  /** Screen pixels per drawing unit, for art that has to stay sharp */
+  density?: number;
 }
 
 /** The four corners of a rectangle, for the batch */
@@ -153,37 +150,6 @@ function fractionOf(progress: ProgressData): number {
   return progress.duration <= 0
     ? 1
     : Math.min(1, Math.max(0, progress.progress / progress.duration));
-}
-
-/**
- * The font a move's name is written in. Fixed rather than fitted to
- * the slot, so a word is baked once and stamped from then on
- */
-const LABEL_FONT = '12px sans-serif';
-
-function drawLabel(
-  context: CanvasRenderingContext2D,
-  text: string,
-  x: number,
-  y: number,
-  color: string,
-  onto?: SlotBatch,
-  alpha = 1,
-): void {
-  const word = onto == null ? null : bakeWord(onto.bakery, text, LABEL_FONT, color);
-
-  if (onto == null || word == null) {
-    context.fillStyle = color;
-    context.textAlign = 'center';
-    context.fillText(text, x, y);
-    return;
-  }
-  onto.batch.quad(
-    onto.bakery.sheet,
-    word,
-    corners(x - word.width / 2, y - word.height / 2, word.width, word.height),
-    alpha,
-  );
 }
 
 /**
@@ -571,6 +537,7 @@ export function drawSlot(
   slot: Slot,
   striking: Map<Unit, Striking>,
   clock: number,
+  labels: CastLabels,
   hidden = false,
   onto?: SlotBatch,
 ): void {
@@ -748,8 +715,6 @@ export function drawSlot(
   // less than none
   const roomy = slot.radius >= NAMED_RADIUS;
 
-  context.font = LABEL_FONT;
-
   // No name and no level. The field says who is still up and what is
   // landing on them; **which** pokemon each one is belongs to the card
   // that comes up over it, where there is room to say it once and say
@@ -780,18 +745,13 @@ export function drawSlot(
     alpha,
   );
 
-  // What it is in the middle of, named above its head: a cast the
-  // other side can still interrupt, or a channel already landing
-  if (busy != null && unit.alive && roomy) {
-    drawLabel(
-      context,
-      getMoveData(busy.move).name,
-      slot.x,
-      slot.y - slot.radius * 2 - 8,
-      COLORS.text,
-      onto,
-      alpha,
-    );
+  // What it is in the middle of, named on a plate above its head. The
+  // plate outlives the cast by its exit animation, so it is read from
+  // the tracked labels rather than from the unit
+  const label = labels.get(unit);
+
+  if (label != null && roomy) {
+    drawCastLabel(context, label, slot.x, slot.y - slot.radius * 2 - 14, clock, onto, alpha);
   }
   context.globalAlpha = 1;
 }

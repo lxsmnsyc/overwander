@@ -115,8 +115,31 @@ Sinnoh's moves, and dozens of older ones, land as a picture of their own.
 - **X-Scissor and Cross Chop cross into an X**, and every slash is a straight
   blade.
 - **Sweet Scent blows petals** and **Aeroblast is a storm**.
+- **Guillotine snaps two great pincers shut**, and **Horn Drill** grinds a
+  spinning drill straight through the target.
 - **The mark each blow leaves** is drawn in the field, in front of the pokemon
   it hit.
+
+## A clearer battle
+
+- **The ground fades into fog** toward the horizon, so the fight stands out
+  from bright biomes. Each side stands inside a faint ring.
+- **One bar across the top** shows the battle's name, each side's health, how
+  many still stand, and the Leave button. A raid boss gets a wide health bar of
+  its own there.
+- **A move's name shows on a plate** in its type's colour while it is cast. The
+  plate floats away when the move lands and shakes off in red when it is
+  interrupted.
+- **A pokemon that changes its look**, by Transform or a form change, flashes
+  and swells into the new one, and never vanishes while it loads.
+
+## The board meets the sky
+
+A new setting picks how the edge of the overworld board meets the sky.
+
+- **Haze**, the default, dissolves the country into the sky toward the edge.
+- **Full board** draws the ground to every corner of the screen.
+- **Plain** keeps the board as it was.
 
 ## Your buddy takes you places
 
@@ -219,6 +242,8 @@ Five more houses, and a **print** for each.
 - **Level Up** carries its candy cost in a badge, and **View in Pokedex** and
   **Release** sit in the Actions menu.
 - **The full ownership history** opens in its own dialog.
+- **Moves, abilities, held items and stats** each have an info icon that
+  explains how they work.
 
 ## Menus in tabs
 
@@ -228,6 +253,10 @@ Five more houses, and a **print** for each.
 - **The bag** splits into Items and Candies, with a tab for each kind of item.
 - **A profile** shows gold and the worn title on one row, and its Friends tab no
   longer jumps back to Battles.
+- **Friend requests** are a tab inside Friends, which shows how many are
+  waiting.
+- **Awards** split into Badges, Achievements, Type specialists and Trainers
+  beaten.
 
 ## Raids play fair
 
@@ -238,6 +267,10 @@ Five more houses, and a **print** for each.
   Seed and the three stat swaps no longer work on one.
 - **Taunt, Torment, Imprison and Encore** no longer hold a boss to part of its
   move set.
+- **A boss has 60 times its species' HP**, up from 20 times.
+- **A boss takes and heals fixed amounts.** Super Fang, Endeavor and one-hit KO
+  moves deal it up to 200. Burns, poison, seeds and weather take up to 200 a
+  hit, up from 100. It heals up to 1,000 HP a second, rather than 1/8 of its HP.
 
 ## Fixes along the way
 
@@ -245,6 +278,8 @@ Five more houses, and a **print** for each.
   on it.
 - **A confused pokemon hitting itself** no longer breaks the fight.
 - **Follow Me outranks** the abilities that pull a move elsewhere.
+- **The battle AI sings Perish Song** only when the other side stands to lose
+  more HP to it than its own.
 - **A rental support** is no longer given a nature that raises its attack.
 - **Big raids run lighter.** Asking whether a pokemon has an ability no longer
   sweeps the whole field.

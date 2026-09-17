@@ -50,6 +50,8 @@ export default function PortraitSection(props: PortraitSectionProps): JSX.Elemen
             animation={SpriteAnim.Idle}
             direction="DownLeft"
             fill
+            // An egg has no height of its own to be drawn at
+            sized={!isEgg(props.caught)}
             shadow
             label={props.named}
           />

@@ -85,6 +85,12 @@ export { default as BANNED_BOSS_MOVES, getBannedBossMoves } from '../../data/ove
 const BOSS_REFUSED_MOVES = new Set<Moves>([...ABILITY_MOVES, ...STAGE_SWAP_MOVES]);
 
 /**
+ * What a boss shrugs off when it is aimed at. Me First cuts its cast
+ * off, so a lobby taking turns with it would keep it out of the fight
+ */
+const BOSS_IMMUNE_MOVES = new Set<Moves>([Moves.MeFirst]);
+
+/**
  * The moves that hold a pokemon to part of its move set. A boss
  * refuses each of them, so the AI never spends a cast finding out
  */
@@ -259,6 +265,18 @@ const setupAbilities = [
 
           event.source.triggerAbility(Abilities.Boss);
         }
+        if (
+          event.success &&
+          BOSS_IMMUNE_MOVES.has(event.move) &&
+          event.target.type === MoveTargetType.Unit &&
+          event.target.unit !== event.source &&
+          event.target.unit.hasAbility(Abilities.Boss)
+        ) {
+          event.success = false;
+
+          // For visual cues
+          event.target.unit.triggerAbility(Abilities.Boss);
+        }
       }),
       // And the AI is told rather than left to spend a cast finding out
       battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Post, (event) => {
@@ -359,7 +377,9 @@ const setupAbilities = [
       battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Post, (event) => {
         if (
           event.usable &&
-          (BOSS_FAILED_MOVES.has(event.move) || MOVE_HOLDS.has(event.move)) &&
+          (BOSS_FAILED_MOVES.has(event.move) ||
+            MOVE_HOLDS.has(event.move) ||
+            BOSS_IMMUNE_MOVES.has(event.move)) &&
           event.target.type === MoveTargetType.Unit &&
           event.target.unit !== event.source &&
           event.target.unit.hasAbility(Abilities.Boss)

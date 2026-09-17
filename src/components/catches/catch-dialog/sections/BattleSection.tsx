@@ -74,8 +74,14 @@ export interface BattleSectionProps {
   onArrange: (order: CatchOrder) => void;
 }
 
-/** How big a move's type and category marks are drawn */
+/** How big a move's type mark is drawn */
 const MARK_SIZE = 18;
+
+/**
+ * The category badge's width. The sheet cuts it at 32x14, so this is
+ * what stands it as tall as the row's line of text
+ */
+const CATEGORY_SIZE = 45;
 
 /**
  * A slot the pokemon could fill but has not: drawn so the layout never
@@ -251,7 +257,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                       <Sigil type={getMoveData(move()).type} size={MARK_SIZE} />
                       <MoveCategorySprite
                         category={getMoveData(move()).category}
-                        size={MARK_SIZE}
+                        size={CATEGORY_SIZE}
                       />
                     </span>
                   </MoveHoverCard>

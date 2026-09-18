@@ -27,9 +27,18 @@ import {
   GUARD_FACTOR,
   SPOTTER_ACCURACY,
 } from '../../../../src/battle/abilities/signature/patrat-to-purrloin';
+import {
+  LOAD_BEARING_DEALT,
+  LOAD_BEARING_TAKEN,
+  RIPPLE_OUT_FRACTION,
+} from '../../../../src/battle/abilities/signature/audino-to-sawk';
+import {
+  BLUE_BELT_SCALE,
+  RED_BELT_SCALE,
+} from '../../../../src/battle/abilities/signature/__create';
 import turns from '../../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../../harness';
-import { dealDamage } from './helpers';
+import { dealDamage, resolveAttackDamage } from './helpers';
 
 function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
   return { type: MoveTargetType.Unit, unit } as const;
@@ -434,5 +443,128 @@ describe('the four the forest holds', () => {
     });
 
     expect(ally.stages[Stages.Attack]).toBe(0);
+  });
+});
+
+describe('the rest of what the forest holds', () => {
+  it('keeps a teammate standing on 1 HP, once each and never itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const audino = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    audino.addAbility(Abilities.Ward);
+    audino.enter();
+    mate.enter();
+    attacker.enter();
+    mate.setHealth(5);
+    audino.setHealth(5);
+
+    attacker.attack(mate, Moves.Tackle, 400, Types.Normal, MoveCategories.Physical, 0);
+    expect(mate.health).toBe(1);
+    expect(mate.alive).toBe(true);
+
+    // The second blow is not covered: one ward each
+    attacker.attack(mate, Moves.Tackle, 400, Types.Normal, MoveCategories.Physical, 0);
+    expect(mate.alive).toBe(false);
+
+    // The holder never wards itself
+    attacker.attack(audino, Moves.Tackle, 400, Types.Normal, MoveCategories.Physical, 0);
+    expect(audino.alive).toBe(false);
+  });
+
+  it('carries the beam while it is healthy and swings it once it is not', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const timburr = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    timburr.addAbility(Abilities.LoadBearing);
+    timburr.enter();
+    plain.enter();
+    foe.enter();
+
+    const covered = resolveAttackDamage(battle, foe, timburr);
+    const bare = resolveAttackDamage(battle, foe, plain);
+
+    expect(covered / bare).toBeCloseTo(LOAD_BEARING_TAKEN, 2);
+
+    // Nothing extra out of it while the beam is still up
+    expect(resolveAttackDamage(battle, timburr, foe)).toBeCloseTo(
+      resolveAttackDamage(battle, plain, foe),
+      2,
+    );
+
+    timburr.setHealth(Math.floor(timburr.checkStat(Stats.HP, 0) / 4));
+
+    const dropped = resolveAttackDamage(battle, foe, timburr);
+    const swung = resolveAttackDamage(battle, timburr, foe);
+
+    expect(dropped).toBeCloseTo(bare, 2);
+    expect(swung / resolveAttackDamage(battle, plain, foe)).toBeCloseTo(LOAD_BEARING_DEALT, 2);
+  });
+
+  it('shakes every other enemy for a quarter of what it dealt', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const toad = createUnit(battle, teamA);
+    const hit = createUnit(battle, teamB);
+    const beside = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    toad.addAbility(Abilities.RippleOut);
+    toad.enter();
+    hit.enter();
+    beside.enter();
+
+    const whole = beside.health;
+    const dealt = dealDamage(toad, hit, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(dealt).toBeGreaterThan(0);
+    expect(whole - beside.health).toBeCloseTo(dealt * RIPPLE_OUT_FRACTION, 0);
+  });
+
+  it('has the throw cover its whole team, the holder included', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const throh = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const spare = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    throh.addAbility(Abilities.RedBelt);
+    throh.enter();
+    mate.enter();
+    foe.enter();
+    spare.enter();
+
+    const guarded = resolveAttackDamage(battle, foe, mate);
+    const onHolder = resolveAttackDamage(battle, foe, throh);
+    const plain = resolveAttackDamage(battle, foe, spare);
+
+    expect(guarded).toBeCloseTo(onHolder, 2);
+    expect(guarded / plain).toBeCloseTo(RED_BELT_SCALE, 2);
+  });
+
+  it('has the strike arm its whole team, the holder included', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const sawk = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const spare = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    sawk.addAbility(Abilities.BlueBelt);
+    sawk.enter();
+    mate.enter();
+    foe.enter();
+    spare.enter();
+
+    const armed = resolveAttackDamage(battle, mate, foe);
+    const fromHolder = resolveAttackDamage(battle, sawk, foe);
+    const plain = resolveAttackDamage(battle, foe, spare);
+
+    expect(armed).toBeCloseTo(fromHolder, 2);
+    expect(armed / plain).toBeCloseTo(BLUE_BELT_SCALE, 2);
   });
 });

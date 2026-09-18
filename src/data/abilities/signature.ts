@@ -1559,6 +1559,35 @@ export default function registerSignatureAbilities(): void {
     description: 'Its moves hit 1.25x and wind up 25% slower.',
   });
 
+  registerSignature(Families.Audino, Abilities.Ward, {
+    name: 'Ward',
+    description:
+      'While it stands, the first blow that would finish a teammate leaves them on 1 HP instead. Once per teammate.',
+  });
+
+  registerSignature(Families.Timburr, Abilities.LoadBearing, {
+    name: 'Load Bearing',
+    description:
+      'At or above 1/2 HP it takes 0.6x from everything. Below that it takes the lot and deals 1.4x.',
+  });
+
+  registerSignature(Families.Tympole, Abilities.RippleOut, {
+    name: 'Ripple Out',
+    description: 'A move it lands also deals 1/4 of that damage to every other enemy.',
+  });
+
+  // Throh and Sawk are one dojo split in two: the throw covers the
+  // team and the strike arms it, each for physical moves only
+  registerSignature(Families.Throh, Abilities.RedBelt, {
+    name: 'Red Belt',
+    description: 'Physical moves hit its whole team at 0.85x while it stands, itself included.',
+  });
+
+  registerSignature(Families.Sawk, Abilities.BlueBelt, {
+    name: 'Blue Belt',
+    description: 'Its whole team throws physical moves at 1.15x while it stands, itself included.',
+  });
+
   // The four the forest holds
   registerSignature(Families.Sewaddle, Abilities.Tailor, {
     name: 'Tailor',

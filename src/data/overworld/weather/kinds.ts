@@ -117,7 +117,7 @@ export const WEATHER_DESCRIPTIONS: Record<Weather, string> = {
   [Weather.DarkDay]:
     'Noon gone dark. It favours every type, and a third of what it meets is a shadow.',
   [Weather.Fogbow]:
-    'A rainbow with the colour gone. Anything met under it knows a move from its line.',
+    'A rainbow with the colour gone. 1 in 4 it meets has room for a 5th move, 1 in 16 a 6th.',
 };
 
 /**

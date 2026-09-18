@@ -4,7 +4,7 @@ import { Slots, getSlots } from '../../src/data/constants/slots';
 import { MAX_IV, STAT_ORDER, getIV } from '../../src/data/constants/stats';
 import { registerMoves } from '../../src/data/moves';
 import type { Species } from '../../src/data/ids/species';
-import { WEATHER_MIN_IV, isWeatherFavored } from '../../src/data/overworld/weather';
+import Weather, { WEATHER_MIN_IV, isWeatherFavored } from '../../src/data/overworld/weather';
 import {
   getBaseSpecies,
   getEggMoves,
@@ -52,6 +52,30 @@ function speciesWith(eggMoves: number): Species {
 }
 
 describe('a nest egg', () => {
+  it('hatches with room to spare where the nest was claimed under a fogbow', () => {
+    // A chunk and window the fogbow stands over, and the same nest
+    // under a plain sky for comparison
+    const fogbow = new ChunkSnapshot(world.getChunk(-3, -16), 7_200_000);
+    const species = speciesWith(2);
+
+    expect(fogbow.weather).toBe(Weather.Fogbow);
+
+    const rooms = new Set<number>();
+    let widest = 0;
+
+    for (let player = 0; player < 200; player += 1) {
+      const egg = deriveNestEgg(fogbow, 5, species, `player-${player}`, MAX_LEVEL);
+
+      rooms.add(getSlots(egg.slots, Slots.Move));
+      widest = Math.max(widest, egg.moves.length);
+      // Whatever it hatched with, it has the room for
+      expect(egg.moves.length).toBeLessThanOrEqual(getSlots(egg.slots, Slots.Move));
+    }
+    // Some of them gain a slot, some gain two, and most gain neither
+    expect(rooms).toEqual(new Set([4, 5, 6]));
+    expect(widest).toBe(6);
+  });
+
   it('hatches with at least two perfect stats', () => {
     const snapshot = new ChunkSnapshot(world.getChunk(0, 0), 0);
     const species = speciesWith(2);

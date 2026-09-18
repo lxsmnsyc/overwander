@@ -209,6 +209,9 @@ async function openRock(
   const encounter = deriveEncounter(snapshot, [species, rng.int32(), rng.int32()], uid, {
     type: EncounterType.Revived,
     level: FOSSIL_REVIVE_LEVEL,
+    // The sky over the bench it was opened on, which is what a fogbow
+    // reads to hand it room for another move
+    weather: snapshot.weather,
   });
 
   try {

@@ -919,6 +919,7 @@ export const enum Items {
   SoulDew = 433,
   SootheBell = 434,
   MachoBrace = 435,
+  LoadedDice = 436,
 }
 
 /**

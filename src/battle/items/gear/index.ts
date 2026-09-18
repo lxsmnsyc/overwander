@@ -2,6 +2,7 @@ import { Items } from '../../../data/ids/items';
 import type Battle from '../../core';
 import {
   setupBrightPowder,
+  setupLoadedDice,
   setupScopeLens,
   setupSpeciesLens,
   setupWideLens,
@@ -81,6 +82,7 @@ function weatherRockSetups(): ((battle: Battle) => void)[] {
 
 const SETUPS: ((battle: Battle) => void)[] = [
   setupLeftovers,
+  setupLoadedDice,
   setupMachoBrace,
   setupSoulDew,
   setupBlackSludge,

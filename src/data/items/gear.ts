@@ -115,6 +115,10 @@ export const FOUND_GEAR: Map<Items, [name: string, description: string]> = new M
   [Items.BigRoot, ['Big Root', '1.3x on everything its holder drains.']],
   [Items.SoulDew, ['Soul Dew', '1.2x damage from a Latios’ or Latias’ Psychic and Dragon moves.']],
   [
+    Items.LoadedDice,
+    ['Loaded Dice', 'A move of its holder’s that strikes several times never lands fewer than 4.'],
+  ],
+  [
     Items.HeavyDutyBoots,
     ['Heavy-Duty Boots', 'Its holder walks over spikes, toxic spikes and stealth rock.'],
   ],

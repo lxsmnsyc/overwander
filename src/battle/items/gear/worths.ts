@@ -223,6 +223,13 @@ export const SOUL_DEW_FACTOR = 1.2;
  * half of the bargain the fight can see
  */
 export const MACHO_BRACE_SPEED = 0.5;
+
+/**
+ * The fewest strikes a Loaded Dice holder throws. It never adds a
+ * strike to a move that lands a fixed number of them: a Double Kick is
+ * two kicks however the dice fall
+ */
+export const LOADED_DICE_FLOOR = 4;
 export const SOUL_DEW_SPECIES = new Set<Species>([Species.Latios, Species.Latias]);
 export const SOUL_DEW_TYPES = new Set<Types>([Types.Psychic, Types.Dragon]);
 

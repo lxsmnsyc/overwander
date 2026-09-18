@@ -217,6 +217,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     // The two relics. A Soul Dew is nothing to anybody but the pair it
     // belongs to, and a brace is heavier than anything wants to wear
     { item: Items.SoulDew, weight: 2 },
+    // Somebody's weighted dice, which is worth a slot to the handful
+    // of pokemon that throw a move several times over
+    { item: Items.LoadedDice, weight: 3 },
     { item: Items.MachoBrace, weight: 3 },
     // Rung for a pokemon that was not caught in a comfortable ball
     { item: Items.SootheBell, weight: 3 },

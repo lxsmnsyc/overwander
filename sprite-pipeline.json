@@ -20820,15 +20820,15 @@
       }
     },
     "public/sprites/ui/items/held/image.png": {
-      "digest": "6fc1bc86c8957e78",
-      "bytes": 21875,
-      "width": 301,
-      "height": 143,
+      "digest": "7eff7e48fdfb7b9f",
+      "bytes": 21599,
+      "width": 216,
+      "height": 201,
       "compact": {
-        "at": "2026-09-07T07:18:34Z",
+        "at": "2026-09-18T02:40:18Z",
         "as": "already compact",
-        "was": 21875,
-        "bytes": 21875
+        "was": 21599,
+        "bytes": 21599
       }
     },
     "public/sprites/ui/items/incense/image.png": {

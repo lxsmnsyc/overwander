@@ -6,6 +6,7 @@ import { BattleEvents, MoveTargetType } from '../../events';
 import { createHeldItem, holds } from '../__create';
 import {
   BRIGHT_POWDER_EVASION,
+  LOADED_DICE_FLOOR,
   SCOPE_LENS_CRITICAL_STAGES,
   SPECIES_LENS_CRITICAL_STAGES,
   WIDE_LENS_ACCURACY,
@@ -65,6 +66,19 @@ export const setupScopeLens = createHeldItem(Items.ScopeLens, (battle) =>
 
 // A species lens is worth twice a Scope Lens to the one pokemon it was
 // made for, and nothing to anybody else
+/**
+ * Loaded Dice: the roll is already resolved through the event a Skill
+ * Link rides, so the dice only have to raise it. Never past what the
+ * move itself throws, which is what leaves a two-strike move alone
+ */
+export const setupLoadedDice = createHeldItem(Items.LoadedDice, (battle) =>
+  battle.on(BattleEvents.CheckUnitMoveHits, EventPriority.Post, (event) => {
+    if (holds(event.source, Items.LoadedDice)) {
+      event.hits = Math.max(event.hits, Math.min(LOADED_DICE_FLOOR, event.max));
+    }
+  }),
+);
+
 export function setupSpeciesLens(item: Items, species: Species): (battle: Battle) => void {
   return createHeldItem(item, (battle) =>
     battle.on(BattleEvents.UnitAttackCheckCriticalRatio, EventPriority.Post, (event) => {

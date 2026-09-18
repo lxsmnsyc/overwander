@@ -30,7 +30,11 @@ import {
   WIDE_LENS_ACCURACY,
   ZOOM_LENS_ACCURACY,
 } from '../../src/battle/items/gear';
-import { MACHO_BRACE_SPEED, SOUL_DEW_FACTOR } from '../../src/battle/items/gear/worths';
+import {
+  LOADED_DICE_FLOOR,
+  MACHO_BRACE_SPEED,
+  SOUL_DEW_FACTOR,
+} from '../../src/battle/items/gear/worths';
 import { X_ITEM_STAGES_BOOST } from '../../src/battle/items/battle-items';
 import { POLICY_STAGES, REACTION_STAGES } from '../../src/battle/items/one-shots';
 import { SACRED_ASH_DELAY } from '../../src/battle/items/sacred-ash';
@@ -420,6 +424,23 @@ describe('gear that changes a rule', () => {
       other.checkMovePower(Moves.Surf, target),
     );
     expect(other.checkMovePower(Moves.Psychic, target)).toBe(bare);
+  });
+
+  it('floors a Loaded Dice holder’s strikes at four', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    const target = unitTarget(createUnit(battle, teamB));
+
+    holder.addItem(Items.LoadedDice);
+
+    // A poor roll is lifted, a good one is left where it is
+    expect(holder.checkMoveHits(Moves.SpikeCannon, target, 2, 5)).toBe(LOADED_DICE_FLOOR);
+    expect(holder.checkMoveHits(Moves.SpikeCannon, target, 5, 5)).toBe(5);
+    expect(bare.checkMoveHits(Moves.SpikeCannon, target, 2, 5)).toBe(2);
+
+    // And a move that throws a fixed number of strikes throws that many
+    expect(holder.checkMoveHits(Moves.DoubleKick, target, 2, 2)).toBe(2);
   });
 
   it('weighs a Macho Brace holder down', () => {

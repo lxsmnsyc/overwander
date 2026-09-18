@@ -1,5 +1,23 @@
 # overwander
 
+## 4.1.1
+
+### Patch Changes
+
+- dbca38a: Experts build sheets on what a move really lands:
+  - Giga Impact and the other moves that leave the user standing still are worth half their power.
+  - Last Resort is rarely worth a slot, since it does nothing until every other move has been cast.
+  - A move that strikes several times is worth every strike, and Skill Link counts them all.
+  - Moves whose power is worked out at the cast, such as Seismic Toss, Return, Heavy Slam and Gyro Ball, are worth a slot again.
+  - A move with priority is worth a little more, because it winds up faster.
+- dbca38a: Experts weigh the recoil of Flare Blitz, Brave Bird, Wood Hammer and Head Smash against how much HP the pokemon has.
+- 60bf1ea: Five held items to find and carry:
+  - Soul Dew: 1.2x damage from a Latios' or Latias' Psychic and Dragon moves.
+  - Soothe Bell: its holder warms to its trainer 2x as fast, on top of whatever its ball is worth.
+  - Macho Brace: a wing or vitamin used on its holder is worth 2x the effort, but its Speed is halved.
+  - Heavy-Duty Boots: its holder walks over spikes, toxic spikes and stealth rock.
+  - Loaded Dice: a move of its holder's that strikes several times never lands fewer than 4.
+
 ## 4.1.0
 
 ### Minor Changes

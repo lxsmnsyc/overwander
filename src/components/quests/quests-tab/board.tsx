@@ -6,7 +6,8 @@ import { type RotationBoard, type RotationScope, claimRotation } from '../../../
 import { CHAINS, CHAIN_ORDER, type Chains, type Quests } from '../../../data/quests';
 import { type QuestReward, QuestRewardKind } from '../../../data/quests/types';
 import { GameDialog, useGame } from '../../app/game-context';
-import { Badge, DialogSection, type ToastTone, useToast } from '../../styled';
+import { Badge, DialogSection, Hint, HintList, type ToastTone, useToast } from '../../styled';
+import { DAILY_SLOTS } from '../../../data/quests/rotations';
 import { For, Index, type JSX, type Resource, Show, createEffect, createSignal } from 'solid-js';
 import {
   Accordion,
@@ -220,7 +221,24 @@ export default function QuestBoard(props: {
       <Show when={props.rotations.latest}>
         {(board) => (
           <>
-            <DialogSection title="Today">
+            <DialogSection
+              title="Today"
+              hint={
+                <Hint title="About quests">
+                  <HintList>
+                    <li>
+                      {DAILY_SLOTS} dailies refresh every day at midnight UTC, and one weekly hunt
+                      refreshes every Monday.
+                    </li>
+                    <li>Only what you do after a daily or weekly starts counts toward it.</li>
+                    <li>
+                      Each chain below opens one step at a time, as you finish the one before.
+                    </li>
+                    <li>A finished quest waits for you to claim its reward.</li>
+                  </HintList>
+                </Hint>
+              }
+            >
               {/* By slot rather than by value: today's three keep
                   their places, and a re-read is new numbers in the
                   same three cards */}

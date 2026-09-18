@@ -25,7 +25,8 @@ import { DARK_DAY_LAMP_CELLS } from '../../../data/overworld/weather';
 import { CAVE_DARK_CELLS } from '../../../data/overworld/cave';
 import { Depth } from '../../../overworld/depth';
 import createOverworld from '../../../overworld/setup';
-import { BOARD_CELLS, BOARD_CENTER, BOARD_MARGIN, BOARD_RADIUS, PUBLISHED_SPAWNS } from './metrics';
+import settings from '../../app/settings';
+import { BOARD_CELLS, BOARD_CENTER, BOARD_RADIUS, PUBLISHED_SPAWNS, boardMargin } from './metrics';
 
 /**
  * The board is a window on world cells rather than a chunk, so
@@ -393,7 +394,13 @@ export function buildBoardView(
     }
   }
 
-  const ground = readBoardGround(world, originX, originY, BOARD_MARGIN, BOARD_CELLS);
+  const ground = readBoardGround(
+    world,
+    originX,
+    originY,
+    boardMargin(settings().boardEdge),
+    BOARD_CELLS,
+  );
   const walls = new Set<number>();
   // Whether a cell stops a walk depends only on the world cell, so what the last
   // board worked out still holds for the cells both boards cover

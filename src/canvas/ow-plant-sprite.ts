@@ -20,6 +20,7 @@ import type { SpriteQuad } from './placement';
 import { type BasicSpriteData, asBasicSpriteData } from './basic-sprite';
 import { type FrameRect, gridOf } from './ow-char-sprite';
 import { SPRITE_TICK } from './sprite-sheet';
+import { stampedFile } from './sprite-stamps';
 
 /**
  * How long one frame is held, in milliseconds. Twelve ticks is a
@@ -164,8 +165,12 @@ export default class OWPlantSprite {
    * The sheet and its description together: `data.json` and `image.png`
    * under one folder, the layout the plant script writes
    */
-  static async fetch(basePath: string, layout: OWPlantLayout = {}): Promise<OWPlantSprite> {
-    const response = await fetch(`${basePath}/data.json`);
+  static async fetch(
+    basePath: string,
+    layout: OWPlantLayout = {},
+    stamp: string | null = null,
+  ): Promise<OWPlantSprite> {
+    const response = await fetch(stampedFile(`${basePath}/data.json`, stamp));
 
     if (!response.ok) {
       throw new Error(`No sprite data at ${basePath}`);
@@ -174,14 +179,18 @@ export default class OWPlantSprite {
     const described: unknown = await response.json();
     const carried = plantLayoutOf(described);
 
-    return new OWPlantSprite(`${basePath}/image.png`, asBasicSpriteData(described), {
-      ...layout,
-      columns: layout.columns ?? carried.columns,
-      rows: layout.rows ?? carried.rows,
-      sourceFrameWidth: layout.sourceFrameWidth ?? carried.sourceFrameWidth,
-      sourceFrameHeight: layout.sourceFrameHeight ?? carried.sourceFrameHeight,
-      base: layout.base ?? carried.base,
-    });
+    return new OWPlantSprite(
+      stampedFile(`${basePath}/image.png`, stamp),
+      asBasicSpriteData(described),
+      {
+        ...layout,
+        columns: layout.columns ?? carried.columns,
+        rows: layout.rows ?? carried.rows,
+        sourceFrameWidth: layout.sourceFrameWidth ?? carried.sourceFrameWidth,
+        sourceFrameHeight: layout.sourceFrameHeight ?? carried.sourceFrameHeight,
+        base: layout.base ?? carried.base,
+      },
+    );
   }
 
   /**

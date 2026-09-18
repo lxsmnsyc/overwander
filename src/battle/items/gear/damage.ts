@@ -15,6 +15,9 @@ import {
   METRONOME_LIMIT,
   METRONOME_STEP,
   SHELL_BELL_SHARE,
+  SOUL_DEW_FACTOR,
+  SOUL_DEW_SPECIES,
+  SOUL_DEW_TYPES,
 } from './worths';
 
 /** What a blow is worth to whoever threw it, and what it hands back */
@@ -80,6 +83,24 @@ export function setupBand(item: Items, boosted: MoveCategories): (battle: Battle
     }),
   );
 }
+
+/**
+ * A Soul Dew lifts what the two it belongs to are actually made of.
+ * Nobody else gets anything from one: it is their own relic rather
+ * than a power item anything could carry
+ */
+export const setupSoulDew = createHeldItem(Items.SoulDew, (battle) =>
+  battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+    if (
+      event.power != null &&
+      SOUL_DEW_SPECIES.has(event.source.species) &&
+      SOUL_DEW_TYPES.has(event.source.checkMoveType(event.move, event.target)) &&
+      holds(event.source, Items.SoulDew)
+    ) {
+      event.power *= SOUL_DEW_FACTOR;
+    }
+  }),
+);
 
 /**
  * An Expert Belt pays only on a blow that was already landing hard,

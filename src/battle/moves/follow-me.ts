@@ -98,4 +98,18 @@ export default function setupFollowMe(battle: Battle): void {
   battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
     redirect(event.source);
   });
+
+  // With no teammate standing there is nobody to draw fire away from
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (!event.usable || !CALLS.has(event.move)) {
+      return;
+    }
+
+    for (const unit of event.source.team.units) {
+      if (unit !== event.source && unit.alive) {
+        return;
+      }
+    }
+    event.usable = false;
+  });
 }

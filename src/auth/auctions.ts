@@ -6,6 +6,7 @@ import {
   reclaimAuction as reclaimOnServerSide,
 } from '../server/auctions';
 import { requireUid } from '../server/auth';
+import check, { AUCTION_OFFER, AUCTION_TERMS, GOLD, ID, OFFSET, TOKEN } from '../server/validate';
 import {
   AuctionLot,
   type AuctionOffer,
@@ -111,6 +112,8 @@ export function watchAuction(
 export function watchOpenAuctions(
   onChange: (auctions: [string, AuctionRecord][]) => void,
 ): Unwatch {
+  let held: [string, AuctionRecord][] = [];
+
   const read = async (): Promise<[string, AuctionRecord][]> => {
     const { data } = await getSupabase()
       .from(AUCTION_TABLE)
@@ -121,13 +124,31 @@ export function watchOpenAuctions(
     for (const row of asRecordArray(data)) {
       auctions.push([String(row.id), fromAuctionRow(row)]);
     }
+    held = auctions;
     return auctions;
   };
 
   // The subscription is unfiltered on purpose: the settling of a lot
   // is an UPDATE that leaves the set, which a settled=false filter
-  // would never deliver
-  return watchTable(AUCTION_TABLE, [], read, onChange);
+  // would never deliver. A change carries every column the list reads,
+  // so a bid or a settling is folded in rather than read again
+  return watchTable(AUCTION_TABLE, [], read, onChange, {
+    fromChange: (row) => {
+      const id = String(row.id);
+      const next: [string, AuctionRecord][] = [];
+
+      for (const entry of held) {
+        if (entry[0] !== id) {
+          next.push(entry);
+        }
+      }
+      if (row.settled !== true) {
+        next.push([id, fromAuctionRow(row)]);
+      }
+      held = next;
+      return next;
+    },
+  });
 }
 
 /** The open lots one player has a stake in: the ones they sell, and the ones they bid on */
@@ -390,6 +411,10 @@ async function openAuctionOnServer(
   offset: number,
 ): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(AUCTION_OFFER, offer);
+  check(AUCTION_TERMS, terms);
+  check(OFFSET, offset);
   return openOnServerSide(await requireUid(token), offer, terms, await syncServerClock(), offset);
 }
 
@@ -415,6 +440,9 @@ export async function placeBid(id: string, amount: number): Promise<number | nul
 
 async function placeBidOnServer(token: string, id: string, amount: number): Promise<number | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(GOLD, amount);
   return bidOnServerSide(await requireUid(token), id, amount, await syncServerClock());
 }
 
@@ -432,6 +460,9 @@ export async function claimAuction(id: string): Promise<boolean> {
 
 async function claimAuctionOnServer(token: string, id: string, offset: number): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(OFFSET, offset);
   return claimOnServerSide(await requireUid(token), id, await syncServerClock(), offset);
 }
 
@@ -449,5 +480,7 @@ export async function reclaimAuction(id: string): Promise<boolean> {
 
 async function reclaimAuctionOnServer(token: string, id: string): Promise<boolean> {
   'use server';
+  check(TOKEN, token);
+  check(ID, id);
   return reclaimOnServerSide(await requireUid(token), id, await syncServerClock());
 }

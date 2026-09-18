@@ -9,6 +9,8 @@ import type Lairs from '../data/overworld/lair';
 import { getLairTitle } from '../data/overworld/lair';
 import type { Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
+import { WORLD_GENERATION } from '../overworld/current';
+import { Generation } from '../overworld/world';
 import type { Spawn } from '../overworld/chunk-snapshot';
 import { asNumber, asRecord, asString, asStringArray } from './__normalize';
 import { toZoneKey } from './local-time';
@@ -205,6 +207,14 @@ export function asRaidRecord(value: unknown): RaidRecord {
   };
 }
 /**
+ * What starts a raid id from a later generation, so two worlds never
+ * mint the same lobby. The first generation's ids stay as they were
+ */
+function generationTag(): string {
+  return WORLD_GENERATION === Generation.First ? '' : `#${WORLD_GENERATION}`;
+}
+
+/**
  * The lobby id of a raid landmark in a given raid window. The kind is
  * part of it, so the two landmark types never collide on a cell
  */
@@ -220,7 +230,7 @@ export function raidId(
   // The zone is part of the id because the window is local: two zones
   // can floor to the same window, and what they stage there is not the
   // same boss
-  return `${chunk.seed}${toZoneKey(offset)}@${raidTimestamp}$${tag}${cell}`;
+  return `${generationTag()}${chunk.seed}${toZoneKey(offset)}@${raidTimestamp}$${tag}${cell}`;
 }
 /**
  * The lobby id of a mythical raid: the window, the zone, the relic
@@ -244,7 +254,7 @@ export function mythicalRaidId(
   uid: string,
   offset = 0,
 ): string {
-  return `${toZoneKey(offset)}@${raidTimestamp}$mythical${item}:${uid}`;
+  return `${generationTag()}${toZoneKey(offset)}@${raidTimestamp}$mythical${item}:${uid}`;
 }
 
 /**

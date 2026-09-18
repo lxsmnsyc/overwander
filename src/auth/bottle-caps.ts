@@ -1,6 +1,7 @@
 import type { Items } from '../data/ids/items';
 import useBottleCapOnServerSide from '../server/bottle-caps';
 import { requireUid } from '../server/auth';
+import check, { GAME_ID, ID, TOKEN } from '../server/validate';
 import { syncServerClock } from './clock';
 import getIdToken from './session';
 
@@ -33,5 +34,8 @@ async function useBottleCapOnServer(
   item: Items,
 ): Promise<number | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(GAME_ID, item);
   return useBottleCapOnServerSide(await requireUid(token), catchId, item, await syncServerClock());
 }

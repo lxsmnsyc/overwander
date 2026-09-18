@@ -142,7 +142,8 @@ const enum Landmark {
 export default Landmark;
 
 /**
- * Every landmark, for uniform rolls over the variants
+ * Every landmark, which is the list the country rolls from once its
+ * biome has taken out what cannot be there
  */
 export const LANDMARKS: Landmark[] = [
   Landmark.ItemCache,
@@ -166,6 +167,43 @@ export const LANDMARKS: Landmark[] = [
   Landmark.CaveMouth,
   Landmark.HoneyTree,
 ];
+
+/**
+ * How often each is rolled out in the country, as a weight against
+ * the rest of its biome's pool.
+ *
+ * Everyday things outweigh the things a player goes looking for: a
+ * cache, a bush and a tree are what a walk turns up, a duel or a
+ * grunt is an afternoon, and a raid is a reason to travel. A flat
+ * roll made a legendary's lair as common as a berry patch, which is
+ * the whole of why this table exists.
+ *
+ * A landmark a town lays out, and the two the ground itself decides,
+ * carry no weight here: they are placed rather than rolled
+ */
+export const LANDMARK_WEIGHTS: Record<Landmark, number> = {
+  [Landmark.ItemCache]: 15,
+  [Landmark.BerryPatch]: 15,
+  [Landmark.ApricornTree]: 15,
+  [Landmark.HoneyTree]: 15,
+  [Landmark.Trainer]: 10,
+  [Landmark.TeamRocket]: 10,
+  [Landmark.ShadowLair]: 6,
+  [Landmark.Nest]: 6,
+  [Landmark.LegendaryLair]: 2,
+  [Landmark.FrontierBrain]: 1,
+  // Chartered by a town or cut into the ground, so never rolled
+  [Landmark.WanderingNpc]: 0,
+  [Landmark.Portal]: 0,
+  [Landmark.GymLeader]: 0,
+  [Landmark.EliteFour]: 0,
+  [Landmark.Champion]: 0,
+  [Landmark.Market]: 0,
+  [Landmark.GymSeat]: 0,
+  [Landmark.AuctionBoard]: 0,
+  [Landmark.PokemonCenter]: 0,
+  [Landmark.CaveMouth]: 0,
+};
 
 /**
  * Display names for the landmarks

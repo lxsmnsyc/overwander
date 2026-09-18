@@ -45,7 +45,8 @@ export default function registerGyroBallToFeint(): void {
   });
   registerMove(Moves.NaturalGift, {
     name: 'Natural Gift',
-    description: "Takes the power and the type of the user's berry, and eats it. Nothing without.",
+    description:
+      "Throws the user's berry at 80 power, typed as whatever the berry resists or Normal. The berry is spent.",
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 15,

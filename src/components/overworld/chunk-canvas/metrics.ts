@@ -45,33 +45,6 @@ export function pictureWidth(): number {
  */
 export const SPRITE_STANDS = 21;
 
-/** The height a pokemon is drawn at its sheet's own size, in meters */
-const ORDINARY_HEIGHT = 1;
-
-/**
- * How much of the difference in height survives, and how far it is
- * allowed to carry. Onix is forty Digletts tall, so the ratio is
- * pulled through a root and clamped
- */
-const HEIGHT_CURVE = 0.18;
-
-const MIN_SIZE = 0.85;
-
-const MAX_SIZE = 1.25;
-
-/**
- * How much bigger or smaller than its sheet a pokemon of this height,
- * in meters, is drawn.
- *
- * The sheets are a poor measure of size: PMD art fills much the same
- * box whatever it is drawing, and the `shadowSize` beside it calls a
- * Ponyta small, so a horse came out shorter than a Rattata. The dex
- * height is the game's own answer to how big something is
- */
-export function sizeOf(height: number): number {
-  return Math.min(MAX_SIZE, Math.max(MIN_SIZE, (height / ORDINARY_HEIGHT) ** HEIGHT_CURVE));
-}
-
 /**
  * How many cells tall a charset's own cell is drawn.
  *
@@ -425,6 +398,20 @@ export const VEIL_ALPHA = 0.35;
  * switching between the two as a walk crosses a line reads as a fault
  */
 export const VEIL_FADE = 140;
+
+/**
+ * How far a pointer may travel between pressing and letting go, in CSS
+ * pixels, and still count as a press on the cell it went down on
+ */
+export const PRESS_SLOP = 8;
+
+/**
+ * How much of a creature's frame a press may land in, as the share cut
+ * off each side and off the top: a sheet's frame is padded well past
+ * the body, and a padded box would take presses meant for the cells beside it
+ */
+export const PICK_INSET_SIDE = 0.25;
+export const PICK_INSET_TOP = 0.2;
 
 /** How long one weather takes to give way to the next, in milliseconds */
 export const WEATHER_FADE = 3000;

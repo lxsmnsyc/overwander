@@ -59,6 +59,19 @@ export const HEAL_BONUS = 7;
  */
 export const FEED_BONUS = 5;
 
+/** The share of its health below which a unit has little left to lose */
+const LAST_LEGS = 0.5;
+
+/**
+ * What a move that costs the user its life is charged: almost never
+ * worth it while there is health to spend, a fair trade on the last legs
+ */
+export function sacrificeCost(unit: Unit): number {
+  const ratio = unit.health / Math.max(1, unit.checkStat(Stats.HP, 0));
+
+  return ratio > LAST_LEGS ? USELESS_PENALTY : RISKY_PENALTY;
+}
+
 /**
  * How little a unit can be missing before healing is a wasted cast
  */

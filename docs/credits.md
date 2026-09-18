@@ -58,7 +58,8 @@ with a description saying where the pictures are.
 | `public/sprites/ui/move-categories`                 | The three marks a move's category is shown by                     |
 | `public/sprites/ui/types`                           | The eighteen sigils a type is shown by                            |
 
-Sheets are filed by region, `kanto` and `johto` for the first 251 and their forms
+Sheets are filed by region, `kanto`, `johto`, `hoenn` and `sinnoh` for the first
+493 and their forms
 and `unknown` for Missingno, the egg and the substitute, and which region a
 pokemon belongs to comes from its dex number rather than from a list beside the
 files.
@@ -87,6 +88,13 @@ longer matches its entry has been re-exported since, and the tests say so. The
 import restamps `coats.json` itself, without which a browser draws yesterday's
 sheet against today's description.
 
+Every sheet is asked for at `?v=<stamp>`, a digest of the files it is drawn from,
+so a sheet may be cached for a year and a repacked one is a new address rather
+than whatever the browser kept. The pokemon sheets take their stamp from
+`coats.json`; everything else takes one from `stamps.json`, which
+`pnpm sprite-stamps` writes and `pnpm build` rewrites, so what ships is always a
+digest of what shipped beside it.
+
 ### Where the sheets come from
 
 Each body of somebody else's work, and its terms, is listed in
@@ -100,9 +108,9 @@ appropriate credit, and **not commercially**.
 
 Every sprite in it carries its own credit row in `sprite/{dex}/credits.txt`, with
 the names in the collection's `credit_names.txt`. Those rows are carried into each
-sheet's own `sheet.json`, under `credits`, one list per coat: the 281 sheets that
-ship, Kanto and Johto's 251 with Unown's 27 other letters plus the three under
-`unknown`, name their artists in the file beside the drawing. `pnpm
+sheet's own `sheet.json`, under `credits`, one list per coat: the 562 sheets that
+ship, the 493 of the dex with the 66 other shapes their forms wear and the three
+under `unknown`, name their artists in the file beside the drawing. `pnpm
 import-sprites` scans them back out into `credits.json`, so a pokemon cannot
 land in `public/` without its artists landing on the credits screen. Most are
 **CHUNSOFT**, whose games the sprites are drawn from.
@@ -156,7 +164,7 @@ it.
 
 ## The rules
 
-The dex runs to 251, with those species and their moves, abilities and items,
+The dex runs to 493, with those species and their moves, abilities and items,
 but the mechanics are the modern ones wherever the two disagree: the special split, the
 current type chart, natures, effort values, abilities, held items and
 friendship. All of that is the mainline games' design, reimplemented here from

@@ -689,6 +689,10 @@ export const enum Items {
    * is doing
    */
   RareCandy = 324,
+  /**
+   * The two that work on a pokemon's abilities: one widens the slot,
+   * the other writes its family's signature into one
+   */
   AbilityCapsule = 325,
   AbilityPatch = 326,
   MaxHoney = 327,
@@ -729,20 +733,21 @@ export const enum Items {
   /**
    * TODO: held items blocked on a battle feature that does not exist.
    *
-   * Terrain for the seeds and the extender, and entry hazards for the
-   * boots: both are TODO'd where they would be declared, in
-   * [`src/data/ids/status.ts`](./status.ts). Trick Room for the
-   * service and the Paradox abilities for the energy have nowhere to
-   * be written down yet
+   * Terrain for the seeds and the extender is TODO'd where it would be
+   * declared, in [`src/data/ids/status.ts`](./status.ts). Trick Room
+   * for the service and the Paradox abilities for the energy have
+   * nowhere to be written down yet
    */
   ElectricSeed = 346,
   GrassySeed = 347,
   MistySeed = 348,
   PsychicSeed = 349,
   TerrainExtender = 350,
-  HeavyDutyBoots = 351,
   RoomService = 352,
   BoosterEnergy = 353,
+
+  /** Walks its holder over whatever was laid at its feet */
+  HeavyDutyBoots = 351,
 
   /**
    * TODO: blocked on Dynamax, which this game has none of
@@ -907,11 +912,21 @@ export const enum Items {
   ChillDrive = 432,
 
   /**
+   * The gear that came later than the shelf it belongs on: appended
+   * rather than filed beside its kind, since an id reaches a player's
+   * bag
+   */
+  SoulDew = 433,
+  SootheBell = 434,
+  MachoBrace = 435,
+  LoadedDice = 436,
+
+  /**
    * The petal left where the colt drank, which is this game's own:
    * the mainline handed Keldeo over at an event and gave nobody an
    * item for it
    */
-  ColtsPetal = 433,
+  ColtsPetal = 437,
 }
 
 /**

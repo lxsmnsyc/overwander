@@ -35,7 +35,7 @@ export default function registerStarterMoves(): void {
   registerMove(Moves.LeechSeed, {
     name: 'Leech Seed',
     description:
-      'Roots the target: 1/8 of its HP every 2 seconds, drained to the seeder. Grass is immune.',
+      'Seeds the target: 1/8 of its HP every 2 seconds, drained to the seeder. Grass is immune.',
     type: Types.Grass,
     category: MoveCategories.Status,
     pp: 10,
@@ -244,7 +244,7 @@ export default function registerStarterMoves(): void {
   });
   registerMove(Moves.HyperBeam, {
     name: 'Hyper Beam',
-    description: 'The user must recharge for a second after it lands.',
+    description: 'The user must recharge for 2 seconds after it lands.',
     type: Types.Normal,
     category: MoveCategories.Special,
     pp: 5,
@@ -350,7 +350,7 @@ export default function registerStarterMoves(): void {
   });
   registerMove(Moves.FireSpin, {
     name: 'Fire Spin',
-    description: 'Binds the target: 1/8 of its HP a second for 4 seconds, and no escape.',
+    description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape.',
     type: Types.Fire,
     category: MoveCategories.Special,
     pp: 15,
@@ -421,7 +421,7 @@ export default function registerStarterMoves(): void {
   registerMove(Moves.Dig, {
     name: 'Dig',
     description:
-      'The user burrows out of sight, then strikes. Only Earthquake , at 2x, and Fissure reach it.',
+      'The user burrows out of sight, then strikes. Only Earthquake and Magnitude (at 2x) and Fissure reach it.',
     type: Types.Ground,
     category: MoveCategories.Physical,
     pp: 10,
@@ -485,7 +485,8 @@ export default function registerStarterMoves(): void {
   });
   registerMove(Moves.Earthquake, {
     name: 'Earthquake',
-    description: 'Hits everything opposite, and hits 2x on anything underground from Dig.',
+    description:
+      "Hits everything opposite and the user's teammates. 2x on anything underground from Dig.",
     type: Types.Ground,
     category: MoveCategories.Physical,
     pp: 10,
@@ -510,7 +511,7 @@ export default function registerStarterMoves(): void {
   registerMove(Moves.Fly, {
     name: 'Fly',
     description:
-      'The user takes to the air, then strikes. Only Gust , at 2x, and Thunder reach it.',
+      'The user takes to the air, then strikes. Only Gust and Twister (at 2x), Thunder and Sky Uppercut reach it.',
     type: Types.Flying,
     category: MoveCategories.Physical,
     pp: 15,
@@ -648,7 +649,8 @@ export default function registerStarterMoves(): void {
   });
   registerMove(Moves.Surf, {
     name: 'Surf',
-    description: 'Hits everything opposite.',
+    description:
+      "Hits everything opposite and the user's teammates. 2x on anything underwater from Dive.",
     type: Types.Water,
     category: MoveCategories.Special,
     pp: 15,

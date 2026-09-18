@@ -1,6 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { Stages } from '../../data/constants/stats';
-import { MoveTargetPriorities, Moves } from '../../data/ids/moves';
+import { MoveCategories, MoveTargetPriorities, Moves } from '../../data/ids/moves';
+import { getMoveData } from '../../data/moves';
 import { checkTeamUnit } from '../ai/rating';
 import type Battle from '../core';
 import type { MoveTarget } from '../events';
@@ -110,8 +111,10 @@ export default function setupSwitchOutMoves(battle: Battle): void {
     }
   });
 
+  // Refused only when the switch is all the move does. A U-turn with
+  // nobody to swap in is still a hit, like a throw with nobody to drag
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
-    if (!event.usable) {
+    if (!event.usable || getMoveData(event.move).category !== MoveCategories.Status) {
       return;
     }
 

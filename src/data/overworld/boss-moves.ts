@@ -44,7 +44,15 @@ import { getSpeciesData } from '../species';
  * boosts over whichever way they are cast, and what a boss builds on
  * doubled stats is worth more to the party than to it. A boss refuses
  * one aimed at it, so the ban is the other half: it never casts one
- * either.
+ * either. **Guard Split** and **Power Split** are refused the same
+ * way, so a boss that knows one would only waste the slot.
+ *
+ * **Final Gambit** throws the user's whole health at its target, and
+ * a boss' single-target moves reach every enemy, so one would wipe the
+ * lobby and spend the pool doing it. **Quash** would send every
+ * enemy's wind-up back to the start at once. **After You**, **Ally
+ * Switch** and **Bestow** are spent on a teammate a lone boss does
+ * not have.
  *
  * **Rest** is the one heal still barred. A boss may put back an
  * eighth of its pool, which is what every other heal is worth to it
@@ -80,6 +88,13 @@ const BANNED_BOSS_MOVES = new Set<Moves>([
   Moves.PowerSwap,
   Moves.GuardSwap,
   Moves.HeartSwap,
+  Moves.GuardSplit,
+  Moves.PowerSplit,
+  Moves.FinalGambit,
+  Moves.Quash,
+  Moves.AfterYou,
+  Moves.AllySwitch,
+  Moves.Bestow,
   // TODO: temporary. A boss is already immune to Perishing, so the
   // song costs it a move slot and does nothing. Drop this line when
   // there is something for it to do

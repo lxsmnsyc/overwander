@@ -35,7 +35,7 @@ export const ONE_SHOTS: Map<Items, [name: string, description: string]> = new Ma
     Items.WeaknessPolicy,
     ['Weakness Policy', '+2 Attack and +2 Special Attack after a super-effective blow lands.'],
   ],
-  [Items.BlunderPolicy, ['Blunder Policy', '+1 Speed after its holder misses.']],
+  [Items.BlunderPolicy, ['Blunder Policy', '+2 Speed after its holder misses.']],
   [Items.AbsorbBulb, ['Absorb Bulb', '+1 Special Attack after a Water move lands on its holder.']],
   [Items.CellBattery, ['Cell Battery', '+1 Attack after an Electric move lands on its holder.']],
   [Items.Snowball, ['Snowball', '+1 Attack after an Ice move lands on its holder.']],
@@ -58,7 +58,7 @@ export const ONE_SHOTS: Map<Items, [name: string, description: string]> = new Ma
     Items.RedCard,
     [
       'Red Card',
-      'Sends the attacker away — an enemy for their weakest, an ally for their strongest.',
+      'Sends the attacker away: an enemy for their weakest, an ally for their strongest.',
     ],
   ],
   [

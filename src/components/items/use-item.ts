@@ -14,16 +14,24 @@ import { isEgg } from '../../auth/egg';
 import useHealingItem from '../../auth/healing';
 import { healedByItem } from '../../auth/health';
 import usePurifyingGem from '../../auth/purify';
+import { useAbilityCapsule } from '../../auth/ability-items';
 import useUtilityBelt from '../../auth/utility-belt';
 import { feedEffortBerry, useEffortItem } from '../../auth/training';
 import { MAX_LEVEL } from '../../data/constants/levels';
 import type { Stats } from '../../data/constants/stats';
-import { MAX_SLOTS } from '../../data/constants/slots';
+import { MAX_SLOTS, countAbilitySlots, mostSlots } from '../../data/constants/slots';
+import { getAbilityData, getSignatureAbility } from '../../data/abilities';
+import { getAwakenableAbilities } from '../../data/overworld/npc';
 import { Items, getBall, getMachineMove, isMachineItem } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
 import { NATURE_NAMES } from '../../data/ids/natures';
 import { Genders, type Species } from '../../data/ids/species';
 import { BERRY_EFFORT_DROPS } from '../../data/items/berries';
+import {
+  ABILITY_CAPSULE_SLOT,
+  isAbilityCapsule,
+  isAbilityPatch,
+} from '../../data/items/ability-items';
 import { isBottleCap, isPerfectIVs } from '../../data/items/bottle-caps';
 import { getMintNature, isMint } from '../../data/items/mints';
 import { isHerbal } from '../../data/items/medicine';
@@ -89,6 +97,25 @@ export function isUsableOn(item: Items, caught: CaughtPokemon): boolean {
   if (isUtilityBelt(item)) {
     return getCatchSlots(caught, UTILITY_BELT_SLOT) < MAX_SLOTS;
   }
+  // A capsule asks what the Channeler asks, so it is offered where she
+  // would take the pokemon: room to open, nothing standing empty, and
+  // something in its line it does not already carry
+  if (isAbilityCapsule(item)) {
+    const room = getCatchSlots(caught, ABILITY_CAPSULE_SLOT);
+
+    return (
+      room < mostSlots(ABILITY_CAPSULE_SLOT) &&
+      countAbilitySlots(caught.abilities) >= room &&
+      getAwakenableAbilities(caught.species, caught.abilities).length > 0
+    );
+  }
+  // A patch is offered where the family has a signature and this one
+  // is not already keeping it
+  if (isAbilityPatch(item)) {
+    const signature = getSignatureAbility(getSpeciesData(caught.species).family);
+
+    return signature != null && !new Set(caught.abilities).has(signature);
+  }
   // A machine is offered only where it would teach something: one this
   // species can learn and does not know already
   if (isMachineItem(item)) {
@@ -122,7 +149,7 @@ export function isUsableOn(item: Items, caught: CaughtPokemon): boolean {
  * leaves the bag until the question is answered
  */
 export function asksAQuestion(item: Items): boolean {
-  return isMachineItem(item) || isPPItem(item);
+  return isMachineItem(item) || isPPItem(item) || isAbilityPatch(item);
 }
 
 /**
@@ -332,6 +359,18 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     return slots == null
       ? refused(item)
       : { said: `Room for ${slots} held items now.`, tone: 'neutral', level: null };
+  }
+
+  if (isAbilityCapsule(item)) {
+    const drawn = await useAbilityCapsule(catchId);
+
+    return drawn == null
+      ? refused(item)
+      : {
+          said: `${getAbilityData(drawn.ability).name} came up — ${drawn.slots} abilities now.`,
+          tone: 'neutral',
+          level: null,
+        };
   }
 
   // Both of these move one stat's effort, and what the player wants to

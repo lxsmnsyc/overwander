@@ -68,6 +68,18 @@ belongs to its family and nobody else.
   lasts. Relicanth has no weaknesses and no resistances.
 - **The raid demo** grants every pokemon its signature, so you can watch them.
 
+### Two ways into an ability slot
+
+Two items, both dug out of the prized band and sold by nobody.
+
+- **The Ability Capsule** does what the Channeler does, without her. It widens a
+  pokemon and draws one more of the abilities its line can reach into the new
+  slot, up to the four a pokemon may hold. Which one comes up is a roll.
+- **The Ability Patch** writes that family's signature into a pokemon, and it is
+  the only way to one: a signature is never rolled at birth and the Channeler
+  never calls one up. A pokemon with a slot standing empty gains it, and a full
+  one gives up an ability you choose. Neither can be undone.
+
 ## 113 new moves
 
 Every Diamond, Pearl and Platinum move, merged into every learnset from Kanto to
@@ -103,8 +115,45 @@ Sinnoh's moves, and dozens of older ones, land as a picture of their own.
 - **X-Scissor and Cross Chop cross into an X**, and every slash is a straight
   blade.
 - **Sweet Scent blows petals** and **Aeroblast is a storm**.
+- **Guillotine snaps two great pincers shut**, and **Horn Drill** grinds a
+  spinning drill straight through the target.
 - **The mark each blow leaves** is drawn in the field, in front of the pokemon
   it hit.
+
+## A clearer battle
+
+- **The ground fades into fog** toward the horizon, so the fight stands out
+  from bright biomes. Each side stands inside a faint ring.
+- **One bar across the top** shows the battle's name, each side's health, how
+  many still stand, and the Leave button. A raid boss gets a wide health bar of
+  its own there.
+- **A move's name shows on a plate** in its type's colour while it is cast. The
+  plate floats away when the move lands and shakes off in red when it is
+  interrupted.
+- **A pokemon that changes its look**, by Transform or a form change, flashes
+  and swells into the new one, and never vanishes while it loads.
+
+## The board meets the sky
+
+A new setting picks how the edge of the overworld board meets the sky.
+
+- **Haze**, the default, dissolves the country into the sky toward the edge.
+- **Full board** draws the ground to every corner of the screen.
+- **Plain** keeps the board as it was.
+
+## Your buddy takes you places
+
+A buddy can use the field moves it is able to learn, from a button on the menu
+bar that lists only the ones usable where you stand.
+
+- **Surf** rides the buddy across open water, which can no longer be walked
+  onto. It starts beside the water and ends on the first step ashore.
+- **Fly** crosses water, trees and cliffs, never lava, and comes down only where
+  a walk could stand. It works above ground only.
+- **Dig** climbs out of a cave to the nearest mouth, like an Escape Rope that is
+  never spent.
+- **Teleport** sends you to the portal of the nearest town, found or not.
+- **While surfing or flying**, you are drawn as your buddy, walking as you walk.
 
 ## A fourth league
 
@@ -181,6 +230,34 @@ Five more houses, and a **print** for each.
   stops now, from the Pokémon Breeder to the Young Couple.
 - Every class is drawn in its own coat, which its own wins unlock.
 
+## A sheet you can read at a glance
+
+- **The pokemon sheet fits on one screen**: the portrait beside its moves,
+  abilities and held items, then its evolutions beside its stats.
+- **The name, gender and shiny mark head the sheet**, and the portrait is the
+  same size for every species.
+- **Each move shows its type and category** beside its name.
+- **Stats show the total, IVs and EVs side by side**, with EVs typed into the
+  same table.
+- **Level Up** carries its candy cost in a badge, and **View in Pokedex** and
+  **Release** sit in the Actions menu.
+- **The full ownership history** opens in its own dialog.
+- **Moves, abilities, held items and stats** each have an info icon that
+  explains how they work.
+
+## Menus in tabs
+
+- **Trades** split into Pending and Settled, and **Bids and Selling** are one
+  Auction tab.
+- **Gifts** split into Catches, Items and Encounters, each with its own search.
+- **The bag** splits into Items and Candies, with a tab for each kind of item.
+- **A profile** shows gold and the worn title on one row, and its Friends tab no
+  longer jumps back to Battles.
+- **Friend requests** are a tab inside Friends, which shows how many are
+  waiting.
+- **Awards** split into Badges, Achievements, Type specialists and Trainers
+  beaten.
+
 ## Raids play fair
 
 - **Stat drops land on a raid boss.** Growl, Screech and Intimidate were refused
@@ -190,6 +267,10 @@ Five more houses, and a **print** for each.
   Seed and the three stat swaps no longer work on one.
 - **Taunt, Torment, Imprison and Encore** no longer hold a boss to part of its
   move set.
+- **A boss has 60 times its species' HP**, up from 20 times.
+- **A boss takes and heals fixed amounts.** Super Fang, Endeavor and one-hit KO
+  moves deal it up to 200. Burns, poison, seeds and weather take up to 200 a
+  hit, up from 100. It heals up to 1,000 HP a second, rather than 1/8 of its HP.
 
 ## Fixes along the way
 
@@ -197,10 +278,19 @@ Five more houses, and a **print** for each.
   on it.
 - **A confused pokemon hitting itself** no longer breaks the fight.
 - **Follow Me outranks** the abilities that pull a move elsewhere.
+- **The battle AI sings Perish Song** only when the other side stands to lose
+  more HP to it than its own.
 - **A rental support** is no longer given a nature that raises its attack.
 - **Big raids run lighter.** Asking whether a pokemon has an ability no longer
   sweeps the whole field.
 - **The sprite processor** is its own page at /sprite-processor.
+- **Every server call checks what it is sent.** A coordinate outside the world,
+  a list longer than the game allows, or a field of the wrong kind is refused
+  rather than read.
+- **Working out the ground is faster.**
+- **A second world generation is ready** for a later reseed. Its terrain never
+  repeats, and adding a roll no longer moves anything already placed. The live
+  world is unchanged.
 
 ## See also
 

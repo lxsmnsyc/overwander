@@ -211,6 +211,18 @@ export const ITEM_POOL: ItemRarityGroups = {
     // Left behind by whatever wriggled out of it, which is what it
     // does for whoever picks it up
     { item: Items.ShedShell, weight: 4 },
+    // Boots somebody walked out of: worth a slot to anything that has
+    // to walk back onto a field somebody else laid spikes on
+    { item: Items.HeavyDutyBoots, weight: 4 },
+    // The two relics. A Soul Dew is nothing to anybody but the pair it
+    // belongs to, and a brace is heavier than anything wants to wear
+    { item: Items.SoulDew, weight: 2 },
+    // Somebody's weighted dice, which is worth a slot to the handful
+    // of pokemon that throw a move several times over
+    { item: Items.LoadedDice, weight: 3 },
+    { item: Items.MachoBrace, weight: 3 },
+    // Rung for a pokemon that was not caught in a comfortable ball
+    { item: Items.SootheBell, weight: 3 },
     // A stone's weight, because every pokemon a player owns wants one
     // — a Fire Stone is wanted once, by one line
     { item: Items.Leftovers, weight: 10 },
@@ -245,6 +257,14 @@ export const ITEM_POOL: ItemRarityGroups = {
     // Thin: a second held item is a whole build, and one belt is one
     // pokemon's worth of it
     { item: Items.UtilityBelt, weight: 4 },
+    // Room for another ability, which the Channeler then has
+    // something to fill. Commoner than the belt: a species that
+    // cannot reach four on its own needs one before she is any use
+    { item: Items.AbilityCapsule, weight: 6 },
+    // The one ability nothing rolls, written into a pokemon that
+    // already has everything its line can be born with. Thin, and
+    // the thinnest thing in the band: it cannot be taken back
+    { item: Items.AbilityPatch, weight: 3 },
     // The one item that brings a pokemon back from nothing at full
     // health. The Revive and the Revival Herb are the rare band's
     // answer to a lost fight; this is the answer to a lost party

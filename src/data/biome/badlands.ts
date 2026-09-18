@@ -6,9 +6,13 @@ import { UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
  * Badlands spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerBadlandsSpawns(): void {
+  // The Dwebble line is written but waits on sprites, since the
+  // collection has drawn no Crustle. Once it does, mornings and days
+  // take Dwebble in uncommon at 22 and Crustle in scarce at 7
   registerSpawnPool(Biome.Badlands, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Sandile, weight: 25 },
         { species: Species.Tepig, weight: 3 },
         { species: Species.Beldum, weight: 2 },
         { species: Species.Mankey, weight: 20 },
@@ -18,8 +22,11 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Aron, weight: 20 },
         { species: Species.Trapinch, weight: 20 },
         { species: Species.Gible, weight: 2 },
+        { species: Species.Roggenrola, weight: 24 },
       ],
       uncommon: [
+        { species: Species.Vullaby, weight: 16 },
+        { species: Species.Darumaka, weight: 22 },
         { species: Species.Numel, weight: 20 },
         { species: Species.Baltoy, weight: 22 },
         { species: Species.Slugma, weight: 20 },
@@ -29,8 +36,10 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.BurmyTrash, weight: 20 },
         { species: Species.Bronzor, weight: 20 },
         { species: Species.Hippopotas, weight: 20 },
+        { species: Species.Drilbur, weight: 16 },
       ],
       rare: [
+        { species: Species.Krokorok, weight: 10 },
         { species: Species.Pignite, weight: 2 },
         { species: Species.Metang, weight: 1 },
         { species: Species.Graveler, weight: 5 },
@@ -40,8 +49,11 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Vibrava, weight: 10 },
         { species: Species.Primeape, weight: 10 },
         { species: Species.Gabite, weight: 1 },
+        { species: Species.Boldore, weight: 12 },
       ],
       scarce: [
+        { species: Species.Mandibuzz, weight: 6 },
+        { species: Species.Darmanitan, weight: 7 },
         { species: Species.Camerupt, weight: 6 },
         { species: Species.Claydol, weight: 6 },
         { species: Species.Donphan, weight: 5 },
@@ -51,8 +63,14 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Hippowdon, weight: 6 },
         { species: Species.Probopass, weight: 6 },
         { species: Species.Magmortar, weight: 6 },
+        { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Durant, weight: 6 },
+        { species: Species.Druddigon, weight: 5 },
+        { species: Species.Sigilyph, weight: 6 },
+        { species: Species.Maractus, weight: 8 },
+        { species: Species.Krookodile, weight: 5 },
         { species: Species.Emboar, weight: 2 },
         { species: Species.Metagross, weight: 1 },
         { species: Species.Kangaskhan, weight: 5 },
@@ -67,6 +85,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Garchomp, weight: 2 },
         { species: Species.Magnezone, weight: 5 },
         { species: Species.Rhyperior, weight: 5 },
+        { species: Species.Gigalith, weight: 6 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
@@ -80,6 +99,7 @@ export default function registerBadlandsSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Sandile, weight: 25 },
         { species: Species.Tepig, weight: 3 },
         { species: Species.Beldum, weight: 2 },
         { species: Species.Mankey, weight: 20 },
@@ -90,8 +110,11 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Aron, weight: 20 },
         { species: Species.Trapinch, weight: 20 },
         { species: Species.Gible, weight: 2 },
+        { species: Species.Roggenrola, weight: 24 },
       ],
       uncommon: [
+        { species: Species.Vullaby, weight: 16 },
+        { species: Species.Darumaka, weight: 22 },
         { species: Species.Numel, weight: 20 },
         { species: Species.Baltoy, weight: 22 },
         { species: Species.Sandshrew, weight: 20 },
@@ -103,8 +126,10 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.BurmyTrash, weight: 20 },
         { species: Species.Bronzor, weight: 20 },
         { species: Species.Hippopotas, weight: 20 },
+        { species: Species.Drilbur, weight: 16 },
       ],
       rare: [
+        { species: Species.Krokorok, weight: 10 },
         { species: Species.Pignite, weight: 2 },
         { species: Species.Metang, weight: 1 },
         { species: Species.Graveler, weight: 5 },
@@ -115,8 +140,11 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Primeape, weight: 10 },
         { species: Species.Rhydon, weight: 5 },
         { species: Species.Gabite, weight: 1 },
+        { species: Species.Boldore, weight: 12 },
       ],
       scarce: [
+        { species: Species.Mandibuzz, weight: 6 },
+        { species: Species.Darmanitan, weight: 7 },
         { species: Species.Camerupt, weight: 6 },
         { species: Species.Claydol, weight: 6 },
         { species: Species.Sandslash, weight: 10 },
@@ -128,8 +156,14 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Hippowdon, weight: 6 },
         { species: Species.Probopass, weight: 6 },
         { species: Species.Magmortar, weight: 6 },
+        { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Durant, weight: 6 },
+        { species: Species.Druddigon, weight: 5 },
+        { species: Species.Sigilyph, weight: 6 },
+        { species: Species.Maractus, weight: 8 },
+        { species: Species.Krookodile, weight: 5 },
         { species: Species.Emboar, weight: 2 },
         { species: Species.Metagross, weight: 1 },
         { species: Species.Kangaskhan, weight: 5 },
@@ -144,6 +178,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Garchomp, weight: 2 },
         { species: Species.Magnezone, weight: 5 },
         { species: Species.Rhyperior, weight: 5 },
+        { species: Species.Gigalith, weight: 6 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
@@ -157,6 +192,7 @@ export default function registerBadlandsSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Deino, weight: 2 },
         { species: Species.Beldum, weight: 2 },
         { species: Species.Zubat, weight: 30 },
         { species: Species.Geodude, weight: 20 },
@@ -164,6 +200,11 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Pawniard, weight: 16 },
+        { species: Species.Golett, weight: 20 },
+        { species: Species.Trubbish, weight: 22 },
+        { species: Species.Yamask, weight: 22 },
+        { species: Species.Scraggy, weight: 22 },
         { species: Species.Baltoy, weight: 22 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Slugma, weight: 20 },
@@ -177,6 +218,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
+        { species: Species.Zweilous, weight: 1 },
         { species: Species.Metang, weight: 1 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
@@ -184,6 +226,11 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Bisharp, weight: 6 },
+        { species: Species.Golurk, weight: 6 },
+        { species: Species.Garbodor, weight: 7 },
+        { species: Species.Cofagrigus, weight: 7 },
+        { species: Species.Scrafty, weight: 7 },
         { species: Species.Claydol, weight: 6 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Ninjask, weight: 10 },
@@ -197,6 +244,8 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Heatmor, weight: 6 },
+        { species: Species.Hydreigon, weight: 2 },
         { species: Species.Spiritomb, weight: 5 },
         { species: Species.Metagross, weight: 1 },
         { species: Species.Tyranitar, weight: 2 },
@@ -219,6 +268,7 @@ export default function registerBadlandsSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Deino, weight: 2 },
         { species: Species.Beldum, weight: 2 },
         { species: Species.Zubat, weight: 30 },
         { species: Species.Geodude, weight: 20 },
@@ -227,6 +277,11 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Pawniard, weight: 16 },
+        { species: Species.Golett, weight: 20 },
+        { species: Species.Trubbish, weight: 22 },
+        { species: Species.Yamask, weight: 22 },
+        { species: Species.Scraggy, weight: 22 },
         { species: Species.Baltoy, weight: 22 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Cubone, weight: 20 },
@@ -242,6 +297,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
+        { species: Species.Zweilous, weight: 1 },
         { species: Species.Metang, weight: 1 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
@@ -250,6 +306,11 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Bisharp, weight: 6 },
+        { species: Species.Golurk, weight: 6 },
+        { species: Species.Garbodor, weight: 7 },
+        { species: Species.Cofagrigus, weight: 7 },
+        { species: Species.Scrafty, weight: 7 },
         { species: Species.Claydol, weight: 6 },
         { species: Species.Marowak, weight: 10 },
         { species: Species.Ninjask, weight: 10 },
@@ -264,6 +325,8 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Heatmor, weight: 6 },
+        { species: Species.Hydreigon, weight: 2 },
         { species: Species.Spiritomb, weight: 5 },
         { species: Species.Metagross, weight: 1 },
         { species: Species.Tyranitar, weight: 2 },

@@ -11,6 +11,7 @@ import {
 import type { TimeOfDay } from '../../../data/ids/biome';
 import { Stats } from '../../../data/constants/stats';
 import type Biome from '../../../data/ids/biome';
+import BiomeId from '../../../data/ids/biome';
 import type { Moves } from '../../../data/ids/moves';
 import type { Species } from '../../../data/ids/species';
 import { LAIR_NAMES, getBiomeLairs, getSpeciesLairs } from '../../../data/overworld/lair';
@@ -76,7 +77,8 @@ export function listLevelMoves(species: Species): [level: number, moves: Moves[]
  * want to know whether it is worth coming back at night
  */
 interface Habitat {
-  biome: Biome;
+  /** Null where it is met in every biome the world grows, alike */
+  biome: Biome | null;
   /**
    * One badge per period it is met in — or a single **Anytime** badge
    * for something met around the clock at the same odds, which is most
@@ -84,6 +86,19 @@ interface Habitat {
    * four times the reading for the same fact
    */
   hours: string[];
+}
+
+/** How many biomes the world actually grows: every one but Beyond, which is only a record's origin */
+function worldBiomeCount(): number {
+  const beyond: number = BiomeId.Beyond;
+  let count = 0;
+
+  for (const key of Object.keys(BIOME_NAMES)) {
+    if (Number(key) !== beyond) {
+      count += 1;
+    }
+  }
+  return count;
 }
 
 export function groupHabitats(species: Species): Habitat[] {
@@ -98,8 +113,23 @@ export function groupHabitats(species: Species): Habitat[] {
   for (const [biome, found] of places) {
     habitats.push({ biome, hours: hourBadges(found) });
   }
+  // Every biome at the same hours is one fact, not thirty rows of it
+  if (habitats.length > 0 && habitats.length === worldBiomeCount()) {
+    const first = habitats[0].hours.join('|');
+    let alike = true;
+
+    for (const habitat of habitats) {
+      if (habitat.hours.join('|') !== first) {
+        alike = false;
+        break;
+      }
+    }
+    if (alike) {
+      return [{ biome: null, hours: habitats[0].hours }];
+    }
+  }
   return habitats.sort((one, other) =>
-    BIOME_NAMES[one.biome].localeCompare(BIOME_NAMES[other.biome]),
+    BIOME_NAMES[one.biome ?? 0].localeCompare(BIOME_NAMES[other.biome ?? 0]),
   );
 }
 

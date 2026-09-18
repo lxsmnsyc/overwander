@@ -8,6 +8,7 @@ import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
+import walksOverHazards from './hazards';
 
 /**
  * Stealth Rock: stones hung over a side, which cost whatever walks in
@@ -90,7 +91,7 @@ export default function setupStealthRock(battle: Battle): void {
   battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
     const unit = event.source;
 
-    if (!unit.alive || !stonesOver(unit.team)) {
+    if (!unit.alive || !stonesOver(unit.team) || walksOverHazards(unit)) {
       return;
     }
 

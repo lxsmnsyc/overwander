@@ -2,8 +2,7 @@ import { type JSX, type ParentProps, createMemo, createSignal } from 'solid-js';
 import type Biome from '../../data/ids/biome';
 import getWorld from '../../overworld/current';
 import { WORLD_MAX, WORLD_MIN, isInWorld } from '../../overworld/world';
-import { Button, Dialog, DialogActions, HoverCard } from '../styled';
-import { InformationIcon } from '../icons';
+import { Button, Dialog, DialogActions, Hint } from '../styled';
 import WorldMapCanvas, { PAN_STRIDE, townsInView } from './WorldMapCanvas';
 import { useGame } from '../app/game-context';
 
@@ -140,13 +139,9 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
       // carries one: there are four keys to say, and a line of running
       // text is not the shape of a list of them
       bar={
-        <HoverCard
+        <Hint
           title="Steering the map"
           description="Click it first: the keys go to whatever has the keyboard."
-          placement="bottom"
-          class="inline-flex rounded text-muted transition-colors hover:text-ink
-          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide"
-          trigger={<InformationIcon class="size-5" role="img" aria-label="Keyboard controls" />}
         >
           <ul class="flex flex-col gap-2">
             <Key presses="↑ ↓ ← →">Pan one chunk. WASD does the same.</Key>
@@ -156,7 +151,7 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
           <p class="mt-2 text-xs text-muted">
             The camera is held inside the world, so panning at the rim comes straight back.
           </p>
-        </HoverCard>
+        </Hint>
       }
     >
       <WorldMapCanvas

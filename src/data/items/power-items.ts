@@ -62,7 +62,30 @@ export function getHeldPowerStat(items: Items[]): Stats | null {
   return null;
 }
 
+/**
+ * What the brace doubles, and what it costs while it is worn.
+ *
+ * Effort here is paid out by the levels rather than earned a species
+ * at a time, so there is no battle's worth of it to double. What the
+ * brace multiplies instead is the effort a **wing or a vitamin**
+ * grants, which is the one effort in the game that is found rather
+ * than levelled. The Speed is the mainline's own price for it
+ */
+export const MACHO_BRACE_EFFORT = 2;
+export const MACHO_BRACE_SPEED = 0.5;
+
 export default function registerPowerItems(): void {
+  registerItem(Items.MachoBrace, {
+    name: 'Macho Brace',
+    description:
+      'A wing or vitamin used on its holder is worth 2x the effort, but its Speed is halved.',
+    type: ItemTypes.Held,
+    icon: nameToIcon('ev-items', 'Macho Brace'),
+    flags: ItemFlags.Holdable | ItemFlags.Marketable,
+    buy: POWER_ITEM_PRICE,
+    sell: POWER_ITEM_PRICE * POWER_ITEM_RESALE,
+  });
+
   for (const [item, [name, stat]] of POWER_ITEMS) {
     registerItem(item, {
       name,

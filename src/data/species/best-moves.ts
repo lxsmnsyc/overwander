@@ -6,7 +6,10 @@ import { TYPE_EFFECTIVENESS, TypeEffectiveness, Types } from '../constants/types
 import { Weathers } from '../ids/status';
 import { getLearnableMoves, getSpeciesData } from './__create';
 import { getMoveData } from '../moves/__create';
+import { isRecoilMove } from '../moves/recoil';
 import { MOVE_WEATHERS, getWeatherMove } from '../moves/weather';
+import { estimateMoveHits } from '../moves/multi-hit';
+import { isRechargeMove } from '../moves/recharge';
 
 /**
  * What a species is best built as: the four moves an expert's copy of
@@ -98,24 +101,39 @@ const STATUS_WORTH: Partial<Record<Moves, number>> = {
   [Moves.DragonDance]: 120,
   [Moves.TailGlow]: 120,
   [Moves.CalmMind]: 115,
+  [Moves.NastyPlot]: 115,
   [Moves.BellyDrum]: 110,
   [Moves.BulkUp]: 110,
   [Moves.Agility]: 85,
+  [Moves.RockPolish]: 85,
   [Moves.Growth]: 90,
   [Moves.Amnesia]: 90,
   [Moves.IronDefense]: 88,
   [Moves.CosmicPower]: 86,
+  [Moves.DefendOrder]: 86,
   [Moves.DoubleTeam]: 85,
+  [Moves.Acupressure]: 80,
+  [Moves.QuiverDance]: 120,
+  [Moves.ShellSmash]: 120,
+  [Moves.ShiftGear]: 115,
+  [Moves.Coil]: 110,
+  [Moves.HoneClaws]: 105,
+  [Moves.WorkUp]: 100,
+  [Moves.CottonGuard]: 88,
+  [Moves.Autotomize]: 85,
 
   // Health back, which is worth about what a hit takes off
   [Moves.Recover]: 105,
   [Moves.SoftBoiled]: 105,
   [Moves.MilkDrink]: 105,
   [Moves.SlackOff]: 105,
+  [Moves.Roost]: 105,
+  [Moves.HealOrder]: 105,
   [Moves.Synthesis]: 95,
   [Moves.MorningSun]: 95,
   [Moves.Moonlight]: 95,
   [Moves.Wish]: 85,
+  [Moves.AquaRing]: 85,
 
   // And taking somebody out of the fight without hitting them
   [Moves.Spore]: 115,
@@ -131,6 +149,10 @@ const STATUS_WORTH: Partial<Record<Moves, number>> = {
   [Moves.Reflect]: 90,
   [Moves.LightScreen]: 90,
   [Moves.LovelyKiss]: 90,
+  [Moves.DarkVoid]: 90,
+  [Moves.GastroAcid]: 80,
+  [Moves.WorrySeed]: 75,
+  [Moves.Captivate]: 70,
   [Moves.Hypnosis]: 85,
   [Moves.Encore]: 85,
   [Moves.Taunt]: 85,
@@ -138,15 +160,32 @@ const STATUS_WORTH: Partial<Record<Moves, number>> = {
   [Moves.Protect]: 85,
   [Moves.Yawn]: 85,
   [Moves.Sing]: 80,
+  // Changing what the target is rather than what it has, which only
+  // sometimes matters
+  [Moves.Soak]: 70,
+  [Moves.PowerSplit]: 65,
+  [Moves.GuardSplit]: 65,
+  [Moves.SimpleBeam]: 60,
+  [Moves.Entrainment]: 60,
 
   // What a support lays over its own side or under the other's. They
   // are priced low here and lifted by the role that wants them
   [Moves.Spikes]: 90,
+  [Moves.StealthRock]: 90,
+  [Moves.ToxicSpikes]: 85,
+  // It changes who lands first rather than who acts more, and it
+  // slows its own side's quick moves as much as the far side's
+  [Moves.TrickRoom]: 70,
+  [Moves.LuckyChant]: 70,
   [Moves.Safeguard]: 80,
   [Moves.HealBell]: 85,
   [Moves.Aromatherapy]: 85,
   [Moves.Haze]: 80,
   [Moves.Mist]: 70,
+  [Moves.WideGuard]: 75,
+  [Moves.QuickGuard]: 70,
+  [Moves.WonderRoom]: 60,
+  [Moves.MagicRoom]: 60,
 
   // Sleeping off everything at once, which is only a plan with
   // something to do while asleep
@@ -157,7 +196,16 @@ const STATUS_WORTH: Partial<Record<Moves, number>> = {
   // behind two cores is the pokemon these were written for
   [Moves.HelpingHand]: 105,
   [Moves.FollowMe]: 100,
+  [Moves.RagePowder]: 100,
+  [Moves.HealPulse]: 95,
+  [Moves.AfterYou]: 70,
+  // Twice as often for the whole side while it blows
+  [Moves.Tailwind]: 100,
   [Moves.BatonPass]: 90,
+  // The user is spent to make a teammate whole, which only a support
+  // standing behind two cores can afford
+  [Moves.LunarDance]: 85,
+  [Moves.HealingWish]: 80,
 
   // The skies. Worth nothing on their own: what prices one is what
   // the build is waiting to do under it
@@ -176,14 +224,26 @@ const STATUS_KINDS: Partial<Record<Moves, StatusKind>> = {
   [Moves.DragonDance]: StatusKind.Setup,
   [Moves.TailGlow]: StatusKind.Setup,
   [Moves.CalmMind]: StatusKind.Setup,
+  [Moves.NastyPlot]: StatusKind.Setup,
   [Moves.BellyDrum]: StatusKind.Setup,
   [Moves.BulkUp]: StatusKind.Setup,
   [Moves.Agility]: StatusKind.Setup,
+  [Moves.RockPolish]: StatusKind.Setup,
   [Moves.Growth]: StatusKind.Setup,
   [Moves.Amnesia]: StatusKind.Setup,
   [Moves.IronDefense]: StatusKind.Setup,
   [Moves.CosmicPower]: StatusKind.Setup,
+  [Moves.DefendOrder]: StatusKind.Setup,
   [Moves.DoubleTeam]: StatusKind.Setup,
+  [Moves.Acupressure]: StatusKind.Setup,
+  [Moves.QuiverDance]: StatusKind.Setup,
+  [Moves.ShellSmash]: StatusKind.Setup,
+  [Moves.ShiftGear]: StatusKind.Setup,
+  [Moves.Coil]: StatusKind.Setup,
+  [Moves.HoneClaws]: StatusKind.Setup,
+  [Moves.WorkUp]: StatusKind.Setup,
+  [Moves.CottonGuard]: StatusKind.Setup,
+  [Moves.Autotomize]: StatusKind.Setup,
 
   [Moves.Recover]: StatusKind.Heal,
   [Moves.SoftBoiled]: StatusKind.Heal,
@@ -193,6 +253,9 @@ const STATUS_KINDS: Partial<Record<Moves, StatusKind>> = {
   [Moves.MorningSun]: StatusKind.Heal,
   [Moves.Moonlight]: StatusKind.Heal,
   [Moves.Wish]: StatusKind.Heal,
+  [Moves.Roost]: StatusKind.Heal,
+  [Moves.HealOrder]: StatusKind.Heal,
+  [Moves.AquaRing]: StatusKind.Heal,
   [Moves.Rest]: StatusKind.Heal,
   [Moves.LeechSeed]: StatusKind.Heal,
 
@@ -206,11 +269,25 @@ const STATUS_KINDS: Partial<Record<Moves, StatusKind>> = {
   [Moves.Mist]: StatusKind.Guard,
   [Moves.Haze]: StatusKind.Guard,
   [Moves.Spikes]: StatusKind.Guard,
+  [Moves.StealthRock]: StatusKind.Guard,
+  [Moves.ToxicSpikes]: StatusKind.Guard,
+  [Moves.TrickRoom]: StatusKind.Guard,
+  [Moves.LuckyChant]: StatusKind.Guard,
   [Moves.SleepTalk]: StatusKind.Guard,
+  [Moves.WideGuard]: StatusKind.Guard,
+  [Moves.QuickGuard]: StatusKind.Guard,
+  [Moves.WonderRoom]: StatusKind.Guard,
+  [Moves.MagicRoom]: StatusKind.Guard,
 
   [Moves.HelpingHand]: StatusKind.Ally,
   [Moves.FollowMe]: StatusKind.Ally,
   [Moves.BatonPass]: StatusKind.Ally,
+  [Moves.Tailwind]: StatusKind.Ally,
+  [Moves.HealingWish]: StatusKind.Ally,
+  [Moves.LunarDance]: StatusKind.Ally,
+  [Moves.RagePowder]: StatusKind.Ally,
+  [Moves.HealPulse]: StatusKind.Ally,
+  [Moves.AfterYou]: StatusKind.Ally,
 
   [Moves.SunnyDay]: StatusKind.Weather,
   [Moves.RainDance]: StatusKind.Weather,
@@ -322,9 +399,61 @@ const SLEEP_MOVES = new Set<Moves>([
   Moves.SleepPowder,
   Moves.Hypnosis,
   Moves.LovelyKiss,
+  Moves.DarkVoid,
   Moves.Sing,
   Moves.Yawn,
 ]);
+
+/** The moves that poison, which is what Venoshock waits for */
+const POISON_MOVES = new Set<Moves>([Moves.Toxic, Moves.PoisonPowder, Moves.PoisonGas]);
+
+/** The moves that leave a status condition, which is what Hex waits for */
+const STATUS_MOVES = new Set<Moves>([
+  ...SLEEP_MOVES,
+  ...POISON_MOVES,
+  Moves.ThunderWave,
+  Moves.StunSpore,
+  Moves.Glare,
+  Moves.WillOWisp,
+]);
+
+/** Whether the sheet holds any of these */
+function holdsAny(chosen: ReadonlySet<Moves>, wanted: ReadonlySet<Moves>): boolean {
+  for (const move of wanted) {
+    if (chosen.has(move)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * The promises a species has to be able to keep at all, as the moves
+ * that keep them. A Dream Eater on a line with nothing that puts
+ * anybody to sleep is a promise it can never keep, however the slots
+ * fall, so it is left out rather than discounted
+ */
+const MOVE_REQUIREMENTS: Partial<Record<Moves, ReadonlySet<Moves>>> = {
+  [Moves.DreamEater]: SLEEP_MOVES,
+  [Moves.SleepTalk]: new Set([Moves.Rest]),
+  [Moves.FocusPunch]: new Set([Moves.Substitute]),
+};
+
+/** Whether the species can ever keep what this move promises */
+function canKeepPromise(species: Species, move: Moves): boolean {
+  const wanted = MOVE_REQUIREMENTS[move];
+
+  if (wanted == null) {
+    return true;
+  }
+
+  for (const learnable of getLearnableMoves(species)) {
+    if (wanted.has(learnable)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 /**
  * The moves whose worth is a promise the rest of the sheet has to
@@ -344,6 +473,10 @@ const MOVE_PARTNERS: Partial<Record<Moves, (chosen: ReadonlySet<Moves>) => boole
   [Moves.FocusPunch]: (chosen) => chosen.has(Moves.Substitute),
   [Moves.SleepTalk]: (chosen) => chosen.has(Moves.Rest),
   [Moves.Rest]: (chosen) => chosen.has(Moves.SleepTalk),
+  [Moves.Hex]: (chosen) => holdsAny(chosen, STATUS_MOVES),
+  [Moves.Venoshock]: (chosen) => holdsAny(chosen, POISON_MOVES),
+  // A Stored Power with nothing raised is a 20 power move
+  [Moves.StoredPower]: (chosen) => holdsAny(chosen, SETUP_MOVES),
   // A Baton Pass with nothing raised passes nothing
   [Moves.BatonPass]: (chosen) => {
     for (const move of chosen) {
@@ -371,6 +504,8 @@ export interface BuildContext {
   chosen: ReadonlySet<Moves>;
   /** How many of the party already bring each move */
   taken: ReadonlyMap<Moves, number>;
+  /** The rest of the party, which a move may be aimed at */
+  allies: readonly BuildAlly[];
   /**
    * Whether this pokemon may spend a slot calling a sky up. A party
    * calls one up once: the other five fight under it and spend their
@@ -405,11 +540,20 @@ const REPEATED_SUPPORT = 0.55;
 const REPEATED_ATTACK = 0.6;
 const REPEATED_STAB = 0.88;
 
+/** A teammate as the build sees it: what it is and what it fights with */
+export interface BuildAlly {
+  species: Species;
+  abilities: Abilities[];
+  role: BuildRole;
+}
+
 /** How this pokemon is being built, and what its team already holds */
 export interface BuildOptions {
   role?: BuildRole;
   /** How many of the party already bring each move */
   taken?: ReadonlyMap<Moves, number>;
+  /** The rest of the party, which a move may be aimed at */
+  allies?: readonly BuildAlly[];
   /**
    * The sky the whole party fights under, where the party settled one:
    * an ally's Drought, or an ally's Sunny Day. Left out, the pokemon
@@ -434,7 +578,12 @@ const SETUP_CATEGORY: Partial<Record<Moves, MoveCategories>> = {
   [Moves.BellyDrum]: MoveCategories.Physical,
   [Moves.BulkUp]: MoveCategories.Physical,
   [Moves.DragonDance]: MoveCategories.Physical,
+  [Moves.ShiftGear]: MoveCategories.Physical,
+  [Moves.Coil]: MoveCategories.Physical,
+  [Moves.HoneClaws]: MoveCategories.Physical,
+  [Moves.QuiverDance]: MoveCategories.Special,
   [Moves.CalmMind]: MoveCategories.Special,
+  [Moves.NastyPlot]: MoveCategories.Special,
   [Moves.TailGlow]: MoveCategories.Special,
   [Moves.Growth]: MoveCategories.Special,
 };
@@ -485,11 +634,9 @@ const MOVE_DRAWBACKS: Partial<Record<Moves, number>> = {
   [Moves.Explosion]: 0,
   [Moves.SelfDestruct]: 0,
 
-  // Landing one and then standing still for the next
-  [Moves.HyperBeam]: 0.5,
-  [Moves.BlastBurn]: 0.5,
-  [Moves.HydroCannon]: 0.5,
-  [Moves.FrenzyPlant]: 0.5,
+  // Worth nothing until every other move on the sheet has been cast,
+  // so it is a wasted slot for most of a fight
+  [Moves.LastResort]: 0.3,
 
   // Worth its power only where nothing touched the user first
   [Moves.FocusPunch]: 0.5,
@@ -508,30 +655,136 @@ const MOVE_DRAWBACKS: Partial<Record<Moves, number>> = {
   // Both of its drops are a stage rather than two, and one of them is
   // a defence it may not have been using anyway
   [Moves.Superpower]: 0.75,
+  // Its drops land on defences and Speed rather than the stat it fired from
+  [Moves.VCreate]: 0.75,
 };
 
+/** The abilities that spare the user each kind of cost */
+const CONFUSION_PROOF = new Set<Abilities>([Abilities.OwnTempo]);
+const RECOIL_PROOF = new Set<Abilities>([Abilities.RockHead, Abilities.MagicGuard]);
+const SLEEP_PROOF = new Set<Abilities>([Abilities.Insomnia, Abilities.VitalSpirit]);
+
+function holdsAbility(abilities: readonly Abilities[], wanted: ReadonlySet<Abilities>): boolean {
+  for (const ability of abilities) {
+    if (wanted.has(ability)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
- * The moves that hurt their user, whether by recoil or by the
- * confusion at the end of a rampage. They are priced against the
- * pokemon rather than flatly: the same recoil that a Snorlax shrugs
- * off is most of a Gengar and the whole of a Shedinja
+ * What a move that leaves the user standing still afterwards is worth.
+ * The recharge is a whole cast spent doing nothing, so the move is
+ * worth about half of what its power says
  */
-const SELF_HURTING = new Set<Moves>([
-  Moves.DoubleEdge,
-  Moves.TakeDown,
-  Moves.Submission,
-  Moves.VoltTackle,
-  Moves.Thrash,
-  Moves.PetalDance,
-  Moves.Outrage,
-]);
+const RECHARGE_FACTOR = 0.5;
+
+/** The drawbacks that are a drop on the user, which Contrary turns into a rise */
+const SELF_DROPPING = new Set<Moves>([Moves.Overheat, Moves.PsychoBoost, Moves.Superpower]);
+
+/**
+ * The moves aimed at an enemy that a teammate's ability turns into a
+ * gift: a flattery for one that cannot be confused, and a drop for one
+ * whose Contrary turns it round. Each names the stat it moves and by
+ * how much, as written for an enemy
+ */
+const ALLY_STAGE_MOVES: Partial<Record<Moves, { stat: Stats; stages: number }>> = {
+  [Moves.Swagger]: { stat: Stats.Attack, stages: 2 },
+  [Moves.Flatter]: { stat: Stats.SpecialAttack, stages: 1 },
+  [Moves.Charm]: { stat: Stats.Attack, stages: -2 },
+  [Moves.FeatherDance]: { stat: Stats.Attack, stages: -2 },
+  [Moves.Tickle]: { stat: Stats.Attack, stages: -1 },
+  [Moves.Screech]: { stat: Stats.Defense, stages: -2 },
+  [Moves.MetalSound]: { stat: Stats.SpecialDefense, stages: -2 },
+  [Moves.FakeTears]: { stat: Stats.SpecialDefense, stages: -2 },
+  [Moves.ScaryFace]: { stat: Stats.Speed, stages: -2 },
+};
+
+/** The ones that confuse as well, which only a teammate that cannot be confused wants */
+const FLATTERY_MOVES = new Set<Moves>([Moves.Swagger, Moves.Flatter]);
+
+/** What 2 stages of a stat are worth, priced as the setup move that raises them */
+const RAISE_WORTH: Partial<Record<Stats, number>> = {
+  [Stats.Attack]: 120,
+  [Stats.SpecialAttack]: 115,
+  [Stats.Defense]: 88,
+  [Stats.SpecialDefense]: 90,
+  [Stats.Speed]: 85,
+};
+
+/** The attacking stats, and the half of the split each one serves */
+const STAT_CATEGORY: Partial<Record<Stats, MoveCategories>> = {
+  [Stats.Attack]: MoveCategories.Physical,
+  [Stats.SpecialAttack]: MoveCategories.Special,
+};
+
+/** What the move is worth cast at the teammate it helps most */
+function allyWorth(move: Moves, allies: readonly BuildAlly[]): number {
+  const raised = ALLY_STAGE_MOVES[move];
+
+  if (raised == null) {
+    return 0;
+  }
+
+  let best = 0;
+
+  for (const ally of allies) {
+    if (FLATTERY_MOVES.has(move) && !holdsAbility(ally.abilities, CONFUSION_PROOF)) {
+      continue;
+    }
+
+    const stages = ally.abilities.includes(Abilities.Contrary) ? -raised.stages : raised.stages;
+
+    if (stages <= 0) {
+      continue;
+    }
+
+    const category = STAT_CATEGORY[raised.stat];
+    const share = category == null ? 1 : categoryShare(ally.species, category, ally.abilities);
+
+    // Worth to the teammate what setup is worth to its own role
+    const worth =
+      (((RAISE_WORTH[raised.stat] ?? 0) * Math.min(stages, 2) * share) / 2) *
+      ROLE_WEIGHTS[ally.role][StatusKind.Setup];
+
+    best = Math.max(best, worth);
+  }
+  return best;
+}
+
+/** Whether the user's own ability makes the move do nothing, or worse */
+function selfDefeating(move: Moves, abilities: Abilities[]): boolean {
+  // Every setup move raises the user, which Contrary turns into a drop
+  if (STATUS_KINDS[move] === StatusKind.Setup && abilities.includes(Abilities.Contrary)) {
+    return true;
+  }
+  // Rest heals by sleeping, and a user that cannot sleep cannot rest
+  return move === Moves.Rest && holdsAbility(abilities, SLEEP_PROOF);
+}
+
+/** The rampages, whose cost is the confusion rather than a recoil */
+const FATIGUING = new Set<Moves>([Moves.Thrash, Moves.PetalDance, Moves.Outrage]);
+
+/** The moves that strike on every step, so their steps are not a wind-up */
+const RAMPAGES = new Set<Moves>([...FATIGUING, Moves.Uproar]);
 
 /** What one of those costs at its cheapest, and the HP that buys it */
 const SELF_HURT_FACTOR = 0.7;
 const SELF_HURT_HEALTH = 70;
 
-function selfHurtFactor(species: Species, move: Moves): number {
-  if (!SELF_HURTING.has(move)) {
+/**
+ * What a move that hurts its user, by recoil or by the confusion at the
+ * end of a rampage, is worth. Priced against the pokemon rather than
+ * flatly: the same recoil that a Snorlax shrugs off is most of a Gengar
+ * and the whole of a Shedinja
+ */
+function selfHurtFactor(species: Species, move: Moves, abilities: Abilities[]): number {
+  // The recoil table is shared with the mechanic, so a move added there is priced here too
+  if (
+    (!isRecoilMove(move) && !FATIGUING.has(move)) ||
+    holdsAbility(abilities, FATIGUING.has(move) ? CONFUSION_PROOF : RECOIL_PROOF)
+  ) {
     return 1;
   }
   const health = getSpeciesData(species).stats[Stats.HP];
@@ -673,6 +926,109 @@ function repeatedWorth(taken: number, stab: boolean): number {
   return (stab ? REPEATED_STAB : REPEATED_ATTACK) ** taken;
 }
 
+/**
+ * What a move with no power of its own is worth, read as the power a
+ * plain move would need to do the same.
+ *
+ * A move's `power` is null where the engine works the figure out at
+ * the cast: off a level, off a health bar, off a weight. Multiplying
+ * by null gives nothing, so every one of these was invisible to the
+ * builder and a Blissey was handed a Fire Blast to cast off 75 special
+ * attack rather than the Seismic Toss beside it.
+ *
+ * The figures are what the move comes to against something its own
+ * level, and a move left out is one an expert is never built with:
+ * the one-hit knockouts, which are a 30% roll, and the ones that
+ * answer a blow rather than throw one (Counter, Mirror Coat, Metal
+ * Burst, Bide), which the AI has no way to set up
+ */
+const ESTIMATED_POWER: Partial<Record<Moves, number>> = {
+  // A level's worth of damage, flat: reliable, and never more than that
+  [Moves.SeismicToss]: 70,
+  [Moves.NightShade]: 70,
+  [Moves.Psywave]: 55,
+  // Half of what the target has left. It never finishes anything, so
+  // it is worth less than the figure suggests
+  [Moves.SuperFang]: 80,
+  // Fixed amounts, which a fight at this level has outgrown
+  [Moves.DragonRage]: 30,
+  [Moves.SonicBoom]: 15,
+
+  // How friendly the pokemon is, and an expert's is freshly staged
+  [Moves.Return]: 90,
+  [Moves.Frustration]: 40,
+  // A type and a power that are whatever the pokemon was born with
+  [Moves.HiddenPower]: 60,
+  // Off the weight of whoever is hit, which averages out about here
+  [Moves.GrassKnot]: 60,
+  [Moves.LowKick]: 60,
+  [Moves.WringOut]: 80,
+  [Moves.CrushGrip]: 80,
+  // Only while the user is nearly gone, which is not where a fight is
+  // spent
+  [Moves.Flail]: 45,
+  [Moves.Reversal]: 45,
+  [Moves.Endeavor]: 40,
+  // Off the stages the target has taken, or the user has
+  [Moves.Punishment]: 60,
+  [Moves.StoredPower]: 40,
+  // What is left in the bag, or what the last of it does
+  [Moves.TrumpCard]: 60,
+  [Moves.Present]: 40,
+  [Moves.Fling]: 40,
+  [Moves.NaturalGift]: 60,
+  [Moves.SpitUp]: 50,
+  // The ground's own roll
+  [Moves.Magnitude]: 71,
+};
+
+/**
+ * The ones whose figure the species itself answers: how heavy it is,
+ * or how fast. Worked out rather than tabled, so a heavy pokemon is
+ * handed the move that wants weight
+ */
+function speciesPower(species: Species, move: Moves): number | undefined {
+  const data = getSpeciesData(species);
+
+  // Thrown by weight: a Snorlax lands these at the cap and a Gengar
+  // barely at all
+  if (move === Moves.HeavySlam || move === Moves.HeatCrash) {
+    return Math.min(120, 40 + data.weight);
+  }
+  // Thrown by speed, and worth most to something quick
+  if (move === Moves.ElectroBall) {
+    return Math.min(120, 30 + data.stats[Stats.Speed] / 2);
+  }
+  // The other way round: a slow pokemon throws the heaviest gear
+  if (move === Moves.GyroBall) {
+    return Math.min(120, 140 - data.stats[Stats.Speed]);
+  }
+  return undefined;
+}
+
+/** What the move hits for, whether the registry says so or the engine works it out */
+function powerOf(species: Species, move: Moves): number {
+  return getMoveData(move).power ?? speciesPower(species, move) ?? ESTIMATED_POWER[move] ?? 0;
+}
+
+/**
+ * How much of a cast a move's wind-up costs, read the way the engine
+ * reads it: priority is frames off the cast, so a Bullet Punch is
+ * thrown in about six sevenths of the time a plain move takes and is
+ * worth that much more for it
+ */
+const CAST_FRAMES = 104;
+const PRIORITY_FRAMES = 16;
+
+function priorityFactor(move: Moves): number {
+  const priority = getMoveData(move).priority ?? 0;
+
+  if (priority === 0) {
+    return 1;
+  }
+  return CAST_FRAMES / Math.max(PRIORITY_FRAMES, CAST_FRAMES - priority * PRIORITY_FRAMES);
+}
+
 /** What one move is worth to this species, as effective power */
 function moveWorth(species: Species, move: Moves, context: BuildContext): number {
   const data = getMoveData(move);
@@ -706,16 +1062,17 @@ function moveWorth(species: Species, move: Moves, context: BuildContext): number
         return 0;
       }
     }
-    const worth =
-      (STATUS_WORTH[move] ?? 0) *
-      weights[STATUS_KINDS[move] ?? StatusKind.Cripple] *
-      REPEATED_SUPPORT ** (context.taken.get(move) ?? 0);
     const serves = SETUP_CATEGORY[move];
-
     // A boost is worth what the stat it raises is worth in these hands
-    return (
-      promise * (serves == null ? worth : worth * categoryShare(species, serves, context.abilities))
-    );
+    const own = selfDefeating(move, context.abilities)
+      ? 0
+      : (STATUS_WORTH[move] ?? 0) *
+        weights[STATUS_KINDS[move] ?? StatusKind.Cripple] *
+        (serves == null ? 1 : categoryShare(species, serves, context.abilities));
+    // Or what it is worth cast at the teammate it helps, where it helps one
+    const aimed = allyWorth(move, context.allies) * weights[StatusKind.Ally];
+
+    return promise * Math.max(own, aimed) * REPEATED_SUPPORT ** (context.taken.get(move) ?? 0);
   }
 
   const share = categoryShare(species, data.category, context.abilities);
@@ -729,22 +1086,35 @@ function moveWorth(species: Species, move: Moves, context: BuildContext): number
   // A move that winds up first lands once for every cast it spends
   // getting there, so its power is spread across them. Solar Beam
   // under its own sun does not wind up at all
-  const charged = move === Moves.SolarBeam && context.weather === Weathers.Sunny ? 0 : data.steps;
+  const charged =
+    (move === Moves.SolarBeam && context.weather === Weathers.Sunny) || RAMPAGES.has(move)
+      ? 0
+      : data.steps;
   const winding = 1 + (charged ?? 0);
 
   // What the party already throws, docked so the sixth sheet reaches
   // for something the other five do not have
   const repeated = repeatedWorth(context.taken.get(move) ?? 0, types.includes(data.type));
 
+  // A move that strikes several times is worth what all of them come
+  // to, which is what makes a Skill Link worth awakening
+  const landed =
+    powerOf(species, move) *
+    estimateMoveHits(move, context.abilities.includes(Abilities.SkillLink));
+
   return (
-    (((data.power ?? 0) *
+    ((landed *
       share *
       accuracy *
       coverageWeight(data.type) *
+      priorityFactor(move) *
       abilityFactor(move, context, types)) /
       winding) *
-    (MOVE_DRAWBACKS[move] ?? 1) *
-    selfHurtFactor(species, move) *
+    (isRechargeMove(move) ? RECHARGE_FACTOR : 1) *
+    (SELF_DROPPING.has(move) && context.abilities.includes(Abilities.Contrary)
+      ? 1
+      : (MOVE_DRAWBACKS[move] ?? 1)) *
+    selfHurtFactor(species, move, context.abilities) *
     weights.attack *
     promise *
     repeated
@@ -804,7 +1174,9 @@ function pickMoves(species: Species, context: BuildContext): Moves[] {
   const scored: { move: Moves; worth: number }[] = [];
 
   for (const move of getLearnableMoves(species)) {
-    scored.push({ move, worth: moveWorth(species, move, context) });
+    if (canKeepPromise(species, move)) {
+      scored.push({ move, worth: moveWorth(species, move, context) });
+    }
   }
   scored.sort((one, two) => two.worth - one.worth || one.move - two.move);
 
@@ -942,6 +1314,7 @@ export function getBestMoves(
       weather: planned ?? buildWeather(abilities, held),
       chosen: held,
       taken,
+      allies: options.allies ?? [],
       setter: planned == null || options.setter === true,
       planned: planned != null,
     });

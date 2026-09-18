@@ -6,9 +6,10 @@ import { getMaxHealth, rescaleHealth } from '../auth/health';
 import { MAX_EFFORT_PER_STAT, type Stats } from '../data/constants/stats';
 import type { Moves } from '../data/ids/moves';
 import { friendshipFactor, gainFriendship } from '../data/constants/friendship';
-import type { Items } from '../data/ids/items';
+import { Items } from '../data/ids/items';
 import { BERRY_EFFORT_DROP, BERRY_EFFORT_DROPS } from '../data/items/berries';
 import { PP_ITEMS, VITAMIN_EFFORT, VITAMIN_STATS } from '../data/items/vitamins';
+import { MACHO_BRACE_EFFORT } from '../data/items/power-items';
 import { WING_EFFORT, WING_STATS } from '../data/items/wings';
 import { PP_UP_LIMIT, getMovePP } from '../data/moves';
 import { Metric } from '../auth/quest-record';
@@ -175,7 +176,7 @@ export async function useEffortItem(
     return null;
   }
 
-  const [stat, amount] = grant;
+  const [stat, granted] = grant;
   const fed = await tx(async (transaction) => {
     const stored = await readCaughtIn(transaction, catchId);
 
@@ -196,6 +197,9 @@ export async function useEffortItem(
     }
 
     const record = asCaughtPokemon(stored);
+    // A Macho Brace is worn to train in, so what a wing or a vitamin
+    // grants its holder is doubled
+    const amount = record.items.includes(Items.MachoBrace) ? granted * MACHO_BRACE_EFFORT : granted;
     const trainedTo = Math.min(MAX_EFFORT_PER_STAT, record.effortValues[stat] + amount);
 
     // Nothing to gain, so nothing is spent
@@ -238,6 +242,17 @@ export interface MovePointsResult {
 }
 
 /**
+ * The points a move would carry after a bottle worth `worth`, or null
+ * when its PP would not change: a 1 PP move's floored fifth is nothing,
+ * so a bottle spent on it would buy nothing
+ */
+export function raisedMovePoints(move: Moves, current: number, worth: number): number | null {
+  const points = Math.min(PP_UP_LIMIT, current + worth);
+
+  return getMovePP(move, points) === getMovePP(move, current) ? null : points;
+}
+
+/**
  * Spend a PP Up or a PP Max on one of a pokemon's moves.
  *
  * The points are permanent, and what they buy here is a **shorter
@@ -246,8 +261,8 @@ export interface MovePointsResult {
  *
  * Resolves what the move now carries, or null when it is refused: the
  * catch is not the player's, it is fighting, it is still an egg, it
- * does not know that move, none of the item is carried, or the move is
- * already at the limit
+ * does not know that move, none of the item is carried, or the move's
+ * PP would not change
  */
 export async function usePPItem(
   uid: string,
@@ -289,10 +304,11 @@ export async function usePPItem(
       return null;
     }
 
-    const points = Math.min(PP_UP_LIMIT, getMovePoints(record, move) + worth);
+    const points = raisedMovePoints(move, getMovePoints(record, move), worth);
 
-    // Already as far as it goes, so nothing is spent
-    if (points === getMovePoints(record, move)) {
+    // Already as far as it goes, or too small a move to gain, so
+    // nothing is spent
+    if (points == null) {
       return null;
     }
 
@@ -363,7 +379,12 @@ export async function feedEffortBerry(
     }
 
     const effortValues = { ...record.effortValues, [stat]: trainedTo };
-    const friendship = gainFriendship(record.friendship, 'berry', 1, friendshipFactor(record.ball));
+    const friendship = gainFriendship(
+      record.friendship,
+      'berry',
+      1,
+      friendshipFactor(record.ball, record.items),
+    );
     const trained = { ...record, effortValues, friendship };
 
     await writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);

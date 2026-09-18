@@ -33,6 +33,8 @@ const WIDTH = 32;
 
 export interface MoveCategorySpriteProps {
   category: MoveCategories;
+  /** The picture's width, where a caller wants it smaller than the sheet's */
+  size?: number;
   class?: string;
 }
 
@@ -41,7 +43,7 @@ export default function MoveCategorySprite(props: MoveCategorySpriteProps): JSX.
     <AtlasSprite
       sheet={SHEET}
       name={PICTURES[props.category]}
-      size={WIDTH}
+      size={props.size ?? WIDTH}
       label={MOVE_CATEGORY_NAMES[props.category]}
       class={props.class}
     />

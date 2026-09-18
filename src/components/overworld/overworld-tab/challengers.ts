@@ -49,10 +49,10 @@ import {
   rocketPartyLevels,
 } from '../../../overworld/stop';
 import {
-  TRAINER_NAMES,
   TRAINER_QUOTES,
   TRAINER_TYPES,
   trainerLevels,
+  trainerNameIn,
 } from '../../../data/overworld/trainers';
 import { TYPE_NAMES, type Types } from '../../../data/constants/types';
 import type { StopChallenge } from '../StopDialog';
@@ -332,7 +332,7 @@ export default function challengerOf(
       return null;
     }
 
-    const name = TRAINER_NAMES[trainer];
+    const name = trainerNameIn(trainer, snapshot.getWandererCoats().get(cell));
     const levels = trainerLevels(trainer);
     const types = TRAINER_TYPES[trainer];
     const fields =

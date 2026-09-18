@@ -13,20 +13,14 @@ import { MAX_IV_STARS, getIVStars } from '../../../../data/constants/stats';
 import { Genders, Species } from '../../../../data/ids/species';
 import { SpriteAnim } from '../../../../data/ids/sprite-anims';
 
-import { getSpeciesData } from '../../../../data/species';
-
-import { SparklesIcon } from '../../../icons';
 import AnimatedSprite from '../../../sprites/AnimatedSprite';
-import TypeBadge from '../../../sprites/TypeBadge';
-import { Divider, Meta, Row } from '../../../styled';
+import { Meta } from '../../../styled';
 
-import { GENDER_LABELS, GENDER_MARKS } from '../../catch-summary';
-import { For, type JSX, Show } from 'solid-js';
+import { type JSX, Show } from 'solid-js';
 
 /**
- * The pokemon itself: the sprite, what it is called, what it has left
- * and what kind of thing it is. An egg is drawn as an egg and says
- * none of the rest — it has nothing to lose yet, and is nothing yet.
+ * The pokemon itself: the sprite, how well it rolled and what it has
+ * left. An egg is drawn as an egg and says none of the rest.
  */
 export interface PortraitSectionProps {
   caught: CaughtPokemon;
@@ -43,107 +37,55 @@ export default function PortraitSection(props: PortraitSectionProps): JSX.Elemen
 
   return (
     <>
-      <div class="-mb-2 flex min-h-28 items-end justify-center pt-2">
-        <AnimatedSprite
-          species={isEgg(props.caught) ? Species.Egg : props.caught.species}
-          shiny={!isEgg(props.caught) && isShiny(props.caught)}
-          female={!isEgg(props.caught) && props.caught.gender === Genders.Female}
-          aura={isEgg(props.caught) ? undefined : catchAura(props.caught)}
-          animation={SpriteAnim.Idle}
-          direction="DownLeft"
-          scale={4}
-          shadow
-          label={props.named}
-        />
+      {/* A square the sprite is fitted to, so every species takes the
+          same room. It grows into whatever height the column has spare,
+          and never below 8rem */}
+      <div class="relative min-h-32 w-full flex-1">
+        <div class="absolute inset-0 m-auto aspect-square h-full max-w-full">
+          <AnimatedSprite
+            species={isEgg(props.caught) ? Species.Egg : props.caught.species}
+            shiny={!isEgg(props.caught) && isShiny(props.caught)}
+            female={!isEgg(props.caught) && props.caught.gender === Genders.Female}
+            aura={isEgg(props.caught) ? undefined : catchAura(props.caught)}
+            animation={SpriteAnim.Idle}
+            direction="DownLeft"
+            fill
+            // An egg has no height of its own to be drawn at
+            sized={!isEgg(props.caught)}
+            shadow
+            label={props.named}
+          />
+        </div>
       </div>
 
-      <div class="flex flex-col items-center gap-0.5">
-        {/* The mark the box and the cards put on a shiny, beside the
-            name rather than in it: it is a picture, and a name is a
-            thing a player types */}
-        <Row class="justify-center">
-          <Show when={!isEgg(props.caught) && isShiny(props.caught)}>
-            <SparklesIcon aria-label="Shiny" class="size-4 shrink-0 text-gold" />
-          </Show>
-          <h3>{props.named}</h3>
-        </Row>
-        {/* What it actually is, under what it is called —
-      and only where the two differ. A pokemon nobody
-      has named is headed by its species already, and
-      printing that twice would be the sheet answering
-      a question it has just answered */}
-        <Show when={!isEgg(props.caught) && props.caught.nickname !== ''}>
-          <Meta>{getSpeciesData(props.caught.species).name}</Meta>
-        </Show>
-        {/* Both of the rolls it was made from, drawn rather
-      than printed, and how well the first of them went.
-      Two of the same species with the same sigil are the
-      same individual. An egg has neither yet */}
-        <Show when={!isEgg(props.caught)}>
-          <Row class="justify-center">
-            <span
-              role="img"
-              aria-label={`${getIVStars(props.caught.ivs)} of ${MAX_IV_STARS} stars`}
-              class="shrink-0 text-sm tracking-[0.2em] text-gold"
-            >
-              {stars()}
-            </span>
-            <Meta class="font-mono tracking-[0.2em]">
-              {getSigil(props.caught.individualValue, props.caught.traitValue)}
-            </Meta>
-          </Row>
-        </Show>
-        {/* What it has left, drawn the way the box draws it.
-      It is here rather than in the stats below because
-      it is about this pokemon *now* rather than about
-      what it is made of, and it is the one number a
-      player checks before sending it anywhere. An egg
-      has nothing to lose yet */}
-        <Show when={!isEgg(props.caught)}>
-          <div class="flex w-48 max-w-full items-center gap-2">
-            <div
-              class="h-1.5 grow overflow-hidden rounded-full border border-line-soft
-          bg-line-soft"
-            >
-              <div
-                class={`h-full ${isFainted(props.caught) ? 'bg-muted' : 'bg-leaf'}`}
-                style={{ width: `${healthLeft(props.caught) * 100}%` }}
-              />
-            </div>
-            <Meta class="shrink-0 tabular-nums">
-              {Math.max(0, Math.round(props.caught.health))}/{getMaxHealth(props.caught)}
-              {isFainted(props.caught) ? ' · fainted' : ''}
-            </Meta>
-          </div>
-        </Show>
-      </div>
-
-      {/* What it is: what the dex calls its kind, the types
-        it fights as, and which it is. Its species is named
-        above — as the heading, or under it where a
-        nickname has taken the heading — so this line does
-        not say it a third time. An egg is none of it yet */}
       <Show when={!isEgg(props.caught)}>
-        <Row class="justify-center">
-          <span class="font-medium">{getSpeciesData(props.caught.species).category}</span>
-          <Divider />
-          <For each={getSpeciesData(props.caught.species).types}>
-            {(type) => <TypeBadge type={type} />}
-          </For>
-          {/* A mark rather than a word, and nothing at all
-            for something that has no gender: an empty
-            column is not information */}
-          <Show when={GENDER_MARKS[props.caught.gender] !== ''}>
-            <Divider />
-            <span
-              class="text-lg leading-none"
-              title={GENDER_LABELS[props.caught.gender]}
-              aria-label={GENDER_LABELS[props.caught.gender]}
-            >
-              {GENDER_MARKS[props.caught.gender]}
-            </span>
-          </Show>
-        </Row>
+        {/* Both rolls it was made from: two of a species with the same
+            sigil are the same individual */}
+        <div class="flex items-center justify-center gap-2">
+          <span
+            role="img"
+            aria-label={`${getIVStars(props.caught.ivs)} of ${MAX_IV_STARS} stars`}
+            class="text-sm tracking-[0.2em] text-gold"
+          >
+            {stars()}
+          </span>
+          <Meta class="font-mono tracking-[0.2em]">
+            {getSigil(props.caught.individualValue, props.caught.traitValue)}
+          </Meta>
+        </div>
+
+        <div class="flex w-full items-center gap-2">
+          <div class="h-1.5 grow overflow-hidden rounded-full border border-line-soft bg-line-soft">
+            <div
+              class={`h-full ${isFainted(props.caught) ? 'bg-muted' : 'bg-leaf'}`}
+              style={{ width: `${healthLeft(props.caught) * 100}%` }}
+            />
+          </div>
+          <Meta class="shrink-0 tabular-nums">
+            {Math.max(0, Math.round(props.caught.health))}/{getMaxHealth(props.caught)}
+            {isFainted(props.caught) ? ' · fainted' : ''}
+          </Meta>
+        </div>
       </Show>
     </>
   );

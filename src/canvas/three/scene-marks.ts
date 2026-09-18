@@ -429,12 +429,23 @@ export default class SceneMarks {
     this.sweep();
   }
 
-  /** Say that a sheet has been drawn into since it was uploaded. */
+  /**
+   * Say that a sheet has been drawn into since it was uploaded. One
+   * that changed size is uploaded afresh: three keeps a texture's
+   * first size for good and writes later uploads into its corner, which
+   * is what stretched and shifted the cave's lamp mask on a phone
+   */
   invalidate(sheet: QuadSheet): void {
     for (const sampling of ['pixels', 'smooth'] as const) {
-      const held = this.textures.get(this.keyOf(sheet, sampling));
+      const key = this.keyOf(sheet, sampling);
+      const held = this.textures.get(key);
 
-      if (held != null) {
+      if (held == null) {
+        continue;
+      }
+      if (held.userData.width !== sheet.width || held.userData.height !== sheet.height) {
+        this.forget(key);
+      } else {
         held.needsUpdate = true;
       }
     }
@@ -460,19 +471,23 @@ export default class SceneMarks {
     if (this.textures.size <= SHEET_LIMIT) {
       return;
     }
-    for (const [key, texture] of this.textures) {
-      if (this.frame - (this.used.get(key) ?? 0) <= SHEET_PATIENCE) {
-        continue;
+    for (const key of this.textures.keys()) {
+      if (this.frame - (this.used.get(key) ?? 0) > SHEET_PATIENCE) {
+        this.forget(key);
       }
-      texture.dispose();
-      this.textures.delete(key);
-      this.used.delete(key);
+    }
+  }
 
-      for (const [name, material] of this.materials) {
-        if (name.startsWith(`${key}|`)) {
-          material.dispose();
-          this.materials.delete(name);
-        }
+  /** Drop one sheet's texture, with the materials that sample it */
+  private forget(key: string): void {
+    this.textures.get(key)?.dispose();
+    this.textures.delete(key);
+    this.used.delete(key);
+
+    for (const [name, material] of this.materials) {
+      if (name.startsWith(`${key}|`)) {
+        material.dispose();
+        this.materials.delete(name);
       }
     }
   }
@@ -496,7 +511,8 @@ export default class SceneMarks {
     if (known != null) {
       return known;
     }
-    const made = new Texture(sheet ?? this.blank);
+    const image = sheet ?? this.blank;
+    const made = new Texture(image);
 
     // Top left rather than bottom left, so a source rectangle is the
     // same one the page was cut with
@@ -508,6 +524,8 @@ export default class SceneMarks {
     made.minFilter = made.magFilter;
     made.generateMipmaps = false;
     made.needsUpdate = true;
+    // The size it was stored at, so a resized sheet is known to need a new one
+    made.userData = { width: image.width, height: image.height };
     this.textures.set(key, made);
     return made;
   }

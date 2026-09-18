@@ -12,6 +12,7 @@ import {
 } from '../auth/trade-record';
 import { FriendTie } from '../auth/friend-record';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
+import type { Species } from '../data/ids/species';
 import { settleHandover } from '../data/species';
 import { isEggRecord, isFavoriteRecord, withoutHeld } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
@@ -19,6 +20,7 @@ import { hasSpareCatchIn } from './caught';
 import { type Tx, getSql, newDocId, tx } from './db';
 import { readFriendTie } from './friends';
 import { isCatchLocked } from './locks';
+import { recordFoundSpecies } from './pokedex';
 import { isAnyCatchQueued } from './raids';
 import { Metric } from '../auth/quest-record';
 import { type ProgressBump, bumpProgress } from './quest-progress';
@@ -220,6 +222,8 @@ export async function acceptTrade(
   }
 
   let goldMoved = 0;
+  // What each side came away with, for the dex once the swap has committed
+  const arrivals: { player: string; species: Species; shiny: boolean }[] = [];
   const accepted = await tx(async (transaction) => {
     const trade = await readTradeIn(transaction, tradeId);
 
@@ -279,6 +283,11 @@ export async function acceptTrade(
     // the friendship it built belonged to the hands it left
     const incoming = asCaughtPokemon(offered);
     const outgoing = asCaughtPokemon(giving);
+
+    arrivals.push(
+      { player: uid, species: incoming.species, shiny: incoming.shiny },
+      { player: trade.proposer, species: outgoing.species, shiny: outgoing.shiny },
+    );
     // Asked once, here: what each was at the moment of the swap, what
     // came the other way, and what it was holding are all in hand, and
     // none of them is afterwards. A held item the evolution asks for
@@ -348,6 +357,11 @@ export async function acceptTrade(
   // Positive gold came from the proposer, negative was asked of the
   // acceptor
   if (accepted && proposer !== '') {
+    // Each side now owns what it took, which the dex counts as caught
+    // the way a hatch or an evolution is: arriving without a meeting
+    for (const arrival of arrivals) {
+      await recordFoundSpecies(arrival.player, arrival.species, arrival.shiny);
+    }
     await bumpProgress(uid, [
       [Metric.Trades, 0, 1],
       ...(goldMoved > 0 ? [[Metric.GoldEarned, 0, goldMoved] satisfies ProgressBump] : []),

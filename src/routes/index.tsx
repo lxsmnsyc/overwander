@@ -438,6 +438,10 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onTrainer={(uid) => {
               game.setVisiting(uid);
             }}
+            // The entry opens over the sheet, the way a profile does
+            onDex={(species) => {
+              game.setDexEntry(species);
+            }}
           />
 
           {/* Which form was meant, for a row that stands for several.
@@ -504,7 +508,21 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           the world is when one is not */}
       {(active) => (
         <BattleData>
-          <BattleView active={active} />
+          <BattleView
+            active={active}
+            onLeave={() => {
+              // The lobby goes too, since one watching its own record
+              // reopens the fight, and so does the panel Start was
+              // pressed in: leaving means standing in the overworld
+              game.setRaid(null);
+              game.setDuel(null);
+              game.setDialog(GameDialog.None);
+              game.setBattle(null);
+            }}
+            onReward={(reward) => {
+              game.setReward(reward);
+            }}
+          />
         </BattleData>
       )}
     </Show>

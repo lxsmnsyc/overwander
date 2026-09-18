@@ -637,6 +637,7 @@ interface Shrunk {
 
 const SHRUNK: Shrunk[] = [
   { from: 'clear-amulet', to: 'held/clear-amulet', wide: 21 },
+  { from: 'loaded-dice', to: 'held/loaded-dice', wide: 20 },
   { from: 'manaphy-egg', to: 'key/manaphy-egg', wide: 20 },
 ];
 

@@ -1,5 +1,5 @@
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { NON_VOLATILE_STATUSES, type Statuses } from '../ids/status';
+import { NON_VOLATILE_STATUSES, Statuses } from '../ids/status';
 import { nameToIcon, registerItem } from './__create';
 
 /**
@@ -47,6 +47,30 @@ export const TREATS: Map<Items, Treat> = new Map([
   [Items.SweetHeart, { name: 'Sweet Heart', restore: 20, buy: 300 }],
 ]);
 
+// The two poisons share a word, so a sweet names poison once
+const CURE_NAMES = new Map<Statuses, string>([
+  [Statuses.Poisoned, 'poison'],
+  [Statuses.BadlyPoisoned, 'poison'],
+  [Statuses.Sleeping, 'sleep'],
+  [Statuses.Paralyzed, 'paralysis'],
+  [Statuses.Burned, 'a burn'],
+  [Statuses.Frozen, 'freezing'],
+]);
+
+function describeSweet(): string {
+  const cured = new Set<string>();
+
+  for (const status of TREAT_CURES) {
+    cured.add(CURE_NAMES.get(status) ?? '');
+  }
+
+  const names = [...cured];
+  const last = names.pop();
+  const list = names.length > 0 ? `${names.join(', ')} or ${last}` : last;
+
+  return `Cures ${list} a second after one lands on its holder.`;
+}
+
 export function isTreat(item: Items): boolean {
   return TREATS.has(item);
 }
@@ -60,7 +84,7 @@ export default function registerTreats(): void {
       description:
         treat.restore > 0
           ? `Restores ${treat.restore} HP when its holder drops to 1/5 of its HP.`
-          : 'Cures every status a second after one lands on its holder.',
+          : describeSweet(),
       type: ItemTypes.Held,
       icon: nameToIcon('medicine', treat.name),
       flags: ItemFlags.Holdable | ItemFlags.Consumable | ItemFlags.Marketable,

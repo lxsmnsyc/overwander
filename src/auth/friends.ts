@@ -12,6 +12,7 @@ import {
 } from '../server/friends';
 import { asNumber, asRecordArray, asString } from './__normalize';
 import { requireUid } from '../server/auth';
+import check, { TEXT, TOKEN, UID } from '../server/validate';
 import { syncServerClock } from './clock';
 import getSupabase, { type Unwatch, watchTable } from './supabase';
 import getIdToken from './session';
@@ -112,6 +113,8 @@ export async function readFriendTie(other: string): Promise<FriendTie> {
 
 async function tieOnServer(token: string, other: string): Promise<FriendTie> {
   'use server';
+  check(TOKEN, token);
+  check(UID, other);
   return readTieOnServerSide(await requireUid(token), other);
 }
 
@@ -125,6 +128,8 @@ export async function sendFriendRequest(target: string): Promise<FriendTie> {
 
 async function sendRequestOnServer(token: string, target: string): Promise<FriendTie> {
   'use server';
+  check(TOKEN, token);
+  check(UID, target);
   return sendOnServerSide(await requireUid(token), target, await syncServerClock());
 }
 
@@ -135,6 +140,8 @@ export async function acceptFriendRequest(from: string): Promise<FriendTie> {
 
 async function acceptOnServer(token: string, from: string): Promise<FriendTie> {
   'use server';
+  check(TOKEN, token);
+  check(UID, from);
   return acceptOnServerSide(await requireUid(token), from, await syncServerClock());
 }
 
@@ -145,6 +152,8 @@ export async function dropFriendRequest(other: string): Promise<FriendTie> {
 
 async function dropRequestOnServer(token: string, other: string): Promise<FriendTie> {
   'use server';
+  check(TOKEN, token);
+  check(UID, other);
   return dropOnServerSide(await requireUid(token), other);
 }
 
@@ -155,6 +164,8 @@ export async function removeFriend(other: string): Promise<FriendTie> {
 
 async function removeFriendOnServer(token: string, other: string): Promise<FriendTie> {
   'use server';
+  check(TOKEN, token);
+  check(UID, other);
   return removeOnServerSide(await requireUid(token), other);
 }
 
@@ -168,6 +179,8 @@ export async function blockPlayer(other: string): Promise<FriendTie> {
 
 async function blockOnServer(token: string, other: string): Promise<FriendTie> {
   'use server';
+  check(TOKEN, token);
+  check(UID, other);
   return blockOnServerSide(await requireUid(token), other, await syncServerClock());
 }
 
@@ -178,6 +191,8 @@ export async function unblockPlayer(other: string): Promise<FriendTie> {
 
 async function unblockOnServer(token: string, other: string): Promise<FriendTie> {
   'use server';
+  check(TOKEN, token);
+  check(UID, other);
   return unblockOnServerSide(await requireUid(token), other);
 }
 
@@ -188,6 +203,7 @@ export async function getMyFriendCode(): Promise<string> {
 
 async function getCodeOnServer(token: string): Promise<string> {
   'use server';
+  check(TOKEN, token);
   return getCodeOnServerSide(await requireUid(token));
 }
 
@@ -198,5 +214,7 @@ export async function findPlayerByCode(code: string): Promise<FoundPlayer | null
 
 async function findOnServer(token: string, code: string): Promise<FoundPlayer | null> {
   'use server';
+  check(TOKEN, token);
+  check(TEXT, code);
   return findOnServerSide(await requireUid(token), code);
 }

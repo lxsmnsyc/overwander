@@ -441,13 +441,13 @@ const BERRY_DESCRIPTIONS: { [key in Items]?: string } = {
   [Items.AspearBerry]: 'Thaws its holder the moment it freezes.',
   [Items.PersimBerry]: 'Cures confusion the moment it lands.',
   [Items.LumBerry]: 'Cures any status the moment it lands.',
-  [Items.LeppaBerry]: 'Clears the cooldown on a move its holder has run down.',
+  [Items.LeppaBerry]: 'Clears the cooldown of the first move its holder uses.',
   [Items.OranBerry]: 'Restores 10 HP at 1/2 HP.',
   [Items.SitrusBerry]: 'Restores 1/4 of max HP at 1/2 HP.',
   [Items.LansatBerry]: 'Sharpens its holder’s criticals by 2 stages at 1/4 HP.',
   [Items.StarfBerry]: '+2 to 1 random stat at 1/4 HP.',
   [Items.CustapBerry]: 'Its holder’s next move winds up a bracket faster, at 1/4 HP.',
-  [Items.MicleBerry]: '1.2x accuracy at 1/4 HP.',
+  [Items.MicleBerry]: '1.2x accuracy on its holder’s next move, at 1/4 HP.',
   [Items.EnigmaBerry]: 'Restores 1/4 of max HP after a super-effective blow lands.',
   [Items.JabocaBerry]: 'A physical attacker pays 1/8 of its own HP.',
   [Items.RowapBerry]: 'A special attacker pays 1/8 of its own HP.',
@@ -481,17 +481,21 @@ export function describeBerry(item: Items): string {
 
   if (calm != null) {
     return calm === 0
-      ? 'Fed to a wild pokemon to stop it bolting from the next ball.'
-      : 'Fed to a wild pokemon to halve its chance of bolting from the next ball.';
+      ? `Fed to a wild pokemon for ${BAIT_CATCH_BONUS}x catch odds, and stops it bolting from the next ball.`
+      : `Fed to a wild pokemon for ${BAIT_CATCH_BONUS}x catch odds, and halves its chance of bolting from the next ball.`;
   }
 
   const helpings = PINAP_CANDY_HELPINGS.get(item);
 
   if (helpings != null) {
-    return `Fed to a wild pokemon: catching it pays ${helpings + 1}x its candy.`;
+    return `Fed to a wild pokemon for ${BAIT_CATCH_BONUS}x catch odds. Catching it pays ${helpings === 1 ? 'one extra helping' : `${helpings} extra helpings`} of its candy.`;
   }
 
   const resisted = BERRY_RESIST_TYPES.get(item);
+
+  if (resisted === Types.Normal) {
+    return 'Halves the first Normal blow to land on its holder.';
+  }
 
   if (resisted != null) {
     return `Halves one ${TYPE_NAMES[resisted]} blow that was landing hard.`;

@@ -39,6 +39,7 @@
  */
 
 import type { SpriteQuad } from './placement';
+import { stampedFile } from './sprite-stamps';
 
 export interface BasicSpriteImage {
   /**
@@ -215,13 +216,16 @@ export default class BasicSprite {
    * is what says how to read the sheet, so neither is any use without
    * the other
    */
-  static async fetch(basePath: string): Promise<BasicSprite> {
-    const response = await fetch(`${basePath}/data.json`);
+  static async fetch(basePath: string, stamp: string | null = null): Promise<BasicSprite> {
+    const response = await fetch(stampedFile(`${basePath}/data.json`, stamp));
 
     if (!response.ok) {
       throw new Error(`No sprite data at ${basePath}`);
     }
-    return new BasicSprite(`${basePath}/image.png`, asBasicSpriteData(await response.json()));
+    return new BasicSprite(
+      stampedFile(`${basePath}/image.png`, stamp),
+      asBasicSpriteData(await response.json()),
+    );
   }
 
   /**

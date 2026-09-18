@@ -27,11 +27,14 @@ export const MARKET_TRINKETS: Map<Items, [name: string, description: string]> = 
 export const FOUND_TRINKETS: Map<Items, [name: string, description: string]> = new Map([
   [
     Items.Everstone,
-    ['Everstone', 'Its holder will not evolve, whatever it meets the conditions for.'],
+    ['Everstone', 'Its holder will not evolve, and an egg bred from it inherits its nature.'],
   ],
   [
     Items.AmuletCoin,
-    ['Amulet Coin', '3x the gold from any fight its holder is in, a raid or a grunt included.'],
+    [
+      'Amulet Coin',
+      'While your buddy carries it, 3x the gold from a won raid or a beaten stop trainer.',
+    ],
   ],
 ]);
 

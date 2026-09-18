@@ -187,7 +187,7 @@ export default function registerArmThrustToOverheat(): void {
   });
   registerMove(Moves.BlastBurn, {
     name: 'Blast Burn',
-    description: 'The user has to recharge afterwards.',
+    description: 'The user has to recharge for 2 seconds afterwards.',
     type: Types.Fire,
     category: MoveCategories.Special,
     power: 150,
@@ -199,7 +199,7 @@ export default function registerArmThrustToOverheat(): void {
   });
   registerMove(Moves.HydroCannon, {
     name: 'Hydro Cannon',
-    description: 'The user has to recharge afterwards.',
+    description: 'The user has to recharge for 2 seconds afterwards.',
     type: Types.Water,
     category: MoveCategories.Special,
     power: 150,
@@ -235,7 +235,8 @@ export default function registerArmThrustToOverheat(): void {
   });
   registerMove(Moves.WeatherBall, {
     name: 'Weather Ball',
-    description: "In any weather it hits for 2x and takes the sky's own type.",
+    description:
+      "In sun, rain, sandstorm, hail or snow it hits for 2x and takes the weather's type.",
     type: Types.Normal,
     category: MoveCategories.Special,
     power: 50,
@@ -248,7 +249,8 @@ export default function registerArmThrustToOverheat(): void {
   });
   registerMove(Moves.Aromatherapy, {
     name: 'Aromatherapy',
-    description: "Clears every status from the user's whole party.",
+    description:
+      "Cures burns, poison, paralysis, sleep and freezing across the user's whole party.",
     type: Types.Grass,
     category: MoveCategories.Status,
     pp: 5,

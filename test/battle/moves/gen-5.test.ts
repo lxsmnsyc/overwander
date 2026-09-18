@@ -674,3 +674,123 @@ describe("Unova's moves", () => {
     });
   });
 });
+
+/** What the AI asks before it scores a move at all */
+function aiMayUse(battle: Battle, source: Unit, move: Moves, aim: Unit): boolean {
+  const event = {
+    id: 'CheckUnitAIMoveUsable',
+    disabled: false,
+    source,
+    move,
+    target: unitTarget(aim),
+    usable: true,
+  };
+
+  battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
+  return event.usable;
+}
+
+describe('what Unova does to a raid boss', () => {
+  it('shrugs off a Quash, so its wind-up keeps going', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const quasher = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+
+    quasher.enter();
+    boss.enter();
+    boss.addAbility(Abilities.Boss);
+    boss.addMove(Moves.Tackle);
+    boss.cast(Moves.Tackle, unitTarget(quasher));
+    battle.tick(500);
+
+    const progress = boss.casting?.time.progress;
+
+    quasher.triggerMoveEffect(Moves.Quash, unitTarget(boss), 0);
+
+    expect(boss.casting?.time.progress).toBe(progress);
+    expect(aiMayUse(battle, quasher, Moves.Quash, boss)).toBe(false);
+  });
+
+  it('cannot be carried off by a Sky Drop', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const carrier = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+
+    boss.addAbility(Abilities.Boss);
+    boss.setWeight(50);
+    carrier.triggerMoveEffect(Moves.SkyDrop, unitTarget(boss), 1);
+
+    expect(boss.status[Statuses.SkyDropped]).toBeUndefined();
+    expect(aiMayUse(battle, carrier, Moves.SkyDrop, boss)).toBe(false);
+  });
+
+  it('sets down every enemy its Sky Drop carried', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const boss = createUnit(battle, teamA);
+    const enemies = [
+      createUnit(battle, teamB),
+      createUnit(battle, teamB),
+      createUnit(battle, teamB),
+    ];
+
+    boss.enter();
+    for (const enemy of enemies) {
+      enemy.enter();
+      enemy.setWeight(50);
+    }
+    boss.addAbility(Abilities.Boss);
+    boss.addMove(Moves.SkyDrop);
+    boss.cast(Moves.SkyDrop, unitTarget(enemies[0]));
+
+    // A boss winds up twice as long, so give the carry and the drop
+    // both room to land
+    for (let elapsed = 0; elapsed < 8000; elapsed += 250) {
+      battle.tick(250);
+    }
+
+    // One boss reaches every enemy, and none of them is left up there
+    for (const enemy of enemies) {
+      expect(enemy.status[Statuses.SkyDropped]).toBeUndefined();
+      expect(enemy.status[Statuses.Invulnerable]).toBeUndefined();
+      expect(enemy.health).toBeLessThan(enemy.checkStat(Stats.HP, 0));
+    }
+  });
+
+  it('refuses a Guard Split and a Power Split at either end', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const splitter = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+
+    boss.addAbility(Abilities.Boss);
+    boss.setStat(StatsKind.Base, Stats.Defense, 200);
+    boss.setStat(StatsKind.Base, Stats.Attack, 200);
+
+    const guard = [splitter.checkStat(Stats.Defense, 0), boss.checkStat(Stats.Defense, 0)];
+    const power = [splitter.checkStat(Stats.Attack, 0), boss.checkStat(Stats.Attack, 0)];
+
+    splitter.triggerMoveEffect(Moves.GuardSplit, unitTarget(boss), 0);
+    boss.triggerMoveEffect(Moves.PowerSplit, unitTarget(splitter), 0);
+
+    expect([splitter.checkStat(Stats.Defense, 0), boss.checkStat(Stats.Defense, 0)]).toEqual(guard);
+    expect([splitter.checkStat(Stats.Attack, 0), boss.checkStat(Stats.Attack, 0)]).toEqual(power);
+  });
+
+  it('keeps what it is through an Entrainment and a Simple Beam', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+
+    caster.addAbility(Abilities.Overgrow);
+    boss.addAbility(Abilities.Boss);
+    boss.addAbility(Abilities.Blaze);
+
+    caster.triggerMoveEffect(Moves.Entrainment, unitTarget(boss), 0);
+    caster.triggerMoveEffect(Moves.SimpleBeam, unitTarget(boss), 0);
+
+    expect(boss.hasAbility(Abilities.Boss)).toBe(true);
+    expect(boss.hasAbility(Abilities.Blaze)).toBe(true);
+    expect(boss.hasAbility(Abilities.Overgrow)).toBe(false);
+    expect(boss.hasAbility(Abilities.Simple)).toBe(false);
+  });
+});

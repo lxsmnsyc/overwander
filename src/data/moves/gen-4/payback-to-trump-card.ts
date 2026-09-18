@@ -45,7 +45,8 @@ export default function registerPaybackToTrumpCard(): void {
   });
   registerMove(Moves.Fling, {
     name: 'Fling',
-    description: "Throws the user's held item. The item decides the power, and it is gone after.",
+    description:
+      "Throws the user's held item: 10 power for a berry, 60 for anything else. The item is gone after.",
     type: Types.Dark,
     category: MoveCategories.Physical,
     pp: 10,

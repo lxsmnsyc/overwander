@@ -13,6 +13,7 @@ import colorOf from './colors';
 import contact from './contact';
 import elements from './elements';
 import legends from './legends';
+import ohko from './ohko';
 import minds from './minds';
 import { BY_TYPE, NAMED } from './named';
 import stats from './stats';
@@ -94,6 +95,7 @@ const PAINTERS: Record<EffectShape, ShapePainter> = {
   ...minds,
   ...care,
   ...legends,
+  ...ohko,
   ...stats,
   ...unova,
 };

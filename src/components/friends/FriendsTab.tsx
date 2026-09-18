@@ -29,13 +29,11 @@ import {
   LIST_PAGE,
   List,
   Note,
-  Row,
   SEARCH_FROM,
   Search,
   Status,
   createPager,
 } from '../styled';
-import AddFriendDialog from './AddFriendDialog';
 import FriendEntry from './FriendEntry';
 import { useGame } from '../app/game-context';
 
@@ -157,7 +155,6 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
   const [busy, setBusy] = createSignal('');
   const [error, setError] = createSignal<string | null>(null);
   const [query, setQuery] = createSignal('');
-  const [adding, setAdding] = createSignal(false);
   const made = createMemo(() => {
     const since = new Map<string, number>();
 
@@ -187,30 +184,19 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
 
   return (
     <>
-      {/* Finding one of a hundred, and asking for one more. The two
-          belong together: both are how a list of friends changes */}
-      <Row class="flex-nowrap items-center gap-2">
-        <Show when={roll().length > SEARCH_FROM}>
-          <Search
-            vocabulary={FRIEND_VOCABULARY}
-            example="sort:since"
-            placeholder="Name, or sort:since"
-            value={query()}
-            onChange={(typed) => {
-              setQuery(typed);
-            }}
-          />
-        </Show>
-        <Button
-          tone="primary"
-          class="shrink-0"
-          onClick={() => {
-            setAdding(true);
+      {/* Finding one of a hundred. Asking for one more is beside the
+          heading the list is drawn under */}
+      <Show when={roll().length > SEARCH_FROM}>
+        <Search
+          vocabulary={FRIEND_VOCABULARY}
+          example="sort:since"
+          placeholder="Name, or sort:since"
+          value={query()}
+          onChange={(typed) => {
+            setQuery(typed);
           }}
-        >
-          Add friend
-        </Button>
-      </Row>
+        />
+      </Show>
 
       <Show
         when={roll().length > 0}
@@ -253,13 +239,6 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
         {shunned.controls()}
       </Show>
       <Status message={error()} tone="alert" />
-      {/* Somebody to ask, out of everybody playing */}
-      <AddFriendDialog
-        isOpen={adding()}
-        onClose={() => {
-          setAdding(false);
-        }}
-      />
     </>
   );
 }

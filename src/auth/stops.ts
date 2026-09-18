@@ -1,4 +1,5 @@
 import { requireUid } from '../server/auth';
+import check, { CELL, CHUNK_COORDINATE, DEPTH, ID, OFFSET, PARTY, TOKEN } from '../server/validate';
 import {
   type StopEntry,
   type StopReward,
@@ -47,6 +48,12 @@ async function enterStopOnServer(
   depth: Depth,
 ): Promise<StopEntry> {
   'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(OFFSET, offset);
+  check(DEPTH, depth);
   return enterOnServer(await requireUid(token), x, y, cell, await syncServerClock(), offset, depth);
 }
 
@@ -65,6 +72,9 @@ async function startBattleOnServer(
   catches: string[],
 ): Promise<string | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, stop);
+  check(PARTY, catches);
   return startOnServer(await requireUid(token), stop, catches, await syncServerClock());
 }
 
@@ -78,5 +88,7 @@ export async function claimStopReward(stop: string): Promise<StopReward | null> 
 
 async function claimRewardOnServer(token: string, stop: string): Promise<StopReward | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, stop);
   return claimOnServer(await requireUid(token), stop);
 }

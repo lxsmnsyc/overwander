@@ -49,7 +49,17 @@ import {
 } from '../../data/overworld/experts';
 import NpcSprite from '../overworld/NpcSprite';
 import ExtraSprite from '../sprites/ExtraSprite';
-import { Card, Detail, HoverCard, Meta, Note } from '../styled';
+import {
+  Card,
+  Detail,
+  HoverCard,
+  Meta,
+  Note,
+  TabBar,
+  TabButton,
+  TabGroup,
+  TabPane,
+} from '../styled';
 
 /**
  * The trainer's shelf, laid out the way the bag's tray is: a grid of
@@ -547,57 +557,73 @@ function tintOf(trainer: TrainerClass): string | undefined {
   return TRAINER_TYPES[trainer].length === 0 ? undefined : TYPE_COLORS[type];
 }
 
-function AchievementShelves(props: { sheet: Resource<AchievementSheet> }): JSX.Element {
+/** One tray of achievement slots, filled out to whole rows */
+function Tray(props: { count: number; children: JSX.Element }): JSX.Element {
   return (
-    <div class="mx-auto flex w-full max-w-lg flex-col gap-2">
-      <Meta>Achievements</Meta>
+    <div class="mx-auto w-full max-w-lg">
       <div
         class="grid w-full grid-cols-6 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
           shadow-pop"
       >
-        <For each={props.sheet()?.lines ?? []}>
-          {([line, standing]) => (
-            <LineSlot name={LINE_NAMES[line]} deed={LINE_DEEDS[line]} standing={standing} />
-          )}
-        </For>
-        <For each={fillers((props.sheet()?.lines ?? []).length)}>{() => <Filler />}</For>
-      </div>
-      <Meta>Type specialists</Meta>
-      <div
-        class="grid w-full grid-cols-6 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
-          shadow-pop"
-      >
-        <For each={props.sheet()?.types ?? []}>
-          {([type, standing]) => (
-            <LineSlot
-              name={TYPE_NAMES[type]}
-              deed={`${TYPE_NAMES[type]} pokemon caught`}
-              standing={standing}
-              tint={TYPE_COLORS[type]}
-            />
-          )}
-        </For>
-        <For each={fillers((props.sheet()?.types ?? []).length)}>{() => <Filler />}</For>
-      </div>
-      <Meta>Trainers beaten</Meta>
-      <div
-        class="grid w-full grid-cols-6 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
-          shadow-pop"
-      >
-        <For each={props.sheet()?.trainers ?? []}>
-          {([trainer, standing]) => (
-            <LineSlot
-              name={TRAINER_BASE_NAMES[trainer]}
-              deed={`${TRAINER_BASE_NAMES[trainer]}s beaten`}
-              standing={standing}
-              tint={tintOf(trainer)}
-            />
-          )}
-        </For>
-        <For each={fillers((props.sheet()?.trainers ?? []).length)}>{() => <Filler />}</For>
+        {props.children}
+        <For each={fillers(props.count)}>{() => <Filler />}</For>
       </div>
     </div>
   );
+}
+
+function LineShelf(props: { sheet: Resource<AchievementSheet> }): JSX.Element {
+  return (
+    <Tray count={(props.sheet()?.lines ?? []).length}>
+      <For each={props.sheet()?.lines ?? []}>
+        {([line, standing]) => (
+          <LineSlot name={LINE_NAMES[line]} deed={LINE_DEEDS[line]} standing={standing} />
+        )}
+      </For>
+    </Tray>
+  );
+}
+
+function TypeShelf(props: { sheet: Resource<AchievementSheet> }): JSX.Element {
+  return (
+    <Tray count={(props.sheet()?.types ?? []).length}>
+      <For each={props.sheet()?.types ?? []}>
+        {([type, standing]) => (
+          <LineSlot
+            name={TYPE_NAMES[type]}
+            deed={`${TYPE_NAMES[type]} pokemon caught`}
+            standing={standing}
+            tint={TYPE_COLORS[type]}
+          />
+        )}
+      </For>
+    </Tray>
+  );
+}
+
+function TrainerShelf(props: { sheet: Resource<AchievementSheet> }): JSX.Element {
+  return (
+    <Tray count={(props.sheet()?.trainers ?? []).length}>
+      <For each={props.sheet()?.trainers ?? []}>
+        {([trainer, standing]) => (
+          <LineSlot
+            name={TRAINER_BASE_NAMES[trainer]}
+            deed={`${TRAINER_BASE_NAMES[trainer]}s beaten`}
+            standing={standing}
+            tint={tintOf(trainer)}
+          />
+        )}
+      </For>
+    </Tray>
+  );
+}
+
+/** Which shelf of the card is open */
+const enum AwardShelf {
+  Badges = 0,
+  Achievements = 1,
+  Types = 2,
+  Trainers = 3,
 }
 
 export interface AwardsCardProps {
@@ -610,12 +636,35 @@ export default function AwardsCard(props: AwardsCardProps): JSX.Element {
 
   return (
     <Card title="Awards">
-      <Suspense fallback={<Note>Reading the shelf…</Note>}>
-        <Shelf held={held} />
-      </Suspense>
-      <Suspense fallback={<Note>Counting the lifetime…</Note>}>
-        <AchievementShelves sheet={sheet} />
-      </Suspense>
+      {/* A shelf per tab, so none of them is a scroll away */}
+      <TabGroup horizontal defaultValue={AwardShelf.Badges} class="flex flex-col gap-3">
+        <TabBar>
+          <TabButton value={AwardShelf.Badges}>Badges</TabButton>
+          <TabButton value={AwardShelf.Achievements}>Achievements</TabButton>
+          <TabButton value={AwardShelf.Types}>Type specialists</TabButton>
+          <TabButton value={AwardShelf.Trainers}>Trainers beaten</TabButton>
+        </TabBar>
+        <TabPane value={AwardShelf.Badges}>
+          <Suspense fallback={<Note>Reading the shelf…</Note>}>
+            <Shelf held={held} />
+          </Suspense>
+        </TabPane>
+        <TabPane value={AwardShelf.Achievements}>
+          <Suspense fallback={<Note>Counting the lifetime…</Note>}>
+            <LineShelf sheet={sheet} />
+          </Suspense>
+        </TabPane>
+        <TabPane value={AwardShelf.Types}>
+          <Suspense fallback={<Note>Counting the lifetime…</Note>}>
+            <TypeShelf sheet={sheet} />
+          </Suspense>
+        </TabPane>
+        <TabPane value={AwardShelf.Trainers}>
+          <Suspense fallback={<Note>Counting the lifetime…</Note>}>
+            <TrainerShelf sheet={sheet} />
+          </Suspense>
+        </TabPane>
+      </TabGroup>
     </Card>
   );
 }

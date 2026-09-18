@@ -7,6 +7,7 @@ import { asNumber, asRecordArray } from './__normalize';
 import { CANDY_STACKS, getStack, listStacks } from './stacks';
 import { useCandy as feedOnServer, useRareCandy as rareOnServer } from '../server/candy';
 import { requireUid } from '../server/auth';
+import check, { COUNT, ID, TOKEN } from '../server/validate';
 import getSupabase from './supabase';
 import getIdToken from './session';
 
@@ -111,6 +112,9 @@ async function feedCandyOnServer(
   levels: number,
 ): Promise<number | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(COUNT, levels);
   return feedOnServer(await requireUid(token), catchId, levels);
 }
 
@@ -125,5 +129,7 @@ export async function useRareCandy(catchId: string): Promise<number | null> {
 
 async function feedRareOnServer(token: string, catchId: string): Promise<number | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
   return rareOnServer(await requireUid(token), catchId);
 }

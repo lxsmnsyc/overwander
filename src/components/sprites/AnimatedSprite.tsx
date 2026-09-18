@@ -11,6 +11,7 @@ import {
 import { type AuraKind, paintPurifiedAura, paintShadowAura } from '../../canvas/auras';
 import settings from '../app/settings';
 import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
+import speciesSize from '../../canvas/species-size';
 import loadSpeciesSprite from '../../canvas/species-sprites';
 import {
   SPARKLE_BURST,
@@ -115,6 +116,27 @@ function boundsOf(
     height: Math.max(cell.height, y + shadow.y) - top,
   };
 }
+
+/** The same bounds widened evenly either side of the feet, where there are any */
+function centredOn(
+  bounds: { x: number; y: number; width: number; height: number },
+  feet: Point | null,
+): { x: number; y: number; width: number; height: number } {
+  if (feet == null) {
+    return bounds;
+  }
+  const middle = feet[0] + 0.5;
+  const half = Math.max(middle - bounds.x, bounds.x + bounds.width - middle);
+
+  return { x: middle - half, y: bounds.y, width: half * 2, height: bounds.height };
+}
+
+/**
+ * How many sheet pixels a sized box stands for. Below the tallest idle
+ * pose, so most species read at a useful size and only the giants are
+ * shrunk to fit
+ */
+const SIZED_SPAN = 64;
 
 const share = (part: number, whole: number): string => `${whole <= 0 ? 0 : (part / whole) * 100}%`;
 
@@ -500,8 +522,22 @@ export interface AnimatedSpriteProps {
    * tall pokemon by its height and a wide one by its width
    */
   fill?: boolean;
+  /**
+   * With `fill`, whether the species is drawn at its real height rather
+   * than stretched to the box, standing on the box's floor. The box then
+   * stands for `SIZED_SPAN` sheet pixels, and anything taller is shrunk
+   * to fit
+   */
+  sized?: boolean;
   /** Whether to draw the ground under it */
   shadow?: boolean;
+  /**
+   * Whether the box is widened to stand the pokemon's feet in its middle.
+   * A clip's box covers every frame and facing, so one facing can sit
+   * well to one side of it; a small icon beside a name wants the body
+   * in the centre instead
+   */
+  centred?: boolean;
   /**
    * The aura it stands in, which **replaces** the ground shadow: a
    * shadow pokemon's dark haze, or the light of one put right. Left
@@ -660,7 +696,10 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
       shadow,
       // Grown for the aura the way it is for the shadow: the pool is
       // painted from the same measurements and needs the same room
-      bounds: boundsOf(cell, props.shadow === true || props.aura != null ? feet : null, shadow),
+      bounds: centredOn(
+        boundsOf(cell, props.shadow === true || props.aura != null ? feet : null, shadow),
+        props.centred === true ? feet : null,
+      ),
     };
   });
 
@@ -675,6 +714,22 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
   const box = (): JSX.CSSProperties => {
     const bounds = drawn()?.bounds ?? { width: DEFAULT_CELL, height: DEFAULT_CELL };
     const longest = Math.max(1, bounds.width, bounds.height);
+
+    const playing = sprite();
+
+    if (props.fill === true && props.sized === true && playing != null && drawn() != null) {
+      const size = speciesSize(props.species, playing);
+      const span = Math.max(SIZED_SPAN, bounds.width * size, bounds.height * size);
+
+      return {
+        position: 'absolute',
+        bottom: '0',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: share(bounds.width * size, span),
+        height: share(bounds.height * size, span),
+      };
+    }
 
     if (props.fill === true) {
       return {

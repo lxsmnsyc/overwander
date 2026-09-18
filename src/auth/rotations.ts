@@ -1,5 +1,6 @@
 import type { RotationReward } from '../data/quests/rotations';
 import { requireUid } from '../server/auth';
+import check, { COUNT, LOCALE, OFFSET, ROTATION_SCOPE, TOKEN } from '../server/validate';
 import type { RotationBoard, RotationScope } from '../server/rotations';
 import {
   claimRotation as claimOnServerSide,
@@ -23,6 +24,7 @@ export async function getRotations(): Promise<RotationBoard> {
 
 async function listOnServer(token: string): Promise<RotationBoard> {
   'use server';
+  check(TOKEN, token);
   return listOnServerSide(await requireUid(token), await syncServerClock());
 }
 
@@ -45,6 +47,11 @@ async function claimOnServer(
   locale: string,
 ): Promise<RotationReward[] | null> {
   'use server';
+  check(TOKEN, token);
+  check(ROTATION_SCOPE, scope);
+  check(COUNT, slot);
+  check(OFFSET, offset);
+  check(LOCALE, locale);
   return claimOnServerSide(
     await requireUid(token),
     scope,

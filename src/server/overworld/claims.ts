@@ -1,6 +1,6 @@
 import 'server-only';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../overworld/chunk-snapshot';
-import getWorld from '../../overworld/current';
+import getWorld, { WORLD_GENERATION } from '../../overworld/current';
 import { Depth } from '../../overworld/depth';
 import { getSql, jsonOf, tx } from '../db';
 import { asOffset, toLocalTime, toZoneKey } from '../../auth/local-time';
@@ -32,7 +32,8 @@ export async function resolveSnapshot(
   const zone = asOffset(offset);
   const rows = await getSql()`
     select window_at from snapshots
-    where chunk_seed = ${chunk.seed} and zone = ${toZoneKey(zone)}
+    where generation = ${WORLD_GENERATION} and chunk_seed = ${chunk.seed}
+      and zone = ${toZoneKey(zone)}
   `;
   const timestamp = asNumber(rows[0]?.window_at);
 
@@ -112,15 +113,22 @@ async function writeClaim(table: string, marker: string, record: ClaimRecord): P
 
     if (table === 'cache_claims') {
       inserted = await transaction`
-        insert into cache_claims (marker, player, claimed_at)
-        values (${marker}, ${player}, ${Date.now()})
+        insert into cache_claims (generation, marker, player, claimed_at)
+        values (${WORLD_GENERATION}, ${marker}, ${player}, ${Date.now()})
         on conflict do nothing
       `;
       if (inserted.count > 0) {
-        const rows: { marker: string; player: typeof player; item: number; amount: number }[] = [];
+        const rows: {
+          generation: number;
+          marker: string;
+          player: typeof player;
+          item: number;
+          amount: number;
+        }[] = [];
 
         for (const stack of asRecordArray(extra.items)) {
           rows.push({
+            generation: WORLD_GENERATION,
             marker,
             player,
             item: asNumber(stack.item),
@@ -130,33 +138,33 @@ async function writeClaim(table: string, marker: string, record: ClaimRecord): P
 
         if (rows.length > 0) {
           await transaction`
-            insert into cache_claim_items ${transaction(rows, 'marker', 'player', 'item', 'amount')}
+            insert into cache_claim_items ${transaction(rows, 'generation', 'marker', 'player', 'item', 'amount')}
           `;
         }
       }
     } else if (table === 'berry_claims') {
       inserted = await transaction`
-        insert into berry_claims (marker, player, item, amount, claimed_at)
-        values (${marker}, ${player}, ${asNumber(extra.item)}, ${asNumber(extra.amount)},
+        insert into berry_claims (generation, marker, player, item, amount, claimed_at)
+        values (${WORLD_GENERATION}, ${marker}, ${player}, ${asNumber(extra.item)}, ${asNumber(extra.amount)},
                 ${Date.now()})
         on conflict do nothing
       `;
     } else if (table === 'nest_claims') {
       inserted = await transaction`
-        insert into nest_claims (marker, player, species, claimed_at)
-        values (${marker}, ${player}, ${asNumber(extra.species)}, ${Date.now()})
+        insert into nest_claims (generation, marker, player, species, claimed_at)
+        values (${WORLD_GENERATION}, ${marker}, ${player}, ${asNumber(extra.species)}, ${Date.now()})
         on conflict do nothing
       `;
     } else if (table === 'phenomenon_claims') {
       inserted = await transaction`
-        insert into phenomenon_claims (marker, player, kind, claimed_at)
-        values (${marker}, ${player}, ${PHENOMENON_KINDS[String(extra.kind)] ?? 0}, ${Date.now()})
+        insert into phenomenon_claims (generation, marker, player, kind, claimed_at)
+        values (${WORLD_GENERATION}, ${marker}, ${player}, ${PHENOMENON_KINDS[String(extra.kind)] ?? 0}, ${Date.now()})
         on conflict do nothing
       `;
     } else {
       inserted = await transaction`
-        insert into npc_claims (marker, player, payload, claimed_at)
-        values (${marker}, ${player}, ${jsonOf(transaction, extra)}, ${Date.now()})
+        insert into npc_claims (generation, marker, player, payload, claimed_at)
+        values (${WORLD_GENERATION}, ${marker}, ${player}, ${jsonOf(transaction, extra)}, ${Date.now()})
         on conflict do nothing
       `;
     }

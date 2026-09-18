@@ -6,8 +6,12 @@ import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import { Items } from '../../../../src/data/ids/items';
-import { MoveTargetType } from '../../../../src/battle/events';
+import { EffectType, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
+import {
+  DOZE_SHARE,
+  STORM_DASH_STEP,
+} from '../../../../src/battle/abilities/signature/munna-to-blitzle';
 import {
   GUARD_FACTOR,
   SPOTTER_ACCURACY,
@@ -168,5 +172,76 @@ describe('the three a walk out of the first town meets', () => {
     dealDamage(cat, other, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
 
     expect(other.hasItem(Items.ShellBell)).toBe(true);
+  });
+});
+
+describe('the three the second road holds', () => {
+  it('banks the seconds it dozes and spends them as it acts', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dreamer = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    dreamer.enter();
+    target.enter();
+    dreamer.addAbility(Abilities.Doze);
+    dreamer.addMove(Moves.Tackle);
+    dreamer.setHealth(1);
+
+    // Three idle seconds are banked, and nothing is paid until it acts
+    battle.tick(3000);
+
+    expect(dreamer.health).toBe(1);
+
+    dreamer.cast(Moves.Tackle, unitTarget(target));
+    battle.tick(1);
+
+    const banked = Math.floor(dreamer.checkStat(Stats.HP, 0) * DOZE_SHARE * 3);
+
+    expect(dreamer.health).toBe(1 + banked);
+  });
+
+  it('cannot miss anybody it has already landed a move on', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const bird = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+
+    bird.enter();
+    target.enter();
+    other.enter();
+    bird.addAbility(Abilities.Homing);
+
+    // The first throw at each of them is rolled for like anybody's
+    expect(bird.checkMoveAccuracy(Moves.AirSlash, unitTarget(target))).toBeGreaterThan(0);
+
+    dealDamage(bird, target, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(bird.checkMoveAccuracy(Moves.AirSlash, unitTarget(target))).toBeUndefined();
+    // Whoever it has not found yet is still a roll
+    expect(bird.checkMoveAccuracy(Moves.AirSlash, unitTarget(other))).toBeGreaterThan(0);
+  });
+
+  it('hits harder for each stage of Speed it is running on', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const zebra = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    zebra.enter();
+    target.enter();
+    zebra.addAbility(Abilities.StormDash);
+
+    const bare = zebra.checkMovePower(Moves.Tackle, unitTarget(target)) ?? 0;
+
+    zebra.addStage(Stages.Speed, 2, { type: EffectType.None });
+
+    expect(zebra.checkMovePower(Moves.Tackle, unitTarget(target))).toBeCloseTo(
+      bare * (1 + STORM_DASH_STEP * 2),
+      5,
+    );
+
+    // A lost stage is not a cost: it only ever reads what it has gained
+    zebra.addStage(Stages.Speed, -4, { type: EffectType.None });
+
+    expect(zebra.checkMovePower(Moves.Tackle, unitTarget(target))).toBeCloseTo(bare, 5);
   });
 });

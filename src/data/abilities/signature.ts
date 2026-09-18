@@ -1525,4 +1525,21 @@ export default function registerSignatureAbilities(): void {
     name: 'Cat Burglar',
     description: 'The first move it lands each fight takes the target’s held item.',
   });
+
+  // The three the second road holds
+  registerSignature(Families.Munna, Abilities.Doze, {
+    name: 'Doze',
+    description:
+      'It heals 1/16 of its HP for each second it has stood idle, up to 8, as it next acts.',
+  });
+
+  registerSignature(Families.Pidove, Abilities.Homing, {
+    name: 'Homing',
+    description: 'Its moves cannot miss a target it has already landed a move on this fight.',
+  });
+
+  registerSignature(Families.Blitzle, Abilities.StormDash, {
+    name: 'Storm Dash',
+    description: 'Its moves hit 10% harder for each stage of Speed it holds, up to 1.5x.',
+  });
 }

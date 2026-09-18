@@ -607,6 +607,9 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Cresselia,
   Species.Heatran,
   Species.Regigigas,
+  // Not one-per-world the way the rest are, but it answers to the
+  // Relic Castle, and what a raid stages is this set
+  Species.Volcarona,
   Species.Cobalion,
   Species.Terrakion,
   Species.Virizion,
@@ -690,16 +693,11 @@ const BABY_SPECIES = new Set<Species>([
 const UNOWN_SPECIES = new Set<Species>(UNOWN_FORMS);
 
 /**
- * The few staged above the band their line's shape would earn. A
- * Volcarona is met as rarely as a legendary and a Larvesta as rarely
- * as a baby, which is the whole of what the games make of the moth
- * the desert once mistook for the sun.
- *
- * Kept apart from LEGENDARY_SPECIES on purpose: neither is
- * one-per-world, neither answers to a lair, and a raid stages that
- * set rather than this one
+ * Staged above the band its line's shape would earn. A Larvesta is
+ * met as rarely as a baby, which is half of what the games make of
+ * the moth the desert once mistook for the sun. The other half is the
+ * moth itself, which is a legendary here and sits in that set
  */
-const SPECIAL_BY_HAND = new Set<Species>([Species.Volcarona]);
 const PRIZED_BY_HAND = new Set<Species>([Species.Larvesta]);
 
 /**
@@ -883,9 +881,6 @@ export function getSpawnRarity(species: Species): SpawnRarity {
   // any other first stage and would otherwise read as Base
   if (isPrizedSpecies(species) || PRIZED_BY_HAND.has(species)) {
     return SpawnRarity.Prized;
-  }
-  if (SPECIAL_BY_HAND.has(species)) {
-    return SpawnRarity.Special;
   }
 
   // The band is where this stage stands in its line and how long that

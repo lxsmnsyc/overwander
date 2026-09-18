@@ -101,15 +101,21 @@ export function shinyBoostOf(weather: Weather): number {
 }
 
 /**
- * Whether anything met in the wild under this sky already knows one of
- * its line's egg moves.
+ * How often a meeting under a fogbow walks out with room for a fifth
+ * move, and how often for a sixth as well.
  *
- * Breeding is the only other way to come by one, so this is the sky
- * that hands over what a walk with an egg would have cost. A species
- * whose line inherits nothing is handed nothing: about half the
- * families have an egg move at all
+ * Nothing else in the game widens a pokemon's move list, so this is
+ * the sky worth hunting under for one. What goes in the extra room is
+ * a move the line would otherwise have had to be bred or taught for
  */
-export function teachesEggMove(weather: Weather): boolean {
+export const FOGBOW_MOVE_CHANCE = 1 / 4;
+export const FOGBOW_SECOND_MOVE_CHANCE = 1 / 16;
+
+/** The most room a fogbow ever hands over, on top of the usual four */
+export const FOGBOW_MOVE_SLOTS = 2;
+
+/** Whether a meeting under this sky can walk out with room for more moves */
+export function widensMoveSlots(weather: Weather): boolean {
   return weather === Weather.Fogbow;
 }
 

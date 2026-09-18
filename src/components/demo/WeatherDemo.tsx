@@ -3,6 +3,8 @@ import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'soli
 import { Badge, Button, Meta, Note, Row, Select, Slider, Switch } from '../styled';
 import Weather, {
   DARK_DAY_LAMP_CELLS,
+  FOGBOW_MOVE_CHANCE,
+  FOGBOW_SECOND_MOVE_CHANCE,
   WEATHER_DESCRIPTIONS,
   WEATHER_NAMES,
   WEATHER_TYPES,
@@ -11,7 +13,7 @@ import Weather, {
   isBoostingWeather,
   shadowsWildMeetings,
   shinyBoostOf,
-  teachesEggMove,
+  widensMoveSlots,
 } from '../../data/overworld/weather';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import Biome from '../../data/ids/biome';
@@ -632,8 +634,10 @@ export default function WeatherDemo(): JSX.Element {
     if (hidden > 1) {
       said.push(`hidden abilities ×${hidden}`);
     }
-    if (teachesEggMove(sky)) {
-      said.push('meetings carry an egg move');
+    if (widensMoveSlots(sky)) {
+      said.push(
+        `1 in ${1 / FOGBOW_MOVE_CHANCE} gains a move slot, 1 in ${1 / FOGBOW_SECOND_MOVE_CHANCE} gains two`,
+      );
     }
     if (shadowsWildMeetings(sky)) {
       said.push('meetings can be shadows');

@@ -2,11 +2,14 @@ import type Lairs from '../../data/overworld/lair';
 import type Phenomenon from '../../data/overworld/phenomenon';
 import type Weather from '../../data/overworld/weather';
 import {
+  FOGBOW_MOVE_CHANCE,
+  FOGBOW_MOVE_SLOTS,
+  FOGBOW_SECOND_MOVE_CHANCE,
   WEATHER_MIN_IV,
   hiddenAbilityBoostOf,
   isWeatherFavored,
   shinyBoostOf,
-  teachesEggMove,
+  widensMoveSlots,
 } from '../../data/overworld/weather';
 import { MAX_IV, Stats, packIVs } from '../../data/constants/stats';
 import type Biome from '../../data/ids/biome';
@@ -20,7 +23,7 @@ import type ChunkSnapshot from '../chunk-snapshot';
 import type { Spawn } from '../chunk-snapshot';
 import { EncounterType, isRaidEncounter } from './kinds';
 import { getSpawnLevels } from './levels';
-import { deriveEggMoves, deriveMoves, eggMoveRoll } from './moves';
+import { bonusMoveRoll, bonusMoveSlots, deriveBonusMoves, deriveMoves } from './moves';
 import type { Encounter } from './shape';
 import { IV_BITS, IV_MASK, TRAIT_MASK, TRAIT_RANGE } from './bits';
 import {
@@ -167,15 +170,25 @@ export default function deriveEncounter(
   // stat, from its own dedicated slice
   const gender = deriveGender(species, traitValue);
 
-  // The last four level-up moves learnable at this level
-  // A fogbow hands over what a walk with an egg would have cost, so a
-  // wild meeting under one already knows a move off its line's list.
-  // Seeded by the trait value alone: what a pokemon knows is the
-  // pokemon's, not the trainer's
-  const moves =
-    sky != null && teachesEggMove(sky) && type === EncounterType.Wild
-      ? deriveEggMoves(species, level, eggMoveRoll(traitValue))
-      : deriveMoves(species, level);
+  // The last four level-up moves learnable at this level, and the room
+  // a fogbow hands over on top of them: a move the line would
+  // otherwise have had to be bred or taught for. Seeded by the trait
+  // value alone, since what a pokemon knows is the pokemon's rather
+  // than the trainer's. A revived fossil counts, and so does a raid
+  // prize won under the sky over its lair
+  const wideSky =
+    sky != null &&
+    widensMoveSlots(sky) &&
+    (type === EncounterType.Wild || type === EncounterType.Revived || isRaidEncounter(type));
+  const roll = bonusMoveRoll(traitValue);
+  const moves = wideSky
+    ? deriveBonusMoves(
+        species,
+        level,
+        roll,
+        bonusMoveSlots(roll(), FOGBOW_MOVE_CHANCE, FOGBOW_SECOND_MOVE_CHANCE, FOGBOW_MOVE_SLOTS),
+      )
+    : deriveMoves(species, level);
   const nature = deriveNature(traitValue);
 
   return {
@@ -240,4 +253,10 @@ export {
   isShinyFor,
 } from './traits';
 export type { Size } from './traits';
-export { deriveEggMoves, deriveMoves } from './moves';
+export {
+  bonusMoveRoll,
+  bonusMoveSlots,
+  deriveBonusMoves,
+  deriveMoves,
+  fillBonusMoves,
+} from './moves';

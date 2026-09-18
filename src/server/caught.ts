@@ -159,8 +159,15 @@ export async function insertCaughtIn(
   from = '',
 ): Promise<string> {
   const id = newDocId();
+  // Room for every move it walks in with, since a fogbow hands some
+  // meetings a fifth and a sixth and the list is sliced to the room
   const room =
-    encounter.slots ?? packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS);
+    encounter.slots ??
+    packSlots(
+      DEFAULT_ABILITY_SLOTS,
+      DEFAULT_ITEM_SLOTS,
+      Math.max(DEFAULT_MOVE_SLOTS, encounter.moves.length),
+    );
   // The instant is the server's, the calendar the owner's: the stamp
   // is written in their zone, and the species day is the day it was
   // where they were standing

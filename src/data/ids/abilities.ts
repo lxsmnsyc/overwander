@@ -880,6 +880,9 @@ const enum Abilities {
   Honed = 200296,
   Warcry = 200297,
   Bonewear = 200298,
+  Anteater = 200299,
+  AntGuard = 200300,
+  EmberHalo = 200301,
 }
 
 export default Abilities;

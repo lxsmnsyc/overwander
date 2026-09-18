@@ -65,6 +65,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Probopass, weight: 6 },
       ],
       elusive: [
+        { species: Species.Durant, weight: 6 },
         { species: Species.Druddigon, weight: 5 },
         { species: Species.Haxorus, weight: 3 },
         { species: Species.Klinklang, weight: 4 },
@@ -164,6 +165,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Probopass, weight: 6 },
       ],
       elusive: [
+        { species: Species.Durant, weight: 6 },
         { species: Species.Druddigon, weight: 5 },
         { species: Species.Haxorus, weight: 3 },
         { species: Species.Klinklang, weight: 4 },

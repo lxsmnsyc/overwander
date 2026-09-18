@@ -141,6 +141,11 @@ const enum Lairs {
    * the weather trio, so which of them answers is a roll
    */
   EmbeddedTower = 34,
+  /**
+   * The buried castle under the sand, and the moth the desert once
+   * took for the sun still in it
+   */
+  RelicCastle = 35,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -179,6 +184,7 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.IronRuins]: 'Iron Ruins',
   [Lairs.NavelRock]: 'Navel Rock',
   [Lairs.EmbeddedTower]: 'Embedded Tower',
+  [Lairs.RelicCastle]: 'Relic Castle',
 };
 
 /**
@@ -224,6 +230,7 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.IronRuins]: [Species.Registeel],
   [Lairs.NavelRock]: [Species.Lugia, Species.HoOh],
   [Lairs.EmbeddedTower]: [Species.Kyogre, Species.Groudon, Species.Rayquaza],
+  [Lairs.RelicCastle]: [Species.Volcarona],
 };
 
 /**
@@ -265,6 +272,7 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.IronRuins,
   Lairs.NavelRock,
   Lairs.EmbeddedTower,
+  Lairs.RelicCastle,
 ];
 
 /**
@@ -332,7 +340,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   [Biome.Taiga]: [Lairs.LakeAcuity, Lairs.IcebergRuins],
   [Biome.Tundra]: [Lairs.LakeAcuity, Lairs.SnowpointTemple, Lairs.IcebergRuins],
   [Biome.Steppe]: [Lairs.PowerPlant],
-  [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins, Lairs.RockPeakRuins],
+  [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins, Lairs.RockPeakRuins, Lairs.RelicCastle],
   [Biome.Badlands]: [Lairs.DesertRuins, Lairs.AncientTomb, Lairs.TurnbackCave, Lairs.RockPeakRuins],
   [Biome.Mountain]: [Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower, Lairs.AncientTomb],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave, Lairs.SpearPillar],

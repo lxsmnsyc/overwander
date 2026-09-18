@@ -90,7 +90,7 @@ export default function registerLarvestaSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Desert, Biome.Volcano],
+    biomes: [Biome.Desert],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -147,7 +147,7 @@ export default function registerLarvestaSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 15,
-    biomes: [Biome.Desert, Biome.Volcano],
+    biomes: [Biome.Desert],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

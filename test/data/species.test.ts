@@ -16,7 +16,6 @@ import Families from '../../src/data/ids/families';
 import registerAbilities from '../../src/data/abilities';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
-import { EvolutionMethod } from '../../src/data/ids/species';
 import {
   TYPE_EFFECTIVENESS,
   TYPE_NAMES,
@@ -35,6 +34,7 @@ import {
   DARMANITAN_FORMS,
   DEOXYS_FORMS,
   DIALGA_FORMS,
+  EvolutionMethod,
   GASTRODON_FORMS,
   GIRATINA_FORMS,
   KYUREM_FORMS,

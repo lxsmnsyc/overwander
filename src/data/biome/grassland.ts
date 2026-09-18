@@ -50,6 +50,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
         { species: Species.Patrat, weight: 30 },
+        { species: Species.Cottonee, weight: 24 },
+        { species: Species.Petilil, weight: 24 },
       ],
       rare: [
         { species: Species.Ivysaur, weight: 1 },
@@ -88,6 +90,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Togekiss, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
         { species: Species.Electivire, weight: 6 },
+        { species: Species.Whimsicott, weight: 7 },
+        { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },
@@ -173,6 +177,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
         { species: Species.Patrat, weight: 30 },
+        { species: Species.Cottonee, weight: 24 },
+        { species: Species.Petilil, weight: 24 },
       ],
       rare: [
         { species: Species.Ivysaur, weight: 1 },
@@ -213,6 +219,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Togekiss, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
         { species: Species.Electivire, weight: 6 },
+        { species: Species.Whimsicott, weight: 7 },
+        { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },

@@ -255,9 +255,7 @@ const enum Families {
   Patrat = 250,
   Lillipup = 251,
   Purrloin = 252,
-  // 253 is held for Pansage, the third of the monkeys, which is not
-  // written yet: leaving the hole keeps this enum in dex order without
-  // renumbering everything below it the day that line lands
+  Pansage = 253,
   Pansear = 254,
   Panpour = 255,
   Munna = 256,
@@ -547,6 +545,7 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Patrat]: 'Patrat',
   [Families.Lillipup]: 'Lillipup',
   [Families.Purrloin]: 'Purrloin',
+  [Families.Pansage]: 'Pansage',
   [Families.Pansear]: 'Pansear',
   [Families.Panpour]: 'Panpour',
   [Families.Munna]: 'Munna',

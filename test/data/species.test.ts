@@ -36,9 +36,11 @@ import {
   DIALGA_FORMS,
   EvolutionMethod,
   GASTRODON_FORMS,
+  GENESECT_FORMS,
   GIRATINA_FORMS,
   KYUREM_FORMS,
   LANDORUS_FORMS,
+  MELOETTA_FORMS,
   PALKIA_FORMS,
   ROTOM_FORMS,
   SHAYMIN_FORMS,
@@ -382,6 +384,8 @@ describe('species forms', () => {
       ...TORNADUS_FORMS.slice(1),
       ...THUNDURUS_FORMS.slice(1),
       ...LANDORUS_FORMS.slice(1),
+      ...MELOETTA_FORMS.slice(1),
+      ...GENESECT_FORMS.slice(1),
     ]);
 
     expect(registered.length).toBeGreaterThan(0);

@@ -46,6 +46,7 @@ import sewaddleToPetilil from './sewaddle-to-petilil';
 import snivyToOshawott from './snivy-to-oshawott';
 import swordsOfJustice from './swords-of-justice';
 import taoTrio from './tao-trio';
+import unovaMythicals from './unova-mythicals';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -98,6 +99,7 @@ const setupAbilities = [
   ...tynamoToMienfoo,
   ...swordsOfJustice,
   ...taoTrio,
+  ...unovaMythicals,
   ...forcesOfNature,
 ];
 

@@ -897,6 +897,9 @@ const enum Abilities {
   Windfall = 200313,
   Stormfall = 200314,
   Landfall = 200315,
+  WinnersShare = 200316,
+  Countertune = 200317,
+  Overclock = 200318,
 }
 
 export default Abilities;

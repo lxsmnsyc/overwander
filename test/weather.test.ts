@@ -3,7 +3,6 @@ import Biome from '../src/data/ids/biome';
 import Weather, {
   BATTLE_WEATHER,
   BIOME_WEATHER,
-  FATA_MORGANA_HIDDEN_BOOST,
   METEOR_SHOWER_SHINY_BOOST,
   WEATHER_DESCRIPTIONS,
   WEATHER_MIN_IV,
@@ -11,7 +10,8 @@ import Weather, {
   WEATHER_TYPES,
   classifyWeather,
   favorsEverything,
-  hiddenAbilityBoostOf,
+  grantsHiddenAbility,
+  grantsSignature,
   isBoostingWeather,
   isWeatherFavored,
   shadowsWildMeetings,
@@ -22,7 +22,11 @@ import Weather, {
 } from '../src/data/overworld/weather';
 import World from '../src/overworld/world';
 import ChunkSnapshot from '../src/overworld/chunk-snapshot';
-import deriveEncounter, { EncounterType, RAID_FAMILY_DAY_MIN_IV } from '../src/overworld/encounter';
+import deriveEncounter, {
+  type Encounter,
+  EncounterType,
+  RAID_FAMILY_DAY_MIN_IV,
+} from '../src/overworld/encounter';
 import { Species } from '../src/data/ids/species';
 import type { Moves } from '../src/data/ids/moves';
 import { TYPE_NAMES, Types } from '../src/data/constants/types';
@@ -31,9 +35,11 @@ import registerGameData from '../src/data';
 import { BattleModes } from '../src/battle/core';
 import { Weathers } from '../src/data/ids/status';
 import { createTrainerBattle } from '../src/overworld/stop-battle';
+import { getSignatureAbility } from '../src/data/abilities';
 import {
   getBaseSpecies,
   getEggMoves,
+  getSpeciesAbilityPools,
   getSpeciesData,
   getTeachableMoves,
 } from '../src/data/species';
@@ -339,6 +345,70 @@ describe('what weather is worth', () => {
     expect(met(Weather.Fogbow, 3_000_023, EncounterType.Hatched)).toHaveLength(4);
   });
 
+  it('hands a fata morgana meeting a second hidden ability', () => {
+    // Butterfree reaches four hidden abilities, three of them through
+    // the Caterpie under it, so there is always another to hand over
+    const met = (
+      weather: Weather | undefined,
+      traitValue: number,
+      type = EncounterType.Wild,
+    ): Encounter =>
+      deriveEncounter(snapshot, [Species.Butterfree, 0, traitValue], 'trainer-red', {
+        type,
+        weather,
+      });
+    const hidden = getSpeciesAbilityPools(Species.Butterfree).hidden;
+    // A trait value the hidden roll lands on, and one it does not
+    const lucky = met(Weather.FataMorgana, 3_000_018);
+
+    expect(lucky.abilities).toHaveLength(2);
+    expect(lucky.abilities?.[0]).toBe(lucky.ability);
+    expect(hidden).toContain(lucky.abilities?.[1]);
+    expect(met(Weather.FataMorgana, 3_000_000).abilities).toBeUndefined();
+
+    // The sky no longer touches the roll itself: what it would have
+    // been under any sky is what it is, and the second one is on top
+    expect(lucky.ability).toBe(met(Weather.Clear, 3_000_018).ability);
+    expect(met(Weather.Clear, 3_000_018).abilities).toBeUndefined();
+
+    // A raid prize is won under the sky over its lair and a fossil is
+    // opened on a bench under one, so both count. A bred egg hatches
+    // wherever its carrier is standing and arrives under its own rules
+    expect(met(Weather.FataMorgana, 3_000_018, EncounterType.LegendaryRaid).abilities).toEqual(
+      lucky.abilities,
+    );
+    expect(met(Weather.FataMorgana, 3_000_018, EncounterType.Revived).abilities).toEqual(
+      lucky.abilities,
+    );
+    expect(met(Weather.FataMorgana, 3_000_018, EncounterType.Hatched).abilities).toBeUndefined();
+  });
+
+  it('hands a few fata morgana meetings the family signature', () => {
+    expect(grantsSignature(Weather.FataMorgana)).toBe(true);
+    for (const sky of [Weather.MeteorShower, Weather.Fogbow, Weather.DarkDay, Weather.Mist]) {
+      expect(grantsSignature(sky)).toBe(false);
+    }
+
+    const met = (weather: Weather | undefined, traitValue: number): Encounter =>
+      deriveEncounter(snapshot, [Species.Butterfree, 0, traitValue], 'trainer-red', {
+        type: EncounterType.Wild,
+        weather,
+      });
+    // 3,000,109 is a trait value both rolls land on, so it keeps three:
+    // the one it rolled, a hidden one and its family's signature
+    const blessed = met(Weather.FataMorgana, 3_000_109);
+    const signature = getSignatureAbility(getSpeciesData(Species.Butterfree).family);
+
+    expect(signature).not.toBeNull();
+    expect(blessed.abilities).toHaveLength(3);
+    expect(blessed.abilities?.[0]).toBe(blessed.ability);
+    expect(blessed.abilities?.[2]).toBe(signature);
+
+    // Nothing under any other sky keeps one, whatever it rolled
+    expect(met(Weather.Clear, 3_000_109).abilities).toBeUndefined();
+    expect(met(Weather.Fogbow, 3_000_109).abilities).toBeUndefined();
+  });
+
   it('puts the floor under anything at all met under a meteor shower', () => {
     // Rain is worth nothing to a rat and the rarest sky is worth the
     // same to everything, which is the whole of what makes it rare
@@ -482,7 +552,7 @@ describe('the types a sky is kind to', () => {
     // It is the shadow it gives rather than a boost: the other two
     // keep theirs to themselves
     expect(shinyBoostOf(Weather.DarkDay)).toBe(1);
-    expect(hiddenAbilityBoostOf(Weather.DarkDay)).toBe(1);
+    expect(grantsHiddenAbility(Weather.DarkDay)).toBe(false);
     // And it is still worth going out in whoever is being raised
     expect(favorsEverything(Weather.DarkDay)).toBe(true);
   });
@@ -492,10 +562,10 @@ describe('the types a sky is kind to', () => {
     // other touches what the pokemon was hiding
     expect(shinyBoostOf(Weather.MeteorShower)).toBe(METEOR_SHOWER_SHINY_BOOST);
     expect(shinyBoostOf(Weather.FataMorgana)).toBe(1);
-    expect(hiddenAbilityBoostOf(Weather.FataMorgana)).toBe(FATA_MORGANA_HIDDEN_BOOST);
-    expect(hiddenAbilityBoostOf(Weather.MeteorShower)).toBe(1);
+    expect(grantsHiddenAbility(Weather.FataMorgana)).toBe(true);
+    expect(grantsHiddenAbility(Weather.MeteorShower)).toBe(false);
     expect(shinyBoostOf(Weather.Rain)).toBe(1);
-    expect(hiddenAbilityBoostOf(Weather.Rain)).toBe(1);
+    expect(grantsHiddenAbility(Weather.Rain)).toBe(false);
   });
 
   it('makes the rarest sky kind to everything', () => {

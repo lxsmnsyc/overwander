@@ -3,13 +3,16 @@ import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'soli
 import { Badge, Button, Meta, Note, Row, Select, Slider, Switch } from '../styled';
 import Weather, {
   DARK_DAY_LAMP_CELLS,
+  FATA_MORGANA_HIDDEN_CHANCE,
+  FATA_MORGANA_SIGNATURE_CHANCE,
   FOGBOW_MOVE_CHANCE,
   FOGBOW_SECOND_MOVE_CHANCE,
   WEATHER_DESCRIPTIONS,
   WEATHER_NAMES,
   WEATHER_TYPES,
   favorsEverything,
-  hiddenAbilityBoostOf,
+  grantsHiddenAbility,
+  grantsSignature,
   isBoostingWeather,
   shadowsWildMeetings,
   shinyBoostOf,
@@ -616,7 +619,6 @@ export default function WeatherDemo(): JSX.Element {
     const sky = chosen();
     const said: string[] = [];
     const shiny = shinyBoostOf(sky);
-    const hidden = hiddenAbilityBoostOf(sky);
 
     if (favorsEverything(sky)) {
       said.push('favours every type');
@@ -631,13 +633,16 @@ export default function WeatherDemo(): JSX.Element {
     if (shiny > 1) {
       said.push(`shinies ×${shiny}`);
     }
-    if (hidden > 1) {
-      said.push(`hidden abilities ×${hidden}`);
+    if (grantsHiddenAbility(sky)) {
+      said.push(`1 in ${1 / FATA_MORGANA_HIDDEN_CHANCE} keeps a second hidden ability`);
     }
     if (widensMoveSlots(sky)) {
       said.push(
         `1 in ${1 / FOGBOW_MOVE_CHANCE} gains a move slot, 1 in ${1 / FOGBOW_SECOND_MOVE_CHANCE} gains two`,
       );
+    }
+    if (grantsSignature(sky)) {
+      said.push(`1 in ${1 / FATA_MORGANA_SIGNATURE_CHANCE} keeps its family signature`);
     }
     if (shadowsWildMeetings(sky)) {
       said.push('meetings can be shadows');

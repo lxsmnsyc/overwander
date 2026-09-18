@@ -28,6 +28,7 @@ import {
   INHERITED_IVS,
   SHADOW_INHERITANCE_CHANCE,
   canBreed,
+  eggAbilities,
   getEggSpecies,
   inheritAbility,
   inheritBall,
@@ -517,6 +518,27 @@ describe('inherited nature', () => {
 
     expect(inheritNature(left, right, () => 0)).toBe(Natures.Adamant);
     expect(inheritNature(left, right, () => 0.9)).toBe(Natures.Modest);
+  });
+});
+
+describe('what an egg hatches holding', () => {
+  it('keeps the sky gifts and drops the roll the mother replaced', () => {
+    // A mirage handed the meeting a second hidden ability, and then
+    // the mother passed her own: the roll goes, the gift stays
+    expect(
+      eggAbilities(Abilities.Chlorophyll, Abilities.Overgrow, [
+        Abilities.Overgrow,
+        Abilities.Static,
+      ]),
+    ).toEqual([Abilities.Chlorophyll, Abilities.Static]);
+
+    // Where she passed nothing, the roll is what it keeps
+    expect(
+      eggAbilities(Abilities.Overgrow, Abilities.Overgrow, [Abilities.Overgrow, Abilities.Static]),
+    ).toEqual([Abilities.Overgrow, Abilities.Static]);
+
+    // And an egg the sky handed nothing keeps one ability
+    expect(eggAbilities(Abilities.Overgrow, Abilities.Overgrow)).toEqual([Abilities.Overgrow]);
   });
 });
 

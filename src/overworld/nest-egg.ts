@@ -176,6 +176,9 @@ export default function deriveNestEgg(
     level,
     weather: snapshot.weather,
     hiddenBoost: NEST_HIDDEN_BOOST,
+    // A nest is claimed under the sky rather than hatched out of
+    // nowhere, so the mirage's gifts reach it
+    skyGifts: true,
   });
   const stats = [...STAT_ORDER];
   let ivs = hatchling.ivs;
@@ -200,6 +203,12 @@ export default function deriveNestEgg(
     ...hatchling,
     ivs,
     moves: deriveNestEggMoves(species, level, () => rng.random(), wide),
-    slots: packSlots(NEST_ABILITY_SLOTS, NEST_ITEM_SLOTS, DEFAULT_MOVE_SLOTS + wide),
+    // Room for what the sky handed it, where that is more than a nest
+    // egg's own two abilities and four moves
+    slots: packSlots(
+      Math.max(NEST_ABILITY_SLOTS, hatchling.abilities?.length ?? 1),
+      NEST_ITEM_SLOTS,
+      DEFAULT_MOVE_SLOTS + wide,
+    ),
   };
 }

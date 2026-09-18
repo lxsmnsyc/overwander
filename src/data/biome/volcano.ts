@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Volcano spawn pool, grouped by day-cycle period and rarity band.
@@ -44,9 +44,8 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Blaziken, weight: 2 },
         { species: Species.Torkoal, weight: 12 },
       ],
-      prized: [...UNOWN_SPAWNS, { species: Species.Larvesta, weight: PRIZED_WEIGHT }],
+      prized: [...UNOWN_SPAWNS],
       special: [
-        { species: Species.Volcarona, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Moltres, weight: 10 },
         { species: Species.Entei, weight: 10 },
@@ -89,9 +88,8 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Blaziken, weight: 2 },
         { species: Species.Torkoal, weight: 12 },
       ],
-      prized: [...UNOWN_SPAWNS, { species: Species.Larvesta, weight: PRIZED_WEIGHT }],
+      prized: [...UNOWN_SPAWNS],
       special: [
-        { species: Species.Volcarona, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Moltres, weight: 10 },
         { species: Species.Entei, weight: 10 },

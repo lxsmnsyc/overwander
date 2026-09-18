@@ -19,6 +19,7 @@ import { UNOWN_SPAWNS, registerCavePool } from './__create';
  */
 const CAVE_SPAWNS: SpawnRarityGroups = {
   base: [
+    { species: Species.Klink, weight: 20 },
     { species: Species.Zubat, weight: 30 },
     { species: Species.Geodude, weight: 24 },
     { species: Species.Machop, weight: 12 },
@@ -30,6 +31,8 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Roggenrola, weight: 24 },
   ],
   uncommon: [
+    { species: Species.Ferroseed, weight: 16 },
+    { species: Species.Joltik, weight: 18 },
     { species: Species.Diglett, weight: 16 },
     { species: Species.Sandshrew, weight: 12 },
     { species: Species.Onix, weight: 10 },
@@ -45,6 +48,7 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Drilbur, weight: 12 },
   ],
   rare: [
+    { species: Species.Klang, weight: 8 },
     { species: Species.Golbat, weight: 16 },
     { species: Species.Graveler, weight: 12 },
     { species: Species.Machoke, weight: 8 },
@@ -56,6 +60,8 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Boldore, weight: 12 },
   ],
   scarce: [
+    { species: Species.Ferrothorn, weight: 5 },
+    { species: Species.Galvantula, weight: 6 },
     { species: Species.Dugtrio, weight: 10 },
     { species: Species.Sandslash, weight: 9 },
     { species: Species.Steelix, weight: 7 },
@@ -71,6 +77,7 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Excadrill, weight: 7 },
   ],
   elusive: [
+    { species: Species.Klinklang, weight: 4 },
     // The ones that never evolve are the reason to be down here at
     // all: none of them stands anywhere else in the world
     { species: Species.Dunsparce, weight: 10 },

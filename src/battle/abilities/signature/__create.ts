@@ -1737,3 +1737,34 @@ export function createCreedAbility(
     }),
   );
 }
+
+/** What a genie standing over the field is worth to its own element */
+export const GENIE_SCALE = 1.3;
+
+/**
+ * The three that ride the storm clouds lift one element apiece for
+ * the side they stand on. Same rule three times over, turned by the
+ * genie's own type, so a trio standing together lifts three
+ */
+export function createGenieAbility(
+  ability: Abilities,
+  type: Types,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const parent = event.parent;
+
+      if (parent.type !== type) {
+        return;
+      }
+
+      // The genie covers its own team, never the whole alliance
+      for (const mate of parent.source.team.units) {
+        if (mate.alive && mate.hasAbility(ability)) {
+          event.value *= GENIE_SCALE;
+          return;
+        }
+      }
+    }),
+  );
+}

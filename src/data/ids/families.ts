@@ -320,12 +320,11 @@ const enum Families {
   Cobalion = 316,
   Terrakion = 317,
   Virizion = 318,
-  // 319 and 320 are held for Tornadus and Thundurus, which sit between
-  // these in the dex and are not written yet
+  Tornadus = 319,
+  Thundurus = 320,
   Reshiram = 321,
   Zekrom = 322,
-  // 323 is held for Landorus, which sits between these in the dex and
-  // is not written yet
+  Landorus = 323,
   Kyurem = 324,
   Keldeo = 325,
 }
@@ -656,8 +655,11 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Cobalion]: 'Cobalion',
   [Families.Terrakion]: 'Terrakion',
   [Families.Virizion]: 'Virizion',
+  [Families.Tornadus]: 'Tornadus',
+  [Families.Thundurus]: 'Thundurus',
   [Families.Reshiram]: 'Reshiram',
   [Families.Zekrom]: 'Zekrom',
+  [Families.Landorus]: 'Landorus',
   [Families.Kyurem]: 'Kyurem',
   [Families.Keldeo]: 'Keldeo',
 };

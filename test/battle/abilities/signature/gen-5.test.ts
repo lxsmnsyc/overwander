@@ -56,6 +56,7 @@ import {
 import {
   BLUE_BELT_SCALE,
   BONEWEAR_STAGES,
+  GENIE_SCALE,
   RED_BELT_SCALE,
   WARCRY_STAGES,
 } from '../../../../src/battle/abilities/signature/__create';
@@ -1816,5 +1817,54 @@ describe('the tao trio', () => {
 
     // Its own burn answers nothing: the question is about what it hits
     expect(blow(dragon, plain) / blow(dragon, other)).toBeCloseTo(1, 1);
+  });
+});
+
+describe('the forces of nature', () => {
+  /** What one genie is worth to a teammate throwing a given type */
+  function thrown(ability: Abilities | null, type: Types): number {
+    const { battle, teamA, teamB } = createBattle();
+    const mate = createUnit(battle, teamA);
+    const genie = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    if (ability != null) {
+      genie.addAbility(ability);
+    }
+    mate.enter();
+    genie.enter();
+    enemy.enter();
+
+    return dealDamage(mate, enemy, Moves.Swift, 40, type, MoveCategories.Special);
+  }
+
+  it('lifts its own element for the side it stands on, and nothing else', () => {
+    for (const [ability, type, other] of [
+      [Abilities.Windfall, Types.Flying, Types.Electric],
+      [Abilities.Stormfall, Types.Electric, Types.Ground],
+      [Abilities.Landfall, Types.Ground, Types.Flying],
+    ] as const) {
+      expect(thrown(ability, type) / thrown(null, type)).toBeCloseTo(GENIE_SCALE, 1);
+      expect(thrown(ability, other)).toBe(thrown(null, other));
+    }
+  });
+
+  it('covers its own team rather than the enemy throwing the same type', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const genie = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    genie.addAbility(Abilities.Stormfall);
+    genie.enter();
+    mate.enter();
+    enemy.enter();
+
+    const bare = dealDamage(enemy, mate, Moves.Swift, 40, Types.Electric, MoveCategories.Special);
+    const lifted = dealDamage(mate, enemy, Moves.Swift, 40, Types.Electric, MoveCategories.Special);
+
+    expect(lifted / bare).toBeCloseTo(GENIE_SCALE, 1);
   });
 });

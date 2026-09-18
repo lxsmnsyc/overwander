@@ -1871,4 +1871,23 @@ export default function registerSignatureAbilities(): void {
     name: 'Hollow Creed',
     description: 'Hits 1.3x an enemy carrying neither a status nor a raised stat stage.',
   });
+
+  /**
+   * The three that ride the storm clouds lift one element apiece for
+   * the side they stand on, which is the same gift told three ways
+   */
+  registerSignature(Families.Tornadus, Abilities.Windfall, {
+    name: 'Windfall',
+    description: 'Its team throws Flying moves at 1.3x while it stands.',
+  });
+
+  registerSignature(Families.Thundurus, Abilities.Stormfall, {
+    name: 'Stormfall',
+    description: 'Its team throws Electric moves at 1.3x while it stands.',
+  });
+
+  registerSignature(Families.Landorus, Abilities.Landfall, {
+    name: 'Landfall',
+    description: 'Its team throws Ground moves at 1.3x while it stands.',
+  });
 }

@@ -894,6 +894,9 @@ const enum Abilities {
   TruthCreed = 200310,
   IdealCreed = 200311,
   HollowCreed = 200312,
+  Windfall = 200313,
+  Stormfall = 200314,
+  Landfall = 200315,
 }
 
 export default Abilities;

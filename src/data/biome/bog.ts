@@ -101,6 +101,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Tympole, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Trubbish, weight: 22 },
         { species: Species.Gulpin, weight: 22 },
         { species: Species.Venonat, weight: 20 },
         { species: Species.Wooper, weight: 25 },
@@ -116,6 +117,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Palpitoad, weight: 10 },
       ],
       scarce: [
+        { species: Species.Garbodor, weight: 7 },
         { species: Species.Swalot, weight: 7 },
         { species: Species.Venomoth, weight: 10 },
         { species: Species.Azumarill, weight: 5 },
@@ -146,6 +148,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Gastly, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Trubbish, weight: 22 },
         { species: Species.Gulpin, weight: 22 },
         { species: Species.Grimer, weight: 20 },
         { species: Species.Wooper, weight: 25 },
@@ -163,6 +166,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Haunter, weight: 5 },
       ],
       scarce: [
+        { species: Species.Garbodor, weight: 7 },
         { species: Species.Swalot, weight: 7 },
         { species: Species.Muk, weight: 10 },
         { species: Species.Azumarill, weight: 5 },

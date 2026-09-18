@@ -280,6 +280,12 @@ const enum Families {
   Darumaka = 273,
   Maractus = 274,
   Dwebble = 275,
+  Scraggy = 276,
+  Sigilyph = 277,
+  Yamask = 278,
+  // 279 and 280 are held for Tirtouga and Archen, the region's two
+  // fossils, which are designed as a pair and are not written yet
+  Trubbish = 281,
 }
 
 export default Families;
@@ -574,4 +580,8 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Darumaka]: 'Darumaka',
   [Families.Maractus]: 'Maractus',
   [Families.Dwebble]: 'Dwebble',
+  [Families.Scraggy]: 'Scraggy',
+  [Families.Sigilyph]: 'Sigilyph',
+  [Families.Yamask]: 'Yamask',
+  [Families.Trubbish]: 'Trubbish',
 };

@@ -64,6 +64,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Sigilyph, weight: 6 },
         { species: Species.Maractus, weight: 8 },
         { species: Species.Krookodile, weight: 5 },
         { species: Species.Emboar, weight: 2 },
@@ -151,6 +152,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Sigilyph, weight: 6 },
         { species: Species.Maractus, weight: 8 },
         { species: Species.Krookodile, weight: 5 },
         { species: Species.Emboar, weight: 2 },
@@ -187,6 +189,9 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Trubbish, weight: 22 },
+        { species: Species.Yamask, weight: 22 },
+        { species: Species.Scraggy, weight: 22 },
         { species: Species.Baltoy, weight: 22 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Slugma, weight: 20 },
@@ -207,6 +212,9 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Garbodor, weight: 7 },
+        { species: Species.Cofagrigus, weight: 7 },
+        { species: Species.Scrafty, weight: 7 },
         { species: Species.Claydol, weight: 6 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Ninjask, weight: 10 },
@@ -249,6 +257,9 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Trubbish, weight: 22 },
+        { species: Species.Yamask, weight: 22 },
+        { species: Species.Scraggy, weight: 22 },
         { species: Species.Baltoy, weight: 22 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Cubone, weight: 20 },
@@ -272,6 +283,9 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Garbodor, weight: 7 },
+        { species: Species.Cofagrigus, weight: 7 },
+        { species: Species.Scrafty, weight: 7 },
         { species: Species.Claydol, weight: 6 },
         { species: Species.Marowak, weight: 10 },
         { species: Species.Ninjask, weight: 10 },

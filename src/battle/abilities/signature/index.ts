@@ -30,6 +30,7 @@ import audinoToSawk from './audino-to-sawk';
 import munnaToBlitzle from './munna-to-blitzle';
 import pansearToPanpour from './pansear-to-panpour';
 import sandileToDwebble from './sandile-to-dwebble';
+import scraggyToTrubbish from './scraggy-to-trubbish';
 import patratToPurrloin from './patrat-to-purrloin';
 import roggenrolaToDrilbur from './roggenrola-to-drilbur';
 import sewaddleToPetilil from './sewaddle-to-petilil';
@@ -75,6 +76,7 @@ const setupAbilities = [
   ...audinoToSawk,
   ...sewaddleToPetilil,
   ...sandileToDwebble,
+  ...scraggyToTrubbish,
 ];
 
 /**

@@ -10,12 +10,11 @@ import { asNickname } from '../auth/nickname';
 import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
 import { getMaxHealth, needsCare } from '../auth/health';
 import {
-  DEFAULT_ABILITY_SLOTS,
-  DEFAULT_ITEM_SLOTS,
   DEFAULT_MOVE_SLOTS,
   Slots,
+  defaultSlots,
   getSlots,
-  packSlots,
+  withSlots,
 } from '../data/constants/slots';
 import Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
@@ -159,8 +158,6 @@ export async function insertCaughtIn(
   from = '',
 ): Promise<string> {
   const id = newDocId();
-  const room =
-    encounter.slots ?? packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS);
   // The instant is the server's, the calendar the owner's: the stamp
   // is written in their zone, and the species day is the day it was
   // where they were standing
@@ -175,6 +172,17 @@ export async function insertCaughtIn(
       ...(shadow ? [Abilities.Shadow] : []),
     ]),
   ];
+  // Room for everything it arrived with, since the battle counts slots
+  // rather than the lists and would read a full one as having none
+  // free: a mirage hands some of them a second ability, a fogbow a
+  // fifth and a sixth move, and each list is cut to its room here
+  const room =
+    encounter.slots ??
+    withSlots(
+      defaultSlots(abilities),
+      Slots.Move,
+      Math.max(DEFAULT_MOVE_SLOTS, encounter.moves.length),
+    );
 
   // It arrives whole, and the maximum it is measured against is stored
   // beside it so `hurt` can be a column

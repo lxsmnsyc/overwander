@@ -10,11 +10,12 @@ import {
 } from '../auth/egg';
 import { getMaxHealth } from '../auth/health';
 import {
-  DEFAULT_ABILITY_SLOTS,
-  DEFAULT_ITEM_SLOTS,
-  DEFAULT_MOVE_SLOTS,
-  packSlots,
-} from '../data/constants/slots';
+  FOGBOW_MOVE_CHANCE,
+  FOGBOW_MOVE_SLOTS,
+  FOGBOW_SECOND_MOVE_CHANCE,
+  widensMoveSlots,
+} from '../data/overworld/weather';
+import { DEFAULT_MOVE_SLOTS, Slots, defaultSlots, withSlots } from '../data/constants/slots';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import AleaRNG from '../core/alea';
 import Abilities from '../data/ids/abilities';
@@ -33,6 +34,7 @@ import type { Genders, Species } from '../data/ids/species';
 import {
   type BreedingParent,
   SHADOW_HATCH_FACTOR,
+  eggAbilities,
   inheritAbility,
   inheritBall,
   inheritIVs,
@@ -44,7 +46,12 @@ import {
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
 import { Metric } from '../auth/quest-record';
-import deriveEncounter, { EncounterType } from '../overworld/encounter';
+import deriveEncounter, {
+  EncounterType,
+  bonusMoveRoll,
+  bonusMoveSlots,
+  fillBonusMoves,
+} from '../overworld/encounter';
 import { grantCatchCandy } from './candy';
 import { bumpProgress } from './quest-progress';
 import { newDocId, tx } from './db';
@@ -132,6 +139,11 @@ interface EggFields {
   shadow: boolean;
   moves: Moves[];
   ability: Abilities;
+  /**
+   * Everything it hatches with, where the sky handed the meeting more
+   * than the one ability. `ability` stays the first of them
+   */
+  abilities?: Abilities[];
   individualValue: number;
   traitValue: number;
   hatchSteps: number;
@@ -175,6 +187,15 @@ async function writeEgg(
     fields.hatchSteps,
   );
 
+  // Everything it will hatch holding: what the caller settled on, and
+  // the Shadow it cannot put down
+  const hatching = [
+    ...new Set([
+      ...(fields.abilities ?? [fields.ability]),
+      ...(fields.shadow ? [Abilities.Shadow] : []),
+    ]),
+  ];
+
   // What is in the shell is whole, and the maximum it is measured
   // against is stored beside it so `hurt` can be a column
   const whole = getMaxHealth({
@@ -203,7 +224,14 @@ async function writeEgg(
           shiny: fields.shiny,
           species: fields.species,
         })},
-        ${fields.slots ?? packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS)},
+        ${
+          fields.slots ??
+          withSlots(
+            defaultSlots(hatching),
+            Slots.Move,
+            Math.max(DEFAULT_MOVE_SLOTS, fields.moves.length),
+          )
+        },
         0, 0, ${hatchSteps}, ${now},
         ${whole}, ${whole},
         0, null, ${fields.ball},
@@ -219,7 +247,7 @@ async function writeEgg(
       movePoints: {},
       // A shadow keeps its Shadow ability for good, the way a shadow
       // raid's prize does
-      abilities: fields.shadow ? [fields.ability, Abilities.Shadow] : [fields.ability],
+      abilities: hatching,
       items: [],
       // It was never anybody else's: this owner is where the pokemon
       // begins, egg and all
@@ -263,6 +291,7 @@ export async function grantNestEgg(
       shadow: hatchling.shadow,
       moves: hatchling.moves,
       ability: hatchling.ability,
+      abilities: hatchling.abilities,
       individualValue: hatchling.individualValue,
       traitValue: hatchling.traitValue,
       hatchSteps: Math.ceil(
@@ -318,10 +347,21 @@ export async function grantBredEgg(
   const hatchling = deriveEncounter(snapshot, spawn, uid, {
     type: EncounterType.Hatched,
     level: EGG_LEVEL,
-    // The egg is collected from the breeder under a sky, so a dark day
-    // over the day care reaches what is inside it
+    // The egg is collected from the breeder under a sky, so what the
+    // sky hands over reaches what is inside it: a move, an ability, or
+    // a heart closed by a dark day
     weather: snapshot.weather,
+    skyGifts: true,
   });
+  // Its own stream, so none of the draws above it move
+  const wide = widensMoveSlots(snapshot.weather)
+    ? bonusMoveSlots(
+        bonusMoveRoll(hatchling.traitValue)(),
+        FOGBOW_MOVE_CHANCE,
+        FOGBOW_SECOND_MOVE_CHANCE,
+        FOGBOW_MOVE_SLOTS,
+      )
+    : 0;
   const ivs = inheritIVs(parents[0], parents[1], () => rng.random());
   const shadow = inheritsShadow(parents[0], parents[1], () => rng.random()) || hatchling.shadow;
   const nature = inheritNature(parents[0], parents[1], () => rng.random());
@@ -342,10 +382,16 @@ export async function grantBredEgg(
       // inherited one
       shiny: hatchling.shiny,
       shadow,
-      moves: inheritMoves(species, parents[0], parents[1], EGG_LEVEL),
+      moves: fillBonusMoves(
+        species,
+        inheritMoves(species, parents[0], parents[1], EGG_LEVEL),
+        bonusMoveRoll(hatchling.traitValue),
+        wide,
+      ),
       // Its mother's, most of the time; its own when she did not pass
-      // it on
+      // it on, plus whatever the sky added on top of the roll
       ability: ability ?? hatchling.ability,
+      abilities: eggAbilities(ability ?? hatchling.ability, hatchling.ability, hatchling.abilities),
       individualValue: hatchling.individualValue,
       traitValue: hatchling.traitValue,
       // Something that should not be in there takes twice as long to

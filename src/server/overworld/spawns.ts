@@ -11,7 +11,13 @@ import deriveEncounter, {
   deriveTrainedAbilities,
   getSpawnLevels,
 } from '../../overworld/encounter';
-import { DEFAULT_ITEM_SLOTS, Slots, defaultSlots, withSlots } from '../../data/constants/slots';
+import {
+  DEFAULT_ITEM_SLOTS,
+  DEFAULT_MOVE_SLOTS,
+  Slots,
+  defaultSlots,
+  withSlots,
+} from '../../data/constants/slots';
 import type { Items } from '../../data/ids/items';
 import { encounterKey, encounterWindow } from '../../overworld/safari';
 import createOverworld from '../../overworld/setup';
@@ -91,20 +97,27 @@ export async function startEncounter(
   // it was carrying. Both are asked for by the caller, since nothing
   // met in the world has either
   const abilities = [
-    ...new Set(
-      deriveTrainedAbilities(
+    ...new Set([
+      ...deriveTrainedAbilities(
         derived.species,
         derived.traitValue,
         derived.ability,
         options.abilities ?? 1,
       ),
-    ),
+      // Whatever the meeting itself came with, which is a family
+      // signature off a fata morgana and nothing else
+      ...(derived.abilities ?? []),
+    ]),
   ];
   const room = Math.max(DEFAULT_ITEM_SLOTS, options.itemSlots ?? DEFAULT_ITEM_SLOTS);
   // Room for both, or the record would hold a second ability it has
   // no slot for: the battle counts slots rather than what is on the
   // list, and the counter would read it as already full
-  const slots = withSlots(defaultSlots(abilities), Slots.Item, room);
+  const slots = withSlots(
+    withSlots(defaultSlots(abilities), Slots.Item, room),
+    Slots.Move,
+    Math.max(DEFAULT_MOVE_SLOTS, derived.moves.length),
+  );
   const record: EncounterRecord = {
     ...derived,
     nature: overworld.checkEncounterNature(id, derived.nature),

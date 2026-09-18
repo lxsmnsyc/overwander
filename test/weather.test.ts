@@ -3,7 +3,6 @@ import Biome from '../src/data/ids/biome';
 import Weather, {
   BATTLE_WEATHER,
   BIOME_WEATHER,
-  FATA_MORGANA_HIDDEN_BOOST,
   METEOR_SHOWER_SHINY_BOOST,
   WEATHER_DESCRIPTIONS,
   WEATHER_MIN_IV,
@@ -11,18 +10,23 @@ import Weather, {
   WEATHER_TYPES,
   classifyWeather,
   favorsEverything,
-  hiddenAbilityBoostOf,
+  grantsHiddenAbility,
+  grantsSignature,
   isBoostingWeather,
   isWeatherFavored,
   shadowsMeetings,
   shinyBoostOf,
   spawnFavoredTypes,
-  teachesEggMove,
   toBattleWeather,
+  widensMoveSlots,
 } from '../src/data/overworld/weather';
 import World from '../src/overworld/world';
 import ChunkSnapshot from '../src/overworld/chunk-snapshot';
-import deriveEncounter, { EncounterType, RAID_FAMILY_DAY_MIN_IV } from '../src/overworld/encounter';
+import deriveEncounter, {
+  type Encounter,
+  EncounterType,
+  RAID_FAMILY_DAY_MIN_IV,
+} from '../src/overworld/encounter';
 import { Species } from '../src/data/ids/species';
 import type { Moves } from '../src/data/ids/moves';
 import { TYPE_NAMES, Types } from '../src/data/constants/types';
@@ -31,7 +35,14 @@ import registerGameData from '../src/data';
 import { BattleModes } from '../src/battle/core';
 import { Weathers } from '../src/data/ids/status';
 import { createTrainerBattle } from '../src/overworld/stop-battle';
-import { getEggMoves, getSpeciesData } from '../src/data/species';
+import { getSignatureAbility } from '../src/data/abilities';
+import {
+  getBaseSpecies,
+  getEggMoves,
+  getSpeciesAbilityPools,
+  getSpeciesData,
+  getTeachableMoves,
+} from '../src/data/species';
 
 /**
  * The sky is derived rather than stored, so what is worth testing is
@@ -285,37 +296,117 @@ describe('what weather is worth', () => {
     expect(prize(Weather.DustHaze)).toBe(RAID_FAMILY_DAY_MIN_IV + WEATHER_MIN_IV);
   });
 
-  it('hands a fogbow meeting a move off its line', () => {
-    expect(teachesEggMove(Weather.Fogbow)).toBe(true);
+  it('hands a fogbow meeting room for a fifth move, and sometimes a sixth', () => {
+    expect(widensMoveSlots(Weather.Fogbow)).toBe(true);
     for (const sky of [Weather.MeteorShower, Weather.FataMorgana, Weather.DarkDay, Weather.Mist]) {
-      expect(teachesEggMove(sky)).toBe(false);
+      expect(widensMoveSlots(sky)).toBe(false);
     }
 
-    // Bulbasaur's line inherits; the moves it walks out with under a
-    // fogbow are not the ones it walks out with under anything else
-    const met = (weather: Weather | undefined): Moves[] =>
-      deriveEncounter(snapshot, [Species.Bulbasaur, 0, 12_345], 'trainer-red', {
-        type: EncounterType.Wild,
+    const met = (
+      weather: Weather | undefined,
+      traitValue: number,
+      type = EncounterType.Wild,
+    ): Moves[] =>
+      deriveEncounter(snapshot, [Species.Butterfree, 0, traitValue], 'trainer-red', {
+        type,
         weather,
       }).moves;
-    const inherited = met(Weather.Fogbow);
+    // Three trait values: one the roll hands nothing, one a slot, one
+    // both of them
+    const plain = met(Weather.Fogbow, 3_000_000);
+    const wide = met(Weather.Fogbow, 3_000_006);
+    const widest = met(Weather.Fogbow, 3_000_023);
 
-    expect(inherited).not.toEqual(met(Weather.Clear));
-    expect(new Set(getEggMoves(Species.Bulbasaur)).has(inherited[0])).toBe(true);
+    expect(plain).toHaveLength(4);
+    expect(wide).toHaveLength(5);
+    expect(widest).toHaveLength(6);
 
-    // A line that inherits nothing is handed nothing
-    expect(getEggMoves(Species.Butterfree)).toEqual([]);
-    expect(
-      deriveEncounter(snapshot, [Species.Butterfree, 0, 12_345], 'trainer-red', {
-        type: EncounterType.Wild,
-        weather: Weather.Fogbow,
-      }).moves,
-    ).toEqual(
-      deriveEncounter(snapshot, [Species.Butterfree, 0, 12_345], 'trainer-red', {
-        type: EncounterType.Wild,
-        weather: Weather.Clear,
-      }).moves,
+    // The four it learned come first and are untouched, so nothing is
+    // given up for the extra room
+    expect(wide.slice(0, 4)).toEqual(met(Weather.Clear, 3_000_006));
+    expect(met(Weather.Clear, 3_000_023)).toHaveLength(4);
+
+    // What fills the room is a move the line would have had to be bred
+    // or taught for, and never one it already knows
+    const fillable = new Set([
+      ...getEggMoves(getBaseSpecies(Species.Butterfree)),
+      ...getTeachableMoves(Species.Butterfree),
+    ]);
+
+    for (const move of widest.slice(4)) {
+      expect(fillable.has(move)).toBe(true);
+    }
+    expect(new Set(widest).size).toBe(widest.length);
+
+    // A raid prize and a revived fossil count; a hatchling arrives
+    // under its own rules, and a nest's does its own widening
+    expect(met(Weather.Fogbow, 3_000_023, EncounterType.LegendaryRaid)).toHaveLength(6);
+    expect(met(Weather.Fogbow, 3_000_023, EncounterType.Revived)).toHaveLength(6);
+    expect(met(Weather.Fogbow, 3_000_023, EncounterType.Hatched)).toHaveLength(4);
+  });
+
+  it('hands a fata morgana meeting a second hidden ability', () => {
+    // Butterfree reaches four hidden abilities, three of them through
+    // the Caterpie under it, so there is always another to hand over
+    const met = (
+      weather: Weather | undefined,
+      traitValue: number,
+      type = EncounterType.Wild,
+    ): Encounter =>
+      deriveEncounter(snapshot, [Species.Butterfree, 0, traitValue], 'trainer-red', {
+        type,
+        weather,
+      });
+    const hidden = getSpeciesAbilityPools(Species.Butterfree).hidden;
+    // A trait value the hidden roll lands on, and one it does not
+    const lucky = met(Weather.FataMorgana, 3_000_018);
+
+    expect(lucky.abilities).toHaveLength(2);
+    expect(lucky.abilities?.[0]).toBe(lucky.ability);
+    expect(hidden).toContain(lucky.abilities?.[1]);
+    expect(met(Weather.FataMorgana, 3_000_000).abilities).toBeUndefined();
+
+    // The sky no longer touches the roll itself: what it would have
+    // been under any sky is what it is, and the second one is on top
+    expect(lucky.ability).toBe(met(Weather.Clear, 3_000_018).ability);
+    expect(met(Weather.Clear, 3_000_018).abilities).toBeUndefined();
+
+    // A raid prize is won under the sky over its lair and a fossil is
+    // opened on a bench under one, so both count. A bred egg hatches
+    // wherever its carrier is standing and arrives under its own rules
+    expect(met(Weather.FataMorgana, 3_000_018, EncounterType.LegendaryRaid).abilities).toEqual(
+      lucky.abilities,
     );
+    expect(met(Weather.FataMorgana, 3_000_018, EncounterType.Revived).abilities).toEqual(
+      lucky.abilities,
+    );
+    expect(met(Weather.FataMorgana, 3_000_018, EncounterType.Hatched).abilities).toBeUndefined();
+  });
+
+  it('hands a few fata morgana meetings the family signature', () => {
+    expect(grantsSignature(Weather.FataMorgana)).toBe(true);
+    for (const sky of [Weather.MeteorShower, Weather.Fogbow, Weather.DarkDay, Weather.Mist]) {
+      expect(grantsSignature(sky)).toBe(false);
+    }
+
+    const met = (weather: Weather | undefined, traitValue: number): Encounter =>
+      deriveEncounter(snapshot, [Species.Butterfree, 0, traitValue], 'trainer-red', {
+        type: EncounterType.Wild,
+        weather,
+      });
+    // 3,000,109 is a trait value both rolls land on, so it keeps three:
+    // the one it rolled, a hidden one and its family's signature
+    const blessed = met(Weather.FataMorgana, 3_000_109);
+    const signature = getSignatureAbility(getSpeciesData(Species.Butterfree).family);
+
+    expect(signature).not.toBeNull();
+    expect(blessed.abilities).toHaveLength(3);
+    expect(blessed.abilities?.[0]).toBe(blessed.ability);
+    expect(blessed.abilities?.[2]).toBe(signature);
+
+    // Nothing under any other sky keeps one, whatever it rolled
+    expect(met(Weather.Clear, 3_000_109).abilities).toBeUndefined();
+    expect(met(Weather.Fogbow, 3_000_109).abilities).toBeUndefined();
   });
 
   it('closes a share of what arrives under a dark day, and only some kinds', () => {
@@ -506,7 +597,7 @@ describe('the types a sky is kind to', () => {
     // It is the shadow it gives rather than a boost: the other two
     // keep theirs to themselves
     expect(shinyBoostOf(Weather.DarkDay)).toBe(1);
-    expect(hiddenAbilityBoostOf(Weather.DarkDay)).toBe(1);
+    expect(grantsHiddenAbility(Weather.DarkDay)).toBe(false);
     // And it is still worth going out in whoever is being raised
     expect(favorsEverything(Weather.DarkDay)).toBe(true);
   });
@@ -516,10 +607,10 @@ describe('the types a sky is kind to', () => {
     // other touches what the pokemon was hiding
     expect(shinyBoostOf(Weather.MeteorShower)).toBe(METEOR_SHOWER_SHINY_BOOST);
     expect(shinyBoostOf(Weather.FataMorgana)).toBe(1);
-    expect(hiddenAbilityBoostOf(Weather.FataMorgana)).toBe(FATA_MORGANA_HIDDEN_BOOST);
-    expect(hiddenAbilityBoostOf(Weather.MeteorShower)).toBe(1);
+    expect(grantsHiddenAbility(Weather.FataMorgana)).toBe(true);
+    expect(grantsHiddenAbility(Weather.MeteorShower)).toBe(false);
     expect(shinyBoostOf(Weather.Rain)).toBe(1);
-    expect(hiddenAbilityBoostOf(Weather.Rain)).toBe(1);
+    expect(grantsHiddenAbility(Weather.Rain)).toBe(false);
   });
 
   it('makes the rarest sky kind to everything', () => {

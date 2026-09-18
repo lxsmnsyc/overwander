@@ -81,13 +81,37 @@ export function favorsEverything(weather: Weather): boolean {
 export const METEOR_SHOWER_SHINY_BOOST = 8;
 
 /**
- * What a fata morgana multiplies the odds of a hidden ability by.
+ * How often a meeting under a fata morgana keeps a second ability: one
+ * out of its line's hidden pool, on top of the one it rolled.
  *
- * The meteor shower's opposite number: a mirage shows what is not there
- * to be seen, so what it is worth is what the pokemon was hiding rather
- * than what its coat looks like
+ * The meteor shower's opposite number. A mirage shows what is not
+ * there to be seen, so what it is worth is what the pokemon was
+ * hiding rather than what its coat looks like, and the odds it rolled
+ * that hidden one by are left where every other sky leaves them: this
+ * hands over an extra rather than widening the band
  */
-export const FATA_MORGANA_HIDDEN_BOOST = 2;
+export const FATA_MORGANA_HIDDEN_CHANCE = 1 / 8;
+
+/**
+ * How often a meeting under a fata morgana keeps its family's
+ * signature ability, beside whatever it rolled.
+ *
+ * A signature is the ability nothing rolls, so an Ability Patch is the
+ * only other way to one: rare enough here to stay a hunt, against the
+ * 1/4 the same sky gives a hidden ability
+ */
+export const FATA_MORGANA_SIGNATURE_CHANCE = 1 / 64;
+
+/**
+ * Whether a meeting under this sky can keep its family's signature.
+ *
+ * The mirage's second gift, and the one the Ability Patch otherwise
+ * has to itself. A raid prize counts: it is won where the lair stands,
+ * so the sky over it is the sky it came out of
+ */
+export function grantsSignature(weather: Weather): boolean {
+  return weather === Weather.FataMorgana;
+}
 
 /**
  * What this sky multiplies the odds of a shiny coat by.
@@ -101,15 +125,21 @@ export function shinyBoostOf(weather: Weather): number {
 }
 
 /**
- * Whether anything met in the wild under this sky already knows one of
- * its line's egg moves.
+ * How often a meeting under a fogbow walks out with room for a fifth
+ * move, and how often for a sixth as well.
  *
- * Breeding is the only other way to come by one, so this is the sky
- * that hands over what a walk with an egg would have cost. A species
- * whose line inherits nothing is handed nothing: about half the
- * families have an egg move at all
+ * Nothing else in the game widens a pokemon's move list, so this is
+ * the sky worth hunting under for one. What goes in the extra room is
+ * a move the line would otherwise have had to be bred or taught for
  */
-export function teachesEggMove(weather: Weather): boolean {
+export const FOGBOW_MOVE_CHANCE = 1 / 4;
+export const FOGBOW_SECOND_MOVE_CHANCE = 1 / 16;
+
+/** The most room a fogbow ever hands over, on top of the usual four */
+export const FOGBOW_MOVE_SLOTS = 2;
+
+/** Whether a meeting under this sky can walk out with room for more moves */
+export function widensMoveSlots(weather: Weather): boolean {
   return weather === Weather.Fogbow;
 }
 
@@ -146,7 +176,7 @@ export const DARK_DAY_SHADOW_CHANCE = 1 / 4;
  */
 export const DARK_DAY_LAMP_CELLS = 1.5;
 
-/** What this sky multiplies the odds of a hidden ability by */
-export function hiddenAbilityBoostOf(weather: Weather): number {
-  return weather === Weather.FataMorgana ? FATA_MORGANA_HIDDEN_BOOST : 1;
+/** Whether a meeting under this sky keeps a second, hidden ability */
+export function grantsHiddenAbility(weather: Weather): boolean {
+  return weather === Weather.FataMorgana;
 }

@@ -4,15 +4,20 @@ import { Badge, Button, Meta, Note, Row, Select, Slider, Switch } from '../style
 import Weather, {
   DARK_DAY_LAMP_CELLS,
   DARK_DAY_SHADOW_CHANCE,
+  FATA_MORGANA_HIDDEN_CHANCE,
+  FATA_MORGANA_SIGNATURE_CHANCE,
+  FOGBOW_MOVE_CHANCE,
+  FOGBOW_SECOND_MOVE_CHANCE,
   WEATHER_DESCRIPTIONS,
   WEATHER_NAMES,
   WEATHER_TYPES,
   favorsEverything,
-  hiddenAbilityBoostOf,
+  grantsHiddenAbility,
+  grantsSignature,
   isBoostingWeather,
   shadowsMeetings,
   shinyBoostOf,
-  teachesEggMove,
+  widensMoveSlots,
 } from '../../data/overworld/weather';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import Biome from '../../data/ids/biome';
@@ -615,7 +620,6 @@ export default function WeatherDemo(): JSX.Element {
     const sky = chosen();
     const said: string[] = [];
     const shiny = shinyBoostOf(sky);
-    const hidden = hiddenAbilityBoostOf(sky);
 
     if (favorsEverything(sky)) {
       said.push('favours every type');
@@ -630,11 +634,16 @@ export default function WeatherDemo(): JSX.Element {
     if (shiny > 1) {
       said.push(`shinies ×${shiny}`);
     }
-    if (hidden > 1) {
-      said.push(`hidden abilities ×${hidden}`);
+    if (grantsHiddenAbility(sky)) {
+      said.push(`1 in ${1 / FATA_MORGANA_HIDDEN_CHANCE} keeps a second hidden ability`);
     }
-    if (teachesEggMove(sky)) {
-      said.push('meetings carry an egg move');
+    if (widensMoveSlots(sky)) {
+      said.push(
+        `1 in ${1 / FOGBOW_MOVE_CHANCE} gains a move slot, 1 in ${1 / FOGBOW_SECOND_MOVE_CHANCE} gains two`,
+      );
+    }
+    if (grantsSignature(sky)) {
+      said.push(`1 in ${1 / FATA_MORGANA_SIGNATURE_CHANCE} keeps its family signature`);
     }
     if (shadowsMeetings(sky)) {
       said.push(`1 in ${1 / DARK_DAY_SHADOW_CHANCE} arrives shadowed`);

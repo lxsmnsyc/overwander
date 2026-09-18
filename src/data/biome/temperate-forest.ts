@@ -183,6 +183,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Zorua, weight: 20 },
         { species: Species.Shuppet, weight: 20 },
         { species: Species.Venonat, weight: 20 },
         { species: Species.Hoothoot, weight: 25 },
@@ -201,6 +202,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Venomoth, weight: 10 },
@@ -246,6 +248,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Zorua, weight: 20 },
         { species: Species.Shuppet, weight: 20 },
         { species: Species.Paras, weight: 20 },
         { species: Species.Venonat, weight: 20 },
@@ -265,6 +268,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Parasect, weight: 10 },

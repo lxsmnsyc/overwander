@@ -831,6 +831,9 @@ const enum Abilities {
   LeafOpening = 200247,
   EmberOpening = 200248,
   ShellOpening = 200249,
+  Spotter = 200250,
+  LoyalGuard = 200251,
+  CatBurglar = 200252,
 }
 
 export default Abilities;

@@ -1509,4 +1509,20 @@ export default function registerSignatureAbilities(): void {
     name: 'Shell Opening',
     description: 'The first move it lands each fight raises its own Defense 2 stages.',
   });
+
+  // The three a walk out of the first town meets
+  registerSignature(Families.Patrat, Abilities.Spotter, {
+    name: 'Spotter',
+    description: 'Its team throws 1.2x as accurately at a target that is casting or channelling.',
+  });
+
+  registerSignature(Families.Lillipup, Abilities.LoyalGuard, {
+    name: 'Loyal Guard',
+    description: '1.5x Defense and Special Defense while a teammate is under 1/2 HP.',
+  });
+
+  registerSignature(Families.Purrloin, Abilities.CatBurglar, {
+    name: 'Cat Burglar',
+    description: 'The first move it lands each fight takes the target’s held item.',
+  });
 }

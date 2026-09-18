@@ -19,6 +19,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Slakoth, weight: 20 },
         { species: Species.Turtwig, weight: 3 },
         { species: Species.Starly, weight: 30 },
+        { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
         { species: Species.Rattata, weight: 30 },
@@ -47,6 +48,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Skiploom, weight: 5 },
         { species: Species.Grotle, weight: 2 },
         { species: Species.Staravia, weight: 5 },
+        { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
         { species: Species.Raticate, weight: 10 },
@@ -117,6 +119,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Slakoth, weight: 20 },
         { species: Species.Turtwig, weight: 3 },
         { species: Species.Starly, weight: 30 },
+        { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
         { species: Species.Rattata, weight: 30 },
@@ -145,6 +148,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Skiploom, weight: 5 },
         { species: Species.Grotle, weight: 2 },
         { species: Species.Staravia, weight: 5 },
+        { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
         { species: Species.Raticate, weight: 10 },
@@ -229,6 +233,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
         { species: Species.Stunky, weight: 22 },
+        { species: Species.Purrloin, weight: 25 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -260,6 +265,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Ambipom, weight: 6 },
         { species: Species.Honchkrow, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
+        { species: Species.Liepard, weight: 6 },
       ],
       elusive: [
         { species: Species.Spiritomb, weight: 5 },
@@ -321,6 +327,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
         { species: Species.Stunky, weight: 22 },
+        { species: Species.Purrloin, weight: 25 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -356,6 +363,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Mismagius, weight: 6 },
         { species: Species.Honchkrow, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
+        { species: Species.Liepard, weight: 6 },
       ],
       elusive: [
         { species: Species.Spiritomb, weight: 5 },

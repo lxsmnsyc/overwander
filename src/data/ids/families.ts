@@ -252,6 +252,9 @@ const enum Families {
   Snivy = 247,
   Tepig = 248,
   Oshawott = 249,
+  Patrat = 250,
+  Lillipup = 251,
+  Purrloin = 252,
 }
 
 export default Families;
@@ -521,4 +524,7 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Snivy]: 'Snivy',
   [Families.Tepig]: 'Tepig',
   [Families.Oshawott]: 'Oshawott',
+  [Families.Patrat]: 'Patrat',
+  [Families.Lillipup]: 'Lillipup',
+  [Families.Purrloin]: 'Purrloin',
 };

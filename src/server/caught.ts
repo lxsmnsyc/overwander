@@ -9,7 +9,13 @@ import {
 import { asNickname } from '../auth/nickname';
 import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
 import { getMaxHealth, needsCare } from '../auth/health';
-import { Slots, defaultSlots, getSlots } from '../data/constants/slots';
+import {
+  DEFAULT_MOVE_SLOTS,
+  Slots,
+  defaultSlots,
+  getSlots,
+  withSlots,
+} from '../data/constants/slots';
 import Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import { Balls, ItemFlags } from '../data/ids/items';
@@ -166,9 +172,17 @@ export async function insertCaughtIn(
       ...(shadow ? [Abilities.Shadow] : []),
     ]),
   ];
-  // Room for what it arrived with, since the battle counts slots
-  // rather than the list and would read a full one as having none free
-  const room = encounter.slots ?? defaultSlots(abilities);
+  // Room for everything it arrived with, since the battle counts slots
+  // rather than the lists and would read a full one as having none
+  // free: a mirage hands some of them a second ability, a fogbow a
+  // fifth and a sixth move, and each list is cut to its room here
+  const room =
+    encounter.slots ??
+    withSlots(
+      defaultSlots(abilities),
+      Slots.Move,
+      Math.max(DEFAULT_MOVE_SLOTS, encounter.moves.length),
+    );
 
   // It arrives whole, and the maximum it is measured against is stored
   // beside it so `hurt` can be a column

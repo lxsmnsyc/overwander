@@ -9,7 +9,13 @@ import {
   stepsRemaining,
 } from '../auth/egg';
 import { getMaxHealth } from '../auth/health';
-import { defaultSlots } from '../data/constants/slots';
+import {
+  FOGBOW_MOVE_CHANCE,
+  FOGBOW_MOVE_SLOTS,
+  FOGBOW_SECOND_MOVE_CHANCE,
+  widensMoveSlots,
+} from '../data/overworld/weather';
+import { DEFAULT_MOVE_SLOTS, Slots, defaultSlots, withSlots } from '../data/constants/slots';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import AleaRNG from '../core/alea';
 import Abilities from '../data/ids/abilities';
@@ -40,7 +46,12 @@ import {
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
 import { Metric } from '../auth/quest-record';
-import deriveEncounter, { EncounterType } from '../overworld/encounter';
+import deriveEncounter, {
+  EncounterType,
+  bonusMoveRoll,
+  bonusMoveSlots,
+  fillBonusMoves,
+} from '../overworld/encounter';
 import { grantCatchCandy } from './candy';
 import { bumpProgress } from './quest-progress';
 import { newDocId, tx } from './db';
@@ -213,7 +224,14 @@ async function writeEgg(
           shiny: fields.shiny,
           species: fields.species,
         })},
-        ${fields.slots ?? defaultSlots(hatching)},
+        ${
+          fields.slots ??
+          withSlots(
+            defaultSlots(hatching),
+            Slots.Move,
+            Math.max(DEFAULT_MOVE_SLOTS, fields.moves.length),
+          )
+        },
         0, 0, ${hatchSteps}, ${now},
         ${whole}, ${whole},
         0, null, ${fields.ball},
@@ -330,6 +348,17 @@ export async function grantBredEgg(
     weather: snapshot.weather,
     skyGifts: true,
   });
+  // The egg is collected from the breeder under a sky, so a fogbow
+  // over the day care hands it room for a move its parents could not
+  // pass. Its own stream, so none of the draws above it move
+  const wide = widensMoveSlots(snapshot.weather)
+    ? bonusMoveSlots(
+        bonusMoveRoll(hatchling.traitValue)(),
+        FOGBOW_MOVE_CHANCE,
+        FOGBOW_SECOND_MOVE_CHANCE,
+        FOGBOW_MOVE_SLOTS,
+      )
+    : 0;
   const ivs = inheritIVs(parents[0], parents[1], () => rng.random());
   const shadow = inheritsShadow(parents[0], parents[1], () => rng.random());
   const nature = inheritNature(parents[0], parents[1], () => rng.random());
@@ -350,7 +379,12 @@ export async function grantBredEgg(
       // inherited one
       shiny: hatchling.shiny,
       shadow,
-      moves: inheritMoves(species, parents[0], parents[1], EGG_LEVEL),
+      moves: fillBonusMoves(
+        species,
+        inheritMoves(species, parents[0], parents[1], EGG_LEVEL),
+        bonusMoveRoll(hatchling.traitValue),
+        wide,
+      ),
       // Its mother's, most of the time; its own when she did not pass
       // it on, plus whatever the sky added on top of the roll
       ability: ability ?? hatchling.ability,

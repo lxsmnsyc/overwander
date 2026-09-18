@@ -4,12 +4,15 @@ import type Weather from '../../data/overworld/weather';
 import {
   FATA_MORGANA_HIDDEN_CHANCE,
   FATA_MORGANA_SIGNATURE_CHANCE,
+  FOGBOW_MOVE_CHANCE,
+  FOGBOW_MOVE_SLOTS,
+  FOGBOW_SECOND_MOVE_CHANCE,
   WEATHER_MIN_IV,
   grantsHiddenAbility,
   grantsSignature,
   isWeatherFavored,
   shinyBoostOf,
-  teachesEggMove,
+  widensMoveSlots,
 } from '../../data/overworld/weather';
 import { MAX_IV, Stats, packIVs } from '../../data/constants/stats';
 import type Biome from '../../data/ids/biome';
@@ -23,7 +26,7 @@ import type ChunkSnapshot from '../chunk-snapshot';
 import type { Spawn } from '../chunk-snapshot';
 import { EncounterType, isRaidEncounter } from './kinds';
 import { getSpawnLevels } from './levels';
-import { deriveEggMoves, deriveMoves, eggMoveRoll } from './moves';
+import { bonusMoveRoll, bonusMoveSlots, deriveBonusMoves, deriveMoves } from './moves';
 import type { Encounter } from './shape';
 import { IV_BITS, IV_MASK, TRAIT_MASK, TRAIT_RANGE } from './bits';
 import {
@@ -178,24 +181,33 @@ export default function deriveEncounter(
   // stat, from its own dedicated slice
   const gender = deriveGender(species, traitValue);
 
-  // The last four level-up moves learnable at this level
-  // A fogbow hands over what a walk with an egg would have cost, so a
-  // wild meeting under one already knows a move off its line's list.
-  // Seeded by the trait value alone: what a pokemon knows is the
-  // pokemon's, not the trainer's
+  // Whether the sky has any say in what this one arrives with. A wild
+  // meeting, a raid prize won under the sky over its lair and a fossil
+  // opened on a bench under one are all asked; an egg passes the
+  // answer itself, since it is claimed rather than met
+  const underTheSky =
+    options.skyGifts ??
+    (type === EncounterType.Wild || type === EncounterType.Revived || isRaidEncounter(type));
+
+  // The last four level-up moves learnable at this level, and the room
+  // a fogbow hands over on top of them: a move the line would
+  // otherwise have had to be bred or taught for. Seeded by the trait
+  // value alone, since what a pokemon knows is the pokemon's rather
+  // than the trainer's
+  const roll = bonusMoveRoll(traitValue);
   const moves =
-    sky != null && teachesEggMove(sky) && type === EncounterType.Wild
-      ? deriveEggMoves(species, level, eggMoveRoll(traitValue))
+    underTheSky && sky != null && widensMoveSlots(sky)
+      ? deriveBonusMoves(
+          species,
+          level,
+          roll,
+          bonusMoveSlots(roll(), FOGBOW_MOVE_CHANCE, FOGBOW_SECOND_MOVE_CHANCE, FOGBOW_MOVE_SLOTS),
+        )
       : deriveMoves(species, level);
   const nature = deriveNature(traitValue);
   // A mirage shows what is not there to be seen: a meeting under one
   // can keep a second ability out of its line's hidden pool, and more
-  // rarely its family's signature, which is the ability nothing rolls.
-  // A raid prize counts, since it is won under the sky over its lair,
-  // and so does a fossil, opened on a bench under one
-  const underTheSky =
-    options.skyGifts ??
-    (type === EncounterType.Wild || type === EncounterType.Revived || isRaidEncounter(type));
+  // rarely its family's signature, which is the ability nothing rolls
   const hiddenExtra =
     underTheSky && sky != null && grantsHiddenAbility(sky)
       ? deriveExtraHidden(species, traitValue, FATA_MORGANA_HIDDEN_CHANCE, ability)
@@ -279,4 +291,10 @@ export {
   isShinyFor,
 } from './traits';
 export type { Size } from './traits';
-export { deriveEggMoves, deriveMoves } from './moves';
+export {
+  bonusMoveRoll,
+  bonusMoveSlots,
+  deriveBonusMoves,
+  deriveMoves,
+  fillBonusMoves,
+} from './moves';

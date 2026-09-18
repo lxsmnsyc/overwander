@@ -49,7 +49,7 @@ import {
   getTeachableMoves,
   registerSpecies,
 } from '../../src/data/species';
-import { deriveBonusMoves, deriveMoves } from '../../src/overworld/encounter';
+import { deriveBonusMoves, deriveMoves, fillBonusMoves } from '../../src/overworld/encounter';
 
 beforeAll(() => {
   registerMoves();
@@ -612,6 +612,19 @@ describe('hatchling moves', () => {
 
     expect(wide.slice(0, learned.length)).toEqual(learned);
     expect(getEggMoves(Species.Bulbasaur)).toContain(wide[learned.length]);
+  });
+
+  it('fills the room behind whatever a bred egg inherited', () => {
+    // A bred egg's list comes off its parents rather than off its
+    // level, and the sky's room goes behind it without disturbing it
+    const [passed] = getEggMoves(Species.Bulbasaur);
+    const inherited = [passed, ...deriveMoves(Species.Bulbasaur, EGG_LEVEL)];
+    const wide = fillBonusMoves(Species.Bulbasaur, inherited, () => 0, 2);
+
+    expect(wide.slice(0, inherited.length)).toEqual(inherited);
+    expect(wide).toHaveLength(inherited.length + 2);
+    // Never a move it was already holding, whatever the draw
+    expect(new Set(wide).size).toBe(wide.length);
   });
 
   it('knows only its own where the sky hands over no room', () => {

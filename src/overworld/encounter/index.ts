@@ -253,4 +253,10 @@ export {
   isShinyFor,
 } from './traits';
 export type { Size } from './traits';
-export { bonusMoveRoll, bonusMoveSlots, deriveBonusMoves, deriveMoves } from './moves';
+export {
+  bonusMoveRoll,
+  bonusMoveSlots,
+  deriveBonusMoves,
+  deriveMoves,
+  fillBonusMoves,
+} from './moves';

@@ -90,24 +90,22 @@ function fillableMoves(species: Species, known: Moves[]): Moves[] {
 }
 
 /**
- * What a meeting under a fogbow walks out knowing: its own four, and
- * one or two more it would otherwise have had to be bred or taught
- * for. The extras go last, since nothing has to be given up for them
+ * A list with the fogbow's extra room filled in behind it. The extras
+ * go last, since nothing has to be given up for them, and a list
+ * already holding a move is never handed it twice
  */
-export function deriveBonusMoves(
+export function fillBonusMoves(
   species: Species,
-  level: number,
+  known: Moves[],
   random: () => number,
   slots: number,
 ): Moves[] {
-  const learned = deriveMoves(species, level);
-
   if (slots < 1) {
-    return learned;
+    return known;
   }
 
-  const moves = [...learned];
-  const left = fillableMoves(species, learned);
+  const moves = [...known];
+  const left = fillableMoves(species, known);
 
   for (let taken = 0; taken < slots && left.length > 0; taken += 1) {
     const [move] = left.splice(Math.floor(random() * left.length), 1);
@@ -115,6 +113,19 @@ export function deriveBonusMoves(
     moves.push(move);
   }
   return moves;
+}
+
+/**
+ * What a meeting under a fogbow walks out knowing: its own four, and
+ * one or two more it would otherwise have had to be bred or taught for
+ */
+export function deriveBonusMoves(
+  species: Species,
+  level: number,
+  random: () => number,
+  slots: number,
+): Moves[] {
+  return fillBonusMoves(species, deriveMoves(species, level), random, slots);
 }
 
 /**

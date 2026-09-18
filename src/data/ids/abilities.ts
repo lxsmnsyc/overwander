@@ -834,6 +834,9 @@ const enum Abilities {
   Spotter = 200250,
   LoyalGuard = 200251,
   CatBurglar = 200252,
+  Doze = 200253,
+  Homing = 200254,
+  StormDash = 200255,
 }
 
 export default Abilities;

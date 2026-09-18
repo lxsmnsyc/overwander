@@ -6,6 +6,11 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
  * Grassland spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerGrasslandSpawns(): void {
+  // Two lines are written but wait on sprites, since the collection
+  // has drawn no Tranquill, Blitzle or Zebstrika. Once it does,
+  // mornings and days take Pidove in base at 30, Tranquill in rare at
+  // 12, Unfezant in elusive at 6, Blitzle in uncommon at 25 and
+  // Zebstrika in scarce at 6
   registerSpawnPool(Biome.Grassland, {
     [TimeOfDay.Morning]: {
       base: [
@@ -275,6 +280,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Glameow, weight: 25 },
         { species: Species.Stunky, weight: 22 },
         { species: Species.Purrloin, weight: 25 },
+        { species: Species.Munna, weight: 25 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -298,6 +304,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Electivire, weight: 6 },
         { species: Species.Watchog, weight: 8 },
         { species: Species.Liepard, weight: 6 },
+        { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },
@@ -350,6 +357,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Glameow, weight: 25 },
         { species: Species.Stunky, weight: 22 },
         { species: Species.Purrloin, weight: 25 },
+        { species: Species.Munna, weight: 25 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -375,6 +383,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Electivire, weight: 6 },
         { species: Species.Watchog, weight: 8 },
         { species: Species.Liepard, weight: 6 },
+        { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },

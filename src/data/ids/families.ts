@@ -286,6 +286,10 @@ const enum Families {
   // 279 and 280 are held for Tirtouga and Archen, the region's two
   // fossils, which are designed as a pair and are not written yet
   Trubbish = 281,
+  Zorua = 282,
+  Minccino = 283,
+  Gothita = 284,
+  Solosis = 285,
 }
 
 export default Families;
@@ -584,4 +588,8 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Sigilyph]: 'Sigilyph',
   [Families.Yamask]: 'Yamask',
   [Families.Trubbish]: 'Trubbish',
+  [Families.Zorua]: 'Zorua',
+  [Families.Minccino]: 'Minccino',
+  [Families.Gothita]: 'Gothita',
+  [Families.Solosis]: 'Solosis',
 };

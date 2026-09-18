@@ -14,6 +14,7 @@ export default function registerGrasslandSpawns(): void {
   registerSpawnPool(Biome.Grassland, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Solosis, weight: 24 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Pidgey, weight: 30 },
         { species: Species.NidoranF, weight: 20 },
@@ -26,6 +27,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Minccino, weight: 26 },
         { species: Species.Swablu, weight: 22 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.Growlithe, weight: 10 },
@@ -54,6 +56,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Duosion, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Pidgeotto, weight: 5 },
         { species: Species.Nidorina, weight: 5 },
@@ -66,6 +69,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Cinccino, weight: 7 },
         { species: Species.Altaria, weight: 5 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Arcanine, weight: 5 },
@@ -94,6 +98,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Reuniclus, weight: 5 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Venusaur, weight: 2 },
         { species: Species.Pidgeot, weight: 5 },
@@ -139,6 +144,7 @@ export default function registerGrasslandSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Solosis, weight: 24 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Pidgey, weight: 30 },
         { species: Species.NidoranF, weight: 20 },
@@ -152,6 +158,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Minccino, weight: 26 },
         { species: Species.Swablu, weight: 22 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.Ekans, weight: 20 },
@@ -181,6 +188,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Duosion, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Pidgeotto, weight: 5 },
         { species: Species.Nidorina, weight: 5 },
@@ -194,6 +202,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Cinccino, weight: 7 },
         { species: Species.Altaria, weight: 5 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Arbok, weight: 10 },
@@ -223,6 +232,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Reuniclus, weight: 5 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Venusaur, weight: 2 },
         { species: Species.Pidgeot, weight: 5 },
@@ -270,6 +280,7 @@ export default function registerGrasslandSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Gothita, weight: 24 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Oddish, weight: 20 },
@@ -291,6 +302,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Munna, weight: 25 },
       ],
       rare: [
+        { species: Species.Gothorita, weight: 10 },
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Gloom, weight: 5 },
@@ -315,6 +327,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Gothitelle, weight: 5 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
@@ -345,6 +358,7 @@ export default function registerGrasslandSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Gothita, weight: 24 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Oddish, weight: 20 },
@@ -368,6 +382,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Munna, weight: 25 },
       ],
       rare: [
+        { species: Species.Gothorita, weight: 10 },
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Gloom, weight: 5 },
@@ -394,6 +409,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Gothitelle, weight: 5 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },

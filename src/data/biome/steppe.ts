@@ -19,6 +19,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Whismur, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Rufflet, weight: 16 },
         { species: Species.Spearow, weight: 20 },
         { species: Species.Growlithe, weight: 10 },
         { species: Species.Ponyta, weight: 10 },
@@ -39,6 +40,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Flaaffy, weight: 5 },
       ],
       scarce: [
+        { species: Species.Braviary, weight: 6 },
         { species: Species.Fearow, weight: 10 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Rapidash, weight: 10 },
@@ -77,6 +79,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Whismur, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Rufflet, weight: 16 },
         { species: Species.Spearow, weight: 20 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Growlithe, weight: 10 },
@@ -98,6 +101,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Flaaffy, weight: 5 },
       ],
       scarce: [
+        { species: Species.Braviary, weight: 6 },
         { species: Species.Fearow, weight: 10 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Arcanine, weight: 5 },

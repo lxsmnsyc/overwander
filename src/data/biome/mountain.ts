@@ -23,6 +23,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Roggenrola, weight: 24 },
       ],
       uncommon: [
+        { species: Species.Rufflet, weight: 16 },
         { species: Species.Makuhita, weight: 20 },
         { species: Species.Spoink, weight: 20 },
         { species: Species.Swablu, weight: 22 },
@@ -51,6 +52,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Boldore, weight: 12 },
       ],
       scarce: [
+        { species: Species.Braviary, weight: 6 },
         { species: Species.Hariyama, weight: 6 },
         { species: Species.Grumpig, weight: 6 },
         { species: Species.Altaria, weight: 5 },
@@ -119,6 +121,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Roggenrola, weight: 24 },
       ],
       uncommon: [
+        { species: Species.Rufflet, weight: 16 },
         { species: Species.Makuhita, weight: 20 },
         { species: Species.Spoink, weight: 20 },
         { species: Species.Swablu, weight: 22 },
@@ -148,6 +151,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Boldore, weight: 12 },
       ],
       scarce: [
+        { species: Species.Braviary, weight: 6 },
         { species: Species.Hariyama, weight: 6 },
         { species: Species.Grumpig, weight: 6 },
         { species: Species.Altaria, weight: 5 },

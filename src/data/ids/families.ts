@@ -306,9 +306,13 @@ const enum Families {
   // Mienfoo, which sit between these in the dex and are not written yet
   Druddigon = 306,
   Golett = 307,
-  // 308 to 313 are held for Pawniard, Bouffalant, Rufflet, Vullaby,
-  // Heatmor and Durant, which sit between these in the dex and are not
-  // written yet
+  Pawniard = 308,
+  // 309 is held for Bouffalant, which sits between these in the dex
+  // and is not written yet
+  Rufflet = 310,
+  Vullaby = 311,
+  // 312 and 313 are held for Heatmor and Durant, the pair that sit
+  // between these in the dex and are not written yet
   Deino = 314,
 }
 
@@ -624,5 +628,8 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Axew]: 'Axew',
   [Families.Druddigon]: 'Druddigon',
   [Families.Golett]: 'Golett',
+  [Families.Pawniard]: 'Pawniard',
+  [Families.Rufflet]: 'Rufflet',
+  [Families.Vullaby]: 'Vullaby',
   [Families.Deino]: 'Deino',
 };

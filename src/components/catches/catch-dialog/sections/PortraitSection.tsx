@@ -41,7 +41,11 @@ export default function PortraitSection(props: PortraitSectionProps): JSX.Elemen
           same room. It grows into whatever height the column has spare,
           and never below 8rem */}
       <div class="relative min-h-32 w-full flex-1">
-        <div class="absolute inset-0 m-auto aspect-square h-full max-w-full">
+        {/* Centred here rather than by the sprite: a sized one places
+            itself against this square, and an egg, which has no height
+            to be sized by, is laid in the flow and would sit at the
+            corner */}
+        <div class="absolute inset-0 m-auto flex aspect-square h-full max-w-full items-center justify-center">
           <AnimatedSprite
             species={isEgg(props.caught) ? Species.Egg : props.caught.species}
             shiny={!isEgg(props.caught) && isShiny(props.caught)}

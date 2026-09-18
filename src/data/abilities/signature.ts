@@ -1786,4 +1786,21 @@ export default function registerSignatureAbilities(): void {
     name: 'Bonewear',
     description: '+1 Defense and +1 Special Defense every time an enemy faints.',
   });
+
+  // Heatmor and Durant are the one hunt the games tell from both
+  // sides: one is built to open the nest, the other to hold it
+  registerSignature(Families.Heatmor, Abilities.Anteater, {
+    name: 'Anteater',
+    description: 'Its moves hit 1.5x against a Bug or Steel target.',
+  });
+
+  registerSignature(Families.Durant, Abilities.AntGuard, {
+    name: 'Ant Guard',
+    description: 'Fire moves hit it at 0.5x.',
+  });
+
+  registerSignature(Families.Larvesta, Abilities.EmberHalo, {
+    name: 'Ember Halo',
+    description: 'Every enemy loses 1/16 of its HP each time it acts while it stands.',
+  });
 }

@@ -428,6 +428,34 @@ function holdsAny(chosen: ReadonlySet<Moves>, wanted: ReadonlySet<Moves>): boole
 }
 
 /**
+ * The promises a species has to be able to keep at all, as the moves
+ * that keep them. A Dream Eater on a line with nothing that puts
+ * anybody to sleep is a promise it can never keep, however the slots
+ * fall, so it is left out rather than discounted
+ */
+const MOVE_REQUIREMENTS: Partial<Record<Moves, ReadonlySet<Moves>>> = {
+  [Moves.DreamEater]: SLEEP_MOVES,
+  [Moves.SleepTalk]: new Set([Moves.Rest]),
+  [Moves.FocusPunch]: new Set([Moves.Substitute]),
+};
+
+/** Whether the species can ever keep what this move promises */
+function canKeepPromise(species: Species, move: Moves): boolean {
+  const wanted = MOVE_REQUIREMENTS[move];
+
+  if (wanted == null) {
+    return true;
+  }
+
+  for (const learnable of getLearnableMoves(species)) {
+    if (wanted.has(learnable)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * The moves whose worth is a promise the rest of the sheet has to
  * keep, and what keeps it. A Focus Punch behind a Substitute is a
  * different move from a Focus Punch alone, and this is the whole of
@@ -1146,7 +1174,9 @@ function pickMoves(species: Species, context: BuildContext): Moves[] {
   const scored: { move: Moves; worth: number }[] = [];
 
   for (const move of getLearnableMoves(species)) {
-    scored.push({ move, worth: moveWorth(species, move, context) });
+    if (canKeepPromise(species, move)) {
+      scored.push({ move, worth: moveWorth(species, move, context) });
+    }
   }
   scored.sort((one, two) => two.worth - one.worth || one.move - two.move);
 

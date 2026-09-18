@@ -24,6 +24,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Turtwig, weight: 3 },
         { species: Species.Starly, weight: 30 },
         { species: Species.Lillipup, weight: 28 },
+        { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
         { species: Species.Rattata, weight: 30 },
@@ -53,6 +54,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Grotle, weight: 2 },
         { species: Species.Staravia, weight: 5 },
         { species: Species.Herdier, weight: 12 },
+        { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
         { species: Species.Raticate, weight: 10 },
@@ -95,6 +97,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Jumpluff, weight: 5 },
         { species: Species.Torterra, weight: 2 },
         { species: Species.Staraptor, weight: 5 },
+        { species: Species.Leavanny, weight: 6 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -124,6 +127,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Turtwig, weight: 3 },
         { species: Species.Starly, weight: 30 },
         { species: Species.Lillipup, weight: 28 },
+        { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
         { species: Species.Rattata, weight: 30 },
@@ -153,6 +157,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Grotle, weight: 2 },
         { species: Species.Staravia, weight: 5 },
         { species: Species.Herdier, weight: 12 },
+        { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
         { species: Species.Raticate, weight: 10 },
@@ -195,6 +200,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Jumpluff, weight: 5 },
         { species: Species.Torterra, weight: 2 },
         { species: Species.Staraptor, weight: 5 },
+        { species: Species.Leavanny, weight: 6 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -217,6 +223,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Oddish, weight: 20 },
         { species: Species.Seedot, weight: 20 },
+        { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
         { species: Species.Shuppet, weight: 20 },
@@ -245,6 +252,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Gloom, weight: 5 },
         { species: Species.Nuzleaf, weight: 10 },
+        { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
         { species: Species.Banette, weight: 6 },
@@ -287,6 +295,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Bellossom, weight: 5 },
         { species: Species.Dustox, weight: 10 },
         { species: Species.Shiftry, weight: 5 },
+        { species: Species.Scolipede, weight: 6 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -310,6 +319,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Oddish, weight: 20 },
         { species: Species.Seedot, weight: 20 },
         { species: Species.Duskull, weight: 20 },
+        { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
         { species: Species.Shuppet, weight: 20 },
@@ -342,6 +352,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Gloom, weight: 5 },
         { species: Species.Nuzleaf, weight: 10 },
         { species: Species.Dusclops, weight: 8 },
+        { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
         { species: Species.Banette, weight: 6 },
@@ -388,6 +399,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Dustox, weight: 10 },
         { species: Species.Shiftry, weight: 5 },
         { species: Species.Dusknoir, weight: 5 },
+        { species: Species.Scolipede, weight: 6 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

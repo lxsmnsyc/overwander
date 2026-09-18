@@ -1558,4 +1558,29 @@ export default function registerSignatureAbilities(): void {
     name: 'Torque',
     description: 'Its moves hit 1.25x and wind up 25% slower.',
   });
+
+  // The four the forest holds
+  registerSignature(Families.Sewaddle, Abilities.Tailor, {
+    name: 'Tailor',
+    description:
+      'It dresses its worst hurt teammate as it arrives, and that one takes 0.8x for the fight.',
+  });
+
+  registerSignature(Families.Venipede, Abilities.HurryVenom, {
+    name: 'Hurry Venom',
+    description: 'Poison it puts on an enemy costs them 1.5x as much each time they act.',
+  });
+
+  // Cottonee and Petilil are the forest's two halves: what the wind
+  // takes off one reaches every enemy, what the other dances reaches
+  // its own team
+  registerSignature(Families.Cottonee, Abilities.SporeDrift, {
+    name: 'Spore Drift',
+    description: 'Its powder moves cannot miss, and nothing is immune to them.',
+  });
+
+  registerSignature(Families.Petilil, Abilities.PollenWaltz, {
+    name: 'Pollen Waltz',
+    description: 'Every stat stage one of its dances gives it is given to its teammates as well.',
+  });
 }

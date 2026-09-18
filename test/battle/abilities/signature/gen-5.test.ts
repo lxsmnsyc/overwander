@@ -15,6 +15,10 @@ import {
   STORM_DASH_STEP,
 } from '../../../../src/battle/abilities/signature/munna-to-blitzle';
 import {
+  HURRY_VENOM_SCALE,
+  TAILOR_SCALE,
+} from '../../../../src/battle/abilities/signature/sewaddle-to-petilil';
+import {
   AFTERSHOCK_SHARE,
   TORQUE_SCALE,
   TORQUE_WIND_UP,
@@ -306,5 +310,129 @@ describe('the three the first cave holds', () => {
 
     expect(mole.checkMovePower(Moves.DrillRun, aim)).toBeCloseTo(power * TORQUE_SCALE, 5);
     expect(mole.checkMoveCastTime(Moves.DrillRun, aim)).toBeCloseTo(wind * TORQUE_WIND_UP, 5);
+  });
+});
+
+describe('the four the forest holds', () => {
+  it('dresses its worst hurt teammate, and only that one', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const tailor = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamA);
+    const well = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    tailor.addAbility(Abilities.Tailor);
+    hurt.enter();
+    well.enter();
+    attacker.enter();
+    hurt.setHealth(Math.floor(hurt.checkStat(Stats.HP, 0) / 4));
+    tailor.enter();
+    battle.tick(1);
+
+    const dressed = dealDamage(
+      attacker,
+      hurt,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+    const bare = dealDamage(
+      attacker,
+      well,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+
+    expect(dressed / bare).toBeCloseTo(TAILOR_SCALE, 1);
+  });
+
+  it('makes its own poison bite harder than anybody else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const centipede = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const bitten = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+
+    centipede.enter();
+    plain.enter();
+    bitten.enter();
+    other.enter();
+    centipede.addAbility(Abilities.HurryVenom);
+
+    bitten.addStatus(Statuses.Poisoned, {
+      type: EffectType.Move,
+      move: Moves.PoisonSting,
+      unit: centipede,
+    });
+    other.addStatus(Statuses.Poisoned, {
+      type: EffectType.Move,
+      move: Moves.PoisonSting,
+      unit: plain,
+    });
+
+    const bittenWhole = bitten.health;
+    const otherWhole = other.health;
+
+    battle.tick(turns(1));
+
+    expect((bittenWhole - bitten.health) / (otherWhole - other.health)).toBeCloseTo(
+      HURRY_VENOM_SCALE,
+      1,
+    );
+  });
+
+  it('puts its powder on a Grass type, and never misses with it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cotton = createUnit(battle, teamA);
+    const grass = createUnit(battle, teamB);
+
+    cotton.enter();
+    grass.enter();
+    grass.types.clear();
+    grass.types.add(Types.Grass);
+
+    const aim = unitTarget(grass);
+
+    // Modern mechanics: powder does nothing to a Grass type
+    expect(cotton.checkMoveImmunity(Moves.StunSpore, aim, Types.Grass)).toBe(true);
+
+    cotton.addAbility(Abilities.SporeDrift);
+
+    expect(cotton.checkMoveImmunity(Moves.StunSpore, aim, Types.Grass)).toBe(false);
+    expect(cotton.checkMoveAccuracy(Moves.StunSpore, aim)).toBeUndefined();
+    // Anything that is not powder is thrown as anybody throws it
+    expect(cotton.checkMoveAccuracy(Moves.RazorLeaf, aim)).toBeGreaterThan(0);
+  });
+
+  it('hands its teammates whatever a dance gives it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dancer = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+
+    createUnit(battle, teamB).enter();
+    dancer.enter();
+    ally.enter();
+    dancer.addAbility(Abilities.PollenWaltz);
+
+    dancer.addStage(Stages.SpecialAttack, 1, {
+      type: EffectType.Move,
+      move: Moves.QuiverDance,
+      unit: dancer,
+    });
+
+    expect(dancer.stages[Stages.SpecialAttack]).toBe(1);
+    expect(ally.stages[Stages.SpecialAttack]).toBe(1);
+
+    // Only a dance, and only what it gains
+    dancer.addStage(Stages.Attack, 1, {
+      type: EffectType.Move,
+      move: Moves.Growth,
+      unit: dancer,
+    });
+
+    expect(ally.stages[Stages.Attack]).toBe(0);
   });
 });

@@ -46,6 +46,11 @@ const FAMILY_TEACHABLE = [
   Moves.Captivate,
   Moves.NaturalGift,
   Moves.VacuumWave,
+  Moves.LowSweep,
+  Moves.Round,
+  Moves.Retaliate,
+  Moves.Bulldoze,
+  Moves.WorkUp,
 ];
 
 // Which of the three it becomes, decided the way the games decide it
@@ -150,10 +155,17 @@ export default function registerTyrogueSpecies(): void {
         37: [Moves.Agility],
         42: [Moves.GyroBall],
         43: [Moves.Detect],
+        46: [Moves.WideGuard, Moves.QuickGuard],
         49: [Moves.TripleKick, Moves.Endeavor],
         51: [Moves.CloseCombat],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Dig, Moves.StoneEdge, Moves.SuckerPunch],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Dig,
+        Moves.StoneEdge,
+        Moves.SuckerPunch,
+        Moves.DrillRun,
+      ],
     },
   });
 }

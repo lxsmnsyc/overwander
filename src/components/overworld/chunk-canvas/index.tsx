@@ -2773,6 +2773,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           if (showing !== Phenomenon.HiddenGrotto) {
             const middle = at(groundPoint(index));
             animating = true;
+            // Faded into the haze the way the ground under it is
+            marks?.carry(0, 0, hazy ? 1 - hazeAt(reachOf(shifted(square))) : 1);
             const picture = batch == null ? null : paintPhenomenon(showing, clock);
             let drew = false;
 
@@ -2793,6 +2795,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             if (!drew) {
               drawPhenomenon(context, middle, showing, clock, magnify);
             }
+            marks?.carry(0, 0);
           }
           continue;
         }

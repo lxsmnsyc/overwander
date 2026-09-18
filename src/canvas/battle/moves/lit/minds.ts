@@ -16,7 +16,13 @@ import {
 } from './shapes';
 
 /** A music note on the picture: a round head, a stem and a flag */
-function note(kit: EffectBatch, at: Spot, size: number, colour: string, alpha: number): void {
+export function note(
+  kit: EffectBatch,
+  at: Spot,
+  size: number,
+  colour: string,
+  alpha: number,
+): void {
   const foot = aside(kit, at, size * 0.3);
   const top = aside(kit, foot, 0, size * 1.1);
 

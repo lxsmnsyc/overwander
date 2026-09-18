@@ -903,6 +903,12 @@ export const enum Items {
    * anybody, and what the kit is worth is the light
    */
   ExplorerKit = 428,
+
+  /** The cassettes that set the type of a Techno Blast */
+  DouseDrive = 429,
+  ShockDrive = 430,
+  BurnDrive = 431,
+  ChillDrive = 432,
 }
 
 /**

@@ -61,6 +61,9 @@ const FAMILY_TEACHABLE = [
   Moves.OminousWind,
   Moves.SuckerPunch,
   Moves.TrickRoom,
+  Moves.WonderRoom,
+  Moves.Telekinesis,
+  Moves.Round,
 ];
 
 export default function registerDuskullSpecies(): void {
@@ -104,7 +107,7 @@ export default function registerDuskullSpecies(): void {
         23: [Moves.ConfuseRay],
         27: [Moves.Pursuit],
         34: [Moves.Curse],
-        38: [Moves.WillOWisp],
+        38: [Moves.WillOWisp, Moves.Hex],
         41: [Moves.Payback],
         45: [Moves.MeanLook],
         49: [Moves.FutureSight],
@@ -156,6 +159,7 @@ export default function registerDuskullSpecies(): void {
         34: [Moves.Curse],
         37: [Moves.ShadowPunch],
         41: [Moves.WillOWisp],
+        42: [Moves.Hex],
         51: [Moves.MeanLook, Moves.Payback],
         58: [Moves.FutureSight],
       },
@@ -179,6 +183,7 @@ export default function registerDuskullSpecies(): void {
         Moves.ThunderPunch,
         Moves.FirePunch,
         Moves.GigaImpact,
+        Moves.Bulldoze,
       ],
     },
   });

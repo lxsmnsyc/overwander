@@ -103,6 +103,10 @@ export default function registerPolitoedSpecies(): void {
         Moves.GigaImpact,
         Moves.NaturalGift,
         Moves.Payback,
+        Moves.Round,
+        Moves.EchoedVoice,
+        Moves.Scald,
+        Moves.Bulldoze,
       ],
     },
   });

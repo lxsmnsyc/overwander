@@ -57,6 +57,12 @@ const FAMILY_TEACHABLE = [
   Moves.PoisonJab,
   Moves.RockClimb,
   Moves.VacuumWave,
+  Moves.SmackDown,
+  Moves.LowSweep,
+  Moves.Round,
+  Moves.Retaliate,
+  Moves.Bulldoze,
+  Moves.WorkUp,
 ];
 
 export default function registerMakuhitaSpecies(): void {
@@ -103,7 +109,7 @@ export default function registerMakuhitaSpecies(): void {
         34: [Moves.WakeUpSlap],
         37: [Moves.BellyDrum],
         40: [Moves.Endure, Moves.CloseCombat],
-        46: [Moves.SeismicToss],
+        46: [Moves.SeismicToss, Moves.HeavySlam],
         49: [Moves.Reversal],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -116,6 +122,8 @@ export default function registerMakuhitaSpecies(): void {
         Moves.Revenge,
         Moves.BulletPunch,
         Moves.Feint,
+        Moves.WideGuard,
+        Moves.ChipAway,
       ],
     },
   });
@@ -161,6 +169,7 @@ export default function registerMakuhitaSpecies(): void {
         51: [Moves.SeismicToss],
         52: [Moves.CloseCombat],
         55: [Moves.Reversal],
+        62: [Moves.HeavySlam],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

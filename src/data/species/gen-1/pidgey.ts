@@ -49,6 +49,8 @@ const FAMILY_TEACHABLE = [
   Moves.OminousWind,
   Moves.Pluck,
   Moves.UTurn,
+  Moves.Round,
+  Moves.WorkUp,
 ];
 
 export default function registerPidgeySpecies(): void {
@@ -95,6 +97,7 @@ export default function registerPidgeySpecies(): void {
         41: [Moves.Tailwind],
         44: [Moves.MirrorMove],
         49: [Moves.AirSlash],
+        53: [Moves.Hurricane],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -151,6 +154,7 @@ export default function registerPidgeySpecies(): void {
         47: [Moves.Tailwind],
         49: [Moves.MirrorMove],
         57: [Moves.AirSlash],
+        62: [Moves.Hurricane],
       },
       teachable: [...FAMILY_TEACHABLE],
     },
@@ -190,6 +194,7 @@ export default function registerPidgeySpecies(): void {
         50: [Moves.Tailwind],
         54: [Moves.MirrorMove],
         62: [Moves.AirSlash],
+        68: [Moves.Hurricane],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },

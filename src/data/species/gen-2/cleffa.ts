@@ -104,6 +104,14 @@ export default function registerCleffaSpecies(): void {
         Moves.LastResort,
         Moves.NaturalGift,
         Moves.ZenHeadbutt,
+        Moves.WonderRoom,
+        Moves.Psyshock,
+        Moves.Telekinesis,
+        Moves.AfterYou,
+        Moves.Round,
+        Moves.EchoedVoice,
+        Moves.Incinerate,
+        Moves.WorkUp,
       ],
       egg: [
         Moves.Amnesia,
@@ -115,6 +123,7 @@ export default function registerCleffaSpecies(): void {
 
         Moves.Substitute,
         Moves.Wish,
+        Moves.StoredPower,
       ],
     },
   });

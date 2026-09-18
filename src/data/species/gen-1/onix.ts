@@ -45,6 +45,7 @@ export default function registerOnixSpecies(): void {
         1: [Moves.Tackle, Moves.Screech],
         10: [Moves.Bind],
         14: [Moves.RockThrow],
+        22: [Moves.SmackDown],
         23: [Moves.Harden],
         25: [Moves.Rage],
         30: [Moves.DragonBreath, Moves.RockPolish],
@@ -106,8 +107,12 @@ export default function registerOnixSpecies(): void {
         Moves.Payback,
         Moves.RockClimb,
         Moves.StealthRock,
+        Moves.SmackDown,
+        Moves.Round,
+        Moves.Bulldoze,
+        Moves.DragonTail,
       ],
-      egg: [Moves.RockSlide, Moves.Flail, Moves.Block],
+      egg: [Moves.RockSlide, Moves.Flail, Moves.Block, Moves.HeavySlam],
     },
   });
 }

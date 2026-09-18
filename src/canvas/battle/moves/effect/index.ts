@@ -17,6 +17,7 @@ import ohko from './ohko';
 import minds from './minds';
 import { BY_TYPE, NAMED } from './named';
 import stats from './stats';
+import unova from './unova';
 
 import {
   type EffectShape,
@@ -49,6 +50,9 @@ const WINDING_UP = new Set<Moves>([
   Moves.ShadowForce,
   Moves.Teleport,
   Moves.Bide,
+  Moves.FreezeShock,
+  Moves.IceBurn,
+  Moves.SkyDrop,
 ]);
 
 /**
@@ -93,6 +97,7 @@ const PAINTERS: Record<EffectShape, ShapePainter> = {
   ...legends,
   ...ohko,
   ...stats,
+  ...unova,
 };
 
 /**

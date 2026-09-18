@@ -39,6 +39,8 @@ const FAMILY_TEACHABLE = [
   Moves.SleepTalk,
   Moves.Swift,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.Scald,
 ];
 
 export default function registerFeebasSpecies(): void {
@@ -156,6 +158,8 @@ export default function registerFeebasSpecies(): void {
         Moves.DragonPulse,
         Moves.GigaImpact,
         Moves.IronHead,
+        Moves.Bulldoze,
+        Moves.DragonTail,
       ],
     },
   });

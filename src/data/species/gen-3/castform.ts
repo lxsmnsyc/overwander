@@ -113,8 +113,13 @@ export default function registerCastformSpecies(): void {
           Moves.Avalanche,
           Moves.Captivate,
           Moves.OminousWind,
+          Moves.Round,
+          Moves.Scald,
+          Moves.Incinerate,
+          Moves.Retaliate,
+          Moves.WorkUp,
         ],
-        egg: [Moves.FutureSight, Moves.LuckyChant, Moves.OminousWind],
+        egg: [Moves.FutureSight, Moves.LuckyChant, Moves.OminousWind, Moves.ClearSmog, Moves.Hex],
       },
     });
   }

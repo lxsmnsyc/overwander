@@ -95,6 +95,13 @@ export default function registerEspeonSpecies(): void {
         Moves.NaturalGift,
         Moves.TrickRoom,
         Moves.ZenHeadbutt,
+        Moves.Psyshock,
+        Moves.Telekinesis,
+        Moves.MagicRoom,
+        Moves.Round,
+        Moves.EchoedVoice,
+        Moves.Retaliate,
+        Moves.WorkUp,
       ],
     },
   });

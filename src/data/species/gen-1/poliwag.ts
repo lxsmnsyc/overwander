@@ -53,6 +53,8 @@ const FAMILY_TEACHABLE = [
   Moves.WaterPulse,
   Moves.Captivate,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.Scald,
 ];
 
 // The evolved forms grow arms: fighting-style TMs and HM Strength
@@ -69,6 +71,7 @@ const EVOLVED_TEACHABLE = [
   Moves.MudSlap,
   Moves.Detect,
   Moves.RockSmash,
+  Moves.Bulldoze,
 ];
 
 export default function registerPoliwagSpecies(): void {
@@ -238,6 +241,7 @@ export default function registerPoliwagSpecies(): void {
       level: {
         1: [Moves.Hypnosis, Moves.WaterGun, Moves.DoubleSlap, Moves.BodySlam, Moves.Submission],
         51: [Moves.MindReader],
+        53: [Moves.CircleThrow],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -255,6 +259,8 @@ export default function registerPoliwagSpecies(): void {
         Moves.PoisonJab,
         Moves.RockClimb,
         Moves.VacuumWave,
+        Moves.LowSweep,
+        Moves.WorkUp,
       ],
     },
   });

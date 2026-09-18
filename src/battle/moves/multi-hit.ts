@@ -40,6 +40,9 @@ export const MULTI_HIT_MOVES: { [key in Moves]?: MultiHitConfig } = {
   [Moves.BulletSeed]: { min: 2, max: 5 },
   [Moves.IcicleSpear]: { min: 2, max: 5 },
   [Moves.RockBlast]: { min: 2, max: 5 },
+  [Moves.DualChop]: { min: 2, max: 2 },
+  [Moves.GearGrind]: { min: 2, max: 2 },
+  [Moves.TailSlap]: { min: 2, max: 5 },
 };
 
 // Delay between strikes

@@ -173,6 +173,12 @@ export default function registerDeoxysSpecies(): void {
           Moves.StealthRock,
           Moves.GrassKnot,
           Moves.ChargeBeam,
+          Moves.WonderRoom,
+          Moves.Psyshock,
+          Moves.Telekinesis,
+          Moves.LowSweep,
+          Moves.Round,
+          Moves.AllySwitch,
         ],
       },
     });

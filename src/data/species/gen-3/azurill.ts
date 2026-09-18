@@ -82,6 +82,9 @@ export default function registerAzurillSpecies(): void {
         Moves.Waterfall,
         Moves.Captivate,
         Moves.NaturalGift,
+        Moves.Round,
+        Moves.Scald,
+        Moves.WorkUp,
       ],
       // The whole line's inheritance, since the egg is laid as an
       // Azurill: what a Marill used to carry is carried here
@@ -99,6 +102,7 @@ export default function registerAzurillSpecies(): void {
         Moves.Substitute,
         Moves.Supersonic,
         Moves.Tickle,
+        Moves.Soak,
       ],
     },
   });

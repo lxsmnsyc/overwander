@@ -59,6 +59,11 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.RockClimb,
   Moves.StoneEdge,
+  Moves.LowSweep,
+  Moves.Round,
+  Moves.Retaliate,
+  Moves.Bulldoze,
+  Moves.WorkUp,
 ];
 
 export default function registerTyrogueSpecies(): void {
@@ -97,7 +102,7 @@ export default function registerTyrogueSpecies(): void {
         26: [Moves.HiJumpKick],
         31: [Moves.MindReader],
         36: [Moves.Foresight],
-        41: [Moves.Endure],
+        41: [Moves.Endure, Moves.WideGuard],
         46: [Moves.MegaKick],
         51: [Moves.Reversal],
         53: [Moves.CloseCombat],
@@ -137,6 +142,7 @@ export default function registerTyrogueSpecies(): void {
         16: [Moves.BulletPunch],
         21: [Moves.Feint],
         26: [Moves.FirePunch, Moves.IcePunch, Moves.ThunderPunch, Moves.VacuumWave],
+        31: [Moves.QuickGuard],
         32: [Moves.MachPunch, Moves.SkyUppercut],
         38: [Moves.MegaPunch],
         44: [Moves.Detect],

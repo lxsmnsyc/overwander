@@ -1,6 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { Stages } from '../../data/constants/stats';
-import { MoveTargetPriorities, Moves } from '../../data/ids/moves';
+import { MoveCategories, MoveTargetPriorities, Moves } from '../../data/ids/moves';
+import { getMoveData } from '../../data/moves';
 import { checkTeamUnit } from '../ai/rating';
 import type Battle from '../core';
 import type { MoveTarget } from '../events';
@@ -26,7 +27,15 @@ export const FORCED_SWITCH_MOVES = new Set<Moves>([Moves.Whirlwind, Moves.Roar])
 // U-turn is one of these that hits on the way out: the blow lands on
 // the wind-up step, which the shared resolver deals, and the walk off
 // the field is this module's on the step after it
-const SELF_SWITCH_MOVES = new Set<Moves>([Moves.Teleport, Moves.BatonPass, Moves.UTurn]);
+const SELF_SWITCH_MOVES = new Set<Moves>([
+  Moves.Teleport,
+  Moves.BatonPass,
+  Moves.UTurn,
+  Moves.VoltSwitch,
+]);
+
+/** The blows that throw their target out once they land */
+const DRAGGING_MOVES = new Set<Moves>([Moves.CircleThrow, Moves.DragonTail]);
 
 /**
  * Every stage a Baton Pass hands over
@@ -81,8 +90,31 @@ function getReplacement(
 }
 
 export default function setupSwitchOutMoves(battle: Battle): void {
+  // A throw with nobody to drag in is still a hit, so it is never refused
+  battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+    if (!DRAGGING_MOVES.has(event.move) || !event.success || !event.target.alive) {
+      return;
+    }
+
+    const replacement = getReplacement(battle, {
+      unit: event.target,
+      priority: MoveTargetPriorities.Weakest,
+      forced: true,
+    });
+
+    if (replacement != null) {
+      event.target.forceSwitch(replacement, {
+        type: EffectType.Move,
+        move: event.move,
+        unit: event.source,
+      });
+    }
+  });
+
+  // Refused only when the switch is all the move does. A U-turn with
+  // nobody to swap in is still a hit, like a throw with nobody to drag
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
-    if (!event.usable) {
+    if (!event.usable || getMoveData(event.move).category !== MoveCategories.Status) {
       return;
     }
 

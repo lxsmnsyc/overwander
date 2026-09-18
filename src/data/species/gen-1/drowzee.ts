@@ -72,6 +72,12 @@ const FAMILY_TEACHABLE = [
   Moves.GrassKnot,
   Moves.NaturalGift,
   Moves.TrickRoom,
+  Moves.Psyshock,
+  Moves.Telekinesis,
+  Moves.MagicRoom,
+  Moves.LowSweep,
+  Moves.FoulPlay,
+  Moves.Round,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Insomnia, Abilities.Forewarn];
@@ -116,9 +122,11 @@ export default function registerDrowzeeSpecies(): void {
         29: [Moves.PoisonGas],
         32: [Moves.Psychic],
         36: [Moves.Meditate],
+        37: [Moves.Synchronoise],
         43: [Moves.PsychUp, Moves.NastyPlot],
         45: [Moves.FutureSight],
         50: [Moves.ZenHeadbutt],
+        57: [Moves.Psyshock],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -161,9 +169,10 @@ export default function registerDrowzeeSpecies(): void {
         1: [Moves.Pound, Moves.Hypnosis, Moves.Disable, Moves.Confusion, Moves.Switcheroo],
         24: [Moves.Headbutt],
         33: [Moves.PoisonGas],
-        37: [Moves.Psychic],
+        37: [Moves.Psychic, Moves.Synchronoise],
         40: [Moves.Meditate],
         55: [Moves.PsychUp, Moves.NastyPlot],
+        57: [Moves.Psyshock],
         60: [Moves.FutureSight],
         64: [Moves.ZenHeadbutt],
       },

@@ -58,6 +58,10 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.Payback,
   Moves.PoisonJab,
+  Moves.Venoshock,
+  Moves.SludgeWave,
+  Moves.Round,
+  Moves.Incinerate,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Stench, Abilities.StickyHold];
@@ -101,6 +105,7 @@ export default function registerGrimerSpecies(): void {
         23: [Moves.Minimize, Moves.MudBomb],
         28: [Moves.Fling],
         31: [Moves.Screech],
+        37: [Moves.SludgeWave],
         40: [Moves.AcidArmor],
         44: [Moves.GunkShot],
         50: [Moves.SludgeBomb],
@@ -114,6 +119,7 @@ export default function registerGrimerSpecies(): void {
         Moves.Imprison,
         Moves.ShadowPunch,
         Moves.ShadowSneak,
+        Moves.AcidSpray,
       ],
     },
   });
@@ -148,7 +154,7 @@ export default function registerGrimerSpecies(): void {
         23: [Moves.Minimize, Moves.MudBomb],
         28: [Moves.Fling],
         31: [Moves.Screech],
-        37: [Moves.Sludge],
+        37: [Moves.Sludge, Moves.SludgeWave],
         45: [Moves.AcidArmor],
         54: [Moves.GunkShot],
         60: [Moves.SludgeBomb],

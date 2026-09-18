@@ -62,6 +62,11 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.ShadowClaw,
   Moves.UTurn,
+  Moves.HoneClaws,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Retaliate,
+  Moves.WorkUp,
 ];
 
 export default function registerSentretSpecies(): void {

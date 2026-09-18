@@ -38,6 +38,7 @@ export default function registerCrobatSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
+        33: [Moves.Acrobatics],
         35: [Moves.AirCutter],
         49: [Moves.PoisonFang],
         1: [Moves.LeechLife, Moves.Screech, Moves.Supersonic, Moves.Astonish, Moves.CrossPoison],
@@ -96,6 +97,9 @@ export default function registerCrobatSpecies(): void {
         Moves.UTurn,
         Moves.XScissor,
         Moves.ZenHeadbutt,
+        Moves.Venoshock,
+        Moves.Round,
+        Moves.Acrobatics,
       ],
     },
   });

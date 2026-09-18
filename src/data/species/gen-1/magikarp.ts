@@ -185,6 +185,11 @@ export default function registerMagikarpSpecies(): void {
         Moves.NaturalGift,
         Moves.Payback,
         Moves.StoneEdge,
+        Moves.Round,
+        Moves.Scald,
+        Moves.Incinerate,
+        Moves.Bulldoze,
+        Moves.DragonTail,
       ],
     },
   });

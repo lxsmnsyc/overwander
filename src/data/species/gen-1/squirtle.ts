@@ -69,6 +69,9 @@ const FAMILY_TEACHABLE = [
   Moves.GyroBall,
   Moves.NaturalGift,
   Moves.ZenHeadbutt,
+  Moves.Round,
+  Moves.Scald,
+  Moves.WaterPledge,
 ];
 
 export default function registerSquirtleSpecies(): void {
@@ -237,6 +240,9 @@ export default function registerSquirtleSpecies(): void {
         Moves.FocusBlast,
         Moves.GigaImpact,
         Moves.RockClimb,
+        Moves.SmackDown,
+        Moves.Bulldoze,
+        Moves.DragonTail,
       ],
     },
   });

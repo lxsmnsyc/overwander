@@ -41,6 +41,7 @@ export default function registerPinsirSpecies(): void {
         25: [Moves.Harden, Moves.Revenge],
         30: [Moves.Guillotine, Moves.XScissor],
         31: [Moves.BrickBreak],
+        33: [Moves.StormThrow],
         37: [Moves.Submission],
         43: [Moves.SwordsDance],
         49: [Moves.Slash],
@@ -94,6 +95,10 @@ export default function registerPinsirSpecies(): void {
         Moves.RockClimb,
         Moves.StealthRock,
         Moves.StoneEdge,
+        Moves.SmackDown,
+        Moves.Round,
+        Moves.StruggleBug,
+        Moves.Bulldoze,
       ],
       egg: [
         Moves.FuryAttack,

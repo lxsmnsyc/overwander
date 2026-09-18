@@ -95,6 +95,10 @@ export default function registerScizorSpecies(): void {
         Moves.Roost,
         Moves.Tailwind,
         Moves.UTurn,
+        Moves.Venoshock,
+        Moves.Round,
+        Moves.Acrobatics,
+        Moves.StruggleBug,
       ],
     },
   });

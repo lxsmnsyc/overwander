@@ -80,15 +80,24 @@ export { default as BANNED_BOSS_MOVES, getBannedBossMoves } from '../../data/ove
  * What a boss refuses at either end. Nothing may move its ability
  * about, and a stage swap leaks whichever way it is cast: the boss
  * turns away the negative half and the positive half lands on its
- * own, so whoever swapped keeps a copy of what the other side had
+ * own, so whoever swapped keeps a copy of what the other side had.
+ * A split averages the stats before a boss' own doubling, so the boss
+ * drops to the average and the other side climbs to it
  */
-const BOSS_REFUSED_MOVES = new Set<Moves>([...ABILITY_MOVES, ...STAGE_SWAP_MOVES]);
+const BOSS_REFUSED_MOVES = new Set<Moves>([
+  ...ABILITY_MOVES,
+  ...STAGE_SWAP_MOVES,
+  Moves.GuardSplit,
+  Moves.PowerSplit,
+]);
 
 /**
- * What a boss shrugs off when it is aimed at. Me First cuts its cast
- * off, so a lobby taking turns with it would keep it out of the fight
+ * What a boss shrugs off when it is aimed at. Quash restarts its
+ * wind-up, Me First cuts it off and Sky Drop carries it where it cannot
+ * act, so a lobby taking turns with any of them would keep it out of
+ * the fight
  */
-const BOSS_IMMUNE_MOVES = new Set<Moves>([Moves.MeFirst]);
+const BOSS_IMMUNE_MOVES = new Set<Moves>([Moves.Quash, Moves.MeFirst, Moves.SkyDrop]);
 
 /**
  * The moves that hold a pokemon to part of its move set. A boss

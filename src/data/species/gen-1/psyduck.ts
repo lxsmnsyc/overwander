@@ -72,6 +72,12 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.ShadowClaw,
   Moves.WorrySeed,
+  Moves.HoneClaws,
+  Moves.WonderRoom,
+  Moves.Psyshock,
+  Moves.Telekinesis,
+  Moves.Round,
+  Moves.Scald,
 ];
 
 export default function registerPsyduckSpecies(): void {
@@ -122,8 +128,9 @@ export default function registerPsyduckSpecies(): void {
         16: [Moves.Confusion],
         23: [Moves.Screech],
         31: [Moves.PsychUp],
+        36: [Moves.Soak],
         40: [Moves.FurySwipes, Moves.ZenHeadbutt],
-        50: [Moves.HydroPump],
+        50: [Moves.HydroPump, Moves.WonderRoom],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -138,6 +145,7 @@ export default function registerPsyduckSpecies(): void {
 
         Moves.Refresh,
         Moves.MudBomb,
+        Moves.Synchronoise,
       ],
     },
   });
@@ -187,8 +195,10 @@ export default function registerPsyduckSpecies(): void {
         ],
         23: [Moves.Screech],
         31: [Moves.PsychUp],
+        38: [Moves.Soak],
         44: [Moves.FurySwipes, Moves.ZenHeadbutt],
         58: [Moves.HydroPump],
+        60: [Moves.WonderRoom],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -197,6 +207,7 @@ export default function registerPsyduckSpecies(): void {
         Moves.FocusBlast,
         Moves.GigaImpact,
         Moves.RockClimb,
+        Moves.LowSweep,
       ],
     },
   });

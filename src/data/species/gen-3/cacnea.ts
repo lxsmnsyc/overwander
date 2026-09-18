@@ -54,6 +54,8 @@ const FAMILY_TEACHABLE = [
   Moves.PoisonJab,
   Moves.SeedBomb,
   Moves.WorrySeed,
+  Moves.Venoshock,
+  Moves.Round,
 ];
 
 export default function registerCacneaSpecies(): void {
@@ -156,6 +158,8 @@ export default function registerCacneaSpecies(): void {
         Moves.Embargo,
         Moves.FocusBlast,
         Moves.GigaImpact,
+        Moves.FoulPlay,
+        Moves.Retaliate,
       ],
     },
   });

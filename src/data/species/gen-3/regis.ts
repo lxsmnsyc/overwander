@@ -58,6 +58,8 @@ const GOLEM_TEACHABLE = [
   Moves.ThunderPunch,
   Moves.SleepTalk,
   Moves.DefenseCurl,
+  Moves.Round,
+  Moves.Bulldoze,
 ];
 
 export default function registerRegiSpecies(): void {
@@ -119,6 +121,7 @@ export default function registerRegiSpecies(): void {
         Moves.RockClimb,
         Moves.RockPolish,
         Moves.StealthRock,
+        Moves.SmackDown,
       ],
     },
   });
@@ -178,6 +181,7 @@ export default function registerRegiSpecies(): void {
         Moves.NaturalGift,
         Moves.RockClimb,
         Moves.RockPolish,
+        Moves.FrostBreath,
       ],
     },
   });
@@ -238,6 +242,7 @@ export default function registerRegiSpecies(): void {
         Moves.RockPolish,
         Moves.ShadowClaw,
         Moves.StealthRock,
+        Moves.HoneClaws,
       ],
     },
   });

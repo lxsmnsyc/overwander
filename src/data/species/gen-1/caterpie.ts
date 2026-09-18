@@ -44,7 +44,7 @@ export default function registerCaterpieSpecies(): void {
         1: [Moves.Tackle, Moves.StringShot],
         15: [Moves.BugBite],
       },
-      teachable: [],
+      teachable: [Moves.Electroweb],
     },
   });
 
@@ -82,7 +82,7 @@ export default function registerCaterpieSpecies(): void {
       level: {
         1: [Moves.Harden],
       },
-      teachable: [Moves.BugBite],
+      teachable: [Moves.BugBite, Moves.Electroweb],
     },
   });
 
@@ -121,8 +121,10 @@ export default function registerCaterpieSpecies(): void {
         28: [Moves.Gust],
         30: [Moves.Tailwind],
         32: [Moves.Psybeam],
+        34: [Moves.RagePowder],
         36: [Moves.Captivate],
         40: [Moves.Safeguard, Moves.BugBuzz],
+        46: [Moves.QuiverDance],
         47: [Moves.SilverWind],
       },
       teachable: [
@@ -174,6 +176,11 @@ export default function registerCaterpieSpecies(): void {
         Moves.OminousWind,
         Moves.Roost,
         Moves.UTurn,
+        Moves.Venoshock,
+        Moves.Round,
+        Moves.Acrobatics,
+        Moves.StruggleBug,
+        Moves.Electroweb,
       ],
     },
   });

@@ -38,7 +38,14 @@ export default function registerMrMimeSpecies(): void {
     activeTimes: TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Confusion, Moves.Barrier, Moves.GuardSwap, Moves.PowerSwap],
+        1: [
+          Moves.Confusion,
+          Moves.Barrier,
+          Moves.GuardSwap,
+          Moves.PowerSwap,
+          Moves.WideGuard,
+          Moves.QuickGuard,
+        ],
         4: [Moves.Copycat],
         11: [Moves.Substitute],
         16: [Moves.Meditate],
@@ -127,6 +134,12 @@ export default function registerMrMimeSpecies(): void {
         Moves.Payback,
         Moves.TrickRoom,
         Moves.ZenHeadbutt,
+        Moves.WonderRoom,
+        Moves.Psyshock,
+        Moves.Telekinesis,
+        Moves.MagicRoom,
+        Moves.FoulPlay,
+        Moves.Round,
       ],
     },
   });

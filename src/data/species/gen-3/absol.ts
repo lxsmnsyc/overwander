@@ -114,6 +114,13 @@ export default function registerAbsolSpecies(): void {
         Moves.StoneEdge,
         Moves.XScissor,
         Moves.ZenHeadbutt,
+        Moves.HoneClaws,
+        Moves.FoulPlay,
+        Moves.Round,
+        Moves.EchoedVoice,
+        Moves.Incinerate,
+        Moves.Retaliate,
+        Moves.Snarl,
       ],
       egg: [
         Moves.Curse,
@@ -122,6 +129,7 @@ export default function registerAbsolSpecies(): void {
         Moves.MagicCoat,
         Moves.Assurance,
         Moves.Punishment,
+        Moves.Hex,
       ],
     },
   });

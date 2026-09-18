@@ -1,4 +1,5 @@
 import BasicSprite from './basic-sprite';
+import sheetStamp from './sprite-stamps';
 
 /**
  * The still sheets, loaded once each.
@@ -21,7 +22,7 @@ const SHEETS = new Map<string, Promise<BasicSprite | null>>();
 
 async function fetchSheet(basePath: string): Promise<BasicSprite | null> {
   try {
-    const sprite = await BasicSprite.fetch(basePath);
+    const sprite = await BasicSprite.fetch(basePath, await sheetStamp(basePath));
 
     await sprite.load();
     return sprite;

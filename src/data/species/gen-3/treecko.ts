@@ -60,6 +60,9 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.SeedBomb,
   Moves.WorrySeed,
+  Moves.Round,
+  Moves.Acrobatics,
+  Moves.GrassPledge,
 ];
 
 export default function registerTreeckoSpecies(): void {
@@ -164,7 +167,7 @@ export default function registerTreeckoSpecies(): void {
         53: [Moves.FalseSwipe],
         59: [Moves.LeafStorm],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.EnergyBall, Moves.XScissor],
+      teachable: [...FAMILY_TEACHABLE, Moves.EnergyBall, Moves.XScissor, Moves.LowSweep],
     },
   });
 
@@ -219,6 +222,9 @@ export default function registerTreeckoSpecies(): void {
         Moves.FocusBlast,
         Moves.GigaImpact,
         Moves.RockClimb,
+        Moves.HoneClaws,
+        Moves.LowSweep,
+        Moves.Bulldoze,
       ],
     },
   });

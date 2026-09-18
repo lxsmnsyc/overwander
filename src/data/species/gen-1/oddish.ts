@@ -48,6 +48,9 @@ const FAMILY_TEACHABLE = [
   Moves.GrassKnot,
   Moves.SeedBomb,
   Moves.WorrySeed,
+  Moves.Venoshock,
+  Moves.AfterYou,
+  Moves.Round,
 ];
 
 export default function registerOddishSpecies(): void {
@@ -103,6 +106,7 @@ export default function registerOddishSpecies(): void {
         Moves.Charm,
         Moves.Synthesis,
         Moves.Ingrain,
+        Moves.AfterYou,
       ],
     },
   });

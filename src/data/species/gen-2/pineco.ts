@@ -44,6 +44,11 @@ const FAMILY_TEACHABLE = [
   Moves.Captivate,
   Moves.Gravity,
   Moves.StealthRock,
+  Moves.Venoshock,
+  Moves.Round,
+  Moves.StruggleBug,
+  Moves.Bulldoze,
+  Moves.DrillRun,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Sturdy];
@@ -144,11 +149,13 @@ export default function registerPinecoSpecies(): void {
         15: [Moves.TakeDown],
         22: [Moves.RapidSpin],
         29: [Moves.Bide],
+        32: [Moves.Autotomize],
         39: [Moves.Explosion],
         45: [Moves.GyroBall],
         49: [Moves.Spikes],
         57: [Moves.MagnetRise],
         59: [Moves.DoubleEdge],
+        70: [Moves.HeavySlam],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -159,6 +166,7 @@ export default function registerPinecoSpecies(): void {
         Moves.FlashCannon,
         Moves.GigaImpact,
         Moves.RockPolish,
+        Moves.VoltSwitch,
       ],
     },
   });

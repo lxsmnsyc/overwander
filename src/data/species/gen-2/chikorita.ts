@@ -45,6 +45,9 @@ const FAMILY_TEACHABLE = [
   Moves.GrassKnot,
   Moves.SeedBomb,
   Moves.WorrySeed,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.GrassPledge,
 ];
 
 // What the two above the base pick up: the machines that ask for a
@@ -107,6 +110,7 @@ export default function registerChikoritaSpecies(): void {
         Moves.NaturePower,
         Moves.LeafStorm,
         Moves.WringOut,
+        Moves.HealPulse,
       ],
     },
   });
@@ -204,6 +208,8 @@ export default function registerChikoritaSpecies(): void {
         Moves.Counter,
         Moves.GigaImpact,
         Moves.RockClimb,
+        Moves.Bulldoze,
+        Moves.DragonTail,
       ],
     },
   });

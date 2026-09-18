@@ -34,6 +34,7 @@
 
 import { type BasicSpriteData, type BasicSpriteImage, asBasicSpriteData } from './basic-sprite';
 import { SPRITE_TICK, type SpriteDirection } from './sprite-sheet';
+import { stampedFile } from './sprite-stamps';
 
 /** The four a character sheet has, in the order sheets lay them out. */
 import type { ShadowPatch, SpriteQuad } from './placement';
@@ -410,8 +411,12 @@ export default class OWCharSprite {
    * The sheet and its description, fetched together — `data.json` and
    * `image.png` under one folder, the layout the packing tool writes
    */
-  static async fetch(basePath: string, layout: OWCharLayout = {}): Promise<OWCharSprite> {
-    const response = await fetch(`${basePath}/data.json`);
+  static async fetch(
+    basePath: string,
+    layout: OWCharLayout = {},
+    stamp: string | null = null,
+  ): Promise<OWCharSprite> {
+    const response = await fetch(stampedFile(`${basePath}/data.json`, stamp));
 
     if (!response.ok) {
       throw new Error(`No sprite data at ${basePath}`);
@@ -420,16 +425,20 @@ export default class OWCharSprite {
     const described: unknown = await response.json();
     const carried = gridLayoutOf(described);
 
-    return new OWCharSprite(`${basePath}/image.png`, asBasicSpriteData(described), {
-      ...layout,
-      // Named one by one rather than spread over: a caller that built
-      // its layout from props it does not have passes `undefined`, and
-      // that is a question rather than an answer
-      columns: layout.columns ?? carried.columns,
-      rows: layout.rows ?? carried.rows,
-      standFrame: layout.standFrame ?? carried.standFrame,
-      cycle: layout.cycle ?? carried.cycle,
-    });
+    return new OWCharSprite(
+      stampedFile(`${basePath}/image.png`, stamp),
+      asBasicSpriteData(described),
+      {
+        ...layout,
+        // Named one by one rather than spread over: a caller that built
+        // its layout from props it does not have passes `undefined`, and
+        // that is a question rather than an answer
+        columns: layout.columns ?? carried.columns,
+        rows: layout.rows ?? carried.rows,
+        standFrame: layout.standFrame ?? carried.standFrame,
+        cycle: layout.cycle ?? carried.cycle,
+      },
+    );
   }
 
   /**

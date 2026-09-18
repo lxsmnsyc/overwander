@@ -22,7 +22,7 @@ pnpm exec oxfmt src test                  # format
 
 ## Conventions live in skills
 
-`.claude/skills/*/SKILL.md` and `.agents/skills/*/SKILL.md` hold this project's conventions, and the two sets are not identical. List both and read whichever covers the task before starting; they are not all surfaced in a session's skill listing. The same rules are mirrored for other agents in `.cursor/rules/`, `.clinerules/`, `.windsurf/` and `AGENTS.md`, so a convention that changes has to change in each.
+`.claude/skills/*/SKILL.md` and `.agents/skills/*/SKILL.md` hold this project's conventions, and the two sets are not identical. List both and read whichever covers the task before starting; they are not all surfaced in a session's skill listing. The same rules are mirrored for other agents in `AGENTS.md`, `.opencode/AGENTS.md` and `.github/`, so a convention that changes has to change in each.
 
 Three that touch nearly every change: comments stay short and say the why rather than the what (`light-comments`), iteration is a `for...of` loop rather than a callback Array method (`prefer-for-of`), and prose anywhere — comments, docs, commit messages — avoids em-dashes in favour of commas, colons, parentheses or two sentences.
 

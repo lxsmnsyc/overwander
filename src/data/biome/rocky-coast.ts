@@ -8,7 +8,10 @@ import { UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
 export default function registerRockyCoastSpawns(): void {
   registerSpawnPool(Biome.RockyCoast, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Piplup, weight: 3 }],
+      base: [
+        { species: Species.Oshawott, weight: 3 },
+        { species: Species.Piplup, weight: 3 },
+      ],
       uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Seel, weight: 20 },
@@ -18,7 +21,10 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.BurmySandy, weight: 20 },
         { species: Species.Buizel, weight: 25 },
       ],
-      rare: [{ species: Species.Prinplup, weight: 2 }],
+      rare: [
+        { species: Species.Dewott, weight: 2 },
+        { species: Species.Prinplup, weight: 2 },
+      ],
       scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
@@ -29,6 +35,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
+        { species: Species.Samurott, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Empoleon, weight: 2 },
       ],
@@ -36,7 +43,10 @@ export default function registerRockyCoastSpawns(): void {
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Piplup, weight: 3 }],
+      base: [
+        { species: Species.Oshawott, weight: 3 },
+        { species: Species.Piplup, weight: 3 },
+      ],
       uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Seel, weight: 20 },
@@ -46,7 +56,10 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.BurmySandy, weight: 20 },
         { species: Species.Buizel, weight: 25 },
       ],
-      rare: [{ species: Species.Prinplup, weight: 2 }],
+      rare: [
+        { species: Species.Dewott, weight: 2 },
+        { species: Species.Prinplup, weight: 2 },
+      ],
       scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
@@ -57,6 +70,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
+        { species: Species.Samurott, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Empoleon, weight: 2 },
       ],
@@ -108,7 +122,10 @@ export default function registerRockyCoastSpawns(): void {
   });
   registerWaterPool(Biome.RockyCoast, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Horsea, weight: 10 }],
+      base: [
+        { species: Species.Oshawott, weight: 3 },
+        { species: Species.Horsea, weight: 10 },
+      ],
       uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
@@ -116,7 +133,10 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Remoraid, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
       ],
-      rare: [{ species: Species.Seadra, weight: 5 }],
+      rare: [
+        { species: Species.Dewott, weight: 2 },
+        { species: Species.Seadra, weight: 5 },
+      ],
       scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
@@ -124,6 +144,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Octillery, weight: 8 },
       ],
       elusive: [
+        { species: Species.Samurott, weight: 2 },
         { species: Species.Qwilfish, weight: 15 },
         { species: Species.Corsola, weight: 10 },
         { species: Species.Kingdra, weight: 2 },
@@ -131,7 +152,10 @@ export default function registerRockyCoastSpawns(): void {
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Horsea, weight: 10 }],
+      base: [
+        { species: Species.Oshawott, weight: 3 },
+        { species: Species.Horsea, weight: 10 },
+      ],
       uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
@@ -139,7 +163,10 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Remoraid, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
       ],
-      rare: [{ species: Species.Seadra, weight: 5 }],
+      rare: [
+        { species: Species.Dewott, weight: 2 },
+        { species: Species.Seadra, weight: 5 },
+      ],
       scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
@@ -147,6 +174,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Octillery, weight: 8 },
       ],
       elusive: [
+        { species: Species.Samurott, weight: 2 },
         { species: Species.Qwilfish, weight: 15 },
         { species: Species.Corsola, weight: 10 },
         { species: Species.Kingdra, weight: 2 },

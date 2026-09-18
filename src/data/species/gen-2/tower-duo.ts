@@ -44,6 +44,10 @@ const DUO_TEACHABLE = [
   Moves.Roar,
   Moves.Swift,
   Moves.Thunder,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.SkyDrop,
+  Moves.Bulldoze,
 ];
 
 // Both learn the same list at the same levels, either side of their
@@ -135,6 +139,10 @@ export default function registerTowerDuoSpecies(): void {
         Moves.Roost,
         Moves.Tailwind,
         Moves.ZenHeadbutt,
+        Moves.WonderRoom,
+        Moves.Psyshock,
+        Moves.Telekinesis,
+        Moves.DragonTail,
       ],
     },
   });
@@ -204,6 +212,8 @@ export default function registerTowerDuoSpecies(): void {
         Moves.Roost,
         Moves.Tailwind,
         Moves.ZenHeadbutt,
+        Moves.FlameCharge,
+        Moves.Incinerate,
       ],
     },
   });

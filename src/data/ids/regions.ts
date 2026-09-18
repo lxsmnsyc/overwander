@@ -14,6 +14,7 @@ const enum Regions {
   Johto = 2,
   Hoenn = 3,
   Sinnoh = 4,
+  Unova = 5,
 }
 
 export default Regions;

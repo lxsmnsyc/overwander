@@ -6,8 +6,8 @@ import { Statuses, Weathers } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
-import { ASLEEP_STATUSES } from '../status';
-import { hasAnyStatus } from '../utils';
+import { ASLEEP_STATUSES, MAJOR_STATUS_CONDITIONS } from '../status';
+import { countHeldItems, hasAnyStatus } from '../utils';
 
 /**
  * The moves whose power is decided by the state of the fight rather
@@ -43,6 +43,12 @@ export const WEATHER_BALL_TYPES = new Map<Weathers, Types>([
  * power at full health, and next to nothing on its last legs
  */
 const HEALTH_SCALED = new Set<Moves>([Moves.Eruption, Moves.WaterSpout]);
+
+/** What Venoshock reads on the target */
+const POISONS = new Set<Statuses>([Statuses.Poisoned, Statuses.BadlyPoisoned]);
+
+/** What Hex reads: any status condition, and the endless sleep of Comatose */
+const HEXED = new Set<Statuses>([...MAJOR_STATUS_CONDITIONS, Statuses.Comatose]);
 
 /** How little is left of a target before the salt gets into the wound */
 const BRINE_SHARE = 0.5;
@@ -91,6 +97,19 @@ export default function setupConditionalPowerMoves(battle: Battle): void {
       healthShare(event.target.unit) < BRINE_SHARE
     ) {
       event.power *= 2;
+    }
+    if (event.move === Moves.Acrobatics && countHeldItems(event.source) === 0) {
+      event.power *= 2;
+    }
+    if (event.target.type === MoveTargetType.Unit) {
+      const target = event.target.unit;
+
+      if (
+        (event.move === Moves.Venoshock && hasAnyStatus(target, POISONS)) ||
+        (event.move === Moves.Hex && hasAnyStatus(target, HEXED))
+      ) {
+        event.power *= 2;
+      }
     }
   });
 

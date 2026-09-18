@@ -7,6 +7,7 @@ import minds from './minds';
 import ohko from './ohko';
 import type { LitShapePainter } from './shapes';
 import stats from './stats';
+import unova from './unova';
 
 export { JOLTS, reachOf } from './shapes';
 
@@ -19,4 +20,5 @@ export const LIT: Partial<Record<EffectShape, LitShapePainter>> = {
   ...legends,
   ...ohko,
   ...stats,
+  ...unova,
 };

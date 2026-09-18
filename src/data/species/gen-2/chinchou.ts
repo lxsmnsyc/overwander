@@ -46,6 +46,10 @@ const FAMILY_TEACHABLE = [
   Moves.ChargeBeam,
   Moves.NaturalGift,
   Moves.SuckerPunch,
+  Moves.Round,
+  Moves.Scald,
+  Moves.VoltSwitch,
+  Moves.WildCharge,
 ];
 
 const FAMILY_ABILITIES = [Abilities.VoltAbsorb, Abilities.Illuminate];
@@ -84,6 +88,7 @@ export default function registerChinchouSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        28: [Moves.ElectroBall],
         34: [Moves.Discharge],
         39: [Moves.AquaRing],
         49: [Moves.Charge],
@@ -131,6 +136,7 @@ export default function registerChinchouSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        30: [Moves.ElectroBall],
         40: [Moves.Discharge],
         47: [Moves.AquaRing],
         61: [Moves.Charge],

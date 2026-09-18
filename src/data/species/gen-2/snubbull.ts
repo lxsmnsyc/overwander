@@ -70,6 +70,13 @@ const FAMILY_TEACHABLE = [
   Moves.Fling,
   Moves.LastResort,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.Incinerate,
+  Moves.Retaliate,
+  Moves.Bulldoze,
+  Moves.WorkUp,
+  Moves.WildCharge,
+  Moves.Snarl,
 ];
 
 const FAMILY_LEVEL = {

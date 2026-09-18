@@ -47,6 +47,9 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.SeedBomb,
   Moves.WorrySeed,
+  Moves.FoulPlay,
+  Moves.Round,
+  Moves.Retaliate,
 ];
 
 // What the two above the base pick up: an acorn hanging in a tree
@@ -64,6 +67,8 @@ const GROWN_TEACHABLE = [
   Moves.MudSlap,
   Moves.FuryCutter,
   Moves.Swift,
+  Moves.LowSweep,
+  Moves.Snarl,
 ];
 
 export default function registerSeedotSpecies(): void {
@@ -117,6 +122,7 @@ export default function registerSeedotSpecies(): void {
         Moves.FalseSwipe,
         Moves.NastyPlot,
         Moves.PowerSwap,
+        Moves.FoulPlay,
       ],
     },
   });
@@ -205,6 +211,7 @@ export default function registerSeedotSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Pound, Moves.Harden, Moves.Growth, Moves.NaturePower, Moves.NastyPlot],
+        19: [Moves.LeafTornado],
         49: [Moves.LeafStorm],
       },
       teachable: [

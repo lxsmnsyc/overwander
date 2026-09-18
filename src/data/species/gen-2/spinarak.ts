@@ -39,6 +39,12 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
   Moves.Captivate,
   Moves.NaturalGift,
+  Moves.HoneClaws,
+  Moves.Venoshock,
+  Moves.FoulPlay,
+  Moves.Round,
+  Moves.StruggleBug,
+  Moves.Electroweb,
 ];
 
 export default function registerSpinarakSpecies(): void {
@@ -96,6 +102,8 @@ export default function registerSpinarakSpecies(): void {
         Moves.Pursuit,
         Moves.SignalBeam,
         Moves.ToxicSpikes,
+        Moves.RagePowder,
+        Moves.Electroweb,
       ],
     },
   });

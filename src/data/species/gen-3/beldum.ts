@@ -57,6 +57,11 @@ const ARMED_TEACHABLE = [
   Moves.SleepTalk,
   Moves.DefenseCurl,
   Moves.Swift,
+  Moves.HoneClaws,
+  Moves.Psyshock,
+  Moves.Telekinesis,
+  Moves.Round,
+  Moves.Bulldoze,
 ];
 
 export default function registerBeldumSpecies(): void {

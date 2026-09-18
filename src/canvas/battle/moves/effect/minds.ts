@@ -26,7 +26,7 @@ import type { EffectShape, ShapePainter } from './shapes';
 import { REACH, landing, many } from './shapes';
 
 /** A music note: a round head, a stem and a flag */
-function note(
+export function note(
   context: CanvasRenderingContext2D,
   [x, y]: Point,
   size: number,

@@ -52,6 +52,12 @@ const FAMILY_TEACHABLE = [
   Moves.Thief,
   Moves.Captivate,
   Moves.NaturalGift,
+  Moves.FlameCharge,
+  Moves.Round,
+  Moves.Incinerate,
+  Moves.Retaliate,
+  Moves.WildCharge,
+  Moves.Snarl,
 ];
 
 export default function registerGrowlitheSpecies(): void {
@@ -92,7 +98,8 @@ export default function registerGrowlitheSpecies(): void {
         18: [Moves.Leer],
         19: [Moves.OdorSleuth],
         26: [Moves.TakeDown],
-        28: [Moves.FireFang],
+        28: [Moves.FireFang, Moves.FlameBurst],
+        32: [Moves.Retaliate],
         34: [Moves.FlameWheel],
         37: [Moves.HelpingHand],
         39: [Moves.Agility],
@@ -158,6 +165,7 @@ export default function registerGrowlitheSpecies(): void {
         Moves.GigaImpact,
         Moves.IronHead,
         Moves.RockClimb,
+        Moves.Bulldoze,
       ],
     },
   });

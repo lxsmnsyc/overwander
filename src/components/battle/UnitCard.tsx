@@ -92,6 +92,8 @@ const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.Roosting]: '#a0c9d6',
   [Statuses.MagnetRisen]: '#d6c96b',
   [Statuses.AquaRinged]: '#6bb8d6',
+  [Statuses.Telekinetic]: '#d68ad6',
+  [Statuses.SkyDropped]: '#8ab4e0',
 };
 
 const STATUS_NAMES: Record<Statuses, string> = {
@@ -146,6 +148,8 @@ const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.Roosting]: 'Roosting',
   [Statuses.MagnetRisen]: 'Magnet Rise',
   [Statuses.AquaRinged]: 'Aqua Ring',
+  [Statuses.Telekinetic]: 'Telekinesis',
+  [Statuses.SkyDropped]: 'Sky Drop',
 };
 
 /**

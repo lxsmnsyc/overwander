@@ -27,7 +27,7 @@ import { BattleModes } from '../core';
 import { HEALTH_SCALED_MOVES, estimateFixedDamage } from '../moves/fixed-damage';
 import { estimateMoveHits } from '../moves/multi-hit';
 import { feedsOwnSide } from '../moves/friendly-fire';
-import { getStageMoveEffect } from '../moves/stage';
+import { getStageMoveEffects } from '../moves/stage';
 import { ACCURACY_PENALTY, BASE_SCORE, STEP_PENALTY, USELESS_PENALTY } from './score';
 import { SELF_STATUS_MOVES, STATUS_MOVES } from '../moves/status';
 import type Unit from '../unit';
@@ -79,9 +79,10 @@ export function setupChooseMoveAI(battle: Battle): void {
    * pipeline (effectiveness, STAB, Reflect, burn, abilities) without
    * applying anything to the target.
    *
-   * The Critical flag is left out so no crit roll happens, and the
-   * Simulated flag makes the resolver take the middle of the damage
-   * range rather than rolling for it.
+   * The Critical flag is set the way a real hit sets it, and the
+   * Simulated flag makes the resolver skip both rolls: no chance of a
+   * critical, only one that is certain (Storm Throw), and the middle of
+   * the damage range.
    */
   function estimateDamage(source: Unit, move: Moves, target: Unit): number {
     const data = getMoveData(move);
@@ -106,6 +107,7 @@ export function setupChooseMoveAI(battle: Battle): void {
       return 0;
     } else {
       value = source.checkMovePower(move, moveTarget) ?? data.power;
+      flags |= MoveAttackFlags.Critical;
     }
 
     const parent: UnitAttackEvent = {
@@ -499,26 +501,22 @@ export function setupChooseMoveAI(battle: Battle): void {
       return;
     }
 
-    const effect = getStageMoveEffect(event.move);
-
     // Only boosts pointed at the own side qualify
-    if (
-      effect == null ||
-      effect.value <= 0 ||
-      getMoveData(event.move).affects & MoveAffects.Enemy
-    ) {
+    if (getMoveData(event.move).affects & MoveAffects.Enemy) {
       return;
     }
 
     const receiver = event.target.type === MoveTargetType.Unit ? event.target.unit : event.source;
 
-    // A stage that will not move is not worth a bonus; the stage move
-    // group is what says it is worth a penalty
-    if (receiver.stages[effect.stage] >= MAX_STAGE) {
-      return;
+    // Any rise with room left earns it. A stage that will not move is
+    // not worth a bonus; the stage move group is what says it is worth
+    // a penalty
+    for (const effect of getStageMoveEffects(event.move)) {
+      if (effect.value > 0 && receiver.stages[effect.stage] < MAX_STAGE) {
+        event.score += RAID_BUFF_BONUS;
+        return;
+      }
     }
-
-    event.score += RAID_BUFF_BONUS;
   });
 
   // A move that has to wind up first pays for the cast it spends there

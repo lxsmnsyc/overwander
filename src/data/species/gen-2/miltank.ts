@@ -115,6 +115,12 @@ export default function registerMiltankSpecies(): void {
         Moves.IronHead,
         Moves.NaturalGift,
         Moves.StealthRock,
+        Moves.AfterYou,
+        Moves.Round,
+        Moves.EchoedVoice,
+        Moves.Retaliate,
+        Moves.Bulldoze,
+        Moves.WorkUp,
       ],
       egg: [
         Moves.Present,
@@ -123,6 +129,7 @@ export default function registerMiltankSpecies(): void {
         Moves.HelpingHand,
         Moves.HammerArm,
         Moves.Punishment,
+        Moves.HeartStamp,
       ],
     },
   });

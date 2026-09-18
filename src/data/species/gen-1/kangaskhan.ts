@@ -39,6 +39,7 @@ export default function registerKangaskhanSpecies(): void {
         13: [Moves.Bite],
         19: [Moves.TailWhip, Moves.FakeOut],
         25: [Moves.MegaPunch],
+        31: [Moves.ChipAway],
         37: [Moves.Endure],
         43: [Moves.DizzyPunch, Moves.DoubleHit],
         46: [Moves.SuckerPunch],
@@ -124,6 +125,11 @@ export default function registerKangaskhanSpecies(): void {
         Moves.NaturalGift,
         Moves.RockClimb,
         Moves.ShadowClaw,
+        Moves.Round,
+        Moves.Incinerate,
+        Moves.Retaliate,
+        Moves.Bulldoze,
+        Moves.WorkUp,
       ],
       egg: [
         Moves.Stomp,
@@ -133,6 +139,7 @@ export default function registerKangaskhanSpecies(): void {
         Moves.Safeguard,
         Moves.CrushClaw,
         Moves.HammerArm,
+        Moves.CircleThrow,
       ],
     },
   });

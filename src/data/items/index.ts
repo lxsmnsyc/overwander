@@ -5,6 +5,7 @@ import registerBattleBerries from './berries';
 import registerBottleCaps from './bottle-caps';
 import registerCandyItems from './candy-items';
 import registerDrinks from './drinks';
+import registerDrives from './drives';
 import registerFormItems from './form-items';
 import registerFossils from './fossils';
 import registerGear from './gear';
@@ -72,6 +73,7 @@ export default function registerItems(): void {
   registerGems();
   registerOrbs();
   registerPlates();
+  registerDrives();
   registerCandyItems();
   registerRareCandy();
   registerBottleCaps();

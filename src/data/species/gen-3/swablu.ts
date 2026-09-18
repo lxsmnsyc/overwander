@@ -45,6 +45,8 @@ const FAMILY_TEACHABLE = [
   Moves.OminousWind,
   Moves.Roost,
   Moves.Tailwind,
+  Moves.Round,
+  Moves.EchoedVoice,
 ];
 
 export default function registerSwabluSpecies(): void {
@@ -83,12 +85,13 @@ export default function registerSwabluSpecies(): void {
         1: [Moves.Growl, Moves.Peck],
         8: [Moves.Astonish],
         11: [Moves.Sing],
-        18: [Moves.FuryAttack],
+        18: [Moves.FuryAttack, Moves.Round],
         21: [Moves.Safeguard],
         28: [Moves.Mist],
         31: [Moves.TakeDown],
         32: [Moves.NaturalGift],
         38: [Moves.MirrorMove],
+        39: [Moves.CottonGuard],
         41: [Moves.Refresh],
         45: [Moves.DragonPulse],
         48: [Moves.PerishSong],
@@ -134,13 +137,14 @@ export default function registerSwabluSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Growl, Moves.Peck, Moves.Astonish, Moves.Sing, Moves.Pluck],
-        18: [Moves.FuryAttack],
+        18: [Moves.FuryAttack, Moves.Round],
         21: [Moves.Safeguard],
         28: [Moves.Mist],
         31: [Moves.TakeDown],
         32: [Moves.NaturalGift],
         35: [Moves.DragonBreath],
         40: [Moves.DragonDance],
+        42: [Moves.CottonGuard],
         45: [Moves.Refresh],
         54: [Moves.PerishSong, Moves.DragonPulse],
         59: [Moves.SkyAttack],
@@ -157,6 +161,10 @@ export default function registerSwabluSpecies(): void {
         Moves.RockSmash,
         Moves.DracoMeteor,
         Moves.GigaImpact,
+        Moves.HoneClaws,
+        Moves.WonderRoom,
+        Moves.Incinerate,
+        Moves.Bulldoze,
       ],
     },
   });

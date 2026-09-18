@@ -1,4 +1,5 @@
 import OWCharSprite, { type OWCharLayout } from './ow-char-sprite';
+import sheetStamp from './sprite-stamps';
 
 /**
  * The character sheets, loaded once each.
@@ -23,7 +24,8 @@ const SHEETS = new Map<string, Promise<OWCharSprite | null>>();
 
 async function fetchSheet(name: string, layout: OWCharLayout): Promise<OWCharSprite | null> {
   try {
-    const sprite = await OWCharSprite.fetch(owCharPath(name), layout);
+    const path = owCharPath(name);
+    const sprite = await OWCharSprite.fetch(path, layout, await sheetStamp(path));
 
     await sprite.load();
     return sprite;

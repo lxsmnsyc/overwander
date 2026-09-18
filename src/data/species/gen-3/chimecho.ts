@@ -50,7 +50,8 @@ export default function registerChimechoSpecies(): void {
         38: [Moves.HealBell],
         41: [Moves.Safeguard],
         46: [Moves.Psychic],
-        49: [Moves.HealingWish],
+        49: [Moves.HealingWish, Moves.HealPulse],
+        54: [Moves.Synchronoise],
       },
       teachable: [
         Moves.Attract,
@@ -98,6 +99,10 @@ export default function registerChimechoSpecies(): void {
         Moves.NaturalGift,
         Moves.TrickRoom,
         Moves.ZenHeadbutt,
+        Moves.Psyshock,
+        Moves.Telekinesis,
+        Moves.Round,
+        Moves.EchoedVoice,
       ],
     },
   });

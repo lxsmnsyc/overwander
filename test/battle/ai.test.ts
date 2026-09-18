@@ -707,6 +707,101 @@ describe('weighing a move', () => {
     return event.usable;
   }
 
+  it('weighs every stage a move raises, not only the first', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.None };
+
+    const fresh = scoreMove(battle, unit, Moves.ShellSmash, target);
+
+    // Attack is only one of its three rises
+    unit.addStage(Stages.Attack, 6, NONE_CAUSE);
+    expect(scoreMove(battle, unit, Moves.ShellSmash, target)).toBe(fresh);
+
+    // Its drops are the price, so pinned rises alone make it useless
+    unit.addStage(Stages.SpecialAttack, 6, NONE_CAUSE);
+    unit.addStage(Stages.Speed, 6, NONE_CAUSE);
+    expect(fresh - scoreMove(battle, unit, Moves.ShellSmash, target)).toBe(USELESS_PENALTY);
+  });
+
+  it('still throws a U-turn with nobody to swap in', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    // The hit lands either way; only a switch that is all the move does
+    // is refused
+    expect(
+      usableMove(battle, unit, Moves.VoltSwitch, { type: MoveTargetType.Unit, unit: enemy }),
+    ).toBe(true);
+    expect(usableMove(battle, unit, Moves.Teleport, { type: MoveTargetType.None })).toBe(false);
+  });
+
+  it('draws fire only with a teammate to draw it from', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.None };
+
+    expect(usableMove(battle, unit, Moves.RagePowder, target)).toBe(false);
+
+    createUnit(battle, teamA);
+
+    expect(usableMove(battle, unit, Moves.RagePowder, target)).toBe(true);
+  });
+
+  it('will not cast an ability move that would fail', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.Unit, unit: enemy };
+
+    expect(usableMove(battle, unit, Moves.SimpleBeam, target)).toBe(true);
+    // Nothing of its own to hand over
+    expect(usableMove(battle, unit, Moves.Entrainment, target)).toBe(false);
+
+    enemy.addAbility(Abilities.Simple);
+
+    expect(usableMove(battle, unit, Moves.SimpleBeam, target)).toBe(false);
+  });
+
+  it('pays for a Final Gambit the way it pays for an Explosion', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.Unit, unit: enemy };
+
+    // Both finish the target, and both leave the user fainted
+    enemy.setHealth(30);
+
+    expect(scoreMove(battle, unit, Moves.FinalGambit, target)).toBe(
+      scoreMove(battle, unit, Moves.Explosion, target),
+    );
+  });
+
+  it('counts a critical that is certain', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.Unit, unit: enemy };
+
+    // Low enough that Storm Throw finishes it only by landing critical
+    enemy.setHealth(40);
+
+    const open = scoreMove(battle, unit, Moves.StormThrow, target);
+
+    enemy.addAbility(Abilities.BattleArmor);
+
+    expect(scoreMove(battle, unit, Moves.StormThrow, target)).toBeLessThan(open);
+  });
+
   it('will not put up a veil the side already has', () => {
     const { battle, teamA, teamB } = createAIBattle();
     pinRandom(battle, 0.99);

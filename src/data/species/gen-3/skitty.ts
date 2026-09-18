@@ -59,6 +59,11 @@ const FAMILY_TEACHABLE = [
   Moves.Payback,
   Moves.SuckerPunch,
   Moves.ZenHeadbutt,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Retaliate,
+  Moves.WorkUp,
+  Moves.WildCharge,
 ];
 
 export default function registerSkittySpecies(): void {
@@ -118,6 +123,7 @@ export default function registerSkittySpecies(): void {
         Moves.Tickle,
         Moves.FakeTears,
         Moves.MudBomb,
+        Moves.SimpleBeam,
       ],
     },
   });

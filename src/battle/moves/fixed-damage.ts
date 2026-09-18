@@ -1,8 +1,9 @@
 import { AttackPriority } from '../../core/event-emitter';
-import { MoveAttackFlags, Moves } from '../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
+import { USELESS_PENALTY, sacrificeCost } from '../ai/score';
 import type Battle from '../core';
-import { BattleEvents, MoveTargetType } from '../events';
+import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
 
 /**
@@ -48,6 +49,9 @@ const FIXED_DAMAGE_MOVES: {
   // the user is exactly what it loses
   // https://bulbapedia.bulbagarden.net/wiki/Endeavor_(move)
   [Moves.Endeavor]: (source, target) => Math.max(0, target.health - source.health),
+  // Everything the user has left, which it loses if the throw lands
+  // https://bulbapedia.bulbagarden.net/wiki/Final_Gambit_(move)
+  [Moves.FinalGambit]: (source) => source.health,
 };
 
 /**
@@ -95,7 +99,7 @@ export default function setupFixedDamageMoves(battle: Battle): void {
         flags |= MoveAttackFlags.HealthScaled;
       }
 
-      event.source.attack(
+      const landed = event.source.attack(
         event.target.unit,
         event.move,
         getAmount(event.source, event.target.unit),
@@ -103,6 +107,28 @@ export default function setupFixedDamageMoves(battle: Battle): void {
         getMoveData(event.move).category,
         flags,
       );
+
+      if (landed && event.move === Moves.FinalGambit) {
+        event.source.damage(
+          { type: EffectType.Move, move: event.move, unit: event.source },
+          event.source,
+          event.source.health,
+          DamageFlags.Indirect | DamageFlags.Cost,
+        );
+      }
     }
+  });
+
+  // A gambit that cannot finish the target is the user thrown away,
+  // and one that can still costs the user, the way an Explosion does
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (event.move !== Moves.FinalGambit || event.target.type !== MoveTargetType.Unit) {
+      return;
+    }
+
+    event.score -=
+      event.source.health < event.target.unit.health
+        ? USELESS_PENALTY
+        : sacrificeCost(event.source);
   });
 }

@@ -283,6 +283,48 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Tears', Moves.FakeTears],
   ['Memento', Moves.Memento],
   ['Clear', Moves.Defog],
+  // Unova's own
+  ['Converge', Moves.Psyshock],
+  ['Converge', Moves.Psystrike],
+  ['Resonance', Moves.Synchronoise],
+  ['Orbit', Moves.StoredPower],
+  ['Gambit', Moves.FinalGambit],
+  ['Buzz', Moves.StruggleBug],
+  ['Techno', Moves.TechnoBlast],
+  ['Victory', Moves.VCreate],
+  ['Searing', Moves.SearingShot],
+  ['Azure', Moves.BlueFlare],
+  ['Fusion', Moves.FusionFlare],
+  ['Thunderclap', Moves.BoltStrike],
+  ['Fusion', Moves.FusionBolt],
+  ['Frostbolt', Moves.FreezeShock],
+  ['Frostfire', Moves.IceBurn],
+  ['Glaze', Moves.Glaciate],
+  ['Smite', Moves.SacredSword],
+  ['Smite', Moves.SecretSword],
+  ['Aria', Moves.RelicSong],
+  ['Flutter', Moves.QuiverDance],
+  ['Smash', Moves.ShellSmash],
+  ['Gears', Moves.ShiftGear],
+  ['Windup', Moves.Coil],
+  ['Shed', Moves.Autotomize],
+  ['Flex', Moves.WorkUp],
+  ['Tonnage', Moves.HeavySlam],
+  ['Tonnage', Moves.HeatCrash],
+  ['Pledge', Moves.FirePledge],
+  ['Pledge', Moves.WaterPledge],
+  ['Pledge', Moves.GrassPledge],
+  ['Aerial', Moves.Acrobatics],
+  ['Plummet', Moves.SkyDrop],
+  ['Lash', Moves.DragonTail],
+  ['Roller', Moves.Steamroller],
+  ['Turnabout', Moves.FoulPlay],
+  ['Leech', Moves.HornLeech],
+  ['Ram', Moves.HeadCharge],
+  ['Blaze', Moves.Inferno],
+  ['Firedance', Moves.FieryDance],
+  ['Scorch', Moves.Incinerate],
+  ['Spatter', Moves.FlameBurst],
 ];
 
 /**
@@ -501,6 +543,25 @@ describe('a painted move', () => {
     expect(delayShapeFor(Moves.ShadowForce, 1)).toBe('Vanish');
   });
 
+  it('draws the Unova moves that are an earlier move in all but name', () => {
+    expect(effectShapeFor(Moves.DrillRun)).toBe('Drill');
+    expect(effectShapeFor(Moves.WildCharge)).toBe('Rush');
+    expect(effectShapeFor(Moves.Hurricane)).toBe('Gale');
+    expect(effectShapeFor(Moves.WideGuard)).toBe('Shell');
+    expect(effectShapeFor(Moves.QuickGuard)).toBe('Shell');
+    expect(effectShapeFor(Moves.WonderRoom)).toBe('Grid');
+    expect(effectShapeFor(Moves.MagicRoom)).toBe('Grid');
+    expect(effectShapeFor(Moves.RagePowder)).toBe('Haze');
+    expect(effectShapeFor(Moves.HealPulse)).toBe('Mend');
+    expect(effectShapeFor(Moves.CottonGuard)).toBe('Cotton');
+    expect(effectShapeFor(Moves.Electroweb)).toBe('Coil');
+    expect(effectShapeFor(Moves.Snarl)).toBe('Roar');
+    expect(effectShapeFor(Moves.EchoedVoice)).toBe('Roar');
+    expect(effectShapeFor(Moves.Round)).toBe('Song');
+    expect(effectShapeFor(Moves.SmackDown)).toBe('Rocks');
+    expect(effectShapeFor(Moves.HeartStamp)).toBe('Hearts');
+  });
+
   it('draws a U-turn as the blow and then as the leaving', () => {
     // The engine deals the damage on the wind-up step and swaps the
     // pokemon out on the last one, so the two steps are two pictures
@@ -554,6 +615,11 @@ describe('a painted move', () => {
     expect(moveEffectVisual(Moves.Dive, 1)).toBeNull();
     expect(moveEffectVisual(Moves.Bounce, 1)).toBeNull();
     expect(moveEffectVisual(Moves.ShadowForce, 1)).toBeNull();
+    // Kyurem's two gather their cold before they land it
+    expect(moveEffectVisual(Moves.FreezeShock, 1)).toBeNull();
+    expect(moveEffectVisual(Moves.IceBurn, 1)).toBeNull();
+    // Sky Drop carries its target up first and drops it on the second step
+    expect(moveEffectVisual(Moves.SkyDrop, 1)).toBeNull();
     // A move that hits on every step keeps its picture on every step
     expect(moveEffectVisual(Moves.Thrash, 1)).not.toBeNull();
   });

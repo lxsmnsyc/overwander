@@ -46,6 +46,7 @@ export default function registerKecleonSpecies(): void {
         40: [Moves.Substitute],
         43: [Moves.SuckerPunch],
         49: [Moves.AncientPower, Moves.ShadowClaw],
+        58: [Moves.Synchronoise],
       },
       teachable: [
         Moves.FocusPunch,
@@ -119,8 +120,16 @@ export default function registerKecleonSpecies(): void {
         Moves.NaturalGift,
         Moves.StealthRock,
         Moves.TrickRoom,
+        Moves.HoneClaws,
+        Moves.WonderRoom,
+        Moves.FoulPlay,
+        Moves.AfterYou,
+        Moves.Round,
+        Moves.Incinerate,
+        Moves.Retaliate,
+        Moves.WorkUp,
       ],
-      egg: [Moves.Disable, Moves.MagicCoat, Moves.Trick, Moves.NastyPlot],
+      egg: [Moves.Disable, Moves.MagicCoat, Moves.Trick, Moves.NastyPlot, Moves.FoulPlay],
     },
   });
 }

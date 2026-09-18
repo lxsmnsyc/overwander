@@ -1,6 +1,6 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Types } from '../../data/constants/types';
-import { DamageFlags } from '../../data/ids/moves';
+import { DamageFlags, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
@@ -15,6 +15,9 @@ import createTimedStatus from './__create';
 const DURATION = turns(5);
 
 const setupTimer = createTimedStatus(Statuses.Frozen, DURATION);
+
+/** Hot enough to thaw what they hit without being Fire-type */
+const THAWS_TARGET = new Set<Moves>([Moves.Scald]);
 
 export default function setupFrozenStatus(battle: Battle): void {
   setupTimer(battle);
@@ -38,7 +41,7 @@ export default function setupFrozenStatus(battle: Battle): void {
       event.success &&
       !(event.flags & DamageFlags.Indirect) &&
       event.cause.type === EffectType.Move &&
-      getMoveData(event.cause.move).type === Types.Fire
+      (getMoveData(event.cause.move).type === Types.Fire || THAWS_TARGET.has(event.cause.move))
     ) {
       event.target.removeStatus(Statuses.Frozen, cause);
     }

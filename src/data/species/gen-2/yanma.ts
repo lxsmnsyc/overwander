@@ -96,6 +96,7 @@ export default function registerYanmaSpecies(): void {
         Moves.OminousWind,
         Moves.Roost,
         Moves.Tailwind,
+        Moves.Round,
       ],
       egg: [
         Moves.LeechLife,

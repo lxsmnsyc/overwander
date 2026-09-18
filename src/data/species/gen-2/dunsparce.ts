@@ -36,7 +36,9 @@ export default function registerDunsparceSpecies(): void {
       level: {
         11: [Moves.Yawn],
         33: [Moves.Roost],
+        37: [Moves.Coil],
         41: [Moves.Endeavor],
+        43: [Moves.DrillRun],
         44: [Moves.Flail],
         1: [Moves.Rage],
         5: [Moves.DefenseCurl],
@@ -106,6 +108,12 @@ export default function registerDunsparceSpecies(): void {
         Moves.PoisonJab,
         Moves.StealthRock,
         Moves.ZenHeadbutt,
+        Moves.Round,
+        Moves.Incinerate,
+        Moves.Retaliate,
+        Moves.Bulldoze,
+        Moves.WildCharge,
+        Moves.DrillRun,
       ],
       egg: [
         Moves.AncientPower,
@@ -115,6 +123,7 @@ export default function registerDunsparceSpecies(): void {
         Moves.RockSlide,
         Moves.Astonish,
         Moves.TrumpCard,
+        Moves.Hex,
       ],
     },
   });

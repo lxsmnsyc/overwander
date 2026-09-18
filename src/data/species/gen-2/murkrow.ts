@@ -51,7 +51,8 @@ export default function registerMurkrowSpecies(): void {
         26: [Moves.NightShade],
         31: [Moves.FeintAttack],
         41: [Moves.MeanLook],
-        45: [Moves.SuckerPunch],
+        45: [Moves.SuckerPunch, Moves.FoulPlay],
+        65: [Moves.Quash],
       },
       teachable: [
         Moves.Attract,
@@ -100,6 +101,11 @@ export default function registerMurkrowSpecies(): void {
         Moves.Pluck,
         Moves.Roost,
         Moves.Tailwind,
+        Moves.FoulPlay,
+        Moves.Round,
+        Moves.Quash,
+        Moves.Retaliate,
+        Moves.Snarl,
       ],
       egg: [
         Moves.DrillPeck,

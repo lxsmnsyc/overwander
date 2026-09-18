@@ -487,6 +487,11 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
   // Drawn as a screen and as Roost's feathers, but still a raise and a drop on the way
   [Moves.Barrier]: [undefined, 'Focus'],
   [Moves.FeatherDance]: [undefined, 'Reach'],
+  // The waits these Unova moves had before they borrowed an earlier move's picture
+  [Moves.WonderRoom]: [undefined, 'Brace'],
+  [Moves.MagicRoom]: [undefined, 'Brace'],
+  [Moves.HealPulse]: [undefined, 'Brace'],
+  [Moves.CottonGuard]: [undefined, 'Focus'],
 
   // Sinnoh. Out of the world and back out of it behind whatever it is
   // hitting, which is the wait Dig and Fly spend
@@ -563,6 +568,11 @@ const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
   Stack: 'Focus',
   Sprout: 'Focus',
   Curl: 'Focus',
+  Flutter: 'Focus',
+  Smash: 'Focus',
+  Gears: 'Focus',
+  Windup: 'Focus',
+  Shed: 'Focus',
 };
 
 /**

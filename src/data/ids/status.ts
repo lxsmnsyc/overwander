@@ -177,6 +177,16 @@ export const enum Statuses {
    * back each time it acts (Aqua Ring)
    */
   AquaRinged = 50,
+  /**
+   * The unit is held up off the ground, and nothing aimed at it can
+   * miss (Telekinesis)
+   */
+  Telekinetic = 51,
+  /**
+   * The unit has been carried into the sky and cannot act until it is
+   * dropped (Sky Drop)
+   */
+  SkyDropped = 52,
 }
 
 /**
@@ -377,4 +387,27 @@ export const enum TeamStatuses {
    * takes a Rock move
    */
   StealthRock = 8,
+  /**
+   * Moves that hit several pokemon at once are turned away from the team
+   */
+  WideGuard = 9,
+  /**
+   * Moves with a shortened wind-up are turned away from the team
+   */
+  QuickGuard = 10,
+  /**
+   * A rainbow hangs over the team: its moves' added effects land 2x as
+   * often (Water Pledge and Fire Pledge)
+   */
+  Rainbow = 11,
+  /**
+   * The team stands in fire: anything not Fire-type is burned each time
+   * it acts (Fire Pledge and Grass Pledge)
+   */
+  SeaOfFire = 12,
+  /**
+   * The team is bogged down: its Speed is quartered (Grass Pledge and
+   * Water Pledge)
+   */
+  Swamp = 13,
 }

@@ -68,6 +68,9 @@ const FAMILY_TEACHABLE = [
   Moves.ShadowClaw,
   Moves.StealthRock,
   Moves.XScissor,
+  Moves.HoneClaws,
+  Moves.Round,
+  Moves.Bulldoze,
 ];
 
 export default function registerSandshrewSpecies(): void {
@@ -123,6 +126,7 @@ export default function registerSandshrewSpecies(): void {
 
         Moves.CrushClaw,
         Moves.NightSlash,
+        Moves.ChipAway,
       ],
     },
   });

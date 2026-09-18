@@ -44,6 +44,10 @@ const FAMILY_TEACHABLE = [
   Moves.ChargeBeam,
   Moves.MagnetRise,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.VoltSwitch,
+  Moves.WildCharge,
+  Moves.Snarl,
 ];
 
 export default function registerElectrikeSpecies(): void {
@@ -90,6 +94,7 @@ export default function registerElectrikeSpecies(): void {
         33: [Moves.Bite, Moves.ThunderFang],
         36: [Moves.Thunder],
         41: [Moves.Charge, Moves.Discharge],
+        49: [Moves.WildCharge],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -100,6 +105,8 @@ export default function registerElectrikeSpecies(): void {
         Moves.FireFang,
         Moves.IceFang,
         Moves.Switcheroo,
+        Moves.FlameBurst,
+        Moves.ElectroBall,
       ],
     },
   });
@@ -142,6 +149,7 @@ export default function registerElectrikeSpecies(): void {
         45: [Moves.Thunder],
         49: [Moves.Discharge],
         53: [Moves.Charge],
+        61: [Moves.WildCharge],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },

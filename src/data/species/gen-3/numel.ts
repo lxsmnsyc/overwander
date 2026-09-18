@@ -45,6 +45,12 @@ const FAMILY_TEACHABLE = [
   Moves.Captivate,
   Moves.NaturalGift,
   Moves.StealthRock,
+  Moves.FlameCharge,
+  Moves.AfterYou,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Incinerate,
+  Moves.Bulldoze,
 ];
 
 export default function registerNumelSpecies(): void {
@@ -82,6 +88,7 @@ export default function registerNumelSpecies(): void {
       level: {
         1: [Moves.Tackle, Moves.Growl],
         11: [Moves.Ember],
+        15: [Moves.FlameBurst],
         19: [Moves.Magnitude],
         25: [Moves.FocusEnergy],
         29: [Moves.TakeDown],
@@ -122,6 +129,7 @@ export default function registerNumelSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.Growl, Moves.Ember, Moves.Magnitude],
+        15: [Moves.FlameBurst],
         25: [Moves.FocusEnergy],
         29: [Moves.TakeDown],
         31: [Moves.Amnesia, Moves.LavaPlume],

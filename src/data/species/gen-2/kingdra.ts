@@ -87,6 +87,9 @@ export default function registerKingdraSpecies(): void {
         Moves.GigaImpact,
         Moves.IronHead,
         Moves.NaturalGift,
+        Moves.Round,
+        Moves.Scald,
+        Moves.Quash,
       ],
     },
   });

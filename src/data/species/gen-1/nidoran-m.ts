@@ -56,6 +56,11 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.ShadowClaw,
   Moves.SuckerPunch,
+  Moves.HoneClaws,
+  Moves.Venoshock,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.DrillRun,
 ];
 
 // Additional TM/HM moves for the fully evolved form
@@ -131,6 +136,7 @@ export default function registerNidoranMSpecies(): void {
         Moves.Amnesia,
         Moves.BeatUp,
         Moves.HeadSmash,
+        Moves.ChipAway,
       ],
     },
   });
@@ -224,7 +230,7 @@ export default function registerNidoranMSpecies(): void {
           Moves.FocusEnergy,
           Moves.Peck,
         ],
-        23: [Moves.Thrash],
+        23: [Moves.Thrash, Moves.ChipAway],
         43: [Moves.Megahorn, Moves.EarthPower],
       },
       teachable: [
@@ -259,6 +265,12 @@ export default function registerNidoranMSpecies(): void {
         Moves.RockClimb,
         Moves.StealthRock,
         Moves.StoneEdge,
+        Moves.SmackDown,
+        Moves.SludgeWave,
+        Moves.Incinerate,
+        Moves.Quash,
+        Moves.Bulldoze,
+        Moves.DragonTail,
       ],
     },
   });

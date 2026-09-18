@@ -57,6 +57,11 @@ const FAMILY_TEACHABLE = [
   Moves.LastResort,
   Moves.NaturalGift,
   Moves.SeedBomb,
+  Moves.HoneClaws,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Retaliate,
+  Moves.WorkUp,
 ];
 
 export default function registerZigzagoonSpecies(): void {
@@ -100,13 +105,13 @@ export default function registerZigzagoonSpecies(): void {
         21: [Moves.MudSport],
         25: [Moves.PinMissile],
         29: [Moves.Covet],
-        33: [Moves.Flail],
+        33: [Moves.Flail, Moves.Bestow],
         37: [Moves.Rest],
         41: [Moves.BellyDrum],
         45: [Moves.Fling],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Charm, Moves.Pursuit, Moves.Tickle, Moves.Trick],
+      egg: [Moves.Charm, Moves.Pursuit, Moves.Tickle, Moves.Trick, Moves.SimpleBeam],
     },
   });
 
@@ -145,7 +150,7 @@ export default function registerZigzagoonSpecies(): void {
         23: [Moves.MudSport],
         29: [Moves.FurySwipes],
         35: [Moves.Covet],
-        41: [Moves.Slash],
+        41: [Moves.Slash, Moves.Bestow],
         47: [Moves.Rest],
         53: [Moves.BellyDrum],
         59: [Moves.Fling],

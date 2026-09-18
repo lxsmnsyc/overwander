@@ -294,6 +294,7 @@ Five more houses, and a **print** for each.
 
 ## See also
 
+- [The fifth generation's moves](fifth-generation-moves.md), the release after this one.
 - [Open world](open-world.md), the release before this one.
 - [Hoenn](hoenn.md), the last region.
 - [Player's guide](../mechanics.md), for the rules in full.

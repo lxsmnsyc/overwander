@@ -49,6 +49,7 @@ const FAMILY_TEACHABLE = [
   Moves.Captivate,
   Moves.NaturalGift,
   Moves.Payback,
+  Moves.Round,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ShellArmor, Abilities.SkillLink];
@@ -94,9 +95,11 @@ export default function registerShellderSpecies(): void {
         23: [Moves.Clamp],
         25: [Moves.Protect],
         28: [Moves.IceShard],
+        32: [Moves.RazorShell],
         33: [Moves.Leer],
         44: [Moves.Brine],
         49: [Moves.IceBeam],
+        56: [Moves.ShellSmash],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [Moves.BubbleBeam, Moves.TakeDown, Moves.Barrier, Moves.Screech, Moves.RapidSpin],
@@ -140,6 +143,7 @@ export default function registerShellderSpecies(): void {
         ],
         33: [Moves.Spikes],
         41: [Moves.SpikeCannon],
+        52: [Moves.IcicleCrash],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -149,6 +153,7 @@ export default function registerShellderSpecies(): void {
         Moves.Brine,
         Moves.GigaImpact,
         Moves.PoisonJab,
+        Moves.FrostBreath,
       ],
     },
   });

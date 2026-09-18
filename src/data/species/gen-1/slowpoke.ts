@@ -73,6 +73,15 @@ const FAMILY_TEACHABLE = [
   Moves.GrassKnot,
   Moves.NaturalGift,
   Moves.TrickRoom,
+  Moves.WonderRoom,
+  Moves.Psyshock,
+  Moves.Telekinesis,
+  Moves.AfterYou,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Scald,
+  Moves.Incinerate,
+  Moves.Bulldoze,
 ];
 
 // Slowbro's claws open up the fighting-style TMs
@@ -133,6 +142,7 @@ export default function registerSlowpokeSpecies(): void {
         34: [Moves.ZenHeadbutt],
         40: [Moves.Amnesia],
         48: [Moves.Psychic],
+        58: [Moves.HealPulse],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -142,6 +152,7 @@ export default function registerSlowpokeSpecies(): void {
         Moves.FutureSight,
         Moves.MudSport,
         Moves.MeFirst,
+        Moves.WonderRoom,
       ],
     },
   });
@@ -187,6 +198,7 @@ export default function registerSlowpokeSpecies(): void {
         37: [Moves.Withdraw],
         44: [Moves.Amnesia],
         54: [Moves.Psychic],
+        68: [Moves.HealPulse],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -205,6 +217,7 @@ export default function registerSlowpokeSpecies(): void {
         Moves.Fling,
         Moves.FocusBlast,
         Moves.GigaImpact,
+        Moves.FoulPlay,
       ],
     },
   });

@@ -48,6 +48,10 @@ const FAMILY_TEACHABLE = [
   Moves.OminousWind,
   Moves.Tailwind,
   Moves.UTurn,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.WorkUp,
+  Moves.DrillRun,
 ];
 
 export default function registerSpearowSpecies(): void {
@@ -138,6 +142,7 @@ export default function registerSpearowSpecies(): void {
         35: [Moves.Assurance],
         41: [Moves.Roost],
         43: [Moves.Agility],
+        53: [Moves.DrillRun],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.AerialAce, Moves.GigaImpact],
     },

@@ -16,8 +16,8 @@ import writeSpriteCredits from '../src/server/sprites/credits.ts';
  * as `{region}/{dex}/{form}`; the game files it under the **species
  * id** it knows it by, which is the dex number for a base form and a
  * number past a hundred thousand for the three things that are drawn
- * like pokemon without being pokemon. A form the game has no id for is
- * skipped and counted.
+ * like pokemon without being pokemon. A form whose species is not
+ * written yet is skipped and counted, whatever ids are reserved.
  *
  * ```bash
  * pnpm import-sprites                    # from ../SpriteCollab
@@ -45,6 +45,7 @@ const REGIONS: Partial<Record<string, string>> = {
   johto: 'johto',
   hoenn: 'hoenn',
   sinnoh: 'sinnoh',
+  unova: 'unova',
 };
 
 /**
@@ -80,6 +81,9 @@ const MINIMUM = new Set<number>([
  * import a `const enum`
  */
 const IDS = 'src/data/ids/species.ts';
+
+/** Where the species themselves are written, a file per line */
+const SPECIES = 'src/data/species';
 
 /**
  * Where form ids start, matching `SPECIES_FORM_BAND` in
@@ -126,19 +130,80 @@ function slotsOf(root: string): Slot[] {
 }
 
 /**
- * Every id the `Species` enum holds. A region is written a few lines
- * at a time, so what the game has an id for is the only thing worth
- * copying: everything else would ship as art nothing can draw
+ * Every species the data actually names, which is narrower than every
+ * id the enum holds: ids are reserved a region at a time and the
+ * species are written a line at a time, so a sheet for a line nobody
+ * can meet yet is art that ships for nothing.
+ *
+ * Both files are read as text, since node refuses the `const enum`
+ * they are written in. A name counts wherever it appears under
+ * `src/data/species/`, and so does a form list the ids file exports,
+ * because a form is as often registered through one of those as by
+ * name
  */
-function knownSpecies(): Set<number> {
+function writtenSpecies(): Set<number> {
   const source = readFileSync(IDS, 'utf8');
   const body = source.slice(source.indexOf('export const enum Species {'));
+  const numbered = new Map<string, number>();
+
+  for (const [, name, id] of body.slice(0, body.indexOf('\n}')).matchAll(/(\w+) = (\d+),/g)) {
+    numbered.set(name, Number(id));
+  }
+
+  const lists = new Map<string, number[]>();
+
+  for (const [, list, members] of source.matchAll(
+    /export const (\w+_FORMS)(?:: Species\[\])? = \[([\s\S]*?)\];/g,
+  )) {
+    const held: number[] = [];
+
+    for (const [, name] of members.matchAll(/Species\.(\w+)/g)) {
+      const id = numbered.get(name);
+
+      if (id != null) {
+        held.push(id);
+      }
+    }
+    lists.set(list, held);
+  }
+
   const ids = new Set<number>();
 
-  for (const [, id] of body.slice(0, body.indexOf('\n}')).matchAll(/= (\d+),/g)) {
-    ids.add(Number(id));
+  for (const file of sourceFiles(SPECIES)) {
+    const text = readFileSync(file, 'utf8');
+
+    for (const [, name] of text.matchAll(/Species\.(\w+)/g)) {
+      const id = numbered.get(name);
+
+      if (id != null) {
+        ids.add(id);
+      }
+    }
+    for (const [list, held] of lists) {
+      if (text.includes(list)) {
+        for (const id of held) {
+          ids.add(id);
+        }
+      }
+    }
   }
   return ids;
+}
+
+/** Every TypeScript file under a folder, the species data being a tree of them */
+function sourceFiles(folder: string): string[] {
+  const found: string[] = [];
+
+  for (const entry of readdirSync(folder, { withFileTypes: true })) {
+    const path = join(folder, entry.name);
+
+    if (entry.isDirectory()) {
+      found.push(...sourceFiles(path));
+    } else if (path.endsWith('.ts')) {
+      found.push(path);
+    }
+  }
+  return found;
 }
 
 /** The species id this form is known by here, or nothing for one it is not. */
@@ -192,7 +257,7 @@ export default function importSprites(source: string, dryRun: boolean): void {
     throw new Error(`No compact sheets at ${root}. Build them in the SpriteCollab checkout first`);
   }
   const slots = slotsOf(root);
-  const known = knownSpecies();
+  const known = writtenSpecies();
   const taking: Wanted[] = [];
 
   for (const slot of slots) {

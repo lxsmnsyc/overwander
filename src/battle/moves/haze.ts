@@ -1,4 +1,4 @@
-import { AttackPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stages } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { USELESS_PENALTY } from '../ai/score';
@@ -47,6 +47,23 @@ export default function setupHaze(battle: Battle): void {
       if (unit.alive) {
         unit.resetStages(cause);
       }
+    }
+  });
+
+  // Clear Smog is the same clearing, aimed at the one pokemon it hits
+  battle.on(BattleEvents.UnitAttackEffect, EventPriority.Exact, (event) => {
+    if (event.parent.move === Moves.ClearSmog) {
+      event.parent.target.resetStages({
+        type: EffectType.Move,
+        move: Moves.ClearSmog,
+        unit: event.parent.source,
+      });
+    }
+  });
+
+  battle.on(BattleEvents.CheckUnitAttackEffectChance, EventPriority.Post, (event) => {
+    if (event.parent.move === Moves.ClearSmog) {
+      event.value = 100;
     }
   });
 

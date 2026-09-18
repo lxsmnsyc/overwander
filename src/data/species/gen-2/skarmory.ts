@@ -39,7 +39,7 @@ export default function registerSkarmorySpecies(): void {
       level: {
         20: [Moves.Feint],
         29: [Moves.AirCutter],
-        39: [Moves.AirSlash],
+        39: [Moves.AirSlash, Moves.Autotomize],
         42: [Moves.Spikes],
         45: [Moves.MetalSound, Moves.NightSlash],
         1: [Moves.Leer, Moves.Peck],
@@ -97,6 +97,8 @@ export default function registerSkarmorySpecies(): void {
         Moves.StealthRock,
         Moves.Tailwind,
         Moves.XScissor,
+        Moves.Round,
+        Moves.SkyDrop,
       ],
       egg: [
         Moves.DrillPeck,

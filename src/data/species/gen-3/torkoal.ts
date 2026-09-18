@@ -47,6 +47,8 @@ export default function registerTorkoalSpecies(): void {
         40: [Moves.Amnesia],
         43: [Moves.Flail],
         46: [Moves.HeatWave],
+        60: [Moves.Inferno],
+        65: [Moves.ShellSmash],
       },
       teachable: [
         Moves.Toxic,
@@ -85,8 +87,13 @@ export default function registerTorkoalSpecies(): void {
         Moves.NaturalGift,
         Moves.StealthRock,
         Moves.StoneEdge,
+        Moves.FlameCharge,
+        Moves.AfterYou,
+        Moves.Round,
+        Moves.Incinerate,
+        Moves.Bulldoze,
       ],
-      egg: [Moves.Yawn, Moves.Eruption],
+      egg: [Moves.Yawn, Moves.Eruption, Moves.FlameBurst, Moves.ClearSmog],
     },
   });
 }

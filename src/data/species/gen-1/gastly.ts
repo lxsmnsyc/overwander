@@ -55,6 +55,11 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.OminousWind,
   Moves.TrickRoom,
+  Moves.WonderRoom,
+  Moves.Venoshock,
+  Moves.Telekinesis,
+  Moves.FoulPlay,
+  Moves.Round,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Levitate];
@@ -119,6 +124,7 @@ export default function registerGastlySpecies(): void {
         26: [Moves.Payback],
         33: [Moves.DreamEater],
         36: [Moves.DestinyBond, Moves.DarkPulse],
+        43: [Moves.Hex],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -132,6 +138,7 @@ export default function registerGastlySpecies(): void {
         Moves.Astonish,
         Moves.Grudge,
         Moves.WillOWisp,
+        Moves.ClearSmog,
       ],
     },
   });
@@ -169,6 +176,7 @@ export default function registerGastlySpecies(): void {
         38: [Moves.DreamEater],
         44: [Moves.DarkPulse],
         48: [Moves.DestinyBond],
+        55: [Moves.Hex],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Fling, Moves.PoisonJab, Moves.ShadowClaw],
     },
@@ -202,6 +210,7 @@ export default function registerGastlySpecies(): void {
         38: [Moves.DreamEater],
         44: [Moves.DarkPulse],
         48: [Moves.DestinyBond],
+        55: [Moves.Hex],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

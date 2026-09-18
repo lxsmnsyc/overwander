@@ -40,6 +40,10 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
   Moves.Captivate,
   Moves.NaturalGift,
+  Moves.FlameCharge,
+  Moves.AfterYou,
+  Moves.Round,
+  Moves.Incinerate,
 ];
 
 const FAMILY_ABILITIES = [Abilities.MagmaArmor, Abilities.FlameBody];
@@ -81,6 +85,7 @@ export default function registerSlugmaSpecies(): void {
         8: [Moves.Ember],
         15: [Moves.RockThrow],
         22: [Moves.Harden],
+        23: [Moves.FlameBurst],
         29: [Moves.Amnesia],
         36: [Moves.Flamethrower],
         38: [Moves.LavaPlume],
@@ -89,7 +94,7 @@ export default function registerSlugmaSpecies(): void {
         56: [Moves.EarthPower],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.AcidArmor, Moves.HeatWave],
+      egg: [Moves.AcidArmor, Moves.HeatWave, Moves.Inferno],
     },
   });
 
@@ -124,8 +129,10 @@ export default function registerSlugmaSpecies(): void {
       level: {
         1: [Moves.Smog, Moves.Ember, Moves.RockThrow, Moves.Yawn],
         22: [Moves.Harden],
+        23: [Moves.FlameBurst],
         29: [Moves.Amnesia],
         36: [Moves.Flamethrower],
+        38: [Moves.ShellSmash],
         40: [Moves.LavaPlume],
         48: [Moves.RockSlide],
         60: [Moves.BodySlam],
@@ -142,6 +149,8 @@ export default function registerSlugmaSpecies(): void {
         Moves.RockPolish,
         Moves.StealthRock,
         Moves.StoneEdge,
+        Moves.SmackDown,
+        Moves.Bulldoze,
       ],
     },
   });

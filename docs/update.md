@@ -1,10 +1,13 @@
 # Releases
 
-Every major release of Overwander is named after a region and gets a page here,
-showing what it brought and what to go and look at first.
+Every release of Overwander gets a page here, showing what it brought and what
+to go and look at first. The early ones are named after the region they opened.
+A release now covers a family or a group rather than a whole region, and is
+named for what it brings.
 
 | Release                  | What it brought                                                                                                                |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| [The fifth generation's moves](update/fifth-generation-moves.md) | 92 moves taught to everyone already here, with pictures of their own, and three more starters |
 | [Sinnoh](update/sinnoh.md) | 107 more pokemon, a signature ability for 246 families, 113 new moves, a fourth league and Frontier, and Team Galactic |
 | [Open world](update/open-world.md) | A map with no edges, caves under the world, named towns with streets, and ground drawn from tilesets |
 | [Hoenn](update/hoenn.md) | 135 more pokemon, 102 new moves, the Battle Frontier, a third league, and Team Aqua and Team Magma |

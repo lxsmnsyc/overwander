@@ -58,6 +58,8 @@ const FAMILY_TEACHABLE = [
   Moves.GrassKnot,
   Moves.Gravity,
   Moves.TrickRoom,
+  Moves.Telekinesis,
+  Moves.Round,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll];
@@ -104,6 +106,7 @@ export default function registerExeggcuteSpecies(): void {
         33: [Moves.WorrySeed],
         37: [Moves.SleepPowder, Moves.NaturalGift],
         42: [Moves.SolarBeam],
+        53: [Moves.Bestow],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Strength, Moves.SeedBomb],
       egg: [
@@ -147,6 +150,7 @@ export default function registerExeggcuteSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Barrage, Moves.Hypnosis, Moves.Confusion, Moves.SeedBomb],
+        17: [Moves.Psyshock],
         19: [Moves.Stomp],
         31: [Moves.EggBomb],
         37: [Moves.WoodHammer],
@@ -161,6 +165,7 @@ export default function registerExeggcuteSpecies(): void {
         Moves.NaturalGift,
         Moves.WorrySeed,
         Moves.ZenHeadbutt,
+        Moves.Psyshock,
       ],
     },
   });

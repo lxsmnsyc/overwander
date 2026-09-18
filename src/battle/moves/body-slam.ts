@@ -8,7 +8,13 @@ import { BattleEvents, MoveTargetType } from '../events';
  * Moves that never miss a minimized target and squash it for double
  * damage
  */
-const MINIMIZE_PUNISHERS = new Set<Moves>([Moves.BodySlam, Moves.Stomp]);
+const MINIMIZE_PUNISHERS = new Set<Moves>([
+  Moves.BodySlam,
+  Moves.Stomp,
+  Moves.Steamroller,
+  Moves.HeavySlam,
+  Moves.HeatCrash,
+]);
 
 // https://bulbapedia.bulbagarden.net/wiki/Body_Slam_(move)
 export default function setupBodySlam(battle: Battle): void {

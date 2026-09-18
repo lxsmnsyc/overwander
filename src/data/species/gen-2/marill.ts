@@ -54,6 +54,9 @@ const FAMILY_TEACHABLE = [
   Moves.Fling,
   Moves.GrassKnot,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.Scald,
+  Moves.WorkUp,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ThickFat, Abilities.HugePower];
@@ -158,6 +161,7 @@ export default function registerMarillSpecies(): void {
         Moves.Substitute,
         Moves.FocusBlast,
         Moves.GigaImpact,
+        Moves.Bulldoze,
       ],
     },
   });

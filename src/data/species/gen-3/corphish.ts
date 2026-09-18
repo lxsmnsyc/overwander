@@ -54,6 +54,9 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.Payback,
   Moves.XScissor,
+  Moves.HoneClaws,
+  Moves.Round,
+  Moves.Scald,
 ];
 
 export default function registerCorphishSpecies(): void {
@@ -103,7 +106,7 @@ export default function registerCorphishSpecies(): void {
         44: [Moves.Guillotine],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.AncientPower, Moves.Endeavor, Moves.MudSport],
+      egg: [Moves.AncientPower, Moves.Endeavor, Moves.MudSport, Moves.ChipAway],
     },
   });
 
@@ -153,6 +156,9 @@ export default function registerCorphishSpecies(): void {
         Moves.Avalanche,
         Moves.DarkPulse,
         Moves.GigaImpact,
+        Moves.SludgeWave,
+        Moves.Retaliate,
+        Moves.Snarl,
       ],
     },
   });

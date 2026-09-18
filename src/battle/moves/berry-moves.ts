@@ -2,6 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import type { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
 import { BERRY_RESIST_TYPES, isBerry } from '../../data/items/berries';
+import { GEMS } from '../../data/items/gems';
 import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
@@ -74,6 +75,17 @@ export default function setupBerryMoves(battle: Battle): void {
       return;
     }
 
+    // Incinerate burns a berry or a gem up, and nobody gets anything
+    if (event.parent.move === Moves.Incinerate) {
+      const target = event.parent.target;
+      const held = stealableItem(target);
+
+      if (held != null && (isBerry(held) || GEMS.has(held))) {
+        target.removeItem(held, { type: EffectType.Move, move: Moves.Incinerate, unit: source });
+      }
+      return;
+    }
+
     // The berry is taken out of the target, and the eater gets what
     // the target would have got out of it
     if (EATING_MOVES.has(event.parent.move)) {
@@ -93,7 +105,11 @@ export default function setupBerryMoves(battle: Battle): void {
   });
 
   battle.on(BattleEvents.CheckUnitAttackEffectChance, EventPriority.Post, (event) => {
-    if (EATING_MOVES.has(event.parent.move) || event.parent.move === Moves.NaturalGift) {
+    if (
+      EATING_MOVES.has(event.parent.move) ||
+      event.parent.move === Moves.NaturalGift ||
+      event.parent.move === Moves.Incinerate
+    ) {
       event.value = 100;
     }
   });

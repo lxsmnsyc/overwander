@@ -47,6 +47,11 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.RockPolish,
   Moves.StealthRock,
+  Moves.SmackDown,
+  Moves.Round,
+  Moves.Retaliate,
+  Moves.Bulldoze,
+  Moves.Snarl,
 ];
 
 // The line's own moves come at the same order the whole way up, only
@@ -93,6 +98,7 @@ export default function registerLarvitarSpecies(): void {
       level: {
         1: [Moves.Bite, Moves.Leer],
         ...FAMILY_LEVEL,
+        14: [Moves.ChipAway],
         28: [Moves.DarkPulse],
         32: [Moves.Payback],
         36: [Moves.ScaryFace],
@@ -148,6 +154,7 @@ export default function registerLarvitarSpecies(): void {
       level: {
         1: [Moves.Bite, Moves.Leer, Moves.Sandstorm, Moves.Screech],
         ...FAMILY_LEVEL,
+        14: [Moves.ChipAway],
         28: [Moves.DarkPulse],
         34: [Moves.Payback],
         38: [Moves.ScaryFace],
@@ -199,6 +206,7 @@ export default function registerLarvitarSpecies(): void {
           Moves.ThunderFang,
         ],
         ...FAMILY_LEVEL,
+        14: [Moves.ChipAway],
         28: [Moves.DarkPulse],
         34: [Moves.Payback],
         38: [Moves.ScaryFace],
@@ -246,6 +254,10 @@ export default function registerLarvitarSpecies(): void {
         Moves.GigaImpact,
         Moves.RockClimb,
         Moves.ShadowClaw,
+        Moves.HoneClaws,
+        Moves.FoulPlay,
+        Moves.Incinerate,
+        Moves.DragonTail,
       ],
     },
   });

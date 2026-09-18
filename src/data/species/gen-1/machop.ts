@@ -68,6 +68,14 @@ const FAMILY_TEACHABLE = [
   Moves.PoisonJab,
   Moves.RockClimb,
   Moves.VacuumWave,
+  Moves.SmackDown,
+  Moves.LowSweep,
+  Moves.Round,
+  Moves.Incinerate,
+  Moves.Retaliate,
+  Moves.Bulldoze,
+  Moves.WorkUp,
+  Moves.DualChop,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Guts, Abilities.NoGuard];
@@ -107,6 +115,7 @@ export default function registerMachopSpecies(): void {
       level: {
         1: [Moves.KarateChop, Moves.LowKick, Moves.Leer],
         7: [Moves.FocusEnergy],
+        13: [Moves.LowSweep],
         19: [Moves.SeismicToss],
         25: [Moves.Foresight, Moves.Revenge],
         31: [Moves.VitalThrow],
@@ -125,6 +134,7 @@ export default function registerMachopSpecies(): void {
         Moves.BulletPunch,
         Moves.CloseCombat,
         Moves.PowerTrick,
+        Moves.HeavySlam,
       ],
     },
   });
@@ -162,6 +172,7 @@ export default function registerMachopSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.KarateChop, Moves.LowKick, Moves.Leer, Moves.FocusEnergy],
+        13: [Moves.LowSweep],
         19: [Moves.SeismicToss],
         25: [Moves.Foresight, Moves.Revenge],
         34: [Moves.VitalThrow],
@@ -199,7 +210,8 @@ export default function registerMachopSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.KarateChop, Moves.LowKick, Moves.Leer, Moves.FocusEnergy],
+        1: [Moves.KarateChop, Moves.LowKick, Moves.Leer, Moves.FocusEnergy, Moves.WideGuard],
+        13: [Moves.LowSweep],
         19: [Moves.SeismicToss],
         25: [Moves.Foresight, Moves.Revenge],
         34: [Moves.VitalThrow],

@@ -15,6 +15,8 @@ export const ABILITY_MOVES = new Set<Moves>([
   Moves.SkillSwap,
   Moves.GastroAcid,
   Moves.WorrySeed,
+  Moves.Entrainment,
+  Moves.SimpleBeam,
 ]);
 
 /**
@@ -48,21 +50,38 @@ function abilitiesOf(unit: Unit): Abilities[] {
   return abilities;
 }
 
+/** Whether the move would do anything, which is also when it works */
+function works(move: Moves, source: Unit, target: Unit): boolean {
+  switch (move) {
+    case Moves.RolePlay:
+    case Moves.GastroAcid:
+      return abilitiesOf(target).length > 0;
+    case Moves.Entrainment:
+      return abilitiesOf(source).length > 0;
+    case Moves.SimpleBeam:
+      return !target.hasAbility(Abilities.Simple);
+    case Moves.SkillSwap:
+      return abilitiesOf(source).length > 0 || abilitiesOf(target).length > 0;
+    default:
+      return true;
+  }
+}
+
 export default function setupAbilityMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
-    if (event.target.type !== MoveTargetType.Unit) {
+    if (!ABILITY_MOVES.has(event.move) || event.target.type !== MoveTargetType.Unit) {
       return;
     }
 
     const target = event.target.unit;
 
+    if (!works(event.move, event.source, target)) {
+      event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
+      return;
+    }
+
     if (event.move === Moves.RolePlay) {
       const copying = abilitiesOf(target);
-
-      if (copying.length === 0) {
-        event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
-        return;
-      }
 
       for (const ability of abilitiesOf(event.source)) {
         event.source.removeAbility(ability);
@@ -70,6 +89,31 @@ export default function setupAbilityMoves(battle: Battle): void {
       for (const ability of copying) {
         event.source.addAbility(ability);
       }
+      return;
+    }
+
+    // Entrainment is Role Play the other way round
+    if (event.move === Moves.Entrainment) {
+      const giving = abilitiesOf(event.source);
+
+      for (const ability of abilitiesOf(target)) {
+        target.removeAbility(ability);
+      }
+      for (const ability of giving) {
+        target.addAbility(ability);
+      }
+      return;
+    }
+
+    // Simple Beam is Worry Seed with Simple, and a target that is
+    // already Simple has nothing to lose
+    if (event.move === Moves.SimpleBeam) {
+      const held = abilitiesOf(target);
+
+      if (held.length > 0) {
+        target.removeAbility(held[Math.floor(battle.random() * held.length)]);
+      }
+      target.addAbility(Abilities.Simple);
       return;
     }
 
@@ -85,10 +129,6 @@ export default function setupAbilityMoves(battle: Battle): void {
 
       if (held.length > 0) {
         target.removeAbility(held[Math.floor(battle.random() * held.length)]);
-      } else if (event.move === Moves.GastroAcid) {
-        // Nothing to shut off is nothing done
-        event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
-        return;
       }
       if (event.move === Moves.WorrySeed) {
         target.addAbility(Abilities.Insomnia);
@@ -103,11 +143,6 @@ export default function setupAbilityMoves(battle: Battle): void {
     const mine = abilitiesOf(event.source);
     const theirs = abilitiesOf(target);
 
-    if (mine.length === 0 && theirs.length === 0) {
-      event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
-      return;
-    }
-
     for (const ability of mine) {
       event.source.removeAbility(ability);
     }
@@ -119,6 +154,15 @@ export default function setupAbilityMoves(battle: Battle): void {
     }
     for (const ability of mine) {
       target.addAbility(ability);
+    }
+  });
+
+  // The AI is told before the cast rather than after it fails
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && ABILITY_MOVES.has(event.move)) {
+      event.usable =
+        event.target.type === MoveTargetType.Unit &&
+        works(event.move, event.source, event.target.unit);
     }
   });
 }

@@ -44,6 +44,8 @@ const FAMILY_TEACHABLE = [
   Moves.EnergyBall,
   Moves.GrassKnot,
   Moves.NaturalGift,
+  Moves.AfterYou,
+  Moves.Round,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll, Abilities.SolarPower];

@@ -42,6 +42,7 @@ export default function registerMisdreavusSpecies(): void {
     learnSet: {
       level: {
         11: [Moves.Astonish],
+        23: [Moves.Hex],
         32: [Moves.Payback],
         50: [Moves.PowerGem],
         53: [Moves.Grudge],
@@ -104,8 +105,21 @@ export default function registerMisdreavusSpecies(): void {
         Moves.OminousWind,
         Moves.SuckerPunch,
         Moves.TrickRoom,
+        Moves.WonderRoom,
+        Moves.Telekinesis,
+        Moves.MagicRoom,
+        Moves.FoulPlay,
+        Moves.Round,
+        Moves.EchoedVoice,
       ],
-      egg: [Moves.DestinyBond, Moves.Screech, Moves.Imprison, Moves.NastyPlot, Moves.ShadowSneak],
+      egg: [
+        Moves.DestinyBond,
+        Moves.Screech,
+        Moves.Imprison,
+        Moves.NastyPlot,
+        Moves.ShadowSneak,
+        Moves.WonderRoom,
+      ],
     },
   });
 }

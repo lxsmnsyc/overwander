@@ -12,7 +12,7 @@ import { MULTI_HIT_MOVES } from './multi-hit';
  * damaging move that resolves nothing on its first step would be a
  * pokemon standing still and then hitting on its way out
  */
-const STRIKES_FIRST = new Set<Moves>([Moves.UTurn]);
+const STRIKES_FIRST = new Set<Moves>([Moves.UTurn, Moves.VoltSwitch]);
 
 export default function setupHitMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {

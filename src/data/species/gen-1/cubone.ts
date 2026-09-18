@@ -69,6 +69,12 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.RockClimb,
   Moves.StealthRock,
+  Moves.SmackDown,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Incinerate,
+  Moves.Retaliate,
+  Moves.Bulldoze,
 ];
 
 const FAMILY_ABILITIES = [Abilities.RockHead, Abilities.LightningRod];
@@ -116,6 +122,7 @@ export default function registerCuboneSpecies(): void {
         33: [Moves.FalseSwipe, Moves.Fling],
         37: [Moves.Thrash],
         41: [Moves.BoneRush],
+        47: [Moves.Retaliate],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -127,6 +134,7 @@ export default function registerCuboneSpecies(): void {
         Moves.PerishSong,
         Moves.AncientPower,
         Moves.IronHead,
+        Moves.ChipAway,
       ],
     },
   });
@@ -165,6 +173,7 @@ export default function registerCuboneSpecies(): void {
         39: [Moves.FalseSwipe],
         41: [Moves.Thrash],
         53: [Moves.BoneRush],
+        59: [Moves.Retaliate],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

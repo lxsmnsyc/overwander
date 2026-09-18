@@ -96,6 +96,8 @@ export const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.Roosting]: 'Roosting',
   [Statuses.MagnetRisen]: 'Magnet Rise',
   [Statuses.AquaRinged]: 'Aqua Ring',
+  [Statuses.Telekinetic]: 'Telekinesis',
+  [Statuses.SkyDropped]: 'Sky Drop',
 };
 
 /**

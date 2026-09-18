@@ -68,6 +68,20 @@ export default function setupItemMoves(battle: Battle): void {
       return;
     }
 
+    if (event.move === Moves.Bestow && event.target.type === MoveTargetType.Unit) {
+      const giving = stealableItem(event.source);
+      const receiver = event.target.unit;
+
+      if (giving == null || !hasFreeItemSlot(receiver)) {
+        event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
+        return;
+      }
+
+      event.source.removeItem(giving, cause);
+      receiver.addItem(giving);
+      return;
+    }
+
     if (!TRADING_MOVES.has(event.move) || event.target.type !== MoveTargetType.Unit) {
       return;
     }
@@ -97,6 +111,12 @@ export default function setupItemMoves(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     if (event.usable && event.move === Moves.Recycle) {
       event.usable = spent.has(event.source);
+    }
+    if (event.usable && event.move === Moves.Bestow) {
+      event.usable =
+        stealableItem(event.source) != null &&
+        event.target.type === MoveTargetType.Unit &&
+        hasFreeItemSlot(event.target.unit);
     }
   });
 

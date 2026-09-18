@@ -53,6 +53,10 @@ const FAMILY_TEACHABLE = [
   Moves.EnergyBall,
   Moves.GrassKnot,
   Moves.NaturalGift,
+  Moves.Venoshock,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.GrassPledge,
 ];
 
 export default function registerBulbasaurSpecies(): void {
@@ -208,6 +212,7 @@ export default function registerBulbasaurSpecies(): void {
         Moves.GigaImpact,
         Moves.RockClimb,
         Moves.SeedBomb,
+        Moves.Bulldoze,
       ],
     },
   });

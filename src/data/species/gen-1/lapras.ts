@@ -109,6 +109,11 @@ export default function registerLaprasSpecies(): void {
         Moves.IronHead,
         Moves.NaturalGift,
         Moves.ZenHeadbutt,
+        Moves.Round,
+        Moves.EchoedVoice,
+        Moves.Bulldoze,
+        Moves.FrostBreath,
+        Moves.DrillRun,
       ],
       egg: [
         Moves.AuroraBeam,

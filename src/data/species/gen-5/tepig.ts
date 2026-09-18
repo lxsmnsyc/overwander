@@ -1,0 +1,252 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { EvolutionMethod, Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM, HM and tutor moves shared by the whole family
+const FAMILY_TEACHABLE = [
+  Moves.Attract,
+  Moves.Covet,
+  Moves.DoubleTeam,
+  Moves.EchoedVoice,
+  Moves.Endeavor,
+  Moves.Facade,
+  Moves.FireBlast,
+  Moves.FirePledge,
+  Moves.FlameCharge,
+  Moves.Flamethrower,
+  Moves.Frustration,
+  Moves.GrassKnot,
+  Moves.GyroBall,
+  Moves.HeatWave,
+  Moves.HelpingHand,
+  Moves.HiddenPower,
+  Moves.Incinerate,
+  Moves.IronTail,
+  Moves.Overheat,
+  Moves.Protect,
+  Moves.Rest,
+  Moves.Return,
+  Moves.Roar,
+  Moves.RockSmash,
+  Moves.RockTomb,
+  Moves.Round,
+  Moves.SleepTalk,
+  Moves.Snore,
+  Moves.SolarBeam,
+  Moves.Strength,
+  Moves.Substitute,
+  Moves.SunnyDay,
+  Moves.Superpower,
+  Moves.Swagger,
+  Moves.Taunt,
+  Moves.Toxic,
+  Moves.WildCharge,
+  Moves.WillOWisp,
+];
+
+/** What the two that fight hand to hand pick up on top of the family's */
+const FIGHTER_TEACHABLE = [
+  Moves.BrickBreak,
+  Moves.Bulldoze,
+  Moves.FirePunch,
+  Moves.Fling,
+  Moves.FocusBlast,
+  Moves.LowKick,
+  Moves.LowSweep,
+  Moves.PoisonJab,
+  Moves.RockSlide,
+  Moves.StoneEdge,
+  Moves.ThunderPunch,
+  Moves.WorkUp,
+];
+
+/**
+ * The fire starter of Unova, a pig that blows smoke from its snout
+ * and ends up fighting with its fists: an Emboar lights its beard
+ * and throws the fire along with the punch
+ */
+export default function registerTepigSpecies(): void {
+  registerSpecies(Species.Tepig, {
+    dexNumber: 498,
+    evolvesInto: [
+      {
+        species: Species.Pignite,
+        method: EvolutionMethod.Level,
+        level: 17,
+      },
+    ],
+    name: 'Tepig',
+    category: 'Fire Pig Pokemon',
+    height: 0.5,
+    weight: 9.9,
+    family: Families.Tepig,
+    stats: {
+      [Stats.HP]: 65,
+      [Stats.Attack]: 63,
+      [Stats.Defense]: 45,
+      [Stats.SpecialAttack]: 45,
+      [Stats.SpecialDefense]: 45,
+      [Stats.Speed]: 45,
+    },
+    types: [Types.Fire],
+    abilities: [Abilities.Blaze],
+    hiddenAbilities: [Abilities.ThickFat],
+    eggGroups: [EggGroups.Field],
+    genderRatio: [7, 1],
+    catchRate: 45,
+    biomes: [Biome.Badlands, Biome.Desert],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [Moves.Tackle],
+        3: [Moves.TailWhip],
+        7: [Moves.Ember],
+        9: [Moves.OdorSleuth],
+        13: [Moves.DefenseCurl],
+        15: [Moves.FlameCharge],
+        19: [Moves.Smog],
+        21: [Moves.Rollout],
+        25: [Moves.TakeDown],
+        27: [Moves.HeatCrash],
+        31: [Moves.Assurance],
+        33: [Moves.Flamethrower],
+        37: [Moves.HeadSmash],
+        39: [Moves.Roar],
+        43: [Moves.FlareBlitz],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+      egg: [
+        Moves.BodySlam,
+        Moves.Covet,
+        Moves.Curse,
+        Moves.Endeavor,
+        Moves.HeavySlam,
+        Moves.Magnitude,
+        Moves.SleepTalk,
+        Moves.Superpower,
+        Moves.Thrash,
+        Moves.Yawn,
+      ],
+    },
+  });
+  registerSpecies(Species.Pignite, {
+    dexNumber: 499,
+    evolvesInto: [
+      {
+        species: Species.Emboar,
+        method: EvolutionMethod.Level,
+        level: 36,
+      },
+    ],
+    name: 'Pignite',
+    category: 'Fire Pig Pokemon',
+    height: 1.0,
+    weight: 55.5,
+    family: Families.Tepig,
+    evolvesFrom: Species.Tepig,
+    stats: {
+      [Stats.HP]: 90,
+      [Stats.Attack]: 93,
+      [Stats.Defense]: 55,
+      [Stats.SpecialAttack]: 70,
+      [Stats.SpecialDefense]: 55,
+      [Stats.Speed]: 55,
+    },
+    types: [Types.Fire, Types.Fighting],
+    abilities: [Abilities.Blaze],
+    hiddenAbilities: [Abilities.ThickFat],
+    eggGroups: [EggGroups.Field],
+    genderRatio: [7, 1],
+    catchRate: 45,
+    biomes: [Biome.Badlands, Biome.Desert],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [Moves.Tackle, Moves.TailWhip, Moves.Ember, Moves.OdorSleuth],
+        3: [Moves.TailWhip],
+        7: [Moves.Ember],
+        9: [Moves.OdorSleuth],
+        13: [Moves.DefenseCurl],
+        15: [Moves.FlameCharge],
+        // What it comes out of the evolution knowing
+        17: [Moves.ArmThrust],
+        20: [Moves.Smog],
+        23: [Moves.Rollout],
+        28: [Moves.TakeDown],
+        31: [Moves.HeatCrash],
+        36: [Moves.Assurance],
+        39: [Moves.Flamethrower],
+        44: [Moves.HeadSmash],
+        47: [Moves.Roar],
+        52: [Moves.FlareBlitz],
+      },
+      teachable: [...FAMILY_TEACHABLE, ...FIGHTER_TEACHABLE],
+    },
+  });
+  registerSpecies(Species.Emboar, {
+    dexNumber: 500,
+    name: 'Emboar',
+    category: 'Mega Fire Pig Pokemon',
+    height: 1.6,
+    weight: 150.0,
+    family: Families.Tepig,
+    evolvesFrom: Species.Pignite,
+    stats: {
+      [Stats.HP]: 110,
+      [Stats.Attack]: 123,
+      [Stats.Defense]: 65,
+      [Stats.SpecialAttack]: 100,
+      [Stats.SpecialDefense]: 65,
+      [Stats.Speed]: 65,
+    },
+    types: [Types.Fire, Types.Fighting],
+    abilities: [Abilities.Blaze],
+    // Iron Fist is this registry's rather than the mainline's: the fists
+    // are what it evolved into having, and both its punches are tutored
+    hiddenAbilities: [Abilities.Reckless, Abilities.IronFist],
+    eggGroups: [EggGroups.Field],
+    genderRatio: [7, 1],
+    catchRate: 45,
+    biomes: [Biome.Badlands, Biome.Desert],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [Moves.Tackle, Moves.TailWhip, Moves.Ember, Moves.OdorSleuth, Moves.HammerArm],
+        3: [Moves.TailWhip],
+        7: [Moves.Ember],
+        9: [Moves.OdorSleuth],
+        13: [Moves.DefenseCurl],
+        15: [Moves.FlameCharge],
+        17: [Moves.ArmThrust],
+        20: [Moves.Smog],
+        23: [Moves.Rollout],
+        28: [Moves.TakeDown],
+        31: [Moves.HeatCrash],
+        38: [Moves.Assurance],
+        43: [Moves.Flamethrower],
+        50: [Moves.HeadSmash],
+        55: [Moves.Roar],
+        62: [Moves.FlareBlitz],
+      },
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...FIGHTER_TEACHABLE,
+        Moves.BlastBurn,
+        Moves.Block,
+        Moves.BulkUp,
+        Moves.Earthquake,
+        Moves.GigaImpact,
+        Moves.HyperBeam,
+        Moves.IronHead,
+        Moves.Scald,
+        Moves.SmackDown,
+      ],
+    },
+  });
+}

@@ -120,6 +120,13 @@ export default function registerAipomSpecies(): void {
         Moves.SeedBomb,
         Moves.ShadowClaw,
         Moves.UTurn,
+        Moves.HoneClaws,
+        Moves.LowSweep,
+        Moves.FoulPlay,
+        Moves.Round,
+        Moves.Acrobatics,
+        Moves.Retaliate,
+        Moves.WorkUp,
       ],
       egg: [
         Moves.Agility,

@@ -46,6 +46,11 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.Tickle]: -1,
       [Moves.FeatherDance]: -2,
       [Moves.Memento]: -2,
+      [Moves.HoneClaws]: 1,
+      [Moves.Coil]: 1,
+      [Moves.ShellSmash]: 2,
+      [Moves.WorkUp]: 1,
+      [Moves.ShiftGear]: 1,
     },
   ],
   [
@@ -59,6 +64,9 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       // cannot aim with
       [Moves.Flatter]: 1,
       [Moves.Memento]: -2,
+      [Moves.QuiverDance]: 1,
+      [Moves.ShellSmash]: 2,
+      [Moves.WorkUp]: 1,
     },
   ],
   [
@@ -72,6 +80,8 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.Charge]: 1,
       [Moves.MetalSound]: -2,
       [Moves.FakeTears]: -2,
+      [Moves.QuiverDance]: 1,
+      [Moves.ShellSmash]: -1,
     },
   ],
   [
@@ -91,6 +101,9 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.CosmicPower]: 1,
       [Moves.Stockpile]: 1,
       [Moves.Tickle]: -1,
+      [Moves.Coil]: 1,
+      [Moves.ShellSmash]: -1,
+      [Moves.CottonGuard]: 3,
     },
   ],
   [
@@ -102,6 +115,10 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.ScaryFace]: -2,
       [Moves.CottonSpore]: -2,
       [Moves.DragonDance]: 1,
+      [Moves.Autotomize]: 2,
+      [Moves.QuiverDance]: 1,
+      [Moves.ShellSmash]: 2,
+      [Moves.ShiftGear]: 2,
     },
   ],
   [
@@ -111,6 +128,8 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.SandAttack]: -1,
       [Moves.SmokeScreen]: -1,
       [Moves.Kinesis]: -1,
+      [Moves.HoneClaws]: 1,
+      [Moves.Coil]: 1,
     },
   ],
   [
@@ -131,18 +150,32 @@ function isAlly(one: Unit, other: Unit): boolean {
   return one !== other && one.team.alliance === other.team.alliance;
 }
 
+export interface StageMoveEffect {
+  stage: Stages;
+  value: number;
+}
+
 /**
- * The stage change a move applies, if any (used by e.g. the AI)
+ * Every stage change a move applies, empty for a move that applies
+ * none. All of them rather than the first: a Shell Smash is three
+ * rises and two drops, and a pinned Attack says nothing about the rest
  */
-export function getStageMoveEffect(move: Moves): { stage: Stages; value: number } | undefined {
+export function getStageMoveEffects(move: Moves): StageMoveEffect[] {
+  const effects: StageMoveEffect[] = [];
+
   for (const [stage, config] of STAGE_MOVE_GROUPS) {
     const value = config[move];
 
     if (value != null) {
-      return { stage, value };
+      effects.push({ stage, value });
     }
   }
-  return undefined;
+  return effects;
+}
+
+/** The first stage change a move applies, for what shows only one */
+export function getStageMoveEffect(move: Moves): StageMoveEffect | undefined {
+  return getStageMoveEffects(move)[0];
 }
 
 /**
@@ -153,19 +186,25 @@ export function getStageMoveEffect(move: Moves): { stage: Stages; value: number 
  */
 function setupFriendlyDrops(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
-    const effect = getStageMoveEffect(event.move);
-
     if (
       !event.usable ||
-      effect == null ||
-      effect.value >= 0 ||
       event.target.type !== MoveTargetType.Unit ||
       !isAlly(event.source, event.target.unit)
     ) {
       return;
     }
 
-    event.usable = event.target.unit.hasAbility(Abilities.Contrary);
+    let drops = false;
+
+    for (const effect of getStageMoveEffects(event.move)) {
+      if (effect.value < 0) {
+        drops = true;
+      }
+    }
+
+    if (drops) {
+      event.usable = event.target.unit.hasAbility(Abilities.Contrary);
+    }
   });
 }
 
@@ -182,26 +221,44 @@ export default function setupStageMoves(battle: Battle): void {
   // The engine is asked about the second rather than the AI keeping
   // its own list of what blocks a stage
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    const effect = getStageMoveEffect(event.move);
+    const effects = getStageMoveEffects(event.move);
 
-    if (effect == null) {
+    if (effects.length === 0) {
       return;
     }
 
     const receiver = event.target.type === MoveTargetType.Unit ? event.target.unit : event.source;
-    const current = receiver.stages[effect.stage];
-    const pinned = effect.value > 0 ? current >= MAX_STAGE : current <= MIN_STAGE;
+    const friendly = receiver.team.alliance === event.source.team.alliance;
+    const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
 
-    if (
-      pinned ||
-      !receiver.checkCanAddStage(
-        effect.stage,
-        effect.value,
-        { type: EffectType.Move, move: event.move, unit: event.source },
-        // Speculative: the AI is weighing the move, not casting it
-        true,
-      )
-    ) {
+    // Only the changes the move is cast for count: a rise on the
+    // caster's side, a drop on the other. Shell Smash's drops are its
+    // price. A move with none of those (Swagger's gift) is judged on
+    // everything it does
+    let wanted = 0;
+    let moving = false;
+
+    for (const effect of effects) {
+      if (effect.value > 0 === friendly) {
+        wanted += 1;
+      }
+    }
+
+    for (const effect of effects) {
+      if (wanted > 0 && effect.value > 0 !== friendly) {
+        continue;
+      }
+
+      const current = receiver.stages[effect.stage];
+      const pinned = effect.value > 0 ? current >= MAX_STAGE : current <= MIN_STAGE;
+
+      // Speculative: the AI is weighing the move, not casting it
+      if (!pinned && receiver.checkCanAddStage(effect.stage, effect.value, cause, true)) {
+        moving = true;
+      }
+    }
+
+    if (!moving) {
       event.score -= USELESS_PENALTY;
     }
   });

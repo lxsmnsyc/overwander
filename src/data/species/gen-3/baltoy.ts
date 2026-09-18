@@ -54,6 +54,14 @@ const FAMILY_TEACHABLE = [
   Moves.StealthRock,
   Moves.TrickRoom,
   Moves.ZenHeadbutt,
+  Moves.WonderRoom,
+  Moves.Psyshock,
+  Moves.Telekinesis,
+  Moves.SmackDown,
+  Moves.Round,
+  Moves.AllySwitch,
+  Moves.Bulldoze,
+  Moves.DrillRun,
 ];
 
 export default function registerBaltoySpecies(): void {
@@ -97,6 +105,7 @@ export default function registerBaltoySpecies(): void {
         19: [Moves.SelfDestruct],
         25: [Moves.AncientPower],
         31: [Moves.Sandstorm, Moves.PowerTrick],
+        34: [Moves.GuardSplit, Moves.PowerSplit],
         37: [Moves.CosmicPower],
         45: [Moves.Explosion],
         53: [Moves.EarthPower],
@@ -143,6 +152,7 @@ export default function registerBaltoySpecies(): void {
         19: [Moves.SelfDestruct],
         25: [Moves.AncientPower],
         31: [Moves.Sandstorm, Moves.PowerTrick],
+        34: [Moves.GuardSplit, Moves.PowerSplit],
         36: [Moves.HyperBeam],
         42: [Moves.CosmicPower],
         55: [Moves.Explosion],

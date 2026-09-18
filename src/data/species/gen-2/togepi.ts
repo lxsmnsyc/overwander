@@ -61,6 +61,13 @@ const FAMILY_TEACHABLE = [
   Moves.GrassKnot,
   Moves.NaturalGift,
   Moves.ZenHeadbutt,
+  Moves.Psyshock,
+  Moves.Telekinesis,
+  Moves.AfterYou,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Incinerate,
+  Moves.WorkUp,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Hustle, Abilities.SereneGrace];
@@ -111,10 +118,12 @@ export default function registerTogepiSpecies(): void {
         ...FAMILY_LEVEL,
         16: [Moves.Yawn],
         21: [Moves.AncientPower],
+        25: [...FAMILY_LEVEL[25], Moves.Bestow],
         26: [Moves.FollowMe],
         31: [...FAMILY_LEVEL[31], Moves.Wish],
         41: [Moves.BatonPass],
         51: [Moves.LastResort],
+        53: [Moves.AfterYou],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -127,6 +136,7 @@ export default function registerTogepiSpecies(): void {
         Moves.LuckyChant,
         Moves.NastyPlot,
         Moves.PsychoShift,
+        Moves.StoredPower,
       ],
     },
   });
@@ -170,10 +180,12 @@ export default function registerTogepiSpecies(): void {
         1: [...FAMILY_LEVEL[1], Moves.MagicalLeaf],
         16: [Moves.Yawn],
         21: [Moves.AncientPower],
+        25: [...FAMILY_LEVEL[25], Moves.Bestow],
         26: [Moves.FollowMe],
         31: [...FAMILY_LEVEL[31], Moves.Wish],
         41: [Moves.BatonPass],
         51: [Moves.LastResort],
+        53: [Moves.AfterYou],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -190,6 +202,7 @@ export default function registerTogepiSpecies(): void {
         Moves.OminousWind,
         Moves.Roost,
         Moves.Tailwind,
+        Moves.Retaliate,
       ],
     },
   });

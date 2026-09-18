@@ -46,6 +46,10 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.Captivate,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Retaliate,
+  Moves.WorkUp,
 ];
 
 export default function registerEeveeSpecies(): void {
@@ -121,7 +125,14 @@ export default function registerEeveeSpecies(): void {
         57: [Moves.TrumpCard],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Flail, Moves.Charm, Moves.Tickle, Moves.Wish],
+      egg: [
+        Moves.Flail,
+        Moves.Charm,
+        Moves.Tickle,
+        Moves.Wish,
+        Moves.Synchronoise,
+        Moves.StoredPower,
+      ],
     },
   });
 
@@ -186,6 +197,7 @@ export default function registerEeveeSpecies(): void {
         Moves.AquaTail,
         Moves.Brine,
         Moves.GigaImpact,
+        Moves.Scald,
       ],
     },
   });
@@ -247,6 +259,8 @@ export default function registerEeveeSpecies(): void {
         Moves.ChargeBeam,
         Moves.GigaImpact,
         Moves.MagnetRise,
+        Moves.VoltSwitch,
+        Moves.WildCharge,
       ],
     },
   });
@@ -304,6 +318,8 @@ export default function registerEeveeSpecies(): void {
 
         Moves.Overheat,
         Moves.GigaImpact,
+        Moves.FlameCharge,
+        Moves.Incinerate,
       ],
     },
   });

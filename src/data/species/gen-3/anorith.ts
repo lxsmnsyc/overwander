@@ -46,6 +46,10 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.RockPolish,
   Moves.StealthRock,
+  Moves.HoneClaws,
+  Moves.SmackDown,
+  Moves.Round,
+  Moves.StruggleBug,
 ];
 
 export default function registerAnorithSpecies(): void {
@@ -148,6 +152,7 @@ export default function registerAnorithSpecies(): void {
         Moves.FlashCannon,
         Moves.GigaImpact,
         Moves.StoneEdge,
+        Moves.Bulldoze,
       ],
     },
   });

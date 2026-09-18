@@ -283,6 +283,8 @@ describe('where a species lives', () => {
       Species.Simisear,
       Species.Panpour,
       Species.Simipour,
+      Species.Dwebble,
+      Species.Crustle,
     ]);
     const staged = new Set<Species>();
 

@@ -1007,6 +1007,9 @@ export const SHELLOS_FORMS = [Species.Shellos, Species.ShellosEast];
 
 export const GASTRODON_FORMS = [Species.Gastrodon, Species.GastrodonEast];
 
+/** Darmanitan standing and Darmanitan sat down, the standing one first */
+export const DARMANITAN_FORMS = [Species.Darmanitan, Species.DarmanitanZen];
+
 /** Cherrim shut and Cherrim open, the shut one first */
 export const CHERRIM_FORMS = [Species.Cherrim, Species.CherrimSunshine];
 

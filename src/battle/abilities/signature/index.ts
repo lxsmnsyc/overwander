@@ -35,6 +35,7 @@ import basculinToAlomomola from './basculin-to-alomomola';
 import joltikToKlink from './joltik-to-klink';
 import zoruaToSolosis from './zorua-to-solosis';
 import axewToDeino from './axew-to-deino';
+import tynamoToMienfoo from './tynamo-to-mienfoo';
 import elgyemToGolett from './elgyem-to-golett';
 import heatmorToLarvesta from './heatmor-to-larvesta';
 import patratToPurrloin from './patrat-to-purrloin';
@@ -91,6 +92,7 @@ const setupAbilities = [
   ...axewToDeino,
   ...pawniardToVullaby,
   ...heatmorToLarvesta,
+  ...tynamoToMienfoo,
 ];
 
 /**

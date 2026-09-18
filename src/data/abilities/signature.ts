@@ -1630,4 +1630,26 @@ export default function registerSignatureAbilities(): void {
     name: 'Pollen Waltz',
     description: 'Every stat stage one of its dances gives it is given to its teammates as well.',
   });
+
+  // Route 4 and the Desert Resort
+  registerSignature(Families.Sandile, Abilities.DeathRoll, {
+    name: 'Death Roll',
+    description: 'Its contact moves hit 1.25x against a target it has already landed one on.',
+  });
+
+  registerSignature(Families.Darumaka, Abilities.GlancingBlow, {
+    name: 'Glancing Blow',
+    description: 'A move of its that misses still deals 1/4 of what it would have.',
+  });
+
+  registerSignature(Families.Maractus, Abilities.DrySpell, {
+    name: 'Dry Spell',
+    description:
+      'While no weather is up, its moves hit 1.3x and it heals 1/16 of its HP each time it acts.',
+  });
+
+  registerSignature(Families.Dwebble, Abilities.Slab, {
+    name: 'Slab',
+    description: 'The rock it carries takes the first 1/4 of its HP worth of damage each fight.',
+  });
 }

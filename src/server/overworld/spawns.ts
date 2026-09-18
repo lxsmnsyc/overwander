@@ -119,14 +119,17 @@ export async function startEncounter(
   // it was carrying. Both are asked for by the caller, since nothing
   // met in the world has either
   const abilities = [
-    ...new Set(
-      deriveTrainedAbilities(
+    ...new Set([
+      ...deriveTrainedAbilities(
         derived.species,
         derived.traitValue,
         derived.ability,
         options.abilities ?? 1,
       ),
-    ),
+      // Whatever the meeting itself came with, which is a family
+      // signature off a fata morgana and nothing else
+      ...(derived.abilities ?? []),
+    ]),
   ];
   const room = Math.max(DEFAULT_ITEM_SLOTS, options.itemSlots ?? DEFAULT_ITEM_SLOTS);
   // Room for both, or the record would hold a second ability it has

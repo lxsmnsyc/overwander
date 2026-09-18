@@ -9,14 +9,7 @@ import {
 import { asNickname } from '../auth/nickname';
 import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
 import { getMaxHealth, needsCare } from '../auth/health';
-import {
-  DEFAULT_ABILITY_SLOTS,
-  DEFAULT_ITEM_SLOTS,
-  DEFAULT_MOVE_SLOTS,
-  Slots,
-  getSlots,
-  packSlots,
-} from '../data/constants/slots';
+import { Slots, defaultSlots, getSlots } from '../data/constants/slots';
 import Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import { Balls, ItemFlags } from '../data/ids/items';
@@ -159,8 +152,6 @@ export async function insertCaughtIn(
   from = '',
 ): Promise<string> {
   const id = newDocId();
-  const room =
-    encounter.slots ?? packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS);
   // The instant is the server's, the calendar the owner's: the stamp
   // is written in their zone, and the species day is the day it was
   // where they were standing
@@ -175,6 +166,9 @@ export async function insertCaughtIn(
       ...(shadow ? [Abilities.Shadow] : []),
     ]),
   ];
+  // Room for what it arrived with, since the battle counts slots
+  // rather than the list and would read a full one as having none free
+  const room = encounter.slots ?? defaultSlots(abilities);
 
   // It arrives whole, and the maximum it is measured against is stored
   // beside it so `hurt` can be a column

@@ -2,8 +2,11 @@ import type Lairs from '../../data/overworld/lair';
 import type Phenomenon from '../../data/overworld/phenomenon';
 import type Weather from '../../data/overworld/weather';
 import {
+  FATA_MORGANA_HIDDEN_CHANCE,
+  FATA_MORGANA_SIGNATURE_CHANCE,
   WEATHER_MIN_IV,
-  hiddenAbilityBoostOf,
+  grantsHiddenAbility,
+  grantsSignature,
   isWeatherFavored,
   shinyBoostOf,
   teachesEggMove,
@@ -26,9 +29,11 @@ import { IV_BITS, IV_MASK, TRAIT_MASK, TRAIT_RANGE } from './bits';
 import {
   RAID_FAMILY_DAY_MIN_IV,
   deriveAbility,
+  deriveExtraHidden,
   deriveGender,
   deriveHeldItems,
   deriveNature,
+  deriveSignature,
   isShinyFor,
 } from './traits';
 
@@ -158,9 +163,7 @@ export default function deriveEncounter(
   const ability = deriveAbility(
     species,
     traitValue,
-    (featured ? SPECIES_DAY_HIDDEN_ABILITY_BOOST : 1) *
-      (sky == null ? 1 : hiddenAbilityBoostOf(sky)) *
-      (options.hiddenBoost ?? 1),
+    (featured ? SPECIES_DAY_HIDDEN_ABILITY_BOOST : 1) * (options.hiddenBoost ?? 1),
   );
 
   // Modern mechanics: gender is a pure ratio roll independent of any
@@ -177,6 +180,28 @@ export default function deriveEncounter(
       ? deriveEggMoves(species, level, eggMoveRoll(traitValue))
       : deriveMoves(species, level);
   const nature = deriveNature(traitValue);
+  // A mirage shows what is not there to be seen: a meeting under one
+  // can keep a second ability out of its line's hidden pool, and more
+  // rarely its family's signature, which is the ability nothing rolls.
+  // A raid prize counts, since it is won under the sky over its lair
+  const underTheSky = type === EncounterType.Wild || isRaidEncounter(type);
+  const hiddenExtra =
+    underTheSky && sky != null && grantsHiddenAbility(sky)
+      ? deriveExtraHidden(species, traitValue, FATA_MORGANA_HIDDEN_CHANCE, ability)
+      : null;
+  const signature =
+    underTheSky && sky != null && grantsSignature(sky)
+      ? deriveSignature(species, traitValue, FATA_MORGANA_SIGNATURE_CHANCE)
+      : null;
+  // The one it rolled first, so the list reads as what it is: what it
+  // would have had under any sky, and what this one added
+  const abilities = [
+    ...new Set([
+      ability,
+      ...(hiddenExtra == null ? [] : [hiddenExtra]),
+      ...(signature == null ? [] : [signature]),
+    ]),
+  ];
 
   return {
     type,
@@ -188,6 +213,7 @@ export default function deriveEncounter(
     lair: options.lair ?? null,
     nature,
     ability,
+    ...(abilities.length > 1 ? { abilities } : {}),
     gender,
     // The day's featured family sparkles eight times as often, the
     // rarest sky doubles whatever is standing under it, and whatever
@@ -235,6 +261,8 @@ export {
   deriveHeldItems,
   deriveNature,
   deriveSize,
+  deriveExtraHidden,
+  deriveSignature,
   deriveSizeScale,
   deriveTrainedAbilities,
   isShinyFor,

@@ -4,6 +4,7 @@ import type Natures from '../../data/ids/natures';
 import type { Items } from '../../data/ids/items';
 import { Genders } from '../../data/ids/species';
 import type { Species } from '../../data/ids/species';
+import { getSignatureAbility } from '../../data/abilities';
 import { getSpeciesAbilityPools, getSpeciesData } from '../../data/species';
 import { getSpeciesHeldItems, pickHeldItem } from '../../data/species/held-items';
 import {
@@ -93,6 +94,60 @@ export function isShinyFor(userId: string, traitValue: number, boost = 1): boole
   // A boost widens the band: 8x takes the odds from 1/4096 to 1/512.
   // A dev run opens it to half of everything before any boost
   return shininess < (SHOWING_OFF && boosting ? DEV_SHINY_THRESHOLD : SHINY_THRESHOLD * boost);
+}
+
+/**
+ * A second ability out of the line's hidden pool where the sky hands
+ * one over, or null.
+ *
+ * Its own seeded stream, like the signature's, so it takes nothing
+ * from the slices the level, gender, ability and nature read. Whatever
+ * the pokemon already rolled is left out of the pick, so a line with
+ * one hidden ability that happened to roll it keeps the one it has
+ */
+export function deriveExtraHidden(
+  species: Species,
+  traitValue: number,
+  chance: number,
+  rolled: Abilities,
+): Abilities | null {
+  const rng = new AleaRNG(`${traitValue}:hidden`);
+
+  if (rng.random() >= chance) {
+    return null;
+  }
+
+  const left: Abilities[] = [];
+
+  for (const ability of getSpeciesAbilityPools(species).hidden) {
+    if (ability !== rolled) {
+      left.push(ability);
+    }
+  }
+
+  if (left.length === 0) {
+    return null;
+  }
+  return left[Math.floor(rng.random() * left.length)];
+}
+
+/**
+ * The family's signature where the sky hands one over, or null.
+ *
+ * Its own seeded stream rather than a slice of the trait value, so it
+ * takes nothing from the slices the level, gender, ability and nature
+ * already read. A family whose signature is not written yet hands
+ * over nothing
+ */
+export function deriveSignature(
+  species: Species,
+  traitValue: number,
+  chance: number,
+): Abilities | null {
+  if (new AleaRNG(`${traitValue}:signature`).random() >= chance) {
+    return null;
+  }
+  return getSignatureAbility(getSpeciesData(species).family);
 }
 
 /**

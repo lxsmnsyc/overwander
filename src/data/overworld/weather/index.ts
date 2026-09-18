@@ -15,7 +15,7 @@ export {
   favorsEverything,
   hiddenAbilityBoostOf,
   isWeatherFavored,
-  shadowsWildMeetings,
+  shadowsMeetings,
   shinyBoostOf,
   spawnFavoredTypes,
   teachesEggMove,

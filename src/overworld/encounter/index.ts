@@ -2,9 +2,11 @@ import type Lairs from '../../data/overworld/lair';
 import type Phenomenon from '../../data/overworld/phenomenon';
 import type Weather from '../../data/overworld/weather';
 import {
+  DARK_DAY_SHADOW_CHANCE,
   WEATHER_MIN_IV,
   hiddenAbilityBoostOf,
   isWeatherFavored,
+  shadowsMeetings,
   shinyBoostOf,
   teachesEggMove,
 } from '../../data/overworld/weather';
@@ -18,7 +20,7 @@ import {
 } from '../../data/species';
 import type ChunkSnapshot from '../chunk-snapshot';
 import type { Spawn } from '../chunk-snapshot';
-import { EncounterType, isRaidEncounter } from './kinds';
+import { EncounterType, isRaidEncounter, isShadowableEncounter } from './kinds';
 import { getSpawnLevels } from './levels';
 import { deriveEggMoves, deriveMoves, eggMoveRoll } from './moves';
 import type { Encounter } from './shape';
@@ -29,6 +31,7 @@ import {
   deriveGender,
   deriveHeldItems,
   deriveNature,
+  isShadowedFor,
   isShinyFor,
 } from './traits';
 
@@ -201,7 +204,17 @@ export default function deriveEncounter(
           (sky == null ? 1 : shinyBoostOf(sky)) *
           (options.shinyBoost ?? 1),
       ),
-    shadow: options.shadow === true,
+    // A dark day closes a share of the hearts that arrive under it,
+    // rolled per pokemon and per player the way the sparkle is. A
+    // caller that already knows keeps saying: a shadow raid's prize
+    // and a syndicate's pokemon are shadowed whatever the sky is doing
+    shadow:
+      options.shadow ??
+      (userId != null &&
+        sky != null &&
+        shadowsMeetings(sky) &&
+        isShadowableEncounter(type) &&
+        isShadowedFor(userId, traitValue, DARK_DAY_SHADOW_CHANCE)),
     moves,
     // Wild meetings only: a raid prize and a hatchling arrive with
     // empty hands, and a Rocket's pokemon is carrying whatever its
@@ -216,7 +229,13 @@ export default function deriveEncounter(
   };
 }
 
-export { ENCOUNTER_TYPE_NAMES, EncounterType, isFatefulEncounter, isRaidEncounter } from './kinds';
+export {
+  ENCOUNTER_TYPE_NAMES,
+  EncounterType,
+  isFatefulEncounter,
+  isRaidEncounter,
+  isShadowableEncounter,
+} from './kinds';
 export type { Encounter } from './shape';
 export {
   SINGLE_SPAWN_LEVELS,
@@ -237,6 +256,7 @@ export {
   deriveSize,
   deriveSizeScale,
   deriveTrainedAbilities,
+  isShadowedFor,
   isShinyFor,
 } from './traits';
 export type { Size } from './traits';

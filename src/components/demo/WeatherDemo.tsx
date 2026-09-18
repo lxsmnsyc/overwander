@@ -3,13 +3,14 @@ import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'soli
 import { Badge, Button, Meta, Note, Row, Select, Slider, Switch } from '../styled';
 import Weather, {
   DARK_DAY_LAMP_CELLS,
+  DARK_DAY_SHADOW_CHANCE,
   WEATHER_DESCRIPTIONS,
   WEATHER_NAMES,
   WEATHER_TYPES,
   favorsEverything,
   hiddenAbilityBoostOf,
   isBoostingWeather,
-  shadowsWildMeetings,
+  shadowsMeetings,
   shinyBoostOf,
   teachesEggMove,
 } from '../../data/overworld/weather';
@@ -635,8 +636,8 @@ export default function WeatherDemo(): JSX.Element {
     if (teachesEggMove(sky)) {
       said.push('meetings carry an egg move');
     }
-    if (shadowsWildMeetings(sky)) {
-      said.push('meetings can be shadows');
+    if (shadowsMeetings(sky)) {
+      said.push(`1 in ${1 / DARK_DAY_SHADOW_CHANCE} arrives shadowed`);
     }
     if (isBoostingWeather(sky)) {
       said.push('carries into battle');

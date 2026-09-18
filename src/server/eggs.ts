@@ -257,15 +257,19 @@ export async function grantNestEgg(
       ivs: hatchling.ivs,
       gender: hatchling.gender,
       nature: hatchling.nature,
-      // It sparkles if it was going to; nothing shadowed comes out of
-      // a nest
+      // It sparkles if it was going to, and a nest claimed under a
+      // dark day can hold a closed heart the way a wild meeting does
       shiny: hatchling.shiny,
-      shadow: false,
+      shadow: hatchling.shadow,
       moves: hatchling.moves,
       ability: hatchling.ability,
       individualValue: hatchling.individualValue,
       traitValue: hatchling.traitValue,
-      hatchSteps: Math.ceil(getEggHatchSteps(species) * NEST_HATCH_FACTOR),
+      hatchSteps: Math.ceil(
+        getEggHatchSteps(species) *
+          NEST_HATCH_FACTOR *
+          (hatchling.shadow ? SHADOW_HATCH_FACTOR : 1),
+      ),
       // Nothing laid it: the ball is the one named for where eggs
       // come from
       ball: Balls.NestBall,
@@ -314,9 +318,12 @@ export async function grantBredEgg(
   const hatchling = deriveEncounter(snapshot, spawn, uid, {
     type: EncounterType.Hatched,
     level: EGG_LEVEL,
+    // The egg is collected from the breeder under a sky, so a dark day
+    // over the day care reaches what is inside it
+    weather: snapshot.weather,
   });
   const ivs = inheritIVs(parents[0], parents[1], () => rng.random());
-  const shadow = inheritsShadow(parents[0], parents[1], () => rng.random());
+  const shadow = inheritsShadow(parents[0], parents[1], () => rng.random()) || hatchling.shadow;
   const nature = inheritNature(parents[0], parents[1], () => rng.random());
   const ability = inheritAbility(species, parents[0], parents[1], () => rng.random());
 

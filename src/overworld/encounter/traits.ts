@@ -96,6 +96,17 @@ export function isShinyFor(userId: string, traitValue: number, boost = 1): boole
 }
 
 /**
+ * Whether the sky closed this one's heart.
+ *
+ * Its own stream, keyed by the pokemon and the player: the same
+ * meeting answers the same way however often it is re-derived, and
+ * the next player along gets their own answer
+ */
+export function isShadowedFor(userId: string, traitValue: number, chance: number): boolean {
+  return new AleaRNG(`${userId}:${traitValue}:shadow`).random() < chance;
+}
+
+/**
  * The ability a trait value picks for the species: the slice's band
  * chooses between the hidden and regular pools, its position within
  * the band chooses the entry.

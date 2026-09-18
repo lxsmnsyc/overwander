@@ -114,8 +114,7 @@ export const WEATHER_DESCRIPTIONS: Record<Weather, string> = {
     'The rarest sky there is. It favours every type, and makes a shiny coat 8x as likely.',
   [Weather.FataMorgana]:
     'A mirage on dead-still air. It favours every type, and doubles hidden ability odds.',
-  [Weather.DarkDay]:
-    'Noon gone dark. It favours every type, and a third of what it meets is a shadow.',
+  [Weather.DarkDay]: 'Noon gone dark. It favours every type, and 1 in 4 it hands over is a shadow.',
   [Weather.Fogbow]:
     'A rainbow with the colour gone. Anything met under it knows a move from its line.',
 };

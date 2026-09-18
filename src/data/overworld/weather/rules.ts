@@ -114,27 +114,26 @@ export function teachesEggMove(weather: Weather): boolean {
 }
 
 /**
- * Whether anything met in the wild under this sky comes out shadowed.
+ * Whether anything that arrives under this sky can come out shadowed.
  *
- * The one sky that closes a heart rather than opening something. It is
- * the meeting that is shadowed and not the pokemon: a raid prize, an
- * egg and a gift arrive under their own rules whatever the sky is
- * doing
+ * The one sky that closes a heart rather than opening something. Which
+ * arrivals it reaches is a question about the meeting rather than
+ * about the sky: see `isShadowableEncounter`
  */
-export function shadowsWildMeetings(weather: Weather): boolean {
+export function shadowsMeetings(weather: Weather): boolean {
   return weather === Weather.DarkDay;
 }
 
 /**
- * How much of what a dark day meets comes out shadowed.
+ * How much of what a dark day hands over comes out shadowed.
  *
  * Not all of it. A sky that closed every heart under it would make the
  * shadow a property of the window rather than of the meeting, and a
  * player who found one would be collecting rather than deciding. A
- * third leaves the sky worth staying out in and every catch under it
+ * quarter leaves the sky worth staying out in and every catch under it
  * still a question
  */
-export const DARK_DAY_SHADOW_CHANCE = 1 / 3;
+export const DARK_DAY_SHADOW_CHANCE = 1 / 4;
 
 /**
  * How far a player sees under a Dark Day, in cells, walking alone.

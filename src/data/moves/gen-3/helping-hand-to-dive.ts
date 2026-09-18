@@ -10,7 +10,7 @@ import { registerMove } from '../__create';
 export default function registerHelpingHandToDive(): void {
   registerMove(Moves.HelpingHand, {
     name: 'Helping Hand',
-    description: "The ally's next move hits for 1.5x.",
+    description: "A teammate's next move within 4 seconds hits for 1.5x.",
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 20,
@@ -33,7 +33,7 @@ export default function registerHelpingHandToDive(): void {
   });
   registerMove(Moves.RolePlay, {
     name: 'Role Play',
-    description: "Takes the target's ability for the user's own.",
+    description: "Copies the target's abilities over the user's own. The target keeps them.",
     type: Types.Psychic,
     category: MoveCategories.Status,
     pp: 10,
@@ -87,7 +87,8 @@ export default function registerHelpingHandToDive(): void {
   });
   registerMove(Moves.MagicCoat, {
     name: 'Magic Coat',
-    description: 'For 4 seconds status moves aimed at the user are turned back on their caster.',
+    description:
+      'For 4 seconds the first status move aimed at the user from outside its party is turned back on its caster.',
     type: Types.Psychic,
     category: MoveCategories.Status,
     pp: 15,
@@ -209,7 +210,8 @@ export default function registerHelpingHandToDive(): void {
   });
   registerMove(Moves.Grudge, {
     name: 'Grudge',
-    description: 'For 10 seconds, whatever knocks the user out loses the move that did it.',
+    description:
+      'For 10 seconds, whatever knocks the user out has the move that did it put on a 2 minute cooldown.',
     type: Types.Ghost,
     category: MoveCategories.Status,
     pp: 5,
@@ -242,7 +244,8 @@ export default function registerHelpingHandToDive(): void {
   });
   registerMove(Moves.Dive, {
     name: 'Dive',
-    description: 'Goes under the water, out of reach, and surfaces into the hit.',
+    description:
+      'Goes under the water, where only Surf and Whirlpool (at 2x) reach it, and surfaces into the hit.',
     type: Types.Water,
     category: MoveCategories.Physical,
     power: 80,

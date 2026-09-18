@@ -148,6 +148,12 @@ const CURE_NAMES = new Map<Statuses, string>([
   [Statuses.Frozen, 'freezing'],
 ]);
 
+// How a bitter cost paid more than once reads
+const BITTER_TIMES: { [bitter: number]: string } = {
+  2: ' twice over',
+  3: ' three times over',
+};
+
 export function describeMedicine(item: Items): string {
   const effect = MEDICINES.get(item);
 
@@ -182,7 +188,7 @@ export function describeMedicine(item: Items): string {
   }
 
   if (effect.bitter != null) {
-    parts.push('Bitter: costs friendship.');
+    parts.push(`Bitter: costs friendship${BITTER_TIMES[effect.bitter] ?? ''}.`);
   }
   return parts.join(' ');
 }

@@ -607,6 +607,9 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Cresselia,
   Species.Heatran,
   Species.Regigigas,
+  Species.Cobalion,
+  Species.Terrakion,
+  Species.Virizion,
   Species.Reshiram,
   Species.Zekrom,
   Species.Kyurem,
@@ -628,6 +631,7 @@ const MYTHICAL_SPECIES = new Set<Species>([
   Species.Manaphy,
   Species.Shaymin,
   Species.Arceus,
+  Species.Keldeo,
 ]);
 
 /**
@@ -681,6 +685,19 @@ const BABY_SPECIES = new Set<Species>([
  * collected over months
  */
 const UNOWN_SPECIES = new Set<Species>(UNOWN_FORMS);
+
+/**
+ * The few staged above the band their line's shape would earn. A
+ * Volcarona is met as rarely as a legendary and a Larvesta as rarely
+ * as a baby, which is the whole of what the games make of the moth
+ * the desert once mistook for the sun.
+ *
+ * Kept apart from LEGENDARY_SPECIES on purpose: neither is
+ * one-per-world, neither answers to a lair, and a raid stages that
+ * set rather than this one
+ */
+const SPECIAL_BY_HAND = new Set<Species>([Species.Volcarona]);
+const PRIZED_BY_HAND = new Set<Species>([Species.Larvesta]);
 
 /**
  * The unowns as prized-band entries, for a pool to spread into its
@@ -861,8 +878,11 @@ export function getSpawnRarity(species: Species): SpawnRarity {
   }
   // Asked before the shape of the line is, since a baby evolves like
   // any other first stage and would otherwise read as Base
-  if (isPrizedSpecies(species)) {
+  if (isPrizedSpecies(species) || PRIZED_BY_HAND.has(species)) {
     return SpawnRarity.Prized;
+  }
+  if (SPECIAL_BY_HAND.has(species)) {
+    return SpawnRarity.Special;
   }
 
   // The band is where this stage stands in its line and how long that

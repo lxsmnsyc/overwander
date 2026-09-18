@@ -10,7 +10,8 @@ import { registerMove } from '../__create';
 export default function registerRoostToHammerArm(): void {
   registerMove(Moves.Roost, {
     name: 'Roost',
-    description: 'Heals 1/2 the max HP, and the user is not Flying for 2 seconds.',
+    description:
+      'Heals 1/2 the max HP. For 2 seconds its Flying type counts for nothing in matchups, though Ground moves still miss.',
     type: Types.Flying,
     category: MoveCategories.Status,
     pp: 5,
@@ -20,7 +21,7 @@ export default function registerRoostToHammerArm(): void {
   });
   registerMove(Moves.Gravity, {
     name: 'Gravity',
-    description: 'For 10 seconds nothing is off the ground: no Flying immunity and no Levitate.',
+    description: 'For 10 seconds Ground moves hit Flying types and anything with Levitate.',
     type: Types.Psychic,
     category: MoveCategories.Status,
     pp: 5,

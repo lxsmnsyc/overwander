@@ -689,7 +689,7 @@ export async function releaseCatches(uid: string, catchIds: string[]): Promise<B
       );
     }
     // The buddy field clears itself, as a foreign key that nulls on delete
-    await transaction`delete from caught where id = any(${transaction.array(outcome.done)})`;
+    await transaction`delete from caught where id in ${transaction(outcome.done)}`;
   });
 
   if (gone.size > 0) {
@@ -746,7 +746,7 @@ export async function setCatchMarks(
     if (outcome.done.length > 0) {
       await transaction`
         update caught set ${transaction(field)} = ${on}
-        where id = any(${transaction.array(outcome.done)})
+        where id in ${transaction(outcome.done)}
       `;
     }
   });

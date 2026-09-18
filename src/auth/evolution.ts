@@ -10,6 +10,7 @@ import {
 import type { EvolutionData } from '../data/species';
 import evolveOnServerSide from '../server/evolution';
 import { requireUid } from '../server/auth';
+import check, { GAME_ID, ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
 import { getCaught } from './caught';
 import { getStats } from './health';
 import { getInventory } from './inventory';
@@ -120,5 +121,10 @@ async function evolveOnServer(
   locale: string,
 ): Promise<Species | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(GAME_ID, into);
+  check(OFFSET, offset);
+  check(LOCALE, locale);
   return evolveOnServerSide(await requireUid(token), catchId, into, offset, locale);
 }

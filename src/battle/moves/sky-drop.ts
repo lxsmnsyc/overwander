@@ -22,8 +22,11 @@ function canCarry(unit: Unit): boolean {
 }
 
 export default function setupSkyDrop(battle: Battle): void {
-  /** Who each user has up in the air with it */
-  const carrying = new Map<Unit, Unit>();
+  /**
+   * Who each user has up in the air with it. A boss' Sky Drop reaches
+   * every enemy, so one user can be carrying several at once
+   */
+  const carrying = new Map<Unit, Set<Unit>>();
 
   function setDown(carried: Unit): void {
     for (const status of CARRIED) {
@@ -40,8 +43,24 @@ export default function setupSkyDrop(battle: Battle): void {
 
     if (carried != null) {
       carrying.delete(carrier);
-      setDown(carried);
+      for (const unit of carried) {
+        setDown(unit);
+      }
     }
+  }
+
+  /** Lets one go, and forgets the carrier once its hands are empty */
+  function drop(carrier: Unit, carried: Unit): boolean {
+    const held = carrying.get(carrier);
+
+    if (held == null || !held.delete(carried)) {
+      return false;
+    }
+    if (held.size === 0) {
+      carrying.delete(carrier);
+    }
+    setDown(carried);
+    return true;
   }
 
   battle.on(BattleEvents.CheckUnitTriggerMoveEffect, EventPriority.Exact, (event) => {
@@ -72,8 +91,10 @@ export default function setupSkyDrop(battle: Battle): void {
 
     const carried = event.target.unit;
     const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
+    const held = carrying.get(event.source) ?? new Set<Unit>();
 
-    carrying.set(event.source, carried);
+    held.add(carried);
+    carrying.set(event.source, held);
 
     for (const status of CARRIED) {
       carried.addStatus(status, cause);
@@ -91,12 +112,9 @@ export default function setupSkyDrop(battle: Battle): void {
       return;
     }
 
-    if (carrying.get(event.source) !== event.target.unit) {
+    if (!drop(event.source, event.target.unit)) {
       event.disabled = true;
-      return;
     }
-
-    release(event.source);
   });
 
   // A Flying type is dropped from a height it can fly out of
@@ -114,8 +132,9 @@ export default function setupSkyDrop(battle: Battle): void {
     battle.on(gone, EventPriority.Post, (event) => {
       release(event.source);
 
-      for (const [carrier, carried] of carrying) {
-        if (carried === event.source) {
+      for (const [carrier, held] of carrying) {
+        held.delete(event.source);
+        if (held.size === 0) {
           carrying.delete(carrier);
         }
       }
@@ -127,10 +146,9 @@ export default function setupSkyDrop(battle: Battle): void {
     if (event.status !== Statuses.SkyDropped) {
       return;
     }
-    for (const [carrier, carried] of carrying) {
-      if (carried === event.source) {
-        carrying.delete(carrier);
-        setDown(carried);
+    for (const [carrier, held] of carrying) {
+      if (held.has(event.source)) {
+        drop(carrier, event.source);
         carrier.interrupt();
       }
     }

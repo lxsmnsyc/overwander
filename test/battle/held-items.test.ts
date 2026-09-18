@@ -30,6 +30,11 @@ import {
   WIDE_LENS_ACCURACY,
   ZOOM_LENS_ACCURACY,
 } from '../../src/battle/items/gear';
+import {
+  LOADED_DICE_FLOOR,
+  MACHO_BRACE_SPEED,
+  SOUL_DEW_FACTOR,
+} from '../../src/battle/items/gear/worths';
 import { X_ITEM_STAGES_BOOST } from '../../src/battle/items/battle-items';
 import { POLICY_STAGES, REACTION_STAGES } from '../../src/battle/items/one-shots';
 import { SACRED_ASH_DELAY } from '../../src/battle/items/sacred-ash';
@@ -377,6 +382,76 @@ describe('gear that changes a rule', () => {
     pinRandom(battle, 0.99); // and this time it does not
     holder.cast(Moves.Tackle, target);
     expect(holder.checkMovePriority(Moves.Tackle, target)).toBe(priority);
+  });
+
+  it('walks a Heavy-Duty Boots holder over everything laid at its feet', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const layer = createUnit(battle, teamA);
+    const booted = createUnit(battle, teamB);
+    const bare = createUnit(battle, teamB);
+
+    layer.enter();
+    booted.addItem(Items.HeavyDutyBoots);
+    layer.triggerMoveEffect(Moves.Spikes, { type: MoveTargetType.Team, team: teamB }, 0);
+    layer.triggerMoveEffect(Moves.StealthRock, { type: MoveTargetType.Team, team: teamB }, 0);
+    layer.triggerMoveEffect(Moves.ToxicSpikes, { type: MoveTargetType.Team, team: teamB }, 0);
+    battle.tick(1);
+
+    booted.enter();
+    bare.enter();
+    battle.tick(1);
+
+    // The boots take the lot: the two that bite and the one that poisons
+    expect(booted.health).toBe(booted.checkStat(Stats.HP, 0));
+    expect(booted.status[Statuses.Poisoned]).toBeUndefined();
+    expect(bare.health).toBeLessThan(bare.checkStat(Stats.HP, 0));
+    expect(bare.status[Statuses.Poisoned]).toBeDefined();
+  });
+
+  it('lifts a Soul Dew holder’s own two types, and nobody else’s', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const latios = createUnit(battle, teamA, [Types.Dragon, Types.Psychic]);
+    const other = createUnit(battle, teamA, [Types.Dragon, Types.Psychic]);
+    const target = unitTarget(createUnit(battle, teamB));
+    const bare = latios.checkMovePower(Moves.Psychic, target) ?? 0;
+
+    latios.species = Species.Latios;
+    latios.addItem(Items.SoulDew);
+    other.addItem(Items.SoulDew);
+
+    expect(latios.checkMovePower(Moves.Psychic, target)).toBeCloseTo(bare * SOUL_DEW_FACTOR);
+    expect(latios.checkMovePower(Moves.Surf, target)).toBe(
+      other.checkMovePower(Moves.Surf, target),
+    );
+    expect(other.checkMovePower(Moves.Psychic, target)).toBe(bare);
+  });
+
+  it('floors a Loaded Dice holder’s strikes at four', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    const target = unitTarget(createUnit(battle, teamB));
+
+    holder.addItem(Items.LoadedDice);
+
+    // A poor roll is lifted, a good one is left where it is
+    expect(holder.checkMoveHits(Moves.SpikeCannon, target, 2, 5)).toBe(LOADED_DICE_FLOOR);
+    expect(holder.checkMoveHits(Moves.SpikeCannon, target, 5, 5)).toBe(5);
+    expect(bare.checkMoveHits(Moves.SpikeCannon, target, 2, 5)).toBe(2);
+
+    // And a move that throws a fixed number of strikes throws that many
+    expect(holder.checkMoveHits(Moves.DoubleKick, target, 2, 2)).toBe(2);
+  });
+
+  it('weighs a Macho Brace holder down', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    const speed = bare.checkStat(Stats.Speed, 0);
+
+    holder.addItem(Items.MachoBrace);
+
+    expect(holder.checkStat(Stats.Speed, 0)).toBe(speed * MACHO_BRACE_SPEED);
   });
 
   it('keeps powder and weather off whoever wears the goggles', () => {

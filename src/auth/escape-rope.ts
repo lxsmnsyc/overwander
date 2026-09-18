@@ -1,4 +1,5 @@
 import { requireUid } from '../server/auth';
+import check, { TOKEN } from '../server/validate';
 import useEscapeRopeOnServer from '../server/escape-rope';
 import type { PositionRecord } from './position-record';
 import { syncServerClock } from './clock';
@@ -15,5 +16,6 @@ export default async function useEscapeRope(): Promise<PositionRecord | null> {
 
 async function useOnServer(token: string): Promise<PositionRecord | null> {
   'use server';
+  check(TOKEN, token);
   return useEscapeRopeOnServer(await requireUid(token), await syncServerClock());
 }

@@ -136,30 +136,34 @@ export async function readCaughtMany(
     return new Map();
   }
 
+  // A list of ids rather than an array parameter: the driver learns
+  // array types as a connection opens, and a query sent on a fresh
+  // pool before that lands has its array refused by Postgres.
+  //
   // The parent is locked on its own, the way the single read locks
   // it: the children are never written without their row
   const rows = lock
-    ? await sql`select * from caught where id = any(${sql.array(wanted)}) for update`
-    : await sql`select * from caught where id = any(${sql.array(wanted)})`;
+    ? await sql`select * from caught where id in ${sql(wanted)} for update`
+    : await sql`select * from caught where id in ${sql(wanted)}`;
 
   const asked = new Set(parts);
   const [moves, abilities, items, history] = await Promise.all([
     asked.has('moves')
       ? sql`select caught_id, move, points from caught_moves
-            where caught_id = any(${sql.array(wanted)}) order by caught_id, slot`
+            where caught_id in ${sql(wanted)} order by caught_id, slot`
       : [],
     asked.has('abilities')
       ? sql`select caught_id, ability from caught_abilities
-            where caught_id = any(${sql.array(wanted)}) order by caught_id, slot`
+            where caught_id in ${sql(wanted)} order by caught_id, slot`
       : [],
     asked.has('items')
       ? sql`select caught_id, item from caught_items
-            where caught_id = any(${sql.array(wanted)}) order by caught_id, slot`
+            where caught_id in ${sql(wanted)} order by caught_id, slot`
       : [],
     asked.has('history')
       ? sql`select caught_id, owner, owner_name, acquired_at_local, acquired_at_offset,
                    kind, paid, ball
-            from caught_history where caught_id = any(${sql.array(wanted)})
+            from caught_history where caught_id in ${sql(wanted)}
             order by caught_id, seq`
       : [],
   ]);
@@ -442,13 +446,14 @@ export async function updateCaughtIn(
     `;
 
     // The counts land in one statement rather than one a move: a move
-    // list is short, but this is written on every PP Up
+    // list is short, but this is written on every PP Up. Written as array
+    // literals rather than array parameters, which a fresh pool can refuse
     if (spentMoves.length > 0) {
       await transaction`
         update caught_moves set points = spent.points
         from unnest(
-          ${transaction.array(spentMoves)}::integer[],
-          ${transaction.array(spentPoints)}::smallint[]
+          ${`{${spentMoves.join(',')}}`}::integer[],
+          ${`{${spentPoints.join(',')}}`}::smallint[]
         ) as spent(move, points)
         where caught_moves.caught_id = ${id} and caught_moves.move = spent.move
       `;

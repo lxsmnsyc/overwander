@@ -519,7 +519,10 @@ const krabbyToPinsir = [
         if (event.critical && event.parent.source.hasAbility(Abilities.CleanCut)) {
           critical.set(event.parent, true);
 
-          event.parent.source.triggerAbility(Abilities.CleanCut);
+          // A cue is for a real attempt, not for the AI weighing one
+          if (!(event.parent.flags & MoveAttackFlags.Simulated)) {
+            event.parent.source.triggerAbility(Abilities.CleanCut);
+          }
         }
       }),
       battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {

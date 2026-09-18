@@ -34,6 +34,8 @@ import {
   Button,
   Card,
   Detail,
+  Hint,
+  HintList,
   HoverCard,
   Note,
   Panel,
@@ -43,6 +45,7 @@ import {
   Status,
 } from '../../styled';
 import AuctionDialog, { type AuctionSubject } from '../AuctionDialog';
+import { AUCTION_DURATION } from '../../../auth/auction-record';
 import { type JSX, type Resource, Show, createSignal, from } from 'solid-js';
 
 export interface AuctionTabProps {
@@ -626,7 +629,28 @@ export function AuctionBoard(
           scrolling past their own bag to get back to what they came
           for */}
       <Show when={props.adding === true} fallback={shopping()}>
-        <Card title="Sell">
+        <Card
+          title="Sell"
+          aside={
+            <Hint title="About selling">
+              <HintList>
+                <li>
+                  An auction runs for {AUCTION_DURATION / 3_600_000} hours, and you can run one at a
+                  time.
+                </li>
+                <li>
+                  A pokemon can be sold if it is shiny, has perfect or all-zero IVs, or is a
+                  legendary or mythical. A favourite cannot be sold.
+                </li>
+                <li>Only special items can be sold.</li>
+                <li>
+                  A lot nobody bids on does not come back on its own. Collect it from Profile,
+                  Auction, Selling.
+                </li>
+              </HintList>
+            </Hint>
+          }
+        >
           <Show
             when={running() == null}
             fallback={

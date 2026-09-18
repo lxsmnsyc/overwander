@@ -49,6 +49,10 @@ export interface Slot {
    * circle this used to be, so the fight is watchable either way
    */
   sprite: SpeciesSpriteAnimation | null;
+  /** How bright a transformation is flashing it, from 0 to 1 */
+  glow?: number;
+  /** How much a transformation is swelling it, as a share of its size */
+  swell?: number;
   /**
    * Which way it is facing: at whatever it is aiming at, worked out
    * after the camera has turned rather than fixed to a side of the

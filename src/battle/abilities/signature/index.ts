@@ -26,7 +26,24 @@ import shinxToShieldon from './shinx-to-shieldon';
 import starlyToKricketot from './starly-to-kricketot';
 import stunkyToGible from './stunky-to-gible';
 import turtwigToPiplup from './turtwig-to-piplup';
+import audinoToSawk from './audino-to-sawk';
+import munnaToBlitzle from './munna-to-blitzle';
+import pansearToPanpour from './pansear-to-panpour';
+import sandileToDwebble from './sandile-to-dwebble';
+import scraggyToTrubbish from './scraggy-to-trubbish';
+import basculinToAlomomola from './basculin-to-alomomola';
+import joltikToKlink from './joltik-to-klink';
+import zoruaToSolosis from './zorua-to-solosis';
+import axewToDeino from './axew-to-deino';
+import tynamoToMienfoo from './tynamo-to-mienfoo';
+import elgyemToGolett from './elgyem-to-golett';
+import heatmorToLarvesta from './heatmor-to-larvesta';
+import patratToPurrloin from './patrat-to-purrloin';
+import pawniardToVullaby from './pawniard-to-vullaby';
+import roggenrolaToDrilbur from './roggenrola-to-drilbur';
+import sewaddleToPetilil from './sewaddle-to-petilil';
 import snivyToOshawott from './snivy-to-oshawott';
+import swordsOfJustice from './swords-of-justice';
 import taoTrio from './tao-trio';
 
 /**
@@ -62,6 +79,23 @@ const setupAbilities = [
   ...shaymin,
   ...arceus,
   ...snivyToOshawott,
+  ...patratToPurrloin,
+  ...pansearToPanpour,
+  ...munnaToBlitzle,
+  ...roggenrolaToDrilbur,
+  ...audinoToSawk,
+  ...sewaddleToPetilil,
+  ...sandileToDwebble,
+  ...scraggyToTrubbish,
+  ...zoruaToSolosis,
+  ...joltikToKlink,
+  ...basculinToAlomomola,
+  ...elgyemToGolett,
+  ...axewToDeino,
+  ...pawniardToVullaby,
+  ...heatmorToLarvesta,
+  ...tynamoToMienfoo,
+  ...swordsOfJustice,
   ...taoTrio,
 ];
 

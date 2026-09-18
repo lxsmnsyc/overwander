@@ -148,7 +148,14 @@ export const getProfileBatched = batchedQuery(
  * earns or spends, and the balance should not wait for a reload
  */
 export function watchProfile(uid: string, onChange: (profile: Profile | null) => void): Unwatch {
-  return watchRow(PROFILE_TABLE, `id=eq.${uid}`, async () => getProfileBatched(uid), onChange);
+  // A change carries the whole row, so it is taken as it stands rather than read again
+  return watchRow(
+    PROFILE_TABLE,
+    `id=eq.${uid}`,
+    async () => getProfileBatched(uid),
+    onChange,
+    asProfile,
+  );
 }
 
 /**

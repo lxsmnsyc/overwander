@@ -134,7 +134,7 @@ const STOCKED_TRADE_ITEMS: [item: Items, name: string, icon: string, description
  * A Razor Claw, a Razor Fang and an Oval Stone are **held** through a
  * level: that is how a Sneasel becomes a Weavile at night, a Gligar a
  * Gliscor, and a Happiny a Chansey in daylight. None is handed over
- * before a trade and none is ever spent, so none is Usable. They keep
+ * before a trade, so none is Usable, and the evolution spends it. They keep
  * their pictures with the evolution items because that is where the
  * sheet packs them.
  *
@@ -142,18 +142,23 @@ const STOCKED_TRADE_ITEMS: [item: Items, name: string, icon: string, description
  * every other held item's does
  */
 const HELD_EVOLUTION_ITEMS: [item: Items, name: string, icon: string, description: string][] = [
-  [Items.RazorClaw, 'Razor Claw', 'razor-claw', '2x its holder’s odds of a critical.'],
+  [
+    Items.RazorClaw,
+    'Razor Claw',
+    'razor-claw',
+    'Sharpens its holder’s criticals by 1 stage. A Sneasel holding it evolves from level 35 in the evening or at night, spending it.',
+  ],
   [
     Items.RazorFang,
     'Razor Fang',
     'razor-fang',
-    '1/10 of its holder’s blows leave the target flinching.',
+    '1/10 of its holder’s blows leave the target flinching. A Gligar holding it evolves from level 35 in the evening or at night, spending it.',
   ],
   [
     Items.OvalStone,
     'Oval Stone',
     'oval-stone',
-    'A Happiny holding it grows into a Chansey in daylight.',
+    'A Happiny holding it grows into a Chansey from level 15, in the morning or by day, spending it.',
   ],
 ];
 
@@ -163,7 +168,8 @@ export default function registerTradeItems(): void {
   // evolutions in this family a player can reach
   registerItem(Items.LinkingCord, {
     name: 'Linking Cord',
-    description: 'Evolves a pokemon that would otherwise only evolve by being traded.',
+    description:
+      'Evolves a pokemon that would otherwise only evolve by being traded. A held item the trade asks for is still needed, and spent.',
     type: ItemTypes.Evolution,
     icon: 'evolutions/linking-cord',
     flags: ItemFlags.Usable | ItemFlags.Marketable,

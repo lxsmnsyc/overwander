@@ -1,4 +1,5 @@
 import 'server-only';
+import { WORLD_GENERATION } from '../../overworld/current';
 import { Depth } from '../../overworld/depth';
 import AleaRNG from '../../core/alea';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
@@ -41,7 +42,8 @@ export async function peekPhenomenonEgg(
   }
   const rows = await getSql()`
     select 1 from phenomenon_claims
-    where marker = ${phenomenonKey(snapshot, cell)} and player = ${uid}
+    where generation = ${WORLD_GENERATION} and marker = ${phenomenonKey(snapshot, cell)}
+      and player = ${uid}
   `;
 
   return { taken: rows.length > 0 };

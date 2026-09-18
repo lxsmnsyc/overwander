@@ -17,7 +17,6 @@ import {
 import { GameDialog, useGame } from '../app/game-context';
 import { type GiftLedgerRow, listAllGifts } from '../../auth/admin';
 import { claimMysteryGift, listMysteryGifts } from '../../auth/gifts';
-import matchesGift, { GIFT_VOCABULARY, type GiftContext, orderGifts } from '../../auth/gift-search';
 import type { CaughtPokemon } from '../../auth/caught';
 import { BASE_FRIENDSHIP } from '../../data/constants/friendship';
 import { createStatsField } from '../../data/constants/stats';
@@ -36,12 +35,15 @@ import ItemGrid, { type ItemCell } from '../items/ItemGrid';
 import { describeItem } from '../details';
 import playEffect, { Effect } from '../app/sound';
 import {
+  Badge,
   Button,
-  DialogSection,
   HoverCard,
   Meta,
   Note,
-  Search,
+  TabBar,
+  TabButton,
+  TabGroup,
+  TabPane,
   type ToastTone,
   useToast,
 } from '../styled';
@@ -77,8 +79,13 @@ function describeGift(gift: MysteryGift): string {
 interface ShelfRow {
   gift: MysteryGift;
   note?: string;
-  /** What the ledger knows beyond the gift itself, for the box that narrows it */
-  context?: GiftContext;
+}
+
+/** The shelf's three tabs: pokemon handed over, items, and pokemon to meet */
+const enum GiftView {
+  Catches = 0,
+  Items = 1,
+  Encounters = 2,
 }
 
 type PokemonRow = ShelfRow & { gift: CatchGift | EncounterGift };
@@ -226,27 +233,17 @@ function GiftShelf(props: {
    * since the shelf is about to be read again anyway
    */
   const [taking, setTaking] = createSignal<string | null>(null);
-  /**
-   * What the ledger's box has been asked. A player's own shelf holds a
-   * handful of things and narrows nothing; the ledger is every gift
-   * ever written by hand
-   */
-  const [query, setQuery] = createSignal('');
+  const gifts = (): ShelfRow[] => props.owed() ?? [];
+  const pokemonOf = (kind: GiftKind): PokemonRow[] => {
+    const rows: PokemonRow[] = [];
 
-  const offered = (): ShelfRow[] => props.owed() ?? [];
-  const gifts = createMemo<ShelfRow[]>(() => {
-    if (props.everything !== true) {
-      return offered();
-    }
-    const matching: ShelfRow[] = [];
-
-    for (const row of offered()) {
-      if (matchesGift(row.gift, query(), row.context)) {
-        matching.push(row);
+    for (const row of gifts()) {
+      if (isPokemonRow(row) && row.gift.kind === kind) {
+        rows.push(row);
       }
     }
-    return orderGifts(matching, query(), (row) => ({ gift: row.gift, context: row.context }));
-  });
+    return rows;
+  };
   const pokemon = (): PokemonRow[] => {
     const rows: PokemonRow[] = [];
 
@@ -277,27 +274,27 @@ function GiftShelf(props: {
     return undefined;
   };
 
-  // Read as the records they would become, so the grid's search speaks
-  // the same syntax as every other box of squares
-  const squares = createMemo<CatchGridEntry[]>(() => {
+  /**
+   * One kind of waiting pokemon as squares, read as the records they
+   * would become so the grid's search speaks the same syntax as every
+   * other box
+   */
+  const squaresOf = (kind: GiftKind): CatchGridEntry[] => {
     const entries: CatchGridEntry[] = [];
 
-    for (const { gift } of pokemon()) {
+    for (const { gift } of pokemonOf(kind)) {
       entries.push({ square: asSquare(gift), caught: asPreview(gift) });
     }
     return entries;
-  });
-
-  /**
-   * What an empty list says. A ledger narrowed to nothing has to say so
-   * rather than read as a game nobody has ever given anything
-   */
-  const emptily = (): string => {
-    if (props.everything !== true) {
-      return 'Nothing is waiting for you.';
-    }
-    return query().length === 0 ? 'Nothing has been offered yet.' : 'No gift matches that.';
   };
+  const handed = createMemo(() => squaresOf(GiftKind.Catch));
+  const meetings = createMemo(() => squaresOf(GiftKind.Encounter));
+
+  /** What an empty tab says, which for the ledger is about everybody */
+  const emptily = (what: string): string =>
+    props.everything === true
+      ? `No ${what} have been offered yet.`
+      : `No ${what} are waiting for you.`;
 
   const say = (message: string, tone: ToastTone): void => {
     toast.push({ message, tone });
@@ -381,84 +378,117 @@ function GiftShelf(props: {
     return cells;
   };
 
-  return (
-    <div class="flex flex-col gap-4">
-      {/* One box over both sections, the way the auction board narrows
-          its two trays with one: a gift is looked for by who it went
-          to and whether anybody came for it, neither of which is a
-          fact about the pokemon on the square */}
-      <Show when={props.everything}>
-        <Search
-          vocabulary={GIFT_VOCABULARY}
-          example="is:waiting"
-          placeholder="Name, or for:red is:waiting"
-          value={query()}
-          onChange={(value) => {
-            setQuery(value);
-          }}
-        />
-      </Show>
-
-      <Show when={gifts().length === 0}>
-        <Note class="text-center">{emptily()}</Note>
-      </Show>
-
-      <Show when={pokemon().length > 0}>
-        <DialogSection title="Pokemon">
-          <CatchGrid
-            entries={squares()}
-            // The ledger has a box of its own above both sections
-            bare={props.everything === true}
-            // The card carries one button, so the square presses it
-            // too; a visited shelf has nothing to press anywhere
-            cardOnly={props.viewOnly === true}
-            onOpen={props.viewOnly === true ? undefined : take}
-            cell={(entry) => (
-              <HoverCard
-                class="block size-full"
-                trigger={<span class="block size-full" />}
-                title="Gift"
-                footer={
-                  <Show when={props.viewOnly !== true && found(entry().id)}>
-                    {(row) => (
-                      <Button
-                        tone="primary"
-                        disabled={taking() != null}
-                        onClick={() => {
-                          take(entry().id);
-                        }}
-                      >
-                        {verbFor(row().gift)}
-                      </Button>
-                    )}
-                  </Show>
-                }
-              >
-                <Show when={found(entry().id)}>
-                  {(row) => (
-                    <div class="flex flex-col gap-1.5">
-                      {/* The box's own card, reading the gift as the
-                          record it is about to become: the same sigil,
-                          stars, moves and held items a pokemon in the
-                          box is read by */}
-                      <CatchCard caught={asPreview(row().gift)} />
-                      <Meta>{row().gift.reason}</Meta>
-                      <Show when={row().note}>{(said) => <Meta>{said()}</Meta>}</Show>
-                    </div>
-                  )}
-                </Show>
-              </HoverCard>
+  /** A box of waiting pokemon, with the card over each square where the taking happens */
+  const box = (entries: CatchGridEntry[]): JSX.Element => (
+    <CatchGrid
+      entries={entries}
+      // The card carries one button, so the square presses it too; a
+      // visited shelf has nothing to press anywhere
+      cardOnly={props.viewOnly === true}
+      onOpen={props.viewOnly === true ? undefined : take}
+      cell={(entry) => (
+        <HoverCard
+          class="block size-full"
+          trigger={<span class="block size-full" />}
+          title="Gift"
+          footer={
+            <Show when={props.viewOnly !== true && found(entry().id)}>
+              {(row) => (
+                <Button
+                  tone="primary"
+                  disabled={taking() != null}
+                  onClick={() => {
+                    take(entry().id);
+                  }}
+                >
+                  {verbFor(row().gift)}
+                </Button>
+              )}
+            </Show>
+          }
+        >
+          <Show when={found(entry().id)}>
+            {(row) => (
+              <div class="flex flex-col gap-1.5">
+                {/* The box's own card, reading the gift as the record
+                    it is about to become */}
+                <CatchCard caught={asPreview(row().gift)} />
+                <Meta>{row().gift.reason}</Meta>
+                <Show when={row().note}>{(said) => <Meta>{said()}</Meta>}</Show>
+              </div>
             )}
-          />
-        </DialogSection>
-      </Show>
+          </Show>
+        </HoverCard>
+      )}
+    />
+  );
 
-      <Show when={things().length > 0}>
-        <DialogSection title="Items">
-          <ItemGrid bare entries={itemCells()} />
-        </DialogSection>
+  /** A tab's name, with how many are on it */
+  const counted = (name: string, count: number): JSX.Element => (
+    <>
+      {name}
+      <Show when={count > 0}>
+        <Badge class="ml-1.5">{count}</Badge>
       </Show>
-    </div>
+    </>
+  );
+
+  /**
+   * The tab picked, or null until one is. Until then it is the first tab
+   * with something on it, which is only known once the shelf has arrived
+   */
+  const [picked, setPicked] = createSignal<GiftView | null>(null);
+  const first = (): GiftView => {
+    if (handed().length > 0) {
+      return GiftView.Catches;
+    }
+    if (things().length > 0) {
+      return GiftView.Items;
+    }
+    return meetings().length > 0 ? GiftView.Encounters : GiftView.Catches;
+  };
+
+  return (
+    <TabGroup
+      horizontal
+      value={picked() ?? first()}
+      onChange={(value) => {
+        setPicked(value);
+      }}
+      class="flex flex-col gap-3"
+    >
+      <TabBar>
+        <TabButton value={GiftView.Catches}>{counted('Catches', handed().length)}</TabButton>
+        <TabButton value={GiftView.Items}>{counted('Items', things().length)}</TabButton>
+        <TabButton value={GiftView.Encounters}>
+          {counted('Encounters', meetings().length)}
+        </TabButton>
+      </TabBar>
+      <TabPane value={GiftView.Catches}>
+        <Show
+          when={handed().length > 0}
+          fallback={<Note class="text-center">{emptily('pokemon')}</Note>}
+        >
+          {box(handed())}
+        </Show>
+      </TabPane>
+      <TabPane value={GiftView.Items}>
+        <Show
+          when={things().length > 0}
+          fallback={<Note class="text-center">{emptily('items')}</Note>}
+        >
+          <ItemGrid entries={itemCells()} />
+        </Show>
+      </TabPane>
+      <TabPane value={GiftView.Encounters}>
+        <Show
+          when={meetings().length > 0}
+          fallback={<Note class="text-center">{emptily('meetings')}</Note>}
+        >
+          {box(meetings())}
+        </Show>
+      </TabPane>
+    </TabGroup>
   );
 }
 
@@ -489,16 +519,7 @@ export default function GiftsTab(props: GiftsTabProps): JSX.Element {
 
     if (props.everything === true) {
       for (const row of await listAllGifts()) {
-        rows.push({
-          gift: row.gift,
-          note: describeLedger(row),
-          context: {
-            recipient: row.recipient,
-            claims: row.claims,
-            expired: row.expired,
-            offeredAt: row.offeredAt,
-          },
-        });
+        rows.push({ gift: row.gift, note: describeLedger(row) });
       }
     } else {
       for (const gift of await listMysteryGifts()) {

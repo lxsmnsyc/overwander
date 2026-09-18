@@ -13,7 +13,7 @@
  * after rather than merely levelled.
  */
 
-import { Balls } from '../ids/items';
+import { Balls, Items } from '../ids/items';
 
 export const MAX_FRIENDSHIP = 255;
 
@@ -121,13 +121,26 @@ function band(current: number): 0 | 1 | 2 {
 export const LUXURY_FRIENDSHIP_FACTOR = 2;
 
 /**
+ * What a Soothe Bell is worth. It is the same doubling the ball pays,
+ * made after the catch and for a pokemon caught in anything, and the
+ * two stack: a comfortable ball and a bell together are four times as
+ * fast
+ */
+export const SOOTHE_BELL_FACTOR = 2;
+
+/**
  * How fast a pokemon caught in this ball comes round. It is the ball
  * the record was made with rather than anything the player still
  * carries, so it is decided once, at the catch, and holds for the
  * pokemon's whole life
  */
-export function friendshipFactor(ball: Balls): number {
-  return ball === Balls.LuxuryBall ? LUXURY_FRIENDSHIP_FACTOR : 1;
+export function friendshipFactor(ball: Balls, held: readonly number[] = []): number {
+  const ballFactor = ball === Balls.LuxuryBall ? LUXURY_FRIENDSHIP_FACTOR : 1;
+  // The bell is carried rather than remembered, so it is read off
+  // whatever the pokemon holds right now
+  const bell = held.includes(Items.SootheBell) ? SOOTHE_BELL_FACTOR : 1;
+
+  return ballFactor * bell;
 }
 
 /**

@@ -41,6 +41,7 @@ import TradesTab from '../trades/TradesTab';
 import { getTitleName, titleLine, titleType } from '../../data/ids/titles';
 import {
   Badge,
+  Button,
   Card,
   Menu,
   Note,
@@ -94,14 +95,8 @@ function TierBadge(props: {
   };
 
   return (
-    <Show
-      when={tier() !== AchievementTier.None}
-      fallback={<Badge class="-mt-1 self-start">{props.name}</Badge>}
-    >
-      <Badge
-        class="-mt-1 self-start"
-        style={{ 'border-color': TIER_COLORS[tier()], color: TIER_COLORS[tier()] }}
-      >
+    <Show when={tier() !== AchievementTier.None} fallback={<Badge>{props.name}</Badge>}>
+      <Badge style={{ 'border-color': TIER_COLORS[tier()], color: TIER_COLORS[tier()] }}>
         {props.name}
       </Badge>
     </Show>
@@ -116,17 +111,13 @@ function TierBadge(props: {
  */
 function TitleBadge(props: { player: string; title: number; name: string }): JSX.Element {
   if (titleLine(props.title) == null && titleType(props.title) == null) {
-    return (
-      <Badge tone="gold" class="-mt-1 self-start">
-        {props.name}
-      </Badge>
-    );
+    return <Badge tone="gold">{props.name}</Badge>;
   }
 
   const [sheet] = createResource(() => props.player, listAchievements);
 
   return (
-    <Suspense fallback={<Badge class="-mt-1 self-start">{props.name}</Badge>}>
+    <Suspense fallback={<Badge>{props.name}</Badge>}>
       <TierBadge sheet={sheet} title={props.title} name={props.name} />
     </Suspense>
   );
@@ -150,6 +141,17 @@ export interface ProfileTabProps {
    * read once on the way in and the player is free to move off it
    */
   section?: ProfileSection;
+}
+
+/** The top-level tab a section opens under: the sub-tabs open their parent */
+function outerSection(section: ProfileSection | undefined): ProfileSection {
+  if (section === ProfileSection.Bids || section === ProfileSection.Selling) {
+    return ProfileSection.Auction;
+  }
+  if (section === ProfileSection.Requests) {
+    return ProfileSection.Friends;
+  }
+  return section ?? ProfileSection.Battles;
 }
 
 /**
@@ -235,6 +237,13 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
     return count;
   };
 
+  /**
+   * The open tab, held here rather than by the group so a group built
+   * again keeps its place. Bids and selling open under the auction tab,
+   * and requests under the friends tab
+   */
+  const [open, setOpen] = createSignal(outerSection(props.section));
+
   const leave = (): void => {
     setError(null);
     signOut().catch((caught: unknown) => {
@@ -287,19 +296,16 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                 hold open and no letter in a circle to fall back to */}
             <PlayerFace sprite={loaded().sprite} size={64} />
             <div class="flex min-w-0 grow flex-col gap-2">
-              {/* The purse beside the name rather than on a line of
-                  its own, where it sat looking like a stray under the
-                  place badge */}
+              <span class="text-lg font-semibold">{loaded().nickname}</span>
+              {/* The purse and the worn title side by side under the name */}
               <Row>
-                <span class="text-lg font-semibold">{loaded().nickname}</span>
                 <Badge tone="gold">{loaded().gold} gold</Badge>
+                <Show when={loaded().title != null && getTitleName(loaded().title ?? -1)} keyed>
+                  {(worn) => (
+                    <TitleBadge player={props.player} title={loaded().title ?? -1} name={worn} />
+                  )}
+                </Show>
               </Row>
-              {/* The worn title, under the name it decorates */}
-              <Show when={loaded().title != null && getTitleName(loaded().title ?? -1)} keyed>
-                {(worn) => (
-                  <TitleBadge player={props.player} title={loaded().title ?? -1} name={worn} />
-                )}
-              </Show>
               {/* Where in the world they are, under the name: it is
                   the one fact about a trainer that changes while
                   somebody is reading it, and it belongs to who they
@@ -408,15 +414,17 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
       >
         <TabGroup
           horizontal
-          defaultValue={props.section ?? ProfileSection.Battles}
+          value={open()}
+          onChange={(value) => {
+            setOpen(value);
+          }}
           class="flex flex-col gap-3"
         >
           <TabBar>
             <TabButton value={ProfileSection.Battles}>Battles</TabButton>
             <TabButton value={ProfileSection.Awards}>Awards</TabButton>
-            <TabButton value={ProfileSection.Friends}>Friends</TabButton>
-            <TabButton value={ProfileSection.Requests}>
-              Friend Requests
+            <TabButton value={ProfileSection.Friends}>
+              Friends
               {/* The count of what is waiting, on the tab itself:
                   a request nobody is told about is one nobody
                   answers */}
@@ -426,9 +434,8 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                 </Badge>
               </Show>
             </TabButton>
-            <TabButton value={ProfileSection.Bids}>Bids</TabButton>
-            <TabButton value={ProfileSection.Selling}>
-              Selling
+            <TabButton value={ProfileSection.Auction}>
+              Auction
               {/* A lot nobody bid on comes back only by hand, and
                   nothing else in the game ever mentions it: the count
                   is what makes a stranded pokemon findable */}
@@ -452,42 +459,94 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
             <AwardsCard player={props.player} />
           </TabPane>
           <TabPane value={ProfileSection.Friends}>
-            <Card title="Friends">
-              <FriendsTab player={props.player} />
+            <Card
+              title="Friends"
+              aside={
+                <Button
+                  tone="primary"
+                  onClick={() => {
+                    setAdding(true);
+                  }}
+                >
+                  Add friend
+                </Button>
+              }
+            >
+              <TabGroup
+                horizontal
+                defaultValue={
+                  props.section === ProfileSection.Requests
+                    ? ProfileSection.Requests
+                    : ProfileSection.Friends
+                }
+                class="flex flex-col gap-3"
+              >
+                <TabBar>
+                  <TabButton value={ProfileSection.Friends}>Friends</TabButton>
+                  <TabButton value={ProfileSection.Requests}>
+                    Requests
+                    <Show when={asking().incoming.length > 0}>
+                      <Badge tone="ember" class="ml-1.5">
+                        {asking().incoming.length}
+                      </Badge>
+                    </Show>
+                  </TabButton>
+                </TabBar>
+                <TabPane value={ProfileSection.Friends}>
+                  <FriendsTab player={props.player} />
+                </TabPane>
+                {/* Both directions: what has been asked of the player,
+                    and what they have asked and can still take back */}
+                <TabPane value={ProfileSection.Requests}>
+                  <RequestsTab waiting={asking()} />
+                </TabPane>
+              </TabGroup>
             </Card>
           </TabPane>
-          {/* Both directions: what has been asked of the player, and
-              what they have asked and can still take back */}
-          <TabPane value={ProfileSection.Requests}>
-            <Card title="Friend Requests">
-              <RequestsTab waiting={asking()} />
-            </Card>
-          </TabPane>
-          {/* What the player has bid on, which lots they are still
-              leading, and which they won and have not collected */}
-          <TabPane value={ProfileSection.Bids}>
-            <Card title="Bids">
-              <BidsList player={props.player} />
-            </Card>
-          </TabPane>
-          {/* What they have put on the block, and the unsold lots
-              waiting to be taken out of escrow. New listings are made
-              at an auction board rather than here */}
-          <TabPane value={ProfileSection.Selling}>
-            <Card title="Selling">
-              <SellingList
-                player={props.player}
-                lots={lots()}
-                onChanged={() => {
-                  Promise.resolve(refetchSelling()).catch(() => undefined);
-                }}
-              />
+          {/* What the player has bid on, and what they have put on the
+              block with the unsold lots waiting to come out of escrow.
+              New listings are made at an auction board rather than here */}
+          <TabPane value={ProfileSection.Auction}>
+            <Card>
+              <TabGroup
+                horizontal
+                defaultValue={
+                  props.section === ProfileSection.Selling
+                    ? ProfileSection.Selling
+                    : ProfileSection.Bids
+                }
+                class="flex flex-col gap-3"
+              >
+                <TabBar>
+                  <TabButton value={ProfileSection.Bids}>Bids</TabButton>
+                  <TabButton value={ProfileSection.Selling}>
+                    Selling
+                    <Show when={stranded() > 0}>
+                      <Badge tone="ember" class="ml-1.5">
+                        {stranded()}
+                      </Badge>
+                    </Show>
+                  </TabButton>
+                </TabBar>
+                <TabPane value={ProfileSection.Bids}>
+                  <BidsList player={props.player} />
+                </TabPane>
+                <TabPane value={ProfileSection.Selling}>
+                  <SellingList
+                    player={props.player}
+                    lots={lots()}
+                    onChanged={() => {
+                      Promise.resolve(refetchSelling()).catch(() => undefined);
+                    }}
+                  />
+                </TabPane>
+              </TabGroup>
             </Card>
           </TabPane>
           {/* Offers between the player and their friends: to answer,
               waiting on an answer, and what has already changed hands */}
           <TabPane value={ProfileSection.Trades}>
-            <Card title="Trades">
+            <Card>
               <TradesTab player={props.player} />
             </Card>
           </TabPane>

@@ -64,6 +64,10 @@ export interface SpeciesCoatProps {
    * their own sheets comes out ragged. **The box has to be square**
    */
   fill?: boolean;
+  /** With `fill`, whether it is drawn at its real height on the square's floor */
+  sized?: boolean;
+  /** Whether to stand the body in the middle of its square, for a small icon */
+  centred?: boolean;
   /** What it should be doing */
   animation?: SpriteAnim;
   /**
@@ -104,6 +108,9 @@ export default function SpeciesCoat(props: SpeciesCoatProps): JSX.Element {
       direction={props.direction ?? 'Down'}
       scale={props.scale}
       fill={props.fill}
+      // An unmet coat is Missingno, which has no height worth drawing to
+      sized={props.sized === true && props.met}
+      centred={props.centred}
       shadow
       // Black in either theme: a silhouette is the shape with the
       // colour taken out of it, and one that turned white by night

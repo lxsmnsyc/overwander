@@ -8,6 +8,8 @@ import {
   createMoveDemo,
 } from '../../battle/demo-move';
 import BattleField from '../battle/BattleField';
+import BattleTopBar from '../battle/BattleTopBar';
+import BiomePicker, { biomeFrom } from './BiomePicker';
 import { Badge, Button, Combobox, Meta, Note, Row, Switch } from '../styled';
 import { MOVE_CATEGORY_NAMES, type Moves } from '../../data/ids/moves';
 import { TYPE_NAMES } from '../../data/constants/types';
@@ -52,7 +54,7 @@ const POLL_INTERVAL = 120;
 const DEFAULT_MOVE = 'Tackle';
 
 export default function MoveDemo(): JSX.Element {
-  const [params, setParams] = useSearchParams<{ move?: string }>();
+  const [params, setParams] = useSearchParams<{ move?: string; biome?: string }>();
 
   /**
    * Every move there is, by name. Built once: the registry is fixed at
@@ -257,6 +259,12 @@ export default function MoveDemo(): JSX.Element {
             setParams({ move: getMoveData(move).name });
           }}
         />
+        <BiomePicker
+          value={biomeFrom(params.biome)}
+          onChange={(biome) => {
+            setParams({ biome: String(biome) });
+          }}
+        />
       </div>
 
       {detail()}
@@ -297,12 +305,14 @@ export default function MoveDemo(): JSX.Element {
           exactly like a demo that has frozen */}
       <Show keyed when={staged()} fallback={<Note>Staging the move…</Note>}>
         {(demo) => (
-          <div class="h-[60vh] w-full overflow-hidden rounded-panel border-4 border-tide shadow-pop">
+          <div class="relative h-[60vh] w-full overflow-hidden rounded-panel border-4 border-tide shadow-pop">
+            <BattleTopBar battle={demo.battle} player="caster" title="Move demo" />
             {/* The caster's own side is drawn at the bottom, which is
                 where a player's is: what is being watched is the move
                 going out rather than coming in */}
             <BattleField
               battle={demo.battle}
+              biome={biomeFrom(params.biome)}
               player="caster"
               onReady={() => {
                 demo.battle.start();

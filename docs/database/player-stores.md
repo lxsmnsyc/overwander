@@ -253,7 +253,7 @@ into one.
 ## `fled_encounters`
 
 Written by `markFled` in
-[`src/server/overworld.ts`](../../src/server/overworld.ts), read through
+[`src/server/overworld/index.ts`](../../src/server/overworld/index.ts), read through
 [`src/auth/safari.ts`](../../src/auth/safari.ts). The key is recomputed from the
 stored encounter, so a player cannot retire a meeting they never had.
 

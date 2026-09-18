@@ -6,6 +6,7 @@ import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
+import walksOverHazards from './hazards';
 
 /**
  * Toxic Spikes: poisoned caltrops scattered under a side. One layer
@@ -80,7 +81,7 @@ export default function setupToxicSpikes(battle: Battle): void {
     const unit = event.source;
     const laid = toxicLayersUnder(unit.team);
 
-    if (laid === 0 || !unit.alive || !walksOn(unit)) {
+    if (laid === 0 || !unit.alive || !walksOn(unit) || walksOverHazards(unit)) {
       return;
     }
 

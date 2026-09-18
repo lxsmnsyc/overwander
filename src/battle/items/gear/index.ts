@@ -2,6 +2,7 @@ import { Items } from '../../../data/ids/items';
 import type Battle from '../../core';
 import {
   setupBrightPowder,
+  setupLoadedDice,
   setupScopeLens,
   setupSpeciesLens,
   setupWideLens,
@@ -14,6 +15,7 @@ import {
   setupMetronome,
   setupProtectivePads,
   setupShellBell,
+  setupSoulDew,
 } from './damage';
 import {
   setupBindingBand,
@@ -37,6 +39,7 @@ import {
   setupIronBall,
   setupLaggingTail,
   setupLeftovers,
+  setupMachoBrace,
   setupRingTarget,
   setupStickyBarbResidual,
   setupStickyBarbTransfer,
@@ -79,6 +82,9 @@ function weatherRockSetups(): ((battle: Battle) => void)[] {
 
 const SETUPS: ((battle: Battle) => void)[] = [
   setupLeftovers,
+  setupLoadedDice,
+  setupMachoBrace,
+  setupSoulDew,
   setupBlackSludge,
   setupStickyBarbResidual,
   setupStickyBarbTransfer,

@@ -92,17 +92,29 @@ export const GRACIDEA_PRICE = 8_000;
  */
 export const SPLICERS_PRICE = 12_000;
 
-/** The three orbs, and the one the holder has to be */
-const CREATION_ORBS: [item: Items, name: string, icon: string, holder: string][] = [
-  [Items.AdamantOrb, 'Adamant Orb', 'adamant-orb', 'Dialga'],
-  [Items.LustrousOrb, 'Lustrous Orb', 'lustrous-orb', 'Palkia'],
-  [Items.GriseousOrb, 'Griseous Orb', 'griseous-orb', 'Giratina'],
+const CREATION_ORBS: [item: Items, name: string, icon: string][] = [
+  [Items.AdamantOrb, 'Adamant Orb', 'adamant-orb'],
+  [Items.LustrousOrb, 'Lustrous Orb', 'lustrous-orb'],
+  [Items.GriseousOrb, 'Griseous Orb', 'griseous-orb'],
 ];
+
+// Written out because the ability each shape brings is battle code,
+// which data may not import
+const DESCRIPTIONS: { [key in Items]?: string } = {
+  [Items.AdamantOrb]: 'A Dialga holding it fights in its other shape, which also brings Unaware.',
+  [Items.LustrousOrb]:
+    'A Palkia holding it fights in its other shape, which also brings Shadow Tag.',
+  [Items.GriseousOrb]:
+    'A Giratina holding it fights in its other shape, which also brings Levitate.',
+  [Items.Gracidea]:
+    'A Shaymin holding it fights in its other shape, which also brings Serene Grace.',
+};
 
 export default function registerFormItems(): void {
   registerItem(Items.Meteorite, {
     name: 'Meteorite',
-    description: 'Rearranges the Deoxys it is used on into another of its shapes.',
+    description:
+      'Rearranges the Deoxys it is used on into another of its shapes. Spent on each change.',
     type: ItemTypes.Evolution,
     // The rock is drawn on the key sheet, which is where the
     // collection packed it
@@ -112,10 +124,10 @@ export default function registerFormItems(): void {
     sell: METEORITE_PRICE / 2,
   });
 
-  for (const [item, name, icon, holder] of CREATION_ORBS) {
+  for (const [item, name, icon] of CREATION_ORBS) {
     registerItem(item, {
       name,
-      description: `A ${holder} holding it fights in its other shape.`,
+      description: DESCRIPTIONS[item] ?? '',
       type: ItemTypes.Held,
       // The three are drawn on the held sheet, which is where the
       // collection packed them
@@ -137,9 +149,20 @@ export default function registerFormItems(): void {
     sell: SPLICERS_PRICE / 2,
   });
 
+  registerItem(Items.DnaSplicers, {
+    name: 'DNA Splicers',
+    description: 'Folds a dragon into a Kyurem, and pulls it back out. Never spent.',
+    type: ItemTypes.Evolution,
+    // Drawn on the key sheet, which is where the collection packed it
+    icon: 'key/dna-splicers',
+    flags: ItemFlags.Usable,
+    buy: 0,
+    sell: SPLICERS_PRICE / 2,
+  });
+
   registerItem(Items.Gracidea, {
     name: 'Gracidea',
-    description: 'A Shaymin holding it fights in its other shape.',
+    description: DESCRIPTIONS[Items.Gracidea] ?? '',
     type: ItemTypes.Held,
     // Drawn on the key sheet, which is where the collection packed it
     icon: 'key/gracidea',

@@ -3,7 +3,7 @@ import type { DuelRules } from '../../auth/duels';
 import { TEAM_SIZE } from '../../auth/teams';
 import { withLimit } from '../../data/constants/battle-limits';
 import { Slots, getSlots, leastSlots, mostSlots } from '../../data/constants/slots';
-import { Button, Dialog, DialogActions, Note, Select } from '../styled';
+import { Button, Dialog, DialogActions, Hint, HintList, Note, Select } from '../styled';
 
 /**
  * What the host is setting the fight to.
@@ -85,6 +85,20 @@ export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Elemen
       isOpen={props.isOpen}
       onClose={props.onClose}
       title="Rules of the fight"
+      aside={
+        <Hint title="About duel rules">
+          <HintList>
+            <li>
+              Each limit is a ceiling. A pokemon fights with what it has, cut down to the limit.
+            </li>
+            <li>
+              A list is cut from the top, so order a pokemon's moves, abilities and held items on
+              its sheet.
+            </li>
+            <li>Changing a rule takes both sides' Ready away.</li>
+          </HintList>
+        </Hint>
+      }
       description="What each pokemon may bring, and how many of them a side may field."
     >
       {slotField('Moves', Slots.Move)}

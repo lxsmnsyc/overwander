@@ -21,7 +21,7 @@ import { getMaxHealth, isFainted } from '../auth/health';
 import { Foe, Metric } from '../auth/quest-record';
 import { TEAM_SIZE } from '../auth/teams';
 import Landmark from '../data/overworld/landmark';
-import getWorld from '../overworld/current';
+import getWorld, { WORLD_GENERATION } from '../overworld/current';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { readCaughtMany } from './caught-io';
 import { type Tx, getSql, jsonOf, newDocId, tx } from './db';
@@ -68,7 +68,9 @@ const asOutcome = (value: unknown): BattleOutcome => asNumber(value) as BattleOu
  * none
  */
 async function readSeat(seat: string): Promise<Record<string, unknown> | null> {
-  const rows = await getSql()`select * from gym_seats where seat_id = ${seat}`;
+  const rows = await getSql()`
+    select * from gym_seats where generation = ${WORLD_GENERATION} and seat_id = ${seat}
+  `;
   const row = rows.at(0);
 
   return row == null ? null : toRecord(row);
@@ -107,7 +109,7 @@ async function readStanding(
 ): Promise<{ cooldownUntil: number; taken: number }> {
   const rows = await getSql()`
     select settled_at, window_at, taken from gym_challenges
-    where seat_id = ${seat} and challenger = ${uid}
+    where generation = ${WORLD_GENERATION} and seat_id = ${seat} and challenger = ${uid}
   `;
   const row = rows.at(0);
 
@@ -144,7 +146,9 @@ function readBar(row: Record<string, unknown> | null, uid: string, now: number):
  * cell is currently empty, and who was turned out of it
  */
 async function readSeatRow(seat: string): Promise<Record<string, unknown> | null> {
-  const rows = await getSql()`select * from gym_seats where seat_id = ${seat}`;
+  const rows = await getSql()`
+    select * from gym_seats where generation = ${WORLD_GENERATION} and seat_id = ${seat}
+  `;
 
   return rows.at(0) ?? null;
 }
@@ -155,7 +159,7 @@ async function readSeatRow(seat: string): Promise<Record<string, unknown> | null
 async function allowance(transaction: Tx, seat: string, uid: string, now: number): Promise<number> {
   const rows = await transaction`
     select window_at, taken from gym_challenges
-    where seat_id = ${seat} and challenger = ${uid}
+    where generation = ${WORLD_GENERATION} and seat_id = ${seat} and challenger = ${uid}
   `;
   const row = rows.at(0);
 
@@ -327,7 +331,8 @@ export async function takeGymSeat(
     // Locked as it is read, so two players cannot both find the seat
     // free and both sit down on it
     const held = await transaction`
-      select holder, ousted, freed_at from gym_seats where seat_id = ${seat} for update
+      select holder, ousted, freed_at from gym_seats
+      where generation = ${WORLD_GENERATION} and seat_id = ${seat} for update
     `;
     const row = held.at(0) ?? null;
     const holder = asString(row?.holder);
@@ -357,12 +362,12 @@ export async function takeGymSeat(
       // holder, and the cell has one again
       await transaction`
         insert into gym_seats
-          (seat_id, holder, snapshot_id, chunk_seed, chunk_x, chunk_y, cell, seated_at,
+          (generation, seat_id, holder, snapshot_id, chunk_seed, chunk_x, chunk_y, cell, seated_at,
            defenses, ousted, freed_at)
         values
-          (${seat}, ${uid}, ${snapshotId}, ${chunk.seed}, ${chunk.x}, ${chunk.y}, ${cell},
+          (${WORLD_GENERATION}, ${seat}, ${uid}, ${snapshotId}, ${chunk.seed}, ${chunk.x}, ${chunk.y}, ${cell},
            ${now}, 0, null, 0)
-        on conflict (seat_id) do update
+        on conflict (generation, seat_id) do update
           set holder = ${uid}, snapshot_id = ${snapshotId}, seated_at = ${now},
               defenses = 0, ousted = null, freed_at = 0
       `;
@@ -373,7 +378,7 @@ export async function takeGymSeat(
     // of what it has turned away stands with it
     await transaction`
       update gym_seats set snapshot_id = ${snapshotId}, seated_at = ${now}
-      where seat_id = ${seat} and holder = ${uid}
+      where generation = ${WORLD_GENERATION} and seat_id = ${seat} and holder = ${uid}
     `;
     return true;
   });
@@ -407,7 +412,8 @@ export async function leaveGymSeat(
   }
 
   const gone = await getSql()`
-    delete from gym_seats where seat_id = ${seat} and holder = ${uid}
+    delete from gym_seats
+    where generation = ${WORLD_GENERATION} and seat_id = ${seat} and holder = ${uid}
   `;
 
   return gone.count > 0;
@@ -475,7 +481,8 @@ export async function challengeGymSeat(
 
   const open = await getSql()`
     select battle_id from gym_challenges
-    where seat_id = ${seat} and challenger = ${uid} and not settled
+    where generation = ${WORLD_GENERATION} and seat_id = ${seat} and challenger = ${uid}
+      and not settled
   `;
   const live = asString(open.at(0)?.battle_id);
 
@@ -510,7 +517,8 @@ export async function challengeGymSeat(
     // walk-up and the acceptance, and what is fought has to be what
     // is actually standing there
     const held = await transaction`
-      select holder, snapshot_id from gym_seats where seat_id = ${seat} for update
+      select holder, snapshot_id from gym_seats
+      where generation = ${WORLD_GENERATION} and seat_id = ${seat} for update
     `;
     const holder = asString(held.at(0)?.holder);
 
@@ -541,9 +549,10 @@ export async function challengeGymSeat(
     // one fight, and resetting them here would be the way around the
     // daily cap
     await transaction`
-      insert into gym_challenges (seat_id, challenger, battle_id, held_by, started_at, settled)
-      values (${seat}, ${uid}, ${battleId}, ${holder}, ${now}, false)
-      on conflict (seat_id, challenger) do update
+      insert into gym_challenges
+        (generation, seat_id, challenger, battle_id, held_by, started_at, settled)
+      values (${WORLD_GENERATION}, ${seat}, ${uid}, ${battleId}, ${holder}, ${now}, false)
+      on conflict (generation, seat_id, challenger) do update
         set battle_id = ${battleId}, held_by = ${holder}, started_at = ${now}, settled = false
     `;
     return true;
@@ -602,7 +611,8 @@ export interface GymSeatResult {
 export async function settleGymChallenge(uid: string, seat: string): Promise<GymSeatResult | null> {
   const rows = await getSql()`
     select battle_id, held_by from gym_challenges
-    where seat_id = ${seat} and challenger = ${uid} and not settled
+    where generation = ${WORLD_GENERATION} and seat_id = ${seat} and challenger = ${uid}
+      and not settled
   `;
   const row = rows.at(0);
 
@@ -629,7 +639,8 @@ export async function settleGymChallenge(uid: string, seat: string): Promise<Gym
   const settled = await tx(async (transaction) => {
     const claimed = await transaction`
       update gym_challenges set settled = true, settled_at = ${now}
-      where seat_id = ${seat} and challenger = ${uid} and not settled
+      where generation = ${WORLD_GENERATION} and seat_id = ${seat} and challenger = ${uid}
+        and not settled
     `;
 
     if (claimed.count === 0) {
@@ -652,7 +663,7 @@ export async function settleGymChallenge(uid: string, seat: string): Promise<Gym
     if (!won) {
       await transaction`
         update gym_seats set defenses = defenses + 1
-        where seat_id = ${seat} and holder = ${from}
+        where generation = ${WORLD_GENERATION} and seat_id = ${seat} and holder = ${from}
       `;
       return { moved: false, gold };
     }
@@ -665,7 +676,7 @@ export async function settleGymChallenge(uid: string, seat: string): Promise<Gym
       update gym_seats
       set holder = null, snapshot_id = null, seated_at = ${now},
           defenses = 0, ousted = ${from}, freed_at = ${now}
-      where seat_id = ${seat} and holder = ${from}
+      where generation = ${WORLD_GENERATION} and seat_id = ${seat} and holder = ${from}
     `;
 
     return { moved: freed.count > 0, gold };
@@ -685,7 +696,7 @@ export async function settleGymChallenge(uid: string, seat: string): Promise<Gym
       set window_at = case when ${now} - window_at >= ${SEAT_TAKE_WINDOW} then ${now} else window_at end,
           taken = case when ${now} - window_at >= ${SEAT_TAKE_WINDOW} then ${settled.gold}
                        else taken + ${settled.gold} end
-      where seat_id = ${seat} and challenger = ${uid}
+      where generation = ${WORLD_GENERATION} and seat_id = ${seat} and challenger = ${uid}
     `;
   }
 
@@ -704,7 +715,9 @@ export async function settleGymChallenge(uid: string, seat: string): Promise<Gym
  */
 export async function listHeldSeats(uid: string): Promise<GymSeatRecord[]> {
   const rows = await getSql()`
-    select * from gym_seats where holder = ${uid} order by seated_at desc limit 50
+    select * from gym_seats
+    where generation = ${WORLD_GENERATION} and holder = ${uid}
+    order by seated_at desc limit 50
   `;
 
   const seats: GymSeatRecord[] = [];

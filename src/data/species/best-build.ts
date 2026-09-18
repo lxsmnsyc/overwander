@@ -11,6 +11,7 @@ import { Weathers } from '../ids/status';
 import {
   ABILITY_WANTS_WEATHER,
   ABILITY_WEATHER,
+  type BuildAlly,
   BuildRole,
   WEATHER_TYPES,
   getBestMoves,
@@ -693,8 +694,9 @@ export function getBestBuild(
   abilityCount: number,
   taken: ReadonlyMap<Moves, number> = new Map(),
   sky?: { weather: Weathers; setter: boolean },
+  allies: readonly BuildAlly[] = [],
 ): BestBuild {
-  const options = { role, taken, weather: sky?.weather, setter: sky?.setter };
+  const options = { role, taken, allies, weather: sky?.weather, setter: sky?.setter };
   // Abilities and moves each want the other decided first, so the
   // draft is thrown away: the sheet is picked on a first guess at the
   // abilities, the abilities are then priced against that sheet, and
@@ -738,10 +740,27 @@ export function getBestParty(party: Species[], abilityCount: number): BestBuild[
   const built: BestBuild[] = [];
 
   for (const [at, species] of party.entries()) {
-    const member = getBestBuild(species, roles[at], abilityCount, taken, {
-      weather: sky.weather,
-      setter: sky.setter === at,
-    });
+    // Built teammates by what they settled on, the rest by their first read
+    const allies: BuildAlly[] = [];
+
+    for (const [other, ally] of party.entries()) {
+      if (other !== at) {
+        allies.push({
+          species: ally,
+          abilities: other < at ? built[other].abilities : wanted[other],
+          role: roles[other],
+        });
+      }
+    }
+
+    const member = getBestBuild(
+      species,
+      roles[at],
+      abilityCount,
+      taken,
+      { weather: sky.weather, setter: sky.setter === at },
+      allies,
+    );
 
     built.push(member);
     // Every move, not only the quiet ones: a party of four

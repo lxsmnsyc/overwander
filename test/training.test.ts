@@ -16,6 +16,7 @@ import {
   MAX_FRIENDSHIP,
   PURIFIED_FRIENDSHIP_BONUS,
   SHADOW_FRIENDSHIP,
+  SOOTHE_BELL_FACTOR,
   describeFriendship,
   friendshipFactor,
   gainFriendship,
@@ -38,6 +39,7 @@ import { PP_UP_LIMIT, getMovePP, registerMoves } from '../src/data/moves';
 import { getItemBand } from '../src/data/overworld/item-pool';
 import { registerSpecies } from '../src/data/species';
 import { Species } from '../src/data/ids/species';
+import { raisedMovePoints } from '../src/server/training';
 
 // The registries the assertions below read: what a move's PP is, and
 // what the market makes of a vitamin
@@ -237,6 +239,21 @@ describe('friendship', () => {
     expect(FRIENDSHIP_STEP_INTERVAL).toBeGreaterThan(0);
   });
 
+  it('rings a Soothe Bell for whatever is carrying one', () => {
+    // The ball is remembered and the bell is carried, so the two stack
+    expect(friendshipFactor(Balls.PokeBall, [Items.SootheBell])).toBe(SOOTHE_BELL_FACTOR);
+    expect(friendshipFactor(Balls.LuxuryBall, [Items.SootheBell])).toBe(
+      LUXURY_FRIENDSHIP_FACTOR * SOOTHE_BELL_FACTOR,
+    );
+    expect(friendshipFactor(Balls.PokeBall, [Items.Leftovers])).toBe(1);
+
+    const factor = friendshipFactor(Balls.PokeBall, [Items.SootheBell]);
+
+    expect(gainFriendship(50, 'level', 1, factor)).toBe(60);
+    // And it is no reason to take a fainting harder
+    expect(gainFriendship(50, 'faint', 1, factor)).toBe(49);
+  });
+
   it('brings a pokemon caught in a Luxury Ball round twice as fast', () => {
     expect(friendshipFactor(Balls.LuxuryBall)).toBe(LUXURY_FRIENDSHIP_FACTOR);
     expect(friendshipFactor(Balls.PokeBall)).toBe(1);
@@ -311,6 +328,14 @@ describe('move points', () => {
     expect(getMovePoints(caught, Moves.Growl)).toBe(0);
     expect(getMovePoints(caught, Moves.Ember)).toBe(0);
     expect(caught.movePoints[String(Moves.TailWhip)]).toBeUndefined();
+  });
+
+  it('refuses a bottle that would not change the move', () => {
+    // A fifth of Sketch's 1 PP floors to nothing at any count
+    expect(raisedMovePoints(Moves.Sketch, 0, PP_UP_LIMIT)).toBeNull();
+    expect(raisedMovePoints(Moves.Tackle, PP_UP_LIMIT, 1)).toBeNull();
+    expect(raisedMovePoints(Moves.Tackle, 0, 1)).toBe(1);
+    expect(raisedMovePoints(Moves.Tackle, 2, PP_UP_LIMIT)).toBe(PP_UP_LIMIT);
   });
 
   it('reads a record written before moves could be trained as untrained', () => {

@@ -1,6 +1,7 @@
 import type { Items } from '../data/ids/items';
 import healOnServerSide from '../server/healing';
 import { requireUid } from '../server/auth';
+import check, { GAME_ID, ID, TOKEN } from '../server/validate';
 import type { HealthState } from './health';
 import getIdToken from './session';
 
@@ -33,5 +34,8 @@ async function healOnServer(
   item: Items,
 ): Promise<HealthState | null> {
   'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  check(GAME_ID, item);
   return healOnServerSide(await requireUid(token), catchId, item);
 }

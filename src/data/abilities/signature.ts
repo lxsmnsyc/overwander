@@ -39,7 +39,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Weedle, Abilities.TwinStinger, {
     name: 'Twin Stinger',
     description:
-      'Each physical move it uses strikes twice at 60% power, so anything that answers a landed blow answers both.',
+      'Each single-hit physical move it uses strikes twice at 60% power, so anything that answers a landed blow answers both.',
   });
 
   registerSignature(Families.Pidgey, Abilities.Slipstream, {
@@ -49,7 +49,8 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Rattata, Abilities.Nibble, {
     name: 'Nibble',
-    description: "Every move it lands takes another 1/32 of the target's HP, whatever its armour.",
+    description:
+      "Every damaging move it lands takes another 1/32 of the target's HP, whatever its armour.",
   });
 
   registerSignature(Families.Spearow, Abilities.Relentless, {
@@ -84,13 +85,13 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.NidoranF, Abilities.QueensCourt, {
     name: "Queen's Court",
     description:
-      'Her Defense and Special Defense are 1.15x for each poisoned enemy on the field, counting up to 3.',
+      'Her Defense and Special Defense rise 15% for each poisoned enemy on the field, counting up to 3.',
   });
 
   registerSignature(Families.NidoranM, Abilities.KingsCourt, {
     name: "King's Court",
     description:
-      'His Attack and Special Attack are 1.15x for each poisoned enemy on the field, counting up to 3.',
+      'His Attack and Special Attack rise 15% for each poisoned enemy on the field, counting up to 3.',
   });
 
   registerSignature(Families.Clefairy, Abilities.WishingWell, {
@@ -195,7 +196,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Ponyta, Abilities.Gallop, {
     name: 'Gallop',
     description:
-      'Its Speed rises 10% each time it acts, up to 1.5x. Any hit it takes brings it back to a standstill.',
+      'Its Speed rises 10% each time it acts, up to 1.5x. Any damage it takes, poison and weather included, brings it back to a standstill.',
   });
 
   registerSignature(Families.Slowpoke, Abilities.DelayedReaction, {
@@ -314,7 +315,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Goldeen, Abilities.Upstream, {
     name: 'Upstream',
-    description: 'Its moves hit 1.35x against any target with more HP than its own.',
+    description: 'Its moves hit 1.35x against any target whose max HP is higher than its own.',
   });
 
   registerSignature(Families.Staryu, Abilities.CoreReset, {
@@ -497,7 +498,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Togepi, Abilities.FairShare, {
     name: 'Fair Share',
     description:
-      'A move under 100% accuracy that just hit somebody in its party cannot hit that one again next time.',
+      'When a move under 100% accuracy lands on somebody in its party, the next such move aimed at them misses.',
   });
 
   registerSignature(Families.Natu, Abilities.Prophecy, {
@@ -701,7 +702,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Suicune, Abilities.RisenTide, {
     name: 'Risen Tide',
     description:
-      'The first blow that would finish it leaves it on 1 HP, cured, and a stage harder to hurt. Once per battle.',
+      'The first blow that would finish it leaves it on 1 HP, cured, and a stage up in Defense. Once per battle.',
   });
 
   registerSignature(Families.Larvitar, Abilities.Tyrant, {
@@ -1094,7 +1095,8 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Relicanth, Abilities.Unchanged, {
     name: 'Unchanged',
-    description: 'Every move hits it for neutral damage: it has no weaknesses and no resistances.',
+    description:
+      'Every move hits it for neutral damage: it has no weaknesses, resistances or immunities.',
   });
 
   registerSignature(Families.Luvdisc, Abilities.SharedHeart, {
@@ -1194,7 +1196,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Turtwig, Abilities.BarkBrace, {
     name: 'Bark Brace',
     description:
-      'The first physical blow it takes each fight lands at 1/2, and it roots: 1/16 of its HP back each time it acts.',
+      'The first physical blow it takes each fight lands at 1/2 and roots it, so it heals 1/16 of its HP each time it acts but cannot leave the field.',
   });
 
   registerSignature(Families.Chimchar, Abilities.CinderBrace, {
@@ -1235,7 +1237,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Shinx, Abilities.GleamEyes, {
     name: 'Gleam Eyes',
     description:
-      "Its attacks ignore the target's raised evasion, and reach one that is in the air or underground.",
+      "Its attacks ignore the target's raised evasion, and reach one hidden by Fly, Dig, Dive, Bounce or Shadow Force.",
   });
 
   /**
@@ -1279,7 +1281,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Buizel, Abilities.FloatSac, {
     name: 'Float Sac',
-    description: 'It floats above Ground moves and hazards until a blow takes it under 1/2 HP.',
+    description: 'It floats above Ground moves and hazards until any damage takes it under 1/2 HP.',
   });
 
   registerSignature(Families.Cherubi, Abilities.SecondBloom, {
@@ -1305,7 +1307,8 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Glameow, Abilities.VelvetClaws, {
     name: 'Velvet Claws',
-    description: 'Its contact moves hit 1.25x against anything that has raised a stat this fight.',
+    description:
+      'Its contact moves hit 1.25x against anything that has gained a stat stage this fight.',
   });
 
   /**
@@ -1371,7 +1374,7 @@ export default function registerSignatureAbilities(): void {
   // The squirrel, whose charge is in the fur of whoever it lives with
   registerSignature(Families.Pachirisu, Abilities.Sparkfur, {
     name: 'Sparkfur',
-    description: 'Anything that touches one of its teammates is paralyzed 30% of the time.',
+    description: 'Anything that touches it or one of its teammates is paralyzed 30% of the time.',
   });
 
   // The bird, whose noise is somebody else's and louder
@@ -1461,12 +1464,13 @@ export default function registerSignatureAbilities(): void {
    */
   registerSignature(Families.Cresselia, Abilities.WaningLight, {
     name: 'Waning Light',
-    description: 'A status on its teammates runs 0.5x as long.',
+    description:
+      'Every timed status on its team runs 0.5x as long, its own and the helpful ones included.',
   });
 
   registerSignature(Families.Darkrai, Abilities.WaxingDark, {
     name: 'Waxing Dark',
-    description: 'A status it puts on an enemy runs 1.5x as long.',
+    description: 'Every timed status it puts on an enemy runs 1.5x as long.',
   });
 
   // The prince of the sea, whose own move is a swap of hearts
@@ -1504,6 +1508,348 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Oshawott, Abilities.ShellOpening, {
     name: 'Shell Opening',
     description: 'The first move it lands each fight raises its own Defense 2 stages.',
+  });
+
+  // The three a walk out of the first town meets
+  registerSignature(Families.Patrat, Abilities.Spotter, {
+    name: 'Spotter',
+    description: 'Its team throws 1.2x as accurately at a target that is casting or channelling.',
+  });
+
+  registerSignature(Families.Lillipup, Abilities.LoyalGuard, {
+    name: 'Loyal Guard',
+    description: '1.5x Defense and Special Defense while a teammate is under 1/2 HP.',
+  });
+
+  registerSignature(Families.Purrloin, Abilities.CatBurglar, {
+    name: 'Cat Burglar',
+    description: 'The first move it lands each fight takes the target’s held item.',
+  });
+
+  // The three the second road holds
+  // The elemental monkeys each spend the tuft they carry once, and
+  // what each leaves on the enemy side keeps costing
+  registerSignature(Families.Pansage, Abilities.LeafCrown, {
+    name: 'Leaf Crown',
+    description: 'The first time it drops below 1/2 HP it seeds every enemy. Once per battle.',
+  });
+
+  registerSignature(Families.Pansear, Abilities.EmberTuft, {
+    name: 'Ember Tuft',
+    description: 'The first time it drops below 1/2 HP it burns every enemy. Once per battle.',
+  });
+
+  registerSignature(Families.Panpour, Abilities.GeyserTail, {
+    name: 'Geyser Tail',
+    description:
+      'The first time it drops below 1/2 HP it traps every enemy in a whirlpool. Once per battle.',
+  });
+
+  registerSignature(Families.Munna, Abilities.Doze, {
+    name: 'Doze',
+    description:
+      'It heals 1/16 of its HP for each second it has stood idle, up to 8, as it next acts.',
+  });
+
+  registerSignature(Families.Pidove, Abilities.Homing, {
+    name: 'Homing',
+    description: 'Its moves cannot miss a target it has already landed a move on this fight.',
+  });
+
+  registerSignature(Families.Blitzle, Abilities.StormDash, {
+    name: 'Storm Dash',
+    description: 'Its moves hit 10% harder for each stage of Speed it holds, up to 1.5x.',
+  });
+
+  // The three the first cave holds
+  registerSignature(Families.Roggenrola, Abilities.Aftershock, {
+    name: 'Aftershock',
+    description: 'A blow that leaves it standing on 1 HP costs whoever threw it 1/4 of their HP.',
+  });
+
+  registerSignature(Families.Woobat, Abilities.HeartMark, {
+    name: 'Heart Mark',
+    description: 'It casts Attract at an enemy as it arrives on the field.',
+  });
+
+  registerSignature(Families.Drilbur, Abilities.Torque, {
+    name: 'Torque',
+    description: 'Its moves hit 1.25x and wind up 25% slower.',
+  });
+
+  registerSignature(Families.Audino, Abilities.Ward, {
+    name: 'Ward',
+    description:
+      'While it stands, the first blow that would finish a teammate leaves them on 1 HP instead. Once per teammate.',
+  });
+
+  registerSignature(Families.Timburr, Abilities.LoadBearing, {
+    name: 'Load Bearing',
+    description:
+      'At or above 1/2 HP it takes 0.6x from everything. Below that it takes the lot and deals 1.4x.',
+  });
+
+  registerSignature(Families.Tympole, Abilities.RippleOut, {
+    name: 'Ripple Out',
+    description: 'A move it lands also deals 1/4 of that damage to every other enemy.',
+  });
+
+  // Throh and Sawk are one dojo split in two: the throw covers the
+  // team and the strike arms it, each for physical moves only
+  registerSignature(Families.Throh, Abilities.RedBelt, {
+    name: 'Red Belt',
+    description: 'Physical moves hit its whole team at 0.85x while it stands, itself included.',
+  });
+
+  registerSignature(Families.Sawk, Abilities.BlueBelt, {
+    name: 'Blue Belt',
+    description: 'Its whole team throws physical moves at 1.15x while it stands, itself included.',
+  });
+
+  // The four the forest holds
+  registerSignature(Families.Sewaddle, Abilities.Tailor, {
+    name: 'Tailor',
+    description:
+      'It dresses its worst hurt teammate as it arrives, and that one takes 0.8x for the fight.',
+  });
+
+  registerSignature(Families.Venipede, Abilities.HurryVenom, {
+    name: 'Hurry Venom',
+    description: 'Poison it puts on an enemy costs them 1.5x as much each time they act.',
+  });
+
+  // Cottonee and Petilil are the forest's two halves: what the wind
+  // takes off one reaches every enemy, what the other dances reaches
+  // its own team
+  registerSignature(Families.Cottonee, Abilities.SporeDrift, {
+    name: 'Spore Drift',
+    description: 'Its powder moves cannot miss, and nothing is immune to them.',
+  });
+
+  registerSignature(Families.Petilil, Abilities.PollenWaltz, {
+    name: 'Pollen Waltz',
+    description: 'Every stat stage one of its dances gives it is given to its teammates as well.',
+  });
+
+  // Route 4 and the Desert Resort
+  registerSignature(Families.Sandile, Abilities.DeathRoll, {
+    name: 'Death Roll',
+    description: 'Its contact moves hit 1.25x against a target it has already landed one on.',
+  });
+
+  registerSignature(Families.Darumaka, Abilities.GlancingBlow, {
+    name: 'Glancing Blow',
+    description: 'A move of its that misses still deals 1/4 of what it would have.',
+  });
+
+  registerSignature(Families.Maractus, Abilities.DrySpell, {
+    name: 'Dry Spell',
+    description:
+      'While no weather is up, its moves hit 1.3x and it heals 1/16 of its HP each time it acts.',
+  });
+
+  registerSignature(Families.Dwebble, Abilities.Slab, {
+    name: 'Slab',
+    description: 'The rock it carries takes the first 1/4 of its HP worth of damage each fight.',
+  });
+
+  // The Relic Castle, and what Castelia leaves out
+  registerSignature(Families.Scraggy, Abilities.GangUp, {
+    name: 'Gang Up',
+    description: 'Its moves hit 10% harder for each teammate still standing with it, up to 1.3x.',
+  });
+
+  registerSignature(Families.Sigilyph, Abilities.WardCircle, {
+    name: 'Ward Circle',
+    description:
+      'Nothing can lay hazards on its side while it stands, and it sweeps any away as it arrives.',
+  });
+
+  registerSignature(Families.Yamask, Abilities.DeathMask, {
+    name: 'Death Mask',
+    description: 'Whoever finishes one of its teammates loses 2 stages of its best stat.',
+  });
+
+  registerSignature(Families.Trubbish, Abilities.Litterbug, {
+    name: 'Litterbug',
+    description: 'It casts Toxic Spikes onto the enemy side as it arrives on the field.',
+  });
+
+  // Route 5, where the games hand out one of the last two apiece
+  registerSignature(Families.Zorua, Abilities.Bluff, {
+    name: 'Bluff',
+    description:
+      'The first move that would hit it super effectively passes through it. Once per battle.',
+  });
+
+  registerSignature(Families.Minccino, Abilities.CleanSweep, {
+    name: 'Clean Sweep',
+    description: 'It sweeps every hazard and screen off both sides of the field as it arrives.',
+  });
+
+  // Gothita and Solosis are the two the games separate: one aims what
+  // its team throws, the other spreads what its team takes
+  registerSignature(Families.Gothita, Abilities.Fixation, {
+    name: 'Fixation',
+    description: 'Its whole team hits 1.2x against whichever enemy is lowest on HP.',
+  });
+
+  registerSignature(Families.Solosis, Abilities.Division, {
+    name: 'Division',
+    description: 'It takes 1/4 of every blow aimed at a teammate in their place.',
+  });
+
+  // Chargestone Cave
+  registerSignature(Families.Joltik, Abilities.StaticFeed, {
+    name: 'Static Feed',
+    description: 'It heals 1/8 of its HP whenever an Electric move lands on anybody, either side.',
+  });
+
+  registerSignature(Families.Ferroseed, Abilities.ThornCurtain, {
+    name: 'Thorn Curtain',
+    description: 'Its teammates take 0.85x from contact moves while it stands.',
+  });
+
+  registerSignature(Families.Klink, Abilities.Meshing, {
+    name: 'Meshing',
+    description: 'While a teammate stands with it, its team takes 0.9x and its own moves hit 1.2x.',
+  });
+
+  // Driftveil and the Cold Storage
+  registerSignature(Families.Basculin, Abilities.BloodWater, {
+    name: 'Blood Water',
+    description: 'Its moves hit 15% harder for each enemy already below 1/2 HP, up to 1.45x.',
+  });
+
+  registerSignature(Families.Ducklett, Abilities.SwanDance, {
+    name: 'Swan Dance',
+    description: 'Every dance move it uses raises its Speed 1 stage on top of what the dance does.',
+  });
+
+  registerSignature(Families.Vanillite, Abilities.FlashFreeze, {
+    name: 'Flash Freeze',
+    description: 'The first Ice move it lands each fight freezes the target outright.',
+  });
+
+  registerSignature(Families.Alomomola, Abilities.TidePool, {
+    name: 'Tide Pool',
+    description: 'Every heal on its team is worth 1.3x while it stands, its own included.',
+  });
+
+  // Celestial Tower and the road to it
+  registerSignature(Families.Elgyem, Abilities.SwapField, {
+    name: 'Swap Field',
+    description: 'It casts Wonder Room as it arrives on the field.',
+  });
+
+  registerSignature(Families.Litwick, Abilities.Hexlight, {
+    name: 'Hexlight',
+    description: 'Its moves hit 1.4x against a target that has a status condition.',
+  });
+
+  registerSignature(Families.Golett, Abilities.BrokenSeal, {
+    name: 'Broken Seal',
+    description:
+      'The first time it drops below 1/2 HP it gains 2 stages of Attack and loses 1 of Defense. Once per battle.',
+  });
+
+  // Dragonspiral Tower and the tunnels under it
+  registerSignature(Families.Axew, Abilities.Scoring, {
+    name: 'Scoring',
+    description: 'Every physical move it lands takes 1 stage of Defense off the target.',
+  });
+
+  registerSignature(Families.Druddigon, Abilities.Sunwarmed, {
+    name: 'Sunwarmed',
+    description: 'Its moves take 0.75x as long to cast while harsh sunlight is up.',
+  });
+
+  registerSignature(Families.Deino, Abilities.ThreeHeads, {
+    name: 'Three Heads',
+    description: 'Every move it lands also bites one other enemy for 1/3 of the damage.',
+  });
+
+  // Routes 9 and 10
+  registerSignature(Families.Pawniard, Abilities.Honed, {
+    name: 'Honed',
+    description: '+1 Attack every time an enemy raises a stat of its own.',
+  });
+
+  // Braviary and Mandibuzz are the sky split in two: one answers its
+  // own side's dead, the other answers everybody else's
+  registerSignature(Families.Rufflet, Abilities.Warcry, {
+    name: 'Warcry',
+    description: '+2 Attack every time one of its teammates faints.',
+  });
+
+  registerSignature(Families.Vullaby, Abilities.Bonewear, {
+    name: 'Bonewear',
+    description: '+1 Defense and +1 Special Defense every time an enemy faints.',
+  });
+
+  // Heatmor and Durant are the one hunt the games tell from both
+  // sides: one is built to open the nest, the other to hold it
+  registerSignature(Families.Heatmor, Abilities.Anteater, {
+    name: 'Anteater',
+    description: 'Its moves hit 1.5x against a Bug or Steel target.',
+  });
+
+  registerSignature(Families.Durant, Abilities.AntGuard, {
+    name: 'Ant Guard',
+    description: 'Fire moves hit it at 0.5x.',
+  });
+
+  registerSignature(Families.Larvesta, Abilities.EmberHalo, {
+    name: 'Ember Halo',
+    description: 'Every enemy loses 1/16 of its HP each time it acts while it stands.',
+  });
+
+  // Twist Mountain and the moor below it
+  registerSignature(Families.Tynamo, Abilities.LatchOn, {
+    name: 'Latch On',
+    description:
+      'Whatever its contact moves land on cannot flee and loses 1/16 of its HP each time it acts. One at a time.',
+  });
+
+  registerSignature(Families.Cubchoo, Abilities.FrostFangs, {
+    name: 'Frost Fangs',
+    description: 'Its contact moves hit 1.25x, with a 20% chance to freeze.',
+  });
+
+  registerSignature(Families.Cryogonal, Abilities.CrystalChain, {
+    name: 'Crystal Chain',
+    description: 'A freeze on an enemy lasts 2x as long while it stands.',
+  });
+
+  registerSignature(Families.Mienfoo, Abilities.SleeveGuard, {
+    name: 'Sleeve Guard',
+    description: 'Contact moves land on it at 0.75x.',
+  });
+
+  /**
+   * The four swords share one signature: each stands watch over its
+   * team against one kind of harm, and none of them is worth anything
+   * to the holder alone
+   */
+  registerSignature(Families.Cobalion, Abilities.IronVigil, {
+    name: 'Iron Vigil',
+    description: 'Its teammates take physical moves at 0.8x while it stands.',
+  });
+
+  registerSignature(Families.Terrakion, Abilities.StoneVigil, {
+    name: 'Stone Vigil',
+    description: 'Its teammates take special moves at 0.8x while it stands.',
+  });
+
+  registerSignature(Families.Virizion, Abilities.LeafVigil, {
+    name: 'Leaf Vigil',
+    description:
+      'Its teammates take indirect damage at 0.8x and cannot be poisoned while it stands.',
+  });
+
+  registerSignature(Families.Keldeo, Abilities.TideVigil, {
+    name: 'Tide Vigil',
+    description: 'Its teammates never flinch and refuse enemy stat drops while it stands.',
   });
 
   /**

@@ -7,6 +7,7 @@ import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
+import walksOverHazards from './hazards';
 
 /**
  * How deep the spikes may be laid, and what each depth costs whatever
@@ -87,7 +88,7 @@ export default function setupSpikes(battle: Battle): void {
     const unit = event.source;
     const laid = layersUnder(unit.team);
 
-    if (laid === 0 || !unit.alive || !walksOn(unit)) {
+    if (laid === 0 || !unit.alive || !walksOn(unit) || walksOverHazards(unit)) {
       return;
     }
 

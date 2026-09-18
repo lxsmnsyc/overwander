@@ -139,7 +139,8 @@ export default function registerCharmToBatonPass(): void {
   });
   registerMove(Moves.HealBell, {
     name: 'Heal Bell',
-    description: "Clears every status from the user's whole party. It is a sound.",
+    description:
+      "Cures burns, poison, paralysis, sleep and freezing across the user's whole party. It is a sound.",
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 5,

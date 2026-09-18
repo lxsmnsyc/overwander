@@ -15,6 +15,7 @@ import {
   IRON_BALL_SPEED,
   LAGGING_TAIL_PRIORITY,
   LEFTOVERS_SHARE,
+  MACHO_BRACE_SPEED,
   STICKY_BARB_SHARE,
 } from './worths';
 
@@ -126,6 +127,16 @@ export const setupIronBall = createHeldItem(
         }
       }),
     ]),
+);
+
+// A Macho Brace is training weight: the effort it buys is granted
+// outside the fight, and the fight is where it is paid for
+export const setupMachoBrace = createHeldItem(Items.MachoBrace, (battle) =>
+  battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+    if (event.stat === Stats.Speed && holds(event.source, Items.MachoBrace)) {
+      event.value *= MACHO_BRACE_SPEED;
+    }
+  }),
 );
 
 // A Float Stone lifts what its holder weighs, which is what a Low Kick

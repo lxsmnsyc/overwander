@@ -87,8 +87,8 @@ evolution stones, by contrast, do carry a price, so a spare one is worth gold.
 and she is standing behind its counter whatever the hour. The open country has
 none at all, so being patched up is a reason to walk back into town.
 
-She charges nothing, takes up to six pokemon in one handover, and turns nobody
-away however often they come back. What she hands back is at full health with
+She charges nothing, takes as many pokemon as you bring in one handover, and
+turns nobody away however often they come back. What she hands back is at full health with
 nothing left on it, and a shadow among them is purified on the way.
 
 ## The specialists
@@ -97,7 +97,7 @@ nothing left on it, and a shadow among them is purified on the way.
 | -------------------- | ---------------------------------------- | ------------------------------------------ |
 | **Breeder**          | Two pokemon, 5,000 gold                  | An egg; both parents returned immediately  |
 | **Daycare Lady**     | An egg, 2,500 gold                       | Half of the walk that remained             |
-| **Nurse Joy**        | Any number, one at a time, free          | Each healed, and any shadow purified       |
+| **Nurse Joy**        | Any number at once, free                 | Each healed, and any shadow purified       |
 | **Groomer**          | One pokemon, 2,500 gold                  | Half of the friendship it had left to gain |
 | **Move Reminder**    | One Heart Scale                          | A level-up move the pokemon has lost       |
 | **Move Tutor**       | One Heart Scale                          | Any move a machine could teach it          |
@@ -108,8 +108,8 @@ nothing left on it, and a shadow among them is purified on the way.
 | **Kurt**             | A basket of apricorns, free              | One ball per apricorn, of that colour      |
 
 **Nurse Joy** charges nothing and heals everything: full health, statuses
-cleared, and any shadow pokemon purified on the way. Six pokemon to a handover,
-and as many handovers as you like while she is standing there.
+cleared, and any shadow pokemon purified on the way. As many pokemon as you
+bring, and as many handovers as you like while she is standing there.
 
 **The Groomer** always adds half of what friendship remains, so he is worth a
 great deal to a pokemon fresh out of a ball and almost nothing to one that is
@@ -235,20 +235,21 @@ Who turns up decides what they bring:
 | **Ace Trainer**   | Five fully-grown pokemon of any type, levels 60-80, raised the way the Elite Four raise theirs. Pays 25,000 to 60,000 |
 | **A type expert** | Three to five of their own type, levels 40-60. Pays 5,000 to 15,000 |
 
-The type experts are the trainer classes, and both regions' are on the road:
-Kanto's Bug Catcher, Swimmer, Black Belt, Bird Keeper, Biker, Hiker, Poké Maniac,
-Channeler, Burglar, Rocker, Psychic, Lass, Beauty, Fisherman, Sailor, Gentleman,
-Super Nerd, Juggler, Tamer, Engineer and Gambler.
+The type experts are the trainer classes, and every region's are on the road.
+Kanto's are the Bug Catcher, Swimmer, Black Belt, Bird Keeper, Biker, Hiker,
+Poké Maniac, Channeler, Burglar, Rocker, Psychic, Lass, Beauty, Fisherman,
+Sailor, Gentleman, Super Nerd, Juggler, Tamer, Engineer and Gambler.
 
 **A class is not one type only.** Most field one, some field the pair the
 mainline gives them (a Sailor brings water and fighting, an Engineer steel and
 electric), and two trades may want the same type: what tells a Beauty from a Lass
 is who they are rather than what they carry.
 
-**A class belongs to a region.** The trades both regions put on the road are on
-it twice: a Swimmer (Kanto) and a Swimmer (Johto) are the same trade in two
-places, drawn differently, fielding what their own region grows. Their wins climb
-one line between them and pay one title, and their coats are earned apart.
+**A class belongs to a region.** A trade more than one region puts on the road
+stands on it once for each: a Swimmer (Kanto) and a Swimmer (Johto) are the same
+trade in two places, drawn differently, fielding what their own region grows.
+Their wins climb one line between them and pay one title, and their coats are
+earned apart.
 
 Johto brings a dozen trades Kanto has none of as well: the **Sage**, who fields
 grass, the **Skier** and the **Boarder**, ice, the **Scientist**, steel, the

@@ -1,5 +1,6 @@
 import OWPlantSprite, { type OWPlantLayout } from './ow-plant-sprite';
 import { OW_SPRITE_ROOT } from './ow-char-sprites';
+import sheetStamp from './sprite-stamps';
 
 /**
  * The plant sheets, loaded once each and **shared** rather than
@@ -22,7 +23,8 @@ const SHEETS = new Map<string, Promise<OWPlantSprite | null>>();
 
 async function fetchSheet(name: string, layout: OWPlantLayout): Promise<OWPlantSprite | null> {
   try {
-    const sprite = await OWPlantSprite.fetch(owPlantPath(name), layout);
+    const path = owPlantPath(name);
+    const sprite = await OWPlantSprite.fetch(path, layout, await sheetStamp(path));
 
     await sprite.load();
     return sprite;

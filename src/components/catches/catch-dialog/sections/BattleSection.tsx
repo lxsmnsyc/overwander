@@ -4,6 +4,13 @@ import type { CatchOrder, CaughtPokemon } from '../../../../auth/caught';
 
 import { getMovePoints } from '../../../../auth/caught-record';
 import { getStats } from '../../../../auth/health';
+import {
+  DEFAULT_ABILITY_SLOTS,
+  DEFAULT_ITEM_SLOTS,
+  DEFAULT_MOVE_SLOTS,
+  Slots,
+  mostSlots,
+} from '../../../../data/constants/slots';
 import { Stats } from '../../../../data/constants/stats';
 
 import type { InventoryEntry } from '../../../../auth/inventory';
@@ -16,21 +23,23 @@ import type { Moves } from '../../../../data/ids/moves';
 
 import { getMoveData } from '../../../../data/moves';
 
-import { describeAbility, detailAbility } from '../../../details';
+import { describeAbility, describeItem, detailAbility } from '../../../details';
+import { CHANNELER_FEE } from '../../../../data/overworld/npc';
 
 import InventoryPicker from '../../../items/InventoryPicker';
 import ItemCard from '../../../items/ItemCard';
 
 import ItemSprite from '../../../items/ItemSprite';
 import MoveHoverCard from '../../../moves/MoveHoverCard';
+import MoveCategorySprite from '../../../sprites/MoveCategorySprite';
+import { Sigil } from '../../../sprites/TypeBadge';
 
 import {
   Badge,
   Button,
-  DialogSection,
+  Hint,
+  HintList,
   HoverCard,
-  Note,
-  Row,
   TooltipHost,
   carried,
   createReorder,
@@ -63,6 +72,63 @@ export interface BattleSectionProps {
   onTake: (item: Items) => void;
   /** Save the whole arrangement, whichever of the three lists moved */
   onArrange: (order: CatchOrder) => void;
+}
+
+/** How big a move's type mark is drawn */
+const MARK_SIZE = 18;
+
+/**
+ * The category badge's width. The sheet cuts it at 32x14, so this is
+ * what stands it as tall as the row's line of text
+ */
+const CATEGORY_SIZE = 45;
+
+/**
+ * A slot the pokemon could fill but has not: drawn so the layout never
+ * shifts, and muted and inert so it is not mistaken for a control
+ */
+const OPEN_SLOT = 'rounded-lg border-2 border-dashed border-line-soft bg-paper/40';
+
+/** One entry per slot left open between what is shown and the most allowed */
+function unfilled(shown: number, kind: Slots): null[] {
+  const open: null[] = [];
+
+  for (let slot = shown; slot < mostSlots(kind); slot += 1) {
+    open.push(null);
+  }
+  return open;
+}
+
+/**
+ * A list's title with its Undo and Save on the far side. The row is as
+ * tall as the buttons whether or not they are showing, so reordering
+ * never moves anything under it
+ */
+function Heading(props: {
+  title: string;
+  /** What the info icon beside the title explains */
+  hint: JSX.Element;
+  shifted: boolean;
+  frozen: boolean;
+  onUndo: () => void;
+  onSave: () => void;
+}): JSX.Element {
+  return (
+    <div class="flex min-h-9 items-center justify-between gap-2">
+      <span class="flex items-center gap-1.5">
+        <h3 class="text-left">{props.title}</h3>
+        {props.hint}
+      </span>
+      <Show when={props.shifted}>
+        <div class="flex gap-1">
+          <Button onClick={props.onUndo}>Undo</Button>
+          <Button tone="primary" disabled={props.frozen} onClick={props.onSave}>
+            Save
+          </Button>
+        </div>
+      </Show>
+    </div>
+  );
 }
 
 /** Whether a laid-out list stands in a different order to the stored one */
@@ -99,10 +165,6 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
   createEffect(on(() => props.caught, lay));
 
   const arrangeable = (): boolean => props.owned && !props.frozen;
-  const laidOut = (): boolean =>
-    shifted(moves(), props.caught.moves) ||
-    shifted(abilities(), props.caught.abilities) ||
-    shifted(items(), props.caught.items);
 
   const movesOrder = createReorder({
     enabled: arrangeable,
@@ -142,58 +204,111 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
   };
 
   return (
-    <DialogSection>
-      <Show when={arrangeable()}>
-        {/* Said once for all three lists, since what it is worth is
-            the same in each: the top of the list is what it takes
-            into a fight that allows fewer than it has */}
-        <Note>
-          Drag to put them in order, or hold Alt and press the arrows. A fight that allows fewer
-          than it has takes them from the top.
-        </Note>
-      </Show>
-
-      <div class="grid gap-3 sm:grid-cols-3">
-        <div class="flex flex-col gap-1">
-          <h4>Moves</h4>
-          {/* The name, with the entry over it. The
-          description was written out under each row
-          once, which is four paragraphs in a column
-          a third this wide */}
-          <Show when={moves().length} fallback={<Note>It knows nothing.</Note>}>
-            <ul class="m-0 flex list-none flex-col gap-1 p-0" {...movesOrder.listProps}>
-              <Index each={moves()}>
-                {(move, at) => (
-                  <li {...movesOrder.itemProps(at)} class={grip(movesOrder.held() === at)}>
-                    <MoveHoverCard
-                      class="block"
-                      move={move()}
-                      points={getMovePoints(props.caught, move())}
-                      speed={getStats(props.caught)[Stats.Speed]}
-                    >
-                      {/* The name and nothing else: what
-                      kind it is and what it does are
-                      on the card over it, and three
-                      marks in a column this narrow
-                      left no room for the word */}
-                      <span
-                        class="block truncate rounded-lg border-2 border-line
-                      bg-paper px-2 py-1 text-sm font-medium"
-                      >
-                        {getMoveData(move()).name}
-                      </span>
-                    </MoveHoverCard>
+    <section class="flex flex-col">
+      <div class="flex flex-col">
+        <div class="flex min-w-0 flex-col gap-1 pb-3">
+          <Heading
+            title="Moves"
+            hint={
+              <Hint title="About moves">
+                <HintList>
+                  <li>
+                    A pokemon knows up to {DEFAULT_MOVE_SLOTS} moves to start, and never more than{' '}
+                    {mostSlots(Slots.Move)}.
                   </li>
-                )}
-              </Index>
-            </ul>
-          </Show>
+                  <li>
+                    Drag to reorder, or hold Alt and press the arrows. A fight that allows fewer
+                    moves takes them from the top.
+                  </li>
+                  <li>
+                    PP is how quickly a move comes back after use, not a count that runs out. PP Ups
+                    raise it for good.
+                  </li>
+                  <li>
+                    Speed shortens every cooldown. Hover a move to see its wait for this pokemon.
+                  </li>
+                </HintList>
+              </Hint>
+            }
+            shifted={shifted(moves(), props.caught.moves)}
+            frozen={props.frozen}
+            onUndo={() => {
+              setMoves([...props.caught.moves]);
+            }}
+            onSave={save}
+          />
+          <ul class="m-0 grid list-none grid-cols-2 gap-1 p-0" {...movesOrder.listProps}>
+            <Index each={moves()}>
+              {(move, at) => (
+                <li {...movesOrder.itemProps(at)} class={grip(movesOrder.held() === at)}>
+                  <MoveHoverCard
+                    class="block"
+                    move={move()}
+                    points={getMovePoints(props.caught, move())}
+                    speed={getStats(props.caught)[Stats.Speed]}
+                  >
+                    {/* Its name, type and category at a glance; what
+                          it does is on the card over it */}
+                    <span
+                      class="flex items-center gap-2 rounded-lg border-2 border-line bg-paper
+                          px-2 py-1 text-left text-sm font-medium"
+                    >
+                      <span class="grow truncate">{getMoveData(move()).name}</span>
+                      <Sigil type={getMoveData(move()).type} size={MARK_SIZE} />
+                      <MoveCategorySprite
+                        category={getMoveData(move()).category}
+                        size={CATEGORY_SIZE}
+                      />
+                    </span>
+                  </MoveHoverCard>
+                </li>
+              )}
+            </Index>
+            <Index each={unfilled(moves().length, Slots.Move)}>
+              {() => (
+                <li aria-hidden="true">
+                  <span class={`block h-8 ${OPEN_SLOT}`} />
+                </li>
+              )}
+            </Index>
+          </ul>
         </div>
 
-        <div class="flex flex-col gap-1">
-          <h4>Abilities</h4>
-          <Show when={abilities().length} fallback={<Note>None.</Note>}>
-            <ul class="m-0 flex list-none flex-col gap-1 p-0" {...abilitiesOrder.listProps}>
+        {/* Abilities and held items side by side under the moves */}
+        <div class="grid grid-cols-2 border-t border-line-soft">
+          <div class="flex min-w-0 flex-col gap-1 border-r border-line-soft py-3 pr-3">
+            <Heading
+              title="Abilities"
+              hint={
+                <Hint title="About abilities">
+                  <HintList>
+                    <li>
+                      A pokemon has room for {DEFAULT_ABILITY_SLOTS} ability to start, and up to{' '}
+                      {mostSlots(Slots.Ability)}.
+                    </li>
+                    <li>
+                      An Ability Capsule draws another ability its line can reach. An Ability Patch
+                      writes in its family's signature ability.
+                    </li>
+                    <li>
+                      The Channeler, a wandering NPC, calls up another ability its line can reach
+                      and adds a slot for it. She charges one {describeItem(CHANNELER_FEE)} and
+                      helps once each time she appears.
+                    </li>
+                    <li>
+                      Drag to reorder. A fight that allows fewer abilities takes them from the top.
+                    </li>
+                  </HintList>
+                </Hint>
+              }
+              shifted={shifted(abilities(), props.caught.abilities)}
+              frozen={props.frozen}
+              onUndo={() => {
+                setAbilities([...props.caught.abilities]);
+              }}
+              onSave={save}
+            />
+            <ul class="m-0 grid list-none grid-cols-2 gap-1 p-0" {...abilitiesOrder.listProps}>
               <Index each={abilities()}>
                 {(ability, at) => (
                   <li {...abilitiesOrder.itemProps(at)} class={grip(abilitiesOrder.held() === at)}>
@@ -205,99 +320,115 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                   </li>
                 )}
               </Index>
+              <Index each={unfilled(abilities().length, Slots.Ability)}>
+                {() => (
+                  <li aria-hidden="true">
+                    <span class={`block h-7 ${OPEN_SLOT}`} />
+                  </li>
+                )}
+              </Index>
             </ul>
-          </Show>
-        </div>
+          </div>
 
-        <div class="flex flex-col gap-1">
-          <h4>Held items</h4>
-          {/* Squares four across, the way the bag draws
-          them: a pokemon carries one by default and
-          a Utility Belt widens the record's own
-          room, so the tray is as wide as the pokemon
-          is rather than as wide as the game allows.
-          Room is only drawn for somebody who can
-          fill it — an empty square on a stranger's
-          pokemon is a button nobody may press */}
-          <ul class="m-0 grid list-none grid-cols-4 gap-1 p-0" {...itemsOrder.listProps}>
-            <Index each={itemSlots(props.caught, props.owned)}>
-              {(_, at) => (
-                <li
-                  class={`contents ${at < items().length ? grip(itemsOrder.held() === at) : ''}`}
-                  {...(at < items().length ? itemsOrder.itemProps(at) : {})}
-                >
-                  <Show
-                    when={at < items().length}
-                    fallback={
-                      <button
-                        type="button"
-                        disabled={props.frozen || props.holdables.length === 0}
-                        aria-label="Give it an item"
-                        class="flex aspect-square cursor-pointer items-center
+          <div class="flex min-w-0 flex-col gap-1 py-3 pl-3">
+            <Heading
+              title="Held items"
+              hint={
+                <Hint title="About held items">
+                  <HintList>
+                    <li>
+                      A pokemon holds {DEFAULT_ITEM_SLOTS} item to start. A Utility Belt adds a slot
+                      for good, up to {mostSlots(Slots.Item)}.
+                    </li>
+                    <li>
+                      Press an empty square to give an item from the bag. Hover an item to take it
+                      back.
+                    </li>
+                    <li>
+                      Drag to reorder. A fight that allows fewer items takes them from the top.
+                    </li>
+                  </HintList>
+                </Hint>
+              }
+              shifted={shifted(items(), props.caught.items)}
+              frozen={props.frozen}
+              onUndo={() => {
+                setItems([...props.caught.items]);
+              }}
+              onSave={save}
+            />
+            {/* Only its own room is drawn, and only for somebody who can
+                fill it: an empty square on a stranger's pokemon is a
+                button nobody may press */}
+            <ul class="m-0 grid list-none grid-cols-8 gap-1 p-0" {...itemsOrder.listProps}>
+              <Index each={itemSlots(props.caught, props.owned)}>
+                {(_, at) => (
+                  <li
+                    class={`contents ${at < items().length ? grip(itemsOrder.held() === at) : ''}`}
+                    {...(at < items().length ? itemsOrder.itemProps(at) : {})}
+                  >
+                    <Show
+                      when={at < items().length}
+                      fallback={
+                        <button
+                          type="button"
+                          disabled={props.frozen || props.holdables.length === 0}
+                          aria-label="Give it an item"
+                          class="flex aspect-square cursor-pointer items-center
                       justify-center rounded-lg border-2 border-dashed
                       border-line bg-paper/40 p-0 text-muted shadow-none
                       hover:border-tide hover:text-tide-dark
                       active:translate-y-0 disabled:cursor-not-allowed"
-                        onClick={() => {
-                          props.onGiving(true);
-                        }}
-                      >
-                        +
-                      </button>
-                    }
-                  >
-                    <HoverCard
-                      class="block"
-                      title="Info"
-                      footer={(close) => (
-                        <Show when={props.owned} fallback={<Button onClick={close}>Close</Button>}>
-                          <Button
-                            tone="primary"
-                            disabled={props.frozen}
-                            onClick={() => {
-                              close();
-                              props.onTake(items()[at]);
-                            }}
-                          >
-                            Take
-                          </Button>
-                        </Show>
-                      )}
-                      trigger={
-                        <span
-                          class="flex aspect-square w-full items-center
-                        justify-center rounded-lg border-2 border-line bg-paper"
+                          onClick={() => {
+                            props.onGiving(true);
+                          }}
                         >
-                          <ItemSprite item={items()[at]} size={ITEM_SPRITE} label="" />
-                        </span>
+                          +
+                        </button>
                       }
                     >
-                      <ItemCard item={items()[at]} />
-                    </HoverCard>
-                  </Show>
-                </li>
-              )}
-            </Index>
-          </ul>
+                      <HoverCard
+                        class="block"
+                        title="Info"
+                        footer={(close) => (
+                          <Show
+                            when={props.owned}
+                            fallback={<Button onClick={close}>Close</Button>}
+                          >
+                            <Button
+                              tone="primary"
+                              disabled={props.frozen}
+                              onClick={() => {
+                                close();
+                                props.onTake(items()[at]);
+                              }}
+                            >
+                              Take
+                            </Button>
+                          </Show>
+                        )}
+                        trigger={
+                          <span
+                            class="flex aspect-square w-full items-center
+                        justify-center rounded-lg border-2 border-line bg-paper"
+                          >
+                            <ItemSprite item={items()[at]} size={ITEM_SPRITE} label="" />
+                          </span>
+                        }
+                      >
+                        <ItemCard item={items()[at]} />
+                      </HoverCard>
+                    </Show>
+                  </li>
+                )}
+              </Index>
+              <Index each={unfilled(itemSlots(props.caught, props.owned).length, Slots.Item)}>
+                {() => <li aria-hidden="true" class={`aspect-square ${OPEN_SLOT}`} />}
+              </Index>
+            </ul>
+          </div>
         </div>
       </div>
-
-      {/* One press for all three lists: the section holds what has
-          been laid out and hands it over when the player saves */}
-      <Show when={laidOut()}>
-        <Row>
-          <Button
-            onClick={() => {
-              lay(props.caught);
-            }}
-          >
-            Undo
-          </Button>
-          <Button tone="primary" disabled={props.frozen} onClick={save}>
-            Save
-          </Button>
-        </Row>
-      </Show>
 
       {/* The bag opens as its own window rather than
       unfolding inside the sheet: a tray of thirty
@@ -325,6 +456,6 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
           }}
         />
       </Show>
-    </DialogSection>
+    </section>
   );
 }

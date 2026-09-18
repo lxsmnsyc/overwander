@@ -49,8 +49,8 @@ const DEV_SHINY_THRESHOLD = (HALF_MASK + 1) / 2;
 
 /**
  * Whether this run is a developer looking at the game rather than the
- * game itself. Read once at load, so the odds cannot change under a
- * session and the client agrees with the server about what sparkles.
+ * game itself. Read once at load; the dev setting below can only turn
+ * the boost off inside a run that has it.
  *
  * Production builds, unit tests and browser tests all keep the real
  * odds: the first is the game, and the other two check behaviour a
@@ -64,6 +64,17 @@ const SHOWING_OFF = ((): boolean => {
 
   return env.DEV === true && env.MODE !== 'test' && env.VITE_REAL_SHINY_ODDS !== 'true';
 })();
+
+/**
+ * The dev setting that switches the boost off, to see the real odds
+ * in a development run. The client and the dev server each hold one,
+ * and the settings sync keeps them agreeing about what sparkles
+ */
+let boosting = true;
+
+export function setDevShinyBoost(on: boolean): void {
+  boosting = on;
+}
 
 /**
  * The mainline shiny formula, adapted: the user id hashes to a stable
@@ -81,7 +92,7 @@ export function isShinyFor(userId: string, traitValue: number, boost = 1): boole
 
   // A boost widens the band: 8x takes the odds from 1/4096 to 1/512.
   // A dev run opens it to half of everything before any boost
-  return shininess < (SHOWING_OFF ? DEV_SHINY_THRESHOLD : SHINY_THRESHOLD * boost);
+  return shininess < (SHOWING_OFF && boosting ? DEV_SHINY_THRESHOLD : SHINY_THRESHOLD * boost);
 }
 
 /**

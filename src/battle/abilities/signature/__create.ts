@@ -30,6 +30,17 @@ import { createAbility, getAbilityHolders } from '../__create';
  * kept per unit and dropped when that unit arrives on the field or
  * falls. An ability lifting and settling again is not an arrival
  */
+/** The first enemy still standing, for an ability that casts at one */
+export function firstEnemy(battle: Battle, unit: Unit): Unit | undefined {
+  for (const enemy of battle.units(unit.team.alliance)) {
+    if (enemy.alive) {
+      return enemy;
+    }
+  }
+
+  return undefined;
+}
+
 export function createUnitState<T>(battle: Battle): {
   state: Map<Unit, T>;
   lifecycles: Lifecycle[];
@@ -1580,6 +1591,128 @@ export function createSinnohFossilAbility(
       spreading = false;
     });
   });
+}
+
+/** What each half of the dojo is worth to the team standing with it */
+export const RED_BELT_SCALE = 0.85;
+export const BLUE_BELT_SCALE = 1.15;
+
+/** Which half of the pair a belt is: the throw or the strike */
+export type BeltSide = 'throws' | 'strikes';
+
+/**
+ * Throh and Sawk train the same team, one covering it against physical
+ * moves and one arming its physical moves. Both read the same resolve,
+ * so the pair is one listener with the predicate swapped
+ */
+export function createBeltAbility(
+  ability: Abilities,
+  side: BeltSide,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const parent = event.parent;
+
+      if (parent.category !== MoveCategories.Physical) {
+        return;
+      }
+
+      // The dojo covers whoever stands in it, the holder included
+      const unit = side === 'throws' ? parent.target : parent.source;
+
+      if (unit.hasAbility(ability) || allyHolder(battle, unit, ability) != null) {
+        event.value *= side === 'throws' ? RED_BELT_SCALE : BLUE_BELT_SCALE;
+      }
+    }),
+  );
+}
+
+/** How low the monkeys let themselves get before they spend the tuft */
+export const TUFT_THRESHOLD = 1 / 2;
+
+/**
+ * The elemental monkeys each carry their element in a tuft and spend
+ * it once, on the whole enemy side, the first time a blow takes them
+ * under half. What each one leaves behind is a status that keeps
+ * costing: a burn, a whirlpool, a seed
+ */
+export function createTuftAbility(
+  ability: Abilities,
+  status: Statuses,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) => {
+    /** Which holders have already spent theirs */
+    const spent = new Set<Unit>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const holder = event.target;
+
+        if (
+          !event.success ||
+          !holder.alive ||
+          spent.has(holder) ||
+          !holder.hasAbility(ability) ||
+          holder.health >= holder.checkStat(Stats.HP, 0) * TUFT_THRESHOLD
+        ) {
+          return;
+        }
+
+        spent.add(holder);
+        holder.triggerAbility(ability);
+
+        const cause = { type: EffectType.Ability, ability, unit: holder } as const;
+
+        for (const enemy of battle.units(holder.team.alliance)) {
+          if (enemy.alive) {
+            enemy.addStatus(status, cause);
+          }
+        }
+      }),
+
+      // A tuft grows back between fights, not between arrivals
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        spent.delete(event.source);
+      }),
+    ]);
+  });
+}
+
+/** What a fallen body is worth to each of the two birds */
+export const WARCRY_STAGES = 2;
+export const BONEWEAR_STAGES = 1;
+
+/**
+ * The eagle and the vulture never share a sky, and each is worth
+ * something the moment a body hits the ground: Braviary reads its own
+ * side's dead and answers with Attack, Mandibuzz reads the enemy's and
+ * answers with armour. Same trigger, opposite side, opposite stat
+ */
+export function createCarrionAbility(
+  ability: Abilities,
+  own: boolean,
+  stages: [stage: Stages, value: number][],
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+      const fallen = event.source;
+
+      for (const holder of getAbilityHolders(battle, ability)) {
+        const theirs = holder.team.alliance === fallen.team.alliance;
+
+        if (!holder.alive || holder === fallen || theirs !== own) {
+          continue;
+        }
+        holder.triggerAbility(ability);
+
+        const cause = { type: EffectType.Ability, ability, unit: holder } as const;
+
+        for (const [stage, value] of stages) {
+          holder.addStage(stage, value, cause);
+        }
+      }
+    }),
+  );
 }
 
 /** What keeping a creed is worth on a blow that answers it */

@@ -131,9 +131,9 @@ describe('the claim markers', () => {
     const cutoff = `(extract(epoch from now()) * 1000)::bigint - 86400000`;
 
     await sql`
-      insert into berry_claims (marker, player, item, amount, claimed_at)
-      values ('old', ${player.uid}, 1, 1, 0),
-             ('fresh', ${player.uid}, 1, 1, (extract(epoch from now()) * 1000)::bigint)
+      insert into berry_claims (generation, marker, player, item, amount, claimed_at)
+      values (1, 'old', ${player.uid}, 1, 1, 0),
+             (1, 'fresh', ${player.uid}, 1, 1, (extract(epoch from now()) * 1000)::bigint)
     `;
     // The sweep's own statement, run the way the schedule runs it
     await sql.unsafe(`delete from berry_claims where claimed_at < ${cutoff}`);
@@ -145,11 +145,12 @@ describe('the claim markers', () => {
 
   it(`takes a cache's items down with it`, async () => {
     await sql`
-      insert into cache_claims (marker, player, claimed_at) values ('old', ${player.uid}, 0)
+      insert into cache_claims (generation, marker, player, claimed_at)
+      values (1, 'old', ${player.uid}, 0)
     `;
     await sql`
-      insert into cache_claim_items (marker, player, item, amount)
-      values ('old', ${player.uid}, 1, 2)
+      insert into cache_claim_items (generation, marker, player, item, amount)
+      values (1, 'old', ${player.uid}, 1, 2)
     `;
     await sql.unsafe(
       `delete from cache_claims where claimed_at < (extract(epoch from now()) * 1000)::bigint - 86400000`,
@@ -172,9 +173,9 @@ describe('the encounters a window staged', () => {
   async function stage(spawn: string, type: number, windowAt: string): Promise<void> {
     await sql`
       insert into encounters
-        (spawn_id, player, type, species, level, individual_value, trait_value, ivs,
+        (generation, spawn_id, player, type, species, level, individual_value, trait_value, ivs,
          nature, ability, gender, shiny, shadow, window_at, x, y, biome)
-      values (${spawn}, ${player.uid}, ${type}, 1, 5, 0, 0, 0, 0, 0, 0, false, false,
+      values (1, ${spawn}, ${player.uid}, ${type}, 1, 5, 0, 0, 0, 0, 0, 0, false, false,
               ${sql.unsafe(windowAt)}, 0, 0, 0)
     `;
   }
@@ -204,8 +205,8 @@ describe('the encounters a window staged', () => {
   it(`takes an encounter's moves down with it`, async () => {
     await stage('wild-old', 0, '0');
     await sql`
-      insert into encounter_moves (spawn_id, player, slot, move)
-      values ('wild-old', ${player.uid}, 0, 1)
+      insert into encounter_moves (generation, spawn_id, player, slot, move)
+      values (1, 'wild-old', ${player.uid}, 0, 1)
     `;
     await sql.unsafe(`delete from encounters where type = 0 and window_at < ${cutoff}`);
 

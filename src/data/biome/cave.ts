@@ -17,9 +17,9 @@ import { UNOWN_SPAWNS, registerCavePool } from './__create';
  * things a player gives up by going under: no dawn, no dusk, and
  * nothing that only comes out at night.
  */
-// TODO: add back Gible, Gabite, Garchomp, Bronzor, Bronzong, Probopass and Rhyperior once Sinnoh is on main
 const CAVE_SPAWNS: SpawnRarityGroups = {
   base: [
+    { species: Species.Klink, weight: 20 },
     { species: Species.Zubat, weight: 30 },
     { species: Species.Geodude, weight: 24 },
     { species: Species.Machop, weight: 12 },
@@ -27,8 +27,12 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Aron, weight: 8 },
     { species: Species.Rhyhorn, weight: 6 },
     { species: Species.Larvitar, weight: 3 },
+    { species: Species.Gible, weight: 3 },
+    { species: Species.Roggenrola, weight: 24 },
   ],
   uncommon: [
+    { species: Species.Ferroseed, weight: 16 },
+    { species: Species.Joltik, weight: 18 },
     { species: Species.Diglett, weight: 16 },
     { species: Species.Sandshrew, weight: 12 },
     { species: Species.Onix, weight: 10 },
@@ -37,10 +41,14 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Makuhita, weight: 8 },
     { species: Species.Baltoy, weight: 7 },
     { species: Species.Nosepass, weight: 6 },
+    { species: Species.Bronzor, weight: 6 },
     { species: Species.Meditite, weight: 6 },
     { species: Species.Slugma, weight: 5 },
+    { species: Species.Woobat, weight: 16 },
+    { species: Species.Drilbur, weight: 12 },
   ],
   rare: [
+    { species: Species.Klang, weight: 8 },
     { species: Species.Golbat, weight: 16 },
     { species: Species.Graveler, weight: 12 },
     { species: Species.Machoke, weight: 8 },
@@ -48,8 +56,12 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Lairon, weight: 6 },
     { species: Species.Rhydon, weight: 5 },
     { species: Species.Pupitar, weight: 3 },
+    { species: Species.Gabite, weight: 3 },
+    { species: Species.Boldore, weight: 12 },
   ],
   scarce: [
+    { species: Species.Ferrothorn, weight: 5 },
+    { species: Species.Galvantula, weight: 6 },
     { species: Species.Dugtrio, weight: 10 },
     { species: Species.Sandslash, weight: 9 },
     { species: Species.Steelix, weight: 7 },
@@ -57,12 +69,18 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Hariyama, weight: 6 },
     { species: Species.Claydol, weight: 6 },
     { species: Species.Clefable, weight: 5 },
+    { species: Species.Bronzong, weight: 5 },
     { species: Species.Medicham, weight: 5 },
     { species: Species.Magcargo, weight: 5 },
+    { species: Species.Probopass, weight: 4 },
+    { species: Species.Swoobat, weight: 8 },
+    { species: Species.Excadrill, weight: 7 },
   ],
   elusive: [
+    { species: Species.Klinklang, weight: 4 },
     // The ones that never evolve are the reason to be down here at
     // all: none of them stands anywhere else in the world
+    { species: Species.Druddigon, weight: 5 },
     { species: Species.Dunsparce, weight: 10 },
     { species: Species.Wobbuffet, weight: 8 },
     { species: Species.Sableye, weight: 7 },
@@ -74,7 +92,10 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Machamp, weight: 5 },
     { species: Species.Exploud, weight: 5 },
     { species: Species.Aggron, weight: 4 },
+    { species: Species.Rhyperior, weight: 3 },
+    { species: Species.Garchomp, weight: 2 },
     { species: Species.Tyranitar, weight: 2 },
+    { species: Species.Gigalith, weight: 4 },
   ],
   prized: [...UNOWN_SPAWNS],
   // Nothing. A legendary underground is at home in a lair rather than

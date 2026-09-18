@@ -12,7 +12,8 @@ players are holding, quests and badges to collect, an auction house and
 friend-to-friend trades, and a real-time battle engine both sides replay from a
 seed.
 
-The dex runs to 251, Kanto and Johto, with their moves, abilities and items.
+The dex runs to 493: Kanto, Johto, Hoenn and Sinnoh, with their moves,
+abilities and items.
 Where the old games and the modern ones disagree, the mechanics follow the
 modern ones.
 
@@ -38,6 +39,7 @@ modern ones.
 | Tailwind CSS 4 | Styling, configured in `src/app.css` rather than a config file |
 | Supabase       | Postgres, auth, row-level security and the realtime stream     |
 | postgres.js    | The direct connection every privileged write travels over      |
+| valibot        | The schemas every server function checks its arguments against |
 | Vitest         | The tests, which run the real engines rather than mocks        |
 | oxlint / oxfmt | Linting and formatting                                         |
 
@@ -157,6 +159,7 @@ hands every account it creates the `admin` role, granted on the server.
 | `pnpm import-sprites`  | Copy the pokemon sheets in from `../SpriteCollab`   |
 | `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel    |
 | `pnpm sprite-coats`    | Restamp `coats.json` after anything writes a sheet  |
+| `pnpm sprite-stamps`   | Restamp every other sheet, which `pnpm build` also does |
 | `pnpm test`            | The whole test suite, once                          |
 | `pnpm test:rules`      | The row-level security suite, against a local stack |
 | `pnpm test:e2e`        | The Playwright suites under `e2e/`                  |

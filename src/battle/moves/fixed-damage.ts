@@ -1,7 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { DamageFlags, MoveAttackFlags, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
-import { USELESS_PENALTY } from '../ai/score';
+import { USELESS_PENALTY, sacrificeCost } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
@@ -119,14 +119,16 @@ export default function setupFixedDamageMoves(battle: Battle): void {
     }
   });
 
-  // A gambit that cannot finish the target is the user thrown away
+  // A gambit that cannot finish the target is the user thrown away,
+  // and one that can still costs the user, the way an Explosion does
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (
-      event.move === Moves.FinalGambit &&
-      event.target.type === MoveTargetType.Unit &&
-      event.source.health < event.target.unit.health
-    ) {
-      event.score -= USELESS_PENALTY;
+    if (event.move !== Moves.FinalGambit || event.target.type !== MoveTargetType.Unit) {
+      return;
     }
+
+    event.score -=
+      event.source.health < event.target.unit.health
+        ? USELESS_PENALTY
+        : sacrificeCost(event.source);
   });
 }

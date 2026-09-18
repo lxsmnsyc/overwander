@@ -1,0 +1,225 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { EvolutionMethod, Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM, HM and tutor moves shared by the whole family
+const FAMILY_TEACHABLE = [
+  Moves.AerialAce,
+  Moves.Attract,
+  Moves.Dig,
+  Moves.DoubleTeam,
+  Moves.Facade,
+  Moves.Frustration,
+  Moves.GigaImpact,
+  Moves.HiddenPower,
+  Moves.Protect,
+  Moves.RainDance,
+  Moves.Rest,
+  Moves.Retaliate,
+  Moves.Return,
+  Moves.Roar,
+  Moves.RockSmash,
+  Moves.RockTomb,
+  Moves.Round,
+  Moves.ShadowBall,
+  Moves.Snarl,
+  Moves.Substitute,
+  Moves.SunnyDay,
+  Moves.Swagger,
+  Moves.ThunderWave,
+  Moves.Thunderbolt,
+  Moves.Toxic,
+  Moves.WildCharge,
+  Moves.WorkUp,
+];
+
+/**
+ * The dogs of Unova: a Lillipup reads a face before it reads a fight,
+ * a Herdier stands in front of what it is told to, and a Stoutland has
+ * pulled people out of snow for as long as anybody has kept dogs
+ */
+export default function registerLillipupSpecies(): void {
+  registerSpecies(Species.Lillipup, {
+    dexNumber: 506,
+    evolvesInto: [
+      {
+        species: Species.Herdier,
+        method: EvolutionMethod.Level,
+        level: 16,
+      },
+    ],
+    name: 'Lillipup',
+    category: 'Puppy Pokemon',
+    height: 0.4,
+    weight: 4.1,
+    family: Families.Lillipup,
+    stats: {
+      [Stats.HP]: 45,
+      [Stats.Attack]: 60,
+      [Stats.Defense]: 45,
+      [Stats.SpecialAttack]: 25,
+      [Stats.SpecialDefense]: 45,
+      [Stats.Speed]: 55,
+    },
+    types: [Types.Normal],
+    abilities: [Abilities.VitalSpirit, Abilities.Pickup],
+    hiddenAbilities: [Abilities.RunAway],
+    eggGroups: [EggGroups.Field],
+    genderRatio: [1, 1],
+    catchRate: 255,
+    biomes: [Biome.Grassland, Biome.Woodland],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [Moves.Tackle, Moves.Leer],
+        5: [Moves.OdorSleuth],
+        8: [Moves.Bite],
+        12: [Moves.HelpingHand],
+        15: [Moves.TakeDown],
+        19: [Moves.WorkUp],
+        22: [Moves.Crunch],
+        26: [Moves.Roar],
+        29: [Moves.Retaliate],
+        33: [Moves.Reversal],
+        36: [Moves.LastResort],
+        40: [Moves.GigaImpact],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+      egg: [
+        Moves.Charm,
+        Moves.Endure,
+        Moves.FireFang,
+        Moves.Howl,
+        Moves.IceFang,
+        Moves.Lick,
+        Moves.MudSlap,
+        Moves.Pursuit,
+        Moves.SandAttack,
+        Moves.ThunderFang,
+        Moves.Yawn,
+      ],
+    },
+  });
+  registerSpecies(Species.Herdier, {
+    dexNumber: 507,
+    evolvesInto: [
+      {
+        species: Species.Stoutland,
+        method: EvolutionMethod.Level,
+        level: 32,
+      },
+    ],
+    name: 'Herdier',
+    category: 'Loyal Dog Pokemon',
+    height: 0.9,
+    weight: 14.7,
+    family: Families.Lillipup,
+    evolvesFrom: Species.Lillipup,
+    stats: {
+      [Stats.HP]: 65,
+      [Stats.Attack]: 80,
+      [Stats.Defense]: 65,
+      [Stats.SpecialAttack]: 35,
+      [Stats.SpecialDefense]: 65,
+      [Stats.Speed]: 60,
+    },
+    types: [Types.Normal],
+    abilities: [Abilities.Intimidate, Abilities.SandRush],
+    hiddenAbilities: [
+      Abilities.Scrappy,
+      Abilities.VitalSpirit,
+      Abilities.Pickup,
+      Abilities.RunAway,
+    ],
+    eggGroups: [EggGroups.Field],
+    genderRatio: [1, 1],
+    catchRate: 120,
+    biomes: [Biome.Grassland, Biome.Woodland],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [Moves.Tackle, Moves.Leer, Moves.Bite, Moves.OdorSleuth],
+        5: [Moves.OdorSleuth],
+        8: [Moves.Bite],
+        12: [Moves.HelpingHand],
+        15: [Moves.TakeDown],
+        20: [Moves.WorkUp],
+        24: [Moves.Crunch],
+        29: [Moves.Roar],
+        33: [Moves.Retaliate],
+        38: [Moves.Reversal],
+        42: [Moves.LastResort],
+        47: [Moves.GigaImpact],
+      },
+      teachable: [...FAMILY_TEACHABLE, Moves.Payback, Moves.Strength, Moves.Surf],
+    },
+  });
+  registerSpecies(Species.Stoutland, {
+    dexNumber: 508,
+    name: 'Stoutland',
+    category: 'Big-Hearted Pokemon',
+    height: 1.2,
+    weight: 61,
+    family: Families.Lillipup,
+    evolvesFrom: Species.Herdier,
+    stats: {
+      [Stats.HP]: 85,
+      [Stats.Attack]: 110,
+      [Stats.Defense]: 90,
+      [Stats.SpecialAttack]: 45,
+      [Stats.SpecialDefense]: 90,
+      [Stats.Speed]: 80,
+    },
+    types: [Types.Normal],
+    abilities: [Abilities.Intimidate, Abilities.SandRush],
+    hiddenAbilities: [
+      Abilities.Scrappy,
+      Abilities.VitalSpirit,
+      Abilities.Pickup,
+      Abilities.RunAway,
+    ],
+    eggGroups: [EggGroups.Field],
+    genderRatio: [1, 1],
+    catchRate: 45,
+    biomes: [Biome.Grassland, Biome.Steppe, Biome.Tundra],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [
+          Moves.Tackle,
+          Moves.Leer,
+          Moves.Bite,
+          Moves.OdorSleuth,
+          Moves.ThunderFang,
+          Moves.IceFang,
+          Moves.FireFang,
+        ],
+        5: [Moves.OdorSleuth],
+        8: [Moves.Bite],
+        12: [Moves.HelpingHand],
+        15: [Moves.TakeDown],
+        20: [Moves.WorkUp],
+        24: [Moves.Crunch],
+        29: [Moves.Roar],
+        36: [Moves.Retaliate],
+        42: [Moves.Reversal],
+        51: [Moves.LastResort],
+        59: [Moves.GigaImpact],
+      },
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Payback,
+        Moves.Strength,
+        Moves.Surf,
+        Moves.Thunder,
+      ],
+    },
+  });
+}

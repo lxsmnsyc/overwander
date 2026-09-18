@@ -26,7 +26,9 @@ import {
   Note,
   Row,
   createPager,
+  useToast,
 } from '../styled';
+import { PlayIcon, ShareIcon } from '../icons';
 import { GameDialog, useGame } from '../app/game-context';
 import type { CaughtPokemon } from '../../auth/caught';
 import { previewSnapshot } from '../../auth/catch-snapshot';
@@ -195,6 +197,7 @@ function HistoryRow(props: {
   onClaimed: () => void;
 }): JSX.Element {
   const game = useGame();
+  const toast = useToast();
   const [fought] = createResource(
     () => `${props.record.teams.join(',')}|${props.owner}`,
     loadFought,
@@ -268,15 +271,31 @@ function HistoryRow(props: {
       <Suspense fallback={<Note>Reading the team…</Note>}>
         <OwnStrip fought={fought} />
       </Suspense>
-      {/* Watching it back, from the row's end. It is called View
-          because that is all a replay is: the same fight again, with
-          nothing at stake */}
+      {/* Watching it back, from the row's end: the same fight again, with nothing at stake */}
       <Button
+        label="Watch replay"
+        title="Watch replay"
         onClick={() => {
           game.setBattle({ id: props.id, replay: true });
         }}
       >
-        View
+        <PlayIcon class="size-5" aria-hidden="true" />
+      </Button>
+      <Button
+        label="Copy link to this battle"
+        title="Copy link"
+        onClick={() => {
+          navigator.clipboard
+            .writeText(`${location.origin}/battle/${props.id}`)
+            .then(() => {
+              toast.push({ message: 'Link copied.', tone: 'leaf' });
+            })
+            .catch(() => {
+              toast.push({ message: 'The link could not be copied.', tone: 'ember' });
+            });
+        }}
+      >
+        <ShareIcon class="size-5" aria-hidden="true" />
       </Button>
     </ListRow>
   );

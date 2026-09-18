@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Volcano spawn pool, grouped by day-cycle period and rarity band.
@@ -44,8 +44,9 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Blaziken, weight: 2 },
         { species: Species.Torkoal, weight: 12 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Larvesta, weight: PRIZED_WEIGHT }],
       special: [
+        { species: Species.Volcarona, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Moltres, weight: 10 },
         { species: Species.Entei, weight: 10 },
@@ -88,8 +89,9 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Blaziken, weight: 2 },
         { species: Species.Torkoal, weight: 12 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Larvesta, weight: PRIZED_WEIGHT }],
       special: [
+        { species: Species.Volcarona, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Moltres, weight: 10 },
         { species: Species.Entei, weight: 10 },
@@ -98,19 +100,22 @@ export default function registerVolcanoSpawns(): void {
       ],
     },
     [TimeOfDay.Evening]: {
-      base: [],
+      base: [{ species: Species.Deino, weight: 2 }],
       uncommon: [
         { species: Species.Vulpix, weight: 20 },
         { species: Species.Slugma, weight: 20 },
         { species: Species.Magmar, weight: 10 },
       ],
-      rare: [],
+      rare: [{ species: Species.Zweilous, weight: 1 }],
       scarce: [
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Magcargo, weight: 10 },
         { species: Species.Magmortar, weight: 6 },
       ],
-      elusive: [],
+      elusive: [
+        { species: Species.Hydreigon, weight: 2 },
+        { species: Species.Heatmor, weight: 6 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Groudon, weight: 10 },
@@ -121,21 +126,24 @@ export default function registerVolcanoSpawns(): void {
       ],
     },
     [TimeOfDay.Night]: {
-      base: [],
+      base: [{ species: Species.Deino, weight: 2 }],
       uncommon: [
         { species: Species.Vulpix, weight: 20 },
         { species: Species.Koffing, weight: 20 },
         { species: Species.Slugma, weight: 20 },
         { species: Species.Magmar, weight: 10 },
       ],
-      rare: [],
+      rare: [{ species: Species.Zweilous, weight: 1 }],
       scarce: [
         { species: Species.Weezing, weight: 5 },
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Magcargo, weight: 5 },
         { species: Species.Magmortar, weight: 6 },
       ],
-      elusive: [],
+      elusive: [
+        { species: Species.Hydreigon, weight: 2 },
+        { species: Species.Heatmor, weight: 6 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Groudon, weight: 10 },

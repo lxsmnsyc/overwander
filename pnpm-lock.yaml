@@ -59,6 +59,9 @@ importers:
       three:
         specifier: ^0.186.0
         version: 0.186.0
+      valibot:
+        specifier: ^1.5.0
+        version: 1.5.0(typescript@7.0.2)
       vite:
         specifier: ^8.3.0
         version: 8.3.0(@types/node@26.5.1)(jiti@2.7.0)(yaml@2.9.1)
@@ -70,8 +73,8 @@ importers:
         specifier: ^2.31.1
         version: 2.31.1(@types/node@26.5.1)
       '@lxsmnsyc/oxlint-config':
-        specifier: ^0.1.2
-        version: 0.1.2(oxlint@1.82.0(oxlint-tsgolint@7.0.2001))
+        specifier: ^0.1.3
+        version: 0.1.3(oxlint@1.82.0(oxlint-tsgolint@7.0.2001))
       '@playwright/test':
         specifier: ^1.63.0
         version: 1.63.0
@@ -450,8 +453,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@lxsmnsyc/oxlint-config@0.1.2':
-    resolution: {integrity: sha512-ZxOFYZy/ofsa60lvWZDhYoVU1omdL5pkWG5sUlJ0qB/SNN9EPR42j6RFI1GFRYKq9fg6B/F/BK84MaW2mZTe+w==}
+  '@lxsmnsyc/oxlint-config@0.1.3':
+    resolution: {integrity: sha512-m262vO8X3wXAFrObKFs2mKggp4TKT6TYDGM/LyGSxnkaPc7G8y6SHW/M09xkn/4ce0I33LubSS/N1Q1PyXcpNg==}
     peerDependencies:
       oxlint: ^1
 
@@ -2605,6 +2608,14 @@ packages:
     peerDependencies:
       browserslist: '>= 4.21.0'
 
+  valibot@1.5.0:
+    resolution: {integrity: sha512-nil6AkP2TChWL43Z5uJ6GTxX01CUA+g8LWUM+N/rB9NBbkUMaUsi9PUNzlUPgoKASgmx9f7eGOYpJ04/fSa6FQ==}
+    peerDependencies:
+      typescript: '>=5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   vfile-message@4.0.3:
     resolution: {integrity: sha512-QTHzsGd1EhbZs4AsQ20JX1rC3cOlt/IWJruk893DfLRr57lcnOeMaWG4K0JrRta4mIJZKth2Au3mM3u03/JWKw==}
 
@@ -3160,7 +3171,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  '@lxsmnsyc/oxlint-config@0.1.2(oxlint@1.82.0(oxlint-tsgolint@7.0.2001))':
+  '@lxsmnsyc/oxlint-config@0.1.3(oxlint@1.82.0(oxlint-tsgolint@7.0.2001))':
     dependencies:
       oxlint: 1.82.0(oxlint-tsgolint@7.0.2001)
 
@@ -5238,6 +5249,10 @@ snapshots:
       browserslist: 4.28.9
       escalade: 3.2.0
       picocolors: 1.1.1
+
+  valibot@1.5.0(typescript@7.0.2):
+    optionalDependencies:
+      typescript: 7.0.2
 
   vfile-message@4.0.3:
     dependencies:

@@ -75,21 +75,17 @@ export function favorsEverything(weather: Weather): boolean {
 }
 
 /**
- * What a meteor shower multiplies the shiny odds by.
- *
- * It is the one sky that touches the coat rather than the values, and
- * it is deliberately the smallest boost in the game: the sky is rare
- * enough on its own that anything larger would make the shiny a
- * function of standing still and waiting rather than of looking
+ * What a meteor shower multiplies the shiny odds by: the Shiny Charm's
+ * worth, since the sky is rare enough that finding one should feel like it
  */
-export const METEOR_SHOWER_SHINY_BOOST = 2;
+export const METEOR_SHOWER_SHINY_BOOST = 8;
 
 /**
  * What a fata morgana multiplies the odds of a hidden ability by.
  *
- * The meteor shower's opposite number, and deliberately its equal: a
- * mirage shows what is not there to be seen, so what it is worth is
- * what the pokemon was hiding rather than what its coat looks like
+ * The meteor shower's opposite number: a mirage shows what is not there
+ * to be seen, so what it is worth is what the pokemon was hiding rather
+ * than what its coat looks like
  */
 export const FATA_MORGANA_HIDDEN_BOOST = 2;
 

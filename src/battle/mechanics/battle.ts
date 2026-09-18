@@ -81,7 +81,7 @@ export default function setupBattleMechanics(battle: Battle): void {
 
       const current = Date.now();
       // Never more than a moment, however long the frame took
-      let diff = Math.min(current - elapsed, MAX_FRAME);
+      let diff = Math.min(current - elapsed, MAX_FRAME) * battle.speed;
 
       elapsed = current;
 
@@ -90,8 +90,9 @@ export default function setupBattleMechanics(battle: Battle): void {
         diff -= FPS_DURATION;
       }
 
+      // What is left over is fight time, so it is owed back in real time
       if (diff > 0) {
-        elapsed -= diff;
+        elapsed -= diff / battle.speed;
       }
     }
   });

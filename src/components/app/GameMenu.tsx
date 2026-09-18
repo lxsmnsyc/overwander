@@ -26,7 +26,11 @@ import {
 } from '../../overworld/chunk-snapshot';
 import { GameDialog, useGame } from './game-context';
 import { watchProfile } from '../../auth/profile';
+import { listMysteryGifts } from '../../auth/gifts';
+import { NoticeKind } from '../../auth/notifications';
+import { getDueQuests } from '../../auth/quests';
 import {
+  ActionsIcon,
   BagIcon,
   BellIcon,
   FireIcon,
@@ -92,6 +96,14 @@ interface MenuEntry {
    */
   icon: (props: ComponentProps<'svg'>) => JSX.Element;
 }
+
+/** The notices a player settles from their profile rather than elsewhere */
+const PROFILE_NOTICES = new Set<NoticeKind>([
+  NoticeKind.FriendRequest,
+  NoticeKind.TradeOffer,
+  NoticeKind.AuctionWon,
+  NoticeKind.AuctionUnsold,
+]);
 
 const ENTRIES: MenuEntry[] = [
   { label: 'World', dialog: GameDialog.Map, icon: MapIcon },
@@ -225,6 +237,8 @@ export default function GameMenu(): JSX.Element {
   const [open, setOpen] = createSignal(false);
   /** The readings on a phone, behind their own button beside the menu */
   const [details, setDetails] = createSignal(false);
+  /** The buddy's field moves, behind their own button on the bar */
+  const [moves, setMoves] = createSignal(false);
   const [now, setNow] = createSignal(toLocalTime(serverNow(), getLocalOffset()));
   const [gold, setGold] = createSignal<number | null>(null);
 
@@ -233,6 +247,44 @@ export default function GameMenu(): JSX.Element {
 
   /** How many things are waiting on the player, for the key's own badge */
   const waiting = (): number => game.notices().length;
+
+  /** Gifts waiting on the shelf and quests ready to claim, read when the menu opens */
+  const [shelf, setShelf] = createSignal({ gifts: 0, quests: 0 });
+
+  const readShelf = (): void => {
+    Promise.all([listMysteryGifts(), getDueQuests()])
+      .then(([gifts, quests]) => {
+        setShelf({ gifts: gifts.length, quests: quests.length });
+      })
+      .catch(() => {
+        // A count that could not be read shows no badge rather than a wrong one
+      });
+  };
+
+  /** How many things each entry has waiting behind it */
+  const countFor = (dialog: GameDialog | undefined): number => {
+    if (dialog === GameDialog.Notifications) {
+      return waiting();
+    }
+    if (dialog === GameDialog.Gifts) {
+      return shelf().gifts;
+    }
+    if (dialog === GameDialog.Quests) {
+      return shelf().quests;
+    }
+    if (dialog !== GameDialog.Profile) {
+      return 0;
+    }
+    // What the profile's own tabs resolve: requests, trades and lots
+    let count = 0;
+
+    for (const notice of game.notices()) {
+      if (PROFILE_NOTICES.has(notice.kind)) {
+        count += 1;
+      }
+    }
+    return count;
+  };
 
   const period = (): string => TIME_OF_DAY_NAMES[getTimeOfDay(now())];
   const clock = (): string => worldClock(now(), settings().clock);
@@ -246,7 +298,12 @@ export default function GameMenu(): JSX.Element {
    */
   const local = (at: number): number => toLocalTime(at, getLocalOffset());
 
-  const beat = setInterval(() => {
+  /** Read the hour again, measuring the clock only for a tab somebody is looking at */
+  const tick = (): void => {
+    if (document.visibilityState !== 'visible') {
+      setNow(local(serverNow()));
+      return;
+    }
     syncServerClock()
       .then((at) => {
         setNow(local(at));
@@ -254,10 +311,16 @@ export default function GameMenu(): JSX.Element {
       .catch(() => {
         setNow(local(serverNow()));
       });
-  }, CLOCK_TICK);
+  };
+  onMount(() => {
+    const beat = setInterval(tick, CLOCK_TICK);
 
-  onCleanup(() => {
-    clearInterval(beat);
+    document.addEventListener('visibilitychange', tick);
+
+    onCleanup(() => {
+      clearInterval(beat);
+      document.removeEventListener('visibilitychange', tick);
+    });
   });
 
   syncServerClock()
@@ -320,9 +383,13 @@ export default function GameMenu(): JSX.Element {
         isOpen={open()}
         onChange={(state: boolean) => {
           setOpen(state);
-          // One panel at a time: both open out of the top of the bar
+          if (state) {
+            readShelf();
+          }
+          // One panel at a time: all of them open out of the top of the bar
           if (state) {
             setDetails(false);
+            setMoves(false);
           }
         }}
         // No `overflow-hidden` however tempting: the panel opens out
@@ -333,13 +400,13 @@ export default function GameMenu(): JSX.Element {
       >
         <PopoverButton
           ref={button}
+          aria-label="Menu"
           class="flex shrink-0 cursor-pointer items-center gap-2 rounded-full border-2
-            border-transparent bg-transparent px-3 py-1 text-sm font-bold text-ink shadow-none
+            border-transparent bg-transparent p-1.5 text-sm font-bold text-ink shadow-none
             transition-colors hover:bg-tide hover:text-on-accent focus-visible:outline-2
             focus-visible:outline-offset-2 focus-visible:outline-tide"
         >
           <MenuIcon class="size-5" aria-hidden="true" />
-          Menu
         </PopoverButton>
 
         {/* On a phone. Not positioned itself, so its panel hangs off the
@@ -350,6 +417,7 @@ export default function GameMenu(): JSX.Element {
             setDetails(state);
             if (state) {
               setOpen(false);
+              setMoves(false);
             }
           }}
           class="flex sm:hidden"
@@ -468,12 +536,67 @@ export default function GameMenu(): JSX.Element {
           <span class="shrink-0 text-sm font-bold whitespace-nowrap text-gold">
             {gold() ?? 0} gold
           </span>
+        </div>
 
-          {/* On the bar rather than behind the button: taking the screen
-              is what a player does as they start walking, and a phone is
-              where the browser's own bars cost the most. The divider is
-              asked the same question the switch is, since a browser that
-              will not fill the screen draws neither */}
+        {/* The buddy's field moves, only while there is one to use here.
+            Outside the readings so a phone gets the button too */}
+        <Show when={game.fieldMoves().length > 0}>
+          <span class="hidden sm:flex">
+            <Divider />
+          </span>
+          <Popover
+            isOpen={moves()}
+            onChange={(state: boolean) => {
+              setMoves(state);
+              if (state) {
+                setOpen(false);
+                setDetails(false);
+              }
+            }}
+            class="flex"
+          >
+            <PopoverButton
+              aria-label="Field moves"
+              class="flex shrink-0 cursor-pointer items-center rounded-full border-2
+                border-transparent bg-transparent p-1.5 text-ink shadow-none transition-colors
+                hover:bg-tide hover:text-on-accent focus-visible:outline-2
+                focus-visible:outline-offset-2 focus-visible:outline-tide"
+            >
+              <ActionsIcon class="size-5" aria-hidden="true" />
+            </PopoverButton>
+            <Transition
+              show={moves()}
+              {...SHEER}
+              class="absolute bottom-full left-1/2 z-30 mb-2 w-max -translate-x-1/2"
+            >
+              <PopoverPanel class="flex gap-1 rounded-panel border-2 border-tide bg-paper p-2 shadow-pop">
+                <For each={game.fieldMoves()}>
+                  {(offer) => (
+                    <button
+                      type="button"
+                      class={`${TILE} w-20 ${offer.active ? 'border-tide bg-tide-soft text-tide-dark' : ''}`}
+                      aria-pressed={offer.active}
+                      disabled={offer.busy}
+                      onClick={() => {
+                        setMoves(false);
+                        offer.use();
+                      }}
+                    >
+                      {offer.name}
+                    </button>
+                  )}
+                </For>
+              </PopoverPanel>
+            </Transition>
+          </Popover>
+        </Show>
+
+        {/* On the bar rather than behind the button: taking the screen
+            is what a player does as they start walking, and a phone is
+            where the browser's own bars cost the most. The divider is
+            asked the same question the switch is, since a browser that
+            will not fill the screen draws neither */}
+        <div class="hidden items-center gap-2 sm:flex">
           <Show when={fullscreenOffered()}>
             <Divider />
           </Show>
@@ -528,13 +651,13 @@ export default function GameMenu(): JSX.Element {
                       {/* How many things are waiting, on the key that
                           opens them: whether to look is the whole of
                           what a player needs off the bar */}
-                      <Show when={entry.dialog === GameDialog.Notifications && waiting() > 0}>
+                      <Show when={countFor(entry.dialog) > 0}>
                         <span
                           class="absolute -top-1 -right-2 min-w-4 rounded-full border-2
                             border-ember bg-ember-soft px-1 text-[0.65rem] leading-4
                             text-ember-dark"
                         >
-                          {waiting()}
+                          {countFor(entry.dialog)}
                         </span>
                       </Show>
                     </span>

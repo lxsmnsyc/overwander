@@ -13,7 +13,7 @@ import { Stages, Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import { Items } from '../../../src/data/ids/items';
 import { Moves } from '../../../src/data/ids/moves';
-import { Statuses, Weathers } from '../../../src/data/ids/status';
+import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import Abilities from '../../../src/data/ids/abilities';
 import turns from '../../../src/battle/turn';
 import Biome from '../../../src/data/ids/biome';
@@ -594,14 +594,28 @@ describe('the moves that are paid for later', () => {
 
   it('breaks the screens before it hits', () => {
     const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
+    pinRandom(battle, 0);
     const breaker = createUnit(battle, teamA);
     const target = createUnit(battle, teamB);
 
     target.triggerMoveEffect(Moves.Reflect, NONE_TARGET, 0);
-    breaker.triggerMoveTarget(Moves.BrickBreak, unitTarget(target), 0);
+    breaker.triggerMove(Moves.BrickBreak, unitTarget(target), 0);
+    battle.tick(turns(1));
 
-    expect(target.team.status[0]).toBeUndefined();
+    expect(target.team.status[TeamStatuses.Reflect]).toBeUndefined();
+  });
+
+  it('leaves the screens up when it does not land', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const breaker = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB, [Types.Ghost]);
+
+    target.triggerMoveEffect(Moves.Reflect, NONE_TARGET, 0);
+    breaker.triggerMove(Moves.BrickBreak, unitTarget(target), 0);
+    battle.tick(turns(1));
+
+    expect(target.team.status[TeamStatuses.Reflect]).toBeDefined();
   });
 
   it('takes the user down with a Memento', () => {

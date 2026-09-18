@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { SHEET, chooseAction, claimStarter, offCentre, openCatch, signIn } from './game';
+import { SHEET, chooseAction, claimStarter, openCatch, signIn } from './game';
 
 /**
  * One pokemon in full.
@@ -24,10 +24,10 @@ declare global {
 
 /**
  * How wide the square an evolution's picture stands in is, in pixels.
- * It is `size-16` in the markup, and it is a number here because the
+ * It is `size-12` in the markup, and it is a number here because the
  * point of it is that it does not depend on what is standing in it
  */
-const EVOLUTION_SQUARE = 64;
+const EVOLUTION_SQUARE = 48;
 
 test.describe('the catch sheet', () => {
   test.beforeEach(async ({ page }) => {
@@ -35,23 +35,22 @@ test.describe('the catch sheet', () => {
     await claimStarter(page);
   });
 
-  test('is named for what it is, with the pokemon named inside it', async ({ page }) => {
+  test('is headed by the pokemon itself, beside its actions', async ({ page }) => {
     const sheet = await openCatch(page);
-    const title = sheet.getByText(SHEET);
 
-    // The window is called Pokemon Info; the pokemon's own name lives
-    // under its sprite, where it belongs to the pokemon
-    expect(await offCentre(sheet, title)).toBeLessThan(4);
+    // No title bar: the pokemon's name heads the top row instead
+    await expect(sheet.getByRole('heading', { level: 3 }).first()).toBeVisible();
     await expect(sheet.getByRole('button', { name: /Actions/ })).toBeVisible();
+    await expect(sheet.getByRole('button', { name: 'Close' })).toBeVisible();
 
-    // Category, type and gender read as one line under the name
+    // Its category reads beside its types under the portrait
     await expect(sheet.getByText(/Pokemon$/).first()).toBeVisible();
   });
 
   test('offers the level and the thing that raises it as one control', async ({ page }) => {
     const sheet = await openCatch(page);
 
-    await expect(sheet.getByRole('button', { name: /^Lv\. \d+ → \d+ \(\d+\)$/ })).toBeVisible();
+    await expect(sheet.getByRole('button', { name: /^Level Up/ })).toBeVisible();
   });
 
   test('shows what it could become and why it cannot yet', async ({ page }) => {
@@ -98,7 +97,6 @@ test.describe('the catch sheet', () => {
   test('counts out the training points at the end of the list', async ({ page }) => {
     const sheet = await openCatch(page);
 
-    await sheet.getByText('EV', { exact: true }).click();
     await expect(sheet.getByText(/Remaining: \d+/)).toBeVisible();
   });
 

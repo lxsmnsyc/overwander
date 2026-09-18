@@ -36,13 +36,14 @@ import {
 import Npc from '../../../data/overworld/npc';
 import { createTrainerBattle } from '../../../overworld/stop-battle';
 import BattleField from '../BattleField';
+import BattleTopBar from '../BattleTopBar';
 import CandySprite from '../../sprites/CandySprite';
 import VerdictDialog from './VerdictDialog';
 import { type Contribution, type SideSummary, readContributions, readSides } from './summary';
 import CatchDialog from '../../catches/catch-dialog';
 import { getFamilyName } from '../../../data/species';
-import { Badge, Button, Dialog, DialogActions, Note, Status, useToast } from '../../styled';
-import { type ActiveBattle, GameDialog, useGame } from '../../app/game-context';
+import { Button, Dialog, DialogActions, Note, Status, useToast } from '../../styled';
+import type { ActiveBattle, PendingReward } from '../../app/game-context';
 import { type Profile, getProfiles } from '../../../auth/profile';
 
 /**
@@ -71,6 +72,10 @@ const COUNTDOWN_TICK = 1000;
 
 export interface BattleViewProps {
   active: ActiveBattle;
+  /** Out of the fight, to wherever the view was opened from */
+  onLeave: () => void;
+  /** A prize the settled fight left waiting to be collected */
+  onReward: (reward: PendingReward) => void;
 }
 
 /**
@@ -83,7 +88,6 @@ export interface BattleViewProps {
 const CANDY_ART = 24;
 
 export default function BattleView(props: BattleViewProps): JSX.Element {
-  const game = useGame();
   const auth = useAuth();
   const toast = useToast();
 
@@ -135,6 +139,16 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
    * record at all: a raid boss belongs to nobody and has none
    */
   const [opened, setOpened] = createSignal<Unit | null>(null);
+  const [speed, setSpeed] = createSignal(1);
+
+  // Only a replay may be hurried: a fight that counts is played in real time
+  createEffect(() => {
+    const built = instance();
+
+    if (built != null && props.active.replay) {
+      built.battle.speed = speed();
+    }
+  });
   createEffect(() => {
     const loaded = record();
 
@@ -517,15 +531,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     });
   };
 
-  /**
-   * Out of the fight and back into the world, in one batch.
-   *
-   * The lobby goes with the battle, because a lobby watching its own
-   * record reopens the fight the moment that record names one. So does
-   * whatever panel was open when the fight began: leaving a battle
-   * means standing in the overworld, not back in the dialog Start was
-   * pressed in
-   */
+  /** Out of the fight, in one batch; where it goes is the opener's to say */
   const leave = (): void => {
     concede();
     instance()?.battle.end();
@@ -536,10 +542,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       // that the canvas and the card rows are still reading from while
       // they are being disposed
       setCounting(null);
-      game.setRaid(null);
-      game.setDuel(null);
-      game.setDialog(GameDialog.None);
-      game.setBattle(null);
+      props.onLeave();
     });
   };
 
@@ -639,18 +642,18 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         // The legendary waits on the raid itself, so it can be
         // collected here or from the battle history later
         await clearRaid(raidId);
-        game.setReward({ raid: raidId });
+        props.onReward({ raid: raidId });
       }
       // A beaten grunt keeps what they owe on their own stop, so it
       // is collected back in the overworld — and only a win closes
       // the stop; losing leaves them standing there
       if (won && stop != null) {
-        game.setReward({ stop });
+        props.onReward({ stop });
       }
       // A seat is settled either way: the win takes it, and the loss
       // is one more challenge its holder turned away
       if (seat != null) {
-        game.setReward({ seat });
+        props.onReward({ seat });
       }
     })().catch((caught: unknown) => {
       setStatus(caught instanceof Error ? caught.message : String(caught));
@@ -701,25 +704,20 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
           )}
         </Show>
 
-        {/* What the fight is, in the corner it is least in the way */}
-        <div class="pointer-events-none absolute top-3 left-3 flex items-center gap-2">
-          <span
-            class="rounded-full border-2 border-tide bg-paper/95 px-3 py-1 text-sm font-bold
-            shadow-pop backdrop-blur-sm"
-          >
-            {props.active.replay ? 'Replay' : title()}
-          </span>
-          <Show when={props.active.replay}>
-            <Badge>Awards nothing</Badge>
-          </Show>
-        </div>
-
-        {/* And the way out, in the other one */}
-        <div class="absolute top-3 right-3">
-          <Button tone="primary" onClick={askToLeave}>
-            Leave
-          </Button>
-        </div>
+        {/* What the fight is, how each side stands, and the way out */}
+        <Show when={instance()}>
+          {(built) => (
+            <BattleTopBar
+              battle={built().battle}
+              player={auth.user()?.uid ?? ''}
+              title={title()}
+              replay={props.active.replay}
+              speed={speed()}
+              onSpeed={props.active.replay ? setSpeed : undefined}
+              onLeave={askToLeave}
+            />
+          )}
+        </Show>
 
         {/* Three seconds to look at the field before anything happens
             in it. It is drawn over the middle of the fight because the

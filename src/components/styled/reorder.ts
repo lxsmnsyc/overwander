@@ -67,19 +67,36 @@ function indexAt(list: HTMLElement | undefined, x: number, y: number): number | 
 /**
  * Whether the pointer has gone past the middle of the entry it is
  * over, the way it is travelling. Without it a drag between two
- * entries of different heights swaps them back and forth
+ * entries of different sizes swaps them back and forth. An entry on
+ * the same row as the carried one, in a list laid out as a grid, is
+ * passed sideways rather than downwards
  */
-function past(list: HTMLElement | undefined, index: number, y: number, down: boolean): boolean {
+function past(
+  list: HTMLElement | undefined,
+  from: number,
+  index: number,
+  x: number,
+  y: number,
+): boolean {
   const entry = list?.querySelector<HTMLElement>(`[data-reorder="${index}"]`);
+  const lifted = list?.querySelector<HTMLElement>(`[data-reorder="${from}"]`);
 
   if (entry == null) {
     return true;
   }
 
   const box = entry.getBoundingClientRect();
+  const forward = index > from;
+
+  if (lifted != null && Math.abs(lifted.getBoundingClientRect().top - box.top) < 1) {
+    const middle = box.left + box.width / 2;
+
+    return forward ? x > middle : x < middle;
+  }
+
   const middle = box.top + box.height / 2;
 
-  return down ? y > middle : y < middle;
+  return forward ? y > middle : y < middle;
 }
 
 export default function createReorder(options: ReorderOptions): Reorder {
@@ -185,7 +202,7 @@ export default function createReorder(options: ReorderOptions): Reorder {
         if (over == null || over === carrying.at) {
           return;
         }
-        if (!past(list, over, event.clientY, over > carrying.at)) {
+        if (!past(list, carrying.at, over, event.clientX, event.clientY)) {
           return;
         }
         options.onMove(carrying.at, over);

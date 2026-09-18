@@ -285,16 +285,20 @@ export async function grantNestEgg(
       ivs: hatchling.ivs,
       gender: hatchling.gender,
       nature: hatchling.nature,
-      // It sparkles if it was going to; nothing shadowed comes out of
-      // a nest
+      // It sparkles if it was going to, and a nest claimed under a
+      // dark day can hold a closed heart the way a wild meeting does
       shiny: hatchling.shiny,
-      shadow: false,
+      shadow: hatchling.shadow,
       moves: hatchling.moves,
       ability: hatchling.ability,
       abilities: hatchling.abilities,
       individualValue: hatchling.individualValue,
       traitValue: hatchling.traitValue,
-      hatchSteps: Math.ceil(getEggHatchSteps(species) * NEST_HATCH_FACTOR),
+      hatchSteps: Math.ceil(
+        getEggHatchSteps(species) *
+          NEST_HATCH_FACTOR *
+          (hatchling.shadow ? SHADOW_HATCH_FACTOR : 1),
+      ),
       // Nothing laid it: the ball is the one named for where eggs
       // come from
       ball: Balls.NestBall,
@@ -343,14 +347,13 @@ export async function grantBredEgg(
   const hatchling = deriveEncounter(snapshot, spawn, uid, {
     type: EncounterType.Hatched,
     level: EGG_LEVEL,
-    // The egg is collected from the breeder under a sky, so a mirage
-    // over the day care reaches what is inside it
+    // The egg is collected from the breeder under a sky, so what the
+    // sky hands over reaches what is inside it: a move, an ability, or
+    // a heart closed by a dark day
     weather: snapshot.weather,
     skyGifts: true,
   });
-  // The egg is collected from the breeder under a sky, so a fogbow
-  // over the day care hands it room for a move its parents could not
-  // pass. Its own stream, so none of the draws above it move
+  // Its own stream, so none of the draws above it move
   const wide = widensMoveSlots(snapshot.weather)
     ? bonusMoveSlots(
         bonusMoveRoll(hatchling.traitValue)(),
@@ -360,7 +363,7 @@ export async function grantBredEgg(
       )
     : 0;
   const ivs = inheritIVs(parents[0], parents[1], () => rng.random());
-  const shadow = inheritsShadow(parents[0], parents[1], () => rng.random());
+  const shadow = inheritsShadow(parents[0], parents[1], () => rng.random()) || hatchling.shadow;
   const nature = inheritNature(parents[0], parents[1], () => rng.random());
   const ability = inheritAbility(species, parents[0], parents[1], () => rng.random());
 

@@ -2,7 +2,6 @@ import 'server-only';
 import { Depth } from '../../overworld/depth';
 import { type EncounterRecord, asEncounterRecord } from '../../auth/encounter-record';
 import { asSpawnRolls, spawnId as nameSpawn } from '../../auth/snapshot-record';
-import AleaRNG from '../../core/alea';
 import type { Spawn } from '../../overworld/chunk-snapshot';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import getWorld, { WORLD_GENERATION } from '../../overworld/current';
@@ -20,8 +19,6 @@ import {
   withSlots,
 } from '../../data/constants/slots';
 import type { Items } from '../../data/ids/items';
-import type Weather from '../../data/overworld/weather';
-import { DARK_DAY_SHADOW_CHANCE, shadowsWildMeetings } from '../../data/overworld/weather';
 import { encounterKey, encounterWindow } from '../../overworld/safari';
 import createOverworld from '../../overworld/setup';
 import type { Buddy } from '../../overworld/core';
@@ -34,26 +31,6 @@ import { toZoneKey } from '../../auth/local-time';
 import { resolveSnapshot } from './claims';
 
 /** Meeting one wild pokemon, and letting it go */
-/**
- * Whether the sky closed this one's heart.
- *
- * Only a wild meeting is ever asked: a raid prize, a hatchling and a
- * gift arrive under their own rules whatever the sky is doing. The
- * roll is keyed by the spawn and the player, so it is the same answer
- * every time this meeting is resolved and a different one for the next
- * player along
- */
-function shadowedByTheSky(
-  sky: Weather,
-  type: EncounterType | undefined,
-  spawn: string,
-  uid: string,
-): boolean {
-  if ((type ?? EncounterType.Wild) !== EncounterType.Wild || !shadowsWildMeetings(sky)) {
-    return false;
-  }
-  return new AleaRNG(`${spawn}:${uid}:shadow`).random() < DARK_DAY_SHADOW_CHANCE;
-}
 
 /**
  * Stage a meeting: the per-player derivation is written to
@@ -103,11 +80,6 @@ export async function startEncounter(
     // After the spread, so a caller that named one keeps it and one
     // that named nothing is not handed an undefined over the top of it
     weather: sky,
-    // A dark day shadows some of what is met in the wild under it,
-    // rolled per spawn and per player the way the sparkle is. Only the
-    // wild: a raid prize carries its own answer, and a caller that
-    // already said keeps saying
-    shadow: options.shadow ?? shadowedByTheSky(sky, options.type, id, uid),
     shinyBoost: (options.shinyBoost ?? 1) * overworld.checkEncounterShiny(id),
     // What a buddy finds in a pokemon's mouth, and how strong the
     // chunk fields one. Both are wild-meeting rules: a raid prize and

@@ -3,6 +3,7 @@ import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'soli
 import { Badge, Button, Meta, Note, Row, Select, Slider, Switch } from '../styled';
 import Weather, {
   DARK_DAY_LAMP_CELLS,
+  DARK_DAY_SHADOW_CHANCE,
   FATA_MORGANA_HIDDEN_CHANCE,
   FATA_MORGANA_SIGNATURE_CHANCE,
   FOGBOW_MOVE_CHANCE,
@@ -14,7 +15,7 @@ import Weather, {
   grantsHiddenAbility,
   grantsSignature,
   isBoostingWeather,
-  shadowsWildMeetings,
+  shadowsMeetings,
   shinyBoostOf,
   widensMoveSlots,
 } from '../../data/overworld/weather';
@@ -644,8 +645,8 @@ export default function WeatherDemo(): JSX.Element {
     if (grantsSignature(sky)) {
       said.push(`1 in ${1 / FATA_MORGANA_SIGNATURE_CHANCE} keeps its family signature`);
     }
-    if (shadowsWildMeetings(sky)) {
-      said.push('meetings can be shadows');
+    if (shadowsMeetings(sky)) {
+      said.push(`1 in ${1 / DARK_DAY_SHADOW_CHANCE} arrives shadowed`);
     }
     if (isBoostingWeather(sky)) {
       said.push('carries into battle');

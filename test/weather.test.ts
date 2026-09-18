@@ -14,7 +14,7 @@ import Weather, {
   grantsSignature,
   isBoostingWeather,
   isWeatherFavored,
-  shadowsWildMeetings,
+  shadowsMeetings,
   shinyBoostOf,
   spawnFavoredTypes,
   toBattleWeather,
@@ -409,6 +409,51 @@ describe('what weather is worth', () => {
     expect(met(Weather.Fogbow, 3_000_109).abilities).toBeUndefined();
   });
 
+  it('closes a share of what arrives under a dark day, and only some kinds', () => {
+    const met = (
+      weather: Weather | undefined,
+      traitValue: number,
+      type = EncounterType.Wild,
+    ): boolean =>
+      deriveEncounter(snapshot, [Species.Bulbasaur, 0, traitValue], 'trainer-red', {
+        type,
+        weather,
+      }).shadow;
+    // A trait value the roll closes, and one it leaves alone
+    expect(met(Weather.DarkDay, 1)).toBe(true);
+    expect(met(Weather.DarkDay, 2)).toBe(false);
+    // Only that sky, and only where there is a sky at all
+    expect(met(Weather.Clear, 1)).toBe(false);
+    expect(met(undefined, 1)).toBe(false);
+
+    // A legendary prize, an egg and a fossil are all reached
+    for (const type of [
+      EncounterType.LegendaryRaid,
+      EncounterType.Hatched,
+      EncounterType.Revived,
+    ]) {
+      expect(met(Weather.DarkDay, 1, type)).toBe(true);
+    }
+    // A mythical is beyond it, and the kinds that arrive already
+    // answered are left to their own answer
+    for (const type of [
+      EncounterType.MythicalRaid,
+      EncounterType.ShadowRaid,
+      EncounterType.Fateful,
+      EncounterType.Rocket,
+    ]) {
+      expect(met(Weather.DarkDay, 1, type)).toBe(false);
+    }
+    // A caller that already knows keeps saying, whatever the sky is
+    expect(
+      deriveEncounter(snapshot, [Species.Bulbasaur, 0, 2], 'trainer-red', {
+        type: EncounterType.ShadowRaid,
+        weather: Weather.Clear,
+        shadow: true,
+      }).shadow,
+    ).toBe(true);
+  });
+
   it('puts the floor under anything at all met under a meteor shower', () => {
     // Rain is worth nothing to a rat and the rarest sky is worth the
     // same to everything, which is the whole of what makes it rare
@@ -544,10 +589,10 @@ describe('the types a sky is kind to', () => {
     expect(classifyWeather(Biome.Grassland, 0.95, -0.5)).toBe(Weather.Rain);
   });
 
-  it('shadows what is met under a dark day and nothing else', () => {
-    expect(shadowsWildMeetings(Weather.DarkDay)).toBe(true);
+  it('shadows what arrives under a dark day and nothing else', () => {
+    expect(shadowsMeetings(Weather.DarkDay)).toBe(true);
     for (const sky of [Weather.MeteorShower, Weather.FataMorgana, Weather.Fog, Weather.Clear]) {
-      expect(shadowsWildMeetings(sky)).toBe(false);
+      expect(shadowsMeetings(sky)).toBe(false);
     }
     // It is the shadow it gives rather than a boost: the other two
     // keep theirs to themselves

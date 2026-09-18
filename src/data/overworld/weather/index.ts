@@ -20,7 +20,7 @@ export {
   grantsHiddenAbility,
   grantsSignature,
   isWeatherFavored,
-  shadowsWildMeetings,
+  shadowsMeetings,
   shinyBoostOf,
   spawnFavoredTypes,
   widensMoveSlots,

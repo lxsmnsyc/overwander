@@ -11,6 +11,11 @@ import { Statuses, TeamStatuses } from '../../../../src/data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
 import {
+  BROKEN_SEAL_ATTACK,
+  BROKEN_SEAL_DEFENSE,
+  HEXLIGHT_SCALE,
+} from '../../../../src/battle/abilities/signature/elgyem-to-golett';
+import {
   DOZE_SHARE,
   STORM_DASH_STEP,
 } from '../../../../src/battle/abilities/signature/munna-to-blitzle';
@@ -63,7 +68,7 @@ import {
 } from '../../../../src/battle/abilities/signature/basculin-to-alomomola';
 import turns from '../../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../../harness';
-import { act, dealDamage, resolveAttackDamage } from './helpers';
+import { NONE_CAUSE, act, dealDamage, resolveAttackDamage } from './helpers';
 
 function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
   return { type: MoveTargetType.Unit, unit } as const;
@@ -1241,5 +1246,78 @@ describe('what Driftveil holds', () => {
     foe.heal(cause, foe, 100, 0);
 
     expect((mate.health - 1) / (foe.health - 1)).toBeCloseTo(TIDE_POOL_SCALE, 2);
+  });
+});
+
+describe('what the tower on the hill holds', () => {
+  it('burns harder into whatever is already going wrong', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const chandelure = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    chandelure.addAbility(Abilities.Hexlight);
+    chandelure.enter();
+    plain.enter();
+    target.enter();
+
+    // Nothing wrong with it yet, so the lamp is worth nothing extra
+    expect(
+      resolveAttackDamage(battle, chandelure, target) / resolveAttackDamage(battle, plain, target),
+    ).toBeCloseTo(1, 2);
+
+    target.addStatus(Statuses.Paralyzed, NONE_CAUSE);
+
+    expect(
+      resolveAttackDamage(battle, chandelure, target) / resolveAttackDamage(battle, plain, target),
+    ).toBeCloseTo(HEXLIGHT_SCALE, 2);
+  });
+
+  it('brings the room with it, so the two defences trade places', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const beheeyem = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    // The harness builds both defences the same, so one has to move
+    // before a swap is visible at all
+    foe.setStat(StatsKind.Base, Stats.Defense, 160);
+    foe.enter();
+
+    const hard = foe.checkStat(Stats.Defense, 0);
+    const soft = foe.checkStat(Stats.SpecialDefense, 0);
+
+    expect(hard).toBeGreaterThan(soft);
+
+    beheeyem.addAbility(Abilities.SwapField);
+    beheeyem.enter();
+    battle.tick(turns(1));
+
+    expect(foe.checkStat(Stats.Defense, 0)).toBe(soft);
+    expect(foe.checkStat(Stats.SpecialDefense, 0)).toBe(hard);
+  });
+
+  it('shakes the seal loose once, and not again in the same fight', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const golurk = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    golurk.addAbility(Abilities.BrokenSeal);
+    golurk.enter();
+    foe.enter();
+
+    // Above half the seal holds
+    foe.attack(golurk, Moves.Tackle, 1, Types.Normal, MoveCategories.Physical, 0);
+    expect(golurk.stages[Stages.Attack]).toBe(0);
+
+    golurk.setHealth(Math.floor(golurk.checkStat(Stats.HP, 0) * 0.6));
+    foe.attack(golurk, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(golurk.stages[Stages.Attack]).toBe(BROKEN_SEAL_ATTACK);
+    expect(golurk.stages[Stages.Defense]).toBe(BROKEN_SEAL_DEFENSE);
+
+    // Spent: a second blow under half adds nothing
+    foe.attack(golurk, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+    expect(golurk.stages[Stages.Attack]).toBe(BROKEN_SEAL_ATTACK);
   });
 });

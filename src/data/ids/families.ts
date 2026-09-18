@@ -297,6 +297,14 @@ const enum Families {
   Joltik = 294,
   Ferroseed = 295,
   Klink = 296,
+  // 297 is held for Tynamo, which sits between these in the dex and is
+  // not written yet
+  Elgyem = 298,
+  Litwick = 299,
+  // 300 to 306 are held for Axew, Cubchoo, Cryogonal, Shelmet,
+  // Stunfisk, Mienfoo and Druddigon, which sit between these in the
+  // dex and are not written yet
+  Golett = 307,
 }
 
 export default Families;
@@ -606,4 +614,7 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Joltik]: 'Joltik',
   [Families.Ferroseed]: 'Ferroseed',
   [Families.Klink]: 'Klink',
+  [Families.Elgyem]: 'Elgyem',
+  [Families.Litwick]: 'Litwick',
+  [Families.Golett]: 'Golett',
 };

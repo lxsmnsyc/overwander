@@ -235,6 +235,7 @@ export default function registerWoodlandSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Litwick, weight: 22 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Oddish, weight: 20 },
@@ -265,6 +266,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Munna, weight: 25 },
       ],
       rare: [
+        { species: Species.Lampent, weight: 8 },
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Gloom, weight: 5 },
@@ -300,6 +302,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Chandelure, weight: 5 },
         { species: Species.Spiritomb, weight: 5 },
         { species: Species.Pachirisu, weight: 8 },
         { species: Species.Rotom, weight: 6 },
@@ -332,6 +335,7 @@ export default function registerWoodlandSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Litwick, weight: 22 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Oddish, weight: 20 },
@@ -366,6 +370,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Munna, weight: 25 },
       ],
       rare: [
+        { species: Species.Lampent, weight: 8 },
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Gloom, weight: 5 },
@@ -405,6 +410,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Chandelure, weight: 5 },
         { species: Species.Spiritomb, weight: 5 },
         { species: Species.Pachirisu, weight: 8 },
         { species: Species.Rotom, weight: 6 },

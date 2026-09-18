@@ -4,7 +4,7 @@ import { Slots, getSlots } from '../../src/data/constants/slots';
 import { MAX_IV, STAT_ORDER, getIV } from '../../src/data/constants/stats';
 import { registerMoves } from '../../src/data/moves';
 import type { Species } from '../../src/data/ids/species';
-import { WEATHER_MIN_IV, isWeatherFavored } from '../../src/data/overworld/weather';
+import Weather, { WEATHER_MIN_IV, isWeatherFavored } from '../../src/data/overworld/weather';
 import {
   getBaseSpecies,
   getEggMoves,
@@ -52,6 +52,32 @@ function speciesWith(eggMoves: number): Species {
 }
 
 describe('a nest egg', () => {
+  it('keeps what the sky handed it where the nest was claimed under a mirage', () => {
+    // A nest is claimed under the sky rather than hatched out of
+    // nowhere, so the mirage reaches it
+    const mirage = new ChunkSnapshot(world.getChunk(-26, -40), 86_400_000);
+    const species = speciesWith(2);
+
+    expect(mirage.weather).toBe(Weather.FataMorgana);
+
+    const counts = new Set<number>();
+
+    for (let player = 0; player < 200; player += 1) {
+      const egg = deriveNestEgg(mirage, 5, species, `player-${player}`, MAX_LEVEL);
+      const abilities = egg.abilities ?? [egg.ability];
+
+      counts.add(abilities.length);
+      // Whatever it hatched with, it has the room for
+      expect(abilities.length).toBeLessThanOrEqual(getSlots(egg.slots, Slots.Ability));
+      expect(abilities[0]).toBe(egg.ability);
+      expect(new Set(abilities).size).toBe(abilities.length);
+    }
+    // Most keep the one they rolled, and some a second off the hidden
+    // pool
+    expect(counts.has(1)).toBe(true);
+    expect(counts.has(2)).toBe(true);
+  });
+
   it('hatches with at least two perfect stats', () => {
     const snapshot = new ChunkSnapshot(world.getChunk(0, 0), 0);
     const species = speciesWith(2);

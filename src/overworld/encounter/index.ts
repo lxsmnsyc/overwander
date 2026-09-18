@@ -112,6 +112,14 @@ export interface EncounterOptions {
   itemSlots?: number;
   /** How much wider its hidden ability band is, on top of the day's and the sky's */
   hiddenBoost?: number;
+  /**
+   * Whether the sky's gifts reach this meeting: the second hidden
+   * ability and the family signature a fata morgana hands over. A
+   * wild meeting, a raid prize and a revived fossil are all asked
+   * anyway; a nest's egg passes it, since a nest is claimed under the
+   * sky the way a wild pokemon is met under it
+   */
+  skyGifts?: boolean;
 }
 
 export default function deriveEncounter(
@@ -183,8 +191,11 @@ export default function deriveEncounter(
   // A mirage shows what is not there to be seen: a meeting under one
   // can keep a second ability out of its line's hidden pool, and more
   // rarely its family's signature, which is the ability nothing rolls.
-  // A raid prize counts, since it is won under the sky over its lair
-  const underTheSky = type === EncounterType.Wild || isRaidEncounter(type);
+  // A raid prize counts, since it is won under the sky over its lair,
+  // and so does a fossil, opened on a bench under one
+  const underTheSky =
+    options.skyGifts ??
+    (type === EncounterType.Wild || type === EncounterType.Revived || isRaidEncounter(type));
   const hiddenExtra =
     underTheSky && sky != null && grantsHiddenAbility(sky)
       ? deriveExtraHidden(species, traitValue, FATA_MORGANA_HIDDEN_CHANCE, ability)

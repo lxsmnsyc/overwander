@@ -349,9 +349,13 @@ describe('what weather is worth', () => {
     expect(lucky.ability).toBe(met(Weather.Clear, 3_000_018).ability);
     expect(met(Weather.Clear, 3_000_018).abilities).toBeUndefined();
 
-    // A raid prize is won under the sky over its lair, so it counts;
-    // a hatchling arrives under its own rules and does not
+    // A raid prize is won under the sky over its lair and a fossil is
+    // opened on a bench under one, so both count. A bred egg hatches
+    // wherever its carrier is standing and arrives under its own rules
     expect(met(Weather.FataMorgana, 3_000_018, EncounterType.LegendaryRaid).abilities).toEqual(
+      lucky.abilities,
+    );
+    expect(met(Weather.FataMorgana, 3_000_018, EncounterType.Revived).abilities).toEqual(
       lucky.abilities,
     );
     expect(met(Weather.FataMorgana, 3_000_018, EncounterType.Hatched).abilities).toBeUndefined();

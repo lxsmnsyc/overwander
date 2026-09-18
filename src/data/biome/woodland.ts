@@ -10,9 +10,13 @@ export default function registerWoodlandSpawns(): void {
   // collection has drawn no Tranquill. Once it does, mornings and days
   // take Pidove in base at 30, Tranquill in rare at 12 and Unfezant in
   // elusive at 6
+  // Throh and Sawk are written but wait on sprites, since the
+  // collection has drawn no Throh and the pair is staged together.
+  // Once it does, mornings and days take each of them in elusive at 5
   registerSpawnPool(Biome.Woodland, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Timburr, weight: 25 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Caterpie, weight: 30 },
         { species: Species.Pidgey, weight: 30 },
@@ -43,6 +47,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Glameow, weight: 25 },
       ],
       rare: [
+        { species: Species.Gurdurr, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Metapod, weight: 15 },
         { species: Species.Pidgeotto, weight: 5 },
@@ -78,6 +83,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Audino, weight: 8 },
+        { species: Species.Conkeldurr, weight: 5 },
         { species: Species.Chatot, weight: 6 },
         { species: Species.Pachirisu, weight: 8 },
         { species: Species.Rotom, weight: 6 },
@@ -116,6 +123,7 @@ export default function registerWoodlandSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Timburr, weight: 25 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Caterpie, weight: 30 },
         { species: Species.Pidgey, weight: 30 },
@@ -146,6 +154,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Glameow, weight: 25 },
       ],
       rare: [
+        { species: Species.Gurdurr, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Metapod, weight: 15 },
         { species: Species.Pidgeotto, weight: 5 },
@@ -181,6 +190,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Audino, weight: 8 },
+        { species: Species.Conkeldurr, weight: 5 },
         { species: Species.Chatot, weight: 6 },
         { species: Species.Pachirisu, weight: 8 },
         { species: Species.Rotom, weight: 6 },

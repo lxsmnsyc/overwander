@@ -837,6 +837,9 @@ const enum Abilities {
   Doze = 200253,
   Homing = 200254,
   StormDash = 200255,
+  Aftershock = 200256,
+  HeartMark = 200257,
+  Torque = 200258,
 }
 
 export default Abilities;

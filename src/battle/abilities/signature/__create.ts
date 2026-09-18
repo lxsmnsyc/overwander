@@ -30,6 +30,17 @@ import { createAbility, getAbilityHolders } from '../__create';
  * kept per unit and dropped when that unit arrives on the field or
  * falls. An ability lifting and settling again is not an arrival
  */
+/** The first enemy still standing, for an ability that casts at one */
+export function firstEnemy(battle: Battle, unit: Unit): Unit | undefined {
+  for (const enemy of battle.units(unit.team.alliance)) {
+    if (enemy.alive) {
+      return enemy;
+    }
+  }
+
+  return undefined;
+}
+
 export function createUnitState<T>(battle: Battle): {
   state: Map<Unit, T>;
   lifecycles: Lifecycle[];

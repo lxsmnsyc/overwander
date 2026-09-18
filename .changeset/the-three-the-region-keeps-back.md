@@ -4,7 +4,8 @@
 
 The three Unova mythicals, and the machinery two of them needed:
 
-- Victini stands on the rocky coast, Meloetta in the woodland and Genesect in the desert, at any hour. A mythical is called by a relic rather than staged by a lair.
+- Victini stands on the rocky coast, Meloetta in the woodland and Genesect in the desert, at any hour.
+- Three new lairs: Liberty Garden for Victini, the Abyssal Ruins for Meloetta and the P2 Laboratory for Genesect. No biome hosts one, so the world never puts a mythical on the map.
 - Three new relics, found in the rarest band of the overworld item pool and nowhere else. The Liberty Pass calls Victini, the Music Box calls Meloetta and the Colress Machine calls Genesect. Each is spent when its raid starts.
 - Victory Star now works: the holder's whole team, itself included, throws moves at 1.1x accuracy.
 - Winner's Share is Victini's own. Each enemy that faints gives its whole team +1 Attack and +1 Special Attack.

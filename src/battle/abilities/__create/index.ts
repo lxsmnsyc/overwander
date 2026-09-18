@@ -21,6 +21,8 @@ export {
   createWeightAbility,
 } from './power';
 export {
+  CONTACT_RECOIL_FRACTION,
+  createContactRecoilAbility,
   createFilterAbility,
   createKeenEyeAbility,
   createLimberAbility,

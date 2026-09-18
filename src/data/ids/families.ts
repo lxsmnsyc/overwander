@@ -290,6 +290,12 @@ const enum Families {
   Minccino = 283,
   Gothita = 284,
   Solosis = 285,
+  // 286 to 293 are held for Ducklett, Vanillite, Deerling, Emolga,
+  // Karrablast, Foongus, Frillish and Alomomola, which sit between
+  // these in the dex and are not written yet
+  Joltik = 294,
+  Ferroseed = 295,
+  Klink = 296,
 }
 
 export default Families;
@@ -592,4 +598,7 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Minccino]: 'Minccino',
   [Families.Gothita]: 'Gothita',
   [Families.Solosis]: 'Solosis',
+  [Families.Joltik]: 'Joltik',
+  [Families.Ferroseed]: 'Ferroseed',
+  [Families.Klink]: 'Klink',
 };

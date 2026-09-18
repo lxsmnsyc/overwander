@@ -21,6 +21,10 @@ import registerTimburrSpecies from './timburr';
 import registerTympoleSpecies from './tympole';
 import registerPurrloinSpecies from './purrloin';
 import registerSandileSpecies from './sandile';
+import registerScraggySpecies from './scraggy';
+import registerSigilyphSpecies from './sigilyph';
+import registerTrubbishSpecies from './trubbish';
+import registerYamaskSpecies from './yamask';
 import registerSnivySpecies from './snivy';
 import registerTepigSpecies from './tepig';
 import registerVenipedeSpecies from './venipede';
@@ -54,4 +58,8 @@ export default function registerGen5Species(): void {
   registerDarumakaSpecies();
   registerMaractusSpecies();
   registerDwebbleSpecies();
+  registerScraggySpecies();
+  registerSigilyphSpecies();
+  registerYamaskSpecies();
+  registerTrubbishSpecies();
 }

@@ -26,6 +26,7 @@ import registerPowerItems from './power-items';
 import registerPurifyingGem from './purifying-gem';
 import registerRareCandy from './rare-candy';
 import registerSacredAsh from './sacred-ash';
+import registerSootheBell from './soothe-bell';
 import registerRaidItems from './raid-items';
 import registerStatBoosters from './stat-boosters';
 import registerEvolutionStones from './stones';
@@ -82,6 +83,7 @@ export default function registerItems(): void {
   registerAbilityItems();
   registerPurifyingGem();
   registerSacredAsh();
+  registerSootheBell();
   registerEscapeRope();
   registerPortalKey();
   registerKeyItems();

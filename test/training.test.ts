@@ -16,6 +16,7 @@ import {
   MAX_FRIENDSHIP,
   PURIFIED_FRIENDSHIP_BONUS,
   SHADOW_FRIENDSHIP,
+  SOOTHE_BELL_FACTOR,
   describeFriendship,
   friendshipFactor,
   gainFriendship,
@@ -236,6 +237,21 @@ describe('friendship', () => {
     // What a buddy's report is worth: one point per interval walked
     expect(gainFriendship(50, 'walk', 3)).toBe(56);
     expect(FRIENDSHIP_STEP_INTERVAL).toBeGreaterThan(0);
+  });
+
+  it('rings a Soothe Bell for whatever is carrying one', () => {
+    // The ball is remembered and the bell is carried, so the two stack
+    expect(friendshipFactor(Balls.PokeBall, [Items.SootheBell])).toBe(SOOTHE_BELL_FACTOR);
+    expect(friendshipFactor(Balls.LuxuryBall, [Items.SootheBell])).toBe(
+      LUXURY_FRIENDSHIP_FACTOR * SOOTHE_BELL_FACTOR,
+    );
+    expect(friendshipFactor(Balls.PokeBall, [Items.Leftovers])).toBe(1);
+
+    const factor = friendshipFactor(Balls.PokeBall, [Items.SootheBell]);
+
+    expect(gainFriendship(50, 'level', 1, factor)).toBe(60);
+    // And it is no reason to take a fainting harder
+    expect(gainFriendship(50, 'faint', 1, factor)).toBe(49);
   });
 
   it('brings a pokemon caught in a Luxury Ball round twice as fast', () => {

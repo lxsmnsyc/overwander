@@ -467,7 +467,7 @@ export async function recordSteps(
                 caught.friendship,
                 'walk',
                 earned,
-                friendshipFactor(caught.ball),
+                friendshipFactor(caught.ball, caught.items),
               ),
             }
           : {}),

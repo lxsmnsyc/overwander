@@ -202,7 +202,12 @@ async function feed(
       // think well of somebody — and the level pays for five more
       // points of effort, which the sheet works out from the level
       // itself rather than storing twice
-      friendship: gainFriendship(record.friendship, 'level', paid, friendshipFactor(record.ball)),
+      friendship: gainFriendship(
+        record.friendship,
+        'level',
+        paid,
+        friendshipFactor(record.ball, record.items),
+      ),
     });
     return { level, paid };
   });

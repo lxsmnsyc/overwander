@@ -14,6 +14,7 @@ import {
   setupMetronome,
   setupProtectivePads,
   setupShellBell,
+  setupSoulDew,
 } from './damage';
 import {
   setupBindingBand,
@@ -37,6 +38,7 @@ import {
   setupIronBall,
   setupLaggingTail,
   setupLeftovers,
+  setupMachoBrace,
   setupRingTarget,
   setupStickyBarbResidual,
   setupStickyBarbTransfer,
@@ -79,6 +81,8 @@ function weatherRockSetups(): ((battle: Battle) => void)[] {
 
 const SETUPS: ((battle: Battle) => void)[] = [
   setupLeftovers,
+  setupMachoBrace,
+  setupSoulDew,
   setupBlackSludge,
   setupStickyBarbResidual,
   setupStickyBarbTransfer,

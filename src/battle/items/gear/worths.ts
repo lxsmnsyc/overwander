@@ -1,6 +1,7 @@
 import { Items } from '../../../data/ids/items';
 import { MoveCategories } from '../../../data/ids/moves';
 import { Species } from '../../../data/ids/species';
+import { Types } from '../../../data/constants/types';
 import { TeamStatuses, Weathers } from '../../../data/ids/status';
 
 /**
@@ -207,6 +208,24 @@ export const UMBRELLA_WEATHERS = new Set<Weathers>([
  * glove nothing but a Chansey has the hands for, and a Stick is the
  * leek a Farfetch'd was already carrying
  */
+/**
+ * What a Soul Dew lifts, and for whom. The modern mainline makes it a
+ * power item for the two it belongs to rather than a pair of stat
+ * boosts, which is also the shape that leaves the other gear a reason
+ * to be in the slot
+ */
+export const SOUL_DEW_FACTOR = 1.2;
+
+/**
+ * What a Macho Brace costs while it is worn. The effort it buys is
+ * granted outside a fight, in
+ * [`src/server/training.ts`](../../../server/training.ts); this is the
+ * half of the bargain the fight can see
+ */
+export const MACHO_BRACE_SPEED = 0.5;
+export const SOUL_DEW_SPECIES = new Set<Species>([Species.Latios, Species.Latias]);
+export const SOUL_DEW_TYPES = new Set<Types>([Types.Psychic, Types.Dragon]);
+
 export const SPECIES_LENSES: Map<Items, Species> = new Map([
   [Items.LuckyPunch, Species.Chansey],
   [Items.Stick, Species.Farfetchd],

@@ -113,6 +113,11 @@ export const FOUND_GEAR: Map<Items, [name: string, description: string]> = new M
   [Items.SmoothRock, ['Smooth Rock', 'A sandstorm its holder calls lasts 1.6x as long.']],
   [Items.LightClay, ['Light Clay', 'Screens its holder puts up last 1.6x as long.']],
   [Items.BigRoot, ['Big Root', '1.3x on everything its holder drains.']],
+  [Items.SoulDew, ['Soul Dew', '1.2x damage from a Latios’ or Latias’ Psychic and Dragon moves.']],
+  [
+    Items.HeavyDutyBoots,
+    ['Heavy-Duty Boots', 'Its holder walks over spikes, toxic spikes and stealth rock.'],
+  ],
   // A burr off a bush, which is why nobody sells one
   [
     Items.StickyBarb,

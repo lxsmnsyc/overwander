@@ -211,6 +211,15 @@ export const ITEM_POOL: ItemRarityGroups = {
     // Left behind by whatever wriggled out of it, which is what it
     // does for whoever picks it up
     { item: Items.ShedShell, weight: 4 },
+    // Boots somebody walked out of: worth a slot to anything that has
+    // to walk back onto a field somebody else laid spikes on
+    { item: Items.HeavyDutyBoots, weight: 4 },
+    // The two relics. A Soul Dew is nothing to anybody but the pair it
+    // belongs to, and a brace is heavier than anything wants to wear
+    { item: Items.SoulDew, weight: 2 },
+    { item: Items.MachoBrace, weight: 3 },
+    // Rung for a pokemon that was not caught in a comfortable ball
+    { item: Items.SootheBell, weight: 3 },
     // A stone's weight, because every pokemon a player owns wants one
     // — a Fire Stone is wanted once, by one line
     { item: Items.Leftovers, weight: 10 },

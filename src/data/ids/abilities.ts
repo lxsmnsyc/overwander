@@ -860,6 +860,10 @@ const enum Abilities {
   WardCircle = 200276,
   DeathMask = 200277,
   Litterbug = 200278,
+  Bluff = 200279,
+  CleanSweep = 200280,
+  Fixation = 200281,
+  Division = 200282,
 }
 
 export default Abilities;

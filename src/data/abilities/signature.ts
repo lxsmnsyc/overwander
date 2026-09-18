@@ -1803,4 +1803,26 @@ export default function registerSignatureAbilities(): void {
     name: 'Ember Halo',
     description: 'Every enemy loses 1/16 of its HP each time it acts while it stands.',
   });
+
+  // Twist Mountain and the moor below it
+  registerSignature(Families.Tynamo, Abilities.LatchOn, {
+    name: 'Latch On',
+    description:
+      'Whatever its contact moves land on cannot flee and loses 1/16 of its HP each time it acts. One at a time.',
+  });
+
+  registerSignature(Families.Cubchoo, Abilities.FrostFangs, {
+    name: 'Frost Fangs',
+    description: 'Its contact moves hit 1.25x, with a 20% chance to freeze.',
+  });
+
+  registerSignature(Families.Cryogonal, Abilities.CrystalChain, {
+    name: 'Crystal Chain',
+    description: 'A freeze on an enemy lasts 2x as long while it stands.',
+  });
+
+  registerSignature(Families.Mienfoo, Abilities.SleeveGuard, {
+    name: 'Sleeve Guard',
+    description: 'Contact moves land on it at 0.75x.',
+  });
 }

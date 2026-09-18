@@ -101,6 +101,7 @@ export default function registerBogSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Tynamo, weight: 18 },
         { species: Species.Litwick, weight: 22 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Tympole, weight: 25 },
@@ -118,6 +119,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.Eelektrik, weight: 7 },
         { species: Species.Lampent, weight: 8 },
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Palpitoad, weight: 10 },
@@ -135,6 +137,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Eelektross, weight: 4 },
         { species: Species.Chandelure, weight: 5 },
         { species: Species.Seismitoad, weight: 5 },
         { species: Species.Spiritomb, weight: 5 },
@@ -149,6 +152,7 @@ export default function registerBogSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Tynamo, weight: 18 },
         { species: Species.Litwick, weight: 22 },
         { species: Species.Tympole, weight: 25 },
         { species: Species.Poliwag, weight: 20 },
@@ -168,6 +172,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.Eelektrik, weight: 7 },
         { species: Species.Lampent, weight: 8 },
         { species: Species.Palpitoad, weight: 10 },
         { species: Species.Poliwhirl, weight: 5 },
@@ -187,6 +192,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Eelektross, weight: 4 },
         { species: Species.Chandelure, weight: 5 },
         { species: Species.Seismitoad, weight: 5 },
         { species: Species.Spiritomb, weight: 5 },

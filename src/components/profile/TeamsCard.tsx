@@ -1,6 +1,7 @@
 import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
 import type { CaughtPokemon } from '../../auth/caught';
-import { getCaughtBatched } from '../../auth/caught';
+import { getCaughtBatched, isGuarded } from '../../auth/caught';
+import { isEgg } from '../../auth/egg';
 import {
   TEAM_PRESET_LIMIT,
   type TeamPresetRecord,
@@ -11,7 +12,7 @@ import {
 import { NICKNAME_LIMIT, asNickname } from '../../auth/nickname';
 import { TEAM_SIZE } from '../../auth/teams';
 import BattleData from '../app/battle-data';
-import TeamPickerDialog from '../battle/TeamPickerDialog';
+import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import TeamStrip from '../catches/TeamStrip';
 import {
   Button,
@@ -36,6 +37,18 @@ import {
  * promises those pokemon can fight: what a preset is for is the press
  * that fills the picker when a raid or a duel asks for a team.
  */
+
+/**
+ * Why a pokemon cannot be written into a team. Only the two that are
+ * still true whenever the team is brought out: fainting and a raid
+ * both pass, so neither is a reason to keep one out of a plan
+ */
+function unfitForATeam(option: CatchOption): string | null {
+  if (isEgg(option.caught)) {
+    return 'not hatched';
+  }
+  return isGuarded(option.caught) ? 'locked' : null;
+}
 
 /** One saved team, with the pokemon in it drawn as a row of squares */
 function PresetRow(props: {
@@ -97,7 +110,6 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
   const [writing, setWriting] = createSignal<{ id: string | null; name: string } | null>(null);
   /** The party the dialog is holding, before it is saved */
   const [party, setParty] = createSignal<string[]>([]);
-  const [picking, setPicking] = createSignal(false);
   const [status, setStatus] = createSignal<string | null>(null);
 
   const held = (): [string, TeamPresetRecord][] => presets.latest ?? [];
@@ -196,11 +208,11 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
       {/* Naming it and filling it are one dialog: a team with no
           pokemon in it is not a team, so the save waits for both */}
       <Dialog
-        isOpen={writing() != null && !picking()}
+        isOpen={writing() != null}
         onClose={close}
         title={writing()?.id == null ? 'New team' : 'Edit team'}
         description="Name a party you can bring to a raid or a duel with one press."
-        terse
+        width="wide"
       >
         <Show when={writing()}>
           {(written) => (
@@ -215,22 +227,29 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
                   }}
                 />
               </Field>
-              <BattleData>
-                <Show when={party().length > 0} fallback={<Note>Nobody picked yet.</Note>}>
-                  <Note>
-                    {party().length} of {TEAM_SIZE} picked.
-                  </Note>
-                </Show>
-              </BattleData>
-              <Row class="justify-center">
-                <Button
-                  onClick={() => {
-                    setPicking(true);
-                  }}
-                >
-                  Pick pokemon
-                </Button>
-              </Row>
+              <Show when={party().length > 0} fallback={<Note>Nobody picked yet.</Note>}>
+                <Note>
+                  {party().length} of {TEAM_SIZE} picked.
+                </Note>
+              </Show>
+              {/* The box itself, rather than a button that opens one:
+                  the team being written is the lit squares, so there is
+                  nothing to preview separately */}
+              <CatchPicker
+                inline
+                multiple
+                live
+                player={props.player}
+                value={party()}
+                max={TEAM_SIZE}
+                sort="level"
+                verb="Bring"
+                empty="You have nothing to put in a team."
+                reason={unfitForATeam}
+                onPick={(catches) => {
+                  setParty(catches);
+                }}
+              />
             </div>
           )}
         </Show>
@@ -245,21 +264,6 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
           <Button onClick={close}>Cancel</Button>
         </DialogActions>
       </Dialog>
-
-      {/* The ordinary team picker, which is what fields one: a team
-          saved from a box that refuses fainted pokemon is a team a
-          player can actually bring */}
-      <TeamPickerDialog
-        player={props.player}
-        isOpen={picking()}
-        onClose={() => {
-          setPicking(false);
-        }}
-        onSubmit={(catches) => {
-          setParty(catches);
-          setPicking(false);
-        }}
-      />
     </Card>
   );
 }

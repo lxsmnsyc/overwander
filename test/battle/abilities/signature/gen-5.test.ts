@@ -10,6 +10,7 @@ import { Genders, Species } from '../../../../src/data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../../../src/data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
+import { HONED_STAGES } from '../../../../src/battle/abilities/signature/pawniard-to-vullaby';
 import {
   SCORING_STAGES,
   SUNWARMED_SCALE,
@@ -44,7 +45,9 @@ import {
 } from '../../../../src/battle/abilities/signature/audino-to-sawk';
 import {
   BLUE_BELT_SCALE,
+  BONEWEAR_STAGES,
   RED_BELT_SCALE,
+  WARCRY_STAGES,
 } from '../../../../src/battle/abilities/signature/__create';
 import {
   DEATH_ROLL_SCALE,
@@ -1402,5 +1405,64 @@ describe('what the dragon tower holds', () => {
 
     hydreigon.attack(bitten, Moves.DragonPulse, 40, Types.Dragon, MoveCategories.Special, 0);
     expect(other.health).toBe(alone);
+  });
+});
+
+describe('what the last two roads hold', () => {
+  it('answers an enemy raising a stat, and never its own answer', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const bisharp = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    bisharp.addAbility(Abilities.Honed);
+    bisharp.enter();
+    foe.enter();
+
+    foe.addStage(Stages.Attack, 2, NONE_CAUSE);
+    expect(bisharp.stages[Stages.Attack]).toBe(HONED_STAGES);
+
+    // A drop is Defiant's to answer, not this one's
+    foe.addStage(Stages.Speed, -1, NONE_CAUSE);
+    expect(bisharp.stages[Stages.Attack]).toBe(HONED_STAGES);
+
+    // Its own boost is a boost too, and must not feed a second one
+    // back through a Honed on the far side
+    const mirror = createUnit(battle, teamB);
+
+    mirror.addAbility(Abilities.Honed);
+    mirror.enter();
+    foe.addStage(Stages.Defense, 1, NONE_CAUSE);
+
+    expect(bisharp.stages[Stages.Attack]).toBe(HONED_STAGES * 2);
+    expect(mirror.stages[Stages.Attack]).toBe(0);
+  });
+
+  it('arms the eagle off its own dead and the vulture off everybody else s', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const braviary = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const mandibuzz = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    braviary.addAbility(Abilities.Warcry);
+    mandibuzz.addAbility(Abilities.Bonewear);
+    braviary.enter();
+    mate.enter();
+    mandibuzz.enter();
+    foe.enter();
+
+    // One of their own goes down: the eagle answers, the vulture does
+    // not, since the dress is made of what it outlived
+    mate.damage(NONE_CAUSE, mate, mate.health, 0);
+
+    expect(braviary.stages[Stages.Attack]).toBe(WARCRY_STAGES);
+    expect(mandibuzz.stages[Stages.Defense]).toBe(0);
+
+    // An enemy goes down, and it is the other way round
+    foe.damage(NONE_CAUSE, foe, foe.health, 0);
+
+    expect(braviary.stages[Stages.Attack]).toBe(WARCRY_STAGES);
+    expect(mandibuzz.stages[Stages.Defense]).toBe(BONEWEAR_STAGES);
+    expect(mandibuzz.stages[Stages.SpecialDefense]).toBe(BONEWEAR_STAGES);
   });
 });

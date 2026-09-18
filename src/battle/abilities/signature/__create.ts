@@ -1677,3 +1677,40 @@ export function createTuftAbility(
     ]);
   });
 }
+
+/** What a fallen body is worth to each of the two birds */
+export const WARCRY_STAGES = 2;
+export const BONEWEAR_STAGES = 1;
+
+/**
+ * The eagle and the vulture never share a sky, and each is worth
+ * something the moment a body hits the ground: Braviary reads its own
+ * side's dead and answers with Attack, Mandibuzz reads the enemy's and
+ * answers with armour. Same trigger, opposite side, opposite stat
+ */
+export function createCarrionAbility(
+  ability: Abilities,
+  own: boolean,
+  stages: [stage: Stages, value: number][],
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+      const fallen = event.source;
+
+      for (const holder of getAbilityHolders(battle, ability)) {
+        const theirs = holder.team.alliance === fallen.team.alliance;
+
+        if (!holder.alive || holder === fallen || theirs !== own) {
+          continue;
+        }
+        holder.triggerAbility(ability);
+
+        const cause = { type: EffectType.Ability, ability, unit: holder } as const;
+
+        for (const [stage, value] of stages) {
+          holder.addStage(stage, value, cause);
+        }
+      }
+    }),
+  );
+}

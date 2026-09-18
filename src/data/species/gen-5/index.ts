@@ -1,10 +1,13 @@
 import registerAudinoSpecies from './audino';
 import registerAlomomolaSpecies from './alomomola';
+import registerAxewSpecies from './axew';
 import registerBasculinSpecies from './basculin';
 import registerBeltPairSpecies from './belt-pair';
 import registerBlitzleSpecies from './blitzle';
 import registerCottoneeSpecies from './cottonee';
 import registerDarumakaSpecies from './darumaka';
+import registerDeinoSpecies from './deino';
+import registerDruddigonSpecies from './druddigon';
 import registerDucklettSpecies from './ducklett';
 import registerDrilburSpecies from './drilbur';
 import registerDwebbleSpecies from './dwebble';
@@ -89,5 +92,8 @@ export default function registerGen5Species(): void {
   registerKlinkSpecies();
   registerElgyemSpecies();
   registerLitwickSpecies();
+  registerAxewSpecies();
+  registerDruddigonSpecies();
   registerGolettSpecies();
+  registerDeinoSpecies();
 }

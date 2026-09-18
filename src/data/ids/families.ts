@@ -301,10 +301,15 @@ const enum Families {
   // not written yet
   Elgyem = 298,
   Litwick = 299,
-  // 300 to 306 are held for Axew, Cubchoo, Cryogonal, Shelmet,
-  // Stunfisk, Mienfoo and Druddigon, which sit between these in the
-  // dex and are not written yet
+  Axew = 300,
+  // 301 to 305 are held for Cubchoo, Cryogonal, Shelmet, Stunfisk and
+  // Mienfoo, which sit between these in the dex and are not written yet
+  Druddigon = 306,
   Golett = 307,
+  // 308 to 313 are held for Pawniard, Bouffalant, Rufflet, Vullaby,
+  // Heatmor and Durant, which sit between these in the dex and are not
+  // written yet
+  Deino = 314,
 }
 
 export default Families;
@@ -616,5 +621,8 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Klink]: 'Klink',
   [Families.Elgyem]: 'Elgyem',
   [Families.Litwick]: 'Litwick',
+  [Families.Axew]: 'Axew',
+  [Families.Druddigon]: 'Druddigon',
   [Families.Golett]: 'Golett',
+  [Families.Deino]: 'Deino',
 };

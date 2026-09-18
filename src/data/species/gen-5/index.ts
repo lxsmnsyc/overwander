@@ -27,9 +27,11 @@ import registerPanpourSpecies from './panpour';
 import registerPansageSpecies from './pansage';
 import registerPansearSpecies from './pansear';
 import registerPatratSpecies from './patrat';
+import registerPawniardSpecies from './pawniard';
 import registerPetililSpecies from './petilil';
 import registerPidoveSpecies from './pidove';
 import registerRoggenrolaSpecies from './roggenrola';
+import registerRuffletSpecies from './rufflet';
 import registerSewaddleSpecies from './sewaddle';
 import registerTimburrSpecies from './timburr';
 import registerTympoleSpecies from './tympole';
@@ -44,6 +46,7 @@ import registerSolosisSpecies from './solosis';
 import registerTepigSpecies from './tepig';
 import registerVanilliteSpecies from './vanillite';
 import registerVenipedeSpecies from './venipede';
+import registerVullabySpecies from './vullaby';
 import registerWoobatSpecies from './woobat';
 import registerZoruaSpecies from './zorua';
 
@@ -95,5 +98,8 @@ export default function registerGen5Species(): void {
   registerAxewSpecies();
   registerDruddigonSpecies();
   registerGolettSpecies();
+  registerPawniardSpecies();
+  registerRuffletSpecies();
+  registerVullabySpecies();
   registerDeinoSpecies();
 }

@@ -34,8 +34,12 @@ const UNNAMED_FLOOR = 30;
  */
 const GROWN_CEILING = 80;
 
-/** As high as anything that is not the end of its line goes */
-const HALF_GROWN_CEILING = 50;
+/**
+ * As high as anything that is not the end of a three-stage line goes.
+ * It stops short of the grown ceiling, but it still has to clear the
+ * latest a two-stage line hands its last stage over, which is 54
+ */
+const HALF_GROWN_CEILING = 70;
 
 /** The first stage of any line starts here */
 const YOUNG_FLOOR = 5;

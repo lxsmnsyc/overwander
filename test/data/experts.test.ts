@@ -1022,6 +1022,21 @@ describe('type experts', () => {
     ).toContain(Moves.Charm);
   });
 
+  it('prices what a move really lands, not what its entry says', () => {
+    // A recharge is a whole cast spent standing still, which is what
+    // kept Giga Impact off a quarter of the dex
+    expect(getBestMoves(Species.Gyarados, [Abilities.Intimidate])).not.toContain(Moves.GigaImpact);
+
+    // A move whose power the engine works out at the cast is still
+    // worth something: Snorlax throws its own weight
+    expect(getBestMoves(Species.Snorlax, [Abilities.Immunity])).toContain(Moves.HeavySlam);
+
+    // Every strike counts, and Skill Link lands the lot, which is what
+    // makes five strikes of 25 worth a slot
+    expect(getBestMoves(Species.Cloyster, [Abilities.ShellArmor])).not.toContain(Moves.SpikeCannon);
+    expect(getBestMoves(Species.Cloyster, [Abilities.SkillLink])).toContain(Moves.SpikeCannon);
+  });
+
   it('never awakens an ability the sheet never asks for', () => {
     // Reckless lifts a move that hurts its user, and a sheet with
     // none is a sheet it does nothing on. The two are picked apart,

@@ -8,6 +8,8 @@ import { getLearnableMoves, getSpeciesData } from './__create';
 import { getMoveData } from '../moves/__create';
 import { isRecoilMove } from '../moves/recoil';
 import { MOVE_WEATHERS, getWeatherMove } from '../moves/weather';
+import { estimateMoveHits } from '../moves/multi-hit';
+import { isRechargeMove } from '../moves/recharge';
 
 /**
  * What a species is best built as: the four moves an expert's copy of
@@ -604,11 +606,9 @@ const MOVE_DRAWBACKS: Partial<Record<Moves, number>> = {
   [Moves.Explosion]: 0,
   [Moves.SelfDestruct]: 0,
 
-  // Landing one and then standing still for the next
-  [Moves.HyperBeam]: 0.5,
-  [Moves.BlastBurn]: 0.5,
-  [Moves.HydroCannon]: 0.5,
-  [Moves.FrenzyPlant]: 0.5,
+  // Worth nothing until every other move on the sheet has been cast,
+  // so it is a wasted slot for most of a fight
+  [Moves.LastResort]: 0.3,
 
   // Worth its power only where nothing touched the user first
   [Moves.FocusPunch]: 0.5,
@@ -644,6 +644,13 @@ function holdsAbility(abilities: readonly Abilities[], wanted: ReadonlySet<Abili
   }
   return false;
 }
+
+/**
+ * What a move that leaves the user standing still afterwards is worth.
+ * The recharge is a whole cast spent doing nothing, so the move is
+ * worth about half of what its power says
+ */
+const RECHARGE_FACTOR = 0.5;
 
 /** The drawbacks that are a drop on the user, which Contrary turns into a rise */
 const SELF_DROPPING = new Set<Moves>([Moves.Overheat, Moves.PsychoBoost, Moves.Superpower]);
@@ -891,6 +898,109 @@ function repeatedWorth(taken: number, stab: boolean): number {
   return (stab ? REPEATED_STAB : REPEATED_ATTACK) ** taken;
 }
 
+/**
+ * What a move with no power of its own is worth, read as the power a
+ * plain move would need to do the same.
+ *
+ * A move's `power` is null where the engine works the figure out at
+ * the cast: off a level, off a health bar, off a weight. Multiplying
+ * by null gives nothing, so every one of these was invisible to the
+ * builder and a Blissey was handed a Fire Blast to cast off 75 special
+ * attack rather than the Seismic Toss beside it.
+ *
+ * The figures are what the move comes to against something its own
+ * level, and a move left out is one an expert is never built with:
+ * the one-hit knockouts, which are a 30% roll, and the ones that
+ * answer a blow rather than throw one (Counter, Mirror Coat, Metal
+ * Burst, Bide), which the AI has no way to set up
+ */
+const ESTIMATED_POWER: Partial<Record<Moves, number>> = {
+  // A level's worth of damage, flat: reliable, and never more than that
+  [Moves.SeismicToss]: 70,
+  [Moves.NightShade]: 70,
+  [Moves.Psywave]: 55,
+  // Half of what the target has left. It never finishes anything, so
+  // it is worth less than the figure suggests
+  [Moves.SuperFang]: 80,
+  // Fixed amounts, which a fight at this level has outgrown
+  [Moves.DragonRage]: 30,
+  [Moves.SonicBoom]: 15,
+
+  // How friendly the pokemon is, and an expert's is freshly staged
+  [Moves.Return]: 90,
+  [Moves.Frustration]: 40,
+  // A type and a power that are whatever the pokemon was born with
+  [Moves.HiddenPower]: 60,
+  // Off the weight of whoever is hit, which averages out about here
+  [Moves.GrassKnot]: 60,
+  [Moves.LowKick]: 60,
+  [Moves.WringOut]: 80,
+  [Moves.CrushGrip]: 80,
+  // Only while the user is nearly gone, which is not where a fight is
+  // spent
+  [Moves.Flail]: 45,
+  [Moves.Reversal]: 45,
+  [Moves.Endeavor]: 40,
+  // Off the stages the target has taken, or the user has
+  [Moves.Punishment]: 60,
+  [Moves.StoredPower]: 40,
+  // What is left in the bag, or what the last of it does
+  [Moves.TrumpCard]: 60,
+  [Moves.Present]: 40,
+  [Moves.Fling]: 40,
+  [Moves.NaturalGift]: 60,
+  [Moves.SpitUp]: 50,
+  // The ground's own roll
+  [Moves.Magnitude]: 71,
+};
+
+/**
+ * The ones whose figure the species itself answers: how heavy it is,
+ * or how fast. Worked out rather than tabled, so a heavy pokemon is
+ * handed the move that wants weight
+ */
+function speciesPower(species: Species, move: Moves): number | undefined {
+  const data = getSpeciesData(species);
+
+  // Thrown by weight: a Snorlax lands these at the cap and a Gengar
+  // barely at all
+  if (move === Moves.HeavySlam || move === Moves.HeatCrash) {
+    return Math.min(120, 40 + data.weight);
+  }
+  // Thrown by speed, and worth most to something quick
+  if (move === Moves.ElectroBall) {
+    return Math.min(120, 30 + data.stats[Stats.Speed] / 2);
+  }
+  // The other way round: a slow pokemon throws the heaviest gear
+  if (move === Moves.GyroBall) {
+    return Math.min(120, 140 - data.stats[Stats.Speed]);
+  }
+  return undefined;
+}
+
+/** What the move hits for, whether the registry says so or the engine works it out */
+function powerOf(species: Species, move: Moves): number {
+  return getMoveData(move).power ?? speciesPower(species, move) ?? ESTIMATED_POWER[move] ?? 0;
+}
+
+/**
+ * How much of a cast a move's wind-up costs, read the way the engine
+ * reads it: priority is frames off the cast, so a Bullet Punch is
+ * thrown in about six sevenths of the time a plain move takes and is
+ * worth that much more for it
+ */
+const CAST_FRAMES = 104;
+const PRIORITY_FRAMES = 16;
+
+function priorityFactor(move: Moves): number {
+  const priority = getMoveData(move).priority ?? 0;
+
+  if (priority === 0) {
+    return 1;
+  }
+  return CAST_FRAMES / Math.max(PRIORITY_FRAMES, CAST_FRAMES - priority * PRIORITY_FRAMES);
+}
+
 /** What one move is worth to this species, as effective power */
 function moveWorth(species: Species, move: Moves, context: BuildContext): number {
   const data = getMoveData(move);
@@ -958,13 +1068,21 @@ function moveWorth(species: Species, move: Moves, context: BuildContext): number
   // for something the other five do not have
   const repeated = repeatedWorth(context.taken.get(move) ?? 0, types.includes(data.type));
 
+  // A move that strikes several times is worth what all of them come
+  // to, which is what makes a Skill Link worth awakening
+  const landed =
+    powerOf(species, move) *
+    estimateMoveHits(move, context.abilities.includes(Abilities.SkillLink));
+
   return (
-    (((data.power ?? 0) *
+    ((landed *
       share *
       accuracy *
       coverageWeight(data.type) *
+      priorityFactor(move) *
       abilityFactor(move, context, types)) /
       winding) *
+    (isRechargeMove(move) ? RECHARGE_FACTOR : 1) *
     (SELF_DROPPING.has(move) && context.abilities.includes(Abilities.Contrary)
       ? 1
       : (MOVE_DRAWBACKS[move] ?? 1)) *

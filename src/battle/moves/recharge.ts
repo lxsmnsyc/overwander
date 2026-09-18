@@ -1,21 +1,12 @@
 import { AttackPriority } from '../../core/event-emitter';
-import { Moves } from '../../data/ids/moves';
+import { RECHARGE_MOVES } from '../../data/moves/recharge';
 import { Statuses } from '../../data/ids/status';
 import { STEP_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 
 // https://bulbapedia.bulbagarden.net/wiki/Hyper_Beam_(move)
-// Moves that lock the user into a recharge after a successful hit.
-const RECHARGE_MOVES = new Set<Moves>([
-  Moves.HyperBeam,
-  Moves.BlastBurn,
-  Moves.HydroCannon,
-  Moves.FrenzyPlant,
-  Moves.GigaImpact,
-  Moves.RockWrecker,
-  Moves.RoarOfTime,
-]);
+// The list itself is data, since the expert builder prices it too
 
 export default function setupRechargeMoves(battle: Battle): void {
   /**

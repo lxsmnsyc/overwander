@@ -9,12 +9,7 @@ import {
   stepsRemaining,
 } from '../auth/egg';
 import { getMaxHealth } from '../auth/health';
-import {
-  DEFAULT_ABILITY_SLOTS,
-  DEFAULT_ITEM_SLOTS,
-  DEFAULT_MOVE_SLOTS,
-  packSlots,
-} from '../data/constants/slots';
+import { defaultSlots } from '../data/constants/slots';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import AleaRNG from '../core/alea';
 import Abilities from '../data/ids/abilities';
@@ -33,6 +28,7 @@ import type { Genders, Species } from '../data/ids/species';
 import {
   type BreedingParent,
   SHADOW_HATCH_FACTOR,
+  eggAbilities,
   inheritAbility,
   inheritBall,
   inheritIVs,
@@ -132,6 +128,11 @@ interface EggFields {
   shadow: boolean;
   moves: Moves[];
   ability: Abilities;
+  /**
+   * Everything it hatches with, where the sky handed the meeting more
+   * than the one ability. `ability` stays the first of them
+   */
+  abilities?: Abilities[];
   individualValue: number;
   traitValue: number;
   hatchSteps: number;
@@ -175,6 +176,15 @@ async function writeEgg(
     fields.hatchSteps,
   );
 
+  // Everything it will hatch holding: what the caller settled on, and
+  // the Shadow it cannot put down
+  const hatching = [
+    ...new Set([
+      ...(fields.abilities ?? [fields.ability]),
+      ...(fields.shadow ? [Abilities.Shadow] : []),
+    ]),
+  ];
+
   // What is in the shell is whole, and the maximum it is measured
   // against is stored beside it so `hurt` can be a column
   const whole = getMaxHealth({
@@ -203,7 +213,7 @@ async function writeEgg(
           shiny: fields.shiny,
           species: fields.species,
         })},
-        ${fields.slots ?? packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS)},
+        ${fields.slots ?? defaultSlots(hatching)},
         0, 0, ${hatchSteps}, ${now},
         ${whole}, ${whole},
         0, null, ${fields.ball},
@@ -219,7 +229,7 @@ async function writeEgg(
       movePoints: {},
       // A shadow keeps its Shadow ability for good, the way a shadow
       // raid's prize does
-      abilities: fields.shadow ? [fields.ability, Abilities.Shadow] : [fields.ability],
+      abilities: hatching,
       items: [],
       // It was never anybody else's: this owner is where the pokemon
       // begins, egg and all
@@ -263,6 +273,7 @@ export async function grantNestEgg(
       shadow: false,
       moves: hatchling.moves,
       ability: hatchling.ability,
+      abilities: hatchling.abilities,
       individualValue: hatchling.individualValue,
       traitValue: hatchling.traitValue,
       hatchSteps: Math.ceil(getEggHatchSteps(species) * NEST_HATCH_FACTOR),
@@ -314,6 +325,10 @@ export async function grantBredEgg(
   const hatchling = deriveEncounter(snapshot, spawn, uid, {
     type: EncounterType.Hatched,
     level: EGG_LEVEL,
+    // The egg is collected from the breeder under a sky, so a mirage
+    // over the day care reaches what is inside it
+    weather: snapshot.weather,
+    skyGifts: true,
   });
   const ivs = inheritIVs(parents[0], parents[1], () => rng.random());
   const shadow = inheritsShadow(parents[0], parents[1], () => rng.random());
@@ -337,8 +352,9 @@ export async function grantBredEgg(
       shadow,
       moves: inheritMoves(species, parents[0], parents[1], EGG_LEVEL),
       // Its mother's, most of the time; its own when she did not pass
-      // it on
+      // it on, plus whatever the sky added on top of the roll
       ability: ability ?? hatchling.ability,
+      abilities: eggAbilities(ability ?? hatchling.ability, hatchling.ability, hatchling.abilities),
       individualValue: hatchling.individualValue,
       traitValue: hatchling.traitValue,
       // Something that should not be in there takes twice as long to

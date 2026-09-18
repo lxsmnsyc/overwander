@@ -593,12 +593,19 @@ describe('hatchling moves', () => {
     expect(passed).toEqual(deriveMoves(Species.Bulbasaur, EGG_LEVEL));
   });
 
-  it('hatches a line with nothing to inherit knowing only its own', () => {
-    // An evolution carries no list of its own — what it knows it
-    // hatched with, as its base stage
+  it('reads an evolution the list of the stage its line hatches at', () => {
+    // An evolution carries no list of its own, so asking it directly
+    // answers nothing and the line's first stage has to be asked
     expect(getEggMoves(Species.Ivysaur)).toEqual([]);
-    expect(deriveEggMoves(Species.Ivysaur, EGG_LEVEL, () => 0)).toEqual(
-      deriveMoves(Species.Ivysaur, EGG_LEVEL),
+    expect(deriveEggMoves(Species.Ivysaur, EGG_LEVEL, () => 0)[0]).toBe(
+      getEggMoves(Species.Bulbasaur)[0],
+    );
+  });
+
+  it('hatches a line with nothing to inherit knowing only its own', () => {
+    expect(getEggMoves(Species.Caterpie)).toEqual([]);
+    expect(deriveEggMoves(Species.Butterfree, EGG_LEVEL, () => 0)).toEqual(
+      deriveMoves(Species.Butterfree, EGG_LEVEL),
     );
   });
 

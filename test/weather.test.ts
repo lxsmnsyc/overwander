@@ -303,8 +303,19 @@ describe('what weather is worth', () => {
     expect(inherited).not.toEqual(met(Weather.Clear));
     expect(new Set(getEggMoves(Species.Bulbasaur)).has(inherited[0])).toBe(true);
 
+    // An evolution inherits too, off the list its own first stage
+    // carries, since no evolution carries one itself
+    expect(getEggMoves(Species.Venusaur)).toEqual([]);
+
+    const evolved = deriveEncounter(snapshot, [Species.Venusaur, 0, 12_345], 'trainer-red', {
+      type: EncounterType.Wild,
+      weather: Weather.Fogbow,
+    }).moves;
+
+    expect(new Set(getEggMoves(Species.Bulbasaur)).has(evolved[0])).toBe(true);
+
     // A line that inherits nothing is handed nothing
-    expect(getEggMoves(Species.Butterfree)).toEqual([]);
+    expect(getEggMoves(Species.Caterpie)).toEqual([]);
     expect(
       deriveEncounter(snapshot, [Species.Butterfree, 0, 12_345], 'trainer-red', {
         type: EncounterType.Wild,

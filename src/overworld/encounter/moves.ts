@@ -1,7 +1,7 @@
 import AleaRNG from '../../core/alea';
 import type { Moves } from '../../data/ids/moves';
 import type { Species } from '../../data/ids/species';
-import { getEggMoves, getSpeciesData } from '../../data/species';
+import { getBaseSpecies, getEggMoves, getSpeciesData } from '../../data/species';
 import { MOVE_LIMIT } from './traits';
 
 /** What it knows when it is met, and what it was hatched knowing */
@@ -63,7 +63,10 @@ export function deriveMoves(species: Species, level: number, banned?: Set<Moves>
  */
 export function deriveEggMoves(species: Species, level: number, random: () => number): Moves[] {
   const learned = deriveMoves(species, level);
-  const inheritable = getEggMoves(species);
+  // A line lists its egg moves on the stage it hatches at, so an
+  // evolution has to be asked about its own first stage or it inherits
+  // nothing at all
+  const inheritable = getEggMoves(getBaseSpecies(species));
 
   if (inheritable.length === 0) {
     return learned;

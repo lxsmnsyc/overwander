@@ -1,5 +1,17 @@
 # overwander
 
+## 4.3.0
+
+### Minor Changes
+
+- 28e97cd: Teams: save up to 6 parties under a name in your profile, then load one with a press when a raid or a duel asks you to form a team.
+
+### Patch Changes
+
+- 9630dd9: - Future Sight and Doom Desire draw their own picture when the delayed strike lands, instead of arriving as a bare hit.
+  - A raid lobby lists the host's party first, whoever formed a party soonest.
+- 2df43a7: An egg's catch sheet is one column: the egg, how far along it is and the button that hatches it, with no empty stat and move columns and no candy giving away what is inside.
+
 ## 4.2.0
 
 ### Minor Changes

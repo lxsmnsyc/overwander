@@ -1752,4 +1752,20 @@ export default function registerSignatureAbilities(): void {
     description:
       'The first time it drops below 1/2 HP it gains 2 stages of Attack and loses 1 of Defense. Once per battle.',
   });
+
+  // Dragonspiral Tower and the tunnels under it
+  registerSignature(Families.Axew, Abilities.Scoring, {
+    name: 'Scoring',
+    description: 'Every physical move it lands takes 1 stage of Defense off the target.',
+  });
+
+  registerSignature(Families.Druddigon, Abilities.Sunwarmed, {
+    name: 'Sunwarmed',
+    description: 'Its moves take 0.75x as long to cast while harsh sunlight is up.',
+  });
+
+  registerSignature(Families.Deino, Abilities.ThreeHeads, {
+    name: 'Three Heads',
+    description: 'Every move it lands also bites one other enemy for 1/3 of the damage.',
+  });
 }

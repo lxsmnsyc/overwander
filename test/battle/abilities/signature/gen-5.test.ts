@@ -7,9 +7,14 @@ import Abilities from '../../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import { Items } from '../../../../src/data/ids/items';
 import { Genders, Species } from '../../../../src/data/ids/species';
-import { Statuses, TeamStatuses } from '../../../../src/data/ids/status';
+import { Statuses, TeamStatuses, Weathers } from '../../../../src/data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
+import {
+  SCORING_STAGES,
+  SUNWARMED_SCALE,
+  THREE_HEADS_SHARE,
+} from '../../../../src/battle/abilities/signature/axew-to-deino';
 import {
   BROKEN_SEAL_ATTACK,
   BROKEN_SEAL_DEFENSE,
@@ -1319,5 +1324,83 @@ describe('what the tower on the hill holds', () => {
     // Spent: a second blow under half adds nothing
     foe.attack(golurk, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
     expect(golurk.stages[Stages.Attack]).toBe(BROKEN_SEAL_ATTACK);
+  });
+});
+
+describe('what the dragon tower holds', () => {
+  it('takes a stage of Defense off with every physical move, and none with a special one', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const haxorus = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    haxorus.addAbility(Abilities.Scoring);
+    haxorus.enter();
+    foe.enter();
+
+    haxorus.attack(foe, Moves.Scratch, 10, Types.Normal, MoveCategories.Physical, 0);
+    expect(foe.stages[Stages.Defense]).toBe(SCORING_STAGES);
+
+    haxorus.attack(foe, Moves.Scratch, 10, Types.Normal, MoveCategories.Physical, 0);
+    expect(foe.stages[Stages.Defense]).toBe(SCORING_STAGES * 2);
+
+    // The tusks are what cut, so nothing special leaves a mark
+    haxorus.attack(foe, Moves.DragonPulse, 10, Types.Dragon, MoveCategories.Special, 0);
+    expect(foe.stages[Stages.Defense]).toBe(SCORING_STAGES * 2);
+  });
+
+  it('casts faster once it has basked, and only under a sun', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const druddigon = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    druddigon.addAbility(Abilities.Sunwarmed);
+    druddigon.enter();
+    foe.enter();
+
+    const target = { type: MoveTargetType.Unit, unit: foe } as const;
+    const cold = druddigon.checkMoveCastTime(Moves.DragonClaw, target);
+
+    battle.setWeather(Weathers.Sunny);
+
+    expect(druddigon.checkMoveCastTime(Moves.DragonClaw, target)).toBeCloseTo(
+      cold * SUNWARMED_SCALE,
+      2,
+    );
+
+    // The cooldown is Speed's to answer, so the sun leaves it alone
+    battle.setWeather(Weathers.Rain);
+    expect(druddigon.checkMoveCastTime(Moves.DragonClaw, target)).toBe(cold);
+  });
+
+  it('bites a second enemy for a share, and nothing when there is only one', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const hydreigon = createUnit(battle, teamA);
+    const bitten = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+
+    pinRandom(battle, 0);
+    hydreigon.addAbility(Abilities.ThreeHeads);
+    hydreigon.enter();
+    bitten.enter();
+    other.enter();
+
+    const front = bitten.health;
+    const side = other.health;
+
+    hydreigon.attack(bitten, Moves.DragonPulse, 40, Types.Dragon, MoveCategories.Special, 0);
+
+    const bite = side - other.health;
+
+    expect(bite).toBeGreaterThan(0);
+    expect(bite / (front - bitten.health)).toBeCloseTo(THREE_HEADS_SHARE, 1);
+
+    // Alone in front of it, the side heads have nothing to reach for
+    other.setHealth(0);
+
+    const alone = other.health;
+
+    hydreigon.attack(bitten, Moves.DragonPulse, 40, Types.Dragon, MoveCategories.Special, 0);
+    expect(other.health).toBe(alone);
   });
 });

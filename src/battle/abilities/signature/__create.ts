@@ -1626,3 +1626,54 @@ export function createBeltAbility(
     }),
   );
 }
+
+/** How low the monkeys let themselves get before they spend the tuft */
+export const TUFT_THRESHOLD = 1 / 2;
+
+/**
+ * The elemental monkeys each carry their element in a tuft and spend
+ * it once, on the whole enemy side, the first time a blow takes them
+ * under half. What each one leaves behind is a status that keeps
+ * costing: a burn, a whirlpool, a seed
+ */
+export function createTuftAbility(
+  ability: Abilities,
+  status: Statuses,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) => {
+    /** Which holders have already spent theirs */
+    const spent = new Set<Unit>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const holder = event.target;
+
+        if (
+          !event.success ||
+          !holder.alive ||
+          spent.has(holder) ||
+          !holder.hasAbility(ability) ||
+          holder.health >= holder.checkStat(Stats.HP, 0) * TUFT_THRESHOLD
+        ) {
+          return;
+        }
+
+        spent.add(holder);
+        holder.triggerAbility(ability);
+
+        const cause = { type: EffectType.Ability, ability, unit: holder } as const;
+
+        for (const enemy of battle.units(holder.team.alliance)) {
+          if (enemy.alive) {
+            enemy.addStatus(status, cause);
+          }
+        }
+      }),
+
+      // A tuft grows back between fights, not between arrivals
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        spent.delete(event.source);
+      }),
+    ]);
+  });
+}

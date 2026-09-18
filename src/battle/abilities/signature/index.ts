@@ -28,6 +28,7 @@ import stunkyToGible from './stunky-to-gible';
 import turtwigToPiplup from './turtwig-to-piplup';
 import audinoToSawk from './audino-to-sawk';
 import munnaToBlitzle from './munna-to-blitzle';
+import pansearToPanpour from './pansear-to-panpour';
 import patratToPurrloin from './patrat-to-purrloin';
 import roggenrolaToDrilbur from './roggenrola-to-drilbur';
 import sewaddleToPetilil from './sewaddle-to-petilil';
@@ -67,6 +68,7 @@ const setupAbilities = [
   ...arceus,
   ...snivyToOshawott,
   ...patratToPurrloin,
+  ...pansearToPanpour,
   ...munnaToBlitzle,
   ...roggenrolaToDrilbur,
   ...audinoToSawk,

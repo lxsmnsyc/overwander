@@ -568,3 +568,58 @@ describe('the rest of what the forest holds', () => {
     expect(armed / plain).toBeCloseTo(BLUE_BELT_SCALE, 2);
   });
 });
+
+describe('the elemental monkeys', () => {
+  it('burns every enemy the first time a blow takes it under half, once a fight', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const pansear = createUnit(battle, teamA);
+    const near = createUnit(battle, teamB);
+    const far = createUnit(battle, teamB);
+
+    pansear.addAbility(Abilities.EmberTuft);
+    pansear.enter();
+    near.enter();
+    far.enter();
+
+    // Above half it keeps the tuft
+    near.attack(pansear, Moves.Tackle, 1, Types.Normal, MoveCategories.Physical, 0);
+    expect(near.status[Statuses.Burned]).toBeFalsy();
+
+    pansear.setHealth(Math.floor(pansear.checkStat(Stats.HP, 0) * 0.6));
+    near.attack(pansear, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(near.status[Statuses.Burned]).toBeTruthy();
+    expect(far.status[Statuses.Burned]).toBeTruthy();
+
+    // Spent: a second enemy arriving later gets nothing
+    const late = createUnit(battle, teamB);
+
+    late.enter();
+    near.attack(pansear, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+    expect(late.status[Statuses.Burned]).toBeFalsy();
+  });
+
+  it('traps every enemy in a whirlpool instead, which costs them as it runs', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const panpour = createUnit(battle, teamA);
+    const near = createUnit(battle, teamB);
+    const far = createUnit(battle, teamB);
+
+    panpour.addAbility(Abilities.GeyserTail);
+    panpour.enter();
+    near.enter();
+    far.enter();
+
+    panpour.setHealth(Math.floor(panpour.checkStat(Stats.HP, 0) * 0.6));
+    near.attack(panpour, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(near.status[Statuses.Trapped]).toBeTruthy();
+    expect(far.status[Statuses.Trapped]).toBeTruthy();
+
+    // The trap keeps costing, which is what a burn and a seed do too
+    const whole = far.health;
+
+    battle.tick(turns(1));
+    expect(far.health).toBeLessThan(whole);
+  });
+});

@@ -1,5 +1,111 @@
 # overwander
 
+## 4.1.0
+
+### Minor Changes
+
+- a000151: Unova's 92 moves are in, along with the Douse, Shock, Burn and Chill Drives that set Techno Blast's type.
+
+  - Hone Claws, Wide Guard, Guard Split, Power Split, Wonder Room, Psyshock
+  - Venoshock, Autotomize, Rage Powder, Telekinesis, Magic Room, Smack Down
+  - Storm Throw, Flame Burst, Sludge Wave, Quiver Dance, Heavy Slam, Synchronoise
+  - Electro Ball, Soak, Flame Charge, Coil, Low Sweep, Acid Spray, Foul Play
+  - Simple Beam, Entrainment, After You, Round, Echoed Voice, Chip Away
+  - Clear Smog, Stored Power, Quick Guard, Ally Switch, Scald, Shell Smash
+  - Heal Pulse, Hex, Sky Drop, Shift Gear, Circle Throw, Incinerate, Quash
+  - Acrobatics, Reflect Type, Retaliate, Final Gambit, Bestow, Inferno
+  - Water Pledge, Fire Pledge, Grass Pledge, Volt Switch, Struggle Bug, Bulldoze
+  - Frost Breath, Dragon Tail, Work Up, Electroweb, Wild Charge, Drill Run
+  - Dual Chop, Heart Stamp, Horn Leech, Sacred Sword, Razor Shell, Heat Crash
+  - Leaf Tornado, Steamroller, Cotton Guard, Night Daze, Psystrike, Tail Slap
+  - Hurricane, Head Charge, Gear Grind, Searing Shot, Techno Blast, Relic Song
+  - Secret Sword, Glaciate, Bolt Strike, Blue Flare, Fiery Dance, Freeze Shock
+  - Ice Burn, Snarl, Icicle Crash, V-create, Fusion Flare, Fusion Bolt
+
+  Some moves read the real-time fight rather than a turn.
+
+  - Round and Retaliate double their power when a teammate sang a Round or fainted in the last 2 seconds.
+  - Fusion Flare and Fusion Bolt double their power when the other one landed in the last 2 seconds.
+  - Echoed Voice lands 40 harder for each one within 2 seconds of the last, up to 200.
+  - Two different Pledges from one team within 2 seconds combine at 150 power and leave a rainbow, a sea of fire or a swamp for 8 seconds.
+  - A sea of fire burns 1/8 of a pokemon's HP each time it acts.
+  - After You makes a teammate's wind-up finish at once.
+  - Quash sends a target's wind-up back to the start.
+  - Quick Guard turns away moves with a shortened wind-up.
+  - Flame Burst splashes the target's own team.
+  - Wonder Room and Magic Room end when cast a second time.
+
+  A raid boss is kept out of the ones a raid breaks.
+
+  - A boss is never staged with Final Gambit, Quash, Guard Split, Power Split, After You, Ally Switch or Bestow.
+  - A boss shrugs off Quash, Sky Drop, Guard Split and Power Split aimed at it.
+
+  Some are drawn the way an earlier move that does the same thing is drawn.
+
+  - Drill Run turns like Horn Drill, and Wild Charge arrives crackling like Volt Tackle.
+  - Hurricane blows like Aeroblast.
+  - Wide Guard and Quick Guard put up Protect's shell.
+  - Wonder Room and Magic Room lay a room over the field like Trick Room.
+  - Rage Powder is a cloud of powder, and Cotton Guard drifts cotton like Cotton Spore.
+  - Heal Pulse brings health back, and Heart Stamp sends up hearts.
+  - Electroweb winds round the target like Bind.
+  - Snarl and Echoed Voice roll sound arcs out like Roar, and Round drifts notes like Sing.
+  - Smack Down brings rocks down on the target.
+
+  Some have a picture of their own.
+
+  - Psyshock and Psystrike hang shards of psychic force round the target and drive them in.
+  - Synchronoise pulses waves out of the target and the pokemon that used it together.
+  - Stored Power circles orbs round the target that close in and burst.
+  - Final Gambit lights up the pokemon that used it and lands one heavy blow.
+  - Struggle Bug sends tiny bugs zigzagging in on the target.
+  - Techno Blast fires a line of plasma that rings out in hexagons.
+  - V-create drives a V of fire down onto the target, and Searing Shot flings fireballs that burst on it.
+  - Blue Flare raises a column of blue fire, and Bolt Strike brings bolts down on the target from every side.
+  - Fusion Flare and Fusion Bolt drop a ball of fire or lightning out of the sky.
+  - Freeze Shock and Ice Burn break ice spikes up round the target, crackling with sparks or licked by fire.
+  - Glaciate spreads frost across the ground under the target.
+  - Sacred Sword and Secret Sword drop a great sword point first through the target.
+  - Relic Song spirals notes up round the target.
+  - Quiver Dance flutters glittering wings up round the pokemon.
+  - Shell Smash cracks the pokemon's shell and bursts it off in pieces.
+  - Shift Gear turns two meshing gears, and Coil winds a spiral up round the body.
+  - Autotomize drops pieces off the pokemon as it speeds away, and Work Up throbs with power like Bulk Up.
+  - Heavy Slam and Heat Crash spread a shadow under the target before the ground gives way.
+  - Fire, Water and Grass Pledge raise a column of fire, water or leaves out of the ground.
+  - Acrobatics swoops in on quick loops, and Sky Drop streaks down onto the ground.
+  - Dragon Tail swings like Iron Tail, and Steamroller rolls a spiked wheel over the target.
+  - Foul Play draws the target's strength out of it and turns it back in a dark blow.
+  - Horn Leech drives a horn in and draws green light back to the pokemon that used it.
+  - Head Charge rushes in behind speed lines and lands a hard hit.
+  - Inferno closes a ring of fire on the target, and Fiery Dance swirls flames in on it.
+  - Incinerate blows hot air across the target like Heat Wave, and Flame Burst flings embers out to either side.
+
+- 17cba35: - Unova's three starters can be caught, with their evolutions. That is nine
+  species, with learnsets, sprites and a candy each. A new trainer picks a
+  starter from fifteen.
+  - Leaf Opening takes 1 stage of Speed off whatever a Snivy's first landed move
+    of the fight hits.
+  - Ember Opening makes a Tepig's first landed move of the fight hit 1.5x.
+  - Shell Opening raises an Oshawott's Defense 2 stages when its first move of the
+    fight lands.
+  - Serperior also reaches Infiltrator and Unnerve, Emboar reaches Iron Fist, and
+    Samurott reaches Swift Swim and Sniper. These are not in the mainline.
+  - Snivy appears in the shrublands and steppes. Tepig appears in the badlands and
+    deserts. Oshawott appears on the rocky coasts and in the kelp forests, both in
+    the water and on the shore.
+  - Changes world generation.
+
+### Patch Changes
+
+- 2f3ecaf: A fight's top bar fits a phone: it drops the health bars onto a row of their own, so the speed buttons and Leave stay reachable.
+- dce0b79: Experts weigh the recoil of Flare Blitz, Brave Bird, Wood Hammer and Head Smash against how much HP the pokemon has.
+- 2e75026: Kanto's, Johto's and Hoenn's pokemon learn Unova's moves by level, machine, tutor and egg, as they do in Black, White, Black 2 and White 2.
+- 49b0b9e: - The AI no longer treats a move that raises several stats, such as Dragon Dance or Calm Mind, as useless once only one of those stats is maxed.
+  - The AI does not use Follow Me when no teammate is standing.
+  - The AI does not use Role Play or Skill Swap when there is no ability to copy or trade.
+- e2b5d6e: Sprite sheets are kept by the browser instead of being checked on every visit, and a repacked sheet is still picked up.
+
 ## 4.0.2
 
 ### Patch Changes

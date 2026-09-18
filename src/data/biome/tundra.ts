@@ -8,15 +8,22 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerIcePool, registerSpawnPool } from 
 export default function registerTundraSpawns(): void {
   registerSpawnPool(Biome.Tundra, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Swinub, weight: 25 }],
+      base: [
+        { species: Species.Swinub, weight: 25 },
+        { species: Species.Vanillite, weight: 24 },
+      ],
       uncommon: [{ species: Species.Snover, weight: 20 }],
-      rare: [{ species: Species.Piloswine, weight: 10 }],
+      rare: [
+        { species: Species.Piloswine, weight: 10 },
+        { species: Species.Vanillish, weight: 10 },
+      ],
       scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vanilluxe, weight: 5 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Mamoswine, weight: 5 },
         { species: Species.Stoutland, weight: 6 },
@@ -30,15 +37,22 @@ export default function registerTundraSpawns(): void {
       ],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Swinub, weight: 25 }],
+      base: [
+        { species: Species.Swinub, weight: 25 },
+        { species: Species.Vanillite, weight: 24 },
+      ],
       uncommon: [{ species: Species.Snover, weight: 20 }],
-      rare: [{ species: Species.Piloswine, weight: 10 }],
+      rare: [
+        { species: Species.Piloswine, weight: 10 },
+        { species: Species.Vanillish, weight: 10 },
+      ],
       scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vanilluxe, weight: 5 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Mamoswine, weight: 5 },
         { species: Species.Stoutland, weight: 6 },
@@ -107,6 +121,7 @@ export default function registerTundraSpawns(): void {
   registerIcePool(Biome.Tundra, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Vanillite, weight: 24 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
       ],
@@ -115,6 +130,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Snorunt, weight: 22 },
       ],
       rare: [
+        { species: Species.Vanillish, weight: 10 },
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Piloswine, weight: 5 },
       ],
@@ -125,6 +141,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vanilluxe, weight: 5 },
         { species: Species.Walrein, weight: 5 },
         { species: Species.Mamoswine, weight: 5 },
       ],
@@ -132,6 +149,7 @@ export default function registerTundraSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Vanillite, weight: 24 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
       ],
@@ -140,6 +158,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Snorunt, weight: 22 },
       ],
       rare: [
+        { species: Species.Vanillish, weight: 10 },
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Piloswine, weight: 5 },
       ],
@@ -150,6 +169,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vanilluxe, weight: 5 },
         { species: Species.Walrein, weight: 5 },
         { species: Species.Mamoswine, weight: 5 },
       ],

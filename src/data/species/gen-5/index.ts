@@ -1,8 +1,11 @@
 import registerAudinoSpecies from './audino';
+import registerAlomomolaSpecies from './alomomola';
+import registerBasculinSpecies from './basculin';
 import registerBeltPairSpecies from './belt-pair';
 import registerBlitzleSpecies from './blitzle';
 import registerCottoneeSpecies from './cottonee';
 import registerDarumakaSpecies from './darumaka';
+import registerDucklettSpecies from './ducklett';
 import registerDrilburSpecies from './drilbur';
 import registerDwebbleSpecies from './dwebble';
 import registerFerroseedSpecies from './ferroseed';
@@ -33,6 +36,7 @@ import registerYamaskSpecies from './yamask';
 import registerSnivySpecies from './snivy';
 import registerSolosisSpecies from './solosis';
 import registerTepigSpecies from './tepig';
+import registerVanilliteSpecies from './vanillite';
 import registerVenipedeSpecies from './venipede';
 import registerWoobatSpecies from './woobat';
 import registerZoruaSpecies from './zorua';
@@ -61,6 +65,7 @@ export default function registerGen5Species(): void {
   registerVenipedeSpecies();
   registerCottoneeSpecies();
   registerPetililSpecies();
+  registerBasculinSpecies();
   registerSandileSpecies();
   registerDarumakaSpecies();
   registerMaractusSpecies();
@@ -73,6 +78,9 @@ export default function registerGen5Species(): void {
   registerMinccinoSpecies();
   registerGothitaSpecies();
   registerSolosisSpecies();
+  registerDucklettSpecies();
+  registerVanilliteSpecies();
+  registerAlomomolaSpecies();
   registerJoltikSpecies();
   registerFerroseedSpecies();
   registerKlinkSpecies();

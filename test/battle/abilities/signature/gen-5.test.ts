@@ -56,6 +56,11 @@ import {
   THORN_CURTAIN_SCALE,
 } from '../../../../src/battle/abilities/signature/joltik-to-klink';
 import { CONTACT_RECOIL_FRACTION } from '../../../../src/battle/abilities/__create';
+import {
+  BLOOD_WATER_STEP,
+  SWAN_DANCE_STAGES,
+  TIDE_POOL_SCALE,
+} from '../../../../src/battle/abilities/signature/basculin-to-alomomola';
 import turns from '../../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { act, dealDamage, resolveAttackDamage } from './helpers';
@@ -1148,5 +1153,93 @@ describe('the charged cave', () => {
       toucher.checkStat(Stats.HP, 0) * CONTACT_RECOIL_FRACTION,
       0,
     );
+  });
+});
+
+describe('what Driftveil holds', () => {
+  it('turns harder on the water for each enemy already bleeding', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const basculin = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    basculin.addAbility(Abilities.BloodWater);
+    basculin.enter();
+    plain.enter();
+    hurt.enter();
+    other.enter();
+
+    // Nobody failing yet, so the school is worth nothing extra
+    expect(
+      resolveAttackDamage(battle, basculin, other) / resolveAttackDamage(battle, plain, other),
+    ).toBeCloseTo(1, 2);
+
+    hurt.setHealth(Math.floor(hurt.checkStat(Stats.HP, 0) / 4));
+
+    // It counts whoever is bleeding, not the one it is aimed at
+    expect(
+      resolveAttackDamage(battle, basculin, other) / resolveAttackDamage(battle, plain, other),
+    ).toBeCloseTo(1 + BLOOD_WATER_STEP, 2);
+  });
+
+  it('adds Speed to every dance, and nothing to anything else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const swanna = createUnit(battle, teamA);
+
+    swanna.addAbility(Abilities.SwanDance);
+    swanna.enter();
+    createUnit(battle, teamB).enter();
+
+    swanna.triggerMove(Moves.FeatherDance, { type: MoveTargetType.None }, 0);
+    battle.tick(turns(1));
+
+    expect(swanna.stages[Stages.Speed]).toBe(SWAN_DANCE_STAGES);
+
+    swanna.triggerMove(Moves.Roost, { type: MoveTargetType.None }, 0);
+    battle.tick(turns(1));
+
+    expect(swanna.stages[Stages.Speed]).toBe(SWAN_DANCE_STAGES);
+  });
+
+  it('freezes with the first Ice move it lands, and only the first', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const vanillite = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    vanillite.addAbility(Abilities.FlashFreeze);
+    vanillite.enter();
+    first.enter();
+    second.enter();
+
+    vanillite.attack(first, Moves.IcyWind, 10, Types.Ice, MoveCategories.Special, 0);
+    expect(first.status[Statuses.Frozen]).toBeTruthy();
+
+    vanillite.attack(second, Moves.IcyWind, 10, Types.Ice, MoveCategories.Special, 0);
+    expect(second.status[Statuses.Frozen]).toBeFalsy();
+  });
+
+  it('makes every heal on its team worth more, its own included', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const alomomola = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    alomomola.addAbility(Abilities.TidePool);
+    alomomola.enter();
+    mate.enter();
+    foe.enter();
+    mate.setHealth(1);
+    foe.setHealth(1);
+
+    const cause = { type: EffectType.None } as const;
+
+    mate.heal(cause, mate, 100, 0);
+    foe.heal(cause, foe, 100, 0);
+
+    expect((mate.health - 1) / (foe.health - 1)).toBeCloseTo(TIDE_POOL_SCALE, 2);
   });
 });

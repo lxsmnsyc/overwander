@@ -867,6 +867,10 @@ const enum Abilities {
   StaticFeed = 200283,
   ThornCurtain = 200284,
   Meshing = 200285,
+  SwanDance = 200286,
+  FlashFreeze = 200287,
+  TidePool = 200288,
+  BloodWater = 200289,
 }
 
 export default Abilities;

@@ -1528,8 +1528,12 @@ export default function registerSignatureAbilities(): void {
 
   // The three the second road holds
   // The elemental monkeys each spend the tuft they carry once, and
-  // what each leaves on the enemy side keeps costing. Pansage's Leaf
-  // Crown is the third and waits on that line
+  // what each leaves on the enemy side keeps costing
+  registerSignature(Families.Pansage, Abilities.LeafCrown, {
+    name: 'Leaf Crown',
+    description: 'The first time it drops below 1/2 HP it seeds every enemy. Once per battle.',
+  });
+
   registerSignature(Families.Pansear, Abilities.EmberTuft, {
     name: 'Ember Tuft',
     description: 'The first time it drops below 1/2 HP it burns every enemy. Once per battle.',

@@ -136,6 +136,9 @@ function setupNonRefreshableStatus(battle: Battle): void {
  */
 const STATUS_TYPE_IMMUNITY: { [key in Statuses]?: Types[] } = {
   [Statuses.Burned]: [Types.Fire],
+  // Leech Seed checks this itself as well, but anything else that
+  // seeds, an ability for instance, has to answer the same rule
+  [Statuses.Seeding]: [Types.Grass],
   [Statuses.Frozen]: [Types.Ice],
   [Statuses.Paralyzed]: [Types.Electric],
   [Statuses.Poisoned]: [Types.Poison, Types.Steel],

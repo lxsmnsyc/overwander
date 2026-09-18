@@ -7,6 +7,7 @@ import registerLillipupSpecies from './lillipup';
 import registerMunnaSpecies from './munna';
 import registerOshawottSpecies from './oshawott';
 import registerPanpourSpecies from './panpour';
+import registerPansageSpecies from './pansage';
 import registerPansearSpecies from './pansear';
 import registerPatratSpecies from './patrat';
 import registerPetililSpecies from './petilil';
@@ -28,6 +29,7 @@ export default function registerGen5Species(): void {
   registerPatratSpecies();
   registerLillipupSpecies();
   registerPurrloinSpecies();
+  registerPansageSpecies();
   registerPansearSpecies();
   registerPanpourSpecies();
   registerMunnaSpecies();

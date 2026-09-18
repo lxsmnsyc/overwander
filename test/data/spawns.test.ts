@@ -277,6 +277,8 @@ describe('where a species lives', () => {
       Species.Zebstrika,
       Species.Throh,
       Species.Sawk,
+      Species.Pansage,
+      Species.Simisage,
       Species.Pansear,
       Species.Simisear,
       Species.Panpour,

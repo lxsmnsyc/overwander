@@ -599,6 +599,29 @@ describe('the elemental monkeys', () => {
     expect(late.status[Statuses.Burned]).toBeFalsy();
   });
 
+  it('seeds every enemy instead, and a Grass type shrugs the seed off', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const pansage = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const grass = createUnit(battle, teamB);
+
+    pansage.addAbility(Abilities.LeafCrown);
+    pansage.enter();
+    plain.enter();
+    grass.enter();
+    grass.types.clear();
+    grass.types.add(Types.Grass);
+
+    pansage.setHealth(Math.floor(pansage.checkStat(Stats.HP, 0) * 0.6));
+    plain.attack(pansage, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(plain.status[Statuses.Seeding]).toBeTruthy();
+
+    // A Grass type shrugs a seed off however it arrives, the same way
+    // a Fire type shrugs off an Ember Tuft
+    expect(grass.status[Statuses.Seeding]).toBeFalsy();
+  });
+
   it('traps every enemy in a whirlpool instead, which costs them as it runs', () => {
     const { battle, teamA, teamB } = createBattle();
     const panpour = createUnit(battle, teamA);

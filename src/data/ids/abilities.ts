@@ -871,6 +871,9 @@ const enum Abilities {
   FlashFreeze = 200287,
   TidePool = 200288,
   BloodWater = 200289,
+  Hexlight = 200290,
+  SwapField = 200291,
+  BrokenSeal = 200292,
 }
 
 export default Abilities;

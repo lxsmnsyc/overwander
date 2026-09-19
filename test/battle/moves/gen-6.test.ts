@@ -723,3 +723,54 @@ describe("Kalos's moves", () => {
     });
   });
 });
+
+/** What the AI asks before it scores a move at all */
+function aiMayUse(battle: Battle, source: Unit, move: Moves, aim: Unit): boolean {
+  const event = {
+    id: 'CheckUnitAIMoveUsable',
+    disabled: false,
+    source,
+    move,
+    target: unitTarget(aim),
+    usable: true,
+  };
+
+  battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
+  return event.usable;
+}
+
+describe('what Kalos does to a raid boss', () => {
+  it('shrugs off a Powder, so its Fire move still goes off', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const bug = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+
+    bug.enter();
+    boss.enter();
+    boss.addAbility(Abilities.Boss);
+    bug.triggerMoveEffect(Moves.Powder, unitTarget(boss), 0);
+
+    const whole = boss.health;
+
+    boss.triggerMove(Moves.Ember, unitTarget(bug), 0);
+    battle.tick(1000);
+
+    expect(boss.health).toBe(whole);
+    expect(bug.health).toBeLessThan(bug.checkStat(Stats.HP, 0));
+    expect(aiMayUse(battle, bug, Moves.Powder, boss)).toBe(false);
+  });
+
+  it('shrugs off an Electrify, so its next move keeps its type', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+
+    caster.enter();
+    boss.enter();
+    boss.addAbility(Abilities.Boss);
+    caster.triggerMoveEffect(Moves.Electrify, unitTarget(boss), 0);
+
+    expect(boss.checkMoveType(Moves.Ember, unitTarget(caster))).toBe(Types.Fire);
+    expect(aiMayUse(battle, caster, Moves.Electrify, boss)).toBe(false);
+  });
+});

@@ -680,6 +680,11 @@ describe('world', () => {
       Moves.AfterYou,
       Moves.AllySwitch,
       Moves.Bestow,
+      // A teammate a lone boss does not have, or nothing it can use
+      Moves.HoldHands,
+      Moves.AromaticMist,
+      Moves.Celebrate,
+      Moves.HappyHour,
     ]) {
       expect(BANNED_BOSS_MOVES.has(move)).toBe(true);
     }

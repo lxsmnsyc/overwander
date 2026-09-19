@@ -75,6 +75,17 @@ export default function registerEerieImpulseToHoldHands(): void {
     flags: 0,
     cast: [SpriteAnim.Dance, SpriteAnim.Hop],
   });
+  registerMove(Moves.ElectricTerrain, {
+    name: 'Electric Terrain',
+    description:
+      'For 10 seconds, grounded pokemon cannot fall asleep or be made drowsy, and their Electric moves hit 1.3x.',
+    type: Types.Electric,
+    category: MoveCategories.Status,
+    pp: 10,
+    target: MoveTargets.None,
+    flags: 0,
+    cast: [SpriteAnim.Shock, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
   registerMove(Moves.DazzlingGleam, {
     name: 'Dazzling Gleam',
     description: 'Hits everything opposite.',

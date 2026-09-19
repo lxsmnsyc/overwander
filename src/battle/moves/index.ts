@@ -106,6 +106,7 @@ import setupFellStinger from './fell-stinger';
 import setupElectrify from './electrify';
 import setupFieldStatMoves from './field-stats';
 import setupGeomancy from './geomancy';
+import setupTerrainMoves from './terrain';
 import setupDefog from './defog';
 import setupCaptivate from './captivate';
 import setupJudgment from './judgment';
@@ -243,6 +244,7 @@ export default function setupMoves(battle: Battle): void {
   setupElectrify(battle);
   setupFieldStatMoves(battle);
   setupGeomancy(battle);
+  setupTerrainMoves(battle);
   setupDefog(battle);
   setupCaptivate(battle);
   setupJudgment(battle);

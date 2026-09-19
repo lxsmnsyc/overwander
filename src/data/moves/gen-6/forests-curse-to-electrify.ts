@@ -110,6 +110,28 @@ export default function registerForestsCurseToElectrify(): void {
     flags: 0,
     cast: [SpriteAnim.Emit, SpriteAnim.Appeal, SpriteAnim.Charge],
   });
+  registerMove(Moves.GrassyTerrain, {
+    name: 'Grassy Terrain',
+    description:
+      'For 10 seconds, grounded pokemon heal 1/16 of their HP each time they act and their Grass moves hit 1.3x. Earthquake, Bulldoze and Magnitude hit them at 1/2.',
+    type: Types.Grass,
+    category: MoveCategories.Status,
+    pp: 10,
+    target: MoveTargets.None,
+    flags: 0,
+    cast: [SpriteAnim.Emit, SpriteAnim.Swell, SpriteAnim.Charge],
+  });
+  registerMove(Moves.MistyTerrain, {
+    name: 'Misty Terrain',
+    description:
+      'For 10 seconds, grounded pokemon cannot be given a status, confused or made drowsy, and Dragon moves hit them at 1/2.',
+    type: Types.Fairy,
+    category: MoveCategories.Status,
+    pp: 10,
+    target: MoveTargets.None,
+    flags: 0,
+    cast: [SpriteAnim.Emit, SpriteAnim.Swell, SpriteAnim.Charge],
+  });
   registerMove(Moves.Electrify, {
     name: 'Electrify',
     description: "The target's next move within 2 seconds lands as Electric.",

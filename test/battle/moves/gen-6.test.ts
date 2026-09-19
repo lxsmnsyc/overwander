@@ -7,7 +7,15 @@ import { Items } from '../../../src/data/ids/items';
 import { Stages, Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import { MoveCategories, Moves } from '../../../src/data/ids/moves';
-import { Statuses } from '../../../src/data/ids/status';
+import { Statuses, Terrains } from '../../../src/data/ids/status';
+import { BattleModes } from '../../../src/battle/core';
+import {
+  GRASSY_HEAL_SHARE,
+  TERRAIN_BLUNTING,
+  TERRAIN_BOOST,
+} from '../../../src/battle/mechanics/terrain';
+import { TERRAIN_DURATION } from '../../../src/battle/moves/terrain';
+import { act } from '../abilities/signature/helpers';
 import turns from '../../../src/battle/turn';
 import { KINGS_SHIELD_STAGES, SPIKY_SHIELD_SHARE } from '../../../src/battle/moves/protect';
 import { STICKY_WEB_STAGES, webOver } from '../../../src/battle/moves/sticky-web';
@@ -592,6 +600,104 @@ describe("Kalos's moves", () => {
 
       cat.triggerMoveEffect(Moves.PayDay, unitTarget(target), 0);
       expect(cat.coins).toBe(one * HAPPY_HOUR_FACTOR * 2);
+    });
+  });
+
+  describe('the terrains', () => {
+    /** The power a move comes to, thrown by `source` at `target` */
+    function powerOf(source: Unit, move: Moves, target: Unit): number {
+      return source.checkMovePower(move, unitTarget(target)) ?? 0;
+    }
+
+    it('keeps the grounded awake and charges their Electric moves', () => {
+      const { battle, teamA, teamB } = createBattle('terrain', BattleModes.PvP);
+      const layer = createUnit(battle, teamA);
+      const bird = createUnit(battle, teamB, [Types.Flying]);
+
+      layer.enter();
+      bird.enter();
+
+      const plain = powerOf(layer, Moves.Thunderbolt, bird);
+
+      layer.triggerMoveEffect(Moves.ElectricTerrain, NONE_TARGET, 0);
+      expect(layer.checkTerrain()).toBe(Terrains.Electric);
+
+      // In the air, the terrain does not reach it
+      expect(bird.checkTerrain()).toBe(Terrains.None);
+      expect(powerOf(layer, Moves.Thunderbolt, bird)).toBeCloseTo(plain * TERRAIN_BOOST, 5);
+
+      layer.addStatus(Statuses.Sleeping, { type: EffectType.None });
+      bird.addStatus(Statuses.Sleeping, { type: EffectType.None });
+      expect(layer.status[Statuses.Sleeping]).toBeUndefined();
+      expect(bird.status[Statuses.Sleeping]).toBeDefined();
+    });
+
+    it('heals on the lawn and takes the force out of a quake', () => {
+      const { battle, teamA, teamB } = createBattle('terrain', BattleModes.PvP);
+      const layer = createUnit(battle, teamA);
+      const target = createUnit(battle, teamB);
+
+      layer.enter();
+      target.enter();
+
+      const quake = powerOf(layer, Moves.Earthquake, target);
+
+      layer.triggerMoveEffect(Moves.GrassyTerrain, NONE_TARGET, 0);
+      expect(powerOf(layer, Moves.Earthquake, target)).toBeCloseTo(quake * TERRAIN_BLUNTING, 5);
+
+      const max = target.checkStat(Stats.HP, 0);
+
+      target.setHealth(max / 2);
+      act(battle, target);
+      expect(target.health).toBe(max / 2 + Math.floor(max * GRASSY_HEAL_SHARE));
+    });
+
+    it('keeps statuses and confusion off the grounded and blunts Dragon moves at them', () => {
+      const { battle, teamA, teamB } = createBattle('terrain', BattleModes.PvP);
+      const layer = createUnit(battle, teamA);
+      const target = createUnit(battle, teamB);
+
+      layer.enter();
+      target.enter();
+
+      const dragon = powerOf(layer, Moves.DragonPulse, target);
+
+      layer.triggerMoveEffect(Moves.MistyTerrain, NONE_TARGET, 0);
+      expect(powerOf(layer, Moves.DragonPulse, target)).toBeCloseTo(dragon * TERRAIN_BLUNTING, 5);
+
+      target.addStatus(Statuses.Burned, { type: EffectType.None });
+      target.addStatus(Statuses.Confused, { type: EffectType.None });
+      expect(target.status[Statuses.Burned]).toBeUndefined();
+      expect(target.status[Statuses.Confused]).toBeUndefined();
+    });
+
+    it('runs out after five turns, and a new terrain takes the place of the old', () => {
+      const { battle, teamA, teamB } = createBattle('terrain', BattleModes.PvP);
+      const layer = createUnit(battle, teamA);
+      const other = createUnit(battle, teamB);
+
+      layer.enter();
+      other.enter();
+
+      layer.triggerMoveEffect(Moves.GrassyTerrain, NONE_TARGET, 0);
+      other.triggerMoveEffect(Moves.MistyTerrain, NONE_TARGET, 0);
+      expect(layer.checkTerrain()).toBe(Terrains.Misty);
+
+      battle.tick(TERRAIN_DURATION + 1);
+      expect(layer.checkTerrain()).toBe(Terrains.None);
+    });
+
+    it("lays a raid's terrain under the layer's own team only", () => {
+      const { battle, teamA, teamB } = createBattle('terrain', BattleModes.Raid);
+      const layer = createUnit(battle, teamA);
+      const other = createUnit(battle, teamB);
+
+      layer.enter();
+      other.enter();
+
+      layer.triggerMoveEffect(Moves.ElectricTerrain, NONE_TARGET, 0);
+      expect(layer.checkTerrain()).toBe(Terrains.Electric);
+      expect(other.checkTerrain()).toBe(Terrains.None);
     });
   });
 });

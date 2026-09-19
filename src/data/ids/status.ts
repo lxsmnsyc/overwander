@@ -320,21 +320,18 @@ export const enum Weathers {
 }
 
 /**
- * TODO: the four terrains. Only `None` is written, so the field is
- * always bare.
+ * What the field is laid with. A terrain only reaches **grounded**
+ * units, which is what sets it apart from a second weather: see
+ * `mechanics/terrain.ts`.
  *
- * `BattleEvents.SetTerrain` is already in the event map and
- * `mechanics/weather.ts` is the shape to copy: a field effect with a
- * duration, a setter, and checks the moves read. What makes terrain
- * its own job rather than a second weather is that it only reaches
- * **grounded** units, so the Flying and Levitate exemptions the
- * ground-type moves already use have to be shared with it.
- *
- * Electric, Grassy, Misty and Psychic. Five items are waiting on it:
- * the four seeds and the Terrain Extender
+ * TODO: Psychic Terrain, which Alola adds, and the five items waiting
+ * on the terrains: the four seeds and the Terrain Extender
  */
 export const enum Terrains {
   None = 0,
+  Electric = 1,
+  Grassy = 2,
+  Misty = 3,
 }
 
 /**

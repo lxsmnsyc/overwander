@@ -24,6 +24,7 @@ import setupOutcomeMechanics from './mechanics/outcome';
 import setupTeamMechanics from './mechanics/team';
 import setupUnitMechanics from './mechanics/unit';
 import setupWeatherMechanics from './mechanics/weather';
+import setupTerrainMechanics from './mechanics/terrain';
 import setupMoves from './moves';
 import setupStatus from './status';
 
@@ -58,6 +59,7 @@ export default function createBattle(
   setupAbilityMechanics(battle);
   setupItemMechanics(battle);
   setupWeatherMechanics(battle);
+  setupTerrainMechanics(battle);
   setupMoveMechanics(battle);
   setupCastingMechanics(battle);
   setupChannelingMechanics(battle);

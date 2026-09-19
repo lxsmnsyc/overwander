@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { countsAgainstSlots } from '../../data/constants/slots';
 import { Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
-import { Moves } from '../../data/ids/moves';
+import { MoveCategories, Moves } from '../../data/ids/moves';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
 import { Statuses } from '../../data/ids/status';
 import { getSpeciesData } from '../../data/species';
@@ -41,6 +41,9 @@ function swappableAbilities(unit: Unit): Abilities[] {
 
 /** How far a Darmanitan has to fall before it sits down */
 export const ZEN_MODE_THRESHOLD = 1 / 2;
+
+/** What a coat thick enough to turn a blow is worth against one */
+const FUR_COAT_SCALE = 0.5;
 
 /** What having the victory sprite on the team is worth to its aim */
 const VICTORY_STAR_SCALE = 1.1;
@@ -227,6 +230,20 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  /** Fur Coat: the coat turns a blow, and answers nothing thrown at it */
+  createAbility(Abilities.FurCoat, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const parent = event.parent;
+
+      if (
+        parent.category === MoveCategories.Physical &&
+        parent.target.hasAbility(Abilities.FurCoat)
+      ) {
+        event.value *= FUR_COAT_SCALE;
+      }
+    }),
+  ),
 
   /**
    * Victory Star: the whole team aims better for having it there,

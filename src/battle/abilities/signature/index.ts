@@ -19,6 +19,7 @@ import treeckoToTorkoal from './treecko-to-torkoal';
 import burmyToShellos from './burmy-to-shellos';
 import combeeToCherubi from './combee-to-cherubi';
 import creationTrio from './creation-trio';
+import deerling from './deerling';
 import croagunkToSnover from './croagunk-to-snover';
 import drifloonToGlameow from './drifloon-to-glameow';
 import rioluToSkorupi from './riolu-to-skorupi';
@@ -100,6 +101,7 @@ const setupAbilities = [
   ...swordsOfJustice,
   ...taoTrio,
   ...unovaMythicals,
+  ...deerling,
   ...forcesOfNature,
 ];
 

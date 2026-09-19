@@ -44,19 +44,12 @@ import {
   yawTurns,
 } from '../../../canvas/board';
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
-import {
-  SPRITE_DIRECTIONS,
-  type SpriteDirection,
-  directionOf,
-  litFrame,
-} from '../../../canvas/sprite-sheet';
+import { SPRITE_DIRECTIONS, type SpriteDirection } from '../../../canvas/sprite-sheet';
 import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/sparkle';
 import speciesSize from '../../../canvas/species-size';
 import {
-  type Cast,
   batchAmbient,
   batchSkybox,
-  getCast,
   getSkybox,
   paintAmbient,
   paintSkybox,
@@ -64,14 +57,7 @@ import {
 import Weather from '../../../data/overworld/weather';
 import settings from '../../app/settings';
 import pixelRatio from '../../../canvas/ratio';
-import paintSky, {
-  CAVERN,
-  type Lamp,
-  batchCavern,
-  batchSky,
-  batchWash,
-  paintCavern,
-} from '../../../canvas/sky';
+import paintSky, { CAVERN, type Lamp, batchSky, batchWash, paintCavern } from '../../../canvas/sky';
 import createTwist from '../../../canvas/twist';
 import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
 import { serverNow } from '../../../auth/clock';
@@ -90,7 +76,6 @@ import Bakery, { type Baked } from '../../../canvas/bakery';
 import {
   type ShadowPatch,
   type SpriteQuad,
-  castCorners,
   cornersOf,
   shadowCorners,
 } from '../../../canvas/placement';
@@ -112,6 +97,19 @@ import berryPlantSheet from '../../../data/overworld/berry-plant';
 import decorationPicture, { grottoPicture } from '../../../data/overworld/decoration-sprite';
 import landmarkPicture, { LANDMARK_SHEET } from '../../../data/overworld/landmark-sprite';
 import type BasicSprite from '../../../canvas/basic-sprite';
+import type { Colour } from '../../../canvas/gl/colour';
+import {
+  CAVE_LIGHT,
+  DARK_DAY_LIGHT,
+  DAYLIGHT,
+  LAMP_COLOUR,
+  LAMP_STRENGTH,
+  type Lighting,
+  dimmed,
+  encoded,
+  isLit,
+  litAt,
+} from '../../../canvas/lighting';
 import loadBasicSprite from '../../../canvas/basic-sprites';
 import type { ItemStack } from '../../../data/overworld/item-pool';
 import {
@@ -130,6 +128,7 @@ import {
   PICKED_STAGE,
   PICK_INSET_SIDE,
   PICK_INSET_TOP,
+  PIECE_SHADOW_WIDTH,
   PLANT_CELLS,
   PLANT_PHASES,
   PLAYER_SHEET,
@@ -386,6 +385,13 @@ export interface ChunkCanvasProps {
    * see all of it. The game never sets it
    */
   lit?: boolean;
+  /**
+   * The hour the board is lit at, as a local time in milliseconds. The
+   * game leaves it out and the board reads the player's own clock; a
+   * page showing what the day looks like sets it rather than waiting
+   * for the hour to come round
+   */
+  time?: number;
   /**
    * A cell the player has asked to be at — the chunk's own, or one of
    * the ring of country drawn around it.
@@ -963,6 +969,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     lay?: (placed: SpriteQuad | null, alpha?: number) => boolean,
     /** How faint to draw it, asked once the piece has been placed */
     fade?: (placed: SpriteQuad | null) => number,
+    /** What it throws on the ground, laid before the piece itself */
+    shadow?: (placed: SpriteQuad) => void,
   ): void => {
     const cell = piece?.sheet.frameOf(piece.name);
 
@@ -998,6 +1006,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
     const quad = piece.sheet.quadOf(piece.name, left, top, where);
     const alpha = fade?.(quad) ?? 1;
+
+    if (quad != null) {
+      shadow?.(quad);
+    }
 
     if (lay?.(quad, alpha) !== true) {
       piece.sheet.draw(context, piece.name, left, top, alpha === 1 ? where : { ...where, alpha });
@@ -1664,6 +1676,122 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
      * one; everything else is left to the dark
      */
     const lamps: Lamp[] = [];
+    /**
+     * The light the board is drawn under, rebuilt every frame: what
+     * reaches everywhere, and every lamp standing on it
+     */
+    const lighting: Lighting = { ambient: DAYLIGHT, sources: [] };
+    /**
+     * The ambient in hand, and what it is on its way from and to. A
+     * sky turning over swaps its light as slowly as it swaps its rain,
+     * so the run is timed rather than chased: a light that moved a
+     * share of what was left every frame took three fades to arrive
+     */
+    const easing: { since: number; under: boolean; from: Colour; to: Colour; light: Colour } = {
+      since: 0,
+      under: false,
+      from: [1, 1, 1, 1],
+      to: [1, 1, 1, 1],
+      light: [1, 1, 1, 1],
+    };
+
+    /**
+     * One light written on all four corners, and the four a ground
+     * tile is lit by. Both are handed straight to the batch and read
+     * before the next call, so they are filled in place rather than
+     * built each time
+     */
+    const evenly: Colour[] = [
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+    ];
+    const cornerwise: Colour[] = [
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+    ];
+
+    // Bent to the page's own curve on the way in: these go to the
+    // shader that multiplies the stored colours, unlike the country's
+    // corners, which are lit in plain light
+    const copyInto = (held: Colour, light: Colour): void => {
+      encoded(light, held);
+    };
+
+    /** One reading, for a thing standing on a cell rather than lying across it */
+    const shading = (light: Colour): Colour[] => {
+      for (const held of evenly) {
+        copyInto(held, light);
+      }
+      return evenly;
+    };
+
+    /**
+     * The light at the four corners of a square, far left, far right,
+     * near right, near left: the order a quad's corners come in, so a
+     * lamp's pool falls off across a tile rather than in steps of one
+     */
+    const tileLight = (square: BoardCell): Colour[] => {
+      const at = shifted(square);
+
+      copyInto(cornerwise[0], litAt(lighting, at.x, at.y));
+      copyInto(cornerwise[1], litAt(lighting, at.x + 1, at.y));
+      copyInto(cornerwise[2], litAt(lighting, at.x + 1, at.y + 1));
+      copyInto(cornerwise[3], litAt(lighting, at.x, at.y + 1));
+      return cornerwise;
+    };
+
+    /**
+     * What reaches everywhere this frame.
+     *
+     * Only the dark places are lit this way: a cave, and a day whose
+     * sky has put the lights out. The hour itself stays a wash over
+     * the finished frame, since it belongs to the sky and the weather
+     * as much as to the ground, and a picture lit cell by cell leaves
+     * everything that is not a cell standing at noon
+     */
+    const ambientLight = (now: number): Colour => {
+      let wanted = DAYLIGHT;
+
+      if (props.underground) {
+        wanted = props.lit === true ? DAYLIGHT : CAVE_LIGHT;
+      } else if (props.weather === Weather.DarkDay) {
+        wanted = DARK_DAY_LIGHT;
+      }
+
+      if (wanted[0] !== easing.to[0] || wanted[1] !== easing.to[1] || wanted[2] !== easing.to[2]) {
+        for (let channel = 0; channel < 3; channel += 1) {
+          easing.from[channel] = easing.light[channel];
+          easing.to[channel] = wanted[channel];
+        }
+        easing.since = now;
+      }
+      // A cave mouth is a different place rather than a sky turning
+      // over: what is on the other side of it is lit the moment the
+      // board is
+      const sudden = easing.under !== props.underground;
+
+      easing.under = props.underground;
+      if (sudden) {
+        // Arrived, so the run it was on is over rather than still
+        // running from wherever the surface left it
+        for (let channel = 0; channel < 3; channel += 1) {
+          easing.from[channel] = easing.to[channel];
+        }
+        easing.since = now;
+      }
+
+      const step = sudden ? 1 : Math.min(1, (now - easing.since) / WEATHER_FADE);
+
+      for (let channel = 0; channel < 3; channel += 1) {
+        easing.light[channel] =
+          easing.from[channel] + (easing.to[channel] - easing.from[channel]) * step;
+      }
+      return easing.light;
+    };
     /** What the batch holds of it, so a newly baked piece re-uploads */
     let baked = -1;
     /** Whether the layer has been emptied down to a pixel under the scene */
@@ -1800,16 +1928,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
      * ticking every second would redraw the board for the sake of a
      * light that has barely moved
      */
-    const worldTime = (): number => toLocalTime(serverNow(), getLocalOffset());
-
-    /** Where this hour's light throws a shadow, if it throws one */
-    const cast = (): Cast | undefined => {
-      // Turned with the board: the sun is fixed in the world, so a
-      // player spinning the ground spins every shadow on it
-      const thrown = getCast(worldTime(), yaw(), props.latitude);
-
-      return thrown.length <= 0 ? undefined : thrown;
-    };
+    const worldTime = (): number => props.time ?? toLocalTime(serverNow(), getLocalOffset());
 
     /**
      * The pokemon standing about are the only thing here that moves
@@ -2028,6 +2147,41 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
       const hazy = settings().boardEdge === 'haze';
 
+      /**
+       * The light this frame is drawn under: what reaches everywhere,
+       * and every lamp standing on the board.
+       *
+       * The sources are filled in below, as the board is walked over,
+       * so they are in hand before anything is drawn under them
+       */
+      lighting.ambient = ambientLight(clock);
+      lighting.sources.length = 0;
+      if (props.lamp > 0 && isLit(lighting)) {
+        // The player carries one, and so does every landmark: the
+        // same things the dark was kept off before, now throwing the
+        // light themselves. Gathered before the ground is laid, since
+        // the ground is lit by them
+        lighting.sources.push({
+          x: BOARD_CENTER + 0.5,
+          z: BOARD_CENTER + 0.5,
+          reach: props.lamp,
+          colour: LAMP_COLOUR,
+          strength: LAMP_STRENGTH,
+        });
+        for (const index of props.landmarks.keys()) {
+          const cell = shifted(boardCellOf(index));
+
+          lighting.sources.push({
+            x: cell.x + 0.5,
+            z: cell.y + 0.5,
+            reach: props.lamp,
+            colour: LAMP_COLOUR,
+            strength: LAMP_STRENGTH,
+          });
+        }
+      }
+      show?.light(isLit(lighting) ? (x, z) => litAt(lighting, x, z) : null);
+
       if (show != null) {
         if (!hazy) {
           show.haze(null);
@@ -2035,13 +2189,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           show.haze({ top: CAVERN.colour, bottom: CAVERN.colour });
         } else {
           const { zenith, horizon } = getSkybox(worldTime(), props.latitude);
+          // Taken down by whatever reaches the board: a day the sky has
+          // put out takes the sky with it, so the rim does not glow
+          // around a country nothing is lighting
+          const light = lighting.ambient;
 
-          show.haze({ top: zenith, bottom: horizon });
+          show.haze({ top: dimmed(zenith, light), bottom: dimmed(horizon, light) });
         }
       }
-
-      /** The light's throw, which the flat board has nowhere to put */
-      const throwing = (): Cast | undefined => (flat ? undefined : cast());
 
       /** How long since the last frame, for anything easing its way somewhere */
       const since = Math.max(0, Math.min(VEIL_FADE, clock - paintedAt));
@@ -2084,7 +2239,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         if (props.underground) {
           batch.solid(CAVERN.colour, screenBox);
         } else {
-          batchSkybox(batch, screen.width, screen.height, worldTime(), props.latitude);
+          batchSkybox(
+            batch,
+            screen.width,
+            screen.height,
+            worldTime(),
+            props.latitude,
+            lighting.ambient,
+          );
         }
       }
 
@@ -2206,12 +2368,18 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * round: the cell was composed with the shore already turned in
        * it, and nothing else in it follows the camera
        */
-      const layTile = (sheet: HTMLCanvasElement, corners: ProjectedPoint[]): void => {
+      const layTile = (
+        sheet: HTMLCanvasElement,
+        corners: ProjectedPoint[],
+        square?: BoardCell,
+      ): void => {
         if (batch == null) {
           drawTileQuad(context, sheet, { x: 0, y: 0 }, 16, corners);
           return;
         }
-        batch.quad(sheet, { x: 0, y: 0, width: 16, height: 16 }, grownQuad(corners));
+        const lit = square == null || !isLit(lighting) ? undefined : tileLight(square);
+
+        batch.quad(sheet, { x: 0, y: 0, width: 16, height: 16 }, grownQuad(corners), 1, lit);
       };
 
       /**
@@ -2233,7 +2401,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         if (cell == null) {
           return false;
         }
-        layTile(cell, corners);
+        layTile(cell, corners, square);
         return true;
       };
 
@@ -2574,49 +2742,30 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             show.depthAt({ ...spot, y: spot.y + above }, SPRITE_LIFT),
           );
         }
-        batch.quad(quad.sheet, quad.source, cornersOf(quad), alpha);
+        // Lit where it stands: one reading at its feet, since a sprite
+        // is a flat picture and a pool of light falls on the ground
+        // rather than up the front of it
+        const spot = standingOn?.spot;
+        const lit =
+          spot == null || !isLit(lighting)
+            ? undefined
+            : shading(litAt(lighting, spot.x + 0.5, spot.z + 0.5));
+
+        batch.quad(quad.sheet, quad.source, cornersOf(quad), alpha, lit);
         // Back to the ground for whatever else the cell has on it
         marks?.depth(standingOn?.floor ?? 0);
         return true;
       };
 
       /**
-       * The shadow a thing throws.
-       *
-       * Where the light has a direction to throw one in, it is the
-       * thing's own picture leaned over and laid flat: every point of
-       * it falls along the light by how high it stands, so the feet
-       * stay put and the head goes furthest. That is what a shadow is,
-       * and it costs the same quad the sprite did.
-       *
-       * With the sun overhead or under the horizon there is nothing to
-       * lean, so what is left is the round patch beneath the feet
+       * The patch a thing throws on the ground: one round stamp,
+       * stretched and turned away from the light by how low it is
        */
-      const shade = (
-        patch: ShadowPatch | null,
-        laid: ((facing: SpriteDirection) => SpriteQuad | null) | null = null,
-      ): boolean => {
+      const shade = (patch: ShadowPatch | null): boolean => {
         const disc = batch == null || patch == null ? null : bakeShadowDisc(bakery);
 
         if (batch == null || patch == null || disc == null) {
           return false;
-        }
-        const thrown = throwing();
-        // Which way the shadow falls. The caller turns that into the
-        // pose the light is looking at, which needs the thing's own
-        // facing as well and only the caller has it
-        const quad =
-          laid == null || thrown == null ? null : laid(directionOf(thrown.dx, thrown.dy));
-
-        if (quad != null && thrown != null) {
-          batch.quad(
-            quad.sheet,
-            quad.source,
-            castCorners(quad, patch, thrown),
-            patch.alpha,
-            patch.colour,
-          );
-          return true;
         }
         batch.quad(
           bakery.sheet,
@@ -2631,6 +2780,46 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           'smooth',
         );
         return true;
+      };
+
+      /**
+       * What a piece of scenery throws on the ground: the patch it
+       * stands on, and its own picture leaned along the light where
+       * the sun throws one. A tree standing on nothing read as a tree
+       * cut out and laid on the board
+       */
+      const standShadow = (quad: SpriteQuad, foot: { x: number; y: number }): void => {
+        const wide = quad.width * PIECE_SHADOW_WIDTH;
+        const patch: ShadowPatch = {
+          x: foot.x,
+          y: foot.y,
+          footX: foot.x,
+          footY: foot.y,
+          radiusX: wide,
+          radiusY: wide * shadowSquash(),
+          angle: 0,
+          colour: COLORS.shadow,
+          alpha: 1,
+        };
+
+        if (shade(patch)) {
+          return;
+        }
+        context.save();
+        context.fillStyle = patch.colour;
+        context.globalAlpha = patch.alpha;
+        context.beginPath();
+        context.ellipse(
+          patch.x,
+          patch.y,
+          patch.radiusX,
+          patch.radiusY,
+          patch.angle,
+          0,
+          Math.PI * 2,
+        );
+        context.fill();
+        context.restore();
       };
 
       /** Which phenomena have been repainted for this frame already */
@@ -3157,16 +3346,42 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           // The ring and its light lie under the landmark and whoever
           // stands on it; the glints are drawn over them further down
           stampAura(index, middle, 'ground');
-          standPiece(context, sceneryOn(index), middle, magnify, place, (quad) =>
-            veil(index, Standing.Scenery, quad),
+          standPiece(
+            context,
+            sceneryOn(index),
+            middle,
+            magnify,
+            place,
+            (quad) => veil(index, Standing.Scenery, quad),
+            (quad) => {
+              standShadow(quad, middle);
+            },
           );
-          standPiece(context, grottoOn(index), middle, magnify, place, (quad) =>
-            veil(index, Standing.Grotto, quad),
+          standPiece(
+            context,
+            grottoOn(index),
+            middle,
+            magnify,
+            place,
+            (quad) => veil(index, Standing.Grotto, quad),
+            (quad) => {
+              standShadow(quad, middle);
+            },
           );
-          standPiece(context, landmarkOn(index), middle, magnify, place, (quad) => {
-            pickOn(index, quad, false);
-            return veil(index, Standing.Mark, quad);
-          });
+          standPiece(
+            context,
+            landmarkOn(index),
+            middle,
+            magnify,
+            place,
+            (quad) => {
+              pickOn(index, quad, false);
+              return veil(index, Standing.Mark, quad);
+            },
+            (quad) => {
+              standShadow(quad, middle);
+            },
+          );
         }
 
         // A bush is drawn before whatever is standing beside it: it is
@@ -3200,6 +3415,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           });
           const alpha = veil(index, Standing.Plant, grown);
 
+          if (grown != null) {
+            standShadow(grown, middle);
+          }
           if (!place(grown, alpha)) {
             plant.draw(context, middle.x, middle.y, alpha === 1 ? growing : { ...growing, alpha });
           }
@@ -3236,22 +3454,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           const thrown = {
             ...standingPerson,
             color: COLORS.shadow,
-            // Lying the way the board lies, and thrown the way this
-            // hour's light throws every other shadow on it
+            // Lying the way the board lies
             squash: shadowSquash(),
-            cast: throwing(),
           };
 
-          if (
-            !shade(person.shadowOf(middle.x, middle.y, thrown), (fallen) =>
-              person.facedQuadOf(
-                middle.x,
-                middle.y,
-                litFrame(person.facing, fallen),
-                standingPerson,
-              ),
-            )
-          ) {
+          if (!shade(person.shadowOf(middle.x, middle.y, thrown))) {
             person.drawShadow(context, middle.x, middle.y, thrown);
           }
           const stood = person.quadOf(middle.x, middle.y, standingPerson);
@@ -3313,22 +3520,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               ...placement,
               color: COLORS.shadow,
               squash: shadowSquash(),
-              // Thrown by whatever light there is at this hour: long
-              // and faint near the horizons, short and hard at noon,
-              // and nothing at all once the sun is down
-              cast: throwing(),
             };
 
-            if (
-              !shade(sprite.shadowOf(middle.x, middle.y, thrown), (fallen) =>
-                sprite.facedQuadOf(
-                  middle.x,
-                  middle.y,
-                  litFrame(sprite.direction, fallen),
-                  placement,
-                ),
-              )
-            ) {
+            if (!shade(sprite.shadowOf(middle.x, middle.y, thrown))) {
               sprite.drawShadow(context, middle.x, middle.y, thrown);
             }
             // Upright, and at its own size: the ground is tilted and
@@ -3428,14 +3622,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               ...riding,
               color: COLORS.shadow,
               squash: shadowSquash(),
-              cast: throwing(),
             };
 
-            if (
-              !shade(mount.shadowOf(spot.x, spot.y, thrown), (fallen) =>
-                mount.facedQuadOf(spot.x, spot.y, litFrame(mount.direction, fallen), riding),
-              )
-            ) {
+            if (!shade(mount.shadowOf(spot.x, spot.y, thrown))) {
               mount.drawShadow(context, spot.x, spot.y, thrown);
             }
             if (!place(mount.quadOf(spot.x, spot.y, riding))) {
@@ -3457,14 +3646,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               ...walking,
               color: COLORS.shadow,
               squash: shadowSquash(),
-              cast: throwing(),
             };
 
-            if (
-              !shade(walker.shadowOf(spot.x, spot.y, thrown), (fallen) =>
-                walker.facedQuadOf(spot.x, spot.y, litFrame(walker.facing, fallen), walking),
-              )
-            ) {
+            if (!shade(walker.shadowOf(spot.x, spot.y, thrown))) {
               walker.drawShadow(context, spot.x, spot.y, thrown);
             }
             if (!place(walker.quadOf(spot.x, spot.y, walking))) {
@@ -3523,7 +3707,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       }
 
       if (batch == null) {
-        paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
+        // No hour underground: the sun does not reach a cave, and the
+        // dark below is the cave's own
+        if (!props.underground) {
+          paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
+        }
         if (props.underground) {
           // No sky down here, so no weather and no hour: the dark is
           // the cave's own and the only thing that lifts it is a light
@@ -3535,20 +3723,21 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           paintSky(context, screen.width, screen.height, skies.from, clock, 1 - risen, lamps, sky);
           paintSky(context, screen.width, screen.height, skies.to, clock, risen, lamps, sky);
         }
-      } else {
-        batchAmbient(batch, screen.width, screen.height, worldTime(), props.latitude);
-        if (props.underground) {
-          if (props.lit !== true) {
-            batchCavern(batch, screen.width, screen.height, lamps);
-          }
-        } else {
-          const { width, height } = screen;
+      } else if (!props.underground) {
+        // The hour over the whole picture, the way it always was: the
+        // sky and the weather stand in it as much as the ground does.
+        // What the lighting answers for is the dark places, so the
+        // weather's own lamps are passed as nothing and a lightless
+        // day is dark because nothing lit it rather than because a
+        // veil was laid over it
+        const { width, height } = screen;
 
-          batchWash(batch, width, height, skies.from, clock, 1 - risen, lamps, sky);
-          batchWash(batch, width, height, skies.to, clock, risen, lamps, sky);
-          batchSky(batch, width, height, skies.from, clock, 1 - risen, sky);
-          batchSky(batch, width, height, skies.to, clock, risen, sky);
-        }
+        batchAmbient(batch, width, height, worldTime(), props.latitude);
+
+        batchWash(batch, width, height, skies.from, clock, 1 - risen, null, sky);
+        batchWash(batch, width, height, skies.to, clock, risen, null, sky);
+        batchSky(batch, width, height, skies.from, clock, 1 - risen, sky);
+        batchSky(batch, width, height, skies.to, clock, risen, sky);
       }
 
       /**

@@ -413,6 +413,14 @@ export const PRESS_SLOP = 8;
 export const PICK_INSET_SIDE = 0.25;
 export const PICK_INSET_TOP = 0.2;
 
+/**
+ * How wide the patch under a piece of scenery is, as a share of the
+ * piece's own width. It is the radius, so a tree's shadow comes to
+ * about two thirds of the crown standing over it: a trunk's worth
+ * reads as a tree hovering, and the whole width as a tree lying down
+ */
+export const PIECE_SHADOW_WIDTH = 0.34;
+
 /** How long one weather takes to give way to the next, in milliseconds */
 export const WEATHER_FADE = 3000;
 

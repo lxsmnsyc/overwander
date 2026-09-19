@@ -3569,12 +3569,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
               animating ||= !spent;
               const glint =
-                batch == null || spent
-                  ? null
-                  : paintSparkle(standing.id, seed, age, sprite.sourceFrameSize, scale * ratio);
+                batch == null || spent ? null : paintSparkle(standing.id, seed, age, scale * ratio);
 
               if (!spent && (batch == null || glint == null)) {
-                drawSparkle(context, seed, age, middle.x, middle.y, sprite.sourceFrameSize, scale);
+                drawSparkle(context, seed, age, middle.x, middle.y, scale);
               } else if (batch != null && glint != null) {
                 // Painted in screen pixels around the point the pokemon
                 // stands on, so it is stamped at the size it was painted

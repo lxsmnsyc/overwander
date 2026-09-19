@@ -84,7 +84,7 @@ import getWorld from './current';
 import type Chunk from './chunk';
 import { canStageBoss } from './raid';
 import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells } from './chunk';
-import type { Depth } from './depth';
+import { Depth } from './depth';
 import type { PhenomenonReward } from './landmarks';
 import {
   resolveApricornColour,
@@ -434,7 +434,12 @@ export default class ChunkSnapshot {
 
     if (pool == null) {
       pool = this.crowd(
-        getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp), false, surface),
+        getSpawnPool(
+          this.chunk.biome,
+          getTimeOfDay(this.timestamp),
+          this.depth === Depth.Cave,
+          surface,
+        ),
       );
       this.pools.set(surface, pool);
     }

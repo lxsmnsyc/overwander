@@ -902,6 +902,14 @@ const enum Abilities {
   Overclock = 200318,
   Turning = 200319,
   Glidewake = 200320,
+  DeepHold = 200321,
+  Featherstone = 200322,
+  ShellThief = 200323,
+  Barehide = 200324,
+  Sporeburst = 200325,
+  StillWater = 200326,
+  Shockmud = 200327,
+  HerdBond = 200328,
 }
 
 export default Abilities;

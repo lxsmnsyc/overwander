@@ -282,8 +282,8 @@ const enum Families {
   Scraggy = 277,
   Sigilyph = 278,
   Yamask = 279,
-  // 280 and 281 are held for Tirtouga and Archen, the region's two
-  // fossils, which are designed as a pair and are not written yet
+  Tirtouga = 280,
+  Archen = 281,
   Trubbish = 282,
   Zorua = 283,
   Minccino = 284,
@@ -293,8 +293,9 @@ const enum Families {
   Vanillite = 288,
   Deerling = 289,
   Emolga = 290,
-  // 291 to 293 are held for Karrablast, Foongus and Frillish, which
-  // sit between these in the dex and are not written yet
+  Karrablast = 291,
+  Foongus = 292,
+  Frillish = 293,
   Alomomola = 294,
   Joltik = 295,
   Ferroseed = 296,
@@ -305,14 +306,13 @@ const enum Families {
   Axew = 301,
   Cubchoo = 302,
   Cryogonal = 303,
-  // 304 and 305 are held for Shelmet and Stunfisk, which sit between
-  // these in the dex and are not written yet
+  Shelmet = 304,
+  Stunfisk = 305,
   Mienfoo = 306,
   Druddigon = 307,
   Golett = 308,
   Pawniard = 309,
-  // 310 is held for Bouffalant, which sits between these in the dex
-  // and is not written yet
+  Bouffalant = 310,
   Rufflet = 311,
   Vullaby = 312,
   Heatmor = 313,
@@ -630,6 +630,8 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Scraggy]: 'Scraggy',
   [Families.Sigilyph]: 'Sigilyph',
   [Families.Yamask]: 'Yamask',
+  [Families.Tirtouga]: 'Tirtouga',
+  [Families.Archen]: 'Archen',
   [Families.Trubbish]: 'Trubbish',
   [Families.Zorua]: 'Zorua',
   [Families.Minccino]: 'Minccino',
@@ -639,6 +641,9 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Vanillite]: 'Vanillite',
   [Families.Deerling]: 'Deerling',
   [Families.Emolga]: 'Emolga',
+  [Families.Karrablast]: 'Karrablast',
+  [Families.Foongus]: 'Foongus',
+  [Families.Frillish]: 'Frillish',
   [Families.Alomomola]: 'Alomomola',
   [Families.Joltik]: 'Joltik',
   [Families.Ferroseed]: 'Ferroseed',
@@ -649,10 +654,13 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Axew]: 'Axew',
   [Families.Cubchoo]: 'Cubchoo',
   [Families.Cryogonal]: 'Cryogonal',
+  [Families.Shelmet]: 'Shelmet',
+  [Families.Stunfisk]: 'Stunfisk',
   [Families.Mienfoo]: 'Mienfoo',
   [Families.Druddigon]: 'Druddigon',
   [Families.Golett]: 'Golett',
   [Families.Pawniard]: 'Pawniard',
+  [Families.Bouffalant]: 'Bouffalant',
   [Families.Rufflet]: 'Rufflet',
   [Families.Vullaby]: 'Vullaby',
   [Families.Heatmor]: 'Heatmor',

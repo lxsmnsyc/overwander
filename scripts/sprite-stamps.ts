@@ -105,17 +105,21 @@ function format(stamps: Map<string, string>): string {
 }
 
 async function main(): Promise<void> {
+  const sheets = new Map<string, string[]>();
+  const found = existsSync(ROOT) ? await walk('') : [];
+
   // The sprites are published to their own host, so a build for the
-  // app alone has none of them on disk. There is nothing to stamp
-  // then, and the file that is served is the one already committed
-  if (!existsSync(ROOT)) {
-    process.stdout.write(`${ROOT}: not here, so nothing to stamp\n`);
+  // app alone has none of them: the folder is missing, or the upload
+  // filter left it empty. Writing then would put an empty stamps file
+  // where the real one is expected, and every sheet would lose the
+  // digest it is asked for with. The one that is served is the one
+  // already committed, so leave it alone
+  if (found.length === 0) {
+    process.stdout.write(`${ROOT}: no sprites here, so nothing to stamp\n`);
     return;
   }
 
-  const sheets = new Map<string, string[]>();
-
-  for (const file of await walk('')) {
+  for (const file of found) {
     const sheet = sheetOf(file);
     const held = sheets.get(sheet);
 

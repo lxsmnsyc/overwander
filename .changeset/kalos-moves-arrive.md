@@ -15,3 +15,7 @@ Kalos's 62 moves:
 - The legendary and mythical signatures each have their own picture: Thousand Arrows rains arrows of earth, Precipice Blades drives stone blades up through magma, Origin Pulse fans beams down onto the target, Dragon Ascent dives out of the sky, and Hyperspace Hole and Fury strike out of rings.
 - Moonblast brings a full moon down, Play Rough is a dust cloud of stars and hearts, and Water Shuriken throws spinning stars of water.
 - A move that does what an older one does is drawn like it: Phantom Force strikes out of the dark like Shadow Force, Flying Press comes down like Sky Drop, and Draining Kiss drains like Giga Drain.
+- Older legendary signatures have bigger pictures: Freeze Shock and Ice Burn raise a crown of ice that shatters, Blue Flare stands up as a column of blue fire, Fusion Flare and Fusion Bolt break open over the ground, and Techno Blast fires a beam ringed with hexagons.
+- V-create drives a great burning V down, Glaciate raises ice spikes in a freezing wind, Judgment opens a wheel of light before its pillar lands, and Seed Flare gathers light before it flares.
+- Psystrike, Aeroblast and Secret Sword each have their own picture: a shell of psychic shards driven in, a spiralling blast of air, and three cuts of a blade of light.
+- Sacred Sword brings down three great swords, and Spacial Rend tears space open twice onto a starry dark before it shatters.

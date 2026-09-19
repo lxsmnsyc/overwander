@@ -174,7 +174,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   // named here is what those rules would have drawn wrong
   // Wind that keeps blowing out of it rather than a jet: the move is
   // a storm aimed at something
-  [Moves.Aeroblast]: 'Gale',
+  [Moves.Aeroblast]: 'Jetstream',
   [Moves.DragonBreath]: 'Beam',
   [Moves.Twister]: 'Swirl',
   [Moves.RapidSpin]: 'Swirl',
@@ -564,7 +564,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.HeartStamp]: 'Hearts',
   // The moves whose type drew them as a flower burst
   [Moves.Psyshock]: 'Converge',
-  [Moves.Psystrike]: 'Converge',
+  [Moves.Psystrike]: 'Overload',
   [Moves.Synchronoise]: 'Resonance',
   [Moves.StoredPower]: 'Orbit',
   [Moves.FinalGambit]: 'Gambit',
@@ -581,7 +581,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.IceBurn]: 'Frostfire',
   [Moves.Glaciate]: 'Glaze',
   [Moves.SacredSword]: 'Smite',
-  [Moves.SecretSword]: 'Smite',
+  [Moves.SecretSword]: 'Resolute',
   [Moves.RelicSong]: 'Aria',
   // Stat moves drawn as what the pokemon does, a body coming down with its weight, and the Pledges
   [Moves.QuiverDance]: 'Flutter',

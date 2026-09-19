@@ -45,6 +45,10 @@ const BY_SHAPE: Partial<Record<EffectShape, string>> = {
   // Dialga's steel blue and Palkia's pink, which the Dragon type's colour is neither of
   Stall: '#8fb0f0',
   Rend: '#f07ccf',
+  // Mewtwo's violet, Lugia's silver-blue and Keldeo's blade of light, where the types' colours are none of them
+  Overload: '#b27cff',
+  Jetstream: '#bcd8ff',
+  Resolute: '#8fd8ff',
   // Light whatever plate it carries: the move's type changes in battle and the picture cannot know
   Verdict: '#fff2b4',
   // Latias' red-white down and Latios' blue light, so the pair read as each other's counterpart

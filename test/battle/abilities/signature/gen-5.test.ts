@@ -12,6 +12,11 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle
 import type Unit from '../../../../src/battle/unit';
 import { HONED_STAGES } from '../../../../src/battle/abilities/signature/pawniard-to-vullaby';
 import {
+  FROST_FANGS_SCALE,
+  LATCH_ON_SHARE,
+  SLEEVE_GUARD_SCALE,
+} from '../../../../src/battle/abilities/signature/tynamo-to-mienfoo';
+import {
   ANTEATER_SCALE,
   ANT_GUARD_SCALE,
   EMBER_HALO_SHARE,
@@ -1538,5 +1543,116 @@ describe('what the last road holds', () => {
     // Its own side stands in the same light and pays nothing
     act(battle, mate);
     expect(mate.health).toBe(friendly);
+  });
+});
+
+describe('what the mountain and the moor hold', () => {
+  it('hits harder where it closes, and only where it closes', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const beartic = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    // Pinned above the freeze chance, so only the damage half shows
+    pinRandom(battle, 1);
+    beartic.addAbility(Abilities.FrostFangs);
+    beartic.enter();
+    plain.enter();
+    foe.enter();
+
+    const close = dealDamage(beartic, foe, Moves.Slash, 40, Types.Normal, MoveCategories.Physical);
+    const bare = dealDamage(plain, foe, Moves.Slash, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(close / bare).toBeCloseTo(FROST_FANGS_SCALE, 2);
+    expect(foe.status[Statuses.Frozen]).toBeFalsy();
+
+    // Pinned under it, the breath takes hold
+    pinRandom(battle, 0);
+    beartic.attack(foe, Moves.Slash, 10, Types.Normal, MoveCategories.Physical, 0);
+    expect(foe.status[Statuses.Frozen]).toBeTruthy();
+  });
+
+  it('holds a freeze open twice as long, and only an enemy s', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cryogonal = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    cryogonal.addAbility(Abilities.CrystalChain);
+    cryogonal.enter();
+    mate.enter();
+    foe.enter();
+
+    foe.addStatus(Statuses.Frozen, NONE_CAUSE);
+    mate.addStatus(Statuses.Frozen, NONE_CAUSE);
+
+    const chained = foe.status[Statuses.Frozen];
+    const loose = mate.status[Statuses.Frozen];
+
+    expect(chained).toBeTruthy();
+    expect(loose).toBeTruthy();
+
+    // The chains reach across the field, never onto its own side
+    battle.tick(turns(5));
+    expect(foe.status[Statuses.Frozen]).toBeTruthy();
+    expect(mate.status[Statuses.Frozen]).toBeFalsy();
+  });
+
+  it('keeps hold of one thing at a time and bleeds it as it acts', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const eelektross = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    eelektross.addAbility(Abilities.LatchOn);
+    eelektross.enter();
+    first.enter();
+    second.enter();
+
+    eelektross.attack(first, Moves.Crunch, 10, Types.Dark, MoveCategories.Physical, 0);
+    expect(first.checkEscape()).toBe(false);
+
+    const share = Math.floor(first.checkStat(Stats.HP, 0) * LATCH_ON_SHARE);
+    const before = first.health;
+
+    act(battle, first);
+    expect(before - first.health).toBe(share);
+
+    // Taking a second lets the first one go
+    eelektross.attack(second, Moves.Crunch, 10, Types.Dark, MoveCategories.Physical, 0);
+    expect(second.checkEscape()).toBe(false);
+    expect(first.checkEscape()).toBe(true);
+  });
+
+  it('takes the blow on the sleeves, but only one that touches', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const mienshao = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    mienshao.addAbility(Abilities.SleeveGuard);
+    mienshao.enter();
+    bare.enter();
+    foe.enter();
+
+    const sleeved = dealDamage(
+      foe,
+      mienshao,
+      Moves.Slash,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+    const open = dealDamage(foe, bare, Moves.Slash, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(sleeved / open).toBeCloseTo(SLEEVE_GUARD_SCALE, 2);
+
+    // Nothing reaches the sleeves from a distance
+    const far = dealDamage(foe, mienshao, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+    const openFar = dealDamage(foe, bare, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+
+    expect(far / openFar).toBeCloseTo(1, 2);
   });
 });

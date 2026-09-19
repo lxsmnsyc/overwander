@@ -16,6 +16,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Turtwig, weight: 3 },
       ],
       uncommon: [
+        { species: Species.Mienfoo, weight: 18 },
         { species: Species.Makuhita, weight: 20 },
         { species: Species.Meditite, weight: 25 },
         { species: Species.Stantler, weight: 5 },
@@ -29,6 +30,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Grotle, weight: 2 },
       ],
       scarce: [
+        { species: Species.Mienshao, weight: 6 },
         { species: Species.Hariyama, weight: 6 },
         { species: Species.Medicham, weight: 10 },
         { species: Species.Wormadam, weight: 4 },
@@ -60,6 +62,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Turtwig, weight: 3 },
       ],
       uncommon: [
+        { species: Species.Mienfoo, weight: 18 },
         { species: Species.Makuhita, weight: 20 },
         { species: Species.Meditite, weight: 25 },
         { species: Species.Stantler, weight: 5 },
@@ -73,6 +76,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Grotle, weight: 2 },
       ],
       scarce: [
+        { species: Species.Mienshao, weight: 6 },
         { species: Species.Hariyama, weight: 6 },
         { species: Species.Medicham, weight: 10 },
         { species: Species.Wormadam, weight: 4 },

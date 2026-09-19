@@ -23,6 +23,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Skitty, weight: 25 },
         { species: Species.Roselia, weight: 20 },
         { species: Species.Glameow, weight: 25 },
+        { species: Species.Cottonee, weight: 24 },
       ],
       rare: [
         { species: Species.Servine, weight: 2 },
@@ -40,6 +41,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Granbull, weight: 5 },
         { species: Species.Purugly, weight: 8 },
         { species: Species.Roserade, weight: 6 },
+        { species: Species.Whimsicott, weight: 7 },
       ],
       elusive: [
         { species: Species.Serperior, weight: 2 },
@@ -72,6 +74,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Skitty, weight: 25 },
         { species: Species.Roselia, weight: 20 },
         { species: Species.Glameow, weight: 25 },
+        { species: Species.Cottonee, weight: 24 },
       ],
       rare: [
         { species: Species.Servine, weight: 2 },
@@ -89,6 +92,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Granbull, weight: 5 },
         { species: Species.Purugly, weight: 8 },
         { species: Species.Roserade, weight: 6 },
+        { species: Species.Whimsicott, weight: 7 },
       ],
       elusive: [
         { species: Species.Serperior, weight: 2 },

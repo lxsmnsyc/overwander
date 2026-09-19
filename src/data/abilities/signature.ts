@@ -1768,4 +1768,22 @@ export default function registerSignatureAbilities(): void {
     name: 'Three Heads',
     description: 'Every move it lands also bites one other enemy for 1/3 of the damage.',
   });
+
+  // Routes 9 and 10
+  registerSignature(Families.Pawniard, Abilities.Honed, {
+    name: 'Honed',
+    description: '+1 Attack every time an enemy raises a stat of its own.',
+  });
+
+  // Braviary and Mandibuzz are the sky split in two: one answers its
+  // own side's dead, the other answers everybody else's
+  registerSignature(Families.Rufflet, Abilities.Warcry, {
+    name: 'Warcry',
+    description: '+2 Attack every time one of its teammates faints.',
+  });
+
+  registerSignature(Families.Vullaby, Abilities.Bonewear, {
+    name: 'Bonewear',
+    description: '+1 Defense and +1 Special Defense every time an enemy faints.',
+  });
 }

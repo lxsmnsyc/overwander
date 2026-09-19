@@ -25,6 +25,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Roggenrola, weight: 24 },
       ],
       uncommon: [
+        { species: Species.Vullaby, weight: 16 },
         { species: Species.Darumaka, weight: 22 },
         { species: Species.Numel, weight: 20 },
         { species: Species.Baltoy, weight: 22 },
@@ -51,6 +52,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Boldore, weight: 12 },
       ],
       scarce: [
+        { species: Species.Mandibuzz, weight: 6 },
         { species: Species.Darmanitan, weight: 7 },
         { species: Species.Camerupt, weight: 6 },
         { species: Species.Claydol, weight: 6 },
@@ -109,6 +111,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Roggenrola, weight: 24 },
       ],
       uncommon: [
+        { species: Species.Vullaby, weight: 16 },
         { species: Species.Darumaka, weight: 22 },
         { species: Species.Numel, weight: 20 },
         { species: Species.Baltoy, weight: 22 },
@@ -138,6 +141,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Boldore, weight: 12 },
       ],
       scarce: [
+        { species: Species.Mandibuzz, weight: 6 },
         { species: Species.Darmanitan, weight: 7 },
         { species: Species.Camerupt, weight: 6 },
         { species: Species.Claydol, weight: 6 },
@@ -192,6 +196,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Pawniard, weight: 16 },
         { species: Species.Golett, weight: 20 },
         { species: Species.Trubbish, weight: 22 },
         { species: Species.Yamask, weight: 22 },
@@ -217,6 +222,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Bisharp, weight: 6 },
         { species: Species.Golurk, weight: 6 },
         { species: Species.Garbodor, weight: 7 },
         { species: Species.Cofagrigus, weight: 7 },
@@ -265,6 +271,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Pawniard, weight: 16 },
         { species: Species.Golett, weight: 20 },
         { species: Species.Trubbish, weight: 22 },
         { species: Species.Yamask, weight: 22 },
@@ -293,6 +300,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Bisharp, weight: 6 },
         { species: Species.Golurk, weight: 6 },
         { species: Species.Garbodor, weight: 7 },
         { species: Species.Cofagrigus, weight: 7 },

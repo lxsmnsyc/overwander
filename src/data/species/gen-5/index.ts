@@ -1,3 +1,4 @@
+import registerKeldeoSpecies from './keldeo';
 import registerAudinoSpecies from './audino';
 import registerAlomomolaSpecies from './alomomola';
 import registerAxewSpecies from './axew';
@@ -50,6 +51,7 @@ import registerTynamoSpecies from './tynamo';
 import registerYamaskSpecies from './yamask';
 import registerSnivySpecies from './snivy';
 import registerSolosisSpecies from './solosis';
+import registerSwordsOfJusticeSpecies from './swords-of-justice';
 import registerTepigSpecies from './tepig';
 import registerVanilliteSpecies from './vanillite';
 import registerVenipedeSpecies from './venipede';
@@ -116,4 +118,6 @@ export default function registerGen5Species(): void {
   registerDurantSpecies();
   registerDeinoSpecies();
   registerLarvestaSpecies();
+  registerSwordsOfJusticeSpecies();
+  registerKeldeoSpecies();
 }

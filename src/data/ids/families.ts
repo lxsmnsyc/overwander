@@ -317,6 +317,13 @@ const enum Families {
   Durant = 313,
   Deino = 314,
   Larvesta = 315,
+  Cobalion = 316,
+  Terrakion = 317,
+  Virizion = 318,
+  // 319 to 324 are held for Tornadus, Thundurus, Reshiram, Zekrom,
+  // Landorus and Kyurem, which sit between these in the dex and are
+  // not written yet
+  Keldeo = 325,
 }
 
 export default Families;
@@ -642,4 +649,8 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Durant]: 'Durant',
   [Families.Deino]: 'Deino',
   [Families.Larvesta]: 'Larvesta',
+  [Families.Cobalion]: 'Cobalion',
+  [Families.Terrakion]: 'Terrakion',
+  [Families.Virizion]: 'Virizion',
+  [Families.Keldeo]: 'Keldeo',
 };

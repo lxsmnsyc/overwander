@@ -920,6 +920,13 @@ export const enum Items {
   SootheBell = 434,
   MachoBrace = 435,
   LoadedDice = 436,
+
+  /**
+   * The petal left where the colt drank, which is this game's own:
+   * the mainline handed Keldeo over at an event and gave nobody an
+   * item for it
+   */
+  ColtsPetal = 437,
 }
 
 /**

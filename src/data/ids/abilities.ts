@@ -887,6 +887,10 @@ const enum Abilities {
   CrystalChain = 200303,
   LatchOn = 200304,
   SleeveGuard = 200305,
+  IronVigil = 200306,
+  StoneVigil = 200307,
+  LeafVigil = 200308,
+  TideVigil = 200309,
 }
 
 export default Abilities;

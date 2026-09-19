@@ -610,6 +610,9 @@ const LEGENDARY_SPECIES = new Set<Species>([
   // Not one-per-world the way the rest are, but it answers to the
   // Relic Castle, and what a raid stages is this set
   Species.Volcarona,
+  Species.Cobalion,
+  Species.Terrakion,
+  Species.Virizion,
 ]);
 
 /**
@@ -628,6 +631,7 @@ const MYTHICAL_SPECIES = new Set<Species>([
   Species.Manaphy,
   Species.Shaymin,
   Species.Arceus,
+  Species.Keldeo,
 ]);
 
 /**

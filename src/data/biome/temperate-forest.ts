@@ -93,7 +93,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
-      special: [{ species: Species.Mesprit, weight: 10 }],
+      special: [
+        { species: Species.Virizion, weight: 10 },
+        { species: Species.Mesprit, weight: 10 },
+      ],
       mythical: [{ species: Species.Celebi, weight: 10 }],
     },
     [TimeOfDay.Day]: {
@@ -174,7 +177,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
-      special: [{ species: Species.Mesprit, weight: 10 }],
+      special: [
+        { species: Species.Virizion, weight: 10 },
+        { species: Species.Mesprit, weight: 10 },
+      ],
       mythical: [{ species: Species.Celebi, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
@@ -239,7 +245,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
-      special: [{ species: Species.Mesprit, weight: 10 }],
+      special: [
+        { species: Species.Virizion, weight: 10 },
+        { species: Species.Mesprit, weight: 10 },
+      ],
       mythical: [{ species: Species.Celebi, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -306,7 +315,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
-      special: [{ species: Species.Mesprit, weight: 10 }],
+      special: [
+        { species: Species.Virizion, weight: 10 },
+        { species: Species.Mesprit, weight: 10 },
+      ],
       mythical: [{ species: Species.Celebi, weight: 10 }],
     },
   });

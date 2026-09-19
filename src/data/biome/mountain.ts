@@ -9,6 +9,7 @@ export default function registerMountainSpawns(): void {
   registerSpawnPool(Biome.Mountain, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Axew, weight: 5 },
         { species: Species.Klink, weight: 20 },
         { species: Species.Charmander, weight: 2 },
         { species: Species.Mankey, weight: 20 },
@@ -36,6 +37,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bronzor, weight: 20 },
       ],
       rare: [
+        { species: Species.Fraxure, weight: 3 },
         { species: Species.Klang, weight: 8 },
         { species: Species.Charmeleon, weight: 1 },
         { species: Species.Machoke, weight: 5 },
@@ -61,6 +63,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Probopass, weight: 6 },
       ],
       elusive: [
+        { species: Species.Druddigon, weight: 5 },
+        { species: Species.Haxorus, weight: 3 },
         { species: Species.Klinklang, weight: 4 },
         { species: Species.Charizard, weight: 2 },
         { species: Species.Machamp, weight: 5 },
@@ -100,6 +104,7 @@ export default function registerMountainSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Axew, weight: 5 },
         { species: Species.Klink, weight: 20 },
         { species: Species.Bagon, weight: 3 },
         { species: Species.Charmander, weight: 2 },
@@ -128,6 +133,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bronzor, weight: 20 },
       ],
       rare: [
+        { species: Species.Fraxure, weight: 3 },
         { species: Species.Klang, weight: 8 },
         { species: Species.Shelgon, weight: 1 },
         { species: Species.Charmeleon, weight: 1 },
@@ -154,6 +160,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Probopass, weight: 6 },
       ],
       elusive: [
+        { species: Species.Druddigon, weight: 5 },
+        { species: Species.Haxorus, weight: 3 },
         { species: Species.Klinklang, weight: 4 },
         { species: Species.Salamence, weight: 2 },
         { species: Species.Charizard, weight: 2 },

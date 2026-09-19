@@ -275,6 +275,8 @@ describe('where a species lives', () => {
       Species.Unfezant,
       Species.Blitzle,
       Species.Zebstrika,
+      Species.Throh,
+      Species.Sawk,
     ]);
     const staged = new Set<Species>();
 

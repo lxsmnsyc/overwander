@@ -1592,3 +1592,37 @@ export function createSinnohFossilAbility(
     });
   });
 }
+
+/** What each half of the dojo is worth to the team standing with it */
+export const RED_BELT_SCALE = 0.85;
+export const BLUE_BELT_SCALE = 1.15;
+
+/** Which half of the pair a belt is: the throw or the strike */
+export type BeltSide = 'throws' | 'strikes';
+
+/**
+ * Throh and Sawk train the same team, one covering it against physical
+ * moves and one arming its physical moves. Both read the same resolve,
+ * so the pair is one listener with the predicate swapped
+ */
+export function createBeltAbility(
+  ability: Abilities,
+  side: BeltSide,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const parent = event.parent;
+
+      if (parent.category !== MoveCategories.Physical) {
+        return;
+      }
+
+      // The dojo covers whoever stands in it, the holder included
+      const unit = side === 'throws' ? parent.target : parent.source;
+
+      if (unit.hasAbility(ability) || allyHolder(battle, unit, ability) != null) {
+        event.value *= side === 'throws' ? RED_BELT_SCALE : BLUE_BELT_SCALE;
+      }
+    }),
+  );
+}

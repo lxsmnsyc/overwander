@@ -1,0 +1,256 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { EvolutionMethod, Habitat, Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM, HM and tutor moves shared by the whole family
+const FAMILY_TEACHABLE = [
+  Moves.AfterYou,
+  Moves.Attract,
+  Moves.Bounce,
+  Moves.DoubleTeam,
+  Moves.EarthPower,
+  Moves.EchoedVoice,
+  Moves.Endeavor,
+  Moves.Endure,
+  Moves.Facade,
+  Moves.Frustration,
+  Moves.Hail,
+  Moves.HiddenPower,
+  Moves.HydroPump,
+  Moves.HyperVoice,
+  Moves.IcyWind,
+  Moves.MudShot,
+  Moves.MuddyWater,
+  Moves.Protect,
+  Moves.RainDance,
+  Moves.Rest,
+  Moves.Return,
+  Moves.Round,
+  Moves.Scald,
+  Moves.Screech,
+  Moves.SecretPower,
+  Moves.SleepTalk,
+  Moves.SludgeBomb,
+  Moves.SludgeWave,
+  Moves.Snore,
+  Moves.Substitute,
+  Moves.Surf,
+  Moves.Swagger,
+  Moves.Toxic,
+  Moves.Uproar,
+  Moves.WaterPulse,
+  Moves.WeatherBall,
+];
+
+// The vibration the whole line works by, whatever stage it is at
+const FAMILY_LEVEL = {
+  12: [Moves.BubbleBeam, Moves.MudShot],
+  20: [Moves.AquaRing],
+  23: [Moves.Uproar],
+  24: [Moves.Flail],
+};
+
+/**
+ * The croakers: the bumps on them shake the water, and by the last
+ * stage they shake the ground the water sits on
+ */
+export default function registerTympoleSpecies(): void {
+  registerSpecies(Species.Tympole, {
+    dexNumber: 535,
+    evolvesInto: [
+      {
+        species: Species.Palpitoad,
+        method: EvolutionMethod.Level,
+        level: 25,
+      },
+    ],
+    name: 'Tympole',
+    category: 'Tadpole Pokemon',
+    height: 0.5,
+    weight: 4.5,
+    family: Families.Tympole,
+    stats: {
+      [Stats.HP]: 50,
+      [Stats.Attack]: 50,
+      [Stats.Defense]: 40,
+      [Stats.SpecialAttack]: 50,
+      [Stats.SpecialDefense]: 40,
+      [Stats.Speed]: 64,
+    },
+    types: [Types.Water],
+    abilities: [Abilities.SwiftSwim, Abilities.Hydration],
+    hiddenAbilities: [Abilities.WaterAbsorb],
+    eggGroups: [EggGroups.Water1],
+    habitat: Habitat.Amphibious,
+    genderRatio: [1, 1],
+    catchRate: 255,
+    biomes: [Biome.Bog, Biome.Swamp],
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
+    learnSet: {
+      level: {
+        1: [Moves.Growl, Moves.Bubble, Moves.EchoedVoice],
+        4: [Moves.Acid],
+        5: [Moves.Supersonic],
+        9: [Moves.Round],
+        ...FAMILY_LEVEL,
+        27: [Moves.MuddyWater],
+        31: [Moves.RainDance],
+        36: [Moves.HyperVoice],
+        42: [Moves.HydroPump],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+      egg: [
+        Moves.AfterYou,
+        Moves.EarthPower,
+        Moves.Mist,
+        Moves.MudBomb,
+        Moves.MudSlap,
+        Moves.MudSport,
+        Moves.Refresh,
+        Moves.WaterPulse,
+      ],
+    },
+  });
+  registerSpecies(Species.Palpitoad, {
+    dexNumber: 536,
+    evolvesInto: [
+      {
+        species: Species.Seismitoad,
+        method: EvolutionMethod.Level,
+        level: 36,
+      },
+    ],
+    name: 'Palpitoad',
+    category: 'Vibration Pokemon',
+    height: 0.8,
+    weight: 17,
+    family: Families.Tympole,
+    evolvesFrom: Species.Tympole,
+    stats: {
+      [Stats.HP]: 75,
+      [Stats.Attack]: 65,
+      [Stats.Defense]: 55,
+      [Stats.SpecialAttack]: 65,
+      [Stats.SpecialDefense]: 55,
+      [Stats.Speed]: 69,
+    },
+    types: [Types.Water, Types.Ground],
+    abilities: [Abilities.SwiftSwim, Abilities.Hydration],
+    hiddenAbilities: [Abilities.WaterAbsorb],
+    eggGroups: [EggGroups.Water1],
+    habitat: Habitat.Amphibious,
+    genderRatio: [1, 1],
+    catchRate: 120,
+    biomes: [Biome.Bog, Biome.Swamp],
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
+    learnSet: {
+      level: {
+        1: [
+          Moves.Growl,
+          Moves.Supersonic,
+          Moves.Acid,
+          Moves.Bubble,
+          Moves.Round,
+          Moves.EchoedVoice,
+        ],
+        ...FAMILY_LEVEL,
+        28: [Moves.MuddyWater],
+        33: [Moves.RainDance],
+        42: [Moves.HyperVoice],
+        47: [Moves.HydroPump],
+      },
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Bulldoze,
+        Moves.FocusPunch,
+        Moves.GastroAcid,
+        Moves.PowerWhip,
+        Moves.RockSmash,
+        Moves.StealthRock,
+      ],
+    },
+  });
+  registerSpecies(Species.Seismitoad, {
+    dexNumber: 537,
+    name: 'Seismitoad',
+    category: 'Vibration Pokemon',
+    height: 1.5,
+    weight: 62,
+    family: Families.Tympole,
+    evolvesFrom: Species.Palpitoad,
+    stats: {
+      [Stats.HP]: 105,
+      [Stats.Attack]: 95,
+      [Stats.Defense]: 75,
+      [Stats.SpecialAttack]: 85,
+      [Stats.SpecialDefense]: 75,
+      [Stats.Speed]: 74,
+    },
+    types: [Types.Water, Types.Ground],
+    // Poison Touch is its own, and Hydration walks up from the two
+    // stages below, so the line reaches four without an invention
+    abilities: [Abilities.SwiftSwim, Abilities.PoisonTouch],
+    hiddenAbilities: [Abilities.WaterAbsorb],
+    eggGroups: [EggGroups.Water1],
+    habitat: Habitat.Amphibious,
+    genderRatio: [1, 1],
+    catchRate: 45,
+    biomes: [Biome.Bog, Biome.Swamp],
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
+    learnSet: {
+      level: {
+        1: [
+          Moves.Growl,
+          Moves.Supersonic,
+          Moves.Bubble,
+          Moves.Acid,
+          Moves.DrainPunch,
+          Moves.GastroAcid,
+          Moves.Round,
+          Moves.EchoedVoice,
+        ],
+        ...FAMILY_LEVEL,
+        28: [Moves.MuddyWater],
+        33: [Moves.RainDance],
+        46: [Moves.HyperVoice],
+        53: [Moves.HydroPump],
+      },
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.BrickBreak,
+        Moves.Bulldoze,
+        Moves.Dig,
+        Moves.Dive,
+        Moves.DrainPunch,
+        Moves.Earthquake,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.FocusPunch,
+        Moves.GastroAcid,
+        Moves.GigaImpact,
+        Moves.GrassKnot,
+        Moves.HyperBeam,
+        Moves.IcePunch,
+        Moves.KnockOff,
+        Moves.LowKick,
+        Moves.MegaKick,
+        Moves.MegaPunch,
+        Moves.Payback,
+        Moves.PoisonJab,
+        Moves.PowerWhip,
+        Moves.RockSlide,
+        Moves.RockSmash,
+        Moves.RockTomb,
+        Moves.StealthRock,
+        Moves.Strength,
+        Moves.Venoshock,
+      ],
+    },
+  });
+}

@@ -2,8 +2,11 @@ import registerAudinoSpecies from './audino';
 import registerBeltPairSpecies from './belt-pair';
 import registerBlitzleSpecies from './blitzle';
 import registerCottoneeSpecies from './cottonee';
+import registerDarumakaSpecies from './darumaka';
 import registerDrilburSpecies from './drilbur';
+import registerDwebbleSpecies from './dwebble';
 import registerLillipupSpecies from './lillipup';
+import registerMaractusSpecies from './maractus';
 import registerMunnaSpecies from './munna';
 import registerOshawottSpecies from './oshawott';
 import registerPanpourSpecies from './panpour';
@@ -17,6 +20,7 @@ import registerSewaddleSpecies from './sewaddle';
 import registerTimburrSpecies from './timburr';
 import registerTympoleSpecies from './tympole';
 import registerPurrloinSpecies from './purrloin';
+import registerSandileSpecies from './sandile';
 import registerSnivySpecies from './snivy';
 import registerTepigSpecies from './tepig';
 import registerVenipedeSpecies from './venipede';
@@ -46,4 +50,8 @@ export default function registerGen5Species(): void {
   registerVenipedeSpecies();
   registerCottoneeSpecies();
   registerPetililSpecies();
+  registerSandileSpecies();
+  registerDarumakaSpecies();
+  registerMaractusSpecies();
+  registerDwebbleSpecies();
 }

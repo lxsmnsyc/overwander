@@ -29,6 +29,7 @@ import {
   createUnitCounter,
   createUnitState,
   enemyHolder,
+  firstEnemy,
   isChannelledMove,
   isPseudoMove,
   sideHolder,
@@ -115,17 +116,6 @@ function healthiestEnemy(battle: Battle, unit: Unit): Unit | undefined {
   }
 
   return best;
-}
-
-/** The first enemy still standing, for an ability that casts at one */
-function firstEnemy(battle: Battle, unit: Unit): Unit | undefined {
-  for (const enemy of battle.units(unit.team.alliance)) {
-    if (enemy.alive) {
-      return enemy;
-    }
-  }
-
-  return undefined;
 }
 
 /** All five battle stages, for an ability that reads or resets them */

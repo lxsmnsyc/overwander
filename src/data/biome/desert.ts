@@ -20,6 +20,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Magmar, weight: 5 },
         { species: Species.BurmySandy, weight: 20 },
         { species: Species.Hippopotas, weight: 20 },
+        { species: Species.Drilbur, weight: 16 },
       ],
       rare: [
         { species: Species.Pignite, weight: 2 },
@@ -32,6 +33,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Hippowdon, weight: 6 },
         { species: Species.Magmortar, weight: 6 },
+        { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
         { species: Species.Emboar, weight: 2 },
@@ -60,6 +62,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Magmar, weight: 5 },
         { species: Species.BurmySandy, weight: 20 },
         { species: Species.Hippopotas, weight: 20 },
+        { species: Species.Drilbur, weight: 16 },
       ],
       rare: [
         { species: Species.Pignite, weight: 2 },
@@ -74,6 +77,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Hippowdon, weight: 6 },
         { species: Species.Magmortar, weight: 6 },
+        { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
         { species: Species.Emboar, weight: 2 },

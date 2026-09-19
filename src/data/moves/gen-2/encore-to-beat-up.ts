@@ -36,7 +36,8 @@ export default function registerEncoreToBeatUp(): void {
   });
   registerMove(Moves.RapidSpin, {
     name: 'Rapid Spin',
-    description: "Always raises the user's Speed a stage, and clears the spikes under its side.",
+    description:
+      "Always raises the user's Speed a stage, clears every hazard under its side, and frees the user from a bind or Leech Seed.",
     type: Types.Normal,
     category: MoveCategories.Physical,
     power: 50,

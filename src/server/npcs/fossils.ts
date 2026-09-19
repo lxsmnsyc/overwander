@@ -209,6 +209,10 @@ async function openRock(
   const encounter = deriveEncounter(snapshot, [species, rng.int32(), rng.int32()], uid, {
     type: EncounterType.Revived,
     level: FOSSIL_REVIVE_LEVEL,
+    // The sky over the bench it was opened on: a fogbow reads it for
+    // room for another move, a mirage for an ability it would not have
+    // rolled, and a dark day to close what comes back out of the rock
+    weather: snapshot.weather,
   });
 
   try {

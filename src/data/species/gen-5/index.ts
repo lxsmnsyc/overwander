@@ -52,6 +52,7 @@ import registerYamaskSpecies from './yamask';
 import registerSnivySpecies from './snivy';
 import registerSolosisSpecies from './solosis';
 import registerSwordsOfJusticeSpecies from './swords-of-justice';
+import registerTaoTrioSpecies from './tao-trio';
 import registerTepigSpecies from './tepig';
 import registerVanilliteSpecies from './vanillite';
 import registerVenipedeSpecies from './venipede';
@@ -120,4 +121,5 @@ export default function registerGen5Species(): void {
   registerLarvestaSpecies();
   registerSwordsOfJusticeSpecies();
   registerKeldeoSpecies();
+  registerTaoTrioSpecies();
 }

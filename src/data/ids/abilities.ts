@@ -891,6 +891,9 @@ const enum Abilities {
   StoneVigil = 200307,
   LeafVigil = 200308,
   TideVigil = 200309,
+  TruthCreed = 200310,
+  IdealCreed = 200311,
+  HollowCreed = 200312,
 }
 
 export default Abilities;

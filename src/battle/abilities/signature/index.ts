@@ -44,6 +44,7 @@ import roggenrolaToDrilbur from './roggenrola-to-drilbur';
 import sewaddleToPetilil from './sewaddle-to-petilil';
 import snivyToOshawott from './snivy-to-oshawott';
 import swordsOfJustice from './swords-of-justice';
+import taoTrio from './tao-trio';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -95,6 +96,7 @@ const setupAbilities = [
   ...heatmorToLarvesta,
   ...tynamoToMienfoo,
   ...swordsOfJustice,
+  ...taoTrio,
 ];
 
 /**

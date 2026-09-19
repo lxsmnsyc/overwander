@@ -1714,3 +1714,26 @@ export function createCarrionAbility(
     }),
   );
 }
+
+/** What keeping a creed is worth on a blow that answers it */
+export const CREED_SCALE = 1.3;
+
+/**
+ * The tao trio's shared shape: each dragon holds one conviction and
+ * asks the thing it is hitting whether the answer is yes, pressing
+ * only where it is
+ */
+export function createCreedAbility(
+  ability: Abilities,
+  answers: (target: Unit) => boolean,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const parent = event.parent;
+
+      if (event.value > 0 && parent.source.hasAbility(ability) && answers(parent.target)) {
+        event.value *= CREED_SCALE;
+      }
+    }),
+  );
+}

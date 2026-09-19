@@ -1742,3 +1742,79 @@ describe('the swords of justice', () => {
     expect(ally.status[Statuses.Flinched]).toBeUndefined();
   });
 });
+
+describe('the tao trio', () => {
+  /** What a plain blow from this holder takes off, ability and all */
+  function blow(
+    unit: ReturnType<typeof createUnit>,
+    target: ReturnType<typeof createUnit>,
+  ): number {
+    return dealDamage(unit, target, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+  }
+
+  it('Truth Creed presses a target that is carrying a status', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dragon = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const burned = createUnit(battle, teamB);
+
+    dragon.addAbility(Abilities.TruthCreed);
+    burned.addStatus(Statuses.Burned, { type: EffectType.None });
+
+    const ordinary = blow(dragon, plain);
+    const pressed = blow(dragon, burned);
+
+    expect(pressed / ordinary).toBeCloseTo(1.3, 1);
+  });
+
+  it('Ideal Creed presses a target that has talked itself up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dragon = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const raised = createUnit(battle, teamB);
+
+    dragon.addAbility(Abilities.IdealCreed);
+    raised.addStage(Stages.Attack, 1, { type: EffectType.None });
+
+    const ordinary = blow(dragon, plain);
+    const pressed = blow(dragon, raised);
+
+    expect(pressed / ordinary).toBeCloseTo(1.3, 1);
+    // A stage that went the other way is not one it reads
+    const lowered = createUnit(battle, teamB);
+
+    lowered.addStage(Stages.Attack, -1, { type: EffectType.None });
+
+    expect(blow(dragon, lowered) / ordinary).toBeCloseTo(1, 1);
+  });
+
+  it('Hollow Creed presses only what nothing has touched', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dragon = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const burned = createUnit(battle, teamB);
+    const raised = createUnit(battle, teamB);
+
+    dragon.addAbility(Abilities.HollowCreed);
+    burned.addStatus(Statuses.Burned, { type: EffectType.None });
+    raised.addStage(Stages.Attack, 1, { type: EffectType.None });
+
+    const untouched = blow(dragon, plain);
+
+    expect(blow(dragon, burned) / untouched).toBeCloseTo(1 / 1.3, 1);
+    expect(blow(dragon, raised) / untouched).toBeCloseTo(1 / 1.3, 1);
+  });
+
+  it('reads the target rather than the dragon itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dragon = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+
+    dragon.addAbility(Abilities.TruthCreed);
+    dragon.addStatus(Statuses.Burned, { type: EffectType.None });
+
+    // Its own burn answers nothing: the question is about what it hits
+    expect(blow(dragon, plain) / blow(dragon, other)).toBeCloseTo(1, 1);
+  });
+});

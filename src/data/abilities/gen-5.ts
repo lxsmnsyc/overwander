@@ -33,4 +33,14 @@ export default function registerGen5Abilities(): void {
     name: 'Zen Mode',
     description: 'Below 1/2 HP it sits down into its Zen shape, and it stands back up above that.',
   });
+  // Reshiram
+  registerAbility(Abilities.Turboblaze, {
+    name: 'Turboblaze',
+    description: "The target's abilities cannot hinder its moves.",
+  });
+  // Zekrom
+  registerAbility(Abilities.Teravolt, {
+    name: 'Teravolt',
+    description: "The target's abilities cannot hinder its moves.",
+  });
 }

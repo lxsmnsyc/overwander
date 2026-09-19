@@ -32,6 +32,7 @@ import {
   CASTFORM_FORMS,
   CHERRIM_FORMS,
   DARMANITAN_FORMS,
+  DEERLING_FORMS,
   DEOXYS_FORMS,
   DIALGA_FORMS,
   EvolutionMethod,
@@ -43,6 +44,7 @@ import {
   MELOETTA_FORMS,
   PALKIA_FORMS,
   ROTOM_FORMS,
+  SAWSBUCK_FORMS,
   SHAYMIN_FORMS,
   SHELLOS_FORMS,
   Species,
@@ -386,6 +388,8 @@ describe('species forms', () => {
       ...LANDORUS_FORMS.slice(1),
       ...MELOETTA_FORMS.slice(1),
       ...GENESECT_FORMS.slice(1),
+      ...DEERLING_FORMS.slice(1),
+      ...SAWSBUCK_FORMS.slice(1),
     ]);
 
     expect(registered.length).toBeGreaterThan(0);

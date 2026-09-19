@@ -57,6 +57,7 @@ export {
 export type { EvolutionContext, Handover } from './evolution';
 export { REGIONS, REGION_NAMES, getSpeciesByRegion, getSpeciesRegion } from './regions';
 export { getShoreForm } from './gen-4/shellos';
+export { getSeasonalCoat } from './gen-5/deerling';
 
 export function registerSpecies(): void {
   registerGen1Species();

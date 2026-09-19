@@ -12650,27 +12650,27 @@
       }
     },
     "public/sprites/pokemon/kanto/1014404/regular.png": {
-      "digest": "3df684f98b908c7c",
-      "bytes": 9814,
+      "digest": "00a5fa13d7054715",
+      "bytes": 9803,
       "width": 259,
       "height": 297,
       "compact": {
-        "at": "2026-09-19T13:20:59Z",
+        "at": "2026-09-19T14:14:28Z",
         "as": "already compact",
-        "was": 9814,
-        "bytes": 9814
+        "was": 9803,
+        "bytes": 9803
       }
     },
     "public/sprites/pokemon/kanto/1014404/shiny.png": {
-      "digest": "28764d9492224354",
-      "bytes": 10088,
+      "digest": "9cc804dd3b591e92",
+      "bytes": 9857,
       "width": 259,
       "height": 297,
       "compact": {
-        "at": "2026-09-19T13:20:59Z",
+        "at": "2026-09-19T14:14:28Z",
         "as": "already compact",
-        "was": 10088,
-        "bytes": 10088
+        "was": 9857,
+        "bytes": 9857
       }
     },
     "public/sprites/pokemon/kanto/1014504/regular.png": {

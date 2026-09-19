@@ -112,6 +112,7 @@ export default function registerCleffaSpecies(): void {
         Moves.EchoedVoice,
         Moves.Incinerate,
         Moves.WorkUp,
+        Moves.Confide,
       ],
       egg: [
         Moves.Amnesia,

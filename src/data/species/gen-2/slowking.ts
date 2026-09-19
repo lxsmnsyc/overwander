@@ -135,6 +135,8 @@ export default function registerSlowkingSpecies(): void {
         Moves.Quash,
         Moves.Bulldoze,
         Moves.DragonTail,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
     },
   });

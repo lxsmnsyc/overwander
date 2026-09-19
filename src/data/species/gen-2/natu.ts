@@ -60,6 +60,8 @@ const FAMILY_TEACHABLE = [
   Moves.MagicRoom,
   Moves.Round,
   Moves.AllySwitch,
+  Moves.Confide,
+  Moves.DazzlingGleam,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Synchronize, Abilities.EarlyBird];

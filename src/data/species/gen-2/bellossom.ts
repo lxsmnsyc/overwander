@@ -36,6 +36,7 @@ export default function registerBellossomSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Absorb, Moves.PetalDance, Moves.StunSpore, Moves.SweetScent, Moves.MagicalLeaf],
+        49: [Moves.PetalBlizzard],
         53: [Moves.LeafStorm],
         55: [Moves.SolarBeam],
       },
@@ -83,6 +84,9 @@ export default function registerBellossomSpecies(): void {
         Moves.Venoshock,
         Moves.AfterYou,
         Moves.Round,
+        Moves.Confide,
+        Moves.DazzlingGleam,
+        Moves.Infestation,
       ],
     },
   });

@@ -57,6 +57,8 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.Scald,
   Moves.WorkUp,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ThickFat, Abilities.HugePower];
@@ -98,7 +100,7 @@ export default function registerMarillSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        23: [Moves.AquaRing],
+        23: [Moves.AquaRing, Moves.PlayRough],
         37: [Moves.AquaTail],
         45: [Moves.HydroPump],
         1: [Moves.Tackle],
@@ -149,7 +151,7 @@ export default function registerMarillSpecies(): void {
         57: [Moves.HydroPump],
         1: [Moves.Tackle, Moves.DefenseCurl, Moves.TailWhip, Moves.WaterGun],
         15: [Moves.Rollout],
-        25: [Moves.BubbleBeam],
+        25: [Moves.BubbleBeam, Moves.PlayRough],
         36: [Moves.DoubleEdge],
         48: [Moves.RainDance],
       },

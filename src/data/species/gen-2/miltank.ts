@@ -121,6 +121,8 @@ export default function registerMiltankSpecies(): void {
         Moves.Retaliate,
         Moves.Bulldoze,
         Moves.WorkUp,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
       egg: [
         Moves.Present,
@@ -130,6 +132,7 @@ export default function registerMiltankSpecies(): void {
         Moves.HammerArm,
         Moves.Punishment,
         Moves.HeartStamp,
+        Moves.Belch,
       ],
     },
   });

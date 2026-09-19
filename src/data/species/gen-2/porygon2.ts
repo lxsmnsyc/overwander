@@ -108,6 +108,7 @@ export default function registerPorygon2Species(): void {
         Moves.FoulPlay,
         Moves.Round,
         Moves.Electroweb,
+        Moves.Confide,
       ],
     },
   });

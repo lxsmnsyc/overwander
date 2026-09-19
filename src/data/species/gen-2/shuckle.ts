@@ -49,6 +49,7 @@ export default function registerShuckleSpecies(): void {
         40: [Moves.BugBite],
         45: [Moves.GuardSplit, Moves.PowerSplit],
         48: [Moves.PowerTrick],
+        53: [Moves.StickyWeb],
       },
       teachable: [
         Moves.Toxic,
@@ -99,6 +100,8 @@ export default function registerShuckleSpecies(): void {
         Moves.Round,
         Moves.StruggleBug,
         Moves.Bulldoze,
+        Moves.Confide,
+        Moves.Infestation,
       ],
       egg: [Moves.SweetScent, Moves.Acupressure, Moves.FinalGambit],
     },

@@ -42,6 +42,7 @@ const BEAST_TEACHABLE = [
   Moves.Quash,
   Moves.Bulldoze,
   Moves.Snarl,
+  Moves.Confide,
 ];
 
 export default function registerLegendaryBeastSpecies(): void {

@@ -112,6 +112,8 @@ export default function registerCelebiSpecies(): void {
         Moves.MagicRoom,
         Moves.Round,
         Moves.EchoedVoice,
+        Moves.Confide,
+        Moves.DazzlingGleam,
       ],
     },
   });

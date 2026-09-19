@@ -99,6 +99,7 @@ export default function registerScizorSpecies(): void {
         Moves.Round,
         Moves.Acrobatics,
         Moves.StruggleBug,
+        Moves.Confide,
       ],
     },
   });

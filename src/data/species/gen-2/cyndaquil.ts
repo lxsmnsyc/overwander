@@ -49,6 +49,7 @@ const FAMILY_TEACHABLE = [
   Moves.Incinerate,
   Moves.FirePledge,
   Moves.WildCharge,
+  Moves.Confide,
 ];
 
 // What the two above the base pick up: the machines that ask for a
@@ -218,6 +219,7 @@ export default function registerCyndaquilSpecies(): void {
         Moves.RockClimb,
         Moves.ShadowClaw,
         Moves.Bulldoze,
+        Moves.PowerUpPunch,
       ],
     },
   });

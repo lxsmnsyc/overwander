@@ -50,6 +50,7 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.EchoedVoice,
   Moves.WorkUp,
+  Moves.Confide,
 ];
 
 export default function registerHoothootSpecies(): void {

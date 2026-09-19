@@ -114,6 +114,7 @@ export default function registerDunsparceSpecies(): void {
         Moves.Bulldoze,
         Moves.WildCharge,
         Moves.DrillRun,
+        Moves.Confide,
       ],
       egg: [
         Moves.AncientPower,

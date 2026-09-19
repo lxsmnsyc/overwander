@@ -1,5 +1,15 @@
 # overwander
 
+## 4.6.1
+
+### Patch Changes
+
+- e4a1e9a: A kelp forest's rocks have life on them: Krabby, Seel, Shellos, Buizel and Tangela by day, with Kingler, Dewgong, Gastrodon, Floatzel, Tangrowth and Shuckle behind them, Wingull and Pelipper overhead until dusk, and the crabs, seals, slugs and otters alone after dark. The Unowns were the only thing standing above the waterline before, which made an alphabet easier to meet than it should be.
+- 2cf05e9: - A wild meeting stops at level 100. A buddy with Hustle, Pressure or Vital Spirit lifts the top of the band by 3, which on a legendary's band of 1 to 100 was handing out levels 101 to 103. Nothing can hold a pokemon above the cap, so catching one failed.
+- 1275f91: - A catch sheet reads in order of what a player looks for: stats, then its abilities and what it is holding, then its moves.
+  - A shiny's sparkle is the same size on every pokemon. Sized off the sprite, it was smallest on the small ones, which are the hardest to spot in the overworld to begin with.
+- 6815869: - Caves roll the cave pool. Underground spawns were read from the biome overhead, so a cave under a grassland held that grassland's pokemon and nothing that lives in the dark.
+
 ## 4.6.0
 
 ### Minor Changes

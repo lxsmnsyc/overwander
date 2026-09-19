@@ -638,6 +638,11 @@ const MYTHICAL_SPECIES = new Set<Species>([
   Species.Shaymin,
   Species.Arceus,
   Species.Keldeo,
+  Species.Victini,
+  // The bare ones only: the step and the four cassettes are worn for
+  // a fight rather than owned, the way Shaymin Sky is
+  Species.Meloetta,
+  Species.Genesect,
 ]);
 
 /**

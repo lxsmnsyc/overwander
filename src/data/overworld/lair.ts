@@ -172,6 +172,21 @@ const enum Lairs {
    * roam the country wrecking it and the third follows behind
    */
   AbundantShrine = 42,
+  /**
+   * The garden on the island the ferry runs out to. A mythical's
+   * lair, so no biome hosts it
+   */
+  LibertyGarden = 43,
+  /**
+   * The ruin under the water the old song came out of, which is where
+   * the relics are named for. A mythical's lair, so no biome hosts it
+   */
+  AbyssalRuins = 44,
+  /**
+   * The laboratory the machine was assembled in. A mythical's lair,
+   * so no biome hosts it
+   */
+  P2Laboratory = 45,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -218,6 +233,9 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.DragonspiralTower]: 'Dragonspiral Tower',
   [Lairs.GiantChasm]: 'Giant Chasm',
   [Lairs.AbundantShrine]: 'Abundant Shrine',
+  [Lairs.LibertyGarden]: 'Liberty Garden',
+  [Lairs.AbyssalRuins]: 'Abyssal Ruins',
+  [Lairs.P2Laboratory]: 'P2 Laboratory',
 };
 
 /**
@@ -271,6 +289,9 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.DragonspiralTower]: [Species.Reshiram, Species.Zekrom],
   [Lairs.GiantChasm]: [Species.Kyurem],
   [Lairs.AbundantShrine]: [Species.Tornadus, Species.Thundurus, Species.Landorus],
+  [Lairs.LibertyGarden]: [Species.Victini],
+  [Lairs.AbyssalRuins]: [Species.Meloetta],
+  [Lairs.P2Laboratory]: [Species.Genesect],
 };
 
 /**
@@ -320,6 +341,9 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.DragonspiralTower,
   Lairs.GiantChasm,
   Lairs.AbundantShrine,
+  Lairs.LibertyGarden,
+  Lairs.AbyssalRuins,
+  Lairs.P2Laboratory,
 ];
 
 /**

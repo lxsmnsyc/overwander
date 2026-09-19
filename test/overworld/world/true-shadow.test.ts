@@ -90,6 +90,7 @@ describe('what a true shadow is', () => {
     expect(getSpeciesData(Species.ArticunoShadow).name).toBe('XD-144');
     expect(getSpeciesData(Species.ZapdosShadow).name).toBe('XD-145');
     expect(getSpeciesData(Species.MoltresShadow).name).toBe('XD-146');
+    expect(getSpeciesData(Species.MewtwoShadow).name).toBe('XD-150');
   });
 
   it('pairs each bird with its own shadow, and nothing else', () => {

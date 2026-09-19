@@ -902,6 +902,7 @@ export const enum Species {
   ArticunoShadow = 1014404,
   ZapdosShadow = 1014504,
   MoltresShadow = 1014604,
+  MewtwoShadow = 1015003,
 }
 
 /**

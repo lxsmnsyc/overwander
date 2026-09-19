@@ -27,6 +27,7 @@ const TRUE_SHADOWS = new Map<Species, Species>([
   [Species.Articuno, Species.ArticunoShadow],
   [Species.Zapdos, Species.ZapdosShadow],
   [Species.Moltres, Species.MoltresShadow],
+  [Species.Mewtwo, Species.MewtwoShadow],
 ]);
 
 /** The same pairing read backwards, since no two counterparts share one */

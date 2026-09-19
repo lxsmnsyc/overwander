@@ -33,13 +33,7 @@ export default function registerShuckleSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [
-      Biome.Mountain,
-      Biome.Badlands,
-      Biome.RockyCoast,
-      Biome.CoralReef,
-      Biome.KelpForest,
-    ],
+    biomes: [Biome.Mountain, Biome.Badlands, Biome.RockyCoast, Biome.CoralReef, Biome.KelpForest],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

@@ -38,12 +38,7 @@ export default function registerTangrowthSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 30,
-    biomes: [
-      Biome.TropicalRainforest,
-      Biome.TemperateRainforest,
-      Biome.Swamp,
-      Biome.KelpForest,
-    ],
+    biomes: [Biome.TropicalRainforest, Biome.TemperateRainforest, Biome.Swamp, Biome.KelpForest],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

@@ -97,13 +97,7 @@ export default function registerShellosSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [
-      Biome.Beach,
-      Biome.RockyCoast,
-      Biome.Mangrove,
-      Biome.CoralReef,
-      Biome.KelpForest,
-    ],
+    biomes: [Biome.Beach, Biome.RockyCoast, Biome.Mangrove, Biome.CoralReef, Biome.KelpForest],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -165,13 +159,7 @@ export default function registerShellosSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [
-      Biome.Beach,
-      Biome.RockyCoast,
-      Biome.Mangrove,
-      Biome.CoralReef,
-      Biome.KelpForest,
-    ],
+    biomes: [Biome.Beach, Biome.RockyCoast, Biome.Mangrove, Biome.CoralReef, Biome.KelpForest],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -228,13 +216,7 @@ export default function registerShellosSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [
-      Biome.Beach,
-      Biome.RockyCoast,
-      Biome.Mangrove,
-      Biome.CoralReef,
-      Biome.KelpForest,
-    ],
+    biomes: [Biome.Beach, Biome.RockyCoast, Biome.Mangrove, Biome.CoralReef, Biome.KelpForest],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -294,13 +276,7 @@ export default function registerShellosSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [
-      Biome.Beach,
-      Biome.RockyCoast,
-      Biome.Mangrove,
-      Biome.CoralReef,
-      Biome.KelpForest,
-    ],
+    biomes: [Biome.Beach, Biome.RockyCoast, Biome.Mangrove, Biome.CoralReef, Biome.KelpForest],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

@@ -91,13 +91,7 @@ export default function registerKrabbySpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 225,
-    biomes: [
-      Biome.Beach,
-      Biome.Mangrove,
-      Biome.RockyCoast,
-      Biome.CoralReef,
-      Biome.KelpForest,
-    ],
+    biomes: [Biome.Beach, Biome.Mangrove, Biome.RockyCoast, Biome.CoralReef, Biome.KelpForest],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -146,13 +140,7 @@ export default function registerKrabbySpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 60,
-    biomes: [
-      Biome.Beach,
-      Biome.Mangrove,
-      Biome.RockyCoast,
-      Biome.CoralReef,
-      Biome.KelpForest,
-    ],
+    biomes: [Biome.Beach, Biome.Mangrove, Biome.RockyCoast, Biome.CoralReef, Biome.KelpForest],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

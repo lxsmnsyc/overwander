@@ -434,6 +434,8 @@ export interface Arena {
   x: number;
   z: number;
   radius: number;
+  /** The colour of the terrain laid on it, or null for bare ground */
+  tint: string | null;
 }
 
 /** How dark the far field is at the horizon, and how far down the fog reaches */
@@ -450,6 +452,11 @@ const SHADE = '#05080d';
 const ARENA_SEGMENTS = 48;
 /** The ring's width as a share of its radius */
 const ARENA_BAND = 0.06;
+/** A terrain's ring: wider and brighter than a bare one, breathing on this period */
+const TERRAIN_BAND = 0.12;
+const TERRAIN_BREATH = 1600;
+/** How often a terrain sends a ring out across its ground, in milliseconds */
+const TERRAIN_WAVE = 2200;
 
 /** One flat-coloured quad, on whichever surface is drawing */
 function fillQuad(
@@ -488,75 +495,128 @@ function rowOf(region: FloorRegion, top: number, bottom: number): { x: number; y
   ];
 }
 
+/** A ring lying on an arena's ground, from `outer` in to `inner` */
+function arenaBand(
+  context: CanvasRenderingContext2D,
+  view: FieldView,
+  arena: Arena,
+  outer: number,
+  inner: number,
+  colour: string,
+  alpha: number,
+  onto?: Painter,
+): void {
+  if (outer <= 0 || alpha <= 0) {
+    return;
+  }
+  for (let segment = 0; segment < ARENA_SEGMENTS; segment += 1) {
+    const from = (segment / ARENA_SEGMENTS) * Math.PI * 2;
+    const to = ((segment + 1) / ARENA_SEGMENTS) * Math.PI * 2;
+    const points = [
+      { x: arena.x + Math.cos(from) * outer, z: arena.z + Math.sin(from) * outer },
+      { x: arena.x + Math.cos(to) * outer, z: arena.z + Math.sin(to) * outer },
+      { x: arena.x + Math.cos(to) * inner, z: arena.z + Math.sin(to) * inner },
+      { x: arena.x + Math.cos(from) * inner, z: arena.z + Math.sin(from) * inner },
+    ];
+    const laid: { x: number; y: number }[] = [];
+
+    for (const point of points) {
+      const projected = projectField(point, view);
+
+      if (!projected.visible || projected.scale <= 0 || projected.scale > NEAREST) {
+        break;
+      }
+      laid.push({ x: projected.x, y: projected.y });
+    }
+    if (laid.length === 4) {
+      fillQuad(context, laid, colour, alpha, onto);
+    }
+  }
+}
+
+/** An arena's ground filled out to `radius`, skipped where any of its edge is off the picture */
+function arenaFloor(
+  context: CanvasRenderingContext2D,
+  view: FieldView,
+  arena: Arena,
+  radius: number,
+  colour: string,
+  alpha: number,
+  onto?: Painter,
+): void {
+  const middle: { x: number; y: number }[] = [];
+
+  for (let segment = 0; segment < ARENA_SEGMENTS; segment += 1) {
+    const angle = (segment / ARENA_SEGMENTS) * Math.PI * 2;
+    const projected = projectField(
+      { x: arena.x + Math.cos(angle) * radius, z: arena.z + Math.sin(angle) * radius },
+      view,
+    );
+
+    if (projected.visible && projected.scale > 0 && projected.scale <= NEAREST) {
+      middle.push({ x: projected.x, y: projected.y });
+    }
+  }
+  const centre = projectField({ x: arena.x, z: arena.z }, view);
+
+  if (!centre.visible || middle.length !== ARENA_SEGMENTS) {
+    return;
+  }
+  for (let segment = 0; segment < ARENA_SEGMENTS; segment += 1) {
+    const next = middle[(segment + 1) % ARENA_SEGMENTS];
+
+    fillQuad(
+      context,
+      [{ x: centre.x, y: centre.y }, middle[segment], next, next],
+      colour,
+      alpha,
+      onto,
+    );
+  }
+}
+
 /**
  * What makes the ground sit behind the fight rather than compete with
  * it: a fog that thickens toward the horizon, darker edges, and a faint
- * ring under each side so the arena has a shape. Stepped in bands, since
- * the batch draws flat colour only.
+ * ring under each side so the arena has a shape. A side standing on a
+ * terrain gets its ring and floor in the terrain's colour. Stepped in
+ * bands, since the batch draws flat colour only.
  */
 export function drawGroundShade(
   context: CanvasRenderingContext2D,
   view: FieldView,
   region: FloorRegion,
   arenas: Arena[],
+  clock: number,
   onto?: Painter,
 ): void {
   // A ring under each side, drawn first so the fog lies over the far ones
   for (const arena of arenas) {
-    const inner = arena.radius * (1 - ARENA_BAND);
+    const band = arena.tint == null ? ARENA_BAND : TERRAIN_BAND;
+    const inner = arena.radius * (1 - band);
 
-    for (let segment = 0; segment < ARENA_SEGMENTS; segment += 1) {
-      const from = (segment / ARENA_SEGMENTS) * Math.PI * 2;
-      const to = ((segment + 1) / ARENA_SEGMENTS) * Math.PI * 2;
-      const points = [
-        { x: arena.x + Math.cos(from) * arena.radius, z: arena.z + Math.sin(from) * arena.radius },
-        { x: arena.x + Math.cos(to) * arena.radius, z: arena.z + Math.sin(to) * arena.radius },
-        { x: arena.x + Math.cos(to) * inner, z: arena.z + Math.sin(to) * inner },
-        { x: arena.x + Math.cos(from) * inner, z: arena.z + Math.sin(from) * inner },
-      ];
-      const laid: { x: number; y: number }[] = [];
-
-      for (const point of points) {
-        const projected = projectField(point, view);
-
-        if (!projected.visible || projected.scale <= 0 || projected.scale > NEAREST) {
-          break;
-        }
-        laid.push({ x: projected.x, y: projected.y });
-      }
-      if (laid.length === 4) {
-        fillQuad(context, laid, '#ffffff', 0.16, onto);
-      }
-    }
     // A soft dark floor inside the ring, so the side's bars read on it
-    const middle: { x: number; y: number }[] = [];
-
-    for (let segment = 0; segment < ARENA_SEGMENTS; segment += 1) {
-      const angle = (segment / ARENA_SEGMENTS) * Math.PI * 2;
-      const projected = projectField(
-        { x: arena.x + Math.cos(angle) * inner, z: arena.z + Math.sin(angle) * inner },
-        view,
-      );
-
-      if (projected.visible && projected.scale > 0 && projected.scale <= NEAREST) {
-        middle.push({ x: projected.x, y: projected.y });
-      }
+    arenaFloor(context, view, arena, inner, SHADE, 0.18, onto);
+    if (arena.tint == null) {
+      arenaBand(context, view, arena, arena.radius, inner, '#ffffff', 0.16, onto);
+      continue;
     }
-    const centre = projectField({ x: arena.x, z: arena.z }, view);
+    const breath = 0.8 + 0.2 * Math.sin((clock / TERRAIN_BREATH) * Math.PI * 2);
+    const wave = (clock % TERRAIN_WAVE) / TERRAIN_WAVE;
+    const out = inner * wave;
 
-    if (centre.visible && middle.length === ARENA_SEGMENTS) {
-      for (let segment = 0; segment < ARENA_SEGMENTS; segment += 1) {
-        const next = middle[(segment + 1) % ARENA_SEGMENTS];
-
-        fillQuad(
-          context,
-          [{ x: centre.x, y: centre.y }, middle[segment], next, next],
-          SHADE,
-          0.18,
-          onto,
-        );
-      }
-    }
+    arenaFloor(context, view, arena, inner, arena.tint, 0.2 * breath, onto);
+    arenaBand(
+      context,
+      view,
+      arena,
+      out,
+      out * (1 - ARENA_BAND),
+      arena.tint,
+      0.35 * (1 - wave),
+      onto,
+    );
+    arenaBand(context, view, arena, arena.radius, inner, arena.tint, 0.55 * breath, onto);
   }
 
   // Fog from the horizon down, thinning as the ground comes nearer

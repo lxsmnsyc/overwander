@@ -41,7 +41,8 @@ import { Stats } from '../../../data/constants/stats';
 import { MoveFlags } from '../../../data/ids/moves';
 import { Genders, Species } from '../../../data/ids/species';
 
-import { Statuses } from '../../../data/ids/status';
+import { Statuses, Terrains } from '../../../data/ids/status';
+import { TYPE_COLORS, Types } from '../../../data/constants/types';
 import { getMoveData } from '../../../data/moves';
 import {
   bodyOf,
@@ -145,21 +146,33 @@ export interface UnitSpot {
 /** How far past its outermost pokemon a side's ring reaches, in field units */
 const ARENA_MARGIN = 6;
 
+/** What each terrain tints the ground it is laid on */
+const TERRAIN_TINTS: Record<Terrains, string | null> = {
+  [Terrains.None]: null,
+  [Terrains.Electric]: TYPE_COLORS[Types.Electric],
+  [Terrains.Grassy]: TYPE_COLORS[Types.Grass],
+  [Terrains.Misty]: TYPE_COLORS[Types.Fairy],
+};
+
 /** The ground each side stands on: the boss's, and each party's */
-function arenasOf(standings: Standing[], field: { middle: Unit[] }): Arena[] {
-  const groups = new Map<unknown, FieldPoint[]>();
+function arenasOf(standings: Standing[], field: { middle: Unit[] }, battle: Battle): Arena[] {
+  const groups = new Map<unknown, { team: Team; places: FieldPoint[] }>();
 
   for (const standing of standings) {
     const key = field.middle.includes(standing.unit) ? 'middle' : standing.unit.team;
-    const held = groups.get(key) ?? [];
+    const held = groups.get(key) ?? { team: standing.unit.team, places: [] };
 
-    held.push(standing.place);
+    held.places.push(standing.place);
     groups.set(key, held);
   }
 
   const arenas: Arena[] = [];
 
-  for (const places of groups.values()) {
+  // A terrain over the whole field outranks a side's own, as weather does
+  for (const { team, places } of groups.values()) {
+    const terrain =
+      battle.terrain.current === Terrains.None ? team.terrain.current : battle.terrain.current;
+
     let x = 0;
     let z = 0;
 
@@ -175,7 +188,7 @@ function arenasOf(standings: Standing[], field: { middle: Unit[] }): Arena[] {
     for (const place of places) {
       radius = Math.max(radius, Math.hypot(place.x - x, place.z - z));
     }
-    arenas.push({ x, z, radius: radius + ARENA_MARGIN });
+    arenas.push({ x, z, radius: radius + ARENA_MARGIN, tint: TERRAIN_TINTS[terrain] });
   }
   return arenas;
 }
@@ -640,13 +653,13 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       const batch = scene?.marks ?? null;
 
       const standings = ringStandings(field, spriteFor, standFor);
-      const arenas = arenasOf(standings, field);
+      const arenas = arenasOf(standings, field, props.battle);
 
       if (scene == null || batch == null) {
         if (floor != null) {
           drawFloor(context, floor, view, region);
         }
-        drawGroundShade(context, view, region, arenas);
+        drawGroundShade(context, view, region, arenas, clock);
       } else {
         // Opened here and drawn once the fight is written into it.
         // Cleared every frame whether or not there is ground to lay,
@@ -666,7 +679,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         if (floor != null) {
           drawFloor(context, floor, view, region, batch);
         }
-        drawGroundShade(context, view, region, arenas, batch);
+        drawGroundShade(context, view, region, arenas, clock, batch);
       }
 
       const slots = project(standings, view, striking);

@@ -75,10 +75,10 @@ The portal stands dead centre, on the plaza, which is what keeps the network
 even and means a player stepping out of the gate is looking down every street at
 once. Around it a town holds **nine to fourteen** lots. One of them is always a
 **Pokémon Center**, since a town you cannot be patched up in is a town you would
-have to leave; the rest differ. About half have an auction board, about half a
-gym seat, a third a gym leader, and a champion sits in perhaps one town in
-twelve. The rest is trade. A place that had everything would be a place nobody
-left.
+have to leave. A **gym leader**, a **gym seat** and an **auction board** stand in
+every one of them too, so a badge run is a walk from town to town. What differs
+is the ladder above the leader: a quarter of towns have an Elite Four member,
+and a champion sits in about one town in seven. The rest is trade.
 
 ### The name
 
@@ -197,7 +197,7 @@ few are one to a chunk, marked below.
 | **Elite Four**      | One of the twelve, for a challenger holding their league's badges |
 | **Champion**        | Blue, Lance, Wallace or Cynthia, for whoever has beaten their league's Elite Four. They field the team they are known for, and one window in sixty-four a legend has the seat instead. One to a chunk |
 | **Frontier Brain**  | The house champion of a Battle Frontier facility, for whoever holds that region's crown. Three a side, under the house's own rule |
-| **Portal**          | A way through to another town's portal, for the price of a Portal Key. One to a region |
+| **Portal**          | A way through to another town's portal, for the price of a Portal Key. One to a town, and none in the country |
 | **Pokémon Center**  | Nurse Joy behind her counter. One to a town, and none in the country |
 
 Walking up to a wandering cell does not reveal in advance which specialist is
@@ -449,9 +449,8 @@ have been typed, and what it knows is every town anybody has ever walked into,
 so a name a friend passes on is a place that can be reached. Arriving puts the
 player on the portal in that town's plaza, whatever the distance.
 
-Every region has a portal, town or no town, so there is always one to leave
-from. A region with no town has nothing anybody could name, so it is somewhere
-to leave from and nowhere to arrive at.
+A portal stands in a town's plaza and nowhere else. A region with no town has
+no portal, since a gate nobody can name is a gate nobody can be sent to.
 
 If a destination is refused for any reason, the key is not spent.
 

@@ -1527,6 +1527,24 @@ export default function registerSignatureAbilities(): void {
   });
 
   // The three the second road holds
+  // The elemental monkeys each spend the tuft they carry once, and
+  // what each leaves on the enemy side keeps costing
+  registerSignature(Families.Pansage, Abilities.LeafCrown, {
+    name: 'Leaf Crown',
+    description: 'The first time it drops below 1/2 HP it seeds every enemy. Once per battle.',
+  });
+
+  registerSignature(Families.Pansear, Abilities.EmberTuft, {
+    name: 'Ember Tuft',
+    description: 'The first time it drops below 1/2 HP it burns every enemy. Once per battle.',
+  });
+
+  registerSignature(Families.Panpour, Abilities.GeyserTail, {
+    name: 'Geyser Tail',
+    description:
+      'The first time it drops below 1/2 HP it traps every enemy in a whirlpool. Once per battle.',
+  });
+
   registerSignature(Families.Munna, Abilities.Doze, {
     name: 'Doze',
     description:

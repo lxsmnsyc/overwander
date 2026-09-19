@@ -51,6 +51,9 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.ShellSmash]: 2,
       [Moves.WorkUp]: 1,
       [Moves.ShiftGear]: 1,
+      [Moves.NobleRoar]: -1,
+      [Moves.PlayNice]: -1,
+      [Moves.BabyDollEyes]: -1,
     },
   ],
   [
@@ -67,6 +70,9 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.QuiverDance]: 1,
       [Moves.ShellSmash]: 2,
       [Moves.WorkUp]: 1,
+      [Moves.NobleRoar]: -1,
+      [Moves.Confide]: -1,
+      [Moves.EerieImpulse]: -2,
     },
   ],
   [
@@ -82,6 +88,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.FakeTears]: -2,
       [Moves.QuiverDance]: 1,
       [Moves.ShellSmash]: -1,
+      [Moves.AromaticMist]: 1,
     },
   ],
   [

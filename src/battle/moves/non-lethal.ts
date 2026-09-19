@@ -8,7 +8,7 @@ import { BattleEvents, EffectType } from '../events';
  * catcher's move: it takes a target down to its last point of health
  * and no further
  */
-const NON_LETHAL_MOVES = new Set<Moves>([Moves.FalseSwipe]);
+const NON_LETHAL_MOVES = new Set<Moves>([Moves.FalseSwipe, Moves.HoldBack]);
 
 export default function setupNonLethalMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {

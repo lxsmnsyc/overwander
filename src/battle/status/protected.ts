@@ -16,11 +16,18 @@ const setupTimer = createTimedStatus(Statuses.Protected, DURATION);
 
 /**
  * The moves a guard does not stop by themselves: Feint walks through
- * it and Shadow Force comes back from off the field. Anything else
+ * it, Shadow Force and Phantom Force come back from off the field, and
+ * Hoopa's two moves reach round it from somewhere else. Anything else
  * that walks through, an ability among them, answers the question
  * below instead of being listed here
  */
-const WALKS_THROUGH = new Set<Moves>([Moves.Feint, Moves.ShadowForce]);
+const WALKS_THROUGH = new Set<Moves>([
+  Moves.Feint,
+  Moves.ShadowForce,
+  Moves.PhantomForce,
+  Moves.HyperspaceHole,
+  Moves.HyperspaceFury,
+]);
 
 /**
  * Guarding: everything aimed at the unit from outside is turned away

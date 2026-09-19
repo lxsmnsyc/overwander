@@ -1674,4 +1674,28 @@ export default function registerSignatureAbilities(): void {
     name: 'Litterbug',
     description: 'It casts Toxic Spikes onto the enemy side as it arrives on the field.',
   });
+
+  // Route 5, where the games hand out one of the last two apiece
+  registerSignature(Families.Zorua, Abilities.Bluff, {
+    name: 'Bluff',
+    description:
+      'The first move that would hit it super effectively passes through it. Once per battle.',
+  });
+
+  registerSignature(Families.Minccino, Abilities.CleanSweep, {
+    name: 'Clean Sweep',
+    description: 'It sweeps every hazard and screen off both sides of the field as it arrives.',
+  });
+
+  // Gothita and Solosis are the two the games separate: one aims what
+  // its team throws, the other spreads what its team takes
+  registerSignature(Families.Gothita, Abilities.Fixation, {
+    name: 'Fixation',
+    description: 'Its whole team hits 1.2x against whichever enemy is lowest on HP.',
+  });
+
+  registerSignature(Families.Solosis, Abilities.Division, {
+    name: 'Division',
+    description: 'It takes 1/4 of every blow aimed at a teammate in their place.',
+  });
 }

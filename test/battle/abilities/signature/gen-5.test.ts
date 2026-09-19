@@ -46,6 +46,10 @@ import {
   DEATH_MASK_STAGES,
   GANG_UP_STEP,
 } from '../../../../src/battle/abilities/signature/scraggy-to-trubbish';
+import {
+  DIVISION_SHARE,
+  FIXATION_SCALE,
+} from '../../../../src/battle/abilities/signature/zorua-to-solosis';
 import turns from '../../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { act, dealDamage, resolveAttackDamage } from './helpers';
@@ -917,5 +921,134 @@ describe('the old city and the back alleys', () => {
 
     expect(robber.status[Statuses.Perishing]).toBeTruthy();
     expect(cofagrigus.status[Statuses.Perishing]).toBeTruthy();
+  });
+});
+
+describe('what Route 5 holds', () => {
+  it('lets the first super effective blow pass through it, once a fight', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const zorua = createUnit(battle, teamA, [Types.Grass]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    zorua.addAbility(Abilities.Bluff);
+    zorua.enter();
+    foe.enter();
+
+    const whole = zorua.health;
+
+    // Fire into Grass is super effective, so the trick answers it
+    foe.attack(zorua, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+    expect(zorua.health).toBe(whole);
+
+    // Spent: the next one lands
+    foe.attack(zorua, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+    expect(zorua.health).toBeLessThan(whole);
+  });
+
+  it('does not spend the bluff on a blow that was not super effective', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const zorua = createUnit(battle, teamA, [Types.Grass]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    zorua.addAbility(Abilities.Bluff);
+    zorua.enter();
+    foe.enter();
+
+    foe.attack(zorua, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    const hurt = zorua.health;
+
+    expect(hurt).toBeLessThan(zorua.checkStat(Stats.HP, 0));
+
+    // Still there for the one it is meant for
+    foe.attack(zorua, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+    expect(zorua.health).toBe(hurt);
+  });
+
+  it('sweeps both sides of the field as it arrives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cinccino = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const cause = { type: EffectType.None } as const;
+
+    foe.enter();
+    teamA.addStatus(TeamStatuses.StealthRock, cause);
+    teamB.addStatus(TeamStatuses.Spikes, cause);
+
+    cinccino.addAbility(Abilities.CleanSweep);
+    cinccino.enter();
+
+    expect(teamA.status[TeamStatuses.StealthRock]).toBeFalsy();
+    expect(teamB.status[TeamStatuses.Spikes]).toBeFalsy();
+  });
+
+  it('has the pair aim what its team throws and spread what its team takes', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const gothita = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const failing = createUnit(battle, teamB);
+    const whole = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    gothita.addAbility(Abilities.Fixation);
+    gothita.enter();
+    mate.enter();
+    failing.enter();
+    whole.enter();
+    failing.setHealth(Math.floor(failing.checkStat(Stats.HP, 0) / 4));
+
+    const onFailing = resolveAttackDamage(battle, mate, failing);
+    const onWhole = resolveAttackDamage(battle, mate, whole);
+
+    expect(onFailing / onWhole).toBeCloseTo(FIXATION_SCALE, 2);
+  });
+
+  it('takes a quarter of what is aimed at a teammate', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const solosis = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    solosis.addAbility(Abilities.Division);
+    solosis.enter();
+    mate.enter();
+    foe.enter();
+
+    const cellWhole = solosis.health;
+    const mateWhole = mate.health;
+
+    foe.damage({ type: EffectType.None }, mate, 100, 0);
+
+    const shared = cellWhole - solosis.health;
+
+    expect(shared).toBeCloseTo(100 * DIVISION_SHARE, 0);
+    expect(mateWhole - mate.health).toBeCloseTo(100 - shared, 0);
+  });
+
+  it('dresses a Zorua as the teammate at the back until something lands', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const zorua = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    zorua.setSpecies(Species.Zorua);
+    zorua.setHealth(zorua.checkStat(Stats.HP, 0));
+    mate.setSpecies(Species.Minccino);
+    mate.setHealth(mate.checkStat(Stats.HP, 0));
+    zorua.addAbility(Abilities.Illusion);
+    mate.enter();
+    zorua.enter();
+    foe.enter();
+
+    expect(zorua.appearance).toBe(Species.Minccino);
+    // What it is never moved, only what it looks like
+    expect(zorua.species).toBe(Species.Zorua);
+
+    foe.attack(zorua, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(zorua.appearance).toBe(Species.Zorua);
   });
 });

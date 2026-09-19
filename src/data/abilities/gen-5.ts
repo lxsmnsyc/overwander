@@ -6,6 +6,11 @@ import { registerAbility } from './__create';
  * the mainline's
  */
 export default function registerGen5Abilities(): void {
+  // Zorua
+  registerAbility(Abilities.Illusion, {
+    name: 'Illusion',
+    description: 'It takes the field looking like a teammate, until a move lands on it.',
+  });
   // Yamask
   registerAbility(Abilities.Mummy, {
     name: 'Mummy',

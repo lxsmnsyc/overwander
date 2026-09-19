@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -104,6 +105,14 @@ function format(stamps: Map<string, string>): string {
 }
 
 async function main(): Promise<void> {
+  // The sprites are published to their own host, so a build for the
+  // app alone has none of them on disk. There is nothing to stamp
+  // then, and the file that is served is the one already committed
+  if (!existsSync(ROOT)) {
+    process.stdout.write(`${ROOT}: not here, so nothing to stamp\n`);
+    return;
+  }
+
   const sheets = new Map<string, string[]>();
 
   for (const file of await walk('')) {

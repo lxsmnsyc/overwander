@@ -1,3 +1,4 @@
+import { spriteUrl } from './sprite-origin';
 /**
  * The digest each sheet is asked for with.
  *
@@ -17,10 +18,10 @@
  */
 
 /** Where the list is served from */
-const STAMPS_PATH = '/sprites/stamps.json';
+const STAMPS_PATH = spriteUrl('/sprites/stamps.json');
 
 /** What every sheet path starts with, and what a stamp key does not */
-const SPRITE_ROOT = '/sprites/';
+const SPRITE_ROOT = spriteUrl('/sprites/');
 
 let listed: Promise<Map<string, string> | null> | undefined;
 

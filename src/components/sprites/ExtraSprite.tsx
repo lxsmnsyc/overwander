@@ -1,5 +1,6 @@
 import { type JSX, Show, createSignal } from 'solid-js';
 import { asNumber, asRecord, asRecordArray, asString } from '../../auth/__normalize';
+import { spriteUrl } from '../../canvas/sprite-origin';
 
 /**
  * One picture off an extras sheet, drawn as a CSS background the way
@@ -103,7 +104,7 @@ export default function ExtraSprite(props: ExtraSpriteProps): JSX.Element {
           style={{
             width: `${found.width}px`,
             height: `${found.height}px`,
-            'background-image': `url(/sprites/extras/${props.sheet}.png)`,
+            'background-image': `url(${spriteUrl(`/sprites/extras/${props.sheet}.png`)})`,
             'background-position': `-${found.x}px -${found.y}px`,
             'image-rendering': 'pixelated',
           }}

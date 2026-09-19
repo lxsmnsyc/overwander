@@ -17,6 +17,7 @@ import registerDurantSpecies from './durant';
 import registerDwebbleSpecies from './dwebble';
 import registerElgyemSpecies from './elgyem';
 import registerFerroseedSpecies from './ferroseed';
+import registerForcesOfNatureSpecies from './forces-of-nature';
 import registerGolettSpecies from './golett';
 import registerGothitaSpecies from './gothita';
 import registerHeatmorSpecies from './heatmor';
@@ -122,4 +123,5 @@ export default function registerGen5Species(): void {
   registerSwordsOfJusticeSpecies();
   registerKeldeoSpecies();
   registerTaoTrioSpecies();
+  registerForcesOfNatureSpecies();
 }

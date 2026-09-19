@@ -166,6 +166,12 @@ const enum Lairs {
   DragonspiralTower = 40,
   /** The crater the husk has been waiting in since it was torn open */
   GiantChasm = 41,
+  /**
+   * The shrine the three storm riders come back to. One place for all
+   * three, the way the burned tower holds the beasts: two of them
+   * roam the country wrecking it and the third follows behind
+   */
+  AbundantShrine = 42,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -211,6 +217,7 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.MoorOfIcirrus]: 'Moor of Icirrus',
   [Lairs.DragonspiralTower]: 'Dragonspiral Tower',
   [Lairs.GiantChasm]: 'Giant Chasm',
+  [Lairs.AbundantShrine]: 'Abundant Shrine',
 };
 
 /**
@@ -263,6 +270,7 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.MoorOfIcirrus]: [Species.Keldeo],
   [Lairs.DragonspiralTower]: [Species.Reshiram, Species.Zekrom],
   [Lairs.GiantChasm]: [Species.Kyurem],
+  [Lairs.AbundantShrine]: [Species.Tornadus, Species.Thundurus, Species.Landorus],
 };
 
 /**
@@ -311,6 +319,7 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.MoorOfIcirrus,
   Lairs.DragonspiralTower,
   Lairs.GiantChasm,
+  Lairs.AbundantShrine,
 ];
 
 /**
@@ -376,7 +385,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.SnowpointTemple,
     Lairs.GiantChasm,
   ],
-  [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor],
+  [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor, Lairs.AbundantShrine],
   [Biome.Bog]: [Lairs.LakeValor, Lairs.TurnbackCave],
   [Biome.TemperateForest]: [Lairs.LakeVerity, Lairs.RuminationField],
   [Biome.Woodland]: [Lairs.BurnedTower, Lairs.LakeVerity, Lairs.RuminationField],

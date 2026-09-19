@@ -1,9 +1,9 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { Types } from '../../data/constants/types';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
 import turns from '../turn';
+import { slipsTraps } from '../utils';
 
 /**
  * Fairy Lock: nobody on the field can be swapped out for a turn. It
@@ -28,7 +28,7 @@ export default function setupFairyLock(battle: Battle): void {
   });
 
   battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
-    if (event.success && held > 0 && !event.source.types.has(Types.Ghost)) {
+    if (event.success && held > 0 && !slipsTraps(event.source)) {
       event.success = false;
     }
   });

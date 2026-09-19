@@ -57,7 +57,7 @@ export default function registerPlayRoughToAromaticMist(): void {
   });
   registerMove(Moves.FairyLock, {
     name: 'Fairy Lock',
-    description: 'Nobody on the field can be swapped out for 2 seconds, except a Ghost type.',
+    description: 'Nobody on the field can be swapped out for 2 seconds, ghosts aside.',
     type: Types.Fairy,
     category: MoveCategories.Status,
     pp: 10,

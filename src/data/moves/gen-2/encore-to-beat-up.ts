@@ -264,7 +264,7 @@ export default function registerEncoreToBeatUp(): void {
   registerMove(Moves.Whirlpool, {
     name: 'Whirlpool',
     description:
-      'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape. 2x on anything underwater from Dive.',
+      'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside. 2x on anything underwater from Dive.',
     type: Types.Water,
     category: MoveCategories.Special,
     power: 35,

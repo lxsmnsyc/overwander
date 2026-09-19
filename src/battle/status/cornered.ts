@@ -4,6 +4,7 @@ import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 import turns from '../turn';
 import createTimedStatus from './__create';
+import { slipsTraps } from '../utils';
 
 /**
  * Held on the field for five casts. The mainline holds a target until
@@ -22,7 +23,11 @@ export default function setupCorneredStatus(battle: Battle): void {
   setupTimer(battle);
 
   battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
-    if (event.success && event.source.status[Statuses.Cornered] != null) {
+    if (
+      event.success &&
+      event.source.status[Statuses.Cornered] != null &&
+      !slipsTraps(event.source)
+    ) {
       event.success = false;
 
       event.source.triggerStatus(Statuses.Cornered, { type: EffectType.None });

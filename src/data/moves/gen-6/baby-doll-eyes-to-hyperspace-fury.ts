@@ -43,7 +43,8 @@ export default function registerBabyDollEyesToHyperspaceFury(): void {
   });
   registerMove(Moves.Infestation, {
     name: 'Infestation',
-    description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape.',
+    description:
+      'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside.',
     type: Types.Bug,
     category: MoveCategories.Special,
     power: 20,
@@ -94,7 +95,8 @@ export default function registerBabyDollEyesToHyperspaceFury(): void {
   });
   registerMove(Moves.ThousandWaves, {
     name: 'Thousand Waves',
-    description: 'Hits everything opposite, and none of them can be swapped out for 10 seconds.',
+    description:
+      'Hits everything opposite, and none of them can be swapped out for 10 seconds, ghosts aside.',
     type: Types.Ground,
     category: MoveCategories.Physical,
     power: 90,

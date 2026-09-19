@@ -8,7 +8,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import { MAJOR_STATUS_CONDITIONS } from '../../status';
 import type Unit from '../../unit';
-import { hasAnyStatus, stealableItem, unitTarget } from '../../utils';
+import { hasAnyStatus, slipsTraps, stealableItem, unitTarget } from '../../utils';
 import { createAbility, getAbilityHolders } from '../__create';
 import { createNextCastPenalty } from './__create';
 
@@ -291,7 +291,7 @@ const parasToTentacool = [
         battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
           const source = event.source;
 
-          if (!event.success || !isQuarry(source)) {
+          if (!event.success || !isQuarry(source) || slipsTraps(source)) {
             return;
           }
 
@@ -467,7 +467,7 @@ const parasToTentacool = [
       battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
         const source = event.source;
 
-        if (!event.success || !held.has(source)) {
+        if (!event.success || !held.has(source) || slipsTraps(source)) {
           return;
         }
 

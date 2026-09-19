@@ -102,7 +102,8 @@ export default function registerDefendOrderToShadowForce(): void {
   });
   registerMove(Moves.MagmaStorm, {
     name: 'Magma Storm',
-    description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape.',
+    description:
+      'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside.',
     type: Types.Fire,
     category: MoveCategories.Special,
     power: 100,

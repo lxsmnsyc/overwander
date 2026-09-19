@@ -22,7 +22,7 @@ import {
 } from '../../events';
 import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { isPrimalWeather, onUnitActs } from '../../utils';
+import { isPrimalWeather, onUnitActs, slipsTraps } from '../../utils';
 import { createAbility, getAbilityHolders } from '../__create';
 
 /**
@@ -1339,7 +1339,7 @@ export function createFossilPairAbility(
         }
       }),
       battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
-        if (event.success && held.has(event.source)) {
+        if (event.success && held.has(event.source) && !slipsTraps(event.source)) {
           event.success = false;
         }
       }),

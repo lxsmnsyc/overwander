@@ -6,6 +6,7 @@ import { SWITCHING_SPAN } from '../../src/battle/status/switching';
 import turns from '../../src/battle/turn';
 import type Unit from '../../src/battle/unit';
 import { Stages } from '../../src/data/constants/stats';
+import Abilities from '../../src/data/ids/abilities';
 import { Types } from '../../src/data/constants/types';
 import { MoveCategories, Moves } from '../../src/data/ids/moves';
 import { Genders } from '../../src/data/ids/species';
@@ -548,5 +549,41 @@ describe('Mist', () => {
 
     veiled.addStage(Stages.Attack, -1, hostile);
     expect(veiled.stages[Stages.Attack]).toBe(-2);
+  });
+});
+
+describe('what a Ghost type slips', () => {
+  it('walks out of every trap an opponent sets, and not out of its own roots', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ghost = createUnit(battle, teamB, [Types.Ghost]);
+    const plain = createUnit(battle, teamB);
+    const cause = { type: EffectType.None } as const;
+
+    pinRandom(battle, 1);
+    holder.addAbility(Abilities.LatchOn);
+    holder.enter();
+    ghost.enter();
+    plain.enter();
+
+    // A bind and a stare hold the plain one and let the Ghost go
+    for (const status of [Statuses.Trapped, Statuses.Cornered]) {
+      ghost.addStatus(status, cause);
+      plain.addStatus(status, cause);
+      expect(ghost.checkEscape(), String(status)).toBe(true);
+      expect(plain.checkEscape(), String(status)).toBe(false);
+      ghost.removeStatus(status, cause);
+      plain.removeStatus(status, cause);
+    }
+
+    // So does a trapping ability
+    holder.attack(ghost, Moves.Crunch, 10, Types.Dark, MoveCategories.Physical, 0);
+    expect(ghost.checkEscape()).toBe(true);
+    holder.attack(plain, Moves.Crunch, 10, Types.Dark, MoveCategories.Physical, 0);
+    expect(plain.checkEscape()).toBe(false);
+
+    // Its own Ingrain is not a trap anybody set on it
+    ghost.addStatus(Statuses.Rooted, cause);
+    expect(ghost.checkEscape()).toBe(false);
   });
 });

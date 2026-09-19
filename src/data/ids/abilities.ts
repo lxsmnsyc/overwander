@@ -874,6 +874,9 @@ const enum Abilities {
   Hexlight = 200290,
   SwapField = 200291,
   BrokenSeal = 200292,
+  Scoring = 200293,
+  ThreeHeads = 200294,
+  Sunwarmed = 200295,
 }
 
 export default Abilities;

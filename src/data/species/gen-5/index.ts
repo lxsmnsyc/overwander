@@ -18,6 +18,7 @@ import registerDwebbleSpecies from './dwebble';
 import registerElgyemSpecies from './elgyem';
 import registerFerroseedSpecies from './ferroseed';
 import registerForcesOfNatureSpecies from './forces-of-nature';
+import registerGenesectSpecies from './genesect';
 import registerGolettSpecies from './golett';
 import registerGothitaSpecies from './gothita';
 import registerHeatmorSpecies from './heatmor';
@@ -27,6 +28,7 @@ import registerLarvestaSpecies from './larvesta';
 import registerLillipupSpecies from './lillipup';
 import registerLitwickSpecies from './litwick';
 import registerMaractusSpecies from './maractus';
+import registerMeloettaSpecies from './meloetta';
 import registerMienfooSpecies from './mienfoo';
 import registerMinccinoSpecies from './minccino';
 import registerMunnaSpecies from './munna';
@@ -56,12 +58,14 @@ import registerSwordsOfJusticeSpecies from './swords-of-justice';
 import registerTaoTrioSpecies from './tao-trio';
 import registerTepigSpecies from './tepig';
 import registerVanilliteSpecies from './vanillite';
+import registerVictiniSpecies from './victini';
 import registerVenipedeSpecies from './venipede';
 import registerVullabySpecies from './vullaby';
 import registerWoobatSpecies from './woobat';
 import registerZoruaSpecies from './zorua';
 
 export default function registerGen5Species(): void {
+  registerVictiniSpecies();
   registerSnivySpecies();
   registerTepigSpecies();
   registerOshawottSpecies();
@@ -124,4 +128,6 @@ export default function registerGen5Species(): void {
   registerKeldeoSpecies();
   registerTaoTrioSpecies();
   registerForcesOfNatureSpecies();
+  registerMeloettaSpecies();
+  registerGenesectSpecies();
 }

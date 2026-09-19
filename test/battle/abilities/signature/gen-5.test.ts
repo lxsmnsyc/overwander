@@ -17,6 +17,12 @@ import {
   SLEEVE_GUARD_SCALE,
 } from '../../../../src/battle/abilities/signature/tynamo-to-mienfoo';
 import {
+  OVERCLOCK_SCALE,
+  OVERCLOCK_SHARE,
+  OVERCLOCK_THRESHOLD,
+  WINNERS_SHARE_STAGES,
+} from '../../../../src/battle/abilities/signature/unova-mythicals';
+import {
   ANTEATER_SCALE,
   ANT_GUARD_SCALE,
   EMBER_HALO_SHARE,
@@ -1866,5 +1872,134 @@ describe('the forces of nature', () => {
     const lifted = dealDamage(mate, enemy, Moves.Swift, 40, Types.Electric, MoveCategories.Special);
 
     expect(lifted / bare).toBeCloseTo(GENIE_SCALE, 1);
+  });
+});
+
+describe('the unova mythicals', () => {
+  it("hands a win to the winner's whole team, the holder included", () => {
+    const { battle, teamA, teamB } = createBattle();
+    const star = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    star.addAbility(Abilities.WinnersShare);
+    star.enter();
+    mate.enter();
+    enemy.enter();
+
+    star.damage({ type: EffectType.Move, move: Moves.Tackle, unit: star }, enemy, 999, 0);
+
+    expect(enemy.alive).toBe(false);
+    for (const unit of [star, mate]) {
+      expect(unit.stages[Stages.Attack]).toBe(WINNERS_SHARE_STAGES);
+      expect(unit.stages[Stages.SpecialAttack]).toBe(WINNERS_SHARE_STAGES);
+    }
+  });
+
+  it('pays out once however many holders a team fields', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const star = createUnit(battle, teamA);
+    const second = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    star.addAbility(Abilities.WinnersShare);
+    second.addAbility(Abilities.WinnersShare);
+    star.enter();
+    second.enter();
+    enemy.enter();
+
+    star.damage({ type: EffectType.Move, move: Moves.Tackle, unit: star }, enemy, 999, 0);
+
+    expect(star.stages[Stages.Attack]).toBe(WINNERS_SHARE_STAGES);
+  });
+
+  it('gives nothing for one of its own going down', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const star = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    star.addAbility(Abilities.WinnersShare);
+    star.enter();
+    mate.enter();
+    enemy.enter();
+
+    enemy.damage({ type: EffectType.Move, move: Moves.Tackle, unit: enemy }, mate, 999, 0);
+
+    expect(mate.alive).toBe(false);
+    expect(star.stages[Stages.Attack]).toBe(0);
+  });
+
+  it('turns a singer over into a dancer with its halves swapped', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    singer.setSpecies(Species.Meloetta);
+    singer.addAbility(Abilities.Countertune);
+    singer.enter();
+    enemy.enter();
+
+    const cause = {
+      type: EffectType.Ability,
+      ability: Abilities.Countertune,
+      unit: singer,
+    } as const;
+
+    singer.addStage(Stages.SpecialAttack, 3, cause);
+    singer.addStage(Stages.Defense, 1, cause);
+
+    singer.triggerMoveTarget(Moves.RelicSong, { type: MoveTargetType.Unit, unit: enemy }, 0);
+    battle.tick(turns(1));
+
+    expect(singer.species).toBe(Species.MeloettaPirouette);
+    expect(singer.stages[Stages.Attack]).toBe(3);
+    expect(singer.stages[Stages.SpecialAttack]).toBe(0);
+    expect(singer.stages[Stages.SpecialDefense]).toBe(1);
+    expect(singer.stages[Stages.Defense]).toBe(0);
+  });
+
+  it('casts faster above half health and burns below it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const machine = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    machine.addAbility(Abilities.Overclock);
+    machine.enter();
+    bare.enter();
+    enemy.enter();
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+    const plain = bare.checkMoveCastTime(Moves.SolarBeam, target);
+
+    expect(machine.checkMoveCastTime(Moves.SolarBeam, target)).toBeCloseTo(
+      plain * OVERCLOCK_SCALE,
+      5,
+    );
+
+    const max = machine.checkStat(Stats.HP, 0);
+
+    machine.setHealth(Math.floor(max * OVERCLOCK_THRESHOLD));
+
+    // Past the threshold the saving stops, and acting starts costing
+    expect(machine.checkMoveCastTime(Moves.SolarBeam, target)).toBe(plain);
+
+    const before = machine.health;
+
+    act(battle, machine);
+
+    expect(machine.health).toBe(before - Math.max(1, Math.floor(max * OVERCLOCK_SHARE)));
+
+    // Above the threshold it costs nothing at all
+    const spare = bare.health;
+
+    act(battle, bare);
+    expect(bare.health).toBe(spare);
   });
 });

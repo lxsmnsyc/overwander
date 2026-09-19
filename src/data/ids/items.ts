@@ -930,6 +930,22 @@ export const enum Items {
 
   /** The pair that folds a dragon into the husk, and pulls it back out */
   DnaSplicers = 438,
+
+  /** The ticket out to the garden on the island, for the one that wins */
+  LibertyPass = 439,
+
+  /**
+   * The box that still plays the old song, which is this game's own:
+   * the mainline handed Meloetta over at an event and gave nobody an
+   * item for it
+   */
+  MusicBox = 440,
+
+  /**
+   * What the scientist left behind him, which is this game's own for
+   * the same reason: nothing in the mainline calls a Genesect
+   */
+  ColressMachine = 441,
 }
 
 /**

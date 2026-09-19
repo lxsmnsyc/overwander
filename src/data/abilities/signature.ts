@@ -1890,4 +1890,24 @@ export default function registerSignatureAbilities(): void {
     name: 'Landfall',
     description: 'Its team throws Ground moves at 1.3x while it stands.',
   });
+
+  /**
+   * The three the region keeps out of the wild. Each stands alone
+   * rather than in a group, so each is its own design
+   */
+  registerSignature(Families.Victini, Abilities.WinnersShare, {
+    name: "Winner's Share",
+    description: 'Each enemy that faints gives its whole team +1 Attack and +1 Special Attack.',
+  });
+
+  registerSignature(Families.Meloetta, Abilities.Countertune, {
+    name: 'Countertune',
+    description: 'Changing shape swaps its Attack and Special Attack stages, and its two defences.',
+  });
+
+  registerSignature(Families.Genesect, Abilities.Overclock, {
+    name: 'Overclock',
+    description:
+      'Casts 25% faster above 1/2 HP. At or below it, loses 1/16 of its HP each time it acts.',
+  });
 }

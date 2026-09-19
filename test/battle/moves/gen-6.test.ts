@@ -430,6 +430,28 @@ describe("Kalos's moves", () => {
       expect(bird.status[Statuses.Grounded]).toBeDefined();
     });
 
+    it('lands a Ground move on a flyer once Smack Down has brought it down', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const striker = createUnit(battle, teamA);
+      const bird = createUnit(battle, teamB, [Types.Flying]);
+
+      pinRandom(battle, 1);
+      striker.enter();
+      bird.enter();
+
+      // Up in the air, the chart's immunity stands
+      expect(effectiveness(battle, striker, bird, Moves.Earthquake, Types.Ground)).toBe(0);
+
+      striker.triggerMoveEffect(Moves.SmackDown, unitTarget(bird), 0);
+      expect(bird.status[Statuses.Grounded]).toBeDefined();
+      expect(effectiveness(battle, striker, bird, Moves.Earthquake, Types.Ground)).toBe(1);
+
+      const whole = bird.health;
+
+      striker.triggerMoveEffect(Moves.Earthquake, unitTarget(bird), 0);
+      expect(bird.health).toBeLessThan(whole);
+    });
+
     it('sharpens the user when Fell Stinger finishes something', () => {
       const { battle, teamA, teamB } = createBattle();
       const bee = createUnit(battle, teamA);

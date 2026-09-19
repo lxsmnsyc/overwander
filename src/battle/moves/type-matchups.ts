@@ -5,10 +5,14 @@ import type Battle from '../core';
 import { BattleEvents } from '../events';
 
 /**
- * The three moves that read the type chart their own way. Flying
- * Press is a Fighting move that also lands as a Flying one, Freeze-Dry
- * is an Ice move that Water does not resist, and Thousand Arrows is a
- * Ground move that a Flying type does not shrug off
+ * The moves that read the type chart their own way. Flying Press is a
+ * Fighting move that also lands as a Flying one, and Freeze-Dry is an
+ * Ice move that Water does not resist.
+ *
+ * And a Ground move against a Flying type: the chart's immunity is
+ * about being in the air, so a flyer brought down (Smack Down, Gravity,
+ * an Iron Ball) takes it at 1x. Thousand Arrows is the one Ground move
+ * that treats every flyer that way, up or down
  * https://bulbapedia.bulbagarden.net/wiki/Flying_Press_(move)
  */
 
@@ -32,7 +36,11 @@ export default function setupTypeMatchups(battle: Battle): void {
       event.multiplier *= factor(Types.Flying, defending);
     } else if (move === Moves.FreezeDry && defending === Types.Water) {
       event.multiplier *= FREEZE_DRY_AGAINST_WATER / factor(Types.Ice, Types.Water);
-    } else if (move === Moves.ThousandArrows && defending === Types.Flying) {
+    } else if (
+      event.parent.type === Types.Ground &&
+      defending === Types.Flying &&
+      (move === Moves.ThousandArrows || event.parent.target.checkGrounded())
+    ) {
       event.multiplier = 1;
     }
   });

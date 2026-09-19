@@ -57,6 +57,23 @@ export function isRaidEncounter(type: EncounterType): boolean {
 }
 
 /**
+ * Whether a dark day can close this kind of arrival's heart.
+ *
+ * A wild meeting, a legendary raid's prize, an egg claimed or bred
+ * under the sky, and a fossil opened under it. A shadow raid's prize
+ * is shadowed already, a mythical is beyond the sky's reach, and a
+ * gift and a syndicate's pokemon both arrive with the answer written
+ */
+export function isShadowableEncounter(type: EncounterType): boolean {
+  return (
+    type === EncounterType.Wild ||
+    type === EncounterType.LegendaryRaid ||
+    type === EncounterType.Hatched ||
+    type === EncounterType.Revived
+  );
+}
+
+/**
  * Whether the meeting happened nowhere. A gift, an event pokemon and a
  * mythical called out of a relic were none of them standing anywhere,
  * so none has a place to name — to a player they are one thing

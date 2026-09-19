@@ -37,6 +37,7 @@ import { GameDialog, useGame } from '../app/game-context';
 import { ActionsIcon } from '../icons';
 import PlayerPlace from './PlayerPlace';
 import ProfileSection from './sections';
+import TeamsCard from './TeamsCard';
 import TradesTab from '../trades/TradesTab';
 import { getTitleName, titleLine, titleType } from '../../data/ids/titles';
 import {
@@ -422,6 +423,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
         >
           <TabBar>
             <TabButton value={ProfileSection.Battles}>Battles</TabButton>
+            <TabButton value={ProfileSection.Teams}>Teams</TabButton>
             <TabButton value={ProfileSection.Awards}>Awards</TabButton>
             <TabButton value={ProfileSection.Friends}>
               Friends
@@ -451,6 +453,11 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
             <Card title="Battles">
               <BattleHistory player={props.player} />
             </Card>
+          </TabPane>
+          {/* The parties they saved, which is what a raid or a duel
+              fills its picker from */}
+          <TabPane value={ProfileSection.Teams}>
+            <TeamsCard player={props.player} />
           </TabPane>
           {/* What they have won for good: the badge shelf, every slot
               shown so a visitor can see what is earned and what is

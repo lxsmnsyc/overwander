@@ -864,6 +864,9 @@ const enum Abilities {
   CleanSweep = 200280,
   Fixation = 200281,
   Division = 200282,
+  StaticFeed = 200283,
+  ThornCurtain = 200284,
+  Meshing = 200285,
 }
 
 export default Abilities;

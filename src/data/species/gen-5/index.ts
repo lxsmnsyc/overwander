@@ -5,7 +5,10 @@ import registerCottoneeSpecies from './cottonee';
 import registerDarumakaSpecies from './darumaka';
 import registerDrilburSpecies from './drilbur';
 import registerDwebbleSpecies from './dwebble';
+import registerFerroseedSpecies from './ferroseed';
 import registerGothitaSpecies from './gothita';
+import registerJoltikSpecies from './joltik';
+import registerKlinkSpecies from './klink';
 import registerLillipupSpecies from './lillipup';
 import registerMaractusSpecies from './maractus';
 import registerMinccinoSpecies from './minccino';
@@ -70,4 +73,7 @@ export default function registerGen5Species(): void {
   registerMinccinoSpecies();
   registerGothitaSpecies();
   registerSolosisSpecies();
+  registerJoltikSpecies();
+  registerFerroseedSpecies();
+  registerKlinkSpecies();
 }

@@ -1698,4 +1698,20 @@ export default function registerSignatureAbilities(): void {
     name: 'Division',
     description: 'It takes 1/4 of every blow aimed at a teammate in their place.',
   });
+
+  // Chargestone Cave
+  registerSignature(Families.Joltik, Abilities.StaticFeed, {
+    name: 'Static Feed',
+    description: 'It heals 1/8 of its HP whenever an Electric move lands on anybody, either side.',
+  });
+
+  registerSignature(Families.Ferroseed, Abilities.ThornCurtain, {
+    name: 'Thorn Curtain',
+    description: 'Its teammates take 0.85x from contact moves while it stands.',
+  });
+
+  registerSignature(Families.Klink, Abilities.Meshing, {
+    name: 'Meshing',
+    description: 'While a teammate stands with it, its team takes 0.9x and its own moves hit 1.2x.',
+  });
 }

@@ -8,7 +8,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
 import { countsAgainstSlots } from '../../data/constants/slots';
-import { createAbility } from './__create';
+import { createAbility, createContactRecoilAbility } from './__create';
 
 /**
  * The abilities a swap may take: what counts against a slot, and never
@@ -34,6 +34,9 @@ function swappableAbilities(unit: Unit): Abilities[] {
 export const ZEN_MODE_THRESHOLD = 1 / 2;
 
 const setupAbilities = [
+  // https://bulbapedia.bulbagarden.net/wiki/Iron_Barbs_(Ability)
+  createContactRecoilAbility(Abilities.IronBarbs),
+
   /**
    * Illusion dresses its holder as the teammate standing furthest back
    * as it takes the field, and the act drops the moment anything lands

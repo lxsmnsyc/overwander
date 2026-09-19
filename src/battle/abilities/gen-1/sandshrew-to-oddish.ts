@@ -1,5 +1,5 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
-import { Stages, Stats } from '../../../data/constants/stats';
+import { Stages } from '../../../data/constants/stats';
 import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
 import { ItemTypes, type Items } from '../../../data/ids/items';
@@ -17,6 +17,7 @@ import {
   chipImmunity,
   createAbility,
   createContactHazard,
+  createContactRecoilAbility,
   createFeedScoring,
   createSandRushAbility,
   movesOfType,
@@ -52,40 +53,7 @@ const sandshrewToOddish = [
   createSandRushAbility(Abilities.SandRush, isWeatherSandstorm, Weathers.Sandstorm),
 
   // https://bulbapedia.bulbagarden.net/wiki/Rough_Skin_(Ability)
-  createAbility(
-    Abilities.RoughSkin,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-          if (
-            event.success &&
-            !(event.flags & DamageFlags.Indirect) &&
-            event.cause.type === EffectType.Move &&
-            event.cause.unit !== event.target &&
-            event.target.hasAbility(Abilities.RoughSkin) &&
-            event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target))
-          ) {
-            const attacker = event.cause.unit;
-
-            event.target.triggerAbility(Abilities.RoughSkin);
-
-            event.target.damage(
-              {
-                type: EffectType.Ability,
-                ability: Abilities.RoughSkin,
-                unit: event.target,
-              },
-              attacker,
-              attacker.checkStat(Stats.HP, 0) / 8,
-              DamageFlags.Indirect,
-            );
-          }
-        }),
-        // Touching it costs something, so the AI is told before it
-        // decides to
-        createContactHazard(battle, Abilities.RoughSkin),
-      ]),
-  ),
+  createContactRecoilAbility(Abilities.RoughSkin),
 
   // Nidoran
   // https://bulbapedia.bulbagarden.net/wiki/Poison_Point_(Ability)

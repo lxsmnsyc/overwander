@@ -281,6 +281,10 @@ export function assembleCaught(
     traded: row.traded,
     canEvolve: row.can_evolve,
     auctionable: row.auctionable,
+    hidden: row.hidden,
+    // What is folded into it, which is how a fusion comes apart
+    // without looking for whoever points back
+    fusedWith: row.fused_with,
     ...(parts.has('moves') ? { moves: moveIds, movePoints } : {}),
     ...(parts.has('abilities') ? { abilities: abilityIds } : {}),
     slots: row.slots,
@@ -337,6 +341,10 @@ const SCALAR_COLUMNS: Record<string, string> = {
   traded: 'traded',
   canEvolve: 'can_evolve',
   auctionable: 'auctionable',
+  // Written by the splicers alone: the base names what is inside it,
+  // and what is inside says it is out of play
+  hidden: 'hidden',
+  fusedWith: 'fused_with',
   slots: 'slots',
   lockedAt: 'locked_at',
   locked_at: 'locked_at',

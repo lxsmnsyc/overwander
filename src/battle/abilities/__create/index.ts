@@ -30,6 +30,7 @@ export {
   createShellArmorAbility,
   createThickFatAbility,
 } from './guard';
+export { default as createMoldBreakerAbility } from './pierce';
 export {
   chipImmunity,
   createCloudNineAbility,

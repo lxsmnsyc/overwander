@@ -1,14 +1,17 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { countsAgainstSlots } from '../../data/constants/slots';
 import { Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
-import type Battle from '../core';
 import { Statuses } from '../../data/ids/status';
+import { getSpeciesData } from '../../data/species';
+import { getFoldedDragon } from '../../data/species/fusion';
+import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
-import { countsAgainstSlots } from '../../data/constants/slots';
-import { createAbility, createContactRecoilAbility } from './__create';
+import { createAbility, createContactRecoilAbility, createMoldBreakerAbility } from './__create';
+import { FOLDED_CREEDS, HUSK_CREED } from './signature/tao-trio';
 
 /**
  * The abilities a swap may take: what counts against a slot, and never
@@ -200,10 +203,52 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  // The two dragons carry Mold Breaker under their own names, so both
+  // go through its factory
+  createMoldBreakerAbility(Abilities.Turboblaze),
+  createMoldBreakerAbility(Abilities.Teravolt),
 ];
+
+/**
+ * What Unova brought. The two dragons carry Mold Breaker under their
+ * own names, so both go through its factory
+ */
+
+/**
+ * The dragon inside a fusion is still fighting, so the shape wears
+ * what that dragon fights with. A fusion is a kept shape rather than
+ * a rolled one, so nothing hands the catch these: they belong to the
+ * shape and lift the moment it comes apart
+ */
+function setupFoldedDragons(battle: Battle): void {
+  battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+    const unit = event.source;
+    const dragon = getFoldedDragon(unit.species);
+
+    if (dragon == null) {
+      return;
+    }
+
+    for (const ability of getSpeciesData(dragon).abilities) {
+      unit.wearAbility(ability);
+    }
+
+    const creed = FOLDED_CREEDS.get(unit.species);
+
+    // The dragon's conviction comes with it, for a holder that was
+    // granted the husk's own: a signature is granted rather than
+    // rolled, so a fusion passes on what the dragon brought rather
+    // than handing out a second gift
+    if (creed != null && unit.hasAbility(HUSK_CREED)) {
+      unit.wearAbility(creed);
+    }
+  });
+}
 
 export default function setupGen5Abilities(battle: Battle): void {
   for (const setup of setupAbilities) {
     setup(battle);
   }
+  setupFoldedDragons(battle);
 }

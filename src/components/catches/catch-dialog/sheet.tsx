@@ -31,6 +31,7 @@ import { canHatch, isEgg } from '../../../auth/egg';
 import { hatchEgg } from '../../../auth/eggs';
 import { deriveSize } from '../../../overworld/encounter';
 import { type EvolutionOption, evolveCatch } from '../../../auth/evolution';
+import { fuseCatch, unfuseCatch } from '../../../auth/fusion';
 import type { InventoryEntry } from '../../../auth/inventory';
 import { learnLevelUpMove } from '../../../auth/moves';
 import playEffect, { Effect } from '../../app/sound';
@@ -51,6 +52,7 @@ import { isPreciousItem } from '../../../data/overworld/item-pool';
 import { isAbilityPatch } from '../../../data/items/ability-items';
 import { isPurifyingGem } from '../../../data/items/purifying-gem';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
+import { getFusionPartner, isFusedSpecies } from '../../../data/species/fusion';
 
 import { ActionsIcon, HeartIcon, LockIcon, SparklesIcon, StarIcon } from '../../icons';
 import TypeBadge from '../../sprites/TypeBadge';
@@ -83,6 +85,7 @@ import {
   useToast,
 } from '../../styled';
 import AbilityPatchDialog from '../AbilityPatchDialog';
+import CatchPicker from '../catch-picker';
 import IncreasePPDialog from '../IncreasePPDialog';
 import TeachMoveDialog from '../TeachMoveDialog';
 
@@ -860,11 +863,64 @@ export function CatchSheetBody(
       });
   };
 
+  /** The shape a picked dragon would be folded into, while it is being picked */
+  const [folding, setFolding] = createSignal<Species | null>(null);
+
+  /** The dragon that shape asks for */
+  const dragonWanted = (): Species | null => {
+    const into = folding();
+
+    return into == null ? null : getFusionPartner(into);
+  };
+
+  /** What to call it while the picker is up */
+  const dragonName = (): string => {
+    const dragon = dragonWanted();
+
+    return dragon == null ? 'dragon' : getSpeciesData(dragon).name;
+  };
+
+  /**
+   * Say what came of a fusion, and re-read everything a change of
+   * shape touches. Both halves change hands' worth of state, so the
+   * box is re-read as well as the sheet
+   */
+  const settleFusion = (species: Species | null, said: string): void => {
+    if (species == null) {
+      say('That is no longer possible.');
+    } else {
+      playEffect(Effect.PokemonGet);
+      say(said, 'leaf');
+    }
+    props.onRecordChanged();
+    props.onEvolutionsChanged();
+    props.onChange?.();
+  };
+
   const evolve = (into: Species): void => {
     const uid = owned();
     const catchId = props.catchId;
 
     if (uid == null || catchId == null) {
+      return;
+    }
+    const shape = view();
+
+    // A fusion is two pokemon rather than one, so it leaves the
+    // evolution road here: folding in asks which dragon, and taking
+    // apart hands one back
+    if (getFusionPartner(into) != null) {
+      setFolding(into);
+      return;
+    }
+    if (shape != null && isFusedSpecies(shape.species)) {
+      unfuseCatch(catchId)
+        .then((species) => {
+          settleFusion(species, 'They came apart.');
+        })
+        .catch((caught: unknown) => {
+          say(caught instanceof Error ? caught.message : String(caught), 'ember');
+        });
       return;
     }
 
@@ -1878,6 +1934,44 @@ export function CatchSheetBody(
       {/* And the same shape for a bottle: a PP Up is spent on one move
           and nothing takes the points back, so it asks which before it
           leaves the bag */}
+      {/* Folding a dragon in asks which one, the way a machine asks
+          which move: the splicers are not spent and the dragon is not
+          gone, but it goes out of sight until the pair comes apart, so
+          the choice is the player's rather than a roll */}
+      <CatchPicker
+        open={folding() != null}
+        value={null}
+        title={`Fold in a ${dragonName()}?`}
+        description="It goes inside the Kyurem until you take the two apart again."
+        verb="Fold in"
+        empty="You have none of that dragon."
+        filter={(option) =>
+          option.caught.species === dragonWanted() &&
+          !option.fighting &&
+          !isEgg(option.caught) &&
+          !isGuarded(option.caught)
+        }
+        onClose={() => {
+          setFolding(null);
+        }}
+        onPick={(partnerId) => {
+          const into = folding();
+          const catchId = props.catchId;
+
+          setFolding(null);
+          if (partnerId == null || into == null || catchId == null) {
+            return;
+          }
+          fuseCatch(catchId, partnerId, into)
+            .then((species) => {
+              settleFusion(species, 'The two are one.');
+            })
+            .catch((caught: unknown) => {
+              say(caught instanceof Error ? caught.message : String(caught), 'ember');
+            });
+        }}
+      />
+
       {/* And the same shape again for a patch, which asks what gives
           way before the signature is written over it */}
       <AbilityPatchDialog

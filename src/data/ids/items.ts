@@ -927,6 +927,9 @@ export const enum Items {
    * item for it
    */
   ColtsPetal = 437,
+
+  /** The pair that folds a dragon into the husk, and pulls it back out */
+  DnaSplicers = 438,
 }
 
 /**

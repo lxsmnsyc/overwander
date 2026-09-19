@@ -159,6 +159,13 @@ const enum Lairs {
    * A mythical's lair, so no biome hosts it
    */
   MoorOfIcirrus = 39,
+  /**
+   * The tower in the snow the two halves of the dragon sleep under,
+   * one in each stone, so which of them answers is a roll
+   */
+  DragonspiralTower = 40,
+  /** The crater the husk has been waiting in since it was torn open */
+  GiantChasm = 41,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -202,6 +209,8 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.TrialChamber]: 'Trial Chamber',
   [Lairs.RuminationField]: 'Rumination Field',
   [Lairs.MoorOfIcirrus]: 'Moor of Icirrus',
+  [Lairs.DragonspiralTower]: 'Dragonspiral Tower',
+  [Lairs.GiantChasm]: 'Giant Chasm',
 };
 
 /**
@@ -252,6 +261,8 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.TrialChamber]: [Species.Terrakion],
   [Lairs.RuminationField]: [Species.Virizion],
   [Lairs.MoorOfIcirrus]: [Species.Keldeo],
+  [Lairs.DragonspiralTower]: [Species.Reshiram, Species.Zekrom],
+  [Lairs.GiantChasm]: [Species.Kyurem],
 };
 
 /**
@@ -298,6 +309,8 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.TrialChamber,
   Lairs.RuminationField,
   Lairs.MoorOfIcirrus,
+  Lairs.DragonspiralTower,
+  Lairs.GiantChasm,
 ];
 
 /**
@@ -357,13 +370,24 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   ],
   [Biome.Beach]: [Lairs.EmbeddedTower],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
-  [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave, Lairs.SnowpointTemple],
+  [Biome.Glacier]: [
+    Lairs.SeafoamIslands,
+    Lairs.IslandCave,
+    Lairs.SnowpointTemple,
+    Lairs.GiantChasm,
+  ],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor],
   [Biome.Bog]: [Lairs.LakeValor, Lairs.TurnbackCave],
   [Biome.TemperateForest]: [Lairs.LakeVerity, Lairs.RuminationField],
   [Biome.Woodland]: [Lairs.BurnedTower, Lairs.LakeVerity, Lairs.RuminationField],
-  [Biome.Taiga]: [Lairs.LakeAcuity, Lairs.IcebergRuins],
-  [Biome.Tundra]: [Lairs.LakeAcuity, Lairs.SnowpointTemple, Lairs.IcebergRuins],
+  [Biome.Taiga]: [Lairs.LakeAcuity, Lairs.IcebergRuins, Lairs.DragonspiralTower],
+  [Biome.Tundra]: [
+    Lairs.LakeAcuity,
+    Lairs.SnowpointTemple,
+    Lairs.IcebergRuins,
+    Lairs.DragonspiralTower,
+    Lairs.GiantChasm,
+  ],
   [Biome.Steppe]: [Lairs.PowerPlant],
   [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins, Lairs.RockPeakRuins, Lairs.RelicCastle],
   [Biome.Badlands]: [

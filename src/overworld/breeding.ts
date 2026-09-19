@@ -379,6 +379,29 @@ const UNINHERITABLE_BALLS: Set<Balls> = new Set([Balls.MasterBall]);
  * beyond the picture — a Luxury Ball's comfort is what a hatchling
  * gains friendship at
  */
+/**
+ * What an egg keeps: the ability it ends up with, plus anything the
+ * sky handed the meeting on top of it.
+ *
+ * The one the mother passed replaces the one the egg rolled, so the
+ * rolled ability is dropped along with it; a mirage's gifts are not,
+ * since they were never the roll
+ */
+export function eggAbilities(
+  kept: Abilities,
+  rolled: Abilities,
+  granted: readonly Abilities[] = [],
+): Abilities[] {
+  const abilities: Abilities[] = [kept];
+
+  for (const ability of granted) {
+    if (ability !== kept && ability !== rolled) {
+      abilities.push(ability);
+    }
+  }
+  return [...new Set(abilities)];
+}
+
 export function inheritBall(left: BreedingParent, right: BreedingParent): Balls {
   const mother = getMother(left, right);
 

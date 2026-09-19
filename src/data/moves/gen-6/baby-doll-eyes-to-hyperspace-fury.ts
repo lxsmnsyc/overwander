@@ -78,6 +78,20 @@ export default function registerBabyDollEyesToHyperspaceFury(): void {
     delay: PROJECTILE_DELAY,
     cast: [SpriteAnim.Shoot, SpriteAnim.SpAttack, SpriteAnim.Charge],
   });
+  registerMove(Moves.ThousandArrows, {
+    name: 'Thousand Arrows',
+    description:
+      'Hits everything opposite, reaches anything in the air, and brings it down to the ground.',
+    type: Types.Ground,
+    category: MoveCategories.Physical,
+    power: 90,
+    pp: 10,
+    accuracy: 100,
+    target: MoveTargets.None,
+    affects: MoveAffects.Unit | MoveAffects.Enemy,
+    flags: 0,
+    cast: [SpriteAnim.Rumble, SpriteAnim.Shoot, SpriteAnim.Charge],
+  });
   registerMove(Moves.ThousandWaves, {
     name: 'Thousand Waves',
     description: 'Hits everything opposite, and none of them can be swapped out for 10 seconds.',

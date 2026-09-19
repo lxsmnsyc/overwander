@@ -5,6 +5,17 @@ import { registerMove } from '../__create';
 
 /** From Forest's Curse to Electrify, where the terrains arrive */
 export default function registerForestsCurseToElectrify(): void {
+  registerMove(Moves.ForestsCurse, {
+    name: "Forest's Curse",
+    description: "Adds Grass to the target's types, in place of anything Trick-or-Treat added.",
+    type: Types.Grass,
+    category: MoveCategories.Status,
+    pp: 20,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.Emit, SpriteAnim.Appeal, SpriteAnim.Charge],
+  });
   registerMove(Moves.PetalBlizzard, {
     name: 'Petal Blizzard',
     description: "Hits everything opposite and the user's teammates.",
@@ -17,6 +28,18 @@ export default function registerForestsCurseToElectrify(): void {
     affects: MoveAffects.Unit | MoveAffects.Own | MoveAffects.Enemy,
     flags: MoveFlags.Wind,
     cast: [SpriteAnim.Twirl, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
+  registerMove(Moves.FreezeDry, {
+    name: 'Freeze-Dry',
+    description: '2x on Water, whatever the chart says. 10% to freeze.',
+    type: Types.Ice,
+    category: MoveCategories.Special,
+    power: 70,
+    pp: 20,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.SpAttack, SpriteAnim.Emit, SpriteAnim.Charge],
   });
   registerMove(Moves.DisarmingVoice, {
     name: 'Disarming Voice',
@@ -43,6 +66,16 @@ export default function registerForestsCurseToElectrify(): void {
     steps: 1,
     cast: [SpriteAnim.Sound, SpriteAnim.Appeal, SpriteAnim.Charge],
   });
+  registerMove(Moves.TopsyTurvy, {
+    name: 'Topsy-Turvy',
+    description: 'Turns every stat stage on the target the other way up.',
+    type: Types.Dark,
+    category: MoveCategories.Status,
+    pp: 20,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.Twirl, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
   registerMove(Moves.DrainingKiss, {
     name: 'Draining Kiss',
     description: 'Heals the user for 3/4 the damage dealt.',
@@ -66,5 +99,25 @@ export default function registerForestsCurseToElectrify(): void {
     affects: MoveAffects.Team | MoveAffects.Own,
     flags: 0,
     cast: [SpriteAnim.Appeal, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
+  registerMove(Moves.FlowerShield, {
+    name: 'Flower Shield',
+    description: 'Raises the Defense of every Grass type on the field a stage.',
+    type: Types.Fairy,
+    category: MoveCategories.Status,
+    pp: 10,
+    target: MoveTargets.None,
+    flags: 0,
+    cast: [SpriteAnim.Emit, SpriteAnim.Appeal, SpriteAnim.Charge],
+  });
+  registerMove(Moves.Electrify, {
+    name: 'Electrify',
+    description: "The target's next move within 2 seconds lands as Electric.",
+    type: Types.Electric,
+    category: MoveCategories.Status,
+    pp: 20,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.Shock, SpriteAnim.Emit, SpriteAnim.Charge],
   });
 }

@@ -1,13 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import { EffectType, MoveTargetType } from '../../../src/battle/events';
+import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
+import type Battle from '../../../src/battle/core';
 import type Unit from '../../../src/battle/unit';
+import Abilities from '../../../src/data/ids/abilities';
+import { Items } from '../../../src/data/ids/items';
 import { Stages, Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
-import { Moves } from '../../../src/data/ids/moves';
+import { MoveCategories, Moves } from '../../../src/data/ids/moves';
 import { Statuses } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
 import { KINGS_SHIELD_STAGES, SPIKY_SHIELD_SHARE } from '../../../src/battle/moves/protect';
 import { STICKY_WEB_STAGES, webOver } from '../../../src/battle/moves/sticky-web';
+import { FELL_STINGER_STAGES } from '../../../src/battle/moves/fell-stinger';
+import { GEOMANCY_VALUE } from '../../../src/battle/moves/geomancy';
+import { POWDER_BLAST_SHARE } from '../../../src/battle/moves/powder';
+import { HAPPY_HOUR_FACTOR, PAY_DAY_COINS_PER_LEVEL } from '../../../src/battle/moves/pay-day';
 import { MULTI_HIT_MOVES } from '../../../src/data/moves/multi-hit';
 import { RECOIL_MOVES } from '../../../src/data/moves/recoil';
 import { getMoveData } from '../../../src/data/moves';
@@ -17,6 +24,42 @@ const NONE_TARGET = { type: MoveTargetType.None } as const;
 
 function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
   return { type: MoveTargetType.Unit, unit } as const;
+}
+
+/** What the chart comes to for a move against every type the target holds */
+function effectiveness(
+  battle: Battle,
+  attacker: Unit,
+  target: Unit,
+  move: Moves,
+  type: Types,
+): number {
+  let total = 1;
+
+  for (const defending of target.types) {
+    const event = {
+      id: 'UnitAttackResolveEffectiveness',
+      disabled: false,
+      parent: {
+        id: 'UnitAttack',
+        disabled: false,
+        source: attacker,
+        target,
+        move,
+        value: 0,
+        category: MoveCategories.Physical,
+        type,
+        flags: 0,
+        success: false,
+      },
+      defendingType: defending,
+      multiplier: 1,
+    };
+
+    battle.emit(BattleEvents.UnitAttackResolveEffectiveness, event);
+    total *= event.multiplier;
+  }
+  return total;
 }
 
 describe("Kalos's moves", () => {
@@ -334,6 +377,221 @@ describe("Kalos's moves", () => {
 
       battle.tick(turns(1) + 1);
       expect(enemy.checkEscape()).toBe(true);
+    });
+  });
+
+  describe('the ones with rules of their own', () => {
+    it('lands Flying Press as both of its types', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const presser = createUnit(battle, teamA);
+      // Fighting is 2x on Normal and Flying is 2x on Grass
+      const target = createUnit(battle, teamB, [Types.Normal, Types.Grass]);
+
+      expect(effectiveness(battle, presser, target, Moves.FlyingPress, Types.Fighting)).toBe(4);
+      expect(effectiveness(battle, presser, target, Moves.CloseCombat, Types.Fighting)).toBe(2);
+    });
+
+    it('lands Freeze-Dry at 2x on Water', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const freezer = createUnit(battle, teamA);
+      const water = createUnit(battle, teamB, [Types.Water]);
+
+      expect(effectiveness(battle, freezer, water, Moves.FreezeDry, Types.Ice)).toBe(2);
+      expect(effectiveness(battle, freezer, water, Moves.IceBeam, Types.Ice)).toBe(0.5);
+    });
+
+    it('reaches a flyer with Thousand Arrows and brings it down', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const archer = createUnit(battle, teamA);
+      const bird = createUnit(battle, teamB, [Types.Flying]);
+
+      pinRandom(battle, 1);
+      archer.enter();
+      bird.enter();
+
+      expect(archer.checkMoveImmunity(Moves.ThousandArrows, unitTarget(bird), Types.Ground)).toBe(
+        false,
+      );
+      expect(archer.checkMoveImmunity(Moves.Earthquake, unitTarget(bird), Types.Ground)).toBe(true);
+      expect(effectiveness(battle, archer, bird, Moves.ThousandArrows, Types.Ground)).toBe(1);
+
+      const whole = bird.health;
+
+      archer.triggerMoveEffect(Moves.ThousandArrows, unitTarget(bird), 0);
+      expect(bird.health).toBeLessThan(whole);
+      expect(bird.status[Statuses.Grounded]).toBeDefined();
+    });
+
+    it('sharpens the user when Fell Stinger finishes something', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const bee = createUnit(battle, teamA);
+      const target = createUnit(battle, teamB);
+
+      bee.enter();
+      target.enter();
+
+      const cause = { type: EffectType.Move, move: Moves.FellStinger, unit: bee } as const;
+
+      bee.damage(cause, target, 1, 0);
+      expect(bee.stages[Stages.Attack]).toBe(0);
+
+      bee.damage(cause, target, target.health, 0);
+      expect(target.alive).toBe(false);
+      expect(bee.stages[Stages.Attack]).toBe(FELL_STINGER_STAGES);
+    });
+
+    it('holds Belch back until a berry has been eaten', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const glutton = createUnit(battle, teamA);
+      const target = createUnit(battle, teamB);
+
+      glutton.addMove(Moves.Belch);
+      glutton.enter();
+      target.enter();
+      expect(glutton.checkCanCast(Moves.Belch, unitTarget(target))).toBe(false);
+
+      glutton.addItem(Items.OranBerry);
+      glutton.triggerItem(Items.OranBerry);
+      expect(glutton.checkCanCast(Moves.Belch, unitTarget(target))).toBe(true);
+    });
+
+    it('blows a Fire move up in the hands of a Powdered target', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const bug = createUnit(battle, teamA);
+      const target = createUnit(battle, teamB);
+
+      bug.enter();
+      target.enter();
+
+      bug.triggerMoveEffect(Moves.Powder, unitTarget(target), 0);
+
+      const max = target.checkStat(Stats.HP, 0);
+      const whole = bug.health;
+
+      target.triggerMove(Moves.Ember, unitTarget(bug), 0);
+      battle.tick(1000);
+
+      expect(bug.health).toBe(whole);
+      expect(target.health).toBe(max - Math.floor(max * POWDER_BLAST_SHARE));
+    });
+
+    it('turns every stage upside down with Topsy-Turvy', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const flipper = createUnit(battle, teamA);
+      const target = createUnit(battle, teamB);
+
+      flipper.enter();
+      target.enter();
+
+      target.addStage(Stages.Attack, 2, { type: EffectType.None });
+      target.addStage(Stages.Speed, -1, { type: EffectType.None });
+      flipper.triggerMoveEffect(Moves.TopsyTurvy, unitTarget(target), 0);
+
+      expect(target.stages[Stages.Attack]).toBe(-2);
+      expect(target.stages[Stages.Speed]).toBe(1);
+    });
+
+    it('turns moves Electric with Electrify on one target and Ion Deluge on the field', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const caster = createUnit(battle, teamA);
+      const target = createUnit(battle, teamB);
+
+      caster.enter();
+      target.enter();
+
+      caster.triggerMoveEffect(Moves.Electrify, unitTarget(target), 0);
+      expect(target.checkMoveType(Moves.Ember, unitTarget(caster))).toBe(Types.Electric);
+      expect(caster.checkMoveType(Moves.Ember, unitTarget(target))).toBe(Types.Fire);
+
+      battle.tick(turns(1) + 1);
+      expect(target.checkMoveType(Moves.Ember, unitTarget(caster))).toBe(Types.Fire);
+
+      caster.triggerMoveEffect(Moves.IonDeluge, NONE_TARGET, 0);
+      expect(target.checkMoveType(Moves.Tackle, unitTarget(caster))).toBe(Types.Electric);
+      expect(target.checkMoveType(Moves.Ember, unitTarget(caster))).toBe(Types.Fire);
+    });
+
+    it("adds a type with Trick-or-Treat, and Forest's Curse takes its place", () => {
+      const { battle, teamA, teamB } = createBattle();
+      const caster = createUnit(battle, teamA);
+      const target = createUnit(battle, teamB, [Types.Water]);
+
+      caster.triggerMoveEffect(Moves.TrickOrTreat, unitTarget(target), 0);
+      expect([...target.types].sort()).toEqual([Types.Water, Types.Ghost].sort());
+
+      caster.triggerMoveEffect(Moves.ForestsCurse, unitTarget(target), 0);
+      expect([...target.types].sort()).toEqual([Types.Water, Types.Grass].sort());
+    });
+
+    it('reaches only what each field stat move is about', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const gardener = createUnit(battle, teamA, [Types.Grass]);
+      const plain = createUnit(battle, teamA, [Types.Normal]);
+      const magnet = createUnit(battle, teamA);
+      const foe = createUnit(battle, teamB);
+
+      magnet.addAbility(Abilities.Plus);
+      for (const unit of [gardener, plain, magnet, foe]) {
+        unit.enter();
+      }
+
+      gardener.triggerMoveEffect(Moves.Rototiller, NONE_TARGET, 0);
+      expect(gardener.stages[Stages.Attack]).toBe(1);
+      expect(plain.stages[Stages.Attack]).toBe(0);
+
+      gardener.triggerMoveEffect(Moves.FlowerShield, NONE_TARGET, 0);
+      expect(gardener.stages[Stages.Defense]).toBe(1);
+
+      gardener.triggerMoveEffect(Moves.MagneticFlux, NONE_TARGET, 0);
+      expect(magnet.stages[Stages.SpecialDefense]).toBe(1);
+      expect(gardener.stages[Stages.SpecialDefense]).toBe(0);
+
+      // Venom Drench reaches only a target that is already poisoned
+      gardener.triggerMoveEffect(Moves.VenomDrench, unitTarget(foe), 0);
+      expect(foe.stages[Stages.Speed]).toBe(0);
+      foe.addStatus(Statuses.Poisoned, { type: EffectType.None });
+      gardener.triggerMoveEffect(Moves.VenomDrench, unitTarget(foe), 0);
+      expect(foe.stages[Stages.Speed]).toBe(-1);
+      expect(foe.stages[Stages.Attack]).toBe(-1);
+    });
+
+    it('raises three stats on the landing of Geomancy, not the wind-up', () => {
+      const { battle, teamA } = createBattle();
+      const fairy = createUnit(battle, teamA);
+
+      fairy.enter();
+      fairy.triggerMoveEffect(Moves.Geomancy, NONE_TARGET, 1);
+      expect(fairy.stages[Stages.SpecialAttack]).toBe(0);
+
+      fairy.triggerMoveEffect(Moves.Geomancy, NONE_TARGET, 0);
+      expect(fairy.stages[Stages.SpecialAttack]).toBe(GEOMANCY_VALUE);
+      expect(fairy.stages[Stages.SpecialDefense]).toBe(GEOMANCY_VALUE);
+      expect(fairy.stages[Stages.Speed]).toBe(GEOMANCY_VALUE);
+    });
+
+    it("doubles the team's Pay Day coins once with Happy Hour", () => {
+      const { battle, teamA, teamB } = createBattle();
+      const cat = createUnit(battle, teamA);
+      const target = createUnit(battle, teamB);
+
+      pinRandom(battle, 1);
+      cat.enter();
+      target.enter();
+
+      cat.triggerMoveEffect(Moves.PayDay, unitTarget(target), 0);
+      const one = PAY_DAY_COINS_PER_LEVEL * cat.level;
+
+      expect(cat.coins).toBe(one);
+
+      cat.triggerMoveEffect(Moves.HappyHour, NONE_TARGET, 0);
+      expect(cat.coins).toBe(one * HAPPY_HOUR_FACTOR);
+
+      // Once only, however often it is thrown
+      cat.triggerMoveEffect(Moves.HappyHour, NONE_TARGET, 0);
+      expect(cat.coins).toBe(one * HAPPY_HOUR_FACTOR);
+
+      cat.triggerMoveEffect(Moves.PayDay, unitTarget(target), 0);
+      expect(cat.coins).toBe(one * HAPPY_HOUR_FACTOR * 2);
     });
   });
 });

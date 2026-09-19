@@ -49,6 +49,7 @@ const WINDING_UP = new Set<Moves>([
   Moves.Bounce,
   Moves.ShadowForce,
   Moves.PhantomForce,
+  Moves.Geomancy,
   Moves.Teleport,
   Moves.Bide,
   Moves.FreezeShock,

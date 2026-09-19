@@ -139,6 +139,7 @@ const EFFECT_STATUS_MOVES: {
   [Moves.IceBurn]: { status: Statuses.Burned, chance: 30 },
   [Moves.IcicleCrash]: { status: Statuses.Flinched, chance: 30 },
   [Moves.SteamEruption]: { status: Statuses.Burned, chance: 30 },
+  [Moves.FreezeDry]: { status: Statuses.Frozen, chance: 10 },
   [Moves.Nuzzle]: { status: Statuses.Paralyzed, chance: 100 },
   [Moves.Infestation]: { status: Statuses.Trapped, chance: 100 },
   // Mean Look's hold, thrown by a wave rather than a stare

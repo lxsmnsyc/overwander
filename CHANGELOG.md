@@ -1,5 +1,36 @@
 # overwander
 
+## 4.7.0
+
+### Minor Changes
+
+- 71c9329: The families along Unova's second road:
+
+  - Munna and Musharna, the dreamers of the grassland and the woodland in the evening and at night. Munna takes a Moon Stone to evolve.
+  - Pidove, Tranquill and Unfezant, the pigeons of the grassland and the woodland.
+  - Blitzle and Zebstrika, the bolts of the grassland and the steppe.
+  - Each family brings its own signature ability: Doze banks the seconds a Munna sleeps through, Homing means a pigeon never misses anybody it has landed a move on, and Storm Dash pays a Zebstrika for every stage of Speed it is running on.
+  - Musharna can be born with Comatose, Unfezant with Defiant and Zebstrika with Reckless.
+  - The Pidove and Blitzle lines are in the dex and in the data, but they are not out in the world yet: nobody has drawn Tranquill, Blitzle or Zebstrika.
+
+- a126580: The families of Unova's first cave:
+
+  - Roggenrola, Boldore and Gigalith, the ore of the caves, the mountains and the badlands. Boldore evolves when it is traded.
+  - Woobat and Swoobat, the bats of the caves, the mountains and the montane forest after dark.
+  - Drilbur and Excadrill, the diggers of the caves, the badlands and the desert.
+  - Each family brings its own signature ability: Aftershock shocks whoever leaves it standing on 1 HP, Heart Mark leaves the mark of a Woobat's nose on an enemy as it arrives, and Torque trades a longer wind-up for harder blows.
+  - Gigalith can be born with Sand Stream, Swoobat with Infiltrator and Excadrill with Tough Claws.
+
+### Patch Changes
+
+- 72e0a50: Weather comes in wider fronts:
+
+  - A weather system now spans about 24 chunks rather than 8, with ragged edges.
+  - A front is misty at its edge, rainy inside and stormy at its core, so walking into a storm passes through the rain first.
+  - Windy air only stirs a dry sky. It no longer turns rain into a storm.
+  - A chunk's sky reads the country most common round it, so one odd chunk of ground no longer breaks a front apart.
+  - The four rarest skies still turn up about as often, but now cover a patch of country rather than a single chunk.
+
 ## 4.6.1
 
 ### Patch Changes

@@ -1910,4 +1910,14 @@ export default function registerSignatureAbilities(): void {
     description:
       'Casts 25% faster above 1/2 HP. At or below it, loses 1/16 of its HP each time it acts.',
   });
+
+  /**
+   * The deer wears the year, and each coat throws its plain moves as
+   * a different element
+   */
+  registerSignature(Families.Deerling, Abilities.Turning, {
+    name: 'Turning',
+    description:
+      "Its Normal moves take its coat's type and hit 1.2x: spring Grass, summer Fire, autumn Ground, winter Ice.",
+  });
 }

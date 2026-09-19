@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { Stages } from '../../../src/data/constants/stats';
+import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
-import { Moves } from '../../../src/data/ids/moves';
+import { MoveCategories, Moves } from '../../../src/data/ids/moves';
 import { Species } from '../../../src/data/ids/species';
 import { MoveTargetType } from '../../../src/battle/events';
 import turns from '../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../harness';
+import { dealDamage } from './signature/helpers';
 
 describe('Victory Star', () => {
   it('lifts the aim of its whole team, itself included', () => {
@@ -137,5 +139,29 @@ describe('Relic Song', () => {
     battle.tick(turns(1));
 
     expect(singer.species).toBe(Species.Jigglypuff);
+  });
+});
+
+describe('Fur Coat', () => {
+  it('turns a physical blow and leaves a special one alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const stag = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    stag.addAbility(Abilities.FurCoat);
+    stag.enter();
+    bare.enter();
+    foe.enter();
+
+    const hit = (target: typeof stag, category: MoveCategories): number =>
+      dealDamage(foe, target, Moves.Swift, 40, Types.Normal, category);
+
+    expect(hit(stag, MoveCategories.Physical) / hit(bare, MoveCategories.Physical)).toBeCloseTo(
+      0.5,
+      1,
+    );
+    expect(hit(stag, MoveCategories.Special)).toBeCloseTo(hit(bare, MoveCategories.Special), 5);
   });
 });

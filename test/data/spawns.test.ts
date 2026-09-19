@@ -17,7 +17,7 @@ import { getBiomeLairs, getLairResidents } from '../../src/data/overworld/lair';
 import registerAbilities from '../../src/data/abilities';
 import { Types } from '../../src/data/constants/types';
 import Biome, { SpawnSurface, TimeOfDay } from '../../src/data/ids/biome';
-import { ROTOM_FORMS, Species } from '../../src/data/ids/species';
+import { DEERLING_FORMS, ROTOM_FORMS, SAWSBUCK_FORMS, Species } from '../../src/data/ids/species';
 import registerItems from '../../src/data/items';
 import { registerMoves } from '../../src/data/moves';
 import {
@@ -270,6 +270,11 @@ describe('where a species lives', () => {
       Species.PorygonZ,
       Species.ShellosEast,
       Species.GastrodonEast,
+      // The three coats past spring are staged by the pool the spring
+      // one sits in, and swapped for as the month hands them over, so
+      // no pool names them either
+      ...DEERLING_FORMS.slice(1),
+      ...SAWSBUCK_FORMS.slice(1),
       Species.Pidove,
       Species.Tranquill,
       Species.Unfezant,

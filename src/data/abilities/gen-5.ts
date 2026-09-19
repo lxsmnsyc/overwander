@@ -43,6 +43,11 @@ export default function registerGen5Abilities(): void {
     name: 'Dancer',
     description: 'Whenever anybody uses a dance move, it casts the same one straight after, free.',
   });
+  // Sawsbuck
+  registerAbility(Abilities.FurCoat, {
+    name: 'Fur Coat',
+    description: 'Physical moves land on it at half damage.',
+  });
   // Reshiram
   registerAbility(Abilities.Turboblaze, {
     name: 'Turboblaze',

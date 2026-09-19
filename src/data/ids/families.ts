@@ -258,6 +258,9 @@ const enum Families {
   Munna = 253,
   Pidove = 254,
   Blitzle = 255,
+  Roggenrola = 256,
+  Woobat = 257,
+  Drilbur = 258,
 }
 
 export default Families;
@@ -533,4 +536,7 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Munna]: 'Munna',
   [Families.Pidove]: 'Pidove',
   [Families.Blitzle]: 'Blitzle',
+  [Families.Roggenrola]: 'Roggenrola',
+  [Families.Woobat]: 'Woobat',
+  [Families.Drilbur]: 'Drilbur',
 };

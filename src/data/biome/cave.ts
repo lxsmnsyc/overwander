@@ -27,6 +27,7 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Rhyhorn, weight: 6 },
     { species: Species.Larvitar, weight: 3 },
     { species: Species.Gible, weight: 3 },
+    { species: Species.Roggenrola, weight: 24 },
   ],
   uncommon: [
     { species: Species.Diglett, weight: 16 },
@@ -40,6 +41,8 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Bronzor, weight: 6 },
     { species: Species.Meditite, weight: 6 },
     { species: Species.Slugma, weight: 5 },
+    { species: Species.Woobat, weight: 16 },
+    { species: Species.Drilbur, weight: 12 },
   ],
   rare: [
     { species: Species.Golbat, weight: 16 },
@@ -50,6 +53,7 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Rhydon, weight: 5 },
     { species: Species.Pupitar, weight: 3 },
     { species: Species.Gabite, weight: 3 },
+    { species: Species.Boldore, weight: 12 },
   ],
   scarce: [
     { species: Species.Dugtrio, weight: 10 },
@@ -63,6 +67,8 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Medicham, weight: 5 },
     { species: Species.Magcargo, weight: 5 },
     { species: Species.Probopass, weight: 4 },
+    { species: Species.Swoobat, weight: 8 },
+    { species: Species.Excadrill, weight: 7 },
   ],
   elusive: [
     // The ones that never evolve are the reason to be down here at
@@ -81,6 +87,7 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Rhyperior, weight: 3 },
     { species: Species.Garchomp, weight: 2 },
     { species: Species.Tyranitar, weight: 2 },
+    { species: Species.Gigalith, weight: 4 },
   ],
   prized: [...UNOWN_SPAWNS],
   // Nothing. A legendary underground is at home in a lair rather than

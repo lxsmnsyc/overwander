@@ -28,6 +28,7 @@ import stunkyToGible from './stunky-to-gible';
 import turtwigToPiplup from './turtwig-to-piplup';
 import munnaToBlitzle from './munna-to-blitzle';
 import patratToPurrloin from './patrat-to-purrloin';
+import roggenrolaToDrilbur from './roggenrola-to-drilbur';
 import snivyToOshawott from './snivy-to-oshawott';
 
 /**
@@ -65,6 +66,7 @@ const setupAbilities = [
   ...snivyToOshawott,
   ...patratToPurrloin,
   ...munnaToBlitzle,
+  ...roggenrolaToDrilbur,
 ];
 
 /**

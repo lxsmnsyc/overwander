@@ -68,6 +68,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
         { species: Species.Chatot, weight: 6 },
@@ -154,6 +155,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
         { species: Species.Chatot, weight: 6 },
@@ -232,6 +234,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Honchkrow, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Pachirisu, weight: 8 },
         { species: Species.Rotom, weight: 6 },
         { species: Species.Rotom, weight: 6 },
@@ -304,6 +307,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Honchkrow, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Pachirisu, weight: 8 },
         { species: Species.Rotom, weight: 6 },
         { species: Species.Rotom, weight: 6 },

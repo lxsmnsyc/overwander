@@ -6,6 +6,10 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
  * Woodland spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerWoodlandSpawns(): void {
+  // The Pidove line is written but waits on sprites, since the
+  // collection has drawn no Tranquill. Once it does, mornings and days
+  // take Pidove in base at 30, Tranquill in rare at 12 and Unfezant in
+  // elusive at 6
   registerSpawnPool(Biome.Woodland, {
     [TimeOfDay.Morning]: {
       base: [
@@ -234,6 +238,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Glameow, weight: 25 },
         { species: Species.Stunky, weight: 22 },
         { species: Species.Purrloin, weight: 25 },
+        { species: Species.Munna, weight: 25 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -266,6 +271,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Honchkrow, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
         { species: Species.Liepard, weight: 6 },
+        { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
         { species: Species.Spiritomb, weight: 5 },
@@ -328,6 +334,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Glameow, weight: 25 },
         { species: Species.Stunky, weight: 22 },
         { species: Species.Purrloin, weight: 25 },
+        { species: Species.Munna, weight: 25 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -364,6 +371,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Honchkrow, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
         { species: Species.Liepard, weight: 6 },
+        { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
         { species: Species.Spiritomb, weight: 5 },

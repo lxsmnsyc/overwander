@@ -782,6 +782,27 @@ describe('the item pictures that ship', () => {
 describe('the family candies that ship', () => {
   const ROOT = `${SPRITE_ROOT}/ui/candies`;
 
+  /**
+   * A candy is painted from the colours of its family's own sheet, so a
+   * line the sprite collection has not drawn has no candy to paint.
+   * Blitzle and Zebstrika are both undrawn, which is the same gap that
+   * keeps the line out of the spawn pools
+   */
+  const UNDRAWN = new Set<Families>([Families.Blitzle]);
+
+  /** Every family that should have a candy on a sheet. */
+  function candyFamilies(): Families[] {
+    const held: Families[] = [];
+
+    for (const family of getRegisteredFamilies()) {
+      if (!UNDRAWN.has(family)) {
+        held.push(family);
+      }
+    }
+
+    return held;
+  }
+
   /** One region's sheet, as the pictures it holds by name. */
   function sheetOf(region: string): { image: Image; images: Map<string, unknown> } {
     const described: unknown = JSON.parse(readFileSync(`${ROOT}/${region}/data.json`, 'utf8'));
@@ -863,7 +884,7 @@ describe('the family candies that ship', () => {
   }
 
   it('draws one for every family, and nothing else', () => {
-    const families = getRegisteredFamilies();
+    const families = candyFamilies();
     const drawn = new Set([...sheets.values()].flatMap((sheet) => [...sheet.images.keys()]));
 
     expect(
@@ -881,7 +902,7 @@ describe('the family candies that ship', () => {
   });
 
   it('keeps the drawing every candy is a swap of', () => {
-    for (const family of getRegisteredFamilies()) {
+    for (const family of candyFamilies()) {
       const { entry } = candyOf(family);
 
       // The cell is an item's, because a candy is drawn beside items

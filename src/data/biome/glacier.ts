@@ -9,12 +9,14 @@ export default function registerGlacierSpawns(): void {
   registerSpawnPool(Biome.Glacier, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Vanillite, weight: 24 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
         { species: Species.Piplup, weight: 3 },
       ],
       uncommon: [{ species: Species.Snorunt, weight: 22 }],
       rare: [
+        { species: Species.Vanillish, weight: 10 },
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Piloswine, weight: 5 },
         { species: Species.Prinplup, weight: 2 },
@@ -25,6 +27,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vanilluxe, weight: 5 },
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Empoleon, weight: 2 },
@@ -39,12 +42,14 @@ export default function registerGlacierSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Vanillite, weight: 24 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
         { species: Species.Piplup, weight: 3 },
       ],
       uncommon: [{ species: Species.Snorunt, weight: 22 }],
       rare: [
+        { species: Species.Vanillish, weight: 10 },
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Piloswine, weight: 5 },
         { species: Species.Prinplup, weight: 2 },
@@ -55,6 +60,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vanilluxe, weight: 5 },
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Empoleon, weight: 2 },
@@ -135,6 +141,7 @@ export default function registerGlacierSpawns(): void {
   registerIcePool(Biome.Glacier, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Vanillite, weight: 24 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Piplup, weight: 3 },
       ],
@@ -143,6 +150,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Snorunt, weight: 22 },
       ],
       rare: [
+        { species: Species.Vanillish, weight: 10 },
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Prinplup, weight: 2 },
       ],
@@ -152,6 +160,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Froslass, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vanilluxe, weight: 5 },
         { species: Species.Walrein, weight: 5 },
         { species: Species.Empoleon, weight: 2 },
       ],
@@ -159,6 +168,7 @@ export default function registerGlacierSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Vanillite, weight: 24 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Piplup, weight: 3 },
       ],
@@ -167,6 +177,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Snorunt, weight: 22 },
       ],
       rare: [
+        { species: Species.Vanillish, weight: 10 },
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Prinplup, weight: 2 },
       ],
@@ -176,6 +187,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Froslass, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vanilluxe, weight: 5 },
         { species: Species.Walrein, weight: 5 },
         { species: Species.Empoleon, weight: 2 },
       ],

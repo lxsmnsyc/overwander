@@ -1714,4 +1714,25 @@ export default function registerSignatureAbilities(): void {
     name: 'Meshing',
     description: 'While a teammate stands with it, its team takes 0.9x and its own moves hit 1.2x.',
   });
+
+  // Driftveil and the Cold Storage
+  registerSignature(Families.Basculin, Abilities.BloodWater, {
+    name: 'Blood Water',
+    description: 'Its moves hit 15% harder for each enemy already below 1/2 HP, up to 1.45x.',
+  });
+
+  registerSignature(Families.Ducklett, Abilities.SwanDance, {
+    name: 'Swan Dance',
+    description: 'Every dance move it uses raises its Speed 1 stage on top of what the dance does.',
+  });
+
+  registerSignature(Families.Vanillite, Abilities.FlashFreeze, {
+    name: 'Flash Freeze',
+    description: 'The first Ice move it lands each fight freezes the target outright.',
+  });
+
+  registerSignature(Families.Alomomola, Abilities.TidePool, {
+    name: 'Tide Pool',
+    description: 'Every heal on its team is worth 1.3x while it stands, its own included.',
+  });
 }

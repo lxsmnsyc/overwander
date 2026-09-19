@@ -50,6 +50,12 @@ import {
   DIVISION_SHARE,
   FIXATION_SCALE,
 } from '../../../../src/battle/abilities/signature/zorua-to-solosis';
+import {
+  MESHING_DEALT,
+  MESHING_TAKEN,
+  THORN_CURTAIN_SCALE,
+} from '../../../../src/battle/abilities/signature/joltik-to-klink';
+import { CONTACT_RECOIL_FRACTION } from '../../../../src/battle/abilities/__create';
 import turns from '../../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { act, dealDamage, resolveAttackDamage } from './helpers';
@@ -1050,5 +1056,97 @@ describe('what Route 5 holds', () => {
     foe.attack(zorua, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
 
     expect(zorua.appearance).toBe(Species.Zorua);
+  });
+});
+
+describe('the charged cave', () => {
+  it('feeds on any bolt that lands, whoever threw it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const joltik = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    joltik.addAbility(Abilities.StaticFeed);
+    joltik.enter();
+    mate.enter();
+    foe.enter();
+    joltik.setHealth(Math.floor(joltik.checkStat(Stats.HP, 0) / 2));
+
+    const hurt = joltik.health;
+
+    // A bolt between two other units still counts
+    foe.attack(mate, Moves.ThunderShock, 40, Types.Electric, MoveCategories.Special, 0);
+    expect(joltik.health).toBeGreaterThan(hurt);
+
+    const fed = joltik.health;
+
+    // Anything that is not Electric feeds it nothing
+    foe.attack(mate, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    expect(joltik.health).toBe(fed);
+  });
+
+  it('puts the spikes between a contact move and its teammates', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ferroseed = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const spare = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    ferroseed.addAbility(Abilities.ThornCurtain);
+    ferroseed.enter();
+    mate.enter();
+    foe.enter();
+    spare.enter();
+
+    const covered = dealDamage(foe, mate, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+    const bare = dealDamage(foe, spare, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(covered / bare).toBeCloseTo(THORN_CURTAIN_SCALE, 1);
+  });
+
+  it('is worth nothing to a gear with nothing to turn against', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const klink = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    klink.addAbility(Abilities.Meshing);
+    klink.enter();
+    mate.enter();
+    foe.enter();
+
+    const meshedOut = resolveAttackDamage(battle, klink, foe);
+    const meshedIn = resolveAttackDamage(battle, foe, klink);
+
+    foe.attack(mate, Moves.Tackle, 900, Types.Normal, MoveCategories.Physical, 0);
+    expect(mate.alive).toBe(false);
+
+    const aloneOut = resolveAttackDamage(battle, klink, foe);
+    const aloneIn = resolveAttackDamage(battle, foe, klink);
+
+    expect(meshedOut / aloneOut).toBeCloseTo(MESHING_DEALT, 2);
+    expect(meshedIn / aloneIn).toBeCloseTo(MESHING_TAKEN, 2);
+  });
+
+  it('answers a touch with the spikes, the way Rough Skin does', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ferroseed = createUnit(battle, teamA);
+    const toucher = createUnit(battle, teamB);
+
+    ferroseed.addAbility(Abilities.IronBarbs);
+    ferroseed.enter();
+    toucher.enter();
+
+    const whole = toucher.health;
+
+    toucher.attack(ferroseed, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(whole - toucher.health).toBeCloseTo(
+      toucher.checkStat(Stats.HP, 0) * CONTACT_RECOIL_FRACTION,
+      0,
+    );
   });
 });

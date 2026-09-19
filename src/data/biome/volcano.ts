@@ -110,7 +110,10 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Magcargo, weight: 10 },
         { species: Species.Magmortar, weight: 6 },
       ],
-      elusive: [{ species: Species.Hydreigon, weight: 2 }],
+      elusive: [
+        { species: Species.Hydreigon, weight: 2 },
+        { species: Species.Heatmor, weight: 6 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Groudon, weight: 10 },
@@ -135,7 +138,10 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Magcargo, weight: 5 },
         { species: Species.Magmortar, weight: 6 },
       ],
-      elusive: [{ species: Species.Hydreigon, weight: 2 }],
+      elusive: [
+        { species: Species.Hydreigon, weight: 2 },
+        { species: Species.Heatmor, weight: 6 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Groudon, weight: 10 },

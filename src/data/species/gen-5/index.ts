@@ -10,13 +10,16 @@ import registerDeinoSpecies from './deino';
 import registerDruddigonSpecies from './druddigon';
 import registerDucklettSpecies from './ducklett';
 import registerDrilburSpecies from './drilbur';
+import registerDurantSpecies from './durant';
 import registerDwebbleSpecies from './dwebble';
 import registerElgyemSpecies from './elgyem';
 import registerFerroseedSpecies from './ferroseed';
 import registerGolettSpecies from './golett';
 import registerGothitaSpecies from './gothita';
+import registerHeatmorSpecies from './heatmor';
 import registerJoltikSpecies from './joltik';
 import registerKlinkSpecies from './klink';
+import registerLarvestaSpecies from './larvesta';
 import registerLillipupSpecies from './lillipup';
 import registerLitwickSpecies from './litwick';
 import registerMaractusSpecies from './maractus';
@@ -101,5 +104,8 @@ export default function registerGen5Species(): void {
   registerPawniardSpecies();
   registerRuffletSpecies();
   registerVullabySpecies();
+  registerHeatmorSpecies();
+  registerDurantSpecies();
   registerDeinoSpecies();
+  registerLarvestaSpecies();
 }

@@ -30,6 +30,7 @@ const TEACHABLE = [
   Moves.Acrobatics,
   Moves.Retaliate,
   Moves.WorkUp,
+  Moves.Confide,
 ];
 
 export default function registerFarfetchdSpecies(): void {

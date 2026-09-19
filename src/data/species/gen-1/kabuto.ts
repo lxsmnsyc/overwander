@@ -60,6 +60,7 @@ const FAMILY_TEACHABLE = [
   Moves.SmackDown,
   Moves.Round,
   Moves.Scald,
+  Moves.Confide,
 ];
 
 const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.BattleArmor];

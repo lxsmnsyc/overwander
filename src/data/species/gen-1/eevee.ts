@@ -50,6 +50,7 @@ const FAMILY_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.Retaliate,
   Moves.WorkUp,
+  Moves.Confide,
 ];
 
 export default function registerEeveeSpecies(): void {
@@ -116,6 +117,7 @@ export default function registerEeveeSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.SandAttack, Moves.TailWhip, Moves.HelpingHand],
+        9: [Moves.BabyDollEyes],
         16: [Moves.Growl],
         23: [Moves.QuickAttack],
         30: [Moves.Bite],

@@ -120,7 +120,7 @@ export default function registerWeedleSpecies(): void {
         34: [Moves.Assurance],
         35: [Moves.Agility],
         37: [Moves.PoisonJab],
-        45: [Moves.Endeavor],
+        45: [Moves.Endeavor, Moves.FellStinger],
       },
       teachable: [
         Moves.SwordsDance,
@@ -178,6 +178,8 @@ export default function registerWeedleSpecies(): void {
         Moves.StruggleBug,
         Moves.Electroweb,
         Moves.DrillRun,
+        Moves.Confide,
+        Moves.Infestation,
       ],
     },
   });

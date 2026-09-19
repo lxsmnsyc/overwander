@@ -75,6 +75,7 @@ const FAMILY_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.Retaliate,
   Moves.WorkUp,
+  Moves.Confide,
 ];
 
 export default function registerMeowthSpecies(): void {
@@ -163,7 +164,7 @@ export default function registerMeowthSpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Scratch, Moves.Growl, Moves.Bite, Moves.Switcheroo],
+        1: [Moves.Scratch, Moves.Growl, Moves.Bite, Moves.Switcheroo, Moves.PlayRough],
         17: [Moves.PayDay],
         24: [Moves.Screech],
         29: [Moves.FeintAttack],

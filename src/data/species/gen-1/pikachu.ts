@@ -71,6 +71,7 @@ const FAMILY_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.VoltSwitch,
   Moves.WildCharge,
+  Moves.Confide,
 ];
 
 export default function registerPikachuSpecies(): void {
@@ -109,13 +110,14 @@ export default function registerPikachuSpecies(): void {
       level: {
         1: [Moves.ThunderShock, Moves.Growl],
         6: [Moves.TailWhip],
+        7: [Moves.PlayNice],
         8: [Moves.ThunderWave],
         11: [Moves.QuickAttack],
         15: [Moves.DoubleTeam],
         18: [Moves.ElectroBall],
         20: [Moves.Slam],
         26: [Moves.Swift, Moves.Thunderbolt],
-        29: [Moves.Feint],
+        29: [Moves.Feint, Moves.Nuzzle],
         33: [Moves.Agility],
         37: [Moves.Discharge],
         41: [Moves.Thunder],

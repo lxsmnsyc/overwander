@@ -123,6 +123,7 @@ export default function registerMunchlaxSpecies(): void {
         Moves.Substitute,
         Moves.Whirlwind,
         Moves.ZenHeadbutt,
+        Moves.Belch,
       ],
     },
   });

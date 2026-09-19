@@ -108,6 +108,7 @@ export default function registerMagbySpecies(): void {
         Moves.MegaPunch,
         Moves.Screech,
         Moves.FlareBlitz,
+        Moves.Belch,
       ],
     },
   });

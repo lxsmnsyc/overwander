@@ -107,6 +107,7 @@ export default function registerPichuSpecies(): void {
         Moves.VoltTackle,
         Moves.Wish,
         Moves.Bestow,
+        Moves.DisarmingVoice,
       ],
     },
   });

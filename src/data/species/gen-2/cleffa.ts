@@ -124,6 +124,7 @@ export default function registerCleffaSpecies(): void {
         Moves.Substitute,
         Moves.Wish,
         Moves.StoredPower,
+        Moves.MistyTerrain,
       ],
     },
   });

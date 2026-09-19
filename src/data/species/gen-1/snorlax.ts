@@ -140,6 +140,8 @@ export default function registerSnorlaxSpecies(): void {
         Moves.Bulldoze,
         Moves.WorkUp,
         Moves.WildCharge,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
     },
   });

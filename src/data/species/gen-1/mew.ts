@@ -237,6 +237,10 @@ export default function registerMewSpecies(): void {
         Moves.DrillRun,
         Moves.DualChop,
         Moves.Snarl,
+        Moves.Confide,
+        Moves.DazzlingGleam,
+        Moves.Infestation,
+        Moves.PowerUpPunch,
       ],
     },
   });

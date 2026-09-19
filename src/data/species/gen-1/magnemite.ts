@@ -50,6 +50,7 @@ const FAMILY_TEACHABLE = [
   Moves.VoltSwitch,
   Moves.Electroweb,
   Moves.WildCharge,
+  Moves.Confide,
 ];
 
 const FAMILY_ABILITIES = [Abilities.MagnetPull, Abilities.Sturdy];
@@ -143,7 +144,14 @@ export default function registerMagnemiteSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.SonicBoom, Moves.ThunderShock, Moves.Supersonic, Moves.MetalSound],
+        1: [
+          Moves.Tackle,
+          Moves.SonicBoom,
+          Moves.ThunderShock,
+          Moves.Supersonic,
+          Moves.MetalSound,
+          Moves.ElectricTerrain,
+        ],
         21: [Moves.ThunderWave],
         26: [Moves.Spark],
         27: [Moves.LockOn],

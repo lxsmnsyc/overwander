@@ -35,7 +35,7 @@ export default function registerJynxSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Pound, Moves.LovelyKiss, Moves.Lick, Moves.PowderSnow],
+        1: [Moves.Pound, Moves.LovelyKiss, Moves.Lick, Moves.PowderSnow, Moves.DrainingKiss],
         21: [Moves.DoubleSlap, Moves.HeartStamp],
         25: [Moves.IcePunch],
         28: [Moves.WakeUpSlap],
@@ -126,6 +126,8 @@ export default function registerJynxSpecies(): void {
         Moves.Round,
         Moves.EchoedVoice,
         Moves.FrostBreath,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
     },
   });

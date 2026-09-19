@@ -113,6 +113,8 @@ export default function registerMagmarSpecies(): void {
         Moves.Round,
         Moves.Incinerate,
         Moves.DualChop,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
     },
   });

@@ -60,6 +60,7 @@ const FAMILY_TEACHABLE = [
   Moves.AfterYou,
   Moves.Round,
   Moves.StruggleBug,
+  Moves.Confide,
 ];
 
 export default function registerParasSpecies(): void {
@@ -116,6 +117,8 @@ export default function registerParasSpecies(): void {
         Moves.Pursuit,
         Moves.SweetScent,
         Moves.CrossPoison,
+        Moves.Rototiller,
+        Moves.FellStinger,
       ],
     },
   });

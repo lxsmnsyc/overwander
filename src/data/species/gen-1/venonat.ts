@@ -49,6 +49,8 @@ const FAMILY_TEACHABLE = [
   Moves.Venoshock,
   Moves.Round,
   Moves.StruggleBug,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 export default function registerVenonatSpecies(): void {

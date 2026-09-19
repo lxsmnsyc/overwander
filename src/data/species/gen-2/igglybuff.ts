@@ -109,7 +109,14 @@ export default function registerIgglybuffSpecies(): void {
         Moves.WorkUp,
         Moves.WildCharge,
       ],
-      egg: [Moves.FeintAttack, Moves.PerishSong, Moves.Present, Moves.FakeTears, Moves.Wish],
+      egg: [
+        Moves.FeintAttack,
+        Moves.PerishSong,
+        Moves.Present,
+        Moves.FakeTears,
+        Moves.Wish,
+        Moves.MistyTerrain,
+      ],
     },
   });
 }

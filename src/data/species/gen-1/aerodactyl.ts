@@ -116,6 +116,7 @@ export default function registerAerodactylSpecies(): void {
         Moves.SkyDrop,
         Moves.Incinerate,
         Moves.Bulldoze,
+        Moves.Confide,
       ],
       egg: [Moves.Whirlwind, Moves.Foresight, Moves.SteelWing, Moves.Pursuit, Moves.Assurance],
     },

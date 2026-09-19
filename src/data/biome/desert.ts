@@ -53,8 +53,13 @@ export default function registerDesertSpawns(): void {
         { species: Species.Solrock, weight: 5 },
         { species: Species.Garchomp, weight: 2 },
       ],
-      prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
+      prized: [
+        ...UNOWN_SPAWNS,
+        { species: Species.Magby, weight: PRIZED_WEIGHT },
+        { species: Species.Larvesta, weight: PRIZED_WEIGHT },
+      ],
       special: [
+        { species: Species.Volcarona, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Moltres, weight: 10 },
       ],
@@ -106,8 +111,13 @@ export default function registerDesertSpawns(): void {
         { species: Species.Solrock, weight: 5 },
         { species: Species.Garchomp, weight: 2 },
       ],
-      prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
+      prized: [
+        ...UNOWN_SPAWNS,
+        { species: Species.Magby, weight: PRIZED_WEIGHT },
+        { species: Species.Larvesta, weight: PRIZED_WEIGHT },
+      ],
       special: [
+        { species: Species.Volcarona, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Moltres, weight: 10 },
       ],

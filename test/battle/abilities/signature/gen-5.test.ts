@@ -12,6 +12,11 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle
 import type Unit from '../../../../src/battle/unit';
 import { HONED_STAGES } from '../../../../src/battle/abilities/signature/pawniard-to-vullaby';
 import {
+  ANTEATER_SCALE,
+  ANT_GUARD_SCALE,
+  EMBER_HALO_SHARE,
+} from '../../../../src/battle/abilities/signature/heatmor-to-larvesta';
+import {
   SCORING_STAGES,
   SUNWARMED_SCALE,
   THREE_HEADS_SHARE,
@@ -1464,5 +1469,74 @@ describe('what the last two roads hold', () => {
     expect(braviary.stages[Stages.Attack]).toBe(WARCRY_STAGES);
     expect(mandibuzz.stages[Stages.Defense]).toBe(BONEWEAR_STAGES);
     expect(mandibuzz.stages[Stages.SpecialDefense]).toBe(BONEWEAR_STAGES);
+  });
+});
+
+describe('what the last road holds', () => {
+  it('opens a nest and holds one, and the ant wins where they meet', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const heatmor = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const ant = createUnit(battle, teamB, [Types.Bug, Types.Steel]);
+    // The control carries the same typing, so the type chart's own 4x
+    // on Fire into Bug and Steel cancels out of the ratio
+    const nest = createUnit(battle, teamB, [Types.Bug, Types.Steel]);
+    const neither = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    heatmor.addAbility(Abilities.Anteater);
+    heatmor.enter();
+    plain.enter();
+    ant.enter();
+    nest.enter();
+    neither.enter();
+
+    // Nothing to open: a target that is neither is worth no more
+    expect(
+      resolveAttackDamage(battle, heatmor, neither) / resolveAttackDamage(battle, plain, neither),
+    ).toBeCloseTo(1, 2);
+
+    expect(
+      resolveAttackDamage(battle, heatmor, nest) / resolveAttackDamage(battle, plain, nest),
+    ).toBeCloseTo(ANTEATER_SCALE, 2);
+
+    // The armour answers the fire, and the two together come out
+    // under 1, so the ant wins the exchange it was built to lose
+    ant.addAbility(Abilities.AntGuard);
+
+    const guarded = dealDamage(
+      heatmor,
+      ant,
+      Moves.Incinerate,
+      40,
+      Types.Fire,
+      MoveCategories.Special,
+    );
+    const bare = dealDamage(plain, nest, Moves.Incinerate, 40, Types.Fire, MoveCategories.Special);
+
+    expect(guarded / bare).toBeCloseTo(ANTEATER_SCALE * ANT_GUARD_SCALE, 2);
+  });
+
+  it('costs every enemy a share of itself each time it reaches for a move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const volcarona = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    volcarona.addAbility(Abilities.EmberHalo);
+    volcarona.enter();
+    mate.enter();
+    foe.enter();
+
+    const share = Math.floor(foe.checkStat(Stats.HP, 0) * EMBER_HALO_SHARE);
+    const whole = foe.health;
+    const friendly = mate.health;
+
+    act(battle, foe);
+    expect(whole - foe.health).toBe(share);
+
+    // Its own side stands in the same light and pays nothing
+    act(battle, mate);
+    expect(mate.health).toBe(friendly);
   });
 });

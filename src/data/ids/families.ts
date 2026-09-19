@@ -311,9 +311,10 @@ const enum Families {
   // and is not written yet
   Rufflet = 310,
   Vullaby = 311,
-  // 312 and 313 are held for Heatmor and Durant, the pair that sit
-  // between these in the dex and are not written yet
+  Heatmor = 312,
+  Durant = 313,
   Deino = 314,
+  Larvesta = 315,
 }
 
 export default Families;
@@ -631,5 +632,8 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Pawniard]: 'Pawniard',
   [Families.Rufflet]: 'Rufflet',
   [Families.Vullaby]: 'Vullaby',
+  [Families.Heatmor]: 'Heatmor',
+  [Families.Durant]: 'Durant',
   [Families.Deino]: 'Deino',
+  [Families.Larvesta]: 'Larvesta',
 };

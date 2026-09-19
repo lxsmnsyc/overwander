@@ -607,6 +607,9 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Cresselia,
   Species.Heatran,
   Species.Regigigas,
+  // Not one-per-world the way the rest are, but it answers to the
+  // Relic Castle, and what a raid stages is this set
+  Species.Volcarona,
 ]);
 
 /**
@@ -678,6 +681,14 @@ const BABY_SPECIES = new Set<Species>([
  * collected over months
  */
 const UNOWN_SPECIES = new Set<Species>(UNOWN_FORMS);
+
+/**
+ * Staged above the band its line's shape would earn. A Larvesta is
+ * met as rarely as a baby, which is half of what the games make of
+ * the moth the desert once mistook for the sun. The other half is the
+ * moth itself, which is a legendary here and sits in that set
+ */
+const PRIZED_BY_HAND = new Set<Species>([Species.Larvesta]);
 
 /**
  * The unowns as prized-band entries, for a pool to spread into its
@@ -858,7 +869,7 @@ export function getSpawnRarity(species: Species): SpawnRarity {
   }
   // Asked before the shape of the line is, since a baby evolves like
   // any other first stage and would otherwise read as Base
-  if (isPrizedSpecies(species)) {
+  if (isPrizedSpecies(species) || PRIZED_BY_HAND.has(species)) {
     return SpawnRarity.Prized;
   }
 

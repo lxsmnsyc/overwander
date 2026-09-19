@@ -20401,6 +20401,30 @@
         "bytes": 2080
       }
     },
+    "public/sprites/pokemon/unova/1055001/regular.png": {
+      "digest": "d6b9cb0277bed1cc",
+      "bytes": 2519,
+      "width": 62,
+      "height": 188,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 2519,
+        "bytes": 2519
+      }
+    },
+    "public/sprites/pokemon/unova/1055001/shiny.png": {
+      "digest": "62012e5ed6ac3827",
+      "bytes": 2519,
+      "width": 62,
+      "height": 188,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 2519,
+        "bytes": 2519
+      }
+    },
     "public/sprites/pokemon/unova/1055501/regular.png": {
       "digest": "0bdb193612d9574e",
       "bytes": 2684,
@@ -21625,6 +21649,30 @@
         "bytes": 5903
       }
     },
+    "public/sprites/pokemon/unova/550/regular.png": {
+      "digest": "3fc1937e58a238ec",
+      "bytes": 2581,
+      "width": 144,
+      "height": 84,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 2581,
+        "bytes": 2581
+      }
+    },
+    "public/sprites/pokemon/unova/550/shiny.png": {
+      "digest": "186542572df1f750",
+      "bytes": 2581,
+      "width": 144,
+      "height": 84,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 2581,
+        "bytes": 2581
+      }
+    },
     "public/sprites/pokemon/unova/551/regular.png": {
       "digest": "ee953f4b3c7c0693",
       "bytes": 3147,
@@ -22201,6 +22249,150 @@
         "bytes": 11773
       }
     },
+    "public/sprites/pokemon/unova/580/regular.png": {
+      "digest": "3a649fbb2d265bfa",
+      "bytes": 4085,
+      "width": 86,
+      "height": 255,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 4085,
+        "bytes": 4085
+      }
+    },
+    "public/sprites/pokemon/unova/580/shiny.png": {
+      "digest": "33402baa7be5f3c2",
+      "bytes": 4127,
+      "width": 86,
+      "height": 255,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 4127,
+        "bytes": 4127
+      }
+    },
+    "public/sprites/pokemon/unova/581/regular.png": {
+      "digest": "202337d48a4be536",
+      "bytes": 6275,
+      "width": 146,
+      "height": 259,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 6275,
+        "bytes": 6275
+      }
+    },
+    "public/sprites/pokemon/unova/581/shiny.png": {
+      "digest": "cc14ae2e2c8cefa7",
+      "bytes": 6275,
+      "width": 146,
+      "height": 259,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 6275,
+        "bytes": 6275
+      }
+    },
+    "public/sprites/pokemon/unova/582/regular.png": {
+      "digest": "5d099843c3183fb9",
+      "bytes": 4729,
+      "width": 195,
+      "height": 130,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 4729,
+        "bytes": 4729
+      }
+    },
+    "public/sprites/pokemon/unova/582/shiny.png": {
+      "digest": "1a2176ed01bc0930",
+      "bytes": 4806,
+      "width": 195,
+      "height": 130,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 4806,
+        "bytes": 4806
+      }
+    },
+    "public/sprites/pokemon/unova/583/regular.png": {
+      "digest": "576da9ea8f40075f",
+      "bytes": 1987,
+      "width": 103,
+      "height": 114,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 1987,
+        "bytes": 1987
+      }
+    },
+    "public/sprites/pokemon/unova/583/shiny.png": {
+      "digest": "9a180af56c55376f",
+      "bytes": 1961,
+      "width": 103,
+      "height": 114,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 1961,
+        "bytes": 1961
+      }
+    },
+    "public/sprites/pokemon/unova/584/regular.png": {
+      "digest": "9220211dce4f8ef8",
+      "bytes": 14517,
+      "width": 266,
+      "height": 346,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 14517,
+        "bytes": 14517
+      }
+    },
+    "public/sprites/pokemon/unova/584/shiny.png": {
+      "digest": "a86ad9007eb62fa9",
+      "bytes": 14517,
+      "width": 266,
+      "height": 346,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 14517,
+        "bytes": 14517
+      }
+    },
+    "public/sprites/pokemon/unova/594/regular.png": {
+      "digest": "c7f69c64327cc7b4",
+      "bytes": 1926,
+      "width": 64,
+      "height": 144,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 1926,
+        "bytes": 1926
+      }
+    },
+    "public/sprites/pokemon/unova/594/shiny.png": {
+      "digest": "611361f1a01f0c9e",
+      "bytes": 1919,
+      "width": 64,
+      "height": 144,
+      "compact": {
+        "at": "2026-09-18T09:31:57Z",
+        "as": "already compact",
+        "was": 1919,
+        "bytes": 1919
+      }
+    },
     "public/sprites/pokemon/unova/595/regular.png": {
       "digest": "f88f4ddfe18093e2",
       "bytes": 1613,
@@ -22430,15 +22622,15 @@
       }
     },
     "public/sprites/ui/candies/unova/image.png": {
-      "digest": "fc3ec2fddd0b109f",
-      "bytes": 5656,
+      "digest": "dd26f892f159b844",
+      "bytes": 6132,
       "width": 112,
       "height": 96,
       "compact": {
-        "at": "2026-09-18T09:08:25Z",
+        "at": "2026-09-18T09:31:57Z",
         "as": "already compact",
-        "was": 5656,
-        "bytes": 5656
+        "was": 6132,
+        "bytes": 6132
       }
     },
     "public/sprites/ui/items/apricorn/image.png": {

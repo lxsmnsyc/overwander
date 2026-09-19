@@ -1,5 +1,62 @@
 # overwander
 
+## 4.6.1
+
+### Patch Changes
+
+- e4a1e9a: A kelp forest's rocks have life on them: Krabby, Seel, Shellos, Buizel and Tangela by day, with Kingler, Dewgong, Gastrodon, Floatzel, Tangrowth and Shuckle behind them, Wingull and Pelipper overhead until dusk, and the crabs, seals, slugs and otters alone after dark. The Unowns were the only thing standing above the waterline before, which made an alphabet easier to meet than it should be.
+- 2cf05e9: - A wild meeting stops at level 100. A buddy with Hustle, Pressure or Vital Spirit lifts the top of the band by 3, which on a legendary's band of 1 to 100 was handing out levels 101 to 103. Nothing can hold a pokemon above the cap, so catching one failed.
+- 1275f91: - A catch sheet reads in order of what a player looks for: stats, then its abilities and what it is holding, then its moves.
+  - A shiny's sparkle is the same size on every pokemon. Sized off the sprite, it was smallest on the small ones, which are the hardest to spot in the overworld to begin with.
+- 6815869: - Caves roll the cave pool. Underground spawns were read from the biome overhead, so a cave under a grassland held that grassland's pokemon and nothing that lives in the dark.
+
+## 4.6.0
+
+### Minor Changes
+
+- 60107b8: - Caves hold water. A waterway is a passage in its own right, cut through the rock and filled wall to wall, so chambers are joined by rivers you ride over rather than walk along.
+  - Where the rock is wet it holds a water table, and every part of a cave at or below it is flooded, so a low chamber fills to its brim.
+  - A cave system is either wet or dry, so the water gathers in some networks and none of it is in others. A way in keeps a cell of dry landing around it.
+  - The countries above ground carry far less standing water. A lake now needs a basin under it as well as the field above the line, so the ponds gather in a few low stretches instead of one every thirty cells everywhere.
+  - Water is laid in 3x3 blocks rather than 2x2, so nothing narrower than three cells is drawn as water at all.
+  - A route crosses water on made ground: the road between two towns dries what it runs over, so a stream or the edge of a lake is a causeway to walk across rather than a gap in the paving. The open sea is the one water nobody has built over.
+  - A cave under a crater holds lava, and it keeps the same distance from the border that lava above ground does, so the two liquids never meet.
+
+### Patch Changes
+
+- 6d03191: - A cave is dark because nothing lights it: the ground is lit at the corners of every cell and whatever stands on it is lit where it stands, so a lamp throws a pool that falls off across the floor instead of a hole cut in a veil.
+  - Nothing a lamp does not reach underground is visible at all.
+  - A day the sky has put out is lit the same way.
+  - Night pulls every country toward one colour instead of only darkening it, so a pale biome is no longer brighter at midnight than a dark one is at dusk.
+  - The sun no longer reaches underground, and nothing throws a sun shadow there.
+  - The board demo can be set to an hour of the day, and to what a player is carrying into the dark.
+- 6d03191: - Trees, scenery, landmarks and berry bushes have a shadow under them, the way a pokemon does.
+  - A shadow is a round patch on the ground again, the same whatever the hour: nothing leans its own picture along the sun any more.
+
+## 4.5.0
+
+### Minor Changes
+
+- ae650d7: - Every town now has a gym leader, a gym seat and an auction board, so a badge run is a walk from town to town.
+  - An Elite Four member stands in 1 town in 4, up from 1 in 7.
+  - A champion sits in about 1 town in 7, up from 1 in 12.
+  - A portal stands in a town and nowhere else. A region with no town no longer has one out in the country.
+  - Changes world generation.
+
+### Patch Changes
+
+- f5cbb03: A coral reef's islands have life on them: Krabby, Corphish, Wingull, Shellos and Slowpoke by day, with Kingler, Crawdaunt, Pelipper, Gastrodon, Slowbro, Shuckle and Slowking behind them, and the crabs, slugs and Shuckle alone after dark. The Unowns were the only thing standing there before, which made an alphabet easier to meet than it should be.
+
+## 4.4.0
+
+### Minor Changes
+
+- 2dcce12: The families a walk out of Unova's first town meets:
+  - Patrat and Watchog, the scouts of the grassland and the steppe. Watchog keeps watch in the evening and at night.
+  - Lillipup, Herdier and Stoutland, the dogs of the grassland and the woodland. A Stoutland also walks the steppe and the tundra.
+  - Purrloin and Liepard, the thieves of the woodland and the grassland after dark.
+  - Each family brings its own signature ability: Spotter calls the shot for the team, Loyal Guard stands over a hurt teammate, and Cat Burglar takes what the target is holding.
+
 ## 4.3.0
 
 ### Minor Changes

@@ -2,7 +2,11 @@ import { SPRITE_FACINGS } from '../../../canvas/board';
 import type { Species } from '../../../data/ids/species';
 import Landmark from '../../../data/overworld/landmark';
 import Phenomenon from '../../../data/overworld/phenomenon';
-import drawSparkle, { SPARKLE_SPREAD, SPARKLE_STAR_SIZE } from '../../../canvas/sparkle';
+import drawSparkle, {
+  SPARKLE_FRAME,
+  SPARKLE_SPREAD,
+  SPARKLE_STAR_SIZE,
+} from '../../../canvas/sparkle';
 import type Bakery from '../../../canvas/bakery';
 import type { Baked } from '../../../canvas/bakery';
 import { CELL, COLORS } from './metrics';
@@ -722,23 +726,21 @@ const SPARKLE_PICTURES = 16;
  *
  * `density` is how many canvas pixels it is stamped at per sheet pixel.
  * Painted at the sheet's own size and shrunk onto a small board sprite,
- * its outlines and smallest glints fell under a pixel and all but vanished
+ * its outlines and smallest glints fell under a pixel and all but
+ * vanished. The box is square and cut to `SPARKLE_FRAME` rather than to
+ * the pokemon, since the sparkle inside it is the same for every one
  */
 export function paintSparkle(
   name: string,
   seed: number,
   age: number,
-  frame: { width: number; height: number },
   density = 1,
 ): HTMLCanvasElement | null {
   const across = Math.min(
     SPARKLE_LIMIT,
-    Math.max(1, Math.round(frame.width * density * SPARKLE_SPAN)),
+    Math.max(1, Math.round(SPARKLE_FRAME * density * SPARKLE_SPAN)),
   );
-  const down = Math.min(
-    SPARKLE_LIMIT,
-    Math.max(1, Math.round(frame.height * density * SPARKLE_SPAN)),
-  );
+  const down = across;
   const key = `${seed}:${Math.round(age)}:${across}:${down}`;
   const held = sparkled.get(name);
 
@@ -761,15 +763,9 @@ export function paintSparkle(
   context.clearRect(0, 0, across, down);
   context.save();
   context.translate(across / 2, down / 2);
-  drawSparkle(
-    context,
-    seed,
-    age,
-    0,
-    0,
-    { width: across / SPARKLE_SPAN, height: down / SPARKLE_SPAN },
-    1,
-  );
+  // Read back off the box rather than from `density`, so a sparkle
+  // that hit the limit is drawn smaller instead of clipped
+  drawSparkle(context, seed, age, 0, 0, across / SPARKLE_SPAN / SPARKLE_FRAME);
   context.restore();
   // Oldest first, which is insertion order
   if (held == null && sparkled.size >= SPARKLE_PICTURES) {

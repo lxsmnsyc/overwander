@@ -5,8 +5,7 @@ import { type Draws, KeyedDraws, StreamDraws } from '../core/draws';
 import { hashString } from '../core/hash';
 import PerlinNoise from '../core/perlin';
 import SimplexNoise, { type Noise2D, SimplexStack } from '../core/simplex';
-import type Biome from '../data/ids/biome';
-import { getBiome } from '../data/ids/biome';
+import Biome, { getBiome } from '../data/ids/biome';
 import type Weather from '../data/overworld/weather';
 import { classifyWeather } from '../data/overworld/weather';
 import Chunk, { CHUNK_CELLS } from './chunk';
@@ -60,28 +59,44 @@ function spreadNoise(value: number): number {
 }
 
 /**
- * How many chunks one weather cell spans.
- *
- * Tighter than a climate cell on purpose: a country keeps its ground
- * for good and its sky for an hour, so a front should cross a country
- * rather than cover it. At eight chunks a cell, walking out of the
- * rain is a walk rather than a step
+ * How many chunks one wave of the front field spans: how much is
+ * falling. Wide enough that a weather system covers a stretch of
+ * country, so walking out of the rain is a walk rather than a step
  */
-const WEATHER_FREQUENCY = 1 / 8;
+const FRONT_FREQUENCY = 1 / 24;
+
+/**
+ * The character field, calm or windy, and much broader than the front,
+ * so a whole region leans one way while fronts cross it
+ */
+const CHARACTER_FREQUENCY = 1 / 64;
+
+/**
+ * The drag on the front, in chunks, and how fine it is. It gives a
+ * front ragged edges and tongues rather than round blobs
+ */
+const FRONT_WARP_REACH = 10;
+const FRONT_WARP_FREQUENCY = 1 / 40;
+
+/** Where the drag is read in the weather fields, far from anything else read there */
+const FRONT_WARP_OFFSET = 517.3;
 
 /** Sampled at the chunk centre, for the reason the climate is */
 const WEATHER_OFFSET = 0.5;
 
 /**
- * How far the field slides in one window, in weather cells.
+ * How far the weather moves in one window, in chunks.
  *
- * The field itself never changes; what moves is where it is read. That
- * is what makes a front travel in a direction instead of fading in and
+ * The fields never change; what moves is where they are read. That is
+ * what makes a front travel in a direction instead of fading in and
  * out where it stands. The two axes differ so the wind blows across
  * the world rather than along its diagonal
  */
-const WEATHER_DRIFT_X = 0.35;
-const WEATHER_DRIFT_Y = 0.14;
+const WEATHER_DRIFT_X = 2.8;
+const WEATHER_DRIFT_Y = 1.1;
+
+/** How far round a chunk its sky looks for the country it stands over, in chunks */
+const SKY_GROUND_REACH = 1;
 
 /**
  * Which way a world's ground is worked out from its seed.
@@ -419,16 +434,70 @@ export default class World {
    * to be told what the weather is
    */
   getWeather(chunkX: number, chunkY: number, window: number): Weather {
-    const x = clampToWorld(chunkX);
-    const y = clampToWorld(chunkY);
-    const sampleX = (x + WEATHER_OFFSET) * WEATHER_FREQUENCY + window * WEATHER_DRIFT_X;
-    const sampleY = (y + WEATHER_OFFSET) * WEATHER_FREQUENCY + window * WEATHER_DRIFT_Y;
+    const { front, character } = this.getWeatherReading(chunkX, chunkY, window);
 
-    return classifyWeather(
-      this.getChunkBiome(x, y),
-      spreadNoise(this.wetness.noise(sampleX, sampleY)),
-      spreadNoise(this.energy.noise(sampleX, sampleY)),
+    return classifyWeather(this.getSkyGround(chunkX, chunkY), front, character);
+  }
+
+  /**
+   * The two readings a chunk's sky is classified from, each -1 to 1:
+   * how much is falling, and how calm or wild the air is
+   */
+  getWeatherReading(
+    chunkX: number,
+    chunkY: number,
+    window: number,
+  ): { front: number; character: number } {
+    const x = clampToWorld(chunkX) + WEATHER_OFFSET - window * WEATHER_DRIFT_X;
+    const y = clampToWorld(chunkY) + WEATHER_OFFSET - window * WEATHER_DRIFT_Y;
+    const dragX = this.wetness.noise(
+      x * FRONT_WARP_FREQUENCY + FRONT_WARP_OFFSET,
+      y * FRONT_WARP_FREQUENCY + FRONT_WARP_OFFSET,
     );
+    const dragY = this.energy.noise(
+      x * FRONT_WARP_FREQUENCY + FRONT_WARP_OFFSET,
+      y * FRONT_WARP_FREQUENCY + FRONT_WARP_OFFSET,
+    );
+
+    return {
+      front: spreadNoise(
+        this.wetness.noise(
+          (x + dragX * FRONT_WARP_REACH) * FRONT_FREQUENCY,
+          (y + dragY * FRONT_WARP_REACH) * FRONT_FREQUENCY,
+        ),
+      ),
+      character: spreadNoise(this.energy.noise(x * CHARACTER_FREQUENCY, y * CHARACTER_FREQUENCY)),
+    };
+  }
+
+  /**
+   * The country a chunk's sky reads as: the commonest one round it,
+   * so a lone chunk of other ground does not break a front in two.
+   * A tie keeps the chunk's own, and Beyond is always itself
+   */
+  getSkyGround(chunkX: number, chunkY: number): Biome {
+    const own = this.getChunkBiome(chunkX, chunkY);
+
+    if (own === Biome.Beyond) {
+      return own;
+    }
+    const counts = new Map<Biome, number>();
+    let best: Biome = own;
+    let most = 0;
+
+    for (let dy = -SKY_GROUND_REACH; dy <= SKY_GROUND_REACH; dy++) {
+      for (let dx = -SKY_GROUND_REACH; dx <= SKY_GROUND_REACH; dx++) {
+        const biome = this.getChunkBiome(chunkX + dx, chunkY + dy);
+        const count = (counts.get(biome) ?? 0) + 1;
+
+        counts.set(biome, count);
+        if (count > most || (count === most && biome === own)) {
+          best = biome;
+          most = count;
+        }
+      }
+    }
+    return best;
   }
 
   /**

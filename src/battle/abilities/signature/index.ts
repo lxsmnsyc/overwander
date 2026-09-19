@@ -31,6 +31,7 @@ import munnaToBlitzle from './munna-to-blitzle';
 import pansearToPanpour from './pansear-to-panpour';
 import sandileToDwebble from './sandile-to-dwebble';
 import scraggyToTrubbish from './scraggy-to-trubbish';
+import zoruaToSolosis from './zorua-to-solosis';
 import patratToPurrloin from './patrat-to-purrloin';
 import roggenrolaToDrilbur from './roggenrola-to-drilbur';
 import sewaddleToPetilil from './sewaddle-to-petilil';
@@ -77,6 +78,7 @@ const setupAbilities = [
   ...sewaddleToPetilil,
   ...sandileToDwebble,
   ...scraggyToTrubbish,
+  ...zoruaToSolosis,
 ];
 
 /**

@@ -37,6 +37,7 @@ import zoruaToSolosis from './zorua-to-solosis';
 import axewToDeino from './axew-to-deino';
 import tynamoToMienfoo from './tynamo-to-mienfoo';
 import elgyemToGolett from './elgyem-to-golett';
+import forcesOfNature from './forces-of-nature';
 import heatmorToLarvesta from './heatmor-to-larvesta';
 import patratToPurrloin from './patrat-to-purrloin';
 import pawniardToVullaby from './pawniard-to-vullaby';
@@ -97,6 +98,7 @@ const setupAbilities = [
   ...tynamoToMienfoo,
   ...swordsOfJustice,
   ...taoTrio,
+  ...forcesOfNature,
 ];
 
 /**

@@ -38,11 +38,14 @@ import {
   GASTRODON_FORMS,
   GIRATINA_FORMS,
   KYUREM_FORMS,
+  LANDORUS_FORMS,
   PALKIA_FORMS,
   ROTOM_FORMS,
   SHAYMIN_FORMS,
   SHELLOS_FORMS,
   Species,
+  THUNDURUS_FORMS,
+  TORNADUS_FORMS,
   UNOWN_FORMS,
   WORMADAM_FORMS,
   getBaseFormSpecies,
@@ -376,6 +379,9 @@ describe('species forms', () => {
       ...ROTOM_FORMS.slice(1),
       ...ARCEUS_FORMS.slice(1),
       ...KYUREM_FORMS.slice(1),
+      ...TORNADUS_FORMS.slice(1),
+      ...THUNDURUS_FORMS.slice(1),
+      ...LANDORUS_FORMS.slice(1),
     ]);
 
     expect(registered.length).toBeGreaterThan(0);

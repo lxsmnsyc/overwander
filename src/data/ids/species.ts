@@ -1010,6 +1010,11 @@ export const GASTRODON_FORMS = [Species.Gastrodon, Species.GastrodonEast];
 /** The two schools of Basculin, the red stripe first */
 export const BASCULIN_FORMS = [Species.Basculin, Species.BasculinBlue];
 
+/** Each genie's two shapes, the one it is usually met in first */
+export const TORNADUS_FORMS = [Species.Tornadus, Species.TornadusTherian];
+export const THUNDURUS_FORMS = [Species.Thundurus, Species.ThundurusTherian];
+export const LANDORUS_FORMS = [Species.Landorus, Species.LandorusTherian];
+
 /** Darmanitan standing and Darmanitan sat down, the standing one first */
 export const DARMANITAN_FORMS = [Species.Darmanitan, Species.DarmanitanZen];
 

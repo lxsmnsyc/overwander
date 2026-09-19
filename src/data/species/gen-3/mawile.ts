@@ -34,7 +34,7 @@ export default function registerMawileSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Astonish],
+        1: [Moves.Astonish, Moves.FairyWind],
         6: [Moves.FakeTears],
         11: [Moves.Bite],
         16: [Moves.SweetScent],
@@ -44,6 +44,7 @@ export default function registerMawileSpecies(): void {
         36: [Moves.Crunch],
         41: [Moves.IronDefense],
         46: [Moves.Stockpile, Moves.Swallow, Moves.SpitUp, Moves.SuckerPunch],
+        49: [Moves.PlayRough],
         56: [Moves.IronHead],
       },
       teachable: [
@@ -108,6 +109,8 @@ export default function registerMawileSpecies(): void {
         Moves.FoulPlay,
         Moves.Round,
         Moves.Incinerate,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
       egg: [
         Moves.AncientPower,
@@ -119,6 +122,7 @@ export default function registerMawileSpecies(): void {
         Moves.IceFang,
         Moves.Punishment,
         Moves.ThunderFang,
+        Moves.MistyTerrain,
       ],
     },
   });

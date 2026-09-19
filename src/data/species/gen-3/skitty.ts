@@ -64,6 +64,7 @@ const FAMILY_TEACHABLE = [
   Moves.Retaliate,
   Moves.WorkUp,
   Moves.WildCharge,
+  Moves.Confide,
 ];
 
 export default function registerSkittySpecies(): void {
@@ -103,7 +104,7 @@ export default function registerSkittySpecies(): void {
         3: [Moves.TailWhip],
         7: [Moves.Attract],
         11: [Moves.Copycat],
-        13: [Moves.Sing],
+        13: [Moves.Sing, Moves.DisarmingVoice],
         15: [Moves.DoubleSlap],
         19: [Moves.Assist],
         25: [Moves.Charm],
@@ -113,6 +114,7 @@ export default function registerSkittySpecies(): void {
         37: [Moves.HealBell],
         39: [Moves.DoubleEdge],
         42: [Moves.Captivate],
+        46: [Moves.PlayRough],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [

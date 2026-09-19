@@ -51,6 +51,7 @@ const FAMILY_TEACHABLE = [
   Moves.Incinerate,
   Moves.Retaliate,
   Moves.Snarl,
+  Moves.Confide,
 ];
 
 export default function registerPoochyenaSpecies(): void {
@@ -111,6 +112,7 @@ export default function registerPoochyenaSpecies(): void {
         Moves.IceFang,
         Moves.MeFirst,
         Moves.ThunderFang,
+        Moves.PlayRough,
       ],
     },
   });

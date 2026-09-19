@@ -179,6 +179,8 @@ export default function registerDeoxysSpecies(): void {
           Moves.LowSweep,
           Moves.Round,
           Moves.AllySwitch,
+          Moves.Confide,
+          Moves.PowerUpPunch,
         ],
       },
     });

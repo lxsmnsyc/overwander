@@ -46,6 +46,7 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.StruggleBug,
   Moves.Bulldoze,
+  Moves.Confide,
 ];
 
 // What the two above the base pick up: a pit in the sand has no
@@ -139,6 +140,7 @@ export default function registerTrapinchSpecies(): void {
         33: [Moves.Crunch],
         35: [Moves.DragonBreath],
         41: [Moves.Screech],
+        47: [Moves.Boomburst],
         49: [Moves.Sandstorm],
         57: [Moves.HyperBeam],
       },
@@ -213,6 +215,7 @@ export default function registerTrapinchSpecies(): void {
         Moves.HoneClaws,
         Moves.Incinerate,
         Moves.DragonTail,
+        Moves.PowerUpPunch,
       ],
     },
   });

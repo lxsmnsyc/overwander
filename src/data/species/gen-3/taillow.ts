@@ -46,6 +46,7 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.EchoedVoice,
   Moves.WorkUp,
+  Moves.Confide,
 ];
 
 export default function registerTaillowSpecies(): void {
@@ -100,6 +101,7 @@ export default function registerTaillowSpecies(): void {
         Moves.Rage,
         Moves.SkyAttack,
         Moves.BraveBird,
+        Moves.Boomburst,
       ],
     },
   });

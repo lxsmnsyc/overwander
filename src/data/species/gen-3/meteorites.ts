@@ -38,7 +38,7 @@ export default function registerMeteoriteSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.Harden],
+        1: [Moves.Tackle, Moves.Harden, Moves.Moonblast],
         7: [Moves.Confusion],
         13: [Moves.RockThrow],
         19: [Moves.Hypnosis],
@@ -109,6 +109,7 @@ export default function registerMeteoriteSpecies(): void {
         Moves.Round,
         Moves.Acrobatics,
         Moves.Bulldoze,
+        Moves.Confide,
       ],
     },
   });
@@ -213,6 +214,7 @@ export default function registerMeteoriteSpecies(): void {
         Moves.Incinerate,
         Moves.Acrobatics,
         Moves.Bulldoze,
+        Moves.Confide,
       ],
     },
   });

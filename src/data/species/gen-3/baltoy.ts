@@ -62,6 +62,8 @@ const FAMILY_TEACHABLE = [
   Moves.AllySwitch,
   Moves.Bulldoze,
   Moves.DrillRun,
+  Moves.Confide,
+  Moves.DazzlingGleam,
 ];
 
 export default function registerBaltoySpecies(): void {

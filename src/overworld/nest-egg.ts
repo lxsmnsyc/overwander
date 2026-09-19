@@ -1,5 +1,11 @@
 import AleaRNG from '../core/alea';
 import { MAX_LEVEL } from '../data/constants/levels';
+import {
+  FOGBOW_MOVE_CHANCE,
+  FOGBOW_MOVE_SLOTS,
+  FOGBOW_SECOND_MOVE_CHANCE,
+  widensMoveSlots,
+} from '../data/overworld/weather';
 import { DEFAULT_MOVE_SLOTS, packSlots } from '../data/constants/slots';
 import { MAX_IV, STAT_ORDER, setIV } from '../data/constants/stats';
 import type EggGroups from '../data/ids/egg-groups';
@@ -17,6 +23,8 @@ import deriveEncounter, {
   type Encounter,
   EncounterType,
   MOVE_LIMIT,
+  bonusMoveRoll,
+  bonusMoveSlots,
   deriveMoves,
 } from './encounter';
 
@@ -109,7 +117,12 @@ export function getChainEggMoves(species: Species): Moves[] {
  * learned by its hatch level. The inherited ones go first so they
  * survive the four-move limit
  */
-export function deriveNestEggMoves(species: Species, level: number, random: () => number): Moves[] {
+export function deriveNestEggMoves(
+  species: Species,
+  level: number,
+  random: () => number,
+  bonus = 0,
+): Moves[] {
   const inherited: Moves[] = [];
   const pick = (from: Moves[]): boolean => {
     const left: Moves[] = [];
@@ -139,7 +152,9 @@ export function deriveNestEggMoves(species: Species, level: number, random: () =
       moves.push(move);
     }
   }
-  return moves.slice(0, MOVE_LIMIT);
+  // A nest claimed under a fogbow hatches with room to spare, so the
+  // inherited ones stop crowding out what it learned on its own
+  return moves.slice(0, MOVE_LIMIT + bonus);
 }
 
 /**
@@ -161,6 +176,9 @@ export default function deriveNestEgg(
     level,
     weather: snapshot.weather,
     hiddenBoost: NEST_HIDDEN_BOOST,
+    // A nest is claimed under the sky rather than hatched out of
+    // nowhere, so the mirage's gifts reach it
+    skyGifts: true,
   });
   const stats = [...STAT_ORDER];
   let ivs = hatchling.ivs;
@@ -170,10 +188,27 @@ export default function deriveNestEgg(
 
     ivs = setIV(ivs, stat, MAX_IV);
   }
+  // Its own stream, so the sky's gift does not move any of the draws
+  // above it
+  const wide = widensMoveSlots(snapshot.weather)
+    ? bonusMoveSlots(
+        bonusMoveRoll(hatchling.traitValue)(),
+        FOGBOW_MOVE_CHANCE,
+        FOGBOW_SECOND_MOVE_CHANCE,
+        FOGBOW_MOVE_SLOTS,
+      )
+    : 0;
+
   return {
     ...hatchling,
     ivs,
-    moves: deriveNestEggMoves(species, level, () => rng.random()),
-    slots: packSlots(NEST_ABILITY_SLOTS, NEST_ITEM_SLOTS, DEFAULT_MOVE_SLOTS),
+    moves: deriveNestEggMoves(species, level, () => rng.random(), wide),
+    // Room for what the sky handed it, where that is more than a nest
+    // egg's own two abilities and four moves
+    slots: packSlots(
+      Math.max(NEST_ABILITY_SLOTS, hatchling.abilities?.length ?? 1),
+      NEST_ITEM_SLOTS,
+      DEFAULT_MOVE_SLOTS + wide,
+    ),
   };
 }

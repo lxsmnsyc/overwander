@@ -1,6 +1,5 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { MoveAttackFlags, Moves } from '../../data/ids/moves';
-import { getMoveData } from '../../data/moves';
+import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 import turns from '../turn';
@@ -29,6 +28,13 @@ interface Pending {
  */
 export default function setupFutureSight(battle: Battle): void {
   const pending: Pending[] = [];
+  /**
+   * Whether a queued strike is arriving right now. The cast refuses its
+   * own effect, and this is what lets the landing through it: the
+   * effect is what deals the blow and what the canvas draws the move
+   * from, so a strike resolved around it arrives invisibly
+   */
+  let landing = false;
 
   const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     for (const strike of [...pending]) {
@@ -45,16 +51,13 @@ export default function setupFutureSight(battle: Battle): void {
       }
 
       const target = { type: MoveTargetType.Unit, unit: strike.target } as const;
-      const data = getMoveData(strike.move);
 
-      strike.source.attack(
-        strike.target,
-        strike.move,
-        strike.source.checkMovePower(strike.move, target) ?? 0,
-        strike.source.checkMoveType(strike.move, target),
-        data.category,
-        MoveAttackFlags.Critical,
-      );
+      landing = true;
+      try {
+        strike.source.triggerMoveEffect(strike.move, target, 0);
+      } finally {
+        landing = false;
+      }
     }
 
     if (pending.length === 0) {
@@ -67,7 +70,7 @@ export default function setupFutureSight(battle: Battle): void {
   // Nothing resolves on the cast: what a Future Sight does now is
   // promise, and the promise is kept by the timer above
   battle.on(BattleEvents.CheckUnitTriggerMoveEffect, EventPriority.Exact, (event) => {
-    if (event.success && DELAYED_MOVES.has(event.move)) {
+    if (!landing && event.success && DELAYED_MOVES.has(event.move)) {
       event.success = false;
     }
   });

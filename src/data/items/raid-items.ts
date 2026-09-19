@@ -27,6 +27,7 @@ export const RAID_ITEMS = new Map<Items, Species>([
   [Items.ManaphyEgg, Species.Manaphy],
   [Items.OaksLetter, Species.Shaymin],
   [Items.AzureFlute, Species.Arceus],
+  [Items.ColtsPetal, Species.Keldeo],
 ]);
 
 const NAMES: { [key in Items]?: string } = {
@@ -38,6 +39,7 @@ const NAMES: { [key in Items]?: string } = {
   [Items.ManaphyEgg]: 'Manaphy Egg',
   [Items.OaksLetter]: "Oak's Letter",
   [Items.AzureFlute]: 'Azure Flute',
+  [Items.ColtsPetal]: "Colt's Petal",
 };
 
 /**
@@ -54,6 +56,7 @@ const PLACES: { [key in Items]?: string } = {
   [Items.ManaphyEgg]: 'the temple the sea gives back for one day',
   [Items.OaksLetter]: 'the meadow at the far end of the broken path',
   [Items.AzureFlute]: 'the stair that opens above the mountain',
+  [Items.ColtsPetal]: 'the marsh the youngest of the swords waits in',
 };
 
 /**
@@ -63,6 +66,7 @@ const PLACES: { [key in Items]?: string } = {
 const ICONS: { [key in Items]?: string } = {
   [Items.AuroraTicket]: 'key/auroraticket',
   [Items.OaksLetter]: 'key/oaks-letter',
+  [Items.ColtsPetal]: 'key/radiant-petal',
 };
 
 /**

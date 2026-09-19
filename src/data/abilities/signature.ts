@@ -1825,4 +1825,30 @@ export default function registerSignatureAbilities(): void {
     name: 'Sleeve Guard',
     description: 'Contact moves land on it at 0.75x.',
   });
+
+  /**
+   * The four swords share one signature: each stands watch over its
+   * team against one kind of harm, and none of them is worth anything
+   * to the holder alone
+   */
+  registerSignature(Families.Cobalion, Abilities.IronVigil, {
+    name: 'Iron Vigil',
+    description: 'Its teammates take physical moves at 0.8x while it stands.',
+  });
+
+  registerSignature(Families.Terrakion, Abilities.StoneVigil, {
+    name: 'Stone Vigil',
+    description: 'Its teammates take special moves at 0.8x while it stands.',
+  });
+
+  registerSignature(Families.Virizion, Abilities.LeafVigil, {
+    name: 'Leaf Vigil',
+    description:
+      'Its teammates take indirect damage at 0.8x and cannot be poisoned while it stands.',
+  });
+
+  registerSignature(Families.Keldeo, Abilities.TideVigil, {
+    name: 'Tide Vigil',
+    description: 'Its teammates never flinch and refuse enemy stat drops while it stands.',
+  });
 }

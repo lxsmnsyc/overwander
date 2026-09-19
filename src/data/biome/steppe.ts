@@ -26,6 +26,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
         { species: Species.BurmyTrash, weight: 20 },
+        { species: Species.Patrat, weight: 30 },
       ],
       rare: [
         { species: Species.Servine, weight: 2 },
@@ -56,6 +57,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Ampharos, weight: 10 },
         { species: Species.Magnezone, weight: 5 },
         { species: Species.Rhyperior, weight: 5 },
+        { species: Species.Stoutland, weight: 6 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
@@ -83,6 +85,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
         { species: Species.BurmyTrash, weight: 20 },
+        { species: Species.Patrat, weight: 30 },
       ],
       rare: [
         { species: Species.Servine, weight: 2 },
@@ -114,6 +117,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Ampharos, weight: 10 },
         { species: Species.Magnezone, weight: 5 },
         { species: Species.Rhyperior, weight: 5 },
+        { species: Species.Stoutland, weight: 6 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
@@ -140,6 +144,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Drifblim, weight: 6 },
         { species: Species.Drapion, weight: 6 },
         { species: Species.Electivire, weight: 6 },
+        { species: Species.Watchog, weight: 8 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },
@@ -172,6 +177,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Drifblim, weight: 6 },
         { species: Species.Drapion, weight: 6 },
         { species: Species.Electivire, weight: 6 },
+        { species: Species.Watchog, weight: 8 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },

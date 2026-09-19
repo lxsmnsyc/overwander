@@ -18,6 +18,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Hoppip, weight: 25 },
         { species: Species.Starly, weight: 30 },
         { species: Species.Shinx, weight: 25 },
+        { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
         { species: Species.Swablu, weight: 22 },
@@ -43,6 +44,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Roselia, weight: 20 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
+        { species: Species.Patrat, weight: 30 },
       ],
       rare: [
         { species: Species.Ivysaur, weight: 1 },
@@ -54,6 +56,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Skiploom, weight: 5 },
         { species: Species.Staravia, weight: 5 },
         { species: Species.Luxio, weight: 5 },
+        { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
         { species: Species.Altaria, weight: 5 },
@@ -104,6 +107,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Hitmontop, weight: 5 },
         { species: Species.Staraptor, weight: 5 },
         { species: Species.Luxray, weight: 4 },
+        { species: Species.Stoutland, weight: 6 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -136,6 +140,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Hoppip, weight: 25 },
         { species: Species.Starly, weight: 30 },
         { species: Species.Shinx, weight: 25 },
+        { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
         { species: Species.Swablu, weight: 22 },
@@ -162,6 +167,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Roselia, weight: 20 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
+        { species: Species.Patrat, weight: 30 },
       ],
       rare: [
         { species: Species.Ivysaur, weight: 1 },
@@ -174,6 +180,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Skiploom, weight: 5 },
         { species: Species.Staravia, weight: 5 },
         { species: Species.Luxio, weight: 5 },
+        { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
         { species: Species.Altaria, weight: 5 },
@@ -227,6 +234,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Hitmontop, weight: 5 },
         { species: Species.Staraptor, weight: 5 },
         { species: Species.Luxray, weight: 4 },
+        { species: Species.Stoutland, weight: 6 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -266,6 +274,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
         { species: Species.Stunky, weight: 22 },
+        { species: Species.Purrloin, weight: 25 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -287,6 +296,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Roserade, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
         { species: Species.Electivire, weight: 6 },
+        { species: Species.Watchog, weight: 8 },
+        { species: Species.Liepard, weight: 6 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },
@@ -338,6 +349,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
         { species: Species.Stunky, weight: 22 },
+        { species: Species.Purrloin, weight: 25 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -361,6 +373,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Roserade, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
         { species: Species.Electivire, weight: 6 },
+        { species: Species.Watchog, weight: 8 },
+        { species: Species.Liepard, weight: 6 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },

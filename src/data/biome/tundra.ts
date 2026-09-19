@@ -19,6 +19,7 @@ export default function registerTundraSpawns(): void {
       elusive: [
         { species: Species.Delibird, weight: 5 },
         { species: Species.Mamoswine, weight: 5 },
+        { species: Species.Stoutland, weight: 6 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
@@ -40,6 +41,7 @@ export default function registerTundraSpawns(): void {
       elusive: [
         { species: Species.Delibird, weight: 5 },
         { species: Species.Mamoswine, weight: 5 },
+        { species: Species.Stoutland, weight: 6 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [

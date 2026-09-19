@@ -26,6 +26,7 @@ import shinxToShieldon from './shinx-to-shieldon';
 import starlyToKricketot from './starly-to-kricketot';
 import stunkyToGible from './stunky-to-gible';
 import turtwigToPiplup from './turtwig-to-piplup';
+import patratToPurrloin from './patrat-to-purrloin';
 import snivyToOshawott from './snivy-to-oshawott';
 
 /**
@@ -61,6 +62,7 @@ const setupAbilities = [
   ...shaymin,
   ...arceus,
   ...snivyToOshawott,
+  ...patratToPurrloin,
 ];
 
 /**

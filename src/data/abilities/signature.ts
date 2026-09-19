@@ -1920,4 +1920,11 @@ export default function registerSignatureAbilities(): void {
     description:
       "Its Normal moves take its coat's type and hit 1.2x: spring Grass, summer Fire, autumn Ground, winter Ice.",
   });
+
+  /** The glider nothing has got a hand on yet */
+  registerSignature(Families.Emolga, Abilities.Glidewake, {
+    name: 'Glidewake',
+    description:
+      'Each move it lands gives it +1 Evasion, up to +2. Any hit on it takes all of it back.',
+  });
 }

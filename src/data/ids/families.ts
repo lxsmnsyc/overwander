@@ -292,8 +292,9 @@ const enum Families {
   Ducklett = 287,
   Vanillite = 288,
   Deerling = 289,
-  // 290 to 293 are held for Emolga, Karrablast, Foongus and Frillish,
-  // which sit between these in the dex and are not written yet
+  Emolga = 290,
+  // 291 to 293 are held for Karrablast, Foongus and Frillish, which
+  // sit between these in the dex and are not written yet
   Alomomola = 294,
   Joltik = 295,
   Ferroseed = 296,
@@ -637,6 +638,7 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Ducklett]: 'Ducklett',
   [Families.Vanillite]: 'Vanillite',
   [Families.Deerling]: 'Deerling',
+  [Families.Emolga]: 'Emolga',
   [Families.Alomomola]: 'Alomomola',
   [Families.Joltik]: 'Joltik',
   [Families.Ferroseed]: 'Ferroseed',

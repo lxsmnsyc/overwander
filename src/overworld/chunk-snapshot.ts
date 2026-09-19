@@ -842,8 +842,18 @@ export default class ChunkSnapshot {
 
       // Under a dark day every shadow lair holds a true shadow instead,
       // so the sky is the one way to meet one and finding the sky is
-      // enough: nothing else has to be drawn for
-      const shadows = this.raidWeather === Weather.DarkDay ? listTrueShadows() : [];
+      // enough: nothing else has to be drawn for. Held to the same boss
+      // rule as every other draw, and with none left to stage the lair
+      // falls back to an ordinary shadow raid rather than holding nothing
+      const shadows: Species[] = [];
+
+      if (this.raidWeather === Weather.DarkDay) {
+        for (const species of listTrueShadows()) {
+          if (canStageBoss(species)) {
+            shadows.push(species);
+          }
+        }
+      }
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark !== Landmark.ShadowLair) {

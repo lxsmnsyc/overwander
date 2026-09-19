@@ -26,6 +26,7 @@ import ChunkSnapshot, {
 import { PLACEMENT_AREA, centeredCells } from '../../../src/overworld/chunk';
 import deriveEncounter, { EncounterType } from '../../../src/overworld/encounter';
 import World from '../../../src/overworld/world';
+import { canStageBoss } from '../../../src/overworld/raid';
 
 registerMoves();
 registerSpecies();
@@ -189,7 +190,17 @@ describe('where a true shadow is met', () => {
     for (const roll of staged) {
       // Guaranteed rather than rolled for: the sky is the whole draw
       expect(isTrueShadow(roll.species)).toBe(true);
+      expect(canStageBoss(roll.species)).toBe(true);
       expect(roll.lair).toBeNull();
+    }
+  });
+
+  it('only ever stages a true shadow that can be a boss', () => {
+    // The conversion keeps the rule every other boss draw keeps. If
+    // this fails, a true shadow has been added whose moves are all
+    // banned, and it would drop out of dark-day lairs on its own
+    for (const shadow of listTrueShadows()) {
+      expect(canStageBoss(shadow), String(shadow)).toBe(true);
     }
   });
 });

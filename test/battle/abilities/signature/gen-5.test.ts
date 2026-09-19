@@ -17,6 +17,7 @@ import {
   SLEEVE_GUARD_SCALE,
 } from '../../../../src/battle/abilities/signature/tynamo-to-mienfoo';
 import { COAT_TYPES, TURNING_SCALE } from '../../../../src/battle/abilities/signature/deerling';
+import { GLIDEWAKE_CAP } from '../../../../src/battle/abilities/signature/emolga';
 import {
   OVERCLOCK_SCALE,
   OVERCLOCK_SHARE,
@@ -2083,5 +2084,63 @@ describe('the deer that wears the year', () => {
     expect(other.checkMoveType(Moves.Tackle, { type: MoveTargetType.Unit, unit: foe })).toBe(
       Types.Normal,
     );
+  });
+});
+
+describe('the glider nothing has a hand on', () => {
+  it('rises a stage for each move it lands, and stops at its cap', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const emolga = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    emolga.addAbility(Abilities.Glidewake);
+    emolga.enter();
+    foe.enter();
+
+    for (let landed = 1; landed <= GLIDEWAKE_CAP + 2; landed++) {
+      dealDamage(emolga, foe, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+      expect(emolga.stages[Stages.Evasion]).toBe(Math.min(landed, GLIDEWAKE_CAP));
+    }
+  });
+
+  it('loses the whole wake the moment something reaches it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const emolga = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    emolga.addAbility(Abilities.Glidewake);
+    emolga.enter();
+    foe.enter();
+
+    dealDamage(emolga, foe, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+    dealDamage(emolga, foe, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+    expect(emolga.stages[Stages.Evasion]).toBe(GLIDEWAKE_CAP);
+
+    foe.damage({ type: EffectType.Move, move: Moves.Tackle, unit: foe }, emolga, 5, 0);
+
+    // The whole wake, not a stage of it
+    expect(emolga.stages[Stages.Evasion]).toBe(0);
+  });
+
+  it('gives back only what it took, leaving another source standing', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const emolga = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    emolga.addAbility(Abilities.Glidewake);
+    emolga.enter();
+    foe.enter();
+
+    emolga.addStage(Stages.Evasion, 2, NONE_CAUSE);
+    dealDamage(emolga, foe, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+    expect(emolga.stages[Stages.Evasion]).toBe(3);
+
+    foe.damage({ type: EffectType.Move, move: Moves.Tackle, unit: foe }, emolga, 5, 0);
+
+    // The two it was already standing on are not the wake's to take
+    expect(emolga.stages[Stages.Evasion]).toBe(2);
   });
 });

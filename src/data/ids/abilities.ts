@@ -901,6 +901,7 @@ const enum Abilities {
   Countertune = 200317,
   Overclock = 200318,
   Turning = 200319,
+  Glidewake = 200320,
 }
 
 export default Abilities;

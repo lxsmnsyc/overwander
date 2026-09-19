@@ -88,6 +88,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
         { species: Species.Chatot, weight: 6 },
@@ -197,6 +198,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
         { species: Species.Chatot, weight: 6 },
@@ -306,6 +308,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Chandelure, weight: 5 },
         { species: Species.Spiritomb, weight: 5 },
         { species: Species.Pachirisu, weight: 8 },
@@ -416,6 +419,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Chandelure, weight: 5 },
         { species: Species.Spiritomb, weight: 5 },
         { species: Species.Pachirisu, weight: 8 },

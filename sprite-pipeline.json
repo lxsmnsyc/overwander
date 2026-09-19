@@ -22777,6 +22777,30 @@
         "bytes": 9863
       }
     },
+    "public/sprites/pokemon/unova/587/regular.png": {
+      "digest": "260fb0c0dd94469d",
+      "bytes": 5579,
+      "width": 40,
+      "height": 775,
+      "compact": {
+        "at": "2026-09-19T10:34:06Z",
+        "as": "already compact",
+        "was": 5579,
+        "bytes": 5579
+      }
+    },
+    "public/sprites/pokemon/unova/587/shiny.png": {
+      "digest": "a589cc17ad6d7837",
+      "bytes": 5579,
+      "width": 40,
+      "height": 775,
+      "compact": {
+        "at": "2026-09-19T10:34:06Z",
+        "as": "already compact",
+        "was": 5579,
+        "bytes": 5579
+      }
+    },
     "public/sprites/pokemon/unova/594/regular.png": {
       "digest": "c7f69c64327cc7b4",
       "bytes": 1926,
@@ -24086,15 +24110,15 @@
       }
     },
     "public/sprites/ui/candies/unova/image.png": {
-      "digest": "ab2bc0eb9a560b89",
-      "bytes": 10821,
+      "digest": "2d5e494bed464b43",
+      "bytes": 10926,
       "width": 144,
       "height": 128,
       "compact": {
-        "at": "2026-09-18T17:51:36Z",
+        "at": "2026-09-19T10:34:06Z",
         "as": "already compact",
-        "was": 10821,
-        "bytes": 10821
+        "was": 10926,
+        "bytes": 10926
       }
     },
     "public/sprites/ui/items/apricorn/image.png": {

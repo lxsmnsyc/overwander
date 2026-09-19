@@ -10,6 +10,7 @@ import registerCryogonalSpecies from './cryogonal';
 import registerCubchooSpecies from './cubchoo';
 import registerDarumakaSpecies from './darumaka';
 import registerDeerlingSpecies from './deerling';
+import registerEmolgaSpecies from './emolga';
 import registerDeinoSpecies from './deino';
 import registerDruddigonSpecies from './druddigon';
 import registerDucklettSpecies from './ducklett';
@@ -106,6 +107,7 @@ export default function registerGen5Species(): void {
   registerDucklettSpecies();
   registerVanilliteSpecies();
   registerDeerlingSpecies();
+  registerEmolgaSpecies();
   registerAlomomolaSpecies();
   registerJoltikSpecies();
   registerFerroseedSpecies();

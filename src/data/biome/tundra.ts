@@ -12,12 +12,16 @@ export default function registerTundraSpawns(): void {
         { species: Species.Swinub, weight: 25 },
         { species: Species.Vanillite, weight: 24 },
       ],
-      uncommon: [{ species: Species.Snover, weight: 20 }],
+      uncommon: [
+        { species: Species.Snover, weight: 20 },
+        { species: Species.Cubchoo, weight: 20 },
+      ],
       rare: [
         { species: Species.Piloswine, weight: 10 },
         { species: Species.Vanillish, weight: 10 },
       ],
       scarce: [
+        { species: Species.Beartic, weight: 6 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
         { species: Species.Glaceon, weight: 6 },
@@ -41,12 +45,16 @@ export default function registerTundraSpawns(): void {
         { species: Species.Swinub, weight: 25 },
         { species: Species.Vanillite, weight: 24 },
       ],
-      uncommon: [{ species: Species.Snover, weight: 20 }],
+      uncommon: [
+        { species: Species.Snover, weight: 20 },
+        { species: Species.Cubchoo, weight: 20 },
+      ],
       rare: [
         { species: Species.Piloswine, weight: 10 },
         { species: Species.Vanillish, weight: 10 },
       ],
       scarce: [
+        { species: Species.Beartic, weight: 6 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
         { species: Species.Glaceon, weight: 6 },
@@ -126,6 +134,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Cubchoo, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Snorunt, weight: 22 },
       ],
@@ -135,6 +144,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
       ],
       scarce: [
+        { species: Species.Beartic, weight: 6 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Froslass, weight: 6 },
@@ -154,6 +164,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Cubchoo, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Snorunt, weight: 22 },
       ],
@@ -163,6 +174,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
       ],
       scarce: [
+        { species: Species.Beartic, weight: 6 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Froslass, weight: 6 },

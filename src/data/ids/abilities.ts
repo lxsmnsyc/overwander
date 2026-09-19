@@ -883,6 +883,10 @@ const enum Abilities {
   Anteater = 200299,
   AntGuard = 200300,
   EmberHalo = 200301,
+  FrostFangs = 200302,
+  CrystalChain = 200303,
+  LatchOn = 200304,
+  SleeveGuard = 200305,
 }
 
 export default Abilities;

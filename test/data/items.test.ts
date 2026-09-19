@@ -878,9 +878,11 @@ describe('item data', () => {
     expect(isPurifyingGem(Items.PurifyingGem)).toBe(true);
     expect(isPurifyingGem(Items.BottleCap)).toBe(false);
 
-    // Only a shadow is worth spending one on
-    expect(isPurifiable({ shadow: true })).toBe(true);
-    expect(isPurifiable({ shadow: false })).toBe(false);
+    // Only a shadow is worth spending one on, and a true shadow is
+    // refused: there is nothing under it to give back
+    expect(isPurifiable({ shadow: true, species: Species.Gastly })).toBe(true);
+    expect(isPurifiable({ shadow: false, species: Species.Gastly })).toBe(false);
+    expect(isPurifiable({ shadow: true, species: Species.ArticunoShadow })).toBe(false);
 
     // The shadow comes off, which is what puts the candy cost back
     // down

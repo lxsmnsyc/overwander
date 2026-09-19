@@ -584,6 +584,12 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Articuno,
   Species.Zapdos,
   Species.Moltres,
+  // The true shadows, which a dark day stages in the same band their
+  // counterparts stand in
+  Species.ArticunoShadow,
+  Species.ZapdosShadow,
+  Species.MoltresShadow,
+  Species.MewtwoShadow,
   Species.Mewtwo,
   Species.Raikou,
   Species.Entei,

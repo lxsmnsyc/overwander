@@ -8,14 +8,17 @@ import {
   getTownPool,
   hasSpawnPool,
   pickSpawn,
+  spawnBand,
   spawnRanks,
 } from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
 import {
   SPECIES_DAY_WEIGHT_BOOST,
+  TRUE_SHADOW_WEIGHT,
   getFeaturedFamily,
   getSeasonalCoat,
   getShoreForm,
+  listTrueShadows,
 } from '../data/species';
 import { SpawnSurface, TimeOfDay, getSeason, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
@@ -79,8 +82,7 @@ import {
   rollChefStock,
   rollVendorStock,
 } from '../data/overworld/vendor';
-import type Weather from '../data/overworld/weather';
-import {
+import Weather, {
   WEATHER_SPAWN_BOOST,
   favorsEverything,
   spawnFavoredTypes,
@@ -427,6 +429,23 @@ export default class ChunkSnapshot {
   private npcSky: Weather | null = null;
 
   /**
+   * The sky the window's raids were staged under, read at the raid
+   * window rather than at the hour, for the same reason `npcWeather`
+   * is: a raid staged under a dark day has to still be that raid an
+   * hour later, including on a server rebuilding it from its timestamp
+   */
+  get raidWeather(): Weather {
+    this.raidSky ??= getWorld().getWeather(
+      this.chunk.x,
+      this.chunk.y,
+      Math.floor(this.raidTimestamp / WEATHER_INTERVAL),
+    );
+    return this.raidSky;
+  }
+
+  private raidSky: Weather | null = null;
+
+  /**
    * What the window may roll, crowded by the two things that crowd it:
    * the featured family for the day, and the sky for the hour
    */
@@ -439,7 +458,7 @@ export default class ChunkSnapshot {
 
     if (pool == null) {
       pool = this.crowd(
-        getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp), false, surface),
+        this.darkened(getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp), false, surface)),
       );
       this.pools.set(surface, pool);
     }
@@ -458,6 +477,24 @@ export default class ChunkSnapshot {
   /** What a town's streets may roll this window, crowded the same way */
   private getStreetPool(): SpawnRarityGroups {
     return this.crowd(getTownPool(getTimeOfDay(this.timestamp)));
+  }
+
+  /**
+   * The true shadows, which a dark day is the only way to meet. They
+   * stand in the special band beside the legendaries, and under every
+   * other sky they are not in the pool at all
+   */
+  private darkened(pool: SpawnRarityGroups): SpawnRarityGroups {
+    if (this.weather !== Weather.DarkDay) {
+      return pool;
+    }
+    const special = [...spawnBand(pool, 'special')];
+
+    for (const species of listTrueShadows()) {
+      special.push({ species, weight: TRUE_SHADOW_WEIGHT });
+    }
+
+    return { ...pool, special };
   }
 
   private crowd(pool: SpawnRarityGroups): SpawnRarityGroups {
@@ -803,12 +840,36 @@ export default class ChunkSnapshot {
         }
       }
 
+      // Under a dark day every shadow lair holds a true shadow instead,
+      // so the sky is the one way to meet one and finding the sky is
+      // enough: nothing else has to be drawn for. Held to the same boss
+      // rule as every other draw, and with none left to stage the lair
+      // falls back to an ordinary shadow raid rather than holding nothing
+      const shadows: Species[] = [];
+
+      if (this.raidWeather === Weather.DarkDay) {
+        for (const species of listTrueShadows()) {
+          if (canStageBoss(species)) {
+            shadows.push(species);
+          }
+        }
+      }
+
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark !== Landmark.ShadowLair) {
           continue;
         }
 
         const rng = new AleaRNG(`${this.key}${this.raidTimestamp}shadow${cell}`);
+
+        if (shadows.length > 0) {
+          raids.set(cell, {
+            lair: null,
+            species: shadows[Math.floor(rng.random() * shadows.length)],
+            traitValue: rng.int32(),
+          });
+          continue;
+        }
         // The draws land in order: which side of the fork, the thing
         // within it, then the trait value its nature and ability
         // derive from

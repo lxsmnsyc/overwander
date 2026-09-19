@@ -97,6 +97,7 @@ export default function registerLeafeonSpecies(): void {
         Moves.Synthesis,
         Moves.Toxic,
         Moves.XScissor,
+        Moves.Confide,
       ],
     },
   });

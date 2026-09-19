@@ -48,6 +48,7 @@ const MOON_TEACHABLE = [
   Moves.ThunderWave,
   Moves.Toxic,
   Moves.Trick,
+  Moves.Confide,
 ];
 
 export default function registerMoonDuoSpecies(): void {
@@ -91,6 +92,7 @@ export default function registerMoonDuoSpecies(): void {
         75: [Moves.PsychoShift],
         84: [Moves.LunarDance],
         93: [Moves.Psychic],
+        99: [Moves.Moonblast],
       },
       teachable: [
         ...MOON_TEACHABLE,
@@ -188,6 +190,7 @@ export default function registerMoonDuoSpecies(): void {
         Moves.Torment,
         Moves.WillOWisp,
         Moves.XScissor,
+        Moves.PowerUpPunch,
       ],
     },
   });

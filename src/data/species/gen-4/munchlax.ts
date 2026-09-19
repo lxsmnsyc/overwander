@@ -113,6 +113,8 @@ export default function registerMunchlaxSpecies(): void {
         Moves.Uproar,
         Moves.WaterPulse,
         Moves.ZenHeadbutt,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
       egg: [
         Moves.Charm,

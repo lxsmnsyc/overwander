@@ -45,6 +45,7 @@ const FAMILY_TEACHABLE = [
   Moves.ThunderWave,
   Moves.Thunderbolt,
   Moves.Toxic,
+  Moves.Confide,
 ];
 
 /**
@@ -88,6 +89,7 @@ export default function registerShinxSpecies(): void {
         1: [Moves.Tackle],
         5: [Moves.Leer],
         9: [Moves.Charge],
+        11: [Moves.BabyDollEyes],
         13: [Moves.Spark],
         17: [Moves.Bite],
         21: [Moves.Roar],
@@ -106,6 +108,7 @@ export default function registerShinxSpecies(): void {
         Moves.QuickAttack,
         Moves.TakeDown,
         Moves.ThunderFang,
+        Moves.EerieImpulse,
       ],
     },
   });
@@ -196,6 +199,7 @@ export default function registerShinxSpecies(): void {
         42: [Moves.Crunch],
         49: [Moves.ScaryFace],
         56: [Moves.Discharge],
+        67: [Moves.ElectricTerrain],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam, Moves.Superpower],
     },

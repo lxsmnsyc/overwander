@@ -40,7 +40,7 @@ export default function registerChatotSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Peck],
+        1: [Moves.Peck, Moves.Confide],
         5: [Moves.Growl],
         9: [Moves.MirrorMove],
         13: [Moves.Sing],
@@ -90,7 +90,9 @@ export default function registerChatotSpecies(): void {
         Moves.Twister,
         Moves.UTurn,
         Moves.Uproar,
+        Moves.Confide,
       ],
+      egg: [Moves.Boomburst],
     },
   });
 }

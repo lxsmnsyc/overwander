@@ -95,6 +95,7 @@ export default function registerHonchkrowSpecies(): void {
         Moves.Toxic,
         Moves.Twister,
         Moves.Uproar,
+        Moves.Confide,
       ],
     },
   });

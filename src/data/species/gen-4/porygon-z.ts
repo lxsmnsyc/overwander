@@ -100,6 +100,7 @@ export default function registerPorygonZSpecies(): void {
         Moves.TrickRoom,
         Moves.Uproar,
         Moves.ZenHeadbutt,
+        Moves.Confide,
       ],
     },
   });

@@ -56,6 +56,7 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.UTurn,
   Moves.WaterPulse,
+  Moves.Confide,
 ];
 
 /**
@@ -108,6 +109,7 @@ export default function registerGlameowSpecies(): void {
         37: [Moves.Slash],
         41: [Moves.SuckerPunch],
         45: [Moves.Attract],
+        50: [Moves.PlayRough],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [

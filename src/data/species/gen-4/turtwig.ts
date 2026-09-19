@@ -50,6 +50,7 @@ const FAMILY_TEACHABLE = [
   Moves.SwordsDance,
   Moves.Synthesis,
   Moves.Toxic,
+  Moves.Confide,
 ];
 
 /**
@@ -117,6 +118,7 @@ export default function registerTurtwigSpecies(): void {
         Moves.Thrash,
         Moves.Tickle,
         Moves.WorrySeed,
+        Moves.GrassyTerrain,
       ],
     },
   });

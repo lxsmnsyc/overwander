@@ -118,6 +118,7 @@ export default function registerGliscorSpecies(): void {
         Moves.Toxic,
         Moves.UTurn,
         Moves.XScissor,
+        Moves.Confide,
       ],
     },
   });

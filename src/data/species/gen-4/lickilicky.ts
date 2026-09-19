@@ -120,6 +120,8 @@ export default function registerLickilickySpecies(): void {
         Moves.Toxic,
         Moves.WaterPulse,
         Moves.ZenHeadbutt,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
     },
   });

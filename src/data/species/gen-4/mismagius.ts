@@ -49,6 +49,8 @@ export default function registerMismagiusSpecies(): void {
           Moves.MagicalLeaf,
           Moves.Psywave,
           Moves.Spite,
+          Moves.PhantomForce,
+          Moves.MysticalFire,
         ],
       },
       teachable: [
@@ -103,6 +105,8 @@ export default function registerMismagiusSpecies(): void {
         Moves.TrickRoom,
         Moves.Uproar,
         Moves.WillOWisp,
+        Moves.Confide,
+        Moves.DazzlingGleam,
       ],
     },
   });

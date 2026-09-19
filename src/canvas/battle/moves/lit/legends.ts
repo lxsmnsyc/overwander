@@ -15,7 +15,7 @@ import {
 } from '../effect/legends';
 import { type EffectShape, many } from '../effect/shapes';
 import { backToward } from './contact';
-import { TAU, arcing, debris, gathering, smoke, sparks } from './pieces';
+import { TAU, arcing, debris, gathering, jet, smoke, sparks } from './pieces';
 import {
   type LitShapePainter,
   aside,
@@ -69,26 +69,6 @@ function shaft(kit: EffectBatch, ground: Spot, reach: number, held: number, colo
 
   kit.pool(ground, reach * 0.9, colour, decay(hit) * 0.7);
   kit.ripple(ground, reach * (0.2 + hit * 0.8), 0.1, lighten(colour, 0.3), decay(hit));
-}
-
-/** A jet out of the floor, of fire or of water */
-function jet(
-  kit: EffectBatch,
-  base: Spot,
-  height: number,
-  width: number,
-  colour: string,
-  hot: string,
-  alpha: number,
-  flow: number,
-): void {
-  const path: Spot[] = [];
-
-  for (let step = 0; step <= 6; step += 1) {
-    path.push([base[0], (step / 6) * height, base[2]]);
-  }
-  kit.ribbon(path, width * 2, colour, alpha * 0.45, flow);
-  kit.ribbon(path, width, hot, alpha, flow * 1.4);
 }
 
 /** A great hand of four fingers reaching in from one side */

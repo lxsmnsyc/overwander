@@ -230,6 +230,23 @@ export type EffectShape =
   | 'Blaze'
   | 'Firedance'
   | 'Spatter'
+  | 'Sparkle'
+  | 'Geo'
+  | 'Terrain'
+  | 'Arrows'
+  | 'Groundswell'
+  | 'Precipice'
+  | 'Ascent'
+  | 'Fury'
+  | 'Portal'
+  | 'Scuffle'
+  | 'Diamonds'
+  | 'Oblivion'
+  | 'Ruin'
+  | 'Origin'
+  | 'Lunar'
+  | 'Steam'
+  | 'Shuriken'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -410,6 +427,23 @@ export const SPANS: Record<EffectShape, number> = {
   Blaze: 1000,
   Firedance: 900,
   Spatter: 700,
+  Sparkle: 520,
+  Geo: 1000,
+  Terrain: 1100,
+  Arrows: 1100,
+  Groundswell: 1000,
+  Precipice: 1000,
+  Ascent: 1000,
+  Fury: 1100,
+  Portal: 950,
+  Scuffle: 820,
+  Diamonds: 1000,
+  Oblivion: 1000,
+  Ruin: 1100,
+  Origin: 1100,
+  Lunar: 900,
+  Steam: 1000,
+  Shuriken: 900,
   Whiff: 320,
 };
 

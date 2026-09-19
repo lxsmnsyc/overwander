@@ -12,6 +12,7 @@ import care from './care';
 import colorOf from './colors';
 import contact from './contact';
 import elements from './elements';
+import kalos from './kalos';
 import legends from './legends';
 import ohko from './ohko';
 import minds from './minds';
@@ -100,6 +101,7 @@ const PAINTERS: Record<EffectShape, ShapePainter> = {
   ...ohko,
   ...stats,
   ...unova,
+  ...kalos,
 };
 
 /**

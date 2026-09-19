@@ -325,6 +325,26 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Firedance', Moves.FieryDance],
   ['Scorch', Moves.Incinerate],
   ['Spatter', Moves.FlameBurst],
+  // Kalos: the fairy type's own, the terrains, and the signatures
+  ['Sparkle', Moves.DazzlingGleam],
+  ['Terrain', Moves.ElectricTerrain],
+  ['Terrain', Moves.GrassyTerrain],
+  ['Terrain', Moves.MistyTerrain],
+  ['Arrows', Moves.ThousandArrows],
+  ['Groundswell', Moves.ThousandWaves],
+  ['Precipice', Moves.PrecipiceBlades],
+  ['Origin', Moves.OriginPulse],
+  ['Ascent', Moves.DragonAscent],
+  ['Oblivion', Moves.OblivionWing],
+  ['Ruin', Moves.LightOfRuin],
+  ['Geo', Moves.Geomancy],
+  ['Portal', Moves.HyperspaceHole],
+  ['Fury', Moves.HyperspaceFury],
+  ['Diamonds', Moves.DiamondStorm],
+  ['Steam', Moves.SteamEruption],
+  ['Lunar', Moves.Moonblast],
+  ['Scuffle', Moves.PlayRough],
+  ['Shuriken', Moves.WaterShuriken],
 ];
 
 /**

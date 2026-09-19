@@ -69,6 +69,11 @@ const BY_SHAPE: Partial<Record<EffectShape, string>> = {
   Swarm: '#4cc46a',
   // A brass bell
   Chime: '#ffd86a',
+  // Yveltal's crimson, Rayquaza's green, a diamond's pale pink and white steam, where the types' colours are none of them
+  Oblivion: '#d6384a',
+  Ascent: '#5ad07a',
+  Diamonds: '#f4d4f0',
+  Steam: '#dfeaf4',
   // Yellow spores and eyes, gold applause, an anger mark's red and a curse's purple, where the types' colours say none of them
   Spores: '#f0d84a',
   Stare: '#f0c830',

@@ -19,6 +19,7 @@ export const BY_TYPE: Partial<Record<Types, EffectShape>> = {
   [Types.Flying]: 'Leafy',
   [Types.Dark]: 'Shade',
   [Types.Ghost]: 'Shade',
+  [Types.Fairy]: 'Sparkle',
 };
 
 /**
@@ -606,6 +607,59 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.FieryDance]: 'Firedance',
   [Moves.Incinerate]: 'Scorch',
   [Moves.FlameBurst]: 'Spatter',
+
+  // Kalos. The legendary and mythical signatures
+  [Moves.ThousandArrows]: 'Arrows',
+  [Moves.ThousandWaves]: 'Groundswell',
+  [Moves.LandsWrath]: 'Rift',
+  [Moves.PrecipiceBlades]: 'Precipice',
+  [Moves.OriginPulse]: 'Origin',
+  [Moves.DragonAscent]: 'Ascent',
+  [Moves.OblivionWing]: 'Oblivion',
+  [Moves.LightOfRuin]: 'Ruin',
+  [Moves.Geomancy]: 'Geo',
+  [Moves.HyperspaceHole]: 'Portal',
+  [Moves.HyperspaceFury]: 'Fury',
+  [Moves.DiamondStorm]: 'Diamonds',
+  [Moves.SteamEruption]: 'Steam',
+  // The terrains, which light the floor rather than land on anybody
+  [Moves.ElectricTerrain]: 'Terrain',
+  [Moves.GrassyTerrain]: 'Terrain',
+  [Moves.MistyTerrain]: 'Terrain',
+  // Attacks with a picture of their own
+  [Moves.Moonblast]: 'Lunar',
+  [Moves.PlayRough]: 'Scuffle',
+  [Moves.WaterShuriken]: 'Shuriken',
+  // Moves that are an earlier move's picture in all but name
+  [Moves.PhantomForce]: 'Ambush',
+  [Moves.FlyingPress]: 'Plummet',
+  [Moves.FellStinger]: 'Spike',
+  [Moves.PetalBlizzard]: 'Petals',
+  [Moves.Infestation]: 'Buzz',
+  [Moves.ParabolicCharge]: 'Drain',
+  [Moves.DrainingKiss]: 'Drain',
+  [Moves.FreezeDry]: 'Freeze',
+  [Moves.MysticalFire]: 'Blaze',
+  [Moves.FairyWind]: 'Swirl',
+  [Moves.Boomburst]: 'Roar',
+  [Moves.NobleRoar]: 'Roar',
+  [Moves.EerieImpulse]: 'Pulse',
+  [Moves.VenomDrench]: 'Toxin',
+  [Moves.MagneticFlux]: 'Crackle',
+  [Moves.Electrify]: 'Crackle',
+  [Moves.IonDeluge]: 'Crackle',
+  [Moves.BabyDollEyes]: 'Hearts',
+  [Moves.PlayNice]: 'Hearts',
+  [Moves.HoldHands]: 'Hearts',
+  [Moves.HappyHour]: 'Applause',
+  [Moves.Celebrate]: 'Applause',
+  [Moves.Rototiller]: 'Sprout',
+  [Moves.ForestsCurse]: 'Greening',
+  [Moves.TrickOrTreat]: 'Shade',
+  [Moves.FlowerShield]: 'Petals',
+  [Moves.AromaticMist]: 'Petals',
+  [Moves.TopsyTurvy]: 'Warp',
+  [Moves.FairyLock]: 'Grid',
 
   // Struck and gone: the blow is the first step and the walk off the
   // field is the second, which is why the landing here is the leaving

@@ -82,6 +82,17 @@ export const JOLTS: Partial<Record<EffectShape, number>> = {
   Ram: 3,
   Blaze: 1.5,
   Spatter: 1.5,
+  Arrows: 3,
+  Groundswell: 3.5,
+  Precipice: 3.5,
+  Ascent: 3.5,
+  Fury: 2,
+  Portal: 1.5,
+  Diamonds: 1.5,
+  Ruin: 3,
+  Origin: 3,
+  Lunar: 2,
+  Steam: 2,
 };
 
 /** Where the effect is happening: the first body it landed on. */
@@ -151,10 +162,7 @@ export function thrown(
   ];
 }
 
-/** Full until `from`, then gone by the end. */
-export function late(share: number, from: number): number {
-  return share < from ? 1 : Math.max(0, 1 - (share - from) / (1 - from));
-}
+export { late } from '../__paint';
 
 /** How far through its own part something staggered is, from 0 to 1. */
 export function staged(share: number, rate: number, delay: number): number {

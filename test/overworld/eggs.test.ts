@@ -28,6 +28,7 @@ import {
   INHERITED_IVS,
   SHADOW_INHERITANCE_CHANCE,
   canBreed,
+  eggAbilities,
   getEggSpecies,
   inheritAbility,
   inheritBall,
@@ -46,9 +47,10 @@ import {
   getLevelUpMoves,
   getRegisteredSpecies,
   getSpeciesData,
+  getTeachableMoves,
   registerSpecies,
 } from '../../src/data/species';
-import { deriveEggMoves, deriveMoves } from '../../src/overworld/encounter';
+import { deriveBonusMoves, deriveMoves, fillBonusMoves } from '../../src/overworld/encounter';
 
 beforeAll(() => {
   registerMoves();
@@ -519,21 +521,49 @@ describe('inherited nature', () => {
   });
 });
 
+describe('what an egg hatches holding', () => {
+  it('keeps the sky gifts and drops the roll the mother replaced', () => {
+    // A mirage handed the meeting a second hidden ability, and then
+    // the mother passed her own: the roll goes, the gift stays
+    expect(
+      eggAbilities(Abilities.Chlorophyll, Abilities.Overgrow, [
+        Abilities.Overgrow,
+        Abilities.Static,
+      ]),
+    ).toEqual([Abilities.Chlorophyll, Abilities.Static]);
+
+    // Where she passed nothing, the roll is what it keeps
+    expect(
+      eggAbilities(Abilities.Overgrow, Abilities.Overgrow, [Abilities.Overgrow, Abilities.Static]),
+    ).toEqual([Abilities.Overgrow, Abilities.Static]);
+
+    // And an egg the sky handed nothing keeps one ability
+    expect(eggAbilities(Abilities.Overgrow, Abilities.Overgrow)).toEqual([Abilities.Overgrow]);
+  });
+});
+
 describe('hatchling moves', () => {
-  it('guarantees one move off its line, in place of a learned one', () => {
-    // Bulbasaur's line inherits; every draw of the stream is one of
-    // the moves it can only inherit
-    const inheritable = new Set(getEggMoves(Species.Bulbasaur));
+  it('fills a bonus slot without giving up a learned move', () => {
+    // Every draw of the stream is a move the line has to be bred or
+    // taught for, and the four it learned stay where they are
+    const fillable = new Set([
+      ...getEggMoves(Species.Bulbasaur),
+      ...getTeachableMoves(Species.Bulbasaur),
+    ]);
+    const learned = deriveMoves(Species.Bulbasaur, EGG_LEVEL);
 
-    expect(inheritable.size).toBeGreaterThan(0);
+    expect(fillable.size).toBeGreaterThan(0);
     for (const roll of [0, 0.4, 0.99]) {
-      const moves = deriveEggMoves(Species.Bulbasaur, EGG_LEVEL, () => roll);
+      const moves = deriveBonusMoves(Species.Bulbasaur, EGG_LEVEL, () => roll, 2);
 
-      expect(moves.length).toBeGreaterThan(0);
       expect(moves).toHaveLength(new Set(moves).size);
-      expect(inheritable.has(moves[0])).toBe(true);
-      // Four is still the limit, inherited move included
-      expect(moves.length).toBeLessThanOrEqual(4);
+      expect(moves.slice(0, learned.length)).toEqual(learned);
+      for (const move of moves.slice(learned.length)) {
+        expect(fillable.has(move)).toBe(true);
+        expect(learned).not.toContain(move);
+      }
+      // Six is the most a fogbow ever hands over
+      expect(moves.length).toBeLessThanOrEqual(6);
     }
   });
 
@@ -593,12 +623,35 @@ describe('hatchling moves', () => {
     expect(passed).toEqual(deriveMoves(Species.Bulbasaur, EGG_LEVEL));
   });
 
-  it('hatches a line with nothing to inherit knowing only its own', () => {
-    // An evolution carries no list of its own — what it knows it
-    // hatched with, as its base stage
+  it('fills a bonus slot off the list of the stage its line hatches at', () => {
+    // An evolution carries no egg list of its own, so the line's first
+    // stage is what a bonus slot is drawn from. The first draw at 0 is
+    // the first of those
     expect(getEggMoves(Species.Ivysaur)).toEqual([]);
-    expect(deriveEggMoves(Species.Ivysaur, EGG_LEVEL, () => 0)).toEqual(
-      deriveMoves(Species.Ivysaur, EGG_LEVEL),
+
+    const learned = deriveMoves(Species.Ivysaur, EGG_LEVEL);
+    const wide = deriveBonusMoves(Species.Ivysaur, EGG_LEVEL, () => 0, 1);
+
+    expect(wide.slice(0, learned.length)).toEqual(learned);
+    expect(getEggMoves(Species.Bulbasaur)).toContain(wide[learned.length]);
+  });
+
+  it('fills the room behind whatever a bred egg inherited', () => {
+    // A bred egg's list comes off its parents rather than off its
+    // level, and the sky's room goes behind it without disturbing it
+    const [passed] = getEggMoves(Species.Bulbasaur);
+    const inherited = [passed, ...deriveMoves(Species.Bulbasaur, EGG_LEVEL)];
+    const wide = fillBonusMoves(Species.Bulbasaur, inherited, () => 0, 2);
+
+    expect(wide.slice(0, inherited.length)).toEqual(inherited);
+    expect(wide).toHaveLength(inherited.length + 2);
+    // Never a move it was already holding, whatever the draw
+    expect(new Set(wide).size).toBe(wide.length);
+  });
+
+  it('knows only its own where the sky hands over no room', () => {
+    expect(deriveBonusMoves(Species.Butterfree, EGG_LEVEL, () => 0, 0)).toEqual(
+      deriveMoves(Species.Butterfree, EGG_LEVEL),
     );
   });
 

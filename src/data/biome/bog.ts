@@ -96,7 +96,10 @@ export default function registerBogSpawns(): void {
       ],
     },
     [TimeOfDay.Evening]: {
-      base: [{ species: Species.Poliwag, weight: 20 }],
+      base: [
+        { species: Species.Poliwag, weight: 20 },
+        { species: Species.Tympole, weight: 25 },
+      ],
       uncommon: [
         { species: Species.Gulpin, weight: 22 },
         { species: Species.Venonat, weight: 20 },
@@ -108,7 +111,10 @@ export default function registerBogSpawns(): void {
         { species: Species.Drifloon, weight: 20 },
         { species: Species.Croagunk, weight: 20 },
       ],
-      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      rare: [
+        { species: Species.Poliwhirl, weight: 5 },
+        { species: Species.Palpitoad, weight: 10 },
+      ],
       scarce: [
         { species: Species.Swalot, weight: 7 },
         { species: Species.Venomoth, weight: 10 },
@@ -121,6 +127,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Seismitoad, weight: 5 },
         { species: Species.Spiritomb, weight: 5 },
         { species: Species.Volbeat, weight: 8 },
         { species: Species.Illumise, weight: 8 },
@@ -133,6 +140,7 @@ export default function registerBogSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Tympole, weight: 25 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Oddish, weight: 20 },
         { species: Species.Gastly, weight: 20 },
@@ -149,6 +157,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.Palpitoad, weight: 10 },
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Gloom, weight: 5 },
         { species: Species.Haunter, weight: 5 },
@@ -165,6 +174,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Seismitoad, weight: 5 },
         { species: Species.Spiritomb, weight: 5 },
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Vileplume, weight: 5 },

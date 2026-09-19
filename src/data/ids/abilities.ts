@@ -849,6 +849,9 @@ const enum Abilities {
   RippleOut = 200265,
   RedBelt = 200266,
   BlueBelt = 200267,
+  EmberTuft = 200268,
+  GeyserTail = 200269,
+  LeafCrown = 200270,
 }
 
 export default Abilities;

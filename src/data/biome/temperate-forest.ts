@@ -9,6 +9,11 @@ export default function registerTemperateForestSpawns(): void {
   // Throh and Sawk are written but wait on sprites, since the
   // collection has drawn no Throh and the pair is staged together.
   // Once it does, mornings and days take each of them in elusive at 5
+  // The three elemental monkeys are written but wait as a set, since
+  // the collection has drawn neither Simisear nor Simipour and the
+  // trio is staged together. Once it does, mornings and days take each
+  // of Pansage, Pansear and Panpour in uncommon at 22 and each of
+  // Simisage, Simisear and Simipour in scarce at 7
   registerSpawnPool(Biome.TemperateForest, {
     [TimeOfDay.Morning]: {
       base: [

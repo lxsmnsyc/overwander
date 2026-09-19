@@ -72,37 +72,39 @@ function sweep(world: World, window: number, reach: number): Weather[][] {
 }
 
 describe('classifying a sky', () => {
-  it('reads a front through its bands as it arrives', () => {
+  it('reads a front through its rings as it arrives', () => {
     const bands = BIOME_WEATHER[Biome.Grassland];
 
-    // Dry and calm is the ordinary sky; the front is damp before it is
-    // wet and wet before it is a storm
+    // Dry and calm is the ordinary sky; a front is damp at its edge,
+    // wet inside and a storm at its core, however calm the air
     expect(classifyWeather(Biome.Grassland, -0.5, -0.5)).toBe(bands.clear);
     expect(classifyWeather(Biome.Grassland, 0.25, -0.5)).toBe(bands.damp);
     expect(classifyWeather(Biome.Grassland, 0.55, -0.5)).toBe(bands.wet);
-    expect(classifyWeather(Biome.Grassland, 0.55, 0.5)).toBe(bands.storm);
+    expect(classifyWeather(Biome.Grassland, 0.85, -0.5)).toBe(bands.storm);
+    // Wild air only stirs a dry sky
     expect(classifyWeather(Biome.Grassland, -0.5, 0.5)).toBe(bands.stirred);
+    expect(classifyWeather(Biome.Grassland, 0.55, 0.5)).toBe(bands.wet);
   });
 
   it('gives the same reading a different sky over different ground', () => {
     // One front crossing a border is one weather system meeting two
     // countries, which is the whole reason the biome reads the numbers
-    expect(classifyWeather(Biome.TropicalRainforest, 0.55, 0.5)).toBe(Weather.Thunderstorm);
-    expect(classifyWeather(Biome.Glacier, 0.55, 0.5)).toBe(Weather.Blizzard);
+    expect(classifyWeather(Biome.TropicalRainforest, 0.85, 0.3)).toBe(Weather.Thunderstorm);
+    expect(classifyWeather(Biome.Glacier, 0.85, 0.3)).toBe(Weather.Blizzard);
     expect(classifyWeather(Biome.Desert, -0.5, 0.5)).toBe(Weather.Sandstorm);
   });
 
   it('keeps the showpieces in the corner of the field', () => {
-    expect(classifyWeather(Biome.Glacier, 0.9, 0.9)).toBe(Weather.Aurora);
+    expect(classifyWeather(Biome.Glacier, 0.75, 0.75)).toBe(Weather.Aurora);
     // A reading short of the corner is only a storm
-    expect(classifyWeather(Biome.Glacier, 0.55, 0.5)).toBe(Weather.Blizzard);
+    expect(classifyWeather(Biome.Glacier, 0.85, 0.5)).toBe(Weather.Blizzard);
   });
 
   it('keeps the rarest sky in the corner of the corner', () => {
     // A reading that would be any other country's showpiece is not
     // enough for this one
     expect(classifyWeather(Biome.Desert, 0.95, 0.95)).toBe(Weather.MeteorShower);
-    expect(classifyWeather(Biome.Desert, 0.65, 0.65)).toBe(Weather.Thunderstorm);
+    expect(classifyWeather(Biome.Desert, 0.85, 0.5)).toBe(BIOME_WEATHER[Biome.Desert].storm);
   });
 
   it('lets the meteor shower fall over every country but Beyond', () => {
@@ -585,8 +587,8 @@ describe('the types a sky is kind to', () => {
     expect(classifyWeather(Biome.Grassland, 0.95, 0.95)).toBe(Weather.MeteorShower);
     expect(classifyWeather(Biome.Grassland, -0.95, -0.95)).toBe(Weather.FataMorgana);
     expect(classifyWeather(Biome.Grassland, -0.95, 0.95)).toBe(Weather.DarkDay);
-    // Short of the corner it is only wet
-    expect(classifyWeather(Biome.Grassland, 0.95, -0.5)).toBe(Weather.Rain);
+    // Short of the corner it is only the core of a front
+    expect(classifyWeather(Biome.Grassland, 0.95, -0.5)).toBe(Weather.Thunderstorm);
   });
 
   it('shadows what arrives under a dark day and nothing else', () => {

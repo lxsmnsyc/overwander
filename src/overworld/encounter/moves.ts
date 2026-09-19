@@ -1,7 +1,7 @@
 import AleaRNG from '../../core/alea';
 import type { Moves } from '../../data/ids/moves';
 import type { Species } from '../../data/ids/species';
-import { getEggMoves, getSpeciesData } from '../../data/species';
+import { getBaseSpecies, getEggMoves, getSpeciesData, getTeachableMoves } from '../../data/species';
 import { MOVE_LIMIT } from './traits';
 
 /** What it knows when it is met, and what it was hatched knowing */
@@ -56,38 +56,85 @@ export function deriveMoves(species: Species, level: number, banned?: Set<Moves>
 }
 
 /**
- * The moves a hatchling knows: what its species has learned by its
- * hatch level, plus one off its line's egg list. The inherited move
- * goes first so it survives the four-move limit — it is the reason to
- * walk an egg at all
+ * How much room a fogbow hands over, out of one roll: two some of the
+ * time, one rather more often, and nothing the rest of it
  */
-export function deriveEggMoves(species: Species, level: number, random: () => number): Moves[] {
-  const learned = deriveMoves(species, level);
-  const inheritable = getEggMoves(species);
-
-  if (inheritable.length === 0) {
-    return learned;
+export function bonusMoveSlots(roll: number, chance: number, second: number, most: number): number {
+  if (roll < second) {
+    return most;
   }
-
-  const inherited = inheritable[Math.floor(random() * inheritable.length)];
-
-  const moves: Moves[] = [inherited];
-
-  for (const move of learned) {
-    if (move !== inherited) {
-      moves.push(move);
-    }
-  }
-  return moves.slice(0, MOVE_LIMIT);
+  return roll < chance ? 1 : 0;
 }
 
 /**
- * The stream a fogbow's inherited move is picked from. Its own seed
+ * Everything the line could be taught or could have inherited but has
+ * not learned by this level: an egg move is as likely as a machine
+ * one, which is what makes the extra room a surprise.
+ *
+ * A line lists its egg moves on the stage it hatches at, so the base
+ * stage is what is asked: an evolution has none of its own
+ */
+function fillableMoves(species: Species, known: Moves[]): Moves[] {
+  const held = new Set(known);
+  const left: Moves[] = [];
+
+  for (const move of new Set([
+    ...getEggMoves(getBaseSpecies(species)),
+    ...getTeachableMoves(species),
+  ])) {
+    if (!held.has(move)) {
+      left.push(move);
+    }
+  }
+  return left;
+}
+
+/**
+ * A list with the fogbow's extra room filled in behind it. The extras
+ * go last, since nothing has to be given up for them, and a list
+ * already holding a move is never handed it twice
+ */
+export function fillBonusMoves(
+  species: Species,
+  known: Moves[],
+  random: () => number,
+  slots: number,
+): Moves[] {
+  if (slots < 1) {
+    return known;
+  }
+
+  const moves = [...known];
+  const left = fillableMoves(species, known);
+
+  for (let taken = 0; taken < slots && left.length > 0; taken += 1) {
+    const [move] = left.splice(Math.floor(random() * left.length), 1);
+
+    moves.push(move);
+  }
+  return moves;
+}
+
+/**
+ * What a meeting under a fogbow walks out knowing: its own four, and
+ * one or two more it would otherwise have had to be bred or taught for
+ */
+export function deriveBonusMoves(
+  species: Species,
+  level: number,
+  random: () => number,
+  slots: number,
+): Moves[] {
+  return fillBonusMoves(species, deriveMoves(species, level), random, slots);
+}
+
+/**
+ * The stream a fogbow's extra moves are drawn from. Its own seed
  * rather than a slice of the trait value, so it takes nothing away
  * from the slices the level, gender, ability and nature already read
  */
-export function eggMoveRoll(traitValue: number): () => number {
-  const rng = new AleaRNG(`${traitValue}:eggmove`);
+export function bonusMoveRoll(traitValue: number): () => number {
+  const rng = new AleaRNG(`${traitValue}:bonusmoves`);
 
   return () => rng.random();
 }

@@ -1,5 +1,49 @@
 # overwander
 
+## 4.3.0
+
+### Minor Changes
+
+- 28e97cd: Teams: save up to 6 parties under a name in your profile, then load one with a press when a raid or a duel asks you to form a team.
+
+### Patch Changes
+
+- 9630dd9: - Future Sight and Doom Desire draw their own picture when the delayed strike lands, instead of arriving as a bare hit.
+  - A raid lobby lists the host's party first, whoever formed a party soonest.
+- 2df43a7: An egg's catch sheet is one column: the egg, how far along it is and the button that hatches it, with no empty stat and move columns and no candy giving away what is inside.
+
+## 4.2.0
+
+### Minor Changes
+
+- eab7b7a: A Fata Morgana hands over abilities rather than widening the odds of one:
+
+  - 1 meeting in 8 under one keeps a second ability out of its line's hidden pool, on top of the one it rolled.
+  - 1 meeting in 64 keeps its family's signature ability as well, so a wild pokemon can walk out with 3.
+  - The sky no longer doubles the odds of rolling a hidden ability. What it would have rolled under any other sky is what it rolls under this one, and the species day is now the only thing that widens that band.
+  - Wild meetings, raid prizes, nest eggs, bred eggs and revived fossils all count. A bred egg reads the sky over the breeder it was collected from, and an ability its mother passed replaces the one it rolled without costing it the sky's gift.
+  - Every egg and every revived fossil arrives with room for what the sky handed it. A nest egg's extra ability was being dropped on the way into the collection.
+  - An Ability Patch is still the only way to write a signature into a pokemon already caught.
+  - A catch now always arrives with room for every ability it walks in with.
+
+- a4ee086: A fogbow hands over move room rather than a single move:
+
+  - 1 meeting in 4 under one walks out with room for a 5th move, and 1 in 16 with room for a 6th as well.
+  - What fills the extra room is drawn from the line's egg moves and its machine and tutor moves together, so an inherited move is as likely as a taught one, and never something it already knows.
+  - Nothing it learned is given up for the room, which is what the old rule cost: the inherited move used to take a level-up move's place.
+  - Wild meetings, raid prizes, nest eggs, bred eggs and revived fossils all count. A bred egg reads the sky over the breeder it was collected from, and the room goes behind what its parents passed rather than in place of it. A gift arrives under its own rules.
+  - Nothing else in the game widens a pokemon's move list, so this is the only way past four.
+  - An evolution reads its line's egg moves off the stage it hatches at, so it is no longer handed nothing.
+
+### Patch Changes
+
+- f715521: A dark day closes hearts beyond the wild:
+
+  - 1 arrival in 4 under one is a shadow, down from 1 in 3.
+  - A legendary raid's prize, a nest egg, a bred egg and a revived fossil can all come out shadowed now, as well as a wild meeting. A nest used to promise that nothing shadowed came out of one.
+  - A mythical raid's prize is beyond the sky's reach. A shadow raid's prize, a syndicate's pokemon and a gift all arrive with the answer already written.
+  - A shadowed nest egg takes twice as long to hatch, the way a bred one does.
+
 ## 4.1.1
 
 ### Patch Changes

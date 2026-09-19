@@ -1435,72 +1435,118 @@ export function CatchSheetBody(
           >
             {(loaded) => (
               <>
-                {/* Fitted to one screen: who it is and what it becomes on
-                    the left, what it fights with and what it is made of on
-                    the right. The columns size apart, so a tall block on
-                    one side never pushes the other. One scrolling column
-                    on a phone, portrait, moves, evolutions, then stats */}
-                <div
-                  class="flex flex-col gap-3 border-y-2 border-line-soft md:grid md:min-h-0
-                    md:flex-1 md:grid-cols-[16rem_minmax(0,1fr)] md:gap-0"
-                >
-                  <div
-                    class="contents md:flex md:min-h-0 md:flex-col md:border-r-2
-                      md:border-line-soft md:pr-4"
-                  >
-                    <div class="flex flex-col items-center gap-2 py-3 text-center md:flex-1">
-                      <PortraitSection caught={loaded()} named={named()} />
-
-                      <div class="flex flex-wrap items-center justify-center gap-1.5">
-                        <Badge tone="gold">
-                          <CandySprite
-                            family={getSpeciesData(loaded().species).family}
-                            label=""
-                            class={CANDY_BADGE}
-                          />
-                          <span class="tabular-nums">{shownCandies()}</span>
-                        </Badge>
-                        {/* The level and what raises it are one control:
-                          where it stands and what the next step costs */}
-                        <Show
-                          when={owned() != null && !isEgg(loaded())}
-                          fallback={<Badge tone="leaf">Lv. {loaded().level}</Badge>}
-                        >
-                          {/* Presses are gathered and sent together once they stop */}
-                          <Button
-                            tone="primary"
-                            disabled={
-                              shownCandies() < getCandyCost(loaded()) ||
-                              shownLevel() >= MAX_LEVEL ||
-                              // A level already paid for is waiting on an
-                              // answer, and pressing past it would take the
-                              // offer away
-                              teaching()?.levelled === true ||
-                              frozen()
-                            }
-                            onClick={feedCandy}
-                          >
-                            {/* The cost in candy, drawn, as a badge on the button */}
-                            {shownLevel() >= MAX_LEVEL ? (
-                              `Lv. ${shownLevel()}`
-                            ) : (
-                              <>
-                                Level Up
-                                <Badge tone="gold">
-                                  <CandySprite
-                                    family={getSpeciesData(loaded().species).family}
-                                    label="Candy"
-                                    class={CANDY_BADGE}
-                                  />
-                                  x {getCandyCost(loaded())}
-                                </Badge>
-                              </>
-                            )}
-                          </Button>
-                        </Show>
+                {/* An egg is one thing and one question: how far along it
+                    is, and whether it is ready. It has no stats, no
+                    moves and nothing to evolve into yet, and what
+                    family it belongs to is exactly what hatching it
+                    tells you, so the columns and the candy stay away
+                    until there is a pokemon to put in them */}
+                <Show
+                  when={!isEgg(loaded())}
+                  fallback={
+                    <div
+                      class="flex flex-col items-center justify-center gap-4 border-y-2
+                        border-line-soft py-4 text-center md:min-h-0 md:flex-1"
+                    >
+                      {/* Fitted to a square of its own: an egg drawn to
+                          whatever width the panel has is a very large
+                          egg */}
+                      <div class="flex w-40 max-w-full flex-col items-center gap-2">
+                        <PortraitSection caught={loaded()} named={named()} />
                       </div>
 
-                      <Show when={!isEgg(loaded())}>
+                      <section class="flex w-full max-w-sm flex-col gap-2">
+                        <h3>Hatching</h3>
+                        <div class="h-2 overflow-hidden rounded-full bg-line-soft">
+                          <div
+                            class="h-full rounded-full bg-leaf transition-[width]"
+                            style={{
+                              width: `${Math.min(100, (loaded().steps / Math.max(1, loaded().hatchSteps)) * 100)}%`,
+                            }}
+                          />
+                        </div>
+                        <Note>
+                          {loaded().steps} / {loaded().hatchSteps} steps
+                          {props.buddy.latest === props.catchId
+                            ? '.'
+                            : '. It only moves while it is the one being carried.'}
+                        </Note>
+                        <Show when={owned()}>
+                          <Row class="justify-center">
+                            <Button tone="primary" disabled={!canHatch(loaded())} onClick={hatch}>
+                              Hatch it
+                            </Button>
+                          </Row>
+                        </Show>
+                      </section>
+                    </div>
+                  }
+                >
+                  {/* Fitted to one screen: who it is and what it becomes on
+                      the left, what it fights with and what it is made of on
+                      the right. The columns size apart, so a tall block on
+                      one side never pushes the other. One scrolling column
+                      on a phone, portrait, moves, evolutions, then stats */}
+                  <div
+                    class="flex flex-col gap-3 border-y-2 border-line-soft md:grid md:min-h-0
+                      md:flex-1 md:grid-cols-[16rem_minmax(0,1fr)] md:gap-0"
+                  >
+                    <div
+                      class="contents md:flex md:min-h-0 md:flex-col md:border-r-2
+                        md:border-line-soft md:pr-4"
+                    >
+                      <div class="flex flex-col items-center gap-2 py-3 text-center md:flex-1">
+                        <PortraitSection caught={loaded()} named={named()} />
+
+                        <div class="flex flex-wrap items-center justify-center gap-1.5">
+                          <Badge tone="gold">
+                            <CandySprite
+                              family={getSpeciesData(loaded().species).family}
+                              label=""
+                              class={CANDY_BADGE}
+                            />
+                            <span class="tabular-nums">{shownCandies()}</span>
+                          </Badge>
+                          {/* The level and what raises it are one control:
+                            where it stands and what the next step costs */}
+                          <Show
+                            when={owned() != null}
+                            fallback={<Badge tone="leaf">Lv. {loaded().level}</Badge>}
+                          >
+                            {/* Presses are gathered and sent together once they stop */}
+                            <Button
+                              tone="primary"
+                              disabled={
+                                shownCandies() < getCandyCost(loaded()) ||
+                                shownLevel() >= MAX_LEVEL ||
+                                // A level already paid for is waiting on an
+                                // answer, and pressing past it would take the
+                                // offer away
+                                teaching()?.levelled === true ||
+                                frozen()
+                              }
+                              onClick={feedCandy}
+                            >
+                              {/* The cost in candy, drawn, as a badge on the button */}
+                              {shownLevel() >= MAX_LEVEL ? (
+                                `Lv. ${shownLevel()}`
+                              ) : (
+                                <>
+                                  Level Up
+                                  <Badge tone="gold">
+                                    <CandySprite
+                                      family={getSpeciesData(loaded().species).family}
+                                      label="Candy"
+                                      class={CANDY_BADGE}
+                                    />
+                                    x {getCandyCost(loaded())}
+                                  </Badge>
+                                </>
+                              )}
+                            </Button>
+                          </Show>
+                        </div>
+
                         <div class="flex flex-wrap items-center justify-center gap-1.5">
                           <span class="text-sm font-medium">
                             {getSpeciesData(loaded().species).category}
@@ -1537,10 +1583,8 @@ export function CatchSheetBody(
                             {loaded().walked} {loaded().walked === 1 ? 'step' : 'steps'}
                           </Badge>
                         </div>
-                      </Show>
-                    </div>
+                      </div>
 
-                    <Show when={!isEgg(loaded())}>
                       <div
                         class="order-3 flex min-h-0 flex-col border-t-2 border-line-soft py-3 md:order-none
                         md:h-48 md:shrink-0"
@@ -1554,46 +1598,12 @@ export function CatchSheetBody(
                           onEvolve={evolve}
                         />
                       </div>
-                    </Show>
-                  </div>
+                    </div>
 
-                  <div class="contents md:flex md:min-h-0 md:flex-col md:pl-4">
-                    <div class="order-2 py-3 md:order-none md:min-h-0 md:flex-1 md:overflow-y-auto">
-                      {/* An egg has nothing to fight with yet, so its side
-                        holds the way out of the shell */}
-                      <Show
-                        when={!isEgg(loaded())}
-                        fallback={
-                          <section class="flex flex-col gap-2">
-                            <h3 class="text-left">Hatching</h3>
-                            <div class="h-2 overflow-hidden rounded-full bg-line-soft">
-                              <div
-                                class="h-full rounded-full bg-leaf transition-[width]"
-                                style={{
-                                  width: `${Math.min(100, (loaded().steps / Math.max(1, loaded().hatchSteps)) * 100)}%`,
-                                }}
-                              />
-                            </div>
-                            <Note>
-                              {loaded().steps} / {loaded().hatchSteps} steps
-                              {props.buddy.latest === props.catchId
-                                ? '.'
-                                : '. It only moves while it is the one being carried.'}
-                            </Note>
-                            <Show when={owned()}>
-                              <Row>
-                                <Button
-                                  tone="primary"
-                                  disabled={!canHatch(loaded())}
-                                  onClick={hatch}
-                                >
-                                  Hatch it
-                                </Button>
-                              </Row>
-                            </Show>
-                          </section>
-                        }
-                      >
+                    <div class="contents md:flex md:min-h-0 md:flex-col md:pl-4">
+                      <div class="order-2 py-3 md:order-none md:min-h-0 md:flex-1 md:overflow-y-auto">
+                        {/* An egg has nothing to fight with yet, so its side
+                          holds the way out of the shell */}
                         <BattleSection
                           caught={loaded()}
                           owned={owned() != null}
@@ -1612,10 +1622,8 @@ export function CatchSheetBody(
                           }}
                           onArrange={arrange}
                         />
-                      </Show>
-                    </div>
+                      </div>
 
-                    <Show when={!isEgg(loaded())}>
                       <div class="order-4 border-t-2 border-line-soft py-3 md:order-none md:shrink-0">
                         <StatsSection
                           caught={loaded()}
@@ -1624,9 +1632,9 @@ export function CatchSheetBody(
                           onTrain={train}
                         />
                       </div>
-                    </Show>
+                    </div>
                   </div>
-                </div>
+                </Show>
 
                 {/* Where it came from in one line. The full chain opens in
                     its own dialog, since a traded pokemon's can run long */}

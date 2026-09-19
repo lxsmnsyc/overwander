@@ -6,9 +6,9 @@ import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import { Items } from '../../../../src/data/ids/items';
-import { Genders } from '../../../../src/data/ids/species';
+import { Genders, Species } from '../../../../src/data/ids/species';
 import { Statuses } from '../../../../src/data/ids/status';
-import { EffectType, MoveTargetType } from '../../../../src/battle/events';
+import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
 import {
   DOZE_SHARE,
@@ -36,9 +36,15 @@ import {
   BLUE_BELT_SCALE,
   RED_BELT_SCALE,
 } from '../../../../src/battle/abilities/signature/__create';
+import {
+  DEATH_ROLL_SCALE,
+  DRY_SPELL_SCALE,
+  GLANCING_BLOW_FRACTION,
+  SLAB_SHARE,
+} from '../../../../src/battle/abilities/signature/sandile-to-dwebble';
 import turns from '../../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../../harness';
-import { dealDamage, resolveAttackDamage } from './helpers';
+import { act, dealDamage, resolveAttackDamage } from './helpers';
 
 function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
   return { type: MoveTargetType.Unit, unit } as const;
@@ -644,5 +650,153 @@ describe('the elemental monkeys', () => {
 
     battle.tick(turns(1));
     expect(far.health).toBeLessThan(whole);
+  });
+});
+
+describe('the desert families', () => {
+  it('bites harder on a throat it already has hold of', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const croc = createUnit(battle, teamA);
+    const held = createUnit(battle, teamB);
+    const fresh = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    croc.addAbility(Abilities.DeathRoll);
+    croc.enter();
+    held.enter();
+    fresh.enter();
+
+    // The first bite on each is worth the ordinary amount
+    const first = dealDamage(croc, held, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+    const other = dealDamage(croc, fresh, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(first).toBeCloseTo(other, 0);
+
+    const second = dealDamage(croc, held, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(second / first).toBeCloseTo(DEATH_ROLL_SCALE, 1);
+  });
+
+  it('still lands a quarter of a move that missed', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const doll = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    doll.addAbility(Abilities.GlancingBlow);
+    doll.enter();
+    plain.enter();
+    foe.enter();
+
+    // What the same move is worth when it lands, off a unit without it
+    const landed = dealDamage(plain, foe, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+    const whole = foe.health;
+
+    battle.emit(BattleEvents.UnitTriggerMoveMissed, {
+      id: 'UnitTriggerMoveMissed',
+      disabled: false,
+      parent: {
+        id: 'UnitTriggerMove',
+        disabled: false,
+        source: doll,
+        move: Moves.Tackle,
+        target: { type: MoveTargetType.Unit, unit: foe },
+        steps: 0,
+      },
+    });
+
+    const glanced = whole - foe.health;
+
+    expect(glanced).toBeGreaterThan(0);
+    expect(glanced / landed).toBeCloseTo(GLANCING_BLOW_FRACTION, 1);
+
+    // Somebody without it loses nothing to a miss
+    const before = foe.health;
+
+    battle.emit(BattleEvents.UnitTriggerMoveMissed, {
+      id: 'UnitTriggerMoveMissed',
+      disabled: false,
+      parent: {
+        id: 'UnitTriggerMove',
+        disabled: false,
+        source: plain,
+        move: Moves.Tackle,
+        target: { type: MoveTargetType.Unit, unit: foe },
+        steps: 0,
+      },
+    });
+
+    expect(foe.health).toBe(before);
+  });
+
+  it('is at its best under a sky doing nothing, and drinks while it is', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cactus = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    cactus.addAbility(Abilities.DrySpell);
+    cactus.enter();
+    plain.enter();
+    foe.enter();
+
+    expect(
+      resolveAttackDamage(battle, cactus, foe) / resolveAttackDamage(battle, plain, foe),
+    ).toBeCloseTo(DRY_SPELL_SCALE, 2);
+
+    cactus.setHealth(Math.floor(cactus.checkStat(Stats.HP, 0) / 2));
+
+    const hurt = cactus.health;
+
+    act(battle, cactus);
+    expect(cactus.health).toBeGreaterThan(hurt);
+  });
+
+  it('lets the slab take a fixed share of it before any of it lands', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const crustle = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    crustle.addAbility(Abilities.Slab);
+    crustle.enter();
+    foe.enter();
+
+    const whole = crustle.health;
+    const slab = crustle.checkStat(Stats.HP, 0) * SLAB_SHARE;
+
+    // The slab is a pool, so a small hit is taken whole by the rock
+    foe.damage({ type: EffectType.None }, crustle, slab / 2, 0);
+    expect(crustle.health).toBe(whole);
+
+    // The rest of the slab goes, and what is left over reaches Crustle
+    foe.damage({ type: EffectType.None }, crustle, slab, 0);
+    expect(whole - crustle.health).toBeCloseTo(slab / 2, 0);
+  });
+
+  it('sits a Darmanitan down below half and stands it back up above', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const darmanitan = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    darmanitan.setSpecies(Species.Darmanitan);
+    darmanitan.setHealth(darmanitan.checkStat(Stats.HP, 0));
+    darmanitan.addAbility(Abilities.ZenMode);
+    darmanitan.enter();
+    foe.enter();
+
+    expect(darmanitan.species).toBe(Species.Darmanitan);
+
+    foe.damage({ type: EffectType.None }, darmanitan, darmanitan.health * 0.6, 0);
+
+    expect(darmanitan.species).toBe(Species.DarmanitanZen);
+    // The shape brings its own stats and its second type with it
+    expect(darmanitan.types.has(Types.Psychic)).toBe(true);
+
+    darmanitan.heal({ type: EffectType.None }, darmanitan, darmanitan.checkStat(Stats.HP, 0), 0);
+
+    expect(darmanitan.species).toBe(Species.Darmanitan);
+    expect(darmanitan.types.has(Types.Psychic)).toBe(false);
   });
 });

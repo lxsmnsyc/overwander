@@ -273,6 +273,13 @@ const enum Families {
   Venipede = 268,
   Cottonee = 269,
   Petilil = 270,
+  // 271 is held for Basculin, which is not written yet: leaving the
+  // hole keeps this enum in dex order without renumbering the day it
+  // lands
+  Sandile = 272,
+  Darumaka = 273,
+  Maractus = 274,
+  Dwebble = 275,
 }
 
 export default Families;
@@ -563,4 +570,8 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Venipede]: 'Venipede',
   [Families.Cottonee]: 'Cottonee',
   [Families.Petilil]: 'Petilil',
+  [Families.Sandile]: 'Sandile',
+  [Families.Darumaka]: 'Darumaka',
+  [Families.Maractus]: 'Maractus',
+  [Families.Dwebble]: 'Dwebble',
 };

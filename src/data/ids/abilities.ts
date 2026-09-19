@@ -852,6 +852,10 @@ const enum Abilities {
   EmberTuft = 200268,
   GeyserTail = 200269,
   LeafCrown = 200270,
+  DeathRoll = 200271,
+  GlancingBlow = 200272,
+  DrySpell = 200273,
+  Slab = 200274,
 }
 
 export default Abilities;

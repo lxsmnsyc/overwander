@@ -151,5 +151,12 @@ export type CatchPickerProps = CatchPickerCommonProps &
          * decides what they are worth
          */
         live?: boolean;
+        /**
+         * A run of ids to draft as a whole, for a caller offering
+         * saved teams. Anything it names that this box is not
+         * offering, or that it refuses, is left out, and the picks
+         * stay the player's to change afterwards
+         */
+        load?: string[];
       }
   );

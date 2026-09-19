@@ -42,6 +42,12 @@ export interface Encounter {
    */
   ability: Abilities;
   /**
+   * Everything it walks out with where that is more than the one it
+   * rolled: a fata morgana hands a few of its meetings the family's
+   * signature as well, and nothing else in the world does
+   */
+  abilities?: Abilities[];
+  /**
    * A pure gender-ratio roll from its dedicated spawn value
    */
   gender: Genders;

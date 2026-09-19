@@ -1,5 +1,19 @@
 # overwander
 
+## 4.5.0
+
+### Minor Changes
+
+- ae650d7: - Every town now has a gym leader, a gym seat and an auction board, so a badge run is a walk from town to town.
+  - An Elite Four member stands in 1 town in 4, up from 1 in 7.
+  - A champion sits in about 1 town in 7, up from 1 in 12.
+  - A portal stands in a town and nowhere else. A region with no town no longer has one out in the country.
+  - Changes world generation.
+
+### Patch Changes
+
+- f5cbb03: A coral reef's islands have life on them: Krabby, Corphish, Wingull, Shellos and Slowpoke by day, with Kingler, Crawdaunt, Pelipper, Gastrodon, Slowbro, Shuckle and Slowking behind them, and the crabs, slugs and Shuckle alone after dark. The Unowns were the only thing standing there before, which made an alphabet easier to meet than it should be.
+
 ## 4.4.0
 
 ### Minor Changes

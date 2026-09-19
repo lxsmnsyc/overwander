@@ -7,6 +7,7 @@ named for what it brings.
 
 | Release                  | What it brought                                                                                                                |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| [Unova's first three families](update/unovas-first-three-families.md) | Patrat, Lillipup and Purrloin and their evolutions, each family with a signature ability |
 | [The fifth generation's moves](update/fifth-generation-moves.md) | 92 moves taught to everyone already here, with pictures of their own, and three more starters |
 | [Sinnoh](update/sinnoh.md) | 107 more pokemon, a signature ability for 246 families, 113 new moves, a fourth league and Frontier, and Team Galactic |
 | [Open world](update/open-world.md) | A map with no edges, caves under the world, named towns with streets, and ground drawn from tilesets |

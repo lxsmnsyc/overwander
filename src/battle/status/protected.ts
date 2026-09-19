@@ -1,5 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
-import { Moves } from '../../data/ids/moves';
+import { MoveCategories, Moves } from '../../data/ids/moves';
+import { getMoveData } from '../../data/moves';
+import { guardOf } from '../moves/protect';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
@@ -56,6 +58,15 @@ export default function setupProtectedStatus(battle: Battle): void {
     // A guard turns away what somebody else aims at it, never what the
     // unit does to itself
     if (target === event.source || guard == null) {
+      return;
+    }
+
+    // A King's Shield is raised against blows, so a status move walks
+    // straight past it without breaking it
+    if (
+      guardOf(target) === Moves.KingsShield &&
+      getMoveData(event.move).category === MoveCategories.Status
+    ) {
       return;
     }
 

@@ -323,6 +323,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
 
   // Laid on the ground for whatever walks in next, the way Spikes is
   [Moves.StealthRock]: 'Caltrops',
+  [Moves.StickyWeb]: 'Caltrops',
   [Moves.ToxicSpikes]: 'Caltrops',
 
   // Held between the two of them: an item, a stat, a move. Trick and
@@ -545,6 +546,10 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Hurricane]: 'Gale',
   [Moves.WideGuard]: 'Shell',
   [Moves.QuickGuard]: 'Shell',
+  [Moves.MatBlock]: 'Shell',
+  [Moves.CraftyShield]: 'Shell',
+  [Moves.SpikyShield]: 'Shell',
+  [Moves.KingsShield]: 'Shell',
   [Moves.WonderRoom]: 'Grid',
   [Moves.MagicRoom]: 'Grid',
   [Moves.RagePowder]: 'Haze',
@@ -605,4 +610,5 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   // Struck and gone: the blow is the first step and the walk off the
   // field is the second, which is why the landing here is the leaving
   [Moves.UTurn]: 'Relay',
+  [Moves.PartingShot]: 'Relay',
 };

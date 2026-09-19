@@ -5,6 +5,13 @@ import { BattleEvents } from '../events';
 import type Unit from '../unit';
 
 /**
+ * The moves that only work on arrival, Fake Out and Mat Block. They
+ * share the one surprise an entrance buys, so throwing either spends
+ * it for both
+ */
+const SURPRISE_MOVES = new Set<Moves>([Moves.FakeOut, Moves.MatBlock]);
+
+/**
  * Fake Out works on somebody who has not seen it yet.
  *
  * The main games say "the turn you come in", which is a rule about
@@ -26,7 +33,7 @@ export default function setupFakeOut(battle: Battle): void {
   });
 
   battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
-    if (event.success && event.move === Moves.FakeOut && !surprise.has(event.source)) {
+    if (event.success && SURPRISE_MOVES.has(event.move) && !surprise.has(event.source)) {
       event.success = false;
     }
   });
@@ -34,13 +41,13 @@ export default function setupFakeOut(battle: Battle): void {
   // Spent on the cast rather than on the hit: a Fake Out that missed
   // was still seen coming
   battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
-    if (event.move === Moves.FakeOut) {
+    if (SURPRISE_MOVES.has(event.move)) {
       surprise.delete(event.source);
     }
   });
 
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
-    if (event.usable && event.move === Moves.FakeOut) {
+    if (event.usable && SURPRISE_MOVES.has(event.move)) {
       event.usable = surprise.has(event.source);
     }
   });

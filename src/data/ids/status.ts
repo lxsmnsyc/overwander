@@ -410,4 +410,9 @@ export const enum TeamStatuses {
    * Water Pledge)
    */
   Swamp = 13,
+  /** Mat Block: the team is behind a mat that turns damaging moves away */
+  MatBlock = 14,
+  /** Crafty Shield: the team is behind a shield that turns status moves away */
+  CraftyShield = 15,
+  StickyWeb = 16,
 }

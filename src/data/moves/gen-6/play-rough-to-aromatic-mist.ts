@@ -55,6 +55,28 @@ export default function registerPlayRoughToAromaticMist(): void {
     flags: MoveFlags.Sound,
     cast: [SpriteAnim.Sound, SpriteAnim.Swell, SpriteAnim.Charge],
   });
+  registerMove(Moves.FairyLock, {
+    name: 'Fairy Lock',
+    description: 'Nobody on the field can be swapped out for 2 seconds, except a Ghost type.',
+    type: Types.Fairy,
+    category: MoveCategories.Status,
+    pp: 10,
+    target: MoveTargets.None,
+    flags: 0,
+    cast: [SpriteAnim.Appeal, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
+  registerMove(Moves.KingsShield, {
+    name: "King's Shield",
+    description:
+      'Blocks every damaging move aimed at the user for 2 seconds, and drops the Attack of anything that touches it a stage. Status moves pass. It fails if used twice over.',
+    type: Types.Steel,
+    category: MoveCategories.Status,
+    pp: 10,
+    priority: 4,
+    target: MoveTargets.None,
+    flags: 0,
+    cast: [SpriteAnim.Withdraw, SpriteAnim.Charge],
+  });
   registerMove(Moves.PlayNice, {
     name: 'Play Nice',
     description: "Drops the target's Attack a stage, and never misses.",
@@ -137,6 +159,18 @@ export default function registerPlayRoughToAromaticMist(): void {
     target: MoveTargets.Unit,
     flags: 0,
     cast: [SpriteAnim.SpAttack, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
+  registerMove(Moves.SpikyShield, {
+    name: 'Spiky Shield',
+    description:
+      'Blocks everything aimed at the user for 2 seconds, and anything that touches it loses 1/8 of its HP. It fails if used twice over.',
+    type: Types.Grass,
+    category: MoveCategories.Status,
+    pp: 10,
+    priority: 4,
+    target: MoveTargets.None,
+    flags: 0,
+    cast: [SpriteAnim.Withdraw, SpriteAnim.Charge],
   });
   registerMove(Moves.AromaticMist, {
     name: 'Aromatic Mist',

@@ -99,6 +99,8 @@ import setupLastResort from './last-resort';
 import setupFangs from './fangs';
 import setupTrickRoom from './trick-room';
 import setupStealthRock from './stealth-rock';
+import setupStickyWeb from './sticky-web';
+import setupFairyLock from './fairy-lock';
 import setupDefog from './defog';
 import setupCaptivate from './captivate';
 import setupJudgment from './judgment';
@@ -229,6 +231,8 @@ export default function setupMoves(battle: Battle): void {
   setupFangs(battle);
   setupTrickRoom(battle);
   setupStealthRock(battle);
+  setupStickyWeb(battle);
+  setupFairyLock(battle);
   setupDefog(battle);
   setupCaptivate(battle);
   setupJudgment(battle);

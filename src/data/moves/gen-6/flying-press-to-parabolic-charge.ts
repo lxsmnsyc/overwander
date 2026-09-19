@@ -5,6 +5,29 @@ import { registerMove } from '../__create';
 
 /** From Flying Press to Parabolic Charge: the start of Kalos's list */
 export default function registerFlyingPressToParabolicCharge(): void {
+  registerMove(Moves.MatBlock, {
+    name: 'Mat Block',
+    description:
+      "For 2 seconds, damaging moves are turned away from the user's team. Once a trip onto the field, shared with Fake Out.",
+    type: Types.Fighting,
+    category: MoveCategories.Status,
+    pp: 10,
+    target: MoveTargets.Team,
+    affects: MoveAffects.Team | MoveAffects.Own,
+    flags: 0,
+    cast: [SpriteAnim.RearUp, SpriteAnim.Slam, SpriteAnim.Charge],
+  });
+  registerMove(Moves.StickyWeb, {
+    name: 'Sticky Web',
+    description:
+      'Weaves a net over the far side: anything swapped in on the ground loses a stage of Speed.',
+    type: Types.Bug,
+    category: MoveCategories.Status,
+    pp: 20,
+    target: MoveTargets.Team,
+    flags: 0,
+    cast: [SpriteAnim.Shoot, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
   registerMove(Moves.PhantomForce, {
     name: 'Phantom Force',
     description:

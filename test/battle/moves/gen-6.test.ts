@@ -2,8 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { EffectType, MoveTargetType } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
 import { Stages, Stats } from '../../../src/data/constants/stats';
+import { Types } from '../../../src/data/constants/types';
 import { Moves } from '../../../src/data/ids/moves';
 import { Statuses } from '../../../src/data/ids/status';
+import turns from '../../../src/battle/turn';
+import { KINGS_SHIELD_STAGES, SPIKY_SHIELD_SHARE } from '../../../src/battle/moves/protect';
+import { STICKY_WEB_STAGES, webOver } from '../../../src/battle/moves/sticky-web';
 import { MULTI_HIT_MOVES } from '../../../src/data/moves/multi-hit';
 import { RECOIL_MOVES } from '../../../src/data/moves/recoil';
 import { getMoveData } from '../../../src/data/moves';
@@ -190,6 +194,146 @@ describe("Kalos's moves", () => {
       // Never missing is written as having no accuracy at all
       expect(getMoveData(Moves.DisarmingVoice).accuracy).toBeUndefined();
       expect(getMoveData(Moves.HyperspaceHole).accuracy).toBeUndefined();
+    });
+  });
+
+  describe('the guards and the field', () => {
+    it('costs whatever touches a Spiky Shield an eighth of its HP', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const guard = createUnit(battle, teamA);
+      const striker = createUnit(battle, teamB);
+
+      pinRandom(battle, 1);
+      guard.enter();
+      striker.enter();
+
+      guard.triggerMoveEffect(Moves.SpikyShield, NONE_TARGET, 0);
+
+      const whole = guard.health;
+      const max = striker.checkStat(Stats.HP, 0);
+
+      striker.triggerMoveTarget(Moves.Tackle, unitTarget(guard), 0);
+      expect(guard.health).toBe(whole);
+      expect(striker.health).toBe(max - Math.floor(max * SPIKY_SHIELD_SHARE));
+    });
+
+    it("drops the Attack of whatever touches a King's Shield, and lets status moves by", () => {
+      const { battle, teamA, teamB } = createBattle();
+      const guard = createUnit(battle, teamA);
+      const striker = createUnit(battle, teamB);
+
+      pinRandom(battle, 1);
+      guard.enter();
+      striker.enter();
+
+      guard.triggerMoveEffect(Moves.KingsShield, NONE_TARGET, 0);
+
+      const whole = guard.health;
+
+      striker.triggerMoveTarget(Moves.Tackle, unitTarget(guard), 0);
+      expect(guard.health).toBe(whole);
+      expect(striker.stages[Stages.Attack]).toBe(-KINGS_SHIELD_STAGES);
+
+      // Raised against blows, so a status move walks past and keeps it up
+      expect(striker.checkMoveImmunity(Moves.Growl, unitTarget(guard), Types.Normal)).toBe(false);
+      expect(guard.status[Statuses.Protected]).toBeDefined();
+    });
+
+    it('turns blows away from the whole team with Mat Block, and only on arrival', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const guard = createUnit(battle, teamA);
+      const mate = createUnit(battle, teamA);
+      const enemy = createUnit(battle, teamB);
+
+      guard.addMove(Moves.MatBlock);
+      guard.addMove(Moves.FakeOut);
+      guard.enter();
+      mate.enter();
+      enemy.enter();
+
+      expect(guard.checkCanCast(Moves.MatBlock, NONE_TARGET)).toBe(true);
+      guard.triggerMove(Moves.MatBlock, { type: MoveTargetType.Team, team: teamA }, 0);
+      guard.triggerMoveEffect(Moves.MatBlock, { type: MoveTargetType.Team, team: teamA }, 0);
+
+      expect(enemy.checkMoveImmunity(Moves.Tackle, unitTarget(mate), Types.Normal)).toBe(true);
+      expect(enemy.checkMoveImmunity(Moves.Growl, unitTarget(mate), Types.Normal)).toBe(false);
+
+      // The surprise is spent, and Fake Out shares it
+      expect(guard.checkCanCast(Moves.MatBlock, NONE_TARGET)).toBe(false);
+      expect(guard.checkCanCast(Moves.FakeOut, unitTarget(enemy))).toBe(false);
+
+      battle.tick(turns(1) + 1);
+      expect(enemy.checkMoveImmunity(Moves.Tackle, unitTarget(mate), Types.Normal)).toBe(false);
+    });
+
+    it('turns status moves away from the whole team with Crafty Shield', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const guard = createUnit(battle, teamA);
+      const mate = createUnit(battle, teamA);
+      const enemy = createUnit(battle, teamB);
+
+      guard.triggerMoveEffect(Moves.CraftyShield, { type: MoveTargetType.Team, team: teamA }, 0);
+
+      expect(enemy.checkMoveImmunity(Moves.Growl, unitTarget(mate), Types.Normal)).toBe(true);
+      expect(enemy.checkMoveImmunity(Moves.Tackle, unitTarget(mate), Types.Normal)).toBe(false);
+    });
+
+    it('slows what walks onto a Sticky Web, spares what flies, and blows away in a Defog', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const weaver = createUnit(battle, teamA);
+      const walker = createUnit(battle, teamB);
+      const bird = createUnit(battle, teamB, [Types.Flying]);
+
+      weaver.enter();
+      weaver.triggerMoveEffect(Moves.StickyWeb, { type: MoveTargetType.Team, team: teamB }, 0);
+      expect(webOver(teamB)).toBe(true);
+
+      walker.enter();
+      bird.enter();
+      expect(walker.stages[Stages.Speed]).toBe(-STICKY_WEB_STAGES);
+      expect(bird.stages[Stages.Speed]).toBe(0);
+
+      weaver.triggerMoveEffect(Moves.Defog, unitTarget(walker), 0);
+      expect(webOver(teamB)).toBe(false);
+    });
+
+    it('drops two stats once with Parting Shot, then walks off', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const leaver = createUnit(battle, teamA);
+      const target = createUnit(battle, teamB);
+
+      createUnit(battle, teamA).enter();
+      leaver.enter();
+      target.enter();
+
+      leaver.triggerMoveEffect(Moves.PartingShot, unitTarget(target), 1);
+      expect(target.stages[Stages.Attack]).toBe(-1);
+      expect(target.stages[Stages.SpecialAttack]).toBe(-1);
+      expect(leaver.status[Statuses.Switching]).toBeUndefined();
+
+      leaver.triggerMoveEffect(Moves.PartingShot, unitTarget(target), 0);
+      expect(target.stages[Stages.Attack]).toBe(-1);
+      expect(leaver.status[Statuses.Switching]).toBeDefined();
+    });
+
+    it('holds everybody on the field for a turn with Fairy Lock, except a Ghost', () => {
+      const { battle, teamA, teamB } = createBattle();
+      const fairy = createUnit(battle, teamA);
+      const enemy = createUnit(battle, teamB);
+      const ghost = createUnit(battle, teamB, [Types.Ghost]);
+
+      fairy.enter();
+      enemy.enter();
+      ghost.enter();
+
+      expect(enemy.checkEscape()).toBe(true);
+      fairy.triggerMoveEffect(Moves.FairyLock, NONE_TARGET, 0);
+      expect(enemy.checkEscape()).toBe(false);
+      expect(fairy.checkEscape()).toBe(false);
+      expect(ghost.checkEscape()).toBe(true);
+
+      battle.tick(turns(1) + 1);
+      expect(enemy.checkEscape()).toBe(true);
     });
   });
 });

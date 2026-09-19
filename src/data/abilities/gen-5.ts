@@ -6,6 +6,18 @@ import { registerAbility } from './__create';
  * the mainline's
  */
 export default function registerGen5Abilities(): void {
+  // Yamask
+  registerAbility(Abilities.Mummy, {
+    name: 'Mummy',
+    description:
+      'Whoever lands a contact move on it loses one of their abilities and catches this one.',
+  });
+  // Cofagrigus
+  registerAbility(Abilities.PerishBody, {
+    name: 'Perish Body',
+    description:
+      'Whoever lands a contact move on it faints in 3 turns, and so does it. Once per battle.',
+  });
   // Darmanitan
   registerAbility(Abilities.ZenMode, {
     name: 'Zen Mode',

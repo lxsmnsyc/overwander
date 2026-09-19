@@ -1652,4 +1652,26 @@ export default function registerSignatureAbilities(): void {
     name: 'Slab',
     description: 'The rock it carries takes the first 1/4 of its HP worth of damage each fight.',
   });
+
+  // The Relic Castle, and what Castelia leaves out
+  registerSignature(Families.Scraggy, Abilities.GangUp, {
+    name: 'Gang Up',
+    description: 'Its moves hit 10% harder for each teammate still standing with it, up to 1.3x.',
+  });
+
+  registerSignature(Families.Sigilyph, Abilities.WardCircle, {
+    name: 'Ward Circle',
+    description:
+      'Nothing can lay hazards on its side while it stands, and it sweeps any away as it arrives.',
+  });
+
+  registerSignature(Families.Yamask, Abilities.DeathMask, {
+    name: 'Death Mask',
+    description: 'Whoever finishes one of its teammates loses 2 stages of its best stat.',
+  });
+
+  registerSignature(Families.Trubbish, Abilities.Litterbug, {
+    name: 'Litterbug',
+    description: 'It casts Toxic Spikes onto the enemy side as it arrives on the field.',
+  });
 }

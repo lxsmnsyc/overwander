@@ -12649,6 +12649,78 @@
         "bytes": 2319
       }
     },
+    "public/sprites/pokemon/kanto/1014404/regular.png": {
+      "digest": "3df684f98b908c7c",
+      "bytes": 9814,
+      "width": 259,
+      "height": 297,
+      "compact": {
+        "at": "2026-09-19T13:20:59Z",
+        "as": "already compact",
+        "was": 9814,
+        "bytes": 9814
+      }
+    },
+    "public/sprites/pokemon/kanto/1014404/shiny.png": {
+      "digest": "28764d9492224354",
+      "bytes": 10088,
+      "width": 259,
+      "height": 297,
+      "compact": {
+        "at": "2026-09-19T13:20:59Z",
+        "as": "already compact",
+        "was": 10088,
+        "bytes": 10088
+      }
+    },
+    "public/sprites/pokemon/kanto/1014504/regular.png": {
+      "digest": "15d2bbd8f7905032",
+      "bytes": 20894,
+      "width": 232,
+      "height": 520,
+      "compact": {
+        "at": "2026-09-19T13:20:59Z",
+        "as": "already compact",
+        "was": 20894,
+        "bytes": 20894
+      }
+    },
+    "public/sprites/pokemon/kanto/1014504/shiny.png": {
+      "digest": "1e1d3d7a84b091c3",
+      "bytes": 20933,
+      "width": 232,
+      "height": 520,
+      "compact": {
+        "at": "2026-09-19T13:20:59Z",
+        "as": "already compact",
+        "was": 20933,
+        "bytes": 20933
+      }
+    },
+    "public/sprites/pokemon/kanto/1014604/regular.png": {
+      "digest": "4ae827eb95c8f6ab",
+      "bytes": 13644,
+      "width": 275,
+      "height": 313,
+      "compact": {
+        "at": "2026-09-19T13:20:59Z",
+        "as": "already compact",
+        "was": 13644,
+        "bytes": 13644
+      }
+    },
+    "public/sprites/pokemon/kanto/1014604/shiny.png": {
+      "digest": "131671a93323c710",
+      "bytes": 13644,
+      "width": 275,
+      "height": 313,
+      "compact": {
+        "at": "2026-09-19T13:20:59Z",
+        "as": "already compact",
+        "was": 13644,
+        "bytes": 13644
+      }
+    },
     "public/sprites/pokemon/kanto/102/regular.png": {
       "digest": "3d47523ab8dea6eb",
       "bytes": 6197,

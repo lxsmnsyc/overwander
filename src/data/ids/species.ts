@@ -893,6 +893,15 @@ export const enum Species {
   /** The two Hisui draws differently, of the lines Unova started */
   SamurottHisui = 1050301,
   LilligantHisui = 1054901,
+
+  /**
+   * The true shadows: a pokemon that is a shadow by what it is rather
+   * than by what was done to it. The form index is the collection's
+   * own Shadow slot, so the art imports under it
+   */
+  ArticunoShadow = 1014404,
+  ZapdosShadow = 1014504,
+  MoltresShadow = 1014604,
 }
 
 /**

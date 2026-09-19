@@ -18,6 +18,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Vullaby, weight: 16 },
         { species: Species.Darumaka, weight: 22 },
         { species: Species.Cacnea, weight: 20 },
         { species: Species.Baltoy, weight: 22 },
@@ -34,6 +35,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Mandibuzz, weight: 6 },
         { species: Species.Darmanitan, weight: 7 },
         { species: Species.Claydol, weight: 6 },
         { species: Species.Dugtrio, weight: 10 },
@@ -66,6 +68,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Vullaby, weight: 16 },
         { species: Species.Darumaka, weight: 22 },
         { species: Species.Cacnea, weight: 20 },
         { species: Species.Baltoy, weight: 22 },
@@ -84,6 +87,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Mandibuzz, weight: 6 },
         { species: Species.Darmanitan, weight: 7 },
         { species: Species.Claydol, weight: 6 },
         { species: Species.Sandslash, weight: 10 },

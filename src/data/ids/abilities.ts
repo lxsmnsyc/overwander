@@ -877,6 +877,9 @@ const enum Abilities {
   Scoring = 200293,
   ThreeHeads = 200294,
   Sunwarmed = 200295,
+  Honed = 200296,
+  Warcry = 200297,
+  Bonewear = 200298,
 }
 
 export default Abilities;

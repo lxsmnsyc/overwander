@@ -1,13 +1,13 @@
 // Snivy through Oshawott.
 
 import { describe, expect, it } from 'vitest';
-import { Stages, Stats } from '../../../../src/data/constants/stats';
+import { Stages, Stats, StatsKind } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import { Items } from '../../../../src/data/ids/items';
 import { Genders, Species } from '../../../../src/data/ids/species';
-import { Statuses } from '../../../../src/data/ids/status';
+import { Statuses, TeamStatuses } from '../../../../src/data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
 import {
@@ -42,6 +42,10 @@ import {
   GLANCING_BLOW_FRACTION,
   SLAB_SHARE,
 } from '../../../../src/battle/abilities/signature/sandile-to-dwebble';
+import {
+  DEATH_MASK_STAGES,
+  GANG_UP_STEP,
+} from '../../../../src/battle/abilities/signature/scraggy-to-trubbish';
 import turns from '../../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { act, dealDamage, resolveAttackDamage } from './helpers';
@@ -798,5 +802,120 @@ describe('the desert families', () => {
 
     expect(darmanitan.species).toBe(Species.Darmanitan);
     expect(darmanitan.types.has(Types.Psychic)).toBe(false);
+  });
+});
+
+describe('the old city and the back alleys', () => {
+  it('hits harder for each teammate still standing with it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const scrafty = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    scrafty.addAbility(Abilities.GangUp);
+    scrafty.enter();
+    mate.enter();
+    foe.enter();
+
+    const backed = resolveAttackDamage(battle, scrafty, foe);
+
+    foe.attack(mate, Moves.Tackle, 900, Types.Normal, MoveCategories.Physical, 0);
+    expect(mate.alive).toBe(false);
+
+    const alone = resolveAttackDamage(battle, scrafty, foe);
+
+    expect(backed / alone).toBeCloseTo(1 + GANG_UP_STEP, 2);
+  });
+
+  it('keeps hazards off its own ground and sweeps what is already there', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const sigilyph = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    foe.enter();
+
+    const cause = { type: EffectType.None } as const;
+
+    // Down before the guardian takes the field
+    teamA.addStatus(TeamStatuses.Spikes, cause);
+    expect(teamA.status[TeamStatuses.Spikes]).toBeTruthy();
+
+    sigilyph.addAbility(Abilities.WardCircle);
+    sigilyph.enter();
+
+    expect(teamA.status[TeamStatuses.Spikes]).toBeFalsy();
+
+    // And nothing may be laid while it stands
+    teamA.addStatus(TeamStatuses.ToxicSpikes, cause);
+    expect(teamA.status[TeamStatuses.ToxicSpikes]).toBeFalsy();
+
+    // The enemy side is untouched
+    teamB.addStatus(TeamStatuses.Spikes, cause);
+    expect(teamB.status[TeamStatuses.Spikes]).toBeTruthy();
+  });
+
+  it('takes 2 stages of its best stat off whoever finished a teammate', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const yamask = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const killer = createUnit(battle, teamB);
+
+    yamask.addAbility(Abilities.DeathMask);
+    yamask.enter();
+    mate.enter();
+    killer.enter();
+
+    // Attack is its highest, so that is what the mask takes
+    killer.setStat(StatsKind.Base, Stats.Attack, 200);
+    killer.attack(mate, Moves.Tackle, 900, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(mate.alive).toBe(false);
+    expect(killer.stages[Stages.Attack]).toBe(-DEATH_MASK_STAGES);
+  });
+
+  it('drops Toxic Spikes on the enemy side as it turns up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const trubbish = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    foe.enter();
+    trubbish.addAbility(Abilities.Litterbug);
+    trubbish.enter();
+    battle.tick(turns(1));
+
+    expect(teamB.status[TeamStatuses.ToxicSpikes]).toBeTruthy();
+    expect(teamA.status[TeamStatuses.ToxicSpikes]).toBeFalsy();
+  });
+
+  it('spreads Mummy onto whoever touches it, in place of what they had', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const yamask = createUnit(battle, teamA);
+    const toucher = createUnit(battle, teamB);
+
+    yamask.addAbility(Abilities.Mummy);
+    toucher.addAbility(Abilities.Guts);
+    yamask.enter();
+    toucher.enter();
+
+    toucher.attack(yamask, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(toucher.hasAbility(Abilities.Mummy)).toBe(true);
+    expect(toucher.hasAbility(Abilities.Guts)).toBe(false);
+  });
+
+  it('marks whoever reaches into the coffin to go down with it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cofagrigus = createUnit(battle, teamA);
+    const robber = createUnit(battle, teamB);
+
+    cofagrigus.addAbility(Abilities.PerishBody);
+    cofagrigus.enter();
+    robber.enter();
+
+    robber.attack(cofagrigus, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(robber.status[Statuses.Perishing]).toBeTruthy();
+    expect(cofagrigus.status[Statuses.Perishing]).toBeTruthy();
   });
 });

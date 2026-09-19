@@ -247,6 +247,31 @@ export default function PickerBox(
     }
   });
 
+  // A whole team loaded at once: everything it names that is on offer
+  // and not refused, in the order it was saved. The draft stays the
+  // player's afterwards, so a loaded team can be topped up or trimmed
+  createEffect(() => {
+    const wanted = props.multiple === true ? props.load : undefined;
+
+    if (wanted == null || !showing()) {
+      return;
+    }
+
+    const byId = optionById();
+    const taken: string[] = [];
+
+    for (const id of wanted) {
+      const option = byId.get(id);
+
+      if (option != null && props.reason?.(option) == null && taken.length < limit()) {
+        taken.push(id);
+      }
+    }
+    if (!sameRun(untrack(draft), taken)) {
+      setDraft(taken);
+    }
+  });
+
   /**
    * What is drafted, as a set. Built once rather than per square: the
    * box asks this of every pokemon it draws, and rebuilding the set

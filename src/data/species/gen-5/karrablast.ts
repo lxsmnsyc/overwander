@@ -95,6 +95,8 @@ export default function registerKarrablastSpecies(): void {
         Moves.SwordsDance,
         Moves.Toxic,
         Moves.XScissor,
+        Moves.Confide,
+        Moves.Infestation,
       ],
     },
   });
@@ -140,6 +142,7 @@ export default function registerKarrablastSpecies(): void {
         49: [Moves.Reversal],
         52: [Moves.SwordsDance],
         56: [Moves.GigaImpact],
+        60: [Moves.FellStinger],
       },
       teachable: [
         Moves.AerialAce,
@@ -174,6 +177,8 @@ export default function registerKarrablastSpecies(): void {
         Moves.SwordsDance,
         Moves.Toxic,
         Moves.XScissor,
+        Moves.Confide,
+        Moves.Infestation,
       ],
     },
   });

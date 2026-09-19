@@ -55,6 +55,7 @@ const FAMILY_TEACHABLE = [
   Moves.WildCharge,
   Moves.WillOWisp,
   Moves.ZenHeadbutt,
+  Moves.Confide,
 ];
 
 /**

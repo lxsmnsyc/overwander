@@ -108,6 +108,8 @@ export default function registerFrillishSpecies(): void {
         Moves.TrickRoom,
         Moves.Waterfall,
         Moves.WillOWisp,
+        Moves.Confide,
+        Moves.DazzlingGleam,
       ],
     },
   });
@@ -198,6 +200,8 @@ export default function registerFrillishSpecies(): void {
         Moves.TrickRoom,
         Moves.Waterfall,
         Moves.WillOWisp,
+        Moves.Confide,
+        Moves.DazzlingGleam,
       ],
     },
   });

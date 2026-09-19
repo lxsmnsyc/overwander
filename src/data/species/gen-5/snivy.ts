@@ -49,6 +49,7 @@ const FAMILY_TEACHABLE = [
   Moves.Torment,
   Moves.Toxic,
   Moves.WorrySeed,
+  Moves.Confide,
 ];
 
 /**
@@ -117,6 +118,7 @@ export default function registerSnivySpecies(): void {
         Moves.Pursuit,
         Moves.SweetScent,
         Moves.Twister,
+        Moves.GrassyTerrain,
       ],
     },
   });

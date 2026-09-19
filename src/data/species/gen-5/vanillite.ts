@@ -48,6 +48,7 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Uproar,
   Moves.WaterPulse,
+  Moves.Confide,
 ];
 
 // What the snow works out how to do, at whichever size
@@ -193,7 +194,15 @@ export default function registerVanilliteSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Mist, Moves.Harden, Moves.Uproar, Moves.Taunt, Moves.Astonish, Moves.IcicleSpear],
+        1: [
+          Moves.Mist,
+          Moves.Harden,
+          Moves.Uproar,
+          Moves.Taunt,
+          Moves.Astonish,
+          Moves.IcicleSpear,
+          Moves.FreezeDry,
+        ],
         ...FAMILY_LEVEL,
         36: [Moves.IceBeam],
         38: [Moves.MirrorCoat],

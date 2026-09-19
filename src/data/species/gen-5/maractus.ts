@@ -40,7 +40,14 @@ export default function registerMaractusSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Peck, Moves.Absorb, Moves.Ingrain, Moves.AfterYou, Moves.CottonGuard],
+        1: [
+          Moves.Peck,
+          Moves.Absorb,
+          Moves.Ingrain,
+          Moves.AfterYou,
+          Moves.CottonGuard,
+          Moves.SpikyShield,
+        ],
         3: [Moves.SweetScent],
         4: [Moves.Growth],
         8: [Moves.MegaDrain],
@@ -53,7 +60,7 @@ export default function registerMaractusSpecies(): void {
         29: [Moves.Acupressure],
         38: [Moves.PetalDance],
         44: [Moves.SunnyDay],
-        48: [Moves.SolarBeam],
+        48: [Moves.SolarBeam, Moves.PetalBlizzard],
       },
       teachable: [
         Moves.AerialAce,
@@ -100,6 +107,7 @@ export default function registerMaractusSpecies(): void {
         Moves.Uproar,
         Moves.WeatherBall,
         Moves.WorrySeed,
+        Moves.Confide,
       ],
       egg: [
         Moves.Bounce,
@@ -110,6 +118,7 @@ export default function registerMaractusSpecies(): void {
         Moves.Spikes,
         Moves.WoodHammer,
         Moves.WorrySeed,
+        Moves.GrassyTerrain,
       ],
     },
   });

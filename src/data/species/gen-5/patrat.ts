@@ -33,6 +33,7 @@ const FAMILY_TEACHABLE = [
   Moves.Thunderbolt,
   Moves.Toxic,
   Moves.WorkUp,
+  Moves.Confide,
 ];
 
 /**
@@ -126,7 +127,7 @@ export default function registerPatratSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.Leer, Moves.Bite, Moves.LowKick],
+        1: [Moves.Tackle, Moves.Leer, Moves.Bite, Moves.LowKick, Moves.Rototiller],
         3: [Moves.Leer],
         6: [Moves.Bite],
         8: [Moves.Bide],
@@ -157,6 +158,7 @@ export default function registerPatratSpecies(): void {
         Moves.Strength,
         Moves.Thunder,
         Moves.ThunderWave,
+        Moves.PowerUpPunch,
       ],
     },
   });

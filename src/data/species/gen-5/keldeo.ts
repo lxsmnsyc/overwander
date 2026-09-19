@@ -105,6 +105,7 @@ export default function registerKeldeoSpecies(): void {
         Moves.Toxic,
         Moves.WorkUp,
         Moves.XScissor,
+        Moves.Confide,
       ],
     },
   });

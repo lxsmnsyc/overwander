@@ -64,6 +64,7 @@ const FAMILY_TEACHABLE = [
   Moves.UTurn,
   Moves.WorkUp,
   Moves.ZenHeadbutt,
+  Moves.Confide,
 ];
 
 // What the eagle works out how to do, at either size

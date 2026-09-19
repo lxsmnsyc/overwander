@@ -95,6 +95,8 @@ export default function registerShelmetSpecies(): void {
         Moves.Swagger,
         Moves.Toxic,
         Moves.Venoshock,
+        Moves.Confide,
+        Moves.Infestation,
       ],
     },
   });
@@ -125,7 +127,13 @@ export default function registerShelmetSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.AcidSpray, Moves.DoubleTeam, Moves.LeechLife, Moves.QuickAttack],
+        1: [
+          Moves.AcidSpray,
+          Moves.DoubleTeam,
+          Moves.LeechLife,
+          Moves.QuickAttack,
+          Moves.WaterShuriken,
+        ],
         4: [Moves.AcidSpray],
         8: [Moves.DoubleTeam],
         13: [Moves.QuickAttack],
@@ -171,6 +179,8 @@ export default function registerShelmetSpecies(): void {
         Moves.Toxic,
         Moves.UTurn,
         Moves.Venoshock,
+        Moves.Confide,
+        Moves.Infestation,
       ],
     },
   });

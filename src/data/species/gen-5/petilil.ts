@@ -41,6 +41,7 @@ const FAMILY_TEACHABLE = [
   Moves.Synthesis,
   Moves.Toxic,
   Moves.WorrySeed,
+  Moves.Confide,
 ];
 
 /**
@@ -144,6 +145,7 @@ export default function registerPetililSpecies(): void {
         10: [Moves.TeeterDance],
         28: [Moves.QuiverDance],
         46: [Moves.PetalDance],
+        50: [Moves.PetalBlizzard],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

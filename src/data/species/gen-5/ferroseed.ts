@@ -57,6 +57,7 @@ const FAMILY_TEACHABLE = [
   Moves.Thunderbolt,
   Moves.Toxic,
   Moves.WorrySeed,
+  Moves.Confide,
 ];
 
 // What a thing hanging off the ceiling learns to do to whatever walks

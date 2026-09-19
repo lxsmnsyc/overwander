@@ -46,6 +46,8 @@ const FAMILY_TEACHABLE = [
   Moves.Uproar,
   Moves.WaterPulse,
   Moves.WeatherBall,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 // The vibration the whole line works by, whatever stage it is at
@@ -250,6 +252,7 @@ export default function registerTympoleSpecies(): void {
         Moves.StealthRock,
         Moves.Strength,
         Moves.Venoshock,
+        Moves.PowerUpPunch,
       ],
     },
   });

@@ -50,6 +50,7 @@ const FAMILY_TEACHABLE = [
   Moves.UTurn,
   Moves.VoltSwitch,
   Moves.WildCharge,
+  Moves.Confide,
 ];
 
 /**
@@ -184,6 +185,7 @@ export default function registerTynamoSpecies(): void {
           Moves.GastroAcid,
           Moves.Discharge,
           Moves.Coil,
+          Moves.IonDeluge,
         ],
         5: [Moves.WildCharge],
       },
@@ -218,6 +220,7 @@ export default function registerTynamoSpecies(): void {
         Moves.Swift,
         Moves.ThunderPunch,
         Moves.ZenHeadbutt,
+        Moves.PowerUpPunch,
       ],
     },
   });

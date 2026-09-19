@@ -72,6 +72,8 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.WaterPulse,
   Moves.XScissor,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 // What the cold works out how to do, at either size
@@ -126,6 +128,7 @@ export default function registerCubchooSpecies(): void {
         6: [Moves.FurySwipes],
         9: [Moves.Bide, Moves.IcyWind],
         ...FAMILY_LEVEL,
+        15: [Moves.Brine, Moves.PlayNice],
         27: [Moves.Charm],
         33: [Moves.Thrash],
         39: [Moves.Blizzard],
@@ -141,6 +144,7 @@ export default function registerCubchooSpecies(): void {
         Moves.NightSlash,
         Moves.SleepTalk,
         Moves.Yawn,
+        Moves.PlayRough,
       ],
     },
   });
@@ -187,6 +191,7 @@ export default function registerCubchooSpecies(): void {
           Moves.AquaJet,
         ],
         ...FAMILY_LEVEL,
+        9: [Moves.PlayNice],
         27: [Moves.Swagger],
         41: [Moves.Blizzard],
       },

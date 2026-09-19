@@ -55,6 +55,7 @@ const FAMILY_TEACHABLE = [
   Moves.SwordsDance,
   Moves.Toxic,
   Moves.XScissor,
+  Moves.Confide,
 ];
 
 // What it does from inside the rock, whichever rock it is carrying
@@ -126,6 +127,7 @@ export default function registerDwebbleSpecies(): void {
         Moves.SandTomb,
         Moves.Spikes,
         Moves.WideGuard,
+        Moves.Rototiller,
       ],
     },
   });

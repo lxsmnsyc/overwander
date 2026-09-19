@@ -124,6 +124,8 @@ export default function registerDruddigonSpecies(): void {
         Moves.ThunderPunch,
         Moves.Torment,
         Moves.Toxic,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
       egg: [
         Moves.CrushClaw,

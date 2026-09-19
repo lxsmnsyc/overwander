@@ -71,6 +71,8 @@ const FAMILY_TEACHABLE = [
   Moves.Torment,
   Moves.Toxic,
   Moves.XScissor,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 // What the blades work out how to do, at either size

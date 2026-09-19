@@ -125,6 +125,8 @@ export default function registerSigilyphSpecies(): void {
         Moves.Trick,
         Moves.TrickRoom,
         Moves.ZenHeadbutt,
+        Moves.Confide,
+        Moves.DazzlingGleam,
       ],
       egg: [
         Moves.AncientPower,

@@ -64,6 +64,8 @@ const PAIR_TEACHABLE = [
   Moves.Toxic,
   Moves.WorkUp,
   Moves.ZenHeadbutt,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 /**

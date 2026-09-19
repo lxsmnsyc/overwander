@@ -63,6 +63,8 @@ const FAMILY_TEACHABLE = [
   Moves.WillOWisp,
   Moves.WorkUp,
   Moves.ZenHeadbutt,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 // What the doll grows into swinging, whichever shape it is in

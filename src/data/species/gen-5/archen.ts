@@ -115,6 +115,7 @@ export default function registerArchenSpecies(): void {
         Moves.Toxic,
         Moves.UTurn,
         Moves.Uproar,
+        Moves.Confide,
       ],
     },
   });
@@ -217,6 +218,7 @@ export default function registerArchenSpecies(): void {
         Moves.Toxic,
         Moves.UTurn,
         Moves.Uproar,
+        Moves.Confide,
       ],
     },
   });

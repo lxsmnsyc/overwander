@@ -91,6 +91,8 @@ const FAMILY_TEACHABLE = [
   Moves.Uproar,
   Moves.WorkUp,
   Moves.ZenHeadbutt,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 // What the gang teaches itself, at whichever size

@@ -46,6 +46,7 @@ const FAMILY_TEACHABLE = [
   Moves.SwordsDance,
   Moves.Toxic,
   Moves.XScissor,
+  Moves.Confide,
 ];
 
 /**
@@ -132,7 +133,7 @@ export default function registerDrilburSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.MudSlap, Moves.MudSport, Moves.RapidSpin, Moves.Scratch],
+        1: [Moves.MudSlap, Moves.MudSport, Moves.RapidSpin, Moves.Scratch, Moves.Rototiller],
         12: [Moves.FurySwipes],
         15: [Moves.MetalClaw],
         19: [Moves.Dig],

@@ -234,7 +234,23 @@ function LobbyRows(
         matching.push(team);
       }
     }
-    return orderTeams(matching, query(), (team) => ({ team, context: contextOf(team) }));
+
+    const ordered = orderTeams(matching, query(), (team) => ({ team, context: contextOf(team) }));
+    // The host heads the lobby whenever they form a party, whichever
+    // order the rows arrived in: a guest who was quicker about it is
+    // not the person everybody is waiting on
+    const host = raid()?.host;
+    const first: TeamRecord[] = [];
+    const rest: TeamRecord[] = [];
+
+    for (const team of ordered) {
+      if (host != null && team.player === host) {
+        first.push(team);
+      } else {
+        rest.push(team);
+      }
+    }
+    return [...first, ...rest];
   };
 
   const act = (action: () => Promise<string | null>, failure: string): void => {

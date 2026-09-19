@@ -1735,4 +1735,21 @@ export default function registerSignatureAbilities(): void {
     name: 'Tide Pool',
     description: 'Every heal on its team is worth 1.3x while it stands, its own included.',
   });
+
+  // Celestial Tower and the road to it
+  registerSignature(Families.Elgyem, Abilities.SwapField, {
+    name: 'Swap Field',
+    description: 'It casts Wonder Room as it arrives on the field.',
+  });
+
+  registerSignature(Families.Litwick, Abilities.Hexlight, {
+    name: 'Hexlight',
+    description: 'Its moves hit 1.4x against a target that has a status condition.',
+  });
+
+  registerSignature(Families.Golett, Abilities.BrokenSeal, {
+    name: 'Broken Seal',
+    description:
+      'The first time it drops below 1/2 HP it gains 2 stages of Attack and loses 1 of Defense. Once per battle.',
+  });
 }

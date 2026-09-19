@@ -111,6 +111,7 @@ export default function registerDesertSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Gible, weight: 2 }],
       uncommon: [
+        { species: Species.Elgyem, weight: 20 },
         { species: Species.Yamask, weight: 22 },
         { species: Species.Baltoy, weight: 22 },
         { species: Species.Sandshrew, weight: 20 },
@@ -122,6 +123,7 @@ export default function registerDesertSpawns(): void {
       ],
       rare: [{ species: Species.Gabite, weight: 1 }],
       scarce: [
+        { species: Species.Beheeyem, weight: 7 },
         { species: Species.Cofagrigus, weight: 7 },
         { species: Species.Cacturne, weight: 6 },
         { species: Species.Claydol, weight: 6 },
@@ -142,6 +144,7 @@ export default function registerDesertSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Gible, weight: 2 }],
       uncommon: [
+        { species: Species.Elgyem, weight: 20 },
         { species: Species.Yamask, weight: 22 },
         { species: Species.Baltoy, weight: 22 },
         { species: Species.Diglett, weight: 20 },
@@ -153,6 +156,7 @@ export default function registerDesertSpawns(): void {
       ],
       rare: [{ species: Species.Gabite, weight: 1 }],
       scarce: [
+        { species: Species.Beheeyem, weight: 7 },
         { species: Species.Cofagrigus, weight: 7 },
         { species: Species.Cacturne, weight: 6 },
         { species: Species.Claydol, weight: 6 },

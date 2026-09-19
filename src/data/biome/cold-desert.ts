@@ -63,6 +63,7 @@ export default function registerColdDesertSpawns(): void {
         { species: Species.Geodude, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Elgyem, weight: 20 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Onix, weight: 10 },
         { species: Species.Gligar, weight: 5 },
@@ -72,6 +73,7 @@ export default function registerColdDesertSpawns(): void {
         { species: Species.Graveler, weight: 5 },
       ],
       scarce: [
+        { species: Species.Beheeyem, weight: 7 },
         { species: Species.Cacturne, weight: 6 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Steelix, weight: 5 },
@@ -91,6 +93,7 @@ export default function registerColdDesertSpawns(): void {
         { species: Species.Geodude, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Elgyem, weight: 20 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Cubone, weight: 20 },
         { species: Species.Onix, weight: 10 },
@@ -101,6 +104,7 @@ export default function registerColdDesertSpawns(): void {
         { species: Species.Graveler, weight: 5 },
       ],
       scarce: [
+        { species: Species.Beheeyem, weight: 7 },
         { species: Species.Cacturne, weight: 6 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Marowak, weight: 10 },

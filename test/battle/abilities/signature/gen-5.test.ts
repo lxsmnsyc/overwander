@@ -6,6 +6,8 @@ import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import { Items } from '../../../../src/data/ids/items';
+import { Genders } from '../../../../src/data/ids/species';
+import { Statuses } from '../../../../src/data/ids/status';
 import { EffectType, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
 import {
@@ -13,9 +15,15 @@ import {
   STORM_DASH_STEP,
 } from '../../../../src/battle/abilities/signature/munna-to-blitzle';
 import {
+  AFTERSHOCK_SHARE,
+  TORQUE_SCALE,
+  TORQUE_WIND_UP,
+} from '../../../../src/battle/abilities/signature/roggenrola-to-drilbur';
+import {
   GUARD_FACTOR,
   SPOTTER_ACCURACY,
 } from '../../../../src/battle/abilities/signature/patrat-to-purrloin';
+import turns from '../../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { dealDamage } from './helpers';
 
@@ -243,5 +251,60 @@ describe('the three the second road holds', () => {
     zebra.addStage(Stages.Speed, -4, { type: EffectType.None });
 
     expect(zebra.checkMovePower(Moves.Tackle, unitTarget(target))).toBeCloseTo(bare, 5);
+  });
+});
+
+describe('the three the first cave holds', () => {
+  it('shocks whoever leaves it standing on 1 HP', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ore = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    ore.enter();
+    attacker.enter();
+    // Sturdy is what usually leaves it on 1 HP, and is in its own
+    // pool. It is worn rather than added, so it costs no slot
+    ore.wearAbility(Abilities.Sturdy);
+    ore.addAbility(Abilities.Aftershock);
+
+    const full = attacker.checkStat(Stats.HP, 0);
+
+    dealDamage(attacker, ore, Moves.Tackle, 999, Types.Normal, MoveCategories.Physical);
+
+    expect(ore.health).toBe(1);
+    expect(full - attacker.health).toBe(Math.floor(full * AFTERSHOCK_SHARE));
+  });
+
+  it('leaves the mark of its nose on an enemy as it arrives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const bat = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    bat.setGender(Genders.Female);
+    enemy.setGender(Genders.Male);
+    bat.addAbility(Abilities.HeartMark);
+    enemy.enter();
+    bat.enter();
+    battle.tick(turns(1));
+
+    expect(enemy.status[Statuses.Infatuated]).toBeDefined();
+  });
+
+  it('spins the drill up: harder blows for a longer wind-up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const mole = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    const aim = unitTarget(target);
+
+    mole.enter();
+    target.enter();
+
+    const power = mole.checkMovePower(Moves.DrillRun, aim) ?? 0;
+    const wind = mole.checkMoveCastTime(Moves.DrillRun, aim);
+
+    mole.addAbility(Abilities.Torque);
+
+    expect(mole.checkMovePower(Moves.DrillRun, aim)).toBeCloseTo(power * TORQUE_SCALE, 5);
+    expect(mole.checkMoveCastTime(Moves.DrillRun, aim)).toBeCloseTo(wind * TORQUE_WIND_UP, 5);
   });
 });

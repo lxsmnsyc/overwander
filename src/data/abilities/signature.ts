@@ -1542,4 +1542,20 @@ export default function registerSignatureAbilities(): void {
     name: 'Storm Dash',
     description: 'Its moves hit 10% harder for each stage of Speed it holds, up to 1.5x.',
   });
+
+  // The three the first cave holds
+  registerSignature(Families.Roggenrola, Abilities.Aftershock, {
+    name: 'Aftershock',
+    description: 'A blow that leaves it standing on 1 HP costs whoever threw it 1/4 of their HP.',
+  });
+
+  registerSignature(Families.Woobat, Abilities.HeartMark, {
+    name: 'Heart Mark',
+    description: 'It casts Attract at an enemy as it arrives on the field.',
+  });
+
+  registerSignature(Families.Drilbur, Abilities.Torque, {
+    name: 'Torque',
+    description: 'Its moves hit 1.25x and wind up 25% slower.',
+  });
 }

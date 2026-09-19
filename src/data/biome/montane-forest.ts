@@ -95,12 +95,14 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Hoothoot, weight: 25 },
         { species: Species.Stantler, weight: 5 },
         { species: Species.Kricketot, weight: 25 },
+        { species: Species.Woobat, weight: 20 },
       ],
       rare: [{ species: Species.Golbat, weight: 10 }],
       scarce: [
         { species: Species.Noctowl, weight: 10 },
         { species: Species.Wormadam, weight: 4 },
         { species: Species.Mothim, weight: 4 },
+        { species: Species.Swoobat, weight: 8 },
       ],
       elusive: [
         { species: Species.Crobat, weight: 5 },
@@ -118,6 +120,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Hoothoot, weight: 25 },
         { species: Species.Stantler, weight: 5 },
         { species: Species.Kricketot, weight: 25 },
+        { species: Species.Woobat, weight: 20 },
       ],
       rare: [{ species: Species.Golbat, weight: 10 }],
       scarce: [
@@ -126,6 +129,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Kricketune, weight: 10 },
         { species: Species.Wormadam, weight: 4 },
         { species: Species.Mothim, weight: 4 },
+        { species: Species.Swoobat, weight: 8 },
       ],
       elusive: [
         { species: Species.Crobat, weight: 5 },

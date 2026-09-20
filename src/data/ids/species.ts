@@ -833,6 +833,9 @@ export const enum Species {
   VivillonSun = 1066615,
   VivillonOcean = 1066616,
   VivillonJungle = 1066617,
+  /** The two nobody's country grows: they are met in a town or not at all */
+  VivillonFancy = 1066618,
+  VivillonPokeBall = 1066619,
 
   /** The shapes the creation trio take in the world behind this one */
   DialgaOrigin = 1048301,
@@ -1087,6 +1090,8 @@ export const VIVILLON_FORMS: Species[] = [
   Species.VivillonSun,
   Species.VivillonOcean,
   Species.VivillonJungle,
+  Species.VivillonFancy,
+  Species.VivillonPokeBall,
 ];
 
 export const DEERLING_FORMS = [

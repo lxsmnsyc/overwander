@@ -1,7 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
-import Biome, { TimeOfDay } from '../../ids/biome';
+import Biome, { AnyTimeOfDay, TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -371,6 +371,106 @@ export default function registerScatterbugSpecies(): void {
       name: pattern.name,
       baseForm: false,
       biomes: [pattern.biome],
+    });
+  }
+
+  // The two the games hand out rather than grow: they are met on a
+  // town's streets and nowhere else, and no Spewpa ever comes out as
+  // one, so neither is on a country's list or on the road up from the
+  // caterpillar
+  for (const [species, name] of [
+    [Species.VivillonFancy, 'Fancy Vivillon'],
+    [Species.VivillonPokeBall, 'Poke Ball Vivillon'],
+  ] as const) {
+    registerSpecies(species, {
+      dexNumber: 666,
+      category: 'Scale Pokemon',
+      height: 1.2,
+      weight: 17.0,
+      family: Families.Scatterbug,
+      stats: {
+        [Stats.HP]: 80,
+        [Stats.Attack]: 52,
+        [Stats.Defense]: 50,
+        [Stats.SpecialAttack]: 90,
+        [Stats.SpecialDefense]: 50,
+        [Stats.Speed]: 89,
+      },
+      types: [Types.Bug, Types.Flying],
+      abilities: [Abilities.ShieldDust, Abilities.CompoundEyes],
+      hiddenAbilities: [Abilities.FriendGuard],
+      eggGroups: [EggGroups.Bug],
+      genderRatio: [4, 4],
+      catchRate: 45,
+      learnSet: {
+        level: {
+          1: [
+            Moves.Gust,
+            Moves.PoisonPowder,
+            Moves.StunSpore,
+            Moves.SleepPowder,
+            Moves.LightScreen,
+          ],
+          12: [Moves.StruggleBug],
+          17: [Moves.Psybeam],
+          21: [Moves.Supersonic],
+          25: [Moves.DrainingKiss],
+          31: [Moves.Aromatherapy],
+          35: [Moves.BugBuzz],
+          41: [Moves.Safeguard],
+          45: [Moves.QuiverDance],
+          50: [Moves.Hurricane],
+          55: [Moves.Powder],
+        },
+        teachable: [
+          ...FAMILY_TEACHABLE,
+          Moves.Acrobatics,
+          Moves.AerialAce,
+          Moves.Attract,
+          Moves.CalmMind,
+          Moves.Confide,
+          Moves.DoubleTeam,
+          Moves.DreamEater,
+          Moves.Electroweb,
+          Moves.Endeavor,
+          Moves.EnergyBall,
+          Moves.Facade,
+          Moves.Flash,
+          Moves.Frustration,
+          Moves.GigaDrain,
+          Moves.GigaImpact,
+          Moves.HiddenPower,
+          Moves.HyperBeam,
+          Moves.Infestation,
+          Moves.LightScreen,
+          Moves.Protect,
+          Moves.PsychUp,
+          Moves.Psychic,
+          Moves.RainDance,
+          Moves.Rest,
+          Moves.Return,
+          Moves.Roost,
+          Moves.Round,
+          Moves.Safeguard,
+          Moves.SecretPower,
+          Moves.SignalBeam,
+          Moves.SleepTalk,
+          Moves.Snore,
+          Moves.SolarBeam,
+          Moves.StruggleBug,
+          Moves.Substitute,
+          Moves.SunnyDay,
+          Moves.Swagger,
+          Moves.Tailwind,
+          Moves.Thief,
+          Moves.Toxic,
+          Moves.UTurn,
+        ],
+      },
+      name,
+      baseForm: false,
+      biomes: [],
+      activeTimes: AnyTimeOfDay,
     });
   }
 }

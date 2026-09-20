@@ -1,15 +1,16 @@
 // Flabebe through Furfrou.
 
 import { describe, expect, it } from 'vitest';
-import { Stages, Stats, StatsKind } from '../../../../src/data/constants/stats';
+import { Stats, StatsKind } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import { Statuses } from '../../../../src/data/ids/status';
 import { EffectType } from '../../../../src/battle/events';
 import {
-  BROAD_BACK_FLOOR,
-  BROAD_BACK_SHARE,
+  PEDIGREE_COAT_FLOOR,
+  PEDIGREE_COAT_SCALE,
+  SADDLE_BURDEN_FLOOR,
 } from '../../../../src/battle/abilities/signature/flabebe-to-furfrou';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { dealDamage } from './helpers';
@@ -81,66 +82,81 @@ describe("Kalos's flower road", () => {
     ).toBeCloseTo(physical, 5);
   });
 
-  it('carries a third of what its teammate is hit with', () => {
+  it("takes a status in a teammate's place while it has health to spare", () => {
     const { battle, teamA, teamB } = createBattle();
     const goat = createUnit(battle, teamA, [Types.Grass]);
     const mate = createUnit(battle, teamA);
-    const foe = createUnit(battle, teamB);
 
     pinRandom(battle, 1);
+    goat.addAbility(Abilities.SaddleBurden);
     goat.enter();
     mate.enter();
-    foe.enter();
-
-    const bare = dealDamage(foe, mate, Moves.Tackle, 80, Types.Normal, MoveCategories.Physical);
-
-    mate.setHealth(mate.checkStat(Stats.HP, 0));
-    goat.addAbility(Abilities.BroadBack);
-
-    const whole = goat.health;
-    const shared = dealDamage(foe, mate, Moves.Tackle, 80, Types.Normal, MoveCategories.Physical);
-
-    expect(shared).toBeCloseTo(bare * (1 - BROAD_BACK_SHARE), 0);
-    expect(whole - goat.health).toBeCloseTo(bare * BROAD_BACK_SHARE, 0);
-  });
-
-  it('stops carrying once it is down to a quarter of its own', () => {
-    const { battle, teamA, teamB } = createBattle();
-    const goat = createUnit(battle, teamA, [Types.Grass]);
-    const mate = createUnit(battle, teamA);
-    const foe = createUnit(battle, teamB);
-
-    pinRandom(battle, 1);
-    goat.addAbility(Abilities.BroadBack);
-    goat.enter();
-    mate.enter();
-    foe.enter();
-    goat.setHealth(goat.checkStat(Stats.HP, 0) * BROAD_BACK_FLOOR);
-
-    const spent = goat.health;
-    const taken = dealDamage(foe, mate, Moves.Tackle, 80, Types.Normal, MoveCategories.Physical);
-
-    expect(taken).toBeGreaterThan(0);
-    expect(goat.health).toBe(spent);
-  });
-
-  it('shrugs the first status off and takes the second', () => {
-    const { battle, teamA, teamB } = createBattle();
-    const poodle = createUnit(battle, teamA, [Types.Normal]);
-
-    pinRandom(battle, 1);
-    poodle.addAbility(Abilities.WellGroomed);
-    poodle.enter();
     createUnit(battle, teamB).enter();
 
-    poodle.addStatus(Statuses.Burned, { type: EffectType.None });
+    mate.addStatus(Statuses.Poisoned, { type: EffectType.None });
 
-    expect(poodle.getStatus(Statuses.Burned)).toBeFalsy();
-    expect(poodle.stages[Stages.Speed]).toBe(1);
+    expect(mate.getStatus(Statuses.Poisoned)).toBeFalsy();
+    expect(goat.getStatus(Statuses.Poisoned)).toBeTruthy();
 
-    poodle.addStatus(Statuses.Burned, { type: EffectType.None });
+    // One burden at a time: the next dose stays where it landed
+    mate.addStatus(Statuses.Burned, { type: EffectType.None });
 
-    expect(poodle.getStatus(Statuses.Burned)).toBeTruthy();
-    expect(poodle.stages[Stages.Speed]).toBe(1);
+    expect(mate.getStatus(Statuses.Burned)).toBeTruthy();
+    expect(goat.getStatus(Statuses.Burned)).toBeFalsy();
+  });
+
+  it('carries nothing once it is down to half its own', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const goat = createUnit(battle, teamA, [Types.Grass]);
+    const mate = createUnit(battle, teamA);
+
+    pinRandom(battle, 1);
+    goat.addAbility(Abilities.SaddleBurden);
+    goat.enter();
+    mate.enter();
+    createUnit(battle, teamB).enter();
+    goat.setHealth(goat.checkStat(Stats.HP, 0) * SADDLE_BURDEN_FLOOR);
+
+    mate.addStatus(Statuses.Paralyzed, { type: EffectType.None });
+
+    expect(mate.getStatus(Statuses.Paralyzed)).toBeTruthy();
+    expect(goat.getStatus(Statuses.Paralyzed)).toBeFalsy();
+  });
+
+  it('turns special moves away with the coat until it is hurt', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const poodle = createUnit(battle, teamA, [Types.Normal]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    poodle.enter();
+    foe.enter();
+
+    const bare = dealDamage(foe, poodle, Moves.Ember, 60, Types.Fire, MoveCategories.Special);
+
+    poodle.setHealth(poodle.checkStat(Stats.HP, 0));
+    poodle.addAbility(Abilities.PedigreeCoat);
+
+    const coated = dealDamage(foe, poodle, Moves.Ember, 60, Types.Fire, MoveCategories.Special);
+
+    expect(coated).toBeCloseTo(bare * PEDIGREE_COAT_SCALE, 0);
+
+    // The coat is no use to a hurt one, and it never answered a fist
+    poodle.setHealth(poodle.checkStat(Stats.HP, 0) * PEDIGREE_COAT_FLOOR - 1);
+
+    const hurt = dealDamage(foe, poodle, Moves.Ember, 60, Types.Fire, MoveCategories.Special);
+
+    expect(hurt).toBeCloseTo(bare, 0);
+
+    poodle.setHealth(poodle.checkStat(Stats.HP, 0));
+
+    const swung = dealDamage(foe, poodle, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical);
+
+    poodle.setHealth(poodle.checkStat(Stats.HP, 0));
+    poodle.removeAbility(Abilities.PedigreeCoat);
+
+    expect(
+      dealDamage(foe, poodle, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical),
+    ).toBeCloseTo(swung, 5);
   });
 });

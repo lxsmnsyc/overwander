@@ -2021,16 +2021,15 @@ export default function registerSignatureAbilities(): void {
       'A teammate defends special moves with its Special Defense whenever theirs is lower.',
   });
 
-  registerSignature(Families.Skiddo, Abilities.BroadBack, {
-    name: 'Broad Back',
+  registerSignature(Families.Skiddo, Abilities.SaddleBurden, {
+    name: 'Saddle Burden',
     description:
-      'It takes 1/3 of every hit landed on a teammate, until it is at or below 1/4 of its HP.',
+      'A status aimed at a teammate lands on it instead, while it is above 1/2 HP and carries none.',
   });
 
-  registerSignature(Families.Furfrou, Abilities.WellGroomed, {
-    name: 'Well Groomed',
-    description:
-      'The first status each fight is refused, and refusing it raises its Speed 1 stage.',
+  registerSignature(Families.Furfrou, Abilities.PedigreeCoat, {
+    name: 'Pedigree Coat',
+    description: 'Special moves hit it at 0.8x while it is at or above 1/2 HP.',
   });
 
   registerSignature(Families.Froakie, Abilities.ShadeBond, {

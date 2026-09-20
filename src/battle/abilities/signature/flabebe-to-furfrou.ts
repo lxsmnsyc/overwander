@@ -1,19 +1,21 @@
-import { AttackPriority, EventPriority } from '../../../core/event-emitter';
-import { Stages, Stats } from '../../../data/constants/stats';
+import { EventPriority } from '../../../core/event-emitter';
+import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
-import { DamageFlags } from '../../../data/ids/moves';
+import { MoveCategories } from '../../../data/ids/moves';
 import { BattleEvents, EffectType } from '../../events';
+import type { EffectCause } from '../../events';
+import { MAJOR_STATUS_CONDITIONS } from '../../status';
 import type Unit from '../../unit';
 import { MergedLifecycle } from '../../lifecycle';
+import { hasAnyStatus } from '../../utils';
 import { createAbility } from '../__create';
-import { createUnitState } from './__create';
 
-/** The share of a teammate's hit the goat carries, and where it stops */
-export const BROAD_BACK_SHARE = 1 / 3;
-export const BROAD_BACK_FLOOR = 1 / 4;
+/** How much health a goat needs left before it will carry anything */
+export const SADDLE_BURDEN_FLOOR = 1 / 2;
 
-/** What refusing the first status is worth */
-export const WELL_GROOMED_STAGES = 1;
+/** What a kept coat turns away, and how hurt it may be and still turn it */
+export const PEDIGREE_COAT_SCALE = 0.8;
+export const PEDIGREE_COAT_FLOOR = 1 / 2;
 
 /** The teammate holding the ability, if one is standing */
 function standing(unit: Unit, ability: Abilities): Unit | undefined {
@@ -27,10 +29,33 @@ function standing(unit: Unit, ability: Abilities): Unit | undefined {
 }
 
 /**
+ * The teammate that will take this status in the unit's place: one
+ * with health to spare and nothing on it already. A burden it is
+ * handing over is never handed back, which is what keeps two goats
+ * from passing one poison between them
+ */
+function carrier(unit: Unit, cause: EffectCause): Unit | undefined {
+  if (cause.type === EffectType.Ability && cause.ability === Abilities.SaddleBurden) {
+    return undefined;
+  }
+
+  const goat = standing(unit, Abilities.SaddleBurden);
+
+  if (
+    goat == null ||
+    goat.health <= goat.checkStat(Stats.HP, 0) * SADDLE_BURDEN_FLOOR ||
+    hasAnyStatus(goat, MAJOR_STATUS_CONDITIONS)
+  ) {
+    return undefined;
+  }
+
+  return goat;
+}
+
+/**
  * The flower road's three: the garden that puts its own roof over
- * everything growing under it, the goat that carries a share of what
- * its team is hit with, and the poodle whose coat shrugs the first
- * thing off
+ * everything growing under it, the goat that takes what its team is
+ * dosed with, and the poodle whose coat turns what its fur cannot
  */
 const setupAbilities = [
   createAbility(Abilities.Hothouse, (battle) =>
@@ -52,66 +77,53 @@ const setupAbilities = [
     }),
   ),
 
-  createAbility(Abilities.BroadBack, (battle) =>
-    battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
-      const hurt = event.target;
+  createAbility(
+    Abilities.SaddleBurden,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            MAJOR_STATUS_CONDITIONS.has(event.status) &&
+            carrier(event.source, event.cause) != null
+          ) {
+            event.immune = true;
+          }
+        }),
+        // Taken on only where a real dose actually failed to land
+        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+          if (!MAJOR_STATUS_CONDITIONS.has(event.status)) {
+            return;
+          }
 
-      // Only a blow somebody struck is shared: poison, weather and the
-      // share itself are already nobody's to carry
-      if (event.value <= 0 || !hurt.alive || (event.flags & DamageFlags.Indirect) !== 0) {
-        return;
-      }
+          const goat = carrier(event.source, event.cause);
 
-      const carrier = standing(hurt, Abilities.BroadBack);
-
-      if (carrier == null || carrier.health <= carrier.checkStat(Stats.HP, 0) * BROAD_BACK_FLOOR) {
-        return;
-      }
-
-      const share = event.value * BROAD_BACK_SHARE;
-
-      event.value -= share;
-      carrier.triggerAbility(Abilities.BroadBack);
-      carrier.damage(
-        { type: EffectType.Ability, ability: Abilities.BroadBack, unit: carrier },
-        carrier,
-        share,
-        DamageFlags.Indirect,
-      );
-    }),
+          if (goat == null) {
+            return;
+          }
+          goat.triggerAbility(Abilities.SaddleBurden);
+          goat.addStatus(event.status, {
+            type: EffectType.Ability,
+            ability: Abilities.SaddleBurden,
+            unit: goat,
+          });
+        }),
+      ]),
   ),
 
-  createAbility(Abilities.WellGroomed, (battle) => {
-    // Whether the coat has already turned something away this fight
-    const { state, lifecycles } = createUnitState<boolean>(battle);
+  createAbility(Abilities.PedigreeCoat, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const target = event.parent.target;
 
-    function fresh(unit: Unit): boolean {
-      return unit.hasAbility(Abilities.WellGroomed) && state.get(unit) !== true;
-    }
-
-    return new MergedLifecycle([
-      ...lifecycles,
-      battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
-        if (!event.immune && fresh(event.source)) {
-          event.immune = true;
-        }
-      }),
-      battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
-        const unit = event.source;
-
-        if (!fresh(unit)) {
-          return;
-        }
-        state.set(unit, true);
-        unit.triggerAbility(Abilities.WellGroomed);
-        unit.addStage(Stages.Speed, WELL_GROOMED_STAGES, {
-          type: EffectType.Ability,
-          ability: Abilities.WellGroomed,
-          unit,
-        });
-      }),
-    ]);
-  }),
+      if (
+        event.parent.category === MoveCategories.Special &&
+        target.hasAbility(Abilities.PedigreeCoat) &&
+        target.health >= target.checkStat(Stats.HP, 0) * PEDIGREE_COAT_FLOOR
+      ) {
+        event.value *= PEDIGREE_COAT_SCALE;
+      }
+    }),
+  ),
 ];
 
 export default setupAbilities;

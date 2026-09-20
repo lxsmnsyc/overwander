@@ -62,13 +62,15 @@ import Npc, { NPC_NAMES, NPC_VISIT_TAGS } from '../../../data/overworld/npc';
 import type { GymSeatStanding } from '../../../auth/gym-seat-record';
 import { enterGymSeat } from '../../../auth/gym-seats';
 import { type LandmarkStandings, readLandmarkStandings } from '../../../auth/landmark-standings';
-import { CellAura } from '../chunk-canvas/scenery';
+import { CellAura, type SpawnRank } from '../chunk-canvas/scenery';
 import GymSeatDialog from '../GymSeatDialog';
 import { VENDOR_KIND_NAMES } from '../../../data/overworld/vendor';
 import type Phenomenon from '../../../data/overworld/phenomenon';
 import { PHENOMENON_NAMES } from '../../../data/overworld/phenomenon';
+import type { Species } from '../../../data/ids/species';
 import { getSpeciesData } from '../../../data/species';
 import { isFeaturedSpecies } from '../../../data/species/day';
+import { isLegendarySpecies, isMythicalSpecies } from '../../../data/biome';
 import { CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from '../../../overworld/chunk';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
@@ -166,6 +168,14 @@ const keptWindows = new LRUMap<string, SnapshotRecord>(CLAIM_MEMORY);
  * `Suspense` written there and land on the boundary around the whole
  * page — the world is what that boundary would blank
  */
+/** Which of the one-per-world kinds a spawn is, or null for everything else */
+function rankOf(species: Species): SpawnRank {
+  if (isLegendarySpecies(species)) {
+    return 'legendary';
+  }
+  return isMythicalSpecies(species) ? 'mythical' : null;
+}
+
 /** The four who keep a house of their own, each a standing fight */
 const EXPERT_LANDMARKS = new Set<Landmark>([
   Landmark.GymLeader,
@@ -2664,6 +2674,7 @@ export default function OverworldBoard(props: {
         // Against the window's own instant, which is what the
         // server weighted the pool by
         featured: isFeaturedSpecies(standing.spawn[0], loaded.snapshot.timestamp),
+        rank: rankOf(standing.spawn[0]),
       });
     }
     return coats;

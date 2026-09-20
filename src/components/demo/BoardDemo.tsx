@@ -2,11 +2,11 @@ import { type JSX, createMemo, createSignal, onCleanup, onMount } from 'solid-js
 import { Badge, Button, Note, Row, Select } from '../styled';
 import type Biome from '../../data/ids/biome';
 import BiomeId from '../../data/ids/biome';
-import { BIOME_NAMES } from '../../data/biome';
+import { BIOME_NAMES, isLegendarySpecies, isMythicalSpecies } from '../../data/biome';
 import type Decoration from '../../data/overworld/decoration';
 import Weather, { DARK_DAY_LAMP_CELLS, WEATHER_NAMES } from '../../data/overworld/weather';
 import ChunkCanvas from '../overworld/chunk-canvas';
-import type { SpawnCoat } from '../overworld/chunk-canvas/scenery';
+import type { SpawnCoat, SpawnRank } from '../overworld/chunk-canvas/scenery';
 import { BOARD_CELLS, BOARD_CENTER, boardIndexOf, viewFor } from '../../canvas/board';
 import { SLIDE_PACE } from '../overworld/chunk-canvas/metrics';
 import { findPathNear } from '../../overworld/path';
@@ -24,7 +24,7 @@ import { isLavaAt, readGround } from '../../overworld/ground';
 import { isRouteAt, routesNear } from '../../overworld/route';
 import { blocksWalk } from '../../overworld/cliff';
 import { TERRACE_TOP, levelAt } from '../../overworld/terrace';
-import { getRegisteredSpecies } from '../../data/species';
+import { Species } from '../../data/ids/species';
 
 /**
  * The board on its own, at whatever shape of screen you like.
@@ -243,6 +243,14 @@ function findRoute(world: World, from: [number, number]): [number, number] | nul
   return null;
 }
 
+/** Which of the one-per-world kinds a demo spawn is */
+function rankOf(species: Species): SpawnRank {
+  if (isLegendarySpecies(species)) {
+    return 'legendary';
+  }
+  return isMythicalSpecies(species) ? 'mythical' : null;
+}
+
 /** Where the pokemon stand, in cells from wherever the player landed */
 const SPAWN_SPOTS: [number, number][] = [
   [-3, -4],
@@ -252,38 +260,64 @@ const SPAWN_SPOTS: [number, number][] = [
   [4, 1],
   [-5, 0],
   [1, 4],
+  [5, -4],
+  [-5, 4],
+  [2, -5],
 ];
 
 /**
- * A few pokemon standing about, taken off the front of the registry so
- * the page draws real sheets rather than dots. They keep to dry open
- * ground, since the country is the world's now and the spots above
- * are as likely to be lake as meadow
+ * What stands about: one of each mark the board can put on a pokemon,
+ * and the pairs of them worth looking at together.
+ *
+ * A legendary of the day's featured family is the loudest a cell ever
+ * gets, and it is the one case nobody can stage on purpose: a wild
+ * legendary is rare, and the day has to be its family's. Each is its
+ * own species, so which is which is legible from the sprites
+ */
+const SHOWN: { species: Species; shiny?: boolean; featured?: boolean }[] = [
+  { species: Species.Bulbasaur },
+  { species: Species.Charmander, shiny: true },
+  { species: Species.Squirtle, featured: true },
+  { species: Species.Pikachu, shiny: true, featured: true },
+  { species: Species.Articuno },
+  { species: Species.Zapdos, featured: true },
+  { species: Species.Moltres, shiny: true, featured: true },
+  { species: Species.Mew },
+  { species: Species.Celebi, featured: true },
+  { species: Species.Jirachi, shiny: true, featured: true },
+];
+
+/**
+ * The pokemon standing about, in every combination of marks. They keep
+ * to dry open ground, since the country is the world's now and the
+ * spots above are as likely to be lake as meadow
  */
 function standing(world: World, at: [number, number]): [at: [number, number], coat: SpawnCoat][] {
-  const species = getRegisteredSpecies().slice(0, 4);
   const placed: [at: [number, number], coat: SpawnCoat][] = [];
 
   for (const [dx, dy] of SPAWN_SPOTS) {
     const spot: [number, number] = [at[0] + dx, at[1] + dy];
 
-    if (placed.length >= species.length) {
+    if (placed.length >= SHOWN.length) {
       break;
     }
     if (readGround(world, spot[0], spot[1]).role !== 'ground' || blocksWalk(world, ...spot)) {
       continue;
     }
+    const shown = SHOWN[placed.length];
+
     placed.push([
       spot,
       // The window names what it publishes, and the name is what the
-      // board keeps a sheet under while the ground slides past
-      // The first is shiny, named for where it stands so the sparkle
-      // plays again wherever the page lands
+      // board keeps a sheet under while the ground slides past. Named
+      // for where it stands, so every burst plays again wherever the
+      // page lands
       {
         id: `demo-${placed.length}-${spot[0]},${spot[1]}`,
-        species: species[placed.length],
-        shiny: placed.length === 0,
-        featured: false,
+        species: shown.species,
+        shiny: shown.shiny === true,
+        featured: shown.featured === true,
+        rank: rankOf(shown.species),
       },
     ]);
   }
@@ -702,6 +736,16 @@ export default function BoardDemo(): JSX.Element {
         camera round. The Layer switch goes down through the nearest cave mouth, or back up. Hour
         lights the board at a time of day instead of waiting for one, and Light carries what a
         player would carry into the dark: nothing, or an Illuminate buddy.
+      </Note>
+
+      <Note>
+        The pokemon standing about wear every mark the board can put on one, in this order from the
+        spots nearest the player: Bulbasaur plain, Charmander shiny, Squirtle of the day's family,
+        Pikachu shiny and of the day's family, then the auras: Articuno, Zapdos with the day's
+        family, shiny Moltres with it too, Mew, Celebi with the day's family, and shiny Jirachi with
+        it. A cell in two marks at once is the case nobody can stage in the game, which is what this
+        is here for: the family's gold rings travel out from under a turning seal, gold under a
+        legendary and magenta under a mythical.
       </Note>
 
       {/* The board takes the whole of whatever it is put in, so the

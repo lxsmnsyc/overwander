@@ -212,6 +212,15 @@ export const COLORS = {
    * which is what the game says "today, this one" in everywhere else
    */
   featured: '#ffcf5c',
+  /**
+   * The aura a one-per-world spawn stands in. Gold for a legendary
+   * and magenta for a mythical, so the colour says which of the two is
+   * standing there before the sprite is close enough to read. Magenta
+   * rather than the violet it was: violet sat too near the dark ground
+   * it is usually drawn over to be seen at a glance
+   */
+  legendary: '#ffc440',
+  mythical: '#ff5ad8',
   glyph: '#1c1c1c',
   landmark: 'rgba(255, 255, 255, 0.65)',
   /**
@@ -512,3 +521,40 @@ export const QUARTER_TURN = Math.PI / 2;
 export function isTurningPress(event: { button: number; ctrlKey: boolean }): boolean {
   return event.button === RIGHT_BUTTON || (event.button === 0 && event.ctrlKey);
 }
+
+/**
+ * The aura a legendary or a mythical stands in: a seal lying on the
+ * ground under it, two broken rings turning opposite ways.
+ *
+ * Broken and turning rather than travelling out, because the day's
+ * featured family already owns rings that travel out: two of those
+ * under one pokemon read as one mark drawn twice. A seal holds its
+ * size, so what it says is "this ground is spoken for" rather than
+ * "something is happening here"
+ */
+export const HERALD_TURN = 5200;
+export const HERALD_ALPHA = 0.8;
+export const HERALD_WEIGHT = 4;
+
+/** Each ring: how far out it lies in cells, how many arcs it is broken into, how much of the way round they cover, and which way and how fast it turns */
+export const HERALD_SEAL: {
+  radius: number;
+  arcs: number;
+  fill: number;
+  way: number;
+}[] = [
+  { radius: 1.7, arcs: 6, fill: 0.55, way: 1 },
+  { radius: 1.05, arcs: 4, fill: 0.45, way: -1.5 },
+];
+
+/** How many points one arc is drawn through */
+export const HERALD_ARC_POINTS = 7;
+
+/**
+ * The motes drifting up out of it: how many, how wide one is drawn in
+ * pixels, and how far up it gets in cells before it fades. Low on
+ * purpose, so they read as light coming off it rather than as a beam
+ */
+export const HERALD_MOTES = 10;
+export const HERALD_MOTE = 3;
+export const HERALD_RISE = 0.7;

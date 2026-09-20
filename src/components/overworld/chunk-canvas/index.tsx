@@ -46,6 +46,7 @@ import {
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
 import { SPRITE_DIRECTIONS, type SpriteDirection } from '../../../canvas/sprite-sheet';
 import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/sparkle';
+import drawHerald, { HERALD_BURST_LIFE } from '../../../canvas/herald';
 import speciesSize from '../../../canvas/species-size';
 import {
   batchAmbient,
@@ -119,6 +120,14 @@ import {
   COLORS,
   DRAW_PACE,
   GOAL_PULSE,
+  HERALD_ALPHA,
+  HERALD_ARC_POINTS,
+  HERALD_MOTE,
+  HERALD_MOTES,
+  HERALD_RISE,
+  HERALD_SEAL,
+  HERALD_TURN,
+  HERALD_WEIGHT,
   HOVER_GLOW,
   IDLE_PACE,
   LOADING_LABEL,
@@ -172,6 +181,7 @@ import {
   facingOf,
   landmarkCallOut,
   paintCellAura,
+  paintHerald,
   paintPhenomenon,
   paintSparkle,
   phenomenonSpan,
@@ -518,6 +528,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * keyed to the ground announced itself again with each one
    */
   const sparkles = new Map<string, number>();
+  /** And when each legendary or mythical was first drawn, for its own burst */
+  const heralds = new Map<string, number>();
 
   /**
    * How many are remembered. A name is unique to its window, so the
@@ -3079,6 +3091,139 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }
       }
 
+      /**
+       * One arc of a seal, lying on the ground round a cell: `from`
+       * and `to` are where it runs between, in radians
+       */
+      const sealArc = (
+        index: number,
+        radius: number,
+        from: number,
+        to: number,
+        colour: string,
+        alpha: number,
+      ): void => {
+        const cell = boardCellOf(index);
+        const spot = shifted(cell);
+        const floor = liftOf(cell);
+
+        marks?.depth(floorOf(cell, floor, RING_SPREAD));
+        const midU = 0.5 + (spot.x - BOARD_CENTER) / BOARD_SPAN;
+        const midV = 0.5 + (spot.y - BOARD_CENTER) / BOARD_SPAN;
+        const round = radius / BOARD_SPAN / 2;
+        const arc: ProjectedPoint[] = [];
+
+        for (let step = 0; step < HERALD_ARC_POINTS; step++) {
+          const angle = from + ((to - from) * step) / (HERALD_ARC_POINTS - 1);
+
+          arc.push(
+            at(
+              projectAir(
+                { u: midU + Math.cos(angle) * round, v: midV + Math.sin(angle) * round },
+                floor,
+                yaw(),
+              ),
+            ),
+          );
+        }
+        if (batch != null) {
+          for (let step = 0; step < arc.length - 1; step++) {
+            batch.line(colour, arc[step], arc[step + 1], HERALD_WEIGHT, alpha);
+          }
+          return;
+        }
+
+        const prior = context.globalAlpha;
+
+        context.beginPath();
+        context.moveTo(arc[0].x, arc[0].y);
+        for (const point of arc.slice(1)) {
+          context.lineTo(point.x, point.y);
+        }
+        context.globalAlpha = prior * alpha;
+        context.strokeStyle = colour;
+        context.lineWidth = HERALD_WEIGHT;
+        context.lineCap = 'round';
+        context.stroke();
+        context.lineWidth = 1;
+        context.lineCap = 'butt';
+        context.globalAlpha = prior;
+      };
+
+      /**
+       * The aura a legendary or a mythical stands in: a seal of broken
+       * rings turning under it, and a few motes coming off it.
+       *
+       * Held for as long as it is standing there rather than thrown
+       * once, since one of these is the rarest thing on the board and
+       * a player walking up from behind should still see it. It lies
+       * flat: anything standing up out of the cell reads as a landmark
+       * rather than as the pokemon
+       */
+      for (const [index, standing] of props.spawns) {
+        if (standing.rank == null) {
+          continue;
+        }
+        animating = true;
+        const colour = standing.rank === 'mythical' ? COLORS.mythical : COLORS.legendary;
+        const turn = (clock / HERALD_TURN) * Math.PI * 2;
+        // Breathing, so a seal that holds its size is still alive
+        const lit = HERALD_ALPHA * (0.75 + 0.25 * Math.sin((clock / HERALD_TURN) * Math.PI * 2));
+
+        for (const band of HERALD_SEAL) {
+          const step = (Math.PI * 2) / band.arcs;
+
+          for (let arc = 0; arc < band.arcs; arc++) {
+            const from = turn * band.way + arc * step;
+
+            sealArc(index, band.radius, from, from + step * band.fill, colour, lit);
+          }
+        }
+
+        const cell = boardCellOf(index);
+        const spot = shifted(cell);
+        const floor = liftOf(cell);
+        const midU = 0.5 + (spot.x - BOARD_CENTER) / BOARD_SPAN;
+        const midV = 0.5 + (spot.y - BOARD_CENTER) / BOARD_SPAN;
+        const seed = nameSeed(standing.id);
+
+        marks?.depth(floorOf(cell, floor, RING_SPREAD));
+        for (let mote = 0; mote < HERALD_MOTES; mote++) {
+          // Each on its own clock, so they are never a row of lights
+          // rising together
+          const phase = (clock / HERALD_TURN + ((seed >> mote) & 0xff) / 256) % 1;
+          const angle = ((mote + 0.5) / HERALD_MOTES) * Math.PI * 2 + phase * 1.2;
+          const round = (1.4 / BOARD_SPAN / 2) * (0.5 + phase * 0.5);
+          const point = at(
+            projectAir(
+              { u: midU + Math.cos(angle) * round, v: midV + Math.sin(angle) * round },
+              floor + phase * HERALD_RISE,
+              yaw(),
+            ),
+          );
+          const half = (HERALD_MOTE * point.scale) / 2;
+          const alpha = Math.sin(phase * Math.PI) * HERALD_ALPHA;
+          const speck = [
+            { x: point.x - half, y: point.y - half },
+            { x: point.x + half, y: point.y - half },
+            { x: point.x + half, y: point.y + half },
+            { x: point.x - half, y: point.y + half },
+          ];
+
+          if (batch != null) {
+            batch.solid(colour, speck, alpha);
+            continue;
+          }
+
+          const prior = context.globalAlpha;
+
+          context.globalAlpha = prior * alpha;
+          context.fillStyle = colour;
+          context.fillRect(point.x - half, point.y - half, half * 2, half * 2);
+          context.globalAlpha = prior;
+        }
+      }
+
       // The cell under the cursor, ruled after the whole grid is laid:
       // its neighbours draw their own edges over it, so a ring left in
       // the loop would come out with two sides missing
@@ -3229,7 +3374,76 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * remember every shiny met all session
        */
       /** Whether one of them is new, which is a thing to be heard */
+      /** Whether a shiny's sparkle started this frame, which is what the board chimes for */
       let announced = false;
+
+      /**
+       * A burst thrown over a pokemon the first time it is drawn: the
+       * shiny's sparkle, and the aura's arrival for a legendary or a
+       * mythical.
+       *
+       * Announced on the first draw rather than the first sight, since
+       * one thrown while the sheet was still coming would be over
+       * before there was anything to burst around. `held` remembers
+       * when each started, so it plays once and no more
+       */
+      const announce = (
+        id: string,
+        name: string,
+        held: Map<string, number>,
+        life: number,
+        middle: ProjectedPoint,
+        scale: number,
+        /** The picture at this moment, for the batch, and the same drawn straight on */
+        paint: (seed: number, age: number, density: number) => HTMLCanvasElement | null,
+        draw: (seed: number, age: number, spot: ProjectedPoint, sized: number) => void,
+        /** Whether this one is starting now, for a caller with a cue to play */
+      ): boolean => {
+        // Seeded off the pokemon rather than off the ground, so the
+        // stars stand in the same places for as long as it does
+        const seed = nameSeed(id);
+        let starting = false;
+
+        if (!held.has(name)) {
+          // Oldest first, which is insertion order: the map is only
+          // trimmed when it has run well past a board's worth of them
+          if (held.size >= SPARKLE_MEMORY) {
+            held.delete(held.keys().next().value ?? '');
+          }
+          held.set(name, clock);
+          starting = true;
+        }
+        const age = clock - (held.get(name) ?? clock);
+        // A spent burst draws nothing, so it is neither painted nor uploaded again
+        const spent = age > life;
+
+        animating ||= !spent;
+        const glint = batch == null || spent ? null : paint(seed, age, scale * ratio);
+
+        if (!spent && (batch == null || glint == null)) {
+          draw(seed, age, middle, scale);
+        } else if (batch != null && glint != null) {
+          // Painted in screen pixels around the point the pokemon
+          // stands on, so it is stamped at the size it was painted
+          const half = { x: glint.width / ratio / 2, y: glint.height / ratio / 2 };
+
+          batch.invalidate(glint);
+          batch.quad(
+            glint,
+            { x: 0, y: 0, width: glint.width, height: glint.height },
+            [
+              { x: middle.x - half.x, y: middle.y - half.y },
+              { x: middle.x + half.x, y: middle.y - half.y },
+              { x: middle.x + half.x, y: middle.y + half.y },
+              { x: middle.x - half.x, y: middle.y + half.y },
+            ],
+            1,
+            undefined,
+            'smooth',
+          );
+        }
+        return starting;
+      };
 
       /**
        * Everything with something standing on it, from the back of the
@@ -3544,58 +3758,35 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             }
 
             if (standing.shiny) {
-              // Announced the first time it is actually drawn rather
-              // than the first time it is known about: a sparkle
-              // thrown while the sheet was still coming would be over
-              // before there was anything to sparkle around
-              // Seeded off the pokemon rather than off the ground, so
-              // the stars stand in the same places for as long as it
-              // does
-              const seed = nameSeed(standing.id);
+              announced ||= announce(
+                standing.id,
+                standing.id,
+                sparkles,
+                SPARKLE_LIFE,
+                middle,
+                scale,
+                (seed, age, density) => paintSparkle(standing.id, seed, age, density),
+                (seed, age, spot, sized) => {
+                  drawSparkle(context, seed, age, spot.x, spot.y, sized);
+                },
+              );
+            }
+            if (standing.rank != null) {
+              const colour = standing.rank === 'mythical' ? COLORS.mythical : COLORS.legendary;
+              const name = `${standing.id}:rank`;
 
-              if (!sparkles.has(standing.id)) {
-                // Oldest first, which is insertion order: the map is
-                // only trimmed when it has run well past a board's
-                // worth of them
-                if (sparkles.size >= SPARKLE_MEMORY) {
-                  sparkles.delete(sparkles.keys().next().value ?? '');
-                }
-                sparkles.set(standing.id, clock);
-                announced = true;
-              }
-              const age = clock - (sparkles.get(standing.id) ?? clock);
-              // A spent sparkle draws nothing, so it is neither painted nor uploaded again
-              const spent = age > SPARKLE_LIFE;
-
-              animating ||= !spent;
-              const glint =
-                batch == null || spent ? null : paintSparkle(standing.id, seed, age, scale * ratio);
-
-              if (!spent && (batch == null || glint == null)) {
-                drawSparkle(context, seed, age, middle.x, middle.y, scale);
-              } else if (batch != null && glint != null) {
-                // Painted in screen pixels around the point the pokemon
-                // stands on, so it is stamped at the size it was painted
-                const half = {
-                  x: glint.width / ratio / 2,
-                  y: glint.height / ratio / 2,
-                };
-
-                batch.invalidate(glint);
-                batch.quad(
-                  glint,
-                  { x: 0, y: 0, width: glint.width, height: glint.height },
-                  [
-                    { x: middle.x - half.x, y: middle.y - half.y },
-                    { x: middle.x + half.x, y: middle.y - half.y },
-                    { x: middle.x + half.x, y: middle.y + half.y },
-                    { x: middle.x - half.x, y: middle.y + half.y },
-                  ],
-                  1,
-                  undefined,
-                  'smooth',
-                );
-              }
+              announce(
+                standing.id,
+                name,
+                heralds,
+                HERALD_BURST_LIFE,
+                middle,
+                scale,
+                (seed, age, density) => paintHerald(name, seed, age, colour, density),
+                (seed, age, spot, sized) => {
+                  drawHerald(context, seed, age, spot.x, spot.y, sized, colour);
+                },
+              );
             }
           } else {
             dot(middle, CELL * 0.18 * middle.scale * magnify, COLORS.spawn);

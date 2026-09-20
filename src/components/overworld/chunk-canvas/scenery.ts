@@ -7,6 +7,7 @@ import drawSparkle, {
   SPARKLE_SPREAD,
   SPARKLE_STAR_SIZE,
 } from '../../../canvas/sparkle';
+import drawHerald, { HERALD_FRAME } from '../../../canvas/herald';
 import type Bakery from '../../../canvas/bakery';
 import type { Baked } from '../../../canvas/bakery';
 import { CELL, COLORS } from './metrics';
@@ -44,7 +45,15 @@ export interface SpawnCoat {
    * are the reason to walk over rather than past
    */
   featured: boolean;
+  /**
+   * Whether it is one of the one-per-world kinds, which the board
+   * announces and then keeps an aura under. Null for everything else
+   */
+  rank: SpawnRank;
 }
+
+/** The two kinds worth an aura of their own */
+export type SpawnRank = 'legendary' | 'mythical' | null;
 
 /** The pokemon a player rides while surfing or flying, in the coat it wears */
 export interface RiddenCoat {
@@ -772,5 +781,59 @@ export function paintSparkle(
     sparkled.delete(sparkled.keys().next().value ?? '');
   }
   sparkled.set(name, { canvas, key });
+  return canvas;
+}
+
+/** How much bigger than the pokemon an arrival's picture is */
+export const HERALD_SPAN = 2.2;
+
+/** One picture per arrival, for the reason a sparkle keeps one */
+const heralded = new Map<string, { canvas: HTMLCanvasElement; key: string }>();
+
+/**
+ * The picture of one arrival at this moment, painted around the point
+ * the pokemon stands on. `density` is canvas pixels per sheet pixel,
+ * as a sparkle's is
+ */
+export function paintHerald(
+  name: string,
+  seed: number,
+  age: number,
+  colour: string,
+  density = 1,
+): HTMLCanvasElement | null {
+  const across = Math.min(
+    SPARKLE_LIMIT,
+    Math.max(1, Math.round(HERALD_FRAME * density * HERALD_SPAN)),
+  );
+  const key = `${seed}:${Math.round(age)}:${across}:${colour}`;
+  const held = heralded.get(name);
+
+  if (held?.key === key) {
+    return held.canvas;
+  }
+
+  const canvas = held?.canvas ?? document.createElement('canvas');
+
+  if (canvas.width !== across || canvas.height !== across) {
+    canvas.width = across;
+    canvas.height = across;
+  }
+
+  const context = canvas.getContext('2d');
+
+  if (context == null) {
+    return null;
+  }
+  context.clearRect(0, 0, across, across);
+  context.save();
+  context.translate(across / 2, across / 2);
+  drawHerald(context, seed, age, 0, 0, across / HERALD_SPAN / HERALD_FRAME, colour);
+  context.restore();
+  // Oldest first, which is insertion order
+  if (held == null && heralded.size >= SPARKLE_PICTURES) {
+    heralded.delete(heralded.keys().next().value ?? '');
+  }
+  heralded.set(name, { canvas, key });
   return canvas;
 }

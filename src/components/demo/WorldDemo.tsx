@@ -1,5 +1,6 @@
 import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
 import WorldMapCanvas, { townsInView } from '../overworld/WorldMapCanvas';
+import WeatherMap from './WeatherMap';
 import getWorld from '../../overworld/current';
 import { BIOME_NAMES } from '../../data/biome';
 import { Badge, Button, Meta, Note, Row, Switch } from '../styled';
@@ -57,6 +58,8 @@ export default function WorldDemo(): JSX.Element {
   const [under, setUnder] = createSignal<{ x: number; y: number; biome: Biome } | null>(null);
   const [detailedMap, setDetailedMap] = createSignal(true);
   let canvas: HTMLCanvasElement | undefined;
+  /** Kept rather than built per read, so hovering the weather map reuses its caches */
+  const weatherWorld = createMemo(() => new World(seed(), undefined, generation()));
 
   /** The in-game map's view, in chunks, centred on the middle of the picture above */
   const mapX = createMemo(() => Math.floor((left() + SPAN / 2) / CHUNK_CELLS) - MAP_SPAN / 2);
@@ -316,6 +319,11 @@ export default function WorldDemo(): JSX.Element {
           }}
         />
       </div>
+      <WeatherMap
+        world={weatherWorld()}
+        centreX={mapX() + MAP_SPAN / 2}
+        centreY={mapY() + MAP_SPAN / 2}
+      />
     </div>
   );
 }

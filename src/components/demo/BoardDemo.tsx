@@ -4,7 +4,7 @@ import type Biome from '../../data/ids/biome';
 import BiomeId from '../../data/ids/biome';
 import { BIOME_NAMES } from '../../data/biome';
 import type Decoration from '../../data/overworld/decoration';
-import Weather, { WEATHER_NAMES } from '../../data/overworld/weather';
+import Weather, { DARK_DAY_LAMP_CELLS, WEATHER_NAMES } from '../../data/overworld/weather';
 import ChunkCanvas from '../overworld/chunk-canvas';
 import type { SpawnCoat } from '../overworld/chunk-canvas/scenery';
 import { BOARD_CELLS, BOARD_CENTER, boardIndexOf, viewFor } from '../../canvas/board';
@@ -17,7 +17,8 @@ import { WORLD_SEED } from '../../overworld/current';
 import { CHUNK_CELLS, chunkOfCell, worldCell } from '../../overworld/chunk';
 import { Depth } from '../../overworld/depth';
 import { nearestMouth } from '../../overworld/cave';
-import { CAVE_DARK_CELLS } from '../../data/overworld/cave';
+import { CAVE_DARK_CELLS, CAVE_LAMP_CELLS } from '../../data/overworld/cave';
+import { ILLUMINATE_LAMP_CELLS } from '../../overworld/abilities/gen-1';
 import { type BoardGround, readBoardGround } from '../../overworld/board-ground';
 import { isLavaAt, readGround } from '../../overworld/ground';
 import { isRouteAt, routesNear } from '../../overworld/route';
@@ -104,8 +105,21 @@ function windowed<T>(
 const NOTHING_MAPPED = new Map<number, never>();
 const NOTHING_SET = new Set<number>();
 
-/** How far the player's lamp reaches, in cells */
-const LAMP = 3;
+/**
+ * What the player is carrying, which is what the dark gives way to.
+ * The two are the game's own reaches rather than numbers for the
+ * page: unaided underground, and the same again with an Illuminate
+ * buddy or a lamp in the bag
+ */
+const enum Carrying {
+  Nothing = 0,
+  Illuminate = 1,
+}
+
+const LIGHT_OPTIONS: { value: Carrying; label: string }[] = [
+  { value: Carrying.Nothing, label: 'Unaided' },
+  { value: Carrying.Illuminate, label: 'Illuminate' },
+];
 
 /** Where the search for a country starts, and how far it reaches */
 const START: [number, number] = [0, 0];
@@ -315,6 +329,29 @@ const STEPS = new Map<string, [number, number]>([
   ['d', [1, 0]],
 ]);
 
+const HOUR = 3_600_000;
+
+/** Not an hour at all: the board is left on the player's own clock */
+const LIVE_HOUR = -1;
+
+/**
+ * The hours worth stopping at. Sunrise and sunset are at six and
+ * eighteen, so the pairs either side of them are where the light is
+ * changing fastest
+ */
+const HOUR_OPTIONS: { value: number; label: string }[] = [
+  { value: LIVE_HOUR, label: 'Now' },
+  { value: 0, label: 'Midnight' },
+  { value: 4, label: '4am, small hours' },
+  { value: 6, label: '6am, sunrise' },
+  { value: 8, label: '8am, morning' },
+  { value: 12, label: 'Noon' },
+  { value: 16, label: '4pm, afternoon' },
+  { value: 18, label: '6pm, sunset' },
+  { value: 20, label: '8pm, dusk' },
+  { value: 22, label: '10pm, night' },
+];
+
 const EDGE_OPTIONS: { value: BoardEdge; label: string }[] = [
   { value: 'haze', label: 'Haze' },
   { value: 'full', label: 'Full board' },
@@ -325,9 +362,20 @@ export default function BoardDemo(): JSX.Element {
   const [frame, setFrame] = createSignal(0);
   const [wanted, setWanted] = createSignal<Biome>(BiomeId.TemperateForest);
   const [weather, setWeather] = createSignal<Weather>(Weather.Clear);
+  /** The hour the board is lit at, or LIVE_HOUR for the player's own clock */
+  const [hour, setHour] = createSignal<number>(LIVE_HOUR);
+  const [carrying, setCarrying] = createSignal<Carrying>(Carrying.Nothing);
   const [seed, setSeed] = createSignal(WORLD_SEED);
   const [generation, setGeneration] = createSignal(Generation.First);
   const [depth, setDepth] = createSignal<Depth>(Depth.Surface);
+
+  /** How far the light carries, which is what a cave and a dark day are worth */
+  const lampCells = (): number => {
+    if (carrying() === Carrying.Illuminate) {
+      return depth() === Depth.Cave ? CAVE_LAMP_CELLS : ILLUMINATE_LAMP_CELLS;
+    }
+    return depth() === Depth.Cave ? CAVE_DARK_CELLS : DARK_DAY_LAMP_CELLS;
+  };
   /** Whether the caves are drawn dark, the way the game draws them */
   const [dark, setDark] = createSignal(false);
   const [yaw, setYaw] = createSignal(0);
@@ -548,6 +596,24 @@ export default function BoardDemo(): JSX.Element {
           }}
         />
         <Select
+          label="Light"
+          class="w-56"
+          value={carrying()}
+          options={LIGHT_OPTIONS}
+          onChange={(chosen) => {
+            setCarrying(chosen);
+          }}
+        />
+        <Select
+          label="Hour"
+          class="w-56"
+          value={hour()}
+          options={HOUR_OPTIONS}
+          onChange={(chosen) => {
+            setHour(chosen);
+          }}
+        />
+        <Select
           label="Sky"
           class="w-56"
           value={weather()}
@@ -633,7 +699,9 @@ export default function BoardDemo(): JSX.Element {
         the face of a cliff stop them the way they do in the game. A screen taller than it is wide
         is drawn flat from above, with the round shadow the board uses at night and the weather
         against the glass; anything wider is laid back under the camera. Drag the ground to walk the
-        camera round. The Layer switch goes down through the nearest cave mouth, or back up.
+        camera round. The Layer switch goes down through the nearest cave mouth, or back up. Hour
+        lights the board at a time of day instead of waiting for one, and Light carries what a
+        player would carry into the dark: nothing, or an Illuminate buddy.
       </Note>
 
       {/* The board takes the whole of whatever it is put in, so the
@@ -646,7 +714,8 @@ export default function BoardDemo(): JSX.Element {
         <ChunkCanvas
           biome={biome()}
           weather={weather()}
-          lamp={depth() === Depth.Cave ? CAVE_DARK_CELLS : LAMP}
+          lamp={lampCells()}
+          time={hour() === LIVE_HOUR ? undefined : hour() * HOUR}
           underground={depth() === Depth.Cave}
           lit={!dark()}
           yaw={yaw()}

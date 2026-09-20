@@ -90,7 +90,7 @@ and a Sawk with Scrappy.
 
 - [Unova's second road and first cave](unovas-road-and-cave.md), the release
   before this one.
-- [The fifth generation's moves](fifth-generation-moves.md), the one before
-  that.
+- [Unova's first three families](unovas-first-three-families.md), the one
+  before that.
 - [Player's guide](../mechanics.md), for the rules in full.
 - [Credits](../credits.md), for the people, libraries and art behind it.

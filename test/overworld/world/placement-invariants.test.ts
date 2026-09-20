@@ -6,6 +6,7 @@ import { isOpenSea, isWaterBiome } from '../../../src/data/ids/biome';
 import registerItems from '../../../src/data/items';
 import { registerSpecies } from '../../../src/data/species';
 import ChunkSnapshot from '../../../src/overworld/chunk-snapshot';
+import { PLACEMENT_AREA, centeredCells } from '../../../src/overworld/chunk';
 import World from '../../../src/overworld/world';
 
 // Spawn rolls read the species registry and the biome spawn pools;
@@ -39,6 +40,26 @@ describe('placement invariants', () => {
         if (banks.size === 0) {
           continue;
         }
+        // The banks a phenomenon could actually be put on: a bank
+        // under a tree, inside the town or outside the area things are
+        // placed in is a bank nothing may stand on
+        const occupied = new Set([
+          ...chunk.getDecorationCells().keys(),
+          ...chunk.getLandmarkCells().keys(),
+          ...chunk.getRockCells(),
+          ...chunk.getFaceCells(),
+          ...chunk.getLavaCells(),
+        ]);
+        let free = 0;
+
+        for (const spot of centeredCells(PLACEMENT_AREA)) {
+          if (banks.has(spot) && !occupied.has(spot) && !chunk.isTownCell(spot)) {
+            free += 1;
+          }
+        }
+        if (free === 0) {
+          continue;
+        }
         for (const cell of new ChunkSnapshot(chunk, 0).getPhenomena().keys()) {
           phenomena += 1;
           banked += banks.has(cell) ? 1 : 0;
@@ -46,7 +67,7 @@ describe('placement invariants', () => {
       }
     }
     // A marsh that only ever rippled would be a marsh that never hid
-    // a grotto, so dry ground is taken first where there is any
+    // a grotto, so dry ground is taken first wherever a bank is free
     expect(phenomena).toBeGreaterThan(0);
     expect(banked).toBe(phenomena);
   });

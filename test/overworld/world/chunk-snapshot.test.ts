@@ -4,10 +4,14 @@ import AleaRNG from '../../../src/core/alea';
 import Abilities from '../../../src/data/ids/abilities';
 import registerAbilities from '../../../src/data/abilities';
 import registerBiomeSpawns, {
+  SPAWN_BAND_KEYS,
   SpawnRarity,
+  type SpawnRarityGroups,
   fitsSurface,
+  getSpawnPool,
   getSpawnRarity,
   pickSpawn,
+  spawnBand,
 } from '../../../src/data/biome';
 import Biome, { SpawnSurface, getTimeOfDay, isOpenSea } from '../../../src/data/ids/biome';
 import Lairs from '../../../src/data/overworld/lair';
@@ -61,6 +65,7 @@ import deriveEncounter, {
 import Landmark from '../../../src/data/overworld/landmark';
 import { SHINY_CHARM_BOOST } from '../../../src/overworld/items/key-items';
 import World from '../../../src/overworld/world';
+import { Depth } from '../../../src/overworld/depth';
 import findChunk from './helpers';
 
 // Spawn rolls read the species registry and the biome spawn pools;
@@ -233,6 +238,34 @@ describe('chunk snapshot', () => {
     for (const cell of stocked) {
       expect(filled).toContain(cell);
     }
+  });
+
+  it('rolls the cave pool underground rather than the country overhead', () => {
+    const NOON = 12 * 60 * 60 * 1000;
+    const chunk = new World('overworld').getChunk(0, 0);
+    const under = new World('overworld', Depth.Cave).getChunk(0, 0);
+    const named = (groups: SpawnRarityGroups): Set<Species> => {
+      const species = new Set<Species>();
+
+      for (const band of SPAWN_BAND_KEYS) {
+        for (const entry of spawnBand(groups, band)) {
+          species.add(entry.species);
+        }
+      }
+      return species;
+    };
+    const cell = centeredCells(PLACEMENT_AREA)[0];
+    const time = getTimeOfDay(NOON);
+
+    // The cave carries the biome overhead so its lairs know where they
+    // are, but what lives in the dark is the cave's own pool
+    expect(under.biome).toBe(chunk.biome);
+    expect(named(new ChunkSnapshot(under, NOON).getCellPool(cell))).toEqual(
+      named(getSpawnPool(chunk.biome, time, true)),
+    );
+    expect(named(new ChunkSnapshot(chunk, NOON).getCellPool(cell))).not.toEqual(
+      named(getSpawnPool(chunk.biome, time, true)),
+    );
   });
 
   it('stands every spawn on a surface its species lives on', () => {

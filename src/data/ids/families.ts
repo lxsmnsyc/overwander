@@ -261,6 +261,15 @@ const enum Families {
   Roggenrola = 256,
   Woobat = 257,
   Drilbur = 258,
+  Audino = 259,
+  Timburr = 260,
+  Tympole = 261,
+  Throh = 262,
+  Sawk = 263,
+  Sewaddle = 264,
+  Venipede = 265,
+  Cottonee = 266,
+  Petilil = 267,
 }
 
 export default Families;
@@ -539,4 +548,13 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Roggenrola]: 'Roggenrola',
   [Families.Woobat]: 'Woobat',
   [Families.Drilbur]: 'Drilbur',
+  [Families.Audino]: 'Audino',
+  [Families.Timburr]: 'Timburr',
+  [Families.Tympole]: 'Tympole',
+  [Families.Throh]: 'Throh',
+  [Families.Sawk]: 'Sawk',
+  [Families.Sewaddle]: 'Sewaddle',
+  [Families.Venipede]: 'Venipede',
+  [Families.Cottonee]: 'Cottonee',
+  [Families.Petilil]: 'Petilil',
 };

@@ -7,6 +7,7 @@ named for what it brings.
 
 | Release                                                               | What it brought                                                                                                                |
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| [Pinwheel Forest](update/pinwheel-forest.md) | Nine more families: the tailors, centipedes, cotton and lilies of the forest, with Timburr, Tympole, Audino and the dojo pair |
 | [Unova's second road and first cave](update/unovas-road-and-cave.md)  | Six more families: Munna, Pidove and Blitzle along the road, and Roggenrola, Woobat and Drilbur under it                       |
 | [Unova's first three families](update/unovas-first-three-families.md) | Patrat, Lillipup and Purrloin and their evolutions, each family with a signature ability                                       |
 | [The fifth generation's moves](update/fifth-generation-moves.md)      | 92 moves taught to everyone already here, with pictures of their own, and three more starters                                  |

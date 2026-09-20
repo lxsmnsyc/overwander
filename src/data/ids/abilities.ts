@@ -840,6 +840,15 @@ const enum Abilities {
   Aftershock = 200256,
   HeartMark = 200257,
   Torque = 200258,
+  Tailor = 200259,
+  HurryVenom = 200260,
+  SporeDrift = 200261,
+  PollenWaltz = 200262,
+  Ward = 200263,
+  LoadBearing = 200264,
+  RippleOut = 200265,
+  RedBelt = 200266,
+  BlueBelt = 200267,
 }
 
 export default Abilities;

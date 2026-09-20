@@ -15,6 +15,10 @@ import {
   STORM_DASH_STEP,
 } from '../../../../src/battle/abilities/signature/munna-to-blitzle';
 import {
+  HURRY_VENOM_SCALE,
+  TAILOR_SCALE,
+} from '../../../../src/battle/abilities/signature/sewaddle-to-petilil';
+import {
   AFTERSHOCK_SHARE,
   TORQUE_SCALE,
   TORQUE_WIND_UP,
@@ -23,9 +27,18 @@ import {
   GUARD_FACTOR,
   SPOTTER_ACCURACY,
 } from '../../../../src/battle/abilities/signature/patrat-to-purrloin';
+import {
+  LOAD_BEARING_DEALT,
+  LOAD_BEARING_TAKEN,
+  RIPPLE_OUT_FRACTION,
+} from '../../../../src/battle/abilities/signature/audino-to-sawk';
+import {
+  BLUE_BELT_SCALE,
+  RED_BELT_SCALE,
+} from '../../../../src/battle/abilities/signature/__create';
 import turns from '../../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../../harness';
-import { dealDamage } from './helpers';
+import { dealDamage, resolveAttackDamage } from './helpers';
 
 function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
   return { type: MoveTargetType.Unit, unit } as const;
@@ -306,5 +319,252 @@ describe('the three the first cave holds', () => {
 
     expect(mole.checkMovePower(Moves.DrillRun, aim)).toBeCloseTo(power * TORQUE_SCALE, 5);
     expect(mole.checkMoveCastTime(Moves.DrillRun, aim)).toBeCloseTo(wind * TORQUE_WIND_UP, 5);
+  });
+});
+
+describe('the four the forest holds', () => {
+  it('dresses its worst hurt teammate, and only that one', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const tailor = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamA);
+    const well = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    tailor.addAbility(Abilities.Tailor);
+    hurt.enter();
+    well.enter();
+    attacker.enter();
+    hurt.setHealth(Math.floor(hurt.checkStat(Stats.HP, 0) / 4));
+    tailor.enter();
+    battle.tick(1);
+
+    const dressed = dealDamage(
+      attacker,
+      hurt,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+    const bare = dealDamage(
+      attacker,
+      well,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+
+    expect(dressed / bare).toBeCloseTo(TAILOR_SCALE, 1);
+  });
+
+  it('makes its own poison bite harder than anybody else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const centipede = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const bitten = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+
+    centipede.enter();
+    plain.enter();
+    bitten.enter();
+    other.enter();
+    centipede.addAbility(Abilities.HurryVenom);
+
+    bitten.addStatus(Statuses.Poisoned, {
+      type: EffectType.Move,
+      move: Moves.PoisonSting,
+      unit: centipede,
+    });
+    other.addStatus(Statuses.Poisoned, {
+      type: EffectType.Move,
+      move: Moves.PoisonSting,
+      unit: plain,
+    });
+
+    const bittenWhole = bitten.health;
+    const otherWhole = other.health;
+
+    battle.tick(turns(1));
+
+    expect((bittenWhole - bitten.health) / (otherWhole - other.health)).toBeCloseTo(
+      HURRY_VENOM_SCALE,
+      1,
+    );
+  });
+
+  it('puts its powder on a Grass type, and never misses with it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cotton = createUnit(battle, teamA);
+    const grass = createUnit(battle, teamB);
+
+    cotton.enter();
+    grass.enter();
+    grass.types.clear();
+    grass.types.add(Types.Grass);
+
+    const aim = unitTarget(grass);
+
+    // Modern mechanics: powder does nothing to a Grass type
+    expect(cotton.checkMoveImmunity(Moves.StunSpore, aim, Types.Grass)).toBe(true);
+
+    cotton.addAbility(Abilities.SporeDrift);
+
+    expect(cotton.checkMoveImmunity(Moves.StunSpore, aim, Types.Grass)).toBe(false);
+    expect(cotton.checkMoveAccuracy(Moves.StunSpore, aim)).toBeUndefined();
+    // Anything that is not powder is thrown as anybody throws it
+    expect(cotton.checkMoveAccuracy(Moves.RazorLeaf, aim)).toBeGreaterThan(0);
+  });
+
+  it('hands its teammates whatever a dance gives it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dancer = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+
+    createUnit(battle, teamB).enter();
+    dancer.enter();
+    ally.enter();
+    dancer.addAbility(Abilities.PollenWaltz);
+
+    dancer.addStage(Stages.SpecialAttack, 1, {
+      type: EffectType.Move,
+      move: Moves.QuiverDance,
+      unit: dancer,
+    });
+
+    expect(dancer.stages[Stages.SpecialAttack]).toBe(1);
+    expect(ally.stages[Stages.SpecialAttack]).toBe(1);
+
+    // Only a dance, and only what it gains
+    dancer.addStage(Stages.Attack, 1, {
+      type: EffectType.Move,
+      move: Moves.Growth,
+      unit: dancer,
+    });
+
+    expect(ally.stages[Stages.Attack]).toBe(0);
+  });
+});
+
+describe('the rest of what the forest holds', () => {
+  it('keeps a teammate standing on 1 HP, once each and never itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const audino = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    audino.addAbility(Abilities.Ward);
+    audino.enter();
+    mate.enter();
+    attacker.enter();
+    mate.setHealth(5);
+    audino.setHealth(5);
+
+    attacker.attack(mate, Moves.Tackle, 400, Types.Normal, MoveCategories.Physical, 0);
+    expect(mate.health).toBe(1);
+    expect(mate.alive).toBe(true);
+
+    // The second blow is not covered: one ward each
+    attacker.attack(mate, Moves.Tackle, 400, Types.Normal, MoveCategories.Physical, 0);
+    expect(mate.alive).toBe(false);
+
+    // The holder never wards itself
+    attacker.attack(audino, Moves.Tackle, 400, Types.Normal, MoveCategories.Physical, 0);
+    expect(audino.alive).toBe(false);
+  });
+
+  it('carries the beam while it is healthy and swings it once it is not', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const timburr = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    timburr.addAbility(Abilities.LoadBearing);
+    timburr.enter();
+    plain.enter();
+    foe.enter();
+
+    const covered = resolveAttackDamage(battle, foe, timburr);
+    const bare = resolveAttackDamage(battle, foe, plain);
+
+    expect(covered / bare).toBeCloseTo(LOAD_BEARING_TAKEN, 2);
+
+    // Nothing extra out of it while the beam is still up
+    expect(resolveAttackDamage(battle, timburr, foe)).toBeCloseTo(
+      resolveAttackDamage(battle, plain, foe),
+      2,
+    );
+
+    timburr.setHealth(Math.floor(timburr.checkStat(Stats.HP, 0) / 4));
+
+    const dropped = resolveAttackDamage(battle, foe, timburr);
+    const swung = resolveAttackDamage(battle, timburr, foe);
+
+    expect(dropped).toBeCloseTo(bare, 2);
+    expect(swung / resolveAttackDamage(battle, plain, foe)).toBeCloseTo(LOAD_BEARING_DEALT, 2);
+  });
+
+  it('shakes every other enemy for a quarter of what it dealt', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const toad = createUnit(battle, teamA);
+    const hit = createUnit(battle, teamB);
+    const beside = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    toad.addAbility(Abilities.RippleOut);
+    toad.enter();
+    hit.enter();
+    beside.enter();
+
+    const whole = beside.health;
+    const dealt = dealDamage(toad, hit, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(dealt).toBeGreaterThan(0);
+    expect(whole - beside.health).toBeCloseTo(dealt * RIPPLE_OUT_FRACTION, 0);
+  });
+
+  it('has the throw cover its whole team, the holder included', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const throh = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const spare = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    throh.addAbility(Abilities.RedBelt);
+    throh.enter();
+    mate.enter();
+    foe.enter();
+    spare.enter();
+
+    const guarded = resolveAttackDamage(battle, foe, mate);
+    const onHolder = resolveAttackDamage(battle, foe, throh);
+    const plain = resolveAttackDamage(battle, foe, spare);
+
+    expect(guarded).toBeCloseTo(onHolder, 2);
+    expect(guarded / plain).toBeCloseTo(RED_BELT_SCALE, 2);
+  });
+
+  it('has the strike arm its whole team, the holder included', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const sawk = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const spare = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    sawk.addAbility(Abilities.BlueBelt);
+    sawk.enter();
+    mate.enter();
+    foe.enter();
+    spare.enter();
+
+    const armed = resolveAttackDamage(battle, mate, foe);
+    const fromHolder = resolveAttackDamage(battle, sawk, foe);
+    const plain = resolveAttackDamage(battle, foe, spare);
+
+    expect(armed).toBeCloseTo(fromHolder, 2);
+    expect(armed / plain).toBeCloseTo(BLUE_BELT_SCALE, 2);
   });
 });

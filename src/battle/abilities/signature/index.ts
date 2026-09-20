@@ -26,9 +26,11 @@ import shinxToShieldon from './shinx-to-shieldon';
 import starlyToKricketot from './starly-to-kricketot';
 import stunkyToGible from './stunky-to-gible';
 import turtwigToPiplup from './turtwig-to-piplup';
+import audinoToSawk from './audino-to-sawk';
 import munnaToBlitzle from './munna-to-blitzle';
 import patratToPurrloin from './patrat-to-purrloin';
 import roggenrolaToDrilbur from './roggenrola-to-drilbur';
+import sewaddleToPetilil from './sewaddle-to-petilil';
 import snivyToOshawott from './snivy-to-oshawott';
 
 /**
@@ -67,6 +69,8 @@ const setupAbilities = [
   ...patratToPurrloin,
   ...munnaToBlitzle,
   ...roggenrolaToDrilbur,
+  ...audinoToSawk,
+  ...sewaddleToPetilil,
 ];
 
 /**

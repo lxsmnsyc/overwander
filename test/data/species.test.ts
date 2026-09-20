@@ -36,6 +36,9 @@ import {
   DEOXYS_FORMS,
   DIALGA_FORMS,
   EvolutionMethod,
+  FLABEBE_FORMS,
+  FLOETTE_FORMS,
+  FLORGES_FORMS,
   GASTRODON_FORMS,
   GENESECT_FORMS,
   GIRATINA_FORMS,
@@ -392,6 +395,9 @@ describe('species forms', () => {
       ...GENESECT_FORMS.slice(1),
       ...DEERLING_FORMS.slice(1),
       ...VIVILLON_FORMS.slice(1),
+      ...FLABEBE_FORMS.slice(1),
+      ...FLOETTE_FORMS.slice(1),
+      ...FLORGES_FORMS.slice(1),
       ...SAWSBUCK_FORMS.slice(1),
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own

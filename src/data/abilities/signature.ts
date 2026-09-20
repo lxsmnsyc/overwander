@@ -2014,6 +2014,25 @@ export default function registerSignatureAbilities(): void {
       "Each move it lands drops that target's Accuracy a stage, to 2 stages from this dust.",
   });
 
+  // The flower road out of the second town
+  registerSignature(Families.Flabebe, Abilities.Hothouse, {
+    name: 'Hothouse',
+    description:
+      'A teammate defends special moves with its Special Defense whenever theirs is lower.',
+  });
+
+  registerSignature(Families.Skiddo, Abilities.BroadBack, {
+    name: 'Broad Back',
+    description:
+      'It takes 1/3 of every hit landed on a teammate, until it is at or below 1/4 of its HP.',
+  });
+
+  registerSignature(Families.Furfrou, Abilities.WellGroomed, {
+    name: 'Well Groomed',
+    description:
+      'The first status each fight is refused, and refusing it raises its Speed 1 stage.',
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:

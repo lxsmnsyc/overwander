@@ -922,6 +922,12 @@ const enum Abilities {
   Stoop = 200333,
   // Scatterbug
   Wingscale = 200334,
+  // Flabebe
+  Hothouse = 200335,
+  // Skiddo
+  BroadBack = 200336,
+  // Furfrou
+  WellGroomed = 200337,
 }
 
 export default Abilities;

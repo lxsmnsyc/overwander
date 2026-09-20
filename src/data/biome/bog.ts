@@ -9,6 +9,7 @@ export default function registerBogSpawns(): void {
   registerSpawnPool(Biome.Bog, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.FlabebeBlue, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Bellsprout, weight: 20 },
@@ -26,6 +27,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.FloetteBlue, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Weepinbell, weight: 5 },
@@ -44,6 +46,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.FlorgesBlue, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Victreebel, weight: 5 },
@@ -59,6 +62,7 @@ export default function registerBogSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.FlabebeBlue, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Bellsprout, weight: 20 },
@@ -76,6 +80,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.FloetteBlue, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Weepinbell, weight: 5 },
@@ -94,6 +99,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.FlorgesBlue, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Victreebel, weight: 5 },

@@ -52,6 +52,7 @@ import taoTrio from './tao-trio';
 import unovaMythicals from './unova-mythicals';
 import chespinToFroakie from './chespin-to-froakie';
 import bunnelbyToScatterbug from './bunnelby-to-scatterbug';
+import flabebeToFurfrou from './flabebe-to-furfrou';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -107,6 +108,7 @@ const setupAbilities = [
   ...unovaMythicals,
   ...chespinToFroakie,
   ...bunnelbyToScatterbug,
+  ...flabebeToFurfrou,
   ...deerling,
   ...emolga,
   ...tirtougaToBouffalant,

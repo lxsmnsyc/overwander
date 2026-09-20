@@ -811,6 +811,12 @@ export const enum Species {
   Scatterbug = 664,
   Spewpa = 665,
   Vivillon = 666,
+  Flabebe = 669,
+  Floette = 670,
+  Florges = 671,
+  Skiddo = 672,
+  Gogoat = 673,
+  Furfrou = 676,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
@@ -836,6 +842,22 @@ export const enum Species {
   /** The two nobody's country grows: they are met in a town or not at all */
   VivillonFancy = 1066618,
   VivillonPokeBall = 1066619,
+
+  /** The colour of the flower a Flabebe picked, the red one at the base */
+  FlabebeYellow = 1066901,
+  FlabebeOrange = 1066902,
+  FlabebeBlue = 1066903,
+  FlabebeWhite = 1066904,
+  FloetteYellow = 1067001,
+  FloetteOrange = 1067002,
+  FloetteBlue = 1067003,
+  FloetteWhite = 1067004,
+  /** The flower that never wilts, which is nobody's to pick */
+  FloetteEternal = 1067005,
+  FlorgesYellow = 1067101,
+  FlorgesOrange = 1067102,
+  FlorgesBlue = 1067103,
+  FlorgesWhite = 1067104,
 
   /** The shapes the creation trio take in the world behind this one */
   DialgaOrigin = 1048301,
@@ -1069,7 +1091,6 @@ export const TORNADUS_FORMS = [Species.Tornadus, Species.TornadusTherian];
 export const THUNDURUS_FORMS = [Species.Thundurus, Species.ThundurusTherian];
 export const LANDORUS_FORMS = [Species.Landorus, Species.LandorusTherian];
 
-/** Each deer's four coats, spring first, in the order the year turns */
 /** Vivillon and the seventeen countries' wings it comes out with */
 export const VIVILLON_FORMS: Species[] = [
   Species.Vivillon,
@@ -1094,6 +1115,35 @@ export const VIVILLON_FORMS: Species[] = [
   Species.VivillonPokeBall,
 ];
 
+/** Each deer's four coats, spring first, in the order the year turns */
+/** Each colour of flower, the red one first: what a Flabebe was met carrying */
+export const FLABEBE_FORMS: Species[] = [
+  Species.Flabebe,
+  Species.FlabebeYellow,
+  Species.FlabebeOrange,
+  Species.FlabebeBlue,
+  Species.FlabebeWhite,
+];
+
+/** The same colours grown, with the flower that never wilts at the end */
+export const FLOETTE_FORMS: Species[] = [
+  Species.Floette,
+  Species.FloetteYellow,
+  Species.FloetteOrange,
+  Species.FloetteBlue,
+  Species.FloetteWhite,
+  Species.FloetteEternal,
+];
+
+export const FLORGES_FORMS: Species[] = [
+  Species.Florges,
+  Species.FlorgesYellow,
+  Species.FlorgesOrange,
+  Species.FlorgesBlue,
+  Species.FlorgesWhite,
+];
+
+/** Each deer's four coats, spring first, in the order the year turns */
 export const DEERLING_FORMS = [
   Species.Deerling,
   Species.DeerlingSummer,

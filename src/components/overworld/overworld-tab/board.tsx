@@ -166,6 +166,14 @@ const keptWindows = new LRUMap<string, SnapshotRecord>(CLAIM_MEMORY);
  * `Suspense` written there and land on the boundary around the whole
  * page — the world is what that boundary would blank
  */
+/** The four who keep a house of their own, each a standing fight */
+const EXPERT_LANDMARKS = new Set<Landmark>([
+  Landmark.GymLeader,
+  Landmark.EliteFour,
+  Landmark.Champion,
+  Landmark.FrontierBrain,
+]);
+
 export default function OverworldBoard(props: {
   buddy: Resource<Buddy | null>;
   fled: Resource<Set<string>>;
@@ -1084,6 +1092,7 @@ export default function OverworldBoard(props: {
       return next;
     }
     const { snapshot, read } = held;
+    const latheredNow = lathered();
 
     for (const [at, landmark] of loaded.landmarks) {
       const spot = loaded.at(at);
@@ -1110,6 +1119,19 @@ export default function OverworldBoard(props: {
         if (staged && !read.beaten.has(inChunk)) {
           next.set(at, CellAura.Fight);
         }
+      } else if (EXPERT_LANDMARKS.has(landmark)) {
+        // An expert's house is a fight waiting like any other. Whether
+        // they will take the challenge is theirs to say at the door
+        const staged =
+          landmark === Landmark.FrontierBrain
+            ? snapshot.getFrontierBrain(inChunk) != null
+            : snapshot.getGymStops().has(inChunk) ||
+              snapshot.getEliteStops().has(inChunk) ||
+              snapshot.getChampionStops().has(inChunk);
+
+        if (staged && !read.beaten.has(inChunk)) {
+          next.set(at, CellAura.Fight);
+        }
       } else if (landmark === Landmark.WanderingNpc) {
         const standing = snapshot.getStandingNpc(inChunk);
 
@@ -1118,6 +1140,11 @@ export default function OverworldBoard(props: {
         }
       } else if (landmark === Landmark.Nest) {
         if (snapshot.getNests().has(inChunk) && !read.taken.has(inChunk)) {
+          next.set(at, CellAura.Fresh);
+        }
+      } else if (landmark === Landmark.HoneyTree) {
+        // Still holding this window's honey for this player, the way an unclaimed nest does
+        if (!latheredNow.has(keyAt(spot))) {
           next.set(at, CellAura.Fresh);
         }
       }

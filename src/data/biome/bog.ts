@@ -103,6 +103,7 @@ export default function registerBogSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Froakie, weight: 2 },
         { species: Species.Tynamo, weight: 18 },
         { species: Species.Litwick, weight: 22 },
         { species: Species.Poliwag, weight: 20 },
@@ -121,12 +122,14 @@ export default function registerBogSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.Frogadier, weight: 2 },
         { species: Species.Eelektrik, weight: 7 },
         { species: Species.Lampent, weight: 8 },
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Palpitoad, weight: 10 },
       ],
       scarce: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.Garbodor, weight: 7 },
         { species: Species.Swalot, weight: 7 },
         { species: Species.Venomoth, weight: 10 },
@@ -155,6 +158,7 @@ export default function registerBogSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Froakie, weight: 2 },
         { species: Species.Tynamo, weight: 18 },
         { species: Species.Litwick, weight: 22 },
         { species: Species.Tympole, weight: 25 },
@@ -175,6 +179,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.Frogadier, weight: 2 },
         { species: Species.Eelektrik, weight: 7 },
         { species: Species.Lampent, weight: 8 },
         { species: Species.Palpitoad, weight: 10 },
@@ -183,6 +188,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Haunter, weight: 5 },
       ],
       scarce: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.Garbodor, weight: 7 },
         { species: Species.Swalot, weight: 7 },
         { species: Species.Muk, weight: 10 },
@@ -293,7 +299,10 @@ export default function registerBogSpawns(): void {
       special: [{ species: Species.Azelf, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
-      base: [{ species: Species.Poliwag, weight: 20 }],
+      base: [
+        { species: Species.Froakie, weight: 2 },
+        { species: Species.Poliwag, weight: 20 },
+      ],
       uncommon: [
         { species: Species.Barboach, weight: 25 },
         { species: Species.Feebas, weight: 10 },
@@ -303,8 +312,12 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanma, weight: 5 },
         { species: Species.Buizel, weight: 25 },
       ],
-      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      rare: [
+        { species: Species.Frogadier, weight: 2 },
+        { species: Species.Poliwhirl, weight: 5 },
+      ],
       scarce: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Quagsire, weight: 5 },
@@ -319,7 +332,10 @@ export default function registerBogSpawns(): void {
       special: [{ species: Species.Azelf, weight: 10 }],
     },
     [TimeOfDay.Night]: {
-      base: [{ species: Species.Poliwag, weight: 20 }],
+      base: [
+        { species: Species.Froakie, weight: 2 },
+        { species: Species.Poliwag, weight: 20 },
+      ],
       uncommon: [
         { species: Species.Barboach, weight: 25 },
         { species: Species.Feebas, weight: 10 },
@@ -329,8 +345,12 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanma, weight: 5 },
         { species: Species.Buizel, weight: 25 },
       ],
-      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      rare: [
+        { species: Species.Frogadier, weight: 2 },
+        { species: Species.Poliwhirl, weight: 5 },
+      ],
       scarce: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Quagsire, weight: 5 },

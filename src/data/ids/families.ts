@@ -331,6 +331,9 @@ const enum Families {
   Keldeo = 326,
   Meloetta = 327,
   Genesect = 328,
+  Chespin = 329,
+  Fennekin = 330,
+  Froakie = 331,
 }
 
 export default Families;
@@ -679,4 +682,7 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Keldeo]: 'Keldeo',
   [Families.Meloetta]: 'Meloetta',
   [Families.Genesect]: 'Genesect',
+  [Families.Chespin]: 'Chespin',
+  [Families.Fennekin]: 'Fennekin',
+  [Families.Froakie]: 'Froakie',
 };

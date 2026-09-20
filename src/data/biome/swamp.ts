@@ -113,6 +113,7 @@ export default function registerSwampSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Froakie, weight: 2 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Tympole, weight: 25 },
       ],
@@ -126,10 +127,12 @@ export default function registerSwampSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.Frogadier, weight: 2 },
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Palpitoad, weight: 10 },
       ],
       scarce: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.Swalot, weight: 7 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Azumarill, weight: 5 },
@@ -150,6 +153,7 @@ export default function registerSwampSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Froakie, weight: 2 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Tympole, weight: 25 },
       ],
@@ -165,10 +169,12 @@ export default function registerSwampSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.Frogadier, weight: 2 },
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Palpitoad, weight: 10 },
       ],
       scarce: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.Swalot, weight: 7 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Muk, weight: 10 },
@@ -290,7 +296,10 @@ export default function registerSwampSpawns(): void {
       special: [],
     },
     [TimeOfDay.Evening]: {
-      base: [{ species: Species.Poliwag, weight: 20 }],
+      base: [
+        { species: Species.Froakie, weight: 2 },
+        { species: Species.Poliwag, weight: 20 },
+      ],
       uncommon: [
         { species: Species.Barboach, weight: 25 },
         { species: Species.Corphish, weight: 25 },
@@ -301,8 +310,12 @@ export default function registerSwampSpawns(): void {
         { species: Species.Marill, weight: 20 },
         { species: Species.Yanma, weight: 5 },
       ],
-      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      rare: [
+        { species: Species.Frogadier, weight: 2 },
+        { species: Species.Poliwhirl, weight: 5 },
+      ],
       scarce: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Seaking, weight: 10 },
@@ -320,7 +333,10 @@ export default function registerSwampSpawns(): void {
       special: [],
     },
     [TimeOfDay.Night]: {
-      base: [{ species: Species.Poliwag, weight: 20 }],
+      base: [
+        { species: Species.Froakie, weight: 2 },
+        { species: Species.Poliwag, weight: 20 },
+      ],
       uncommon: [
         { species: Species.Barboach, weight: 25 },
         { species: Species.Corphish, weight: 25 },
@@ -331,8 +347,12 @@ export default function registerSwampSpawns(): void {
         { species: Species.Marill, weight: 20 },
         { species: Species.Yanma, weight: 5 },
       ],
-      rare: [{ species: Species.Poliwhirl, weight: 5 }],
+      rare: [
+        { species: Species.Frogadier, weight: 2 },
+        { species: Species.Poliwhirl, weight: 5 },
+      ],
       scarce: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Seaking, weight: 10 },

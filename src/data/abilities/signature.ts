@@ -1984,4 +1984,22 @@ export default function registerSignatureAbilities(): void {
     name: 'Herd Bond',
     description: 'Attack rises 10% for each other pokemon on its team still standing.',
   });
+
+  // Kalos's three starters, each standing for the team rather than
+  // for itself
+  registerSignature(Families.Chespin, Abilities.SpineBond, {
+    name: 'Spine Bond',
+    description: 'Its team, itself included, takes 0.85x from physical moves while it stands.',
+  });
+
+  registerSignature(Families.Fennekin, Abilities.EmberBond, {
+    name: 'Ember Bond',
+    description: 'Its team, itself included, deals 1.15x with special moves while it stands.',
+  });
+
+  registerSignature(Families.Froakie, Abilities.ShadeBond, {
+    name: 'Shade Bond',
+    description:
+      'Its team, itself included, casts and channels at 0.85x the time while it stands. Cooldowns are untouched.',
+  });
 }

@@ -65,6 +65,7 @@ export default function registerShrublandSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Fennekin, weight: 2 },
         { species: Species.Solosis, weight: 24 },
         { species: Species.Snivy, weight: 3 },
         { species: Species.Mareep, weight: 25 },
@@ -84,6 +85,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Cottonee, weight: 24 },
       ],
       rare: [
+        { species: Species.Braixen, weight: 2 },
         { species: Species.Duosion, weight: 10 },
         { species: Species.Servine, weight: 2 },
         { species: Species.Flaaffy, weight: 5 },
@@ -91,6 +93,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Delphox, weight: 2 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Grumpig, weight: 6 },
         { species: Species.Fearow, weight: 10 },
@@ -121,6 +124,7 @@ export default function registerShrublandSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Fennekin, weight: 2 },
         { species: Species.Gothita, weight: 24 },
         { species: Species.Seedot, weight: 20 },
         { species: Species.Shinx, weight: 25 },
@@ -136,11 +140,13 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Skorupi, weight: 20 },
       ],
       rare: [
+        { species: Species.Braixen, weight: 2 },
         { species: Species.Gothorita, weight: 10 },
         { species: Species.Nuzleaf, weight: 10 },
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Delphox, weight: 2 },
         { species: Species.Bisharp, weight: 6 },
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Flareon, weight: 5 },

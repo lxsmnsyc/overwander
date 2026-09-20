@@ -58,6 +58,7 @@ export default function registerSavannaSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Fennekin, weight: 2 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Rhyhorn, weight: 20 },
@@ -77,6 +78,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
+        { species: Species.Braixen, weight: 2 },
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Combusken, weight: 1 },
@@ -84,6 +86,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Delphox, weight: 2 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Dodrio, weight: 10 },
@@ -111,6 +114,7 @@ export default function registerSavannaSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Fennekin, weight: 2 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Shinx, weight: 25 },
@@ -123,11 +127,13 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
+        { species: Species.Braixen, weight: 2 },
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Delphox, weight: 2 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Mightyena, weight: 10 },
         { species: Species.Houndoom, weight: 5 },

@@ -792,6 +792,17 @@ export const enum Species {
   Keldeo = 647,
   Meloetta = 648,
   Genesect = 649,
+
+  // Kalos
+  Chespin = 650,
+  Quilladin = 651,
+  Chesnaught = 652,
+  Fennekin = 653,
+  Braixen = 654,
+  Delphox = 655,
+  Froakie = 656,
+  Frogadier = 657,
+  Greninja = 658,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,

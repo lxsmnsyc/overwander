@@ -1,5 +1,27 @@
 # overwander
 
+## 4.9.0
+
+### Minor Changes
+
+- 5225e71: The four families of Pinwheel Forest:
+
+  - Sewaddle, Swadloon and Leavanny, the tailors of the temperate forest and the woodland. A Swadloon evolves once it is fond enough of its trainer.
+  - Venipede, Whirlipede and Scolipede, the centipedes of the same woods after dark.
+  - Cottonee and Whimsicott, blown across the grassland and the shrubland, and Petilil and Lilligant, rooted in the forest and the grassland. Both lines take a Sun Stone to evolve.
+  - Each family brings its own signature ability: Tailor dresses a hurt teammate in leaves, Hurry Venom makes its poison bite harder, and the forest's two halves pair up, with Spore Drift putting a Whimsicott's powder on anything at all and Pollen Waltz sharing a Lilligant's dances with its team.
+  - Scolipede can be born with Rough Skin, Whimsicott with Magic Bounce and Lilligant with Serene Grace.
+  - The expert builder no longer hands a pokemon a move whose promise its line can never keep, such as a Dream Eater on something that cannot put anybody to sleep.
+
+- 6847b59: The five families the rest of Pinwheel Forest holds:
+
+  - Timburr, Gurdurr and Conkeldurr, working the temperate forest and the woodland. A Gurdurr evolves on being traded.
+  - Tympole, Palpitoad and Seismitoad, croaking through the bog and the swamp after dark.
+  - Audino, alone in the same woods by day.
+  - Throh and Sawk, the two halves of one dojo. Both are written but neither spawns yet, since the sprite collection has drawn no Throh.
+  - Each family brings its own signature ability: Ward keeps a hurt teammate on their feet, Load Bearing trades what Timburr's line carries for what it swings, Ripple Out carries a quarter of a landed blow to every other enemy, and the dojo pairs up, with Red Belt covering its team against physical moves and Blue Belt arming its team's own.
+  - Conkeldurr can be born with Rock Head, Audino with Friend Guard, Throh with Stamina and Sawk with Scrappy.
+
 ## 4.8.0
 
 ### Minor Changes

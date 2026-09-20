@@ -428,9 +428,14 @@ describe('terrain spots', () => {
         }
 
         for (let window = 0; window < 6; window++) {
-          for (const phenomenon of new ChunkSnapshot(chunk, window * PHENOMENON_INTERVAL)
-            .getPhenomena()
-            .values()) {
+          const snapshot = new ChunkSnapshot(chunk, window * PHENOMENON_INTERVAL);
+
+          for (const [cell, phenomenon] of snapshot.getPhenomena()) {
+            // Only the cells actually at sea: a border may leave a
+            // sea chunk a corner of the coast, and that corner is dry
+            if (!isOpenSea(snapshot.biomeAt(cell))) {
+              continue;
+            }
             expect(phenomenon).toBe(Phenomenon.RipplingWater);
             checked += 1;
           }

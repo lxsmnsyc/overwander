@@ -93,7 +93,6 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
-        { species: Species.Delphox, weight: 2 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Grumpig, weight: 6 },
         { species: Species.Fearow, weight: 10 },
@@ -107,6 +106,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Whimsicott, weight: 7 },
       ],
       elusive: [
+        { species: Species.Delphox, weight: 2 },
         { species: Species.Reuniclus, weight: 5 },
         { species: Species.Serperior, weight: 2 },
         { species: Species.Smeargle, weight: 5 },
@@ -146,7 +146,6 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
-        { species: Species.Delphox, weight: 2 },
         { species: Species.Bisharp, weight: 6 },
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Flareon, weight: 5 },
@@ -158,6 +157,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Roserade, weight: 6 },
       ],
       elusive: [
+        { species: Species.Delphox, weight: 2 },
         { species: Species.Gothitelle, weight: 5 },
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Shiftry, weight: 5 },

@@ -69,7 +69,6 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
-        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Furret, weight: 10 },
@@ -91,6 +90,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
@@ -182,7 +182,6 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
-        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Furret, weight: 10 },
@@ -204,6 +203,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },

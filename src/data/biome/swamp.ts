@@ -132,7 +132,6 @@ export default function registerSwampSpawns(): void {
         { species: Species.Palpitoad, weight: 10 },
       ],
       scarce: [
-        { species: Species.Greninja, weight: 2 },
         { species: Species.Swalot, weight: 7 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Azumarill, weight: 5 },
@@ -143,6 +142,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.Seismitoad, weight: 5 },
         { species: Species.Carnivine, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
@@ -174,7 +174,6 @@ export default function registerSwampSpawns(): void {
         { species: Species.Palpitoad, weight: 10 },
       ],
       scarce: [
-        { species: Species.Greninja, weight: 2 },
         { species: Species.Swalot, weight: 7 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Muk, weight: 10 },
@@ -187,6 +186,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.Seismitoad, weight: 5 },
         { species: Species.Carnivine, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
@@ -315,7 +315,6 @@ export default function registerSwampSpawns(): void {
         { species: Species.Poliwhirl, weight: 5 },
       ],
       scarce: [
-        { species: Species.Greninja, weight: 2 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Seaking, weight: 10 },
@@ -325,6 +324,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.BasculinBlue, weight: 6 },
         { species: Species.Basculin, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
@@ -352,7 +352,6 @@ export default function registerSwampSpawns(): void {
         { species: Species.Poliwhirl, weight: 5 },
       ],
       scarce: [
-        { species: Species.Greninja, weight: 2 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Seaking, weight: 10 },
@@ -362,6 +361,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.BasculinBlue, weight: 6 },
         { species: Species.Basculin, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },

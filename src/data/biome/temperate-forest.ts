@@ -53,7 +53,6 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
-        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Ledian, weight: 8 },
@@ -71,6 +70,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
@@ -143,7 +143,6 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
-        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Ledian, weight: 8 },
@@ -161,6 +160,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },

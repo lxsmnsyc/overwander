@@ -86,7 +86,6 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
-        { species: Species.Delphox, weight: 2 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Dodrio, weight: 10 },
@@ -99,6 +98,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Delphox, weight: 2 },
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
         { species: Species.Kangaskhan, weight: 5 },
@@ -133,7 +133,6 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
-        { species: Species.Delphox, weight: 2 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Mightyena, weight: 10 },
         { species: Species.Houndoom, weight: 5 },
@@ -141,6 +140,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Delphox, weight: 2 },
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
         { species: Species.Seviper, weight: 8 },

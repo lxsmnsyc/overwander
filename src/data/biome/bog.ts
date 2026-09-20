@@ -129,7 +129,6 @@ export default function registerBogSpawns(): void {
         { species: Species.Palpitoad, weight: 10 },
       ],
       scarce: [
-        { species: Species.Greninja, weight: 2 },
         { species: Species.Garbodor, weight: 7 },
         { species: Species.Swalot, weight: 7 },
         { species: Species.Venomoth, weight: 10 },
@@ -142,6 +141,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.Eelektross, weight: 4 },
         { species: Species.Chandelure, weight: 5 },
         { species: Species.Seismitoad, weight: 5 },
@@ -188,7 +188,6 @@ export default function registerBogSpawns(): void {
         { species: Species.Haunter, weight: 5 },
       ],
       scarce: [
-        { species: Species.Greninja, weight: 2 },
         { species: Species.Garbodor, weight: 7 },
         { species: Species.Swalot, weight: 7 },
         { species: Species.Muk, weight: 10 },
@@ -201,6 +200,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.Eelektross, weight: 4 },
         { species: Species.Chandelure, weight: 5 },
         { species: Species.Seismitoad, weight: 5 },
@@ -317,7 +317,6 @@ export default function registerBogSpawns(): void {
         { species: Species.Poliwhirl, weight: 5 },
       ],
       scarce: [
-        { species: Species.Greninja, weight: 2 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Quagsire, weight: 5 },
@@ -326,6 +325,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.BasculinBlue, weight: 6 },
         { species: Species.Basculin, weight: 6 },
       ],
@@ -350,7 +350,6 @@ export default function registerBogSpawns(): void {
         { species: Species.Poliwhirl, weight: 5 },
       ],
       scarce: [
-        { species: Species.Greninja, weight: 2 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Quagsire, weight: 5 },
@@ -359,6 +358,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Greninja, weight: 2 },
         { species: Species.BasculinBlue, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Basculin, weight: 6 },

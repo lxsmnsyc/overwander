@@ -1679,6 +1679,36 @@ export default class ChunkSnapshot {
       // ...and water is the only thing that ripples, so the rest of
       // the cell's own list is what dry ground can show. A beach hosts
       // both, and a ripple on its sand was the sea in the wrong place
+      const overhead = new Map<Biome, boolean>();
+      // Something passing over is over the water too, so a pond shows
+      // a shadow as readily as the grass around it
+      const fliesOver = (cell: number): boolean => {
+        const biome = this.biomeAt(cell);
+        const held = overhead.get(biome);
+
+        if (held != null) {
+          return held;
+        }
+
+        const flies = BIOME_PHENOMENA[biome].includes(Phenomenon.FlyingShadow);
+
+        overhead.set(biome, flies);
+        return flies;
+      };
+      // What the water can show: the water itself, and a shadow over
+      // it where the country has one. A country with neither still
+      // ripples, since water is what it is
+      const wet = (cell: number): Phenomenon[] => {
+        const kinds: Phenomenon[] = [];
+
+        if (BIOME_PHENOMENA[this.biomeAt(cell)].includes(Phenomenon.RipplingWater)) {
+          kinds.push(Phenomenon.RipplingWater);
+        }
+        if (fliesOver(cell)) {
+          kinds.push(Phenomenon.FlyingShadow);
+        }
+        return kinds.length > 0 ? kinds : [Phenomenon.RipplingWater];
+      };
       const dried = new Map<Biome, Phenomenon[]>();
       const dryAt = (cell: number): Phenomenon[] => {
         const biome = this.biomeAt(cell);
@@ -1715,16 +1745,26 @@ export default class ChunkSnapshot {
       // nothing but ripples in it goes the other way: its islands show
       // nothing, since nothing else happens there
       const ground: number[] = [];
+      // A shadow passes over the water as readily as over the grass,
+      // so those cells stand beside the dry ones rather than behind
+      // them. Only a shadow does: a ripple is the water on its own,
+      // and taking every wet cell would leave a marsh doing nothing
+      // but ripple
+      const flown: number[] = [];
 
       for (const cell of open) {
-        if (!afloat(cell) && dryAt(cell).length > 0) {
-          ground.push(cell);
+        if (!afloat(cell)) {
+          if (dryAt(cell).length > 0) {
+            ground.push(cell);
+          }
+        } else if (fliesOver(cell)) {
+          flown.push(cell);
         }
       }
 
-      const free: number[] = ground.length > 0 ? ground : [];
+      const free: number[] = [...ground, ...flown];
 
-      if (ground.length === 0) {
+      if (free.length === 0) {
         for (const cell of open) {
           if (afloat(cell)) {
             free.push(cell);
@@ -1737,10 +1777,13 @@ export default class ChunkSnapshot {
 
         const dry = dryAt(cell);
 
-        showing.set(
-          cell,
-          afloat(cell) ? Phenomenon.RipplingWater : dry[Math.floor(rng.random() * dry.length)],
-        );
+        if (afloat(cell)) {
+          const kinds = wet(cell);
+
+          showing.set(cell, kinds[Math.floor(rng.random() * kinds.length)]);
+          continue;
+        }
+        showing.set(cell, dry[Math.floor(rng.random() * dry.length)]);
       }
       this.phenomena = showing;
     }

@@ -53,6 +53,7 @@ import { DECORATION_NAMES } from '../../../data/overworld/decoration';
 import {
   CHAMPION_NAMES,
   ELITE_MEMBER_NAMES,
+  FRONTIER_BRAIN_NAMES,
   GYM_LEADER_NAMES,
   LEGEND_NAMES,
 } from '../../../data/overworld/experts';
@@ -2753,6 +2754,11 @@ export default function OverworldBoard(props: {
       const champion = spot.snapshot.getChampion(spot.cell);
 
       return champion == null ? LANDMARK_NAMES[landmark] : CHAMPION_NAMES[champion];
+    }
+    if (landmark === Landmark.FrontierBrain) {
+      const brain = spot.snapshot.getFrontierBrain(spot.cell);
+
+      return brain == null ? LANDMARK_NAMES[landmark] : FRONTIER_BRAIN_NAMES[brain];
     }
     return LANDMARK_NAMES[landmark];
   };

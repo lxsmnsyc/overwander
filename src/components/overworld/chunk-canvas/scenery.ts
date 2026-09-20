@@ -259,6 +259,9 @@ export function landmarkCallOut(landmark: Landmark): string {
   if (landmark === Landmark.Champion) {
     return COLORS.champion;
   }
+  if (landmark === Landmark.FrontierBrain) {
+    return COLORS.frontier;
+  }
   if (landmark === Landmark.TeamRocket) {
     return COLORS.rocket;
   }
@@ -278,9 +281,10 @@ export function plantCallOut(landmark: Landmark): string {
 /**
  * Whether the person standing at a landmark is somebody to fight.
  *
- * The five who do are the two ambushes and the three seats of the
- * league. Everyone else at a landmark keeps a counter: a nurse, a
- * breeder, a vendor, whoever the wandering cell turned up this window
+ * The six who do are the two ambushes, the three seats of the league
+ * and the house past it. Everyone else at a landmark keeps a counter:
+ * a nurse, a breeder, a vendor, whoever the wandering cell turned up
+ * this window
  */
 export function isFightingLandmark(landmark: Landmark): boolean {
   return (
@@ -288,7 +292,8 @@ export function isFightingLandmark(landmark: Landmark): boolean {
     landmark === Landmark.Trainer ||
     landmark === Landmark.GymLeader ||
     landmark === Landmark.EliteFour ||
-    landmark === Landmark.Champion
+    landmark === Landmark.Champion ||
+    landmark === Landmark.FrontierBrain
   );
 }
 

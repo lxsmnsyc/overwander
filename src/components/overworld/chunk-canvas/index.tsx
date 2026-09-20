@@ -800,7 +800,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       landmark === Landmark.Trainer ||
       landmark === Landmark.GymLeader ||
       landmark === Landmark.EliteFour ||
-      landmark === Landmark.Champion
+      landmark === Landmark.Champion ||
+      landmark === Landmark.FrontierBrain
     ) {
       // The experts wear their own coats from the snapshot; the plain
       // trainer's sheet only stands in while a coat is missing

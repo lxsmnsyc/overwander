@@ -240,14 +240,17 @@ export const COLORS = {
    * each other: a badge, a mark and a title are three different
    * walks, and a player who wants the one they are short of should be
    * able to read it off the ground. Amber for a gym, violet for a
-   * seat of the Elite Four, gold for a champion, and Team Rocket's
-   * own crimson for a cell they are barring, whichever rank of them
-   * is standing on it. Ember is then the roadside duel alone
+   * seat of the Elite Four, gold for a champion, teal for a Frontier
+   * Brain's house, and Team Rocket's own crimson for a cell they are
+   * barring, whichever rank of them is standing on it. Ember is then
+   * the roadside duel alone
    */
   gym: 'rgba(214, 138, 26, 0.85)',
   elite: 'rgba(155, 93, 229, 0.85)',
   champion: 'rgba(255, 226, 138, 0.95)',
   rocket: 'rgba(190, 30, 110, 0.9)',
+  /** The houses past the league, which answer to a crown rather than a badge */
+  frontier: 'rgba(38, 176, 190, 0.9)',
   /**
    * The two crops, told apart from each other and from everything
    * else that is worth pressing. One colour each rather than one per

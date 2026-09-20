@@ -1,5 +1,34 @@
 # overwander
 
+## 4.8.0
+
+### Minor Changes
+
+- 4bfbf6a: The world map can show the sky: each chunk is washed in the colour of its weather, and the four rarest are ringed and listed with their coordinates, so a player can see where one is and walk to it.
+
+### Patch Changes
+
+- 0b2f0d6: A wild legendary or mythical announces itself: light is drawn in to it and goes off in a flash, leaving a ring rolling out along the ground. It then stands on a seal of slowly turning broken rings for as long as it is there, gold for a legendary and magenta for a mythical.
+- 55f99f4: A border runs through a chunk, so what a player meets now comes from the country the cell they are standing on belongs to, not the country in the middle of the chunk:
+
+  - Wild spawns, and whether ice is walked like land.
+  - What is in a stash, what sleeps in a nest, and which phenomena appear and what they give.
+  - A duelling trainer's class, and a Team Rocket stop's party, loot and backdrop.
+  - The place name under the map.
+
+- 2247e85: The board's glow now says what is left to do at more landmarks:
+
+  - A honey tree glows until you have lathered it this window.
+  - A gym leader, an Elite Four member, a Champion and a Frontier Brain each glow until you have beaten them this window, the way a trainer does.
+
+- 4bfbf6a: The four rarest skies are about three times more common, and each now falls as often as the others:
+
+  - A meteor shower, a fata morgana, a dark day and a fogbow each fall on about 1 window in 400 over a chunk, against 1 in 1,100 or worse before.
+  - Each one covers more ground and lasts longer, about 6 chunks across for 2 hours.
+  - The fogbow was the rarest of the four and the dark day the second rarest. All four are now worth the same to find.
+
+- 6449a95: A flying shadow passes over water as well as over dry ground, so a pond in a country that has fliers can show one.
+
 ## 4.7.0
 
 ### Minor Changes

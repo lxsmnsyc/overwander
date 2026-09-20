@@ -95,7 +95,7 @@ describe('classifying a sky', () => {
   });
 
   it('keeps the showpieces in the corner of the field', () => {
-    expect(classifyWeather(Biome.Glacier, 0.75, 0.75)).toBe(Weather.Aurora);
+    expect(classifyWeather(Biome.Glacier, 0.7, 0.7)).toBe(Weather.Aurora);
     // A reading short of the corner is only a storm
     expect(classifyWeather(Biome.Glacier, 0.85, 0.5)).toBe(Weather.Blizzard);
   });
@@ -105,6 +105,45 @@ describe('classifying a sky', () => {
     // enough for this one
     expect(classifyWeather(Biome.Desert, 0.95, 0.95)).toBe(Weather.MeteorShower);
     expect(classifyWeather(Biome.Desert, 0.85, 0.5)).toBe(BIOME_WEATHER[Biome.Desert].storm);
+  });
+
+  it('holds the four showpieces to the same rarity', () => {
+    const world = new World('overworld');
+    const counts = new Map<Weather, number>();
+    let total = 0;
+
+    // Spread across the whole world rather than one region: which
+    // corner of the noise a region favours differs from place to
+    // place, and it is the world's own average that is being held
+    for (let x = -2048; x < 2048; x += 17) {
+      for (let y = -2048; y < 2048; y += 17) {
+        const weather = world.getWeather(x, y, 0);
+
+        counts.set(weather, (counts.get(weather) ?? 0) + 1);
+        total += 1;
+      }
+    }
+
+    const shares: number[] = [];
+
+    for (const weather of [
+      Weather.MeteorShower,
+      Weather.FataMorgana,
+      Weather.DarkDay,
+      Weather.Fogbow,
+    ]) {
+      shares.push((counts.get(weather) ?? 0) / total);
+    }
+
+    const rarest = Math.min(...shares);
+    const commonest = Math.max(...shares);
+
+    // Each about one window in four hundred, and none of them more
+    // than a third rarer than another: what they hand over is worth
+    // the same, so what it costs to find one should be too
+    expect(commonest).toBeLessThan(1 / 200);
+    expect(rarest).toBeGreaterThan(1 / 800);
+    expect(commonest / rarest).toBeLessThan(1.35);
   });
 
   it('lets the meteor shower fall over every country but Beyond', () => {

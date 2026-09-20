@@ -85,14 +85,26 @@ const WILD = 0.4;
 const RARE = 0.6;
 
 /**
- * Further out again, and the narrowest band there is.
+ * Further out again, and the narrowest band there is: one reading per
+ * corner of the field.
  *
- * It is set against the map rather than picked: the sky above it falls
- * over every country, so the band is the only thing holding it rare.
- * At this reading it lands on about one window in thirteen hundred,
- * which is half as often as the next rarest sky
+ * The band rather than the map is what holds these four rare, since
+ * the sky above them falls over every country. Each lands on about
+ * one window in four hundred, which is half as often as the next
+ * rarest sky.
+ *
+ * The four differ because the corners of the noise are not the same
+ * thickness: measured over the whole world, one flat reading leaves
+ * the wild corner about a fifth commoner than the wet, calm one. They
+ * are worth the same to a player, so each corner carries the reading
+ * that evens them out rather than one shared figure
  */
-const RAREST = 0.83;
+const RAREST: Record<'wildest' | 'stillest' | 'bleakest' | 'thickest', number> = {
+  wildest: 0.75,
+  stillest: 0.744,
+  bleakest: 0.747,
+  thickest: 0.745,
+};
 
 /**
  * Nothing lives in `Beyond` and nothing happens over it, which is why
@@ -473,16 +485,16 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
 export function classifyWeather(biome: Biome, front: number, character: number): Weather {
   const bands = BIOME_WEATHER[biome];
 
-  if (bands.wildest != null && front >= RAREST && character >= RAREST) {
+  if (bands.wildest != null && front >= RAREST.wildest && character >= RAREST.wildest) {
     return bands.wildest;
   }
-  if (bands.stillest != null && front <= -RAREST && character <= -RAREST) {
+  if (bands.stillest != null && front <= -RAREST.stillest && character <= -RAREST.stillest) {
     return bands.stillest;
   }
-  if (bands.bleakest != null && front <= -RAREST && character >= RAREST) {
+  if (bands.bleakest != null && front <= -RAREST.bleakest && character >= RAREST.bleakest) {
     return bands.bleakest;
   }
-  if (bands.thickest != null && front >= RAREST && character <= -RAREST) {
+  if (bands.thickest != null && front >= RAREST.thickest && character <= -RAREST.thickest) {
     return bands.thickest;
   }
   if (bands.rare != null && front >= RARE && character >= RARE) {

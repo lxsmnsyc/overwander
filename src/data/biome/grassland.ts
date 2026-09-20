@@ -14,6 +14,8 @@ export default function registerGrasslandSpawns(): void {
   registerSpawnPool(Biome.Grassland, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
+        { species: Species.Fletchling, weight: 26 },
         { species: Species.Solosis, weight: 24 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Pidgey, weight: 30 },
@@ -27,6 +29,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Bunnelby, weight: 26 },
         { species: Species.Deerling, weight: 18 },
         { species: Species.Minccino, weight: 26 },
         { species: Species.Swablu, weight: 22 },
@@ -57,6 +60,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
+        { species: Species.Fletchinder, weight: 8 },
         { species: Species.Duosion, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Pidgeotto, weight: 5 },
@@ -70,6 +75,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Diggersby, weight: 6 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Altaria, weight: 5 },
@@ -100,6 +106,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
+        { species: Species.Talonflame, weight: 5 },
         { species: Species.Reuniclus, weight: 5 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Venusaur, weight: 2 },
@@ -149,6 +157,8 @@ export default function registerGrasslandSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
+        { species: Species.Fletchling, weight: 26 },
         { species: Species.Solosis, weight: 24 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Pidgey, weight: 30 },
@@ -163,6 +173,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Bunnelby, weight: 26 },
         { species: Species.Deerling, weight: 18 },
         { species: Species.Minccino, weight: 26 },
         { species: Species.Swablu, weight: 22 },
@@ -194,6 +205,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
+        { species: Species.Fletchinder, weight: 8 },
         { species: Species.Duosion, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Pidgeotto, weight: 5 },
@@ -208,6 +221,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Diggersby, weight: 6 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Altaria, weight: 5 },
@@ -239,6 +253,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
+        { species: Species.Talonflame, weight: 5 },
         { species: Species.Reuniclus, weight: 5 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Venusaur, weight: 2 },

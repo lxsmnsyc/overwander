@@ -51,6 +51,7 @@ import {
   THUNDURUS_FORMS,
   TORNADUS_FORMS,
   UNOWN_FORMS,
+  VIVILLON_FORMS,
   WORMADAM_FORMS,
   getBaseFormSpecies,
   speciesDexNumber,
@@ -390,6 +391,7 @@ describe('species forms', () => {
       ...MELOETTA_FORMS.slice(1),
       ...GENESECT_FORMS.slice(1),
       ...DEERLING_FORMS.slice(1),
+      ...VIVILLON_FORMS.slice(1),
       ...SAWSBUCK_FORMS.slice(1),
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own

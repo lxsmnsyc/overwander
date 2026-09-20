@@ -17,6 +17,7 @@ export default function registerTemperateForestSpawns(): void {
   registerSpawnPool(Biome.TemperateForest, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Chespin, weight: 2 },
         { species: Species.Timburr, weight: 25 },
         { species: Species.Bulbasaur, weight: 2 },
@@ -41,6 +42,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Quilladin, weight: 2 },
         { species: Species.Gurdurr, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
@@ -53,7 +55,6 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
-        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Ledian, weight: 8 },
@@ -71,6 +72,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
+        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
@@ -107,6 +110,7 @@ export default function registerTemperateForestSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Chespin, weight: 2 },
         { species: Species.Timburr, weight: 25 },
         { species: Species.Bulbasaur, weight: 2 },
@@ -131,6 +135,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Quilladin, weight: 2 },
         { species: Species.Gurdurr, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
@@ -143,7 +148,6 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
-        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Ledian, weight: 8 },
@@ -161,6 +165,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
+        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },

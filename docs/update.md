@@ -7,6 +7,7 @@ named for what it brings.
 
 | Release                  | What it brought                                                                                                                |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| [The sixth generation's moves](update/sixth-generation-moves.md) | 62 moves taught to everyone already here, terrain under the field, and three more starters |
 | [Unova's second road and first cave](update/unovas-road-and-cave.md) | Six more families: Munna, Pidove and Blitzle along the road, and Roggenrola, Woobat and Drilbur under it |
 | [The fifth generation's moves](update/fifth-generation-moves.md) | 92 moves taught to everyone already here, with pictures of their own, and three more starters |
 | [Sinnoh](update/sinnoh.md) | 107 more pokemon, a signature ability for 246 families, 113 new moves, a fourth league and Frontier, and Team Galactic |

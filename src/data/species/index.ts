@@ -59,6 +59,7 @@ export {
 export type { EvolutionContext, Handover } from './evolution';
 export { REGIONS, REGION_NAMES, getSpeciesByRegion, getSpeciesRegion } from './regions';
 export { getShoreForm } from './gen-4/shellos';
+export { getWingPattern } from './gen-6/scatterbug';
 export { getSeasonalCoat } from './gen-5/deerling';
 export {
   TRUE_SHADOW_BONUS,

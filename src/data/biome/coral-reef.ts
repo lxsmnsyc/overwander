@@ -8,20 +8,20 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
 export default function registerCoralReefSpawns(): void {
   registerSpawnPool(Biome.CoralReef, {
     [TimeOfDay.Morning]: {
-      base: [],
+      base: [{ species: Species.Scatterbug, weight: 24 }],
       uncommon: [],
-      rare: [],
+      rare: [{ species: Species.Spewpa, weight: 8 }],
       scarce: [],
-      elusive: [],
+      elusive: [{ species: Species.Vivillon, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [],
+      base: [{ species: Species.Scatterbug, weight: 24 }],
       uncommon: [],
-      rare: [],
+      rare: [{ species: Species.Spewpa, weight: 8 }],
       scarce: [],
-      elusive: [],
+      elusive: [{ species: Species.Vivillon, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },

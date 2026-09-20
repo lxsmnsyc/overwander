@@ -12,6 +12,7 @@ export default function registerBadlandsSpawns(): void {
   registerSpawnPool(Biome.Badlands, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Sandile, weight: 25 },
         { species: Species.Tepig, weight: 3 },
         { species: Species.Beldum, weight: 2 },
@@ -39,6 +40,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Drilbur, weight: 16 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Krokorok, weight: 10 },
         { species: Species.Pignite, weight: 2 },
         { species: Species.Metang, weight: 1 },
@@ -66,6 +68,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Durant, weight: 6 },
         { species: Species.Druddigon, weight: 5 },
         { species: Species.Sigilyph, weight: 6 },
@@ -99,6 +102,7 @@ export default function registerBadlandsSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Sandile, weight: 25 },
         { species: Species.Tepig, weight: 3 },
         { species: Species.Beldum, weight: 2 },
@@ -129,6 +133,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Drilbur, weight: 16 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Krokorok, weight: 10 },
         { species: Species.Pignite, weight: 2 },
         { species: Species.Metang, weight: 1 },
@@ -159,6 +164,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Durant, weight: 6 },
         { species: Species.Druddigon, weight: 5 },
         { species: Species.Sigilyph, weight: 6 },

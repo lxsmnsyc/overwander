@@ -9,6 +9,7 @@ export default function registerTropicalRainforestSpawns(): void {
   registerSpawnPool(Biome.TropicalRainforest, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Treecko, weight: 2 },
         { species: Species.Slakoth, weight: 20 },
       ],
@@ -18,6 +19,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Grovyle, weight: 1 },
         { species: Species.Vigoroth, weight: 10 },
       ],
@@ -29,6 +31,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Carnivine, weight: 6 },
         { species: Species.Sceptile, weight: 2 },
         { species: Species.Slaking, weight: 5 },
@@ -41,6 +44,7 @@ export default function registerTropicalRainforestSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Treecko, weight: 2 },
         { species: Species.Slakoth, weight: 20 },
       ],
@@ -50,6 +54,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Grovyle, weight: 1 },
         { species: Species.Vigoroth, weight: 10 },
       ],
@@ -61,6 +66,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Carnivine, weight: 6 },
         { species: Species.Sceptile, weight: 2 },
         { species: Species.Slaking, weight: 5 },

@@ -1,0 +1,376 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { EvolutionMethod, Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM, HM and tutor moves shared by the whole family
+const FAMILY_TEACHABLE = [Moves.BugBite];
+
+/**
+ * The wings a Vivillon comes out with, one per country.
+ *
+ * The mainline decides the pattern by the part of the world the game
+ * is played in; here the world is the world, so it is the country the
+ * scatterbug was met in that the wings remember. Anywhere without a
+ * pattern of its own leaves the meadow wings, which are the base form
+ */
+const WING_PATTERNS: { species: Species; name: string; biome: Biome }[] = [
+  { species: Species.VivillonIcySnow, name: 'Icy Snow Vivillon', biome: Biome.Glacier },
+  { species: Species.VivillonPolar, name: 'Polar Vivillon', biome: Biome.AlpineTundra },
+  { species: Species.VivillonTundra, name: 'Tundra Vivillon', biome: Biome.Tundra },
+  {
+    species: Species.VivillonContinental,
+    name: 'Continental Vivillon',
+    biome: Biome.TemperateForest,
+  },
+  { species: Species.VivillonGarden, name: 'Garden Vivillon', biome: Biome.Grassland },
+  { species: Species.VivillonElegant, name: 'Elegant Vivillon', biome: Biome.Woodland },
+  { species: Species.VivillonModern, name: 'Modern Vivillon', biome: Biome.Steppe },
+  { species: Species.VivillonMarine, name: 'Marine Vivillon', biome: Biome.CoralReef },
+  { species: Species.VivillonArchipelago, name: 'Archipelago Vivillon', biome: Biome.Beach },
+  { species: Species.VivillonHighPlains, name: 'High Plains Vivillon', biome: Biome.Badlands },
+  { species: Species.VivillonSandstorm, name: 'Sandstorm Vivillon', biome: Biome.Desert },
+  { species: Species.VivillonRiver, name: 'River Vivillon', biome: Biome.Bog },
+  { species: Species.VivillonMonsoon, name: 'Monsoon Vivillon', biome: Biome.TropicalRainforest },
+  { species: Species.VivillonSavannah, name: 'Savannah Vivillon', biome: Biome.Savanna },
+  { species: Species.VivillonSun, name: 'Sun Vivillon', biome: Biome.Volcano },
+  { species: Species.VivillonOcean, name: 'Ocean Vivillon', biome: Biome.Ocean },
+  { species: Species.VivillonJungle, name: 'Jungle Vivillon', biome: Biome.TropicalSeasonalForest },
+];
+
+const PATTERN_BY_BIOME = new Map<Biome, Species>(
+  WING_PATTERNS.map((pattern) => [pattern.biome, pattern.species]),
+);
+
+/**
+ * The wings this country hands a butterfly. Anything that is not a
+ * Vivillon, and any country with no pattern of its own, comes back
+ * unchanged
+ */
+export function getWingPattern(species: Species, biome: Biome): Species {
+  return species === Species.Vivillon ? (PATTERN_BY_BIOME.get(biome) ?? species) : species;
+}
+
+export default function registerScatterbugSpecies(): void {
+  registerSpecies(Species.Scatterbug, {
+    dexNumber: 664,
+    evolvesInto: [
+      {
+        species: Species.Spewpa,
+        method: EvolutionMethod.Level,
+        level: 9,
+      },
+    ],
+    name: 'Scatterbug',
+    category: 'Scatterdust Pokemon',
+    height: 0.3,
+    weight: 2.5,
+    family: Families.Scatterbug,
+    stats: {
+      [Stats.HP]: 38,
+      [Stats.Attack]: 35,
+      [Stats.Defense]: 40,
+      [Stats.SpecialAttack]: 27,
+      [Stats.SpecialDefense]: 25,
+      [Stats.Speed]: 35,
+    },
+    types: [Types.Bug],
+    abilities: [Abilities.ShieldDust, Abilities.CompoundEyes],
+    hiddenAbilities: [Abilities.FriendGuard],
+    eggGroups: [EggGroups.Bug],
+    genderRatio: [4, 4],
+    catchRate: 255,
+    biomes: [
+      Biome.Glacier,
+      Biome.AlpineTundra,
+      Biome.Tundra,
+      Biome.TemperateForest,
+      Biome.Grassland,
+      Biome.Woodland,
+      Biome.Steppe,
+      Biome.Ocean,
+      Biome.CoralReef,
+      Biome.Badlands,
+      Biome.Desert,
+      Biome.Bog,
+      Biome.TropicalRainforest,
+      Biome.Savanna,
+      Biome.Volcano,
+      Biome.Beach,
+      Biome.TropicalSeasonalForest,
+      Biome.Shrubland,
+    ],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [Moves.Tackle, Moves.StringShot],
+        6: [Moves.StunSpore],
+        15: [Moves.BugBite],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.PoisonPowder, Moves.RagePowder, Moves.StunSpore],
+    },
+  });
+  registerSpecies(Species.Spewpa, {
+    dexNumber: 665,
+    evolvesInto: [
+      {
+        species: Species.Vivillon,
+        method: EvolutionMethod.Level,
+        level: 12,
+      },
+    ],
+    name: 'Spewpa',
+    category: 'Scatterdust Pokemon',
+    height: 0.3,
+    weight: 8.4,
+    family: Families.Scatterbug,
+    evolvesFrom: Species.Scatterbug,
+    stats: {
+      [Stats.HP]: 45,
+      [Stats.Attack]: 22,
+      [Stats.Defense]: 60,
+      [Stats.SpecialAttack]: 27,
+      [Stats.SpecialDefense]: 30,
+      [Stats.Speed]: 29,
+    },
+    types: [Types.Bug],
+    abilities: [Abilities.ShedSkin],
+    hiddenAbilities: [Abilities.FriendGuard],
+    eggGroups: [EggGroups.Bug],
+    genderRatio: [4, 4],
+    catchRate: 120,
+    biomes: [
+      Biome.Glacier,
+      Biome.AlpineTundra,
+      Biome.Tundra,
+      Biome.TemperateForest,
+      Biome.Grassland,
+      Biome.Woodland,
+      Biome.Steppe,
+      Biome.Ocean,
+      Biome.CoralReef,
+      Biome.Badlands,
+      Biome.Desert,
+      Biome.Bog,
+      Biome.TropicalRainforest,
+      Biome.Savanna,
+      Biome.Volcano,
+      Biome.Beach,
+      Biome.TropicalSeasonalForest,
+      Biome.Shrubland,
+    ],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [Moves.Harden],
+        9: [Moves.Protect],
+      },
+      teachable: [...FAMILY_TEACHABLE, Moves.Electroweb, Moves.IronDefense, Moves.Protect],
+    },
+  });
+  registerSpecies(Species.Vivillon, {
+    dexNumber: 666,
+    name: 'Vivillon',
+    category: 'Scale Pokemon',
+    height: 1.2,
+    weight: 17.0,
+    family: Families.Scatterbug,
+    evolvesFrom: Species.Spewpa,
+    stats: {
+      [Stats.HP]: 80,
+      [Stats.Attack]: 52,
+      [Stats.Defense]: 50,
+      [Stats.SpecialAttack]: 90,
+      [Stats.SpecialDefense]: 50,
+      [Stats.Speed]: 89,
+    },
+    types: [Types.Bug, Types.Flying],
+    abilities: [Abilities.ShieldDust, Abilities.CompoundEyes],
+    hiddenAbilities: [Abilities.FriendGuard],
+    eggGroups: [EggGroups.Bug],
+    genderRatio: [4, 4],
+    catchRate: 45,
+    biomes: [
+      Biome.Glacier,
+      Biome.AlpineTundra,
+      Biome.Tundra,
+      Biome.TemperateForest,
+      Biome.Grassland,
+      Biome.Woodland,
+      Biome.Steppe,
+      Biome.Ocean,
+      Biome.CoralReef,
+      Biome.Badlands,
+      Biome.Desert,
+      Biome.Bog,
+      Biome.TropicalRainforest,
+      Biome.Savanna,
+      Biome.Volcano,
+      Biome.Beach,
+      Biome.TropicalSeasonalForest,
+      Biome.Shrubland,
+    ],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [Moves.Gust, Moves.PoisonPowder, Moves.StunSpore, Moves.SleepPowder, Moves.LightScreen],
+        12: [Moves.StruggleBug],
+        17: [Moves.Psybeam],
+        21: [Moves.Supersonic],
+        25: [Moves.DrainingKiss],
+        31: [Moves.Aromatherapy],
+        35: [Moves.BugBuzz],
+        41: [Moves.Safeguard],
+        45: [Moves.QuiverDance],
+        50: [Moves.Hurricane],
+        55: [Moves.Powder],
+      },
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Acrobatics,
+        Moves.AerialAce,
+        Moves.Attract,
+        Moves.CalmMind,
+        Moves.Confide,
+        Moves.DoubleTeam,
+        Moves.DreamEater,
+        Moves.Electroweb,
+        Moves.Endeavor,
+        Moves.EnergyBall,
+        Moves.Facade,
+        Moves.Flash,
+        Moves.Frustration,
+        Moves.GigaDrain,
+        Moves.GigaImpact,
+        Moves.HiddenPower,
+        Moves.HyperBeam,
+        Moves.Infestation,
+        Moves.LightScreen,
+        Moves.Protect,
+        Moves.PsychUp,
+        Moves.Psychic,
+        Moves.RainDance,
+        Moves.Rest,
+        Moves.Return,
+        Moves.Roost,
+        Moves.Round,
+        Moves.Safeguard,
+        Moves.SecretPower,
+        Moves.SignalBeam,
+        Moves.SleepTalk,
+        Moves.Snore,
+        Moves.SolarBeam,
+        Moves.StruggleBug,
+        Moves.Substitute,
+        Moves.SunnyDay,
+        Moves.Swagger,
+        Moves.Tailwind,
+        Moves.Thief,
+        Moves.Toxic,
+        Moves.UTurn,
+      ],
+    },
+  });
+
+  // Every pattern is the same butterfly under different wings, so
+  // each is registered off the one shape rather than written out
+  for (const pattern of WING_PATTERNS) {
+    registerSpecies(pattern.species, {
+      dexNumber: 666,
+      category: 'Scale Pokemon',
+      height: 1.2,
+      weight: 17.0,
+      family: Families.Scatterbug,
+      evolvesFrom: Species.Spewpa,
+      stats: {
+        [Stats.HP]: 80,
+        [Stats.Attack]: 52,
+        [Stats.Defense]: 50,
+        [Stats.SpecialAttack]: 90,
+        [Stats.SpecialDefense]: 50,
+        [Stats.Speed]: 89,
+      },
+      types: [Types.Bug, Types.Flying],
+      abilities: [Abilities.ShieldDust, Abilities.CompoundEyes],
+      hiddenAbilities: [Abilities.FriendGuard],
+      eggGroups: [EggGroups.Bug],
+      genderRatio: [4, 4],
+      catchRate: 45,
+      activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+      learnSet: {
+        level: {
+          1: [
+            Moves.Gust,
+            Moves.PoisonPowder,
+            Moves.StunSpore,
+            Moves.SleepPowder,
+            Moves.LightScreen,
+          ],
+          12: [Moves.StruggleBug],
+          17: [Moves.Psybeam],
+          21: [Moves.Supersonic],
+          25: [Moves.DrainingKiss],
+          31: [Moves.Aromatherapy],
+          35: [Moves.BugBuzz],
+          41: [Moves.Safeguard],
+          45: [Moves.QuiverDance],
+          50: [Moves.Hurricane],
+          55: [Moves.Powder],
+        },
+        teachable: [
+          ...FAMILY_TEACHABLE,
+          Moves.Acrobatics,
+          Moves.AerialAce,
+          Moves.Attract,
+          Moves.CalmMind,
+          Moves.Confide,
+          Moves.DoubleTeam,
+          Moves.DreamEater,
+          Moves.Electroweb,
+          Moves.Endeavor,
+          Moves.EnergyBall,
+          Moves.Facade,
+          Moves.Flash,
+          Moves.Frustration,
+          Moves.GigaDrain,
+          Moves.GigaImpact,
+          Moves.HiddenPower,
+          Moves.HyperBeam,
+          Moves.Infestation,
+          Moves.LightScreen,
+          Moves.Protect,
+          Moves.PsychUp,
+          Moves.Psychic,
+          Moves.RainDance,
+          Moves.Rest,
+          Moves.Return,
+          Moves.Roost,
+          Moves.Round,
+          Moves.Safeguard,
+          Moves.SecretPower,
+          Moves.SignalBeam,
+          Moves.SleepTalk,
+          Moves.Snore,
+          Moves.SolarBeam,
+          Moves.StruggleBug,
+          Moves.Substitute,
+          Moves.SunnyDay,
+          Moves.Swagger,
+          Moves.Tailwind,
+          Moves.Thief,
+          Moves.Toxic,
+          Moves.UTurn,
+        ],
+      },
+      name: pattern.name,
+      baseForm: false,
+      biomes: [pattern.biome],
+    });
+  }
+}

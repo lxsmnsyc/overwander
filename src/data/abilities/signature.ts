@@ -1997,6 +1997,23 @@ export default function registerSignatureAbilities(): void {
     description: 'Its team, itself included, deals 1.15x with special moves while it stands.',
   });
 
+  // The three the first roads out of Kalos's towns walk past
+  registerSignature(Families.Bunnelby, Abilities.LoosenedEarth, {
+    name: 'Loosened Earth',
+    description: 'Its Ground moves ignore whatever Defense the target has built up.',
+  });
+
+  registerSignature(Families.Fletchling, Abilities.Stoop, {
+    name: 'Stoop',
+    description: 'Its Flying moves hit 1.3x a target that is casting or channelling.',
+  });
+
+  registerSignature(Families.Scatterbug, Abilities.Wingscale, {
+    name: 'Wingscale',
+    description:
+      "Each move it lands drops that target's Accuracy a stage, to 2 stages from this dust.",
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:

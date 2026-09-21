@@ -1,5 +1,39 @@
 # overwander
 
+## 4.10.0
+
+### Minor Changes
+
+- 2190cfc: Route 4 and the first half of the Desert Resort:
+
+  - Sandile, Krokorok and Krookodile, and Darumaka and Darmanitan, across the desert and the badlands by day. Maractus stands in both.
+  - Dwebble and Crustle are written but do not spawn yet, since the sprite collection has drawn no Crustle.
+  - Darmanitan now sits down into its Zen shape below half its HP and stands back up above it, which turns what it hits with into what it thinks with and makes it far harder to shift. The shape is its own dex entry.
+  - Each family brings its own signature ability: Death Roll bites harder on a throat it already has hold of, Glancing Blow still lands a quarter of a move that missed, Dry Spell makes a clear sky worth something to a cactus, and Slab lets the rock take the first share of what is aimed at Dwebble.
+  - Krookodile can be born with Rough Skin, Maractus with Rattled and Crustle with Solid Rock.
+
+- 09b218a: The three elemental monkeys:
+
+  - Pansage and Simisage, Pansear and Simisear, and Panpour and Simipour. Each evolves on a stone, a Leaf Stone, a Fire Stone and a Water Stone.
+  - None of the three spawns yet. They are staged as a set, and the sprite collection has drawn neither Simisear nor Simipour.
+  - Each brings its own signature ability, built on the one the trio shares: the first time a blow takes it under half its HP it spends the tuft it carries on the whole enemy side, once a battle. Leaf Crown seeds every enemy, Ember Tuft burns every enemy and Geyser Tail traps every enemy in a whirlpool.
+  - Simisage can be born with Sap Sipper or Harvest, Simisear with Flash Fire or Moxie, and Simipour with Water Absorb or Analytic.
+  - A Grass type now shrugs off Leech Seed however the seed reaches it, rather than only when the move puts it there.
+
+- 9af3677: The rest of the Desert Resort, the Relic Castle and what Castelia leaves behind:
+
+  - Scraggy and Scrafty across the badlands and the steppe after dark, Sigilyph over the desert and the badlands by day, Yamask and Cofagrigus in the same places at night, and Trubbish and Garbodor through the badlands and the bog.
+  - Mummy now works: whoever lands a contact move on a Yamask loses one of their own abilities and catches Mummy in its place. The line had no working ability at all before this.
+  - Perish Body is new as well: whoever reaches into a Cofagrigus is marked to faint in 3 turns, and the coffin goes with them.
+  - Each family brings its own signature ability: Gang Up pays Scrafty for the gang at its back, Ward Circle keeps hazards off the ground Sigilyph patrols, Death Mask takes 2 stages off whoever it watched finish a teammate, and Litterbug drops Toxic Spikes wherever Trubbish turns up.
+  - Scrafty can be born with Guts, Sigilyph with Compound Eyes, and Cofagrigus with Cursed Body, Pressure or Perish Body.
+
+### Patch Changes
+
+- 9e87707: Trainers and gym leaders no longer field a pokemon nobody can meet. A line that is written but held out of every spawn pool, usually because its art is unfinished or the counterpart it is paired with does not exist yet, is now left out of their rosters as well. Unfezant, Zebstrika, Throh and Sawk were the four this was letting through.
+
+  Trainers and gym leaders now field the alternate forms a pokemon is kept in rather than only default forms. A Rotom in an appliance and a Wormadam in its cloak are somebody's pokemon like any other, and an appliance is an address rather than a stage left to grow out of. A shape worn mid-fight stays out, and a set that differs only in its coat, such as the Unown letters, is fielded as the one pokemon it is.
+
 ## 4.9.1
 
 ### Patch Changes

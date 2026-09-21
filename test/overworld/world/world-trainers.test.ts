@@ -134,10 +134,13 @@ describe('world', () => {
 
     const snapshot = new ChunkSnapshot(chunk, 0);
     const stops = snapshot.getRocketStops();
-    const pool = getBiomeRoster(chunk.biome, getTimeOfDay(0));
 
     expect(stops.size).toBeGreaterThan(0);
     for (const [cell, party] of stops) {
+      // The country the stop itself stands in, which is the chunk's
+      // only where no border runs through it
+      const pool = getBiomeRoster(snapshot.biomeAt(cell), getTimeOfDay(0));
+
       // A stop stands at Team Rocket's own landmark now
       expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.TeamRocket);
 
@@ -389,8 +392,6 @@ describe('world', () => {
     for (let x = 0; x < 48; x++) {
       for (let y = 0; y < 8; y++) {
         const chunk = world.getChunk(x, y);
-        const homes = getBiomeLairs(chunk.biome);
-        const endemic = new Set(homes.flatMap((lair) => getLairResidents(lair)));
 
         for (const [cell, landmark] of chunk.getLandmarkCells()) {
           if (landmark !== Landmark.TeamRocket) {
@@ -398,6 +399,9 @@ describe('world', () => {
           }
           for (let window = 0; window < 16; window++) {
             const snapshot = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
+            // The lairs of the country the stop stands in
+            const homes = getBiomeLairs(snapshot.biomeAt(cell));
+            const endemic = new Set(homes.flatMap((lair) => getLairResidents(lair)));
 
             if (!snapshot.isRocketBoss(cell)) {
               continue;

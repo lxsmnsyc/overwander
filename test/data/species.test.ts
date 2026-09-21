@@ -43,11 +43,13 @@ import {
   GASTRODON_FORMS,
   GENESECT_FORMS,
   GIRATINA_FORMS,
+  GOURGEIST_FORMS,
   KYUREM_FORMS,
   LANDORUS_FORMS,
   MELOETTA_FORMS,
   MEOWSTIC_FORMS,
   PALKIA_FORMS,
+  PUMPKABOO_FORMS,
   ROTOM_FORMS,
   SAWSBUCK_FORMS,
   SHAYMIN_FORMS,
@@ -402,6 +404,8 @@ describe('species forms', () => {
       ...FLORGES_FORMS.slice(1),
       ...AEGISLASH_FORMS.slice(1),
       ...MEOWSTIC_FORMS.slice(1),
+      ...PUMPKABOO_FORMS.slice(1),
+      ...GOURGEIST_FORMS.slice(1),
       ...SAWSBUCK_FORMS.slice(1),
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own

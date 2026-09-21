@@ -950,6 +950,12 @@ const enum Abilities {
   Backfeed = 200347,
   // Hawlucha
   TopRope = 200348,
+  // Phantump
+  Undergrowth = 200349,
+  // Pumpkaboo
+  Hollowing = 200350,
+  // Bergmite
+  Deadweight = 200351,
 }
 
 export default Abilities;

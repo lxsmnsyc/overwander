@@ -351,6 +351,9 @@ const enum Families {
   Amaura = 346,
   Hawlucha = 347,
   Klefki = 348,
+  Phantump = 349,
+  Pumpkaboo = 350,
+  Bergmite = 351,
 }
 
 export default Families;
@@ -719,4 +722,7 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Amaura]: 'Amaura',
   [Families.Hawlucha]: 'Hawlucha',
   [Families.Klefki]: 'Klefki',
+  [Families.Phantump]: 'Phantump',
+  [Families.Pumpkaboo]: 'Pumpkaboo',
+  [Families.Bergmite]: 'Bergmite',
 };

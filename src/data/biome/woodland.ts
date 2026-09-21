@@ -275,6 +275,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Pumpkaboo, weight: 12 },
+        { species: Species.PumpkabooSuper, weight: 12 },
+        { species: Species.Phantump, weight: 24 },
         { species: Species.Espurr, weight: 24 },
         { species: Species.Zorua, weight: 20 },
         { species: Species.Shuppet, weight: 20 },
@@ -307,6 +310,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Gourgeist, weight: 3 },
+        { species: Species.GourgeistSuper, weight: 3 },
+        { species: Species.Trevenant, weight: 6 },
         { species: Species.Meowstic, weight: 3 },
         { species: Species.MeowsticFemale, weight: 3 },
         { species: Species.Zoroark, weight: 5 },
@@ -383,6 +389,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Pumpkaboo, weight: 12 },
+        { species: Species.PumpkabooSuper, weight: 12 },
+        { species: Species.Phantump, weight: 24 },
         { species: Species.Espurr, weight: 24 },
         { species: Species.Zorua, weight: 20 },
         { species: Species.Shuppet, weight: 20 },
@@ -419,6 +428,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Gourgeist, weight: 3 },
+        { species: Species.GourgeistSuper, weight: 3 },
+        { species: Species.Trevenant, weight: 6 },
         { species: Species.Meowstic, weight: 3 },
         { species: Species.MeowsticFemale, weight: 3 },
         { species: Species.Zoroark, weight: 5 },

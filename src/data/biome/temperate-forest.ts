@@ -213,6 +213,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Phantump, weight: 24 },
         { species: Species.Espurr, weight: 24 },
         { species: Species.Deerling, weight: 18 },
         { species: Species.Zorua, weight: 20 },
@@ -234,6 +235,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Trevenant, weight: 6 },
         { species: Species.Meowstic, weight: 3 },
         { species: Species.MeowsticFemale, weight: 3 },
         { species: Species.Sawsbuck, weight: 7 },
@@ -287,6 +289,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Phantump, weight: 24 },
         { species: Species.Espurr, weight: 24 },
         { species: Species.Deerling, weight: 18 },
         { species: Species.Zorua, weight: 20 },
@@ -309,6 +312,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Trevenant, weight: 6 },
         { species: Species.Meowstic, weight: 3 },
         { species: Species.MeowsticFemale, weight: 3 },
         { species: Species.Sawsbuck, weight: 7 },

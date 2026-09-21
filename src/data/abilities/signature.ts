@@ -2095,6 +2095,22 @@ export default function registerSignatureAbilities(): void {
     description: 'Its contact moves hit 10% harder for each 50 kg the target weighs, up to 1.5x.',
   });
 
+  // The two the versions keep apart, and the ice beside them
+  registerSignature(Families.Phantump, Abilities.Undergrowth, {
+    name: 'Undergrowth',
+    description: 'A move it lands adds the Grass type to the target, once per target.',
+  });
+
+  registerSignature(Families.Pumpkaboo, Abilities.Hollowing, {
+    name: 'Hollowing',
+    description: 'A move it lands adds the Ghost type to the target, once per target.',
+  });
+
+  registerSignature(Families.Bergmite, Abilities.Deadweight, {
+    name: 'Deadweight',
+    description: 'Its physical moves use its Defense in place of its Attack while it is higher.',
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:

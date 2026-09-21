@@ -18,6 +18,9 @@ import registerAmauraSpecies from './amaura';
 import registerInkaySpecies from './inkay';
 import registerHelioptileSpecies from './helioptile';
 import registerHawluchaSpecies from './hawlucha';
+import registerPhantumpSpecies from './phantump';
+import registerPumpkabooSpecies from './pumpkaboo';
+import registerBergmiteSpecies from './bergmite';
 
 /** Kalos, as far as it is written */
 export default function registerGen6Species(): void {
@@ -40,5 +43,8 @@ export default function registerGen6Species(): void {
   registerInkaySpecies();
   registerHelioptileSpecies();
   registerHawluchaSpecies();
+  registerPhantumpSpecies();
+  registerPumpkabooSpecies();
+  registerBergmiteSpecies();
   registerKlefkiSpecies();
 }

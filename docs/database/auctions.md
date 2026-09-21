@@ -3,9 +3,10 @@
 The auction house is the one place something passes from one player to another.
 The server decides everything about it in
 [`src/server/auctions.ts`](../../src/server/auctions.ts). The rules both sides
-read, covering what a bid must clear, when bidding closes and who may collect, live in
-[`src/auth/auction-record.ts`](../../src/auth/auction-record.ts), and the browser
-reads the board through [`src/auth/auctions.ts`](../../src/auth/auctions.ts).
+read, covering what a bid must clear, when bidding closes and who may collect,
+live in [`src/auth/auction-record.ts`](../../src/auth/auction-record.ts), and
+the browser reads the board through
+[`src/auth/auctions.ts`](../../src/auth/auctions.ts).
 
 Two decisions carry the whole feature, and neither needs anything swept up
 afterwards:
@@ -13,12 +14,13 @@ afterwards:
 - **A lot is taken when it is listed.** The item leaves the bag, or the pokemon
   the seller's records, the moment the auction opens, so nothing has to be
   re-checked a day later and a seller cannot list what they have since spent. It
-  cannot be pulled off the block either, which is what makes a listing something a
-  bidder can trust. Only a lot that ends the day with **no bid at all** goes back,
-  and the seller has to come and take it.
+  cannot be pulled off the block either, which is what makes a listing something
+  a bidder can trust. Only a lot that ends the day with **no bid at all** goes
+  back, and the seller has to come and take it.
 - **A bid is paid when it is made.** The gold is taken as the bid lands and
   handed straight back to whoever it outbid, so the last bidder standing has
   already paid. Nothing can be won by a player who spent the money meanwhile.
+  See [Auction bids](auction-bids.md).
 
 ## `auctions`
 
@@ -41,20 +43,22 @@ afterwards:
 Two checks hold the shape of a lot: exactly one of `item` and `caught_id` is
 filled, matching what `lot` says, and a bidder is never the seller.
 
-Every signed-in player can read it, since a board nobody can see is not a board,
-and only the server writes it. `watchOpenAuctions` follows the unsettled lots, on
-the partial `auctions_live` index, which covers both the ones still taking bids
-and the ones whose winner has not come back for them. Which of the two a listing
-is depends on the clock rather than the row, so the caller splits them with
-`isLive`. The table is published to realtime with `replica identity full`, so the
-board sees the old row on a delete or a filtered update and can merge it away.
+Every signed-in player can read it, since a board nobody can see is of no use,
+and only the server writes it. `watchOpenAuctions` follows the unsettled lots,
+on the partial `auctions_live` index, which covers both the ones still taking
+bids and the ones whose winner has not come back for them. Which of the two a
+listing is depends on the clock rather than the row, so the caller splits them
+with `isLive`. The table is published to realtime with `replica identity full`,
+so the board sees the old row on a delete or a filtered update and can merge it
+away.
 
-**Nothing is polled.** The closing time is a number written into the listing, and
-whether it has passed is the reader's own clock against it: no timer, no re-read,
-no second opinion asked of the server while somebody looks at the board. Being a
-minute out of step changes nothing that matters. A lot the reader thinks is still
-open is refused by `canBid` when the bid actually lands, and a lot they think has
-closed is claimable the moment they ask. The board is a view; the server decides.
+**Nothing is polled.** The closing time is a number written into the listing,
+and whether it has passed is the reader's own clock against it: no timer, no
+re-read, no second opinion asked of the server while somebody looks at the
+board. Being a minute out of step changes nothing that matters. A lot the reader
+thinks is still open is refused by `canBid` when the bid actually lands, and a
+lot they think has closed is claimable the moment they ask. The board only
+displays; the server decides.
 
 The terms a seller sends are normalized by `asAuctionTerms` before anything is
 written: whole numbers, `startingBid` within `[MIN_STARTING_BID,
@@ -70,10 +74,11 @@ helps nobody.
 | `auction` | `text`   | The lot they listed                       |
 | `ends_at` | `bigint` | When it closes; another cannot open until |
 
-One row per seller, read inside the same transaction that opens an auction. It is
-what keeps a player to **one auction at a time**, and since an auction runs a full
-day, that is one auction a day. A single row answers both halves of the rule, so no query and no calendar arithmetic is involved: a seller whose lot
-is still on the block is refused, whatever zone they report.
+One row per seller, read inside the same transaction that opens an auction. It
+is what keeps a player to **one auction at a time**, and since an auction runs a
+full day, that is one auction a day. A single row answers both halves of the
+rule, so no query and no calendar arithmetic is involved: a seller whose lot is
+still on the block is refused, whatever zone they report.
 
 Private to the owning uid, and read-only to them. The sell form asks it before
 offering to list anything.
@@ -87,24 +92,24 @@ nickname, and a seller whose profile has gone is still "a trainer".
 A **catch** lot carries a second line with the three things a bidder is buying
 and cannot change afterwards: how good its individual values are, its nature and
 its abilities. They are read straight off the escrowed record, which is exactly
-why escrow keeps the row readable instead of copying a name into the
-listing. Health and status are not shown, since both are cosmetic the moment the
-pokemon changes hands.
+why [escrow](auction-bids.md#escrow) keeps the row readable instead of copying a
+name into the listing. Health and status are not shown, since both are cosmetic
+the moment the pokemon changes hands.
 
 The values are shown as a **rating** rather than as six numbers. `getIVStars`
-gives one star per `MAX_IV` (31) points across all six, so ★★★★★★ is flawless and
-★★★☆☆☆ is ordinary. It is deliberately lossy: printing the numbers does the
-buyer's arithmetic for them and turns a bid into a lookup, while a rating says how
-good the pokemon is without saying which stat carries it. The bid stays a
-judgement and the rest is learned by winning. A pokemon the player already owns
-still shows all six.
+gives one star per `MAX_IV` (31) points across all six, so ★★★★★★ is flawless
+and ★★★☆☆☆ is ordinary. It is deliberately lossy: printing the numbers does the
+buyer's arithmetic for them and turns a bid into a lookup, while a rating says
+how good the pokemon is without saying which stat carries it. A pokemon the
+player already owns still shows all six.
 
-Clicking a catch lot opens the **catch dialog read-only** (`readOnly`): the whole
-record, with values, nature, abilities, moves, friendship, origin and the
-ownership chain, and nothing to press. The prop drops the dialog's owner check, since a lot
-in escrow is owned by nobody and requiring a match would show an empty dialog, and
-it leaves out every section that writes. It is not a permission, since the server
-refuses all of those writes anyway. It is so the buttons are never offered.
+Clicking a catch lot opens the **catch dialog read-only** (`readOnly`): the
+whole record, with values, nature, abilities, moves, friendship, origin and the
+ownership chain, and nothing to press. The prop drops the dialog's owner check,
+since a lot in escrow is owned by nobody and requiring a match would show an
+empty dialog, and it leaves out every section that writes. It is not a
+permission, since the server refuses all of those writes anyway. It is so the
+buttons are never offered.
 
 An **egg** lot shows none of it. What is inside one is hidden from everybody but
 its owner, and a board is not the place to give it away, which is also why
@@ -132,138 +137,19 @@ answered over what it read.
 | `is:`, `not:`                 | `item`, `pokemon`, `mine`, `bidding`, `bid`, `unbid`, `live`, `ended`, `settled`, `shiny`, `shadow` |
 | `sort:`, `order:`             | `name`, `seller`, `price`, `start`, `ends`, `listed`, `level`                                       |
 
-What the board writes for itself, the lot's name and the seller's, is handed
-to the search as context rather than derived twice, along with the escrowed
-pokemon and where the reader stands on the lot. A lot whose pokemon has not
-loaded yet answers nothing about it, and stays on the board rather than
-disappearing while it is being read.
-
-## What a bid does
-
-`placeBid` runs in one transaction:
-
-1. The auction is read and checked with `canBid`.
-2. The bidder's balance is read, and the outbid bidder's alongside it. They are
-   never the same row, since nobody outbids themselves, so the two move
-   independently.
-3. The outbid bid is refunded, the new one is taken, `bid` and `bidder` are
-   written, and the bidder's own `bids` row is rewritten with what they just
-   named.
-
-A bid the balance cannot cover changes nothing and resolves null.
-
-`canBid` refuses three things:
-
-- **The seller**, who would be selling to themselves.
-- **The standing bidder**, until somebody outbids them. They are already winning,
-  so bidding again could only cost them gold, and it would let a lot be walked up
-  to a price nobody else ever offered. Once outbid they may bid again, against a
-  floor that has moved.
-- **Anything under `nextBid`**: the asking price while the lot is untouched, and
-  the standing bid plus the seller's increment after that.
-
-There is **no ceiling**. The increment is the floor on a raise rather than its
-size, so a bidder may name anything from `nextBid` up to what they are holding,
-and a lot worth having can be put out of reach in one bid rather than a hundred.
-The board's input opens at `nextBid` and accepts anything above it; the balance is
-the real limit, and it is checked where the gold moves.
-
-## `bids`
-
-| Column    | Type     | Notes                                     |
-| --------- | -------- | ----------------------------------------- |
-| `player`  | `uuid`   | The bidder                                |
-| `auction` | `text`   | The lot bid on                            |
-| `amount`  | `bigint` | The last amount they named for it         |
-| `bid_at`  | `bigint` | When they last bid, on the server's clock |
-
-The pair is the primary key, so bidding again rewrites rather than appending.
-
-The auction keeps only the bid that is standing. That is all a lot needs in order
-to settle, who to hand it to and what to pay the seller, and a lot that kept
-everybody who ever bid on it would grow a list nothing settling it ever reads.
-
-A player's history is a different question asked by a different reader, so it
-lives on their side: one row per lot they have bid on, rewritten with the last
-amount they named. Being outbid does not touch it, which is the point: it is how
-a player finds the lot they were outbid on an hour ago.
-
-Written only by the server, in the same transaction as the bid it records, and
-private to the owning uid.
-
-`listBidHistory` reads these newest first and joins the lots they name.
-`getBidState` then says where the player stands, read off the lot itself:
-
-| State       | When                                             |
-| ----------- | ------------------------------------------------ |
-| `Leading`   | They are the standing bidder, bidding still open |
-| `Outbid`    | Somebody else is, and bidding is still open      |
-| `Won`       | Bidding closed with them in front, uncollected   |
-| `Lost`      | Bidding closed with somebody else in front       |
-| `Collected` | Won and claimed                                  |
-
-`Outbid` is the one state a player can still do something about, and `canRebid`
-is that question. The Bids panel puts a bid box on those rows, so a raise is made
-from the history rather than by finding the lot on the board again. A `Won` row
-gets a Collect button for the same reason.
-
-## Collecting
-
-Nothing happens at the instant bidding closes, because there is no job to run one,
-so the winner comes back for the lot. `claimAuction` checks `canClaim`, which is
-bidding closed, unsettled, and the caller as the last bidder, then in one
-transaction:
-
-- an **item** lot lands in the winner's stack;
-- a **catch** lot comes out of escrow: `owner` becomes the winner's uid, an
-  `Acquisition.Auction` entry is appended to its history, stamped in the new
-  owner's own zone the way a catch date is, and its `friendship` is **reset to
-  `BASE_FRIENDSHIP`**. What it walked, levelled and was groomed for belonged to
-  the seller, and a pokemon that arrived inseparable would make being loved
-  something that can be bought;
-- the seller is paid the winning bid;
-- `settled` is set, which is the claim marker: the lot is collected once and the
-  purse is paid once.
-
-## Taking a lot back
-
-An auction that closes with **no bidder** has no winner to hand anything to, so
-the lot goes back where it came from. `reclaimAuction` checks `canReclaim`, which is
-bidding closed, unsettled, nobody having bid, and the caller as the seller, then
-in one transaction returns the item to the seller's stack or the pokemon to their
-records and sets `settled`.
-
-Nothing is paid, because nothing was sold, and the catch's ownership `history`
-and `friendship` are both left alone: it did not change hands, it sat on a shelf
-for a day and came back to the same person.
-
-Reclaiming and collecting are the same handover seen from either end, and they
-share the one marker. `canClaim` needs a bidder and `canReclaim` needs none, so no
-auction can satisfy both, and `settled` stops either happening twice.
-
-Bidding closing is what unlocks it. A seller cannot take a lot back while it is
-still running: that would let a listing be pulled the moment a bid looked
-unlikely, and a board whose lots can vanish is not one anybody would bid on.
-
-## Escrow
-
-A pokemon on the block keeps its row. Its `owner` is set to **null**, which is
-nobody, and no policy matches a null owner. Every write that touches a catch asks
-whether the caller is its `owner`, and a uid is never null, so an escrowed pokemon
-is refused to the seller, the bidders and everyone else by the checks that were
-already there. It stays **readable**, which is what lets a bidder see what
-they are bidding on.
-
-Escrow always ends: the winner collects it, or, if nobody bid, the seller takes it
-back. Nothing stays ownerless once the day is up and somebody has come for it.
+What the board writes for itself, the lot's name and the seller's, is handed to
+the search as context rather than derived twice, along with the escrowed pokemon
+and where the reader stands on the lot. A lot whose pokemon has not loaded yet
+answers nothing about it, and stays on the board rather than disappearing while
+it is being read.
 
 ## What may go on the block
 
 A player runs one auction a day, so the block is the scarcest thing in the game,
-and what sits on it decides what the whole feature is for. Left open to anything,
-a day's listing goes on whatever happened to be in the bag, and the board fills
-with Potions nobody would walk to a vendor for. So it is narrowed to what a bidder
-**could not simply go and get for themselves**:
+and what sits on it decides what the whole feature is for. Left open to
+anything, a day's listing goes on whatever happened to be in the bag, and the
+board fills with Potions nobody would walk to a vendor for. So it is narrowed to
+what a bidder **could not simply go and get for themselves**:
 
 | Lot       | May be listed when                                                                     | Rule                 |
 | --------- | -------------------------------------------------------------------------------------- | -------------------- |
@@ -275,19 +161,20 @@ The prized band is deliberately below the line for items. A Bottle Cap is worth
 still something a player turns up by walking. The block is for what walking may
 never turn up at all.
 
-The four answers for a pokemon are four different reasons somebody else would want
-it:
+The four answers for a pokemon are four different reasons somebody else would
+want it:
 
-- **Perfect values** are six lucky rolls or a Golden Bottle Cap spent on them, and
-  nothing else in the game hands them over.
+- **Perfect values** are six lucky rolls or a Golden Bottle Cap spent on them,
+  and nothing else in the game hands them over.
 - **All zero** is the other end of the same coin. Six rolls landing on 0 are
-  exactly as rare as six landing on 31, a pokemon as bad as one can possibly be is
-  a curiosity, and it is the only one of the four a player **cannot manufacture**:
-  a cap raises values and never lowers them, so a blank record is found or not at
-  all, and spending a cap on one destroys the thing that made it worth having.
+  exactly as rare as six landing on 31, a pokemon as bad as one can possibly be
+  is a curiosity, and it is the only one of the four a player **cannot
+  manufacture**: a cap raises values and never lowers them, so a blank record is
+  found or not at all, and spending a cap on one destroys the thing that made it
+  worth having.
 - **Shiny** is the one thing a player cannot work towards.
-- A **special-tier species** is a legendary or a mythical, which the world stages
-  on its own schedule.
+- A **special-tier species** is a legendary or a mythical, which the world
+  stages on its own schedule.
 
 Anything else, a rare or a fully-evolved anything, a bidder can walk out and
 catch, which is what makes it not worth a day of the board.
@@ -300,9 +187,9 @@ asks again from the **stored** record before it takes the lot.
 The catch rule is also a **stored field**. `auctionable` on the catch record is
 `isAuctionableCatch` written down, so the sell picker asks
 `listCaughtMarked(player, 'auctionable')` instead of reading a whole box to find
-the few rows that qualify. See
-[The marks are fields](catches.md#auctionable-is-the-sixth-and-a-different-kind).
-The field is an index and never an authority: the picker re-checks every row it
+the few rows that qualify. See [The marks are
+fields](catch-training.md#auctionable-is-the-sixth-and-a-different-kind). The
+field is an index and never an authority: the picker re-checks every row it
 returns, and `openAuction` derives the answer from `ivs`, `shiny` and `species`
 rather than reading it.
 
@@ -320,19 +207,24 @@ transaction that would have written the listing:
 
 Unlike the eligibility rules above, these four are **shown and refused** rather
 than hidden: a player looking for one of them wants the reason. What does not
-qualify for the block at all is left out of the list, since that would be most of
-a box and a hundred greyed rows say nothing.
+qualify for the block at all is left out of the list, since that would be most
+of a box and a hundred greyed rows say nothing.
 
-The egg rule is about what an auction _is_. A catch lot is readable precisely so a
-bidder can look at what they are bidding on; an egg shows nothing but the word
-"Egg" to everyone except the person selling it, who has known what is inside since
-the moment it was found.
+The egg rule is about what an auction _is_. A catch lot is readable precisely so
+a bidder can look at what they are bidding on; an egg shows nothing but the word
+"Egg" to everyone except the person selling it, who has known what is inside
+since the moment it was found.
 
-The buddy rule replaces something the code used to do: listing the buddy cleared
-the profile's `buddy` in the same transaction, the way a release does. Refusing is
-better than tidying up afterwards, because a lot cannot be taken off the block, so
-a mis-click sold the pokemon the player walks with. Sending it home first is one
-press, and it makes the sale deliberate.
+The buddy rule refuses rather than tidies up afterwards. A lot cannot be taken
+off the block, so a mis-click would sell the pokemon the player walks with.
+Sending it home first is one press, and it makes the sale deliberate.
 
-Whatever the pokemon is holding goes with it. The item was handed to the pokemon,
-and the pokemon is what is being sold.
+Whatever the pokemon is holding goes with it. The item was handed to the
+pokemon, and the pokemon is what is being sold.
+
+## See also
+
+- [Auction bids](auction-bids.md), bidding, collecting and escrow
+- [Catches](catches.md), the records a catch lot is taken from
+- [The item pool](../mechanics/items.md#the-item-pool), the bands an item lot is
+  drawn from

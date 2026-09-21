@@ -785,10 +785,19 @@ describe('the family candies that ship', () => {
   /**
    * A candy is painted from the colours of its family's own sheet, so a
    * line the sprite collection has not drawn has no candy to paint.
-   * Blitzle, Zebstrika and Throh are all undrawn, which is the same gap
-   * that keeps each of them out of the spawn pools
+   * Each of these is undrawn at its first stage, which is the same gap
+   * that keeps every one of them out of the spawn pools. Tirtouga is
+   * also why the Cover Fossil is held back
    */
-  const UNDRAWN = new Set<Families>([Families.Blitzle, Families.Throh]);
+  const UNDRAWN = new Set<Families>([
+    Families.Blitzle,
+    Families.Throh,
+    Families.Tirtouga,
+    Families.Frillish,
+    Families.Shelmet,
+    Families.Stunfisk,
+    Families.Bouffalant,
+  ]);
 
   /** Every family that should have a candy on a sheet. */
   function candyFamilies(): Families[] {

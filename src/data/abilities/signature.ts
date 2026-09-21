@@ -1927,4 +1927,60 @@ export default function registerSignatureAbilities(): void {
     description:
       'Each move it lands gives it +1 Evasion, up to +2. Any hit on it takes all of it back.',
   });
+
+  /**
+   * The region's two fossils, designed as a pair: each refuses the end
+   * once, the way the rock refused to let go of it
+   */
+  registerSignature(Families.Tirtouga, Abilities.DeepHold, {
+    name: 'Deep Hold',
+    description:
+      'The first hit that would take it under 1/2 HP leaves it there, and raises its Defense 2 stages.',
+  });
+
+  registerSignature(Families.Archen, Abilities.Featherstone, {
+    name: 'Featherstone',
+    description: 'The first time it falls under 1/2 HP, it heals 1/4 of its HP. Once a battle.',
+  });
+
+  /**
+   * The pair that trade shells: one takes armour off what it hits, the
+   * other refuses to give any up
+   */
+  registerSignature(Families.Karrablast, Abilities.ShellThief, {
+    name: 'Shell Thief',
+    description:
+      'The first physical move it lands on each enemy takes 1 Defense stage off them and puts it on itself.',
+  });
+
+  registerSignature(Families.Shelmet, Abilities.Barehide, {
+    name: 'Barehide',
+    description:
+      'Refuses every Defense drop from anybody else, and gains +1 Special Defense instead.',
+  });
+
+  /** The lure that is still working after it is gone */
+  registerSignature(Families.Foongus, Abilities.Sporeburst, {
+    name: 'Sporeburst',
+    description: 'Fainting casts Stun Spore at every enemy on the field.',
+  });
+
+  /** What the water is like around something that drags ships down */
+  registerSignature(Families.Frillish, Abilities.StillWater, {
+    name: 'Still Water',
+    description:
+      'While it stands, every enemy takes 1.2x as long to cast. Cooldowns are untouched.',
+  });
+
+  /** The mud that bites back */
+  registerSignature(Families.Stunfisk, Abilities.Shockmud, {
+    name: 'Shockmud',
+    description: 'Its Ground moves hit 1.2x and paralyse 20% of the time.',
+  });
+
+  /** A herd is worth more than the bull in front of it */
+  registerSignature(Families.Bouffalant, Abilities.HerdBond, {
+    name: 'Herd Bond',
+    description: 'Attack rises 10% for each other pokemon on its team still standing.',
+  });
 }

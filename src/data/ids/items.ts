@@ -946,6 +946,15 @@ export const enum Items {
    * the same reason: nothing in the mainline calls a Genesect
    */
   ColressMachine = 441,
+
+  /**
+   * The rocks the two Unova fossils are still inside. Both are held
+   * back with the lines themselves: reviving one is the only way to
+   * the species in it, so shipping the rock would be shipping the
+   * pokemon
+   */
+  CoverFossil = 442,
+  PlumeFossil = 443,
 }
 
 /**

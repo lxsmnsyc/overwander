@@ -58,8 +58,9 @@ describe('which pool a species may stand in', () => {
   });
 
   it('gives every Water type a place in the water', () => {
-    // Palkia is Water by type and lives nowhere near it, and Wash Rotom
-    // is only ever reached through a Catalog
+    // Palkia is Water by type and lives nowhere near it, Wash Rotom is
+    // only ever reached through a Catalog, and Volcanion carries its
+    // water in a boiler on a mountain
     const dry = new Set<Species>();
 
     for (const species of getRegisteredSpecies()) {
@@ -73,7 +74,7 @@ describe('which pool a species may stand in', () => {
         dry.add(species);
       }
     }
-    expect(dry).toEqual(new Set([Species.Palkia, Species.RotomWash]));
+    expect(dry).toEqual(new Set([Species.Palkia, Species.RotomWash, Species.Volcanion]));
   });
 
   it('writes every pool for the surface it stands on', () => {

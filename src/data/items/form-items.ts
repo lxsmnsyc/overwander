@@ -68,6 +68,7 @@ export const FORM_ITEMS = new Map<Items, Species[]>([
   [Items.LustrousOrb, [Species.PalkiaOrigin]],
   [Items.GriseousOrb, [Species.GiratinaOrigin]],
   [Items.Gracidea, [Species.ShayminSky]],
+  [Items.PrisonBottle, [Species.HoopaUnbound]],
   // The seventeen Plates, each of which is already a type booster.
   // Holding one paints an Arceus the type it lifts, which is what the
   // mainline calls Multitype: there is no battle code behind it, only
@@ -128,6 +129,7 @@ const DESCRIPTIONS: { [key in Items]?: string } = {
     'A Giratina holding it fights in its other shape, which also brings Levitate.',
   [Items.Gracidea]:
     'A Shaymin holding it fights in its other shape, which also brings Serene Grace.',
+  [Items.PrisonBottle]: 'A Hoopa holding it fights unbound, with its rings let out.',
 };
 
 export default function registerFormItems(): void {
@@ -167,6 +169,17 @@ export default function registerFormItems(): void {
     flags: ItemFlags.Usable,
     buy: 0,
     sell: SPLICERS_PRICE / 2,
+  });
+
+  registerItem(Items.PrisonBottle, {
+    name: 'Prison Bottle',
+    description: DESCRIPTIONS[Items.PrisonBottle] ?? '',
+    type: ItemTypes.Held,
+    // Drawn on the key sheet, which is where the collection packed it
+    icon: 'key/prison-bottle',
+    flags: ItemFlags.Holdable,
+    buy: 0,
+    sell: ORB_PRICE / 2,
   });
 
   registerItem(Items.Gracidea, {

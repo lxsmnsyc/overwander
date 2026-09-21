@@ -859,6 +859,9 @@ export const enum Species {
   Xerneas = 716,
   Yveltal = 717,
   Zygarde = 718,
+  Diancie = 719,
+  Hoopa = 720,
+  Volcanion = 721,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
@@ -903,6 +906,9 @@ export const enum Species {
 
   /** The female of the line, who evolves out of a female Espurr */
   MeowsticFemale = 1067801,
+
+  /** The shape the rings let out when the bottle is opened */
+  HoopaUnbound = 1072001,
 
   /** The share of itself a Zygarde has gathered, half of it at the base */
   ZygardeTenPercent = 1071801,
@@ -1208,6 +1214,9 @@ export const FLORGES_FORMS: Species[] = [
   Species.FlorgesBlue,
   Species.FlorgesWhite,
 ];
+
+/** The two Hoopa, bound first: the rings in, then the rings out */
+export const HOOPA_FORMS: Species[] = [Species.Hoopa, Species.HoopaUnbound];
 
 /** What a Zygarde has gathered of itself, half first, then a tenth, then all */
 export const ZYGARDE_FORMS: Species[] = [

@@ -958,6 +958,12 @@ export const enum Items {
   /** The two Kalos fossils, which are shipped with their lines */
   JawFossil = 444,
   SailFossil = 445,
+  /** The relics Kalos's three mythicals leave behind them */
+  HeartDiamond = 446,
+  SealedRing = 447,
+  SteamValve = 448,
+  /** What lets the rings out, and puts them back */
+  PrisonBottle = 449,
 }
 
 /**

@@ -309,6 +309,7 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LustrousOrb, weight: 3 },
     { item: Items.GriseousOrb, weight: 3 },
     { item: Items.Gracidea, weight: 3 },
+    { item: Items.PrisonBottle, weight: 3 },
     // Three purses instead of one, for good, and nothing sells one.
     // Here rather than in rare so that parting with it is asked about
     // twice
@@ -357,6 +358,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LibertyPass, weight: 6 },
     { item: Items.MusicBox, weight: 6 },
     { item: Items.ColressMachine, weight: 6 },
+    { item: Items.HeartDiamond, weight: 6 },
+    { item: Items.SealedRing, weight: 6 },
+    { item: Items.SteamValve, weight: 6 },
     // Six stats made perfect at once. Nothing else undoes a bad roll,
     // so it belongs with the things gold cannot buy
     { item: Items.GoldenBottleCap, weight: 8 },

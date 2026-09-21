@@ -198,6 +198,12 @@ const enum Lairs {
   FrostCavern = 47,
   /** The cave the cells gather in, which is where Kalos finds it */
   TerminusCave = 48,
+  /** The queen's cave of diamonds. A mythical's, so it is never staged */
+  DiamondDomain = 49,
+  /** The desert ruin the rings were shut into */
+  DaharaRuins = 50,
+  /** The mountain shelf the steam machine keeps to */
+  NebelPlateau = 51,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -250,6 +256,9 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.WindingWoods]: 'Winding Woods',
   [Lairs.FrostCavern]: 'Frost Cavern',
   [Lairs.TerminusCave]: 'Terminus Cave',
+  [Lairs.DiamondDomain]: 'Diamond Domain',
+  [Lairs.DaharaRuins]: 'Dahara Ruins',
+  [Lairs.NebelPlateau]: 'Nebel Plateau',
 };
 
 /**
@@ -309,6 +318,9 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.WindingWoods]: [Species.Xerneas],
   [Lairs.FrostCavern]: [Species.Yveltal],
   [Lairs.TerminusCave]: [Species.Zygarde, Species.ZygardeTenPercent],
+  [Lairs.DiamondDomain]: [Species.Diancie],
+  [Lairs.DaharaRuins]: [Species.Hoopa],
+  [Lairs.NebelPlateau]: [Species.Volcanion],
 };
 
 /**
@@ -364,6 +376,9 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.WindingWoods,
   Lairs.FrostCavern,
   Lairs.TerminusCave,
+  Lairs.DiamondDomain,
+  Lairs.DaharaRuins,
+  Lairs.NebelPlateau,
 ];
 
 /**

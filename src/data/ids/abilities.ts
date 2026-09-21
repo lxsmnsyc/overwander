@@ -974,6 +974,12 @@ const enum Abilities {
   Quickening = 200359,
   Withering = 200360,
   EvenKeel = 200361,
+  // Diancie
+  Regalia = 200362,
+  // Hoopa
+  Ringback = 200363,
+  // Volcanion
+  Boiler = 200364,
 }
 
 export default Abilities;

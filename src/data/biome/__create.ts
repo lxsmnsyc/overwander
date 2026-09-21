@@ -653,6 +653,10 @@ const MYTHICAL_SPECIES = new Set<Species>([
   // a fight rather than owned, the way Shaymin Sky is
   Species.Meloetta,
   Species.Genesect,
+  Species.Diancie,
+  // The bound shape only: unbound is worn while the bottle is held
+  Species.Hoopa,
+  Species.Volcanion,
 ]);
 
 /**

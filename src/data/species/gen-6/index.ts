@@ -29,6 +29,7 @@ import registerDedenneSpecies from './dedenne';
 import registerCarbinkSpecies from './carbink';
 import registerSylveonSpecies from './sylveon';
 import registerKalosTrioSpecies from './kalos-trio';
+import registerKalosMythicalSpecies from './kalos-mythicals';
 
 /** Kalos, as far as it is written */
 export default function registerGen6Species(): void {
@@ -59,6 +60,7 @@ export default function registerGen6Species(): void {
   registerCarbinkSpecies();
   registerSylveonSpecies();
   registerKalosTrioSpecies();
+  registerKalosMythicalSpecies();
   registerGoomySpecies();
   registerBergmiteSpecies();
   registerNoibatSpecies();

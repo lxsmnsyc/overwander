@@ -73,6 +73,11 @@ export default function registerGen6Abilities(): void {
     name: 'Earth Eater',
     description: 'Ground moves deal it nothing and heal it 1/4 of its HP instead.',
   });
+  // Volcanion
+  registerAbility(Abilities.SteamEngine, {
+    name: 'Steam Engine',
+    description: 'A Fire or Water move landing on it raises its Speed 6 stages.',
+  });
   // Swirlix
   registerAbility(Abilities.SweetVeil, {
     name: 'Sweet Veil',

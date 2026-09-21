@@ -548,8 +548,10 @@ describe('biome data', () => {
     const pool = getSpawnPool(Biome.Mountain, TimeOfDay.Night);
     const rolls = (values: number[]) => () => values.shift() ?? 0.999;
 
-    // A sub-1/4096 band roll lands in the special section
-    expect(getSpawnRarity(pickSpawn(pool, rolls([0, 0]))!)).toBe(SpawnRarity.Special);
+    // The rarest roll of all lands on the mythical the biome keeps,
+    // and the one under it in the special section
+    expect(getSpawnRarity(pickSpawn(pool, rolls([0, 0]))!)).toBe(SpawnRarity.Mythical);
+    expect(getSpawnRarity(pickSpawn(pool, rolls([1.5 / 4096, 0]))!)).toBe(SpawnRarity.Special);
 
     // Then the ladder down: prized, the two grown bands, the middle
     // of a line, and the first stages

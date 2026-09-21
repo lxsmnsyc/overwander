@@ -13441,6 +13441,30 @@
         "bytes": 59934
       }
     },
+    "public/sprites/pokemon/kalos/1072001/regular.png": {
+      "digest": "9d5875dbae4b1d08",
+      "bytes": 14880,
+      "width": 243,
+      "height": 420,
+      "compact": {
+        "at": "2026-09-21T14:25:13Z",
+        "as": "already compact",
+        "was": 14880,
+        "bytes": 14880
+      }
+    },
+    "public/sprites/pokemon/kalos/1072001/shiny.png": {
+      "digest": "fbfc443a273b7a1f",
+      "bytes": 14890,
+      "width": 243,
+      "height": 420,
+      "compact": {
+        "at": "2026-09-21T14:25:13Z",
+        "as": "already compact",
+        "was": 14890,
+        "bytes": 14890
+      }
+    },
     "public/sprites/pokemon/kalos/650/regular.png": {
       "digest": "896bb67e0fd50c1c",
       "bytes": 3703,
@@ -15023,6 +15047,78 @@
         "as": "already compact",
         "was": 19581,
         "bytes": 19581
+      }
+    },
+    "public/sprites/pokemon/kalos/719/regular.png": {
+      "digest": "919e878345529256",
+      "bytes": 5356,
+      "width": 135,
+      "height": 180,
+      "compact": {
+        "at": "2026-09-21T14:25:13Z",
+        "as": "already compact",
+        "was": 5356,
+        "bytes": 5356
+      }
+    },
+    "public/sprites/pokemon/kalos/719/shiny.png": {
+      "digest": "90749d06cf8b53b8",
+      "bytes": 5364,
+      "width": 135,
+      "height": 180,
+      "compact": {
+        "at": "2026-09-21T14:25:13Z",
+        "as": "already compact",
+        "was": 5364,
+        "bytes": 5364
+      }
+    },
+    "public/sprites/pokemon/kalos/720/regular.png": {
+      "digest": "cf82679d79e038c8",
+      "bytes": 6749,
+      "width": 160,
+      "height": 221,
+      "compact": {
+        "at": "2026-09-21T14:25:13Z",
+        "as": "already compact",
+        "was": 6749,
+        "bytes": 6749
+      }
+    },
+    "public/sprites/pokemon/kalos/720/shiny.png": {
+      "digest": "c5b49648af724a55",
+      "bytes": 6629,
+      "width": 160,
+      "height": 221,
+      "compact": {
+        "at": "2026-09-21T14:25:13Z",
+        "as": "already compact",
+        "was": 6629,
+        "bytes": 6629
+      }
+    },
+    "public/sprites/pokemon/kalos/721/regular.png": {
+      "digest": "7b7b6901c7a0b19b",
+      "bytes": 17060,
+      "width": 412,
+      "height": 314,
+      "compact": {
+        "at": "2026-09-21T14:25:13Z",
+        "as": "already compact",
+        "was": 17060,
+        "bytes": 17060
+      }
+    },
+    "public/sprites/pokemon/kalos/721/shiny.png": {
+      "digest": "9f04e07a3415acfc",
+      "bytes": 17060,
+      "width": 412,
+      "height": 314,
+      "compact": {
+        "at": "2026-09-21T14:25:13Z",
+        "as": "already compact",
+        "was": 17060,
+        "bytes": 17060
       }
     },
     "public/sprites/pokemon/kanto/1/regular.png": {
@@ -26798,15 +26894,15 @@
       }
     },
     "public/sprites/ui/candies/kalos/image.png": {
-      "digest": "84537398c5f8ebc1",
-      "bytes": 5044,
+      "digest": "edf7101da897c68f",
+      "bytes": 5520,
       "width": 96,
       "height": 96,
       "compact": {
-        "at": "2026-09-21T13:59:38Z",
+        "at": "2026-09-21T14:25:13Z",
         "as": "already compact",
-        "was": 5044,
-        "bytes": 5044
+        "was": 5520,
+        "bytes": 5520
       }
     },
     "public/sprites/ui/candies/kanto/image.png": {

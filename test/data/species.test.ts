@@ -44,6 +44,7 @@ import {
   GENESECT_FORMS,
   GIRATINA_FORMS,
   GOURGEIST_FORMS,
+  HOOPA_FORMS,
   KYUREM_FORMS,
   LANDORUS_FORMS,
   MELOETTA_FORMS,
@@ -407,6 +408,7 @@ describe('species forms', () => {
       ...MEOWSTIC_FORMS.slice(1),
       ...PUMPKABOO_FORMS.slice(1),
       ...ZYGARDE_FORMS.slice(1),
+      ...HOOPA_FORMS.slice(1),
       ...GOURGEIST_FORMS.slice(1),
       ...SAWSBUCK_FORMS.slice(1),
       // The true shadows, which are forms of the birds they are the

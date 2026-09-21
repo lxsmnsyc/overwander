@@ -72,6 +72,9 @@ const BROKEN_AURA_SCALE = 3 / 4;
 /** How much of itself a Zygarde has to lose before the rest gathers */
 const POWER_CONSTRUCT_THRESHOLD = 1 / 2;
 
+/** What a struck kettle gains, all at once */
+const STEAM_ENGINE_STAGES = 6;
+
 /** What Triage moves a heal ahead by, which here is cast time */
 const TRIAGE_PRIORITY = 3;
 
@@ -373,6 +376,36 @@ const setupAbilities = [
 
       unit.triggerAbility(Abilities.PowerConstruct);
       unit.setSpecies(Species.ZygardeComplete);
+    }),
+  ),
+
+  // Volcanion: a kettle struck by fire or water jumps
+  createAbility(Abilities.SteamEngine, (battle) =>
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      const cause = event.cause;
+
+      if (
+        !event.success ||
+        (event.flags & DamageFlags.Indirect) !== 0 ||
+        cause.type !== EffectType.Move ||
+        cause.unit === event.target ||
+        !event.target.hasAbility(Abilities.SteamEngine)
+      ) {
+        return;
+      }
+
+      const type = cause.unit.checkMoveType(cause.move, unitTarget(event.target));
+
+      if (type !== Types.Fire && type !== Types.Water) {
+        return;
+      }
+
+      event.target.triggerAbility(Abilities.SteamEngine);
+      event.target.addStage(Stages.Speed, STEAM_ENGINE_STAGES, {
+        type: EffectType.Ability,
+        ability: Abilities.SteamEngine,
+        unit: event.target,
+      });
     }),
   ),
 

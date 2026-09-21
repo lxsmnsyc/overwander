@@ -453,3 +453,24 @@ describe('Earth Eater', () => {
     expect(swarm.health).toBeGreaterThan(whole / 2);
   });
 });
+
+describe('Steam Engine', () => {
+  it('jumps when fire or water lands on it, and not otherwise', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const boiler = createUnit(battle, teamA, [Types.Fire, Types.Water]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    boiler.addAbility(Abilities.SteamEngine);
+    boiler.enter();
+    foe.enter();
+
+    dealDamage(foe, boiler, Moves.Pound, 10, Types.Normal, MoveCategories.Physical);
+
+    expect(boiler.stages[Stages.Speed]).toBe(0);
+
+    dealDamage(foe, boiler, Moves.Scald, 10, Types.Water, MoveCategories.Special);
+
+    expect(boiler.stages[Stages.Speed]).toBe(6);
+  });
+});

@@ -363,6 +363,9 @@ const enum Families {
   Xerneas = 358,
   Yveltal = 359,
   Zygarde = 360,
+  Diancie = 361,
+  Hoopa = 362,
+  Volcanion = 363,
 }
 
 export default Families;
@@ -743,4 +746,7 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Xerneas]: 'Xerneas',
   [Families.Yveltal]: 'Yveltal',
   [Families.Zygarde]: 'Zygarde',
+  [Families.Diancie]: 'Diancie',
+  [Families.Hoopa]: 'Hoopa',
+  [Families.Volcanion]: 'Volcanion',
 };

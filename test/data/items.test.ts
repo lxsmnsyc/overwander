@@ -1328,6 +1328,9 @@ describe('item data', () => {
       Items.LibertyPass,
       Items.MusicBox,
       Items.ColressMachine,
+      Items.HeartDiamond,
+      Items.SealedRing,
+      Items.SteamValve,
       Items.GoldenBottleCap,
       // The one thing in the band that is only gold, and there because
       // it is more of it than anything else in the game pays

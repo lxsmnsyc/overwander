@@ -4,6 +4,7 @@ import EggGroups from '../../ids/egg-groups';
 import { Species } from '../../ids/species';
 import { getRegisteredSpecies, getSpeciesData, isBaseForm } from '../../species';
 import { EVERY_LAIR, getLairResidents } from '../lair';
+import canMeetSpecies from '../reach';
 import { EliteMember } from './elite';
 import { GYM_LEADER_TYPES, GymLeader } from './gym-leaders';
 
@@ -222,6 +223,11 @@ function inExpertPool(
   named: Set<Species>,
 ): boolean {
   if (species === Species.Egg || LAIR_SPECIES.has(species) || !isBaseForm(species)) {
+    return false;
+  }
+  // Nothing the world has nowhere to put: a line written but kept out
+  // of every pool is not something a player could be walking either
+  if (!canMeetSpecies(species)) {
     return false;
   }
   // Naming beats the band as well as the type rules. Bruno's Onix

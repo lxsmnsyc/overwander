@@ -18,6 +18,7 @@ import AleaRNG from '../../src/core/alea';
 import { Stats } from '../../src/data/constants/stats';
 import { getExpertHeldItems } from '../../src/data/items/expert-loadout';
 import { TYPE_BOOSTERS } from '../../src/data/items/type-boosters';
+import canMeetSpecies from '../../src/data/overworld/reach';
 import {
   getLearnableMoves,
   getSpeciesAbilityPools,
@@ -275,6 +276,37 @@ describe('type experts', () => {
     // Jasmine's steel is Johto's, and she is seated in countries a
     // Kanto-only roster could only answer with Magneton
     expect(getGymLeaderRoster(GymLeader.Jasmine)).toContain(Species.Steelix);
+  });
+
+  it('leaves out what the world has nowhere to put yet', () => {
+    // A line is written before it is staged: the art is unfinished,
+    // or the counterpart it waits on does not exist. Nobody can meet
+    // one, so nobody fields one either
+    for (const species of getWorldExpertPool({ types: [] })) {
+      expect(canMeetSpecies(species), getSpeciesData(species).name).toBe(true);
+    }
+    for (const leader of GYM_LEADERS) {
+      for (const species of getGymLeaderRoster(leader)) {
+        expect(canMeetSpecies(species), getSpeciesData(species).name).toBe(true);
+      }
+    }
+    for (const member of ELITE_MEMBERS) {
+      for (const species of getEliteMemberRoster(member)) {
+        expect(canMeetSpecies(species), getSpeciesData(species).name).toBe(true);
+      }
+    }
+
+    // What the rule reads: a fossil is brought back rather than met, a
+    // honey tree is where a Heracross is, and a Phione hatches out of
+    // a Manaphy and nowhere else
+    expect(canMeetSpecies(Species.Kabutops)).toBe(true);
+    expect(canMeetSpecies(Species.Heracross)).toBe(true);
+    expect(canMeetSpecies(Species.Phione)).toBe(true);
+    // And the four Unova still waiting on their sprites
+    expect(canMeetSpecies(Species.Throh)).toBe(false);
+    expect(canMeetSpecies(Species.Sawk)).toBe(false);
+    expect(canMeetSpecies(Species.Zebstrika)).toBe(false);
+    expect(canMeetSpecies(Species.Unfezant)).toBe(false);
   });
 
   it('gives every leader a signature of their own type', () => {

@@ -1,7 +1,9 @@
 import { CHUNK_CELLS, ORTHOGONAL, worldCell } from './grid';
 import { isHillside, isSurfaceWater } from './surface';
 import { portalCellIn } from './town';
-import { isCaveFloor, isRock } from './fields';
+import { caveWaterTable, isCaveFloor, isCaveWaterway, isRock, isSealedVolcano } from './fields';
+import { levelAt } from './terrace';
+import poolsWhere, { remembered } from './pooling';
 import type Biome from '../data/ids/biome';
 import { MOUTH_GAP, MOUTH_SEARCH } from '../data/overworld/cave';
 import type World from './world';
@@ -333,6 +335,116 @@ export function isCaveOpen(world: World, x: number, y: number): boolean {
   }
   held.set(key, block);
   return block[(y - blockY * BLOCK_CELLS) * BLOCK_CELLS + (x - blockX * BLOCK_CELLS)] === 1;
+}
+
+/**
+ * How far a way in keeps the water off, in cells.
+ *
+ * A player who steps down into a river is a player who has to swim
+ * before they have seen where they are. One cell each way is a landing
+ * to stand on and no more: any wider and a river passing a mouth was
+ * cut in half by it
+ */
+const MOUTH_DRY = 1;
+
+/** Whether a way between the layers is within `MOUTH_DRY` cells of here */
+function nearMouth(world: World, x: number, y: number): boolean {
+  const chunkX = Math.floor(x / CHUNK_CELLS);
+  const chunkY = Math.floor(y / CHUNK_CELLS);
+
+  // The mouth nearest a cell may be staged by the chunk next door, so
+  // the ring around this one is asked as well
+  for (let dy = -1; dy <= 1; dy += 1) {
+    for (let dx = -1; dx <= 1; dx += 1) {
+      const cell = caveMouthCellIn(world, chunkX + dx, chunkY + dy);
+
+      if (cell == null) {
+        continue;
+      }
+      const mouthX = worldCell(chunkX + dx, cell % CHUNK_CELLS);
+      const mouthY = worldCell(chunkY + dy, Math.floor(cell / CHUNK_CELLS));
+
+      if (Math.abs(mouthX - x) <= MOUTH_DRY && Math.abs(mouthY - y) <= MOUTH_DRY) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Whether the waterway's water covers this cell.
+ *
+ * The cut itself and the cell either side of it, which is the same
+ * widening the floor gets: a waterway is water from wall to wall, so
+ * there is no dry ledge to walk along beside it
+ */
+function underWaterway(world: World, x: number, y: number): boolean {
+  if (isCaveWaterway(world, x, y)) {
+    return true;
+  }
+  for (const [dx, dy] of ORTHOGONAL) {
+    if (isCaveWaterway(world, x + dx, y + dy)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Whether the fields would wet this cell of cave: open floor the rock
+ * is holding water in, away from the ways in and out.
+ *
+ * Either it is a waterway, which is water by definition, or it lies at
+ * or below the water table in a wet stretch of rock, which is what
+ * fills a low chamber to its brim
+ */
+const isCaveWetField = remembered((world: World, x: number, y: number): boolean => {
+  if (!isCaveOpen(world, x, y) || nearMouth(world, x, y)) {
+    return false;
+  }
+  // A cave under a crater holds lava, and lava keeps away from the
+  // border the way it does above ground
+  if (!isSealedVolcano(world, x, y, world.getCellBiome(x, y))) {
+    return false;
+  }
+  const table = caveWaterTable(world, x, y);
+
+  return table >= 0 && levelAt(world, x, y) <= table;
+});
+
+/**
+ * Whether a waterway's own water runs here.
+ *
+ * It is not asked to pool: a channel is water because the water cut
+ * it, and holding it to the rules a lake keeps broke it into ponds
+ * wherever it narrowed or stepped. A river is allowed to run downhill
+ */
+const isChannel = remembered(
+  (world: World, x: number, y: number): boolean =>
+    isCaveOpen(world, x, y) &&
+    underWaterway(world, x, y) &&
+    !nearMouth(world, x, y) &&
+    isSealedVolcano(world, x, y, world.getCellBiome(x, y)),
+);
+
+/**
+ * Whether a cave's floor is under water here: the underground rivers
+ * and the aquifers, standing under the same rules a lake does
+ */
+const standsInCave = poolsWhere(
+  isCaveWetField,
+  // The rock itself. A chamber standing over lower stone is a chamber
+  // with a wall round it, not a pool about to pour over a cliff
+  (world, x, y) => !isCaveOpen(world, x, y),
+);
+
+/**
+ * Whether a cave's floor is under water here: the channels the water
+ * cut for itself, and whatever the water table has flooded
+ */
+export function isCaveWater(world: World, x: number, y: number): boolean {
+  return isChannel(world, x, y) || standsInCave(world, x, y);
 }
 
 /** A way out, and the chunk it was found in */

@@ -1,8 +1,13 @@
-import { isGrownSpecies } from '../../biome';
 import { Types } from '../../constants/types';
 import EggGroups from '../../ids/egg-groups';
-import { Species } from '../../ids/species';
-import { getRegisteredSpecies, getSpeciesData, isBaseForm } from '../../species';
+import { Species, getBaseFormSpecies } from '../../ids/species';
+import {
+  getGrowthRoads,
+  getRegisteredSpecies,
+  getSpeciesData,
+  isCosmeticForm,
+  isWornForm,
+} from '../../species';
 import { EVERY_LAIR, getLairResidents } from '../lair';
 import canMeetSpecies from '../reach';
 import { EliteMember } from './elite';
@@ -222,7 +227,14 @@ function inExpertPool(
   groups: Set<EggGroups>,
   named: Set<Species>,
 ): boolean {
-  if (species === Species.Egg || LAIR_SPECIES.has(species) || !isBaseForm(species)) {
+  // A worn shape is nobody's to walk with; a rearrangement that is
+  // kept, such as a Rotom in an appliance, is owned like anything else
+  if (
+    species === Species.Egg ||
+    LAIR_SPECIES.has(getBaseFormSpecies(species)) ||
+    isWornForm(species) ||
+    isCosmeticForm(species)
+  ) {
     return false;
   }
   // Nothing the world has nowhere to put: a line written but kept out
@@ -236,7 +248,10 @@ function inExpertPool(
   if (named.has(species)) {
     return true;
   }
-  if (!isGrownSpecies(species)) {
+  // Grown as its line goes, with a rearrangement into another of its
+  // own shapes left out: an appliance is a Rotom's address rather than
+  // a stage it is waiting to leave
+  if (getGrowthRoads(species).length > 0) {
     return false;
   }
   // An expert with no specialty takes the band whole

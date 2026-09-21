@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import registerBiomeSpawns, { isGrownSpecies } from '../../src/data/biome';
+import registerBiomeSpawns from '../../src/data/biome';
 import registerAbilities from '../../src/data/abilities';
 import Abilities from '../../src/data/ids/abilities';
 import {
@@ -11,7 +11,7 @@ import {
 import Biome, { isOpenSea } from '../../src/data/ids/biome';
 import { Items, getMachineMove } from '../../src/data/ids/items';
 import { MoveCategories, Moves } from '../../src/data/ids/moves';
-import { Species } from '../../src/data/ids/species';
+import { Species, getBaseFormSpecies } from '../../src/data/ids/species';
 import registerItems, { getItemData } from '../../src/data/items';
 import { getMoveData, registerMoves } from '../../src/data/moves';
 import AleaRNG from '../../src/core/alea';
@@ -20,6 +20,7 @@ import { getExpertHeldItems } from '../../src/data/items/expert-loadout';
 import { TYPE_BOOSTERS } from '../../src/data/items/type-boosters';
 import canMeetSpecies from '../../src/data/overworld/reach';
 import {
+  getGrowthRoads,
   getLearnableMoves,
   getSpeciesAbilityPools,
   getSpeciesData,
@@ -244,9 +245,11 @@ describe('type experts', () => {
     const open = getWorldExpertPool({ types: [] });
 
     // What an expert fields is fully evolved, or has nowhere to
-    // evolve to until a later gen gives it one
+    // evolve to until a later gen gives it one. A Rotom counts:
+    // its roads lead to its own appliances, which is an address
+    // rather than a stage
     for (const species of open) {
-      expect(isGrownSpecies(species), getSpeciesData(species).name).toBe(true);
+      expect(getGrowthRoads(species).length, getSpeciesData(species).name).toBe(0);
     }
     const psychic = getWorldExpertPool({ types: [Types.Psychic] });
 
@@ -1203,8 +1206,13 @@ describe('type experts', () => {
     expect(getSpeciesData(Species.Gyarados).types).not.toContain(Types.Dragon);
 
     // Agatha is not a second Koga, who now sits in Johto's league
-    // with the Poison type entire: hers is the group her ghosts share
-    expect(poolOf(EliteMember.Agatha).length).toBeLessThan(poolOf(EliteMember.Koga).length);
+    // with the Poison type entire: hers is the group her ghosts
+    // share. Counted by pokemon rather than by entry, since a Rotom
+    // brings five addresses of itself to an Amorphous pool
+    const distinct = (member: EliteMember): number =>
+      new Set(poolOf(member).map(getBaseFormSpecies)).size;
+
+    expect(distinct(EliteMember.Agatha)).toBeLessThan(distinct(EliteMember.Koga));
     expect(poolOf(EliteMember.Agatha)).not.toContain(Species.Venusaur);
 
     // A name is the one thing that reaches outside the band: Bruno's
@@ -1219,7 +1227,7 @@ describe('type experts', () => {
       }
       for (const species of poolOf(member)) {
         if (!names.has(species)) {
-          expect(isGrownSpecies(species), getSpeciesData(species).name).toBe(true);
+          expect(getGrowthRoads(species).length, getSpeciesData(species).name).toBe(0);
         }
       }
     }

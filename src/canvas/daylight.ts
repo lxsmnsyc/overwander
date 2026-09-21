@@ -14,6 +14,8 @@
  */
 
 import { WORLD_MAX } from '../overworld/world';
+import type { Colour } from './gl/colour';
+import { dimmed } from './lighting';
 import type { Painter } from './gl/quad-batch';
 import { boardView } from './board';
 
@@ -110,14 +112,36 @@ export interface Ambient {
   /** The colour everything is multiplied by, and how much of it */
   shade: string;
   depth: number;
+  /**
+   * The colour everything is pulled **toward**, and how far.
+   *
+   * Multiplying is proportional: it takes the same share off every
+   * pixel, so pale sand stays pale beside a forest that has gone
+   * black, and one night reads as two. This pass is laid straight over
+   * instead, which moves both the same distance and closes the gap
+   * between them. It is what makes night night; the multiply above it
+   * only keeps the ground's own shape
+   */
+  mix: string;
+  blend: number;
   /** The colour laid over that, and how much of it */
   glow: string;
   warmth: number;
 }
 
-/** The deepest the night gets. Enough to read as night, little enough
- * that the ground under it is still a place rather than a silhouette */
-const NIGHT_DEPTH = 0.62;
+/**
+ * The deepest the multiply goes at night. Lower than the night is,
+ * because most of the night is the pass below it: this one is here to
+ * keep the ground's own light and shade rather than to put it out
+ */
+const NIGHT_DEPTH = 0.42;
+
+/**
+ * How far toward the night's colour everything is pulled once the sun
+ * is well down. Enough to bring a beach and a pine wood into the same
+ * band, little enough that the two are still telling apart
+ */
+const NIGHT_BLEND = 0.45;
 
 /**
  * How much of that is already there with the sun on the horizon.
@@ -170,6 +194,11 @@ export function getAmbient(localTime: number, latitude = 0): Ambient {
     // amber, and dusk is on the way between them
     shade: mixHex(NIGHT_SHADE, GOLDEN_SHADE, low),
     depth: Math.min(NIGHT_DEPTH, dark * NIGHT_DEPTH + low * GOLDEN_DEPTH),
+    // Only the night flattens. A low sun is a colour over the world,
+    // and a world half-painted night blue at six in the evening is an
+    // evening nobody has seen
+    mix: NIGHT_SHADE,
+    blend: dark * NIGHT_BLEND,
     // Warm at both horizons and gone by the time the sun is properly
     // up or properly down: this is the colour of a low sun, not a
     // light of its own
@@ -246,8 +275,12 @@ export function batchSkybox(
   height: number,
   localTime: number,
   latitude = 0,
+  /** What reaches the board, for a sky a lightless day has put out too */
+  light?: Colour,
 ): void {
-  const { zenith, horizon } = getSkybox(localTime, latitude);
+  const read = getSkybox(localTime, latitude);
+  const zenith = light == null ? read.zenith : dimmed(read.zenith, light);
+  const horizon = light == null ? read.horizon : dimmed(read.horizon, light);
 
   if (bands.zenith !== zenith || bands.horizon !== horizon) {
     bands.zenith = zenith;
@@ -396,7 +429,7 @@ export function paintAmbient(
 ): void {
   const ambient = getAmbient(localTime, latitude);
 
-  if (ambient.depth <= 0 && ambient.warmth <= 0) {
+  if (ambient.depth <= 0 && ambient.blend <= 0 && ambient.warmth <= 0) {
     return;
   }
   context.save();
@@ -404,6 +437,14 @@ export function paintAmbient(
     context.globalCompositeOperation = 'multiply';
     context.globalAlpha = ambient.depth;
     context.fillStyle = ambient.shade;
+    context.fillRect(0, 0, width, height);
+  }
+  if (ambient.blend > 0) {
+    // Laid straight over, which is the pass that closes the gap
+    // between a pale country and a dark one
+    context.globalCompositeOperation = 'source-over';
+    context.globalAlpha = ambient.blend;
+    context.fillStyle = ambient.mix;
     context.fillRect(0, 0, width, height);
   }
   if (ambient.warmth > 0) {
@@ -434,7 +475,7 @@ export function batchAmbient(
 ): boolean {
   const ambient = getAmbient(localTime, latitude);
 
-  if (ambient.depth <= 0 && ambient.warmth <= 0) {
+  if (ambient.depth <= 0 && ambient.blend <= 0 && ambient.warmth <= 0) {
     return false;
   }
   const box = [
@@ -446,6 +487,9 @@ export function batchAmbient(
 
   if (ambient.depth > 0) {
     batch.solid(ambient.shade, box, ambient.depth, 'multiply');
+  }
+  if (ambient.blend > 0) {
+    batch.solid(ambient.mix, box, ambient.blend, 'over');
   }
   if (ambient.warmth > 0) {
     batch.solid(ambient.glow, box, ambient.warmth, 'screen');

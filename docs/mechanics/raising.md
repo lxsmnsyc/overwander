@@ -4,10 +4,14 @@ Pokemon in Overwander do not gain experience from fighting. A pokemon grows
 because its owner spends **candy** on it, assigns its **training points**, and
 walks with it. All three are decisions rather than by-products of grinding.
 
+This page covers candy, levels, stats and keeping a party on its feet.
+Evolution, training points, friendship and moves are on
+[Training a pokemon](training.md).
+
 ## Levels and candy
 
-Candy is held **per family** rather than per species, so anything in a line feeds
-anything else in it: catching Caterpies levels a Butterfree.
+Candy is held **per family** rather than per species, so anything in a line
+feeds anything else in it: catching Caterpies levels a Butterfree.
 
 | Rule                     | Value                     |
 | ------------------------ | ------------------------- |
@@ -16,8 +20,8 @@ anything else in it: catching Caterpies levels a Butterfree.
 | Candy one level costs    | 1, or **2** for a shadow  |
 | Highest level            | 100                       |
 
-What a catch pays depends on how hard it was to meet, since a candy is a level
-and a level of a legendary is worth more work than a level of a Rattata:
+What a catch pays depends on how hard it was to meet. A candy is a level, and a
+level of a legendary is worth more work than a level of a Rattata:
 
 | What was caught                             | Candy |
 | ------------------------------------------- | ----- |
@@ -35,141 +39,34 @@ the buddy's family, so everything caught feeds the one pokemon being raised. A
 **Lucky Egg** pays the caught pokemon's family, filling out a collection faster.
 Neither stacks with the species day, which already pays four times over.
 
-A level is also a heal: the pokemon returns to full health with its statuses
+A level is also a heal. The pokemon returns to full health with its statuses
 cleared, and thinks slightly better of its trainer for it.
 
-A **Rare Candy** is the exception to the family rule: used from the bag on any
+A **Rare Candy** is the exception to the family rule. Used from the bag on any
 pokemon, it buys one level no matter what family the pokemon belongs to and no
 matter what its levels normally cost. Nothing sells them; they are prizes.
 
 Releasing a pokemon pays its family 1 candy for every 25 levels it reached,
 rounded up: 1 for anything up to level 25, and 4 for a pokemon at 76 or above.
 What comes back is the raising rather than the rarity, and it is a fraction of
-what those levels cost, so letting one go is a decision about space rather than a
+what those levels cost. Letting one go is a decision about space rather than a
 way of stocking up.
 
 ## Names
 
-A pokemon answers to its species until you name it. **Set nickname** on the catch
-sheet gives it one of up to 24 characters; clearing the box takes the name
-back off, and it goes back to being called by its kind. A name survives evolution,
-which is rather the point of giving one. A pokemon that was never named is
-called by whatever it has just become. Eggs cannot be named: nothing has been
-introduced yet.
+A pokemon answers to its species until you name it. **Set nickname** on the
+catch sheet gives it one of up to 24 characters. Clearing the box takes the name
+back off, and it goes back to being called by its kind. A name survives
+evolution, which is rather the point of giving one. A pokemon that was never
+named is called by whatever it has just become. Eggs cannot be named: nothing
+has been introduced yet.
 
 A name belongs to the trainer who gave it. A pokemon that arrives already named,
 won at auction, traded for, or handed over as a gift, keeps the name it came
-with: the entry reads **Named by its first trainer** and does nothing. One that
-arrives unnamed is yours to name, since there is nothing there to write over, and
-a pokemon that finds its way back to the trainer who named it may be renamed by
-them.
-
-## Evolution
-
-Only evolutions the game can verify are offered. The rest are never offered
-rather than being waved through.
-
-| Method                          | Supported | Notes                                                 |
-| ------------------------------- | --------- | ----------------------------------------------------- |
-| **By level**                    | Yes       | Checked against the pokemon's level                   |
-| **Using an item**               | Yes       | The stone is consumed                                 |
-| **Holding an item**             | Yes       | Held at the moment of evolving                        |
-| **By trade**                    | Yes       | A pokemon that changed hands as what it is            |
-| **By friendship**               | Yes       | The three Kanto babies ask for 220                    |
-| **By time of day**              | Yes       | An Espeon by day, an Umbreon by night                 |
-| **By one stat against another** | Yes       | A Tyrogue at level 20, its Attack against its Defense |
-| Weather, party, place           | No        | Nothing stores the answer, so it is never offered     |
-
-A **trade evolution** opens the moment a pokemon changes hands, and what it opens
-is the evolution of whatever the pokemon was at that moment. A Machoke that was
-traded is a Machamp waiting to be asked. A Machop that was traded and then grew
-into a Machoke is not, because nobody ever traded a Machoke: it wants a handover
-of its own. The mainline evolves one during the trade itself, which is a moment
-this game has nowhere to put, so changing hands opens the evolution rather than
-performing it, and it stays open until it is taken.
-
-A trade evolution that also asks for a **held item** spends it at the handover.
-An Onix traded in a Metal Coat arrives without the coat and with nothing left to
-ask for. An Onix nobody traded still has to hold one, and spends a **Linking
-Cord** as well.
-
-An **Everstone** refuses every evolution while the pokemon holds it. It is not
-held back from anything else: it still levels, learns and fights.
-
-Evolving preserves the individual's proportions, so a pokemon that was large for
-its species stays large for its new one.
-
-## Training
-
-Training points arrive with levels rather than from fighting, and the owner
-decides where they go: five points per level, so 500 across a full hundred
-levels.
-
-| Quantity | Meaning                                     |
-| -------- | ------------------------------------------- |
-| Budget   | 5 per level, plus anything wings have added |
-| Spent    | Everything assigned across the six stats    |
-| Unused   | What is left to assign                      |
-| Per stat | Never more than 252                         |
-
-Four training points buy one point of a stat, which is why 252 is the cap worth
-having: anything above it would buy nothing.
-
-A freshly caught level 20 pokemon therefore arrives with 100 unassigned points.
-Three things move them:
-
-- **Assigning** puts unused points into a stat or takes them back out. Nothing is
-  consumed, so retraining is free and reversible forever.
-- **A wing** grants 3 points in its own stat _and_ raises the pokemon's budget by
-  the same, so a wing adds to what there is to spend rather than spending it. It
-  is the only training a pokemon ever gets that its levels did not pay for, and
-  it is worth the same at level 5 as at level 100.
-- **A bitter berry** removes 10 points from one stat. They return to the unused
-  pool rather than being lost, and the pokemon thinks better of its trainer for
-  swallowing something unpleasant.
-- **A vitamin** grants 10 points in its own stat and raises the budget by the
-  same, the way a wing does: an HP Up, a Protein, an Iron, a Calcium, a Zinc or a
-  Carbos. One bottle is three wings and a third, and it is the only training gold
-  alone can buy, off a vendor's vitamin counter.
-
-### PP Ups
-
-A **PP Up** raises one move's points by a fifth of what it started with, up to
-three times, and a **PP Max** takes it the whole way in one bottle. In this game
-that buys a **shorter cooldown** rather than more uses, since nothing runs out
-mid-fight: see [Battles](battles.md#how-a-move-resolves).
-
-It is permanent. No berry takes it back, which is why they cost more than a
-vitamin, and a move already at the limit is refused rather than charged.
-
-## Friendship
-
-Every pokemon carries a friendship score from 0 to 255. Gains **shrink as the
-score grows**: the first hundred points come quickly and the last fifty are a
-long walk.
-
-| Event                     | 0 to 99 | 100 to 199 | 200 to 255 |
-| ------------------------- | ------- | ---------- | ---------- |
-| A level taken             | +5      | +3         | +2         |
-| 256 steps walked as buddy | +2      | +2         | +1         |
-| A bitter berry eaten      | +10     | +5         | +2         |
-| Herbal medicine, per dose | −5      | −5         | −10        |
-| Knocked out               | −1      | −1         | −1         |
-
-A caught pokemon starts at 70; a hatched one starts at 120, because it has
-already been carried.
-
-A pokemon caught in a **Luxury Ball** gains twice as much from every source for
-its whole life. The doubling applies to gains and never to losses.
-
-A **groomer** adds half of whatever friendship is left to give. That is worth a
-great deal to a pokemon fresh out of a ball and almost nothing to one that is
-already inseparable, and since it is always half of the remainder it can never
-buy the last of a friendship. See [People you meet](npcs.md).
-
-Friendship does not survive a sale. A pokemon bought at auction begins again at
-70 for its new trainer, so gold buys the pokemon but never the walking behind it.
-A lot that goes back unsold keeps what it had, having never changed hands.
+with. The entry reads **Named by its first trainer** and does nothing. One that
+arrives unnamed is yours to name, since there is nothing there to write over,
+and a pokemon that finds its way back to the trainer who named it may be renamed
+by them.
 
 ## Bottle caps
 
@@ -183,16 +80,17 @@ already-raised pokemon worth an item of its own.
 | **Bottle Cap**        | Prized  | Raises one stat, drawn from the imperfect ones |
 
 The stat a plain cap lands on is not the player's choice, or it would not be a
-cap. It never lands on a stat that was already perfect, and a pokemon that
-is perfect all round is refused before it can waste one.
+cap. It never lands on a stat that was already perfect, and a pokemon that is
+perfect all round is refused before it can waste one.
 
 Both caps are found in the overworld and nowhere else; no shop stocks either.
 
 ### Mints
 
 A nature is rolled at the same time and decides two of the six stats for good:
-one is worth 1.1x and another 0.9x. A **mint** rewrites it. There are 21, one per
-nature that moves a stat, and a Serious Mint for a pokemon that should move none.
+one is worth 1.1x and another 0.9x. A **mint** rewrites it. There are 21, one
+per nature that moves a stat, and a Serious Mint for a pokemon that should move
+none.
 
 A mint changes the nature outright rather than hiding it, so the summary goes on
 saying what the pokemon actually is. It is spent on use, and it is refused on a
@@ -205,56 +103,22 @@ either a purchase or a long walk.
 A shadow pokemon comes from a shadow raid or from a Team Rocket grunt. It keeps
 the **Shadow** ability permanently and costs **double candy** at every level.
 
-Shadow is a glass cannon written into the stats: **1.25x Attack and Special
-Attack, 0.75x Defense and Special Defense**. It hits a quarter harder and takes
-a third more, and the trade is visible on its stat sheet.
+Shadow is written into the stats: **1.25x Attack and Special Attack, 0.75x
+Defense and Special Defense**. It hits a quarter harder and takes a third more,
+and the trade is visible on its stat sheet.
 
 Two things undo that: a **Purifying Gem**, which is a prized find, and **Nurse
 Joy**, who does it free of charge along with her healing.
 
 A purified pokemon costs ordinary candy again, gains **+2 to every individual
 stat**, and is marked Purified. The mark is cosmetic and changes nothing in
-battle: purifying changes what a pokemon costs, not what it was.
-
-## Teaching a move
-
-Three things change what a pokemon knows after it has been obtained:
-
-- **Growing into a move.** When candy takes a pokemon to a level its species
-  learns something at, that move is offered. It costs nothing; the candy already
-  paid for it.
-- **A technical machine.** There is one machine per teachable move, and it works
-  on any species able to learn it. A gym leader hands one over, and a stall that
-  set up as a **machine stall** sells a dozen of them.
-- **The Move Reminder**, who restores a move the pokemon learned by levelling and
-  has since lost. His price is one **Heart Scale**, which is dug out of the ground
-  and which no shop buys or sells. See [People you meet](npcs.md).
-
-A pokemon that knows fewer than four moves simply learns another; one that
-already knows four must forget one, chosen by the player. Nothing is ever spent
-on a move that was not learned.
-
-Four cases are refused: a move that source cannot teach, a move the pokemon
-already knows, an egg, and a pokemon locked into a live battle.
-
-The Move Reminder restores only **level-up** moves, so a machine move given up to
-make room is gone for good, and the choice of what to forget stays a real one.
-
-### Why only the current level
-
-A level-up move is offered for the level a pokemon is standing on and no other.
-Nothing records whether the offer was accepted or declined, so a player may
-change their mind right up until the next candy takes the pokemon past that
-level. After that a Heart Scale is the only route back.
-
-If growing up offered everything a pokemon could have learned by then, it would
-amount to a free Move Reminder and the Heart Scale would be worth nothing.
+battle. Purifying changes what a pokemon costs, not what it was.
 
 ## Healing
 
-- **A berry** restores or cures exactly what it does in a fight, so an Oran Berry
-  is worth ten points on either side of one. Out of battle the player decides
-  when it is worth using.
+- **A berry** restores or cures exactly what it does in a fight, so an Oran
+  Berry is worth ten points on either side of one. Out of battle the player
+  decides when it is worth using.
 - **Medicine**, off the shelf below. **None of it can be held**, so nothing is
   drunk mid-raid, which is what keeps berries worth carrying into one.
 - **Herbal medicine**, cheaper and stronger, paid for in friendship rather than
@@ -288,15 +152,15 @@ A pokemon holds **one** item at a time, and only items meant to be held. A
 **Utility Belt**, a prized find that is spent on use, gives one pokemon a second
 slot permanently.
 
-That single slot is what makes the held items a genuine choice: a Shiny Charm, an
-Exp. Share, a Lucky Egg, a Luck Incense, a Pure Incense and an Amulet Coin all
-want the same slot on the same buddy, and a berry or a piece of battle gear
+That single slot is what makes the held items a genuine choice. A Shiny Charm,
+an Exp. Share, a Lucky Egg, a Luck Incense, a Pure Incense and an Amulet Coin
+all want the same slot on the same buddy, and a berry or a piece of battle gear
 wants it during a raid.
 
 ## The order they are in
 
 A pokemon's moves, its abilities and what it is holding are each a list, and the
-order of each list is yours to set: drag them into place on the pokemon's own
+order of each list is yours to set. Drag them into place on the pokemon's own
 page, and press Save once when all three are where you want them.
 
 The order is worth setting. A fight that allows fewer than a pokemon has takes
@@ -314,29 +178,30 @@ more. For one Heart Scale she opens an ability slot and fills it at once,
 drawing from everything the pokemon's family is capable of. Which ability
 answers is hers to decide. Ask her again on a later window and the pokemon
 widens again, until either its family has nothing left it does not already carry
-or it runs out of room.
+or it runs out of room. See [People you meet](npcs.md).
 
 Two rare finds do ability work of their own:
 
-- An **Ability Capsule** does exactly what she does, out of the bag: it widens
+- An **Ability Capsule** does exactly what she does, out of the bag. It widens
   the pokemon and draws one more of the abilities its line can reach into the
   new slot. Which one comes up is a roll, the same as hers. What a capsule is
-  worth is not something she cannot do, it is not having to find her and not
+  worth is not something she cannot do: it is not having to find her and not
   having to wait for her next window.
 - An **Ability Patch** writes that family's **signature** into a slot. A
   signature is the one ability no pokemon is ever born with and the Channeler
   never calls up, so a patch is the only way to one. A pokemon with a slot
-  standing empty simply gains it; one that is full gives up an ability you
+  standing empty simply gains it. One that is full gives up an ability you
   choose, and neither the signature nor the ability it replaced can be put back.
 
 No pokemon holds more than **four** abilities however many its family is capable
 of, and most Kanto families hold three or fewer between all their stages, so a
 pokemon usually stops at two or three. The Eevee line is the deepest by far.
-Being a shadow, a purified pokemon or a raid boss costs no room: those marks ride
-alongside the abilities rather than taking a slot from them.
+Being a shadow, a purified pokemon or a raid boss costs no room: those marks
+ride alongside the abilities rather than taking a slot from them.
 
 ## See also
 
+- [Training a pokemon](training.md)
 - [Eggs](eggs.md)
 - [Items and gold](items.md)
 - [Battles](battles.md)

@@ -2,11 +2,11 @@ import { type JSX, createMemo, createSignal, onCleanup, onMount } from 'solid-js
 import { Badge, Button, Note, Row, Select } from '../styled';
 import type Biome from '../../data/ids/biome';
 import BiomeId from '../../data/ids/biome';
-import { BIOME_NAMES } from '../../data/biome';
+import { BIOME_NAMES, isLegendarySpecies, isMythicalSpecies } from '../../data/biome';
 import type Decoration from '../../data/overworld/decoration';
-import Weather, { WEATHER_NAMES } from '../../data/overworld/weather';
+import Weather, { DARK_DAY_LAMP_CELLS, WEATHER_NAMES } from '../../data/overworld/weather';
 import ChunkCanvas from '../overworld/chunk-canvas';
-import type { SpawnCoat } from '../overworld/chunk-canvas/scenery';
+import type { SpawnCoat, SpawnRank } from '../overworld/chunk-canvas/scenery';
 import { BOARD_CELLS, BOARD_CENTER, boardIndexOf, viewFor } from '../../canvas/board';
 import { SLIDE_PACE } from '../overworld/chunk-canvas/metrics';
 import { findPathNear } from '../../overworld/path';
@@ -17,13 +17,14 @@ import { WORLD_SEED } from '../../overworld/current';
 import { CHUNK_CELLS, chunkOfCell, worldCell } from '../../overworld/chunk';
 import { Depth } from '../../overworld/depth';
 import { nearestMouth } from '../../overworld/cave';
-import { CAVE_DARK_CELLS } from '../../data/overworld/cave';
+import { CAVE_DARK_CELLS, CAVE_LAMP_CELLS } from '../../data/overworld/cave';
+import { ILLUMINATE_LAMP_CELLS } from '../../overworld/abilities/gen-1';
 import { type BoardGround, readBoardGround } from '../../overworld/board-ground';
 import { isLavaAt, readGround } from '../../overworld/ground';
 import { isRouteAt, routesNear } from '../../overworld/route';
 import { blocksWalk } from '../../overworld/cliff';
 import { TERRACE_TOP, levelAt } from '../../overworld/terrace';
-import { getRegisteredSpecies } from '../../data/species';
+import { Species } from '../../data/ids/species';
 
 /**
  * The board on its own, at whatever shape of screen you like.
@@ -104,8 +105,21 @@ function windowed<T>(
 const NOTHING_MAPPED = new Map<number, never>();
 const NOTHING_SET = new Set<number>();
 
-/** How far the player's lamp reaches, in cells */
-const LAMP = 3;
+/**
+ * What the player is carrying, which is what the dark gives way to.
+ * The two are the game's own reaches rather than numbers for the
+ * page: unaided underground, and the same again with an Illuminate
+ * buddy or a lamp in the bag
+ */
+const enum Carrying {
+  Nothing = 0,
+  Illuminate = 1,
+}
+
+const LIGHT_OPTIONS: { value: Carrying; label: string }[] = [
+  { value: Carrying.Nothing, label: 'Unaided' },
+  { value: Carrying.Illuminate, label: 'Illuminate' },
+];
 
 /** Where the search for a country starts, and how far it reaches */
 const START: [number, number] = [0, 0];
@@ -229,6 +243,14 @@ function findRoute(world: World, from: [number, number]): [number, number] | nul
   return null;
 }
 
+/** Which of the one-per-world kinds a demo spawn is */
+function rankOf(species: Species): SpawnRank {
+  if (isLegendarySpecies(species)) {
+    return 'legendary';
+  }
+  return isMythicalSpecies(species) ? 'mythical' : null;
+}
+
 /** Where the pokemon stand, in cells from wherever the player landed */
 const SPAWN_SPOTS: [number, number][] = [
   [-3, -4],
@@ -238,38 +260,64 @@ const SPAWN_SPOTS: [number, number][] = [
   [4, 1],
   [-5, 0],
   [1, 4],
+  [5, -4],
+  [-5, 4],
+  [2, -5],
 ];
 
 /**
- * A few pokemon standing about, taken off the front of the registry so
- * the page draws real sheets rather than dots. They keep to dry open
- * ground, since the country is the world's now and the spots above
- * are as likely to be lake as meadow
+ * What stands about: one of each mark the board can put on a pokemon,
+ * and the pairs of them worth looking at together.
+ *
+ * A legendary of the day's featured family is the loudest a cell ever
+ * gets, and it is the one case nobody can stage on purpose: a wild
+ * legendary is rare, and the day has to be its family's. Each is its
+ * own species, so which is which is legible from the sprites
+ */
+const SHOWN: { species: Species; shiny?: boolean; featured?: boolean }[] = [
+  { species: Species.Bulbasaur },
+  { species: Species.Charmander, shiny: true },
+  { species: Species.Squirtle, featured: true },
+  { species: Species.Pikachu, shiny: true, featured: true },
+  { species: Species.Articuno },
+  { species: Species.Zapdos, featured: true },
+  { species: Species.Moltres, shiny: true, featured: true },
+  { species: Species.Mew },
+  { species: Species.Celebi, featured: true },
+  { species: Species.Jirachi, shiny: true, featured: true },
+];
+
+/**
+ * The pokemon standing about, in every combination of marks. They keep
+ * to dry open ground, since the country is the world's now and the
+ * spots above are as likely to be lake as meadow
  */
 function standing(world: World, at: [number, number]): [at: [number, number], coat: SpawnCoat][] {
-  const species = getRegisteredSpecies().slice(0, 4);
   const placed: [at: [number, number], coat: SpawnCoat][] = [];
 
   for (const [dx, dy] of SPAWN_SPOTS) {
     const spot: [number, number] = [at[0] + dx, at[1] + dy];
 
-    if (placed.length >= species.length) {
+    if (placed.length >= SHOWN.length) {
       break;
     }
     if (readGround(world, spot[0], spot[1]).role !== 'ground' || blocksWalk(world, ...spot)) {
       continue;
     }
+    const shown = SHOWN[placed.length];
+
     placed.push([
       spot,
       // The window names what it publishes, and the name is what the
-      // board keeps a sheet under while the ground slides past
-      // The first is shiny, named for where it stands so the sparkle
-      // plays again wherever the page lands
+      // board keeps a sheet under while the ground slides past. Named
+      // for where it stands, so every burst plays again wherever the
+      // page lands
       {
         id: `demo-${placed.length}-${spot[0]},${spot[1]}`,
-        species: species[placed.length],
-        shiny: placed.length === 0,
-        featured: false,
+        species: shown.species,
+        shiny: shown.shiny === true,
+        featured: shown.featured === true,
+        rank: rankOf(shown.species),
       },
     ]);
   }
@@ -315,6 +363,29 @@ const STEPS = new Map<string, [number, number]>([
   ['d', [1, 0]],
 ]);
 
+const HOUR = 3_600_000;
+
+/** Not an hour at all: the board is left on the player's own clock */
+const LIVE_HOUR = -1;
+
+/**
+ * The hours worth stopping at. Sunrise and sunset are at six and
+ * eighteen, so the pairs either side of them are where the light is
+ * changing fastest
+ */
+const HOUR_OPTIONS: { value: number; label: string }[] = [
+  { value: LIVE_HOUR, label: 'Now' },
+  { value: 0, label: 'Midnight' },
+  { value: 4, label: '4am, small hours' },
+  { value: 6, label: '6am, sunrise' },
+  { value: 8, label: '8am, morning' },
+  { value: 12, label: 'Noon' },
+  { value: 16, label: '4pm, afternoon' },
+  { value: 18, label: '6pm, sunset' },
+  { value: 20, label: '8pm, dusk' },
+  { value: 22, label: '10pm, night' },
+];
+
 const EDGE_OPTIONS: { value: BoardEdge; label: string }[] = [
   { value: 'haze', label: 'Haze' },
   { value: 'full', label: 'Full board' },
@@ -325,9 +396,20 @@ export default function BoardDemo(): JSX.Element {
   const [frame, setFrame] = createSignal(0);
   const [wanted, setWanted] = createSignal<Biome>(BiomeId.TemperateForest);
   const [weather, setWeather] = createSignal<Weather>(Weather.Clear);
+  /** The hour the board is lit at, or LIVE_HOUR for the player's own clock */
+  const [hour, setHour] = createSignal<number>(LIVE_HOUR);
+  const [carrying, setCarrying] = createSignal<Carrying>(Carrying.Nothing);
   const [seed, setSeed] = createSignal(WORLD_SEED);
   const [generation, setGeneration] = createSignal(Generation.First);
   const [depth, setDepth] = createSignal<Depth>(Depth.Surface);
+
+  /** How far the light carries, which is what a cave and a dark day are worth */
+  const lampCells = (): number => {
+    if (carrying() === Carrying.Illuminate) {
+      return depth() === Depth.Cave ? CAVE_LAMP_CELLS : ILLUMINATE_LAMP_CELLS;
+    }
+    return depth() === Depth.Cave ? CAVE_DARK_CELLS : DARK_DAY_LAMP_CELLS;
+  };
   /** Whether the caves are drawn dark, the way the game draws them */
   const [dark, setDark] = createSignal(false);
   const [yaw, setYaw] = createSignal(0);
@@ -548,6 +630,24 @@ export default function BoardDemo(): JSX.Element {
           }}
         />
         <Select
+          label="Light"
+          class="w-56"
+          value={carrying()}
+          options={LIGHT_OPTIONS}
+          onChange={(chosen) => {
+            setCarrying(chosen);
+          }}
+        />
+        <Select
+          label="Hour"
+          class="w-56"
+          value={hour()}
+          options={HOUR_OPTIONS}
+          onChange={(chosen) => {
+            setHour(chosen);
+          }}
+        />
+        <Select
           label="Sky"
           class="w-56"
           value={weather()}
@@ -633,7 +733,19 @@ export default function BoardDemo(): JSX.Element {
         the face of a cliff stop them the way they do in the game. A screen taller than it is wide
         is drawn flat from above, with the round shadow the board uses at night and the weather
         against the glass; anything wider is laid back under the camera. Drag the ground to walk the
-        camera round. The Layer switch goes down through the nearest cave mouth, or back up.
+        camera round. The Layer switch goes down through the nearest cave mouth, or back up. Hour
+        lights the board at a time of day instead of waiting for one, and Light carries what a
+        player would carry into the dark: nothing, or an Illuminate buddy.
+      </Note>
+
+      <Note>
+        The pokemon standing about wear every mark the board can put on one, in this order from the
+        spots nearest the player: Bulbasaur plain, Charmander shiny, Squirtle of the day's family,
+        Pikachu shiny and of the day's family, then the auras: Articuno, Zapdos with the day's
+        family, shiny Moltres with it too, Mew, Celebi with the day's family, and shiny Jirachi with
+        it. A cell in two marks at once is the case nobody can stage in the game, which is what this
+        is here for: the family's gold rings travel out from under a turning seal, gold under a
+        legendary and magenta under a mythical.
       </Note>
 
       {/* The board takes the whole of whatever it is put in, so the
@@ -646,7 +758,8 @@ export default function BoardDemo(): JSX.Element {
         <ChunkCanvas
           biome={biome()}
           weather={weather()}
-          lamp={depth() === Depth.Cave ? CAVE_DARK_CELLS : LAMP}
+          lamp={lampCells()}
+          time={hour() === LIVE_HOUR ? undefined : hour() * HOUR}
           underground={depth() === Depth.Cave}
           lit={!dark()}
           yaw={yaw()}

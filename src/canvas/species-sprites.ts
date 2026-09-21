@@ -40,6 +40,29 @@ import asSpriteSheetJSON, { type SpriteSheetJSON, readFrameTable } from './sprit
 export const SPRITE_ROOT = '/sprites/pokemon';
 
 /**
+ * A form the collection draws as a **coat** of another shape rather
+ * than as a sheet of its own. A female Meowstic is her own species
+ * here, since she evolves from a female Espurr and keeps her own
+ * abilities, but SpriteCollab packs her drawing beside the male's
+ * frames, so she is asked for as his sheet wearing the female coat
+ */
+const BORROWED_COATS = new Map<Species, { sheet: Species; female: boolean }>([
+  [Species.MeowsticFemale, { sheet: Species.Meowstic, female: true }],
+]);
+
+/**
+ * Which sheet this one is drawn from and which coat it wears there.
+ * Anything with a sheet of its own comes back unchanged
+ */
+export function drawnAs(species: Species, female = false): { species: Species; female: boolean } {
+  const borrowed = BORROWED_COATS.get(species);
+
+  return borrowed == null
+    ? { species, female }
+    : { species: borrowed.sheet, female: borrowed.female };
+}
+
+/**
  * Where one pokemon's sheets are filed.
  *
  * By region, so a folder holds a dex's worth of files rather than
@@ -68,7 +91,9 @@ const COAT_FILES: Record<Coat, string> = {
 
 /** Everything one pokemon is drawn from, in one folder. */
 export function spriteFolder(species: Species): string {
-  return `${regionRoot(species)}/${species}`;
+  const drawnSpecies = drawnAs(species).species;
+
+  return `${regionRoot(drawnSpecies)}/${drawnSpecies}`;
 }
 
 /**
@@ -79,7 +104,9 @@ export function spriteFolder(species: Species): string {
  * a preference rather than a promise, see `loadSpeciesSprite`
  */
 export function spriteImagePath(species: Species, shiny = false, female = false): string {
-  return `${spriteFolder(species)}/${COAT_FILES[coatOf(shiny, female)]}`;
+  const worn = drawnAs(species, female);
+
+  return `${spriteFolder(species)}/${COAT_FILES[coatOf(shiny, worn.female)]}`;
 }
 
 /** The layout every coat of this pokemon is drawn against. */
@@ -127,7 +154,7 @@ async function loadDescription(species: Species): Promise<SpriteSheetJSON | null
     // browser kept from last time
     const stamp = await coats();
     const [described, framed] = await Promise.all([
-      fetch(stamped(spriteSheetPath(species), stamp, species)),
+      fetch(stamped(spriteSheetPath(species), stamp, drawnAs(species).species)),
       fetch(stamped(spriteFramesPath(species), stamp, species)),
     ]);
 
@@ -166,7 +193,9 @@ async function loadSheet(
   // Asked before anything is fetched: a species whose list says it was
   // never drawn this way is answered without a request, which is the
   // whole point of keeping the list
-  if (!drawn(await coats(), species, coatOf(shiny, female))) {
+  const worn = drawnAs(species, female);
+
+  if (!drawn(await coats(), worn.species, coatOf(shiny, worn.female))) {
     return null;
   }
   const data = await description(species);
@@ -177,7 +206,7 @@ async function loadSheet(
 
   try {
     const sprite = new SpeciesSpriteAnimation(
-      stamped(spriteImagePath(species, shiny, female), await coats(), species),
+      stamped(spriteImagePath(species, shiny, female), await coats(), worn.species),
       data,
     );
 

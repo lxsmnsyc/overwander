@@ -865,6 +865,9 @@ export const enum Species {
   FlorgesBlue = 1067103,
   FlorgesWhite = 1067104,
 
+  /** The female of the line, who evolves out of a female Espurr */
+  MeowsticFemale = 1067801,
+
   /** The sword drawn, which is what an Aegislash is while it attacks */
   AegislashBlade = 1068101,
 
@@ -1125,6 +1128,9 @@ export const VIVILLON_FORMS: Species[] = [
 ];
 
 /** Each deer's four coats, spring first, in the order the year turns */
+/** The two Meowstic, the male first: what a cat's own Espurr grew into */
+export const MEOWSTIC_FORMS: Species[] = [Species.Meowstic, Species.MeowsticFemale];
+
 /** The two stances a royal sword takes, the shield first */
 export const AEGISLASH_FORMS: Species[] = [Species.Aegislash, Species.AegislashBlade];
 

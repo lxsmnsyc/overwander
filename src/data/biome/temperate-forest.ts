@@ -234,7 +234,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
-        { species: Species.Meowstic, weight: 6 },
+        { species: Species.Meowstic, weight: 3 },
+        { species: Species.MeowsticFemale, weight: 3 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },
@@ -308,7 +309,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
-        { species: Species.Meowstic, weight: 6 },
+        { species: Species.Meowstic, weight: 3 },
+        { species: Species.MeowsticFemale, weight: 3 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },

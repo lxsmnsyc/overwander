@@ -307,7 +307,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
-        { species: Species.Meowstic, weight: 6 },
+        { species: Species.Meowstic, weight: 3 },
+        { species: Species.MeowsticFemale, weight: 3 },
         { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },
         { species: Species.Raticate, weight: 10 },
@@ -418,7 +419,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
-        { species: Species.Meowstic, weight: 6 },
+        { species: Species.Meowstic, weight: 3 },
+        { species: Species.MeowsticFemale, weight: 3 },
         { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },
         { species: Species.Raticate, weight: 10 },

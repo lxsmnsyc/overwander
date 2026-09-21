@@ -1,5 +1,6 @@
 import 'server-only';
 import { GiftKind } from '../auth/gift-record';
+import { asOffset, toLocalTime } from '../auth/local-time';
 import {
   DAILY_SLOTS,
   type RotationQuest,
@@ -37,15 +38,15 @@ export interface RotationBoard {
   weekly: RotationStanding;
 }
 
-function windowOf(scope: RotationScope, now: number): string {
-  return scope === 'daily' ? dailyWindow(now) : weeklyWindow(now);
+function windowOf(scope: RotationScope, local: number): string {
+  return scope === 'daily' ? dailyWindow(local) : weeklyWindow(local);
 }
 
-function questAt(scope: RotationScope, slot: number, now: number): RotationQuest | null {
+function questAt(scope: RotationScope, slot: number, local: number): RotationQuest | null {
   if (scope === 'weekly') {
-    return slot === 0 ? getWeeklyHunt(now) : null;
+    return slot === 0 ? getWeeklyHunt(local) : null;
   }
-  for (const quest of getDailyQuests(now)) {
+  for (const quest of getDailyQuests(local)) {
     if (quest.slot === slot) {
       return quest;
     }
@@ -116,11 +117,11 @@ async function standingOf(
   counters: Counters,
   scope: RotationScope,
   quest: RotationQuest,
-  now: number,
+  local: number,
   stored: Map<number, number>,
   claimedSlots: Set<number>,
 ): Promise<RotationStanding> {
-  const window = windowOf(scope, now);
+  const window = windowOf(scope, local);
   const current = countOf(counters, quest.requirement);
   const baseline = await baselineOf(uid, window, quest.slot, current, stored);
   const have = Math.max(0, current - baseline);
@@ -132,33 +133,53 @@ async function standingOf(
 /**
  * Forget the windows that have rolled past.
  *
- * A window key is derived from the date, so yesterday's is a string
- * nothing will ever compute again: the rows under it are not stale,
- * they are unreachable. They are swept here rather than on a clock
- * because the moment they became garbage is the moment this player's
- * day turned over, and this is where that is noticed
+ * Only the ones **behind** the player's own, which is why the keys are
+ * padded: a zone is the player's to report, so a day ahead of the one
+ * they are standing in is a window they can reach again, and sweeping
+ * it would hand them a claim they have already taken. Anything shaped
+ * unlike a key goes, since nothing computes those any more.
+ *
+ * Swept here rather than on a clock because the moment they became
+ * garbage is the moment this player's day turned over, and this is
+ * where that is noticed
  */
 async function forgetOldWindows(uid: string, daily: string, weekly: string): Promise<void> {
   await getSql()`
     delete from rotation_baselines
-    where player = ${uid} and window_key not in (${daily}, ${weekly})
+    where player = ${uid}
+      and (
+        (window_key like 'd%' and window_key < ${daily})
+        or (window_key like 'w%' and window_key < ${weekly})
+        or (window_key not like 'd____-__-__' and window_key not like 'w____-__')
+      )
   `;
   await getSql()`
     delete from rotation_claims
-    where player = ${uid} and window_key not in (${daily}, ${weekly})
+    where player = ${uid}
+      and (
+        (window_key like 'd%' and window_key < ${daily})
+        or (window_key like 'w%' and window_key < ${weekly})
+        or (window_key not like 'd____-__-__' and window_key not like 'w____-__')
+      )
   `;
 }
 
-/** The whole rotating board as it stands for this player right now */
+/**
+ * The whole rotating board as it stands for this player right now.
+ * The zone decides which day that is, so two players reading at the
+ * same instant in different zones can be on different boards
+ */
 export async function listRotations(
   uid: string,
   now: number,
+  offset: number,
   // Handed in by a caller that read them for something else as well
   progress?: Awaited<ReturnType<typeof readProgress>>,
 ): Promise<RotationBoard> {
+  const local = toLocalTime(now, asOffset(offset));
   const counters = progress ?? (await readProgress(uid));
-  const today = dailyWindow(now);
-  const thisWeek = weeklyWindow(now);
+  const today = dailyWindow(local);
+  const thisWeek = weeklyWindow(local);
   const [dailyBase, weeklyBase, dailyClaims, weeklyClaims] = await Promise.all([
     readBaselines(uid, today),
     readBaselines(uid, thisWeek),
@@ -175,8 +196,8 @@ export async function listRotations(
 
   const daily: RotationStanding[] = [];
 
-  for (const quest of getDailyQuests(now)) {
-    daily.push(await standingOf(uid, counters, 'daily', quest, now, dailyBase, dailyClaims));
+  for (const quest of getDailyQuests(local)) {
+    daily.push(await standingOf(uid, counters, 'daily', quest, local, dailyBase, dailyClaims));
   }
   return {
     daily,
@@ -184,8 +205,8 @@ export async function listRotations(
       uid,
       counters,
       'weekly',
-      getWeeklyHunt(now),
-      now,
+      getWeeklyHunt(local),
+      local,
       weeklyBase,
       weeklyClaims,
     ),
@@ -207,13 +228,16 @@ export async function claimRotation(
   offset: number,
   locale: string,
 ): Promise<RotationReward[] | null> {
-  const quest = questAt(scope, slot, now);
+  // The board is the player's day, and the row is stamped with the
+  // server's instant: one says which window, the other when
+  const local = toLocalTime(now, asOffset(offset));
+  const quest = questAt(scope, slot, local);
 
   if (quest == null || slot < 0 || slot >= (scope === 'daily' ? DAILY_SLOTS : 1)) {
     return null;
   }
 
-  const window = windowOf(scope, now);
+  const window = windowOf(scope, local);
   const counters = await readProgress(uid);
   const current = countOf(counters, quest.requirement);
   const stored = await readBaselines(uid, window);

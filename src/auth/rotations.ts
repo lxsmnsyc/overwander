@@ -19,13 +19,14 @@ import getIdToken from './session';
 export type { RotationBoard, RotationScope, RotationStanding } from '../server/rotations';
 
 export async function getRotations(): Promise<RotationBoard> {
-  return listOnServer(await getIdToken());
+  return listOnServer(await getIdToken(), getLocalOffset());
 }
 
-async function listOnServer(token: string): Promise<RotationBoard> {
+async function listOnServer(token: string, offset: number): Promise<RotationBoard> {
   'use server';
   check(TOKEN, token);
-  return listOnServerSide(await requireUid(token), await syncServerClock());
+  check(OFFSET, offset);
+  return listOnServerSide(await requireUid(token), await syncServerClock(), offset);
 }
 
 /**

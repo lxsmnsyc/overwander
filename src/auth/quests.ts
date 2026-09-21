@@ -25,13 +25,14 @@ export type { DueQuest } from '../server/due';
  * standings themselves
  */
 export async function getDueQuests(): Promise<DueQuest[]> {
-  return listDueOnServer(await getIdToken());
+  return listDueOnServer(await getIdToken(), getLocalOffset());
 }
 
-async function listDueOnServer(token: string): Promise<DueQuest[]> {
+async function listDueOnServer(token: string, offset: number): Promise<DueQuest[]> {
   'use server';
   check(TOKEN, token);
-  return listDue(await requireUid(token), await syncServerClock());
+  check(OFFSET, offset);
+  return listDue(await requireUid(token), await syncServerClock(), offset);
 }
 
 export async function getQuests(): Promise<QuestStanding[]> {

@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, { BIOME_NAMES, isMythicalSpecies } from '../../src/data/biome';
+import { toLocalTime } from '../../src/auth/local-time';
 import registerAbilities from '../../src/data/abilities';
 import { TYPE_NAMES, Types } from '../../src/data/constants/types';
 import { isOpenSea } from '../../src/data/ids/biome';
@@ -502,6 +503,19 @@ describe('rotating quests', () => {
 
     expect(spotlight.name.startsWith('Featured:')).toBe(true);
     expect(spotlight.requirement.family).toBe(1);
+  });
+
+  it('keys a window by the day the player is standing in', () => {
+    // A zone 8 hours east is already on tomorrow's board at 16:00 UTC
+    const evening = Date.UTC(2026, 7, 26, 16);
+    const ahead = toLocalTime(evening, 480);
+
+    expect(dailyWindow(ahead)).not.toBe(dailyWindow(evening));
+    expect(dailyWindow(ahead)).toBe(dailyWindow(evening + 24 * 3_600_000));
+    // Padded, so one key sorts against the next rather than by digit
+    expect(dailyWindow(Date.UTC(2026, 0, 3, 12))).toBe('d2026-01-03');
+    expect(dailyWindow(Date.UTC(2026, 0, 3, 12)) < dailyWindow(NOON)).toBe(true);
+    expect(weeklyWindow(Date.UTC(2026, 0, 8, 12))).toBe('w2026-02');
   });
 
   it('hunts one registered, lair-free family a week', () => {

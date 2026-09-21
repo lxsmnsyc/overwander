@@ -9,11 +9,17 @@ import { getFeaturedFamily } from '../species/day';
 import { type MetricRequirement, RequirementKind } from './index';
 
 /**
- * The rotating quests: a fresh set of dailies every UTC day and one
- * hunt a week, derived from the date the way the species day is, so
- * every player faces the same board and nothing is stored to rotate.
- * Progress is the same lifetime counters measured from a baseline the
- * server snapshots when the window first sees the player.
+ * The rotating quests: a fresh set of dailies every day and one hunt a
+ * week, derived from the date the way the species day is, so nothing
+ * is stored to rotate. Progress is the same lifetime counters measured
+ * from a baseline the server snapshots when the window first sees the
+ * player.
+ *
+ * The date is the **player's**, so every function here takes a local
+ * timestamp (`toLocalTime(now, offset)`) and reads it as UTC, the way
+ * `getTimeOfDay` does. A day that turns over mid-morning because the
+ * server's day did is a day that means nothing to the player standing
+ * in it.
  */
 
 export interface RotationReward {
@@ -32,22 +38,27 @@ export const DAILY_SLOTS = 3;
 
 const DAY = 24 * 60 * 60 * 1000;
 
-/** The daily window's key: the UTC date, same rollover as the species day */
-export function dailyWindow(now: number): string {
-  const date = new Date(now);
-
-  return `d${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
+/** Two digits, so one window key sorts against the next */
+function pad(value: number): string {
+  return String(value).padStart(2, '0');
 }
 
-/** The weekly window's key: the ISO week, read in UTC */
-export function weeklyWindow(now: number): string {
-  const date = new Date(now);
+/** The daily window's key: the player's date, same rollover as their species day */
+export function dailyWindow(local: number): string {
+  const date = new Date(local);
+
+  return `d${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
+}
+
+/** The weekly window's key: the ISO week the player's date falls in */
+export function weeklyWindow(local: number): string {
+  const date = new Date(local);
   // ISO weeks belong to the year of their Thursday
   const nearest = new Date(date.getTime() + (4 - (date.getUTCDay() || 7)) * DAY);
   const opening = Date.UTC(nearest.getUTCFullYear(), 0, 1);
   const week = Math.ceil(((nearest.getTime() - opening) / DAY + 1) / 7);
 
-  return `w${nearest.getUTCFullYear()}-${week}`;
+  return `w${nearest.getUTCFullYear()}-${pad(week)}`;
 }
 
 function ask(metric: Metric, count: number, rest?: Partial<MetricRequirement>): MetricRequirement {
@@ -78,8 +89,8 @@ const DAILY_POOL: [name: string, requirement: MetricRequirement, rewards: Rotati
  * Today's three: the featured family's catch where the calendar
  * names one, a walk, and one drawn from the pool
  */
-export function getDailyQuests(now: number): RotationQuest[] {
-  const featured = getFeaturedFamily(now);
+export function getDailyQuests(local: number): RotationQuest[] {
+  const featured = getFeaturedFamily(local);
   const spotlight: RotationQuest =
     featured == null
       ? {
@@ -98,7 +109,7 @@ export function getDailyQuests(now: number): RotationQuest[] {
           ],
         };
 
-  const rng = new AleaRNG(`daily${dailyWindow(now)}`);
+  const rng = new AleaRNG(`daily${dailyWindow(local)}`);
   const [name, requirement, rewards] = DAILY_POOL[Math.floor(rng.random() * DAILY_POOL.length)];
 
   return [
@@ -137,9 +148,9 @@ function huntFamilies(): Families[] {
 }
 
 /** This week's bounty: 5 catches from one seeded family line */
-export function getWeeklyHunt(now: number): RotationQuest {
+export function getWeeklyHunt(local: number): RotationQuest {
   const pool = huntFamilies();
-  const rng = new AleaRNG(`hunt${weeklyWindow(now)}`);
+  const rng = new AleaRNG(`hunt${weeklyWindow(local)}`);
   const family = pool[Math.floor(rng.random() * pool.length)];
 
   return {

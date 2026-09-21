@@ -292,6 +292,7 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.GrimsleyDefeated]: '#4f4a52',
   [Awards.CaitlinDefeated]: '#d9a3c9',
   [Awards.UnovaDexMedal]: '#5aa87f',
+  [Awards.UnovaChampion]: '#e0b64f',
 };
 
 /**
@@ -322,6 +323,7 @@ const SHELF = ((): Awards[] => {
     Awards.SinnohDexMedal,
     ...UNOVA_BADGES,
     ...UNOVA_HONORS,
+    Awards.UnovaChampion,
     Awards.UnovaDexMedal,
     ...FRONTIER_SYMBOLS,
     ...SYNDICATE_HONORS,
@@ -488,7 +490,8 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
         {HOENN_BADGES.length} badges. Sinnoh: {sinnoh()} of {SINNOH_BADGES.length} badges, {seats()}{' '}
         of {SINNOH_HONORS.length} of the Elite Four
         {wins().has(Awards.SinnohChampion) ? ', Champion' : ''}. Unova: {unova()} of{' '}
-        {UNOVA_BADGES.length} badges, {seated()} of {UNOVA_HONORS.length} of the Elite Four.
+        {UNOVA_BADGES.length} badges, {seated()} of {UNOVA_HONORS.length} of the Elite Four
+        {wins().has(Awards.UnovaChampion) ? ', Champion' : ''}.
       </Meta>
     </div>
   );

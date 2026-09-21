@@ -435,6 +435,29 @@ describe('type experts', () => {
     expect(CHAMPION_TITLES[Champion.Cynthia]).toBe(Awards.SinnohChampion);
   });
 
+  it('crowns Unova with Iris, who asks for its own four', () => {
+    expect(CHAMPION_HONORS[Champion.Iris]).toEqual(UNOVA_HONORS);
+    expect(CHAMPION_TITLES[Champion.Iris]).toBe(Awards.UnovaChampion);
+
+    // Opelucid's gym is Drayden's, so she stands at the top and
+    // nowhere else
+    for (const leader of GYM_LEADERS) {
+      expect(GYM_LEADER_NAMES[leader]).not.toBe('Iris');
+    }
+  });
+
+  it('gives every champion a party a player could have walked', () => {
+    // A champion's six is written out rather than rolled, so nothing
+    // filters it: a hand-written party is where a pokemon nobody can
+    // meet slips onto a team. Iris' own Archeops is the live case,
+    // since Unova's fossils wait on a Tirtouga being drawn
+    for (const champion of CHAMPIONS) {
+      for (const species of CHAMPION_PARTIES[champion]) {
+        expect(canMeetSpecies(species), getSpeciesData(species).name).toBe(true);
+      }
+    }
+  });
+
   it('gives every Frontier Brain a house, a rule and a pair of symbols', () => {
     const symbols = FRONTIER_BRAINS.flatMap((brain) => FRONTIER_BRAIN_SYMBOLS[brain]);
 

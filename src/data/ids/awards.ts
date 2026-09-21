@@ -139,6 +139,7 @@ const enum Awards {
   CaitlinDefeated = 114,
   /** Unova's dex filled to 152 caught */
   UnovaDexMedal = 115,
+  UnovaChampion = 116,
 }
 
 export default Awards;
@@ -261,6 +262,7 @@ export const AWARD_NAMES: Record<Awards, string> = {
   // The same person who keeps Sinnoh's Battle Castle, a league older
   [Awards.CaitlinDefeated]: 'Caitlin Defeated',
   [Awards.UnovaDexMedal]: 'Unova Dex Medal',
+  [Awards.UnovaChampion]: 'Unova Champion',
 };
 
 /**

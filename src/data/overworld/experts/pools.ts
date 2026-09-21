@@ -141,12 +141,10 @@ export const ELITE_MEMBER_SIGNATURES: Record<EliteMember, Species> = {
   // starter a player chooses rather than a pokemon of his
   [EliteMember.Flint]: Species.Magmortar,
   [EliteMember.Lucian]: Species.Bronzong,
-  // Her Chandelure is unwritten, and so is every other ghost on her
-  // team, so she stands with a Dusknoir until the Litwick line is
-  [EliteMember.Shauntal]: Species.Dusknoir,
+  [EliteMember.Shauntal]: Species.Chandelure,
   [EliteMember.Marshal]: Species.Conkeldurr,
-  [EliteMember.Grimsley]: Species.Liepard,
-  [EliteMember.Caitlin]: Species.Musharna,
+  [EliteMember.Grimsley]: Species.Bisharp,
+  [EliteMember.Caitlin]: Species.Reuniclus,
 };
 
 /**
@@ -207,29 +205,24 @@ export const GYM_LEADER_SIGNATURES: Record<GymLeader, Species> = {
   // Not the Raichu he opens with: Lt. Surge is already remembered for
   // that one, and the Luxray is what Sunyshore closes with anyway
   [GymLeader.Volkner]: Species.Luxray,
-  // Striaton's three and Brycen keep the pokemon they are actually
-  // remembered for the day those lines are written. Until then each
-  // stands with the nearest written thing of their own fight: the
-  // monkeys, Vanillish, Cryogonal and Beartic are all undrawn
+  // Striaton's three each close with an elemental monkey, and those
+  // three lines are written but staged nowhere while Simisear and
+  // Simipour are undrawn. A leader may not field what nobody can
+  // meet, so each stands with another of their own fight until then
   [GymLeader.Cilan]: Species.Lilligant,
   [GymLeader.Chili]: Species.Emboar,
   [GymLeader.Cress]: Species.Seismitoad,
   [GymLeader.Lenora]: Species.Watchog,
   [GymLeader.Burgh]: Species.Leavanny,
-  // Her Zebstrika is written and drawn by nobody, so no player can
-  // meet one; the Flaaffy is off her own sequel team, and the seat
-  // is the Emolga's the day that line is written
-  [GymLeader.Elesa]: Species.Flaaffy,
+  [GymLeader.Elesa]: Species.Emolga,
   [GymLeader.Clay]: Species.Excadrill,
-  // The Swanna she closes with is unwritten, and the Swoobat is hers
-  // in the same team
-  [GymLeader.Skyla]: Species.Swoobat,
-  [GymLeader.Brycen]: Species.Froslass,
-  // The Flygon on his own team, since the Haxorus above it is not
-  // written yet
-  [GymLeader.Drayden]: Species.Flygon,
+  [GymLeader.Skyla]: Species.Swanna,
+  [GymLeader.Brycen]: Species.Cryogonal,
+  [GymLeader.Drayden]: Species.Haxorus,
   [GymLeader.Cheren]: Species.Stoutland,
-  [GymLeader.Roxie]: Species.Scolipede,
+  [GymLeader.Roxie]: Species.Garbodor,
+  // The Jellicent he closes with is unwritten, and the Wailord is
+  // his in the same team
   [GymLeader.Marlon]: Species.Wailord,
 };
 

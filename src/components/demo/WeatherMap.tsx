@@ -1,7 +1,6 @@
 import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
 import type World from '../../overworld/world';
-import { WEATHER_INTERVAL } from '../../overworld/chunk-snapshot';
-import { serverNow } from '../../auth/clock';
+import ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { getLocalOffset, toLocalTime } from '../../auth/local-time';
 import Weather, { WEATHER_NAMES } from '../../data/overworld/weather';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
@@ -94,10 +93,17 @@ export interface WeatherMapProps {
 }
 
 export default function WeatherMap(props: WeatherMapProps): JSX.Element {
-  // The window the board is standing in: the game counts its hours off
-  // the zone's own wall clock and the server's clock, so a map counting
-  // them off UTC and this machine's shows a different hour's sky
-  const now = Math.floor(toLocalTime(serverNow(), getLocalOffset()) / WEATHER_INTERVAL);
+  // The window the board is standing in, worked out the way the board
+  // works it out: a snapshot of the middle chunk, built off this
+  // machine's clock and zone, answering its own weather window. Doing
+  // the arithmetic again here is how the map came to show another
+  // hour's sky than the game
+  const zone = getLocalOffset();
+  const now = new ChunkSnapshot(
+    props.world.getChunk(props.centreX, props.centreY),
+    toLocalTime(Date.now(), zone),
+    zone,
+  ).weatherWindow;
   const [view, setView] = createSignal(View.Sky);
   const [hour, setHour] = createSignal(now);
   const [playing, setPlaying] = createSignal(false);
@@ -250,6 +256,7 @@ export default function WeatherMap(props: WeatherMapProps): JSX.Element {
         <Badge>
           {hour() === now ? 'This hour' : `${hour() - now > 0 ? '+' : ''}${hour() - now} h`}
         </Badge>
+        <Badge>window {hour()}</Badge>
       </Row>
       <canvas
         ref={canvas}

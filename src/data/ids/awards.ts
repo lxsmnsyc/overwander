@@ -133,6 +133,10 @@ const enum Awards {
   LegendBadge = 108,
   ToxicBadge = 109,
   WaveBadge = 110,
+  ShauntalDefeated = 111,
+  MarshalDefeated = 112,
+  GrimsleyDefeated = 113,
+  CaitlinDefeated = 114,
 }
 
 export default Awards;
@@ -249,6 +253,11 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.LegendBadge]: 'Legend Badge',
   [Awards.ToxicBadge]: 'Toxic Badge',
   [Awards.WaveBadge]: 'Wave Badge',
+  [Awards.ShauntalDefeated]: 'Shauntal Defeated',
+  [Awards.MarshalDefeated]: 'Marshal Defeated',
+  [Awards.GrimsleyDefeated]: 'Grimsley Defeated',
+  // The same person who keeps Sinnoh's Battle Castle, a league older
+  [Awards.CaitlinDefeated]: 'Caitlin Defeated',
 };
 
 /**
@@ -372,6 +381,16 @@ export const SINNOH_HONORS: Awards[] = [
   Awards.BerthaDefeated,
   Awards.FlintDefeated,
   Awards.LucianDefeated,
+];
+
+/**
+ * And Unova's 4, who keep their seats in both of its leagues
+ */
+export const UNOVA_HONORS: Awards[] = [
+  Awards.ShauntalDefeated,
+  Awards.MarshalDefeated,
+  Awards.GrimsleyDefeated,
+  Awards.CaitlinDefeated,
 ];
 
 /**

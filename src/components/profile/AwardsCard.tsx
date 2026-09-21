@@ -28,6 +28,7 @@ import Awards, {
   SINNOH_BADGES,
   SINNOH_HONORS,
   UNOVA_BADGES,
+  UNOVA_HONORS,
 } from '../../data/ids/awards';
 import Npc, { EXECUTIVE_CHARSETS, EXECUTIVE_HONORS } from '../../data/overworld/npc';
 import {
@@ -286,6 +287,10 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.LegendBadge]: '#c26a3f',
   [Awards.ToxicBadge]: '#a05fb8',
   [Awards.WaveBadge]: '#4f9fd0',
+  [Awards.ShauntalDefeated]: '#7a6fa8',
+  [Awards.MarshalDefeated]: '#b8563f',
+  [Awards.GrimsleyDefeated]: '#4f4a52',
+  [Awards.CaitlinDefeated]: '#d9a3c9',
 };
 
 /**
@@ -315,6 +320,7 @@ const SHELF = ((): Awards[] => {
     Awards.SinnohChampion,
     Awards.SinnohDexMedal,
     ...UNOVA_BADGES,
+    ...UNOVA_HONORS,
     ...FRONTIER_SYMBOLS,
     ...SYNDICATE_HONORS,
   ]);
@@ -450,6 +456,7 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
   const sinnoh = (): number => won(SINNOH_BADGES);
   const seats = (): number => won(SINNOH_HONORS);
   const unova = (): number => won(UNOVA_BADGES);
+  const seated = (): number => won(UNOVA_HONORS);
 
   const empties = (): number[] => fillers(SHELF.length);
 
@@ -479,7 +486,7 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
         {HOENN_BADGES.length} badges. Sinnoh: {sinnoh()} of {SINNOH_BADGES.length} badges, {seats()}{' '}
         of {SINNOH_HONORS.length} of the Elite Four
         {wins().has(Awards.SinnohChampion) ? ', Champion' : ''}. Unova: {unova()} of{' '}
-        {UNOVA_BADGES.length} badges.
+        {UNOVA_BADGES.length} badges, {seated()} of {UNOVA_HONORS.length} of the Elite Four.
       </Meta>
     </div>
   );

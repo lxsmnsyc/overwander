@@ -104,6 +104,12 @@ export const ELITE_MEMBER_POOLS: Record<EliteMember, ExpertPool> = {
   [EliteMember.Bertha]: { types: [Types.Ground], also: [Species.Sudowoodo] },
   [EliteMember.Flint]: { types: [Types.Fire] },
   [EliteMember.Lucian]: { types: [Types.Psychic] },
+  // Unova's four are each their type all the way down, the way
+  // Hoenn's are, so none of them needs a widener
+  [EliteMember.Shauntal]: { types: [Types.Ghost] },
+  [EliteMember.Marshal]: { types: [Types.Fighting] },
+  [EliteMember.Grimsley]: { types: [Types.Dark] },
+  [EliteMember.Caitlin]: { types: [Types.Psychic] },
 };
 
 /**
@@ -134,6 +140,12 @@ export const ELITE_MEMBER_SIGNATURES: Record<EliteMember, Species> = {
   // starter a player chooses rather than a pokemon of his
   [EliteMember.Flint]: Species.Magmortar,
   [EliteMember.Lucian]: Species.Bronzong,
+  // Her Chandelure is unwritten, and so is every other ghost on her
+  // team, so she stands with a Dusknoir until the Litwick line is
+  [EliteMember.Shauntal]: Species.Dusknoir,
+  [EliteMember.Marshal]: Species.Conkeldurr,
+  [EliteMember.Grimsley]: Species.Liepard,
+  [EliteMember.Caitlin]: Species.Musharna,
 };
 
 /**

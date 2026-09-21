@@ -38,6 +38,7 @@ import Awards, {
   SINNOH_BADGES,
   SINNOH_HONORS,
   UNOVA_BADGES,
+  UNOVA_HONORS,
 } from '../../src/data/ids/awards';
 import {
   ARCADE_PANELS,
@@ -195,14 +196,24 @@ describe('type experts', () => {
 
   it('gives every elite a mark and the champion a title', () => {
     const honors = ELITE_MEMBERS.map((member) => ELITE_MEMBER_HONORS[member]);
-    const marks = new Set([...KANTO_HONORS, ...JOHTO_HONORS, ...HOENN_HONORS, ...SINNOH_HONORS]);
+    const marks = new Set([
+      ...KANTO_HONORS,
+      ...JOHTO_HONORS,
+      ...HOENN_HONORS,
+      ...SINNOH_HONORS,
+      ...UNOVA_HONORS,
+    ]);
 
-    // Sixteen seats between four leagues, four apiece: Bruno keeps one
+    // Twenty seats between five leagues, four apiece: Bruno keeps one
     // in each of the first two, and no mark is shared between them
     expect(new Set(honors).size).toBe(marks.size);
     expect(honors.every((honor) => marks.has(honor))).toBe(true);
     expect(marks.size).toBe(
-      KANTO_HONORS.length + JOHTO_HONORS.length + HOENN_HONORS.length + SINNOH_HONORS.length,
+      KANTO_HONORS.length +
+        JOHTO_HONORS.length +
+        HOENN_HONORS.length +
+        SINNOH_HONORS.length +
+        UNOVA_HONORS.length,
     );
 
     for (const member of ELITE_MEMBERS) {
@@ -227,6 +238,7 @@ describe('type experts', () => {
       ...JOHTO_HONORS,
       ...HOENN_HONORS,
       ...SINNOH_HONORS,
+      ...UNOVA_HONORS,
       Awards.KantoChampion,
     ]) {
       expect(AWARD_NAMES[award].length).toBeGreaterThan(0);
@@ -381,6 +393,7 @@ describe('type experts', () => {
       [JOHTO_HONORS, JOHTO_BADGES],
       [HOENN_HONORS, HOENN_BADGES],
       [SINNOH_HONORS, SINNOH_BADGES],
+      [UNOVA_HONORS, UNOVA_BADGES],
     ] as const;
 
     for (const member of ELITE_MEMBERS) {

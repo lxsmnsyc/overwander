@@ -155,6 +155,10 @@ const ELITE_MEMBER_LEAGUES: Record<EliteMember, string> = {
   [EliteMember.Bertha]: 'Sinnoh',
   [EliteMember.Flint]: 'Sinnoh',
   [EliteMember.Lucian]: 'Sinnoh',
+  [EliteMember.Shauntal]: 'Unova',
+  [EliteMember.Marshal]: 'Unova',
+  [EliteMember.Grimsley]: 'Unova',
+  [EliteMember.Caitlin]: 'Unova',
 };
 
 const ELITE_QUOTES: Record<EliteMember, string> = {
@@ -174,6 +178,10 @@ const ELITE_QUOTES: Record<EliteMember, string> = {
   [EliteMember.Bertha]: 'I have been at this longer than you have been alive, dear.',
   [EliteMember.Flint]: 'My hair is not the hottest thing here. Watch.',
   [EliteMember.Lucian]: 'One moment, let me finish this page. Now then.',
+  [EliteMember.Shauntal]: 'I am writing a book about trainers like you. Give me a good ending.',
+  [EliteMember.Marshal]: 'My master taught me to seek strength. You look like a step on the way.',
+  [EliteMember.Grimsley]: 'Win or lose, the cards fall. Let us see how they fall for you.',
+  [EliteMember.Caitlin]: 'I fight my own battles now. You may regret that I do.',
 };
 
 /** What a legend says, where they say anything at all */

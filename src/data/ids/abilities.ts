@@ -928,6 +928,12 @@ const enum Abilities {
   SaddleBurden = 200336,
   // Furfrou
   PedigreeCoat = 200337,
+  // Espurr
+  Restraint = 200338,
+  // Honedge
+  TurnTheBlade = 200339,
+  // Klefki
+  Keyring = 200340,
 }
 
 export default Abilities;

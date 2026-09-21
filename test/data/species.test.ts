@@ -26,6 +26,7 @@ import {
 import Biome, { TimeOfDay, WILD_BIOMES } from '../../src/data/ids/biome';
 import { Moves } from '../../src/data/ids/moves';
 import {
+  AEGISLASH_FORMS,
   ARCEUS_FORMS,
   BASCULIN_FORMS,
   BURMY_FORMS,
@@ -398,6 +399,7 @@ describe('species forms', () => {
       ...FLABEBE_FORMS.slice(1),
       ...FLOETTE_FORMS.slice(1),
       ...FLORGES_FORMS.slice(1),
+      ...AEGISLASH_FORMS.slice(1),
       ...SAWSBUCK_FORMS.slice(1),
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own

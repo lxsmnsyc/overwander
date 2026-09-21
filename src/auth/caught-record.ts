@@ -6,7 +6,7 @@ import { SpawnRarity, getSpawnRarity } from '../data/biome';
 import { getSpeciesData } from '../data/species';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { isPerfectIVs } from '../data/items/bottle-caps';
-import { type Slots, defaultSlots, getSlots } from '../data/constants/slots';
+import { Slots, defaultSlots, getSlots, mostSlots } from '../data/constants/slots';
 import { type Stats, isZeroIVs } from '../data/constants/stats';
 import type { AuraKind } from '../canvas/auras';
 import Abilities from '../data/ids/abilities';
@@ -48,6 +48,20 @@ export const HELD_ITEM_LIMIT = 1;
  */
 export function getCatchSlots(caught: { slots: number }, kind: Slots): number {
   return getSlots(caught.slots, kind);
+}
+
+/**
+ * How many held items this pokemon has room for, which is the record's
+ * own answer plus the pocket a Keyring carries. It is asked wherever an
+ * item is put on or drawn, so the extra key is worth something outside
+ * a fight as well as in one
+ */
+export function getHeldItemRoom(caught: { slots: number; abilities: Abilities[] }): number {
+  const room = getCatchSlots(caught, Slots.Item);
+
+  return caught.abilities.includes(Abilities.Keyring)
+    ? Math.min(room + 1, mostSlots(Slots.Item))
+    : room;
 }
 
 /**

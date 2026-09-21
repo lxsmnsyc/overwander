@@ -658,6 +658,12 @@
     "672": ["regular","shiny"],
     "673": ["regular","shiny"],
     "676": ["regular","shiny"],
+    "677": ["regular","shiny"],
+    "678": ["regular","shiny","female","shinyFemale"],
+    "679": ["regular","shiny"],
+    "680": ["regular","shiny"],
+    "681": ["regular","shiny"],
+    "707": ["regular","shiny"],
     "100000": ["regular","shiny"],
     "100001": ["regular"],
     "100002": ["regular"],
@@ -778,7 +784,8 @@
     "1067101": ["regular","shiny"],
     "1067102": ["regular","shiny"],
     "1067103": ["regular","shiny"],
-    "1067104": ["regular","shiny"]
+    "1067104": ["regular","shiny"],
+    "1068101": ["regular","shiny"]
   },
   "stamps": {
     "1": "c742fcfb",
@@ -1438,6 +1445,12 @@
     "672": "4300b77a",
     "673": "bc411f49",
     "676": "dcc0fe5e",
+    "677": "e0b2f5b2",
+    "678": "7785afe5",
+    "679": "2fe88311",
+    "680": "415ba70a",
+    "681": "e872f2c0",
+    "707": "c96aff5f",
     "100000": "b6d50e11",
     "100001": "385a9b78",
     "100002": "e9d7108a",
@@ -1558,6 +1571,7 @@
     "1067101": "cfa9da20",
     "1067102": "42821fbf",
     "1067103": "289aa76d",
-    "1067104": "a2f3f788"
+    "1067104": "a2f3f788",
+    "1068101": "80998fb5"
   }
 }

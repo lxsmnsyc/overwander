@@ -340,6 +340,9 @@ const enum Families {
   Flabebe = 335,
   Skiddo = 336,
   Furfrou = 337,
+  Espurr = 338,
+  Honedge = 339,
+  Klefki = 340,
 }
 
 export default Families;
@@ -697,4 +700,7 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Flabebe]: 'Flabebe',
   [Families.Skiddo]: 'Skiddo',
   [Families.Furfrou]: 'Furfrou',
+  [Families.Espurr]: 'Espurr',
+  [Families.Honedge]: 'Honedge',
+  [Families.Klefki]: 'Klefki',
 };

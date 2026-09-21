@@ -67,6 +67,7 @@ import type {
   CheckUnitGroundedEvent,
   CheckUnitItemEvent,
   CheckUnitItemThresholdEvent,
+  CheckUnitSlotsEvent,
   CheckUnitStageEvent,
   CheckUnitStatEvent,
   CheckUnitStatusDamageEvent,
@@ -282,6 +283,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.SetTerrain]: [TerrainEvent, EventPriority];
   [BattleEvents.TeamSetTerrain]: [TeamTerrainEvent, EventPriority];
   [BattleEvents.UnitSetTerrain]: [UnitSetTerrainEvent, EventPriority];
+  [BattleEvents.CheckUnitSlots]: [CheckUnitSlotsEvent, EventPriority];
   [BattleEvents.CheckUnitTerrain]: [UnitTerrainEvent, EventPriority];
   [BattleEvents.CheckUnitTerrainDuration]: [CheckUnitTerrainDurationEvent, EventPriority];
   [BattleEvents.AddAlliance]: [AllianceEvent, EventPriority];

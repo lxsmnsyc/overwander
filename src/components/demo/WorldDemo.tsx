@@ -1,7 +1,7 @@
 import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
 import WorldMapCanvas, { townsInView } from '../overworld/WorldMapCanvas';
 import WeatherMap from './WeatherMap';
-import getWorld from '../../overworld/current';
+import getWorld, { WORLD_GENERATION, WORLD_SEED } from '../../overworld/current';
 import { BIOME_NAMES } from '../../data/biome';
 import { Badge, Button, Meta, Note, Row, Switch } from '../styled';
 import World, { Generation, isInWorld } from '../../overworld/world';
@@ -37,7 +37,7 @@ const MAX_ZOOM = 8;
 const STEP = 128;
 
 /** The world every player is walking, so the picture is the real one */
-const DEFAULT_SEED = 'overworld';
+const DEFAULT_SEED = WORLD_SEED;
 
 /** How many chunks across the in-game map below it is, which is what the game's dialog shows */
 const MAP_SPAN = 64;
@@ -46,7 +46,9 @@ export default function WorldDemo(): JSX.Element {
   const [seed, setSeed] = createSignal(DEFAULT_SEED);
   // Which generation the ground is read with, so the second can be
   // looked at beside the first on the same seed
-  const [second, setSecond] = createSignal(false);
+  // Which generation the live world is read with, so what opens is the
+  // ground and the sky players are actually walking under
+  const [second, setSecond] = createSignal(WORLD_GENERATION === Generation.Second);
   const generation = (): Generation => (second() ? Generation.Second : Generation.First);
   const [left, setLeft] = createSignal(-SPAN / 2);
   const [top, setTop] = createSignal(-SPAN / 2);

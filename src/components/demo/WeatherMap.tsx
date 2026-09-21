@@ -1,6 +1,8 @@
 import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
 import type World from '../../overworld/world';
 import { WEATHER_INTERVAL } from '../../overworld/chunk-snapshot';
+import { serverNow } from '../../auth/clock';
+import { getLocalOffset, toLocalTime } from '../../auth/local-time';
 import Weather, { WEATHER_NAMES } from '../../data/overworld/weather';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
@@ -92,7 +94,10 @@ export interface WeatherMapProps {
 }
 
 export default function WeatherMap(props: WeatherMapProps): JSX.Element {
-  const now = Math.floor(Date.now() / WEATHER_INTERVAL);
+  // The window the board is standing in: the game counts its hours off
+  // the zone's own wall clock and the server's clock, so a map counting
+  // them off UTC and this machine's shows a different hour's sky
+  const now = Math.floor(toLocalTime(serverNow(), getLocalOffset()) / WEATHER_INTERVAL);
   const [view, setView] = createSignal(View.Sky);
   const [hour, setHour] = createSignal(now);
   const [playing, setPlaying] = createSignal(false);

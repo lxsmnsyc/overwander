@@ -13,6 +13,7 @@ import {
 } from '../../../src/data/species/best-build';
 import Biome, { getTimeOfDay } from '../../../src/data/ids/biome';
 import { EVERY_LAIR, getBiomeLairs, getLairResidents } from '../../../src/data/overworld/lair';
+import canMeetSpecies from '../../../src/data/overworld/reach';
 import { Items } from '../../../src/data/ids/items';
 import registerItems, { getItemData } from '../../../src/data/items';
 import { getExpertHeldItems } from '../../../src/data/items/expert-loadout';
@@ -301,6 +302,11 @@ describe('world', () => {
       expect(TRAINER_NAMES[trainer]).not.toBe('');
       expect(TRAINER_CHARSETS[trainer].length).toBeGreaterThan(0);
       expect(getTrainerPool(trainer).length).toBeGreaterThan(0);
+      // And nothing in it that nobody could be walking: a line the
+      // world has nowhere to put yet is nobody's to field
+      for (const species of getTrainerPool(trainer)) {
+        expect(canMeetSpecies(species), getSpeciesData(species).name).toBe(true);
+      }
       expect(trainerLevels(trainer)).toEqual(
         isAceTrainer(trainer) ? ACE_TRAINER_LEVELS : TYPE_TRAINER_LEVELS,
       );

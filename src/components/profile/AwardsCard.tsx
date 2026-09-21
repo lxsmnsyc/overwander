@@ -291,6 +291,7 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.MarshalDefeated]: '#b8563f',
   [Awards.GrimsleyDefeated]: '#4f4a52',
   [Awards.CaitlinDefeated]: '#d9a3c9',
+  [Awards.UnovaDexMedal]: '#5aa87f',
 };
 
 /**
@@ -321,6 +322,7 @@ const SHELF = ((): Awards[] => {
     Awards.SinnohDexMedal,
     ...UNOVA_BADGES,
     ...UNOVA_HONORS,
+    Awards.UnovaDexMedal,
     ...FRONTIER_SYMBOLS,
     ...SYNDICATE_HONORS,
   ]);

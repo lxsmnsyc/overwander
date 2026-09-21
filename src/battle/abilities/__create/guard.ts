@@ -1,6 +1,6 @@
-import { EventPriority } from '../../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
-import { StatFlags } from '../../../data/ids/moves';
+import { DamageFlags, StatFlags } from '../../../data/ids/moves';
 import type { Types } from '../../../data/constants/types';
 import type { UnitAttackEvent } from '../../events';
 import type Unit from '../../unit';
@@ -9,7 +9,7 @@ import type { Statuses } from '../../../data/ids/status';
 import type Battle from '../../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
-import { createAbility } from './create';
+import { createAbility, createContactHazard } from './create';
 
 /** Abilities that refuse something: a status, a stat drop, a critical, an aim */
 /**
@@ -239,4 +239,47 @@ export function createRestageAbility(
       }),
     ]);
   });
+}
+
+/** What a coat of spikes takes off whoever reached through it */
+export const CONTACT_RECOIL_FRACTION = 1 / 8;
+
+/**
+ * Meta ability for the two that answer a touch with the same bite
+ * (Rough Skin, Iron Barbs). The attacker pays a share of its own
+ * maximum, and the AI is told before it decides to reach in
+ */
+export function createContactRecoilAbility(ability: Abilities): (battle: Battle) => void {
+  return createAbility(
+    ability,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+          if (
+            !event.success ||
+            event.flags & DamageFlags.Indirect ||
+            event.cause.type !== EffectType.Move ||
+            event.cause.unit === event.target ||
+            !event.target.hasAbility(ability) ||
+            !event.cause.unit.checkMoveContact(event.cause.move, {
+              type: MoveTargetType.Unit,
+              unit: event.target,
+            })
+          ) {
+            return;
+          }
+
+          const attacker = event.cause.unit;
+
+          event.target.triggerAbility(ability);
+          event.target.damage(
+            { type: EffectType.Ability, ability, unit: event.target },
+            attacker,
+            attacker.checkStat(Stats.HP, 0) * CONTACT_RECOIL_FRACTION,
+            DamageFlags.Indirect,
+          );
+        }),
+        createContactHazard(battle, ability),
+      ]),
+  );
 }

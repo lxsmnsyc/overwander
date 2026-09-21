@@ -9,17 +9,20 @@ export default function registerMontaneForestSpawns(): void {
   registerSpawnPool(Biome.MontaneForest, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Axew, weight: 5 },
         { species: Species.Mankey, weight: 20 },
         { species: Species.Ralts, weight: 20 },
         { species: Species.Chimchar, weight: 3 },
         { species: Species.Turtwig, weight: 3 },
       ],
       uncommon: [
+        { species: Species.Mienfoo, weight: 18 },
         { species: Species.Makuhita, weight: 20 },
         { species: Species.Meditite, weight: 25 },
         { species: Species.Stantler, weight: 5 },
       ],
       rare: [
+        { species: Species.Fraxure, weight: 3 },
         { species: Species.Kirlia, weight: 10 },
         { species: Species.Primeape, weight: 10 },
         { species: Species.Ursaring, weight: 5 },
@@ -27,12 +30,14 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Grotle, weight: 2 },
       ],
       scarce: [
+        { species: Species.Mienshao, weight: 6 },
         { species: Species.Hariyama, weight: 6 },
         { species: Species.Medicham, weight: 10 },
         { species: Species.Wormadam, weight: 4 },
         { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
+        { species: Species.Haxorus, weight: 3 },
         { species: Species.Gardevoir, weight: 5 },
         { species: Species.Spinda, weight: 12 },
         { species: Species.Chimecho, weight: 5 },
@@ -50,17 +55,20 @@ export default function registerMontaneForestSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Axew, weight: 5 },
         { species: Species.Mankey, weight: 20 },
         { species: Species.Ralts, weight: 20 },
         { species: Species.Chimchar, weight: 3 },
         { species: Species.Turtwig, weight: 3 },
       ],
       uncommon: [
+        { species: Species.Mienfoo, weight: 18 },
         { species: Species.Makuhita, weight: 20 },
         { species: Species.Meditite, weight: 25 },
         { species: Species.Stantler, weight: 5 },
       ],
       rare: [
+        { species: Species.Fraxure, weight: 3 },
         { species: Species.Kirlia, weight: 10 },
         { species: Species.Primeape, weight: 10 },
         { species: Species.Ursaring, weight: 5 },
@@ -68,12 +76,14 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Grotle, weight: 2 },
       ],
       scarce: [
+        { species: Species.Mienshao, weight: 6 },
         { species: Species.Hariyama, weight: 6 },
         { species: Species.Medicham, weight: 10 },
         { species: Species.Wormadam, weight: 4 },
         { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
+        { species: Species.Haxorus, weight: 3 },
         { species: Species.Gardevoir, weight: 5 },
         { species: Species.Spinda, weight: 12 },
         { species: Species.Chimecho, weight: 5 },

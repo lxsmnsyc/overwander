@@ -63,12 +63,13 @@ export const ELITE_MEMBER_POOLS: Record<EliteMember, ExpertPool> = {
     types: [Types.Fighting, Types.Ground],
     also: [Species.Onix],
   },
-  // Not the Poison **type**, which in Kanto is Koga's pool exactly
-  // and would make her a second Koga. The Amorphous group is what her
-  // ghosts have in common, and her Golbat and Arbok are named
+  // The Ghost type on its own, now that it runs to a dozen grown
+  // species across the regions. She carried the Amorphous group while
+  // Kanto had one grown Ghost, and that widener had come to reach
+  // Gardevoir and Castform, which no ghost specialist would field.
+  // Her Golbat and Arbok stay named
   [EliteMember.Agatha]: {
     types: [Types.Ghost],
-    eggGroups: [EggGroups.Amorphous],
     also: [Species.Golbat, Species.Arbok],
   },
   // The Dragon egg group is the whole point: it is why a Gyarados

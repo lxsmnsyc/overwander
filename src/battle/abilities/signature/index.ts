@@ -19,6 +19,8 @@ import treeckoToTorkoal from './treecko-to-torkoal';
 import burmyToShellos from './burmy-to-shellos';
 import combeeToCherubi from './combee-to-cherubi';
 import creationTrio from './creation-trio';
+import deerling from './deerling';
+import emolga from './emolga';
 import croagunkToSnover from './croagunk-to-snover';
 import drifloonToGlameow from './drifloon-to-glameow';
 import rioluToSkorupi from './riolu-to-skorupi';
@@ -28,10 +30,25 @@ import stunkyToGible from './stunky-to-gible';
 import turtwigToPiplup from './turtwig-to-piplup';
 import audinoToSawk from './audino-to-sawk';
 import munnaToBlitzle from './munna-to-blitzle';
+import pansearToPanpour from './pansear-to-panpour';
+import sandileToDwebble from './sandile-to-dwebble';
+import scraggyToTrubbish from './scraggy-to-trubbish';
+import basculinToAlomomola from './basculin-to-alomomola';
+import joltikToKlink from './joltik-to-klink';
+import zoruaToSolosis from './zorua-to-solosis';
+import axewToDeino from './axew-to-deino';
+import tynamoToMienfoo from './tynamo-to-mienfoo';
+import elgyemToGolett from './elgyem-to-golett';
+import forcesOfNature from './forces-of-nature';
+import heatmorToLarvesta from './heatmor-to-larvesta';
 import patratToPurrloin from './patrat-to-purrloin';
+import pawniardToVullaby from './pawniard-to-vullaby';
 import roggenrolaToDrilbur from './roggenrola-to-drilbur';
 import sewaddleToPetilil from './sewaddle-to-petilil';
 import snivyToOshawott from './snivy-to-oshawott';
+import swordsOfJustice from './swords-of-justice';
+import taoTrio from './tao-trio';
+import unovaMythicals from './unova-mythicals';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -67,10 +84,27 @@ const setupAbilities = [
   ...arceus,
   ...snivyToOshawott,
   ...patratToPurrloin,
+  ...pansearToPanpour,
   ...munnaToBlitzle,
   ...roggenrolaToDrilbur,
   ...audinoToSawk,
   ...sewaddleToPetilil,
+  ...sandileToDwebble,
+  ...scraggyToTrubbish,
+  ...zoruaToSolosis,
+  ...joltikToKlink,
+  ...basculinToAlomomola,
+  ...elgyemToGolett,
+  ...axewToDeino,
+  ...pawniardToVullaby,
+  ...heatmorToLarvesta,
+  ...tynamoToMienfoo,
+  ...swordsOfJustice,
+  ...taoTrio,
+  ...unovaMythicals,
+  ...deerling,
+  ...emolga,
+  ...forcesOfNature,
 ];
 
 /**

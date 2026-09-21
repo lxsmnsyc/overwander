@@ -141,6 +141,52 @@ const enum Lairs {
    * the weather trio, so which of them answers is a roll
    */
   EmbeddedTower = 34,
+  /**
+   * The buried castle under the sand, and the moth the desert once
+   * took for the sun still in it
+   */
+  RelicCastle = 35,
+  /**
+   * The three chambers the swords keep, one apiece the way the lakes
+   * are: the cave one waits in, the hall one is tested in and the
+   * clearing one thinks in
+   */
+  GuidanceChamber = 36,
+  TrialChamber = 37,
+  RuminationField = 38,
+  /**
+   * The marsh the colt waits in until the other three have been met.
+   * A mythical's lair, so no biome hosts it
+   */
+  MoorOfIcirrus = 39,
+  /**
+   * The tower in the snow the two halves of the dragon sleep under,
+   * one in each stone, so which of them answers is a roll
+   */
+  DragonspiralTower = 40,
+  /** The crater the husk has been waiting in since it was torn open */
+  GiantChasm = 41,
+  /**
+   * The shrine the three storm riders come back to. One place for all
+   * three, the way the burned tower holds the beasts: two of them
+   * roam the country wrecking it and the third follows behind
+   */
+  AbundantShrine = 42,
+  /**
+   * The garden on the island the ferry runs out to. A mythical's
+   * lair, so no biome hosts it
+   */
+  LibertyGarden = 43,
+  /**
+   * The ruin under the water the old song came out of, which is where
+   * the relics are named for. A mythical's lair, so no biome hosts it
+   */
+  AbyssalRuins = 44,
+  /**
+   * The laboratory the machine was assembled in. A mythical's lair,
+   * so no biome hosts it
+   */
+  P2Laboratory = 45,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -179,6 +225,17 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.IronRuins]: 'Iron Ruins',
   [Lairs.NavelRock]: 'Navel Rock',
   [Lairs.EmbeddedTower]: 'Embedded Tower',
+  [Lairs.RelicCastle]: 'Relic Castle',
+  [Lairs.GuidanceChamber]: 'Guidance Chamber',
+  [Lairs.TrialChamber]: 'Trial Chamber',
+  [Lairs.RuminationField]: 'Rumination Field',
+  [Lairs.MoorOfIcirrus]: 'Moor of Icirrus',
+  [Lairs.DragonspiralTower]: 'Dragonspiral Tower',
+  [Lairs.GiantChasm]: 'Giant Chasm',
+  [Lairs.AbundantShrine]: 'Abundant Shrine',
+  [Lairs.LibertyGarden]: 'Liberty Garden',
+  [Lairs.AbyssalRuins]: 'Abyssal Ruins',
+  [Lairs.P2Laboratory]: 'P2 Laboratory',
 };
 
 /**
@@ -224,6 +281,17 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.IronRuins]: [Species.Registeel],
   [Lairs.NavelRock]: [Species.Lugia, Species.HoOh],
   [Lairs.EmbeddedTower]: [Species.Kyogre, Species.Groudon, Species.Rayquaza],
+  [Lairs.RelicCastle]: [Species.Volcarona],
+  [Lairs.GuidanceChamber]: [Species.Cobalion],
+  [Lairs.TrialChamber]: [Species.Terrakion],
+  [Lairs.RuminationField]: [Species.Virizion],
+  [Lairs.MoorOfIcirrus]: [Species.Keldeo],
+  [Lairs.DragonspiralTower]: [Species.Reshiram, Species.Zekrom],
+  [Lairs.GiantChasm]: [Species.Kyurem],
+  [Lairs.AbundantShrine]: [Species.Tornadus, Species.Thundurus, Species.Landorus],
+  [Lairs.LibertyGarden]: [Species.Victini],
+  [Lairs.AbyssalRuins]: [Species.Meloetta],
+  [Lairs.P2Laboratory]: [Species.Genesect],
 };
 
 /**
@@ -265,6 +333,17 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.IronRuins,
   Lairs.NavelRock,
   Lairs.EmbeddedTower,
+  Lairs.RelicCastle,
+  Lairs.GuidanceChamber,
+  Lairs.TrialChamber,
+  Lairs.RuminationField,
+  Lairs.MoorOfIcirrus,
+  Lairs.DragonspiralTower,
+  Lairs.GiantChasm,
+  Lairs.AbundantShrine,
+  Lairs.LibertyGarden,
+  Lairs.AbyssalRuins,
+  Lairs.P2Laboratory,
 ];
 
 /**
@@ -324,17 +403,41 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   ],
   [Biome.Beach]: [Lairs.EmbeddedTower],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
-  [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave, Lairs.SnowpointTemple],
-  [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor],
+  [Biome.Glacier]: [
+    Lairs.SeafoamIslands,
+    Lairs.IslandCave,
+    Lairs.SnowpointTemple,
+    Lairs.GiantChasm,
+  ],
+  [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor, Lairs.AbundantShrine],
   [Biome.Bog]: [Lairs.LakeValor, Lairs.TurnbackCave],
-  [Biome.TemperateForest]: [Lairs.LakeVerity],
-  [Biome.Woodland]: [Lairs.BurnedTower, Lairs.LakeVerity],
-  [Biome.Taiga]: [Lairs.LakeAcuity, Lairs.IcebergRuins],
-  [Biome.Tundra]: [Lairs.LakeAcuity, Lairs.SnowpointTemple, Lairs.IcebergRuins],
+  [Biome.TemperateForest]: [Lairs.LakeVerity, Lairs.RuminationField],
+  [Biome.Woodland]: [Lairs.BurnedTower, Lairs.LakeVerity, Lairs.RuminationField],
+  [Biome.Taiga]: [Lairs.LakeAcuity, Lairs.IcebergRuins, Lairs.DragonspiralTower],
+  [Biome.Tundra]: [
+    Lairs.LakeAcuity,
+    Lairs.SnowpointTemple,
+    Lairs.IcebergRuins,
+    Lairs.DragonspiralTower,
+    Lairs.GiantChasm,
+  ],
   [Biome.Steppe]: [Lairs.PowerPlant],
-  [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins, Lairs.RockPeakRuins],
-  [Biome.Badlands]: [Lairs.DesertRuins, Lairs.AncientTomb, Lairs.TurnbackCave, Lairs.RockPeakRuins],
-  [Biome.Mountain]: [Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower, Lairs.AncientTomb],
+  [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins, Lairs.RockPeakRuins, Lairs.RelicCastle],
+  [Biome.Badlands]: [
+    Lairs.DesertRuins,
+    Lairs.AncientTomb,
+    Lairs.TurnbackCave,
+    Lairs.RockPeakRuins,
+    Lairs.TrialChamber,
+  ],
+  [Biome.Mountain]: [
+    Lairs.MtEmber,
+    Lairs.CeruleanCave,
+    Lairs.BellTower,
+    Lairs.AncientTomb,
+    Lairs.GuidanceChamber,
+    Lairs.TrialChamber,
+  ],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave, Lairs.SpearPillar],
   [Biome.Volcano]: [Lairs.TerraCave, Lairs.StarkMountain],
 };

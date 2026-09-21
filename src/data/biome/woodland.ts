@@ -13,6 +13,11 @@ export default function registerWoodlandSpawns(): void {
   // Throh and Sawk are written but wait on sprites, since the
   // collection has drawn no Throh and the pair is staged together.
   // Once it does, mornings and days take each of them in elusive at 5
+  // The three elemental monkeys are written but wait as a set, since
+  // the collection has drawn neither Simisear nor Simipour and the
+  // trio is staged together. Once it does, mornings and days take each
+  // of Pansage, Pansear and Panpour in uncommon at 22 and each of
+  // Simisage, Simisear and Simipour in scarce at 7
   registerSpawnPool(Biome.Woodland, {
     [TimeOfDay.Morning]: {
       base: [
@@ -83,6 +88,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
         { species: Species.Chatot, weight: 6 },
@@ -115,11 +121,13 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
         { species: Species.Raikou, weight: 10 },
         { species: Species.Entei, weight: 10 },
         { species: Species.Suicune, weight: 10 },
       ],
+      mythical: [{ species: Species.Meloetta, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -190,6 +198,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
         { species: Species.Chatot, weight: 6 },
@@ -222,14 +231,17 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
         { species: Species.Raikou, weight: 10 },
         { species: Species.Entei, weight: 10 },
         { species: Species.Suicune, weight: 10 },
       ],
+      mythical: [{ species: Species.Meloetta, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Litwick, weight: 22 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Oddish, weight: 20 },
@@ -237,6 +249,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Zorua, weight: 20 },
         { species: Species.Shuppet, weight: 20 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.Vulpix, weight: 10 },
@@ -259,6 +272,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Munna, weight: 25 },
       ],
       rare: [
+        { species: Species.Lampent, weight: 8 },
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Gloom, weight: 5 },
@@ -266,6 +280,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Raichu, weight: 5 },
@@ -293,6 +308,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
+        { species: Species.Chandelure, weight: 5 },
         { species: Species.Spiritomb, weight: 5 },
         { species: Species.Pachirisu, weight: 8 },
         { species: Species.Rotom, weight: 6 },
@@ -317,14 +334,17 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
         { species: Species.Raikou, weight: 10 },
         { species: Species.Entei, weight: 10 },
         { species: Species.Suicune, weight: 10 },
       ],
+      mythical: [{ species: Species.Meloetta, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Litwick, weight: 22 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Oddish, weight: 20 },
@@ -333,6 +353,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Zorua, weight: 20 },
         { species: Species.Shuppet, weight: 20 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.Vulpix, weight: 10 },
@@ -358,6 +379,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Munna, weight: 25 },
       ],
       rare: [
+        { species: Species.Lampent, weight: 8 },
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Gloom, weight: 5 },
@@ -366,6 +388,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Raichu, weight: 5 },
@@ -396,6 +419,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
+        { species: Species.Chandelure, weight: 5 },
         { species: Species.Spiritomb, weight: 5 },
         { species: Species.Pachirisu, weight: 8 },
         { species: Species.Rotom, weight: 6 },
@@ -421,11 +446,13 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
         { species: Species.Raikou, weight: 10 },
         { species: Species.Entei, weight: 10 },
         { species: Species.Suicune, weight: 10 },
       ],
+      mythical: [{ species: Species.Meloetta, weight: 10 }],
     },
   });
   registerWaterPool(Biome.Woodland, {

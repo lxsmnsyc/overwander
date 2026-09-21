@@ -1,15 +1,44 @@
 // Snivy through Oshawott.
 
 import { describe, expect, it } from 'vitest';
-import { Stages, Stats } from '../../../../src/data/constants/stats';
+import { Stages, Stats, StatsKind } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import { Items } from '../../../../src/data/ids/items';
-import { Genders } from '../../../../src/data/ids/species';
-import { Statuses } from '../../../../src/data/ids/status';
-import { EffectType, MoveTargetType } from '../../../../src/battle/events';
+import { Genders, Species } from '../../../../src/data/ids/species';
+import { Statuses, TeamStatuses, Weathers } from '../../../../src/data/ids/status';
+import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
+import { HONED_STAGES } from '../../../../src/battle/abilities/signature/pawniard-to-vullaby';
+import {
+  FROST_FANGS_SCALE,
+  LATCH_ON_SHARE,
+  SLEEVE_GUARD_SCALE,
+} from '../../../../src/battle/abilities/signature/tynamo-to-mienfoo';
+import { COAT_TYPES, TURNING_SCALE } from '../../../../src/battle/abilities/signature/deerling';
+import { GLIDEWAKE_CAP } from '../../../../src/battle/abilities/signature/emolga';
+import {
+  OVERCLOCK_SCALE,
+  OVERCLOCK_SHARE,
+  OVERCLOCK_THRESHOLD,
+  WINNERS_SHARE_STAGES,
+} from '../../../../src/battle/abilities/signature/unova-mythicals';
+import {
+  ANTEATER_SCALE,
+  ANT_GUARD_SCALE,
+  EMBER_HALO_SHARE,
+} from '../../../../src/battle/abilities/signature/heatmor-to-larvesta';
+import {
+  SCORING_STAGES,
+  SUNWARMED_SCALE,
+  THREE_HEADS_SHARE,
+} from '../../../../src/battle/abilities/signature/axew-to-deino';
+import {
+  BROKEN_SEAL_ATTACK,
+  BROKEN_SEAL_DEFENSE,
+  HEXLIGHT_SCALE,
+} from '../../../../src/battle/abilities/signature/elgyem-to-golett';
 import {
   DOZE_SHARE,
   STORM_DASH_STEP,
@@ -34,11 +63,39 @@ import {
 } from '../../../../src/battle/abilities/signature/audino-to-sawk';
 import {
   BLUE_BELT_SCALE,
+  BONEWEAR_STAGES,
+  GENIE_SCALE,
   RED_BELT_SCALE,
+  WARCRY_STAGES,
 } from '../../../../src/battle/abilities/signature/__create';
+import {
+  DEATH_ROLL_SCALE,
+  DRY_SPELL_SCALE,
+  GLANCING_BLOW_FRACTION,
+  SLAB_SHARE,
+} from '../../../../src/battle/abilities/signature/sandile-to-dwebble';
+import {
+  DEATH_MASK_STAGES,
+  GANG_UP_STEP,
+} from '../../../../src/battle/abilities/signature/scraggy-to-trubbish';
+import {
+  DIVISION_SHARE,
+  FIXATION_SCALE,
+} from '../../../../src/battle/abilities/signature/zorua-to-solosis';
+import {
+  MESHING_DEALT,
+  MESHING_TAKEN,
+  THORN_CURTAIN_SCALE,
+} from '../../../../src/battle/abilities/signature/joltik-to-klink';
+import { CONTACT_RECOIL_FRACTION } from '../../../../src/battle/abilities/__create';
+import {
+  BLOOD_WATER_STEP,
+  SWAN_DANCE_STAGES,
+  TIDE_POOL_SCALE,
+} from '../../../../src/battle/abilities/signature/basculin-to-alomomola';
 import turns from '../../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../../harness';
-import { dealDamage, resolveAttackDamage } from './helpers';
+import { NONE_CAUSE, act, dealDamage, resolveAttackDamage } from './helpers';
 
 function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
   return { type: MoveTargetType.Unit, unit } as const;
@@ -566,5 +623,1524 @@ describe('the rest of what the forest holds', () => {
 
     expect(armed).toBeCloseTo(fromHolder, 2);
     expect(armed / plain).toBeCloseTo(BLUE_BELT_SCALE, 2);
+  });
+});
+
+describe('the elemental monkeys', () => {
+  it('burns every enemy the first time a blow takes it under half, once a fight', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const pansear = createUnit(battle, teamA);
+    const near = createUnit(battle, teamB);
+    const far = createUnit(battle, teamB);
+
+    pansear.addAbility(Abilities.EmberTuft);
+    pansear.enter();
+    near.enter();
+    far.enter();
+
+    // Above half it keeps the tuft
+    near.attack(pansear, Moves.Tackle, 1, Types.Normal, MoveCategories.Physical, 0);
+    expect(near.status[Statuses.Burned]).toBeFalsy();
+
+    pansear.setHealth(Math.floor(pansear.checkStat(Stats.HP, 0) * 0.6));
+    near.attack(pansear, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(near.status[Statuses.Burned]).toBeTruthy();
+    expect(far.status[Statuses.Burned]).toBeTruthy();
+
+    // Spent: a second enemy arriving later gets nothing
+    const late = createUnit(battle, teamB);
+
+    late.enter();
+    near.attack(pansear, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+    expect(late.status[Statuses.Burned]).toBeFalsy();
+  });
+
+  it('seeds every enemy instead, and a Grass type shrugs the seed off', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const pansage = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const grass = createUnit(battle, teamB);
+
+    pansage.addAbility(Abilities.LeafCrown);
+    pansage.enter();
+    plain.enter();
+    grass.enter();
+    grass.types.clear();
+    grass.types.add(Types.Grass);
+
+    pansage.setHealth(Math.floor(pansage.checkStat(Stats.HP, 0) * 0.6));
+    plain.attack(pansage, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(plain.status[Statuses.Seeding]).toBeTruthy();
+
+    // A Grass type shrugs a seed off however it arrives, the same way
+    // a Fire type shrugs off an Ember Tuft
+    expect(grass.status[Statuses.Seeding]).toBeFalsy();
+  });
+
+  it('traps every enemy in a whirlpool instead, which costs them as it runs', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const panpour = createUnit(battle, teamA);
+    const near = createUnit(battle, teamB);
+    const far = createUnit(battle, teamB);
+
+    panpour.addAbility(Abilities.GeyserTail);
+    panpour.enter();
+    near.enter();
+    far.enter();
+
+    panpour.setHealth(Math.floor(panpour.checkStat(Stats.HP, 0) * 0.6));
+    near.attack(panpour, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(near.status[Statuses.Trapped]).toBeTruthy();
+    expect(far.status[Statuses.Trapped]).toBeTruthy();
+
+    // The trap keeps costing, which is what a burn and a seed do too
+    const whole = far.health;
+
+    battle.tick(turns(1));
+    expect(far.health).toBeLessThan(whole);
+  });
+});
+
+describe('the desert families', () => {
+  it('bites harder on a throat it already has hold of', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const croc = createUnit(battle, teamA);
+    const held = createUnit(battle, teamB);
+    const fresh = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    croc.addAbility(Abilities.DeathRoll);
+    croc.enter();
+    held.enter();
+    fresh.enter();
+
+    // The first bite on each is worth the ordinary amount
+    const first = dealDamage(croc, held, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+    const other = dealDamage(croc, fresh, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(first).toBeCloseTo(other, 0);
+
+    const second = dealDamage(croc, held, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(second / first).toBeCloseTo(DEATH_ROLL_SCALE, 1);
+  });
+
+  it('still lands a quarter of a move that missed', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const doll = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    doll.addAbility(Abilities.GlancingBlow);
+    doll.enter();
+    plain.enter();
+    foe.enter();
+
+    // What the same move is worth when it lands, off a unit without it
+    const landed = dealDamage(plain, foe, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+    const whole = foe.health;
+
+    battle.emit(BattleEvents.UnitTriggerMoveMissed, {
+      id: 'UnitTriggerMoveMissed',
+      disabled: false,
+      parent: {
+        id: 'UnitTriggerMove',
+        disabled: false,
+        source: doll,
+        move: Moves.Tackle,
+        target: { type: MoveTargetType.Unit, unit: foe },
+        steps: 0,
+      },
+    });
+
+    const glanced = whole - foe.health;
+
+    expect(glanced).toBeGreaterThan(0);
+    expect(glanced / landed).toBeCloseTo(GLANCING_BLOW_FRACTION, 1);
+
+    // Somebody without it loses nothing to a miss
+    const before = foe.health;
+
+    battle.emit(BattleEvents.UnitTriggerMoveMissed, {
+      id: 'UnitTriggerMoveMissed',
+      disabled: false,
+      parent: {
+        id: 'UnitTriggerMove',
+        disabled: false,
+        source: plain,
+        move: Moves.Tackle,
+        target: { type: MoveTargetType.Unit, unit: foe },
+        steps: 0,
+      },
+    });
+
+    expect(foe.health).toBe(before);
+  });
+
+  it('is at its best under a sky doing nothing, and drinks while it is', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cactus = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    cactus.addAbility(Abilities.DrySpell);
+    cactus.enter();
+    plain.enter();
+    foe.enter();
+
+    expect(
+      resolveAttackDamage(battle, cactus, foe) / resolveAttackDamage(battle, plain, foe),
+    ).toBeCloseTo(DRY_SPELL_SCALE, 2);
+
+    cactus.setHealth(Math.floor(cactus.checkStat(Stats.HP, 0) / 2));
+
+    const hurt = cactus.health;
+
+    act(battle, cactus);
+    expect(cactus.health).toBeGreaterThan(hurt);
+  });
+
+  it('lets the slab take a fixed share of it before any of it lands', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const crustle = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    crustle.addAbility(Abilities.Slab);
+    crustle.enter();
+    foe.enter();
+
+    const whole = crustle.health;
+    const slab = crustle.checkStat(Stats.HP, 0) * SLAB_SHARE;
+
+    // The slab is a pool, so a small hit is taken whole by the rock
+    foe.damage({ type: EffectType.None }, crustle, slab / 2, 0);
+    expect(crustle.health).toBe(whole);
+
+    // The rest of the slab goes, and what is left over reaches Crustle
+    foe.damage({ type: EffectType.None }, crustle, slab, 0);
+    expect(whole - crustle.health).toBeCloseTo(slab / 2, 0);
+  });
+
+  it('sits a Darmanitan down below half and stands it back up above', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const darmanitan = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    darmanitan.setSpecies(Species.Darmanitan);
+    darmanitan.setHealth(darmanitan.checkStat(Stats.HP, 0));
+    darmanitan.addAbility(Abilities.ZenMode);
+    darmanitan.enter();
+    foe.enter();
+
+    expect(darmanitan.species).toBe(Species.Darmanitan);
+
+    foe.damage({ type: EffectType.None }, darmanitan, darmanitan.health * 0.6, 0);
+
+    expect(darmanitan.species).toBe(Species.DarmanitanZen);
+    // The shape brings its own stats and its second type with it
+    expect(darmanitan.types.has(Types.Psychic)).toBe(true);
+
+    darmanitan.heal({ type: EffectType.None }, darmanitan, darmanitan.checkStat(Stats.HP, 0), 0);
+
+    expect(darmanitan.species).toBe(Species.Darmanitan);
+    expect(darmanitan.types.has(Types.Psychic)).toBe(false);
+  });
+});
+
+describe('the old city and the back alleys', () => {
+  it('hits harder for each teammate still standing with it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const scrafty = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    scrafty.addAbility(Abilities.GangUp);
+    scrafty.enter();
+    mate.enter();
+    foe.enter();
+
+    const backed = resolveAttackDamage(battle, scrafty, foe);
+
+    foe.attack(mate, Moves.Tackle, 900, Types.Normal, MoveCategories.Physical, 0);
+    expect(mate.alive).toBe(false);
+
+    const alone = resolveAttackDamage(battle, scrafty, foe);
+
+    expect(backed / alone).toBeCloseTo(1 + GANG_UP_STEP, 2);
+  });
+
+  it('keeps hazards off its own ground and sweeps what is already there', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const sigilyph = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    foe.enter();
+
+    const cause = { type: EffectType.None } as const;
+
+    // Down before the guardian takes the field
+    teamA.addStatus(TeamStatuses.Spikes, cause);
+    expect(teamA.status[TeamStatuses.Spikes]).toBeTruthy();
+
+    sigilyph.addAbility(Abilities.WardCircle);
+    sigilyph.enter();
+
+    expect(teamA.status[TeamStatuses.Spikes]).toBeFalsy();
+
+    // And nothing may be laid while it stands
+    teamA.addStatus(TeamStatuses.ToxicSpikes, cause);
+    expect(teamA.status[TeamStatuses.ToxicSpikes]).toBeFalsy();
+
+    // The enemy side is untouched
+    teamB.addStatus(TeamStatuses.Spikes, cause);
+    expect(teamB.status[TeamStatuses.Spikes]).toBeTruthy();
+  });
+
+  it('takes 2 stages of its best stat off whoever finished a teammate', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const yamask = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const killer = createUnit(battle, teamB);
+
+    yamask.addAbility(Abilities.DeathMask);
+    yamask.enter();
+    mate.enter();
+    killer.enter();
+
+    // Attack is its highest, so that is what the mask takes
+    killer.setStat(StatsKind.Base, Stats.Attack, 200);
+    killer.attack(mate, Moves.Tackle, 900, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(mate.alive).toBe(false);
+    expect(killer.stages[Stages.Attack]).toBe(-DEATH_MASK_STAGES);
+  });
+
+  it('drops Toxic Spikes on the enemy side as it turns up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const trubbish = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    foe.enter();
+    trubbish.addAbility(Abilities.Litterbug);
+    trubbish.enter();
+    battle.tick(turns(1));
+
+    expect(teamB.status[TeamStatuses.ToxicSpikes]).toBeTruthy();
+    expect(teamA.status[TeamStatuses.ToxicSpikes]).toBeFalsy();
+  });
+
+  it('spreads Mummy onto whoever touches it, in place of what they had', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const yamask = createUnit(battle, teamA);
+    const toucher = createUnit(battle, teamB);
+
+    yamask.addAbility(Abilities.Mummy);
+    toucher.addAbility(Abilities.Guts);
+    yamask.enter();
+    toucher.enter();
+
+    toucher.attack(yamask, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(toucher.hasAbility(Abilities.Mummy)).toBe(true);
+    expect(toucher.hasAbility(Abilities.Guts)).toBe(false);
+  });
+
+  it('marks whoever reaches into the coffin to go down with it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cofagrigus = createUnit(battle, teamA);
+    const robber = createUnit(battle, teamB);
+
+    cofagrigus.addAbility(Abilities.PerishBody);
+    cofagrigus.enter();
+    robber.enter();
+
+    robber.attack(cofagrigus, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(robber.status[Statuses.Perishing]).toBeTruthy();
+    expect(cofagrigus.status[Statuses.Perishing]).toBeTruthy();
+  });
+});
+
+describe('what Route 5 holds', () => {
+  it('lets the first super effective blow pass through it, once a fight', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const zorua = createUnit(battle, teamA, [Types.Grass]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    zorua.addAbility(Abilities.Bluff);
+    zorua.enter();
+    foe.enter();
+
+    const whole = zorua.health;
+
+    // Fire into Grass is super effective, so the trick answers it
+    foe.attack(zorua, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+    expect(zorua.health).toBe(whole);
+
+    // Spent: the next one lands
+    foe.attack(zorua, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+    expect(zorua.health).toBeLessThan(whole);
+  });
+
+  it('does not spend the bluff on a blow that was not super effective', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const zorua = createUnit(battle, teamA, [Types.Grass]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    zorua.addAbility(Abilities.Bluff);
+    zorua.enter();
+    foe.enter();
+
+    foe.attack(zorua, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    const hurt = zorua.health;
+
+    expect(hurt).toBeLessThan(zorua.checkStat(Stats.HP, 0));
+
+    // Still there for the one it is meant for
+    foe.attack(zorua, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+    expect(zorua.health).toBe(hurt);
+  });
+
+  it('sweeps both sides of the field as it arrives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cinccino = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const cause = { type: EffectType.None } as const;
+
+    foe.enter();
+    teamA.addStatus(TeamStatuses.StealthRock, cause);
+    teamB.addStatus(TeamStatuses.Spikes, cause);
+
+    cinccino.addAbility(Abilities.CleanSweep);
+    cinccino.enter();
+
+    expect(teamA.status[TeamStatuses.StealthRock]).toBeFalsy();
+    expect(teamB.status[TeamStatuses.Spikes]).toBeFalsy();
+  });
+
+  it('has the pair aim what its team throws and spread what its team takes', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const gothita = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const failing = createUnit(battle, teamB);
+    const whole = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    gothita.addAbility(Abilities.Fixation);
+    gothita.enter();
+    mate.enter();
+    failing.enter();
+    whole.enter();
+    failing.setHealth(Math.floor(failing.checkStat(Stats.HP, 0) / 4));
+
+    const onFailing = resolveAttackDamage(battle, mate, failing);
+    const onWhole = resolveAttackDamage(battle, mate, whole);
+
+    expect(onFailing / onWhole).toBeCloseTo(FIXATION_SCALE, 2);
+  });
+
+  it('takes a quarter of what is aimed at a teammate', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const solosis = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    solosis.addAbility(Abilities.Division);
+    solosis.enter();
+    mate.enter();
+    foe.enter();
+
+    const cellWhole = solosis.health;
+    const mateWhole = mate.health;
+
+    foe.damage({ type: EffectType.None }, mate, 100, 0);
+
+    const shared = cellWhole - solosis.health;
+
+    expect(shared).toBeCloseTo(100 * DIVISION_SHARE, 0);
+    expect(mateWhole - mate.health).toBeCloseTo(100 - shared, 0);
+  });
+
+  it('dresses a Zorua as the teammate at the back until something lands', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const zorua = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    zorua.setSpecies(Species.Zorua);
+    zorua.setHealth(zorua.checkStat(Stats.HP, 0));
+    mate.setSpecies(Species.Minccino);
+    mate.setHealth(mate.checkStat(Stats.HP, 0));
+    zorua.addAbility(Abilities.Illusion);
+    mate.enter();
+    zorua.enter();
+    foe.enter();
+
+    expect(zorua.appearance).toBe(Species.Minccino);
+    // What it is never moved, only what it looks like
+    expect(zorua.species).toBe(Species.Zorua);
+
+    foe.attack(zorua, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(zorua.appearance).toBe(Species.Zorua);
+  });
+});
+
+describe('the charged cave', () => {
+  it('feeds on any bolt that lands, whoever threw it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const joltik = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    joltik.addAbility(Abilities.StaticFeed);
+    joltik.enter();
+    mate.enter();
+    foe.enter();
+    joltik.setHealth(Math.floor(joltik.checkStat(Stats.HP, 0) / 2));
+
+    const hurt = joltik.health;
+
+    // A bolt between two other units still counts
+    foe.attack(mate, Moves.ThunderShock, 40, Types.Electric, MoveCategories.Special, 0);
+    expect(joltik.health).toBeGreaterThan(hurt);
+
+    const fed = joltik.health;
+
+    // Anything that is not Electric feeds it nothing
+    foe.attack(mate, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    expect(joltik.health).toBe(fed);
+  });
+
+  it('puts the spikes between a contact move and its teammates', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ferroseed = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const spare = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    ferroseed.addAbility(Abilities.ThornCurtain);
+    ferroseed.enter();
+    mate.enter();
+    foe.enter();
+    spare.enter();
+
+    const covered = dealDamage(foe, mate, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+    const bare = dealDamage(foe, spare, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(covered / bare).toBeCloseTo(THORN_CURTAIN_SCALE, 1);
+  });
+
+  it('is worth nothing to a gear with nothing to turn against', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const klink = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    klink.addAbility(Abilities.Meshing);
+    klink.enter();
+    mate.enter();
+    foe.enter();
+
+    const meshedOut = resolveAttackDamage(battle, klink, foe);
+    const meshedIn = resolveAttackDamage(battle, foe, klink);
+
+    foe.attack(mate, Moves.Tackle, 900, Types.Normal, MoveCategories.Physical, 0);
+    expect(mate.alive).toBe(false);
+
+    const aloneOut = resolveAttackDamage(battle, klink, foe);
+    const aloneIn = resolveAttackDamage(battle, foe, klink);
+
+    expect(meshedOut / aloneOut).toBeCloseTo(MESHING_DEALT, 2);
+    expect(meshedIn / aloneIn).toBeCloseTo(MESHING_TAKEN, 2);
+  });
+
+  it('answers a touch with the spikes, the way Rough Skin does', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ferroseed = createUnit(battle, teamA);
+    const toucher = createUnit(battle, teamB);
+
+    ferroseed.addAbility(Abilities.IronBarbs);
+    ferroseed.enter();
+    toucher.enter();
+
+    const whole = toucher.health;
+
+    toucher.attack(ferroseed, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(whole - toucher.health).toBeCloseTo(
+      toucher.checkStat(Stats.HP, 0) * CONTACT_RECOIL_FRACTION,
+      0,
+    );
+  });
+});
+
+describe('what Driftveil holds', () => {
+  it('turns harder on the water for each enemy already bleeding', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const basculin = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    basculin.addAbility(Abilities.BloodWater);
+    basculin.enter();
+    plain.enter();
+    hurt.enter();
+    other.enter();
+
+    // Nobody failing yet, so the school is worth nothing extra
+    expect(
+      resolveAttackDamage(battle, basculin, other) / resolveAttackDamage(battle, plain, other),
+    ).toBeCloseTo(1, 2);
+
+    hurt.setHealth(Math.floor(hurt.checkStat(Stats.HP, 0) / 4));
+
+    // It counts whoever is bleeding, not the one it is aimed at
+    expect(
+      resolveAttackDamage(battle, basculin, other) / resolveAttackDamage(battle, plain, other),
+    ).toBeCloseTo(1 + BLOOD_WATER_STEP, 2);
+  });
+
+  it('adds Speed to every dance, and nothing to anything else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const swanna = createUnit(battle, teamA);
+
+    swanna.addAbility(Abilities.SwanDance);
+    swanna.enter();
+    createUnit(battle, teamB).enter();
+
+    swanna.triggerMove(Moves.FeatherDance, { type: MoveTargetType.None }, 0);
+    battle.tick(turns(1));
+
+    expect(swanna.stages[Stages.Speed]).toBe(SWAN_DANCE_STAGES);
+
+    swanna.triggerMove(Moves.Roost, { type: MoveTargetType.None }, 0);
+    battle.tick(turns(1));
+
+    expect(swanna.stages[Stages.Speed]).toBe(SWAN_DANCE_STAGES);
+  });
+
+  it('freezes with the first Ice move it lands, and only the first', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const vanillite = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    vanillite.addAbility(Abilities.FlashFreeze);
+    vanillite.enter();
+    first.enter();
+    second.enter();
+
+    vanillite.attack(first, Moves.IcyWind, 10, Types.Ice, MoveCategories.Special, 0);
+    expect(first.status[Statuses.Frozen]).toBeTruthy();
+
+    vanillite.attack(second, Moves.IcyWind, 10, Types.Ice, MoveCategories.Special, 0);
+    expect(second.status[Statuses.Frozen]).toBeFalsy();
+  });
+
+  it('makes every heal on its team worth more, its own included', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const alomomola = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    alomomola.addAbility(Abilities.TidePool);
+    alomomola.enter();
+    mate.enter();
+    foe.enter();
+    mate.setHealth(1);
+    foe.setHealth(1);
+
+    const cause = { type: EffectType.None } as const;
+
+    mate.heal(cause, mate, 100, 0);
+    foe.heal(cause, foe, 100, 0);
+
+    expect((mate.health - 1) / (foe.health - 1)).toBeCloseTo(TIDE_POOL_SCALE, 2);
+  });
+});
+
+describe('what the tower on the hill holds', () => {
+  it('burns harder into whatever is already going wrong', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const chandelure = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    chandelure.addAbility(Abilities.Hexlight);
+    chandelure.enter();
+    plain.enter();
+    target.enter();
+
+    // Nothing wrong with it yet, so the lamp is worth nothing extra
+    expect(
+      resolveAttackDamage(battle, chandelure, target) / resolveAttackDamage(battle, plain, target),
+    ).toBeCloseTo(1, 2);
+
+    target.addStatus(Statuses.Paralyzed, NONE_CAUSE);
+
+    expect(
+      resolveAttackDamage(battle, chandelure, target) / resolveAttackDamage(battle, plain, target),
+    ).toBeCloseTo(HEXLIGHT_SCALE, 2);
+  });
+
+  it('brings the room with it, so the two defences trade places', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const beheeyem = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    // The harness builds both defences the same, so one has to move
+    // before a swap is visible at all
+    foe.setStat(StatsKind.Base, Stats.Defense, 160);
+    foe.enter();
+
+    const hard = foe.checkStat(Stats.Defense, 0);
+    const soft = foe.checkStat(Stats.SpecialDefense, 0);
+
+    expect(hard).toBeGreaterThan(soft);
+
+    beheeyem.addAbility(Abilities.SwapField);
+    beheeyem.enter();
+    battle.tick(turns(1));
+
+    expect(foe.checkStat(Stats.Defense, 0)).toBe(soft);
+    expect(foe.checkStat(Stats.SpecialDefense, 0)).toBe(hard);
+  });
+
+  it('shakes the seal loose once, and not again in the same fight', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const golurk = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    golurk.addAbility(Abilities.BrokenSeal);
+    golurk.enter();
+    foe.enter();
+
+    // Above half the seal holds
+    foe.attack(golurk, Moves.Tackle, 1, Types.Normal, MoveCategories.Physical, 0);
+    expect(golurk.stages[Stages.Attack]).toBe(0);
+
+    golurk.setHealth(Math.floor(golurk.checkStat(Stats.HP, 0) * 0.6));
+    foe.attack(golurk, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(golurk.stages[Stages.Attack]).toBe(BROKEN_SEAL_ATTACK);
+    expect(golurk.stages[Stages.Defense]).toBe(BROKEN_SEAL_DEFENSE);
+
+    // Spent: a second blow under half adds nothing
+    foe.attack(golurk, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+    expect(golurk.stages[Stages.Attack]).toBe(BROKEN_SEAL_ATTACK);
+  });
+});
+
+describe('what the dragon tower holds', () => {
+  it('takes a stage of Defense off with every physical move, and none with a special one', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const haxorus = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    haxorus.addAbility(Abilities.Scoring);
+    haxorus.enter();
+    foe.enter();
+
+    haxorus.attack(foe, Moves.Scratch, 10, Types.Normal, MoveCategories.Physical, 0);
+    expect(foe.stages[Stages.Defense]).toBe(SCORING_STAGES);
+
+    haxorus.attack(foe, Moves.Scratch, 10, Types.Normal, MoveCategories.Physical, 0);
+    expect(foe.stages[Stages.Defense]).toBe(SCORING_STAGES * 2);
+
+    // The tusks are what cut, so nothing special leaves a mark
+    haxorus.attack(foe, Moves.DragonPulse, 10, Types.Dragon, MoveCategories.Special, 0);
+    expect(foe.stages[Stages.Defense]).toBe(SCORING_STAGES * 2);
+  });
+
+  it('casts faster once it has basked, and only under a sun', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const druddigon = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    druddigon.addAbility(Abilities.Sunwarmed);
+    druddigon.enter();
+    foe.enter();
+
+    const target = { type: MoveTargetType.Unit, unit: foe } as const;
+    const cold = druddigon.checkMoveCastTime(Moves.DragonClaw, target);
+
+    battle.setWeather(Weathers.Sunny);
+
+    expect(druddigon.checkMoveCastTime(Moves.DragonClaw, target)).toBeCloseTo(
+      cold * SUNWARMED_SCALE,
+      2,
+    );
+
+    // The cooldown is Speed's to answer, so the sun leaves it alone
+    battle.setWeather(Weathers.Rain);
+    expect(druddigon.checkMoveCastTime(Moves.DragonClaw, target)).toBe(cold);
+  });
+
+  it('bites a second enemy for a share, and nothing when there is only one', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const hydreigon = createUnit(battle, teamA);
+    const bitten = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+
+    pinRandom(battle, 0);
+    hydreigon.addAbility(Abilities.ThreeHeads);
+    hydreigon.enter();
+    bitten.enter();
+    other.enter();
+
+    const front = bitten.health;
+    const side = other.health;
+
+    hydreigon.attack(bitten, Moves.DragonPulse, 40, Types.Dragon, MoveCategories.Special, 0);
+
+    const bite = side - other.health;
+
+    expect(bite).toBeGreaterThan(0);
+    expect(bite / (front - bitten.health)).toBeCloseTo(THREE_HEADS_SHARE, 1);
+
+    // Alone in front of it, the side heads have nothing to reach for
+    other.setHealth(0);
+
+    const alone = other.health;
+
+    hydreigon.attack(bitten, Moves.DragonPulse, 40, Types.Dragon, MoveCategories.Special, 0);
+    expect(other.health).toBe(alone);
+  });
+});
+
+describe('what the last two roads hold', () => {
+  it('answers an enemy raising a stat, and never its own answer', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const bisharp = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    bisharp.addAbility(Abilities.Honed);
+    bisharp.enter();
+    foe.enter();
+
+    foe.addStage(Stages.Attack, 2, NONE_CAUSE);
+    expect(bisharp.stages[Stages.Attack]).toBe(HONED_STAGES);
+
+    // A drop is Defiant's to answer, not this one's
+    foe.addStage(Stages.Speed, -1, NONE_CAUSE);
+    expect(bisharp.stages[Stages.Attack]).toBe(HONED_STAGES);
+
+    // Its own boost is a boost too, and must not feed a second one
+    // back through a Honed on the far side
+    const mirror = createUnit(battle, teamB);
+
+    mirror.addAbility(Abilities.Honed);
+    mirror.enter();
+    foe.addStage(Stages.Defense, 1, NONE_CAUSE);
+
+    expect(bisharp.stages[Stages.Attack]).toBe(HONED_STAGES * 2);
+    expect(mirror.stages[Stages.Attack]).toBe(0);
+  });
+
+  it('arms the eagle off its own dead and the vulture off everybody else s', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const braviary = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const mandibuzz = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    braviary.addAbility(Abilities.Warcry);
+    mandibuzz.addAbility(Abilities.Bonewear);
+    braviary.enter();
+    mate.enter();
+    mandibuzz.enter();
+    foe.enter();
+
+    // One of their own goes down: the eagle answers, the vulture does
+    // not, since the dress is made of what it outlived
+    mate.damage(NONE_CAUSE, mate, mate.health, 0);
+
+    expect(braviary.stages[Stages.Attack]).toBe(WARCRY_STAGES);
+    expect(mandibuzz.stages[Stages.Defense]).toBe(0);
+
+    // An enemy goes down, and it is the other way round
+    foe.damage(NONE_CAUSE, foe, foe.health, 0);
+
+    expect(braviary.stages[Stages.Attack]).toBe(WARCRY_STAGES);
+    expect(mandibuzz.stages[Stages.Defense]).toBe(BONEWEAR_STAGES);
+    expect(mandibuzz.stages[Stages.SpecialDefense]).toBe(BONEWEAR_STAGES);
+  });
+});
+
+describe('what the last road holds', () => {
+  it('opens a nest and holds one, and the ant wins where they meet', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const heatmor = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const ant = createUnit(battle, teamB, [Types.Bug, Types.Steel]);
+    // The control carries the same typing, so the type chart's own 4x
+    // on Fire into Bug and Steel cancels out of the ratio
+    const nest = createUnit(battle, teamB, [Types.Bug, Types.Steel]);
+    const neither = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    heatmor.addAbility(Abilities.Anteater);
+    heatmor.enter();
+    plain.enter();
+    ant.enter();
+    nest.enter();
+    neither.enter();
+
+    // Nothing to open: a target that is neither is worth no more
+    expect(
+      resolveAttackDamage(battle, heatmor, neither) / resolveAttackDamage(battle, plain, neither),
+    ).toBeCloseTo(1, 2);
+
+    expect(
+      resolveAttackDamage(battle, heatmor, nest) / resolveAttackDamage(battle, plain, nest),
+    ).toBeCloseTo(ANTEATER_SCALE, 2);
+
+    // The armour answers the fire, and the two together come out
+    // under 1, so the ant wins the exchange it was built to lose
+    ant.addAbility(Abilities.AntGuard);
+
+    const guarded = dealDamage(
+      heatmor,
+      ant,
+      Moves.Incinerate,
+      40,
+      Types.Fire,
+      MoveCategories.Special,
+    );
+    const bare = dealDamage(plain, nest, Moves.Incinerate, 40, Types.Fire, MoveCategories.Special);
+
+    expect(guarded / bare).toBeCloseTo(ANTEATER_SCALE * ANT_GUARD_SCALE, 2);
+  });
+
+  it('costs every enemy a share of itself each time it reaches for a move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const volcarona = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    volcarona.addAbility(Abilities.EmberHalo);
+    volcarona.enter();
+    mate.enter();
+    foe.enter();
+
+    const share = Math.floor(foe.checkStat(Stats.HP, 0) * EMBER_HALO_SHARE);
+    const whole = foe.health;
+    const friendly = mate.health;
+
+    act(battle, foe);
+    expect(whole - foe.health).toBe(share);
+
+    // Its own side stands in the same light and pays nothing
+    act(battle, mate);
+    expect(mate.health).toBe(friendly);
+  });
+});
+
+describe('what the mountain and the moor hold', () => {
+  it('hits harder where it closes, and only where it closes', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const beartic = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    // Pinned above the freeze chance, so only the damage half shows
+    pinRandom(battle, 1);
+    beartic.addAbility(Abilities.FrostFangs);
+    beartic.enter();
+    plain.enter();
+    foe.enter();
+
+    const close = dealDamage(beartic, foe, Moves.Slash, 40, Types.Normal, MoveCategories.Physical);
+    const bare = dealDamage(plain, foe, Moves.Slash, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(close / bare).toBeCloseTo(FROST_FANGS_SCALE, 2);
+    expect(foe.status[Statuses.Frozen]).toBeFalsy();
+
+    // Pinned under it, the breath takes hold
+    pinRandom(battle, 0);
+    beartic.attack(foe, Moves.Slash, 10, Types.Normal, MoveCategories.Physical, 0);
+    expect(foe.status[Statuses.Frozen]).toBeTruthy();
+  });
+
+  it('holds a freeze open twice as long, and only an enemy s', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cryogonal = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    cryogonal.addAbility(Abilities.CrystalChain);
+    cryogonal.enter();
+    mate.enter();
+    foe.enter();
+
+    foe.addStatus(Statuses.Frozen, NONE_CAUSE);
+    mate.addStatus(Statuses.Frozen, NONE_CAUSE);
+
+    const chained = foe.status[Statuses.Frozen];
+    const loose = mate.status[Statuses.Frozen];
+
+    expect(chained).toBeTruthy();
+    expect(loose).toBeTruthy();
+
+    // The chains reach across the field, never onto its own side
+    battle.tick(turns(5));
+    expect(foe.status[Statuses.Frozen]).toBeTruthy();
+    expect(mate.status[Statuses.Frozen]).toBeFalsy();
+  });
+
+  it('keeps hold of one thing at a time and bleeds it as it acts', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const eelektross = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    eelektross.addAbility(Abilities.LatchOn);
+    eelektross.enter();
+    first.enter();
+    second.enter();
+
+    eelektross.attack(first, Moves.Crunch, 10, Types.Dark, MoveCategories.Physical, 0);
+    expect(first.checkEscape()).toBe(false);
+
+    const share = Math.floor(first.checkStat(Stats.HP, 0) * LATCH_ON_SHARE);
+    const before = first.health;
+
+    act(battle, first);
+    expect(before - first.health).toBe(share);
+
+    // Taking a second lets the first one go
+    eelektross.attack(second, Moves.Crunch, 10, Types.Dark, MoveCategories.Physical, 0);
+    expect(second.checkEscape()).toBe(false);
+    expect(first.checkEscape()).toBe(true);
+  });
+
+  it('takes the blow on the sleeves, but only one that touches', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const mienshao = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    mienshao.addAbility(Abilities.SleeveGuard);
+    mienshao.enter();
+    bare.enter();
+    foe.enter();
+
+    const sleeved = dealDamage(
+      foe,
+      mienshao,
+      Moves.Slash,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+    const open = dealDamage(foe, bare, Moves.Slash, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(sleeved / open).toBeCloseTo(SLEEVE_GUARD_SCALE, 2);
+
+    // Nothing reaches the sleeves from a distance
+    const far = dealDamage(foe, mienshao, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+    const openFar = dealDamage(foe, bare, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+
+    expect(far / openFar).toBeCloseTo(1, 2);
+  });
+});
+
+describe('the swords of justice', () => {
+  /** What one blow takes off a teammate, with a sword standing beside it or without */
+  function blow(ability: Abilities | null, category: MoveCategories): number {
+    const { battle, teamA, teamB } = createBattle();
+    const ally = createUnit(battle, teamA);
+    const sword = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    if (ability != null) {
+      sword.addAbility(ability);
+    }
+    ally.enter();
+    sword.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    return dealDamage(enemy, ally, Moves.Tackle, 40, Types.Normal, category);
+  }
+
+  it('cuts the physical blows its team takes, and leaves the special ones alone', () => {
+    const guarded = blow(Abilities.IronVigil, MoveCategories.Physical);
+
+    expect(guarded / blow(null, MoveCategories.Physical)).toBeCloseTo(0.8, 1);
+    expect(blow(Abilities.IronVigil, MoveCategories.Special)).toBe(
+      blow(null, MoveCategories.Special),
+    );
+  });
+
+  it('cuts the special blows its team takes, and leaves the physical ones alone', () => {
+    const guarded = blow(Abilities.StoneVigil, MoveCategories.Special);
+
+    expect(guarded / blow(null, MoveCategories.Special)).toBeCloseTo(0.8, 1);
+    expect(blow(Abilities.StoneVigil, MoveCategories.Physical)).toBe(
+      blow(null, MoveCategories.Physical),
+    );
+  });
+
+  it('keeps poison off its team', () => {
+    const { battle, teamA } = createBattle();
+    const ally = createUnit(battle, teamA);
+    const sword = createUnit(battle, teamA);
+
+    sword.addAbility(Abilities.LeafVigil);
+    ally.enter();
+    sword.enter();
+    battle.tick(1);
+    ally.addStatus(Statuses.Poisoned, NONE_CAUSE);
+
+    expect(ally.status[Statuses.Poisoned]).toBeUndefined();
+  });
+
+  it('refuses an enemy stat drop and a flinch for its team, its own side aside', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ally = createUnit(battle, teamA);
+    const sword = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    sword.addAbility(Abilities.TideVigil);
+    ally.enter();
+    sword.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    ally.addStage(Stages.Attack, -1, {
+      type: EffectType.Ability,
+      ability: Abilities.Intimidate,
+      unit: enemy,
+    });
+
+    expect(ally.stages[Stages.Attack]).toBe(0);
+
+    // What its own side hands it is welcome, up or down
+    ally.addStage(Stages.Attack, -1, {
+      type: EffectType.Ability,
+      ability: Abilities.Intimidate,
+      unit: sword,
+    });
+
+    expect(ally.stages[Stages.Attack]).toBe(-1);
+
+    ally.addStatus(Statuses.Flinched, NONE_CAUSE);
+
+    expect(ally.status[Statuses.Flinched]).toBeUndefined();
+  });
+});
+
+describe('the tao trio', () => {
+  /** What a plain blow from this holder takes off, ability and all */
+  function blow(
+    unit: ReturnType<typeof createUnit>,
+    target: ReturnType<typeof createUnit>,
+  ): number {
+    return dealDamage(unit, target, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+  }
+
+  it('Truth Creed presses a target that is carrying a status', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dragon = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const burned = createUnit(battle, teamB);
+
+    dragon.addAbility(Abilities.TruthCreed);
+    burned.addStatus(Statuses.Burned, { type: EffectType.None });
+
+    const ordinary = blow(dragon, plain);
+    const pressed = blow(dragon, burned);
+
+    expect(pressed / ordinary).toBeCloseTo(1.3, 1);
+  });
+
+  it('Ideal Creed presses a target that has talked itself up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dragon = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const raised = createUnit(battle, teamB);
+
+    dragon.addAbility(Abilities.IdealCreed);
+    raised.addStage(Stages.Attack, 1, { type: EffectType.None });
+
+    const ordinary = blow(dragon, plain);
+    const pressed = blow(dragon, raised);
+
+    expect(pressed / ordinary).toBeCloseTo(1.3, 1);
+    // A stage that went the other way is not one it reads
+    const lowered = createUnit(battle, teamB);
+
+    lowered.addStage(Stages.Attack, -1, { type: EffectType.None });
+
+    expect(blow(dragon, lowered) / ordinary).toBeCloseTo(1, 1);
+  });
+
+  it('Hollow Creed presses only what nothing has touched', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dragon = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const burned = createUnit(battle, teamB);
+    const raised = createUnit(battle, teamB);
+
+    dragon.addAbility(Abilities.HollowCreed);
+    burned.addStatus(Statuses.Burned, { type: EffectType.None });
+    raised.addStage(Stages.Attack, 1, { type: EffectType.None });
+
+    const untouched = blow(dragon, plain);
+
+    expect(blow(dragon, burned) / untouched).toBeCloseTo(1 / 1.3, 1);
+    expect(blow(dragon, raised) / untouched).toBeCloseTo(1 / 1.3, 1);
+  });
+
+  it('reads the target rather than the dragon itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dragon = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+
+    dragon.addAbility(Abilities.TruthCreed);
+    dragon.addStatus(Statuses.Burned, { type: EffectType.None });
+
+    // Its own burn answers nothing: the question is about what it hits
+    expect(blow(dragon, plain) / blow(dragon, other)).toBeCloseTo(1, 1);
+  });
+});
+
+describe('the forces of nature', () => {
+  /** What one genie is worth to a teammate throwing a given type */
+  function thrown(ability: Abilities | null, type: Types): number {
+    const { battle, teamA, teamB } = createBattle();
+    const mate = createUnit(battle, teamA);
+    const genie = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    if (ability != null) {
+      genie.addAbility(ability);
+    }
+    mate.enter();
+    genie.enter();
+    enemy.enter();
+
+    return dealDamage(mate, enemy, Moves.Swift, 40, type, MoveCategories.Special);
+  }
+
+  it('lifts its own element for the side it stands on, and nothing else', () => {
+    for (const [ability, type, other] of [
+      [Abilities.Windfall, Types.Flying, Types.Electric],
+      [Abilities.Stormfall, Types.Electric, Types.Ground],
+      [Abilities.Landfall, Types.Ground, Types.Flying],
+    ] as const) {
+      expect(thrown(ability, type) / thrown(null, type)).toBeCloseTo(GENIE_SCALE, 1);
+      expect(thrown(ability, other)).toBe(thrown(null, other));
+    }
+  });
+
+  it('covers its own team rather than the enemy throwing the same type', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const genie = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    genie.addAbility(Abilities.Stormfall);
+    genie.enter();
+    mate.enter();
+    enemy.enter();
+
+    const bare = dealDamage(enemy, mate, Moves.Swift, 40, Types.Electric, MoveCategories.Special);
+    const lifted = dealDamage(mate, enemy, Moves.Swift, 40, Types.Electric, MoveCategories.Special);
+
+    expect(lifted / bare).toBeCloseTo(GENIE_SCALE, 1);
+  });
+});
+
+describe('the unova mythicals', () => {
+  it("hands a win to the winner's whole team, the holder included", () => {
+    const { battle, teamA, teamB } = createBattle();
+    const star = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    star.addAbility(Abilities.WinnersShare);
+    star.enter();
+    mate.enter();
+    enemy.enter();
+
+    star.damage({ type: EffectType.Move, move: Moves.Tackle, unit: star }, enemy, 999, 0);
+
+    expect(enemy.alive).toBe(false);
+    for (const unit of [star, mate]) {
+      expect(unit.stages[Stages.Attack]).toBe(WINNERS_SHARE_STAGES);
+      expect(unit.stages[Stages.SpecialAttack]).toBe(WINNERS_SHARE_STAGES);
+    }
+  });
+
+  it('pays out once however many holders a team fields', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const star = createUnit(battle, teamA);
+    const second = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    star.addAbility(Abilities.WinnersShare);
+    second.addAbility(Abilities.WinnersShare);
+    star.enter();
+    second.enter();
+    enemy.enter();
+
+    star.damage({ type: EffectType.Move, move: Moves.Tackle, unit: star }, enemy, 999, 0);
+
+    expect(star.stages[Stages.Attack]).toBe(WINNERS_SHARE_STAGES);
+  });
+
+  it('gives nothing for one of its own going down', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const star = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    star.addAbility(Abilities.WinnersShare);
+    star.enter();
+    mate.enter();
+    enemy.enter();
+
+    enemy.damage({ type: EffectType.Move, move: Moves.Tackle, unit: enemy }, mate, 999, 0);
+
+    expect(mate.alive).toBe(false);
+    expect(star.stages[Stages.Attack]).toBe(0);
+  });
+
+  it('turns a singer over into a dancer with its halves swapped', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    singer.setSpecies(Species.Meloetta);
+    singer.addAbility(Abilities.Countertune);
+    singer.enter();
+    enemy.enter();
+
+    const cause = {
+      type: EffectType.Ability,
+      ability: Abilities.Countertune,
+      unit: singer,
+    } as const;
+
+    singer.addStage(Stages.SpecialAttack, 3, cause);
+    singer.addStage(Stages.Defense, 1, cause);
+
+    singer.triggerMoveTarget(Moves.RelicSong, { type: MoveTargetType.Unit, unit: enemy }, 0);
+    battle.tick(turns(1));
+
+    expect(singer.species).toBe(Species.MeloettaPirouette);
+    expect(singer.stages[Stages.Attack]).toBe(3);
+    expect(singer.stages[Stages.SpecialAttack]).toBe(0);
+    expect(singer.stages[Stages.SpecialDefense]).toBe(1);
+    expect(singer.stages[Stages.Defense]).toBe(0);
+  });
+
+  it('casts faster above half health and burns below it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const machine = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    machine.addAbility(Abilities.Overclock);
+    machine.enter();
+    bare.enter();
+    enemy.enter();
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+    const plain = bare.checkMoveCastTime(Moves.SolarBeam, target);
+
+    expect(machine.checkMoveCastTime(Moves.SolarBeam, target)).toBeCloseTo(
+      plain * OVERCLOCK_SCALE,
+      5,
+    );
+
+    const max = machine.checkStat(Stats.HP, 0);
+
+    machine.setHealth(Math.floor(max * OVERCLOCK_THRESHOLD));
+
+    // Past the threshold the saving stops, and acting starts costing
+    expect(machine.checkMoveCastTime(Moves.SolarBeam, target)).toBe(plain);
+
+    const before = machine.health;
+
+    act(battle, machine);
+
+    expect(machine.health).toBe(before - Math.max(1, Math.floor(max * OVERCLOCK_SHARE)));
+
+    // Above the threshold it costs nothing at all
+    const spare = bare.health;
+
+    act(battle, bare);
+    expect(bare.health).toBe(spare);
+  });
+});
+
+describe('the deer that wears the year', () => {
+  /** What a plain move is worth thrown by the given coat */
+  function plain(coat: Species, turning: boolean): number {
+    const { battle, teamA, teamB } = createBattle();
+    const deer = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB, [Types.Water]);
+
+    pinRandom(battle, 1);
+    deer.setSpecies(coat);
+    if (turning) {
+      deer.addAbility(Abilities.Turning);
+    }
+    deer.enter();
+    foe.enter();
+
+    return dealDamage(deer, foe, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+  }
+
+  it('throws a plain move as its coat, and each coat is a different element', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const deer = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    deer.addAbility(Abilities.Turning);
+    deer.enter();
+    foe.enter();
+
+    const target = { type: MoveTargetType.Unit, unit: foe } as const;
+
+    for (const [coat, type] of COAT_TYPES) {
+      deer.setSpecies(coat);
+      expect(deer.checkMoveType(Moves.Tackle, target), String(coat)).toBe(type);
+    }
+  });
+
+  it('pays the coat its boost, and pays nothing to a move already that element', () => {
+    // Grass into Water is the same chart square Normal is not, so the
+    // control is the same coat without the ability rather than a
+    // different move
+    expect(plain(Species.Deerling, true) / plain(Species.Deerling, false)).toBeCloseTo(
+      TURNING_SCALE,
+      1,
+    );
+
+    const { battle, teamA, teamB } = createBattle();
+    const deer = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB, [Types.Water]);
+
+    pinRandom(battle, 1);
+    deer.setSpecies(Species.Deerling);
+    deer.enter();
+    foe.enter();
+
+    // Energy Ball is Grass to begin with, so the spring coat turns
+    // nothing and the boost never lands on it
+    const bare = dealDamage(deer, foe, Moves.EnergyBall, 40, Types.Grass, MoveCategories.Special);
+
+    deer.addAbility(Abilities.Turning);
+    expect(
+      dealDamage(deer, foe, Moves.EnergyBall, 40, Types.Grass, MoveCategories.Special),
+    ).toBeCloseTo(bare, 5);
+  });
+
+  it('leaves anything that is not a deer throwing plain moves plain', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const other = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    other.setSpecies(Species.Rattata);
+    other.addAbility(Abilities.Turning);
+    other.enter();
+    foe.enter();
+
+    expect(other.checkMoveType(Moves.Tackle, { type: MoveTargetType.Unit, unit: foe })).toBe(
+      Types.Normal,
+    );
+  });
+});
+
+describe('the glider nothing has a hand on', () => {
+  it('rises a stage for each move it lands, and stops at its cap', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const emolga = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    emolga.addAbility(Abilities.Glidewake);
+    emolga.enter();
+    foe.enter();
+
+    for (let landed = 1; landed <= GLIDEWAKE_CAP + 2; landed++) {
+      dealDamage(emolga, foe, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+      expect(emolga.stages[Stages.Evasion]).toBe(Math.min(landed, GLIDEWAKE_CAP));
+    }
+  });
+
+  it('loses the whole wake the moment something reaches it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const emolga = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    emolga.addAbility(Abilities.Glidewake);
+    emolga.enter();
+    foe.enter();
+
+    dealDamage(emolga, foe, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+    dealDamage(emolga, foe, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+    expect(emolga.stages[Stages.Evasion]).toBe(GLIDEWAKE_CAP);
+
+    foe.damage({ type: EffectType.Move, move: Moves.Tackle, unit: foe }, emolga, 5, 0);
+
+    // The whole wake, not a stage of it
+    expect(emolga.stages[Stages.Evasion]).toBe(0);
+  });
+
+  it('gives back only what it took, leaving another source standing', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const emolga = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    emolga.addAbility(Abilities.Glidewake);
+    emolga.enter();
+    foe.enter();
+
+    emolga.addStage(Stages.Evasion, 2, NONE_CAUSE);
+    dealDamage(emolga, foe, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+    expect(emolga.stages[Stages.Evasion]).toBe(3);
+
+    foe.damage({ type: EffectType.Move, move: Moves.Tackle, unit: foe }, emolga, 5, 0);
+
+    // The two it was already standing on are not the wake's to take
+    expect(emolga.stages[Stages.Evasion]).toBe(2);
   });
 });

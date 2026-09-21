@@ -1,4 +1,5 @@
 import { Species } from '../ids/species';
+import { DRIVES } from './drives';
 import { PLATES } from './plates';
 import { Types } from '../constants/types';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
@@ -45,6 +46,21 @@ const ARCEUS_PLATES: [Items, Species[]][] = [...PLATES].flatMap(([plate, type]) 
   return shape == null ? [] : [[plate, [shape]] as [Items, Species[]]];
 });
 
+/** Which shape each Drive repaints a Genesect, by the type it loads */
+const GENESECT_TYPE_FORMS: { [key in Types]?: Species } = {
+  [Types.Water]: Species.GenesectDouse,
+  [Types.Electric]: Species.GenesectShock,
+  [Types.Fire]: Species.GenesectBurn,
+  [Types.Ice]: Species.GenesectChill,
+};
+
+/** The Drive rows, derived the way the Plate rows are */
+const GENESECT_DRIVES: [Items, Species[]][] = [...DRIVES].flatMap(([drive, type]) => {
+  const shape = GENESECT_TYPE_FORMS[type];
+
+  return shape == null ? [] : [[drive, [shape]] as [Items, Species[]]];
+});
+
 export const FORM_ITEMS = new Map<Items, Species[]>([
   // One shape each rather than a set, so an orb is a switch a player
   // sets rather than a roll
@@ -57,6 +73,10 @@ export const FORM_ITEMS = new Map<Items, Species[]>([
   // mainline calls Multitype: there is no battle code behind it, only
   // the shape the stone puts it in
   ...ARCEUS_PLATES,
+  // The four Drives, each of which already sets a Techno Blast's
+  // type. Holding one repaints the machine round the cannon, which
+  // is all the mainline means by a Genesect form
+  ...GENESECT_DRIVES,
 ]);
 
 /**
@@ -85,6 +105,12 @@ export const ORB_PRICE = 12_000;
  * thing that grows rather than a thing the world was made with
  */
 export const GRACIDEA_PRICE = 8_000;
+
+/**
+ * What the splicers cost. Dear as an orb: they are the only way to
+ * put a dragon inside the husk, and the only way to get it back out
+ */
+export const SPLICERS_PRICE = 12_000;
 
 const CREATION_ORBS: [item: Items, name: string, icon: string][] = [
   [Items.AdamantOrb, 'Adamant Orb', 'adamant-orb'],
@@ -131,6 +157,17 @@ export default function registerFormItems(): void {
       sell: ORB_PRICE / 2,
     });
   }
+
+  registerItem(Items.DnaSplicers, {
+    name: 'DNA Splicers',
+    description: 'Folds a dragon into a Kyurem, and pulls it back out. Never spent.',
+    type: ItemTypes.Evolution,
+    // Drawn on the key sheet, which is where the collection packed it
+    icon: 'key/dna-splicers',
+    flags: ItemFlags.Usable,
+    buy: 0,
+    sell: SPLICERS_PRICE / 2,
+  });
 
   registerItem(Items.Gracidea, {
     name: 'Gracidea',

@@ -11,8 +11,13 @@ import {
   spawnRanks,
 } from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
-import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily, getShoreForm } from '../data/species';
-import { SpawnSurface, TimeOfDay, getTimeOfDay } from '../data/ids/biome';
+import {
+  SPECIES_DAY_WEIGHT_BOOST,
+  getFeaturedFamily,
+  getSeasonalCoat,
+  getShoreForm,
+} from '../data/species';
+import { SpawnSurface, TimeOfDay, getSeason, getTimeOfDay } from '../data/ids/biome';
 import type Biome from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { ItemStack } from '../data/overworld/item-pool';
@@ -556,8 +561,10 @@ export default class ChunkSnapshot {
 
         // Which shell a Shellos wears is the world's own longitude,
         // so the two seas fall either side of the meridian rather
-        // than either side of a pool
-        const species = getShoreForm(rolled, this.chunk.x);
+        // than either side of a pool. Which coat a Deerling wears is
+        // the month, so it turns for everybody at once
+        const shore = getShoreForm(rolled, this.chunk.x);
+        const species = getSeasonalCoat(shore, getSeason(this.timestamp));
 
         // The draws land in tuple order: individual value, then the
         // trait value

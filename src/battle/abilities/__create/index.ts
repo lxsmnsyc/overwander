@@ -21,6 +21,8 @@ export {
   createWeightAbility,
 } from './power';
 export {
+  CONTACT_RECOIL_FRACTION,
+  createContactRecoilAbility,
   createFilterAbility,
   createKeenEyeAbility,
   createLimberAbility,
@@ -28,6 +30,7 @@ export {
   createShellArmorAbility,
   createThickFatAbility,
 } from './guard';
+export { default as createMoldBreakerAbility } from './pierce';
 export {
   chipImmunity,
   createCloudNineAbility,

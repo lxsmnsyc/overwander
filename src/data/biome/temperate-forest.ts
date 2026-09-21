@@ -9,6 +9,11 @@ export default function registerTemperateForestSpawns(): void {
   // Throh and Sawk are written but wait on sprites, since the
   // collection has drawn no Throh and the pair is staged together.
   // Once it does, mornings and days take each of them in elusive at 5
+  // The three elemental monkeys are written but wait as a set, since
+  // the collection has drawn neither Simisear nor Simipour and the
+  // trio is staged together. Once it does, mornings and days take each
+  // of Pansage, Pansear and Panpour in uncommon at 22 and each of
+  // Simisage, Simisear and Simipour in scarce at 7
   registerSpawnPool(Biome.TemperateForest, {
     [TimeOfDay.Morning]: {
       base: [
@@ -22,6 +27,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
         { species: Species.Ledyba, weight: 20 },
         { species: Species.Pineco, weight: 20 },
         { species: Species.Scyther, weight: 5 },
@@ -45,6 +51,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Ledian, weight: 8 },
         { species: Species.Scizor, weight: 5 },
@@ -61,6 +68,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
         { species: Species.Chatot, weight: 6 },
@@ -88,7 +96,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
-      special: [{ species: Species.Mesprit, weight: 10 }],
+      special: [
+        { species: Species.Virizion, weight: 10 },
+        { species: Species.Mesprit, weight: 10 },
+      ],
       mythical: [{ species: Species.Celebi, weight: 10 }],
     },
     [TimeOfDay.Day]: {
@@ -103,6 +114,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
         { species: Species.Ledyba, weight: 20 },
         { species: Species.Pineco, weight: 20 },
         { species: Species.Scyther, weight: 5 },
@@ -126,6 +138,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Ledian, weight: 8 },
         { species: Species.Scizor, weight: 5 },
@@ -142,6 +155,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
         { species: Species.Chatot, weight: 6 },
@@ -169,7 +183,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
-      special: [{ species: Species.Mesprit, weight: 10 }],
+      special: [
+        { species: Species.Virizion, weight: 10 },
+        { species: Species.Mesprit, weight: 10 },
+      ],
       mythical: [{ species: Species.Celebi, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
@@ -178,6 +195,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
+        { species: Species.Zorua, weight: 20 },
         { species: Species.Shuppet, weight: 20 },
         { species: Species.Venonat, weight: 20 },
         { species: Species.Hoothoot, weight: 25 },
@@ -196,6 +215,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
+        { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Venomoth, weight: 10 },
@@ -213,6 +234,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Honchkrow, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Pachirisu, weight: 8 },
         { species: Species.Rotom, weight: 6 },
         { species: Species.Rotom, weight: 6 },
@@ -232,7 +254,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
-      special: [{ species: Species.Mesprit, weight: 10 }],
+      special: [
+        { species: Species.Virizion, weight: 10 },
+        { species: Species.Mesprit, weight: 10 },
+      ],
       mythical: [{ species: Species.Celebi, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -241,6 +266,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
+        { species: Species.Zorua, weight: 20 },
         { species: Species.Shuppet, weight: 20 },
         { species: Species.Paras, weight: 20 },
         { species: Species.Venonat, weight: 20 },
@@ -260,6 +287,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
+        { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Parasect, weight: 10 },
@@ -278,6 +307,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Honchkrow, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Pachirisu, weight: 8 },
         { species: Species.Rotom, weight: 6 },
         { species: Species.Rotom, weight: 6 },
@@ -297,7 +327,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
-      special: [{ species: Species.Mesprit, weight: 10 }],
+      special: [
+        { species: Species.Virizion, weight: 10 },
+        { species: Species.Mesprit, weight: 10 },
+      ],
       mythical: [{ species: Species.Celebi, weight: 10 }],
     },
   });

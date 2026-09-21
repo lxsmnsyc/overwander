@@ -41,6 +41,7 @@ export default function registerRockyCoastSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
+      mythical: [{ species: Species.Victini, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -76,6 +77,7 @@ export default function registerRockyCoastSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
+      mythical: [{ species: Species.Victini, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [],
@@ -97,6 +99,7 @@ export default function registerRockyCoastSpawns(): void {
       elusive: [{ species: Species.Shuckle, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
+      mythical: [{ species: Species.Victini, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [],
@@ -118,6 +121,7 @@ export default function registerRockyCoastSpawns(): void {
       elusive: [{ species: Species.Shuckle, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
+      mythical: [{ species: Species.Victini, weight: 10 }],
     },
   });
   registerWaterPool(Biome.RockyCoast, {

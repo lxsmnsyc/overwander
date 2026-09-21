@@ -1860,3 +1860,37 @@ export function createCurseAbility(
     }),
   );
 }
+
+/** What a spent item is worth, to either side of the field */
+export const SPENT_ITEM_STAGES = 1;
+
+/**
+ * What the two sweet shops share: finishing its own held item moves
+ * the field a step, Swirlix towards its own side and Spritzee away
+ * from the other. Only what the holder spends itself counts, so an
+ * item knocked out of its hands is nobody's
+ */
+export function createSpentItemAbility(
+  ability: Abilities,
+  own: boolean,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
+      const shop = event.source;
+
+      if (event.cause.type !== EffectType.Item || !shop.hasAbility(ability)) {
+        return;
+      }
+
+      shop.triggerAbility(ability);
+
+      const cause = { type: EffectType.Ability, ability, unit: shop } as const;
+
+      for (const unit of own ? shop.team.units : battle.units(shop.team.alliance)) {
+        if (unit.alive) {
+          unit.addStage(Stages.Speed, own ? SPENT_ITEM_STAGES : -SPENT_ITEM_STAGES, cause);
+        }
+      }
+    }),
+  );
+}

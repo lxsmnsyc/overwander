@@ -964,7 +964,7 @@ const enum Abilities {
   Begrudge = 200354,
   // Swirlix
   SugarRush = 200355,
-  /** Swirlix's counterpart, reserved until Aromatisse is drawn */
+  // Spritzee, Swirlix's counterpart
   CalmingScent = 200356,
   // Dedenne
   QuickWhiskers = 200357,
@@ -980,6 +980,8 @@ const enum Abilities {
   Ringback = 200363,
   // Volcanion
   Boiler = 200364,
+  // Litleo
+  PrideCall = 200365,
 }
 
 export default Abilities;

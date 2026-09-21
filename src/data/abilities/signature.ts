@@ -2179,6 +2179,17 @@ export default function registerSignatureAbilities(): void {
     description: 'Its Fire moves hit 1.15x in rain and its Water moves hit 1.15x in sunlight.',
   });
 
+  // The two Kalos lines that waited on their evolutions being drawn
+  registerSignature(Families.Litleo, Abilities.PrideCall, {
+    name: 'Pride Call',
+    description: 'It casts Noble Roar at an enemy as it arrives on the field.',
+  });
+
+  registerSignature(Families.Spritzee, Abilities.CalmingScent, {
+    name: 'Calming Scent',
+    description: 'The enemy side loses 1 stage of Speed whenever it uses up its own held item.',
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:

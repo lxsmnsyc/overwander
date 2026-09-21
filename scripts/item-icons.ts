@@ -548,6 +548,53 @@ const TINTS: Tint[] = [
       '#008bee': '#c59431',
     },
   },
+  {
+    from: 'other/heart-scale',
+    to: 'key/heart-diamond',
+    why: 'the heart scale is a thing a pokemon sheds, and this is the stone a Diancie presses out of its own hands',
+    // The scale is pale everything: white, cold blue, a little pink
+    // and a little green. Taken round to rose, with the white kept,
+    // the same faceted shape reads as a cut diamond
+    swaps: {
+      '#202020': '#2a1a26',
+      '#eeeeee': '#fff6fb',
+      '#cdeeee': '#ffd5e6',
+      '#eecdcd': '#ff9cc5',
+      '#cdcdee': '#e6a4d5',
+      '#c5e6c5': '#f6b4de',
+    },
+  },
+  {
+    from: 'valuables/relic-band',
+    to: 'key/sealed-ring',
+    why: 'the relic band is sold for gold, and this is one of the rings a Hoopa was shut into',
+    // The band is verdigris over grey. Gold down the metal and violet
+    // in the deepest shadow make it a ring with something bound in it
+    swaps: {
+      '#202020': '#241a2a',
+      '#416a6a': '#a47318',
+      '#5a7b7b': '#c58b20',
+      '#949c9c': '#f6c552',
+      '#acacac': '#ffde8b',
+      '#c5c5bd': '#fff0bd',
+      '#314a52': '#6a4a94',
+    },
+  },
+  {
+    from: 'held/metal-coat',
+    to: 'key/steam-valve',
+    why: 'the metal coat is held to evolve, and this is the fitting cut out of a Volcanion',
+    // The coat is a steel plate with a lit rim. Copper through the
+    // body and brass along the rim make it a valve off a boiler
+    swaps: {
+      '#202020': '#2a1a18',
+      '#526a6a': '#8b3a18',
+      '#6a8383': '#b45a20',
+      '#b4c5c5': '#e69c3a',
+      '#deeeee': '#f6c552',
+      '#ffffff': '#fff0c5',
+    },
+  },
 ];
 
 /**

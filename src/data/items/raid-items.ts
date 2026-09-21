@@ -83,9 +83,9 @@ const PLACES: { [key in Items]?: string } = {
  */
 const ICONS: { [key in Items]?: string } = {
   [Items.AuroraTicket]: 'key/auroraticket',
-  [Items.HeartDiamond]: 'key/ruby',
-  [Items.SealedRing]: 'key/old-charm',
-  [Items.SteamValve]: 'key/machine-part',
+  [Items.HeartDiamond]: 'key/heart-diamond',
+  [Items.SealedRing]: 'key/sealed-ring',
+  [Items.SteamValve]: 'key/steam-valve',
   [Items.OaksLetter]: 'key/oaks-letter',
   [Items.ColtsPetal]: 'key/radiant-petal',
 };

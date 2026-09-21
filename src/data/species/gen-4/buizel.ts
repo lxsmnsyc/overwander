@@ -84,7 +84,7 @@ export default function registerBuizelSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Beach, Biome.RockyCoast, Biome.Bog],
+    biomes: [Biome.Beach, Biome.RockyCoast, Biome.Bog, Biome.KelpForest],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -136,7 +136,7 @@ export default function registerBuizelSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Beach, Biome.RockyCoast, Biome.Bog],
+    biomes: [Biome.Beach, Biome.RockyCoast, Biome.Bog, Biome.KelpForest],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

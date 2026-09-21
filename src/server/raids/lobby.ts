@@ -16,6 +16,7 @@ import AleaRNG from '../../core/alea';
 import type { Items } from '../../data/ids/items';
 import { getRaidSpecies } from '../../data/items/raid-items';
 import Biome from '../../data/ids/biome';
+import { getSpeciesHome } from '../../data/biome';
 import { getSpeciesLairs } from '../../data/overworld/lair';
 import { getSql, tx } from '../db';
 import { readBattle, readRaid, readRaidIn, writeRaid } from '../raid-io';
@@ -280,7 +281,10 @@ export async function hostMythicalRaid(
     timestamp: snapshot.raidTimestamp,
     offset: zone,
     chunk: { seed: chunk.seed, x: chunk.x, y: chunk.y },
-    biome: Biome.Beyond,
+    // The ground its own country is drawn on, so the fight stands
+    // somewhere rather than on the bare field. A mythical is called to
+    // the one place it is ever met, which is what its home names
+    biome: getSpeciesHome(species) ?? Biome.Beyond,
     // A mythical stands on no landmark cell
     cell: -1,
     cleared: false,

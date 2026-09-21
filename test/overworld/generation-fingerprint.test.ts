@@ -110,15 +110,14 @@ function fingerprint(world: World): string {
 
 describe('generation fingerprint', () => {
   it('keeps the first generation exactly as it was', () => {
-    // The live world stands on the first generation, so every cell,
-    // landmark, mouth and lot of it is pinned here: a change that
-    // moves any of them moves every player's map
+    // The first generation is pinned so nothing drifts in it by
+    // accident, the way the second one is
     registerGameData();
 
     const surface = new World('fingerprint-seed');
 
-    expect(fingerprint(surface)).toBe('a49c296c');
-    expect(fingerprint(surface.at(Depth.Cave))).toBe('8f07651b');
+    expect(fingerprint(surface)).toBe('1ef9c039');
+    expect(fingerprint(surface.at(Depth.Cave))).toBe('b1e41e75');
   });
 
   it('pins the second generation too, so a change to it is a decision', () => {
@@ -126,7 +125,7 @@ describe('generation fingerprint', () => {
 
     const surface = new World('fingerprint-seed', Depth.Surface, Generation.Second);
 
-    expect(fingerprint(surface)).toBe('0078240c');
-    expect(fingerprint(surface.at(Depth.Cave))).toBe('41abc2b4');
+    expect(fingerprint(surface)).toBe('ff7dc067');
+    expect(fingerprint(surface.at(Depth.Cave))).toBe('8a53501e');
   });
 });

@@ -243,9 +243,9 @@ export const NPC_INTERVAL = 3 * 60 * 60 * 1000;
 
 /**
  * A nest runs slower than anything else in a chunk: one egg every
- * twelve hours, which is one in the morning and one in the evening
- * for a player who walks the same ground twice a day. The window is
- * local, since the snapshot's clock already is
+ * twelve hours, so a player who walks the same ground twice a day
+ * finds two. It is ground, so the window is counted from UTC and the
+ * hour it turns over is whatever that is where the player stands
  */
 export const NEST_INTERVAL = 12 * 60 * 60 * 1000;
 

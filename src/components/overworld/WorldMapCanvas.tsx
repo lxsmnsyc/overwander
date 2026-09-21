@@ -1,5 +1,7 @@
 import { type JSX, Show, createEffect, createSignal, onCleanup, onMount, untrack } from 'solid-js';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
+import type Weather from '../../data/overworld/weather';
+import { WEATHER_COLORS, WEATHER_NAMES, favorsEverything } from '../../data/overworld/weather';
 import type Biome from '../../data/ids/biome';
 import LRUMap from '../../core/lru-map';
 import shadeCell from '../../canvas/world-shade';
@@ -28,6 +30,9 @@ const SAMPLE = 2;
 
 /** How many pixels wide one chunk is drawn */
 const TILE = CHUNK_CELLS / SAMPLE;
+
+/** How much of the ground the sky's colour covers where the map shows one */
+const SKY_WASH = 0.5;
 
 /** How many chunk pictures are kept: several views' worth, so panning back costs nothing */
 const TILES_KEPT = 16_384;
@@ -189,6 +194,13 @@ export interface WorldMapCanvasProps {
    * own setting decides
    */
   detailed?: boolean;
+  /**
+   * The sky over each chunk, laid out like `biomes`. Given, it is
+   * washed over the ground, so the map says what the weather is doing
+   * as well as what the country is. Left out, the ground is drawn on
+   * its own
+   */
+  skies?: (Weather | null)[];
 }
 
 export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element {
@@ -257,7 +269,10 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
     const x = props.originX + (at % props.span);
     const y = props.originY + Math.floor(at / props.span);
 
-    return `${settledAt(x, y) ? `Town, ${BIOME_NAMES[biome]}` : BIOME_NAMES[biome]} (${x}, ${y})`;
+    const place = settledAt(x, y) ? `Town, ${BIOME_NAMES[biome]}` : BIOME_NAMES[biome];
+    const sky = props.skies?.[at];
+
+    return sky == null ? `${place} (${x}, ${y})` : `${place}, ${WEATHER_NAMES[sky]} (${x}, ${y})`;
   };
 
   onMount(() => {
@@ -319,6 +334,7 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
       const originX = props.originX;
       const originY = props.originY;
       const biomes = props.biomes;
+      const skies = props.skies;
       const size = TILE * across;
       const world = getWorld();
       const detailed = props.detailed ?? settings().detailedMap;
@@ -364,6 +380,29 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
           towns.push(index);
         }
       }
+      // The sky over the ground rather than instead of it: a wash,
+      // so a player reads the country and the weather at once
+      const showpieces: number[] = [];
+
+      if (skies != null) {
+        for (let index = 0; index < across * across; index++) {
+          const sky = skies[index];
+
+          if (sky == null) {
+            continue;
+          }
+          paint.globalAlpha = SKY_WASH;
+          paint.fillStyle = WEATHER_COLORS[sky];
+          paint.fillRect((index % across) * TILE, Math.floor(index / across) * TILE, TILE, TILE);
+          paint.globalAlpha = 1;
+          // The four a player is out looking for are ringed as well,
+          // since a wash of colour is not something to spot across a
+          // map of it
+          if (favorsEverything(sky)) {
+            showpieces.push(index);
+          }
+        }
+      }
       if (!detailed) {
         // The chunk grid, which is what the quick map is read by
         paint.strokeStyle = COLORS.grid;
@@ -385,6 +424,20 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
           paint.strokeRect(left + 0.5, top + 0.5, TILE - 1, TILE - 1);
           paint.strokeStyle = COLORS.townRing;
           paint.strokeRect(left + 1.5, top + 1.5, TILE - 3, TILE - 3);
+        }
+      }
+      if (skies != null) {
+        for (const index of showpieces) {
+          const left = (index % across) * TILE;
+          const top = Math.floor(index / across) * TILE;
+          const sky = skies[index];
+
+          paint.strokeStyle = COLORS.townEdge;
+          paint.strokeRect(left + 0.5, top + 0.5, TILE - 1, TILE - 1);
+          paint.strokeStyle = sky == null ? COLORS.townRing : WEATHER_COLORS[sky];
+          paint.lineWidth = 2;
+          paint.strokeRect(left + 1.5, top + 1.5, TILE - 3, TILE - 3);
+          paint.lineWidth = 1;
         }
       }
       untrack(compose);

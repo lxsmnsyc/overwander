@@ -98,8 +98,8 @@ with Unaware, and either Basculin with Swift Swim.
 
 ## See also
 
-- [Unova's second road and first cave](unovas-road-and-cave.md), an earlier
-  release.
-- [The fifth generation's moves](fifth-generation-moves.md), the one before it.
+- [The desert and the Relic Castle](desert-and-relic-castle.md), the release
+  before this one.
+- [Pinwheel Forest](pinwheel-forest.md), the one before that.
 - [Player's guide](../mechanics.md), for the rules in full.
 - [Credits](../credits.md), for the people, libraries and art behind it.

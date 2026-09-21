@@ -546,7 +546,7 @@ export async function startStopBattle(
                            rules, opponent, opponent_sprite)
       values (${battleId}, null, ${fielded.length > 0 ? fielded[0][0] : (record.party[0]?.species ?? 0)},
               ${BattleOutcome.Unfinished}, ${now},
-              ${chunk.biome}, ${weather}, ${NPC_BATTLE_LIMITS}, ${rules},
+              ${snapshot.biomeAt(record.cell)}, ${weather}, ${NPC_BATTLE_LIMITS}, ${rules},
               ${challenger?.name ?? ''}, ${challenger?.sprite ?? ''})
     `;
 
@@ -729,7 +729,7 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
       ? rollStopLoot(
           landmark ?? Landmark.TeamRocket,
           rank,
-          snapshot.chunk.biome,
+          snapshot.biomeAt(record.cell),
           () => rng.random(),
           legend,
         )

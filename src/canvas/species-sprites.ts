@@ -4,6 +4,7 @@ import SpeciesSpriteAnimation from './species-sprite-animation';
 import type { Coat, SpriteCoats } from './sprite-coats';
 import { COATS_PATH, asSpriteCoats, coatOf, drawn, stamped } from './sprite-coats';
 import asSpriteSheetJSON, { type SpriteSheetJSON, readFrameTable } from './sprite-sheet';
+import { spriteUrl } from './sprite-origin';
 
 /**
  * Which sheet belongs to which pokemon, and how to get one.
@@ -37,7 +38,7 @@ import asSpriteSheetJSON, { type SpriteSheetJSON, readFrameTable } from './sprit
  * over one image.
  */
 
-export const SPRITE_ROOT = '/sprites/pokemon';
+export const SPRITE_ROOT = spriteUrl('/sprites/pokemon');
 
 /**
  * Where one pokemon's sheets are filed.

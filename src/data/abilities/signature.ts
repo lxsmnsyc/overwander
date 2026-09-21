@@ -2078,6 +2078,23 @@ export default function registerSignatureAbilities(): void {
     description: 'A target it damages casts and channels 30% slower for the next 6 seconds.',
   });
 
+  // The three Kalos meets on its way up out of the towns
+  registerSignature(Families.Inkay, Abilities.Overturn, {
+    name: 'Overturn',
+    description:
+      'A move it lands flips every stat stage the target holds, once every 10 seconds per target.',
+  });
+
+  registerSignature(Families.Helioptile, Abilities.Backfeed, {
+    name: 'Backfeed',
+    description: 'Each Electric move it lands heals its whole team 1/16 of the damage it dealt.',
+  });
+
+  registerSignature(Families.Hawlucha, Abilities.TopRope, {
+    name: 'Top Rope',
+    description: 'Its contact moves hit 10% harder for each 50 kg the target weighs, up to 1.5x.',
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:

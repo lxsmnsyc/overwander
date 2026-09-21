@@ -27,18 +27,18 @@ export default function registerKelpForestSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [],
-      uncommon: [],
+      uncommon: [{ species: Species.Inkay, weight: 24 }],
       rare: [],
-      scarce: [],
+      scarce: [{ species: Species.Malamar, weight: 6 }],
       elusive: [],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
       base: [],
-      uncommon: [],
+      uncommon: [{ species: Species.Inkay, weight: 24 }],
       rare: [],
-      scarce: [],
+      scarce: [{ species: Species.Malamar, weight: 6 }],
       elusive: [],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -114,6 +114,7 @@ export default function registerKelpForestSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
+        { species: Species.Inkay, weight: 24 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
@@ -123,6 +124,7 @@ export default function registerKelpForestSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Malamar, weight: 6 },
         { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Starmie, weight: 10 },
@@ -140,6 +142,7 @@ export default function registerKelpForestSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
+        { species: Species.Inkay, weight: 24 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
@@ -149,6 +152,7 @@ export default function registerKelpForestSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Malamar, weight: 6 },
         { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Starmie, weight: 10 },

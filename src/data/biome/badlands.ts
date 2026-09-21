@@ -26,6 +26,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Roggenrola, weight: 24 },
       ],
       uncommon: [
+        { species: Species.Helioptile, weight: 24 },
         { species: Species.Vullaby, weight: 16 },
         { species: Species.Darumaka, weight: 22 },
         { species: Species.Numel, weight: 20 },
@@ -54,6 +55,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Boldore, weight: 12 },
       ],
       scarce: [
+        { species: Species.Heliolisk, weight: 6 },
         { species: Species.Mandibuzz, weight: 6 },
         { species: Species.Darmanitan, weight: 7 },
         { species: Species.Camerupt, weight: 6 },
@@ -118,6 +120,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Roggenrola, weight: 24 },
       ],
       uncommon: [
+        { species: Species.Helioptile, weight: 24 },
         { species: Species.Vullaby, weight: 16 },
         { species: Species.Darumaka, weight: 22 },
         { species: Species.Numel, weight: 20 },
@@ -149,6 +152,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Boldore, weight: 12 },
       ],
       scarce: [
+        { species: Species.Heliolisk, weight: 6 },
         { species: Species.Mandibuzz, weight: 6 },
         { species: Species.Darmanitan, weight: 7 },
         { species: Species.Camerupt, weight: 6 },

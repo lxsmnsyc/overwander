@@ -12,7 +12,8 @@ import {
 } from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
 import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily, getShoreForm } from '../data/species';
-import { SpawnSurface, TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
+import { SpawnSurface, TimeOfDay, getTimeOfDay } from '../data/ids/biome';
+import type Biome from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { ItemStack } from '../data/overworld/item-pool';
 import type { Species } from '../data/ids/species';
@@ -84,7 +85,7 @@ import getWorld from './current';
 import type Chunk from './chunk';
 import { canStageBoss } from './raid';
 import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells } from './chunk';
-import type { Depth } from './depth';
+import { Depth } from './depth';
 import type { PhenomenonReward } from './landmarks';
 import {
   resolveApricornColour,
@@ -205,6 +206,9 @@ export const EXECUTIVE_CHANCE = 1 / 8;
  * one should find what it is worth
  */
 export const LEGEND_CHANCE = 1 / 64;
+
+/** How many surfaces a pool key has to hold apart: land, water and ice */
+const SURFACES = 3;
 
 export const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
 
@@ -425,18 +429,32 @@ export default class ChunkSnapshot {
    * What the window may roll, crowded by the two things that crowd it:
    * the featured family for the day, and the sky for the hour
    */
-  private readonly pools = new Map<SpawnSurface, SpawnRarityGroups>();
+  private readonly pools = new Map<number, SpawnRarityGroups>();
+
+  /**
+   * The country a cell belongs to. A border runs through a chunk
+   * wherever the climate puts it, so everything a player meets at a
+   * cell reads this rather than `chunk.biome`, which is only the one
+   * in the middle
+   */
+  biomeAt(cell: number): Biome {
+    return this.chunk.getCellBiomes()[cell];
+  }
 
   /** What a spawn on this cell may roll, crowded the same way */
   getCellPool(cell: number): SpawnRarityGroups {
+    const biome = this.biomeAt(cell);
     const surface = this.drawnSurface(cell);
-    let pool = this.pools.get(surface);
+    // A chunk holds as many countries as its borders leave it with,
+    // so the pools are kept per country and surface rather than one
+    const key = biome * SURFACES + surface;
+    let pool = this.pools.get(key);
 
     if (pool == null) {
       pool = this.crowd(
-        getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp), false, surface),
+        getSpawnPool(biome, getTimeOfDay(this.timestamp), this.depth === Depth.Cave, surface),
       );
-      this.pools.set(surface, pool);
+      this.pools.set(key, pool);
     }
     return pool;
   }
@@ -445,7 +463,7 @@ export default class ChunkSnapshot {
   private drawnSurface(cell: number): SpawnSurface {
     const surface = this.chunk.getCellSurface(cell);
 
-    return surface === SpawnSurface.Ice && !hasSpawnPool(this.chunk.biome, SpawnSurface.Ice)
+    return surface === SpawnSurface.Ice && !hasSpawnPool(this.biomeAt(cell), SpawnSurface.Ice)
       ? SpawnSurface.Land
       : surface;
   }
@@ -618,7 +636,7 @@ export default class ChunkSnapshot {
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.ItemCache) {
           const rng = new AleaRNG(`${this.groundKey}${this.landmarkTimestamp}cache${cell}`);
-          const stash = resolveItemCache(this.chunk.biome, () => rng.random());
+          const stash = resolveItemCache(this.biomeAt(cell), () => rng.random());
 
           if (stash.length > 0) {
             caches.set(cell, stash);
@@ -861,7 +879,7 @@ export default class ChunkSnapshot {
 
         const rng = new AleaRNG(`${this.groundKey}${this.nestTimestamp}nest${cell}`);
         const species = resolveNest(
-          this.chunk.biome,
+          this.biomeAt(cell),
           time,
           () => rng.random(),
           getFeaturedFamily(this.nestTimestamp),
@@ -1084,7 +1102,22 @@ export default class ChunkSnapshot {
    * commonest one that is not empty; null when the pool has nothing
    * at all
    */
-  private fightBands(): SpawnRarityGroups['base'][] | null {
+  private readonly bands = new Map<Biome, SpawnRarityGroups['base'][] | null>();
+
+  private fightBands(biome: Biome): SpawnRarityGroups['base'][] | null {
+    const held = this.bands.get(biome);
+
+    if (held !== undefined) {
+      return held;
+    }
+
+    const found = this.readFightBands(biome);
+
+    this.bands.set(biome, found);
+    return found;
+  }
+
+  private readFightBands(biome: Biome): SpawnRarityGroups['base'][] | null {
     const times = [
       getTimeOfDay(this.npcTimestamp),
       TimeOfDay.Morning,
@@ -1094,7 +1127,7 @@ export default class ChunkSnapshot {
     ];
 
     for (const time of times) {
-      const pool = getBiomeRoster(this.chunk.biome, time);
+      const pool = getBiomeRoster(biome, time);
       const bands = spawnRanks(pool);
       let stocked: SpawnRarityGroups['base'] | undefined;
 
@@ -1130,14 +1163,15 @@ export default class ChunkSnapshot {
   getRocketStops(): Map<number, Spawn[]> {
     if (this.rocketStops == null) {
       const stops = new Map<number, Spawn[]>();
-      const fielded = this.fightBands();
 
-      if (fielded != null) {
-        for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-          if (landmark !== Landmark.TeamRocket) {
-            continue;
-          }
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.TeamRocket) {
+          continue;
+        }
 
+        const fielded = this.fightBands(this.biomeAt(cell));
+
+        if (fielded != null) {
           const rng = new AleaRNG(`${this.key}${this.npcTimestamp}rocket${cell}`);
           const draw = (band: SpawnRarityGroups['base']): Spawn => {
             const entry = band[Math.floor(rng.random() * band.length)];
@@ -1161,7 +1195,7 @@ export default class ChunkSnapshot {
             // lair is a place, so a biome that hosts none has no
             // legendary to have been taken from it and the boss
             // fields a sixth rare
-            const homes = getBiomeLairs(this.chunk.biome);
+            const homes = getBiomeLairs(this.biomeAt(cell));
             const party = drawMany(rares, ROCKET_PARTY_SIZE - 1);
 
             if (homes.length > 0) {
@@ -1213,7 +1247,7 @@ export default class ChunkSnapshot {
       return null;
     }
 
-    const standing = getBiomeTrainers(this.chunk.biome);
+    const standing = getBiomeTrainers(this.biomeAt(cell));
     const rng = new AleaRNG(`${this.key}${this.npcTimestamp}duellist${cell}`);
 
     return standing[Math.floor(rng.random() * standing.length)] ?? null;
@@ -1626,13 +1660,6 @@ export default class ChunkSnapshot {
   getPhenomena(): Map<number, Phenomenon> {
     if (this.phenomena == null) {
       const showing = new Map<number, Phenomenon>();
-      const kinds = BIOME_PHENOMENA[this.chunk.biome];
-
-      if (kinds.length === 0) {
-        this.phenomena = showing;
-        return showing;
-      }
-
       const rng = new AleaRNG(`${this.groundKey}${this.phenomenonTimestamp}happenings`);
       const count = MIN_PHENOMENA + Math.floor(rng.random() * (MAX_PHENOMENA - MIN_PHENOMENA + 1));
       // A phenomenon may stand in water where a landmark may not: the
@@ -1645,26 +1672,70 @@ export default class ChunkSnapshot {
         ...this.chunk.getFaceCells(),
         ...this.chunk.getLavaCells(),
       ]);
-      const spots = this.chunk.getSpotCells();
-      const flooded = isWaterBiome(this.chunk.biome);
+      const water = this.chunk.getWaterCells();
       // Standing on water — in a pool, or at sea off the banks — the
       // only thing that can be going on is the water itself
-      const afloat = (cell: number): boolean => flooded !== spots.has(cell);
+      const afloat = (cell: number): boolean => water.has(cell);
       // ...and water is the only thing that ripples, so the rest of
-      // the biome's list is what dry ground can show. A beach hosts
+      // the cell's own list is what dry ground can show. A beach hosts
       // both, and a ripple on its sand was the sea in the wrong place
-      const dry: Phenomenon[] = [];
+      const overhead = new Map<Biome, boolean>();
+      // Something passing over is over the water too, so a pond shows
+      // a shadow as readily as the grass around it
+      const fliesOver = (cell: number): boolean => {
+        const biome = this.biomeAt(cell);
+        const held = overhead.get(biome);
 
-      for (const kind of kinds) {
-        if (kind !== Phenomenon.RipplingWater) {
-          dry.push(kind);
+        if (held != null) {
+          return held;
         }
-      }
 
+        const flies = BIOME_PHENOMENA[biome].includes(Phenomenon.FlyingShadow);
+
+        overhead.set(biome, flies);
+        return flies;
+      };
+      // What the water can show: the water itself, and a shadow over
+      // it where the country has one. A country with neither still
+      // ripples, since water is what it is
+      const wet = (cell: number): Phenomenon[] => {
+        const kinds: Phenomenon[] = [];
+
+        if (BIOME_PHENOMENA[this.biomeAt(cell)].includes(Phenomenon.RipplingWater)) {
+          kinds.push(Phenomenon.RipplingWater);
+        }
+        if (fliesOver(cell)) {
+          kinds.push(Phenomenon.FlyingShadow);
+        }
+        return kinds.length > 0 ? kinds : [Phenomenon.RipplingWater];
+      };
+      const dried = new Map<Biome, Phenomenon[]>();
+      const dryAt = (cell: number): Phenomenon[] => {
+        const biome = this.biomeAt(cell);
+        const held = dried.get(biome);
+
+        if (held != null) {
+          return held;
+        }
+
+        const dry: Phenomenon[] = [];
+
+        for (const kind of BIOME_PHENOMENA[biome]) {
+          if (kind !== Phenomenon.RipplingWater) {
+            dry.push(kind);
+          }
+        }
+        dried.set(biome, dry);
+        return dry;
+      };
       const open: number[] = [];
 
       for (const cell of centeredCells(PLACEMENT_AREA)) {
-        if (!occupied.has(cell) && !this.chunk.isTownCell(cell)) {
+        if (
+          !occupied.has(cell) &&
+          !this.chunk.isTownCell(cell) &&
+          BIOME_PHENOMENA[this.biomeAt(cell)].length > 0
+        ) {
           open.push(cell);
         }
       }
@@ -1674,18 +1745,26 @@ export default class ChunkSnapshot {
       // nothing but ripples in it goes the other way: its islands show
       // nothing, since nothing else happens there
       const ground: number[] = [];
+      // A shadow passes over the water as readily as over the grass,
+      // so those cells stand beside the dry ones rather than behind
+      // them. Only a shadow does: a ripple is the water on its own,
+      // and taking every wet cell would leave a marsh doing nothing
+      // but ripple
+      const flown: number[] = [];
 
-      if (dry.length > 0) {
-        for (const cell of open) {
-          if (!afloat(cell)) {
+      for (const cell of open) {
+        if (!afloat(cell)) {
+          if (dryAt(cell).length > 0) {
             ground.push(cell);
           }
+        } else if (fliesOver(cell)) {
+          flown.push(cell);
         }
       }
 
-      const free: number[] = ground.length > 0 ? ground : [];
+      const free: number[] = [...ground, ...flown];
 
-      if (ground.length === 0) {
+      if (free.length === 0) {
         for (const cell of open) {
           if (afloat(cell)) {
             free.push(cell);
@@ -1696,10 +1775,15 @@ export default class ChunkSnapshot {
       for (let at = 0; at < count && free.length > 0; at++) {
         const [cell] = free.splice(Math.floor(rng.random() * free.length), 1);
 
-        showing.set(
-          cell,
-          afloat(cell) ? Phenomenon.RipplingWater : dry[Math.floor(rng.random() * dry.length)],
-        );
+        const dry = dryAt(cell);
+
+        if (afloat(cell)) {
+          const kinds = wet(cell);
+
+          showing.set(cell, kinds[Math.floor(rng.random() * kinds.length)]);
+          continue;
+        }
+        showing.set(cell, dry[Math.floor(rng.random() * dry.length)]);
       }
       this.phenomena = showing;
     }
@@ -1726,7 +1810,7 @@ export default class ChunkSnapshot {
 
     const reward = resolvePhenomenon(
       phenomenon,
-      this.chunk.biome,
+      this.biomeAt(cell),
       getTimeOfDay(this.phenomenonTimestamp),
       () => rng.random(),
       getFeaturedFamily(this.phenomenonTimestamp),

@@ -16,7 +16,7 @@ import {
 } from 'three';
 import { WALL_BANDS, boardClipDepth, boardClipMatrix, boardView } from '../board';
 import { SKY_BANDS } from '../daylight';
-import parseColour from '../gl/colour';
+import parseColour, { type Colour } from '../gl/colour';
 import { VIEW_RADIUS } from '../../overworld/board';
 import { SQUARES } from '../../overworld/grid';
 import { FLAT_PITCH, PITCH } from '../tilt';
@@ -151,6 +151,15 @@ export interface BoardScene {
    * the screen and at the bottom, or nothing to leave the rim hard
    */
   haze: (sky: { top: string; bottom: string } | null) => void;
+  /**
+   * The light the country stands in, asked for at every cell corner in
+   * the cells a scene spot is written in. Null leaves it at full
+   * daylight.
+   *
+   * Read after `look`, since the ground is drawn where the camera has
+   * got to rather than where it lives
+   */
+  light: (at: ((x: number, z: number) => Colour) | null) => void;
   /** The flat marks, written in the page's own coordinates */
   marks: SceneMarks;
   /**
@@ -201,7 +210,13 @@ export default function createBoardScene(
    * Opaque, with the holes cut rather than blended: the country is the
    * backdrop everything else is depth-tested against
    */
-  const rock = new MeshBasicMaterial({ map: texture, alphaTest: 0.5, side: DoubleSide });
+  const rock = new MeshBasicMaterial({
+    map: texture,
+    alphaTest: 0.5,
+    side: DoubleSide,
+    // The light the ground is standing in, written on its corners
+    vertexColors: true,
+  });
   const hazeTop = new Vector3();
   const hazeBottom = new Vector3();
   const hazeScreen = { value: 1 };
@@ -241,9 +256,11 @@ export default function createBoardScene(
    */
   const count = cells * cells;
   const positions = new Float32Array(count * 12);
+  const shades = new Float32Array(count * 12).fill(1);
   const tiles = new Float32Array(count * 8);
   const joins = count * 4 > 0xffff ? new Uint32Array(count * 6) : new Uint16Array(count * 6);
   const placed = new BufferAttribute(positions, 3).setUsage(DynamicDrawUsage);
+  const lit = new BufferAttribute(shades, 3).setUsage(DynamicDrawUsage);
   const joined = new BufferAttribute(joins, 1).setUsage(DynamicDrawUsage);
   const shape = new BufferGeometry();
 
@@ -269,6 +286,7 @@ export default function createBoardScene(
     }
   }
   shape.setAttribute('position', placed);
+  shape.setAttribute('color', lit);
   shape.setAttribute('uv', new BufferAttribute(tiles, 2));
   shape.setIndex(joined);
 
@@ -458,8 +476,54 @@ export default function createBoardScene(
   let rise = Math.cos(lean);
   let away = Math.sin(lean);
 
+  /** Whether the country is carrying light of its own, so white is written back only once */
+  let shaded = false;
+
+  const light = (at: ((x: number, z: number) => Colour) | null): void => {
+    if (at == null) {
+      if (!shaded) {
+        return;
+      }
+      shades.fill(1);
+      lit.needsUpdate = true;
+      shaded = false;
+      return;
+    }
+    // Asked for in the same cells a scene spot is written in, which is
+    // where the shift and the scene's own reach go
+    const shiftX = country.position.x - extra;
+    const shiftZ = country.position.z - extra;
+
+    for (let z = 0; z < cells; z += 1) {
+      for (let x = 0; x < cells; x += 1) {
+        const spot = (z * cells + x) * 12;
+        const left = x + shiftX;
+        const far = z + shiftZ;
+        // The same four corners the positions are written on, in the
+        // same order: far left, far right, near right, near left
+        const corners = [
+          [left, far],
+          [left + 1, far],
+          [left + 1, far + 1],
+          [left, far + 1],
+        ];
+
+        for (const [corner, [cx, cz]] of corners.entries()) {
+          const shade = at(cx, cz);
+
+          shades[spot + corner * 3] = shade[0];
+          shades[spot + corner * 3 + 1] = shade[1];
+          shades[spot + corner * 3 + 2] = shade[2];
+        }
+      }
+    }
+    lit.needsUpdate = true;
+    shaded = true;
+  };
+
   return {
     ground,
+    light,
     haze: (sky): void => {
       const upper = sky == null ? null : parseColour(sky.top);
       const lower = sky == null ? null : parseColour(sky.bottom);

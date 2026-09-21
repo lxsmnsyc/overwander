@@ -1,5 +1,14 @@
 # overwander
 
+## 4.9.1
+
+### Patch Changes
+
+- d8fd147: A mythical raid is fought on the ground of the country that mythical is met in, rather than on a bare field.
+- f192310: A Frontier Brain stands in their house on the board: their own sprite, their name on the cell, and the cell called out as a fight. They were drawn as nobody at all.
+- f004bdb: The world demo's weather map takes its hour from a chunk snapshot, the way the board does, so it no longer shows a different hour's sky when this machine's clock and the server's disagree.
+- 7dc3484: The world demo's weather map now shows the sky the game is showing: it counts its hours off the zone's wall clock and the server's clock the way a chunk does, and it opens on the live world's seed and generation.
+
 ## 4.9.0
 
 ### Minor Changes

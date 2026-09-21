@@ -275,6 +275,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Noibat, weight: 24 },
         { species: Species.Pumpkaboo, weight: 12 },
         { species: Species.PumpkabooSuper, weight: 12 },
         { species: Species.Phantump, weight: 24 },
@@ -310,6 +311,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Noivern, weight: 6 },
         { species: Species.Gourgeist, weight: 3 },
         { species: Species.GourgeistSuper, weight: 3 },
         { species: Species.Trevenant, weight: 6 },
@@ -389,6 +391,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Noibat, weight: 24 },
         { species: Species.Pumpkaboo, weight: 12 },
         { species: Species.PumpkabooSuper, weight: 12 },
         { species: Species.Phantump, weight: 24 },
@@ -428,6 +431,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Noivern, weight: 6 },
         { species: Species.Gourgeist, weight: 3 },
         { species: Species.GourgeistSuper, weight: 3 },
         { species: Species.Trevenant, weight: 6 },

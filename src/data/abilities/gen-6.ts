@@ -46,6 +46,11 @@ export default function registerGen6Abilities(): void {
     name: 'Refrigerate',
     description: 'Its Normal moves are Ice moves instead, and hit 1.2x.',
   });
+  // Goomy
+  registerAbility(Abilities.Gooey, {
+    name: 'Gooey',
+    description: 'Whatever makes contact with it loses 1 stage of Speed.',
+  });
   // Honedge
   registerAbility(Abilities.StanceChange, {
     name: 'Stance Change',

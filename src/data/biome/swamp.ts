@@ -9,6 +9,7 @@ export default function registerSwampSpawns(): void {
   registerSpawnPool(Biome.Swamp, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Goomy, weight: 12 },
         { species: Species.FlabebeBlue, weight: 24 },
         { species: Species.Squirtle, weight: 2 },
         { species: Species.Poliwag, weight: 20 },
@@ -29,6 +30,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.Sliggoo, weight: 5 },
         { species: Species.FloetteBlue, weight: 8 },
         { species: Species.Wartortle, weight: 1 },
         { species: Species.Poliwhirl, weight: 5 },
@@ -51,6 +53,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Goodra, weight: 3 },
         { species: Species.FlorgesBlue, weight: 5 },
         { species: Species.Carnivine, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
@@ -64,6 +67,7 @@ export default function registerSwampSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Goomy, weight: 12 },
         { species: Species.FlabebeBlue, weight: 24 },
         { species: Species.Squirtle, weight: 2 },
         { species: Species.Poliwag, weight: 20 },
@@ -84,6 +88,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.Sliggoo, weight: 5 },
         { species: Species.FloetteBlue, weight: 8 },
         { species: Species.Wartortle, weight: 1 },
         { species: Species.Poliwhirl, weight: 5 },
@@ -106,6 +111,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Goodra, weight: 3 },
         { species: Species.FlorgesBlue, weight: 5 },
         { species: Species.Carnivine, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
@@ -119,6 +125,7 @@ export default function registerSwampSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Goomy, weight: 12 },
         { species: Species.Froakie, weight: 2 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Tympole, weight: 25 },
@@ -133,6 +140,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.Sliggoo, weight: 5 },
         { species: Species.Frogadier, weight: 2 },
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Palpitoad, weight: 10 },
@@ -148,6 +156,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Goodra, weight: 3 },
         { species: Species.Greninja, weight: 2 },
         { species: Species.Seismitoad, weight: 5 },
         { species: Species.Carnivine, weight: 6 },
@@ -159,6 +168,7 @@ export default function registerSwampSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Goomy, weight: 12 },
         { species: Species.Froakie, weight: 2 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Tympole, weight: 25 },
@@ -175,6 +185,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.Sliggoo, weight: 5 },
         { species: Species.Frogadier, weight: 2 },
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Palpitoad, weight: 10 },
@@ -192,6 +203,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Goodra, weight: 3 },
         { species: Species.Greninja, weight: 2 },
         { species: Species.Seismitoad, weight: 5 },
         { species: Species.Carnivine, weight: 6 },
@@ -205,6 +217,7 @@ export default function registerSwampSpawns(): void {
   registerWaterPool(Biome.Swamp, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Goomy, weight: 12 },
         { species: Species.Squirtle, weight: 2 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Totodile, weight: 2 },
@@ -224,6 +237,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [
+        { species: Species.Sliggoo, weight: 5 },
         { species: Species.Wartortle, weight: 1 },
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Croconaw, weight: 1 },
@@ -243,6 +257,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Goodra, weight: 3 },
         { species: Species.BasculinBlue, weight: 6 },
         { species: Species.Basculin, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
@@ -254,6 +269,7 @@ export default function registerSwampSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Goomy, weight: 12 },
         { species: Species.Squirtle, weight: 2 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Totodile, weight: 2 },
@@ -273,6 +289,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [
+        { species: Species.Sliggoo, weight: 5 },
         { species: Species.Wartortle, weight: 1 },
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Croconaw, weight: 1 },
@@ -292,6 +309,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Goodra, weight: 3 },
         { species: Species.BasculinBlue, weight: 6 },
         { species: Species.Basculin, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
@@ -303,6 +321,7 @@ export default function registerSwampSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Goomy, weight: 12 },
         { species: Species.Froakie, weight: 2 },
         { species: Species.Poliwag, weight: 20 },
       ],
@@ -317,6 +336,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [
+        { species: Species.Sliggoo, weight: 5 },
         { species: Species.Frogadier, weight: 2 },
         { species: Species.Poliwhirl, weight: 5 },
       ],
@@ -330,6 +350,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Goodra, weight: 3 },
         { species: Species.Greninja, weight: 2 },
         { species: Species.BasculinBlue, weight: 6 },
         { species: Species.Basculin, weight: 6 },
@@ -340,6 +361,7 @@ export default function registerSwampSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Goomy, weight: 12 },
         { species: Species.Froakie, weight: 2 },
         { species: Species.Poliwag, weight: 20 },
       ],
@@ -354,6 +376,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [
+        { species: Species.Sliggoo, weight: 5 },
         { species: Species.Frogadier, weight: 2 },
         { species: Species.Poliwhirl, weight: 5 },
       ],
@@ -367,6 +390,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Goodra, weight: 3 },
         { species: Species.Greninja, weight: 2 },
         { species: Species.BasculinBlue, weight: 6 },
         { species: Species.Basculin, weight: 6 },

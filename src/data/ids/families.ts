@@ -350,10 +350,12 @@ const enum Families {
   Tyrunt = 345,
   Amaura = 346,
   Hawlucha = 347,
-  Klefki = 348,
-  Phantump = 349,
-  Pumpkaboo = 350,
-  Bergmite = 351,
+  Goomy = 348,
+  Klefki = 349,
+  Phantump = 350,
+  Pumpkaboo = 351,
+  Bergmite = 352,
+  Noibat = 353,
 }
 
 export default Families;
@@ -721,8 +723,10 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Tyrunt]: 'Tyrunt',
   [Families.Amaura]: 'Amaura',
   [Families.Hawlucha]: 'Hawlucha',
+  [Families.Goomy]: 'Goomy',
   [Families.Klefki]: 'Klefki',
   [Families.Phantump]: 'Phantump',
   [Families.Pumpkaboo]: 'Pumpkaboo',
   [Families.Bergmite]: 'Bergmite',
+  [Families.Noibat]: 'Noibat',
 };

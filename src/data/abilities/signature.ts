@@ -2111,6 +2111,17 @@ export default function registerSignatureAbilities(): void {
     description: 'Its physical moves use its Defense in place of its Attack while it is higher.',
   });
 
+  // The slug that soaks a blow and the bat that is past it already
+  registerSignature(Families.Goomy, Abilities.Seepage, {
+    name: 'Seepage',
+    description: '40% of every direct blow it takes is paid over the next 4 seconds instead.',
+  });
+
+  registerSignature(Families.Noibat, Abilities.Outpace, {
+    name: 'Outpace',
+    description: 'Its moves hit 1.3x against a target whose Speed is lower than its own.',
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:

@@ -2144,6 +2144,25 @@ export default function registerSignatureAbilities(): void {
       'It gains 1 stage of Defense and 1 of Special Defense every 10 seconds, up to 3 of each.',
   });
 
+  /**
+   * Kalos's three, on one axis: a stat stage is life given or taken,
+   * and the thing in the ground will have neither
+   */
+  registerSignature(Families.Xerneas, Abilities.Quickening, {
+    name: 'Quickening',
+    description: 'Every stat rise on its team is 1 stage bigger.',
+  });
+
+  registerSignature(Families.Yveltal, Abilities.Withering, {
+    name: 'Withering',
+    description: 'Every stat drop it lands on an enemy is 1 stage deeper.',
+  });
+
+  registerSignature(Families.Zygarde, Abilities.EvenKeel, {
+    name: 'Even Keel',
+    description: 'Every stat stage on the field counts 0.5x, its own included.',
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:

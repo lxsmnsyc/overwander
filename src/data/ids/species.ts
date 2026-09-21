@@ -856,6 +856,9 @@ export const enum Species {
   Avalugg = 713,
   Noibat = 714,
   Noivern = 715,
+  Xerneas = 716,
+  Yveltal = 717,
+  Zygarde = 718,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
@@ -900,6 +903,10 @@ export const enum Species {
 
   /** The female of the line, who evolves out of a female Espurr */
   MeowsticFemale = 1067801,
+
+  /** The share of itself a Zygarde has gathered, half of it at the base */
+  ZygardeTenPercent = 1071801,
+  ZygardeComplete = 1071802,
 
   /** How big the pumpkin grew, the middling one at the base */
   PumpkabooSmall = 1071001,
@@ -1200,6 +1207,13 @@ export const FLORGES_FORMS: Species[] = [
   Species.FlorgesOrange,
   Species.FlorgesBlue,
   Species.FlorgesWhite,
+];
+
+/** What a Zygarde has gathered of itself, half first, then a tenth, then all */
+export const ZYGARDE_FORMS: Species[] = [
+  Species.Zygarde,
+  Species.ZygardeTenPercent,
+  Species.ZygardeComplete,
 ];
 
 /** Each size a pumpkin comes in, the middling one first */

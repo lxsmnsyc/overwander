@@ -970,6 +970,10 @@ const enum Abilities {
   QuickWhiskers = 200357,
   // Carbink
   CrystalGrowth = 200358,
+  // The Kalos trio: one axis, three ways
+  Quickening = 200359,
+  Withering = 200360,
+  EvenKeel = 200361,
 }
 
 export default Abilities;

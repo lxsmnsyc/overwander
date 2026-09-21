@@ -360,6 +360,9 @@ const enum Families {
   Pumpkaboo = 355,
   Bergmite = 356,
   Noibat = 357,
+  Xerneas = 358,
+  Yveltal = 359,
+  Zygarde = 360,
 }
 
 export default Families;
@@ -737,4 +740,7 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Pumpkaboo]: 'Pumpkaboo',
   [Families.Bergmite]: 'Bergmite',
   [Families.Noibat]: 'Noibat',
+  [Families.Xerneas]: 'Xerneas',
+  [Families.Yveltal]: 'Yveltal',
+  [Families.Zygarde]: 'Zygarde',
 };

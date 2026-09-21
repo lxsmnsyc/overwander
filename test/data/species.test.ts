@@ -60,6 +60,7 @@ import {
   UNOWN_FORMS,
   VIVILLON_FORMS,
   WORMADAM_FORMS,
+  ZYGARDE_FORMS,
   getBaseFormSpecies,
   speciesDexNumber,
   speciesFormIndex,
@@ -405,6 +406,7 @@ describe('species forms', () => {
       ...AEGISLASH_FORMS.slice(1),
       ...MEOWSTIC_FORMS.slice(1),
       ...PUMPKABOO_FORMS.slice(1),
+      ...ZYGARDE_FORMS.slice(1),
       ...GOURGEIST_FORMS.slice(1),
       ...SAWSBUCK_FORMS.slice(1),
       // The true shadows, which are forms of the birds they are the

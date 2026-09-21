@@ -46,6 +46,33 @@ export default function registerGen6Abilities(): void {
     name: 'Refrigerate',
     description: 'Its Normal moves are Ice moves instead, and hit 1.2x.',
   });
+  // Xerneas
+  registerAbility(Abilities.FairyAura, {
+    name: 'Fairy Aura',
+    description: 'Every Fairy move on the field hits 1.33x, whoever throws it.',
+  });
+  registerAbility(Abilities.Triage, {
+    name: 'Triage',
+    description: 'Its healing moves cast a step ahead of everything else.',
+  });
+  // Yveltal
+  registerAbility(Abilities.DarkAura, {
+    name: 'Dark Aura',
+    description: 'Every Dark move on the field hits 1.33x, whoever throws it.',
+  });
+  // Zygarde
+  registerAbility(Abilities.AuraBreak, {
+    name: 'Aura Break',
+    description: 'An aura on the field weakens its type to 0.75x rather than strengthening it.',
+  });
+  registerAbility(Abilities.PowerConstruct, {
+    name: 'Power Construct',
+    description: 'At 1/2 HP the rest of its cells gather and it takes its Complete shape.',
+  });
+  registerAbility(Abilities.EarthEater, {
+    name: 'Earth Eater',
+    description: 'Ground moves deal it nothing and heal it 1/4 of its HP instead.',
+  });
   // Swirlix
   registerAbility(Abilities.SweetVeil, {
     name: 'Sweet Veil',

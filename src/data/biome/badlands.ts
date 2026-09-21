@@ -96,6 +96,8 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },
@@ -196,6 +198,8 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },
@@ -276,6 +280,8 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },
@@ -362,6 +368,8 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },

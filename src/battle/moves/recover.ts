@@ -37,6 +37,16 @@ const HEAL_FRACTION: { [key in Moves]?: number } = {
  */
 const WEATHER_HEALS = new Set<Moves>([Moves.MorningSun, Moves.Synthesis, Moves.Moonlight]);
 
+/**
+ * Every move whose whole job is putting health back, for anything
+ * that treats them as a class rather than one at a time
+ */
+export const HEALING_MOVES = new Set<Moves>([...WEATHER_HEALS, Moves.Rest, Moves.Wish]);
+
+for (const key of Object.keys(HEAL_FRACTION)) {
+  HEALING_MOVES.add(Number(key));
+}
+
 const SUNLIT_HEAL = 2 / 3;
 
 const OVERCAST_HEAL = 0.25;

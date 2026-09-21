@@ -102,6 +102,9 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
+        { species: Species.Yveltal, weight: 10 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Cobalion, weight: 10 },
         { species: Species.Registeel, weight: 10 },
@@ -208,6 +211,9 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
+        { species: Species.Yveltal, weight: 10 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Cobalion, weight: 10 },
         { species: Species.Registeel, weight: 10 },
@@ -289,6 +295,9 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
+        { species: Species.Yveltal, weight: 10 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Cobalion, weight: 10 },
         { species: Species.Registeel, weight: 10 },
@@ -377,6 +386,9 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
+        { species: Species.Yveltal, weight: 10 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Cobalion, weight: 10 },
         { species: Species.Registeel, weight: 10 },

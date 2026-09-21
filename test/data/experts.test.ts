@@ -37,6 +37,7 @@ import Awards, {
   KANTO_HONORS,
   SINNOH_BADGES,
   SINNOH_HONORS,
+  UNOVA_BADGES,
 } from '../../src/data/ids/awards';
 import {
   ARCADE_PANELS,
@@ -134,15 +135,25 @@ registerBiomeSpawns();
 describe('type experts', () => {
   it('gives every leader a name, a badge and a shipped wardrobe', () => {
     const badges = GYM_LEADERS.map((leader) => GYM_LEADER_BADGES[leader]);
-    const cases = [...KANTO_BADGES, ...JOHTO_BADGES, ...HOENN_BADGES, ...SINNOH_BADGES];
+    const cases = [
+      ...KANTO_BADGES,
+      ...JOHTO_BADGES,
+      ...HOENN_BADGES,
+      ...SINNOH_BADGES,
+      ...UNOVA_BADGES,
+    ];
 
-    // Every leader carries a badge, and between the four regions the
-    // leaders account for every badge there is. There is one leader
-    // more than there are badges, because Mossdeep is kept by two
-    // people who pay the same one
+    // Every leader carries a badge, and between the five regions the
+    // leaders account for every badge there is. There are more
+    // leaders than badges, because a gym kept by several people pays
+    // the one badge between them: Mossdeep, Striaton, and Nacrene's
+    // fight passing to Aspertia a league later
     expect(new Set(badges).size).toBe(cases.length);
     expect(badges.every((badge) => cases.includes(badge))).toBe(true);
     expect(GYM_LEADER_BADGES[GymLeader.Tate]).toBe(GYM_LEADER_BADGES[GymLeader.Liza]);
+    expect(GYM_LEADER_BADGES[GymLeader.Cilan]).toBe(GYM_LEADER_BADGES[GymLeader.Chili]);
+    expect(GYM_LEADER_BADGES[GymLeader.Cress]).toBe(GYM_LEADER_BADGES[GymLeader.Chili]);
+    expect(GYM_LEADER_BADGES[GymLeader.Cheren]).toBe(GYM_LEADER_BADGES[GymLeader.Lenora]);
 
     for (const leader of GYM_LEADERS) {
       expect(GYM_LEADER_NAMES[leader].length).toBeGreaterThan(0);
@@ -155,7 +166,7 @@ describe('type experts', () => {
     // one Blue used to take all comers at, and no region runs the
     // same fight twice. Across regions they repeat: Roxanne's gym is
     // Brock's fight in another country
-    for (const region of [KANTO_BADGES, JOHTO_BADGES, HOENN_BADGES, SINNOH_BADGES]) {
+    for (const region of [KANTO_BADGES, JOHTO_BADGES, HOENN_BADGES, SINNOH_BADGES, UNOVA_BADGES]) {
       const held = new Map<Awards, Set<Types>>();
 
       for (const leader of GYM_LEADERS.filter((one) => region.includes(GYM_LEADER_BADGES[one]))) {
@@ -163,11 +174,20 @@ describe('type experts', () => {
 
         held.set(badge, (held.get(badge) ?? new Set<Types>()).add(GYM_LEADER_TYPES[leader]));
       }
-      // One badge is one type, whoever of its keepers a chunk seats
+      // One badge is one fight, whoever of its keepers a chunk seats.
+      // Striaton is the exception the region is named for: three
+      // keepers, three types, one badge between them
       for (const [badge, types] of held) {
-        expect(types.size, AWARD_NAMES[badge]).toBe(1);
+        expect(types.size, AWARD_NAMES[badge]).toBe(badge === Awards.TrioBadge ? 3 : 1);
       }
-      expect(new Set([...held.values()].flatMap((types) => [...types])).size).toBe(region.length);
+      // And no region runs the same fight twice, so every type under
+      // that region's badges is its own. Unova runs water twice: the
+      // sequels open Humilau's gym without closing Striaton's, and
+      // each pays its own badge
+      const fought = [...held.values()].flatMap((types) => [...types]);
+      const twice = fought.filter((type) => fought.indexOf(type) !== fought.lastIndexOf(type));
+
+      expect(new Set(twice)).toEqual(region === UNOVA_BADGES ? new Set([Types.Water]) : new Set());
     }
     expect(GYM_LEADER_TYPES[GymLeader.Giovanni]).toBe(Types.Ground);
     expect(GYM_LEADER_TYPES[GymLeader.Brock]).toBe(Types.Rock);
@@ -202,6 +222,7 @@ describe('type experts', () => {
       ...JOHTO_BADGES,
       ...HOENN_BADGES,
       ...SINNOH_BADGES,
+      ...UNOVA_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
       ...HOENN_HONORS,
@@ -1303,6 +1324,7 @@ describe('type experts', () => {
       ...JOHTO_BADGES,
       ...HOENN_BADGES,
       ...SINNOH_BADGES,
+      ...UNOVA_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
       ...HOENN_HONORS,

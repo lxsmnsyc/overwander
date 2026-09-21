@@ -123,6 +123,16 @@ const enum Awards {
   GoldCastlePrint = 98,
   SilverHallPrint = 99,
   GoldHallPrint = 100,
+  TrioBadge = 101,
+  BasicBadge = 102,
+  InsectBadge = 103,
+  BoltBadge = 104,
+  QuakeBadge = 105,
+  JetBadge = 106,
+  FreezeBadge = 107,
+  LegendBadge = 108,
+  ToxicBadge = 109,
+  WaveBadge = 110,
 }
 
 export default Awards;
@@ -229,6 +239,16 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.GoldCastlePrint]: 'Gold Castle Print',
   [Awards.SilverHallPrint]: 'Silver Hall Print',
   [Awards.GoldHallPrint]: 'Gold Hall Print',
+  [Awards.TrioBadge]: 'Trio Badge',
+  [Awards.BasicBadge]: 'Basic Badge',
+  [Awards.InsectBadge]: 'Insect Badge',
+  [Awards.BoltBadge]: 'Bolt Badge',
+  [Awards.QuakeBadge]: 'Quake Badge',
+  [Awards.JetBadge]: 'Jet Badge',
+  [Awards.FreezeBadge]: 'Freeze Badge',
+  [Awards.LegendBadge]: 'Legend Badge',
+  [Awards.ToxicBadge]: 'Toxic Badge',
+  [Awards.WaveBadge]: 'Wave Badge',
 };
 
 /**
@@ -313,6 +333,25 @@ export const SINNOH_BADGES: Awards[] = [
   Awards.MineBadge,
   Awards.IcicleBadge,
   Awards.BeaconBadge,
+];
+
+/**
+ * And Unova's 10, in gym order, the sequels' two gyms last. The
+ * region runs more gyms than any other because two of its towns
+ * changed hands between one league and the next, and Striaton is
+ * kept by three people who each fight a different type
+ */
+export const UNOVA_BADGES: Awards[] = [
+  Awards.TrioBadge,
+  Awards.BasicBadge,
+  Awards.InsectBadge,
+  Awards.BoltBadge,
+  Awards.QuakeBadge,
+  Awards.JetBadge,
+  Awards.FreezeBadge,
+  Awards.LegendBadge,
+  Awards.ToxicBadge,
+  Awards.WaveBadge,
 ];
 
 /**

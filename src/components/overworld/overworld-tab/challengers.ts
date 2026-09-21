@@ -114,6 +114,19 @@ const GYM_LEADER_QUOTES: Record<GymLeader, string> = {
   [GymLeader.Byron]: 'My son keeps a gym of his own. Neither of us gives anything away.',
   [GymLeader.Candice]: 'Focus! That is all it takes. Mine has never once slipped.',
   [GymLeader.Volkner]: 'I have been bored for years. Please be worth the electricity.',
+  [GymLeader.Cilan]: 'Allow me to taste your battling style. I expect it is undercooked.',
+  [GymLeader.Chili]: 'My fire burns hotter than my brothers put together! Ready?',
+  [GymLeader.Cress]: 'Composure wins battles. I have rather a lot of it.',
+  [GymLeader.Lenora]: 'You want the badge? Then show me something worth putting in my museum.',
+  [GymLeader.Burgh]: 'My bug pokemon and I are making something beautiful. Try not to spoil it.',
+  [GymLeader.Elesa]: 'The lights are on you now. Let us see how you look losing.',
+  [GymLeader.Clay]: 'I dug this gym out of the ground myself. You will not walk off with it cheap.',
+  [GymLeader.Skyla]: 'I have flown every route in this region. You will not outrun me.',
+  [GymLeader.Brycen]: 'I left the stage for the ice. Nothing here is acting.',
+  [GymLeader.Drayden]: 'A dragon is not tamed by wanting it. Show me what you have.',
+  [GymLeader.Cheren]: 'I used to chase strength. Now I teach it. Let us see what you have learned.',
+  [GymLeader.Roxie]: 'Turn it up! If my poison does not get you, the noise will!',
+  [GymLeader.Marlon]: 'The sea does what it wants, and so do I. Let us have a good one.',
 };
 
 /** Which league each champion is the top of */

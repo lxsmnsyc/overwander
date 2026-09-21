@@ -194,6 +194,30 @@ export const GYM_LEADER_SIGNATURES: Record<GymLeader, Species> = {
   // Not the Raichu he opens with: Lt. Surge is already remembered for
   // that one, and the Luxray is what Sunyshore closes with anyway
   [GymLeader.Volkner]: Species.Luxray,
+  // Striaton's three and Brycen keep the pokemon they are actually
+  // remembered for the day those lines are written. Until then each
+  // stands with the nearest written thing of their own fight: the
+  // monkeys, Vanillish, Cryogonal and Beartic are all undrawn
+  [GymLeader.Cilan]: Species.Lilligant,
+  [GymLeader.Chili]: Species.Emboar,
+  [GymLeader.Cress]: Species.Seismitoad,
+  [GymLeader.Lenora]: Species.Watchog,
+  [GymLeader.Burgh]: Species.Leavanny,
+  // Her Zebstrika is written and drawn by nobody, so no player can
+  // meet one; the Flaaffy is off her own sequel team, and the seat
+  // is the Emolga's the day that line is written
+  [GymLeader.Elesa]: Species.Flaaffy,
+  [GymLeader.Clay]: Species.Excadrill,
+  // The Swanna she closes with is unwritten, and the Swoobat is hers
+  // in the same team
+  [GymLeader.Skyla]: Species.Swoobat,
+  [GymLeader.Brycen]: Species.Froslass,
+  // The Flygon on his own team, since the Haxorus above it is not
+  // written yet
+  [GymLeader.Drayden]: Species.Flygon,
+  [GymLeader.Cheren]: Species.Stoutland,
+  [GymLeader.Roxie]: Species.Scolipede,
+  [GymLeader.Marlon]: Species.Wailord,
 };
 
 /**

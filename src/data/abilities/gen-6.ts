@@ -46,6 +46,16 @@ export default function registerGen6Abilities(): void {
     name: 'Refrigerate',
     description: 'Its Normal moves are Ice moves instead, and hit 1.2x.',
   });
+  // Swirlix
+  registerAbility(Abilities.SweetVeil, {
+    name: 'Sweet Veil',
+    description: 'Nothing on its team can be put to sleep while it stands.',
+  });
+  // Sylveon
+  registerAbility(Abilities.Pixilate, {
+    name: 'Pixilate',
+    description: 'Its Normal moves are Fairy moves instead, and hit 1.2x.',
+  });
   // Goomy
   registerAbility(Abilities.Gooey, {
     name: 'Gooey',

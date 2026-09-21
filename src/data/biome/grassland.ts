@@ -30,6 +30,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Swirlix, weight: 24 },
         { species: Species.Skiddo, weight: 24 },
         { species: Species.Bunnelby, weight: 26 },
         { species: Species.Deerling, weight: 18 },
@@ -78,6 +79,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sylveon, weight: 6 },
+        { species: Species.Slurpuff, weight: 6 },
         { species: Species.Gogoat, weight: 6 },
         { species: Species.Diggersby, weight: 6 },
         { species: Species.Sawsbuck, weight: 7 },
@@ -110,6 +113,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Dedenne, weight: 6 },
         { species: Species.Furfrou, weight: 5 },
         { species: Species.Florges, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
@@ -180,6 +184,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Swirlix, weight: 24 },
         { species: Species.Skiddo, weight: 24 },
         { species: Species.Bunnelby, weight: 26 },
         { species: Species.Deerling, weight: 18 },
@@ -230,6 +235,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sylveon, weight: 6 },
+        { species: Species.Slurpuff, weight: 6 },
         { species: Species.Gogoat, weight: 6 },
         { species: Species.Diggersby, weight: 6 },
         { species: Species.Sawsbuck, weight: 7 },
@@ -263,6 +270,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Dedenne, weight: 6 },
         { species: Species.Furfrou, weight: 5 },
         { species: Species.Florges, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
@@ -350,6 +358,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Sylveon, weight: 6 },
         { species: Species.Gourgeist, weight: 3 },
         { species: Species.GourgeistSuper, weight: 3 },
         { species: Species.Sawsbuck, weight: 7 },
@@ -371,6 +380,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Dedenne, weight: 6 },
         { species: Species.Furfrou, weight: 5 },
         { species: Species.Gothitelle, weight: 5 },
         { species: Species.Castform, weight: 10 },
@@ -440,6 +450,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Sylveon, weight: 6 },
         { species: Species.Gourgeist, weight: 3 },
         { species: Species.GourgeistSuper, weight: 3 },
         { species: Species.Sawsbuck, weight: 7 },
@@ -463,6 +474,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Dedenne, weight: 6 },
         { species: Species.Gothitelle, weight: 5 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Nidoqueen, weight: 5 },

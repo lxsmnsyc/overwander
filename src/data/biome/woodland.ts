@@ -40,6 +40,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Pancham, weight: 24 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.Eevee, weight: 2 },
         { species: Species.Sentret, weight: 25 },
@@ -75,6 +76,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sylveon, weight: 6 },
+        { species: Species.Pangoro, weight: 6 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Furret, weight: 10 },
@@ -96,6 +99,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Dedenne, weight: 6 },
         { species: Species.Furfrou, weight: 5 },
         { species: Species.Florges, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
@@ -163,6 +167,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Pancham, weight: 24 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.Eevee, weight: 2 },
         { species: Species.Sentret, weight: 25 },
@@ -198,6 +203,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sylveon, weight: 6 },
+        { species: Species.Pangoro, weight: 6 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Furret, weight: 10 },
@@ -219,6 +226,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Dedenne, weight: 6 },
         { species: Species.Furfrou, weight: 5 },
         { species: Species.Florges, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
@@ -275,6 +283,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Pancham, weight: 24 },
         { species: Species.Noibat, weight: 24 },
         { species: Species.Pumpkaboo, weight: 12 },
         { species: Species.PumpkabooSuper, weight: 12 },
@@ -311,6 +320,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sylveon, weight: 6 },
+        { species: Species.Pangoro, weight: 6 },
         { species: Species.Noivern, weight: 6 },
         { species: Species.Gourgeist, weight: 3 },
         { species: Species.GourgeistSuper, weight: 3 },
@@ -345,6 +356,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Dedenne, weight: 6 },
         { species: Species.Furfrou, weight: 5 },
         { species: Species.Emolga, weight: 8 },
         { species: Species.Chandelure, weight: 5 },
@@ -431,6 +443,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sylveon, weight: 6 },
         { species: Species.Noivern, weight: 6 },
         { species: Species.Gourgeist, weight: 3 },
         { species: Species.GourgeistSuper, weight: 3 },
@@ -468,6 +481,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Dedenne, weight: 6 },
         { species: Species.Emolga, weight: 8 },
         { species: Species.Chandelure, weight: 5 },
         { species: Species.Spiritomb, weight: 5 },

@@ -18,6 +18,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Swirlix, weight: 24 },
         { species: Species.Skiddo, weight: 24 },
         { species: Species.Minccino, weight: 26 },
         { species: Species.Spoink, weight: 20 },
@@ -40,6 +41,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Slurpuff, weight: 6 },
         { species: Species.Gogoat, weight: 6 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Grumpig, weight: 6 },
@@ -85,6 +87,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Swirlix, weight: 24 },
         { species: Species.Skiddo, weight: 24 },
         { species: Species.Minccino, weight: 26 },
         { species: Species.Spoink, weight: 20 },
@@ -108,6 +111,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Slurpuff, weight: 6 },
         { species: Species.Gogoat, weight: 6 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Grumpig, weight: 6 },

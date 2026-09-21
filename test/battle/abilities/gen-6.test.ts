@@ -311,3 +311,47 @@ describe('Refrigerate', () => {
     );
   });
 });
+
+describe('Sweet Veil', () => {
+  it('keeps its whole team awake while it stands', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const shop = createUnit(battle, teamA, [Types.Fairy]);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    shop.addAbility(Abilities.SweetVeil);
+    shop.enter();
+    mate.enter();
+    foe.enter();
+
+    mate.addStatus(Statuses.Sleeping, { type: EffectType.None });
+
+    expect(mate.status[Statuses.Sleeping]).toBeFalsy();
+
+    // The other side sleeps as it always did
+    foe.addStatus(Statuses.Sleeping, { type: EffectType.None });
+
+    expect(foe.status[Statuses.Sleeping]).toBeTruthy();
+  });
+});
+
+describe('Pixilate', () => {
+  it('sends a Normal move out as Fairy, and harder', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ribbon = createUnit(battle, teamA, [Types.Fairy]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    ribbon.enter();
+    foe.enter();
+
+    const target = { type: MoveTargetType.Unit, unit: foe } as const;
+    const bare = ribbon.checkMovePower(Moves.Pound, target);
+
+    ribbon.addAbility(Abilities.Pixilate);
+
+    expect(ribbon.checkMoveType(Moves.Pound, target)).toBe(Types.Fairy);
+    expect(ribbon.checkMovePower(Moves.Pound, target)).toBeCloseTo((bare ?? 0) * 1.2, 1);
+  });
+});

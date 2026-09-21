@@ -4,7 +4,7 @@ import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { DamageFlags, MoveAttackFlags, MoveCategories, Moves } from '../../data/ids/moves';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
-import { Terrains } from '../../data/ids/status';
+import { Statuses, Terrains } from '../../data/ids/status';
 import { MergedLifecycle } from '../lifecycle';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
@@ -49,6 +49,20 @@ const MEGA_LAUNCHER_SCALE = 1.5;
 
 /** What the cold is worth to a move it froze on the way out */
 const REFRIGERATE_SCALE = 1.2;
+
+/** What the ribbon is worth to a move it wrapped on the way out */
+const PIXILATE_SCALE = 1.2;
+
+/** The teammate keeping this one awake, if one is standing */
+function sweetenedBy(unit: Unit): Unit | undefined {
+  for (const mate of unit.team.units) {
+    if (mate.alive && mate.hasAbility(Abilities.SweetVeil)) {
+      return mate;
+    }
+  }
+
+  return undefined;
+}
 
 /**
  * What a shell thick enough to stop a shot turns away: everything
@@ -260,6 +274,31 @@ const setupAbilities = [
   // Amaura: what it throws freezes on the way out, which is worth a
   // fifth again on top of landing as Ice
   createTypeShiftAbility(Abilities.Refrigerate, Types.Normal, Types.Ice, REFRIGERATE_SCALE),
+
+  // Swirlix: the cream is a bed, so nothing on its team goes to sleep
+  createAbility(
+    Abilities.SweetVeil,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            event.status === Statuses.Sleeping &&
+            sweetenedBy(event.source) != null
+          ) {
+            event.immune = true;
+          }
+        }),
+        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+          if (event.status === Statuses.Sleeping) {
+            sweetenedBy(event.source)?.triggerAbility(Abilities.SweetVeil);
+          }
+        }),
+      ]),
+  ),
+
+  // Sylveon: what it throws goes out as ribbon rather than as noise
+  createTypeShiftAbility(Abilities.Pixilate, Types.Normal, Types.Fairy, PIXILATE_SCALE),
 
   // Goomy: the slime comes off on whatever touches it, and a foot
   // in it is a foot that is slower afterwards

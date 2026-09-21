@@ -2122,6 +2122,28 @@ export default function registerSignatureAbilities(): void {
     description: 'Its moves hit 1.3x against a target whose Speed is lower than its own.',
   });
 
+  // The four Kalos keeps for last
+  registerSignature(Families.Pancham, Abilities.Begrudge, {
+    name: 'Begrudge',
+    description: 'It gains 1 stage of Attack every time an enemy is healed.',
+  });
+
+  registerSignature(Families.Swirlix, Abilities.SugarRush, {
+    name: 'Sugar Rush',
+    description: 'Its whole team gains 1 stage of Speed whenever it uses up its own held item.',
+  });
+
+  registerSignature(Families.Dedenne, Abilities.QuickWhiskers, {
+    name: 'Quick Whiskers',
+    description: 'Its moves cast at 1 step higher priority. Cooldowns are untouched.',
+  });
+
+  registerSignature(Families.Carbink, Abilities.CrystalGrowth, {
+    name: 'Crystal Growth',
+    description:
+      'It gains 1 stage of Defense and 1 of Special Defense every 10 seconds, up to 3 of each.',
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:

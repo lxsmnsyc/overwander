@@ -59,6 +59,7 @@ import tyruntAndAmaura from './tyrunt-and-amaura';
 import inkayToHawlucha from './inkay-to-hawlucha';
 import phantumpToBergmite from './phantump-to-bergmite';
 import goomyAndNoibat from './goomy-and-noibat';
+import panchamToCarbink from './pancham-to-carbink';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -121,6 +122,7 @@ const setupAbilities = [
   ...inkayToHawlucha,
   ...phantumpToBergmite,
   ...goomyAndNoibat,
+  ...panchamToCarbink,
   ...deerling,
   ...emolga,
   ...tirtougaToBouffalant,

@@ -960,6 +960,16 @@ const enum Abilities {
   Seepage = 200352,
   // Noibat
   Outpace = 200353,
+  // Pancham
+  Begrudge = 200354,
+  // Swirlix
+  SugarRush = 200355,
+  /** Swirlix's counterpart, reserved until Aromatisse is drawn */
+  CalmingScent = 200356,
+  // Dedenne
+  QuickWhiskers = 200357,
+  // Carbink
+  CrystalGrowth = 200358,
 }
 
 export default Abilities;

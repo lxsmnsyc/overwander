@@ -1657,7 +1657,21 @@ export function CatchSheetBody(
                     </div>
 
                     <div class="contents md:flex md:min-h-0 md:flex-col md:pl-4">
-                      <div class="order-2 py-3 md:order-none md:min-h-0 md:flex-1 md:overflow-y-auto">
+                      {/* Stats lead the column: they are what a player
+                          opens a catch to read */}
+                      <div class="order-2 py-3 md:order-none md:shrink-0">
+                        <StatsSection
+                          caught={loaded()}
+                          owned={owned() != null}
+                          frozen={frozen()}
+                          onTrain={train}
+                        />
+                      </div>
+
+                      <div
+                        class="order-4 min-h-0 border-t-2 border-line-soft py-3 md:order-none
+                        md:flex-1 md:overflow-y-auto"
+                      >
                         {/* An egg has nothing to fight with yet, so its side
                           holds the way out of the shell */}
                         <BattleSection
@@ -1677,15 +1691,6 @@ export function CatchSheetBody(
                             moveItem(item, false);
                           }}
                           onArrange={arrange}
-                        />
-                      </div>
-
-                      <div class="order-4 border-t-2 border-line-soft py-3 md:order-none md:shrink-0">
-                        <StatsSection
-                          caught={loaded()}
-                          owned={owned() != null}
-                          frozen={frozen()}
-                          onTrain={train}
                         />
                       </div>
                     </div>

@@ -103,11 +103,15 @@ const CHARTER: [kind: Landmark, chance: number][] = [
   // has one: being patched up is the service the rest of the game
   // assumes, and a town without it is a town a player has to leave
   [Landmark.PokemonCenter, 1],
-  [Landmark.GymSeat, 0.5],
-  [Landmark.AuctionBoard, 0.5],
-  [Landmark.GymLeader, 0.35],
-  [Landmark.EliteFour, 0.15],
-  [Landmark.Champion, 0.08],
+  [Landmark.GymSeat, 1],
+  [Landmark.AuctionBoard, 1],
+  // A gym leader in every town, so a badge run is a walk between
+  // towns rather than a search for one with a leader in it. The two
+  // above them are widened to match: the ladder is worth climbing
+  // only where its top is reachable
+  [Landmark.GymLeader, 1],
+  [Landmark.EliteFour, 0.25],
+  [Landmark.Champion, 0.15],
 ];
 
 /** And what fills whatever lots the charter left over */
@@ -290,46 +294,22 @@ export function townAt(world: World, x: number, y: number): Town | null {
 }
 
 /**
- * How many spots are tried for a portal out in the country before it
- * is put down wherever the last one landed. A portal at sea is a gate
- * on the water and perfectly good; one inside a crag is not
- */
-const PORTAL_TRIES = 6;
-
-/**
- * Where the region's portal stands, as a world cell.
+ * Where the region's portal stands, as a world cell, or null where the
+ * region has no town.
  *
- * Every region has exactly one, which is what makes the network worth
- * having: it is even, it is dense enough to search quickly, and every
- * country the world grows has one somewhere in it, the open seas
- * included. Where the region has a town the portal is in the town,
- * because that is what a town is for; where it has none the portal
- * stands out in the country
+ * A portal stands dead centre of a town's plaza, where every one of
+ * its streets begins, and nowhere else: a gate out in the country is
+ * somewhere to leave from that nobody can name, arrive at or talk
+ * about, which is the whole of what the network is for
  */
-export function portalSpot(world: World, regionX: number, regionY: number): [x: number, y: number] {
+export function portalSpot(
+  world: World,
+  regionX: number,
+  regionY: number,
+): [x: number, y: number] | null {
   const town = townIn(world, regionX, regionY);
 
-  // Dead centre of the plaza, which is where every one of its streets
-  // begins: a player stepping out of the gate is looking down all of
-  // them at once
-  if (town != null) {
-    return [town.x, town.y];
-  }
-
-  const draws = world.draws(`${world.seed}portal(${regionX}, ${regionY})`);
-  const spread = REGION_CELLS - SITE_INSET * 2;
-  let spot: [number, number] = [regionX * REGION_CELLS, regionY * REGION_CELLS];
-
-  for (let tried = 0; tried < PORTAL_TRIES; tried++) {
-    const x = regionX * REGION_CELLS + SITE_INSET + Math.floor(draws.random('x') * spread);
-    const y = regionY * REGION_CELLS + SITE_INSET + Math.floor(draws.random('y') * spread);
-
-    spot = [x, y];
-    if (!isRock(world, x, y, world.getCellBiome(x, y))) {
-      break;
-    }
-  }
-  return spot;
+  return town == null ? null : [town.x, town.y];
 }
 
 /**
@@ -345,7 +325,13 @@ export function portalCellIn(world: World, chunkX: number, chunkY: number): numb
     return null;
   }
 
-  const [x, y] = portalSpot(world, regionOf(chunkX * CHUNK_CELLS), regionOf(chunkY * CHUNK_CELLS));
+  const spot = portalSpot(world, regionOf(chunkX * CHUNK_CELLS), regionOf(chunkY * CHUNK_CELLS));
+
+  if (spot == null) {
+    return null;
+  }
+
+  const [x, y] = spot;
   const cellX = x - chunkX * CHUNK_CELLS;
   const cellY = y - chunkY * CHUNK_CELLS;
 

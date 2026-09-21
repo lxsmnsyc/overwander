@@ -148,7 +148,7 @@ case: a released catch nulls the column by cascade.
 
 An **egg** may be the buddy, and has to be: steps only count for what walks
 beside the player. `resolveBuddy` reports no field effects for one, though, since
-it is carried rather than accompanied. See [Eggs](catches.md#eggs).
+it is carried rather than accompanied. See [Eggs](eggs.md#what-an-egg-is).
 
 ## `positions`
 

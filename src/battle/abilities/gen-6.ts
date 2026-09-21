@@ -10,7 +10,7 @@ import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
 import { hasFreeItemSlot, stealableItem } from '../utils';
-import { createAbility } from './__create';
+import { createAbility, createTypeShiftAbility } from './__create';
 
 /** What a pelt of grass is worth while there is grass to stand on */
 const GRASS_PELT_SCALE = 1.5;
@@ -46,6 +46,9 @@ const PULSE_MOVES = new Set<Moves>([
 
 /** What a launcher is worth to a pulse, thrown or given */
 const MEGA_LAUNCHER_SCALE = 1.5;
+
+/** What the cold is worth to a move it froze on the way out */
+const REFRIGERATE_SCALE = 1.2;
 
 /**
  * What a shell thick enough to stop a shot turns away: everything
@@ -253,6 +256,10 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Amaura: what it throws freezes on the way out, which is worth a
+  // fifth again on top of landing as Ice
+  createTypeShiftAbility(Abilities.Refrigerate, Types.Normal, Types.Ice, REFRIGERATE_SCALE),
 
   // Honedge: the sword is a shield until it swings. Both shapes carry
   // their own stats and share an HP stat, so turning over moves

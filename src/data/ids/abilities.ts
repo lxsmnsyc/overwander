@@ -940,6 +940,10 @@ const enum Abilities {
   DeepKelp = 200342,
   // Clauncher
   RangingShot = 200343,
+  // Tyrunt
+  JawSnap = 200344,
+  // Amaura
+  Frostbound = 200345,
 }
 
 export default Abilities;

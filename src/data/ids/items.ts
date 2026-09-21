@@ -955,6 +955,9 @@ export const enum Items {
    */
   CoverFossil = 442,
   PlumeFossil = 443,
+  /** The two Kalos fossils, which are shipped with their lines */
+  JawFossil = 444,
+  SailFossil = 445,
 }
 
 /**

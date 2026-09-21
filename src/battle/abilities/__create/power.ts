@@ -1,7 +1,7 @@
 import { EventPriority } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
 import type { Types } from '../../../data/constants/types';
-import type { MoveFlags } from '../../../data/ids/moves';
+import type { MoveFlags, Moves } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
 import Abilities from '../../../data/ids/abilities';
 import type Battle from '../../core';
@@ -258,5 +258,48 @@ export function createToughClawsAbility(
         event.power *= factor;
       }
     }),
+  );
+}
+
+/**
+ * Meta ability for the ones that rewrite what a move is made of:
+ * Normalize, which turns everything it throws Normal, and the -ate
+ * abilities, which turn its Normal moves into their own element and
+ * pay a little extra for the trouble.
+ *
+ * `from` is the type being rewritten, or null for anything at all,
+ * and the scale is only paid where the rewrite actually happened
+ * https://bulbapedia.bulbagarden.net/wiki/Refrigerate_(Ability)
+ */
+export function createTypeShiftAbility(
+  targetAbility: Abilities,
+  from: Types | null,
+  to: Types,
+  factor = 1,
+): (battle: Battle) => void {
+  /** Whether this move is one the ability rewrites */
+  function shifts(move: Moves, source: Unit): boolean {
+    return source.hasAbility(targetAbility) && (from == null || getMoveData(move).type === from);
+  }
+
+  return createAbility(
+    targetAbility,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitMoveType, EventPriority.Post, (event) => {
+          if (shifts(event.move, event.source)) {
+            event.type = to;
+          }
+        }),
+        ...(factor === 1
+          ? []
+          : [
+              battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+                if (event.power != null && shifts(event.move, event.source)) {
+                  event.power *= factor;
+                }
+              }),
+            ]),
+      ]),
   );
 }

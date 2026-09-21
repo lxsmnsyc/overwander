@@ -18,6 +18,7 @@ export {
   createPolarityAbility,
   createWaterAbsorbAbility,
   createToughClawsAbility,
+  createTypeShiftAbility,
   createWeightAbility,
 } from './power';
 export {

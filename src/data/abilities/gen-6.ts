@@ -36,6 +36,11 @@ export default function registerGen6Abilities(): void {
     name: 'Misty Surge',
     description: 'Lays Misty Terrain as it takes the field.',
   });
+  // Clauncher
+  registerAbility(Abilities.MegaLauncher, {
+    name: 'Mega Launcher',
+    description: 'Pulses and aura moves hit 1.5x, and a Heal Pulse gives back 1.5x as much.',
+  });
   // Honedge
   registerAbility(Abilities.StanceChange, {
     name: 'Stance Change',

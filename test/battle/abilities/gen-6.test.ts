@@ -231,3 +231,45 @@ describe('Stance Change', () => {
     expect(sword.species).toBe(Species.Aegislash);
   });
 });
+
+describe('Mega Launcher', () => {
+  it('fires a pulse harder and mends with one further', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const gunner = createUnit(battle, teamA, [Types.Water]);
+    const foe = createUnit(battle, teamB);
+    const mate = createUnit(battle, teamA);
+
+    pinRandom(battle, 1);
+    gunner.enter();
+    mate.enter();
+    foe.enter();
+
+    const bare = dealDamage(gunner, foe, Moves.WaterPulse, 60, Types.Water, MoveCategories.Special);
+
+    foe.setHealth(foe.checkStat(Stats.HP, 0));
+    gunner.addAbility(Abilities.MegaLauncher);
+
+    const fired = dealDamage(
+      gunner,
+      foe,
+      Moves.WaterPulse,
+      60,
+      Types.Water,
+      MoveCategories.Special,
+    );
+
+    expect(fired).toBeCloseTo(bare * 1.5, 0);
+
+    // And what it swings rather than fires is its own business
+    foe.setHealth(foe.checkStat(Stats.HP, 0));
+
+    const swung = dealDamage(gunner, foe, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical);
+
+    gunner.removeAbility(Abilities.MegaLauncher);
+    foe.setHealth(foe.checkStat(Stats.HP, 0));
+
+    expect(
+      dealDamage(gunner, foe, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical),
+    ).toBeCloseTo(swung, 5);
+  });
+});

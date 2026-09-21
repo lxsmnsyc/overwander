@@ -1527,6 +1527,24 @@ export default function registerSignatureAbilities(): void {
   });
 
   // The three the second road holds
+  // The elemental monkeys each spend the tuft they carry once, and
+  // what each leaves on the enemy side keeps costing
+  registerSignature(Families.Pansage, Abilities.LeafCrown, {
+    name: 'Leaf Crown',
+    description: 'The first time it drops below 1/2 HP it seeds every enemy. Once per battle.',
+  });
+
+  registerSignature(Families.Pansear, Abilities.EmberTuft, {
+    name: 'Ember Tuft',
+    description: 'The first time it drops below 1/2 HP it burns every enemy. Once per battle.',
+  });
+
+  registerSignature(Families.Panpour, Abilities.GeyserTail, {
+    name: 'Geyser Tail',
+    description:
+      'The first time it drops below 1/2 HP it traps every enemy in a whirlpool. Once per battle.',
+  });
+
   registerSignature(Families.Munna, Abilities.Doze, {
     name: 'Doze',
     description:
@@ -1611,5 +1629,49 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Petilil, Abilities.PollenWaltz, {
     name: 'Pollen Waltz',
     description: 'Every stat stage one of its dances gives it is given to its teammates as well.',
+  });
+
+  // Route 4 and the Desert Resort
+  registerSignature(Families.Sandile, Abilities.DeathRoll, {
+    name: 'Death Roll',
+    description: 'Its contact moves hit 1.25x against a target it has already landed one on.',
+  });
+
+  registerSignature(Families.Darumaka, Abilities.GlancingBlow, {
+    name: 'Glancing Blow',
+    description: 'A move of its that misses still deals 1/4 of what it would have.',
+  });
+
+  registerSignature(Families.Maractus, Abilities.DrySpell, {
+    name: 'Dry Spell',
+    description:
+      'While no weather is up, its moves hit 1.3x and it heals 1/16 of its HP each time it acts.',
+  });
+
+  registerSignature(Families.Dwebble, Abilities.Slab, {
+    name: 'Slab',
+    description: 'The rock it carries takes the first 1/4 of its HP worth of damage each fight.',
+  });
+
+  // The Relic Castle, and what Castelia leaves out
+  registerSignature(Families.Scraggy, Abilities.GangUp, {
+    name: 'Gang Up',
+    description: 'Its moves hit 10% harder for each teammate still standing with it, up to 1.3x.',
+  });
+
+  registerSignature(Families.Sigilyph, Abilities.WardCircle, {
+    name: 'Ward Circle',
+    description:
+      'Nothing can lay hazards on its side while it stands, and it sweeps any away as it arrives.',
+  });
+
+  registerSignature(Families.Yamask, Abilities.DeathMask, {
+    name: 'Death Mask',
+    description: 'Whoever finishes one of its teammates loses 2 stages of its best stat.',
+  });
+
+  registerSignature(Families.Trubbish, Abilities.Litterbug, {
+    name: 'Litterbug',
+    description: 'It casts Toxic Spikes onto the enemy side as it arrives on the field.',
   });
 }

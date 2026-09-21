@@ -1,14 +1,14 @@
 // Snivy through Oshawott.
 
 import { describe, expect, it } from 'vitest';
-import { Stages, Stats } from '../../../../src/data/constants/stats';
+import { Stages, Stats, StatsKind } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import { Items } from '../../../../src/data/ids/items';
-import { Genders } from '../../../../src/data/ids/species';
-import { Statuses } from '../../../../src/data/ids/status';
-import { EffectType, MoveTargetType } from '../../../../src/battle/events';
+import { Genders, Species } from '../../../../src/data/ids/species';
+import { Statuses, TeamStatuses } from '../../../../src/data/ids/status';
+import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
 import {
   DOZE_SHARE,
@@ -36,9 +36,19 @@ import {
   BLUE_BELT_SCALE,
   RED_BELT_SCALE,
 } from '../../../../src/battle/abilities/signature/__create';
+import {
+  DEATH_ROLL_SCALE,
+  DRY_SPELL_SCALE,
+  GLANCING_BLOW_FRACTION,
+  SLAB_SHARE,
+} from '../../../../src/battle/abilities/signature/sandile-to-dwebble';
+import {
+  DEATH_MASK_STAGES,
+  GANG_UP_STEP,
+} from '../../../../src/battle/abilities/signature/scraggy-to-trubbish';
 import turns from '../../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../../harness';
-import { dealDamage, resolveAttackDamage } from './helpers';
+import { act, dealDamage, resolveAttackDamage } from './helpers';
 
 function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
   return { type: MoveTargetType.Unit, unit } as const;
@@ -566,5 +576,346 @@ describe('the rest of what the forest holds', () => {
 
     expect(armed).toBeCloseTo(fromHolder, 2);
     expect(armed / plain).toBeCloseTo(BLUE_BELT_SCALE, 2);
+  });
+});
+
+describe('the elemental monkeys', () => {
+  it('burns every enemy the first time a blow takes it under half, once a fight', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const pansear = createUnit(battle, teamA);
+    const near = createUnit(battle, teamB);
+    const far = createUnit(battle, teamB);
+
+    pansear.addAbility(Abilities.EmberTuft);
+    pansear.enter();
+    near.enter();
+    far.enter();
+
+    // Above half it keeps the tuft
+    near.attack(pansear, Moves.Tackle, 1, Types.Normal, MoveCategories.Physical, 0);
+    expect(near.status[Statuses.Burned]).toBeFalsy();
+
+    pansear.setHealth(Math.floor(pansear.checkStat(Stats.HP, 0) * 0.6));
+    near.attack(pansear, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(near.status[Statuses.Burned]).toBeTruthy();
+    expect(far.status[Statuses.Burned]).toBeTruthy();
+
+    // Spent: a second enemy arriving later gets nothing
+    const late = createUnit(battle, teamB);
+
+    late.enter();
+    near.attack(pansear, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+    expect(late.status[Statuses.Burned]).toBeFalsy();
+  });
+
+  it('seeds every enemy instead, and a Grass type shrugs the seed off', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const pansage = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const grass = createUnit(battle, teamB);
+
+    pansage.addAbility(Abilities.LeafCrown);
+    pansage.enter();
+    plain.enter();
+    grass.enter();
+    grass.types.clear();
+    grass.types.add(Types.Grass);
+
+    pansage.setHealth(Math.floor(pansage.checkStat(Stats.HP, 0) * 0.6));
+    plain.attack(pansage, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(plain.status[Statuses.Seeding]).toBeTruthy();
+
+    // A Grass type shrugs a seed off however it arrives, the same way
+    // a Fire type shrugs off an Ember Tuft
+    expect(grass.status[Statuses.Seeding]).toBeFalsy();
+  });
+
+  it('traps every enemy in a whirlpool instead, which costs them as it runs', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const panpour = createUnit(battle, teamA);
+    const near = createUnit(battle, teamB);
+    const far = createUnit(battle, teamB);
+
+    panpour.addAbility(Abilities.GeyserTail);
+    panpour.enter();
+    near.enter();
+    far.enter();
+
+    panpour.setHealth(Math.floor(panpour.checkStat(Stats.HP, 0) * 0.6));
+    near.attack(panpour, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(near.status[Statuses.Trapped]).toBeTruthy();
+    expect(far.status[Statuses.Trapped]).toBeTruthy();
+
+    // The trap keeps costing, which is what a burn and a seed do too
+    const whole = far.health;
+
+    battle.tick(turns(1));
+    expect(far.health).toBeLessThan(whole);
+  });
+});
+
+describe('the desert families', () => {
+  it('bites harder on a throat it already has hold of', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const croc = createUnit(battle, teamA);
+    const held = createUnit(battle, teamB);
+    const fresh = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    croc.addAbility(Abilities.DeathRoll);
+    croc.enter();
+    held.enter();
+    fresh.enter();
+
+    // The first bite on each is worth the ordinary amount
+    const first = dealDamage(croc, held, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+    const other = dealDamage(croc, fresh, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(first).toBeCloseTo(other, 0);
+
+    const second = dealDamage(croc, held, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(second / first).toBeCloseTo(DEATH_ROLL_SCALE, 1);
+  });
+
+  it('still lands a quarter of a move that missed', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const doll = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    doll.addAbility(Abilities.GlancingBlow);
+    doll.enter();
+    plain.enter();
+    foe.enter();
+
+    // What the same move is worth when it lands, off a unit without it
+    const landed = dealDamage(plain, foe, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+    const whole = foe.health;
+
+    battle.emit(BattleEvents.UnitTriggerMoveMissed, {
+      id: 'UnitTriggerMoveMissed',
+      disabled: false,
+      parent: {
+        id: 'UnitTriggerMove',
+        disabled: false,
+        source: doll,
+        move: Moves.Tackle,
+        target: { type: MoveTargetType.Unit, unit: foe },
+        steps: 0,
+      },
+    });
+
+    const glanced = whole - foe.health;
+
+    expect(glanced).toBeGreaterThan(0);
+    expect(glanced / landed).toBeCloseTo(GLANCING_BLOW_FRACTION, 1);
+
+    // Somebody without it loses nothing to a miss
+    const before = foe.health;
+
+    battle.emit(BattleEvents.UnitTriggerMoveMissed, {
+      id: 'UnitTriggerMoveMissed',
+      disabled: false,
+      parent: {
+        id: 'UnitTriggerMove',
+        disabled: false,
+        source: plain,
+        move: Moves.Tackle,
+        target: { type: MoveTargetType.Unit, unit: foe },
+        steps: 0,
+      },
+    });
+
+    expect(foe.health).toBe(before);
+  });
+
+  it('is at its best under a sky doing nothing, and drinks while it is', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cactus = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    cactus.addAbility(Abilities.DrySpell);
+    cactus.enter();
+    plain.enter();
+    foe.enter();
+
+    expect(
+      resolveAttackDamage(battle, cactus, foe) / resolveAttackDamage(battle, plain, foe),
+    ).toBeCloseTo(DRY_SPELL_SCALE, 2);
+
+    cactus.setHealth(Math.floor(cactus.checkStat(Stats.HP, 0) / 2));
+
+    const hurt = cactus.health;
+
+    act(battle, cactus);
+    expect(cactus.health).toBeGreaterThan(hurt);
+  });
+
+  it('lets the slab take a fixed share of it before any of it lands', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const crustle = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    crustle.addAbility(Abilities.Slab);
+    crustle.enter();
+    foe.enter();
+
+    const whole = crustle.health;
+    const slab = crustle.checkStat(Stats.HP, 0) * SLAB_SHARE;
+
+    // The slab is a pool, so a small hit is taken whole by the rock
+    foe.damage({ type: EffectType.None }, crustle, slab / 2, 0);
+    expect(crustle.health).toBe(whole);
+
+    // The rest of the slab goes, and what is left over reaches Crustle
+    foe.damage({ type: EffectType.None }, crustle, slab, 0);
+    expect(whole - crustle.health).toBeCloseTo(slab / 2, 0);
+  });
+
+  it('sits a Darmanitan down below half and stands it back up above', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const darmanitan = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    darmanitan.setSpecies(Species.Darmanitan);
+    darmanitan.setHealth(darmanitan.checkStat(Stats.HP, 0));
+    darmanitan.addAbility(Abilities.ZenMode);
+    darmanitan.enter();
+    foe.enter();
+
+    expect(darmanitan.species).toBe(Species.Darmanitan);
+
+    foe.damage({ type: EffectType.None }, darmanitan, darmanitan.health * 0.6, 0);
+
+    expect(darmanitan.species).toBe(Species.DarmanitanZen);
+    // The shape brings its own stats and its second type with it
+    expect(darmanitan.types.has(Types.Psychic)).toBe(true);
+
+    darmanitan.heal({ type: EffectType.None }, darmanitan, darmanitan.checkStat(Stats.HP, 0), 0);
+
+    expect(darmanitan.species).toBe(Species.Darmanitan);
+    expect(darmanitan.types.has(Types.Psychic)).toBe(false);
+  });
+});
+
+describe('the old city and the back alleys', () => {
+  it('hits harder for each teammate still standing with it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const scrafty = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    scrafty.addAbility(Abilities.GangUp);
+    scrafty.enter();
+    mate.enter();
+    foe.enter();
+
+    const backed = resolveAttackDamage(battle, scrafty, foe);
+
+    foe.attack(mate, Moves.Tackle, 900, Types.Normal, MoveCategories.Physical, 0);
+    expect(mate.alive).toBe(false);
+
+    const alone = resolveAttackDamage(battle, scrafty, foe);
+
+    expect(backed / alone).toBeCloseTo(1 + GANG_UP_STEP, 2);
+  });
+
+  it('keeps hazards off its own ground and sweeps what is already there', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const sigilyph = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    foe.enter();
+
+    const cause = { type: EffectType.None } as const;
+
+    // Down before the guardian takes the field
+    teamA.addStatus(TeamStatuses.Spikes, cause);
+    expect(teamA.status[TeamStatuses.Spikes]).toBeTruthy();
+
+    sigilyph.addAbility(Abilities.WardCircle);
+    sigilyph.enter();
+
+    expect(teamA.status[TeamStatuses.Spikes]).toBeFalsy();
+
+    // And nothing may be laid while it stands
+    teamA.addStatus(TeamStatuses.ToxicSpikes, cause);
+    expect(teamA.status[TeamStatuses.ToxicSpikes]).toBeFalsy();
+
+    // The enemy side is untouched
+    teamB.addStatus(TeamStatuses.Spikes, cause);
+    expect(teamB.status[TeamStatuses.Spikes]).toBeTruthy();
+  });
+
+  it('takes 2 stages of its best stat off whoever finished a teammate', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const yamask = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const killer = createUnit(battle, teamB);
+
+    yamask.addAbility(Abilities.DeathMask);
+    yamask.enter();
+    mate.enter();
+    killer.enter();
+
+    // Attack is its highest, so that is what the mask takes
+    killer.setStat(StatsKind.Base, Stats.Attack, 200);
+    killer.attack(mate, Moves.Tackle, 900, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(mate.alive).toBe(false);
+    expect(killer.stages[Stages.Attack]).toBe(-DEATH_MASK_STAGES);
+  });
+
+  it('drops Toxic Spikes on the enemy side as it turns up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const trubbish = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    foe.enter();
+    trubbish.addAbility(Abilities.Litterbug);
+    trubbish.enter();
+    battle.tick(turns(1));
+
+    expect(teamB.status[TeamStatuses.ToxicSpikes]).toBeTruthy();
+    expect(teamA.status[TeamStatuses.ToxicSpikes]).toBeFalsy();
+  });
+
+  it('spreads Mummy onto whoever touches it, in place of what they had', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const yamask = createUnit(battle, teamA);
+    const toucher = createUnit(battle, teamB);
+
+    yamask.addAbility(Abilities.Mummy);
+    toucher.addAbility(Abilities.Guts);
+    yamask.enter();
+    toucher.enter();
+
+    toucher.attack(yamask, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(toucher.hasAbility(Abilities.Mummy)).toBe(true);
+    expect(toucher.hasAbility(Abilities.Guts)).toBe(false);
+  });
+
+  it('marks whoever reaches into the coffin to go down with it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cofagrigus = createUnit(battle, teamA);
+    const robber = createUnit(battle, teamB);
+
+    cofagrigus.addAbility(Abilities.PerishBody);
+    cofagrigus.enter();
+    robber.enter();
+
+    robber.attack(cofagrigus, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(robber.status[Statuses.Perishing]).toBeTruthy();
+    expect(cofagrigus.status[Statuses.Perishing]).toBeTruthy();
   });
 });

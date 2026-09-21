@@ -849,6 +849,17 @@ const enum Abilities {
   RippleOut = 200265,
   RedBelt = 200266,
   BlueBelt = 200267,
+  EmberTuft = 200268,
+  GeyserTail = 200269,
+  LeafCrown = 200270,
+  DeathRoll = 200271,
+  GlancingBlow = 200272,
+  DrySpell = 200273,
+  Slab = 200274,
+  GangUp = 200275,
+  WardCircle = 200276,
+  DeathMask = 200277,
+  Litterbug = 200278,
 }
 
 export default Abilities;

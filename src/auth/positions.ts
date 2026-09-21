@@ -6,12 +6,14 @@ import check, {
   CHUNK_COORDINATE,
   COUNT,
   DEPTH,
+  OFFSET,
   TOKEN,
   UID,
 } from '../server/validate';
 import { type WalkReport, recordSteps } from '../server/eggs';
 import savePositionOnServerSide, { readPosition } from '../server/positions';
 import { syncServerClock } from './clock';
+import { getLocalOffset } from './local-time';
 import getSupabase, { type Unwatch, watchRow } from './supabase';
 import { asRecord } from './__normalize';
 import { type PositionRecord, asPositionRecord } from './position-record';
@@ -159,7 +161,16 @@ export async function settleWalk(
   cellY: number,
   depth: Depth,
 ): Promise<{ stamp: number; report: WalkReport | null }> {
-  return settleWalkOnServer(await getIdToken(), steps, chunkX, chunkY, cellX, cellY, depth);
+  return settleWalkOnServer(
+    await getIdToken(),
+    steps,
+    chunkX,
+    chunkY,
+    cellX,
+    cellY,
+    depth,
+    getLocalOffset(),
+  );
 }
 
 async function settleWalkOnServer(
@@ -170,6 +181,7 @@ async function settleWalkOnServer(
   cellX: number,
   cellY: number,
   depth: Depth,
+  offset: number,
 ): Promise<{ stamp: number; report: WalkReport | null }> {
   'use server';
   check(TOKEN, token);
@@ -179,10 +191,11 @@ async function settleWalkOnServer(
   check(CELL_COORDINATE, cellX);
   check(CELL_COORDINATE, cellY);
   check(DEPTH, depth);
+  check(OFFSET, offset);
   const uid = await requireUid(token);
   const now = await syncServerClock();
   // The paces land first, so a saved position never runs ahead of the egg
-  const report = steps > 0 ? await recordSteps(uid, steps, now) : null;
+  const report = steps > 0 ? await recordSteps(uid, steps, now, offset) : null;
   const stamp = await savePositionOnServerSide(uid, chunkX, chunkY, cellX, cellY, depth, now);
 
   return { stamp, report };

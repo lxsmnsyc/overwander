@@ -28,14 +28,19 @@ export type { EggWalk, WalkReport } from '../server/eggs';
  * Resolves what the walk came to, or null when the player walks alone
  */
 export async function walk(steps: number): Promise<WalkReport | null> {
-  return walkOnServer(await getIdToken(), steps);
+  return walkOnServer(await getIdToken(), steps, getLocalOffset());
 }
 
-async function walkOnServer(token: string, steps: number): Promise<WalkReport | null> {
+async function walkOnServer(
+  token: string,
+  steps: number,
+  offset: number,
+): Promise<WalkReport | null> {
   'use server';
   check(TOKEN, token);
   check(COUNT, steps);
-  return recordSteps(await requireUid(token), steps, await syncServerClock());
+  check(OFFSET, offset);
+  return recordSteps(await requireUid(token), steps, await syncServerClock(), offset);
 }
 
 /**

@@ -1,4 +1,5 @@
 import type { Species } from '../data/ids/species';
+import { spriteUrl } from './sprite-origin';
 
 /**
  * Which drawings of each pokemon exist.
@@ -16,7 +17,7 @@ import type { Species } from '../data/ids/species';
  */
 
 /** Where the list is served from. */
-export const COATS_PATH = '/sprites/pokemon/coats.json';
+export const COATS_PATH = spriteUrl('/sprites/pokemon/coats.json');
 
 /** The four drawings a species can have, named as the file is. */
 export type Coat = 'regular' | 'shiny' | 'female' | 'shinyFemale';

@@ -1,5 +1,30 @@
 # overwander
 
+## 4.12.0
+
+### Minor Changes
+
+- afc2a7f: Chargestone Cave and the three families in it:
+
+  - Joltik and Galvantula, Ferroseed and Ferrothorn, and Klink, Klang and Klinklang. All three are met underground and on the mountain above it, the gears by day and the other two after dark.
+  - Iron Barbs now works: whoever lands a contact move on a Ferroseed loses 1/8 of their HP to the spikes. The line had no working ability at all before this, and Rough Skin is now built from the same shared rule rather than its own copy of it.
+  - Each family brings its own signature ability: Static Feed has Joltik drink any bolt that lands on anybody, Thorn Curtain puts Ferroseed's spikes between a contact move and its teammates, and Meshing pays a gear for having something to turn against.
+  - Galvantula can be born with Static, Klinklang with Motor Drive, and Ferrothorn with Overcoat or Sturdy.
+
+- 4e078bd: Driftveil and the Cold Storage, and the four families around them:
+
+  - Basculin in the bog and the swamp at any hour, Ducklett and Swanna over the same water by day, Vanillite and its line across the tundra and the glacier, and Alomomola out in the ocean and the coral reef.
+  - Basculin comes in two schools that will not share a river. The red stripe throws itself about and the blue one takes the landing, which is the whole difference between them, and each is its own dex entry.
+  - Each family brings its own signature ability: Blood Water turns a school harder on whatever is already failing, Swan Dance adds Speed to every dance a Swanna uses, Flash Freeze has the first Ice move a Vanillite lands freeze outright, and Tide Pool makes every heal on Alomomola's team worth half again.
+  - Swanna can be born with Rain Dish, Alomomola with Unaware, and either Basculin with Swift Swim.
+
+- 79d13de: Route 5 and the four families along it:
+
+  - Zorua and Zoroark through the temperate forest and the woodland after dark, Minccino and Cinccino across the grassland and the shrubland by day, Solosis and its line in the same places by day, and Gothita and its line there at night.
+  - Illusion now works: a Zorua takes the field looking like the teammate standing furthest back, and the act drops the moment anything lands on it. Only the look changes. The line had no working ability at all before this.
+  - Each family brings its own signature ability: Bluff lets the first super effective blow pass straight through a Zorua, Clean Sweep has Cinccino tidy every hazard and screen off both sides as it arrives, and the two the games hand out one apiece pair up, with Fixation aiming what Gothita's team throws at whichever enemy is failing and Division taking a quarter of every blow aimed at one of Solosis' teammates.
+  - Cinccino can be born with Sturdy, Gothitelle with Synchronize, Reuniclus with Telepathy, and Zoroark with Pickpocket, Prankster or Trace.
+
 ## 4.11.0
 
 ### Minor Changes

@@ -189,6 +189,7 @@ const ELITE_QUOTES: Record<EliteMember, string> = {
 const LEGEND_GREETINGS: Record<Legend, string> = {
   [Legend.Red]: 'Red says nothing. He reaches for a ball.',
   [Legend.Steven]: 'Steven turns a stone over in his hand. “I was hoping for a real fight.”',
+  [Legend.N]: 'N tilts his head. “Show me what you and your pokemon are to each other.”',
 };
 
 /** What a champion says as the last fight of their league is put */

@@ -446,13 +446,13 @@ describe('type experts', () => {
     }
   });
 
-  it('gives every champion a party a player could have walked', () => {
-    // A champion's six is written out rather than rolled, so nothing
-    // filters it: a hand-written party is where a pokemon nobody can
-    // meet slips onto a team. Iris' own Archeops is the live case,
-    // since Unova's fossils wait on a Tirtouga being drawn
-    for (const champion of CHAMPIONS) {
-      for (const species of CHAMPION_PARTIES[champion]) {
+  it('gives every champion and legend a party a player could have walked', () => {
+    // These six are written out rather than rolled, so nothing filters
+    // them: a hand-written party is where a pokemon nobody can meet
+    // slips onto a team. Iris' Archeops and N's Carracosta are the
+    // live cases, since Unova's fossils wait on a Tirtouga being drawn
+    for (const party of [...Object.values(CHAMPION_PARTIES), ...Object.values(LEGEND_PARTIES)]) {
+      for (const species of party) {
         expect(canMeetSpecies(species), getSpeciesData(species).name).toBe(true);
       }
     }

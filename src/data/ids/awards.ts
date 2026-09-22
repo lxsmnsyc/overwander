@@ -140,6 +140,8 @@ const enum Awards {
   /** Unova's dex filled to 152 caught */
   UnovaDexMedal = 115,
   UnovaChampion = 116,
+  /** The one above Unova's league, met where a champion would be */
+  NDefeated = 117,
 }
 
 export default Awards;
@@ -263,6 +265,7 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.CaitlinDefeated]: 'Caitlin Defeated',
   [Awards.UnovaDexMedal]: 'Unova Dex Medal',
   [Awards.UnovaChampion]: 'Unova Champion',
+  [Awards.NDefeated]: 'N Defeated',
 };
 
 /**

@@ -293,6 +293,7 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.CaitlinDefeated]: '#d9a3c9',
   [Awards.UnovaDexMedal]: '#5aa87f',
   [Awards.UnovaChampion]: '#e0b64f',
+  [Awards.NDefeated]: '#4f8f7a',
 };
 
 /**

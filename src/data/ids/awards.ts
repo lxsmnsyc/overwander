@@ -142,6 +142,11 @@ const enum Awards {
   UnovaChampion = 116,
   /** The one above Unova's league, met where a champion would be */
   NDefeated = 117,
+  /** Any one of Team Plasma's rank and file put down */
+  PlasmaGruntDefeated = 118,
+  ColressDefeated = 119,
+  ZinzolinDefeated = 120,
+  GhetsisDefeated = 121,
 }
 
 export default Awards;
@@ -266,6 +271,10 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.UnovaDexMedal]: 'Unova Dex Medal',
   [Awards.UnovaChampion]: 'Unova Champion',
   [Awards.NDefeated]: 'N Defeated',
+  [Awards.PlasmaGruntDefeated]: 'Team Plasma Repelled',
+  [Awards.ColressDefeated]: 'Colress Defeated',
+  [Awards.ZinzolinDefeated]: 'Zinzolin Defeated',
+  [Awards.GhetsisDefeated]: 'Ghetsis Defeated',
 };
 
 /**

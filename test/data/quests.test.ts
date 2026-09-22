@@ -209,6 +209,7 @@ describe('achievements', () => {
       TrainerClass.JohtoSwimmer,
       TrainerClass.HoennSwimmer,
       TrainerClass.SinnohSwimmer,
+      TrainerClass.UnovaSwimmer,
     ]);
     expect(TRAINER_TRADES).not.toContain(TrainerClass.JohtoSwimmer);
     expect(ACHIEVEMENT_TRAINERS).toEqual(TRAINER_TRADES);
@@ -357,6 +358,7 @@ describe('achievements', () => {
           TrainerClass.JohtoAceTrainer,
           TrainerClass.HoennAceTrainer,
           TrainerClass.SinnohAceTrainer,
+          TrainerClass.UnovaAceTrainer,
           ...standing,
         ]);
       }

@@ -261,9 +261,10 @@ describe('world', () => {
         continue;
       }
 
-      // Whoever is standing there is one this country puts on the
-      // road, or the Ace, who belongs to no country
-      expect(getBiomeTrainers(chunk.biome)).toContain(trainer);
+      // Whoever is standing there is one that cell's own country puts
+      // on the road, or the Ace, who belongs to no country. A chunk
+      // may cross a border, so it is the cell that is asked
+      expect(getBiomeTrainers(snapshot.biomeAt(cell))).toContain(trainer);
 
       // The Ace fields five of anything; a type expert three to five
       // of their own kind, and nothing of the biome's choosing

@@ -20,9 +20,9 @@ pair.
 - A **Supabase** account, and the **Supabase CLI** on your `PATH`. The CLI is
   what pushes the schema. The dashboard cannot replay a migration folder.
 - A **Vercel** account, and the repository on GitHub, GitLab or Bitbucket.
-- The two OAuth apps. A deployed build signs in with **Google and GitHub** and
-  offers nothing else. The email and password form is drawn on a development
-  build alone.
+- The two OAuth apps. A deployed build signs in with **Google and GitHub**. The
+  email and password form is drawn on a development build, and on any build
+  whose host sets `VITE_EMAIL_SIGN_IN`.
 
 ## The order to do it in
 

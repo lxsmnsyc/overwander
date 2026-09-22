@@ -118,6 +118,7 @@ Copy `.env.example` and fill it in. Against your own stack the values are:
 | `VITE_SUPABASE_URL`         | The public URL of your API gateway, the one the browser calls       |
 | `VITE_SUPABASE_ANON_KEY`    | The anon key you generated for that stack                           |
 | `VITE_SPRITE_ORIGIN`        | Empty, unless the sprites live on another host                      |
+| `VITE_EMAIL_SIGN_IN`        | `1` to offer an address and a password, empty for OAuth alone       |
 | `VITE_WORLD_SEED`           | Any string. It decides the entire world                             |
 | `VITE_WORLD_GENERATION`     | `2` for a new world, empty for the first                            |
 | `SUPABASE_URL`              | The same API URL, read by the server                                |
@@ -133,22 +134,23 @@ gets certificates on its own; nginx with certbot does the same job.
 
 ## 6. Signing in
 
-A deployed build offers Google and GitHub, and nothing else. The email and
-password form is behind `import.meta.env.DEV`, so it is not in a production
-bundle at all.
+A build offers Google and GitHub. It offers an address and a password as well
+when `VITE_EMAIL_SIGN_IN` is `1` or `true`, which is the setting to reach for if
+you would rather not register OAuth apps at all. A development build draws the
+pair whatever the variable says.
 
-That means two OAuth apps, neither of which is a hosting account:
+Turning it on means GoTrue needs an SMTP server, for confirmations and password
+resets. Leaving it off means two OAuth apps, neither of which is a hosting
+account:
 
 - Google Cloud, OAuth client, with your auth server's `/auth/v1/callback` as the
   redirect URI.
 - GitHub, developer settings, OAuth app, the same callback.
 
 Put the client ids and secrets in GoTrue's configuration, set its site URL to
-your domain, and add the domain to its redirect allow list.
-
-If you want the email form instead, GoTrue can do it, but you also have to
-remove the `DEV` guard in `src/components/app/LoginForm.tsx` and give GoTrue an
-SMTP server for confirmations and password resets.
+your domain, and add the domain to its redirect allow list. Both routes can be
+open at once: the variable adds the fields, it does not take the buttons
+away.
 
 ## 7. Make yourself an admin
 

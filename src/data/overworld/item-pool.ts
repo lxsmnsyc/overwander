@@ -179,6 +179,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     // on a pokemon and spent. Thinner, because a Rotom wants more
     // than one of them and nobody sells any
     { item: Items.RotomCatalog, weight: 6 },
+    // Beside it for the same reason, and as thin: a Zygarde goes both
+    // ways between its shapes, so one cube is never enough either
+    { item: Items.ZygardeCube, weight: 6 },
     { item: Items.Nugget, weight: 8 },
     // The middle of the ladder, thinning as it climbs
     // Cut off a Slowpoke, and worth more than the nugget it is found

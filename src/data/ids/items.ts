@@ -958,6 +958,12 @@ export const enum Items {
   /** The two Kalos fossils, which are shipped with their lines */
   JawFossil = 444,
   SailFossil = 445,
+
+  /**
+   * The box the cells are gathered in, spent putting a tenth of a
+   * Zygarde back up to half of one
+   */
+  ZygardeCube = 446,
 }
 
 /**

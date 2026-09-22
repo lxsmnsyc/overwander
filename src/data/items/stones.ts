@@ -113,4 +113,19 @@ export default function registerEvolutionStones(): void {
     buy: 0,
     sell: 1500,
   });
+
+  /**
+   * Also not a stone: the cells a Zygarde is not carrying are kept in
+   * it, so it takes the shape either way and is spent doing it
+   */
+  registerItem(Items.ZygardeCube, {
+    name: 'Zygarde Cube',
+    description: 'Puts the Zygarde it is used on into its other shape. Spent on each change.',
+    type: ItemTypes.Evolution,
+    // Drawn on the key sheet, which is where the collection packed it
+    icon: 'key/zygarde-cube',
+    flags: ItemFlags.Usable,
+    buy: 0,
+    sell: 1500,
+  });
 }

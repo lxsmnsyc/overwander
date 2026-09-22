@@ -24,6 +24,7 @@ import Biome, { TimeOfDay, WILD_BIOMES } from '../../src/data/ids/biome';
 import { Moves } from '../../src/data/ids/moves';
 import {
   ARCEUS_FORMS,
+  BASCULIN_FORMS,
   BURMY_FORMS,
   CASTFORM_FORMS,
   CHERRIM_FORMS,
@@ -360,6 +361,7 @@ describe('species forms', () => {
       ...WORMADAM_FORMS.slice(1),
       ...SHELLOS_FORMS.slice(1),
       ...GASTRODON_FORMS.slice(1),
+      ...BASCULIN_FORMS.slice(1),
       ...CHERRIM_FORMS.slice(1),
       ...DARMANITAN_FORMS.slice(1),
       ...DIALGA_FORMS.slice(1),

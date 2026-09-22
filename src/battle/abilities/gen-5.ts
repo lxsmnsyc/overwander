@@ -8,7 +8,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
 import { countsAgainstSlots } from '../../data/constants/slots';
-import { createAbility } from './__create';
+import { createAbility, createContactRecoilAbility } from './__create';
 
 /**
  * The abilities a swap may take: what counts against a slot, and never
@@ -34,6 +34,63 @@ function swappableAbilities(unit: Unit): Abilities[] {
 export const ZEN_MODE_THRESHOLD = 1 / 2;
 
 const setupAbilities = [
+  // https://bulbapedia.bulbagarden.net/wiki/Iron_Barbs_(Ability)
+  createContactRecoilAbility(Abilities.IronBarbs),
+
+  /**
+   * Illusion dresses its holder as the teammate standing furthest back
+   * as it takes the field, and the act drops the moment anything lands
+   * on it. Only the look changes: what it is, and what it hits with,
+   * never moved
+   * https://bulbapedia.bulbagarden.net/wiki/Illusion_(Ability)
+   */
+  createAbility(Abilities.Illusion, (battle) => {
+    /** Who is still wearing somebody else's face */
+    const acting = new Set<Unit>();
+
+    function drop(unit: Unit): void {
+      if (acting.delete(unit)) {
+        unit.setAppearance(unit.species);
+      }
+    }
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        const source = event.source;
+
+        if (event.reactivation || !source.hasAbility(Abilities.Illusion)) {
+          return;
+        }
+
+        // The last one on the team, which is the mainline's rule and
+        // is the one a player is least likely to be watching
+        let worn: Unit | undefined;
+
+        for (const mate of source.team.units) {
+          if (mate !== source && mate.alive) {
+            worn = mate;
+          }
+        }
+
+        if (worn == null) {
+          return;
+        }
+        acting.add(source);
+        source.setAppearance(worn.species);
+      }),
+
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        if (event.success && acting.has(event.target)) {
+          event.target.triggerAbility(Abilities.Illusion);
+          drop(event.target);
+        }
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        drop(event.source);
+      }),
+    ]);
+  }),
+
   /**
    * Mummy spreads itself: whoever touches it catches it in place of
    * whatever they were carrying. One ability rather than the lot, the

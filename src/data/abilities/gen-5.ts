@@ -6,6 +6,16 @@ import { registerAbility } from './__create';
  * the mainline's
  */
 export default function registerGen5Abilities(): void {
+  // Ferroseed
+  registerAbility(Abilities.IronBarbs, {
+    name: 'Iron Barbs',
+    description: 'Whoever lands a contact move on it loses 1/8 of their HP to the spikes.',
+  });
+  // Zorua
+  registerAbility(Abilities.Illusion, {
+    name: 'Illusion',
+    description: 'It takes the field looking like a teammate, until a move lands on it.',
+  });
   // Yamask
   registerAbility(Abilities.Mummy, {
     name: 'Mummy',

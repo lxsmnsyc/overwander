@@ -15,6 +15,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Lotad, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Ducklett, weight: 20 },
         { species: Species.Gulpin, weight: 22 },
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
@@ -30,6 +31,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Lombre, weight: 10 },
       ],
       scarce: [
+        { species: Species.Swanna, weight: 6 },
         { species: Species.Swalot, weight: 7 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Masquerain, weight: 10 },
@@ -59,6 +61,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Lotad, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Ducklett, weight: 20 },
         { species: Species.Gulpin, weight: 22 },
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
@@ -74,6 +77,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Lombre, weight: 10 },
       ],
       scarce: [
+        { species: Species.Swanna, weight: 6 },
         { species: Species.Swalot, weight: 7 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Masquerain, weight: 10 },
@@ -225,6 +229,8 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.BasculinBlue, weight: 6 },
+        { species: Species.Basculin, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Swampert, weight: 2 },
         { species: Species.Ludicolo, weight: 5 },
@@ -262,6 +268,8 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.BasculinBlue, weight: 6 },
+        { species: Species.Basculin, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Swampert, weight: 2 },
         { species: Species.Ludicolo, weight: 5 },
@@ -288,7 +296,10 @@ export default function registerBogSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
         { species: Species.Yanmega, weight: 6 },
       ],
-      elusive: [],
+      elusive: [
+        { species: Species.BasculinBlue, weight: 6 },
+        { species: Species.Basculin, weight: 6 },
+      ],
       special: [{ species: Species.Azelf, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -311,7 +322,11 @@ export default function registerBogSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
         { species: Species.Yanmega, weight: 6 },
       ],
-      elusive: [{ species: Species.Poliwrath, weight: 5 }],
+      elusive: [
+        { species: Species.BasculinBlue, weight: 6 },
+        { species: Species.Poliwrath, weight: 5 },
+        { species: Species.Basculin, weight: 6 },
+      ],
       special: [{ species: Species.Azelf, weight: 10 }],
     },
   });

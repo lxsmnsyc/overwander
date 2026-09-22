@@ -273,9 +273,7 @@ const enum Families {
   Venipede = 268,
   Cottonee = 269,
   Petilil = 270,
-  // 271 is held for Basculin, which is not written yet: leaving the
-  // hole keeps this enum in dex order without renumbering the day it
-  // lands
+  Basculin = 271,
   Sandile = 272,
   Darumaka = 273,
   Maractus = 274,
@@ -286,6 +284,19 @@ const enum Families {
   // 279 and 280 are held for Tirtouga and Archen, the region's two
   // fossils, which are designed as a pair and are not written yet
   Trubbish = 281,
+  Zorua = 282,
+  Minccino = 283,
+  Gothita = 284,
+  Solosis = 285,
+  Ducklett = 286,
+  Vanillite = 287,
+  // 288 to 292 are held for Deerling, Emolga, Karrablast, Foongus and
+  // Frillish, which sit between these in the dex and are not written
+  // yet
+  Alomomola = 293,
+  Joltik = 294,
+  Ferroseed = 295,
+  Klink = 296,
 }
 
 export default Families;
@@ -576,6 +587,7 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Venipede]: 'Venipede',
   [Families.Cottonee]: 'Cottonee',
   [Families.Petilil]: 'Petilil',
+  [Families.Basculin]: 'Basculin',
   [Families.Sandile]: 'Sandile',
   [Families.Darumaka]: 'Darumaka',
   [Families.Maractus]: 'Maractus',
@@ -584,4 +596,14 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Sigilyph]: 'Sigilyph',
   [Families.Yamask]: 'Yamask',
   [Families.Trubbish]: 'Trubbish',
+  [Families.Zorua]: 'Zorua',
+  [Families.Minccino]: 'Minccino',
+  [Families.Gothita]: 'Gothita',
+  [Families.Solosis]: 'Solosis',
+  [Families.Ducklett]: 'Ducklett',
+  [Families.Vanillite]: 'Vanillite',
+  [Families.Alomomola]: 'Alomomola',
+  [Families.Joltik]: 'Joltik',
+  [Families.Ferroseed]: 'Ferroseed',
+  [Families.Klink]: 'Klink',
 };

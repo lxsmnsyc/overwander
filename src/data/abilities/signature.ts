@@ -1674,4 +1674,65 @@ export default function registerSignatureAbilities(): void {
     name: 'Litterbug',
     description: 'It casts Toxic Spikes onto the enemy side as it arrives on the field.',
   });
+
+  // Route 5, where the games hand out one of the last two apiece
+  registerSignature(Families.Zorua, Abilities.Bluff, {
+    name: 'Bluff',
+    description:
+      'The first move that would hit it super effectively passes through it. Once per battle.',
+  });
+
+  registerSignature(Families.Minccino, Abilities.CleanSweep, {
+    name: 'Clean Sweep',
+    description: 'It sweeps every hazard and screen off both sides of the field as it arrives.',
+  });
+
+  // Gothita and Solosis are the two the games separate: one aims what
+  // its team throws, the other spreads what its team takes
+  registerSignature(Families.Gothita, Abilities.Fixation, {
+    name: 'Fixation',
+    description: 'Its whole team hits 1.2x against whichever enemy is lowest on HP.',
+  });
+
+  registerSignature(Families.Solosis, Abilities.Division, {
+    name: 'Division',
+    description: 'It takes 1/4 of every blow aimed at a teammate in their place.',
+  });
+
+  // Chargestone Cave
+  registerSignature(Families.Joltik, Abilities.StaticFeed, {
+    name: 'Static Feed',
+    description: 'It heals 1/8 of its HP whenever an Electric move lands on anybody, either side.',
+  });
+
+  registerSignature(Families.Ferroseed, Abilities.ThornCurtain, {
+    name: 'Thorn Curtain',
+    description: 'Its teammates take 0.85x from contact moves while it stands.',
+  });
+
+  registerSignature(Families.Klink, Abilities.Meshing, {
+    name: 'Meshing',
+    description: 'While a teammate stands with it, its team takes 0.9x and its own moves hit 1.2x.',
+  });
+
+  // Driftveil and the Cold Storage
+  registerSignature(Families.Basculin, Abilities.BloodWater, {
+    name: 'Blood Water',
+    description: 'Its moves hit 15% harder for each enemy already below 1/2 HP, up to 1.45x.',
+  });
+
+  registerSignature(Families.Ducklett, Abilities.SwanDance, {
+    name: 'Swan Dance',
+    description: 'Every dance move it uses raises its Speed 1 stage on top of what the dance does.',
+  });
+
+  registerSignature(Families.Vanillite, Abilities.FlashFreeze, {
+    name: 'Flash Freeze',
+    description: 'The first Ice move it lands each fight freezes the target outright.',
+  });
+
+  registerSignature(Families.Alomomola, Abilities.TidePool, {
+    name: 'Tide Pool',
+    description: 'Every heal on its team is worth 1.3x while it stands, its own included.',
+  });
 }

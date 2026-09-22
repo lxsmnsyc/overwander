@@ -46,6 +46,21 @@ import {
   DEATH_MASK_STAGES,
   GANG_UP_STEP,
 } from '../../../../src/battle/abilities/signature/scraggy-to-trubbish';
+import {
+  DIVISION_SHARE,
+  FIXATION_SCALE,
+} from '../../../../src/battle/abilities/signature/zorua-to-solosis';
+import {
+  MESHING_DEALT,
+  MESHING_TAKEN,
+  THORN_CURTAIN_SCALE,
+} from '../../../../src/battle/abilities/signature/joltik-to-klink';
+import { CONTACT_RECOIL_FRACTION } from '../../../../src/battle/abilities/__create';
+import {
+  BLOOD_WATER_STEP,
+  SWAN_DANCE_STAGES,
+  TIDE_POOL_SCALE,
+} from '../../../../src/battle/abilities/signature/basculin-to-alomomola';
 import turns from '../../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { act, dealDamage, resolveAttackDamage } from './helpers';
@@ -917,5 +932,314 @@ describe('the old city and the back alleys', () => {
 
     expect(robber.status[Statuses.Perishing]).toBeTruthy();
     expect(cofagrigus.status[Statuses.Perishing]).toBeTruthy();
+  });
+});
+
+describe('what Route 5 holds', () => {
+  it('lets the first super effective blow pass through it, once a fight', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const zorua = createUnit(battle, teamA, [Types.Grass]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    zorua.addAbility(Abilities.Bluff);
+    zorua.enter();
+    foe.enter();
+
+    const whole = zorua.health;
+
+    // Fire into Grass is super effective, so the trick answers it
+    foe.attack(zorua, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+    expect(zorua.health).toBe(whole);
+
+    // Spent: the next one lands
+    foe.attack(zorua, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+    expect(zorua.health).toBeLessThan(whole);
+  });
+
+  it('does not spend the bluff on a blow that was not super effective', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const zorua = createUnit(battle, teamA, [Types.Grass]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    zorua.addAbility(Abilities.Bluff);
+    zorua.enter();
+    foe.enter();
+
+    foe.attack(zorua, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    const hurt = zorua.health;
+
+    expect(hurt).toBeLessThan(zorua.checkStat(Stats.HP, 0));
+
+    // Still there for the one it is meant for
+    foe.attack(zorua, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+    expect(zorua.health).toBe(hurt);
+  });
+
+  it('sweeps both sides of the field as it arrives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cinccino = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const cause = { type: EffectType.None } as const;
+
+    foe.enter();
+    teamA.addStatus(TeamStatuses.StealthRock, cause);
+    teamB.addStatus(TeamStatuses.Spikes, cause);
+
+    cinccino.addAbility(Abilities.CleanSweep);
+    cinccino.enter();
+
+    expect(teamA.status[TeamStatuses.StealthRock]).toBeFalsy();
+    expect(teamB.status[TeamStatuses.Spikes]).toBeFalsy();
+  });
+
+  it('has the pair aim what its team throws and spread what its team takes', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const gothita = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const failing = createUnit(battle, teamB);
+    const whole = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    gothita.addAbility(Abilities.Fixation);
+    gothita.enter();
+    mate.enter();
+    failing.enter();
+    whole.enter();
+    failing.setHealth(Math.floor(failing.checkStat(Stats.HP, 0) / 4));
+
+    const onFailing = resolveAttackDamage(battle, mate, failing);
+    const onWhole = resolveAttackDamage(battle, mate, whole);
+
+    expect(onFailing / onWhole).toBeCloseTo(FIXATION_SCALE, 2);
+  });
+
+  it('takes a quarter of what is aimed at a teammate', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const solosis = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    solosis.addAbility(Abilities.Division);
+    solosis.enter();
+    mate.enter();
+    foe.enter();
+
+    const cellWhole = solosis.health;
+    const mateWhole = mate.health;
+
+    foe.damage({ type: EffectType.None }, mate, 100, 0);
+
+    const shared = cellWhole - solosis.health;
+
+    expect(shared).toBeCloseTo(100 * DIVISION_SHARE, 0);
+    expect(mateWhole - mate.health).toBeCloseTo(100 - shared, 0);
+  });
+
+  it('dresses a Zorua as the teammate at the back until something lands', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const zorua = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    zorua.setSpecies(Species.Zorua);
+    zorua.setHealth(zorua.checkStat(Stats.HP, 0));
+    mate.setSpecies(Species.Minccino);
+    mate.setHealth(mate.checkStat(Stats.HP, 0));
+    zorua.addAbility(Abilities.Illusion);
+    mate.enter();
+    zorua.enter();
+    foe.enter();
+
+    expect(zorua.appearance).toBe(Species.Minccino);
+    // What it is never moved, only what it looks like
+    expect(zorua.species).toBe(Species.Zorua);
+
+    foe.attack(zorua, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(zorua.appearance).toBe(Species.Zorua);
+  });
+});
+
+describe('the charged cave', () => {
+  it('feeds on any bolt that lands, whoever threw it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const joltik = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    joltik.addAbility(Abilities.StaticFeed);
+    joltik.enter();
+    mate.enter();
+    foe.enter();
+    joltik.setHealth(Math.floor(joltik.checkStat(Stats.HP, 0) / 2));
+
+    const hurt = joltik.health;
+
+    // A bolt between two other units still counts
+    foe.attack(mate, Moves.ThunderShock, 40, Types.Electric, MoveCategories.Special, 0);
+    expect(joltik.health).toBeGreaterThan(hurt);
+
+    const fed = joltik.health;
+
+    // Anything that is not Electric feeds it nothing
+    foe.attack(mate, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    expect(joltik.health).toBe(fed);
+  });
+
+  it('puts the spikes between a contact move and its teammates', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ferroseed = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const spare = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    ferroseed.addAbility(Abilities.ThornCurtain);
+    ferroseed.enter();
+    mate.enter();
+    foe.enter();
+    spare.enter();
+
+    const covered = dealDamage(foe, mate, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+    const bare = dealDamage(foe, spare, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(covered / bare).toBeCloseTo(THORN_CURTAIN_SCALE, 1);
+  });
+
+  it('is worth nothing to a gear with nothing to turn against', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const klink = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    klink.addAbility(Abilities.Meshing);
+    klink.enter();
+    mate.enter();
+    foe.enter();
+
+    const meshedOut = resolveAttackDamage(battle, klink, foe);
+    const meshedIn = resolveAttackDamage(battle, foe, klink);
+
+    foe.attack(mate, Moves.Tackle, 900, Types.Normal, MoveCategories.Physical, 0);
+    expect(mate.alive).toBe(false);
+
+    const aloneOut = resolveAttackDamage(battle, klink, foe);
+    const aloneIn = resolveAttackDamage(battle, foe, klink);
+
+    expect(meshedOut / aloneOut).toBeCloseTo(MESHING_DEALT, 2);
+    expect(meshedIn / aloneIn).toBeCloseTo(MESHING_TAKEN, 2);
+  });
+
+  it('answers a touch with the spikes, the way Rough Skin does', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ferroseed = createUnit(battle, teamA);
+    const toucher = createUnit(battle, teamB);
+
+    ferroseed.addAbility(Abilities.IronBarbs);
+    ferroseed.enter();
+    toucher.enter();
+
+    const whole = toucher.health;
+
+    toucher.attack(ferroseed, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(whole - toucher.health).toBeCloseTo(
+      toucher.checkStat(Stats.HP, 0) * CONTACT_RECOIL_FRACTION,
+      0,
+    );
+  });
+});
+
+describe('what Driftveil holds', () => {
+  it('turns harder on the water for each enemy already bleeding', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const basculin = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    basculin.addAbility(Abilities.BloodWater);
+    basculin.enter();
+    plain.enter();
+    hurt.enter();
+    other.enter();
+
+    // Nobody failing yet, so the school is worth nothing extra
+    expect(
+      resolveAttackDamage(battle, basculin, other) / resolveAttackDamage(battle, plain, other),
+    ).toBeCloseTo(1, 2);
+
+    hurt.setHealth(Math.floor(hurt.checkStat(Stats.HP, 0) / 4));
+
+    // It counts whoever is bleeding, not the one it is aimed at
+    expect(
+      resolveAttackDamage(battle, basculin, other) / resolveAttackDamage(battle, plain, other),
+    ).toBeCloseTo(1 + BLOOD_WATER_STEP, 2);
+  });
+
+  it('adds Speed to every dance, and nothing to anything else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const swanna = createUnit(battle, teamA);
+
+    swanna.addAbility(Abilities.SwanDance);
+    swanna.enter();
+    createUnit(battle, teamB).enter();
+
+    swanna.triggerMove(Moves.FeatherDance, { type: MoveTargetType.None }, 0);
+    battle.tick(turns(1));
+
+    expect(swanna.stages[Stages.Speed]).toBe(SWAN_DANCE_STAGES);
+
+    swanna.triggerMove(Moves.Roost, { type: MoveTargetType.None }, 0);
+    battle.tick(turns(1));
+
+    expect(swanna.stages[Stages.Speed]).toBe(SWAN_DANCE_STAGES);
+  });
+
+  it('freezes with the first Ice move it lands, and only the first', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const vanillite = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    vanillite.addAbility(Abilities.FlashFreeze);
+    vanillite.enter();
+    first.enter();
+    second.enter();
+
+    vanillite.attack(first, Moves.IcyWind, 10, Types.Ice, MoveCategories.Special, 0);
+    expect(first.status[Statuses.Frozen]).toBeTruthy();
+
+    vanillite.attack(second, Moves.IcyWind, 10, Types.Ice, MoveCategories.Special, 0);
+    expect(second.status[Statuses.Frozen]).toBeFalsy();
+  });
+
+  it('makes every heal on its team worth more, its own included', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const alomomola = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    alomomola.addAbility(Abilities.TidePool);
+    alomomola.enter();
+    mate.enter();
+    foe.enter();
+    mate.setHealth(1);
+    foe.setHealth(1);
+
+    const cause = { type: EffectType.None } as const;
+
+    mate.heal(cause, mate, 100, 0);
+    foe.heal(cause, foe, 100, 0);
+
+    expect((mate.health - 1) / (foe.health - 1)).toBeCloseTo(TIDE_POOL_SCALE, 2);
   });
 });

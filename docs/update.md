@@ -7,6 +7,7 @@ named for what it brings.
 
 | Release                                                               | What it brought                                                                                                                |
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| [From Route 5 to Driftveil](update/route-five-to-driftveil.md) | Eleven more families along Unova's fifth road, in Chargestone Cave and around Driftveil, with Illusion and Iron Barbs working at last |
 | [The desert and the Relic Castle](update/desert-and-relic-castle.md)  | Ten more families across Unova's desert and ruins, with Mummy and Perish Body working at last                                  |
 | [Pinwheel Forest](update/pinwheel-forest.md)                          | Nine more families: the tailors, centipedes, cotton and lilies of the forest, with Timburr, Tympole, Audino and the dojo pair  |
 | [Unova's second road and first cave](update/unovas-road-and-cave.md)  | Six more families: Munna, Pidove and Blitzle along the road, and Roggenrola, Woobat and Drilbur under it                       |

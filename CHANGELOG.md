@@ -1,5 +1,12 @@
 # overwander
 
+## 4.10.1
+
+### Patch Changes
+
+- 3d22983: The weather map follows the clock while it is open, so a page left open shows this hour's sky rather than the hour it was opened in. It also names the seed and the generation it is reading.
+- 4fc6dac: The world map's weather now reads the same hour as the ground under you, rather than the hour it is in UTC.
+
 ## 4.10.0
 
 ### Minor Changes

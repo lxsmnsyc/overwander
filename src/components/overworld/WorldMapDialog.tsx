@@ -4,6 +4,7 @@ import type Weather from '../../data/overworld/weather';
 import { WEATHER_NAMES, favorsEverything } from '../../data/overworld/weather';
 import getWorld from '../../overworld/current';
 import { WEATHER_INTERVAL } from '../../overworld/chunk-snapshot';
+import { getLocalOffset, toLocalTime } from '../../auth/local-time';
 import { WORLD_MAX, WORLD_MIN, isInWorld } from '../../overworld/world';
 import { Button, Dialog, DialogActions, Hint, Switch } from '../styled';
 import WorldMapCanvas, { PAN_STRIDE, townsInView } from './WorldMapCanvas';
@@ -66,12 +67,17 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
   const [sky, setSky] = createSignal(false);
 
   /**
-   * The hour the skies are read for. It ticks on its own, so a map
-   * left open does not go on showing an hour that has passed
+   * The hour the skies are read for, counted off the player's own zone
+   * the way the board counts it: read off UTC instead, the map shows
+   * another hour's sky than the ground under the player. It ticks on
+   * its own, so a map left open does not go on showing an hour that
+   * has passed
    */
-  const [hour, setHour] = createSignal(Math.floor(Date.now() / WEATHER_INTERVAL));
+  const skyWindow = (): number =>
+    Math.floor(toLocalTime(Date.now(), getLocalOffset()) / WEATHER_INTERVAL);
+  const [hour, setHour] = createSignal(skyWindow());
   const clock = setInterval(() => {
-    setHour(Math.floor(Date.now() / WEATHER_INTERVAL));
+    setHour(skyWindow());
   }, SKY_CHECK);
 
   onCleanup(() => {

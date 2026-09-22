@@ -1,5 +1,23 @@
 # overwander
 
+## 4.11.0
+
+### Minor Changes
+
+- a0640cd: A host can now offer signing in with an address and a password by setting VITE_EMAIL_SIGN_IN, rather than the form being drawn on a development build alone.
+
+### Patch Changes
+
+- 8d2e3d8: The docs now cover self-hosting: running the database, the auth server, the realtime stream and the app on your own machines, with none of the three hosting accounts the live game uses.
+- d08c1a5: Battles, the parties frozen into them and the raids they were fought in are deleted after 30 days, so battle history reaches back a month.
+- c9b0a53: A screen that offers a choice from your box reads only what it shows, so walking up to somebody with a large collection sends about half the data it used to.
+- 94bf9f0: A duel lobby is deleted a day after it was staged, whether or not its fight ever started.
+- 2bf1d76: The paces walked are reported to the egg being carried about once a minute rather than every few seconds, and a position is written at most once every eight seconds while walking.
+- dda630a: A walk saves its position straight to the database rather than through the game server, and the biome it discovers is marked on its own when the ground underfoot changes.
+- 3431d53: A run of catches asks once whether a quest has come due, rather than once for each catch.
+- fd62a92: Spawn windows and their rolls are deleted a day after they turn over, rather than kept for every chunk and zone anybody has walked.
+- 66ea06a: The safari asks everything it needs to open at once rather than one question after another, so the dialog appears sooner.
+
 ## 4.10.1
 
 ### Patch Changes

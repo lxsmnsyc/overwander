@@ -131,6 +131,7 @@ import {
   PUBLISHED_SPAWNS,
   REFRESH_DEBOUNCE,
   SAVE_DELAY,
+  SAVE_FLOOR,
   STANDINGS_MEMORY,
   START_CELL,
   STEP_PACE,
@@ -1412,6 +1413,8 @@ export default function OverworldBoard(props: {
    */
   let pending = 0;
   let reporting = false;
+  /** When the position was last written, which is what SAVE_FLOOR is measured from */
+  let settledAt = 0;
 
   /**
    * Hand the paces walked so far to the server. A walk in progress
@@ -1472,6 +1475,7 @@ export default function OverworldBoard(props: {
     if (game.elsewhere() != null) {
       return;
     }
+    settledAt = Date.now();
     // The paces ride the save, unless a report is already out with them
     const steps = reporting ? 0 : pending;
 
@@ -1538,7 +1542,9 @@ export default function OverworldBoard(props: {
   // ...and remembered as they walk. A step is a keypress, so the
   // writes are held back to one every SAVE_DELAY: the effect re-runs
   // on every move and clears the timer it set last time, so what
-  // lands is where they stopped rather than every square they crossed
+  // lands is where they stopped rather than every square they crossed.
+  // SAVE_FLOOR holds the rest of the wait, since a walk of two steps
+  // and a pause, over and over, is otherwise a write every few seconds
   createEffect(() => {
     const user = auth.user();
     const at = {
@@ -1552,9 +1558,10 @@ export default function OverworldBoard(props: {
       return;
     }
 
+    const owed = Math.max(SAVE_DELAY, SAVE_FLOOR - (Date.now() - settledAt));
     const timer = setTimeout(() => {
       settle(at.chunkX, at.chunkY, at.cellX, at.cellY);
-    }, SAVE_DELAY);
+    }, owed);
 
     onCleanup(() => {
       clearTimeout(timer);

@@ -25,6 +25,19 @@ export type ClockFormat = '24h' | '12h';
 
 export type BoxColumns = 5 | 6 | 8;
 
+/** The settings panel's sections, for reopening it where it was left */
+export const SETTINGS_PANES = [
+  'display',
+  'controls',
+  'world',
+  'play',
+  'audio',
+  'about',
+  'development',
+] as const;
+
+export type SettingsPane = (typeof SETTINGS_PANES)[number];
+
 /** What the board shows past the country it keeps track of */
 export type BoardEdge = 'haze' | 'full' | 'plain';
 
@@ -76,6 +89,8 @@ export interface GameSettings {
   /** Both 0 to 1 */
   sound: number;
   music: number;
+  /** Which section the settings panel opens on */
+  settingsPane: SettingsPane;
 }
 
 /**
@@ -99,6 +114,7 @@ function defaults(): GameSettings {
     devShinyBoost: true,
     sound: 0.7,
     music: 0.5,
+    settingsPane: 'display',
   };
 }
 
@@ -182,6 +198,7 @@ function stored(): GameSettings {
       devShinyBoost: said.devShinyBoost !== false,
       sound: volume(said.sound, base.sound),
       music: volume(said.music, base.music),
+      settingsPane: oneOf(said.settingsPane, SETTINGS_PANES, base.settingsPane),
     };
   } catch {
     // Unreadable or refused storage is a machine that has not been

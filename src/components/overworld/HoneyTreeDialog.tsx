@@ -6,7 +6,18 @@ import { Items } from '../../data/ids/items';
 import { LATHER_COST } from '../../data/overworld/honey-tree';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import ItemSprite from '../items/ItemSprite';
+import AtlasSprite from '../sprites/AtlasSprite';
+import { OW_SPRITE_ROOT } from '../../canvas/ow-char-sprites';
+import Landmark from '../../data/overworld/landmark';
+import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
+
 import { Badge, Button, Dialog, DialogActions, Note, Status } from '../styled';
+
+/** The tree at twice the size it stands on the board */
+const TREE_SPRITE = 88;
+
+/** The jar on the button, the size the safari draws its ball */
+const LATHER_SPRITE = 28;
 
 export interface HoneyTreeDialogProps {
   player: string;
@@ -73,6 +84,14 @@ function HoneyTreeBody(
   return (
     <>
       <div class="flex justify-center">
+        <AtlasSprite
+          sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
+          name={landmarkPicture(Landmark.HoneyTree) ?? ''}
+          size={TREE_SPRITE}
+          label="The honey tree"
+        />
+      </div>
+      <div class="flex justify-center">
         <Badge tone={jars() >= LATHER_COST ? 'gold' : 'neutral'}>
           <ItemSprite item={Items.Honey} size={16} label="" />
           {jars()} Honey
@@ -85,12 +104,15 @@ function HoneyTreeBody(
       </Note>
       <Status message={status()} />
       <DialogActions>
+        {/* Drawn like the safari's Throw: the jar is the label, with what is left beside it */}
         <Button
           tone="primary"
           disabled={busy() || props.lathered || jars() < LATHER_COST}
+          label={`Lather with Honey, ${jars()} left`}
           onClick={lather}
         >
-          Lather (<ItemSprite item={Items.Honey} size={16} label="" /> x {LATHER_COST})
+          <ItemSprite item={Items.Honey} size={LATHER_SPRITE} label="" />
+          Lather × {jars()}
         </Button>
         <Button onClick={close}>Close</Button>
       </DialogActions>

@@ -7,6 +7,7 @@ import {
 } from '../../../auth/caught';
 import CatchPicker, { type CatchOption, type CatchPickerProps } from '../catch-picker';
 import { useGame } from '../../app/game-context';
+import { ArrowDownIcon, ArrowUpIcon } from '../../icons';
 import { Button, DialogActions, Select, useToast } from '../../styled';
 import { type QueryControls, parseControls, withControl } from '../../../core/query';
 import CatchActions from './actions';
@@ -234,7 +235,12 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
                 setQuery(withControl(query(), 'order', controls().descending ? 'asc' : null));
               }}
             >
-              {controls().descending ? '↓' : '↑'}
+              <Show
+                when={controls().descending}
+                fallback={<ArrowUpIcon class="size-5" aria-hidden="true" />}
+              >
+                <ArrowDownIcon class="size-5" aria-hidden="true" />
+              </Show>
             </Button>
             <Show when={props.viewOnly !== true}>
               <Button

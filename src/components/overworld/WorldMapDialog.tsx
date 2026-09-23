@@ -16,6 +16,13 @@ import getWorld from '../../overworld/current';
 import { weatherWindowOf } from '../../overworld/chunk-snapshot';
 import { localNow } from '../../auth/clock';
 import { WORLD_MAX, WORLD_MIN, isInWorld } from '../../overworld/world';
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  CrosshairIcon,
+} from '../icons';
 import { Button, Dialog, DialogActions, Hint } from '../styled';
 import WorldMapCanvas, { PAN_STRIDE, townsInView } from './WorldMapCanvas';
 import { useGame } from '../app/game-context';
@@ -353,21 +360,21 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
             <div class="absolute right-1.5 bottom-1.5 z-10 grid grid-cols-3 gap-0.5">
               <span />
               <button type="button" class={PAD} aria-label="Pan north" onClick={step(0, -1)}>
-                ▲
+                <ChevronUpIcon class="size-4" aria-hidden="true" />
               </button>
               <span />
               <button type="button" class={PAD} aria-label="Pan west" onClick={step(-1, 0)}>
-                ◀
+                <ChevronLeftIcon class="size-4" aria-hidden="true" />
               </button>
               <button type="button" class={PAD} aria-label="Back to you" onClick={recenter}>
-                ⌖
+                <CrosshairIcon class="size-5" aria-hidden="true" />
               </button>
               <button type="button" class={PAD} aria-label="Pan east" onClick={step(1, 0)}>
-                ▶
+                <ChevronRightIcon class="size-4" aria-hidden="true" />
               </button>
               <span />
               <button type="button" class={PAD} aria-label="Pan south" onClick={step(0, 1)}>
-                ▼
+                <ChevronDownIcon class="size-4" aria-hidden="true" />
               </button>
               <span />
             </div>

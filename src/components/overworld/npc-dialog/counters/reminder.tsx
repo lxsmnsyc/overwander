@@ -1,4 +1,4 @@
-import { type JSX, createSignal } from 'solid-js';
+import { type JSX, Show, createSignal } from 'solid-js';
 import { LearnRefusal, type LearnResult } from '../../../../auth/learn-refusal';
 import { remindMove } from '../../../../auth/npcs';
 import type { Moves } from '../../../../data/ids/moves';
@@ -63,32 +63,35 @@ export default function Reminder(props: CounterProps): JSX.Element {
         }}
       />
       <DialogActions>
-        <Button
-          tone="primary"
-          disabled={scalesIn(props) < 1 || picked() == null || chosen() == null}
-          // The badge is the price drawn rather than spelled out, so
-          // the button says in a picture what the bag says in one
-          label="Remind, 1 Heart Scale"
-          onClick={() => {
-            const id = picked();
-            const move = chosen();
+        {/* Only once there is a pokemon to spend it on */}
+        <Show when={picked() != null}>
+          <Button
+            tone="primary"
+            disabled={scalesIn(props) < 1 || picked() == null || chosen() == null}
+            // The badge is the price drawn rather than spelled out, so
+            // the button says in a picture what the bag says in one
+            label="Remind, 1 Heart Scale"
+            onClick={() => {
+              const id = picked();
+              const move = chosen();
 
-            if (id != null && move != null) {
-              props.ask({
-                catchId: id,
-                move,
-                cost: 'The Heart Scale',
-                teach: remind,
-                onTaught: remembered,
-              });
-            }
-          }}
-        >
-          Remind{' '}
-          <Badge tone="gold">
-            <ItemSprite item={REMINDER_FEE} size={16} label="" />1
-          </Badge>
-        </Button>
+              if (id != null && move != null) {
+                props.ask({
+                  catchId: id,
+                  move,
+                  cost: 'The Heart Scale',
+                  teach: remind,
+                  onTaught: remembered,
+                });
+              }
+            }}
+          >
+            Remind{' '}
+            <Badge tone="gold">
+              <ItemSprite item={REMINDER_FEE} size={16} label="" />1
+            </Badge>
+          </Button>
+        </Show>
         {props.walkOn()}
       </DialogActions>
     </>

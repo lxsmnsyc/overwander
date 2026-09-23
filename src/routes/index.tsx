@@ -324,7 +324,8 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             isOpen={showing(GameDialog.Raids)}
             onClose={close}
             insistent={hosting()}
-            width="wide"
+            // Broad in a lobby, for the boss beside the trainer list
+            width={lobby() == null ? 'wide' : 'broad'}
             // Named for the lair while the player is standing in one,
             // and "Raids" while they are only looking at the list.
             //

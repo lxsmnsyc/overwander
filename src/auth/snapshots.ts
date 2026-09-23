@@ -47,9 +47,9 @@ import {
   peekPhenomenonEgg as peekPhenomenonEggOnServerSide,
 } from '../server/overworld';
 import batchedQuery from '../utils/batched-query';
-import { serverNow, syncServerClock } from './clock';
+import { localNow, syncServerClock } from './clock';
 import { asRecord, asRecordArray } from './__normalize';
-import { asOffset, getLocale, toLocalTime, toZoneKey } from './local-time';
+import { asOffset, getLocale, toZoneKey } from './local-time';
 import type { EncounterRecord } from './encounter-record';
 import getSupabase, { type Unwatch, watchTable } from './supabase';
 import getIdToken from './session';
@@ -116,7 +116,7 @@ export const PUBLISHED_SPAWNS = SPAWN_COUNT + LURE_SPAWN_BONUS;
  */
 async function freshenWindow(snapshot: ChunkSnapshot): Promise<void> {
   await syncServerClock();
-  if (toLocalTime(serverNow(), snapshot.offset) < snapshot.timestamp + SNAPSHOT_INTERVAL) {
+  if (localNow(snapshot.offset) < snapshot.timestamp + SNAPSHOT_INTERVAL) {
     return;
   }
   await resolveSnapshotWindow(snapshot.chunk, snapshot.offset, PUBLISHED_SPAWNS);
@@ -141,7 +141,7 @@ async function resolveSnapshotWindow(
   await syncServerClock();
 
   const existing = known === undefined ? await readSnapshotWindow(chunk, offset) : known;
-  const now = toLocalTime(serverNow(), offset);
+  const now = localNow(offset);
 
   // A live window is adopted whole; its spawns are what everybody in
   // this zone is looking at. One written before the spawns moved in

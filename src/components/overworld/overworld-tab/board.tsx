@@ -23,8 +23,8 @@ import { MAX_STEP_REPORT } from '../../../auth/egg';
 import type { SnapshotRecord } from '../../../auth/snapshot-record';
 import { type EggWalk, type WalkReport, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../auth/encounter-record';
-import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
-import { serverNow } from '../../../auth/clock';
+import { getLocalOffset } from '../../../auth/local-time';
+import { localNow } from '../../../auth/clock';
 import { RaidAction, RaidKind, type RaidView, canJoinRaids, peekRaid } from '../../../auth/raids';
 import { type StopRecord, stopIdOf } from '../../../auth/stop-record';
 import { claimStopReward, enterStop } from '../../../auth/stops';
@@ -588,8 +588,7 @@ export default function OverworldBoard(props: {
 
   /** Whether a window still stands, which is when visiting its chunk would only read it again */
   const isLive = (record: WatchedWindow['record']): boolean =>
-    record.spawns.length > 0 &&
-    toLocalTime(serverNow(), zone) < record.timestamp + SNAPSHOT_INTERVAL;
+    record.spawns.length > 0 && localNow(zone) < record.timestamp + SNAPSHOT_INTERVAL;
 
   /**
    * Visit the chunks whose window is missing or has run out; the watch
@@ -766,7 +765,7 @@ export default function OverworldBoard(props: {
       return;
     }
 
-    const now = toLocalTime(serverNow(), zone);
+    const now = localNow(zone);
     let soonest = Number.POSITIVE_INFINITY;
 
     for (const { record } of held.values()) {
@@ -796,7 +795,7 @@ export default function OverworldBoard(props: {
   // Rather than staying pressable and answering "too late"
   const liveWindows = createMemo(() => {
     expiries();
-    return runningWindows(windows(), toLocalTime(serverNow(), zone));
+    return runningWindows(windows(), localNow(zone));
   });
 
   // What walks beside the player changes what the chunk holds, so the
@@ -874,8 +873,7 @@ export default function OverworldBoard(props: {
       held.set(`${piece.x},${piece.y}`, piece);
     }
 
-    const current =
-      Math.floor(toLocalTime(serverNow(), zone) / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
+    const current = Math.floor(localNow(zone) / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
     const lists: Promise<string[]>[] = [];
     let live = true;
 
@@ -2807,10 +2805,7 @@ export default function OverworldBoard(props: {
               style={{
                 'background-color': loaded().underground
                   ? CAVERN.colour
-                  : getSkybox(
-                      toLocalTime(serverNow(), getLocalOffset()),
-                      latitudeOf(loaded().chunkY),
-                    ).horizon,
+                  : getSkybox(localNow(), latitudeOf(loaded().chunkY)).horizon,
               }}
             >
               <ChunkCanvas

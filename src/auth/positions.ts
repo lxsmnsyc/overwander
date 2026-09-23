@@ -6,12 +6,14 @@ import check, {
   CHUNK_COORDINATE,
   COUNT,
   DEPTH,
+  OFFSET,
   TOKEN,
   UID,
 } from '../server/validate';
 import { type WalkReport, recordSteps } from '../server/eggs';
 import savePositionOnServerSide, { markBiomeStoodIn, readPosition } from '../server/positions';
 import { syncServerClock } from './clock';
+import { getLocalOffset } from './local-time';
 import getSupabase, { type Unwatch, watchRow } from './supabase';
 import { asNumber, asRecord } from './__normalize';
 import { type PositionRecord, asPositionRecord } from './position-record';
@@ -197,10 +199,20 @@ export async function settleWalk(
   if (steps === 0) {
     return { stamp: await writePosition(chunkX, chunkY, cellX, cellY, depth), report: null };
   }
-  return settleWalkOnServer(await getIdToken(), steps, chunkX, chunkY, cellX, cellY, depth);
+  return settleWalkInZoneOnServer(
+    await getIdToken(),
+    steps,
+    chunkX,
+    chunkY,
+    cellX,
+    cellY,
+    depth,
+    getLocalOffset(),
+  );
 }
 
-async function settleWalkOnServer(
+/** Retired: a tab from before the species day turned locally still calls this slot */
+export async function settleWalkOnServer(
   token: string,
   steps: number,
   chunkX: number,
@@ -241,4 +253,32 @@ async function visitBiomeOnServer(token: string, chunkX: number, chunkY: number)
   check(CHUNK_COORDINATE, chunkX);
   check(CHUNK_COORDINATE, chunkY);
   return markBiomeStoodIn(await requireUid(token), chunkX, chunkY);
+}
+
+async function settleWalkInZoneOnServer(
+  token: string,
+  steps: number,
+  chunkX: number,
+  chunkY: number,
+  cellX: number,
+  cellY: number,
+  depth: Depth,
+  offset: number,
+): Promise<{ stamp: number; report: WalkReport | null }> {
+  'use server';
+  check(TOKEN, token);
+  check(COUNT, steps);
+  check(CHUNK_COORDINATE, chunkX);
+  check(CHUNK_COORDINATE, chunkY);
+  check(CELL_COORDINATE, cellX);
+  check(CELL_COORDINATE, cellY);
+  check(DEPTH, depth);
+  check(OFFSET, offset);
+  const uid = await requireUid(token);
+  const now = await syncServerClock();
+  // The paces land first, so a saved position never runs ahead of the egg
+  const report = steps > 0 ? await recordSteps(uid, steps, now, offset) : null;
+  const stamp = await savePositionOnServerSide(uid, chunkX, chunkY, cellX, cellY, depth, now);
+
+  return { stamp, report };
 }

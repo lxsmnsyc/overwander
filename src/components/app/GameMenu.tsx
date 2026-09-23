@@ -11,7 +11,7 @@ import {
 import { Dynamic } from 'solid-js/web';
 import { Popover, PopoverButton, PopoverPanel, Transition } from 'terracotta';
 import { useAuth } from '../../auth/context';
-import { serverNow, syncServerClock } from '../../auth/clock';
+import { localNow, serverNow, syncServerClock } from '../../auth/clock';
 import { getLocalOffset, toLocalTime } from '../../auth/local-time';
 import { TIME_OF_DAY_NAMES } from '../../data/biome';
 import { getTimeOfDay } from '../../data/ids/biome';
@@ -180,11 +180,10 @@ const WINDOWS: [called: string, every: number][] = [
 
 /**
  * How long until a window of this length turns over. Every one of them
- * is counted off the same instant the chunk counts it off, so this is
- * the chunk's own arithmetic rather than a guess at it
+ * is counted off the same local instant the chunk counts it off
  */
-function until(at: number, every: number): number {
-  return every - (at % every);
+function until(local: number, every: number): number {
+  return every - (local % every);
 }
 
 /**
@@ -224,8 +223,7 @@ function Windows(props: { now: number; class?: string }): JSX.Element {
         </For>
       </dl>
       <p class="mt-2 text-xs text-muted">
-        Counted off this clock, yours rather than the world's, so nothing turns over halfway through
-        what you are doing at it.
+        Counted off your own clock, so nothing turns over halfway through what you are doing at it.
       </p>
     </>
   );
@@ -239,7 +237,7 @@ export default function GameMenu(): JSX.Element {
   const [details, setDetails] = createSignal(false);
   /** The buddy's field moves, behind their own button on the bar */
   const [moves, setMoves] = createSignal(false);
-  const [now, setNow] = createSignal(toLocalTime(serverNow(), getLocalOffset()));
+  const [now, setNow] = createSignal(localNow());
   const [gold, setGold] = createSignal<number | null>(null);
 
   /** The way in, kept so the bound key can hand it the keyboard */

@@ -1,7 +1,7 @@
 import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
 import { Generation, type default as World } from '../../overworld/world';
-import ChunkSnapshot from '../../overworld/chunk-snapshot';
-import { getLocalOffset, toLocalTime } from '../../auth/local-time';
+import { weatherWindowOf } from '../../overworld/chunk-snapshot';
+import { localNow } from '../../auth/clock';
 import Weather, { WEATHER_NAMES } from '../../data/overworld/weather';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
@@ -96,18 +96,8 @@ export interface WeatherMapProps {
 }
 
 export default function WeatherMap(props: WeatherMapProps): JSX.Element {
-  // The window the board is standing in, worked out the way the board
-  // works it out: a snapshot of the middle chunk, built off this
-  // machine's clock and zone, answering its own weather window
-  const windowNow = (): number => {
-    const zone = getLocalOffset();
-
-    return new ChunkSnapshot(
-      props.world.getChunk(props.centreX, props.centreY),
-      toLocalTime(Date.now(), zone),
-      zone,
-    ).weatherWindow;
-  };
+  // The live window, the same way every other reader of the sky counts it
+  const windowNow = (): number => weatherWindowOf(localNow());
   const [now, setNow] = createSignal(windowNow());
   // Where the picture stands relative to the live window rather than
   // an hour number, so a page left open crosses into the next hour

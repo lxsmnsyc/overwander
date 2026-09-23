@@ -1,5 +1,5 @@
 import { type SnapshotRecord, spawnId } from '../../../auth/snapshot-record';
-import { toLocalTime } from '../../../auth/local-time';
+import { localNow } from '../../../auth/clock';
 import type Biome from '../../../data/ids/biome';
 import type Weather from '../../../data/overworld/weather';
 import type Decoration from '../../../data/overworld/decoration';
@@ -441,7 +441,7 @@ export function buildBoardView(
   // record crosses the wire
   const under =
     covering.get(`${playerX},${playerY}`) ??
-    new ChunkSnapshot(world.getChunk(playerX, playerY), toLocalTime(Date.now(), offset), offset);
+    new ChunkSnapshot(world.getChunk(playerX, playerY), localNow(offset), offset);
 
   return {
     originX,

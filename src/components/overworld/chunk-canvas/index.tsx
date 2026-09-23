@@ -60,8 +60,7 @@ import settings from '../../app/settings';
 import pixelRatio from '../../../canvas/ratio';
 import paintSky, { CAVERN, type Lamp, batchSky, batchWash, paintCavern } from '../../../canvas/sky';
 import createTwist from '../../../canvas/twist';
-import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
-import { serverNow } from '../../../auth/clock';
+import { localNow } from '../../../auth/clock';
 import loadSpeciesSprite from '../../../canvas/species-sprites';
 import drawTileQuad, { grownQuad } from '../../../canvas/tile-quad';
 import loadTerrainTiles, { type TerrainTiles } from '../../../canvas/terrain-tiles';
@@ -1941,7 +1940,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
      * ticking every second would redraw the board for the sake of a
      * light that has barely moved
      */
-    const worldTime = (): number => props.time ?? toLocalTime(serverNow(), getLocalOffset());
+    const worldTime = (): number => props.time ?? localNow();
 
     /**
      * The pokemon standing about are the only thing here that moves

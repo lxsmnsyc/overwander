@@ -15,6 +15,7 @@ import { getCaught } from './caught';
 import { getStats } from './health';
 import { getInventory } from './inventory';
 import { getLocalOffset, getLocale } from './local-time';
+import { localNow } from './clock';
 import getIdToken from './session';
 
 /**
@@ -80,7 +81,7 @@ export async function listEvolutionOptions(
     canEvolve: caught.canEvolve,
     stats: getStats(caught),
     friendship: caught.friendship,
-    time: getTimeOfDay(Date.now()),
+    time: getTimeOfDay(localNow()),
     gender: caught.gender,
   };
 

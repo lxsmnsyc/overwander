@@ -27,8 +27,9 @@ is in [Security](../database/security.md).
   bundle, so the write is refused rather than attempted. It is behind no
   sign-in. On the machine it works on, the person at the keyboard owns those
   files already, so the refusal is the whole guard.
-- **The email and password form.** Drawn on a development build alone, which is
-  what the browser tests sign in with.
+- **The email and password form.** Off unless `VITE_EMAIL_SIGN_IN` is `1` or
+  `true`. A development build draws it either way, which is what the browser
+  tests sign in with.
 
 ## Keeping it running
 

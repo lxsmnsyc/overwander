@@ -1,5 +1,4 @@
 import {
-  For,
   type JSX,
   type Resource,
   Show,
@@ -9,6 +8,7 @@ import {
   createSignal,
   onCleanup,
 } from 'solid-js';
+import { Disclosure, DisclosureButton, DisclosurePanel } from 'terracotta';
 import type { PlayerIdentity } from '../../auth/user';
 import {
   DEFAULT_DUEL_RULES,
@@ -38,16 +38,8 @@ import PlayerPlate from '../profile/PlayerPlate';
 import SpectatorList from '../battle/SpectatorList';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
 import watchLive from '../app/watch';
-import {
-  Badge,
-  Button,
-  DialogActions,
-  DialogSection,
-  List,
-  ListRow,
-  Note,
-  Status,
-} from '../styled';
+import { Badge, Button, DialogActions, Note, Status } from '../styled';
+import { ChevronRightIcon } from '../icons';
 import { useGame } from '../app/game-context';
 
 export interface DuelLobbyProps {
@@ -193,43 +185,120 @@ function LobbyRows(
     game.setDuel(null);
   };
 
+  const invite = (): void => {
+    setCalling(true);
+  };
+
+  const takeSeat = (): void => {
+    act(async () => setDuelRole(props.duelId, LobbyRole.Fighter), 'That seat could not be taken.');
+  };
+
+  /** Your own seat's controls: the party, readiness, and the way back to watching */
+  const controls = (member: DuelMember): JSX.Element => (
+    <div class="flex flex-col items-start gap-1.5 border-t-2 border-line-soft pt-2">
+      <div class="flex flex-wrap gap-2">
+        <Button
+          disabled={busy() || member.ready}
+          onClick={() => {
+            setPicking(true);
+          }}
+        >
+          {member.catches.length > 0 ? 'Change party' : 'Form a team'}
+        </Button>
+        <Button
+          tone={member.ready ? undefined : 'primary'}
+          disabled={busy() || member.catches.length === 0}
+          onClick={() => {
+            act(
+              async () => setDuelReady(props.duelId, !member.ready),
+              'That could not be changed.',
+            );
+          }}
+        >
+          {member.ready ? 'Not ready' : 'Ready'}
+        </Button>
+      </div>
+      {/* Stepping back drops the party */}
+      <Button
+        tone="ghost"
+        disabled={busy()}
+        onClick={() => {
+          act(
+            async () => setDuelRole(props.duelId, LobbyRole.Spectator),
+            'That could not be changed.',
+          );
+        }}
+      >
+        Watch instead
+      </Button>
+    </div>
+  );
+
   /**
    * One seat, taken or standing empty. The occupant arrives as an
-   * accessor rather than a value: the row is drawn once per seat and
-   * has to follow whoever sits down in it afterwards
+   * accessor: the card is drawn once per seat and follows whoever sits
+   * down in it afterwards
    */
   const seat = (member: () => DuelMember | undefined, at: number): JSX.Element => (
-    <ListRow selected={member()?.player === props.user.uid}>
-      <Show
-        when={member()}
-        fallback={<Note class="grow">Seat {at + 1} is open. Invite somebody to it.</Note>}
-      >
-        {(taken) => (
-          <>
-            <PlayerPlate
-              name={taken().player === props.user.uid ? 'You' : named(taken().player)}
-              sprite={faceOf(taken().player)}
-              onOpen={
-                taken().player === props.user.uid
-                  ? undefined
-                  : () => {
-                      game.setVisiting(taken().player);
-                    }
-              }
-            />
-            <Badge tone={taken().ready ? 'leaf' : 'neutral'}>
-              {taken().ready ? 'Ready' : 'Choosing'}
-            </Badge>
-            <Show
-              when={taken().catches.length > 0}
-              fallback={<Note class="grow">No party yet.</Note>}
-            >
-              <LobbyParty catches={taken().catches} />
+    <Show
+      when={member()}
+      fallback={
+        <div
+          class="flex min-w-0 flex-col justify-center gap-2 rounded-panel border-2 border-dashed
+            border-line p-3"
+        >
+          <Note>Seat {at + 1} is open.</Note>
+          <div class="flex flex-wrap gap-2">
+            <Show when={!fighting()}>
+              <Button disabled={busy()} onClick={takeSeat}>
+                Take this seat
+              </Button>
             </Show>
-          </>
-        )}
-      </Show>
-    </ListRow>
+            <Show when={isHost()}>
+              <Button disabled={busy()} onClick={invite}>
+                Invite
+              </Button>
+            </Show>
+          </div>
+        </div>
+      }
+    >
+      {(taken) => (
+        <div
+          class={`flex min-w-0 flex-col gap-2 rounded-panel border-2 p-3 shadow-pop-sm ${
+            taken().player === props.user.uid ? 'border-leaf bg-leaf-soft' : 'border-line bg-paper'
+          }`}
+        >
+          <div class="flex min-w-0 items-center gap-2">
+            <span class="min-w-0 grow">
+              <PlayerPlate
+                name={taken().player === props.user.uid ? 'You' : named(taken().player)}
+                sprite={faceOf(taken().player)}
+                onOpen={
+                  taken().player === props.user.uid
+                    ? undefined
+                    : () => {
+                        game.setVisiting(taken().player);
+                      }
+                }
+              />
+            </span>
+            <Show when={taken().player === duel()?.host}>
+              <Badge tone="tide">Host</Badge>
+            </Show>
+          </div>
+          <Show when={taken().catches.length > 0} fallback={<Note>No party yet.</Note>}>
+            <LobbyParty catches={taken().catches} />
+          </Show>
+          <span>
+            <Badge tone={taken().ready ? 'leaf' : 'neutral'}>
+              {taken().ready ? '● Ready' : '○ Choosing'}
+            </Badge>
+          </span>
+          <Show when={taken().player === props.user.uid}>{controls(taken())}</Show>
+        </div>
+      )}
+    </Show>
   );
 
   return (
@@ -238,104 +307,61 @@ function LobbyRows(
         {(record) => (
           <div class="flex flex-col gap-3">
             <Note class="text-center">
-              A fight between trainers. Nothing is recorded from it: no candy, no aftermath, and
-              what the party spent comes back.
+              Nothing is recorded: no candy, no aftermath, and what the party spent comes back.
             </Note>
 
-            <DialogSection title="Rules">
-              <List>
-                <ListRow>
-                  <Note class="grow">{arrangement()}</Note>
-                  <Show when={isHost()}>
-                    <Button
-                      disabled={busy()}
-                      onClick={() => {
-                        setArranging(true);
-                      }}
-                    >
-                      Change
-                    </Button>
-                  </Show>
-                </ListRow>
-              </List>
-            </DialogSection>
+            {/* What the other side agrees to when they say they are ready */}
+            <div class="flex min-h-9 items-center gap-2">
+              <span class="shrink-0 text-xs font-semibold text-muted uppercase">Rules</span>
+              <span class="grow text-sm">{arrangement()}</span>
+              <Show when={isHost()}>
+                <Button
+                  disabled={busy()}
+                  onClick={() => {
+                    setArranging(true);
+                  }}
+                >
+                  Change
+                </Button>
+              </Show>
+            </div>
 
-            <DialogSection title="Fighters">
-              <List>
-                <For each={Array.from<null>({ length: DUEL_FIGHTERS }).fill(null)}>
-                  {(_, at) => seat(() => fighters().at(at()), at())}
-                </For>
-              </List>
-            </DialogSection>
+            <div class="grid items-stretch gap-2 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+              {seat(() => fighters().at(0), 0)}
+              <span class="self-center text-center text-sm font-bold text-muted">VS</span>
+              {seat(() => fighters().at(1), 1)}
+            </div>
 
-            <DialogSection title="Spectators">
-              <SpectatorList player={props.user.uid} watching={watchers()} />
-            </DialogSection>
+            <Disclosure defaultOpen={false} class="flex flex-col border-t-2 border-line-soft pt-2">
+              <DisclosureButton
+                class="group flex cursor-pointer items-center gap-2 border-0 bg-transparent p-0
+                  text-left text-sm font-bold text-ink shadow-none focus-visible:outline-2
+                  focus-visible:outline-offset-2 focus-visible:outline-tide"
+              >
+                <ChevronRightIcon
+                  aria-hidden="true"
+                  class="size-4 shrink-0 text-muted transition-transform group-aria-expanded:rotate-90"
+                />
+                Watching · {watchers().length}
+              </DisclosureButton>
+              <DisclosurePanel class="max-h-48 overflow-y-auto pt-2">
+                <SpectatorList player={props.user.uid} watching={watchers()} />
+              </DisclosurePanel>
+            </Disclosure>
 
-            <Show when={isHost() && getDuelBlocker(record())}>
-              {(blocked) => <Note class="text-center">{blocked()}</Note>}
+            <Show
+              when={status()}
+              fallback={
+                <Show when={isHost() && getDuelBlocker(record())}>
+                  {(blocked) => <Note class="text-center">{blocked()}</Note>}
+                </Show>
+              }
+            >
+              <Status message={status()} />
             </Show>
 
-            <Status message={status()} />
-
             <DialogActions>
-              <Show when={fighting()}>
-                <Button
-                  disabled={busy() || mine()?.ready === true}
-                  onClick={() => {
-                    setPicking(true);
-                  }}
-                >
-                  {(mine()?.catches.length ?? 0) > 0 ? 'Change party' : 'Form a team'}
-                </Button>
-                <Button
-                  tone={mine()?.ready === true ? undefined : 'primary'}
-                  disabled={busy() || (mine()?.catches.length ?? 0) === 0}
-                  onClick={() => {
-                    act(
-                      async () => setDuelReady(props.duelId, mine()?.ready !== true),
-                      'That could not be changed.',
-                    );
-                  }}
-                >
-                  {mine()?.ready === true ? 'Not ready' : 'Ready'}
-                </Button>
-              </Show>
-              {/* Stepping between the seat and the chairs. Taking a
-                  seat is only offered while one is free; stepping back
-                  drops the party, which is why it says so */}
-              <Show when={!fighting() && seatFree()}>
-                <Button
-                  disabled={busy()}
-                  onClick={() => {
-                    act(
-                      async () => setDuelRole(props.duelId, LobbyRole.Fighter),
-                      'That seat could not be taken.',
-                    );
-                  }}
-                >
-                  Take a seat
-                </Button>
-              </Show>
-              <Show when={fighting()}>
-                <Button
-                  disabled={busy()}
-                  onClick={() => {
-                    act(
-                      async () => setDuelRole(props.duelId, LobbyRole.Spectator),
-                      'That could not be changed.',
-                    );
-                  }}
-                >
-                  Watch instead
-                </Button>
-              </Show>
-              <Button
-                disabled={busy()}
-                onClick={() => {
-                  setCalling(true);
-                }}
-              >
+              <Button disabled={busy()} onClick={invite}>
                 Invite
               </Button>
               <Show when={isHost()}>

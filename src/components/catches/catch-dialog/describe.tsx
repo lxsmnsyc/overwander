@@ -244,7 +244,7 @@ const COMPARE_WORDS = { greater: 'higher than', lesser: 'lower than', equal: 'eq
 
 /**
  * What an evolution asks for, read straight off the row after the
- * picture it leads to: a Haunter's says `+ Trade`, an Eevee's shows
+ * picture it leads to: a Haunter's says `Trade`, an Eevee's shows
  * the stone, a Charmander's names the level.
  *
  * An item is its icon rather than its name, the way the bag draws it,

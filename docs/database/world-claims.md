@@ -190,8 +190,8 @@ is empty. The base band is not in it, since what a player can meet by walking is
 not worth stopping for. Neither is the special one, so no phenomenon ever stages
 a legendary.
 
-An item reward lands in the inventory as part of the claim, one piece.
-Everything a phenomenon leaves is worth carrying home on its own. A pokemon
+An item reward lands in the inventory as part of the claim, as a stash of one to
+three kinds of one to three pieces each, the way a cache pays. A pokemon
 reward comes back as a spawn tuple whose two rolls derive from
 `{seed}{phenomenonTimestamp}happening{cell}spawn`, passed to `startEncounter`
 under the id `{chunkSeed}@{phenomenonTimestamp}$happening{cell}`, which has no

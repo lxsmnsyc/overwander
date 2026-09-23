@@ -1,7 +1,7 @@
 import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
-import type World from '../../overworld/world';
-import ChunkSnapshot from '../../overworld/chunk-snapshot';
-import { getLocalOffset, toLocalTime } from '../../auth/local-time';
+import { Generation, type default as World } from '../../overworld/world';
+import { weatherWindowOf } from '../../overworld/chunk-snapshot';
+import { localNow } from '../../auth/clock';
 import Weather, { WEATHER_NAMES } from '../../data/overworld/weather';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
@@ -24,6 +24,9 @@ const SCALE = 4;
 
 /** How long a played hour stays on screen, in milliseconds */
 const PLAY_STEP = 400;
+
+/** How often the live hour is read again, in milliseconds */
+const CLOCK_CHECK = 15_000;
 
 const enum View {
   Sky = 0,
@@ -93,19 +96,15 @@ export interface WeatherMapProps {
 }
 
 export default function WeatherMap(props: WeatherMapProps): JSX.Element {
-  // The window the board is standing in, worked out the way the board
-  // works it out: a snapshot of the middle chunk, built off this
-  // machine's clock and zone, answering its own weather window. Doing
-  // the arithmetic again here is how the map came to show another
-  // hour's sky than the game
-  const zone = getLocalOffset();
-  const now = new ChunkSnapshot(
-    props.world.getChunk(props.centreX, props.centreY),
-    toLocalTime(Date.now(), zone),
-    zone,
-  ).weatherWindow;
+  // The live window, the same way every other reader of the sky counts it
+  const windowNow = (): number => weatherWindowOf(localNow());
+  const [now, setNow] = createSignal(windowNow());
+  // Where the picture stands relative to the live window rather than
+  // an hour number, so a page left open crosses into the next hour
+  // with the game instead of holding the hour it was opened in
+  const [step, setStep] = createSignal(0);
+  const hour = (): number => now() + step();
   const [view, setView] = createSignal(View.Sky);
-  const [hour, setHour] = createSignal(now);
   const [playing, setPlaying] = createSignal(false);
   const [counts, setCounts] = createSignal<[Weather, number][]>([]);
   const [under, setUnder] = createSignal<{
@@ -173,12 +172,22 @@ export default function WeatherMap(props: WeatherMapProps): JSX.Element {
     setCounts(sorted);
   });
 
+  // The live window, checked often enough that the picture turns over
+  // with the game rather than an hour after it
+  const clock = setInterval(() => {
+    setNow(windowNow());
+  }, CLOCK_CHECK);
+
+  onCleanup(() => {
+    clearInterval(clock);
+  });
+
   createEffect(() => {
     if (!playing()) {
       return;
     }
     const timer = setInterval(() => {
-      setHour((was) => was + 1);
+      setStep((was) => was + 1);
     }, PLAY_STEP);
 
     onCleanup(() => {
@@ -226,14 +235,14 @@ export default function WeatherMap(props: WeatherMapProps): JSX.Element {
         />
         <Button
           onClick={() => {
-            setHour((was) => was - 1);
+            setStep((was) => was - 1);
           }}
         >
           Hour earlier
         </Button>
         <Button
           onClick={() => {
-            setHour((was) => was + 1);
+            setStep((was) => was + 1);
           }}
         >
           Hour later
@@ -246,17 +255,18 @@ export default function WeatherMap(props: WeatherMapProps): JSX.Element {
           {playing() ? 'Stop' : 'Play'}
         </Button>
         <Button
-          disabled={hour() === now}
+          disabled={step() === 0}
           onClick={() => {
-            setHour(now);
+            setStep(0);
           }}
         >
           Now
         </Button>
-        <Badge>
-          {hour() === now ? 'This hour' : `${hour() - now > 0 ? '+' : ''}${hour() - now} h`}
-        </Badge>
+        <Badge>{step() === 0 ? 'This hour' : `${step() > 0 ? '+' : ''}${step()} h`}</Badge>
         <Badge>window {hour()}</Badge>
+        <Badge>
+          {props.world.seed} · generation {props.world.generation === Generation.Second ? 2 : 1}
+        </Badge>
       </Row>
       <canvas
         ref={canvas}

@@ -39,22 +39,26 @@ export async function createSafariSession(
 ): Promise<SafariSession<EncounterRecord>> {
   const now = await syncServerClock();
   const rng = new AleaRNG(`${user.uid}${encounterKey(encounter)}${now}`);
-  // The Repeat Ball needs to know whether this species is already in
-  // the player's records; it is read once, when the session opens
-  const speciesCaught = await hasCaughtSpecies(user.uid, encounter.species);
-  // The Level and Love Balls are thrown from behind the buddy, so who
-  // that is is read once here alongside it. A player walking alone
-  // throws both as plain balls
-  const walking = await resolveBuddy(user.uid);
+  // Four questions about the player, none of which is an answer to
+  // another: asked together, the dialog opens on one round trip
+  // rather than on four.
+  //
+  // The Repeat Ball wants to know whether this species is in the
+  // records; the Level and Love Balls are thrown from behind the
+  // buddy, so who that is comes too; how much of the dex is filled
+  // decides how often a ball holds on the first shake; and the bag
+  // says whether there is anything left to throw
+  const [speciesCaught, walking, dex, balls] = await Promise.all([
+    hasCaughtSpecies(user.uid, encounter.species),
+    resolveBuddy(user.uid),
+    getCaughtSpeciesCount(user.uid),
+    countBalls(user.uid),
+  ]);
   // What the player brought along, asked once: the Catching Charm on
   // the throw and a buddy that pins the meeting down on the bolt.
   // Neither can change while a ball is in the air
   const overworld = createOverworld(user.uid, walking == null ? null : buddyEffectsOf(walking[1]));
   const treats = overworld.checkTreats(encounterKey(encounter), MAX_CATCH_BONUS);
-  // How much of the dex is filled decides how often a ball holds on
-  // the first shake, so a player who has caught a great many things
-  // throws like somebody who has
-  const dex = await getCaughtSpeciesCount(user.uid);
   const critical = overworld.checkCriticalCatch(encounterKey(encounter), encounter);
   const session = new SafariSession(encounter, () => rng.random(), {
     speciesCaught,
@@ -78,7 +82,7 @@ export async function createSafariSession(
   // What the bag holds is the session's own business only so far as
   // knowing whether there is anything left to throw; the throw itself
   // no longer asks
-  session.ballsLeft = await countBalls(user.uid);
+  session.ballsLeft = balls;
   return session;
 }
 

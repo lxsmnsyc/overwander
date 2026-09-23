@@ -25,13 +25,17 @@ export type { DueQuest } from '../server/due';
  * standings themselves
  */
 export async function getDueQuests(): Promise<DueQuest[]> {
-  return listDueOnServer(await getIdToken());
+  return listDueInZoneOnServer(await getIdToken(), getLocalOffset());
 }
 
-async function listDueOnServer(token: string): Promise<DueQuest[]> {
+/**
+ * Retired: a tab from before the rotations turned at local midnight
+ * still calls this slot, and gets the UTC day it expects
+ */
+export async function listDueOnServer(token: string): Promise<DueQuest[]> {
   'use server';
   check(TOKEN, token);
-  return listDue(await requireUid(token), await syncServerClock());
+  return listDue(await requireUid(token), await syncServerClock(), 0);
 }
 
 export async function getQuests(): Promise<QuestStanding[]> {
@@ -64,4 +68,11 @@ async function claimOnServer2(
   check(OFFSET, offset);
   check(LOCALE, locale);
   return claimOnServer(await requireUid(token), quest, await syncServerClock(), offset, locale);
+}
+
+async function listDueInZoneOnServer(token: string, offset: number): Promise<DueQuest[]> {
+  'use server';
+  check(TOKEN, token);
+  check(OFFSET, offset);
+  return listDue(await requireUid(token), await syncServerClock(), offset);
 }

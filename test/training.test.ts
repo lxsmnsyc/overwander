@@ -354,17 +354,16 @@ describe('vitamins', () => {
     expect(VITAMIN_STATS.size).toBe(WING_STATS.size);
   });
 
-  it('is bought rather than found, which is a wing turned around', () => {
+  it('is bought, and found a band above the wings', () => {
     for (const item of VITAMIN_STATS.keys()) {
       const data = getItemData(item);
 
       expect(data.type).toBe(ItemTypes.Training);
       expect(data.flags & ItemFlags.Marketable).not.toBe(0);
       expect(data.buy).toBe(VITAMIN_PRICE);
-      // Nothing on the ground hides one: a vitamin is a gold sink
-      expect(getItemBand(item)).toBeNull();
+      expect(getItemBand(item)).toBe('rare');
     }
-    // A wing is the other way round: found, never stocked
+    // A wing is found, never stocked
     for (const item of WING_STATS.keys()) {
       expect(getItemData(item).flags & ItemFlags.Marketable).toBe(0);
       expect(getItemBand(item)).toBe('scarce');

@@ -459,22 +459,9 @@ describe('item data', () => {
     expect(getApricornBall(Items.PokeBall)).toBeNull();
   });
 
-  it("keeps Kurt's seven off every counter and out of every stash", () => {
-    // They are turned out of apricorns rather than bought or found,
-    // and the exclusion is a property of the data rather than a list
-    // somebody has to remember: nothing prices them, so nothing that
-    // filters on a price can carry them
-    const pooled = new Set(
-      [
-        ITEM_POOL.base,
-        ITEM_POOL.uncommon,
-        ITEM_POOL.scarce,
-        ITEM_POOL.rare,
-        ITEM_POOL.prized,
-        ITEM_POOL.special,
-      ].flatMap((band) => band.map((entry) => entry.item)),
-    );
-
+  it("keeps Kurt's seven off every counter, and buries them in scarce", () => {
+    // Turned out of apricorns rather than bought: nothing prices them,
+    // so nothing that filters on a price can carry them
     for (const item of APRICORN_BALL_ITEMS) {
       const data = getItemData(item);
 
@@ -482,7 +469,7 @@ describe('item data', () => {
       expect(data.buy, data.name).toBe(0);
       // Nor will he take one off a player's hands
       expect(data.sell, data.name).toBe(0);
-      expect(pooled.has(item), `${data.name} is in a stash`).toBe(false);
+      expect(getItemBand(item), data.name).toBe('scarce');
 
       for (const kind of VENDOR_KINDS) {
         expect(new Set(getVendorGoods(kind)).has(item), `${data.name} on a counter`).toBe(false);
@@ -1493,13 +1480,7 @@ describe('item data', () => {
 
     // The ones still waiting on a generation this game has not
     // registered are named, drawn and priceless rather than stocked
-    const latent = [
-      Items.KingsRock,
-      Items.DragonScale,
-      Items.UpGrade,
-      Items.Sachet,
-      Items.WhippedDream,
-    ];
+    const latent = [Items.Sachet, Items.WhippedDream];
 
     for (const item of latent) {
       const data = getItemData(item);
@@ -1510,6 +1491,14 @@ describe('item data', () => {
       expect(data.sell, data.name).toBe(0);
       expect(getItemBand(item)).toBeNull();
       expect(new Set(getVendorGoods()).has(item), data.name).toBe(false);
+    }
+
+    // Asked for by a line but never stocked: found instead
+    for (const item of [Items.KingsRock, Items.DragonScale, Items.UpGrade]) {
+      const data = getItemData(item);
+
+      expect(data.flags & ItemFlags.Marketable, data.name).toBe(0);
+      expect(getItemBand(item), data.name).toBe('rare');
     }
 
     // A stone is spent on the pokemon, the way the five Kanto ones are

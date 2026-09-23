@@ -5,6 +5,7 @@ import { MARKET_GEAR } from '../items/gear';
 import { ONE_SHOTS } from '../items/one-shots';
 import { ORBS } from '../items/orbs';
 import { PLATES } from '../items/plates';
+import { VITAMIN_STATS } from '../items/vitamins';
 import { MINT_NATURES } from '../items/mints';
 import { POWER_ITEMS } from '../items/power-items';
 import { GENERAL_STAT_BOOSTERS } from '../items/stat-boosters';
@@ -147,6 +148,15 @@ export const ITEM_POOL: ItemRarityGroups = {
   ],
   scarce: [
     { item: Items.UltraBall, weight: 15 },
+    // Kurt's balls, dropped by whoever carried one out of his shop.
+    // Thin, since nobody sells them and each is for one kind of catch
+    { item: Items.LevelBall, weight: 3 },
+    { item: Items.LureBall, weight: 3 },
+    { item: Items.MoonBall, weight: 3 },
+    { item: Items.FriendBall, weight: 3 },
+    { item: Items.LoveBall, weight: 3 },
+    { item: Items.HeavyBall, weight: 3 },
+    { item: Items.FastBall, weight: 3 },
     { item: Items.RelicSilver, weight: 4 },
     { item: Items.HyperPotion, weight: 6 },
     // The root is a Hyper Potion's worth and then some, so it sits in
@@ -217,6 +227,30 @@ export const ITEM_POOL: ItemRarityGroups = {
     // on a pokemon and spent. Thinner, because a Rotom wants more
     // than one of them and nobody sells any
     { item: Items.RotomCatalog, weight: 6 },
+    // What a trade or a held evolution asks for, on the stones' terms
+    // but thinner: each is wanted by one line rather than several
+    { item: Items.KingsRock, weight: 3 },
+    { item: Items.DragonScale, weight: 3 },
+    { item: Items.UpGrade, weight: 3 },
+    { item: Items.Protector, weight: 3 },
+    { item: Items.Electirizer, weight: 3 },
+    { item: Items.Magmarizer, weight: 3 },
+    { item: Items.ReaperCloth, weight: 3 },
+    { item: Items.DubiousDisc, weight: 3 },
+    { item: Items.DeepSeaTooth, weight: 3 },
+    { item: Items.DeepSeaScale, weight: 3 },
+    { item: Items.PrismScale, weight: 3 },
+    { item: Items.OvalStone, weight: 3 },
+    { item: Items.RazorClaw, weight: 3 },
+    { item: Items.RazorFang, weight: 3 },
+    { item: Items.LinkingCord, weight: 4 },
+    // A level for any line, whatever candy it takes
+    { item: Items.RareCandy, weight: 5 },
+    // 10 effort a bottle, one step past the wings' 3
+    ...evenlyWeighted(VITAMIN_STATS.keys(), 3),
+    // A step off one move's cooldown for good; its bigger bottle is
+    // prized
+    { item: Items.PPUp, weight: 3 },
     { item: Items.Nugget, weight: 8 },
     // The middle of the ladder, thinning as it climbs
     // Cut off a Slowpoke, and worth more than the nugget it is found
@@ -336,6 +370,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     // are made of, which is the band's permanence test passed on the
     // next generation rather than on the holder
     ...evenlyWeighted(POWER_ITEMS.keys(), 3),
+    // A move's cooldown taken as far down as it goes, for good
+    { item: Items.PPMax, weight: 2 },
+    // A lamp for the dark underground, and nobody sells one
+    { item: Items.ExplorerKit, weight: 3 },
     // The mints. A nature is two stats for the rest of a pokemon's
     // life and nothing else touches one, which is this band exactly.
     // The thinnest weight there is, because there are twenty-one of

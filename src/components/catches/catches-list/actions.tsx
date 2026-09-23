@@ -131,7 +131,7 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
   };
 
   return (
-    <div class="flex flex-col items-center gap-1">
+    <div class="flex w-full min-w-0 flex-col items-center gap-1">
       {/* The price sits over the buttons, read before the second press */}
       <Show when={releasing() && going().length > 0}>
         <Row class="justify-center">
@@ -162,8 +162,11 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
           {count() - going().length} of these cannot be released: {tally(props.chosen)}
         </Meta>
       </Show>
-      <Row class="flex-nowrap justify-center">
-        <Meta class="shrink-0 tabular-nums">{count()} selected</Meta>
+      {/* Wraps on a phone, so the way out is never scrolled off the end */}
+      <Row class="justify-center sm:flex-nowrap">
+        <Meta class="shrink-0 basis-full text-center tabular-nums sm:basis-auto">
+          {count()} selected
+        </Meta>
         <Button
           disabled={props.busy === true || count() === 0}
           onClick={() => {

@@ -221,7 +221,7 @@ function PortalBody(
                   >
                     <span class="flex w-full items-center gap-2">
                       <span class="min-w-0 grow truncate text-left font-semibold">{town.name}</span>
-                      <Meta class="shrink-0">{BIOME_NAMES[town.biome]}</Meta>
+                      <Meta class="hidden shrink-0 sm:inline">{BIOME_NAMES[town.biome]}</Meta>
                       <Meta class="w-24 shrink-0 text-right tabular-nums">
                         {describeWhere(chunkOf(town), here())}
                       </Meta>

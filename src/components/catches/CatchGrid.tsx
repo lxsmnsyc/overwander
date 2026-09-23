@@ -97,20 +97,23 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
           itself under a handful of pokemon takes its own box away when
           it narrows far enough */}
       <Show when={props.bare !== true}>
-        <Row class="flex-nowrap items-center gap-2">
-          <Search
-            vocabulary={CATCH_VOCABULARY}
-            example="type:fire"
-            placeholder="Name, or type:fire is:shiny"
-            value={query()}
-            onChange={(value) => {
-              if (props.onSearch == null) {
-                setTyped(value);
-              } else {
-                props.onSearch(value);
-              }
-            }}
-          />
+        {/* On a phone the controls beside it drop under the search rather than squeezing it */}
+        <Row class="items-center gap-2 sm:flex-nowrap">
+          <div class="min-w-48 grow basis-full sm:basis-0">
+            <Search
+              vocabulary={CATCH_VOCABULARY}
+              example="type:fire"
+              placeholder="Name, or type:fire is:shiny"
+              value={query()}
+              onChange={(value) => {
+                if (props.onSearch == null) {
+                  setTyped(value);
+                } else {
+                  props.onSearch(value);
+                }
+              }}
+            />
+          </div>
           {/* Whatever the caller keeps beside the search: the button
               that turns picking on, most of the time. It belongs to the
               box rather than to the panel around it, since what it

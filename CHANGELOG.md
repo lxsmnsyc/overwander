@@ -1,5 +1,53 @@
 # overwander
 
+## 4.12.2
+
+### Patch Changes
+
+- 1b69db3: The game menu and the bar under the world are laid out anew:
+
+  - The menu's keys sit in three labelled rows: You, Play and Inbox.
+  - Settings and the day or night switch sit together at the foot of the menu.
+  - The menu button shows how many notices are waiting.
+  - The bar names the place, the weather, the time of day and the clock together, and pressing them opens when each part of the world next turns over.
+  - Field moves are buttons on the bar, and Surf or Fly shows as pressed while it is on.
+  - The "What the bar shows" setting is gone, since the bar now shows both.
+
+- a7f00c4: The battle lobby is laid out anew:
+
+  - The two seats face each other, and the host's seat is marked.
+  - Your party and ready buttons sit on your own seat.
+  - An open seat offers to take it or to invite somebody to it.
+  - The rules are one line, and spectators are folded under "Watching" until opened.
+
+- 4495039: The profile is laid out anew:
+
+  - Your details and your buddy share one trainer card.
+  - Your profile lists its sections down the side, grouped as Record, Social and Market, with no tabs inside tabs.
+  - Requests, Bids and Selling are sections of their own, and a notice opens the one it is about.
+  - Each waiting count shows once, on the section that holds it.
+
+- da590a9: The list of raids is laid out anew:
+
+  - Each raid shows its boss asleep, the boss's types, and an Open button.
+  - A raid says how far away it is and in which direction, rather than its chunk coordinates.
+  - The list says when the next raids arrive, and it pages past twenty.
+
+- da590a9: Settings are laid out anew:
+
+  - Settings are grouped into Display, Controls, World, Play, Audio and About, listed down the side.
+  - Settings reopens on the section you last had open.
+  - About counts the dex from the game's own data, so it now says gens 1 to 5 rather than gen 1 alone.
+
+- 13d3adc: The raid lobby is laid out anew:
+
+  - The boss sits beside the trainer list on a wide screen, and the list fills the height of the panel.
+  - The boss card shows what it is weak to, resists and is immune to, with both of its types counted together.
+  - The list counts the trainers against the limit and marks the host.
+  - Spectators are folded under "Watching" until opened.
+  - The way out is called Leave, and forming a team reads "Form another team" once you have one in.
+  - The host is told why Start is not ready.
+
 ## 4.12.1
 
 ### Patch Changes

@@ -20,9 +20,9 @@ pair.
 - A **Supabase** account, and the **Supabase CLI** on your `PATH`. The CLI is
   what pushes the schema. The dashboard cannot replay a migration folder.
 - A **Vercel** account, and the repository on GitHub, GitLab or Bitbucket.
-- The two OAuth apps. A deployed build signs in with **Google and GitHub** and
-  offers nothing else. The email and password form is drawn on a development
-  build alone.
+- The two OAuth apps. A deployed build signs in with **Google and GitHub**. The
+  email and password form is drawn on a development build, and on any build
+  whose host sets `VITE_EMAIL_SIGN_IN`.
 
 ## The order to do it in
 
@@ -49,6 +49,10 @@ migration in it. [Operating the game](deploy/operating.md) covers running it.
 | [Vercel](deploy/vercel.md)                         | The build settings, every environment variable, which key is which, first deploy |
 | [Schema changes](deploy/schema-changes.md)         | Writing a migration, pushing it, the order against a deploy, previews         |
 | [Operating the game](deploy/operating.md)          | Admin, what a deployed build will not do, upkeep, and what each failure means |
+| [Self-hosting](deploy/self-hosting.md)             | Running the whole thing yourself, with none of the three accounts above       |
+
+If you would rather not have any of those accounts, [Self-hosting](deploy/self-hosting.md)
+covers running the database, the auth server and the app on your own machines.
 
 ## See also
 

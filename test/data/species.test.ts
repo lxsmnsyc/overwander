@@ -18,6 +18,7 @@ import {
   TYPE_NAMES,
   TypeEffectiveness,
   Types,
+  getTypeFactor,
   getTypeMatchups,
 } from '../../src/data/constants/types';
 import Biome, { TimeOfDay, WILD_BIOMES } from '../../src/data/ids/biome';
@@ -195,6 +196,15 @@ describe('the type chart', () => {
 
     expect(new Set(ghost.immune)).toEqual(new Set(idsIn('Normal,Fighting')));
     expect(new Set(ghost.resists)).toEqual(new Set(idsIn('Poison,Bug')));
+  });
+
+  it('multiplies the chart across a dual type', () => {
+    const gyarados = [Types.Water, Types.Flying];
+
+    expect(getTypeFactor(Types.Electric, gyarados)).toBe(4);
+    expect(getTypeFactor(Types.Ground, gyarados)).toBe(0);
+    expect(getTypeFactor(Types.Fire, gyarados)).toBe(0.5);
+    expect(getTypeFactor(Types.Normal, gyarados)).toBe(1);
   });
 });
 

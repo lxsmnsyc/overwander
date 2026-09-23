@@ -52,7 +52,8 @@ function sheetOf(name: string): ExtraSheet | null {
 }
 
 async function fetchSheet(name: string): Promise<ExtraSheet> {
-  const response = await fetch(`/sprites/extras/${name}.json`);
+  // From the sprite host: the app deployment leaves public/sprites out
+  const response = await fetch(spriteUrl(`/sprites/extras/${name}.json`));
 
   if (!response.ok) {
     throw new Error(`No extras sheet at ${name}`);

@@ -141,10 +141,11 @@ are signed in as.
 
 ### Signing in
 
-A deployed game offers **Google and GitHub**, both redirect-based, and nothing
-else. The **email and password form is drawn on a development build alone**,
-which is what the browser tests sign in with: the local stack skips address
-confirmation, so a sign-up answers with a live session. A development build also
+A deployed game offers **Google and GitHub**, both redirect-based. The **email
+and password form is drawn on a development build**, and on any build whose host
+sets `VITE_EMAIL_SIGN_IN` to `1` or `true`. It is what the browser tests sign in
+with: the local stack skips address confirmation, so a sign-up answers with a
+live session. A development build also
 hands every account it creates the `admin` role, granted on the server.
 
 ## Commands

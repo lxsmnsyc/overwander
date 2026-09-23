@@ -454,6 +454,7 @@ export async function recordSteps(
   uid: string,
   reported: number,
   now: number,
+  offset = 0,
 ): Promise<WalkReport | null> {
   return tx(async (transaction) => {
     const profiles = await transaction`select buddy_id from profiles where id = ${uid}`;
@@ -544,7 +545,9 @@ export async function recordSteps(
     // An egg of the day's own family walks further on the same paces.
     // The credit is clamped again afterwards, since the pacing was
     // measured against what is left rather than what it is worth
-    const steps = caught.steps + Math.min(remaining, creditedEggSteps(caught.species, paced, now));
+    const steps =
+      caught.steps +
+      Math.min(remaining, creditedEggSteps(caught.species, paced, toLocalTime(now, offset)));
 
     // The stamp moves whether or not anything was credited: it is
     // what the next report is measured from, and a refused report

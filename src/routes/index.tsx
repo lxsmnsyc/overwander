@@ -15,7 +15,7 @@ import CatchDialog from '../components/catches/catch-dialog';
 import CatchesList from '../components/catches/catches-list';
 import GameMenu from '../components/app/GameMenu';
 import GameProvider, { GameDialog, useGame } from '../components/app/game-context';
-import InventoryList from '../components/items/InventoryList';
+import InventoryList, { BagHint } from '../components/items/InventoryList';
 import LoginForm from '../components/app/LoginForm';
 import GiftsTab from '../components/gifts/GiftsTab';
 import NotificationsTab from '../components/notifications/NotificationsTab';
@@ -214,6 +214,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onClose={close}
             width="wide"
             terse
+            aside={<BagHint />}
             title={TITLES[GameDialog.Inventory]}
             description={DESCRIPTIONS[GameDialog.Inventory]}
           >

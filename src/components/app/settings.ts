@@ -91,6 +91,8 @@ export interface GameSettings {
   music: number;
   /** Which section the settings panel opens on */
   settingsPane: SettingsPane;
+  /** Which pocket the bag opens on: an item type, or the bag's own numbers for All and Candies */
+  bagPocket: number;
 }
 
 /**
@@ -115,6 +117,7 @@ function defaults(): GameSettings {
     sound: 0.7,
     music: 0.5,
     settingsPane: 'display',
+    bagPocket: -1,
   };
 }
 
@@ -199,6 +202,8 @@ function stored(): GameSettings {
       sound: volume(said.sound, base.sound),
       music: volume(said.music, base.music),
       settingsPane: oneOf(said.settingsPane, SETTINGS_PANES, base.settingsPane),
+      // Checked against what the bag holds where it is read
+      bagPocket: Math.trunc(asNumber(said.bagPocket, base.bagPocket)),
     };
   } catch {
     // Unreadable or refused storage is a machine that has not been

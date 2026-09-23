@@ -44,9 +44,10 @@ Whirl Islands. A player walking in from a cave in the hills cannot reach them.
 
 A cave is dark whatever the hour. A player sees **2 cells** carrying nothing. A
 buddy with **Illuminate** sees **3**, and so does a buddy carrying the
-**Explorer Kit**, for a player whose buddy cannot light the way itself. They are
-worth the same and they do not stack, so it is a choice between spending the
-buddy or spending its held item rather than a reason to carry both.
+**Explorer Kit**, a prized find on the ground, for a player whose buddy cannot
+light the way itself. They are worth the same and they do not stack, so it is a
+choice between spending the buddy or spending its held item rather than a reason
+to carry both.
 
 ## See also
 

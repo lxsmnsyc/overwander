@@ -38,6 +38,7 @@ change to either needs a redeploy rather than a restart:
 | `VITE_SUPABASE_URL`      | `https://<ref>.supabase.co`                        |
 | `VITE_SUPABASE_ANON_KEY` | The project's **publishable** or **anon** key      |
 | `VITE_WORLD_SEED`        | Any string, and then never touched again           |
+| `VITE_EMAIL_SIGN_IN`     | Left empty, unless the deploy is to offer passwords |
 
 The **server's** variables are secret and are read at run time:
 

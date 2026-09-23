@@ -44,7 +44,8 @@ cleared, and thinks slightly better of its trainer for it.
 
 A **Rare Candy** is the exception to the family rule. Used from the bag on any
 pokemon, it buys one level no matter what family the pokemon belongs to and no
-matter what its levels normally cost. Nothing sells them; they are prizes.
+matter what its levels normally cost. Nothing sells them: they are quest prizes
+and rare finds on the ground.
 
 Releasing a pokemon pays its family 1 candy for every 25 levels it reached,
 rounded up: 1 for anything up to level 25, and 4 for a pokemon at 76 or above.

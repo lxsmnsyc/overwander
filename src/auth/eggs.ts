@@ -28,10 +28,11 @@ export type { EggWalk, WalkReport } from '../server/eggs';
  * Resolves what the walk came to, or null when the player walks alone
  */
 export async function walk(steps: number): Promise<WalkReport | null> {
-  return walkOnServer(await getIdToken(), steps);
+  return walkInZoneOnServer(await getIdToken(), steps, getLocalOffset());
 }
 
-async function walkOnServer(token: string, steps: number): Promise<WalkReport | null> {
+/** Retired: a tab from before the species day turned locally still calls this slot */
+export async function walkOnServer(token: string, steps: number): Promise<WalkReport | null> {
   'use server';
   check(TOKEN, token);
   check(COUNT, steps);
@@ -67,4 +68,16 @@ async function hatchOnServer(
   check(ID, catchId);
   check(OFFSET, offset);
   return hatchOnServerSide(await requireUid(token), catchId, await syncServerClock(), offset);
+}
+
+async function walkInZoneOnServer(
+  token: string,
+  steps: number,
+  offset: number,
+): Promise<WalkReport | null> {
+  'use server';
+  check(TOKEN, token);
+  check(COUNT, steps);
+  check(OFFSET, offset);
+  return recordSteps(await requireUid(token), steps, await syncServerClock(), offset);
 }

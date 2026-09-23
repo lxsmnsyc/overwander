@@ -28,7 +28,7 @@ import type { PostgrestError } from '@supabase/supabase-js';
 import { asRecord, asRecordArray } from './__normalize';
 import { announceBuddyChange } from './buddy-changes';
 import type { CatchOrder, CaughtPokemon } from './caught-record';
-import { CAUGHT_EMBED, fromCaughtRow } from './caught-rows';
+import { CAUGHT_EMBED, CAUGHT_LIST_EMBED, fromCaughtRow } from './caught-rows';
 import getSupabase from './supabase';
 import getIdToken from './session';
 import batchedQuery from '../utils/batched-query';
@@ -138,6 +138,10 @@ export async function getCaught(id: string): Promise<CaughtPokemon | null> {
 // oxlint-disable-next-line typescript/no-inferrable-types
 const ROW_SELECTION: string = `id, ${CAUGHT_EMBED}`;
 
+/** The same, for the screens that only offer a choice from the box */
+// oxlint-disable-next-line typescript/no-inferrable-types
+const LIST_SELECTION: string = CAUGHT_LIST_EMBED;
+
 /**
  * `getCaught` for a screen reading many at once, such as a lobby of
  * parties: every call made in the same moment goes out as one read.
@@ -176,6 +180,25 @@ const caughtRows = (owner: string) =>
 
 export async function listCaught(owner: string): Promise<[string, CaughtPokemon][]> {
   return rowsToPairs(await everyRow((from, to) => caughtRows(owner).order('id').range(from, to)));
+}
+
+/**
+ * The same box for a screen that offers a choice from it. The records
+ * come back without their history, effort or origin, which a chooser
+ * never shows: half the bytes of the whole box, and the whole box is
+ * what these screens read
+ */
+export async function listCaughtToChooseFrom(owner: string): Promise<[string, CaughtPokemon][]> {
+  return rowsToPairs(
+    await everyRow((from, to) =>
+      getSupabase()
+        .from(CAUGHT_TABLE)
+        .select(LIST_SELECTION)
+        .eq('owner', owner)
+        .order('id')
+        .range(from, to),
+    ),
+  );
 }
 
 /**

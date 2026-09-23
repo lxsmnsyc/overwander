@@ -92,12 +92,13 @@ and either way a player gets **one** per cell per hour.
 | Phenomenon         | Item half                         | Pokemon half                           |
 | ------------------ | --------------------------------- | -------------------------------------- |
 | **Hidden Grotto**  | Nothing at all                    | A pokemon, or 1/64 an egg of the biome |
-| **Dust Cloud**     | One gem, stone, plate or valuable | A pokemon                              |
-| **Rippling Water** | One valuable                      | A pokemon                              |
-| **Flying Shadow**  | One wing                          | A pokemon                              |
+| **Dust Cloud**     | Gems, stones, plates or valuables | A pokemon                              |
+| **Rippling Water** | Valuables                         | A pokemon                              |
+| **Flying Shadow**  | Wings                             | A pokemon                              |
 
-The pokemon is drawn from the biome's **uncommon** band, or its **rare** band
-one time in eight.
+The item half is a stash, rolled the way a cache's is: one to three kinds, one to
+three of each. The pokemon is drawn from the biome's **uncommon** band, or its
+**rare** band one time in eight.
 
 What a phenomenon leaves starts at **uncommon**. It does not hand over what an
 ordinary walk turns up anyway, and the two bands above that are eight times as

@@ -23,8 +23,8 @@ import { MAX_STEP_REPORT } from '../../../auth/egg';
 import type { SnapshotRecord } from '../../../auth/snapshot-record';
 import { type EggWalk, type WalkReport, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../auth/encounter-record';
-import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
-import { serverNow } from '../../../auth/clock';
+import { getLocalOffset } from '../../../auth/local-time';
+import { localNow } from '../../../auth/clock';
 import { RaidAction, RaidKind, type RaidView, canJoinRaids, peekRaid } from '../../../auth/raids';
 import { type StopRecord, stopIdOf } from '../../../auth/stop-record';
 import { claimStopReward, enterStop } from '../../../auth/stops';
@@ -131,6 +131,7 @@ import {
   PUBLISHED_SPAWNS,
   REFRESH_DEBOUNCE,
   SAVE_DELAY,
+  SAVE_FLOOR,
   STANDINGS_MEMORY,
   START_CELL,
   STEP_PACE,
@@ -587,8 +588,7 @@ export default function OverworldBoard(props: {
 
   /** Whether a window still stands, which is when visiting its chunk would only read it again */
   const isLive = (record: WatchedWindow['record']): boolean =>
-    record.spawns.length > 0 &&
-    toLocalTime(serverNow(), zone) < record.timestamp + SNAPSHOT_INTERVAL;
+    record.spawns.length > 0 && localNow(zone) < record.timestamp + SNAPSHOT_INTERVAL;
 
   /**
    * Visit the chunks whose window is missing or has run out; the watch
@@ -765,7 +765,7 @@ export default function OverworldBoard(props: {
       return;
     }
 
-    const now = toLocalTime(serverNow(), zone);
+    const now = localNow(zone);
     let soonest = Number.POSITIVE_INFINITY;
 
     for (const { record } of held.values()) {
@@ -795,7 +795,7 @@ export default function OverworldBoard(props: {
   // Rather than staying pressable and answering "too late"
   const liveWindows = createMemo(() => {
     expiries();
-    return runningWindows(windows(), toLocalTime(serverNow(), zone));
+    return runningWindows(windows(), localNow(zone));
   });
 
   // What walks beside the player changes what the chunk holds, so the
@@ -873,8 +873,7 @@ export default function OverworldBoard(props: {
       held.set(`${piece.x},${piece.y}`, piece);
     }
 
-    const current =
-      Math.floor(toLocalTime(serverNow(), zone) / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
+    const current = Math.floor(localNow(zone) / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
     const lists: Promise<string[]>[] = [];
     let live = true;
 
@@ -1412,6 +1411,8 @@ export default function OverworldBoard(props: {
    */
   let pending = 0;
   let reporting = false;
+  /** When the position was last written, which is what SAVE_FLOOR is measured from */
+  let settledAt = 0;
 
   /**
    * Hand the paces walked so far to the server. A walk in progress
@@ -1472,6 +1473,7 @@ export default function OverworldBoard(props: {
     if (game.elsewhere() != null) {
       return;
     }
+    settledAt = Date.now();
     // The paces ride the save, unless a report is already out with them
     const steps = reporting ? 0 : pending;
 
@@ -1538,7 +1540,9 @@ export default function OverworldBoard(props: {
   // ...and remembered as they walk. A step is a keypress, so the
   // writes are held back to one every SAVE_DELAY: the effect re-runs
   // on every move and clears the timer it set last time, so what
-  // lands is where they stopped rather than every square they crossed
+  // lands is where they stopped rather than every square they crossed.
+  // SAVE_FLOOR holds the rest of the wait, since a walk of two steps
+  // and a pause, over and over, is otherwise a write every few seconds
   createEffect(() => {
     const user = auth.user();
     const at = {
@@ -1552,9 +1556,10 @@ export default function OverworldBoard(props: {
       return;
     }
 
+    const owed = Math.max(SAVE_DELAY, SAVE_FLOOR - (Date.now() - settledAt));
     const timer = setTimeout(() => {
       settle(at.chunkX, at.chunkY, at.cellX, at.cellY);
-    }, SAVE_DELAY);
+    }, owed);
 
     onCleanup(() => {
       clearTimeout(timer);
@@ -2800,10 +2805,7 @@ export default function OverworldBoard(props: {
               style={{
                 'background-color': loaded().underground
                   ? CAVERN.colour
-                  : getSkybox(
-                      toLocalTime(serverNow(), getLocalOffset()),
-                      latitudeOf(loaded().chunkY),
-                    ).horizon,
+                  : getSkybox(localNow(), latitudeOf(loaded().chunkY)).horizon,
               }}
             >
               <ChunkCanvas
@@ -2983,6 +2985,7 @@ export default function OverworldBoard(props: {
             <NestDialog
               offer={eggOffer()}
               busy={taking()}
+              buddy={buddy() ?? null}
               onAccept={takeEgg}
               onClose={() => {
                 setEggOffer(null);

@@ -129,6 +129,9 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
           </Note>
         }
       >
+        {/* Above the box: five rows of squares fill a laptop screen, and
+            paging under them is paging a player has to scroll to */}
+        {shelf.controls({ range: true })}
         <CatchBox
           entries={shelf.shown()}
           columns={settings().boxColumns}
@@ -136,7 +139,6 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
           cardOnly={props.cardOnly}
           cell={props.cell}
         />
-        {shelf.controls()}
       </Show>
     </div>
   );

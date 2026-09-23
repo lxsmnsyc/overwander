@@ -38,6 +38,8 @@ const BERRY_POOL: ItemRarityGroups = {
     { item: Items.AguavBerry, weight: 5 },
     { item: Items.IapapaBerry, weight: 5 },
   ],
+  // Nothing grows scarce: a roll that lands here falls to uncommon
+  scarce: [],
   rare: [
     { item: Items.LumBerry, weight: 10 },
     { item: Items.SitrusBerry, weight: 10 },

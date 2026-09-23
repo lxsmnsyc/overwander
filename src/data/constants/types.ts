@@ -289,6 +289,20 @@ export interface TypeMatchups {
   immune: Types[];
 }
 
+/** How hard an attacking type hits a defender of all these types at once */
+export function getTypeFactor(attacking: Types, defending: readonly Types[]): number {
+  let factor = 1;
+
+  for (const type of defending) {
+    const matchup = TYPE_EFFECTIVENESS[attacking][type];
+
+    if (matchup != null) {
+      factor *= TYPE_EFFECTIVENESS_FACTOR[matchup];
+    }
+  }
+  return factor;
+}
+
 /**
  * How a type fares both ways round: what it is good against, and what
  * is good against it.

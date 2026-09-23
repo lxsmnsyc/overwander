@@ -40,19 +40,17 @@ import spendItemOn, { getLevelMoves, isUsableOn } from './use-item';
 import spentToast from './spent-toast';
 import { GameDialog, useGame } from '../app/game-context';
 import { Hint, HintList, Note, TabBar, TabButton, TabGroup, TabPane, useToast } from '../styled';
+import settings, { setSetting } from '../app/settings';
 
 export interface InventoryListProps {
   player: string;
 }
 
-/** The bag's two tabs */
-const enum BagView {
-  Items = 0,
-  Candies = 1,
-}
-
 /** The items tab that holds every type at once, beside one tab per type */
 const ALL_ITEMS = -1;
+
+/** The candy pocket, numbered past the item types like `ALL_ITEMS` */
+const CANDIES = -2;
 
 /** An item's type, or null for one the registry does not know */
 function typeOf(item: Items): ItemTypes | null {
@@ -87,6 +85,11 @@ function isRelic(item: Items): boolean {
   return getRaidSpecies(item) != null;
 }
 
+/** How many different things a pocket holds, beside its name */
+function Count(props: { of: number }): JSX.Element {
+  return <span class="ml-2 text-xs font-normal tabular-nums opacity-80">{props.of}</span>;
+}
+
 /** What pressing this square is announced as doing */
 function relicVerb(item: Items): string {
   if (isRelic(item)) {
@@ -96,6 +99,26 @@ function relicVerb(item: Items): string {
     return 'Climb out with ';
   }
   return isUsable(item) ? 'Use ' : '';
+}
+
+/** What the bag's pockets hold and what pressing does, for the dialog's title bar */
+export function BagHint(): JSX.Element {
+  return (
+    <Hint title="About the bag">
+      <HintList>
+        <li>Press an item you can use to pick the pokemon to use it on.</li>
+        <li>Medicine heals and cures. Poke Balls are thrown at wild pokemon.</li>
+        <li>Held items are given to a pokemon from its sheet.</li>
+        <li>Machines teach a move, and evolution items evolve the pokemon that need them.</li>
+        <li>Training items change a pokemon's values or effort.</li>
+        <li>Fossils are revived by the Fossil Scientist, and valuables are only worth selling.</li>
+        <li>
+          Candies belong to a family. Every pokemon in that line spends the same pile to level up,
+          and releasing one gives some back.
+        </li>
+      </HintList>
+    </Hint>
+  );
 }
 
 /**
@@ -268,16 +291,12 @@ function BagBody(
     }
     return order;
   });
-  const [shelf, setShelf] = createSignal<number>(ALL_ITEMS);
+  /** The open pocket, remembered per device. A type the bag no longer holds falls back to All */
+  const shelf = (): number => {
+    const at = settings().bagPocket;
 
-  // A type the bag no longer holds has no tab left to stand on
-  createEffect(() => {
-    const at = shelf();
-
-    if (at !== ALL_ITEMS && !types().includes(at)) {
-      setShelf(ALL_ITEMS);
-    }
-  });
+    return at === ALL_ITEMS || at === CANDIES || types().includes(at) ? at : ALL_ITEMS;
+  };
 
   /**
    * Pressing a square. Nothing is refused: an item with no use has
@@ -367,66 +386,53 @@ function BagBody(
 
   return (
     <>
-      <TabGroup horizontal defaultValue={BagView.Items} class="flex flex-col gap-3">
-        <div class="flex items-center gap-2">
-          <TabBar>
-            <TabButton value={BagView.Items}>Items</TabButton>
-            <TabButton value={BagView.Candies}>Candies</TabButton>
-          </TabBar>
-          <span class="ml-auto">
-            <Hint title="About the bag">
-              <HintList>
-                <li>Press an item you can use to pick the pokemon to use it on.</li>
-                <li>Medicine heals and cures. Poke Balls are thrown at wild pokemon.</li>
-                <li>Held items are given to a pokemon from its sheet.</li>
-                <li>
-                  Machines teach a move, and evolution items evolve the pokemon that need them.
-                </li>
-                <li>Training items change a pokemon's values or effort.</li>
-                <li>
-                  Fossils are revived by the Fossil Scientist, and valuables are only worth selling.
-                </li>
-                <li>
-                  Candies belong to a family. Every pokemon in that line spends the same pile to
-                  level up, and releasing one gives some back.
-                </li>
-              </HintList>
-            </Hint>
-          </span>
-        </div>
-        <TabPane value={BagView.Items}>
-          <Show when={props.items.latest?.length} fallback={<Note>Carrying nothing.</Note>}>
-            <TabGroup
-              horizontal
-              value={shelf()}
-              onChange={(value) => {
-                setShelf(value);
-              }}
-              class="flex flex-col gap-3"
-            >
-              <TabBar>
-                <TabButton value={ALL_ITEMS}>All</TabButton>
-                <For each={types()}>
-                  {(type) => <TabButton value={type}>{ITEM_TYPE_NAMES[type]}</TabButton>}
-                </For>
-              </TabBar>
-              <TabPane value={ALL_ITEMS}>
-                <ItemGrid entries={tray(null)} onPress={press} />
+      {/* One level of pockets: a side list from `md` up, a bar that
+          scrolls sideways on a phone */}
+      <TabGroup
+        horizontal
+        value={shelf()}
+        onChange={(value) => {
+          setSetting('bagPocket', value);
+        }}
+        class="flex flex-col gap-3 md:flex-row md:items-start md:gap-4"
+      >
+        <TabBar class="md:sticky md:top-0 md:w-44 md:shrink-0 md:flex-col md:overflow-visible">
+          <TabButton value={ALL_ITEMS} class="md:justify-between">
+            All
+            <Count of={props.items.latest?.length ?? 0} />
+          </TabButton>
+          <For each={types()}>
+            {(type) => (
+              <TabButton value={type} class="md:justify-between">
+                {ITEM_TYPE_NAMES[type]}
+                <Count of={tray(type).length} />
+              </TabButton>
+            )}
+          </For>
+          <span aria-hidden="true" class="mx-2 my-1 hidden h-0.5 bg-line-soft md:block" />
+          <TabButton value={CANDIES} class="md:justify-between">
+            Candies
+            <Count of={piles().length} />
+          </TabButton>
+        </TabBar>
+
+        <div class="min-w-0 grow">
+          <TabPane value={ALL_ITEMS}>
+            <Show when={props.items.latest?.length} fallback={<Note>Carrying nothing.</Note>}>
+              <ItemGrid entries={tray(null)} onPress={press} />
+            </Show>
+          </TabPane>
+          <For each={types()}>
+            {(type) => (
+              <TabPane value={type}>
+                <ItemGrid entries={tray(type)} onPress={press} />
               </TabPane>
-              <For each={types()}>
-                {(type) => (
-                  <TabPane value={type}>
-                    <ItemGrid entries={tray(type)} onPress={press} />
-                  </TabPane>
-                )}
-              </For>
-            </TabGroup>
-          </Show>
-        </TabPane>
-        {/* A pile is a picture and a number in the jar's own colours */}
-        <TabPane value={BagView.Candies}>
-          <CandyGrid piles={piles()} />
-        </TabPane>
+            )}
+          </For>
+          <TabPane value={CANDIES}>
+            <CandyGrid piles={piles()} />
+          </TabPane>
+        </div>
       </TabGroup>
 
       {/* Which pokemon it goes on, and the last press: the item is spent

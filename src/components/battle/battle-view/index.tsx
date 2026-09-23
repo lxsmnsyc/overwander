@@ -43,7 +43,7 @@ import { type Contribution, type SideSummary, readContributions, readSides } fro
 import CatchDialog from '../../catches/catch-dialog';
 import { getFamilyName } from '../../../data/species';
 import { Button, Dialog, DialogActions, Note, Status, useToast } from '../../styled';
-import type { ActiveBattle, PendingReward } from '../../app/game-context';
+import type { ActiveBattle, PendingReward, Spoils } from '../../app/game-context';
 import { type Profile, getProfiles } from '../../../auth/profile';
 
 /**
@@ -76,6 +76,8 @@ export interface BattleViewProps {
   onLeave: () => void;
   /** A prize the settled fight left waiting to be collected */
   onReward: (reward: PendingReward) => void;
+  /** What that prize came to, once claimed, for the summary to show */
+  spoils?: () => Spoils | null;
 }
 
 /**
@@ -97,6 +99,15 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
    * than a sentence listing them, since which pile grew is the thing
    * being reported
    */
+  /** Candy the settled fight paid, for the summary */
+  const [candy, setCandy] = createSignal<CandyEarned[]>([]);
+  /** Whether the view has been left, so a late payout is said in passing instead */
+  let gone = false;
+
+  onCleanup(() => {
+    gone = true;
+  });
+
   const sayCandy = (earned: CandyEarned[]): void => {
     for (const pile of earned) {
       toast.push({
@@ -630,9 +641,18 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         const aftermath = collectAftermath(built, user.uid);
 
         if (aftermath.length > 0) {
-          sayCandy(
-            await recordAftermath(props.active.id, aftermath, countDefeated(built, user.uid)),
+          const earned = await recordAftermath(
+            props.active.id,
+            aftermath,
+            countDefeated(built, user.uid),
           );
+
+          // Onto the summary while it is up, in passing once the player has left
+          if (gone) {
+            sayCandy(earned);
+          } else {
+            setCandy(earned);
+          }
         }
       }
 
@@ -796,6 +816,9 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
           — the prize is already recorded either way */}
       <VerdictDialog
         verdict={verdict}
+        outcome={outcome()}
+        spoils={props.spoils?.() ?? null}
+        candy={candy()}
         dismissed={dismissed()}
         onDismiss={() => {
           setDismissed(true);

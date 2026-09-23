@@ -303,6 +303,31 @@ const SHELF = ((): Awards[] => {
 
 const GRID_COLUMNS = 6;
 
+/**
+ * An award's own picture where it has one, for anywhere outside the
+ * shelf that names an award as won
+ */
+export function AwardArt(props: { award: Awards; class?: string }): JSX.Element {
+  return (
+    <Show
+      when={AWARD_SPRITES[props.award]}
+      keyed
+      fallback={
+        <span
+          class={`flex items-center justify-center rounded-full text-xs font-semibold text-white ${
+            props.class ?? ''
+          }`}
+          style={{ 'background-color': AWARD_COLORS[props.award] }}
+        >
+          {CHAMPION_TITLES_SET.has(props.award) ? '★' : AWARD_NAMES[props.award].slice(0, 1)}
+        </span>
+      }
+    >
+      {(sprite) => <ExtraSprite sheet={sprite[0]} name={sprite[1]} label="" class={props.class} />}
+    </Show>
+  );
+}
+
 function Slot(props: { award: Awards; wins: number | null }): JSX.Element {
   const name = (): string => AWARD_NAMES[props.award];
   const held = (): boolean => props.wins != null;

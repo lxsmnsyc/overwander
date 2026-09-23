@@ -529,6 +529,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onReward={(reward) => {
               game.setReward(reward);
             }}
+            spoils={game.spoils}
           />
         </BattleData>
       )}

@@ -1,5 +1,40 @@
 # overwander
 
+## 4.13.0
+
+### Minor Changes
+
+- 4a37ee0: The pokedex is easier to move around:
+
+  - A chip per region shows how many of its pokemon you have seen and caught, and pressing it turns to that region.
+  - A search finds a dex number, or the name of a pokemon you have already met.
+  - The dex can show everything, only what you have caught, or only what you are missing.
+  - Each page says which region it is in, and the squares are larger.
+
+- 30ccf57: The world map can be steered without a keyboard:
+
+  - Drag the map to pan it, on a mouse or a touch screen.
+  - Buttons in the map's corner pan it a chunk at a time, or return it to you.
+  - The map shows where you are and where it is looking.
+  - The sky switch and a key to the colours sit on the map itself.
+  - Each notable sky in view is a button that pans the map to it.
+
+### Patch Changes
+
+- d18800d: The bag is laid out anew:
+
+  - Its pockets are one list down the side: All, one pocket per kind of item you carry, then Candies.
+  - Each pocket shows how many different things it holds.
+  - The bag reopens on the pocket you last had open.
+
+- ed17a99: - The honey tree's dialog shows the tree, and its Lather button shows the jar and how many are left, like the safari's Throw.
+  - A pokemon's evolution row no longer puts a "+" in front of a single condition.
+- 8b2f095: The catches box is laid out anew:
+
+  - A sort menu and a direction button sit beside the search, and they stay in step with a typed `sort:`.
+  - The box's page control sits above the squares and says which catches are showing out of how many.
+  - While selecting, the actions sit at the foot of the dialog with a count of what is picked.
+
 ## 4.12.2
 
 ### Patch Changes

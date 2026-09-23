@@ -24,16 +24,15 @@ import {
   boardCellOf,
   boardCells,
   boardIndexOf,
+  boardStand,
   boardView,
   compassMarks,
   depthOrder,
   facingFrom,
   fitPicture,
-  isBoardCell,
   projectAir,
   projectBoardCell,
   projectBoardCellQuad,
-  projectGround,
   radiusOf,
   reachOf,
   setBoardFlat,
@@ -69,7 +68,6 @@ import createBoardScene, {
   type SceneSpot,
   hazeAt,
 } from '../../../canvas/three/board-scene';
-import { TERRACE_TOP } from '../../../overworld/terrace';
 import terrainCell from '../../../canvas/terrain-cell';
 import QuadBatch, { type Painter } from '../../../canvas/gl/quad-batch';
 import Bakery, { type Baked } from '../../../canvas/bakery';
@@ -204,21 +202,8 @@ const RING_SPREAD = 2;
  */
 const SPRITE_LIFT = 0.3;
 
-/** The levels a press is read at, highest first */
-const DOWNWARD: number[] = [];
-
-for (let step = 0; step <= TERRACE_TOP; step++) {
-  DOWNWARD.push(TERRACE_TOP - step);
-}
-
-/** A cell and the eight around it, for a reading that may have landed one cell off */
-const AROUND: [number, number][] = [];
-
-for (const dy of [-1, 0, 1]) {
-  for (const dx of [-1, 0, 1]) {
-    AROUND.push([dx, dy]);
-  }
-}
+/** Every cell a press can land on, listed once */
+const PRESSABLE = boardCells();
 
 /** Whether a point falls inside a quad, its corners given in order round it */
 function inQuad(point: { x: number; y: number }, corners: { x: number; y: number }[]): boolean {
@@ -1542,35 +1527,29 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     if (boardView().mode === '2d') {
       return boardCellAtFraction(at.x, at.y, yaw(), camera());
     }
-    // Read at every level, and kept only where the point falls inside a
-    // cell as it is drawn, corners sunk down any slope. A slope lies below
-    // its own level, so a reading at that level alone names the tile
-    // behind it. Of the cells the point is inside, the nearest is on top
-    const candidates: BoardCell[] = [];
-
-    for (const level of DOWNWARD) {
-      const hit = boardCellAtFraction(at.x, at.y, yaw(), camera(), level * TERRACE_LIFT);
-
-      if (hit != null) {
-        for (const [dx, dy] of AROUND) {
-          candidates.push({ x: hit.x + dx, y: hit.y + dy });
-        }
-      }
-    }
-
+    // Every cell is tested against its outline as drawn, corners sunk
+    // down any slope, and the nearest one the point is inside is on top.
+    // Asked of the whole board: guessing candidates from a reading at
+    // each level drifts by cells once the ground stands many levels off
     let found: BoardCell | null = null;
     let nearest = Number.NEGATIVE_INFINITY;
 
-    for (const cell of candidates) {
-      const lifts = cornerLifts(cell);
-      const corners: ProjectedPoint[] = [];
-
-      for (let corner = 0; corner < lifts.length; corner++) {
-        corners.push(projectBoardCellQuad(shifted(cell), yaw(), lifts[corner])[corner]);
-      }
+    for (const cell of PRESSABLE) {
       const depth = projectBoardCell(shifted(cell), yaw()).y;
 
-      if (isBoardCell(cell) && depth > nearest && inQuad(at, corners)) {
+      if (depth <= nearest) {
+        continue;
+      }
+      const lifts = cornerLifts(cell);
+      const level = lifts[0] === lifts[1] && lifts[1] === lifts[2] && lifts[2] === lifts[3];
+      const corners = level ? projectBoardCellQuad(shifted(cell), yaw(), lifts[0]) : [];
+
+      if (!level) {
+        for (let corner = 0; corner < lifts.length; corner++) {
+          corners.push(projectBoardCellQuad(shifted(cell), yaw(), lifts[corner])[corner]);
+        }
+      }
+      if (inQuad(at, corners)) {
         nearest = depth;
         found = cell;
       }
@@ -2282,7 +2261,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       if (loading()) {
         marks?.glass();
 
-        const middle = at(projectGround({ u: 0.5, v: 0.5 }, yaw()));
+        const middle = at(projectAir({ u: 0.5, v: 0.5 }, boardStand(), yaw()));
         const size = Math.round(LOADING_SIZE * magnify);
         const font = `bold ${size}px monospace`;
         const word =
@@ -3942,7 +3921,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * the only one coloured: a shape and a colour are read at a
        * glance, where four letters had to be read one at a time
        */
-      const hub = at(projectGround({ u: 0.5, v: 0.5 }, yaw()));
+      const hub = at(projectAir({ u: 0.5, v: 0.5 }, boardStand(), yaw()));
 
       for (const mark of compassMarks(yaw())) {
         const spot = at(mark);

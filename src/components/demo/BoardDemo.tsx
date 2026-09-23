@@ -1,5 +1,5 @@
 import { type JSX, createMemo, createSignal, onCleanup, onMount } from 'solid-js';
-import { Badge, Button, Note, Row, Select } from '../styled';
+import { Badge, Button, Row, Select } from '../styled';
 import type Biome from '../../data/ids/biome';
 import BiomeId from '../../data/ids/biome';
 import { BIOME_NAMES, isLegendarySpecies, isMythicalSpecies } from '../../data/biome';
@@ -23,7 +23,7 @@ import { type BoardGround, readBoardGround } from '../../overworld/board-ground'
 import { isLavaAt, readGround } from '../../overworld/ground';
 import { isRouteAt, routesNear } from '../../overworld/route';
 import { blocksWalk } from '../../overworld/cliff';
-import { TERRACE_TOP, levelAt } from '../../overworld/terrace';
+import { levelAt, terraceTop } from '../../overworld/terrace';
 import { Species } from '../../data/ids/species';
 
 /**
@@ -702,7 +702,7 @@ export default function BoardDemo(): JSX.Element {
           {at()[0]}, {at()[1]}
         </Badge>
         <Badge tone="neutral">
-          level {levelAt(world(), at()[0], at()[1])} of {TERRACE_TOP}
+          level {levelAt(world(), at()[0], at()[1])} of {terraceTop(world())}
         </Badge>
         <Button
           onClick={() => {
@@ -726,27 +726,6 @@ export default function BoardDemo(): JSX.Element {
         </Button>
         <Badge>{seed()}</Badge>
       </Row>
-
-      <Note>
-        The ground is the real world's, read at the cell the badges name. Press a cell to walk
-        there, which finds a way round whatever is in the road; the arrows step, and water, rock and
-        the face of a cliff stop them the way they do in the game. A screen taller than it is wide
-        is drawn flat from above, with the round shadow the board uses at night and the weather
-        against the glass; anything wider is laid back under the camera. Drag the ground to walk the
-        camera round. The Layer switch goes down through the nearest cave mouth, or back up. Hour
-        lights the board at a time of day instead of waiting for one, and Light carries what a
-        player would carry into the dark: nothing, or an Illuminate buddy.
-      </Note>
-
-      <Note>
-        The pokemon standing about wear every mark the board can put on one, in this order from the
-        spots nearest the player: Bulbasaur plain, Charmander shiny, Squirtle of the day's family,
-        Pikachu shiny and of the day's family, then the auras: Articuno, Zapdos with the day's
-        family, shiny Moltres with it too, Mew, Celebi with the day's family, and shiny Jirachi with
-        it. A cell in two marks at once is the case nobody can stage in the game, which is what this
-        is here for: the family's gold rings travel out from under a turning seal, gold under a
-        legendary and magenta under a mythical.
-      </Note>
 
       {/* The board takes the whole of whatever it is put in, so the
           frame is what decides its shape and therefore which of the two

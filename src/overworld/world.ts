@@ -9,6 +9,7 @@ import Biome, { getBiome } from '../data/ids/biome';
 import type Weather from '../data/overworld/weather';
 import { classifyWeather } from '../data/overworld/weather';
 import Chunk, { CHUNK_CELLS } from './chunk';
+import { SECOND_TERRACE_COUNT, TERRACE_STEPS, evenTerraceSteps } from './terrace';
 
 /**
  * How many chunks one climate noise cell spans: lower values make
@@ -252,6 +253,10 @@ export default class World {
     public seed: string,
     public readonly depth: Depth = Depth.Surface,
     public readonly generation: Generation = Generation.First,
+    /** Where the terrace levels start, lowest first: the generation's own unless a caller passes some */
+    public readonly terraceSteps: readonly number[] = generation === Generation.First
+      ? TERRACE_STEPS
+      : evenTerraceSteps(SECOND_TERRACE_COUNT),
   ) {
     if (generation === Generation.First) {
       const rng = new AleaRNG(seed);
@@ -292,6 +297,15 @@ export default class World {
     this.stone = new SimplexNoise(key, FieldSalt.Stone, 2);
     this.warp = new SimplexStack([warpX, warpY]);
     this.climate = new SimplexStack([humidity, temperature, elevation]);
+  }
+
+  /**
+   * Whether a town stands on one level, its middle's, with its edges
+   * squared off so no lone cell sticks out. The first generation's
+   * towns kept the slope and the round edge they were built with
+   */
+  get flattensTowns(): boolean {
+    return this.generation !== Generation.First;
   }
 
   /**
@@ -581,7 +595,7 @@ export default class World {
       return this;
     }
     if (this.other == null) {
-      this.other = new World(this.seed, depth, this.generation);
+      this.other = new World(this.seed, depth, this.generation, this.terraceSteps);
       // Pointed back, so the pair is two objects however many times
       // either of them is asked for the other
       this.other.other = this;

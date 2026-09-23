@@ -53,6 +53,7 @@ import { DECORATION_NAMES } from '../../../data/overworld/decoration';
 import {
   CHAMPION_NAMES,
   ELITE_MEMBER_NAMES,
+  FRONTIER_BRAIN_NAMES,
   GYM_LEADER_NAMES,
   LEGEND_NAMES,
 } from '../../../data/overworld/experts';
@@ -62,13 +63,15 @@ import Npc, { NPC_NAMES, NPC_VISIT_TAGS } from '../../../data/overworld/npc';
 import type { GymSeatStanding } from '../../../auth/gym-seat-record';
 import { enterGymSeat } from '../../../auth/gym-seats';
 import { type LandmarkStandings, readLandmarkStandings } from '../../../auth/landmark-standings';
-import { CellAura } from '../chunk-canvas/scenery';
+import { CellAura, type SpawnRank } from '../chunk-canvas/scenery';
 import GymSeatDialog from '../GymSeatDialog';
 import { VENDOR_KIND_NAMES } from '../../../data/overworld/vendor';
 import type Phenomenon from '../../../data/overworld/phenomenon';
 import { PHENOMENON_NAMES } from '../../../data/overworld/phenomenon';
+import type { Species } from '../../../data/ids/species';
 import { getSpeciesData } from '../../../data/species';
 import { isFeaturedSpecies } from '../../../data/species/day';
+import { isLegendarySpecies, isMythicalSpecies } from '../../../data/biome';
 import { CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from '../../../overworld/chunk';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
@@ -128,6 +131,7 @@ import {
   PUBLISHED_SPAWNS,
   REFRESH_DEBOUNCE,
   SAVE_DELAY,
+  SAVE_FLOOR,
   STANDINGS_MEMORY,
   START_CELL,
   STEP_PACE,
@@ -166,6 +170,22 @@ const keptWindows = new LRUMap<string, SnapshotRecord>(CLAIM_MEMORY);
  * `Suspense` written there and land on the boundary around the whole
  * page — the world is what that boundary would blank
  */
+/** Which of the one-per-world kinds a spawn is, or null for everything else */
+function rankOf(species: Species): SpawnRank {
+  if (isLegendarySpecies(species)) {
+    return 'legendary';
+  }
+  return isMythicalSpecies(species) ? 'mythical' : null;
+}
+
+/** The four who keep a house of their own, each a standing fight */
+const EXPERT_LANDMARKS = new Set<Landmark>([
+  Landmark.GymLeader,
+  Landmark.EliteFour,
+  Landmark.Champion,
+  Landmark.FrontierBrain,
+]);
+
 export default function OverworldBoard(props: {
   buddy: Resource<Buddy | null>;
   fled: Resource<Set<string>>;
@@ -1084,6 +1104,7 @@ export default function OverworldBoard(props: {
       return next;
     }
     const { snapshot, read } = held;
+    const latheredNow = lathered();
 
     for (const [at, landmark] of loaded.landmarks) {
       const spot = loaded.at(at);
@@ -1110,6 +1131,19 @@ export default function OverworldBoard(props: {
         if (staged && !read.beaten.has(inChunk)) {
           next.set(at, CellAura.Fight);
         }
+      } else if (EXPERT_LANDMARKS.has(landmark)) {
+        // An expert's house is a fight waiting like any other. Whether
+        // they will take the challenge is theirs to say at the door
+        const staged =
+          landmark === Landmark.FrontierBrain
+            ? snapshot.getFrontierBrain(inChunk) != null
+            : snapshot.getGymStops().has(inChunk) ||
+              snapshot.getEliteStops().has(inChunk) ||
+              snapshot.getChampionStops().has(inChunk);
+
+        if (staged && !read.beaten.has(inChunk)) {
+          next.set(at, CellAura.Fight);
+        }
       } else if (landmark === Landmark.WanderingNpc) {
         const standing = snapshot.getStandingNpc(inChunk);
 
@@ -1118,6 +1152,11 @@ export default function OverworldBoard(props: {
         }
       } else if (landmark === Landmark.Nest) {
         if (snapshot.getNests().has(inChunk) && !read.taken.has(inChunk)) {
+          next.set(at, CellAura.Fresh);
+        }
+      } else if (landmark === Landmark.HoneyTree) {
+        // Still holding this window's honey for this player, the way an unclaimed nest does
+        if (!latheredNow.has(keyAt(spot))) {
           next.set(at, CellAura.Fresh);
         }
       }
@@ -1374,6 +1413,8 @@ export default function OverworldBoard(props: {
    */
   let pending = 0;
   let reporting = false;
+  /** When the position was last written, which is what SAVE_FLOOR is measured from */
+  let settledAt = 0;
 
   /**
    * Hand the paces walked so far to the server. A walk in progress
@@ -1434,6 +1475,7 @@ export default function OverworldBoard(props: {
     if (game.elsewhere() != null) {
       return;
     }
+    settledAt = Date.now();
     // The paces ride the save, unless a report is already out with them
     const steps = reporting ? 0 : pending;
 
@@ -1500,7 +1542,9 @@ export default function OverworldBoard(props: {
   // ...and remembered as they walk. A step is a keypress, so the
   // writes are held back to one every SAVE_DELAY: the effect re-runs
   // on every move and clears the timer it set last time, so what
-  // lands is where they stopped rather than every square they crossed
+  // lands is where they stopped rather than every square they crossed.
+  // SAVE_FLOOR holds the rest of the wait, since a walk of two steps
+  // and a pause, over and over, is otherwise a write every few seconds
   createEffect(() => {
     const user = auth.user();
     const at = {
@@ -1514,9 +1558,10 @@ export default function OverworldBoard(props: {
       return;
     }
 
+    const owed = Math.max(SAVE_DELAY, SAVE_FLOOR - (Date.now() - settledAt));
     const timer = setTimeout(() => {
       settle(at.chunkX, at.chunkY, at.cellX, at.cellY);
-    }, SAVE_DELAY);
+    }, owed);
 
     onCleanup(() => {
       clearTimeout(timer);
@@ -2637,6 +2682,7 @@ export default function OverworldBoard(props: {
         // Against the window's own instant, which is what the
         // server weighted the pool by
         featured: isFeaturedSpecies(standing.spawn[0], loaded.snapshot.timestamp),
+        rank: rankOf(standing.spawn[0]),
       });
     }
     return coats;
@@ -2715,6 +2761,11 @@ export default function OverworldBoard(props: {
       const champion = spot.snapshot.getChampion(spot.cell);
 
       return champion == null ? LANDMARK_NAMES[landmark] : CHAMPION_NAMES[champion];
+    }
+    if (landmark === Landmark.FrontierBrain) {
+      const brain = spot.snapshot.getFrontierBrain(spot.cell);
+
+      return brain == null ? LANDMARK_NAMES[landmark] : FRONTIER_BRAIN_NAMES[brain];
     }
     return LANDMARK_NAMES[landmark];
   };

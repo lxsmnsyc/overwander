@@ -28,6 +28,8 @@ modern ones.
   Supabase project.
 - [Credits](docs/credits.md): who wrote it, what it is built from, and where the
   art and rules come from.
+- [Contributing](CONTRIBUTING.md): branches, changesets, the checks to run, and
+  the conventions a reviewer looks for.
 
 ## How it is built
 
@@ -139,10 +141,11 @@ are signed in as.
 
 ### Signing in
 
-A deployed game offers **Google and GitHub**, both redirect-based, and nothing
-else. The **email and password form is drawn on a development build alone**,
-which is what the browser tests sign in with: the local stack skips address
-confirmation, so a sign-up answers with a live session. A development build also
+A deployed game offers **Google and GitHub**, both redirect-based. The **email
+and password form is drawn on a development build**, and on any build whose host
+sets `VITE_EMAIL_SIGN_IN` to `1` or `true`. It is what the browser tests sign in
+with: the local stack skips address confirmation, so a sign-up answers with a
+live session. A development build also
 hands every account it creates the `admin` role, granted on the server.
 
 ## Commands
@@ -156,7 +159,7 @@ hands every account it creates the `admin` role, granted on the server.
 | `pnpm db`              | Start the local Supabase stack                      |
 | `pnpm db:reset`        | Rebuild the database from `supabase/migrations/`    |
 | `pnpm seed`            | Fill a fresh stack with accounts and sample rows    |
-| `pnpm import-sprites`  | Copy the pokemon sheets in from `../SpriteCollab`   |
+| `pnpm import-sprites`  | Copy the pokemon sheets in from `../SpriteCollab`, the `lxsmnsyc/SpriteCollab` fork |
 | `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel    |
 | `pnpm sprite-coats`    | Restamp `coats.json` after anything writes a sheet  |
 | `pnpm sprite-stamps`   | Restamp every other sheet, which `pnpm build` also does |

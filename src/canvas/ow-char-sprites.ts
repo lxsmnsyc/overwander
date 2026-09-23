@@ -1,5 +1,6 @@
 import OWCharSprite, { type OWCharLayout } from './ow-char-sprite';
 import sheetStamp from './sprite-stamps';
+import { spriteUrl } from './sprite-origin';
 
 /**
  * The character sheets, loaded once each.
@@ -13,7 +14,7 @@ import sheetStamp from './sprite-stamps';
  */
 
 /** Where the sheets the processor writes are served from. */
-export const OW_SPRITE_ROOT = '/sprites/overworld';
+export const OW_SPRITE_ROOT = spriteUrl('/sprites/overworld');
 
 /** The folder one charset lives in, drawing and description together. */
 export function owCharPath(name: string): string {

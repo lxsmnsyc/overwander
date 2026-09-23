@@ -18,11 +18,13 @@ import { claimRaidReward } from '../../auth/raids';
 import { claimStopReward } from '../../auth/stops';
 import { settleGymChallenge } from '../../auth/gym-seats';
 import type { PositionRecord } from '../../auth/position-record';
+import type Biome from '../../data/ids/biome';
 import type { Species } from '../../data/ids/species';
 import type { WalkReport } from '../../auth/eggs';
 import {
   getPosition,
   savePosition,
+  visitBiome,
   watchPosition,
   settleWalk as writeWalk,
 } from '../../auth/positions';
@@ -627,6 +629,31 @@ export default function GameProvider(props: ParentProps): JSX.Element {
     const stop = watchPosition(user.uid, hearPosition);
 
     onCleanup(stop);
+  });
+
+  /** The biome the server has been told about, so one walk marks it once */
+  let marked: Biome | null = null;
+
+  // Standing in a biome is what discovers it, and the mark is the one
+  // part of a walk the server sees: sent by itself, and only where the
+  // ground underfoot has changed to something else
+  createEffect(() => {
+    const at = position();
+
+    if (at == null) {
+      return;
+    }
+
+    const biome = getWorld().getChunk(at.chunkX, at.chunkY).biome;
+
+    if (biome === marked) {
+      return;
+    }
+    marked = biome;
+    visitBiome(at.chunkX, at.chunkY).catch(() => {
+      // A mark that did not land is one the next crossing sends again
+      marked = null;
+    });
   });
   const [sheet, setSheet] = createSignal<OpenSheet | null>(null);
   const [listing, setListing] = createSignal<AuctionSubject | null>(null);

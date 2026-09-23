@@ -1,8 +1,12 @@
-import { type JSX, type ParentProps, createMemo, createSignal } from 'solid-js';
+import { type JSX, type ParentProps, Show, createMemo, createSignal, onCleanup } from 'solid-js';
 import type Biome from '../../data/ids/biome';
+import type Weather from '../../data/overworld/weather';
+import { WEATHER_NAMES, favorsEverything } from '../../data/overworld/weather';
 import getWorld from '../../overworld/current';
+import { WEATHER_INTERVAL } from '../../overworld/chunk-snapshot';
+import { getLocalOffset, toLocalTime } from '../../auth/local-time';
 import { WORLD_MAX, WORLD_MIN, isInWorld } from '../../overworld/world';
-import { Button, Dialog, DialogActions, Hint } from '../styled';
+import { Button, Dialog, DialogActions, Hint, Switch } from '../styled';
 import WorldMapCanvas, { PAN_STRIDE, townsInView } from './WorldMapCanvas';
 import { useGame } from '../app/game-context';
 
@@ -16,6 +20,12 @@ import { useGame } from '../app/game-context';
 const SPAN = 64;
 
 const HALF = Math.floor(SPAN / 2);
+
+/**
+ * How often the map looks at the clock, in milliseconds. The sky turns
+ * over on the hour, and a minute late is close enough for a map
+ */
+const SKY_CHECK = 60 * 1000;
 
 /**
  * One key and what it does, laid out the way the search guide lays out
@@ -48,6 +58,31 @@ export interface WorldMapDialogProps {
  */
 export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element {
   const game = useGame();
+
+  /**
+   * Whether the map shows what the sky is doing. It is off by default:
+   * the map is read to decide which way to walk, and the weather is
+   * the answer to a different question
+   */
+  const [sky, setSky] = createSignal(false);
+
+  /**
+   * The hour the skies are read for, counted off the player's own zone
+   * the way the board counts it: read off UTC instead, the map shows
+   * another hour's sky than the ground under the player. It ticks on
+   * its own, so a map left open does not go on showing an hour that
+   * has passed
+   */
+  const skyWindow = (): number =>
+    Math.floor(toLocalTime(Date.now(), getLocalOffset()) / WEATHER_INTERVAL);
+  const [hour, setHour] = createSignal(skyWindow());
+  const clock = setInterval(() => {
+    setHour(skyWindow());
+  }, SKY_CHECK);
+
+  onCleanup(() => {
+    clearInterval(clock);
+  });
 
   /**
    * Where the player is, once it has been found out. Until then there
@@ -118,6 +153,58 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
     return values;
   });
 
+  /**
+   * The sky over each chunk of the view, or nothing while the map is
+   * showing the ground alone. Derived like the biomes are: the world
+   * answers what the sky is doing without anything being stored
+   */
+  const skies = createMemo(() => {
+    if (!sky()) {
+      return undefined;
+    }
+    const world = getWorld();
+    const window = hour();
+    const values: (Weather | null)[] = [];
+
+    for (let row = 0; row < SPAN; row++) {
+      const y = centerY() - HALF + row;
+
+      for (let column = 0; column < SPAN; column++) {
+        const x = centerX() - HALF + column;
+
+        values.push(isInWorld(x, y) ? world.getWeather(x, y, window) : null);
+      }
+    }
+    return values;
+  });
+
+  /**
+   * The four skies worth walking to, where the view is looking at
+   * one. They are ringed on the map as well, but a player scanning
+   * for one wants to be told rather than to find it
+   */
+  const showpieces = createMemo(() => {
+    const values = skies();
+
+    if (values == null) {
+      return [];
+    }
+    const found: { weather: Weather; x: number; y: number }[] = [];
+
+    for (let index = 0; index < values.length; index++) {
+      const weather = values[index];
+
+      if (weather != null && favorsEverything(weather)) {
+        found.push({
+          weather,
+          x: centerX() - HALF + (index % SPAN),
+          y: centerY() - HALF + Math.floor(index / SPAN),
+        });
+      }
+    }
+    return found;
+  });
+
   const towns = createMemo(() => townsInView(centerX() - HALF, centerY() - HALF, SPAN));
 
   return (
@@ -159,12 +246,33 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
         originX={centerX() - HALF}
         originY={centerY() - HALF}
         biomes={biomes()}
+        skies={skies()}
         towns={towns()}
         playerX={standing()?.chunkX ?? Number.NaN}
         playerY={standing()?.chunkY ?? Number.NaN}
         onPan={pan}
         onRecenter={recenter}
       />
+
+      <Switch
+        class="mt-3"
+        label="Show the sky"
+        description="Washes each chunk in the colour of its weather, and rings the four worth walking to."
+        checked={sky()}
+        onChange={(on) => {
+          setSky(on);
+        }}
+      />
+
+      <Show when={sky()}>
+        <p class="mt-2 text-xs text-muted">
+          {showpieces().length === 0
+            ? 'Nothing out of the ordinary in view this hour.'
+            : showpieces()
+                .map((one) => `${WEATHER_NAMES[one.weather]} (${one.x}, ${one.y})`)
+                .join(' · ')}
+        </p>
+      </Show>
 
       <DialogActions>
         <Button onClick={close}>Close</Button>

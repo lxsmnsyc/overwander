@@ -5,7 +5,7 @@ import {
   signInWithGithub,
   signInWithGoogle,
 } from '../../auth/actions';
-import { EMAIL_SIGN_IN } from '../../auth/sign-in-options';
+import EMAIL_SIGN_IN from '../../auth/sign-in-options';
 import { Button, Row, Status } from '../styled';
 
 /**

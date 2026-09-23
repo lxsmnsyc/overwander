@@ -9,7 +9,9 @@
  * sets `VITE_EMAIL_SIGN_IN` to `1` or `true`, which is what a
  * self-hosted game without OAuth apps of its own needs.
  */
-export const EMAIL_SIGN_IN =
+const EMAIL_SIGN_IN =
   import.meta.env.DEV ||
   import.meta.env.VITE_EMAIL_SIGN_IN === '1' ||
   import.meta.env.VITE_EMAIL_SIGN_IN === 'true';
+
+export default EMAIL_SIGN_IN;

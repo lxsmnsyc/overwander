@@ -309,7 +309,8 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           <Dialog
             isOpen={showing(GameDialog.Profile)}
             onClose={close}
-            width="wide"
+            // Broad for the side list of sections beside what is open
+            width="broad"
             quiet
             title={TITLES[GameDialog.Profile]}
             description={DESCRIPTIONS[GameDialog.Profile]}

@@ -260,10 +260,10 @@ describe('item data', () => {
     expect(getItemData(Items.ExpShare).name).toBe('Exp. Share');
     expect(getItemData(Items.LuckyEgg).name).toBe('Lucky Egg');
 
-    // Both hide where the Leftovers hide, and thinner: every party
+    // Both are training kit, hidden with the rest of it: every party
     // wants one, and the ground is the only counter that carries them
-    expect(getItemBand(Items.ExpShare)).toBe('rare');
-    expect(getItemBand(Items.LuckyEgg)).toBe('rare');
+    expect(getItemBand(Items.ExpShare)).toBe('scarce');
+    expect(getItemBand(Items.LuckyEgg)).toBe('scarce');
   });
 
   it('stocks the medicine and hides some of it too', () => {
@@ -299,14 +299,14 @@ describe('item data', () => {
     // is not
     expect(ITEM_POOL.base.some((entry) => entry.item === Items.Potion)).toBe(true);
     expect(ITEM_POOL.uncommon.some((entry) => entry.item === Items.SuperPotion)).toBe(true);
-    for (const item of [Items.MaxPotion, Items.FullRestore, Items.Revive]) {
-      expect(ITEM_POOL.rare.some((entry) => entry.item === item)).toBe(true);
+    for (const item of [Items.MaxPotion, Items.Revive]) {
+      expect(ITEM_POOL.scarce.some((entry) => entry.item === item)).toBe(true);
       expect(ITEM_POOL.base.some((entry) => entry.item === item)).toBe(false);
     }
-    // And the one that undoes a lost party rather than a lost fight
-    // sits a band above the rest of them
-    expect(ITEM_POOL.prized.some((entry) => entry.item === Items.MaxRevive)).toBe(true);
-    expect(ITEM_POOL.rare.some((entry) => entry.item === Items.MaxRevive)).toBe(false);
+    // And the top of the medicine sits a band above the rest of it
+    for (const item of [Items.FullRestore, Items.MaxRevive]) {
+      expect(ITEM_POOL.rare.some((entry) => entry.item === item)).toBe(true);
+    }
     // None of it is one-per-world class
     for (const item of MEDICINES.keys()) {
       expect(ITEM_POOL.special.some((entry) => entry.item === item)).toBe(false);
@@ -468,6 +468,7 @@ describe('item data', () => {
       [
         ITEM_POOL.base,
         ITEM_POOL.uncommon,
+        ITEM_POOL.scarce,
         ITEM_POOL.rare,
         ITEM_POOL.prized,
         ITEM_POOL.special,
@@ -709,8 +710,8 @@ describe('item data', () => {
     for (const item of [Items.EnergyPowder, Items.HealPowder]) {
       expect(ITEM_POOL.base.some((entry) => entry.item === item)).toBe(true);
     }
-    expect(ITEM_POOL.uncommon.some((entry) => entry.item === Items.EnergyRoot)).toBe(true);
-    expect(ITEM_POOL.rare.some((entry) => entry.item === Items.RevivalHerb)).toBe(true);
+    expect(ITEM_POOL.scarce.some((entry) => entry.item === Items.EnergyRoot)).toBe(true);
+    expect(ITEM_POOL.scarce.some((entry) => entry.item === Items.RevivalHerb)).toBe(true);
   });
 
   it('packs a battle\u2019s limits the way a catch packs its slots', () => {
@@ -853,10 +854,10 @@ describe('item data', () => {
     // only: the plain cap fixes one stat and the golden one all six
     expect(ITEM_POOL.special.some((entry) => entry.item === Items.GoldenBottleCap)).toBe(true);
     expect(ITEM_POOL.prized.some((entry) => entry.item === Items.BottleCap)).toBe(true);
-    for (const band of ['base', 'uncommon', 'rare', 'prized'] as const) {
+    for (const band of ['base', 'uncommon', 'scarce', 'rare', 'prized'] as const) {
       expect(ITEM_POOL[band].some((entry) => entry.item === Items.GoldenBottleCap)).toBe(false);
     }
-    for (const band of ['base', 'uncommon', 'rare', 'special'] as const) {
+    for (const band of ['base', 'uncommon', 'scarce', 'rare', 'special'] as const) {
       expect(ITEM_POOL[band].some((entry) => entry.item === Items.BottleCap)).toBe(false);
     }
   });
@@ -1349,12 +1350,12 @@ describe('item data', () => {
     // with it. It is banded by what a find is worth, so a shell off a
     // beach is a common and a crown out of a ruin stands with the
     // Master Ball
-    const bands = ['base', 'uncommon', 'rare', 'prized', 'special'];
+    const bands = ['base', 'uncommon', 'scarce', 'rare', 'prized', 'special'];
     const rung = (item: Items): number => bands.indexOf(getItemBand(item) ?? '');
 
     expect(getItemBand(Items.TinyMushroom)).toBe('base');
     expect(getItemBand(Items.RelicCopper)).toBe('base');
-    expect(getItemBand(Items.RelicSilver)).toBe('uncommon');
+    expect(getItemBand(Items.RelicSilver)).toBe('scarce');
     expect(getItemBand(Items.BigNugget)).toBe('rare');
     expect(getItemBand(Items.CometShard)).toBe('prized');
     expect(getItemBand(Items.RelicCrown)).toBe('special');
@@ -1398,7 +1399,7 @@ describe('item data', () => {
     // is a rarer find than it. The rest of the pool is banded by what
     // a thing does rather than what it costs, so this is the ladder's
     // rule and not the pool's
-    const bands = ['base', 'uncommon', 'rare', 'prized', 'special'];
+    const bands = ['base', 'uncommon', 'scarce', 'rare', 'prized', 'special'];
     const rung = (item: Items): number => bands.indexOf(getItemBand(item) ?? '');
 
     for (const [item] of VALUABLE_SELL) {
@@ -1818,9 +1819,13 @@ describe('item data', () => {
     expect(stats.length).toBe(STAT_ORDER.length);
 
     const pooled = new Set(
-      [...ITEM_POOL.base, ...ITEM_POOL.uncommon, ...ITEM_POOL.rare, ...ITEM_POOL.special].map(
-        (entry) => entry.item,
-      ),
+      [
+        ...ITEM_POOL.base,
+        ...ITEM_POOL.uncommon,
+        ...ITEM_POOL.scarce,
+        ...ITEM_POOL.rare,
+        ...ITEM_POOL.special,
+      ].map((entry) => entry.item),
     );
 
     for (const item of WING_STATS.keys()) {

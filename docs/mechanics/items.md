@@ -34,25 +34,30 @@ Every source of items rolls first for a rarity band:
 | Band     | Odds     |
 | -------- | -------- |
 | Special  | 1/4096   |
-| Prized   | 1/512    |
+| Prized   | 1/256    |
 | Rare     | 1/64     |
-| Uncommon | 1/8      |
+| Scarce   | 1/16     |
+| Uncommon | 1/4      |
 | Base     | The rest |
 
 | Band         | Contents                                                                                                                                                                                                                                                                                                          |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls, Stardust, shoal salt and shells, Pretty Wings, Tiny Mushrooms, Relic Copper; Black Sludge and a Sticky Barb; the everyday medicine; Energy and Heal Powder                                                                                                   |
-| **Uncommon** | The eight utility balls; Big Pearls, Star Pieces, Big Mushrooms, Rare Bones, Relic Silver; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings; the sixteen one-shot answers, from a Focus Sash to a Weakness Policy; the Everstone; the four weather rocks, Light Clay and a Big Root |
-| **Rare**     | The six evolution stones; Nuggets and the richer valuables; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the seventeen plates and the type-boosting gear; the choice items, the vest and the Eviolite; the three orbs; Leftovers, a Shed Shell and the rest of the battle gear        |
-| **Prized**   | Bottle Caps, the Purifying Gem, the Utility Belt, the Ability Capsule, the Ability Patch, Max Revives, the Sacred Ash, the Portal Key, the Amulet Coin, the six power items, all three fossils, the ruins, the 21 mints                                                                                                                                                 |
+| **Uncommon** | The seven utility balls; Big Pearls, Star Pieces, Big Mushrooms, Rare Bones; Super Potions and Full Heals; Heart Scales; the Everstone |
+| **Scarce**   | Ultra Balls; Relic Silver; Hyper Potions, Energy Roots, Max Potions, Revives and Revival Herbs; the six wings; the sixteen one-shot answers, from a Focus Sash to a Weakness Policy; the type boosters and the everyday gear, from a Muscle Band to a Scope Lens; the four weather rocks, Light Clay and a Big Root; a Shed Shell, Heavy-Duty Boots and Loaded Dice; the Macho Brace, the Soothe Bell, the Exp. Share and the Lucky Egg |
+| **Rare**     | The evolution stones and the Rotom Catalog; Nuggets and the richer valuables; Full Restores and Max Revives; the species relics and the Soul Dew; the seventeen plates and the Drives; the choice items, the vest and the Eviolite; the Flame, Toxic and Life Orbs; Leftovers; the Meteorite, the Adamant, Lustrous and Griseous Orbs and the Gracidea |
+| **Prized**   | Bottle Caps, the Purifying Gem, the Utility Belt, the Ability Capsule, the Ability Patch, the Sacred Ash, the Portal Key, the Amulet Coin, the six power items, the fossils, the ruins, the 21 mints |
 | **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, the four raid relics (the Old Sea Map, the **GS Ball**, the **Wish Tag** and the **Aurora Ticket**), the Relic Crown                                                                                                                                                                                          |
 
+The line between uncommon and scarce is **use**. Uncommon restocks a bag: balls,
+potions, the smaller valuables. Scarce is gear and training, the things that
+change how a fight or a build goes.
+
 The line between rare and prized is **permanence**. Rare is where a walk turns
-up something that gets a party through the next fight: a stone, a Revive, a
-plate. Prized is where it turns up something that changes a pokemon for good and
-cannot be undone. A Bottle Cap fixes what a pokemon was born with, a Purifying
-Gem removes a shadow, a Max Revive answers a lost _party_ rather than a lost
-fight.
+up something that gets a party through the next fight: a stone, a Full Restore,
+a plate. Prized is where it turns up something that changes a pokemon for good
+and cannot be undone. A Bottle Cap fixes what a pokemon was born with, a
+Purifying Gem removes a shadow, a fossil brings back a species nothing else can.
 
 A prized find is not unique. A stash may hold two, and they come in stacks like
 anything else.

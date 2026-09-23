@@ -789,11 +789,9 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         // What the fight left besides the purse rides the same claim as
         // the badge, and is already in the bag by the time there is
         // anything to say
-        if (collected.item != null) {
-          const won = collected.item;
-
+        for (const { item: won, amount } of collected.items) {
           toast.push({
-            title: getItemData(won).name,
+            title: amount > 1 ? `${getItemData(won).name} ×${amount}` : getItemData(won).name,
             message: 'Left behind by the fight.',
             art: () => <ItemSprite item={won} size={24} label="" />,
             tone: 'leaf',

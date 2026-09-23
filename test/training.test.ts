@@ -367,7 +367,7 @@ describe('vitamins', () => {
     // A wing is the other way round: found, never stocked
     for (const item of WING_STATS.keys()) {
       expect(getItemData(item).flags & ItemFlags.Marketable).toBe(0);
-      expect(getItemBand(item)).toBe('uncommon');
+      expect(getItemBand(item)).toBe('scarce');
     }
   });
 

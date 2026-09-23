@@ -1,5 +1,67 @@
 # overwander
 
+## 4.14.0
+
+### Minor Changes
+
+- d0ddcaa: Celestial Tower and the road to it, and the three families around them:
+
+  - Litwick, Lampent and Chandelure over the bog and the woodland after dark, Elgyem and Beheeyem out in the desert and the cold desert, and Golett and Golurk across the badlands and the steppe. All three families keep to the evening and the night.
+  - Lampent becomes a Chandelure on a Dusk Stone, which is the first Unova line to evolve on a stone rather than a level.
+  - Each family brings its own signature ability: Hexlight has a lamp hit 1.4x into anything that already carries a status, Swap Field casts Wonder Room as a Beheeyem arrives, and Broken Seal gives a Golurk 2 stages of Attack for 1 of Defense the first time it drops below half.
+  - Chandelure can be born with Illuminate, Beheeyem with Forewarn, and Golurk with Stamina.
+  - Agatha fields the Ghost type and her named Golbat and Arbok, and no longer draws on the whole Amorphous egg group. That widener dated from when Kanto had one fully grown Ghost, and it had come to reach Gardevoir, Gallade and Castform.
+
+- 82f6e65: Dragonspiral Tower and the tunnels under it, and the three families around them:
+
+  - Axew, Fraxure and Haxorus on the mountain and in the montane forest by day, Druddigon on the mountain and the badlands and in every cave, and Deino, Zweilous and Hydreigon across the badlands and the volcano after dark.
+  - Each family brings its own signature ability: Scoring takes a stage of Defense off with every physical move Haxorus lands, Sunwarmed has Druddigon cast a quarter faster while the sun is up, and Three Heads has every move Hydreigon lands also bite a second enemy for a third of the damage.
+  - Haxorus can be born with Hyper Cutter, Druddigon with Intimidate, and Hydreigon with Berserk or Pressure.
+  - A fully grown wild pokemon can now be met up to level 80 rather than 60. Hydreigon does not exist below level 64, which the old ceiling had no room for.
+
+- fa1c90f: The last two roads out of Opelucid, and the three families along them:
+
+  - Pawniard and Bisharp in the badlands and the shrubland after dark, Rufflet and Braviary on the mountain and the steppe by day, and Vullaby and Mandibuzz over the badlands and the desert at the same hours.
+  - Every Rufflet and Braviary is male and every Vullaby and Mandibuzz is female, the way the games have them.
+  - Each family brings its own signature ability: Honed gives Bisharp 1 stage of Attack every time an enemy raises a stat of its own, Warcry gives Braviary 2 stages of Attack every time one of its teammates falls, and Bonewear gives Mandibuzz 1 stage of each defence every time an enemy does.
+  - Mandibuzz can be born with Guts. Braviary needs nothing invented, because Hustle walks up from the Rufflet below it.
+  - A wild pokemon at the end of a two-stage line can now be met up to level 70 rather than 50. Bisharp, Braviary and Mandibuzz all arrive above the old ceiling.
+
+### Patch Changes
+
+- 86b1eb7: Badges and other extra sprites show again on the awards shelf.
+- b561303: The world map's pan and recenter buttons and the catch list's sort direction button draw centered icons instead of text arrows.
+- 560e6df: - The portal shows itself and its fee, and lists every town nearest first with its biome, distance and direction, with a search to narrow the list.
+  - An egg's dialog names the buddy you would put down to carry it.
+- 234fd69: - The Fossil Scientist lays your fossils out in his own dialog rather than opening a second window.
+  - The Channeler shows her Heart Scale fee and how many you carry, the way the Move Reminder and Tutor do.
+- 2094137: The Move Reminder and Move Tutor ask in two steps:
+
+  - First pick a pokemon from your box.
+  - Then that pokemon stands on its own above the moves on offer, with a button to change it.
+  - The fee and how many Heart Scales you have sit at the top.
+  - The list of moves pages past twenty.
+
+- 1c22442: More items turn up on the ground, and phenomena leave more:
+
+  - Rare: the trade and held evolution items (King's Rock, Dragon Scale, Up-Grade and the rest), the Linking Cord, Rare Candies, the six vitamins and PP Ups.
+  - Scarce: Kurt's seven apricorn balls.
+  - Prized: the PP Max and the Explorer Kit.
+  - A phenomenon's item half is now a stash of one to three kinds, one to three of each, like an item cache.
+
+- 564b864: The item bands are reworked:
+
+  - Uncommon finds turn up 1 time in 4, a new scarce band 1 time in 16, rare stays 1 in 64, and prized is 1 in 256 instead of 1 in 512.
+  - Scarce holds the gear and training: Ultra Balls, Relic Silver, the healing from Hyper Potions up to Revives, the wings, the one-shots, the type boosters and everyday gear, the weather rocks and the training kit.
+  - The Max Revive moves from prized to rare, and using one no longer asks twice.
+  - The six power items and the Ability Patch are commoner within the prized band.
+  - A beaten executive, Elite Four member, champion or legend leaves a stash of one to three kinds, like an item cache.
+  - Executives and the Elite Four draw it from scarce, rare and prized; champions and legends from rare, prized and special, with a legend the richest.
+
+- e18845a: The vendor and the chef show their stock in their own dialog, with Buy and Sell tabs and your gold beside them.
+- 234fd69: - A challenge on the road says what winning pays and losing costs, the level range of their party, and how many you may bring.
+  - A gym seat shows its holder with a button to their profile, and sets out what winning and losing do side by side.
+
 ## 4.13.0
 
 ### Minor Changes

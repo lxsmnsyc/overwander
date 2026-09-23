@@ -5,8 +5,9 @@ import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
 import { MoveCategories, Moves } from '../../../src/data/ids/moves';
-import { Statuses, Terrains } from '../../../src/data/ids/status';
-import { EffectType, MoveTargetType } from '../../../src/battle/events';
+import { Statuses, Terrains, Weathers } from '../../../src/data/ids/status';
+import { AttackPriority } from '../../../src/core/event-emitter';
+import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
 import turns from '../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../harness';
 import { dealDamage } from './signature/helpers';
@@ -472,5 +473,106 @@ describe('Steam Engine', () => {
     dealDamage(foe, boiler, Moves.Scald, 10, Types.Water, MoveCategories.Special);
 
     expect(boiler.stages[Stages.Speed]).toBe(6);
+  });
+});
+
+describe('Aerilate', () => {
+  it('throws its Normal moves as Flying, and pays a fifth again for them', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const beetle = createUnit(battle, teamA, [Types.Bug, Types.Flying]);
+    const foe = createUnit(battle, teamB, [Types.Grass]);
+
+    pinRandom(battle, 1);
+    beetle.enter();
+    foe.enter();
+
+    const at = { type: MoveTargetType.Unit, unit: foe } as const;
+    const plain = beetle.checkMovePower(Moves.Tackle, at);
+
+    beetle.addAbility(Abilities.Aerilate);
+
+    expect(beetle.checkMoveType(Moves.Tackle, at)).toBe(Types.Flying);
+    expect(beetle.checkMovePower(Moves.Tackle, at)).toBeCloseTo((plain ?? 0) * 1.2, 5);
+  });
+});
+
+describe('Parental Bond', () => {
+  it('lands a move cast at one target twice, the second a quarter as hard', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const parent = createUnit(battle, teamA, [Types.Normal]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    parent.addAbility(Abilities.ParentalBond);
+    parent.enter();
+    foe.enter();
+
+    const powers: number[] = [];
+
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
+      if (event.source === parent && event.success) {
+        powers.push(event.value);
+      }
+    });
+
+    parent.attack(foe, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    // The child's blow resolves inside the parent's, so it is logged first
+    expect(powers).toHaveLength(2);
+    expect(powers).toContain(40);
+    expect(powers).toContain(10);
+  });
+
+  it('leaves a move that already strikes several times alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const parent = createUnit(battle, teamA, [Types.Normal]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    parent.addAbility(Abilities.ParentalBond);
+    parent.enter();
+    foe.enter();
+
+    let landed = 0;
+
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
+      if (event.source === parent && event.success) {
+        landed += 1;
+      }
+    });
+
+    parent.attack(foe, Moves.DoubleSlap, 15, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(landed).toBe(1);
+  });
+});
+
+describe('Delta Stream', () => {
+  it('raises strong winds on entry, and they hold against any other sky', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dragon = createUnit(battle, teamA, [Types.Dragon, Types.Flying]);
+    const foe = createUnit(battle, teamB);
+
+    dragon.addAbility(Abilities.DeltaStream);
+    foe.addAbility(Abilities.Drought);
+    dragon.enter();
+    foe.enter();
+
+    expect(dragon.checkWeather()).toBe(Weathers.StrongWinds);
+  });
+
+  it('takes the winds away with it when it faints', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dragon = createUnit(battle, teamA, [Types.Dragon, Types.Flying]);
+    const foe = createUnit(battle, teamB);
+
+    dragon.addAbility(Abilities.DeltaStream);
+    dragon.enter();
+    foe.enter();
+    foe.damage({ type: EffectType.None }, dragon, dragon.health, 0);
+
+    expect(dragon.alive).toBe(false);
+
+    expect(foe.checkWeather()).toBe(Weathers.None);
   });
 });

@@ -1,6 +1,7 @@
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
 import type { Slot } from './field';
 import { type CastLabels, drawCastLabel } from './cast-label';
+import drawMegaMark from './mega-mark';
 import { COLORS, HIT_REACH, NAMED_RADIUS } from './metrics';
 import speciesSize from '../../../canvas/species-size';
 import { type Striking, animationFor } from './motion';
@@ -795,5 +796,7 @@ export function drawSlot(
   if (label != null && roomy) {
     drawCastLabel(context, label, slot.x, slot.y - slot.radius * 2 - 14, clock, onto, alpha);
   }
+  // Above the plate, so a Mega drawn in its old shape still reads as one
+  drawMegaMark(context, unit.species, slot.x, slot.y - slot.radius * 2 - 14, clock, alpha, onto);
   context.globalAlpha = 1;
 }

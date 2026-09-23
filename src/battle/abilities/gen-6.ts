@@ -2,14 +2,22 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
-import { DamageFlags, MoveAttackFlags, MoveCategories, Moves } from '../../data/ids/moves';
+import {
+  DamageFlags,
+  MoveAttackFlags,
+  MoveCategories,
+  MoveTargets,
+  Moves,
+} from '../../data/ids/moves';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
-import { Statuses, Terrains } from '../../data/ids/status';
+import { Statuses, Terrains, Weathers } from '../../data/ids/status';
+import { getMoveData } from '../../data/moves';
+import { MULTI_HIT_MOVES } from '../../data/moves/multi-hit';
 import { MergedLifecycle } from '../lifecycle';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
-import { hasFreeItemSlot, stealableItem, unitTarget } from '../utils';
+import { hasFreeItemSlot, skyOverTeam, stealableItem, unitTarget } from '../utils';
 import { HEALING_MOVES } from '../moves/recover';
 import { fieldHolder } from './signature/__create';
 import {
@@ -59,6 +67,12 @@ const REFRIGERATE_SCALE = 1.2;
 
 /** What the ribbon is worth to a move it wrapped on the way out */
 const PIXILATE_SCALE = 1.2;
+
+/** What the wind is worth to a move it carried on the way out */
+const AERILATE_SCALE = 1.2;
+
+/** What the child's blow is worth beside the parent's */
+const PARENTAL_BOND_SCALE = 0.25;
 
 /**
  * What an aura is worth to the type it carries, and what it is worth
@@ -487,6 +501,95 @@ const setupAbilities = [
       }),
       battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
         stand(event.source, Species.Aegislash);
+      }),
+    ]);
+  }),
+
+  // Mega Pinsir and Mega Salamence: the wings carry a plain move
+  createTypeShiftAbility(Abilities.Aerilate, Types.Normal, Types.Flying, AERILATE_SCALE),
+
+  // Mega Kangaskhan: the child throws the same move again, softer.
+  // Only a move cast at one unit, and never one that already strikes
+  // more than once
+  createAbility(Abilities.ParentalBond, (battle) => {
+    const striking = new Set<Unit>();
+
+    return battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+      const source = event.source;
+
+      // Its own confused swing has no move data behind it, so the
+      // move is only read once everything else has said yes
+      if (
+        !event.success ||
+        !event.target.alive ||
+        event.target === source ||
+        event.flags & MoveAttackFlags.Simulated ||
+        striking.has(source) ||
+        !source.hasAbility(Abilities.ParentalBond) ||
+        MULTI_HIT_MOVES[event.move] != null ||
+        getMoveData(event.move).target !== MoveTargets.Unit
+      ) {
+        return;
+      }
+
+      striking.add(source);
+      source.triggerAbility(Abilities.ParentalBond);
+      source.attack(
+        event.target,
+        event.move,
+        event.value * PARENTAL_BOND_SCALE,
+        event.type,
+        event.category,
+        event.flags,
+      );
+      striking.delete(source);
+    });
+  }),
+
+  // Mega Rayquaza: the winds hold for as long as it stands, and no
+  // other sky pushes them aside while they do
+  createAbility(Abilities.DeltaStream, (battle) => {
+    function blow(unit: Unit): void {
+      if (unit.alive && unit.hasAbility(Abilities.DeltaStream)) {
+        unit.triggerAbility(Abilities.DeltaStream);
+      }
+    }
+
+    /** Clear the winds once nobody left on the field is raising them */
+    function still(unit: Unit): void {
+      if (skyOverTeam(unit.team) !== Weathers.StrongWinds) {
+        return;
+      }
+      for (const other of battle.units()) {
+        if (other !== unit && other.alive && other.hasAbility(Abilities.DeltaStream)) {
+          return;
+        }
+      }
+      unit.setWeather(Weathers.None);
+    }
+
+    return new MergedLifecycle([
+      // Worn the moment it Mega Evolves, which is already on the field
+      battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, (event) => {
+        blow(event.source);
+      }),
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        blow(event.source);
+      }),
+      battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+        if (event.ability === Abilities.DeltaStream) {
+          event.source.setWeather(Weathers.StrongWinds);
+        }
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        if (event.source.hasAbility(Abilities.DeltaStream)) {
+          still(event.source);
+        }
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        if (event.source.hasAbility(Abilities.DeltaStream)) {
+          still(event.source);
+        }
       }),
     ]);
   }),

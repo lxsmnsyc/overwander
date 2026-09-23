@@ -82,6 +82,7 @@ import {
   getSpeciesForms,
   getWornForms,
   isBaseForm,
+  listMegas,
   listTrueShadows,
   registerSpecies,
 } from '../../src/data/species';
@@ -414,6 +415,7 @@ describe('species forms', () => {
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own
       ...listTrueShadows(),
+      ...listMegas(),
     ]);
 
     expect(registered.length).toBeGreaterThan(0);

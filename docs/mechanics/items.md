@@ -36,7 +36,7 @@ rolls first for a rarity band:
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls, Stardust, shoal salt and shells, Pretty Wings, Tiny Mushrooms, Relic Copper; Black Sludge and a Sticky Barb; the everyday medicine; Energy and Heal Powder                                                                                                   |
 | **Uncommon** | The eight utility balls; Big Pearls, Star Pieces, Big Mushrooms, Rare Bones, Relic Silver; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings; the sixteen one-shot answers, from a Focus Sash to a Weakness Policy; the Everstone; the four weather rocks, Light Clay and a Big Root |
-| **Rare**     | The six evolution stones; Nuggets and the richer valuables; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the seventeen plates and the type-boosting gear; the choice items, the vest and the Eviolite; the three orbs; Leftovers, a Shed Shell and the rest of the battle gear        |
+| **Rare**     | The six evolution stones; Nuggets and the richer valuables; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the seventeen plates, the 47 Mega Stones and the type-boosting gear; the choice items, the vest and the Eviolite; the three orbs; Leftovers, a Shed Shell and the rest of the battle gear        |
 | **Prized**   | Bottle Caps, the Purifying Gem, the Utility Belt, the Ability Capsule, the Ability Patch, Max Revives, the Sacred Ash, the Portal Key, the Amulet Coin, the six power items, all three fossils, the ruins, the 21 mints                                                                                                                                                 |
 | **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, the four raid relics (the Old Sea Map, the **GS Ball**, the **Wish Tag** and the **Aurora Ticket**), the Relic Crown                                                                                                                                                                                          |
 
@@ -235,6 +235,11 @@ The **species relics** are the same idea for one pokemon each: a Thick Club for 
 Cubone, a Light Ball for a Pikachu, a Lucky Punch for a Chansey, a Stick for a
 Farfetch'd, and Metal and Quick Powder for a Ditto. They are worth nothing to
 anybody else.
+
+The **Mega Stones** are one per Mega, and each is worth something only to the
+pokemon it names. They are buried like the plates, one thin slot each, and no
+shop stocks them. How a stone is used is in
+[Battles](battles.md#mega-evolution).
 
 The **six power items** are the odd ones out: they are worn for breeding rather
 than for a fight, and each names one stat and passes it straight to an egg.

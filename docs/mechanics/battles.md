@@ -191,6 +191,37 @@ In a **raid**, a pokemon that changes the weather changes it only for its own
 party, unless the boss changed it, in which case it applies to everybody.
 Otherwise one player could impose rain on a lobby of strangers.
 
+## Mega Evolution
+
+A pokemon holding its own **Mega Stone** takes its Mega shape as it takes the
+field. There are 48 Megas, from Mega Venusaur to Mega Diancie. Rayquaza needs no
+stone: it Mega Evolves if it knows Dragon Ascent.
+
+**One pokemon on a team Mega Evolves in a fight.** Where several hold a stone
+that fits them, it goes to the highest level. A tie on level goes to the bigger
+Mega by base stat total, and a full tie to whoever stands earlier in the party.
+Each side of a fight has its own.
+
+A Mega keeps its catch's ability and **wears the Mega's own on top**, the way an
+Origin Forme does. Where the line can already have that ability, the Mega wears
+another instead:
+
+| Mega       | Wears           | In place of  |
+| ---------- | --------------- | ------------ |
+| Scizor     | Tough Claws     | Technician   |
+| Tyranitar  | Sand Force      | Sand Stream  |
+| Blaziken   | Reckless        | Speed Boost  |
+| Medicham   | Iron Fist       | Pure Power   |
+| Latias     | Friend Guard    | Levitate     |
+| Latios     | Tinted Lens     | Levitate     |
+| Abomasnow  | Thick Fat       | Snow Warning |
+| Audino     | Triage          | Healer       |
+| Diancie    | Queenly Majesty | Magic Bounce |
+
+The stone glows over the pokemon's head for the rest of the fight, with a Key
+Stone over Mega Rayquaza. That is how a watcher can tell, since not every Mega
+has been drawn yet: one that has not is drawn as its ordinary self.
+
 ## How a fight ends
 
 A fight ends as soon as it can go nowhere: nothing is mid-move, and no surviving

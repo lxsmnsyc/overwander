@@ -7,6 +7,7 @@ import registerCandyItems from './candy-items';
 import registerDrinks from './drinks';
 import registerDrives from './drives';
 import registerFormItems from './form-items';
+import registerMegaStones from './mega-stones';
 import registerFossils from './fossils';
 import registerGear from './gear';
 import registerGems from './gems';
@@ -45,6 +46,7 @@ export type { ItemData } from './__create';
 export { getTeachableMoves } from './machines';
 export { FOSSIL_SPECIES, getSpeciesFossil, isFossil, listFossils } from './fossils';
 export { FORM_ITEMS, getItemForms } from './form-items';
+export { MEGA_STONES, getMegaStone, getStoneMega } from './mega-stones';
 export { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER } from './names';
 export { WING_EFFORT, WING_STATS, isWing } from './wings';
 
@@ -93,6 +95,7 @@ export default function registerItems(): void {
   registerHoney();
   registerFossils();
   registerFormItems();
+  registerMegaStones();
   registerWings();
   registerVitamins();
   registerMachines();

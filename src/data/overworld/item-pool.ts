@@ -4,6 +4,7 @@ import { DRIVES } from '../items/drives';
 import { MARKET_GEAR } from '../items/gear';
 import { ONE_SHOTS } from '../items/one-shots';
 import { ORBS } from '../items/orbs';
+import { MEGA_STONES } from '../items/mega-stones';
 import { PLATES } from '../items/plates';
 import { MINT_NATURES } from '../items/mints';
 import { POWER_ITEMS } from '../items/power-items';
@@ -231,6 +232,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     ...evenlyWeighted(PLATES.keys(), 1),
     // The Drives are found on the same terms as the plates
     ...evenlyWeighted(DRIVES.keys(), 1),
+    // And the Mega Stones, which are held for a shape the way a plate is
+    ...evenlyWeighted(MEGA_STONES.keys(), 1),
     // The held-item shelves, on the plates' terms: whole families of
     // thin slots, so the band stays the stones' and finding a Choice
     // Band stays an event. The type boosters also drop off the wild

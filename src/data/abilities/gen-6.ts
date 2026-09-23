@@ -98,4 +98,20 @@ export default function registerGen6Abilities(): void {
     name: 'Stance Change',
     description: "It draws the blade to attack and sheathes it again on King's Shield.",
   });
+  // Mega Pinsir and Mega Salamence
+  registerAbility(Abilities.Aerilate, {
+    name: 'Aerilate',
+    description: 'Its Normal moves are Flying moves instead, and hit 1.2x.',
+  });
+  // Mega Kangaskhan
+  registerAbility(Abilities.ParentalBond, {
+    name: 'Parental Bond',
+    description: 'A move it casts at one target lands twice, the second hit at 0.25x.',
+  });
+  // Mega Rayquaza
+  registerAbility(Abilities.DeltaStream, {
+    name: 'Delta Stream',
+    description:
+      'Raises strong winds while it stands. Moves super effective on a Flying type hit it at 1x, and no other weather can be set.',
+  });
 }

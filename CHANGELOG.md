@@ -1,5 +1,27 @@
 # overwander
 
+## 4.12.1
+
+### Patch Changes
+
+- b629e26: A trainer, a grunt or a stall no longer stands on the water in a flooded field. A chunk whose dry ground runs out used to put the next landmark on the nearest wet cell whatever it was, so a country that is almost all lake could field a Bird Keeper out on the water. Only what can be afloat takes a wet cell now, and a duel is afloat on the open sea alone, where the country's trainers are narrowed to its swimmers and sailors.
+- 37f0d8b: Everything with a time window now runs on your own clock:
+
+  - Item caches, berry and apricorn patches, honey trees, nests and happenings turn over in your time zone, the same as spawns.
+  - Nests and happenings roll from your own time of day and your own species day.
+  - Daily quests and the weekly hunt turn over at your own midnight.
+  - Eggs of the day's featured family get their step bonus on your own date.
+  - Evolutions that need day or night go by your own time of day.
+
+- e3300f2: - The compass marks stay at the board's edges when you stand on a terrace, instead of staying at the lowest ground.
+  - High ground near the camera is no longer cut away as you climb.
+  - Pointing at the ground picks the tile drawn under the pointer, never one hidden behind a terrace.
+- e3300f2: - The ground climbs through 20 terrace levels instead of 3, so mountains are a real climb with a cliff about every ten cells.
+  - Every town stands flat on one level, so nothing in it is on a cliff.
+  - A town's edge no longer leaves a single tile sticking out.
+  - The ground round a town climbs or drops to it in a staircase of one-level cliffs, with no ledge between them for anything to be stranded on.
+  - Flooded caves fill to the same height as before.
+
 ## 4.12.0
 
 ### Minor Changes

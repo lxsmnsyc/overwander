@@ -7,9 +7,20 @@ import Abilities from '../../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import { Items } from '../../../../src/data/ids/items';
 import { Genders, Species } from '../../../../src/data/ids/species';
-import { Statuses, TeamStatuses } from '../../../../src/data/ids/status';
+import { Statuses, TeamStatuses, Weathers } from '../../../../src/data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
+import { HONED_STAGES } from '../../../../src/battle/abilities/signature/pawniard-to-vullaby';
+import {
+  SCORING_STAGES,
+  SUNWARMED_SCALE,
+  THREE_HEADS_SHARE,
+} from '../../../../src/battle/abilities/signature/axew-to-deino';
+import {
+  BROKEN_SEAL_ATTACK,
+  BROKEN_SEAL_DEFENSE,
+  HEXLIGHT_SCALE,
+} from '../../../../src/battle/abilities/signature/elgyem-to-golett';
 import {
   DOZE_SHARE,
   STORM_DASH_STEP,
@@ -34,7 +45,9 @@ import {
 } from '../../../../src/battle/abilities/signature/audino-to-sawk';
 import {
   BLUE_BELT_SCALE,
+  BONEWEAR_STAGES,
   RED_BELT_SCALE,
+  WARCRY_STAGES,
 } from '../../../../src/battle/abilities/signature/__create';
 import {
   DEATH_ROLL_SCALE,
@@ -63,7 +76,7 @@ import {
 } from '../../../../src/battle/abilities/signature/basculin-to-alomomola';
 import turns from '../../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../../harness';
-import { act, dealDamage, resolveAttackDamage } from './helpers';
+import { NONE_CAUSE, act, dealDamage, resolveAttackDamage } from './helpers';
 
 function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
   return { type: MoveTargetType.Unit, unit } as const;
@@ -1241,5 +1254,215 @@ describe('what Driftveil holds', () => {
     foe.heal(cause, foe, 100, 0);
 
     expect((mate.health - 1) / (foe.health - 1)).toBeCloseTo(TIDE_POOL_SCALE, 2);
+  });
+});
+
+describe('what the tower on the hill holds', () => {
+  it('burns harder into whatever is already going wrong', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const chandelure = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    chandelure.addAbility(Abilities.Hexlight);
+    chandelure.enter();
+    plain.enter();
+    target.enter();
+
+    // Nothing wrong with it yet, so the lamp is worth nothing extra
+    expect(
+      resolveAttackDamage(battle, chandelure, target) / resolveAttackDamage(battle, plain, target),
+    ).toBeCloseTo(1, 2);
+
+    target.addStatus(Statuses.Paralyzed, NONE_CAUSE);
+
+    expect(
+      resolveAttackDamage(battle, chandelure, target) / resolveAttackDamage(battle, plain, target),
+    ).toBeCloseTo(HEXLIGHT_SCALE, 2);
+  });
+
+  it('brings the room with it, so the two defences trade places', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const beheeyem = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    // The harness builds both defences the same, so one has to move
+    // before a swap is visible at all
+    foe.setStat(StatsKind.Base, Stats.Defense, 160);
+    foe.enter();
+
+    const hard = foe.checkStat(Stats.Defense, 0);
+    const soft = foe.checkStat(Stats.SpecialDefense, 0);
+
+    expect(hard).toBeGreaterThan(soft);
+
+    beheeyem.addAbility(Abilities.SwapField);
+    beheeyem.enter();
+    battle.tick(turns(1));
+
+    expect(foe.checkStat(Stats.Defense, 0)).toBe(soft);
+    expect(foe.checkStat(Stats.SpecialDefense, 0)).toBe(hard);
+  });
+
+  it('shakes the seal loose once, and not again in the same fight', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const golurk = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    golurk.addAbility(Abilities.BrokenSeal);
+    golurk.enter();
+    foe.enter();
+
+    // Above half the seal holds
+    foe.attack(golurk, Moves.Tackle, 1, Types.Normal, MoveCategories.Physical, 0);
+    expect(golurk.stages[Stages.Attack]).toBe(0);
+
+    golurk.setHealth(Math.floor(golurk.checkStat(Stats.HP, 0) * 0.6));
+    foe.attack(golurk, Moves.Tackle, 60, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(golurk.stages[Stages.Attack]).toBe(BROKEN_SEAL_ATTACK);
+    expect(golurk.stages[Stages.Defense]).toBe(BROKEN_SEAL_DEFENSE);
+
+    // Spent: a second blow under half adds nothing
+    foe.attack(golurk, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+    expect(golurk.stages[Stages.Attack]).toBe(BROKEN_SEAL_ATTACK);
+  });
+});
+
+describe('what the dragon tower holds', () => {
+  it('takes a stage of Defense off with every physical move, and none with a special one', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const haxorus = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    haxorus.addAbility(Abilities.Scoring);
+    haxorus.enter();
+    foe.enter();
+
+    haxorus.attack(foe, Moves.Scratch, 10, Types.Normal, MoveCategories.Physical, 0);
+    expect(foe.stages[Stages.Defense]).toBe(SCORING_STAGES);
+
+    haxorus.attack(foe, Moves.Scratch, 10, Types.Normal, MoveCategories.Physical, 0);
+    expect(foe.stages[Stages.Defense]).toBe(SCORING_STAGES * 2);
+
+    // The tusks are what cut, so nothing special leaves a mark
+    haxorus.attack(foe, Moves.DragonPulse, 10, Types.Dragon, MoveCategories.Special, 0);
+    expect(foe.stages[Stages.Defense]).toBe(SCORING_STAGES * 2);
+  });
+
+  it('casts faster once it has basked, and only under a sun', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const druddigon = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    druddigon.addAbility(Abilities.Sunwarmed);
+    druddigon.enter();
+    foe.enter();
+
+    const target = { type: MoveTargetType.Unit, unit: foe } as const;
+    const cold = druddigon.checkMoveCastTime(Moves.DragonClaw, target);
+
+    battle.setWeather(Weathers.Sunny);
+
+    expect(druddigon.checkMoveCastTime(Moves.DragonClaw, target)).toBeCloseTo(
+      cold * SUNWARMED_SCALE,
+      2,
+    );
+
+    // The cooldown is Speed's to answer, so the sun leaves it alone
+    battle.setWeather(Weathers.Rain);
+    expect(druddigon.checkMoveCastTime(Moves.DragonClaw, target)).toBe(cold);
+  });
+
+  it('bites a second enemy for a share, and nothing when there is only one', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const hydreigon = createUnit(battle, teamA);
+    const bitten = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+
+    pinRandom(battle, 0);
+    hydreigon.addAbility(Abilities.ThreeHeads);
+    hydreigon.enter();
+    bitten.enter();
+    other.enter();
+
+    const front = bitten.health;
+    const side = other.health;
+
+    hydreigon.attack(bitten, Moves.DragonPulse, 40, Types.Dragon, MoveCategories.Special, 0);
+
+    const bite = side - other.health;
+
+    expect(bite).toBeGreaterThan(0);
+    expect(bite / (front - bitten.health)).toBeCloseTo(THREE_HEADS_SHARE, 1);
+
+    // Alone in front of it, the side heads have nothing to reach for
+    other.setHealth(0);
+
+    const alone = other.health;
+
+    hydreigon.attack(bitten, Moves.DragonPulse, 40, Types.Dragon, MoveCategories.Special, 0);
+    expect(other.health).toBe(alone);
+  });
+});
+
+describe('what the last two roads hold', () => {
+  it('answers an enemy raising a stat, and never its own answer', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const bisharp = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    bisharp.addAbility(Abilities.Honed);
+    bisharp.enter();
+    foe.enter();
+
+    foe.addStage(Stages.Attack, 2, NONE_CAUSE);
+    expect(bisharp.stages[Stages.Attack]).toBe(HONED_STAGES);
+
+    // A drop is Defiant's to answer, not this one's
+    foe.addStage(Stages.Speed, -1, NONE_CAUSE);
+    expect(bisharp.stages[Stages.Attack]).toBe(HONED_STAGES);
+
+    // Its own boost is a boost too, and must not feed a second one
+    // back through a Honed on the far side
+    const mirror = createUnit(battle, teamB);
+
+    mirror.addAbility(Abilities.Honed);
+    mirror.enter();
+    foe.addStage(Stages.Defense, 1, NONE_CAUSE);
+
+    expect(bisharp.stages[Stages.Attack]).toBe(HONED_STAGES * 2);
+    expect(mirror.stages[Stages.Attack]).toBe(0);
+  });
+
+  it('arms the eagle off its own dead and the vulture off everybody else s', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const braviary = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const mandibuzz = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    braviary.addAbility(Abilities.Warcry);
+    mandibuzz.addAbility(Abilities.Bonewear);
+    braviary.enter();
+    mate.enter();
+    mandibuzz.enter();
+    foe.enter();
+
+    // One of their own goes down: the eagle answers, the vulture does
+    // not, since the dress is made of what it outlived
+    mate.damage(NONE_CAUSE, mate, mate.health, 0);
+
+    expect(braviary.stages[Stages.Attack]).toBe(WARCRY_STAGES);
+    expect(mandibuzz.stages[Stages.Defense]).toBe(0);
+
+    // An enemy goes down, and it is the other way round
+    foe.damage(NONE_CAUSE, foe, foe.health, 0);
+
+    expect(braviary.stages[Stages.Attack]).toBe(WARCRY_STAGES);
+    expect(mandibuzz.stages[Stages.Defense]).toBe(BONEWEAR_STAGES);
+    expect(mandibuzz.stages[Stages.SpecialDefense]).toBe(BONEWEAR_STAGES);
   });
 });

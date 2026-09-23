@@ -28,11 +28,18 @@ export const SINGLE_SPAWN_LEVELS: [minimum: number, maximum: number] = [10, 50];
  */
 const UNNAMED_FLOOR = 30;
 
-/** As high as the wild goes, short of a legendary */
-const GROWN_CEILING = 60;
+/**
+ * As high as the wild goes, short of a legendary. It has to clear the
+ * latest any line hands a stage over, which is Hydreigon at 64
+ */
+const GROWN_CEILING = 80;
 
-/** As high as anything that is not the end of its line goes */
-const HALF_GROWN_CEILING = 50;
+/**
+ * As high as anything that is not the end of a three-stage line goes.
+ * It stops short of the grown ceiling, but it still has to clear the
+ * latest a two-stage line hands its last stage over, which is 54
+ */
+const HALF_GROWN_CEILING = 70;
 
 /** The first stage of any line starts here */
 const YOUNG_FLOOR = 5;

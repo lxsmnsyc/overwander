@@ -1735,4 +1735,55 @@ export default function registerSignatureAbilities(): void {
     name: 'Tide Pool',
     description: 'Every heal on its team is worth 1.3x while it stands, its own included.',
   });
+
+  // Celestial Tower and the road to it
+  registerSignature(Families.Elgyem, Abilities.SwapField, {
+    name: 'Swap Field',
+    description: 'It casts Wonder Room as it arrives on the field.',
+  });
+
+  registerSignature(Families.Litwick, Abilities.Hexlight, {
+    name: 'Hexlight',
+    description: 'Its moves hit 1.4x against a target that has a status condition.',
+  });
+
+  registerSignature(Families.Golett, Abilities.BrokenSeal, {
+    name: 'Broken Seal',
+    description:
+      'The first time it drops below 1/2 HP it gains 2 stages of Attack and loses 1 of Defense. Once per battle.',
+  });
+
+  // Dragonspiral Tower and the tunnels under it
+  registerSignature(Families.Axew, Abilities.Scoring, {
+    name: 'Scoring',
+    description: 'Every physical move it lands takes 1 stage of Defense off the target.',
+  });
+
+  registerSignature(Families.Druddigon, Abilities.Sunwarmed, {
+    name: 'Sunwarmed',
+    description: 'Its moves take 0.75x as long to cast while harsh sunlight is up.',
+  });
+
+  registerSignature(Families.Deino, Abilities.ThreeHeads, {
+    name: 'Three Heads',
+    description: 'Every move it lands also bites one other enemy for 1/3 of the damage.',
+  });
+
+  // Routes 9 and 10
+  registerSignature(Families.Pawniard, Abilities.Honed, {
+    name: 'Honed',
+    description: '+1 Attack every time an enemy raises a stat of its own.',
+  });
+
+  // Braviary and Mandibuzz are the sky split in two: one answers its
+  // own side's dead, the other answers everybody else's
+  registerSignature(Families.Rufflet, Abilities.Warcry, {
+    name: 'Warcry',
+    description: '+2 Attack every time one of its teammates faints.',
+  });
+
+  registerSignature(Families.Vullaby, Abilities.Bonewear, {
+    name: 'Bonewear',
+    description: '+1 Defense and +1 Special Defense every time an enemy faints.',
+  });
 }

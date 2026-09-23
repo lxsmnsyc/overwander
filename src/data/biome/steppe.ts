@@ -19,6 +19,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Whismur, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Rufflet, weight: 16 },
         { species: Species.Spearow, weight: 20 },
         { species: Species.Growlithe, weight: 10 },
         { species: Species.Ponyta, weight: 10 },
@@ -39,6 +40,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Flaaffy, weight: 5 },
       ],
       scarce: [
+        { species: Species.Braviary, weight: 6 },
         { species: Species.Fearow, weight: 10 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Rapidash, weight: 10 },
@@ -77,6 +79,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Whismur, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Rufflet, weight: 16 },
         { species: Species.Spearow, weight: 20 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Growlithe, weight: 10 },
@@ -98,6 +101,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Flaaffy, weight: 5 },
       ],
       scarce: [
+        { species: Species.Braviary, weight: 6 },
         { species: Species.Fearow, weight: 10 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Arcanine, weight: 5 },
@@ -132,6 +136,7 @@ export default function registerSteppeSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Magnemite, weight: 20 }],
       uncommon: [
+        { species: Species.Golett, weight: 20 },
         { species: Species.Scraggy, weight: 22 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Voltorb, weight: 20 },
@@ -143,6 +148,7 @@ export default function registerSteppeSpawns(): void {
       ],
       rare: [{ species: Species.Magneton, weight: 10 }],
       scarce: [
+        { species: Species.Golurk, weight: 6 },
         { species: Species.Scrafty, weight: 7 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Electrode, weight: 10 },
@@ -167,6 +173,7 @@ export default function registerSteppeSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Magnemite, weight: 20 }],
       uncommon: [
+        { species: Species.Golett, weight: 20 },
         { species: Species.Scraggy, weight: 22 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Voltorb, weight: 20 },
@@ -178,6 +185,7 @@ export default function registerSteppeSpawns(): void {
       ],
       rare: [{ species: Species.Magneton, weight: 10 }],
       scarce: [
+        { species: Species.Golurk, weight: 6 },
         { species: Species.Scrafty, weight: 7 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Electrode, weight: 10 },

@@ -34,7 +34,10 @@ import scraggyToTrubbish from './scraggy-to-trubbish';
 import basculinToAlomomola from './basculin-to-alomomola';
 import joltikToKlink from './joltik-to-klink';
 import zoruaToSolosis from './zorua-to-solosis';
+import axewToDeino from './axew-to-deino';
+import elgyemToGolett from './elgyem-to-golett';
 import patratToPurrloin from './patrat-to-purrloin';
+import pawniardToVullaby from './pawniard-to-vullaby';
 import roggenrolaToDrilbur from './roggenrola-to-drilbur';
 import sewaddleToPetilil from './sewaddle-to-petilil';
 import snivyToOshawott from './snivy-to-oshawott';
@@ -83,6 +86,9 @@ const setupAbilities = [
   ...zoruaToSolosis,
   ...joltikToKlink,
   ...basculinToAlomomola,
+  ...elgyemToGolett,
+  ...axewToDeino,
+  ...pawniardToVullaby,
 ];
 
 /**

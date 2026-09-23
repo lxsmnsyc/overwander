@@ -126,6 +126,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Pawniard, weight: 16 },
         { species: Species.Vulpix, weight: 10 },
         { species: Species.Houndour, weight: 20 },
         { species: Species.Poochyena, weight: 20 },
@@ -140,6 +141,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Bisharp, weight: 6 },
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Flareon, weight: 5 },
         { species: Species.Mightyena, weight: 10 },
@@ -169,6 +171,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Pawniard, weight: 16 },
         { species: Species.Vulpix, weight: 10 },
         { species: Species.Houndour, weight: 20 },
         { species: Species.Poochyena, weight: 20 },
@@ -183,6 +186,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Bisharp, weight: 6 },
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Flareon, weight: 5 },
         { species: Species.Mightyena, weight: 10 },

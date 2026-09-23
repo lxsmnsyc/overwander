@@ -180,12 +180,16 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Catches]}
             description={DESCRIPTIONS[GameDialog.Catches]}
           >
-            <BattleData>
-              <CatchesList player={props.user.uid} />
+            {/* The list draws the dialog's foot itself, since picking puts its actions there */}
+            <BattleData
+              fallback={
+                <DialogActions>
+                  <Button onClick={close}>Close</Button>
+                </DialogActions>
+              }
+            >
+              <CatchesList player={props.user.uid} onClose={close} />
             </BattleData>
-            <DialogActions>
-              <Button onClick={close}>Close</Button>
-            </DialogActions>
           </Dialog>
 
           {/* The dex: what there is, beside the box of what they have */}

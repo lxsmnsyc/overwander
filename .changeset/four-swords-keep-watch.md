@@ -8,6 +8,9 @@
   forests and woodlands.
 - Keldeo is a mythical, so no lair stages it. It waits in the bogs, and the
   Colt's Petal calls one out to be fought.
+- A Keldeo that knows Secret Sword fights in its Resolute form.
+- A form with no art of its own is drawn as its base form instead of
+  Missingno.
 - Iron Vigil, Stone Vigil, Leaf Vigil and Tide Vigil each guard the holder's
   team while it stands: physical moves land at 0.8x, special moves at 0.8x,
   indirect damage at 0.8x with no poison, and enemies can neither flinch a

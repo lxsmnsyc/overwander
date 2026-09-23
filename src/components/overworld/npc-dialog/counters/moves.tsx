@@ -5,7 +5,7 @@ import type { Moves } from '../../../../data/ids/moves';
 import { getRecallableMoves, getTutorableMoves } from '../../../../data/overworld/npc';
 import CatchPicker, { type CatchOption } from '../../../catches/catch-picker';
 import { MoveLine } from '../../../catches/TeachMoveDialog';
-import ItemSprite from '../../../items/ItemSprite';
+import FeeLine from './price';
 import AnimatedSprite from '../../../sprites/AnimatedSprite';
 import { getCatchName, isGuarded, isShiny } from '../../../../auth/caught-record';
 import { Genders } from '../../../../data/ids/species';
@@ -15,7 +15,6 @@ import {
   LIST_PAGE,
   List,
   ListRow,
-  Row,
   RowButton,
   createPager,
 } from '../../../styled';
@@ -45,20 +44,6 @@ interface MoveCounterProps {
  * until one is on it: what has been forgotten, or what can be taught,
  * is a question about a particular pokemon
  */
-/** What a lesson costs, and whether the bag can pay it */
-function FeeLine(props: { fee: Items; scales: number }): JSX.Element {
-  return (
-    <Row class="justify-center gap-1.5 text-sm">
-      <span class="text-xs font-semibold text-muted uppercase">Fee</span>
-      <ItemSprite item={props.fee} size={20} label="" />
-      <span>1 Heart Scale</span>
-      <span class={props.scales > 0 ? 'text-muted' : 'font-semibold text-ember-dark'}>
-        · you have {props.scales}
-      </span>
-    </Row>
-  );
-}
-
 function pickedOf(props: MoveCounterProps): CatchOption | null {
   for (const option of props.options) {
     if (option.id === props.picked) {

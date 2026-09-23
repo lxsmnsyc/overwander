@@ -79,11 +79,7 @@ export interface ReviveCounterProps {
   carrying: number;
 }
 
-/**
- * His bench, which is a word rather than a tray: what he opens is in
- * the bag, and the bag is asked for in a window of its own the way
- * the vendor asks for what he is being sold
- */
+/** What his bench promises, over the fossils laid out on it */
 export function ReviveCounter(props: ReviveCounterProps): JSX.Element {
   return (
     <DialogSection class={CENTRED}>

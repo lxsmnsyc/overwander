@@ -33,6 +33,7 @@ import { SpriteAnim } from '../../data/ids/sprite-anims';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import TypeBadge from '../sprites/TypeBadge';
 import { useGame } from '../app/game-context';
+import describeWhere from '../../overworld/bearing';
 
 export interface RaidsTabProps {
   user: PlayerIdentity;
@@ -56,31 +57,6 @@ export interface RaidsTabProps {
  * fetched by name instead, read through `latest` so a row still
  * arriving does not suspend the tab
  */
-/** The eight ways a lair can lie from the player, clockwise from north */
-const COMPASS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-
-/** How far a lair is from the player, or its coordinates while their position is unknown */
-function describeWhere(
-  chunk: { x: number; y: number },
-  standing: { chunkX: number; chunkY: number } | null,
-): string {
-  if (standing == null) {
-    return `chunk ${chunk.x}, ${chunk.y}`;
-  }
-
-  const dx = chunk.x - standing.chunkX;
-  const dy = chunk.y - standing.chunkY;
-  const far = Math.max(Math.abs(dx), Math.abs(dy));
-
-  if (far === 0) {
-    return 'Here';
-  }
-  // North is up the board, which is -y
-  const turn = Math.round(Math.atan2(dx, -dy) / (Math.PI / 4));
-
-  return `${far} chunk${far === 1 ? '' : 's'} ${COMPASS[(turn + 8) % 8]}`;
-}
-
 /** A small uppercase heading over a list */
 function ListHeading(props: { children: JSX.Element; aside?: JSX.Element }): JSX.Element {
   return (

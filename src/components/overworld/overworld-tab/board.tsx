@@ -2985,6 +2985,7 @@ export default function OverworldBoard(props: {
             <NestDialog
               offer={eggOffer()}
               busy={taking()}
+              buddy={buddy() ?? null}
               onAccept={takeEgg}
               onClose={() => {
                 setEggOffer(null);

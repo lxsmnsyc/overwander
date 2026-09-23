@@ -1,18 +1,25 @@
 import type BasicSprite from '../../../canvas/basic-sprite';
 import loadBasicSprite, { UI_SPRITE_ROOT } from '../../../canvas/basic-sprites';
 import { type SpriteQuad, cornersOf } from '../../../canvas/placement';
-import type { Species } from '../../../data/ids/species';
+import { Species } from '../../../data/ids/species';
 import { MEGA_STONES, getMegaStone } from '../../../data/items/mega-stones';
 import { isMegaSpecies } from '../../../data/species/megas';
 import type { SlotBatch } from './draw';
 
 /**
- * The stone a Mega is wearing, floating over it. Not every Mega has
- * art of its own, so this is what tells a watcher it has Mega Evolved
+ * The stone a Mega is wearing, or the orb a Primal is, floating over
+ * it. Not every Mega has art of its own, so this is what tells a
+ * watcher the shape has changed
  */
 
 /** What a Mega with no stone wears instead: Rayquaza's Key Stone */
 const KEY_STONE = { sheet: 'key', name: 'key-stone-gen6' };
+
+/** A Primal wears the orb that returned it to that shape */
+const PRIMAL_ORBS = new Map<Species, { sheet: string; name: string }>([
+  [Species.KyogrePrimal, { sheet: 'held', name: 'blue-orb' }],
+  [Species.GroudonPrimal, { sheet: 'held', name: 'red-orb' }],
+]);
 
 /** How far above the cast plate it floats */
 const MARK_RISE = 22;
@@ -39,6 +46,11 @@ function sheetOf(name: string): BasicSprite | null {
 }
 
 function iconOf(species: Species): { sheet: string; name: string } | null {
+  const orb = PRIMAL_ORBS.get(species);
+
+  if (orb != null) {
+    return orb;
+  }
   if (!isMegaSpecies(species)) {
     return null;
   }

@@ -1090,6 +1090,10 @@ export const enum Species {
   GalladeMega = 1047501,
   AudinoMega = 1053101,
   DiancieMega = 1071901,
+
+  /** The two Primals, in the collection's own Primal slot */
+  KyogrePrimal = 1038201,
+  GroudonPrimal = 1038301,
 }
 
 /**

@@ -69,6 +69,10 @@ export const FORM_ITEMS = new Map<Items, Species[]>([
   [Items.GriseousOrb, [Species.GiratinaOrigin]],
   [Items.Gracidea, [Species.ShayminSky]],
   [Items.PrisonBottle, [Species.HoopaUnbound]],
+  // Primal Reversion is an Origin forme's rule rather than a Mega's:
+  // every holder takes the shape, with no limit to a team
+  [Items.BlueOrb, [Species.KyogrePrimal]],
+  [Items.RedOrb, [Species.GroudonPrimal]],
   // The seventeen Plates, each of which is already a type booster.
   // Holding one paints an Arceus the type it lifts, which is what the
   // mainline calls Multitype: there is no battle code behind it, only
@@ -113,10 +117,12 @@ export const GRACIDEA_PRICE = 8_000;
  */
 export const SPLICERS_PRICE = 12_000;
 
-const CREATION_ORBS: [item: Items, name: string, icon: string][] = [
+const LEGEND_ORBS: [item: Items, name: string, icon: string][] = [
   [Items.AdamantOrb, 'Adamant Orb', 'adamant-orb'],
   [Items.LustrousOrb, 'Lustrous Orb', 'lustrous-orb'],
   [Items.GriseousOrb, 'Griseous Orb', 'griseous-orb'],
+  [Items.BlueOrb, 'Blue Orb', 'blue-orb'],
+  [Items.RedOrb, 'Red Orb', 'red-orb'],
 ];
 
 // Written out because the ability each shape brings is battle code,
@@ -130,6 +136,10 @@ const DESCRIPTIONS: { [key in Items]?: string } = {
   [Items.Gracidea]:
     'A Shaymin holding it fights in its other shape, which also brings Serene Grace.',
   [Items.PrisonBottle]: 'A Hoopa holding it fights unbound, with its rings let out.',
+  [Items.BlueOrb]:
+    'A Kyogre holding it fights in its Primal shape, which also brings Primordial Sea.',
+  [Items.RedOrb]:
+    'A Groudon holding it fights in its Primal shape, which also brings Desolate Land.',
 };
 
 export default function registerFormItems(): void {
@@ -146,13 +156,13 @@ export default function registerFormItems(): void {
     sell: METEORITE_PRICE / 2,
   });
 
-  for (const [item, name, icon] of CREATION_ORBS) {
+  for (const [item, name, icon] of LEGEND_ORBS) {
     registerItem(item, {
       name,
       description: DESCRIPTIONS[item] ?? '',
       type: ItemTypes.Held,
-      // The three are drawn on the held sheet, which is where the
-      // collection packed them
+      // Drawn on the held sheet, which is where the collection
+      // packed them
       icon: `held/${icon}`,
       flags: ItemFlags.Holdable,
       buy: 0,

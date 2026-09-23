@@ -17,12 +17,13 @@ import { MergedLifecycle } from '../lifecycle';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
-import { hasFreeItemSlot, skyOverTeam, stealableItem, unitTarget } from '../utils';
+import { hasFreeItemSlot, stealableItem, unitTarget } from '../utils';
 import { HEALING_MOVES } from '../moves/recover';
 import { fieldHolder } from './signature/__create';
 import {
   createAbility,
   createContactHazard,
+  createPrimalWeatherAbility,
   createTypeShiftAbility,
   createWaterAbsorbAbility,
 } from './__create';
@@ -546,53 +547,11 @@ const setupAbilities = [
     });
   }),
 
-  // Mega Rayquaza: the winds hold for as long as it stands, and no
-  // other sky pushes them aside while they do
-  createAbility(Abilities.DeltaStream, (battle) => {
-    function blow(unit: Unit): void {
-      if (unit.alive && unit.hasAbility(Abilities.DeltaStream)) {
-        unit.triggerAbility(Abilities.DeltaStream);
-      }
-    }
-
-    /** Clear the winds once nobody left on the field is raising them */
-    function still(unit: Unit): void {
-      if (skyOverTeam(unit.team) !== Weathers.StrongWinds) {
-        return;
-      }
-      for (const other of battle.units()) {
-        if (other !== unit && other.alive && other.hasAbility(Abilities.DeltaStream)) {
-          return;
-        }
-      }
-      unit.setWeather(Weathers.None);
-    }
-
-    return new MergedLifecycle([
-      // Worn the moment it Mega Evolves, which is already on the field
-      battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, (event) => {
-        blow(event.source);
-      }),
-      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-        blow(event.source);
-      }),
-      battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-        if (event.ability === Abilities.DeltaStream) {
-          event.source.setWeather(Weathers.StrongWinds);
-        }
-      }),
-      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
-        if (event.source.hasAbility(Abilities.DeltaStream)) {
-          still(event.source);
-        }
-      }),
-      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
-        if (event.source.hasAbility(Abilities.DeltaStream)) {
-          still(event.source);
-        }
-      }),
-    ]);
-  }),
+  // Primal Kyogre, Primal Groudon and Mega Rayquaza: each raises its
+  // own primal sky for as long as it stands
+  createPrimalWeatherAbility(Abilities.PrimordialSea, Weathers.HeavyRain),
+  createPrimalWeatherAbility(Abilities.DesolateLand, Weathers.ExtremeSunny),
+  createPrimalWeatherAbility(Abilities.DeltaStream, Weathers.StrongWinds),
 ];
 
 export default function setupGen6Abilities(battle: Battle): void {

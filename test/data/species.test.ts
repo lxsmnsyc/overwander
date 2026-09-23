@@ -416,6 +416,8 @@ describe('species forms', () => {
       // shadow of rather than pokemon of their own
       ...listTrueShadows(),
       ...listMegas(),
+      Species.KyogrePrimal,
+      Species.GroudonPrimal,
     ]);
 
     expect(registered.length).toBeGreaterThan(0);

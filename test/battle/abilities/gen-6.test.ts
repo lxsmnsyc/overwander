@@ -576,3 +576,46 @@ describe('Delta Stream', () => {
     expect(foe.checkWeather()).toBe(Weathers.None);
   });
 });
+
+describe('Primordial Sea and Desolate Land', () => {
+  it('raise their primal skies, and the one to arrive last takes the field', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const sea = createUnit(battle, teamA, [Types.Water]);
+    const land = createUnit(battle, teamB, [Types.Ground]);
+
+    sea.addAbility(Abilities.PrimordialSea);
+    land.addAbility(Abilities.DesolateLand);
+    sea.enter();
+    land.enter();
+
+    // Only an ordinary sky is shut out: one primal answers another
+    expect(land.checkWeather()).toBe(Weathers.ExtremeSunny);
+  });
+
+  it('puts every Fire move out under heavy rain', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const sea = createUnit(battle, teamA, [Types.Water]);
+    const foe = createUnit(battle, teamB, [Types.Fire]);
+
+    sea.addAbility(Abilities.PrimordialSea);
+    sea.enter();
+    foe.enter();
+
+    const at = { type: MoveTargetType.Unit, unit: sea } as const;
+
+    expect(foe.checkMoveImmunity(Moves.Ember, at, Types.Fire)).toBe(true);
+  });
+
+  it('clears the sky when its holder leaves the field', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const land = createUnit(battle, teamA, [Types.Ground]);
+    const foe = createUnit(battle, teamB);
+
+    land.addAbility(Abilities.DesolateLand);
+    land.enter();
+    foe.enter();
+    land.leave();
+
+    expect(foe.checkWeather()).toBe(Weathers.None);
+  });
+});

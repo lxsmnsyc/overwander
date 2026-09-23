@@ -1016,6 +1016,10 @@ export const enum Items {
   Galladite = 495,
   Audinite = 496,
   Diancite = 497,
+
+  /** The orbs that return the sea and the land to their Primal shapes */
+  BlueOrb = 498,
+  RedOrb = 499,
 }
 
 /**

@@ -311,6 +311,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.AdamantOrb, weight: 3 },
     { item: Items.LustrousOrb, weight: 3 },
     { item: Items.GriseousOrb, weight: 3 },
+    { item: Items.BlueOrb, weight: 3 },
+    { item: Items.RedOrb, weight: 3 },
     { item: Items.Gracidea, weight: 3 },
     { item: Items.PrisonBottle, weight: 3 },
     // Three purses instead of one, for good, and nothing sells one.

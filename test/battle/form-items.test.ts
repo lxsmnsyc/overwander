@@ -140,4 +140,46 @@ describe('Worn abilities and slots', () => {
     }
     expect(fusion.worn[Abilities.Teravolt]).toBe(true);
   });
+
+  it('returns every Kyogre and Groudon holding an orb to its Primal shape, with no limit', () => {
+    const { battle, teamA } = createBattle();
+    const sea = createUnit(battle, teamA);
+    const land = createUnit(battle, teamA);
+    const second = createUnit(battle, teamA);
+    sea.setSpecies(Species.Kyogre);
+    sea.addItem(Items.BlueOrb);
+    land.setSpecies(Species.Groudon);
+    land.addItem(Items.RedOrb);
+    second.setSpecies(Species.Kyogre);
+    second.addItem(Items.BlueOrb);
+
+    sea.enter();
+    land.enter();
+    second.enter();
+
+    // Not a Mega, so a team takes as many as it holds orbs for
+    expect(sea.species).toBe(Species.KyogrePrimal);
+    expect(second.species).toBe(Species.KyogrePrimal);
+    expect(sea.hasAbility(Abilities.PrimordialSea)).toBe(true);
+    expect(land.species).toBe(Species.GroudonPrimal);
+    expect([...land.types]).toEqual([Types.Ground, Types.Fire]);
+    expect(land.hasAbility(Abilities.DesolateLand)).toBe(true);
+  });
+
+  it('leaves a Primal beside a Mega on the same team', () => {
+    const { battle, teamA } = createBattle();
+    const sea = createUnit(battle, teamA);
+    const ghost = createUnit(battle, teamA);
+    sea.setSpecies(Species.Kyogre);
+    sea.addItem(Items.BlueOrb);
+    sea.setLevel(90);
+    ghost.setSpecies(Species.Gengar);
+    ghost.addItem(Items.Gengarite);
+
+    sea.enter();
+    ghost.enter();
+
+    expect(sea.species).toBe(Species.KyogrePrimal);
+    expect(ghost.species).toBe(Species.GengarMega);
+  });
 });

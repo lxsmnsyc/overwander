@@ -222,6 +222,16 @@ The stone glows over the pokemon's head for the rest of the fight, with a Key
 Stone over Mega Rayquaza. That is how a watcher can tell, since not every Mega
 has been drawn yet: one that has not is drawn as its ordinary self.
 
+### Primal Reversion
+
+A Kyogre holding a **Blue Orb** or a Groudon holding a **Red Orb** takes its
+Primal shape as it takes the field. It is not a Mega Evolution: it works the way
+an Origin Forme does, so every holder changes and none of them takes the team's
+one Mega. Primal Kyogre wears Primordial Sea and raises heavy rain, and Primal
+Groudon wears Desolate Land and raises harsh sunlight. Either sky holds while
+its Primal stands and shuts every ordinary weather out, and the orb floats over
+it the way a stone does over a Mega.
+
 ## How a fight ends
 
 A fight ends as soon as it can go nowhere: nothing is mid-move, and no surviving

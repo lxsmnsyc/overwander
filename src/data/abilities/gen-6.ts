@@ -108,6 +108,18 @@ export default function registerGen6Abilities(): void {
     name: 'Parental Bond',
     description: 'A move it casts at one target lands twice, the second hit at 0.25x.',
   });
+  // Primal Kyogre
+  registerAbility(Abilities.PrimordialSea, {
+    name: 'Primordial Sea',
+    description:
+      'Raises heavy rain while it stands. Water moves hit 1.5x, Fire moves fail, and no other weather can be set.',
+  });
+  // Primal Groudon
+  registerAbility(Abilities.DesolateLand, {
+    name: 'Desolate Land',
+    description:
+      'Raises harsh sunlight while it stands. Fire moves hit 1.5x, Water moves fail, and no other weather can be set.',
+  });
   // Mega Rayquaza
   registerAbility(Abilities.DeltaStream, {
     name: 'Delta Stream',

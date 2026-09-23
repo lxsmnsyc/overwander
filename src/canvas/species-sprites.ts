@@ -295,24 +295,12 @@ export default async function loadSpeciesSprite(
    * there is any drawing carrying it; a **form** is a flower or a tail
    * a few species differ by, and losing it costs a detail rather than
    * the point. So the shiny form is asked for first, then the shiny
-   * without it, and only then the ordinary coat
+   * without it, and only then the ordinary coat.
+   *
+   * A Mega nobody has drawn yet is drawn as the pokemon it is a Mega
+   * of. Losing the Mega sits between the two: a female Mega Steelix
+   * is the Mega's own sheet rather than a female Steelix
    */
-  const tried: [shiny: boolean, female: boolean][] = [];
-
-  if (shiny) {
-    if (female) {
-      tried.push([true, true]);
-    }
-    tried.push([true, false]);
-  }
-  if (female) {
-    tried.push([false, true]);
-  }
-  tried.push([false, false]);
-
-  // A Mega nobody has drawn yet is drawn as the pokemon it is a Mega
-  // of, which is a form lost rather than the coat, so each coat is
-  // asked of both before the next is tried
   const shapes = [species];
   const base = getMegaBase(species);
 
@@ -322,9 +310,11 @@ export default async function loadSpeciesSprite(
 
   const wanted: [Species, boolean, boolean][] = [];
 
-  for (const [wantedShiny, wantedFemale] of tried) {
+  for (const wantedShiny of shiny ? [true, false] : [false]) {
     for (const shape of shapes) {
-      wanted.push([shape, wantedShiny, wantedFemale]);
+      for (const wantedFemale of female ? [true, false] : [false]) {
+        wanted.push([shape, wantedShiny, wantedFemale]);
+      }
     }
   }
 

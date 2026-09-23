@@ -163,15 +163,3 @@ export function KurtCounter(props: KurtCounterProps): JSX.Element {
     </DialogSection>
   );
 }
-
-export function VendorCounter(props: { gold: number }): JSX.Element {
-  return (
-    <DialogSection title="Trading" class={CENTRED}>
-      <Purse gold={props.gold} />
-
-      {/* His crate and the player's bag are windows of their own,
-          opened from the bar below */}
-      <Note>Buy from him, or sell to him.</Note>
-    </DialogSection>
-  );
-}

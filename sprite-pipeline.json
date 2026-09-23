@@ -27816,15 +27816,15 @@
       }
     },
     "public/sprites/ui/items/mega-stones/image.png": {
-      "digest": "83d1ec62b4c82f20",
-      "bytes": 5514,
-      "width": 98,
-      "height": 98,
+      "digest": "710f00eae457b27d",
+      "bytes": 11614,
+      "width": 112,
+      "height": 168,
       "compact": {
-        "at": "2026-08-17T06:50:23Z",
-        "as": "truecolour, none",
-        "was": 10052,
-        "bytes": 5514
+        "at": "2026-09-23T03:19:58Z",
+        "as": "already compact",
+        "was": 11614,
+        "bytes": 11614
       }
     },
     "public/sprites/ui/items/memories/image.png": {

@@ -4,7 +4,6 @@ import settings, {
   type BoardEdge,
   type BoxColumns,
   type ClockFormat,
-  type WorldTimeFace,
   setSetting,
 } from '../app/settings';
 import { ACTION_NAMES, ACTION_ORDER, type GameAction } from '../app/keys';
@@ -60,15 +59,6 @@ function ThemeSetting(): JSX.Element {
 const CLOCKS: { value: ClockFormat; label: string; description: string }[] = [
   { value: '24h', label: '24-hour', description: 'Twenty past eight in the evening is 20:20.' },
   { value: '12h', label: '12-hour', description: 'The same hour is 8:20 pm.' },
-];
-
-const WORLD_TIMES: { value: WorldTimeFace; label: string; description: string }[] = [
-  {
-    value: 'period',
-    label: 'Period',
-    description: 'Dawn, Day, Dusk or Night: what actually decides what walks about.',
-  },
-  { value: 'clock', label: 'Clock', description: 'The hour itself. The period is on hover.' },
 ];
 
 const BOARD_EDGES: { value: BoardEdge; label: string; description: string }[] = [
@@ -252,14 +242,6 @@ function GeneralPane(): JSX.Element {
           options={CLOCKS}
           onChange={(clock) => {
             setSetting('clock', clock);
-          }}
-        />
-        <RadioGroup
-          label="What the bar shows"
-          value={settings().worldTime}
-          options={WORLD_TIMES}
-          onChange={(face) => {
-            setSetting('worldTime', face);
           }}
         />
       </Card>

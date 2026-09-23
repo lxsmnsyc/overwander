@@ -24,7 +24,7 @@ import {
   SNAPSHOT_INTERVAL,
   WEATHER_INTERVAL,
 } from '../../overworld/chunk-snapshot';
-import { GameDialog, useGame } from './game-context';
+import { type FieldMoveOffer, GameDialog, useGame } from './game-context';
 import { watchProfile } from '../../auth/profile';
 import { listMysteryGifts } from '../../auth/gifts';
 import { NoticeKind } from '../../auth/notifications';
@@ -33,9 +33,9 @@ import {
   ActionsIcon,
   BagIcon,
   BellIcon,
+  ChevronDownIcon,
   FireIcon,
   GiftIcon,
-  InformationIcon,
   MapIcon,
   MenuIcon,
   NewsIcon,
@@ -46,8 +46,8 @@ import {
   TrophyIcon,
   UserIcon,
 } from '../icons';
-import WeatherIcon from '../overworld/WeatherIcon';
-import { Divider, HoverCard } from '../styled';
+import WeatherIcon, { getWeatherIcon } from '../overworld/WeatherIcon';
+import { Divider } from '../styled';
 import { SHEER } from '../styled/transition';
 import FullscreenToggle, { fullscreenOffered } from './fullscreen';
 import { ThemeToggle } from './theme';
@@ -62,39 +62,45 @@ const TOGGLE = `cursor-pointer rounded-full border-0 bg-transparent px-2 py-1 te
   transition-colors hover:border-0 hover:bg-tide hover:text-on-accent active:translate-y-0
   focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide`;
 
+/** A round icon button on the bar */
+const BAR_BUTTON = `relative flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border-2
+  border-transparent bg-transparent p-1.5 text-sm font-bold text-ink shadow-none
+  transition-colors hover:bg-tide hover:text-on-accent focus-visible:outline-2
+  focus-visible:outline-offset-2 focus-visible:outline-tide`;
+
+/** How many things are waiting, on the key or button that opens them */
+const COUNT = `min-w-4 rounded-full border-2 border-ember bg-ember-soft px-1 text-center
+  text-[0.65rem] leading-4 text-ember-dark`;
+
+/** A field move on the bar. Pressed is a travel mode that is on */
+const CHIP = `shrink-0 cursor-pointer rounded-full border-2 border-tide bg-transparent px-2.5 py-0.5
+  text-xs font-bold text-tide-dark shadow-none transition-colors hover:bg-tide-soft
+  active:translate-y-0 aria-pressed:bg-tide aria-pressed:text-on-accent
+  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide
+  disabled:cursor-not-allowed disabled:opacity-55`;
+
 /**
  * The one piece of furniture the game has: a bar along the bottom of
- * the world, with everything else behind the button on it.
- *
- * Every destination lives in a panel above that button, laid out as a
- * grid rather than a list: the same thing stays in the same corner, so
- * it is pressable without reading. A row of them along the bottom would
- * cost every screen a strip of map to say words that never change.
- *
- * Beside the button is what a player would otherwise have to open
- * something to learn: where they are standing, the hour the world is
- * in, and what is in the purse. On a phone those go behind a second
- * button, since the bar has no room to say them
+ * the world, with every destination in a keypad above the button on it.
+ * Beside the button is where the player stands and what the sky and
+ * clock are doing, which opens into the windows the world turns over on.
  */
 
 /**
- * One thing behind the button.
- *
- * `dialog` is what pressing it opens; an entry without one is a place
- * kept for something that is not built yet, drawn so the shape of the
- * menu is the shape it will keep. They are disabled rather than
- * hidden, because a keypad whose keys move as the game grows is one a
- * player has to read every time
+ * One key on the keypad. An entry without a `dialog` is a place kept
+ * for something not built yet, disabled rather than hidden so the other
+ * keys never move
  */
 interface MenuEntry {
   label: string;
   dialog?: GameDialog;
-  /**
-   * The picture over the word. Both are drawn: the keypad is learnt by
-   * where a thing is and recognised by its picture, and the word is
-   * what makes the first press of it possible
-   */
   icon: (props: ComponentProps<'svg'>) => JSX.Element;
+}
+
+/** A labelled row of keys. A new key joins its own row, so no other key moves */
+interface MenuGroup {
+  label: string;
+  entries: MenuEntry[];
 }
 
 /** The notices a player settles from their profile rather than elsewhere */
@@ -105,38 +111,45 @@ const PROFILE_NOTICES = new Set<NoticeKind>([
   NoticeKind.AuctionUnsold,
 ]);
 
-const ENTRIES: MenuEntry[] = [
-  { label: 'World', dialog: GameDialog.Map, icon: MapIcon },
-  // An invitation is worth finding, and nothing else on the bar was
-  // ever going to say one had landed
-  { label: 'Notices', dialog: GameDialog.Notifications, icon: BellIcon },
-  { label: 'Profile', dialog: GameDialog.Profile, icon: UserIcon },
-  // The row a player is in and out of all day: what they caught, what
-  // they are carrying, and what they have seen
-  { label: 'Catches', dialog: GameDialog.Catches, icon: SparklesIcon },
-  { label: 'Bag', dialog: GameDialog.Inventory, icon: BagIcon },
-  { label: 'Pokedex', dialog: GameDialog.Pokedex, icon: SearchIcon },
-  { label: 'Quests', dialog: GameDialog.Quests, icon: TrophyIcon },
-  // No Auctions key: the lots are read at an auction board out in the
-  // world, which is what makes trading somewhere a player goes rather
-  // than a panel they open. The panel itself still exists, and the
-  // profile still hands over anything already won
-  { label: 'Gifts', dialog: GameDialog.Gifts, icon: GiftIcon },
-  { label: 'Battle', dialog: GameDialog.Battles, icon: SwordsIcon },
-  { label: 'Raids', dialog: GameDialog.Raids, icon: FireIcon },
-  { label: 'Settings', dialog: GameDialog.Settings, icon: SettingsIcon },
-  // Added at the end rather than beside Notices: a key that moves is
-  // a key a player has to read again
-  { label: 'News', dialog: GameDialog.News, icon: NewsIcon },
+// No Auctions key: the lots are read at an auction board out in the
+// world, which is what makes trading somewhere a player goes
+const GROUPS: MenuGroup[] = [
+  {
+    label: 'You',
+    entries: [
+      { label: 'Catches', dialog: GameDialog.Catches, icon: SparklesIcon },
+      { label: 'Bag', dialog: GameDialog.Inventory, icon: BagIcon },
+      { label: 'Pokedex', dialog: GameDialog.Pokedex, icon: SearchIcon },
+      { label: 'Profile', dialog: GameDialog.Profile, icon: UserIcon },
+    ],
+  },
+  {
+    label: 'Play',
+    entries: [
+      { label: 'World', dialog: GameDialog.Map, icon: MapIcon },
+      { label: 'Quests', dialog: GameDialog.Quests, icon: TrophyIcon },
+      { label: 'Battle', dialog: GameDialog.Battles, icon: SwordsIcon },
+      { label: 'Raids', dialog: GameDialog.Raids, icon: FireIcon },
+    ],
+  },
+  {
+    label: 'Inbox',
+    entries: [
+      { label: 'Notices', dialog: GameDialog.Notifications, icon: BellIcon },
+      { label: 'Gifts', dialog: GameDialog.Gifts, icon: GiftIcon },
+      { label: 'News', dialog: GameDialog.News, icon: NewsIcon },
+    ],
+  },
 ];
 
 const TILE =
-  'flex cursor-pointer flex-col items-center gap-1 rounded-xl border-2 border-transparent' +
-  ' bg-transparent px-2 py-2 text-xs font-bold text-ink shadow-none transition-colors' +
-  ' hover:border-tide hover:bg-tide-soft hover:text-tide-dark active:translate-y-0' +
-  ' focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide' +
-  ' disabled:cursor-not-allowed disabled:text-muted disabled:opacity-55' +
-  ' disabled:hover:border-transparent disabled:hover:bg-transparent disabled:hover:text-muted';
+  'flex w-full min-w-0 cursor-pointer flex-col items-center gap-1 rounded-xl border-2' +
+  ' border-transparent bg-transparent px-1 py-2 text-xs font-bold text-ink shadow-none' +
+  ' transition-colors hover:border-tide hover:bg-tide-soft hover:text-tide-dark' +
+  ' active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2' +
+  ' focus-visible:outline-tide disabled:cursor-not-allowed disabled:text-muted' +
+  ' disabled:opacity-55 disabled:hover:border-transparent disabled:hover:bg-transparent' +
+  ' disabled:hover:text-muted';
 
 /**
  * How often the hour on the bar is re-read. The world turns over in
@@ -147,9 +160,8 @@ const CLOCK_TICK = 60_000;
 
 /**
  * The hour the world is reading, as a clock. It is the player's own
- * wall clock — the same reading the chunk under them derives its
- * pokemon from — so a word that disagrees with the window outside
- * shows up as the bug it is
+ * wall clock, the same reading the chunk under them derives its
+ * pokemon from
  */
 function worldClock(at: number, format: ClockFormat): string {
   const minutes = Math.floor(at / 60_000) % (24 * 60);
@@ -165,9 +177,9 @@ function worldClock(at: number, format: ClockFormat): string {
 }
 
 /**
- * What a chunk turns over, and how long each window runs. Named the
- * way a player would name them, and read as a countdown: when the next
- * one lands is what somebody standing in a chunk is deciding on
+ * What a chunk turns over, and how long each window runs. Read as a
+ * countdown: when the next one lands is what somebody standing in a
+ * chunk is deciding on
  */
 const WINDOWS: [called: string, every: number][] = [
   ['Pokemon', SNAPSHOT_INTERVAL],
@@ -205,10 +217,7 @@ function saidWait(left: number): string {
   return `in ${hours}h ${past}m`;
 }
 
-/**
- * When each window next turns over, rather than how long it runs: a
- * player reads this to decide whether to wait where they stand or walk on
- */
+/** When each window next turns over, rather than how long it runs */
 function Windows(props: { now: number; class?: string }): JSX.Element {
   return (
     <>
@@ -229,13 +238,23 @@ function Windows(props: { now: number; class?: string }): JSX.Element {
   );
 }
 
+/** The travel mode that is on, if any, for the phone's field move button */
+function activeMove(offers: FieldMoveOffer[]): FieldMoveOffer | null {
+  for (const offer of offers) {
+    if (offer.active) {
+      return offer;
+    }
+  }
+  return null;
+}
+
 export default function GameMenu(): JSX.Element {
   const auth = useAuth();
   const game = useGame();
   const [open, setOpen] = createSignal(false);
-  /** The readings on a phone, behind their own button beside the menu */
+  /** Where the player stands and the world's clock, opened from the bar */
   const [details, setDetails] = createSignal(false);
-  /** The buddy's field moves, behind their own button on the bar */
+  /** The buddy's field moves, behind their own button on a phone */
   const [moves, setMoves] = createSignal(false);
   const [now, setNow] = createSignal(localNow());
   const [gold, setGold] = createSignal<number | null>(null);
@@ -243,7 +262,7 @@ export default function GameMenu(): JSX.Element {
   /** The way in, kept so the bound key can hand it the keyboard */
   let button: HTMLButtonElement | undefined;
 
-  /** How many things are waiting on the player, for the key's own badge */
+  /** How many things are waiting on the player, for the menu button's own badge */
   const waiting = (): number => game.notices().length;
 
   /** Gifts waiting on the shelf and quests ready to claim, read when the menu opens */
@@ -284,15 +303,30 @@ export default function GameMenu(): JSX.Element {
     return count;
   };
 
+  /** Opens one panel off the bar and closes the others, since all of them open upward */
+  const only = (panel: 'menu' | 'details' | 'moves'): void => {
+    setOpen(panel === 'menu');
+    setDetails(panel === 'details');
+    setMoves(panel === 'moves');
+    if (panel === 'menu') {
+      readShelf();
+    }
+  };
+
+  const openDialog = (dialog: GameDialog): void => {
+    setOpen(false);
+    game.setDialog(dialog);
+  };
+
   const period = (): string => TIME_OF_DAY_NAMES[getTimeOfDay(now())];
   const clock = (): string => worldClock(now(), settings().clock);
+  const place = (): string => game.place() ?? 'Somewhere';
+  const purse = (): string => `${(gold() ?? 0).toLocaleString()} gold`;
 
   /**
-   * The instant, read the way the world reads it: the server's clock
-   * for *when* — a device cannot move time — put into the player's own
-   * zone for *which hour*. The chunk under them derives its pokemon
-   * from exactly this, so the bar said Night over a field of day
-   * pokemon while it was reading raw UTC
+   * The server's clock for when, put into the player's own zone for
+   * which hour, since the chunk under them derives its pokemon from
+   * exactly this
    */
   const local = (at: number): number => toLocalTime(at, getLocalOffset());
 
@@ -330,8 +364,7 @@ export default function GameMenu(): JSX.Element {
     });
 
   // Watched rather than read once: gold moves at a vendor, on the
-  // board and at the end of a raid, and a figure on permanent display
-  // that only updates on a reload is a figure a player stops trusting
+  // board and at the end of a raid
   createEffect(() => {
     const user = auth.user();
 
@@ -348,10 +381,9 @@ export default function GameMenu(): JSX.Element {
   });
 
   /**
-   * The bound key puts the keyboard on the bar rather than opening it.
-   * The button is then a button: Enter opens the panel, and a player
-   * who pressed the key to see where they were reads the bar and walks
-   * on without a panel over the world
+   * The bound key puts the keyboard on the bar rather than opening it,
+   * so a player who pressed it to see where they were can walk on
+   * without a panel over the world
    */
   onMount(() => {
     const onKey = (event: KeyboardEvent): void => {
@@ -375,59 +407,76 @@ export default function GameMenu(): JSX.Element {
       // map and below anything opened over the map
       class="pointer-events-none fixed inset-x-0 bottom-4 z-10 flex justify-center px-4"
     >
-      {/* One bar: the way in on the left, and the three readings a
-          player would otherwise have to open something to get */}
       <Popover
         isOpen={open()}
         onChange={(state: boolean) => {
-          setOpen(state);
           if (state) {
-            readShelf();
-          }
-          // One panel at a time: all of them open out of the top of the bar
-          if (state) {
-            setDetails(false);
-            setMoves(false);
+            only('menu');
+          } else {
+            setOpen(false);
           }
         }}
-        // No `overflow-hidden` however tempting: the panel opens out
-        // of the top of this box, and a clipped panel is a menu that
-        // does not appear
+        // No `overflow-hidden`: every panel opens out of the top of
+        // this box, and a clipped panel is a menu that does not appear
         class="pointer-events-auto relative flex max-w-full items-center gap-2 rounded-full
-          border-2 border-tide bg-paper/95 py-1 pr-1 pl-1 shadow-pop backdrop-blur-sm sm:pr-4"
+          border-2 border-tide bg-paper/95 py-1 pr-1 pl-1 shadow-pop backdrop-blur-sm sm:pr-3"
       >
         <PopoverButton
           ref={button}
-          aria-label="Menu"
-          class="flex shrink-0 cursor-pointer items-center gap-2 rounded-full border-2
-            border-transparent bg-transparent p-1.5 text-sm font-bold text-ink shadow-none
-            transition-colors hover:bg-tide hover:text-on-accent focus-visible:outline-2
-            focus-visible:outline-offset-2 focus-visible:outline-tide"
+          aria-label={waiting() > 0 ? `Menu, ${waiting()} waiting` : 'Menu'}
+          class={BAR_BUTTON}
         >
           <MenuIcon class="size-5" aria-hidden="true" />
+          <Show when={waiting() > 0}>
+            <span aria-hidden="true" class={`${COUNT} absolute -top-1 -right-1`}>
+              {waiting()}
+            </span>
+          </Show>
         </PopoverButton>
 
-        {/* On a phone. Not positioned itself, so its panel hangs off the
-            bar the way the menu's does */}
+        <Divider />
+
+        {/* Not positioned itself, so its panel hangs off the bar the way the menu's does */}
         <Popover
           isOpen={details()}
           onChange={(state: boolean) => {
-            setDetails(state);
             if (state) {
-              setOpen(false);
-              setMoves(false);
+              only('details');
+            } else {
+              setDetails(false);
             }
           }}
-          class="flex sm:hidden"
+          class="flex min-w-0"
         >
+          {/* Read straight rather than through a callback `Show`, which
+              untracks the call and would hold the first place stood in */}
           <PopoverButton
-            aria-label="Details"
-            class="flex shrink-0 cursor-pointer items-center rounded-full border-2
-              border-transparent bg-transparent p-1.5 text-ink shadow-none transition-colors
-              hover:bg-tide hover:text-on-accent focus-visible:outline-2
-              focus-visible:outline-offset-2 focus-visible:outline-tide"
+            class="flex max-w-full min-w-0 cursor-pointer flex-col items-start rounded-2xl border-0
+              bg-transparent px-2 py-0.5 text-left leading-tight shadow-none transition-colors
+              hover:bg-tide-soft active:translate-y-0 focus-visible:outline-2
+              focus-visible:outline-offset-2 focus-visible:outline-tide sm:max-w-72"
           >
-            <InformationIcon class="size-5" aria-hidden="true" />
+            <span class="flex max-w-full min-w-0 items-center gap-1">
+              <span class="min-w-0 truncate text-sm font-bold text-ink">{place()}</span>
+              <ChevronDownIcon class="size-3.5 shrink-0 text-muted" aria-hidden="true" />
+            </span>
+            <span class="flex items-center gap-1 text-xs whitespace-nowrap text-muted">
+              {(() => {
+                const sky = game.weather();
+
+                return sky == null ? (
+                  ''
+                ) : (
+                  <>
+                    <Dynamic component={getWeatherIcon(sky)} class="size-3.5" aria-hidden="true" />
+                    <span class="hidden sm:inline">{WEATHER_NAMES[sky]} ·</span>
+                  </>
+                );
+              })()}
+              <span>
+                {period()} {clock()}
+              </span>
+            </span>
           </PopoverButton>
           <Transition
             show={details()}
@@ -440,11 +489,10 @@ export default function GameMenu(): JSX.Element {
                 shadow-pop"
             >
               <div class="flex items-center justify-between gap-3">
-                <span class="min-w-0 truncate font-bold text-ink">
-                  {game.place() ?? 'Somewhere'}
-                </span>
-                <span class="shrink-0 font-bold whitespace-nowrap text-gold">
-                  {gold() ?? 0} gold
+                <span class="min-w-0 truncate font-bold text-ink">{place()}</span>
+                {/* On the bar itself from a screen wide enough to hold it */}
+                <span class="shrink-0 font-bold whitespace-nowrap text-gold sm:hidden">
+                  {purse()}
                 </span>
               </div>
               {(() => {
@@ -459,12 +507,11 @@ export default function GameMenu(): JSX.Element {
                   </span>
                 );
               })()}
-              {/* The windows said outright, since a phone has no hover to open a card with */}
-              <div class="flex items-center justify-between gap-3 border-t-2 border-line-soft pt-2">
+              <div class="flex items-center justify-between gap-3">
                 <span class="font-bold text-ink">{period()}</span>
                 <span class="text-muted">{clock()}</span>
               </div>
-              <div class="text-xs">
+              <div class="border-t-2 border-line-soft pt-2 text-xs">
                 <Windows
                   now={now()}
                   class="grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 [&_dd]:text-right
@@ -472,7 +519,7 @@ export default function GameMenu(): JSX.Element {
                 />
               </div>
               <Show when={fullscreenOffered()}>
-                <div class="flex justify-end border-t-2 border-line-soft pt-2">
+                <div class="flex justify-end border-t-2 border-line-soft pt-2 sm:hidden">
                   <FullscreenToggle class={TOGGLE} />
                 </div>
               </Show>
@@ -480,87 +527,46 @@ export default function GameMenu(): JSX.Element {
           </Transition>
         </Popover>
 
-        {/* The readings on the bar itself, from a screen wide enough to hold them */}
-        <div class="hidden min-w-0 items-center gap-2 sm:flex">
-          <Divider />
-
-          {/* Where they are standing. It is the one reading that can be
-              missing — a chunk still being read has no name yet */}
-          {/* Read straight rather than through a `Show`. Its callback
-              form hands the child an accessor and then untracks the call,
-              so a child that *is* the call — `{(place) => place()}` —
-              captures the first place the player stood in and holds it:
-              the words only changed when they went from nothing to
-              something, which is once a session */}
-          <span class="min-w-0 truncate text-sm font-bold text-ink">
-            {game.place() ?? 'Somewhere'}
-          </span>
-
-          <Divider />
-
-          {/* What the sky is doing, which is worth reading: a pokemon met
-              under weather comes with a floor under its values. Drawn
-              rather than named, since the bar is a strip and the place
-              beside it has the words */}
-          <span class="flex shrink-0 items-center text-muted">
-            {(() => {
-              const sky = game.weather();
-
-              return sky == null ? '' : <WeatherIcon weather={sky} />;
-            })()}
-          </span>
-
-          <Divider />
-
-          {/* What hour the world is in, which is what decides what walks
-              about in it. The reading the player did not choose is the
-              first thing the card says, so neither is ever more than a
-              hover away, and the windows the hour is divided into are
-              under it: what changes on this clock, and how often */}
-          <HoverCard
-            title="The world's clock"
-            description={settings().worldTime === 'clock' ? period() : `World time ${clock()}`}
-            placement="top"
-            width="wide"
-            class="shrink-0 cursor-help rounded text-sm whitespace-nowrap text-muted
-            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide"
-            trigger={settings().worldTime === 'clock' ? clock() : period()}
-          >
-            <Windows now={now()} />
-          </HoverCard>
-
-          <Divider />
-
-          <span class="shrink-0 text-sm font-bold whitespace-nowrap text-gold">
-            {gold() ?? 0} gold
-          </span>
-        </div>
-
-        {/* The buddy's field moves, only while there is one to use here.
-            Outside the readings so a phone gets the button too */}
+        {/* The buddy's field moves, only while there is one to use here */}
         <Show when={game.fieldMoves().length > 0}>
-          <span class="hidden sm:flex">
-            <Divider />
-          </span>
+          <Divider />
+
+          <div class="hidden items-center gap-1 sm:flex">
+            <For each={game.fieldMoves()}>
+              {(offer) => (
+                <button
+                  type="button"
+                  class={CHIP}
+                  aria-pressed={offer.active}
+                  disabled={offer.busy}
+                  onClick={() => {
+                    offer.use();
+                  }}
+                >
+                  {offer.name}
+                </button>
+              )}
+            </For>
+          </div>
+
+          {/* A phone has no width for the chips, so they go behind a button
+              that names the travel mode that is on */}
           <Popover
             isOpen={moves()}
             onChange={(state: boolean) => {
-              setMoves(state);
               if (state) {
-                setOpen(false);
-                setDetails(false);
+                only('moves');
+              } else {
+                setMoves(false);
               }
             }}
-            class="flex"
+            class="flex sm:hidden"
           >
-            <PopoverButton
-              aria-label="Field moves"
-              class="flex shrink-0 cursor-pointer items-center rounded-full border-2
-                border-transparent bg-transparent p-1.5 text-ink shadow-none transition-colors
-                hover:bg-tide hover:text-on-accent focus-visible:outline-2
-                focus-visible:outline-offset-2 focus-visible:outline-tide"
-            >
+            <PopoverButton aria-label="Field moves" class={BAR_BUTTON}>
               <ActionsIcon class="size-5" aria-hidden="true" />
+              <Show when={activeMove(game.fieldMoves())}>
+                {(offer) => <span class="pr-1">{offer().name}</span>}
+              </Show>
             </PopoverButton>
             <Transition
               show={moves()}
@@ -589,12 +595,14 @@ export default function GameMenu(): JSX.Element {
           </Popover>
         </Show>
 
-        {/* On the bar rather than behind the button: taking the screen
-            is what a player does as they start walking, and a phone is
-            where the browser's own bars cost the most. The divider is
-            asked the same question the switch is, since a browser that
-            will not fill the screen draws neither */}
         <div class="hidden items-center gap-2 sm:flex">
+          <Divider />
+
+          <span class="shrink-0 text-sm font-bold whitespace-nowrap text-gold">{purse()}</span>
+
+          {/* On the bar rather than behind the button: taking the screen
+              is what a player does as they start walking. The divider
+              goes with it on a browser that will not fill the screen */}
           <Show when={fullscreenOffered()}>
             <Divider />
           </Show>
@@ -602,67 +610,71 @@ export default function GameMenu(): JSX.Element {
           <FullscreenToggle class={`${TOGGLE} shrink-0`} />
         </div>
 
-        {/* Above the button rather than below it: the button is at the
-            bottom of the window, and there is nothing under it to open
-            into. Centred on the button and pulled back by half its own
-            width, so the panel stays over the middle of the screen
-            however wide it turns out to be */}
+        {/* Centred on the bar and pulled back by half its own width, so
+            the panel stays over the middle of the screen */}
         <Transition
           show={open()}
           {...SHEER}
-          class="absolute bottom-full left-1/2 z-30 mb-2 w-max -translate-x-1/2"
+          class="absolute bottom-full left-1/2 z-30 mb-2 w-[21rem] max-w-[calc(100vw-2rem)]
+            -translate-x-1/2"
         >
-          <PopoverPanel
-            // Kept mounted, since the fade needs something to fade,
-            // and out of reach while it is going
-            // unmount={false}
-            class="rounded-panel border-2 border-tide bg-paper p-2 shadow-pop"
-          >
-            {/* Whether it is day or night in the game, which changes
-              how it looks rather than what is on it, so it is not one
-              of the keys */}
-            <div class="flex items-center justify-end gap-2 border-b-2 border-line-soft px-2 pb-2">
-              <ThemeToggle class={TOGGLE} />
-            </div>
-
-            <div class="grid grid-cols-3 gap-1 pt-2">
-              <For each={ENTRIES}>
-                {(entry) => (
-                  <button
-                    type="button"
-                    class={`${TILE} w-20`}
-                    disabled={entry.dialog == null}
-                    // What a screen reader is told about a key that is
-                    // kept rather than built. The word alone reads as
-                    // something the game can do and will not
-                    title={entry.dialog == null ? `${entry.label} — not yet` : entry.label}
-                    onClick={() => {
-                      if (entry.dialog == null) {
-                        return;
-                      }
-                      setOpen(false);
-                      game.setDialog(entry.dialog);
-                    }}
+          <PopoverPanel class="flex flex-col gap-1 rounded-panel border-2 border-tide bg-paper p-2 shadow-pop">
+            <For each={GROUPS}>
+              {(group) => (
+                <div role="group" aria-label={group.label}>
+                  <span
+                    aria-hidden="true"
+                    class="block px-2 pt-1 text-left text-xs font-semibold text-muted uppercase"
                   >
-                    <span class="relative">
-                      <Dynamic component={entry.icon} class="size-7" aria-hidden="true" />
-                      {/* How many things are waiting, on the key that
-                          opens them: whether to look is the whole of
-                          what a player needs off the bar */}
-                      <Show when={countFor(entry.dialog) > 0}>
-                        <span
-                          class="absolute -top-1 -right-2 min-w-4 rounded-full border-2
-                            border-ember bg-ember-soft px-1 text-[0.65rem] leading-4
-                            text-ember-dark"
+                    {group.label}
+                  </span>
+                  <div class="grid grid-cols-4 gap-1">
+                    <For each={group.entries}>
+                      {(entry) => (
+                        <button
+                          type="button"
+                          class={TILE}
+                          disabled={entry.dialog == null}
+                          // The word alone reads as something the game can do and will not
+                          title={entry.dialog == null ? `${entry.label}, not yet` : entry.label}
+                          onClick={() => {
+                            if (entry.dialog != null) {
+                              openDialog(entry.dialog);
+                            }
+                          }}
                         >
-                          {countFor(entry.dialog)}
-                        </span>
-                      </Show>
-                    </span>
-                    {entry.label}
-                  </button>
-                )}
-              </For>
+                          <span class="relative">
+                            <Dynamic component={entry.icon} class="size-7" aria-hidden="true" />
+                            <Show when={countFor(entry.dialog) > 0}>
+                              <span class={`${COUNT} absolute -top-1 -right-2`}>
+                                {countFor(entry.dialog)}
+                              </span>
+                            </Show>
+                          </span>
+                          {entry.label}
+                        </button>
+                      )}
+                    </For>
+                  </div>
+                </div>
+              )}
+            </For>
+
+            {/* Settings and the day or night switch change how the game
+                behaves rather than where the player goes, so they sit
+                under the keys rather than among them */}
+            <div class="mt-1 flex items-center justify-between gap-2 border-t-2 border-line-soft px-1 pt-2">
+              <button
+                type="button"
+                class={`${TOGGLE} flex items-center gap-1.5 text-sm font-bold`}
+                onClick={() => {
+                  openDialog(GameDialog.Settings);
+                }}
+              >
+                <SettingsIcon class="size-5" aria-hidden="true" />
+                Settings
+              </button>
+              <ThemeToggle class={TOGGLE} />
             </div>
           </PopoverPanel>
         </Transition>

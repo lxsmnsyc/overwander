@@ -23,9 +23,6 @@ const STORAGE_KEY = 'overwander:settings';
 
 export type ClockFormat = '24h' | '12h';
 
-/** What the menu bar says about the hour the world is in */
-export type WorldTimeFace = 'period' | 'clock';
-
 export type BoxColumns = 5 | 6 | 8;
 
 /** What the board shows past the country it keeps track of */
@@ -40,7 +37,6 @@ export interface GameSettings {
    */
   reduceMotion: boolean;
   clock: ClockFormat;
-  worldTime: WorldTimeFace;
   /** How wide the pokemon box is drawn, in squares */
   boxColumns: BoxColumns;
   /**
@@ -91,7 +87,6 @@ function defaults(): GameSettings {
   return {
     reduceMotion: !isServer && globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches,
     clock: '24h',
-    worldTime: 'period',
     boxColumns: 6,
     keepBall: true,
     lastBall: Balls.PokeBall,
@@ -175,7 +170,6 @@ function stored(): GameSettings {
     return {
       reduceMotion: said.reduceMotion === true,
       clock: oneOf(said.clock, ['24h', '12h'] as const, base.clock),
-      worldTime: oneOf(said.worldTime, ['period', 'clock'] as const, base.worldTime),
       boxColumns: columns === 5 || columns === 8 ? columns : base.boxColumns,
       keepBall: typeof said.keepBall === 'boolean' ? said.keepBall : base.keepBall,
       lastBall: ballOf(said.lastBall, base.lastBall),

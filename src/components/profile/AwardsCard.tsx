@@ -267,6 +267,7 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.WikstromDefeated]: '#8f9aa8',
   [Awards.DrasnaDefeated]: '#6a5fb0',
   [Awards.KalosChampion]: '#e0b64f',
+  [Awards.AZDefeated]: '#6a5a8f',
   [Awards.AaronDefeated]: '#6fae5a',
   [Awards.BerthaDefeated]: '#b8935a',
   [Awards.FlintDefeated]: '#d9542f',

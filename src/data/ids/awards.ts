@@ -140,6 +140,8 @@ const enum Awards {
   WikstromDefeated = 132,
   DrasnaDefeated = 133,
   KalosChampion = 134,
+  /** The king who ended a war with a weapon, met where a champion would be */
+  AZDefeated = 135,
 }
 
 export default Awards;
@@ -259,6 +261,7 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.WikstromDefeated]: 'Wikstrom Defeated',
   [Awards.DrasnaDefeated]: 'Drasna Defeated',
   [Awards.KalosChampion]: 'Kalos Champion',
+  [Awards.AZDefeated]: 'AZ Defeated',
 };
 
 /**

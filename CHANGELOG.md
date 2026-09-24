@@ -1,5 +1,42 @@
 # overwander
 
+## 4.16.0
+
+### Minor Changes
+
+- ccf396b: - Cobalion, Terrakion, Virizion and Keldeo can be met. Cobalion keeps the
+  Guidance Chamber in the mountains, Terrakion the Trial Chamber in the
+  mountains and badlands, and Virizion the Rumination Field in the temperate
+  forests and woodlands.
+  - Keldeo is a mythical, so no lair stages it. It waits in the bogs, and the
+    Colt's Petal calls one out to be fought.
+  - A Keldeo that knows Secret Sword fights in its Resolute form.
+  - A form with no art of its own is drawn as its base form instead of
+    Missingno.
+  - Iron Vigil, Stone Vigil, Leaf Vigil and Tide Vigil each guard the holder's
+    team while it stands: physical moves land at 0.8x, special moves at 0.8x,
+    indirect damage at 0.8x with no poison, and enemies can neither flinch a
+    teammate nor knock its stats down.
+  - All four reach three of this registry's own abilities beside Justified:
+    Sturdy, Clear Body and Inner Focus for Cobalion, Sand Rush, Rock Head and
+    Moxie for Terrakion, Chlorophyll, Leaf Guard and Serene Grace for Virizion,
+    and Swift Swim, Analytic and Steadfast for Keldeo.
+  - Changes world generation.
+- 85e0f35: Route 12 and the last of the region's roads, and the three families along them:
+
+  - Durant works the badlands and the mountain by day, and Heatmor comes over the same badlands and the volcano after dark, which is when it opens the nest.
+  - Larvesta and Volcarona stand in the desert by day, and on no other ground. The moth is a legendary here and the grub is as rare as a baby.
+  - The Relic Castle is a legendary lair in the desert, with Volcarona in it. A raid in the desert can stage it, the way one in the mountain can stage Mt. Ember.
+  - Each family brings its own signature ability: Anteater has Heatmor hit 1.5x into Bug and Steel, Ant Guard has Fire moves land on Durant at 0.5x, and Ember Halo costs every enemy 1/16 of its HP each time it acts near a Volcarona. Heatmor into Durant comes out at 0.75x, so the ant wins the exchange it was built to lose.
+  - Heatmor can be born with Sheer Force, Durant with Compound Eyes, and Volcarona with Drought or Magic Guard.
+
+- ab0083d: Twist Mountain and the moor below it, and the four families around them:
+
+  - Cubchoo and Beartic across the tundra and the glacier by day, Cryogonal over the glacier and the alpine tundra after dark, Tynamo through Eelektross on the mountain and in the bog at the same hours, and Mienfoo and Mienshao on the mountain and in the montane forest by day.
+  - A Tynamo knows four moves and never learns a fifth until it is something else, which is how the games have it.
+  - Each family brings its own signature ability: Frost Fangs has Beartic's contact moves hit 1.25x with a 20% chance to freeze, Crystal Chain holds a freeze on an enemy open twice as long while Cryogonal stands, Latch On stops whatever Eelektross closes on from fleeing and bleeds it 1/16 each time it acts, and Sleeve Guard has contact moves land on Mienshao at 0.75x.
+  - Cryogonal can be born with Ice Body, Snow Warning or Clear Body, Eelektross with Volt Absorb, Strong Jaw or Water Absorb, and Mienshao with Iron Fist. Beartic needs nothing invented, because Rattled walks up from the Cubchoo below it.
+
 ## 4.15.1
 
 ### Patch Changes

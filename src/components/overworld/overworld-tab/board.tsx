@@ -117,6 +117,7 @@ import {
   createEffect,
   createMemo,
   createSignal,
+  on,
   onCleanup,
   onMount,
   untrack,
@@ -464,19 +465,23 @@ export default function OverworldBoard(props: {
     setPlaced(true);
   });
 
-  // Put somewhere by something other than a walk, which today means a
-  // staff teleport. The board holds its own coordinates once it is
-  // placed, so the news has to move them rather than the position
-  createEffect(() => {
-    const at = game.moved();
-
-    if (at == null || !placed()) {
-      return;
-    }
-    setAtX(worldCell(at.chunkX, at.cellX));
-    setAtY(worldCell(at.chunkY, at.cellY));
-    setAtDepth(at.depth);
-  });
+  // Put somewhere by something other than a walk (a staff teleport, Dig
+  // or Teleport), which has to move the board's own coordinates. Deferred
+  // so a remount after a battle does not replay a move walked away from
+  createEffect(
+    on(
+      game.moved,
+      (at) => {
+        if (at == null || !placed()) {
+          return;
+        }
+        setAtX(worldCell(at.chunkX, at.cellX));
+        setAtY(worldCell(at.chunkY, at.cellY));
+        setAtDepth(at.depth);
+      },
+      { defer: true },
+    ),
+  );
 
   /**
    * The windows of every chunk the board overlaps, by chunk key.

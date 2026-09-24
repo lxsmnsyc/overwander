@@ -18,6 +18,7 @@ import {
   useToast,
 } from '../../../styled';
 import { type CounterProps, priceOf, refusal, useSaying } from '../shared';
+import { readable } from '../../../app/resource-reads';
 
 /** Which side of the counter is open */
 const enum Side {
@@ -66,7 +67,7 @@ export default function Vendor(props: CounterProps): JSX.Element {
    * say, and what a player buying a third potion is deciding with
    */
   const carrying = (item: Items): number => {
-    for (const entry of props.bag.latest ?? []) {
+    for (const entry of readable(props.bag) ?? []) {
       if (entry.item === item) {
         return entry.amount;
       }
@@ -131,7 +132,7 @@ export default function Vendor(props: CounterProps): JSX.Element {
           : 'Press what you are buying, then say how many.'
       }
       verb={selling ? 'Sell' : 'Buy'}
-      entries={selling ? props.bag.latest : crate()}
+      entries={selling ? readable(props.bag) : crate()}
       disabled={busy()}
       value={null}
       carried={(entry) => carrying(entry.item)}

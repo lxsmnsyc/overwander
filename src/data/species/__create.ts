@@ -415,6 +415,29 @@ export function getLearnableMoves(species: Species): Moves[] {
 }
 
 /**
+ * Every move a pokemon of this species can be holding: its own, plus
+ * whatever an earlier stage of the line learned, bred or was taught
+ * before evolving. Egg moves sit on the base stage, so an evolution
+ * only reaches them through this
+ */
+export function getReachableMoves(species: Species): Moves[] {
+  const moves = new Set<Moves>();
+  let current: Species | undefined = species;
+
+  // Bounded like `getBaseSpecies`: a chain that loops is a data error
+  while (current != null) {
+    for (const move of getLearnableMoves(current)) {
+      moves.add(move);
+    }
+
+    const previous: Species | undefined = getSpeciesData(current).evolvesFrom;
+
+    current = previous === current ? undefined : previous;
+  }
+  return [...moves];
+}
+
+/**
  * What the species learns on reaching exactly that level, in the order
  * the entry lists them. A level with nothing on it answers an empty
  * list.

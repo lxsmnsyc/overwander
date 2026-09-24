@@ -19,7 +19,7 @@ import { Stats } from '../../src/data/constants/stats';
 import { getExpertHeldItems } from '../../src/data/items/expert-loadout';
 import { TYPE_BOOSTERS } from '../../src/data/items/type-boosters';
 import {
-  getLearnableMoves,
+  getReachableMoves,
   getSpeciesAbilityPools,
   getSpeciesData,
   registerSpecies,
@@ -611,7 +611,7 @@ describe('type experts', () => {
   it('builds every species an expert can field with four moves it can learn', () => {
     for (const species of getRentalPool()) {
       const built = getBestMoves(species);
-      const legal = new Set(getLearnableMoves(species));
+      const legal = new Set(getReachableMoves(species));
       const name = getSpeciesData(species).name;
 
       expect(built.length, name).toBeLessThanOrEqual(BEST_MOVE_COUNT);
@@ -754,7 +754,7 @@ describe('type experts', () => {
   it('builds a support out of the same species as a core', () => {
     for (const species of getRentalPool()) {
       const name = getSpeciesData(species).name;
-      const legal = new Set(getLearnableMoves(species));
+      const legal = new Set(getReachableMoves(species));
       const support = getBestMoves(species, [], { role: BuildRole.Protector });
       const quiet = (moves: Moves[]): number =>
         moves.filter((move) => getMoveData(move).category === MoveCategories.Status).length;
@@ -1128,24 +1128,46 @@ describe('type experts', () => {
   });
 
   it('hands the healing to the frailest that can and the hits to the bulkiest', () => {
-    // Chansey and Clefable can both heal; Chansey is the one that can
-    // take a hit, so Clefable heals and Chansey draws fire
+    // Audino and Chansey can both heal a teammate; Chansey is the one
+    // that can take a hit, so Audino heals and Chansey draws fire
     const roles = assignBuildRoles([
       Species.Gengar,
       Species.Machamp,
-      Species.Clefable,
+      Species.Audino,
       Species.Chansey,
       Species.Skarmory,
-      Species.Jynx,
+      Species.Tyranitar,
     ]);
 
-    expect(roles[3]).not.toBe(BuildRole.Healer);
+    expect(roles[2]).toBe(BuildRole.Healer);
+    expect(roles[3]).toBe(BuildRole.Redirector);
+  });
+
+  it('prefers a healer that mends over a frailer one that only boosts', () => {
+    // Lucario only has Helping Hand, so Chansey heals despite its bulk
+    const roles = assignBuildRoles([
+      Species.Gengar,
+      Species.Machamp,
+      Species.Lucario,
+      Species.Chansey,
+      Species.Skarmory,
+      Species.Tyranitar,
+    ]);
+
+    expect(roles[3]).toBe(BuildRole.Healer);
+  });
+
+  it('reaches the moves an earlier stage learned or hatched with', () => {
+    // Wish is Togetic's, not Togekiss's own
+    const built = getBestMoves(Species.Togekiss, [], { role: BuildRole.Healer });
+
+    expect(built).toContain(Moves.Wish);
   });
 
   it('keeps every written override to something its species can learn', () => {
     for (const [key, moves] of Object.entries(BEST_MOVE_OVERRIDES)) {
       const species: Species = Number(key);
-      const legal = new Set(getLearnableMoves(species));
+      const legal = new Set(getReachableMoves(species));
 
       expect(moves, getSpeciesData(species).name).toHaveLength(BEST_MOVE_COUNT);
       for (const move of moves) {

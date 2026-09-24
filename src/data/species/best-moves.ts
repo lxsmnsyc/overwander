@@ -4,7 +4,7 @@ import { Stats } from '../constants/stats';
 import type { Species } from '../ids/species';
 import { TYPE_EFFECTIVENESS, TypeEffectiveness, Types } from '../constants/types';
 import { Weathers } from '../ids/status';
-import { getLearnableMoves, getSpeciesData } from './__create';
+import { getReachableMoves, getSpeciesData } from './__create';
 import { getMoveData } from '../moves/__create';
 import { isRecoilMove } from '../moves/recoil';
 import { MOVE_WEATHERS, getWeatherMove } from '../moves/weather';
@@ -75,7 +75,7 @@ export function coreCategory(role: BuildRole): MoveCategories | null {
 }
 
 /** What a status move is for, which is what a role has an opinion about */
-const enum StatusKind {
+export const enum StatusKind {
   /** A stat raised on the user, worth what the stat is worth to it */
   Setup = 0,
   /** Health back for the user */
@@ -292,8 +292,6 @@ const STATUS_KINDS: Partial<Record<Moves, StatusKind>> = {
   [Moves.Autotomize]: StatusKind.Setup,
 
   [Moves.Recover]: StatusKind.Heal,
-  [Moves.SoftBoiled]: StatusKind.Heal,
-  [Moves.MilkDrink]: StatusKind.Heal,
   [Moves.SlackOff]: StatusKind.Heal,
   [Moves.Synthesis]: StatusKind.Heal,
   [Moves.MorningSun]: StatusKind.Heal,
@@ -344,6 +342,9 @@ const STATUS_KINDS: Partial<Record<Moves, StatusKind>> = {
   [Moves.AromaticMist]: StatusKind.Boost,
 
   [Moves.HealPulse]: StatusKind.Mend,
+  // Cast at the user or a teammate: see `EITHER_HEALS`
+  [Moves.SoftBoiled]: StatusKind.Mend,
+  [Moves.MilkDrink]: StatusKind.Mend,
   [Moves.Wish]: StatusKind.Mend,
   [Moves.HealingWish]: StatusKind.Mend,
   [Moves.LunarDance]: StatusKind.Mend,
@@ -357,6 +358,9 @@ const STATUS_KINDS: Partial<Record<Moves, StatusKind>> = {
   [Moves.Sandstorm]: StatusKind.Weather,
   [Moves.Hail]: StatusKind.Weather,
 };
+
+/** Heals cast at the user or a teammate, priced as whichever the role pays more for */
+const EITHER_HEALS = new Set<Moves>([Moves.SoftBoiled, Moves.MilkDrink]);
 
 /**
  * The ones that raise something on the user, which is what a Baton
@@ -475,6 +479,21 @@ function coreWeights(): { attack: number } & Record<StatusKind, number> {
 const OFF_SIDE_ATTACK = 0.6;
 
 /**
+ * Setup that raises a defence or evasion rather than what a core hits
+ * with or how often, which a core pays this share of
+ */
+const GUARD_SETUP = new Set<Moves>([
+  Moves.Amnesia,
+  Moves.IronDefense,
+  Moves.CosmicPower,
+  Moves.DefendOrder,
+  Moves.CottonGuard,
+  Moves.DoubleTeam,
+  Moves.Acupressure,
+]);
+const CORE_GUARD_SETUP = 0.5;
+
+/**
  * How many slots a role gives to moves that deal no damage. Every
  * role keeps one attack: a pokemon that cannot hit is one the far side
  * ignores. The healer's job is almost all quiet moves
@@ -581,7 +600,7 @@ function canKeepPromise(species: Species, move: Moves): boolean {
     return true;
   }
 
-  for (const learnable of getLearnableMoves(species)) {
+  for (const learnable of getReachableMoves(species)) {
     if (wanted.has(learnable)) {
       return true;
     }
@@ -642,13 +661,14 @@ const ROLE_KINDS: Partial<Record<BuildRole, readonly StatusKind[]>> = {
 export function roleCapability(species: Species, role: BuildRole): number {
   const kinds = ROLE_KINDS[role];
 
-  if (kinds == null) {
-    return 0;
-  }
+  return kinds == null ? 0 : kindCapability(species, kinds);
+}
 
+/** The same reading over any set of kinds */
+export function kindCapability(species: Species, kinds: readonly StatusKind[]): number {
   const found: number[] = [];
 
-  for (const move of getLearnableMoves(species)) {
+  for (const move of getReachableMoves(species)) {
     const worth = STATUS_WORTH[move];
     const kind = STATUS_KINDS[move] ?? StatusKind.Cripple;
 
@@ -1236,8 +1256,11 @@ function moveWorth(species: Species, move: Moves, context: BuildContext): number
     const own = selfDefeating(move, context.abilities)
       ? 0
       : (STATUS_WORTH[move] ?? 0) *
-        weights[STATUS_KINDS[move] ?? StatusKind.Cripple] *
-        (serves == null ? 1 : categoryShare(species, serves, context.abilities));
+        (EITHER_HEALS.has(move)
+          ? Math.max(weights[StatusKind.Mend], weights[StatusKind.Heal])
+          : weights[STATUS_KINDS[move] ?? StatusKind.Cripple]) *
+        (serves == null ? 1 : categoryShare(species, serves, context.abilities)) *
+        (isCoreRole(context.role) && GUARD_SETUP.has(move) ? CORE_GUARD_SETUP : 1);
     // Or what it is worth cast at the teammate it helps, where it helps one
     const aimed = allyWorth(move, context.allies) * weights[StatusKind.Boost];
 
@@ -1345,7 +1368,7 @@ function buildWeather(abilities: Abilities[], chosen: ReadonlySet<Moves>): Weath
 function pickMoves(species: Species, context: BuildContext): Moves[] {
   const scored: { move: Moves; worth: number }[] = [];
 
-  for (const move of getLearnableMoves(species)) {
+  for (const move of getReachableMoves(species)) {
     if (canKeepPromise(species, move)) {
       scored.push({ move, worth: moveWorth(species, move, context) });
     }
@@ -1372,7 +1395,7 @@ function pickMoves(species: Species, context: BuildContext): Moves[] {
   if (context.planned && context.setter && context.weather !== Weathers.None) {
     const called = getWeatherMove(context.weather);
 
-    if (called != null && getLearnableMoves(species).includes(called)) {
+    if (called != null && getReachableMoves(species).includes(called)) {
       chosen.push(called);
       quiet += 1;
     }
@@ -1402,13 +1425,38 @@ function pickMoves(species: Species, context: BuildContext): Moves[] {
     chosen.push(move);
   }
 
+  // A hard promise whose partner lost its slot is dropped, not kept at
+  // half: a Dream Eater with nothing to put anybody to sleep never lands
+  const broken = new Set<Moves>();
+
+  for (const move of chosen) {
+    const kept = MOVE_PARTNERS[move];
+
+    if (MOVE_REQUIREMENTS[move] != null && kept != null && !kept(new Set(chosen))) {
+      broken.add(move);
+    }
+  }
+  if (broken.size > 0) {
+    const whole: Moves[] = [];
+
+    for (const move of chosen) {
+      if (!broken.has(move)) {
+        whole.push(move);
+      }
+    }
+    chosen.length = 0;
+    chosen.push(...whole);
+  }
+
   // Whatever is left over fills the slots coverage could not: a
   // species with two types worth carrying still fights with four
   for (const move of skipped) {
     if (chosen.length >= BEST_MOVE_COUNT) {
       break;
     }
-    chosen.push(move);
+    if (!broken.has(move)) {
+      chosen.push(move);
+    }
   }
 
   // And a species the scoring found nothing to say about still walks
@@ -1434,7 +1482,7 @@ function pickMoves(species: Species, context: BuildContext): Moves[] {
       if (chosen.length >= BEST_MOVE_COUNT) {
         break;
       }
-      if (!held.has(move)) {
+      if (!held.has(move) && !broken.has(move)) {
         held.add(move);
         chosen.push(move);
       }

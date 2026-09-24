@@ -4,7 +4,7 @@ import Natures, { NATURE_EFFECTS, getNatureFactor } from '../ids/natures';
 import { Stats } from '../constants/stats';
 import type { Species } from '../ids/species';
 import { getMoveData } from '../moves/__create';
-import { getLearnableMoves, getSpeciesAbilityPools, getSpeciesData } from './__create';
+import { getReachableMoves, getSpeciesAbilityPools, getSpeciesData } from './__create';
 import { MOVE_WEATHERS } from '../moves/weather';
 import { isRecoilMove } from '../moves/recoil';
 import { Weathers } from '../ids/status';
@@ -13,10 +13,12 @@ import {
   ABILITY_WEATHER,
   type BuildAlly,
   BuildRole,
+  StatusKind,
   WEATHER_TYPES,
   coreCategory,
   getBestMoves,
   isCoreRole,
+  kindCapability,
   roleCapability,
 } from './best-moves';
 import { Types } from '../constants/types';
@@ -524,6 +526,15 @@ const ROLE_ABILITY_FIT = 0.5;
 const HEALER_ABLE = 1;
 const HEALER_FRAILTY = 2;
 const HEALER_REACH = 0.3;
+
+/**
+ * Healing and curing a teammate is the healer's real job. A member that
+ * can only boost one is a fallback, and never outranks one that mends
+ */
+const MENDING_KINDS: readonly StatusKind[] = [StatusKind.Mend, StatusKind.Cure];
+const MENDING_ABILITIES = new Set<Abilities>([Abilities.Healer, Abilities.Hospitality]);
+const HEALER_MENDS = 3;
+const HEALER_BOOST_ONLY = 0.5;
 const PROTECTOR_BULK = 0.3;
 const REDIRECTOR_BULK = 2;
 const REDIRECTOR_REACH = 0.5;
@@ -548,6 +559,22 @@ function hasRoleAbility(species: Species, role: BuildRole): boolean {
   return false;
 }
 
+/** Whether it can heal or cure a teammate, by move or by ability */
+function mends(species: Species): boolean {
+  if (kindCapability(species, MENDING_KINDS) > 0) {
+    return true;
+  }
+
+  const pools = getSpeciesAbilityPools(species);
+
+  for (const ability of [...pools.regular, ...pools.hidden]) {
+    if (MENDING_ABILITIES.has(ability)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * How well a species suits a supporting job: what it can learn and
  * awaken for it, then the frame the job wants. The healer is the
@@ -559,9 +586,16 @@ function roleFitness(species: Species, role: BuildRole, bulk: number, speed: num
     roleCapability(species, role) + (hasRoleAbility(species, role) ? ROLE_ABILITY_FIT : 0);
 
   switch (role) {
-    case BuildRole.Healer:
+    case BuildRole.Healer: {
       // A member with nothing to heal with is no healer however frail
-      return reach <= 0 ? 0 : HEALER_ABLE + HEALER_FRAILTY * (1 - bulk) + HEALER_REACH * reach;
+      if (reach <= 0) {
+        return 0;
+      }
+
+      const fit = HEALER_ABLE + HEALER_FRAILTY * (1 - bulk) + HEALER_REACH * reach;
+
+      return mends(species) ? HEALER_MENDS + fit : HEALER_BOOST_ONLY * fit;
+    }
     case BuildRole.Protector:
       return reach + PROTECTOR_BULK * bulk;
     case BuildRole.Redirector:
@@ -858,7 +892,7 @@ function pickSetter(
   const learns: boolean[] = [];
 
   for (const species of party) {
-    learns.push(getLearnableMoves(species).includes(setter));
+    learns.push(getReachableMoves(species).includes(setter));
   }
 
   const order: number[] = [];

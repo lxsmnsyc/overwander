@@ -5041,6 +5041,18 @@
         "bytes": 1365
       }
     },
+    "public/sprites/overworld/characters/xy/malva/image.png": {
+      "digest": "7ce491a9a04f177b",
+      "bytes": 1346,
+      "width": 72,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-24T15:11:07Z",
+        "as": "already compact",
+        "was": 1346,
+        "bytes": 1346
+      }
+    },
     "public/sprites/overworld/characters/xy/monsieur/image.png": {
       "digest": "3ca8ce58d6507f89",
       "bytes": 1164,
@@ -5317,6 +5329,18 @@
         "bytes": 1397
       }
     },
+    "public/sprites/overworld/characters/xy/siebold/image.png": {
+      "digest": "289ca5c7a32ef45f",
+      "bytes": 1179,
+      "width": 60,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:11:07Z",
+        "as": "already compact",
+        "was": 1179,
+        "bytes": 1179
+      }
+    },
     "public/sprites/overworld/characters/xy/swimmer-f/image.png": {
       "digest": "bd0a2f990902fe88",
       "bytes": 1445,
@@ -5471,6 +5495,18 @@
         "as": "already compact",
         "was": 1530,
         "bytes": 1530
+      }
+    },
+    "public/sprites/overworld/characters/xy/wikstrom/image.png": {
+      "digest": "6be98b6dd307b8ca",
+      "bytes": 1745,
+      "width": 69,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-24T15:11:07Z",
+        "as": "already compact",
+        "was": 1745,
+        "bytes": 1745
       }
     },
     "public/sprites/overworld/characters/xy/worker-1/image.png": {

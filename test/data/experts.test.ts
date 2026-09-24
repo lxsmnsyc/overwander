@@ -32,6 +32,7 @@ import Awards, {
   JOHTO_BADGES,
   JOHTO_HONORS,
   KALOS_BADGES,
+  KALOS_HONORS,
   KANTO_BADGES,
   KANTO_HONORS,
   SINNOH_BADGES,
@@ -189,14 +190,25 @@ describe('type experts', () => {
 
   it('gives every elite a mark and the champion a title', () => {
     const honors = ELITE_MEMBERS.map((member) => ELITE_MEMBER_HONORS[member]);
-    const marks = new Set([...KANTO_HONORS, ...JOHTO_HONORS, ...HOENN_HONORS, ...SINNOH_HONORS]);
+    const marks = new Set([
+      ...KANTO_HONORS,
+      ...JOHTO_HONORS,
+      ...HOENN_HONORS,
+      ...SINNOH_HONORS,
+      ...KALOS_HONORS,
+      ...KALOS_HONORS,
+    ]);
 
-    // Sixteen seats between four leagues, four apiece: Bruno keeps one
+    // Twenty seats between five leagues, four apiece: Bruno keeps one
     // in each of the first two, and no mark is shared between them
     expect(new Set(honors).size).toBe(marks.size);
     expect(honors.every((honor) => marks.has(honor))).toBe(true);
     expect(marks.size).toBe(
-      KANTO_HONORS.length + JOHTO_HONORS.length + HOENN_HONORS.length + SINNOH_HONORS.length,
+      KANTO_HONORS.length +
+        JOHTO_HONORS.length +
+        HOENN_HONORS.length +
+        SINNOH_HONORS.length +
+        KALOS_HONORS.length,
     );
 
     for (const member of ELITE_MEMBERS) {
@@ -221,6 +233,7 @@ describe('type experts', () => {
       ...JOHTO_HONORS,
       ...HOENN_HONORS,
       ...SINNOH_HONORS,
+      ...KALOS_HONORS,
       Awards.KantoChampion,
     ]) {
       expect(AWARD_NAMES[award].length).toBeGreaterThan(0);
@@ -342,6 +355,7 @@ describe('type experts', () => {
       [JOHTO_HONORS, JOHTO_BADGES],
       [HOENN_HONORS, HOENN_BADGES],
       [SINNOH_HONORS, SINNOH_BADGES],
+      [KALOS_HONORS, KALOS_BADGES],
     ] as const;
 
     for (const member of ELITE_MEMBERS) {
@@ -366,6 +380,18 @@ describe('type experts', () => {
     // And Wallace stands above them, asking for all four
     expect(CHAMPION_HONORS[Champion.Wallace]).toEqual(HOENN_HONORS);
     expect(CHAMPION_TITLES[Champion.Wallace]).toBe(Awards.HoennChampion);
+  });
+
+  it('seats Kalos’s four on Kalos’s badges', () => {
+    for (const member of [
+      EliteMember.Malva,
+      EliteMember.Siebold,
+      EliteMember.Wikstrom,
+      EliteMember.Drasna,
+    ]) {
+      expect(KALOS_HONORS).toContain(ELITE_MEMBER_HONORS[member]);
+      expect(getEliteBadges(member), ELITE_MEMBER_NAMES[member]).toEqual(KALOS_BADGES);
+    }
   });
 
   it('seats Sinnoh’s four on Sinnoh’s badges, with Cynthia above them', () => {
@@ -1378,6 +1404,7 @@ describe('type experts', () => {
       ...JOHTO_HONORS,
       ...HOENN_HONORS,
       ...SINNOH_HONORS,
+      ...KALOS_HONORS,
       ...CHAMPIONS.map((champion) => CHAMPION_TITLES[champion]),
     ]);
 

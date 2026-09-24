@@ -99,6 +99,10 @@ export const ELITE_MEMBER_POOLS: Record<EliteMember, ExpertPool> = {
   [EliteMember.Bertha]: { types: [Types.Ground], also: [Species.Sudowoodo] },
   [EliteMember.Flint]: { types: [Types.Fire] },
   [EliteMember.Lucian]: { types: [Types.Psychic] },
+  [EliteMember.Malva]: { types: [Types.Fire] },
+  [EliteMember.Siebold]: { types: [Types.Water] },
+  [EliteMember.Wikstrom]: { types: [Types.Steel] },
+  [EliteMember.Drasna]: { types: [Types.Dragon] },
 };
 
 /**
@@ -129,6 +133,11 @@ export const ELITE_MEMBER_SIGNATURES: Record<EliteMember, Species> = {
   // starter a player chooses rather than a pokemon of his
   [EliteMember.Flint]: Species.Magmortar,
   [EliteMember.Lucian]: Species.Bronzong,
+  // The Talonflame she closes with, since her Pyroar is staged nowhere yet
+  [EliteMember.Malva]: Species.Talonflame,
+  [EliteMember.Siebold]: Species.Barbaracle,
+  [EliteMember.Wikstrom]: Species.Aegislash,
+  [EliteMember.Drasna]: Species.Noivern,
 };
 
 /**

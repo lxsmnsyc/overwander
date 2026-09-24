@@ -150,6 +150,10 @@ const ELITE_MEMBER_LEAGUES: Record<EliteMember, string> = {
   [EliteMember.Bertha]: 'Sinnoh',
   [EliteMember.Flint]: 'Sinnoh',
   [EliteMember.Lucian]: 'Sinnoh',
+  [EliteMember.Malva]: 'Kalos',
+  [EliteMember.Siebold]: 'Kalos',
+  [EliteMember.Wikstrom]: 'Kalos',
+  [EliteMember.Drasna]: 'Kalos',
 };
 
 const ELITE_QUOTES: Record<EliteMember, string> = {
@@ -169,6 +173,10 @@ const ELITE_QUOTES: Record<EliteMember, string> = {
   [EliteMember.Bertha]: 'I have been at this longer than you have been alive, dear.',
   [EliteMember.Flint]: 'My hair is not the hottest thing here. Watch.',
   [EliteMember.Lucian]: 'One moment, let me finish this page. Now then.',
+  [EliteMember.Malva]: 'I report on the news. Today it is your defeat, live.',
+  [EliteMember.Siebold]: 'A battle is a dish. I shall serve you something unforgettable.',
+  [EliteMember.Wikstrom]: 'Well met, challenger! My blade and I await your mettle!',
+  [EliteMember.Drasna]: 'Oh my, a challenger! My dragons have been so looking forward to this.',
 };
 
 /** What a legend says, where they say anything at all */

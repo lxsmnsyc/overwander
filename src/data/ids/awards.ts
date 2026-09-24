@@ -135,6 +135,10 @@ const enum Awards {
   FairyBadge = 127,
   PsychicBadge = 128,
   IcebergBadge = 129,
+  MalvaDefeated = 130,
+  SieboldDefeated = 131,
+  WikstromDefeated = 132,
+  DrasnaDefeated = 133,
 }
 
 export default Awards;
@@ -249,6 +253,10 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.FairyBadge]: 'Fairy Badge',
   [Awards.PsychicBadge]: 'Psychic Badge',
   [Awards.IcebergBadge]: 'Iceberg Badge',
+  [Awards.MalvaDefeated]: 'Malva Defeated',
+  [Awards.SieboldDefeated]: 'Siebold Defeated',
+  [Awards.WikstromDefeated]: 'Wikstrom Defeated',
+  [Awards.DrasnaDefeated]: 'Drasna Defeated',
 };
 
 /**
@@ -365,6 +373,14 @@ export const SINNOH_HONORS: Awards[] = [
   Awards.BerthaDefeated,
   Awards.FlintDefeated,
   Awards.LucianDefeated,
+];
+
+/** And Kalos's 4 */
+export const KALOS_HONORS: Awards[] = [
+  Awards.MalvaDefeated,
+  Awards.SieboldDefeated,
+  Awards.WikstromDefeated,
+  Awards.DrasnaDefeated,
 ];
 
 /**

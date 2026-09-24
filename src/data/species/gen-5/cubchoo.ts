@@ -1,0 +1,213 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { EvolutionMethod, Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM and tutor moves shared by both sizes
+const FAMILY_TEACHABLE = [
+  Moves.AerialAce,
+  Moves.Assurance,
+  Moves.Attract,
+  Moves.Avalanche,
+  Moves.Blizzard,
+  Moves.BodySlam,
+  Moves.Brine,
+  Moves.Bulldoze,
+  Moves.Charm,
+  Moves.Crunch,
+  Moves.Cut,
+  Moves.Dig,
+  Moves.DoubleTeam,
+  Moves.EchoedVoice,
+  Moves.Encore,
+  Moves.Endeavor,
+  Moves.Endure,
+  Moves.Facade,
+  Moves.Fling,
+  Moves.FocusPunch,
+  Moves.FrostBreath,
+  Moves.Frustration,
+  Moves.GrassKnot,
+  Moves.Hail,
+  Moves.HeavySlam,
+  Moves.HiddenPower,
+  Moves.HoneClaws,
+  Moves.IceBeam,
+  Moves.IceFang,
+  Moves.IcePunch,
+  Moves.IcicleSpear,
+  Moves.IcyWind,
+  Moves.LowKick,
+  Moves.MegaKick,
+  Moves.MegaPunch,
+  Moves.MetalClaw,
+  Moves.MudShot,
+  Moves.MudSlap,
+  Moves.Protect,
+  Moves.RainDance,
+  Moves.Rest,
+  Moves.Return,
+  Moves.RockSlide,
+  Moves.RockSmash,
+  Moves.RockTomb,
+  Moves.Round,
+  Moves.SecretPower,
+  Moves.ShadowClaw,
+  Moves.SleepTalk,
+  Moves.Snarl,
+  Moves.Snore,
+  Moves.Strength,
+  Moves.Substitute,
+  Moves.Superpower,
+  Moves.Surf,
+  Moves.Swagger,
+  Moves.TakeDown,
+  Moves.Taunt,
+  Moves.Thief,
+  Moves.Toxic,
+  Moves.WaterPulse,
+  Moves.XScissor,
+];
+
+// What the cold works out how to do, at either size
+const FAMILY_LEVEL = {
+  15: [Moves.Brine],
+  18: [Moves.FrostBreath],
+  21: [Moves.Slash],
+  24: [Moves.Flail],
+  30: [Moves.Hail],
+  36: [Moves.Rest],
+};
+
+/**
+ * The bears: a Cubchoo's nose runs constantly and that is what it
+ * freezes into the fangs and claws a Beartic fights with
+ */
+export default function registerCubchooSpecies(): void {
+  registerSpecies(Species.Cubchoo, {
+    dexNumber: 613,
+    evolvesInto: [
+      {
+        species: Species.Beartic,
+        method: EvolutionMethod.Level,
+        level: 37,
+      },
+    ],
+    name: 'Cubchoo',
+    category: 'Chill Pokemon',
+    height: 0.5,
+    weight: 8.5,
+    family: Families.Cubchoo,
+    stats: {
+      [Stats.HP]: 55,
+      [Stats.Attack]: 70,
+      [Stats.Defense]: 40,
+      [Stats.SpecialAttack]: 60,
+      [Stats.SpecialDefense]: 40,
+      [Stats.Speed]: 40,
+    },
+    types: [Types.Ice],
+    abilities: [Abilities.SnowCloak, Abilities.SlushRush],
+    hiddenAbilities: [Abilities.Rattled],
+    eggGroups: [EggGroups.Field],
+    genderRatio: [1, 1],
+    catchRate: 120,
+    biomes: [Biome.Tundra, Biome.Glacier],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [Moves.Growl, Moves.PowderSnow],
+        3: [Moves.Endure],
+        6: [Moves.FurySwipes],
+        9: [Moves.Bide, Moves.IcyWind],
+        ...FAMILY_LEVEL,
+        27: [Moves.Charm],
+        33: [Moves.Thrash],
+        39: [Moves.Blizzard],
+        42: [Moves.SheerCold],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+      egg: [
+        Moves.Assurance,
+        Moves.Avalanche,
+        Moves.Encore,
+        Moves.FocusPunch,
+        Moves.IcePunch,
+        Moves.NightSlash,
+        Moves.SleepTalk,
+        Moves.Yawn,
+      ],
+    },
+  });
+  registerSpecies(Species.Beartic, {
+    dexNumber: 614,
+    name: 'Beartic',
+    category: 'Freezing Pokemon',
+    height: 2.6,
+    weight: 260,
+    family: Families.Cubchoo,
+    evolvesFrom: Species.Cubchoo,
+    stats: {
+      [Stats.HP]: 95,
+      [Stats.Attack]: 130,
+      [Stats.Defense]: 80,
+      [Stats.SpecialAttack]: 70,
+      [Stats.SpecialDefense]: 80,
+      [Stats.Speed]: 50,
+    },
+    types: [Types.Ice],
+    abilities: [Abilities.SnowCloak, Abilities.SlushRush],
+    // Four without inventing anything: Rattled walks up from the
+    // Cubchoo below it and Swift Swim is its own
+    hiddenAbilities: [Abilities.SwiftSwim],
+    eggGroups: [EggGroups.Field],
+    genderRatio: [1, 1],
+    catchRate: 60,
+    biomes: [Biome.Tundra, Biome.Glacier],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [
+          Moves.IcicleCrash,
+          Moves.Thrash,
+          Moves.Growl,
+          Moves.Bide,
+          Moves.FurySwipes,
+          Moves.PowderSnow,
+          Moves.IcyWind,
+          Moves.Endure,
+          Moves.Charm,
+          Moves.Superpower,
+          Moves.SheerCold,
+          Moves.AquaJet,
+        ],
+        ...FAMILY_LEVEL,
+        27: [Moves.Swagger],
+        41: [Moves.Blizzard],
+      },
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.BrickBreak,
+        Moves.BulkUp,
+        Moves.CloseCombat,
+        Moves.Curse,
+        Moves.Dive,
+        Moves.DoubleEdge,
+        Moves.Earthquake,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.HyperBeam,
+        Moves.Reversal,
+        Moves.Roar,
+        Moves.ScaryFace,
+        Moves.StoneEdge,
+        Moves.SwordsDance,
+      ],
+    },
+  });
+}

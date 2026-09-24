@@ -297,13 +297,15 @@ const enum Families {
   Joltik = 294,
   Ferroseed = 295,
   Klink = 296,
-  // 297 is held for Tynamo, which sits between these in the dex and is
-  // not written yet
+  Tynamo = 297,
   Elgyem = 298,
   Litwick = 299,
   Axew = 300,
-  // 301 to 305 are held for Cubchoo, Cryogonal, Shelmet, Stunfisk and
-  // Mienfoo, which sit between these in the dex and are not written yet
+  Cubchoo = 301,
+  Cryogonal = 302,
+  // 303 and 304 are held for Shelmet and Stunfisk, which sit between
+  // these in the dex and are not written yet
+  Mienfoo = 305,
   Druddigon = 306,
   Golett = 307,
   Pawniard = 308,
@@ -311,9 +313,17 @@ const enum Families {
   // and is not written yet
   Rufflet = 310,
   Vullaby = 311,
-  // 312 and 313 are held for Heatmor and Durant, the pair that sit
-  // between these in the dex and are not written yet
+  Heatmor = 312,
+  Durant = 313,
   Deino = 314,
+  Larvesta = 315,
+  Cobalion = 316,
+  Terrakion = 317,
+  Virizion = 318,
+  // 319 to 324 are held for Tornadus, Thundurus, Reshiram, Zekrom,
+  // Landorus and Kyurem, which sit between these in the dex and are
+  // not written yet
+  Keldeo = 325,
 }
 
 export default Families;
@@ -623,13 +633,24 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Joltik]: 'Joltik',
   [Families.Ferroseed]: 'Ferroseed',
   [Families.Klink]: 'Klink',
+  [Families.Tynamo]: 'Tynamo',
   [Families.Elgyem]: 'Elgyem',
   [Families.Litwick]: 'Litwick',
   [Families.Axew]: 'Axew',
+  [Families.Cubchoo]: 'Cubchoo',
+  [Families.Cryogonal]: 'Cryogonal',
+  [Families.Mienfoo]: 'Mienfoo',
   [Families.Druddigon]: 'Druddigon',
   [Families.Golett]: 'Golett',
   [Families.Pawniard]: 'Pawniard',
   [Families.Rufflet]: 'Rufflet',
   [Families.Vullaby]: 'Vullaby',
+  [Families.Heatmor]: 'Heatmor',
+  [Families.Durant]: 'Durant',
   [Families.Deino]: 'Deino',
+  [Families.Larvesta]: 'Larvesta',
+  [Families.Cobalion]: 'Cobalion',
+  [Families.Terrakion]: 'Terrakion',
+  [Families.Virizion]: 'Virizion',
+  [Families.Keldeo]: 'Keldeo',
 };

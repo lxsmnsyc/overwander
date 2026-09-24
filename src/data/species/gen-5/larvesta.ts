@@ -1,0 +1,198 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { EvolutionMethod, Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM and tutor moves shared by both sizes
+const FAMILY_TEACHABLE = [
+  Moves.Acrobatics,
+  Moves.Amnesia,
+  Moves.Attract,
+  Moves.BodySlam,
+  Moves.BugBite,
+  Moves.BugBuzz,
+  Moves.CalmMind,
+  Moves.DoubleEdge,
+  Moves.DoubleTeam,
+  Moves.Endure,
+  Moves.Facade,
+  Moves.FireBlast,
+  Moves.FireSpin,
+  Moves.FlameCharge,
+  Moves.FlareBlitz,
+  Moves.Flamethrower,
+  Moves.Frustration,
+  Moves.GigaDrain,
+  Moves.HeatWave,
+  Moves.HiddenPower,
+  Moves.Incinerate,
+  Moves.LeechLife,
+  Moves.LightScreen,
+  Moves.Overheat,
+  Moves.Protect,
+  Moves.Psychic,
+  Moves.Rest,
+  Moves.Return,
+  Moves.Round,
+  Moves.Safeguard,
+  Moves.Screech,
+  Moves.SecretPower,
+  Moves.SleepTalk,
+  Moves.Snore,
+  Moves.SolarBeam,
+  Moves.StruggleBug,
+  Moves.Substitute,
+  Moves.SunnyDay,
+  Moves.Swagger,
+  Moves.TakeDown,
+  Moves.Toxic,
+  Moves.UTurn,
+  Moves.WildCharge,
+  Moves.WillOWisp,
+  Moves.ZenHeadbutt,
+];
+
+/**
+ * The torch: a Larvesta carries five small fires on its head, and the
+ * moth it becomes was taken for the sun itself once
+ */
+export default function registerLarvestaSpecies(): void {
+  registerSpecies(Species.Larvesta, {
+    dexNumber: 636,
+    evolvesInto: [
+      {
+        species: Species.Volcarona,
+        method: EvolutionMethod.Level,
+        level: 59,
+      },
+    ],
+    name: 'Larvesta',
+    category: 'Torch Pokemon',
+    height: 1.1,
+    weight: 28.8,
+    family: Families.Larvesta,
+    stats: {
+      [Stats.HP]: 55,
+      [Stats.Attack]: 85,
+      [Stats.Defense]: 55,
+      [Stats.SpecialAttack]: 50,
+      [Stats.SpecialDefense]: 55,
+      [Stats.Speed]: 60,
+    },
+    types: [Types.Bug, Types.Fire],
+    abilities: [Abilities.FlameBody],
+    hiddenAbilities: [Abilities.Swarm],
+    eggGroups: [EggGroups.Bug],
+    genderRatio: [1, 1],
+    catchRate: 45,
+    biomes: [Biome.Desert],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [Moves.Ember, Moves.StringShot],
+        6: [Moves.FlameCharge],
+        10: [Moves.Absorb, Moves.LeechLife],
+        12: [Moves.StruggleBug],
+        18: [Moves.FlameWheel],
+        20: [Moves.TakeDown],
+        24: [Moves.BugBite],
+        30: [Moves.Screech],
+        42: [Moves.BugBuzz],
+        50: [Moves.DoubleEdge],
+        54: [Moves.Amnesia],
+        66: [Moves.FlareBlitz],
+        90: [Moves.Thrash],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+      egg: [
+        Moves.Absorb,
+        Moves.Endure,
+        Moves.Foresight,
+        Moves.Harden,
+        Moves.MagnetRise,
+        Moves.MorningSun,
+        Moves.StringShot,
+        Moves.Thrash,
+        Moves.ZenHeadbutt,
+      ],
+    },
+  });
+  registerSpecies(Species.Volcarona, {
+    dexNumber: 637,
+    name: 'Volcarona',
+    category: 'Sun Pokemon',
+    height: 1.6,
+    weight: 46,
+    family: Families.Larvesta,
+    evolvesFrom: Species.Larvesta,
+    stats: {
+      [Stats.HP]: 85,
+      [Stats.Attack]: 60,
+      [Stats.Defense]: 65,
+      [Stats.SpecialAttack]: 135,
+      [Stats.SpecialDefense]: 105,
+      [Stats.Speed]: 100,
+    },
+    types: [Types.Bug, Types.Fire],
+    abilities: [Abilities.FlameBody],
+    // Drought and Magic Guard are the invented pair: the whole line
+    // reaches only Flame Body and Swarm, which leaves it two short, and
+    // a 65 Defense moth loses more to chip than to blows
+    hiddenAbilities: [Abilities.Swarm, Abilities.Drought, Abilities.MagicGuard],
+    eggGroups: [EggGroups.Bug],
+    genderRatio: [1, 1],
+    catchRate: 15,
+    biomes: [Biome.Desert],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [
+          Moves.QuiverDance,
+          Moves.Gust,
+          Moves.Whirlwind,
+          Moves.TakeDown,
+          Moves.Thrash,
+          Moves.DoubleEdge,
+          Moves.Ember,
+          Moves.Absorb,
+          Moves.StringShot,
+          Moves.FireSpin,
+          Moves.Amnesia,
+          Moves.LeechLife,
+          Moves.FlameWheel,
+          Moves.HeatWave,
+          Moves.FlareBlitz,
+          Moves.BugBuzz,
+          Moves.RagePowder,
+          Moves.FlameCharge,
+          Moves.StruggleBug,
+          Moves.Hurricane,
+          Moves.FieryDance,
+        ],
+        24: [Moves.BugBite],
+        30: [Moves.Screech],
+        50: [Moves.SilverWind],
+        70: [Moves.FireBlast],
+      },
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.AerialAce,
+        Moves.AirCutter,
+        Moves.AirSlash,
+        Moves.Fly,
+        Moves.GigaImpact,
+        Moves.Hurricane,
+        Moves.HyperBeam,
+        Moves.PoisonJab,
+        Moves.RainDance,
+        Moves.Roost,
+        Moves.Tailwind,
+      ],
+    },
+  });
+}

@@ -189,6 +189,17 @@ export const GYM_LEADER_SIGNATURES: Record<GymLeader, Species> = {
   // Not the Raichu he opens with: Lt. Surge is already remembered for
   // that one, and the Luxray is what Sunyshore closes with anyway
   [GymLeader.Volkner]: Species.Luxray,
+  [GymLeader.Viola]: Species.Vivillon,
+  // The fossil he closes with in X, a first stage like Roark's Cranidos
+  [GymLeader.Grant]: Species.Tyrunt,
+  // Her gym ace rather than the Lucario she Mega Evolves on the tower,
+  // which is Maylene's already
+  [GymLeader.Korrina]: Species.Hawlucha,
+  [GymLeader.Ramos]: Species.Gogoat,
+  [GymLeader.Clemont]: Species.Heliolisk,
+  [GymLeader.Valerie]: Species.Sylveon,
+  [GymLeader.Olympia]: Species.Meowstic,
+  [GymLeader.Wulfric]: Species.Avalugg,
 };
 
 /**

@@ -31,6 +31,7 @@ import Awards, {
   HOENN_HONORS,
   JOHTO_BADGES,
   JOHTO_HONORS,
+  KALOS_BADGES,
   KANTO_BADGES,
   KANTO_HONORS,
   SINNOH_BADGES,
@@ -141,9 +142,15 @@ registerBiomeSpawns();
 describe('type experts', () => {
   it('gives every leader a name, a badge and a shipped wardrobe', () => {
     const badges = GYM_LEADERS.map((leader) => GYM_LEADER_BADGES[leader]);
-    const cases = [...KANTO_BADGES, ...JOHTO_BADGES, ...HOENN_BADGES, ...SINNOH_BADGES];
+    const cases = [
+      ...KANTO_BADGES,
+      ...JOHTO_BADGES,
+      ...HOENN_BADGES,
+      ...SINNOH_BADGES,
+      ...KALOS_BADGES,
+    ];
 
-    // Every leader carries a badge, and between the four regions the
+    // Every leader carries a badge, and between the five regions the
     // leaders account for every badge there is. There is one leader
     // more than there are badges, because Mossdeep is kept by two
     // people who pay the same one
@@ -162,7 +169,7 @@ describe('type experts', () => {
     // one Blue used to take all comers at, and no region runs the
     // same fight twice. Across regions they repeat: Roxanne's gym is
     // Brock's fight in another country
-    for (const region of [KANTO_BADGES, JOHTO_BADGES, HOENN_BADGES, SINNOH_BADGES]) {
+    for (const region of [KANTO_BADGES, JOHTO_BADGES, HOENN_BADGES, SINNOH_BADGES, KALOS_BADGES]) {
       const held = new Map<Awards, Set<Types>>();
 
       for (const leader of GYM_LEADERS.filter((one) => region.includes(GYM_LEADER_BADGES[one]))) {
@@ -209,6 +216,7 @@ describe('type experts', () => {
       ...JOHTO_BADGES,
       ...HOENN_BADGES,
       ...SINNOH_BADGES,
+      ...KALOS_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
       ...HOENN_HONORS,
@@ -1365,6 +1373,7 @@ describe('type experts', () => {
       ...JOHTO_BADGES,
       ...HOENN_BADGES,
       ...SINNOH_BADGES,
+      ...KALOS_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
       ...HOENN_HONORS,

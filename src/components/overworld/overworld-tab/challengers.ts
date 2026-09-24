@@ -114,6 +114,14 @@ const GYM_LEADER_QUOTES: Record<GymLeader, string> = {
   [GymLeader.Byron]: 'My son keeps a gym of his own. Neither of us gives anything away.',
   [GymLeader.Candice]: 'Focus! That is all it takes. Mine has never once slipped.',
   [GymLeader.Volkner]: 'I have been bored for years. Please be worth the electricity.',
+  [GymLeader.Viola]: 'Hold still, I want this shot. It is the one where you lose.',
+  [GymLeader.Grant]: 'Every wall has a way up. Let us see if you can find mine.',
+  [GymLeader.Korrina]: 'Roller skates on, fists up! I hope you can keep pace!',
+  [GymLeader.Ramos]: 'A garden takes patience, and so does beating me.',
+  [GymLeader.Clemont]: 'The future is now, thanks to science! Watch my invention at work.',
+  [GymLeader.Valerie]: 'Oh, a visitor. My fairies are gentle, until they are not.',
+  [GymLeader.Olympia]: 'I have already seen how this ends. Shall we play it out?',
+  [GymLeader.Wulfric]: 'Ha! A good fight warms the bones. Come on, then!',
 };
 
 /** Which league each champion is the top of */

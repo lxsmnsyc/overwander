@@ -123,6 +123,18 @@ const enum Awards {
   GoldCastlePrint = 98,
   SilverHallPrint = 99,
   GoldHallPrint = 100,
+  /*
+   * 101 to 121 are Unova's badges and marks, on a branch of their
+   * own, so Kalos starts after them rather than taking the same ids
+   */
+  BugBadge = 122,
+  CliffBadge = 123,
+  RumbleBadge = 124,
+  PlantBadge = 125,
+  VoltageBadge = 126,
+  FairyBadge = 127,
+  PsychicBadge = 128,
+  IcebergBadge = 129,
 }
 
 export default Awards;
@@ -229,6 +241,14 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.GoldCastlePrint]: 'Gold Castle Print',
   [Awards.SilverHallPrint]: 'Silver Hall Print',
   [Awards.GoldHallPrint]: 'Gold Hall Print',
+  [Awards.BugBadge]: 'Bug Badge',
+  [Awards.CliffBadge]: 'Cliff Badge',
+  [Awards.RumbleBadge]: 'Rumble Badge',
+  [Awards.PlantBadge]: 'Plant Badge',
+  [Awards.VoltageBadge]: 'Voltage Badge',
+  [Awards.FairyBadge]: 'Fairy Badge',
+  [Awards.PsychicBadge]: 'Psychic Badge',
+  [Awards.IcebergBadge]: 'Iceberg Badge',
 };
 
 /**
@@ -313,6 +333,18 @@ export const SINNOH_BADGES: Awards[] = [
   Awards.MineBadge,
   Awards.IcicleBadge,
   Awards.BeaconBadge,
+];
+
+/** And Kalos's 8, in gym order */
+export const KALOS_BADGES: Awards[] = [
+  Awards.BugBadge,
+  Awards.CliffBadge,
+  Awards.RumbleBadge,
+  Awards.PlantBadge,
+  Awards.VoltageBadge,
+  Awards.FairyBadge,
+  Awards.PsychicBadge,
+  Awards.IcebergBadge,
 ];
 
 /**

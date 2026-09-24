@@ -23,6 +23,7 @@ import Awards, {
   HOENN_HONORS,
   JOHTO_BADGES,
   JOHTO_HONORS,
+  KALOS_BADGES,
   KANTO_BADGES,
   KANTO_HONORS,
   SINNOH_BADGES,
@@ -126,6 +127,16 @@ const AWARD_SPRITES: Partial<Record<Awards, [sheet: string, name: string]>> = {
   [Awards.MineBadge]: ['badges/sinnoh', '6'],
   [Awards.IcicleBadge]: ['badges/sinnoh', '7'],
   [Awards.BeaconBadge]: ['badges/sinnoh', '8'],
+  // Kalos's sheet numbers its badges out of gym order, so each is named
+  // by what is drawn on it
+  [Awards.BugBadge]: ['badges/kalos', 'Kalos'],
+  [Awards.CliffBadge]: ['badges/kalos', 'Kalos (1)'],
+  [Awards.RumbleBadge]: ['badges/kalos', 'Kalos (2)'],
+  [Awards.PlantBadge]: ['badges/kalos', 'Kalos (3)'],
+  [Awards.VoltageBadge]: ['badges/kalos', 'Kalos (4)'],
+  [Awards.FairyBadge]: ['badges/kalos', 'Kalos (5)'],
+  [Awards.PsychicBadge]: ['badges/kalos', 'Kalos (6)'],
+  [Awards.IcebergBadge]: ['badges/kalos', 'Kalos (7)'],
 };
 
 /**
@@ -242,6 +253,14 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.MineBadge]: '#8f9aa8',
   [Awards.IcicleBadge]: '#9fd7e8',
   [Awards.BeaconBadge]: '#f2c14a',
+  [Awards.BugBadge]: '#7a8f3f',
+  [Awards.CliffBadge]: '#9a8a78',
+  [Awards.RumbleBadge]: '#c0584a',
+  [Awards.PlantBadge]: '#4f9a5f',
+  [Awards.VoltageBadge]: '#f0c93a',
+  [Awards.FairyBadge]: '#e87a9a',
+  [Awards.PsychicBadge]: '#9a5fc0',
+  [Awards.IcebergBadge]: '#6fb0e0',
   [Awards.AaronDefeated]: '#6fae5a',
   [Awards.BerthaDefeated]: '#b8935a',
   [Awards.FlintDefeated]: '#d9542f',
@@ -291,6 +310,7 @@ const SHELF = ((): Awards[] => {
     ...SINNOH_HONORS,
     Awards.SinnohChampion,
     Awards.SinnohDexMedal,
+    ...KALOS_BADGES,
     ...FRONTIER_SYMBOLS,
     ...SYNDICATE_HONORS,
   ]);
@@ -425,6 +445,7 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
   const hoenn = (): number => won(HOENN_BADGES);
   const sinnoh = (): number => won(SINNOH_BADGES);
   const seats = (): number => won(SINNOH_HONORS);
+  const kalos = (): number => won(KALOS_BADGES);
 
   const empties = (): number[] => fillers(SHELF.length);
 
@@ -453,7 +474,8 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
         {wins().has(Awards.JohtoChampion) ? ', Champion' : ''}. Hoenn: {hoenn()} of{' '}
         {HOENN_BADGES.length} badges. Sinnoh: {sinnoh()} of {SINNOH_BADGES.length} badges, {seats()}{' '}
         of {SINNOH_HONORS.length} of the Elite Four
-        {wins().has(Awards.SinnohChampion) ? ', Champion' : ''}.
+        {wins().has(Awards.SinnohChampion) ? ', Champion' : ''}. Kalos: {kalos()} of{' '}
+        {KALOS_BADGES.length} badges.
       </Meta>
     </div>
   );

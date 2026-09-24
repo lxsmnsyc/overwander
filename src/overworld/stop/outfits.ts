@@ -29,6 +29,8 @@ export interface StopOutfit {
   best?: boolean;
   /** Whether one of the party may carry a Mega Stone */
   megas?: boolean;
+  /** Whether each built member takes its family's signature ability first */
+  signatures?: boolean;
 }
 
 /** What a duelling trainer and a Team Rocket grunt field: what they caught. */
@@ -79,6 +81,7 @@ export const LEGEND_OUTFIT: StopOutfit = {
   training: LEGEND_TRAINING,
   best: true,
   megas: true,
+  signatures: true,
 };
 
 /**

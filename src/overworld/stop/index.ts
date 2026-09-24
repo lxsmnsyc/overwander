@@ -81,7 +81,16 @@ export function createStopSnapshot(
   // the nature those moves want, and gear that follows all of it
   const built =
     outfit.best === true
-      ? (composed ?? getBestBuild(fielded.species, coreRoleOf(fielded.species), outfit.abilities))
+      ? (composed ??
+        getBestBuild(
+          fielded.species,
+          coreRoleOf(fielded.species),
+          outfit.abilities,
+          undefined,
+          undefined,
+          [],
+          outfit.signatures === true,
+        ))
       : undefined;
   // A set, because a species with fewer abilities than the outfit
   // asks for carries fewer, and a shadow's own mark rides free of the
@@ -173,7 +182,7 @@ export function createStopParty(
     for (const [one] of spawns) {
       species.push(one);
     }
-    composed = getBestParty(species, outfit.abilities);
+    composed = getBestParty(species, outfit.abilities, outfit.signatures === true);
   }
 
   const party: CatchSnapshot[] = [];

@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, { isGrownSpecies } from '../../src/data/biome';
-import registerAbilities from '../../src/data/abilities';
+import registerAbilities, { getSignatureAbility } from '../../src/data/abilities';
 import Abilities from '../../src/data/ids/abilities';
 import {
   TYPE_EFFECTIVENESS,
@@ -112,6 +112,7 @@ import {
   isCoreRole,
 } from '../../src/data/species/best-moves';
 import {
+  CORE_COUNT,
   assignBuildRoles,
   getBestAbilities,
   getBestBuild,
@@ -1127,9 +1128,8 @@ describe('type experts', () => {
     ).toHaveLength(1);
   });
 
-  it('hands the healing to the frailest that can and the hits to the bulkiest', () => {
-    // Audino and Chansey can both heal a teammate; Chansey is the one
-    // that can take a hit, so Audino heals and Chansey draws fire
+  it('hands the healing to the frailest that can', () => {
+    // Audino and Chansey can both heal a teammate; Audino is the frailer
     const roles = assignBuildRoles([
       Species.Gengar,
       Species.Machamp,
@@ -1140,7 +1140,59 @@ describe('type experts', () => {
     ]);
 
     expect(roles[2]).toBe(BuildRole.Healer);
-    expect(roles[3]).toBe(BuildRole.Redirector);
+  });
+
+  it('never fields more than two cores', () => {
+    // Darmanitan hits harder than most cores, and still takes a support job
+    const roles = assignBuildRoles([
+      Species.Vanilluxe,
+      Species.Klinklang,
+      Species.Darmanitan,
+      Species.Zoroark,
+      Species.Reshiram,
+      Species.Zekrom,
+    ]);
+    let cores = 0;
+
+    for (const role of roles) {
+      if (isCoreRole(role)) {
+        cores += 1;
+      }
+    }
+    expect(cores).toBe(CORE_COUNT);
+  });
+
+  it('leads a legend’s six with their signatures', () => {
+    for (const party of Object.values(LEGEND_PARTIES)) {
+      const signed = getBestParty(party, 3, true);
+      const plain = getBestParty(party, 3);
+
+      for (const [at, species] of party.entries()) {
+        const signature = getSignatureAbility(getSpeciesData(species).family);
+
+        if (signature == null) {
+          continue;
+        }
+        expect(signed[at].abilities[0], getSpeciesData(species).name).toBe(signature);
+        expect(signed[at].abilities).toHaveLength(3);
+        expect(plain[at].abilities).not.toContain(signature);
+      }
+    }
+  });
+
+  it('leaves a job nobody can do empty', () => {
+    // Nothing of Steven's heals, cures or raises a teammate
+    const roles = assignBuildRoles([
+      Species.Skarmory,
+      Species.Claydol,
+      Species.Aggron,
+      Species.Cradily,
+      Species.Armaldo,
+      Species.Metagross,
+    ]);
+
+    expect(roles).not.toContain(BuildRole.Healer);
+    expect(roles).toContain(BuildRole.Redirector);
   });
 
   it('prefers a healer that mends over a frailer one that only boosts', () => {

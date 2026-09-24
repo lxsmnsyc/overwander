@@ -46,14 +46,14 @@ import {
 } from '../../../src/overworld/raid';
 import {
   ACE_OUTFIT,
-  CHAMPION_GOLD,
   BOSS_OUTFIT,
+  CHAMPION_GOLD,
   CHAMPION_OUTFIT,
   CHAMPION_PARTY_LEVELS,
   ELITE_GOLD,
   ELITE_OUTFIT,
-  FRONTIER_OUTFIT,
   ELITE_PARTY_LEVELS,
+  FRONTIER_OUTFIT,
   GIOVANNI_GOLD,
   GIOVANNI_PARTY_LEVELS,
   GYM_GOLD,
@@ -693,6 +693,13 @@ describe('world', () => {
       expect(member.nature).toBe(
         createStopSnapshot(snapshot, spawns[at], false, ELITE_PARTY_LEVELS, PLAIN_OUTFIT).nature,
       );
+    }
+  });
+
+  it('leaves the signature abilities to the legends', () => {
+    expect(LEGEND_OUTFIT.signatures).toBe(true);
+    for (const outfit of [ACE_OUTFIT, GYM_OUTFIT, ELITE_OUTFIT, CHAMPION_OUTFIT, BOSS_OUTFIT]) {
+      expect(outfit.signatures ?? false).toBe(false);
     }
   });
 

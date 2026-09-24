@@ -3,6 +3,7 @@ import { MoveCategories, MoveFlags, Moves } from '../ids/moves';
 import Natures, { NATURE_EFFECTS, getNatureFactor } from '../ids/natures';
 import { Stats } from '../constants/stats';
 import type { Species } from '../ids/species';
+import { getSignatureAbility } from '../abilities/__create';
 import { getMoveData } from '../moves/__create';
 import { getReachableMoves, getSpeciesAbilityPools, getSpeciesData } from './__create';
 import { MOVE_WEATHERS } from '../moves/weather';
@@ -337,8 +338,11 @@ export function getBestAbilities(
   role: BuildRole,
   sky?: Weathers,
   moves: Moves[] = [],
+  signature = false,
 ): Abilities[] {
   const pools = getSpeciesAbilityPools(species);
+  // A granted signature takes the first slot and the pool fills the rest
+  const granted = signature ? getSignatureAbility(getSpeciesData(species).family) : null;
   const lean = isCoreRole(role) ? CORE_LEAN : SUPPORT_LEAN;
   const own = ROLE_ABILITIES[role];
   const leaning = (ability: Abilities): number => {
@@ -375,10 +379,15 @@ export function getBestAbilities(
   }
   ranked.sort((one, two) => two.worth - one.worth || one.ability - two.ability);
 
-  const best: Abilities[] = [];
+  const best: Abilities[] = granted == null || count < 1 ? [] : [granted];
 
-  for (const { ability } of ranked.slice(0, Math.max(0, count))) {
-    best.push(ability);
+  for (const { ability } of ranked) {
+    if (best.length >= count) {
+      break;
+    }
+    if (ability !== granted) {
+      best.push(ability);
+    }
   }
   return best;
 }
@@ -515,6 +524,9 @@ const SUPPORT_ROLES: readonly BuildRole[] = [
   BuildRole.FieldControl,
 ];
 
+/** What a second member on a job already taken is worth */
+const DOUBLED_JOB = 0.4;
+
 /** What the ability pool adds to a species' fitness for a job */
 const ROLE_ABILITY_FIT = 0.5;
 
@@ -585,13 +597,13 @@ function roleFitness(species: Species, role: BuildRole, bulk: number, speed: num
   const reach =
     roleCapability(species, role) + (hasRoleAbility(species, role) ? ROLE_ABILITY_FIT : 0);
 
+  // A job needs a move or an ability that does it, however the frame fits
+  if (reach <= 0) {
+    return 0;
+  }
+
   switch (role) {
     case BuildRole.Healer: {
-      // A member with nothing to heal with is no healer however frail
-      if (reach <= 0) {
-        return 0;
-      }
-
       const fit = HEALER_ABLE + HEALER_FRAILTY * (1 - bulk) + HEALER_REACH * reach;
 
       return mends(species) ? HEALER_MENDS + fit : HEALER_BOOST_ONLY * fit;
@@ -612,7 +624,7 @@ function roleFitness(species: Species, role: BuildRole, bulk: number, speed: num
  * one, counting speed as half since a core that acts oftener hits
  * oftener. A party smaller than the league's six gets one core. The
  * rest are matched to the four supporting jobs so the whole party's
- * fitness is highest, one job each
+ * fitness is highest. A job nobody can do is left empty
  */
 export function assignBuildRoles(party: Species[]): BuildRole[] {
   const cores = Math.min(CORE_COUNT, Math.max(1, Math.round(party.length / CORE_SHARE)));
@@ -679,27 +691,45 @@ export function assignBuildRoles(party: Species[]): BuildRole[] {
       getSpeciesData(party[at]).stats[Stats.Speed] / fastest,
     );
 
-  // Every way to hand out the jobs, which is at most 24 for four members
+  // Every way to hand out the jobs. A job goes to someone able to do
+  // it; a member who can only do a job already taken doubles it at a
+  // discount, and one who can do none falls back to field control,
+  // since a party never fields more than two cores
   let bestPlan: BuildRole[] = [];
   let bestWorth = Number.NEGATIVE_INFINITY;
   const plan: BuildRole[] = [];
-  const used = new Set<BuildRole>();
+  const used = new Map<BuildRole, number>();
   const search = (depth: number, worth: number): void => {
-    if (depth === Math.min(rest.length, SUPPORT_ROLES.length)) {
+    if (depth === rest.length) {
       if (worth > bestWorth) {
         bestWorth = worth;
         bestPlan = [...plan];
       }
       return;
     }
+
+    let able = false;
+
     for (const role of SUPPORT_ROLES) {
-      if (!used.has(role)) {
-        used.add(role);
-        plan.push(role);
-        search(depth + 1, worth + fitness(rest[depth], role));
-        plan.pop();
-        used.delete(role);
+      const fit = fitness(rest[depth], role);
+
+      if (fit <= 0) {
+        continue;
       }
+      able = true;
+
+      const taken = used.get(role) ?? 0;
+
+      used.set(role, taken + 1);
+      plan.push(role);
+      search(depth + 1, worth + fit * (taken > 0 ? DOUBLED_JOB : 1));
+      plan.pop();
+      used.set(role, taken);
+    }
+    if (!able) {
+      plan.push(BuildRole.FieldControl);
+      search(depth + 1, worth);
+      plan.pop();
     }
   };
 
@@ -708,10 +738,7 @@ export function assignBuildRoles(party: Species[]): BuildRole[] {
   const assigned: BuildRole[] = [];
 
   for (const [at, role] of roles.entries()) {
-    const slot = rest.indexOf(at);
-
-    // A party longer than the four jobs repeats the last one
-    assigned.push(role ?? (slot < bestPlan.length ? bestPlan[slot] : BuildRole.FieldControl));
+    assigned.push(role ?? bestPlan[rest.indexOf(at)]);
   }
   return assigned;
 }
@@ -941,6 +968,7 @@ export function getBestBuild(
   taken: ReadonlyMap<Moves, number> = new Map(),
   sky?: { weather: Weathers; setter: boolean },
   allies: readonly BuildAlly[] = [],
+  signature = false,
 ): BestBuild {
   const options = { role, taken, allies, weather: sky?.weather, setter: sky?.setter };
   // Abilities and moves each want the other decided first, so the
@@ -948,9 +976,9 @@ export function getBestBuild(
   // abilities, the abilities are then priced against that sheet, and
   // the sheet is picked again if they moved. Without it an Arcanine
   // awakened Reckless and carried nothing that recoils
-  const guessed = getBestAbilities(species, abilityCount, role, sky?.weather);
+  const guessed = getBestAbilities(species, abilityCount, role, sky?.weather, [], signature);
   const draft = getBestMoves(species, guessed, options);
-  const abilities = getBestAbilities(species, abilityCount, role, sky?.weather, draft);
+  const abilities = getBestAbilities(species, abilityCount, role, sky?.weather, draft, signature);
   let settled = abilities.length === guessed.length;
 
   for (let at = 0; settled && at < abilities.length; at++) {
@@ -969,7 +997,11 @@ export function getBestBuild(
  * member built on its own is a member that plans its own weather and
  * repeats its neighbour's screen
  */
-export function getBestParty(party: Species[], abilityCount: number): BestBuild[] {
+export function getBestParty(
+  party: Species[],
+  abilityCount: number,
+  signature = false,
+): BestBuild[] {
   const roles = assignBuildRoles(party);
   // Abilities are read twice: once to see what the party could want
   // of the sky, and again once the sky is settled, since an ability
@@ -979,7 +1011,7 @@ export function getBestParty(party: Species[], abilityCount: number): BestBuild[
   const wanted: Abilities[][] = [];
 
   for (const [at, species] of party.entries()) {
-    wanted.push(getBestAbilities(species, abilityCount, roles[at]));
+    wanted.push(getBestAbilities(species, abilityCount, roles[at], undefined, [], signature));
   }
   const sky = planPartyWeather(party, roles, wanted);
   const taken = new Map<Moves, number>();
@@ -1006,6 +1038,7 @@ export function getBestParty(party: Species[], abilityCount: number): BestBuild[
       taken,
       { weather: sky.weather, setter: sky.setter === at },
       allies,
+      signature,
     );
 
     built.push(member);

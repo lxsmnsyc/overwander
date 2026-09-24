@@ -19,6 +19,7 @@ import { type Direction, actionOf, forTheGame } from '../../app/keys';
 import settings from '../../app/settings';
 import { DEFAULT_CHARSET } from '../../../data/overworld/charsets';
 import { watchProfile } from '../../../auth/profile';
+import openSight, { type Sight } from '../../../auth/sight';
 import { MAX_STEP_REPORT } from '../../../auth/egg';
 import type { SnapshotRecord } from '../../../auth/snapshot-record';
 import { type EggWalk, type WalkReport, walk } from '../../../auth/eggs';
@@ -2056,6 +2057,42 @@ export default function OverworldBoard(props: {
   const [facing, setFacing] = createSignal<[number, number]>([0, 1]);
 
   /**
+   * The other players in sight, and this one as they see them. Opened
+   * once the board is placed, so nobody sees the player at the start
+   * cell on the way to where they really are
+   */
+  const [sight, setSight] = createSignal<Sight | null>(null);
+  // By uid, so a refreshed session is not a reason to rejoin every channel
+  const seer = createMemo(() => auth.user()?.uid ?? null);
+
+  createEffect(() => {
+    const uid = seer();
+
+    if (uid == null || !placed()) {
+      return;
+    }
+
+    const opened = openSight(uid, STEP_PACE);
+
+    setSight(opened);
+    onCleanup(() => {
+      opened.close();
+      setSight(null);
+    });
+  });
+  createEffect(() => {
+    sight()?.setCharset(charset());
+  });
+  // A screen that stood down keeps watching but is not seen, or a
+  // player on two screens would stand in two places
+  createEffect(() => {
+    sight()?.setSeen(game.elsewhere() == null);
+  });
+  createEffect(() => {
+    sight()?.stand(atDepth(), atX(), atY(), facing());
+  });
+
+  /**
    * The cell one step from where the player stands. Always on the
    * board: they stand in the middle of it, and the middle is eight
    * cells from every edge
@@ -2334,6 +2371,24 @@ export default function OverworldBoard(props: {
    * for somewhere else to go, since the player can see the board and
    * will press again
    */
+  /** The walk whose route the other players have been told, so it is told once */
+  let announced: Journey | null = null;
+
+  /** A route of board cells as the steps between them */
+  const stepsAlong = (from: number, cells: number[]): [number, number][] => {
+    const steps: [number, number][] = [];
+    let at = from;
+
+    for (const onto of cells) {
+      steps.push([
+        (onto % BOARD_CELLS) - (at % BOARD_CELLS),
+        Math.floor(onto / BOARD_CELLS) - Math.floor(at / BOARD_CELLS),
+      ]);
+      at = onto;
+    }
+    return steps;
+  };
+
   const stride = (): void => {
     const plan = journey();
     const loaded = view();
@@ -2402,9 +2457,23 @@ export default function OverworldBoard(props: {
       setJourney(null);
       return;
     }
+    // Told once, as all of it: the ground and what stands on it are
+    // fixed, so the route found at the first step is the one walked
+    if (announced !== plan && route != null) {
+      announced = plan;
+      sight()?.plan(stepsAlong(here, route));
+    }
     steppedAt = Date.now();
     move(step[0], step[1]);
   };
+
+  // A walk that ends short of its route says where it stopped
+  createEffect(() => {
+    if (journey() == null) {
+      announced = null;
+      untrack(sight)?.plan(null);
+    }
+  });
 
   /**
    * The walk itself: a step, and then one every `STEP_PACE` until it
@@ -2814,6 +2883,7 @@ export default function OverworldBoard(props: {
                 lamp={loaded().lamp}
                 underground={loaded().underground}
                 charset={charset()}
+                strangers={sight()?.strangers ?? null}
                 mount={mount()}
                 // The camera belongs to the player rather than to the
                 // chunk: walking over a boundary swaps the board out

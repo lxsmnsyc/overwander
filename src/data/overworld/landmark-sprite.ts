@@ -31,6 +31,8 @@ const PICTURES: Partial<Record<Landmark, string>> = {
   [Landmark.AuctionBoard]: 'board',
   [Landmark.HoneyTree]: 'honey-tree',
   [Landmark.CaveMouth]: 'cave',
+  // No art of its own yet: a dungeon is a way in, drawn as one
+  [Landmark.Dungeon]: 'cave',
 };
 
 /**

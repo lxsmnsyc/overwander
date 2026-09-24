@@ -354,7 +354,8 @@ describe('the caves', () => {
     expect(kinds.size).toBeGreaterThan(1);
     for (const kind of kinds) {
       // No bushes, no trees, no stalls, no seats of the league, and no
-      // portal: the way out of a cave is the way back into it
+      // portal: the way out of a cave is the way back into it. A
+      // hideout or a dungeon is a way further down
       expect(
         [
           Landmark.CaveMouth,
@@ -364,6 +365,8 @@ describe('the caves', () => {
           Landmark.Trainer,
           Landmark.LegendaryLair,
           Landmark.ShadowLair,
+          Landmark.Hideout,
+          Landmark.Dungeon,
         ],
         String(kind),
       ).toContain(kind);

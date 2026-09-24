@@ -6,11 +6,13 @@ import { asNumber, asString } from './__normalize';
 import { RaidKind, raidId } from './raid-record';
 import { seatId } from './gym-seat-record';
 import { stopIdOf } from './stop-record';
+import { dungeonIdOf } from './dungeon-record';
+import { dungeonKindOf } from '../overworld/dungeon/stage';
 import getSupabase from './supabase';
 
 /** Where the signed-in player stands with a chunk's landmarks, by cell */
 export interface LandmarkStandings {
-  /** Lairs whose raid this player won this raid window */
+  /** Lairs whose raid this player won this raid window, and dungeons cleared this window */
   cleared: Set<number>;
   /** Trainers, grunts and experts this player has beaten this window */
   beaten: Set<number>;
@@ -75,9 +77,11 @@ export async function readLandmarkStandings(
     ...snapshot.getChampionStops().keys(),
   ];
 
+  const runs = new Map<string, number>();
+
   for (const [cell, landmark] of chunk.getLandmarkCells()) {
-    if (landmark === Landmark.FrontierBrain) {
-      fighters.push(cell);
+    if (dungeonKindOf(landmark) != null) {
+      runs.set(dungeonIdOf(chunk, snapshot.npcTimestamp, cell, offset), cell);
     }
   }
   for (const cell of fighters) {
@@ -97,7 +101,7 @@ export async function readLandmarkStandings(
   }
 
   const supabase = getSupabase();
-  const [rewards, defeated, held, claims, eggs] = await Promise.all([
+  const [rewards, defeated, held, claims, eggs, done] = await Promise.all([
     lairs.size === 0
       ? null
       : supabase
@@ -138,6 +142,15 @@ export async function readLandmarkStandings(
           .eq('generation', WORLD_GENERATION)
           .eq('player', uid)
           .in('marker', [...nests.keys()]),
+    runs.size === 0
+      ? null
+      : supabase
+          .from('dungeon_runs')
+          .select('run_id')
+          .eq('generation', WORLD_GENERATION)
+          .eq('player', uid)
+          .eq('cleared', true)
+          .in('run_id', [...runs.keys()]),
   ]);
 
   const holders = new Map<number, string>();
@@ -146,7 +159,10 @@ export async function readLandmarkStandings(
     holders.set(asNumber(row.cell), asString(row.holder));
   }
   return {
-    cleared: cellsOf(lairs, (rewards?.data ?? []) as { raid_id: unknown }[], 'raid_id'),
+    cleared: new Set([
+      ...cellsOf(lairs, (rewards?.data ?? []) as { raid_id: unknown }[], 'raid_id'),
+      ...cellsOf(runs, (done?.data ?? []) as { run_id: unknown }[], 'run_id'),
+    ]),
     beaten: cellsOf(stops, (defeated?.data ?? []) as { stop_id: unknown }[], 'stop_id'),
     seats: holders,
     visited: cellsOf(visits, (claims?.data ?? []) as { marker: unknown }[], 'marker'),

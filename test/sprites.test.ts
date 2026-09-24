@@ -132,6 +132,7 @@ const DRAWN_AS_PEOPLE = new Set<Landmark>([
   Landmark.WanderingNpc,
   Landmark.PokemonCenter,
   Landmark.FrontierBrain,
+  Landmark.Hideout,
 ]);
 
 /** And the ones that grow their own picture */

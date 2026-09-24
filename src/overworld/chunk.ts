@@ -19,6 +19,7 @@ import {
   getIslandDecorations,
 } from '../data/overworld/decoration';
 import Landmark, { LANDMARKS, LANDMARK_WEIGHTS } from '../data/overworld/landmark';
+import { getBiomeLairs } from '../data/overworld/lair';
 import { TOWN_LANDMARKS, getTownLots, isTownAt, portalCellIn, townOverChunk } from './town';
 import { caveMouthCellIn } from './cave';
 import { isFace, isSeam } from './cliff';
@@ -69,6 +70,15 @@ const MIN_LANDMARKS = 2;
 const MAX_LANDMARKS = 4;
 
 /**
+ * The landmarks with floors inside. They are rolled on their own after
+ * everything else is placed, so adding them moved nothing already there
+ */
+const DUNGEON_LANDMARKS = new Set([Landmark.Hideout, Landmark.Dungeon]);
+
+/** How often a chunk has a hideout or a dungeon in it */
+const DUNGEON_CHANCE = 1 / 12;
+
+/**
  * What the open country still holds: everything a town does not, less
  * the cave mouths, which are cut where the ground has a hillside to
  * cut them into rather than rolled anywhere
@@ -78,7 +88,7 @@ const WILD_LANDMARKS = ((): Landmark[] => {
   const wild: Landmark[] = [];
 
   for (const kind of LANDMARKS) {
-    if (!town.has(kind) && kind !== Landmark.CaveMouth) {
+    if (!town.has(kind) && kind !== Landmark.CaveMouth && !DUNGEON_LANDMARKS.has(kind)) {
       wild.push(kind);
     }
   }
@@ -769,6 +779,28 @@ export default class Chunk {
         taken.add(cell);
         for (const neighbor of neighborCells(cell)) {
           taken.add(neighbor);
+        }
+      }
+
+      // The dungeons, last and under names of their own. A Dungeon
+      // ends in a legendary, so it only stands where a lair would
+      if (draws.random('dungeon') < DUNGEON_CHANCE) {
+        const legendary =
+          getBiomeLairs(this.biome).length > 0 && draws.random('dungeon-kind') < 0.5;
+
+        for (const candidate of order) {
+          if (
+            !taken.has(candidate) &&
+            this.getCellRole(candidate) === 'ground' &&
+            this.isClear(candidate) &&
+            !this.getFaceCells().has(candidate) &&
+            !this.getLavaCells().has(candidate) &&
+            !this.isTownCell(candidate) &&
+            !this.isRouteCell(candidate)
+          ) {
+            cells.set(candidate, legendary ? Landmark.Dungeon : Landmark.Hideout);
+            break;
+          }
         }
       }
       this.landmarkCells = cells;

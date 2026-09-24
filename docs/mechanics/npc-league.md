@@ -48,6 +48,12 @@ kept by its Brain. What makes one different from a champion is not the party but
 the **rule**: a Frontier fight is **three a side** everywhere but the Hall, and
 the house adds its own terms on top.
 
+A facility is a **tower** of seven floors, walked the way a
+[dungeon](dungeons.md) is. The first six are trainers with three from the
+Factory's crate, and the Brain is on the seventh. Every floor plays under the
+Brain's own rule, so the climb is practice for the top. The party is locked in
+at the door, damage carries up the tower, and losing sends you back down.
+
 Hoenn's houses:
 
 - **Brandon** keeps the Battle Pyramid, which is walked with nothing in hand. No

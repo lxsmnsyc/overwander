@@ -17,6 +17,8 @@ import type { EncounterRecord } from '../../auth/encounter-record';
 import { type Notice, watchNotifications } from '../../auth/notifications';
 import { claimRaidReward } from '../../auth/raids';
 import { claimStopReward } from '../../auth/stops';
+import { settleDungeonFight } from '../../auth/dungeons';
+import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { settleGymChallenge } from '../../auth/gym-seats';
 import type { PositionRecord } from '../../auth/position-record';
 import type Biome from '../../data/ids/biome';
@@ -143,6 +145,8 @@ export interface ActiveBattle {
    * seat, so the settlement is the seat's rather than a purse's
    */
   seat?: string;
+  /** The dungeon run the fight was a room of, settled win or lose */
+  dungeon?: string;
 }
 
 /**
@@ -167,11 +171,21 @@ export interface Spoils {
 }
 
 export type PendingReward =
-  | { raid: string; stop?: undefined; seat?: undefined }
-  | { stop: string; raid?: undefined; seat?: undefined }
+  | { raid: string; stop?: undefined; seat?: undefined; dungeon?: undefined }
+  | { stop: string; raid?: undefined; seat?: undefined; dungeon?: undefined }
   // A seat settles whichever way the fight went: a win moves it, a
   // loss counts towards the stand its holder is keeping
-  | { seat: string; raid?: undefined; stop?: undefined };
+  | { seat: string; raid?: undefined; stop?: undefined; dungeon?: undefined }
+  // And so does a dungeon room: a loss sends the run back to the entrance
+  | { dungeon: string; raid?: undefined; stop?: undefined; seat?: undefined };
+
+/** The dungeon the player is inside, and what its last fight came to */
+export interface OpenDungeon {
+  snapshot: ChunkSnapshot;
+  cell: number;
+  /** What the last room's fight left the run saying, if anything */
+  note?: string;
+}
 
 /**
  * A catch opened in full, and whether it is being read or handled.
@@ -303,6 +317,12 @@ export interface GameState {
   setBattle: Setter<ActiveBattle | null>;
   reward: Accessor<PendingReward | null>;
   setReward: Setter<PendingReward | null>;
+  /**
+   * The dungeon being walked, kept here so the board opens it again
+   * once a room's fight hands the page back
+   */
+  dungeon: Accessor<OpenDungeon | null>;
+  setDungeon: Setter<OpenDungeon | null>;
   /** What the fight on screen paid, once it is claimed */
   spoils: Accessor<Spoils | null>;
   setSpoils: Setter<Spoils | null>;
@@ -716,6 +736,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   const [battle, setBattle] = createSignal<ActiveBattle | null>(null);
   const [reward, setReward] = createSignal<PendingReward | null>(null);
   const [spoils, setSpoils] = createSignal<Spoils | null>(null);
+  const [dungeon, setDungeon] = createSignal<OpenDungeon | null>(null);
 
   // A new fight, or none, starts with nothing paid yet
   createEffect(
@@ -817,6 +838,46 @@ export default function GameProvider(props: ParentProps): JSX.Element {
       return;
     }
 
+    if (owed.dungeon != null) {
+      const run = owed.dungeon;
+
+      settleDungeonFight(run)
+        .then((settled) => {
+          let note: string | undefined;
+
+          if (settled?.won === false) {
+            note = 'Beaten. The run starts again from the entrance.';
+          } else if (settled != null) {
+            note = settled.run.cleared ? 'Cleared.' : 'The room is clear.';
+          }
+
+          const open = dungeon();
+
+          if (open != null) {
+            setDungeon({ ...open, note });
+          }
+
+          const paid = settled?.reward;
+
+          if (paid != null) {
+            pay({
+              ...NOTHING,
+              gold: paid.gold,
+              award: paid.award,
+              items: paid.items,
+              waiting: paid.encounter?.species ?? null,
+            });
+            if (paid.encounter != null) {
+              setEncounter(paid.encounter);
+            }
+          }
+        })
+        .catch(() => {
+          // The run keeps the fight until somebody settles it
+        });
+      return;
+    }
+
     if (owed.stop == null) {
       claimRaidReward(owed.raid)
         .then((collected) => {
@@ -883,6 +944,8 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         setBattle,
         reward,
         setReward,
+        dungeon,
+        setDungeon,
         spoils,
         setSpoils,
         encounter,

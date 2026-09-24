@@ -28,6 +28,9 @@ import { localNow } from '../../../auth/clock';
 import { RaidAction, RaidKind, type RaidView, canJoinRaids, peekRaid } from '../../../auth/raids';
 import { type StopRecord, stopIdOf } from '../../../auth/stop-record';
 import { claimStopReward, enterStop } from '../../../auth/stops';
+import { enterDungeon } from '../../../auth/dungeons';
+import { dungeonKindOf, getDungeonLayout } from '../../../overworld/dungeon/stage';
+import { SYNDICATE_NAMES } from '../../../data/overworld/syndicate';
 import { createSafariSession, isEncounterRetired } from '../../../auth/safari';
 import {
   claimApricornTree,
@@ -106,6 +109,7 @@ import NestDialog, { type EggSource, type EggState } from '../NestDialog';
 import PortalDialog from '../PortalDialog';
 import HoneyTreeDialog from '../HoneyTreeDialog';
 import StopDialog, { type StopChallenge } from '../StopDialog';
+import DungeonDialog from '../dungeon-dialog';
 import SafariDialog from '../SafariDialog';
 import ChunkCanvas, { type CellSpot, type RiddenCoat, type SpawnCoat } from '../chunk-canvas';
 import NpcDialog from '../npc-dialog';
@@ -183,7 +187,6 @@ const EXPERT_LANDMARKS = new Set<Landmark>([
   Landmark.GymLeader,
   Landmark.EliteFour,
   Landmark.Champion,
-  Landmark.FrontierBrain,
 ]);
 
 export default function OverworldBoard(props: {
@@ -1116,6 +1119,12 @@ export default function OverworldBoard(props: {
         if (read.cleared.has(inChunk)) {
           next.set(at, CellAura.Cleared);
         }
+      } else if (dungeonKindOf(landmark) != null) {
+        if (read.cleared.has(inChunk)) {
+          next.set(at, CellAura.Cleared);
+        } else if (getDungeonLayout(snapshot, inChunk) != null) {
+          next.set(at, CellAura.Fight);
+        }
       } else if (landmark === Landmark.GymSeat) {
         const holder = read.seats.get(inChunk);
 
@@ -1133,11 +1142,9 @@ export default function OverworldBoard(props: {
         // An expert's house is a fight waiting like any other. Whether
         // they will take the challenge is theirs to say at the door
         const staged =
-          landmark === Landmark.FrontierBrain
-            ? snapshot.getFrontierBrain(inChunk) != null
-            : snapshot.getGymStops().has(inChunk) ||
-              snapshot.getEliteStops().has(inChunk) ||
-              snapshot.getChampionStops().has(inChunk);
+          snapshot.getGymStops().has(inChunk) ||
+          snapshot.getEliteStops().has(inChunk) ||
+          snapshot.getChampionStops().has(inChunk);
 
         if (staged && !read.beaten.has(inChunk)) {
           next.set(at, CellAura.Fight);
@@ -1699,6 +1706,28 @@ export default function OverworldBoard(props: {
       announce(at, 'Picked bare. Come back next window.', apricorns == null ? null : [apricorns]);
       return null;
     }
+    // A hideout, a dungeon or a Frontier tower opens its own dialog,
+    // which walks the floors
+    if (dungeonKindOf(landmark) != null) {
+      const run = await enterDungeon(spot.snapshot, spot.cell);
+
+      if (run === 'locked') {
+        const brain = spot.snapshot.getFrontierBrain(spot.cell);
+
+        return brain == null
+          ? 'The house is not taking challengers.'
+          : `${FRONTIER_BRAIN_NAMES[brain]} only faces challengers ${frontierGate(brain)}.`;
+      }
+      if (run === 'cleared') {
+        return 'You have cleared it this window.';
+      }
+      if (run == null) {
+        askForWindow(true, true);
+        return 'Nothing stirs inside any more.';
+      }
+      game.setDungeon({ snapshot: spot.snapshot, cell: spot.cell });
+      return null;
+    }
     // The landmarks somebody fights at share one flow: Team Rocket's
     // ambush, the trainer's duel, and the experts' ladder, all put in
     // the challenge dialog rather than the wanderer's
@@ -1719,16 +1748,12 @@ export default function OverworldBoard(props: {
           landmark === Landmark.Champion && spot.snapshot.getLegend(spot.cell) == null
             ? spot.snapshot.getChampion(spot.cell)
             : null;
-        const housed =
-          landmark === Landmark.FrontierBrain ? loaded.snapshot.getFrontierBrain(at) : null;
         let asked: string | null = null;
 
         if (seated != null) {
           asked = eliteGate(seated);
         } else if (crowned != null) {
           asked = championGate(crowned);
-        } else if (housed != null) {
-          asked = frontierGate(housed);
         }
         return asked == null
           ? `${who} is not taking challengers.`
@@ -2732,10 +2757,9 @@ export default function OverworldBoard(props: {
 
       return counter == null ? LANDMARK_NAMES[landmark] : VENDOR_KIND_NAMES[counter];
     }
-    // The boss is named when he is actually standing there: 1/64 is
-    // worth crossing the field for
-    if (landmark === Landmark.TeamRocket && spot.snapshot.isRocketBoss(spot.cell)) {
-      return 'Giovanni';
+    // A hideout is named for whose it is
+    if (landmark === Landmark.Hideout) {
+      return `${SYNDICATE_NAMES[spot.snapshot.getSyndicate()]} Hideout`;
     }
     // The experts are named outright: which leader keeps this gym is
     // what decides whether the walk is worth it
@@ -2934,6 +2958,14 @@ export default function OverworldBoard(props: {
                 // Worst case the spawn is drawn until the window turns
                 // over, and interacting with it says it has already fled
                 props.onFled();
+              }}
+            />
+            <DungeonDialog
+              user={user()}
+              open={game.dungeon()}
+              onClose={() => {
+                game.setDungeon(null);
+                recheck();
               }}
             />
             <StopDialog

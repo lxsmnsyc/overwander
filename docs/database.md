@@ -40,6 +40,7 @@ migrations to a Supabase project, and what Vercel needs to reach it.
 | [Raids](database/raids.md) | `raids`, `teams`, the lobby, invites and watchers |
 | [Battle rows](database/battle-rows.md) | `team_snapshots`, the raid boss, `battles`, `battle_teams` and `battle_aftermaths` |
 | [Stops and rewards](database/raid-stops.md) | `rocket_stops` and `raid_rewards` |
+| [Dungeon runs](database/dungeons.md) | `dungeon_runs`: one player's way through a hideout, a dungeon or a Frontier tower |
 | [Battle lobbies](database/duels.md) | `duels`, `duel_members`, `duel_catches`, `duel_invites`: the private lobbies players open |
 | [Gym seats](database/gyms.md) | `gym_seats`, `gym_challenges`: the seat a player holds, and what a challenge stakes |
 | [Auctions](database/auctions.md) | `auctions`, `auction_sellers`, the board, and what may go on the block |

@@ -21,8 +21,10 @@ import { packStatuses } from '../data/ids/status';
 import {
   FRONTIER_OUTFIT,
   FRONTIER_PARTY_LEVELS,
+  type LevelBand,
   ROCKET_REWARD_LEVEL,
   STOP_ALLIANCE,
+  type StopOutfit,
   counterParty,
   createStopParty,
   rentedHand,
@@ -37,7 +39,7 @@ import { encounterKey } from '../overworld/safari';
 import createOverworld from '../overworld/setup';
 import Landmark from '../data/overworld/landmark';
 import Npc, { EXECUTIVE_HONORS } from '../data/overworld/npc';
-import { SYNDICATE_BOSS_HONORS, SYNDICATE_GRUNT_HONORS } from '../data/overworld/syndicate';
+import { SYNDICATE_GRUNT_HONORS } from '../data/overworld/syndicate';
 import { trainerLevels } from '../data/overworld/trainers';
 import type Awards from '../data/ids/awards';
 import type { CatchSnapshot } from '../auth/catch-snapshot';
@@ -47,9 +49,6 @@ import {
   CHAMPION_HONORS,
   CHAMPION_TITLES,
   ELITE_MEMBER_HONORS,
-  FRONTIER_BRAIN_RULES,
-  FRONTIER_BRAIN_SYMBOLS,
-  FRONTIER_BRAIN_TITLES,
   FrontierRule,
   GYM_LEADER_BADGES,
   LEGEND_HONORS,
@@ -70,7 +69,7 @@ import { grantItem } from './inventory';
 import { Foe, Metric } from '../auth/quest-record';
 import { type ProgressBump, bumpProgress } from './quest-progress';
 import resolveBuddy from './buddy';
-import { getSql, jsonOf, newDocId, tx } from './db';
+import { type Tx, getSql, jsonOf, newDocId, tx } from './db';
 import { readEncounter } from './encounter-io';
 import { startEncounter } from './overworld';
 import { grantGold } from './profile';
@@ -171,7 +170,6 @@ function stagedParty(
   snapshot: ChunkSnapshot,
   landmark: Landmark | undefined,
   cell: number,
-  gold = false,
 ): Spawn[] | null {
   if (landmark === Landmark.Trainer) {
     return snapshot.getTrainerStops().get(cell) ?? null;
@@ -184,9 +182,6 @@ function stagedParty(
   }
   if (landmark === Landmark.Champion) {
     return snapshot.getChampionStops().get(cell) ?? null;
-  }
-  if (landmark === Landmark.FrontierBrain) {
-    return snapshot.getFrontierStop(cell, gold);
   }
   return snapshot.getRocketStops().get(cell) ?? null;
 }
@@ -206,13 +201,7 @@ export async function enterStop(
   // The cell's landmark says whose stop this is: Team Rocket's, the
   // duelling trainer's, or one of the experts'
   const landmark = chunk.getLandmarkCells().get(cell);
-  // A house that has already been taken brings its second three out
-  // the next time: the silver symbol on the shelf is what asks for
-  // them, so the party is the player's own question rather than the
-  // chunk's
-  const brain = landmark === Landmark.FrontierBrain ? snapshot.getFrontierBrain(cell) : null;
-  const gold = brain != null && (await hasAwards(uid, [FRONTIER_BRAIN_SYMBOLS[brain][0]]));
-  const party = stagedParty(snapshot, landmark, cell, gold);
+  const party = stagedParty(snapshot, landmark, cell);
 
   if (party == null) {
     return null;
@@ -233,14 +222,6 @@ export async function enterStop(
     const champion = snapshot.getChampion(cell);
 
     if (champion == null || !(await hasAwards(uid, CHAMPION_HONORS[champion]))) {
-      return 'locked';
-    }
-  }
-
-  // And the Frontier's own gate: a house stands past the league, so
-  // it takes nobody who has not taken that region's crown
-  if (landmark === Landmark.FrontierBrain) {
-    if (brain == null || !(await hasAwards(uid, [FRONTIER_BRAIN_TITLES[brain]]))) {
       return 'locked';
     }
   }
@@ -413,16 +394,77 @@ export async function startStopBattle(
 
   const chunk = getWorld().getChunk(record.chunk.x, record.chunk.y);
   const snapshot = new ChunkSnapshot(chunk, record.timestamp, record.offset);
-  const brain =
-    chunk.getLandmarkCells().get(record.cell) === Landmark.FrontierBrain
-      ? snapshot.getFrontierBrain(record.cell)
-      : null;
-  const rules = brain == null ? FrontierRule.None : FRONTIER_BRAIN_RULES[brain];
+  // The cell's landmark decides what they field: only Team Rocket
+  // fields shadows, and it fixes the band — every league seat brings
+  // a full 6, so size alone cannot say what the fight is worth, and a
+  // duellist's band is their class'
+  const landmark = chunk.getLandmarkCells().get(record.cell);
+  const duellist = snapshot.getTrainerClass(record.cell);
+  const rank = snapshot.getRocketRank(record.cell) ?? RocketRank.Grunt;
+  const legend = snapshot.getLegend(record.cell) != null;
+
+  return stageHouseFight(uid, catches, now, {
+    seed: stop,
+    snapshot,
+    cell: record.cell,
+    rules: FrontierRule.None,
+    party: toSpawns(record.party),
+    shadow: landmark === Landmark.TeamRocket,
+    levels: stopPartyLevels(
+      landmark ?? Landmark.TeamRocket,
+      rank,
+      duellist == null ? undefined : trainerLevels(duellist),
+      legend,
+    ),
+    outfit: stopOutfit(landmark ?? Landmark.TeamRocket, rank, legend, duellist ?? undefined),
+    // Who is standing there, kept on the battle rather than derived
+    // again later: the window that rolled them is gone within the hour,
+    // and a history read back afterwards has nothing to ask
+    challenger: stopChallenger(snapshot, record.cell),
+    link: async (transaction, battleId) => {
+      await transaction`
+        update rocket_stops set battle_id = ${battleId}
+        where generation = ${WORLD_GENERATION} and stop_id = ${stop} and player = ${uid}
+      `;
+    },
+  });
+}
+
+/** Everything a house fight is staged from, whoever keeps the house */
+export interface HouseFight {
+  /** What the curtain, the panel, the crate and the Dome are seeded from */
+  seed: string;
+  snapshot: ChunkSnapshot;
+  cell: number;
+  rules: FrontierRule;
+  /** The house's party; the Dome and the Hall draw theirs here instead */
+  party: Spawn[];
+  shadow: boolean;
+  levels: LevelBand;
+  outfit: StopOutfit;
+  challenger: { name: string; sprite: string } | null;
+  /** Points the caller's own record at the battle, inside the same write */
+  link: (transaction: Tx, battleId: string) => Promise<void>;
+}
+
+/**
+ * Freeze both sides of a fight against somebody who stands at a cell
+ * and write the battle. The house's rule decides what each side takes
+ * onto the field. Resolves the battle id, or null when the challenge
+ * cannot be taken
+ */
+export async function stageHouseFight(
+  uid: string,
+  catches: string[],
+  now: number,
+  fight: HouseFight,
+): Promise<string | null> {
+  const { seed, snapshot, rules } = fight;
 
   // A house fight is three a side. The cap is refused rather than
   // trimmed: which three were brought is the player's decision, and
   // silently dropping the rest would field a party they did not pick
-  if (brain != null && catches.length > frontierTeamSize(rules)) {
+  if (rules !== FrontierRule.None && catches.length > frontierTeamSize(rules)) {
     return null;
   }
 
@@ -439,20 +481,20 @@ export async function startStopBattle(
   // fight back walks through the curtain the challenger did
   const curtain =
     rules === FrontierRule.Curtained
-      ? pickPikeCurtain(new AleaRNG(`${stop}:curtain`).random())
+      ? pickPikeCurtain(new AleaRNG(`${seed}:curtain`).random())
       : undefined;
   // And the Arcade's panel, drawn the same way and landing on both
   // sides rather than on the challenger alone
   const panel =
     rules === FrontierRule.Rolled
-      ? pickArcadePanel(new AleaRNG(`${stop}:panel`).random())
+      ? pickArcadePanel(new AleaRNG(`${seed}:panel`).random())
       : undefined;
   const stripped = rules === FrontierRule.Bare || panel === ArcadePanel.Stripped;
   // The Factory lends both sides their three, so there is nothing of
   // the player's to freeze: the crate is drawn from once for the
   // challenge and the row belongs to them without standing for any
   // record of theirs
-  const hand = rules === FrontierRule.Rented ? rentedHand(stop, catches) : null;
+  const hand = rules === FrontierRule.Rented ? rentedHand(seed, catches) : null;
 
   if (rules === FrontierRule.Rented && hand == null) {
     return null;
@@ -478,28 +520,9 @@ export async function startStopBattle(
   // drawn against the party that actually made the field
   const fielded =
     rules === FrontierRule.Countered || rules === FrontierRule.Singled
-      ? counterParty(stop, await readPublishedSpecies(party))
-      : toSpawns(record.party);
-  // The cell's landmark decides what they field: only Team Rocket
-  // fields shadows, and it fixes the band — every league seat brings
-  // a full 6, so size alone cannot say what the fight is worth, and a
-  // duellist's band is their class'
-  const landmark = chunk.getLandmarkCells().get(record.cell);
-  const shadow = landmark === Landmark.TeamRocket;
-  const duellist = snapshot.getTrainerClass(record.cell);
-  const rank = snapshot.getRocketRank(record.cell) ?? RocketRank.Grunt;
-  const legend = snapshot.getLegend(record.cell) != null;
-  const levels = stopPartyLevels(
-    landmark ?? Landmark.TeamRocket,
-    rank,
-    duellist == null ? undefined : trainerLevels(duellist),
-    legend,
-  );
-  // Who is standing there, kept on the battle rather than derived
-  // again later: the window that rolled them is gone within the hour,
-  // and a history read back afterwards has nothing to ask
-  const challenger = stopChallenger(snapshot, record.cell);
-  const gruntId = newDocId();
+      ? counterParty(seed, await readPublishedSpecies(party))
+      : fight.party;
+  const houseId = newDocId();
   // The sky over the cell when the fight was accepted, read here
   // rather than trusted from the client and kept on the row, since
   // the world's own moves on within the hour
@@ -507,7 +530,7 @@ export async function startStopBattle(
   // weather one; everywhere else it is the sky over the cell
   const weather =
     (panel == null ? null : ARCADE_PANEL_WEATHER[panel]) ??
-    getWorld().getWeather(record.chunk.x, record.chunk.y, snapshot.weatherWindow);
+    getWorld().getWeather(snapshot.chunk.x, snapshot.chunk.y, snapshot.weatherWindow);
 
   await tx(async (transaction) => {
     // A rented party is the player's to field and nobody's to keep:
@@ -518,25 +541,14 @@ export async function startStopBattle(
         values (${party}, ${uid}, ${PLAYER_ALLIANCE}, ${jsonOf(transaction, rented)})
       `;
     }
-    // The stop's party belongs to nobody, the way a raid boss' does
+    // The house's party belongs to nobody, the way a raid boss' does
     await transaction`
       insert into team_snapshots (id, player, alliance, catches)
-      values (${gruntId}, null, ${STOP_ALLIANCE},
+      values (${houseId}, null, ${STOP_ALLIANCE},
               ${jsonOf(
                 transaction,
                 houseParty(
-                  createStopParty(
-                    snapshot,
-                    fielded,
-                    shadow,
-                    levels,
-                    stopOutfit(
-                      landmark ?? Landmark.TeamRocket,
-                      rank,
-                      legend,
-                      duellist ?? undefined,
-                    ),
-                  ),
+                  createStopParty(snapshot, fielded, fight.shadow, fight.levels, fight.outfit),
                   { stripped, panel },
                 ),
               )})
@@ -544,27 +556,24 @@ export async function startStopBattle(
     await transaction`
       insert into battles (id, raid_id, species, outcome, started_at, biome, weather, limits,
                            rules, opponent, opponent_sprite)
-      values (${battleId}, null, ${fielded.length > 0 ? fielded[0][0] : (record.party[0]?.species ?? 0)},
+      values (${battleId}, null, ${fielded.length > 0 ? fielded[0][0] : 0},
               ${BattleOutcome.Unfinished}, ${now},
-              ${snapshot.biomeAt(record.cell)}, ${weather}, ${NPC_BATTLE_LIMITS}, ${rules},
-              ${challenger?.name ?? ''}, ${challenger?.sprite ?? ''})
+              ${snapshot.biomeAt(fight.cell)}, ${weather}, ${NPC_BATTLE_LIMITS}, ${rules},
+              ${fight.challenger?.name ?? ''}, ${fight.challenger?.sprite ?? ''})
     `;
 
     const rows = [
-      { battle_id: battleId, position: 0, snapshot_id: gruntId, player: null as string | null },
+      { battle_id: battleId, position: 0, snapshot_id: houseId, player: null as string | null },
       { battle_id: battleId, position: 1, snapshot_id: party, player: uid as string | null },
     ];
 
     await transaction`
       insert into battle_teams ${transaction(rows, 'battle_id', 'position', 'snapshot_id', 'player')}
     `;
-    await transaction`
-      update rocket_stops set battle_id = ${battleId}
-      where generation = ${WORLD_GENERATION} and stop_id = ${stop} and player = ${uid}
-    `;
+    await fight.link(transaction, battleId);
   });
 
-  // What the stop put on the field is now something the player has
+  // What the house put on the field is now something the player has
   // seen, whatever the fight comes to
   await recordSeenOpponents(battleId, [uid]);
 
@@ -706,16 +715,7 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
   // leader's badge, the elite's mark, or the region's title. Each is
   // earned once for good; every win counts on the shelf, and only
   // the earning one reports the award
-  // Which of the house's pair this win earned: the one they were
-  // already holding is what brought the second three out, so holding
-  // it is what makes this the gold fight. Asked before the award is
-  // written, so the win that earns silver is not read as a gold one
-  const owed = awardFor(
-    landmark,
-    snapshot,
-    record.cell,
-    await tookTheHouse(uid, snapshot, record.cell),
-  );
+  const owed = awardFor(landmark, snapshot, record.cell);
   const award = owed != null && (await recordAwardWin(uid, owed, Date.now())) ? owed : null;
 
   // A beaten expert also leaves something: a leader's TM of their own
@@ -771,22 +771,6 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
 }
 
 /**
- * Whether this player had already taken the house standing at the
- * cell. It is what decides both halves of a Frontier win: the second
- * three are fielded against somebody holding the silver symbol, and
- * beating them is what the gold one is for
- */
-async function tookTheHouse(
-  player: string,
-  snapshot: ChunkSnapshot,
-  cell: number,
-): Promise<boolean> {
-  const brain = snapshot.getFrontierBrain(cell);
-
-  return brain != null && (await hasAwards(player, [FRONTIER_BRAIN_SYMBOLS[brain][0]]));
-}
-
-/**
  * The award a fighting landmark pays, or null where it pays none: a
  * badge is the resident leader's, a mark the resident elite's, the
  * title the region's, and Team Rocket's is whoever was standing on
@@ -796,30 +780,11 @@ function awardFor(
   landmark: Landmark | undefined,
   snapshot: ChunkSnapshot,
   cell: number,
-  gold: boolean,
 ): Awards | null {
-  if (landmark === Landmark.FrontierBrain) {
-    const brain = snapshot.getFrontierBrain(cell);
-
-    if (brain == null) {
-      return null;
-    }
-
-    // Two symbols for two fights: the first win takes the house, and
-    // the second is against the three the house only brings out for
-    // somebody who has
-    const pair = FRONTIER_BRAIN_SYMBOLS[brain];
-
-    return gold ? pair[1] : pair[0];
-  }
   if (landmark === Landmark.TeamRocket) {
     // Which of the three teams keeps this cell is the biome's, so the
     // mark is theirs rather than Team Rocket's everywhere
     const syndicate = snapshot.getSyndicate();
-
-    if (snapshot.getRocketRank(cell) === RocketRank.Boss) {
-      return SYNDICATE_BOSS_HONORS[syndicate];
-    }
 
     const executive = snapshot.getRocketExecutive(cell);
 

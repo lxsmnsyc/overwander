@@ -54,6 +54,9 @@ at level 10.
 | **Executive** | 40,000 to 90,000  | Any of its six, and a stash it was carrying         |
 | **The boss**  | 120,000 to 250,000 | Their own mark and any of theirs, the legendary included |
 
+The boss is never on a Team Rocket cell. They wait on the last floor of their
+team's hideout, and what beating them pays is in [Dungeons](dungeons.md).
+
 The grunt is the commonest fight in the world, and the only place some of a
 biome's pokemon can be met as a shadow at all. Giovanni's mark is worth the coat
 he runs Team Rocket in. The gym he keeps in Kanto is a different fight with a

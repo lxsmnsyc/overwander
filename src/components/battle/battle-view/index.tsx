@@ -536,6 +536,10 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         sayCandy(await recordAftermath(props.active.id, aftermath, defeated));
       }
       await finishBattle(props.active.id, BattleOutcome.Lost);
+      // Walking out of a dungeon room is losing it
+      if (props.active.dungeon != null) {
+        props.onReward({ dungeon: props.active.dungeon });
+      }
     })().catch(() => {
       // Leaving is not a moment to hold the player in; if the write
       // never lands, the battle lock's own timeout frees the party
@@ -674,6 +678,10 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       // is one more challenge its holder turned away
       if (seat != null) {
         props.onReward({ seat });
+      }
+      // A dungeon room settles either way: a loss sends the run back
+      if (props.active.dungeon != null) {
+        props.onReward({ dungeon: props.active.dungeon });
       }
     })().catch((caught: unknown) => {
       setStatus(caught instanceof Error ? caught.message : String(caught));

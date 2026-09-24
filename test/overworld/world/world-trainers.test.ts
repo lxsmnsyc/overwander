@@ -114,6 +114,7 @@ import { SYNDICATE_BOSS_CHARSETS } from '../../../src/data/overworld/syndicate';
 import { EXECUTIVE_CHARSETS, EXECUTIVE_NAMES } from '../../../src/data/overworld/npc';
 import { favorsEverything } from '../../../src/data/overworld/weather';
 import World from '../../../src/overworld/world';
+import { dungeonFoe, getDungeonLayout } from '../../../src/overworld/dungeon/stage';
 import findChunk from './helpers';
 
 // Spawn rolls read the species registry and the biome spawn pools;
@@ -328,124 +329,67 @@ describe('world', () => {
     );
   });
 
-  it('rolls Giovanni once in a long while, six strong', () => {
-    const world = new World('overworld');
-    let staged: { snapshot: ChunkSnapshot; cell: number } | null = null;
-
-    // 1/64 a stop a window: a few hundred stop-windows finds him
-    for (let x = 0; x < 48 && staged == null; x++) {
-      for (let y = 0; y < 8 && staged == null; y++) {
-        const chunk = world.getChunk(x, y);
-
-        for (const [cell, landmark] of chunk.getLandmarkCells()) {
-          if (landmark !== Landmark.TeamRocket) {
-            continue;
-          }
-          for (let window = 0; window < 16; window++) {
-            const snapshot = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
-
-            if (snapshot.isRocketBoss(cell) && snapshot.getRocketStops().get(cell) != null) {
-              staged = { snapshot, cell };
-              break;
-            }
-          }
-          if (staged != null) {
-            break;
-          }
-        }
-      }
-    }
-
-    expect(staged).not.toBeNull();
-    if (staged == null) {
-      return;
-    }
-
-    const party = staged.snapshot.getRocketStops().get(staged.cell) ?? [];
-    const legendaries = new Set(EVERY_LAIR.flatMap((lair) => getLairResidents(lair)));
-    const homes = getBiomeLairs(staged.snapshot.chunk.biome);
-    const endemic = new Set(homes.flatMap((lair) => getLairResidents(lair)));
-
-    // Six strong: five of the biome's rares, and at the end a
-    // legendary that lives here. A biome hosting no lair has none for
-    // him to have taken, so the sixth is another rare
-    expect(party).toHaveLength(6);
-    expect(homes.length > 0 ? endemic.has(party[5][0]) : !legendaries.has(party[5][0])).toBe(true);
-
-    // Dressed as the boss himself
-    expect(SYNDICATE_BOSS_CHARSETS[staged.snapshot.getSyndicate()]).toContain(
-      staged.snapshot.getWandererCoats().get(staged.cell),
-    );
-
-    // Fielded at his own level, all shadows. The band is the stop's to
-    // pass now that every rank fields six: nothing about the party
-    // says whose it is
-    const fielded = createStopParty(
-      staged.snapshot,
-      party,
-      true,
-      rocketPartyLevels(RocketRank.Boss),
-    );
-
-    for (const member of fielded) {
-      expect(member.level).toBeGreaterThanOrEqual(GIOVANNI_PARTY_LEVELS[0]);
-      expect(member.level).toBeLessThanOrEqual(GIOVANNI_PARTY_LEVELS[1]);
-      expect(member.shadow).toBe(true);
-    }
-  });
-
-  it('never fields Giovanni a legendary the biome cannot host', () => {
+  it("keeps the syndicate boss on a hideout's last floor, six strong", () => {
     const world = new World('overworld');
     const legendaries = new Set(EVERY_LAIR.flatMap((lair) => getLairResidents(lair)));
     let bosses = 0;
     let barren = 0;
 
-    for (let x = 0; x < 48; x++) {
-      for (let y = 0; y < 8; y++) {
+    for (let x = 0; x < 64; x++) {
+      for (let y = 0; y < 12; y++) {
         const chunk = world.getChunk(x, y);
 
         for (const [cell, landmark] of chunk.getLandmarkCells()) {
-          if (landmark !== Landmark.TeamRocket) {
+          if (landmark !== Landmark.Hideout) {
             continue;
           }
-          for (let window = 0; window < 16; window++) {
-            const snapshot = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
-            // The lairs of the country the stop stands in
-            const homes = getBiomeLairs(snapshot.biomeAt(cell));
-            const endemic = new Set(homes.flatMap((lair) => getLairResidents(lair)));
 
-            if (!snapshot.isRocketBoss(cell)) {
-              continue;
-            }
+          const snapshot = new ChunkSnapshot(chunk, 0);
+          const layout = getDungeonLayout(snapshot, cell);
 
-            const party = snapshot.getRocketStops().get(cell);
+          if (layout == null) {
+            continue;
+          }
 
-            if (party == null) {
-              continue;
-            }
-            bosses += 1;
+          const last = layout.floors.length - 1;
+          const foe = dungeonFoe(snapshot, cell, last, layout.floors[last].exit);
 
-            const last = party[party.length - 1][0];
+          expect(foe).not.toBeNull();
+          if (foe == null) {
+            continue;
+          }
+          bosses += 1;
 
-            if (homes.length > 0) {
-              expect(endemic.has(last)).toBe(true);
-              continue;
-            }
-            // Nowhere here for one to have come from, so the sixth is
-            // a rare like the five in front of it
+          // Five of the biome's rares, and at the end a legendary that
+          // lives here, or a sixth rare where the biome hosts no lair
+          const homes = getBiomeLairs(snapshot.biomeAt(cell));
+          const endemic = new Set(homes.flatMap((lair) => getLairResidents(lair)));
+          const sixth = foe.party[5][0];
+
+          expect(foe.party).toHaveLength(6);
+          if (homes.length > 0) {
+            expect(endemic.has(sixth)).toBe(true);
+          } else {
             barren += 1;
-            expect(legendaries.has(last)).toBe(false);
+            expect(legendaries.has(sixth)).toBe(false);
+          }
+
+          // Dressed as the boss, and fielded at the boss' level, all shadows
+          expect(SYNDICATE_BOSS_CHARSETS[snapshot.getSyndicate()]).toContain(foe.sprite);
+          for (const member of createStopParty(snapshot, foe.party, foe.shadow, foe.levels)) {
+            expect(member.level).toBeGreaterThanOrEqual(GIOVANNI_PARTY_LEVELS[0]);
+            expect(member.level).toBeLessThanOrEqual(GIOVANNI_PARTY_LEVELS[1]);
+            expect(member.shadow).toBe(true);
           }
         }
       }
     }
 
-    // Both sides of it are actually walked: most biomes host no lair
     expect(bosses).toBeGreaterThan(0);
     expect(barren).toBeGreaterThan(0);
   });
 
-  it('ranks a Team Rocket cell into a grunt, an executive or the boss', () => {
+  it('ranks a Team Rocket cell into a grunt or an executive, never the boss', () => {
     const world = new World('overworld');
     const seen = new Map<RocketRank, number>();
     let windows = 0;
@@ -470,9 +414,8 @@ describe('world', () => {
             seen.set(rank, (seen.get(rank) ?? 0) + 1);
             windows += 1;
 
-            // The three are one draw, so they cannot overlap: only the
-            // boss reads as the boss, and only an executive names one
-            expect(snapshot.isRocketBoss(cell)).toBe(rank === RocketRank.Boss);
+            // The boss keeps to the hideouts, and only an executive names one
+            expect(snapshot.isRocketBoss(cell)).toBe(false);
             expect(snapshot.getRocketExecutive(cell) != null).toBe(rank === RocketRank.Executive);
 
             if (rank === RocketRank.Executive && executive == null) {
@@ -486,13 +429,13 @@ describe('world', () => {
     expect(windows).toBeGreaterThan(500);
 
     // Roughly the stated odds: a grunt most of the time, an executive
-    // about one window in eight, the boss far rarer than either
+    // about one window in eight, and never the boss
     const share = (rank: RocketRank): number => (seen.get(rank) ?? 0) / windows;
 
     expect(share(RocketRank.Grunt)).toBeGreaterThan(0.7);
     expect(share(RocketRank.Executive)).toBeGreaterThan(EXECUTIVE_CHANCE / 2);
     expect(share(RocketRank.Executive)).toBeLessThan(EXECUTIVE_CHANCE * 2);
-    expect(share(RocketRank.Boss)).toBeLessThan(EXECUTIVE_CHANCE);
+    expect(share(RocketRank.Boss)).toBe(0);
 
     // And an executive stands there as one of the four, dressed as
     // themselves, fielding six of the country's rares at the Elite

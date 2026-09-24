@@ -108,11 +108,10 @@ const enum Landmark {
    */
   ApricornTree = 16,
   /**
-   * A Battle Frontier facility, with its house champion standing in
-   * it. The rank above the Champion, and the first fight in the game
-   * whose **rules** differ rather than its roster: three a side, and
-   * whatever the house asks on top. It takes a challenger who holds
-   * the crown of the region the house stands in
+   * A Battle Frontier tower, with its Brain at the top. Six floors of
+   * crate trainers under the Brain's house rule come first, then the
+   * Brain. It takes a challenger who holds the crown of the region the
+   * house stands in
    */
   FrontierBrain = 17,
   /**
@@ -137,6 +136,17 @@ const enum Landmark {
    * the spot, and nothing in its pool spawns anywhere else
    */
   HoneyTree = 20,
+  /**
+   * A syndicate's hideout: floors of grunts going down, an executive
+   * on each floor's stairs, and the boss on the last floor. The only
+   * place the boss is met
+   */
+  Hideout = 21,
+  /**
+   * Ruins or a cavern with floors of wild hordes, and a legendary that
+   * cannot flee at the bottom. Only where the biome hosts a lair
+   */
+  Dungeon = 22,
 }
 
 export default Landmark;
@@ -166,6 +176,8 @@ export const LANDMARKS: Landmark[] = [
   Landmark.PokemonCenter,
   Landmark.CaveMouth,
   Landmark.HoneyTree,
+  Landmark.Hideout,
+  Landmark.Dungeon,
 ];
 
 /**
@@ -203,6 +215,9 @@ export const LANDMARK_WEIGHTS: Record<Landmark, number> = {
   [Landmark.AuctionBoard]: 0,
   [Landmark.PokemonCenter]: 0,
   [Landmark.CaveMouth]: 0,
+  // Rolled on their own, after everything else
+  [Landmark.Hideout]: 0,
+  [Landmark.Dungeon]: 0,
 };
 
 /**
@@ -225,8 +240,10 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.GymSeat]: 'Gym Seat',
   [Landmark.AuctionBoard]: 'Auction Board',
   [Landmark.ApricornTree]: 'Apricorn Tree',
-  [Landmark.FrontierBrain]: 'Frontier Brain',
+  [Landmark.FrontierBrain]: 'Battle Frontier',
   [Landmark.PokemonCenter]: 'Pokémon Center',
   [Landmark.CaveMouth]: 'Cave',
   [Landmark.HoneyTree]: 'Honey Tree',
+  [Landmark.Hideout]: 'Hideout',
+  [Landmark.Dungeon]: 'Dungeon',
 };

@@ -35,6 +35,7 @@ for players; the developer documentation lives in
 | [People you meet](mechanics/npcs.md) | The vendor, Nurse Joy and the specialists |
 | [Trainers on the road](mechanics/npc-trainers.md) | The syndicates, the duelling trainers and their classes |
 | [The league](mechanics/npc-league.md) | Gym leaders, the Elite Four, champions and the Battle Frontier |
+| [Dungeons](mechanics/dungeons.md) | Hideouts, dungeons and Frontier towers: floors walked with one locked party |
 | [Items](mechanics/items.md) | The item pool, battle gear, berries and what each item does |
 | [Where items come from](mechanics/item-sources.md) | Caches, berry patches, apricorn trees, phenomena and Pickup |
 | [Gold and auctions](mechanics/economy.md) | Where gold comes from, where it goes, and the auction house |

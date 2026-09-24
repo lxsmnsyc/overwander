@@ -6,6 +6,7 @@ import Npc, { DAYCARE_FEE } from '../../data/overworld/npc';
 import { isPurifiable, purifyIVs } from '../../data/items/purifying-gem';
 import { isEggRecord, isGuardedRecord } from '../catch-fields';
 import { readCaughtIn, readCaughtMany, updateCaughtIn } from '../caught-io';
+import { runLockedCatches } from '../dungeon-lock';
 import { getSql, tx } from '../db';
 import { isCatchLocked } from '../locks';
 import { grantGold, spendGold } from '../profile';
@@ -99,8 +100,13 @@ export async function visitNurse(
   // The whole handover in one read, however many she is handed
   const stored = await readCaughtMany(getSql(), catches);
   const care: [string, Record<string, unknown>, boolean][] = [];
+  // A party locked into a dungeon run mends only on its own medicine
+  const running = await runLockedCatches(uid, Date.now());
 
   for (const id of catches) {
+    if (running.has(id)) {
+      continue;
+    }
     const caught = stored.get(id);
     const done = caught == null ? null : tended(caught, uid);
 

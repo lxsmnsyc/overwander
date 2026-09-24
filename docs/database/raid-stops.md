@@ -5,9 +5,10 @@ owes the party that cleared it.
 
 ## `rocket_stops`
 
-A **stop** is any landmark cell that bars the way with somebody who fights. Six
-of them stage one: `TeamRocket`, `Trainer`, `GymLeader`, `EliteFour`, `Champion`
-and `FrontierBrain`. Whoever is standing there holds the cell for `NPC_INTERVAL`
+A **stop** is any landmark cell that bars the way with somebody who fights. Five
+of them stage one: `TeamRocket`, `Trainer`, `GymLeader`, `EliteFour` and
+`Champion`. A `FrontierBrain` cell is a tower now, kept in
+[`dungeon_runs`](dungeons.md). Whoever is standing there holds the cell for `NPC_INTERVAL`
 (3 hours), the window that decides who is at one.
 
 The two tables are still named for Team Rocket because it was the only kind when

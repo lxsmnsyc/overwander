@@ -14,6 +14,7 @@ import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { type Tx, tx } from './db';
 import { bumpProgress } from './quest-progress';
+import { isInLiveRun } from './dungeon-lock';
 import { isCatchLocked } from './locks';
 import { asNumber } from './read';
 import { grantStack, grantStacks, readStackIn, spendStackIn } from './stacks';
@@ -150,6 +151,11 @@ async function feed(
     wanted: number,
   ) => Promise<number>,
 ): Promise<number | null> {
+  // A level mends, and mid-run the only mending is the player's medicine
+  if (await isInLiveRun(uid, [catchId], Date.now())) {
+    return null;
+  }
+
   const grown = await tx(async (transaction) => {
     // A level reads the row it is written on: what the pokemon knows
     // is not part of feeding it

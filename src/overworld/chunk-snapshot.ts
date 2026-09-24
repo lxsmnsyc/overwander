@@ -125,7 +125,7 @@ function expertParty(pool: Species[], signature: Species, seed: string): Spawn[]
  * replacement, since the crate is what it is and two of a kind is a
  * hand the house can deal
  */
-function rentedParty(pool: Species[], size: number, seed: string): Spawn[] {
+export function rentedParty(pool: Species[], size: number, seed: string): Spawn[] {
   const rng = new AleaRNG(seed);
 
   const party: Spawn[] = [];
@@ -170,12 +170,6 @@ export type Spawn = [species: Species, individualValue: number, traitValue: numb
 export const SPAWN_COUNT = 8;
 
 /**
- * How often a Team Rocket stop is Giovanni himself rather than a
- * grunt: the rare band's own odds, so a walk remembers meeting him
- */
-export const GIOVANNI_CHANCE = 1 / 64;
-
-/**
  * How many a Team Rocket stop fields, whoever is standing there: a
  * full six against the player's six. What changes with the rank is
  * what the six are drawn from and what level they fight at
@@ -183,9 +177,8 @@ export const GIOVANNI_CHANCE = 1 / 64;
 export const ROCKET_PARTY_SIZE = 6;
 
 /**
- * Who is standing at a Team Rocket cell this window. Rolled once per
- * cell from one draw, so the three are disjoint: the boss, then his
- * executives, then the rank and file who hold everything else
+ * Who a syndicate puts up. A Team Rocket cell rolls a grunt or an
+ * executive; the boss is only ever met on a hideout's last floor
  */
 const enum RocketRank {
   Grunt = 0,
@@ -197,6 +190,57 @@ export { RocketRank };
 
 /** One window in eight puts an executive on the cell */
 export const EXECUTIVE_CHANCE = 1 / 8;
+
+/**
+ * A syndicate party, weakest first. A grunt takes two of each of the
+ * biome's three bands, an executive six rares, and the boss five rares
+ * and the legendary of a lair the biome hosts, or a sixth rare where it
+ * hosts none
+ */
+export function drawSyndicateParty(
+  rank: RocketRank,
+  [commons, uncommons, rares]: SpawnRarityGroups['base'][],
+  biome: Biome,
+  random: () => number,
+  int32: () => number,
+  size = ROCKET_PARTY_SIZE,
+): Spawn[] {
+  const draw = (band: SpawnRarityGroups['base']): Spawn => {
+    const entry = band[Math.floor(random() * band.length)];
+
+    return [entry.species, int32(), int32()];
+  };
+  const party: Spawn[] = [];
+
+  if (rank === RocketRank.Boss) {
+    for (let at = 0; at < size - 1; at++) {
+      party.push(draw(rares));
+    }
+
+    const homes = getBiomeLairs(biome);
+
+    if (homes.length > 0) {
+      const lair = homes[Math.floor(random() * homes.length)];
+
+      party.push([pickLairSpecies(lair, () => true, int32()), int32(), int32()]);
+    } else {
+      party.push(draw(rares));
+    }
+    return party;
+  }
+  if (rank === RocketRank.Executive) {
+    for (let at = 0; at < size; at++) {
+      party.push(draw(rares));
+    }
+    return party;
+  }
+  for (const band of [commons, uncommons, rares]) {
+    for (let at = 0; at < size / 3; at++) {
+      party.push(draw(band));
+    }
+  }
+  return party;
+}
 
 /**
  * How often the seat at the top of a league holds a legend instead of
@@ -741,7 +785,7 @@ export default class ChunkSnapshot {
   getLegendaryLairs(): Map<number, RaidRoll> {
     if (this.raids == null) {
       const raids = new Map<number, RaidRoll>();
-      const lairs = this.stageableLairs();
+      const lairs = this.getStageableLairs();
 
       if (lairs.length > 0) {
         for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
@@ -765,7 +809,7 @@ export default class ChunkSnapshot {
   }
 
   /** The biome's lairs with at least one resident a raid can stage */
-  private stageableLairs(): Lairs[] {
+  getStageableLairs(): Lairs[] {
     const lairs: Lairs[] = [];
 
     for (const lair of getBiomeLairs(this.chunk.biome)) {
@@ -795,7 +839,7 @@ export default class ChunkSnapshot {
     if (this.shadowRaids == null) {
       const raids = new Map<number, RaidRoll>();
       const pool = getBiomeRoster(this.chunk.biome, getTimeOfDay(this.raidTimestamp));
-      const lairs = this.stageableLairs();
+      const lairs = this.getStageableLairs();
       const ranked = spawnRanks(pool)[2];
       const rare: typeof ranked = [];
 
@@ -1000,6 +1044,9 @@ export default class ChunkSnapshot {
           } else {
             dress(cell, EXECUTIVE_CHARSETS[executive]);
           }
+        } else if (landmark === Landmark.Hideout) {
+          // A grunt keeps the door of their team's hideout
+          dress(cell, SYNDICATE_GRUNT_CHARSETS[this.getSyndicate()]);
         } else if (landmark === Landmark.GymLeader) {
           const leader = this.getGymLeader(cell);
 
@@ -1040,9 +1087,8 @@ export default class ChunkSnapshot {
 
   /**
    * Who is barring this Team Rocket cell this window, or null where
-   * the cell is not one. One draw settles all three ranks, so they
-   * cannot overlap: the boss at one in sixty-four, an executive at
-   * one in eight, and a grunt the rest of the time
+   * the cell is not one: an executive one window in eight, a grunt
+   * the rest of the time
    */
   getRocketRank(cell: number): RocketRank | null {
     if (this.chunk.getLandmarkCells().get(cell) !== Landmark.TeamRocket) {
@@ -1051,10 +1097,7 @@ export default class ChunkSnapshot {
 
     const rolled = new AleaRNG(`${this.key}${this.npcTimestamp}boss${cell}`).random();
 
-    if (rolled < GIOVANNI_CHANCE) {
-      return RocketRank.Boss;
-    }
-    return rolled < GIOVANNI_CHANCE + EXECUTIVE_CHANCE ? RocketRank.Executive : RocketRank.Grunt;
+    return rolled < EXECUTIVE_CHANCE ? RocketRank.Executive : RocketRank.Grunt;
   }
 
   /**
@@ -1098,7 +1141,7 @@ export default class ChunkSnapshot {
    */
   private readonly bands = new Map<Biome, SpawnRarityGroups['base'][] | null>();
 
-  private fightBands(biome: Biome): SpawnRarityGroups['base'][] | null {
+  getFightBands(biome: Biome): SpawnRarityGroups['base'][] | null {
     const held = this.bands.get(biome);
 
     if (held !== undefined) {
@@ -1163,64 +1206,21 @@ export default class ChunkSnapshot {
           continue;
         }
 
-        const fielded = this.fightBands(this.biomeAt(cell));
+        const fielded = this.getFightBands(this.biomeAt(cell));
 
         if (fielded != null) {
           const rng = new AleaRNG(`${this.key}${this.npcTimestamp}rocket${cell}`);
-          const draw = (band: SpawnRarityGroups['base']): Spawn => {
-            const entry = band[Math.floor(rng.random() * band.length)];
 
-            return [entry.species, rng.int32(), rng.int32()];
-          };
-          const drawMany = (band: SpawnRarityGroups['base'], size: number): Spawn[] => {
-            const party: Spawn[] = [];
-
-            for (let at = 0; at < size; at += 1) {
-              party.push(draw(band));
-            }
-            return party;
-          };
-
-          const [commons, uncommons, rares] = fielded;
-          const rank = this.getRocketRank(cell);
-
-          if (rank === RocketRank.Boss) {
-            // The ground they are standing on, and nowhere else: a
-            // lair is a place, so a biome that hosts none has no
-            // legendary to have been taken from it and the boss
-            // fields a sixth rare
-            const homes = getBiomeLairs(this.biomeAt(cell));
-            const party = drawMany(rares, ROCKET_PARTY_SIZE - 1);
-
-            if (homes.length > 0) {
-              const lair = homes[Math.floor(rng.random() * homes.length)];
-
-              party.push([
-                pickLairSpecies(lair, () => true, rng.int32()),
-                rng.int32(),
-                rng.int32(),
-              ]);
-            } else {
-              party.push(draw(rares));
-            }
-            stops.set(cell, party);
-          } else if (rank === RocketRank.Executive) {
-            stops.set(cell, drawMany(rares, ROCKET_PARTY_SIZE));
-          } else {
-            // Weakest first, and two out of each of the biome's three
-            // bands: a grunt is the one rank that reaches the whole
-            // pool rather than the top of it, which is what makes the
-            // commonest fight in the world the only way to meet some
-            // of what lives there
-            stops.set(cell, [
-              draw(commons),
-              draw(commons),
-              draw(uncommons),
-              draw(uncommons),
-              draw(rares),
-              draw(rares),
-            ]);
-          }
+          stops.set(
+            cell,
+            drawSyndicateParty(
+              this.getRocketRank(cell) ?? RocketRank.Grunt,
+              fielded,
+              this.biomeAt(cell),
+              () => rng.random(),
+              () => rng.int32(),
+            ),
+          );
         }
       }
       this.rocketStops = stops;

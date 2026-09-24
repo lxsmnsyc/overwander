@@ -15,21 +15,6 @@ export const CAUGHT_EMBED =
   'caught_items(slot, item), caught_history(seq, owner, owner_name, ' +
   'acquired_at_local, acquired_at_offset, kind, paid, ball)';
 
-/**
- * The same catch for a list of them to choose from: what a square
- * draws and what an offer is judged by, without the ownership
- * history, the effort values or where it was met. A box of two
- * hundred is 320KB asked whole and 130KB asked this way, and a
- * chooser shows none of the difference
- */
-export const CAUGHT_LIST_EMBED =
-  'id, owner, type, species, nickname, level, individual_value, trait_value, ivs, gender, ' +
-  'nature, shiny, shadow, egg, favorite, guarded, traded, can_evolve, auctionable, slots, ' +
-  'locked_at, steps, hatch_steps, stepped_at, health, statuses, lair, ball, ' +
-  'caught_at_local, caught_at_offset, friendship, ' +
-  'caught_moves(slot, move, points), caught_abilities(slot, ability), ' +
-  'caught_items(slot, item)';
-
 /** An ISO local stamp with its offset re-attached */
 function toStoredISO(local: unknown, offset: unknown): string {
   const minutes = typeof offset === 'number' ? offset : Number(offset ?? 0);

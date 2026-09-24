@@ -87,6 +87,8 @@ import Phenomenon from '../../../data/overworld/phenomenon';
 import Npc, { npcSheet } from '../../../data/overworld/npc';
 import facingToward from '../../../canvas/facing';
 import type OWCharSprite from '../../../canvas/ow-char-sprite';
+import type Strangers from '../../../overworld/strangers';
+import type { StrangerStanding } from '../../../overworld/strangers';
 import loadOWChar, { OW_SPRITE_ROOT } from '../../../canvas/ow-char-sprites';
 import type OWPlantSprite from '../../../canvas/ow-plant-sprite';
 import loadOWPlant from '../../../canvas/ow-plant-sprites';
@@ -276,6 +278,11 @@ export interface ChunkCanvasProps {
    * Left out, the default red-trainer sheet
    */
   charset?: string;
+  /**
+   * The other players in sight. Read every frame rather than handed
+   * over as a value, since they walk on their own clock
+   */
+  strangers?: Strangers | null;
   /**
    * The pokemon the player is riding while they surf or fly. While it
    * is set the player is drawn as that pokemon instead of the charset
@@ -1083,6 +1090,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   let mine: OWCharSprite | null = null;
   let mineSheet: string | null = null;
 
+  /**
+   * Each other player's own clone, for the same reason, with where
+   * they were drawn last so the stride follows how far they moved
+   */
+  const walkers = new Map<string, { sheet: string; sprite: OWCharSprite; x: number; y: number }>();
+  /** The other players as they stand this frame */
+  let crowd: StrangerStanding[] = [];
+
   const playerPerson = (): OWCharSprite | null => {
     const sheet = props.charset ?? PLAYER_SHEET;
     const shared = personFor(sheet);
@@ -1143,6 +1158,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   /** The standing pass's cells in paint order, kept while nothing on the board changes */
   let standOrder: {
     yaw: number;
+    /** Which cells other players stand on, as a string so a new frame with the same cells matches */
+    crowded: string;
     projected: object;
     ground: BoardGround;
     landmarks: Map<number, Landmark>;
@@ -1393,6 +1410,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       boardView().mode === '2d' ? 0 : props.ground.level(cell.x, cell.y) * TERRACE_LIFT,
     );
   };
+
+  /**
+   * A point between cells, for somebody walking across them, stood at
+   * the height of the cell they are passing through
+   */
+  const groundBetween = (x: number, y: number, cell: BoardCell): ProjectedPoint =>
+    projectBoardCell(
+      shifted({ x, y }),
+      yaw(),
+      boardView().mode === '2d' ? 0 : props.ground.level(cell.x, cell.y) * TERRACE_LIFT,
+    );
 
   const setYaw = (turn: (angle: number) => number): void => {
     props.onTurn(turn(props.yaw));
@@ -2019,6 +2047,47 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       }
       if (heading !== facing) {
         dirty = true;
+      }
+
+      // The other players, each walked by how far they moved this frame
+      crowd = props.strangers?.standing({ x: props.at[0], y: props.at[1] }) ?? [];
+
+      const present = new Set<string>();
+
+      for (const one of crowd) {
+        const shared = personFor(one.charset);
+
+        if (shared?.ready !== true) {
+          continue;
+        }
+        present.add(one.uid);
+
+        const known = walkers.get(one.uid);
+
+        if (known?.sheet !== one.charset) {
+          walkers.set(one.uid, { sheet: one.charset, sprite: shared.clone(), x: one.x, y: one.y });
+          dirty = true;
+          continue;
+        }
+
+        const moved = Math.hypot(one.x - known.x, one.y - known.y);
+
+        if (moved > 0) {
+          dirty = true;
+        }
+        if (one.moving) {
+          known.sprite.advanceBy(moved * CELL_STRIDE);
+        } else {
+          known.sprite.stop();
+        }
+        known.x = one.x;
+        known.y = one.y;
+      }
+      for (const uid of walkers.keys()) {
+        if (!present.has(uid)) {
+          walkers.delete(uid);
+          dirty = true;
+        }
       }
       // The board slides under a cursor that holds still, so what it is
       // over is read again rather than left where the last move put it
@@ -3424,6 +3493,30 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         return starting;
       };
 
+      // Another player belongs to the cell they are nearest, which is the
+      // row they are drawn in
+      const crowdOn = new Map<number, StrangerStanding[]>();
+
+      for (const one of crowd) {
+        const bx = Math.round(one.x - props.origin[0]);
+        const by = Math.round(one.y - props.origin[1]);
+
+        if (!walkers.has(one.uid) || bx < 0 || by < 0 || bx >= BOARD_CELLS || by >= BOARD_CELLS) {
+          continue;
+        }
+
+        const index = by * BOARD_CELLS + bx;
+        const here = crowdOn.get(index);
+
+        if (here == null) {
+          crowdOn.set(index, [one]);
+        } else {
+          here.push(one);
+        }
+      }
+
+      const crowded = [...crowdOn.keys()].sort((a, b) => a - b).join(',');
+
       /**
        * Everything with something standing on it, from the back of the
        * board forwards. Only those cells: the country is a thousand
@@ -3432,6 +3525,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        */
       if (
         standOrder?.yaw !== yaw() ||
+        standOrder.crowded !== crowded ||
         standOrder.projected !== kept ||
         standOrder.ground !== ground ||
         standOrder.landmarks !== props.landmarks ||
@@ -3462,6 +3556,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           ...blocked,
           ...props.spawns.keys(),
           ...props.phenomena.keys(),
+          ...crowdOn.keys(),
         ]) {
           if (reachOf(boardCellOf(index)) <= VIEW_RADIUS) {
             occupied.push(index);
@@ -3470,6 +3565,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
         standOrder = {
           yaw: yaw(),
+          crowded,
           projected: kept,
           ground,
           landmarks: props.landmarks,
@@ -3665,6 +3761,52 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               middle.x,
               middle.y,
               alpha === 1 ? standingPerson : { ...standingPerson, alpha },
+            );
+          }
+        }
+
+        const passing = loading() ? undefined : crowdOn.get(index);
+
+        for (const one of passing ?? []) {
+          const stranger = walkers.get(one.uid)?.sprite;
+
+          if (stranger == null) {
+            continue;
+          }
+
+          const spot = at(groundBetween(one.x - props.origin[0], one.y - props.origin[1], cell));
+
+          stranger.facing =
+            SPRITE_DIRECTIONS[
+              facingFrom(
+                SPRITE_DIRECTIONS.indexOf(facingToward(0, 0, one.facing[0], one.facing[1])),
+                yaw(),
+              )
+            ];
+
+          const standingStranger = {
+            scale: (CELL * NPC_CELLS * spot.scale * magnify) / stranger.sourceFrameHeight,
+            anchor: 'foot',
+          } as const;
+          const thrown = {
+            ...standingStranger,
+            color: COLORS.shadow,
+            squash: shadowSquash(),
+          };
+
+          if (!shade(stranger.shadowOf(spot.x, spot.y, thrown))) {
+            stranger.drawShadow(context, spot.x, spot.y, thrown);
+          }
+
+          const stood = stranger.quadOf(spot.x, spot.y, standingStranger);
+          const alpha = veil(index, Standing.Person, stood);
+
+          if (!place(stood, alpha)) {
+            stranger.draw(
+              context,
+              spot.x,
+              spot.y,
+              alpha === 1 ? standingStranger : { ...standingStranger, alpha },
             );
           }
         }

@@ -1,6 +1,6 @@
 import { type JSX, createResource, createSignal } from 'solid-js';
 import { isLockLive } from '../../../auth/battle-lock';
-import { listCaughtToChooseFrom } from '../../../auth/caught';
+import readBox from '../../../auth/box';
 import { syncServerClock } from '../../../auth/clock';
 import { getInventory } from '../../../auth/inventory';
 import { getProfile } from '../../../auth/profile';
@@ -75,7 +75,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   const [catches, { refetch }] = createResource(
     () => (props.standing == null ? null : props.player),
     async (player): Promise<CatchOption[]> => {
-      const [owned, now] = await Promise.all([listCaughtToChooseFrom(player), syncServerClock()]);
+      const [owned, now] = await Promise.all([readBox(player), syncServerClock()]);
 
       const options: CatchOption[] = [];
 

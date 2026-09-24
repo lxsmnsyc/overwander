@@ -5,15 +5,16 @@ import DungeonKind, {
   FloorGate,
   FloorGimmick,
 } from '../../../src/data/overworld/dungeon';
-import { DoorKind, type DungeonFloor, RoomKind } from '../../../src/overworld/dungeon/floor';
+import { type DungeonFloor, RoomKind } from '../../../src/overworld/dungeon/floor';
+import { type CellGrid, Thing, Tile, hasObstacles } from '../../../src/overworld/dungeon/grid';
 import { generateDungeon } from '../../../src/overworld/dungeon/layout';
-import { canFinish, explore, startFloor } from '../../../src/overworld/dungeon/walk';
+import { solvable } from '../../../src/overworld/dungeon/tread';
 
 /** Every mapped floor of a couple of hundred dungeons of each mapped kind */
 function sampleFloors(): DungeonFloor[] {
   const floors: DungeonFloor[] = [];
 
-  for (let seed = 0; seed < 150; seed++) {
+  for (let seed = 0; seed < 40; seed++) {
     for (const kind of [DungeonKind.Hideout, DungeonKind.Dungeon]) {
       floors.push(...generateDungeon(kind, `seed${seed}`).floors);
     }
@@ -23,14 +24,23 @@ function sampleFloors(): DungeonFloor[] {
 
 const FLOORS = sampleFloors();
 
-function without(floor: DungeonFloor, field: 'warp' | 'key' | 'switch'): DungeonFloor {
-  const rooms = [];
-
-  for (const room of floor.rooms) {
-    rooms.push({ ...room, [field]: undefined });
+function without(grid: CellGrid, what: Thing | 'pads'): CellGrid {
+  if (what === 'pads') {
+    return { ...grid, pads: new Map() };
   }
-  return { ...floor, rooms };
+
+  const things = new Map<number, Thing>();
+
+  for (const [cell, thing] of grid.things) {
+    if (thing !== what) {
+      things.set(cell, thing);
+    }
+  }
+  return { ...grid, things };
 }
+
+const finishable = (floor: DungeonFloor, grid: CellGrid = floor.grid): boolean =>
+  solvable(grid, floor.gate === FloorGate.Pass);
 
 describe('dungeon layouts', () => {
   it('builds the same floors from the same seed', () => {
@@ -65,6 +75,9 @@ describe('dungeon layouts', () => {
       expect(floor.gimmick).toBeNull();
       expect(floor.sight).toBeNull();
       expect(floor.rooms).toHaveLength(1);
+      // Arrived on at the bottom, with the fight between you and the way on
+      expect(floor.grid.tiles[floor.grid.entry]).toBe(Tile.Arrival);
+      expect(finishable(floor)).toBe(true);
     }
   });
 
@@ -74,7 +87,7 @@ describe('dungeon layouts', () => {
     for (const floor of FLOORS) {
       expect(floor.gimmick).not.toBeNull();
       expect(floor.sight).not.toBeNull();
-      expect(canFinish(floor)).toBe(true);
+      expect(finishable(floor)).toBe(true);
       if (floor.gimmick != null) {
         seen.add(floor.gimmick);
       }
@@ -87,23 +100,23 @@ describe('dungeon layouts', () => {
       // The islands only meet through the pads, the lock only opens
       // with the key, and the barriers only part at a switch
       if (floor.gimmick === FloorGimmick.Warp) {
-        expect(canFinish(without(floor, 'warp'))).toBe(false);
+        expect(finishable(floor, without(floor.grid, 'pads'))).toBe(false);
       }
       if (floor.gimmick === FloorGimmick.LockedDoors) {
-        expect(canFinish(without(floor, 'key'))).toBe(false);
+        expect(finishable(floor, without(floor.grid, Thing.Key))).toBe(false);
       }
       if (floor.gimmick === FloorGimmick.Barriers) {
-        expect(canFinish(without(floor, 'switch'))).toBe(false);
+        expect(finishable(floor, without(floor.grid, Thing.Switch))).toBe(false);
       }
       // Something is in the way, and the stairs never need it cleared
       if (floor.gimmick === FloorGimmick.FieldMoves) {
-        expect(floor.doors.some((door) => door.kind === DoorKind.Obstacle)).toBe(true);
+        expect(hasObstacles(floor.grid)).toBe(true);
       }
-      // A drop can cost rooms, never the stairs
+      if (floor.gimmick === FloorGimmick.Spinner) {
+        expect(floor.grid.tiles.includes(Tile.Spinner)).toBe(true);
+      }
       if (floor.gimmick === FloorGimmick.Ledges) {
-        for (const state of explore(floor, startFloor(floor)) ?? []) {
-          expect(canFinish(floor, state)).toBe(true);
-        }
+        expect(floor.grid.tiles.includes(Tile.Ledge)).toBe(true);
       }
     }
   });

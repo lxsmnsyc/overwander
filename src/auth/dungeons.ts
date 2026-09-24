@@ -3,17 +3,19 @@ import { requireUid } from '../server/auth';
 import check, { CELL, CHUNK_COORDINATE, DEPTH, ID, OFFSET, PARTY, TOKEN } from '../server/validate';
 import {
   type DungeonEntry,
+  type DungeonPress,
   type DungeonReward,
   type DungeonSettlement,
-  type DungeonStep,
+  type DungeonWalk,
+  WALK_LIMIT,
   beginDungeonRun as beginOnServer,
-  climbDungeon as climbOnServer,
   enterDungeon as enterOnServer,
   startDungeonFight as fightOnServer,
   leaveDungeonRun as leaveOnServer,
   meetDungeonLegendary as meetOnServer,
-  moveInDungeon as moveOnServer,
+  pressInDungeon as pressOnServer,
   settleDungeonFight as settleOnServer,
+  walkDungeon as walkOnServer,
 } from '../server/dungeons';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Depth } from '../overworld/depth';
@@ -25,9 +27,11 @@ import getIdToken from './session';
 export type { DungeonRun } from './dungeon-record';
 export type {
   DungeonEntry,
+  DungeonPress,
   DungeonReward,
   DungeonSettlement,
-  DungeonStep,
+  DungeonWalk,
+  DungeonWalkEvent,
 } from '../server/dungeons';
 
 /**
@@ -37,6 +41,8 @@ export type {
  */
 
 const DIRECTION = v.picklist([Direction.North, Direction.East, Direction.South, Direction.West]);
+const STEPS = v.pipe(v.array(DIRECTION), v.maxLength(WALK_LIMIT));
+const GRID_CELL = v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(4096));
 
 /** Walk up to a dungeon and read this window's run */
 export async function enterDungeon(snapshot: ChunkSnapshot, cell: number): Promise<DungeonEntry> {
@@ -85,38 +91,61 @@ async function beginOnServerSide(
   return beginOnServer(await requireUid(token), id, catches, await syncServerClock());
 }
 
-/** Take one step on the floor */
-export async function moveInDungeon(id: string, direction: Direction): Promise<DungeonStep | null> {
-  return moveOnServerSide(await getIdToken(), id, direction);
+/** Walk a run of steps; the server stops at the first thing that happens */
+export async function walkDungeon(id: string, steps: Direction[]): Promise<DungeonWalk | null> {
+  return walkOnServerSide(await getIdToken(), id, steps);
 }
 
-async function moveOnServerSide(
+async function walkOnServerSide(
   token: string,
   id: string,
-  direction: Direction,
-): Promise<DungeonStep | null> {
+  steps: Direction[],
+): Promise<DungeonWalk | null> {
   'use server';
   check(TOKEN, token);
   check(ID, id);
-  check(DIRECTION, direction);
-  return moveOnServer(await requireUid(token), id, direction, await syncServerClock());
+  check(STEPS, steps);
+  return walkOnServer(await requireUid(token), id, steps, await syncServerClock());
 }
 
-/** Fight whoever stands in the room; `picks` are rental indexes on a Factory floor */
-export async function startDungeonFight(id: string, picks: string[]): Promise<string | null> {
-  return fightOnServerSide(await getIdToken(), id, picks);
+/** Press whatever is faced after turning to `facing` */
+export async function pressInDungeon(id: string, facing: Direction): Promise<DungeonPress | null> {
+  return pressOnServerSide(await getIdToken(), id, facing);
+}
+
+async function pressOnServerSide(
+  token: string,
+  id: string,
+  facing: Direction,
+): Promise<DungeonPress | null> {
+  'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  check(DIRECTION, facing);
+  return pressOnServer(await requireUid(token), id, facing, await syncServerClock());
+}
+
+/** Fight whoever stands at `cell`; `picks` are rental indexes on a Factory floor */
+export async function startDungeonFight(
+  id: string,
+  cell: number,
+  picks: string[],
+): Promise<string | null> {
+  return fightOnServerSide(await getIdToken(), id, cell, picks);
 }
 
 async function fightOnServerSide(
   token: string,
   id: string,
+  cell: number,
   picks: string[],
 ): Promise<string | null> {
   'use server';
   check(TOKEN, token);
   check(ID, id);
+  check(GRID_CELL, cell);
   check(PARTY, picks);
-  return fightOnServer(await requireUid(token), id, picks, await syncServerClock());
+  return fightOnServer(await requireUid(token), id, cell, picks, await syncServerClock());
 }
 
 /** Read the room's fight back once it is over */
@@ -129,18 +158,6 @@ async function settleOnServerSide(token: string, id: string): Promise<DungeonSet
   check(TOKEN, token);
   check(ID, id);
   return settleOnServer(await requireUid(token), id);
-}
-
-/** Take the stairs to the next floor */
-export async function climbDungeon(id: string): Promise<DungeonRun | null> {
-  return climbOnServerSide(await getIdToken(), id);
-}
-
-async function climbOnServerSide(token: string, id: string): Promise<DungeonRun | null> {
-  'use server';
-  check(TOKEN, token);
-  check(ID, id);
-  return climbOnServer(await requireUid(token), id, await syncServerClock());
 }
 
 /** Meet the legendary at the bottom of a Dungeon */

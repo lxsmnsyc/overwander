@@ -9,7 +9,10 @@ Dungeons: landmarks with floors, cleared once per window.
 - A Battle Frontier house is now a tower of seven floors: six crate trainers under the Brain's house rule, then the Brain.
 - The party is locked in at the entrance, damage carries from fight to fight, and only your own medicine heals it.
 - Losing a fight sends the run back to the entrance.
-- Every hideout and dungeon floor has a layout: spinner tiles, warp pads, ice, cracked floors, obstacles, locked doors, barriers or ledges.
+- Floors are walked on the board, the way the caves are.
+- Trainers watch a line and come to fight whoever steps into it.
+- Every hideout and dungeon floor has a layout: spinner tiles, warp pads, ice, cracked floors that drop you a floor, obstacles, locked doors, barriers or ledges.
+- Strength pushes boulders, Rock Smash breaks rocks, Cut fells trees and Surf crosses water.
 - A floor can also be dark or unmarked. Illuminate, Flash or an Explorer Kit lights a dark one.
 - The syndicate boss is no longer met on a Team Rocket cell.
 - Changes world generation: hideouts and dungeons are added, and nothing already placed moves.

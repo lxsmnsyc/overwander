@@ -5,7 +5,7 @@ import {
   Direction,
   type Door,
   DoorKind,
-  type DungeonFloor,
+  type FloorPlan,
   type Room,
   RoomKind,
 } from '../../../src/overworld/dungeon/floor';
@@ -21,7 +21,7 @@ function floorOf(
   gimmick: FloorGimmick,
   rooms: Partial<Record<number, Partial<Room>>> = {},
   doors: Partial<Record<string, Partial<Door>>> = {},
-): DungeonFloor {
+): FloorPlan {
   const all: Room[] = [];
 
   for (let room = 0; room < 9; room++) {

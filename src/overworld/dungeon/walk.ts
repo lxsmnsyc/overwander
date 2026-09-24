@@ -5,7 +5,7 @@ import {
   type Direction,
   type Door,
   DoorKind,
-  type DungeonFloor,
+  type FloorPlan,
   doorBetween,
   neighbour,
 } from './floor';
@@ -28,7 +28,7 @@ export interface FloorState {
   seen: number[];
 }
 
-export function startFloor(floor: DungeonFloor): FloorState {
+export function startFloor(floor: FloorPlan): FloorState {
   return enterRoom(floor, {
     at: floor.entry,
     flipped: false,
@@ -46,7 +46,7 @@ function withSorted(list: number[], value: number): number[] {
 }
 
 /** What entering a room does, once the player has stopped in it */
-function enterRoom(floor: DungeonFloor, state: FloorState): FloorState {
+function enterRoom(floor: FloorPlan, state: FloorState): FloorState {
   const room = floor.rooms[state.at];
   const next = {
     ...state,
@@ -99,7 +99,7 @@ function crossing(
  * only the room they stop in is entered. Null when nothing moves
  */
 export function step(
-  floor: DungeonFloor,
+  floor: FloorPlan,
   state: FloorState,
   direction: Direction,
   known: ReadonlySet<Moves>,
@@ -154,7 +154,7 @@ export function step(
 }
 
 /** Whether standing here lets the player take the stairs, gate aside */
-export function atExit(floor: DungeonFloor, state: FloorState): boolean {
+export function atExit(floor: FloorPlan, state: FloorState): boolean {
   return state.at === floor.exit && (floor.gate !== FloorGate.Pass || state.pass);
 }
 
@@ -170,7 +170,7 @@ const SEARCH_LIMIT = 50_000;
  * null when the search runs past its limit
  */
 export function explore(
-  floor: DungeonFloor,
+  floor: FloorPlan,
   from: FloorState,
   known: ReadonlySet<Moves> = new Set(),
 ): FloorState[] | null {
@@ -201,7 +201,7 @@ export function explore(
 
 /** Whether the stairs can be reached, with the gate's pass if it asks one */
 export function canFinish(
-  floor: DungeonFloor,
+  floor: FloorPlan,
   from: FloorState = startFloor(floor),
   known: ReadonlySet<Moves> = new Set(),
 ): boolean {
@@ -220,7 +220,7 @@ export function canFinish(
 
 /** Every room some walk from the entry stops in */
 export function reachableRooms(
-  floor: DungeonFloor,
+  floor: FloorPlan,
   known: ReadonlySet<Moves> = new Set(),
 ): Set<number> {
   const rooms = new Set<number>();

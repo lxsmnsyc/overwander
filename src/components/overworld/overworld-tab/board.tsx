@@ -1725,7 +1725,7 @@ export default function OverworldBoard(props: {
         askForWindow(true, true);
         return 'Nothing stirs inside any more.';
       }
-      game.setDungeon({ snapshot: spot.snapshot, cell: spot.cell });
+      game.setDungeon({ snapshot: spot.snapshot, cell: spot.cell, run });
       return null;
     }
     // The landmarks somebody fights at share one flow: Team Rocket's

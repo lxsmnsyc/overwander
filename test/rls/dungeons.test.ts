@@ -9,7 +9,7 @@ import {
   beginDungeonRun,
   enterDungeon,
   leaveDungeonRun,
-  moveInDungeon,
+  walkDungeon,
 } from '../../src/server/dungeons';
 import { useRareCandy } from '../../src/server/candy';
 import { visitNurse } from '../../src/server/npcs/nurse';
@@ -74,7 +74,11 @@ describe('a dungeon run', () => {
     let stepped = null;
 
     for (const direction of DIRECTIONS) {
-      stepped ??= await moveInDungeon(player.uid, run.id, direction, Date.now());
+      const walked = await walkDungeon(player.uid, run.id, [direction], Date.now());
+
+      if (walked != null && walked.run.state?.at !== started?.state?.at) {
+        stepped ??= walked;
+      }
     }
     expect(stepped).not.toBeNull();
     expect(stepped?.run.state?.at).not.toBe(started?.state?.at);

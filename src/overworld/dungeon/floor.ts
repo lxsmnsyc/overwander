@@ -4,6 +4,7 @@ import type {
   FloorSight,
   ObstacleMove,
 } from '../../data/overworld/dungeon';
+import type { CellGrid } from './grid';
 
 /** Up, right, down, left, in grid terms */
 export const enum Direction {
@@ -77,7 +78,12 @@ export interface DungeonFloor {
   gimmick: FloorGimmick | null;
   sight: FloorSight | null;
   gate: FloorGate;
+  /** The plan laid out in cells, which is what is walked */
+  grid: CellGrid;
 }
+
+/** A floor before it is laid out in cells */
+export type FloorPlan = Omit<DungeonFloor, 'grid'>;
 
 /** The room one step away, or -1 past the edge */
 export function neighbour(size: number, room: number, direction: Direction): number {
@@ -87,14 +93,14 @@ export function neighbour(size: number, room: number, direction: Direction): num
   return x < 0 || y < 0 || x >= size || y >= size ? -1 : y * size + x;
 }
 
-const DOOR_INDEX = new WeakMap<DungeonFloor, Map<number, number>>();
+const DOOR_INDEX = new WeakMap<FloorPlan, Map<number, number>>();
 
 function pairKey(a: number, b: number): number {
   return Math.min(a, b) * 64 + Math.max(a, b);
 }
 
 /** Index into `floor.doors` of the door between two rooms, or -1 */
-export function doorBetween(floor: DungeonFloor, a: number, b: number): number {
+export function doorBetween(floor: FloorPlan, a: number, b: number): number {
   let index = DOOR_INDEX.get(floor);
 
   if (index == null) {

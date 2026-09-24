@@ -14,7 +14,7 @@ import { asOffset, toLocalTime } from '../auth/local-time';
 import { TEAM_SIZE } from '../auth/teams';
 import type Awards from '../data/ids/awards';
 import type { Moves } from '../data/ids/moves';
-import DungeonKind from '../data/overworld/dungeon';
+import DungeonKind, { FloorGate } from '../data/overworld/dungeon';
 import {
   FRONTIER_BRAIN_RULES,
   FRONTIER_BRAIN_SYMBOLS,
@@ -38,9 +38,9 @@ import {
   dungeonKindOf,
   getDungeonLayout,
   getDungeonLegendary,
-  hasFoe,
 } from '../overworld/dungeon/stage';
-import { atExit, startFloor, step } from '../overworld/dungeon/walk';
+import { type CellGrid, Thing, cellAhead } from '../overworld/dungeon/grid';
+import { type Footing, arrive, press, spottedBy, thingAt, tread } from '../overworld/dungeon/tread';
 import { EncounterType } from '../overworld/encounter';
 import { resolveItemCache } from '../overworld/landmarks';
 import { LEGENDARY_RAID_GOLD, LEGENDARY_RAID_REWARD_LEVEL } from '../overworld/raid';
@@ -101,6 +101,7 @@ async function readRun(id: string, player: string): Promise<DungeonRun | null> {
     beaten: row.beaten,
     looted: row.looted,
     battle: row.battle_id,
+    battleRoom: row.battle_room,
     cleared: row.cleared,
   };
 
@@ -151,13 +152,33 @@ async function isFightUnfinished(battle: string | null): Promise<boolean> {
   return row != null && asOutcome(row.outcome) === BattleOutcome.Unfinished;
 }
 
-/** Whether the room the player stands in still holds somebody to beat */
-function blocked(layout: DungeonLayout, run: DungeonRun): boolean {
+/** The moves the locked party knows between them, which is what clears the way */
+async function partyMoves(run: DungeonRun): Promise<Set<Moves>> {
+  const known = new Set<Moves>();
+
+  for (const data of (await readCaughtMany(getSql(), run.party)).values()) {
+    for (const move of asCaughtPokemon(data).moves) {
+      known.add(move);
+    }
+  }
+  return known;
+}
+
+/** Whether somebody at this cell still has a fight to give */
+function standing(grid: CellGrid, run: DungeonRun, footing: Footing, cell: number): boolean {
+  const thing = thingAt(grid, footing, cell);
+  const room = grid.rooms.get(cell);
+
   return (
-    run.state != null &&
-    hasFoe(layout, run.floor, run.state.at) &&
-    !run.beaten.includes(run.state.at)
+    room != null &&
+    (thing === Thing.Trainer || thing === Thing.Horde || thing === Thing.Boss) &&
+    !run.beaten.includes(room)
   );
+}
+
+/** A floor's footing as arrived back on at its stairs, coming up from below */
+function atStairs(grid: CellGrid): Footing {
+  return { ...arrive(grid), at: grid.exit };
 }
 
 /** Whether the challenger holds the house's silver symbol already */
@@ -286,7 +307,7 @@ export async function beginDungeonRun(
     ...run,
     party: catches,
     floor: 0,
-    state: startFloor(layout.floors[0]),
+    state: arrive(layout.floors[0].grid),
     beaten: [],
     battle: null,
   };
@@ -295,80 +316,191 @@ export async function beginDungeonRun(
   return started;
 }
 
-/** What a step turned up besides the new footing */
-export interface DungeonStep {
+/** What a walk came to, besides the footing it left */
+export type DungeonWalkEvent =
+  | { kind: 'spotted'; cell: number }
+  | { kind: 'climbed' }
+  | { kind: 'shut'; want: 'guard' | 'pass' }
+  | { kind: 'up' }
+  | { kind: 'fell' }
+  | { kind: 'out' };
+
+export interface DungeonWalk {
   run: DungeonRun;
-  items: ItemStack[];
+  event: DungeonWalkEvent | null;
 }
 
+/** The most steps one walk report may carry */
+export const WALK_LIMIT = 64;
+
 /**
- * Take one step. Refused while a fight is under way or somebody in
- * the room is still standing. A stash stopped in is taken on the spot,
- * once per window
+ * Walk a run of steps, replaying each with the same rules the board
+ * draws with, and stop at the first thing that happens: a trainer's
+ * line, the stairs, a fall, the way back up
  */
-export async function moveInDungeon(
+export async function walkDungeon(
   uid: string,
   id: string,
-  direction: Direction,
+  steps: Direction[],
   now: number,
-): Promise<DungeonStep | null> {
+): Promise<DungeonWalk | null> {
   const run = await readRun(id, uid);
 
-  if (run?.state == null || !isLive(run, now)) {
+  if (run?.state == null || !isLive(run, now) || steps.length > WALK_LIMIT) {
     return null;
   }
   if (await isFightUnfinished(run.battle)) {
     return null;
   }
 
-  const snapshot = snapshotOf(run);
-  const layout = getDungeonLayout(snapshot, run.cell);
+  const layout = getDungeonLayout(snapshotOf(run), run.cell);
 
-  if (layout == null || blocked(layout, run)) {
+  if (layout == null) {
     return null;
   }
 
-  const floor = layout.floors[run.floor];
-  const known = new Set<Moves>();
+  const known = await partyMoves(run);
+  const beaten = new Set(run.beaten);
+  let floor = run.floor;
+  let footing = run.state;
+  let event: DungeonWalkEvent | null = null;
 
-  for (const data of (await readCaughtMany(getSql(), run.party)).values()) {
-    for (const move of asCaughtPokemon(data).moves) {
-      known.add(move);
+  for (const direction of steps) {
+    const plan = layout.floors[floor];
+    const trod = tread(plan.grid, footing, direction, known);
+
+    if (trod == null) {
+      continue;
+    }
+    footing = trod.footing;
+
+    if (trod.event?.kind === 'fall') {
+      // A broken floor drops you back a floor, and out of the first one
+      floor = Math.max(0, floor - 1);
+      footing = floor === run.floor ? arrive(layout.floors[0].grid) : atStairs(layout.floors[floor].grid);
+      event = { kind: 'fell' };
+      break;
+    }
+    if (trod.event?.kind === 'stairs') {
+      const guarded = plan.gate === FloorGate.Guard && !beaten.has(plan.exit);
+      const passless = plan.gate === FloorGate.Pass && !footing.pass;
+
+      if (guarded || passless) {
+        event = { kind: 'shut', want: guarded ? 'guard' : 'pass' };
+        break;
+      }
+      floor += 1;
+      footing = arrive(layout.floors[floor].grid);
+      event = { kind: 'climbed' };
+      break;
+    }
+    if (trod.event?.kind === 'arrival') {
+      if (floor === 0) {
+        event = { kind: 'out' };
+      } else {
+        floor -= 1;
+        footing = atStairs(layout.floors[floor].grid);
+        event = { kind: 'up' };
+      }
+      break;
+    }
+
+    const spotter = spottedBy(plan.grid, footing, beaten);
+
+    if (spotter != null) {
+      event = { kind: 'spotted', cell: spotter };
+      break;
     }
   }
 
-  const state = step(floor, run.state, direction, known);
+  // A new floor starts with nothing on it beaten
+  const walked: DungeonRun = {
+    ...run,
+    floor,
+    state: footing,
+    beaten: floor === run.floor ? run.beaten : [],
+  };
 
-  if (state == null) {
+  await saveRun(uid, walked);
+  return { run: walked, event };
+}
+
+/** What pressing the thing in front of you came to */
+export interface DungeonPress {
+  run: DungeonRun;
+  items: ItemStack[];
+  /** A fight, or the legendary, waiting on the cell pressed */
+  fight: number | null;
+}
+
+/** Press whatever the player faces, having turned to face it */
+export async function pressInDungeon(
+  uid: string,
+  id: string,
+  facing: Direction,
+  now: number,
+): Promise<DungeonPress | null> {
+  const run = await readRun(id, uid);
+
+  if (run?.state == null || !isLive(run, now) || (await isFightUnfinished(run.battle))) {
     return null;
   }
 
-  let moved: DungeonRun = { ...run, state };
-  let items: ItemStack[] = [];
-  const key = lootKey(run.floor, state.at);
+  const snapshot = snapshotOf(run);
+  const layout = getDungeonLayout(snapshot, run.cell);
 
-  if (floor.rooms[state.at].kind === RoomKind.Stash && !run.looted.includes(key)) {
-    const rng = new AleaRNG(`${id}:stash:${key}:${uid}`);
-
-    items = resolveItemCache(snapshot.biomeAt(run.cell), () => rng.random());
-    moved = { ...moved, looted: [...run.looted, key] };
+  if (layout == null) {
+    return null;
   }
 
-  await saveRun(uid, moved);
+  const grid = layout.floors[run.floor].grid;
+  const pressed = press(grid, { ...run.state, facing }, await partyMoves(run));
+
+  if (pressed == null) {
+    return null;
+  }
+  if (pressed.event?.kind === 'fight') {
+    const cell = pressed.event.cell;
+
+    return {
+      run,
+      items: [],
+      fight: standing(grid, run, run.state, cell) ? cell : null,
+    };
+  }
+
+  let pressedRun: DungeonRun = { ...run, state: pressed.footing };
+  let items: ItemStack[] = [];
+
+  // A stash pays once per window, however many times the run starts over
+  if (pressed.event?.kind === 'take' && pressed.event.thing === Thing.Stash) {
+    const key = lootKey(run.floor, pressed.event.cell);
+
+    if (!run.looted.includes(key)) {
+      const rng = new AleaRNG(`${id}:stash:${key}:${uid}`);
+
+      items = resolveItemCache(snapshot.biomeAt(run.cell), () => rng.random());
+      pressedRun = { ...pressedRun, looted: [...run.looted, key] };
+    }
+  }
+
+  await saveRun(uid, pressedRun);
   for (const { item, amount } of items) {
     await grantItem(uid, item, amount);
   }
-  return { run: moved, items };
+  return { run: pressedRun, items, fight: null };
 }
 
 /**
- * Fight whoever stands in the player's room, with the locked party.
- * `picks` are the rental indexes on a Factory floor and nothing
- * elsewhere. Resolves the battle id, the one under way if any
+ * Fight whoever stands at `cell`: somebody the player is facing, or a
+ * trainer whose line they walked into. `picks` are the rental indexes on
+ * a Factory floor and nothing elsewhere. Resolves the battle id, the one
+ * under way if any
  */
 export async function startDungeonFight(
   uid: string,
   id: string,
+  cell: number,
   picks: string[],
   now: number,
 ): Promise<string | null> {
@@ -385,11 +517,20 @@ export async function startDungeonFight(
   const snapshot = snapshotOf(run);
   const layout = getDungeonLayout(snapshot, run.cell);
 
-  if (layout == null || !blocked(layout, run)) {
+  if (layout == null) {
     return null;
   }
 
-  const room = run.state.at;
+  const plan = layout.floors[run.floor];
+  const grid = plan.grid;
+  const room = grid.rooms.get(cell);
+  const beside = cellAhead(grid, run.state.at, run.state.facing) === cell;
+  const seen = grid.watches.get(cell)?.sight.includes(run.state.at) === true;
+
+  if (room == null || !standing(grid, run, run.state, cell) || !(beside || seen)) {
+    return null;
+  }
+
   const last = run.floor === layout.floors.length - 1;
   const gold =
     layout.kind === DungeonKind.Frontier && last && (await tookTheHouse(uid, snapshot, run.cell));
@@ -471,19 +612,36 @@ export async function settleDungeonFight(
     return null;
   }
 
-  const room = run.state.at;
+  const room = run.battleRoom;
+
+  if (room == null) {
+    return null;
+  }
+
+  const grid = layout.floors[run.floor].grid;
   const boss = layout.floors[run.floor].rooms[room].kind === RoomKind.Boss;
+  // A beaten horde is gone from the cell it stood on
+  let footing = run.state;
+
+  for (const [cell, of] of grid.rooms) {
+    if (of === room && grid.things.get(cell) === Thing.Horde && !footing.taken.includes(cell)) {
+      footing = { ...footing, taken: [...footing.taken, cell].sort((a, b) => a - b) };
+    }
+  }
+
   const settled: DungeonRun = {
     ...run,
+    state: footing,
     beaten: run.beaten.includes(room) ? run.beaten : [...run.beaten, room],
     battle: null,
+    battleRoom: null,
     cleared: boss,
   };
 
   // The first settle to clear it is the one that pays
   const claimed = await getSql()`
-    update dungeon_runs set beaten = ${jsonOf(getSql(), settled.beaten)}, battle_id = null,
-      battle_room = null, cleared = ${boss}
+    update dungeon_runs set beaten = ${jsonOf(getSql(), settled.beaten)},
+      state = ${jsonOf(getSql(), footing)}, battle_id = null, battle_room = null, cleared = ${boss}
     where generation = ${WORLD_GENERATION} and run_id = ${id} and player = ${uid}
       and battle_id = ${run.battle}
   `;
@@ -494,7 +652,7 @@ export async function settleDungeonFight(
   return {
     run: settled,
     won: true,
-    reward: boss ? await payBoss(uid, run, snapshot, layout) : null,
+    reward: boss ? await payBoss(uid, run, snapshot, layout, room) : null,
   };
 }
 
@@ -504,6 +662,7 @@ async function payBoss(
   run: DungeonRun,
   snapshot: ChunkSnapshot,
   layout: DungeonLayout,
+  room: number,
 ): Promise<DungeonReward> {
   const overworld = createOverworld(uid, await resolveBuddy(uid));
 
@@ -556,7 +715,7 @@ async function payBoss(
   }
 
   // One of the boss' own six, handed over the way a grunt's is
-  const foe = dungeonFoe(snapshot, run.cell, run.floor, run.state?.at ?? 0);
+  const foe = dungeonFoe(snapshot, run.cell, run.floor, room);
   const offered = foe?.party ?? [];
   const encounter =
     offered.length === 0
@@ -576,45 +735,6 @@ async function payBoss(
         );
 
   return { gold: purse, award, items, encounter };
-}
-
-/**
- * Take the stairs: allowed from the floor's exit once its gate is met,
- * a guard beaten or the pass in hand
- */
-export async function climbDungeon(
-  uid: string,
-  id: string,
-  now: number,
-): Promise<DungeonRun | null> {
-  const run = await readRun(id, uid);
-
-  if (run?.state == null || !isLive(run, now)) {
-    return null;
-  }
-
-  const layout = getDungeonLayout(snapshotOf(run), run.cell);
-
-  if (layout == null || run.floor >= layout.floors.length - 1) {
-    return null;
-  }
-
-  const floor = layout.floors[run.floor];
-
-  if (!atExit(floor, run.state) || blocked(layout, run)) {
-    return null;
-  }
-
-  const next = run.floor + 1;
-  const climbed: DungeonRun = {
-    ...run,
-    floor: next,
-    state: startFloor(layout.floors[next]),
-    beaten: [],
-  };
-
-  await saveRun(uid, climbed);
-  return climbed;
 }
 
 /**
@@ -640,7 +760,8 @@ export async function meetDungeonLegendary(
     layout?.kind !== DungeonKind.Dungeon ||
     legendary == null ||
     run.floor !== layout.floors.length - 1 ||
-    run.state.at !== layout.floors[run.floor].exit
+    cellAhead(layout.floors[run.floor].grid, run.state.at, run.state.facing) !==
+      layout.floors[run.floor].exit
   ) {
     return null;
   }

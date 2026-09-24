@@ -4378,6 +4378,62 @@
       ],
       "skirt": null,
       "cornerSkirt": null
+    },
+    {
+      "from": "dark-cobbles-slate",
+      "tone": [
+        225,
+        0.1,
+        0.275
+      ],
+      "fill": [
+        560,
+        816,
+        16,
+        16
+      ],
+      "art": [
+        480,
+        816,
+        48,
+        48
+      ],
+      "corner": [
+        528,
+        816,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff-slate",
+      "tone": [
+        225,
+        0.1,
+        0.275
+      ],
+      "fill": [
+        656,
+        816,
+        16,
+        16
+      ],
+      "art": [
+        576,
+        816,
+        48,
+        48
+      ],
+      "corner": [
+        624,
+        816,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
     }
   ],
   "terrains": [
@@ -5538,6 +5594,36 @@
       "role": "wall",
       "name": "kelp-forest-wall",
       "piece": 157
+    },
+    {
+      "biome": 64,
+      "role": "ground",
+      "name": "hideout-ground",
+      "piece": 158
+    },
+    {
+      "biome": 64,
+      "role": "blend",
+      "name": "hideout-blend",
+      "piece": 158
+    },
+    {
+      "biome": 64,
+      "role": "face",
+      "name": "hideout-face",
+      "piece": 159
+    },
+    {
+      "biome": 64,
+      "role": "wall",
+      "name": "hideout-wall",
+      "piece": 159
+    },
+    {
+      "biome": 64,
+      "role": "water",
+      "name": "hideout-water",
+      "piece": 150
     }
   ],
   "deep": [

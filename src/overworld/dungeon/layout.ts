@@ -15,11 +15,14 @@ import {
   type Door,
   DoorKind,
   type DungeonFloor,
+  type FloorPlan,
   type Room,
   RoomKind,
   neighbour,
 } from './floor';
 import { canFinish, explore, reachableRooms, startFloor } from './walk';
+import { type CellGrid, Thing, Tile, hasObstacles, lineOfSight, rasterize } from './grid';
+import { solvable } from './tread';
 
 /** A whole run's floors, first to last */
 export interface DungeonLayout {
@@ -609,7 +612,7 @@ const GATE_WEIGHTS: Record<FloorGate.Guard | FloorGate.Pass, number> = {
 };
 
 /** Foes and stashes in the rooms nothing else took */
-function furnish(random: Random, floor: DungeonFloor, claimed: Set<number>): boolean {
+function furnish(random: Random, floor: FloorPlan, claimed: Set<number>): boolean {
   const reach = reachableRooms(floor);
   const free = shuffled(
     random,
@@ -662,56 +665,14 @@ function furnish(random: Random, floor: DungeonFloor, claimed: Set<number>): boo
   return true;
 }
 
-/** Everything the gimmick is meant to force, beyond the floor being finishable */
-function gimmickHolds(floor: DungeonFloor): boolean {
-  const without = (field: 'warp' | 'key' | 'switch'): DungeonFloor => {
-    const rooms: Room[] = [];
-
-    for (const room of floor.rooms) {
-      rooms.push({ ...room, [field]: undefined });
-    }
-    return { ...floor, rooms };
-  };
-  const hasDoor = (kind: DoorKind): boolean => {
-    for (const door of floor.doors) {
-      if (door.kind === kind) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  switch (floor.gimmick) {
-    case FloorGimmick.Warp:
-      return !canFinish(without('warp'));
-    case FloorGimmick.LockedDoors:
-      return !canFinish(without('key'));
-    case FloorGimmick.Barriers:
-      return !canFinish(without('switch'));
-    case FloorGimmick.FieldMoves:
-      return hasDoor(DoorKind.Obstacle);
-    case FloorGimmick.Spinner:
-      for (const room of floor.rooms) {
-        if (room.arrow != null) {
-          return true;
-        }
-      }
+/** A drop between rooms can cost rooms, never the stairs */
+function ledgesNeverStrand(floor: FloorPlan): boolean {
+  for (const state of explore(floor, startFloor(floor)) ?? []) {
+    if (!canFinish(floor, state)) {
       return false;
-    case FloorGimmick.Ledges: {
-      if (!hasDoor(DoorKind.Ledge)) {
-        return false;
-      }
-      // A wrong turn may cost rooms, never the stairs
-      for (const state of explore(floor, startFloor(floor)) ?? []) {
-        if (!canFinish(floor, state)) {
-          return false;
-        }
-      }
-      return true;
     }
-    default:
-      return true;
   }
+  return true;
 }
 
 function mappedFloor(
@@ -730,7 +691,7 @@ function mappedFloor(
   draft.rooms[draft.entry].kind = RoomKind.Entry;
   draft.rooms[draft.exit].kind = last ? RoomKind.Boss : RoomKind.Stairs;
 
-  const floor: DungeonFloor = {
+  const floor: FloorPlan = {
     depth,
     size: draft.size,
     rooms: draft.rooms,
@@ -745,15 +706,67 @@ function mappedFloor(
   if (!furnish(random, floor, draft.claimed)) {
     return null;
   }
-  return canFinish(floor) && gimmickHolds(floor) ? floor : null;
+
+  const grid = lineOfSight(rasterize(floor, kind));
+
+  return solvable(grid, floor.gate === FloorGate.Pass) && gridHolds(floor, grid)
+    ? { ...floor, grid }
+    : null;
 }
 
-/** A Frontier floor is one fight: a single room, no map */
+/** The grid with every one of a thing gone, or every pad taken up */
+function stripped(grid: CellGrid, what: Thing | 'pads'): CellGrid {
+  if (what === 'pads') {
+    return { ...grid, pads: new Map() };
+  }
+
+  const things = new Map<number, Thing>();
+
+  for (const [cell, thing] of grid.things) {
+    if (thing !== what) {
+      things.set(cell, thing);
+    }
+  }
+  return { ...grid, things };
+}
+
+function hasTile(grid: CellGrid, tile: Tile): boolean {
+  for (const one of grid.tiles) {
+    if (one === tile) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** Everything the gimmick is meant to force, walked cell by cell */
+function gridHolds(floor: FloorPlan, grid: CellGrid): boolean {
+  const pass = floor.gate === FloorGate.Pass;
+
+  switch (floor.gimmick) {
+    case FloorGimmick.Warp:
+      return !solvable(stripped(grid, 'pads'), pass);
+    case FloorGimmick.LockedDoors:
+      return !solvable(stripped(grid, Thing.Key), pass);
+    case FloorGimmick.Barriers:
+      return !solvable(stripped(grid, Thing.Switch), pass);
+    case FloorGimmick.FieldMoves:
+      return hasObstacles(grid);
+    case FloorGimmick.Spinner:
+      return hasTile(grid, Tile.Spinner);
+    case FloorGimmick.Ledges:
+      return hasTile(grid, Tile.Ledge) && ledgesNeverStrand(floor);
+    default:
+      return true;
+  }
+}
+
+/** A Frontier floor is one fight in one room, the way on behind it */
 function towerFloor(depth: number, last: boolean): DungeonFloor {
-  return {
+  const plan: FloorPlan = {
     depth,
     size: 1,
-    rooms: [{ kind: last ? RoomKind.Boss : RoomKind.Trainer }],
+    rooms: [{ kind: last ? RoomKind.Boss : RoomKind.Stairs }],
     doors: [],
     entry: 0,
     exit: 0,
@@ -761,6 +774,8 @@ function towerFloor(depth: number, last: boolean): DungeonFloor {
     sight: null,
     gate: last ? FloorGate.Boss : FloorGate.Guard,
   };
+
+  return { ...plan, grid: lineOfSight(rasterize(plan, DungeonKind.Frontier)) };
 }
 
 /** How many tries a floor gets before it settles for a plain maze */
@@ -786,8 +801,33 @@ export function generateFloor(
   throw new Error(`No floor ${depth} for dungeon ${seed}`);
 }
 
+/** Dungeons already laid out, since checking every floor cell by cell is slow */
+const LAID = new Map<string, DungeonLayout>();
+
+/** How many laid-out dungeons are kept */
+const LAID_LIMIT = 64;
+
 /** Every floor of one dungeon for one window, from its seed */
 export function generateDungeon(kind: DungeonKind, seed: string): DungeonLayout {
+  const key = `${kind}:${seed}`;
+  const held = LAID.get(key);
+
+  if (held != null) {
+    return held;
+  }
+
+  const layout = layDungeon(kind, seed);
+
+  if (LAID.size >= LAID_LIMIT) {
+    const [oldest] = LAID.keys();
+
+    LAID.delete(oldest);
+  }
+  LAID.set(key, layout);
+  return layout;
+}
+
+function layDungeon(kind: DungeonKind, seed: string): DungeonLayout {
   const rng = new AleaRNG(`${seed}floors`);
   const [min, max] = DUNGEON_FLOORS[kind];
   const count = min + Math.floor(rng.random() * (max - min + 1));

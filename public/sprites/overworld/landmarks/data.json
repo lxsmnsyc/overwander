@@ -1,58 +1,58 @@
 {
   "compact": true,
-  "width": 120,
-  "height": 111,
+  "width": 152,
+  "height": 112,
   "stands": 24,
   "images": [
     {
       "name": "board.png",
-      "x": 0,
+      "x": 17,
       "y": 86,
       "width": 34,
       "height": 24,
-      "sourceWidth": 44,
-      "sourceHeight": 44,
+      "sourceWidth": 48,
+      "sourceHeight": 48,
       "trim": [
-        5,
-        20
+        7,
+        24
       ],
       "base": [
-        22,
-        35
+        24,
+        39
       ]
     },
     {
       "name": "cache-taken.png",
-      "x": 103,
-      "y": 42,
+      "x": 119,
+      "y": 64,
       "width": 15,
       "height": 14,
-      "sourceWidth": 44,
-      "sourceHeight": 44,
+      "sourceWidth": 48,
+      "sourceHeight": 48,
       "trim": [
-        14,
-        30
+        16,
+        34
       ],
       "base": [
-        21,
-        39
+        23,
+        43
       ]
     },
     {
       "name": "cache.png",
-      "x": 103,
-      "y": 57,
+      "x": 135,
+      "y": 64,
       "width": 15,
       "height": 12,
-      "sourceWidth": 44,
-      "sourceHeight": 44,
+      "sourceWidth": 48,
+      "sourceHeight": 48,
       "trim": [
-        14,
-        32
+        16,
+        36
       ],
       "base": [
-        21,
-        39
+        23,
+        43
       ]
     },
     {
@@ -61,15 +61,15 @@
       "y": 45,
       "width": 40,
       "height": 40,
-      "sourceWidth": 44,
-      "sourceHeight": 44,
+      "sourceWidth": 48,
+      "sourceHeight": 48,
       "trim": [
-        2,
-        4
+        4,
+        8
       ],
       "base": [
-        22,
-        33
+        24,
+        37
       ]
     },
     {
@@ -78,15 +78,49 @@
       "y": 45,
       "width": 40,
       "height": 40,
-      "sourceWidth": 44,
-      "sourceHeight": 44,
+      "sourceWidth": 48,
+      "sourceHeight": 48,
       "trim": [
-        2,
-        4
+        4,
+        8
       ],
       "base": [
-        22,
-        33
+        24,
+        37
+      ]
+    },
+    {
+      "name": "door-locked.png",
+      "x": 103,
+      "y": 0,
+      "width": 48,
+      "height": 31,
+      "sourceWidth": 48,
+      "sourceHeight": 48,
+      "trim": [
+        0,
+        17
+      ],
+      "base": [
+        24,
+        35
+      ]
+    },
+    {
+      "name": "door-open.png",
+      "x": 103,
+      "y": 32,
+      "width": 48,
+      "height": 31,
+      "sourceWidth": 48,
+      "sourceHeight": 48,
+      "trim": [
+        0,
+        17
+      ],
+      "base": [
+        24,
+        35
       ]
     },
     {
@@ -95,15 +129,15 @@
       "y": 0,
       "width": 38,
       "height": 44,
-      "sourceWidth": 44,
-      "sourceHeight": 44,
+      "sourceWidth": 48,
+      "sourceHeight": 48,
       "trim": [
-        3,
-        0
+        5,
+        4
       ],
       "base": [
-        22,
-        40
+        24,
+        44
       ]
     },
     {
@@ -112,15 +146,15 @@
       "y": 0,
       "width": 23,
       "height": 41,
-      "sourceWidth": 44,
-      "sourceHeight": 44,
+      "sourceWidth": 48,
+      "sourceHeight": 48,
       "trim": [
-        10,
-        3
+        12,
+        7
       ],
       "base": [
-        21,
-        37
+        23,
+        41
       ]
     },
     {
@@ -129,32 +163,32 @@
       "y": 0,
       "width": 23,
       "height": 41,
-      "sourceWidth": 44,
-      "sourceHeight": 44,
+      "sourceWidth": 48,
+      "sourceHeight": 48,
       "trim": [
-        10,
-        3
+        12,
+        7
       ],
       "base": [
-        21,
-        37
+        23,
+        41
       ]
     },
     {
       "name": "nest.png",
       "x": 103,
-      "y": 26,
+      "y": 64,
       "width": 15,
       "height": 15,
-      "sourceWidth": 44,
-      "sourceHeight": 44,
+      "sourceWidth": 48,
+      "sourceHeight": 48,
       "trim": [
-        14,
-        29
+        16,
+        33
       ],
       "base": [
-        21,
-        40
+        23,
+        44
       ]
     },
     {
@@ -163,32 +197,32 @@
       "y": 0,
       "width": 15,
       "height": 32,
-      "sourceWidth": 44,
-      "sourceHeight": 44,
+      "sourceWidth": 48,
+      "sourceHeight": 48,
       "trim": [
-        14,
-        12
+        16,
+        16
       ],
       "base": [
-        21,
-        39
+        23,
+        43
       ]
     },
     {
       "name": "seat.png",
-      "x": 103,
-      "y": 0,
+      "x": 0,
+      "y": 86,
       "width": 16,
       "height": 25,
-      "sourceWidth": 44,
-      "sourceHeight": 44,
+      "sourceWidth": 48,
+      "sourceHeight": 48,
       "trim": [
-        14,
-        19
+        16,
+        23
       ],
       "base": [
-        22,
-        36
+        24,
+        40
       ]
     }
   ]

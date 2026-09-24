@@ -64,6 +64,10 @@ const CUTS: Cut[] = [
   { name: 'cache-taken', x: 1441, y: 976, width: 16, height: 14, crowded: true },
   // A squat tree gone gold with honey, beside the rip's vine-hung trees
   { name: 'honey-tree', x: 1516, y: 140, width: 54, height: 56 },
+  // A dungeon's locked door, a wooden door in a stone arch, and the same
+  // arch once a key has opened it, off the ruins beside the stairs
+  { name: 'door-locked', x: 1696, y: 465, width: 48, height: 32, crowded: true },
+  { name: 'door-open', x: 1696, y: 497, width: 48, height: 32, crowded: true },
 ];
 
 /**

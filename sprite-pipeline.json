@@ -5546,15 +5546,15 @@
       }
     },
     "public/sprites/overworld/landmarks/image.png": {
-      "digest": "55c56c98f7924c96",
-      "bytes": 3084,
-      "width": 120,
-      "height": 111,
+      "digest": "6946f94a469639fc",
+      "bytes": 3855,
+      "width": 152,
+      "height": 112,
       "compact": {
-        "at": "2026-09-14T17:04:33Z",
+        "at": "2026-09-24T05:18:39Z",
         "as": "already compact",
-        "was": 3084,
-        "bytes": 3084
+        "was": 3855,
+        "bytes": 3855
       }
     },
     "public/sprites/overworld/trees/image.png": {
@@ -23042,15 +23042,15 @@
       }
     },
     "public/sprites/terrain/biome-tiles.png": {
-      "digest": "4f6dc95113c78897",
-      "bytes": 138157,
+      "digest": "3463871eb4a6016a",
+      "bytes": 139966,
       "width": 864,
       "height": 864,
       "compact": {
-        "at": "2026-09-14T09:25:26Z",
+        "at": "2026-09-24T05:18:39Z",
         "as": "truecolour, none",
-        "was": 143002,
-        "bytes": 138157
+        "was": 144902,
+        "bytes": 139966
       }
     },
     "public/sprites/ui/candies/hoenn/image.png": {

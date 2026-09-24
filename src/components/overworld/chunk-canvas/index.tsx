@@ -417,6 +417,21 @@ export interface ChunkCanvasProps {
    * than the board's
    */
   onPlaced?: (spotOf: (cell: number) => CellSpot | null) => void;
+  /**
+   * Which way somebody standing on a cell faces, as a sprite direction,
+   * where it is not simply towards the player: a dungeon's trainer
+   * watches the line they guard
+   */
+  facings?: Map<number, SpriteDirection>;
+  /** A landmark's picture by name, where the cell's own kind does not say it */
+  pictures?: Map<number, string>;
+  /** Pictures laid flat on their cells, under whatever stands there */
+  marks?: Map<number, HTMLCanvasElement>;
+  /**
+   * What the ground is, where the window alone does not say: a dungeon's
+   * floors share their coordinates, so changing floor has to repaint
+   */
+  groundKey?: string;
 }
 
 /**
@@ -1052,7 +1067,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       return null;
     }
 
-    const name = landmarkPicture(kind, props.dug.has(index), props.underground);
+    const name =
+      props.pictures?.get(index) ?? landmarkPicture(kind, props.dug.has(index), props.underground);
 
     if (name == null) {
       return null;
@@ -2511,7 +2527,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         const extra = edgeExtra();
         const window = `${props.origin[0]},${props.origin[1]}|${flat ? '2d' : '3d'}|${turns}|${
           props.underground ? 'cave' : 'day'
-        }|${extra}`;
+        }|${extra}|${props.groundKey ?? ''}`;
 
         if (built !== window) {
           // Asked in the board's own cells, which is what the look
@@ -2917,6 +2933,24 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // What is going on here, which is no longer a landmark: it is
         // rolled over the chunk by the hour and drawn wherever it fell
         const showing = props.phenomena.get(index);
+        const flatMark = props.marks?.get(index);
+
+        // Laid on the cell itself, stretched over its projected corners
+        if (flatMark != null) {
+          if (batch == null) {
+            drawTileQuad(context, flatMark, { x: 0, y: 0 }, flatMark.width, outline);
+          } else {
+            // Lit like the ground under it, so a dark floor hides it too
+            batch.quad(
+              flatMark,
+              { x: 0, y: 0, width: flatMark.width, height: flatMark.height },
+              outline,
+              1,
+              tileLight(square),
+              'smooth',
+            );
+          }
+        }
 
         // Somebody standing there is drawn with the rest of what
         // stands, in paint order — so the letter under their feet as
@@ -3618,20 +3652,24 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
         const person = loading() ? null : personOn(index);
 
+        const turnedTo = props.facings?.get(index);
+
         if (person != null) {
           // Looking at the player, seen from wherever the camera has
           // been walked to: somebody waiting at a crossroads watches
-          // whoever is coming up to it
+          // whoever is coming up to it. A dungeon's trainer watches
+          // their own line instead
           person.facing =
             SPRITE_DIRECTIONS[
               facingFrom(
                 SPRITE_DIRECTIONS.indexOf(
-                  facingToward(
-                    index % BOARD_CELLS,
-                    Math.floor(index / BOARD_CELLS),
-                    BOARD_CENTER,
-                    BOARD_CENTER,
-                  ),
+                  turnedTo ??
+                    facingToward(
+                      index % BOARD_CELLS,
+                      Math.floor(index / BOARD_CELLS),
+                      BOARD_CENTER,
+                      BOARD_CENTER,
+                    ),
                 ),
                 yaw(),
               )

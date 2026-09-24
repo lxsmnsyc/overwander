@@ -5,7 +5,8 @@
 import type DungeonKind from '../data/overworld/dungeon';
 import type Chunk from '../overworld/chunk';
 import type { Depth } from '../overworld/depth';
-import type { FloorState } from '../overworld/dungeon/walk';
+import type { Direction } from '../overworld/dungeon/floor';
+import type { Footing } from '../overworld/dungeon/tread';
 import { asNumber, asRecord, asString } from './__normalize';
 import { toZoneKey } from './local-time';
 
@@ -25,14 +26,15 @@ export interface DungeonRun {
   /** The catches locked in at the entrance; empty before a run starts */
   party: string[];
   floor: number;
-  /** Where the player stands; null before a run starts */
-  state: FloorState | null;
-  /** Rooms beaten on this floor */
+  /** Where the player stands on the floor; null before a run starts */
+  state: Footing | null;
+  /** Rooms whose fight is won on this floor */
   beaten: number[];
-  /** Stashes taken this window, as `floor:room` */
+  /** Stashes taken this window, as `floor:cell` */
   looted: string[];
-  /** The fight under way, if any */
+  /** The fight under way, if any, and the room it is for */
   battle: string | null;
+  battleRoom: number | null;
   cleared: boolean;
 }
 
@@ -58,7 +60,7 @@ function asStrings(value: unknown): string[] {
   return out;
 }
 
-export function asFloorState(value: unknown): FloorState | null {
+export function asFooting(value: unknown): Footing | null {
   if (value == null || typeof value !== 'object') {
     return null;
   }
@@ -67,13 +69,15 @@ export function asFloorState(value: unknown): FloorState | null {
 
   return {
     at: asNumber(data.at),
+    facing: asNumber(data.facing) as Direction,
     flipped: data.flipped === true,
     keys: asNumber(data.keys),
     opened: asNumbers(data.opened),
     taken: asNumbers(data.taken),
     crumbled: asNumbers(data.crumbled),
+    filled: asNumbers(data.filled),
+    boulders: asNumbers(data.boulders),
     pass: data.pass === true,
-    seen: asNumbers(data.seen),
   };
 }
 
@@ -92,10 +96,11 @@ export function asDungeonRun(value: unknown): DungeonRun {
     cell: asNumber(data.cell),
     party: asStrings(data.party),
     floor: asNumber(data.floor),
-    state: asFloorState(data.state),
+    state: asFooting(data.state),
     beaten: asNumbers(data.beaten),
     looted: asStrings(data.looted),
     battle: typeof data.battle === 'string' ? data.battle : null,
+    battleRoom: typeof data.battleRoom === 'number' ? data.battleRoom : null,
     cleared: data.cleared === true,
   };
 }
@@ -111,6 +116,6 @@ export function dungeonFightSeed(run: string, floor: number, room: number): stri
 }
 
 /** The key a taken stash is remembered by */
-export function lootKey(floor: number, room: number): string {
-  return `${floor}:${room}`;
+export function lootKey(floor: number, cell: number): string {
+  return `${floor}:${cell}`;
 }

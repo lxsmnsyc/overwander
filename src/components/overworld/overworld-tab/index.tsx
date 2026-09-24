@@ -1,4 +1,4 @@
-import { type JSX, Suspense, createEffect, createResource, onCleanup } from 'solid-js';
+import { type JSX, Show, Suspense, createEffect, createResource, onCleanup } from 'solid-js';
 
 import { getBuddyEffects } from '../../../auth/buddy';
 import { onBuddyChange } from '../../../auth/buddy-changes';
@@ -11,6 +11,8 @@ import settings from '../../app/settings';
 import { Note } from '../../styled';
 
 import OverworldBoard from './board';
+import DungeonBoard from '../dungeon-board';
+import { useGame } from '../../app/game-context';
 
 /**
  * The chunk the player is standing in, drawn to fill the screen.
@@ -22,6 +24,7 @@ import OverworldBoard from './board';
  */
 export default function OverworldTab(): JSX.Element {
   const auth = useAuth();
+  const game = useGame();
 
   const [buddy, { refetch: refetchBuddy }] = createResource(
     () => auth.user()?.uid ?? null,
@@ -54,15 +57,37 @@ export default function OverworldTab(): JSX.Element {
     async (uid) => getRetiredKeys(uid),
   );
 
+  /** A dungeon run under way, walked on the board instead of the world */
+  const inside = (): boolean => game.dungeon()?.run?.state != null;
+
   return (
     <Suspense fallback={<Note>Reading the world…</Note>}>
-      <OverworldBoard
-        buddy={buddy}
-        fled={fled}
-        onFled={() => {
-          Promise.resolve(refetchFled()).catch(() => undefined);
-        }}
-      />
+      <Show
+        when={inside() && auth.user()}
+        fallback={
+          <OverworldBoard
+            buddy={buddy}
+            fled={fled}
+            onFled={() => {
+              Promise.resolve(refetchFled()).catch(() => undefined);
+            }}
+          />
+        }
+      >
+        {(user) => (
+          <Show when={game.dungeon()}>
+            {(open) => (
+              <DungeonBoard
+                user={user()}
+                open={open()}
+                onLeave={() => {
+                  game.setDungeon(null);
+                }}
+              />
+            )}
+          </Show>
+        )}
+      </Show>
     </Suspense>
   );
 }

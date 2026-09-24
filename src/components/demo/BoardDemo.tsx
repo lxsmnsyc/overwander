@@ -1,5 +1,6 @@
-import { type JSX, createMemo, createSignal, onCleanup, onMount } from 'solid-js';
+import { type JSX, Show, createMemo, createSignal, onCleanup, onMount } from 'solid-js';
 import { Badge, Button, Row, Select } from '../styled';
+import DungeonFloorDemo from './DungeonFloorDemo';
 import type Biome from '../../data/ids/biome';
 import BiomeId from '../../data/ids/biome';
 import { BIOME_NAMES, isLegendarySpecies, isMythicalSpecies } from '../../data/biome';
@@ -402,6 +403,8 @@ export default function BoardDemo(): JSX.Element {
   const [seed, setSeed] = createSignal(WORLD_SEED);
   const [generation, setGeneration] = createSignal(Generation.First);
   const [depth, setDepth] = createSignal<Depth>(Depth.Surface);
+  /** Whether the board shows a dungeon floor instead of the world */
+  const [dungeon, setDungeon] = createSignal(false);
 
   /** How far the light carries, which is what a cave and a dark day are worth */
   const lampCells = (): number => {
@@ -567,7 +570,8 @@ export default function BoardDemo(): JSX.Element {
     const walked = (event: KeyboardEvent): void => {
       const step = STEPS.get(event.key);
 
-      if (step == null) {
+      // A dungeon floor walks itself
+      if (step == null || dungeon()) {
         return;
       }
       event.preventDefault();
@@ -725,13 +729,33 @@ export default function BoardDemo(): JSX.Element {
           Another world
         </Button>
         <Badge>{seed()}</Badge>
+        <Button
+          tone={dungeon() ? 'primary' : undefined}
+          onClick={() => {
+            setDungeon((was) => !was);
+          }}
+        >
+          {dungeon() ? 'Back to the world' : 'Walk a dungeon floor'}
+        </Button>
       </Row>
+
+      <Show when={dungeon()}>
+        <DungeonFloorDemo
+          width={shape().width}
+          height={shape().height}
+          yaw={yaw()}
+          onTurn={(turned) => {
+            setYaw(turned);
+          }}
+        />
+      </Show>
 
       {/* The board takes the whole of whatever it is put in, so the
           frame is what decides its shape and therefore which of the two
           ways it is drawn */}
       <div
         class="relative overflow-hidden rounded-panel border-4 border-tide bg-shade shadow-pop"
+        classList={{ hidden: dungeon() }}
         style={{ width: `${shape().width}px`, height: `${shape().height}px`, 'max-width': '100%' }}
       >
         <ChunkCanvas

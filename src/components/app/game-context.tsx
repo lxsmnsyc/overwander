@@ -17,7 +17,7 @@ import type { EncounterRecord } from '../../auth/encounter-record';
 import { type Notice, watchNotifications } from '../../auth/notifications';
 import { claimRaidReward } from '../../auth/raids';
 import { claimStopReward } from '../../auth/stops';
-import { settleDungeonFight } from '../../auth/dungeons';
+import { type DungeonRun, settleDungeonFight } from '../../auth/dungeons';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { settleGymChallenge } from '../../auth/gym-seats';
 import type { PositionRecord } from '../../auth/position-record';
@@ -183,7 +183,9 @@ export type PendingReward =
 export interface OpenDungeon {
   snapshot: ChunkSnapshot;
   cell: number;
-  /** What the last room's fight left the run saying, if anything */
+  /** The player's run of it; walked on the board once its party is locked in */
+  run: DungeonRun | null;
+  /** What the last fight left the run saying, if anything */
   note?: string;
 }
 
@@ -847,14 +849,14 @@ export default function GameProvider(props: ParentProps): JSX.Element {
 
           if (settled?.won === false) {
             note = 'Beaten. The run starts again from the entrance.';
-          } else if (settled != null) {
-            note = settled.run.cleared ? 'Cleared.' : 'The room is clear.';
+          } else if (settled?.run.cleared === true) {
+            note = 'Cleared.';
           }
 
           const open = dungeon();
 
           if (open != null) {
-            setDungeon({ ...open, note });
+            setDungeon({ ...open, run: settled?.run ?? open.run, note });
           }
 
           const paid = settled?.reward;

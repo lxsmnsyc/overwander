@@ -1,5 +1,12 @@
 # overwander
 
+## 4.15.1
+
+### Patch Changes
+
+- a09533a: A pokemon's burn, poison, paralysis, sleep or freeze shows as a coloured square beside its health on its hover card and catch sheet, named when hovered.
+- 1718dd7: Coming back from a battle no longer puts the player back where a teleport last dropped them.
+
 ## 4.15.0
 
 ### Minor Changes

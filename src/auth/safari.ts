@@ -11,6 +11,7 @@ import SafariSession, {
 } from '../overworld/safari';
 import { recordCatch } from '../server/caught';
 import { requireUid } from '../server/auth';
+import { Pace } from '../server/pace';
 import check, { GAME_ID, ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
 import { consumeItem } from '../server/inventory';
 import { stampFeed } from '../server/encounter-io';
@@ -142,7 +143,7 @@ async function spendBall(token: string, ball: Balls): Promise<boolean> {
   'use server';
   check(TOKEN, token);
   check(GAME_ID, ball);
-  return consumeItem(await requireUid(token), BALL_ITEMS[ball]);
+  return consumeItem(await requireUid(token, Pace.Throw), BALL_ITEMS[ball]);
 }
 
 /**
@@ -156,7 +157,7 @@ async function spendFeed(token: string, spawn: string, item: Items): Promise<boo
   check(ID, spawn);
   check(GAME_ID, item);
 
-  const uid = await requireUid(token);
+  const uid = await requireUid(token, Pace.Feed);
 
   if (!(await consumeItem(uid, item))) {
     return false;

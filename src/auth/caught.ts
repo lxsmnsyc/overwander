@@ -28,7 +28,7 @@ import type { PostgrestError } from '@supabase/supabase-js';
 import { asRecord, asRecordArray } from './__normalize';
 import { announceBuddyChange } from './buddy-changes';
 import type { CatchOrder, CaughtPokemon } from './caught-record';
-import { CAUGHT_EMBED, CAUGHT_LIST_EMBED, fromCaughtRow } from './caught-rows';
+import { CAUGHT_EMBED, fromCaughtRow } from './caught-rows';
 import getSupabase from './supabase';
 import getIdToken from './session';
 import batchedQuery from '../utils/batched-query';
@@ -138,10 +138,6 @@ export async function getCaught(id: string): Promise<CaughtPokemon | null> {
 // oxlint-disable-next-line typescript/no-inferrable-types
 const ROW_SELECTION: string = `id, ${CAUGHT_EMBED}`;
 
-/** The same, for the screens that only offer a choice from the box */
-// oxlint-disable-next-line typescript/no-inferrable-types
-const LIST_SELECTION: string = CAUGHT_LIST_EMBED;
-
 /**
  * `getCaught` for a screen reading many at once, such as a lobby of
  * parties: every call made in the same moment goes out as one read.
@@ -169,6 +165,58 @@ export const getCaughtBatched = batchedQuery(
 );
 
 /**
+ * Every catch an owner holds, as its id and revision and nothing else.
+ * It is what a kept box is checked against: a couple of dozen bytes a
+ * catch, where the catch itself is over a kilobyte
+ */
+export async function readBoxRevisions(owner: string): Promise<[string, number][]> {
+  const rows = await everyRow((from, to) =>
+    getSupabase()
+      .from(CAUGHT_TABLE)
+      .select('id, revision')
+      .eq('owner', owner)
+      .order('id')
+      .range(from, to),
+  );
+  const revisions: [string, number][] = [];
+
+  for (const row of rows) {
+    revisions.push([String(row.id), Number(row.revision ?? 0)]);
+  }
+  return revisions;
+}
+
+/** How many catches one read by id asks for */
+const REVISED_PAGE = 50;
+
+/**
+ * Catches in full, with the revision each was read at. Asked fifty at
+ * a time, since the ids travel in the request's address
+ */
+export async function readCaughtRevised(ids: string[]): Promise<[string, number, CaughtPokemon][]> {
+  const pages: PromiseLike<{ data: unknown; error: PostgrestError | null }>[] = [];
+
+  for (let start = 0; start < ids.length; start += REVISED_PAGE) {
+    pages.push(
+      getSupabase()
+        .from(CAUGHT_TABLE)
+        .select(ROW_SELECTION)
+        .in('id', ids.slice(start, start + REVISED_PAGE)),
+    );
+  }
+
+  const found: [string, number, CaughtPokemon][] = [];
+
+  for (const { data, error } of await Promise.all(pages)) {
+    raise(error);
+    for (const row of asRecordArray(data)) {
+      found.push([String(row.id), Number(row.revision ?? 0), fromCaughtRow(row)]);
+    }
+  }
+  return found;
+}
+
+/**
  * The rows of one owner's box, with the embeds along. An arrow with
  * its type left to inference: the builder's type is the anchor the
  * constraint chain below is checked against, and nobody can write it
@@ -180,25 +228,6 @@ const caughtRows = (owner: string) =>
 
 export async function listCaught(owner: string): Promise<[string, CaughtPokemon][]> {
   return rowsToPairs(await everyRow((from, to) => caughtRows(owner).order('id').range(from, to)));
-}
-
-/**
- * The same box for a screen that offers a choice from it. The records
- * come back without their history, effort or origin, which a chooser
- * never shows: half the bytes of the whole box, and the whole box is
- * what these screens read
- */
-export async function listCaughtToChooseFrom(owner: string): Promise<[string, CaughtPokemon][]> {
-  return rowsToPairs(
-    await everyRow((from, to) =>
-      getSupabase()
-        .from(CAUGHT_TABLE)
-        .select(LIST_SELECTION)
-        .eq('owner', owner)
-        .order('id')
-        .range(from, to),
-    ),
-  );
 }
 
 /**

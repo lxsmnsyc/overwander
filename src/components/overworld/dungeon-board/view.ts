@@ -16,7 +16,14 @@ import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
 import type { BoardGround } from '../../../overworld/board-ground';
 import { BOARD_CELLS, BOARD_CENTER } from '../../../overworld/board';
 import { Direction, type DungeonFloor } from '../../../overworld/dungeon/floor';
-import { type CellGrid, ROOM_CELLS, Thing, Tile } from '../../../overworld/dungeon/grid';
+import {
+  type CellGrid,
+  ROOM_CELLS,
+  ROOM_PITCH,
+  Thing,
+  Tile,
+  WALL_CELLS,
+} from '../../../overworld/dungeon/grid';
 import type { DungeonLayout } from '../../../overworld/dungeon/layout';
 import { dungeonFoe, getDungeonLegendary } from '../../../overworld/dungeon/stage';
 import { type Footing, thingAt } from '../../../overworld/dungeon/tread';
@@ -32,14 +39,13 @@ const SPRITE_FACING: Record<Direction, SpriteDirection> = {
 
 /** The room a cell of the floor is inside, or -1 for a wall or a door */
 export function roomOf(grid: CellGrid, size: number, cell: number): number {
-  const pitch = ROOM_CELLS + 1;
-  const x = cell % grid.width;
-  const y = Math.floor(cell / grid.width);
+  const x = (cell % grid.width) - WALL_CELLS;
+  const y = Math.floor(cell / grid.width) - WALL_CELLS;
 
-  if (x % pitch === 0 || y % pitch === 0) {
+  if (x < 0 || y < 0 || x % ROOM_PITCH >= ROOM_CELLS || y % ROOM_PITCH >= ROOM_CELLS) {
     return -1;
   }
-  return Math.floor(y / pitch) * size + Math.floor(x / pitch);
+  return Math.floor(y / ROOM_PITCH) * size + Math.floor(x / ROOM_PITCH);
 }
 
 /** Everything the board canvas is handed for one floor, as it stands */

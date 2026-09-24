@@ -2463,9 +2463,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           const lift = liftOf(square);
           const spot = { x: square.x + cameraX, y: square.y + cameraY };
           const outline: ProjectedPoint[] = [];
+          // Each corner sunk the way the scene lays the ground, so a cliff
+          // tile is ringed on its slope rather than at the top of it
+          const lifts = laidBack ? cornerLifts(square) : [0, 0, 0, 0];
 
-          for (const point of projectBoardCellQuad(spot, yaw(), lift)) {
-            outline.push(at(point));
+          for (let corner = 0; corner < lifts.length; corner++) {
+            outline.push(at(projectBoardCellQuad(spot, yaw(), lifts[corner])[corner]));
           }
 
           if (onScreen(outline)) {

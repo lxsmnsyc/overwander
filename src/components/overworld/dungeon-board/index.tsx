@@ -38,6 +38,7 @@ import ChunkCanvas from '../chunk-canvas';
 import { Badge, Button, Dialog, DialogActions, Meta, useToast } from '../../styled';
 import { dungeonTitle, floorName, floorRules, partyIsLit } from '../dungeon-dialog/describe';
 import { type FloorView, floorView, roomOf } from './view';
+import createGlide from './glide';
 import findWalk from './walking';
 
 /** How long a walk waits for more steps before telling the server */
@@ -112,6 +113,7 @@ export default function DungeonBoard(props: {
   let timer: ReturnType<typeof setTimeout> | undefined;
   let queued: Direction[] = [];
   let pacing: ReturnType<typeof setInterval> | undefined;
+  const glide = createGlide();
 
   const run = (): DungeonRun | null => props.open.run;
   const layout = createMemo((): DungeonLayout | null =>
@@ -144,6 +146,7 @@ export default function DungeonBoard(props: {
         setFooting(held.state);
         if (held.floor !== floor()) {
           setSeen(new Set<number>());
+          glide.play([]);
         }
         setFloor(held.floor);
         if (props.open.note != null) {
@@ -219,7 +222,7 @@ export default function DungeonBoard(props: {
       cell: props.open.cell,
       layout: held,
       floor: floor(),
-      footing: here,
+      footing: { ...here, at: glide.at() ?? here.at },
       beaten: new Set(run()?.beaten ?? []),
       seen: seen(),
     });
@@ -232,6 +235,9 @@ export default function DungeonBoard(props: {
   /** Take the server's word for the run, the walk it rejected included */
   const settleOn = (settled: DungeonRun): void => {
     game.setDungeon({ ...props.open, run: settled, note: undefined });
+    if (settled.floor !== floor()) {
+      glide.play([]);
+    }
     setFooting(settled.state);
     setFloor(settled.floor);
   };
@@ -344,7 +350,7 @@ export default function DungeonBoard(props: {
     const here = footing();
     const floorGrid = grid();
 
-    if (here == null || floorGrid == null || busy() || renting() != null) {
+    if (here == null || floorGrid == null || busy() || renting() != null || glide.at() != null) {
       return;
     }
 
@@ -354,6 +360,7 @@ export default function DungeonBoard(props: {
       return;
     }
     setFooting(trod.footing);
+    glide.play(trod.path);
     pending.push(direction);
 
     // Anything that happens is the server's to settle, straight away
@@ -489,6 +496,11 @@ export default function DungeonBoard(props: {
     queued = findWalk(floorGrid, here, target, known()) ?? [];
     clearInterval(pacing);
     pacing = setInterval(() => {
+      // A slide under way finishes before the next step
+      if (glide.at() != null) {
+        return;
+      }
+
       const next = queued.shift();
 
       if (next == null) {
@@ -582,9 +594,11 @@ export default function DungeonBoard(props: {
     const here = footing();
     const floorGrid = grid();
 
-    return here == null || floorGrid == null
+    const shown = glide.at() ?? here?.at;
+
+    return shown == null || floorGrid == null
       ? [0, 0]
-      : [here.at % floorGrid.width, Math.floor(here.at / floorGrid.width)];
+      : [shown % floorGrid.width, Math.floor(shown / floorGrid.width)];
   };
 
   const facing = (): [number, number] => {

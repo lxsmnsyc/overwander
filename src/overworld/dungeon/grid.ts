@@ -5,6 +5,12 @@ import { DIRECTIONS, Direction, DoorKind, type FloorPlan, RoomKind, neighbour } 
 /** Floor cells across one room, walls not counted */
 export const ROOM_CELLS = 5;
 
+/** How thick the rock between two rooms is, and round the floor's edge */
+export const WALL_CELLS = 2;
+
+/** From one room's first cell to the next room's */
+export const ROOM_PITCH = ROOM_CELLS + WALL_CELLS;
+
 /** How far a trainer sees down the line it faces */
 export const TRAINER_SIGHT = 4;
 
@@ -104,11 +110,11 @@ export const CLEARED_BY: Partial<Record<Thing, Moves>> = {
 
 /**
  * The floor's plan laid out in cells: each room a square of floor inside
- * one-cell walls, each door a gap in the wall carrying the door's rule
+ * walls, each door a passage through the wall carrying the door's rule
  */
 export function rasterize(floor: FloorPlan, kind: DungeonKind): CellGrid {
-  const pitch = ROOM_CELLS + 1;
-  const width = floor.size * pitch + 1;
+  const pitch = ROOM_PITCH;
+  const width = floor.size * pitch + WALL_CELLS;
   const tiles: Tile[] = [];
 
   for (let cell = 0; cell < width * width; cell++) {
@@ -131,12 +137,15 @@ export function rasterize(floor: FloorPlan, kind: DungeonKind): CellGrid {
   const at = (x: number, y: number): number => y * width + x;
   const middle = Math.floor(ROOM_CELLS / 2);
   const centre = (room: number): number =>
-    at((room % floor.size) * pitch + 1 + middle, Math.floor(room / floor.size) * pitch + 1 + middle);
+    at(
+      (room % floor.size) * pitch + WALL_CELLS + middle,
+      Math.floor(room / floor.size) * pitch + WALL_CELLS + middle,
+    );
   const ice = floor.gimmick === FloorGimmick.Ice;
 
   for (let room = 0; room < floor.rooms.length; room++) {
-    const left = (room % floor.size) * pitch + 1;
-    const top = Math.floor(room / floor.size) * pitch + 1;
+    const left = (room % floor.size) * pitch + WALL_CELLS;
+    const top = Math.floor(room / floor.size) * pitch + WALL_CELLS;
     const rough = floor.rooms[room].rough === true;
 
     for (let y = top; y < top + ROOM_CELLS; y++) {
@@ -165,30 +174,51 @@ export function rasterize(floor: FloorPlan, kind: DungeonKind): CellGrid {
     }
   }
 
-  // Doors: the wall cell between two rooms' middles
+  // Doors: the passage through the wall between two rooms' middles. The
+  // door's own rule sits on its first cell and the rest is plain ground
   for (const door of floor.doors) {
     const [a, b] = door.a < door.b ? [door.a, door.b] : [door.b, door.a];
     const across = b === a + 1;
-    const x = across ? (a % floor.size) * pitch + pitch : (a % floor.size) * pitch + 1 + middle;
-    const y = across
-      ? Math.floor(a / floor.size) * pitch + 1 + middle
-      : Math.floor(a / floor.size) * pitch + pitch;
-    const cell = at(x, y);
+    const passage: number[] = [];
 
-    // A doorway is plain ground even on ice, which is where a slide ends
-    tiles[cell] = floor.gimmick === FloorGimmick.Cracked ? Tile.Cracked : Tile.Floor;
+    for (let depth = 0; depth < WALL_CELLS; depth++) {
+      const x = across
+        ? (a % floor.size) * pitch + WALL_CELLS + ROOM_CELLS + depth
+        : (a % floor.size) * pitch + WALL_CELLS + middle;
+      const y = across
+        ? Math.floor(a / floor.size) * pitch + WALL_CELLS + middle
+        : Math.floor(a / floor.size) * pitch + WALL_CELLS + ROOM_CELLS + depth;
+
+      passage.push(at(x, y));
+    }
+
     // A lane running through the door carries on through it
     const lane = floor.rooms[a].arrow ?? floor.rooms[b].arrow;
+    const along =
+      lane != null &&
+      (across
+        ? lane === Direction.East || lane === Direction.West
+        : lane === Direction.North || lane === Direction.South);
 
-    if (lane != null && tiles[cell] !== Tile.Cracked) {
-      const along = across ? lane === Direction.East || lane === Direction.West : lane === Direction.North || lane === Direction.South;
-
-      if (along) {
+    // A doorway is plain ground even on ice, which is where a slide ends
+    for (const cell of passage) {
+      tiles[cell] = Tile.Floor;
+      if (along && floor.gimmick !== FloorGimmick.Cracked) {
         tiles[cell] = Tile.Spinner;
         grid.arrows.set(cell, lane);
       }
     }
 
+    const cell = passage[0];
+
+    // A door's rule stands in for any lane under it
+    if (door.kind !== DoorKind.Open) {
+      tiles[cell] = Tile.Floor;
+      grid.arrows.delete(cell);
+    }
+    if (floor.gimmick === FloorGimmick.Cracked) {
+      tiles[cell] = Tile.Cracked;
+    }
     if (door.kind === DoorKind.Ledge && door.to != null) {
       tiles[cell] = Tile.Ledge;
       grid.arrows.set(cell, towards(floor, door.to === a ? b : a, door.to));
@@ -201,7 +231,11 @@ export function rasterize(floor: FloorPlan, kind: DungeonKind): CellGrid {
       const thing = OBSTACLE_THINGS[door.move];
 
       if (thing == null) {
-        tiles[cell] = Tile.Water;
+        // Water fills the whole passage, so it is crossed rather than stepped over
+        for (const wet of passage) {
+          tiles[wet] = Tile.Water;
+          grid.arrows.delete(wet);
+        }
       } else {
         grid.things.set(cell, thing);
       }
@@ -262,8 +296,8 @@ export function rasterize(floor: FloorPlan, kind: DungeonKind): CellGrid {
   if (floor.entry === floor.exit) {
     const room = floor.entry;
     const cell = at(
-      (room % floor.size) * pitch + 1 + middle,
-      Math.floor(room / floor.size) * pitch + ROOM_CELLS,
+      (room % floor.size) * pitch + WALL_CELLS + middle,
+      Math.floor(room / floor.size) * pitch + WALL_CELLS + ROOM_CELLS - 1,
     );
 
     tiles[cell] = Tile.Arrival;

@@ -1,4 +1,4 @@
-import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
+import { type JSX, Show, batch, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
 import type { Moves } from '../../data/ids/moves';
 import DungeonKind, {
   FLOOR_GIMMICKS,
@@ -26,6 +26,7 @@ import {
 } from '../../overworld/dungeon/tread';
 import ChunkCanvas from '../overworld/chunk-canvas';
 import { floorView } from '../overworld/dungeon-board/view';
+import createGlide from '../overworld/dungeon-board/glide';
 import findWalk from '../overworld/dungeon-board/walking';
 import { dungeonTitle, floorName, floorRules } from '../overworld/dungeon-dialog/describe';
 import { Badge, Button, Meta, Row, Select, Switch } from '../styled';
@@ -121,31 +122,39 @@ export default function DungeonFloorDemo(props: {
   const [said, setSaid] = createSignal<string | null>(null);
   let pacing: ReturnType<typeof setInterval> | undefined;
   let queued: Direction[] = [];
+  const glide = createGlide();
 
-  const found = createMemo(() =>
+  const wanted = createMemo(() =>
     findDungeon(kind(), kind() === DungeonKind.Frontier ? null : gimmick(), skip()),
   );
+  // Held apart from what is wanted, so a new dungeon and the floor landed
+  // on in it change together rather than one frame apart
+  const [found, setFound] = createSignal<Found | null>(null);
   const grid = (): CellGrid | null => found()?.layout.floors[floor()]?.grid ?? null;
   const known = (): Set<Moves> => new Set(moves() ? OBSTACLE_MOVES : []);
 
-  const land = (at: number): void => {
-    const held = found();
-
+  const land = (at: number, held = found()): void => {
     if (held == null) {
       return;
     }
-    setFloor(at);
-    setBeaten(new Set<number>());
-    setFooting(arrive(held.layout.floors[at].grid));
+    glide.play([]);
+    batch(() => {
+      setFound(held);
+      setFloor(at);
+      setBeaten(new Set<number>());
+      setFooting(arrive(held.layout.floors[at].grid));
+    });
   };
 
   // Straight onto the floor that was asked for
   createEffect(() => {
-    const held = found();
+    const held = wanted();
 
     setSaid(null);
-    if (held != null) {
-      land(held.floor);
+    if (held == null) {
+      setFound(null);
+    } else {
+      land(held.floor, held);
     }
   });
 
@@ -163,7 +172,7 @@ export default function DungeonFloorDemo(props: {
     const floorGrid = grid();
     const held = found();
 
-    if (here == null || floorGrid == null || held == null) {
+    if (here == null || floorGrid == null || held == null || glide.at() != null) {
       return;
     }
 
@@ -176,6 +185,7 @@ export default function DungeonFloorDemo(props: {
     const plan = held.layout.floors[floor()];
 
     setFooting(trod.footing);
+    glide.play(trod.path);
     if (trod.event?.kind === 'fall') {
       setSaid('The floor gave way.');
       land(Math.max(0, floor() - 1));
@@ -266,7 +276,7 @@ export default function DungeonFloorDemo(props: {
       cell: held.cell,
       layout: held.layout,
       floor: floor(),
-      footing: here,
+      footing: { ...here, at: glide.at() ?? here.at },
       beaten: beaten(),
       seen: new Set<number>(),
     });
@@ -296,6 +306,10 @@ export default function DungeonFloorDemo(props: {
     queued = findWalk(floorGrid, here, target, known()) ?? [];
     clearInterval(pacing);
     pacing = setInterval(() => {
+      if (glide.at() != null) {
+        return;
+      }
+
       const next = queued.shift();
 
       if (next == null) {
@@ -313,12 +327,12 @@ export default function DungeonFloorDemo(props: {
   }
 
   const at = (): [number, number] => {
-    const here = footing();
+    const shown = glide.at() ?? footing()?.at;
     const floorGrid = grid();
 
-    return here == null || floorGrid == null
+    return shown == null || floorGrid == null
       ? [0, 0]
-      : [here.at % floorGrid.width, Math.floor(here.at / floorGrid.width)];
+      : [shown % floorGrid.width, Math.floor(shown / floorGrid.width)];
   };
 
   return (

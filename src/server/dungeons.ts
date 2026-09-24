@@ -377,7 +377,8 @@ export async function walkDungeon(
     if (trod.event?.kind === 'fall') {
       // A broken floor drops you back a floor, and out of the first one
       floor = Math.max(0, floor - 1);
-      footing = floor === run.floor ? arrive(layout.floors[0].grid) : atStairs(layout.floors[floor].grid);
+      footing =
+        floor === run.floor ? arrive(layout.floors[0].grid) : atStairs(layout.floors[floor].grid);
       event = { kind: 'fell' };
       break;
     }

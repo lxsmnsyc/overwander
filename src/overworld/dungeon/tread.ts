@@ -34,6 +34,8 @@ export type TreadEvent =
 export interface Tread {
   footing: Footing;
   event: TreadEvent | null;
+  /** Every cell passed over on the way, in order, the last one included */
+  path: number[];
 }
 
 function sorted(list: number[]): number[] {
@@ -157,19 +159,24 @@ export function tread(
     const beyond = cellAhead(grid, next, direction);
 
     if (!known.has(Moves.Strength) || !boulderFits(grid, from, beyond)) {
-      return { footing: turned, event: null };
+      return { footing: turned, event: null, path: [] };
     }
 
     const boulders = removed(from.boulders, next);
 
     return isHole(grid, from, beyond)
-      ? { footing: { ...turned, boulders, filled: added(from.filled, beyond) }, event: null }
-      : { footing: { ...turned, boulders: added(boulders, beyond) }, event: null };
+      ? {
+          footing: { ...turned, boulders, filled: added(from.filled, beyond) },
+          event: null,
+          path: [],
+        }
+      : { footing: { ...turned, boulders: added(boulders, beyond) }, event: null, path: [] };
   }
 
   let footing = turned;
   let heading = direction;
   let target = next;
+  const path: number[] = [];
 
   // A locked door takes a key as it is walked into
   if (grid.tiles[next] === Tile.Locked && !from.opened.includes(next) && from.keys > 0) {
@@ -180,18 +187,20 @@ export function tread(
     const landing = cellAhead(grid, next, direction);
 
     if (grid.arrows.get(next) !== direction || !open(grid, footing, landing, known)) {
-      return { footing: turned, event: null };
+      return { footing: turned, event: null, path: [] };
     }
+    path.push(next);
     target = landing;
   } else if (!open(grid, footing, next, known)) {
-    return { footing: turned, event: null };
+    return { footing: turned, event: null, path: [] };
   }
 
   // Ice and spinner lanes carry on; a loop of arrows is cut off
   for (let slid = 0; slid <= grid.tiles.length; slid++) {
     footing = { ...leave(grid, footing), at: target };
+    path.push(target);
     if (isHole(grid, footing, target)) {
-      return { footing, event: { kind: 'fall' } };
+      return { footing, event: { kind: 'fall' }, path };
     }
 
     const tile = grid.tiles[target];
@@ -214,14 +223,15 @@ export function tread(
 
   if (pad != null) {
     footing = { ...footing, at: pad };
+    path.push(pad);
   }
   if (grid.tiles[footing.at] === Tile.Stairs) {
-    return { footing, event: { kind: 'stairs' } };
+    return { footing, event: { kind: 'stairs' }, path };
   }
   if (grid.tiles[footing.at] === Tile.Arrival && footing.at !== from.at) {
-    return { footing, event: { kind: 'arrival' } };
+    return { footing, event: { kind: 'arrival' }, path };
   }
-  return { footing, event: null };
+  return { footing, event: null, path };
 }
 
 /**
@@ -237,31 +247,42 @@ export function press(grid: CellGrid, from: Footing, known: ReadonlySet<Moves>):
       return {
         footing: { ...from, keys: from.keys + 1, taken: added(from.taken, cell) },
         event: { kind: 'take', cell, thing },
+        path: [],
       };
     case Thing.Pass:
       return {
         footing: { ...from, pass: true, taken: added(from.taken, cell) },
         event: { kind: 'take', cell, thing },
+        path: [],
       };
     case Thing.Stash:
       return {
         footing: { ...from, taken: added(from.taken, cell) },
         event: { kind: 'take', cell, thing },
+        path: [],
       };
     case Thing.Switch:
-      return { footing: { ...from, flipped: !from.flipped }, event: { kind: 'take', cell, thing } };
+      return {
+        footing: { ...from, flipped: !from.flipped },
+        event: { kind: 'take', cell, thing },
+        path: [],
+      };
     case Thing.Rock:
     case Thing.Tree: {
       const move = CLEARED_BY[thing];
 
       return move != null && known.has(move)
-        ? { footing: { ...from, taken: added(from.taken, cell) }, event: { kind: 'take', cell, thing } }
+        ? {
+            footing: { ...from, taken: added(from.taken, cell) },
+            event: { kind: 'take', cell, thing },
+            path: [],
+          }
         : null;
     }
     case Thing.Trainer:
     case Thing.Horde:
     case Thing.Boss:
-      return { footing: from, event: { kind: 'fight', cell } };
+      return { footing: from, event: { kind: 'fight', cell }, path: [] };
     default:
       return null;
   }
@@ -345,10 +366,7 @@ export function solvable(
 
       // Only what opens a way matters here: a stash taken or a fight won
       // changes nothing about the walk, and tracking them only multiplies it
-      if (
-        pressed?.event?.kind === 'take' &&
-        pressed.event.thing !== Thing.Stash
-      ) {
+      if (pressed?.event?.kind === 'take' && pressed.event.thing !== Thing.Stash) {
         moves.push(pressed.footing);
       }
       for (const next of moves) {

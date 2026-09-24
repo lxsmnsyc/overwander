@@ -752,46 +752,53 @@ export default function BoardDemo(): JSX.Element {
 
       {/* The board takes the whole of whatever it is put in, so the
           frame is what decides its shape and therefore which of the two
-          ways it is drawn */}
-      <div
-        class="relative overflow-hidden rounded-panel border-4 border-tide bg-shade shadow-pop"
-        classList={{ hidden: dungeon() }}
-        style={{ width: `${shape().width}px`, height: `${shape().height}px`, 'max-width': '100%' }}
-      >
-        <ChunkCanvas
-          biome={biome()}
-          weather={weather()}
-          lamp={lampCells()}
-          time={hour() === LIVE_HOUR ? undefined : hour() * HOUR}
-          underground={depth() === Depth.Cave}
-          lit={!dark()}
-          yaw={yaw()}
-          onTurn={(turned) => {
-            setYaw(turned);
+          ways it is drawn. Unmounted rather than hidden while the dungeon
+          is up: a board still painting sets the projection the other
+          reads its pointer through */}
+      <Show when={!dungeon()}>
+        <div
+          class="relative overflow-hidden rounded-panel border-4 border-tide bg-shade shadow-pop"
+          style={{
+            width: `${shape().width}px`,
+            height: `${shape().height}px`,
+            'max-width': '100%',
           }}
-          latitude={0}
-          caption="Demo chunk"
-          at={at()}
-          origin={origin()}
-          facing={facing()}
-          landmarks={NOTHING_MAPPED}
-          phenomena={NOTHING_MAPPED}
-          ground={ground()}
-          wanderers={NOTHING_MAPPED}
-          coats={NOTHING_MAPPED}
-          berries={NOTHING_MAPPED}
-          picked={NOTHING_SET}
-          dug={NOTHING_SET}
-          auras={NOTHING_MAPPED}
-          decorations={decorations()}
-          spawns={windowed(spawns(), at())}
-          goal={queued().at(-1) ?? null}
-          label={(index) => `Cell ${index}`}
-          onPress={(cell) => {
-            headFor(cell);
-          }}
-        />
-      </div>
+        >
+          <ChunkCanvas
+            biome={biome()}
+            weather={weather()}
+            lamp={lampCells()}
+            time={hour() === LIVE_HOUR ? undefined : hour() * HOUR}
+            underground={depth() === Depth.Cave}
+            lit={!dark()}
+            yaw={yaw()}
+            onTurn={(turned) => {
+              setYaw(turned);
+            }}
+            latitude={0}
+            caption="Demo chunk"
+            at={at()}
+            origin={origin()}
+            facing={facing()}
+            landmarks={NOTHING_MAPPED}
+            phenomena={NOTHING_MAPPED}
+            ground={ground()}
+            wanderers={NOTHING_MAPPED}
+            coats={NOTHING_MAPPED}
+            berries={NOTHING_MAPPED}
+            picked={NOTHING_SET}
+            dug={NOTHING_SET}
+            auras={NOTHING_MAPPED}
+            decorations={decorations()}
+            spawns={windowed(spawns(), at())}
+            goal={queued().at(-1) ?? null}
+            label={(index) => `Cell ${index}`}
+            onPress={(cell) => {
+              headFor(cell);
+            }}
+          />
+        </div>
+      </Show>
     </div>
   );
 }

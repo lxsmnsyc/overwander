@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { Moves } from '../../../src/data/ids/moves';
 import { Direction } from '../../../src/overworld/dungeon/floor';
 import { type CellGrid, Thing, Tile, lineOfSight } from '../../../src/overworld/dungeon/grid';
+import findWalk from '../../../src/components/overworld/dungeon-board/walking';
 import {
   arrive,
   press,
@@ -78,7 +79,19 @@ describe('treading a floor', () => {
 
     grid.arrows.set(at(1), Direction.East);
     grid.arrows.set(at(2), Direction.East);
-    expect(tread(grid, arrive(grid), Direction.East, NOTHING)?.footing.at).toBe(at(3));
+    const carried = tread(grid, arrive(grid), Direction.East, NOTHING);
+
+    expect(carried?.footing.at).toBe(at(3));
+    // Every cell passed over, so the board can play the ride a cell at a time
+    expect(carried?.path).toEqual([at(1), at(2), at(3)]);
+  });
+
+  it('walks to a spinner cell by riding over it', () => {
+    const grid = corridor([Tile.Arrival, Tile.Floor, Tile.Spinner, Tile.Spinner]);
+
+    grid.arrows.set(at(2), Direction.East);
+    grid.arrows.set(at(3), Direction.East);
+    expect(findWalk(grid, arrive(grid), at(2), NOTHING)).toEqual([Direction.East, Direction.East]);
   });
 
   it('sends a pad to its pair', () => {

@@ -8,4 +8,4 @@ Built parties give each member a job, and the top trainers bring a Mega:
 - The healer is the frailest member able to heal or cure the team, or to raise it when none can, and the redirector is the bulkiest.
 - A built party never fields more than two cores.
 - Legends give each member its family's signature ability.
-- Ace trainers, gym leaders, executives, the Elite Four, champions and legends may give one member a Mega Stone, a core first.
+- Ace trainers, gym leaders, the Elite Four, champions and legends may give one member a Mega Stone, a core first. Syndicates field none.

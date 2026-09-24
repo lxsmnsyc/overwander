@@ -53,6 +53,7 @@ import {
   ELITE_GOLD,
   ELITE_OUTFIT,
   ELITE_PARTY_LEVELS,
+  EXECUTIVE_OUTFIT,
   FRONTIER_OUTFIT,
   GIOVANNI_GOLD,
   GIOVANNI_PARTY_LEVELS,
@@ -564,7 +565,7 @@ describe('world', () => {
     expect(stopOutfit(Landmark.TeamRocket, RocketRank.Grunt)).toEqual(PLAIN_OUTFIT);
     expect(stopOutfit(Landmark.GymLeader, RocketRank.Grunt)).toEqual(GYM_OUTFIT);
     expect(stopOutfit(Landmark.EliteFour, RocketRank.Grunt)).toEqual(ELITE_OUTFIT);
-    expect(stopOutfit(Landmark.TeamRocket, RocketRank.Executive)).toEqual(ELITE_OUTFIT);
+    expect(stopOutfit(Landmark.TeamRocket, RocketRank.Executive)).toEqual(EXECUTIVE_OUTFIT);
     expect(stopOutfit(Landmark.Champion, RocketRank.Grunt)).toEqual(CHAMPION_OUTFIT);
     expect(stopOutfit(Landmark.TeamRocket, RocketRank.Boss)).toEqual(BOSS_OUTFIT);
     // And the one rung above the league, which is three of everything
@@ -698,7 +699,7 @@ describe('world', () => {
 
   it('leaves the signature abilities to the legends', () => {
     expect(LEGEND_OUTFIT.signatures).toBe(true);
-    for (const outfit of [ACE_OUTFIT, GYM_OUTFIT, ELITE_OUTFIT, CHAMPION_OUTFIT, BOSS_OUTFIT]) {
+    for (const outfit of [ACE_OUTFIT, GYM_OUTFIT, ELITE_OUTFIT, CHAMPION_OUTFIT]) {
       expect(outfit.signatures ?? false).toBe(false);
     }
   });
@@ -748,8 +749,8 @@ describe('world', () => {
       expect(getSlots(party[1].slots, Slots.Item)).toBe(Math.max(1, outfit.items));
     }
 
-    // A syndicate's boss, a Frontier house and everybody below an ace field none
-    for (const outfit of [BOSS_OUTFIT, FRONTIER_OUTFIT, PLAIN_OUTFIT]) {
+    // A syndicate, a Frontier house and everybody below an ace field none
+    for (const outfit of [EXECUTIVE_OUTFIT, BOSS_OUTFIT, FRONTIER_OUTFIT, PLAIN_OUTFIT]) {
       expect(stones(createStopParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, outfit))).toEqual(
         [],
       );

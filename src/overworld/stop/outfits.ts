@@ -84,14 +84,15 @@ export const LEGEND_OUTFIT: StopOutfit = {
   signatures: true,
 };
 
+/** A syndicate's executive and boss: an elite's and a champion's, without a Mega */
+export const EXECUTIVE_OUTFIT: StopOutfit = { ...ELITE_OUTFIT, megas: false };
+export const BOSS_OUTFIT: StopOutfit = { ...CHAMPION_OUTFIT, megas: false };
+
 /**
  * A Frontier Brain's: a champion's training on three, and the items
  * are the house's business. The Pyramid bars them on both sides, and
  * the caller strips them there rather than here
  */
-/** A syndicate's boss fights at a champion's strength, without a Mega */
-export const BOSS_OUTFIT: StopOutfit = { ...CHAMPION_OUTFIT, megas: false };
-
 export const FRONTIER_OUTFIT: StopOutfit = {
   abilities: 2,
   items: 2,
@@ -125,7 +126,7 @@ export function stopOutfit(
     if (rank === RocketRank.Boss) {
       return BOSS_OUTFIT;
     }
-    return rank === RocketRank.Executive ? ELITE_OUTFIT : PLAIN_OUTFIT;
+    return rank === RocketRank.Executive ? EXECUTIVE_OUTFIT : PLAIN_OUTFIT;
   }
   return PLAIN_OUTFIT;
 }

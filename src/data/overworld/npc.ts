@@ -193,6 +193,12 @@ const enum Executive {
   Mars = 8,
   Jupiter = 9,
   Saturn = 10,
+  // 11 and 12 are Colress and Zinzolin, Unova's, on a branch of their own
+  Xerosic = 13,
+  Aliana = 14,
+  Bryony = 15,
+  Celosia = 16,
+  Mable = 17,
 }
 
 export { Executive };
@@ -209,6 +215,11 @@ export const EXECUTIVE_NAMES: Record<Executive, string> = {
   [Executive.Mars]: 'Mars',
   [Executive.Jupiter]: 'Jupiter',
   [Executive.Saturn]: 'Saturn',
+  [Executive.Xerosic]: 'Xerosic',
+  [Executive.Aliana]: 'Aliana',
+  [Executive.Bryony]: 'Bryony',
+  [Executive.Celosia]: 'Celosia',
+  [Executive.Mable]: 'Mable',
 };
 
 export const EXECUTIVE_CHARSETS: Record<Executive, string[]> = {
@@ -223,6 +234,11 @@ export const EXECUTIVE_CHARSETS: Record<Executive, string[]> = {
   [Executive.Mars]: ['characters/dppt/mars'],
   [Executive.Jupiter]: ['characters/dppt/jupiter'],
   [Executive.Saturn]: ['characters/dppt/saturn'],
+  [Executive.Xerosic]: ['characters/xy/xerosic'],
+  [Executive.Aliana]: ['characters/xy/aliana'],
+  [Executive.Bryony]: ['characters/xy/bryony'],
+  [Executive.Celosia]: ['characters/xy/celosia'],
+  [Executive.Mable]: ['characters/xy/mable'],
 };
 
 /** The mark putting one of them down is worth, one to each */
@@ -238,6 +254,11 @@ export const EXECUTIVE_HONORS: Record<Executive, Awards> = {
   [Executive.Mars]: Awards.MarsDefeated,
   [Executive.Jupiter]: Awards.JupiterDefeated,
   [Executive.Saturn]: Awards.SaturnDefeated,
+  [Executive.Xerosic]: Awards.XerosicDefeated,
+  [Executive.Aliana]: Awards.AlianaDefeated,
+  [Executive.Bryony]: Awards.BryonyDefeated,
+  [Executive.Celosia]: Awards.CelosiaDefeated,
+  [Executive.Mable]: Awards.MableDefeated,
 };
 
 /** What each says as they bar the cell */
@@ -253,6 +274,11 @@ export const EXECUTIVE_QUOTES: Record<Executive, string> = {
   [Executive.Mars]: 'You are in the way of a better world. Move, or be moved.',
   [Executive.Jupiter]: 'Do not take this personally. I barely take it personally.',
   [Executive.Saturn]: 'I have my doubts about all this. None of them are about beating you.',
+  [Executive.Xerosic]: 'Fascinating. Let me see how your pokemon hold up under stress.',
+  [Executive.Aliana]: 'The world is ugly, so we are fixing it. You are part of the ugly.',
+  [Executive.Bryony]: 'Calculating your odds. They round down to nothing.',
+  [Executive.Celosia]: 'Only the beautiful get to stay. I will judge whether you do.',
+  [Executive.Mable]: 'We scientists are busy. Let us make this quick and quiet.',
 };
 
 /**

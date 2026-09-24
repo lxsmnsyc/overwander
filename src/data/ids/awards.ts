@@ -142,6 +142,14 @@ const enum Awards {
   KalosChampion = 134,
   /** The king who ended a war with a weapon, met where a champion would be */
   AZDefeated = 135,
+  /** Any one of Team Flare's rank and file put down */
+  FlareGruntDefeated = 136,
+  XerosicDefeated = 137,
+  AlianaDefeated = 138,
+  BryonyDefeated = 139,
+  CelosiaDefeated = 140,
+  MableDefeated = 141,
+  LysandreDefeated = 142,
 }
 
 export default Awards;
@@ -262,6 +270,13 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.DrasnaDefeated]: 'Drasna Defeated',
   [Awards.KalosChampion]: 'Kalos Champion',
   [Awards.AZDefeated]: 'AZ Defeated',
+  [Awards.FlareGruntDefeated]: 'Team Flare Repelled',
+  [Awards.XerosicDefeated]: 'Xerosic Defeated',
+  [Awards.AlianaDefeated]: 'Aliana Defeated',
+  [Awards.BryonyDefeated]: 'Bryony Defeated',
+  [Awards.CelosiaDefeated]: 'Celosia Defeated',
+  [Awards.MableDefeated]: 'Mable Defeated',
+  [Awards.LysandreDefeated]: 'Lysandre Defeated',
 };
 
 /**

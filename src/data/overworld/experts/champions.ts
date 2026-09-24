@@ -1,4 +1,10 @@
-import Awards, { HOENN_HONORS, JOHTO_HONORS, KANTO_HONORS, SINNOH_HONORS } from '../../ids/awards';
+import Awards, {
+  HOENN_HONORS,
+  JOHTO_HONORS,
+  KALOS_HONORS,
+  KANTO_HONORS,
+  SINNOH_HONORS,
+} from '../../ids/awards';
 import { Species } from '../../ids/species';
 
 /**
@@ -12,6 +18,8 @@ const enum Champion {
   Lance = 1,
   Wallace = 2,
   Cynthia = 3,
+  // 4 is Iris, Unova's, on a branch of her own
+  Diantha = 5,
 }
 
 export { Champion };
@@ -21,6 +29,7 @@ export const CHAMPIONS: Champion[] = [
   Champion.Lance,
   Champion.Wallace,
   Champion.Cynthia,
+  Champion.Diantha,
 ];
 
 export const CHAMPION_NAMES: Record<Champion, string> = {
@@ -28,6 +37,7 @@ export const CHAMPION_NAMES: Record<Champion, string> = {
   [Champion.Lance]: 'Lance',
   [Champion.Wallace]: 'Wallace',
   [Champion.Cynthia]: 'Cynthia',
+  [Champion.Diantha]: 'Diantha',
 };
 
 export const CHAMPION_CHARSETS: Record<Champion, string[]> = {
@@ -37,6 +47,7 @@ export const CHAMPION_CHARSETS: Record<Champion, string[]> = {
   // at the top, in both coats he is drawn in
   [Champion.Wallace]: ['characters/rse/wallace', 'characters/oras/wallace'],
   [Champion.Cynthia]: ['characters/dppt/cynthia'],
+  [Champion.Diantha]: ['characters/xy/diantha'],
 };
 
 /** The title a champion's seat is worth */
@@ -45,6 +56,7 @@ export const CHAMPION_TITLES: Record<Champion, Awards> = {
   [Champion.Lance]: Awards.JohtoChampion,
   [Champion.Wallace]: Awards.HoennChampion,
   [Champion.Cynthia]: Awards.SinnohChampion,
+  [Champion.Diantha]: Awards.KalosChampion,
 };
 
 /**
@@ -63,6 +75,7 @@ export const CHAMPION_HONORS: Record<Champion, Awards[]> = {
   [Champion.Lance]: JOHTO_HONORS,
   [Champion.Wallace]: HOENN_HONORS,
   [Champion.Cynthia]: SINNOH_HONORS,
+  [Champion.Diantha]: KALOS_HONORS,
 };
 
 /**
@@ -110,5 +123,15 @@ export const CHAMPION_PARTIES: Record<Champion, Species[]> = {
     Species.Lucario,
     Species.Milotic,
     Species.Garchomp,
+  ],
+  // The six she defends Kalos with, Gardevoir last. Both fossils are
+  // hers, so Tyrantrum and Aurorus stand side by side
+  [Champion.Diantha]: [
+    Species.Hawlucha,
+    Species.Tyrantrum,
+    Species.Aurorus,
+    Species.Gourgeist,
+    Species.Goodra,
+    Species.Gardevoir,
   ],
 };

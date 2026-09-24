@@ -130,6 +130,7 @@ const CHAMPION_LEAGUES: Record<Champion, string> = {
   [Champion.Lance]: 'Johto',
   [Champion.Wallace]: 'Hoenn',
   [Champion.Cynthia]: 'Sinnoh',
+  [Champion.Diantha]: 'Kalos',
 };
 
 /** Which league each seat belongs to, for the copy that names it */
@@ -192,6 +193,8 @@ const CHAMPION_GREETINGS: Record<Champion, string> = {
   [Champion.Wallace]: 'Wallace bows. “Let us make this beautiful, and let us make it brief.”',
   [Champion.Cynthia]:
     'Cynthia closes her book. “I have been waiting for somebody worth the whole team.”',
+  [Champion.Diantha]:
+    'Diantha smiles as if the cameras were rolling. “Shall we give them a scene worth remembering?”',
 };
 
 /**

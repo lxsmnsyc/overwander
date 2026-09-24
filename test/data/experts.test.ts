@@ -382,6 +382,19 @@ describe('type experts', () => {
     expect(CHAMPION_TITLES[Champion.Wallace]).toBe(Awards.HoennChampion);
   });
 
+  it('keeps Synchronoise off a sheet it would rarely land from', () => {
+    // It only reaches what shares a type with the user, teammates included
+    expect(getBestMoves(Species.Gardevoir)).not.toContain(Moves.Synchronoise);
+    for (const build of getBestParty(CHAMPION_PARTIES[Champion.Diantha], 2)) {
+      expect(build.moves).not.toContain(Moves.Synchronoise);
+    }
+  });
+
+  it('crowns Kalos with Diantha, who asks for its own four', () => {
+    expect(CHAMPION_HONORS[Champion.Diantha]).toEqual(KALOS_HONORS);
+    expect(CHAMPION_TITLES[Champion.Diantha]).toBe(Awards.KalosChampion);
+  });
+
   it('seats Kalos’s four on Kalos’s badges', () => {
     for (const member of [
       EliteMember.Malva,

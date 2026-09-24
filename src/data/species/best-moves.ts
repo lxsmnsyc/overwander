@@ -831,6 +831,9 @@ const MOVE_DRAWBACKS: Partial<Record<Moves, number>> = {
   [Moves.FocusPunch]: 0.5,
   // And only against something already asleep
   [Moves.DreamEater]: 0.5,
+  // And only against what shares a type with the user, which most of
+  // the far side does not
+  [Moves.Synchronoise]: 0.25,
   // Paid for later rather than now
   [Moves.FutureSight]: 0.7,
   [Moves.DoomDesire]: 0.7,
@@ -1218,9 +1221,30 @@ function priorityFactor(move: Moves): number {
   return CAST_FRAMES / Math.max(PRIORITY_FRAMES, CAST_FRAMES - priority * PRIORITY_FRAMES);
 }
 
+/** The attacks that also land on any teammate sharing a type with the user */
+const HITS_KIN = new Set<Moves>([Moves.Synchronoise]);
+
+/** Whether a teammate shares a type with this species */
+function hasKin(species: Species, allies: readonly BuildAlly[]): boolean {
+  const own = getSpeciesData(species).types;
+
+  for (const ally of allies) {
+    for (const type of getSpeciesData(ally.species).types) {
+      if (own.includes(type)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 /** What one move is worth to this species, as effective power */
 function moveWorth(species: Species, move: Moves, context: BuildContext): number {
   const data = getMoveData(move);
+
+  if (HITS_KIN.has(move) && hasKin(species, context.allies)) {
+    return 0;
+  }
   const weights = ROLE_WEIGHTS[context.role];
   // A move promising something the rest of the sheet has to keep is
   // worth half of it until the partner is actually there

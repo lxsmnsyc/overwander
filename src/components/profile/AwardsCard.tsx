@@ -266,6 +266,7 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.SieboldDefeated]: '#3f7fc0',
   [Awards.WikstromDefeated]: '#8f9aa8',
   [Awards.DrasnaDefeated]: '#6a5fb0',
+  [Awards.KalosChampion]: '#e0b64f',
   [Awards.AaronDefeated]: '#6fae5a',
   [Awards.BerthaDefeated]: '#b8935a',
   [Awards.FlintDefeated]: '#d9542f',
@@ -317,6 +318,7 @@ const SHELF = ((): Awards[] => {
     Awards.SinnohDexMedal,
     ...KALOS_BADGES,
     ...KALOS_HONORS,
+    Awards.KalosChampion,
     ...FRONTIER_SYMBOLS,
     ...SYNDICATE_HONORS,
   ]);
@@ -482,7 +484,8 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
         {HOENN_BADGES.length} badges. Sinnoh: {sinnoh()} of {SINNOH_BADGES.length} badges, {seats()}{' '}
         of {SINNOH_HONORS.length} of the Elite Four
         {wins().has(Awards.SinnohChampion) ? ', Champion' : ''}. Kalos: {kalos()} of{' '}
-        {KALOS_BADGES.length} badges, {chairs()} of {KALOS_HONORS.length} of the Elite Four.
+        {KALOS_BADGES.length} badges, {chairs()} of {KALOS_HONORS.length} of the Elite Four
+        {wins().has(Awards.KalosChampion) ? ', Champion' : ''}.
       </Meta>
     </div>
   );

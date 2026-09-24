@@ -19,6 +19,9 @@ interface SheetImage {
 }
 
 interface ExtraSheet {
+  /** The whole sheet, which a scaled picture has to scale with it */
+  width: number;
+  height: number;
   images: SheetImage[];
 }
 
@@ -72,7 +75,9 @@ async function fetchSheet(name: string): Promise<ExtraSheet> {
       height: asNumber(entry.height),
     });
   }
-  return { images };
+  const whole = asRecord(described);
+
+  return { width: asNumber(whole.width), height: asNumber(whole.height), images };
 }
 
 export interface ExtraSpriteProps {
@@ -81,6 +86,11 @@ export interface ExtraSpriteProps {
   /** Which of its pictures, by the name the description carries */
   name: string;
   label: string;
+  /**
+   * The longest side, in pixels, for a picture fitted to a box of its
+   * own. Left out, it is drawn at the size it was cut at
+   */
+  size?: number;
   class?: string;
 }
 
@@ -94,6 +104,10 @@ export default function ExtraSprite(props: ExtraSpriteProps): JSX.Element {
     return null;
   };
 
+  /** How far the picture is scaled to fit `size` */
+  const scale = (found: SheetImage): number =>
+    props.size == null ? 1 : props.size / Math.max(1, found.width, found.height);
+
   return (
     <Show when={image()} keyed>
       {(found) => (
@@ -103,10 +117,17 @@ export default function ExtraSprite(props: ExtraSpriteProps): JSX.Element {
           aria-hidden={props.label === '' ? 'true' : undefined}
           class={`inline-block ${props.class ?? ''}`}
           style={{
-            width: `${found.width}px`,
-            height: `${found.height}px`,
+            width: `${found.width * scale(found)}px`,
+            height: `${found.height * scale(found)}px`,
             'background-image': `url(${spriteUrl(`/sprites/extras/${props.sheet}.png`)})`,
-            'background-position': `-${found.x}px -${found.y}px`,
+            'background-position': `-${found.x * scale(found)}px -${found.y * scale(found)}px`,
+            // Only when scaled: drawn as cut, the sheet sits at its own size
+            'background-size':
+              props.size == null
+                ? undefined
+                : `${(sheetOf(props.sheet)?.width ?? 0) * scale(found)}px ${
+                    (sheetOf(props.sheet)?.height ?? 0) * scale(found)
+                  }px`,
             'image-rendering': 'pixelated',
           }}
         />

@@ -210,7 +210,7 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
                 </Show>
                 <Show when={props.spoils?.award}>
                   {(award) => (
-                    <Prize art={<AwardArt award={award()} class="size-6" />}>
+                    <Prize art={<AwardArt award={award()} size={24} />}>
                       {AWARD_NAMES[award()]}
                     </Prize>
                   )}

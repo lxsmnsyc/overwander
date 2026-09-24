@@ -1,5 +1,29 @@
 # overwander
 
+## 4.15.0
+
+### Minor Changes
+
+- 46d2add: Other players walking nearby on the overworld are drawn on the board, in
+  their own charset, a couple of seconds behind where they walked.
+
+### Patch Changes
+
+- 612d57b: Opening a box or a pokemon picker reads only the pokemon that are new or
+  changed since it was last opened, instead of the whole collection.
+- 4afafc8: - On a phone, the catches box's sort and select controls sit under the search rather than squeezing it.
+  - On a phone, the catches box's selection buttons wrap, so Close stays on screen.
+  - On a phone, the portal's town list leaves out the biome so the town names have room.
+- ff045f7: Saved teams load their pokemon in one request instead of one at a time.
+- 475c014: Redrawn sprites, such as the Unova candies, now show up in place of the old ones.
+- 8737c4a: The battle summary is laid out anew:
+
+  - It lists what the fight paid: gold, a badge, items, candy, and the pokemon waiting in the overworld.
+  - The two sides face each other, marked Won or Lost, with each side's share of the damage.
+  - Each pokemon shows its level and the health it finished on, or that it fainted.
+  - The best damage dealer is named under the sides.
+  - Rewards claimed after you leave the battle still arrive as notes in passing.
+
 ## 4.14.0
 
 ### Minor Changes

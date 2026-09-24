@@ -1,0 +1,111 @@
+{
+  "compact": true,
+  "width": 170,
+  "height": 130,
+  "images": [
+    {
+      "name": "Kalos",
+      "x": 96,
+      "y": 0,
+      "width": 36,
+      "height": 43,
+      "sourceWidth": 36,
+      "sourceHeight": 43,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Kalos (1)",
+      "x": 0,
+      "y": 50,
+      "width": 37,
+      "height": 45,
+      "sourceWidth": 37,
+      "sourceHeight": 45,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Kalos (2)",
+      "x": 0,
+      "y": 95,
+      "width": 55,
+      "height": 35,
+      "sourceWidth": 55,
+      "sourceHeight": 35,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Kalos (3)",
+      "x": 132,
+      "y": 0,
+      "width": 38,
+      "height": 42,
+      "sourceWidth": 38,
+      "sourceHeight": 42,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Kalos (4)",
+      "x": 45,
+      "y": 0,
+      "width": 51,
+      "height": 49,
+      "sourceWidth": 51,
+      "sourceHeight": 49,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Kalos (5)",
+      "x": 55,
+      "y": 95,
+      "width": 61,
+      "height": 26,
+      "sourceWidth": 61,
+      "sourceHeight": 26,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Kalos (6)",
+      "x": 37,
+      "y": 50,
+      "width": 42,
+      "height": 45,
+      "sourceWidth": 42,
+      "sourceHeight": 45,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Kalos (7)",
+      "x": 0,
+      "y": 0,
+      "width": 45,
+      "height": 50,
+      "sourceWidth": 45,
+      "sourceHeight": 50,
+      "trim": [
+        0,
+        0
+      ]
+    }
+  ]
+}

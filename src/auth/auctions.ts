@@ -57,6 +57,9 @@ export type { AuctionOffer, AuctionRecord, AuctionTerms, PlayerBid } from './auc
 
 const AUCTION_TABLE = 'auctions';
 
+/** What a player is told when the auction house cannot be read, in place of the store's own message */
+const AUCTIONS_UNREADABLE = 'Could not read the auction house just now.';
+
 const AUCTION_COLUMNS =
   'id, seller, lot, item, caught_id, starting_bid, increment, bid, bidder, ' +
   'created_at, ends_at, utc_offset, settled';
@@ -178,10 +181,10 @@ async function readMyAuctions(uid: string): Promise<MyAuctions> {
 
   // Thrown rather than read as empty, so the watch keeps its lots and filter
   if (selling.error != null) {
-    throw new Error(selling.error.message);
+    throw new Error(AUCTIONS_UNREADABLE);
   }
   if (bidding.error != null) {
-    throw new Error(bidding.error.message);
+    throw new Error(AUCTIONS_UNREADABLE);
   }
 
   const lots: [string, AuctionRecord][] = [];

@@ -109,9 +109,9 @@ import {
   BuildRole,
   SETUP_MOVES,
   getBestMoves,
+  isCoreRole,
 } from '../../src/data/species/best-moves';
 import {
-  CORE_COUNT,
   assignBuildRoles,
   getBestAbilities,
   getBestBuild,
@@ -120,6 +120,14 @@ import {
 } from '../../src/data/species/best-build';
 import { NATURE_EFFECTS } from '../../src/data/ids/natures';
 import { isRecoilMove } from '../../src/data/moves/recoil';
+
+const SUPPORT_ROLES = [
+  BuildRole.Healer,
+  BuildRole.Protector,
+  BuildRole.Redirector,
+  BuildRole.FieldControl,
+];
+const ALL_ROLES = [BuildRole.SpecialCore, BuildRole.PhysicalCore, ...SUPPORT_ROLES];
 
 // Registry-only tests: no battle is involved, the data just has to
 // be registered (re-registration is an idempotent map overwrite)
@@ -702,7 +710,7 @@ describe('type experts', () => {
     const core = getExpertHeldItems(Species.Gengar, 2, { moves, best: true });
     const support = getExpertHeldItems(Species.Gengar, 2, {
       moves,
-      role: BuildRole.Support,
+      role: BuildRole.Protector,
       best: true,
     });
 
@@ -747,7 +755,7 @@ describe('type experts', () => {
     for (const species of getRentalPool()) {
       const name = getSpeciesData(species).name;
       const legal = new Set(getLearnableMoves(species));
-      const support = getBestMoves(species, [], { role: BuildRole.Support });
+      const support = getBestMoves(species, [], { role: BuildRole.Protector });
       const quiet = (moves: Moves[]): number =>
         moves.filter((move) => getMoveData(move).category === MoveCategories.Status).length;
 
@@ -770,7 +778,7 @@ describe('type experts', () => {
     // fight open it reaches for what holds it open
     const core = getBestMoves(Species.Blissey, [Abilities.NaturalCure]);
     const support = getBestMoves(Species.Blissey, [Abilities.NaturalCure], {
-      role: BuildRole.Support,
+      role: BuildRole.Redirector,
     });
 
     expect(support).not.toEqual(core);
@@ -896,7 +904,7 @@ describe('type experts', () => {
   it('spends a support slot on the two in front of it', () => {
     // Every fight here stands the whole party up at once, so a move
     // aimed at an ally has somebody to aim at
-    const support = getBestMoves(Species.Espeon, [], { role: BuildRole.Support });
+    const support = getBestMoves(Species.Espeon, [], { role: BuildRole.Healer });
 
     expect(support).toContain(Moves.HelpingHand);
     // A core spending a cast on somebody else's hit is a core not
@@ -905,7 +913,7 @@ describe('type experts', () => {
 
     // And nothing passes a baton with nothing raised to pass
     for (const species of getRentalPool()) {
-      for (const role of [BuildRole.Core, BuildRole.Support]) {
+      for (const role of ALL_ROLES) {
         const built = getBestMoves(species, [], { role });
 
         if (built.includes(Moves.BatonPass)) {
@@ -920,7 +928,7 @@ describe('type experts', () => {
 
   it('never promises what the rest of the sheet cannot keep', () => {
     for (const species of getRentalPool()) {
-      for (const role of [BuildRole.Core, BuildRole.Support]) {
+      for (const role of ALL_ROLES) {
         const built = getBestMoves(species, [], { role });
         const name = getSpeciesData(species).name;
 
@@ -950,12 +958,14 @@ describe('type experts', () => {
 
   it('awakens the abilities the job asks for', () => {
     // The sky it brings with it is the whole of what a Groudon is
-    expect(getBestAbilities(Species.Groudon, 1, BuildRole.Core)).toEqual([Abilities.Drought]);
+    expect(getBestAbilities(Species.Groudon, 1, BuildRole.PhysicalCore)).toEqual([
+      Abilities.Drought,
+    ]);
 
     // The same species leans one way as a core and the other behind
     // one: what sharpens a hit against what survives one
-    expect(getBestAbilities(Species.Salamence, 1, BuildRole.Core)).not.toEqual(
-      getBestAbilities(Species.Salamence, 1, BuildRole.Support),
+    expect(getBestAbilities(Species.Salamence, 1, BuildRole.PhysicalCore)).not.toEqual(
+      getBestAbilities(Species.Salamence, 1, BuildRole.Redirector),
     );
 
     // A species with fewer than asked carries what it has, and never
@@ -965,7 +975,7 @@ describe('type experts', () => {
         ...getSpeciesAbilityPools(species).regular,
         ...getSpeciesAbilityPools(species).hidden,
       ]);
-      const held = getBestAbilities(species, 3, BuildRole.Support);
+      const held = getBestAbilities(species, 3, BuildRole.Protector);
 
       expect(held.length, getSpeciesData(species).name).toBe(Math.min(3, pool.size));
       expect(new Set(held).size).toBe(held.length);
@@ -979,7 +989,9 @@ describe('type experts', () => {
     // Overheat halves the stat it just fired from, and a fight here is
     // cast after cast rather than turn after turn, so its face value
     // is a price paid once and collected once
-    const arcanine = getBestMoves(Species.Arcanine, [Abilities.Intimidate]);
+    const arcanine = getBestMoves(Species.Arcanine, [Abilities.Intimidate], {
+      role: BuildRole.SpecialCore,
+    });
 
     expect(arcanine).toContain(Moves.FireBlast);
     expect(arcanine).not.toContain(Moves.Overheat);
@@ -999,9 +1011,10 @@ describe('type experts', () => {
     const tempo = {
       species: Species.Lickilicky,
       abilities: [Abilities.OwnTempo],
-      role: BuildRole.Core,
+      role: BuildRole.PhysicalCore,
     };
-    const support = { role: BuildRole.Support };
+    // Raising a teammate is the healer's job
+    const support = { role: BuildRole.Healer };
 
     // A Swagger is 2 stages of Attack for a teammate that cannot be confused
     expect(getBestMoves(Species.Umbreon, [], support)).not.toContain(Moves.Swagger);
@@ -1042,14 +1055,14 @@ describe('type experts', () => {
     // none is a sheet it does nothing on. The two are picked apart,
     // so the abilities are priced again once the moves are known
     expect(
-      getBestAbilities(Species.Arcanine, 1, BuildRole.Core, undefined, [Moves.DoubleEdge]),
+      getBestAbilities(Species.Arcanine, 1, BuildRole.PhysicalCore, undefined, [Moves.DoubleEdge]),
     ).toEqual([Abilities.Reckless]);
     expect(
-      getBestAbilities(Species.Arcanine, 1, BuildRole.Core, undefined, [Moves.Overheat]),
+      getBestAbilities(Species.Arcanine, 1, BuildRole.PhysicalCore, undefined, [Moves.Overheat]),
     ).not.toEqual([Abilities.Reckless]);
 
     // And what the builder actually fields agrees with its own sheet
-    const built = getBestBuild(Species.Arcanine, BuildRole.Core, 2);
+    const built = getBestBuild(Species.Arcanine, BuildRole.PhysicalCore, 2);
 
     if (built.abilities.includes(Abilities.Reckless)) {
       expect(built.moves.some((move) => isRecoilMove(move))).toBe(true);
@@ -1057,8 +1070,8 @@ describe('type experts', () => {
   });
 
   it('picks the nature the sheet it built actually wants', () => {
-    const machamp = getBestBuild(Species.Machamp, BuildRole.Core, 1);
-    const gengar = getBestBuild(Species.Gengar, BuildRole.Core, 1);
+    const machamp = getBestBuild(Species.Machamp, BuildRole.PhysicalCore, 1);
+    const gengar = getBestBuild(Species.Gengar, BuildRole.SpecialCore, 1);
 
     // The drop belongs on the side it never casts from
     expect(NATURE_EFFECTS[machamp.nature]?.up).toBe(Stats.Attack);
@@ -1069,26 +1082,22 @@ describe('type experts', () => {
     // A support is bought defence rather than power, and never pays
     // for it with the defence it is there for
     for (const species of getRentalPool()) {
-      const nature = getBestNature(
-        species,
-        BuildRole.Support,
-        getBestMoves(species, [], {
-          role: BuildRole.Support,
-        }),
-      );
-      const effect = NATURE_EFFECTS[nature];
-      const name = getSpeciesData(species).name;
+      for (const role of SUPPORT_ROLES) {
+        const nature = getBestNature(species, role, getBestMoves(species, [], { role }));
+        const effect = NATURE_EFFECTS[nature];
+        const name = getSpeciesData(species).name;
 
-      expect(effect, name).toBeDefined();
-      expect([Stats.Defense, Stats.SpecialDefense, Stats.Speed], name).toContain(effect?.up);
+        expect(effect, name).toBeDefined();
+        expect([Stats.Defense, Stats.SpecialDefense, Stats.Speed], name).toContain(effect?.up);
+      }
     }
     // And the same species answers the same way twice
-    expect(getBestNature(Species.Machamp, BuildRole.Core)).toBe(
-      getBestNature(Species.Machamp, BuildRole.Core),
+    expect(getBestNature(Species.Machamp, BuildRole.PhysicalCore)).toBe(
+      getBestNature(Species.Machamp, BuildRole.PhysicalCore),
     );
   });
 
-  it('fields two cores behind four supports', () => {
+  it('gives each of six its own job', () => {
     const six = [
       Species.Blissey,
       Species.Skarmory,
@@ -1099,19 +1108,38 @@ describe('type experts', () => {
     ];
     const roles = assignBuildRoles(six);
 
-    expect(roles.filter((role) => role === BuildRole.Core)).toHaveLength(CORE_COUNT);
-    // Read off the species rather than the slot: the two that can
-    // take something off the field are the two asked to
-    expect(roles[six.indexOf(Species.Salamence)]).toBe(BuildRole.Core);
-    expect(roles[six.indexOf(Species.Blissey)]).toBe(BuildRole.Support);
+    // One of each: a core on either side of the split, and the four
+    // supporting jobs behind them
+    expect([...roles].sort((one, two) => one - two)).toEqual(
+      [...ALL_ROLES].sort((one, two) => one - two),
+    );
+    // Read off the species rather than the slot
+    expect(roles[six.indexOf(Species.Gengar)]).toBe(BuildRole.SpecialCore);
+    expect(roles[six.indexOf(Species.Salamence)]).toBe(BuildRole.PhysicalCore);
+    expect(isCoreRole(roles[six.indexOf(Species.Blissey)])).toBe(false);
 
-    // A house that fields three has one, since two attackers and one
-    // support is not a plan
+    // A house that fields three has one core, since two attackers and
+    // one support is not a plan
     expect(
-      assignBuildRoles([Species.Blissey, Species.Salamence, Species.Skarmory]).filter(
-        (role) => role === BuildRole.Core,
+      assignBuildRoles([Species.Blissey, Species.Salamence, Species.Skarmory]).filter((role) =>
+        isCoreRole(role),
       ),
     ).toHaveLength(1);
+  });
+
+  it('hands the healing to the frailest that can and the hits to the bulkiest', () => {
+    // Chansey and Clefable can both heal; Chansey is the one that can
+    // take a hit, so Clefable heals and Chansey draws fire
+    const roles = assignBuildRoles([
+      Species.Gengar,
+      Species.Machamp,
+      Species.Clefable,
+      Species.Chansey,
+      Species.Skarmory,
+      Species.Jynx,
+    ]);
+
+    expect(roles[3]).not.toBe(BuildRole.Healer);
   });
 
   it('keeps every written override to something its species can learn', () => {

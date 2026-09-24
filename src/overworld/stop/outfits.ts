@@ -27,20 +27,32 @@ export interface StopOutfit {
    * between a badge and a crown
    */
   best?: boolean;
+  /** Whether one of the party may carry a Mega Stone */
+  megas?: boolean;
 }
 
 /** What a duelling trainer and a Team Rocket grunt field: what they caught. */
 export const PLAIN_OUTFIT: StopOutfit = { abilities: 1, items: 0, training: PLAIN_TRAINING };
 
 /** A gym leader's party is geared but not doubled. */
-export const GYM_OUTFIT: StopOutfit = { abilities: 1, items: 1, training: GYM_TRAINING };
+export const GYM_OUTFIT: StopOutfit = {
+  abilities: 1,
+  items: 1,
+  training: GYM_TRAINING,
+  megas: true,
+};
 
 /**
  * An Ace Trainer's: what they caught, raised the way the Elite Four
  * raise theirs. Nothing they field is beyond what a walk could have
  * met, and all of it is fast and hard to drop
  */
-export const ACE_OUTFIT: StopOutfit = { abilities: 1, items: 0, training: ELITE_TRAINING };
+export const ACE_OUTFIT: StopOutfit = {
+  abilities: 1,
+  items: 0,
+  training: ELITE_TRAINING,
+  megas: true,
+};
 
 /** The Elite Four's, and the executives who match them. */
 export const ELITE_OUTFIT: StopOutfit = {
@@ -48,6 +60,7 @@ export const ELITE_OUTFIT: StopOutfit = {
   items: 1,
   training: ELITE_TRAINING,
   best: true,
+  megas: true,
 };
 
 /** A champion's, and Giovanni's: two of everything. */
@@ -56,6 +69,7 @@ export const CHAMPION_OUTFIT: StopOutfit = {
   items: 2,
   training: CHAMPION_TRAINING,
   best: true,
+  megas: true,
 };
 
 /** A legend's: three of everything, on six at the ceiling. */
@@ -64,6 +78,7 @@ export const LEGEND_OUTFIT: StopOutfit = {
   items: 3,
   training: LEGEND_TRAINING,
   best: true,
+  megas: true,
 };
 
 /**
@@ -71,6 +86,9 @@ export const LEGEND_OUTFIT: StopOutfit = {
  * are the house's business. The Pyramid bars them on both sides, and
  * the caller strips them there rather than here
  */
+/** A syndicate's boss fights at a champion's strength, without a Mega */
+export const BOSS_OUTFIT: StopOutfit = { ...CHAMPION_OUTFIT, megas: false };
+
 export const FRONTIER_OUTFIT: StopOutfit = {
   abilities: 2,
   items: 2,
@@ -102,7 +120,7 @@ export function stopOutfit(
   }
   if (landmark === Landmark.TeamRocket) {
     if (rank === RocketRank.Boss) {
-      return CHAMPION_OUTFIT;
+      return BOSS_OUTFIT;
     }
     return rank === RocketRank.Executive ? ELITE_OUTFIT : PLAIN_OUTFIT;
   }

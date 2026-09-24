@@ -4,7 +4,8 @@ import AleaRNG from '../../../src/core/alea';
 import Abilities from '../../../src/data/ids/abilities';
 import registerAbilities from '../../../src/data/abilities';
 import registerBiomeSpawns, { getBiomeRoster, spawnRanks } from '../../../src/data/biome';
-import { BuildRole } from '../../../src/data/species/best-moves';
+import { isCoreRole } from '../../../src/data/species/best-moves';
+import { getStoneMega } from '../../../src/data/items/mega-stones';
 import {
   CORE_COUNT,
   assignBuildRoles,
@@ -46,10 +47,12 @@ import {
 import {
   ACE_OUTFIT,
   CHAMPION_GOLD,
+  BOSS_OUTFIT,
   CHAMPION_OUTFIT,
   CHAMPION_PARTY_LEVELS,
   ELITE_GOLD,
   ELITE_OUTFIT,
+  FRONTIER_OUTFIT,
   ELITE_PARTY_LEVELS,
   GIOVANNI_GOLD,
   GIOVANNI_PARTY_LEVELS,
@@ -563,7 +566,7 @@ describe('world', () => {
     expect(stopOutfit(Landmark.EliteFour, RocketRank.Grunt)).toEqual(ELITE_OUTFIT);
     expect(stopOutfit(Landmark.TeamRocket, RocketRank.Executive)).toEqual(ELITE_OUTFIT);
     expect(stopOutfit(Landmark.Champion, RocketRank.Grunt)).toEqual(CHAMPION_OUTFIT);
-    expect(stopOutfit(Landmark.TeamRocket, RocketRank.Boss)).toEqual(CHAMPION_OUTFIT);
+    expect(stopOutfit(Landmark.TeamRocket, RocketRank.Boss)).toEqual(BOSS_OUTFIT);
     // And the one rung above the league, which is three of everything
     expect(stopOutfit(Landmark.Champion, RocketRank.Grunt, true)).toEqual(LEGEND_OUTFIT);
 
@@ -663,7 +666,7 @@ describe('world', () => {
       ELITE_OUTFIT.abilities,
     );
 
-    expect(roles.filter((role) => role === BuildRole.Core)).toHaveLength(
+    expect(roles.filter((role) => isCoreRole(role))).toHaveLength(
       Math.min(CORE_COUNT, party.length),
     );
 
@@ -673,7 +676,13 @@ describe('world', () => {
       // nature those moves want
       expect(member.abilities, getSpeciesData(member.species).name).toEqual(composed[at].abilities);
       expect(member.moves).toEqual(composed[at].moves);
-      expect(member.nature).toBe(getBestNature(member.species, roles[at], member.moves));
+      // The one carrying a Mega Stone is natured for the Mega it fights as
+      let shape = member.species;
+
+      for (const item of member.items) {
+        shape = getStoneMega(item) ?? shape;
+      }
+      expect(member.nature).toBe(getBestNature(shape, roles[at], member.moves));
     }
 
     // A rolled party has no jobs to hand out, so nothing about it
@@ -683,6 +692,59 @@ describe('world', () => {
     for (const [at, member] of rolled.entries()) {
       expect(member.nature).toBe(
         createStopSnapshot(snapshot, spawns[at], false, ELITE_PARTY_LEVELS, PLAIN_OUTFIT).nature,
+      );
+    }
+  });
+
+  it('hands one Mega Stone to a core, where the rung fields Megas', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getRocketStops().size > 0,
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const snapshot = new ChunkSnapshot(chunk, 0);
+    // Two lines with a Mega: Charizard is the special core, Audino a support
+    const spawns: [Species, number, number][] = [
+      [Species.Audino, 11, 21],
+      [Species.Charizard, 12, 22],
+      [Species.Machamp, 13, 23],
+      [Species.Blissey, 14, 24],
+      [Species.Skarmory, 15, 25],
+      [Species.Chansey, 16, 26],
+    ];
+    const stones = (party: CatchSnapshot[]): number[] => {
+      const held: number[] = [];
+
+      for (const [at, member] of party.entries()) {
+        for (const item of member.items) {
+          if (getStoneMega(item) != null) {
+            held.push(at);
+          }
+        }
+      }
+      return held;
+    };
+
+    for (const outfit of [ACE_OUTFIT, GYM_OUTFIT, ELITE_OUTFIT, CHAMPION_OUTFIT, LEGEND_OUTFIT]) {
+      const party = createStopParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, outfit);
+
+      // One stone, since a team Mega Evolves once, and on the core
+      expect(stones(party)).toEqual([1]);
+      // An outfit with no item to spare still makes room for it
+      expect(party[1].items.length).toBe(Math.max(1, outfit.items));
+      expect(getSlots(party[1].slots, Slots.Item)).toBe(Math.max(1, outfit.items));
+    }
+
+    // A syndicate's boss, a Frontier house and everybody below an ace field none
+    for (const outfit of [BOSS_OUTFIT, FRONTIER_OUTFIT, PLAIN_OUTFIT]) {
+      expect(stones(createStopParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, outfit))).toEqual(
+        [],
       );
     }
   });

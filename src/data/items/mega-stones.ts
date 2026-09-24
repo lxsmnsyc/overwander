@@ -1,5 +1,5 @@
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { Species } from '../ids/species';
+import { Species, getBaseFormSpecies } from '../ids/species';
 import { registerItem } from './__create';
 
 /**
@@ -262,6 +262,18 @@ export const MEGA_STONE_RESALE = 2000;
 /** The Mega this stone puts its holder in, or null for everything else in the bag */
 export function getStoneMega(item: Items): Species | null {
   return MEGA_STONES.get(item)?.mega ?? null;
+}
+
+/** Every stone this species can hold for a Mega of its own: two for a Charizard, none for most */
+export function getSpeciesStones(species: Species): Items[] {
+  const stones: Items[] = [];
+
+  for (const [item, stone] of MEGA_STONES) {
+    if (getBaseFormSpecies(stone.mega) === species) {
+      stones.push(item);
+    }
+  }
+  return stones;
 }
 
 /** The stone that puts a pokemon in this Mega, or null for anything that is not one */

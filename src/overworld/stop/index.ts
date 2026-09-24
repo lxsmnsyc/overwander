@@ -3,8 +3,25 @@ import type { CatchSnapshot } from '../../auth/catch-snapshot';
 import { getMaxHealth } from '../../auth/health';
 import { Slots, defaultSlots, withSlots } from '../../data/constants/slots';
 import { getExpertHeldItems } from '../../data/items/expert-loadout';
-import { BuildRole } from '../../data/species/best-moves';
-import { type BestBuild, getBestBuild, getBestParty } from '../../data/species/best-build';
+import {
+  type BuildRole,
+  coreCategory,
+  coreRoleOf,
+  isCoreRole,
+} from '../../data/species/best-moves';
+import {
+  type BestBuild,
+  assignBuildRoles,
+  getBestBuild,
+  getBestNature,
+  getBestParty,
+} from '../../data/species/best-build';
+import type { Items } from '../../data/ids/items';
+import type { Species } from '../../data/ids/species';
+import { getSpeciesStones, getStoneMega } from '../../data/items/mega-stones';
+import { STAT_ORDER, Stats } from '../../data/constants/stats';
+import { MoveCategories } from '../../data/ids/moves';
+import { getSpeciesData } from '../../data/species';
 import Abilities from '../../data/ids/abilities';
 import type ChunkSnapshot from '../chunk-snapshot';
 import type { Spawn } from '../chunk-snapshot';
@@ -64,7 +81,7 @@ export function createStopSnapshot(
   // the nature those moves want, and gear that follows all of it
   const built =
     outfit.best === true
-      ? (composed ?? getBestBuild(fielded.species, BuildRole.Core, outfit.abilities))
+      ? (composed ?? getBestBuild(fielded.species, coreRoleOf(fielded.species), outfit.abilities))
       : undefined;
   // A set, because a species with fewer abilities than the outfit
   // asks for carries fewer, and a shadow's own mark rides free of the
@@ -164,7 +181,121 @@ export function createStopParty(
   for (const [at, spawn] of spawns.entries()) {
     party.push(createStopSnapshot(snapshot, spawn, shadow, levels, outfit, composed?.[at]));
   }
+  if (outfit.megas === true) {
+    handMegaStone(party, outfit, composed);
+  }
   return party;
+}
+
+function statTotal(species: Species): number {
+  let total = 0;
+
+  for (const stat of STAT_ORDER) {
+    total += getSpeciesData(species).stats[stat];
+  }
+  return total;
+}
+
+/**
+ * Which of a species' stones suits the job it was given: a core takes
+ * the Mega that hits from its own side of the split, and otherwise the
+ * one with the bigger stat total
+ */
+function stoneFor(species: Species, role: BuildRole): Items | null {
+  const leans = coreCategory(role);
+  let best: Items | null = null;
+  let bestWorth = Number.NEGATIVE_INFINITY;
+
+  for (const stone of getSpeciesStones(species)) {
+    const mega = getStoneMega(stone);
+
+    if (mega == null) {
+      continue;
+    }
+
+    const stats = getSpeciesData(mega).stats;
+    const swings = stats[Stats.Attack] > stats[Stats.SpecialAttack];
+    const fits = leans == null || (leans === MoveCategories.Physical) === swings ? 1_000 : 0;
+    const worth = fits + statTotal(mega);
+
+    if (worth > bestWorth) {
+      best = stone;
+      bestWorth = worth;
+    }
+  }
+  return best;
+}
+
+/**
+ * One member carries a Mega Stone, since a team Mega Evolves once.
+ * The cores come first; among them, and among the rest where no core
+ * has one, the pick is the one the battle would evolve: highest level,
+ * then the bigger Mega. The stone takes the member's first item slot,
+ * and a built member is re-natured for the Mega it fights as
+ */
+function handMegaStone(
+  party: CatchSnapshot[],
+  outfit: StopOutfit,
+  composed: BestBuild[] | undefined,
+): void {
+  const species: Species[] = [];
+
+  for (const member of party) {
+    species.push(member.species);
+  }
+
+  const roles = composed == null ? assignBuildRoles(species) : [];
+
+  for (const build of composed ?? []) {
+    roles.push(build.role);
+  }
+
+  let chosen: { at: number; stone: Items; core: boolean; level: number; total: number } | null =
+    null;
+
+  for (const [at, member] of party.entries()) {
+    const role = roles[at] ?? coreRoleOf(member.species);
+    const stone = stoneFor(member.species, role);
+    const mega = stone == null ? null : getStoneMega(stone);
+
+    if (stone == null || mega == null) {
+      continue;
+    }
+
+    const candidate = {
+      at,
+      stone,
+      core: isCoreRole(role),
+      level: member.level,
+      total: statTotal(mega),
+    };
+
+    if (
+      chosen == null ||
+      (candidate.core && !chosen.core) ||
+      (candidate.core === chosen.core &&
+        (candidate.level > chosen.level ||
+          (candidate.level === chosen.level && candidate.total > chosen.total)))
+    ) {
+      chosen = candidate;
+    }
+  }
+  if (chosen == null) {
+    return;
+  }
+
+  const member = party[chosen.at];
+  const items = [chosen.stone, ...member.items].slice(0, Math.max(1, outfit.items));
+  const mega = getStoneMega(chosen.stone);
+  const built = composed?.[chosen.at];
+
+  party[chosen.at] = {
+    ...member,
+    items,
+    nature:
+      built == null || mega == null ? member.nature : getBestNature(mega, built.role, member.moves),
+    slots: withSlots(member.slots, Slots.Item, Math.max(1, items.length)),
+  };
 }
 
 export {
@@ -217,6 +348,7 @@ export {
 export type { StopTraining } from './training';
 export {
   ACE_OUTFIT,
+  BOSS_OUTFIT,
   CHAMPION_OUTFIT,
   ELITE_OUTFIT,
   FRONTIER_OUTFIT,

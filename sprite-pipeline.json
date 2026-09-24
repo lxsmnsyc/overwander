@@ -4585,6 +4585,18 @@
         "bytes": 1340
       }
     },
+    "public/sprites/overworld/characters/xy/ace-trainer-f/image.png": {
+      "digest": "e4da6ad08b679985",
+      "bytes": 1169,
+      "width": 54,
+      "height": 100,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1169,
+        "bytes": 1169
+      }
+    },
     "public/sprites/overworld/characters/xy/ace-trainer/image.png": {
       "digest": "f810155d9dfdb8f5",
       "bytes": 1281,
@@ -4595,6 +4607,18 @@
         "as": "already compact",
         "was": 1281,
         "bytes": 1281
+      }
+    },
+    "public/sprites/overworld/characters/xy/aliana/image.png": {
+      "digest": "8673ce53e0c2412e",
+      "bytes": 1145,
+      "width": 54,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1145,
+        "bytes": 1145
       }
     },
     "public/sprites/overworld/characters/xy/artist-f/image.png": {
@@ -4633,6 +4657,18 @@
         "bytes": 1420
       }
     },
+    "public/sprites/overworld/characters/xy/az/image.png": {
+      "digest": "9f904081731279d2",
+      "bytes": 1615,
+      "width": 54,
+      "height": 120,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1615,
+        "bytes": 1615
+      }
+    },
     "public/sprites/overworld/characters/xy/backpacker/image.png": {
       "digest": "a30bb4cfe1660bf5",
       "bytes": 1567,
@@ -4643,6 +4679,18 @@
         "as": "already compact",
         "was": 1567,
         "bytes": 1567
+      }
+    },
+    "public/sprites/overworld/characters/xy/battle-girl/image.png": {
+      "digest": "63f27652ae81d7a1",
+      "bytes": 1315,
+      "width": 72,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1315,
+        "bytes": 1315
       }
     },
     "public/sprites/overworld/characters/xy/beauty/image.png": {
@@ -4705,6 +4753,18 @@
         "bytes": 1427
       }
     },
+    "public/sprites/overworld/characters/xy/bryony/image.png": {
+      "digest": "d8627f52268ceb6a",
+      "bytes": 1162,
+      "width": 60,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1162,
+        "bytes": 1162
+      }
+    },
     "public/sprites/overworld/characters/xy/butler/image.png": {
       "digest": "06c2de941308f53a",
       "bytes": 1257,
@@ -4741,6 +4801,18 @@
         "bytes": 1546
       }
     },
+    "public/sprites/overworld/characters/xy/celosia/image.png": {
+      "digest": "5ed48c29a120e022",
+      "bytes": 1122,
+      "width": 54,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1122,
+        "bytes": 1122
+      }
+    },
     "public/sprites/overworld/characters/xy/chef/image.png": {
       "digest": "12fd41a42213aee7",
       "bytes": 1194,
@@ -4763,6 +4835,42 @@
         "as": "already compact",
         "was": 1360,
         "bytes": 1360
+      }
+    },
+    "public/sprites/overworld/characters/xy/clerk/image.png": {
+      "digest": "bf0426c39cf672f9",
+      "bytes": 1197,
+      "width": 54,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1197,
+        "bytes": 1197
+      }
+    },
+    "public/sprites/overworld/characters/xy/cyclist/image.png": {
+      "digest": "ab8179a1071b1b5d",
+      "bytes": 1150,
+      "width": 72,
+      "height": 100,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1150,
+        "bytes": 1150
+      }
+    },
+    "public/sprites/overworld/characters/xy/dexio/image.png": {
+      "digest": "40d7f7f4e515f243",
+      "bytes": 1116,
+      "width": 54,
+      "height": 100,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1116,
+        "bytes": 1116
       }
     },
     "public/sprites/overworld/characters/xy/diantha/image.png": {
@@ -4789,6 +4897,30 @@
         "bytes": 1472
       }
     },
+    "public/sprites/overworld/characters/xy/emma/image.png": {
+      "digest": "1688fc1b46e83765",
+      "bytes": 1422,
+      "width": 81,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1422,
+        "bytes": 1422
+      }
+    },
+    "public/sprites/overworld/characters/xy/essentia/image.png": {
+      "digest": "077d9aba43f5abdb",
+      "bytes": 1142,
+      "width": 51,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1142,
+        "bytes": 1142
+      }
+    },
     "public/sprites/overworld/characters/xy/fairy-tale-girl/image.png": {
       "digest": "ba06ea55bb34f73d",
       "bytes": 991,
@@ -4811,6 +4943,18 @@
         "as": "already compact",
         "was": 1159,
         "bytes": 1159
+      }
+    },
+    "public/sprites/overworld/characters/xy/flare-admin-f/image.png": {
+      "digest": "9da997a9bbcd6f24",
+      "bytes": 1353,
+      "width": 57,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1353,
+        "bytes": 1353
       }
     },
     "public/sprites/overworld/characters/xy/flare-admin/image.png": {
@@ -4849,6 +4993,42 @@
         "bytes": 1443
       }
     },
+    "public/sprites/overworld/characters/xy/furisode-girl-kali/image.png": {
+      "digest": "c3732b6ee27513ed",
+      "bytes": 1253,
+      "width": 78,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1253,
+        "bytes": 1253
+      }
+    },
+    "public/sprites/overworld/characters/xy/furisode-girl-katherine/image.png": {
+      "digest": "a71cf415c3bdaee3",
+      "bytes": 1198,
+      "width": 75,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1198,
+        "bytes": 1198
+      }
+    },
+    "public/sprites/overworld/characters/xy/furisode-girl-linnea/image.png": {
+      "digest": "707345ae7706eaa8",
+      "bytes": 1119,
+      "width": 54,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1119,
+        "bytes": 1119
+      }
+    },
     "public/sprites/overworld/characters/xy/furisode-girl/image.png": {
       "digest": "1f4e1d48f06c793c",
       "bytes": 1443,
@@ -4873,6 +5053,18 @@
         "bytes": 1181
       }
     },
+    "public/sprites/overworld/characters/xy/gentleman/image.png": {
+      "digest": "4624f850a18511fc",
+      "bytes": 1004,
+      "width": 54,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1004,
+        "bytes": 1004
+      }
+    },
     "public/sprites/overworld/characters/xy/grant/image.png": {
       "digest": "ebd3a8b45f0b3fe1",
       "bytes": 1406,
@@ -4895,6 +5087,18 @@
         "as": "already compact",
         "was": 1716,
         "bytes": 1716
+      }
+    },
+    "public/sprites/overworld/characters/xy/gym-guy/image.png": {
+      "digest": "4b39c23e8d0f1d30",
+      "bytes": 1257,
+      "width": 60,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1257,
+        "bytes": 1257
       }
     },
     "public/sprites/overworld/characters/xy/harmony/image.png": {
@@ -5017,6 +5221,18 @@
         "bytes": 1329
       }
     },
+    "public/sprites/overworld/characters/xy/mable/image.png": {
+      "digest": "4148d42be7e949ed",
+      "bytes": 1228,
+      "width": 63,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1228,
+        "bytes": 1228
+      }
+    },
     "public/sprites/overworld/characters/xy/madame/image.png": {
       "digest": "2470b31cb64b19fb",
       "bytes": 1307,
@@ -5053,6 +5269,42 @@
         "bytes": 1346
       }
     },
+    "public/sprites/overworld/characters/xy/man-1/image.png": {
+      "digest": "d382af0489517ef0",
+      "bytes": 1106,
+      "width": 54,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1106,
+        "bytes": 1106
+      }
+    },
+    "public/sprites/overworld/characters/xy/man-2/image.png": {
+      "digest": "0a5e8466f1c07a9a",
+      "bytes": 1026,
+      "width": 51,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1026,
+        "bytes": 1026
+      }
+    },
+    "public/sprites/overworld/characters/xy/man-3/image.png": {
+      "digest": "dec919e460597827",
+      "bytes": 1036,
+      "width": 54,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1036,
+        "bytes": 1036
+      }
+    },
     "public/sprites/overworld/characters/xy/monsieur/image.png": {
       "digest": "3ca8ce58d6507f89",
       "bytes": 1164,
@@ -5063,6 +5315,30 @@
         "as": "already compact",
         "was": 1164,
         "bytes": 1164
+      }
+    },
+    "public/sprites/overworld/characters/xy/mr-bonding/image.png": {
+      "digest": "d6e5a643c8b0bbf8",
+      "bytes": 1095,
+      "width": 54,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1095,
+        "bytes": 1095
+      }
+    },
+    "public/sprites/overworld/characters/xy/mystery-gift-girl/image.png": {
+      "digest": "f9759502e2e2a513",
+      "bytes": 1134,
+      "width": 57,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1134,
+        "bytes": 1134
       }
     },
     "public/sprites/overworld/characters/xy/olympia/image.png": {
@@ -5099,6 +5375,18 @@
         "as": "already compact",
         "was": 1272,
         "bytes": 1272
+      }
+    },
+    "public/sprites/overworld/characters/xy/phil/image.png": {
+      "digest": "37628d2de349a7a3",
+      "bytes": 1209,
+      "width": 60,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1209,
+        "bytes": 1209
       }
     },
     "public/sprites/overworld/characters/xy/poke-fan-f/image.png": {
@@ -5147,6 +5435,30 @@
         "as": "already compact",
         "was": 963,
         "bytes": 963
+      }
+    },
+    "public/sprites/overworld/characters/xy/preschooler/image.png": {
+      "digest": "ab3f46f0055659b9",
+      "bytes": 887,
+      "width": 51,
+      "height": 88,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 887,
+        "bytes": 887
+      }
+    },
+    "public/sprites/overworld/characters/xy/psychic/image.png": {
+      "digest": "e3cb65451a7e27ac",
+      "bytes": 1182,
+      "width": 51,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1182,
+        "bytes": 1182
       }
     },
     "public/sprites/overworld/characters/xy/punk-girl/image.png": {
@@ -5207,6 +5519,18 @@
         "as": "already compact",
         "was": 1455,
         "bytes": 1455
+      }
+    },
+    "public/sprites/overworld/characters/xy/receptionist/image.png": {
+      "digest": "7f3a2d9f52a9b027",
+      "bytes": 1019,
+      "width": 57,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1019,
+        "bytes": 1019
       }
     },
     "public/sprites/overworld/characters/xy/rich-boy/image.png": {
@@ -5329,6 +5653,18 @@
         "bytes": 1397
       }
     },
+    "public/sprites/overworld/characters/xy/shauna/image.png": {
+      "digest": "e2528732f43e303d",
+      "bytes": 1281,
+      "width": 75,
+      "height": 100,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1281,
+        "bytes": 1281
+      }
+    },
     "public/sprites/overworld/characters/xy/siebold/image.png": {
       "digest": "289ca5c7a32ef45f",
       "bytes": 1179,
@@ -5341,6 +5677,90 @@
         "bytes": 1179
       }
     },
+    "public/sprites/overworld/characters/xy/sina/image.png": {
+      "digest": "c4d472332aa66c30",
+      "bytes": 1218,
+      "width": 69,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1218,
+        "bytes": 1218
+      }
+    },
+    "public/sprites/overworld/characters/xy/sky-trainer-f/image.png": {
+      "digest": "9ea0af9027c47eec",
+      "bytes": 1237,
+      "width": 54,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1237,
+        "bytes": 1237
+      }
+    },
+    "public/sprites/overworld/characters/xy/sky-trainer-m/image.png": {
+      "digest": "d382b3113ad090a8",
+      "bytes": 1188,
+      "width": 54,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1188,
+        "bytes": 1188
+      }
+    },
+    "public/sprites/overworld/characters/xy/socialite/image.png": {
+      "digest": "c394d2fd3925d331",
+      "bytes": 1092,
+      "width": 54,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1092,
+        "bytes": 1092
+      }
+    },
+    "public/sprites/overworld/characters/xy/stylist-1/image.png": {
+      "digest": "81bb3a03740d92a6",
+      "bytes": 1194,
+      "width": 60,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1194,
+        "bytes": 1194
+      }
+    },
+    "public/sprites/overworld/characters/xy/stylist-2/image.png": {
+      "digest": "d46a0e1093128d4f",
+      "bytes": 1125,
+      "width": 60,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1125,
+        "bytes": 1125
+      }
+    },
+    "public/sprites/overworld/characters/xy/swimmer-f-2/image.png": {
+      "digest": "22b8ff0f6c3e093c",
+      "bytes": 981,
+      "width": 72,
+      "height": 84,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 981,
+        "bytes": 981
+      }
+    },
     "public/sprites/overworld/characters/xy/swimmer-f/image.png": {
       "digest": "bd0a2f990902fe88",
       "bytes": 1445,
@@ -5351,6 +5771,18 @@
         "as": "already compact",
         "was": 1445,
         "bytes": 1445
+      }
+    },
+    "public/sprites/overworld/characters/xy/swimmer-m-2/image.png": {
+      "digest": "082142303ff7bc44",
+      "bytes": 912,
+      "width": 69,
+      "height": 84,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 912,
+        "bytes": 912
       }
     },
     "public/sprites/overworld/characters/xy/swimmer-m/image.png": {
@@ -5375,6 +5807,18 @@
         "as": "already compact",
         "was": 1511,
         "bytes": 1511
+      }
+    },
+    "public/sprites/overworld/characters/xy/teenager/image.png": {
+      "digest": "282e0e3d9b683dc6",
+      "bytes": 1203,
+      "width": 60,
+      "height": 100,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1203,
+        "bytes": 1203
       }
     },
     "public/sprites/overworld/characters/xy/tierno/image.png": {
@@ -5413,6 +5857,18 @@
         "bytes": 1239
       }
     },
+    "public/sprites/overworld/characters/xy/tourist-m/image.png": {
+      "digest": "c7fb278d2b4679fb",
+      "bytes": 1196,
+      "width": 63,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1196,
+        "bytes": 1196
+      }
+    },
     "public/sprites/overworld/characters/xy/trevor/image.png": {
       "digest": "2b8532ae3cf60a37",
       "bytes": 1113,
@@ -5423,6 +5879,18 @@
         "as": "already compact",
         "was": 1113,
         "bytes": 1113
+      }
+    },
+    "public/sprites/overworld/characters/xy/twins/image.png": {
+      "digest": "acda557699ff6d33",
+      "bytes": 880,
+      "width": 60,
+      "height": 88,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 880,
+        "bytes": 880
       }
     },
     "public/sprites/overworld/characters/xy/urbain/image.png": {
@@ -5447,6 +5915,18 @@
         "as": "already compact",
         "was": 2266,
         "bytes": 2266
+      }
+    },
+    "public/sprites/overworld/characters/xy/veteran-f/image.png": {
+      "digest": "8bb17f8fbe0ee0cb",
+      "bytes": 1092,
+      "width": 60,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1092,
+        "bytes": 1092
       }
     },
     "public/sprites/overworld/characters/xy/veteran/image.png": {
@@ -5509,6 +5989,30 @@
         "bytes": 1745
       }
     },
+    "public/sprites/overworld/characters/xy/woman-1/image.png": {
+      "digest": "3116889a93c9aa7e",
+      "bytes": 1160,
+      "width": 60,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1160,
+        "bytes": 1160
+      }
+    },
+    "public/sprites/overworld/characters/xy/woman-2/image.png": {
+      "digest": "efd16ad1a2c41d4f",
+      "bytes": 1105,
+      "width": 60,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1105,
+        "bytes": 1105
+      }
+    },
     "public/sprites/overworld/characters/xy/worker-1/image.png": {
       "digest": "5e73cc408a98fc8e",
       "bytes": 1050,
@@ -5543,6 +6047,18 @@
         "as": "already compact",
         "was": 1768,
         "bytes": 1768
+      }
+    },
+    "public/sprites/overworld/characters/xy/xerosic/image.png": {
+      "digest": "1c54477efe4489f8",
+      "bytes": 1441,
+      "width": 57,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-24T15:26:49Z",
+        "as": "already compact",
+        "was": 1441,
+        "bytes": 1441
       }
     },
     "public/sprites/overworld/characters/xy/youngster/image.png": {

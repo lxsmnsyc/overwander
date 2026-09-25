@@ -1,5 +1,14 @@
 # overwander
 
+## 4.18.2
+
+### Patch Changes
+
+- e027b1e: The fourteen flavour berries grow on berry trees, so they can be found for the safari.
+- fd883fd: A gift made from the admin page can be given an expiry date again.
+- 0fb5ce5: A player in a raid lobby has one team. Forming a new one replaces the old, and the button reads Change team.
+- 504cb22: A vendor trades up to 999 of one item at a time, up from 99.
+
 ## 4.18.1
 
 ### Patch Changes

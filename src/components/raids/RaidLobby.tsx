@@ -631,11 +631,6 @@ function LobbyRows(
   );
 }
 
-/** What a team is, for telling one that changed from one that did not */
-function teamKey(team: TeamRecord): string {
-  return `${team.player}:${team.catches.join(',')}`;
-}
-
 /** The uids packed into a resource key, without the empty one an empty lobby leaves */
 function splitKey(key: string): string[] {
   const uids: string[] = [];
@@ -702,31 +697,36 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
     }),
   );
 
+  // A team is written once and never changed, so one already read is
+  // kept by its id: a join reads the team that joined and nothing else,
+  // and the rows of the teams already there are not built again
+  const known = new Map<string, TeamRecord>();
+  const readTeam = async (id: string): Promise<TeamRecord | null> => {
+    const team = known.get(id) ?? (await getTeamBatched(id));
+
+    if (team != null) {
+      known.set(id, team);
+    }
+    return team;
+  };
+
   // Keyed on the ids, since every lobby ping hands over a fresh array of
   // the same ones
   const [teams] = createResource(
     () => raid()?.teams.join(',') ?? null,
-    async (key, { value }): Promise<TeamRecord[]> => {
-      const reads: ReturnType<typeof getTeamBatched>[] = [];
+    async (key): Promise<TeamRecord[]> => {
+      const reads: Promise<TeamRecord | null>[] = [];
 
-      // One read for the whole lobby rather than one per team
+      // One read for every team not held yet, rather than one per team
       for (const id of splitKey(key)) {
-        reads.push(getTeamBatched(id));
-      }
-
-      // A team that did not change keeps its object, so its row and the
-      // party strip in it are not built again
-      const before = new Map<string, TeamRecord>();
-
-      for (const team of value ?? []) {
-        before.set(teamKey(team), team);
+        reads.push(readTeam(id));
       }
 
       const found: TeamRecord[] = [];
 
       for (const team of await Promise.all(reads)) {
         if (team != null) {
-          found.push(before.get(teamKey(team)) ?? team);
+          found.push(team);
         }
       }
       return found;

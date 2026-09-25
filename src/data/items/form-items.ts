@@ -150,6 +150,23 @@ export const GRACIDEA_PRICE = 8_000;
  */
 export const SPLICERS_PRICE = 12_000;
 
+/** What a nectar costs: a flower's worth, since the island grows them */
+export const NECTAR_PRICE = 2000;
+
+/** The style each nectar dances an Oricorio into, Baile at the base */
+export const NECTAR_STYLES = new Map<Items, [name: string, style: Species, styleName: string]>([
+  [Items.RedNectar, ['Red Nectar', Species.Oricorio, 'Baile']],
+  [Items.YellowNectar, ['Yellow Nectar', Species.OricorioPomPom, 'Pom-Pom']],
+  [Items.PinkNectar, ['Pink Nectar', Species.OricorioPau, "Pa'u"]],
+  [Items.PurpleNectar, ['Purple Nectar', Species.OricorioSensu, 'Sensu']],
+]);
+
+/** The two prisms that fold a Solgaleo or a Lunala into a Necrozma, and part them again */
+const PRISMS: [item: Items, name: string, icon: string, into: string][] = [
+  [Items.NSolarizer, 'N-Solarizer', 'n-solarizer', 'a Solgaleo'],
+  [Items.NLunarizer, 'N-Lunarizer', 'n-lunarizer', 'a Lunala'],
+];
+
 const LEGEND_ORBS: [item: Items, name: string, icon: string][] = [
   [Items.AdamantOrb, 'Adamant Orb', 'adamant-orb'],
   [Items.LustrousOrb, 'Lustrous Orb', 'lustrous-orb'],
@@ -213,6 +230,31 @@ export default function registerFormItems(): void {
     buy: 0,
     sell: SPLICERS_PRICE / 2,
   });
+
+  for (const [item, [name, , styleName]] of NECTAR_STYLES) {
+    registerItem(item, {
+      name,
+      description: `Dances the Oricorio it is used on into its ${styleName} Style. Spent on each change.`,
+      type: ItemTypes.Evolution,
+      icon: `other/${name.toLowerCase().replace(' ', '-')}`,
+      flags: ItemFlags.Usable,
+      buy: 0,
+      sell: NECTAR_PRICE / 2,
+    });
+  }
+
+  for (const [item, name, icon, into] of PRISMS) {
+    registerItem(item, {
+      name,
+      description: `Folds ${into} into a Necrozma, and pulls it back out. Never spent.`,
+      type: ItemTypes.Evolution,
+      // Drawn on the key sheet, which is where the collection packed it
+      icon: `key/${icon}`,
+      flags: ItemFlags.Usable,
+      buy: 0,
+      sell: SPLICERS_PRICE / 2,
+    });
+  }
 
   registerItem(Items.PrisonBottle, {
     name: 'Prison Bottle',

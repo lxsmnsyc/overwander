@@ -9,3 +9,4 @@ Alola's items:
 - Beast Ball catches 5x on an Ultra Beast and 0.1x on anything else. It turns up on walks and is never sold.
 - A Silvally holding a Memory takes that type's shape.
 - The Memories and the Z-Crystals turn up on walks, one thin slot each.
+- The four nectars and the N-Solarizer and N-Lunarizer are in the bag and turn up on walks, ready for Oricorio and Necrozma.

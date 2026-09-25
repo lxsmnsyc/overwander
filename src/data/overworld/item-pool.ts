@@ -323,6 +323,15 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.RedOrb, weight: 3 },
     { item: Items.Gracidea, weight: 3 },
     { item: Items.PrisonBottle, weight: 3 },
+    // The prisms, on the orbs' terms: each names one pokemon
+    { item: Items.NSolarizer, weight: 3 },
+    { item: Items.NLunarizer, weight: 3 },
+    // The nectars, spent the way the meteorite is and as thin: four
+    // styles of one pokemon share them
+    { item: Items.RedNectar, weight: 1 },
+    { item: Items.YellowNectar, weight: 1 },
+    { item: Items.PinkNectar, weight: 1 },
+    { item: Items.PurpleNectar, weight: 1 },
     // Three purses instead of one, for good, and nothing sells one.
     // Here rather than in rare so that parting with it is asked about
     // twice

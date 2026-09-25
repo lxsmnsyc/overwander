@@ -28,16 +28,6 @@ export async function getDueQuests(): Promise<DueQuest[]> {
   return listDueInZoneOnServer(await getIdToken(), getLocalOffset());
 }
 
-/**
- * Retired: a tab from before the rotations turned at local midnight
- * still calls this slot, and gets the UTC day it expects
- */
-export async function listDueOnServer(token: string): Promise<DueQuest[]> {
-  'use server';
-  check(TOKEN, token);
-  return listDue(await requireUid(token), await syncServerClock(), 0);
-}
-
 export async function getQuests(): Promise<QuestStanding[]> {
   return listOnServer2(await getIdToken());
 }

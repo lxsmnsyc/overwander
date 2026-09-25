@@ -31,14 +31,6 @@ export async function walk(steps: number): Promise<WalkReport | null> {
   return walkInZoneOnServer(await getIdToken(), steps, getLocalOffset());
 }
 
-/** Retired: a tab from before the species day turned locally still calls this slot */
-export async function walkOnServer(token: string, steps: number): Promise<WalkReport | null> {
-  'use server';
-  check(TOKEN, token);
-  check(COUNT, steps);
-  return recordSteps(await requireUid(token), steps, await syncServerClock());
-}
-
 /**
  * Open an egg that has been carried far enough. What is inside was
  * decided when the egg was found, so this reveals rather than rolls —

@@ -5,12 +5,9 @@ import { Items } from '../../data/ids/items';
 import { LATHER_COST, rollHoneyTree } from '../../data/overworld/honey-tree';
 import Landmark from '../../data/overworld/landmark';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
-import { WORLD_GENERATION } from '../../overworld/current';
 import type { Spawn } from '../../overworld/chunk-snapshot';
-import { getSql } from '../db';
 import { ITEM_STACKS } from '../../auth/stacks';
 import { readStackIn, spendStackIn } from '../stacks';
-import { asString } from '../read';
 import { claim, resolveSnapshot } from './claims';
 import { startEncounter } from './spawns';
 
@@ -26,31 +23,6 @@ export type LatherResult =
  */
 export function honeyPrefix(snapshot: ChunkSnapshot): string {
   return `${snapshot.groundKey}@${snapshot.landmarkTimestamp}$honey`;
-}
-
-/** Which of this chunk's honey trees this player has lathered this window */
-export async function listLatheredHoneyTrees(
-  uid: string,
-  x: number,
-  y: number,
-  now: number,
-  offset: number,
-): Promise<number[]> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
-
-  if (snapshot == null) {
-    return [];
-  }
-
-  const prefix = honeyPrefix(snapshot);
-  const rows = await getSql()`
-    select marker from berry_claims
-    where generation = ${WORLD_GENERATION} and player = ${uid} and marker like ${`${prefix}%`}
-  `;
-
-  return rows
-    .map((row) => Number(asString(row.marker).slice(prefix.length)))
-    .filter((cell) => Number.isInteger(cell));
 }
 
 /**

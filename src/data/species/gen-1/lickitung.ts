@@ -143,6 +143,8 @@ export default function registerLickitungSpecies(): void {
         Moves.WorkUp,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
       ],
       egg: [
         Moves.BodySlam,

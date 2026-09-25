@@ -66,6 +66,7 @@ const FAMILY_TEACHABLE = [
   Moves.WorkUp,
   Moves.Confide,
   Moves.PowerUpPunch,
+  Moves.LaserFocus,
 ];
 
 export default function registerTyrogueSpecies(): void {
@@ -109,7 +110,13 @@ export default function registerTyrogueSpecies(): void {
         51: [Moves.Reversal],
         53: [Moves.CloseCombat],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.PoisonJab, Moves.SuckerPunch, Moves.VacuumWave],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.PoisonJab,
+        Moves.SuckerPunch,
+        Moves.VacuumWave,
+        Moves.StompingTantrum,
+      ],
     },
   });
 
@@ -158,6 +165,7 @@ export default function registerTyrogueSpecies(): void {
         Moves.ThunderPunch,
         Moves.BrickBreak,
         Moves.DrainPunch,
+        Moves.ThroatChop,
       ],
     },
   });

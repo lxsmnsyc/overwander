@@ -152,6 +152,8 @@ export default function registerChanseySpecies(): void {
         Moves.Confide,
         Moves.DazzlingGleam,
         Moves.PowerUpPunch,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
       ],
     },
   });

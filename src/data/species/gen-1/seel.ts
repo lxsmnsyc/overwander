@@ -57,6 +57,7 @@ const FAMILY_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.DrillRun,
   Moves.Confide,
+  Moves.SmartStrike,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ThickFat, Abilities.Hydration];
@@ -181,6 +182,7 @@ export default function registerSeelSpecies(): void {
         Moves.Avalanche,
         Moves.GigaImpact,
         Moves.FrostBreath,
+        Moves.Liquidation,
       ],
     },
   });

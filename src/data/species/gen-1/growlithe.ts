@@ -116,6 +116,7 @@ export default function registerGrowlitheSpecies(): void {
         Moves.Crunch,
         Moves.HeatWave,
         Moves.Howl,
+        Moves.BurnUp,
       ],
     },
   });
@@ -167,6 +168,7 @@ export default function registerGrowlitheSpecies(): void {
         Moves.IronHead,
         Moves.RockClimb,
         Moves.Bulldoze,
+        Moves.LaserFocus,
       ],
     },
   });

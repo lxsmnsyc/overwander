@@ -62,6 +62,7 @@ const FAMILY_TEACHABLE = [
   Moves.Incinerate,
   Moves.DragonTail,
   Moves.Confide,
+  Moves.BrutalSwing,
 ];
 
 export default function registerDratiniSpecies(): void {

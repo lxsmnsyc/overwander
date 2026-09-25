@@ -156,7 +156,13 @@ export default function registerParasSpecies(): void {
         55: [Moves.GigaDrain, Moves.XScissor],
         59: [Moves.Aromatherapy, Moves.RagePowder],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Counter, Moves.GigaImpact],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Counter,
+        Moves.GigaImpact,
+        Moves.ThroatChop,
+      ],
     },
   });
 }

@@ -34,7 +34,7 @@ export default function registerMewtwoSpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Confusion, Moves.Disable, Moves.Swift],
+        1: [Moves.Confusion, Moves.Disable, Moves.Swift, Moves.LaserFocus],
         11: [Moves.Barrier],
         33: [Moves.PsychUp],
         36: [Moves.MiracleEye],
@@ -161,6 +161,7 @@ export default function registerMewtwoSpecies(): void {
         Moves.Bulldoze,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.BrutalSwing,
       ],
     },
   });

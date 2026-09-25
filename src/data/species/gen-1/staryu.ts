@@ -153,6 +153,7 @@ export default function registerStaryuSpecies(): void {
           Moves.BubbleBeam,
           Moves.Recover,
           Moves.RapidSpin,
+          Moves.Spotlight,
         ],
         37: [Moves.ConfuseRay],
       },

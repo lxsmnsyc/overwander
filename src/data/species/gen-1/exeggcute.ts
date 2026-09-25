@@ -169,6 +169,7 @@ export default function registerExeggcuteSpecies(): void {
         Moves.WorrySeed,
         Moves.ZenHeadbutt,
         Moves.Psyshock,
+        Moves.StompingTantrum,
       ],
     },
   });

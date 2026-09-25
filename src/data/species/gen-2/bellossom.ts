@@ -87,6 +87,7 @@ export default function registerBellossomSpecies(): void {
         Moves.Confide,
         Moves.DazzlingGleam,
         Moves.Infestation,
+        Moves.LaserFocus,
       ],
     },
   });

@@ -100,6 +100,8 @@ export default function registerPinsirSpecies(): void {
         Moves.StruggleBug,
         Moves.Bulldoze,
         Moves.Confide,
+        Moves.BrutalSwing,
+        Moves.ThroatChop,
       ],
       egg: [
         Moves.FuryAttack,

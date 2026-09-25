@@ -50,6 +50,8 @@ export default function registerSnorlaxSpecies(): void {
         50: [Moves.Rollout],
         52: [Moves.HeavySlam],
         56: [Moves.HyperBeam],
+
+        57: [Moves.HighHorsepower],
       },
       teachable: [
         Moves.Toxic,
@@ -142,6 +144,7 @@ export default function registerSnorlaxSpecies(): void {
         Moves.WildCharge,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.StompingTantrum,
       ],
     },
   });

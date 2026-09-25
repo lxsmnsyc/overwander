@@ -256,6 +256,7 @@ export default function registerCharmanderSpecies(): void {
         Moves.SkyDrop,
         Moves.Bulldoze,
         Moves.DragonTail,
+        Moves.BrutalSwing,
       ],
     },
   });

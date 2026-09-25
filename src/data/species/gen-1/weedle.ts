@@ -180,6 +180,9 @@ export default function registerWeedleSpecies(): void {
         Moves.DrillRun,
         Moves.Confide,
         Moves.Infestation,
+        Moves.BrutalSwing,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

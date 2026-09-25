@@ -104,6 +104,7 @@ export default function registerMagmortarSpecies(): void {
         Moves.WillOWisp,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.StompingTantrum,
       ],
     },
   });

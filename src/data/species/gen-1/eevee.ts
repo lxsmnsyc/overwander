@@ -51,6 +51,7 @@ const FAMILY_TEACHABLE = [
   Moves.Retaliate,
   Moves.WorkUp,
   Moves.Confide,
+  Moves.LaserFocus,
 ];
 
 export default function registerEeveeSpecies(): void {

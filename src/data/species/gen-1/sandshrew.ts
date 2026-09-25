@@ -72,6 +72,7 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.Bulldoze,
   Moves.Confide,
+  Moves.StompingTantrum,
 ];
 
 export default function registerSandshrewSpecies(): void {

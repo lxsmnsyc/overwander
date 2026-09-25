@@ -188,6 +188,7 @@ export default function registerJigglypuffSpecies(): void {
         Moves.GigaImpact,
         Moves.GyroBall,
         Moves.MagicRoom,
+        Moves.LaserFocus,
       ],
     },
   });

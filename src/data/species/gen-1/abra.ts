@@ -155,6 +155,7 @@ export default function registerAbraSpecies(): void {
         Moves.GuardSwap,
         Moves.PowerTrick,
         Moves.GuardSplit,
+        Moves.PsychicTerrain,
       ],
     },
   });
@@ -242,6 +243,7 @@ export default function registerAbraSpecies(): void {
         Moves.LightScreen,
         Moves.FocusBlast,
         Moves.GigaImpact,
+        Moves.LaserFocus,
       ],
     },
   });

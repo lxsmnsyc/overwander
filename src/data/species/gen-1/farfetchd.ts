@@ -103,6 +103,9 @@ export default function registerFarfetchdSpecies(): void {
         Moves.Pluck,
         Moves.Roost,
         Moves.UTurn,
+        Moves.BrutalSwing,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
       egg: [
         Moves.Gust,
@@ -113,6 +116,7 @@ export default function registerFarfetchdSpecies(): void {
         Moves.SteelWing,
 
         Moves.FeatherDance,
+        Moves.FirstImpression,
       ],
     },
   });

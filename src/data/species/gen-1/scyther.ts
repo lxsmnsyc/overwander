@@ -103,6 +103,8 @@ export default function registerScytherSpecies(): void {
         Moves.Round,
         Moves.StruggleBug,
         Moves.Confide,
+        Moves.BrutalSwing,
+        Moves.LaserFocus,
       ],
       egg: [
         Moves.Counter,

@@ -194,6 +194,7 @@ export default function registerNidoranFSpecies(): void {
         Moves.Counter,
         Moves.Dig,
         Moves.EchoedVoice,
+        Moves.StompingTantrum,
       ],
     },
   });
@@ -267,6 +268,8 @@ export default function registerNidoranFSpecies(): void {
         Moves.Quash,
         Moves.Bulldoze,
         Moves.DragonTail,
+        Moves.StompingTantrum,
+        Moves.ThroatChop,
       ],
     },
   });

@@ -1491,9 +1491,11 @@ export function CatchSheetBody(
                     class="flex flex-col gap-3 border-y-2 border-line-soft md:grid md:min-h-0
                       md:flex-1 md:grid-cols-[16rem_minmax(0,1fr)] md:gap-0"
                   >
+                    {/* Scrolls like the right side does, so a short screen
+                        never pushes the evolutions down over the history */}
                     <div
-                      class="contents md:flex md:min-h-0 md:flex-col md:border-r-2
-                        md:border-line-soft md:pr-4"
+                      class="contents md:flex md:min-h-0 md:flex-col md:overflow-y-auto
+                        md:border-r-2 md:border-line-soft md:pr-4"
                     >
                       <div class="flex flex-col items-center gap-2 py-3 text-center md:flex-1">
                         <PortraitSection caught={loaded()} named={named()} />

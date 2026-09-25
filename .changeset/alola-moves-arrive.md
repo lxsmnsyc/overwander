@@ -17,3 +17,6 @@ Alola's moves:
 - Sunsteel Strike, Moongeist Beam and Photon Geyser ignore the target's abilities, and Photon Geyser lands as a physical move when the user's Attack is higher.
 - Stomping Tantrum hits 2x after the user's last move failed. Core Enforcer takes an ability off each target that is not winding up a move.
 - The 17 Memories are held items that set Multi-Attack's type.
+- Z-Moves are in. A pokemon holding a Z-Crystal turns a matching damaging move into its Z-Move as it goes off, once a side a fight.
+- The 18 type crystals take their power from the move they replace, and the 17 signature crystals each turn one line's own move into its own Z-Move.
+- A Mega, or a pokemon holding its Mega Stone, never throws a Z-Move.

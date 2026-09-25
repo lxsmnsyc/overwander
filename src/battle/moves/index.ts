@@ -81,6 +81,7 @@ import setupSpectralThief from './spectral-thief';
 import setupMindBlown from './mind-blown';
 import setupPiercingMoves from './piercing-moves';
 import setupInstruct from './instruct';
+import setupZMoves from './z-moves';
 import setupFocusPunch from './focus-punch';
 import setupFollowMe from './follow-me';
 import setupImprison from './imprison';
@@ -223,6 +224,7 @@ export default function setupMoves(battle: Battle): void {
   setupMindBlown(battle);
   setupPiercingMoves(battle);
   setupInstruct(battle);
+  setupZMoves(battle);
   setupFocusPunch(battle);
   setupFollowMe(battle);
   setupStockpile(battle);

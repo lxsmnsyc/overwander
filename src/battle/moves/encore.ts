@@ -1,3 +1,4 @@
+import { Z_MOVES } from '../../data/moves/z-moves';
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
@@ -14,7 +15,7 @@ import { unitTarget } from '../utils';
  * hearing. Encore itself is out so a performance cannot call for
  * another one
  */
-const NOT_A_MOVE = new Set<Moves>([Moves.Struggle, Moves.Attack, Moves.Encore]);
+const NOT_A_MOVE = new Set<Moves>([Moves.Struggle, Moves.Attack, Moves.Encore, ...Z_MOVES]);
 
 /**
  * What an ally is worth over an enemy. An encore is a free extra use

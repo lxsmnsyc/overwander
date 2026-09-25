@@ -155,6 +155,7 @@ const EFFECT_STATUS_MOVES: {
   [Moves.FloatyFall]: { status: Statuses.Flinched, chance: 30 },
   [Moves.BuzzyBuzz]: { status: Statuses.Paralyzed, chance: 100 },
   [Moves.SizzlySlide]: { status: Statuses.Burned, chance: 100 },
+  [Moves.StokedSparksurfer]: { status: Statuses.Paralyzed, chance: 100 },
 };
 
 /**
@@ -313,6 +314,18 @@ const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
   [Moves.ShadowBone]: { stage: Stages.Defense, value: -1, chance: 20 },
   [Moves.Liquidation]: { stage: Stages.Defense, value: -1, chance: 20 },
   [Moves.ZippyZap]: { stage: Stages.Evasion, value: 1, chance: 100, self: true },
+  [Moves.ClangorousSoulblaze]: {
+    stage: [
+      Stages.Attack,
+      Stages.Defense,
+      Stages.SpecialAttack,
+      Stages.SpecialDefense,
+      Stages.Speed,
+    ],
+    value: 1,
+    chance: 100,
+    self: true,
+  },
 };
 
 /**

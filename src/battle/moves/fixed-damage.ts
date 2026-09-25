@@ -43,6 +43,8 @@ const FIXED_DAMAGE_MOVES: {
   [Moves.SuperFang]: (_, target) => Math.max(1, Math.floor(target.health / 2)),
   // https://bulbapedia.bulbagarden.net/wiki/Nature%27s_Madness_(move)
   [Moves.NaturesMadness]: (_, target) => Math.max(1, Math.floor(target.health / 2)),
+  // https://bulbapedia.bulbagarden.net/wiki/Guardian_of_Alola_(move)
+  [Moves.GuardianOfAlola]: (_, target) => Math.max(1, Math.floor((target.health * 3) / 4)),
   // https://bulbapedia.bulbagarden.net/wiki/Psywave_(move)
   [Moves.Psywave]: (source) => Math.max(1, source.level * source.battle.randomRange(0.5, 1.5)),
   // https://bulbapedia.bulbagarden.net/wiki/Sheer_Cold_(move)
@@ -65,6 +67,7 @@ export const HEALTH_SCALED_MOVES = new Set<Moves>([
   Moves.Guillotine,
   Moves.SuperFang,
   Moves.NaturesMadness,
+  Moves.GuardianOfAlola,
   Moves.SheerCold,
   Moves.Endeavor,
 ]);

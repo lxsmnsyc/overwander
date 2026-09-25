@@ -1,3 +1,4 @@
+import { Z_MOVES } from '../../data/moves/z-moves';
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
@@ -9,7 +10,7 @@ import type Unit from '../unit';
  * Mimic refuses them, and Sketch itself, which would copy the
  * copying rather than a move
  */
-const BANNED = new Set<Moves>([Moves.Struggle, Moves.Attack, Moves.Sketch]);
+const BANNED = new Set<Moves>([Moves.Struggle, Moves.Attack, Moves.Sketch, ...Z_MOVES]);
 
 /**
  * Sketch takes the move for good, where Mimic borrows it: the copy

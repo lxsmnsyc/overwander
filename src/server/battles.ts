@@ -18,6 +18,7 @@ import { asNumber, asNumberArray } from './read';
 import type { CaughtPokemon } from '../auth/caught';
 import { Moves } from '../data/ids/moves';
 import { getRegisteredMoves } from '../data/moves';
+import { Z_MOVES } from '../data/moves/z-moves';
 
 /**
  * What a Sketch leaves behind: the move set to write, or nothing when
@@ -33,7 +34,8 @@ function settleSketch(record: CaughtPokemon, sketched: Moves | undefined): Moves
     sketched == null ||
     !record.moves.includes(Moves.Sketch) ||
     record.moves.includes(sketched) ||
-    !new Set(getRegisteredMoves()).has(sketched)
+    !new Set(getRegisteredMoves()).has(sketched) ||
+    Z_MOVES.has(sketched)
   ) {
     return undefined;
   }

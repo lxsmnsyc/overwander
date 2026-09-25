@@ -8,6 +8,7 @@ import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
 import { MoveCategories, Moves } from '../../../src/data/ids/moves';
 import { Statuses, TeamStatuses, Terrains, Weathers } from '../../../src/data/ids/status';
+import { Species } from '../../../src/data/ids/species';
 import turns from '../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
@@ -452,5 +453,86 @@ describe("Alola's moves with rules of their own", () => {
     mate.addStatus(Statuses.Burned, MOVE_CAUSE);
     partner.triggerMoveEffect(Moves.SparklySwirl, unitTarget(target), 0);
     expect(mate.status[Statuses.Burned]).toBeUndefined();
+  });
+});
+
+describe('Z-Moves', () => {
+  /** Every move each unit actually threw, Z-Moves included */
+  function watchThrows(battle: ReturnType<typeof createBattle>['battle']): Map<Unit, Moves[]> {
+    const thrown = new Map<Unit, Moves[]>();
+
+    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
+      thrown.set(event.source, [...(thrown.get(event.source) ?? []), event.move]);
+    });
+    return thrown;
+  }
+
+  it("turns a crystal holder's move into its type's Z-Move, once for the whole side", () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    const thrown = watchThrows(battle);
+    const powers: number[] = [];
+
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+      if (event.move === Moves.InfernoOverdrive) {
+        powers.push(event.value);
+        expect(event.category).toBe(MoveCategories.Special);
+      }
+    });
+    pinRandom(battle, 1);
+    holder.addItem(Items.FiriumZ);
+    mate.addItem(Items.FiriumZ);
+    holder.triggerMove(Moves.Flamethrower, unitTarget(target), 0);
+    battle.tick(turns(1));
+    mate.triggerMove(Moves.Flamethrower, unitTarget(target), 0);
+    battle.tick(turns(1));
+
+    expect(thrown.get(holder)).toEqual([Moves.InfernoOverdrive]);
+    expect(thrown.get(mate)).toEqual([Moves.Flamethrower]);
+    // Flamethrower's 90 comes to 175
+    expect(powers).toEqual([175]);
+  });
+
+  it('leaves status moves and a Mega holder alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const mega = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    const thrown = watchThrows(battle);
+
+    holder.addItem(Items.NormaliumZ);
+    holder.triggerMove(Moves.SwordsDance, NONE_TARGET, 0);
+    mega.setSpecies(Species.Charizard);
+    mega.addItem(Items.CharizarditeX);
+    mega.addItem(Items.FiriumZ);
+    mega.triggerMove(Moves.Flamethrower, unitTarget(target), 0);
+    battle.tick(turns(1));
+
+    expect(thrown.get(holder)).toEqual([Moves.SwordsDance]);
+    expect(thrown.get(mega)).toEqual([Moves.Flamethrower]);
+  });
+
+  it("turns a line's own move into its signature Z-Move, and only for that line", () => {
+    const { battle, teamA, teamB } = createBattle();
+    const snorlax = createUnit(battle, teamA);
+    const eevee = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+    const thrown = watchThrows(battle);
+
+    pinRandom(battle, 1);
+    snorlax.setSpecies(Species.Snorlax);
+    snorlax.addItem(Items.SnorliumZ);
+    snorlax.triggerMove(Moves.GigaImpact, unitTarget(other), 0);
+
+    eevee.setSpecies(Species.Eevee);
+    eevee.addItem(Items.EeviumZ);
+    eevee.triggerMove(Moves.LastResort, unitTarget(snorlax), 0);
+    battle.tick(turns(1));
+
+    expect(thrown.get(snorlax)).toEqual([Moves.PulverizingPancake]);
+    expect(thrown.get(eevee)).toEqual([Moves.ExtremeEvoboost]);
+    expect(eevee.stages[Stages.Speed]).toBe(2);
   });
 });

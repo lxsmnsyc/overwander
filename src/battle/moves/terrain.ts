@@ -19,12 +19,19 @@ export const TERRAIN_MOVES = new Map<Moves, Terrains>([
   [Moves.GrassyTerrain, Terrains.Grassy],
   [Moves.MistyTerrain, Terrains.Misty],
   [Moves.PsychicTerrain, Terrains.Psychic],
+  // Mew's Z-Move leaves the same terrain behind it
+  [Moves.GenesisSupernova, Terrains.Psychic],
 ]);
 
 export default function setupTerrainMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const terrain = TERRAIN_MOVES.get(event.move);
 
+    // Lycanroc's Z-Move clears whatever the field was laid with
+    if (event.move === Moves.SplinteredStormshards) {
+      event.source.setTerrain(Terrains.None, 0);
+      return;
+    }
     if (terrain != null) {
       event.source.setTerrain(
         terrain,

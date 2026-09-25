@@ -14,6 +14,9 @@ export const PIERCING_MOVES = new Set<Moves>([
   Moves.SunsteelStrike,
   Moves.MoongeistBeam,
   Moves.PhotonGeyser,
+  Moves.SearingSunrazeSmash,
+  Moves.MenacingMoonrazeMaelstrom,
+  Moves.LightThatBurnsTheSky,
 ]);
 
 export default function setupPiercingMoves(battle: Battle): void {
@@ -23,7 +26,7 @@ export default function setupPiercingMoves(battle: Battle): void {
   // included, which decides whether it lands as a physical move
   battle.on(BattleEvents.UnitAttack, AttackPriority.Pre, (event) => {
     if (
-      event.move === Moves.PhotonGeyser &&
+      (event.move === Moves.PhotonGeyser || event.move === Moves.LightThatBurnsTheSky) &&
       event.source.resolveStat(Stats.Attack, StatFlags.Attack) >
         event.source.resolveStat(Stats.SpecialAttack, StatFlags.Attack)
     ) {

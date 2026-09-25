@@ -27935,6 +27935,18 @@
         "bytes": 2683
       }
     },
+    "public/sprites/ui/items/z-crystals/image.png": {
+      "digest": "a86f046ac89deeb4",
+      "bytes": 4726,
+      "width": 100,
+      "height": 117,
+      "compact": {
+        "at": "2026-09-25T07:51:43Z",
+        "as": "already compact",
+        "was": 4726,
+        "bytes": 4726
+      }
+    },
     "public/sprites/ui/move-categories/image.png": {
       "digest": "daceb76248da2137",
       "bytes": 403,

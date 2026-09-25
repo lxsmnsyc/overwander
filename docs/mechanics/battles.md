@@ -233,6 +233,26 @@ Groudon wears Desolate Land and raises harsh sunlight. Either sky holds while
 its Primal stands and shuts every ordinary weather out, and the orb floats over
 it the way a stone does over a Mega.
 
+## Z-Moves
+
+A pokemon holding a **Z-Crystal** turns a matching move into its Z-Move as the
+move goes off. There is nothing to press, so the AI and a player get it the same
+way.
+
+- A type crystal, such as Firium Z, turns any damaging move of its type into
+  that type's Z-Move. The Z-Move is physical or special when the move it
+  replaces is, and its power comes from that move: 100 for 55 power or less,
+  rising to 200 for 140 or more.
+- One of the 17 signature crystals, such as Decidium Z, turns one move of one
+  line into that line's own Z-Move, which has its own power and effect.
+- **One Z-Move a side a fight.** The first one a side throws spends it for every
+  pokemon on that side.
+- Status moves are never turned into a Z-Move yet.
+- A Mega, or a pokemon holding the stone that would make it one, never throws a
+  Z-Move.
+- A Z-Move is always aimed at one enemy, except Clangorous Soulblaze. Metronome,
+  Mimic, Sketch, Mirror Move, Assist, Encore and Instruct never reach one.
+
 ## How a fight ends
 
 A fight ends as soon as it can go nowhere: nothing is mid-move, and no surviving

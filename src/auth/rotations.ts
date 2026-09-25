@@ -23,16 +23,6 @@ export async function getRotations(): Promise<RotationBoard> {
 }
 
 /**
- * Retired: a tab from before the board turned at local midnight still
- * calls this slot, and gets the UTC day it expects
- */
-export async function listOnServer(token: string): Promise<RotationBoard> {
-  'use server';
-  check(TOKEN, token);
-  return listOnServerSide(await requireUid(token), await syncServerClock(), 0);
-}
-
-/**
  * Take one rotating quest's rewards. Resolves what was paid, or null
  * when the slot is unmet or already claimed
  */

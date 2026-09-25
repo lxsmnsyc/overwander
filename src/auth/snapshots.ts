@@ -42,7 +42,6 @@ import {
   claimPhenomenon as claimPhenomenonOnServerSide,
   latherHoneyTree as latherHoneyTreeOnServerSide,
   listClaimsFor as listClaimsForOnServerSide,
-  listLatheredHoneyTrees as listLatheredHoneyTreesOnServerSide,
   meetSpawn,
   peekNest as peekNestOnServerSide,
   peekPhenomenonEgg as peekPhenomenonEggOnServerSide,
@@ -550,78 +549,6 @@ async function peekPhenomenonEggOnServer(
   );
 }
 
-/*
- * A server function is addressed by its place in this file, so a tab
- * loaded before a deploy calls these three by position. They keep
- * their slots and answer from the batched read; new ones go at the end
- */
-
-export async function listClaimedOnServer(
-  token: string,
-  x: number,
-  y: number,
-  offset: number,
-  depth: Depth,
-): Promise<number[]> {
-  'use server';
-  check(TOKEN, token);
-  check(CHUNK_COORDINATE, x);
-  check(CHUNK_COORDINATE, y);
-  check(OFFSET, offset);
-  check(DEPTH, depth);
-  const claims = await listClaimsForOnServerSide(
-    await requireUid(token),
-    [{ x, y, offset, depth }],
-    await syncServerClock(),
-  );
-
-  return claims.at(0)?.phenomena ?? [];
-}
-
-export async function listPickedOnServer(
-  token: string,
-  x: number,
-  y: number,
-  offset: number,
-  depth: Depth,
-): Promise<number[]> {
-  'use server';
-  check(TOKEN, token);
-  check(CHUNK_COORDINATE, x);
-  check(CHUNK_COORDINATE, y);
-  check(OFFSET, offset);
-  check(DEPTH, depth);
-  const claims = await listClaimsForOnServerSide(
-    await requireUid(token),
-    [{ x, y, offset, depth }],
-    await syncServerClock(),
-  );
-
-  return claims.at(0)?.patches ?? [];
-}
-
-export async function listDugCachesOnServer(
-  token: string,
-  x: number,
-  y: number,
-  offset: number,
-  depth: Depth,
-): Promise<number[]> {
-  'use server';
-  check(TOKEN, token);
-  check(CHUNK_COORDINATE, x);
-  check(CHUNK_COORDINATE, y);
-  check(OFFSET, offset);
-  check(DEPTH, depth);
-  const claims = await listClaimsForOnServerSide(
-    await requireUid(token),
-    [{ x, y, offset, depth }],
-    await syncServerClock(),
-  );
-
-  return claims.at(0)?.caches ?? [];
-}
-
 /**
  * Take the egg a nest is holding. A nest refills every twelve hours
  * rather than every landmark window, and the marker behind it is
@@ -782,7 +709,6 @@ function claimKey(query: ClaimQuery): string {
   return `${query.depth}|${query.offset}|${query.x},${query.y}`;
 }
 
-// Last in the file, so adding it moved no other server function's place
 async function listClaimsOnServer(token: string, queries: ClaimQuery[]): Promise<ChunkClaims[]> {
   'use server';
   check(TOKEN, token);
@@ -843,27 +769,6 @@ export async function listClaimedItemCaches(snapshot: ChunkSnapshot): Promise<nu
 /** Which of this chunk's honey trees this player has lathered this window */
 export async function listLatheredHoneyTrees(snapshot: ChunkSnapshot): Promise<number[]> {
   return (await claimsOf(snapshot)).honey;
-}
-
-// Nothing calls it since honey joined the batched claim lists, but it keeps its place
-export async function listLatheredOnServer(
-  token: string,
-  x: number,
-  y: number,
-  offset: number,
-): Promise<number[]> {
-  'use server';
-  check(TOKEN, token);
-  check(CHUNK_COORDINATE, x);
-  check(CHUNK_COORDINATE, y);
-  check(OFFSET, offset);
-  return listLatheredHoneyTreesOnServerSide(
-    await requireUid(token),
-    x,
-    y,
-    await syncServerClock(),
-    offset,
-  );
 }
 
 /** Lather a honey tree: one jar spent, and whatever it draws out met on the spot */

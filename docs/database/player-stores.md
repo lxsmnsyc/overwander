@@ -79,6 +79,24 @@ one mints Master Balls and the other mints levels.
 `count > 0` check is what holds it. The bag holds what is carried and nothing
 else, so a picker never has to filter empties out.
 
+### The copy the browser keeps
+
+The browser reads the bag once and keeps it
+([`src/auth/live-bag.ts`](../../src/auth/live-bag.ts)), so opening a picker or a
+dialog costs no read. A trigger on each table broadcasts every write on the
+private channel `bag:<uid>`: the row as it now stands, or the row that went for
+a stack spent to its last. Only the owner may listen on it, and nobody may send
+on it. It is a broadcast rather than a `postgres_changes` stream because a
+delete cannot be filtered on that stream, so every player would be sent every
+emptied stack.
+
+The copy is read whole again when it cannot be sure it has heard everything:
+before the channel is listening, after it reconnects, and after any server call
+this tab made since the copy was read. That last one matters because a call's
+own change may still be on its way down the channel when the screen that made
+it asks for the bag again. A message carries the stack's count rather than a
+difference, so one arriving after a read that already saw it changes nothing.
+
 ### How a stack is read and written
 
 [`src/auth/stacks.ts`](../../src/auth/stacks.ts) says which table a kind lives in
@@ -293,3 +311,48 @@ fastest the game itself goes.
 pacing costs no extra round trip. A call that any named bucket cannot cover is
 refused with "Slow down a moment." Buckets that could cover it are spent anyway,
 so a flood pays for itself. Only the server reads or writes this table.
+
+## Not built yet: an economy ledger
+
+Nothing records where gold, items or candy came from. A balance says what a
+player holds today and nothing about how it got there. Pokemon are the
+exception, since `caught_history` keeps every owner of a catch and what they
+paid (see [Ownership history](catch-history.md)).
+
+A ledger would be one append-only row per change: the player, which stack
+(gold, an item or a candy family), the amount it moved by, the balance after
+it, the transaction id, the time, and a reason. It is the same idea as
+rAthena's `picklog` and `zenylog`, and it answers one kind of question: when
+something looks duplicated or a balance jumps, where it came from and how far
+it spread.
+
+**How it would be built.** Postgres triggers on `profiles.gold`, `bag_items`
+and `bag_candies`, rather than a call in every writer. Gold alone is written
+directly in more than a dozen places (auctions, trades, gym stakes, the vendor,
+Pay Day) besides `grantGold` and `spendGold`, and a trigger catches all of
+them, including ones written later. The trigger runs inside the writer's own
+transaction, so a change and its entry commit together or not at all. The
+transaction id groups the two sides of a trade or a sale, and a writer that
+wants a readable reason sets it with `set_config('ledger.reason', ..., true)`.
+A pg_cron job sweeps rows past a retention window, the way the battle sweep
+does.
+
+**What it was measured to cost** (local Postgres, September 2026):
+
+- About 190 bytes a row with its `(player, at)` index.
+- About 0.1 ms added to each bag or gold write.
+- Nothing in egress or requests, since only the server writes it and no client
+  reads it.
+- At an estimated 600 changes a day per active player, 12 players come to
+  roughly 40 MB a month: about 80 MB at a 60-day retention, or around 490 MB a
+  year kept forever. The Free plan caps the whole database at 500 MB, so it
+  needs the sweep.
+
+**Why it waits.** It only helps after the fact, and the holes it would have
+helped chase are closed at the source: catches are rolled and written on the
+server, claims pay in one transaction, actions are paced, and Pay Day is capped
+by what the snapshot knows and how long the fight ran. With a small player
+base, asking is cheaper than 80 MB. It becomes worth building when the player
+count grows, when auctions and trades carry a real economy, or the first time
+something suspicious needs tracing. Nothing it would record before it exists
+can be recovered afterwards.

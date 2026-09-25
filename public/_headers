@@ -11,8 +11,18 @@
 #
 # A year and immutable is safe because a sheet is asked for with its
 # own digest (`?v=`), so a regenerated one arrives under a new URL
-# rather than replacing a cached one. This covers the whole tree,
-# including the two files vercel.json's patterns missed.
+# rather than replacing a cached one.
 /sprites/*
   Access-Control-Allow-Origin: *
   Cache-Control: public, max-age=31536000, immutable
+
+# Except the two indexes that hand out those digests. They keep one
+# address, so they are checked with the host on every read; cached for
+# a year, a browser kept asking for sheets that had since been redrawn.
+/sprites/stamps.json
+  ! Cache-Control
+  Cache-Control: no-cache
+
+/sprites/pokemon/coats.json
+  ! Cache-Control
+  Cache-Control: no-cache

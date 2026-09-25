@@ -1,19 +1,14 @@
 /**
- * The shared clock. Snapshot windows, safari sessions and catch
- * records must not hang off a player's local clock — a skewed or
- * tampered device would disagree about which 5-minute window a chunk
- * is in. Everything time-bound reads the server's clock through
- * here: one round trip measures the offset between the two clocks,
- * and every later read derives from it locally until the offset goes
- * stale.
+ * The shared clock. A device's clock can be skewed or tampered with,
+ * so everything time-bound reads the server's instant through here:
+ * one round trip measures the offset between the two clocks, and
+ * every later read derives from it until the offset goes stale.
  *
- * The times themselves are epoch milliseconds, which carry no
- * timezone. Where a calendar is read out of one — the day of the year
- * the species day turns on, a catch date — it is read in UTC, which
- * the server pins for its own process (`src/server/timezone.ts`), so
- * every player's day begins at the same instant whatever the host
- * machine is set to
+ * Which hour and day that instant falls in is always the player's
+ * own: it is read in their zone through localNow
  */
+
+import { getLocalOffset, toLocalTime } from './local-time';
 
 /**
  * How long a measured offset is trusted before the next read
@@ -70,6 +65,16 @@ async function measure(): Promise<void> {
  */
 export function serverNow(): number {
   return Date.now() + offset;
+}
+
+/**
+ * The player's moment: the server's instant on the player's own wall
+ * clock. Spawns, weather and the day are all windowed off this, so
+ * anything that shows one of them reads it here rather than pairing a
+ * clock and a zone itself
+ */
+export function localNow(zone: number = getLocalOffset()): number {
+  return toLocalTime(serverNow(), zone);
 }
 
 /**

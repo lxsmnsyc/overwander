@@ -148,37 +148,6 @@ export async function savePosition(
   return writePosition(chunkX, chunkY, cellX, cellY, depth);
 }
 
-/*
- * A server function is addressed by its place in this file, so a tab
- * loaded before a deploy calls this one by position. It keeps its
- * slot and its arguments, and writes the row as it always did
- */
-export async function savePositionOnServer(
-  token: string,
-  chunkX: number,
-  chunkY: number,
-  cellX: number,
-  cellY: number,
-  depth: Depth,
-): Promise<number> {
-  'use server';
-  check(TOKEN, token);
-  check(CHUNK_COORDINATE, chunkX);
-  check(CHUNK_COORDINATE, chunkY);
-  check(CELL_COORDINATE, cellX);
-  check(CELL_COORDINATE, cellY);
-  check(DEPTH, depth);
-  return savePositionOnServerSide(
-    await requireUid(token),
-    chunkX,
-    chunkY,
-    cellX,
-    cellY,
-    depth,
-    await syncServerClock(),
-  );
-}
-
 /**
  * Remember where the player stopped, with the paces walked since the
  * last step report riding the same call.
@@ -209,33 +178,6 @@ export async function settleWalk(
     depth,
     getLocalOffset(),
   );
-}
-
-/** Retired: a tab from before the species day turned locally still calls this slot */
-export async function settleWalkOnServer(
-  token: string,
-  steps: number,
-  chunkX: number,
-  chunkY: number,
-  cellX: number,
-  cellY: number,
-  depth: Depth,
-): Promise<{ stamp: number; report: WalkReport | null }> {
-  'use server';
-  check(TOKEN, token);
-  check(COUNT, steps);
-  check(CHUNK_COORDINATE, chunkX);
-  check(CHUNK_COORDINATE, chunkY);
-  check(CELL_COORDINATE, cellX);
-  check(CELL_COORDINATE, cellY);
-  check(DEPTH, depth);
-  const uid = await requireUid(token);
-  const now = await syncServerClock();
-  // The paces land first, so a saved position never runs ahead of the egg
-  const report = steps > 0 ? await recordSteps(uid, steps, now) : null;
-  const stamp = await savePositionOnServerSide(uid, chunkX, chunkY, cellX, cellY, depth, now);
-
-  return { stamp, report };
 }
 
 /**

@@ -1,5 +1,11 @@
 # overwander
 
+## 4.16.2
+
+### Patch Changes
+
+- e82e285: The place card on the menu bar says what the weather does and which types it favors again, without a hover.
+
 ## 4.16.1
 
 ### Patch Changes

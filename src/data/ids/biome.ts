@@ -1,3 +1,5 @@
+import { REAL_TIME_OF_DAY, clockHour } from '../day-clock';
+
 const enum Biome {
   // Aquatic
   DeepOcean = 0,
@@ -88,9 +90,6 @@ export const enum TimeOfDay {
  */
 export const AnyTimeOfDay = TimeOfDay.Morning | TimeOfDay.Day | TimeOfDay.Evening | TimeOfDay.Night;
 
-const HOUR = 3_600_000;
-const DAY = 24 * HOUR;
-
 /**
  * The day-cycle period a timestamp falls in, per the documented hour
  * ranges.
@@ -98,10 +97,11 @@ const DAY = 24 * HOUR;
  * The hours are read off the timestamp as UTC, so the caller passes a
  * **local** one — `toLocalTime(now, offset)`. Everything the world
  * derives per player does: a snapshot window is local, and a player
- * walking at night should meet the night pool wherever they are
+ * walking at night should meet the night pool wherever they are. The
+ * hour is the day clock's, which may be a game clock (`day-clock.ts`)
  */
-export function getTimeOfDay(timestamp: number): TimeOfDay {
-  const hour = (timestamp % DAY) / HOUR;
+export function getTimeOfDay(timestamp: number, real = REAL_TIME_OF_DAY): TimeOfDay {
+  const hour = clockHour(timestamp, real);
 
   if (hour >= 4 && hour < 10) {
     return TimeOfDay.Morning;

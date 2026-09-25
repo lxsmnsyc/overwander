@@ -14,13 +14,13 @@ Import the repository. The build needs no framework override. The
 pushes, `main` included. Production deploys only when a release is published
 (step 3), and a preview is only ever deployed by hand.
 
-| Setting              | Value                                                 |
-| -------------------- | ----------------------------------------------------- |
-| **Install command**  | `pnpm install`                                        |
-| **Build command**    | `pnpm build`                                          |
-| **Output directory** | Left alone. Nitro writes `.vercel/output` itself      |
-| **Node version**     | **22 or newer**, which the Vite 8 toolchain expects   |
-| **Function region**  | The one nearest the Supabase project                  |
+| Setting              | Value                                               |
+| -------------------- | --------------------------------------------------- |
+| **Install command**  | `pnpm install`                                      |
+| **Build command**    | `pnpm build`                                        |
+| **Output directory** | Left alone. Nitro writes `.vercel/output` itself    |
+| **Node version**     | **22 or newer**, which the Vite 8 toolchain expects |
+| **Function region**  | The one nearest the Supabase project                |
 
 Nitro picks its Vercel preset off the `VERCEL` environment variable that the
 builder sets, so the same `pnpm build` that produces a Node server locally
@@ -34,21 +34,23 @@ mean to deploy. `.env.example` documents all of them.
 The **browser's pair** is public by design and is **baked into the build**, so a
 change to either needs a redeploy rather than a restart:
 
-| Variable                 | What to put there                                  |
-| ------------------------ | -------------------------------------------------- |
-| `VITE_SUPABASE_URL`      | `https://<ref>.supabase.co`                        |
-| `VITE_SUPABASE_ANON_KEY` | The project's **publishable** or **anon** key      |
-| `VITE_WORLD_SEED`        | Any string, and then never touched again           |
-| `VITE_EMAIL_SIGN_IN`     | Left empty, unless the deploy is to offer passwords |
+| Variable                   | What to put there                                    |
+| -------------------------- | ---------------------------------------------------- |
+| `VITE_SUPABASE_URL`        | `https://<ref>.supabase.co`                          |
+| `VITE_SUPABASE_ANON_KEY`   | The project's **publishable** or **anon** key        |
+| `VITE_WORLD_SEED`          | Any string, and then never touched again             |
+| `VITE_EMAIL_SIGN_IN`       | Left empty, unless the deploy is to offer passwords  |
+| `VITE_REAL_TIME_OF_DAY`    | `true` for the local clock, empty for the game clock |
+| `VITE_TIME_OF_DAY_MINUTES` | Minutes per period on the game clock. Empty means 90 |
 
 The **server's** variables are secret and are read at run time:
 
-| Variable                    | What to put there                                                    |
-| --------------------------- | --------------------------------------------------------------------- |
+| Variable                    | What to put there                                                      |
+| --------------------------- | ---------------------------------------------------------------------- |
 | `SUPABASE_DB_URL`           | The **transaction pooler** URI, port **6543**, with `?sslmode=require` |
-| `SUPABASE_URL`              | `https://<ref>.supabase.co`                                           |
-| `SUPABASE_SERVICE_ROLE_KEY` | The project's **secret** or **service_role** key                      |
-| `SUPABASE_JWT_SECRET`       | **Left empty**                                                        |
+| `SUPABASE_URL`              | `https://<ref>.supabase.co`                                            |
+| `SUPABASE_SERVICE_ROLE_KEY` | The project's **secret** or **service_role** key                       |
+| `SUPABASE_JWT_SECRET`       | **Left empty**                                                         |
 
 Three of those want a word:
 
@@ -76,10 +78,10 @@ them. The variable names here predate the newer pair, so read them as roles
 rather than as formats. Either generation works as the value, since both are
 passed to the client as a string.
 
-| The variable                | Newer key                | Older key      | What it is                                          |
-| --------------------------- | ------------------------ | -------------- | --------------------------------------------------- |
-| `VITE_SUPABASE_ANON_KEY`    | **Publishable**, `sb_publishable_...` | **anon**, a JWT | Public. Bound by row-level security |
-| `SUPABASE_SERVICE_ROLE_KEY` | **Secret**, `sb_secret_...`           | **service_role**, a JWT | Secret. Ignores row-level security |
+| The variable                | Newer key                             | Older key               | What it is                          |
+| --------------------------- | ------------------------------------- | ----------------------- | ----------------------------------- |
+| `VITE_SUPABASE_ANON_KEY`    | **Publishable**, `sb_publishable_...` | **anon**, a JWT         | Public. Bound by row-level security |
+| `SUPABASE_SERVICE_ROLE_KEY` | **Secret**, `sb_secret_...`           | **service_role**, a JWT | Secret. Ignores row-level security  |
 
 Both are on the project's API settings page, and `supabase status` prints the
 local stack's.

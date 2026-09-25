@@ -11,13 +11,13 @@ domain name pointed at it.
 The app talks to four things. Three of them are open-source services that Supabase
 the company publishes and anybody may run, and the fourth is the app itself.
 
-| Piece         | What it is                    | Why it is needed                                                     |
-| ------------- | ----------------------------- | -------------------------------------------------------------------- |
-| **Postgres**  | Version 17, as the stack runs | Every row, every policy, and the cron jobs that sweep old data        |
+| Piece         | What it is                    | Why it is needed                                                          |
+| ------------- | ----------------------------- | ------------------------------------------------------------------------- |
+| **Postgres**  | Version 17, as the stack runs | Every row, every policy, and the cron jobs that sweep old data            |
 | **GoTrue**    | Supabase Auth, an HTTP server | Accounts. 55 foreign keys point at `auth.users`, so it cannot be left out |
-| **PostgREST** | The REST layer over Postgres  | Every read the browser makes, under row-level security                |
-| **Realtime**  | The websocket server          | Lobbies, trades, auctions and gym seats update without polling        |
-| **The app**   | Node 26 running the build     | The pages, and the privileged writes in `src/server/`                 |
+| **PostgREST** | The REST layer over Postgres  | Every read the browser makes, under row-level security                    |
+| **Realtime**  | The websocket server          | Lobbies, trades, auctions and gym seats update without polling            |
+| **The app**   | Node 26 running the build     | The pages, and the privileged writes in `src/server/`                     |
 
 There is no queue, no object storage and no separate API. The world is derived
 from its seed rather than stored, and the sprites are static files.
@@ -113,18 +113,20 @@ and read back, and a cross-origin image without that header taints the canvas.
 
 Copy `.env.example` and fill it in. Against your own stack the values are:
 
-| Variable                    | What to put                                                        |
-| --------------------------- | ------------------------------------------------------------------ |
-| `VITE_SUPABASE_URL`         | The public URL of your API gateway, the one the browser calls       |
-| `VITE_SUPABASE_ANON_KEY`    | The anon key you generated for that stack                           |
-| `VITE_SPRITE_ORIGIN`        | Empty, unless the sprites live on another host                      |
-| `VITE_EMAIL_SIGN_IN`        | `1` to offer an address and a password, empty for OAuth alone       |
-| `VITE_WORLD_SEED`           | Any string. It decides the entire world                             |
-| `VITE_WORLD_GENERATION`     | `2` for a new world, empty for the first                            |
-| `SUPABASE_URL`              | The same API URL, read by the server                                |
-| `SUPABASE_DB_URL`           | A direct Postgres connection as the table owner                     |
-| `SUPABASE_SERVICE_ROLE_KEY` | The service key. Only the auth admin calls need it                  |
-| `SUPABASE_JWT_SECRET`       | The shared signing secret                                           |
+| Variable                    | What to put                                                   |
+| --------------------------- | ------------------------------------------------------------- |
+| `VITE_SUPABASE_URL`         | The public URL of your API gateway, the one the browser calls |
+| `VITE_SUPABASE_ANON_KEY`    | The anon key you generated for that stack                     |
+| `VITE_SPRITE_ORIGIN`        | Empty, unless the sprites live on another host                |
+| `VITE_EMAIL_SIGN_IN`        | `1` to offer an address and a password, empty for OAuth alone |
+| `VITE_WORLD_SEED`           | Any string. It decides the entire world                       |
+| `VITE_WORLD_GENERATION`     | `2` for a new world, empty for the first                      |
+| `VITE_REAL_TIME_OF_DAY`     | Empty for the game clock, `true` for the local clock          |
+| `VITE_TIME_OF_DAY_MINUTES`  | Minutes per period on the game clock. Empty means 90          |
+| `SUPABASE_URL`              | The same API URL, read by the server                          |
+| `SUPABASE_DB_URL`           | A direct Postgres connection as the table owner               |
+| `SUPABASE_SERVICE_ROLE_KEY` | The service key. Only the auth admin calls need it            |
+| `SUPABASE_JWT_SECRET`       | The shared signing secret                                     |
 
 `SUPABASE_DB_URL` bypasses row-level security by design, because it connects as
 the table owner. It belongs to the server process and nowhere near the browser.
@@ -191,7 +193,7 @@ the main reason to do this at all.
 - **Push migrations before deploying the build that needs them**, always in that
   order.
 - **Watch the sweep jobs.** `select * from cron.job_run_details order by
-  start_time desc limit 20;` says whether they are running. They are what keeps
+start_time desc limit 20;` says whether they are running. They are what keeps
   the database from growing without bound.
 
 ## What you give up

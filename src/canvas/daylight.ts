@@ -13,19 +13,12 @@
  * lamp being switched rather than as the sun going down.
  */
 
+import { clockHour } from '../data/day-clock';
 import { WORLD_MAX } from '../overworld/world';
 import type { Colour } from './gl/colour';
 import { dimmed } from './lighting';
 import type { Painter } from './gl/quad-batch';
 import { boardView } from './board';
-
-const HOUR = 3_600_000;
-const DAY = 24 * HOUR;
-
-/** The local hour, as a fraction: 13.5 is half past one */
-function hourOf(localTime: number): number {
-  return (((localTime % DAY) + DAY) % DAY) / HOUR;
-}
 
 /**
  * Where the sun stands.
@@ -70,7 +63,7 @@ export function latitudeOf(chunkY: number): number {
 }
 
 export function getSun(localTime: number, latitude = 0): Sun {
-  const hour = hourOf(localTime);
+  const hour = clockHour(localTime);
   /**
    * How far through the daylight it is, from 0 at sunrise to 1 at
    * sunset. Outside those hours it runs on past both ends, which is

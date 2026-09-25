@@ -209,6 +209,28 @@ A banned player can still sign in and read: the game tells them they are banned
 and why, since a ban that looked like a broken game would be worse than one that
 says so.
 
+### Switches close a part of the game
+
+`switches` has one row per part of the game (`auctions`, `trades`, `stops`,
+`raids`, `duels`, `gym-seats`, `gifts`, `townsfolk`, `catching`, `claims`) and
+one for `everything`. Ticking `closed` on a row in the dashboard closes that
+part at once, without a deploy, which is the answer to an exploit found before
+its fix can ship. `message` is what players are told; an empty one uses the
+game's own line.
+
+The server reads the switches in the same statement as the ban check and the
+paces, so they cost no round trip. A server function that **starts** something
+names its part through `requireUidFor(token, Feature.Auctions)`; one that
+leaves, cancels, reads, collects what is owed or settles a fight already under
+way calls `requireUid` and is never refused, so closing a part strands nobody
+halfway through it. `everything` is maintenance: every call from a player
+without a role is refused, and staff still get in to check the game before it
+opens again. The feature list lives in
+[`src/server/switches.ts`](../../src/server/switches.ts).
+
+Anybody signed in may read the table, so a screen can say a part is closed
+before a player tries it. Nobody but the owner writes it.
+
 ### Testing the policies
 
 [`test/rls/rls.test.ts`](../../test/rls/rls.test.ts) asks Postgres itself. It

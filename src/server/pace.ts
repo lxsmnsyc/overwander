@@ -1,5 +1,7 @@
 import 'server-only';
 import type { Sql, Tx } from './db';
+import isStaff from '../auth/staff';
+import { Feature } from './switches';
 
 /**
  * How fast a player may act.
@@ -54,8 +56,21 @@ export interface PaceCost {
   cost: number;
 }
 
+/** What `admit` found out about a caller */
+export interface Admission {
+  banned: boolean;
+  paced: boolean;
+  /**
+   * The switch that refuses this call, with what it says, or null when
+   * nothing does. Maintenance wins over a part's own switch, and a
+   * caller with a role is never refused by one
+   */
+  closed: { feature: Feature; message: string } | null;
+}
+
 /**
- * Spend from each bucket named, beside the ban check, in one statement.
+ * Spend from each bucket named, beside the ban check and the switches,
+ * in one statement.
  *
  * A bucket that cannot cover its cost is left as it was, and the call
  * is refused if any of them could not. Buckets that could are spent
@@ -67,7 +82,8 @@ export async function admit(
   uid: string,
   costs: readonly PaceCost[],
   now: number,
-): Promise<{ banned: boolean; paced: boolean }> {
+  feature?: Feature,
+): Promise<Admission> {
   const rows: [string, number, number, number][] = [];
 
   for (const { pace, cost } of costs) {
@@ -97,12 +113,30 @@ export async function admit(
     )
     select
       coalesce((select banned from profiles where id = ${uid}), false) as banned,
-      (select count(*)::int from spent) as spent
+      coalesce((select role from profiles where id = ${uid}), '') as role,
+      (select count(*)::int from spent) as spent,
+      (
+        select json_build_object('feature', feature, 'message', message)
+        from switches
+        where closed and feature in (${Feature.Everything}, ${feature ?? Feature.Everything})
+        order by feature = ${Feature.Everything} desc
+        limit 1
+      ) as closed
   `;
   const row = answer.at(0);
+  const closed: unknown = row?.closed;
 
   return {
     banned: row?.banned === true,
     paced: Number(row?.spent ?? 0) === rows.length,
+    closed:
+      closed != null && typeof closed === 'object' && !isStaff(String(row?.role ?? ''))
+        ? {
+            // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+            feature: String((closed as { feature: unknown }).feature) as Feature,
+            // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+            message: String((closed as { message: unknown }).message),
+          }
+        : null,
   };
 }

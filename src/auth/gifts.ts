@@ -1,5 +1,6 @@
 import type { MysteryGift } from './gift-record';
-import { requireUid } from '../server/auth';
+import { requireUid, requireUidFor } from '../server/auth';
+import { Feature } from '../server/switches';
 import check, { ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
 import type { GiftClaim } from '../server/gifts';
 import { claimMysteryGift as claimOne, listMysteryGifts as listOwed } from '../server/gifts';
@@ -46,7 +47,7 @@ async function claimOnServer(
   check(OFFSET, offset);
   check(LOCALE, locale);
 
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Gifts);
   const paid = await claimOne(uid, gift, await syncServerClock(), offset, locale);
 
   // Counted here rather than in the claim itself, so a quest reward

@@ -5,7 +5,8 @@
 import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import { type DuelInvite, type DuelRecord, type DuelRules, asDuelRecord } from './duel-record';
 import type { LobbyRole } from './lobby-role';
-import { requireUid } from '../server/auth';
+import { requireUid, requireUidFor } from '../server/auth';
+import { Feature } from '../server/switches';
 import check, {
   DUEL_RULES,
   FLAG,
@@ -240,7 +241,7 @@ async function hostDuelOnServer(token: string, watching: boolean): Promise<strin
   'use server';
   check(TOKEN, token);
   check(FLAG, watching);
-  return hostOnServer(await requireUid(token), watching, await syncServerClock());
+  return hostOnServer(await requireUidFor(token, Feature.Duels), watching, await syncServerClock());
 }
 
 /** Call somebody in, to fight or to watch */
@@ -259,7 +260,13 @@ async function inviteToDuelOnServer(
   check(ID, id);
   check(UID, target);
   check(LOBBY_ROLE, role);
-  return inviteOnServer(await requireUid(token), id, target, role, await syncServerClock());
+  return inviteOnServer(
+    await requireUidFor(token, Feature.Duels),
+    id,
+    target,
+    role,
+    await syncServerClock(),
+  );
 }
 
 /** The same call, to whoever holds a friend code */
@@ -282,7 +289,13 @@ async function inviteByCodeOnServer(
   check(ID, id);
   check(TEXT, code);
   check(LOBBY_ROLE, role);
-  return inviteByCodeOnServerSide(await requireUid(token), id, code, role, await syncServerClock());
+  return inviteByCodeOnServerSide(
+    await requireUidFor(token, Feature.Duels),
+    id,
+    code,
+    role,
+    await syncServerClock(),
+  );
 }
 
 export async function declineDuelInvite(id: string): Promise<void> {
@@ -305,7 +318,7 @@ async function joinDuelOnServer(token: string, id: string): Promise<boolean> {
   'use server';
   check(TOKEN, token);
   check(ID, id);
-  return joinOnServer(await requireUid(token), id);
+  return joinOnServer(await requireUidFor(token, Feature.Duels), id);
 }
 
 /** Take the free seat, or step back to watching */
@@ -394,5 +407,5 @@ async function startDuelOnServer(token: string, id: string): Promise<string | nu
   'use server';
   check(TOKEN, token);
   check(ID, id);
-  return startOnServer(await requireUid(token), id, await syncServerClock());
+  return startOnServer(await requireUidFor(token, Feature.Duels), id, await syncServerClock());
 }

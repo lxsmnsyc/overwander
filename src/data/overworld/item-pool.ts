@@ -350,6 +350,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LustrousOrb, weight: 3 },
     { item: Items.GriseousOrb, weight: 3 },
     { item: Items.Gracidea, weight: 3 },
+    // As thin as the orbs, for the same reason: the splicers are worth
+    // nothing until a Kyurem has been caught
+    { item: Items.DnaSplicers, weight: 3 },
     // Three purses instead of one, for good, and nothing sells one.
     // Here rather than in rare so that parting with it is asked about
     // twice

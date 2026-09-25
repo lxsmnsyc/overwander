@@ -579,7 +579,7 @@ function LobbyRows(
                     setPicking(true);
                   }}
                 >
-                  {mine() ? 'Form another team' : 'Form a team'}
+                  {mine() ? 'Change team' : 'Form a team'}
                 </Button>
               </Show>
               <Show when={isHost()}>

@@ -1,5 +1,57 @@
 # overwander
 
+## 4.18.0
+
+### Minor Changes
+
+- 4ba82de: Reshiram, Zekrom and Kyurem can be met, and Kyurem can be fused.
+
+  - Dragonspiral Tower stands in taiga and tundra and holds Reshiram and Zekrom,
+    one of the two each time. Giant Chasm stands in tundra and glacier and holds
+    Kyurem. Each of the three is also a wild spawn where its lair stands.
+  - Their signatures are one idea told three ways. Truth Creed hits 1.3x an enemy
+    carrying a status condition, Ideal Creed 1.3x an enemy carrying a raised stat
+    stage, and Hollow Creed 1.3x an enemy carrying neither.
+  - Turboblaze and Teravolt are new, and both do what Mold Breaker does: the
+    target's abilities cannot hinder their moves.
+  - The mainline gives each of them one ability, so each carries three of this
+    registry's own. Reshiram has Flash Fire, Pressure and Serene Grace, Zekrom
+    Motor Drive, Pressure and Sheer Force, and Kyurem Snow Warning, Ice Body and
+    Intimidate.
+  - The DNA Splicers are new. Used on a Kyurem they ask which dragon to fold in,
+    and the pokemon picked goes inside the fusion rather than being spent: it
+    leaves the boxes until the two are taken apart again, which the same pair
+    does. The fused pokemon names what is inside it, so nothing is lost. Black Kyurem takes Zekrom's Attack and Teravolt, White Kyurem takes
+    Reshiram's Special Attack and Turboblaze, and neither may be folded out of a
+    fight, an egg or the buddy slot.
+  - Changes world generation.
+
+- bb78f7b: The three that ride the storm clouds, and the shrine they come back to:
+
+  - Tornadus, Thundurus and Landorus all stand in the grassland, at any hour, out of the Abundant Shrine. One lair holds all three, the way the burned tower holds the beasts.
+  - Each carries one gift, told three ways: Windfall has its team throw Flying moves at 1.3x, Stormfall does the same for Electric and Landfall for Ground. Three of them standing together lift three different elements.
+  - Tornadus can be born with Wind Rider or Snow Warning, Thundurus with Lightning Rod or Drizzle, and Landorus with Harvest or Sand Stream.
+  - Each one's second shape is written and none of them can be reached yet: the mirror that turns one into the other works the way the Meteorite does for a Deoxys, and it waits until the other two shapes are drawn.
+
+- 931108b: The three Unova mythicals, and the machinery two of them needed:
+
+  - Victini stands on the rocky coast, Meloetta in the woodland and Genesect in the desert, at any hour.
+  - Three new lairs: Liberty Garden for Victini, the Abyssal Ruins for Meloetta and the P2 Laboratory for Genesect. No biome hosts one, so the world never puts a mythical on the map.
+  - Three new relics, found in the rarest band of the overworld item pool and nowhere else. The Liberty Pass calls Victini, the Music Box calls Meloetta and the Colress Machine calls Genesect. Each is spent when its raid starts.
+  - Victory Star now works: the holder's whole team, itself included, throws moves at 1.1x accuracy.
+  - Winner's Share is Victini's own. Each enemy that faints gives its whole team +1 Attack and +1 Special Attack.
+  - Countertune is Meloetta's own. Changing shape swaps its Attack and Special Attack stages, and swaps its two defences.
+  - Overclock is Genesect's own. It casts 25% faster above 1/2 HP, and at or below that it loses 1/16 of its HP each time it acts.
+  - Relic Song turns a Meloetta from its singing shape into its dancing one, and back again.
+  - A Genesect holding a Drive now fights in that Drive's shape. The Drive already set the type of its Techno Blast.
+  - Dancer now works: whenever anybody uses a dance move, the holder casts the same one straight after, for free. Rain Dance does not count as a dance.
+  - Victini can also be born with Flash Fire, Inner Focus or Magic Guard. Meloetta with Soundproof, Healer or Dancer. Genesect with Analytic, Synchronize or Adaptability.
+
+### Patch Changes
+
+- daa0a46: The catch dialog shows the pokemon's level before its category.
+- 5aaf21c: People standing past the live part of the board wear their own coats, so a far syndicate, gym leader or trainer no longer looks like a Rocket grunt or an Ace Trainer.
+
 ## 4.17.0
 
 ### Minor Changes

@@ -247,7 +247,13 @@ way.
   line into that line's own Z-Move, which has its own power and effect.
 - **One Z-Move a side a fight.** The first one a side throws spends it for every
   pokemon on that side.
-- Status moves are never turned into a Z-Move yet.
+- A status move of a type crystal's type still goes off as itself, with its
+  Z-effect paid first. Depending on the move, that raises the user's stages,
+  brings it back to full HP, clears its lowered stages, raises its critical hit
+  ratio 2 stages, or draws the other side's moves to it, as the mainline
+  assigns them. Z-Curse heals a Ghost to full and raises anything else's
+  Attack a stage. Memento, Parting Shot, Healing Wish and Lunar Dance get
+  nothing, since their Z-effect heals a replacement that never comes in here.
 - A Mega, or a pokemon holding the stone that would make it one, never throws a
   Z-Move.
 - A Z-Move is always aimed at one enemy, except Clangorous Soulblaze. Metronome,

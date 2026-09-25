@@ -495,23 +495,62 @@ describe('Z-Moves', () => {
     expect(powers).toEqual([175]);
   });
 
-  it('leaves status moves and a Mega holder alone', () => {
+  it('leaves a Mega holder alone', () => {
     const { battle, teamA, teamB } = createBattle();
-    const holder = createUnit(battle, teamA);
     const mega = createUnit(battle, teamA);
     const target = createUnit(battle, teamB);
     const thrown = watchThrows(battle);
 
-    holder.addItem(Items.NormaliumZ);
-    holder.triggerMove(Moves.SwordsDance, NONE_TARGET, 0);
     mega.setSpecies(Species.Charizard);
     mega.addItem(Items.CharizarditeX);
     mega.addItem(Items.FiriumZ);
     mega.triggerMove(Moves.Flamethrower, unitTarget(target), 0);
+    mega.triggerMove(Moves.SunnyDay, NONE_TARGET, 0);
+    battle.tick(turns(1));
+
+    expect(thrown.get(mega)).toEqual([Moves.Flamethrower, Moves.SunnyDay]);
+    expect(mega.stages[Stages.Speed]).toBe(0);
+  });
+
+  it("gives a status move its Z-effect first, and spends the side's Z-Move", () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    const thrown = watchThrows(battle);
+    const cause = { type: EffectType.None } as const;
+
+    holder.addItem(Items.NormaliumZ);
+    mate.addItem(Items.NormaliumZ);
+    holder.addStage(Stages.Attack, -2, cause);
+    holder.addStage(Stages.Speed, -1, cause);
+    // Swords Dance clears the drops first, then raises Attack as usual
+    holder.triggerMove(Moves.SwordsDance, NONE_TARGET, 0);
+    mate.triggerMove(Moves.Growl, unitTarget(target), 0);
     battle.tick(turns(1));
 
     expect(thrown.get(holder)).toEqual([Moves.SwordsDance]);
-    expect(thrown.get(mega)).toEqual([Moves.Flamethrower]);
+    expect(holder.stages[Stages.Attack]).toBe(2);
+    expect(holder.stages[Stages.Speed]).toBe(0);
+    expect(mate.stages[Stages.Defense]).toBe(0);
+  });
+
+  it('raises stages, or heals, by the move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const growler = createUnit(battle, teamA);
+    const ghost = createUnit(battle, teamB);
+
+    growler.addItem(Items.NormaliumZ);
+    growler.triggerMove(Moves.Growl, unitTarget(ghost), 0);
+    ghost.addType(Types.Ghost);
+    ghost.addItem(Items.GhostiumZ);
+    ghost.setHealth(1);
+    ghost.triggerMove(Moves.Curse, unitTarget(growler), 0);
+    battle.tick(turns(1));
+
+    expect(growler.stages[Stages.Defense]).toBe(1);
+    // Healed to full before Curse takes its half
+    expect(ghost.health).toBe(Math.ceil(ghost.checkStat(Stats.HP, 0) / 2));
   });
 
   it("turns a line's own move into its signature Z-Move, and only for that line", () => {

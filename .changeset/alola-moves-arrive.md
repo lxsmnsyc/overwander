@@ -18,5 +18,6 @@ Alola's moves:
 - Stomping Tantrum hits 2x after the user's last move failed. Core Enforcer takes an ability off each target that is not winding up a move.
 - The 17 Memories are held items that set Multi-Attack's type.
 - Z-Moves are in. A pokemon holding a Z-Crystal turns a matching damaging move into its Z-Move as it goes off, once a side a fight.
+- A type crystal gives a status move of its type the mainline Z-effect before the move goes off, such as a stage raised, full HP or cleared drops.
 - The 18 type crystals take their power from the move they replace, and the 17 signature crystals each turn one line's own move into its own Z-Move.
 - A Mega, or a pokemon holding its Mega Stone, never throws a Z-Move.

@@ -281,7 +281,7 @@ export default function registerZCrystals(): void {
   for (const [item, crystal] of TYPE_CRYSTALS) {
     registerItem(item, {
       name: crystal.name,
-      description: `Turns a damaging ${TYPE_NAMES[crystal.type]} move into ${crystal.zMoveName} as it is thrown. ${LIMIT}`,
+      description: `Turns a damaging ${TYPE_NAMES[crystal.type]} move into ${crystal.zMoveName} as it is thrown, and gives a status move of the type its Z-effect first. ${LIMIT}`,
       type: ItemTypes.Held,
       icon: iconOf(crystal.name),
       flags: ItemFlags.Holdable,

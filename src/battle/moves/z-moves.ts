@@ -1,12 +1,22 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { Stages, Stats } from '../../data/constants/stats';
+import { Types } from '../../data/constants/types';
 import { Species } from '../../data/ids/species';
-import { MoveTargets, type Moves } from '../../data/ids/moves';
+import { MoveCategories, MoveTargets, type Moves } from '../../data/ids/moves';
+import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
-import { GENERIC_Z_MOVES, TYPE_Z_MOVES, canBecomeZMove, zPowerOf } from '../../data/moves/z-moves';
+import {
+  GENERIC_Z_MOVES,
+  TYPE_Z_MOVES,
+  type ZStatusEffect,
+  Z_STATUS_EFFECTS,
+  canBecomeZMove,
+  zPowerOf,
+} from '../../data/moves/z-moves';
 import { getMegaStone } from '../../data/items/mega-stones';
 import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../../data/items/z-crystals';
 import type Battle from '../core';
-import { BattleEvents, type MoveTarget, MoveTargetType } from '../events';
+import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
 import { megaOf } from '../items/megas';
 import type Team from '../team';
 import type Unit from '../unit';
@@ -15,10 +25,21 @@ import type Unit from '../unit';
  * Z-Moves. A unit holding a Z-Crystal has a matching move turned into
  * its Z-Move as the move goes off, with no button to press, so the AI
  * and a player get it the same way. The first one a side throws spends
- * it for the whole side for the rest of the fight. A Mega, or a unit
+ * it for the whole side for the rest of the fight. A status move keeps
+ * going off as itself, with its Z-effect paid first. A Mega, or a unit
  * that would become one, never throws one: its stone is what it holds
  * https://bulbapedia.bulbagarden.net/wiki/Z-Move
  */
+
+const ALL_STAGES = [
+  Stages.Attack,
+  Stages.Defense,
+  Stages.SpecialAttack,
+  Stages.SpecialDefense,
+  Stages.Speed,
+  Stages.Evasion,
+  Stages.Accuracy,
+] as const;
 
 /** Whether the unit is a Mega, or holds what would make it one */
 function isMegaHolder(unit: Unit): boolean {
@@ -42,12 +63,68 @@ function zMoveFor(unit: Unit, move: Moves, target: MoveTarget): Moves | null {
 
   const type = unit.checkMoveType(move, target);
 
+  return holdsTypeCrystal(unit, type) ? (TYPE_Z_MOVES.get(type) ?? null) : null;
+}
+
+function holdsTypeCrystal(unit: Unit, type: Types): boolean {
   for (const [item, crystal] of TYPE_CRYSTALS) {
     if (unit.hasItem(item) && crystal.type === type) {
-      return TYPE_Z_MOVES.get(type) ?? null;
+      return true;
     }
   }
-  return null;
+  return false;
+}
+
+/** The Z-effect this unit's crystal adds to a status move, if any */
+function zEffectFor(unit: Unit, move: Moves, target: MoveTarget): ZStatusEffect | null {
+  const effect = Z_STATUS_EFFECTS.get(move);
+
+  if (
+    effect == null ||
+    isMegaHolder(unit) ||
+    !holdsTypeCrystal(unit, unit.checkMoveType(move, target))
+  ) {
+    return null;
+  }
+  return effect;
+}
+
+function applyZEffect(unit: Unit, move: Moves, effect: ZStatusEffect): void {
+  const cause = { type: EffectType.Move, move, unit } as const;
+  const heal = (): void => {
+    unit.heal(cause, unit, unit.checkStat(Stats.HP, 0), 0);
+  };
+
+  switch (effect.kind) {
+    case 'stages':
+      for (const stage of effect.stages) {
+        unit.addStage(stage, effect.value, cause);
+      }
+      break;
+    case 'heal':
+      heal();
+      break;
+    case 'clear':
+      for (const stage of ALL_STAGES) {
+        if (unit.stages[stage] < 0) {
+          unit.addStage(stage, -unit.stages[stage], cause);
+        }
+      }
+      break;
+    case 'critical':
+      unit.addStatus(Statuses.FocusEnergy, cause);
+      break;
+    case 'centre':
+      unit.addStatus(Statuses.Centered, cause);
+      break;
+    case 'curse':
+      if (unit.types.has(Types.Ghost)) {
+        heal();
+      } else {
+        unit.addStage(Stages.Attack, 1, cause);
+      }
+      break;
+  }
 }
 
 /**
@@ -78,6 +155,16 @@ export default function setupZMoves(battle: Battle): void {
 
     // The wind-up steps of a charged move go by as they are; the blow is the one turned
     if (event.steps !== 0 || spent.has(unit.team)) {
+      return;
+    }
+
+    if (getMoveData(event.move).category === MoveCategories.Status) {
+      const effect = zEffectFor(unit, event.move, event.target);
+
+      if (effect != null) {
+        spent.add(unit.team);
+        applyZEffect(unit, event.move, effect);
+      }
       return;
     }
 

@@ -25,6 +25,7 @@ export const ABSORB_MOVES = new Set<Moves>([
   Moves.ParabolicCharge,
   Moves.DrainingKiss,
   Moves.OblivionWing,
+  Moves.BouncyBubble,
 ]);
 
 const HEALING_FACTOR = 0.5;
@@ -33,6 +34,7 @@ const HEALING_FACTOR = 0.5;
 const DRAIN_SHARES: { [key in Moves]?: number } = {
   [Moves.DrainingKiss]: 0.75,
   [Moves.OblivionWing]: 0.75,
+  [Moves.BouncyBubble]: 1,
 };
 
 /**

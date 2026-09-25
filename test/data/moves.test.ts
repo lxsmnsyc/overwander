@@ -309,6 +309,11 @@ describe('move damage', () => {
     Moves.HeavySlam,
     Moves.HeatCrash,
     Moves.FinalGambit,
+    // Alola's own: power read off what the target has left, and off
+    // friendship for the two partner moves
+    Moves.NaturesMadness,
+    Moves.PikaPapow,
+    Moves.VeeveeVolley,
   ]);
 
   it('gives every damaging move something to hit with', () => {

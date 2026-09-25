@@ -19,6 +19,7 @@ import {
   spawnId,
 } from './snapshot-record';
 import { requireUid } from '../server/auth';
+import { Pace } from '../server/pace';
 import check, {
   CELL,
   CHUNK_COORDINATE,
@@ -352,7 +353,7 @@ async function claimCacheOnServer(
   check(OFFSET, offset);
   check(DEPTH, depth);
   return claimCacheOnServerSide(
-    await requireUid(token),
+    await requireUid(token, Pace.Claim),
     x,
     y,
     cell,
@@ -398,7 +399,7 @@ async function claimBerryOnServer(
   check(OFFSET, offset);
   check(DEPTH, depth);
   return claimBerryOnServerSide(
-    await requireUid(token),
+    await requireUid(token, Pace.Claim),
     x,
     y,
     cell,
@@ -443,7 +444,7 @@ async function claimApricornOnServer(
   check(OFFSET, offset);
   check(DEPTH, depth);
   return claimApricornOnServerSide(
-    await requireUid(token),
+    await requireUid(token, Pace.Claim),
     x,
     y,
     cell,
@@ -587,7 +588,7 @@ async function claimNestOnServer(
   check(LOCALE, locale);
   check(DEPTH, depth);
   return claimNestOnServerSide(
-    await requireUid(token),
+    await requireUid(token, Pace.Claim),
     x,
     y,
     cell,
@@ -651,7 +652,7 @@ async function claimPhenomenonOnServer(
   check(LOCALE, locale);
   check(DEPTH, depth);
   return claimPhenomenonOnServerSide(
-    await requireUid(token),
+    await requireUid(token, Pace.Claim),
     x,
     y,
     cell,

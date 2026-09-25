@@ -1,6 +1,7 @@
 import type { Species } from '../data/ids/species';
 import { type WalkReport, hatchEgg as hatchOnServerSide, recordSteps } from '../server/eggs';
 import { requireUid } from '../server/auth';
+import { Pace } from '../server/pace';
 import check, { COUNT, ID, OFFSET, TOKEN } from '../server/validate';
 import { announceBuddyChange } from './buddy-changes';
 import { syncServerClock } from './clock';
@@ -71,5 +72,10 @@ async function walkInZoneOnServer(
   check(TOKEN, token);
   check(COUNT, steps);
   check(OFFSET, offset);
-  return recordSteps(await requireUid(token), steps, await syncServerClock(), offset);
+  return recordSteps(
+    await requireUid(token, Pace.Steps, steps),
+    steps,
+    await syncServerClock(),
+    offset,
+  );
 }

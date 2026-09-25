@@ -11,6 +11,7 @@ import SafariSession, {
 } from '../overworld/safari';
 import { safariContextOf } from '../overworld/safari-context';
 import { requireUid } from '../server/auth';
+import { Pace } from '../server/pace';
 import check, { GAME_ID, ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
 import { type ThrowReport, feedAt, throwAt } from '../server/throws';
 import { WORLD_GENERATION } from '../overworld/current';
@@ -150,7 +151,7 @@ async function spendFeed(token: string, spawn: string, item: Items): Promise<boo
   check(TOKEN, token);
   check(ID, spawn);
   check(GAME_ID, item);
-  return feedAt(await requireUid(token), spawn, item);
+  return feedAt(await requireUid(token, Pace.Feed), spawn, item);
 }
 
 /**
@@ -317,5 +318,12 @@ async function throwOnServer(
   check(GAME_ID, ball);
   check(OFFSET, offset);
   check(LOCALE, locale);
-  return throwAt(await requireUid(token), spawn, ball, await syncServerClock(), offset, locale);
+  return throwAt(
+    await requireUid(token, Pace.Throw),
+    spawn,
+    ball,
+    await syncServerClock(),
+    offset,
+    locale,
+  );
 }

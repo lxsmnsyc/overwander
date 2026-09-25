@@ -294,6 +294,24 @@ against.
 
 Private to the owning uid, and read-only to them.
 
+## `action_paces`
+
+How fast each player may act: one token bucket per kind of action, keyed by
+`(player, action)`. A bucket holds up to `burst` tokens and refills `per_ms` of
+them every millisecond; an action spends what it costs.
+
+Every server call spends one token from the player's `any` bucket. The loops a
+script would want to run fast spend from their own bucket as well: `throw`,
+`feed`, `claim` (caches, berries, apricorns, nests and phenomenon eggs) and
+`steps`, which spends one token per step a walk reports. The rules live in
+[`src/server/pace.ts`](../../src/server/pace.ts), each a little above the
+fastest the game itself goes.
+
+`requireUid` checks and spends in the same statement as the ban check, so
+pacing costs no extra round trip. A call that any named bucket cannot cover is
+refused with "Slow down a moment." Buckets that could cover it are spent anyway,
+so a flood pays for itself. Only the server reads or writes this table.
+
 ## Not built yet: an economy ledger
 
 Nothing records where gold, items or candy came from. A balance says what a

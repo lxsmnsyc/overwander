@@ -1,6 +1,7 @@
 import { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
 import { requireUid } from '../server/auth';
+import { Pace } from '../server/pace';
 import check, {
   CELL_COORDINATE,
   CHUNK_COORDINATE,
@@ -216,7 +217,7 @@ async function settleWalkInZoneOnServer(
   check(CELL_COORDINATE, cellY);
   check(DEPTH, depth);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUid(token, Pace.Steps, steps);
   const now = await syncServerClock();
   // The paces land first, so a saved position never runs ahead of the egg
   const report = steps > 0 ? await recordSteps(uid, steps, now, offset) : null;

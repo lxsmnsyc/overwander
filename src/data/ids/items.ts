@@ -74,6 +74,7 @@ export const enum Balls {
   LoveBall = 18,
   HeavyBall = 19,
   FastBall = 20,
+  BeastBall = 21,
 }
 
 export const enum Items {
@@ -1188,6 +1189,7 @@ export const BALL_ITEMS: Record<Balls, Items> = {
   [Balls.LoveBall]: Items.LoveBall,
   [Balls.HeavyBall]: Items.HeavyBall,
   [Balls.FastBall]: Items.FastBall,
+  [Balls.BeastBall]: Items.BeastBall,
 };
 
 const BALLS_BY_ITEM = (() => {

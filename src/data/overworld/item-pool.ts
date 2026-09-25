@@ -124,6 +124,7 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.TimerBall, weight: 10 },
     { item: Items.QuickBall, weight: 10 },
     { item: Items.DuskBall, weight: 10 },
+    { item: Items.BeastBall, weight: 3 },
     { item: Items.BigPearl, weight: 8 },
     { item: Items.StarPiece, weight: 8 },
     { item: Items.BigMushroom, weight: 6 },

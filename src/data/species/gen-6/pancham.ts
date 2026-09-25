@@ -153,6 +153,7 @@ export default function registerPanchamSpecies(): void {
         Moves.QuickGuard,
         Moves.SeismicToss,
         Moves.StormThrow,
+        Moves.PowerTrip,
       ],
     },
   });
@@ -223,6 +224,9 @@ export default function registerPanchamSpecies(): void {
         Moves.Snarl,
         Moves.Thief,
         Moves.XScissor,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

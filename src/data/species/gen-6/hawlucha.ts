@@ -140,6 +140,8 @@ export default function registerHawluchaSpecies(): void {
         Moves.WorkUp,
         Moves.XScissor,
         Moves.ZenHeadbutt,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
       egg: [
         Moves.Agility,

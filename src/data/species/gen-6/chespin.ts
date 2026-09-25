@@ -76,6 +76,7 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.WorrySeed,
   Moves.ZenHeadbutt,
+  Moves.StompingTantrum,
 ];
 
 export default function registerChespinSpecies(): void {

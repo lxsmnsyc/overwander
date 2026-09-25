@@ -125,6 +125,7 @@ export default function registerCarbinkSpecies(): void {
         Moves.Toxic,
         Moves.TrickRoom,
         Moves.WonderRoom,
+        Moves.StompingTantrum,
       ],
     },
   });

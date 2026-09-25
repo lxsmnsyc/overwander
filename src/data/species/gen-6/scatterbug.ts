@@ -274,6 +274,7 @@ export default function registerScatterbugSpecies(): void {
         Moves.Thief,
         Moves.Toxic,
         Moves.UTurn,
+        Moves.LaserFocus,
       ],
     },
   });
@@ -366,6 +367,7 @@ export default function registerScatterbugSpecies(): void {
           Moves.Thief,
           Moves.Toxic,
           Moves.UTurn,
+          Moves.LaserFocus,
         ],
       },
       name: pattern.name,
@@ -465,6 +467,7 @@ export default function registerScatterbugSpecies(): void {
           Moves.Thief,
           Moves.Toxic,
           Moves.UTurn,
+          Moves.LaserFocus,
         ],
       },
       name,

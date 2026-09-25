@@ -260,6 +260,9 @@ export default function registerGoomySpecies(): void {
         Moves.Thunder,
         Moves.ThunderPunch,
         Moves.WeatherBall,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
       ],
     },
   });

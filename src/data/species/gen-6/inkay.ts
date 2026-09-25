@@ -199,6 +199,8 @@ export default function registerInkaySpecies(): void {
         Moves.Reversal,
         Moves.ScaryFace,
         Moves.SignalBeam,
+        Moves.BrutalSwing,
+        Moves.ThroatChop,
       ],
     },
   });

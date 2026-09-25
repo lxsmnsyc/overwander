@@ -15,6 +15,15 @@ Pinap pays its extra candy at the catch, which is a later call than the one that
 fed it, and the catch is recorded from the staged row. The row is therefore
 where the berry has to live.
 
+`safari` is what the meeting has built up between throws: the feeding bonus, how
+many balls have been thrown, the safari clock and whether it is still chewing.
+Throws and treats are decided on the server (`throwAt` and `feedAt` in
+[`src/server/throws.ts`](../../src/server/throws.ts)), which reads this, rolls,
+and writes it back in the same transaction that spends the ball or the treat. A
+throw that catches or flees also retires the meeting in `fled_encounters` in
+that transaction, so a meeting is caught at most once. Null is a meeting nobody
+has thrown at or fed yet.
+
 Its `shiny` and `shadow` columns and its packed `ivs` are the same shapes the
 catch row stores, see [Packed fields](catch-training.md#packed-fields), so
 recording a catch copies them across rather than converting them. Only the named

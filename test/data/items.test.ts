@@ -1791,17 +1791,16 @@ describe('item data', () => {
     expect(RAZZ_CATCH_BONUS.get(Items.GoldenRazzBerry)).toBeLessThanOrEqual(MAX_CATCH_BONUS);
   });
 
-  it('grows no flavour berry yet', () => {
-    // They are cut, named and fed, and deliberately left out of the
-    // patches: nothing in the world drops one until they are pooled
-    const grown = new Set(
-      [...BERRY_POOL.base, ...BERRY_POOL.uncommon, ...BERRY_POOL.rare, ...BERRY_POOL.special].map(
-        (entry) => entry.item,
-      ),
-    );
+  it('grows every flavour berry in the everyday band', () => {
+    // Bait for the safari and nothing else, so they grow where the
+    // everyday cures do
+    const everyday = new Set<Items>();
 
+    for (const entry of BERRY_POOL.base) {
+      everyday.add(entry.item);
+    }
     for (const item of BAIT_BERRY_NAMES.keys()) {
-      expect(grown.has(item)).toBe(false);
+      expect(everyday.has(item), getItemData(item).name).toBe(true);
     }
   });
 

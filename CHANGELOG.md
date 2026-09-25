@@ -1,5 +1,11 @@
 # overwander
 
+## 4.18.1
+
+### Patch Changes
+
+- d45adcc: The DNA Splicers turn up on walks, so Kyurem can be fused.
+
 ## 4.18.0
 
 ### Minor Changes

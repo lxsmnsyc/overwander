@@ -35,12 +35,15 @@ import basculinToAlomomola from './basculin-to-alomomola';
 import joltikToKlink from './joltik-to-klink';
 import zoruaToSolosis from './zorua-to-solosis';
 import axewToDeino from './axew-to-deino';
+import tynamoToMienfoo from './tynamo-to-mienfoo';
 import elgyemToGolett from './elgyem-to-golett';
+import heatmorToLarvesta from './heatmor-to-larvesta';
 import patratToPurrloin from './patrat-to-purrloin';
 import pawniardToVullaby from './pawniard-to-vullaby';
 import roggenrolaToDrilbur from './roggenrola-to-drilbur';
 import sewaddleToPetilil from './sewaddle-to-petilil';
 import snivyToOshawott from './snivy-to-oshawott';
+import swordsOfJustice from './swords-of-justice';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -89,6 +92,9 @@ const setupAbilities = [
   ...elgyemToGolett,
   ...axewToDeino,
   ...pawniardToVullaby,
+  ...heatmorToLarvesta,
+  ...tynamoToMienfoo,
+  ...swordsOfJustice,
 ];
 
 /**

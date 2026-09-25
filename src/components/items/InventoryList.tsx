@@ -41,6 +41,7 @@ import spentToast from './spent-toast';
 import { GameDialog, useGame } from '../app/game-context';
 import { Hint, HintList, Note, TabBar, TabButton, TabGroup, TabPane, useToast } from '../styled';
 import settings, { setSetting } from '../app/settings';
+import { failed, readable } from '../app/resource-reads';
 
 export interface InventoryListProps {
   player: string;
@@ -191,7 +192,7 @@ function BagBody(
   // Nothing left to spend is nothing to keep the picker open for
   createEffect(() => {
     const item = using();
-    const carried = props.items.latest;
+    const carried = readable(props.items);
 
     if (item == null || carried == null) {
       return;
@@ -262,7 +263,7 @@ function BagBody(
   const tray = (type: ItemTypes | null): ItemCell[] => {
     const cells: ItemCell[] = [];
 
-    for (const entry of props.items.latest ?? []) {
+    for (const entry of readable(props.items) ?? []) {
       if (type != null && typeOf(entry.item) !== type) {
         continue;
       }
@@ -279,7 +280,7 @@ function BagBody(
   const types = createMemo((): ItemTypes[] => {
     const held = new Set<ItemTypes | null>();
 
-    for (const entry of props.items.latest ?? []) {
+    for (const entry of readable(props.items) ?? []) {
       held.add(typeOf(entry.item));
     }
     const order: ItemTypes[] = [];
@@ -319,7 +320,7 @@ function BagBody(
   const piles = (): CandyPile[] => {
     const stacks: CandyPile[] = [];
 
-    for (const stack of props.candies() ?? []) {
+    for (const stack of readable(props.candies) ?? []) {
       stacks.push({ family: stack.family, count: stack.count });
     }
     return stacks;
@@ -399,7 +400,7 @@ function BagBody(
         <TabBar class="md:sticky md:top-0 md:w-44 md:shrink-0 md:flex-col md:overflow-visible">
           <TabButton value={ALL_ITEMS} class="md:justify-between">
             All
-            <Count of={props.items.latest?.length ?? 0} />
+            <Count of={readable(props.items)?.length ?? 0} />
           </TabButton>
           <For each={types()}>
             {(type) => (
@@ -418,7 +419,10 @@ function BagBody(
 
         <div class="min-w-0 grow">
           <TabPane value={ALL_ITEMS}>
-            <Show when={props.items.latest?.length} fallback={<Note>Carrying nothing.</Note>}>
+            <Show
+              when={readable(props.items)?.length}
+              fallback={<Note>{failed(props.items) ?? 'Carrying nothing.'}</Note>}
+            >
               <ItemGrid entries={tray(null)} onPress={press} />
             </Show>
           </TabPane>
@@ -430,7 +434,9 @@ function BagBody(
             )}
           </For>
           <TabPane value={CANDIES}>
-            <CandyGrid piles={piles()} />
+            <Show when={failed(props.candies)} fallback={<CandyGrid piles={piles()} />}>
+              {(refused) => <Note>{refused()}</Note>}
+            </Show>
           </TabPane>
         </div>
       </TabGroup>

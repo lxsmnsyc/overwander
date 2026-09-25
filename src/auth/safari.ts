@@ -1,23 +1,20 @@
 import type { PlayerIdentity } from '../auth/user';
-import AleaRNG from '../core/alea';
 import { BALL_ITEMS, type Balls, type Items } from '../data/ids/items';
 import SafariSession, {
   FEED_CATCH_BONUS,
-  MAX_CATCH_BONUS,
   SafariState,
+  type SafariTally,
   ThrowResult,
+  applyTally,
+  asSafariTally,
   encounterKey,
-  masteryOf,
 } from '../overworld/safari';
-import { recordCatch } from '../server/caught';
+import { safariContextOf } from '../overworld/safari-context';
 import { requireUid } from '../server/auth';
 import { Pace } from '../server/pace';
 import check, { GAME_ID, ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
-import { consumeItem } from '../server/inventory';
-import { stampFeed } from '../server/encounter-io';
-import { pocketFled, retireSpawn } from '../server/overworld';
+import { type ThrowReport, feedAt, throwAt } from '../server/throws';
 import { WORLD_GENERATION } from '../overworld/current';
-import createOverworld from '../overworld/setup';
 import { buddyEffectsOf, resolveBuddy } from './buddy';
 import { hasCaughtSpecies } from './caught';
 import { getCaughtSpeciesCount } from './pokedex';
@@ -29,56 +26,52 @@ import { getInventory } from './inventory';
 import getIdToken from './session';
 
 /**
- * Open a safari session on an encounter for the signed-in user. The
- * roll stream mixes in the server clock so re-engaging the same
- * encounter does not replay the previous attempt, and a player
- * cannot steer the seed by moving their own clock
+ * Open a safari session on an encounter for the signed-in user. It is
+ * the browser's copy: it shows the odds and plays each ball, while
+ * every throw and treat is decided on the server (`throwOnServer`)
  */
 export async function createSafariSession(
   user: PlayerIdentity,
   encounter: EncounterRecord,
 ): Promise<SafariSession<EncounterRecord>> {
-  const now = await syncServerClock();
-  const rng = new AleaRNG(`${user.uid}${encounterKey(encounter)}${now}`);
-  // Four questions about the player, none of which is an answer to
-  // another: asked together, the dialog opens on one round trip
-  // rather than on four.
+  // Five questions, none of which is an answer to another: asked
+  // together, the dialog opens on one round trip rather than on five.
   //
   // The Repeat Ball wants to know whether this species is in the
   // records; the Level and Love Balls are thrown from behind the
   // buddy, so who that is comes too; how much of the dex is filled
-  // decides how often a ball holds on the first shake; and the bag
-  // says whether there is anything left to throw
-  const [speciesCaught, walking, dex, balls] = await Promise.all([
+  // decides how often a ball holds on the first shake; the bag says
+  // whether there is anything left to throw; and the tally is what the
+  // server has on the meeting so far
+  const [speciesCaught, walking, dex, balls, tally] = await Promise.all([
     hasCaughtSpecies(user.uid, encounter.species),
     resolveBuddy(user.uid),
     getCaughtSpeciesCount(user.uid),
     countBalls(user.uid),
+    readTally(encounter.spawn),
   ]);
-  // What the player brought along, asked once: the Catching Charm on
-  // the throw and a buddy that pins the meeting down on the bolt.
-  // Neither can change while a ball is in the air
-  const overworld = createOverworld(user.uid, walking == null ? null : buddyEffectsOf(walking[1]));
-  const treats = overworld.checkTreats(encounterKey(encounter), MAX_CATCH_BONUS);
-  const critical = overworld.checkCriticalCatch(encounterKey(encounter), encounter);
-  const session = new SafariSession(encounter, () => rng.random(), {
-    speciesCaught,
-    cap: treats.cap,
-    keeps: treats.keeps,
-    mastery: masteryOf(dex),
-    keen: critical.boost,
-    aims: critical.aims,
-    charm: overworld.checkCatchChance(encounterKey(encounter), encounter),
-    trap: overworld.checkFleeChance(encounterKey(encounter), encounter),
-    buddy:
-      walking == null
-        ? undefined
-        : {
-            species: walking[1].species,
-            gender: walking[1].gender,
-            level: walking[1].level,
-          },
-  });
+  const session = new SafariSession(
+    encounter,
+    // Never rolled here: the server's answer is applied instead
+    Math.random,
+    safariContextOf(user.uid, encounter, {
+      speciesCaught,
+      dex,
+      buddy:
+        walking == null
+          ? null
+          : {
+              effects: buddyEffectsOf(walking[1]),
+              species: walking[1].species,
+              gender: walking[1].gender,
+              level: walking[1].level,
+            },
+    }),
+  );
+
+  // Picked up where the server has it: a meeting thrown at, fed or
+  // walked away from carries its bonus and its wear into the next look
+  applyTally(session, tally);
 
   // What the bag holds is the session's own business only so far as
   // knowing whether there is anything left to throw; the throw itself
@@ -136,45 +129,37 @@ export async function isEncounterRetired(
 }
 
 /**
- * Spend one ball of the kind the session is throwing. Resolves false
- * when none is carried, in which case nothing is thrown
+ * Retired: a ball is spent by the throw itself now (`throwOnServer`).
+ * A tab from before still calls this slot, and is told it has nothing
+ * to throw rather than losing a ball to a catch it can no longer write
  */
-async function spendBall(token: string, ball: Balls): Promise<boolean> {
+export async function spendBall(token: string, ball: Balls): Promise<boolean> {
   'use server';
   check(TOKEN, token);
   check(GAME_ID, ball);
-  return consumeItem(await requireUid(token, Pace.Throw), BALL_ITEMS[ball]);
+  await requireUid(token);
+  return false;
 }
 
 /**
- * Spend one feeding item and write it onto the meeting. Resolves false
- * when it is not carried, in which case nothing is fed and nothing is
- * written
+ * Feed the meeting one treat, on the server's own tally. Resolves
+ * false, spending nothing, when it is not carried, is no treat, or
+ * the meeting is still chewing the last one
  */
 async function spendFeed(token: string, spawn: string, item: Items): Promise<boolean> {
   'use server';
   check(TOKEN, token);
   check(ID, spawn);
   check(GAME_ID, item);
-
-  const uid = await requireUid(token, Pace.Feed);
-
-  if (!(await consumeItem(uid, item))) {
-    return false;
-  }
-  // The row is what pays a Pinap out, and it is written here rather
-  // than at the throw because this is the call that knows the berry
-  await stampFeed(spawn, uid, item);
-  return true;
+  return feedAt(await requireUid(token, Pace.Feed), spawn, item);
 }
 
 /**
- * Write down a successful catch. The server reads the encounter the
- * player was actually shown and records that, so the pokemon in the
- * record is the one the overworld staged — a client can report a
- * catch it did not earn, but not a better pokemon than it met
+ * Retired: a catch is written by the throw that made it
+ * (`throwOnServer`), never on a client's say-so. A tab from before
+ * still calls this slot and is refused
  */
-async function keepCatch(
+export async function keepCatch(
   token: string,
   spawn: string,
   ball: Balls,
@@ -187,25 +172,22 @@ async function keepCatch(
   check(GAME_ID, ball);
   check(OFFSET, offset);
   check(LOCALE, locale);
-  return recordCatch(await requireUid(token), spawn, ball, await syncServerClock(), offset, locale);
+  await requireUid(token);
+  return null;
 }
 
 /**
- * Retire an encounter that fled. The key is recomputed server-side
- * from the stored encounter
+ * Retired: a meeting runs when the server's roll says so, inside the
+ * throw (`throwOnServer`). A tab from before still calls this slot and
+ * is refused, since answering it would let a client declare a flight
+ * to collect what the meeting was holding
  */
-async function retireEncounter(token: string, spawn: string): Promise<Items | null> {
+export async function retireEncounter(token: string, spawn: string): Promise<Items | null> {
   'use server';
   check(TOKEN, token);
   check(ID, spawn);
-
-  const uid = await requireUid(token);
-
-  // Only the call that actually retires it pays: a meeting is retired
-  // rather than deleted, so what it was carrying stays readable, and a
-  // client reporting the same flight twice would otherwise be paid
-  // twice for it
-  return (await retireSpawn(uid, spawn)) ? pocketFled(uid, spawn) : null;
+  await requireUid(token);
+  return null;
 }
 
 /**
@@ -237,8 +219,9 @@ export interface ThrowOutcome {
 }
 
 /**
- * Throw the session's preferred ball: spends one from the bag, rolls
- * the catch, and has the server write down a success or a flight.
+ * Throw the session's preferred ball. The server spends it, rolls it
+ * and writes down a catch or a flight in one call; the session here
+ * is told how it went, so the dialog shows what actually happened.
  * Resolves null when the session is over or no ball of the preferred
  * kind is carried
  */
@@ -250,44 +233,37 @@ export async function throwBall(
     return null;
   }
 
-  const token = await getIdToken();
+  // The catch is stamped in the catcher's own zone and carries the
+  // locale it was made in, so its date reads as the day they had
+  const report = await throwOnServer(
+    await getIdToken(),
+    session.encounter.spawn,
+    session.ball,
+    getLocalOffset(),
+    getLocale(),
+  );
 
-  // The count is not asked for here. A throw is a chain of calls a
-  // player waits through, and this one bought nothing: the dialog
-  // keeps `ballsLeft` in step from the bag it already follows, and
-  // overwrites whatever a throw wrote as soon as the spend lands
-  if (!(await spendBall(token, session.ball))) {
+  if (report == null) {
     return null;
   }
 
-  const result = session.throwBall();
-  const spawn = session.encounter.spawn;
-
-  // Handed over the moment it is rolled, before the record is written:
-  // the ball is what the player is watching, and the writing is what
-  // it should be watched over rather than after
-  watch?.(session.shakes, result);
-
-  if (result === ThrowResult.Caught) {
-    // The catch is stamped in the catcher's own zone and carries the
-    // locale it was made in, so its date reads as the day they had
-    return {
-      result,
-      shakes: session.shakes,
-      critical: session.critical,
-      catchId: await keepCatch(token, spawn, session.ball, getLocalOffset(), getLocale()),
-    };
+  applyTally(session, report.tally);
+  session.shakes = report.shakes;
+  session.critical = report.critical;
+  if (report.result === ThrowResult.Caught) {
+    session.end(SafariState.Caught);
+  } else if (report.result === ThrowResult.Fled) {
+    session.end(SafariState.Fled);
   }
-  if (result === ThrowResult.Fled) {
-    return {
-      result,
-      shakes: session.shakes,
-      critical: session.critical,
-      catchId: null,
-      pocketed: await retireEncounter(token, spawn),
-    };
-  }
-  return { result, shakes: session.shakes, critical: session.critical, catchId: null };
+  watch?.(report.shakes, report.result);
+
+  return {
+    result: report.result,
+    shakes: report.shakes,
+    critical: report.critical,
+    catchId: report.catchId,
+    ...(report.result === ThrowResult.Fled ? { pocketed: report.pocketed } : {}),
+  };
 }
 
 /**
@@ -308,4 +284,46 @@ export async function feedEncounter(
     return false;
   }
   return session.feed(item);
+}
+
+/**
+ * Where tallies are read from: the meeting's own row, which only its
+ * player can read
+ */
+async function readTally(spawn: string): Promise<SafariTally | null> {
+  const { data } = await getSupabase()
+    .from('encounters')
+    .select('safari')
+    .eq('generation', WORLD_GENERATION)
+    .eq('spawn_id', spawn)
+    .maybeSingle();
+
+  return asSafariTally((data as { safari?: unknown } | null)?.safari);
+}
+
+/**
+ * One throw, decided here: the ball spent, the roll made, and a catch
+ * or a flight written, all in one transaction
+ */
+async function throwOnServer(
+  token: string,
+  spawn: string,
+  ball: Balls,
+  offset: number,
+  locale: string,
+): Promise<ThrowReport | null> {
+  'use server';
+  check(TOKEN, token);
+  check(ID, spawn);
+  check(GAME_ID, ball);
+  check(OFFSET, offset);
+  check(LOCALE, locale);
+  return throwAt(
+    await requireUid(token, Pace.Throw),
+    spawn,
+    ball,
+    await syncServerClock(),
+    offset,
+    locale,
+  );
 }

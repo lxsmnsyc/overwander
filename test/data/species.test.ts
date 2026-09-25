@@ -34,6 +34,7 @@ import {
   DIALGA_FORMS,
   GASTRODON_FORMS,
   GIRATINA_FORMS,
+  KELDEO_FORMS,
   PALKIA_FORMS,
   ROTOM_FORMS,
   SHAYMIN_FORMS,
@@ -378,6 +379,7 @@ describe('species forms', () => {
       ...PALKIA_FORMS.slice(1),
       ...GIRATINA_FORMS.slice(1),
       ...SHAYMIN_FORMS.slice(1),
+      ...KELDEO_FORMS.slice(1),
       ...ROTOM_FORMS.slice(1),
       ...ARCEUS_FORMS.slice(1),
     ]);

@@ -1786,4 +1786,69 @@ export default function registerSignatureAbilities(): void {
     name: 'Bonewear',
     description: '+1 Defense and +1 Special Defense every time an enemy faints.',
   });
+
+  // Heatmor and Durant are the one hunt the games tell from both
+  // sides: one is built to open the nest, the other to hold it
+  registerSignature(Families.Heatmor, Abilities.Anteater, {
+    name: 'Anteater',
+    description: 'Its moves hit 1.5x against a Bug or Steel target.',
+  });
+
+  registerSignature(Families.Durant, Abilities.AntGuard, {
+    name: 'Ant Guard',
+    description: 'Fire moves hit it at 0.5x.',
+  });
+
+  registerSignature(Families.Larvesta, Abilities.EmberHalo, {
+    name: 'Ember Halo',
+    description: 'Every enemy loses 1/16 of its HP each time it acts while it stands.',
+  });
+
+  // Twist Mountain and the moor below it
+  registerSignature(Families.Tynamo, Abilities.LatchOn, {
+    name: 'Latch On',
+    description:
+      'Whatever its contact moves land on cannot flee and loses 1/16 of its HP each time it acts. One at a time.',
+  });
+
+  registerSignature(Families.Cubchoo, Abilities.FrostFangs, {
+    name: 'Frost Fangs',
+    description: 'Its contact moves hit 1.25x, with a 20% chance to freeze.',
+  });
+
+  registerSignature(Families.Cryogonal, Abilities.CrystalChain, {
+    name: 'Crystal Chain',
+    description: 'A freeze on an enemy lasts 2x as long while it stands.',
+  });
+
+  registerSignature(Families.Mienfoo, Abilities.SleeveGuard, {
+    name: 'Sleeve Guard',
+    description: 'Contact moves land on it at 0.75x.',
+  });
+
+  /**
+   * The four swords share one signature: each stands watch over its
+   * team against one kind of harm, and none of them is worth anything
+   * to the holder alone
+   */
+  registerSignature(Families.Cobalion, Abilities.IronVigil, {
+    name: 'Iron Vigil',
+    description: 'Its teammates take physical moves at 0.8x while it stands.',
+  });
+
+  registerSignature(Families.Terrakion, Abilities.StoneVigil, {
+    name: 'Stone Vigil',
+    description: 'Its teammates take special moves at 0.8x while it stands.',
+  });
+
+  registerSignature(Families.Virizion, Abilities.LeafVigil, {
+    name: 'Leaf Vigil',
+    description:
+      'Its teammates take indirect damage at 0.8x and cannot be poisoned while it stands.',
+  });
+
+  registerSignature(Families.Keldeo, Abilities.TideVigil, {
+    name: 'Tide Vigil',
+    description: 'Its teammates never flinch and refuse enemy stat drops while it stands.',
+  });
 }

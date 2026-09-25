@@ -66,6 +66,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Durant, weight: 6 },
         { species: Species.Druddigon, weight: 5 },
         { species: Species.Sigilyph, weight: 6 },
         { species: Species.Maractus, weight: 8 },
@@ -88,6 +89,7 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },
         { species: Species.Entei, weight: 10 },
@@ -157,6 +159,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Durant, weight: 6 },
         { species: Species.Druddigon, weight: 5 },
         { species: Species.Sigilyph, weight: 6 },
         { species: Species.Maractus, weight: 8 },
@@ -179,6 +182,7 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },
         { species: Species.Entei, weight: 10 },
@@ -240,6 +244,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Heatmor, weight: 6 },
         { species: Species.Hydreigon, weight: 2 },
         { species: Species.Spiritomb, weight: 5 },
         { species: Species.Metagross, weight: 1 },
@@ -253,6 +258,7 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },
         { species: Species.Entei, weight: 10 },
@@ -319,6 +325,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Heatmor, weight: 6 },
         { species: Species.Hydreigon, weight: 2 },
         { species: Species.Spiritomb, weight: 5 },
         { species: Species.Metagross, weight: 1 },
@@ -333,6 +340,7 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },
         { species: Species.Entei, weight: 10 },

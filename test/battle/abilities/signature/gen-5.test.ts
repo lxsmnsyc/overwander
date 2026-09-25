@@ -12,6 +12,16 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle
 import type Unit from '../../../../src/battle/unit';
 import { HONED_STAGES } from '../../../../src/battle/abilities/signature/pawniard-to-vullaby';
 import {
+  FROST_FANGS_SCALE,
+  LATCH_ON_SHARE,
+  SLEEVE_GUARD_SCALE,
+} from '../../../../src/battle/abilities/signature/tynamo-to-mienfoo';
+import {
+  ANTEATER_SCALE,
+  ANT_GUARD_SCALE,
+  EMBER_HALO_SHARE,
+} from '../../../../src/battle/abilities/signature/heatmor-to-larvesta';
+import {
   SCORING_STAGES,
   SUNWARMED_SCALE,
   THREE_HEADS_SHARE,
@@ -1464,5 +1474,271 @@ describe('what the last two roads hold', () => {
     expect(braviary.stages[Stages.Attack]).toBe(WARCRY_STAGES);
     expect(mandibuzz.stages[Stages.Defense]).toBe(BONEWEAR_STAGES);
     expect(mandibuzz.stages[Stages.SpecialDefense]).toBe(BONEWEAR_STAGES);
+  });
+});
+
+describe('what the last road holds', () => {
+  it('opens a nest and holds one, and the ant wins where they meet', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const heatmor = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const ant = createUnit(battle, teamB, [Types.Bug, Types.Steel]);
+    // The control carries the same typing, so the type chart's own 4x
+    // on Fire into Bug and Steel cancels out of the ratio
+    const nest = createUnit(battle, teamB, [Types.Bug, Types.Steel]);
+    const neither = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    heatmor.addAbility(Abilities.Anteater);
+    heatmor.enter();
+    plain.enter();
+    ant.enter();
+    nest.enter();
+    neither.enter();
+
+    // Nothing to open: a target that is neither is worth no more
+    expect(
+      resolveAttackDamage(battle, heatmor, neither) / resolveAttackDamage(battle, plain, neither),
+    ).toBeCloseTo(1, 2);
+
+    expect(
+      resolveAttackDamage(battle, heatmor, nest) / resolveAttackDamage(battle, plain, nest),
+    ).toBeCloseTo(ANTEATER_SCALE, 2);
+
+    // The armour answers the fire, and the two together come out
+    // under 1, so the ant wins the exchange it was built to lose
+    ant.addAbility(Abilities.AntGuard);
+
+    const guarded = dealDamage(
+      heatmor,
+      ant,
+      Moves.Incinerate,
+      40,
+      Types.Fire,
+      MoveCategories.Special,
+    );
+    const bare = dealDamage(plain, nest, Moves.Incinerate, 40, Types.Fire, MoveCategories.Special);
+
+    expect(guarded / bare).toBeCloseTo(ANTEATER_SCALE * ANT_GUARD_SCALE, 2);
+  });
+
+  it('costs every enemy a share of itself each time it reaches for a move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const volcarona = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    volcarona.addAbility(Abilities.EmberHalo);
+    volcarona.enter();
+    mate.enter();
+    foe.enter();
+
+    const share = Math.floor(foe.checkStat(Stats.HP, 0) * EMBER_HALO_SHARE);
+    const whole = foe.health;
+    const friendly = mate.health;
+
+    act(battle, foe);
+    expect(whole - foe.health).toBe(share);
+
+    // Its own side stands in the same light and pays nothing
+    act(battle, mate);
+    expect(mate.health).toBe(friendly);
+  });
+});
+
+describe('what the mountain and the moor hold', () => {
+  it('hits harder where it closes, and only where it closes', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const beartic = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    // Pinned above the freeze chance, so only the damage half shows
+    pinRandom(battle, 1);
+    beartic.addAbility(Abilities.FrostFangs);
+    beartic.enter();
+    plain.enter();
+    foe.enter();
+
+    const close = dealDamage(beartic, foe, Moves.Slash, 40, Types.Normal, MoveCategories.Physical);
+    const bare = dealDamage(plain, foe, Moves.Slash, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(close / bare).toBeCloseTo(FROST_FANGS_SCALE, 2);
+    expect(foe.status[Statuses.Frozen]).toBeFalsy();
+
+    // Pinned under it, the breath takes hold
+    pinRandom(battle, 0);
+    beartic.attack(foe, Moves.Slash, 10, Types.Normal, MoveCategories.Physical, 0);
+    expect(foe.status[Statuses.Frozen]).toBeTruthy();
+  });
+
+  it('holds a freeze open twice as long, and only an enemy s', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cryogonal = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    cryogonal.addAbility(Abilities.CrystalChain);
+    cryogonal.enter();
+    mate.enter();
+    foe.enter();
+
+    foe.addStatus(Statuses.Frozen, NONE_CAUSE);
+    mate.addStatus(Statuses.Frozen, NONE_CAUSE);
+
+    const chained = foe.status[Statuses.Frozen];
+    const loose = mate.status[Statuses.Frozen];
+
+    expect(chained).toBeTruthy();
+    expect(loose).toBeTruthy();
+
+    // The chains reach across the field, never onto its own side
+    battle.tick(turns(5));
+    expect(foe.status[Statuses.Frozen]).toBeTruthy();
+    expect(mate.status[Statuses.Frozen]).toBeFalsy();
+  });
+
+  it('keeps hold of one thing at a time and bleeds it as it acts', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const eelektross = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    eelektross.addAbility(Abilities.LatchOn);
+    eelektross.enter();
+    first.enter();
+    second.enter();
+
+    eelektross.attack(first, Moves.Crunch, 10, Types.Dark, MoveCategories.Physical, 0);
+    expect(first.checkEscape()).toBe(false);
+
+    const share = Math.floor(first.checkStat(Stats.HP, 0) * LATCH_ON_SHARE);
+    const before = first.health;
+
+    act(battle, first);
+    expect(before - first.health).toBe(share);
+
+    // Taking a second lets the first one go
+    eelektross.attack(second, Moves.Crunch, 10, Types.Dark, MoveCategories.Physical, 0);
+    expect(second.checkEscape()).toBe(false);
+    expect(first.checkEscape()).toBe(true);
+  });
+
+  it('takes the blow on the sleeves, but only one that touches', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const mienshao = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    mienshao.addAbility(Abilities.SleeveGuard);
+    mienshao.enter();
+    bare.enter();
+    foe.enter();
+
+    const sleeved = dealDamage(
+      foe,
+      mienshao,
+      Moves.Slash,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+    const open = dealDamage(foe, bare, Moves.Slash, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(sleeved / open).toBeCloseTo(SLEEVE_GUARD_SCALE, 2);
+
+    // Nothing reaches the sleeves from a distance
+    const far = dealDamage(foe, mienshao, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+    const openFar = dealDamage(foe, bare, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+
+    expect(far / openFar).toBeCloseTo(1, 2);
+  });
+});
+
+describe('the swords of justice', () => {
+  /** What one blow takes off a teammate, with a sword standing beside it or without */
+  function blow(ability: Abilities | null, category: MoveCategories): number {
+    const { battle, teamA, teamB } = createBattle();
+    const ally = createUnit(battle, teamA);
+    const sword = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    if (ability != null) {
+      sword.addAbility(ability);
+    }
+    ally.enter();
+    sword.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    return dealDamage(enemy, ally, Moves.Tackle, 40, Types.Normal, category);
+  }
+
+  it('cuts the physical blows its team takes, and leaves the special ones alone', () => {
+    const guarded = blow(Abilities.IronVigil, MoveCategories.Physical);
+
+    expect(guarded / blow(null, MoveCategories.Physical)).toBeCloseTo(0.8, 1);
+    expect(blow(Abilities.IronVigil, MoveCategories.Special)).toBe(
+      blow(null, MoveCategories.Special),
+    );
+  });
+
+  it('cuts the special blows its team takes, and leaves the physical ones alone', () => {
+    const guarded = blow(Abilities.StoneVigil, MoveCategories.Special);
+
+    expect(guarded / blow(null, MoveCategories.Special)).toBeCloseTo(0.8, 1);
+    expect(blow(Abilities.StoneVigil, MoveCategories.Physical)).toBe(
+      blow(null, MoveCategories.Physical),
+    );
+  });
+
+  it('keeps poison off its team', () => {
+    const { battle, teamA } = createBattle();
+    const ally = createUnit(battle, teamA);
+    const sword = createUnit(battle, teamA);
+
+    sword.addAbility(Abilities.LeafVigil);
+    ally.enter();
+    sword.enter();
+    battle.tick(1);
+    ally.addStatus(Statuses.Poisoned, NONE_CAUSE);
+
+    expect(ally.status[Statuses.Poisoned]).toBeUndefined();
+  });
+
+  it('refuses an enemy stat drop and a flinch for its team, its own side aside', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ally = createUnit(battle, teamA);
+    const sword = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    sword.addAbility(Abilities.TideVigil);
+    ally.enter();
+    sword.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    ally.addStage(Stages.Attack, -1, {
+      type: EffectType.Ability,
+      ability: Abilities.Intimidate,
+      unit: enemy,
+    });
+
+    expect(ally.stages[Stages.Attack]).toBe(0);
+
+    // What its own side hands it is welcome, up or down
+    ally.addStage(Stages.Attack, -1, {
+      type: EffectType.Ability,
+      ability: Abilities.Intimidate,
+      unit: sword,
+    });
+
+    expect(ally.stages[Stages.Attack]).toBe(-1);
+
+    ally.addStatus(Statuses.Flinched, NONE_CAUSE);
+
+    expect(ally.status[Statuses.Flinched]).toBeUndefined();
   });
 });

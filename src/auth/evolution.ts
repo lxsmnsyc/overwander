@@ -11,9 +11,9 @@ import type { EvolutionData } from '../data/species';
 import evolveOnServerSide from '../server/evolution';
 import { requireUid } from '../server/auth';
 import check, { GAME_ID, ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
-import { getCaught } from './caught';
+import { type CaughtPokemon, getCaught } from './caught';
 import { getStats } from './health';
-import { getInventory } from './inventory';
+import { type InventoryEntry, getInventory } from './inventory';
 import { getLocalOffset, getLocale } from './local-time';
 import { localNow } from './clock';
 import getIdToken from './session';
@@ -52,13 +52,19 @@ export interface EvolutionOption {
  * showing it the row is showing it something it can never work
  * towards.
  *
- * Resolves an empty list when the catch is not the user's
+ * Resolves an empty list when the catch is not the user's. A caller
+ * already holding the record and the bag hands them over as `known`,
+ * and nothing is read again
  */
 export async function listEvolutionOptions(
   uid: string,
   catchId: string,
+  known?: { caught: CaughtPokemon; inventory: InventoryEntry[] },
 ): Promise<EvolutionOption[]> {
-  const [caught, inventory] = await Promise.all([getCaught(catchId), getInventory(uid)]);
+  const [caught, inventory] =
+    known == null
+      ? await Promise.all([getCaught(catchId), getInventory(uid)])
+      : [known.caught, known.inventory];
 
   if (caught == null || caught.owner !== uid) {
     return [];

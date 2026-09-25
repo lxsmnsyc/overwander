@@ -120,6 +120,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
         { species: Species.Raikou, weight: 10 },
         { species: Species.Entei, weight: 10 },
@@ -227,6 +228,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
         { species: Species.Raikou, weight: 10 },
         { species: Species.Entei, weight: 10 },
@@ -327,6 +329,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
         { species: Species.Raikou, weight: 10 },
         { species: Species.Entei, weight: 10 },
@@ -436,6 +439,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
         { species: Species.Raikou, weight: 10 },
         { species: Species.Entei, weight: 10 },

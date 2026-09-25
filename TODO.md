@@ -75,7 +75,7 @@ is still short of the mainline, in rough order of how much it matters:
 ## Non-canon abilities
 
 - Add non-canon abilities per family.
-  
+
 ## Open world gimmicks
 
 Candidates, none committed to. Secret bases are deliberately left out: they were
@@ -147,7 +147,7 @@ the first piece of overworld state that cannot be computed and has to be sent.
 What already exists:
 
 - `positions` holds every player's `chunk_x, chunk_y, cell_x, cell_y, depth,
-  moved_at` (`supabase/migrations/20260820000300_world.sql:81`), and the table is
+moved_at` (`supabase/migrations/20260820000300_world.sql:81`), and the table is
   already in the realtime publication
   (`supabase/migrations/20260831000100_position_realtime.sql`).
 - `profiles.sprite` already holds the charset a trainer walks as, and it is
@@ -234,11 +234,3 @@ before it exists can be traced afterwards.
       release candy is paid when the sweep runs rather than at the press, or
       releasing and taking back would print candy. Every box query has to leave
       the marked ones out, which is most of the work.
-
-## A record of what staff did
-
-- [ ] **One row per staff action**, the way rAthena logs every GM command to
-      `atcommandlog`: who acted, on whom, what they did and when. The dashboard
-      only reads today, and bans, roles and grants are made by hand, so there is
-      nothing to log yet. It becomes worth building the moment the dashboard
-      writes anything, or somebody besides the owner holds a role.

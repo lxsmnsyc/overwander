@@ -31,6 +31,20 @@ is in [Security](../database/security.md).
   `true`. A development build draws it either way, which is what the browser
   tests sign in with.
 
+## Record keeping you may switch on
+
+Three kinds of record are off by default, so a small self-hosted server keeps
+no rows it does not want. Each is a server environment variable, on only when it
+is exactly `1` or `true`, read on every call, so turning one on or off takes a
+redeploy of the variables and nothing else. Records already written stay where
+they are when one is turned off.
+
+| Variable    | What it keeps                                                                 |
+| ----------- | ----------------------------------------------------------------------------- |
+| `STAFF_LOG` | `staff_actions`: every role set, ban, gift and teleport, who did it, and when |
+
+Read them in the dashboard's table editor; players never can.
+
 ## Keeping it running
 
 - **Push migrations before deploying**, always in that order. A build that

@@ -1094,6 +1094,12 @@ export const enum Items {
   LunaliumZ = 557,
   UltranecroziumZ = 558,
   MarshadiumZ = 559,
+
+  /** The relics Alola's mythicals leave behind them, in the order the dex meets their pokemon */
+  AncientPokeBall = 560,
+  HerosCharm = 561,
+  WindmillCharm = 562,
+  MysteryBox = 563,
 }
 
 /**

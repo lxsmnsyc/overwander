@@ -155,7 +155,7 @@ export default function registerMeloettaSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: { ...MELOETTA_LEVELS },
-      teachable: [...MELOETTA_TEACHABLE],
+      teachable: [...MELOETTA_TEACHABLE, Moves.LaserFocus],
     },
   });
   registerSpecies(Species.MeloettaPirouette, {
@@ -188,7 +188,7 @@ export default function registerMeloettaSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: { ...MELOETTA_LEVELS },
-      teachable: [...MELOETTA_TEACHABLE],
+      teachable: [...MELOETTA_TEACHABLE, Moves.LaserFocus],
     },
   });
 }

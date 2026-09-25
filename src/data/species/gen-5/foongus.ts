@@ -180,6 +180,7 @@ export default function registerFoongusSpecies(): void {
         Moves.Venoshock,
         Moves.WorrySeed,
         Moves.Confide,
+        Moves.StompingTantrum,
       ],
     },
   });

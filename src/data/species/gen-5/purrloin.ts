@@ -155,7 +155,14 @@ export default function registerPurrloinSpecies(): void {
         55: [Moves.SuckerPunch],
         58: [Moves.PlayRough],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam, Moves.RockSmash],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.GigaImpact,
+        Moves.HyperBeam,
+        Moves.RockSmash,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
+      ],
     },
   });
 }

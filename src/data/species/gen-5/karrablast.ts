@@ -179,6 +179,9 @@ export default function registerKarrablastSpecies(): void {
         Moves.XScissor,
         Moves.Confide,
         Moves.Infestation,
+        Moves.BrutalSwing,
+        Moves.LaserFocus,
+        Moves.SmartStrike,
       ],
     },
   });

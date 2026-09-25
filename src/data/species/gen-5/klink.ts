@@ -181,7 +181,14 @@ export default function registerKlinkSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.ViceGrip, Moves.Bind, Moves.ThunderShock, Moves.Charge, Moves.GearGrind],
+        1: [
+          Moves.ViceGrip,
+          Moves.Bind,
+          Moves.ThunderShock,
+          Moves.Charge,
+          Moves.GearGrind,
+          Moves.GearUp,
+        ],
         ...FAMILY_LEVEL,
         42: [Moves.ShiftGear],
         48: [Moves.ZapCannon],

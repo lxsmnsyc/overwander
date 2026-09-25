@@ -128,6 +128,7 @@ export default function registerJoltikSpecies(): void {
         Moves.PoisonSting,
         Moves.Pursuit,
         Moves.RockClimb,
+        Moves.Lunge,
       ],
     },
   });
@@ -174,7 +175,13 @@ export default function registerJoltikSpecies(): void {
         56: [Moves.BugBuzz],
         65: [Moves.StickyWeb],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Charge, Moves.GigaImpact, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Charge,
+        Moves.GigaImpact,
+        Moves.HyperBeam,
+        Moves.ThroatChop,
+      ],
     },
   });
 }

@@ -228,6 +228,7 @@ export default function registerSnivySpecies(): void {
         Moves.Outrage,
         Moves.RockSmash,
         Moves.Strength,
+        Moves.BrutalSwing,
       ],
     },
   });

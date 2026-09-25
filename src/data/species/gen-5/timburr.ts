@@ -69,6 +69,7 @@ const FAMILY_TEACHABLE = [
   Moves.WorkUp,
   Moves.Confide,
   Moves.PowerUpPunch,
+  Moves.BrutalSwing,
 ];
 
 // What the line carries, in the order it grows into: a square timber,
@@ -233,6 +234,7 @@ export default function registerTimburrSpecies(): void {
         Moves.GigaImpact,
         Moves.HyperBeam,
         Moves.RockBlast,
+        Moves.StompingTantrum,
       ],
     },
   });

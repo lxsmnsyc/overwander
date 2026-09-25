@@ -261,6 +261,7 @@ export default function registerSolosisSpecies(): void {
         Moves.HyperBeam,
         Moves.LowSweep,
         Moves.PowerUpPunch,
+        Moves.LaserFocus,
       ],
     },
   });

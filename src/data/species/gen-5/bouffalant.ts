@@ -101,6 +101,8 @@ export default function registerBouffalantSpecies(): void {
         Moves.WorkUp,
         Moves.ZenHeadbutt,
         Moves.Confide,
+        Moves.StompingTantrum,
+        Moves.SmartStrike,
       ],
       egg: [Moves.Belch],
     },

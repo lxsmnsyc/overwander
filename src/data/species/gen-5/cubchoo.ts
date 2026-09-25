@@ -212,6 +212,7 @@ export default function registerCubchooSpecies(): void {
         Moves.ScaryFace,
         Moves.StoneEdge,
         Moves.SwordsDance,
+        Moves.ThroatChop,
       ],
     },
   });

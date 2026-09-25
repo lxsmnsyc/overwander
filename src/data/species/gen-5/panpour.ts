@@ -185,6 +185,7 @@ export default function registerPanpourSpecies(): void {
         Moves.RockSlide,
         Moves.Superpower,
         Moves.PowerUpPunch,
+        Moves.ThroatChop,
       ],
     },
   });

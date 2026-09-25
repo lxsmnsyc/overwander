@@ -49,6 +49,7 @@ const FAMILY_TEACHABLE = [
   Moves.WildCharge,
   Moves.WillOWisp,
   Moves.Confide,
+  Moves.StompingTantrum,
 ];
 
 /** What the two that fight hand to hand pick up on top of the family's */
@@ -134,6 +135,7 @@ export default function registerTepigSpecies(): void {
         Moves.Superpower,
         Moves.Thrash,
         Moves.Yawn,
+        Moves.BurnUp,
       ],
     },
   });

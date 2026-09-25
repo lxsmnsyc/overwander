@@ -203,6 +203,8 @@ export default function registerSewaddleSpecies(): void {
         Moves.ShadowClaw,
         Moves.SwordsDance,
         Moves.XScissor,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

@@ -181,6 +181,7 @@ export default function registerTrubbishSpecies(): void {
         Moves.SmackDown,
         Moves.SolarBeam,
         Moves.Thunderbolt,
+        Moves.StompingTantrum,
       ],
     },
   });

@@ -150,6 +150,7 @@ export default function registerBlitzleSpecies(): void {
         Moves.HyperBeam,
         Moves.Overheat,
         Moves.RockSmash,
+        Moves.LaserFocus,
       ],
     },
   });

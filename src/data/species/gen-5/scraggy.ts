@@ -220,6 +220,7 @@ export default function registerScraggySpecies(): void {
         Moves.Outrage,
         Moves.Reversal,
         Moves.SwordsDance,
+        Moves.ThroatChop,
       ],
     },
   });

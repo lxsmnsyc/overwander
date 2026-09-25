@@ -247,6 +247,7 @@ export default function registerGothitaSpecies(): void {
         Moves.LowSweep,
         Moves.Metronome,
         Moves.PowerUpPunch,
+        Moves.LaserFocus,
       ],
     },
   });

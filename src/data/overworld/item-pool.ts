@@ -5,7 +5,9 @@ import { MARKET_GEAR } from '../items/gear';
 import { ONE_SHOTS } from '../items/one-shots';
 import { ORBS } from '../items/orbs';
 import { MEGA_STONES } from '../items/mega-stones';
+import { MEMORIES } from '../items/memories';
 import { PLATES } from '../items/plates';
+import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../items/z-crystals';
 import { MINT_NATURES } from '../items/mints';
 import { POWER_ITEMS } from '../items/power-items';
 import { GENERAL_STAT_BOOSTERS } from '../items/stat-boosters';
@@ -236,6 +238,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     ...evenlyWeighted(DRIVES.keys(), 1),
     // And the Mega Stones, which are held for a shape the way a plate is
     ...evenlyWeighted(MEGA_STONES.keys(), 1),
+    // The Memories on the plates' terms, and the Z-Crystals on the stones'
+    ...evenlyWeighted(MEMORIES.keys(), 1),
+    ...evenlyWeighted(TYPE_CRYSTALS.keys(), 1),
+    ...evenlyWeighted(SIGNATURE_CRYSTALS.keys(), 1),
     // The held-item shelves, on the plates' terms: whole families of
     // thin slots, so the band stays the stones' and finding a Choice
     // Band stays an event. The type boosters also drop off the wild

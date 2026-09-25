@@ -1,5 +1,6 @@
 import { Species } from '../ids/species';
 import { DRIVES } from './drives';
+import { MEMORIES } from './memories';
 import { PLATES } from './plates';
 import { Types } from '../constants/types';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
@@ -61,6 +62,34 @@ const GENESECT_DRIVES: [Items, Species[]][] = [...DRIVES].flatMap(([drive, type]
   return shape == null ? [] : [[drive, [shape]] as [Items, Species[]]];
 });
 
+/** Which shape each Memory makes a Silvally, by the type it carries */
+const SILVALLY_TYPE_FORMS: { [key in Types]?: Species } = {
+  [Types.Fighting]: Species.SilvallyFighting,
+  [Types.Flying]: Species.SilvallyFlying,
+  [Types.Poison]: Species.SilvallyPoison,
+  [Types.Ground]: Species.SilvallyGround,
+  [Types.Rock]: Species.SilvallyRock,
+  [Types.Bug]: Species.SilvallyBug,
+  [Types.Ghost]: Species.SilvallyGhost,
+  [Types.Steel]: Species.SilvallySteel,
+  [Types.Fire]: Species.SilvallyFire,
+  [Types.Water]: Species.SilvallyWater,
+  [Types.Grass]: Species.SilvallyGrass,
+  [Types.Electric]: Species.SilvallyElectric,
+  [Types.Psychic]: Species.SilvallyPsychic,
+  [Types.Ice]: Species.SilvallyIce,
+  [Types.Dragon]: Species.SilvallyDragon,
+  [Types.Dark]: Species.SilvallyDark,
+  [Types.Fairy]: Species.SilvallyFairy,
+};
+
+/** The Memory rows, derived the way the Plate rows are */
+const SILVALLY_MEMORIES: [Items, Species[]][] = [...MEMORIES].flatMap(([memory, type]) => {
+  const shape = SILVALLY_TYPE_FORMS[type];
+
+  return shape == null ? [] : [[memory, [shape]] as [Items, Species[]]];
+});
+
 export const FORM_ITEMS = new Map<Items, Species[]>([
   // One shape each rather than a set, so an orb is a switch a player
   // sets rather than a roll
@@ -82,6 +111,10 @@ export const FORM_ITEMS = new Map<Items, Species[]>([
   // type. Holding one repaints the machine round the cannon, which
   // is all the mainline means by a Genesect form
   ...GENESECT_DRIVES,
+  // The seventeen Memories, each of which already sets a Multi-Attack's
+  // type. Holding one makes a Silvally that type, which is the
+  // mainline's RKS System
+  ...SILVALLY_MEMORIES,
 ]);
 
 /**

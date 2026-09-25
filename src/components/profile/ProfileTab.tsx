@@ -1,4 +1,5 @@
 import {
+  For,
   type JSX,
   type Resource,
   Show,
@@ -144,16 +145,32 @@ export interface ProfileTabProps {
   section?: ProfileSection;
 }
 
-/** The top-level tab a section opens under: the sub-tabs open their parent */
-function outerSection(section: ProfileSection | undefined): ProfileSection {
-  if (section === ProfileSection.Bids || section === ProfileSection.Selling) {
-    return ProfileSection.Auction;
-  }
-  if (section === ProfileSection.Requests) {
-    return ProfileSection.Friends;
-  }
-  return section ?? ProfileSection.Battles;
-}
+/** The player's own sections, grouped for the side list */
+const SECTION_GROUPS: { label: string; sections: [ProfileSection, string][] }[] = [
+  {
+    label: 'Record',
+    sections: [
+      [ProfileSection.Battles, 'Battles'],
+      [ProfileSection.Awards, 'Awards'],
+      [ProfileSection.Teams, 'Teams'],
+    ],
+  },
+  {
+    label: 'Social',
+    sections: [
+      [ProfileSection.Friends, 'Friends'],
+      [ProfileSection.Requests, 'Requests'],
+      [ProfileSection.Trades, 'Trades'],
+    ],
+  },
+  {
+    label: 'Market',
+    sections: [
+      [ProfileSection.Bids, 'Bids'],
+      [ProfileSection.Selling, 'Selling'],
+    ],
+  },
+];
 
 /**
  * Who the player is: their details and balance, who is walking with
@@ -239,11 +256,21 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
   };
 
   /**
-   * The open tab, held here rather than by the group so a group built
-   * again keeps its place. Bids and selling open under the auction tab,
-   * and requests under the friends tab
+   * The open section, held here rather than by the group so a group
+   * built again keeps its place
    */
-  const [open, setOpen] = createSignal(outerSection(props.section));
+  const [open, setOpen] = createSignal(props.section ?? ProfileSection.Battles);
+
+  /** What is waiting on the player in a section, for its badge */
+  const countFor = (section: ProfileSection): number => {
+    if (section === ProfileSection.Requests) {
+      return asking().incoming.length;
+    }
+    if (section === ProfileSection.Selling) {
+      return stranded();
+    }
+    return 0;
+  };
 
   const leave = (): void => {
     setError(null);
@@ -289,111 +316,92 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
 
   return (
     <Panel>
-      <Show when={profile()} fallback={<Note>Loading profile…</Note>}>
-        {(loaded) => (
-          <Card class="sm:flex-row sm:items-start sm:gap-4">
-            {/* The character they go about as, at the size the card
-                keeps for it. Everybody has one, so there is no room to
-                hold open and no letter in a circle to fall back to */}
-            <PlayerFace sprite={loaded().sprite} size={64} />
-            <div class="flex min-w-0 grow flex-col gap-2">
-              <span class="text-lg font-semibold">{loaded().nickname}</span>
-              {/* The purse and the worn title side by side under the name */}
-              <Row>
-                <Badge tone="gold">{loaded().gold} gold</Badge>
-                <Show when={loaded().title != null && getTitleName(loaded().title ?? -1)} keyed>
-                  {(worn) => (
-                    <TitleBadge player={props.player} title={loaded().title ?? -1} name={worn} />
-                  )}
-                </Show>
-              </Row>
-              {/* Where in the world they are, under the name: it is
-                  the one fact about a trainer that changes while
-                  somebody is reading it, and it belongs to who they
-                  are rather than to a card of its own */}
-              <PlayerPlace player={props.player} />
-            </div>
-            {/* Everything the profile can do, behind one button: the
-                way out is a press a player makes once a session, and
-                a card is not the place for a row of them.
-
-                Visited, the menu holds the one thing a reader can do
-                to somebody else — ask them, answer them, or undo it */}
-            <Show
-              when={props.viewOnly !== true}
-              fallback={
+      {/* One trainer card: who they are on the left, who walks with
+          them on the right */}
+      <Card class="md:flex-row md:items-stretch md:gap-0">
+        <Show when={profile()} fallback={<Note>Loading profile…</Note>}>
+          {(loaded) => (
+            <div class="flex min-w-0 items-start gap-4 md:w-1/2 md:border-r-2 md:border-line-soft md:pr-4">
+              <PlayerFace sprite={loaded().sprite} size={64} />
+              <div class="flex min-w-0 grow flex-col gap-2">
+                <span class="truncate text-lg font-semibold">{loaded().nickname}</span>
+                <Row>
+                  <Show when={loaded().title != null && getTitleName(loaded().title ?? -1)} keyed>
+                    {(worn) => (
+                      <TitleBadge player={props.player} title={loaded().title ?? -1} name={worn} />
+                    )}
+                  </Show>
+                  <Badge tone="gold">{loaded().gold.toLocaleString()} gold</Badge>
+                </Row>
+                <PlayerPlace player={props.player} />
+              </div>
+              {/* Visited, the menu holds what a reader can do to somebody else */}
+              <Show
+                when={props.viewOnly !== true}
+                fallback={
+                  <Menu
+                    label="Actions"
+                    icon={ActionsIcon}
+                    actions={[
+                      {
+                        label: 'Battle',
+                        disabled: staging(),
+                        onSelect: challenge,
+                      },
+                      {
+                        label: friendActionLabel(friend.tie()),
+                        disabled: friend.busy(),
+                        onSelect: friend.act,
+                      },
+                      ...(friend.tie() === FriendTie.Blocked
+                        ? []
+                        : [
+                            {
+                              label: 'Block',
+                              disabled: friend.busy(),
+                              onSelect: friend.block,
+                            },
+                          ]),
+                    ]}
+                  />
+                }
+              >
                 <Menu
                   label="Actions"
                   icon={ActionsIcon}
                   actions={[
-                    // The one thing a reader can do *with* somebody
-                    // rather than about them: stage a fight and call
-                    // them into it
                     {
-                      label: 'Battle',
-                      disabled: staging(),
-                      onSelect: challenge,
+                      label: 'Edit profile',
+                      onSelect: () => {
+                        setEditing(true);
+                      },
                     },
                     {
-                      label: friendActionLabel(friend.tie()),
-                      disabled: friend.busy(),
-                      onSelect: friend.act,
+                      label: 'Add friend',
+                      onSelect: () => {
+                        setAdding(true);
+                      },
                     },
-                    // Blocking is offered until it is done, and then
-                    // the menu is the one press that undoes it: a
-                    // blocked trainer has nothing else to be asked
-                    ...(friend.tie() === FriendTie.Blocked
-                      ? []
-                      : [
-                          {
-                            label: 'Block',
-                            disabled: friend.busy(),
-                            onSelect: friend.block,
-                          },
-                        ]),
+                    { label: 'Sign out', onSelect: leave },
                   ]}
                 />
-              }
-            >
-              <Menu
-                label="Actions"
-                icon={ActionsIcon}
-                actions={[
-                  {
-                    label: 'Edit profile',
-                    onSelect: () => {
-                      setEditing(true);
-                    },
-                  },
-                  {
-                    label: 'Add friend',
-                    onSelect: () => {
-                      setAdding(true);
-                    },
-                  },
-                  { label: 'Sign out', onSelect: leave },
-                ]}
-              />
-            </Show>
-          </Card>
-        )}
-      </Show>
+              </Show>
+            </div>
+          )}
+        </Show>
 
-      {/* Who is walking with them, which is the one thing on this
-          page that changes what happens outside it: a buddy draws
-          spawns in, earns the candy, and is what an egg is counted
-          against */}
-      <BuddyCard
-        player={props.player}
-        viewOnly={props.viewOnly}
-        onOpen={(catchId) => {
-          game.setSheet({ catchId, readOnly: props.viewOnly === true });
-        }}
-      />
+        <div class="min-w-0 border-t-2 border-line-soft pt-3 md:w-1/2 md:border-t-0 md:pt-0 md:pl-4">
+          <BuddyCard
+            player={props.player}
+            viewOnly={props.viewOnly}
+            onOpen={(catchId) => {
+              game.setSheet({ catchId, readOnly: props.viewOnly === true });
+            }}
+          />
+        </div>
+      </Card>
 
-      {/* Visited, this is the whole of the bottom half: what they have
-          fought, with no bar over it. The tabs are back the moment the
-          profile is the reader's own */}
+      {/* Visited, the bottom half is only what they have fought and earned */}
       <Show
         when={props.viewOnly !== true}
         fallback={
@@ -413,150 +421,101 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           </TabGroup>
         }
       >
+        {/* One level of sections: a side list from `md` up, a bar that
+            scrolls sideways on a phone */}
         <TabGroup
           horizontal
           value={open()}
           onChange={(value) => {
             setOpen(value);
           }}
-          class="flex flex-col gap-3"
+          class="flex flex-col gap-3 md:flex-row md:items-start md:gap-4"
         >
-          <TabBar>
-            <TabButton value={ProfileSection.Battles}>Battles</TabButton>
-            <TabButton value={ProfileSection.Teams}>Teams</TabButton>
-            <TabButton value={ProfileSection.Awards}>Awards</TabButton>
-            <TabButton value={ProfileSection.Friends}>
-              Friends
-              {/* The count of what is waiting, on the tab itself:
-                  a request nobody is told about is one nobody
-                  answers */}
-              <Show when={asking().incoming.length > 0}>
-                <Badge tone="ember" class="ml-1.5">
-                  {asking().incoming.length}
-                </Badge>
-              </Show>
-            </TabButton>
-            <TabButton value={ProfileSection.Auction}>
-              Auction
-              {/* A lot nobody bid on comes back only by hand, and
-                  nothing else in the game ever mentions it: the count
-                  is what makes a stranded pokemon findable */}
-              <Show when={stranded() > 0}>
-                <Badge tone="ember" class="ml-1.5">
-                  {stranded()}
-                </Badge>
-              </Show>
-            </TabButton>
-            <TabButton value={ProfileSection.Trades}>Trades</TabButton>
+          <TabBar class="md:sticky md:top-0 md:w-40 md:shrink-0 md:flex-col md:overflow-visible">
+            <For each={SECTION_GROUPS}>
+              {(group) => (
+                <>
+                  <span
+                    aria-hidden="true"
+                    class="hidden px-3 pt-2 pb-0.5 text-xs font-semibold text-muted uppercase first:pt-0.5 md:block"
+                  >
+                    {group.label}
+                  </span>
+                  <For each={group.sections}>
+                    {([section, label]) => (
+                      <TabButton value={section} class="md:justify-start">
+                        {label}
+                        <Show when={countFor(section) > 0}>
+                          <Badge tone="ember" class="ml-1.5">
+                            {countFor(section)}
+                          </Badge>
+                        </Show>
+                      </TabButton>
+                    )}
+                  </For>
+                </>
+              )}
+            </For>
           </TabBar>
-          <TabPane value={ProfileSection.Battles}>
-            <Card title="Battles">
-              <BattleHistory player={props.player} />
-            </Card>
-          </TabPane>
-          {/* The parties they saved, which is what a raid or a duel
-              fills its picker from */}
-          <TabPane value={ProfileSection.Teams}>
-            <TeamsCard player={props.player} />
-          </TabPane>
-          {/* What they have won for good: the badge shelf, every slot
-              shown so a visitor can see what is earned and what is
-              still out there */}
-          <TabPane value={ProfileSection.Awards}>
-            <AwardsCard player={props.player} />
-          </TabPane>
-          <TabPane value={ProfileSection.Friends}>
-            <Card
-              title="Friends"
-              aside={
-                <Button
-                  tone="primary"
-                  onClick={() => {
-                    setAdding(true);
-                  }}
-                >
-                  Add friend
-                </Button>
-              }
-            >
-              <TabGroup
-                horizontal
-                defaultValue={
-                  props.section === ProfileSection.Requests
-                    ? ProfileSection.Requests
-                    : ProfileSection.Friends
-                }
-                class="flex flex-col gap-3"
-              >
-                <TabBar>
-                  <TabButton value={ProfileSection.Friends}>Friends</TabButton>
-                  <TabButton value={ProfileSection.Requests}>
-                    Requests
-                    <Show when={asking().incoming.length > 0}>
-                      <Badge tone="ember" class="ml-1.5">
-                        {asking().incoming.length}
-                      </Badge>
-                    </Show>
-                  </TabButton>
-                </TabBar>
-                <TabPane value={ProfileSection.Friends}>
-                  <FriendsTab player={props.player} />
-                </TabPane>
-                {/* Both directions: what has been asked of the player,
-                    and what they have asked and can still take back */}
-                <TabPane value={ProfileSection.Requests}>
-                  <RequestsTab waiting={asking()} />
-                </TabPane>
-              </TabGroup>
-            </Card>
-          </TabPane>
-          {/* What the player has bid on, and what they have put on the
-              block with the unsold lots waiting to come out of escrow.
-              New listings are made at an auction board rather than here */}
-          <TabPane value={ProfileSection.Auction}>
-            <Card>
-              <TabGroup
-                horizontal
-                defaultValue={
-                  props.section === ProfileSection.Selling
-                    ? ProfileSection.Selling
-                    : ProfileSection.Bids
-                }
-                class="flex flex-col gap-3"
-              >
-                <TabBar>
-                  <TabButton value={ProfileSection.Bids}>Bids</TabButton>
-                  <TabButton value={ProfileSection.Selling}>
-                    Selling
-                    <Show when={stranded() > 0}>
-                      <Badge tone="ember" class="ml-1.5">
-                        {stranded()}
-                      </Badge>
-                    </Show>
-                  </TabButton>
-                </TabBar>
-                <TabPane value={ProfileSection.Bids}>
-                  <BidsList player={props.player} />
-                </TabPane>
-                <TabPane value={ProfileSection.Selling}>
-                  <SellingList
-                    player={props.player}
-                    lots={lots()}
-                    onChanged={() => {
-                      Promise.resolve(refetchSelling()).catch(() => undefined);
+
+          <div class="min-w-0 grow">
+            <TabPane value={ProfileSection.Battles}>
+              <Card>
+                <BattleHistory player={props.player} />
+              </Card>
+            </TabPane>
+            <TabPane value={ProfileSection.Awards}>
+              <AwardsCard player={props.player} />
+            </TabPane>
+            {/* The saved parties the raid and duel team pickers fill from */}
+            <TabPane value={ProfileSection.Teams}>
+              <TeamsCard player={props.player} />
+            </TabPane>
+            <TabPane value={ProfileSection.Friends}>
+              <Card>
+                <Row class="justify-end">
+                  <Button
+                    tone="primary"
+                    onClick={() => {
+                      setAdding(true);
                     }}
-                  />
-                </TabPane>
-              </TabGroup>
-            </Card>
-          </TabPane>
-          {/* Offers between the player and their friends: to answer,
-              waiting on an answer, and what has already changed hands */}
-          <TabPane value={ProfileSection.Trades}>
-            <Card>
-              <TradesTab player={props.player} />
-            </Card>
-          </TabPane>
+                  >
+                    Add friend
+                  </Button>
+                </Row>
+                <FriendsTab player={props.player} />
+              </Card>
+            </TabPane>
+            {/* What they have been asked and can still take back */}
+            <TabPane value={ProfileSection.Requests}>
+              <Card>
+                <RequestsTab waiting={asking()} />
+              </Card>
+            </TabPane>
+            {/* Offers to answer, waiting on an answer, and what has changed hands */}
+            <TabPane value={ProfileSection.Trades}>
+              <Card>
+                <TradesTab player={props.player} />
+              </Card>
+            </TabPane>
+            <TabPane value={ProfileSection.Bids}>
+              <Card>
+                <BidsList player={props.player} />
+              </Card>
+            </TabPane>
+            {/* Lots on the block, and unsold ones waiting to come out of escrow */}
+            <TabPane value={ProfileSection.Selling}>
+              <Card>
+                <SellingList
+                  player={props.player}
+                  lots={lots()}
+                  onChanged={() => {
+                    Promise.resolve(refetchSelling()).catch(() => undefined);
+                  }}
+                />
+              </Card>
+            </TabPane>
+          </div>
         </TabGroup>
       </Show>
       {/* Somebody to ask, out of everybody playing. It is opened from

@@ -62,7 +62,7 @@ import {
   pickPikeCurtain,
   rollGymMachine,
 } from '../data/overworld/experts';
-import type { Items } from '../data/ids/items';
+import type { ItemStack } from '../data/overworld/item-pool';
 import type { Species } from '../data/ids/species';
 import AleaRNG from '../core/alea';
 import { hasAwards, recordAwardWin } from './awards';
@@ -583,10 +583,10 @@ export interface StopReward {
   award: Awards | null;
   /**
    * What the fight left besides the purse: a gym leader's TM of their
-   * own type, or the one item the rungs above them drop. First claim
-   * only, and null for the rungs that leave none
+   * own type, or the stash the rungs above them drop. First claim
+   * only, and empty for the rungs that leave none
    */
-  item: Items | null;
+  items: ItemStack[];
 }
 
 /**
@@ -667,7 +667,7 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
       where player = ${uid} and generation = ${WORLD_GENERATION} and key = ${encounterKey(encounter)}
     `;
 
-    return gone.length > 0 ? null : { encounter, gold: 0, award: null, item: null };
+    return gone.length > 0 ? null : { encounter, gold: 0, award: null, items: [] };
   }
 
   // What the stop is worth — a purse rolled per winner, the top range
@@ -724,25 +724,32 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
   // is worth one of them however many times it is claimed
   const rng = new AleaRNG(`${stop}:machine:${uid}`);
   const leader = landmark === Landmark.GymLeader ? snapshot.getGymLeader(record.cell) : null;
-  const item =
-    leader == null
-      ? rollStopLoot(
-          landmark ?? Landmark.TeamRocket,
-          rank,
-          snapshot.biomeAt(record.cell),
-          () => rng.random(),
-          legend,
-        )
-      : rollGymMachine(leader, () => rng.random());
+  let items: ItemStack[] = [];
 
-  if (item != null) {
-    await grantItem(uid, item);
+  if (leader == null) {
+    items = rollStopLoot(
+      landmark ?? Landmark.TeamRocket,
+      rank,
+      snapshot.biomeAt(record.cell),
+      () => rng.random(),
+      legend,
+    );
+  } else {
+    const machine = rollGymMachine(leader, () => rng.random());
+
+    if (machine != null) {
+      items = [{ item: machine, amount: 1 }];
+    }
+  }
+
+  for (const { item, amount } of items) {
+    await grantItem(uid, item, amount);
   }
 
   // A trainer's and an expert's purse is the whole of what changes
   // hands: they keep their party
   if (kind === Npc.Trainer) {
-    return { encounter: null, gold, award, item };
+    return { encounter: null, gold, award, items };
   }
 
   // Fixed rather than rolled, so the same grunt is worth the same to
@@ -760,7 +767,7 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
     itemSlots: raised.items,
   });
 
-  return { encounter, gold, award, item };
+  return { encounter, gold, award, items };
 }
 
 /**

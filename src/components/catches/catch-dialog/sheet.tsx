@@ -25,7 +25,7 @@ import {
 import { getCatchName, isNicknameLocked, isShadow, isShiny } from '../../../auth/caught-record';
 import { NICKNAME_LIMIT, asNickname } from '../../../auth/nickname';
 import { useAuth } from '../../../auth/context';
-import { answered } from '../../app/resource-reads';
+import { answered, failed, readable } from '../../app/resource-reads';
 
 import { canHatch, isEgg } from '../../../auth/egg';
 import { hatchEgg } from '../../../auth/eggs';
@@ -502,7 +502,7 @@ export function CatchSheetBody(
   createEffect(() => {
     const settled = settling();
 
-    if (settled != null && (props.candies.latest ?? 0) !== settled.was) {
+    if (settled != null && (readable(props.candies) ?? 0) !== settled.was) {
       setSettling(null);
     }
   });
@@ -515,7 +515,7 @@ export function CatchSheetBody(
    * the last handover left it at while the bag is still being re-read
    */
   const heldCandies = (): number => {
-    const held = props.candies.latest ?? 0;
+    const held = readable(props.candies) ?? 0;
     const settled = settling();
 
     return settled?.was === held ? settled.now : held;
@@ -634,7 +634,7 @@ export function CatchSheetBody(
         const grown = Math.max(0, (level ?? from) - from);
 
         setSettling({
-          was: props.candies.latest ?? 0,
+          was: readable(props.candies) ?? 0,
           now: Math.max(0, heldCandies() - grown * getCandyCost(view() ?? { shadow: false })),
         });
         say(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
@@ -736,7 +736,7 @@ export function CatchSheetBody(
   const holdables = (): InventoryEntry[] => {
     const found: InventoryEntry[] = [];
 
-    for (const entry of props.bag.latest ?? []) {
+    for (const entry of readable(props.bag) ?? []) {
       if (isHoldable(entry.item)) {
         found.push(entry);
       }
@@ -929,7 +929,7 @@ export function CatchSheetBody(
     const carried = new Set<Items>();
     let husk: string | null = null;
 
-    for (const entry of props.bag.latest ?? []) {
+    for (const entry of readable(props.bag) ?? []) {
       if (entry.amount > 0) {
         carried.add(entry.item);
       }
@@ -1173,7 +1173,7 @@ export function CatchSheetBody(
    * knows whether there would be a list in it
    */
   const hasUsableItem = (): boolean => {
-    for (const entry of props.bag.latest ?? []) {
+    for (const entry of readable(props.bag) ?? []) {
       if (entry.amount > 0 && isUsable(entry.item)) {
         return true;
       }
@@ -1561,7 +1561,9 @@ export function CatchSheetBody(
                               label=""
                               class={CANDY_BADGE}
                             />
-                            <span class="tabular-nums">{shownCandies()}</span>
+                            <span class="tabular-nums">
+                              {failed(props.candies) == null ? shownCandies() : '?'}
+                            </span>
                           </Badge>
                           {/* The level and what raises it are one control:
                             where it stands and what the next step costs */}
@@ -1679,7 +1681,7 @@ export function CatchSheetBody(
                           owned={owned() != null}
                           frozen={frozen()}
                           holdables={holdables()}
-                          bag={props.bag.latest}
+                          bag={readable(props.bag)}
                           giving={panel() === 'give'}
                           onGiving={(open) => {
                             setPanel(open ? 'give' : null);
@@ -1903,7 +1905,7 @@ export function CatchSheetBody(
         }}
         title="Use item"
         description={`Choose what to spend on ${named()}.`}
-        entries={props.bag.latest}
+        entries={readable(props.bag)}
         disabled={frozen()}
         // Only the prized and special bands ask twice. Everything a
         // player heals with — a Potion, a Full Restore, a wing — is

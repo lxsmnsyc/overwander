@@ -44,3 +44,5 @@ jobs:
           createGithubReleases: false
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          # Vercel only deploys through this hook, so only a new release goes live
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}

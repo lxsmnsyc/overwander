@@ -1,4 +1,4 @@
-import { type JSX, createSignal } from 'solid-js';
+import { type JSX, Show, createSignal } from 'solid-js';
 import type { InventoryEntry } from '../../../../auth/inventory';
 import { reviveFossil } from '../../../../auth/npcs';
 import type { Items } from '../../../../data/ids/items';
@@ -9,10 +9,11 @@ import { getSpeciesData } from '../../../../data/species';
 import { describeItem } from '../../../details';
 import InventoryPicker from '../../../items/InventoryPicker';
 import AnimatedSprite from '../../../sprites/AnimatedSprite';
-import { Button, Detail, DialogActions, useToast } from '../../../styled';
+import { Detail, DialogActions, useToast } from '../../../styled';
 import playEffect, { Effect } from '../../../app/sound';
 import { type CounterProps, refusal } from '../shared';
 import { ReviveCounter } from './goods';
+import { readable } from '../../../app/resource-reads';
 
 /**
  * The fossil scientist: put the rocks on the bench and see what was in
@@ -27,13 +28,12 @@ import { ReviveCounter } from './goods';
 export default function Scientist(props: CounterProps): JSX.Element {
   const toast = useToast();
   const [busy, setBusy] = createSignal(false);
-  const [bench, setBench] = createSignal(false);
 
   /** What is in the bag that he can open */
   const fossils = (): InventoryEntry[] => {
     const held: InventoryEntry[] = [];
 
-    for (const entry of props.bag.latest ?? []) {
+    for (const entry of readable(props.bag) ?? []) {
       if (isFossil(entry.item) && entry.amount > 0) {
         held.push(entry);
       }
@@ -107,45 +107,30 @@ export default function Scientist(props: CounterProps): JSX.Element {
   return (
     <>
       <ReviveCounter carrying={fossils().length} />
-      <DialogActions>
-        <Button
-          tone="primary"
-          disabled={busy() || fossils().length === 0}
-          onClick={() => {
-            setBench(true);
+      {/* The bench stands in the dialog, the way the vendor's crate does */}
+      <Show when={fossils().length > 0}>
+        <InventoryPicker
+          inline
+          keepOpen
+          player={props.player}
+          title="On the bench"
+          description="Press a fossil, then say how many of it to open."
+          verb="Revive"
+          entries={fossils()}
+          disabled={busy()}
+          value={null}
+          counts
+          empty="You are carrying nothing he can open."
+          card={(entry) => <Detail label="Inside">{inside(entry.item)}</Detail>}
+          most={(entry) => Math.min(FOSSIL_BENCH_LIMIT, entry.amount)}
+          onPick={(item, amount) => {
+            if (item != null && amount > 0) {
+              openRocks(item, amount);
+            }
           }}
-        >
-          Open a fossil
-        </Button>
-        {props.walkOn()}
-      </DialogActions>
-
-      <InventoryPicker
-        open={bench()}
-        keepOpen
-        onClose={() => {
-          setBench(false);
-        }}
-        player={props.player}
-        title="On the bench"
-        terse
-        description="Press a fossil, then say how many of it to open."
-        verb="Revive"
-        entries={fossils()}
-        disabled={busy()}
-        value={null}
-        counts
-        empty="You are carrying nothing he can open."
-        // What is in the rock, where the rock is being decided on: the
-        // square is a fossil and every fossil looks like a fossil
-        card={(entry) => <Detail label="Inside">{inside(entry.item)}</Detail>}
-        most={(entry) => Math.min(FOSSIL_BENCH_LIMIT, entry.amount)}
-        onPick={(item, amount) => {
-          if (item != null && amount > 0) {
-            openRocks(item, amount);
-          }
-        }}
-      />
+        />
+      </Show>
+      <DialogActions>{props.walkOn()}</DialogActions>
     </>
   );
 }

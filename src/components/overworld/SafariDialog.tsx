@@ -458,9 +458,9 @@ function SafariBody(
       }
 
       const spent = active.ball;
-      // The ball is played out as the record is written: `throwBall`
-      // hands the shakes over the moment they are rolled, and what is
-      // awaited here is both halves finishing
+      // The server rolls the throw and writes it down in one call;
+      // `throwBall` hands the shakes over as soon as it answers, and
+      // what is awaited here is the ball finishing its rocking
       let played: Promise<void> = Promise.resolve();
       const thrownAt = await throwBall(active, (shakes, result) => {
         played = rock(shakes, result);

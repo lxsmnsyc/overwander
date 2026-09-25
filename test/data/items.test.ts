@@ -1617,15 +1617,20 @@ describe('item data', () => {
     expect(relic.buy).toBe(0);
     expect(relic.sell).toBe(0);
 
+    const registered = new Set(getRegisteredSpecies());
+
     for (const [item, species] of RAID_ITEMS) {
-      // Every relic names a mythical, and only the special band
-      // carries it
-      expect(getRaidSpecies(item)).toBe(species);
       expect(isMythicalSpecies(species)).toBe(true);
-      expect(ITEM_POOL.special.some((entry) => entry.item === item)).toBe(true);
       for (const band of ['base', 'uncommon', 'rare'] as const) {
         expect(ITEM_POOL[band].some((entry) => entry.item === item)).toBe(false);
       }
+      // Every relic names a mythical, and only the special band carries
+      // it. One whose mythical is not written yet calls nothing and is
+      // found nowhere
+      const written = registered.has(species);
+
+      expect(getRaidSpecies(item)).toBe(written ? species : null);
+      expect(ITEM_POOL.special.some((entry) => entry.item === item)).toBe(written);
     }
 
     // A relic that named a legendary would call nothing: the world

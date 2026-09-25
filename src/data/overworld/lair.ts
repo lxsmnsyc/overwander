@@ -204,6 +204,14 @@ const enum Lairs {
   DaharaRuins = 50,
   /** The mountain shelf the steam machine keeps to */
   NebelPlateau = 51,
+  /** The kingdom the machine was built in, five hundred years ago */
+  AzothKingdom = 52,
+  /** The mountain the hero climbed, with something watching from its shadows */
+  MtTensei = 53,
+  /** The forest behind the city of windmills */
+  FulaForest = 54,
+  /** The park the pokemon of another world are let out into */
+  GoPark = 55,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -259,6 +267,10 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.DiamondDomain]: 'Diamond Domain',
   [Lairs.DaharaRuins]: 'Dahara Ruins',
   [Lairs.NebelPlateau]: 'Nebel Plateau',
+  [Lairs.AzothKingdom]: 'Azoth Kingdom',
+  [Lairs.MtTensei]: 'Mt. Tensei',
+  [Lairs.FulaForest]: 'Fula Forest',
+  [Lairs.GoPark]: 'GO Park',
 };
 
 /**
@@ -321,6 +333,10 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.DiamondDomain]: [Species.Diancie],
   [Lairs.DaharaRuins]: [Species.Hoopa],
   [Lairs.NebelPlateau]: [Species.Volcanion],
+  [Lairs.AzothKingdom]: [Species.Magearna],
+  [Lairs.MtTensei]: [Species.Marshadow],
+  [Lairs.FulaForest]: [Species.Zeraora],
+  [Lairs.GoPark]: [Species.Meltan],
 };
 
 /**
@@ -379,6 +395,10 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.DiamondDomain,
   Lairs.DaharaRuins,
   Lairs.NebelPlateau,
+  Lairs.AzothKingdom,
+  Lairs.MtTensei,
+  Lairs.FulaForest,
+  Lairs.GoPark,
 ];
 
 /**

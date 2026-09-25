@@ -595,6 +595,80 @@ const TINTS: Tint[] = [
       '#ffffff': '#fff0c5',
     },
   },
+  {
+    from: 'balls/cherish',
+    to: 'key/ancient-poke-ball',
+    why: 'the cherish ball is thrown, and this is the one a Magearna was shut into five hundred years ago',
+    // Red down to brass and the lower half to rose, so the same ball
+    // reads as old metal rather than a gift
+    swaps: {
+      '#202020': '#2a1a18',
+      '#ff4131': '#c59431',
+      '#de4131': '#b48320',
+      '#cd3920': '#a47318',
+      '#a43929': '#7b5210',
+      '#ff736a': '#e6b452',
+      '#ff9c9c': '#ffde8b',
+      '#ffffff': '#fff6d5',
+      '#4a5252': '#8b4a5a',
+    },
+  },
+  {
+    from: 'key/old-charm',
+    to: 'key/heros-charm',
+    why: 'the old charm is a keepsake of Sinnoh, and this is the one the hero Marshadow shadows carried',
+    // Yellow to a weathered green and the red cord to grey
+    swaps: {
+      '#202020': '#1a2420',
+      '#d5d562': '#8bb48b',
+      '#ffff9c': '#c5e6c5',
+      '#bdbd52': '#6a9c73',
+      '#9c9c31': '#4a735a',
+      '#ffffde': '#eef6ee',
+      '#ff9494': '#b4bdc5',
+      '#de5a5a': '#8b949c',
+      '#c53939': '#6a737b',
+      '#8b3939': '#4a525a',
+    },
+  },
+  {
+    from: 'key/oval-charm',
+    to: 'key/windmill-charm',
+    why: 'the oval charm is about eggs, and this is the one sold at the festival of the city of windmills',
+    // Pink and violet to sky blue and white, the colours of the wind
+    swaps: {
+      '#202020': '#18222a',
+      '#ffc5e6': '#d5eeff',
+      '#8352de': '#3a83c5',
+      '#ac6aff': '#62acee',
+      '#83d5c5': '#9ce6d5',
+      '#ffffde': '#ffffff',
+      '#de8ba4': '#94c5e6',
+      '#bd5a62': '#5a8bb4',
+    },
+  },
+  {
+    from: 'key/medal-box',
+    to: 'key/mystery-box',
+    why: 'the medal box holds medals, and this is the box a Meltan comes out of',
+    // Blue to steel grey, with the gold clasp kept, for Meltan's own colours
+    swaps: {
+      '#202020': '#202020',
+      '#3183d5': '#8b8b94',
+      '#2973c5': '#6a6a73',
+      '#399cee': '#a4a4ac',
+      '#62b4f6': '#c5c5cd',
+      '#94b4e6': '#dedee6',
+      '#7bd5cd': '#ffde8b',
+      '#414141': '#414141',
+      '#525252': '#525252',
+      '#7b7b7b': '#7b7b7b',
+      '#e69c20': '#e69c20',
+      '#cd7b10': '#cd7b10',
+      '#8b7b41': '#8b7b41',
+      '#ffc529': '#ffc529',
+    },
+  },
 ];
 
 /**

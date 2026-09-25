@@ -11,6 +11,7 @@ import { ArrowDownIcon, ArrowUpIcon } from '../../icons';
 import { Button, DialogActions, Select, useToast } from '../../styled';
 import { type QueryControls, parseControls, withControl } from '../../../core/query';
 import CatchActions from './actions';
+import ReleasedList from './released';
 
 export interface CatchesListProps {
   player: string;
@@ -266,6 +267,11 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         }}
         {...mode()}
       />
+
+      {/* What was let go today, on a server that gives a day to take it back */}
+      <Show when={props.viewOnly !== true}>
+        <ReleasedList />
+      </Show>
 
       {/* The dialog's foot: the selection's actions while picking, the way out last */}
       <DialogActions>

@@ -31,20 +31,21 @@ is in [Security](../database/security.md).
   `true`. A development build draws it either way, which is what the browser
   tests sign in with.
 
-## Record keeping you may switch on
+## Optional features
 
-Three kinds of record are off by default, so a small self-hosted server keeps
-no rows it does not want. Each is a server environment variable, on only when it
-is exactly `1` or `true`, read on every call, so turning one on or off takes a
-redeploy of the variables and nothing else. Records already written stay where
-they are when one is turned off.
+Three features are off by default, so a small self-hosted server keeps no rows
+and makes no promises it does not want. Each is a server environment variable,
+on only when it is exactly `1` or `true` and read on every call, so turning one
+on or off takes a redeploy of the variables and nothing else. What was already
+written stays when one is turned off.
 
-| Variable         | What it keeps                                                                 |
-| ---------------- | ----------------------------------------------------------------------------- |
-| `ECONOMY_LEDGER` | `ledger`: every change to gold, an item or a candy stack, swept at 60 days    |
-| `STAFF_LOG`      | `staff_actions`: every role set, ban, gift and teleport, who did it, and when |
+| Variable         | What it does                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------------- |
+| `ECONOMY_LEDGER` | Keeps `ledger`: every change to gold, an item or a candy stack, swept at 60 days                        |
+| `RELEASE_GRACE`  | Holds a release for a day, when it can be taken back for the candy it paid, before the sweep deletes it |
+| `STAFF_LOG`      | Keeps `staff_actions`: every role set, ban, gift and teleport, who did it, and when                     |
 
-Read them in the dashboard's table editor; players never can.
+Read the two records in the dashboard's table editor; players never can.
 
 ## Keeping it running
 

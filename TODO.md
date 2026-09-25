@@ -200,15 +200,3 @@ Note the seasons entry above overlaps what Deerling shipped. That work put four
 seasons on the clock at one month each and used them for the coat a deer is met
 in, not for terrain or a quarter of every biome's rolls. The gimmick as written
 here is still unbuilt.
-
-## Taking back a release
-
-- [ ] **A day's grace before a release is final**, the way rAthena waits
-      `char_del_delay` (24 hours) before a deleted character is gone. Today a
-      release deletes the pokemon at once ([`src/server/caught.ts`](src/server/caught.ts)),
-      and a bulk release takes many in one press, so a slip or a stolen login is
-      permanent. A release would mark the pokemon and hide it instead, a sweep
-      would delete it a day later, and it could be taken back until then. The
-      release candy is paid when the sweep runs rather than at the press, or
-      releasing and taking back would print candy. Every box query has to leave
-      the marked ones out, which is most of the work.

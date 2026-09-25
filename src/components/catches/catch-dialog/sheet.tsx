@@ -16,6 +16,7 @@ import {
   giveItem,
   isFavorite,
   isGuarded,
+  isReleaseGraced,
   releaseCatch,
   setFavorite,
   setGuarded,
@@ -93,6 +94,7 @@ import {
   Show,
   batch,
   createEffect,
+  createResource,
   createSignal,
   onCleanup,
 } from 'solid-js';
@@ -1017,6 +1019,11 @@ export function CatchSheetBody(
    * second one says what it is doing
    */
   const [releasing, setReleasing] = createSignal(false);
+  /**
+   * Whether this server gives a day to take a release back, asked the
+   * first time the question is put and kept for the visit
+   */
+  const [graced] = createResource(releasing, isReleaseGraced);
   /** Whether the full ownership history is open over the sheet */
   const [tracing, setTracing] = createSignal(false);
 
@@ -1713,7 +1720,11 @@ export function CatchSheetBody(
           setReleasing(false);
         }}
         title="Release it?"
-        description="Letting a pokemon go cannot be undone."
+        description={
+          answered(graced) === true
+            ? 'It can be taken back within a day, for the candy it paid.'
+            : 'Letting a pokemon go cannot be undone.'
+        }
         terse
       >
         <Show when={view()}>

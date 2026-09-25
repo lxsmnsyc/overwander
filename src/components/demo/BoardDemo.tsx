@@ -1,4 +1,5 @@
 import { type JSX, createMemo, createSignal, onCleanup, onMount } from 'solid-js';
+import { atClockHour } from '../../data/day-clock';
 import { Badge, Button, Row, Select } from '../styled';
 import type Biome from '../../data/ids/biome';
 import BiomeId from '../../data/ids/biome';
@@ -362,8 +363,6 @@ const STEPS = new Map<string, [number, number]>([
   ['a', [-1, 0]],
   ['d', [1, 0]],
 ]);
-
-const HOUR = 3_600_000;
 
 /** Not an hour at all: the board is left on the player's own clock */
 const LIVE_HOUR = -1;
@@ -738,7 +737,7 @@ export default function BoardDemo(): JSX.Element {
           biome={biome()}
           weather={weather()}
           lamp={lampCells()}
-          time={hour() === LIVE_HOUR ? undefined : hour() * HOUR}
+          time={hour() === LIVE_HOUR ? undefined : atClockHour(hour())}
           underground={depth() === Depth.Cave}
           lit={!dark()}
           yaw={yaw()}

@@ -1,3 +1,4 @@
+import authRefusal from './refusal';
 import getSupabase from './supabase';
 
 /**
@@ -25,7 +26,7 @@ export async function signInWithGoogle(): Promise<void> {
   });
 
   if (error != null) {
-    throw new Error(error.message);
+    throw authRefusal(error);
   }
 }
 
@@ -36,7 +37,7 @@ export async function signInWithGithub(): Promise<void> {
   });
 
   if (error != null) {
-    throw new Error(error.message);
+    throw authRefusal(error);
   }
 }
 
@@ -49,7 +50,7 @@ export async function signInWithEmail(email: string, password: string): Promise<
   const { error } = await getSupabase().auth.signInWithPassword({ email, password });
 
   if (error != null) {
-    throw new Error(error.message);
+    throw authRefusal(error);
   }
 }
 
@@ -57,7 +58,7 @@ export async function registerWithEmail(email: string, password: string): Promis
   const { error } = await getSupabase().auth.signUp({ email, password });
 
   if (error != null) {
-    throw new Error(error.message);
+    throw authRefusal(error);
   }
 }
 
@@ -65,6 +66,6 @@ export async function signOut(): Promise<void> {
   const { error } = await getSupabase().auth.signOut();
 
   if (error != null) {
-    throw new Error(error.message);
+    throw authRefusal(error, 'Could not sign you out just now.');
   }
 }

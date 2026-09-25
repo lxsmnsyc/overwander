@@ -57,7 +57,7 @@ async function readWhole(uid: string): Promise<HeldBag> {
   ]);
 
   if (items.error != null || candies.error != null) {
-    throw new Error('The bag could not be read.');
+    throw new Error('Could not read your bag just now.');
   }
 
   const bag: HeldBag = { items: new Map(), candies: new Map() };

@@ -38,6 +38,7 @@ import Landmark from '../../data/overworld/landmark';
 import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
 import describeWhere from '../../overworld/bearing';
 import FeeLine from './npc-dialog/counters/price';
+import { failed, readable } from '../app/resource-reads';
 
 /** The portal at twice the size it stands on the board */
 const PORTAL_SPRITE = 88;
@@ -192,7 +193,8 @@ function PortalBody(
           label="The portal"
         />
       </div>
-      <FeeLine fee={Items.PortalKey} scales={props.keys() ?? 0} name="Portal Key" />
+      <FeeLine fee={Items.PortalKey} scales={readable(props.keys) ?? 0} name="Portal Key" />
+      <Show when={failed(props.keys)}>{(said) => <Note class="text-center">{said()}</Note>}</Show>
 
       <Show
         when={towns().length > 0}
@@ -239,7 +241,7 @@ function PortalBody(
       <DialogActions>
         <Button
           tone="primary"
-          disabled={busy() || chosen() == null || (props.keys() ?? 0) === 0}
+          disabled={busy() || chosen() == null || (readable(props.keys) ?? 0) === 0}
           label="Cross, 1 Portal Key"
           onClick={cross}
         >

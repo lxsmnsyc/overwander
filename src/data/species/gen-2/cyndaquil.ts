@@ -98,6 +98,8 @@ export default function registerCyndaquilSpecies(): void {
         31: [Moves.LavaPlume],
         36: [Moves.Swift],
         46: [Moves.Flamethrower, Moves.Inferno],
+
+        58: [Moves.BurnUp],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -155,6 +157,8 @@ export default function registerCyndaquilSpecies(): void {
         42: [Moves.Swift],
         53: [Moves.Inferno],
         54: [Moves.Flamethrower],
+
+        68: [Moves.BurnUp],
       },
       teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE, Moves.BrickBreak, Moves.FocusPunch],
     },
@@ -196,6 +200,8 @@ export default function registerCyndaquilSpecies(): void {
         45: [Moves.Swift],
         56: [Moves.Inferno],
         60: [Moves.Flamethrower],
+
+        74: [Moves.BurnUp],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -220,6 +226,9 @@ export default function registerCyndaquilSpecies(): void {
         Moves.ShadowClaw,
         Moves.Bulldoze,
         Moves.PowerUpPunch,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

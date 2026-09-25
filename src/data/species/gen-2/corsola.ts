@@ -106,6 +106,9 @@ export default function registerCorsolaSpecies(): void {
         Moves.Scald,
         Moves.Bulldoze,
         Moves.Confide,
+        Moves.StompingTantrum,
+        Moves.Liquidation,
+        Moves.ThroatChop,
       ],
       egg: [
         Moves.Amnesia,

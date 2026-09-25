@@ -122,6 +122,8 @@ export default function registerSneaselSpecies(): void {
         Moves.Snarl,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
       egg: [
         Moves.Bite,

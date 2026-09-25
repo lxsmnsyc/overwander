@@ -98,6 +98,8 @@ export default function registerQwilfishSpecies(): void {
         Moves.Round,
         Moves.Scald,
         Moves.Confide,
+        Moves.Liquidation,
+        Moves.ThroatChop,
       ],
       egg: [
         Moves.BubbleBeam,

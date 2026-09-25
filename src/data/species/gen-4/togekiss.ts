@@ -108,6 +108,7 @@ export default function registerTogekissSpecies(): void {
         Moves.ZenHeadbutt,
         Moves.Confide,
         Moves.DazzlingGleam,
+        Moves.LaserFocus,
       ],
     },
   });

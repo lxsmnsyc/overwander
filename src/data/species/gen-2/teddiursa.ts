@@ -194,6 +194,9 @@ export default function registerTeddiursaSpecies(): void {
         Moves.RockClimb,
         Moves.StoneEdge,
         Moves.SmackDown,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

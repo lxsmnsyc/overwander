@@ -159,7 +159,7 @@ export default function registerChikoritaSpecies(): void {
         47: [Moves.Safeguard],
         55: [Moves.SolarBeam],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE, Moves.Counter],
+      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE, Moves.Counter, Moves.LaserFocus],
     },
   });
 
@@ -213,6 +213,8 @@ export default function registerChikoritaSpecies(): void {
         Moves.RockClimb,
         Moves.Bulldoze,
         Moves.DragonTail,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
       ],
     },
   });

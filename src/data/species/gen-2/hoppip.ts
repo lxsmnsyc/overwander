@@ -116,6 +116,7 @@ export default function registerHoppipSpecies(): void {
         Moves.PsychUp,
         Moves.CottonGuard,
         Moves.GrassyTerrain,
+        Moves.StrengthSap,
       ],
     },
   });

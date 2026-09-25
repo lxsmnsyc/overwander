@@ -104,6 +104,7 @@ export default function registerStantlerSpecies(): void {
         Moves.WorkUp,
         Moves.WildCharge,
         Moves.Confide,
+        Moves.ThroatChop,
       ],
       egg: [
         Moves.Bite,

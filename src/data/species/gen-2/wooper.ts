@@ -60,6 +60,7 @@ const FAMILY_TEACHABLE = [
   Moves.Bulldoze,
   Moves.Confide,
   Moves.Infestation,
+  Moves.StompingTantrum,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Damp, Abilities.WaterAbsorb];

@@ -206,6 +206,7 @@ export default function registerTogepiSpecies(): void {
         Moves.Roost,
         Moves.Tailwind,
         Moves.Retaliate,
+        Moves.SmartStrike,
       ],
     },
   });

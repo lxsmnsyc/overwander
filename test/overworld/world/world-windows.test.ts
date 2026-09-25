@@ -1023,6 +1023,8 @@ describe('world', () => {
     expect(new Set(getPhenomenonItems(Phenomenon.FlyingShadow)).has(Items.HealthWing)).toBe(true);
     expect(new Set(getPhenomenonItems(Phenomenon.RipplingWater)).has(Items.FireStone)).toBe(false);
     expect(new Set(getPhenomenonItems(Phenomenon.DustCloud)).has(Items.FireStone)).toBe(true);
+    // Dust is for what comes out of rock, the Mega Stones included
+    expect(new Set(getPhenomenonItems(Phenomenon.DustCloud)).has(Items.CharizarditeX)).toBe(true);
     expect(getPhenomenonItems(Phenomenon.HiddenGrotto)).toEqual([]);
   });
 

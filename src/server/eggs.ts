@@ -467,7 +467,11 @@ export async function recordSteps(
   now: number,
   offset = 0,
 ): Promise<WalkReport | null> {
-  return tx(async (transaction) => {
+  // Counted once the walk has committed, over the pool rather than
+  // inside the transaction: a count that fails must not undo the
+  // walk, and a walk that rolls back must not be counted
+  let counted = 0;
+  const report = await tx(async (transaction) => {
     const profiles = await transaction`select buddy_id from profiles where id = ${uid}`;
     const catchId: unknown = profiles.at(0)?.buddy_id;
 
@@ -541,7 +545,7 @@ export async function recordSteps(
       for (const [item, carried] of stacks) {
         await writeStackIn(transaction, ITEM_STACKS, uid, item, carried + (found.get(item) ?? 0));
       }
-      await bumpProgress(uid, [[Metric.Steps, 0, credited]]);
+      counted = credited;
 
       const picked: { item: Items; amount: number }[] = [];
 
@@ -564,11 +568,14 @@ export async function recordSteps(
     // what the next report is measured from, and a refused report
     // should not leave time banked for the one after it
     await updateCaughtIn(transaction, catchId, { steps, steppedAt: now });
-    await bumpProgress(uid, [[Metric.Steps, 0, paced]]);
+    counted = paced;
     // An egg finds nothing: whatever is inside it is not out here
     // looking at the ground
     return { egg: { caught: catchId, steps, hatchSteps: caught.hatchSteps }, picked: [] };
   });
+
+  await bumpProgress(uid, [[Metric.Steps, 0, counted]]);
+  return report;
 }
 
 /**

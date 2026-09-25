@@ -128,6 +128,7 @@ export default function registerFeudingPairSpecies(): void {
         Moves.WorkUp,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.ThroatChop,
       ],
       egg: [
         Moves.Curse,
@@ -232,6 +233,8 @@ export default function registerFeudingPairSpecies(): void {
         Moves.DragonTail,
         Moves.Confide,
         Moves.Infestation,
+        Moves.BrutalSwing,
+        Moves.ThroatChop,
       ],
       egg: [
         Moves.SpitUp,

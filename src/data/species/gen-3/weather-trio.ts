@@ -115,6 +115,7 @@ export default function registerWeatherTrioSpecies(): void {
         Moves.IronHead,
         Moves.NaturalGift,
         Moves.Scald,
+        Moves.Liquidation,
       ],
     },
   });
@@ -223,6 +224,8 @@ export default function registerWeatherTrioSpecies(): void {
         Moves.Incinerate,
         Moves.DragonTail,
         Moves.PowerUpPunch,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
       ],
     },
   });
@@ -332,6 +335,7 @@ export default function registerWeatherTrioSpecies(): void {
         Moves.Incinerate,
         Moves.DragonTail,
         Moves.DragonAscent,
+        Moves.BrutalSwing,
       ],
     },
   });

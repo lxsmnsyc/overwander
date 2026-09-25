@@ -155,6 +155,7 @@ export default function registerSnoruntSpecies(): void {
         Moves.IronHead,
         Moves.Payback,
         Moves.Bulldoze,
+        Moves.LaserFocus,
       ],
     },
   });

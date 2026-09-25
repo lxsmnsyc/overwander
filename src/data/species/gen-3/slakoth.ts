@@ -232,6 +232,7 @@ export default function registerSlakothSpecies(): void {
         Moves.RockClimb,
         Moves.SmackDown,
         Moves.Quash,
+        Moves.StompingTantrum,
       ],
     },
   });

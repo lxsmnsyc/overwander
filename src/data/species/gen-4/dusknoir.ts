@@ -127,6 +127,7 @@ export default function registerDusknoirSpecies(): void {
         Moves.Confide,
         Moves.Infestation,
         Moves.PowerUpPunch,
+        Moves.LaserFocus,
       ],
     },
   });

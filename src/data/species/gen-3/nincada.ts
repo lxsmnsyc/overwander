@@ -158,6 +158,7 @@ export default function registerNincadaSpecies(): void {
         Moves.OminousWind,
         Moves.Roost,
         Moves.UTurn,
+        Moves.LaserFocus,
       ],
     },
   });

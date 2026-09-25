@@ -160,6 +160,7 @@ export default function registerCorphishSpecies(): void {
         Moves.SludgeWave,
         Moves.Retaliate,
         Moves.Snarl,
+        Moves.Liquidation,
       ],
     },
   });

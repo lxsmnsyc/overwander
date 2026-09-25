@@ -178,7 +178,7 @@ export default function registerWhismurSpecies(): void {
         51: [Moves.Rest, Moves.SleepTalk, Moves.Synchronoise],
         57: [Moves.HyperVoice],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE, Moves.StompingTantrum],
     },
   });
 
@@ -237,6 +237,7 @@ export default function registerWhismurSpecies(): void {
         Moves.FocusBlast,
         Moves.GigaImpact,
         Moves.RockClimb,
+        Moves.StompingTantrum,
       ],
     },
   });

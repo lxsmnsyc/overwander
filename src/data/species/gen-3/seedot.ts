@@ -232,6 +232,8 @@ export default function registerSeedotSpecies(): void {
         Moves.SuckerPunch,
         Moves.Tailwind,
         Moves.XScissor,
+        Moves.BrutalSwing,
+        Moves.ThroatChop,
       ],
     },
   });

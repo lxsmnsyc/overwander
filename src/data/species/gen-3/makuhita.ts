@@ -180,6 +180,8 @@ export default function registerMakuhitaSpecies(): void {
         Moves.IronHead,
         Moves.Payback,
         Moves.StoneEdge,
+        Moves.StompingTantrum,
+        Moves.ThroatChop,
       ],
     },
   });

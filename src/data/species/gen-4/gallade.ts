@@ -136,6 +136,8 @@ export default function registerGalladeSpecies(): void {
         Moves.Confide,
         Moves.DazzlingGleam,
         Moves.PowerUpPunch,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

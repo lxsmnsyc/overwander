@@ -93,6 +93,7 @@ export default function registerTorkoalSpecies(): void {
         Moves.Incinerate,
         Moves.Bulldoze,
         Moves.Confide,
+        Moves.StompingTantrum,
       ],
       egg: [Moves.Yawn, Moves.Eruption, Moves.FlameBurst, Moves.ClearSmog],
     },

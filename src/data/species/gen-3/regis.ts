@@ -124,6 +124,7 @@ export default function registerRegiSpecies(): void {
         Moves.RockPolish,
         Moves.StealthRock,
         Moves.SmackDown,
+        Moves.StompingTantrum,
       ],
     },
   });
@@ -184,6 +185,8 @@ export default function registerRegiSpecies(): void {
         Moves.RockClimb,
         Moves.RockPolish,
         Moves.FrostBreath,
+        Moves.AuroraVeil,
+        Moves.StompingTantrum,
       ],
     },
   });
@@ -245,6 +248,7 @@ export default function registerRegiSpecies(): void {
         Moves.ShadowClaw,
         Moves.StealthRock,
         Moves.HoneClaws,
+        Moves.StompingTantrum,
       ],
     },
   });

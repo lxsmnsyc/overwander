@@ -1,5 +1,16 @@
 # overwander
 
+## 4.17.0
+
+### Minor Changes
+
+- d4307a7: The time of day runs on a game clock where each period lasts 90 minutes, unless a deploy sets it to follow the local clock.
+
+### Patch Changes
+
+- 01411af: On a short screen the catch sheet's left column scrolls, so its evolutions no longer spill over the history line.
+- 8a2fcbe: A town in the portal's list shows its distance and country on a line under its name, so a far town's distance stays inside its row.
+
 ## 4.16.2
 
 ### Patch Changes

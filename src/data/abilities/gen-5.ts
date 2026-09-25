@@ -6,6 +6,11 @@ import { registerAbility } from './__create';
  * the mainline's
  */
 export default function registerGen5Abilities(): void {
+  // Victini
+  registerAbility(Abilities.VictoryStar, {
+    name: 'Victory Star',
+    description: 'Its whole team, itself included, throws moves at 1.1x accuracy.',
+  });
   // Ferroseed
   registerAbility(Abilities.IronBarbs, {
     name: 'Iron Barbs',
@@ -32,5 +37,20 @@ export default function registerGen5Abilities(): void {
   registerAbility(Abilities.ZenMode, {
     name: 'Zen Mode',
     description: 'Below 1/2 HP it sits down into its Zen shape, and it stands back up above that.',
+  });
+  // Meloetta
+  registerAbility(Abilities.Dancer, {
+    name: 'Dancer',
+    description: 'Whenever anybody uses a dance move, it casts the same one straight after, free.',
+  });
+  // Reshiram
+  registerAbility(Abilities.Turboblaze, {
+    name: 'Turboblaze',
+    description: "The target's abilities cannot hinder its moves.",
+  });
+  // Zekrom
+  registerAbility(Abilities.Teravolt, {
+    name: 'Teravolt',
+    description: "The target's abilities cannot hinder its moves.",
   });
 }

@@ -134,6 +134,9 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Tornadus, weight: 10 },
+        { species: Species.Thundurus, weight: 10 },
+        { species: Species.Landorus, weight: 10 },
         { species: Species.Raikou, weight: 10 },
         { species: Species.Azelf, weight: 10 },
         { species: Species.Zapdos, weight: 10 },
@@ -270,6 +273,9 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Tornadus, weight: 10 },
+        { species: Species.Thundurus, weight: 10 },
+        { species: Species.Landorus, weight: 10 },
         { species: Species.Raikou, weight: 10 },
         { species: Species.Azelf, weight: 10 },
         { species: Species.Zapdos, weight: 10 },
@@ -348,6 +354,9 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Tornadus, weight: 10 },
+        { species: Species.Thundurus, weight: 10 },
+        { species: Species.Landorus, weight: 10 },
         { species: Species.Raikou, weight: 10 },
         { species: Species.Azelf, weight: 10 },
         { species: Species.Zapdos, weight: 10 },
@@ -430,6 +439,9 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Tornadus, weight: 10 },
+        { species: Species.Thundurus, weight: 10 },
+        { species: Species.Landorus, weight: 10 },
         { species: Species.Raikou, weight: 10 },
         { species: Species.Azelf, weight: 10 },
         { species: Species.Zapdos, weight: 10 },

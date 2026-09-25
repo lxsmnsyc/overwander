@@ -17,6 +17,12 @@ import {
   SLEEVE_GUARD_SCALE,
 } from '../../../../src/battle/abilities/signature/tynamo-to-mienfoo';
 import {
+  OVERCLOCK_SCALE,
+  OVERCLOCK_SHARE,
+  OVERCLOCK_THRESHOLD,
+  WINNERS_SHARE_STAGES,
+} from '../../../../src/battle/abilities/signature/unova-mythicals';
+import {
   ANTEATER_SCALE,
   ANT_GUARD_SCALE,
   EMBER_HALO_SHARE,
@@ -56,6 +62,7 @@ import {
 import {
   BLUE_BELT_SCALE,
   BONEWEAR_STAGES,
+  GENIE_SCALE,
   RED_BELT_SCALE,
   WARCRY_STAGES,
 } from '../../../../src/battle/abilities/signature/__create';
@@ -1740,5 +1747,259 @@ describe('the swords of justice', () => {
     ally.addStatus(Statuses.Flinched, NONE_CAUSE);
 
     expect(ally.status[Statuses.Flinched]).toBeUndefined();
+  });
+});
+
+describe('the tao trio', () => {
+  /** What a plain blow from this holder takes off, ability and all */
+  function blow(
+    unit: ReturnType<typeof createUnit>,
+    target: ReturnType<typeof createUnit>,
+  ): number {
+    return dealDamage(unit, target, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+  }
+
+  it('Truth Creed presses a target that is carrying a status', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dragon = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const burned = createUnit(battle, teamB);
+
+    dragon.addAbility(Abilities.TruthCreed);
+    burned.addStatus(Statuses.Burned, { type: EffectType.None });
+
+    const ordinary = blow(dragon, plain);
+    const pressed = blow(dragon, burned);
+
+    expect(pressed / ordinary).toBeCloseTo(1.3, 1);
+  });
+
+  it('Ideal Creed presses a target that has talked itself up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dragon = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const raised = createUnit(battle, teamB);
+
+    dragon.addAbility(Abilities.IdealCreed);
+    raised.addStage(Stages.Attack, 1, { type: EffectType.None });
+
+    const ordinary = blow(dragon, plain);
+    const pressed = blow(dragon, raised);
+
+    expect(pressed / ordinary).toBeCloseTo(1.3, 1);
+    // A stage that went the other way is not one it reads
+    const lowered = createUnit(battle, teamB);
+
+    lowered.addStage(Stages.Attack, -1, { type: EffectType.None });
+
+    expect(blow(dragon, lowered) / ordinary).toBeCloseTo(1, 1);
+  });
+
+  it('Hollow Creed presses only what nothing has touched', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dragon = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const burned = createUnit(battle, teamB);
+    const raised = createUnit(battle, teamB);
+
+    dragon.addAbility(Abilities.HollowCreed);
+    burned.addStatus(Statuses.Burned, { type: EffectType.None });
+    raised.addStage(Stages.Attack, 1, { type: EffectType.None });
+
+    const untouched = blow(dragon, plain);
+
+    expect(blow(dragon, burned) / untouched).toBeCloseTo(1 / 1.3, 1);
+    expect(blow(dragon, raised) / untouched).toBeCloseTo(1 / 1.3, 1);
+  });
+
+  it('reads the target rather than the dragon itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dragon = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+
+    dragon.addAbility(Abilities.TruthCreed);
+    dragon.addStatus(Statuses.Burned, { type: EffectType.None });
+
+    // Its own burn answers nothing: the question is about what it hits
+    expect(blow(dragon, plain) / blow(dragon, other)).toBeCloseTo(1, 1);
+  });
+});
+
+describe('the forces of nature', () => {
+  /** What one genie is worth to a teammate throwing a given type */
+  function thrown(ability: Abilities | null, type: Types): number {
+    const { battle, teamA, teamB } = createBattle();
+    const mate = createUnit(battle, teamA);
+    const genie = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    if (ability != null) {
+      genie.addAbility(ability);
+    }
+    mate.enter();
+    genie.enter();
+    enemy.enter();
+
+    return dealDamage(mate, enemy, Moves.Swift, 40, type, MoveCategories.Special);
+  }
+
+  it('lifts its own element for the side it stands on, and nothing else', () => {
+    for (const [ability, type, other] of [
+      [Abilities.Windfall, Types.Flying, Types.Electric],
+      [Abilities.Stormfall, Types.Electric, Types.Ground],
+      [Abilities.Landfall, Types.Ground, Types.Flying],
+    ] as const) {
+      expect(thrown(ability, type) / thrown(null, type)).toBeCloseTo(GENIE_SCALE, 1);
+      expect(thrown(ability, other)).toBe(thrown(null, other));
+    }
+  });
+
+  it('covers its own team rather than the enemy throwing the same type', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const genie = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    genie.addAbility(Abilities.Stormfall);
+    genie.enter();
+    mate.enter();
+    enemy.enter();
+
+    const bare = dealDamage(enemy, mate, Moves.Swift, 40, Types.Electric, MoveCategories.Special);
+    const lifted = dealDamage(mate, enemy, Moves.Swift, 40, Types.Electric, MoveCategories.Special);
+
+    expect(lifted / bare).toBeCloseTo(GENIE_SCALE, 1);
+  });
+});
+
+describe('the unova mythicals', () => {
+  it("hands a win to the winner's whole team, the holder included", () => {
+    const { battle, teamA, teamB } = createBattle();
+    const star = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    star.addAbility(Abilities.WinnersShare);
+    star.enter();
+    mate.enter();
+    enemy.enter();
+
+    star.damage({ type: EffectType.Move, move: Moves.Tackle, unit: star }, enemy, 999, 0);
+
+    expect(enemy.alive).toBe(false);
+    for (const unit of [star, mate]) {
+      expect(unit.stages[Stages.Attack]).toBe(WINNERS_SHARE_STAGES);
+      expect(unit.stages[Stages.SpecialAttack]).toBe(WINNERS_SHARE_STAGES);
+    }
+  });
+
+  it('pays out once however many holders a team fields', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const star = createUnit(battle, teamA);
+    const second = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    star.addAbility(Abilities.WinnersShare);
+    second.addAbility(Abilities.WinnersShare);
+    star.enter();
+    second.enter();
+    enemy.enter();
+
+    star.damage({ type: EffectType.Move, move: Moves.Tackle, unit: star }, enemy, 999, 0);
+
+    expect(star.stages[Stages.Attack]).toBe(WINNERS_SHARE_STAGES);
+  });
+
+  it('gives nothing for one of its own going down', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const star = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    star.addAbility(Abilities.WinnersShare);
+    star.enter();
+    mate.enter();
+    enemy.enter();
+
+    enemy.damage({ type: EffectType.Move, move: Moves.Tackle, unit: enemy }, mate, 999, 0);
+
+    expect(mate.alive).toBe(false);
+    expect(star.stages[Stages.Attack]).toBe(0);
+  });
+
+  it('turns a singer over into a dancer with its halves swapped', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    singer.setSpecies(Species.Meloetta);
+    singer.addAbility(Abilities.Countertune);
+    singer.enter();
+    enemy.enter();
+
+    const cause = {
+      type: EffectType.Ability,
+      ability: Abilities.Countertune,
+      unit: singer,
+    } as const;
+
+    singer.addStage(Stages.SpecialAttack, 3, cause);
+    singer.addStage(Stages.Defense, 1, cause);
+
+    singer.triggerMoveTarget(Moves.RelicSong, { type: MoveTargetType.Unit, unit: enemy }, 0);
+    battle.tick(turns(1));
+
+    expect(singer.species).toBe(Species.MeloettaPirouette);
+    expect(singer.stages[Stages.Attack]).toBe(3);
+    expect(singer.stages[Stages.SpecialAttack]).toBe(0);
+    expect(singer.stages[Stages.SpecialDefense]).toBe(1);
+    expect(singer.stages[Stages.Defense]).toBe(0);
+  });
+
+  it('casts faster above half health and burns below it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const machine = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    machine.addAbility(Abilities.Overclock);
+    machine.enter();
+    bare.enter();
+    enemy.enter();
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+    const plain = bare.checkMoveCastTime(Moves.SolarBeam, target);
+
+    expect(machine.checkMoveCastTime(Moves.SolarBeam, target)).toBeCloseTo(
+      plain * OVERCLOCK_SCALE,
+      5,
+    );
+
+    const max = machine.checkStat(Stats.HP, 0);
+
+    machine.setHealth(Math.floor(max * OVERCLOCK_THRESHOLD));
+
+    // Past the threshold the saving stops, and acting starts costing
+    expect(machine.checkMoveCastTime(Moves.SolarBeam, target)).toBe(plain);
+
+    const before = machine.health;
+
+    act(battle, machine);
+
+    expect(machine.health).toBe(before - Math.max(1, Math.floor(max * OVERCLOCK_SHARE)));
+
+    // Above the threshold it costs nothing at all
+    const spare = bare.health;
+
+    act(battle, bare);
+    expect(bare.health).toBe(spare);
   });
 });

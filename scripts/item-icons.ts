@@ -520,6 +520,34 @@ const TINTS: Tint[] = [
       '#3994ff': '#e6a420',
     },
   },
+  {
+    from: 'key/fashion-case',
+    to: 'key/music-box',
+    why: 'no rip drew a music box, and the fashion case is already a lidded box with fittings',
+    // The case is a lid, a body and a clasp. Wood down the body and
+    // brass on the fittings make it an old music box without a pixel
+    // moving
+    swaps: {
+      '#202020': '#291f18',
+      '#ffffff': '#ffeec5',
+      // The body, lightest to darkest, taken round to walnut. It is
+      // kept dark on purpose: the scrollwork over it is brass, and
+      // wood this side of the metal is what lets the metal read
+      '#ffc5ff': '#c5915a',
+      '#ff9cee': '#ac7b4a',
+      '#ff83ee': '#9c6a3a',
+      '#ff62ee': '#8b5a31',
+      '#ff31e6': '#7b4a29',
+      '#de10a4': '#6a3f21',
+      '#d500bd': '#5a3519',
+      '#ac1094': '#412410',
+      // The trim and the clasp, which were yellow and blue, both to
+      // brass so the fittings read as one metal
+      '#ffff52': '#ffd54a',
+      '#5ab4ff': '#ffe6a4',
+      '#008bee': '#c59431',
+    },
+  },
 ];
 
 /**

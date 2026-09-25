@@ -79,6 +79,24 @@ one mints Master Balls and the other mints levels.
 `count > 0` check is what holds it. The bag holds what is carried and nothing
 else, so a picker never has to filter empties out.
 
+### The copy the browser keeps
+
+The browser reads the bag once and keeps it
+([`src/auth/live-bag.ts`](../../src/auth/live-bag.ts)), so opening a picker or a
+dialog costs no read. A trigger on each table broadcasts every write on the
+private channel `bag:<uid>`: the row as it now stands, or the row that went for
+a stack spent to its last. Only the owner may listen on it, and nobody may send
+on it. It is a broadcast rather than a `postgres_changes` stream because a
+delete cannot be filtered on that stream, so every player would be sent every
+emptied stack.
+
+The copy is read whole again when it cannot be sure it has heard everything:
+before the channel is listening, after it reconnects, and after any server call
+this tab made since the copy was read. That last one matters because a call's
+own change may still be on its way down the channel when the screen that made
+it asks for the bag again. A message carries the stack's count rather than a
+difference, so one arriving after a read that already saw it changes nothing.
+
 ### How a stack is read and written
 
 [`src/auth/stacks.ts`](../../src/auth/stacks.ts) says which table a kind lives in

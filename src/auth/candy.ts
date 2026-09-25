@@ -3,12 +3,11 @@
 // to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type Families from '../data/ids/families';
-import { asNumber, asRecordArray } from './__normalize';
-import { CANDY_STACKS, listStacks } from './stacks';
+import { CANDY_STACKS, getStack, listStacks } from './stacks';
 import { useCandy as feedOnServer, useRareCandy as rareOnServer } from '../server/candy';
 import { requireUid } from '../server/auth';
 import check, { COUNT, ID, TOKEN } from '../server/validate';
-import getSupabase from './supabase';
+import readHeldBag from './live-bag';
 import getIdToken from './session';
 
 export {
@@ -41,27 +40,14 @@ export interface CandyStack {
   count: number;
 }
 
-/** What a player is told when their candies cannot be read, in place of the store's own message */
-export const CANDIES_UNREADABLE = 'Could not read your candies just now.';
-
 /**
- * Every candy stack the player holds, in the shape `stacks.ts` reads.
- * A refused read is raised rather than answered as no candy at all
+ * Every candy stack the player holds, in the shape `stacks.ts` reads
  */
 async function readBag(uid: string): Promise<unknown> {
-  const { data, error } = await getSupabase()
-    .from('bag_candies')
-    .select('family, count')
-    .eq('player', uid);
-
-  if (error != null) {
-    throw new Error(CANDIES_UNREADABLE);
-  }
-
   const candies: Record<number, number> = {};
 
-  for (const row of asRecordArray(data)) {
-    candies[asNumber(row.family)] = asNumber(row.count);
+  for (const [family, count] of (await readHeldBag(uid)).candies) {
+    candies[family] = count;
   }
   return { candies };
 }
@@ -84,22 +70,10 @@ export async function getCandies(uid: string): Promise<CandyStack[]> {
 }
 
 /**
- * How many candies of one family the user holds. One row asked for,
- * not every family's
+ * How many candies of one family the user holds
  */
 export async function getCandyCount(uid: string, family: Families): Promise<number> {
-  const { data, error } = await getSupabase()
-    .from('bag_candies')
-    .select('count')
-    .eq('player', uid)
-    .eq('family', family)
-    .maybeSingle();
-
-  if (error != null) {
-    throw new Error(CANDIES_UNREADABLE);
-  }
-
-  return asNumber((data as { count?: unknown } | null)?.count);
+  return getStack(await readBag(uid), CANDY_STACKS, family);
 }
 
 /**

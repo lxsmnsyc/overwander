@@ -1,7 +1,6 @@
 import type { Items } from '../data/ids/items';
-import { asNumber, asRecordArray } from './__normalize';
-import { ITEM_STACKS, listStacks } from './stacks';
-import getSupabase from './supabase';
+import readHeldBag from './live-bag';
+import { ITEM_STACKS, getStack, listStacks } from './stacks';
 
 /**
  * The bag as a list of stacks, which is how every picker in the game
@@ -26,31 +25,13 @@ export interface InventoryEntry {
 }
 
 /**
- * What a player is told when the bag cannot be read. The store's own
- * message says nothing a player can act on and describes the schema,
- * so it stays here
- */
-export const BAG_UNREADABLE = 'Could not read your bag just now.';
-
-/**
- * The player's whole bag, in one read. A refused read is raised rather
- * than answered as an empty bag, which would tell the player they
- * carry nothing
+ * The player's whole bag, from the copy the browser keeps
  */
 async function readBag(uid: string): Promise<unknown> {
-  const { data, error } = await getSupabase()
-    .from('bag_items')
-    .select('item, count')
-    .eq('player', uid);
-
-  if (error != null) {
-    throw new Error(BAG_UNREADABLE);
-  }
-
   const items: Record<number, number> = {};
 
-  for (const row of asRecordArray(data)) {
-    items[asNumber(row.item)] = asNumber(row.count);
+  for (const [item, count] of (await readHeldBag(uid)).items) {
+    items[item] = count;
   }
   return { items };
 }
@@ -73,22 +54,10 @@ export async function getInventory(uid: string): Promise<InventoryEntry[]> {
 }
 
 /**
- * How many of one item the user carries. One row asked for, not the
- * whole bag: a missing row is a stack spent to its last
+ * How many of one item the user carries
  */
 export async function getItemCount(uid: string, item: Items): Promise<number> {
-  const { data, error } = await getSupabase()
-    .from('bag_items')
-    .select('count')
-    .eq('player', uid)
-    .eq('item', item)
-    .maybeSingle();
-
-  if (error != null) {
-    throw new Error(BAG_UNREADABLE);
-  }
-
-  return asNumber((data as { count?: unknown } | null)?.count);
+  return getStack(await readBag(uid), ITEM_STACKS, item);
 }
 
 /**

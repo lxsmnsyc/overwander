@@ -406,7 +406,7 @@ export default function registerBurmySpecies(): void {
         38: [Moves.SilverWind],
         41: [Moves.AirSlash],
         44: [Moves.Psychic],
-        47: [Moves.BugBuzz],
+        47: [Moves.BugBuzz, Moves.Lunge],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

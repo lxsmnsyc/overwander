@@ -195,7 +195,13 @@ export default function registerStarlySpecies(): void {
         41: [Moves.Agility],
         49: [Moves.BraveBird],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam, Moves.SkyAttack],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.GigaImpact,
+        Moves.HyperBeam,
+        Moves.SkyAttack,
+        Moves.LaserFocus,
+      ],
     },
   });
 }

@@ -105,6 +105,7 @@ export default function registerRegigigasSpecies(): void {
         Moves.ZenHeadbutt,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.StompingTantrum,
       ],
     },
   });

@@ -146,6 +146,7 @@ export default function registerCombeeSpecies(): void {
         Moves.XScissor,
         Moves.Confide,
         Moves.Infestation,
+        Moves.LaserFocus,
       ],
     },
   });

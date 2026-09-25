@@ -186,6 +186,8 @@ export default function registerBunearySpecies(): void {
         Moves.Strength,
         Moves.Thunder,
         Moves.ThunderPunch,
+        Moves.BrutalSwing,
+        Moves.LaserFocus,
       ],
     },
   });

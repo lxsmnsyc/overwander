@@ -96,6 +96,7 @@ export default function registerPachirisuSpecies(): void {
         Moves.UTurn,
         Moves.Uproar,
         Moves.Confide,
+        Moves.LaserFocus,
       ],
       egg: [Moves.IonDeluge],
     },

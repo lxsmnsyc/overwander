@@ -96,7 +96,7 @@ export default function registerShayminSpecies(): void {
         91: [Moves.HealingWish],
         100: [Moves.SeedFlare],
       },
-      teachable: [...SHAYMIN_TEACHABLE, Moves.EarthPower, Moves.Endeavor],
+      teachable: [...SHAYMIN_TEACHABLE, Moves.EarthPower, Moves.Endeavor, Moves.LaserFocus],
     },
   });
   registerSpecies(Species.ShayminSky, {
@@ -145,7 +145,7 @@ export default function registerShayminSpecies(): void {
         91: [Moves.LeafStorm],
         100: [Moves.SeedFlare],
       },
-      teachable: [...SHAYMIN_TEACHABLE, Moves.AirCutter, Moves.OminousWind],
+      teachable: [...SHAYMIN_TEACHABLE, Moves.AirCutter, Moves.OminousWind, Moves.LaserFocus],
     },
   });
 }

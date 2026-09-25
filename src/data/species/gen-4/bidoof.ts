@@ -178,6 +178,8 @@ export default function registerBidoofSpecies(): void {
         Moves.WaterPulse,
         Moves.Waterfall,
         Moves.Whirlpool,
+        Moves.StompingTantrum,
+        Moves.Liquidation,
       ],
     },
   });

@@ -106,6 +106,7 @@ export default function registerHeatranSpecies(): void {
         Moves.Uproar,
         Moves.WillOWisp,
         Moves.Confide,
+        Moves.StompingTantrum,
       ],
     },
   });

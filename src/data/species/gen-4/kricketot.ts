@@ -140,6 +140,8 @@ export default function registerKricketotSpecies(): void {
         Moves.Confide,
         Moves.Infestation,
         Moves.PowerUpPunch,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

@@ -150,6 +150,7 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.IcyRock, weight: 3 },
     { item: Items.SmoothRock, weight: 3 },
     { item: Items.LightClay, weight: 3 },
+    { item: Items.TerrainExtender, weight: 3 },
     // Pulled up with them, and about as particular: everything to a
     // pokemon that drains, nothing to anything else
     { item: Items.BigRoot, weight: 4 },

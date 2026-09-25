@@ -26,3 +26,13 @@ create table boosts (
 create index boosts_running on boosts (reward, ends_at);
 
 alter table boosts enable row level security;
+
+-- A boost that ended a day ago is swept, hourly like the other sweeps
+select cron.schedule(
+  'sweep-old-boosts',
+  '5 * * * *',
+  $$
+  delete from boosts
+  where ends_at < (extract(epoch from now()) * 1000)::bigint - 86400000;
+  $$
+);

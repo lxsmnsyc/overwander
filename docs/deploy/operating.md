@@ -90,6 +90,9 @@ Only what the server pays can be boosted. What spawns and how often it sparkles
 is rolled on the client from the world seed, so a boost there would have the two
 disagreeing. Players are not told about a boost by itself; announce it.
 
+A boost is deleted a day after it ends, by an hourly `pg_cron` job
+(`sweep-old-boosts`), so there is nothing to tidy up by hand.
+
 ## See also
 
 - [Vercel](vercel.md), for the variables named above

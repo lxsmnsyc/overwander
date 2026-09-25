@@ -15,7 +15,7 @@ import { localNow, serverNow, syncServerClock } from '../../auth/clock';
 import { getLocalOffset, toLocalTime } from '../../auth/local-time';
 import { TIME_OF_DAY_NAMES } from '../../data/biome';
 import { getTimeOfDay } from '../../data/ids/biome';
-import { WEATHER_NAMES } from '../../data/overworld/weather';
+import { WEATHER_DESCRIPTIONS, WEATHER_NAMES } from '../../data/overworld/weather';
 import {
   LANDMARK_INTERVAL,
   NEST_INTERVAL,
@@ -46,7 +46,7 @@ import {
   TrophyIcon,
   UserIcon,
 } from '../icons';
-import WeatherIcon, { getWeatherIcon } from '../overworld/WeatherIcon';
+import { WeatherFavors, getWeatherIcon } from '../overworld/WeatherIcon';
 import { Divider } from '../styled';
 import { SHEER } from '../styled/transition';
 import FullscreenToggle, { fullscreenOffered } from './fullscreen';
@@ -498,13 +498,19 @@ export default function GameMenu(): JSX.Element {
               {(() => {
                 const sky = game.weather();
 
+                // Said outright rather than behind a hover, which a phone
+                // has no way to open
                 return sky == null ? (
                   ''
                 ) : (
-                  <span class="flex items-center gap-2 text-muted">
-                    <WeatherIcon weather={sky} />
-                    {WEATHER_NAMES[sky]}
-                  </span>
+                  <div class="flex flex-col gap-1.5">
+                    <span class="flex items-center gap-2 font-bold text-ink">
+                      <Dynamic component={getWeatherIcon(sky)} class="size-5" aria-hidden="true" />
+                      {WEATHER_NAMES[sky]}
+                    </span>
+                    <p class="text-xs text-muted">{WEATHER_DESCRIPTIONS[sky]}</p>
+                    <WeatherFavors weather={sky} />
+                  </div>
                 );
               })()}
               <div class="flex items-center justify-between gap-3">

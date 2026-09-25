@@ -1714,3 +1714,57 @@ export function createCarrionAbility(
     }),
   );
 }
+
+/** What keeping a creed is worth on a blow that answers it */
+export const CREED_SCALE = 1.3;
+
+/**
+ * The tao trio's shared shape: each dragon holds one conviction and
+ * asks the thing it is hitting whether the answer is yes, pressing
+ * only where it is
+ */
+export function createCreedAbility(
+  ability: Abilities,
+  answers: (target: Unit) => boolean,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const parent = event.parent;
+
+      if (event.value > 0 && parent.source.hasAbility(ability) && answers(parent.target)) {
+        event.value *= CREED_SCALE;
+      }
+    }),
+  );
+}
+
+/** What a genie standing over the field is worth to its own element */
+export const GENIE_SCALE = 1.3;
+
+/**
+ * The three that ride the storm clouds lift one element apiece for
+ * the side they stand on. Same rule three times over, turned by the
+ * genie's own type, so a trio standing together lifts three
+ */
+export function createGenieAbility(
+  ability: Abilities,
+  type: Types,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const parent = event.parent;
+
+      if (parent.type !== type) {
+        return;
+      }
+
+      // The genie covers its own team, never the whole alliance
+      for (const mate of parent.source.team.units) {
+        if (mate.alive && mate.hasAbility(ability)) {
+          event.value *= GENIE_SCALE;
+          return;
+        }
+      }
+    }),
+  );
+}

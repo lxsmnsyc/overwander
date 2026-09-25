@@ -109,6 +109,7 @@ import setupStatReadingMoves from './stat-reading';
 import setupRooms from './rooms';
 import setupSplitMoves from './splits';
 import setupAutotomize from './autotomize';
+import setupRelicSong from './relic-song';
 import setupTeamGuards from './team-guards';
 import setupAirborneMoves from './airborne';
 import setupSkyDrop from './sky-drop';
@@ -240,6 +241,7 @@ export default function setupMoves(battle: Battle): void {
   setupRooms(battle);
   setupSplitMoves(battle);
   setupAutotomize(battle);
+  setupRelicSong(battle);
   setupTeamGuards(battle);
   setupAirborneMoves(battle);
   setupSkyDrop(battle);

@@ -1851,4 +1851,63 @@ export default function registerSignatureAbilities(): void {
     name: 'Tide Vigil',
     description: 'Its teammates never flinch and refuse enemy stat drops while it stands.',
   });
+
+  /**
+   * The tao trio: each holds one conviction and asks the target
+   * whether it answers to it. The three tests cannot both fail and
+   * both pass, so a fused Kyurem carrying two of them never stacks
+   */
+  registerSignature(Families.Reshiram, Abilities.TruthCreed, {
+    name: 'Truth Creed',
+    description: 'Hits 1.3x an enemy carrying a status condition.',
+  });
+
+  registerSignature(Families.Zekrom, Abilities.IdealCreed, {
+    name: 'Ideal Creed',
+    description: 'Hits 1.3x an enemy carrying a raised stat stage.',
+  });
+
+  registerSignature(Families.Kyurem, Abilities.HollowCreed, {
+    name: 'Hollow Creed',
+    description: 'Hits 1.3x an enemy carrying neither a status nor a raised stat stage.',
+  });
+
+  /**
+   * The three that ride the storm clouds lift one element apiece for
+   * the side they stand on, which is the same gift told three ways
+   */
+  registerSignature(Families.Tornadus, Abilities.Windfall, {
+    name: 'Windfall',
+    description: 'Its team throws Flying moves at 1.3x while it stands.',
+  });
+
+  registerSignature(Families.Thundurus, Abilities.Stormfall, {
+    name: 'Stormfall',
+    description: 'Its team throws Electric moves at 1.3x while it stands.',
+  });
+
+  registerSignature(Families.Landorus, Abilities.Landfall, {
+    name: 'Landfall',
+    description: 'Its team throws Ground moves at 1.3x while it stands.',
+  });
+
+  /**
+   * The three the region keeps out of the wild. Each stands alone
+   * rather than in a group, so each is its own design
+   */
+  registerSignature(Families.Victini, Abilities.WinnersShare, {
+    name: "Winner's Share",
+    description: 'Each enemy that faints gives its whole team +1 Attack and +1 Special Attack.',
+  });
+
+  registerSignature(Families.Meloetta, Abilities.Countertune, {
+    name: 'Countertune',
+    description: 'Changing shape swaps its Attack and Special Attack stages, and its two defences.',
+  });
+
+  registerSignature(Families.Genesect, Abilities.Overclock, {
+    name: 'Overclock',
+    description:
+      'Casts 25% faster above 1/2 HP. At or below it, loses 1/16 of its HP each time it acts.',
+  });
 }

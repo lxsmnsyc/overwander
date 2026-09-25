@@ -68,7 +68,9 @@ const asHeldItems = (value: unknown): Items[] => asNumberArray(value) as Items[]
  * single row
  */
 export async function hasAnyCaught(uid: string): Promise<boolean> {
-  const rows = await getSql()`select 1 from caught where owner = ${uid} limit 1`;
+  const rows = await getSql()`
+    select 1 from caught where owner = ${uid} and not hidden limit 1
+  `;
 
   return rows.length > 0;
 }
@@ -85,7 +87,11 @@ export async function hasAnyCaught(uid: string): Promise<boolean> {
 async function spareRoomIn(transaction: Tx, uid: string): Promise<number> {
   await transaction`select 1 from profiles where id = ${uid} for update`;
 
-  const held = await transaction`select count(*)::int as count from caught where owner = ${uid}`;
+  // A dragon folded into a fusion is not one of the player's spare
+  // pokemon: it is already inside one of them
+  const held = await transaction`
+    select count(*)::int as count from caught where owner = ${uid} and not hidden
+  `;
 
   return Math.max(0, asNumber(held.at(0)?.count) - 1);
 }

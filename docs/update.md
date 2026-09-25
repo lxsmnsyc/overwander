@@ -7,6 +7,7 @@ named for what it brings.
 
 | Release                                                               | What it brought                                                                                                                |
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| [Unova's legends](update/unovas-legends.md) | The Tao trio with Kyurem's fusions, the forces of nature, and Victini, Meloetta and Genesect |
 | [Twist Mountain and the Swords of Justice](update/twist-mountain-and-the-swords.md) | Seven more families along the last roads and Twist Mountain, and Cobalion, Terrakion, Virizion and Keldeo |
 | [Opelucid and the towers](update/opelucid-and-the-towers.md) | Nine more families around Celestial Tower, Dragonspiral Tower and Opelucid's last roads, and higher wild levels |
 | [From Route 5 to Driftveil](update/route-five-to-driftveil.md) | Eleven more families along Unova's fifth road, in Chargestone Cave and around Driftveil, with Illusion and Iron Barbs working at last |

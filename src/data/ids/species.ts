@@ -631,7 +631,10 @@ export const enum Species {
    * The sprite collection has drawn nothing for Blitzle, Zebstrika,
    * Simisear, Simipour, Tranquill, Throh, Crustle, Tirtouga,
    * Carracosta, Amoonguss, Frillish, Jellicent, Shelmet, Stunfisk and
-   * Bouffalant, so those lines cannot be released until it does
+   * Bouffalant, so those lines cannot be released until it does.
+   *
+   * Karrablast, Escavalier and Accelgor are drawn and their
+   * counterparts are not, so those two lines wait on each other
    */
   Victini = 494,
   Snivy = 495,
@@ -1010,6 +1013,23 @@ export const GASTRODON_FORMS = [Species.Gastrodon, Species.GastrodonEast];
 /** The two schools of Basculin, the red stripe first */
 export const BASCULIN_FORMS = [Species.Basculin, Species.BasculinBlue];
 
+/** Each genie's two shapes, the one it is usually met in first */
+export const TORNADUS_FORMS = [Species.Tornadus, Species.TornadusTherian];
+export const THUNDURUS_FORMS = [Species.Thundurus, Species.ThundurusTherian];
+export const LANDORUS_FORMS = [Species.Landorus, Species.LandorusTherian];
+
+/** The song and the step, the song first */
+export const MELOETTA_FORMS = [Species.Meloetta, Species.MeloettaPirouette];
+
+/** Genesect and the four shapes its Drives repaint it in */
+export const GENESECT_FORMS = [
+  Species.Genesect,
+  Species.GenesectDouse,
+  Species.GenesectShock,
+  Species.GenesectBurn,
+  Species.GenesectChill,
+];
+
 /** Darmanitan standing and Darmanitan sat down, the standing one first */
 export const DARMANITAN_FORMS = [Species.Darmanitan, Species.DarmanitanZen];
 
@@ -1075,6 +1095,9 @@ export const ARCEUS_FORMS: Species[] = [
 
 /** Shaymin and the shape the Gracidea opens it into */
 export const SHAYMIN_FORMS: Species[] = [Species.Shaymin, Species.ShayminSky];
+
+/** The husk and the two shapes a dragon folded into it puts it in */
+export const KYUREM_FORMS: Species[] = [Species.Kyurem, Species.KyuremBlack, Species.KyuremWhite];
 
 export const DEOXYS_FORMS: Species[] = [
   Species.Deoxys,

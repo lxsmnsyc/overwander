@@ -1309,6 +1309,9 @@ describe('item data', () => {
       Items.OaksLetter,
       Items.AzureFlute,
       Items.ColtsPetal,
+      Items.LibertyPass,
+      Items.MusicBox,
+      Items.ColressMachine,
       Items.GoldenBottleCap,
       // The one thing in the band that is only gold, and there because
       // it is more of it than anything else in the game pays

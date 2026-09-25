@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { UNLIMITED_BATTLE_LIMITS } from '../../src/data/constants/battle-limits';
+import { packSlots } from '../../src/data/constants/slots';
 import { Stats } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import Abilities from '../../src/data/ids/abilities';
@@ -60,5 +62,82 @@ describe('Form items', () => {
 
     expect(flower.hasAbility(Abilities.Guts)).toBe(true);
     expect(flower.hasAbility(Abilities.SereneGrace)).toBe(true);
+  });
+});
+
+describe('Fused shapes', () => {
+  it('lets the dragon inside a Black Kyurem fight with Teravolt', () => {
+    const { battle, teamA } = createBattle();
+    const fusion = createUnit(battle, teamA);
+
+    fusion.setSpecies(Species.KyuremBlack);
+    fusion.addAbility(Abilities.Pressure);
+    fusion.enter();
+
+    expect(fusion.hasAbility(Abilities.Teravolt)).toBe(true);
+    // What the Kyurem itself rolled is still its own
+    expect(fusion.hasAbility(Abilities.Pressure)).toBe(true);
+  });
+
+  it('gives White Kyurem Turboblaze, and a plain Kyurem neither', () => {
+    const { battle, teamA } = createBattle();
+    const fusion = createUnit(battle, teamA);
+    const husk = createUnit(battle, teamA);
+
+    fusion.setSpecies(Species.KyuremWhite);
+    husk.setSpecies(Species.Kyurem);
+    fusion.enter();
+    husk.enter();
+
+    expect(fusion.hasAbility(Abilities.Turboblaze)).toBe(true);
+    expect(husk.hasAbility(Abilities.Turboblaze)).toBe(false);
+    expect(husk.hasAbility(Abilities.Teravolt)).toBe(false);
+  });
+
+  it('hands the folded dragon creed only to a holder keeping its own', () => {
+    const { battle, teamA } = createBattle();
+    const granted = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+
+    granted.setSpecies(Species.KyuremBlack);
+    granted.addAbility(Abilities.HollowCreed);
+    plain.setSpecies(Species.KyuremBlack);
+    granted.enter();
+    plain.enter();
+
+    expect(granted.hasAbility(Abilities.IdealCreed)).toBe(true);
+    expect(plain.hasAbility(Abilities.IdealCreed)).toBe(false);
+  });
+});
+
+describe('Worn abilities and slots', () => {
+  it('rides free of a Kyurem that has filled all four of its slots', () => {
+    const { battle, teamA } = createBattle('test-seed', undefined, UNLIMITED_BATTLE_LIMITS);
+    const fusion = createUnit(battle, teamA);
+
+    fusion.setSpecies(Species.KyuremBlack);
+    fusion.setSlots(packSlots(4, 1, 4));
+    for (const ability of [
+      Abilities.Pressure,
+      Abilities.SnowWarning,
+      Abilities.IceBody,
+      Abilities.Intimidate,
+    ]) {
+      fusion.addAbility(ability);
+    }
+    fusion.enter();
+
+    // The four it rolled, and the dragon's on top of them: a worn
+    // ability is the shape's rather than the pokemon's
+    for (const ability of [
+      Abilities.Pressure,
+      Abilities.SnowWarning,
+      Abilities.IceBody,
+      Abilities.Intimidate,
+      Abilities.Teravolt,
+    ]) {
+      expect(fusion.hasAbility(ability)).toBe(true);
+    }
+    expect(fusion.worn[Abilities.Teravolt]).toBe(true);
   });
 });

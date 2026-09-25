@@ -126,6 +126,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Entei, weight: 10 },
         { species: Species.Suicune, weight: 10 },
       ],
+      mythical: [{ species: Species.Meloetta, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -234,6 +235,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Entei, weight: 10 },
         { species: Species.Suicune, weight: 10 },
       ],
+      mythical: [{ species: Species.Meloetta, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -335,6 +337,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Entei, weight: 10 },
         { species: Species.Suicune, weight: 10 },
       ],
+      mythical: [{ species: Species.Meloetta, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -445,6 +448,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Entei, weight: 10 },
         { species: Species.Suicune, weight: 10 },
       ],
+      mythical: [{ species: Species.Meloetta, weight: 10 }],
     },
   });
   registerWaterPool(Biome.Woodland, {

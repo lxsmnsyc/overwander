@@ -222,3 +222,23 @@ Worth building when any of these happens:
 It costs about 190 bytes a row and 0.1 ms a write, roughly 40 MB a month at 12
 players, so it needs the sweep on the Free plan's 500 MB. Nothing that happens
 before it exists can be traced afterwards.
+
+## Taking back a release
+
+- [ ] **A day's grace before a release is final**, the way rAthena waits
+      `char_del_delay` (24 hours) before a deleted character is gone. Today a
+      release deletes the pokemon at once ([`src/server/caught.ts`](src/server/caught.ts)),
+      and a bulk release takes many in one press, so a slip or a stolen login is
+      permanent. A release would mark the pokemon and hide it instead, a sweep
+      would delete it a day later, and it could be taken back until then. The
+      release candy is paid when the sweep runs rather than at the press, or
+      releasing and taking back would print candy. Every box query has to leave
+      the marked ones out, which is most of the work.
+
+## A record of what staff did
+
+- [ ] **One row per staff action**, the way rAthena logs every GM command to
+      `atcommandlog`: who acted, on whom, what they did and when. The dashboard
+      only reads today, and bans, roles and grants are made by hand, so there is
+      nothing to log yet. It becomes worth building the moment the dashboard
+      writes anything, or somebody besides the owner holds a role.

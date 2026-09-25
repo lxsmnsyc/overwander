@@ -221,11 +221,12 @@ function PortalBody(
                       setNamed(town.name);
                     }}
                   >
-                    <span class="flex w-full items-center gap-2">
-                      <span class="min-w-0 grow truncate text-left font-semibold">{town.name}</span>
-                      <Meta class="hidden shrink-0 sm:inline">{BIOME_NAMES[town.biome]}</Meta>
-                      <Meta class="w-24 shrink-0 text-right tabular-nums">
-                        {describeWhere(chunkOf(town), here())}
+                    {/* Two lines, since a far town's distance runs longer
+                        than any column set aside for it */}
+                    <span class="flex w-full min-w-0 flex-col text-left">
+                      <span class="truncate font-semibold">{town.name}</span>
+                      <Meta class="truncate tabular-nums">
+                        {describeWhere(chunkOf(town), here())} · {BIOME_NAMES[town.biome]}
                       </Meta>
                     </span>
                   </RowButton>

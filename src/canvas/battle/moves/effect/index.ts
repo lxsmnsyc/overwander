@@ -19,6 +19,11 @@ import minds from './minds';
 import { BY_TYPE, NAMED } from './named';
 import stats from './stats';
 import unova from './unova';
+import zTypes from './z-types';
+import zElements from './z-elements';
+import zPartners from './z-partners';
+import zLegends from './z-legends';
+import alola from './alola';
 
 import {
   type EffectShape,
@@ -41,6 +46,7 @@ export { weightOf } from './shapes';
  */
 const WINDING_UP = new Set<Moves>([
   Moves.SolarBeam,
+  Moves.SolarBlade,
   Moves.SkyAttack,
   Moves.SkullBash,
   Moves.RazorWind,
@@ -102,6 +108,11 @@ const PAINTERS: Record<EffectShape, ShapePainter> = {
   ...stats,
   ...unova,
   ...kalos,
+  ...zTypes,
+  ...zElements,
+  ...zPartners,
+  ...zLegends,
+  ...alola,
 };
 
 /**

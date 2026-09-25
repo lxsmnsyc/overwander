@@ -172,6 +172,8 @@ const kalos = {
           light,
           alpha,
         );
+      } else if (type === Types.Psychic) {
+        kit.ripple(spot, reach * 0.4 * (0.5 + rise), 0.15, light, alpha);
       } else {
         kit.puff(spot, reach * 0.35 * (0.6 + rise), light, alpha * 0.5);
       }

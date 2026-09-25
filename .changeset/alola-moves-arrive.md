@@ -21,3 +21,5 @@ Alola's moves:
 - A type crystal gives a status move of its type the mainline Z-effect before the move goes off, such as a stage raised, full HP or cleared drops.
 - The 18 type crystals take their power from the move they replace, and the 17 signature crystals each turn one line's own move into its own Z-Move.
 - A Mega, or a pokemon holding its Mega Stone, never throws a Z-Move.
+- Every Z-Move has a picture of its own, opening with the user gathering its Z-Power under a gold Z.
+- Alola's signature moves have pictures of their own, and Psychic Terrain washes the floor pink.

@@ -9,6 +9,11 @@ import ohko from './ohko';
 import type { LitShapePainter } from './shapes';
 import stats from './stats';
 import unova from './unova';
+import zTypes from './z-types';
+import zElements from './z-elements';
+import zPartners from './z-partners';
+import zLegends from './z-legends';
+import alola from './alola';
 
 export { JOLTS, reachOf } from './shapes';
 
@@ -23,4 +28,9 @@ export const LIT: Partial<Record<EffectShape, LitShapePainter>> = {
   ...stats,
   ...unova,
   ...kalos,
+  ...zTypes,
+  ...zElements,
+  ...zPartners,
+  ...zLegends,
+  ...alola,
 };

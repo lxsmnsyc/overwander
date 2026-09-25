@@ -250,6 +250,54 @@ export type EffectShape =
   | 'Overload'
   | 'Jetstream'
   | 'Resolute'
+  | 'Blitz'
+  | 'Pummel'
+  | 'Skystrike'
+  | 'Downpour'
+  | 'Tectonic'
+  | 'Continental'
+  | 'Cocoon'
+  | 'Nightmare'
+  | 'Corkscrew'
+  | 'Overdrive'
+  | 'Hydrovortex'
+  | 'Doom'
+  | 'Havoc'
+  | 'Psyche'
+  | 'Slammer'
+  | 'Drake'
+  | 'Eclipse'
+  | 'Twinkle'
+  | 'Catastropika'
+  | 'ArrowRaid'
+  | 'Moonsault'
+  | 'Operetta'
+  | 'Sparksurfer'
+  | 'Pancake'
+  | 'Evoboost'
+  | 'Megavolt'
+  | 'Snuggle'
+  | 'Guardian'
+  | 'SevenStar'
+  | 'Supernova'
+  | 'Skyburn'
+  | 'Sunraze'
+  | 'Moonraze'
+  | 'Stormshards'
+  | 'Soulblaze'
+  | 'Sunsteel'
+  | 'Moongeist'
+  | 'Photon'
+  | 'Prism'
+  | 'Enforcer'
+  | 'Aurora'
+  | 'Shackle'
+  | 'Anchor'
+  | 'Lariat'
+  | 'Madness'
+  | 'Spotlight'
+  | 'Pollen'
+  | 'Detonate'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -450,6 +498,54 @@ export const SPANS: Record<EffectShape, number> = {
   Overload: 1000,
   Jetstream: 1000,
   Resolute: 950,
+  Blitz: 1500,
+  Pummel: 1500,
+  Skystrike: 1500,
+  Downpour: 1500,
+  Tectonic: 1500,
+  Continental: 1500,
+  Cocoon: 1500,
+  Nightmare: 1500,
+  Corkscrew: 1500,
+  Overdrive: 1500,
+  Hydrovortex: 1500,
+  Doom: 1500,
+  Havoc: 1500,
+  Psyche: 1500,
+  Slammer: 1500,
+  Drake: 1500,
+  Eclipse: 1500,
+  Twinkle: 1500,
+  Catastropika: 1500,
+  ArrowRaid: 1500,
+  Moonsault: 1500,
+  Operetta: 1500,
+  Sparksurfer: 1500,
+  Pancake: 1500,
+  Evoboost: 1300,
+  Megavolt: 1500,
+  Snuggle: 1500,
+  Guardian: 1500,
+  SevenStar: 1500,
+  Supernova: 1500,
+  Skyburn: 1500,
+  Sunraze: 1500,
+  Moonraze: 1500,
+  Stormshards: 1500,
+  Soulblaze: 1500,
+  Sunsteel: 1000,
+  Moongeist: 1000,
+  Photon: 1000,
+  Prism: 1000,
+  Enforcer: 1000,
+  Aurora: 1000,
+  Shackle: 1000,
+  Anchor: 1000,
+  Lariat: 1000,
+  Madness: 1000,
+  Spotlight: 1000,
+  Pollen: 1000,
+  Detonate: 1000,
   Whiff: 320,
 };
 
@@ -520,7 +616,7 @@ export const OVER_A_SIDE = new Set<EffectShape>(['Screen']);
  * over on its way off the field, so it belongs over the caster even
  * when the move reached somebody else on the way out
  */
-export const ON_THE_CASTER = new Set<EffectShape>(['Relay']);
+export const ON_THE_CASTER = new Set<EffectShape>(['Relay', 'Evoboost']);
 
 /** The point in the middle of everything given. */
 export function middle(points: Point[]): Point {

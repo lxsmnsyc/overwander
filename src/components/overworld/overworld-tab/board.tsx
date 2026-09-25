@@ -19,12 +19,13 @@ import { type Direction, actionOf, forTheGame } from '../../app/keys';
 import settings from '../../app/settings';
 import { DEFAULT_CHARSET } from '../../../data/overworld/charsets';
 import { watchProfile } from '../../../auth/profile';
+import openSight, { type Sight } from '../../../auth/sight';
 import { MAX_STEP_REPORT } from '../../../auth/egg';
 import type { SnapshotRecord } from '../../../auth/snapshot-record';
 import { type EggWalk, type WalkReport, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../auth/encounter-record';
-import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
-import { serverNow } from '../../../auth/clock';
+import { getLocalOffset } from '../../../auth/local-time';
+import { localNow } from '../../../auth/clock';
 import { RaidAction, RaidKind, type RaidView, canJoinRaids, peekRaid } from '../../../auth/raids';
 import { type StopRecord, stopIdOf } from '../../../auth/stop-record';
 import { claimStopReward, enterStop } from '../../../auth/stops';
@@ -116,6 +117,7 @@ import {
   createEffect,
   createMemo,
   createSignal,
+  on,
   onCleanup,
   onMount,
   untrack,
@@ -131,6 +133,7 @@ import {
   PUBLISHED_SPAWNS,
   REFRESH_DEBOUNCE,
   SAVE_DELAY,
+  SAVE_FLOOR,
   STANDINGS_MEMORY,
   START_CELL,
   STEP_PACE,
@@ -462,19 +465,23 @@ export default function OverworldBoard(props: {
     setPlaced(true);
   });
 
-  // Put somewhere by something other than a walk, which today means a
-  // staff teleport. The board holds its own coordinates once it is
-  // placed, so the news has to move them rather than the position
-  createEffect(() => {
-    const at = game.moved();
-
-    if (at == null || !placed()) {
-      return;
-    }
-    setAtX(worldCell(at.chunkX, at.cellX));
-    setAtY(worldCell(at.chunkY, at.cellY));
-    setAtDepth(at.depth);
-  });
+  // Put somewhere by something other than a walk (a staff teleport, Dig
+  // or Teleport), which has to move the board's own coordinates. Deferred
+  // so a remount after a battle does not replay a move walked away from
+  createEffect(
+    on(
+      game.moved,
+      (at) => {
+        if (at == null || !placed()) {
+          return;
+        }
+        setAtX(worldCell(at.chunkX, at.cellX));
+        setAtY(worldCell(at.chunkY, at.cellY));
+        setAtDepth(at.depth);
+      },
+      { defer: true },
+    ),
+  );
 
   /**
    * The windows of every chunk the board overlaps, by chunk key.
@@ -587,8 +594,7 @@ export default function OverworldBoard(props: {
 
   /** Whether a window still stands, which is when visiting its chunk would only read it again */
   const isLive = (record: WatchedWindow['record']): boolean =>
-    record.spawns.length > 0 &&
-    toLocalTime(serverNow(), zone) < record.timestamp + SNAPSHOT_INTERVAL;
+    record.spawns.length > 0 && localNow(zone) < record.timestamp + SNAPSHOT_INTERVAL;
 
   /**
    * Visit the chunks whose window is missing or has run out; the watch
@@ -765,7 +771,7 @@ export default function OverworldBoard(props: {
       return;
     }
 
-    const now = toLocalTime(serverNow(), zone);
+    const now = localNow(zone);
     let soonest = Number.POSITIVE_INFINITY;
 
     for (const { record } of held.values()) {
@@ -795,7 +801,7 @@ export default function OverworldBoard(props: {
   // Rather than staying pressable and answering "too late"
   const liveWindows = createMemo(() => {
     expiries();
-    return runningWindows(windows(), toLocalTime(serverNow(), zone));
+    return runningWindows(windows(), localNow(zone));
   });
 
   // What walks beside the player changes what the chunk holds, so the
@@ -873,8 +879,7 @@ export default function OverworldBoard(props: {
       held.set(`${piece.x},${piece.y}`, piece);
     }
 
-    const current =
-      Math.floor(toLocalTime(serverNow(), zone) / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
+    const current = Math.floor(localNow(zone) / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
     const lists: Promise<string[]>[] = [];
     let live = true;
 
@@ -1412,6 +1417,8 @@ export default function OverworldBoard(props: {
    */
   let pending = 0;
   let reporting = false;
+  /** When the position was last written, which is what SAVE_FLOOR is measured from */
+  let settledAt = 0;
 
   /**
    * Hand the paces walked so far to the server. A walk in progress
@@ -1472,6 +1479,7 @@ export default function OverworldBoard(props: {
     if (game.elsewhere() != null) {
       return;
     }
+    settledAt = Date.now();
     // The paces ride the save, unless a report is already out with them
     const steps = reporting ? 0 : pending;
 
@@ -1538,7 +1546,9 @@ export default function OverworldBoard(props: {
   // ...and remembered as they walk. A step is a keypress, so the
   // writes are held back to one every SAVE_DELAY: the effect re-runs
   // on every move and clears the timer it set last time, so what
-  // lands is where they stopped rather than every square they crossed
+  // lands is where they stopped rather than every square they crossed.
+  // SAVE_FLOOR holds the rest of the wait, since a walk of two steps
+  // and a pause, over and over, is otherwise a write every few seconds
   createEffect(() => {
     const user = auth.user();
     const at = {
@@ -1552,9 +1562,10 @@ export default function OverworldBoard(props: {
       return;
     }
 
+    const owed = Math.max(SAVE_DELAY, SAVE_FLOOR - (Date.now() - settledAt));
     const timer = setTimeout(() => {
       settle(at.chunkX, at.chunkY, at.cellX, at.cellY);
-    }, SAVE_DELAY);
+    }, owed);
 
     onCleanup(() => {
       clearTimeout(timer);
@@ -2051,6 +2062,42 @@ export default function OverworldBoard(props: {
   const [facing, setFacing] = createSignal<[number, number]>([0, 1]);
 
   /**
+   * The other players in sight, and this one as they see them. Opened
+   * once the board is placed, so nobody sees the player at the start
+   * cell on the way to where they really are
+   */
+  const [sight, setSight] = createSignal<Sight | null>(null);
+  // By uid, so a refreshed session is not a reason to rejoin every channel
+  const seer = createMemo(() => auth.user()?.uid ?? null);
+
+  createEffect(() => {
+    const uid = seer();
+
+    if (uid == null || !placed()) {
+      return;
+    }
+
+    const opened = openSight(uid, STEP_PACE);
+
+    setSight(opened);
+    onCleanup(() => {
+      opened.close();
+      setSight(null);
+    });
+  });
+  createEffect(() => {
+    sight()?.setCharset(charset());
+  });
+  // A screen that stood down keeps watching but is not seen, or a
+  // player on two screens would stand in two places
+  createEffect(() => {
+    sight()?.setSeen(game.elsewhere() == null);
+  });
+  createEffect(() => {
+    sight()?.stand(atDepth(), atX(), atY(), facing());
+  });
+
+  /**
    * The cell one step from where the player stands. Always on the
    * board: they stand in the middle of it, and the middle is eight
    * cells from every edge
@@ -2329,6 +2376,24 @@ export default function OverworldBoard(props: {
    * for somewhere else to go, since the player can see the board and
    * will press again
    */
+  /** The walk whose route the other players have been told, so it is told once */
+  let announced: Journey | null = null;
+
+  /** A route of board cells as the steps between them */
+  const stepsAlong = (from: number, cells: number[]): [number, number][] => {
+    const steps: [number, number][] = [];
+    let at = from;
+
+    for (const onto of cells) {
+      steps.push([
+        (onto % BOARD_CELLS) - (at % BOARD_CELLS),
+        Math.floor(onto / BOARD_CELLS) - Math.floor(at / BOARD_CELLS),
+      ]);
+      at = onto;
+    }
+    return steps;
+  };
+
   const stride = (): void => {
     const plan = journey();
     const loaded = view();
@@ -2397,9 +2462,23 @@ export default function OverworldBoard(props: {
       setJourney(null);
       return;
     }
+    // Told once, as all of it: the ground and what stands on it are
+    // fixed, so the route found at the first step is the one walked
+    if (announced !== plan && route != null) {
+      announced = plan;
+      sight()?.plan(stepsAlong(here, route));
+    }
     steppedAt = Date.now();
     move(step[0], step[1]);
   };
+
+  // A walk that ends short of its route says where it stopped
+  createEffect(() => {
+    if (journey() == null) {
+      announced = null;
+      untrack(sight)?.plan(null);
+    }
+  });
 
   /**
    * The walk itself: a step, and then one every `STEP_PACE` until it
@@ -2800,10 +2879,7 @@ export default function OverworldBoard(props: {
               style={{
                 'background-color': loaded().underground
                   ? CAVERN.colour
-                  : getSkybox(
-                      toLocalTime(serverNow(), getLocalOffset()),
-                      latitudeOf(loaded().chunkY),
-                    ).horizon,
+                  : getSkybox(localNow(), latitudeOf(loaded().chunkY)).horizon,
               }}
             >
               <ChunkCanvas
@@ -2812,6 +2888,7 @@ export default function OverworldBoard(props: {
                 lamp={loaded().lamp}
                 underground={loaded().underground}
                 charset={charset()}
+                strangers={sight()?.strangers ?? null}
                 mount={mount()}
                 // The camera belongs to the player rather than to the
                 // chunk: walking over a boundary swaps the board out
@@ -2983,6 +3060,7 @@ export default function OverworldBoard(props: {
             <NestDialog
               offer={eggOffer()}
               busy={taking()}
+              buddy={buddy() ?? null}
               onAccept={takeEgg}
               onClose={() => {
                 setEggOffer(null);

@@ -1,5 +1,6 @@
 import { type JSX, Show, Suspense, createMemo, createResource, createSignal } from 'solid-js';
 import { isLockLive } from '../../../auth/battle-lock';
+import readBox from '../../../auth/box';
 import { readCatchContext, searchCaught } from '../../../auth/caught';
 import { syncServerClock } from '../../../auth/clock';
 import { useAuth } from '../../../auth/context';
@@ -96,7 +97,11 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
     async ([player, , , narrowed]): Promise<CatchOption[]> => {
       // The clock is the server's, so a lock that has timed out reads
       // as free rather than as whatever this device believes
-      const [records, now] = await Promise.all([searchCaught(player, narrowed), syncServerClock()]);
+      // An unnarrowed box is the kept one, read again only where it changed
+      const [records, now] = await Promise.all([
+        narrowed.length === 0 ? readBox(player) : searchCaught(player, narrowed),
+        syncServerClock(),
+      ]);
 
       const options: CatchOption[] = [];
 

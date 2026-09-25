@@ -86,6 +86,9 @@ function chunkTile(world: World, chunkX: number, chunkY: number): ImageData {
  * at a time
  */
 const PAN_STEP = 1;
+
+/** How far a press may wander, in pixels, and still be a click */
+const DRAG_SLOP = 4;
 export const PAN_STRIDE = 8;
 
 const PAN_KEYS = new Map<string, [number, number]>([
@@ -201,6 +204,8 @@ export interface WorldMapCanvasProps {
    * its own
    */
   skies?: (Weather | null)[];
+  /** Controls laid over the map, inside its frame */
+  overlay?: JSX.Element;
 }
 
 export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element {
@@ -212,6 +217,40 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
    * north-east is green, and nothing tells them which green
    */
   const [hovered, setHovered] = createSignal<number | null>(null);
+
+  /**
+   * A drag in progress: where the pointer last paid out a whole chunk,
+   * and whether it has moved far enough to be a drag rather than a click
+   */
+  let drag: { x: number; y: number; moved: boolean } | null = null;
+  /** Set by a drag that ended, so the click the browser raises after it picks nothing */
+  let swallowClick = false;
+
+  const dragBy = (event: PointerEvent): void => {
+    const element = canvas;
+
+    if (drag == null || element == null) {
+      return;
+    }
+
+    const across = element.getBoundingClientRect().width / props.span;
+    const dx = event.clientX - drag.x;
+    const dy = event.clientY - drag.y;
+
+    if (Math.abs(dx) + Math.abs(dy) > DRAG_SLOP) {
+      drag.moved = true;
+    }
+
+    const stepX = Math.trunc(dx / across);
+    const stepY = Math.trunc(dy / across);
+
+    if (stepX !== 0 || stepY !== 0) {
+      // The ground follows the pointer, so the view moves the other way
+      props.onPan(-stepX, -stepY);
+      drag.x += stepX * across;
+      drag.y += stepY * across;
+    }
+  };
 
   /**
    * Whether a town stands in a chunk: its middle against the town's reach,
@@ -509,16 +548,35 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
         role="application"
         aria-label={`World map, ${props.span} chunks across, centred on ${
           props.originX + Math.floor(props.span / 2)
-        }, ${props.originY + Math.floor(props.span / 2)}. Arrow keys pan.`}
+        }, ${props.originY + Math.floor(props.span / 2)}. Drag or use the arrow keys to pan.`}
         // Blown up from a few hundred pixels, so the chunks stay squares
         // rather than being smeared into each other
-        class="block h-auto w-full rounded-xl border-4 border-tide shadow-pop
+        class="block h-auto w-full cursor-grab touch-none rounded-xl border-4 border-tide shadow-pop active:cursor-grabbing
         [image-rendering:pixelated] focus-visible:outline-none"
         title={naming()}
         onMouseMove={(event) => {
           setHovered(chunkAt(event));
         }}
+        onPointerDown={(event) => {
+          if (event.button !== 0) {
+            return;
+          }
+          drag = { x: event.clientX, y: event.clientY, moved: false };
+          event.currentTarget.setPointerCapture(event.pointerId);
+        }}
+        onPointerMove={dragBy}
+        onPointerUp={() => {
+          swallowClick = drag?.moved === true;
+          drag = null;
+        }}
+        onPointerCancel={() => {
+          drag = null;
+        }}
         onClick={(event) => {
+          if (swallowClick) {
+            swallowClick = false;
+            return;
+          }
           const at = chunkAt(event);
 
           if (at != null && props.biomes[at] != null) {
@@ -556,6 +614,8 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
           }
         }}
       />
+
+      {props.overlay}
     </div>
   );
 }

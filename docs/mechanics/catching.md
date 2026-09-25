@@ -119,8 +119,8 @@ chosen.
 | **Great Ball**                     | ×1.5     | Always                                     |
 | **Poke / Premier / Heal / Luxury** | ×1       | Always                                     |
 
-**Kurt's seven** are carved from apricorns rather than bought, and each answers
-something the shop balls cannot. See [People you meet](npcs.md).
+**Kurt's seven** are carved from apricorns rather than bought, and turn up on
+the ground as scarce finds. Each answers something the shop balls cannot. See [People you meet](npcs.md).
 
 | Ball             | Bonus    | Condition                                        |
 | ---------------- | -------- | ------------------------------------------------ |

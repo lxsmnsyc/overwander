@@ -51,7 +51,7 @@ at level 10.
 | Rank          | Purse             | What it leaves                                      |
 | ------------- | ----------------- | --------------------------------------------------- |
 | **Grunt**     | 5,000 to 15,000   | Any one of its six                                  |
-| **Executive** | 40,000 to 90,000  | Any of its six, and an item it was carrying         |
+| **Executive** | 40,000 to 90,000  | Any of its six, and a stash it was carrying         |
 | **The boss**  | 120,000 to 250,000 | Their own mark and any of theirs, the legendary included |
 
 The grunt is the commonest fight in the world, and the only place some of a

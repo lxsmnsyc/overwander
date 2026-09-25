@@ -117,7 +117,8 @@ in with GitHub.
 The local stack runs its own auth server, so it needs its own OAuth app: a
 second one whose callback is `http://127.0.0.1:54321/auth/v1/callback`. Most of
 the time this is not worth doing. A development build draws the email and
-password form, and `pnpm seed` leaves two accounts ready to use.
+password form, which `VITE_EMAIL_SIGN_IN` also turns on anywhere else, and
+`pnpm seed` leaves two accounts ready to use.
 
 If you do want it, add the provider to
 [`supabase/config.toml`](../../supabase/config.toml) and keep the secret out of

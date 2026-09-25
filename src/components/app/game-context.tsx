@@ -6,6 +6,7 @@ import {
   createContext,
   createEffect,
   createSignal,
+  on,
   onCleanup,
   useContext,
 } from 'solid-js';
@@ -18,15 +19,19 @@ import { claimRaidReward } from '../../auth/raids';
 import { claimStopReward } from '../../auth/stops';
 import { settleGymChallenge } from '../../auth/gym-seats';
 import type { PositionRecord } from '../../auth/position-record';
+import type Biome from '../../data/ids/biome';
 import type { Species } from '../../data/ids/species';
 import type { WalkReport } from '../../auth/eggs';
 import {
   getPosition,
   savePosition,
+  visitBiome,
   watchPosition,
   settleWalk as writeWalk,
 } from '../../auth/positions';
+import type Awards from '../../data/ids/awards';
 import { AWARD_NAMES } from '../../data/ids/awards';
+import type { ItemStack } from '../../data/overworld/item-pool';
 import { getItemData } from '../../data/items';
 import ItemSprite from '../items/ItemSprite';
 import watchDueQuests from './due-quests';
@@ -148,6 +153,19 @@ export interface ActiveBattle {
  * whether it is shadowed, the chunk and window it comes from are all
  * read off the raid or the stop when it is claimed
  */
+/**
+ * What a settled fight paid, for the battle's own summary to lay out.
+ * Gold is negative for a purse lost at a gym seat
+ */
+export interface Spoils {
+  gold: number;
+  award: Awards | null;
+  items: ItemStack[];
+  /** What the fight left standing in the overworld, to be met there */
+  waiting: Species | null;
+  seat: 'freed' | 'held' | null;
+}
+
 export type PendingReward =
   | { raid: string; stop?: undefined; seat?: undefined }
   | { stop: string; raid?: undefined; seat?: undefined }
@@ -285,6 +303,9 @@ export interface GameState {
   setBattle: Setter<ActiveBattle | null>;
   reward: Accessor<PendingReward | null>;
   setReward: Setter<PendingReward | null>;
+  /** What the fight on screen paid, once it is claimed */
+  spoils: Accessor<Spoils | null>;
+  setSpoils: Setter<Spoils | null>;
   /**
    * What a cleared raid or a beaten grunt left standing, once it has
    * been collected: the encounter the player is about to meet.
@@ -628,6 +649,31 @@ export default function GameProvider(props: ParentProps): JSX.Element {
 
     onCleanup(stop);
   });
+
+  /** The biome the server has been told about, so one walk marks it once */
+  let marked: Biome | null = null;
+
+  // Standing in a biome is what discovers it, and the mark is the one
+  // part of a walk the server sees: sent by itself, and only where the
+  // ground underfoot has changed to something else
+  createEffect(() => {
+    const at = position();
+
+    if (at == null) {
+      return;
+    }
+
+    const biome = getWorld().getChunk(at.chunkX, at.chunkY).biome;
+
+    if (biome === marked) {
+      return;
+    }
+    marked = biome;
+    visitBiome(at.chunkX, at.chunkY).catch(() => {
+      // A mark that did not land is one the next crossing sends again
+      marked = null;
+    });
+  });
   const [sheet, setSheet] = createSignal<OpenSheet | null>(null);
   const [listing, setListing] = createSignal<AuctionSubject | null>(null);
   const [visiting, setVisiting] = createSignal<string | null>(null);
@@ -669,7 +715,72 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   const [duel, setDuel] = createSignal<string | null>(null);
   const [battle, setBattle] = createSignal<ActiveBattle | null>(null);
   const [reward, setReward] = createSignal<PendingReward | null>(null);
+  const [spoils, setSpoils] = createSignal<Spoils | null>(null);
+
+  // A new fight, or none, starts with nothing paid yet
+  createEffect(
+    on(battle, () => {
+      setSpoils(null);
+    }),
+  );
   const [encounter, setEncounter] = createSignal<EncounterRecord | null>(null);
+
+  /**
+   * Collect what a won fight left behind, the moment it is won.
+   *
+   * The prize is claimed here rather than by the overworld: the
+   * overworld is unmounted while the battle has the page, so an effect
+   * living there could not start until the player had already left the
+   * fight and the world had drawn itself again. Claimed here, the
+   * pokemon is standing there waiting by the time they arrive
+   */
+  /**
+   * Said in passing, for a claim that lands after the player has left
+   * the battle screen: its summary is gone, and nothing else would say
+   * what the fight was worth
+   */
+  const sayInPassing = (paid: Spoils): void => {
+    if (paid.seat === 'freed') {
+      toast.push({
+        title: 'The seat is open',
+        message:
+          paid.gold > 0 ? `You beat them off it. +${paid.gold} gold` : 'You beat them off it.',
+        tone: 'leaf',
+      });
+    } else if (paid.seat === 'held') {
+      toast.push({
+        message:
+          paid.gold < 0
+            ? `Their line-up held. −${-paid.gold} gold`
+            : 'Their line-up held. The seat stays theirs.',
+        tone: 'ember',
+      });
+    } else if (paid.gold > 0) {
+      toast.push({ message: `The purse is yours. +${paid.gold} gold`, tone: 'leaf' });
+    }
+    if (paid.award != null) {
+      toast.push({ title: AWARD_NAMES[paid.award], message: 'Yours, for good.', tone: 'leaf' });
+    }
+    for (const { item: won, amount } of paid.items) {
+      toast.push({
+        title: amount > 1 ? `${getItemData(won).name} ×${amount}` : getItemData(won).name,
+        message: 'Left behind by the fight.',
+        art: () => <ItemSprite item={won} size={24} label="" />,
+        tone: 'leaf',
+      });
+    }
+  };
+
+  /** Onto the summary while the battle has the page, in passing once it does not */
+  const pay = (paid: Spoils): void => {
+    if (battle() == null) {
+      sayInPassing(paid);
+      return;
+    }
+    setSpoils(paid);
+  };
+
+  const NOTHING: Spoils = { gold: 0, award: null, items: [], waiting: null, seat: null };
 
   /**
    * Collect what a won fight left behind, the moment it is won.
@@ -689,37 +800,15 @@ export default function GameProvider(props: ParentProps): JSX.Element {
     setReward(null);
 
     if (owed.seat != null) {
-      const seat = owed.seat;
-
-      settleGymChallenge(seat)
+      settleGymChallenge(owed.seat)
         .then((settled) => {
-          if (settled == null) {
-            return;
-          }
-          // Said the moment it happens, for the same reason the purse
-          // is: the winner is still on the battle screen, and the
-          // seat is the whole of what the fight was for
-          // The seat is opened rather than handed over, so what is
-          // said is that it is open. Sitting down on it is the
-          // player's next move, back in the world
-          if (settled.freed) {
-            toast.push({
-              title: 'The seat is open',
-              message:
-                settled.gold > 0
-                  ? `You beat them off it. +${settled.gold} gold`
-                  : 'You beat them off it. Sit down while it is free.',
-              tone: 'leaf',
+          if (settled != null) {
+            pay({
+              ...NOTHING,
+              seat: settled.freed ? 'freed' : 'held',
+              gold: settled.freed ? settled.gold : -settled.gold,
             });
-            return;
           }
-          toast.push({
-            message:
-              settled.gold > 0
-                ? `Their line-up held. −${settled.gold} gold`
-                : 'Their line-up held. The seat stays theirs.',
-            tone: 'ember',
-          });
         })
         .catch(() => {
           // Nothing is lost: the challenge stays unsettled until
@@ -731,9 +820,11 @@ export default function GameProvider(props: ParentProps): JSX.Element {
     if (owed.stop == null) {
       claimRaidReward(owed.raid)
         .then((collected) => {
-          if (collected?.encounter != null) {
-            setEncounter(collected.encounter);
+          if (collected == null) {
+            return;
           }
+          pay({ ...NOTHING, gold: collected.gold, waiting: collected.encounter.species });
+          setEncounter(collected.encounter);
         })
         .catch(() => {
           // Nothing is lost by a claim that failed: the raid keeps
@@ -746,32 +837,13 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         if (collected == null) {
           return;
         }
-        // The purse and the badge are said in passing the moment the
-        // fight pays them: the winner is still on the battle screen,
-        // and nothing else would tell them what the win was worth
-        if (collected.gold > 0) {
-          toast.push({ message: `The purse is yours. +${collected.gold} gold`, tone: 'leaf' });
-        }
-        if (collected.award != null) {
-          toast.push({
-            title: AWARD_NAMES[collected.award],
-            message: 'Yours, for good.',
-            tone: 'leaf',
-          });
-        }
-        // What the fight left besides the purse rides the same claim as
-        // the badge, and is already in the bag by the time there is
-        // anything to say
-        if (collected.item != null) {
-          const won = collected.item;
-
-          toast.push({
-            title: getItemData(won).name,
-            message: 'Left behind by the fight.',
-            art: () => <ItemSprite item={won} size={24} label="" />,
-            tone: 'leaf',
-          });
-        }
+        pay({
+          ...NOTHING,
+          gold: collected.gold,
+          award: collected.award,
+          items: collected.items,
+          waiting: collected.encounter?.species ?? null,
+        });
         // A duelling trainer pays a purse and leaves no pokemon, so
         // there is nothing to stand waiting in the overworld
         if (collected.encounter != null) {
@@ -779,9 +851,8 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         }
       })
       .catch(() => {
-        // Nothing is lost by a claim that failed: the raid keeps what
-        // it owes until somebody collects it, and the overworld says
-        // so when they walk back to it
+        // Nothing is lost by a claim that failed: the stop keeps what
+        // it owes until somebody collects it
       });
   });
 
@@ -812,6 +883,8 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         setBattle,
         reward,
         setReward,
+        spoils,
+        setSpoils,
         encounter,
         setEncounter,
         sheet,

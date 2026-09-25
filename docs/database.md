@@ -26,7 +26,7 @@ migrations to a Supabase project, and what Vercel needs to reach it.
 
 | Page | What it covers |
 | ---- | -------------- |
-| [Player-owned tables](database/player-stores.md) | `profiles` (buddy included), `bag_items`, `bag_candies`, `pokedex_entries`, `positions`, `fled_encounters` |
+| [Player-owned tables](database/player-stores.md) | `profiles` (buddy included), `bag_items`, `bag_candies`, `pokedex_entries`, `positions`, `fled_encounters`, `action_paces` |
 | [Catch records](database/catches.md) | `caught` and its child tables, and searching a box |
 | [Training and friendship](database/catch-training.md) | The effort pool, the friendship table, the packed fields, and the mark columns |
 | [Health and state](database/catch-state.md) | Health and status, what the player sets, and the lock a fight puts on a catch |

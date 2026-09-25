@@ -62,7 +62,7 @@ describe('the rotation board', () => {
       values (${player.uid}, ${stale}, 0, 1000)
     `;
 
-    await listRotations(player.uid, NOW);
+    await listRotations(player.uid, NOW, 0);
 
     // Today's board wrote its own baselines and took the old ones with
     // it: a month of dailies is a month of rows no query can name
@@ -84,7 +84,7 @@ describe('the rotation board', () => {
       values (${player.uid}, ${dailyWindow(NOW - DAY)}, 0, 3), (${player.uid}, ${week}, 0, 3)
     `;
 
-    await listRotations(player.uid, NOW);
+    await listRotations(player.uid, NOW, 0);
 
     const left = await windows('rotation_baselines');
 
@@ -93,7 +93,7 @@ describe('the rotation board', () => {
   });
 
   it('does not sweep on every look, only on the first of the day', async () => {
-    await listRotations(player.uid, NOW);
+    await listRotations(player.uid, NOW, 0);
 
     // A second read finds today's baselines already written, so it
     // has nothing to turn over and does not go looking
@@ -101,7 +101,7 @@ describe('the rotation board', () => {
       insert into rotation_baselines (player, window_key, slot, baseline)
       values (${player.uid}, 'd-planted', 9, 0)
     `;
-    await listRotations(player.uid, NOW);
+    await listRotations(player.uid, NOW, 0);
 
     expect(await windows('rotation_baselines')).toContain('d-planted');
   });

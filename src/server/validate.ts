@@ -288,7 +288,7 @@ export const TELEPORT_WANTED = v.object({
 /** What every gift says, wherever it was made */
 const GIFT_BASE = {
   reason: TEXT,
-  expiresAt: v.nullable(COUNT),
+  expiresAt: v.nullable(v.date()),
 };
 
 /** What a gifted pokemon is, before it is rolled into a record */

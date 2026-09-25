@@ -1552,6 +1552,8 @@ export function CatchSheetBody(
                         </div>
 
                         <div class="flex flex-wrap items-center justify-center gap-1.5">
+                          <span class="text-sm font-medium">Lv. {shownLevel()}</span>
+                          <Divider />
                           <span class="text-sm font-medium">
                             {getSpeciesData(loaded().species).category}
                           </span>

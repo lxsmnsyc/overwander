@@ -837,6 +837,7 @@ export default function OverworldBoard(props: {
           buddy() ?? null,
           fled() ?? new Set(),
           atDepth(),
+          localNow(zone),
         )
       : null,
   );

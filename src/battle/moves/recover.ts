@@ -1,12 +1,12 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
-import { Statuses, Weathers } from '../../data/ids/status';
+import { Statuses, Terrains, Weathers } from '../../data/ids/status';
 import { scoreHeal } from '../ai/score';
 import type Battle from '../core';
 import type Unit from '../unit';
 import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
-import { isWeatherSunny } from '../utils';
+import { isWeatherSandstorm, isWeatherSunny } from '../utils';
 
 /**
  * Self-healing moves and the fraction of max health they restore
@@ -28,6 +28,9 @@ const HEAL_FRACTION: { [key in Moves]?: number } = {
   [Moves.HealOrder]: 0.5,
   // Cast at a teammate, which `healedUnit` below already reads
   [Moves.HealPulse]: 0.5,
+  // Both read the field; see `healFraction`
+  [Moves.ShoreUp]: 0.5,
+  [Moves.FloralHealing]: 0.5,
 };
 
 /**
@@ -58,6 +61,13 @@ const CLEAR_HEAL = 0.5;
  * if the move does not heal at all
  */
 function healFraction(unit: Unit, move: Moves): number | undefined {
+  // Shore Up draws on a sandstorm and Floral Healing on a lawn
+  if (move === Moves.ShoreUp && isWeatherSandstorm(unit)) {
+    return SUNLIT_HEAL;
+  }
+  if (move === Moves.FloralHealing && unit.checkTerrain() === Terrains.Grassy) {
+    return SUNLIT_HEAL;
+  }
   if (!WEATHER_HEALS.has(move)) {
     return HEAL_FRACTION[move];
   }

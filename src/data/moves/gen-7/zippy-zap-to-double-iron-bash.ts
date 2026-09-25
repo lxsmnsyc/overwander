@@ -116,6 +116,42 @@ export default function registerZippyZapToDoubleIronBash(): void {
     flags: 0,
     cast: [SpriteAnim.SpAttack, SpriteAnim.Emit, SpriteAnim.Charge],
   });
+  registerMove(Moves.SappySeed, {
+    name: 'Sappy Seed',
+    description: 'Plants a Leech Seed on the target as it lands.',
+    type: Types.Grass,
+    category: MoveCategories.Physical,
+    power: 100,
+    pp: 10,
+    accuracy: 90,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.Shoot, SpriteAnim.Strike, SpriteAnim.Attack],
+  });
+  registerMove(Moves.FreezyFrost, {
+    name: 'Freezy Frost',
+    description: "Resets every stat stage on the field as it lands, the user's included.",
+    type: Types.Ice,
+    category: MoveCategories.Special,
+    power: 100,
+    pp: 10,
+    accuracy: 90,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.SpAttack, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
+  registerMove(Moves.SparklySwirl, {
+    name: 'Sparkly Swirl',
+    description: "Cures the user's whole party as it lands.",
+    type: Types.Fairy,
+    category: MoveCategories.Special,
+    power: 120,
+    pp: 5,
+    accuracy: 85,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.SpAttack, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
   registerMove(Moves.VeeveeVolley, {
     name: 'Veevee Volley',
     description:

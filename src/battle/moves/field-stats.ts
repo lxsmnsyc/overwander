@@ -53,6 +53,14 @@ const FIELD_STAT_MOVES: { [key in Moves]?: FieldStatMove } = {
       unit.team === source.team &&
       (unit.hasAbility(Abilities.Plus) || unit.hasAbility(Abilities.Minus)),
   },
+  // Magnetic Flux's other half, on the attacking stats
+  [Moves.GearUp]: {
+    stages: [Stages.Attack, Stages.SpecialAttack],
+    value: 1,
+    reaches: (unit, source) =>
+      unit.team === source.team &&
+      (unit.hasAbility(Abilities.Plus) || unit.hasAbility(Abilities.Minus)),
+  },
   [Moves.VenomDrench]: {
     stages: [Stages.Attack, Stages.SpecialAttack, Stages.Speed],
     value: -1,

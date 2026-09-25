@@ -1,10 +1,20 @@
 import { Types } from '../../constants/types';
-import { MoveCategories, MoveFlags, MoveTargets, Moves } from '../../ids/moves';
+import { MoveAffects, MoveCategories, MoveFlags, MoveTargets, Moves } from '../../ids/moves';
 import { SpriteAnim } from '../../ids/sprite-anims';
 import { PROJECTILE_DELAY, registerMove } from '../__create';
 
 /** From Shore Up to Leafage, the first of Alola's own */
 export default function registerShoreUpToLeafage(): void {
+  registerMove(Moves.ShoreUp, {
+    name: 'Shore Up',
+    description: 'Heals the user 1/2 its HP, or 2/3 in a sandstorm.',
+    type: Types.Ground,
+    category: MoveCategories.Status,
+    pp: 5,
+    target: MoveTargets.None,
+    flags: 0,
+    cast: [SpriteAnim.Rumble, SpriteAnim.Charge],
+  });
   registerMove(Moves.FirstImpression, {
     name: 'First Impression',
     description:
@@ -56,6 +66,20 @@ export default function registerShoreUpToLeafage(): void {
     flags: MoveFlags.Contact,
     cast: [SpriteAnim.Rotate, SpriteAnim.Swing, SpriteAnim.Attack],
   });
+  registerMove(Moves.SparklingAria, {
+    name: 'Sparkling Aria',
+    description:
+      "Hits everything opposite and the user's teammates, and washes a burn off whatever it hits. It is a sound.",
+    type: Types.Water,
+    category: MoveCategories.Special,
+    power: 90,
+    pp: 10,
+    accuracy: 100,
+    target: MoveTargets.None,
+    affects: MoveAffects.Unit | MoveAffects.Own | MoveAffects.Enemy,
+    flags: MoveFlags.Sound,
+    cast: [SpriteAnim.Sing, SpriteAnim.Sound, SpriteAnim.Charge],
+  });
   registerMove(Moves.IceHammer, {
     name: 'Ice Hammer',
     description: "Drops the user's Speed a stage after it lands.",
@@ -68,6 +92,17 @@ export default function registerShoreUpToLeafage(): void {
     flags: MoveFlags.Contact,
     cast: [SpriteAnim.Punch, SpriteAnim.Slam, SpriteAnim.Attack],
   });
+  registerMove(Moves.FloralHealing, {
+    name: 'Floral Healing',
+    description: 'Heals the target 1/2 its HP, or 2/3 on Grassy Terrain.',
+    type: Types.Fairy,
+    category: MoveCategories.Status,
+    pp: 10,
+    target: MoveTargets.Unit,
+    affects: MoveAffects.Unit | MoveAffects.Own | MoveAffects.Enemy,
+    flags: 0,
+    cast: [SpriteAnim.Appeal, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
   registerMove(Moves.HighHorsepower, {
     name: 'High Horsepower',
     description: 'Plain contact damage.',
@@ -79,6 +114,17 @@ export default function registerShoreUpToLeafage(): void {
     target: MoveTargets.Unit,
     flags: MoveFlags.Contact,
     cast: [SpriteAnim.Stomp, SpriteAnim.Slam, SpriteAnim.Attack],
+  });
+  registerMove(Moves.StrengthSap, {
+    name: 'Strength Sap',
+    description: "Heals the user by the target's Attack, then drops that Attack a stage.",
+    type: Types.Grass,
+    category: MoveCategories.Status,
+    pp: 10,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.Emit, SpriteAnim.SpAttack, SpriteAnim.Charge],
   });
   registerMove(Moves.SolarBlade, {
     name: 'Solar Blade',

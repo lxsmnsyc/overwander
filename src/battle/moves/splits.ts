@@ -15,7 +15,11 @@ import type Unit from '../unit';
 const SPLITS: { [key in Moves]?: Stats[] } = {
   [Moves.GuardSplit]: [Stats.Defense, Stats.SpecialDefense],
   [Moves.PowerSplit]: [Stats.Attack, Stats.SpecialAttack],
+  [Moves.SpeedSwap]: [Stats.Speed],
 };
+
+/** The one that trades the two stats outright rather than meeting in the middle */
+const SWAPS = new Set<Moves>([Moves.SpeedSwap]);
 
 export default function setupSplitMoves(battle: Battle): void {
   const shared = new Map<Unit, Map<Stats, number>>();
@@ -58,12 +62,18 @@ export default function setupSplitMoves(battle: Battle): void {
     const target = event.target.unit;
 
     for (const stat of stats) {
-      const average = Math.floor((unsplit(event.source, stat) + unsplit(target, stat)) / 2);
+      const mine = unsplit(event.source, stat);
+      const theirs = unsplit(target, stat);
+      const average = Math.floor((mine + theirs) / 2);
+      const swapped = SWAPS.has(event.move);
 
-      for (const unit of [event.source, target]) {
+      for (const [unit, value] of [
+        [event.source, swapped ? theirs : average],
+        [target, swapped ? mine : average],
+      ] as const) {
         const split = shared.get(unit) ?? new Map<Stats, number>();
 
-        split.set(stat, average);
+        split.set(stat, value);
         shared.set(unit, split);
       }
     }

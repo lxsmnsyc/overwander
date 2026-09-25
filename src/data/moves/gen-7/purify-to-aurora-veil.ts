@@ -5,6 +5,44 @@ import { registerMove } from '../__create';
 
 /** From Purify to Aurora Veil */
 export default function registerPurifyToAuroraVeil(): void {
+  registerMove(Moves.Purify, {
+    name: 'Purify',
+    description:
+      "Cures the target's status and heals the user 1/2 its HP. Fails if there is nothing to cure.",
+    type: Types.Poison,
+    category: MoveCategories.Status,
+    pp: 20,
+    target: MoveTargets.Unit,
+    affects: MoveAffects.Unit | MoveAffects.Own | MoveAffects.Enemy,
+    flags: 0,
+    cast: [SpriteAnim.Emit, SpriteAnim.Appeal, SpriteAnim.Charge],
+  });
+  registerMove(Moves.RevelationDance, {
+    name: 'Revelation Dance',
+    description: "Thrown as the user's first type.",
+    type: Types.Normal,
+    category: MoveCategories.Special,
+    power: 90,
+    pp: 15,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.Dance, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
+  registerMove(Moves.CoreEnforcer, {
+    name: 'Core Enforcer',
+    description:
+      'Hits everything opposite, and takes an ability off each one it hits that is not winding up a move.',
+    type: Types.Dragon,
+    category: MoveCategories.Special,
+    power: 100,
+    pp: 10,
+    accuracy: 100,
+    target: MoveTargets.None,
+    affects: MoveAffects.Unit | MoveAffects.Enemy,
+    flags: 0,
+    cast: [SpriteAnim.SpAttack, SpriteAnim.Shoot, SpriteAnim.Charge],
+  });
   registerMove(Moves.TropKick, {
     name: 'Trop Kick',
     description: "Always drops the target's Attack a stage.",
@@ -16,6 +54,30 @@ export default function registerPurifyToAuroraVeil(): void {
     target: MoveTargets.Unit,
     flags: MoveFlags.Contact,
     cast: [SpriteAnim.Kick, SpriteAnim.Strike, SpriteAnim.Attack],
+  });
+  registerMove(Moves.Instruct, {
+    name: 'Instruct',
+    description: 'The target throws the move it threw last again, at once.',
+    type: Types.Psychic,
+    category: MoveCategories.Status,
+    pp: 15,
+    target: MoveTargets.Unit,
+    affects: MoveAffects.Unit | MoveAffects.Own | MoveAffects.Enemy,
+    flags: 0,
+    cast: [SpriteAnim.Appeal, SpriteAnim.Charge],
+  });
+  registerMove(Moves.BeakBlast, {
+    name: 'Beak Blast',
+    description: 'A long wind-up, and anything that touches the user during it is burned.',
+    type: Types.Flying,
+    category: MoveCategories.Physical,
+    power: 100,
+    pp: 15,
+    accuracy: 100,
+    priority: -3,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.Jab, SpriteAnim.Strike, SpriteAnim.Attack],
   });
   registerMove(Moves.ClangingScales, {
     name: 'Clanging Scales',

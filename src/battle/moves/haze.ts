@@ -32,7 +32,8 @@ function totalStages(unit: Unit): number {
 // https://bulbapedia.bulbagarden.net/wiki/Haze_(move)
 export default function setupHaze(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
-    if (event.move !== Moves.Haze) {
+    // Freezy Frost clears the same way as it lands
+    if (event.move !== Moves.Haze && event.move !== Moves.FreezyFrost) {
       return;
     }
 

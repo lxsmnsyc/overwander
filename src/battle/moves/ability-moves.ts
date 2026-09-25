@@ -68,6 +68,24 @@ function works(move: Moves, source: Unit, target: Unit): boolean {
 }
 
 export default function setupAbilityMoves(battle: Battle): void {
+  // Core Enforcer takes an ability off whatever it hits that has
+  // already had its go: a target caught mid-wind-up has not moved yet
+  // https://bulbapedia.bulbagarden.net/wiki/Core_Enforcer_(move)
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
+    if (event.move !== Moves.CoreEnforcer || event.target.type !== MoveTargetType.Unit) {
+      return;
+    }
+
+    const target = event.target.unit;
+    const held = abilitiesOf(target);
+
+    if (target.alive && target.casting == null && held.length > 0) {
+      target.removeAbility(
+        held[Math.min(held.length - 1, Math.floor(battle.random() * held.length))],
+      );
+    }
+  });
+
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (!ABILITY_MOVES.has(event.move) || event.target.type !== MoveTargetType.Unit) {
       return;

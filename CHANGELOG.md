@@ -1,5 +1,38 @@
 # overwander
 
+## 4.16.1
+
+### Patch Changes
+
+- f04e837: The bag is read once and kept up to date as it changes, so opening the bag, a
+  picker or a dialog that shows item counts no longer reads it again each time.
+- 70912c6: - A berry, apricorn, cache, nest or phenomenon claim and what it pays land
+  together, so a failure can no longer spend a landmark without paying it.
+  - Lathering a honey tree spends the jar in the same step as the lather.
+  - A hatched egg's candy lands in the same step as the hatching.
+- 0961303: - The catch sheet no longer reads the pokemon and the bag a second time to
+  list its evolutions.
+  - Throwing or feeding in an encounter no longer reads the whole bag again.
+  - Counting one item or one family's candy reads only that row.
+  - A bag or candy read that fails says so instead of showing an empty bag.
+- 44dfa65: A raid lobby updates from the live stream when a party joins or leaves, rather
+  than every member reading the whole lobby again, and only the party that joined
+  is read.
+- 7a938fd: - The server refuses a player acting faster than the game can: every call is
+  paced, and throws, treats, claims and walked steps have limits of their own.
+- c5099be: Pay Day coins are only paid out for a pokemon that could have used the move,
+  and never more than the casts the fight had time for.
+- 653ead2: A read or save the database refuses is explained in the game's own words
+  instead of showing the database's message.
+- 24a4a57: A tab that does not say which version of the game it is running is asked to
+  reload before it can call the server, the same as a tab from an older version.
+- eca6f39: Steps walked are counted toward quests only once the walk itself is saved, so a
+  walk that fails to save is no longer counted.
+- 86e3305: - Every throw and treat in an encounter is decided on the server: the ball is
+  spent, the catch is rolled and the pokemon is written together.
+  - An encounter can no longer be caught more than once.
+  - Feeding and throws carry over when an encounter is closed and met again.
+
 ## 4.16.0
 
 ### Minor Changes

@@ -171,6 +171,7 @@ export const RAZOR_CLAW_CRITICAL_STAGES = SCOPE_LENS_CRITICAL_STAGES;
 export const SCREEN_STATUSES = new Set<TeamStatuses>([
   TeamStatuses.Reflect,
   TeamStatuses.LightScreen,
+  TeamStatuses.AuroraVeil,
 ]);
 
 /**

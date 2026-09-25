@@ -33,6 +33,8 @@ export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Imprison]: Statuses.Imprisoned,
   [Moves.HelpingHand]: Statuses.Helped,
   [Moves.ToxicThread]: Statuses.Poisoned,
+  // Follow Me's pull, put on the target rather than taken on
+  [Moves.Spotlight]: Statuses.Centered,
 };
 
 export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
@@ -448,6 +450,10 @@ function setupUnitStatusMoves(battle: Battle): void {
 const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
   [Moves.Reflect]: TeamStatuses.Reflect,
   [Moves.LightScreen]: TeamStatuses.LightScreen,
+  [Moves.AuroraVeil]: TeamStatuses.AuroraVeil,
+  // The partner moves that leave a screen behind as they land
+  [Moves.GlitzyGlow]: TeamStatuses.LightScreen,
+  [Moves.BaddyBad]: TeamStatuses.Reflect,
   [Moves.Mist]: TeamStatuses.Mist,
   [Moves.Safeguard]: TeamStatuses.Safeguard,
 };

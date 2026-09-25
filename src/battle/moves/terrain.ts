@@ -18,6 +18,7 @@ export const TERRAIN_MOVES = new Map<Moves, Terrains>([
   [Moves.ElectricTerrain, Terrains.Electric],
   [Moves.GrassyTerrain, Terrains.Grassy],
   [Moves.MistyTerrain, Terrains.Misty],
+  [Moves.PsychicTerrain, Terrains.Psychic],
 ]);
 
 export default function setupTerrainMoves(battle: Battle): void {

@@ -92,6 +92,30 @@ export default function registerZippyZapToDoubleIronBash(): void {
     flags: MoveFlags.Contact,
     cast: [SpriteAnim.Slam, SpriteAnim.Strike, SpriteAnim.Attack],
   });
+  registerMove(Moves.GlitzyGlow, {
+    name: 'Glitzy Glow',
+    description: "Puts up Light Screen over the user's side as it lands.",
+    type: Types.Psychic,
+    category: MoveCategories.Special,
+    power: 80,
+    pp: 15,
+    accuracy: 95,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.SpAttack, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
+  registerMove(Moves.BaddyBad, {
+    name: 'Baddy Bad',
+    description: "Puts up Reflect over the user's side as it lands.",
+    type: Types.Dark,
+    category: MoveCategories.Special,
+    power: 80,
+    pp: 15,
+    accuracy: 95,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.SpAttack, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
   registerMove(Moves.VeeveeVolley, {
     name: 'Veevee Volley',
     description:

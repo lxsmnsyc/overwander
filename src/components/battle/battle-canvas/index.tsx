@@ -152,6 +152,7 @@ const TERRAIN_TINTS: Record<Terrains, string | null> = {
   [Terrains.Electric]: TYPE_COLORS[Types.Electric],
   [Terrains.Grassy]: TYPE_COLORS[Types.Grass],
   [Terrains.Misty]: TYPE_COLORS[Types.Fairy],
+  [Terrains.Psychic]: TYPE_COLORS[Types.Psychic],
 };
 
 /** The ground each side stands on: the boss's, and each party's */

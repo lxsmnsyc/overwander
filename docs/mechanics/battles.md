@@ -14,12 +14,12 @@ into, **Team Rocket** stops, a **gym seat** another player is holding, and a
 
 ## How a move resolves
 
-| Stage           | What happens                   | How long                                      |
-| --------------- | ------------------------------ | --------------------------------------------- |
-| **Wind-up**     | The pokemon gathers itself     | About 1.7 seconds                             |
-| **Travel**      | The move is on its way         | A quarter second, or the flight time it names |
-| **Landing**     | It hits, and the effect lands  | Instant                                       |
-| **Carrying on** | Multi-step moves continue      | Another wind-up per step                      |
+| Stage           | What happens                   | How long                                       |
+| --------------- | ------------------------------ | ---------------------------------------------- |
+| **Wind-up**     | The pokemon gathers itself     | About 1.7 seconds                              |
+| **Travel**      | The move is on its way         | A quarter second, or the flight time it names  |
+| **Landing**     | It hits, and the effect lands  | Instant                                        |
+| **Carrying on** | Multi-step moves continue      | Another wind-up per step                       |
 | **Cooldown**    | That move cannot be used again | Set by the move's PP, less what Speed buys off |
 
 **A move is in the air for a moment.** Most take a quarter of a second between
@@ -171,6 +171,7 @@ A status that runs out on its own runs out on that clock too:
 | Freeze                      | 10 seconds, or until a Fire move thaws it  |
 | Being trapped               | 8 seconds, biting every 2                  |
 | Reflect, Light Screen, Mist | 10 seconds                                 |
+| Aurora Veil                 | 10 seconds                                 |
 | Weather                     | 10 seconds                                 |
 | A disabled move             | 8 seconds                                  |
 | Perish Song                 | 8 seconds, and then whoever heard it falls |
@@ -206,17 +207,17 @@ A Mega keeps its catch's ability and **wears the Mega's own on top**, the way an
 Origin Forme does. Where the line can already have that ability, the Mega wears
 another instead:
 
-| Mega       | Wears           | In place of  |
-| ---------- | --------------- | ------------ |
-| Scizor     | Tough Claws     | Technician   |
-| Tyranitar  | Sand Force      | Sand Stream  |
-| Blaziken   | Reckless        | Speed Boost  |
-| Medicham   | Iron Fist       | Pure Power   |
-| Latias     | Friend Guard    | Levitate     |
-| Latios     | Tinted Lens     | Levitate     |
-| Abomasnow  | Thick Fat       | Snow Warning |
-| Audino     | Triage          | Healer       |
-| Diancie    | Queenly Majesty | Magic Bounce |
+| Mega      | Wears           | In place of  |
+| --------- | --------------- | ------------ |
+| Scizor    | Tough Claws     | Technician   |
+| Tyranitar | Sand Force      | Sand Stream  |
+| Blaziken  | Reckless        | Speed Boost  |
+| Medicham  | Iron Fist       | Pure Power   |
+| Latias    | Friend Guard    | Levitate     |
+| Latios    | Tinted Lens     | Levitate     |
+| Abomasnow | Thick Fat       | Snow Warning |
+| Audino    | Triage          | Healer       |
+| Diancie   | Queenly Majesty | Magic Bounce |
 
 The stone glows over the pokemon's head for the rest of the fight, with a Key
 Stone over Mega Rayquaza. That is how a watcher can tell, since not every Mega
@@ -427,6 +428,7 @@ The job reaches everything about a pokemon that is chosen rather than rolled:
   no sky is called at all. An ability waiting on a sky that is not coming is not
   awakened either: a Charizard on a rain team keeps Blaze and Intimidate rather
   than a Solar Power that would never fire.
+
 - **Abilities.** The ones it awakens are the ones the job wants, out of everything
   its species could ever carry: what sharpens a hit for a core, what survives one
   for a support. They are priced against the sheet it ends up with, so nothing

@@ -332,6 +332,7 @@ export const enum Terrains {
   Electric = 1,
   Grassy = 2,
   Misty = 3,
+  Psychic = 4,
 }
 
 /**
@@ -412,4 +413,9 @@ export const enum TeamStatuses {
   /** Crafty Shield: the team is behind a shield that turns status moves away */
   CraftyShield = 15,
   StickyWeb = 16,
+  /**
+   * Aurora Veil: both kinds of damage are cut, the way Reflect and
+   * Light Screen each cut one
+   */
+  AuroraVeil = 17,
 }

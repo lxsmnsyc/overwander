@@ -55,4 +55,16 @@ export default function registerPurifyToAuroraVeil(): void {
     flags: MoveFlags.Contact,
     cast: [SpriteAnim.Rotate, SpriteAnim.Swing, SpriteAnim.Attack],
   });
+  registerMove(Moves.AuroraVeil, {
+    name: 'Aurora Veil',
+    description:
+      "Cuts physical and special damage against the user's side by 1/3 for 10 seconds. It fails outside hail or snow.",
+    type: Types.Ice,
+    category: MoveCategories.Status,
+    pp: 20,
+    target: MoveTargets.Team,
+    affects: MoveAffects.Team | MoveAffects.Own,
+    flags: 0,
+    cast: [SpriteAnim.RearUp, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
 }

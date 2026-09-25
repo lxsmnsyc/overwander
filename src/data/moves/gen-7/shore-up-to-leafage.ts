@@ -19,6 +19,18 @@ export default function registerShoreUpToLeafage(): void {
     flags: MoveFlags.Contact,
     cast: [SpriteAnim.QuickStrike, SpriteAnim.Strike, SpriteAnim.Attack],
   });
+  registerMove(Moves.BanefulBunker, {
+    name: 'Baneful Bunker',
+    description:
+      'Blocks everything aimed at the user for 2 seconds, and poisons anything that touches it. It fails if used twice over.',
+    type: Types.Poison,
+    category: MoveCategories.Status,
+    pp: 10,
+    priority: 4,
+    target: MoveTargets.None,
+    flags: 0,
+    cast: [SpriteAnim.Withdraw, SpriteAnim.Charge],
+  });
   registerMove(Moves.SpiritShackle, {
     name: 'Spirit Shackle',
     description: 'The target cannot be swapped out for 10 seconds, ghosts aside.',

@@ -23,6 +23,7 @@ import { clearToxicSpikes, toxicLayersUnder } from './toxic-spikes';
 const SCREENS = [
   TeamStatuses.Reflect,
   TeamStatuses.LightScreen,
+  TeamStatuses.AuroraVeil,
   TeamStatuses.Mist,
   TeamStatuses.Safeguard,
   TeamStatuses.LuckyChant,

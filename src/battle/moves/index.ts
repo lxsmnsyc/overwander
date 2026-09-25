@@ -70,6 +70,7 @@ import setupCharged from './charged';
 import setupConditionalPowerMoves from './conditional-power';
 import setupCureMoves from './cure';
 import setupFakeOut from './fake-out';
+import setupAuroraVeil from './aurora-veil';
 import setupFocusPunch from './focus-punch';
 import setupFollowMe from './follow-me';
 import setupImprison from './imprison';
@@ -201,6 +202,7 @@ export default function setupMoves(battle: Battle): void {
   // does to it
   setupConditionalPowerMoves(battle);
   setupFakeOut(battle);
+  setupAuroraVeil(battle);
   setupFocusPunch(battle);
   setupFollowMe(battle);
   setupStockpile(battle);

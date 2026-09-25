@@ -16,6 +16,7 @@ const GUARD_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Endure]: Statuses.Enduring,
   [Moves.SpikyShield]: Statuses.Protected,
   [Moves.KingsShield]: Statuses.Protected,
+  [Moves.BanefulBunker]: Statuses.Protected,
 };
 
 /** What a Spiky Shield costs whatever touches it, as a share of its HP */
@@ -79,7 +80,7 @@ export default function setupProtectMoves(battle: Battle): void {
     });
   });
 
-  // What touches the two shields pays for it. Read off a move the
+  // What touches the three shields pays for it. Read off a move the
   // guard actually turned away rather than off the question of
   // whether it would, so a move the AI only weighed costs nothing
   battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
@@ -92,7 +93,9 @@ export default function setupProtectMoves(battle: Battle): void {
     const guard = guardOf(target.unit);
 
     if (
-      (guard !== Moves.SpikyShield && guard !== Moves.KingsShield) ||
+      (guard !== Moves.SpikyShield &&
+        guard !== Moves.KingsShield &&
+        guard !== Moves.BanefulBunker) ||
       !source.checkMoveContact(move, target)
     ) {
       return;
@@ -100,6 +103,10 @@ export default function setupProtectMoves(battle: Battle): void {
 
     const cause = { type: EffectType.Move, move: guard, unit: target.unit } as const;
 
+    if (guard === Moves.BanefulBunker) {
+      source.addStatus(Statuses.Poisoned, cause);
+      return;
+    }
     if (guard === Moves.SpikyShield) {
       source.damage(
         cause,

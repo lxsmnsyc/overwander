@@ -18,12 +18,18 @@ interface ScreenData {
 export const SCREEN_DURATION = turns(5);
 const DAMAGE_REDUCTION = 2732 / 4096;
 
+/** The screen that already covers each category, which Aurora Veil does not stack on */
+const OWN_SCREEN: { [key in MoveCategories]?: TeamStatuses } = {
+  [MoveCategories.Physical]: TeamStatuses.Reflect,
+  [MoveCategories.Special]: TeamStatuses.LightScreen,
+};
+
 /**
- * Screen team statuses: reduce incoming damage of one category for
- * the whole team until the screen expires (Reflect for physical,
- * Light Screen for special).
+ * Screen team statuses: reduce incoming damage of their categories for
+ * the whole team until the screen expires (Reflect for physical, Light
+ * Screen for special, Aurora Veil for both).
  */
-function createScreenStatus(status: TeamStatuses, category: MoveCategories) {
+function createScreenStatus(status: TeamStatuses, categories: MoveCategories[]) {
   return (battle: Battle) => {
     const instances = new Map<Team, ScreenData>();
 
@@ -66,9 +72,14 @@ function createScreenStatus(status: TeamStatuses, category: MoveCategories) {
     });
 
     battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const team = event.parent.target.team;
+      const own = OWN_SCREEN[event.parent.category];
+
       if (
-        event.parent.category === category &&
-        event.parent.target.team.status[status] != null &&
+        categories.includes(event.parent.category) &&
+        team.status[status] != null &&
+        // A veil over a screen of the same kind cuts the damage once
+        (status !== TeamStatuses.AuroraVeil || own == null || team.status[own] == null) &&
         !(event.parent.flags & MoveAttackFlags.Confused)
       ) {
         event.value *= DAMAGE_REDUCTION;
@@ -77,11 +88,19 @@ function createScreenStatus(status: TeamStatuses, category: MoveCategories) {
   };
 }
 
-const setupReflectStatus = createScreenStatus(TeamStatuses.Reflect, MoveCategories.Physical);
+const setupReflectStatus = createScreenStatus(TeamStatuses.Reflect, [MoveCategories.Physical]);
 
-const setupLightScreenStatus = createScreenStatus(TeamStatuses.LightScreen, MoveCategories.Special);
+const setupLightScreenStatus = createScreenStatus(TeamStatuses.LightScreen, [
+  MoveCategories.Special,
+]);
+
+const setupAuroraVeilStatus = createScreenStatus(TeamStatuses.AuroraVeil, [
+  MoveCategories.Physical,
+  MoveCategories.Special,
+]);
 
 export default function setupScreenStatus(battle: Battle): void {
   setupReflectStatus(battle);
   setupLightScreenStatus(battle);
+  setupAuroraVeilStatus(battle);
 }

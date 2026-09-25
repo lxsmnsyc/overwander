@@ -39,9 +39,10 @@ is exactly `1` or `true`, read on every call, so turning one on or off takes a
 redeploy of the variables and nothing else. Records already written stay where
 they are when one is turned off.
 
-| Variable    | What it keeps                                                                 |
-| ----------- | ----------------------------------------------------------------------------- |
-| `STAFF_LOG` | `staff_actions`: every role set, ban, gift and teleport, who did it, and when |
+| Variable         | What it keeps                                                                 |
+| ---------------- | ----------------------------------------------------------------------------- |
+| `ECONOMY_LEDGER` | `ledger`: every change to gold, an item or a candy stack, swept at 60 days    |
+| `STAFF_LOG`      | `staff_actions`: every role set, ban, gift and teleport, who did it, and when |
 
 Read them in the dashboard's table editor; players never can.
 

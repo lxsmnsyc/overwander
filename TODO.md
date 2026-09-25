@@ -201,28 +201,6 @@ seasons on the clock at one month each and used them for the coat a deer is met
 in, not for terrain or a quarter of every biome's rolls. The gimmick as written
 here is still unbuilt.
 
-## Economy ledger
-
-Deferred on purpose. The design, what it was measured to cost and why it waits
-are in [Player-owned tables](docs/database/player-stores.md#not-built-yet-an-economy-ledger).
-
-- [ ] **An append-only record of every gold, item and candy change**, the way
-      rAthena keeps `picklog` and `zenylog`. Postgres triggers on
-      `profiles.gold`, `bag_items` and `bag_candies`, so every writer is covered
-      without a call of its own, each row carrying the player, the stack, the
-      amount it moved by, the balance after, the transaction id and a reason. A
-      pg_cron sweep keeps it to a retention window.
-
-Worth building when any of these happens:
-
-- the player count grows well past a dozen, or players stop knowing each other;
-- auctions and trades start carrying a real economy;
-- something looks duplicated and needs tracing.
-
-It costs about 190 bytes a row and 0.1 ms a write, roughly 40 MB a month at 12
-players, so it needs the sweep on the Free plan's 500 MB. Nothing that happens
-before it exists can be traced afterwards.
-
 ## Taking back a release
 
 - [ ] **A day's grace before a release is final**, the way rAthena waits

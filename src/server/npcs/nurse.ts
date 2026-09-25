@@ -183,7 +183,7 @@ export async function boostEgg(
   if (visit == null) {
     return null;
   }
-  if (!(await spendGold(uid, DAYCARE_FEE))) {
+  if (!(await spendGold(uid, DAYCARE_FEE, 'daycare'))) {
     await releaseVisit(visit);
     return null;
   }
@@ -195,7 +195,7 @@ export async function boostEgg(
       update caught set steps = ${warmed}, stepped_at = ${now} where id = ${catchId}
     `;
   } catch (error) {
-    await grantGold(uid, DAYCARE_FEE);
+    await grantGold(uid, DAYCARE_FEE, 'daycare-refund');
     await releaseVisit(visit);
     throw error;
   }

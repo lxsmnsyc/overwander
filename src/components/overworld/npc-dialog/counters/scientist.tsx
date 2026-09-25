@@ -13,6 +13,7 @@ import { Detail, DialogActions, useToast } from '../../../styled';
 import playEffect, { Effect } from '../../../app/sound';
 import { type CounterProps, refusal } from '../shared';
 import { ReviveCounter } from './goods';
+import { readable } from '../../../app/resource-reads';
 
 /**
  * The fossil scientist: put the rocks on the bench and see what was in
@@ -32,7 +33,7 @@ export default function Scientist(props: CounterProps): JSX.Element {
   const fossils = (): InventoryEntry[] => {
     const held: InventoryEntry[] = [];
 
-    for (const entry of props.bag.latest ?? []) {
+    for (const entry of readable(props.bag) ?? []) {
       if (isFossil(entry.item) && entry.amount > 0) {
         held.push(entry);
       }

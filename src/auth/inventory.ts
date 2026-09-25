@@ -1,6 +1,6 @@
 import type { Items } from '../data/ids/items';
 import { asNumber, asRecordArray } from './__normalize';
-import { ITEM_STACKS, getStack, listStacks } from './stacks';
+import { ITEM_STACKS, listStacks } from './stacks';
 import getSupabase from './supabase';
 
 /**
@@ -26,10 +26,26 @@ export interface InventoryEntry {
 }
 
 /**
- * The player's whole bag, in one read
+ * What a player is told when the bag cannot be read. The store's own
+ * message says nothing a player can act on and describes the schema,
+ * so it stays here
+ */
+export const BAG_UNREADABLE = 'Could not read your bag just now.';
+
+/**
+ * The player's whole bag, in one read. A refused read is raised rather
+ * than answered as an empty bag, which would tell the player they
+ * carry nothing
  */
 async function readBag(uid: string): Promise<unknown> {
-  const { data } = await getSupabase().from('bag_items').select('item, count').eq('player', uid);
+  const { data, error } = await getSupabase()
+    .from('bag_items')
+    .select('item, count')
+    .eq('player', uid);
+
+  if (error != null) {
+    throw new Error(BAG_UNREADABLE);
+  }
 
   const items: Record<number, number> = {};
 
@@ -57,10 +73,22 @@ export async function getInventory(uid: string): Promise<InventoryEntry[]> {
 }
 
 /**
- * How many of one item the user carries
+ * How many of one item the user carries. One row asked for, not the
+ * whole bag: a missing row is a stack spent to its last
  */
 export async function getItemCount(uid: string, item: Items): Promise<number> {
-  return getStack(await readBag(uid), ITEM_STACKS, item);
+  const { data, error } = await getSupabase()
+    .from('bag_items')
+    .select('count')
+    .eq('player', uid)
+    .eq('item', item)
+    .maybeSingle();
+
+  if (error != null) {
+    throw new Error(BAG_UNREADABLE);
+  }
+
+  return asNumber((data as { count?: unknown } | null)?.count);
 }
 
 /**

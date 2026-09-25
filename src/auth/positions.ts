@@ -57,7 +57,7 @@ export async function getPosition(uid: string): Promise<PositionRecord | null> {
 
   // Thrown rather than read as "never walked", which would put a start position over the real one
   if (error != null) {
-    throw new Error(error.message);
+    throw new Error('Could not read where you are just now.');
   }
   return data == null ? null : fromPositionRow(asRecord(data));
 }
@@ -128,7 +128,7 @@ async function writePosition(
   })) as { data: unknown; error: { message: string } | null };
 
   if (error != null) {
-    throw new Error(error.message);
+    throw new Error('Could not save where you are just now.');
   }
   return typeof data === 'string' ? Number(data) : asNumber(data);
 }

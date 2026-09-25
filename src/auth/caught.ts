@@ -64,7 +64,7 @@ function rowsToPairs(rows: Record<string, unknown>[]): [string, CaughtPokemon][]
  */
 function raise(error: PostgrestError | null): void {
   if (error != null) {
-    throw new Error(error.message);
+    throw new Error('Could not read those pokemon just now.');
   }
 }
 

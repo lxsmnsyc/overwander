@@ -32,6 +32,7 @@ import { isCatchLocked } from './locks';
 import { Metric } from '../auth/quest-record';
 import { bumpProgress } from './quest-progress';
 import { asNumber } from './read';
+import { moveGoldIn } from './profile';
 
 /**
  * Auctions, written over the owner connection.
@@ -253,12 +254,7 @@ export async function placeBid(
 
     // The bidder pays as the bid lands; the guard rides in the
     // statement, so a balance that cannot cover it changes nothing
-    const paid = await transaction`
-      update profiles set gold = gold - ${bid}
-      where id = ${uid} and gold >= ${bid}
-    `;
-
-    if (paid.count === 0) {
+    if (!(await moveGoldIn(transaction, uid, -bid, 'auction-bid', true))) {
       return null;
     }
 
@@ -266,9 +262,7 @@ export async function placeBid(
     // bid is always money that has already been paid. Never the same
     // row, since nobody outbids themselves
     if (auction.bidder !== '') {
-      await transaction`
-        update profiles set gold = gold + ${auction.bid} where id = ${auction.bidder}
-      `;
+      await moveGoldIn(transaction, auction.bidder, auction.bid, 'auction-outbid');
     }
     await transaction`
       update auctions set bid = ${bid}, bidder = ${uid} where id = ${auctionId}
@@ -394,9 +388,7 @@ export async function claimAuction(
       });
     }
 
-    await transaction`
-      update profiles set gold = gold + ${auction.bid} where id = ${auction.seller}
-    `;
+    await moveGoldIn(transaction, auction.seller, auction.bid, 'auction-sale');
     await transaction`update auctions set settled = true where id = ${auctionId}`;
     return true;
   });

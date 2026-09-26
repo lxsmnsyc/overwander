@@ -32,6 +32,7 @@ import { foughtBattle, readBattle } from './raid-io';
 import { isAnyCatchQueued, publishTeamSnapshot } from './raids';
 import { recordSeenOpponents } from './pokedex';
 import { asNumber, asString } from './read';
+import { moveGoldIn } from './profile';
 
 /**
  * Gym seats: asynchronous fights between players.
@@ -193,8 +194,8 @@ async function strip(
     return 0;
   }
 
-  await transaction`update profiles set gold = gold - ${moved} where id = ${loser}`;
-  await transaction`update profiles set gold = gold + ${moved} where id = ${winner}`;
+  await moveGoldIn(transaction, loser, -moved, 'gym-stake');
+  await moveGoldIn(transaction, winner, moved, 'gym-stake');
   return moved;
 }
 

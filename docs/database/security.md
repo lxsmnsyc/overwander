@@ -98,9 +98,9 @@ Three tiers:
 
 | Tier                  | Tables                                                                                                                                                                                                                                                                                    | Who reads                   |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| **Public to players** | `caught` and its children, `snapshots`, `snapshot_spawns`, `auctions`, `raids`, `teams`, `team_catches`, `team_snapshots`, `battles`, `battle_teams`, `rocket_stops`, `rocket_party`, `gym_seats`, `raid_watchers`, `awards`, `towns`                                                              | Any signed-in player        |
+| **Public to players** | `caught` and its children, `snapshots`, `snapshot_spawns`, `auctions`, `raids`, `teams`, `team_catches`, `team_snapshots`, `battles`, `battle_teams`, `rocket_stops`, `rocket_party`, `gym_seats`, `raid_watchers`, `awards`, `towns`                                                     | Any signed-in player        |
 | **Own rows only**     | `bag_items`, `bag_candies`, `pokedex_entries`, `positions`, `fled_encounters`, `encounters` and its children, `bids`, `auction_sellers`, `friends`, `friend_requests`, `blocks`, `friend_codes`, `trades`, `raid_invites`, `gym_challenges`, the four duel tables, and every claim marker | The player named on the row |
-| **Closed**            | `gifts`, `gift_claims`, `quest_progress`, `quest_baselines`, `quest_claims`, `rotation_baselines`, `rotation_claims`                                                                                                                                                                                         | Nobody                      |
+| **Closed**            | `gifts`, `gift_claims`, `quest_progress`, `quest_baselines`, `quest_claims`, `rotation_baselines`, `rotation_claims`                                                                                                                                                                      | Nobody                      |
 
 `profiles` sits outside the three: everyone signed in reads every profile,
 because a trade or a raid lobby starts with looking somebody up, and a player may
@@ -149,17 +149,17 @@ own balance.
 Some rules are neither policy nor server code but constraints, so a bug on the
 server cannot break them either:
 
-| Guard                                 | What it holds                                                                            |
-| ------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `write_once` triggers                 | Claim markers, raid rewards, aftermath markers and team snapshots never change           |
-| `append_only` on `caught_history`     | History is insert-only, with one lawful update: the cascade that nulls a deleted account |
-| `settle_once` on `battles`            | An outcome stamps once, from Unfinished, and nothing else on the row moves               |
-| `dex_monotonic`                       | Pokedex counts only rise                                                                 |
-| `trades_open_pair`                    | One open trade offer per direction of a pair                                             |
-| `buddy_owner` / `buddy_follows_owner` | A buddy must be an owned catch, and stops following when the catch changes hands         |
+| Guard                                 | What it holds                                                                                                                   |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `write_once` triggers                 | Claim markers, raid rewards, aftermath markers and team snapshots never change                                                  |
+| `append_only` on `caught_history`     | History is insert-only, with one lawful update: the cascade that nulls a deleted account                                        |
+| `settle_once` on `battles`            | An outcome stamps once, from Unfinished, and nothing else on the row moves                                                      |
+| `dex_monotonic`                       | Pokedex counts only rise                                                                                                        |
+| `trades_open_pair`                    | One open trade offer per direction of a pair                                                                                    |
+| `buddy_owner` / `buddy_follows_owner` | A buddy must be an owned catch, and stops following when the catch changes hands                                                |
 | `gift_claims` backfill guard          | A claim may be updated exactly once, to record the catch it became, and again to lose that pointer when the pokemon is released |
-| Column checks                         | Gold never negative, levels 1 to 100, friendship 0 to 255, a bid above zero              |
-| Foreign keys                          | A team names a real catch; deleting an account takes its rows with it                    |
+| Column checks                         | Gold never negative, levels 1 to 100, friendship 0 to 255, a bid above zero                                                     |
+| Foreign keys                          | A team names a real catch; deleting an account takes its rows with it                                                           |
 
 ### Realtime is RLS
 
@@ -199,6 +199,14 @@ The checks live on the server: `requireStaff` for anything the dashboard reads,
 `requireAdmin` for anything that runs the game, and `setRole`/`setBan` compare
 the caller's stored role against the target's before writing. The dashboard hides
 what a role cannot use, which is a courtesy rather than a defence.
+
+### What staff did is kept, if the server wants it
+
+With the server's `STAFF_LOG` variable on, every role set, ban, gift and
+teleport is written to `staff_actions` once it has landed: who acted, on whom,
+the particulars, and when. It is rAthena's `atcommandlog`. A line that cannot be
+written is dropped rather than undoing the action, and only the server reads or
+writes the table. With the variable off it stays empty.
 
 ### A ban is one line
 

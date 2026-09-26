@@ -109,7 +109,7 @@ export default async function breedCatches(
   if (visit == null) {
     return null;
   }
-  if (!(await spendGold(uid, BREEDING_FEE))) {
+  if (!(await spendGold(uid, BREEDING_FEE, 'breeder'))) {
     await releaseVisit(visit);
     return null;
   }
@@ -126,7 +126,7 @@ export default async function breedCatches(
   } catch (error) {
     // The fee bought an egg that was never written; the player keeps
     // their gold and their visit rather than the breeder keeping both
-    await grantGold(uid, BREEDING_FEE);
+    await grantGold(uid, BREEDING_FEE, 'breeder-refund');
     await releaseVisit(visit);
     throw error;
   }

@@ -2,17 +2,22 @@ import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import {
   type BulkOutcome,
+  type ReleasedCatch,
+  type TakeBack,
   arrangeCatch as arrangeOnServer,
   setFavorite as favoriteOnServerSide,
   giveItem as giveOnServer,
   setGuarded as guardedOnServerSide,
+  listReleased as listReleasedOnServerSide,
   setCatchMarks as markOnServerSide,
   setNickname as nicknameOnServerSide,
   releaseCatches as releaseManyOnServerSide,
   releaseCatch as releaseOnServerSide,
+  takeBack as takeBackOnServerSide,
   takeItem as takeOnServer,
 } from '../server/caught';
 import { requireUid } from '../server/auth';
+import { ServerFlag, isFlagOn } from '../server/flags';
 import check, {
   CATCH_LIST,
   CATCH_ORDER,
@@ -770,4 +775,74 @@ async function markManyOnServer(
   check(MARK_FIELD, field);
   check(FLAG, on);
   return markOnServerSide(await requireUid(token), catchIds, field, on);
+}
+
+export type { ReleasedCatch, TakeBack } from '../server/caught';
+
+/** Whether a release can be taken back, and what has been let go inside the day */
+export interface ReleaseGrace {
+  /** Whether this server holds releases for a day at all */
+  grace: boolean;
+  released: ReleasedCatch[];
+}
+
+/**
+ * Whether releasing is final on this server, and what the player let
+ * go that can still be taken back. The server's `RELEASE_GRACE`
+ * variable decides, so the screen asks rather than guessing
+ */
+export async function getReleaseGrace(): Promise<ReleaseGrace> {
+  return releaseGraceOnServer(await getIdToken());
+}
+
+async function releaseGraceOnServer(token: string): Promise<ReleaseGrace> {
+  'use server';
+  check(TOKEN, token);
+  const uid = await requireUid(token);
+
+  return {
+    grace: isFlagOn(ServerFlag.ReleaseGrace),
+    released: await listReleasedOnServerSide(uid, Date.now()),
+  };
+}
+
+/**
+ * Take back a pokemon let go inside the day. The candy its release
+ * paid is spent again; it comes back without what it was holding,
+ * since that went back to the bag
+ */
+export async function takeBackCatch(catchId: string): Promise<TakeBack> {
+  return takeBackOnServer(await getIdToken(), catchId);
+}
+
+async function takeBackOnServer(token: string, catchId: string): Promise<TakeBack> {
+  'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  return takeBackOnServerSide(await requireUid(token), catchId, Date.now());
+}
+
+/** Whether this server holds releases for a day, asked once a visit */
+let graced: Promise<boolean> | null = null;
+
+/**
+ * Whether a release can be taken back on this server, for a screen
+ * that only needs to say so. Asked once and kept: the answer is the
+ * deployment's and does not change while the page is open
+ */
+export async function isReleaseGraced(): Promise<boolean> {
+  graced ??= getIdToken()
+    .then(async (token) => releaseGracedOnServer(token))
+    .catch(() => {
+      graced = null;
+      return false;
+    });
+  return graced;
+}
+
+async function releaseGracedOnServer(token: string): Promise<boolean> {
+  'use server';
+  check(TOKEN, token);
+  await requireUid(token);
+  return isFlagOn(ServerFlag.ReleaseGrace);
 }

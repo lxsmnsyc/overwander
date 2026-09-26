@@ -10,6 +10,7 @@ import { giveGift, listAllGifts as listAllOnServer } from '../server/gifts';
 import { requireAdmin, requireStaff, setBan, setRole } from '../server/roles';
 import { syncServerClock } from './clock';
 import getIdToken from './session';
+import { StaffAction, recordStaffAction } from '../server/staff-log';
 
 /**
  * What the dashboard asks the server for.
@@ -126,8 +127,13 @@ async function giftOnServer(token: string, gift: StaffGift): Promise<boolean> {
   'use server';
   check(TOKEN, token);
   check(STAFF_GIFT, gift);
-  await requireAdmin(token);
-  return giveGift(gift, await syncServerClock());
+  const caller = await requireAdmin(token);
+  const written = await giveGift(gift, await syncServerClock());
+
+  if (written) {
+    await recordStaffAction(caller, StaffAction.Gift, gift.player, { ...gift });
+  }
+  return written;
 }
 
 /**

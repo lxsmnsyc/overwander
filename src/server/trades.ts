@@ -25,6 +25,7 @@ import { isAnyCatchQueued } from './raids';
 import { Metric } from '../auth/quest-record';
 import { type ProgressBump, bumpProgress } from './quest-progress';
 import { asNumber, asString } from './read';
+import { moveGoldIn } from './profile';
 
 /**
  * Trades, written over the owner connection.
@@ -170,7 +171,7 @@ export async function offerTrade(
     }
 
     if (gold > 0) {
-      await transaction`update profiles set gold = gold - ${gold} where id = ${uid}`;
+      await moveGoldIn(transaction, uid, -gold, 'trade-offer');
     }
     await updateCaughtIn(transaction, offer.caught, { owner: TRADE_ESCROW });
 
@@ -270,12 +271,10 @@ export async function acceptTrade(
     }
 
     if (trade.gold > 0) {
-      await transaction`update profiles set gold = gold + ${trade.gold} where id = ${uid}`;
+      await moveGoldIn(transaction, uid, trade.gold, 'trade');
     } else if (trade.gold < 0) {
-      await transaction`update profiles set gold = gold - ${-trade.gold} where id = ${uid}`;
-      await transaction`
-        update profiles set gold = gold + ${-trade.gold} where id = ${trade.proposer}
-      `;
+      await moveGoldIn(transaction, uid, trade.gold, 'trade');
+      await moveGoldIn(transaction, trade.proposer, -trade.gold, 'trade');
     }
     goldMoved = trade.gold;
 
@@ -396,7 +395,7 @@ async function returnTradeIn(
     return false;
   }
   if (trade.gold > 0) {
-    await transaction`update profiles set gold = gold + ${trade.gold} where id = ${trade.proposer}`;
+    await moveGoldIn(transaction, trade.proposer, trade.gold, 'trade-returned');
   }
   await updateCaughtIn(transaction, trade.offered, { owner: trade.proposer });
   await transaction`

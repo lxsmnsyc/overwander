@@ -75,7 +75,7 @@ is still short of the mainline, in rough order of how much it matters:
 ## Non-canon abilities
 
 - Add non-canon abilities per family.
-  
+
 ## Open world gimmicks
 
 Candidates, none committed to. Secret bases are deliberately left out: they were
@@ -147,7 +147,7 @@ the first piece of overworld state that cannot be computed and has to be sent.
 What already exists:
 
 - `positions` holds every player's `chunk_x, chunk_y, cell_x, cell_y, depth,
-  moved_at` (`supabase/migrations/20260820000300_world.sql:81`), and the table is
+moved_at` (`supabase/migrations/20260820000300_world.sql:81`), and the table is
   already in the realtime publication
   (`supabase/migrations/20260831000100_position_realtime.sql`).
 - `profiles.sprite` already holds the charset a trainer walks as, and it is
@@ -200,45 +200,3 @@ Note the seasons entry above overlaps what Deerling shipped. That work put four
 seasons on the clock at one month each and used them for the coat a deer is met
 in, not for terrain or a quarter of every biome's rolls. The gimmick as written
 here is still unbuilt.
-
-## Economy ledger
-
-Deferred on purpose. The design, what it was measured to cost and why it waits
-are in [Player-owned tables](docs/database/player-stores.md#not-built-yet-an-economy-ledger).
-
-- [ ] **An append-only record of every gold, item and candy change**, the way
-      rAthena keeps `picklog` and `zenylog`. Postgres triggers on
-      `profiles.gold`, `bag_items` and `bag_candies`, so every writer is covered
-      without a call of its own, each row carrying the player, the stack, the
-      amount it moved by, the balance after, the transaction id and a reason. A
-      pg_cron sweep keeps it to a retention window.
-
-Worth building when any of these happens:
-
-- the player count grows well past a dozen, or players stop knowing each other;
-- auctions and trades start carrying a real economy;
-- something looks duplicated and needs tracing.
-
-It costs about 190 bytes a row and 0.1 ms a write, roughly 40 MB a month at 12
-players, so it needs the sweep on the Free plan's 500 MB. Nothing that happens
-before it exists can be traced afterwards.
-
-## Taking back a release
-
-- [ ] **A day's grace before a release is final**, the way rAthena waits
-      `char_del_delay` (24 hours) before a deleted character is gone. Today a
-      release deletes the pokemon at once ([`src/server/caught.ts`](src/server/caught.ts)),
-      and a bulk release takes many in one press, so a slip or a stolen login is
-      permanent. A release would mark the pokemon and hide it instead, a sweep
-      would delete it a day later, and it could be taken back until then. The
-      release candy is paid when the sweep runs rather than at the press, or
-      releasing and taking back would print candy. Every box query has to leave
-      the marked ones out, which is most of the work.
-
-## A record of what staff did
-
-- [ ] **One row per staff action**, the way rAthena logs every GM command to
-      `atcommandlog`: who acted, on whom, what they did and when. The dashboard
-      only reads today, and bans, roles and grants are made by hand, so there is
-      nothing to log yet. It becomes worth building the moment the dashboard
-      writes anything, or somebody besides the owner holds a role.

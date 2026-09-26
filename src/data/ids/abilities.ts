@@ -944,6 +944,12 @@ const enum Abilities {
   JawSnap = 200344,
   // Amaura
   Frostbound = 200345,
+  // Inkay
+  Overturn = 200346,
+  // Helioptile
+  Backfeed = 200347,
+  // Hawlucha
+  TopRope = 200348,
 }
 
 export default Abilities;

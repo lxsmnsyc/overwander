@@ -56,6 +56,7 @@ import flabebeToFurfrou from './flabebe-to-furfrou';
 import espurrToKlefki from './espurr-to-klefki';
 import binacleToClauncher from './binacle-to-clauncher';
 import tyruntAndAmaura from './tyrunt-and-amaura';
+import inkayToHawlucha from './inkay-to-hawlucha';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -115,6 +116,7 @@ const setupAbilities = [
   ...espurrToKlefki,
   ...binacleToClauncher,
   ...tyruntAndAmaura,
+  ...inkayToHawlucha,
   ...deerling,
   ...emolga,
   ...tirtougaToBouffalant,

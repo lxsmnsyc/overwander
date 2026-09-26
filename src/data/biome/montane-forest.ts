@@ -39,6 +39,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
+        { species: Species.Hawlucha, weight: 6 },
         { species: Species.Haxorus, weight: 3 },
         { species: Species.Gardevoir, weight: 5 },
         { species: Species.Spinda, weight: 12 },
@@ -87,6 +88,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
+        { species: Species.Hawlucha, weight: 6 },
         { species: Species.Haxorus, weight: 3 },
         { species: Species.Gardevoir, weight: 5 },
         { species: Species.Spinda, weight: 12 },
@@ -119,6 +121,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Swoobat, weight: 8 },
       ],
       elusive: [
+        { species: Species.Hawlucha, weight: 6 },
         { species: Species.Crobat, weight: 5 },
         { species: Species.Sableye, weight: 8 },
         { species: Species.Chimecho, weight: 5 },

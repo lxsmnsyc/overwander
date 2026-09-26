@@ -91,6 +91,35 @@ export const enum TimeOfDay {
 export const AnyTimeOfDay = TimeOfDay.Morning | TimeOfDay.Day | TimeOfDay.Evening | TimeOfDay.Night;
 
 /**
+ * The four coats the year turns through. The world is in exactly one
+ * at a time, everywhere, so two players walking apart are in the same
+ * season and can say so
+ */
+export const enum Seasons {
+  Spring = 0,
+  Summer = 1,
+  Autumn = 2,
+  Winter = 3,
+}
+
+/** How many seasons the year cycles through, one to a month */
+const SEASON_COUNT = 4;
+
+/**
+ * The season a timestamp falls in: one month apiece, January spring,
+ * so the whole year turns three times over.
+ *
+ * It reads the month rather than the coordinates on purpose. Where a
+ * player stands already decides the biome, and a season decided by
+ * place would freeze a coat to wherever somebody happens to live; a
+ * season decided by the clock turns for everybody at once, which is
+ * the mainline's own rule and the same shape as the day cycle above
+ */
+export function getSeason(timestamp: number): Seasons {
+  return new Date(timestamp).getUTCMonth() % SEASON_COUNT;
+}
+
+/**
  * The day-cycle period a timestamp falls in, per the documented hour
  * ranges.
  *

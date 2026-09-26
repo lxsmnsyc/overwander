@@ -6,10 +6,6 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
  * Woodland spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerWoodlandSpawns(): void {
-  // The Pidove line is written but waits on sprites, since the
-  // collection has drawn no Tranquill. Once it does, mornings and days
-  // take Pidove in base at 30, Tranquill in rare at 12 and Unfezant in
-  // elusive at 6
   // Throh and Sawk are written but wait on sprites, since the
   // collection has drawn no Throh and the pair is staged together.
   // Once it does, mornings and days take each of them in elusive at 5
@@ -21,6 +17,7 @@ export default function registerWoodlandSpawns(): void {
   registerSpawnPool(Biome.Woodland, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Pidove, weight: 30 },
         { species: Species.Timburr, weight: 25 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Caterpie, weight: 30 },
@@ -52,6 +49,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Glameow, weight: 25 },
       ],
       rare: [
+        { species: Species.Tranquill, weight: 12 },
         { species: Species.Gurdurr, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Metapod, weight: 15 },
@@ -88,6 +86,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Unfezant, weight: 6 },
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
         { species: Species.Chatot, weight: 6 },
@@ -130,6 +130,7 @@ export default function registerWoodlandSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Pidove, weight: 30 },
         { species: Species.Timburr, weight: 25 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Caterpie, weight: 30 },
@@ -161,6 +162,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Glameow, weight: 25 },
       ],
       rare: [
+        { species: Species.Tranquill, weight: 12 },
         { species: Species.Gurdurr, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Metapod, weight: 15 },
@@ -197,6 +199,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Unfezant, weight: 6 },
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
         { species: Species.Chatot, weight: 6 },
@@ -306,6 +310,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Chandelure, weight: 5 },
         { species: Species.Spiritomb, weight: 5 },
         { species: Species.Pachirisu, weight: 8 },
@@ -416,6 +421,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Chandelure, weight: 5 },
         { species: Species.Spiritomb, weight: 5 },
         { species: Species.Pachirisu, weight: 8 },

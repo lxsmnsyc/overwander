@@ -17,7 +17,7 @@ import { getBiomeLairs, getLairResidents } from '../../src/data/overworld/lair';
 import registerAbilities from '../../src/data/abilities';
 import { Types } from '../../src/data/constants/types';
 import Biome, { SpawnSurface, TimeOfDay } from '../../src/data/ids/biome';
-import { ROTOM_FORMS, Species } from '../../src/data/ids/species';
+import { DEERLING_FORMS, ROTOM_FORMS, SAWSBUCK_FORMS, Species } from '../../src/data/ids/species';
 import registerItems from '../../src/data/items';
 import { registerMoves } from '../../src/data/moves';
 import {
@@ -258,10 +258,10 @@ describe('where a species lives', () => {
     // shell is staged by the pool its west counterpart sits in, and
     // swapped for as the world hands it over, so no pool names it either.
     //
-    // The Pidove and Blitzle lines name where they live, but the
-    // sprite collection has drawn no Tranquill, Blitzle or Zebstrika,
-    // so neither line is staged until it does. The pools they are
-    // waiting for are written as comments in the biome files
+    // The Blitzle line names where it lives, but the sprite collection
+    // has drawn neither Blitzle nor Zebstrika, so it is not staged
+    // until it does. The pools the waiting
+    // lines will take are written as comments in the biome files
     const unstaged = new Set<Species>([
       Species.Phione,
       ...ROTOM_FORMS.slice(1),
@@ -270,9 +270,11 @@ describe('where a species lives', () => {
       Species.PorygonZ,
       Species.ShellosEast,
       Species.GastrodonEast,
-      Species.Pidove,
-      Species.Tranquill,
-      Species.Unfezant,
+      // The three coats past spring are staged by the pool the spring
+      // one sits in, and swapped for as the month hands them over, so
+      // no pool names them either
+      ...DEERLING_FORMS.slice(1),
+      ...SAWSBUCK_FORMS.slice(1),
       Species.Blitzle,
       Species.Zebstrika,
       Species.Throh,
@@ -283,8 +285,6 @@ describe('where a species lives', () => {
       Species.Simisear,
       Species.Panpour,
       Species.Simipour,
-      Species.Dwebble,
-      Species.Crustle,
     ]);
     const staged = new Set<Species>();
 

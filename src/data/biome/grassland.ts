@@ -6,14 +6,14 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
  * Grassland spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerGrasslandSpawns(): void {
-  // Two lines are written but wait on sprites, since the collection
-  // has drawn no Tranquill, Blitzle or Zebstrika. Once it does,
-  // mornings and days take Pidove in base at 30, Tranquill in rare at
-  // 12, Unfezant in elusive at 6, Blitzle in uncommon at 25 and
-  // Zebstrika in scarce at 6
+  // The Blitzle line is written but waits on sprites, since the
+  // collection has drawn neither Blitzle nor Zebstrika. Once it does,
+  // mornings and days take Blitzle in uncommon at 25 and Zebstrika in
+  // scarce at 6
   registerSpawnPool(Biome.Grassland, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Pidove, weight: 30 },
         { species: Species.Solosis, weight: 24 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Pidgey, weight: 30 },
@@ -27,6 +27,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
         { species: Species.Minccino, weight: 26 },
         { species: Species.Swablu, weight: 22 },
         { species: Species.Rattata, weight: 30 },
@@ -56,6 +57,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Tranquill, weight: 12 },
         { species: Species.Duosion, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Pidgeotto, weight: 5 },
@@ -69,6 +71,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Altaria, weight: 5 },
         { species: Species.Raticate, weight: 10 },
@@ -98,6 +101,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Unfezant, weight: 6 },
         { species: Species.Reuniclus, weight: 5 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Venusaur, weight: 2 },
@@ -147,6 +151,7 @@ export default function registerGrasslandSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Pidove, weight: 30 },
         { species: Species.Solosis, weight: 24 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Pidgey, weight: 30 },
@@ -161,6 +166,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
         { species: Species.Minccino, weight: 26 },
         { species: Species.Swablu, weight: 22 },
         { species: Species.Rattata, weight: 30 },
@@ -191,6 +197,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Tranquill, weight: 12 },
         { species: Species.Duosion, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Pidgeotto, weight: 5 },
@@ -205,6 +212,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Altaria, weight: 5 },
         { species: Species.Raticate, weight: 10 },
@@ -235,6 +243,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Unfezant, weight: 6 },
         { species: Species.Reuniclus, weight: 5 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Venusaur, weight: 2 },
@@ -293,6 +302,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Eevee, weight: 2 },
@@ -315,6 +325,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Wigglytuff, weight: 5 },
@@ -374,6 +385,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Meowth, weight: 20 },
@@ -398,6 +410,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Wigglytuff, weight: 5 },

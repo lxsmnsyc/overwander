@@ -258,10 +258,10 @@ describe('where a species lives', () => {
     // shell is staged by the pool its west counterpart sits in, and
     // swapped for as the world hands it over, so no pool names it either.
     //
-    // The Pidove and Blitzle lines name where they live, but the
-    // sprite collection has drawn no Tranquill, Blitzle or Zebstrika,
-    // so neither line is staged until it does. The pools they are
-    // waiting for are written as comments in the biome files
+    // The Blitzle line names where it lives, but the sprite collection
+    // has drawn neither Blitzle nor Zebstrika, so it is not staged
+    // until it does. The pools the waiting
+    // lines will take are written as comments in the biome files
     const unstaged = new Set<Species>([
       Species.Phione,
       ...ROTOM_FORMS.slice(1),
@@ -270,9 +270,6 @@ describe('where a species lives', () => {
       Species.PorygonZ,
       Species.ShellosEast,
       Species.GastrodonEast,
-      Species.Pidove,
-      Species.Tranquill,
-      Species.Unfezant,
       Species.Blitzle,
       Species.Zebstrika,
       Species.Throh,
@@ -283,8 +280,6 @@ describe('where a species lives', () => {
       Species.Simisear,
       Species.Panpour,
       Species.Simipour,
-      Species.Dwebble,
-      Species.Crustle,
     ]);
     const staged = new Set<Species>();
 

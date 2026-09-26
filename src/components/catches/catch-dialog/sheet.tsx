@@ -1,4 +1,5 @@
 import { HISTORY_BALL, HISTORY_BALL_INSET, describeHistory, isHoldable } from './describe';
+import { capAsksForStat } from '../../../data/items/bottle-caps';
 import BattleData from '../../app/battle-data';
 import CandySprite from '../../sprites/CandySprite';
 import BattleSection from './sections/BattleSection';
@@ -87,6 +88,7 @@ import {
 import AbilityPatchDialog from '../AbilityPatchDialog';
 import CatchPicker from '../catch-picker';
 import IncreasePPDialog from '../IncreasePPDialog';
+import BottleCapDialog from '../BottleCapDialog';
 import TeachMoveDialog from '../TeachMoveDialog';
 
 import {
@@ -374,6 +376,8 @@ export function CatchSheetBody(
    * question is answered
    */
   const [bottle, setBottle] = createSignal<{ item: Items; catchId: string } | null>(null);
+  /** The catch a Bottle Cap is being spent on, while it asks which stat */
+  const [capping, setCapping] = createSignal<string | null>(null);
 
   /** Whoever is having its signature written, while the patch asks what gives way */
   const [patching, setPatching] = createSignal<string | null>(null);
@@ -1207,6 +1211,10 @@ export function CatchSheetBody(
       setBottle({ item, catchId });
       return;
     }
+    if (capAsksForStat(item)) {
+      setCapping(catchId);
+      return;
+    }
     // A signature takes the place of something on a full pokemon, and
     // which ability that is has to be asked before the patch is spent
     if (isAbilityPatch(item)) {
@@ -2003,6 +2011,19 @@ export function CatchSheetBody(
         item={bottle()?.item ?? null}
         onClose={() => {
           setBottle(null);
+        }}
+        onUsed={(said) => {
+          say(said);
+          props.onRecordChanged();
+          props.onBagChanged();
+          props.onChange?.();
+        }}
+      />
+
+      <BottleCapDialog
+        catchId={capping()}
+        onClose={() => {
+          setCapping(null);
         }}
         onUsed={(said) => {
           say(said);

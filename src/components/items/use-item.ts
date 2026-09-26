@@ -32,7 +32,7 @@ import {
   isAbilityCapsule,
   isAbilityPatch,
 } from '../../data/items/ability-items';
-import { isBottleCap, isPerfectIVs } from '../../data/items/bottle-caps';
+import { capAsksForStat, isBottleCap, isPerfectIVs } from '../../data/items/bottle-caps';
 import { getMintNature, isMint } from '../../data/items/mints';
 import { isHerbal } from '../../data/items/medicine';
 import { isPurifyingGem } from '../../data/items/purifying-gem';
@@ -144,12 +144,12 @@ export function isUsableOn(item: Items, caught: CaughtPokemon): boolean {
 
 /**
  * Whether the item asks a question back before it is spent. A machine
- * asks which move is given up for it, and a bottle which move the
- * points land on. Neither can be taken back afterwards, so neither
- * leaves the bag until the question is answered
+ * asks which move is given up for it, a bottle which move the points
+ * land on, and a Bottle Cap which stat it polishes. None can be taken
+ * back afterwards, so none leaves the bag until the question is answered
  */
 export function asksAQuestion(item: Items): boolean {
-  return isMachineItem(item) || isPPItem(item) || isAbilityPatch(item);
+  return isMachineItem(item) || isPPItem(item) || isAbilityPatch(item) || capAsksForStat(item);
 }
 
 /**

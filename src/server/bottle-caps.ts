@@ -1,10 +1,10 @@
 import 'server-only';
 import { asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
 import { ITEM_STACKS } from '../auth/stacks';
-import AleaRNG from '../core/alea';
 import type { Items } from '../data/ids/items';
+import { MAX_IV, STAT_ORDER, type Stats, getIV } from '../data/constants/stats';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
-import { BOTTLE_CAPS, polishIVs } from '../data/items/bottle-caps';
+import { capAsksForStat, capStats, isBottleCap, polishIVs } from '../data/items/bottle-caps';
 import { Metric } from '../auth/quest-record';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { bumpProgress } from './quest-progress';
@@ -19,33 +19,44 @@ import { isCatchLocked } from './locks';
  * the only thing that moves them does it here: the cap is checked
  * against the bag, the stats against the stored record, and both are
  * written in one transaction — a cap is never spent on a pokemon that
- * did not change, and a pokemon never changes without one being spent.
- *
- * Which stats a plain cap polishes is the server's roll, not the
- * caller's: a client that chose would simply choose whichever stat it
- * wanted, and the cap would stop being a cap
+ * did not change, and a pokemon never changes without one being spent
  */
 
 /**
+ * The stat a plain cap goes on when the caller named none: the lowest
+ * that is not yet perfect. Only a tab from before the player chose
+ * asks this way
+ */
+function weakestStat(ivs: number): Stats | null {
+  let weakest: Stats | null = null;
+
+  for (const stat of STAT_ORDER) {
+    const value = getIV(ivs, stat);
+
+    if (value < MAX_IV && (weakest == null || value < getIV(ivs, weakest))) {
+      weakest = stat;
+    }
+  }
+  return weakest;
+}
+
+/**
  * Use a bottle cap on one of the player's catches. A golden cap
- * raises every value it can reach; a plain one raises a single stat,
- * drawn from the ones that are not already perfect so the cap is never
- * spent on a stat that needed nothing.
+ * raises every value it can reach; a plain one raises the stat the
+ * player chose.
  *
  * Resolves the values the catch now has, or null when the use is
  * refused: the catch is not the player's, it is fighting, it is still
- * an egg, the item is not a cap, none is carried, or the pokemon is
- * already perfect
+ * an egg, the item is not a cap, none is carried, or the stats it
+ * would raise are already perfect
  */
 export default async function useBottleCap(
   uid: string,
   catchId: string,
   item: Items,
-  now: number,
+  stat: Stats | null,
 ): Promise<number | null> {
-  const polishes = BOTTLE_CAPS.get(item);
-
-  if (polishes == null) {
+  if (!isBottleCap(item)) {
     return null;
   }
 
@@ -73,11 +84,9 @@ export default async function useBottleCap(
       return null;
     }
 
-    // Seeded by the catch, the cap and the instant, so the same cap
-    // used twice on the same pokemon picks its own stat each time
     const record = asCaughtPokemon(caught);
-    const rng = new AleaRNG(`${uid}:${catchId}:${item}:${now}`);
-    const polished = polishIVs(record.ivs, polishes, () => rng.random());
+    const chosen = stat ?? (capAsksForStat(item) ? weakestStat(record.ivs) : null);
+    const polished = polishIVs(record.ivs, capStats(item, chosen));
 
     // Nothing left to polish, so nothing is spent
     if (polished == null) {

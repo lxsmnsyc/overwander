@@ -123,7 +123,8 @@ import {
   unpackIVs,
 } from '../../src/data/constants/stats';
 import {
-  BOTTLE_CAPS,
+  capAsksForStat,
+  capStats,
   isBottleCap,
   isPerfectIVs,
   polishIVs,
@@ -832,10 +833,13 @@ describe('item data', () => {
     expect(getItemData(Items.BottleCap).name).toBe('Bottle Cap');
     expect(isBottleCap(Items.Nugget)).toBe(false);
 
-    // The golden one perfects everything there is, the plain one a
-    // single stat
-    expect(BOTTLE_CAPS.get(Items.GoldenBottleCap)).toBe(STAT_ORDER.length);
-    expect(BOTTLE_CAPS.get(Items.BottleCap)).toBe(1);
+    // The golden one perfects everything there is, the plain one the
+    // single stat the player picks
+    expect(capAsksForStat(Items.GoldenBottleCap)).toBe(false);
+    expect(capStats(Items.GoldenBottleCap, Stats.Speed)).toEqual(STAT_ORDER);
+    expect(capAsksForStat(Items.BottleCap)).toBe(true);
+    expect(capStats(Items.BottleCap, Stats.Speed)).toEqual([Stats.Speed]);
+    expect(capStats(Items.BottleCap, null)).toEqual([]);
 
     // A one-per-world find and the band below it, each in one band
     // only: the plain cap fixes one stat and the golden one all six
@@ -1236,32 +1240,25 @@ describe('item data', () => {
         [Stats.Speed]: value,
       });
 
-    // A golden cap reaches every stat, whatever the stream says
-    const golden = polishIVs(evenly(0), STAT_ORDER.length, () => 0);
+    // A golden cap reaches every stat
+    const golden = polishIVs(evenly(0), STAT_ORDER);
 
     expect(golden).toBe(PERFECT_IVS);
     expect(isPerfectIVs(golden ?? 0)).toBe(true);
 
-    // A plain cap raises exactly one, and leaves the rest as they were
-    const plain = polishIVs(evenly(5), 1, () => 0) ?? 0;
-    const raised = STAT_ORDER.filter((stat) => getIV(plain, stat) === MAX_IV);
+    // A plain cap raises the stat it was put on, and leaves the rest
+    const plain = polishIVs(evenly(5), [Stats.Attack]) ?? 0;
 
-    expect(raised).toHaveLength(1);
     for (const stat of STAT_ORDER) {
-      expect(getIV(plain, stat)).toBe(raised[0] === stat ? MAX_IV : 5);
+      expect(getIV(plain, stat)).toBe(stat === Stats.Attack ? MAX_IV : 5);
     }
 
-    // Only the stats that need it are drawn from: a cap that could
-    // land on a stat already at the cap would be spent on nothing,
-    // and would get worse the closer a pokemon came to perfect
+    // A stat already at the cap has nothing to polish, so no cap is spent on it
     const nearly = setIV(PERFECT_IVS, Stats.Speed, 0);
 
-    for (const roll of [0, 0.5, 0.999]) {
-      expect(polishIVs(nearly, 1, () => roll)).toBe(PERFECT_IVS);
-    }
-
-    // Nothing left to polish, so there is nothing to spend a cap on
-    expect(polishIVs(PERFECT_IVS, STAT_ORDER.length, () => 0)).toBeNull();
+    expect(polishIVs(nearly, [Stats.Attack])).toBeNull();
+    expect(polishIVs(nearly, [Stats.Speed])).toBe(PERFECT_IVS);
+    expect(polishIVs(PERFECT_IVS, STAT_ORDER)).toBeNull();
     expect(isPerfectIVs(nearly)).toBe(false);
   });
 

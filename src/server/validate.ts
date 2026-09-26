@@ -11,7 +11,7 @@ import { CLAIM_CHUNK_LIMIT } from '../auth/snapshot-record';
 import { Depth } from '../overworld/depth';
 import { GiftKind } from '../auth/gift-record';
 import { LobbyRole } from '../auth/lobby-role';
-import { MAX_EFFORT_PER_STAT, MAX_PACKED_IVS } from '../data/constants/stats';
+import { MAX_EFFORT_PER_STAT, MAX_PACKED_IVS, Stats } from '../data/constants/stats';
 import { MAX_LEVEL } from '../data/constants/levels';
 import Npc from '../data/overworld/npc';
 import { RaidKind } from '../auth/raid-record';
@@ -214,6 +214,18 @@ export const PARENTS = v.tuple([MAYBE_ID, MAYBE_ID]);
 
 /** What a shopper is buying or selling, as pairs of item and amount */
 export const BASKET = listOf(v.tuple([GAME_ID, AMOUNT]), BASKET_LIMIT);
+
+/** One of the six stats, or none where the caller has no choice to make */
+export const MAYBE_STAT = v.nullable(
+  v.picklist([
+    Stats.HP,
+    Stats.Attack,
+    Stats.Defense,
+    Stats.SpecialAttack,
+    Stats.SpecialDefense,
+    Stats.Speed,
+  ]),
+);
 
 /** Effort points to move, keyed by the stat they go on */
 export const EFFORT_SPREAD = v.record(

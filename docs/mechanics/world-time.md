@@ -39,8 +39,14 @@ Four periods divide the day, and each has its own pokemon:
 | Evening | 17:00 to 20:00 |
 | Night   | 20:00 to 04:00 |
 
-These are read in the player's own timezone. There is no time of day
+On the local clock, these are read in the player's own timezone. There is no time of day
 underground: see [The caves](world-caves.md).
+
+By default the time of day runs on a game clock. The four periods take turns
+in the order above, and each lasts `VITE_TIME_OF_DAY_MINUTES` (90 when unset),
+so a whole day passes in 6 hours. Setting `VITE_REAL_TIME_OF_DAY` to `true`
+reads the hours in the table from the player's own clock instead. The light
+follows whichever clock is in use.
 
 ## The species day
 

@@ -1,4 +1,5 @@
 import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
+import { atClockHour } from '../../data/day-clock';
 import { Badge, Meta, Note, Row, Select, Slider, Switch } from '../styled';
 import { CELL, COLORS, SPRITE_STANDS, pictureWidth } from '../overworld/chunk-canvas/metrics';
 import { fitPicture, projectAir } from '../../canvas/board';
@@ -34,9 +35,6 @@ import loadSpeciesSprite from '../../canvas/species-sprites';
 
 /** How many cells the board is across, which is what a chunk is */
 const CELLS = 16;
-
-/** A whole day, for reading a fraction of the slider as an hour */
-const DAY = 24 * 60 * 60 * 1000;
 
 /** The hour a bare page opens on: well up, and well off noon */
 const DEFAULT_HOUR = 15 / 24;
@@ -156,7 +154,7 @@ export default function ShadowDemo(): JSX.Element {
   const [zoom, setZoom] = createSignal(0.5);
   const [refused, setRefused] = createSignal(false);
 
-  const localTime = (): number => hour() * DAY;
+  const localTime = (): number => atClockHour(hour() * 24);
   const yaw = (): number => turned() * 2 * Math.PI;
   const latitude = (): number => placed() * 2 - 1;
   const magnified = (): number => 1 + zoom() * 3;

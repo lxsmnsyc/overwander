@@ -13,11 +13,15 @@ import check, {
   NICKNAME,
   OFFSET,
   PARTY,
+  STAFF_GIFT,
   TRADE_OFFER,
 } from '../src/server/validate';
 import { AuctionLot } from '../src/auth/auction-record';
 import { Depth } from '../src/overworld/depth';
+import { GiftKind } from '../src/auth/gift-record';
+import { MAX_PACKED_IVS } from '../src/data/constants/stats';
 import { Items } from '../src/data/ids/items';
+import { Species } from '../src/data/ids/species';
 
 /**
  * What a server function will take as an argument.
@@ -140,5 +144,37 @@ describe('what a player wrote', () => {
   it('refuses a name longer than a name may be', () => {
     expect(() => check(NICKNAME, 'Rocket')).not.toThrow();
     expect(() => check(NICKNAME, 'R'.repeat(25))).toThrow();
+  });
+});
+
+describe('a gift written by hand', () => {
+  const encounter = {
+    kind: GiftKind.Encounter,
+    reason: 'Launch week',
+    expiresAt: new Date('2026-10-05T23:59:59'),
+    player: null,
+    species: Species.Pikachu,
+    level: 5,
+    shiny: false,
+    shadow: false,
+    gender: null,
+    nature: null,
+    ivs: MAX_PACKED_IVS,
+    abilities: [],
+    moves: [],
+    items: [],
+    place: '',
+    slots: 0,
+  };
+
+  it('takes a pokemon with every individual value at its best', () => {
+    expect(() => check(STAFF_GIFT, encounter)).not.toThrow();
+    expect(() => check(STAFF_GIFT, { ...encounter, ivs: MAX_PACKED_IVS + 1 })).toThrow();
+  });
+
+  it('takes an expiry as a date and refuses one that is not a day', () => {
+    expect(() => check(STAFF_GIFT, { ...encounter, expiresAt: null })).not.toThrow();
+    expect(() => check(STAFF_GIFT, { ...encounter, expiresAt: new Date('nope') })).toThrow();
+    expect(() => check(STAFF_GIFT, { ...encounter, expiresAt: Date.now() })).toThrow();
   });
 });

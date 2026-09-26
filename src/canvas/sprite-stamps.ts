@@ -17,8 +17,11 @@ import { spriteUrl } from './sprite-origin';
  * and gets whatever the server says about them.
  */
 
-/** Where the list is served from */
-const STAMPS_PATH = spriteUrl('/sprites/stamps.json');
+/**
+ * Where the list is served from. The query is a new address for
+ * browsers still holding a copy from when the list was cached for a year
+ */
+const STAMPS_PATH = spriteUrl('/sprites/stamps.json?fresh=1');
 
 /** What every sheet path starts with, and what a stamp key does not */
 const SPRITE_ROOT = spriteUrl('/sprites/');

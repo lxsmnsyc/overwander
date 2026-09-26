@@ -637,9 +637,10 @@ export default function registerSignatureAbilities(): void {
     description: 'Whenever it is healed, the teammate lowest on HP is healed the same amount.',
   });
 
-  registerSignature(Families.Remoraid, Abilities.Standoff, {
-    name: 'Standoff',
-    description: 'Nothing it uses counts as contact, so it never sets off what answers a touch.',
+  registerSignature(Families.Remoraid, Abilities.Ricochet, {
+    name: 'Ricochet',
+    description:
+      'When a single-target move of its misses, it strikes another standing enemy instead, at full power.',
   });
 
   registerSignature(Families.Delibird, Abilities.Delivery, {

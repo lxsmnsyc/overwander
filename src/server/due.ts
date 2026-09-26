@@ -4,6 +4,7 @@ import { dailyWindow, weeklyWindow } from '../data/quests/rotations';
 import { readProgress } from './quest-progress';
 import { listQuests } from './quests';
 import { listRotations } from './rotations';
+import { toLocalTime } from '../auth/local-time';
 
 /**
  * What is standing ready to claim, for the announcement rather than
@@ -21,14 +22,19 @@ export interface DueQuest {
   name: string;
 }
 
-export default async function listDueQuests(uid: string, now: number): Promise<DueQuest[]> {
+export default async function listDueQuests(
+  uid: string,
+  now: number,
+  offset: number,
+): Promise<DueQuest[]> {
   // Both boards count the same progress, and every signed-in player
   // polls this, so it is read once and handed to both
   const progress = await readProgress(uid);
   const [board, rotations] = await Promise.all([
     listQuests(uid, progress),
-    listRotations(uid, now, progress),
+    listRotations(uid, now, offset, progress),
   ]);
+  const local = toLocalTime(now, offset);
   const due: DueQuest[] = [];
 
   for (const standing of board) {
@@ -39,13 +45,13 @@ export default async function listDueQuests(uid: string, now: number): Promise<D
   for (const standing of rotations.daily) {
     if (standing.claimable) {
       due.push({
-        key: `daily-${dailyWindow(now)}-${standing.quest.slot}`,
+        key: `daily-${dailyWindow(local)}-${standing.quest.slot}`,
         name: standing.quest.name,
       });
     }
   }
   if (rotations.weekly.claimable) {
-    due.push({ key: `weekly-${weeklyWindow(now)}`, name: rotations.weekly.quest.name });
+    due.push({ key: `weekly-${weeklyWindow(local)}`, name: rotations.weekly.quest.name });
   }
   return due;
 }

@@ -7,6 +7,7 @@ named for what it brings.
 
 | Release                                                               | What it brought                                                                                                                |
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| [Seasons and the last of Unova's lines](update/seasons-and-the-last-lines.md) | Monthly seasons with Deerling's four coats, Emolga, and the fourteen Unova lines still missing |
 | [Unova's legends](update/unovas-legends.md) | The Tao trio with Kyurem's fusions, the forces of nature, and Victini, Meloetta and Genesect |
 | [Twist Mountain and the Swords of Justice](update/twist-mountain-and-the-swords.md) | Seven more families along the last roads and Twist Mountain, and Cobalion, Terrakion, Virizion and Keldeo |
 | [Opelucid and the towers](update/opelucid-and-the-towers.md) | Nine more families around Celestial Tower, Dragonspiral Tower and Opelucid's last roads, and higher wild levels |

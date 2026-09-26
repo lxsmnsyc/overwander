@@ -1,0 +1,137 @@
+{
+  "compact": true,
+  "width": 158,
+  "height": 111,
+  "images": [
+    {
+      "name": "1",
+      "x": 0,
+      "y": 60,
+      "width": 18,
+      "height": 51,
+      "sourceWidth": 18,
+      "sourceHeight": 51,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "10",
+      "x": 131,
+      "y": 0,
+      "width": 27,
+      "height": 47,
+      "sourceWidth": 27,
+      "sourceHeight": 47,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "2",
+      "x": 71,
+      "y": 60,
+      "width": 18,
+      "height": 50,
+      "sourceWidth": 18,
+      "sourceHeight": 50,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "3",
+      "x": 89,
+      "y": 60,
+      "width": 26,
+      "height": 48,
+      "sourceWidth": 26,
+      "sourceHeight": 48,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "4",
+      "x": 18,
+      "y": 60,
+      "width": 31,
+      "height": 51,
+      "sourceWidth": 31,
+      "sourceHeight": 51,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "5",
+      "x": 49,
+      "y": 60,
+      "width": 22,
+      "height": 51,
+      "sourceWidth": 22,
+      "sourceHeight": 51,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "6",
+      "x": 74,
+      "y": 0,
+      "width": 25,
+      "height": 54,
+      "sourceWidth": 25,
+      "sourceHeight": 54,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "7",
+      "x": 43,
+      "y": 0,
+      "width": 31,
+      "height": 55,
+      "sourceWidth": 31,
+      "sourceHeight": 55,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "8",
+      "x": 0,
+      "y": 0,
+      "width": 43,
+      "height": 60,
+      "sourceWidth": 43,
+      "sourceHeight": 60,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "9",
+      "x": 99,
+      "y": 0,
+      "width": 32,
+      "height": 54,
+      "sourceWidth": 32,
+      "sourceHeight": 54,
+      "trim": [
+        0,
+        0
+      ]
+    }
+  ]
+}

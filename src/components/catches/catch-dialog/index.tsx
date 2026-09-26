@@ -18,6 +18,7 @@ import { listEvolutionOptions } from '../../../auth/evolution';
 import { getSpeciesData } from '../../../data/species';
 
 import { type CatchDialogProps, CatchSheetBody } from './sheet';
+import { answered } from '../../app/resource-reads';
 
 export type { CatchDialogProps };
 
@@ -119,14 +120,38 @@ function CatchSheet(
     () => {
       const uid = owned();
       const catchId = props.catchId;
+      const carried = answered(props.bag);
 
-      return uid == null || catchId == null ? null : `${uid}/${catchId}/${view()?.species ?? ''}`;
+      // Asked once the record and the bag are both here, and handed
+      // both, so the options are not read a second time. What the bag
+      // carries is in the key: a stone spent or bought changes the answer
+      if (uid == null || catchId == null || view() == null || carried == null) {
+        return null;
+      }
+
+      const held: number[] = [];
+
+      for (const entry of carried) {
+        if (entry.amount > 0) {
+          held.push(entry.item);
+        }
+      }
+      return `${uid}/${catchId}/${view()?.species ?? ''}/${held.sort((a, b) => a - b).join(',')}`;
     },
     async () => {
       const uid = owned();
       const catchId = props.catchId;
+      const caught = view();
+      const inventory = answered(props.bag);
 
-      return uid == null || catchId == null ? [] : listEvolutionOptions(uid, catchId);
+      if (uid == null || catchId == null) {
+        return [];
+      }
+      return listEvolutionOptions(
+        uid,
+        catchId,
+        caught == null || inventory == null ? undefined : { caught, inventory },
+      );
     },
   );
 

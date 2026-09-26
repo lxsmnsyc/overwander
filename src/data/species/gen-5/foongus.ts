@@ -1,7 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
-import { AnyTimeOfDay } from '../../ids/biome';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -41,8 +41,9 @@ export default function registerFoongusSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [],
-    activeTimes: AnyTimeOfDay,
+    // Under the trees at dusk, where a dropped ball would lie
+    biomes: [Biome.TemperateForest, Biome.Woodland],
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Absorb],
@@ -126,8 +127,8 @@ export default function registerFoongusSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [],
-    activeTimes: AnyTimeOfDay,
+    biomes: [Biome.TemperateForest, Biome.Woodland],
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Absorb, Moves.Astonish, Moves.Bide, Moves.Growth],

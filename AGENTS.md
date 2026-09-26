@@ -31,8 +31,8 @@ one that covers what you are about to do:
   one key at once; the server reads many keys with one query instead, and never
   merges separate requests or batches inside a transaction.
 - `server-function-order` - a `'use server'` function is addressed by its place
-  in its file, so new ones go at the end and existing ones are never removed,
-  reordered or given different parameters.
+  in its file; the build guard refuses every call from another build, so it
+  must never be weakened and every server call must go through `fetch`.
 - `spawn-surfaces` - a spawn rolls from the land, water or ice pool of the cell
   under it, and a species' `habitat` decides which of those pools may list it.
 - `world-generation` - the live world's generation is frozen and pinned by a

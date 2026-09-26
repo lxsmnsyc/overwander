@@ -947,12 +947,7 @@ export const enum Items {
    */
   ColressMachine = 441,
 
-  /**
-   * The rocks the two Unova fossils are still inside. Both are held
-   * back with the lines themselves: reviving one is the only way to
-   * the species in it, so shipping the rock would be shipping the
-   * pokemon
-   */
+  /** Unova's two, the shell that swam and the wing that tried to fly */
   CoverFossil = 442,
   PlumeFossil = 443,
 }

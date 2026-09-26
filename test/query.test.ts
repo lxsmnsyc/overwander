@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import type { QueryVocabulary } from '../src/core/query';
-import { completeQuery, scanQuery, sharedPrefix, splitTerms, typedTerms } from '../src/core/query';
+import {
+  completeQuery,
+  scanQuery,
+  sharedPrefix,
+  splitTerms,
+  typedTerms,
+  withControl,
+} from '../src/core/query';
 
 /**
  * Where a term sits in the box, and what the box can offer to finish
@@ -183,5 +190,16 @@ describe('typedTerms', () => {
 
   it('leaves a plain word where it was typed', () => {
     expect(typedTerms('pikachu ')).toEqual({ terms: [], rest: 'pikachu ' });
+  });
+});
+
+describe('withControl', () => {
+  it('replaces a control and leaves the rest of the search alone', () => {
+    expect(withControl('type:fire sort:level', 'sort', 'iv')).toBe('type:fire sort:iv');
+    expect(withControl('sort:level type:fire order:asc', 'order', null)).toBe(
+      'sort:level type:fire',
+    );
+    expect(withControl('', 'sort', 'name')).toBe('sort:name');
+    expect(withControl('"mr mime" sort:name', 'sort', null)).toBe('"mr mime"');
   });
 });

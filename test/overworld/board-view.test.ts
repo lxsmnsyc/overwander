@@ -144,3 +144,35 @@ describe('the spawns a board draws', () => {
     expect(count(next, lure)).toBeGreaterThan(nextAlone);
   });
 });
+
+describe('people past the live circle', () => {
+  it('are dressed by the clock where no window has landed', () => {
+    const now = 5_000_000 * SNAPSHOT_INTERVAL;
+    const unread = buildBoardView(180, -120, new Map(), 480, 'player', null, new Set());
+    const dressed = buildBoardView(
+      180,
+      -120,
+      new Map(),
+      480,
+      'player',
+      null,
+      new Set(),
+      Depth.Surface,
+      now,
+    );
+    // The same coats every published window at this hour would put on them
+    const published = buildBoardView(
+      180,
+      -120,
+      publish(180, -120, Depth.Surface, now),
+      480,
+      'player',
+      null,
+      new Set(),
+    );
+
+    expect(unread.coats.size).toBe(0);
+    expect(dressed.coats.size).toBeGreaterThan(0);
+    expect(dressed.coats).toEqual(published.coats);
+  });
+});

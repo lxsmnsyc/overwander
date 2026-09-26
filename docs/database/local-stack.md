@@ -77,15 +77,20 @@ through a server function, so a new table needs no grants or policies.
 pnpm test        # the unit suites; nothing needs to be running
 ```
 
-`pnpm test:rules` and `pnpm test:e2e` still expect the Supabase stack until the
-last phase of the move off Supabase rewrites them.
+```bash
+pnpm test:db     # the server modules against this database
+pnpm test:e2e    # the browser suites, which start the database themselves
+```
+
+Run them one at a time: the database suite clears the game rows between cases,
+accounts included. Every suite reads `test/env/.env.test` rather than your `.env`.
 
 ## When something is wrong
 
 - **`pnpm db` cannot find Docker.** Start Colima, or point `DOCKER_HOST` at its
   socket, which `colima status` prints.
-- **The port is taken.** A Supabase stack from before the move still holds 54322.
-  Stop it with `supabase stop`.
+- **The port is taken.** Something else holds 54322, such as a Supabase stack
+  left from before the move. `docker ps` shows what.
 - **Every call says "Not signed in".** `BETTER_AUTH_SECRET` changed, or the
   database was reset under a signed-in tab. Sign in again.
 - **`pnpm dev` exits with "Migration failed".** The error names the statement.

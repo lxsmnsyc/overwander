@@ -3,7 +3,7 @@
 Accounts are run by the game's own server with [Better Auth](https://better-auth.com).
 This page covers its settings, the two OAuth apps, and signing in locally.
 
-**Assumes:** the schema is pushed. See [The Supabase project](supabase-project.md).
+**Assumes:** nothing yet. This is the first step.
 
 ## 1. The server's settings
 
@@ -97,6 +97,5 @@ To sign in with a provider anyway, make a separate OAuth app whose callback is
 
 ## See also
 
-- [The Supabase project](supabase-project.md), the step before this one
 - [The server](server.md), the step after it
 - [Operating the game](operating.md), for what a failed sign-in means

@@ -20,16 +20,13 @@ app having run.
 | `title`      | `smallint` | The title worn over their name, or null  |
 
 Anyone signed in may read it, since other players see nicknames and characters.
-The owner writes their own `nickname` and `buddy_id`, and nothing else:
-that limit is a **column grant** rather than a policy, because a policy can only
-choose rows.
+The owner sets their own `nickname` and `buddy_id` through the server, and
+nothing else: the functions that write those two write no other column.
 
 `role`, `banned` and `ban_reason` are the server's alone, see
-[Roles](security.md), and the insert policy refuses a row that arrives with a
-role, a balance or a ban already on it. So are `title` and `sprite`: what a
-player may wear is derived from their counters and awards, so neither column
-carries a client grant at
-all. See [Quests, achievements and awards](quests.md).
+[Roles](security.md). So are `title` and `sprite`: what a player may wear is
+derived from their counters and awards. See
+[Quests, achievements and awards](quests.md).
 
 The balance is not the player's to write. `grantGold` and `spendGold` live in
 [`src/server/profile.ts`](../../src/server/profile.ts) and read the row `for
@@ -47,8 +44,8 @@ with `viewOnly` set. That flag travels down to the buddy card and the battle
 history and removes everything that writes: the sign-out, the buddy swap, and the
 button that collects what a won raid still owes.
 
-None of it is a permission. The policies refuse every one of those writes for
-anybody but the owner, and the server refuses them again. The flag only stops a
+None of it is a permission. The server refuses every one of those writes for
+anybody but the owner. The flag only stops a
 reader being offered a button that could not work.
 
 A visitor is left with who the player is, who walks with them, and what they have

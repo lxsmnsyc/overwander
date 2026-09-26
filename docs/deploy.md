@@ -46,13 +46,11 @@ migration in it. [Operating the game](deploy/operating.md) covers running it.
 | [The server](deploy/server.md)                       | The tunnel, every environment variable, which key is which, the release deploy, first deploy, backups |
 | [Schema changes](deploy/schema-changes.md)           | Writing a migration, and the order against a deploy                                                   |
 | [Operating the game](deploy/operating.md)            | Admin, what a deployed build will not do, upkeep, and what each failure means                         |
-| [Self-hosting](deploy/self-hosting.md)               | Running the whole thing yourself, with none of the three accounts above                               |
 
-If you would rather not have any of those accounts, [Self-hosting](deploy/self-hosting.md)
-covers running the database, the auth server and the app on your own machines.
+To run it without Cloudflare, see [Without Cloudflare](deploy/server.md#without-cloudflare).
 
 ## See also
 
 - [Running the database locally](database/local-stack.md)
-- [Security](database/security.md), for what the policies and grants say
+- [Security](database/security.md), for who may read and write what
 - [The database](database.md), for every table and who may touch it

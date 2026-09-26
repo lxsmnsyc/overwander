@@ -1,26 +1,22 @@
 # The database
 
 Every table the game writes to today: the row it holds, the key that addresses
-it, and the access it needs. The game runs on **Supabase**, which is Postgres
-with authentication, row-level security and a realtime stream over it.
+it, and the access it needs. The game runs on Postgres 17 in Docker, beside the
+app server.
 
-Reads go through the Supabase **client** from `src/auth/*`, under the policies in
-[Security](database/security.md). Everything that creates or moves value is
-written by `src/server/*` over a **direct Postgres connection as the table
-owner**, which row-level security does not bind. The policies therefore describe
-one thing only: what a signed-in browser may do on its own.
+The browser never reaches it. Every read and write is a server function in
+`src/auth/*` calling into `src/server/*`, which talks to Postgres as the **table
+owner** and decides for itself who may see or change a row. The tiers it applies
+are in [Security](database/security.md).
 
 What the game does with all of it, how a world is derived, what a thrown ball is
 worth, how a fight resolves, is in the [Player's guide](mechanics.md), and how
 the battle engine runs is in [The battle engine](engine.md). These pages are the
 storage side of the same thing.
 
-The schema itself lives in [`supabase/migrations/`](../supabase/migrations),
-applied in filename order. [Running the database
-locally](database/local-stack.md) is the guide to standing one up: what to
-install, what `pnpm db` prints, what goes in `.env`, and how to reset and seed
-it. [Deploying the game](deploy.md) covers the hosted half: pushing the same
-migrations to a Supabase project, and what the server needs to reach it.
+The schema itself lives in [`db/migrations/`](../db/migrations), applied in
+filename order. [Running the database locally](database/local-stack.md) is the
+guide to standing one up, and [Deploying the game](deploy.md) covers the server.
 
 ## The tables
 
@@ -49,7 +45,7 @@ migrations to a Supabase project, and what the server needs to reach it.
 | [Quests and awards](database/quests.md)               | `quest_progress`, `quest_baselines`, `quest_claims`, the rotation windows, `awards`, and the worn title                              |
 | [Encounter kinds](database/encounters.md)             | `EncounterType`: what each way of meeting a pokemon is recorded as                                                                   |
 | [Time](database/time.md)                              | The server clock, and the player-local zone everything is read in                                                                    |
-| [Security](database/security.md)                      | Privileged writes, the policies, the grants, and the indexes the queries need                                                        |
+| [Security](database/security.md)                      | The server as the only door, who may read what, the guards, and the indexes                                                          |
 | [Running it locally](database/local-stack.md)         | Starting the stack, pointing the app at it, seeding, resetting, and what to check when it misbehaves                                 |
 
 ## How to read these

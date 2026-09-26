@@ -60,7 +60,7 @@ The **server's variables** are secret and are read at run time:
 | Variable                                | What to put there                                                        |
 | --------------------------------------- | ------------------------------------------------------------------------ |
 | `POSTGRES_PASSWORD`                     | The database's password. Long and random                                 |
-| `SUPABASE_DB_URL`                       | `postgresql://postgres:<POSTGRES_PASSWORD>@127.0.0.1:54322/overwander`   |
+| `DATABASE_URL`                          | `postgresql://postgres:<POSTGRES_PASSWORD>@127.0.0.1:54322/overwander`   |
 | `BETTER_AUTH_SECRET`                    | A long random string. See [Authentication](authentication.md)            |
 | `BETTER_AUTH_URL`                       | `https://your-domain`                                                    |
 | `GOOGLE_CLIENT_*`, `GITHUB_CLIENT_*`    | The OAuth apps' ids and secrets. See [Authentication](authentication.md) |
@@ -69,7 +69,7 @@ The **server's variables** are secret and are read at run time:
 
 Some of those need explaining:
 
-- **`SUPABASE_DB_URL` is for the host's tools**, such as `pnpm migrate`.
+- **`DATABASE_URL` is for the host's tools**, such as `pnpm migrate`.
   Inside compose the app is pointed at the `db` service instead.
 - **`VITE_WORLD_SEED` decides the whole world.** Chunk seeds, biomes, landmark
   placement, spawn rolls and lair contents all derive from it. Changing it after
@@ -162,6 +162,23 @@ Check the sweeps now and then. `pg_cron` runs them inside the database:
 ```sql
 select jobname, status, start_time from cron.job_run_details order by start_time desc limit 20;
 ```
+
+## Without Cloudflare
+
+The tunnel is one way in, not the only one. To use your own reverse proxy
+instead, leave `TUNNEL_TOKEN` empty, stop the `tunnel` service, and publish the
+app's port to the proxy in a `compose.override.yaml`:
+
+```yaml
+services:
+  app:
+    ports:
+      - 127.0.0.1:3000:3000
+```
+
+The proxy must pass WebSocket upgrades on `/_live`. Caddy and nginx both do with
+their usual reverse proxy settings. With no sprite host, leave
+`VITE_SPRITE_ORIGIN` empty and the server serves the sprites itself.
 
 ## See also
 

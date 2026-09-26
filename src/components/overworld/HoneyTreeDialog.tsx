@@ -13,6 +13,7 @@ import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-s
 
 import { Badge, Button, Dialog, DialogActions, Note, Status } from '../styled';
 import { failed, readable } from '../app/resource-reads';
+import playEffect, { Effect } from '../app/sound';
 
 /** The tree at twice the size it stands on the board */
 const TREE_SPRITE = 88;
@@ -72,6 +73,7 @@ function HoneyTreeBody(
           props.onLathered(cell, null);
           return;
         }
+        playEffect(Effect.HoneyLather);
         props.onSpent();
         props.onLathered(cell, result.encounter);
         close();

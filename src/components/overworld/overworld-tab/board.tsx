@@ -345,6 +345,20 @@ export default function OverworldBoard(props: {
       return;
     }
 
+    // The best band anything in it belongs to, which is what says
+    // whether this was a find worth hearing about. Here rather than at
+    // each landmark, so a cache, a bush and a phenomenon all ring alike
+    const rarest: ReturnType<typeof getItemBand>[] = [];
+
+    for (const stack of items) {
+      rarest.push(getItemBand(stack.item));
+    }
+    if (rarest.includes('special')) {
+      playEffect(Effect.SpecialItem);
+    } else if (rarest.includes('prized')) {
+      playEffect(Effect.PrizedItem);
+    }
+
     for (const stack of items) {
       const said = `${describeItem(stack.item)} ×${stack.amount}`;
       const art = (): JSX.Element => <ItemSprite item={stack.item} size={ICON_SIZE} label="" />;
@@ -1663,19 +1677,6 @@ export default function OverworldBoard(props: {
     if (landmark === Landmark.ItemCache) {
       const stash = await claimItemCache(spot.snapshot, spot.cell);
 
-      // The best band anything in it belongs to, which is what says
-      // whether this was a dig worth hearing about
-      const rarest: ReturnType<typeof getItemBand>[] = [];
-
-      for (const held of stash ?? []) {
-        rarest.push(getItemBand(held.item));
-      }
-
-      if (rarest.includes('special')) {
-        playEffect(Effect.SpecialItem);
-      } else if (rarest.includes('prized')) {
-        playEffect(Effect.PrizedItem);
-      }
       // Empty either way: the stash was already carried off, or this
       // press carried it off
       setDug((cells) => new Set(cells).add(keyAt(spot)));
@@ -2929,6 +2930,11 @@ export default function OverworldBoard(props: {
                 // same moment
                 onShiny={() => {
                   playEffect(Effect.ShinySparkle);
+                }}
+                onHerald={(rank) => {
+                  playEffect(
+                    rank === 'mythical' ? Effect.MythicalAppears : Effect.LegendaryAppears,
+                  );
                 }}
                 onPress={press}
                 onPlaced={(found) => {

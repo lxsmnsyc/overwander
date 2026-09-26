@@ -71,12 +71,13 @@ and lairs.
 
 The portal stands dead centre, on the plaza. That keeps the portal network
 evenly spread, and a player arriving by portal can see down every street at
-once. Around it a town holds **nine to fourteen** lots. One of them is always a
-**Pokémon Center**, so every town can heal a party. A **gym leader**, a **gym
-seat** and an **auction board** stand in every one of them too, so a badge run
-is a walk from one town to the next. What differs is the ladder above the
-leader: a quarter of towns have an Elite Four member, and a champion sits in
-about one town in seven. The remaining lots are trade.
+once. Around it a town holds **nine to fourteen** lots. Every town holds the whole
+ladder: a **Pokémon Center** so a party can be healed, a **gym seat** and an
+**auction board**, and a **gym leader**, an **Elite Four member** and a
+**champion**, so a badge run is a walk from one town to the next rather than a
+search for the town that has a fight in it. What differs is the second gym:
+about a third of towns stand a second leader, which is two badges in one walk.
+The remaining lots are trade.
 
 ## The name
 

@@ -91,13 +91,15 @@ export const TOWN_LANDMARKS: Landmark[] = [
 /**
  * What a town may hold, and how often it does.
  *
- * One of each at most, and not in every town: a place worth walking to
- * is one that has something the last one did not. A market and
- * somebody passing through are on every corner; a portal, a board or
- * a seat are worth the walk, and the ladder is what a badge run is
- * spent looking for. The centre is the one certainty, since walking
- * into a town has to mean a party comes out of it whole
+ * A town is the whole ladder: it patches a party up, it holds a seat
+ * and a board to trade at, and it stands somebody from every rung
+ * between a badge and a crown. Only the second gym is a chance, and
+ * it is what makes one town worth walking to over another, since a
+ * town with two gyms is two badges in one walk. Whatever lots are
+ * left over are stalls and people passing through
  */
+const SECOND_GYM_CHANCE = 0.35;
+
 const CHARTER: [kind: Landmark, chance: number][] = [
   // Certain, and chartered first so a town with barely any room still
   // has one: being patched up is the service the rest of the game
@@ -105,13 +107,15 @@ const CHARTER: [kind: Landmark, chance: number][] = [
   [Landmark.PokemonCenter, 1],
   [Landmark.GymSeat, 1],
   [Landmark.AuctionBoard, 1],
-  // A gym leader in every town, so a badge run is a walk between
-  // towns rather than a search for one with a leader in it. The two
-  // above them are widened to match: the ladder is worth climbing
-  // only where its top is reachable
+  // The ladder, whole, in every town: a badge run is a walk between
+  // towns rather than a search for the one town with a leader in it,
+  // and a run that cannot reach its own top is not a run
   [Landmark.GymLeader, 1],
-  [Landmark.EliteFour, 0.25],
-  [Landmark.Champion, 0.15],
+  [Landmark.EliteFour, 1],
+  [Landmark.Champion, 1],
+  // And the one thing a town may have that its neighbour does not.
+  // Chartered last, so it is the first lot a cramped site loses
+  [Landmark.GymLeader, SECOND_GYM_CHANCE],
 ];
 
 /** And what fills whatever lots the charter left over */

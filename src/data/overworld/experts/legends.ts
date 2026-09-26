@@ -6,33 +6,38 @@ import { Species } from '../../ids/species';
  *
  * A legend keeps no seat and answers to no badge case: they turn up
  * where a champion would have been, at full level, and anybody
- * standing there may fight them. There is one so far, which is the
- * one the mainline puts at the top of a mountain and says nothing
- * about
+ * standing there may fight them. Each is somebody the mainline puts
+ * above its own league: the one at the top of a mountain, the one
+ * who hands his region over and goes looking for stones, and the one
+ * who walks away from Unova's throne
  */
 const enum Legend {
   Red = 0,
   Steven = 1,
+  N = 2,
 }
 
 export { Legend };
 
-export const LEGENDS: Legend[] = [Legend.Red, Legend.Steven];
+export const LEGENDS: Legend[] = [Legend.Red, Legend.Steven, Legend.N];
 
 export const LEGEND_NAMES: Record<Legend, string> = {
   [Legend.Red]: 'Red',
   [Legend.Steven]: 'Steven',
+  [Legend.N]: 'N',
 };
 
 export const LEGEND_CHARSETS: Record<Legend, string[]> = {
   [Legend.Red]: ['characters/frlg/red'],
   [Legend.Steven]: ['characters/oras/steven'],
+  [Legend.N]: ['characters/b2w2/n'],
 };
 
 /** The mark beating one is worth, which is the only thing they pay */
 export const LEGEND_HONORS: Record<Legend, Awards> = {
   [Legend.Red]: Awards.RedDefeated,
   [Legend.Steven]: Awards.StevenDefeated,
+  [Legend.N]: Awards.NDefeated,
 };
 
 /**
@@ -47,6 +52,7 @@ export const LEGEND_HONORS: Record<Legend, Awards> = {
 export const LEGEND_PRIZE_CHARSETS: Record<Legend, string[]> = {
   [Legend.Red]: ['characters/hgss/red', 'characters/lgpe/red'],
   [Legend.Steven]: ['characters/oras/steven'],
+  [Legend.N]: ['characters/b2w2/n'],
 };
 
 /** A legend's own six, the way a champion's is their own */
@@ -68,5 +74,20 @@ export const LEGEND_PARTIES: Record<Legend, Species[]> = {
     Species.Cradily,
     Species.Armaldo,
     Species.Metagross,
+  ],
+  /*
+   * His castle six, with both dragons rather than the one his version
+   * hands him: he is the only person either of them answers to. The
+   * Carracosta and Archeops they crowd out are pokemon nobody can
+   * meet while Unova's fossils wait on a Tirtouga being drawn, and
+   * the Darmanitan is his own, off the fight in the desert
+   */
+  [Legend.N]: [
+    Species.Vanilluxe,
+    Species.Klinklang,
+    Species.Darmanitan,
+    Species.Zoroark,
+    Species.Reshiram,
+    Species.Zekrom,
   ],
 };

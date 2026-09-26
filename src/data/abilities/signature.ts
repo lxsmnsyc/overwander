@@ -2067,6 +2067,18 @@ export default function registerSignatureAbilities(): void {
       "Its special moves deal at least 1/8 of the target's HP, however they are resisted.",
   });
 
+  // Kalos's two fossils, which both attack the clock
+  registerSignature(Families.Tyrunt, Abilities.JawSnap, {
+    name: 'Jaw Snap',
+    description:
+      'A move it lands cancels whatever the target was casting or channelling, once every 8 seconds per target.',
+  });
+
+  registerSignature(Families.Amaura, Abilities.Frostbound, {
+    name: 'Frostbound',
+    description: 'A target it damages casts and channels 30% slower for the next 6 seconds.',
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:

@@ -13,6 +13,8 @@ import registerKlefkiSpecies from './klefki';
 import registerBinacleSpecies from './binacle';
 import registerSkrelpSpecies from './skrelp';
 import registerClauncherSpecies from './clauncher';
+import registerTyruntSpecies from './tyrunt';
+import registerAmauraSpecies from './amaura';
 
 /** Kalos, as far as it is written */
 export default function registerGen6Species(): void {
@@ -30,5 +32,7 @@ export default function registerGen6Species(): void {
   registerBinacleSpecies();
   registerSkrelpSpecies();
   registerClauncherSpecies();
+  registerTyruntSpecies();
+  registerAmauraSpecies();
   registerKlefkiSpecies();
 }

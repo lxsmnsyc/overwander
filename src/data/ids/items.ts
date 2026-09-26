@@ -950,6 +950,9 @@ export const enum Items {
   /** Unova's two, the shell that swam and the wing that tried to fly */
   CoverFossil = 442,
   PlumeFossil = 443,
+  /** The two Kalos fossils, which are shipped with their lines */
+  JawFossil = 444,
+  SailFossil = 445,
 }
 
 /**

@@ -123,6 +123,30 @@ const enum Awards {
   GoldCastlePrint = 98,
   SilverHallPrint = 99,
   GoldHallPrint = 100,
+  TrioBadge = 101,
+  BasicBadge = 102,
+  InsectBadge = 103,
+  BoltBadge = 104,
+  QuakeBadge = 105,
+  JetBadge = 106,
+  FreezeBadge = 107,
+  LegendBadge = 108,
+  ToxicBadge = 109,
+  WaveBadge = 110,
+  ShauntalDefeated = 111,
+  MarshalDefeated = 112,
+  GrimsleyDefeated = 113,
+  CaitlinDefeated = 114,
+  /** Unova's dex filled to 152 caught */
+  UnovaDexMedal = 115,
+  UnovaChampion = 116,
+  /** The one above Unova's league, met where a champion would be */
+  NDefeated = 117,
+  /** Any one of Team Plasma's rank and file put down */
+  PlasmaGruntDefeated = 118,
+  ColressDefeated = 119,
+  ZinzolinDefeated = 120,
+  GhetsisDefeated = 121,
 }
 
 export default Awards;
@@ -229,6 +253,28 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.GoldCastlePrint]: 'Gold Castle Print',
   [Awards.SilverHallPrint]: 'Silver Hall Print',
   [Awards.GoldHallPrint]: 'Gold Hall Print',
+  [Awards.TrioBadge]: 'Trio Badge',
+  [Awards.BasicBadge]: 'Basic Badge',
+  [Awards.InsectBadge]: 'Insect Badge',
+  [Awards.BoltBadge]: 'Bolt Badge',
+  [Awards.QuakeBadge]: 'Quake Badge',
+  [Awards.JetBadge]: 'Jet Badge',
+  [Awards.FreezeBadge]: 'Freeze Badge',
+  [Awards.LegendBadge]: 'Legend Badge',
+  [Awards.ToxicBadge]: 'Toxic Badge',
+  [Awards.WaveBadge]: 'Wave Badge',
+  [Awards.ShauntalDefeated]: 'Shauntal Defeated',
+  [Awards.MarshalDefeated]: 'Marshal Defeated',
+  [Awards.GrimsleyDefeated]: 'Grimsley Defeated',
+  // The same person who keeps Sinnoh's Battle Castle, a league older
+  [Awards.CaitlinDefeated]: 'Caitlin Defeated',
+  [Awards.UnovaDexMedal]: 'Unova Dex Medal',
+  [Awards.UnovaChampion]: 'Unova Champion',
+  [Awards.NDefeated]: 'N Defeated',
+  [Awards.PlasmaGruntDefeated]: 'Team Plasma Repelled',
+  [Awards.ColressDefeated]: 'Colress Defeated',
+  [Awards.ZinzolinDefeated]: 'Zinzolin Defeated',
+  [Awards.GhetsisDefeated]: 'Ghetsis Defeated',
 };
 
 /**
@@ -316,6 +362,25 @@ export const SINNOH_BADGES: Awards[] = [
 ];
 
 /**
+ * And Unova's 10, in gym order, the sequels' two gyms last. The
+ * region runs more gyms than any other because two of its towns
+ * changed hands between one league and the next, and Striaton is
+ * kept by three people who each fight a different type
+ */
+export const UNOVA_BADGES: Awards[] = [
+  Awards.TrioBadge,
+  Awards.BasicBadge,
+  Awards.InsectBadge,
+  Awards.BoltBadge,
+  Awards.QuakeBadge,
+  Awards.JetBadge,
+  Awards.FreezeBadge,
+  Awards.LegendBadge,
+  Awards.ToxicBadge,
+  Awards.WaveBadge,
+];
+
+/**
  * And Hoenn's 4, which its champion asks to see
  */
 export const HOENN_HONORS: Awards[] = [
@@ -333,6 +398,16 @@ export const SINNOH_HONORS: Awards[] = [
   Awards.BerthaDefeated,
   Awards.FlintDefeated,
   Awards.LucianDefeated,
+];
+
+/**
+ * And Unova's 4, who keep their seats in both of its leagues
+ */
+export const UNOVA_HONORS: Awards[] = [
+  Awards.ShauntalDefeated,
+  Awards.MarshalDefeated,
+  Awards.GrimsleyDefeated,
+  Awards.CaitlinDefeated,
 ];
 
 /**

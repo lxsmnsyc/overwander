@@ -1,17 +1,25 @@
-import Awards, { HOENN_HONORS, JOHTO_HONORS, KANTO_HONORS, SINNOH_HONORS } from '../../ids/awards';
+import Awards, {
+  HOENN_HONORS,
+  JOHTO_HONORS,
+  KANTO_HONORS,
+  SINNOH_HONORS,
+  UNOVA_HONORS,
+} from '../../ids/awards';
 import { Species } from '../../ids/species';
 
 /**
  * The champions, one to a league. Giovanni runs Kanto's eighth gym
  * here, so the seat at the top of that league is Blue's; Johto's is
  * Lance, who also keeps a seat in Kanto's Elite Four and is drawn in
- * his Heart Gold coat when he is standing at the top
+ * his Heart Gold coat when he is standing at the top. Unova's is
+ * Iris, which is why Opelucid's gym is Drayden's
  */
 const enum Champion {
   Blue = 0,
   Lance = 1,
   Wallace = 2,
   Cynthia = 3,
+  Iris = 4,
 }
 
 export { Champion };
@@ -21,6 +29,7 @@ export const CHAMPIONS: Champion[] = [
   Champion.Lance,
   Champion.Wallace,
   Champion.Cynthia,
+  Champion.Iris,
 ];
 
 export const CHAMPION_NAMES: Record<Champion, string> = {
@@ -28,6 +37,7 @@ export const CHAMPION_NAMES: Record<Champion, string> = {
   [Champion.Lance]: 'Lance',
   [Champion.Wallace]: 'Wallace',
   [Champion.Cynthia]: 'Cynthia',
+  [Champion.Iris]: 'Iris',
 };
 
 export const CHAMPION_CHARSETS: Record<Champion, string[]> = {
@@ -37,6 +47,9 @@ export const CHAMPION_CHARSETS: Record<Champion, string[]> = {
   // at the top, in both coats he is drawn in
   [Champion.Wallace]: ['characters/rse/wallace', 'characters/oras/wallace'],
   [Champion.Cynthia]: ['characters/dppt/cynthia'],
+  // Opelucid's gym is Drayden's here, so both of her looks are the
+  // champion's, the way both of Wallace's are
+  [Champion.Iris]: ['characters/b2w2/iris-1', 'characters/b2w2/iris-2'],
 };
 
 /** The title a champion's seat is worth */
@@ -45,6 +58,7 @@ export const CHAMPION_TITLES: Record<Champion, Awards> = {
   [Champion.Lance]: Awards.JohtoChampion,
   [Champion.Wallace]: Awards.HoennChampion,
   [Champion.Cynthia]: Awards.SinnohChampion,
+  [Champion.Iris]: Awards.UnovaChampion,
 };
 
 /**
@@ -63,6 +77,7 @@ export const CHAMPION_HONORS: Record<Champion, Awards[]> = {
   [Champion.Lance]: JOHTO_HONORS,
   [Champion.Wallace]: HOENN_HONORS,
   [Champion.Cynthia]: SINNOH_HONORS,
+  [Champion.Iris]: UNOVA_HONORS,
 };
 
 /**
@@ -110,5 +125,18 @@ export const CHAMPION_PARTIES: Record<Champion, Species[]> = {
     Species.Lucario,
     Species.Milotic,
     Species.Garchomp,
+  ],
+  // The six she defends Unova with in the sequels, Haxorus last. The
+  // Archeops among them is hers and nobody can meet one: Unova's two
+  // fossils wait on a Tirtouga being drawn. The Excadrill standing in
+  // its place is hers as well, off the Opelucid gym team she keeps
+  // before the crown
+  [Champion.Iris]: [
+    Species.Hydreigon,
+    Species.Druddigon,
+    Species.Aggron,
+    Species.Excadrill,
+    Species.Lapras,
+    Species.Haxorus,
   ],
 };

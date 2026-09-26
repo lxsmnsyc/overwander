@@ -105,6 +105,12 @@ export const ELITE_MEMBER_POOLS: Record<EliteMember, ExpertPool> = {
   [EliteMember.Bertha]: { types: [Types.Ground], also: [Species.Sudowoodo] },
   [EliteMember.Flint]: { types: [Types.Fire] },
   [EliteMember.Lucian]: { types: [Types.Psychic] },
+  // Unova's four are each their type all the way down, the way
+  // Hoenn's are, so none of them needs a widener
+  [EliteMember.Shauntal]: { types: [Types.Ghost] },
+  [EliteMember.Marshal]: { types: [Types.Fighting] },
+  [EliteMember.Grimsley]: { types: [Types.Dark] },
+  [EliteMember.Caitlin]: { types: [Types.Psychic] },
 };
 
 /**
@@ -135,6 +141,10 @@ export const ELITE_MEMBER_SIGNATURES: Record<EliteMember, Species> = {
   // starter a player chooses rather than a pokemon of his
   [EliteMember.Flint]: Species.Magmortar,
   [EliteMember.Lucian]: Species.Bronzong,
+  [EliteMember.Shauntal]: Species.Chandelure,
+  [EliteMember.Marshal]: Species.Conkeldurr,
+  [EliteMember.Grimsley]: Species.Bisharp,
+  [EliteMember.Caitlin]: Species.Reuniclus,
 };
 
 /**
@@ -195,6 +205,25 @@ export const GYM_LEADER_SIGNATURES: Record<GymLeader, Species> = {
   // Not the Raichu he opens with: Lt. Surge is already remembered for
   // that one, and the Luxray is what Sunyshore closes with anyway
   [GymLeader.Volkner]: Species.Luxray,
+  // Striaton's three each close with an elemental monkey, and those
+  // three lines are written but staged nowhere while Simisear and
+  // Simipour are undrawn. A leader may not field what nobody can
+  // meet, so each stands with another of their own fight until then
+  [GymLeader.Cilan]: Species.Lilligant,
+  [GymLeader.Chili]: Species.Emboar,
+  [GymLeader.Cress]: Species.Seismitoad,
+  [GymLeader.Lenora]: Species.Watchog,
+  [GymLeader.Burgh]: Species.Leavanny,
+  [GymLeader.Elesa]: Species.Emolga,
+  [GymLeader.Clay]: Species.Excadrill,
+  [GymLeader.Skyla]: Species.Swanna,
+  [GymLeader.Brycen]: Species.Cryogonal,
+  [GymLeader.Drayden]: Species.Haxorus,
+  [GymLeader.Cheren]: Species.Stoutland,
+  [GymLeader.Roxie]: Species.Garbodor,
+  // The Jellicent he closes with is unwritten, and the Wailord is
+  // his in the same team
+  [GymLeader.Marlon]: Species.Wailord,
 };
 
 /**

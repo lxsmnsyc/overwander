@@ -9,6 +9,7 @@ export default function registerSavannaSpawns(): void {
   registerSpawnPool(Biome.Savanna, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Torchic, weight: 2 },
@@ -26,6 +27,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Combusken, weight: 1 },
@@ -43,6 +45,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
         { species: Species.Kangaskhan, weight: 5 },
@@ -58,6 +61,7 @@ export default function registerSavannaSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Fennekin, weight: 2 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
@@ -78,6 +82,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Braixen, weight: 2 },
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
@@ -98,6 +103,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Delphox, weight: 2 },
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },

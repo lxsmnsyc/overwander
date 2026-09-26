@@ -729,9 +729,12 @@ const UNOWN_SPECIES = new Set<Species>(UNOWN_FORMS);
  * Staged above the band its line's shape would earn. A Larvesta is
  * met as rarely as a baby, which is half of what the games make of
  * the moth the desert once mistook for the sun. The other half is the
- * moth itself, which is a legendary here and sits in that set
+ * moth itself, which is a legendary here and sits in that set.
+ *
+ * The fancy Vivillon is the other: no country grows those wings, so a
+ * town is the only place one is ever met
  */
-const PRIZED_BY_HAND = new Set<Species>([Species.Larvesta]);
+const PRIZED_BY_HAND = new Set<Species>([Species.Larvesta, Species.VivillonFancy]);
 
 /**
  * The unowns as prized-band entries, for a pool to spread into its

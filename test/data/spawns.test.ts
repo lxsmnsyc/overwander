@@ -17,7 +17,13 @@ import { getBiomeLairs, getLairResidents } from '../../src/data/overworld/lair';
 import registerAbilities from '../../src/data/abilities';
 import { Types } from '../../src/data/constants/types';
 import Biome, { SpawnSurface, TimeOfDay } from '../../src/data/ids/biome';
-import { DEERLING_FORMS, ROTOM_FORMS, SAWSBUCK_FORMS, Species } from '../../src/data/ids/species';
+import {
+  DEERLING_FORMS,
+  ROTOM_FORMS,
+  SAWSBUCK_FORMS,
+  Species,
+  VIVILLON_FORMS,
+} from '../../src/data/ids/species';
 import registerItems from '../../src/data/items';
 import { registerMoves } from '../../src/data/moves';
 import {
@@ -265,6 +271,9 @@ describe('where a species lives', () => {
       Species.PorygonZ,
       Species.ShellosEast,
       Species.GastrodonEast,
+      // The wings a country hands a Vivillon, which the meeting puts
+      // on rather than the pool holding one of each
+      ...VIVILLON_FORMS.slice(1),
       // The three coats past spring are staged by the pool the spring
       // one sits in, and swapped for as the month hands them over, so
       // no pool names them either

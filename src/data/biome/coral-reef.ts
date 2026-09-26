@@ -8,7 +8,7 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
 export default function registerCoralReefSpawns(): void {
   registerSpawnPool(Biome.CoralReef, {
     [TimeOfDay.Morning]: {
-      base: [],
+      base: [{ species: Species.Scatterbug, weight: 24 }],
       uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Corphish, weight: 25 },
@@ -16,7 +16,7 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Shellos, weight: 25 },
         { species: Species.Slowpoke, weight: 20 },
       ],
-      rare: [],
+      rare: [{ species: Species.Spewpa, weight: 8 }],
       scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Crawdaunt, weight: 8 },
@@ -25,6 +25,7 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Slowbro, weight: 10 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Slowking, weight: 5 },
       ],
@@ -32,7 +33,7 @@ export default function registerCoralReefSpawns(): void {
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [],
+      base: [{ species: Species.Scatterbug, weight: 24 }],
       uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Corphish, weight: 25 },
@@ -40,7 +41,7 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Shellos, weight: 25 },
         { species: Species.Slowpoke, weight: 20 },
       ],
-      rare: [],
+      rare: [{ species: Species.Spewpa, weight: 8 }],
       scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Crawdaunt, weight: 8 },
@@ -49,6 +50,7 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Slowbro, weight: 10 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Slowking, weight: 5 },
       ],

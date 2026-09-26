@@ -9,12 +9,14 @@ export default function registerSteppeSpawns(): void {
   registerSpawnPool(Biome.Steppe, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Snivy, weight: 3 },
         { species: Species.Mareep, weight: 25 },
         { species: Species.Magnemite, weight: 20 },
         { species: Species.Whismur, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Bunnelby, weight: 26 },
         { species: Species.Blitzle, weight: 25 },
         { species: Species.Rufflet, weight: 16 },
         { species: Species.Spearow, weight: 20 },
@@ -31,12 +33,14 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Patrat, weight: 30 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Servine, weight: 2 },
         { species: Species.Loudred, weight: 10 },
         { species: Species.Magneton, weight: 10 },
         { species: Species.Flaaffy, weight: 5 },
       ],
       scarce: [
+        { species: Species.Diggersby, weight: 6 },
         { species: Species.Zebstrika, weight: 6 },
         { species: Species.Braviary, weight: 6 },
         { species: Species.Fearow, weight: 10 },
@@ -51,6 +55,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Bouffalant, weight: 6 },
         { species: Species.Serperior, weight: 2 },
         { species: Species.Castform, weight: 10 },
@@ -72,12 +77,14 @@ export default function registerSteppeSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Snivy, weight: 3 },
         { species: Species.Mareep, weight: 25 },
         { species: Species.Magnemite, weight: 20 },
         { species: Species.Whismur, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Bunnelby, weight: 26 },
         { species: Species.Blitzle, weight: 25 },
         { species: Species.Rufflet, weight: 16 },
         { species: Species.Spearow, weight: 20 },
@@ -95,12 +102,14 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Patrat, weight: 30 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Servine, weight: 2 },
         { species: Species.Loudred, weight: 10 },
         { species: Species.Magneton, weight: 10 },
         { species: Species.Flaaffy, weight: 5 },
       ],
       scarce: [
+        { species: Species.Diggersby, weight: 6 },
         { species: Species.Zebstrika, weight: 6 },
         { species: Species.Braviary, weight: 6 },
         { species: Species.Fearow, weight: 10 },
@@ -116,6 +125,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Bouffalant, weight: 6 },
         { species: Species.Serperior, weight: 2 },
         { species: Species.Castform, weight: 10 },

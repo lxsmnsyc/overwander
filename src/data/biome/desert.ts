@@ -9,6 +9,7 @@ export default function registerDesertSpawns(): void {
   registerSpawnPool(Biome.Desert, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Sandile, weight: 25 },
         { species: Species.Tepig, weight: 3 },
         { species: Species.Trapinch, weight: 20 },
@@ -27,6 +28,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Drilbur, weight: 16 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Krokorok, weight: 10 },
         { species: Species.Pignite, weight: 2 },
         { species: Species.Vibrava, weight: 10 },
@@ -44,6 +46,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Sigilyph, weight: 6 },
         { species: Species.Maractus, weight: 8 },
         { species: Species.Krookodile, weight: 5 },
@@ -66,6 +69,7 @@ export default function registerDesertSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Sandile, weight: 25 },
         { species: Species.Tepig, weight: 3 },
         { species: Species.Rhyhorn, weight: 20 },
@@ -86,6 +90,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Drilbur, weight: 16 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Krokorok, weight: 10 },
         { species: Species.Pignite, weight: 2 },
         { species: Species.Vibrava, weight: 10 },
@@ -105,6 +110,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Sigilyph, weight: 6 },
         { species: Species.Maractus, weight: 8 },
         { species: Species.Krookodile, weight: 5 },

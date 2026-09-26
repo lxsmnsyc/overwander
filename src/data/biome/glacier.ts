@@ -9,6 +9,7 @@ export default function registerGlacierSpawns(): void {
   registerSpawnPool(Biome.Glacier, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Vanillite, weight: 24 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
@@ -19,6 +20,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Cubchoo, weight: 20 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Vanillish, weight: 10 },
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Piloswine, weight: 5 },
@@ -31,6 +33,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Vanilluxe, weight: 5 },
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },
@@ -47,6 +50,7 @@ export default function registerGlacierSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Vanillite, weight: 24 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
@@ -57,6 +61,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Cubchoo, weight: 20 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Vanillish, weight: 10 },
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Piloswine, weight: 5 },
@@ -69,6 +74,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Vanilluxe, weight: 5 },
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },

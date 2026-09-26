@@ -18,6 +18,7 @@ import {
   getFeaturedFamily,
   getSeasonalCoat,
   getShoreForm,
+  getWingPattern,
   listTrueShadows,
 } from '../data/species';
 import { SpawnSurface, TimeOfDay, getSeason, getTimeOfDay } from '../data/ids/biome';
@@ -596,8 +597,12 @@ export default class ChunkSnapshot {
         // so the two seas fall either side of the meridian rather
         // than either side of a pool. Which coat a Deerling wears is
         // the month, so it turns for everybody at once
+        // Which shell a Shellos wears is the world's own longitude,
+        // which coat a Deerling wears is the month, and which wings a
+        // Vivillon wears is the country it came out in
         const shore = getShoreForm(rolled, this.chunk.x);
-        const species = getSeasonalCoat(shore, getSeason(this.timestamp));
+        const winged = getWingPattern(shore, this.chunk.biome);
+        const species = getSeasonalCoat(winged, getSeason(this.timestamp));
 
         // The draws land in tuple order: individual value, then the
         // trait value
@@ -1884,7 +1889,10 @@ export default class ChunkSnapshot {
 
     // A pokemon out of a phenomenon answers the meridian too
     return reward?.kind === 'pokemon'
-      ? { ...reward, species: getShoreForm(reward.species, this.chunk.x) }
+      ? {
+          ...reward,
+          species: getWingPattern(getShoreForm(reward.species, this.chunk.x), this.chunk.biome),
+        }
       : reward;
   }
 }

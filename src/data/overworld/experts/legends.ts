@@ -7,30 +7,36 @@ import { Species } from '../../ids/species';
  * A legend keeps no seat and answers to no badge case: they turn up
  * where a champion would have been, at full level, and anybody
  * standing there may fight them. Each is somebody the mainline puts
- * above its own league: the one at the top of a mountain, the one who
- * hands his region over to look for stones, and the king who ended
- * Kalos's war
+ * above its own league: the one at the top of a mountain, the one
+ * who hands his region over and goes looking for stones, the one
+ * who walks away from Unova's throne, the champion who gave that seat
+ * up to wander it, and the king who ended Kalos's war
  */
 const enum Legend {
   Red = 0,
   Steven = 1,
-  // 2 is N, Unova's, on a branch of his own
-  AZ = 3,
+  N = 2,
+  Alder = 3,
+  AZ = 4,
 }
 
 export { Legend };
 
-export const LEGENDS: Legend[] = [Legend.Red, Legend.Steven, Legend.AZ];
+export const LEGENDS: Legend[] = [Legend.Red, Legend.Steven, Legend.N, Legend.Alder, Legend.AZ];
 
 export const LEGEND_NAMES: Record<Legend, string> = {
   [Legend.Red]: 'Red',
   [Legend.Steven]: 'Steven',
+  [Legend.N]: 'N',
+  [Legend.Alder]: 'Alder',
   [Legend.AZ]: 'AZ',
 };
 
 export const LEGEND_CHARSETS: Record<Legend, string[]> = {
   [Legend.Red]: ['characters/frlg/red'],
   [Legend.Steven]: ['characters/oras/steven'],
+  [Legend.N]: ['characters/b2w2/n'],
+  [Legend.Alder]: ['characters/b2w2/alder'],
   [Legend.AZ]: ['characters/xy/az'],
 };
 
@@ -38,6 +44,8 @@ export const LEGEND_CHARSETS: Record<Legend, string[]> = {
 export const LEGEND_HONORS: Record<Legend, Awards> = {
   [Legend.Red]: Awards.RedDefeated,
   [Legend.Steven]: Awards.StevenDefeated,
+  [Legend.N]: Awards.NDefeated,
+  [Legend.Alder]: Awards.AlderDefeated,
   [Legend.AZ]: Awards.AZDefeated,
 };
 
@@ -53,6 +61,8 @@ export const LEGEND_HONORS: Record<Legend, Awards> = {
 export const LEGEND_PRIZE_CHARSETS: Record<Legend, string[]> = {
   [Legend.Red]: ['characters/hgss/red', 'characters/lgpe/red'],
   [Legend.Steven]: ['characters/oras/steven'],
+  [Legend.N]: ['characters/b2w2/n'],
+  [Legend.Alder]: ['characters/b2w2/alder'],
   [Legend.AZ]: ['characters/xy/az'],
 };
 
@@ -75,6 +85,28 @@ export const LEGEND_PARTIES: Record<Legend, Species[]> = {
     Species.Cradily,
     Species.Armaldo,
     Species.Metagross,
+  ],
+  /*
+   * His castle six, with both dragons rather than the one his version
+   * hands him: he is the only person either of them answers to. The
+   * Vanilluxe is the one left out for them, which Alder carries anyway
+   */
+  [Legend.N]: [
+    Species.Zoroark,
+    Species.Carracosta,
+    Species.Archeops,
+    Species.Klinklang,
+    Species.Reshiram,
+    Species.Zekrom,
+  ],
+  // The six he held the league with in Black and White, Volcarona last
+  [Legend.Alder]: [
+    Species.Accelgor,
+    Species.Bouffalant,
+    Species.Druddigon,
+    Species.Vanilluxe,
+    Species.Escavalier,
+    Species.Volcarona,
   ],
   // His three from the post-game fight, then the Floette he spent three
   // thousand years looking for, and both halves of the power his

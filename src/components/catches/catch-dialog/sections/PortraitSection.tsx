@@ -6,6 +6,7 @@ import { catchAura, isShiny } from '../../../../auth/caught-record';
 import { isEgg } from '../../../../auth/egg';
 
 import { getMaxHealth, isFainted } from '../../../../auth/health';
+import StatusSquares from '../../StatusSquares';
 
 import getSigil from '../../../../data/constants/sigil';
 import { MAX_IV_STARS, getIVStars } from '../../../../data/constants/stats';
@@ -89,6 +90,8 @@ export default function PortraitSection(props: PortraitSectionProps): JSX.Elemen
             {Math.max(0, Math.round(props.caught.health))}/{getMaxHealth(props.caught)}
             {isFainted(props.caught) ? ' · fainted' : ''}
           </Meta>
+          {/* What it is still carrying from its last fight */}
+          <StatusSquares statuses={props.caught.statuses} />
         </div>
       </Show>
     </>

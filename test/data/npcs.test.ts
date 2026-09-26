@@ -297,8 +297,8 @@ describe('the syndicates', () => {
       seen.set(syndicate, (seen.get(syndicate) ?? 0) + 1);
     }
 
-    // All five are somewhere, and the water, the fire, the cold and the
-    // meadows are the four that were claimed
+    // All six are somewhere, and the water, the fire, the cold, the
+    // woods and the meadows are the five that were claimed
     for (const syndicate of SYNDICATES) {
       expect(seen.get(syndicate) ?? 0, SYNDICATE_NAMES[syndicate]).toBeGreaterThan(0);
     }
@@ -306,10 +306,11 @@ describe('the syndicates', () => {
     expect(getSyndicate(Biome.Volcano)).toBe(Syndicate.Magma);
     expect(getSyndicate(Biome.Glacier)).toBe(Syndicate.Galactic);
     expect(getSyndicate(Biome.Beyond)).toBe(Syndicate.Galactic);
+    expect(getSyndicate(Biome.TemperateForest)).toBe(Syndicate.Plasma);
+    expect(getSyndicate(Biome.Woodland)).toBe(Syndicate.Plasma);
     expect(getSyndicate(Biome.Grassland)).toBe(Syndicate.Flare);
     expect(getSyndicate(Biome.Shrubland)).toBe(Syndicate.Flare);
-    // The open country and the woods are what Rocket is left with
+    // The open country is what Rocket is left with
     expect(getSyndicate(Biome.Savanna)).toBe(Syndicate.Rocket);
-    expect(getSyndicate(Biome.TemperateForest)).toBe(Syndicate.Rocket);
   });
 });

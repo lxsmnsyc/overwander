@@ -2,6 +2,7 @@ import Biome from '../ids/biome';
 import { ItemTypes, Items } from '../ids/items';
 import { listItemsByType } from '../items';
 import { GEMS } from '../items/gems';
+import { MEGA_STONES } from '../items/mega-stones';
 import { PLATES } from '../items/plates';
 import { isValuable } from '../items/valuables';
 import { WING_STATS } from '../items/wings';
@@ -242,7 +243,10 @@ function bandOf(item: Items): keyof ItemRarityGroups {
   if (band === 'special') {
     return 'prized';
   }
-  return band == null || band === 'base' ? 'uncommon' : band;
+  // Scarce is the ground's step, not a phenomenon's: a shadow drops
+  // only wings, and a band of nothing but wings above an empty floor
+  // would leave most shadows empty-handed
+  return band == null || band === 'base' || band === 'scarce' ? 'uncommon' : band;
 }
 
 /**
@@ -273,6 +277,7 @@ export function getPhenomenonGroups(phenomenon: Phenomenon): ItemRarityGroups {
     base: [],
     special: [],
     uncommon: weigh(sorted.get('uncommon') ?? []),
+    scarce: [],
     rare: weigh(sorted.get('rare') ?? []),
     prized: weigh(sorted.get('prized') ?? []),
   };
@@ -290,6 +295,7 @@ function buildPool(phenomenon: Phenomenon): Items[] {
       ...GEMS.keys(),
       ...spendableStones(),
       ...PLATES.keys(),
+      ...MEGA_STONES.keys(),
       ...listItemsByType(ItemTypes.Valuable),
     ];
   }

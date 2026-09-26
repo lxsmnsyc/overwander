@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import registerBiomeSpawns, { isGrownSpecies } from '../../src/data/biome';
+import registerBiomeSpawns from '../../src/data/biome';
 import registerAbilities, { getSignatureAbility } from '../../src/data/abilities';
 import Abilities from '../../src/data/ids/abilities';
 import {
@@ -11,14 +11,16 @@ import {
 import Biome, { isOpenSea } from '../../src/data/ids/biome';
 import { Items, getMachineMove } from '../../src/data/ids/items';
 import { MoveCategories, Moves } from '../../src/data/ids/moves';
-import { Species } from '../../src/data/ids/species';
+import { Species, getBaseFormSpecies } from '../../src/data/ids/species';
 import registerItems, { getItemData } from '../../src/data/items';
 import { getMoveData, registerMoves } from '../../src/data/moves';
 import AleaRNG from '../../src/core/alea';
 import { Stats } from '../../src/data/constants/stats';
 import { getExpertHeldItems } from '../../src/data/items/expert-loadout';
 import { TYPE_BOOSTERS } from '../../src/data/items/type-boosters';
+import canMeetSpecies from '../../src/data/overworld/reach';
 import {
+  getGrowthRoads,
   getReachableMoves,
   getSpeciesAbilityPools,
   getSpeciesData,
@@ -37,6 +39,8 @@ import Awards, {
   KANTO_HONORS,
   SINNOH_BADGES,
   SINNOH_HONORS,
+  UNOVA_BADGES,
+  UNOVA_HONORS,
 } from '../../src/data/ids/awards';
 import {
   ARCADE_PANELS,
@@ -148,16 +152,21 @@ describe('type experts', () => {
       ...JOHTO_BADGES,
       ...HOENN_BADGES,
       ...SINNOH_BADGES,
+      ...UNOVA_BADGES,
       ...KALOS_BADGES,
     ];
 
-    // Every leader carries a badge, and between the five regions the
-    // leaders account for every badge there is. There is one leader
-    // more than there are badges, because Mossdeep is kept by two
-    // people who pay the same one
+    // Every leader carries a badge, and between the six regions the
+    // leaders account for every badge there is. There are more
+    // leaders than badges, because a gym kept by several people pays
+    // the one badge between them: Mossdeep, Striaton, and Nacrene's
+    // fight passing to Aspertia a league later
     expect(new Set(badges).size).toBe(cases.length);
     expect(badges.every((badge) => cases.includes(badge))).toBe(true);
     expect(GYM_LEADER_BADGES[GymLeader.Tate]).toBe(GYM_LEADER_BADGES[GymLeader.Liza]);
+    expect(GYM_LEADER_BADGES[GymLeader.Cilan]).toBe(GYM_LEADER_BADGES[GymLeader.Chili]);
+    expect(GYM_LEADER_BADGES[GymLeader.Cress]).toBe(GYM_LEADER_BADGES[GymLeader.Chili]);
+    expect(GYM_LEADER_BADGES[GymLeader.Cheren]).toBe(GYM_LEADER_BADGES[GymLeader.Lenora]);
 
     for (const leader of GYM_LEADERS) {
       expect(GYM_LEADER_NAMES[leader].length).toBeGreaterThan(0);
@@ -170,7 +179,14 @@ describe('type experts', () => {
     // one Blue used to take all comers at, and no region runs the
     // same fight twice. Across regions they repeat: Roxanne's gym is
     // Brock's fight in another country
-    for (const region of [KANTO_BADGES, JOHTO_BADGES, HOENN_BADGES, SINNOH_BADGES, KALOS_BADGES]) {
+    for (const region of [
+      KANTO_BADGES,
+      JOHTO_BADGES,
+      HOENN_BADGES,
+      SINNOH_BADGES,
+      UNOVA_BADGES,
+      KALOS_BADGES,
+    ]) {
       const held = new Map<Awards, Set<Types>>();
 
       for (const leader of GYM_LEADERS.filter((one) => region.includes(GYM_LEADER_BADGES[one]))) {
@@ -178,11 +194,20 @@ describe('type experts', () => {
 
         held.set(badge, (held.get(badge) ?? new Set<Types>()).add(GYM_LEADER_TYPES[leader]));
       }
-      // One badge is one type, whoever of its keepers a chunk seats
+      // One badge is one fight, whoever of its keepers a chunk seats.
+      // Striaton is the exception the region is named for: three
+      // keepers, three types, one badge between them
       for (const [badge, types] of held) {
-        expect(types.size, AWARD_NAMES[badge]).toBe(1);
+        expect(types.size, AWARD_NAMES[badge]).toBe(badge === Awards.TrioBadge ? 3 : 1);
       }
-      expect(new Set([...held.values()].flatMap((types) => [...types])).size).toBe(region.length);
+      // And no region runs the same fight twice, so every type under
+      // that region's badges is its own. Unova runs water twice: the
+      // sequels open Humilau's gym without closing Striaton's, and
+      // each pays its own badge
+      const fought = [...held.values()].flatMap((types) => [...types]);
+      const twice = fought.filter((type) => fought.indexOf(type) !== fought.lastIndexOf(type));
+
+      expect(new Set(twice)).toEqual(region === UNOVA_BADGES ? new Set([Types.Water]) : new Set());
     }
     expect(GYM_LEADER_TYPES[GymLeader.Giovanni]).toBe(Types.Ground);
     expect(GYM_LEADER_TYPES[GymLeader.Brock]).toBe(Types.Rock);
@@ -195,12 +220,12 @@ describe('type experts', () => {
       ...JOHTO_HONORS,
       ...HOENN_HONORS,
       ...SINNOH_HONORS,
-      ...KALOS_HONORS,
+      ...UNOVA_HONORS,
       ...KALOS_HONORS,
     ]);
 
-    // Twenty seats between five leagues, four apiece: Bruno keeps one
-    // in each of the first two, and no mark is shared between them
+    // Four seats a league: Bruno keeps one in each of the first two,
+    // and no mark is shared between them
     expect(new Set(honors).size).toBe(marks.size);
     expect(honors.every((honor) => marks.has(honor))).toBe(true);
     expect(marks.size).toBe(
@@ -208,6 +233,7 @@ describe('type experts', () => {
         JOHTO_HONORS.length +
         HOENN_HONORS.length +
         SINNOH_HONORS.length +
+        UNOVA_HONORS.length +
         KALOS_HONORS.length,
     );
 
@@ -228,11 +254,13 @@ describe('type experts', () => {
       ...JOHTO_BADGES,
       ...HOENN_BADGES,
       ...SINNOH_BADGES,
+      ...UNOVA_BADGES,
       ...KALOS_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
       ...HOENN_HONORS,
       ...SINNOH_HONORS,
+      ...UNOVA_HONORS,
       ...KALOS_HONORS,
       Awards.KantoChampion,
     ]) {
@@ -273,9 +301,11 @@ describe('type experts', () => {
     const open = getWorldExpertPool({ types: [] });
 
     // What an expert fields is fully evolved, or has nowhere to
-    // evolve to until a later gen gives it one
+    // evolve to until a later gen gives it one. A Rotom counts:
+    // its roads lead to its own appliances, which is an address
+    // rather than a stage
     for (const species of open) {
-      expect(isGrownSpecies(species), getSpeciesData(species).name).toBe(true);
+      expect(getGrowthRoads(species).length, getSpeciesData(species).name).toBe(0);
     }
     const psychic = getWorldExpertPool({ types: [Types.Psychic] });
 
@@ -305,6 +335,33 @@ describe('type experts', () => {
     // Jasmine's steel is Johto's, and she is seated in countries a
     // Kanto-only roster could only answer with Magneton
     expect(getGymLeaderRoster(GymLeader.Jasmine)).toContain(Species.Steelix);
+  });
+
+  it('leaves out what the world has nowhere to put yet', () => {
+    // A line is written before it is staged: the art is unfinished,
+    // or the counterpart it waits on does not exist. Nobody can meet
+    // one, so nobody fields one either
+    for (const species of getWorldExpertPool({ types: [] })) {
+      expect(canMeetSpecies(species), getSpeciesData(species).name).toBe(true);
+    }
+    for (const leader of GYM_LEADERS) {
+      for (const species of getGymLeaderRoster(leader)) {
+        expect(canMeetSpecies(species), getSpeciesData(species).name).toBe(true);
+      }
+    }
+    for (const member of ELITE_MEMBERS) {
+      for (const species of getEliteMemberRoster(member)) {
+        expect(canMeetSpecies(species), getSpeciesData(species).name).toBe(true);
+      }
+    }
+
+    // What the rule reads: a fossil is brought back rather than met, a
+    // honey tree is where a Heracross is, and a Phione hatches out of
+    // a Manaphy and nowhere else
+    expect(canMeetSpecies(Species.Kabutops)).toBe(true);
+    expect(canMeetSpecies(Species.Heracross)).toBe(true);
+    expect(canMeetSpecies(Species.Phione)).toBe(true);
+    expect(canMeetSpecies(Species.Carracosta)).toBe(true);
   });
 
   it('gives every leader a signature of their own type', () => {
@@ -355,6 +412,7 @@ describe('type experts', () => {
       [JOHTO_HONORS, JOHTO_BADGES],
       [HOENN_HONORS, HOENN_BADGES],
       [SINNOH_HONORS, SINNOH_BADGES],
+      [UNOVA_HONORS, UNOVA_BADGES],
       [KALOS_HONORS, KALOS_BADGES],
     ] as const;
 
@@ -420,6 +478,29 @@ describe('type experts', () => {
     // And Cynthia stands above them, asking for all four
     expect(CHAMPION_HONORS[Champion.Cynthia]).toEqual(SINNOH_HONORS);
     expect(CHAMPION_TITLES[Champion.Cynthia]).toBe(Awards.SinnohChampion);
+  });
+
+  it('crowns Unova with Iris, who asks for its own four', () => {
+    expect(CHAMPION_HONORS[Champion.Iris]).toEqual(UNOVA_HONORS);
+    expect(CHAMPION_TITLES[Champion.Iris]).toBe(Awards.UnovaChampion);
+
+    // Opelucid's gym is Drayden's, so she stands at the top and
+    // nowhere else
+    for (const leader of GYM_LEADERS) {
+      expect(GYM_LEADER_NAMES[leader]).not.toBe('Iris');
+    }
+  });
+
+  it('gives every champion and legend a party a player could have walked', () => {
+    // These six are written out rather than rolled, so nothing filters
+    // them: a hand-written party is where a pokemon nobody can meet
+    // slips onto a team. Iris' Archeops and N's Carracosta are only
+    // met by reviving a fossil
+    for (const party of [...Object.values(CHAMPION_PARTIES), ...Object.values(LEGEND_PARTIES)]) {
+      for (const species of party) {
+        expect(canMeetSpecies(species), getSpeciesData(species).name).toBe(true);
+      }
+    }
   });
 
   it('gives every Frontier Brain a house, a rule and a pair of symbols', () => {
@@ -1320,8 +1401,13 @@ describe('type experts', () => {
     expect(getSpeciesData(Species.Gyarados).types).not.toContain(Types.Dragon);
 
     // Agatha is not a second Koga, who now sits in Johto's league
-    // with the Poison type entire: hers is the group her ghosts share
-    expect(poolOf(EliteMember.Agatha).length).toBeLessThan(poolOf(EliteMember.Koga).length);
+    // with the Poison type entire: hers is the group her ghosts
+    // share. Counted by pokemon rather than by entry, since a Rotom
+    // brings five addresses of itself to an Amorphous pool
+    const distinct = (member: EliteMember): number =>
+      new Set(poolOf(member).map(getBaseFormSpecies)).size;
+
+    expect(distinct(EliteMember.Agatha)).toBeLessThan(distinct(EliteMember.Koga));
     expect(poolOf(EliteMember.Agatha)).not.toContain(Species.Venusaur);
 
     // A name is the one thing that reaches outside the band: Bruno's
@@ -1336,7 +1422,7 @@ describe('type experts', () => {
       }
       for (const species of poolOf(member)) {
         if (!names.has(species)) {
-          expect(isGrownSpecies(species), getSpeciesData(species).name).toBe(true);
+          expect(getGrowthRoads(species).length, getSpeciesData(species).name).toBe(0);
         }
       }
     }
@@ -1412,6 +1498,7 @@ describe('type experts', () => {
       ...JOHTO_BADGES,
       ...HOENN_BADGES,
       ...SINNOH_BADGES,
+      ...UNOVA_BADGES,
       ...KALOS_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,

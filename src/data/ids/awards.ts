@@ -123,33 +123,55 @@ const enum Awards {
   GoldCastlePrint = 98,
   SilverHallPrint = 99,
   GoldHallPrint = 100,
-  /*
-   * 101 to 121 are Unova's badges and marks, on a branch of their
-   * own, so Kalos starts after them rather than taking the same ids
-   */
-  BugBadge = 122,
-  CliffBadge = 123,
-  RumbleBadge = 124,
-  PlantBadge = 125,
-  VoltageBadge = 126,
-  FairyBadge = 127,
-  PsychicBadge = 128,
-  IcebergBadge = 129,
-  MalvaDefeated = 130,
-  SieboldDefeated = 131,
-  WikstromDefeated = 132,
-  DrasnaDefeated = 133,
-  KalosChampion = 134,
+  TrioBadge = 101,
+  BasicBadge = 102,
+  InsectBadge = 103,
+  BoltBadge = 104,
+  QuakeBadge = 105,
+  JetBadge = 106,
+  FreezeBadge = 107,
+  LegendBadge = 108,
+  ToxicBadge = 109,
+  WaveBadge = 110,
+  ShauntalDefeated = 111,
+  MarshalDefeated = 112,
+  GrimsleyDefeated = 113,
+  CaitlinDefeated = 114,
+  /** Unova's dex filled to 152 caught */
+  UnovaDexMedal = 115,
+  UnovaChampion = 116,
+  /** The one above Unova's league, met where a champion would be */
+  NDefeated = 117,
+  /** Any one of Team Plasma's rank and file put down */
+  PlasmaGruntDefeated = 118,
+  ColressDefeated = 119,
+  ZinzolinDefeated = 120,
+  GhetsisDefeated = 121,
+  /** Unova's champion before Iris, met where a champion would be */
+  AlderDefeated = 122,
+  BugBadge = 123,
+  CliffBadge = 124,
+  RumbleBadge = 125,
+  PlantBadge = 126,
+  VoltageBadge = 127,
+  FairyBadge = 128,
+  PsychicBadge = 129,
+  IcebergBadge = 130,
+  MalvaDefeated = 131,
+  SieboldDefeated = 132,
+  WikstromDefeated = 133,
+  DrasnaDefeated = 134,
+  KalosChampion = 135,
   /** The king who ended a war with a weapon, met where a champion would be */
-  AZDefeated = 135,
+  AZDefeated = 136,
   /** Any one of Team Flare's rank and file put down */
-  FlareGruntDefeated = 136,
-  XerosicDefeated = 137,
-  AlianaDefeated = 138,
-  BryonyDefeated = 139,
-  CelosiaDefeated = 140,
-  MableDefeated = 141,
-  LysandreDefeated = 142,
+  FlareGruntDefeated = 137,
+  XerosicDefeated = 138,
+  AlianaDefeated = 139,
+  BryonyDefeated = 140,
+  CelosiaDefeated = 141,
+  MableDefeated = 142,
+  LysandreDefeated = 143,
 }
 
 export default Awards;
@@ -256,6 +278,29 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.GoldCastlePrint]: 'Gold Castle Print',
   [Awards.SilverHallPrint]: 'Silver Hall Print',
   [Awards.GoldHallPrint]: 'Gold Hall Print',
+  [Awards.TrioBadge]: 'Trio Badge',
+  [Awards.BasicBadge]: 'Basic Badge',
+  [Awards.InsectBadge]: 'Insect Badge',
+  [Awards.BoltBadge]: 'Bolt Badge',
+  [Awards.QuakeBadge]: 'Quake Badge',
+  [Awards.JetBadge]: 'Jet Badge',
+  [Awards.FreezeBadge]: 'Freeze Badge',
+  [Awards.LegendBadge]: 'Legend Badge',
+  [Awards.ToxicBadge]: 'Toxic Badge',
+  [Awards.WaveBadge]: 'Wave Badge',
+  [Awards.ShauntalDefeated]: 'Shauntal Defeated',
+  [Awards.MarshalDefeated]: 'Marshal Defeated',
+  [Awards.GrimsleyDefeated]: 'Grimsley Defeated',
+  // The same person who keeps Sinnoh's Battle Castle, a league older
+  [Awards.CaitlinDefeated]: 'Caitlin Defeated',
+  [Awards.UnovaDexMedal]: 'Unova Dex Medal',
+  [Awards.UnovaChampion]: 'Unova Champion',
+  [Awards.NDefeated]: 'N Defeated',
+  [Awards.PlasmaGruntDefeated]: 'Team Plasma Repelled',
+  [Awards.ColressDefeated]: 'Colress Defeated',
+  [Awards.ZinzolinDefeated]: 'Zinzolin Defeated',
+  [Awards.GhetsisDefeated]: 'Ghetsis Defeated',
+  [Awards.AlderDefeated]: 'Alder Defeated',
   [Awards.BugBadge]: 'Bug Badge',
   [Awards.CliffBadge]: 'Cliff Badge',
   [Awards.RumbleBadge]: 'Rumble Badge',
@@ -376,6 +421,25 @@ export const KALOS_BADGES: Awards[] = [
 ];
 
 /**
+ * And Unova's 10, in gym order, the sequels' two gyms last. The
+ * region runs more gyms than any other because two of its towns
+ * changed hands between one league and the next, and Striaton is
+ * kept by three people who each fight a different type
+ */
+export const UNOVA_BADGES: Awards[] = [
+  Awards.TrioBadge,
+  Awards.BasicBadge,
+  Awards.InsectBadge,
+  Awards.BoltBadge,
+  Awards.QuakeBadge,
+  Awards.JetBadge,
+  Awards.FreezeBadge,
+  Awards.LegendBadge,
+  Awards.ToxicBadge,
+  Awards.WaveBadge,
+];
+
+/**
  * And Hoenn's 4, which its champion asks to see
  */
 export const HOENN_HONORS: Awards[] = [
@@ -401,6 +465,16 @@ export const KALOS_HONORS: Awards[] = [
   Awards.SieboldDefeated,
   Awards.WikstromDefeated,
   Awards.DrasnaDefeated,
+];
+
+/**
+ * And Unova's 4, who keep their seats in both of its leagues
+ */
+export const UNOVA_HONORS: Awards[] = [
+  Awards.ShauntalDefeated,
+  Awards.MarshalDefeated,
+  Awards.GrimsleyDefeated,
+  Awards.CaitlinDefeated,
 ];
 
 /**

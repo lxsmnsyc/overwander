@@ -1,10 +1,10 @@
-import { Species } from '../data/ids/species';
-import { getMegaBase } from '../data/species/megas';
+import { Species, getBaseFormSpecies } from '../data/ids/species';
 import { REGION_NAMES, getSpeciesRegion } from '../data/species/regions';
 import SpeciesSpriteAnimation from './species-sprite-animation';
 import type { Coat, SpriteCoats } from './sprite-coats';
 import { COATS_PATH, asSpriteCoats, coatOf, drawn, stamped } from './sprite-coats';
 import asSpriteSheetJSON, { type SpriteSheetJSON, readFrameTable } from './sprite-sheet';
+import { spriteUrl } from './sprite-origin';
 
 /**
  * Which sheet belongs to which pokemon, and how to get one.
@@ -38,7 +38,7 @@ import asSpriteSheetJSON, { type SpriteSheetJSON, readFrameTable } from './sprit
  * over one image.
  */
 
-export const SPRITE_ROOT = '/sprites/pokemon';
+export const SPRITE_ROOT = spriteUrl('/sprites/pokemon');
 
 /**
  * A form the collection draws as a **coat** of another shape rather
@@ -301,20 +301,33 @@ export default async function loadSpeciesSprite(
    * of. Losing the Mega sits between the two: a female Mega Steelix
    * is the Mega's own sheet rather than a female Steelix
    */
-  const shapes = [species];
-  const base = getMegaBase(species);
+  const tried: [shiny: boolean, female: boolean][] = [];
 
-  if (base != null) {
+  if (shiny) {
+    if (female) {
+      tried.push([true, true]);
+    }
+    tried.push([true, false]);
+  }
+  if (female) {
+    tried.push([false, true]);
+  }
+  tried.push([false, false]);
+
+  // A form nobody has drawn yet is drawn as its base form, which loses
+  // the form rather than the coat, so each coat is asked of both first
+  const shapes = [species];
+  const base = getBaseFormSpecies(species);
+
+  if (base !== species) {
     shapes.push(base);
   }
 
   const wanted: [Species, boolean, boolean][] = [];
 
-  for (const wantedShiny of shiny ? [true, false] : [false]) {
+  for (const [wantedShiny, wantedFemale] of tried) {
     for (const shape of shapes) {
-      for (const wantedFemale of female ? [true, false] : [false]) {
-        wanted.push([shape, wantedShiny, wantedFemale]);
-      }
+      wanted.push([shape, wantedShiny, wantedFemale]);
     }
   }
 

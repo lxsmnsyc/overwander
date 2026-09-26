@@ -20,8 +20,7 @@ import readGift from './gift';
 import readPlayer from './player';
 import readTeleport from './teleport';
 import teleport, { banPlayer, findPlayer, giveCommandGift } from '../../../auth/commands';
-import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
-import { serverNow } from '../../../auth/clock';
+import { localNow } from '../../../auth/clock';
 
 /**
  * Running what was typed, and saying what happened.
@@ -106,7 +105,7 @@ function runLocate(parameters: CommandArguments, context: CommandContext): Comma
   // On the player's own clock, not the server's: the sky a chunk is
   // under is read in the observer's zone, so a window counted in UTC
   // would be somebody else's hour
-  const found = locate(asked.value, context.origin, toLocalTime(serverNow(), getLocalOffset()));
+  const found = locate(asked.value, context.origin, localNow());
 
   return found == null ? refused(`Nothing like that within ${LOCATE_RADIUS} chunks.`) : done(found);
 }

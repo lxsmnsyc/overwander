@@ -91,7 +91,7 @@ export interface WeatherIconProps {
 }
 
 /** What the sky is kind to, drawn rather than named */
-function Favored(props: { weather: Weather }): JSX.Element {
+export function WeatherFavors(props: { weather: Weather }): JSX.Element {
   const favored = (): Types[] => WEATHER_TYPES[props.weather];
 
   // Eighteen badges would say less than the words do, so the sky that
@@ -118,7 +118,7 @@ export default function WeatherIcon(props: WeatherIconProps): JSX.Element {
       class="inline-flex items-center"
       name={WEATHER_NAMES[props.weather]}
       description={WEATHER_DESCRIPTIONS[props.weather]}
-      extra={() => <Favored weather={props.weather} />}
+      extra={() => <WeatherFavors weather={props.weather} />}
     >
       <span
         class={`inline-flex items-center ${props.class ?? ''}`}

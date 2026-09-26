@@ -4,6 +4,7 @@ import Awards, {
   KALOS_HONORS,
   KANTO_HONORS,
   SINNOH_HONORS,
+  UNOVA_HONORS,
 } from '../../ids/awards';
 import { Species } from '../../ids/species';
 
@@ -11,14 +12,15 @@ import { Species } from '../../ids/species';
  * The champions, one to a league. Giovanni runs Kanto's eighth gym
  * here, so the seat at the top of that league is Blue's; Johto's is
  * Lance, who also keeps a seat in Kanto's Elite Four and is drawn in
- * his Heart Gold coat when he is standing at the top
+ * his Heart Gold coat when he is standing at the top. Unova's is
+ * Iris, which is why Opelucid's gym is Drayden's
  */
 const enum Champion {
   Blue = 0,
   Lance = 1,
   Wallace = 2,
   Cynthia = 3,
-  // 4 is Iris, Unova's, on a branch of her own
+  Iris = 4,
   Diantha = 5,
 }
 
@@ -29,6 +31,7 @@ export const CHAMPIONS: Champion[] = [
   Champion.Lance,
   Champion.Wallace,
   Champion.Cynthia,
+  Champion.Iris,
   Champion.Diantha,
 ];
 
@@ -37,6 +40,7 @@ export const CHAMPION_NAMES: Record<Champion, string> = {
   [Champion.Lance]: 'Lance',
   [Champion.Wallace]: 'Wallace',
   [Champion.Cynthia]: 'Cynthia',
+  [Champion.Iris]: 'Iris',
   [Champion.Diantha]: 'Diantha',
 };
 
@@ -47,6 +51,9 @@ export const CHAMPION_CHARSETS: Record<Champion, string[]> = {
   // at the top, in both coats he is drawn in
   [Champion.Wallace]: ['characters/rse/wallace', 'characters/oras/wallace'],
   [Champion.Cynthia]: ['characters/dppt/cynthia'],
+  // Opelucid's gym is Drayden's here, so both of her looks are the
+  // champion's, the way both of Wallace's are
+  [Champion.Iris]: ['characters/b2w2/iris-1', 'characters/b2w2/iris-2'],
   [Champion.Diantha]: ['characters/xy/diantha'],
 };
 
@@ -56,6 +63,7 @@ export const CHAMPION_TITLES: Record<Champion, Awards> = {
   [Champion.Lance]: Awards.JohtoChampion,
   [Champion.Wallace]: Awards.HoennChampion,
   [Champion.Cynthia]: Awards.SinnohChampion,
+  [Champion.Iris]: Awards.UnovaChampion,
   [Champion.Diantha]: Awards.KalosChampion,
 };
 
@@ -75,6 +83,7 @@ export const CHAMPION_HONORS: Record<Champion, Awards[]> = {
   [Champion.Lance]: JOHTO_HONORS,
   [Champion.Wallace]: HOENN_HONORS,
   [Champion.Cynthia]: SINNOH_HONORS,
+  [Champion.Iris]: UNOVA_HONORS,
   [Champion.Diantha]: KALOS_HONORS,
 };
 
@@ -123,6 +132,15 @@ export const CHAMPION_PARTIES: Record<Champion, Species[]> = {
     Species.Lucario,
     Species.Milotic,
     Species.Garchomp,
+  ],
+  // The six she defends Unova with in the sequels, Haxorus last
+  [Champion.Iris]: [
+    Species.Hydreigon,
+    Species.Druddigon,
+    Species.Aggron,
+    Species.Archeops,
+    Species.Lapras,
+    Species.Haxorus,
   ],
   // The six she defends Kalos with, Gardevoir last. Both fossils are
   // hers, so Tyrantrum and Aurorus stand side by side

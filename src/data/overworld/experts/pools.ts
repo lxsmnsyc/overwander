@@ -1,9 +1,15 @@
-import { isGrownSpecies } from '../../biome';
 import { Types } from '../../constants/types';
 import EggGroups from '../../ids/egg-groups';
-import { Species } from '../../ids/species';
-import { getRegisteredSpecies, getSpeciesData, isBaseForm } from '../../species';
+import { Species, getBaseFormSpecies } from '../../ids/species';
+import {
+  getGrowthRoads,
+  getRegisteredSpecies,
+  getSpeciesData,
+  isCosmeticForm,
+  isWornForm,
+} from '../../species';
 import { EVERY_LAIR, getLairResidents } from '../lair';
+import canMeetSpecies from '../reach';
 import { EliteMember } from './elite';
 import { GYM_LEADER_TYPES, GymLeader } from './gym-leaders';
 
@@ -99,6 +105,12 @@ export const ELITE_MEMBER_POOLS: Record<EliteMember, ExpertPool> = {
   [EliteMember.Bertha]: { types: [Types.Ground], also: [Species.Sudowoodo] },
   [EliteMember.Flint]: { types: [Types.Fire] },
   [EliteMember.Lucian]: { types: [Types.Psychic] },
+  // Unova's four are each their type all the way down, the way
+  // Hoenn's are, so none of them needs a widener
+  [EliteMember.Shauntal]: { types: [Types.Ghost] },
+  [EliteMember.Marshal]: { types: [Types.Fighting] },
+  [EliteMember.Grimsley]: { types: [Types.Dark] },
+  [EliteMember.Caitlin]: { types: [Types.Psychic] },
   [EliteMember.Malva]: { types: [Types.Fire] },
   [EliteMember.Siebold]: { types: [Types.Water] },
   [EliteMember.Wikstrom]: { types: [Types.Steel] },
@@ -133,6 +145,10 @@ export const ELITE_MEMBER_SIGNATURES: Record<EliteMember, Species> = {
   // starter a player chooses rather than a pokemon of his
   [EliteMember.Flint]: Species.Magmortar,
   [EliteMember.Lucian]: Species.Bronzong,
+  [EliteMember.Shauntal]: Species.Chandelure,
+  [EliteMember.Marshal]: Species.Conkeldurr,
+  [EliteMember.Grimsley]: Species.Bisharp,
+  [EliteMember.Caitlin]: Species.Reuniclus,
   // The Talonflame she closes with, since her Pyroar is staged nowhere yet
   [EliteMember.Malva]: Species.Talonflame,
   [EliteMember.Siebold]: Species.Barbaracle,
@@ -198,6 +214,25 @@ export const GYM_LEADER_SIGNATURES: Record<GymLeader, Species> = {
   // Not the Raichu he opens with: Lt. Surge is already remembered for
   // that one, and the Luxray is what Sunyshore closes with anyway
   [GymLeader.Volkner]: Species.Luxray,
+  // Striaton's three each close with an elemental monkey, and those
+  // three lines are written but staged nowhere while Simisear and
+  // Simipour are undrawn. A leader may not field what nobody can
+  // meet, so each stands with another of their own fight until then
+  [GymLeader.Cilan]: Species.Lilligant,
+  [GymLeader.Chili]: Species.Emboar,
+  [GymLeader.Cress]: Species.Seismitoad,
+  [GymLeader.Lenora]: Species.Watchog,
+  [GymLeader.Burgh]: Species.Leavanny,
+  [GymLeader.Elesa]: Species.Emolga,
+  [GymLeader.Clay]: Species.Excadrill,
+  [GymLeader.Skyla]: Species.Swanna,
+  [GymLeader.Brycen]: Species.Cryogonal,
+  [GymLeader.Drayden]: Species.Haxorus,
+  [GymLeader.Cheren]: Species.Stoutland,
+  [GymLeader.Roxie]: Species.Garbodor,
+  // The Jellicent he closes with is unwritten, and the Wailord is
+  // his in the same team
+  [GymLeader.Marlon]: Species.Wailord,
   [GymLeader.Viola]: Species.Vivillon,
   // The fossil he closes with in X, a first stage like Roark's Cranidos
   [GymLeader.Grant]: Species.Tyrunt,
@@ -242,7 +277,19 @@ function inExpertPool(
   groups: Set<EggGroups>,
   named: Set<Species>,
 ): boolean {
-  if (species === Species.Egg || LAIR_SPECIES.has(species) || !isBaseForm(species)) {
+  // A worn shape is nobody's to walk with; a rearrangement that is
+  // kept, such as a Rotom in an appliance, is owned like anything else
+  if (
+    species === Species.Egg ||
+    LAIR_SPECIES.has(getBaseFormSpecies(species)) ||
+    isWornForm(species) ||
+    isCosmeticForm(species)
+  ) {
+    return false;
+  }
+  // Nothing the world has nowhere to put: a line written but kept out
+  // of every pool is not something a player could be walking either
+  if (!canMeetSpecies(species)) {
     return false;
   }
   // Naming beats the band as well as the type rules. Bruno's Onix
@@ -251,7 +298,10 @@ function inExpertPool(
   if (named.has(species)) {
     return true;
   }
-  if (!isGrownSpecies(species)) {
+  // Grown as its line goes, with a rearrangement into another of its
+  // own shapes left out: an appliance is a Rotom's address rather than
+  // a stage it is waiting to leave
+  if (getGrowthRoads(species).length > 0) {
     return false;
   }
   // An expert with no specialty takes the band whole

@@ -233,13 +233,14 @@ describe('sprite metadata', () => {
    * as a list so a second one shows up as a failure rather than as
    * nothing
    */
-  const OVERDRAWN = new Set(['214 Attack', '643 Charge', '643 Shoot', '643 Swing']);
+  const OVERDRAWN = new Set(['214 Attack', '643 Charge', '643 Shoot', '643 Swing', '727 Charge']);
 
   /**
    * A clip whose drawing starts above or left of the cell it is
-   * declared in, and how far. Combee's Idle is one pixel up and
-   * Reshiram's three wide clips start a column or two out, which is
-   * the archive's own offset rather than anything the import does.
+   * declared in, and how far. Combee's Idle is one pixel up, and
+   * Reshiram's three wide clips and Incineroar's Charge start a column
+   * or three out, which is the archive's own offset rather than
+   * anything the import does.
    * Listed for the same reason as the overdrawn ones: a fresh one
    * should fail rather than pass quietly
    */
@@ -248,6 +249,7 @@ describe('sprite metadata', () => {
     ['643 Charge', -2],
     ['643 Shoot', -1],
     ['643 Swing', -2],
+    ['727 Charge', -3],
   ]);
 
   it('trims frames into the cell they were drawn in', () => {

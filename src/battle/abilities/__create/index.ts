@@ -4,7 +4,12 @@
  * changing what a blow is worth, refusing something, and the sky
  */
 
-export { createAbility, createContactHazard, getAbilityHolders } from './create';
+export {
+  createAbility,
+  createContactHazard,
+  createNoContactAbility,
+  getAbilityHolders,
+} from './create';
 export { createFeedScoring, createHealFeedScoring, createStageFeedScoring } from './scoring';
 export { createAbsorbStageAbility, createClearBodyAbility } from './absorb';
 export { movesFlagged, movesOfType } from './matchers';

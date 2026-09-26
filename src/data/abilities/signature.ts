@@ -2195,4 +2195,21 @@ export default function registerSignatureAbilities(): void {
     description:
       'Its team, itself included, casts and channels at 0.85x the time while it stands. Cooldowns are untouched.',
   });
+
+  // Alola's three starters, each playing to a crowd: the two that
+  // fight it out read the far side, the singer reads its own
+  registerSignature(Families.Rowlet, Abilities.QuillAudience, {
+    name: 'Quill Audience',
+    description: 'Its Speed counts 1.1x for each enemy standing, up to 4 of them.',
+  });
+
+  registerSignature(Families.Litten, Abilities.HeelAudience, {
+    name: 'Heel Audience',
+    description: 'Its Attack counts 1.1x for each enemy standing, up to 4 of them.',
+  });
+
+  registerSignature(Families.Popplio, Abilities.AriaAudience, {
+    name: 'Aria Audience',
+    description: 'Its Special Attack counts 1.1x for each teammate standing, up to 4 of them.',
+  });
 }

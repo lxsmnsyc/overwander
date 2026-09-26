@@ -326,6 +326,7 @@ export default function registerGrasslandSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Litten, weight: 2 },
         { species: Species.Gothita, weight: 24 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
@@ -351,6 +352,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Munna, weight: 25 },
       ],
       rare: [
+        { species: Species.Torracat, weight: 2 },
         { species: Species.Gothorita, weight: 10 },
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
@@ -380,6 +382,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Incineroar, weight: 2 },
         { species: Species.Dedenne, weight: 6 },
         { species: Species.Furfrou, weight: 5 },
         { species: Species.Gothitelle, weight: 5 },
@@ -416,6 +419,7 @@ export default function registerGrasslandSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Litten, weight: 2 },
         { species: Species.Gothita, weight: 24 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
@@ -443,6 +447,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Munna, weight: 25 },
       ],
       rare: [
+        { species: Species.Torracat, weight: 2 },
         { species: Species.Gothorita, weight: 10 },
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
@@ -474,6 +479,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Incineroar, weight: 2 },
         { species: Species.Dedenne, weight: 6 },
         { species: Species.Gothitelle, weight: 5 },
         { species: Species.Castform, weight: 10 },

@@ -21,7 +21,7 @@ import { MergedLifecycle } from '../../lifecycle';
 import { PASSED_STAGES } from '../../moves/switch-out';
 import type Unit from '../../unit';
 import { hasFreeItemSlot, isWeatherSandstorm, onUnitActs, unitTarget } from '../../utils';
-import { createAbility } from '../__create';
+import { createAbility, createNoContactAbility } from '../__create';
 import {
   allyHolder,
   createMarkAbility,
@@ -1078,13 +1078,7 @@ const chikoritaToCelebi = [
 
   // Remoraid: it shoots from where it is, so nothing that answers a
   // touch ever gets to answer
-  createAbility(Abilities.Standoff, (battle) =>
-    battle.on(BattleEvents.CheckUnitMoveContact, EventPriority.Post, (event) => {
-      if (event.contact && event.source.hasAbility(Abilities.Standoff)) {
-        event.contact = false;
-      }
-    }),
-  ),
+  createNoContactAbility(Abilities.Standoff),
 
   // Delibird: the sack is for somebody else, so it turns up with the
   // parcel already addressed to whoever needs it

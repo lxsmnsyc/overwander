@@ -1894,3 +1894,44 @@ export function createSpentItemAbility(
     }),
   );
 }
+
+/** What each head in an Alola starter's audience is worth, and how many count */
+export const AUDIENCE_SHARE = 0.1;
+export const AUDIENCE_LIMIT = 4;
+
+/** Who an Alola starter plays to: the far side, or its own team */
+export type AudienceKind = 'enemies' | 'team';
+
+/** How many of its audience are standing, capped at the limit */
+function audienceSize(unit: Unit, kind: AudienceKind): number {
+  let count = 0;
+  const crowd = kind === 'team' ? unit.team.units : unit.battle.units(unit.team.alliance);
+
+  for (const other of crowd) {
+    if (other !== unit && other.alive) {
+      count += 1;
+    }
+  }
+
+  return Math.min(count, AUDIENCE_LIMIT);
+}
+
+/**
+ * What the Alola starters share: each plays to a crowd, and one of its
+ * stats counts for more with every head in it. Recounted on every
+ * read, so the crowd thinning shows at once. The team is the holder's
+ * own, never the whole alliance
+ */
+export function createAudienceAbility(
+  ability: Abilities,
+  stat: Stats,
+  kind: AudienceKind,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (event.stat === stat && event.source.hasAbility(ability)) {
+        event.value *= 1 + audienceSize(event.source, kind) * AUDIENCE_SHARE;
+      }
+    }),
+  );
+}

@@ -45,7 +45,7 @@ and eaten berries are all left where they were. It is a fight for its own sake,
 which is what lets two friends run one as often as they like.
 
 The one player-versus-player fight that does settle is a
-[gym seat](battles.md#gym-seats), where the challenger's party carries the wear
+[gym seat](battle-opponents.md#gym-seats), where the challenger's party carries the wear
 out and gold moves.
 
 ## Leaving

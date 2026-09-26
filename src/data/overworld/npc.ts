@@ -193,6 +193,8 @@ const enum Executive {
   Mars = 8,
   Jupiter = 9,
   Saturn = 10,
+  Colress = 11,
+  Zinzolin = 12,
 }
 
 export { Executive };
@@ -209,6 +211,8 @@ export const EXECUTIVE_NAMES: Record<Executive, string> = {
   [Executive.Mars]: 'Mars',
   [Executive.Jupiter]: 'Jupiter',
   [Executive.Saturn]: 'Saturn',
+  [Executive.Colress]: 'Colress',
+  [Executive.Zinzolin]: 'Zinzolin',
 };
 
 export const EXECUTIVE_CHARSETS: Record<Executive, string[]> = {
@@ -223,6 +227,10 @@ export const EXECUTIVE_CHARSETS: Record<Executive, string[]> = {
   [Executive.Mars]: ['characters/dppt/mars'],
   [Executive.Jupiter]: ['characters/dppt/jupiter'],
   [Executive.Saturn]: ['characters/dppt/saturn'],
+  // Both of his coats: the one he wears under Ghetsis and the one he
+  // wears once the machine is his own
+  [Executive.Colress]: ['characters/b2w2/colress-1', 'characters/b2w2/colress-2'],
+  [Executive.Zinzolin]: ['characters/b2w2/zinzolin'],
 };
 
 /** The mark putting one of them down is worth, one to each */
@@ -238,6 +246,8 @@ export const EXECUTIVE_HONORS: Record<Executive, Awards> = {
   [Executive.Mars]: Awards.MarsDefeated,
   [Executive.Jupiter]: Awards.JupiterDefeated,
   [Executive.Saturn]: Awards.SaturnDefeated,
+  [Executive.Colress]: Awards.ColressDefeated,
+  [Executive.Zinzolin]: Awards.ZinzolinDefeated,
 };
 
 /** What each says as they bar the cell */
@@ -253,6 +263,8 @@ export const EXECUTIVE_QUOTES: Record<Executive, string> = {
   [Executive.Mars]: 'You are in the way of a better world. Move, or be moved.',
   [Executive.Jupiter]: 'Do not take this personally. I barely take it personally.',
   [Executive.Saturn]: 'I have my doubts about all this. None of them are about beating you.',
+  [Executive.Colress]: 'I want to see the strength a pokemon reaches with you. Purely as data.',
+  [Executive.Zinzolin]: 'You will be cold long before you are finished. Begin.',
 };
 
 /**

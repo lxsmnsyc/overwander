@@ -1,7 +1,28 @@
-import { type JSX, type ParentProps, createMemo, createSignal } from 'solid-js';
+import {
+  For,
+  type JSX,
+  type ParentProps,
+  Show,
+  createMemo,
+  createSignal,
+  onCleanup,
+} from 'solid-js';
+import { Popover, PopoverButton, PopoverPanel } from 'terracotta';
+import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
+import type Weather from '../../data/overworld/weather';
+import { WEATHER_NAMES, favorsEverything } from '../../data/overworld/weather';
 import getWorld from '../../overworld/current';
+import { weatherWindowOf } from '../../overworld/chunk-snapshot';
+import { localNow } from '../../auth/clock';
 import { WORLD_MAX, WORLD_MIN, isInWorld } from '../../overworld/world';
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  CrosshairIcon,
+} from '../icons';
 import { Button, Dialog, DialogActions, Hint } from '../styled';
 import WorldMapCanvas, { PAN_STRIDE, townsInView } from './WorldMapCanvas';
 import { useGame } from '../app/game-context';
@@ -16,6 +37,24 @@ import { useGame } from '../app/game-context';
 const SPAN = 64;
 
 const HALF = Math.floor(SPAN / 2);
+
+/**
+ * How often the map looks at the clock, in milliseconds. The sky turns
+ * over on the hour, and a minute late is close enough for a map
+ */
+const SKY_CHECK = 60 * 1000;
+
+/** A small toggle or chip laid over the map */
+const CHIP = `cursor-pointer rounded-full border-2 border-tide bg-paper/90 px-2 py-0.5 text-xs
+  font-bold text-tide-dark shadow-none transition-colors hover:bg-tide-soft active:translate-y-0
+  aria-pressed:bg-tide aria-pressed:text-on-accent focus-visible:outline-2
+  focus-visible:outline-offset-2 focus-visible:outline-tide`;
+
+/** One key of the pan pad */
+const PAD = `flex size-8 cursor-pointer items-center justify-center rounded-lg border-2 border-tide
+  bg-paper/90 p-0 text-sm text-ink shadow-none transition-colors hover:bg-tide-soft
+  active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2
+  focus-visible:outline-tide`;
 
 /**
  * One key and what it does, laid out the way the search guide lays out
@@ -48,6 +87,27 @@ export interface WorldMapDialogProps {
  */
 export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element {
   const game = useGame();
+
+  /**
+   * Whether the map shows what the sky is doing. It is off by default:
+   * the map is read to decide which way to walk, and the weather is
+   * the answer to a different question
+   */
+  const [sky, setSky] = createSignal(false);
+
+  /**
+   * The hour the skies are read for. It ticks on its own, so a map
+   * left open does not go on showing an hour that has passed
+   */
+  const skyWindow = (): number => weatherWindowOf(localNow());
+  const [hour, setHour] = createSignal(skyWindow());
+  const clock = setInterval(() => {
+    setHour(skyWindow());
+  }, SKY_CHECK);
+
+  onCleanup(() => {
+    clearInterval(clock);
+  });
 
   /**
    * Where the player is, once it has been found out. Until then there
@@ -118,7 +178,83 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
     return values;
   });
 
+  /**
+   * The sky over each chunk of the view, or nothing while the map is
+   * showing the ground alone. Derived like the biomes are: the world
+   * answers what the sky is doing without anything being stored
+   */
+  const skies = createMemo(() => {
+    if (!sky()) {
+      return undefined;
+    }
+    const world = getWorld();
+    const window = hour();
+    const values: (Weather | null)[] = [];
+
+    for (let row = 0; row < SPAN; row++) {
+      const y = centerY() - HALF + row;
+
+      for (let column = 0; column < SPAN; column++) {
+        const x = centerX() - HALF + column;
+
+        values.push(isInWorld(x, y) ? world.getWeather(x, y, window) : null);
+      }
+    }
+    return values;
+  });
+
+  /**
+   * The four skies worth walking to, where the view is looking at
+   * one. They are ringed on the map as well, but a player scanning
+   * for one wants to be told rather than to find it
+   */
+  const showpieces = createMemo(() => {
+    const values = skies();
+
+    if (values == null) {
+      return [];
+    }
+    const found: { weather: Weather; x: number; y: number }[] = [];
+
+    for (let index = 0; index < values.length; index++) {
+      const weather = values[index];
+
+      if (weather != null && favorsEverything(weather)) {
+        found.push({
+          weather,
+          x: centerX() - HALF + (index % SPAN),
+          y: centerY() - HALF + Math.floor(index / SPAN),
+        });
+      }
+    }
+    return found;
+  });
+
   const towns = createMemo(() => townsInView(centerX() - HALF, centerY() - HALF, SPAN));
+
+  /** Every biome the view is looking at, once each, for the key */
+  const biomesInView = createMemo(() => {
+    const seen = new Set<Biome>();
+
+    for (const biome of biomes()) {
+      if (biome != null) {
+        seen.add(biome);
+      }
+    }
+    return [...seen].sort((one, other) => BIOME_NAMES[one].localeCompare(BIOME_NAMES[other]));
+  });
+
+  /** Point the camera at one chunk */
+  const lookAt = (x: number, y: number): void => {
+    pan(x - centerX(), y - centerY());
+  };
+
+  /** One press on the pad: a chunk, or a stride with Shift held */
+  const step = (dx: number, dy: number) => (event: MouseEvent) => {
+    const distance = event.shiftKey ? PAN_STRIDE : 1;
+
+    pan(dx * distance, dy * distance);
+  };
 
   return (
     <Dialog
@@ -129,7 +265,8 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
       title="World Map"
       description={
         <>
-          {SPAN} chunks across, centred on {centerX()}, {centerY()}. Click the map to steer it.
+          {SPAN} chunks across, centred on {centerX()}, {centerY()}. Drag the map or use the buttons
+          on it to steer.
         </>
       }
       // The keys, on the one visible row a quiet dialog has. The
@@ -144,6 +281,7 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
           description="Click it first: the keys go to whatever has the keyboard."
         >
           <ul class="flex flex-col gap-2">
+            <Key presses="Drag">Pulls the map along. The buttons in its corner step it too.</Key>
             <Key presses="↑ ↓ ← →">Pan one chunk. WASD does the same.</Key>
             <Key presses="Shift + ↑ ↓ ← →">Crosses {PAN_STRIDE} chunks at a time.</Key>
             <Key presses="Home">Back to the chunk you are standing in. C does the same.</Key>
@@ -159,12 +297,117 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
         originX={centerX() - HALF}
         originY={centerY() - HALF}
         biomes={biomes()}
+        skies={skies()}
         towns={towns()}
         playerX={standing()?.chunkX ?? Number.NaN}
         playerY={standing()?.chunkY ?? Number.NaN}
         onPan={pan}
         onRecenter={recenter}
+        overlay={
+          <>
+            <div class="absolute top-1.5 right-1.5 z-10 flex gap-1">
+              <button
+                type="button"
+                class={CHIP}
+                aria-pressed={sky()}
+                title="Washes each chunk in the colour of its weather, and rings the four worth walking to"
+                onClick={() => {
+                  setSky(!sky());
+                }}
+              >
+                ☁ Sky
+              </button>
+              <Popover defaultOpen={false} class="relative">
+                <PopoverButton class={CHIP}>Key</PopoverButton>
+                <PopoverPanel
+                  class="absolute top-full right-0 z-30 mt-1 flex max-h-72 w-52 flex-col gap-1
+                    overflow-y-auto rounded-panel border-2 border-tide bg-paper p-2 text-xs shadow-pop"
+                >
+                  <span class="flex items-center gap-2">
+                    <span class="size-3 shrink-0 border-2 border-white bg-ink/40" />
+                    You
+                  </span>
+                  <span class="flex items-center gap-2">
+                    <span class="size-3 shrink-0 border border-white bg-transparent ring-1 ring-black/70" />
+                    Town
+                  </span>
+                  <For each={biomesInView()}>
+                    {(biome) => (
+                      <span class="flex items-center gap-2">
+                        <span
+                          class="size-3 shrink-0 rounded-sm"
+                          style={{ background: BIOME_COLORS[biome] }}
+                        />
+                        {BIOME_NAMES[biome]}
+                      </span>
+                    )}
+                  </For>
+                </PopoverPanel>
+              </Popover>
+            </div>
+
+            <span
+              class="pointer-events-none absolute bottom-1.5 left-1.5 z-10 rounded-lg bg-ink/70
+                px-1.5 py-0.5 text-xs font-semibold text-parchment tabular-nums"
+            >
+              <Show when={standing()} fallback="Finding you…">
+                {(at) => `You ${at().chunkX}, ${at().chunkY}`}
+              </Show>
+              {` · View ${centerX()}, ${centerY()}`}
+            </span>
+
+            {/* Buttons for whoever has no keyboard to steer with */}
+            <div class="absolute right-1.5 bottom-1.5 z-10 grid grid-cols-3 gap-0.5">
+              <span />
+              <button type="button" class={PAD} aria-label="Pan north" onClick={step(0, -1)}>
+                <ChevronUpIcon class="size-4" aria-hidden="true" />
+              </button>
+              <span />
+              <button type="button" class={PAD} aria-label="Pan west" onClick={step(-1, 0)}>
+                <ChevronLeftIcon class="size-4" aria-hidden="true" />
+              </button>
+              <button type="button" class={PAD} aria-label="Back to you" onClick={recenter}>
+                <CrosshairIcon class="size-5" aria-hidden="true" />
+              </button>
+              <button type="button" class={PAD} aria-label="Pan east" onClick={step(1, 0)}>
+                <ChevronRightIcon class="size-4" aria-hidden="true" />
+              </button>
+              <span />
+              <button type="button" class={PAD} aria-label="Pan south" onClick={step(0, 1)}>
+                <ChevronDownIcon class="size-4" aria-hidden="true" />
+              </button>
+              <span />
+            </div>
+          </>
+        }
       />
+
+      {/* Pressing one looks at it */}
+      <Show when={sky()}>
+        <div class="mt-3 flex flex-wrap items-center gap-1.5 text-xs">
+          <Show
+            when={showpieces().length > 0}
+            fallback={
+              <span class="text-muted">Nothing out of the ordinary in view this hour.</span>
+            }
+          >
+            <span class="text-muted">Worth walking to:</span>
+            <For each={showpieces()}>
+              {(one) => (
+                <button
+                  type="button"
+                  class={CHIP}
+                  onClick={() => {
+                    lookAt(one.x, one.y);
+                  }}
+                >
+                  {WEATHER_NAMES[one.weather]} {one.x}, {one.y}
+                </button>
+              )}
+            </For>
+          </Show>
+        </div>
+      </Show>
 
       <DialogActions>
         <Button onClick={close}>Close</Button>

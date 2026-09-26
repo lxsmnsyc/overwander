@@ -123,6 +123,25 @@ export function scanQuery(query: string): QueryToken[] {
 }
 
 /**
+ * The search with every `field:` term taken out and, where a value is
+ * given, one put back at the end. It is how a control beside the box
+ * writes into the search, so the typed text stays the one source
+ */
+export function withControl(query: string, field: string, value: string | null): string {
+  let kept = '';
+  let from = 0;
+
+  for (const token of scanQuery(query)) {
+    if (token.field === field) {
+      kept += query.slice(from, token.start);
+      from = token.end;
+    }
+  }
+  kept = `${kept}${query.slice(from)}`.replace(/\s+/g, ' ').trim();
+  return value == null ? kept : `${kept} ${field}:${value}`.trim();
+}
+
+/**
  * What a search is asking, term by term. Every term has to be
  * answered — the terms narrow rather than widen — and an empty search
  * asks nothing, which is what makes clearing the box the way back to

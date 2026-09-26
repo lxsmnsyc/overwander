@@ -1,4 +1,5 @@
 import AleaRNG from '../core/alea';
+import { MAX_LEVEL } from '../data/constants/levels';
 import { EventEngine } from '../core/event-engine';
 import type Abilities from '../data/ids/abilities';
 import type Families from '../data/ids/families';
@@ -283,7 +284,11 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
   /**
    * The band a wild meeting rolls its level inside. The floor never
    * passes the ceiling: an ability that keeps the weak away and one
-   * that draws the strong out can be carried by the same buddy
+   * that draws the strong out can be carried by the same buddy.
+   *
+   * Both ends stop at `MAX_LEVEL`. A legendary's band already tops out
+   * there, and a buddy that lifted the ceiling off one handed over a
+   * pokemon above the cap that the caught rows refuse to hold
    */
   checkEncounterLevels(spawn: string, base: [lowest: number, highest: number]): [number, number] {
     const event: CheckEncounterLevelsEvent = {
@@ -298,7 +303,7 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
 
     this.emit(OverworldEvents.CheckEncounterLevels, event);
 
-    const highest = Math.max(1, Math.round(event.highest));
+    const highest = Math.min(MAX_LEVEL, Math.max(1, Math.round(event.highest)));
 
     return [Math.min(highest, Math.max(1, Math.round(event.lowest))), highest];
   }

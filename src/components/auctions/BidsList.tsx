@@ -29,6 +29,7 @@ import {
   Status,
   createPager,
 } from '../styled';
+import playEffect, { Effect } from '../app/sound';
 
 /**
  * Where the player stands, said the way they would say it
@@ -98,6 +99,9 @@ function BidRows(
     setStatus(null);
     claimAuction(id)
       .then((claimed) => {
+        if (claimed) {
+          playEffect(Effect.TradeComplete);
+        }
         setStatus(claimed ? 'Collected.' : 'That lot could not be collected.');
         props.onChanged();
       })

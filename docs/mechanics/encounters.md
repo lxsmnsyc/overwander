@@ -158,7 +158,7 @@ weather favours is crowded into the chunk at twice its ordinary weight, within
 the bands it already lives in. A favoured rare stays rare and only wins its band
 more often, and a sky can only crowd what the biome already holds, so rain over a
 coral reef changes nothing. The four rarest skies favour every type at once and
-so crowd nothing. See [The world](world.md#weather).
+so crowd nothing. See [The world](weather.md).
 
 ## Shininess
 

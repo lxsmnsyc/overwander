@@ -12,7 +12,7 @@ import getSupabase from './supabase';
 export interface LandmarkStandings {
   /** Lairs whose raid this player won this raid window */
   cleared: Set<number>;
-  /** Trainers and grunts this player has beaten this window */
+  /** Trainers, grunts and experts this player has beaten this window */
   beaten: Set<number>;
   /** Seats somebody holds, with who holds them */
   seats: Map<number, string>;
@@ -64,8 +64,23 @@ export async function readLandmarkStandings(
     }
   }
   // Only the cells that stage somebody this window: a stop row is
-  // keyed by the window, so an empty cell has nothing to look up
-  for (const cell of [...snapshot.getTrainerStops().keys(), ...snapshot.getRocketStops().keys()]) {
+  // keyed by the window, so an empty cell has nothing to look up. The
+  // experts keep their houses for good, so theirs are the cells the
+  // landmark itself is on
+  const fighters = [
+    ...snapshot.getTrainerStops().keys(),
+    ...snapshot.getRocketStops().keys(),
+    ...snapshot.getGymStops().keys(),
+    ...snapshot.getEliteStops().keys(),
+    ...snapshot.getChampionStops().keys(),
+  ];
+
+  for (const [cell, landmark] of chunk.getLandmarkCells()) {
+    if (landmark === Landmark.FrontierBrain) {
+      fighters.push(cell);
+    }
+  }
+  for (const cell of fighters) {
     stops.set(stopIdOf(chunk, snapshot.npcTimestamp, cell, offset), cell);
   }
   for (const [cell, npc] of snapshot.getWanderingNpcs()) {

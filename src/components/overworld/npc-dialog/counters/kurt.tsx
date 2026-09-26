@@ -8,6 +8,7 @@ import ItemSprite from '../../../items/ItemSprite';
 import { DialogActions, useToast } from '../../../styled';
 import type { CounterProps } from '../shared';
 import { KurtCounter } from './goods';
+import { readable } from '../../../app/resource-reads';
 
 /**
  * Kurt at his lathe: a basket of one colour in, the ball that colour
@@ -27,7 +28,7 @@ export default function Kurt(props: CounterProps): JSX.Element {
   const apricorns = (): InventoryEntry[] => {
     const held: InventoryEntry[] = [];
 
-    for (const entry of props.bag.latest ?? []) {
+    for (const entry of readable(props.bag) ?? []) {
       if (getApricornBall(entry.item) != null && entry.amount > 0) {
         held.push(entry);
       }

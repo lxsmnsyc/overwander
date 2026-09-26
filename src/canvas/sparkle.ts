@@ -7,12 +7,20 @@
  * of light out of its middle and then scatters glints over it, once: it
  * is an announcement rather than something a shiny wears.
  *
- * Everything here is a **share of the sprite** rather than a number of
- * pixels, so the same sparkle reads on a pokemon two dozen pixels tall
- * across a chunk and on the same pokemon blown up four times in a
- * dialog. Every shape carries a dark edge, so it reads on sand and on a
- * dark page alike.
+ * Its size is the same for every pokemon: a sparkle sized off the
+ * sprite made the small ones hardest to spot, which is the opposite of
+ * what it is for. Everything is a share of `SPARKLE_FRAME` times the
+ * scale it is drawn at, so it still grows when the board is zoomed or
+ * the pokemon is blown up in a dialog. Every shape carries a dark edge,
+ * so it reads on sand and on a dark page alike.
  */
+
+/**
+ * The sprite size every sparkle is drawn for, in sheet pixels. Around
+ * the wider end of what a pokemon is authored at, so a small one is
+ * announced loudly rather than in proportion
+ */
+export const SPARKLE_FRAME = 64;
 
 /** How long a sparkle runs for, in milliseconds */
 export const SPARKLE_LIFE = 1400;
@@ -29,30 +37,29 @@ export const SPARKLE_STARS = 9;
 /** How many rays the burst throws, long and short in turn */
 export const SPARKLE_RAYS = 8;
 
-/** How big a glint is at its widest, as a share of the sprite's own width */
+/** How big a glint is at its widest, as a share of the sparkle's own size */
 export const SPARKLE_STAR_SIZE = 0.3;
 
-/** How far the long rays and the ring reach from the middle, as a share of the sprite's width */
+/** How far the long rays and the ring reach from the middle, as a share of the sparkle's size */
 export const SPARKLE_RAY_REACH = 0.62;
 export const SPARKLE_RING_REACH = 0.55;
 
-/** Where the burst comes from, as a share of the sprite's height above the point it stands on */
+/** Where the burst comes from, as a share of the sparkle's size above the point it stands on */
 export const SPARKLE_MIDDLE = -0.5;
 
 /**
- * The smallest a glint is ever drawn, in pixels. A pokemon standing
- * across the board is a couple of dozen pixels tall, and a glint sized
- * purely as a share of that would be a lit pixel and nothing more
+ * The smallest a glint is ever drawn, in pixels, for a board zoomed
+ * far enough out that even a fixed glint falls under a pixel
  */
 const SPARKLE_MIN_STAR = 2;
 
-/** How far a glint drifts upward over its life, as a share of the sprite's height */
+/** How far a glint drifts upward over its life, as a share of the sparkle's size */
 export const SPARKLE_RISE = 0.12;
 
 /**
- * How far to either side of the sprite the glints are thrown, as a
- * share of its width. A glint sits on the outline as often as on the
- * middle, so they spread a little past the picture
+ * How far to either side of the point it stands on the glints are
+ * thrown, as a share of the sparkle's size. A glint sits on the
+ * outline as often as on the middle, so they spread a little wide
  */
 export const SPARKLE_SPREAD = 1.4;
 
@@ -70,8 +77,8 @@ export const SPARKLE_TINTS = ['#fff2a8', '#ffffff', '#c8f4ff'] as const;
 
 export interface SparkleOptions {
   /**
-   * How far to either side of the sprite the glints may fall, as a
-   * share of its width. Anything drawing into a box cut to the picture
+   * How far to either side the glints may fall, as a share of the
+   * sparkle's size. Anything drawing into a box cut to the picture
    * wants less than the default, or the outermost ones are clipped
    */
   spread?: number;
@@ -154,8 +161,9 @@ function drawGlint(
 /**
  * Draw a shiny's sparkle over the sprite it belongs to.
  *
- * `x` and `y` are the point the pokemon stands on, and `frame` is the
- * sheet's own frame size before the scale. `age` is how long the
+ * `x` and `y` are the point the pokemon stands on, and `scale` is how
+ * many canvas pixels a sheet pixel covers. The sprite's own frame is
+ * deliberately not read: see `SPARKLE_FRAME`. `age` is how long the
  * sparkle has been running: past `SPARKLE_LIFE` nothing is drawn, which
  * is what makes this something that happens once. `seed` decides where
  * the glints fall and only has to be stable
@@ -166,7 +174,6 @@ export default function drawSparkle(
   age: number,
   x: number,
   y: number,
-  frame: { width: number; height: number },
   scale: number,
   options: SparkleOptions = {},
 ): void {
@@ -174,8 +181,8 @@ export default function drawSparkle(
     return;
   }
 
-  const width = frame.width * scale;
-  const height = frame.height * scale;
+  const width = SPARKLE_FRAME * scale;
+  const height = width;
   const spread = options.spread ?? SPARKLE_SPREAD;
   const middleX = x;
   const middleY = y + SPARKLE_MIDDLE * height;

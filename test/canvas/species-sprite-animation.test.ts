@@ -237,14 +237,19 @@ describe('sprite metadata', () => {
 
   /**
    * A clip whose drawing starts above or left of the cell it is
-   * declared in, and how far. Combee's Idle is one pixel up and
-   * Reshiram's three wide clips start a column or two out, which is
+   * declared in, and how far. Combee's Idle and all four of
+   * Jellicent's clips are one pixel up, and Reshiram's three wide
+   * clips start a column or two out, which is
    * the archive's own offset rather than anything the import does.
    * Listed for the same reason as the overdrawn ones: a fresh one
    * should fail rather than pass quietly
    */
   const RAISED = new Map([
     ['415 Idle', -1],
+    ['593 Idle', -1],
+    ['593 Sleep', -1],
+    ['593 Rotate', -1],
+    ['593 Walk', -1],
     ['643 Charge', -2],
     ['643 Shoot', -1],
     ['643 Swing', -2],

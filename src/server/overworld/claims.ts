@@ -2,7 +2,7 @@ import 'server-only';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../overworld/chunk-snapshot';
 import getWorld, { WORLD_GENERATION } from '../../overworld/current';
 import { Depth } from '../../overworld/depth';
-import { getSql, jsonOf, tx } from '../db';
+import { type Tx, getSql, jsonOf, tx } from '../db';
 import { asOffset, toLocalTime, toZoneKey } from '../../auth/local-time';
 import { asNumber, asRecordArray } from '../read';
 
@@ -75,13 +75,39 @@ export function liveSnapshot(
   return new ChunkSnapshot(getWorld(depth).getChunk(x, y), toLocalTime(now, zone), zone);
 }
 
+/** Thrown to roll a claim back when its payment could not be made */
+class Unpaid extends Error {}
+
+/**
+ * What a claim pays, run inside the transaction that takes the marker.
+ * Answering false refuses the claim: the marker goes back along with
+ * anything the payment wrote, so nothing lands half-way
+ */
+export type ClaimPayment = (transaction: Tx) => Promise<boolean>;
+
 /**
  * Take a claim marker, or find it already taken. One marker per
  * landmark, window and player, so a landmark pays each player once
- * per window and regenerates with the next one
+ * per window and regenerates with the next one.
+ *
+ * `pay` is what the claim is worth, written in the same transaction as
+ * the marker: a marker without its payout, or a payout without its
+ * marker, would be a landmark that paid nothing or paid twice
  */
-export async function claim(table: string, id: string, record: ClaimRecord): Promise<boolean> {
-  return writeClaim(table, id, record);
+export async function claim(
+  table: string,
+  id: string,
+  record: ClaimRecord,
+  pay?: ClaimPayment,
+): Promise<boolean> {
+  try {
+    return await writeClaim(table, id, record, pay);
+  } catch (refused) {
+    if (refused instanceof Unpaid) {
+      return false;
+    }
+    throw refused;
+  }
 }
 
 /**
@@ -105,7 +131,12 @@ const PHENOMENON_KINDS: Record<string, number> = { item: 0, encounter: 1, egg: 2
  * hourly sweep reads: a marker whose window has rolled can never
  * refuse a second claim again, so it is only taking up room
  */
-async function writeClaim(table: string, marker: string, record: ClaimRecord): Promise<boolean> {
+async function writeClaim(
+  table: string,
+  marker: string,
+  record: ClaimRecord,
+  pay?: ClaimPayment,
+): Promise<boolean> {
   const { player, ...extra } = record;
 
   return tx(async (transaction) => {
@@ -168,6 +199,12 @@ async function writeClaim(table: string, marker: string, record: ClaimRecord): P
         on conflict do nothing
       `;
     }
-    return inserted.count > 0;
+    if (inserted.count === 0) {
+      return false;
+    }
+    if (pay != null && !(await pay(transaction))) {
+      throw new Unpaid();
+    }
+    return true;
   });
 }

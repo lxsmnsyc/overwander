@@ -14,7 +14,8 @@ import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { useGame } from '../app/game-context';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
-import { Badge, Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';
+import PlayerPlate from '../profile/PlayerPlate';
+import { Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';
 
 /**
  * A gym seat, put to whoever walked up to it.
@@ -50,10 +51,16 @@ export interface GymSeatDialogProps {
  * What the seat is holding, and who by. Read one component down so a
  * slow read suspends the panel rather than the world behind it
  */
+/** Who is sitting on the seat, as their plate draws them */
+interface Holder {
+  name: string;
+  sprite: string | null;
+}
+
 function SeatCounter(
   props: GymSeatDialogProps & {
     party: Resource<TeamSnapshotRecord | null>;
-    holder: Resource<string>;
+    holder: Resource<Holder>;
   },
 ): JSX.Element {
   const game = useGame();
@@ -77,6 +84,7 @@ function SeatCounter(
    * How long until the thing in the way lifts, in whole minutes: a
    * countdown to the second would be a clock nothing is redrawing
    */
+  const stake = (): number => Math.round(SEAT_STAKE_SHARE * 100);
   const minutes = (until: number): number => Math.max(1, Math.ceil((until - Date.now()) / 60_000));
 
   /**
@@ -211,31 +219,65 @@ function SeatCounter(
           >
             {(seated) => (
               <>
-                <Badge tone={mine() ? 'leaf' : 'tide'}>
-                  {mine() ? 'Your seat' : `Held by ${props.holder.latest ?? 'a trainer'}`}
-                </Badge>
+                {/* Who is sitting there, with a way to look them up */}
+                <div
+                  class={`flex w-full items-center gap-2 rounded-panel border-2 px-3 py-2 text-left ${
+                    mine() ? 'border-leaf bg-leaf-soft' : 'border-line bg-paper'
+                  }`}
+                >
+                  <div class="flex min-w-0 grow flex-col gap-0.5">
+                    <PlayerPlate
+                      name={mine() ? 'Your seat' : (props.holder.latest?.name ?? 'A trainer')}
+                      sprite={props.holder.latest?.sprite ?? null}
+                    />
+                    <Meta class="text-left">
+                      {lineup().length} standing · {seated().defenses} turned away
+                    </Meta>
+                  </div>
+                  <Show when={!mine()}>
+                    <Button
+                      onClick={() => {
+                        game.setVisiting(seated().holder);
+                      }}
+                    >
+                      Profile
+                    </Button>
+                  </Show>
+                </div>
 
-                {/* What they left standing, in the box of squares a
-                    player already reads their own pokemon in */}
                 <CatchBox
                   entries={lineup()}
                   capacity={Math.max(1, lineup().length)}
                   columns={3}
                   cardOnly
                 />
-                <Meta>
-                  {lineup().length} standing, {seated().defenses} turned away.
-                </Meta>
-                <Meta class="max-w-prose">
-                  {mine()
-                    ? `They fight for you while you are away, at full health every time, and
-                       nothing that happens to them is written back to your pokemon. What a
-                       beaten challenger pays lands in your purse.`
-                    : `Win and the seat empties, ${Math.round(SEAT_STAKE_SHARE * 100)}% of their
-                       purse is yours, and you may sit down on it. Lose and they take the same
-                       share of yours. Your party carries the fight out with it either way —
-                       theirs does not.`}
-                </Meta>
+
+                <Show
+                  when={!mine()}
+                  fallback={
+                    <Meta class="max-w-prose">
+                      They fight for you while you are away, at full health every time, and nothing
+                      that happens to them is written back to your pokemon. What a beaten challenger
+                      pays lands in your purse.
+                    </Meta>
+                  }
+                >
+                  <div class="grid w-full gap-2 text-left sm:grid-cols-2">
+                    <div class="flex flex-col gap-1 rounded-panel border-2 border-leaf bg-leaf-soft p-2">
+                      <span class="text-xs font-semibold text-muted uppercase">Win</span>
+                      <Meta class="text-left">The seat empties.</Meta>
+                      <Meta class="text-left">{stake()}% of their purse is yours.</Meta>
+                      <Meta class="text-left">You may sit down on it.</Meta>
+                    </div>
+                    <div class="flex flex-col gap-1 rounded-panel border-2 border-ember bg-ember-soft p-2">
+                      <span class="text-xs font-semibold text-muted uppercase">Lose</span>
+                      <Meta class="text-left">They take {stake()}% of your purse.</Meta>
+                      <Meta class="text-left">
+                        Your party carries the fight out with it. Theirs does not.
+                      </Meta>
+                    </div>
+                  </div>
+                </Show>
                 <Show when={!mine() && (cooling() || spent())}>
                   <Note>
                     {spent()
@@ -312,7 +354,11 @@ export default function GymSeatDialog(props: GymSeatDialogProps): JSX.Element {
 
   const [holder] = createResource(
     () => props.standing?.seat?.holder ?? null,
-    async (uid) => (await getProfile(uid))?.nickname ?? 'a trainer',
+    async (uid): Promise<Holder> => {
+      const profile = await getProfile(uid);
+
+      return { name: profile?.nickname ?? 'A trainer', sprite: profile?.sprite ?? null };
+    },
   );
 
   return <SeatCounter {...props} party={party} holder={holder} />;

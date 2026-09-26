@@ -77,7 +77,9 @@ eight facing rows per animation, an `anims` block, and an anchor for the pokemon
 shadow, centre, head and hands. The anchors survive the packing.
 
 The sheets are made outside this repository, in the SpriteCollab checkout beside
-it, which is where the archives and the packing tools live. `pnpm import-sprites`
+it, which is where the archives and the packing tools live. That checkout is
+[lxsmnsyc/SpriteCollab](https://github.com/lxsmnsyc/SpriteCollab), a fork of the
+collection. `pnpm import-sprites`
 copies the finished folders in, renaming each from the collection's
 `{region}/{dex}/{form}` to the species id this game knows it by.
 

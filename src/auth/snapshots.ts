@@ -4,7 +4,6 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { ItemStack } from '../data/overworld/item-pool';
 import type Chunk from '../overworld/chunk';
-import { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
 import ChunkSnapshot, {
   SNAPSHOT_INTERVAL,
@@ -15,20 +14,24 @@ import { LURE_SPAWN_BONUS } from '../overworld/abilities/__create';
 import {
   CLAIM_CHUNK_LIMIT,
   type SnapshotRecord,
+  type SpawnRoll,
   asSnapshotRecord,
   spawnId,
 } from './snapshot-record';
-import { requireUid, requireUidFor } from '../server/auth';
+import { requireReader, requireUid, requireUidFor } from '../server/auth';
 import { Feature } from '../server/switches';
 import { Pace } from '../server/pace';
 import check, {
   CELL,
   CHUNK_COORDINATE,
   CLAIM_QUERIES,
+  COUNT,
   DEPTH,
   ID,
   LOCALE,
+  MAYBE_OFFSET,
   OFFSET,
+  SPAWN_ROLLS,
   TOKEN,
 } from '../server/validate';
 import {
@@ -49,49 +52,36 @@ import {
 } from '../server/overworld';
 import batchedQuery from '../utils/batched-query';
 import { localNow, syncServerClock } from './clock';
-import { asRecord, asRecordArray } from './__normalize';
 import { asOffset, getLocale, toZoneKey } from './local-time';
 import type { EncounterRecord } from './encounter-record';
-import getSupabase, { type Unwatch, watchTable } from './supabase';
+import { type Unwatch, watchTable } from './supabase';
+import { readOnly } from '../utils/server-calls';
+import { readSnapshotWindows, writeSnapshotWindow } from '../server/snapshot-windows';
 import getIdToken from './session';
 
 export type { LatherResult } from '../server/overworld';
 
 /** The stored window plus its spawn rows, in the record shape */
 async function readSnapshotWindow(chunk: Chunk, offset: number): Promise<SnapshotRecord | null> {
-  const { data } = await getSupabase()
-    .from('snapshots')
-    .select(
-      'chunk_seed, zone, utc_offset, window_at, snapshot_spawns(idx, species, individual_value, trait_value)',
-    )
-    .eq('generation', WORLD_GENERATION)
-    .eq('chunk_seed', chunk.seed)
-    .eq('zone', toZoneKey(asOffset(offset)))
-    .maybeSingle();
+  const found = await readWindowsOnServer(await getIdToken(), chunk.seed, offset);
 
-  return data == null ? null : fromSnapshotRow(asRecord(data));
+  return found.length === 0 ? null : asSnapshotRecord(found[0]);
 }
 
-function fromSnapshotRow(row: Record<string, unknown>): SnapshotRecord {
-  const spawns = asRecordArray(row.snapshot_spawns).sort(
-    (left, right) => Number(left.idx ?? 0) - Number(right.idx ?? 0),
-  );
-  const rolls: Record<string, unknown>[] = [];
-
-  for (const entry of spawns) {
-    rolls.push({
-      species: entry.species,
-      individualValue: entry.individual_value,
-      traitValue: entry.trait_value,
-    });
-  }
-  return asSnapshotRecord({
-    seed: row.chunk_seed,
-    offset: row.utc_offset,
-    timestamp: row.window_at,
-    spawns: rolls,
-  });
+/** The chunk's windows, or only the offset's zone's when one is given */
+async function readWindowsOnServer(
+  token: string,
+  seed: string,
+  offset: number | null,
+): Promise<unknown[]> {
+  'use server';
+  check(TOKEN, token);
+  check(ID, seed);
+  check(MAYBE_OFFSET, offset);
+  await requireReader(token);
+  return readSnapshotWindows(seed, offset ?? undefined);
 }
+readOnly(readWindowsOnServer);
 
 /**
  * How many spawns a visit publishes: the ordinary eight plus the
@@ -173,19 +163,12 @@ async function resolveSnapshotWindow(
     spawns: rolled,
   };
 
-  // The publish is a definer function: shape-checked, and monotonic,
-  // so two racing publishers converge on one stored window. Not read
+  // The publish is shape-checked and monotonic, so two racing
+  // publishers converge on one stored window. Not read
   // back: a publisher that lost the race lost it to the same window,
   // and a window's spawns are rolled from the chunk, the window and
   // the zone alone, so what was stored is what was rolled here
-  await getSupabase().rpc('publish_snapshot', {
-    p_generation: WORLD_GENERATION,
-    p_seed: chunk.seed,
-    p_zone: toZoneKey(asOffset(offset)),
-    p_offset: asOffset(offset),
-    p_window: timestamp,
-    p_spawns: record.spawns,
-  });
+  await publishOnServer(await getIdToken(), chunk.seed, offset, timestamp, record.spawns);
 
   return record;
 }
@@ -212,20 +195,29 @@ export async function getChunkSnapshot(
  * right now, once per zone anybody has walked it from
  */
 export async function listChunkWindows(seed: string): Promise<SnapshotRecord[]> {
-  const { data } = await getSupabase()
-    .from('snapshots')
-    .select(
-      'chunk_seed, zone, utc_offset, window_at, snapshot_spawns(idx, species, individual_value, trait_value)',
-    )
-    .eq('generation', WORLD_GENERATION)
-    .eq('chunk_seed', seed);
-
   const windows: SnapshotRecord[] = [];
 
-  for (const row of asRecordArray(data)) {
-    windows.push(fromSnapshotRow(row));
+  for (const found of await readWindowsOnServer(await getIdToken(), seed, null)) {
+    windows.push(asSnapshotRecord(found));
   }
   return windows;
+}
+
+async function publishOnServer(
+  token: string,
+  seed: string,
+  offset: number,
+  windowAt: number,
+  spawns: SpawnRoll[],
+): Promise<void> {
+  'use server';
+  check(TOKEN, token);
+  check(ID, seed);
+  check(OFFSET, offset);
+  check(COUNT, windowAt);
+  check(SPAWN_ROLLS, spawns);
+  await requireUid(token);
+  return writeSnapshotWindow(seed, offset, windowAt, spawns);
 }
 
 /**

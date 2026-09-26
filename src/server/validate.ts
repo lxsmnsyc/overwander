@@ -15,7 +15,7 @@ import { MAX_EFFORT_PER_STAT, MAX_PACKED_IVS, Stats } from '../data/constants/st
 import { MAX_LEVEL } from '../data/constants/levels';
 import Npc from '../data/overworld/npc';
 import { RaidKind } from '../auth/raid-record';
-import { TEAM_SIZE } from '../auth/teams';
+import TEAM_SIZE from '../auth/team-size';
 import { TRADE_GOLD_LIMIT } from '../auth/trade-record';
 
 /**
@@ -52,6 +52,12 @@ const MAX_AMOUNT = 1e9;
 
 /** The most rows an admin listing may page to */
 const MAX_PAGE = 10_000;
+
+/** The most spawns one chunk window may store */
+const MAX_WINDOW_SPAWNS = 64;
+
+/** The most keys one batched read in the browser gathers */
+const BATCH_LIMIT = 50;
 
 /** The most pokemon one call may act on at once */
 const BULK_LIMIT = 200;
@@ -182,6 +188,21 @@ export const PARTY = listOf(ID, TEAM_SIZE);
 
 /** The catches one call acts on at once */
 export const CATCH_LIST = listOf(ID, BULK_LIMIT);
+
+/** The caller's zone offset, or null for every zone */
+export const MAYBE_OFFSET = v.nullable(OFFSET);
+
+/** Any value a Postgres `integer` column holds, such as a packed roll */
+const INT32 = whole(-(2 ** 31), 2 ** 31 - 1);
+
+/** A chunk window's spawn rolls, as a publisher sends them */
+export const SPAWN_ROLLS = listOf(
+  v.object({ species: GAME_ID, individualValue: INT32, traitValue: INT32 }),
+  MAX_WINDOW_SPAWNS,
+);
+
+/** As many row ids as one batched read in the browser sends */
+export const ID_BATCH = listOf(ID, BATCH_LIMIT);
 
 /** Row ids keyed by the cells of one chunk, at most one per cell */
 const CHUNK_IDS = listOf(ID, CELL_COUNT);

@@ -1,9 +1,19 @@
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import type { Species } from '../data/ids/species';
-import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
-import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
-import { requireUid } from '../server/auth';
-import check, { AFTERMATHS, BATTLE_OUTCOME, COUNT, ID, TOKEN } from '../server/validate';
+import { asNumber, asRecordArray, asString } from './__normalize';
+import { type Unwatch, watchRow, watchTable } from './supabase';
+import { readOnly } from '../utils/server-calls';
+import { readBattleRows, readPlayerBattleRows } from '../server/battle-reads';
+import { requireReader, requireUid } from '../server/auth';
+import check, {
+  AFTERMATHS,
+  BATTLE_OUTCOME,
+  COUNT,
+  ID,
+  MAYBE_ID,
+  TOKEN,
+  UID,
+} from '../server/validate';
 import BattleOutcome from './battle-outcome';
 import Biome from '../data/ids/biome';
 import Weather from '../data/overworld/weather';
@@ -97,14 +107,25 @@ const BATTLE_TABLE = 'battles';
 
 /** One battle row plus its team list, in the record shape */
 async function readBattleRow(id: string): Promise<BattleRecord | null> {
-  const { data }: { data: unknown } = await getSupabase()
-    .from(BATTLE_TABLE)
-    .select('*, battle_teams(position, snapshot_id, player)')
-    .eq('id', id)
-    .maybeSingle();
+  const row = (await readBattlesOnServer(await getIdToken(), id, '')).at(0);
 
-  return data == null ? null : fromBattleRow(asRecord(data));
+  return row == null ? null : fromBattleRow(row);
 }
+
+/** One battle by id, or every battle the player fought when `battle` is empty */
+async function readBattlesOnServer(
+  token: string,
+  battle: string,
+  player: string,
+): Promise<Record<string, unknown>[]> {
+  'use server';
+  check(TOKEN, token);
+  check(MAYBE_ID, battle);
+  check(UID, player);
+  await requireReader(token);
+  return battle === '' ? readPlayerBattleRows(player) : readBattleRows([battle]);
+}
+readOnly(readBattlesOnServer);
 
 function fromBattleRow(row: Record<string, unknown>): BattleRecord {
   const teams = asRecordArray(row.battle_teams).sort(
@@ -172,14 +193,7 @@ export function watchBattleHistory(
   player: string,
   onChange: (battles: [string, BattleRecord][]) => void,
 ): Unwatch {
-  const read = async (): Promise<[string, BattleRecord][]> => {
-    const { data } = await getSupabase()
-      .from('battle_teams')
-      .select('battle_id, battles(*, battle_teams(position, snapshot_id, player))')
-      .eq('player', player);
-
-    return finishedBattles(data);
-  };
+  const read = async (): Promise<[string, BattleRecord][]> => listBattleHistory(player);
 
   // The junction row filtered to this player is the invalidation
   // signal; every ping re-reads the list
@@ -251,23 +265,13 @@ async function recordAftermathOnServer(
  * out of the history — an abandoned fight is not a result
  */
 export async function listBattleHistory(player: string): Promise<[string, BattleRecord][]> {
-  const { data } = await getSupabase()
-    .from('battle_teams')
-    .select('battle_id, battles(*, battle_teams(position, snapshot_id, player))')
-    .eq('player', player);
-
-  return finishedBattles(data);
-}
-
-/** Junction rows to their finished battles, newest first */
-function finishedBattles(data: unknown): [string, BattleRecord][] {
   const battles: [string, BattleRecord][] = [];
 
-  for (const entry of asRecordArray(data)) {
-    const record = fromBattleRow(asRecord(entry.battles));
+  for (const row of await readBattlesOnServer(await getIdToken(), '', player)) {
+    const record = fromBattleRow(row);
 
     if (record.outcome !== BattleOutcome.Unfinished) {
-      battles.push([String(entry.battle_id), record]);
+      battles.push([asString(row.id), record]);
     }
   }
   return battles.sort((left, right) => right[1].startedAt - left[1].startedAt);

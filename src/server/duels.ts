@@ -13,7 +13,7 @@ import {
 } from '../auth/duel-record';
 import { withLimit } from '../data/constants/battle-limits';
 import { Slots, getSlots } from '../data/constants/slots';
-import { TEAM_SIZE } from '../auth/teams';
+import TEAM_SIZE from '../auth/team-size';
 import { LobbyRole } from '../auth/lobby-role';
 import { asCaughtPokemon } from '../auth/caught-record';
 import { isFainted } from '../auth/health';

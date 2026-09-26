@@ -53,6 +53,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Bouffalant, weight: 6 },
         { species: Species.Serperior, weight: 2 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Kangaskhan, weight: 5 },
@@ -115,6 +116,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Bouffalant, weight: 6 },
         { species: Species.Serperior, weight: 2 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Kangaskhan, weight: 5 },

@@ -147,6 +147,8 @@ const enum Awards {
   ColressDefeated = 119,
   ZinzolinDefeated = 120,
   GhetsisDefeated = 121,
+  /** Unova's champion before Iris, met where a champion would be */
+  AlderDefeated = 122,
 }
 
 export default Awards;
@@ -275,6 +277,7 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.ColressDefeated]: 'Colress Defeated',
   [Awards.ZinzolinDefeated]: 'Zinzolin Defeated',
   [Awards.GhetsisDefeated]: 'Ghetsis Defeated',
+  [Awards.AlderDefeated]: 'Alder Defeated',
 };
 
 /**

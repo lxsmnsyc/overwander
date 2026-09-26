@@ -33,6 +33,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Karrablast, weight: 20 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.Eevee, weight: 2 },
         { species: Species.Sentret, weight: 25 },
@@ -65,6 +66,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Escavalier, weight: 5 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Furret, weight: 10 },
@@ -146,6 +148,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Karrablast, weight: 20 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.Eevee, weight: 2 },
         { species: Species.Sentret, weight: 25 },
@@ -178,6 +181,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Escavalier, weight: 5 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Furret, weight: 10 },

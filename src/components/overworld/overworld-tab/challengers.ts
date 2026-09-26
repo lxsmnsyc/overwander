@@ -190,6 +190,7 @@ const LEGEND_GREETINGS: Record<Legend, string> = {
   [Legend.Red]: 'Red says nothing. He reaches for a ball.',
   [Legend.Steven]: 'Steven turns a stone over in his hand. “I was hoping for a real fight.”',
   [Legend.N]: 'N tilts his head. “Show me what you and your pokemon are to each other.”',
+  [Legend.Alder]: 'Alder laughs and rolls his shoulders. “Let us enjoy this one, shall we?”',
 };
 
 /** What a champion says as the last fight of their league is put */

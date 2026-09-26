@@ -101,6 +101,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Bouffalant, weight: 6 },
         { species: Species.Unfezant, weight: 6 },
         { species: Species.Reuniclus, weight: 5 },
         { species: Species.Castform, weight: 10 },
@@ -243,6 +244,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Bouffalant, weight: 6 },
         { species: Species.Unfezant, weight: 6 },
         { species: Species.Reuniclus, weight: 5 },
         { species: Species.Castform, weight: 10 },

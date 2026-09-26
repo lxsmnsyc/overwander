@@ -298,6 +298,7 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.ColressDefeated]: '#7f9fc9',
   [Awards.ZinzolinDefeated]: '#6f5f9f',
   [Awards.GhetsisDefeated]: '#8f7f4f',
+  [Awards.AlderDefeated]: '#c4552e',
 };
 
 /**

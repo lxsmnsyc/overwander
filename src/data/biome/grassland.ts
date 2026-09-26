@@ -6,17 +6,13 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
  * Grassland spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerGrasslandSpawns(): void {
-  // Two lines are written but wait on sprites, since the collection
-  // has drawn no Tranquill, Blitzle or Zebstrika. Once it does,
-  // mornings and days take Pidove in base at 30, Tranquill in rare at
-  // 12, Unfezant in elusive at 6, Blitzle in uncommon at 25 and
-  // Zebstrika in scarce at 6
   registerSpawnPool(Biome.Grassland, {
     [TimeOfDay.Morning]: {
       base: [
         { species: Species.Flabebe, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Fletchling, weight: 26 },
+        { species: Species.Pidove, weight: 30 },
         { species: Species.Solosis, weight: 24 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Pidgey, weight: 30 },
@@ -32,6 +28,7 @@ export default function registerGrasslandSpawns(): void {
       uncommon: [
         { species: Species.Skiddo, weight: 24 },
         { species: Species.Bunnelby, weight: 26 },
+        { species: Species.Blitzle, weight: 25 },
         { species: Species.Deerling, weight: 18 },
         { species: Species.Minccino, weight: 26 },
         { species: Species.Swablu, weight: 22 },
@@ -65,6 +62,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Floette, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Fletchinder, weight: 8 },
+        { species: Species.Tranquill, weight: 12 },
         { species: Species.Duosion, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Pidgeotto, weight: 5 },
@@ -80,6 +78,7 @@ export default function registerGrasslandSpawns(): void {
       scarce: [
         { species: Species.Gogoat, weight: 6 },
         { species: Species.Diggersby, weight: 6 },
+        { species: Species.Zebstrika, weight: 6 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Altaria, weight: 5 },
@@ -114,6 +113,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Florges, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Talonflame, weight: 5 },
+        { species: Species.Bouffalant, weight: 6 },
+        { species: Species.Unfezant, weight: 6 },
         { species: Species.Reuniclus, weight: 5 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Venusaur, weight: 2 },
@@ -166,6 +167,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Flabebe, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Fletchling, weight: 26 },
+        { species: Species.Pidove, weight: 30 },
         { species: Species.Solosis, weight: 24 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Pidgey, weight: 30 },
@@ -182,6 +184,7 @@ export default function registerGrasslandSpawns(): void {
       uncommon: [
         { species: Species.Skiddo, weight: 24 },
         { species: Species.Bunnelby, weight: 26 },
+        { species: Species.Blitzle, weight: 25 },
         { species: Species.Deerling, weight: 18 },
         { species: Species.Minccino, weight: 26 },
         { species: Species.Swablu, weight: 22 },
@@ -216,6 +219,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Floette, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Fletchinder, weight: 8 },
+        { species: Species.Tranquill, weight: 12 },
         { species: Species.Duosion, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Pidgeotto, weight: 5 },
@@ -232,6 +236,7 @@ export default function registerGrasslandSpawns(): void {
       scarce: [
         { species: Species.Gogoat, weight: 6 },
         { species: Species.Diggersby, weight: 6 },
+        { species: Species.Zebstrika, weight: 6 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Altaria, weight: 5 },
@@ -267,6 +272,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Florges, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Talonflame, weight: 5 },
+        { species: Species.Bouffalant, weight: 6 },
+        { species: Species.Unfezant, weight: 6 },
         { species: Species.Reuniclus, weight: 5 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Venusaur, weight: 2 },

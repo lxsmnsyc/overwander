@@ -18,21 +18,31 @@ import { registerItem } from './__create';
  * pokemon to hold: they are used, not carried.
  */
 
-/**
- * How many of the six stats each cap polishes. A golden cap covers
- * every stat there is, so it is the count itself rather than a flag —
- * "all of them" is only "as many as exist"
- */
-export const BOTTLE_CAPS = new Map<Items, number>([
-  [Items.GoldenBottleCap, STAT_ORDER.length],
-  [Items.BottleCap, 1],
-]);
+/** The caps there are */
+const BOTTLE_CAPS = new Set<Items>([Items.GoldenBottleCap, Items.BottleCap]);
 
 /**
  * Whether the cap is one of the caps
  */
 export function isBottleCap(item: Items): boolean {
   return BOTTLE_CAPS.has(item);
+}
+
+/**
+ * Whether the player picks the stat the cap goes on. A plain cap
+ * polishes one of their choosing; a golden one polishes them all, so
+ * there is nothing to ask
+ */
+export function capAsksForStat(item: Items): boolean {
+  return item === Items.BottleCap;
+}
+
+/** Which stats a cap polishes, given the one the player chose for a plain cap */
+export function capStats(item: Items, chosen: Stats | null): readonly Stats[] {
+  if (!capAsksForStat(item)) {
+    return STAT_ORDER;
+  }
+  return chosen == null ? [] : [chosen];
 }
 
 /**
@@ -50,37 +60,17 @@ export function isPerfectIVs(ivs: number): boolean {
 }
 
 /**
- * The values a cap leaves behind: `count` stats picked at random from
- * the ones that are not already perfect and raised to `MAX_IV`.
- *
- * Only imperfect stats are drawn from, so a cap never lands on a stat
- * that was already there and does nothing — the item is spent either
- * way, and a random pick that could waste it would make the ordinary
- * cap worse the closer a pokemon got to perfect.
- *
- * Answers null when there was nothing left to polish
+ * The values a cap leaves behind: each of `stats` raised to `MAX_IV`.
+ * Null when none of them had anything to raise, so a cap is never
+ * spent on a stat that was already perfect
  */
-export function polishIVs(ivs: number, count: number, random: () => number): number | null {
-  const dull: Stats[] = [];
-
-  for (const stat of STAT_ORDER) {
-    if (getIV(ivs, stat) < MAX_IV) {
-      dull.push(stat);
-    }
-  }
-
-  if (dull.length === 0) {
-    return null;
-  }
-
+export function polishIVs(ivs: number, stats: readonly Stats[]): number | null {
   let polished = ivs;
 
-  for (let taken = 0; taken < count && dull.length > 0; taken++) {
-    const [stat] = dull.splice(Math.floor(random() * dull.length), 1);
-
+  for (const stat of stats) {
     polished = setIV(polished, stat, MAX_IV);
   }
-  return polished;
+  return polished === ivs ? null : polished;
 }
 
 export default function registerBottleCaps(): void {
@@ -96,7 +86,7 @@ export default function registerBottleCaps(): void {
 
   registerItem(Items.BottleCap, {
     name: 'Bottle Cap',
-    description: `Raises one random value that is not yet ${MAX_IV} to ${MAX_IV}. Spent on use.`,
+    description: `Raises one value of your choice that is not yet ${MAX_IV} to ${MAX_IV}. Spent on use.`,
     type: ItemTypes.Training,
     icon: 'other/bottle-cap',
     flags: ItemFlags.Usable | ItemFlags.Consumable,

@@ -19,6 +19,13 @@ import { getDueQuests } from '../../auth/quests';
 /** How often the asking happens while nothing else prompts it */
 const SWEEP_INTERVAL = 180_000;
 
+/**
+ * The least time between two asks prompted by the collection
+ * changing. A run of catches is a handful of changes in a minute, and
+ * each of them would otherwise be a question of its own
+ */
+const RECORD_PACE = 30_000;
+
 export default function watchDueQuests(
   player: Accessor<string | null>,
   /** Bumped wherever the collection changes, as a reason to look again */
@@ -27,6 +34,8 @@ export default function watchDueQuests(
 ): void {
   const announced = new Set<string>();
   let seeded = false;
+  /** When the last ask went out, which is what RECORD_PACE is measured from */
+  let askedAt = 0;
 
   createEffect(() => {
     if (player() == null) {
@@ -37,6 +46,7 @@ export default function watchDueQuests(
     let cancelled = false;
 
     const sweep = (): void => {
+      askedAt = Date.now();
       getDueQuests()
         .then((due) => {
           if (cancelled) {
@@ -89,7 +99,11 @@ export default function watchDueQuests(
       }
     };
 
-    tick();
+    // The effect re-runs on every collection change, and each of those
+    // is worth asking about, but not one ask apiece
+    if (Date.now() - askedAt >= RECORD_PACE) {
+      tick();
+    }
 
     const timer = setInterval(tick, SWEEP_INTERVAL);
 

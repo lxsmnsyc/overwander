@@ -433,7 +433,6 @@ export function drawLitDecor(
 function sparkle(
   context: CanvasRenderingContext2D,
   slot: Slot,
-  sprite: SpeciesSpriteAnimation,
   x: number,
   y: number,
   clock: number,
@@ -455,11 +454,10 @@ function sparkle(
 
   const seed = Math.round(slot.x + slot.y);
   const scale = scaleOf(slot);
-  const frame = sprite.sourceFrameSize;
-  const glint = onto == null ? null : paintSparkle(nameOf(slot.unit), seed, age, frame);
+  const glint = onto == null ? null : paintSparkle(nameOf(slot.unit), seed, age);
 
   if (onto == null || glint == null) {
-    drawSparkle(context, seed, age, x, y, frame, scale);
+    drawSparkle(context, seed, age, x, y, scale);
     return;
   }
 
@@ -717,7 +715,7 @@ export function drawSlot(
         onto.solid?.(false);
       }
       if (unit.shiny && onto?.lit !== true) {
-        sparkle(context, slot, sprite, x, y, clock, onto);
+        sparkle(context, slot, x, y, clock, onto);
       }
     } else {
       const middle = { x: slot.x + slot.offset[0], y: slot.y + slot.offset[1] };

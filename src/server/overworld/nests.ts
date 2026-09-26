@@ -92,11 +92,20 @@ export async function claimNest(
 
   const id = snapshot.nestMarker(cell);
 
-  if (!(await claim('nest_claims', id, { player: uid, species }))) {
+  // Laid in the claim's own transaction, so the nest is never spent
+  // without the egg landing
+  let egg = '';
+
+  if (
+    !(await claim('nest_claims', id, { player: uid, species }, async (transaction) => {
+      egg = await grantNestEgg(uid, snapshot, cell, species, now, offset, locale, transaction);
+      return true;
+    }))
+  ) {
     return null;
   }
   await bumpProgress(uid, [[Metric.Landmarks, Landmark.Nest, 1]]);
-  return grantNestEgg(uid, snapshot, cell, species, now, offset, locale);
+  return egg;
 }
 
 /**

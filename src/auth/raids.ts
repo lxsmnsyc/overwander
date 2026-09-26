@@ -45,8 +45,8 @@ import {
 } from '../server/raids';
 import { serverNow, syncServerClock } from './clock';
 import { asOffset, toLocalTime } from './local-time';
-import { REALTIME_SUBSCRIBE_STATES } from '@supabase/supabase-js';
-import getSupabase, { type Unwatch, watchTable } from './supabase';
+import { followChanges } from './live';
+import { type Unwatch, watchTable } from './watch';
 import getIdToken from './session';
 import batchedQuery from '../utils/batched-query';
 import { readOnly } from '../utils/server-calls';
@@ -164,7 +164,6 @@ readOnly(readLobbiesOnServer);
  * that says too little to fold is read like a reconnect
  */
 export function watchRaid(id: string, onChange: (raid: RaidRecord | null) => void): Unwatch {
-  const supabase = getSupabase();
   // What is held: nothing until the first read lands, then the lobby
   // row (or null once it is gone) and its teams
   let held: { row: Record<string, unknown> | null; joined: Joined } | null = null;
@@ -184,18 +183,31 @@ export function watchRaid(id: string, onChange: (raid: RaidRecord | null) => voi
         // next change or reconnect tries again
       });
   };
-  let connected = false;
-  const channel = supabase
-    .channel(`raid:${id}:${Math.random().toString(36).slice(2)}`)
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: RAID_TABLE, filter: `id=eq.${id}` },
-      (payload) => {
-        const row: Record<string, unknown> = payload.new;
+  // The first subscribe of each rides the read below; a resubscribe
+  // may have missed changes while the socket was away
+  const connected = new Set<string>();
+  // Both subscriptions come back together, and one read answers both
+  let rereading = false;
+  const resubscribed = (table: string) => (): void => {
+    if (connected.has(table) && !rereading) {
+      rereading = true;
+      queueMicrotask(() => {
+        rereading = false;
+        refetch();
+      });
+    }
+    connected.add(table);
+  };
+  const closers = [
+    followChanges(
+      RAID_TABLE,
+      [`id=eq.${id}`],
+      (change) => {
+        const row = change.new;
 
         if (held == null) {
           refetch();
-        } else if (payload.eventType === 'DELETE') {
+        } else if (change.op === 'DELETE') {
           held = { row: null, joined: new Map() };
           publish();
         } else if (Object.keys(row).length === 0) {
@@ -205,48 +217,40 @@ export function watchRaid(id: string, onChange: (raid: RaidRecord | null) => voi
           publish();
         }
       },
-    )
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'teams', filter: `raid_id=eq.${id}` },
-      (payload) => {
-        const joining: Record<string, unknown> = payload.new;
-        const leaving: Record<string, unknown> = payload.old;
+      resubscribed(RAID_TABLE),
+    ),
+    followChanges(
+      'teams',
+      [`raid_id=eq.${id}`],
+      (change) => {
+        const joining = change.new;
+        const leaving = change.old;
 
         if (held == null) {
           refetch();
-        } else if (payload.eventType === 'INSERT' && typeof joining.id === 'string') {
+        } else if (change.op === 'INSERT' && typeof joining.id === 'string') {
           // A team is written once and never changed, so its id and
           // its place in the queue are all the lobby needs
           held.joined.set(joining.id, Number(joining.joined_seq ?? 0));
           publish();
-        } else if (payload.eventType === 'DELETE' && typeof leaving.id === 'string') {
+        } else if (change.op === 'DELETE' && typeof leaving.id === 'string') {
           held.joined.delete(leaving.id);
           publish();
         } else {
           refetch();
         }
       },
-    )
-    .subscribe((status) => {
-      if (status !== REALTIME_SUBSCRIBE_STATES.SUBSCRIBED) {
-        return;
-      }
-      // The first subscribe rides the read below; a resubscribe may
-      // have missed changes while the socket was away
-      if (connected) {
-        refetch();
-      }
-      connected = true;
-    });
+      resubscribed('teams'),
+    ),
+  ];
 
   // The first paint cannot wait for the socket
   refetch();
 
   return () => {
-    supabase.removeChannel(channel).catch(() => {
-      // A channel that cannot be removed is already gone
-    });
+    for (const close of closers) {
+      close();
+    }
   };
 }
 

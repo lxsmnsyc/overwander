@@ -34,7 +34,7 @@ import {
   startDuel as startOnServer,
 } from '../server/duels';
 import { syncServerClock } from './clock';
-import { type Unwatch, watchRow, watchTable } from './supabase';
+import { type Unwatch, watchRow, watchTable } from './watch';
 import { readOnly } from '../utils/server-calls';
 import getIdToken from './session';
 

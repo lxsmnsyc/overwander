@@ -93,15 +93,16 @@ cannot verify the token. Check that `SUPABASE_URL` names the same project the
 browser is signed in to, and that `SUPABASE_JWT_SECRET` is empty rather than
 holding a local stack's secret.
 
-**Connections exhausted, or timeouts under load.** The direct connection is
-being used instead of the pooler. It is port 6543, transaction mode.
+**Connections exhausted, or timeouts under load.** Too many connections for the
+project. The server holds at most ten, plus one for the live feed.
 
 **Looking a player up by email refuses, everything else works.**
 `SUPABASE_SERVICE_ROLE_KEY` is unset. Only the auth admin calls need it.
 
-**A player's screen never updates until reload.** Realtime is not reaching them.
-The publication is created by the migrations, so the usual cause is a schema
-pushed only in part.
+**A player's screen never updates until reload.** The live feed is not reaching
+them. Check that the migrations are pushed in full, since the change triggers
+come with them, and that `SUPABASE_DB_URL` is not the transaction pooler, which
+cannot `LISTEN`.
 
 ## See also
 

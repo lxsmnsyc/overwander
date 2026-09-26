@@ -4,7 +4,7 @@ import { countServerCall } from './server-calls';
 /** The stale build a reload was last asked for, so a page that comes back stale is not reloaded forever */
 const RELOADED_KEY = 'stale-build-reload';
 
-function reloadForNewBuild(): void {
+export function reloadForNewBuild(): void {
   try {
     if (sessionStorage.getItem(RELOADED_KEY) === import.meta.env.VITE_BUILD_ID) {
       return;

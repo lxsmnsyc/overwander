@@ -1,5 +1,5 @@
 import { readOnly } from '../utils/server-calls';
-import { type Unwatch, watchTable } from './supabase';
+import { type Unwatch, watchTable } from './watch';
 import readAnnouncements from '../server/announcements';
 
 /**

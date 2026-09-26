@@ -11,7 +11,7 @@ import { Feature } from '../server/switches';
 import check, { ID, MAYBE_ID, OFFSET, TOKEN, TRADE_OFFER, UID } from '../server/validate';
 import { type TradeRecord, asTradeRecord } from './trade-record';
 import { syncServerClock } from './clock';
-import { type Unwatch, watchTable } from './supabase';
+import { type Unwatch, watchTable } from './watch';
 import { readOnly } from '../utils/server-calls';
 import { getLocalOffset } from './local-time';
 import getIdToken from './session';

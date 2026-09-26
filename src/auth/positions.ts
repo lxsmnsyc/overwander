@@ -16,7 +16,7 @@ import { type WalkReport, recordSteps } from '../server/eggs';
 import savePositionOnServerSide, { markBiomeStoodIn, readPosition } from '../server/positions';
 import { syncServerClock } from './clock';
 import { getLocalOffset } from './local-time';
-import { type Unwatch, watchRow } from './supabase';
+import { type Unwatch, watchRow } from './watch';
 import { type PositionRecord, asPositionRecord } from './position-record';
 import getIdToken from './session';
 

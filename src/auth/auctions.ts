@@ -26,7 +26,7 @@ import {
   asPlayerBid,
 } from './auction-record';
 import { syncServerClock } from './clock';
-import { type Unwatch, watchRow, watchTable } from './supabase';
+import { type Unwatch, watchRow, watchTable } from './watch';
 import { readOnly } from '../utils/server-calls';
 import {
   readAuctionsBy,

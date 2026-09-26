@@ -6,36 +6,31 @@ import type { RaidRecord } from '../src/auth/raid-record';
  * changes are folded in, and only the first look and a reconnect read.
  */
 
-type Listener = (payload: {
-  eventType: string;
+type Listener = (change: {
+  op: string;
   new: Record<string, unknown>;
   old: Record<string, unknown>;
 }) => void;
 
 const listeners = new Map<string, Listener>();
-let subscribed: (status: string) => void = () => undefined;
+const readies = new Map<string, () => void>();
 let stored: Record<string, unknown> | null = null;
 let reads = 0;
 
-vi.mock('../src/auth/supabase', () => {
-  const channel = {
-    on(_kind: string, filter: { table: string }, listener: Listener) {
-      listeners.set(filter.table, listener);
-      return channel;
-    },
-    subscribe(callback: (status: string) => void) {
-      subscribed = callback;
-      return channel;
-    },
-  };
+/** Every subscription (re)made, as the live feed says it */
+function subscribed(): void {
+  for (const ready of readies.values()) {
+    ready();
+  }
+}
 
-  return {
-    default: () => ({
-      channel: () => channel,
-      removeChannel: async () => Promise.resolve(),
-    }),
-  };
-});
+vi.mock('../src/auth/live', () => ({
+  followChanges: (table: string, _filters: string[], listener: Listener, ready: () => void) => {
+    listeners.set(table, listener);
+    readies.set(table, ready);
+    return () => undefined;
+  },
+}));
 
 // The lobby is read through a server call, which runs only inside a request
 vi.mock('solid-js/web', async (original) => ({
@@ -77,11 +72,11 @@ async function flush(): Promise<void> {
   });
 }
 
-function send(table: string, eventType: string, row: Record<string, unknown>): void {
+function send(table: string, op: string, row: Record<string, unknown>): void {
   listeners.get(table)?.({
-    eventType,
-    new: eventType === 'DELETE' ? {} : row,
-    old: eventType === 'DELETE' ? row : {},
+    op,
+    new: op === 'DELETE' ? {} : row,
+    old: op === 'DELETE' ? row : {},
   });
 }
 
@@ -90,13 +85,14 @@ describe('a watched lobby', () => {
 
   beforeEach(async () => {
     listeners.clear();
+    readies.clear();
     reads = 0;
     seen = [];
     stored = { ...ROW, teams: [{ id: 'first', joined_seq: 1 }] };
     watchRaid('lobby', (raid) => {
       seen.push(raid);
     });
-    subscribed('SUBSCRIBED');
+    subscribed();
     await flush();
   });
 
@@ -137,7 +133,7 @@ describe('a watched lobby', () => {
 
   it('reads again on a reconnect, which may have missed changes', async () => {
     stored = { ...ROW, teams: [{ id: 'other', joined_seq: 5 }] };
-    subscribed('SUBSCRIBED');
+    subscribed();
     await flush();
 
     expect(reads).toBe(2);

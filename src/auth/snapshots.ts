@@ -54,7 +54,7 @@ import batchedQuery from '../utils/batched-query';
 import { localNow, syncServerClock } from './clock';
 import { asOffset, getLocale, toZoneKey } from './local-time';
 import type { EncounterRecord } from './encounter-record';
-import { type Unwatch, watchTable } from './supabase';
+import { type Unwatch, watchTable } from './watch';
 import { readOnly } from '../utils/server-calls';
 import { readSnapshotWindows, writeSnapshotWindow } from '../server/snapshot-windows';
 import getIdToken from './session';

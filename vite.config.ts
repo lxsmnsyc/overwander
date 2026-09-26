@@ -78,7 +78,16 @@ export default defineConfig(({ mode }) => ({
     }),
     ...(forTests
       ? []
-      : [nitro({ preset: 'node-server', ignore: publicIgnore(mode), routeRules: ROUTE_RULES })]),
+      : [
+          nitro({
+            preset: 'node-server',
+            ignore: publicIgnore(mode),
+            routeRules: ROUTE_RULES,
+            // The live feed that replaced Supabase Realtime (src/server/live)
+            features: { websocket: true },
+            handlers: [{ route: '/_live', handler: './src/server/live/socket.ts' }],
+          }),
+        ]),
   ],
   server: {
     watch: {
@@ -107,6 +116,11 @@ export default defineConfig(({ mode }) => ({
     // Keeping it non-external puts the marker back in front of the
     // plugin that understands it
     noExternal: ['server-only'],
+  },
+  environments: {
+    // The same for Nitro's own handlers (the live socket), which the dev
+    // server otherwise loads with the real, throwing `server-only`
+    nitro: { resolve: { noExternal: ['server-only'] } },
   },
   test: {
     // The world tests generate thousands of chunks and sit near 5 seconds alone,

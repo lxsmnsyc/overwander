@@ -68,9 +68,10 @@ Some of those need explaining:
 
 - **The session pooler.** The server is one long-lived process holding a pool of
   up to ten connections, so it does not need the transaction pooler that
-  serverless hosts use. The direct connection works too, but only over IPv6
-  unless the project pays for an IPv4 address. Copy the URI from the dashboard's
-  **Connect** dialog.
+  serverless hosts use. The live feed also holds one connection open to `LISTEN`,
+  which the transaction pooler cannot do. The direct connection works too, but
+  only over IPv6 unless the project pays for an IPv4 address. Copy the URI from
+  the dashboard's **Connect** dialog.
 - **`SUPABASE_JWT_SECRET` stays empty against a hosted project.** Hosted stacks
   sign asymmetrically, so the server fetches the project's JWKS from
   `SUPABASE_URL` and checks signatures with that. The variable is only for the
@@ -159,8 +160,9 @@ these four things. Each one tests a different part of the setup:
 2. **Walk a few chunks.** Tests the browser's variables and the read policies.
 3. **Catch something.** Tests `SUPABASE_DB_URL`, because a catch is a
    privileged write over the owner connection.
-4. **Open a raid lobby in two browsers.** Tests realtime, which is a separate
-   socket with its own policies.
+4. **Open a raid lobby in two browsers.** Tests the live feed: the server's
+   socket at `/_live`, through the tunnel, fed by the database's change
+   triggers.
 
 `docker compose logs -f app` follows the server's output, and
 `docker compose logs -f tunnel` the tunnel's.

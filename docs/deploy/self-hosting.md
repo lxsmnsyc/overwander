@@ -8,16 +8,14 @@ domain name pointed at it.
 
 ## What the game actually needs
 
-The app talks to four things. Three of them are open-source services that Supabase
-the company publishes and anybody may run, and the fourth is the app itself.
+The app talks to three things: Postgres, Supabase's open-source auth server, and
+the app itself. Reads, writes and the live feed all go through the app.
 
-| Piece         | What it is                    | Why it is needed                                                          |
-| ------------- | ----------------------------- | ------------------------------------------------------------------------- |
-| **Postgres**  | Version 17, as the stack runs | Every row, every policy, and the cron jobs that sweep old data            |
-| **GoTrue**    | Supabase Auth, an HTTP server | Accounts. 55 foreign keys point at `auth.users`, so it cannot be left out |
-| **PostgREST** | The REST layer over Postgres  | Every read the browser makes, under row-level security                    |
-| **Realtime**  | The websocket server          | Lobbies, trades, auctions and gym seats update without polling            |
-| **The app**   | Node 26 running the build     | The pages, and the privileged writes in `src/server/`                     |
+| Piece        | What it is                    | Why it is needed                                                          |
+| ------------ | ----------------------------- | ------------------------------------------------------------------------- |
+| **Postgres** | Version 17, as the stack runs | Every row, every policy, and the cron jobs that sweep old data            |
+| **GoTrue**   | Supabase Auth, an HTTP server | Accounts. 55 foreign keys point at `auth.users`, so it cannot be left out |
+| **The app**  | Node 26 running the build     | The pages, and the privileged writes in `src/server/`                     |
 
 There is no queue, no object storage and no separate API. The world is derived
 from its seed rather than stored, and the sprites are static files.

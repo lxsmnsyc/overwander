@@ -1,7 +1,7 @@
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import type { Species } from '../data/ids/species';
 import { asNumber, asRecordArray, asString } from './__normalize';
-import { type Unwatch, watchRow, watchTable } from './supabase';
+import { type Unwatch, watchRow, watchTable } from './watch';
 import { readOnly } from '../utils/server-calls';
 import { readBattleRows, readPlayerBattleRows } from '../server/battle-reads';
 import { requireReader, requireUid } from '../server/auth';

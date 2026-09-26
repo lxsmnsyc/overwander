@@ -343,6 +343,10 @@ export default class SpeciesSpriteAnimation {
 
     this.loading = new Promise<this>((resolve, reject) => {
       const image = new Image();
+      // Cross-origin, since the sprites answer from their own host.
+      // A picture drawn without this taints the canvas it lands on,
+      // and the terrain pack is read back pixel by pixel
+      image.crossOrigin = 'anonymous';
 
       image.addEventListener('load', () => {
         this.image = image;

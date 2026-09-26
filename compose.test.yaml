@@ -1,0 +1,22 @@
+# The tests' own database, apart from the one `pnpm db` serves: another
+# project, another port, and data kept in memory only. The database suite
+# and the e2e harness start it themselves (see test/test-database.ts).
+
+name: overwander-test
+
+services:
+  db:
+    build: db
+    command:
+      [postgres, -c, shared_preload_libraries=pg_cron, -c, cron.database_name=overwander_test]
+    environment:
+      POSTGRES_DB: overwander_test
+      POSTGRES_PASSWORD: test
+    ports:
+      - 127.0.0.1:54323:5432
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: [CMD, pg_isready, -U, postgres, -d, overwander_test]
+      interval: 2s
+      retries: 30

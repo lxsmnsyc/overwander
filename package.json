@@ -30,6 +30,8 @@
     "cs:add": "changeset add",
     "db": "docker compose up --detach --wait db",
     "db:stop": "docker compose stop db",
+    "db:test": "docker compose -f compose.test.yaml up --detach --wait",
+    "db:test:stop": "docker compose -f compose.test.yaml down",
     "db:reset": "docker compose rm --force --stop --volumes db && docker volume rm -f overwander_db && pnpm db && pnpm migrate",
     "seed": "node --env-file-if-exists=.env scripts/seed-dev.ts",
     "migrate": "node --env-file-if-exists=.env scripts/migrate.ts"

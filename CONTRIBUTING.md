@@ -83,11 +83,11 @@ pnpm test                   # the whole unit suite
 pnpm exec oxfmt src test    # format
 ```
 
-Two suites need the local database and are not run by CI:
+Two suites need Docker and are not run by CI. Both start the tests' own database
+(port 54323) and never touch the one `pnpm db` serves:
 
 ```bash
-pnpm db          # in one terminal
-pnpm test:db     # the server modules against the local database
+pnpm test:db     # the server modules against the test database
 pnpm test:e2e    # the Playwright suites
 ```
 

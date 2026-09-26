@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { TEST_DATABASE_URL } from './test/test-database.ts';
 
 /**
  * The browser tests: the game as a player meets it.
@@ -29,16 +30,16 @@ const ORIGIN = `http://localhost:${PORT}`;
 const onCI = process.env.CI != null;
 
 /**
- * What the app is pointed at while the tests run: the local database
- * `pnpm db` serves, with the real shiny odds a player meets rather than
+ * What the app is pointed at while the tests run: the tests' own
+ * database, with the real shiny odds a player meets rather than
  * the loud dev ones
  */
 const STAGED = {
   // The tests' own environment rather than the developer's .env (see test/env/.env.test)
   OVERWANDER_ENV_DIR: 'test/env',
   VITE_REAL_SHINY_ODDS: 'true',
-  DATABASE_URL:
-    process.env.DATABASE_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54322/overwander',
+  // The tests' own instance, never the database `pnpm dev` or the server uses
+  DATABASE_URL: TEST_DATABASE_URL,
   // Better Auth under test: a throwaway secret, and the origin the browsers open
   BETTER_AUTH_SECRET: 'e2e-secret-that-is-at-least-thirty-two-characters',
   BETTER_AUTH_URL: ORIGIN,

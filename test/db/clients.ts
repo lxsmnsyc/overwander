@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import postgres from 'postgres';
 import { createProfile } from '../../src/server/profile';
+import { TEST_DATABASE_URL, assertTestDatabase } from '../test-database.ts';
 import registerGameData from '../../src/data';
 
 // The server functions under test read the registries: a trade asks
@@ -16,10 +17,11 @@ registerGameData();
  * signs in.
  */
 
-export const DB_URL =
-  process.env.DATABASE_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54322/overwander';
-
-export const sql = postgres(DB_URL, { prepare: false, max: 4, onnotice: () => undefined });
+export const sql = postgres(assertTestDatabase(TEST_DATABASE_URL), {
+  prepare: false,
+  max: 4,
+  onnotice: () => undefined,
+});
 
 /** One player, by uid */
 export interface Actor {

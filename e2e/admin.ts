@@ -1,17 +1,19 @@
 import { randomUUID } from 'node:crypto';
 import { hashSync } from 'bcryptjs';
 import postgres from 'postgres';
+import { TEST_DATABASE_URL, assertTestDatabase } from '../test/test-database.ts';
 
 /**
- * The owner connection into the local database, for staging what a
+ * The owner connection into the tests' own database, for staging what a
  * spec cannot click into being: accounts, gold, bag rows, lots. Nothing
  * a browser does reaches the database this way; only the specs do.
  */
 
-export const sql = postgres(
-  process.env.DATABASE_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54322/overwander',
-  { prepare: false, max: 2, onnotice: () => undefined },
-);
+export const sql = postgres(assertTestDatabase(TEST_DATABASE_URL), {
+  prepare: false,
+  max: 2,
+  onnotice: () => undefined,
+});
 
 /** The world generation the dev server under test reads and writes */
 export const GENERATION = process.env.VITE_WORLD_GENERATION === '2' ? 2 : 1;

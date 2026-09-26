@@ -95,14 +95,14 @@ starts. [Schema changes](docs/deploy/schema-changes.md) covers writing one.
 The database suite runs the server modules against a real Postgres:
 
 ```bash
-pnpm db        # in one terminal
-pnpm test:db   # in another
+pnpm test:db
 ```
 
-It is separate from `pnpm test` because it needs the database running, and
-because it **clears the game rows between cases**: run it while the e2e suite is
-using the same database and it will delete the accounts those browsers are
-signed in as. Every suite reads `test/env/.env.test` rather than your `.env`.
+It uses the tests' own database, a separate instance on port 54323 that it
+starts and migrates itself, so your development data is never touched. It
+refuses any database whose name does not end in `_test`. It **clears the game
+rows between cases**, so run it apart from the e2e suite, which shares that
+instance. Every suite reads `test/env/.env.test` rather than your `.env`.
 
 ### Signing in
 
@@ -122,6 +122,7 @@ hands every account it creates the `admin` role, granted on the server.
 | `pnpm preview`         | Preview the build locally                                                           |
 | `pnpm db`              | Start the local database                                                            |
 | `pnpm db:reset`        | Delete the local data and rebuild it from `db/migrations/`                          |
+| `pnpm db:test`         | Start the tests' own database, which the test suites also do themselves             |
 | `pnpm migrate`         | Apply the migrations the database has not seen                                      |
 | `pnpm seed`            | Fill a fresh database with accounts and sample rows                                 |
 | `pnpm import-sprites`  | Copy the pokemon sheets in from `../SpriteCollab`, the `lxsmnsyc/SpriteCollab` fork |
@@ -129,7 +130,7 @@ hands every account it creates the `admin` role, granted on the server.
 | `pnpm sprite-coats`    | Restamp `coats.json` after anything writes a sheet                                  |
 | `pnpm sprite-stamps`   | Restamp every other sheet, which `pnpm build` also does                             |
 | `pnpm test`            | The whole test suite, once                                                          |
-| `pnpm test:db`         | The server modules against the local database                                       |
+| `pnpm test:db`         | The server modules against the tests' own database                                  |
 | `pnpm test:e2e`        | The Playwright suites under `e2e/`                                                  |
 | `npx tsc --noEmit`     | Type-check                                                                          |
 | `npx oxlint src test`  | Lint                                                                                |

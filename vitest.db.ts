@@ -1,11 +1,11 @@
 import { defineConfig } from 'vitest/config';
+import { TEST_DATABASE_URL } from './test/test-database.ts';
 
 /**
- * The database suite: server modules run against the local Postgres
- * that `pnpm db` starts, with every migration applied. It clears the
- * game's rows, accounts included, between cases, so it runs apart from
- * everything else and one file at a time, and never beside the e2e
- * suite, whose browsers would lose the accounts they signed in as
+ * The database suite: server modules run against the tests' own Postgres
+ * (`compose.test.yaml`), which the setup starts and migrates. It clears
+ * the game's rows, accounts included, between cases, so it runs one file
+ * at a time and never beside the e2e suite, which shares that instance
  */
 export default defineConfig({
   // The tests' own environment, not the developer's .env (see test/env/.env.test)
@@ -17,12 +17,10 @@ export default defineConfig({
     alias: { 'server-only': new URL('test/db/__server-only.ts', import.meta.url).pathname },
   },
   test: {
-    // The server modules read the connection the way the app does. The
-    // local default stands in when nothing set it, as in `clients.ts`
-    env: {
-      DATABASE_URL:
-        process.env.DATABASE_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54322/overwander',
-    },
+    // The server modules read DATABASE_URL, which is set here to the test
+    // instance whatever the shell says, so no environment reaches real data
+    env: { DATABASE_URL: TEST_DATABASE_URL },
+    globalSetup: ['test/db/global-setup.ts'],
     include: ['test/db/**/*.test.ts'],
     fileParallelism: false,
     testTimeout: 20_000,

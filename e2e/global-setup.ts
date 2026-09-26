@@ -1,10 +1,6 @@
-import { execSync } from 'node:child_process';
+import { prepareTestDatabase } from '../test/test-database.ts';
 
-/**
- * Make sure the local database is up and current before any spec runs.
- * Both steps leave a database that is already there alone
- */
-export default function globalSetup(): void {
-  execSync('pnpm db', { stdio: 'inherit' });
-  execSync('pnpm migrate', { stdio: 'inherit' });
+/** The tests' own database, started and migrated before any spec runs */
+export default async function globalSetup(): Promise<void> {
+  await prepareTestDatabase();
 }

@@ -150,8 +150,8 @@ export default defineConfig(({ mode }) => ({
       },
     ],
     /**
-     * `test/db` needs the local database and clears it between cases, so
-     * it runs on its own as `pnpm test:db` (see `vitest.db.ts`).
+     * `test/db` needs the tests' own database and clears it between cases,
+     * so it runs on its own as `pnpm test:db` (see `vitest.db.ts`).
      *
      * `e2e` is left out because those are Playwright specs, and
      * Playwright refuses to have its `test` called by another runner

@@ -194,12 +194,12 @@ A server call refused by a closed part says so, and only staff change a switch.
 
 ### Testing it
 
-[`test/db/`](../../test/db) runs the server modules against the local database:
-the writes above, the switches, the paces and the sweeps. Run it with
-`pnpm test:db` once `pnpm db` is up. It is kept out of `pnpm test` because it
-needs the database running, and because it **clears the game rows between
-cases**: beside the e2e suite, it would delete the accounts those browsers are
-signed in as. One file at a time, for the same reason.
+[`test/db/`](../../test/db) runs the server modules against a real Postgres:
+the writes above, the switches, the paces and the sweeps. `pnpm test:db` starts
+the tests' own instance and migrates it, and refuses any database whose name does
+not end in `_test`, so it never reaches development or production data. It
+**clears the game rows between cases**, so it runs one file at a time and apart
+from the e2e suite, which shares that instance.
 
 ## Indexes
 

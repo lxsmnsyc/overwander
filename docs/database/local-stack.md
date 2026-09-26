@@ -78,9 +78,15 @@ pnpm test        # the unit suites; nothing needs to be running
 ```
 
 ```bash
-pnpm test:db     # the server modules against this database
-pnpm test:e2e    # the browser suites, which start the database themselves
+pnpm test:db     # the server modules against the tests' own database
+pnpm test:e2e    # the browser suites, against the same one
 ```
+
+Neither touches this database. Both start a separate instance from
+[`compose.test.yaml`](../../compose.test.yaml), on port 54323 with its data in
+memory, and migrate it. They reach it only through `TEST_DATABASE_URL`, and
+refuse a database whose name does not end in `_test`, so no setting can point
+them at development or production data. `pnpm db:test:stop` removes it.
 
 Run them one at a time: the database suite clears the game rows between cases,
 accounts included. Every suite reads `test/env/.env.test` rather than your `.env`.

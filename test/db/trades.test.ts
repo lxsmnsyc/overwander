@@ -5,10 +5,6 @@ import { TradeStatus } from '../../src/auth/trade-record';
 import { BASE_FRIENDSHIP } from '../../src/data/constants/friendship';
 import { Species } from '../../src/data/ids/species';
 
-// The server pool reads this lazily at its first query, safely after
-// module load
-process.env.DATABASE_URL ??= 'postgresql://postgres:postgres@127.0.0.1:54322/postgres';
-
 /**
  * The trade flow, run through the real server functions against the
  * local stack: escrow in and out, the gold riding both ways, and the

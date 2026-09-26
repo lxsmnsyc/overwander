@@ -18,7 +18,7 @@ pnpm exec oxlint src test                 # lint (never biome — this repo migr
 pnpm exec oxfmt src test                  # format
 ```
 
-`pnpm test:db` and `pnpm test:e2e` both need `pnpm db` (the local Postgres) running with `pnpm migrate` applied. Run them one at a time: the database suite clears game rows between cases and will delete the accounts the e2e browsers are signed in as. Every suite reads `test/env/.env.test` rather than the developer's `.env`.
+`pnpm test:db` and `pnpm test:e2e` run against the tests' own Postgres (`compose.test.yaml`, port 54323), which they start and migrate themselves; never the database `pnpm dev` uses. They reach it only through `TEST_DATABASE_URL`, and refuse a database whose name does not end in `_test` ([test/test-database.ts](test/test-database.ts)). Run them one at a time: the database suite clears game rows between cases and will delete the accounts the e2e browsers are signed in as. Every suite reads `test/env/.env.test` rather than the developer's `.env`.
 
 ## Conventions live in skills
 

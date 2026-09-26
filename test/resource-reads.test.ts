@@ -16,13 +16,14 @@ function resource<T>(
   };
 
   // A stand-in: only the fields the readers look at are real
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+  /* oxlint-disable typescript/no-unsafe-type-assertion */
   return Object.defineProperties(read, {
     state: { value: state },
     error: { value: error },
     loading: { value: false },
     latest: { get: read },
   }) as Resource<T>;
+  /* oxlint-enable typescript/no-unsafe-type-assertion */
 }
 
 describe('a resource read that can fail', () => {

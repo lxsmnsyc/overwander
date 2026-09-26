@@ -53,6 +53,7 @@ import unovaMythicals from './unova-mythicals';
 import chespinToFroakie from './chespin-to-froakie';
 import bunnelbyToScatterbug from './bunnelby-to-scatterbug';
 import flabebeToFurfrou from './flabebe-to-furfrou';
+import espurrToKlefki from './espurr-to-klefki';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -109,6 +110,7 @@ const setupAbilities = [
   ...chespinToFroakie,
   ...bunnelbyToScatterbug,
   ...flabebeToFurfrou,
+  ...espurrToKlefki,
   ...deerling,
   ...emolga,
   ...tirtougaToBouffalant,

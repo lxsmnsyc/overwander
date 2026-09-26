@@ -3,6 +3,7 @@ import {
   type Acquisition,
   type CatchOrder,
   asCaughtPokemon,
+  getHeldItemRoom,
   isAuctionableCatch,
   isNicknameLocked,
 } from '../auth/caught-record';
@@ -226,7 +227,7 @@ export async function insertCaughtIn(
     moves: encounter.moves.slice(0, getSlots(room, Slots.Move)),
     movePoints: {},
     abilities,
-    items: encounter.items.slice(0, getSlots(room, Slots.Item)),
+    items: encounter.items.slice(0, getHeldItemRoom({ slots: room, abilities })),
     // The ball is on the entry as well as on the pokemon: this is
     // the one it arrived in, and a later owner may put it in another.
     // Whoever had it first holds no uid: nobody signs in as Red
@@ -460,7 +461,14 @@ export async function giveItem(uid: string, catchId: string, item: Items): Promi
     // How much room it has is the record's own answer: a pokemon that
     // has been given a second hand is not the one the constant knows
     // about
-    if (held.length >= getSlots(asNumber(caught.slots), Slots.Item)) {
+    if (
+      held.length >=
+      getHeldItemRoom({
+        slots: asNumber(caught.slots),
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+        abilities: asNumberArray(caught.abilities) as Abilities[],
+      })
+    ) {
       return false;
     }
 

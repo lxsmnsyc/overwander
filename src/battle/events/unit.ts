@@ -1,4 +1,5 @@
 import type { BaseEvent } from '../../core/event-emitter';
+import type { Slots } from '../../data/constants/slots';
 import type { Stages, Stats, StatsKind } from '../../data/constants/stats';
 import type { Types } from '../../data/constants/types';
 import type Abilities from '../../data/ids/abilities';
@@ -224,6 +225,16 @@ export interface CheckUnitCanConsumeItemEvent extends UnitEvent {
 
 export interface UnitItemEvent extends UnitEvent {
   item: Items;
+}
+
+/**
+ * How much room the unit has for one kind of thing. The value opens
+ * as what the record allows, held to what the battle allows, and
+ * anything widening it says so here
+ */
+export interface CheckUnitSlotsEvent extends UnitEvent {
+  kind: Slots;
+  value: number;
 }
 
 export interface UnitRemoveItemEvent extends UnitItemEvent {

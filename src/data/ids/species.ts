@@ -817,6 +817,12 @@ export const enum Species {
   Skiddo = 672,
   Gogoat = 673,
   Furfrou = 676,
+  Espurr = 677,
+  Meowstic = 678,
+  Honedge = 679,
+  Doublade = 680,
+  Aegislash = 681,
+  Klefki = 707,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
@@ -858,6 +864,12 @@ export const enum Species {
   FlorgesOrange = 1067102,
   FlorgesBlue = 1067103,
   FlorgesWhite = 1067104,
+
+  /** The female of the line, who evolves out of a female Espurr */
+  MeowsticFemale = 1067801,
+
+  /** The sword drawn, which is what an Aegislash is while it attacks */
+  AegislashBlade = 1068101,
 
   /** The shapes the creation trio take in the world behind this one */
   DialgaOrigin = 1048301,
@@ -1116,6 +1128,12 @@ export const VIVILLON_FORMS: Species[] = [
 ];
 
 /** Each deer's four coats, spring first, in the order the year turns */
+/** The two Meowstic, the male first: what a cat's own Espurr grew into */
+export const MEOWSTIC_FORMS: Species[] = [Species.Meowstic, Species.MeowsticFemale];
+
+/** The two stances a royal sword takes, the shield first */
+export const AEGISLASH_FORMS: Species[] = [Species.Aegislash, Species.AegislashBlade];
+
 /** Each colour of flower, the red one first: what a Flabebe was met carrying */
 export const FLABEBE_FORMS: Species[] = [
   Species.Flabebe,

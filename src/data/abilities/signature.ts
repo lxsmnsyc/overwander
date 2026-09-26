@@ -2033,6 +2033,23 @@ export default function registerSignatureAbilities(): void {
     description: 'Special moves hit it at 0.8x while it is at or above 1/2 HP.',
   });
 
+  // The sword and the key
+  registerSignature(Families.Espurr, Abilities.Restraint, {
+    name: 'Restraint',
+    description: 'Its first 3 moves each fight hit 0.8x, and every move after them hits 1.25x.',
+  });
+
+  registerSignature(Families.Honedge, Abilities.TurnTheBlade, {
+    name: 'Turn the Blade',
+    description: 'The first blow it takes in each stance lands at 0.5x.',
+  });
+
+  registerSignature(Families.Klefki, Abilities.Keyring, {
+    name: 'Keyring',
+    description:
+      'It has room for 1 held item more than it was born with, as far as the fight allows.',
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:

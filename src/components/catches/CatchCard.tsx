@@ -2,7 +2,7 @@ import { For, Index, type JSX, Show } from 'solid-js';
 import type { CaughtPokemon } from '../../auth/caught';
 import {
   getCatchName,
-  getCatchSlots,
+  getHeldItemRoom,
   getMovePoints,
   isFavorite,
   isGuarded,
@@ -15,7 +15,6 @@ import { getMaxHealth, getStats, isFainted } from '../../auth/health';
 import getSigil from '../../data/constants/sigil';
 import { LockIcon, MoonIcon, SparklesIcon, StarIcon, SunIcon } from '../icons';
 import { MAX_IV_STARS, Stats, getIVStars } from '../../data/constants/stats';
-import { Slots } from '../../data/constants/slots';
 import type { Items } from '../../data/ids/items';
 import { NATURE_NAMES } from '../../data/ids/natures';
 import { getSpeciesData } from '../../data/species';
@@ -94,7 +93,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
     // stranger's pokemon an empty slot is a button nobody may press
     const length =
       props.owned === true
-        ? Math.max(caught().items.length, getCatchSlots(caught(), Slots.Item))
+        ? Math.max(caught().items.length, getHeldItemRoom(caught()))
         : caught().items.length;
     const made: null[] = [];
 

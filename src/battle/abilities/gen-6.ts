@@ -2,7 +2,8 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
-import { DamageFlags, Moves } from '../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags, MoveCategories, Moves } from '../../data/ids/moves';
+import { Species, getBaseFormSpecies } from '../../data/ids/species';
 import { Terrains } from '../../data/ids/status';
 import { MergedLifecycle } from '../lifecycle';
 import type Battle from '../core';
@@ -209,6 +210,45 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Honedge: the sword is a shield until it swings. Both shapes carry
+  // their own stats and share an HP stat, so turning over moves
+  // nothing underneath it
+  createAbility(Abilities.StanceChange, (battle) => {
+    function stand(unit: Unit, shape: Species): void {
+      if (
+        !unit.alive ||
+        !unit.hasAbility(Abilities.StanceChange) ||
+        getBaseFormSpecies(unit.species) !== Species.Aegislash ||
+        unit.species === shape
+      ) {
+        return;
+      }
+      unit.triggerAbility(Abilities.StanceChange);
+      unit.setSpecies(shape);
+    }
+
+    return new MergedLifecycle([
+      // Drawn before the blow resolves, so the edge is what the
+      // damage is worked out from
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Pre, (event) => {
+        if (
+          event.category !== MoveCategories.Status &&
+          (event.flags & MoveAttackFlags.Simulated) === 0
+        ) {
+          stand(event.source, Species.AegislashBlade);
+        }
+      }),
+      battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
+        if (event.move === Moves.KingsShield) {
+          stand(event.source, Species.Aegislash);
+        }
+      }),
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        stand(event.source, Species.Aegislash);
+      }),
+    ]);
+  }),
 ];
 
 export default function setupGen6Abilities(battle: Battle): void {

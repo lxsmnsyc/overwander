@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Stages, Stats } from '../../../src/data/constants/stats';
+import { Species } from '../../../src/data/ids/species';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
@@ -186,5 +187,47 @@ describe('Misty Surge', () => {
     battle.tick(turns(1));
 
     expect(foe.checkTerrain()).toBe(Terrains.Misty);
+  });
+});
+
+describe('Stance Change', () => {
+  it("draws the blade to attack and sheathes it on King's Shield", () => {
+    const { battle, teamA, teamB } = createBattle();
+    const sword = createUnit(battle, teamA, [Types.Steel, Types.Ghost]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    sword.addAbility(Abilities.StanceChange);
+    sword.setSpecies(Species.Aegislash);
+    sword.enter();
+    foe.enter();
+
+    expect(sword.species).toBe(Species.Aegislash);
+
+    dealDamage(sword, foe, Moves.IronHead, 80, Types.Steel, MoveCategories.Physical);
+
+    expect(sword.species).toBe(Species.AegislashBlade);
+
+    sword.addMove(Moves.KingsShield);
+    sword.cast(Moves.KingsShield, { type: MoveTargetType.None });
+
+    expect(sword.species).toBe(Species.Aegislash);
+  });
+
+  it('keeps the shield up for a status move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const sword = createUnit(battle, teamA, [Types.Steel, Types.Ghost]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    sword.addAbility(Abilities.StanceChange);
+    sword.setSpecies(Species.Aegislash);
+    sword.enter();
+    foe.enter();
+
+    sword.addMove(Moves.SwordsDance);
+    sword.cast(Moves.SwordsDance, { type: MoveTargetType.None });
+
+    expect(sword.species).toBe(Species.Aegislash);
   });
 });

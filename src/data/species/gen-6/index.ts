@@ -7,6 +7,9 @@ import registerScatterbugSpecies from './scatterbug';
 import registerFlabebeSpecies from './flabebe';
 import registerSkiddoSpecies from './skiddo';
 import registerFurfrouSpecies from './furfrou';
+import registerEspurrSpecies from './espurr';
+import registerHonedgeSpecies from './honedge';
+import registerKlefkiSpecies from './klefki';
 
 /** Kalos, as far as it is written */
 export default function registerGen6Species(): void {
@@ -19,4 +22,7 @@ export default function registerGen6Species(): void {
   registerFlabebeSpecies();
   registerSkiddoSpecies();
   registerFurfrouSpecies();
+  registerEspurrSpecies();
+  registerHonedgeSpecies();
+  registerKlefkiSpecies();
 }

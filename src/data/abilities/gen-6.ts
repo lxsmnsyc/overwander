@@ -36,4 +36,9 @@ export default function registerGen6Abilities(): void {
     name: 'Misty Surge',
     description: 'Lays Misty Terrain as it takes the field.',
   });
+  // Honedge
+  registerAbility(Abilities.StanceChange, {
+    name: 'Stance Change',
+    description: "It draws the blade to attack and sheathes it again on King's Shield.",
+  });
 }

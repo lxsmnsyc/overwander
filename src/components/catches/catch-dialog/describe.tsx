@@ -1,11 +1,10 @@
 import type { CaughtPokemon } from '../../../auth/caught';
-import { getCatchSlots } from '../../../auth/caught-record';
+import { getHeldItemRoom } from '../../../auth/caught-record';
 import { isEgg } from '../../../auth/egg';
 import describeDate from '../../../core/dates';
 import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../../../data/biome';
 import { EVOLUTION_FRIENDSHIP } from '../../../data/constants/friendship';
 import { getMoveData } from '../../../data/moves';
-import { Slots } from '../../../data/constants/slots';
 import { STAT_NAMES, STAT_ORDER, Stats, getIV, getOtherStat } from '../../../data/constants/stats';
 import Biome, { TimeOfDay } from '../../../data/ids/biome';
 import type Natures from '../../../data/ids/natures';
@@ -199,7 +198,7 @@ export const ITEM_SPRITE = 28;
  */
 export function itemSlots(caught: CaughtPokemon, mine: boolean): null[] {
   const length = mine
-    ? Math.max(caught.items.length, getCatchSlots(caught, Slots.Item))
+    ? Math.max(caught.items.length, getHeldItemRoom(caught))
     : caught.items.length;
   const slots: null[] = [];
 

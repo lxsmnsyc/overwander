@@ -54,6 +54,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Whimsicott, weight: 7 },
       ],
       elusive: [
+        { species: Species.Klefki, weight: 5 },
         { species: Species.Furfrou, weight: 5 },
         { species: Species.FlorgesOrange, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
@@ -121,6 +122,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Whimsicott, weight: 7 },
       ],
       elusive: [
+        { species: Species.Klefki, weight: 5 },
         { species: Species.Furfrou, weight: 5 },
         { species: Species.FlorgesOrange, weight: 5 },
         { species: Species.Vivillon, weight: 5 },

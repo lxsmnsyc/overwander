@@ -168,9 +168,6 @@ export const PAGE = whole(0, MAX_PAGE);
 /** A level a pokemon can stand at */
 export const LEVEL = whole(1, MAX_LEVEL);
 
-/** A place in one of a pokemon's lists */
-const LIST_POSITION = whole(0, mostSlots(Slots.Move) - 1);
-
 /**
  * Which known move a new one goes over. Below nothing where the
  * pokemon still has room, which is what the counters send then
@@ -221,11 +218,11 @@ export const EFFORT_SPREAD = v.record(
   whole(0, MAX_EFFORT_PER_STAT),
 );
 
-/** The lists a rearranging player wants, in the order they want them */
+/** The lists a rearranging player wants, as ids in the order they want them */
 export const CATCH_ORDER = v.object({
-  moves: v.optional(listOf(LIST_POSITION, mostSlots(Slots.Move))),
-  abilities: v.optional(listOf(LIST_POSITION, mostSlots(Slots.Ability))),
-  items: v.optional(listOf(LIST_POSITION, mostSlots(Slots.Item))),
+  moves: v.optional(listOf(GAME_ID, mostSlots(Slots.Move))),
+  abilities: v.optional(listOf(GAME_ID, mostSlots(Slots.Ability))),
+  items: v.optional(listOf(GAME_ID, mostSlots(Slots.Item))),
 });
 
 /** What a proposer put on the table */

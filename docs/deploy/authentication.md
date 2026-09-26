@@ -1,7 +1,9 @@
 # Authentication
 
 Accounts are run by the game's own server with [Better Auth](https://better-auth.com).
-This page covers its settings, the two OAuth apps, and signing in locally.
+Players sign in with an email and a password, or a passkey. Google and GitHub are
+optional. This page covers the settings, password links, two-factor and passkeys,
+the two OAuth apps, and signing in locally.
 
 **Assumes:** nothing yet. This is the first step.
 
@@ -13,20 +15,59 @@ Set these in the server's `.env`. `.env.example` documents each one.
 | ------------------------------------------ | --------------------------------------------------------------------- |
 | `BETTER_AUTH_SECRET`                       | A long random string, such as the output of `openssl rand -base64 32` |
 | `BETTER_AUTH_URL`                          | The production origin, `https://your-domain`                          |
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | From the Google OAuth client (step 3)                                 |
-| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | From the GitHub OAuth app (step 2)                                    |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Optional. From the Google OAuth client (step 3)                       |
+| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | Optional. From the GitHub OAuth app (step 2)                          |
 
 - Changing `BETTER_AUTH_SECRET` signs every player out.
-- A provider works only when both of its values are set.
+- The email and password form is always offered.
+- A provider's button appears only when both of its values are set. Leave both
+  empty to turn that provider off. A restart is enough, with no new build.
+- Passkeys belong to the host in `BETTER_AUTH_URL`. Changing the domain means
+  every player adds their passkeys again.
 - The routes live under `/api/auth` on the site itself. Each provider's callback is
   `https://your-domain/api/auth/callback/<provider>`.
 - Sign-in sends the player back to the page they left.
-- The email and password form is drawn only on a development build, or where
-  `VITE_EMAIL_SIGN_IN` is `1` or `true`. The server refuses email sign-ups
-  everywhere else.
+  A first sign-in creates the account and its profile. The profile takes the
+  provider's name, or **Trainer** when there is none.
 
-A first sign-in creates the account and its profile. The profile takes the
-provider's name, or **Trainer** when there is none.
+## Password links
+
+The game sends no email, so a player who needs a password gets a link from
+staff. It is how players who used to sign in with Google or GitHub move to a
+password: the link adds one to the account they already have, and nothing else
+about the account changes.
+
+- **From the dashboard.** Open the player under Players, then **Make a password
+  link** and copy it. Only admins and the owner see this, and only for accounts
+  ranked below their own. Each link is recorded in the staff log.
+- **From the server,** for an account nobody ranks above, such as the owner's:
+
+  ```bash
+  pnpm password-link <email or nickname>
+  ```
+
+  It reads `.env`, so it reaches production.
+
+A link opens `/reset-password`, works once, and lasts 7 days. A new link for the
+same account replaces the old one. The player then signs in with the account's
+email and the new password. The email is shown on the player's admin page.
+
+## Two-factor and passkeys
+
+Both are under Settings, **Security**. The section asks for the account's
+password first, and for 15 minutes after that the server accepts changes to
+either. An account without a password needs a password link before it can use
+them.
+
+- **Authenticator app.** Setting it up shows a QR code and ten backup codes.
+  From then on, a password sign-in also asks for the app's code, or one backup
+  code. A device can be trusted for 30 days.
+- **Passkeys.** Each one signs in by itself, with no password or code.
+
+A player who loses both their authenticator app and their backup codes can't
+sign in with a password. Remove their `two_factors` row and set
+`two_factor_enabled` to false on their `users` row, then give them a password
+link.
 
 ## 2. GitHub
 
@@ -88,12 +129,12 @@ site's own:
 
 ## Signing in with a provider locally
 
-Most of the time this is not needed. A development build draws the email and
-password form, and `pnpm seed` makes two accounts ready to use.
+Most of the time this is not needed. `pnpm seed` makes two accounts that sign in
+with the email and password form.
 
 To sign in with a provider anyway, make a separate OAuth app whose callback is
 `http://localhost:3000/api/auth/callback/<provider>`. Put its id and secret in
-`.env` and restart `pnpm dev`.
+`.env.development.local` and restart `pnpm dev`.
 
 ## See also
 

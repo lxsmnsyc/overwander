@@ -16,6 +16,7 @@ export const enum StaffAction {
   Ban = 'ban',
   Gift = 'gift',
   Teleport = 'teleport',
+  PasswordLink = 'password-link',
 }
 
 export async function recordStaffAction(

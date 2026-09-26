@@ -8,6 +8,7 @@ import {
 import type { GiftLedgerRow, StaffGift } from '../server/gifts';
 import { giveGift, listAllGifts as listAllOnServer } from '../server/gifts';
 import { requireAdmin, requireStaff, setBan, setRole } from '../server/roles';
+import makePasswordLink from '../server/password-links';
 import { syncServerClock } from './clock';
 import getIdToken from './session';
 import { StaffAction, recordStaffAction } from '../server/staff-log';
@@ -149,4 +150,20 @@ async function allGiftsOnServer(token: string): Promise<GiftLedgerRow[]> {
   check(TOKEN, token);
   await requireAdmin(token);
   return listAllOnServer(await syncServerClock());
+}
+
+/**
+ * A one-time link that lets the player choose a password, replacing
+ * any earlier one. Resolves null when refused: only staff who run the
+ * game may make one, and only for an account below their own
+ */
+export async function createPasswordLink(uid: string): Promise<string | null> {
+  return passwordLinkOnServer(await getIdToken(), uid);
+}
+
+async function passwordLinkOnServer(token: string, uid: string): Promise<string | null> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, uid);
+  return makePasswordLink(await requireAdmin(token), uid);
 }

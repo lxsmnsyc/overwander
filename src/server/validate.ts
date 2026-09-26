@@ -167,6 +167,9 @@ export const MAYBE_PLAYER_NAME = v.nullable(PLAYER_NAME);
 /** A line a player or a staff member wrote: a reason, a search */
 export const TEXT = v.pipe(v.string(), v.maxLength(TEXT_LIMIT));
 
+/** A password as typed, bounded at Better Auth's own longest */
+export const PASSWORD = v.pipe(v.string(), v.maxLength(128));
+
 /** A page of an admin listing */
 export const PAGE = whole(0, MAX_PAGE);
 

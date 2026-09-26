@@ -111,11 +111,15 @@ from the e2e suite, which shares that database. Every suite reads
 
 ### Signing in
 
-A deployed game offers **Google and GitHub**, both redirect-based. The **email
-and password form is drawn on a development build**, and on any build whose host
-sets `VITE_EMAIL_SIGN_IN` to `1` or `true`. It is what the browser tests sign in
-with, and a sign-up answers with a live session. A development build also
+Every build offers an **email and password**, and a **passkey**. **Google and
+GitHub** buttons appear only where the server has both of that provider's
+credentials. A sign-up answers with a live session. A development build also
 hands every account it creates the `admin` role, granted on the server.
+
+An account can turn on an authenticator app and add passkeys under Settings,
+Security, after typing its password again. The game sends no email, so staff
+give a player a **password link** from the player's admin page instead, or with
+`pnpm password-link <email>` for an account no staff member ranks above.
 
 ## Commands
 

@@ -51,7 +51,6 @@ build**, so a change to one needs a deploy rather than a restart:
 | -------------------------- | --------------------------------------------------------------- |
 | `VITE_SPRITE_ORIGIN`       | The sprite host's origin, such as `https://sprites.your-domain` |
 | `VITE_WORLD_SEED`          | Any string, and then never touched again                        |
-| `VITE_EMAIL_SIGN_IN`       | Left empty, unless the deploy is to offer passwords             |
 | `VITE_REAL_TIME_OF_DAY`    | `true` for the local clock, empty for the game clock            |
 | `VITE_TIME_OF_DAY_MINUTES` | Minutes per period on the game clock. Empty means 90            |
 

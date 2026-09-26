@@ -21,9 +21,9 @@ pair.
 
 - A **Cloudflare** account, for the tunnel and the sprite host.
 - A machine that runs **Docker**, with the repository cloned on it.
-- The two OAuth apps. A deployed build signs in with **Google and GitHub**. The
-  email and password form is drawn on a development build, and on any build
-  whose host sets `VITE_EMAIL_SIGN_IN`.
+- Optionally, the two OAuth apps. Every build signs in with an email and a
+  password or a passkey. **Google and GitHub** are offered only where their
+  credentials are set.
 
 ## The order to do it in
 

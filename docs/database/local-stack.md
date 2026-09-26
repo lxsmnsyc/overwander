@@ -53,17 +53,18 @@ pnpm dev               # http://localhost:3000
 
 `pnpm seed` makes **alice@example.com** and **bob@example.com**, both with the
 password `walking-in-the-tall-grass` and the `admin` role. It is safe to run twice.
-A development build draws the email and password form, so either signs in at once.
+Either signs in at once with the email and password form.
 
 ## Everyday commands
 
-| Command           | What it does                                                    |
-| ----------------- | --------------------------------------------------------------- |
-| `pnpm db`         | Start the database, or leave a running one alone                |
-| `pnpm db:stop`    | Stop it. The data goes with it                                  |
-| `pnpm db:reset`   | Delete the development data and start again from the migrations |
-| `pnpm db:migrate` | Apply the migrations the database has not seen                  |
-| `pnpm seed`       | Put the two accounts and their rows back                        |
+| Command                         | What it does                                                    |
+| ------------------------------- | --------------------------------------------------------------- |
+| `pnpm db`                       | Start the database, or leave a running one alone                |
+| `pnpm db:stop`                  | Stop it. The data goes with it                                  |
+| `pnpm db:reset`                 | Delete the development data and start again from the migrations |
+| `pnpm db:migrate`               | Apply the migrations the database has not seen                  |
+| `pnpm seed`                     | Put the two accounts and their rows back                        |
+| `pnpm db:password-link <email>` | Print a password link for a development account                 |
 
 A shell on the database:
 

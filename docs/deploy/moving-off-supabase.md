@@ -128,6 +128,9 @@ database since the move is left behind.
 
 ## After the move
 
+- If Google and GitHub are not set up on the new server, give each player a
+  password link (see [Authentication](authentication.md#password-links)). It
+  adds a password to the account they already have.
 - Players who were signed in through Supabase sign in once more. Their accounts,
   links and passwords are all there, so it is the same account they come back to.
 - Once going back is off the table, remove `SUPABASE_DB_URL` from `.env` and pause

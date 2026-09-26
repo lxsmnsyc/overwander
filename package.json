@@ -32,10 +32,13 @@
     "db:stop": "docker compose -f compose.dev.yaml stop",
     "db:reset": "docker compose -f compose.dev.yaml down && pnpm db && pnpm db:migrate",
     "db:migrate": "node --env-file=.env.development scripts/migrate.ts",
+    "db:password-link": "node --env-file=.env.development scripts/password-link.ts",
     "seed": "node --env-file=.env.development scripts/seed-dev.ts",
-    "migrate": "node --env-file=.env scripts/migrate.ts"
+    "migrate": "node --env-file=.env scripts/migrate.ts",
+    "password-link": "node --env-file=.env scripts/password-link.ts"
   },
   "dependencies": {
+    "@better-auth/passkey": "1.7.6",
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^1.0.0",
     "@solidjs/start": "^2.0.5",
@@ -53,6 +56,7 @@
     "solid-marked": "^0.8.0",
     "terracotta": "^1.3.0",
     "three": "^0.186.1",
+    "uqr": "^0.1.3",
     "valibot": "^1.5.0",
     "vite": "^8.3.1"
   },

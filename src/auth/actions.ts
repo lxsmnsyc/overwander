@@ -33,14 +33,55 @@ export async function signInWithGithub(): Promise<void> {
   return signInWith('github');
 }
 
-/** Offered where `EMAIL_SIGN_IN` is: development, and hosts that set it */
-export async function signInWithEmail(email: string, password: string): Promise<void> {
+/**
+ * Resolves whether the account asks for a second factor, in which case
+ * nobody is signed in until `verifySignInCode` or `verifyBackupCode` is
+ */
+export async function signInWithEmail(email: string, password: string): Promise<boolean> {
   forgetIdToken();
 
-  const { error } = await authClient.signIn.email({ email, password });
+  const { data, error } = await authClient.signIn.email({ email, password });
 
   if (error != null) {
     throw authRefusal(error);
+  }
+  return 'twoFactorRedirect' in data && data.twoFactorRedirect === true;
+}
+
+/** The authenticator app's code, finishing a sign-in that asked for one */
+export async function verifySignInCode(code: string, trustDevice: boolean): Promise<void> {
+  const { error } = await authClient.twoFactor.verifyTotp({ code, trustDevice });
+
+  if (error != null) {
+    throw authRefusal(error);
+  }
+}
+
+/** One of the account's backup codes, in place of the authenticator app's */
+export async function verifyBackupCode(code: string): Promise<void> {
+  const { error } = await authClient.twoFactor.verifyBackupCode({ code });
+
+  if (error != null) {
+    throw authRefusal(error);
+  }
+}
+
+export async function signInWithPasskey(): Promise<void> {
+  forgetIdToken();
+
+  const result = await authClient.signIn.passkey();
+
+  if (result.error != null) {
+    throw authRefusal(result.error, 'That passkey did not sign you in.');
+  }
+}
+
+/** Choose a password with a link staff handed out (see `db/password-link.ts`) */
+export async function choosePassword(token: string, newPassword: string): Promise<void> {
+  const { error } = await authClient.resetPassword({ token, newPassword });
+
+  if (error != null) {
+    throw authRefusal(error, 'Could not set that password.');
   }
 }
 

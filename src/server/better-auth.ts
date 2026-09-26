@@ -1,10 +1,12 @@
 import 'server-only';
+import { APIError, createAuthMiddleware, getSessionFromCtx } from 'better-auth/api';
 import { betterAuth } from 'better-auth';
-import { hashPassword, verifyPassword } from 'better-auth/crypto';
+import { hashPassword } from 'better-auth/crypto';
 import { jwt } from 'better-auth/plugins/jwt';
-import bcrypt from 'bcryptjs';
+import { passkey } from '@better-auth/passkey';
+import { twoFactor } from 'better-auth/plugins/two-factor';
 import { Pool } from 'pg';
-import EMAIL_SIGN_IN from '../auth/sign-in-options';
+import { checkPassword, securityUnlocked } from './security';
 import { createProfile } from './profile';
 
 /**
@@ -29,6 +31,38 @@ function provider(prefix: string): { clientId: string; clientSecret: string } | 
 
   return clientId === '' || clientSecret === '' ? undefined : { clientId, clientSecret };
 }
+
+export type SignInProvider = 'google' | 'github';
+
+/** The OAuth providers this server has credentials for, which the sign-in form offers */
+export function signInProviders(): SignInProvider[] {
+  const providers: SignInProvider[] = [];
+
+  if (provider('GOOGLE') != null) {
+    providers.push('google');
+  }
+  if (provider('GITHUB') != null) {
+    providers.push('github');
+  }
+  return providers;
+}
+
+/**
+ * Routes that change or list an account's second factors. They need a
+ * password confirmed in the security settings first (see `./security`);
+ * the two-factor ones ask for the password again on top
+ */
+const NEEDS_UNLOCK = new Set([
+  '/two-factor/enable',
+  '/two-factor/disable',
+  '/two-factor/get-totp-uri',
+  '/two-factor/generate-backup-codes',
+  '/passkey/generate-register-options',
+  '/passkey/verify-registration',
+  '/passkey/list-user-passkeys',
+  '/passkey/update-passkey',
+  '/passkey/delete-passkey',
+]);
 
 // The instance's type is Better Auth's own, inferred from these options and too long to write
 // oxlint-disable-next-line typescript/explicit-function-return-type
@@ -78,20 +112,29 @@ function createAuth() {
       fields: { expiresAt: 'expires_at', createdAt: 'created_at', updatedAt: 'updated_at' },
     },
     emailAndPassword: {
-      enabled: EMAIL_SIGN_IN,
+      enabled: true,
       autoSignIn: true,
       password: {
         hash: hashPassword,
-        // Accounts brought over from Supabase keep their bcrypt hashes until they change password
-        verify: async ({ hash, password }) =>
-          hash.startsWith('$2')
-            ? bcrypt.compare(password, hash)
-            : verifyPassword({ hash, password }),
+        verify: async ({ hash, password }) => checkPassword(hash, password),
       },
     },
     socialProviders: {
       ...(google == null ? {} : { google }),
       ...(github == null ? {} : { github }),
+    },
+    hooks: {
+      before: createAuthMiddleware(async (ctx) => {
+        if (!NEEDS_UNLOCK.has(ctx.path)) {
+          return;
+        }
+
+        const session = await getSessionFromCtx(ctx);
+
+        if (session == null || !(await securityUnlocked(session.user.id))) {
+          throw new APIError('FORBIDDEN', { message: 'Confirm your password first.' });
+        }
+      }),
     },
     databaseHooks: {
       user: {
@@ -103,6 +146,37 @@ function createAuth() {
       },
     },
     plugins: [
+      twoFactor({
+        issuer: 'Overwander',
+        schema: {
+          user: { fields: { twoFactorEnabled: 'two_factor_enabled' } },
+          twoFactor: {
+            modelName: 'two_factors',
+            fields: {
+              backupCodes: 'backup_codes',
+              userId: 'user_id',
+              failedVerificationCount: 'failed_verification_count',
+              lockedUntil: 'locked_until',
+            },
+          },
+        },
+      }),
+      passkey({
+        rpName: 'Overwander',
+        schema: {
+          passkey: {
+            modelName: 'passkeys',
+            fields: {
+              publicKey: 'public_key',
+              userId: 'user_id',
+              credentialID: 'credential_id',
+              deviceType: 'device_type',
+              backedUp: 'backed_up',
+              createdAt: 'created_at',
+            },
+          },
+        },
+      }),
       jwt({
         jwks: { keyPairConfig: { alg: 'EdDSA', crv: 'Ed25519' } },
         jwt: { expirationTime: '15m' },

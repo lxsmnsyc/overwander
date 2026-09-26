@@ -19,6 +19,14 @@ const AUTH_REFUSALS = new Map<string, string>([
   ['USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL', 'There is already an account with that email.'],
   ['PASSWORD_TOO_SHORT', 'Choose a longer password.'],
   ['INVALID_EMAIL', 'That is not an email address.'],
+  ['PASSWORD_TOO_LONG', 'Choose a shorter password.'],
+  ['INVALID_TOKEN', 'This link has been used or has expired. Ask staff for a new one.'],
+  ['INVALID_CODE', 'That code is not right.'],
+  ['INVALID_BACKUP_CODE', 'That backup code is not right, or was used already.'],
+  ['INVALID_TWO_FACTOR_COOKIE', 'That took too long. Sign in again.'],
+  ['ACCOUNT_TEMPORARILY_LOCKED', 'Too many wrong codes. Wait a while and try again.'],
+  ['TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE', 'Too many wrong codes. Sign in again.'],
+  ['AUTH_CANCELLED', 'The passkey was cancelled.'],
 ]);
 
 /** Too many tries, which Better Auth answers by status rather than code */

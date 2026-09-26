@@ -1,4 +1,4 @@
-import { type JSX, createSignal } from 'solid-js';
+import { type JSX, Show, createSignal } from 'solid-js';
 import { LearnRefusal, type LearnResult } from '../../../../auth/learn-refusal';
 import { tutorMove } from '../../../../auth/npcs';
 import type { Moves } from '../../../../data/ids/moves';
@@ -56,30 +56,33 @@ export default function Tutor(props: CounterProps): JSX.Element {
         }}
       />
       <DialogActions>
-        <Button
-          tone="primary"
-          disabled={scalesIn(props) < 1 || picked() == null || chosen() == null}
-          label="Teach, 1 Heart Scale"
-          onClick={() => {
-            const id = picked();
-            const move = chosen();
+        {/* Only once there is a pokemon to spend it on */}
+        <Show when={picked() != null}>
+          <Button
+            tone="primary"
+            disabled={scalesIn(props) < 1 || picked() == null || chosen() == null}
+            label="Teach, 1 Heart Scale"
+            onClick={() => {
+              const id = picked();
+              const move = chosen();
 
-            if (id != null && move != null) {
-              props.ask({
-                catchId: id,
-                move,
-                cost: 'The Heart Scale',
-                teach: tutor,
-                onTaught: tutored,
-              });
-            }
-          }}
-        >
-          Teach{' '}
-          <Badge tone="gold">
-            <ItemSprite item={TUTOR_FEE} size={16} label="" />1
-          </Badge>
-        </Button>
+              if (id != null && move != null) {
+                props.ask({
+                  catchId: id,
+                  move,
+                  cost: 'The Heart Scale',
+                  teach: tutor,
+                  onTaught: tutored,
+                });
+              }
+            }}
+          >
+            Teach{' '}
+            <Badge tone="gold">
+              <ItemSprite item={TUTOR_FEE} size={16} label="" />1
+            </Badge>
+          </Button>
+        </Show>
         {props.walkOn()}
       </DialogActions>
     </>

@@ -17,7 +17,7 @@ import {
   Texture,
   Vector2,
 } from 'three';
-import parseColour from '../gl/colour';
+import parseColour, { type Colour } from '../gl/colour';
 import type { QuadBlend, QuadPoint, QuadSampling, QuadSheet, QuadSource } from '../gl/quad-batch';
 
 /**
@@ -323,13 +323,16 @@ export default class SceneMarks {
     source: QuadSource,
     corners: QuadPoint[],
     alpha = 1,
-    colour?: string,
+    colour?: string | readonly Colour[],
     sampling: QuadSampling = 'pixels',
     blend: QuadBlend = 'over',
   ): void {
-    const tint = colour == null ? null : parseColour(colour);
+    // One colour a corner where the caller has the light at each of
+    // them, which is how a lamp pool falls off across a tile
+    const corner = typeof colour === 'string' || colour == null ? null : colour;
+    const tint = typeof colour === 'string' ? parseColour(colour) : null;
 
-    if (colour != null && tint == null) {
+    if (typeof colour === 'string' && tint == null) {
       return;
     }
     const opacity = alpha * (tint == null ? 1 : tint[3]);
@@ -351,6 +354,7 @@ export default class SceneMarks {
       opacity * (tint == null ? 1 : tint[1]),
       opacity * (tint == null ? 1 : tint[2]),
       opacity,
+      corner,
     );
   }
 
@@ -586,6 +590,8 @@ export default class SceneMarks {
     green: number,
     blue: number,
     alpha: number,
+    /** One colour a corner, in ring order, for a quad lit unevenly */
+    lit: readonly Colour[] | null = null,
   ): void {
     const layer = this.on;
 
@@ -621,9 +627,11 @@ export default class SceneMarks {
       // A ring runs top left, top right, bottom right, bottom left
       layer.vertices[at + 3] = corner === 0 || corner === 3 ? left : right;
       layer.vertices[at + 4] = corner <= 1 ? top : bottom;
-      layer.vertices[at + 5] = red * fade;
-      layer.vertices[at + 6] = green * fade;
-      layer.vertices[at + 7] = blue * fade;
+      const own = lit == null ? null : lit[corner];
+
+      layer.vertices[at + 5] = red * fade * (own == null ? 1 : own[0]);
+      layer.vertices[at + 6] = green * fade * (own == null ? 1 : own[1]);
+      layer.vertices[at + 7] = blue * fade * (own == null ? 1 : own[2]);
       layer.vertices[at + 8] = alpha * fade;
       layer.filled += 1;
     }

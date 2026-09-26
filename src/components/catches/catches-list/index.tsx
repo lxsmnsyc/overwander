@@ -7,7 +7,9 @@ import {
 } from '../../../auth/caught';
 import CatchPicker, { type CatchOption, type CatchPickerProps } from '../catch-picker';
 import { useGame } from '../../app/game-context';
-import { Button, useToast } from '../../styled';
+import { ArrowDownIcon, ArrowUpIcon } from '../../icons';
+import { Button, DialogActions, Select, useToast } from '../../styled';
+import { type QueryControls, parseControls, withControl } from '../../../core/query';
 import CatchActions from './actions';
 
 export interface CatchesListProps {
@@ -20,7 +22,22 @@ export interface CatchesListProps {
    * nothing on it to press
    */
   viewOnly?: boolean;
+  /** The dialog's way out, which shares the foot of the list with the selection's actions */
+  onClose: () => void;
 }
+
+/** What the sort control offers. The empty value leaves the box in its own order */
+const SORT_OPTIONS: { value: string; label: string }[] = [
+  { value: '', label: 'Sort: Box order' },
+  { value: 'caught', label: 'Sort: Caught' },
+  { value: 'level', label: 'Sort: Level' },
+  { value: 'iv', label: 'Sort: Values' },
+  { value: 'friendship', label: 'Sort: Friendship' },
+  { value: 'species', label: 'Sort: Dex number' },
+  { value: 'name', label: 'Sort: Name' },
+  { value: 'hp', label: 'Sort: HP' },
+  { value: 'walked', label: 'Sort: Walked' },
+];
 
 /**
  * The player's pokemon, in boxes.
@@ -61,6 +78,18 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
    * search rather than in the row of buttons that closes the panel
    */
   const [marking, setMarking] = createSignal(false);
+
+  // Read off the search, so a `sort:` typed by hand moves the control too.
+  // Highest first unless `order:asc` says otherwise, as `orderCatches` reads it
+  const controls = (): QueryControls => parseControls(query(), true);
+  const sortValue = (): string => {
+    for (const option of SORT_OPTIONS) {
+      if (option.value === controls().sort) {
+        return option.value;
+      }
+    }
+    return '';
+  };
 
   // Leaving select mode lets go of what was picked. Coming back to a
   // box still lit from last time is a selection nobody made
@@ -187,22 +216,46 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         // Marking a run of them and letting a run of them go, which is
         // the one thing the box is for that opening them one at a time
         // cannot do. Nobody marks somebody else's pokemon
-        aside={
-          props.viewOnly === true
-            ? undefined
-            : () => (
-                <Button
-                  class="shrink-0"
-                  tone={selecting() ? 'primary' : undefined}
-                  disabled={busy()}
-                  onClick={() => {
-                    setMarking(!marking());
-                  }}
-                >
-                  {selecting() ? 'Done' : 'Select'}
-                </Button>
-              )
-        }
+        aside={() => (
+          <>
+            <Select
+              label="Sort"
+              class="shrink-0 [&>label]:sr-only"
+              value={sortValue()}
+              options={SORT_OPTIONS}
+              onChange={(sort) => {
+                setQuery(withControl(query(), 'sort', sort === '' ? null : sort));
+              }}
+            />
+            <Button
+              class="shrink-0"
+              label={controls().descending ? 'Highest first' : 'Lowest first'}
+              disabled={sortValue() === ''}
+              onClick={() => {
+                setQuery(withControl(query(), 'order', controls().descending ? 'asc' : null));
+              }}
+            >
+              <Show
+                when={controls().descending}
+                fallback={<ArrowUpIcon class="size-5" aria-hidden="true" />}
+              >
+                <ArrowDownIcon class="size-5" aria-hidden="true" />
+              </Show>
+            </Button>
+            <Show when={props.viewOnly !== true}>
+              <Button
+                class="shrink-0"
+                tone={selecting() ? 'primary' : undefined}
+                disabled={busy()}
+                onClick={() => {
+                  setMarking(!marking());
+                }}
+              >
+                {selecting() ? 'Done' : 'Select'}
+              </Button>
+            </Show>
+          </>
+        )}
         // Nothing more asked for while a round trip is in the air
         disabled={busy()}
         // A record changed under it — an evolution, a release, a lot
@@ -214,26 +267,30 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         {...mode()}
       />
 
-      <Show when={selecting()}>
-        <CatchActions
-          chosen={chosen()}
-          busy={busy()}
-          onFavorite={(on) => {
-            settle(favoriteCatches(ids(), on), (count) =>
-              on ? `${count} favorited` : `${count} unfavorited`,
-            );
-          }}
-          onGuard={(on) => {
-            settle(guardCatches(ids(), on), (count) =>
-              on ? `${count} locked` : `${count} unlocked`,
-            );
-          }}
-          onRelease={release}
-          onClear={() => {
-            setPicked([]);
-          }}
-        />
-      </Show>
+      {/* The dialog's foot: the selection's actions while picking, the way out last */}
+      <DialogActions>
+        <Show when={selecting()} fallback={<Button onClick={props.onClose}>Close</Button>}>
+          <CatchActions
+            chosen={chosen()}
+            busy={busy()}
+            onFavorite={(on) => {
+              settle(favoriteCatches(ids(), on), (count) =>
+                on ? `${count} favorited` : `${count} unfavorited`,
+              );
+            }}
+            onGuard={(on) => {
+              settle(guardCatches(ids(), on), (count) =>
+                on ? `${count} locked` : `${count} unlocked`,
+              );
+            }}
+            onRelease={release}
+            onClear={() => {
+              setPicked([]);
+            }}
+            trailing={<Button onClick={props.onClose}>Close</Button>}
+          />
+        </Show>
+      </DialogActions>
     </div>
   );
 }

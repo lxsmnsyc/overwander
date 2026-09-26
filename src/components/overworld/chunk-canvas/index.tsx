@@ -24,16 +24,15 @@ import {
   boardCellOf,
   boardCells,
   boardIndexOf,
+  boardStand,
   boardView,
   compassMarks,
   depthOrder,
   facingFrom,
   fitPicture,
-  isBoardCell,
   projectAir,
   projectBoardCell,
   projectBoardCellQuad,
-  projectGround,
   radiusOf,
   reachOf,
   setBoardFlat,
@@ -44,19 +43,13 @@ import {
   yawTurns,
 } from '../../../canvas/board';
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
-import {
-  SPRITE_DIRECTIONS,
-  type SpriteDirection,
-  directionOf,
-  litFrame,
-} from '../../../canvas/sprite-sheet';
+import { SPRITE_DIRECTIONS, type SpriteDirection } from '../../../canvas/sprite-sheet';
 import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/sparkle';
+import drawHerald, { HERALD_BURST_LIFE } from '../../../canvas/herald';
 import speciesSize from '../../../canvas/species-size';
 import {
-  type Cast,
   batchAmbient,
   batchSkybox,
-  getCast,
   getSkybox,
   paintAmbient,
   paintSkybox,
@@ -64,17 +57,9 @@ import {
 import Weather from '../../../data/overworld/weather';
 import settings from '../../app/settings';
 import pixelRatio from '../../../canvas/ratio';
-import paintSky, {
-  CAVERN,
-  type Lamp,
-  batchCavern,
-  batchSky,
-  batchWash,
-  paintCavern,
-} from '../../../canvas/sky';
+import paintSky, { CAVERN, type Lamp, batchSky, batchWash, paintCavern } from '../../../canvas/sky';
 import createTwist from '../../../canvas/twist';
-import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
-import { serverNow } from '../../../auth/clock';
+import { localNow } from '../../../auth/clock';
 import loadSpeciesSprite from '../../../canvas/species-sprites';
 import drawTileQuad, { grownQuad } from '../../../canvas/tile-quad';
 import loadTerrainTiles, { type TerrainTiles } from '../../../canvas/terrain-tiles';
@@ -83,14 +68,12 @@ import createBoardScene, {
   type SceneSpot,
   hazeAt,
 } from '../../../canvas/three/board-scene';
-import { TERRACE_TOP } from '../../../overworld/terrace';
 import terrainCell from '../../../canvas/terrain-cell';
 import QuadBatch, { type Painter } from '../../../canvas/gl/quad-batch';
 import Bakery, { type Baked } from '../../../canvas/bakery';
 import {
   type ShadowPatch,
   type SpriteQuad,
-  castCorners,
   cornersOf,
   shadowCorners,
 } from '../../../canvas/placement';
@@ -104,6 +87,8 @@ import Phenomenon from '../../../data/overworld/phenomenon';
 import Npc, { npcSheet } from '../../../data/overworld/npc';
 import facingToward from '../../../canvas/facing';
 import type OWCharSprite from '../../../canvas/ow-char-sprite';
+import type Strangers from '../../../overworld/strangers';
+import type { StrangerStanding } from '../../../overworld/strangers';
 import loadOWChar, { OW_SPRITE_ROOT } from '../../../canvas/ow-char-sprites';
 import type OWPlantSprite from '../../../canvas/ow-plant-sprite';
 import loadOWPlant from '../../../canvas/ow-plant-sprites';
@@ -112,6 +97,19 @@ import berryPlantSheet from '../../../data/overworld/berry-plant';
 import decorationPicture, { grottoPicture } from '../../../data/overworld/decoration-sprite';
 import landmarkPicture, { LANDMARK_SHEET } from '../../../data/overworld/landmark-sprite';
 import type BasicSprite from '../../../canvas/basic-sprite';
+import type { Colour } from '../../../canvas/gl/colour';
+import {
+  CAVE_LIGHT,
+  DARK_DAY_LIGHT,
+  DAYLIGHT,
+  LAMP_COLOUR,
+  LAMP_STRENGTH,
+  type Lighting,
+  dimmed,
+  encoded,
+  isLit,
+  litAt,
+} from '../../../canvas/lighting';
 import loadBasicSprite from '../../../canvas/basic-sprites';
 import type { ItemStack } from '../../../data/overworld/item-pool';
 import {
@@ -121,6 +119,14 @@ import {
   COLORS,
   DRAW_PACE,
   GOAL_PULSE,
+  HERALD_ALPHA,
+  HERALD_ARC_POINTS,
+  HERALD_MOTE,
+  HERALD_MOTES,
+  HERALD_RISE,
+  HERALD_SEAL,
+  HERALD_TURN,
+  HERALD_WEIGHT,
   HOVER_GLOW,
   IDLE_PACE,
   LOADING_LABEL,
@@ -130,6 +136,7 @@ import {
   PICKED_STAGE,
   PICK_INSET_SIDE,
   PICK_INSET_TOP,
+  PIECE_SHADOW_WIDTH,
   PLANT_CELLS,
   PLANT_PHASES,
   PLAYER_SHEET,
@@ -173,6 +180,7 @@ import {
   facingOf,
   landmarkCallOut,
   paintCellAura,
+  paintHerald,
   paintPhenomenon,
   paintSparkle,
   phenomenonSpan,
@@ -196,21 +204,8 @@ const RING_SPREAD = 2;
  */
 const SPRITE_LIFT = 0.3;
 
-/** The levels a press is read at, highest first */
-const DOWNWARD: number[] = [];
-
-for (let step = 0; step <= TERRACE_TOP; step++) {
-  DOWNWARD.push(TERRACE_TOP - step);
-}
-
-/** A cell and the eight around it, for a reading that may have landed one cell off */
-const AROUND: [number, number][] = [];
-
-for (const dy of [-1, 0, 1]) {
-  for (const dx of [-1, 0, 1]) {
-    AROUND.push([dx, dy]);
-  }
-}
+/** Every cell a press can land on, listed once */
+const PRESSABLE = boardCells();
 
 /** Whether a point falls inside a quad, its corners given in order round it */
 function inQuad(point: { x: number; y: number }, corners: { x: number; y: number }[]): boolean {
@@ -283,6 +278,11 @@ export interface ChunkCanvasProps {
    * Left out, the default red-trainer sheet
    */
   charset?: string;
+  /**
+   * The other players in sight. Read every frame rather than handed
+   * over as a value, since they walk on their own clock
+   */
+  strangers?: Strangers | null;
   /**
    * The pokemon the player is riding while they surf or fly. While it
    * is set the player is drawn as that pokemon instead of the charset
@@ -387,6 +387,13 @@ export interface ChunkCanvasProps {
    */
   lit?: boolean;
   /**
+   * The hour the board is lit at, as a local time in milliseconds. The
+   * game leaves it out and the board reads the player's own clock; a
+   * page showing what the day looks like sets it rather than waiting
+   * for the hour to come round
+   */
+  time?: number;
+  /**
    * A cell the player has asked to be at — the chunk's own, or one of
    * the ring of country drawn around it.
    *
@@ -410,6 +417,12 @@ export interface ChunkCanvasProps {
    * in it
    */
   onShiny?: () => void;
+  /**
+   * A legendary's or a mythical's herald has just started, handed up
+   * the same way and for the same reason as `onShiny`. A mythical
+   * wins a frame that started both
+   */
+  onHerald?: (rank: 'legendary' | 'mythical') => void;
   /**
    * How to find where a cell is on the screen, handed up once there is
    * a canvas to measure. It is what lets a caller hang something over
@@ -512,6 +525,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * keyed to the ground announced itself again with each one
    */
   const sparkles = new Map<string, number>();
+  /** And when each legendary or mythical was first drawn, for its own burst */
+  const heralds = new Map<string, number>();
 
   /**
    * How many are remembered. A name is unique to its window, so the
@@ -782,7 +797,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       landmark === Landmark.Trainer ||
       landmark === Landmark.GymLeader ||
       landmark === Landmark.EliteFour ||
-      landmark === Landmark.Champion
+      landmark === Landmark.Champion ||
+      landmark === Landmark.FrontierBrain
     ) {
       // The experts wear their own coats from the snapshot; the plain
       // trainer's sheet only stands in while a coat is missing
@@ -963,6 +979,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     lay?: (placed: SpriteQuad | null, alpha?: number) => boolean,
     /** How faint to draw it, asked once the piece has been placed */
     fade?: (placed: SpriteQuad | null) => number,
+    /** What it throws on the ground, laid before the piece itself */
+    shadow?: (placed: SpriteQuad) => void,
   ): void => {
     const cell = piece?.sheet.frameOf(piece.name);
 
@@ -998,6 +1016,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
     const quad = piece.sheet.quadOf(piece.name, left, top, where);
     const alpha = fade?.(quad) ?? 1;
+
+    if (quad != null) {
+      shadow?.(quad);
+    }
 
     if (lay?.(quad, alpha) !== true) {
       piece.sheet.draw(context, piece.name, left, top, alpha === 1 ? where : { ...where, alpha });
@@ -1074,6 +1096,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   let mine: OWCharSprite | null = null;
   let mineSheet: string | null = null;
 
+  /**
+   * Each other player's own clone, for the same reason, with where
+   * they were drawn last so the stride follows how far they moved
+   */
+  const walkers = new Map<string, { sheet: string; sprite: OWCharSprite; x: number; y: number }>();
+  /** The other players as they stand this frame */
+  let crowd: StrangerStanding[] = [];
+
   const playerPerson = (): OWCharSprite | null => {
     const sheet = props.charset ?? PLAYER_SHEET;
     const shared = personFor(sheet);
@@ -1134,6 +1164,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   /** The standing pass's cells in paint order, kept while nothing on the board changes */
   let standOrder: {
     yaw: number;
+    /** Which cells other players stand on, as a string so a new frame with the same cells matches */
+    crowded: string;
     projected: object;
     ground: BoardGround;
     landmarks: Map<number, Landmark>;
@@ -1385,6 +1417,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     );
   };
 
+  /**
+   * A point between cells, for somebody walking across them, stood at
+   * the height of the cell they are passing through
+   */
+  const groundBetween = (x: number, y: number, cell: BoardCell): ProjectedPoint =>
+    projectBoardCell(
+      shifted({ x, y }),
+      yaw(),
+      boardView().mode === '2d' ? 0 : props.ground.level(cell.x, cell.y) * TERRACE_LIFT,
+    );
+
   const setYaw = (turn: (angle: number) => number): void => {
     props.onTurn(turn(props.yaw));
   };
@@ -1518,35 +1561,29 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     if (boardView().mode === '2d') {
       return boardCellAtFraction(at.x, at.y, yaw(), camera());
     }
-    // Read at every level, and kept only where the point falls inside a
-    // cell as it is drawn, corners sunk down any slope. A slope lies below
-    // its own level, so a reading at that level alone names the tile
-    // behind it. Of the cells the point is inside, the nearest is on top
-    const candidates: BoardCell[] = [];
-
-    for (const level of DOWNWARD) {
-      const hit = boardCellAtFraction(at.x, at.y, yaw(), camera(), level * TERRACE_LIFT);
-
-      if (hit != null) {
-        for (const [dx, dy] of AROUND) {
-          candidates.push({ x: hit.x + dx, y: hit.y + dy });
-        }
-      }
-    }
-
+    // Every cell is tested against its outline as drawn, corners sunk
+    // down any slope, and the nearest one the point is inside is on top.
+    // Asked of the whole board: guessing candidates from a reading at
+    // each level drifts by cells once the ground stands many levels off
     let found: BoardCell | null = null;
     let nearest = Number.NEGATIVE_INFINITY;
 
-    for (const cell of candidates) {
-      const lifts = cornerLifts(cell);
-      const corners: ProjectedPoint[] = [];
-
-      for (let corner = 0; corner < lifts.length; corner++) {
-        corners.push(projectBoardCellQuad(shifted(cell), yaw(), lifts[corner])[corner]);
-      }
+    for (const cell of PRESSABLE) {
       const depth = projectBoardCell(shifted(cell), yaw()).y;
 
-      if (isBoardCell(cell) && depth > nearest && inQuad(at, corners)) {
+      if (depth <= nearest) {
+        continue;
+      }
+      const lifts = cornerLifts(cell);
+      const level = lifts[0] === lifts[1] && lifts[1] === lifts[2] && lifts[2] === lifts[3];
+      const corners = level ? projectBoardCellQuad(shifted(cell), yaw(), lifts[0]) : [];
+
+      if (!level) {
+        for (let corner = 0; corner < lifts.length; corner++) {
+          corners.push(projectBoardCellQuad(shifted(cell), yaw(), lifts[corner])[corner]);
+        }
+      }
+      if (inQuad(at, corners)) {
         nearest = depth;
         found = cell;
       }
@@ -1664,6 +1701,122 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
      * one; everything else is left to the dark
      */
     const lamps: Lamp[] = [];
+    /**
+     * The light the board is drawn under, rebuilt every frame: what
+     * reaches everywhere, and every lamp standing on it
+     */
+    const lighting: Lighting = { ambient: DAYLIGHT, sources: [] };
+    /**
+     * The ambient in hand, and what it is on its way from and to. A
+     * sky turning over swaps its light as slowly as it swaps its rain,
+     * so the run is timed rather than chased: a light that moved a
+     * share of what was left every frame took three fades to arrive
+     */
+    const easing: { since: number; under: boolean; from: Colour; to: Colour; light: Colour } = {
+      since: 0,
+      under: false,
+      from: [1, 1, 1, 1],
+      to: [1, 1, 1, 1],
+      light: [1, 1, 1, 1],
+    };
+
+    /**
+     * One light written on all four corners, and the four a ground
+     * tile is lit by. Both are handed straight to the batch and read
+     * before the next call, so they are filled in place rather than
+     * built each time
+     */
+    const evenly: Colour[] = [
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+    ];
+    const cornerwise: Colour[] = [
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+    ];
+
+    // Bent to the page's own curve on the way in: these go to the
+    // shader that multiplies the stored colours, unlike the country's
+    // corners, which are lit in plain light
+    const copyInto = (held: Colour, light: Colour): void => {
+      encoded(light, held);
+    };
+
+    /** One reading, for a thing standing on a cell rather than lying across it */
+    const shading = (light: Colour): Colour[] => {
+      for (const held of evenly) {
+        copyInto(held, light);
+      }
+      return evenly;
+    };
+
+    /**
+     * The light at the four corners of a square, far left, far right,
+     * near right, near left: the order a quad's corners come in, so a
+     * lamp's pool falls off across a tile rather than in steps of one
+     */
+    const tileLight = (square: BoardCell): Colour[] => {
+      const at = shifted(square);
+
+      copyInto(cornerwise[0], litAt(lighting, at.x, at.y));
+      copyInto(cornerwise[1], litAt(lighting, at.x + 1, at.y));
+      copyInto(cornerwise[2], litAt(lighting, at.x + 1, at.y + 1));
+      copyInto(cornerwise[3], litAt(lighting, at.x, at.y + 1));
+      return cornerwise;
+    };
+
+    /**
+     * What reaches everywhere this frame.
+     *
+     * Only the dark places are lit this way: a cave, and a day whose
+     * sky has put the lights out. The hour itself stays a wash over
+     * the finished frame, since it belongs to the sky and the weather
+     * as much as to the ground, and a picture lit cell by cell leaves
+     * everything that is not a cell standing at noon
+     */
+    const ambientLight = (now: number): Colour => {
+      let wanted = DAYLIGHT;
+
+      if (props.underground) {
+        wanted = props.lit === true ? DAYLIGHT : CAVE_LIGHT;
+      } else if (props.weather === Weather.DarkDay) {
+        wanted = DARK_DAY_LIGHT;
+      }
+
+      if (wanted[0] !== easing.to[0] || wanted[1] !== easing.to[1] || wanted[2] !== easing.to[2]) {
+        for (let channel = 0; channel < 3; channel += 1) {
+          easing.from[channel] = easing.light[channel];
+          easing.to[channel] = wanted[channel];
+        }
+        easing.since = now;
+      }
+      // A cave mouth is a different place rather than a sky turning
+      // over: what is on the other side of it is lit the moment the
+      // board is
+      const sudden = easing.under !== props.underground;
+
+      easing.under = props.underground;
+      if (sudden) {
+        // Arrived, so the run it was on is over rather than still
+        // running from wherever the surface left it
+        for (let channel = 0; channel < 3; channel += 1) {
+          easing.from[channel] = easing.to[channel];
+        }
+        easing.since = now;
+      }
+
+      const step = sudden ? 1 : Math.min(1, (now - easing.since) / WEATHER_FADE);
+
+      for (let channel = 0; channel < 3; channel += 1) {
+        easing.light[channel] =
+          easing.from[channel] + (easing.to[channel] - easing.from[channel]) * step;
+      }
+      return easing.light;
+    };
     /** What the batch holds of it, so a newly baked piece re-uploads */
     let baked = -1;
     /** Whether the layer has been emptied down to a pixel under the scene */
@@ -1800,16 +1953,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
      * ticking every second would redraw the board for the sake of a
      * light that has barely moved
      */
-    const worldTime = (): number => toLocalTime(serverNow(), getLocalOffset());
-
-    /** Where this hour's light throws a shadow, if it throws one */
-    const cast = (): Cast | undefined => {
-      // Turned with the board: the sun is fixed in the world, so a
-      // player spinning the ground spins every shadow on it
-      const thrown = getCast(worldTime(), yaw(), props.latitude);
-
-      return thrown.length <= 0 ? undefined : thrown;
-    };
+    const worldTime = (): number => props.time ?? localNow();
 
     /**
      * The pokemon standing about are the only thing here that moves
@@ -1909,6 +2053,47 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       }
       if (heading !== facing) {
         dirty = true;
+      }
+
+      // The other players, each walked by how far they moved this frame
+      crowd = props.strangers?.standing({ x: props.at[0], y: props.at[1] }) ?? [];
+
+      const present = new Set<string>();
+
+      for (const one of crowd) {
+        const shared = personFor(one.charset);
+
+        if (shared?.ready !== true) {
+          continue;
+        }
+        present.add(one.uid);
+
+        const known = walkers.get(one.uid);
+
+        if (known?.sheet !== one.charset) {
+          walkers.set(one.uid, { sheet: one.charset, sprite: shared.clone(), x: one.x, y: one.y });
+          dirty = true;
+          continue;
+        }
+
+        const moved = Math.hypot(one.x - known.x, one.y - known.y);
+
+        if (moved > 0) {
+          dirty = true;
+        }
+        if (one.moving) {
+          known.sprite.advanceBy(moved * CELL_STRIDE);
+        } else {
+          known.sprite.stop();
+        }
+        known.x = one.x;
+        known.y = one.y;
+      }
+      for (const uid of walkers.keys()) {
+        if (!present.has(uid)) {
+          walkers.delete(uid);
+          dirty = true;
+        }
       }
       // The board slides under a cursor that holds still, so what it is
       // over is read again rather than left where the last move put it
@@ -2028,6 +2213,41 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
       const hazy = settings().boardEdge === 'haze';
 
+      /**
+       * The light this frame is drawn under: what reaches everywhere,
+       * and every lamp standing on the board.
+       *
+       * The sources are filled in below, as the board is walked over,
+       * so they are in hand before anything is drawn under them
+       */
+      lighting.ambient = ambientLight(clock);
+      lighting.sources.length = 0;
+      if (props.lamp > 0 && isLit(lighting)) {
+        // The player carries one, and so does every landmark: the
+        // same things the dark was kept off before, now throwing the
+        // light themselves. Gathered before the ground is laid, since
+        // the ground is lit by them
+        lighting.sources.push({
+          x: BOARD_CENTER + 0.5,
+          z: BOARD_CENTER + 0.5,
+          reach: props.lamp,
+          colour: LAMP_COLOUR,
+          strength: LAMP_STRENGTH,
+        });
+        for (const index of props.landmarks.keys()) {
+          const cell = shifted(boardCellOf(index));
+
+          lighting.sources.push({
+            x: cell.x + 0.5,
+            z: cell.y + 0.5,
+            reach: props.lamp,
+            colour: LAMP_COLOUR,
+            strength: LAMP_STRENGTH,
+          });
+        }
+      }
+      show?.light(isLit(lighting) ? (x, z) => litAt(lighting, x, z) : null);
+
       if (show != null) {
         if (!hazy) {
           show.haze(null);
@@ -2035,13 +2255,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           show.haze({ top: CAVERN.colour, bottom: CAVERN.colour });
         } else {
           const { zenith, horizon } = getSkybox(worldTime(), props.latitude);
+          // Taken down by whatever reaches the board: a day the sky has
+          // put out takes the sky with it, so the rim does not glow
+          // around a country nothing is lighting
+          const light = lighting.ambient;
 
-          show.haze({ top: zenith, bottom: horizon });
+          show.haze({ top: dimmed(zenith, light), bottom: dimmed(horizon, light) });
         }
       }
-
-      /** The light's throw, which the flat board has nowhere to put */
-      const throwing = (): Cast | undefined => (flat ? undefined : cast());
 
       /** How long since the last frame, for anything easing its way somewhere */
       const since = Math.max(0, Math.min(VEIL_FADE, clock - paintedAt));
@@ -2084,7 +2305,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         if (props.underground) {
           batch.solid(CAVERN.colour, screenBox);
         } else {
-          batchSkybox(batch, screen.width, screen.height, worldTime(), props.latitude);
+          batchSkybox(
+            batch,
+            screen.width,
+            screen.height,
+            worldTime(),
+            props.latitude,
+            lighting.ambient,
+          );
         }
       }
 
@@ -2108,7 +2336,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       if (loading()) {
         marks?.glass();
 
-        const middle = at(projectGround({ u: 0.5, v: 0.5 }, yaw()));
+        const middle = at(projectAir({ u: 0.5, v: 0.5 }, boardStand(), yaw()));
         const size = Math.round(LOADING_SIZE * magnify);
         const font = `bold ${size}px monospace`;
         const word =
@@ -2206,12 +2434,18 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * round: the cell was composed with the shore already turned in
        * it, and nothing else in it follows the camera
        */
-      const layTile = (sheet: HTMLCanvasElement, corners: ProjectedPoint[]): void => {
+      const layTile = (
+        sheet: HTMLCanvasElement,
+        corners: ProjectedPoint[],
+        square?: BoardCell,
+      ): void => {
         if (batch == null) {
           drawTileQuad(context, sheet, { x: 0, y: 0 }, 16, corners);
           return;
         }
-        batch.quad(sheet, { x: 0, y: 0, width: 16, height: 16 }, grownQuad(corners));
+        const lit = square == null || !isLit(lighting) ? undefined : tileLight(square);
+
+        batch.quad(sheet, { x: 0, y: 0, width: 16, height: 16 }, grownQuad(corners), 1, lit);
       };
 
       /**
@@ -2233,7 +2467,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         if (cell == null) {
           return false;
         }
-        layTile(cell, corners);
+        layTile(cell, corners, square);
         return true;
       };
 
@@ -2574,49 +2808,30 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             show.depthAt({ ...spot, y: spot.y + above }, SPRITE_LIFT),
           );
         }
-        batch.quad(quad.sheet, quad.source, cornersOf(quad), alpha);
+        // Lit where it stands: one reading at its feet, since a sprite
+        // is a flat picture and a pool of light falls on the ground
+        // rather than up the front of it
+        const spot = standingOn?.spot;
+        const lit =
+          spot == null || !isLit(lighting)
+            ? undefined
+            : shading(litAt(lighting, spot.x + 0.5, spot.z + 0.5));
+
+        batch.quad(quad.sheet, quad.source, cornersOf(quad), alpha, lit);
         // Back to the ground for whatever else the cell has on it
         marks?.depth(standingOn?.floor ?? 0);
         return true;
       };
 
       /**
-       * The shadow a thing throws.
-       *
-       * Where the light has a direction to throw one in, it is the
-       * thing's own picture leaned over and laid flat: every point of
-       * it falls along the light by how high it stands, so the feet
-       * stay put and the head goes furthest. That is what a shadow is,
-       * and it costs the same quad the sprite did.
-       *
-       * With the sun overhead or under the horizon there is nothing to
-       * lean, so what is left is the round patch beneath the feet
+       * The patch a thing throws on the ground: one round stamp,
+       * stretched and turned away from the light by how low it is
        */
-      const shade = (
-        patch: ShadowPatch | null,
-        laid: ((facing: SpriteDirection) => SpriteQuad | null) | null = null,
-      ): boolean => {
+      const shade = (patch: ShadowPatch | null): boolean => {
         const disc = batch == null || patch == null ? null : bakeShadowDisc(bakery);
 
         if (batch == null || patch == null || disc == null) {
           return false;
-        }
-        const thrown = throwing();
-        // Which way the shadow falls. The caller turns that into the
-        // pose the light is looking at, which needs the thing's own
-        // facing as well and only the caller has it
-        const quad =
-          laid == null || thrown == null ? null : laid(directionOf(thrown.dx, thrown.dy));
-
-        if (quad != null && thrown != null) {
-          batch.quad(
-            quad.sheet,
-            quad.source,
-            castCorners(quad, patch, thrown),
-            patch.alpha,
-            patch.colour,
-          );
-          return true;
         }
         batch.quad(
           bakery.sheet,
@@ -2631,6 +2846,46 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           'smooth',
         );
         return true;
+      };
+
+      /**
+       * What a piece of scenery throws on the ground: the patch it
+       * stands on, and its own picture leaned along the light where
+       * the sun throws one. A tree standing on nothing read as a tree
+       * cut out and laid on the board
+       */
+      const standShadow = (quad: SpriteQuad, foot: { x: number; y: number }): void => {
+        const wide = quad.width * PIECE_SHADOW_WIDTH;
+        const patch: ShadowPatch = {
+          x: foot.x,
+          y: foot.y,
+          footX: foot.x,
+          footY: foot.y,
+          radiusX: wide,
+          radiusY: wide * shadowSquash(),
+          angle: 0,
+          colour: COLORS.shadow,
+          alpha: 1,
+        };
+
+        if (shade(patch)) {
+          return;
+        }
+        context.save();
+        context.fillStyle = patch.colour;
+        context.globalAlpha = patch.alpha;
+        context.beginPath();
+        context.ellipse(
+          patch.x,
+          patch.y,
+          patch.radiusX,
+          patch.radiusY,
+          patch.angle,
+          0,
+          Math.PI * 2,
+        );
+        context.fill();
+        context.restore();
       };
 
       /** Which phenomena have been repainted for this frame already */
@@ -2890,6 +3145,139 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }
       }
 
+      /**
+       * One arc of a seal, lying on the ground round a cell: `from`
+       * and `to` are where it runs between, in radians
+       */
+      const sealArc = (
+        index: number,
+        radius: number,
+        from: number,
+        to: number,
+        colour: string,
+        alpha: number,
+      ): void => {
+        const cell = boardCellOf(index);
+        const spot = shifted(cell);
+        const floor = liftOf(cell);
+
+        marks?.depth(floorOf(cell, floor, RING_SPREAD));
+        const midU = 0.5 + (spot.x - BOARD_CENTER) / BOARD_SPAN;
+        const midV = 0.5 + (spot.y - BOARD_CENTER) / BOARD_SPAN;
+        const round = radius / BOARD_SPAN / 2;
+        const arc: ProjectedPoint[] = [];
+
+        for (let step = 0; step < HERALD_ARC_POINTS; step++) {
+          const angle = from + ((to - from) * step) / (HERALD_ARC_POINTS - 1);
+
+          arc.push(
+            at(
+              projectAir(
+                { u: midU + Math.cos(angle) * round, v: midV + Math.sin(angle) * round },
+                floor,
+                yaw(),
+              ),
+            ),
+          );
+        }
+        if (batch != null) {
+          for (let step = 0; step < arc.length - 1; step++) {
+            batch.line(colour, arc[step], arc[step + 1], HERALD_WEIGHT, alpha);
+          }
+          return;
+        }
+
+        const prior = context.globalAlpha;
+
+        context.beginPath();
+        context.moveTo(arc[0].x, arc[0].y);
+        for (const point of arc.slice(1)) {
+          context.lineTo(point.x, point.y);
+        }
+        context.globalAlpha = prior * alpha;
+        context.strokeStyle = colour;
+        context.lineWidth = HERALD_WEIGHT;
+        context.lineCap = 'round';
+        context.stroke();
+        context.lineWidth = 1;
+        context.lineCap = 'butt';
+        context.globalAlpha = prior;
+      };
+
+      /**
+       * The aura a legendary or a mythical stands in: a seal of broken
+       * rings turning under it, and a few motes coming off it.
+       *
+       * Held for as long as it is standing there rather than thrown
+       * once, since one of these is the rarest thing on the board and
+       * a player walking up from behind should still see it. It lies
+       * flat: anything standing up out of the cell reads as a landmark
+       * rather than as the pokemon
+       */
+      for (const [index, standing] of props.spawns) {
+        if (standing.rank == null) {
+          continue;
+        }
+        animating = true;
+        const colour = standing.rank === 'mythical' ? COLORS.mythical : COLORS.legendary;
+        const turn = (clock / HERALD_TURN) * Math.PI * 2;
+        // Breathing, so a seal that holds its size is still alive
+        const lit = HERALD_ALPHA * (0.75 + 0.25 * Math.sin((clock / HERALD_TURN) * Math.PI * 2));
+
+        for (const band of HERALD_SEAL) {
+          const step = (Math.PI * 2) / band.arcs;
+
+          for (let arc = 0; arc < band.arcs; arc++) {
+            const from = turn * band.way + arc * step;
+
+            sealArc(index, band.radius, from, from + step * band.fill, colour, lit);
+          }
+        }
+
+        const cell = boardCellOf(index);
+        const spot = shifted(cell);
+        const floor = liftOf(cell);
+        const midU = 0.5 + (spot.x - BOARD_CENTER) / BOARD_SPAN;
+        const midV = 0.5 + (spot.y - BOARD_CENTER) / BOARD_SPAN;
+        const seed = nameSeed(standing.id);
+
+        marks?.depth(floorOf(cell, floor, RING_SPREAD));
+        for (let mote = 0; mote < HERALD_MOTES; mote++) {
+          // Each on its own clock, so they are never a row of lights
+          // rising together
+          const phase = (clock / HERALD_TURN + ((seed >> mote) & 0xff) / 256) % 1;
+          const angle = ((mote + 0.5) / HERALD_MOTES) * Math.PI * 2 + phase * 1.2;
+          const round = (1.4 / BOARD_SPAN / 2) * (0.5 + phase * 0.5);
+          const point = at(
+            projectAir(
+              { u: midU + Math.cos(angle) * round, v: midV + Math.sin(angle) * round },
+              floor + phase * HERALD_RISE,
+              yaw(),
+            ),
+          );
+          const half = (HERALD_MOTE * point.scale) / 2;
+          const alpha = Math.sin(phase * Math.PI) * HERALD_ALPHA;
+          const speck = [
+            { x: point.x - half, y: point.y - half },
+            { x: point.x + half, y: point.y - half },
+            { x: point.x + half, y: point.y + half },
+            { x: point.x - half, y: point.y + half },
+          ];
+
+          if (batch != null) {
+            batch.solid(colour, speck, alpha);
+            continue;
+          }
+
+          const prior = context.globalAlpha;
+
+          context.globalAlpha = prior * alpha;
+          context.fillStyle = colour;
+          context.fillRect(point.x - half, point.y - half, half * 2, half * 2);
+          context.globalAlpha = prior;
+        }
+      }
+
       // The cell under the cursor, ruled after the whole grid is laid:
       // its neighbours draw their own edges over it, so a ring left in
       // the loop would come out with two sides missing
@@ -3040,7 +3428,102 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * remember every shiny met all session
        */
       /** Whether one of them is new, which is a thing to be heard */
+      /** Whether a shiny's sparkle started this frame, which is what the board chimes for */
       let announced = false;
+      /** Which herald started this frame, if any, for the board to sound */
+      let heralded: 'legendary' | 'mythical' | null = null;
+
+      /**
+       * A burst thrown over a pokemon the first time it is drawn: the
+       * shiny's sparkle, and the aura's arrival for a legendary or a
+       * mythical.
+       *
+       * Announced on the first draw rather than the first sight, since
+       * one thrown while the sheet was still coming would be over
+       * before there was anything to burst around. `held` remembers
+       * when each started, so it plays once and no more
+       */
+      const announce = (
+        id: string,
+        name: string,
+        held: Map<string, number>,
+        life: number,
+        middle: ProjectedPoint,
+        scale: number,
+        /** The picture at this moment, for the batch, and the same drawn straight on */
+        paint: (seed: number, age: number, density: number) => HTMLCanvasElement | null,
+        draw: (seed: number, age: number, spot: ProjectedPoint, sized: number) => void,
+        /** Whether this one is starting now, for a caller with a cue to play */
+      ): boolean => {
+        // Seeded off the pokemon rather than off the ground, so the
+        // stars stand in the same places for as long as it does
+        const seed = nameSeed(id);
+        let starting = false;
+
+        if (!held.has(name)) {
+          // Oldest first, which is insertion order: the map is only
+          // trimmed when it has run well past a board's worth of them
+          if (held.size >= SPARKLE_MEMORY) {
+            held.delete(held.keys().next().value ?? '');
+          }
+          held.set(name, clock);
+          starting = true;
+        }
+        const age = clock - (held.get(name) ?? clock);
+        // A spent burst draws nothing, so it is neither painted nor uploaded again
+        const spent = age > life;
+
+        animating ||= !spent;
+        const glint = batch == null || spent ? null : paint(seed, age, scale * ratio);
+
+        if (!spent && (batch == null || glint == null)) {
+          draw(seed, age, middle, scale);
+        } else if (batch != null && glint != null) {
+          // Painted in screen pixels around the point the pokemon
+          // stands on, so it is stamped at the size it was painted
+          const half = { x: glint.width / ratio / 2, y: glint.height / ratio / 2 };
+
+          batch.invalidate(glint);
+          batch.quad(
+            glint,
+            { x: 0, y: 0, width: glint.width, height: glint.height },
+            [
+              { x: middle.x - half.x, y: middle.y - half.y },
+              { x: middle.x + half.x, y: middle.y - half.y },
+              { x: middle.x + half.x, y: middle.y + half.y },
+              { x: middle.x - half.x, y: middle.y + half.y },
+            ],
+            1,
+            undefined,
+            'smooth',
+          );
+        }
+        return starting;
+      };
+
+      // Another player belongs to the cell they are nearest, which is the
+      // row they are drawn in
+      const crowdOn = new Map<number, StrangerStanding[]>();
+
+      for (const one of crowd) {
+        const bx = Math.round(one.x - props.origin[0]);
+        const by = Math.round(one.y - props.origin[1]);
+
+        if (!walkers.has(one.uid) || bx < 0 || by < 0 || bx >= BOARD_CELLS || by >= BOARD_CELLS) {
+          continue;
+        }
+
+        const index = by * BOARD_CELLS + bx;
+        const here = crowdOn.get(index);
+
+        if (here == null) {
+          crowdOn.set(index, [one]);
+        } else {
+          here.push(one);
+        }
+      }
+
+      const crowded = [...crowdOn.keys()].sort((a, b) => a - b).join(',');
 
       /**
        * Everything with something standing on it, from the back of the
@@ -3050,6 +3533,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        */
       if (
         standOrder?.yaw !== yaw() ||
+        standOrder.crowded !== crowded ||
         standOrder.projected !== kept ||
         standOrder.ground !== ground ||
         standOrder.landmarks !== props.landmarks ||
@@ -3080,6 +3564,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           ...blocked,
           ...props.spawns.keys(),
           ...props.phenomena.keys(),
+          ...crowdOn.keys(),
         ]) {
           if (reachOf(boardCellOf(index)) <= VIEW_RADIUS) {
             occupied.push(index);
@@ -3088,6 +3573,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
         standOrder = {
           yaw: yaw(),
+          crowded,
           projected: kept,
           ground,
           landmarks: props.landmarks,
@@ -3157,16 +3643,42 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           // The ring and its light lie under the landmark and whoever
           // stands on it; the glints are drawn over them further down
           stampAura(index, middle, 'ground');
-          standPiece(context, sceneryOn(index), middle, magnify, place, (quad) =>
-            veil(index, Standing.Scenery, quad),
+          standPiece(
+            context,
+            sceneryOn(index),
+            middle,
+            magnify,
+            place,
+            (quad) => veil(index, Standing.Scenery, quad),
+            (quad) => {
+              standShadow(quad, middle);
+            },
           );
-          standPiece(context, grottoOn(index), middle, magnify, place, (quad) =>
-            veil(index, Standing.Grotto, quad),
+          standPiece(
+            context,
+            grottoOn(index),
+            middle,
+            magnify,
+            place,
+            (quad) => veil(index, Standing.Grotto, quad),
+            (quad) => {
+              standShadow(quad, middle);
+            },
           );
-          standPiece(context, landmarkOn(index), middle, magnify, place, (quad) => {
-            pickOn(index, quad, false);
-            return veil(index, Standing.Mark, quad);
-          });
+          standPiece(
+            context,
+            landmarkOn(index),
+            middle,
+            magnify,
+            place,
+            (quad) => {
+              pickOn(index, quad, false);
+              return veil(index, Standing.Mark, quad);
+            },
+            (quad) => {
+              standShadow(quad, middle);
+            },
+          );
         }
 
         // A bush is drawn before whatever is standing beside it: it is
@@ -3200,6 +3712,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           });
           const alpha = veil(index, Standing.Plant, grown);
 
+          if (grown != null) {
+            standShadow(grown, middle);
+          }
           if (!place(grown, alpha)) {
             plant.draw(context, middle.x, middle.y, alpha === 1 ? growing : { ...growing, alpha });
           }
@@ -3236,22 +3751,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           const thrown = {
             ...standingPerson,
             color: COLORS.shadow,
-            // Lying the way the board lies, and thrown the way this
-            // hour's light throws every other shadow on it
+            // Lying the way the board lies
             squash: shadowSquash(),
-            cast: throwing(),
           };
 
-          if (
-            !shade(person.shadowOf(middle.x, middle.y, thrown), (fallen) =>
-              person.facedQuadOf(
-                middle.x,
-                middle.y,
-                litFrame(person.facing, fallen),
-                standingPerson,
-              ),
-            )
-          ) {
+          if (!shade(person.shadowOf(middle.x, middle.y, thrown))) {
             person.drawShadow(context, middle.x, middle.y, thrown);
           }
           const stood = person.quadOf(middle.x, middle.y, standingPerson);
@@ -3265,6 +3769,52 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               middle.x,
               middle.y,
               alpha === 1 ? standingPerson : { ...standingPerson, alpha },
+            );
+          }
+        }
+
+        const passing = loading() ? undefined : crowdOn.get(index);
+
+        for (const one of passing ?? []) {
+          const stranger = walkers.get(one.uid)?.sprite;
+
+          if (stranger == null) {
+            continue;
+          }
+
+          const spot = at(groundBetween(one.x - props.origin[0], one.y - props.origin[1], cell));
+
+          stranger.facing =
+            SPRITE_DIRECTIONS[
+              facingFrom(
+                SPRITE_DIRECTIONS.indexOf(facingToward(0, 0, one.facing[0], one.facing[1])),
+                yaw(),
+              )
+            ];
+
+          const standingStranger = {
+            scale: (CELL * NPC_CELLS * spot.scale * magnify) / stranger.sourceFrameHeight,
+            anchor: 'foot',
+          } as const;
+          const thrown = {
+            ...standingStranger,
+            color: COLORS.shadow,
+            squash: shadowSquash(),
+          };
+
+          if (!shade(stranger.shadowOf(spot.x, spot.y, thrown))) {
+            stranger.drawShadow(context, spot.x, spot.y, thrown);
+          }
+
+          const stood = stranger.quadOf(spot.x, spot.y, standingStranger);
+          const alpha = veil(index, Standing.Person, stood);
+
+          if (!place(stood, alpha)) {
+            stranger.draw(
+              context,
+              spot.x,
+              spot.y,
+              alpha === 1 ? standingStranger : { ...standingStranger, alpha },
             );
           }
         }
@@ -3313,22 +3863,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               ...placement,
               color: COLORS.shadow,
               squash: shadowSquash(),
-              // Thrown by whatever light there is at this hour: long
-              // and faint near the horizons, short and hard at noon,
-              // and nothing at all once the sun is down
-              cast: throwing(),
             };
 
-            if (
-              !shade(sprite.shadowOf(middle.x, middle.y, thrown), (fallen) =>
-                sprite.facedQuadOf(
-                  middle.x,
-                  middle.y,
-                  litFrame(sprite.direction, fallen),
-                  placement,
-                ),
-              )
-            ) {
+            if (!shade(sprite.shadowOf(middle.x, middle.y, thrown))) {
               sprite.drawShadow(context, middle.x, middle.y, thrown);
             }
             // Upright, and at its own size: the ground is tilted and
@@ -3350,59 +3887,37 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             }
 
             if (standing.shiny) {
-              // Announced the first time it is actually drawn rather
-              // than the first time it is known about: a sparkle
-              // thrown while the sheet was still coming would be over
-              // before there was anything to sparkle around
-              // Seeded off the pokemon rather than off the ground, so
-              // the stars stand in the same places for as long as it
-              // does
-              const seed = nameSeed(standing.id);
+              announced ||= announce(
+                standing.id,
+                standing.id,
+                sparkles,
+                SPARKLE_LIFE,
+                middle,
+                scale,
+                (seed, age, density) => paintSparkle(standing.id, seed, age, density),
+                (seed, age, spot, sized) => {
+                  drawSparkle(context, seed, age, spot.x, spot.y, sized);
+                },
+              );
+            }
+            if (standing.rank != null) {
+              const colour = standing.rank === 'mythical' ? COLORS.mythical : COLORS.legendary;
+              const name = `${standing.id}:rank`;
+              const started = announce(
+                standing.id,
+                name,
+                heralds,
+                HERALD_BURST_LIFE,
+                middle,
+                scale,
+                (seed, age, density) => paintHerald(name, seed, age, colour, density),
+                (seed, age, spot, sized) => {
+                  drawHerald(context, seed, age, spot.x, spot.y, sized, colour);
+                },
+              );
 
-              if (!sparkles.has(standing.id)) {
-                // Oldest first, which is insertion order: the map is
-                // only trimmed when it has run well past a board's
-                // worth of them
-                if (sparkles.size >= SPARKLE_MEMORY) {
-                  sparkles.delete(sparkles.keys().next().value ?? '');
-                }
-                sparkles.set(standing.id, clock);
-                announced = true;
-              }
-              const age = clock - (sparkles.get(standing.id) ?? clock);
-              // A spent sparkle draws nothing, so it is neither painted nor uploaded again
-              const spent = age > SPARKLE_LIFE;
-
-              animating ||= !spent;
-              const glint =
-                batch == null || spent
-                  ? null
-                  : paintSparkle(standing.id, seed, age, sprite.sourceFrameSize, scale * ratio);
-
-              if (!spent && (batch == null || glint == null)) {
-                drawSparkle(context, seed, age, middle.x, middle.y, sprite.sourceFrameSize, scale);
-              } else if (batch != null && glint != null) {
-                // Painted in screen pixels around the point the pokemon
-                // stands on, so it is stamped at the size it was painted
-                const half = {
-                  x: glint.width / ratio / 2,
-                  y: glint.height / ratio / 2,
-                };
-
-                batch.invalidate(glint);
-                batch.quad(
-                  glint,
-                  { x: 0, y: 0, width: glint.width, height: glint.height },
-                  [
-                    { x: middle.x - half.x, y: middle.y - half.y },
-                    { x: middle.x + half.x, y: middle.y - half.y },
-                    { x: middle.x + half.x, y: middle.y + half.y },
-                    { x: middle.x - half.x, y: middle.y + half.y },
-                  ],
-                  1,
-                  undefined,
-                  'smooth',
-                );
+              if (started && heralded !== 'mythical') {
+                heralded = standing.rank;
               }
             }
           } else {
@@ -3428,14 +3943,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               ...riding,
               color: COLORS.shadow,
               squash: shadowSquash(),
-              cast: throwing(),
             };
 
-            if (
-              !shade(mount.shadowOf(spot.x, spot.y, thrown), (fallen) =>
-                mount.facedQuadOf(spot.x, spot.y, litFrame(mount.direction, fallen), riding),
-              )
-            ) {
+            if (!shade(mount.shadowOf(spot.x, spot.y, thrown))) {
               mount.drawShadow(context, spot.x, spot.y, thrown);
             }
             if (!place(mount.quadOf(spot.x, spot.y, riding))) {
@@ -3457,14 +3967,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               ...walking,
               color: COLORS.shadow,
               squash: shadowSquash(),
-              cast: throwing(),
             };
 
-            if (
-              !shade(walker.shadowOf(spot.x, spot.y, thrown), (fallen) =>
-                walker.facedQuadOf(spot.x, spot.y, litFrame(walker.facing, fallen), walking),
-              )
-            ) {
+            if (!shade(walker.shadowOf(spot.x, spot.y, thrown))) {
               walker.drawShadow(context, spot.x, spot.y, thrown);
             }
             if (!place(walker.quadOf(spot.x, spot.y, walking))) {
@@ -3481,6 +3986,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
       if (announced) {
         props.onShiny?.();
+      }
+      if (heralded != null) {
+        props.onHerald?.(heralded);
       }
 
       // The board is finished, so it is put back where it was found:
@@ -3523,7 +4031,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       }
 
       if (batch == null) {
-        paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
+        // No hour underground: the sun does not reach a cave, and the
+        // dark below is the cave's own
+        if (!props.underground) {
+          paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
+        }
         if (props.underground) {
           // No sky down here, so no weather and no hour: the dark is
           // the cave's own and the only thing that lifts it is a light
@@ -3535,20 +4047,21 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           paintSky(context, screen.width, screen.height, skies.from, clock, 1 - risen, lamps, sky);
           paintSky(context, screen.width, screen.height, skies.to, clock, risen, lamps, sky);
         }
-      } else {
-        batchAmbient(batch, screen.width, screen.height, worldTime(), props.latitude);
-        if (props.underground) {
-          if (props.lit !== true) {
-            batchCavern(batch, screen.width, screen.height, lamps);
-          }
-        } else {
-          const { width, height } = screen;
+      } else if (!props.underground) {
+        // The hour over the whole picture, the way it always was: the
+        // sky and the weather stand in it as much as the ground does.
+        // What the lighting answers for is the dark places, so the
+        // weather's own lamps are passed as nothing and a lightless
+        // day is dark because nothing lit it rather than because a
+        // veil was laid over it
+        const { width, height } = screen;
 
-          batchWash(batch, width, height, skies.from, clock, 1 - risen, lamps, sky);
-          batchWash(batch, width, height, skies.to, clock, risen, lamps, sky);
-          batchSky(batch, width, height, skies.from, clock, 1 - risen, sky);
-          batchSky(batch, width, height, skies.to, clock, risen, sky);
-        }
+        batchAmbient(batch, width, height, worldTime(), props.latitude);
+
+        batchWash(batch, width, height, skies.from, clock, 1 - risen, null, sky);
+        batchWash(batch, width, height, skies.to, clock, risen, null, sky);
+        batchSky(batch, width, height, skies.from, clock, 1 - risen, sky);
+        batchSky(batch, width, height, skies.to, clock, risen, sky);
       }
 
       /**
@@ -3564,7 +4077,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * the only one coloured: a shape and a colour are read at a
        * glance, where four letters had to be read one at a time
        */
-      const hub = at(projectGround({ u: 0.5, v: 0.5 }, yaw()));
+      const hub = at(projectAir({ u: 0.5, v: 0.5 }, boardStand(), yaw()));
 
       for (const mark of compassMarks(yaw())) {
         const spot = at(mark);

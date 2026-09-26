@@ -1,19 +1,22 @@
 import { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
 import { requireUid } from '../server/auth';
+import { Pace } from '../server/pace';
 import check, {
   CELL_COORDINATE,
   CHUNK_COORDINATE,
   COUNT,
   DEPTH,
+  OFFSET,
   TOKEN,
   UID,
 } from '../server/validate';
 import { type WalkReport, recordSteps } from '../server/eggs';
-import savePositionOnServerSide, { readPosition } from '../server/positions';
+import savePositionOnServerSide, { markBiomeStoodIn, readPosition } from '../server/positions';
 import { syncServerClock } from './clock';
+import { getLocalOffset } from './local-time';
 import getSupabase, { type Unwatch, watchRow } from './supabase';
-import { asRecord } from './__normalize';
+import { asNumber, asRecord } from './__normalize';
 import { type PositionRecord, asPositionRecord } from './position-record';
 import getIdToken from './session';
 
@@ -55,7 +58,7 @@ export async function getPosition(uid: string): Promise<PositionRecord | null> {
 
   // Thrown rather than read as "never walked", which would put a start position over the real one
   if (error != null) {
-    throw new Error(error.message);
+    throw new Error('Could not read where you are just now.');
   }
   return data == null ? null : fromPositionRow(asRecord(data));
 }
@@ -102,6 +105,36 @@ export function watchPosition(
 }
 
 /**
+ * Write the row itself, through the definer function rather than the
+ * server: it is the commonest write in the game, and a caller can
+ * only ever write their own. The stamp is the database's own clock,
+ * which is what a device compares its news against
+ */
+async function writePosition(
+  chunkX: number,
+  chunkY: number,
+  cellX: number,
+  cellY: number,
+  depth: Depth,
+): Promise<number> {
+  // The client carries no generated schema, so the answer is read the
+  // way a row is: whatever came back, narrowed here
+  const { data, error } = (await getSupabase().rpc('save_position', {
+    p_generation: WORLD_GENERATION,
+    p_chunk_x: chunkX,
+    p_chunk_y: chunkY,
+    p_cell_x: cellX,
+    p_cell_y: cellY,
+    p_depth: depth,
+  })) as { data: unknown; error: { message: string } | null };
+
+  if (error != null) {
+    throw new Error('Could not save where you are just now.');
+  }
+  return typeof data === 'string' ? Number(data) : asNumber(data);
+}
+
+/**
  * Remember where the player is standing. Answers the stamp it was
  * written under, so the caller can tell its own write coming back
  * around the subscription
@@ -113,35 +146,7 @@ export async function savePosition(
   cellY: number,
   depth: Depth,
 ): Promise<number> {
-  return savePositionOnServer(await getIdToken(), chunkX, chunkY, cellX, cellY, depth);
-}
-
-// A server function is addressed by its place in this file, so this one
-// keeps its slot and its arguments for tabs loaded before a deploy
-async function savePositionOnServer(
-  token: string,
-  chunkX: number,
-  chunkY: number,
-  cellX: number,
-  cellY: number,
-  depth: Depth,
-): Promise<number> {
-  'use server';
-  check(TOKEN, token);
-  check(CHUNK_COORDINATE, chunkX);
-  check(CHUNK_COORDINATE, chunkY);
-  check(CELL_COORDINATE, cellX);
-  check(CELL_COORDINATE, cellY);
-  check(DEPTH, depth);
-  return savePositionOnServerSide(
-    await requireUid(token),
-    chunkX,
-    chunkY,
-    cellX,
-    cellY,
-    depth,
-    await syncServerClock(),
-  );
+  return writePosition(chunkX, chunkY, cellX, cellY, depth);
 }
 
 /**
@@ -159,10 +164,41 @@ export async function settleWalk(
   cellY: number,
   depth: Depth,
 ): Promise<{ stamp: number; report: WalkReport | null }> {
-  return settleWalkOnServer(await getIdToken(), steps, chunkX, chunkY, cellX, cellY, depth);
+  // Paces are the only reason a walk needs the server. Without them
+  // the settle is one row, so it goes straight to the database
+  if (steps === 0) {
+    return { stamp: await writePosition(chunkX, chunkY, cellX, cellY, depth), report: null };
+  }
+  return settleWalkInZoneOnServer(
+    await getIdToken(),
+    steps,
+    chunkX,
+    chunkY,
+    cellX,
+    cellY,
+    depth,
+    getLocalOffset(),
+  );
 }
 
-async function settleWalkOnServer(
+/**
+ * Mark the biome under the player as one they have stood in. It is
+ * the one thing about a walk the server has to see, so it is sent by
+ * itself and only when the biome changes
+ */
+export async function visitBiome(chunkX: number, chunkY: number): Promise<void> {
+  return visitBiomeOnServer(await getIdToken(), chunkX, chunkY);
+}
+
+async function visitBiomeOnServer(token: string, chunkX: number, chunkY: number): Promise<void> {
+  'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, chunkX);
+  check(CHUNK_COORDINATE, chunkY);
+  return markBiomeStoodIn(await requireUid(token), chunkX, chunkY);
+}
+
+async function settleWalkInZoneOnServer(
   token: string,
   steps: number,
   chunkX: number,
@@ -170,6 +206,7 @@ async function settleWalkOnServer(
   cellX: number,
   cellY: number,
   depth: Depth,
+  offset: number,
 ): Promise<{ stamp: number; report: WalkReport | null }> {
   'use server';
   check(TOKEN, token);
@@ -179,10 +216,11 @@ async function settleWalkOnServer(
   check(CELL_COORDINATE, cellX);
   check(CELL_COORDINATE, cellY);
   check(DEPTH, depth);
-  const uid = await requireUid(token);
+  check(OFFSET, offset);
+  const uid = await requireUid(token, Pace.Steps, steps);
   const now = await syncServerClock();
   // The paces land first, so a saved position never runs ahead of the egg
-  const report = steps > 0 ? await recordSteps(uid, steps, now) : null;
+  const report = steps > 0 ? await recordSteps(uid, steps, now, offset) : null;
   const stamp = await savePositionOnServerSide(uid, chunkX, chunkY, cellX, cellY, depth, now);
 
   return { stamp, report };

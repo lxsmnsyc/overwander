@@ -19,5 +19,7 @@ FROM node:26-slim
 WORKDIR /app
 ENV NODE_ENV=production PORT=3000
 COPY --from=build /app/.output ./.output
+# The server migrates on start, from the same files the repository holds
+COPY db/migrations ./db/migrations
 EXPOSE 3000
 CMD ["node", ".output/server/index.mjs"]

@@ -3,9 +3,8 @@
 Running the app on a machine you control, behind a Cloudflare tunnel, and
 shipping each release to it.
 
-**Assumes:** the Supabase project exists, the schema is pushed, and the
-providers are set up. See [The Supabase project](supabase-project.md) and
-[Authentication](authentication.md).
+**Assumes:** the providers are set up. See [Authentication](authentication.md).
+For the one-time move of the live data, see [Moving off Supabase](moving-off-supabase.md).
 
 ## 1. The machine
 
@@ -15,14 +14,18 @@ It needs three things:
 - **A clone of the repository**, for example in `/srv/overwander`.
 - **cron**, or anything else that can run a script every few minutes.
 
-[`compose.yaml`](../../compose.yaml) runs two containers:
+[`compose.yaml`](../../compose.yaml) runs three containers:
 
-- `app`, the Node server built by the [`Dockerfile`](../../Dockerfile).
+- `db`, Postgres 17 with `pg_cron`, built from [`db/Dockerfile`](../../db/Dockerfile).
+  Its data is in the `overwander_db` volume.
+- `app`, the Node server built by the [`Dockerfile`](../../Dockerfile). It applies
+  any pending migration as it starts, before it answers a request.
 - `tunnel`, `cloudflared`, which connects out to Cloudflare.
 
-Nothing is published on the host. The tunnel is the only way in, so the machine
-needs no open ports and no fixed address. Both containers restart on their own,
-so the Docker service itself must start on boot.
+The tunnel is the only way in, so the machine needs no open ports and no fixed
+address. The database listens on `127.0.0.1:54322` for the host's own tools and
+nowhere else. All three restart on their own, so the Docker service itself must
+start on boot.
 
 ## 2. The tunnel
 
@@ -54,22 +57,20 @@ build**, so a change to one needs a deploy rather than a restart:
 
 The **server's variables** are secret and are read at run time:
 
-| Variable                             | What to put there                                                        |
-| ------------------------------------ | ------------------------------------------------------------------------ |
-| `SUPABASE_DB_URL`                    | The **session pooler** URI, port **5432**, with `?sslmode=require`       |
-| `BETTER_AUTH_SECRET`                 | A long random string. See [Authentication](authentication.md)            |
-| `BETTER_AUTH_URL`                    | `https://your-domain`                                                    |
-| `GOOGLE_CLIENT_*`, `GITHUB_CLIENT_*` | The OAuth apps' ids and secrets. See [Authentication](authentication.md) |
-| `TUNNEL_TOKEN`                       | The tunnel's token from step 2                                           |
+| Variable                                | What to put there                                                        |
+| --------------------------------------- | ------------------------------------------------------------------------ |
+| `POSTGRES_PASSWORD`                     | The database's password. Long and random                                 |
+| `SUPABASE_DB_URL`                       | `postgresql://postgres:<POSTGRES_PASSWORD>@127.0.0.1:54322/overwander`   |
+| `BETTER_AUTH_SECRET`                    | A long random string. See [Authentication](authentication.md)            |
+| `BETTER_AUTH_URL`                       | `https://your-domain`                                                    |
+| `GOOGLE_CLIENT_*`, `GITHUB_CLIENT_*`    | The OAuth apps' ids and secrets. See [Authentication](authentication.md) |
+| `TUNNEL_TOKEN`                          | The tunnel's token from step 2                                           |
+| `BACKUP_BUCKET`, `CLOUDFLARE_API_TOKEN` | Where backups go. See [Backups](#6-backups)                              |
 
 Some of those need explaining:
 
-- **The session pooler.** The server is one long-lived process holding a pool of
-  up to ten connections, so it does not need the transaction pooler that
-  serverless hosts use. The live feed also holds one connection open to `LISTEN`,
-  which the transaction pooler cannot do. The direct connection works too, but
-  only over IPv6 unless the project pays for an IPv4 address. Copy the URI from
-  the dashboard's **Connect** dialog.
+- **`SUPABASE_DB_URL` is for the host's tools**, such as `pnpm migrate`.
+  Inside compose the app is pointed at the `db` service instead.
 - **`VITE_WORLD_SEED` decides the whole world.** Chunk seeds, biomes, landmark
   placement, spawn rolls and lair contents all derive from it. Changing it after
   players have walked anywhere leaves every stored record pointing at ground
@@ -125,9 +126,8 @@ these four things. Each one tests a different part of the setup:
 1. **Sign in with Google or GitHub.** Tests `BETTER_AUTH_URL` and the provider
    credentials. A provider that answers with a redirect error has a callback
    that does not match `BETTER_AUTH_URL`.
-2. **Walk a few chunks.** Tests the browser's variables and the read policies.
-3. **Catch something.** Tests `SUPABASE_DB_URL`, because a catch is a
-   privileged write over the owner connection.
+2. **Walk a few chunks.** Tests the browser's variables and the server's reads.
+3. **Catch something.** Tests the database, since a catch is a write.
 4. **Open a raid lobby in two browsers.** Tests the live feed: the server's
    socket at `/_live`, through the tunnel, fed by the database's change
    triggers.
@@ -135,9 +135,37 @@ these four things. Each one tests a different part of the setup:
 `docker compose logs -f app` follows the server's output, and
 `docker compose logs -f tunnel` the tunnel's.
 
+## 6. Backups
+
+[`scripts/backup.sh`](../../scripts/backup.sh) dumps the database, keeps two
+weeks of dumps in `backups/`, and copies each one to an R2 bucket. A dump that
+stays on the machine is lost with its disk, so set up the bucket:
+
+1. In the Cloudflare dashboard, open **R2** and create a bucket, for example
+   `overwander-backups`. Put its name in `.env` as `BACKUP_BUCKET`.
+2. Create an API token that may edit that bucket, and put it in `.env` as
+   `CLOUDFLARE_API_TOKEN`.
+3. Run it nightly from cron:
+
+   ```bash
+   15 4 * * * /srv/overwander/scripts/backup.sh >> /var/log/overwander-backup.log 2>&1
+   ```
+
+To restore a dump into an empty database:
+
+```bash
+docker compose exec -T db pg_restore -U postgres -d overwander --clean --if-exists < backups/<file>.dump
+```
+
+Check the sweeps now and then. `pg_cron` runs them inside the database:
+
+```sql
+select jobname, status, start_time from cron.job_run_details order by start_time desc limit 20;
+```
+
 ## See also
 
 - [Authentication](authentication.md), the step before this one
 - [Schema changes](schema-changes.md), for the next release with a migration
 - [Operating the game](operating.md), for what each failure means
-- [Security](../database/security.md), for what the policies and grants say
+- [Moving off Supabase](moving-off-supabase.md), for the one-time move of the live data

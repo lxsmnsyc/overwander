@@ -1,13 +1,14 @@
 # Deploying the game
 
-The live game is three pieces:
+The live game is two pieces:
 
-- **The server** runs the app: a Node build in Docker on a machine you control,
-  reached through a Cloudflare tunnel.
+- **The server** runs everything else in Docker on a machine you control: the
+  app, its Postgres database, accounts and the live feed. A Cloudflare tunnel is
+  the only way in.
 - **The sprite host** serves the sprites and sounds, published to Cloudflare
   from `public/` on each release.
-- **Supabase** is the database, the accounts, the row-level security and the
-  realtime stream, in a hosted project rather than the local Docker stack.
+
+A game still on Supabase moves over once, with [Moving off Supabase](deploy/moving-off-supabase.md).
 
 There is no separate API, no queue and no file storage. The world is derived
 rather than stored.
@@ -18,8 +19,6 @@ pair.
 
 ## Before you start
 
-- A **Supabase** account, and the **Supabase CLI** on your `PATH`. The CLI is
-  what pushes the schema. The dashboard cannot replay a migration folder.
 - A **Cloudflare** account, for the tunnel and the sprite host.
 - A machine that runs **Docker**, with the repository cloned on it.
 - The two OAuth apps. A deployed build signs in with **Google and GitHub**. The
@@ -28,16 +27,11 @@ pair.
 
 ## The order to do it in
 
-1. **[The Supabase project](deploy/supabase-project.md).** Create the project,
-   then push `supabase/migrations/` to it.
-2. **[Authentication](deploy/authentication.md).** Set the site URL and the
-   redirect list, then create the Google and GitHub OAuth apps.
-3. **[The server](deploy/server.md).** Create the tunnel, fill in the
-   environment variables, schedule the deploy script, deploy, then check the
-   four paths.
-
-Do steps 1 and 2 before the first deploy. The app has nothing to talk to until
-the schema is pushed, and nobody can sign in until the providers are set up.
+1. **[Authentication](deploy/authentication.md).** Create the Google and GitHub
+   OAuth apps.
+2. **[The server](deploy/server.md).** Create the tunnel, fill in the
+   environment variables, schedule the deploy and backup scripts, deploy, then
+   check the four paths. The first start creates the schema.
 
 Two pages cover what comes after the first deploy. [Schema
 changes](deploy/schema-changes.md) is the loop for every later release with a
@@ -45,14 +39,14 @@ migration in it. [Operating the game](deploy/operating.md) covers running it.
 
 ## Contents
 
-| Page                                               | What it covers                                                                               |
-| -------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| [The Supabase project](deploy/supabase-project.md) | Creating the project, the region, and pushing the schema with the CLI                        |
-| [Authentication](deploy/authentication.md)         | The redirect list, the GitHub and Google OAuth apps, and signing in locally                  |
-| [The server](deploy/server.md)                     | The tunnel, every environment variable, which key is which, the release deploy, first deploy |
-| [Schema changes](deploy/schema-changes.md)         | Writing a migration, pushing it, the order against a deploy                                  |
-| [Operating the game](deploy/operating.md)          | Admin, what a deployed build will not do, upkeep, and what each failure means                |
-| [Self-hosting](deploy/self-hosting.md)             | Running the whole thing yourself, with none of the three accounts above                      |
+| Page                                                 | What it covers                                                                                        |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| [Moving off Supabase](deploy/moving-off-supabase.md) | The one-time move of a live game's data from Supabase to the server's own database                    |
+| [Authentication](deploy/authentication.md)           | The redirect list, the GitHub and Google OAuth apps, and signing in locally                           |
+| [The server](deploy/server.md)                       | The tunnel, every environment variable, which key is which, the release deploy, first deploy, backups |
+| [Schema changes](deploy/schema-changes.md)           | Writing a migration, and the order against a deploy                                                   |
+| [Operating the game](deploy/operating.md)            | Admin, what a deployed build will not do, upkeep, and what each failure means                         |
+| [Self-hosting](deploy/self-hosting.md)               | Running the whole thing yourself, with none of the three accounts above                               |
 
 If you would rather not have any of those accounts, [Self-hosting](deploy/self-hosting.md)
 covers running the database, the auth server and the app on your own machines.

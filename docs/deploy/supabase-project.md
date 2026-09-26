@@ -1,5 +1,8 @@
 # The Supabase project
 
+> Only for a game that has not moved yet. The server now runs its own database;
+> see [Moving off Supabase](moving-off-supabase.md).
+
 Creating the hosted project, and pushing the schema into it.
 
 **Assumes:** nothing yet. This is the first step. You need a Supabase account

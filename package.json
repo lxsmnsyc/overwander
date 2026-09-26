@@ -28,10 +28,11 @@
     "cs:pub": "changeset publish",
     "cs:tag": "node scripts/tag-release.ts",
     "cs:add": "changeset add",
-    "db": "supabase start",
-    "db:stop": "supabase stop",
-    "db:reset": "supabase db reset",
-    "seed": "node scripts/seed-dev.ts"
+    "db": "docker compose up --detach --wait db",
+    "db:stop": "docker compose stop db",
+    "db:reset": "docker compose rm --force --stop --volumes db && docker volume rm -f overwander_db && pnpm db && pnpm migrate",
+    "seed": "node scripts/seed-dev.ts",
+    "migrate": "node scripts/migrate.ts"
   },
   "dependencies": {
     "@solidjs/meta": "^0.29.4",

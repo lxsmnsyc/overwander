@@ -40,7 +40,7 @@ set -euo pipefail
   git -c advice.detachedHead=false checkout --quiet "$tag"
 
   # The build id ties open tabs to this build, so it is the commit, not the time
-  BUILD_ID="$(git rev-parse HEAD)" docker compose up --build --detach --remove-orphans
+  BUILD_ID="$(git rev-parse HEAD)" docker compose --profile server up --build --detach --remove-orphans
   echo "$tag" > "$deployed_file"
   echo "Deployed $tag"
   exit 0

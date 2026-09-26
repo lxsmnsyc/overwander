@@ -86,6 +86,8 @@ export default defineConfig(({ mode }) => ({
             // The live feed that replaced Supabase Realtime (src/server/live)
             features: { websocket: true },
             handlers: [{ route: '/_live', handler: './src/server/live/socket.ts' }],
+            // Brings the database up to date before the first request is served
+            plugins: ['./src/server/migrate-on-start.ts'],
           }),
         ]),
   ],

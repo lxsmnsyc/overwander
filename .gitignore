@@ -156,3 +156,6 @@ ui-debug.log
 # What scripts/deploy.sh last put live on the server, and any tag pinned there
 .deployed-tag
 .deploy-pin
+
+# Database dumps scripts/backup.sh keeps on the server
+backups/

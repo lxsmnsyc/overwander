@@ -49,13 +49,10 @@ Read the two records in the dashboard's table editor; players never can.
 
 ## Keeping it running
 
-- **Push migrations before deploying**, always in that order. A build that
-  reaches a database missing a table fails at the first read of it rather than
-  at start-up, which is a worse place to find out.
-- **Free-tier projects pause** after a week of no activity, and a paused project
-  answers nothing. A game nobody is playing goes quiet on its own.
-- **Backups are the database's.** The world needs none, since it is derived, but
-  every catch, bag, auction and friendship is a row.
+- **Migrations run as the server starts.** A release with a migration in it is
+  one deploy. See [Schema changes](schema-changes.md).
+- **Backups are yours.** The world needs none, since it is derived, but every
+  catch, bag, auction and friendship is a row. See [Backups](server.md#6-backups).
 - **The clock is the server's.** `src/server/*` runs in UTC deliberately, and
   `src/server/timezone.ts` pins it, so nothing needs setting for it.
 
@@ -78,27 +75,25 @@ values ('The game closes for maintenance in ten minutes.',
 
 ## When something is wrong
 
-**Every write fails, reads are fine.** `SUPABASE_DB_URL` is unset or wrong. The
-game is built to read without it and refuse every write, which looks like a
-permissions problem and is not.
-
-**`SUPABASE_DB_URL is not set` in the server's logs.** The variable is missing
-from `.env` on the server. `docker compose logs app` shows it.
+**The server keeps restarting.** A migration failed, or the database is not up.
+`docker compose logs app` names the failing statement, and
+`docker compose ps` shows whether `db` is healthy.
 
 **Sign-in loops back signed out.** `BETTER_AUTH_URL` is not the origin players
 open, so the session cookie is set for another site.
 
 **"Not signed in" on every server call, with a valid session.** The server
-cannot read its signing keys from the `jwks` table. Check that the accounts
-migration is pushed and that `SUPABASE_DB_URL` reaches the database.
+cannot read its signing keys from the `jwks` table. Check that the `db`
+container is healthy.
 
-**Connections exhausted, or timeouts under load.** Too many connections for the
-project. The server holds at most ten, plus one for the live feed.
+**Connections exhausted, or timeouts under load.** The server holds at most ten
+connections, five more for accounts, and one for the live feed. Postgres allows
+a hundred by default.
 
 **A player's screen never updates until reload.** The live feed is not reaching
-them. Check that the migrations are pushed in full, since the change triggers
-come with them, and that `SUPABASE_DB_URL` is not the transaction pooler, which
-cannot `LISTEN`.
+them. Check the tunnel passes WebSockets (it does unless a Cloudflare rule turns
+them off), and that `select count(*) from pg_trigger where tgname = 'live_changes'`
+is 21.
 
 ## See also
 

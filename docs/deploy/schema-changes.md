@@ -1,104 +1,46 @@
 # Schema changes
 
-Writing a migration, pushing it to a live project, and the order to do that in
-against a deploy.
+The server applies every pending file in [`db/migrations/`](../../db/migrations)
+as it starts, before it answers a request. A release with a migration in it is
+one deploy.
 
-**Assumes:** the site is deployed and the schema has been pushed at least once.
-See [The Supabase project](supabase-project.md) and [The server](server.md).
-
-Nothing on the server touches the schema. A release with a migration in it is two
-deployments, yours and the CLI's, and the order between them is the only part
-that can go wrong.
+**Assumes:** the server is running. See [The server](server.md).
 
 ## 1. Write it locally
 
-```bash
-supabase migration new gym_seat_freeing   # writes a timestamped empty file
-# edit supabase/migrations/<timestamp>_gym_seat_freeing.sql
-pnpm db:reset                             # replay everything, including the new one
-pnpm test:rules                           # the policies still say what they should
-```
+See [Changing the schema](../database/local-stack.md#changing-the-schema). Run
+`pnpm db:reset` before shipping, since that replays the folder from nothing the
+way a new server does.
 
-`pnpm db:reset` is the real test of a migration. It replays the folder from
-nothing, which is what a fresh environment does. A file that only works against
-your current database is a file that works once.
+## 2. Mind which way it cuts
 
-A new table needs two things beyond its columns, both easy to forget because the
-originals were done in bulk: **its own grants**, and **its own policy** or a
-deliberate decision to have none. [Changing the
-schema](../database/local-stack.md#changing-the-schema) covers both, and
-[Security](../database/security.md) covers what the existing policies say.
+The migration runs as the new build starts. The old build is still serving for
+that moment:
 
-If the browser is meant to watch the new table live, it also needs a line in the
-realtime publication, and `replica identity full` if the client filters updates
-or merges deletes:
+| The change                                   | How to ship it                                      |
+| -------------------------------------------- | --------------------------------------------------- |
+| **Adding** a table, column, index or trigger | In the same release as the code that uses it        |
+| **Dropping or renaming** one                 | A release after the one whose code stopped using it |
 
-```sql
-alter publication supabase_realtime add table gym_seats;
-alter table gym_seats replica identity full;
-```
+A rename is therefore two releases. Add the new column and write to both, then
+drop the old one in a later release once nothing reads it.
 
-## 2. See what the project is missing
+- **There are no down migrations.** A mistake is fixed by a new file.
+- **Creating an index locks the table against writes** while it builds. On a large
+  table, run `create index concurrently` by hand first. The file's plain
+  `create index if not exists` then finds it there.
+
+## 3. Check it landed
 
 ```bash
-supabase migration list        # local files against what the project has applied
-supabase db push --dry-run     # exactly what would run
+docker compose exec db psql -U postgres -d overwander \
+  -c 'select version, applied_at from schema_migrations order by version'
 ```
 
-`migration list` prints a row per file with a **Local** and a **Remote** column.
-Anything with a local version and no remote one is what the next push will
-apply, in that order.
-
-## 3. Push it, then deploy
-
-```bash
-supabase db push
-```
-
-The order depends on which way the change cuts:
-
-| The change                                  | Order                                                                   |
-| ------------------------------------------- | ----------------------------------------------------------------------- |
-| **Adding** a table, column, index or policy | **Push, then deploy.** The old code ignores what it does not know about |
-| **Dropping or renaming** one                | **Deploy, then push.** The new code stops using it first                |
-
-A rename is therefore two releases rather than one. Add the new column and write
-to both, deploy, backfill, then drop the old one in a later migration once
-nothing reads it. The alternative is a window where the live site is talking to
-a schema that no longer has what it asks for, and that window is however long
-the server's build takes.
-
-Two more things worth knowing before pushing to a live project:
-
-- **There are no down migrations here.** A mistake is fixed by a new file, not by
-  reversing an old one. Nothing in this repository has ever needed a rollback,
-  which is a reason to keep migrations small rather than a reason to trust them.
-- **Creating an index locks the table against writes** while it builds. On a
-  table with any size to it, build it with `create index concurrently` from the
-  dashboard's SQL editor, and keep the plain `create index` in the migration file
-  for the environments that replay from empty.
-
-## 4. Check it landed
-
-In the SQL editor:
-
-```sql
-select jobname, schedule from cron.job;    -- if the migration scheduled one
-select * from pg_policies where tablename = 'gym_seats';
-```
-
-`supabase migration list` should now show the same version on both sides. Then
-deploy the app, or let the push be the whole of the release if no code changed.
-
-The app deploys when the Version Packages pull request is merged, not on every
-push to `main` (see [The server](server.md#4-deploy-on-release)). Push an adding
-migration before merging that pull request. Push a dropping one after the
-release has deployed.
+A migration that fails stops the server, and `docker compose logs app` names the
+statement. Nothing of it was applied, so fix the file and deploy again.
 
 ## See also
 
-- [The Supabase project](supabase-project.md), for the first push
+- [The server](server.md), for the deploy itself
 - [Operating the game](operating.md), for what each failure means
-- [Changing the schema](../database/local-stack.md#changing-the-schema), for
-  grants and policies on a new table
-- [Security](../database/security.md), for what the existing policies say

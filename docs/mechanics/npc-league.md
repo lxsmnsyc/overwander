@@ -6,10 +6,21 @@ is kept for good.
 | Who                | What they field                                     | What beating them is worth                                            |
 | ------------------ | --------------------------------------------------- | --------------------------------------------------------------------- |
 | **Gym leader**     | Five of their gym's type and their signature, 45-65 | Their badge, a purse of 20,000 to 50,000, and a machine of their type |
-| **Elite Four**     | Five of their seat's type and their signature, 65-85 | Their mark, an item, and a purse of 50,000 to 110,000                 |
-| **Champion**       | Their own named six, 85-100                         | Their league's title, an item, and 150,000 to 300,000                 |
-| **Legend**         | Their own named six at level 100                    | Their mark, a purse of 250,000 to 500,000, and a rare or a special item |
+| **Elite Four**     | Five of their seat's type and their signature, 65-85 | Their mark, a stash of items, and a purse of 50,000 to 110,000        |
+| **Champion**       | Their own named six, 85-100                         | Their league's title, a stash of items, and 150,000 to 300,000        |
+| **Legend**         | Their own named six at level 100                    | Their mark, a purse of 250,000 to 500,000, and a stash of items         |
 | **Frontier Brain** | Their own three at level 100, or one at the Hall    | A symbol or a print, silver or gold, and a purse of 200,000 to 400,000 |
+
+What a beaten expert leaves is a **stash**, rolled the way an item cache is: one
+to three kinds, one to three of each, the best of them set by the band below and
+the rest no better. A special is only ever one piece.
+
+| Who               | Scarce | Rare  | Prized | Special   |
+| ----------------- | ------ | ----- | ------ | --------- |
+| **Executive**     | 70%    | 25%   | 5%     | -         |
+| **Elite Four**    | 25%    | 45%   | 30%    | -         |
+| **Champion**      | -      | 39.5% | 60%    | 1 in 200  |
+| **Legend**        | -      | 25%   | 65%    | 1 in 10   |
 
 A gym leader's sixth is always the one pokemon they are known for, whatever the
 other five roll. The five are drawn from every region rather than from the one
@@ -23,10 +34,9 @@ is standing there instead. There are two: Red, and Steven, who kept Hoenn's
 crown before Wallace did.
 
 A legend keeps no league. No badge case is asked for and no title is won. What
-is left behind is their own mark, the largest purse in the game, and an item off
-the rare band or, one time in twenty-one, the special one. The mark is worth the
-**Legend Breaker** title and the other coats that legend is drawn in. That is
-the only fight in the game that reaches the special band.
+is left behind is their own mark, the largest purse in the game, and the richest
+stash any fight leaves: a special item one time in ten. The mark is worth the
+**Legend Breaker** title and the other coats that legend is drawn in.
 
 Under one of the four skies that favour every type at once, the rarest weather
 there is, the seat is a legend's for certain.

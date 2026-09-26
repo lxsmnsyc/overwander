@@ -1,5 +1,407 @@
 # overwander
 
+## 4.18.2
+
+### Patch Changes
+
+- e027b1e: The fourteen flavour berries grow on berry trees, so they can be found for the safari.
+- fd883fd: A gift made from the admin page can be given an expiry date again.
+- 0fb5ce5: A player in a raid lobby has one team. Forming a new one replaces the old, and the button reads Change team.
+- 504cb22: A vendor trades up to 999 of one item at a time, up from 99.
+
+## 4.18.1
+
+### Patch Changes
+
+- d45adcc: The DNA Splicers turn up on walks, so Kyurem can be fused.
+
+## 4.18.0
+
+### Minor Changes
+
+- 4ba82de: Reshiram, Zekrom and Kyurem can be met, and Kyurem can be fused.
+
+  - Dragonspiral Tower stands in taiga and tundra and holds Reshiram and Zekrom,
+    one of the two each time. Giant Chasm stands in tundra and glacier and holds
+    Kyurem. Each of the three is also a wild spawn where its lair stands.
+  - Their signatures are one idea told three ways. Truth Creed hits 1.3x an enemy
+    carrying a status condition, Ideal Creed 1.3x an enemy carrying a raised stat
+    stage, and Hollow Creed 1.3x an enemy carrying neither.
+  - Turboblaze and Teravolt are new, and both do what Mold Breaker does: the
+    target's abilities cannot hinder their moves.
+  - The mainline gives each of them one ability, so each carries three of this
+    registry's own. Reshiram has Flash Fire, Pressure and Serene Grace, Zekrom
+    Motor Drive, Pressure and Sheer Force, and Kyurem Snow Warning, Ice Body and
+    Intimidate.
+  - The DNA Splicers are new. Used on a Kyurem they ask which dragon to fold in,
+    and the pokemon picked goes inside the fusion rather than being spent: it
+    leaves the boxes until the two are taken apart again, which the same pair
+    does. The fused pokemon names what is inside it, so nothing is lost. Black Kyurem takes Zekrom's Attack and Teravolt, White Kyurem takes
+    Reshiram's Special Attack and Turboblaze, and neither may be folded out of a
+    fight, an egg or the buddy slot.
+  - Changes world generation.
+
+- bb78f7b: The three that ride the storm clouds, and the shrine they come back to:
+
+  - Tornadus, Thundurus and Landorus all stand in the grassland, at any hour, out of the Abundant Shrine. One lair holds all three, the way the burned tower holds the beasts.
+  - Each carries one gift, told three ways: Windfall has its team throw Flying moves at 1.3x, Stormfall does the same for Electric and Landfall for Ground. Three of them standing together lift three different elements.
+  - Tornadus can be born with Wind Rider or Snow Warning, Thundurus with Lightning Rod or Drizzle, and Landorus with Harvest or Sand Stream.
+  - Each one's second shape is written and none of them can be reached yet: the mirror that turns one into the other works the way the Meteorite does for a Deoxys, and it waits until the other two shapes are drawn.
+
+- 931108b: The three Unova mythicals, and the machinery two of them needed:
+
+  - Victini stands on the rocky coast, Meloetta in the woodland and Genesect in the desert, at any hour.
+  - Three new lairs: Liberty Garden for Victini, the Abyssal Ruins for Meloetta and the P2 Laboratory for Genesect. No biome hosts one, so the world never puts a mythical on the map.
+  - Three new relics, found in the rarest band of the overworld item pool and nowhere else. The Liberty Pass calls Victini, the Music Box calls Meloetta and the Colress Machine calls Genesect. Each is spent when its raid starts.
+  - Victory Star now works: the holder's whole team, itself included, throws moves at 1.1x accuracy.
+  - Winner's Share is Victini's own. Each enemy that faints gives its whole team +1 Attack and +1 Special Attack.
+  - Countertune is Meloetta's own. Changing shape swaps its Attack and Special Attack stages, and swaps its two defences.
+  - Overclock is Genesect's own. It casts 25% faster above 1/2 HP, and at or below that it loses 1/16 of its HP each time it acts.
+  - Relic Song turns a Meloetta from its singing shape into its dancing one, and back again.
+  - A Genesect holding a Drive now fights in that Drive's shape. The Drive already set the type of its Techno Blast.
+  - Dancer now works: whenever anybody uses a dance move, the holder casts the same one straight after, for free. Rain Dance does not count as a dance.
+  - Victini can also be born with Flash Fire, Inner Focus or Magic Guard. Meloetta with Soundproof, Healer or Dancer. Genesect with Analytic, Synchronize or Adaptability.
+
+### Patch Changes
+
+- daa0a46: The catch dialog shows the pokemon's level before its category.
+- 5aaf21c: People standing past the live part of the board wear their own coats, so a far syndicate, gym leader or trainer no longer looks like a Rocket grunt or an Ace Trainer.
+
+## 4.17.0
+
+### Minor Changes
+
+- d4307a7: The time of day runs on a game clock where each period lasts 90 minutes, unless a deploy sets it to follow the local clock.
+
+### Patch Changes
+
+- 01411af: On a short screen the catch sheet's left column scrolls, so its evolutions no longer spill over the history line.
+- 8a2fcbe: A town in the portal's list shows its distance and country on a line under its name, so a far town's distance stays inside its row.
+
+## 4.16.2
+
+### Patch Changes
+
+- e82e285: The place card on the menu bar says what the weather does and which types it favors again, without a hover.
+
+## 4.16.1
+
+### Patch Changes
+
+- f04e837: The bag is read once and kept up to date as it changes, so opening the bag, a
+  picker or a dialog that shows item counts no longer reads it again each time.
+- 70912c6: - A berry, apricorn, cache, nest or phenomenon claim and what it pays land
+  together, so a failure can no longer spend a landmark without paying it.
+  - Lathering a honey tree spends the jar in the same step as the lather.
+  - A hatched egg's candy lands in the same step as the hatching.
+- 0961303: - The catch sheet no longer reads the pokemon and the bag a second time to
+  list its evolutions.
+  - Throwing or feeding in an encounter no longer reads the whole bag again.
+  - Counting one item or one family's candy reads only that row.
+  - A bag or candy read that fails says so instead of showing an empty bag.
+- 44dfa65: A raid lobby updates from the live stream when a party joins or leaves, rather
+  than every member reading the whole lobby again, and only the party that joined
+  is read.
+- 7a938fd: - The server refuses a player acting faster than the game can: every call is
+  paced, and throws, treats, claims and walked steps have limits of their own.
+- c5099be: Pay Day coins are only paid out for a pokemon that could have used the move,
+  and never more than the casts the fight had time for.
+- 653ead2: A read or save the database refuses is explained in the game's own words
+  instead of showing the database's message.
+- 24a4a57: A tab that does not say which version of the game it is running is asked to
+  reload before it can call the server, the same as a tab from an older version.
+- eca6f39: Steps walked are counted toward quests only once the walk itself is saved, so a
+  walk that fails to save is no longer counted.
+- 86e3305: - Every throw and treat in an encounter is decided on the server: the ball is
+  spent, the catch is rolled and the pokemon is written together.
+  - An encounter can no longer be caught more than once.
+  - Feeding and throws carry over when an encounter is closed and met again.
+
+## 4.16.0
+
+### Minor Changes
+
+- ccf396b: - Cobalion, Terrakion, Virizion and Keldeo can be met. Cobalion keeps the
+  Guidance Chamber in the mountains, Terrakion the Trial Chamber in the
+  mountains and badlands, and Virizion the Rumination Field in the temperate
+  forests and woodlands.
+  - Keldeo is a mythical, so no lair stages it. It waits in the bogs, and the
+    Colt's Petal calls one out to be fought.
+  - A Keldeo that knows Secret Sword fights in its Resolute form.
+  - A form with no art of its own is drawn as its base form instead of
+    Missingno.
+  - Iron Vigil, Stone Vigil, Leaf Vigil and Tide Vigil each guard the holder's
+    team while it stands: physical moves land at 0.8x, special moves at 0.8x,
+    indirect damage at 0.8x with no poison, and enemies can neither flinch a
+    teammate nor knock its stats down.
+  - All four reach three of this registry's own abilities beside Justified:
+    Sturdy, Clear Body and Inner Focus for Cobalion, Sand Rush, Rock Head and
+    Moxie for Terrakion, Chlorophyll, Leaf Guard and Serene Grace for Virizion,
+    and Swift Swim, Analytic and Steadfast for Keldeo.
+  - Changes world generation.
+- 85e0f35: Route 12 and the last of the region's roads, and the three families along them:
+
+  - Durant works the badlands and the mountain by day, and Heatmor comes over the same badlands and the volcano after dark, which is when it opens the nest.
+  - Larvesta and Volcarona stand in the desert by day, and on no other ground. The moth is a legendary here and the grub is as rare as a baby.
+  - The Relic Castle is a legendary lair in the desert, with Volcarona in it. A raid in the desert can stage it, the way one in the mountain can stage Mt. Ember.
+  - Each family brings its own signature ability: Anteater has Heatmor hit 1.5x into Bug and Steel, Ant Guard has Fire moves land on Durant at 0.5x, and Ember Halo costs every enemy 1/16 of its HP each time it acts near a Volcarona. Heatmor into Durant comes out at 0.75x, so the ant wins the exchange it was built to lose.
+  - Heatmor can be born with Sheer Force, Durant with Compound Eyes, and Volcarona with Drought or Magic Guard.
+
+- ab0083d: Twist Mountain and the moor below it, and the four families around them:
+
+  - Cubchoo and Beartic across the tundra and the glacier by day, Cryogonal over the glacier and the alpine tundra after dark, Tynamo through Eelektross on the mountain and in the bog at the same hours, and Mienfoo and Mienshao on the mountain and in the montane forest by day.
+  - A Tynamo knows four moves and never learns a fifth until it is something else, which is how the games have it.
+  - Each family brings its own signature ability: Frost Fangs has Beartic's contact moves hit 1.25x with a 20% chance to freeze, Crystal Chain holds a freeze on an enemy open twice as long while Cryogonal stands, Latch On stops whatever Eelektross closes on from fleeing and bleeds it 1/16 each time it acts, and Sleeve Guard has contact moves land on Mienshao at 0.75x.
+  - Cryogonal can be born with Ice Body, Snow Warning or Clear Body, Eelektross with Volt Absorb, Strong Jaw or Water Absorb, and Mienshao with Iron Fist. Beartic needs nothing invented, because Rattled walks up from the Cubchoo below it.
+
+## 4.15.1
+
+### Patch Changes
+
+- a09533a: A pokemon's burn, poison, paralysis, sleep or freeze shows as a coloured square beside its health on its hover card and catch sheet, named when hovered.
+- 1718dd7: Coming back from a battle no longer puts the player back where a teleport last dropped them.
+
+## 4.15.0
+
+### Minor Changes
+
+- 46d2add: Other players walking nearby on the overworld are drawn on the board, in
+  their own charset, a couple of seconds behind where they walked.
+
+### Patch Changes
+
+- 612d57b: Opening a box or a pokemon picker reads only the pokemon that are new or
+  changed since it was last opened, instead of the whole collection.
+- 4afafc8: - On a phone, the catches box's sort and select controls sit under the search rather than squeezing it.
+  - On a phone, the catches box's selection buttons wrap, so Close stays on screen.
+  - On a phone, the portal's town list leaves out the biome so the town names have room.
+- ff045f7: Saved teams load their pokemon in one request instead of one at a time.
+- 475c014: Redrawn sprites, such as the Unova candies, now show up in place of the old ones.
+- 8737c4a: The battle summary is laid out anew:
+
+  - It lists what the fight paid: gold, a badge, items, candy, and the pokemon waiting in the overworld.
+  - The two sides face each other, marked Won or Lost, with each side's share of the damage.
+  - Each pokemon shows its level and the health it finished on, or that it fainted.
+  - The best damage dealer is named under the sides.
+  - Rewards claimed after you leave the battle still arrive as notes in passing.
+
+## 4.14.0
+
+### Minor Changes
+
+- d0ddcaa: Celestial Tower and the road to it, and the three families around them:
+
+  - Litwick, Lampent and Chandelure over the bog and the woodland after dark, Elgyem and Beheeyem out in the desert and the cold desert, and Golett and Golurk across the badlands and the steppe. All three families keep to the evening and the night.
+  - Lampent becomes a Chandelure on a Dusk Stone, which is the first Unova line to evolve on a stone rather than a level.
+  - Each family brings its own signature ability: Hexlight has a lamp hit 1.4x into anything that already carries a status, Swap Field casts Wonder Room as a Beheeyem arrives, and Broken Seal gives a Golurk 2 stages of Attack for 1 of Defense the first time it drops below half.
+  - Chandelure can be born with Illuminate, Beheeyem with Forewarn, and Golurk with Stamina.
+  - Agatha fields the Ghost type and her named Golbat and Arbok, and no longer draws on the whole Amorphous egg group. That widener dated from when Kanto had one fully grown Ghost, and it had come to reach Gardevoir, Gallade and Castform.
+
+- 82f6e65: Dragonspiral Tower and the tunnels under it, and the three families around them:
+
+  - Axew, Fraxure and Haxorus on the mountain and in the montane forest by day, Druddigon on the mountain and the badlands and in every cave, and Deino, Zweilous and Hydreigon across the badlands and the volcano after dark.
+  - Each family brings its own signature ability: Scoring takes a stage of Defense off with every physical move Haxorus lands, Sunwarmed has Druddigon cast a quarter faster while the sun is up, and Three Heads has every move Hydreigon lands also bite a second enemy for a third of the damage.
+  - Haxorus can be born with Hyper Cutter, Druddigon with Intimidate, and Hydreigon with Berserk or Pressure.
+  - A fully grown wild pokemon can now be met up to level 80 rather than 60. Hydreigon does not exist below level 64, which the old ceiling had no room for.
+
+- fa1c90f: The last two roads out of Opelucid, and the three families along them:
+
+  - Pawniard and Bisharp in the badlands and the shrubland after dark, Rufflet and Braviary on the mountain and the steppe by day, and Vullaby and Mandibuzz over the badlands and the desert at the same hours.
+  - Every Rufflet and Braviary is male and every Vullaby and Mandibuzz is female, the way the games have them.
+  - Each family brings its own signature ability: Honed gives Bisharp 1 stage of Attack every time an enemy raises a stat of its own, Warcry gives Braviary 2 stages of Attack every time one of its teammates falls, and Bonewear gives Mandibuzz 1 stage of each defence every time an enemy does.
+  - Mandibuzz can be born with Guts. Braviary needs nothing invented, because Hustle walks up from the Rufflet below it.
+  - A wild pokemon at the end of a two-stage line can now be met up to level 70 rather than 50. Bisharp, Braviary and Mandibuzz all arrive above the old ceiling.
+
+### Patch Changes
+
+- 86b1eb7: Badges and other extra sprites show again on the awards shelf.
+- b561303: The world map's pan and recenter buttons and the catch list's sort direction button draw centered icons instead of text arrows.
+- 560e6df: - The portal shows itself and its fee, and lists every town nearest first with its biome, distance and direction, with a search to narrow the list.
+  - An egg's dialog names the buddy you would put down to carry it.
+- 234fd69: - The Fossil Scientist lays your fossils out in his own dialog rather than opening a second window.
+  - The Channeler shows her Heart Scale fee and how many you carry, the way the Move Reminder and Tutor do.
+- 2094137: The Move Reminder and Move Tutor ask in two steps:
+
+  - First pick a pokemon from your box.
+  - Then that pokemon stands on its own above the moves on offer, with a button to change it.
+  - The fee and how many Heart Scales you have sit at the top.
+  - The list of moves pages past twenty.
+
+- 1c22442: More items turn up on the ground, and phenomena leave more:
+
+  - Rare: the trade and held evolution items (King's Rock, Dragon Scale, Up-Grade and the rest), the Linking Cord, Rare Candies, the six vitamins and PP Ups.
+  - Scarce: Kurt's seven apricorn balls.
+  - Prized: the PP Max and the Explorer Kit.
+  - A phenomenon's item half is now a stash of one to three kinds, one to three of each, like an item cache.
+
+- 564b864: The item bands are reworked:
+
+  - Uncommon finds turn up 1 time in 4, a new scarce band 1 time in 16, rare stays 1 in 64, and prized is 1 in 256 instead of 1 in 512.
+  - Scarce holds the gear and training: Ultra Balls, Relic Silver, the healing from Hyper Potions up to Revives, the wings, the one-shots, the type boosters and everyday gear, the weather rocks and the training kit.
+  - The Max Revive moves from prized to rare, and using one no longer asks twice.
+  - The six power items and the Ability Patch are commoner within the prized band.
+  - A beaten executive, Elite Four member, champion or legend leaves a stash of one to three kinds, like an item cache.
+  - Executives and the Elite Four draw it from scarce, rare and prized; champions and legends from rare, prized and special, with a legend the richest.
+
+- e18845a: The vendor and the chef show their stock in their own dialog, with Buy and Sell tabs and your gold beside them.
+- 234fd69: - A challenge on the road says what winning pays and losing costs, the level range of their party, and how many you may bring.
+  - A gym seat shows its holder with a button to their profile, and sets out what winning and losing do side by side.
+
+## 4.13.0
+
+### Minor Changes
+
+- 4a37ee0: The pokedex is easier to move around:
+
+  - A chip per region shows how many of its pokemon you have seen and caught, and pressing it turns to that region.
+  - A search finds a dex number, or the name of a pokemon you have already met.
+  - The dex can show everything, only what you have caught, or only what you are missing.
+  - Each page says which region it is in, and the squares are larger.
+
+- 30ccf57: The world map can be steered without a keyboard:
+
+  - Drag the map to pan it, on a mouse or a touch screen.
+  - Buttons in the map's corner pan it a chunk at a time, or return it to you.
+  - The map shows where you are and where it is looking.
+  - The sky switch and a key to the colours sit on the map itself.
+  - Each notable sky in view is a button that pans the map to it.
+
+### Patch Changes
+
+- d18800d: The bag is laid out anew:
+
+  - Its pockets are one list down the side: All, one pocket per kind of item you carry, then Candies.
+  - Each pocket shows how many different things it holds.
+  - The bag reopens on the pocket you last had open.
+
+- ed17a99: - The honey tree's dialog shows the tree, and its Lather button shows the jar and how many are left, like the safari's Throw.
+  - A pokemon's evolution row no longer puts a "+" in front of a single condition.
+- 8b2f095: The catches box is laid out anew:
+
+  - A sort menu and a direction button sit beside the search, and they stay in step with a typed `sort:`.
+  - The box's page control sits above the squares and says which catches are showing out of how many.
+  - While selecting, the actions sit at the foot of the dialog with a count of what is picked.
+
+## 4.12.2
+
+### Patch Changes
+
+- 1b69db3: The game menu and the bar under the world are laid out anew:
+
+  - The menu's keys sit in three labelled rows: You, Play and Inbox.
+  - Settings and the day or night switch sit together at the foot of the menu.
+  - The menu button shows how many notices are waiting.
+  - The bar names the place, the weather, the time of day and the clock together, and pressing them opens when each part of the world next turns over.
+  - Field moves are buttons on the bar, and Surf or Fly shows as pressed while it is on.
+  - The "What the bar shows" setting is gone, since the bar now shows both.
+
+- a7f00c4: The battle lobby is laid out anew:
+
+  - The two seats face each other, and the host's seat is marked.
+  - Your party and ready buttons sit on your own seat.
+  - An open seat offers to take it or to invite somebody to it.
+  - The rules are one line, and spectators are folded under "Watching" until opened.
+
+- 4495039: The profile is laid out anew:
+
+  - Your details and your buddy share one trainer card.
+  - Your profile lists its sections down the side, grouped as Record, Social and Market, with no tabs inside tabs.
+  - Requests, Bids and Selling are sections of their own, and a notice opens the one it is about.
+  - Each waiting count shows once, on the section that holds it.
+
+- da590a9: The list of raids is laid out anew:
+
+  - Each raid shows its boss asleep, the boss's types, and an Open button.
+  - A raid says how far away it is and in which direction, rather than its chunk coordinates.
+  - The list says when the next raids arrive, and it pages past twenty.
+
+- da590a9: Settings are laid out anew:
+
+  - Settings are grouped into Display, Controls, World, Play, Audio and About, listed down the side.
+  - Settings reopens on the section you last had open.
+  - About counts the dex from the game's own data, so it now says gens 1 to 5 rather than gen 1 alone.
+
+- 13d3adc: The raid lobby is laid out anew:
+
+  - The boss sits beside the trainer list on a wide screen, and the list fills the height of the panel.
+  - The boss card shows what it is weak to, resists and is immune to, with both of its types counted together.
+  - The list counts the trainers against the limit and marks the host.
+  - Spectators are folded under "Watching" until opened.
+  - The way out is called Leave, and forming a team reads "Form another team" once you have one in.
+  - The host is told why Start is not ready.
+
+## 4.12.1
+
+### Patch Changes
+
+- b629e26: A trainer, a grunt or a stall no longer stands on the water in a flooded field. A chunk whose dry ground runs out used to put the next landmark on the nearest wet cell whatever it was, so a country that is almost all lake could field a Bird Keeper out on the water. Only what can be afloat takes a wet cell now, and a duel is afloat on the open sea alone, where the country's trainers are narrowed to its swimmers and sailors.
+- 37f0d8b: Everything with a time window now runs on your own clock:
+
+  - Item caches, berry and apricorn patches, honey trees, nests and happenings turn over in your time zone, the same as spawns.
+  - Nests and happenings roll from your own time of day and your own species day.
+  - Daily quests and the weekly hunt turn over at your own midnight.
+  - Eggs of the day's featured family get their step bonus on your own date.
+  - Evolutions that need day or night go by your own time of day.
+
+- e3300f2: - The compass marks stay at the board's edges when you stand on a terrace, instead of staying at the lowest ground.
+  - High ground near the camera is no longer cut away as you climb.
+  - Pointing at the ground picks the tile drawn under the pointer, never one hidden behind a terrace.
+- e3300f2: - The ground climbs through 20 terrace levels instead of 3, so mountains are a real climb with a cliff about every ten cells.
+  - Every town stands flat on one level, so nothing in it is on a cliff.
+  - A town's edge no longer leaves a single tile sticking out.
+  - The ground round a town climbs or drops to it in a staircase of one-level cliffs, with no ledge between them for anything to be stranded on.
+  - Flooded caves fill to the same height as before.
+
+## 4.12.0
+
+### Minor Changes
+
+- afc2a7f: Chargestone Cave and the three families in it:
+
+  - Joltik and Galvantula, Ferroseed and Ferrothorn, and Klink, Klang and Klinklang. All three are met underground and on the mountain above it, the gears by day and the other two after dark.
+  - Iron Barbs now works: whoever lands a contact move on a Ferroseed loses 1/8 of their HP to the spikes. The line had no working ability at all before this, and Rough Skin is now built from the same shared rule rather than its own copy of it.
+  - Each family brings its own signature ability: Static Feed has Joltik drink any bolt that lands on anybody, Thorn Curtain puts Ferroseed's spikes between a contact move and its teammates, and Meshing pays a gear for having something to turn against.
+  - Galvantula can be born with Static, Klinklang with Motor Drive, and Ferrothorn with Overcoat or Sturdy.
+
+- 4e078bd: Driftveil and the Cold Storage, and the four families around them:
+
+  - Basculin in the bog and the swamp at any hour, Ducklett and Swanna over the same water by day, Vanillite and its line across the tundra and the glacier, and Alomomola out in the ocean and the coral reef.
+  - Basculin comes in two schools that will not share a river. The red stripe throws itself about and the blue one takes the landing, which is the whole difference between them, and each is its own dex entry.
+  - Each family brings its own signature ability: Blood Water turns a school harder on whatever is already failing, Swan Dance adds Speed to every dance a Swanna uses, Flash Freeze has the first Ice move a Vanillite lands freeze outright, and Tide Pool makes every heal on Alomomola's team worth half again.
+  - Swanna can be born with Rain Dish, Alomomola with Unaware, and either Basculin with Swift Swim.
+
+- 79d13de: Route 5 and the four families along it:
+
+  - Zorua and Zoroark through the temperate forest and the woodland after dark, Minccino and Cinccino across the grassland and the shrubland by day, Solosis and its line in the same places by day, and Gothita and its line there at night.
+  - Illusion now works: a Zorua takes the field looking like the teammate standing furthest back, and the act drops the moment anything lands on it. Only the look changes. The line had no working ability at all before this.
+  - Each family brings its own signature ability: Bluff lets the first super effective blow pass straight through a Zorua, Clean Sweep has Cinccino tidy every hazard and screen off both sides as it arrives, and the two the games hand out one apiece pair up, with Fixation aiming what Gothita's team throws at whichever enemy is failing and Division taking a quarter of every blow aimed at one of Solosis' teammates.
+  - Cinccino can be born with Sturdy, Gothitelle with Synchronize, Reuniclus with Telepathy, and Zoroark with Pickpocket, Prankster or Trace.
+
+## 4.11.0
+
+### Minor Changes
+
+- a0640cd: A host can now offer signing in with an address and a password by setting VITE_EMAIL_SIGN_IN, rather than the form being drawn on a development build alone.
+
+### Patch Changes
+
+- 8d2e3d8: The docs now cover self-hosting: running the database, the auth server, the realtime stream and the app on your own machines, with none of the three hosting accounts the live game uses.
+- d08c1a5: Battles, the parties frozen into them and the raids they were fought in are deleted after 30 days, so battle history reaches back a month.
+- c9b0a53: A screen that offers a choice from your box reads only what it shows, so walking up to somebody with a large collection sends about half the data it used to.
+- 94bf9f0: A duel lobby is deleted a day after it was staged, whether or not its fight ever started.
+- 2bf1d76: The paces walked are reported to the egg being carried about once a minute rather than every few seconds, and a position is written at most once every eight seconds while walking.
+- dda630a: A walk saves its position straight to the database rather than through the game server, and the biome it discovers is marked on its own when the ground underfoot changes.
+- 3431d53: A run of catches asks once whether a quest has come due, rather than once for each catch.
+- fd62a92: Spawn windows and their rolls are deleted a day after they turn over, rather than kept for every chunk and zone anybody has walked.
+- 66ea06a: The safari asks everything it needs to open at once rather than one question after another, so the dialog appears sooner.
+
+## 4.10.1
+
+### Patch Changes
+
+- 3d22983: The weather map follows the clock while it is open, so a page left open shows this hour's sky rather than the hour it was opened in. It also names the seed and the generation it is reading.
+- 4fc6dac: The world map's weather now reads the same hour as the ground under you, rather than the hour it is in UTC.
+
 ## 4.10.0
 
 ### Minor Changes

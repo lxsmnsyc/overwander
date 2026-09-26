@@ -69,7 +69,8 @@ Four things move them:
 - **A vitamin** grants 10 points in its own stat and raises the budget by the
   same, the way a wing does: an HP Up, a Protein, an Iron, a Calcium, a Zinc or
   a Carbos. One bottle is three wings and a third, and it is the only training
-  gold alone can buy, off a vendor's vitamin counter.
+  gold alone can buy, off a vendor's vitamin counter. The ground hides them as
+  rare finds.
 
 ### PP Ups
 
@@ -79,7 +80,8 @@ that buys a **shorter cooldown** rather than more uses, since nothing runs out
 mid-fight. See [Battles](battles.md#how-a-move-resolves).
 
 It is permanent. No berry takes it back, which is why they cost more than a
-vitamin, and a move already at the limit is refused rather than charged.
+vitamin, and a move already at the limit is refused rather than charged. The
+ground hides a PP Up as a rare find and a PP Max as a prized one.
 
 ## Friendship
 

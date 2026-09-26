@@ -6,8 +6,9 @@ import { isOpenSea, isWaterBiome } from '../../../src/data/ids/biome';
 import registerItems from '../../../src/data/items';
 import { registerSpecies } from '../../../src/data/species';
 import ChunkSnapshot from '../../../src/overworld/chunk-snapshot';
-import { PLACEMENT_AREA, centeredCells } from '../../../src/overworld/chunk';
-import World from '../../../src/overworld/world';
+import { PLACEMENT_AREA, centeredCells, landmarkFloats } from '../../../src/overworld/chunk';
+import Landmark from '../../../src/data/overworld/landmark';
+import World, { Depth, Generation } from '../../../src/overworld/world';
 
 // Spawn rolls read the species registry and the biome spawn pools;
 // the berry patch reads the item registry to name what it grew, and
@@ -70,5 +71,51 @@ describe('placement invariants', () => {
     // a grotto, so dry ground is taken first wherever a bank is free
     expect(phenomena).toBeGreaterThan(0);
     expect(banked).toBe(phenomena);
+  });
+
+  it('puts nobody who needs ground on a lake', () => {
+    const world = new World('overworld');
+    let afloat = 0;
+
+    for (let x = -120; x < 120; x += 8) {
+      for (let y = -120; y < 120; y += 8) {
+        const chunk = world.getChunk(x, y);
+
+        for (const [cell, landmark] of chunk.getLandmarkCells()) {
+          if (chunk.getCellRole(cell) !== 'water') {
+            continue;
+          }
+          afloat += 1;
+          // A lake in a field is as wet as the ocean, so the rule is
+          // read off the cell's own country rather than the chunk's
+          expect(
+            landmarkFloats(landmark, chunk.getCellBiomes()[cell]),
+            `${x},${y} cell ${cell} holds ${landmark}`,
+          ).toBe(true);
+        }
+      }
+    }
+    // A cache and a nest are still carried on the water, so the sweep
+    // is checking something
+    expect(afloat).toBeGreaterThan(0);
+  });
+
+  it('leaves a flooded field its landmarks, and nobody standing on them', () => {
+    // A steppe almost entirely under one lake: 250 of its 256 cells
+    // are water, and the dry handful is spoken for, which used to put
+    // a Bird Keeper out on the water
+    const world = new World('lxsmnsyc', Depth.Surface, Generation.Second);
+    const chunk = world.getChunk(-45, 82);
+    let wet = 0;
+
+    for (const [cell, landmark] of chunk.getLandmarkCells()) {
+      if (chunk.getCellRole(cell) !== 'water') {
+        continue;
+      }
+      wet += 1;
+      expect(landmark).not.toBe(Landmark.Trainer);
+    }
+    expect(chunk.getLandmarkCells().size).toBeGreaterThan(0);
+    expect(wet).toBeGreaterThan(0);
   });
 });

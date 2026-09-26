@@ -93,21 +93,23 @@ node .output/server/index.mjs
 It listens on `PORT`, which defaults to 3000. Run it under systemd, Docker or
 whatever keeps a process alive on your host.
 
-Sprites are the one difference from the live game, and it is in your favour.
-The live build keeps `public/sprites` out of the upload and serves them from a
-separate host. Your build has no such exclusion, so the Node server serves them
-from `.output/public` and `VITE_SPRITE_ORIGIN` stays empty, which means "this
-origin". Point your proxy at that tree with a long cache lifetime:
+`VITE_SPRITE_ORIGIN` decides where the sprites and sounds are served from.
+
+- **Set** (as the live game does): they are published to that host with
+  `wrangler deploy` (see `wrangler.jsonc`), and the build leaves
+  `public/sprites` and `public/sounds` out of `.output/public`.
+- **Empty**: the Node server serves them from `.output/public` itself. Point
+  your proxy at that tree with a long cache lifetime:
 
 ```
 Cache-Control: public, max-age=31536000, immutable
 ```
 
 The paths are content-addressed with a `?v=` digest, so a regenerated sheet
-arrives under a new URL and a year-long cache is safe. If you do move the
-sprites to a second host, set `VITE_SPRITE_ORIGIN` to it and send
-`Access-Control-Allow-Origin` with them: the terrain pack is drawn into a canvas
-and read back, and a cross-origin image without that header taints the canvas.
+arrives under a new URL and a year-long cache is safe. A second host must send
+`Access-Control-Allow-Origin` with them (`public/_headers` does): the terrain
+pack is drawn into a canvas and read back, and a cross-origin image without that
+header taints the canvas.
 
 ## 5. The environment
 

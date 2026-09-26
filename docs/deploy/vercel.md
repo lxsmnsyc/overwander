@@ -128,6 +128,19 @@ Without the secret, the release still publishes and the workflow logs a warning
 that nothing was deployed. To ship without a release, redeploy from the Vercel
 dashboard.
 
+Before calling the hook, the script publishes the sprite host
+([`wrangler.jsonc`](../../wrangler.jsonc)) with `wrangler deploy`. It needs two
+more repository secrets:
+
+| Secret                  | Where it comes from                                                                                     |
+| ----------------------- | ------------------------------------------------------------------------------------------------------- |
+| `CLOUDFLARE_API_TOKEN`  | Cloudflare dashboard, **My Profile, API Tokens**, created from the **Edit Cloudflare Workers** template |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare dashboard, **Workers & Pages**, shown in the sidebar as the **Account ID**                   |
+
+Without the token, the release still publishes and the workflow logs a warning
+that the sprite host was not deployed. To publish it by hand, run
+`pnpm dlx wrangler@4 deploy` while signed in with `wrangler login`.
+
 Vercel fills the repository's **Website** field with the production domain
 whenever that field is empty, and it has no setting to stop this. To keep a
 different link there, set it to any other URL rather than clearing it:

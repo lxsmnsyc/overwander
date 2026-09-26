@@ -3,7 +3,7 @@ import { solidStart } from '@solidjs/start/config';
 import tailwindcss from '@tailwindcss/vite';
 import { nitro } from 'nitro/vite';
 import solidMarked from 'vite-plugin-solid-marked';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 
 /**
  * Nitro is the server runtime: it is what turns the app into something
@@ -30,7 +30,18 @@ const forTests = process.env.VITEST != null;
  */
 const BUILD_ID = process.env.VERCEL_GIT_COMMIT_SHA ?? String(Date.now());
 
-export default defineConfig({
+/**
+ * With a sprite host set, the sprites and sounds are served from there
+ * (see `wrangler.jsonc`), so the app's own output leaves them out
+ */
+function publicIgnore(mode: string): string[] {
+  const env = loadEnv(mode, process.cwd(), 'VITE_');
+  const hosted = 'VITE_SPRITE_ORIGIN' in env && env.VITE_SPRITE_ORIGIN !== '';
+
+  return hosted ? ['public/sprites/**', 'public/sounds/**'] : [];
+}
+
+export default defineConfig(({ mode }) => ({
   define: {
     'import.meta.env.VITE_BUILD_ID': JSON.stringify(BUILD_ID),
   },
@@ -47,7 +58,7 @@ export default defineConfig({
       devOverlay: false,
       middleware: 'src/middleware/index.ts',
     }),
-    ...(forTests ? [] : [nitro()]),
+    ...(forTests ? [] : [nitro({ ignore: publicIgnore(mode) })]),
   ],
   server: {
     watch: {
@@ -106,4 +117,4 @@ export default defineConfig({
      */
     exclude: ['**/node_modules/**', '**/dist/**', '.output/**', 'test/rls/**', 'e2e/**'],
   },
-});
+}));

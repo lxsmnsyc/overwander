@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "node scripts/sprite-stamps.ts && node scripts/sound-stamps.ts && vite build",
-    "start": "node .output/server/index.mjs",
+    "start": "node --env-file-if-exists=.env .output/server/index.mjs",
     "preview": "vite preview",
     "compact-sprites": "node scripts/compact-sprites.ts",
     "sprite-coats": "node scripts/sprite-coats.ts",
@@ -30,9 +30,10 @@
     "cs:add": "changeset add",
     "db": "docker compose -f compose.dev.yaml up --detach --wait",
     "db:stop": "docker compose -f compose.dev.yaml stop",
-    "db:reset": "docker compose -f compose.dev.yaml down && pnpm db && pnpm migrate",
-    "seed": "node --env-file-if-exists=.env scripts/seed-dev.ts",
-    "migrate": "node --env-file-if-exists=.env scripts/migrate.ts"
+    "db:reset": "docker compose -f compose.dev.yaml down && pnpm db && pnpm db:migrate",
+    "db:migrate": "node --env-file=.env.development scripts/migrate.ts",
+    "seed": "node --env-file=.env.development scripts/seed-dev.ts",
+    "migrate": "node --env-file=.env scripts/migrate.ts"
   },
   "dependencies": {
     "@solidjs/meta": "^0.29.4",

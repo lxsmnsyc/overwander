@@ -18,7 +18,7 @@ pnpm exec oxlint src test                 # lint (never biome — this repo migr
 pnpm exec oxfmt src test                  # format
 ```
 
-The `db` service in `compose.yaml` (port 54322, `overwander`) is production, and on a machine that self-hosts the game it is the live player data: never reset, seed or experiment against it. The root `.env` is production's configuration and is not edited.
+The `db` service in `compose.yaml` (port 54322, `overwander`) is production, and on a machine that self-hosts the game it is the live player data: never reset, seed or experiment against it. The root `.env` is production's configuration and is not edited. The script's name says which settings it reads: `pnpm dev`, `pnpm db:*` and `pnpm seed` read the committed `.env.development`, which overrides every data, account and sign-in value; `pnpm start` and `pnpm migrate` read `.env`.
 
 `pnpm db` starts the throwaway database development and the tests share (`compose.dev.yaml`, port 54324, `overwander_dev`), which keeps its data in memory. `pnpm test:db` and `pnpm test:e2e` start and migrate it themselves, reach it only through `TEST_DATABASE_URL`, and refuse a database not named `*_dev` ([test/test-database.ts](test/test-database.ts)); `pnpm seed` refuses the same. Run the two suites one at a time: the database suite clears game rows between cases and will delete the accounts the e2e browsers are signed in as. Every suite reads `test/env/.env.test` rather than the root `.env`.
 

@@ -24,9 +24,8 @@ that first if you have not run it yet.
 
 ```bash
 pnpm install
-cp .env.example .env    # fill it in, see the README
 pnpm db                 # the development database
-pnpm migrate            # its schema
+pnpm db:migrate         # its schema
 pnpm dev                # http://localhost:3000
 ```
 

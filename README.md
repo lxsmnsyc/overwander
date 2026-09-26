@@ -58,9 +58,8 @@ modern ones.
 
 ```bash
 pnpm install
-cp .env.example .env    # the local defaults work as they are
 pnpm db                 # the development database on 127.0.0.1:54324
-pnpm migrate            # the schema
+pnpm db:migrate         # the schema
 pnpm seed               # two accounts and a few rows
 pnpm dev                # http://localhost:3000
 ```
@@ -70,7 +69,13 @@ The whole of it, including what to do when something is wrong, is in
 
 ### Configuring it
 
-`.env.example` documents every variable and its local default.
+The script's name says which settings it reads:
+
+- **Development** (`pnpm dev`, `pnpm db:*`, `pnpm seed`) reads the committed
+  `.env.development`, which sets every database, account and sign-in value.
+  Personal changes go in `.env.development.local`.
+- **Production** (`pnpm start`, `pnpm migrate`) reads the root `.env`.
+  `.env.example` documents every variable it takes.
 
 - **`VITE_` variables** are baked into the browser bundle, so they are public.
   `VITE_WORLD_SEED` is the world everyone shares.
@@ -89,7 +94,7 @@ point at ground that no longer looks the same.
 ### The schema
 
 [`db/migrations/`](db/migrations) is the whole database, applied in filename
-order. `pnpm migrate` applies what is pending, and the server does the same as it
+order. `pnpm db:migrate` applies what is pending, and the server does the same as it
 starts. [Schema changes](docs/deploy/schema-changes.md) covers writing one.
 
 The database suite runs the server modules against a real Postgres:
@@ -122,7 +127,8 @@ hands every account it creates the `admin` role, granted on the server.
 | `pnpm preview`         | Preview the build locally                                                           |
 | `pnpm db`              | Start the development database (`compose.dev.yaml`)                                 |
 | `pnpm db:reset`        | Delete the development data and rebuild it from `db/migrations/`                    |
-| `pnpm migrate`         | Apply the migrations the database has not seen                                      |
+| `pnpm db:migrate`      | Apply pending migrations to the development database                                |
+| `pnpm migrate`         | Apply pending migrations to production, from the root `.env`                        |
 | `pnpm seed`            | Fill a fresh database with accounts and sample rows                                 |
 | `pnpm import-sprites`  | Copy the pokemon sheets in from `../SpriteCollab`, the `lxsmnsyc/SpriteCollab` fork |
 | `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel                                    |

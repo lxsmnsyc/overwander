@@ -28,12 +28,20 @@ neither can reach the other's data:
 
 - **Node 26** and **pnpm**, for the app itself.
 
+## Its settings
+
+Development reads the committed [`.env.development`](../../.env.development)
+rather than the root `.env`, which is production's. It sets every value that
+reaches data, accounts or sign-in, so nothing of production's gets through; the
+world (seed, generation, sprite host) is left to `.env`, so development shows
+the live game's world. Personal changes go in `.env.development.local`, which git
+ignores.
+
 ## Starting it
 
 ```bash
-cp .env.example .env   # once; the local defaults work as they are
 pnpm db                # start the development database on 127.0.0.1:54324
-pnpm migrate           # apply db/migrations
+pnpm db:migrate        # apply db/migrations
 pnpm seed              # two accounts and a few rows
 pnpm dev               # http://localhost:3000
 ```
@@ -49,13 +57,13 @@ A development build draws the email and password form, so either signs in at onc
 
 ## Everyday commands
 
-| Command         | What it does                                                    |
-| --------------- | --------------------------------------------------------------- |
-| `pnpm db`       | Start the database, or leave a running one alone                |
-| `pnpm db:stop`  | Stop it. The data goes with it                                  |
-| `pnpm db:reset` | Delete the development data and start again from the migrations |
-| `pnpm migrate`  | Apply the migrations the database has not seen                  |
-| `pnpm seed`     | Put the two accounts and their rows back                        |
+| Command           | What it does                                                    |
+| ----------------- | --------------------------------------------------------------- |
+| `pnpm db`         | Start the database, or leave a running one alone                |
+| `pnpm db:stop`    | Stop it. The data goes with it                                  |
+| `pnpm db:reset`   | Delete the development data and start again from the migrations |
+| `pnpm db:migrate` | Apply the migrations the database has not seen                  |
+| `pnpm seed`       | Put the two accounts and their rows back                        |
 
 A shell on the database:
 
@@ -70,7 +78,7 @@ apply in filename order and are never edited once they have run anywhere:
 
 ```bash
 # write db/migrations/0002_gym_seat_freeing.sql
-pnpm migrate          # applies it, and records it in schema_migrations
+pnpm db:migrate       # applies it, and records it in schema_migrations
 pnpm db:reset         # proves the folder still replays from nothing
 ```
 

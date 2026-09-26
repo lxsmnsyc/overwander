@@ -10,9 +10,6 @@ export default function registerTropicalRainforestSpawns(): void {
   // collection has drawn no Trumbeak and no finished Toucannon. Once it
   // does, mornings and days take Pikipek in base at 24, Trumbeak in
   // rare at 8 and Toucannon in elusive at 5
-  // Sensu Oricorio is written but waits on sprites, since the
-  // collection has drawn no Sensu style. Once it does, mornings and
-  // days take it in elusive at 5
   registerSpawnPool(Biome.TropicalRainforest, {
     [TimeOfDay.Morning]: {
       base: [
@@ -40,6 +37,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.OricorioSensu, weight: 5 },
         { species: Species.Vikavolt, weight: 4 },
         { species: Species.Hawlucha, weight: 6 },
         { species: Species.Vivillon, weight: 5 },
@@ -79,6 +77,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.OricorioSensu, weight: 5 },
         { species: Species.Vikavolt, weight: 4 },
         { species: Species.Hawlucha, weight: 6 },
         { species: Species.Vivillon, weight: 5 },

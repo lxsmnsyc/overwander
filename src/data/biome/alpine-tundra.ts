@@ -25,6 +25,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
       ],
       scarce: [
+        { species: Species.Crabominable, weight: 6 },
         { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Bronzong, weight: 6 },
@@ -68,6 +69,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
       ],
       scarce: [
+        { species: Species.Crabominable, weight: 6 },
         { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Bronzong, weight: 6 },
@@ -109,6 +111,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
       ],
       scarce: [
+        { species: Species.Crabominable, weight: 6 },
         { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Bronzong, weight: 6 },
@@ -143,6 +146,7 @@ export default function registerAlpineTundraSpawns(): void {
       ],
       rare: [{ species: Species.Piloswine, weight: 5 }],
       scarce: [
+        { species: Species.Crabominable, weight: 6 },
         { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Bronzong, weight: 6 },

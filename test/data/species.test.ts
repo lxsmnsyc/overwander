@@ -47,8 +47,10 @@ import {
   HOOPA_FORMS,
   KYUREM_FORMS,
   LANDORUS_FORMS,
+  LYCANROC_FORMS,
   MELOETTA_FORMS,
   MEOWSTIC_FORMS,
+  ORICORIO_FORMS,
   PALKIA_FORMS,
   PUMPKABOO_FORMS,
   ROTOM_FORMS,
@@ -412,6 +414,8 @@ describe('species forms', () => {
       ...HOOPA_FORMS.slice(1),
       ...GOURGEIST_FORMS.slice(1),
       ...SAWSBUCK_FORMS.slice(1),
+      ...ORICORIO_FORMS.slice(1),
+      ...LYCANROC_FORMS.slice(1),
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own
       ...listTrueShadows(),

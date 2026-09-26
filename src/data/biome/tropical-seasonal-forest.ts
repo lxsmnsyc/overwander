@@ -20,6 +20,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Treecko, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Cutiefly, weight: 24 },
         { species: Species.Pancham, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Cherubi, weight: 22 },
@@ -32,6 +33,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Grovyle, weight: 1 },
       ],
       scarce: [
+        { species: Species.Ribombee, weight: 6 },
         { species: Species.Pangoro, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Cherrim, weight: 6 },
@@ -59,6 +61,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Treecko, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Cutiefly, weight: 24 },
         { species: Species.Pancham, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Cherubi, weight: 22 },
@@ -71,6 +74,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Grovyle, weight: 1 },
       ],
       scarce: [
+        { species: Species.Ribombee, weight: 6 },
         { species: Species.Pangoro, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Cherrim, weight: 6 },

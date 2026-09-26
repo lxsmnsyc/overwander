@@ -270,7 +270,7 @@ describe('where a species lives', () => {
     // so neither line is staged until it does. The pools they are
     // waiting for are written as comments in the biome files. So are
     // the Pikipek and Yungoos lines', since the collection has drawn no
-    // Trumbeak, finished Toucannon or Gumshoos
+    // Trumbeak, finished Toucannon or Gumshoos, and Sensu Oricorio's
     const unstaged = new Set<Species>([
       Species.Phione,
       ...ROTOM_FORMS.slice(1),
@@ -307,6 +307,7 @@ describe('where a species lives', () => {
       Species.Toucannon,
       Species.Yungoos,
       Species.Gumshoos,
+      Species.OricorioSensu,
     ]);
     const staged = new Set<Species>();
 

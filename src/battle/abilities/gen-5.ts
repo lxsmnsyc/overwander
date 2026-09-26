@@ -61,6 +61,7 @@ const DANCE_MOVES = new Set<Moves>([
   Moves.LunarDance,
   Moves.QuiverDance,
   Moves.FieryDance,
+  Moves.RevelationDance,
 ]);
 
 const setupAbilities = [

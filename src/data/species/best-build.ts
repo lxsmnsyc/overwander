@@ -7,6 +7,7 @@ import { getMoveData } from '../moves/__create';
 import { getLearnableMoves, getSpeciesAbilityPools, getSpeciesData } from './__create';
 import { MOVE_WEATHERS } from '../moves/weather';
 import { isRecoilMove } from '../moves/recoil';
+import { isPunchMove } from '../moves/punches';
 import { Weathers } from '../ids/status';
 import {
   ABILITY_WANTS_WEATHER,
@@ -184,25 +185,10 @@ const SLEEPING_ABILITY = 0.35;
 const TECHNICIAN_POWER = 60;
 
 /**
- * The punches and the multi-hit moves. The battle side owns what each
- * ability does with them; these are here so the pricing can tell
- * whether the sheet has any
+ * The multi-hit moves. The battle side owns what each ability does
+ * with them; these are here so the pricing can tell whether the sheet
+ * has any
  */
-const PUNCHES = new Set<Moves>([
-  Moves.FirePunch,
-  Moves.IcePunch,
-  Moves.ThunderPunch,
-  Moves.MachPunch,
-  Moves.DynamicPunch,
-  Moves.FocusPunch,
-  Moves.MegaPunch,
-  Moves.CometPunch,
-  Moves.DizzyPunch,
-  Moves.SkyUppercut,
-  Moves.ShadowPunch,
-  Moves.MeteorMash,
-]);
-
 const MULTI_HITS = new Set<Moves>([
   Moves.DoubleSlap,
   Moves.CometPunch,
@@ -237,7 +223,7 @@ const ABILITY_NEEDS: Partial<Record<Abilities, (move: Moves) => boolean>> = {
   [Abilities.Sharpness]: (move) => (getMoveData(move).flags & MoveFlags.Slicing) !== 0,
   [Abilities.Steelworker]: (move) => getMoveData(move).type === Types.Steel,
   [Abilities.Technician]: (move) => (getMoveData(move).power ?? 0) <= TECHNICIAN_POWER,
-  [Abilities.IronFist]: (move) => PUNCHES.has(move),
+  [Abilities.IronFist]: (move) => isPunchMove(move),
   [Abilities.SkillLink]: (move) => MULTI_HITS.has(move),
 };
 

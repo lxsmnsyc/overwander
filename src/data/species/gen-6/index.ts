@@ -21,6 +21,8 @@ import registerHawluchaSpecies from './hawlucha';
 import registerPhantumpSpecies from './phantump';
 import registerPumpkabooSpecies from './pumpkaboo';
 import registerBergmiteSpecies from './bergmite';
+import registerGoomySpecies from './goomy';
+import registerNoibatSpecies from './noibat';
 
 /** Kalos, as far as it is written */
 export default function registerGen6Species(): void {
@@ -45,6 +47,8 @@ export default function registerGen6Species(): void {
   registerHawluchaSpecies();
   registerPhantumpSpecies();
   registerPumpkabooSpecies();
+  registerGoomySpecies();
   registerBergmiteSpecies();
+  registerNoibatSpecies();
   registerKlefkiSpecies();
 }

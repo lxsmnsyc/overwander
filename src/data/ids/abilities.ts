@@ -956,6 +956,10 @@ const enum Abilities {
   Hollowing = 200350,
   // Bergmite
   Deadweight = 200351,
+  // Goomy
+  Seepage = 200352,
+  // Noibat
+  Echolocation = 200353,
 }
 
 export default Abilities;

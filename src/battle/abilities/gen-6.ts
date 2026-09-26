@@ -1,5 +1,5 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { Stats } from '../../data/constants/stats';
+import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { DamageFlags, MoveAttackFlags, MoveCategories, Moves } from '../../data/ids/moves';
@@ -9,8 +9,8 @@ import { MergedLifecycle } from '../lifecycle';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
-import { hasFreeItemSlot, stealableItem } from '../utils';
-import { createAbility, createTypeShiftAbility } from './__create';
+import { hasFreeItemSlot, stealableItem, unitTarget } from '../utils';
+import { createAbility, createContactHazard, createTypeShiftAbility } from './__create';
 
 /** What a pelt of grass is worth while there is grass to stand on */
 const GRASS_PELT_SCALE = 1.5;
@@ -260,6 +260,37 @@ const setupAbilities = [
   // Amaura: what it throws freezes on the way out, which is worth a
   // fifth again on top of landing as Ice
   createTypeShiftAbility(Abilities.Refrigerate, Types.Normal, Types.Ice, REFRIGERATE_SCALE),
+
+  // Goomy: the slime comes off on whatever touches it, and a foot
+  // in it is a foot that is slower afterwards
+  createAbility(
+    Abilities.Gooey,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+          if (
+            !event.success ||
+            (event.flags & DamageFlags.Indirect) !== 0 ||
+            event.cause.type !== EffectType.Move ||
+            event.cause.unit === event.target ||
+            !event.target.hasAbility(Abilities.Gooey) ||
+            !event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target))
+          ) {
+            return;
+          }
+
+          event.target.triggerAbility(Abilities.Gooey);
+          event.cause.unit.addStage(Stages.Speed, -1, {
+            type: EffectType.Ability,
+            ability: Abilities.Gooey,
+            unit: event.target,
+          });
+        }),
+        // Touching it costs something, so the AI is told before it
+        // decides to
+        createContactHazard(battle, Abilities.Gooey),
+      ]),
+  ),
 
   // Honedge: the sword is a shield until it swings. Both shapes carry
   // their own stats and share an HP stat, so turning over moves

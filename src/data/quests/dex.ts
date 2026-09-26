@@ -45,6 +45,10 @@ export const REGION_DEXES: Partial<Record<Regions, RegionDex>> = {
   // the four a relic calls, which is Darkrai, Manaphy, Shaymin and
   // Arceus
   [Regions.Sinnoh]: { milestones: [21, 54, 103], medal: Awards.SinnohDexMedal },
+  // 156 more, the widest yet, and the same shape: a fifth, half, and
+  // all but the four a relic calls, which is Victini, Keldeo,
+  // Meloetta and Genesect
+  [Regions.Unova]: { milestones: [31, 78, 152], medal: Awards.UnovaDexMedal },
 };
 
 /**

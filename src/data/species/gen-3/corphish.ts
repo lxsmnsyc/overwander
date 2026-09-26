@@ -90,7 +90,13 @@ export default function registerCorphishSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 205,
-    biomes: [Biome.Mangrove, Biome.Swamp, Biome.TropicalSeasonalForest, Biome.Badlands],
+    biomes: [
+      Biome.Mangrove,
+      Biome.Swamp,
+      Biome.TropicalSeasonalForest,
+      Biome.Badlands,
+      Biome.CoralReef,
+    ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -136,7 +142,13 @@ export default function registerCorphishSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 155,
-    biomes: [Biome.Mangrove, Biome.Swamp, Biome.TropicalSeasonalForest, Biome.Badlands],
+    biomes: [
+      Biome.Mangrove,
+      Biome.Swamp,
+      Biome.TropicalSeasonalForest,
+      Biome.Badlands,
+      Biome.CoralReef,
+    ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

@@ -6,14 +6,6 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
  * TemperateForest spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerTemperateForestSpawns(): void {
-  // Throh and Sawk are written but wait on sprites, since the
-  // collection has drawn no Throh and the pair is staged together.
-  // Once it does, mornings and days take each of them in elusive at 5
-  // The three elemental monkeys are written but wait as a set, since
-  // the collection has drawn neither Simisear nor Simipour and the
-  // trio is staged together. Once it does, mornings and days take each
-  // of Pansage, Pansear and Panpour in uncommon at 22 and each of
-  // Simisage, Simisear and Simipour in scarce at 7
   registerSpawnPool(Biome.TemperateForest, {
     [TimeOfDay.Morning]: {
       base: [
@@ -29,6 +21,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Panpour, weight: 22 },
+        { species: Species.Pansear, weight: 22 },
+        { species: Species.Pansage, weight: 22 },
+        { species: Species.Karrablast, weight: 20 },
         { species: Species.Deerling, weight: 18 },
         { species: Species.Ledyba, weight: 20 },
         { species: Species.Pineco, weight: 20 },
@@ -55,6 +51,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Simipour, weight: 7 },
+        { species: Species.Simisear, weight: 7 },
+        { species: Species.Simisage, weight: 7 },
+        { species: Species.Escavalier, weight: 5 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Ledian, weight: 8 },
@@ -74,6 +74,8 @@ export default function registerTemperateForestSpawns(): void {
       elusive: [
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Chesnaught, weight: 2 },
+        { species: Species.Sawk, weight: 5 },
+        { species: Species.Throh, weight: 5 },
         { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
@@ -122,6 +124,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Panpour, weight: 22 },
+        { species: Species.Pansear, weight: 22 },
+        { species: Species.Pansage, weight: 22 },
+        { species: Species.Karrablast, weight: 20 },
         { species: Species.Deerling, weight: 18 },
         { species: Species.Ledyba, weight: 20 },
         { species: Species.Pineco, weight: 20 },
@@ -148,6 +154,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Simipour, weight: 7 },
+        { species: Species.Simisear, weight: 7 },
+        { species: Species.Simisage, weight: 7 },
+        { species: Species.Escavalier, weight: 5 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Ledian, weight: 8 },
@@ -167,6 +177,8 @@ export default function registerTemperateForestSpawns(): void {
       elusive: [
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Chesnaught, weight: 2 },
+        { species: Species.Sawk, weight: 5 },
+        { species: Species.Throh, weight: 5 },
         { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
@@ -207,6 +219,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Foongus, weight: 20 },
+        { species: Species.Shelmet, weight: 20 },
         { species: Species.Deerling, weight: 18 },
         { species: Species.Zorua, weight: 20 },
         { species: Species.Shuppet, weight: 20 },
@@ -227,6 +241,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Amoonguss, weight: 6 },
+        { species: Species.Accelgor, weight: 5 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },
@@ -278,6 +294,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Foongus, weight: 20 },
+        { species: Species.Shelmet, weight: 20 },
         { species: Species.Deerling, weight: 18 },
         { species: Species.Zorua, weight: 20 },
         { species: Species.Shuppet, weight: 20 },
@@ -299,6 +317,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Amoonguss, weight: 6 },
+        { species: Species.Accelgor, weight: 5 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },

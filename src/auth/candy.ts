@@ -3,12 +3,11 @@
 // to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type Families from '../data/ids/families';
-import { asNumber, asRecordArray } from './__normalize';
 import { CANDY_STACKS, getStack, listStacks } from './stacks';
 import { useCandy as feedOnServer, useRareCandy as rareOnServer } from '../server/candy';
 import { requireUid } from '../server/auth';
 import check, { COUNT, ID, TOKEN } from '../server/validate';
-import getSupabase from './supabase';
+import readHeldBag from './live-bag';
 import getIdToken from './session';
 
 export {
@@ -45,15 +44,10 @@ export interface CandyStack {
  * Every candy stack the player holds, in the shape `stacks.ts` reads
  */
 async function readBag(uid: string): Promise<unknown> {
-  const { data } = await getSupabase()
-    .from('bag_candies')
-    .select('family, count')
-    .eq('player', uid);
-
   const candies: Record<number, number> = {};
 
-  for (const row of asRecordArray(data)) {
-    candies[asNumber(row.family)] = asNumber(row.count);
+  for (const [family, count] of (await readHeldBag(uid)).candies) {
+    candies[family] = count;
   }
   return { candies };
 }

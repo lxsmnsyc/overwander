@@ -13,7 +13,7 @@ import {
   SWEET_PAW_SHARE,
   TIMELINE_SPLIT_THRESHOLD,
 } from '../../../../src/battle/abilities/signature/chikorita-to-celebi';
-import { AttackPriority } from '../../../../src/core/event-emitter';
+import { AttackPriority, EventPriority } from '../../../../src/core/event-emitter';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import { Stages, Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
@@ -348,18 +348,43 @@ describe('Coral Bloom', () => {
   });
 });
 
-describe('Standoff', () => {
-  it('never touches whatever it is shooting at', () => {
+describe('Ricochet', () => {
+  it('strikes another standing enemy when a single-target move misses', () => {
     const { battle, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    const bare = createUnit(battle, teamA);
+    const missed = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
 
-    expect(bare.checkMoveContact(Moves.Pound, unitTarget(enemy))).toBe(true);
+    holder.addAbility(Abilities.Ricochet);
+    // Every roll against the first enemy misses
+    battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, (event) => {
+      if (event.parent.target.type === MoveTargetType.Unit && event.parent.target.unit === missed) {
+        event.hit = false;
+      }
+    });
+    holder.triggerMove(Moves.Tackle, unitTarget(missed), 0);
+    battle.tick(1000);
 
-    holder.addAbility(Abilities.Standoff);
+    expect(missed.health).toBe(missed.checkStat(Stats.HP, 0));
+    expect(other.health).toBeLessThan(other.checkStat(Stats.HP, 0));
+  });
 
-    expect(holder.checkMoveContact(Moves.Pound, unitTarget(enemy))).toBe(false);
+  it('does nothing with no other enemy standing', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const missed = createUnit(battle, teamB);
+    const mate = createUnit(battle, teamA);
+
+    holder.addAbility(Abilities.Ricochet);
+    battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, (event) => {
+      event.hit = false;
+    });
+    holder.triggerMove(Moves.Tackle, unitTarget(missed), 0);
+    battle.tick(1000);
+
+    expect(missed.health).toBe(missed.checkStat(Stats.HP, 0));
+    // Never glances onto its own side
+    expect(mate.health).toBe(mate.checkStat(Stats.HP, 0));
   });
 });
 

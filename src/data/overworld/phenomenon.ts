@@ -242,7 +242,10 @@ function bandOf(item: Items): keyof ItemRarityGroups {
   if (band === 'special') {
     return 'prized';
   }
-  return band == null || band === 'base' ? 'uncommon' : band;
+  // Scarce is the ground's step, not a phenomenon's: a shadow drops
+  // only wings, and a band of nothing but wings above an empty floor
+  // would leave most shadows empty-handed
+  return band == null || band === 'base' || band === 'scarce' ? 'uncommon' : band;
 }
 
 /**
@@ -273,6 +276,7 @@ export function getPhenomenonGroups(phenomenon: Phenomenon): ItemRarityGroups {
     base: [],
     special: [],
     uncommon: weigh(sorted.get('uncommon') ?? []),
+    scarce: [],
     rare: weigh(sorted.get('rare') ?? []),
     prized: weigh(sorted.get('prized') ?? []),
   };

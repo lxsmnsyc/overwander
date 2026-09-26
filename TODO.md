@@ -135,3 +135,110 @@ invisible or already reachable is not worth building.
 Pairs that would ship as one release: rides and fishing, both wanting the same
 water; tracks and the camera, which turn a walk into looking; seasons and rides,
 since a frozen lake and a Lapras answer the same closed route.
+
+## Seeing other players in the overworld
+
+Feasible, and most of it is already written. Nothing here is committed to.
+
+Every other thing on the map is derived from the world seed plus the coordinates
+plus the clock, and generation runs on the client. Another player's position is
+the first piece of overworld state that cannot be computed and has to be sent.
+
+What already exists:
+
+- `positions` holds every player's `chunk_x, chunk_y, cell_x, cell_y, depth,
+  moved_at` (`supabase/migrations/20260820000300_world.sql:81`), and the table is
+  already in the realtime publication
+  (`supabase/migrations/20260831000100_position_realtime.sql`).
+- `profiles.sprite` already holds the charset a trainer walks as, and it is
+  already readable by anybody.
+- `readPositions(uids)` already reads many players' rows in one query
+  (`src/server/positions.ts:98`), and `getPlayerPosition(uid)` already reads
+  anybody's through the server (`src/auth/positions.ts:71`). The profile card
+  uses it today to say where a trainer is standing.
+- The chunk canvas already draws several people on several cells in several
+  charsets, facing correctly, with cast shadows, occlusion veiling and press
+  targets. `loadOWChar` hands each caller its own clone so two people in the same
+  charset stand apart (`src/canvas/ow-char-sprites.ts:46`). What is missing is a
+  prop saying who else is here: `personOn` reads landmarks only
+  (`src/components/overworld/chunk-canvas/index.tsx:769`).
+
+What is in the way:
+
+- [ ] **The read policy on `positions` is self-only**
+      (`supabase/migrations/20260820000900_rls.sql:53`), so a socket watching the
+      table sees one row. This is deliberate, and the realtime migration says so,
+      but it was written when the stream was only for reconciling one player's
+      two devices. The project has already made the opposite call elsewhere:
+      `getPlayerPosition` says where a trainer is standing is as public as their
+      nickname.
+- [ ] **Nothing queries by region.** The key is `(player, generation)` and there
+      is no index on `chunk_x, chunk_y`. "Who else is in this chunk" is a query
+      that does not exist.
+- [ ] **Positions are saved every few seconds rather than every step**
+      (`src/auth/position-record.ts:15`), and only the local player has a slide.
+      Anybody else would hop between saves without one.
+
+The objection to answer first: the world is effectively endless, so two players
+are almost never in the same chunk, and an ambient version would show an empty
+map to nearly everyone nearly always. Gym seats are drawn as an aura rather than
+a figure for the same reason, since what is worth knowing is who holds the cell
+rather than who walked past it.
+
+Three scopes, ascending in cost:
+
+- [ ] **Where people already converge.** Towns, gyms and raid landmarks only.
+      `towns` is already readable by anybody and raid lobbies are already live,
+      so people appear exactly where there was a reason to be.
+- [ ] **Friends only.** `friends` already exists, the query stays a list of uids,
+      and `readPositions` already takes one, so no spatial index is needed at all.
+      Cheapest of the three by a wide margin.
+- [ ] **Ambient presence.** Everyone nearby, wanting the policy change, the
+      spatial index and per-character interpolation.
+
+Note the seasons entry above overlaps what Deerling shipped. That work put four
+seasons on the clock at one month each and used them for the coat a deer is met
+in, not for terrain or a quarter of every biome's rolls. The gimmick as written
+here is still unbuilt.
+
+## Economy ledger
+
+Deferred on purpose. The design, what it was measured to cost and why it waits
+are in [Player-owned tables](docs/database/player-stores.md#not-built-yet-an-economy-ledger).
+
+- [ ] **An append-only record of every gold, item and candy change**, the way
+      rAthena keeps `picklog` and `zenylog`. Postgres triggers on
+      `profiles.gold`, `bag_items` and `bag_candies`, so every writer is covered
+      without a call of its own, each row carrying the player, the stack, the
+      amount it moved by, the balance after, the transaction id and a reason. A
+      pg_cron sweep keeps it to a retention window.
+
+Worth building when any of these happens:
+
+- the player count grows well past a dozen, or players stop knowing each other;
+- auctions and trades start carrying a real economy;
+- something looks duplicated and needs tracing.
+
+It costs about 190 bytes a row and 0.1 ms a write, roughly 40 MB a month at 12
+players, so it needs the sweep on the Free plan's 500 MB. Nothing that happens
+before it exists can be traced afterwards.
+
+## Taking back a release
+
+- [ ] **A day's grace before a release is final**, the way rAthena waits
+      `char_del_delay` (24 hours) before a deleted character is gone. Today a
+      release deletes the pokemon at once ([`src/server/caught.ts`](src/server/caught.ts)),
+      and a bulk release takes many in one press, so a slip or a stolen login is
+      permanent. A release would mark the pokemon and hide it instead, a sweep
+      would delete it a day later, and it could be taken back until then. The
+      release candy is paid when the sweep runs rather than at the press, or
+      releasing and taking back would print candy. Every box query has to leave
+      the marked ones out, which is most of the work.
+
+## A record of what staff did
+
+- [ ] **One row per staff action**, the way rAthena logs every GM command to
+      `atcommandlog`: who acted, on whom, what they did and when. The dashboard
+      only reads today, and bans, roles and grants are made by hand, so there is
+      nothing to log yet. It becomes worth building the moment the dashboard
+      writes anything, or somebody besides the owner holds a role.

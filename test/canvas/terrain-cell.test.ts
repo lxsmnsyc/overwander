@@ -11,7 +11,7 @@ const NAMES: Partial<Record<Biome, string>> = {
 };
 
 /** A pack with names and edges only, which is all the layering reads */
-// oxlint-disable-next-line typescript/no-unsafe-type-assertion
+/* oxlint-disable typescript/no-unsafe-type-assertion */
 const pack = {
   of: (biome: Biome, role: TerrainRole) => {
     const name = NAMES[biome];
@@ -28,6 +28,7 @@ const pack = {
     };
   },
 } as unknown as TerrainTiles;
+/* oxlint-enable typescript/no-unsafe-type-assertion */
 
 /** Every sea blend laid over dry ground in a window of cells */
 function seaBlendsOnLand(look: CellLook): string[] {

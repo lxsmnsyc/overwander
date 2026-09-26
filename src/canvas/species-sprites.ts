@@ -1,9 +1,10 @@
-import { Species } from '../data/ids/species';
+import { Species, getBaseFormSpecies } from '../data/ids/species';
 import { REGION_NAMES, getSpeciesRegion } from '../data/species/regions';
 import SpeciesSpriteAnimation from './species-sprite-animation';
 import type { Coat, SpriteCoats } from './sprite-coats';
 import { COATS_PATH, asSpriteCoats, coatOf, drawn, stamped } from './sprite-coats';
 import asSpriteSheetJSON, { type SpriteSheetJSON, readFrameTable } from './sprite-sheet';
+import { spriteUrl } from './sprite-origin';
 
 /**
  * Which sheet belongs to which pokemon, and how to get one.
@@ -37,7 +38,7 @@ import asSpriteSheetJSON, { type SpriteSheetJSON, readFrameTable } from './sprit
  * over one image.
  */
 
-export const SPRITE_ROOT = '/sprites/pokemon';
+export const SPRITE_ROOT = spriteUrl('/sprites/pokemon');
 
 /**
  * Where one pokemon's sheets are filed.
@@ -267,18 +268,35 @@ export default async function loadSpeciesSprite(
    * the point. So the shiny form is asked for first, then the shiny
    * without it, and only then the ordinary coat
    */
-  const wanted: [Species, boolean, boolean][] = [];
+  const tried: [shiny: boolean, female: boolean][] = [];
 
   if (shiny) {
     if (female) {
-      wanted.push([species, true, true]);
+      tried.push([true, true]);
     }
-    wanted.push([species, true, false]);
+    tried.push([true, false]);
   }
   if (female) {
-    wanted.push([species, false, true]);
+    tried.push([false, true]);
   }
-  wanted.push([species, false, false]);
+  tried.push([false, false]);
+
+  // A form nobody has drawn yet is drawn as its base form, which loses
+  // the form rather than the coat, so each coat is asked of both first
+  const shapes = [species];
+  const base = getBaseFormSpecies(species);
+
+  if (base !== species) {
+    shapes.push(base);
+  }
+
+  const wanted: [Species, boolean, boolean][] = [];
+
+  for (const [wantedShiny, wantedFemale] of tried) {
+    for (const shape of shapes) {
+      wanted.push([shape, wantedShiny, wantedFemale]);
+    }
+  }
 
   if (request.fallback !== false) {
     wanted.push([FALLBACK_SPECIES, false, false]);

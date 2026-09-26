@@ -11,7 +11,7 @@ import { CLAIM_CHUNK_LIMIT } from '../auth/snapshot-record';
 import { Depth } from '../overworld/depth';
 import { GiftKind } from '../auth/gift-record';
 import { LobbyRole } from '../auth/lobby-role';
-import { MAX_EFFORT_PER_STAT } from '../data/constants/stats';
+import { MAX_EFFORT_PER_STAT, MAX_PACKED_IVS } from '../data/constants/stats';
 import { MAX_LEVEL } from '../data/constants/levels';
 import Npc from '../data/overworld/npc';
 import { RaidKind } from '../auth/raid-record';
@@ -168,6 +168,9 @@ export const PAGE = whole(0, MAX_PAGE);
 /** A level a pokemon can stand at */
 export const LEVEL = whole(1, MAX_LEVEL);
 
+/** Six individual values packed five bits apiece, which runs past MAX_AMOUNT */
+const PACKED_IVS = whole(0, MAX_PACKED_IVS);
+
 /**
  * Which known move a new one goes over. Below nothing where the
  * pokemon still has room, which is what the counters send then
@@ -296,7 +299,7 @@ const GIFT_POKEMON = {
   shadow: FLAG,
   gender: MAYBE_GAME_ID,
   nature: MAYBE_GAME_ID,
-  ivs: v.nullable(COUNT),
+  ivs: v.nullable(PACKED_IVS),
   abilities: listOf(GAME_ID, mostSlots(Slots.Ability)),
   moves: listOf(GAME_ID, mostSlots(Slots.Move)),
   items: listOf(GAME_ID, mostSlots(Slots.Item)),

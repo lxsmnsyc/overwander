@@ -28,6 +28,16 @@ interface ImportMetaEnv {
    * Unset means this origin, which is what development wants
    */
   readonly VITE_SPRITE_ORIGIN?: string;
+  /**
+   * `'true'` or `'1'` to run the time of day on the local clock. Anything
+   * else, including unset, is the game clock
+   */
+  readonly VITE_REAL_TIME_OF_DAY?: string;
+  /**
+   * How many minutes each period of the day lasts on the game clock.
+   * Unset means 90, which makes a whole day 6 hours
+   */
+  readonly VITE_TIME_OF_DAY_MINUTES?: string;
 }
 
 interface Window {

@@ -7,7 +7,7 @@ import { Badge, Button, Meta, Note, Row, Switch } from '../styled';
 import World, { Generation, isInWorld } from '../../overworld/world';
 import { CHUNK_CELLS } from '../../overworld/chunk';
 import shadeCell from '../../canvas/world-shade';
-import { TERRACE_TOP, levelAt } from '../../overworld/terrace';
+import { levelAt, terraceTop } from '../../overworld/terrace';
 import type Biome from '../../data/ids/biome';
 
 /**
@@ -283,8 +283,9 @@ export default function WorldDemo(): JSX.Element {
         {(spot) => (
           <Note>
             Cell {spot.x}, {spot.y} is {BIOME_NAMES[spot.biome]} at level{' '}
-            {levelAt(new World(seed(), undefined, generation()), spot.x, spot.y)} of {TERRACE_TOP},
-            in chunk {Math.floor(spot.x / CHUNK_CELLS)}, {Math.floor(spot.y / CHUNK_CELLS)}
+            {levelAt(new World(seed(), undefined, generation()), spot.x, spot.y)} of{' '}
+            {terraceTop(new World(seed(), undefined, generation()))}, in chunk{' '}
+            {Math.floor(spot.x / CHUNK_CELLS)}, {Math.floor(spot.y / CHUNK_CELLS)}
           </Note>
         )}
       </Show>

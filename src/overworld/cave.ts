@@ -2,7 +2,7 @@ import { CHUNK_CELLS, ORTHOGONAL, worldCell } from './grid';
 import { isHillside, isSurfaceWater } from './surface';
 import { portalCellIn } from './town';
 import { caveWaterTable, isCaveFloor, isCaveWaterway, isRock, isSealedVolcano } from './fields';
-import { levelAt } from './terrace';
+import { TERRACE_STEPS, levelAt, levelBelow } from './terrace';
 import poolsWhere, { remembered } from './pooling';
 import type Biome from '../data/ids/biome';
 import { MOUTH_GAP, MOUTH_SEARCH } from '../data/overworld/cave';
@@ -410,7 +410,10 @@ const isCaveWetField = remembered((world: World, x: number, y: number): boolean 
   }
   const table = caveWaterTable(world, x, y);
 
-  return table >= 0 && levelAt(world, x, y) <= table;
+  // The table is counted in the first generation's levels, so it is
+  // carried over as a height: the same ground floods however many
+  // levels the world climbs through
+  return table >= 0 && levelAt(world, x, y) <= levelBelow(world, TERRACE_STEPS[table]);
 });
 
 /**

@@ -90,6 +90,11 @@ select * from pg_policies where tablename = 'gym_seats';
 `supabase migration list` should now show the same version on both sides. Then
 deploy the app, or let the push be the whole of the release if no code changed.
 
+The app deploys when the Version Packages pull request is merged, not on every
+push to `main` (see [Vercel](vercel.md#3-deploy-on-release)). Push an adding
+migration before merging that pull request. Push a dropping one after the
+release has deployed.
+
 ## Preview deployments share whatever they point at
 
 A preview pointed at the production project is talking to the production

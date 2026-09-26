@@ -17,8 +17,11 @@ export const LIST_PAGE = 20;
  */
 export interface Pager<T> {
   shown: Accessor<T[]>;
-  /** Drawn only when there is more than one page */
-  controls: () => JSX.Element;
+  /**
+   * Drawn only when there is more than one page. With `range`, it also
+   * says which rows are showing out of how many, and stays up for one page
+   */
+  controls: (options?: { range?: boolean }) => JSX.Element;
 }
 
 /**
@@ -53,8 +56,8 @@ export function createPager<T>(
 
   return {
     shown,
-    controls: () => (
-      <Show when={pages() > 1}>
+    controls: (options) => (
+      <Show when={pages() > 1 || (options?.range === true && items().length > 0)}>
         <Row class="justify-center">
           <Button
             label="Previous page"
@@ -65,8 +68,13 @@ export function createPager<T>(
           >
             <ArrowLeftIcon class="size-4" aria-hidden="true" />
           </Button>
-          <Meta>
-            {unit} {page() + 1} of {pages()}
+          <Meta class="tabular-nums">
+            {options?.range === true
+              ? `${unit} ${page() + 1} · ${Math.min(items().length, page() * fits() + 1)}–${Math.min(
+                  items().length,
+                  (page() + 1) * fits(),
+                )} of ${items().length}`
+              : `${unit} ${page() + 1} of ${pages()}`}
           </Meta>
           <Button
             label="Next page"

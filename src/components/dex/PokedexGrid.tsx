@@ -91,6 +91,8 @@ export interface PokedexGridProps {
   squares?: number;
   /** What the box is announced as, for a grid that is not the dex. */
   label?: string;
+  /** A square to ring, for a dex number searched for */
+  highlight?: Species | null;
 }
 
 /**
@@ -142,7 +144,7 @@ export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
     <div
       role="group"
       aria-label={props.label ?? `Pokedex, ${props.entries.length} species on this page.`}
-      class="mx-auto grid w-full max-w-sm grid-cols-6 gap-1.5 rounded-xl border-4 border-tide
+      class="mx-auto grid w-full max-w-md grid-cols-6 gap-1.5 rounded-xl border-4 border-tide
         bg-parchment p-1.5 shadow-pop"
     >
       <Index each={squares()}>
@@ -167,7 +169,7 @@ export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
                   entry().seen || entry().caught
                     ? 'border-line bg-paper hover:bg-line-soft'
                     : 'border-line-soft bg-line-soft/70'
-                }`}
+                } ${entry().species === props.highlight ? 'ring-2 ring-gold ring-offset-1' : ''}`}
                 onClick={() => {
                   props.onOpen(entry().species);
                 }}

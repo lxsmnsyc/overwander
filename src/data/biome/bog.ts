@@ -51,6 +51,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Goodra, weight: 3 },
         { species: Species.FlorgesBlue, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
+        { species: Species.Stunfisk, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Swampert, weight: 2 },
@@ -107,6 +108,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Goodra, weight: 3 },
         { species: Species.FlorgesBlue, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
+        { species: Species.Stunfisk, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Swampert, weight: 2 },
@@ -163,6 +165,7 @@ export default function registerBogSpawns(): void {
       elusive: [
         { species: Species.Goodra, weight: 3 },
         { species: Species.Greninja, weight: 2 },
+        { species: Species.Stunfisk, weight: 6 },
         { species: Species.Eelektross, weight: 4 },
         { species: Species.Chandelure, weight: 5 },
         { species: Species.Seismitoad, weight: 5 },
@@ -225,6 +228,7 @@ export default function registerBogSpawns(): void {
       elusive: [
         { species: Species.Goodra, weight: 3 },
         { species: Species.Greninja, weight: 2 },
+        { species: Species.Stunfisk, weight: 6 },
         { species: Species.Eelektross, weight: 4 },
         { species: Species.Chandelure, weight: 5 },
         { species: Species.Seismitoad, weight: 5 },

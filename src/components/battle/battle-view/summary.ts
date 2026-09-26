@@ -3,6 +3,7 @@ import type Team from '../../../battle/team';
 import type { RaidBattle } from '../../../overworld/raid-battle';
 import type { Species } from '../../../data/ids/species';
 import { getSpeciesData } from '../../../data/species';
+import { Stats } from '../../../data/constants/stats';
 
 /**
  * What a settled fight is read down to for its summary: who dealt
@@ -28,7 +29,17 @@ export interface SideSummary {
   player: string;
   lead: Species;
   dealt: number;
-  units: { species: Species; dealt: number }[];
+  units: SideUnit[];
+}
+
+/** One pokemon's part in a settled fight */
+export interface SideUnit {
+  species: Species;
+  level: number;
+  shiny: boolean;
+  dealt: number;
+  /** What it finished on, as a share of its full health: zero is fainted */
+  health: number;
 }
 
 /**
@@ -89,7 +100,15 @@ export function readSides(built: RaidBattle): SideSummary[] {
         teams.set(unit.team, side);
       }
       side.dealt += unit.dealt;
-      side.units.push({ species: unit.species, dealt: unit.dealt });
+      const most = unit.checkStat(Stats.HP, 0);
+
+      side.units.push({
+        species: unit.species,
+        level: unit.level,
+        shiny: unit.shiny,
+        dealt: unit.dealt,
+        health: most <= 0 ? 0 : Math.max(0, Math.min(1, unit.health / most)),
+      });
     }
   }
   const sides: SideSummary[] = [];

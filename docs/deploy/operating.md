@@ -103,6 +103,29 @@ being used instead of the pooler. It is port 6543, transaction mode.
 The publication is created by the migrations, so the usual cause is a schema
 pushed only in part.
 
+## Running an event
+
+Add a row to `boosts` in the dashboard: a `reward` (`candy` or `gold`), a
+`factor` from 1 to 10, and an `ends_at` in epoch milliseconds. `starts_at`
+defaults to now. Candy covers catches, hatchings and fights; gold covers stops
+and raids. Two boosts on one reward that overlap do not multiply: the larger one
+counts. Each server instance rereads the table once a minute, so a boost starts
+and stops within a minute of its stamps.
+
+Double candy for the weekend, starting now:
+
+```sql
+insert into boosts (reward, factor, ends_at)
+values ('candy', 2, (extract(epoch from now()) * 1000)::bigint + 2 * 86400000);
+```
+
+Only what the server pays can be boosted. What spawns and how often it sparkles
+is rolled on the client from the world seed, so a boost there would have the two
+disagreeing. Players are not told about a boost by itself; announce it.
+
+A boost is deleted a day after it ends, by an hourly `pg_cron` job
+(`sweep-old-boosts`), so there is nothing to tidy up by hand.
+
 ## See also
 
 - [Vercel](vercel.md), for the variables named above

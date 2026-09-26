@@ -20,6 +20,7 @@ import { Moves } from '../data/ids/moves';
 import { getRegisteredMoves } from '../data/moves';
 import BATTLE_TIMEOUT from '../auth/battle-lock';
 import { payDayCeiling } from '../battle/moves/pay-day';
+import { Boost, boostOf, boostedAll } from './boosts';
 import { moveGoldIn } from './profile';
 
 /**
@@ -322,10 +323,12 @@ export default async function recordAftermath(
 
     earned.set(family, (earned.get(family) ?? 0) + 1);
   }
-  await grantCandies(uid, earned);
+  const paidOut = boostedAll(earned, await boostOf(Boost.Candy, Date.now()));
+
+  await grantCandies(uid, paidOut);
   const candies: CandyEarned[] = [];
 
-  for (const [family, count] of earned) {
+  for (const [family, count] of paidOut) {
     candies.push({ family, count });
   }
   return candies;

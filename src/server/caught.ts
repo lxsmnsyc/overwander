@@ -47,6 +47,7 @@ import { readStackIn, readStacksIn, spendStackIn, writeStackIn } from './stacks'
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import { isCatchLocked } from './locks';
 import { asNumber, asNumberArray, asRecord } from './read';
+import { Boost, boostOf, boostedAll } from './boosts';
 import { ServerFlag, isFlagOn } from './flags';
 
 /**
@@ -288,7 +289,8 @@ export async function payCatch(
   if (helpings != null) {
     owe(family, getCatchCandy(encounter.species) * helpings);
   }
-  await grantCandies(uid, earned);
+  // An event's boost multiplies the whole catch, bonuses included
+  await grantCandies(uid, boostedAll(earned, await boostOf(Boost.Candy, now)));
   await mendWithHealBall(ball, buddy);
 }
 

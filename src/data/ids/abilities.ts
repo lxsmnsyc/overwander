@@ -900,6 +900,7 @@ const enum Abilities {
   WinnersShare = 200316,
   Countertune = 200317,
   Overclock = 200318,
+  Turning = 200319,
 }
 
 export default Abilities;

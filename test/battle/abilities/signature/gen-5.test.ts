@@ -16,6 +16,7 @@ import {
   LATCH_ON_SHARE,
   SLEEVE_GUARD_SCALE,
 } from '../../../../src/battle/abilities/signature/tynamo-to-mienfoo';
+import { COAT_TYPES, TURNING_SCALE } from '../../../../src/battle/abilities/signature/deerling';
 import {
   OVERCLOCK_SCALE,
   OVERCLOCK_SHARE,
@@ -2001,5 +2002,86 @@ describe('the unova mythicals', () => {
 
     act(battle, bare);
     expect(bare.health).toBe(spare);
+  });
+});
+
+describe('the deer that wears the year', () => {
+  /** What a plain move is worth thrown by the given coat */
+  function plain(coat: Species, turning: boolean): number {
+    const { battle, teamA, teamB } = createBattle();
+    const deer = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB, [Types.Water]);
+
+    pinRandom(battle, 1);
+    deer.setSpecies(coat);
+    if (turning) {
+      deer.addAbility(Abilities.Turning);
+    }
+    deer.enter();
+    foe.enter();
+
+    return dealDamage(deer, foe, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+  }
+
+  it('throws a plain move as its coat, and each coat is a different element', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const deer = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    deer.addAbility(Abilities.Turning);
+    deer.enter();
+    foe.enter();
+
+    const target = { type: MoveTargetType.Unit, unit: foe } as const;
+
+    for (const [coat, type] of COAT_TYPES) {
+      deer.setSpecies(coat);
+      expect(deer.checkMoveType(Moves.Tackle, target), String(coat)).toBe(type);
+    }
+  });
+
+  it('pays the coat its boost, and pays nothing to a move already that element', () => {
+    // Grass into Water is the same chart square Normal is not, so the
+    // control is the same coat without the ability rather than a
+    // different move
+    expect(plain(Species.Deerling, true) / plain(Species.Deerling, false)).toBeCloseTo(
+      TURNING_SCALE,
+      1,
+    );
+
+    const { battle, teamA, teamB } = createBattle();
+    const deer = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB, [Types.Water]);
+
+    pinRandom(battle, 1);
+    deer.setSpecies(Species.Deerling);
+    deer.enter();
+    foe.enter();
+
+    // Energy Ball is Grass to begin with, so the spring coat turns
+    // nothing and the boost never lands on it
+    const bare = dealDamage(deer, foe, Moves.EnergyBall, 40, Types.Grass, MoveCategories.Special);
+
+    deer.addAbility(Abilities.Turning);
+    expect(
+      dealDamage(deer, foe, Moves.EnergyBall, 40, Types.Grass, MoveCategories.Special),
+    ).toBeCloseTo(bare, 5);
+  });
+
+  it('leaves anything that is not a deer throwing plain moves plain', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const other = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    other.setSpecies(Species.Rattata);
+    other.addAbility(Abilities.Turning);
+    other.enter();
+    foe.enter();
+
+    expect(other.checkMoveType(Moves.Tackle, { type: MoveTargetType.Unit, unit: foe })).toBe(
+      Types.Normal,
+    );
   });
 });

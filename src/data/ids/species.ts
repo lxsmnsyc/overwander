@@ -1018,6 +1018,21 @@ export const TORNADUS_FORMS = [Species.Tornadus, Species.TornadusTherian];
 export const THUNDURUS_FORMS = [Species.Thundurus, Species.ThundurusTherian];
 export const LANDORUS_FORMS = [Species.Landorus, Species.LandorusTherian];
 
+/** Each deer's four coats, spring first, in the order the year turns */
+export const DEERLING_FORMS = [
+  Species.Deerling,
+  Species.DeerlingSummer,
+  Species.DeerlingAutumn,
+  Species.DeerlingWinter,
+];
+
+export const SAWSBUCK_FORMS = [
+  Species.Sawsbuck,
+  Species.SawsbuckSummer,
+  Species.SawsbuckAutumn,
+  Species.SawsbuckWinter,
+];
+
 /** The song and the step, the song first */
 export const MELOETTA_FORMS = [Species.Meloetta, Species.MeloettaPirouette];
 

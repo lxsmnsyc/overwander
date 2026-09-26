@@ -27,6 +27,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
         { species: Species.Minccino, weight: 26 },
         { species: Species.Swablu, weight: 22 },
         { species: Species.Rattata, weight: 30 },
@@ -70,6 +71,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Altaria, weight: 5 },
         { species: Species.Raticate, weight: 10 },
@@ -164,6 +166,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
         { species: Species.Minccino, weight: 26 },
         { species: Species.Swablu, weight: 22 },
         { species: Species.Rattata, weight: 30 },
@@ -209,6 +212,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Altaria, weight: 5 },
         { species: Species.Raticate, weight: 10 },
@@ -298,6 +302,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Eevee, weight: 2 },
@@ -320,6 +325,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Wigglytuff, weight: 5 },
@@ -379,6 +385,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Meowth, weight: 20 },
@@ -403,6 +410,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Wigglytuff, weight: 5 },

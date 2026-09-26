@@ -84,8 +84,7 @@ export async function requireUidFor(
 
 /**
  * The caller of a read, checked by signature alone. Reads move nothing,
- * so they skip the pacing write, the ban and the switches, the same as
- * the browser's reads under row-level security did
+ * so they skip the pacing write, the ban and the switches
  */
 export async function requireReader(token: string): Promise<string> {
   if (token === '') {

@@ -7,7 +7,7 @@ import { asString } from './read';
 
 /**
  * The box reads, in the record shape. Every catch is public to a
- * signed-in player, as it was under row-level security. A list is read
+ * signed-in player. A list is read
  * in two steps: the ids a filter answers, then those catches whole
  */
 
@@ -124,7 +124,7 @@ export async function readMarked(owner: string, mark: MarkColumn): Promise<Revis
 /** What a planned constraint compares against */
 type Value = string | number | boolean | (string | number)[];
 
-/** One comparison, as PostgREST read the same operator. A fragment, never awaited */
+/** One comparison, as the search planner means the operator. A fragment, never awaited */
 // oxlint-disable-next-line typescript/promise-function-async
 function compare(sql: Sql, column: Fragment, op: CatchOp, value: Value): Fragment {
   if (op === 'in' || op === 'nin') {

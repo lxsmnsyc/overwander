@@ -24,10 +24,9 @@ import { TRADE_GOLD_LIMIT } from '../auth/trade-record';
  * Every argument on the other side of a `'use server'` boundary is
  * whatever the caller sent, not what the parameter list says: the
  * types are erased and the call is an ordinary HTTP request anybody
- * can shape. The modules under `src/server/` then read those
- * arguments over the table-owner connection, which row-level security
- * does not bind, so the shape has to be checked here rather than
- * assumed.
+ * can shape. The modules under `src/server/` then act on those
+ * arguments over the table-owner connection, so the shape has to be
+ * checked here rather than assumed.
  *
  * This is a check, not a rule. A schema says an argument is a number
  * in the world or a text id of a sane length; whether the player may
@@ -106,7 +105,7 @@ function whole(least: number, most: number): v.BaseSchema<unknown, unknown, v.Ba
 export const TOKEN = v.string();
 
 /**
- * An account, which is a Supabase uid. Empty stands for nobody, the
+ * An account's uuid. Empty stands for nobody, the
  * way it does everywhere else, and the calls that take it refuse it
  * themselves
  */

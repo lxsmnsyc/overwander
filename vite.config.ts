@@ -23,6 +23,13 @@ import { defineConfig, loadEnv } from 'vite';
 const forTests = process.env.VITEST != null;
 
 /**
+ * Where the tests' own environment lives, read in place of the root
+ * .env so a developer's settings never change what a test sees. The
+ * e2e dev server asks for it through OVERWANDER_ENV_DIR
+ */
+const ENV_DIR = forTests ? 'test/env' : process.env.OVERWANDER_ENV_DIR;
+
+/**
  * One id per build, shared by the client and server bundles. A tab
  * names it on every server call, and a call from a build that is no
  * longer live is refused: server functions are addressed by their
@@ -53,13 +60,14 @@ const ROUTE_RULES = {
  * (see `wrangler.jsonc`), so the app's own output leaves them out
  */
 function publicIgnore(mode: string): string[] {
-  const env = loadEnv(mode, process.cwd(), 'VITE_');
+  const env = loadEnv(mode, ENV_DIR ?? process.cwd(), 'VITE_');
   const hosted = 'VITE_SPRITE_ORIGIN' in env && env.VITE_SPRITE_ORIGIN !== '';
 
   return hosted ? ['public/sprites/**', 'public/sounds/**'] : [];
 }
 
 export default defineConfig(({ mode }) => ({
+  ...(ENV_DIR == null ? {} : { envDir: ENV_DIR }),
   define: {
     'import.meta.env.VITE_BUILD_ID': JSON.stringify(BUILD_ID),
   },
@@ -142,15 +150,12 @@ export default defineConfig(({ mode }) => ({
       },
     ],
     /**
-     * `test/rls` needs the local Supabase stack and clears it between
-     * cases — run inside `pnpm test` it fails on a machine with no
-     * stack, and run beside the e2e suite it deletes the accounts the
-     * browsers are signed in as. It runs on its own as `pnpm
-     * test:rules` (see `vitest.rules.ts`).
+     * `test/db` needs the local database and clears it between cases, so
+     * it runs on its own as `pnpm test:db` (see `vitest.db.ts`).
      *
      * `e2e` is left out because those are Playwright specs, and
      * Playwright refuses to have its `test` called by another runner
      */
-    exclude: ['**/node_modules/**', '**/dist/**', '.output/**', 'test/rls/**', 'e2e/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', '.output/**', 'test/db/**', 'e2e/**'],
   },
 }));

@@ -5,7 +5,7 @@ import { jwt } from 'better-auth/plugins/jwt';
 import bcrypt from 'bcryptjs';
 import { Pool } from 'pg';
 import EMAIL_SIGN_IN from '../auth/sign-in-options';
-import { getSql } from './db';
+import { createProfile } from './profile';
 
 /**
  * Accounts, sessions and sign-in, run by this server with Better Auth.
@@ -17,9 +17,6 @@ import { getSql } from './db';
 
 /** Where the routes are mounted, under the site's own origin */
 export const AUTH_PATH = '/api/auth';
-
-/** The name a profile falls back to, as the old account trigger had it */
-const DEFAULT_NICKNAME = 'Trainer';
 
 function env(name: string): string {
   return process.env[name] ?? '';
@@ -44,7 +41,7 @@ function createAuth() {
     baseURL: baseURL === '' ? undefined : baseURL,
     basePath: AUTH_PATH,
     secret: env('BETTER_AUTH_SECRET'),
-    database: new Pool({ connectionString: env('SUPABASE_DB_URL'), max: 5 }),
+    database: new Pool({ connectionString: env('DATABASE_URL'), max: 5 }),
     advanced: { database: { generateId: 'uuid' } },
     user: {
       modelName: 'users',
@@ -100,14 +97,7 @@ function createAuth() {
       user: {
         create: {
           after: async (user) => {
-            await getSql()`
-              insert into profiles (id, nickname)
-              values (
-                ${user.id},
-                coalesce(nullif(clean_nickname(${user.name}, 24), ''), ${DEFAULT_NICKNAME})
-              )
-              on conflict (id) do nothing
-            `;
+            await createProfile(user.id, user.name);
           },
         },
       },

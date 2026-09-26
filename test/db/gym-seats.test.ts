@@ -255,27 +255,3 @@ describe('the aftermath of a seat fight', () => {
     expect(holder).toHaveLength(0);
   });
 });
-
-describe('who may see a seat', () => {
-  it('shows a freed seat to everybody without naming a holder', async () => {
-    await seatAlice();
-    await sql`
-      update gym_seats set holder = null, snapshot_id = null, ousted = ${alice.uid}, freed_at = 2000
-      where seat_id = ${SEAT}
-    `;
-
-    const seen = await bob.client.from('gym_seats').select('holder, ousted');
-
-    expect(seen.error).toBeNull();
-    expect(seen.data?.length).toBe(1);
-    expect(seen.data?.[0]?.holder).toBeNull();
-
-    // And nobody can free or claim one from a browser
-    const forged = await bob.client
-      .from('gym_seats')
-      .update({ holder: bob.uid })
-      .eq('seat_id', SEAT);
-
-    expect(forged.error).not.toBeNull();
-  });
-});

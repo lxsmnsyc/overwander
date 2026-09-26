@@ -1,11 +1,10 @@
-import { execSync } from 'node:child_process';
 import { defineConfig, devices } from '@playwright/test';
 
 /**
  * The browser tests: the game as a player meets it.
  *
  * Everything else in the repository is tested without a screen. The
- * battle engine, the world derivation and the security policies are
+ * battle engine, the world derivation and the server's rules are
  * all checked by reading what a function returned, which is the right
  * way to check them and says nothing at all about whether the game can
  * be played. The bugs that got through were never wrong answers; they
@@ -14,7 +13,7 @@ import { defineConfig, devices } from '@playwright/test';
  * square. None of those are visible to a unit test.
  *
  * So these drive the real thing: a real browser, the real dev server,
- * and the real local Supabase stack with a real account signing in.
+ * and the real local database with a real account signing in.
  * It is slow by the standards of the rest of the suite and it is
  * meant to be, because nothing is stubbed out.
  */
@@ -30,63 +29,25 @@ const ORIGIN = `http://localhost:${PORT}`;
 const onCI = process.env.CI != null;
 
 /**
- * The stack's own connection values, asked of the CLI so the suite
- * runs on a machine with no `.env` at all. The published local demo
- * keys are the fallback for a stack that is up but a CLI that is not
- * answering; a developer's `.env` is neither read nor written.
- */
-function stackEnv(): Record<string, string> {
-  const fallback = {
-    SUPABASE_URL: 'http://127.0.0.1:54321',
-    SUPABASE_DB_URL: 'postgresql://postgres:postgres@127.0.0.1:54322/postgres',
-    SUPABASE_ANON_KEY:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0',
-    SUPABASE_SERVICE_ROLE_KEY:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU',
-    SUPABASE_JWT_SECRET: 'super-secret-jwt-token-with-at-least-32-characters-long',
-  };
-
-  try {
-    const printed = execSync('supabase status -o env', { encoding: 'utf8' });
-    const parsed: Record<string, string | undefined> = Object.fromEntries(
-      printed
-        .split('\n')
-        .map((line) => /^(\w+)="?([^"]*)"?$/.exec(line))
-        .filter((match): match is RegExpExecArray => match != null)
-        .map((match) => [match[1], match[2]]),
-    );
-
-    return {
-      SUPABASE_URL: parsed.API_URL ?? fallback.SUPABASE_URL,
-      SUPABASE_DB_URL: parsed.DB_URL ?? fallback.SUPABASE_DB_URL,
-      SUPABASE_ANON_KEY: parsed.ANON_KEY ?? fallback.SUPABASE_ANON_KEY,
-      SUPABASE_SERVICE_ROLE_KEY: parsed.SERVICE_ROLE_KEY ?? fallback.SUPABASE_SERVICE_ROLE_KEY,
-      SUPABASE_JWT_SECRET: parsed.JWT_SECRET ?? fallback.SUPABASE_JWT_SECRET,
-    };
-  } catch {
-    return fallback;
-  }
-}
-
-const STACK = stackEnv();
-
-/**
- * What the app is pointed at while the tests run: the local stack,
- * with the real shiny odds a player meets rather than the loud dev
- * ones
+ * What the app is pointed at while the tests run: the local database
+ * `pnpm db` serves, with the real shiny odds a player meets rather than
+ * the loud dev ones
  */
 const STAGED = {
+  // The tests' own environment rather than the developer's .env (see test/env/.env.test)
+  OVERWANDER_ENV_DIR: 'test/env',
   VITE_REAL_SHINY_ODDS: 'true',
+  DATABASE_URL:
+    process.env.DATABASE_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54322/overwander',
   // Better Auth under test: a throwaway secret, and the origin the browsers open
   BETTER_AUTH_SECRET: 'e2e-secret-that-is-at-least-thirty-two-characters',
   BETTER_AUTH_URL: ORIGIN,
-  ...STACK,
 };
 
 export default defineConfig({
   testDir: 'e2e',
   /**
-   * One at a time. The local stack holds a single store, so two specs
+   * One at a time. The local database holds a single store, so two specs
    * signing in and writing catches at once would be reading each
    * other's world
    */

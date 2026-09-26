@@ -7,7 +7,7 @@ import { Species } from '../../src/data/ids/species';
 
 // The server pool reads this lazily at its first query, safely after
 // module load
-process.env.SUPABASE_DB_URL ??= 'postgresql://postgres:postgres@127.0.0.1:54322/postgres';
+process.env.DATABASE_URL ??= 'postgresql://postgres:postgres@127.0.0.1:54322/postgres';
 
 /**
  * The trade flow, run through the real server functions against the
@@ -242,41 +242,5 @@ describe('turning back', () => {
     expect(await cancelTrade(receiver.uid, String(id), NOW)).toBe(false);
     expect(await cancelTrade(proposer.uid, String(id), NOW + 1000)).toBe(true);
     expect(await ownerOf('catch-a')).toBe(proposer.uid);
-  });
-});
-
-describe('who may read a trade', () => {
-  it('shows the row to both parties and to nobody else', async () => {
-    const id = await offerTrade(
-      proposer.uid,
-      { friend: receiver.uid, caught: 'catch-a', asked: '', gold: 0 },
-      NOW,
-      OFFSET,
-    );
-
-    const [mine, theirs, others] = await Promise.all([
-      proposer.client.from('trades').select('id').eq('id', String(id)),
-      receiver.client.from('trades').select('id').eq('id', String(id)),
-      stranger.client.from('trades').select('id').eq('id', String(id)),
-    ]);
-
-    expect(mine.data).toHaveLength(1);
-    expect(theirs.data).toHaveLength(1);
-    expect(others.data).toHaveLength(0);
-  });
-
-  it('is never client-writable', async () => {
-    const written = await proposer.client.from('trades').insert({
-      id: 'forged',
-      proposer: proposer.uid,
-      receiver: receiver.uid,
-      offered_caught: 'catch-a',
-      gold: 0,
-      status: 0,
-      created_at: NOW,
-      utc_offset: 0,
-    });
-
-    expect(written.error).not.toBeNull();
   });
 });

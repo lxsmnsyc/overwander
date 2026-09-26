@@ -59,17 +59,4 @@ describe('switches', () => {
 
     expect((await admit(sql, player.uid, ANY, 0)).closed).toBeNull();
   });
-
-  it('are read by players and written by nobody but the owner', async () => {
-    const { data } = await player.client.from('switches').select('feature');
-
-    expect(data?.length).toBeGreaterThan(0);
-
-    const { error } = await player.client
-      .from('switches')
-      .update({ closed: true })
-      .eq('feature', 'auctions');
-
-    expect(error).not.toBeNull();
-  });
 });

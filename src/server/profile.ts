@@ -101,3 +101,19 @@ export async function writeNickname(uid: string, nickname: string): Promise<void
 export async function writeBuddy(uid: string, catchId: string | null): Promise<void> {
   await getSql()`update profiles set buddy_id = ${catchId} where id = ${uid}`;
 }
+
+/** The name a profile falls back to when the account brings none */
+const DEFAULT_NICKNAME = 'Trainer';
+
+/**
+ * A new account's profile, named after what its provider calls the
+ * player, cleaned by the same rule as a rename. An account that already
+ * has one keeps it
+ */
+export async function createProfile(uid: string, name: string): Promise<void> {
+  await getSql()`
+    insert into profiles (id, nickname)
+    values (${uid}, coalesce(nullif(clean_nickname(${name}, 24), ''), ${DEFAULT_NICKNAME}))
+    on conflict (id) do nothing
+  `;
+}

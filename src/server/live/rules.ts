@@ -75,7 +75,7 @@ export function visibleRow(table: string, row: Row | null, uid: string): Row {
   return keys;
 }
 
-/** One condition a subscription narrows by, as PostgREST's filter syntax writes it */
+/** One condition a subscription narrows by, written `column=eq.value` or `column=in.(a,b)` */
 export interface Filter {
   column: string;
   values: string[];

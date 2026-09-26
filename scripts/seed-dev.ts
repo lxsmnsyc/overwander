@@ -10,7 +10,7 @@ import bcrypt from 'bcryptjs';
 import postgres from 'postgres';
 
 const DB_URL =
-  process.env.SUPABASE_DB_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54322/postgres';
+  process.env.DATABASE_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54322/postgres';
 const PASSWORD = 'walking-in-the-tall-grass';
 
 const sql = postgres(DB_URL, { prepare: false });

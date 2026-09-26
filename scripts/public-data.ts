@@ -35,7 +35,8 @@ for (const line of lines) {
     out.push(line);
     copying = line !== '\\.';
   } else if (line.startsWith('COPY "public".')) {
-    out.push(line);
+    // The baseline seeds some rows, such as the switches, which the dump's own replace
+    out.push(`DELETE FROM ${line.slice('COPY '.length, line.indexOf(' ('))};`, line);
     copying = true;
     tables += 1;
   } else if (line.startsWith('SELECT pg_catalog.setval(\'"public"')) {

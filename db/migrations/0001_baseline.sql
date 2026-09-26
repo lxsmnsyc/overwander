@@ -1763,6 +1763,11 @@ ALTER TABLE ONLY public.trades
 ALTER TABLE ONLY public.trades
     ADD CONSTRAINT trades_receiver_fkey FOREIGN KEY (receiver) REFERENCES public.users(id) ON DELETE CASCADE;
 
+-- Every part of the game a staff switch can close, all open
+INSERT INTO public.switches (feature) VALUES
+  ('everything'), ('auctions'), ('trades'), ('stops'), ('raids'), ('duels'),
+  ('gym-seats'), ('gifts'), ('townsfolk'), ('catching'), ('claims');
+
 -- The sweeps that keep old rows from piling up
 select cron.schedule(
   'sweep-claim-markers',

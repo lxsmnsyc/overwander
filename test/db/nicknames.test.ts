@@ -1,31 +1,32 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { PLAYER_NAME_LIMIT, asNickname, asPlayerName } from '../../src/auth/nickname';
-import { caughtRow, service, sql } from './clients';
+import { randomUUID } from 'node:crypto';
+import { actor, caughtRow, sql } from './clients';
+import { createProfile } from '../../src/server/profile';
 import { Acquisition } from '../../src/auth/caught-record';
 import { setNickname } from '../../src/server/caught';
 
 /**
- * The nickname columns, which are the half of the rule the app cannot
- * enforce: `profiles` is the one row a browser writes for itself, so
- * the column's own constraint is what actually holds. The cleaner is
- * checked against the TypeScript one here too, since a name written
- * by the trigger and a name written by the app must come out the same
+ * The nickname columns, whose own constraint holds whatever writes
+ * them. The SQL cleaner is checked against the TypeScript one here
+ * too, since a name a new account is given and a name the app writes
+ * must come out the same
  */
 
 let uid = '';
 
+/** Delete an account made here; its profile and rows cascade with it */
+async function forget(account: string): Promise<void> {
+  await sql`delete from users where id = ${account}`;
+}
+
 beforeAll(async () => {
-  const made = await service.auth.admin.createUser({
-    email: `nick-${Date.now()}@example.test`,
-    password: 'walking-in-the-tall-grass',
-    email_confirm: true,
-  });
-  uid = made.data.user?.id ?? '';
+  ({ uid } = await actor('nick'));
 });
 
 afterAll(async () => {
   await sql`delete from caught where owner = ${uid}`;
-  await service.auth.admin.deleteUser(uid);
+  await forget(uid);
 });
 
 describe('the columns refuse what the app would have cleaned', () => {
@@ -89,12 +90,7 @@ describe('a name given before a handover', () => {
   };
 
   it('stays its first trainer’s to change', async () => {
-    const second = await service.auth.admin.createUser({
-      email: `nick-second-${Date.now()}@example.test`,
-      password: 'walking-in-the-tall-grass',
-      email_confirm: true,
-    });
-    const other = second.data.user?.id ?? '';
+    const { uid: other } = await actor('nick-second');
 
     // Held by whoever it was handed to, named by whoever caught it
     await plant('nick-traded', other, [uid, other]);
@@ -113,7 +109,7 @@ describe('a name given before a handover', () => {
     expect(await setNickname(other, 'nick-traded', 'Zap')).toBe('Zap');
 
     await sql`delete from caught where id = 'nick-traded'`;
-    await service.auth.admin.deleteUser(other);
+    await forget(other);
   });
 
   it('is the holder’s own where the pokemon never changed hands', async () => {
@@ -164,32 +160,26 @@ describe('the two cleaners agree', () => {
 
 describe('a new account', () => {
   it('is given a cleaned provider name, or Trainer', async () => {
-    const made = await service.auth.admin.createUser({
-      email: `trig-${Date.now()}@example.test`,
-      password: 'walking-in-the-tall-grass',
-      email_confirm: true,
-      user_metadata: { full_name: '\u{1f525} Ash\u202E Ketchum of Pallet Town \u{1f525}' },
-    });
-    const other = made.data.user?.id ?? '';
+    const other = randomUUID();
+
+    await sql`insert into users (id, name, email, email_verified) values (${other}, '', ${`trig-${other}@example.test`}, true)`;
+    await createProfile(other, '\u{1f525} Ash\u202E Ketchum of Pallet Town \u{1f525}');
+
     const rows = await sql`select nickname from profiles where id = ${other}`;
 
     // Cut to the limit, which is where the name runs out rather than
     // where the word does
     expect(rows[0]?.nickname).toBe(asPlayerName('Ash Ketchum of Pallet Town'));
     expect(rows[0]?.nickname).toHaveLength(PLAYER_NAME_LIMIT);
-    await service.auth.admin.deleteUser(other);
+    await forget(other);
 
-    const blank = await service.auth.admin.createUser({
-      email: `trig2-${Date.now()}@example.test`,
-      password: 'walking-in-the-tall-grass',
-      email_confirm: true,
-      user_metadata: { full_name: '\u{1f525}' },
-    });
-    const none = blank.data.user?.id ?? '';
+    const none = randomUUID();
 
+    await sql`insert into users (id, name, email, email_verified) values (${none}, '', ${`trig-${none}@example.test`}, true)`;
+    await createProfile(none, '\u{1f525}');
     expect((await sql`select nickname from profiles where id = ${none}`)[0]?.nickname).toBe(
       'Trainer',
     );
-    await service.auth.admin.deleteUser(none);
+    await forget(none);
   });
 });

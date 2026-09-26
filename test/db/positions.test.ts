@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { type Actor, actor, clearAll, sql } from './clients';
 import { readPosition, readPositions } from '../../src/server/positions';
+import { WORLD_GENERATION } from '../../src/overworld/current';
 
 /**
  * Reading where people are standing, against the real database. The
@@ -19,7 +20,7 @@ beforeAll(async () => {
 
   await sql`
     insert into positions (player, generation, chunk_x, chunk_y, cell_x, cell_y, moved_at)
-    values (${walker.uid}, 1, 3, -4, 5, 6, 1000)
+    values (${walker.uid}, ${WORLD_GENERATION}, 3, -4, 5, 6, 1000)
   `;
 });
 

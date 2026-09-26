@@ -54,10 +54,12 @@ describe('what a reader sees', () => {
   it('follows exactly the tables the migration triggers on', () => {
     const triggered: string[] = [];
 
-    for (const file of readdirSync('supabase/migrations')) {
-      const text = readFileSync(`supabase/migrations/${file}`, 'utf8');
+    for (const file of readdirSync('db/migrations')) {
+      const text = readFileSync(`db/migrations/${file}`, 'utf8');
 
-      for (const match of text.matchAll(/create trigger live_changes after .* on (\w+)/g)) {
+      for (const match of text.matchAll(
+        /create trigger live_changes after .* on (?:public\.)?(\w+)/gi,
+      )) {
         triggered.push(match[1]);
       }
     }

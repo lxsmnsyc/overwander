@@ -2,7 +2,7 @@ import { REALTIME_SUBSCRIBE_STATES, type RealtimeChannel } from '@supabase/supab
 import { readOnly, serverCallsSeen } from '../utils/server-calls';
 import { asNumber, asRecord, asString } from './__normalize';
 import getIdToken from './session';
-import { requireUid } from '../server/auth';
+import { requireReader } from '../server/auth';
 import check, { TOKEN, UID } from '../server/validate';
 import { readBag } from '../server/inventory';
 import getSupabase from './supabase';
@@ -66,7 +66,7 @@ async function readWholeOnServer(
   'use server';
   check(TOKEN, token);
   check(UID, player);
-  const uid = await requireUid(token);
+  const uid = await requireReader(token);
 
   return player === uid ? readBag(uid) : { items: [], candies: [] };
 }

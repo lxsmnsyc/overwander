@@ -7,7 +7,7 @@ import {
   readPokedex as readStoredDex,
 } from '../server/pokedex';
 import getIdToken from './session';
-import { requireUid } from '../server/auth';
+import { requireReader } from '../server/auth';
 import {
   DEX_CAUGHT,
   DEX_SEEN,
@@ -59,7 +59,7 @@ async function readPokedexOnServer(token: string, player: string): Promise<Store
   'use server';
   check(TOKEN, token);
   check(UID, player);
-  const uid = await requireUid(token);
+  const uid = await requireReader(token);
 
   return player === uid
     ? readStoredDex(uid)
@@ -98,7 +98,7 @@ async function getCaughtSpeciesCountOnServer(token: string, player: string): Pro
   'use server';
   check(TOKEN, token);
   check(UID, player);
-  const uid = await requireUid(token);
+  const uid = await requireReader(token);
 
   return player === uid ? readCaughtEntryCount(uid) : 0;
 }

@@ -11,7 +11,7 @@ import SafariSession, {
   encounterKey,
 } from '../overworld/safari';
 import { safariContextOf } from '../overworld/safari-context';
-import { requireUid, requireUidFor } from '../server/auth';
+import { requireReader, requireUid, requireUidFor } from '../server/auth';
 import { Feature } from '../server/switches';
 import { Pace } from '../server/pace';
 import check, { GAME_ID, ID, LOCALE, OFFSET, TOKEN, UID } from '../server/validate';
@@ -111,7 +111,7 @@ async function getRetiredKeysOnServer(token: string, player: string): Promise<st
   'use server';
   check(TOKEN, token);
   check(UID, player);
-  const uid = await requireUid(token);
+  const uid = await requireReader(token);
 
   return player === uid ? readRetiredKeys(uid) : [];
 }
@@ -295,7 +295,7 @@ async function readTallyOnServer(token: string, spawn: string): Promise<unknown>
   'use server';
   check(TOKEN, token);
   check(ID, spawn);
-  return readSafariTally(spawn, await requireUid(token));
+  return readSafariTally(spawn, await requireReader(token));
 }
 readOnly(readTallyOnServer);
 

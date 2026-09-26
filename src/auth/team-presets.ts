@@ -1,7 +1,7 @@
 import { readOnly } from '../utils/server-calls';
 import type { TeamPresetRecord } from './team-preset-record';
 import getIdToken from './session';
-import { requireUid } from '../server/auth';
+import { requireReader, requireUid } from '../server/auth';
 import check, { ID, NICKNAME, PARTY, TOKEN, UID } from '../server/validate';
 import {
   readTeamPresets as readOnServer,
@@ -30,7 +30,7 @@ async function listTeamPresetsOnServer(
   'use server';
   check(TOKEN, token);
   check(UID, player);
-  const uid = await requireUid(token);
+  const uid = await requireReader(token);
 
   return player === uid ? readOnServer(uid) : [];
 }

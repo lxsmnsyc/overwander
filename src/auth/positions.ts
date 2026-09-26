@@ -1,7 +1,7 @@
 import { readOnly } from '../utils/server-calls';
 import { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
-import { requireUid } from '../server/auth';
+import { requireReader, requireUid } from '../server/auth';
 import { Pace } from '../server/pace';
 import check, {
   CELL_COORDINATE,
@@ -56,7 +56,7 @@ async function getPositionOnServer(token: string, player: string): Promise<Posit
   'use server';
   check(TOKEN, token);
   check(UID, player);
-  const uid = await requireUid(token);
+  const uid = await requireReader(token);
 
   return player === uid ? readPosition(uid) : null;
 }

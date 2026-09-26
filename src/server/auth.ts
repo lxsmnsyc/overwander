@@ -97,6 +97,24 @@ export async function requireUidFor(
   return admitCaller(token, pace, cost, feature);
 }
 
+/**
+ * The caller of a read, checked by signature alone. Reads move nothing,
+ * so they skip the pacing write, the ban and the switches, the same as
+ * the browser's reads under row-level security did
+ */
+export async function requireReader(token: string): Promise<string> {
+  if (token === '') {
+    throw new Error('Not signed in');
+  }
+
+  const uid = (await verify(token)).sub;
+
+  if (uid == null || uid === '') {
+    throw new Error('Not signed in');
+  }
+  return uid;
+}
+
 async function admitCaller(
   token: string,
   pace: Pace | undefined,

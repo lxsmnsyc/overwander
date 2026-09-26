@@ -3,7 +3,7 @@ import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import Npc from '../data/overworld/npc';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-import { requireUid, requireUidFor } from '../server/auth';
+import { requireReader, requireUidFor } from '../server/auth';
 import { readVisited } from '../server/npcs/visits';
 import { Feature } from '../server/switches';
 import check, {
@@ -753,6 +753,6 @@ async function hasVisitedOnServer(token: string, marker: string): Promise<boolea
   'use server';
   check(TOKEN, token);
   check(ID, marker);
-  return readVisited(await requireUid(token), marker);
+  return readVisited(await requireReader(token), marker);
 }
 readOnly(hasVisitedOnServer);

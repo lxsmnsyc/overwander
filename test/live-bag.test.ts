@@ -41,7 +41,7 @@ vi.mock('solid-js/web', async (original) => ({
   getRequestEvent: () => ({ locals: {} }),
 }));
 vi.mock('../src/auth/session', () => ({ default: async () => Promise.resolve('token') }));
-vi.mock('../src/server/auth', () => ({ requireUid: async () => Promise.resolve(uid) }));
+vi.mock('../src/server/auth', () => ({ requireReader: async () => Promise.resolve(uid) }));
 vi.mock('../src/server/inventory', () => ({
   readBag: async () => {
     reads += 1;

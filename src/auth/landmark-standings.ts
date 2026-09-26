@@ -6,7 +6,7 @@ import { RaidKind, raidId } from './raid-record';
 import { seatId } from './gym-seat-record';
 import { stopIdOf } from './stop-record';
 import getIdToken from './session';
-import { requireUid } from '../server/auth';
+import { requireReader } from '../server/auth';
 import check, { STANDING_IDS, TOKEN, UID } from '../server/validate';
 import {
   type StandingIds,
@@ -124,7 +124,7 @@ async function readStandingsOnServer(
   check(TOKEN, token);
   check(UID, player);
   check(STANDING_IDS, ids);
-  const uid = await requireUid(token);
+  const uid = await requireReader(token);
 
   return readStandingRows(uid, player === uid ? ids : { ...EMPTY_IDS, seats: ids.seats });
 }

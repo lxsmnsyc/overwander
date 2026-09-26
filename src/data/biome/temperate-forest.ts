@@ -27,6 +27,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
         { species: Species.Ledyba, weight: 20 },
         { species: Species.Pineco, weight: 20 },
         { species: Species.Scyther, weight: 5 },
@@ -50,6 +51,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Ledian, weight: 8 },
         { species: Species.Scizor, weight: 5 },
@@ -66,6 +68,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
         { species: Species.Chatot, weight: 6 },
@@ -111,6 +114,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
         { species: Species.Ledyba, weight: 20 },
         { species: Species.Pineco, weight: 20 },
         { species: Species.Scyther, weight: 5 },
@@ -134,6 +138,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Ledian, weight: 8 },
         { species: Species.Scizor, weight: 5 },
@@ -150,6 +155,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
         { species: Species.Chatot, weight: 6 },
@@ -189,6 +195,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
         { species: Species.Zorua, weight: 20 },
         { species: Species.Shuppet, weight: 20 },
         { species: Species.Venonat, weight: 20 },
@@ -208,6 +215,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },
         { species: Species.Raichu, weight: 5 },
@@ -226,6 +234,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Honchkrow, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Pachirisu, weight: 8 },
         { species: Species.Rotom, weight: 6 },
         { species: Species.Rotom, weight: 6 },
@@ -257,6 +266,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Deerling, weight: 18 },
         { species: Species.Zorua, weight: 20 },
         { species: Species.Shuppet, weight: 20 },
         { species: Species.Paras, weight: 20 },
@@ -277,6 +287,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },
         { species: Species.Raichu, weight: 5 },
@@ -296,6 +307,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Honchkrow, weight: 6 },
       ],
       elusive: [
+        { species: Species.Emolga, weight: 8 },
         { species: Species.Pachirisu, weight: 8 },
         { species: Species.Rotom, weight: 6 },
         { species: Species.Rotom, weight: 6 },

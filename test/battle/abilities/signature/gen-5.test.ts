@@ -16,6 +16,18 @@ import {
   LATCH_ON_SHARE,
   SLEEVE_GUARD_SCALE,
 } from '../../../../src/battle/abilities/signature/tynamo-to-mienfoo';
+import { COAT_TYPES, TURNING_SCALE } from '../../../../src/battle/abilities/signature/deerling';
+import { GLIDEWAKE_CAP } from '../../../../src/battle/abilities/signature/emolga';
+import {
+  BAREHIDE_STAGES,
+  DEEP_HOLD_STAGES,
+  FEATHERSTONE_SHARE,
+  FOSSIL_THRESHOLD,
+  HERD_BOND_SHARE,
+  SHELL_THIEF_STAGES,
+  SHOCKMUD_SCALE,
+  STILL_WATER_SCALE,
+} from '../../../../src/battle/abilities/signature/tirtouga-to-bouffalant';
 import {
   OVERCLOCK_SCALE,
   OVERCLOCK_SHARE,
@@ -2001,5 +2013,391 @@ describe('the unova mythicals', () => {
 
     act(battle, bare);
     expect(bare.health).toBe(spare);
+  });
+});
+
+describe('the deer that wears the year', () => {
+  /** What a plain move is worth thrown by the given coat */
+  function plain(coat: Species, turning: boolean): number {
+    const { battle, teamA, teamB } = createBattle();
+    const deer = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB, [Types.Water]);
+
+    pinRandom(battle, 1);
+    deer.setSpecies(coat);
+    if (turning) {
+      deer.addAbility(Abilities.Turning);
+    }
+    deer.enter();
+    foe.enter();
+
+    return dealDamage(deer, foe, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+  }
+
+  it('throws a plain move as its coat, and each coat is a different element', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const deer = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    deer.addAbility(Abilities.Turning);
+    deer.enter();
+    foe.enter();
+
+    const target = { type: MoveTargetType.Unit, unit: foe } as const;
+
+    for (const [coat, type] of COAT_TYPES) {
+      deer.setSpecies(coat);
+      expect(deer.checkMoveType(Moves.Tackle, target), String(coat)).toBe(type);
+    }
+  });
+
+  it('pays the coat its boost, and pays nothing to a move already that element', () => {
+    // Grass into Water is the same chart square Normal is not, so the
+    // control is the same coat without the ability rather than a
+    // different move
+    expect(plain(Species.Deerling, true) / plain(Species.Deerling, false)).toBeCloseTo(
+      TURNING_SCALE,
+      1,
+    );
+
+    const { battle, teamA, teamB } = createBattle();
+    const deer = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB, [Types.Water]);
+
+    pinRandom(battle, 1);
+    deer.setSpecies(Species.Deerling);
+    deer.enter();
+    foe.enter();
+
+    // Energy Ball is Grass to begin with, so the spring coat turns
+    // nothing and the boost never lands on it
+    const bare = dealDamage(deer, foe, Moves.EnergyBall, 40, Types.Grass, MoveCategories.Special);
+
+    deer.addAbility(Abilities.Turning);
+    expect(
+      dealDamage(deer, foe, Moves.EnergyBall, 40, Types.Grass, MoveCategories.Special),
+    ).toBeCloseTo(bare, 5);
+  });
+
+  it('leaves anything that is not a deer throwing plain moves plain', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const other = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    other.setSpecies(Species.Rattata);
+    other.addAbility(Abilities.Turning);
+    other.enter();
+    foe.enter();
+
+    expect(other.checkMoveType(Moves.Tackle, { type: MoveTargetType.Unit, unit: foe })).toBe(
+      Types.Normal,
+    );
+  });
+});
+
+describe('the glider nothing has a hand on', () => {
+  it('rises a stage for each move it lands, and stops at its cap', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const emolga = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    emolga.addAbility(Abilities.Glidewake);
+    emolga.enter();
+    foe.enter();
+
+    for (let landed = 1; landed <= GLIDEWAKE_CAP + 2; landed++) {
+      dealDamage(emolga, foe, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+      expect(emolga.stages[Stages.Evasion]).toBe(Math.min(landed, GLIDEWAKE_CAP));
+    }
+  });
+
+  it('loses the whole wake the moment something reaches it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const emolga = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    emolga.addAbility(Abilities.Glidewake);
+    emolga.enter();
+    foe.enter();
+
+    dealDamage(emolga, foe, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+    dealDamage(emolga, foe, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+    expect(emolga.stages[Stages.Evasion]).toBe(GLIDEWAKE_CAP);
+
+    foe.damage({ type: EffectType.Move, move: Moves.Tackle, unit: foe }, emolga, 5, 0);
+
+    // The whole wake, not a stage of it
+    expect(emolga.stages[Stages.Evasion]).toBe(0);
+  });
+
+  it('gives back only what it took, leaving another source standing', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const emolga = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    emolga.addAbility(Abilities.Glidewake);
+    emolga.enter();
+    foe.enter();
+
+    emolga.addStage(Stages.Evasion, 2, NONE_CAUSE);
+    dealDamage(emolga, foe, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+    expect(emolga.stages[Stages.Evasion]).toBe(3);
+
+    foe.damage({ type: EffectType.Move, move: Moves.Tackle, unit: foe }, emolga, 5, 0);
+
+    // The two it was already standing on are not the wake's to take
+    expect(emolga.stages[Stages.Evasion]).toBe(2);
+  });
+});
+
+describe('the gap between the fossils and the bull', () => {
+  it('holds the shell at half health once, and pays a guard for it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const turtle = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    turtle.addAbility(Abilities.DeepHold);
+    turtle.enter();
+    foe.enter();
+
+    const max = turtle.checkStat(Stats.HP, 0);
+    const half = max * FOSSIL_THRESHOLD;
+
+    foe.damage({ type: EffectType.Move, move: Moves.Tackle, unit: foe }, turtle, max, 0);
+    expect(turtle.health).toBe(half);
+    expect(turtle.stages[Stages.Defense]).toBe(DEEP_HOLD_STAGES);
+
+    // Once a battle: the second blow goes through
+    foe.damage({ type: EffectType.Move, move: Moves.Tackle, unit: foe }, turtle, max, 0);
+    expect(turtle.alive).toBe(false);
+  });
+
+  it('lets a blow that stops above half through untouched', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const turtle = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    turtle.addAbility(Abilities.DeepHold);
+    turtle.enter();
+    foe.enter();
+
+    const max = turtle.checkStat(Stats.HP, 0);
+
+    foe.damage({ type: EffectType.Move, move: Moves.Tackle, unit: foe }, turtle, max * 0.25, 0);
+    expect(turtle.health).toBe(max * 0.75);
+    expect(turtle.stages[Stages.Defense]).toBe(0);
+  });
+
+  it('heals the bird back once it first falls under half', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const bird = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    bird.addAbility(Abilities.Featherstone);
+    bird.enter();
+    foe.enter();
+
+    const max = bird.checkStat(Stats.HP, 0);
+
+    foe.damage({ type: EffectType.Move, move: Moves.Tackle, unit: foe }, bird, max * 0.6, 0);
+    expect(bird.health).toBe(max * 0.4 + max * FEATHERSTONE_SHARE);
+
+    // Spent: falling under half a second time pays nothing
+    const held = bird.health;
+
+    foe.damage({ type: EffectType.Move, move: Moves.Tackle, unit: foe }, bird, held * 0.5, 0);
+    expect(bird.health).toBe(held * 0.5);
+  });
+
+  it('moves one guard off each enemy it first strikes, and no more', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const bug = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    bug.addAbility(Abilities.ShellThief);
+    bug.enter();
+    foe.enter();
+
+    dealDamage(bug, foe, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+    expect(foe.stages[Stages.Defense]).toBe(-SHELL_THIEF_STAGES);
+    expect(bug.stages[Stages.Defense]).toBe(SHELL_THIEF_STAGES);
+
+    // One shell per enemy, however often it presses the same one
+    dealDamage(bug, foe, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+    expect(foe.stages[Stages.Defense]).toBe(-SHELL_THIEF_STAGES);
+    expect(bug.stages[Stages.Defense]).toBe(SHELL_THIEF_STAGES);
+  });
+
+  it('takes nothing off an enemy it only reached with a special move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const bug = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    bug.addAbility(Abilities.ShellThief);
+    bug.enter();
+    foe.enter();
+
+    dealDamage(bug, foe, Moves.Swift, 40, Types.Normal, MoveCategories.Special);
+    expect(foe.stages[Stages.Defense]).toBe(0);
+  });
+
+  it('refuses a stolen guard and answers with the other one', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const snail = createUnit(battle, teamA);
+    const thief = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    snail.addAbility(Abilities.Barehide);
+    thief.addAbility(Abilities.ShellThief);
+    snail.enter();
+    thief.enter();
+
+    dealDamage(thief, snail, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+
+    // The pair cancel: the thief gets its stage, the snail keeps its own
+    expect(snail.stages[Stages.Defense]).toBe(0);
+    expect(snail.stages[Stages.SpecialDefense]).toBe(BAREHIDE_STAGES);
+    expect(thief.stages[Stages.Defense]).toBe(SHELL_THIEF_STAGES);
+  });
+
+  it('keeps its own Defense drops, which nobody else threw', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const snail = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    snail.addAbility(Abilities.Barehide);
+    snail.enter();
+    foe.enter();
+
+    snail.addStage(Stages.Defense, -2, {
+      type: EffectType.Move,
+      move: Moves.Tackle,
+      unit: snail,
+    });
+    expect(snail.stages[Stages.Defense]).toBe(-2);
+    expect(snail.stages[Stages.SpecialDefense]).toBe(0);
+  });
+
+  it('casts its spores over the field as it goes', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const mushroom = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 0);
+    mushroom.addAbility(Abilities.Sporeburst);
+    mushroom.enter();
+    foe.enter();
+
+    const cast: Moves[] = [];
+
+    battle.on(BattleEvents.UnitTriggerMove, 0, (event) => {
+      cast.push(event.move);
+    });
+    mushroom.damage(
+      { type: EffectType.Move, move: Moves.Tackle, unit: foe },
+      mushroom,
+      mushroom.checkStat(Stats.HP, 0),
+      0,
+    );
+    expect(mushroom.alive).toBe(false);
+    expect(cast).toContain(Moves.StunSpore);
+  });
+
+  it('slows what an enemy casts, and leaves its own casting alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const jelly = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    jelly.addAbility(Abilities.StillWater);
+    jelly.enter();
+    foe.enter();
+
+    const target = { type: MoveTargetType.Unit, unit: jelly } as const;
+    const plain = jelly.checkMoveCastTime(Moves.SolarBeam, {
+      type: MoveTargetType.Unit,
+      unit: foe,
+    });
+
+    expect(foe.checkMoveCastTime(Moves.SolarBeam, target)).toBeCloseTo(
+      plain * STILL_WATER_SCALE,
+      5,
+    );
+
+    // Its own side casts at the speed it always did
+    expect(jelly.checkMoveCastTime(Moves.SolarBeam, { type: MoveTargetType.Unit, unit: foe })).toBe(
+      plain,
+    );
+  });
+
+  it('presses its Ground moves harder and leaves the rest alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const fish = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    fish.addAbility(Abilities.Shockmud);
+    fish.enter();
+    foe.enter();
+
+    const target = { type: MoveTargetType.Unit, unit: foe } as const;
+    const plainGround = foe.checkMovePower(Moves.Earthquake, target) ?? 0;
+    const plainNormal = foe.checkMovePower(Moves.Tackle, target) ?? 0;
+
+    expect(fish.checkMovePower(Moves.Earthquake, target)).toBeCloseTo(
+      plainGround * SHOCKMUD_SCALE,
+      5,
+    );
+    expect(fish.checkMovePower(Moves.Tackle, target)).toBe(plainNormal);
+  });
+
+  it('paralyses on a Ground move when the roll lands', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const fish = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 0);
+    fish.addAbility(Abilities.Shockmud);
+    fish.enter();
+    foe.enter();
+
+    dealDamage(fish, foe, Moves.Earthquake, 40, Types.Ground, MoveCategories.Physical);
+    expect(foe.status[Statuses.Paralyzed]).toBeDefined();
+  });
+
+  it('counts the herd at its back, and forgets what has fallen', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const bull = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    bull.addAbility(Abilities.HerdBond);
+    bull.enter();
+    mate.enter();
+    foe.enter();
+
+    const alone = foe.checkStat(Stats.Attack, 0);
+
+    expect(bull.checkStat(Stats.Attack, 0)).toBe(alone * (1 + HERD_BOND_SHARE));
+
+    mate.damage(
+      { type: EffectType.Move, move: Moves.Tackle, unit: foe },
+      mate,
+      mate.checkStat(Stats.HP, 0),
+      0,
+    );
+    expect(bull.checkStat(Stats.Attack, 0)).toBe(alone);
   });
 });

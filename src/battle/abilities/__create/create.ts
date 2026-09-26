@@ -136,7 +136,7 @@ export function createContactHazard(
 /**
  * An ability that keeps its holder out of arm's reach: none of its
  * moves count as contact, so nothing that answers a touch ever gets
- * to answer. Long Reach, and Remoraid's Standoff
+ * to answer. Long Reach
  */
 export function createNoContactAbility(
   ability: Abilities,

@@ -1,14 +1,23 @@
 import { For, type JSX, Show } from 'solid-js';
-import { isGuarded } from '../../../../auth/caught-record';
 import { isEgg } from '../../../../auth/egg';
 import type { Items } from '../../../../data/ids/items';
 import type { Moves } from '../../../../data/ids/moves';
 import { getRecallableMoves, getTutorableMoves } from '../../../../data/overworld/npc';
 import CatchPicker, { type CatchOption } from '../../../catches/catch-picker';
 import { MoveLine } from '../../../catches/TeachMoveDialog';
-import Price from './price';
-import { DialogSection, List, ListRow, Meta, Note, RowButton } from '../../../styled';
-import { CENTRED } from '../shared';
+import FeeLine from './price';
+import AnimatedSprite from '../../../sprites/AnimatedSprite';
+import { getCatchName, isGuarded, isShiny } from '../../../../auth/caught-record';
+import { Genders } from '../../../../data/ids/species';
+import {
+  Button,
+  DialogSection,
+  LIST_PAGE,
+  List,
+  ListRow,
+  RowButton,
+  createPager,
+} from '../../../styled';
 
 /**
  * The two counters that sell a move: the reminder, who gives back what
@@ -35,38 +44,6 @@ interface MoveCounterProps {
  * until one is on it: what has been forgotten, or what can be taught,
  * is a question about a particular pokemon
  */
-function Lessons(props: {
-  moves: Moves[];
-  chosen: Moves | null;
-  busy: boolean;
-  said: string;
-  onChoose: (move: Moves) => void;
-}): JSX.Element {
-  return (
-    <>
-      <Meta>{props.said}</Meta>
-      <List>
-        <For each={props.moves}>
-          {(move) => (
-            <ListRow selected={props.chosen === move}>
-              <RowButton
-                pressed={props.chosen === move}
-                disabled={props.busy}
-                onClick={() => {
-                  props.onChoose(move);
-                }}
-              >
-                <MoveLine move={move} />
-              </RowButton>
-            </ListRow>
-          )}
-        </For>
-      </List>
-    </>
-  );
-}
-
-/** The option the counter has picked, or null */
 function pickedOf(props: MoveCounterProps): CatchOption | null {
   for (const option of props.options) {
     if (option.id === props.picked) {
@@ -76,93 +53,132 @@ function pickedOf(props: MoveCounterProps): CatchOption | null {
   return null;
 }
 
-export function ReminderCounter(props: MoveCounterProps): JSX.Element {
+/**
+ * The counter both of them keep, in two steps: the box to pick from,
+ * then that pokemon on its own with the moves on offer, so the choice
+ * never scrolls away under the list
+ */
+function MoveCounter(
+  props: MoveCounterProps & {
+    verb: string;
+    empty: string;
+    heading: string;
+    counted: string;
+    movesOf: (option: CatchOption) => Moves[];
+  },
+): JSX.Element {
   const standing = (): CatchOption | null => pickedOf(props);
+  const moves = (): Moves[] => {
+    const option = standing();
 
-  /**
-   * What he could give this one back: everything its species learns by
-   * levelling up to its level, minus the moves it still knows
-   */
-  const forgotten = (option: CatchOption): Moves[] =>
-    getRecallableMoves(option.caught.species, option.caught.level, option.caught.moves);
+    return option == null ? [] : props.movesOf(option);
+  };
+  const page = createPager(moves, LIST_PAGE);
 
   return (
-    <DialogSection class={CENTRED}>
-      <Price fee={props.fee} scales={props.scales} />
+    <DialogSection class="flex flex-col gap-3">
+      <FeeLine fee={props.fee} scales={props.scales} />
 
-      {/* Both inputs are on the counter the moment he is walked up to:
-          the pokemon, and what that pokemon has lost. There is nothing
-          to agree to first — what he offers *is* the two of them — so
-          the button is the only step, and it stays dead until they are
-          both filled in and a scale is in the bag.
-
-          The pickers are inline rather than dialogs of their own,
-          since this is already one */}
-      <CatchPicker
-        inline
-        options={props.options}
-        value={props.picked}
-        verb="Remind"
-        empty="You have nothing that has forgotten anything."
-        filter={(option) =>
-          !isEgg(option.caught) && !option.fighting && forgotten(option).length > 0
+      <Show
+        when={standing()}
+        fallback={
+          <>
+            <span class="text-xs font-semibold text-muted uppercase">Choose a pokemon</span>
+            <CatchPicker
+              inline
+              options={props.options}
+              value={props.picked}
+              verb={props.verb}
+              empty={props.empty}
+              filter={(option) =>
+                !isEgg(option.caught) && !option.fighting && props.movesOf(option).length > 0
+              }
+              reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
+              note={(option) => `${props.movesOf(option).length} ${props.counted}`}
+              onPick={props.onPick}
+            />
+          </>
         }
-        reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
-        note={(option) => `${forgotten(option).length} forgotten`}
-        onPick={props.onPick}
-      />
-
-      <Show when={standing()} fallback={<Note>Choose one of yours first.</Note>}>
+      >
         {(option) => (
-          <Lessons
-            moves={forgotten(option())}
-            chosen={props.chosen}
-            busy={props.busy}
-            said="What it has learned and lost:"
-            onChoose={props.onChoose}
-          />
+          <>
+            <ListRow class="flex-nowrap">
+              <span class="flex size-12 shrink-0 items-center justify-center">
+                <AnimatedSprite
+                  species={option().caught.species}
+                  shiny={isShiny(option().caught)}
+                  female={option().caught.gender === Genders.Female}
+                  direction="DownLeft"
+                  still
+                  fill
+                  label=""
+                />
+              </span>
+              <span class="min-w-0 grow truncate text-left font-semibold">
+                Lv. {option().caught.level} {getCatchName(option().caught)}
+              </span>
+              <Button
+                disabled={props.busy}
+                onClick={() => {
+                  props.onPick(null);
+                }}
+              >
+                Change
+              </Button>
+            </ListRow>
+
+            <span class="text-xs font-semibold text-muted uppercase">
+              {props.heading} · {moves().length}
+            </span>
+            <List>
+              <For each={page.shown()}>
+                {(move) => (
+                  <ListRow selected={props.chosen === move}>
+                    <RowButton
+                      pressed={props.chosen === move}
+                      disabled={props.busy}
+                      onClick={() => {
+                        props.onChoose(move);
+                      }}
+                    >
+                      <MoveLine move={move} />
+                    </RowButton>
+                  </ListRow>
+                )}
+              </For>
+            </List>
+            {page.controls()}
+          </>
         )}
       </Show>
     </DialogSection>
   );
 }
 
-export function TutorCounter(props: MoveCounterProps): JSX.Element {
-  const standing = (): CatchOption | null => pickedOf(props);
-
-  const lessons = (option: CatchOption): Moves[] =>
-    getTutorableMoves(option.caught.species, option.caught.moves);
-
+export function ReminderCounter(props: MoveCounterProps): JSX.Element {
   return (
-    <DialogSection class={CENTRED}>
-      <Price fee={props.fee} scales={props.scales} />
+    <MoveCounter
+      {...props}
+      verb="Remind"
+      empty="You have nothing that has forgotten anything."
+      heading="What it has learned and lost"
+      counted="forgotten"
+      movesOf={(option) =>
+        getRecallableMoves(option.caught.species, option.caught.level, option.caught.moves)
+      }
+    />
+  );
+}
 
-      {/* The same counter the reminder keeps: both inputs on it at
-          once, and the button dead until they are filled in and the
-          fee is in the purse */}
-      <CatchPicker
-        inline
-        options={props.options}
-        value={props.picked}
-        verb="Teach"
-        empty="You have nothing he could teach."
-        filter={(option) => !isEgg(option.caught) && !option.fighting && lessons(option).length > 0}
-        reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
-        note={(option) => `${lessons(option).length} to learn`}
-        onPick={props.onPick}
-      />
-
-      <Show when={standing()} fallback={<Note>Choose one of yours first.</Note>}>
-        {(option) => (
-          <Lessons
-            moves={lessons(option())}
-            chosen={props.chosen}
-            busy={props.busy}
-            said="What he could teach it:"
-            onChoose={props.onChoose}
-          />
-        )}
-      </Show>
-    </DialogSection>
+export function TutorCounter(props: MoveCounterProps): JSX.Element {
+  return (
+    <MoveCounter
+      {...props}
+      verb="Teach"
+      empty="You have nothing he could teach."
+      heading="What he could teach it"
+      counted="to learn"
+      movesOf={(option) => getTutorableMoves(option.caught.species, option.caught.moves)}
+    />
   );
 }

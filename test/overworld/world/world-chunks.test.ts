@@ -170,22 +170,19 @@ describe('world', () => {
     }
     expect(shapes.size).toBeGreaterThan(1);
 
-    // ...and the zone it is read in is not one of the things that
-    // makes it a different stash. The offset comes from the caller, so
-    // a zone in the seed or in the claim marker would be a stash dug
-    // up once per zone by a client saying it was somewhere else
+    // ...and every zone reads its own ground, the way it reads its own
+    // spawns: one stash and one claim marker per real zone
     const NOW = 1_700_000_000_000;
-    const buried = new Set<string>();
+    const zones = new Set<number>();
     const markers = new Set<string>();
 
     for (let offset = MIN_OFFSET; offset <= MAX_OFFSET; offset++) {
       const zoned = new ChunkSnapshot(chunk, NOW + asOffset(offset) * 60 * 1000, offset);
 
-      buried.add(JSON.stringify([...zoned.getItemCaches()]));
+      zones.add(asOffset(offset));
       markers.add(`${zoned.groundKey}@${zoned.landmarkTimestamp}`);
     }
-    expect(buried.size).toBe(1);
-    expect(markers.size).toBe(1);
+    expect(markers.size).toBe(zones.size);
   });
 
   it('rolls what is happening over the chunk rather than pinning it', () => {

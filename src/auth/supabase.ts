@@ -3,6 +3,7 @@ import {
   type SupabaseClient,
   createClient,
 } from '@supabase/supabase-js';
+import measuredFetch from './traffic';
 
 /**
  * The browser's one Supabase client: auth session, reads under RLS,
@@ -52,7 +53,12 @@ export default function getSupabase(): SupabaseClient {
           'Vite reads .env at startup, so restart `pnpm dev` after editing it.',
       );
     }
-    client = createClient(config.url, config.key);
+    // Development measures what every read downloads; see ./traffic
+    client = createClient(
+      config.url,
+      config.key,
+      import.meta.env.DEV ? { global: { fetch: measuredFetch() } } : {},
+    );
   }
   return client;
 }

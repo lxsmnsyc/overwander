@@ -6,7 +6,7 @@ import { Slots, countAbilitySlots, mostSlots } from '../../../../data/constants/
 import type { Items } from '../../../../data/ids/items';
 import { getAwakenableAbilities } from '../../../../data/overworld/npc';
 import CatchPicker, { type CatchOption } from '../../../catches/catch-picker';
-import Price from './price';
+import FeeLine from './price';
 import { DialogSection, Meta, Status } from '../../../styled';
 import { canLayEggs } from '../../../../overworld/breeding';
 import { CENTRED } from '../shared';
@@ -246,7 +246,7 @@ function hasSomethingLeft(caught: CatchOption['caught']): boolean {
 export function ChannelerCounter(props: ChannelerCounterProps): JSX.Element {
   return (
     <DialogSection class={CENTRED}>
-      <Price fee={props.fee} scales={props.scales} />
+      <FeeLine fee={props.fee} scales={props.scales} />
 
       {/* The box goes once she has called one up. She has nothing left
           to offer this while, and a box standing under a spent price is

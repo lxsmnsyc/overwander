@@ -892,6 +892,60 @@ export default class SafariSession<
 }
 
 /**
+ * What a session has built up between throws, as the server keeps it.
+ * The server decides every throw, so this is stored beside the
+ * encounter rather than trusted from whichever screen is throwing
+ */
+export interface SafariTally {
+  catchBonus: number;
+  turn: number;
+  throws: number;
+  fed: boolean;
+  fedItem: Items | null;
+}
+
+export function tallyOf(session: SafariSession): SafariTally {
+  return {
+    catchBonus: session.catchBonus,
+    turn: session.turn,
+    throws: session.throws,
+    fed: session.fed,
+    fedItem: session.fedItem,
+  };
+}
+
+/** Put a stored tally back on a fresh session. A missing one is a meeting nobody has thrown at yet */
+export function applyTally(session: SafariSession, tally: SafariTally | null): void {
+  if (tally == null) {
+    return;
+  }
+  session.catchBonus = tally.catchBonus;
+  session.turn = tally.turn;
+  session.throws = tally.throws;
+  session.fed = tally.fed;
+  session.fedItem = tally.fedItem;
+}
+
+/** A tally out of a stored value, or null for anything that is not one */
+export function asSafariTally(value: unknown): SafariTally | null {
+  if (value == null || typeof value !== 'object') {
+    return null;
+  }
+
+  const data: Record<string, unknown> = Object.fromEntries(Object.entries(value));
+  const count = (field: unknown): number =>
+    typeof field === 'number' && Number.isFinite(field) ? field : 0;
+
+  return {
+    catchBonus: typeof data.catchBonus === 'number' && data.catchBonus > 0 ? data.catchBonus : 1,
+    turn: count(data.turn),
+    throws: count(data.throws),
+    fed: data.fed === true,
+    fedItem: typeof data.fedItem === 'number' ? data.fedItem : null,
+  };
+}
+
+/**
  * Whether the ball holds through one shake, given as many aims at it
  * as the player brought. The rolls stop at the first that holds, so a
  * second aim costs a roll only where the first one missed

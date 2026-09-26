@@ -21,7 +21,7 @@ import { MergedLifecycle } from '../../lifecycle';
 import { PASSED_STAGES } from '../../moves/switch-out';
 import type Unit from '../../unit';
 import { hasFreeItemSlot, isWeatherSandstorm, onUnitActs, unitTarget } from '../../utils';
-import { createAbility, createNoContactAbility } from '../__create';
+import { createAbility } from '../__create';
 import {
   allyHolder,
   createMarkAbility,
@@ -1076,9 +1076,41 @@ const chikoritaToCelebi = [
     });
   }),
 
-  // Remoraid: it shoots from where it is, so nothing that answers a
-  // touch ever gets to answer
-  createNoContactAbility(Abilities.Standoff),
+  // Remoraid: a jet that misses glances off onto whoever is standing
+  // nearby. Nothing rolls again, so a ricochet never misses in turn
+  createAbility(Abilities.Ricochet, (battle) =>
+    battle.on(BattleEvents.UnitTriggerMoveMissed, EventPriority.Post, (event) => {
+      const { source, move, target, steps } = event.parent;
+
+      if (
+        !source.alive ||
+        target.type !== MoveTargetType.Unit ||
+        getMoveData(move).target !== MoveTargets.Unit ||
+        !source.hasAbility(Abilities.Ricochet)
+      ) {
+        return;
+      }
+
+      const others: Unit[] = [];
+
+      for (const unit of battle.units()) {
+        if (unit.alive && unit !== target.unit && unit.team.alliance !== source.team.alliance) {
+          others.push(unit);
+        }
+      }
+      if (others.length === 0) {
+        return;
+      }
+
+      const struck = unitTarget(others[Math.floor(battle.random() * others.length)]);
+
+      if (source.checkMoveImmunity(move, struck, source.checkMoveType(move, struck))) {
+        return;
+      }
+      source.triggerAbility(Abilities.Ricochet);
+      source.triggerMoveEffect(move, struck, steps);
+    }),
+  ),
 
   // Delibird: the sack is for somebody else, so it turns up with the
   // parcel already addressed to whoever needs it

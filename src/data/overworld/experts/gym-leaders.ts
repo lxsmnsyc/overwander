@@ -15,12 +15,16 @@ import { getMoveData } from '../../moves';
  */
 
 /**
- * The leaders of the four regions, numbered Kanto's eight, Johto's,
- * Hoenn's, then Sinnoh's. Which of them a country seats is the table
- * below.
+ * The leaders of the five regions, numbered Kanto's eight, Johto's,
+ * Hoenn's, Sinnoh's, then Unova's. Which of them a country seats is
+ * the table below.
  *
- * Hoenn seats nine for eight gyms: Mossdeep is kept by two people,
- * so Tate and Liza are a leader each and share the one badge
+ * Two regions seat more people than they have gyms. Mossdeep is kept
+ * by two, so Tate and Liza are a leader each and share the one badge.
+ * Unova seats thirteen over ten badges: Striaton is kept by three who
+ * each fight a different type, and Nacrene's fight passes to Cheren
+ * in Aspertia a league later, so the Basic Badge has two keepers as
+ * well. Iris is left out, since Opelucid is Drayden's here
  */
 const enum GymLeader {
   Brock = 0,
@@ -56,6 +60,19 @@ const enum GymLeader {
   Byron = 30,
   Candice = 31,
   Volkner = 32,
+  Cilan = 33,
+  Chili = 34,
+  Cress = 35,
+  Lenora = 36,
+  Burgh = 37,
+  Elesa = 38,
+  Clay = 39,
+  Skyla = 40,
+  Brycen = 41,
+  Drayden = 42,
+  Cheren = 43,
+  Roxie = 44,
+  Marlon = 45,
 }
 
 export { GymLeader };
@@ -94,6 +111,19 @@ export const GYM_LEADERS: GymLeader[] = [
   GymLeader.Byron,
   GymLeader.Candice,
   GymLeader.Volkner,
+  GymLeader.Cilan,
+  GymLeader.Chili,
+  GymLeader.Cress,
+  GymLeader.Lenora,
+  GymLeader.Burgh,
+  GymLeader.Elesa,
+  GymLeader.Clay,
+  GymLeader.Skyla,
+  GymLeader.Brycen,
+  GymLeader.Drayden,
+  GymLeader.Cheren,
+  GymLeader.Roxie,
+  GymLeader.Marlon,
 ];
 
 export const GYM_LEADER_NAMES: Record<GymLeader, string> = {
@@ -131,6 +161,21 @@ export const GYM_LEADER_NAMES: Record<GymLeader, string> = {
   [GymLeader.Byron]: 'Byron',
   [GymLeader.Candice]: 'Candice',
   [GymLeader.Volkner]: 'Volkner',
+  [GymLeader.Cilan]: 'Cilan',
+  [GymLeader.Chili]: 'Chili',
+  [GymLeader.Cress]: 'Cress',
+  [GymLeader.Lenora]: 'Lenora',
+  [GymLeader.Burgh]: 'Burgh',
+  [GymLeader.Elesa]: 'Elesa',
+  [GymLeader.Clay]: 'Clay',
+  [GymLeader.Skyla]: 'Skyla',
+  [GymLeader.Brycen]: 'Brycen',
+  // Opelucid is kept by him in Black and by Iris in White, and she
+  // is the one who goes on to be champion, so the gym is his here
+  [GymLeader.Drayden]: 'Drayden',
+  [GymLeader.Cheren]: 'Cheren',
+  [GymLeader.Roxie]: 'Roxie',
+  [GymLeader.Marlon]: 'Marlon',
 };
 
 /** What each leader fields. */
@@ -168,6 +213,23 @@ export const GYM_LEADER_TYPES: Record<GymLeader, Types> = {
   [GymLeader.Byron]: Types.Steel,
   [GymLeader.Candice]: Types.Ice,
   [GymLeader.Volkner]: Types.Electric,
+  // Striaton's three, one gym and three fights
+  [GymLeader.Cilan]: Types.Grass,
+  [GymLeader.Chili]: Types.Fire,
+  [GymLeader.Cress]: Types.Water,
+  [GymLeader.Lenora]: Types.Normal,
+  [GymLeader.Burgh]: Types.Bug,
+  [GymLeader.Elesa]: Types.Electric,
+  [GymLeader.Clay]: Types.Ground,
+  [GymLeader.Skyla]: Types.Flying,
+  [GymLeader.Brycen]: Types.Ice,
+  [GymLeader.Drayden]: Types.Dragon,
+  // The three the sequels seat: Cheren takes Lenora's fight in
+  // another town, and the other two are gyms the first league
+  // never ran
+  [GymLeader.Cheren]: Types.Normal,
+  [GymLeader.Roxie]: Types.Poison,
+  [GymLeader.Marlon]: Types.Water,
 };
 
 export const GYM_LEADER_BADGES: Record<GymLeader, Awards> = {
@@ -206,6 +268,22 @@ export const GYM_LEADER_BADGES: Record<GymLeader, Awards> = {
   [GymLeader.Byron]: Awards.MineBadge,
   [GymLeader.Candice]: Awards.IcicleBadge,
   [GymLeader.Volkner]: Awards.BeaconBadge,
+  // One gym, three people, one badge between them, whichever of the
+  // three fights a challenger
+  [GymLeader.Cilan]: Awards.TrioBadge,
+  [GymLeader.Chili]: Awards.TrioBadge,
+  [GymLeader.Cress]: Awards.TrioBadge,
+  [GymLeader.Lenora]: Awards.BasicBadge,
+  [GymLeader.Burgh]: Awards.InsectBadge,
+  [GymLeader.Elesa]: Awards.BoltBadge,
+  [GymLeader.Clay]: Awards.QuakeBadge,
+  [GymLeader.Skyla]: Awards.JetBadge,
+  [GymLeader.Brycen]: Awards.FreezeBadge,
+  [GymLeader.Drayden]: Awards.LegendBadge,
+  // Aspertia pays what Nacrene paid: the same fight, a league later
+  [GymLeader.Cheren]: Awards.BasicBadge,
+  [GymLeader.Roxie]: Awards.ToxicBadge,
+  [GymLeader.Marlon]: Awards.WaveBadge,
 };
 
 export const GYM_LEADER_CHARSETS: Record<GymLeader, string[]> = {
@@ -242,6 +320,21 @@ export const GYM_LEADER_CHARSETS: Record<GymLeader, string[]> = {
   [GymLeader.Byron]: ['characters/dppt/byron'],
   [GymLeader.Candice]: ['characters/dppt/candice'],
   [GymLeader.Volkner]: ['characters/dppt/volkner'],
+  [GymLeader.Cilan]: ['characters/b2w2/cilan'],
+  [GymLeader.Chili]: ['characters/b2w2/chili'],
+  [GymLeader.Cress]: ['characters/b2w2/cress'],
+  // Lenora and Elesa are each drawn twice, once for Black and White
+  // and once for the sequels, and both looks are the same era
+  [GymLeader.Lenora]: ['characters/b2w2/lenora-1', 'characters/b2w2/lenora-2'],
+  [GymLeader.Burgh]: ['characters/b2w2/burgh'],
+  [GymLeader.Elesa]: ['characters/b2w2/elesa-1', 'characters/b2w2/elesa-2'],
+  [GymLeader.Clay]: ['characters/b2w2/clay'],
+  [GymLeader.Skyla]: ['characters/b2w2/skyla'],
+  [GymLeader.Brycen]: ['characters/b2w2/brycen'],
+  [GymLeader.Drayden]: ['characters/b2w2/drayden'],
+  [GymLeader.Cheren]: ['characters/b2w2/cheren-1', 'characters/b2w2/cheren-2'],
+  [GymLeader.Roxie]: ['characters/b2w2/roxie'],
+  [GymLeader.Marlon]: ['characters/b2w2/marlon'],
 };
 
 /**
@@ -289,6 +382,9 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Winona,
     GymLeader.Juan,
     GymLeader.CrasherWake,
+    GymLeader.Cress,
+    GymLeader.Skyla,
+    GymLeader.Marlon,
   ],
   [Biome.Ocean]: [
     GymLeader.Misty,
@@ -296,8 +392,17 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Winona,
     GymLeader.Juan,
     GymLeader.CrasherWake,
+    GymLeader.Cress,
+    GymLeader.Skyla,
+    GymLeader.Marlon,
   ],
-  [Biome.CoralReef]: [GymLeader.Misty, GymLeader.Juan, GymLeader.CrasherWake],
+  [Biome.CoralReef]: [
+    GymLeader.Misty,
+    GymLeader.Juan,
+    GymLeader.CrasherWake,
+    GymLeader.Cress,
+    GymLeader.Marlon,
+  ],
   [Biome.Beach]: [
     GymLeader.Misty,
     GymLeader.Falkner,
@@ -308,9 +413,26 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Brawly,
     GymLeader.CrasherWake,
     GymLeader.Maylene,
+    GymLeader.Cress,
+    GymLeader.Lenora,
+    GymLeader.Skyla,
+    GymLeader.Cheren,
+    GymLeader.Marlon,
   ],
-  [Biome.Mangrove]: [GymLeader.Koga, GymLeader.Bugsy, GymLeader.Norman],
-  [Biome.KelpForest]: [GymLeader.Misty, GymLeader.Juan, GymLeader.CrasherWake],
+  [Biome.Mangrove]: [
+    GymLeader.Koga,
+    GymLeader.Bugsy,
+    GymLeader.Norman,
+    GymLeader.Burgh,
+    GymLeader.Roxie,
+  ],
+  [Biome.KelpForest]: [
+    GymLeader.Misty,
+    GymLeader.Juan,
+    GymLeader.CrasherWake,
+    GymLeader.Cress,
+    GymLeader.Marlon,
+  ],
   [Biome.PolarOcean]: [
     GymLeader.Misty,
     GymLeader.Falkner,
@@ -319,6 +441,10 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Juan,
     GymLeader.CrasherWake,
     GymLeader.Candice,
+    GymLeader.Cress,
+    GymLeader.Skyla,
+    GymLeader.Brycen,
+    GymLeader.Marlon,
   ],
   [Biome.Glacier]: [
     GymLeader.Misty,
@@ -326,6 +452,9 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Juan,
     GymLeader.CrasherWake,
     GymLeader.Candice,
+    GymLeader.Cress,
+    GymLeader.Brycen,
+    GymLeader.Marlon,
   ],
   [Biome.Tundra]: [
     GymLeader.Misty,
@@ -337,6 +466,12 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Norman,
     GymLeader.CrasherWake,
     GymLeader.Candice,
+    GymLeader.Cress,
+    GymLeader.Lenora,
+    GymLeader.Skyla,
+    GymLeader.Brycen,
+    GymLeader.Cheren,
+    GymLeader.Marlon,
   ],
   [Biome.Swamp]: [
     GymLeader.Koga,
@@ -344,8 +479,16 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Bugsy,
     GymLeader.Norman,
     GymLeader.Fantina,
+    GymLeader.Burgh,
+    GymLeader.Roxie,
   ],
-  [Biome.Bog]: [GymLeader.Koga, GymLeader.Morty, GymLeader.Norman, GymLeader.Fantina],
+  [Biome.Bog]: [
+    GymLeader.Koga,
+    GymLeader.Morty,
+    GymLeader.Norman,
+    GymLeader.Fantina,
+    GymLeader.Roxie,
+  ],
   [Biome.TropicalSeasonalForest]: [
     GymLeader.Erika,
     GymLeader.Bugsy,
@@ -354,6 +497,11 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Norman,
     GymLeader.Winona,
     GymLeader.Gardenia,
+    GymLeader.Cilan,
+    GymLeader.Lenora,
+    GymLeader.Burgh,
+    GymLeader.Skyla,
+    GymLeader.Cheren,
   ],
   [Biome.Grassland]: [
     GymLeader.Erika,
@@ -363,6 +511,11 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Norman,
     GymLeader.Winona,
     GymLeader.Gardenia,
+    GymLeader.Cilan,
+    GymLeader.Lenora,
+    GymLeader.Burgh,
+    GymLeader.Skyla,
+    GymLeader.Cheren,
   ],
   [Biome.TemperateForest]: [
     GymLeader.Erika,
@@ -372,6 +525,10 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Norman,
     GymLeader.Gardenia,
     GymLeader.Fantina,
+    GymLeader.Cilan,
+    GymLeader.Lenora,
+    GymLeader.Burgh,
+    GymLeader.Cheren,
   ],
   [Biome.Woodland]: [
     GymLeader.Erika,
@@ -379,6 +536,10 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Whitney,
     GymLeader.Norman,
     GymLeader.Gardenia,
+    GymLeader.Cilan,
+    GymLeader.Lenora,
+    GymLeader.Burgh,
+    GymLeader.Cheren,
   ],
   [Biome.Savanna]: [
     GymLeader.LtSurge,
@@ -390,6 +551,9 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Brawly,
     GymLeader.Maylene,
     GymLeader.Volkner,
+    GymLeader.Elesa,
+    GymLeader.Clay,
+    GymLeader.Skyla,
   ],
   [Biome.Steppe]: [
     GymLeader.LtSurge,
@@ -398,14 +562,25 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Wattson,
     GymLeader.Winona,
     GymLeader.Volkner,
+    GymLeader.Elesa,
+    GymLeader.Clay,
+    GymLeader.Skyla,
   ],
-  [Biome.Desert]: [GymLeader.Blaine, GymLeader.Giovanni, GymLeader.Flannery],
+  [Biome.Desert]: [
+    GymLeader.Blaine,
+    GymLeader.Giovanni,
+    GymLeader.Flannery,
+    GymLeader.Chili,
+    GymLeader.Clay,
+  ],
   [Biome.Volcano]: [
     GymLeader.Blaine,
     GymLeader.Jasmine,
     GymLeader.Clair,
     GymLeader.Flannery,
     GymLeader.Byron,
+    GymLeader.Chili,
+    GymLeader.Drayden,
   ],
   [Biome.ColdDesert]: [
     GymLeader.Brock,
@@ -416,6 +591,8 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Roark,
     GymLeader.Byron,
     GymLeader.Candice,
+    GymLeader.Clay,
+    GymLeader.Brycen,
   ],
   [Biome.Mountain]: [
     GymLeader.Brock,
@@ -428,6 +605,8 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Roark,
     GymLeader.Maylene,
     GymLeader.Byron,
+    GymLeader.Clay,
+    GymLeader.Drayden,
   ],
   [Biome.AlpineTundra]: [
     GymLeader.Brock,
@@ -438,6 +617,9 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Winona,
     GymLeader.Roark,
     GymLeader.Candice,
+    GymLeader.Skyla,
+    GymLeader.Brycen,
+    GymLeader.Drayden,
   ],
   [Biome.Badlands]: [
     GymLeader.Brock,
@@ -449,6 +631,7 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Roark,
     GymLeader.Maylene,
     GymLeader.Byron,
+    GymLeader.Clay,
   ],
   [Biome.RockyCoast]: [
     GymLeader.Brock,
@@ -456,6 +639,7 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Roxanne,
     GymLeader.Winona,
     GymLeader.Roark,
+    GymLeader.Skyla,
   ],
   [Biome.TemperateRainforest]: [
     GymLeader.Sabrina,
@@ -464,8 +648,15 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Tate,
     GymLeader.Liza,
     GymLeader.Fantina,
+    GymLeader.Burgh,
   ],
-  [Biome.MontaneForest]: [GymLeader.Sabrina, GymLeader.Bugsy, GymLeader.Tate, GymLeader.Liza],
+  [Biome.MontaneForest]: [
+    GymLeader.Sabrina,
+    GymLeader.Bugsy,
+    GymLeader.Tate,
+    GymLeader.Liza,
+    GymLeader.Burgh,
+  ],
   [Biome.Beyond]: [
     GymLeader.Sabrina,
     GymLeader.Morty,
@@ -473,12 +664,15 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Tate,
     GymLeader.Liza,
     GymLeader.Fantina,
+    GymLeader.Drayden,
   ],
   [Biome.TropicalRainforest]: [
     GymLeader.Bugsy,
     GymLeader.Erika,
     GymLeader.Norman,
     GymLeader.Gardenia,
+    GymLeader.Cilan,
+    GymLeader.Burgh,
   ],
   [Biome.Shrubland]: [
     GymLeader.Whitney,
@@ -486,6 +680,10 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Norman,
     GymLeader.Wattson,
     GymLeader.Volkner,
+    GymLeader.Lenora,
+    GymLeader.Burgh,
+    GymLeader.Elesa,
+    GymLeader.Cheren,
   ],
   [Biome.Taiga]: [
     GymLeader.Bugsy,
@@ -493,6 +691,9 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
     GymLeader.Pryce,
     GymLeader.Winona,
     GymLeader.Candice,
+    GymLeader.Burgh,
+    GymLeader.Skyla,
+    GymLeader.Brycen,
   ],
 };
 

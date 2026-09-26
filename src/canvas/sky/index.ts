@@ -13,7 +13,7 @@ import {
 import { type SkyCamera, eachDrop, eachWorldDrop, paintFall, zoomFor } from './drops';
 import { FALL_TABLE } from './fall';
 import { FLASHES, flashAt } from './flash';
-import { CAVERN, LAMPLIT, type Lamp, lampMask } from './lamp';
+import { CAVERN, LAMPLIT, type Lamp, batchLamplit, paintLamplit } from './lamp';
 import { SHEENS, batchSheen, paintSheen } from './sheen';
 import { SHOWERS, meteorAt, paintShower, worldMeteorAt } from './shower';
 import { BLENDS, MODES, WASHES } from './wash';
@@ -110,7 +110,8 @@ export function batchWash(
   weather: Weather,
   clock: number,
   strength = 1,
-  lamps: Lamp[] = [],
+  /** Nothing, for a board that lights what it draws rather than veiling it */
+  lamps: Lamp[] | null = [],
   camera?: SkyCamera,
 ): boolean {
   if (weather === Weather.Clear || strength <= 0 || !(width > 0) || !(height > 0)) {
@@ -119,26 +120,8 @@ export function batchWash(
   const wash = WASHES[weather];
   const dark = LAMPLIT[weather];
 
-  if (dark != null) {
-    const cut = lampMask(width, height, dark, lamps, strength);
-
-    if (cut != null) {
-      batch.invalidate(cut);
-      batch.quad(
-        cut,
-        { x: 0, y: 0, width: cut.width, height: cut.height },
-        [
-          { x: 0, y: 0 },
-          { x: width, y: 0 },
-          { x: width, y: height },
-          { x: 0, y: height },
-        ],
-        1,
-        undefined,
-        'smooth',
-        'over',
-      );
-    }
+  if (dark != null && lamps != null) {
+    batchLamplit(batch, width, height, dark, lamps, strength);
   }
   if (wash != null) {
     batch.solid(
@@ -280,16 +263,7 @@ export function paintCavern(
     return;
   }
 
-  const cut = lampMask(width, height, CAVERN, lamps, 1);
-
-  if (cut == null) {
-    return;
-  }
-  context.save();
-  context.globalCompositeOperation = 'source-over';
-  context.globalAlpha = 1;
-  context.drawImage(cut, 0, 0, width, height);
-  context.restore();
+  paintLamplit(context, width, height, CAVERN, lamps, 1);
 }
 
 /**
@@ -306,24 +280,7 @@ export function batchCavern(
     return false;
   }
 
-  const cut = lampMask(width, height, CAVERN, lamps, 1);
-
-  if (cut == null) {
-    return false;
-  }
-  batch.invalidate(cut);
-  batch.quad(
-    cut,
-    { x: 0, y: 0, width: cut.width, height: cut.height },
-    [
-      { x: 0, y: 0 },
-      { x: width, y: 0 },
-      { x: width, y: height },
-      { x: 0, y: height },
-    ],
-    1,
-  );
-  return true;
+  return batchLamplit(batch, width, height, CAVERN, lamps, 1);
 }
 
 export default function paintSky(
@@ -354,13 +311,7 @@ export default function paintSky(
     context.fillRect(0, 0, width, height);
   }
   if (dark != null) {
-    const cut = lampMask(width, height, dark, lamps, strength);
-
-    if (cut != null) {
-      context.globalCompositeOperation = 'source-over';
-      context.globalAlpha = 1;
-      context.drawImage(cut, 0, 0, width, height);
-    }
+    paintLamplit(context, width, height, dark, lamps, strength);
   }
   context.globalCompositeOperation = 'source-over';
   context.globalAlpha = strength;

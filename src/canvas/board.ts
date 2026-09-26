@@ -621,7 +621,9 @@ export function boardClipMatrix(
     -DEPTH_RANGE * rise * sin * cell,
     -DEPTH_RANGE * depth * cell,
     -DEPTH_RANGE * rise * cos * cell,
-    0,
+    // Measured from the player's floor like the rows above: counted from
+    // level 0, high ground runs past the clip planes and is cut away
+    DEPTH_RANGE * depth * standing,
 
     -lens * sin * cell,
     0,
@@ -770,8 +772,9 @@ export function projectCellQuad(index: number, yaw: Yaw = 0): ProjectedPoint[] {
 
 /**
  * Which way each compass point is, and where its mark stands. They are
- * ground points, so they turn with the board on their own; which one
- * is north is answered here rather than left to the order they come in
+ * ground points on the player's own floor, so they turn with the board
+ * and climb with the player; which one is north is answered here
+ * rather than left to the order they come in
  */
 export function compassMarks(yaw: Yaw = 0): (ProjectedPoint & { north: boolean })[] {
   const marks: (ProjectedPoint & { north: boolean })[] = [];
@@ -784,7 +787,11 @@ export function compassMarks(yaw: Yaw = 0): (ProjectedPoint & { north: boolean }
   ] as const) {
     marks.push({
       north,
-      ...projectGround({ u: 0.5 + du * looking.compass, v: 0.5 + dv * looking.compass }, yaw),
+      ...projectAir(
+        { u: 0.5 + du * looking.compass, v: 0.5 + dv * looking.compass },
+        standing,
+        yaw,
+      ),
     });
   }
   return marks;

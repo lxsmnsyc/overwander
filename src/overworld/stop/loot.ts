@@ -1,68 +1,62 @@
 import Landmark from '../../data/overworld/landmark';
-import type { Items } from '../../data/ids/items';
 import type Biome from '../../data/ids/biome';
-import { type ItemBandOdds, pickItem } from '../../data/overworld/item-pool';
+import { type ItemBandOdds, type ItemStack, pickItems } from '../../data/overworld/item-pool';
 import { getItemPool } from '../../data/overworld/biome-items';
 import { RocketRank } from '../chunk-snapshot';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE } from '../raid';
 
-/** What a beaten stop leaves behind besides the purse */
 /**
  * What the rungs above a gym leave behind besides the purse, as the
- * bands their one item is rolled off.
+ * bands their stash is rolled off. The gym leader is not here: theirs
+ * is a TM of their own type rather than a draw.
  *
- * The gym leader is not here: theirs is a TM of their own type rather
- * than a draw. An executive drops what a thief was carrying, which is
- * the rare band and little else; the Elite Four reach the prized band
- * properly; and a champion mostly does.
+ * Each rung reads three bands. A thief and the Elite Four reach from
+ * scarce to prized; a champion and a legend from rare to special.
+ * The champion's special is thin because the seat can be fought again
+ * every window, and a legend, one window in sixty-four, is where the
+ * special band is really reached.
  *
- * **Nobody drops out of the special band.** A chunk keeps a champion's
- * seat the way it keeps a gym's, and it can be fought again every
- * window: at that frequency a Master Ball or a Shiny Charm would stop
- * being a find of a lifetime within a week. The special band stays
- * the ground's alone.
- *
- * Each set sums to 1, so none of them can fall through to the base
- * band either
+ * Each set sums to 1, so none of them falls through to the commoner
+ * bands
  */
 export const EXECUTIVE_LOOT_ODDS: ItemBandOdds = {
   special: 0,
   prized: 0.05,
-  rare: 0.95,
+  rare: 0.25,
+  scarce: 0.7,
   uncommon: 0,
 };
 
 export const ELITE_LOOT_ODDS: ItemBandOdds = {
   special: 0,
   prized: 0.3,
-  rare: 0.7,
+  rare: 0.45,
+  scarce: 0.25,
   uncommon: 0,
 };
 
 export const CHAMPION_LOOT_ODDS: ItemBandOdds = {
-  special: 0,
+  special: 1 / 200,
   prized: 0.6,
-  rare: 0.4,
+  rare: 1 - 1 / 200 - 0.6,
+  scarce: 0,
   uncommon: 0,
 };
 
-/**
- * The one exception, and the reason a legend is worth walking into: a
- * rare or a special at twenty to one. It is the only fight in the
- * game that reaches the special band, which is what one window in
- * sixty-four should be worth
- */
 export const LEGEND_LOOT_ODDS: ItemBandOdds = {
-  special: 1 / 21,
-  prized: 0,
-  rare: 20 / 21,
+  special: 0.1,
+  prized: 0.65,
+  rare: 0.25,
+  scarce: 0,
   uncommon: 0,
 };
 
 /**
- * The one item a beaten expert leaves, or null for the rungs that
- * leave none: a duelling trainer, a Team Rocket grunt, and the gym
- * leader, whose own gift is a machine
+ * What a beaten expert leaves: a stash of one to three kinds, rolled
+ * the way an item cache is, so the opening draw sets the best band and
+ * a special is a single piece. Empty for the rungs that leave nothing:
+ * a duelling trainer, a Team Rocket grunt, and the gym leader, whose
+ * own gift is a machine
  */
 export function rollStopLoot(
   landmark: Landmark,
@@ -70,21 +64,21 @@ export function rollStopLoot(
   biome: Biome,
   random: () => number,
   legend = false,
-): Items | null {
+): ItemStack[] {
   // What they were carrying is what the ground they were beaten on
   // has to offer, the same as a stash dug up beside them
   const pool = getItemPool(biome);
 
   if (landmark === Landmark.EliteFour) {
-    return pickItem(pool, random, ELITE_LOOT_ODDS);
+    return pickItems(pool, random, ELITE_LOOT_ODDS);
   }
   if (landmark === Landmark.Champion) {
-    return pickItem(pool, random, legend ? LEGEND_LOOT_ODDS : CHAMPION_LOOT_ODDS);
+    return pickItems(pool, random, legend ? LEGEND_LOOT_ODDS : CHAMPION_LOOT_ODDS);
   }
   if (landmark === Landmark.TeamRocket && rank === RocketRank.Executive) {
-    return pickItem(pool, random, EXECUTIVE_LOOT_ODDS);
+    return pickItems(pool, random, EXECUTIVE_LOOT_ODDS);
   }
-  return null;
+  return [];
 }
 
 /**

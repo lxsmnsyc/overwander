@@ -71,9 +71,9 @@ describe('type-enhancing items', () => {
     }
 
     // Beside the wild species that carry them, the ground hides the
-    // whole family on the plates' terms: thin slots in the rare band
+    // whole family in thin slots of the scarce band
     for (const item of TYPE_BOOSTERS.keys()) {
-      expect(getItemBand(item)).toBe('rare');
+      expect(getItemBand(item)).toBe('scarce');
     }
   });
 
@@ -147,9 +147,13 @@ describe('type-enhancing items', () => {
 
   it('registers every incense as a held, stocked smoke', () => {
     const pooled = new Set(
-      [...ITEM_POOL.base, ...ITEM_POOL.uncommon, ...ITEM_POOL.rare, ...ITEM_POOL.special].map(
-        (entry) => entry.item,
-      ),
+      [
+        ...ITEM_POOL.base,
+        ...ITEM_POOL.uncommon,
+        ...ITEM_POOL.scarce,
+        ...ITEM_POOL.rare,
+        ...ITEM_POOL.special,
+      ].map((entry) => entry.item),
     );
 
     for (const item of INCENSES) {
@@ -211,9 +215,13 @@ describe('type-enhancing items', () => {
 
   it('lists the gear the market carries and hides the rest of it', () => {
     const pooled = new Set(
-      [...ITEM_POOL.base, ...ITEM_POOL.uncommon, ...ITEM_POOL.rare, ...ITEM_POOL.special].map(
-        (entry) => entry.item,
-      ),
+      [
+        ...ITEM_POOL.base,
+        ...ITEM_POOL.uncommon,
+        ...ITEM_POOL.scarce,
+        ...ITEM_POOL.rare,
+        ...ITEM_POOL.special,
+      ].map((entry) => entry.item),
     );
 
     for (const [item, [name]] of MARKET_GEAR) {
@@ -227,8 +235,8 @@ describe('type-enhancing items', () => {
       expect(data.flags & ItemFlags.Marketable).not.toBe(0);
       expect(data.buy).toBe(GEAR_PRICE);
       expect(isGear(item)).toBe(true);
-      // Listed, and hidden in the rare band's thin slots besides
-      expect(getItemBand(item)).toBe('rare');
+      // Listed, and hidden in the scarce band's thin slots besides
+      expect(getItemBand(item)).toBe('scarce');
     }
 
     for (const [item] of FOUND_GEAR) {
@@ -275,6 +283,7 @@ describe('type-enhancing items', () => {
       [
         ...ITEM_POOL.base,
         ...ITEM_POOL.uncommon,
+        ...ITEM_POOL.scarce,
         ...ITEM_POOL.rare,
         ...ITEM_POOL.prized,
         ...ITEM_POOL.special,

@@ -112,8 +112,7 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                       fill
                     />
                   </span>
-                  {/* The condition reads as a sum with the
-                picture: that shape, plus a trade.
+                  {/* The condition beside the picture.
                 It stays on the row rather than
                 hiding on the button, because it is
                 what the player is working towards
@@ -130,7 +129,6 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                     fallback={<span class="grow text-left text-sm text-muted">ready</span>}
                   >
                     <span class="flex grow items-center gap-1 text-left text-sm text-muted">
-                      <span>+</span>
                       <EvolutionCondition evolution={option().evolution} />
                     </span>
                   </Show>

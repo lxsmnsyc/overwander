@@ -1,6 +1,17 @@
 import type { PlayerIdentity } from '../../auth/user';
-import { For, type JSX, type Resource, Show, Suspense, createResource, from } from 'solid-js';
-import { syncServerClock } from '../../auth/clock';
+import {
+  For,
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createResource,
+  createSignal,
+  from,
+  onCleanup,
+  onMount,
+} from 'solid-js';
+import { localNow, syncServerClock } from '../../auth/clock';
 import { getLocalOffset, toLocalTime } from '../../auth/local-time';
 import {
   type RaidInvite,
@@ -16,8 +27,13 @@ import { type Profile, watchProfile } from '../../auth/profile';
 import { RAID_INTERVAL } from '../../overworld/chunk-snapshot';
 import RaidLobby from './RaidLobby';
 import watchLive from '../app/watch';
-import { Button, List, ListRow, Meta, Note, Panel, RowButton } from '../styled';
+import { Button, LIST_PAGE, List, ListRow, Meta, Note, Panel, createPager } from '../styled';
+import { getSpeciesData } from '../../data/species';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
+import AnimatedSprite from '../sprites/AnimatedSprite';
+import TypeBadge from '../sprites/TypeBadge';
 import { useGame } from '../app/game-context';
+import describeWhere from '../../overworld/bearing';
 
 export interface RaidsTabProps {
   user: PlayerIdentity;
@@ -41,6 +57,60 @@ export interface RaidsTabProps {
  * fetched by name instead, read through `latest` so a row still
  * arriving does not suspend the tab
  */
+/** A small uppercase heading over a list */
+function ListHeading(props: { children: JSX.Element; aside?: JSX.Element }): JSX.Element {
+  return (
+    <div class="flex items-baseline justify-between gap-2">
+      <span class="text-xs font-semibold text-muted uppercase">{props.children}</span>
+      {props.aside}
+    </div>
+  );
+}
+
+/**
+ * One lair as a row: the boss asleep, its name and types, a muted line
+ * under them, and what can be pressed on the right
+ */
+function LairRow(props: {
+  raid: RaidRecord | null;
+  line: JSX.Element;
+  children: JSX.Element;
+}): JSX.Element {
+  return (
+    <ListRow class="flex-nowrap">
+      <span class="flex size-10 shrink-0 items-end justify-center">
+        <Show when={props.raid}>
+          {(raid) => (
+            <AnimatedSprite
+              species={raid().species}
+              animation={SpriteAnim.Sleep}
+              direction="DownLeft"
+              scale={1}
+              label={`${getSpeciesData(raid().species).name}, asleep in the lair`}
+            />
+          )}
+        </Show>
+      </span>
+      <div class="flex min-w-0 grow flex-col gap-0.5">
+        <div class="flex min-w-0 flex-wrap items-center gap-1.5">
+          <span class="truncate font-medium">
+            {props.raid == null ? 'A raid' : getRaidTitle(props.raid)}
+          </span>
+          <Show when={props.raid}>
+            {(raid) => (
+              <For each={getSpeciesData(raid().species).types}>
+                {(type) => <TypeBadge type={type} />}
+              </For>
+            )}
+          </Show>
+        </div>
+        <Meta class="truncate text-left">{props.line}</Meta>
+      </div>
+      <div class="flex shrink-0 gap-1.5">{props.children}</div>
+    </ListRow>
+  );
+}
+
 function InvitedRow(props: {
   invite: RaidInvite;
   known: RaidRecord | undefined;
@@ -64,13 +134,15 @@ function InvitedRow(props: {
   };
 
   return (
-    <ListRow>
-      <RowButton class="font-medium" onClick={props.onOpen}>
-        {raid() == null ? 'A raid' : getRaidTitle(raid()!)}
-      </RowButton>
-      <Meta class="grow">
-        called in by {named()} to {props.invite.role === LobbyRole.Spectator ? 'watch' : 'fight'}
-      </Meta>
+    <LairRow
+      raid={raid()}
+      line={`${named()} called you in to ${
+        props.invite.role === LobbyRole.Spectator ? 'watch' : 'fight'
+      }`}
+    >
+      <Button tone="primary" onClick={props.onOpen}>
+        Open
+      </Button>
       <Button
         onClick={() => {
           declineRaidInvite(props.invite.raid).catch(() => undefined);
@@ -78,7 +150,7 @@ function InvitedRow(props: {
       >
         Dismiss
       </Button>
-    </ListRow>
+    </LairRow>
   );
 }
 
@@ -126,6 +198,26 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
     }
     return ids;
   };
+  const gathering = createPager(() => raids() ?? [], LIST_PAGE);
+
+  /** The player's clock, re-read each minute for the countdown to the next window */
+  const [now, setNow] = createSignal(localNow(props.zone));
+  onMount(() => {
+    const beat = setInterval(() => {
+      setNow(localNow(props.zone));
+    }, 60_000);
+
+    onCleanup(() => {
+      clearInterval(beat);
+    });
+  });
+
+  const nextWindow = (): string => {
+    const minutes = Math.max(1, Math.ceil((RAID_INTERVAL - (now() % RAID_INTERVAL)) / 60_000));
+
+    return `New raids in ${minutes} minute${minutes === 1 ? '' : 's'}`;
+  };
+
   const inviteTo = (id: string): RaidInvite | undefined => {
     for (const invite of invites() ?? []) {
       if (invite.raid === id) {
@@ -142,7 +234,7 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
         fallback={
           <Show when={raids()} fallback={<Note>Loading raids…</Note>}>
             <Show when={(invites() ?? []).length > 0}>
-              <Note>Invited</Note>
+              <ListHeading>Invited</ListHeading>
               <List>
                 <For each={invitedIds()}>
                   {(id) => (
@@ -161,27 +253,32 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
                 </For>
               </List>
             </Show>
+            <ListHeading aside={<Meta>{nextWindow()}</Meta>}>
+              Gathering · {raids()?.length ?? 0}
+            </ListHeading>
             <Show when={raids()?.length} fallback={<Note>No raids are gathering right now.</Note>}>
               <List>
-                <For each={raids()}>
+                <For each={gathering.shown()}>
                   {([id, raid]) => (
-                    <ListRow>
-                      <RowButton
-                        class="font-medium"
+                    <LairRow
+                      raid={raid}
+                      line={`${describeWhere(raid.chunk, game.position())} · ${raid.teams.length} team${
+                        raid.teams.length === 1 ? '' : 's'
+                      }`}
+                    >
+                      <Button
+                        tone="primary"
                         onClick={() => {
                           game.setRaid(id);
                         }}
                       >
-                        {getRaidTitle(raid)}
-                      </RowButton>
-                      <Meta>
-                        chunk {raid.chunk.x}, {raid.chunk.y} · {raid.teams.length} team
-                        {raid.teams.length === 1 ? '' : 's'}
-                      </Meta>
-                    </ListRow>
+                        Open
+                      </Button>
+                    </LairRow>
                   )}
                 </For>
               </List>
+              {gathering.controls()}
             </Show>
           </Show>
         }

@@ -9,7 +9,7 @@ import { CHUNK_CELLS, worldCell } from '../../../src/overworld/chunk';
 import { isRoadAt } from '../../../src/overworld/town';
 import ChunkSnapshot, { PHENOMENON_INTERVAL } from '../../../src/overworld/chunk-snapshot';
 import Landmark from '../../../src/data/overworld/landmark';
-import Phenomenon from '../../../src/data/overworld/phenomenon';
+import Phenomenon, { BIOME_PHENOMENA } from '../../../src/data/overworld/phenomenon';
 import { roleAt } from '../../../src/overworld/ground';
 import { isIslandAt } from '../../../src/overworld/fields';
 import { Depth } from '../../../src/overworld/depth';
@@ -389,7 +389,9 @@ describe('terrain spots', () => {
     let checked = 0;
 
     // A pool is not where the interesting four are: a chunk with dry
-    // ground puts what is going on onto it, so the pond stays a pond
+    // ground puts what is going on onto it, so the pond stays a pond.
+    // What passes overhead is the exception, since it is over the
+    // water rather than in it
     for (let x = 0; x < 25 && checked < 8; x++) {
       for (let y = 0; y < 8 && checked < 8; y++) {
         const chunk = world.getChunk(x, y);
@@ -401,9 +403,14 @@ describe('terrain spots', () => {
         const water = chunk.getSpotCells();
 
         for (let window = 0; window < 6; window++) {
-          for (const cell of new ChunkSnapshot(chunk, window * PHENOMENON_INTERVAL)
-            .getPhenomena()
-            .keys()) {
+          for (const [cell, phenomenon] of new ChunkSnapshot(
+            chunk,
+            window * PHENOMENON_INTERVAL,
+          ).getPhenomena()) {
+            if (water.has(cell)) {
+              expect(phenomenon).toBe(Phenomenon.FlyingShadow);
+              continue;
+            }
             expect(water.has(cell)).toBe(false);
             checked += 1;
           }
@@ -411,6 +418,33 @@ describe('terrain spots', () => {
       }
     }
     expect(checked).toBeGreaterThan(0);
+  });
+
+  it('lets a shadow pass over a pond, where the country has one', () => {
+    const world = new World('overworld');
+    let flown = 0;
+
+    // Something passing overhead is over the water as much as over
+    // the grass, so a pond in a country that has fliers shows one
+    for (let x = 0; x < 40 && flown === 0; x++) {
+      for (let y = 0; y < 40 && flown === 0; y++) {
+        const chunk = world.getChunk(x, y);
+
+        for (let window = 0; window < 24 && flown === 0; window++) {
+          const snapshot = new ChunkSnapshot(chunk, window * PHENOMENON_INTERVAL);
+
+          for (const [cell, phenomenon] of snapshot.getPhenomena()) {
+            if (!chunk.getWaterCells().has(cell) || phenomenon !== Phenomenon.FlyingShadow) {
+              continue;
+            }
+            // Only where the cell's own country flies one
+            expect(BIOME_PHENOMENA[snapshot.biomeAt(cell)]).toContain(Phenomenon.FlyingShadow);
+            flown += 1;
+          }
+        }
+      }
+    }
+    expect(flown).toBeGreaterThan(0);
   });
 
   it('ripples on the open sea, where there is no ground at all', () => {
@@ -428,9 +462,14 @@ describe('terrain spots', () => {
         }
 
         for (let window = 0; window < 6; window++) {
-          for (const phenomenon of new ChunkSnapshot(chunk, window * PHENOMENON_INTERVAL)
-            .getPhenomena()
-            .values()) {
+          const snapshot = new ChunkSnapshot(chunk, window * PHENOMENON_INTERVAL);
+
+          for (const [cell, phenomenon] of snapshot.getPhenomena()) {
+            // Only the cells actually at sea: a border may leave a
+            // sea chunk a corner of the coast, and that corner is dry
+            if (!isOpenSea(snapshot.biomeAt(cell))) {
+              continue;
+            }
             expect(phenomenon).toBe(Phenomenon.RipplingWater);
             checked += 1;
           }

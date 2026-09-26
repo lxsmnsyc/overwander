@@ -52,12 +52,13 @@ import deriveEncounter, {
   bonusMoveSlots,
   fillBonusMoves,
 } from '../overworld/encounter';
-import { grantCatchCandy } from './candy';
+import { getSpeciesData } from '../data/species';
+import { catchCandyWorth } from './candy';
 import { bumpProgress } from './quest-progress';
-import { newDocId, tx } from './db';
+import { type Tx, newDocId, tx } from './db';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
-import { ITEM_STACKS } from '../auth/stacks';
-import { readStacksIn, writeStackIn } from './stacks';
+import { CANDY_STACKS, ITEM_STACKS } from '../auth/stacks';
+import { grantStacksIn, readStacksIn, writeStackIn } from './stacks';
 import { asLocale, isEggRecord, zeroEffortValues } from './catch-fields';
 import {
   BASE_FRIENDSHIP,
@@ -173,6 +174,7 @@ async function writeEgg(
   now: number,
   offset: number,
   locale: string,
+  within?: Tx,
 ): Promise<string> {
   const id = newDocId();
   const zone = asOffset(offset);
@@ -205,7 +207,9 @@ async function writeEgg(
     effortValues: zeroEffortValues(),
   });
 
-  await tx(async (transaction) => {
+  // Inside the caller's transaction where there is one, so an egg a
+  // claim pays lands with the claim's marker or not at all
+  const lay = async (transaction: Tx): Promise<void> => {
     await transaction`
       insert into caught (
         id, owner, type, species, nickname, level, individual_value, trait_value,
@@ -253,8 +257,13 @@ async function writeEgg(
       // begins, egg and all
       history: [{ owner: uid, acquiredAt: foundAt, kind: Acquisition.Egg, ball: fields.ball }],
     });
-  });
+  };
 
+  if (within == null) {
+    await tx(lay);
+  } else {
+    await lay(within);
+  }
   return id;
 }
 
@@ -274,6 +283,7 @@ export async function grantNestEgg(
   now: number,
   offset: number,
   locale: string,
+  within?: Tx,
 ): Promise<string> {
   const hatchling = deriveNestEgg(snapshot, cell, species, uid, EGG_LEVEL);
 
@@ -308,6 +318,7 @@ export async function grantNestEgg(
     now,
     offset,
     locale,
+    within,
   );
 }
 
@@ -454,8 +465,13 @@ export async function recordSteps(
   uid: string,
   reported: number,
   now: number,
+  offset = 0,
 ): Promise<WalkReport | null> {
-  return tx(async (transaction) => {
+  // Counted once the walk has committed, over the pool rather than
+  // inside the transaction: a count that fails must not undo the
+  // walk, and a walk that rolls back must not be counted
+  let counted = 0;
+  const report = await tx(async (transaction) => {
     const profiles = await transaction`select buddy_id from profiles where id = ${uid}`;
     const catchId: unknown = profiles.at(0)?.buddy_id;
 
@@ -529,7 +545,7 @@ export async function recordSteps(
       for (const [item, carried] of stacks) {
         await writeStackIn(transaction, ITEM_STACKS, uid, item, carried + (found.get(item) ?? 0));
       }
-      await bumpProgress(uid, [[Metric.Steps, 0, credited]]);
+      counted = credited;
 
       const picked: { item: Items; amount: number }[] = [];
 
@@ -544,17 +560,22 @@ export async function recordSteps(
     // An egg of the day's own family walks further on the same paces.
     // The credit is clamped again afterwards, since the pacing was
     // measured against what is left rather than what it is worth
-    const steps = caught.steps + Math.min(remaining, creditedEggSteps(caught.species, paced, now));
+    const steps =
+      caught.steps +
+      Math.min(remaining, creditedEggSteps(caught.species, paced, toLocalTime(now, offset)));
 
     // The stamp moves whether or not anything was credited: it is
     // what the next report is measured from, and a refused report
     // should not leave time banked for the one after it
     await updateCaughtIn(transaction, catchId, { steps, steppedAt: now });
-    await bumpProgress(uid, [[Metric.Steps, 0, paced]]);
+    counted = paced;
     // An egg finds nothing: whatever is inside it is not out here
     // looking at the ground
     return { egg: { caught: catchId, steps, hatchSteps: caught.hatchSteps }, picked: [] };
   });
+
+  await bumpProgress(uid, [[Metric.Steps, 0, counted]]);
+  return report;
 }
 
 /**
@@ -599,13 +620,20 @@ export async function hatchEgg(
       // hatching, and what it does now buys friendship
       walked: 0,
     });
+    // The family's candy lands with the hatching, so an egg never
+    // opens without paying it
+    await grantStacksIn(transaction, CANDY_STACKS, uid, [
+      [
+        getSpeciesData(caught.species).family,
+        catchCandyWorth(caught.species, toLocalTime(now, asOffset(offset))),
+      ],
+    ]);
     return { species: caught.species, shiny: caught.shiny };
   });
 
   if (hatched == null) {
     return null;
   }
-  await grantCatchCandy(uid, hatched.species, toLocalTime(now, asOffset(offset)));
   // The dex is told here rather than where the egg was picked up:
   // what is inside a shell is not something the player has met, and an
   // egg that never hatches is a species they never saw. Both tallies

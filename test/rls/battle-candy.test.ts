@@ -5,6 +5,9 @@ import { Species } from '../../src/data/ids/species';
 import registerData from '../../src/data';
 import recordAftermath from '../../src/server/battles';
 import { jsonOf } from '../../src/server/db';
+import { Moves } from '../../src/data/ids/moves';
+import { getCastTime } from '../../src/battle/mechanics/move/timing';
+import { PAY_DAY_COINS_PER_LEVEL } from '../../src/battle/moves/pay-day';
 
 /**
  * What a fought team is paid, run against the real database.
@@ -52,14 +55,15 @@ interface Snapshot {
   nature: number;
   gender: number;
   health: number;
+  moves?: number[];
 }
 
-function snapshot(id: string, species: Species): Snapshot {
-  return { caught: id, species, level: 5, ivs: 0, nature: 0, gender: 0, health: 20 };
+function snapshot(id: string, species: Species, moves: Moves[] = []): Snapshot {
+  return { caught: id, species, level: 5, ivs: 0, nature: 0, gender: 0, health: 20, moves };
 }
 
 /** A battle the player fought, staged the way the server stages one */
-async function stage(outcome: BattleOutcome): Promise<void> {
+async function stage(outcome: BattleOutcome, moves: Moves[] = [], startedAt = 1000): Promise<void> {
   for (const [at] of PARTY.entries()) {
     await sql`insert into caught ${sql(caughtRow(`${MINE}-${at}`, player.uid))}`;
   }
@@ -68,7 +72,7 @@ async function stage(outcome: BattleOutcome): Promise<void> {
     values (${MINE}, ${player.uid}, 0,
             ${jsonOf(
               sql,
-              PARTY.map((one, at) => snapshot(`${MINE}-${at}`, one)),
+              PARTY.map((one, at) => snapshot(`${MINE}-${at}`, one, at === 0 ? moves : [])),
             )})
   `;
   // The other side belongs to nobody, the way a grunt's party does
@@ -82,7 +86,7 @@ async function stage(outcome: BattleOutcome): Promise<void> {
   `;
   await sql`
     insert into battles (id, raid_id, species, outcome, started_at, limits)
-    values (${BATTLE}, null, 0, ${outcome}, 1000, 0)
+    values (${BATTLE}, null, 0, ${outcome}, ${startedAt}, 0)
   `;
   await sql`
     insert into battle_teams (battle_id, position, snapshot_id, player)
@@ -91,7 +95,7 @@ async function stage(outcome: BattleOutcome): Promise<void> {
 }
 
 /** The report a client sends: every one of the party walked out */
-function report(): {
+function report(coins = 0): {
   caught: string;
   items: never[];
   health: number;
@@ -103,7 +107,7 @@ function report(): {
     items: [],
     health: 10,
     statuses: 0,
-    coins: 0,
+    coins,
   }));
 }
 
@@ -170,5 +174,35 @@ describe('what a fought team is paid', () => {
 
     expect(again).toEqual([]);
     expect(await candies()).toBe(1);
+  });
+});
+
+describe('what a Pay Day report is paid', () => {
+  async function gold(): Promise<number> {
+    const rows = await sql`select gold from profiles where id = ${player.uid}`;
+
+    return Number(rows[0]?.gold ?? 0);
+  }
+
+  it('pays nothing to a party that never knew the move', async () => {
+    await stage(BattleOutcome.Won);
+    const before = await gold();
+
+    await recordAftermath(player.uid, BATTLE, report(1000), 0);
+
+    expect(await gold()).toBe(before);
+  });
+
+  it('pays no more than the casts the fight has had time for', async () => {
+    // Started three casts ago on the server's clock, so the one who
+    // knows it may claim four uses at level 5, and the other nothing
+    const lasted = getCastTime(0) * 3 + 100;
+
+    await stage(BattleOutcome.Won, [Moves.PayDay], Date.now() - lasted);
+    const before = await gold();
+
+    await recordAftermath(player.uid, BATTLE, report(1_000_000), 0);
+
+    expect((await gold()) - before).toBe(PAY_DAY_COINS_PER_LEVEL * 5 * 4);
   });
 });

@@ -357,7 +357,7 @@ export interface StaffGiftCommon {
   /** Whose it is, or null for an offer that stands on every shelf */
   player: string | null;
   /** When it stops being takeable, or null for one that waits forever */
-  expiresAt: number | null;
+  expiresAt: Date | null;
 }
 
 export interface StaffItemGift extends StaffGiftCommon {
@@ -434,7 +434,7 @@ export function makeGiftOffer(spec: StaffGift, id: string, now: number): Offer {
         kind: GiftKind.Item,
         id,
         reason: spec.reason,
-        expiresAt: spec.expiresAt,
+        expiresAt: spec.expiresAt?.getTime() ?? null,
         item: spec.item,
         amount: spec.amount,
       },
@@ -445,7 +445,7 @@ export function makeGiftOffer(spec: StaffGift, id: string, now: number): Offer {
   const pokemon = {
     id,
     reason: spec.reason,
-    expiresAt: spec.expiresAt,
+    expiresAt: spec.expiresAt?.getTime() ?? null,
     species: spec.species,
     level: spec.level,
     shiny: spec.shiny,

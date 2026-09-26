@@ -28,23 +28,28 @@ vi.mock('../src/auth/supabase', () => {
       return channel;
     },
   };
-  const query = {
-    select: () => query,
-    eq: () => query,
-    maybeSingle: async () => {
-      reads += 1;
-      return Promise.resolve({ data: stored == null ? null : structuredClone(stored) });
-    },
-  };
 
   return {
     default: () => ({
       channel: () => channel,
-      from: () => query,
       removeChannel: async () => Promise.resolve(),
     }),
   };
 });
+
+// The lobby is read through a server call, which runs only inside a request
+vi.mock('solid-js/web', async (original) => ({
+  ...(await original<object>()),
+  getRequestEvent: () => ({ locals: {} }),
+}));
+vi.mock('../src/auth/session', () => ({ default: async () => Promise.resolve('token') }));
+vi.mock('../src/server/auth', () => ({ requireReader: async () => Promise.resolve('reader') }));
+vi.mock('../src/server/raid-reads', () => ({
+  readLobbyRows: async () => {
+    reads += 1;
+    return Promise.resolve(stored == null ? [] : [structuredClone(stored)]);
+  },
+}));
 
 const { watchRaid } = await import('../src/auth/raids');
 

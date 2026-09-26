@@ -222,6 +222,59 @@ export const STANDING_IDS = v.object({
 /** Which of a player's friend lists a read is for */
 export const LINK_TABLE = v.picklist(['friends', 'blocks']);
 
+/** A column name the search planner writes, checked as a plain lower-case identifier */
+const COLUMN = v.pipe(v.string(), v.regex(/^[a-z_]{1,64}$/));
+
+/** A join's own name in a search plan, which the server does not use */
+const ALIAS = v.pipe(v.string(), v.regex(/^[a-z0-9_]{1,64}$/));
+
+/** An operator the search planner uses */
+const CATCH_OP = v.picklist(['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'in', 'nin', 'ilike']);
+
+/** One value a constraint compares against */
+const CATCH_VALUE = v.union([
+  v.pipe(v.string(), v.maxLength(TEXT_LIMIT)),
+  v.number(),
+  v.boolean(),
+  listOf(v.union([v.pipe(v.string(), v.maxLength(TEXT_LIMIT)), v.number()]), MAX_PAGE),
+]);
+
+/** The store's half of a box search, as `catch-search.ts` plans it */
+export const CATCH_CONSTRAINTS = listOf(
+  v.variant('on', [
+    v.object({ on: v.literal('row'), column: COLUMN, op: CATCH_OP, value: CATCH_VALUE }),
+    v.object({
+      on: v.literal('child'),
+      alias: ALIAS,
+      table: v.picklist(['caught_moves', 'caught_abilities', 'caught_items', 'caught_history']),
+      column: COLUMN,
+      op: CATCH_OP,
+      value: CATCH_VALUE,
+    }),
+    v.object({
+      on: v.literal('exists'),
+      alias: ALIAS,
+      table: v.picklist(['team_catches', 'auctions', 'profiles']),
+      equals: v.record(COLUMN, v.union([v.string(), v.number(), v.boolean()])),
+    }),
+  ]),
+  64,
+);
+
+/** A flag column a box may be listed by */
+export const CATCH_MARK = v.picklist([
+  'shiny',
+  'shadow',
+  'egg',
+  'favorite',
+  'guarded',
+  'auctionable',
+  'hurt',
+]);
+
+/** As many catches as one read by id asks for */
+export const CATCH_IDS = listOf(ID, MAX_PAGE);
+
 /** Which mark a bulk call is setting */
 export const MARK_FIELD = v.picklist(['favorite', 'guarded']);
 

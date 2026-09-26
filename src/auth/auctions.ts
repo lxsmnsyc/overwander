@@ -5,9 +5,17 @@ import {
   openAuction as openOnServerSide,
   reclaimAuction as reclaimOnServerSide,
 } from '../server/auctions';
-import { requireUid, requireUidFor } from '../server/auth';
+import { requireReader, requireUid, requireUidFor } from '../server/auth';
 import { Feature } from '../server/switches';
-import check, { AUCTION_OFFER, AUCTION_TERMS, GOLD, ID, OFFSET, TOKEN } from '../server/validate';
+import check, {
+  AUCTION_OFFER,
+  AUCTION_TERMS,
+  GOLD,
+  ID,
+  OFFSET,
+  TOKEN,
+  UID,
+} from '../server/validate';
 import {
   AuctionLot,
   type AuctionOffer,
@@ -18,8 +26,16 @@ import {
   asPlayerBid,
 } from './auction-record';
 import { syncServerClock } from './clock';
-import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
-import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
+import { type Unwatch, watchRow, watchTable } from './supabase';
+import { readOnly } from '../utils/server-calls';
+import {
+  readAuctionsBy,
+  readAuctionsIn,
+  readBidHistory,
+  readOpenAuctions,
+  readSellerStanding,
+  readStakes,
+} from '../server/auction-reads';
 import { getLocalOffset } from './local-time';
 import getIdToken from './session';
 
@@ -58,13 +74,6 @@ export type { AuctionOffer, AuctionRecord, AuctionTerms, PlayerBid } from './auc
 
 const AUCTION_TABLE = 'auctions';
 
-/** What a player is told when the auction house cannot be read, in place of the store's own message */
-const AUCTIONS_UNREADABLE = 'Could not read the auction house just now.';
-
-const AUCTION_COLUMNS =
-  'id, seller, lot, item, caught_id, starting_bid, increment, bid, bidder, ' +
-  'created_at, ends_at, utc_offset, settled';
-
 /** One auction row in the record shape the rules read */
 function fromAuctionRow(row: Record<string, unknown>): AuctionRecord {
   return asAuctionRecord({
@@ -84,14 +93,19 @@ function fromAuctionRow(row: Record<string, unknown>): AuctionRecord {
 }
 
 export async function getAuction(id: string): Promise<AuctionRecord | null> {
-  const { data } = await getSupabase()
-    .from(AUCTION_TABLE)
-    .select(AUCTION_COLUMNS)
-    .eq('id', id)
-    .maybeSingle();
+  const row = (await readLotOnServer(await getIdToken(), id)).at(0);
 
-  return data == null ? null : fromAuctionRow(asRecord(data));
+  return row == null ? null : fromAuctionRow(row);
 }
+
+async function readLotOnServer(token: string, id: string): Promise<Record<string, unknown>[]> {
+  'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  await requireReader(token);
+  return readAuctionsIn([id]);
+}
+readOnly(readLotOnServer);
 
 /**
  * Follow one auction: a bid raises it under whoever is looking at it
@@ -119,13 +133,9 @@ export function watchOpenAuctions(
   let held: [string, AuctionRecord][] = [];
 
   const read = async (): Promise<[string, AuctionRecord][]> => {
-    const { data } = await getSupabase()
-      .from(AUCTION_TABLE)
-      .select(AUCTION_COLUMNS)
-      .eq('settled', false);
     const auctions: [string, AuctionRecord][] = [];
 
-    for (const row of asRecordArray(data)) {
+    for (const row of await readOpenOnServer(await getIdToken())) {
       auctions.push([String(row.id), fromAuctionRow(row)]);
     }
     held = auctions;
@@ -155,6 +165,14 @@ export function watchOpenAuctions(
   });
 }
 
+async function readOpenOnServer(token: string): Promise<Record<string, unknown>[]> {
+  'use server';
+  check(TOKEN, token);
+  await requireReader(token);
+  return readOpenAuctions();
+}
+readOnly(readOpenOnServer);
+
 /** The open lots one player has a stake in: the ones they sell, and the ones they bid on */
 export interface MyAuctions {
   lots: [string, AuctionRecord][];
@@ -169,39 +187,35 @@ const FILTER_IDS = 100;
 const bidListeners = new Set<() => void>();
 
 async function readMyAuctions(uid: string): Promise<MyAuctions> {
-  const supabase = getSupabase();
-  const [selling, bidding] = await Promise.all([
-    supabase.from(AUCTION_TABLE).select(AUCTION_COLUMNS).eq('seller', uid).eq('settled', false),
-    supabase
-      .from('bids')
-      .select(`auction, auctions!inner(${AUCTION_COLUMNS})`)
-      .eq('player', uid)
-      .eq('auctions.settled', false)
-      .order('auction'),
-  ]);
-
-  // Thrown rather than read as empty, so the watch keeps its lots and filter
-  if (selling.error != null) {
-    throw new Error(AUCTIONS_UNREADABLE);
-  }
-  if (bidding.error != null) {
-    throw new Error(AUCTIONS_UNREADABLE);
-  }
-
+  const { selling, bidding } = await readStakesOnServer(await getIdToken(), uid);
   const lots: [string, AuctionRecord][] = [];
   const bidOn: string[] = [];
 
-  for (const row of asRecordArray(selling.data)) {
+  for (const row of selling) {
     lots.push([String(row.id), fromAuctionRow(row)]);
   }
-  for (const row of asRecordArray(bidding.data)) {
-    const auction = asString(row.auction);
+  for (const row of bidding) {
+    const auction = String(row.id);
 
-    lots.push([auction, fromAuctionRow(asRecord(row.auctions))]);
+    lots.push([auction, fromAuctionRow(row)]);
     bidOn.push(auction);
   }
   return { lots, bidOn };
 }
+
+/** Another player's stakes are never read, so they come back empty */
+async function readStakesOnServer(
+  token: string,
+  player: string,
+): Promise<{ selling: Record<string, unknown>[]; bidding: Record<string, unknown>[] }> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  const uid = await requireReader(token);
+
+  return player === uid ? readStakes(uid) : { selling: [], bidding: [] };
+}
+readOnly(readStakesOnServer);
 
 /**
  * Follow only the lots this player has a stake in, so a bid elsewhere
@@ -262,18 +276,25 @@ export function watchMyAuctions(uid: string, onChange: (mine: MyAuctions) => voi
  * Everything this player has ever put up, newest last
  */
 export async function listAuctionsBy(seller: string): Promise<[string, AuctionRecord][]> {
-  const { data } = await getSupabase()
-    .from(AUCTION_TABLE)
-    .select(AUCTION_COLUMNS)
-    .eq('seller', seller)
-    .order('created_at', { ascending: true });
   const auctions: [string, AuctionRecord][] = [];
 
-  for (const row of asRecordArray(data)) {
+  for (const row of await readAuctionsByOnServer(await getIdToken(), seller)) {
     auctions.push([String(row.id), fromAuctionRow(row)]);
   }
   return auctions;
 }
+
+async function readAuctionsByOnServer(
+  token: string,
+  seller: string,
+): Promise<Record<string, unknown>[]> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, seller);
+  await requireReader(token);
+  return readAuctionsBy(seller);
+}
+readOnly(readAuctionsByOnServer);
 
 /**
  * One entry of the player's bidding history: the lot, and what they
@@ -297,45 +318,24 @@ export interface BidHistoryEntry {
  * by looking at this, so it is where the answer belongs
  */
 export async function listBidHistory(uid: string): Promise<BidHistoryEntry[]> {
-  const { data: bids } = await getSupabase()
-    .from('bids')
-    .select('player, auction, amount, bid_at')
-    .eq('player', uid);
+  const { bids, lots: found } = await readBidHistoryOnServer(await getIdToken(), uid);
   const placed: PlayerBid[] = [];
-  const named = new Set<string>();
 
-  for (const row of asRecordArray(bids)) {
-    const bid = asPlayerBid({
-      player: row.player,
-      auction: row.auction,
-      amount: row.amount,
-      bidAt: row.bid_at,
-    });
+  for (const row of bids) {
+    const bid = asPlayerBid(row);
 
     if (bid.auction !== '') {
       placed.push(bid);
-      named.add(bid.auction);
     }
   }
   placed.sort((one, other) => other.bidAt - one.bidAt);
 
-  if (placed.length === 0) {
-    return [];
-  }
-
-  const { data: found } = await getSupabase()
-    .from(AUCTION_TABLE)
-    .select(AUCTION_COLUMNS)
-    .in('id', [...named]);
   const lots = new Map<string, AuctionRecord>();
 
-  for (const row of asRecordArray(found)) {
+  for (const row of found) {
     lots.set(String(row.id), fromAuctionRow(row));
   }
 
-  // A bid whose lot has vanished has nothing left to show; nothing
-  // deletes an auction today, so this is only for the sake of a
-  // history that outlives one
   const history: BidHistoryEntry[] = [];
 
   for (const bid of placed) {
@@ -348,6 +348,22 @@ export async function listBidHistory(uid: string): Promise<BidHistoryEntry[]> {
   return history;
 }
 
+async function readBidHistoryOnServer(
+  token: string,
+  player: string,
+): Promise<{
+  bids: { player: string; auction: string; amount: number; bidAt: number }[];
+  lots: Record<string, unknown>[];
+}> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  const uid = await requireReader(token);
+
+  return player === uid ? readBidHistory(uid) : { bids: [], lots: [] };
+}
+readOnly(readBidHistoryOnServer);
+
 /**
  * The auction the player has running and when it closes, or null when
  * they have never listed anything. A seller may not open another until
@@ -357,17 +373,21 @@ export async function listBidHistory(uid: string): Promise<BidHistoryEntry[]> {
 export async function getSellerStanding(
   uid: string,
 ): Promise<{ auction: string; endsAt: number } | null> {
-  const { data } = await getSupabase()
-    .from('auction_sellers')
-    .select('auction, ends_at')
-    .eq('player', uid)
-    .maybeSingle();
-
-  if (data == null) {
-    return null;
-  }
-  return { auction: asString(data.auction), endsAt: asNumber(data.ends_at) };
+  return readStandingOnServer(await getIdToken(), uid);
 }
+
+async function readStandingOnServer(
+  token: string,
+  player: string,
+): Promise<{ auction: string; endsAt: number } | null> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  const uid = await requireReader(token);
+
+  return player === uid ? readSellerStanding(uid) : null;
+}
+readOnly(readStandingOnServer);
 
 /**
  * Put an item up for auction. The item leaves the bag as the auction

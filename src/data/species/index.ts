@@ -40,7 +40,7 @@ export {
   SPECIES_DAY_WEIGHT_BOOST,
   getDayOfYear,
   getDaysInYear,
-  getFeaturedFamily,
+  getFeaturedFamilies,
   isFeaturedSpecies,
 } from './day';
 export {

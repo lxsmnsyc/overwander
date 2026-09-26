@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -105,8 +106,20 @@ function format(stamps: Map<string, string>): string {
 
 async function main(): Promise<void> {
   const sheets = new Map<string, string[]>();
+  const found = existsSync(ROOT) ? await walk('') : [];
 
-  for (const file of await walk('')) {
+  // The sprites are published to their own host, so a build for the
+  // app alone has none of them: the folder is missing, or the upload
+  // filter left it empty. Writing then would put an empty stamps file
+  // where the real one is expected, and every sheet would lose the
+  // digest it is asked for with. The one that is served is the one
+  // already committed, so leave it alone
+  if (found.length === 0) {
+    process.stdout.write(`${ROOT}: no sprites here, so nothing to stamp\n`);
+    return;
+  }
+
+  for (const file of found) {
     const sheet = sheetOf(file);
     const held = sheets.get(sheet);
 

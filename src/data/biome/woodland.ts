@@ -6,22 +6,11 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
  * Woodland spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerWoodlandSpawns(): void {
-  // The Pidove line is written but waits on sprites, since the
-  // collection has drawn no Tranquill. Once it does, mornings and days
-  // take Pidove in base at 30, Tranquill in rare at 12 and Unfezant in
-  // elusive at 6
-  // Throh and Sawk are written but wait on sprites, since the
-  // collection has drawn no Throh and the pair is staged together.
-  // Once it does, mornings and days take each of them in elusive at 5
-  // The three elemental monkeys are written but wait as a set, since
-  // the collection has drawn neither Simisear nor Simipour and the
-  // trio is staged together. Once it does, mornings and days take each
-  // of Pansage, Pansear and Panpour in uncommon at 22 and each of
-  // Simisage, Simisear and Simipour in scarce at 7
   registerSpawnPool(Biome.Woodland, {
     [TimeOfDay.Morning]: {
       base: [
         { species: Species.Chespin, weight: 2 },
+        { species: Species.Pidove, weight: 30 },
         { species: Species.Timburr, weight: 25 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Caterpie, weight: 30 },
@@ -37,6 +26,10 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Panpour, weight: 22 },
+        { species: Species.Pansear, weight: 22 },
+        { species: Species.Pansage, weight: 22 },
+        { species: Species.Karrablast, weight: 20 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.Eevee, weight: 2 },
         { species: Species.Sentret, weight: 25 },
@@ -54,6 +47,7 @@ export default function registerWoodlandSpawns(): void {
       ],
       rare: [
         { species: Species.Quilladin, weight: 2 },
+        { species: Species.Tranquill, weight: 12 },
         { species: Species.Gurdurr, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Metapod, weight: 15 },
@@ -69,6 +63,10 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Simipour, weight: 7 },
+        { species: Species.Simisear, weight: 7 },
+        { species: Species.Simisage, weight: 7 },
+        { species: Species.Escavalier, weight: 5 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Furret, weight: 10 },
@@ -91,6 +89,9 @@ export default function registerWoodlandSpawns(): void {
       ],
       elusive: [
         { species: Species.Chesnaught, weight: 2 },
+        { species: Species.Sawk, weight: 5 },
+        { species: Species.Throh, weight: 5 },
+        { species: Species.Unfezant, weight: 6 },
         { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
@@ -135,6 +136,7 @@ export default function registerWoodlandSpawns(): void {
     [TimeOfDay.Day]: {
       base: [
         { species: Species.Chespin, weight: 2 },
+        { species: Species.Pidove, weight: 30 },
         { species: Species.Timburr, weight: 25 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Caterpie, weight: 30 },
@@ -150,6 +152,10 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Panpour, weight: 22 },
+        { species: Species.Pansear, weight: 22 },
+        { species: Species.Pansage, weight: 22 },
+        { species: Species.Karrablast, weight: 20 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.Eevee, weight: 2 },
         { species: Species.Sentret, weight: 25 },
@@ -167,6 +173,7 @@ export default function registerWoodlandSpawns(): void {
       ],
       rare: [
         { species: Species.Quilladin, weight: 2 },
+        { species: Species.Tranquill, weight: 12 },
         { species: Species.Gurdurr, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Metapod, weight: 15 },
@@ -182,6 +189,10 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Simipour, weight: 7 },
+        { species: Species.Simisear, weight: 7 },
+        { species: Species.Simisage, weight: 7 },
+        { species: Species.Escavalier, weight: 5 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Furret, weight: 10 },
@@ -204,6 +215,9 @@ export default function registerWoodlandSpawns(): void {
       ],
       elusive: [
         { species: Species.Chesnaught, weight: 2 },
+        { species: Species.Sawk, weight: 5 },
+        { species: Species.Throh, weight: 5 },
+        { species: Species.Unfezant, weight: 6 },
         { species: Species.Emolga, weight: 8 },
         { species: Species.Audino, weight: 8 },
         { species: Species.Conkeldurr, weight: 5 },
@@ -255,6 +269,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Foongus, weight: 20 },
         { species: Species.Zorua, weight: 20 },
         { species: Species.Shuppet, weight: 20 },
         { species: Species.Rattata, weight: 30 },
@@ -286,6 +301,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Amoonguss, weight: 6 },
         { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },
         { species: Species.Raticate, weight: 10 },
@@ -359,6 +375,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Foongus, weight: 20 },
         { species: Species.Zorua, weight: 20 },
         { species: Species.Shuppet, weight: 20 },
         { species: Species.Rattata, weight: 30 },
@@ -394,6 +411,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Amoonguss, weight: 6 },
         { species: Species.Zoroark, weight: 5 },
         { species: Species.Banette, weight: 6 },
         { species: Species.Raticate, weight: 10 },

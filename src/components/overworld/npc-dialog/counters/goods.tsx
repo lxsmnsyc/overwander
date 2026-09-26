@@ -79,11 +79,7 @@ export interface ReviveCounterProps {
   carrying: number;
 }
 
-/**
- * His bench, which is a word rather than a tray: what he opens is in
- * the bag, and the bag is asked for in a window of its own the way
- * the vendor asks for what he is being sold
- */
+/** What his bench promises, over the fossils laid out on it */
 export function ReviveCounter(props: ReviveCounterProps): JSX.Element {
   return (
     <DialogSection class={CENTRED}>
@@ -160,18 +156,6 @@ export function KurtCounter(props: KurtCounterProps): JSX.Element {
           }}
         />
       </Show>
-    </DialogSection>
-  );
-}
-
-export function VendorCounter(props: { gold: number }): JSX.Element {
-  return (
-    <DialogSection title="Trading" class={CENTRED}>
-      <Purse gold={props.gold} />
-
-      {/* His crate and the player's bag are windows of their own,
-          opened from the bar below */}
-      <Note>Buy from him, or sell to him.</Note>
     </DialogSection>
   );
 }

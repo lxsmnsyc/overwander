@@ -531,6 +531,28 @@ export function listSpeciesHabitats(species: Species): SpeciesHabitat[] {
   return habitatIndex.get(species) ?? [];
 }
 
+/**
+ * The country a species belongs to, or null for one that lives
+ * nowhere.
+ *
+ * The first biome its habitats name, with a band the species is
+ * rarest in preferred, which for a mythical is the one place its
+ * relic calls it from. What has no pool of its own, such as a
+ * legendary a lair stages, answers null
+ */
+export function getSpeciesHome(species: Species): Biome | null {
+  let home: Biome | null = null;
+  let rarest: SpawnRarity | null = null;
+
+  for (const habitat of listSpeciesHabitats(species)) {
+    if (rarest == null || habitat.rarity > rarest) {
+      home = habitat.biome;
+      rarest = habitat.rarity;
+    }
+  }
+  return home;
+}
+
 /** Every hour and band this species is met on a town's streets */
 export function listTownHabitats(species: Species): { time: TimeOfDay; rarity: SpawnRarity }[] {
   const habitats: { time: TimeOfDay; rarity: SpawnRarity }[] = [];

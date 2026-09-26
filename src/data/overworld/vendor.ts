@@ -112,7 +112,7 @@ export const VENDOR_STAPLES: Partial<Record<VendorKind, Items[]>> = {
  * the real limit; this is only so a slip of the keyboard cannot ask
  * for a hundred thousand potions
  */
-export const VENDOR_TRADE_LIMIT = 99;
+export const VENDOR_TRADE_LIMIT = 999;
 
 /**
  * Whether the market puts a price on the item at all. Everything the

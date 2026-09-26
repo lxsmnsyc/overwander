@@ -15,6 +15,7 @@ import { describeItem } from '../details';
 import ItemGrid, { type ItemCell } from './ItemGrid';
 import ItemSprite from './ItemSprite';
 import { Button, Dialog, DialogActions, Note, Row, Status } from '../styled';
+import { failed, readable } from '../app/resource-reads';
 
 /**
  * Picking something out of the bag.
@@ -240,7 +241,7 @@ function PickerList(
   const offered = (): InventoryEntry[] => {
     const kept: InventoryEntry[] = [];
 
-    for (const entry of props.entries ?? props.bag() ?? []) {
+    for (const entry of props.entries ?? readable(props.bag) ?? []) {
       if (props.filter?.(entry) ?? true) {
         kept.push(entry);
       }
@@ -412,7 +413,13 @@ function PickerList(
           out the same way wherever the bag is opened */}
       <Show
         when={offered().length}
-        fallback={<Note>{props.empty ?? 'Nothing in the bag for this.'}</Note>}
+        fallback={
+          <Note>
+            {(props.entries == null ? failed(props.bag) : null) ??
+              props.empty ??
+              'Nothing in the bag for this.'}
+          </Note>
+        }
       >
         <ItemGrid
           entries={cells()}

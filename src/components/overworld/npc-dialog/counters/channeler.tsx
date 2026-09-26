@@ -5,6 +5,7 @@ import { CHANNELER_FEE } from '../../../../data/overworld/npc';
 import { DialogActions, useToast } from '../../../styled';
 import { type CounterProps, optionsOf, refusal, scalesIn, useSaying } from '../shared';
 import { ChannelerCounter } from './care';
+import playEffect, { Effect } from '../../../app/sound';
 
 /**
  * The channeler: hand the scale over and let her call something up.
@@ -38,6 +39,7 @@ export default function Channeler(props: CounterProps): JSX.Element {
           );
           return;
         }
+        playEffect(Effect.AbilityLearned);
         toast.push({
           title: getAbilityData(drawn.ability).name,
           message: `Called up, and room for it. (−1 Heart Scale)`,

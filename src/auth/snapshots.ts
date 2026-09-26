@@ -19,6 +19,7 @@ import {
   spawnId,
 } from './snapshot-record';
 import { requireUid } from '../server/auth';
+import { Pace } from '../server/pace';
 import check, {
   CELL,
   CHUNK_COORDINATE,
@@ -41,15 +42,14 @@ import {
   claimPhenomenon as claimPhenomenonOnServerSide,
   latherHoneyTree as latherHoneyTreeOnServerSide,
   listClaimsFor as listClaimsForOnServerSide,
-  listLatheredHoneyTrees as listLatheredHoneyTreesOnServerSide,
   meetSpawn,
   peekNest as peekNestOnServerSide,
   peekPhenomenonEgg as peekPhenomenonEggOnServerSide,
 } from '../server/overworld';
 import batchedQuery from '../utils/batched-query';
-import { serverNow, syncServerClock } from './clock';
+import { localNow, syncServerClock } from './clock';
 import { asRecord, asRecordArray } from './__normalize';
-import { asOffset, getLocale, toLocalTime, toZoneKey } from './local-time';
+import { asOffset, getLocale, toZoneKey } from './local-time';
 import type { EncounterRecord } from './encounter-record';
 import getSupabase, { type Unwatch, watchTable } from './supabase';
 import getIdToken from './session';
@@ -116,7 +116,7 @@ export const PUBLISHED_SPAWNS = SPAWN_COUNT + LURE_SPAWN_BONUS;
  */
 async function freshenWindow(snapshot: ChunkSnapshot): Promise<void> {
   await syncServerClock();
-  if (toLocalTime(serverNow(), snapshot.offset) < snapshot.timestamp + SNAPSHOT_INTERVAL) {
+  if (localNow(snapshot.offset) < snapshot.timestamp + SNAPSHOT_INTERVAL) {
     return;
   }
   await resolveSnapshotWindow(snapshot.chunk, snapshot.offset, PUBLISHED_SPAWNS);
@@ -141,7 +141,7 @@ async function resolveSnapshotWindow(
   await syncServerClock();
 
   const existing = known === undefined ? await readSnapshotWindow(chunk, offset) : known;
-  const now = toLocalTime(serverNow(), offset);
+  const now = localNow(offset);
 
   // A live window is adopted whole; its spawns are what everybody in
   // this zone is looking at. One written before the spawns moved in
@@ -353,7 +353,7 @@ async function claimCacheOnServer(
   check(OFFSET, offset);
   check(DEPTH, depth);
   return claimCacheOnServerSide(
-    await requireUid(token),
+    await requireUid(token, Pace.Claim),
     x,
     y,
     cell,
@@ -399,7 +399,7 @@ async function claimBerryOnServer(
   check(OFFSET, offset);
   check(DEPTH, depth);
   return claimBerryOnServerSide(
-    await requireUid(token),
+    await requireUid(token, Pace.Claim),
     x,
     y,
     cell,
@@ -444,7 +444,7 @@ async function claimApricornOnServer(
   check(OFFSET, offset);
   check(DEPTH, depth);
   return claimApricornOnServerSide(
-    await requireUid(token),
+    await requireUid(token, Pace.Claim),
     x,
     y,
     cell,
@@ -549,78 +549,6 @@ async function peekPhenomenonEggOnServer(
   );
 }
 
-/*
- * A server function is addressed by its place in this file, so a tab
- * loaded before a deploy calls these three by position. They keep
- * their slots and answer from the batched read; new ones go at the end
- */
-
-export async function listClaimedOnServer(
-  token: string,
-  x: number,
-  y: number,
-  offset: number,
-  depth: Depth,
-): Promise<number[]> {
-  'use server';
-  check(TOKEN, token);
-  check(CHUNK_COORDINATE, x);
-  check(CHUNK_COORDINATE, y);
-  check(OFFSET, offset);
-  check(DEPTH, depth);
-  const claims = await listClaimsForOnServerSide(
-    await requireUid(token),
-    [{ x, y, offset, depth }],
-    await syncServerClock(),
-  );
-
-  return claims.at(0)?.phenomena ?? [];
-}
-
-export async function listPickedOnServer(
-  token: string,
-  x: number,
-  y: number,
-  offset: number,
-  depth: Depth,
-): Promise<number[]> {
-  'use server';
-  check(TOKEN, token);
-  check(CHUNK_COORDINATE, x);
-  check(CHUNK_COORDINATE, y);
-  check(OFFSET, offset);
-  check(DEPTH, depth);
-  const claims = await listClaimsForOnServerSide(
-    await requireUid(token),
-    [{ x, y, offset, depth }],
-    await syncServerClock(),
-  );
-
-  return claims.at(0)?.patches ?? [];
-}
-
-export async function listDugCachesOnServer(
-  token: string,
-  x: number,
-  y: number,
-  offset: number,
-  depth: Depth,
-): Promise<number[]> {
-  'use server';
-  check(TOKEN, token);
-  check(CHUNK_COORDINATE, x);
-  check(CHUNK_COORDINATE, y);
-  check(OFFSET, offset);
-  check(DEPTH, depth);
-  const claims = await listClaimsForOnServerSide(
-    await requireUid(token),
-    [{ x, y, offset, depth }],
-    await syncServerClock(),
-  );
-
-  return claims.at(0)?.caches ?? [];
-}
-
 /**
  * Take the egg a nest is holding. A nest refills every twelve hours
  * rather than every landmark window, and the marker behind it is
@@ -660,7 +588,7 @@ async function claimNestOnServer(
   check(LOCALE, locale);
   check(DEPTH, depth);
   return claimNestOnServerSide(
-    await requireUid(token),
+    await requireUid(token, Pace.Claim),
     x,
     y,
     cell,
@@ -724,7 +652,7 @@ async function claimPhenomenonOnServer(
   check(LOCALE, locale);
   check(DEPTH, depth);
   return claimPhenomenonOnServerSide(
-    await requireUid(token),
+    await requireUid(token, Pace.Claim),
     x,
     y,
     cell,
@@ -781,7 +709,6 @@ function claimKey(query: ClaimQuery): string {
   return `${query.depth}|${query.offset}|${query.x},${query.y}`;
 }
 
-// Last in the file, so adding it moved no other server function's place
 async function listClaimsOnServer(token: string, queries: ClaimQuery[]): Promise<ChunkClaims[]> {
   'use server';
   check(TOKEN, token);
@@ -842,27 +769,6 @@ export async function listClaimedItemCaches(snapshot: ChunkSnapshot): Promise<nu
 /** Which of this chunk's honey trees this player has lathered this window */
 export async function listLatheredHoneyTrees(snapshot: ChunkSnapshot): Promise<number[]> {
   return (await claimsOf(snapshot)).honey;
-}
-
-// Nothing calls it since honey joined the batched claim lists, but it keeps its place
-export async function listLatheredOnServer(
-  token: string,
-  x: number,
-  y: number,
-  offset: number,
-): Promise<number[]> {
-  'use server';
-  check(TOKEN, token);
-  check(CHUNK_COORDINATE, x);
-  check(CHUNK_COORDINATE, y);
-  check(OFFSET, offset);
-  return listLatheredHoneyTreesOnServerSide(
-    await requireUid(token),
-    x,
-    y,
-    await syncServerClock(),
-    offset,
-  );
 }
 
 /** Lather a honey tree: one jar spent, and whatever it draws out met on the spot */

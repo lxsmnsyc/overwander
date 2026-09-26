@@ -1,4 +1,4 @@
-import type { Stats } from '../constants/stats';
+import { STAT_ORDER, type Stats } from '../constants/stats';
 import type { Types } from '../constants/types';
 import type Abilities from '../ids/abilities';
 import type Biome from '../ids/biome';
@@ -356,6 +356,58 @@ export function getSpeciesForms(species: Species): Species[] {
  */
 export function isWornForm(species: Species): boolean {
   return getSpeciesData(species).worn === true;
+}
+
+/**
+ * The roads out of this shape that grow it into something else. A
+ * rearrangement is left out: a Rotom in one appliance can be put into
+ * another and a Deoxys can be rearranged, which moves it sideways
+ * rather than along, so a shape whose every road leads to another of
+ * its own forms is as grown as its line gets
+ */
+export function getGrowthRoads(species: Species): EvolutionData[] {
+  const base = getBaseFormSpecies(species);
+  const grown: EvolutionData[] = [];
+
+  for (const road of getSpeciesData(species).evolvesInto ?? []) {
+    if (getBaseFormSpecies(road.species) !== base) {
+      grown.push(road);
+    }
+  }
+  return grown;
+}
+
+/**
+ * Whether the form is the same pokemon in a different coat: an Unown
+ * letter, a flower's colour. It carries its base form's types and its
+ * base form's stats, so anything picking one pokemon out of a list
+ * takes the base and leaves the rest, or a roster of five comes back
+ * as five spellings of the same thing
+ */
+export function isCosmeticForm(species: Species): boolean {
+  const base = getBaseFormSpecies(species);
+
+  if (base === species) {
+    return false;
+  }
+
+  const data = getSpeciesData(species);
+  const plain = getSpeciesData(base);
+
+  if (data.types.length !== plain.types.length) {
+    return false;
+  }
+  for (const [at, type] of data.types.entries()) {
+    if (plain.types[at] !== type) {
+      return false;
+    }
+  }
+  for (const stat of STAT_ORDER) {
+    if (data.stats[stat] !== plain.stats[stat]) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**

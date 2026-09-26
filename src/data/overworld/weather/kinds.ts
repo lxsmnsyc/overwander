@@ -81,6 +81,41 @@ export const WEATHER_NAMES: Record<Weather, string> = {
 };
 
 /**
+ * What each sky is drawn as on the world map, where a chunk is one
+ * square of colour. They run cold to warm the way the skies
+ * themselves do, and the four showpieces are the only saturated ones,
+ * so a player scanning the map sees them without being told
+ */
+export const WEATHER_COLORS: Record<Weather, string> = {
+  [Weather.Clear]: '#ece2aa',
+  [Weather.Cloudy]: '#b0b8c4',
+  [Weather.Overcast]: '#808896',
+  [Weather.Breezy]: '#aadece',
+  [Weather.Drizzle]: '#8cbae6',
+  [Weather.Rain]: '#5288d6',
+  [Weather.Downpour]: '#2852aa',
+  [Weather.Thunderstorm]: '#462882',
+  [Weather.Mist]: '#d2d8e2',
+  [Weather.Fog]: '#f0f0f4',
+  [Weather.Haze]: '#d6be96',
+  [Weather.Frost]: '#c4e8fa',
+  [Weather.Snow]: '#fafcff',
+  [Weather.Blizzard]: '#96c8f0',
+  [Weather.Hail]: '#78aabe',
+  [Weather.Sandstorm]: '#d6a454',
+  [Weather.DustHaze]: '#b4966e',
+  [Weather.Heatwave]: '#f06e3c',
+  [Weather.FallingAsh]: '#5a5050',
+  [Weather.Aurora]: '#50e6aa',
+  [Weather.Rainbow]: '#fa78c8',
+  [Weather.PollenDrift]: '#f0dc50',
+  [Weather.MeteorShower]: '#ff3c3c',
+  [Weather.FataMorgana]: '#ffaa28',
+  [Weather.DarkDay]: '#14141e',
+  [Weather.Fogbow]: '#aa6eff',
+};
+
+/**
  * One line on each sky, and only what a picture of it cannot say.
  *
  * What the sky favours is drawn as its types rather than written out,

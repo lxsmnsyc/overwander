@@ -14,8 +14,6 @@ import type { CaughtPokemon } from '../../../../auth/caught';
 
 import { unusedEffort } from '../../../../auth/effort';
 
-import { STATUS_NAMES } from '../../../../auth/health';
-
 import type { Stats } from '../../../../data/constants/stats';
 import {
   EFFORT_PER_LEVEL,
@@ -25,7 +23,6 @@ import {
   getIV,
 } from '../../../../data/constants/stats';
 
-import { unpackStatuses } from '../../../../data/ids/status';
 import { VITAMIN_EFFORT } from '../../../../data/items/vitamins';
 import { WING_EFFORT } from '../../../../data/items/wings';
 
@@ -49,15 +46,6 @@ export interface StatsSectionProps {
    * hands them over on one press, so six stats are one round trip
    */
   onTrain: (spread: Partial<Record<Stats, number>>) => void;
-}
-
-function statusNames(statuses: number): string {
-  const names: string[] = [];
-
-  for (const carried of unpackStatuses(statuses)) {
-    names.push(STATUS_NAMES[carried]);
-  }
-  return names.join(' · ');
 }
 
 export default function StatsSection(props: StatsSectionProps): JSX.Element {
@@ -239,9 +227,6 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
       {/* Points are laid out first and saved on one press, so six
           stats are one round trip and free to change until then */}
       <div class="flex items-center justify-end gap-2">
-        <Show when={props.caught.statuses !== 0}>
-          <Meta class="mr-auto">{statusNames(props.caught.statuses)}</Meta>
-        </Show>
         <Show when={props.owned}>
           <Meta class="tabular-nums">Remaining: {left()}</Meta>
           <Show when={spent() > 0}>

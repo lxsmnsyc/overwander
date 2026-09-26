@@ -1,6 +1,6 @@
 import 'server-only';
 import type { StackSpec } from '../auth/stacks';
-import { type Tx, getSql, tx } from './db';
+import { type Sql, type Tx, getSql, tx } from './db';
 import { asNumber } from './read';
 
 /**
@@ -213,6 +213,20 @@ export async function grantStacks(
   uid: string,
   granted: Iterable<[key: number, count: number]>,
 ): Promise<void> {
+  return grantStacksIn(getSql(), spec, uid, granted);
+}
+
+/**
+ * `grantStacks` inside the caller's transaction, for a grant that has
+ * to land with something else or not at all: a claim marker and what
+ * the claim pays, an egg and the candy its hatching is worth
+ */
+export async function grantStacksIn(
+  transaction: Sql | Tx,
+  spec: StackSpec,
+  uid: string,
+  granted: Iterable<[key: number, count: number]>,
+): Promise<void> {
   const { table, key: column } = tableOf(spec);
   const rows: { [column: string]: string | number }[] = [];
 
@@ -225,11 +239,9 @@ export async function grantStacks(
     return;
   }
 
-  const sql = getSql();
-
-  await sql`
-    insert into ${sql(table)} ${sql(rows, 'player', column, 'count')}
-    on conflict (player, ${sql(column)})
-      do update set count = ${sql(table)}.count + excluded.count
+  await transaction`
+    insert into ${transaction(table)} ${transaction(rows, 'player', column, 'count')}
+    on conflict (player, ${transaction(column)})
+      do update set count = ${transaction(table)}.count + excluded.count
   `;
 }

@@ -10,7 +10,9 @@ import {
   createSignal,
   from,
   onCleanup,
+  onMount,
 } from 'solid-js';
+import { Disclosure, DisclosureButton, DisclosurePanel } from 'terracotta';
 import {
   RAID_PLAYER_LIMIT,
   RaidKind,
@@ -31,6 +33,8 @@ import { settled } from '../app/resource-reads';
 import PlayerPlate from '../profile/PlayerPlate';
 import { type TeamRecord, getTeamBatched } from '../../auth/teams';
 import { getSpeciesData } from '../../data/species';
+import { TYPE_EFFECTIVENESS, type Types, getTypeFactor } from '../../data/constants/types';
+import { ChevronRightIcon } from '../icons';
 import { RAID_BOSS_LEVEL } from '../../overworld/raid';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import LobbyInviteDialog from '../battle/LobbyInviteDialog';
@@ -43,7 +47,6 @@ import {
   Badge,
   Button,
   DialogActions,
-  DialogSection,
   List,
   Note,
   Row,
@@ -70,6 +73,146 @@ export interface RaidLobbyProps {
    * by a stray press on the overlay
    */
   onHosting?: (hosting: boolean) => void;
+}
+
+/** The combined multipliers the boss card lists, strongest first */
+const FACTORS: [factor: number, said: string][] = [
+  [4, '×4'],
+  [2, '×2'],
+  [0.5, '×½'],
+  [0.25, '×¼'],
+  [0, '×0'],
+];
+
+/** Every attacking type that does not hit these types for plain damage, by multiplier */
+function defenceChart(defending: readonly Types[]): Map<number, Types[]> {
+  const chart = new Map<number, Types[]>();
+
+  for (const key of Object.keys(TYPE_EFFECTIVENESS)) {
+    const attacking: Types = Number(key);
+    const factor = getTypeFactor(attacking, defending);
+
+    if (factor !== 1) {
+      const listed = chart.get(factor) ?? [];
+
+      listed.push(attacking);
+      chart.set(factor, listed);
+    }
+  }
+  return chart;
+}
+
+/** One labelled block of the chart, a line per multiplier */
+function ChartRows(props: {
+  label: string;
+  chart: Map<number, Types[]>;
+  factors: number[];
+}): JSX.Element {
+  const rows = (): [said: string, types: Types[]][] => {
+    const found: [string, Types[]][] = [];
+
+    for (const [factor, said] of FACTORS) {
+      const types = props.chart.get(factor);
+
+      if (props.factors.includes(factor) && types != null) {
+        found.push([said, types]);
+      }
+    }
+    return found;
+  };
+
+  return (
+    <Show when={rows().length > 0}>
+      <div class="grid grid-cols-[4.5rem_2rem_minmax(0,1fr)] items-start gap-x-1 gap-y-1 text-xs">
+        <For each={rows()}>
+          {([said, types], at) => (
+            <>
+              <span class="pt-0.5 font-semibold text-muted uppercase">
+                {at() === 0 ? props.label : ''}
+              </span>
+              <span class="pt-0.5 font-bold tabular-nums">{said}</span>
+              <span class="flex flex-wrap gap-1">
+                <For each={types}>{(type) => <TypeBadge type={type} />}</For>
+              </span>
+            </>
+          )}
+        </For>
+      </div>
+    </Show>
+  );
+}
+
+/**
+ * What is waiting in the lair, asleep, and what to bring against it.
+ * The lair's name is the panel's own heading. A row on a phone, a
+ * column beside the trainers from `md` up
+ */
+function BossCard(props: { species: number; mythical: boolean; hosting: boolean }): JSX.Element {
+  const [wide, setWide] = createSignal(false);
+
+  onMount(() => {
+    const query = globalThis.matchMedia('(min-width: 48rem)');
+    const read = (): void => {
+      setWide(query.matches);
+    };
+
+    read();
+    query.addEventListener('change', read);
+    onCleanup(() => {
+      query.removeEventListener('change', read);
+    });
+  });
+
+  const data = (): ReturnType<typeof getSpeciesData> => getSpeciesData(props.species);
+  const chart = (): Map<number, Types[]> => defenceChart(data().types);
+
+  return (
+    <div
+      class="flex flex-col gap-3 rounded-panel border-2 border-line-soft p-3 md:min-h-0
+        md:overflow-y-auto md:rounded-none md:border-0 md:border-r-2 md:p-0 md:pr-4"
+    >
+      <div class="flex items-end gap-3 md:flex-col md:items-center md:text-center">
+        {/* Feet on the floor of the box, so a tall boss and a short one
+            put their name on the same line */}
+        <div class="flex min-h-14 shrink-0 items-end justify-center md:-mb-2 md:min-h-28 md:w-full md:pt-2">
+          <AnimatedSprite
+            species={props.species}
+            animation={SpriteAnim.Sleep}
+            direction="DownLeft"
+            scale={wide() ? 4 : 2}
+            shadow
+            label={`${data().name}, waiting in the lair`}
+          />
+        </div>
+        <div class="flex min-w-0 flex-col gap-1 md:items-center">
+          {/* The level first: a raid boss is fought at the cap whoever
+              it is, and that is what a party is sized against */}
+          <span class="font-medium">
+            Lv. {RAID_BOSS_LEVEL} {data().name}
+          </span>
+          <div class="flex flex-wrap gap-1 md:justify-center">
+            <For each={data().types}>{(type) => <TypeBadge type={type} />}</For>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2 border-t-2 border-line-soft pt-3">
+        <ChartRows label="Weak to" chart={chart()} factors={[4, 2]} />
+        <ChartRows label="Resists" chart={chart()} factors={[0.5, 0.25]} />
+        <ChartRows label="Immune" chart={chart()} factors={[0]} />
+      </div>
+
+      <div class="flex flex-col items-center gap-2 border-t-2 border-line-soft pt-3 text-center md:mt-auto">
+        {/* The relic that opened it is spent, so there is no second attempt */}
+        <Show when={props.mythical}>
+          <Note>The relic is spent. Whatever this raid comes to, it comes to it once.</Note>
+        </Show>
+        <Badge tone={props.hosting ? 'leaf' : 'neutral'}>
+          {props.hosting ? 'You are hosting' : 'Waiting for the host'}
+        </Badge>
+      </div>
+    </div>
+  );
 }
 
 /**
@@ -282,173 +425,145 @@ function LobbyRows(
     game.setRaid(null);
   };
 
+  const joinedPlayers = (): number => new Set(teamPlayers()).size;
+  const mine = (): boolean => teamPlayers().includes(props.user.uid);
+
+  /** The one line of advice under the lobby, most pressing first */
+  const notice = (): string | null => {
+    if (canJoin() === false) {
+      return 'You need a pokemon of your own to fight. You can only watch this one.';
+    }
+    if (full()) {
+      return `The lobby is full: ${RAID_PLAYER_LIMIT} trainers are already in.`;
+    }
+    if (isHost() && (raid()?.teams.length ?? 0) === 0) {
+      return 'Start needs at least one team.';
+    }
+    return null;
+  };
+
   return (
     <>
       <Show when={raid()} fallback={<Note>Loading raid…</Note>}>
         {(record) => (
           <div class="flex flex-col gap-3">
-            {/* What is waiting in there, asleep. The lair's name is
-                the panel's own heading, so the picture says the one
-                thing the name cannot */}
-            <div class="flex flex-col items-center gap-1 text-center">
-              {/* Feet on the floor of the box rather than in the
-                  middle of one: a tall boss and a short one put their
-                  name on the same line that way */}
-              {/* Wide enough for a wingspan: the row is the width of
-                  the panel and the picture is as wide as it happens to
-                  be */}
-              <div class="-mb-2 flex min-h-28 w-full items-end justify-center pt-2">
-                <AnimatedSprite
-                  species={record().species}
-                  animation={SpriteAnim.Sleep}
-                  direction="DownLeft"
-                  scale={4}
-                  shadow
-                  label={`${getSpeciesData(record().species).name}, waiting in the lair`}
-                />
+            {/* Boss on the left, trainers on the right. The columns
+                share a fixed height so the list scrolls inside its own */}
+            <div class="flex flex-col gap-3 md:grid md:h-[min(60vh,30rem)] md:grid-cols-[16rem_minmax(0,1fr)] md:gap-0">
+              <BossCard
+                species={record().species}
+                mythical={record().kind === RaidKind.Mythical}
+                hosting={isHost()}
+              />
+
+              <div class="flex min-h-0 flex-col gap-2 md:pl-4">
+                <Row>
+                  <h4 class="grow">
+                    Trainers{' '}
+                    <span class="text-sm font-normal text-muted tabular-nums">
+                      {joinedPlayers()} / {RAID_PLAYER_LIMIT}
+                    </span>
+                  </h4>
+                  {/* A full lobby is a list of strangers; finding one is worth typing for */}
+                  <Show when={(teams()?.length ?? 0) > SEARCH_FROM}>
+                    <Search
+                      vocabulary={TEAM_VOCABULARY}
+                      example="is:host"
+                      placeholder="Name, or size:6 is:host"
+                      value={query()}
+                      onChange={(typed) => {
+                        setQuery(typed);
+                      }}
+                    />
+                  </Show>
+                </Row>
+
+                {/* The player's own row is stuck to the top: it is the one
+                    they came to look at, and the first to scroll away */}
+                <Show when={teams()?.length} fallback={<Note>No teams have joined yet.</Note>}>
+                  <Show when={joined().length} fallback={<Note>Nobody here matches.</Note>}>
+                    <div class="max-h-72 min-h-0 overflow-y-auto md:max-h-none md:flex-1">
+                      <List>
+                        <For each={joined()}>
+                          {(team) => (
+                            // The plate wears the frame so the party strip has the rest of the row
+                            <li
+                              class={`flex flex-col gap-2 sm:flex-row sm:items-center ${
+                                team.player === props.user.uid
+                                  ? 'sticky top-0 z-10 rounded-xl bg-paper'
+                                  : ''
+                              }`}
+                            >
+                              {/* Anybody but the reader opens their profile */}
+                              <span
+                                class={`flex w-full shrink-0 items-center gap-2 rounded-xl border-2
+                                  px-2 py-2 text-sm shadow-pop-sm sm:w-44 ${
+                                    team.player === props.user.uid
+                                      ? 'border-leaf bg-leaf-soft'
+                                      : 'border-line bg-paper'
+                                  }`}
+                              >
+                                <span class="min-w-0 grow">
+                                  <PlayerPlate
+                                    name={
+                                      team.player === props.user.uid ? 'You' : named(team.player)
+                                    }
+                                    sprite={faceOf(team.player)}
+                                    onOpen={
+                                      team.player === props.user.uid
+                                        ? undefined
+                                        : () => {
+                                            game.setVisiting(team.player);
+                                          }
+                                    }
+                                  />
+                                </span>
+                                <Show when={team.player === record().host}>
+                                  <Badge tone="tide">Host</Badge>
+                                </Show>
+                              </span>
+                              <LobbyParty catches={team.catches} class="min-w-0 grow" />
+                            </li>
+                          )}
+                        </For>
+                      </List>
+                    </div>
+                  </Show>
+                </Show>
+
+                {/* Everybody in the room without a party, closed until asked for */}
+                <Disclosure
+                  defaultOpen={false}
+                  class="flex flex-col border-t-2 border-line-soft pt-2"
+                >
+                  <DisclosureButton
+                    class="group flex cursor-pointer items-center gap-2 border-0 bg-transparent p-0
+                      text-left text-sm font-bold text-ink shadow-none focus-visible:outline-2
+                      focus-visible:outline-offset-2 focus-visible:outline-tide"
+                  >
+                    <ChevronRightIcon
+                      aria-hidden="true"
+                      class="size-4 shrink-0 text-muted transition-transform group-aria-expanded:rotate-90"
+                    />
+                    Watching · {onlookers().length}
+                  </DisclosureButton>
+                  <DisclosurePanel class="max-h-48 overflow-y-auto pt-2">
+                    <SpectatorList player={props.user.uid} watching={onlookers()} />
+                  </DisclosurePanel>
+                </Disclosure>
               </div>
-              {/* Named the way the lair named it — the level first,
-                  because a raid boss is fought at the cap whoever it
-                  is, and that is the number a player is sizing their
-                  party against */}
-              <span class="font-medium">
-                Lv. {RAID_BOSS_LEVEL} {getSpeciesData(record().species).name}
-              </span>
-              {/* And what it fights as, for the same reason the lair
-                  says it: the party is picked against these */}
-              <div class="flex flex-wrap justify-center gap-1">
-                <For each={getSpeciesData(record().species).types}>
-                  {(type) => <TypeBadge type={type} />}
-                </For>
-              </div>
-              <Badge tone={isHost() ? 'leaf' : 'neutral'}>
-                {isHost() ? 'You are hosting' : 'Waiting for the host'}
-              </Badge>
             </div>
 
-            {/* The relic that opened it is already spent, so there is
-                no second attempt to fall back on */}
-            <Show when={record().kind === RaidKind.Mythical}>
-              <Note class="text-center">
-                The relic is spent. Whatever this raid comes to, it comes to it once.
-              </Note>
+            <Show
+              when={status()}
+              fallback={
+                <Show when={notice()}>{(said) => <Note class="text-center">{said()}</Note>}</Show>
+              }
+            >
+              <Status message={status()} />
             </Show>
 
-            <Row>
-              <h4 class="grow">Teams</h4>
-              {/* A full lobby is a list of strangers' ids; finding one
-                  in it is worth typing for */}
-              <Show when={(teams()?.length ?? 0) > SEARCH_FROM}>
-                <Search
-                  vocabulary={TEAM_VOCABULARY}
-                  example="is:host"
-                  placeholder="Name, or size:6 is:host"
-                  value={query()}
-                  onChange={(typed) => {
-                    setQuery(typed);
-                  }}
-                />
-              </Show>
-            </Row>
-
-            {/* A lobby holds up to twenty players' parties, so the
-                list scrolls rather than growing the panel. The
-                player's own row is stuck to the top of it: it is the
-                one row they came to look at, and it is the one that
-                scrolls away first */}
-            <Show when={teams()?.length} fallback={<Note>No teams have joined yet.</Note>}>
-              <Show when={joined().length} fallback={<Note>Nobody here matches.</Note>}>
-                <div class="max-h-56 overflow-y-auto">
-                  <List>
-                    <For each={joined()}>
-                      {(team) => (
-                        // A box in a box: the strip of squares draws
-                        // its own frame, so the row's frame around it
-                        // and the name together left the squares a
-                        // third of the width to share. The plate wears
-                        // the frame now and the strip has the row
-                        <li
-                          class={`flex flex-col gap-2 sm:flex-row sm:items-center ${
-                            team.player === props.user.uid
-                              ? 'sticky top-0 z-10 rounded-xl bg-paper'
-                              : ''
-                          }`}
-                        >
-                          {/* Anybody but the reader is somebody worth
-                              knowing about before the fight starts:
-                              what they walk with, what they have
-                              fought, what is in their box. Their own
-                              row is not a button — a player pressing
-                              their own name in a lobby would be
-                              opening a read-only copy of the profile
-                              the menu already gives them */}
-                          <span
-                            class={`flex w-full shrink-0 items-center rounded-xl border-2 px-2
-                              py-2 text-sm shadow-pop-sm sm:w-40 ${
-                                team.player === props.user.uid
-                                  ? 'border-leaf bg-leaf-soft'
-                                  : 'border-line bg-paper'
-                              }`}
-                          >
-                            <PlayerPlate
-                              name={team.player === props.user.uid ? 'You' : named(team.player)}
-                              sprite={faceOf(team.player)}
-                              onOpen={
-                                team.player === props.user.uid
-                                  ? undefined
-                                  : () => {
-                                      game.setVisiting(team.player);
-                                    }
-                              }
-                            />
-                          </span>
-                          {/* The party itself, square for square, with
-                              the same card the box would put over each.
-                              It takes what is left of the row: six
-                              squares sharing 240 pixels were too small
-                              to tell one pokemon from another */}
-                          <LobbyParty catches={team.catches} class="min-w-0 grow" />
-                        </li>
-                      )}
-                    </For>
-                  </List>
-                </div>
-              </Show>
-            </Show>
-
-            {/* Everybody in the room without a party. A player with
-                no pokemon of their own can only ever be one of these,
-                and a host may stage a raid for other people the same
-                way a battle lobby is staged */}
-            <DialogSection title="Spectators">
-              <SpectatorList player={props.user.uid} watching={onlookers()} />
-            </DialogSection>
-
-            <Show when={canJoin() === false}>
-              <Note class="text-center">
-                You need a pokemon of your own to fight — you can only watch this one.
-              </Note>
-            </Show>
-
-            <Show when={full()}>
-              <Note class="text-center">
-                The lobby is full: {RAID_PLAYER_LIMIT} trainers are already in.
-              </Note>
-            </Show>
-
-            <Status message={status()} />
-
-            {/* Bring a party, start the fight, or walk out of it */}
             <DialogActions>
-              <Show when={canJoin() !== false && !full()}>
-                <Button
-                  onClick={() => {
-                    setPicking(true);
-                  }}
-                >
-                  Form a team
-                </Button>
-              </Show>
               <Show when={mayInvite()}>
                 <Button
                   onClick={() => {
@@ -456,6 +571,15 @@ function LobbyRows(
                   }}
                 >
                   Invite
+                </Button>
+              </Show>
+              <Show when={canJoin() !== false && !full()}>
+                <Button
+                  onClick={() => {
+                    setPicking(true);
+                  }}
+                >
+                  {mine() ? 'Change team' : 'Form a team'}
                 </Button>
               </Show>
               <Show when={isHost()}>
@@ -469,7 +593,7 @@ function LobbyRows(
                   Start
                 </Button>
               </Show>
-              <Button onClick={back}>Cancel</Button>
+              <Button onClick={back}>Leave</Button>
             </DialogActions>
           </div>
         )}
@@ -505,11 +629,6 @@ function LobbyRows(
       />
     </>
   );
-}
-
-/** What a team is, for telling one that changed from one that did not */
-function teamKey(team: TeamRecord): string {
-  return `${team.player}:${team.catches.join(',')}`;
 }
 
 /** The uids packed into a resource key, without the empty one an empty lobby leaves */
@@ -578,31 +697,36 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
     }),
   );
 
+  // A team is written once and never changed, so one already read is
+  // kept by its id: a join reads the team that joined and nothing else,
+  // and the rows of the teams already there are not built again
+  const known = new Map<string, TeamRecord>();
+  const readTeam = async (id: string): Promise<TeamRecord | null> => {
+    const team = known.get(id) ?? (await getTeamBatched(id));
+
+    if (team != null) {
+      known.set(id, team);
+    }
+    return team;
+  };
+
   // Keyed on the ids, since every lobby ping hands over a fresh array of
   // the same ones
   const [teams] = createResource(
     () => raid()?.teams.join(',') ?? null,
-    async (key, { value }): Promise<TeamRecord[]> => {
-      const reads: ReturnType<typeof getTeamBatched>[] = [];
+    async (key): Promise<TeamRecord[]> => {
+      const reads: Promise<TeamRecord | null>[] = [];
 
-      // One read for the whole lobby rather than one per team
+      // One read for every team not held yet, rather than one per team
       for (const id of splitKey(key)) {
-        reads.push(getTeamBatched(id));
-      }
-
-      // A team that did not change keeps its object, so its row and the
-      // party strip in it are not built again
-      const before = new Map<string, TeamRecord>();
-
-      for (const team of value ?? []) {
-        before.set(teamKey(team), team);
+        reads.push(readTeam(id));
       }
 
       const found: TeamRecord[] = [];
 
       for (const team of await Promise.all(reads)) {
         if (team != null) {
-          found.push(before.get(teamKey(team)) ?? team);
+          found.push(team);
         }
       }
       return found;

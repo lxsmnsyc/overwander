@@ -54,11 +54,21 @@ function SavedTeam(props: { preset: TeamPresetRecord; onUse: () => void }): JSX.
   const [party] = createResource(
     () => props.preset.catches.join(','),
     async (key): Promise<[string, CaughtPokemon][]> => {
+      const pending: Promise<[string, CaughtPokemon | null]>[] = [];
+
+      // Asked for together, since the batch only merges reads started in the same tick
+      for (const id of key.split(',')) {
+        if (id === '') {
+          continue;
+        }
+        pending.push(
+          getCaughtBatched(id).then((caught): [string, CaughtPokemon | null] => [id, caught]),
+        );
+      }
+
       const held: [string, CaughtPokemon][] = [];
 
-      for (const id of key.split(',')) {
-        const caught = await getCaughtBatched(id);
-
+      for (const [id, caught] of await Promise.all(pending)) {
         if (caught != null) {
           held.push([id, caught]);
         }

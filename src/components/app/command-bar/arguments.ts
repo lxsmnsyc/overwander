@@ -50,11 +50,11 @@ export function asBounded(
  * gift expires at the end of the day it names rather than at its
  * beginning: "the 5th" means the 5th is still a day it can be taken on
  */
-export function endOfDay(typed: string | undefined): number | null | undefined {
+export function endOfDay(typed: string | undefined): Date | null | undefined {
   if (typed == null || typed.trim() === '') {
     return typed == null ? undefined : null;
   }
   const at = new Date(`${typed.trim()}T23:59:59`);
 
-  return Number.isNaN(at.getTime()) ? null : at.getTime();
+  return Number.isNaN(at.getTime()) ? null : at;
 }

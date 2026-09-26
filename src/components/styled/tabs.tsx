@@ -93,11 +93,11 @@ export function TabBar(props: ParentProps & { class?: string }): JSX.Element {
  * Every tab in the game is a numbered one — the tab enums are plain
  * numbers — so the value is a number rather than something generic
  */
-export function TabButton(props: ParentProps<{ value: number }>): JSX.Element {
+export function TabButton(props: ParentProps<{ value: number; class?: string }>): JSX.Element {
   return (
     <Tab
       value={props.value}
-      class={TAB}
+      class={`${TAB} ${props.class ?? ''}`}
       // Focused on press: terracotta selects a tab again when it loses
       // focus, and a browser that leaves focus on the old tab after a
       // click would hand the selection back to it later

@@ -4,7 +4,7 @@
  */
 
 export { default } from './kinds';
-export { WEATHER_DESCRIPTIONS, WEATHER_NAMES, WEATHER_TYPES } from './kinds';
+export { WEATHER_COLORS, WEATHER_DESCRIPTIONS, WEATHER_NAMES, WEATHER_TYPES } from './kinds';
 export {
   DARK_DAY_LAMP_CELLS,
   DARK_DAY_SHADOW_CHANCE,

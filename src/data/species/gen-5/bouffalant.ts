@@ -1,7 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
-import { AnyTimeOfDay } from '../../ids/biome';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -34,8 +34,9 @@ export default function registerBouffalantSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [],
-    activeTimes: AnyTimeOfDay,
+    // The open grass it charges through, by day
+    biomes: [Biome.Grassland, Biome.Steppe],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.Leer, Moves.Pursuit],

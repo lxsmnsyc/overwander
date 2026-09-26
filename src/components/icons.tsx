@@ -638,6 +638,73 @@ export function ChevronUpIcon(props: ComponentProps<'svg'>): JSX.Element {
   );
 }
 
+export function ChevronLeftIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      {...props}
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 19.5-7.5-7.5 7.5-7.5" />
+    </svg>
+  );
+}
+
+export function ArrowUpIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      {...props}
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+    </svg>
+  );
+}
+
+export function ArrowDownIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      {...props}
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"
+      />
+    </svg>
+  );
+}
+
+/** A ring with four ticks: back to where you stand */
+export function CrosshairIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      {...props}
+    >
+      <circle cx="12" cy="12" r="6.75" />
+      <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
+      <path stroke-linecap="round" d="M12 2.25v3.5M12 18.25v3.5M2.25 12h3.5M18.25 12h3.5" />
+    </svg>
+  );
+}
+
 /** Four arrows pushing out: the game taking the whole screen */
 export function ExpandIcon(props: ComponentProps<'svg'>): JSX.Element {
   return (

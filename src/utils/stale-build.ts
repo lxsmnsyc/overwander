@@ -1,4 +1,5 @@
 import { BUILD_HEADER, STALE_BUILD_HEADER, isServerCall } from './build';
+import { countServerCall } from './server-calls';
 
 /** The stale build a reload was last asked for, so a page that comes back stale is not reloaded forever */
 const RELOADED_KEY = 'stale-build-reload';
@@ -35,7 +36,10 @@ export default function guardServerCalls(): void {
 
     headers.set(BUILD_HEADER, import.meta.env.VITE_BUILD_ID);
 
-    const response = await send(new Request(request, { headers }));
+    // Counted as it goes out and again once it is answered, so a copy
+    // read while it was in flight is not taken for one read after it
+    countServerCall();
+    const response = await send(new Request(request, { headers })).finally(countServerCall);
 
     if (response.headers.has(STALE_BUILD_HEADER)) {
       reloadForNewBuild();

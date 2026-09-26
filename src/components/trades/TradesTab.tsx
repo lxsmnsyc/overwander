@@ -190,7 +190,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
           return;
         }
         if (gained) {
-          playEffect(Effect.PokemonGet);
+          playEffect(Effect.TradeComplete);
         }
         toast.push({ message: said, tone: 'leaf' });
         // Either a pokemon changed hands or one came home from

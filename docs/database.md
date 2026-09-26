@@ -24,22 +24,33 @@ migrations to a Supabase project, and what Vercel needs to reach it.
 
 ## The tables
 
-| Page                                             | What it covers                                                                                             |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
-| [Player-owned tables](database/player-stores.md) | `profiles` (buddy included), `bag_items`, `bag_candies`, `pokedex_entries`, `positions`, `fled_encounters` |
-| [Catch records](database/catches.md)             | `caught` and its children, the battle lock, and eggs waiting to be walked                                  |
-| [Shared overworld tables](database/overworld.md) | `snapshots`, `snapshot_spawns`, `encounters`, and the landmark claim markers                               |
-| [Raids and battles](database/raids.md)           | `raids`, `teams`, `team_snapshots`, `battles`, `rocket_stops`, `raid_rewards`, invites and watchers        |
-| [Battle lobbies](database/duels.md)              | `duels`, `duel_members`, `duel_catches`, `duel_invites`: the private lobbies players open                  |
-| [Gym seats](database/gyms.md)                    | `gym_seats`, `gym_challenges`: the seat a player holds, and what a challenge stakes                        |
-| [Auctions](database/auctions.md)                 | `auctions`, `auction_sellers`, `bids`, and the escrow a lot sits in                                        |
-| [Mystery gifts](database/gifts.md)               | `gifts`, `gift_claims`: what is waiting on a shelf, and who has taken it                                   |
-| [Friends](database/friends.md)                   | `friends`, `friend_requests`, `blocks`, `friend_codes`, `trades`                                           |
-| [Quests and awards](database/quests.md)          | `quest_progress`, `quest_baselines`, `quest_claims`, the rotation windows, `awards`, and the worn title    |
-| [Encounter kinds](database/encounters.md)        | `EncounterType`: what each way of meeting a pokemon is recorded as                                         |
-| [Time](database/time.md)                         | The server clock, and the player-local zone everything is read in                                          |
-| [Security](database/security.md)                 | Privileged writes, the policies, the grants, and the indexes the queries need                              |
-| [Running it locally](database/local-stack.md)    | Starting the stack, pointing the app at it, seeding, resetting, and what to check when it misbehaves       |
+| Page | What it covers |
+| ---- | -------------- |
+| [Player-owned tables](database/player-stores.md) | `profiles` (buddy included), `bag_items`, `bag_candies`, `pokedex_entries`, `positions`, `fled_encounters`, `action_paces` |
+| [Catch records](database/catches.md) | `caught` and its child tables, and searching a box |
+| [Training and friendship](database/catch-training.md) | The effort pool, the friendship table, the packed fields, and the mark columns |
+| [Health and state](database/catch-state.md) | Health and status, what the player sets, and the lock a fight puts on a catch |
+| [Ownership history](database/catch-history.md) | `caught_history`, what a catch was paid for, and where it came from |
+| [Changing a catch](database/catch-changes.md) | Evolution, held items, bottle caps, purifying, releasing and escrow |
+| [Eggs](database/eggs.md) | What an egg is, how a bred one is made, and walking one |
+| [Shared overworld tables](database/overworld.md) | The refresh windows, `snapshots` and `snapshot_spawns` |
+| [Claim markers](database/world-claims.md) | `encounters`, and the cache, berry, phenomenon and nest claims |
+| [Towns and people](database/town-npcs.md) | Wandering NPCs, portals, and how a town is named |
+| [The cave layers](database/cave-layers.md) | The world under the surface, its mouths, and which layer a call is about |
+| [Raids](database/raids.md) | `raids`, `teams`, the lobby, invites and watchers |
+| [Battle rows](database/battle-rows.md) | `team_snapshots`, the raid boss, `battles`, `battle_teams` and `battle_aftermaths` |
+| [Stops and rewards](database/raid-stops.md) | `rocket_stops` and `raid_rewards` |
+| [Battle lobbies](database/duels.md) | `duels`, `duel_members`, `duel_catches`, `duel_invites`: the private lobbies players open |
+| [Gym seats](database/gyms.md) | `gym_seats`, `gym_challenges`: the seat a player holds, and what a challenge stakes |
+| [Auctions](database/auctions.md) | `auctions`, `auction_sellers`, the board, and what may go on the block |
+| [Bids and escrow](database/auction-bids.md) | `bids`, collecting a lot, taking one back, and the escrow it sits in |
+| [Mystery gifts](database/gifts.md) | `gifts`, `gift_claims`: what is waiting on a shelf, and who has taken it |
+| [Friends](database/friends.md) | `friends`, `friend_requests`, `blocks`, `friend_codes`, `trades` |
+| [Quests and awards](database/quests.md) | `quest_progress`, `quest_baselines`, `quest_claims`, the rotation windows, `awards`, and the worn title |
+| [Encounter kinds](database/encounters.md) | `EncounterType`: what each way of meeting a pokemon is recorded as |
+| [Time](database/time.md) | The server clock, and the player-local zone everything is read in |
+| [Security](database/security.md) | Privileged writes, the policies, the grants, and the indexes the queries need |
+| [Running it locally](database/local-stack.md) | Starting the stack, pointing the app at it, seeding, resetting, and what to check when it misbehaves |
 
 ## How to read these
 

@@ -15,7 +15,7 @@ import CatchDialog from '../components/catches/catch-dialog';
 import CatchesList from '../components/catches/catches-list';
 import GameMenu from '../components/app/GameMenu';
 import GameProvider, { GameDialog, useGame } from '../components/app/game-context';
-import InventoryList from '../components/items/InventoryList';
+import InventoryList, { BagHint } from '../components/items/InventoryList';
 import LoginForm from '../components/app/LoginForm';
 import GiftsTab from '../components/gifts/GiftsTab';
 import NotificationsTab from '../components/notifications/NotificationsTab';
@@ -180,12 +180,16 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Catches]}
             description={DESCRIPTIONS[GameDialog.Catches]}
           >
-            <BattleData>
-              <CatchesList player={props.user.uid} />
+            {/* The list draws the dialog's foot itself, since picking puts its actions there */}
+            <BattleData
+              fallback={
+                <DialogActions>
+                  <Button onClick={close}>Close</Button>
+                </DialogActions>
+              }
+            >
+              <CatchesList player={props.user.uid} onClose={close} />
             </BattleData>
-            <DialogActions>
-              <Button onClick={close}>Close</Button>
-            </DialogActions>
           </Dialog>
 
           {/* The dex: what there is, beside the box of what they have */}
@@ -210,6 +214,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onClose={close}
             width="wide"
             terse
+            aside={<BagHint />}
             title={TITLES[GameDialog.Inventory]}
             description={DESCRIPTIONS[GameDialog.Inventory]}
           >
@@ -309,7 +314,8 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           <Dialog
             isOpen={showing(GameDialog.Profile)}
             onClose={close}
-            width="wide"
+            // Broad for the side list of sections beside what is open
+            width="broad"
             quiet
             title={TITLES[GameDialog.Profile]}
             description={DESCRIPTIONS[GameDialog.Profile]}
@@ -324,7 +330,8 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             isOpen={showing(GameDialog.Raids)}
             onClose={close}
             insistent={hosting()}
-            width="wide"
+            // Broad in a lobby, for the boss beside the trainer list
+            width={lobby() == null ? 'wide' : 'broad'}
             // Named for the lair while the player is standing in one,
             // and "Raids" while they are only looking at the list.
             //
@@ -522,6 +529,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onReward={(reward) => {
               game.setReward(reward);
             }}
+            spoils={game.spoils}
           />
         </BattleData>
       )}

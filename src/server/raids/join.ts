@@ -24,14 +24,15 @@ import { asNumber } from '../read';
  * its pokemon free — and a party that is actually fighting answers
  * the different question the battle lock asks.
  *
- * A battle lobby's party counts the same way. `exceptDuel` is the one
- * a caller is assembling right now: replacing a party there must not
- * find the pokemon it is replacing
+ * A battle lobby's party counts the same way. `exceptDuel` and
+ * `exceptRaid` are the lobby a caller is replacing a party in, which
+ * must not find the pokemon it is replacing
  */
 export async function isAnyCatchQueued(
   uid: string,
   catches: string[],
   exceptDuel = '',
+  exceptRaid = '',
 ): Promise<boolean> {
   // One query says it all: a party of this player's, holding any of
   // these catches, in a lobby that has not started
@@ -42,6 +43,7 @@ export async function isAnyCatchQueued(
     join raids r on r.id = t.raid_id
     where t.player = ${uid}
       and tc.caught_id = any(${catches})
+      and t.raid_id <> ${exceptRaid}
       and r.generation = ${WORLD_GENERATION}
       and r.battle_id is null
       and not r.cleared
@@ -67,8 +69,9 @@ export async function isAnyCatchQueued(
  *
  * The freeze at the start of the fight would drop a fainted pokemon
  * anyway; refusing here is so a player finds out while they can still
- * do something about it. Resolves the team id, or null when the party
- * is not a legal one or the raid has started
+ * do something about it. A player already in the lobby has their
+ * party replaced rather than added to. Resolves the team id, or null
+ * when the party is not a legal one or the raid has started
  */
 export async function joinRaid(
   uid: string,
@@ -119,10 +122,10 @@ export async function joinRaid(
       return null;
     }
   }
-  // Nor one already waiting in another lobby, or in this one: a party
-  // that queues the same pokemon twice would have it dropped from
-  // whichever raid started second, without ever being told
-  if (await isAnyCatchQueued(uid, catches)) {
+  // Nor one already waiting in another lobby: a party that queues the
+  // same pokemon twice would have it dropped from whichever raid
+  // started second. This lobby's own party is the one being replaced
+  if (await isAnyCatchQueued(uid, catches, '', lobby)) {
     return null;
   }
 
@@ -137,8 +140,8 @@ export async function joinRaid(
       return null;
     }
 
-    // Distinct players other than this one: a second team of their
-    // own fills no new place, and a full lobby still takes it
+    // Distinct players other than this one: a player replacing their
+    // party fills no new place, and a full lobby still takes it
     const others = await transaction`
       select count(distinct player)::int as joined
       from teams where raid_id = ${lobby} and player <> ${uid}
@@ -148,6 +151,8 @@ export async function joinRaid(
       return null;
     }
 
+    // One party a player: a new one replaces whatever they had here
+    await transaction`delete from teams where raid_id = ${lobby} and player = ${uid}`;
     await transaction`
       insert into teams (id, player, raid_id) values (${teamId}, ${uid}, ${lobby})
     `;

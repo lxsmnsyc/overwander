@@ -76,6 +76,14 @@ export const START_CELL = CHUNK_CELLS / 2;
 export const SAVE_DELAY = 1500;
 
 /**
+ * The least time between two position writes, however often the
+ * player stops. The row is only where they are standing, so one
+ * written a moment late costs nothing, and stop-start walking would
+ * otherwise write every few seconds all afternoon
+ */
+export const SAVE_FLOOR = 8000;
+
+/**
  * How many paces are walked before the egg being carried is told
  * about them: as many as the server credits in one report. Batching
  * costs the walker nothing, since the server credits against the time

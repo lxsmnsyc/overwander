@@ -95,13 +95,13 @@ const GENDER_NAMES: Record<Genders, string> = {
  * names rather than at its beginning — "the 5th" means the 5th is
  * still a day it can be taken on
  */
-function endOf(day: string): number | null {
+function endOf(day: string): Date | null {
   if (day.trim() === '') {
     return null;
   }
   const at = new Date(`${day}T23:59:59`);
 
-  return Number.isNaN(at.getTime()) ? null : at.getTime();
+  return Number.isNaN(at.getTime()) ? null : at;
 }
 
 export interface GiftFormProps {

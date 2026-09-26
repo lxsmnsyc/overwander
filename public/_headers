@@ -1,0 +1,33 @@
+# What the sprite host answers with. Cloudflare Pages reads this from
+# the root of what it publishes; Vercel ignores it, and the rules it
+# needs stay in vercel.json.
+#
+# The app is served from a different origin to the sprites, so every
+# one of these is read cross-origin: the sheets and frame packs are
+# fetched, and the terrain pack is drawn into a canvas and read back
+# pixel by pixel, which a tainted canvas refuses. Both need the
+# allow-origin header, and the pictures are loaded with crossOrigin
+# set to match.
+#
+# A year and immutable is safe because a sheet is asked for with its
+# own digest (`?v=`), so a regenerated one arrives under a new URL
+# rather than replacing a cached one.
+/sprites/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=31536000, immutable
+
+# The sound effects, stamped the same way by scripts/sound-stamps.ts
+/sounds/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=31536000, immutable
+
+# Except the two indexes that hand out those digests. They keep one
+# address, so they are checked with the host on every read; cached for
+# a year, a browser kept asking for sheets that had since been redrawn.
+/sprites/stamps.json
+  ! Cache-Control
+  Cache-Control: no-cache
+
+/sprites/pokemon/coats.json
+  ! Cache-Control
+  Cache-Control: no-cache

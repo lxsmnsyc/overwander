@@ -1,0 +1,15 @@
+# The sprites are published to their own host and served from there,
+# so Vercel never needs them. They are the most requested thing the
+# game has by a wide margin, and every request for one would otherwise
+# be counted against the app's own allowance.
+#
+# Vite copies public/ into the build output, so keeping the files out
+# of the upload keeps them out of the deployment. Development is
+# untouched: the files stay in the working tree and Vite serves them.
+public/sprites
+
+# The sound effects, served from the same host for the same reason
+public/sounds
+
+# The sprite host's own config, which the app's build has no use for
+wrangler.jsonc

@@ -214,8 +214,8 @@ function startled(
  * to be.
  *
  * Every kind can be a **pokemon**, and every kind but the grotto can
- * be an **item** instead: half the time, through the phenomenon's own
- * bands, which are the ground's one step richer. A grotto has no item
+ * be a **stash** of items instead: half the time, through the
+ * phenomenon's own bands, which are the ground's one step richer. A grotto has no item
  * side: what it has instead is one draw in sixty-four on an **egg** of
  * the biome, decided before anything else, which is the rarest thing
  * any landmark hands over without a fee or a walk.
@@ -232,12 +232,12 @@ export function resolvePhenomenon(
   featured: Families | null = null,
   surface = SpawnSurface.Land,
 ): PhenomenonReward | null {
-  // One piece. Everything a phenomenon leaves is worth carrying home
-  // on its own, so a handful of them would be a different landmark
+  // A stash on a cache's terms, drawn through the phenomenon's richer
+  // bands
   const dropped = (): PhenomenonReward | null => {
-    const item = pickItem(getPhenomenonGroups(phenomenon), random, PHENOMENON_BAND_ODDS);
+    const items = pickItems(getPhenomenonGroups(phenomenon), random, PHENOMENON_BAND_ODDS);
 
-    return item == null ? null : { kind: 'item', items: [{ item, amount: 1 }] };
+    return items.length === 0 ? null : { kind: 'item', items };
   };
 
   if (phenomenon === Phenomenon.HiddenGrotto) {

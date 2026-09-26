@@ -24,9 +24,8 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Reads the version from packageManager in package.json
       - uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       # The scripts run straight from TypeScript, which needs a recent node
       - uses: actions/setup-node@v4
@@ -36,13 +35,14 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # v1 rather than v2: v2 expects Changesets 3, and this repo is on 2
-      - uses: changesets/action@v1
+      # release.sh makes the tag and the release itself, since the package
+      # is private and Changesets does not tag it
+      - uses: changesets/action@v2
         with:
-          version: pnpm cs:ver
-          publish: bash scripts/release.sh
-          createGithubReleases: false
+          version-script: pnpm cs:ver
+          publish-script: bash scripts/release.sh
+          create-github-releases: false
+          push-git-tags: false
         env:
-          GITHUB_TOKEN: ${{ github.token }}
           # Vercel only deploys through this hook, so only a new release goes live
           VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}

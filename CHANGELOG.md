@@ -1,5 +1,18 @@
 # overwander
 
+## 4.19.1
+
+### Patch Changes
+
+- 9fc5de8: The game can show a line to everybody with it open, such as a maintenance
+  window or an event starting, and each player can put it away.
+- 994282f: A server can switch on three optional features: a ledger of every gold, item
+  and candy change, a log of what staff did, and a day's grace on releases, when
+  a released pokemon can be taken back for the candy it paid.
+- dc52f18: Parts of the game, or the whole game for maintenance, can be closed for a while
+  without an update. Leaving, cancelling and finishing what is already under way
+  always stays open.
+
 ## 4.19.0
 
 ### Minor Changes

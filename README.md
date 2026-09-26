@@ -50,8 +50,8 @@ modern ones.
 ### What you need
 
 - **Node 22 or newer**, which the Vite 8 toolchain expects.
-- **pnpm**. This repository is pnpm-managed and its lockfile is
-  `pnpm-lock.yaml`; npm and yarn will fight it.
+- **pnpm 12**. The version is pinned in `packageManager`, so Corepack picks it
+  up. The lockfile is `pnpm-lock.yaml`; npm and yarn will fight it.
 - **The Supabase CLI** and **Docker**, for the local stack. A hosted project
   works too, but nothing about development needs one.
 

@@ -40,6 +40,17 @@ The second is stacking a cost on a line that is already paying one. Slaking alre
 
 **Nothing keys on whether a move repeats the last one landed**, in either direction. The AI scores each move on its own merits through the speculative resolvers and has no notion of what it threw a moment ago, so a rule written on move history plays completely differently in a player's hands than in the AI's. Counting landed moves without caring which they were is fine, and so is keying on the target rather than the move.
 
+## Directions worth reaching for
+
+Flat multipliers and stat stages are the crowded end of the registry. These four kinds of design change how a fight plays rather than how hard it hits, so propose them first when the family's theme allows:
+
+- **Handing a teammate a specific item**, as Delibird's Delivery gives a Berry Juice to the teammate lowest on HP.
+- **Widening a move's reach** to several enemies or allies, as Caterpie's Powder Burst does for status moves and Yanma's Resonance for sound moves.
+- **Redirecting a move or its effect**, as Nosepass's Magnetize pulls enemy moves onto itself and Finneon's False Eyes draws a move aimed at a badly hurt teammate.
+- **Triggering a move's effect on a condition other than arriving on the field**, on itself, a teammate or an enemy, as Sandshrew's Curl Up casts Defense Curl each time it is hit and Exeggcute's Psyseed seeds whatever its Psychic moves damage.
+
+The uniqueness rules still apply: a second design in one of these directions has to be a different mechanic, not the same one with another move or number.
+
 ## Reach for a move before writing machinery
 
 **Where a move already does the thing, cast it.** Drought casts Sunny Day and Cursed Body casts Disable, and a signature that wants weather, a screen, a trap, a heal, a hazard or a status should reach for the move rather than a hand-written listener: the move's own duration, power and cure list stay authoritative, so tuning the move tunes every ability built on it. Cast with `unit.triggerMove(move, target, 0)`, and remember a cast move resolves on its own flight delay, which a test has to advance the clock for.

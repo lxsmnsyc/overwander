@@ -2050,6 +2050,23 @@ export default function registerSignatureAbilities(): void {
       'It has room for 1 held item more than it was born with, as far as the fight allows.',
   });
 
+  // The sea, and the pair its two routes hand out one apiece
+  registerSignature(Families.Binacle, Abilities.ManyHands, {
+    name: 'Many Hands',
+    description: 'Every stat stage it holds counts 1.5x, raises and drops alike.',
+  });
+
+  registerSignature(Families.Skrelp, Abilities.DeepKelp, {
+    name: 'Deep Kelp',
+    description: 'A blow that would take less than 1/8 of its HP does nothing at all.',
+  });
+
+  registerSignature(Families.Clauncher, Abilities.RangingShot, {
+    name: 'Ranging Shot',
+    description:
+      "Its special moves deal at least 1/8 of the target's HP, however they are resisted.",
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:

@@ -31,6 +31,23 @@ function veiledBy(unit: Unit, ability: Abilities): Unit | undefined {
 }
 
 /**
+ * What a claw built like a gun fires: the pulses and the aura moves,
+ * which the mainline counts as one family
+ * https://bulbapedia.bulbagarden.net/wiki/Mega_Launcher_(Ability)
+ */
+const PULSE_MOVES = new Set<Moves>([
+  Moves.AuraSphere,
+  Moves.DarkPulse,
+  Moves.DragonPulse,
+  Moves.HealPulse,
+  Moves.OriginPulse,
+  Moves.WaterPulse,
+]);
+
+/** What a launcher is worth to a pulse, thrown or given */
+const MEGA_LAUNCHER_SCALE = 1.5;
+
+/**
  * What a shell thick enough to stop a shot turns away: everything
  * thrown rather than swung, which the mainline calls ballistic
  * https://bulbapedia.bulbagarden.net/wiki/Bulletproof_(Ability)
@@ -206,6 +223,32 @@ const setupAbilities = [
         battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
           if (event.ability === Abilities.MistySurge) {
             event.source.triggerMove(Moves.MistyTerrain, { type: MoveTargetType.None }, 0);
+          }
+        }),
+      ]),
+  ),
+
+  // Clauncher: the claw is a barrel, so anything fired down it lands
+  // harder, and the one pulse that mends rather than hurts mends more
+  createAbility(
+    Abilities.MegaLauncher,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+          if (
+            PULSE_MOVES.has(event.parent.move) &&
+            event.parent.source.hasAbility(Abilities.MegaLauncher)
+          ) {
+            event.value *= MEGA_LAUNCHER_SCALE;
+          }
+        }),
+        battle.on(BattleEvents.UnitHeal, EventPriority.Post, (event) => {
+          if (
+            event.cause.type === EffectType.Move &&
+            event.cause.move === Moves.HealPulse &&
+            event.cause.unit.hasAbility(Abilities.MegaLauncher)
+          ) {
+            event.value *= MEGA_LAUNCHER_SCALE;
           }
         }),
       ]),

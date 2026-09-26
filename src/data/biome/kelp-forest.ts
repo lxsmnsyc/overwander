@@ -110,6 +110,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Horsea, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Skrelp, weight: 24 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
@@ -121,6 +122,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Seadra, weight: 10 },
       ],
       scarce: [
+        { species: Species.Dragalge, weight: 6 },
         { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Lanturn, weight: 10 },
@@ -141,6 +143,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Horsea, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Skrelp, weight: 24 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
@@ -152,6 +155,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Seadra, weight: 10 },
       ],
       scarce: [
+        { species: Species.Dragalge, weight: 6 },
         { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Lanturn, weight: 10 },

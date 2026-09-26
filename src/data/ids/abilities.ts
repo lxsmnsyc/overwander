@@ -934,6 +934,12 @@ const enum Abilities {
   TurnTheBlade = 200339,
   // Klefki
   Keyring = 200340,
+  // Binacle
+  ManyHands = 200341,
+  // Skrelp
+  DeepKelp = 200342,
+  // Clauncher
+  RangingShot = 200343,
 }
 
 export default Abilities;

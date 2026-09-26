@@ -96,6 +96,8 @@ export default function registerCoralReefSpawns(): void {
     [TimeOfDay.Morning]: {
       base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
+        { species: Species.Clauncher, weight: 24 },
+        { species: Species.Skrelp, weight: 24 },
         { species: Species.Carvanha, weight: 20 },
         { species: Species.Clamperl, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
@@ -103,6 +105,8 @@ export default function registerCoralReefSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Clawitzer, weight: 6 },
+        { species: Species.Dragalge, weight: 6 },
         { species: Species.Sharpedo, weight: 6 },
         { species: Species.Octillery, weight: 5 },
         { species: Species.Lumineon, weight: 6 },
@@ -120,6 +124,8 @@ export default function registerCoralReefSpawns(): void {
     [TimeOfDay.Day]: {
       base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
+        { species: Species.Clauncher, weight: 24 },
+        { species: Species.Skrelp, weight: 24 },
         { species: Species.Carvanha, weight: 20 },
         { species: Species.Clamperl, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
@@ -127,6 +133,8 @@ export default function registerCoralReefSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Clawitzer, weight: 6 },
+        { species: Species.Dragalge, weight: 6 },
         { species: Species.Sharpedo, weight: 6 },
         { species: Species.Octillery, weight: 5 },
         { species: Species.Lumineon, weight: 6 },

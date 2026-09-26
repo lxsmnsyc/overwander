@@ -4,7 +4,7 @@ Making yourself an admin, what a deployed build will not do, the upkeep, and
 what each failure means.
 
 **Assumes:** the site is deployed and players can sign in. See
-[Vercel](vercel.md).
+[The server](server.md).
 
 ## Making yourself an admin
 
@@ -57,7 +57,7 @@ Read the two records in the dashboard's table editor; players never can.
 - **Backups are the database's.** The world needs none, since it is derived, but
   every catch, bag, auction and friendship is a row.
 - **The clock is the server's.** `src/server/*` runs in UTC deliberately, and
-  Vercel's functions already do, so nothing needs setting for it.
+  `src/server/timezone.ts` pins it, so nothing needs setting for it.
 
 ## Telling everybody something
 
@@ -82,11 +82,11 @@ values ('The game closes for maintenance in ten minutes.',
 game is built to read without it and refuse every write, which looks like a
 permissions problem and is not.
 
-**`SUPABASE_DB_URL is not set` in the function logs.** The variable is missing
-from that environment. Preview and production are configured separately.
+**`SUPABASE_DB_URL is not set` in the server's logs.** The variable is missing
+from `.env` on the server. `docker compose logs app` shows it.
 
 **Sign-in loops back signed out.** The origin is not on the redirect list, or is
-there without `/**`. Preview hostnames change per deployment and need a pattern.
+there without `/**`.
 
 **"Not signed in" on every server call, with a valid session.** The server
 cannot verify the token. Check that `SUPABASE_URL` names the same project the
@@ -105,7 +105,7 @@ pushed only in part.
 
 ## See also
 
-- [Vercel](vercel.md), for the variables named above
+- [The server](server.md), for the variables named above
 - [Authentication](authentication.md), for the redirect list a failed sign-in
   points at
 - [Schema changes](schema-changes.md), for the push a partial schema needs

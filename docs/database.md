@@ -20,7 +20,7 @@ applied in filename order. [Running the database
 locally](database/local-stack.md) is the guide to standing one up: what to
 install, what `pnpm db` prints, what goes in `.env`, and how to reset and seed
 it. [Deploying the game](deploy.md) covers the hosted half: pushing the same
-migrations to a Supabase project, and what Vercel needs to reach it.
+migrations to a Supabase project, and what the server needs to reach it.
 
 ## The tables
 

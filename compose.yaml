@@ -1,0 +1,27 @@
+# The self-hosted game: the app server and the Cloudflare tunnel in front of it.
+# Nothing is published on the host; only the tunnel reaches the app.
+# See docs/deploy/server.md.
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        BUILD_ID: ${BUILD_ID:-}
+      secrets:
+        - env
+    env_file: .env
+    restart: unless-stopped
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:?Set TUNNEL_TOKEN in .env}
+    depends_on:
+      - app
+    restart: unless-stopped
+
+secrets:
+  env:
+    file: .env

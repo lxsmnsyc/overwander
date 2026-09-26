@@ -152,3 +152,7 @@ ui-debug.log
 .firebase
 
 .DS_Store
+
+# What scripts/deploy.sh last put live on the server, and any tag pinned there
+.deployed-tag
+.deploy-pin

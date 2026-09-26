@@ -4,9 +4,9 @@ Writing a migration, pushing it to a live project, and the order to do that in
 against a deploy.
 
 **Assumes:** the site is deployed and the schema has been pushed at least once.
-See [The Supabase project](supabase-project.md) and [Vercel](vercel.md).
+See [The Supabase project](supabase-project.md) and [The server](server.md).
 
-Nothing on Vercel touches the database. A release with a migration in it is two
+Nothing on the server touches the schema. A release with a migration in it is two
 deployments, yours and the CLI's, and the order between them is the only part
 that can go wrong.
 
@@ -57,16 +57,16 @@ supabase db push
 
 The order depends on which way the change cuts:
 
-| The change                                  | Order                                                |
-| ------------------------------------------- | ---------------------------------------------------- |
+| The change                                  | Order                                                                   |
+| ------------------------------------------- | ----------------------------------------------------------------------- |
 | **Adding** a table, column, index or policy | **Push, then deploy.** The old code ignores what it does not know about |
-| **Dropping or renaming** one                | **Deploy, then push.** The new code stops using it first |
+| **Dropping or renaming** one                | **Deploy, then push.** The new code stops using it first                |
 
 A rename is therefore two releases rather than one. Add the new column and write
 to both, deploy, backfill, then drop the old one in a later migration once
 nothing reads it. The alternative is a window where the live site is talking to
 a schema that no longer has what it asks for, and that window is however long
-the Vercel build takes.
+the server's build takes.
 
 Two more things worth knowing before pushing to a live project:
 
@@ -91,21 +91,13 @@ select * from pg_policies where tablename = 'gym_seats';
 deploy the app, or let the push be the whole of the release if no code changed.
 
 The app deploys when the Version Packages pull request is merged, not on every
-push to `main` (see [Vercel](vercel.md#3-deploy-on-release)). Push an adding
+push to `main` (see [The server](server.md#4-deploy-on-release)). Push an adding
 migration before merging that pull request. Push a dropping one after the
 release has deployed.
-
-## Preview deployments share whatever they point at
-
-A preview pointed at the production project is talking to the production
-database, so a migration pushed to try something out is pushed to the live game.
-Give previews their own Supabase project if you expect to be pushing
-half-finished schema at them, and their own environment variables to match.
 
 ## See also
 
 - [The Supabase project](supabase-project.md), for the first push
-- [Vercel](vercel.md), for the environment a preview needs
 - [Operating the game](operating.md), for what each failure means
 - [Changing the schema](../database/local-stack.md#changing-the-schema), for
   grants and policies on a new table

@@ -11,8 +11,8 @@ Create a project, and note two things while you do:
 
 - **The region.** Every privileged write travels over a direct Postgres
   connection, so the distance between the app's region and the database's is
-  paid on every write. Pick one, then point Vercel's functions at the same part
-  of the world. See [Vercel](vercel.md).
+  paid on every write. Pick the one nearest the server. See
+  [The server](server.md).
 - **The database password.** It is shown once, and it is half of
   `SUPABASE_DB_URL`.
 
@@ -46,13 +46,13 @@ migration creates the extension. If the push fails on that line, enable
 `pg_cron` under Database, Extensions and push again.
 
 Migrations are never edited once pushed. A schema change is a new file, pushed
-the same way, and nothing on Vercel runs one for you. [Schema
+the same way, and nothing on the server runs one for you. [Schema
 changes](schema-changes.md) is the whole of that loop.
 
 ## See also
 
 - [Authentication](authentication.md), the next step
-- [Vercel](vercel.md), for the environment variables this project supplies
+- [The server](server.md), for the environment variables this project supplies
 - [Schema changes](schema-changes.md), for every migration after the first push
 - [Running the database locally](../database/local-stack.md)
 - [The database](../database.md), for every table and who may touch it

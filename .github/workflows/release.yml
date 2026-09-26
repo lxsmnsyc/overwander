@@ -47,5 +47,3 @@ jobs:
           # wrangler publishes the sprite host (wrangler.jsonc) with these
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          # Vercel only deploys through this hook, so only a new release goes live
-          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}

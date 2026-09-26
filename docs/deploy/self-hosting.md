@@ -1,6 +1,6 @@
 # Self-hosting
 
-Running the whole game on your own machines, with no Vercel, no Supabase project
+Running the whole game on your own machines, with no Supabase project
 and no Cloudflare account.
 
 **Assumes:** you can run Docker or Postgres on a host you control, and you have a

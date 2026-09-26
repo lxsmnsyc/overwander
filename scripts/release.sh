@@ -30,18 +30,11 @@ fi
 
 gh release create "$tag" --title "Overwander $tag" --notes-file "$notes" --verify-tag
 
-# The sprite host goes first, so the app never asks for a sheet it does not have yet
+# The server picks the new tag up itself (scripts/deploy.sh), so the sprite host
+# is the one thing a release publishes
 if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
   pnpm dlx wrangler@4 deploy
   echo "Sprite host deployed for $tag"
 else
   echo "::warning::CLOUDFLARE_API_TOKEN is not set, so the sprite host was not deployed"
-fi
-
-# Git pushes do not deploy (vercel.json), so a new release is what ships main
-if [ -n "${VERCEL_DEPLOY_HOOK:-}" ]; then
-  curl -fsS -X POST "$VERCEL_DEPLOY_HOOK" > /dev/null
-  echo "Deploy of $tag requested from Vercel"
-else
-  echo "::warning::VERCEL_DEPLOY_HOOK is not set, so $tag was not deployed"
 fi

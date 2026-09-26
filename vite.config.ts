@@ -28,7 +28,25 @@ const forTests = process.env.VITEST != null;
  * longer live is refused: server functions are addressed by their
  * place in a file, so an old tab's arguments would reach the wrong one
  */
-const BUILD_ID = process.env.VERCEL_GIT_COMMIT_SHA ?? String(Date.now());
+const BUILD_ID =
+  process.env.BUILD_ID != null && process.env.BUILD_ID !== ''
+    ? process.env.BUILD_ID
+    : String(Date.now());
+
+/** The year-long cache the stamped files take, as `public/_headers` gives them */
+const IMMUTABLE = { 'cache-control': 'public, max-age=31536000, immutable' };
+
+/**
+ * The same headers for a server with no sprite host, which serves the
+ * files itself. The two indexes that hand out the stamps keep one
+ * address, so they are checked on every read
+ */
+const ROUTE_RULES = {
+  '/sprites/**': { headers: IMMUTABLE },
+  '/sounds/**': { headers: IMMUTABLE },
+  '/sprites/stamps.json': { headers: { 'cache-control': 'no-cache' } },
+  '/sprites/pokemon/coats.json': { headers: { 'cache-control': 'no-cache' } },
+};
 
 /**
  * With a sprite host set, the sprites and sounds are served from there
@@ -58,7 +76,9 @@ export default defineConfig(({ mode }) => ({
       devOverlay: false,
       middleware: 'src/middleware/index.ts',
     }),
-    ...(forTests ? [] : [nitro({ ignore: publicIgnore(mode) })]),
+    ...(forTests
+      ? []
+      : [nitro({ preset: 'node-server', ignore: publicIgnore(mode), routeRules: ROUTE_RULES })]),
   ],
   server: {
     watch: {

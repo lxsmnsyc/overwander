@@ -24,8 +24,8 @@ modern ones.
   battle canvas actually run.
 - [The database](docs/database.md): every table the game writes to, what it
   holds, and who may touch it.
-- [Deploying it](docs/deploy.md): standing the game up on Vercel and a hosted
-  Supabase project.
+- [Deploying it](docs/deploy.md): standing the game up on your own server and a
+  hosted Supabase project.
 - [Credits](docs/credits.md): who wrote it, what it is built from, and where the
   art and rules come from.
 - [Contributing](CONTRIBUTING.md): branches, changesets, the checks to run, and
@@ -119,7 +119,7 @@ supabase db push --project-ref <ref>   # apply them to a hosted project
 ```
 
 [Deploying the game](docs/deploy.md) is the whole of that side: the hosted
-project, the sign-in providers, and what Vercel needs in its environment.
+project, the sign-in providers, and what the server needs in its environment.
 
 Most tables are read-only to clients on purpose: the server owns anything worth
 cheating for. The exceptions are a player's own profile and the shared snapshot
@@ -150,26 +150,26 @@ hands every account it creates the `admin` role, granted on the server.
 
 ## Commands
 
-| Command                | What it does                                        |
-| ---------------------- | --------------------------------------------------- |
-| `pnpm dev`             | Development server with HMR                         |
-| `pnpm build`           | Production build (client, server and Nitro output)  |
-| `pnpm start`           | Serve the built output from `.output/`              |
-| `pnpm preview`         | Preview the build locally                           |
-| `pnpm db`              | Start the local Supabase stack                      |
-| `pnpm db:reset`        | Rebuild the database from `supabase/migrations/`    |
-| `pnpm seed`            | Fill a fresh stack with accounts and sample rows    |
+| Command                | What it does                                                                        |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| `pnpm dev`             | Development server with HMR                                                         |
+| `pnpm build`           | Production build (client, server and Nitro output)                                  |
+| `pnpm start`           | Serve the built output from `.output/`                                              |
+| `pnpm preview`         | Preview the build locally                                                           |
+| `pnpm db`              | Start the local Supabase stack                                                      |
+| `pnpm db:reset`        | Rebuild the database from `supabase/migrations/`                                    |
+| `pnpm seed`            | Fill a fresh stack with accounts and sample rows                                    |
 | `pnpm import-sprites`  | Copy the pokemon sheets in from `../SpriteCollab`, the `lxsmnsyc/SpriteCollab` fork |
-| `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel    |
-| `pnpm sprite-coats`    | Restamp `coats.json` after anything writes a sheet  |
-| `pnpm sprite-stamps`   | Restamp every other sheet, which `pnpm build` also does |
-| `pnpm test`            | The whole test suite, once                          |
-| `pnpm test:rules`      | The row-level security suite, against a local stack |
-| `pnpm test:e2e`        | The Playwright suites under `e2e/`                  |
-| `npx tsc --noEmit`     | Type-check                                          |
-| `npx oxlint src test`  | Lint                                                |
-| `npx oxfmt src test`   | Format                                              |
-| `pnpm cs:add`          | Add a changeset                                     |
+| `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel                                    |
+| `pnpm sprite-coats`    | Restamp `coats.json` after anything writes a sheet                                  |
+| `pnpm sprite-stamps`   | Restamp every other sheet, which `pnpm build` also does                             |
+| `pnpm test`            | The whole test suite, once                                                          |
+| `pnpm test:rules`      | The row-level security suite, against a local stack                                 |
+| `pnpm test:e2e`        | The Playwright suites under `e2e/`                                                  |
+| `npx tsc --noEmit`     | Type-check                                                                          |
+| `npx oxlint src test`  | Lint                                                                                |
+| `npx oxfmt src test`   | Format                                                                              |
+| `pnpm cs:add`          | Add a changeset                                                                     |
 
 ## Where things live
 

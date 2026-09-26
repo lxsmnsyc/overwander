@@ -10,18 +10,16 @@ Supabase project](supabase-project.md).
 
 Under Authentication in the dashboard:
 
-| Setting                     | What to put there                                                       |
-| --------------------------- | ------------------------------------------------------------------------ |
-| **Site URL**                | The production origin, `https://your-domain`                            |
-| **Redirect URLs**           | `https://your-domain/**`, plus a preview pattern if you want previews    |
-| **Google**, **GitHub**      | Enabled, with the client id and secret from each provider                |
-| **Email sign-ups**          | Off, unless you want them: the form is not drawn on a deployed build     |
+| Setting                | What to put there                                                    |
+| ---------------------- | -------------------------------------------------------------------- |
+| **Site URL**           | The production origin, `https://your-domain`                         |
+| **Redirect URLs**      | `https://your-domain/**`                                             |
+| **Google**, **GitHub** | Enabled, with the client id and secret from each provider            |
+| **Email sign-ups**     | Off, unless you want them: the form is not drawn on a deployed build |
 
 Sign-in is redirect-based. The player is sent back to **the page they left**
 rather than to a fixed callback route, so the redirect list needs the `/**`
-wildcard rather than a bare origin. Vercel's preview deployments each get their
-own hostname, so previews need a pattern of their own,
-`https://*-<your-team>.vercel.app/**`, or a second Supabase project to point at.
+wildcard rather than a bare origin.
 
 In each provider's own console, the callback is Supabase's, not the site's:
 
@@ -33,7 +31,7 @@ That decides how many OAuth apps you need: **one per Supabase project, not one
 per hostname**. The player's browser goes to the provider, the provider returns
 to Supabase, and Supabase returns to whatever page the player left. The site's
 own origins are therefore configured in the redirect list above and nowhere
-else. Production and every preview deployment share one app.
+else.
 
 Signing in for the first time creates the profile row through the `auth.users`
 trigger. Nothing about that needs configuring.
@@ -44,11 +42,11 @@ trigger. Nothing about that needs configuring.
 under your account, or under an organisation if the project should belong to
 one:
 
-| Field                        | What to put there                          |
-| ---------------------------- | ------------------------------------------ |
-| Application name             | What the player is asked to authorise      |
-| Homepage URL                 | `https://your-domain`                      |
-| Authorization callback URL   | `https://<ref>.supabase.co/auth/v1/callback` |
+| Field                      | What to put there                            |
+| -------------------------- | -------------------------------------------- |
+| Application name           | What the player is asked to authorise        |
+| Homepage URL               | `https://your-domain`                        |
+| Authorization callback URL | `https://<ref>.supabase.co/auth/v1/callback` |
 
 Create it, then **Generate a new client secret**. The secret is shown once.
 
@@ -79,12 +77,12 @@ before it lets strangers sign in to it.
 **In Google Cloud.** Pick a project or make one, then go to the OAuth consent
 screen, which newer consoles file under Google Auth Platform:
 
-| Field                   | What to put there                                     |
-| ----------------------- | ------------------------------------------------------ |
+| Field                   | What to put there                                            |
+| ----------------------- | ------------------------------------------------------------ |
 | User type or audience   | **External**, unless everyone signing in is in one Workspace |
-| App name, support email | What the player is shown on the consent screen         |
-| Developer contact       | Where Google writes to you about the app               |
-| Scopes                  | The default three: `openid`, `email`, `profile`        |
+| App name, support email | What the player is shown on the consent screen               |
+| Developer contact       | Where Google writes to you about the app                     |
+| Scopes                  | The default three: `openid`, `email`, `profile`              |
 
 Those scopes are the non-sensitive ones, so nothing here needs Google's
 verification review. Asking for more does.
@@ -92,10 +90,10 @@ verification review. Asking for more does.
 Then Credentials, Create credentials, **OAuth client ID**, application type
 **Web application**:
 
-| Field                          | What to put there                            |
-| ------------------------------ | -------------------------------------------- |
-| Authorised redirect URI        | `https://<ref>.supabase.co/auth/v1/callback` |
-| Authorised JavaScript origins  | Nothing. The game uses the redirect flow, not One Tap |
+| Field                         | What to put there                                     |
+| ----------------------------- | ----------------------------------------------------- |
+| Authorised redirect URI       | `https://<ref>.supabase.co/auth/v1/callback`          |
+| Authorised JavaScript origins | Nothing. The game uses the redirect flow, not One Tap |
 
 Creating it shows the client id and secret.
 
@@ -145,6 +143,6 @@ corrected.
 ## See also
 
 - [The Supabase project](supabase-project.md), the step before this one
-- [Vercel](vercel.md), the step after it
+- [The server](server.md), the step after it
 - [Operating the game](operating.md), for what a failed sign-in means
 - [Running the database locally](../database/local-stack.md)

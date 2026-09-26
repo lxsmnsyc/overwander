@@ -1,5 +1,96 @@
 # overwander
 
+## 4.19.0
+
+### Minor Changes
+
+- 6b500d1: Alder, Unova's champion before Iris, now turns up as a legend where a champion would be, with the six he held the league with: Accelgor, Bouffalant, Druddigon, Vanilluxe, Escavalier and Volcarona. Beating him earns the Alder Defeated mark, which unlocks his coat.
+- c895ed4: Team Plasma keeps the woods:
+  
+  - The crime landmark in the temperate forest, the two rainforests, the tropical seasonal forest and the woodland is theirs. Rocket keeps the open country it used to hold there.
+  - Grunts are met in both uniforms, the robes and the fatigues. Colress and Zinzolin stand above them, and Ghetsis bars the cell in either of his coats.
+  - Four new marks: Team Plasma Repelled for clearing a cell, and one each for Colress, Zinzolin and Ghetsis.
+- 96155a7: The seasons, and the deer that wears them:
+  
+  - The world is in one of four seasons at a time, and it turns a month at a time with January in spring. Everybody is in the same season at once, wherever they are standing.
+  - Deerling and Sawsbuck stand in the grassland and the temperate forest at any hour. Deerling evolves at level 34.
+  - Each comes in four coats, and the month decides which one is met. The coat a catch was met in stays with it.
+  - Turning is their own: their Normal moves take their coat's type and hit 1.2x, spring Grass, summer Fire, autumn Ground and winter Ice. A move that was already that type gains nothing.
+  - Sawsbuck can also be born with Fur Coat, which is new: physical moves land on its holder at half damage.
+- a658233: - The game has its own sound effects, in the style of a Nintendo DS: throwing
+    a ball and each shake, a catch or a miss, the battle count in, a win, a loss
+    and a draw, a first badge or mark, evolving and hatching, a new dex entry,
+    a quest coming due, crossing a portal, reviving a fossil, lathering honey,
+    buying and selling, trades and auction lots, levelling up, learning a move,
+    an ability or a signature, a new held-item slot, purifying, finds from the
+    ground, and a legendary or a mythical arriving on the board.
+  - The shiny sparkle is a new sound of the game's own.
+- e8a29d8: The fourteen Unova lines the region was still missing:
+  
+  - Tirtouga and Carracosta, the fossil turtle, and Archen and Archeops, the first bird.
+  - Karrablast and Escavalier, and Shelmet and Accelgor. The two trade with each other: hand a Karrablast over while a Shelmet comes the other way, and one takes the shell the other loses.
+  - Foongus and Amoonguss, the mushrooms that grew into the shape of a dropped ball.
+  - Frillish and Jellicent, the jellyfish that drift under ships.
+  - Stunfisk, flat in the mud, and Bouffalant, which settles everything head first.
+  - Each family brings its own signature ability. Deep Hold stops the first blow that would take a Carracosta under half its HP and hardens its shell; Featherstone heals an Archeops once it first falls under half, which is the mark Defeatist reads; Shell Thief takes a guard off each enemy it first strikes and Barehide refuses to give one up; Sporeburst throws Stun Spore over the field as a Foongus falls; Still Water makes everything an enemy casts take longer; Shockmud puts a charge in a Stunfisk's Ground moves; and Herd Bond pays a Bouffalant for every other pokemon on its team still standing.
+  - Carracosta can be born with Battle Armor, Archeops with Rock Head, Sheer Force or Big Pecks, Amoonguss with Rain Dish or Overcoat, Jellicent with Liquid Ooze, Stunfisk with Lightning Rod and Bouffalant with Rock Head.
+  - Where to find them: the Cover Fossil and the Plume Fossil are dug up and sold by the Fossil Maniac like the others, and revive Tirtouga and Archen. Karrablast lives in the temperate forest and the woodland by morning and day, and Shelmet in the temperate forest and the swamp by evening and night. Foongus hides under the same trees by evening and night, Frillish drifts through the ocean and the deep ocean at any hour, Stunfisk lies in the swamp and the bog, and Bouffalant charges through the grassland and the steppe by morning and day. Each evolved form is met in a scarcer band.
+- 264568a: The squirrel that glides between the trees:
+  
+  - Emolga stands in the temperate forest and the woodland at any hour.
+  - Glidewake is its own: each move it lands gives it 1 Evasion stage, up to 2, and any hit on it takes the whole lot back at once.
+  - It can also be born with Motor Drive, Wind Rider or Cheek Pouch.
+- 0194336: Iris holds Unova's crown:
+  
+  - She asks to see Shauntal, Marshal, Grimsley and Caitlin beaten first, and pays the Unova Champion title along with both of her coats.
+  - Her six are the ones she defends the sequels with, Archeops among them and Haxorus last.
+  - Opelucid's gym stays Drayden's, so Iris is only ever the person at the top.
+- 4a69102: Unova has a pokedex chain now:
+  
+  - Three rungs, at 31, 78 and 152 of the region's own, paying Ultra Balls, Rare Candies and then the Unova Dex Medal with a Master Ball.
+  - The top rung asks for every Unova dex number except Victini, Keldeo, Meloetta and Genesect, since a relic is not something a walk turns up.
+  - The medal also pays Professor Juniper's coat, the way each other region's medal pays its own professor's.
+- 3f32f13: Unova's Elite Four hold seats now:
+  
+  - Shauntal on ghosts, Marshal on fighting, Grimsley on dark and Caitlin on psychic. They keep the same seats in both of Unova's leagues, so each is one fight with one mark.
+  - Caitlin is the same person who keeps Sinnoh's Battle Castle. Each seat is worn off its own deed, so her league coat is paid by her mark and her castle coat by the castle's print.
+  - Each of the four asks to see Unova's ten badges before they will fight, and is seated in the countries their type lives in.
+- c2199d3: Unova's gym leaders keep gyms now:
+  
+  - Cilan, Chili, Cress, Lenora, Burgh, Elesa, Clay, Skyla, Brycen and Drayden from the first league, and Cheren, Roxie and Marlon from the sequels. Opelucid is Drayden's, so Iris is left out.
+  - Ten new badges: Trio, Basic, Insect, Bolt, Quake, Jet, Freeze, Legend, Toxic and Wave. They are drawn from the Unova badge sheet on the profile shelf.
+  - Striaton is one gym kept by three people who each fight a different type, and they pay the one Trio Badge between them. Cheren pays the Basic Badge in Aspertia that Lenora pays in Nacrene.
+  - Each of the thirteen is seated in the countries their type lives in, and fields the same world-wide pool of their type that every other leader does.
+- ef02983: N stands above Unova's league:
+  
+  - He turns up where a champion would have been, at full level, and asks for no badges. Beating him pays his mark and the coat he is drawn in.
+  - He brings both tao dragons rather than the one his version hands him, behind Zoroark, Carracosta, Archeops and Klinklang.
+- e5616cd: Unova's trainers stand on the road now, 48 classes of them:
+  
+  - Twenty-two trades nobody had before: the Backpacker, Baker, Clerk, Dancer, Depot Agent, Doctor, Harlequin, Hoopster, Infielder, Janitor, Lady, Linebacker, Maid, Musician, Nursery Aide, Pilot, Smasher, Socialite, Striker, Suit Actor, Veteran and the Backers.
+  - And twenty-six of its own of trades already on the road, from its Ace Trainer down, each fielding Unova's answer to that type.
+  - Each stands in the countries its type belongs to, the same rule every other region's trainers follow, and its Ace Trainer travels everywhere like the other four.
+
+### Patch Changes
+
+- 2d37ab1: Rearranging a pokemon's moves, abilities or held items saves again instead of being refused.
+- 654cc51: The demo pages under /demo are available in development only, and a production build answers them with a 404.
+- 7f6eac7: A gift pokemon with its individual values set high is accepted instead of refused.
+- e5891eb: A Bottle Cap now asks which stat to raise to 31, instead of picking one at random.
+- ef9f597: The Pidove and Dwebble lines are met in the wild now that Tranquill and Crustle are drawn. Pidove, Tranquill and Unfezant live in the grassland and the woodland, and Dwebble and Crustle in the badlands and the desert, by morning and day.
+- 45a868e: Remoraid and Octillery's signature is now Ricochet: when a single-target move of theirs misses, it strikes another standing enemy instead, at full power. It replaces Standoff.
+- 8346205: Every town stands the whole ladder now:
+  
+  - A gym leader, an Elite Four member and a champion in each of them, rather than an elite in a quarter and a champion in one in seven.
+  - A Pokemon Center, a gym seat and an auction board stay certain.
+  - About a third of towns stand a second gym leader, which is two badges in one walk.
+  - Fewer lots are left for stalls and passers-by: a town averages 2.5 markets and 2.6 wandering NPCs, down from about 3.5 of each.
+- 77cdf5c: Simisear, Simipour, Blitzle, Zebstrika, Throh, Tirtouga, Carracosta and Stunfisk are drawn now, and Amoonguss and Bouffalant have updated art. Three lines that waited on those sprites are met in the wild:
+  
+  - The three elemental monkeys live in the temperate forest and the woodland by morning and day, Pansage, Pansear and Panpour among the commoner finds and their evolutions scarcer.
+  - Blitzle and Zebstrika run through the grassland and the steppe by morning and day.
+  - Throh and Sawk turn up together in the temperate forest and the woodland by morning and day.
+
 ## 4.18.2
 
 ### Patch Changes

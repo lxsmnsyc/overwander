@@ -14,6 +14,7 @@ import { ROTATION_GIFT, claimMysteryGift, giftId, makeGiftOffer, offer } from '.
 import { type Counters, countOf } from './quests';
 import { readProgress } from './quest-progress';
 import { asNumber, asRecord } from './read';
+import { toLocalTime } from '../auth/local-time';
 
 /**
  * The rotating board, measured from baselines: the quests are the
@@ -37,15 +38,15 @@ export interface RotationBoard {
   weekly: RotationStanding;
 }
 
-function windowOf(scope: RotationScope, now: number): string {
-  return scope === 'daily' ? dailyWindow(now) : weeklyWindow(now);
+function windowOf(scope: RotationScope, local: number): string {
+  return scope === 'daily' ? dailyWindow(local) : weeklyWindow(local);
 }
 
-function questAt(scope: RotationScope, slot: number, now: number): RotationQuest | null {
+function questAt(scope: RotationScope, slot: number, local: number): RotationQuest | null {
   if (scope === 'weekly') {
-    return slot === 0 ? getWeeklyHunt(now) : null;
+    return slot === 0 ? getWeeklyHunt(local) : null;
   }
-  for (const quest of getDailyQuests(now)) {
+  for (const quest of getDailyQuests(local)) {
     if (quest.slot === slot) {
       return quest;
     }
@@ -116,11 +117,11 @@ async function standingOf(
   counters: Counters,
   scope: RotationScope,
   quest: RotationQuest,
-  now: number,
+  local: number,
   stored: Map<number, number>,
   claimedSlots: Set<number>,
 ): Promise<RotationStanding> {
-  const window = windowOf(scope, now);
+  const window = windowOf(scope, local);
   const current = countOf(counters, quest.requirement);
   const baseline = await baselineOf(uid, window, quest.slot, current, stored);
   const have = Math.max(0, current - baseline);
@@ -153,12 +154,15 @@ async function forgetOldWindows(uid: string, daily: string, weekly: string): Pro
 export async function listRotations(
   uid: string,
   now: number,
+  offset: number,
   // Handed in by a caller that read them for something else as well
   progress?: Awaited<ReturnType<typeof readProgress>>,
 ): Promise<RotationBoard> {
   const counters = progress ?? (await readProgress(uid));
-  const today = dailyWindow(now);
-  const thisWeek = weeklyWindow(now);
+  // The player's day and week, not UTC's
+  const local = toLocalTime(now, offset);
+  const today = dailyWindow(local);
+  const thisWeek = weeklyWindow(local);
   const [dailyBase, weeklyBase, dailyClaims, weeklyClaims] = await Promise.all([
     readBaselines(uid, today),
     readBaselines(uid, thisWeek),
@@ -175,8 +179,8 @@ export async function listRotations(
 
   const daily: RotationStanding[] = [];
 
-  for (const quest of getDailyQuests(now)) {
-    daily.push(await standingOf(uid, counters, 'daily', quest, now, dailyBase, dailyClaims));
+  for (const quest of getDailyQuests(local)) {
+    daily.push(await standingOf(uid, counters, 'daily', quest, local, dailyBase, dailyClaims));
   }
   return {
     daily,
@@ -184,8 +188,8 @@ export async function listRotations(
       uid,
       counters,
       'weekly',
-      getWeeklyHunt(now),
-      now,
+      getWeeklyHunt(local),
+      local,
       weeklyBase,
       weeklyClaims,
     ),
@@ -207,13 +211,14 @@ export async function claimRotation(
   offset: number,
   locale: string,
 ): Promise<RotationReward[] | null> {
-  const quest = questAt(scope, slot, now);
+  const local = toLocalTime(now, offset);
+  const quest = questAt(scope, slot, local);
 
   if (quest == null || slot < 0 || slot >= (scope === 'daily' ? DAILY_SLOTS : 1)) {
     return null;
   }
 
-  const window = windowOf(scope, now);
+  const window = windowOf(scope, local);
   const counters = await readProgress(uid);
   const current = countOf(counters, quest.requirement);
   const stored = await readBaselines(uid, window);

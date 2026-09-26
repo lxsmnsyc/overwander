@@ -316,7 +316,6 @@ describe('biome data', () => {
       Items.MasterBall,
       Items.BottleCap,
       Items.PurifyingGem,
-      Items.MaxRevive,
     ]) {
       expect(isPreciousItem(item)).toBe(true);
     }
@@ -324,6 +323,8 @@ describe('biome data', () => {
     // still only a fight's worth of healing, so it is not asked about
     for (const item of [
       Items.FullRestore,
+      // Bottled and sold, so one used by mistake can be bought again
+      Items.MaxRevive,
       Items.MaxPotion,
       Items.Revive,
       Items.Potion,
@@ -344,7 +345,7 @@ describe('biome data', () => {
 
   it('buries what belongs to a landscape only in that landscape', () => {
     const holds = (biome: Biome, item: Items): boolean =>
-      (['base', 'uncommon', 'rare', 'prized', 'special'] as const).some((band) =>
+      (['base', 'uncommon', 'scarce', 'rare', 'prized', 'special'] as const).some((band) =>
         getItemPool(biome)[band].some((entry) => entry.item === item),
       );
 
@@ -375,6 +376,7 @@ describe('biome data', () => {
     for (const entry of [
       ...ITEM_POOL.base,
       ...ITEM_POOL.uncommon,
+      ...ITEM_POOL.scarce,
       ...ITEM_POOL.rare,
       ...ITEM_POOL.prized,
       ...ITEM_POOL.special,
@@ -412,9 +414,10 @@ describe('biome data', () => {
         special: 1 / 64,
         prized: 0,
         rare: 1 / 8,
+        scarce: 0,
         uncommon: 1,
       }),
-    ).toBe(Items.UltraBall);
+    ).toBe(Items.NetBall);
   });
 
   it('digs a stash of several kinds rather than one item', () => {
@@ -470,7 +473,7 @@ describe('biome data', () => {
 
     // Bands summing to 1 shut the base tier out of a stash the same
     // way they shut it out of a single roll
-    const grotto = { special: 1 / 64, prized: 0, rare: 1 / 8, uncommon: 1 };
+    const grotto = { special: 1 / 64, prized: 0, rare: 1 / 8, scarce: 0, uncommon: 1 };
     const dug = pickItems(ITEM_POOL, rolls([0.99, 0.99, 0, 0, 0.001, 0.5, 0, 0.9, 0.5, 0]), grotto);
 
     expect(dug.length).toBeGreaterThan(0);
@@ -518,7 +521,7 @@ describe('biome data', () => {
     const specials = new Set(ITEM_POOL.special.map((entry) => entry.item));
     // Odds that make the special band an everyday find, so the sweep
     // is actually testing the rule rather than never reaching it
-    const generous = { special: 0.5, prized: 0.1, rare: 0.2, uncommon: 0.15 };
+    const generous = { special: 0.5, prized: 0.1, rare: 0.2, scarce: 0, uncommon: 0.15 };
     let carried = 0;
 
     for (let seed = 0; seed < 2000; seed++) {

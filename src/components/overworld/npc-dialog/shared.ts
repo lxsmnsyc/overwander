@@ -13,6 +13,7 @@ import type { CatchOption } from '../../catches/catch-picker';
 import type { Moves } from '../../../data/ids/moves';
 import type { LearnResult } from '../../../auth/learn-refusal';
 import { type ToastTone, useToast } from '../../styled';
+import { readable } from '../../app/resource-reads';
 
 /**
  * What the person standing there actually says.
@@ -153,7 +154,7 @@ export function optionsOf(props: CounterProps): CatchOption[] {
  * reminder, a lesson and a channelling
  */
 export function scalesIn(props: CounterProps): number {
-  for (const entry of props.bag.latest ?? []) {
+  for (const entry of readable(props.bag) ?? []) {
     if (entry.item === REMINDER_FEE) {
       return entry.amount;
     }

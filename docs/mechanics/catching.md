@@ -119,8 +119,8 @@ chosen.
 | **Great Ball**                     | ×1.5     | Always                                     |
 | **Poke / Premier / Heal / Luxury** | ×1       | Always                                     |
 
-**Kurt's seven** are carved from apricorns rather than bought, and each answers
-something the shop balls cannot. See [People you meet](npcs.md).
+**Kurt's seven** are carved from apricorns rather than bought, and turn up on
+the ground as scarce finds. Each answers something the shop balls cannot. See [People you meet](npcs.md).
 
 | Ball             | Bonus    | Condition                                        |
 | ---------------- | -------- | ------------------------------------------------ |
@@ -142,7 +142,7 @@ are worth throwing for what happens afterwards:
   every status cleared, at no cost. Nothing happens if the buddy is already
   healthy, is an egg, or is locked into a live battle.
 - A **Luxury Ball** makes the pokemon caught in it gain friendship **twice as
-  fast** for the rest of its life. See [Friendship](raising.md#friendship).
+  fast** for the rest of its life. See [Friendship](training.md#friendship).
 
 The Premier Ball is commemorative and nothing more.
 

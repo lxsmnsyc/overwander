@@ -93,7 +93,19 @@ function loaded(species: number): SpeciesSpriteAnimation {
  * to Idle, and the pokemon stands there through its own attack — so a
  * gap is worth knowing about even when nothing has tripped over it yet
  */
-const KNOWN_GAPS: Record<number, SpriteAnim[] | undefined> = {};
+const KNOWN_GAPS: Record<number, SpriteAnim[] | undefined> = {
+  591: [SpriteAnim.Double, SpriteAnim.Swing],
+  593: [SpriteAnim.Hurt, SpriteAnim.Attack, SpriteAnim.Charge, SpriteAnim.Double, SpriteAnim.Hop],
+};
+
+/**
+ * Sheets shipped below the bare minimum on purpose, and what they are
+ * short of. Jellicent's is only drawn drifting, sleeping and turning;
+ * in battle the shims lunge, knock and hop it in place of the rest
+ */
+const MINIMUM_GAPS: Record<number, SpriteAnim[] | undefined> = {
+  593: [SpriteAnim.Attack, SpriteAnim.Hurt, SpriteAnim.Hop],
+};
 
 describe('cast clips', () => {
   it('builds every common clip on every sheet that ships', () => {
@@ -119,7 +131,7 @@ describe('cast clips', () => {
       expect(
         MINIMUM_CAST.filter((name) => !sprite.has(name)).map(spriteAnimName),
         `${species} is missing`,
-      ).toEqual([]);
+      ).toEqual((MINIMUM_GAPS[species] ?? []).map(spriteAnimName));
     }
   });
 

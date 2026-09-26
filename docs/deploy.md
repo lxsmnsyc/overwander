@@ -20,9 +20,9 @@ pair.
 - A **Supabase** account, and the **Supabase CLI** on your `PATH`. The CLI is
   what pushes the schema. The dashboard cannot replay a migration folder.
 - A **Vercel** account, and the repository on GitHub, GitLab or Bitbucket.
-- The two OAuth apps. A deployed build signs in with **Google and GitHub** and
-  offers nothing else. The email and password form is drawn on a development
-  build alone.
+- The two OAuth apps. A deployed build signs in with **Google and GitHub**. The
+  email and password form is drawn on a development build, and on any build
+  whose host sets `VITE_EMAIL_SIGN_IN`.
 
 ## The order to do it in
 
@@ -31,7 +31,8 @@ pair.
 2. **[Authentication](deploy/authentication.md).** Set the site URL and the
    redirect list, then create the Google and GitHub OAuth apps.
 3. **[Vercel](deploy/vercel.md).** Import the repository, fill in the
-   environment variables, deploy, then check the four paths.
+   environment variables, set up the release deploy hook, deploy, then check
+   the four paths.
 
 Do steps 1 and 2 before the first deploy. The app has nothing to talk to until
 the schema is pushed, and nobody can sign in until the providers are set up.
@@ -46,9 +47,13 @@ migration in it. [Operating the game](deploy/operating.md) covers running it.
 | ------------------------------------------------- | ----------------------------------------------------------------------------- |
 | [The Supabase project](deploy/supabase-project.md) | Creating the project, the region, and pushing the schema with the CLI         |
 | [Authentication](deploy/authentication.md)         | The redirect list, the GitHub and Google OAuth apps, and signing in locally   |
-| [Vercel](deploy/vercel.md)                         | The build settings, every environment variable, which key is which, first deploy |
+| [Vercel](deploy/vercel.md)                         | The build settings, every environment variable, which key is which, the release deploy, first deploy |
 | [Schema changes](deploy/schema-changes.md)         | Writing a migration, pushing it, the order against a deploy, previews         |
 | [Operating the game](deploy/operating.md)          | Admin, what a deployed build will not do, upkeep, and what each failure means |
+| [Self-hosting](deploy/self-hosting.md)             | Running the whole thing yourself, with none of the three accounts above       |
+
+If you would rather not have any of those accounts, [Self-hosting](deploy/self-hosting.md)
+covers running the database, the auth server and the app on your own machines.
 
 ## See also
 

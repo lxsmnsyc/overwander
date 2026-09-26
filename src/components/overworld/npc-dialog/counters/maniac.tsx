@@ -46,7 +46,7 @@ export default function Maniac(props: CounterProps): JSX.Element {
         setBusy(false);
 
         if (done != null) {
-          playEffect(Effect.ItemGet);
+          playEffect(Effect.ShopBuy);
           toast.push({
             title: describeItem(item),
             message: `−${getFossilPrice(item)} gold`,

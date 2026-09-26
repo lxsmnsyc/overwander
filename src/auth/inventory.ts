@@ -1,7 +1,6 @@
 import type { Items } from '../data/ids/items';
-import { asNumber, asRecordArray } from './__normalize';
+import readHeldBag from './live-bag';
 import { ITEM_STACKS, getStack, listStacks } from './stacks';
-import getSupabase from './supabase';
 
 /**
  * The bag as a list of stacks, which is how every picker in the game
@@ -26,15 +25,13 @@ export interface InventoryEntry {
 }
 
 /**
- * The player's whole bag, in one read
+ * The player's whole bag, from the copy the browser keeps
  */
 async function readBag(uid: string): Promise<unknown> {
-  const { data } = await getSupabase().from('bag_items').select('item, count').eq('player', uid);
-
   const items: Record<number, number> = {};
 
-  for (const row of asRecordArray(data)) {
-    items[asNumber(row.item)] = asNumber(row.count);
+  for (const [item, count] of (await readHeldBag(uid)).items) {
+    items[item] = count;
   }
   return { items };
 }

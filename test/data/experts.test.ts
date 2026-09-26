@@ -338,11 +338,12 @@ describe('type experts', () => {
     expect(canMeetSpecies(Species.Kabutops)).toBe(true);
     expect(canMeetSpecies(Species.Heracross)).toBe(true);
     expect(canMeetSpecies(Species.Phione)).toBe(true);
-    // And the four Unova still waiting on their sprites
+    // And the three Unova still waiting on their sprites, next to the
+    // line those sprites just let in
     expect(canMeetSpecies(Species.Throh)).toBe(false);
     expect(canMeetSpecies(Species.Sawk)).toBe(false);
     expect(canMeetSpecies(Species.Zebstrika)).toBe(false);
-    expect(canMeetSpecies(Species.Unfezant)).toBe(false);
+    expect(canMeetSpecies(Species.Unfezant)).toBe(true);
   });
 
   it('gives every leader a signature of their own type', () => {

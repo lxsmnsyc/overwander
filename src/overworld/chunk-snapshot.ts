@@ -1,4 +1,4 @@
-import { asOffset, toZoneKey } from '../auth/local-time';
+import { toZoneKey } from '../auth/local-time';
 import AleaRNG from '../core/alea';
 import {
   boostFamilyWeights,
@@ -271,6 +271,15 @@ export const PHENOMENON_INTERVAL = 60 * 60 * 1000;
 export const WEATHER_INTERVAL = 60 * 60 * 1000;
 
 /**
+ * Which hour of sky a local timestamp falls in. Every reader of the
+ * weather goes through here, so a map and the board cannot count the
+ * hour two different ways
+ */
+export function weatherWindowOf(local: number): number {
+  return Math.floor(local / WEATHER_INTERVAL);
+}
+
+/**
  * How many things may be going on in one chunk at once.
  *
  * Zero is deliberately in range: a chunk with nothing happening is
@@ -354,33 +363,18 @@ export default class ChunkSnapshot {
   }
 
   /**
-   * What the **ground** of this chunk is keyed by: the chunk alone,
-   * with no zone in it.
-   *
-   * Spawns are a zone's own — the pokemon out at dusk are out at dusk
-   * where the player is standing — but what is buried under a chunk is
-   * not. A zone in this key made the same cache roll again for every
-   * zone it was asked in, and made the claim that empties it a
-   * different claim each time, which is a stash a caller could dig up
-   * once per zone by saying it was somewhere else
+   * What the ground of this chunk is keyed by. The zone is in it, the
+   * same as the spawns: a stash is found in the player's own hour, so
+   * two zones on one chunk see different ground as they see different
+   * pokemon
    */
   get groundKey(): string {
-    return this.chunk.seed;
+    return this.key;
   }
 
-  /**
-   * The instant this window began, as UTC rather than as the zone's
-   * own wall clock. Every zone reading the same chunk at the same
-   * moment answers the same number, which is what lets the ground be
-   * shared
-   */
-  private get instant(): number {
-    return this.timestamp - asOffset(this.offset) * 60_000;
-  }
-
-  /** The ground's window of that length, counted from UTC */
+  /** The ground's window of that length, on the zone's own clock */
   private groundWindow(interval: number): number {
-    return Math.floor(this.instant / interval) * interval;
+    return Math.floor(this.timestamp / interval) * interval;
   }
 
   private spawns: Spawn[] | null = null;
@@ -423,7 +417,7 @@ export default class ChunkSnapshot {
     this.npcSky ??= getWorld().getWeather(
       this.chunk.x,
       this.chunk.y,
-      Math.floor(this.npcTimestamp / WEATHER_INTERVAL),
+      weatherWindowOf(this.npcTimestamp),
     );
     return this.npcSky;
   }
@@ -622,7 +616,7 @@ export default class ChunkSnapshot {
    * the instant one began
    */
   get weatherWindow(): number {
-    return Math.floor(this.timestamp / WEATHER_INTERVAL);
+    return weatherWindowOf(this.timestamp);
   }
 
   private itemCaches: Map<number, ItemStack[]> | null = null;

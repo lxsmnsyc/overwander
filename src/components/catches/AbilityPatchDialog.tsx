@@ -20,6 +20,7 @@ import { Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';
+import playEffect, { Effect } from '../app/sound';
 
 /**
  * Spending an Ability Patch on one pokemon.
@@ -138,6 +139,8 @@ function PatchBody(
           props.onRefused();
           return;
         }
+        // The patch only ever writes the family's signature
+        playEffect(Effect.SignatureLearned);
         props.onUsed?.(
           dropped == null
             ? `It has ${getAbilityData(ability).name} now.`

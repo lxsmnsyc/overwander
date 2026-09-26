@@ -1,6 +1,7 @@
 # Vercel
 
-The build settings, the environment variables, and the first deploy.
+The build settings, the environment variables, the release deploy, and the
+first deploy.
 
 **Assumes:** the Supabase project exists, the schema is pushed, and the
 providers are set up. See [The Supabase project](supabase-project.md) and
@@ -9,17 +10,17 @@ providers are set up. See [The Supabase project](supabase-project.md) and
 ## 1. Make the Vercel project
 
 Import the repository. The build needs no framework override. The
-[`vercel.json`](../../vercel.json) at the root only limits automatic deployments
-to pushes on `main`, so other branches get no preview unless you deploy one by
-hand.
+[`vercel.json`](../../vercel.json) at the root turns off deploys from git
+pushes, `main` included. Production deploys only when a release is published
+(step 3), and a preview is only ever deployed by hand.
 
-| Setting              | Value                                                 |
-| -------------------- | ----------------------------------------------------- |
-| **Install command**  | `pnpm install`                                        |
-| **Build command**    | `pnpm build`                                          |
-| **Output directory** | Left alone. Nitro writes `.vercel/output` itself      |
-| **Node version**     | **22 or newer**, which the Vite 8 toolchain expects   |
-| **Function region**  | The one nearest the Supabase project                  |
+| Setting              | Value                                               |
+| -------------------- | --------------------------------------------------- |
+| **Install command**  | `pnpm install`                                      |
+| **Build command**    | `pnpm build`                                        |
+| **Output directory** | Left alone. Nitro writes `.vercel/output` itself    |
+| **Node version**     | **22 or newer**, which the Vite 8 toolchain expects |
+| **Function region**  | The one nearest the Supabase project                |
 
 Nitro picks its Vercel preset off the `VERCEL` environment variable that the
 builder sets, so the same `pnpm build` that produces a Node server locally
@@ -33,20 +34,23 @@ mean to deploy. `.env.example` documents all of them.
 The **browser's pair** is public by design and is **baked into the build**, so a
 change to either needs a redeploy rather than a restart:
 
-| Variable                 | What to put there                                  |
-| ------------------------ | -------------------------------------------------- |
-| `VITE_SUPABASE_URL`      | `https://<ref>.supabase.co`                        |
-| `VITE_SUPABASE_ANON_KEY` | The project's **publishable** or **anon** key      |
-| `VITE_WORLD_SEED`        | Any string, and then never touched again           |
+| Variable                   | What to put there                                    |
+| -------------------------- | ---------------------------------------------------- |
+| `VITE_SUPABASE_URL`        | `https://<ref>.supabase.co`                          |
+| `VITE_SUPABASE_ANON_KEY`   | The project's **publishable** or **anon** key        |
+| `VITE_WORLD_SEED`          | Any string, and then never touched again             |
+| `VITE_EMAIL_SIGN_IN`       | Left empty, unless the deploy is to offer passwords  |
+| `VITE_REAL_TIME_OF_DAY`    | `true` for the local clock, empty for the game clock |
+| `VITE_TIME_OF_DAY_MINUTES` | Minutes per period on the game clock. Empty means 90 |
 
 The **server's** variables are secret and are read at run time:
 
-| Variable                    | What to put there                                                    |
-| --------------------------- | --------------------------------------------------------------------- |
+| Variable                    | What to put there                                                      |
+| --------------------------- | ---------------------------------------------------------------------- |
 | `SUPABASE_DB_URL`           | The **transaction pooler** URI, port **6543**, with `?sslmode=require` |
-| `SUPABASE_URL`              | `https://<ref>.supabase.co`                                           |
-| `SUPABASE_SERVICE_ROLE_KEY` | The project's **secret** or **service_role** key                      |
-| `SUPABASE_JWT_SECRET`       | **Left empty**                                                        |
+| `SUPABASE_URL`              | `https://<ref>.supabase.co`                                            |
+| `SUPABASE_SERVICE_ROLE_KEY` | The project's **secret** or **service_role** key                       |
+| `SUPABASE_JWT_SECRET`       | **Left empty**                                                         |
 
 Three of those want a word:
 
@@ -74,10 +78,10 @@ them. The variable names here predate the newer pair, so read them as roles
 rather than as formats. Either generation works as the value, since both are
 passed to the client as a string.
 
-| The variable                | Newer key                | Older key      | What it is                                          |
-| --------------------------- | ------------------------ | -------------- | --------------------------------------------------- |
-| `VITE_SUPABASE_ANON_KEY`    | **Publishable**, `sb_publishable_...` | **anon**, a JWT | Public. Bound by row-level security |
-| `SUPABASE_SERVICE_ROLE_KEY` | **Secret**, `sb_secret_...`           | **service_role**, a JWT | Secret. Ignores row-level security |
+| The variable                | Newer key                             | Older key               | What it is                          |
+| --------------------------- | ------------------------------------- | ----------------------- | ----------------------------------- |
+| `VITE_SUPABASE_ANON_KEY`    | **Publishable**, `sb_publishable_...` | **anon**, a JWT         | Public. Bound by row-level security |
+| `SUPABASE_SERVICE_ROLE_KEY` | **Secret**, `sb_secret_...`           | **service_role**, a JWT | Secret. Ignores row-level security  |
 
 Both are on the project's API settings page, and `supabase status` prints the
 local stack's.
@@ -106,10 +110,37 @@ environment.
 The newer keys are worth preferring where a project offers them. Several may
 exist at once, and one can be revoked or rotated on its own.
 
-## 3. Deploy, then check it
+## 3. Deploy on release
 
-Push to the production branch, or press Deploy. When it is up, walk through the
-four things that each prove a different half of the setup:
+The [release workflow](../../.github/workflows/release.yml) publishes a GitHub
+release when the Version Packages pull request is merged.
+[`scripts/release.sh`](../../scripts/release.sh) then calls a Vercel deploy
+hook, which builds the latest commit on `main`. A push that publishes no new
+release deploys nothing.
+
+1. In the Vercel project, open **Settings, Git, Deploy Hooks** and create a hook
+   for the `main` branch.
+2. In the GitHub repository, open **Settings, Secrets and variables, Actions**
+   and add a **repository secret** named `VERCEL_DEPLOY_HOOK` holding the hook's
+   URL. From a terminal, `gh secret set VERCEL_DEPLOY_HOOK` does the same.
+
+Without the secret, the release still publishes and the workflow logs a warning
+that nothing was deployed. To ship without a release, redeploy from the Vercel
+dashboard.
+
+Vercel fills the repository's **Website** field with the production domain
+whenever that field is empty, and it has no setting to stop this. To keep a
+different link there, set it to any other URL rather than clearing it:
+
+```bash
+gh repo edit --homepage "https://github.com/<owner>/<repo>/releases"
+```
+
+## 4. Deploy, then check it
+
+Press Deploy in the Vercel dashboard for the first deploy. Later ones come with
+each release. When it is up, walk through the four things that each prove a
+different half of the setup:
 
 1. **Sign in with Google or GitHub.** Proves the redirect list and the provider
    credentials. A sign-in that lands back on the site signed out usually means

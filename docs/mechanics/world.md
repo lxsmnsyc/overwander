@@ -219,7 +219,10 @@ ripples. Once a player has walked into one it stops being drawn for them.
 Somebody else walking the same chunk that hour still finds it.
 
 Nothing that somebody stands at is rolled out at sea. The open ocean carries
-caches, phenomena, nests, lairs and portals, and nothing else.
+caches, phenomena, nests, lairs and portals, and nothing else. Inland water is
+held to the same rule: a lake takes a cache or a nest, and nobody stands on
+one, so a chunk the water has covered holds fewer landmarks rather than
+floating ones.
 
 The contents of each are covered in [Items](items.md), [Where items come
 from](item-sources.md), [Eggs](eggs.md), [People you meet](npcs.md) and

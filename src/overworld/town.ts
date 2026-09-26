@@ -3,7 +3,7 @@ import { isOpenSea, isSettledBiome } from '../data/ids/biome';
 import nameTown from '../data/overworld/town-names';
 import { isRock, isWaterAt } from './fields';
 import Landmark from '../data/overworld/landmark';
-import { CHUNK_CELLS, ORTHOGONAL } from './grid';
+import { CHUNK_CELLS, ORTHOGONAL, SQUARES } from './grid';
 import type World from './world';
 import { Depth } from './depth';
 
@@ -294,7 +294,15 @@ function townIn(world: World, regionX: number, regionY: number): Town | null {
 export function townAt(world: World, x: number, y: number): Town | null {
   const town = townIn(world, regionOf(x), regionOf(y));
 
-  return town != null && Math.hypot(x - town.x, y - town.y) <= TOWN_RADIUS ? town : null;
+  if (town == null) {
+    return null;
+  }
+  // The first generation's towns keep the round edge they were built with
+  const inside = world.flattensTowns
+    ? withinSquared(town, x, y, TOWN_RADIUS)
+    : Math.hypot(x - town.x, y - town.y) <= TOWN_RADIUS;
+
+  return inside ? town : null;
 }
 
 /**
@@ -355,6 +363,135 @@ export function portalCellIn(world: World, chunkX: number, chunkY: number): numb
  */
 export function townName(town: Town): string {
   return nameTown(town.regionX, town.regionY, town.biome);
+}
+
+/**
+ * How far past its footprint a town's ground is levelled. Two cells
+ * clears every neighbour of every town cell, diagonals included, so
+ * the cliff where the slope resumes is outside the town
+ */
+const PLATEAU_APRON = 2;
+
+/** How far out a town's levelled ground can reach, in cells */
+const PLATEAU_REACH = TOWN_RADIUS + PLATEAU_APRON;
+
+/**
+ * Whether a cell is inside a circle round a town, counting only cells
+ * in a 2x2 block wholly inside it. A plain circle leaves a lone cell
+ * at each of its four points, and neither the ground nor a cliff has a
+ * one-tile piece to draw it with
+ */
+function withinSquared(town: Town, x: number, y: number, reach: number): boolean {
+  const inside = (cx: number, cy: number): boolean => Math.hypot(cx - town.x, cy - town.y) <= reach;
+
+  if (!inside(x, y)) {
+    return false;
+  }
+  // Two cells in from the rim, every block round the cell is inside
+  if (Math.hypot(x - town.x, y - town.y) <= reach - 2) {
+    return true;
+  }
+  for (const [ox, oy] of SQUARES) {
+    if (
+      inside(x + ox, y + oy) &&
+      inside(x + ox + 1, y + oy) &&
+      inside(x + ox, y + oy + 1) &&
+      inside(x + ox + 1, y + oy + 1)
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** The town whose levelled ground covers a world cell, if one does */
+export function plateauAt(world: World, x: number, y: number): Town | null {
+  const town = townIn(world, regionOf(x), regionOf(y));
+
+  return town != null && withinSquared(town, x, y, PLATEAU_REACH) ? town : null;
+}
+
+/**
+ * How far past its levelled ground a town eases the slope, in steps of
+ * one cell and one level each. It covers the tallest wall a town was
+ * measured to need with room over, and stays inside the town's region
+ */
+const SKIRT_REACH = 16;
+
+/** How far a skirt reaches past its own region's edge, since a town stands `SITE_INSET` inside it */
+const SKIRT_SPILL = Math.max(0, PLATEAU_REACH + SKIRT_REACH - SITE_INSET);
+
+/**
+ * How many king's moves a cell is from the circle round a town: the
+ * fewest steps, diagonals counting as one, that reach it. Rings counted
+ * this way are one cell wide all round, so a level a ring never leaves
+ * a neighbour two levels off, diagonally or not
+ */
+function stepsFrom(town: Town, x: number, y: number, reach: number): number {
+  const across = Math.abs(x - town.x);
+  const down = Math.abs(y - town.y);
+  // Where the square of that many steps round the cell first touches
+  // the circle: on its corner while both offsets are still outside it
+  const room = 2 * reach * reach - (across - down) ** 2;
+
+  if (room >= 0) {
+    const steps = (across + down - Math.sqrt(room)) / 2;
+
+    if (steps <= Math.min(across, down)) {
+      return Math.max(0, steps);
+    }
+  }
+  return Math.max(0, Math.max(across, down) - reach);
+}
+
+/** One town's say over a cell: its level, and how far the ground there may stand from it */
+export interface Skirt {
+  town: Town;
+  give: number;
+}
+
+/** Reused between calls, since this is asked for every cell the terraces read */
+const SKIRTS: Skirt[] = [];
+
+/**
+ * Every town whose ground reaches a cell, with how far the ground may
+ * stand from its level there: zero on its levelled ground and one more
+ * each step out, so a town meets the slope in a staircase of single
+ * cliffs with no ledge between them to put anything on. The list is
+ * reused, so read it before asking again
+ */
+export function townSkirts(world: World, x: number, y: number): readonly Skirt[] {
+  SKIRTS.length = 0;
+
+  const regionX = regionOf(x);
+  const regionY = regionOf(y);
+  const alongX = x - regionX * REGION_CELLS;
+  const alongY = y - regionY * REGION_CELLS;
+  // A neighbour's town can only reach a cell near the side they share
+  const fromX = alongX < SKIRT_SPILL ? -1 : 0;
+  const toX = alongX >= REGION_CELLS - SKIRT_SPILL ? 1 : 0;
+  const fromY = alongY < SKIRT_SPILL ? -1 : 0;
+  const toY = alongY >= REGION_CELLS - SKIRT_SPILL ? 1 : 0;
+
+  for (let dy = fromY; dy <= toY; dy++) {
+    for (let dx = fromX; dx <= toX; dx++) {
+      const town = townIn(world, regionX + dx, regionY + dy);
+
+      if (town == null) {
+        continue;
+      }
+      const steps = stepsFrom(town, x, y, PLATEAU_REACH);
+
+      if (steps > SKIRT_REACH) {
+        continue;
+      }
+      SKIRTS.push({
+        town,
+        give: withinSquared(town, x, y, PLATEAU_REACH) ? 0 : Math.max(1, Math.ceil(steps)),
+      });
+    }
+  }
+  return SKIRTS;
 }
 
 /** Whether a world cell is inside a town */

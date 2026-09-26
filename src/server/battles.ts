@@ -18,6 +18,8 @@ import { asNumber, asNumberArray } from './read';
 import type { CaughtPokemon } from '../auth/caught';
 import { Moves } from '../data/ids/moves';
 import { getRegisteredMoves } from '../data/moves';
+import BATTLE_TIMEOUT from '../auth/battle-lock';
+import { payDayCeiling } from '../battle/moves/pay-day';
 
 /**
  * What a Sketch leaves behind: the move set to write, or nothing when
@@ -68,13 +70,6 @@ function settleSketch(record: CaughtPokemon, sketched: Moves | undefined): Moves
  */
 // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
 const asHeldItems = (value: unknown): Items[] => asNumberArray(value) as Items[];
-
-/**
- * The most one catch's Pay Days may claim from a single battle:
- * 5 coins x level 100, one landed use per two-second turn, over a
- * ten-minute fight
- */
-const PAY_DAY_REPORT_LIMIT = 5 * 100 * 300;
 
 /**
  * Everything the player actually fielded in this battle, catch id to
@@ -136,7 +131,7 @@ export default async function recordAftermath(
   // Whether this player fought it and how many did, in one question of
   // the one table, asked alongside the battle itself
   const [battles, teams] = await Promise.all([
-    getSql()`select raid_id, outcome from battles where id = ${battleId}`,
+    getSql()`select raid_id, outcome, started_at from battles where id = ${battleId}`,
     getSql()`
       select (count(*) filter (where player = ${uid}))::int as mine,
              (count(distinct player))::int as players
@@ -186,13 +181,23 @@ export default async function recordAftermath(
   }
 
   // The report is the client's word, so what a Pay Day can pay is
-  // bounded the way health is bounded by the pool: per catch, at the
-  // mainline's rate for a level-100 user landing one use a turn for
-  // the length of a long raid
+  // bounded the way health is bounded by the pool: per catch, by what
+  // its snapshot knows and how long the fight has run. The clock is
+  // the server's, from the start it stamped itself, and it stops at
+  // the battle timeout, so holding a report back does not make the
+  // fight any longer. It is a ceiling rather than a count: no server
+  // replays the fight, so a report under it is taken at its word
+  const lasted = Math.min(Date.now() - asNumber(battles[0].started_at), BATTLE_TIMEOUT);
   let coins = 0;
 
   for (const entry of reported) {
-    coins += Math.min(Math.max(0, Math.floor(entry.coins)), PAY_DAY_REPORT_LIMIT);
+    const snapshot = fielded.get(entry.caught);
+    const ceiling =
+      snapshot == null
+        ? 0
+        : payDayCeiling(snapshot.level, snapshot.moves, snapshot.abilities, lasted);
+
+    coins += Math.min(Math.max(0, Math.floor(entry.coins)), ceiling);
   }
 
   const settled = await tx(async (transaction) => {

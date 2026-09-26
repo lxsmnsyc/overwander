@@ -1,4 +1,5 @@
 import { HISTORY_BALL, HISTORY_BALL_INSET, describeHistory, isHoldable } from './describe';
+import { capAsksForStat } from '../../../data/items/bottle-caps';
 import BattleData from '../../app/battle-data';
 import CandySprite from '../../sprites/CandySprite';
 import BattleSection from './sections/BattleSection';
@@ -25,7 +26,7 @@ import {
 import { getCatchName, isNicknameLocked, isShadow, isShiny } from '../../../auth/caught-record';
 import { NICKNAME_LIMIT, asNickname } from '../../../auth/nickname';
 import { useAuth } from '../../../auth/context';
-import { answered } from '../../app/resource-reads';
+import { answered, failed, readable } from '../../app/resource-reads';
 
 import { canHatch, isEgg } from '../../../auth/egg';
 import { hatchEgg } from '../../../auth/eggs';
@@ -87,6 +88,7 @@ import {
 import AbilityPatchDialog from '../AbilityPatchDialog';
 import CatchPicker from '../catch-picker';
 import IncreasePPDialog from '../IncreasePPDialog';
+import BottleCapDialog from '../BottleCapDialog';
 import TeachMoveDialog from '../TeachMoveDialog';
 
 import {
@@ -374,6 +376,8 @@ export function CatchSheetBody(
    * question is answered
    */
   const [bottle, setBottle] = createSignal<{ item: Items; catchId: string } | null>(null);
+  /** The catch a Bottle Cap is being spent on, while it asks which stat */
+  const [capping, setCapping] = createSignal<string | null>(null);
 
   /** Whoever is having its signature written, while the patch asks what gives way */
   const [patching, setPatching] = createSignal<string | null>(null);
@@ -502,7 +506,7 @@ export function CatchSheetBody(
   createEffect(() => {
     const settled = settling();
 
-    if (settled != null && (props.candies.latest ?? 0) !== settled.was) {
+    if (settled != null && (readable(props.candies) ?? 0) !== settled.was) {
       setSettling(null);
     }
   });
@@ -515,7 +519,7 @@ export function CatchSheetBody(
    * the last handover left it at while the bag is still being re-read
    */
   const heldCandies = (): number => {
-    const held = props.candies.latest ?? 0;
+    const held = readable(props.candies) ?? 0;
     const settled = settling();
 
     return settled?.was === held ? settled.now : held;
@@ -634,7 +638,7 @@ export function CatchSheetBody(
         const grown = Math.max(0, (level ?? from) - from);
 
         setSettling({
-          was: props.candies.latest ?? 0,
+          was: readable(props.candies) ?? 0,
           now: Math.max(0, heldCandies() - grown * getCandyCost(view() ?? { shadow: false })),
         });
         say(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
@@ -736,7 +740,7 @@ export function CatchSheetBody(
   const holdables = (): InventoryEntry[] => {
     const found: InventoryEntry[] = [];
 
-    for (const entry of props.bag.latest ?? []) {
+    for (const entry of readable(props.bag) ?? []) {
       if (isHoldable(entry.item)) {
         found.push(entry);
       }
@@ -848,6 +852,9 @@ export function CatchSheetBody(
     }
     hatchEgg(catchId)
       .then((species) => {
+        if (species != null) {
+          playEffect(Effect.EggHatch);
+        }
         say(
           species == null
             ? 'It is not ready yet.'
@@ -889,7 +896,7 @@ export function CatchSheetBody(
     if (species == null) {
       say('That is no longer possible.');
     } else {
-      playEffect(Effect.PokemonGet);
+      playEffect(Effect.Evolution);
       say(said, 'leaf');
     }
     props.onRecordChanged();
@@ -929,7 +936,7 @@ export function CatchSheetBody(
     const carried = new Set<Items>();
     let husk: string | null = null;
 
-    for (const entry of props.bag.latest ?? []) {
+    for (const entry of readable(props.bag) ?? []) {
       if (entry.amount > 0) {
         carried.add(entry.item);
       }
@@ -948,7 +955,7 @@ export function CatchSheetBody(
     evolveCatch(catchId, into)
       .then((species) => {
         if (species != null) {
-          playEffect(Effect.PokemonGet);
+          playEffect(Effect.Evolution);
         }
         if (species == null) {
           say('That evolution is no longer available.');
@@ -1173,7 +1180,7 @@ export function CatchSheetBody(
    * knows whether there would be a list in it
    */
   const hasUsableItem = (): boolean => {
-    for (const entry of props.bag.latest ?? []) {
+    for (const entry of readable(props.bag) ?? []) {
       if (entry.amount > 0 && isUsable(entry.item)) {
         return true;
       }
@@ -1205,6 +1212,10 @@ export function CatchSheetBody(
     }
     if (isPPItem(item)) {
       setBottle({ item, catchId });
+      return;
+    }
+    if (capAsksForStat(item)) {
+      setCapping(catchId);
       return;
     }
     // A signature takes the place of something on a full pokemon, and
@@ -1547,9 +1558,11 @@ export function CatchSheetBody(
                     class="flex flex-col gap-3 border-y-2 border-line-soft md:grid md:min-h-0
                       md:flex-1 md:grid-cols-[16rem_minmax(0,1fr)] md:gap-0"
                   >
+                    {/* Scrolls like the right side does, so a short screen
+                        never pushes the evolutions down over the history */}
                     <div
-                      class="contents md:flex md:min-h-0 md:flex-col md:border-r-2
-                        md:border-line-soft md:pr-4"
+                      class="contents md:flex md:min-h-0 md:flex-col md:overflow-y-auto
+                        md:border-r-2 md:border-line-soft md:pr-4"
                     >
                       <div class="flex flex-col items-center gap-2 py-3 text-center md:flex-1">
                         <PortraitSection caught={loaded()} named={named()} />
@@ -1561,7 +1574,9 @@ export function CatchSheetBody(
                               label=""
                               class={CANDY_BADGE}
                             />
-                            <span class="tabular-nums">{shownCandies()}</span>
+                            <span class="tabular-nums">
+                              {failed(props.candies) == null ? shownCandies() : '?'}
+                            </span>
                           </Badge>
                           {/* The level and what raises it are one control:
                             where it stands and what the next step costs */}
@@ -1604,6 +1619,8 @@ export function CatchSheetBody(
                         </div>
 
                         <div class="flex flex-wrap items-center justify-center gap-1.5">
+                          <span class="text-sm font-medium">Lv. {shownLevel()}</span>
+                          <Divider />
                           <span class="text-sm font-medium">
                             {getSpeciesData(loaded().species).category}
                           </span>
@@ -1679,7 +1696,7 @@ export function CatchSheetBody(
                           owned={owned() != null}
                           frozen={frozen()}
                           holdables={holdables()}
-                          bag={props.bag.latest}
+                          bag={readable(props.bag)}
                           giving={panel() === 'give'}
                           onGiving={(open) => {
                             setPanel(open ? 'give' : null);
@@ -1903,7 +1920,7 @@ export function CatchSheetBody(
         }}
         title="Use item"
         description={`Choose what to spend on ${named()}.`}
-        entries={props.bag.latest}
+        entries={readable(props.bag)}
         disabled={frozen()}
         // Only the prized and special bands ask twice. Everything a
         // player heals with — a Potion, a Full Restore, a wing — is
@@ -1997,6 +2014,19 @@ export function CatchSheetBody(
         item={bottle()?.item ?? null}
         onClose={() => {
           setBottle(null);
+        }}
+        onUsed={(said) => {
+          say(said);
+          props.onRecordChanged();
+          props.onBagChanged();
+          props.onChange?.();
+        }}
+      />
+
+      <BottleCapDialog
+        catchId={capping()}
+        onClose={() => {
+          setCapping(null);
         }}
         onUsed={(said) => {
           say(said);

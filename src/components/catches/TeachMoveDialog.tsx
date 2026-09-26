@@ -24,6 +24,7 @@ import MovePicker, { MoveLine } from './MovePicker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, List, Meta, Note, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
+import playEffect, { Effect } from '../app/sound';
 
 /**
  * Teaching one move to one pokemon.
@@ -159,6 +160,7 @@ function TeachBody(
           setStatus(describeLearnRefusal(result.refused, named(), taught()));
           return;
         }
+        playEffect(Effect.MoveLearned);
         props.onTaught?.();
         close();
       })

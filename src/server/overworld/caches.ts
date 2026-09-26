@@ -3,7 +3,9 @@ import { Depth } from '../../overworld/depth';
 import type { ItemStack } from '../../data/overworld/item-pool';
 import type { Items } from '../../data/ids/items';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
-import { grantItems } from '../inventory';
+import { ITEM_STACKS } from '../../auth/stacks';
+import { type Sql, type Tx, getSql } from '../db';
+import { grantStacksIn } from '../stacks';
 import { Landmark, Metric } from '../../auth/quest-record';
 import { bumpProgress } from '../quest-progress';
 import { claim, resolveSnapshot } from './claims';
@@ -34,25 +36,34 @@ export async function claimItemCache(
 
   // The marker records the whole stash, so what a cache paid is
   // readable afterwards rather than only that it paid
-  if (!(await claim('cache_claims', id, { player: uid, items: stash }))) {
+  if (
+    !(await claim('cache_claims', id, { player: uid, items: stash }, async (transaction) => {
+      await grantStash(uid, stash, transaction);
+      return true;
+    }))
+  ) {
     return null;
   }
-  await grantStash(uid, stash);
   await bumpProgress(uid, [[Metric.Landmarks, Landmark.Cache, 1]]);
   return stash;
 }
 
 /**
- * Put a whole stash in the bag, in one transaction, so a stash cannot
- * half-land
+ * Put a whole stash in the bag in one statement, so a stash cannot
+ * half-land. A claim hands its own transaction over, so the stash
+ * lands with the marker or not at all
  */
-export async function grantStash(uid: string, stash: ItemStack[]): Promise<void> {
+export async function grantStash(
+  uid: string,
+  stash: ItemStack[],
+  transaction: Sql | Tx = getSql(),
+): Promise<void> {
   const granted: [Items, number][] = [];
 
   for (const { item, amount } of stash) {
     granted.push([item, amount]);
   }
-  await grantItems(uid, granted);
+  await grantStacksIn(transaction, ITEM_STACKS, uid, granted);
 }
 
 export function cachePrefix(snapshot: ChunkSnapshot): string {

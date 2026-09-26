@@ -100,21 +100,43 @@ export async function claimPhenomenon(
 
   const key = phenomenonKey(snapshot, cell);
 
-  if (!(await claim('phenomenon_claims', key, { player: uid, kind: reward.kind }))) {
+  // What it pays lands in the claim's own transaction, so a phenomenon
+  // is never spent without its item or its egg
+  let egg = '';
+
+  if (
+    !(await claim(
+      'phenomenon_claims',
+      key,
+      { player: uid, kind: reward.kind },
+      async (transaction) => {
+        if (reward.kind === 'item') {
+          await grantStash(uid, reward.items, transaction);
+        } else if (reward.kind === 'egg') {
+          egg = await grantNestEgg(
+            uid,
+            snapshot,
+            cell,
+            reward.species,
+            now,
+            offset,
+            locale,
+            transaction,
+          );
+        }
+        return true;
+      },
+    ))
+  ) {
     return null;
   }
   await bumpProgress(uid, [[Metric.Landmarks, Landmark.Phenomenon, 1]]);
 
   if (reward.kind === 'item') {
-    await grantStash(uid, reward.items);
     return { kind: 'item', items: reward.items };
   }
-
   if (reward.kind === 'egg') {
-    return {
-      kind: 'egg',
-      catchId: await grantNestEgg(uid, snapshot, cell, reward.species, now, offset, locale),
-    };
+    return { kind: 'egg', catchId: egg };
   }
 
   // The pokemon needs the two rolls a snapshot spawn would have; they

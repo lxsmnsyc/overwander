@@ -1,7 +1,15 @@
-import { Species } from '../../ids/species';
+import { Species, getBaseFormSpecies } from '../../ids/species';
 import type Regions from '../../ids/regions';
-import { getSpeciesByRegion, getSpeciesData, getSpeciesRegion, isBaseForm } from '../../species';
+import {
+  getGrowthRoads,
+  getSpeciesByRegion,
+  getSpeciesData,
+  getSpeciesRegion,
+  isCosmeticForm,
+  isWornForm,
+} from '../../species';
 import { EVERY_LAIR, getLairResidents } from '../lair';
+import canMeetSpecies from '../reach';
 import { TRAINER_REGIONS, TrainerClass } from './classes';
 import TRAINER_TYPES from './types';
 
@@ -33,7 +41,8 @@ export function isAceTrainer(trainer: TrainerClass): boolean {
     trainer === TrainerClass.AceTrainer ||
     trainer === TrainerClass.JohtoAceTrainer ||
     trainer === TrainerClass.HoennAceTrainer ||
-    trainer === TrainerClass.SinnohAceTrainer
+    trainer === TrainerClass.SinnohAceTrainer ||
+    trainer === TrainerClass.UnovaAceTrainer
   );
 }
 
@@ -63,9 +72,12 @@ const LAIR_SPECIES = (() => {
  * region is concerned
  */
 export function isGrownInRegion(species: Species, region: Regions): boolean {
-  const roads = getSpeciesData(species).evolvesInto ?? [];
-
-  return roads.every((road) => getSpeciesRegion(road.species) !== region);
+  for (const road of getGrowthRoads(species)) {
+    if (getSpeciesRegion(road.species) === region) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
@@ -75,7 +87,8 @@ export function isGrownInRegion(species: Species, region: Regions): boolean {
  * a Johto Swimmer worth meeting on the same water as a Kanto one.
  *
  * Legendaries stay out, one belongs to its raid, and so do the
- * alternate forms and the egg
+ * alternate forms and the egg. So does anything the world has nowhere
+ * to put yet: a trainer fields what a player could be walking too
  */
 export function getTrainerPool(trainer: TrainerClass): Species[] {
   const types = new Set(TRAINER_TYPES[trainer]);
@@ -83,7 +96,18 @@ export function getTrainerPool(trainer: TrainerClass): Species[] {
   const pool: Species[] = [];
 
   for (const species of getSpeciesByRegion(TRAINER_REGIONS[trainer])) {
-    if (species === Species.Egg || LAIR_SPECIES.has(species) || !isBaseForm(species)) {
+    // A shape a pokemon is put into mid-fight is nobody's to walk
+    // with, but one it is rearranged into and kept in, such as a Rotom
+    // in an appliance, is a pokemon a player owns like any other
+    if (
+      species === Species.Egg ||
+      LAIR_SPECIES.has(getBaseFormSpecies(species)) ||
+      isWornForm(species) ||
+      isCosmeticForm(species)
+    ) {
+      continue;
+    }
+    if (!canMeetSpecies(species)) {
       continue;
     }
     // "Rare" is the shape of the line rather than the odds of meeting

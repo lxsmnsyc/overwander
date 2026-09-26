@@ -37,7 +37,7 @@ describe('the caves', () => {
     expect(cave.getChunk(3, 4).seed).toContain('cave');
   });
 
-  it('is stone and the space in it, and nothing else', () => {
+  it('is stone, the space in it and the water it holds', () => {
     const cave = new World('overworld').at(Depth.Cave);
     const roles = new Set<string>();
 
@@ -46,8 +46,8 @@ describe('the caves', () => {
         roles.add(roleAt(cave, x, y));
       }
     }
-    // No water underground, and no third thing either
-    expect([...roles].sort()).toEqual(['ground', 'wall']);
+    // Rock, floor, and the rivers and aquifers standing in it. Nothing else
+    expect([...roles].sort()).toEqual(['ground', 'wall', 'water']);
   });
 
   it('is tighter than the country over it', () => {
@@ -171,12 +171,14 @@ describe('the caves', () => {
     const span = chunks * CHUNK_CELLS;
     const reached = new Uint8Array(span * span);
     const stack: number[] = [];
+    // Water is floor a player rides over rather than walks, so it
+    // carries a way through the same as dry rock does
     const open = (at: number): boolean =>
       roleAt(
         cave,
         originX * CHUNK_CELLS + (at % span),
         originY * CHUNK_CELLS + Math.floor(at / span),
-      ) === 'ground';
+      ) !== 'wall';
 
     for (let y = originY; y < originY + chunks; y++) {
       for (let x = originX; x < originX + chunks; x++) {

@@ -1,7 +1,7 @@
 /**
  * Tag the release sitting in package.json.
  *
- * `changeset tag` skips private packages, and this one stays private,
+ * `changeset git-tag` skips private packages, and this one stays private,
  * so the tag is made here: an annotated `v1.0.0` on the commit that
  * carries the bump.
  */

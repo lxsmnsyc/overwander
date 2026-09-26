@@ -12,7 +12,7 @@
  * before and passes the four corners it already had.
  */
 
-import parseColour from './colour';
+import parseColour, { type Colour } from './colour';
 
 /** A corner, in canvas pixels. */
 export interface QuadPoint {
@@ -47,7 +47,7 @@ export interface Painter {
     source: QuadSource,
     corners: QuadPoint[],
     alpha?: number,
-    colour?: string,
+    colour?: string | readonly Colour[],
     sampling?: QuadSampling,
     blend?: QuadBlend,
   ) => void;
@@ -360,7 +360,7 @@ export default class QuadBatch {
     source: QuadSource,
     corners: QuadPoint[],
     alpha = 1,
-    colour?: string,
+    colour?: string | readonly Colour[],
     sampling: QuadSampling = 'pixels',
     blend: QuadBlend = 'over',
   ): void {
@@ -369,9 +369,12 @@ export default class QuadBatch {
     if (held == null) {
       return;
     }
-    const tint = colour == null ? null : parseColour(colour);
+    // Four colours rather than one: the light at a tile's corners,
+    // which the shader blends across it the way it blends the picture
+    const corner = typeof colour === 'string' || colour == null ? null : colour;
+    const tint = typeof colour === 'string' ? parseColour(colour) : null;
 
-    if (colour != null && tint == null) {
+    if (typeof colour === 'string' && tint == null) {
       return;
     }
     const opacity = alpha * (tint == null ? 1 : tint[3]);
@@ -396,6 +399,7 @@ export default class QuadBatch {
       blue,
       opacity,
       blend,
+      corner,
     );
   }
 
@@ -562,6 +566,8 @@ export default class QuadBatch {
     blue: number,
     alpha: number,
     blend: QuadBlend,
+    /** One colour a corner, in ring order, for a quad lit unevenly */
+    lit: readonly Colour[] | null = null,
   ): void {
     this.room();
 
@@ -593,9 +599,11 @@ export default class QuadBatch {
       // A ring runs top left, top right, bottom right, bottom left
       this.vertices[at + 2] = corner === 0 || corner === 3 ? left : right;
       this.vertices[at + 3] = corner <= 1 ? top : bottom;
-      this.vertices[at + 4] = red * fade;
-      this.vertices[at + 5] = green * fade;
-      this.vertices[at + 6] = blue * fade;
+      const own = lit == null ? null : lit[corner];
+
+      this.vertices[at + 4] = red * fade * (own == null ? 1 : own[0]);
+      this.vertices[at + 5] = green * fade * (own == null ? 1 : own[1]);
+      this.vertices[at + 6] = blue * fade * (own == null ? 1 : own[2]);
       this.vertices[at + 7] = alpha * fade;
       this.filled += 1;
     }

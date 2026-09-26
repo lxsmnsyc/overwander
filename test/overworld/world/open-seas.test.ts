@@ -105,7 +105,10 @@ describe('the open seas', () => {
         const snapshot = new ChunkSnapshot(chunk, 0);
 
         for (const [cell, landmark] of chunk.getLandmarkCells()) {
-          if (landmark !== Landmark.Trainer) {
+          // A border runs through a chunk, so a sea chunk may hold a
+          // cell of the coast beside it. Only what is actually at sea
+          // is held to the sea's rule
+          if (landmark !== Landmark.Trainer || !isOpenSea(snapshot.biomeAt(cell))) {
             continue;
           }
           duels += 1;

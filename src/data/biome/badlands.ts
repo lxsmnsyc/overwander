@@ -6,9 +6,6 @@ import { UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
  * Badlands spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerBadlandsSpawns(): void {
-  // The Dwebble line is written but waits on sprites, since the
-  // collection has drawn no Crustle. Once it does, mornings and days
-  // take Dwebble in uncommon at 22 and Crustle in scarce at 7
   registerSpawnPool(Biome.Badlands, {
     [TimeOfDay.Morning]: {
       base: [
@@ -28,6 +25,7 @@ export default function registerBadlandsSpawns(): void {
       uncommon: [
         { species: Species.Rockruff, weight: 22 },
         { species: Species.Helioptile, weight: 24 },
+        { species: Species.Dwebble, weight: 22 },
         { species: Species.Vullaby, weight: 16 },
         { species: Species.Darumaka, weight: 22 },
         { species: Species.Numel, weight: 20 },
@@ -58,6 +56,7 @@ export default function registerBadlandsSpawns(): void {
       scarce: [
         { species: Species.Lycanroc, weight: 6 },
         { species: Species.Heliolisk, weight: 6 },
+        { species: Species.Crustle, weight: 7 },
         { species: Species.Mandibuzz, weight: 6 },
         { species: Species.Darmanitan, weight: 7 },
         { species: Species.Camerupt, weight: 6 },
@@ -127,6 +126,7 @@ export default function registerBadlandsSpawns(): void {
       uncommon: [
         { species: Species.Rockruff, weight: 22 },
         { species: Species.Helioptile, weight: 24 },
+        { species: Species.Dwebble, weight: 22 },
         { species: Species.Vullaby, weight: 16 },
         { species: Species.Darumaka, weight: 22 },
         { species: Species.Numel, weight: 20 },
@@ -160,6 +160,7 @@ export default function registerBadlandsSpawns(): void {
       scarce: [
         { species: Species.Lycanroc, weight: 6 },
         { species: Species.Heliolisk, weight: 6 },
+        { species: Species.Crustle, weight: 7 },
         { species: Species.Mandibuzz, weight: 6 },
         { species: Species.Darmanitan, weight: 7 },
         { species: Species.Camerupt, weight: 6 },

@@ -1,63 +1,71 @@
 # People you meet
 
-Some chunks contain a **Wandering NPC** cell. The cell itself never moves, but
-whoever is standing on it changes every **three hours**, so the same spot may
-offer a breeder in the morning and a daycare lady by midday.
+The people on the map either help you or fight you. This page covers the ones
+who help.
+
+Some chunks hold a **Wandering NPC** cell. The cell never moves, but whoever is
+standing on it changes every **three hours**. The same spot may offer a breeder
+in the morning and a daycare lady by midday.
 
 Ten people wander: the breeder, the daycare lady, the groomer, the Move
 Reminder, the Move Tutor, the chef, the Fossil Maniac, the Fossil Scientist, the
-Channeler and Kurt. Nurse Joy, the vendor, the syndicate grunt and the duelling
-trainers each keep a landmark of their own, further down. A cell is a crossroads
-rather than a shop, so walking up to one does not reveal in advance which of the
-ten is there.
+Channeler and Kurt. A cell is a crossroads rather than a shop, so walking up to
+one does not show in advance which of the ten is there.
+
+Four more keep a landmark of their own. Nurse Joy and the vendor are covered
+below. The syndicates and the duelling trainers are on
+[Trainers on the road](npc-trainers.md), and the gyms, the league and the
+Battle Frontier are on [Gyms and the league](npc-league.md).
 
 ## The once-per-window rule
 
 Every traveller except the **chef**, the **Fossil Scientist** and **Kurt** helps
-a player once per three-hour window, and asking again before it turns over is
-refused whatever the player can pay. The chef is paced by a purse, the scientist
-by how many fossils have been dug up, and Kurt by how many apricorns have been
-picked.
+a player once per three-hour window. Asking again before the window turns over
+is refused, whatever the player can pay. The chef is paced by a purse, the
+scientist by how many fossils have been dug up, and Kurt by how many apricorns
+have been picked.
 
-The limit applies per cell, so walking to another wandering cell finds somebody
-who has not served that player yet. That walk is what a second egg costs.
+The limit applies per cell. Walking to another wandering cell finds somebody who
+has not served that player yet. That walk is what a second egg costs.
 
-Nobody charges for a visit that could not help: a pair that cannot breed, an egg
+Nobody charges for a visit that could not help. A pair that cannot breed, an egg
 already ready to hatch, or a party that needed nothing is turned away before any
 gold or any visit is spent.
 
 ## The vendor
 
-The **Vendor** is the game's only shop. What most others hand over is
-something the world cannot produce twice in a window; what he hands over is a
-potion, so a player may
-trade with him as often as their purse allows while he is standing there.
+The **Vendor** is the game's only shop. What most of the others hand over is
+something the world cannot produce twice in a window. What he hands over is a
+potion, so a player may trade with him as often as their purse allows while he
+is standing there.
 
-Buying and selling are both one thing at a time. His crate and the bag are the
-same tray of pictures the bag is always shown as, and resting on a square brings
-up a card saying what the thing is, what it does, how many are already carried,
-and the button that buys or sells it at the price on the square.
+Buying and selling are both one thing at a time. His crate and the bag use the
+same tray of pictures the bag is always shown as. Resting on a square brings up
+a card saying what the thing is, what it does, how many are already carried, and
+the button that buys or sells it at the price on the square.
 
 ### What he sells
 
 A stall sets up **one counter** per window, drawn from six:
 
-| Counter          | What is on it                                                |
-| ---------------- | ------------------------------------------------------------ |
-| **Balls**        | Every ball with a price, opening with a Poke Ball            |
+| Counter          | What is on it                                               |
+| ---------------- | ----------------------------------------------------------- |
+| **Balls**        | Every ball with a price, opening with a Poke Ball           |
 | **Medicine**     | Potions, cures, revives and the herbs, opening with a Potion |
-| **Vitamins**     | The six vitamins, and the PP Ups                             |
-| **Incenses**     | The incenses a buddy carries                                 |
-| **Battle items** | The one-fight boosters                                       |
-| **Machines**     | The machines, and the only place one is sold                 |
+| **Vitamins**     | The six vitamins, and the PP Ups                            |
+| **Incenses**     | The incenses a buddy carries                                |
+| **Battle items** | The one-fight boosters                                      |
+| **Machines**     | The machines, and the only place one is sold                |
 
-**12** kinds off that counter, drawn without repeats, or the whole shelf where a
-counter carries fewer than twelve, which the vitamins, the incenses and the
-battle items all do. The balls and the medicine open with a staple, a **Poke
-Ball** and a **Potion**, and everything else varies. What a stall carries is part of who set it up rather than
-anything a player can influence, and every player who reaches it in that window
-is offered the same crate. A player who wants an Ultra Ball, or a particular
-machine, walks until they find a counter carrying one.
+A stall carries **12** kinds off that counter, drawn without repeats. Where a
+counter holds fewer than twelve, it carries the whole shelf, which the vitamins,
+the incenses and the battle items all do. The balls open with a staple, a **Poke
+Ball**, and the medicine with a **Potion**. Everything else varies.
+
+What a stall carries is part of who set it up. No player can influence it, and
+every player who reaches it in that window is offered the same crate. A player
+who wants an Ultra Ball, or a particular machine, walks until they find a
+counter carrying one.
 
 A machine is priced by the move on it: 2,000 gold for a status move or a weak
 one, 5,000 for a solid attack, 12,000 for the heaviest. Until now a gym was the
@@ -70,16 +78,16 @@ Prices are the same from every vendor in the world.
 
 ### What he buys
 
-Far more than he sells: anything the game puts a resale price on, which is where
-the Pearls, Star Pieces and Nuggets dug up on a walk finally become gold. He pays
-half of what he charges for the same item, so nothing bought from him can be sold
-back at a profit.
+He buys far more than he sells: anything the game puts a resale price on. That
+is where the Pearls, Star Pieces and Nuggets dug up on a walk finally become
+gold. He pays half of what he charges for the same item, so nothing bought from
+him can be sold back at a profit.
 
-Some items have no price at all and are therefore outside his trade in both
+Some items have no price at all, and they are outside his trade in both
 directions: the **Master Ball**, the **Portal Key**, both **Bottle Caps**, the
-**Purifying Gem** and the **Heart Scale**. A scale in the bag is a forgotten move
-waiting to be recovered, and a price would let it be spent on something else. The
-evolution stones, by contrast, do carry a price, so a spare one is worth gold.
+**Purifying Gem** and the **Heart Scale**. A scale in the bag is a forgotten
+move waiting to be recovered, and a price would let it be spent on something
+else. The evolution stones do carry a price, so a spare one is worth gold.
 
 ## The Pokémon Center
 
@@ -88,336 +96,78 @@ and she is standing behind its counter whatever the hour. The open country has
 none at all, so being patched up is a reason to walk back into town.
 
 She charges nothing, takes as many pokemon as you bring in one handover, and
-turns nobody away however often they come back. What she hands back is at full health with
-nothing left on it, and a shadow among them is purified on the way.
+turns nobody away however often they come back. What she hands back is at full
+health with nothing left on it, and a shadow among them is purified on the way.
 
 ## The specialists
 
-| Who                  | Takes                                    | Gives                                      |
-| -------------------- | ---------------------------------------- | ------------------------------------------ |
-| **Breeder**          | Two pokemon, 5,000 gold                  | An egg; both parents returned immediately  |
-| **Daycare Lady**     | An egg, 2,500 gold                       | Half of the walk that remained             |
-| **Nurse Joy**        | Any number at once, free                 | Each healed, and any shadow purified       |
-| **Groomer**          | One pokemon, 2,500 gold                  | Half of the friendship it had left to gain |
-| **Move Reminder**    | One Heart Scale                          | A level-up move the pokemon has lost       |
-| **Move Tutor**       | One Heart Scale                          | Any move a machine could teach it          |
+| Who                  | Takes                                    | Gives                                          |
+| -------------------- | ---------------------------------------- | ---------------------------------------------- |
+| **Breeder**          | Two pokemon, 5,000 gold                  | An egg; both parents returned immediately      |
+| **Daycare Lady**     | An egg, 2,500 gold                       | Half of the walk that remained                 |
+| **Nurse Joy**        | Any number at once, free                 | Each healed, and any shadow purified           |
+| **Groomer**          | One pokemon, 2,500 gold                  | Half of the friendship it had left to gain     |
+| **Move Reminder**    | One Heart Scale                          | A level-up move the pokemon has lost           |
+| **Move Tutor**       | One Heart Scale                          | Any move a machine could teach it              |
 | **Chef**             | Gold, as often as it holds out           | Drinks, treats and mints, stocked nowhere else |
-| **Fossil Maniac**    | 12,000 gold, or 30,000 for the Old Amber | One of the two fossils he is carrying      |
-| **Fossil Scientist** | A fossil, free                           | The pokemon inside it, at level 20         |
-| **Channeler**        | One pokemon, one Heart Scale             | An extra ability slot, filled at once      |
-| **Kurt**             | A basket of apricorns, free              | One ball per apricorn, of that colour      |
+| **Fossil Maniac**    | 12,000 gold, or 30,000 for the Old Amber | One of the two fossils he is carrying          |
+| **Fossil Scientist** | A fossil, free                           | The pokemon inside it, at level 20             |
+| **Channeler**        | One pokemon, one Heart Scale             | An extra ability slot, filled at once          |
+| **Kurt**             | A basket of apricorns, free              | One ball per apricorn, of that colour          |
 
-**Nurse Joy** charges nothing and heals everything: full health, statuses
-cleared, and any shadow pokemon purified on the way. As many pokemon as you
-bring, and as many handovers as you like while she is standing there.
-
-**The Groomer** always adds half of what friendship remains, so he is worth a
-great deal to a pokemon fresh out of a ball and almost nothing to one that is
-already inseparable. He can never buy the last of a friendship, and he refuses
-eggs outright.
+**The Groomer** always adds half of what friendship remains. He is worth a great
+deal to a pokemon fresh out of a ball and almost nothing to one that is already
+inseparable. He can never buy the last of a friendship, and he refuses eggs
+outright.
 
 **The Move Reminder** restores only moves learned by **levelling up**, never
-machine moves. His price is not gold: a Heart Scale is dug out of the ground and
-no shop deals in them, so what paces him is walking. The scale is spent only if a
-move is actually taught.
+machine moves. His price is not gold. A Heart Scale is dug out of the ground and
+no shop deals in them, so what paces him is walking. The scale is spent only if
+a move is actually taught.
 
-**The Move Tutor** deals in the same currency and covers the other half of a move
-list: everything on the species' machine list that it does not already know. What
-he sells is the lesson without the hunt for the disc.
+**The Move Tutor** deals in the same currency and covers the other half of a
+move list: everything on the species' machine list that it does not already
+know. What he sells is the lesson without the hunt for the disc.
 
 **The Channeler** is the only way a pokemon ever gains an ability. Every other
-ability it has was decided before you met it. She opens one more ability slot and
-fills it in the same breath, drawing from everything the pokemon and the stages
-**below** it are capable of, so a Gyarados can wake up with a Magikarp's Swift
-Swim. Which one answers is hers to decide, not yours.
+ability it has was decided before you met it. She opens one more ability slot
+and fills it in the same breath, drawing from everything the pokemon and the
+stages **below** it are capable of, so a Gyarados can wake up with a Magikarp's
+Swift Swim. Which one answers is hers to decide, not yours.
 
 She refuses a pokemon whose family has nothing left it does not already carry,
 and she refuses one that has run out of room. **Four abilities is the most any
 pokemon holds**, however deep its family runs. A shadow's mark and a boss's do
 not count against that room, so a shadow is not punished for carrying one.
 
-**Kurt** carves apricorns into balls, one ball per apricorn, and charges nothing.
-Each colour makes its own ball, and the seven he carves are stocked nowhere:
-Level, Love, Lure, Moon, Fast, Heavy and Friend. Hand him a basket and the only
-decision is how many to hand over. What paces him is picking, so he is worth
-walking to with a full bag. See [Catching](catching.md#balls) for what each ball
-answers.
+**Kurt** carves apricorns into balls, one ball per apricorn, and charges
+nothing. Each colour makes its own ball, and the seven he carves are stocked
+nowhere: Level, Love, Lure, Moon, Fast, Heavy and Friend. Hand him a basket and
+the only decision is how many to hand over. What paces him is picking, so he is
+worth walking to with a full bag. See [Catching](catching.md#balls) for what
+each ball answers.
 
 **The Chef** keeps the one shelf no vendor stocks: the region's drinks, its
 treats and all 21 mints, a dozen of them a window. Like the vendor, he serves as
 often as a purse holds out rather than once per window.
 
-A trade moves at most **99** of one kind at a time, which is a guard against a
-slipped keyboard rather than a rule: gold is the real limit.
+A trade moves at most **99** of one kind at a time. That is a guard against a
+slipped keyboard rather than a rule, since gold is the real limit.
 
 **The Fossil Maniac** is the only source of a fossil other than the ground
 itself. He carries **two of the three** and will part with **one** while he is
 standing there, so a player after a particular fossil waits for it or walks
 elsewhere.
 
-**The Fossil Scientist** takes the fossil and asks for nothing else. Which pokemon
-emerges belongs to the fossil, and it arrives at level 20. Like the vendor, he has
-no once-per-window limit: what paces him is how many fossils have been dug up.
-
-## The syndicates
-
-Somebody from a criminal organisation bars the cell and fights whoever accepts.
-Who it is is rolled per cell per window, and the three ranks cannot overlap:
-
-| Standing there | How often | What they field                                               |
-| -------------- | --------- | ------------------------------------------------------------- |
-| **Grunt**      | The rest  | Two of each of the biome's three bands, 40-60                 |
-| **Executive**  | 1 in 8    | Six of the biome's rare band, 65-85                           |
-| **The boss**   | 1 in 64   | Five of the rare band and a legendary, 85-100                 |
-
-**Which organisation** it is is not rolled at all: it is the biome's, and it
-never changes. **Team Aqua** holds the water, every ocean, reef, kelp forest,
-beach, rocky coast, mangrove, swamp and bog. **Team Magma** holds the fire and
-the high dry country: volcanoes, mountains, alpine tundra, badlands and both
-deserts. **Team Galactic** holds the cold and the thin places: glaciers, tundra,
-taiga, montane forest and the Beyond. **Team Rocket** holds everywhere else, and holds any biome added later
-until somebody says otherwise. So a player who learns that the coast is Aqua's
-has learned something about the world rather than about this window.
-
-| Team            | Its boss            | Its executives                      |
-| --------------- | ------------------- | ----------------------------------- |
-| **Team Rocket** | Boss **Giovanni**   | Archer, Ariana, Proton, Petrel      |
-| **Team Magma**  | Leader **Maxie**    | Admins Tabitha and Courtney         |
-| **Team Aqua**   | Leader **Archie**   | Admins Matt and Shelly              |
-| **Team Galactic** | Boss **Cyrus**    | Commanders Mars, Jupiter and Saturn |
-
-Which executive turns up is its own roll, so a team with two of them is no
-likelier to field one than a team with four. Everybody is introduced team first
-and rank before the name, so **Team Aqua Leader Archie** says which organisation
-and how far up it in one line. Everything all three field is shadowed, and it is
-an ordinary trainer battle, so a simultaneous knockout is a draw.
-
-Every player fights the cell separately. One player's victory closes nothing for
-anybody else, and losing costs nothing but the attempt: they are still standing
-and may be challenged again until the three hours are up.
-
-Beating one pays a purse drawn per winner, so the same fight is worth a different
-amount to the next player, and leaves a pokemon behind, shadowed and at level 10.
-A grunt pays **5,000 to 15,000** and leaves any one of its six, which is what
-makes the commonest fight in the world the only place some of a biome's pokemon
-can be met as a shadow at all. An executive
-pays **40,000 to 90,000**, leaves any of its six, and drops an item it was
-carrying besides. A **boss** pays **120,000 to 250,000**, their own mark and any
-of theirs, the legendary included. Giovanni's mark is worth the coat he runs Team
-Rocket in; the gym he keeps in Kanto is a different fight with a badge of its own.
-
-Every rank leaves a mark on the shelf as well, and every team's marks are its
-own: the rank and file of one team share one between them, each executive has
-their own, and so does each boss. Each is worth going about in that person's
-coat, so the three uniforms are three different unlocks. See
-[Awards and titles](awards.md).
-
-The executives and the bosses field trained pokemon rather than caught ones, and
-what they leave behind keeps it: an executive's prize walks away with both its
-abilities, and a boss' with both and room for a second held item. See
-[Battles](battles.md).
-
-A syndicate is the one person at a crossroads a player can lose to. See
-[Battles](battles.md) for how the fight itself runs.
-
-## Duelling trainers
-
-A **trainer cell** is its own landmark rather than a wanderer's crossroads, and
-whoever is standing on it changes with the same three-hour window. They fight
-fair: nothing they field is a shadow, and a win costs them only the purse, which
-is rolled between **1,000 and 10,000** per winner. They keep their party, so
-nothing is handed over.
-
-Who turns up decides what they bring:
-
-| Standing there    | What they field                                    |
-| ----------------- | -------------------------------------------------- |
-| **Ace Trainer**   | Five fully-grown pokemon of any type, levels 60-80, raised the way the Elite Four raise theirs. Pays 25,000 to 60,000 |
-| **A type expert** | Three to five of their own type, levels 40-60. Pays 5,000 to 15,000 |
-
-The type experts are the trainer classes, and every region's are on the road.
-Kanto's are the Bug Catcher, Swimmer, Black Belt, Bird Keeper, Biker, Hiker,
-Poké Maniac, Channeler, Burglar, Rocker, Psychic, Lass, Beauty, Fisherman,
-Sailor, Gentleman, Super Nerd, Juggler, Tamer, Engineer and Gambler.
-
-**A class is not one type only.** Most field one, some field the pair the
-mainline gives them (a Sailor brings water and fighting, an Engineer steel and
-electric), and two trades may want the same type: what tells a Beauty from a Lass
-is who they are rather than what they carry.
-
-**A class belongs to a region.** A trade more than one region puts on the road
-stands on it once for each: a Swimmer (Kanto) and a Swimmer (Johto) are the same
-trade in two places, drawn differently, fielding what their own region grows.
-Their wins climb one line between them and pay one title, and their coats are
-earned apart.
-
-Johto brings a dozen trades Kanto has none of as well: the **Sage**, who fields
-grass, the **Skier** and the **Boarder**, ice, the **Scientist**, steel, the
-**Firebreather**, fire, the **Medium**, ghost, the **Teacher**, psychic, the
-**School Kid**, electric, the **Youngster**, ground, the **Camper**, rock, and
-its own **Poké Maniac** and **Burglar**, who field the dragons of the Dragon's
-Den and the dark that works the roads outside it. Johto's road covers every type
-the game grows; Kanto's covers what Kanto grows.
-
-Hoenn and Sinnoh each bring their own of the trades already on the road, under
-their own names: a **Guitarist** is a Rocker, an **Aroma Lady** a Sage, a
-**Battle Girl** a Black Belt, a **Cyclist** and a **Roughneck** are Bikers. Both
-also bring trades nobody had: Hoenn the **Ninja Boy**, the **Tuber** and the
-**Poké Fan**, and Sinnoh fifteen more, among them the **Pokémon Ranger**, the
-**Worker**, the **Rancher**, the **Pokémon Breeder**, the **Policeman**, the
-**Parasol Lady**, the **Collector** and the **Twins**. Seven of those two
-regions share, the **Young Couple** among them, so each is met in its own
-region's coat. Every one of the four regions now covers every type its own
-country grows.
-
-Which of them may be standing on a cell is the country's own: a Swimmer is met on
-the water, a Hiker on hard ground, a Skier in the snow, the same rule the gyms
-follow, so a player hunting one class knows where to walk. What they field is
-their type and nothing else, wherever they are met, and it is drawn from their
-own region rather than from the country they are standing in.
-
-The **Ace Trainer** belongs to no country and may turn up anywhere.
-
-## The league
-
-Four more landmarks fight rather than help, and each is worth something that is
-kept for good.
-
-| Who            | What they field                 | What beating them is worth                        |
-| -------------- | ------------------------------- | ------------------------------------------------- |
-| **Gym leader** | Five of their gym's type and their signature, 45-65 | Their badge, a purse of 20,000 to 50,000, and a machine of their type |
-| **Elite Four** | Five of their seat's type and their signature, 65-85 | Their mark, an item, and a purse of 50,000 to 110,000 |
-| **Champion**   | Their own named six, 85-100     | Their league's title, an item, and 150,000 to 300,000 |
-| **Legend**     | Their own named six at level 100 | Their mark, a purse of 250,000 to 500,000, and a rare or a special item |
-| **Frontier Brain** | Their own three at level 100, or one at the Hall | A symbol or a print, silver or gold, and a purse of 200,000 to 400,000 |
-
-A gym leader's sixth is always the one pokemon they are known for, whatever the
-other five roll, and the five are drawn from every region rather than from the
-one their gym stands in. The Elite Four are built the same way, down to the
-signature.
-
-One window in sixty-four, a **legend** has walked into the champion's seat and is
-standing there instead. There are two: Red, and Steven, who kept Hoenn's crown
-before Wallace did. A legend keeps no league: no badge case is asked for and no title is won, and what is left behind
-is their own mark, the largest purse in the game, and an item off the rare band
-or, one time in twenty-one, the special one. The mark is worth the **Legend
-Breaker** title and the other coats that legend is drawn in. That is the only fight in the game that reaches the
-special band. Under one of the four skies that favour every type at once, the
-rarest weather there is, the seat is a legend's for certain.
-
-Past the league stands the **Battle Frontier**, one to a region. A facility is
-kept by its Brain, and what makes one different from a champion is not the party
-but the **rule**: a Frontier fight is **three a side** everywhere but the Hall,
-and the house adds its own terms on top.
-**Brandon** keeps the Battle Pyramid, which is walked with nothing in hand: no
-held item on either side counts for the length of the fight, and what a pokemon
-is holding is not spent, only left at the door. **Greta** keeps the Battle Arena,
-which is judged rather than waited out: after 10 turns the fight stops and
-whichever side has kept the greater **share** of what it brought takes it, so
-bringing something enormous is worth nothing on its own and an even fight is a
-draw.
-
-**Lucy** keeps the Battle Pike, which is walked through a curtain: what is
-behind it is drawn when the challenge is accepted, and your three arrive
-poisoned, burned, paralysed, asleep, or mended. One room in five is the kind
-one, and it heals whatever walked in. Hers arrive as they are, since the house
-does not walk through its own rooms. What the curtain leaves comes out with the
-party the way any status does, so a poisoned three walk out poisoned.
-
-**Noland** keeps the Battle Factory, where nothing on the field belongs to
-anybody. He lays 6 rented pokemon on the table, you pick 3, and he draws his own
-3 out of the same crate. Your box stays where it is: nothing of yours is fought
-with, so nothing of yours is hurt, spent or fed candy for it. The crate is every
-species an expert could field, from every region, so the Factory gets harder
-with each generation the game registers rather than easier.
-
-**Spenser** keeps the Battle Palace, where nobody fights on orders. Every pokemon
-on the field, his and yours, picks its moves by its own **nature**: one whose
-nature raises Attack, Special Attack or Speed leans towards attacking, one whose
-nature raises a defence leans towards status and setting up, and the five neutral
-natures have no leaning and fight as they always do. A nature decides who is
-aimed at as well: everywhere else a pokemon concentrates fire on the biggest
-threat on the field, but an attacking nature goes the other way and picks off
-whatever is nearest to going down, while a defensive one leans harder into the
-threat. A leaning is a preference and not a rule, so nobody walks past a
-finishing blow and nobody casts something that would do nothing. It makes the
-Palace the one house where which three you bring is a question of who they are
-rather than of what they cover.
-
-**Anabel** keeps the Battle Tower, and asks nothing at all: three of hers against
-three of yours, under the ordinary rules. She is the house the other four are
-read against, and she brings the hardest hand in the game to make up for having
-no rule to hide behind.
-
-**Tucker** keeps the Battle Dome, and the Dome names nobody in advance. His
-three are drawn the moment your party is frozen, one apiece against what you
-brought: whatever you field, he arrives carrying the answer to it. There is no
-lineup to read before you commit and no cover team that works, which makes his
-the one house where bringing your best three is a worse plan than bringing three
-that are hard to answer. His pokemon come out of the same crate the Factory
-rents from, so the Dome, like the Factory, gets harder with each generation the
-game registers.
-
-Sinnoh keeps a Frontier of its own, five houses across six people. **Palmer**
-keeps its Battle Tower and asks nothing, the way Anabel does. **Thorton** keeps
-its Battle Factory and rents both sides out of the same crate.
-
-**Dahlia** keeps the Battle Arcade, where a wheel is spun as you walk in. What it
-lands on lands on **both sides**, which is what tells it from the Pike: the sun,
-the rain, the sand or the hail for the whole fight, every held item on the field
-left at the door, everybody poisoned, or everybody mended. It is drawn when the
-challenge is accepted, so the fight replays as the fight that happened.
-
-**Darach** and **Caitlin** keep the Battle Castle between them, and whichever of
-them a chunk seats, the Castle Print is what it pays. The house keeps the
-medicine: nothing puts health back on your side for the whole fight, not a
-potion, not a berry, not a drain, not a held item. Theirs heal as usual, which is
-the point of it.
-
-**Argenta** keeps the Battle Hall, which is fought **one against one**. You bring
-a single pokemon, and hers is drawn against it the moment yours is frozen, out of
-the same crate the Factory rents from. Nothing covers for anything else.
-
-From the **Elite Four upwards**, a trainer's pokemon are **built rather than
-caught**: the four moves their species is best with, worked out from everything
-it can ever learn and weighed against its own types, which of its two attacking
-stats is the real one, and the ability it is fighting with. Their gear is priced the same way, on one
-scale, so a 1.5x on half of what a pokemon throws can be weighed against a 1.2x
-on all of it: a hard hitter is handed a Life Orb, a pokemon built around one blow
-is handed a Choice item, a wall is handed Leftovers, and an orb only goes to
-something whose ability turns the status into a gain. A relic like the Light Ball
-or the Thick Club still beats everything for the one species it belongs to, and
-nobody carries two of a kind. Below the league the gear is chosen the way it
-always was, off the species' own table, so a gym leader's party still reads as
-that leader's rather than as the best answer to a question. It reaches the Elite Four, the Champions, the legends,
-Giovanni and his executives, and every Frontier house in both regions, the
-Factory's rented crate included. A gym leader and everybody below still field what they levelled
-into, which is most of what separates a badge from a crown.
-
-A house takes nobody who does not hold the crown of the region it stands in.
-Beating one hangs that facility's **silver symbol** on the shelf, and holding
-that symbol is what brings the Brain's **second three** out the next time you
-walk in. Beating those is the **gold** one. The two symbols are two different
-fights rather than one fight scored twice, and Brandon is the only Brain who
-fields the same three either time. Noland and Tucker name nobody either time,
-since both of their houses draw a party rather than keeping one.
-
-A member of the **Elite Four** will not fight anybody who is not carrying all
-eight of their own league's badges, and a **Champion** asks for all four of their
-own league's marks first. Bruno keeps a seat in each league and each is its own
-fight, so a challenger who has only walked one region meets only that region's
-Bruno.
-
-An award is earned once. Every later win over the same leader counts on the shelf
-and pays its purse again, and a gym leader's machine is rolled per winner, so a
-second visit is worth going to. See [Awards and titles](awards.md).
-
-Beating them is counted for life, class by class. Enough wins over one class earns
-that class' own **title** to wear on the profile, from **Bronze** on its
-achievement; see the awards shelf on the profile for where each one stands.
+**The Fossil Scientist** takes the fossil and asks for nothing else. Which
+pokemon emerges belongs to the fossil, and it arrives at level 20. Like the
+vendor, he has no once-per-window limit: what paces him is how many fossils have
+been dug up.
 
 ## See also
 
+- [Trainers on the road](npc-trainers.md)
+- [Gyms and the league](npc-league.md)
 - [Eggs](eggs.md)
 - [Items and gold](items.md)
 - [Battles](battles.md)

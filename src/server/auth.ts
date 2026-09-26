@@ -1,6 +1,7 @@
 import 'server-only';
 import { type JWTPayload, createRemoteJWKSet, decodeProtectedHeader, jwtVerify } from 'jose';
 import { getSql } from './db';
+import { PACE_MESSAGE, Pace, type PaceCost, admit } from './pace';
 
 /**
  * Who a token says the caller is, checked without a round trip.
@@ -65,9 +66,14 @@ async function verify(token: string): Promise<JWTPayload> {
  * a ban: every call that writes anything passes through this line, so
  * one check shuts all of them rather than each remembering to ask.
  *
+ * Every call is **paced** here too, in the same statement as the ban
+ * check: it spends from the player's `Pace.Any` bucket, and from
+ * `pace` as well where the caller names one (see `./pace`). A player
+ * acting faster than the game can is refused.
+ *
  * Resolves the caller's uid
  */
-export async function requireUid(token: string): Promise<string> {
+export async function requireUid(token: string, pace?: Pace, cost = 1): Promise<string> {
   if (token === '') {
     throw new Error('Not signed in');
   }
@@ -79,11 +85,19 @@ export async function requireUid(token: string): Promise<string> {
     throw new Error('Not signed in');
   }
 
-  const sql = getSql();
-  const rows = await sql`select banned from profiles where id = ${uid}`;
+  const costs: PaceCost[] = [{ pace: Pace.Any, cost: 1 }];
 
-  if (rows[0]?.banned === true) {
+  if (pace != null && cost > 0) {
+    costs.push({ pace, cost });
+  }
+
+  const { banned, paced } = await admit(getSql(), uid, costs, Date.now());
+
+  if (banned) {
     throw new Error(BANNED_MESSAGE);
+  }
+  if (!paced) {
+    throw new Error(PACE_MESSAGE);
   }
   return uid;
 }

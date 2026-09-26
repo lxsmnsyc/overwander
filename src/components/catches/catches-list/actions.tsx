@@ -24,6 +24,8 @@ export interface CatchActionsProps {
   onClear: () => void;
   /** While a round trip is in the air, so nothing is asked for twice */
   busy?: boolean;
+  /** Drawn last on the row of buttons: the dialog's way out */
+  trailing?: JSX.Element;
 }
 
 /**
@@ -129,8 +131,42 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
   };
 
   return (
-    <div class="flex flex-col items-center gap-1">
-      <Row class="justify-center">
+    <div class="flex w-full min-w-0 flex-col items-center gap-1">
+      {/* The price sits over the buttons, read before the second press */}
+      <Show when={releasing() && going().length > 0}>
+        <Row class="justify-center">
+          <For each={candyPiles(going())}>
+            {([family, paid]) => (
+              <Badge tone="gold">
+                <CandySprite family={family} label="" />
+                {paid} {getFamilyName(family)}
+              </Badge>
+            )}
+          </For>
+        </Row>
+        {/* The half a player forgets: a released pokemon hands back
+            whatever it was carrying, and there is no undoing either */}
+        <Show when={holding(going()) > 0}>
+          <Meta>
+            {holding(going())} held item{holding(going()) === 1 ? '' : 's'} come
+            {holding(going()) === 1 ? 's' : ''} back to the bag.
+          </Meta>
+        </Show>
+      </Show>
+
+      {/* Which of the picked ones Release will step over, and why. The
+          other two buttons take them all, so this is about Release
+          alone */}
+      <Show when={tally(props.chosen) !== ''}>
+        <Meta>
+          {count() - going().length} of these cannot be released: {tally(props.chosen)}
+        </Meta>
+      </Show>
+      {/* Wraps on a phone, so the way out is never scrolled off the end */}
+      <Row class="justify-center sm:flex-nowrap">
+        <Meta class="shrink-0 basis-full text-center tabular-nums sm:basis-auto">
+          {count()} selected
+        </Meta>
         <Button
           disabled={props.busy === true || count() === 0}
           onClick={() => {
@@ -170,38 +206,8 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
             Clear
           </Button>
         </Show>
+        {props.trailing}
       </Row>
-
-      {/* What the price is, before the decision rather than after it */}
-      <Show when={releasing() && going().length > 0}>
-        <Row class="justify-center">
-          <For each={candyPiles(going())}>
-            {([family, paid]) => (
-              <Badge tone="gold">
-                <CandySprite family={family} label="" />
-                {paid} {getFamilyName(family)}
-              </Badge>
-            )}
-          </For>
-        </Row>
-        {/* The half a player forgets: a released pokemon hands back
-            whatever it was carrying, and there is no undoing either */}
-        <Show when={holding(going()) > 0}>
-          <Meta>
-            {holding(going())} held item{holding(going()) === 1 ? '' : 's'} come
-            {holding(going()) === 1 ? 's' : ''} back to the bag.
-          </Meta>
-        </Show>
-      </Show>
-
-      {/* Which of the picked ones Release will step over, and why. The
-          other two buttons take them all, so this is about Release
-          alone */}
-      <Show when={tally(props.chosen) !== ''}>
-        <Meta>
-          {count() - going().length} of these cannot be released: {tally(props.chosen)}
-        </Meta>
-      </Show>
     </div>
   );
 }

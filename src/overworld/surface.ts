@@ -1,9 +1,9 @@
-import CellMemo from '../core/cell-memo';
-import Biome, { isOpenSea } from '../data/ids/biome';
-import { isRock, isWaterAt } from './fields';
-import { SQUARES, SURROUNDING } from './grid';
+import type Biome from '../data/ids/biome';
+import { isOpenSea } from '../data/ids/biome';
+import { isRock, isSealedVolcano, isWaterAt } from './fields';
+import { isRouteAt } from './route';
 import { isTownAt } from './town';
-import { levelAt } from './terrace';
+import poolsWhere, { remembered } from './pooling';
 import type World from './world';
 
 /**
@@ -26,38 +26,6 @@ export function isHillside(world: World, x: number, y: number): boolean {
     return false;
   }
   return isRock(world, x, y, biome);
-}
-
-/**
- * The same rule, remembering what it has answered for each world.
- *
- * The water rules below read one another across four neighbours and
- * nine cells at a time, so one reading of one cell is thousands of the
- * cheapest one without this. Held against the world, so a world nobody
- * is standing in is collected with its answers
- */
-function remembered(
-  read: (world: World, x: number, y: number) => boolean,
-): (world: World, x: number, y: number) => boolean {
-  const held = new WeakMap<World, CellMemo<boolean>>();
-
-  return (world, x, y) => {
-    let kept = held.get(world);
-
-    if (kept == null) {
-      kept = new CellMemo<boolean>();
-      held.set(world, kept);
-    }
-    const known = kept.get(x, y);
-
-    if (known != null) {
-      return known;
-    }
-    const answer = read(world, x, y);
-
-    kept.set(x, y, answer);
-    return answer;
-  };
 }
 
 /**
@@ -84,81 +52,21 @@ const isWetField = remembered((world: World, x: number, y: number): boolean => {
   if (!isOpenSea(biome) && isTownAt(world, x, y)) {
     return false;
   }
-  if (biome !== Biome.Volcano) {
-    return true;
+  // And a route crosses on made ground: the road between two towns is
+  // built over what it has to cross, so a stream or the edge of a lake
+  // is a causeway rather than a gap in the paving. The open sea is the
+  // one thing nobody has built over
+  if (!isOpenSea(biome) && isRouteAt(world, x, y)) {
+    return false;
   }
-  for (const [dx, dy] of SURROUNDING) {
-    if (world.getCellBiome(x + dx, y + dy) !== Biome.Volcano) {
-      return false;
-    }
-  }
-  return true;
+  return isSealedVolcano(world, x, y, biome);
 });
 
-/** Whether all four cells of one 2x2 square answer to something. */
-function fitsSquare(ox: number, oy: number, is: (x: number, y: number) => boolean): boolean {
-  for (let dy = 0; dy < 2; dy += 1) {
-    for (let dx = 0; dx < 2; dx += 1) {
-      if (!is(ox + dx, oy + dy)) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
 /**
- * Whether the water here hangs over a cliff, read against whatever the
- * caller counts as water below the step.
- *
- * A pool's surface is level, so it cannot sit at the lip of a step
- * with open country below it: drawn there, the water would end in
- * mid-air and the cliff would be wearing it as a hat. Where the ground
- * below is water too, the two are one fall and the board runs them
- * together, so only a dry drop dries the lip up. Diagonals count, since
- * a cliff's inside corner is as much its edge as a side
+ * Where the lakes, the rivers and the seas actually stand, under the
+ * rules every pool keeps
  */
-function spills(
-  world: World,
-  x: number,
-  y: number,
-  below: (cx: number, cy: number) => boolean,
-): boolean {
-  const here = levelAt(world, x, y);
-
-  for (const [dx, dy] of SURROUNDING) {
-    if (levelAt(world, x + dx, y + dy) < here && !below(x + dx, y + dy)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * Whether water covers this cell.
- *
- * Water is laid in 2x2 blocks rather than cell by cell: the shore is
- * drawn as a ring of edges and corners, and a single cell asks for
- * all four corners at once. A block stands on one level, so water only
- * ever depends on the water below it and the lip rule can ask this
- * finished answer of the step below without asking about itself
- */
-const isWater = remembered((world: World, x: number, y: number): boolean => {
-  const level = levelAt(world, x, y);
-  // water may stand on a cell of this level where the fields put it and
-  // every lower cell beside it is water too
-  const pools = (cx: number, cy: number): boolean =>
-    levelAt(world, cx, cy) === level &&
-    isWetField(world, cx, cy) &&
-    !spills(world, cx, cy, (bx, by) => isWater(world, bx, by));
-
-  for (const [ox, oy] of SQUARES) {
-    if (fitsSquare(ox, oy, (cx, cy) => pools(x + cx, y + cy))) {
-      return true;
-    }
-  }
-  return false;
-});
+const isWater = poolsWhere(isWetField);
 
 /**
  * Whether a surface cell is water rather than ground. A town is

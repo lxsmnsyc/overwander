@@ -23,10 +23,20 @@ const STORAGE_KEY = 'overwander:settings';
 
 export type ClockFormat = '24h' | '12h';
 
-/** What the menu bar says about the hour the world is in */
-export type WorldTimeFace = 'period' | 'clock';
-
 export type BoxColumns = 5 | 6 | 8;
+
+/** The settings panel's sections, for reopening it where it was left */
+export const SETTINGS_PANES = [
+  'display',
+  'controls',
+  'world',
+  'play',
+  'audio',
+  'about',
+  'development',
+] as const;
+
+export type SettingsPane = (typeof SETTINGS_PANES)[number];
 
 /** What the board shows past the country it keeps track of */
 export type BoardEdge = 'haze' | 'full' | 'plain';
@@ -40,7 +50,6 @@ export interface GameSettings {
    */
   reduceMotion: boolean;
   clock: ClockFormat;
-  worldTime: WorldTimeFace;
   /** How wide the pokemon box is drawn, in squares */
   boxColumns: BoxColumns;
   /**
@@ -80,6 +89,10 @@ export interface GameSettings {
   /** Both 0 to 1 */
   sound: number;
   music: number;
+  /** Which section the settings panel opens on */
+  settingsPane: SettingsPane;
+  /** Which pocket the bag opens on: an item type, or the bag's own numbers for All and Candies */
+  bagPocket: number;
 }
 
 /**
@@ -91,7 +104,6 @@ function defaults(): GameSettings {
   return {
     reduceMotion: !isServer && globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches,
     clock: '24h',
-    worldTime: 'period',
     boxColumns: 6,
     keepBall: true,
     lastBall: Balls.PokeBall,
@@ -104,6 +116,8 @@ function defaults(): GameSettings {
     devShinyBoost: true,
     sound: 0.7,
     music: 0.5,
+    settingsPane: 'display',
+    bagPocket: -1,
   };
 }
 
@@ -175,7 +189,6 @@ function stored(): GameSettings {
     return {
       reduceMotion: said.reduceMotion === true,
       clock: oneOf(said.clock, ['24h', '12h'] as const, base.clock),
-      worldTime: oneOf(said.worldTime, ['period', 'clock'] as const, base.worldTime),
       boxColumns: columns === 5 || columns === 8 ? columns : base.boxColumns,
       keepBall: typeof said.keepBall === 'boolean' ? said.keepBall : base.keepBall,
       lastBall: ballOf(said.lastBall, base.lastBall),
@@ -188,6 +201,9 @@ function stored(): GameSettings {
       devShinyBoost: said.devShinyBoost !== false,
       sound: volume(said.sound, base.sound),
       music: volume(said.music, base.music),
+      settingsPane: oneOf(said.settingsPane, SETTINGS_PANES, base.settingsPane),
+      // Checked against what the bag holds where it is read
+      bagPocket: Math.trunc(asNumber(said.bagPocket, base.bagPocket)),
     };
   } catch {
     // Unreadable or refused storage is a machine that has not been

@@ -97,9 +97,9 @@ A gym fight is the **one** player-versus-player battle that settles an aftermath
 and only for the challenger: their party was there and carries the wear out with
 it. The holder's side is a frozen copy standing in for somebody who is not
 present, and settling it would charge them for a fight they never saw. See
-[`recordAftermath`](raids.md#battle_aftermaths).
+[`recordAftermath`](battle-rows.md#battle_aftermaths).
 
 ## See also
 
 - [Raids and battles](raids.md)
-- [Battles](../mechanics/battles.md#gym-seats): the same rules for players
+- [Battles](../mechanics/battle-opponents.md#gym-seats): the same rules for players

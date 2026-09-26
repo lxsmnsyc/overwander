@@ -29,3 +29,11 @@ if [ -z "$(git tag -l "$tag")" ]; then
 fi
 
 gh release create "$tag" --title "Overwander $tag" --notes-file "$notes" --verify-tag
+
+# Git pushes do not deploy (vercel.json), so a new release is what ships main
+if [ -n "${VERCEL_DEPLOY_HOOK:-}" ]; then
+  curl -fsS -X POST "$VERCEL_DEPLOY_HOOK" > /dev/null
+  echo "Deploy of $tag requested from Vercel"
+else
+  echo "::warning::VERCEL_DEPLOY_HOOK is not set, so $tag was not deployed"
+fi

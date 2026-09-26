@@ -265,12 +265,10 @@ describe('where a species lives', () => {
     // shell is staged by the pool its west counterpart sits in, and
     // swapped for as the world hands it over, so no pool names it either.
     //
-    // The Pidove and Blitzle lines name where they live, but the
-    // sprite collection has drawn no Tranquill, Blitzle or Zebstrika,
-    // so neither line is staged until it does. The pools they are
-    // waiting for are written as comments in the biome files. So are
-    // the Pikipek and Yungoos lines', since the collection has drawn no
-    // Trumbeak, finished Toucannon or Gumshoos
+    // The Pikipek and Yungoos lines name where they live, but the
+    // collection has drawn no Trumbeak, finished Toucannon or Gumshoos,
+    // so neither is staged until it does. The pools they are waiting
+    // for are written as comments in the biome files
     const unstaged = new Set<Species>([
       Species.Phione,
       ...ROTOM_FORMS.slice(1),
@@ -287,21 +285,6 @@ describe('where a species lives', () => {
       // no pool names them either
       ...DEERLING_FORMS.slice(1),
       ...SAWSBUCK_FORMS.slice(1),
-      Species.Pidove,
-      Species.Tranquill,
-      Species.Unfezant,
-      Species.Blitzle,
-      Species.Zebstrika,
-      Species.Throh,
-      Species.Sawk,
-      Species.Pansage,
-      Species.Simisage,
-      Species.Pansear,
-      Species.Simisear,
-      Species.Panpour,
-      Species.Simipour,
-      Species.Dwebble,
-      Species.Crustle,
       Species.Pikipek,
       Species.Trumbeak,
       Species.Toucannon,

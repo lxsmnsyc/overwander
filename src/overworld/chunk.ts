@@ -126,6 +126,23 @@ const SEA_PEOPLE = new Set([
   Landmark.PokemonCenter,
 ]);
 
+/**
+ * Whether this landmark may take a water cell, given the country that
+ * cell is in.
+ *
+ * Everybody in `SEA_PEOPLE` needs ground under them wherever they
+ * are, and a lake in a field is as wet as the ocean. The duel is the
+ * same exception it is out at sea and for the same reason: a trainer
+ * on water is a swimmer, and only the open sea narrows the country's
+ * list down to the people who could be standing there
+ */
+export function landmarkFloats(landmark: Landmark, biome: Biome): boolean {
+  if (landmark === Landmark.Trainer) {
+    return isOpenSea(biome);
+  }
+  return !SEA_PEOPLE.has(landmark);
+}
+
 const BIOME_LANDMARKS = new Map<number, Landmark[]>();
 
 /**
@@ -721,7 +738,8 @@ export default class Chunk {
         // Dry ground first and the water only where there is none: a
         // landmark stands beside the pool rather than in it, and a
         // chunk one lake covers is stood on all the same rather than
-        // left with nothing on it
+        // left with nothing on it. Only what can be afloat takes that
+        // fallback, so a flooded field puts nobody on its lake
         let cell: number | undefined;
         let wet: number | undefined;
 
@@ -733,11 +751,15 @@ export default class Chunk {
             cell = candidate;
             break;
           }
-          wet ??= candidate;
+          if (landmarkFloats(landmark, this.getCellBiomes()[candidate])) {
+            wet ??= candidate;
+          }
         }
         cell ??= wet;
+        // Nowhere this one may stand. The roll is spent rather than
+        // the chunk given up on, since the next kind may still fit
         if (cell == null) {
-          break;
+          continue;
         }
         cells.set(cell, landmark);
         rolled.add(landmark);

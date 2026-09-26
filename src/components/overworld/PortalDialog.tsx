@@ -1,4 +1,5 @@
 import {
+  For,
   type JSX,
   type Resource,
   Show,
@@ -15,7 +16,33 @@ import { Items } from '../../data/ids/items';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { chunkOfCell } from '../../overworld/grid';
 import type { PortalDestination } from '../../overworld/portal';
-import { Badge, Button, Combobox, Dialog, DialogActions, Meta, Note, Status } from '../styled';
+import {
+  Badge,
+  Button,
+  Dialog,
+  DialogActions,
+  LIST_PAGE,
+  List,
+  ListRow,
+  Meta,
+  Note,
+  RowButton,
+  Status,
+  TextField,
+  createPager,
+} from '../styled';
+import ItemSprite from '../items/ItemSprite';
+import AtlasSprite from '../sprites/AtlasSprite';
+import { OW_SPRITE_ROOT } from '../../canvas/ow-char-sprites';
+import Landmark from '../../data/overworld/landmark';
+import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
+import describeWhere from '../../overworld/bearing';
+import FeeLine from './npc-dialog/counters/price';
+import { failed, readable } from '../app/resource-reads';
+import playEffect, { Effect } from '../app/sound';
+
+/** The portal at twice the size it stands on the board */
+const PORTAL_SPRITE = 88;
 
 /**
  * A portal, and the name of somewhere to come out.
@@ -84,31 +111,42 @@ function PortalBody(
     }
     return null;
   });
-  const options = createMemo(() => {
-    const listed: { value: string; label: string }[] = [];
+  const [query, setQuery] = createSignal('');
 
-    for (const town of towns()) {
-      listed.push({ value: town.name, label: town.name });
-    }
-    return listed;
-  });
-
-  /**
-   * How far the named town is, in chunks. A ring rather than as the
-   * crow flies, which is the measure the rest of the world walks in
-   */
-  const away = createMemo(() => {
-    const town = chosen();
+  /** Where the player stands, for how far each town is */
+  const here = (): { chunkX: number; chunkY: number } | null => {
     const snapshot = props.snapshot;
 
-    if (town == null || snapshot == null) {
-      return null;
-    }
-    return Math.max(
-      Math.abs(chunkOfCell(town.x) - snapshot.chunk.x),
-      Math.abs(chunkOfCell(town.y) - snapshot.chunk.y),
-    );
+    return snapshot == null ? null : { chunkX: snapshot.chunk.x, chunkY: snapshot.chunk.y };
+  };
+  const chunkOf = (town: TownRecord): { x: number; y: number } => ({
+    x: chunkOfCell(town.x),
+    y: chunkOfCell(town.y),
   });
+  const distance = (town: TownRecord): number => {
+    const at = here();
+
+    return at == null
+      ? 0
+      : Math.max(
+          Math.abs(chunkOfCell(town.x) - at.chunkX),
+          Math.abs(chunkOfCell(town.y) - at.chunkY),
+        );
+  };
+
+  /** Every town the search names, nearest first */
+  const listed = createMemo((): TownRecord[] => {
+    const wanted = query().trim().toLowerCase();
+    const found: TownRecord[] = [];
+
+    for (const town of towns()) {
+      if (wanted === '' || town.name.toLowerCase().includes(wanted)) {
+        found.push(town);
+      }
+    }
+    return found.sort((one, other) => distance(one) - distance(other));
+  });
+  const page = createPager(listed, LIST_PAGE);
 
   const close = (): void => {
     setStatus(null);
@@ -137,6 +175,7 @@ function PortalBody(
           props.onSpent();
           return;
         }
+        playEffect(Effect.PortalCross);
         props.onTravel(arrived);
         close();
       })
@@ -148,52 +187,71 @@ function PortalBody(
 
   return (
     <>
-      {/* What it costs, said as a count rather than as a sentence. It
-          is why the button at the bottom is dead, so it is the one
-          thing above the box worth a line */}
       <div class="flex justify-center">
-        <Badge tone={(props.keys() ?? 0) > 0 ? 'tide' : 'neutral'}>
-          {props.keys() ?? 0} Portal {(props.keys() ?? 0) === 1 ? 'Key' : 'Keys'}
-        </Badge>
+        <AtlasSprite
+          sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
+          name={landmarkPicture(Landmark.Portal) ?? ''}
+          size={PORTAL_SPRITE}
+          label="The portal"
+        />
       </div>
+      <FeeLine fee={Items.PortalKey} scales={readable(props.keys) ?? 0} name="Portal Key" />
+      <Show when={failed(props.keys)}>{(said) => <Note class="text-center">{said()}</Note>}</Show>
 
       <Show
         when={towns().length > 0}
         fallback={<Note class="text-center">Nobody has walked into a town yet.</Note>}
       >
-        <Combobox
+        <TextField
           label="Town"
-          placeholder="Start typing a name"
-          options={options()}
-          value={named()}
-          disabled={busy()}
-          onChange={(name) => {
-            setStatus(null);
-            setNamed(name);
+          placeholder="Search towns"
+          value={query()}
+          onChange={(typed) => {
+            setQuery(typed);
           }}
         />
-      </Show>
-
-      {/* Where the name turned out to be, once there is one. A player
-          typing a name a friend gave them has no idea how far off it
-          is until the box finishes it */}
-      <Show when={chosen()}>
-        {(town) => (
-          <Meta class="text-center">
-            {BIOME_NAMES[town().biome]} · {away()} chunk{away() === 1 ? '' : 's'} away ·{' '}
-            {chunkOfCell(town().x)}, {chunkOfCell(town().y)}
-          </Meta>
-        )}
+        <Show when={listed().length > 0} fallback={<Note>No town by that name.</Note>}>
+          <List>
+            <For each={page.shown()}>
+              {(town) => (
+                <ListRow selected={named() === town.name}>
+                  <RowButton
+                    pressed={named() === town.name}
+                    disabled={busy()}
+                    onClick={() => {
+                      setStatus(null);
+                      setNamed(town.name);
+                    }}
+                  >
+                    {/* Two lines, since a far town's distance runs longer
+                        than any column set aside for it */}
+                    <span class="flex w-full min-w-0 flex-col text-left">
+                      <span class="truncate font-semibold">{town.name}</span>
+                      <Meta class="truncate tabular-nums">
+                        {describeWhere(chunkOf(town), here())} · {BIOME_NAMES[town.biome]}
+                      </Meta>
+                    </span>
+                  </RowButton>
+                </ListRow>
+              )}
+            </For>
+          </List>
+          {page.controls()}
+        </Show>
       </Show>
 
       <Status message={status()} />
       <DialogActions>
         <Button
           tone="primary"
-          disabled={busy() || chosen() == null || (props.keys() ?? 0) === 0}
+          disabled={busy() || chosen() == null || (readable(props.keys) ?? 0) === 0}
+          label="Cross, 1 Portal Key"
           onClick={cross}
         >
-          Confirm
+          Cross{' '}
+          <Badge tone="gold">
+            <ItemSprite item={Items.PortalKey} size={16} label="" />1
+          </Badge>
         </Button>
         <Button onClick={close}>Close</Button>
       </DialogActions>

@@ -1,6 +1,7 @@
 import type Biome from '../data/ids/biome';
 import { asNumber, asNumberArray, asRecord, asRecordArray, asString } from '../auth/__normalize';
 import sheetStamp, { stampedFile } from './sprite-stamps';
+import { spriteUrl } from './sprite-origin';
 
 /**
  * The ground, drawn from one sheet of thirteen tiles a terrain.
@@ -21,9 +22,9 @@ import sheetStamp, { stampedFile } from './sprite-stamps';
 
 /** Where the pack lives. */
 /** The pair the pack is drawn from, and the sheet they are stamped as */
-const TERRAIN_SHEET = '/sprites/terrain/biome-tiles';
-const SHEET = '/sprites/terrain/biome-tiles.png';
-const DATA = '/sprites/terrain/biome-tiles.json';
+const TERRAIN_SHEET = spriteUrl('/sprites/terrain/biome-tiles');
+const SHEET = spriteUrl('/sprites/terrain/biome-tiles.png');
+const DATA = spriteUrl('/sprites/terrain/biome-tiles.json');
 
 export type TerrainRole =
   | 'ground'
@@ -494,6 +495,10 @@ export class TerrainTiles {
 async function pictureOf(source: string): Promise<HTMLImageElement> {
   const image = new Image();
 
+  // Cross-origin, since the sprites answer from their own host. The
+  // pack is drawn into a canvas and read back below, which a tainted
+  // canvas refuses
+  image.crossOrigin = 'anonymous';
   image.src = source;
   await image.decode();
   return image;

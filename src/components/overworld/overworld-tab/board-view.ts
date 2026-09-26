@@ -1,5 +1,5 @@
 import { type SnapshotRecord, spawnId } from '../../../auth/snapshot-record';
-import { toLocalTime } from '../../../auth/local-time';
+import { localNow } from '../../../auth/clock';
 import type Biome from '../../../data/ids/biome';
 import type Weather from '../../../data/overworld/weather';
 import type Decoration from '../../../data/overworld/decoration';
@@ -257,6 +257,12 @@ export function buildBoardView(
   buddy: Buddy | null,
   fled: Set<string>,
   depth: Depth = Depth.Surface,
+  /**
+   * The local instant, for dressing the people in a chunk whose window
+   * has not landed. Who stands where is the three-hour roll, which the
+   * clock already names
+   */
+  now?: number,
 ): BoardView {
   const world = getWorld(depth);
   const playerX = chunkOfCell(originX + BOARD_CENTER);
@@ -311,6 +317,15 @@ export function buildBoardView(
 
     // A window of the other layer at the same coordinates is not this chunk's
     if (record == null || record.record.seed !== chunk.seed) {
+      // Out past the live circle nothing is read, but the people there
+      // are the clock's roll, so they are dressed as they stand rather
+      // than as a stand-in grunt or ace trainer
+      if (now != null) {
+        const derived = new ChunkSnapshot(chunk, now, offset);
+
+        carry(derived.getWanderingNpcs(), wanderers);
+        carry(derived.getWandererCoats(), coats);
+      }
       continue;
     }
 
@@ -441,7 +456,7 @@ export function buildBoardView(
   // record crosses the wire
   const under =
     covering.get(`${playerX},${playerY}`) ??
-    new ChunkSnapshot(world.getChunk(playerX, playerY), toLocalTime(Date.now(), offset), offset);
+    new ChunkSnapshot(world.getChunk(playerX, playerY), localNow(offset), offset);
 
   return {
     originX,

@@ -107,6 +107,7 @@ export default function registerOceanSpawns(): void {
     [TimeOfDay.Morning]: {
       base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
+        { species: Species.Frillish, weight: 20 },
         { species: Species.Carvanha, weight: 20 },
         { species: Species.Wailmer, weight: 15 },
         { species: Species.Clamperl, weight: 20 },
@@ -120,6 +121,7 @@ export default function registerOceanSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Jellicent, weight: 5 },
         { species: Species.Sharpedo, weight: 6 },
         { species: Species.Wailord, weight: 4 },
         { species: Species.Tentacruel, weight: 10 },
@@ -147,6 +149,7 @@ export default function registerOceanSpawns(): void {
     [TimeOfDay.Day]: {
       base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
+        { species: Species.Frillish, weight: 20 },
         { species: Species.Carvanha, weight: 20 },
         { species: Species.Wailmer, weight: 15 },
         { species: Species.Clamperl, weight: 20 },
@@ -160,6 +163,7 @@ export default function registerOceanSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Jellicent, weight: 5 },
         { species: Species.Sharpedo, weight: 6 },
         { species: Species.Wailord, weight: 4 },
         { species: Species.Tentacruel, weight: 10 },
@@ -187,6 +191,7 @@ export default function registerOceanSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
+        { species: Species.Frillish, weight: 20 },
         { species: Species.Carvanha, weight: 20 },
         { species: Species.Wailmer, weight: 15 },
         { species: Species.Clamperl, weight: 20 },
@@ -200,6 +205,7 @@ export default function registerOceanSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Jellicent, weight: 5 },
         { species: Species.Sharpedo, weight: 6 },
         { species: Species.Wailord, weight: 4 },
         { species: Species.Tentacruel, weight: 10 },
@@ -225,6 +231,7 @@ export default function registerOceanSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
+        { species: Species.Frillish, weight: 20 },
         { species: Species.Carvanha, weight: 20 },
         { species: Species.Wailmer, weight: 15 },
         { species: Species.Clamperl, weight: 20 },
@@ -238,6 +245,7 @@ export default function registerOceanSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Jellicent, weight: 5 },
         { species: Species.Sharpedo, weight: 6 },
         { species: Species.Wailord, weight: 4 },
         { species: Species.Tentacruel, weight: 10 },

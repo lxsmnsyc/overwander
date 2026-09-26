@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getAmbient, getCast, getSun, latitudeOf } from '../../src/canvas/daylight';
+import { atClockHour } from '../../src/data/day-clock';
 import { GROUND_DEPTH } from '../../src/canvas/tilt';
 import { WORLD_MAX } from '../../src/overworld/world';
 
@@ -11,9 +12,9 @@ import { WORLD_MAX } from '../../src/overworld/world';
 
 const HOUR = 3_600_000;
 
-/** A local time at that hour of the day, which is what the light reads */
+/** A local time at that hour on the day clock, whichever clock that is */
 function at(hour: number): number {
-  return hour * HOUR;
+  return atClockHour(hour);
 }
 
 describe('daylight', () => {

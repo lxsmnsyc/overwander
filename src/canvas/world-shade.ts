@@ -3,7 +3,7 @@ import type Biome from '../data/ids/biome';
 import { ORTHOGONAL } from '../overworld/grid';
 import { readGround } from '../overworld/ground';
 import { isRouteAt } from '../overworld/route';
-import { TERRACE_TOP, levelAt } from '../overworld/terrace';
+import { levelAt, terraceTop } from '../overworld/terrace';
 import { isRoadAt, isTownAt } from '../overworld/town';
 import type World from '../overworld/world';
 
@@ -113,7 +113,7 @@ export default function shadeCell(
       return FACE;
     }
   }
-  const lit = 1 - LEVEL_SHADE + (level / TERRACE_TOP) * LEVEL_SHADE;
+  const lit = 1 - LEVEL_SHADE + (level / terraceTop(world)) * LEVEL_SHADE;
 
   return [
     Math.min(0xff, Math.round(shade[0] * lit)),

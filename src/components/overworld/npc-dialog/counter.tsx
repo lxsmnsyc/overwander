@@ -2,7 +2,8 @@ import { type JSX, type Resource, Show, createMemo, createSignal } from 'solid-j
 import type { InventoryEntry } from '../../../auth/inventory';
 import Npc, { NPC_NAMES } from '../../../data/overworld/npc';
 import type { CatchOption } from '../../catches/catch-picker';
-import { Button, Dialog } from '../../styled';
+import { Button, Dialog, Note } from '../../styled';
+import { failed } from '../../app/resource-reads';
 import NpcSprite from '../NpcSprite';
 import Breeder from './counters/breeder';
 import Channeler from './counters/channeler';
@@ -121,6 +122,9 @@ export default function NpcCounter(
         <Show when={showing()}>
           {(standing) => (
             <>
+              <Show when={failed(props.bag)}>
+                {(said) => <Note class="text-center">{said()}</Note>}
+              </Show>
               {/* The person themselves, off their overworld charset —
                 the same figure the player just walked up to. The room
                 is held whether or not the sheet has landed, so the

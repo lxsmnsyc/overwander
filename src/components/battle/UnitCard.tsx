@@ -40,7 +40,7 @@ import { Meta, TooltipHost } from '../styled';
  * a family resemblance for the rest: fire is what burns, water is
  * what drowses, poison is purple wherever it comes from
  */
-const STATUS_COLORS: Record<Statuses, string> = {
+export const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.Burned]: '#e2703a',
   [Statuses.Frozen]: '#79c6e8',
   [Statuses.Paralyzed]: '#e8c33a',

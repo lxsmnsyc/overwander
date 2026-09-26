@@ -55,7 +55,7 @@ describe('a nest egg', () => {
   it('keeps what the sky handed it where the nest was claimed under a mirage', () => {
     // A nest is claimed under the sky rather than hatched out of
     // nowhere, so the mirage reaches it
-    const mirage = new ChunkSnapshot(world.getChunk(-26, -40), 86_400_000);
+    const mirage = new ChunkSnapshot(world.getChunk(-17, -40), 338_400_000);
     const species = speciesWith(2);
 
     expect(mirage.weather).toBe(Weather.FataMorgana);
@@ -81,7 +81,7 @@ describe('a nest egg', () => {
   it('hatches with room to spare where the nest was claimed under a fogbow', () => {
     // A chunk and window the fogbow stands over, and the same nest
     // under a plain sky for comparison
-    const fogbow = new ChunkSnapshot(world.getChunk(-3, -16), 7_200_000);
+    const fogbow = new ChunkSnapshot(world.getChunk(-40, 31), 154_800_000);
     const species = speciesWith(2);
 
     expect(fogbow.weather).toBe(Weather.Fogbow);

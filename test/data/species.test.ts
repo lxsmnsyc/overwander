@@ -1,3 +1,5 @@
+import type { EvolutionData } from '../../src/data/species';
+import { getFoldedDragon, getFusedShape, isFusedSpecies } from '../../src/data/species/fusion';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, {
   BIOME_NAMES,
@@ -13,6 +15,7 @@ import EggGroups from '../../src/data/ids/egg-groups';
 import Families from '../../src/data/ids/families';
 import registerAbilities from '../../src/data/abilities';
 import Abilities from '../../src/data/ids/abilities';
+import { Items } from '../../src/data/ids/items';
 import {
   TYPE_EFFECTIVENESS,
   TYPE_NAMES,
@@ -30,16 +33,25 @@ import {
   CASTFORM_FORMS,
   CHERRIM_FORMS,
   DARMANITAN_FORMS,
+  DEERLING_FORMS,
   DEOXYS_FORMS,
   DIALGA_FORMS,
+  EvolutionMethod,
   GASTRODON_FORMS,
+  GENESECT_FORMS,
   GIRATINA_FORMS,
   KELDEO_FORMS,
+  KYUREM_FORMS,
+  LANDORUS_FORMS,
+  MELOETTA_FORMS,
   PALKIA_FORMS,
   ROTOM_FORMS,
+  SAWSBUCK_FORMS,
   SHAYMIN_FORMS,
   SHELLOS_FORMS,
   Species,
+  THUNDURUS_FORMS,
+  TORNADUS_FORMS,
   UNOWN_FORMS,
   WORMADAM_FORMS,
   getBaseFormSpecies,
@@ -382,6 +394,14 @@ describe('species forms', () => {
       ...KELDEO_FORMS.slice(1),
       ...ROTOM_FORMS.slice(1),
       ...ARCEUS_FORMS.slice(1),
+      ...KYUREM_FORMS.slice(1),
+      ...TORNADUS_FORMS.slice(1),
+      ...THUNDURUS_FORMS.slice(1),
+      ...LANDORUS_FORMS.slice(1),
+      ...MELOETTA_FORMS.slice(1),
+      ...GENESECT_FORMS.slice(1),
+      ...DEERLING_FORMS.slice(1),
+      ...SAWSBUCK_FORMS.slice(1),
     ]);
 
     expect(registered.length).toBeGreaterThan(0);
@@ -570,5 +590,42 @@ describe('the unowns', () => {
     for (const species of UNOWN_FORMS) {
       expect(hatchable.has(species)).toBe(false);
     }
+  });
+});
+
+describe('fusions', () => {
+  it('joins each dragon to the shape it makes, and back again', () => {
+    for (const shape of KYUREM_FORMS.slice(1)) {
+      const dragon = getFoldedDragon(shape);
+
+      expect(dragon).not.toBeNull();
+      expect(isFusedSpecies(shape)).toBe(true);
+      // oxlint-disable-next-line typescript/no-non-null-assertion
+      expect(getFusedShape(dragon!)).toBe(shape);
+    }
+    expect(isFusedSpecies(Species.Kyurem)).toBe(false);
+    expect(getFoldedDragon(Species.Kyurem)).toBeNull();
+  });
+
+  it('puts the splicers on every road into a fusion and out of one', () => {
+    const roads: EvolutionData[] = [...(getSpeciesData(Species.Kyurem).evolvesInto ?? [])];
+
+    for (const shape of KYUREM_FORMS.slice(1)) {
+      roads.push(...(getSpeciesData(shape).evolvesInto ?? []));
+    }
+
+    // Two ways in from the husk, and one way back out of each shape
+    expect(roads.length).toBe(4);
+    for (const road of roads) {
+      expect(road.method).toBe(EvolutionMethod.UsedItem);
+      expect(road.item).toBe(Items.DnaSplicers);
+    }
+  });
+
+  it('gives a fused shape the ability of the dragon inside it', () => {
+    expect(getSpeciesData(Species.KyuremBlack).abilities).toEqual([Abilities.Teravolt]);
+    expect(getSpeciesData(Species.KyuremWhite).abilities).toEqual([Abilities.Turboblaze]);
+    expect(getSpeciesData(Species.Zekrom).abilities).toEqual([Abilities.Teravolt]);
+    expect(getSpeciesData(Species.Reshiram).abilities).toEqual([Abilities.Turboblaze]);
   });
 });

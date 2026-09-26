@@ -1,14 +1,23 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { countsAgainstSlots } from '../../data/constants/slots';
 import { Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
+import { MoveCategories, Moves } from '../../data/ids/moves';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
-import type Battle from '../core';
 import { Statuses } from '../../data/ids/status';
+import { getSpeciesData } from '../../data/species';
+import { getFoldedDragon } from '../../data/species/fusion';
+import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
-import { countsAgainstSlots } from '../../data/constants/slots';
-import { createAbility, createContactRecoilAbility } from './__create';
+import {
+  createAbility,
+  createContactRecoilAbility,
+  createMoldBreakerAbility,
+  getAbilityHolders,
+} from './__create';
+import { FOLDED_CREEDS, HUSK_CREED } from './signature/tao-trio';
 
 /**
  * The abilities a swap may take: what counts against a slot, and never
@@ -32,6 +41,27 @@ function swappableAbilities(unit: Unit): Abilities[] {
 
 /** How far a Darmanitan has to fall before it sits down */
 export const ZEN_MODE_THRESHOLD = 1 / 2;
+
+/** What a coat thick enough to turn a blow is worth against one */
+const FUR_COAT_SCALE = 0.5;
+
+/** What having the victory sprite on the team is worth to its aim */
+const VICTORY_STAR_SCALE = 1.1;
+
+/**
+ * The moves that count as a dance. Rain Dance is deliberately absent:
+ * the mainline does not count it either, whatever it is called
+ */
+const DANCE_MOVES = new Set<Moves>([
+  Moves.SwordsDance,
+  Moves.PetalDance,
+  Moves.FeatherDance,
+  Moves.TeeterDance,
+  Moves.DragonDance,
+  Moves.LunarDance,
+  Moves.QuiverDance,
+  Moves.FieryDance,
+]);
 
 const setupAbilities = [
   // https://bulbapedia.bulbagarden.net/wiki/Iron_Barbs_(Ability)
@@ -200,10 +230,138 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  /** Fur Coat: the coat turns a blow, and answers nothing thrown at it */
+  createAbility(Abilities.FurCoat, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const parent = event.parent;
+
+      if (
+        parent.category === MoveCategories.Physical &&
+        parent.target.hasAbility(Abilities.FurCoat)
+      ) {
+        event.value *= FUR_COAT_SCALE;
+      }
+    }),
+  ),
+
+  /**
+   * Victory Star: the whole team aims better for having it there,
+   * the holder included
+   */
+  createAbility(Abilities.VictoryStar, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+      if (event.accuracy == null) {
+        return;
+      }
+
+      // It covers its own team, never the whole alliance
+      for (const mate of event.source.team.units) {
+        if (mate.alive && mate.hasAbility(Abilities.VictoryStar)) {
+          event.accuracy *= VICTORY_STAR_SCALE;
+          return;
+        }
+      }
+    }),
+  ),
+
+  /**
+   * Dancer: whoever dances, it dances too, straight after and for
+   * free. A dance aimed at the dancer itself is re-aimed at the
+   * holder, so a Swords Dance sharpens the copier rather than the
+   * one it copied
+   */
+  createAbility(Abilities.Dancer, (battle) => {
+    /** Holders part way through a copy, so a copy never copies itself */
+    const dancing = new Set<Unit>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
+        if (!DANCE_MOVES.has(event.move)) {
+          return;
+        }
+
+        const lead = event.source;
+        const aimed =
+          event.target.type === MoveTargetType.Unit && event.target.unit === lead
+            ? null
+            : event.target;
+
+        for (const holder of getAbilityHolders(battle, Abilities.Dancer)) {
+          if (!holder.alive || holder === lead || dancing.has(holder)) {
+            continue;
+          }
+
+          const back = aimed ?? ({ type: MoveTargetType.Unit, unit: holder } as const);
+
+          holder.triggerAbility(Abilities.Dancer);
+          dancing.add(holder);
+
+          const steps = holder.checkMoveSteps(event.move, back);
+
+          holder.triggerMove(event.move, back, steps);
+
+          if (steps > 0) {
+            holder.channel(event.move, back, steps - 1);
+          }
+
+          dancing.delete(holder);
+        }
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        dancing.delete(event.source);
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        dancing.delete(event.source);
+      }),
+    ]);
+  }),
+
+  // The two dragons carry Mold Breaker under their own names, so both
+  // go through its factory
+  createMoldBreakerAbility(Abilities.Turboblaze),
+  createMoldBreakerAbility(Abilities.Teravolt),
 ];
+
+/**
+ * What Unova brought. The two dragons carry Mold Breaker under their
+ * own names, so both go through its factory
+ */
+
+/**
+ * The dragon inside a fusion is still fighting, so the shape wears
+ * what that dragon fights with. A fusion is a kept shape rather than
+ * a rolled one, so nothing hands the catch these: they belong to the
+ * shape and lift the moment it comes apart
+ */
+function setupFoldedDragons(battle: Battle): void {
+  battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+    const unit = event.source;
+    const dragon = getFoldedDragon(unit.species);
+
+    if (dragon == null) {
+      return;
+    }
+
+    for (const ability of getSpeciesData(dragon).abilities) {
+      unit.wearAbility(ability);
+    }
+
+    const creed = FOLDED_CREEDS.get(unit.species);
+
+    // The dragon's conviction comes with it, for a holder that was
+    // granted the husk's own: a signature is granted rather than
+    // rolled, so a fusion passes on what the dragon brought rather
+    // than handing out a second gift
+    if (creed != null && unit.hasAbility(HUSK_CREED)) {
+      unit.wearAbility(creed);
+    }
+  });
+}
 
 export default function setupGen5Abilities(battle: Battle): void {
   for (const setup of setupAbilities) {
     setup(battle);
   }
+  setupFoldedDragons(battle);
 }

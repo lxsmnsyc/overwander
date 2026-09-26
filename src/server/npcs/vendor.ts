@@ -11,6 +11,7 @@ import { bumpProgress } from '../quest-progress';
 import { asNumber } from '../read';
 import type { TradeResult } from './moves';
 import { resolveNpc } from './visits';
+import { moveGoldIn } from '../profile';
 
 /** The counter itself: what is bought and what is sold back */
 /**
@@ -63,7 +64,7 @@ export async function trade(
       return null;
     }
 
-    await transaction`update profiles set gold = ${balance} where id = ${uid}`;
+    await moveGoldIn(transaction, uid, gold, 'shop');
     for (const [at, [item]] of basket.entries()) {
       await writeStackIn(transaction, ITEM_STACKS, uid, item, held[at]);
     }

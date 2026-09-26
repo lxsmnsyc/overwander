@@ -48,6 +48,7 @@ import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import { isCatchLocked } from './locks';
 import { asNumber, asNumberArray, asRecord } from './read';
 import { Boost, boostOf, boostedAll } from './boosts';
+import { ServerFlag, isFlagOn } from './flags';
 
 /**
  * Catch records, written over the owner connection. A catch is the
@@ -69,7 +70,9 @@ const asHeldItems = (value: unknown): Items[] => asNumberArray(value) as Items[]
  * single row
  */
 export async function hasAnyCaught(uid: string): Promise<boolean> {
-  const rows = await getSql()`select 1 from caught where owner = ${uid} limit 1`;
+  const rows = await getSql()`
+    select 1 from caught where owner = ${uid} and not hidden limit 1
+  `;
 
   return rows.length > 0;
 }
@@ -86,7 +89,11 @@ export async function hasAnyCaught(uid: string): Promise<boolean> {
 async function spareRoomIn(transaction: Tx, uid: string): Promise<number> {
   await transaction`select 1 from profiles where id = ${uid} for update`;
 
-  const held = await transaction`select count(*)::int as count from caught where owner = ${uid}`;
+  // A dragon folded into a fusion is not one of the player's spare
+  // pokemon: it is already inside one of them
+  const held = await transaction`
+    select count(*)::int as count from caught where owner = ${uid} and not hidden
+  `;
 
   return Math.max(0, asNumber(held.at(0)?.count) - 1);
 }
@@ -626,6 +633,8 @@ export async function releaseCatches(uid: string, catchIds: string[]): Promise<B
     // or of one family, share a stack and would clobber each other
     const returning = new Map<Items, number>();
     const candy = new Map<Families, number>();
+    /** What each one paid, kept on it while it can still be taken back */
+    const paid: { id: string; candy: number }[] = [];
 
     for (const catchId of catchIds) {
       const caught = stored.get(catchId);
@@ -645,10 +654,10 @@ export async function releaseCatches(uid: string, catchIds: string[]): Promise<B
       for (const item of asHeldItems(caught.items)) {
         returning.set(item, (returning.get(item) ?? 0) + 1);
       }
-      candy.set(
-        family,
-        (candy.get(family) ?? 0) + getReleaseCandy({ level: asNumber(caught.level) }),
-      );
+      const worth = getReleaseCandy({ level: asNumber(caught.level) });
+
+      candy.set(family, (candy.get(family) ?? 0) + worth);
+      paid.push({ id: catchId, candy: worth });
       gone.set(species, (gone.get(species) ?? 0) + 1);
     }
     if (outcome.done.length === 0) {
@@ -672,8 +681,12 @@ export async function releaseCatches(uid: string, catchIds: string[]): Promise<B
         (candies.get(family) ?? 0) + count,
       );
     }
-    // The buddy field clears itself, as a foreign key that nulls on delete
-    await transaction`delete from caught where id in ${transaction(outcome.done)}`;
+    if (isFlagOn(ServerFlag.ReleaseGrace)) {
+      await holdReleasedIn(transaction, uid, paid);
+    } else {
+      // The buddy field clears itself, as a foreign key that nulls on delete
+      await transaction`delete from caught where id in ${transaction(outcome.done)}`;
+    }
   });
 
   if (gone.size > 0) {
@@ -686,6 +699,138 @@ export async function releaseCatches(uid: string, catchIds: string[]): Promise<B
     await bumpProgress(uid, bumps);
   }
   return outcome;
+}
+
+/** How long a released pokemon can be taken back, while `RELEASE_GRACE` is on */
+export const RELEASE_GRACE = 24 * 60 * 60 * 1000;
+
+/**
+ * Let them go for a day rather than for good. Their owner is cleared,
+ * which hides them from every policy and refuses them to every server
+ * call the way escrow does, and a sweep deletes them once the day is
+ * out (see the release grace migration).
+ *
+ * What a delete would have cascaded is done by hand: the buddy slot,
+ * the lobby parties and the presets let them go now, and their held
+ * items, which have already gone back to the bag, come off them, so a
+ * pokemon taken back returns empty-handed rather than twice-holding
+ */
+async function holdReleasedIn(
+  transaction: Tx,
+  uid: string,
+  paid: readonly { id: string; candy: number }[],
+): Promise<void> {
+  const ids: string[] = [];
+
+  for (const { id } of paid) {
+    ids.push(id);
+  }
+  await transaction`
+    update caught set owner = null, released_by = ${uid}, released_at = ${Date.now()},
+      released_candy = held.candy::int
+    from (values ${transaction(paid.map(({ id, candy }) => [id, candy]))}) as held (id, candy)
+    where caught.id = held.id
+  `;
+  await transaction`update profiles set buddy_id = null where id = ${uid} and buddy_id in ${transaction(ids)}`;
+  await transaction`delete from caught_items where caught_id in ${transaction(ids)}`;
+  await transaction`delete from team_catches where caught_id in ${transaction(ids)}`;
+  await transaction`delete from duel_catches where caught_id in ${transaction(ids)}`;
+  await transaction`delete from team_preset_catches where caught_id in ${transaction(ids)}`;
+}
+
+/** A pokemon let go inside the grace, as the player is shown it */
+export interface ReleasedCatch {
+  id: string;
+  species: Species;
+  nickname: string;
+  level: number;
+  shiny: boolean;
+  releasedAt: number;
+  /** The candy taking it back spends again */
+  candy: number;
+}
+
+/**
+ * What the player let go inside the grace, newest first. Read here
+ * because a released pokemon has no owner, and no policy shows a
+ * player a row that is not theirs
+ */
+export async function listReleased(uid: string, now: number): Promise<ReleasedCatch[]> {
+  const rows = await getSql()`
+    select id, species, nickname, level, shiny, released_at, released_candy
+    from caught
+    where released_by = ${uid} and released_at > ${now - RELEASE_GRACE}
+    order by released_at desc
+  `;
+  const found: ReleasedCatch[] = [];
+
+  for (const row of rows) {
+    found.push({
+      id: String(row.id),
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      species: asNumber(row.species) as Species,
+      nickname: String(row.nickname ?? ''),
+      level: asNumber(row.level),
+      shiny: row.shiny === true,
+      releasedAt: asNumber(row.released_at),
+      candy: asNumber(row.released_candy),
+    });
+  }
+  return found;
+}
+
+/**
+ * Whether a pokemon came back: `gone` is not the player's release or
+ * the day is out, `no-candy` is the candy it paid spent since
+ */
+export type TakeBack = 'done' | 'gone' | 'no-candy';
+
+/**
+ * Take back a pokemon let go inside the grace. The candy its release
+ * paid is spent again, so letting go and taking back is never a way to
+ * make candy, and a player who has already spent it cannot. The
+ * release is also taken off the quest counter it went on
+ */
+export async function takeBack(uid: string, catchId: string, now: number): Promise<TakeBack> {
+  const result = await tx(async (transaction) => {
+    const rows = await transaction`
+      select species, released_candy from caught
+      where id = ${catchId} and released_by = ${uid} and released_at > ${now - RELEASE_GRACE}
+      for update
+    `;
+    const row = rows.at(0);
+
+    if (row == null) {
+      return { outcome: 'gone' as const, species: null };
+    }
+
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    const species = asNumber(row.species) as Species;
+    const { family } = getSpeciesData(species);
+    const owed = asNumber(row.released_candy);
+    const held = await readStackIn(transaction, CANDY_STACKS, uid, family);
+
+    if (!(await spendStackIn(transaction, CANDY_STACKS, uid, family, held, owed))) {
+      return { outcome: 'no-candy' as const, species: null };
+    }
+    await transaction`
+      update caught set owner = ${uid}, released_by = null, released_at = null, released_candy = null
+      where id = ${catchId}
+    `;
+    return { outcome: 'done' as const, species };
+  });
+
+  if (result.species != null) {
+    try {
+      await getSql()`
+        update quest_progress set count = greatest(count - 1, 0)
+        where player = ${uid} and metric = ${Metric.Releases} and param = ${result.species}
+      `;
+    } catch {
+      // A counter is a total, and the pokemon is back either way
+    }
+  }
+  return result.outcome;
 }
 
 /**

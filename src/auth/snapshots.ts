@@ -18,7 +18,8 @@ import {
   asSnapshotRecord,
   spawnId,
 } from './snapshot-record';
-import { requireUid } from '../server/auth';
+import { requireUid, requireUidFor } from '../server/auth';
+import { Feature } from '../server/switches';
 import { Pace } from '../server/pace';
 import check, {
   CELL,
@@ -353,7 +354,7 @@ async function claimCacheOnServer(
   check(OFFSET, offset);
   check(DEPTH, depth);
   return claimCacheOnServerSide(
-    await requireUid(token, Pace.Claim),
+    await requireUidFor(token, Feature.Claims, Pace.Claim),
     x,
     y,
     cell,
@@ -399,7 +400,7 @@ async function claimBerryOnServer(
   check(OFFSET, offset);
   check(DEPTH, depth);
   return claimBerryOnServerSide(
-    await requireUid(token, Pace.Claim),
+    await requireUidFor(token, Feature.Claims, Pace.Claim),
     x,
     y,
     cell,
@@ -444,7 +445,7 @@ async function claimApricornOnServer(
   check(OFFSET, offset);
   check(DEPTH, depth);
   return claimApricornOnServerSide(
-    await requireUid(token, Pace.Claim),
+    await requireUidFor(token, Feature.Claims, Pace.Claim),
     x,
     y,
     cell,
@@ -588,7 +589,7 @@ async function claimNestOnServer(
   check(LOCALE, locale);
   check(DEPTH, depth);
   return claimNestOnServerSide(
-    await requireUid(token, Pace.Claim),
+    await requireUidFor(token, Feature.Claims, Pace.Claim),
     x,
     y,
     cell,
@@ -652,7 +653,7 @@ async function claimPhenomenonOnServer(
   check(LOCALE, locale);
   check(DEPTH, depth);
   return claimPhenomenonOnServerSide(
-    await requireUid(token, Pace.Claim),
+    await requireUidFor(token, Feature.Claims, Pace.Claim),
     x,
     y,
     cell,
@@ -800,7 +801,7 @@ async function latherOnServer(
   check(CELL, cell);
   check(OFFSET, offset);
   return latherHoneyTreeOnServerSide(
-    await requireUid(token),
+    await requireUidFor(token, Feature.Claims),
     x,
     y,
     cell,

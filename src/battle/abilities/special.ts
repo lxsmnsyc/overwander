@@ -24,11 +24,9 @@ import type Unit from '../unit';
 import { MergedLifecycle } from '../lifecycle';
 import { createAbility } from './__create';
 
-/**
- * Special-tier abilities that can never be disabled (e.g. by
- * Neutralizing Gas or future ability-suppressing effects)
- */
-export const PROTECTED_ABILITIES = new Set<Abilities>([Abilities.Boss, Abilities.Shadow]);
+import PROTECTED_ABILITIES from './protected';
+
+export { default as PROTECTED_ABILITIES } from './protected';
 
 /**
  * A Boss' health is sixtyfold what the species would otherwise have,

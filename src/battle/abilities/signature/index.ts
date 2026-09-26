@@ -19,6 +19,9 @@ import treeckoToTorkoal from './treecko-to-torkoal';
 import burmyToShellos from './burmy-to-shellos';
 import combeeToCherubi from './combee-to-cherubi';
 import creationTrio from './creation-trio';
+import deerling from './deerling';
+import emolga from './emolga';
+import tirtougaToBouffalant from './tirtouga-to-bouffalant';
 import croagunkToSnover from './croagunk-to-snover';
 import drifloonToGlameow from './drifloon-to-glameow';
 import rioluToSkorupi from './riolu-to-skorupi';
@@ -37,6 +40,7 @@ import zoruaToSolosis from './zorua-to-solosis';
 import axewToDeino from './axew-to-deino';
 import tynamoToMienfoo from './tynamo-to-mienfoo';
 import elgyemToGolett from './elgyem-to-golett';
+import forcesOfNature from './forces-of-nature';
 import heatmorToLarvesta from './heatmor-to-larvesta';
 import patratToPurrloin from './patrat-to-purrloin';
 import pawniardToVullaby from './pawniard-to-vullaby';
@@ -44,6 +48,8 @@ import roggenrolaToDrilbur from './roggenrola-to-drilbur';
 import sewaddleToPetilil from './sewaddle-to-petilil';
 import snivyToOshawott from './snivy-to-oshawott';
 import swordsOfJustice from './swords-of-justice';
+import taoTrio from './tao-trio';
+import unovaMythicals from './unova-mythicals';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -95,6 +101,12 @@ const setupAbilities = [
   ...heatmorToLarvesta,
   ...tynamoToMienfoo,
   ...swordsOfJustice,
+  ...taoTrio,
+  ...unovaMythicals,
+  ...deerling,
+  ...emolga,
+  ...tirtougaToBouffalant,
+  ...forcesOfNature,
 ];
 
 /**

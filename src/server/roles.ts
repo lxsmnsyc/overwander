@@ -3,6 +3,7 @@ import isStaff, { ADMIN_ROLE, canActOn, canAssign, canBan, runsTheGame } from '.
 import { requireUid } from './auth';
 import { getSql } from './db';
 import { asString } from './read';
+import { StaffAction, recordStaffAction } from './staff-log';
 
 /**
  * Who is allowed to do what, decided here rather than by the screen
@@ -91,6 +92,7 @@ export async function setRole(caller: string, uid: string, wanted: string): Prom
     return null;
   }
   await getSql()`update profiles set role = ${wanted} where id = ${uid}`;
+  await recordStaffAction(caller, StaffAction.Role, uid, { from: theirs, to: wanted });
   return wanted;
 }
 
@@ -122,5 +124,6 @@ export async function setBan(
     set banned = ${banned}, ban_reason = ${banned ? reason : ''}
     where id = ${uid}
   `;
+  await recordStaffAction(caller, StaffAction.Ban, uid, { banned, reason: banned ? reason : '' });
   return banned;
 }

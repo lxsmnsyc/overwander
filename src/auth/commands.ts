@@ -15,6 +15,7 @@ import { requireAdmin, setBan } from '../server/roles';
 import { syncServerClock } from './clock';
 import teleportOnServerSide from '../server/teleport';
 import getIdToken from './session';
+import { StaffAction, recordStaffAction } from '../server/staff-log';
 
 /**
  * What the command bar asks the server for.
@@ -67,7 +68,15 @@ async function teleportOnServer(
   check(TOKEN, token);
   check(PLAYER_NAME, player);
   check(TELEPORT_WANTED, wanted);
-  return teleportOnServerSide(await requireAdmin(token), player, wanted, await syncServerClock());
+  const caller = await requireAdmin(token);
+  const outcome = await teleportOnServerSide(caller, player, wanted, await syncServerClock());
+
+  await recordStaffAction(caller, StaffAction.Teleport, outcome.player, {
+    chunkX: outcome.chunkX,
+    chunkY: outcome.chunkY,
+    depth: outcome.depth,
+  });
+  return outcome;
 }
 
 /**
@@ -124,6 +133,7 @@ async function giftOnServer(
   if (!written) {
     throw new Error('That gift is already on the shelf.');
   }
+  await recordStaffAction(caller, StaffAction.Gift, player, { ...gift });
   return player == null ? null : { player, nickname: await nameOf(player) };
 }
 

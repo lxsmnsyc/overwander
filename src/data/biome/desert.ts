@@ -6,9 +6,6 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
  * Desert spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerDesertSpawns(): void {
-  // The Dwebble line is written but waits on sprites, since the
-  // collection has drawn no Crustle. Once it does, mornings and days
-  // take Dwebble in uncommon at 22 and Crustle in scarce at 7
   registerSpawnPool(Biome.Desert, {
     [TimeOfDay.Morning]: {
       base: [
@@ -18,6 +15,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Dwebble, weight: 22 },
         { species: Species.Vullaby, weight: 16 },
         { species: Species.Darumaka, weight: 22 },
         { species: Species.Cacnea, weight: 20 },
@@ -35,6 +33,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Crustle, weight: 7 },
         { species: Species.Mandibuzz, weight: 6 },
         { species: Species.Darmanitan, weight: 7 },
         { species: Species.Claydol, weight: 6 },
@@ -63,6 +62,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Regirock, weight: 10 },
         { species: Species.Moltres, weight: 10 },
       ],
+      mythical: [{ species: Species.Genesect, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -73,6 +73,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Dwebble, weight: 22 },
         { species: Species.Vullaby, weight: 16 },
         { species: Species.Darumaka, weight: 22 },
         { species: Species.Cacnea, weight: 20 },
@@ -92,6 +93,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Crustle, weight: 7 },
         { species: Species.Mandibuzz, weight: 6 },
         { species: Species.Darmanitan, weight: 7 },
         { species: Species.Claydol, weight: 6 },
@@ -121,6 +123,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Regirock, weight: 10 },
         { species: Species.Moltres, weight: 10 },
       ],
+      mythical: [{ species: Species.Genesect, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Gible, weight: 2 }],
@@ -154,6 +157,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Regirock, weight: 10 },
         { species: Species.Moltres, weight: 10 },
       ],
+      mythical: [{ species: Species.Genesect, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Gible, weight: 2 }],
@@ -187,6 +191,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Regirock, weight: 10 },
         { species: Species.Moltres, weight: 10 },
       ],
+      mythical: [{ species: Species.Genesect, weight: 10 }],
     },
   });
   registerWaterPool(Biome.Desert, {

@@ -457,9 +457,13 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       return;
     }
     sounded = true;
-    // A draw is a fight nobody won, which is near enough a loss to
-    // share the sound with one
-    playEffect(result === 'won' ? Effect.BattleWon : Effect.BattleLost);
+    if (result === 'won') {
+      playEffect(Effect.BattleWon);
+    } else if (result === 'lost') {
+      playEffect(Effect.BattleLost);
+    } else {
+      playEffect(Effect.BattleDraw);
+    }
   });
 
   /**

@@ -418,6 +418,12 @@ export interface ChunkCanvasProps {
    */
   onShiny?: () => void;
   /**
+   * A legendary's or a mythical's herald has just started, handed up
+   * the same way and for the same reason as `onShiny`. A mythical
+   * wins a frame that started both
+   */
+  onHerald?: (rank: 'legendary' | 'mythical') => void;
+  /**
    * How to find where a cell is on the screen, handed up once there is
    * a canvas to measure. It is what lets a caller hang something over
    * a cell — a reward, a remark — in the page's own coordinates rather
@@ -3424,6 +3430,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       /** Whether one of them is new, which is a thing to be heard */
       /** Whether a shiny's sparkle started this frame, which is what the board chimes for */
       let announced = false;
+      /** Which herald started this frame, if any, for the board to sound */
+      let heralded: 'legendary' | 'mythical' | null = null;
 
       /**
        * A burst thrown over a pokemon the first time it is drawn: the
@@ -3895,8 +3903,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             if (standing.rank != null) {
               const colour = standing.rank === 'mythical' ? COLORS.mythical : COLORS.legendary;
               const name = `${standing.id}:rank`;
-
-              announce(
+              const started = announce(
                 standing.id,
                 name,
                 heralds,
@@ -3908,6 +3915,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
                   drawHerald(context, seed, age, spot.x, spot.y, sized, colour);
                 },
               );
+
+              if (started && heralded !== 'mythical') {
+                heralded = standing.rank;
+              }
             }
           } else {
             dot(middle, CELL * 0.18 * middle.scale * magnify, COLORS.spawn);
@@ -3975,6 +3986,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
       if (announced) {
         props.onShiny?.();
+      }
+      if (heralded != null) {
+        props.onHerald?.(heralded);
       }
 
       // The board is finished, so it is put back where it was found:

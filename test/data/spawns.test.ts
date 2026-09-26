@@ -17,7 +17,7 @@ import { getBiomeLairs, getLairResidents } from '../../src/data/overworld/lair';
 import registerAbilities from '../../src/data/abilities';
 import { Types } from '../../src/data/constants/types';
 import Biome, { SpawnSurface, TimeOfDay } from '../../src/data/ids/biome';
-import { ROTOM_FORMS, Species } from '../../src/data/ids/species';
+import { DEERLING_FORMS, ROTOM_FORMS, SAWSBUCK_FORMS, Species } from '../../src/data/ids/species';
 import registerItems from '../../src/data/items';
 import { registerMoves } from '../../src/data/moves';
 import {
@@ -256,12 +256,7 @@ describe('where a species lives', () => {
     // Porygon is met on town streets, which no biome pool holds, and
     // what it evolves into is made rather than met. The far shore's
     // shell is staged by the pool its west counterpart sits in, and
-    // swapped for as the world hands it over, so no pool names it either.
-    //
-    // The Pidove and Blitzle lines name where they live, but the
-    // sprite collection has drawn no Tranquill, Blitzle or Zebstrika,
-    // so neither line is staged until it does. The pools they are
-    // waiting for are written as comments in the biome files
+    // swapped for as the world hands it over, so no pool names it either
     const unstaged = new Set<Species>([
       Species.Phione,
       ...ROTOM_FORMS.slice(1),
@@ -270,21 +265,11 @@ describe('where a species lives', () => {
       Species.PorygonZ,
       Species.ShellosEast,
       Species.GastrodonEast,
-      Species.Pidove,
-      Species.Tranquill,
-      Species.Unfezant,
-      Species.Blitzle,
-      Species.Zebstrika,
-      Species.Throh,
-      Species.Sawk,
-      Species.Pansage,
-      Species.Simisage,
-      Species.Pansear,
-      Species.Simisear,
-      Species.Panpour,
-      Species.Simipour,
-      Species.Dwebble,
-      Species.Crustle,
+      // The three coats past spring are staged by the pool the spring
+      // one sits in, and swapped for as the month hands them over, so
+      // no pool names them either
+      ...DEERLING_FORMS.slice(1),
+      ...SAWSBUCK_FORMS.slice(1),
     ]);
     const staged = new Set<Species>();
 

@@ -27,6 +27,8 @@ import Awards, {
   KANTO_HONORS,
   SINNOH_BADGES,
   SINNOH_HONORS,
+  UNOVA_BADGES,
+  UNOVA_HONORS,
 } from '../../data/ids/awards';
 import Npc, { EXECUTIVE_CHARSETS, EXECUTIVE_HONORS } from '../../data/overworld/npc';
 import {
@@ -126,6 +128,18 @@ const AWARD_SPRITES: Partial<Record<Awards, [sheet: string, name: string]>> = {
   [Awards.MineBadge]: ['badges/sinnoh', '6'],
   [Awards.IcicleBadge]: ['badges/sinnoh', '7'],
   [Awards.BeaconBadge]: ['badges/sinnoh', '8'],
+  // Unova's sheet is numbered the same way, and its gym order runs
+  // the first league's eight then the two the sequels open
+  [Awards.TrioBadge]: ['badges/unova', '1'],
+  [Awards.BasicBadge]: ['badges/unova', '2'],
+  [Awards.InsectBadge]: ['badges/unova', '3'],
+  [Awards.BoltBadge]: ['badges/unova', '4'],
+  [Awards.QuakeBadge]: ['badges/unova', '5'],
+  [Awards.JetBadge]: ['badges/unova', '6'],
+  [Awards.FreezeBadge]: ['badges/unova', '7'],
+  [Awards.LegendBadge]: ['badges/unova', '8'],
+  [Awards.ToxicBadge]: ['badges/unova', '9'],
+  [Awards.WaveBadge]: ['badges/unova', '10'],
 };
 
 /**
@@ -263,6 +277,28 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.GoldCastlePrint]: '#e0b64f',
   [Awards.SilverHallPrint]: '#b9c0c9',
   [Awards.GoldHallPrint]: '#e0b64f',
+  [Awards.TrioBadge]: '#7fbf6a',
+  [Awards.BasicBadge]: '#8f9ecb',
+  [Awards.InsectBadge]: '#a8c94f',
+  [Awards.BoltBadge]: '#e9c33f',
+  [Awards.QuakeBadge]: '#b08a52',
+  [Awards.JetBadge]: '#6fbfe0',
+  [Awards.FreezeBadge]: '#9fd9e8',
+  [Awards.LegendBadge]: '#c26a3f',
+  [Awards.ToxicBadge]: '#a05fb8',
+  [Awards.WaveBadge]: '#4f9fd0',
+  [Awards.ShauntalDefeated]: '#7a6fa8',
+  [Awards.MarshalDefeated]: '#b8563f',
+  [Awards.GrimsleyDefeated]: '#4f4a52',
+  [Awards.CaitlinDefeated]: '#d9a3c9',
+  [Awards.UnovaDexMedal]: '#5aa87f',
+  [Awards.UnovaChampion]: '#e0b64f',
+  [Awards.NDefeated]: '#4f8f7a',
+  [Awards.PlasmaGruntDefeated]: '#3f5a6f',
+  [Awards.ColressDefeated]: '#7f9fc9',
+  [Awards.ZinzolinDefeated]: '#6f5f9f',
+  [Awards.GhetsisDefeated]: '#8f7f4f',
+  [Awards.AlderDefeated]: '#c4552e',
 };
 
 /**
@@ -291,6 +327,10 @@ const SHELF = ((): Awards[] => {
     ...SINNOH_HONORS,
     Awards.SinnohChampion,
     Awards.SinnohDexMedal,
+    ...UNOVA_BADGES,
+    ...UNOVA_HONORS,
+    Awards.UnovaChampion,
+    Awards.UnovaDexMedal,
     ...FRONTIER_SYMBOLS,
     ...SYNDICATE_HONORS,
   ]);
@@ -452,6 +492,8 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
   const hoenn = (): number => won(HOENN_BADGES);
   const sinnoh = (): number => won(SINNOH_BADGES);
   const seats = (): number => won(SINNOH_HONORS);
+  const unova = (): number => won(UNOVA_BADGES);
+  const seated = (): number => won(UNOVA_HONORS);
 
   const empties = (): number[] => fillers(SHELF.length);
 
@@ -480,7 +522,9 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
         {wins().has(Awards.JohtoChampion) ? ', Champion' : ''}. Hoenn: {hoenn()} of{' '}
         {HOENN_BADGES.length} badges. Sinnoh: {sinnoh()} of {SINNOH_BADGES.length} badges, {seats()}{' '}
         of {SINNOH_HONORS.length} of the Elite Four
-        {wins().has(Awards.SinnohChampion) ? ', Champion' : ''}.
+        {wins().has(Awards.SinnohChampion) ? ', Champion' : ''}. Unova: {unova()} of{' '}
+        {UNOVA_BADGES.length} badges, {seated()} of {UNOVA_HONORS.length} of the Elite Four
+        {wins().has(Awards.UnovaChampion) ? ', Champion' : ''}.
       </Meta>
     </div>
   );

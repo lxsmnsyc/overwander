@@ -8,5 +8,8 @@
 # untouched: the files stay in the working tree and Vite serves them.
 public/sprites
 
+# The sound effects, served from the same host for the same reason
+public/sounds
+
 # The sprite host's own config, which the app's build has no use for
 wrangler.jsonc

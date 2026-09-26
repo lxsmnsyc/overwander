@@ -691,7 +691,7 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
     await boostOf(Boost.Gold, Date.now()),
   );
 
-  await grantGold(uid, gold);
+  await grantGold(uid, gold, 'stop-reward');
 
   // A first claim is the one moment a beaten stop counts once. A
   // duellist counts twice over: once as a trainer beaten, and once

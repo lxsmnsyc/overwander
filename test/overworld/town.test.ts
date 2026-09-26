@@ -17,7 +17,7 @@ import {
   townAt,
   townOfRegion,
 } from '../../src/overworld/town';
-import Landmark from '../../src/data/overworld/landmark';
+import Landmark, { LANDMARK_NAMES } from '../../src/data/overworld/landmark';
 import { isOpenSea } from '../../src/data/ids/biome';
 import { readGround } from '../../src/overworld/ground';
 
@@ -154,8 +154,9 @@ describe('what a town holds', () => {
     expect(towns).toBeGreaterThan(0);
   });
 
-  it('gives every town its services, and only some of them a title fight', () => {
+  it('gives every town the whole ladder, and some of them a second gym', () => {
     const held = new Map<Landmark, number>();
+    const twice = new Map<Landmark, number>();
     let towns = 0;
 
     for (let regionY = -8; regionY < 8; regionY++) {
@@ -166,8 +167,18 @@ describe('what a town holds', () => {
           continue;
         }
         towns++;
-        for (const kind of new Set(getTownLots(world, town).map((lot) => lot.landmark))) {
+
+        const lots = getTownLots(world, town);
+        const counts = new Map<Landmark, number>();
+
+        for (const lot of lots) {
+          counts.set(lot.landmark, (counts.get(lot.landmark) ?? 0) + 1);
+        }
+        for (const [kind, count] of counts) {
           held.set(kind, (held.get(kind) ?? 0) + 1);
+          if (count > 1) {
+            twice.set(kind, (twice.get(kind) ?? 0) + 1);
+          }
         }
       }
     }
@@ -175,22 +186,32 @@ describe('what a town holds', () => {
     // The portal stands on the plaza rather than on a lot, so no town
     // ever spends one of its lots on the thing every town has
     expect(held.get(Landmark.Portal) ?? 0).toBe(0);
-    // What every town has: the counter that patches a party up, the
-    // fight a badge run is made of, a seat to hold and a board to
-    // trade at
+    // What every town has: the counter that patches a party up, a seat
+    // to hold, a board to trade at, and every rung of the ladder from
+    // a badge to a crown
     for (const kind of [
       Landmark.PokemonCenter,
-      Landmark.GymLeader,
       Landmark.GymSeat,
       Landmark.AuctionBoard,
+      Landmark.GymLeader,
+      Landmark.EliteFour,
+      Landmark.Champion,
     ]) {
       expect(held.get(kind) ?? 0).toBe(towns);
     }
-    // And what only some of them have, which is what makes one town
-    // worth walking to over another
-    for (const kind of [Landmark.EliteFour, Landmark.Champion]) {
-      expect(held.get(kind) ?? 0).toBeGreaterThan(0);
-      expect(held.get(kind) ?? 0).toBeLessThan(towns);
+    // And what only some of them have: a second gym, which is two
+    // badges in one walk
+    expect(twice.get(Landmark.GymLeader) ?? 0).toBeGreaterThan(0);
+    expect(twice.get(Landmark.GymLeader) ?? 0).toBeLessThan(towns);
+    // Nothing else is ever chartered twice
+    for (const kind of [
+      Landmark.PokemonCenter,
+      Landmark.GymSeat,
+      Landmark.AuctionBoard,
+      Landmark.EliteFour,
+      Landmark.Champion,
+    ]) {
+      expect(twice.get(kind) ?? 0, LANDMARK_NAMES[kind]).toBe(0);
     }
   });
 

@@ -21,6 +21,7 @@ import { getRegisteredMoves } from '../data/moves';
 import BATTLE_TIMEOUT from '../auth/battle-lock';
 import { payDayCeiling } from '../battle/moves/pay-day';
 import { Boost, boostOf, boostedAll } from './boosts';
+import { moveGoldIn } from './profile';
 
 /**
  * What a Sketch leaves behind: the move set to write, or nothing when
@@ -215,7 +216,7 @@ export default async function recordAftermath(
     }
 
     if (coins > 0) {
-      await transaction`update profiles set gold = gold + ${coins} where id = ${uid}`;
+      await moveGoldIn(transaction, uid, coins, 'pay-day');
     }
 
     // Locked together rather than one at a time: everything the fight

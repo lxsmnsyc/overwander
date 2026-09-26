@@ -146,7 +146,30 @@ deletion, so a record cannot vanish without the candy landing. Rarity has no say
 on the way out, and neither does the family-day bonus: that one belongs to
 meeting the pokemon.
 
-The dialog asks twice before calling it, and there is no undo.
+The dialog asks twice before calling it, and by default there is no undo.
+
+### A day's grace, where the server keeps one
+
+With the server's `RELEASE_GRACE` variable on, a release is held for a day
+before it is final, the way rAthena waits `char_del_delay` before a deleted
+character is gone. The row is not deleted. Its `owner` is cleared, which hides
+it from every policy and refuses it to every server call exactly as
+[escrow](#escrow) does, and three columns say who let it go (`released_by`),
+when (`released_at`) and what candy it paid (`released_candy`). An escrowed lot
+never has a `released_by`, which is what tells the two apart.
+
+What a delete would have cascaded is done by hand in the same transaction: the
+buddy slot, raid and duel lobby parties and team presets let it go, and its held
+items, already back in the bag, come off it. The candy is paid at the press as
+before.
+
+Inside the day the box lists it under **Let go today** and `takeBack` returns
+it, **spending the candy it paid again**, so releasing and taking back is never
+a way to make candy, and a player who has already spent it cannot. It comes back
+empty-handed, since what it held is in the bag, and the release comes off the
+quest counter it went on. Past the day an hourly pg_cron sweep deletes the row,
+and the delete cascades as an immediate release always did. The sweep runs
+whether the variable is on or not, so a release made while it was on still ends.
 
 ## Escrow
 

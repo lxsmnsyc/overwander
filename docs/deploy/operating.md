@@ -31,6 +31,22 @@ is in [Security](../database/security.md).
   `true`. A development build draws it either way, which is what the browser
   tests sign in with.
 
+## Optional features
+
+Three features are off by default, so a small self-hosted server keeps no rows
+and makes no promises it does not want. Each is a server environment variable,
+on only when it is exactly `1` or `true` and read on every call, so turning one
+on or off takes a redeploy of the variables and nothing else. What was already
+written stays when one is turned off.
+
+| Variable         | What it does                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------------- |
+| `ECONOMY_LEDGER` | Keeps `ledger`: every change to gold, an item or a candy stack, swept at 60 days                        |
+| `RELEASE_GRACE`  | Holds a release for a day, when it can be taken back for the candy it paid, before the sweep deletes it |
+| `STAFF_LOG`      | Keeps `staff_actions`: every role set, ban, gift and teleport, who did it, and when                     |
+
+Read the two records in the dashboard's table editor; players never can.
+
 ## Keeping it running
 
 - **Push migrations before deploying**, always in that order. A build that
@@ -42,6 +58,23 @@ is in [Security](../database/security.md).
   every catch, bag, auction and friendship is a row.
 - **The clock is the server's.** `src/server/*` runs in UTC deliberately, and
   Vercel's functions already do, so nothing needs setting for it.
+
+## Telling everybody something
+
+Add a row to `announcements` in the dashboard's table editor: a `message` of up
+to 280 characters and an `ends_at` in epoch milliseconds. `starts_at` defaults
+to now, so leave it empty to show the line at once or set it to schedule one.
+Every open tab shows it as a banner straight away, the sign-in screen included,
+and each player can put it away on their own device. Rows a month past their end
+are swept.
+
+Maintenance in ten minutes, for an hour from now:
+
+```sql
+insert into announcements (message, ends_at)
+values ('The game closes for maintenance in ten minutes.',
+        (extract(epoch from now()) * 1000)::bigint + 3600000);
+```
 
 ## When something is wrong
 

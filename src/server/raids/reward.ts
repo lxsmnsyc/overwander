@@ -77,7 +77,7 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   if (claimed.count === 0) {
     return null;
   }
-  await grantGold(uid, gold);
+  await grantGold(uid, gold, 'raid-reward');
   await bumpProgress(uid, [[Metric.GoldEarned, 0, gold]]);
 
   const chunk = getWorld().getChunk(raid.chunk.x, raid.chunk.y);

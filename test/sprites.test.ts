@@ -785,10 +785,10 @@ describe('the family candies that ship', () => {
   /**
    * A candy is painted from the colours of its family's own sheet, so a
    * line the sprite collection has not drawn has no candy to paint.
-   * Blitzle, Zebstrika and Throh are all undrawn, which is the same gap
-   * that keeps each of them out of the spawn pools
+   * None is undrawn at its first stage today, so the set is empty
+   * until a region lands before its art does
    */
-  const UNDRAWN = new Set<Families>([Families.Blitzle, Families.Throh]);
+  const UNDRAWN = new Set<Families>([]);
 
   /** Every family that should have a candy on a sheet. */
   function candyFamilies(): Families[] {

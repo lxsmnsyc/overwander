@@ -11,6 +11,7 @@ import {
 } from 'solid-js';
 import { type CandyStack, getCandies } from '../../auth/candy';
 import { getCaught } from '../../auth/caught';
+import { capAsksForStat } from '../../data/items/bottle-caps';
 import {
   ItemFlags,
   type ItemTypes,
@@ -32,6 +33,7 @@ import { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER } from '../../data/items/names';
 import CatchPicker from '../catches/catch-picker';
 import AbilityPatchDialog from '../catches/AbilityPatchDialog';
 import IncreasePPDialog from '../catches/IncreasePPDialog';
+import BottleCapDialog from '../catches/BottleCapDialog';
 import TeachMoveDialog from '../catches/TeachMoveDialog';
 import CandyGrid, { type CandyPile } from './CandyGrid';
 import ItemGrid, { type ItemCell } from './ItemGrid';
@@ -170,6 +172,8 @@ function BagBody(
   const [bottling, setBottling] = createSignal<{ catchId: string; item: Items } | null>(null);
   /** Whoever is having its signature written, while the patch asks what gives way */
   const [patching, setPatching] = createSignal<string | null>(null);
+  /** The catch a Bottle Cap is being spent on, while it asks which stat */
+  const [capping, setCapping] = createSignal<string | null>(null);
 
   const said = (message: string, tone: 'neutral' | 'ember' | 'leaf' = 'neutral'): void => {
     toast.push({ message, tone });
@@ -357,6 +361,10 @@ function BagBody(
       setBottling({ catchId, item });
       return;
     }
+    if (capAsksForStat(item)) {
+      setCapping(catchId);
+      return;
+    }
     if (isAbilityPatch(item)) {
       setPatching(catchId);
       return;
@@ -511,6 +519,17 @@ function BagBody(
         item={bottling()?.item ?? null}
         onClose={() => {
           setBottling(null);
+        }}
+        onUsed={(message) => {
+          said(message);
+          changed();
+        }}
+      />
+
+      <BottleCapDialog
+        catchId={capping()}
+        onClose={() => {
+          setCapping(null);
         }}
         onUsed={(message) => {
           said(message);

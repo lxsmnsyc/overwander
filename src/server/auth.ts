@@ -2,6 +2,7 @@ import 'server-only';
 import { type JWTPayload, createRemoteJWKSet, decodeProtectedHeader, jwtVerify } from 'jose';
 import { getSql } from './db';
 import { PACE_MESSAGE, Pace, type PaceCost, admit } from './pace';
+import { CLOSED_MESSAGE, Feature, MAINTENANCE_MESSAGE } from './switches';
 
 /**
  * Who a token says the caller is, checked without a round trip.
@@ -71,9 +72,37 @@ async function verify(token: string): Promise<JWTPayload> {
  * `pace` as well where the caller names one (see `./pace`). A player
  * acting faster than the game can is refused.
  *
+ * And maintenance is checked here, in the same statement again: while
+ * the `everything` switch is closed, every call from a player without a
+ * role is refused (see `./switches`).
+ *
  * Resolves the caller's uid
  */
 export async function requireUid(token: string, pace?: Pace, cost = 1): Promise<string> {
+  return admitCaller(token, pace, cost);
+}
+
+/**
+ * `requireUid` for a call that starts something in one part of the
+ * game, which that part's switch may have closed. Calls that leave,
+ * cancel, read or settle take `requireUid` instead, so a closed part
+ * never strands anybody halfway through it
+ */
+export async function requireUidFor(
+  token: string,
+  feature: Feature,
+  pace?: Pace,
+  cost = 1,
+): Promise<string> {
+  return admitCaller(token, pace, cost, feature);
+}
+
+async function admitCaller(
+  token: string,
+  pace: Pace | undefined,
+  cost: number,
+  feature?: Feature,
+): Promise<string> {
   if (token === '') {
     throw new Error('Not signed in');
   }
@@ -91,10 +120,15 @@ export async function requireUid(token: string, pace?: Pace, cost = 1): Promise<
     costs.push({ pace, cost });
   }
 
-  const { banned, paced } = await admit(getSql(), uid, costs, Date.now());
+  const { banned, paced, closed } = await admit(getSql(), uid, costs, Date.now(), feature);
 
   if (banned) {
     throw new Error(BANNED_MESSAGE);
+  }
+  if (closed != null) {
+    const fallback = closed.feature === Feature.Everything ? MAINTENANCE_MESSAGE : CLOSED_MESSAGE;
+
+    throw new Error(closed.message === '' ? fallback : closed.message);
   }
   if (!paced) {
     throw new Error(PACE_MESSAGE);

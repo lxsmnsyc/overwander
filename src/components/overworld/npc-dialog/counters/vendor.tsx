@@ -19,6 +19,7 @@ import {
 } from '../../../styled';
 import { type CounterProps, priceOf, refusal, useSaying } from '../shared';
 import { readable } from '../../../app/resource-reads';
+import playEffect, { Effect } from '../../../app/sound';
 
 /** Which side of the counter is open */
 const enum Side {
@@ -100,6 +101,7 @@ export default function Vendor(props: CounterProps): JSX.Element {
         if (done == null) {
           return;
         }
+        playEffect(buyingIt ? Effect.ShopBuy : Effect.ShopSell);
         // A purchase is worth a word in passing; a sale's receipt is
         // the purse badge climbing, and a refusal is the greyed square
         if (buyingIt) {

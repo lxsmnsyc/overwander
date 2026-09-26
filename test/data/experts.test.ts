@@ -37,6 +37,8 @@ import Awards, {
   KANTO_HONORS,
   SINNOH_BADGES,
   SINNOH_HONORS,
+  UNOVA_BADGES,
+  UNOVA_HONORS,
 } from '../../src/data/ids/awards';
 import {
   ARCADE_PANELS,
@@ -134,15 +136,25 @@ registerBiomeSpawns();
 describe('type experts', () => {
   it('gives every leader a name, a badge and a shipped wardrobe', () => {
     const badges = GYM_LEADERS.map((leader) => GYM_LEADER_BADGES[leader]);
-    const cases = [...KANTO_BADGES, ...JOHTO_BADGES, ...HOENN_BADGES, ...SINNOH_BADGES];
+    const cases = [
+      ...KANTO_BADGES,
+      ...JOHTO_BADGES,
+      ...HOENN_BADGES,
+      ...SINNOH_BADGES,
+      ...UNOVA_BADGES,
+    ];
 
-    // Every leader carries a badge, and between the four regions the
-    // leaders account for every badge there is. There is one leader
-    // more than there are badges, because Mossdeep is kept by two
-    // people who pay the same one
+    // Every leader carries a badge, and between the five regions the
+    // leaders account for every badge there is. There are more
+    // leaders than badges, because a gym kept by several people pays
+    // the one badge between them: Mossdeep, Striaton, and Nacrene's
+    // fight passing to Aspertia a league later
     expect(new Set(badges).size).toBe(cases.length);
     expect(badges.every((badge) => cases.includes(badge))).toBe(true);
     expect(GYM_LEADER_BADGES[GymLeader.Tate]).toBe(GYM_LEADER_BADGES[GymLeader.Liza]);
+    expect(GYM_LEADER_BADGES[GymLeader.Cilan]).toBe(GYM_LEADER_BADGES[GymLeader.Chili]);
+    expect(GYM_LEADER_BADGES[GymLeader.Cress]).toBe(GYM_LEADER_BADGES[GymLeader.Chili]);
+    expect(GYM_LEADER_BADGES[GymLeader.Cheren]).toBe(GYM_LEADER_BADGES[GymLeader.Lenora]);
 
     for (const leader of GYM_LEADERS) {
       expect(GYM_LEADER_NAMES[leader].length).toBeGreaterThan(0);
@@ -155,7 +167,7 @@ describe('type experts', () => {
     // one Blue used to take all comers at, and no region runs the
     // same fight twice. Across regions they repeat: Roxanne's gym is
     // Brock's fight in another country
-    for (const region of [KANTO_BADGES, JOHTO_BADGES, HOENN_BADGES, SINNOH_BADGES]) {
+    for (const region of [KANTO_BADGES, JOHTO_BADGES, HOENN_BADGES, SINNOH_BADGES, UNOVA_BADGES]) {
       const held = new Map<Awards, Set<Types>>();
 
       for (const leader of GYM_LEADERS.filter((one) => region.includes(GYM_LEADER_BADGES[one]))) {
@@ -163,11 +175,20 @@ describe('type experts', () => {
 
         held.set(badge, (held.get(badge) ?? new Set<Types>()).add(GYM_LEADER_TYPES[leader]));
       }
-      // One badge is one type, whoever of its keepers a chunk seats
+      // One badge is one fight, whoever of its keepers a chunk seats.
+      // Striaton is the exception the region is named for: three
+      // keepers, three types, one badge between them
       for (const [badge, types] of held) {
-        expect(types.size, AWARD_NAMES[badge]).toBe(1);
+        expect(types.size, AWARD_NAMES[badge]).toBe(badge === Awards.TrioBadge ? 3 : 1);
       }
-      expect(new Set([...held.values()].flatMap((types) => [...types])).size).toBe(region.length);
+      // And no region runs the same fight twice, so every type under
+      // that region's badges is its own. Unova runs water twice: the
+      // sequels open Humilau's gym without closing Striaton's, and
+      // each pays its own badge
+      const fought = [...held.values()].flatMap((types) => [...types]);
+      const twice = fought.filter((type) => fought.indexOf(type) !== fought.lastIndexOf(type));
+
+      expect(new Set(twice)).toEqual(region === UNOVA_BADGES ? new Set([Types.Water]) : new Set());
     }
     expect(GYM_LEADER_TYPES[GymLeader.Giovanni]).toBe(Types.Ground);
     expect(GYM_LEADER_TYPES[GymLeader.Brock]).toBe(Types.Rock);
@@ -175,14 +196,24 @@ describe('type experts', () => {
 
   it('gives every elite a mark and the champion a title', () => {
     const honors = ELITE_MEMBERS.map((member) => ELITE_MEMBER_HONORS[member]);
-    const marks = new Set([...KANTO_HONORS, ...JOHTO_HONORS, ...HOENN_HONORS, ...SINNOH_HONORS]);
+    const marks = new Set([
+      ...KANTO_HONORS,
+      ...JOHTO_HONORS,
+      ...HOENN_HONORS,
+      ...SINNOH_HONORS,
+      ...UNOVA_HONORS,
+    ]);
 
-    // Sixteen seats between four leagues, four apiece: Bruno keeps one
+    // Twenty seats between five leagues, four apiece: Bruno keeps one
     // in each of the first two, and no mark is shared between them
     expect(new Set(honors).size).toBe(marks.size);
     expect(honors.every((honor) => marks.has(honor))).toBe(true);
     expect(marks.size).toBe(
-      KANTO_HONORS.length + JOHTO_HONORS.length + HOENN_HONORS.length + SINNOH_HONORS.length,
+      KANTO_HONORS.length +
+        JOHTO_HONORS.length +
+        HOENN_HONORS.length +
+        SINNOH_HONORS.length +
+        UNOVA_HONORS.length,
     );
 
     for (const member of ELITE_MEMBERS) {
@@ -202,10 +233,12 @@ describe('type experts', () => {
       ...JOHTO_BADGES,
       ...HOENN_BADGES,
       ...SINNOH_BADGES,
+      ...UNOVA_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
       ...HOENN_HONORS,
       ...SINNOH_HONORS,
+      ...UNOVA_HONORS,
       Awards.KantoChampion,
     ]) {
       expect(AWARD_NAMES[award].length).toBeGreaterThan(0);
@@ -305,11 +338,7 @@ describe('type experts', () => {
     expect(canMeetSpecies(Species.Kabutops)).toBe(true);
     expect(canMeetSpecies(Species.Heracross)).toBe(true);
     expect(canMeetSpecies(Species.Phione)).toBe(true);
-    // And the four Unova still waiting on their sprites
-    expect(canMeetSpecies(Species.Throh)).toBe(false);
-    expect(canMeetSpecies(Species.Sawk)).toBe(false);
-    expect(canMeetSpecies(Species.Zebstrika)).toBe(false);
-    expect(canMeetSpecies(Species.Unfezant)).toBe(false);
+    expect(canMeetSpecies(Species.Carracosta)).toBe(true);
   });
 
   it('gives every leader a signature of their own type', () => {
@@ -360,6 +389,7 @@ describe('type experts', () => {
       [JOHTO_HONORS, JOHTO_BADGES],
       [HOENN_HONORS, HOENN_BADGES],
       [SINNOH_HONORS, SINNOH_BADGES],
+      [UNOVA_HONORS, UNOVA_BADGES],
     ] as const;
 
     for (const member of ELITE_MEMBERS) {
@@ -399,6 +429,29 @@ describe('type experts', () => {
     // And Cynthia stands above them, asking for all four
     expect(CHAMPION_HONORS[Champion.Cynthia]).toEqual(SINNOH_HONORS);
     expect(CHAMPION_TITLES[Champion.Cynthia]).toBe(Awards.SinnohChampion);
+  });
+
+  it('crowns Unova with Iris, who asks for its own four', () => {
+    expect(CHAMPION_HONORS[Champion.Iris]).toEqual(UNOVA_HONORS);
+    expect(CHAMPION_TITLES[Champion.Iris]).toBe(Awards.UnovaChampion);
+
+    // Opelucid's gym is Drayden's, so she stands at the top and
+    // nowhere else
+    for (const leader of GYM_LEADERS) {
+      expect(GYM_LEADER_NAMES[leader]).not.toBe('Iris');
+    }
+  });
+
+  it('gives every champion and legend a party a player could have walked', () => {
+    // These six are written out rather than rolled, so nothing filters
+    // them: a hand-written party is where a pokemon nobody can meet
+    // slips onto a team. Iris' Archeops and N's Carracosta are only
+    // met by reviving a fossil
+    for (const party of [...Object.values(CHAMPION_PARTIES), ...Object.values(LEGEND_PARTIES)]) {
+      for (const species of party) {
+        expect(canMeetSpecies(species), getSpeciesData(species).name).toBe(true);
+      }
+    }
   });
 
   it('gives every Frontier Brain a house, a rule and a pair of symbols', () => {
@@ -1303,6 +1356,7 @@ describe('type experts', () => {
       ...JOHTO_BADGES,
       ...HOENN_BADGES,
       ...SINNOH_BADGES,
+      ...UNOVA_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
       ...HOENN_HONORS,

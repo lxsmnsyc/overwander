@@ -1,4 +1,5 @@
 import { HISTORY_BALL, HISTORY_BALL_INSET, describeHistory, isHoldable } from './describe';
+import { capAsksForStat } from '../../../data/items/bottle-caps';
 import BattleData from '../../app/battle-data';
 import CandySprite from '../../sprites/CandySprite';
 import BattleSection from './sections/BattleSection';
@@ -16,6 +17,7 @@ import {
   giveItem,
   isFavorite,
   isGuarded,
+  isReleaseGraced,
   releaseCatch,
   setFavorite,
   setGuarded,
@@ -31,6 +33,7 @@ import { canHatch, isEgg } from '../../../auth/egg';
 import { hatchEgg } from '../../../auth/eggs';
 import { deriveSize } from '../../../overworld/encounter';
 import { type EvolutionOption, evolveCatch } from '../../../auth/evolution';
+import { fuseCatch, unfuseCatch } from '../../../auth/fusion';
 import type { InventoryEntry } from '../../../auth/inventory';
 import { learnLevelUpMove } from '../../../auth/moves';
 import playEffect, { Effect } from '../../app/sound';
@@ -51,6 +54,7 @@ import { isPreciousItem } from '../../../data/overworld/item-pool';
 import { isAbilityPatch } from '../../../data/items/ability-items';
 import { isPurifyingGem } from '../../../data/items/purifying-gem';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
+import { getFusionPartner, isFusedSpecies } from '../../../data/species/fusion';
 
 import { ActionsIcon, HeartIcon, LockIcon, SparklesIcon, StarIcon } from '../../icons';
 import TypeBadge from '../../sprites/TypeBadge';
@@ -83,7 +87,9 @@ import {
   useToast,
 } from '../../styled';
 import AbilityPatchDialog from '../AbilityPatchDialog';
+import CatchPicker from '../catch-picker';
 import IncreasePPDialog from '../IncreasePPDialog';
+import BottleCapDialog from '../BottleCapDialog';
 import TeachMoveDialog from '../TeachMoveDialog';
 
 import {
@@ -93,6 +99,7 @@ import {
   Show,
   batch,
   createEffect,
+  createResource,
   createSignal,
   onCleanup,
 } from 'solid-js';
@@ -371,6 +378,8 @@ export function CatchSheetBody(
    * question is answered
    */
   const [bottle, setBottle] = createSignal<{ item: Items; catchId: string } | null>(null);
+  /** The catch a Bottle Cap is being spent on, while it asks which stat */
+  const [capping, setCapping] = createSignal<string | null>(null);
 
   /** Whoever is having its signature written, while the patch asks what gives way */
   const [patching, setPatching] = createSignal<string | null>(null);
@@ -845,6 +854,9 @@ export function CatchSheetBody(
     }
     hatchEgg(catchId)
       .then((species) => {
+        if (species != null) {
+          playEffect(Effect.EggHatch);
+        }
         say(
           species == null
             ? 'It is not ready yet.'
@@ -860,11 +872,64 @@ export function CatchSheetBody(
       });
   };
 
+  /** The shape a picked dragon would be folded into, while it is being picked */
+  const [folding, setFolding] = createSignal<Species | null>(null);
+
+  /** The dragon that shape asks for */
+  const dragonWanted = (): Species | null => {
+    const into = folding();
+
+    return into == null ? null : getFusionPartner(into);
+  };
+
+  /** What to call it while the picker is up */
+  const dragonName = (): string => {
+    const dragon = dragonWanted();
+
+    return dragon == null ? 'dragon' : getSpeciesData(dragon).name;
+  };
+
+  /**
+   * Say what came of a fusion, and re-read everything a change of
+   * shape touches. Both halves change hands' worth of state, so the
+   * box is re-read as well as the sheet
+   */
+  const settleFusion = (species: Species | null, said: string): void => {
+    if (species == null) {
+      say('That is no longer possible.');
+    } else {
+      playEffect(Effect.Evolution);
+      say(said, 'leaf');
+    }
+    props.onRecordChanged();
+    props.onEvolutionsChanged();
+    props.onChange?.();
+  };
+
   const evolve = (into: Species): void => {
     const uid = owned();
     const catchId = props.catchId;
 
     if (uid == null || catchId == null) {
+      return;
+    }
+    const shape = view();
+
+    // A fusion is two pokemon rather than one, so it leaves the
+    // evolution road here: folding in asks which dragon, and taking
+    // apart hands one back
+    if (getFusionPartner(into) != null) {
+      setFolding(into);
+      return;
+    }
+    if (shape != null && isFusedSpecies(shape.species)) {
+      unfuseCatch(catchId)
+        .then((species) => {
+          settleFusion(species, 'They came apart.');
+        })
+        .catch((caught: unknown) => {
+          say(caught instanceof Error ? caught.message : String(caught), 'ember');
+        });
       return;
     }
 
@@ -892,7 +957,7 @@ export function CatchSheetBody(
     evolveCatch(catchId, into)
       .then((species) => {
         if (species != null) {
-          playEffect(Effect.PokemonGet);
+          playEffect(Effect.Evolution);
         }
         if (species == null) {
           say('That evolution is no longer available.');
@@ -1017,6 +1082,11 @@ export function CatchSheetBody(
    * second one says what it is doing
    */
   const [releasing, setReleasing] = createSignal(false);
+  /**
+   * Whether this server gives a day to take a release back, asked the
+   * first time the question is put and kept for the visit
+   */
+  const [graced] = createResource(releasing, isReleaseGraced);
   /** Whether the full ownership history is open over the sheet */
   const [tracing, setTracing] = createSignal(false);
 
@@ -1149,6 +1219,10 @@ export function CatchSheetBody(
     }
     if (isPPItem(item)) {
       setBottle({ item, catchId });
+      return;
+    }
+    if (capAsksForStat(item)) {
+      setCapping(catchId);
       return;
     }
     // A signature takes the place of something on a full pokemon, and
@@ -1491,9 +1565,11 @@ export function CatchSheetBody(
                     class="flex flex-col gap-3 border-y-2 border-line-soft md:grid md:min-h-0
                       md:flex-1 md:grid-cols-[16rem_minmax(0,1fr)] md:gap-0"
                   >
+                    {/* Scrolls like the right side does, so a short screen
+                        never pushes the evolutions down over the history */}
                     <div
-                      class="contents md:flex md:min-h-0 md:flex-col md:border-r-2
-                        md:border-line-soft md:pr-4"
+                      class="contents md:flex md:min-h-0 md:flex-col md:overflow-y-auto
+                        md:border-r-2 md:border-line-soft md:pr-4"
                     >
                       <div class="flex flex-col items-center gap-2 py-3 text-center md:flex-1">
                         <PortraitSection caught={loaded()} named={named()} />
@@ -1550,6 +1626,8 @@ export function CatchSheetBody(
                         </div>
 
                         <div class="flex flex-wrap items-center justify-center gap-1.5">
+                          <span class="text-sm font-medium">Lv. {shownLevel()}</span>
+                          <Divider />
                           <span class="text-sm font-medium">
                             {getSpeciesData(loaded().species).category}
                           </span>
@@ -1713,7 +1791,11 @@ export function CatchSheetBody(
           setReleasing(false);
         }}
         title="Release it?"
-        description="Letting a pokemon go cannot be undone."
+        description={
+          answered(graced) === true
+            ? 'It can be taken back within a day, for the candy it paid.'
+            : 'Letting a pokemon go cannot be undone.'
+        }
         terse
       >
         <Show when={view()}>
@@ -1885,6 +1967,44 @@ export function CatchSheetBody(
       {/* And the same shape for a bottle: a PP Up is spent on one move
           and nothing takes the points back, so it asks which before it
           leaves the bag */}
+      {/* Folding a dragon in asks which one, the way a machine asks
+          which move: the splicers are not spent and the dragon is not
+          gone, but it goes out of sight until the pair comes apart, so
+          the choice is the player's rather than a roll */}
+      <CatchPicker
+        open={folding() != null}
+        value={null}
+        title={`Fold in a ${dragonName()}?`}
+        description="It goes inside the Kyurem until you take the two apart again."
+        verb="Fold in"
+        empty="You have none of that dragon."
+        filter={(option) =>
+          option.caught.species === dragonWanted() &&
+          !option.fighting &&
+          !isEgg(option.caught) &&
+          !isGuarded(option.caught)
+        }
+        onClose={() => {
+          setFolding(null);
+        }}
+        onPick={(partnerId) => {
+          const into = folding();
+          const catchId = props.catchId;
+
+          setFolding(null);
+          if (partnerId == null || into == null || catchId == null) {
+            return;
+          }
+          fuseCatch(catchId, partnerId, into)
+            .then((species) => {
+              settleFusion(species, 'The two are one.');
+            })
+            .catch((caught: unknown) => {
+              say(caught instanceof Error ? caught.message : String(caught), 'ember');
+            });
+        }}
+      />
+
       {/* And the same shape again for a patch, which asks what gives
           way before the signature is written over it */}
       <AbilityPatchDialog
@@ -1905,6 +2025,19 @@ export function CatchSheetBody(
         item={bottle()?.item ?? null}
         onClose={() => {
           setBottle(null);
+        }}
+        onUsed={(said) => {
+          say(said);
+          props.onRecordChanged();
+          props.onBagChanged();
+          props.onChange?.();
+        }}
+      />
+
+      <BottleCapDialog
+        catchId={capping()}
+        onClose={() => {
+          setCapping(null);
         }}
         onUsed={(said) => {
           say(said);

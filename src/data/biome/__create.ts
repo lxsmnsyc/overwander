@@ -635,6 +635,12 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Cobalion,
   Species.Terrakion,
   Species.Virizion,
+  Species.Reshiram,
+  Species.Zekrom,
+  Species.Kyurem,
+  Species.Tornadus,
+  Species.Thundurus,
+  Species.Landorus,
 ]);
 
 /**
@@ -654,6 +660,11 @@ const MYTHICAL_SPECIES = new Set<Species>([
   Species.Shaymin,
   Species.Arceus,
   Species.Keldeo,
+  Species.Victini,
+  // The bare ones only: the step and the four cassettes are worn for
+  // a fight rather than owned, the way Shaymin Sky is
+  Species.Meloetta,
+  Species.Genesect,
 ]);
 
 /**

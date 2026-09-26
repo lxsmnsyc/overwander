@@ -1,5 +1,9 @@
 # Self-hosting
 
+> This page still describes the Supabase stack and is rewritten in the last
+> phase of the move to self-hosting. [The server](server.md) and
+> [Authentication](authentication.md) are current.
+
 Running the whole game on your own machines, with no Supabase project
 and no Cloudflare account.
 

@@ -1,48 +1,36 @@
 /**
  * Dev seed: a couple of accounts and enough rows to walk the game.
  *
- * Runs against the local stack after `supabase db reset`, through the
- * same two doors the app uses: accounts via the auth admin API, data
- * via the owner connection. Nothing here touches auth.users directly,
- * since GoTrue owns that table's invariants.
+ * Runs against the local database after a reset, over the owner
+ * connection. Accounts are written straight into Better Auth's tables
+ * with a bcrypt hash, which the server's password check accepts.
  */
-import { createClient } from '@supabase/supabase-js';
+import { randomUUID } from 'node:crypto';
+import bcrypt from 'bcryptjs';
 import postgres from 'postgres';
 
-const SUPABASE_URL = process.env.SUPABASE_URL ?? 'http://127.0.0.1:54321';
 const DB_URL =
   process.env.SUPABASE_DB_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54322/postgres';
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
+const PASSWORD = 'walking-in-the-tall-grass';
 
-if (SERVICE_KEY === '') {
-  console.error('Set SUPABASE_SERVICE_ROLE_KEY (see `supabase status`).');
-  process.exit(1);
-}
-
-const api = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } });
 const sql = postgres(DB_URL, { prepare: false });
 
 async function ensureUser(email: string, nickname: string): Promise<string> {
-  const { data, error } = await api.auth.admin.createUser({
-    email,
-    password: 'walking-in-the-tall-grass',
-    email_confirm: true,
-  });
+  const found = (await sql`select id from users where email = ${email}`).at(0);
 
-  if (error != null) {
-    // Already seeded: find the account instead of failing the rerun
-    const { data: listed } = await api.auth.admin.listUsers();
-    const found = listed.users.find((user) => user.email === email);
-
-    if (found == null) {
-      throw new Error(`cannot create or find ${email}: ${error.message}`);
-    }
-    return found.id;
+  // Already seeded: the rerun finds the account instead of failing
+  if (found != null) {
+    return String(found.id);
   }
 
-  const uid = data.user.id;
+  const uid = randomUUID();
 
-  await sql`update profiles set nickname = ${nickname}, role = 'admin' where id = ${uid}`;
+  await sql`insert into users (id, name, email, email_verified) values (${uid}, ${nickname}, ${email}, true)`;
+  await sql`
+    insert into identities (account_id, provider_id, user_id, password, updated_at)
+    values (${uid}, 'credential', ${uid}, ${bcrypt.hashSync(PASSWORD, 10)}, now())
+  `;
+  await sql`insert into profiles (id, nickname, role) values (${uid}, ${nickname}, 'admin')`;
   return uid;
 }
 

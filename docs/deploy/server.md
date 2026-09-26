@@ -46,8 +46,6 @@ build**, so a change to one needs a deploy rather than a restart:
 
 | Variable                   | What to put there                                               |
 | -------------------------- | --------------------------------------------------------------- |
-| `VITE_SUPABASE_URL`        | `https://<ref>.supabase.co`                                     |
-| `VITE_SUPABASE_ANON_KEY`   | The project's **publishable** or **anon** key                   |
 | `VITE_SPRITE_ORIGIN`       | The sprite host's origin, such as `https://sprites.your-domain` |
 | `VITE_WORLD_SEED`          | Any string, and then never touched again                        |
 | `VITE_EMAIL_SIGN_IN`       | Left empty, unless the deploy is to offer passwords             |
@@ -56,13 +54,13 @@ build**, so a change to one needs a deploy rather than a restart:
 
 The **server's variables** are secret and are read at run time:
 
-| Variable                    | What to put there                                                  |
-| --------------------------- | ------------------------------------------------------------------ |
-| `SUPABASE_DB_URL`           | The **session pooler** URI, port **5432**, with `?sslmode=require` |
-| `SUPABASE_URL`              | `https://<ref>.supabase.co`                                        |
-| `SUPABASE_SERVICE_ROLE_KEY` | The project's **secret** or **service_role** key                   |
-| `SUPABASE_JWT_SECRET`       | **Left empty**                                                     |
-| `TUNNEL_TOKEN`              | The tunnel's token from step 2                                     |
+| Variable                             | What to put there                                                        |
+| ------------------------------------ | ------------------------------------------------------------------------ |
+| `SUPABASE_DB_URL`                    | The **session pooler** URI, port **5432**, with `?sslmode=require`       |
+| `BETTER_AUTH_SECRET`                 | A long random string. See [Authentication](authentication.md)            |
+| `BETTER_AUTH_URL`                    | `https://your-domain`                                                    |
+| `GOOGLE_CLIENT_*`, `GITHUB_CLIENT_*` | The OAuth apps' ids and secrets. See [Authentication](authentication.md) |
+| `TUNNEL_TOKEN`                       | The tunnel's token from step 2                                           |
 
 Some of those need explaining:
 
@@ -72,10 +70,6 @@ Some of those need explaining:
   which the transaction pooler cannot do. The direct connection works too, but
   only over IPv6 unless the project pays for an IPv4 address. Copy the URI from
   the dashboard's **Connect** dialog.
-- **`SUPABASE_JWT_SECRET` stays empty against a hosted project.** Hosted stacks
-  sign asymmetrically, so the server fetches the project's JWKS from
-  `SUPABASE_URL` and checks signatures with that. The variable is only for the
-  local stack's shared HS256 secret.
 - **`VITE_WORLD_SEED` decides the whole world.** Chunk seeds, biomes, landmark
   placement, spawn rolls and lair contents all derive from it. Changing it after
   players have walked anywhere leaves every stored record pointing at ground
@@ -85,32 +79,6 @@ Some of those need explaining:
 
 The build reads `.env` as a Docker build secret, so it is never stored in an
 image layer.
-
-## Which key is which
-
-Supabase hands out two keys per project, and has two generations of names for
-them. The variable names here predate the newer pair, so read them as roles
-rather than as formats. Either generation works as the value.
-
-| The variable                | Newer key                             | Older key               | What it is                          |
-| --------------------------- | ------------------------------------- | ----------------------- | ----------------------------------- |
-| `VITE_SUPABASE_ANON_KEY`    | **Publishable**, `sb_publishable_...` | **anon**, a JWT         | Public. Bound by row-level security |
-| `SUPABASE_SERVICE_ROLE_KEY` | **Secret**, `sb_secret_...`           | **service_role**, a JWT | Secret. Ignores row-level security  |
-
-**The anon or publishable key is meant to be in the browser.** It identifies the
-project and grants nothing on its own. What a player may read is decided by the
-policies in [Security](../database/security.md) and by the session token they
-carry.
-
-**The service_role or secret key bypasses every policy**, so it belongs on the
-server and nowhere else. Never give it a `VITE_` name: those are inlined into
-the browser bundle.
-
-[`src/server/admin-api.ts`](../../src/server/admin-api.ts) is the only module
-that uses it, for **auth admin calls**: finding a player by email, and the
-account pages of the admin dashboard. Game writes go over the owner connection
-in [`src/server/db.ts`](../../src/server/db.ts) instead. Leave the key unset and
-those admin calls refuse while the rest of the game runs.
 
 ## 4. Deploy on release
 
@@ -154,9 +122,9 @@ scripts/deploy.sh --unpin  # follow releases again
 Run `scripts/deploy.sh` once by hand for the first deploy. When it is up, check
 these four things. Each one tests a different part of the setup:
 
-1. **Sign in with Google or GitHub.** Tests the redirect list and the provider
-   credentials. A sign-in that lands back on the site signed out usually means
-   the redirect URL is missing its `/**`.
+1. **Sign in with Google or GitHub.** Tests `BETTER_AUTH_URL` and the provider
+   credentials. A provider that answers with a redirect error has a callback
+   that does not match `BETTER_AUTH_URL`.
 2. **Walk a few chunks.** Tests the browser's variables and the read policies.
 3. **Catch something.** Tests `SUPABASE_DB_URL`, because a catch is a
    privileged write over the owner connection.

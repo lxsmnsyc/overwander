@@ -1,4 +1,6 @@
+import { randomUUID } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
+import { hashSync } from 'bcryptjs';
 
 /**
  * What the staging client believes about the schema: any table, rows
@@ -48,16 +50,29 @@ export const admin = createClient<StageDatabase>(SUPABASE_URL, SERVICE_KEY, {
 export const GENERATION = process.env.VITE_WORLD_GENERATION === '2' ? 2 : 1;
 
 export async function stageAccount(email: string, password: string): Promise<string> {
-  const { data, error } = await admin.auth.admin.createUser({
-    email,
-    password,
-    email_confirm: true,
-  });
+  const uid = randomUUID();
+  const now = new Date().toISOString();
+  const steps = [
+    admin.from('users').insert({ id: uid, name: '', email, email_verified: true }),
+    admin.from('identities').insert({
+      account_id: uid,
+      provider_id: 'credential',
+      user_id: uid,
+      password: hashSync(password, 10),
+      updated_at: now,
+    }),
+    admin.from('profiles').insert({ id: uid, nickname: 'Trainer' }),
+  ];
 
-  if (error != null) {
-    throw new Error(`cannot stage ${email}: ${error.message}`);
+  // In order: each row points at the one before it
+  for (const step of steps) {
+    const { error } = await step;
+
+    if (error != null) {
+      throw new Error(`cannot stage ${email}: ${error.message}`);
+    }
   }
-  return data.user.id;
+  return uid;
 }
 
 /**
@@ -66,13 +81,13 @@ export async function stageAccount(email: string, password: string): Promise<str
  */
 export async function uidOf(player: string | { email: string }): Promise<string> {
   const email = typeof player === 'string' ? player : player.email;
-  const { data } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
-  const found = data.users.find((user) => user.email === email);
+  const { data } = await admin.from('users').select('id').eq('email', email).maybeSingle();
+  const found = data?.id;
 
-  if (found == null) {
+  if (typeof found !== 'string') {
     throw new Error(`no account at ${email}`);
   }
-  return found.id;
+  return found;
 }
 
 /** Set a player's purse outright */

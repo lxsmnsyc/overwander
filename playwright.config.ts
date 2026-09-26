@@ -77,8 +77,9 @@ const STACK = stackEnv();
  */
 const STAGED = {
   VITE_REAL_SHINY_ODDS: 'true',
-  VITE_SUPABASE_URL: STACK.SUPABASE_URL,
-  VITE_SUPABASE_ANON_KEY: STACK.SUPABASE_ANON_KEY,
+  // Better Auth under test: a throwaway secret, and the origin the browsers open
+  BETTER_AUTH_SECRET: 'e2e-secret-that-is-at-least-thirty-two-characters',
+  BETTER_AUTH_URL: ORIGIN,
   ...STACK,
 };
 

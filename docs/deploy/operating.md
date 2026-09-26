@@ -85,19 +85,15 @@ permissions problem and is not.
 **`SUPABASE_DB_URL is not set` in the server's logs.** The variable is missing
 from `.env` on the server. `docker compose logs app` shows it.
 
-**Sign-in loops back signed out.** The origin is not on the redirect list, or is
-there without `/**`.
+**Sign-in loops back signed out.** `BETTER_AUTH_URL` is not the origin players
+open, so the session cookie is set for another site.
 
 **"Not signed in" on every server call, with a valid session.** The server
-cannot verify the token. Check that `SUPABASE_URL` names the same project the
-browser is signed in to, and that `SUPABASE_JWT_SECRET` is empty rather than
-holding a local stack's secret.
+cannot read its signing keys from the `jwks` table. Check that the accounts
+migration is pushed and that `SUPABASE_DB_URL` reaches the database.
 
 **Connections exhausted, or timeouts under load.** Too many connections for the
 project. The server holds at most ten, plus one for the live feed.
-
-**Looking a player up by email refuses, everything else works.**
-`SUPABASE_SERVICE_ROLE_KEY` is unset. Only the auth admin calls need it.
 
 **A player's screen never updates until reload.** The live feed is not reaching
 them. Check that the migrations are pushed in full, since the change triggers

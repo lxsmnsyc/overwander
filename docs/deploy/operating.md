@@ -43,6 +43,23 @@ is in [Security](../database/security.md).
 - **The clock is the server's.** `src/server/*` runs in UTC deliberately, and
   Vercel's functions already do, so nothing needs setting for it.
 
+## Telling everybody something
+
+Add a row to `announcements` in the dashboard's table editor: a `message` of up
+to 280 characters and an `ends_at` in epoch milliseconds. `starts_at` defaults
+to now, so leave it empty to show the line at once or set it to schedule one.
+Every open tab shows it as a banner straight away, the sign-in screen included,
+and each player can put it away on their own device. Rows a month past their end
+are swept.
+
+Maintenance in ten minutes, for an hour from now:
+
+```sql
+insert into announcements (message, ends_at)
+values ('The game closes for maintenance in ten minutes.',
+        (extract(epoch from now()) * 1000)::bigint + 3600000);
+```
+
 ## When something is wrong
 
 **Every write fails, reads are fine.** `SUPABASE_DB_URL` is unset or wrong. The

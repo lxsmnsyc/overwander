@@ -35,6 +35,7 @@ import type { ItemStack } from '../../data/overworld/item-pool';
 import { getItemData } from '../../data/items';
 import ItemSprite from '../items/ItemSprite';
 import watchDueQuests from './due-quests';
+import playEffect, { Effect, playEffectAfter } from './sound';
 import { useToast } from '../styled';
 import type { AuctionSubject } from '../auctions/AuctionDialog';
 import type ProfileSection from '../profile/sections';
@@ -409,6 +410,9 @@ export interface GameState {
 
 const GameContext = createContext<GameState>();
 
+/** How long after one quest's tune another is held back, in milliseconds */
+const QUEST_SOUND_GAP = 3000;
+
 export function useGame(): GameState {
   const state = useContext(GameContext);
 
@@ -685,11 +689,19 @@ export default function GameProvider(props: ParentProps): JSX.Element {
 
   // Said wherever the player is, since the board is shut whenever it
   // is worth hearing
+  // One tune for a sweep however many quests came due in it: several
+  // at once would be the same sound over itself
+  let questSoundedAt = 0;
+
   watchDueQuests(
     () => auth.user()?.uid ?? null,
     records,
     (name) => {
       toast.push({ title: 'Quest complete', message: `${name} is ready to claim.`, tone: 'leaf' });
+      if (Date.now() - questSoundedAt > QUEST_SOUND_GAP) {
+        questSoundedAt = Date.now();
+        playEffect(Effect.QuestComplete);
+      }
     },
   );
 
@@ -836,6 +848,12 @@ export default function GameProvider(props: ParentProps): JSX.Element {
       .then((collected) => {
         if (collected == null) {
           return;
+        }
+        // Only on the first win over whoever hands it out, which is
+        // when the award is not null. The claim lands while the win's
+        // own fanfare is still going, so the march waits for it
+        if (collected.award != null) {
+          playEffectAfter(Effect.TrainerBeaten, Effect.BattleWon);
         }
         pay({
           ...NOTHING,

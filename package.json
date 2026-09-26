@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite dev",
-    "build": "node scripts/sprite-stamps.ts && vite build",
+    "build": "node scripts/sprite-stamps.ts && node scripts/sound-stamps.ts && vite build",
     "start": "node .output/server/index.mjs",
     "preview": "vite preview",
     "compact-sprites": "node scripts/compact-sprites.ts",
@@ -19,6 +19,7 @@
     "family-candies": "node scripts/family-candies.ts",
     "import-sprites": "node scripts/import-sprites.ts",
     "sprite-stamps": "node scripts/sprite-stamps.ts",
+    "sound-stamps": "node scripts/sound-stamps.ts",
     "test": "vitest run",
     "test:rules": "vitest run --config vitest.rules.ts",
     "test:e2e": "playwright test",

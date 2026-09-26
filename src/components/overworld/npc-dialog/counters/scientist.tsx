@@ -69,7 +69,7 @@ export default function Scientist(props: CounterProps): JSX.Element {
         }
         // Once for the handover, however many rocks were on the
         // bench: one sound a pokemon is six sounds over each other
-        playEffect(Effect.PokemonGet);
+        playEffect(Effect.FossilRevive);
         // Said over the counter rather than under it: the bench is
         // cleared for the next rock the moment this one is open, and a
         // line in the panel would go with it

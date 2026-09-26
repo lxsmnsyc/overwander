@@ -30,15 +30,15 @@ const ORIGIN = `http://localhost:${PORT}`;
 const onCI = process.env.CI != null;
 
 /**
- * What the app is pointed at while the tests run: the tests' own
+ * What the app is pointed at while the tests run: the development
  * database, with the real shiny odds a player meets rather than
  * the loud dev ones
  */
 const STAGED = {
-  // The tests' own environment rather than the developer's .env (see test/env/.env.test)
+  // The tests' own environment rather than the root .env (see test/env/.env.test)
   OVERWANDER_ENV_DIR: 'test/env',
   VITE_REAL_SHINY_ODDS: 'true',
-  // The tests' own instance, never the database `pnpm dev` or the server uses
+  // The throwaway development database, never production
   DATABASE_URL: TEST_DATABASE_URL,
   // Better Auth under test: a throwaway secret, and the origin the browsers open
   BETTER_AUTH_SECRET: 'e2e-secret-that-is-at-least-thirty-two-characters',

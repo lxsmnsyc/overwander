@@ -69,8 +69,11 @@ The **server's variables** are secret and are read at run time:
 
 Some of those need explaining:
 
-- **`DATABASE_URL` is for the host's tools**, such as `pnpm migrate`.
-  Inside compose the app is pointed at the `db` service instead.
+- **`DATABASE_URL` is for the host's tools**, such as `pnpm migrate`, and on
+  the server it names production. Inside compose the app is pointed at the `db`
+  service instead. A development checkout on the same machine points it at its
+  own database (see [Running the database locally](../database/local-stack.md)),
+  so development never reaches the live game's data.
 - **`VITE_WORLD_SEED` decides the whole world.** Chunk seeds, biomes, landmark
   placement, spawn rolls and lair contents all derive from it. Changing it after
   players have walked anywhere leaves every stored record pointing at ground

@@ -2,13 +2,13 @@ import { defineConfig } from 'vitest/config';
 import { TEST_DATABASE_URL } from './test/test-database.ts';
 
 /**
- * The database suite: server modules run against the tests' own Postgres
- * (`compose.test.yaml`), which the setup starts and migrates. It clears
- * the game's rows, accounts included, between cases, so it runs one file
- * at a time and never beside the e2e suite, which shares that instance
+ * The database suite: server modules run against the throwaway
+ * development database (`compose.dev.yaml`), which the setup starts and
+ * migrates. It clears the game's rows, accounts included, between cases,
+ * so it runs one file at a time and never beside the e2e suite
  */
 export default defineConfig({
-  // The tests' own environment, not the developer's .env (see test/env/.env.test)
+  // The tests' own environment, not the root .env (see test/env/.env.test)
   envDir: 'test/env',
   resolve: {
     // The `server-only` marker throws when Node imports it for real;

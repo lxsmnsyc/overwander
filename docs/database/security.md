@@ -196,10 +196,10 @@ A server call refused by a closed part says so, and only staff change a switch.
 
 [`test/db/`](../../test/db) runs the server modules against a real Postgres:
 the writes above, the switches, the paces and the sweeps. `pnpm test:db` starts
-the tests' own instance and migrates it, and refuses any database whose name does
-not end in `_test`, so it never reaches development or production data. It
-**clears the game rows between cases**, so it runs one file at a time and apart
-from the e2e suite, which shares that instance.
+the throwaway development database and migrates it, and refuses any database
+whose name does not end in `_dev`, so it never reaches production. It **clears
+the game rows between cases**, so it runs one file at a time and apart from the
+e2e suite, which shares that database.
 
 ## Indexes
 

@@ -25,7 +25,7 @@ that first if you have not run it yet.
 ```bash
 pnpm install
 cp .env.example .env    # fill it in, see the README
-pnpm db                 # the local Postgres
+pnpm db                 # the development database
 pnpm migrate            # its schema
 pnpm dev                # http://localhost:3000
 ```
@@ -83,11 +83,11 @@ pnpm test                   # the whole unit suite
 pnpm exec oxfmt src test    # format
 ```
 
-Two suites need Docker and are not run by CI. Both start the tests' own database
-(port 54323) and never touch the one `pnpm db` serves:
+Two suites need Docker and are not run by CI. Both start the throwaway
+development database (port 54324) and never touch production:
 
 ```bash
-pnpm test:db     # the server modules against the test database
+pnpm test:db     # the server modules against the development database
 pnpm test:e2e    # the Playwright suites
 ```
 

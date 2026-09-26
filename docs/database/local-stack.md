@@ -1,8 +1,21 @@
 # Running the database locally
 
-Development runs against the same database the server runs: Postgres 17 with
-`pg_cron`, in Docker, from [`compose.yaml`](../../compose.yaml). For the server,
-see [Deploying the game](../deploy.md).
+Development and the tests share one throwaway database: Postgres 17 with
+`pg_cron`, in Docker, from [`compose.dev.yaml`](../../compose.dev.yaml). It is
+the same image the server runs, as a separate instance, and it keeps its data in
+memory, so it starts empty whenever it starts. For the server, see
+[Deploying the game](../deploy.md).
+
+Two instances can run on one machine, each its own compose project and port, so
+neither can reach the other's data:
+
+| Instance    | Compose file       | Port  | Database         | Used by                                                 |
+| ----------- | ------------------ | ----- | ---------------- | ------------------------------------------------------- |
+| Production  | `compose.yaml`     | 54322 | `overwander`     | The live game, through `scripts/deploy.sh`              |
+| Development | `compose.dev.yaml` | 54324 | `overwander_dev` | `pnpm db`, `pnpm seed`, `pnpm test:db`, `pnpm test:e2e` |
+
+`pnpm seed` and the test suites refuse any database whose name does not end in
+`_dev`. `pnpm db:reset` only ever touches the development instance.
 
 ## What you need
 
@@ -19,7 +32,7 @@ see [Deploying the game](../deploy.md).
 
 ```bash
 cp .env.example .env   # once; the local defaults work as they are
-pnpm db                # start Postgres on 127.0.0.1:54322
+pnpm db                # start the development database on 127.0.0.1:54324
 pnpm migrate           # apply db/migrations
 pnpm seed              # two accounts and a few rows
 pnpm dev               # http://localhost:3000
@@ -27,7 +40,7 @@ pnpm dev               # http://localhost:3000
 
 - `pnpm dev` also applies any pending migration as it starts, so after pulling a
   branch with a new one, restarting `pnpm dev` is enough.
-- The data lives in the `overwander_db` Docker volume, so `pnpm db:stop` keeps it.
+- The data lives in memory, so stopping the database, or Colima, empties it.
 - `colima stop` stops the database with it. `pnpm db` starts it again.
 
 `pnpm seed` makes **alice@example.com** and **bob@example.com**, both with the
@@ -36,18 +49,18 @@ A development build draws the email and password form, so either signs in at onc
 
 ## Everyday commands
 
-| Command         | What it does                                        |
-| --------------- | --------------------------------------------------- |
-| `pnpm db`       | Start the database, or leave a running one alone    |
-| `pnpm db:stop`  | Stop it. The data survives                          |
-| `pnpm db:reset` | Delete the data and start again from the migrations |
-| `pnpm migrate`  | Apply the migrations the database has not seen      |
-| `pnpm seed`     | Put the two accounts and their rows back            |
+| Command         | What it does                                                    |
+| --------------- | --------------------------------------------------------------- |
+| `pnpm db`       | Start the database, or leave a running one alone                |
+| `pnpm db:stop`  | Stop it. The data goes with it                                  |
+| `pnpm db:reset` | Delete the development data and start again from the migrations |
+| `pnpm migrate`  | Apply the migrations the database has not seen                  |
+| `pnpm seed`     | Put the two accounts and their rows back                        |
 
 A shell on the database:
 
 ```bash
-docker compose exec db psql -U postgres -d overwander
+docker compose -f compose.dev.yaml exec db psql -U postgres -d overwander_dev
 ```
 
 ## Changing the schema
@@ -78,15 +91,14 @@ pnpm test        # the unit suites; nothing needs to be running
 ```
 
 ```bash
-pnpm test:db     # the server modules against the tests' own database
+pnpm test:db     # the server modules against the development database
 pnpm test:e2e    # the browser suites, against the same one
 ```
 
-Neither touches this database. Both start a separate instance from
-[`compose.test.yaml`](../../compose.test.yaml), on port 54323 with its data in
-memory, and migrate it. They reach it only through `TEST_DATABASE_URL`, and
-refuse a database whose name does not end in `_test`, so no setting can point
-them at development or production data. `pnpm db:test:stop` removes it.
+Both start the development instance if it is not up, and migrate it. They reach
+it only through `TEST_DATABASE_URL`, and refuse a database whose name does not
+end in `_dev`, so no setting can point them at production. They clear its data,
+so `pnpm seed` again afterwards.
 
 Run them one at a time: the database suite clears the game rows between cases,
 accounts included. Every suite reads `test/env/.env.test` rather than your `.env`.
@@ -95,8 +107,7 @@ accounts included. Every suite reads `test/env/.env.test` rather than your `.env
 
 - **`pnpm db` cannot find Docker.** Start Colima, or point `DOCKER_HOST` at its
   socket, which `colima status` prints.
-- **The port is taken.** Something else holds 54322, such as a Supabase stack
-  left from before the move. `docker ps` shows what.
+- **The port is taken.** Something else holds 54324. `docker ps` shows what.
 - **Every call says "Not signed in".** `BETTER_AUTH_SECRET` changed, or the
   database was reset under a signed-in tab. Sign in again.
 - **`pnpm dev` exits with "Migration failed".** The error names the statement.

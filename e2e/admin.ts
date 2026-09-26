@@ -4,7 +4,7 @@ import postgres from 'postgres';
 import { TEST_DATABASE_URL, assertTestDatabase } from '../test/test-database.ts';
 
 /**
- * The owner connection into the tests' own database, for staging what a
+ * The owner connection into the development database, for staging what a
  * spec cannot click into being: accounts, gold, bag rows, lots. Nothing
  * a browser does reaches the database this way; only the specs do.
  */

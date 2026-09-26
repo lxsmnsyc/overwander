@@ -59,7 +59,7 @@ modern ones.
 ```bash
 pnpm install
 cp .env.example .env    # the local defaults work as they are
-pnpm db                 # Postgres on 127.0.0.1:54322
+pnpm db                 # the development database on 127.0.0.1:54324
 pnpm migrate            # the schema
 pnpm seed               # two accounts and a few rows
 pnpm dev                # http://localhost:3000
@@ -98,11 +98,11 @@ The database suite runs the server modules against a real Postgres:
 pnpm test:db
 ```
 
-It uses the tests' own database, a separate instance on port 54323 that it
-starts and migrates itself, so your development data is never touched. It
-refuses any database whose name does not end in `_test`. It **clears the game
-rows between cases**, so run it apart from the e2e suite, which shares that
-instance. Every suite reads `test/env/.env.test` rather than your `.env`.
+It uses the throwaway development database on port 54324, which it starts and
+migrates itself, and never production. It refuses any database whose name does
+not end in `_dev`. It **clears the game rows between cases**, so run it apart
+from the e2e suite, which shares that database. Every suite reads
+`test/env/.env.test` rather than the root `.env`.
 
 ### Signing in
 
@@ -120,9 +120,8 @@ hands every account it creates the `admin` role, granted on the server.
 | `pnpm build`           | Production build (client, server and Nitro output)                                  |
 | `pnpm start`           | Serve the built output from `.output/`                                              |
 | `pnpm preview`         | Preview the build locally                                                           |
-| `pnpm db`              | Start the local database                                                            |
-| `pnpm db:reset`        | Delete the local data and rebuild it from `db/migrations/`                          |
-| `pnpm db:test`         | Start the tests' own database, which the test suites also do themselves             |
+| `pnpm db`              | Start the development database (`compose.dev.yaml`)                                 |
+| `pnpm db:reset`        | Delete the development data and rebuild it from `db/migrations/`                    |
 | `pnpm migrate`         | Apply the migrations the database has not seen                                      |
 | `pnpm seed`            | Fill a fresh database with accounts and sample rows                                 |
 | `pnpm import-sprites`  | Copy the pokemon sheets in from `../SpriteCollab`, the `lxsmnsyc/SpriteCollab` fork |
@@ -130,7 +129,7 @@ hands every account it creates the `admin` role, granted on the server.
 | `pnpm sprite-coats`    | Restamp `coats.json` after anything writes a sheet                                  |
 | `pnpm sprite-stamps`   | Restamp every other sheet, which `pnpm build` also does                             |
 | `pnpm test`            | The whole test suite, once                                                          |
-| `pnpm test:db`         | The server modules against the tests' own database                                  |
+| `pnpm test:db`         | The server modules against the development database                                 |
 | `pnpm test:e2e`        | The Playwright suites under `e2e/`                                                  |
 | `npx tsc --noEmit`     | Type-check                                                                          |
 | `npx oxlint src test`  | Lint                                                                                |

@@ -16,22 +16,34 @@ for players; the developer documentation lives in
 
 ## Contents
 
-| Page                                       | What it covers                                               |
-| ------------------------------------------ | ------------------------------------------------------------ |
-| [The world](mechanics/world.md)            | The map, biomes, chunks, landmarks, refresh windows, portals |
+| Page | What it covers |
+| ---- | -------------- |
+| [The world](mechanics/world.md) | The map, biomes, chunks, towns, scenery and landmarks |
+| [Weather](mechanics/weather.md) | How a sky is decided, the rare ones, and what each is worth |
+| [The clock](mechanics/world-time.md) | Refresh windows, the time of day, and the species day |
+| [Caves](mechanics/world-caves.md) | Where caves are, what lives in them, and the dark |
+| [Getting around](mechanics/world-travel.md) | Walking, and the portals a Portal Key opens |
 | [Meeting pokemon](mechanics/encounters.md) | Which pokemon appear, how rare they are, what they come with |
-| [Catching](mechanics/catching.md)          | Balls, berries, catch odds, and when a pokemon flees         |
-| [Battles](mechanics/battles.md)            | Real-time combat, damage, statuses, raids, gyms, duels       |
-| [Raising a pokemon](mechanics/raising.md)  | Candy, evolution, training, friendship, moves, healing       |
-| [Eggs](mechanics/eggs.md)                  | Nests, breeding, inheritance, hatching                       |
-| [People you meet](mechanics/npcs.md)       | The vendor, the specialists, and Team Rocket grunts          |
-| [Items and gold](mechanics/items.md)       | The item pool, berries, gear, the economy, the auction house |
-| [Gifts](mechanics/gifts.md)                | Starters, and what else the game sets aside for a player     |
-| [Friends](mechanics/friends.md)            | Friend codes, trading, and blocking                          |
-| [Battle lobbies](mechanics/duels.md)       | Fighting another player on purpose, and who watches          |
-| [Quests](mechanics/quests.md)              | What the game asks of you, and what each ask pays            |
-| [Awards and titles](mechanics/awards.md)   | Badges, achievements, and what a trainer is called           |
-| [Settings](mechanics/settings.md)          | What a player sets for themselves on this machine            |
+| [Catching](mechanics/catching.md) | Balls, berries, catch odds, and when a pokemon flees |
+| [Battles](mechanics/battles.md) | Real-time combat, damage, statuses and how a fight ends |
+| [Raids](mechanics/raids.md) | Lairs, lobbies, the raid boss, and the rules a raid changes |
+| [Who you fight](mechanics/battle-opponents.md) | Trainers, the syndicates, gym seats, duels, and how a built party is made |
+| [What a fight pays](mechanics/battle-rewards.md) | What a fight costs, and the purse each one pays |
+| [Raising a pokemon](mechanics/raising.md) | Candy, levels, healing, held items and abilities |
+| [Training](mechanics/training.md) | Evolution, training points, friendship and teaching a move |
+| [Eggs](mechanics/eggs.md) | Nests, breeding, inheritance, hatching |
+| [People you meet](mechanics/npcs.md) | The vendor, Nurse Joy and the specialists |
+| [Trainers on the road](mechanics/npc-trainers.md) | The syndicates, the duelling trainers and their classes |
+| [The league](mechanics/npc-league.md) | Gym leaders, the Elite Four, champions and the Battle Frontier |
+| [Items](mechanics/items.md) | The item pool, battle gear, berries and what each item does |
+| [Where items come from](mechanics/item-sources.md) | Caches, berry patches, apricorn trees, phenomena and Pickup |
+| [Gold and auctions](mechanics/economy.md) | Where gold comes from, where it goes, and the auction house |
+| [Gifts](mechanics/gifts.md) | Starters, and what else the game sets aside for a player |
+| [Friends](mechanics/friends.md) | Friend codes, trading, and blocking |
+| [Battle lobbies](mechanics/duels.md) | Fighting another player on purpose, and who watches |
+| [Quests](mechanics/quests.md) | What the game asks of you, and what each ask pays |
+| [Awards and titles](mechanics/awards.md) | Badges, achievements, and what a trainer is called |
+| [Settings](mechanics/settings.md) | What a player sets for themselves on this machine |
 
 ## Overview
 

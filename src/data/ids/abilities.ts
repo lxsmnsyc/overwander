@@ -695,7 +695,7 @@ const enum Abilities {
   MagmaTrail = 200111,
   Icebreaker = 200112,
   CoralBloom = 200113,
-  Standoff = 200114,
+  Ricochet = 200114,
   Delivery = 200115,
   Escort = 200116,
   Steelmolt = 200117,

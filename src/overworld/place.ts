@@ -25,5 +25,11 @@ export default function namePlace(chunkX: number, chunkY: number, x?: number, y?
   if (town != null) {
     return `${townName(town)} (${chunkX}, ${chunkY})`;
   }
-  return `${BIOME_NAMES[world.getChunkBiome(chunkX, chunkY)]} (${chunkX}, ${chunkY})`;
+  // The country is the cell's too, since a border runs through a
+  // chunk: standing on the desert side of a forest chunk is standing
+  // in the desert. A caller with only a chunk in hand gets its middle
+  const biome =
+    x == null || y == null ? world.getChunkBiome(chunkX, chunkY) : world.getCellBiome(x, y);
+
+  return `${BIOME_NAMES[biome]} (${chunkX}, ${chunkY})`;
 }

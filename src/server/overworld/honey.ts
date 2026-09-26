@@ -5,11 +5,9 @@ import { Items } from '../../data/ids/items';
 import { LATHER_COST, rollHoneyTree } from '../../data/overworld/honey-tree';
 import Landmark from '../../data/overworld/landmark';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
-import { WORLD_GENERATION } from '../../overworld/current';
 import type { Spawn } from '../../overworld/chunk-snapshot';
-import { getSql } from '../db';
-import { consumeItem } from '../inventory';
-import { asString } from '../read';
+import { ITEM_STACKS } from '../../auth/stacks';
+import { readStackIn, spendStackIn } from '../stacks';
 import { claim, resolveSnapshot } from './claims';
 import { startEncounter } from './spawns';
 
@@ -25,31 +23,6 @@ export type LatherResult =
  */
 export function honeyPrefix(snapshot: ChunkSnapshot): string {
   return `${snapshot.groundKey}@${snapshot.landmarkTimestamp}$honey`;
-}
-
-/** Which of this chunk's honey trees this player has lathered this window */
-export async function listLatheredHoneyTrees(
-  uid: string,
-  x: number,
-  y: number,
-  now: number,
-  offset: number,
-): Promise<number[]> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
-
-  if (snapshot == null) {
-    return [];
-  }
-
-  const prefix = honeyPrefix(snapshot);
-  const rows = await getSql()`
-    select marker from berry_claims
-    where generation = ${WORLD_GENERATION} and player = ${uid} and marker like ${`${prefix}%`}
-  `;
-
-  return rows
-    .map((row) => Number(asString(row.marker).slice(prefix.length)))
-    .filter((cell) => Number.isInteger(cell));
 }
 
 /**
@@ -73,17 +46,33 @@ export async function latherHoneyTree(
 
   const id = `${honeyPrefix(snapshot)}${cell}`;
 
-  if (!(await claim('berry_claims', id, { player: uid, item: Items.Honey, amount: LATHER_COST }))) {
-    return { kind: 'lathered' };
-  }
-  // The marker goes back when there was no jar, so a player who buys
-  // one can still lather this window
-  if (!(await consumeItem(uid, Items.Honey, LATHER_COST))) {
-    await getSql()`
-      delete from berry_claims
-      where generation = ${WORLD_GENERATION} and marker = ${id} and player = ${uid}
-    `;
-    return { kind: 'no-honey' };
+  // The jar is spent in the claim's own transaction. Without one the
+  // claim is rolled back, so a player who buys honey can still lather
+  // this window. An object, since the checker reads a `let` set inside
+  // the payment as never having changed
+  const jar = { missing: false };
+
+  const lathered = await claim(
+    'berry_claims',
+    id,
+    { player: uid, item: Items.Honey, amount: LATHER_COST },
+    async (transaction) => {
+      const held = await readStackIn(transaction, ITEM_STACKS, uid, Items.Honey);
+
+      jar.missing = !(await spendStackIn(
+        transaction,
+        ITEM_STACKS,
+        uid,
+        Items.Honey,
+        held,
+        LATHER_COST,
+      ));
+      return !jar.missing;
+    },
+  );
+
+  if (!lathered) {
+    return jar.missing ? { kind: 'no-honey' } : { kind: 'lathered' };
   }
 
   const key = `${id}:${uid}`;

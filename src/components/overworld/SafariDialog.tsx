@@ -21,7 +21,7 @@ import { getSpeciesData } from '../../data/species';
 import type SafariSession from '../../overworld/safari';
 import { FEED_CATCH_BONUS, SafariState, ThrowResult, describeFlight } from '../../overworld/safari';
 import { describeAbility, describeItem } from '../details';
-import playEffect, { Effect } from '../app/sound';
+import playEffect, { Effect, playEffectAfter } from '../app/sound';
 import InventoryPicker from '../items/InventoryPicker';
 import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
@@ -30,6 +30,7 @@ import { getSpeciesDexEntry } from '../../auth/pokedex';
 import { Badge, Button, Dialog, DialogActions, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import settings, { setSetting } from '../app/settings';
+import { failed, readable } from '../app/resource-reads';
 
 /**
  * Whether the item is something the encounter would eat
@@ -160,7 +161,8 @@ function SafariBody(
     bag: Resource<InventoryEntry[]>;
     /** Whether this player has ever owned the species standing there */
     owned: Resource<boolean>;
-    onSpent: () => void;
+    /** One of this item left the bag on the server */
+    onSpent: (item: Items) => void;
   },
 ): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
@@ -223,6 +225,9 @@ function SafariBody(
     if (still) {
       playEffect(Effect.BallShake);
     } else {
+      // The throw is timed to be over as the ball lands, where the
+      // first knock starts
+      playEffect(Effect.BallThrow);
       for (let shake = 0; shake < shakes; shake += 1) {
         setTimeout(
           () => {
@@ -303,7 +308,7 @@ function SafariBody(
   // counts down and what says there is nothing left to throw
   createEffect(() => {
     const active = props.session;
-    const carried = props.bag.latest;
+    const carried = readable(props.bag);
 
     if (active != null && carried != null) {
       let total = 0;
@@ -321,7 +326,7 @@ function SafariBody(
   const balls = (): [Balls, number][] => {
     const pairs: [Balls, number][] = [];
 
-    for (const entry of props.bag.latest ?? []) {
+    for (const entry of readable(props.bag) ?? []) {
       const ball = getBall(entry.item);
 
       if (ball != null) {
@@ -336,7 +341,7 @@ function SafariBody(
    * has run out of, which is the number worth showing on the button
    */
   const stockOf = (item: Items): number => {
-    for (const entry of props.bag.latest ?? []) {
+    for (const entry of readable(props.bag) ?? []) {
       if (entry.item === item) {
         return entry.amount;
       }
@@ -398,7 +403,6 @@ function SafariBody(
   const settle = (message: string | null): void => {
     setStatus(message);
     setRevision((value) => value + 1);
-    props.onSpent();
   };
 
   const act = (action: () => Promise<string | null>): void => {
@@ -452,21 +456,27 @@ function SafariBody(
         const eaten = await feedEncounter(active, thrown);
 
         setTreat(null);
+        if (eaten) {
+          props.onSpent(thrown);
+        }
         return eaten
           ? `Fed ${describeItem(thrown)}. It is watching you now.`
           : `It would not take the ${describeItem(thrown)}.`;
       }
 
       const spent = active.ball;
-      // The ball is played out as the record is written: `throwBall`
-      // hands the shakes over the moment they are rolled, and what is
-      // awaited here is both halves finishing
+      // The server rolls the throw and writes it down in one call;
+      // `throwBall` hands the shakes over as soon as it answers, and
+      // what is awaited here is the ball finishing its rocking
       let played: Promise<void> = Promise.resolve();
       const thrownAt = await throwBall(active, (shakes, result) => {
         played = rock(shakes, result);
       });
 
       await played;
+      if (thrownAt != null) {
+        props.onSpent(BALL_ITEMS[spent]);
+      }
       if (thrownAt == null) {
         setRocking(null);
         return 'No ball of that kind to throw.';
@@ -480,7 +490,13 @@ function SafariBody(
       // Said as the ball stops: one sound for it opening again, and
       // another for a pokemon that used the moment to bolt
       if (thrownAt.result === ThrowResult.Caught) {
-        playEffect(Effect.PokemonGet);
+        playEffect(Effect.CatchSuccess);
+        // A species this player never owned is a new line in the dex,
+        // said once the fanfare is done. Strictly false, so a dex
+        // entry still loading does not count as missing
+        if (props.owned.latest === false) {
+          playEffectAfter(Effect.DexEntry, Effect.CatchSuccess);
+        }
       }
       if (thrownAt.result === ThrowResult.BrokeFree) {
         playEffect(Effect.CatchFailed);
@@ -729,7 +745,7 @@ function SafariBody(
                 filter={(entry) =>
                   getBall(entry.item) != null || (isTreat(entry.item) && active().canFeed())
                 }
-                entries={props.bag.latest}
+                entries={readable(props.bag)}
                 onPick={(item) => {
                   if (item != null) {
                     take(item);
@@ -747,7 +763,7 @@ function SafariBody(
                 it, the badge beside it counts what is left, and a
                 treat that would catch nothing is a treat the player
                 chose to take out */}
-            <Status message={status()} />
+            <Status message={status() ?? failed(props.bag)} />
           </>
         )}
       </Show>
@@ -828,9 +844,10 @@ function SafariBody(
  * read must not reach the page the world is drawn on
  */
 export default function SafariDialog(props: SafariDialogProps): JSX.Element {
-  // Read once per opened session: throwing and feeding both spend
-  // from the bag, so it is refetched after each action
-  const [bag, { refetch }] = createResource(
+  // Read once per opened session. A throw or a treat spends exactly
+  // one of what was used, so the count is taken down here rather than
+  // the whole bag read again after every action
+  const [bag, { mutate }] = createResource(
     () => (props.session == null ? null : props.user.uid),
     getInventory,
   );
@@ -846,8 +863,19 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
         {...props}
         bag={bag}
         owned={owned}
-        onSpent={() => {
-          Promise.resolve(refetch()).catch(() => undefined);
+        onSpent={(item) => {
+          mutate((carried) => {
+            const left: InventoryEntry[] = [];
+
+            for (const entry of carried ?? []) {
+              if (entry.item !== item) {
+                left.push(entry);
+              } else if (entry.amount > 1) {
+                left.push({ ...entry, amount: entry.amount - 1 });
+              }
+            }
+            return left;
+          });
         }}
       />
     </Suspense>

@@ -69,11 +69,12 @@ export function creditedEggSteps(species: Species, steps: number, timestamp: num
 export const MIN_STEP_INTERVAL = 250;
 
 /**
- * The most steps one report may carry. A report is sent every few
- * paces, so anything larger is a client saving them up — and the
- * elapsed-time clamp would refuse most of it anyway
+ * The most steps one report may carry, which is also how many are
+ * saved up before one is sent: about a minute of walking. The
+ * elapsed-time clamp is what keeps a report honest, so the size is
+ * free to be a round trip's worth rather than a handful of paces
  */
-export const MAX_STEP_REPORT = 64;
+export const MAX_STEP_REPORT = 256;
 
 /**
  * The progress fields of a catch, which is all these rules read

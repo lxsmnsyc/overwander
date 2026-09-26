@@ -1,6 +1,6 @@
 import 'server-only';
 import {
-  Acquisition,
+  type Acquisition,
   type CatchOrder,
   asCaughtPokemon,
   getHeldItemRoom,
@@ -8,7 +8,7 @@ import {
   isNicknameLocked,
 } from '../auth/caught-record';
 import { asNickname } from '../auth/nickname';
-import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
+import type { EncounterRecord } from '../auth/encounter-record';
 import { getMaxHealth, needsCare } from '../auth/health';
 import {
   DEFAULT_MOVE_SLOTS,
@@ -25,7 +25,7 @@ import { PINAP_CANDY_HELPINGS } from '../data/items/berries';
 import type { Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species';
 import createOverworld from '../overworld/setup';
-import { asBuddy, resolveBuddyCatch } from './buddy';
+import { asBuddy } from './buddy';
 import type Families from '../data/ids/families';
 import { catchCandyWorth, grantCandies } from './candy';
 import { getCatchCandy, getReleaseCandy } from '../auth/candy-rules';
@@ -40,7 +40,6 @@ import {
 import { readCaughtIn, readCaughtMany, updateCaughtIn } from './caught-io';
 import { caughtFriendship } from '../data/constants/friendship';
 import { type Tx, getSql, newDocId, tx } from './db';
-import { readEncounter } from './encounter-io';
 import { recordCaughtSpecies } from './pokedex';
 import { Metric } from '../auth/quest-record';
 import { type ProgressBump, bumpProgress } from './quest-progress';
@@ -49,7 +48,6 @@ import { readStackIn, readStacksIn, spendStackIn, writeStackIn } from './stacks'
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import { isCatchLocked } from './locks';
 import { asNumber, asNumberArray, asRecord } from './read';
-import { retireEncounter } from './overworld';
 
 /**
  * Catch records, written over the owner connection. A catch is the
@@ -242,43 +240,33 @@ export async function insertCaughtIn(
 }
 
 /**
- * Record the catch of an encounter the player is already in. The
- * encounter is read from the server's own staged row, so the species,
- * level, IVs and shininess are the ones that were staged, whatever
- * the client believes.
+ * Everything a catch pays once its record is written: the dex, the
+ * quest counters, the family's candy (fourfold on the family's own
+ * day, plus what the buddy and a fed Pinap add) and a Heal Ball's
+ * mending of the buddy.
  *
- * Every catch pays its family's candy, fourfold on the family's own
- * day, in the same call: the reward cannot be skipped or claimed
- * twice by a client that stops asking.
- *
- * Resolves the new catch id, or null when the player is not in that
- * encounter
+ * The caller has already claimed the encounter, so this runs once per
+ * meeting however often a client asks. `buddy` is the one the throw
+ * was rolled with, read once and handed on
  */
-export async function recordCatch(
+export async function payCatch(
   uid: string,
   spawnId: string,
+  encounter: EncounterRecord,
   ball: Balls,
   now: number,
   offset: number,
-  locale: string,
-): Promise<string | null> {
-  const stored = await readEncounter(spawnId, uid);
+  buddy: [string, Record<string, unknown>] | null,
+): Promise<void> {
+  await recordCaughtSpecies(uid, encounter.species, encounter.shiny);
+  await bumpProgress(uid, [
+    [Metric.Catches, encounter.species, 1],
+    ...(encounter.shiny
+      ? [[Metric.ShinyCatches, encounter.species, 1] satisfies ProgressBump]
+      : []),
+  ]);
 
-  if (stored == null) {
-    return null;
-  }
-
-  const encounter = asEncounterRecord(stored);
   const zone = asOffset(offset);
-  // Looked up once and handed on. Both the candy the buddy earns and
-  // the mending a Heal Ball does read the same pokemon, and asking
-  // twice is two round trips of a path a player waits on
-  const buddy = await resolveBuddyCatch(uid);
-  const id = await writeCaughtRecord(uid, encounter, ball, Acquisition.Caught, now, offset, locale);
-
-  // Everything the catch pays, counted up and written once: the meeting
-  // itself, whatever the player was carrying, and whatever was fed to
-  // it all land on the same piles
   const overworld = createOverworld(uid, buddy == null ? null : asBuddy(buddy[1]));
   const family = getSpeciesData(encounter.species).family;
   const earned = new Map<Families, number>([
@@ -302,14 +290,6 @@ export async function recordCatch(
   }
   await grantCandies(uid, earned);
   await mendWithHealBall(ball, buddy);
-  // And it is not standing there any more, for this player. The spawn
-  // belongs to the window and the window is everybody's, so it is
-  // retired the same way one that ran off is: left in the world, left
-  // out of what this player is shown
-  // Handed the encounter already read above rather than reading it again
-  await retireEncounter(uid, encounter);
-
-  return id;
 }
 
 /**

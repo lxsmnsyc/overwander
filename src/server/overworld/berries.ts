@@ -2,7 +2,8 @@ import 'server-only';
 import { Depth } from '../../overworld/depth';
 import type { ItemStack } from '../../data/overworld/item-pool';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
-import { grantItem } from '../inventory';
+import { ITEM_STACKS } from '../../auth/stacks';
+import { grantStacksIn } from '../stacks';
 import { Landmark, Metric } from '../../auth/quest-record';
 import { bumpProgress } from '../quest-progress';
 import { claim, resolveSnapshot } from './claims';
@@ -35,15 +36,18 @@ export async function claimBerryPatch(
   const id = `${berryPrefix(snapshot)}${cell}`;
 
   if (
-    !(await claim('berry_claims', id, {
-      player: uid,
-      item: berries.item,
-      amount: berries.amount,
-    }))
+    !(await claim(
+      'berry_claims',
+      id,
+      { player: uid, item: berries.item, amount: berries.amount },
+      async (transaction) => {
+        await grantStacksIn(transaction, ITEM_STACKS, uid, [[berries.item, berries.amount]]);
+        return true;
+      },
+    ))
   ) {
     return null;
   }
-  await grantItem(uid, berries.item, berries.amount);
   await bumpProgress(uid, [[Metric.Landmarks, Landmark.Berry, 1]]);
   return berries;
 }
@@ -76,15 +80,18 @@ export async function claimApricornTree(
   const id = `${berryPrefix(snapshot)}${cell}`;
 
   if (
-    !(await claim('berry_claims', id, {
-      player: uid,
-      item: picked.item,
-      amount: picked.amount,
-    }))
+    !(await claim(
+      'berry_claims',
+      id,
+      { player: uid, item: picked.item, amount: picked.amount },
+      async (transaction) => {
+        await grantStacksIn(transaction, ITEM_STACKS, uid, [[picked.item, picked.amount]]);
+        return true;
+      },
+    ))
   ) {
     return null;
   }
-  await grantItem(uid, picked.item, picked.amount);
   await bumpProgress(uid, [[Metric.Landmarks, Landmark.Apricorn, 1]]);
   return picked;
 }

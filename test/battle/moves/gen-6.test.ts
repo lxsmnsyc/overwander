@@ -721,6 +721,40 @@ describe("Kalos's moves", () => {
       expect(layer.checkTerrain()).toBe(Terrains.Electric);
       expect(other.checkTerrain()).toBe(Terrains.None);
     });
+
+    it('keeps the AI from laying a terrain over one its own side still has down', () => {
+      const { battle, teamA, teamB } = createBattle('terrain', BattleModes.Raid);
+      const layer = createUnit(battle, teamA, [Types.Fairy]);
+      const mate = createUnit(battle, teamA);
+      const boss = createUnit(battle, teamB);
+
+      layer.enter();
+      mate.enter();
+      boss.enter();
+      layer.triggerMoveEffect(Moves.MistyTerrain, NONE_TARGET, 0);
+
+      // Neither the layer nor anybody on its team throws the mist away
+      expect(aiMayUse(battle, layer, Moves.GrassyTerrain, boss)).toBe(false);
+      expect(aiMayUse(battle, mate, Moves.ElectricTerrain, boss)).toBe(false);
+
+      // Once it has run out the field is anybody's again
+      battle.tick(TERRAIN_DURATION + 1);
+      expect(aiMayUse(battle, layer, Moves.GrassyTerrain, boss)).toBe(true);
+    });
+
+    it("still lets the AI lay its own terrain over the other side's", () => {
+      const { battle, teamA, teamB } = createBattle('terrain', BattleModes.PvP);
+      const layer = createUnit(battle, teamA);
+      const other = createUnit(battle, teamB);
+
+      layer.enter();
+      other.enter();
+      other.triggerMoveEffect(Moves.GrassyTerrain, NONE_TARGET, 0);
+
+      expect(aiMayUse(battle, layer, Moves.MistyTerrain, other)).toBe(true);
+      // And the side that laid the lawn keeps it
+      expect(aiMayUse(battle, other, Moves.ElectricTerrain, layer)).toBe(false);
+    });
   });
 });
 

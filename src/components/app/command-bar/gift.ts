@@ -143,7 +143,7 @@ function readRecipient(parameters: CommandArguments): string | null {
 /** What every gift carries, whatever is on it */
 function readCommon(
   parameters: CommandArguments,
-): Arguments<{ reason: string; expiresAt: number | null }> {
+): Arguments<{ reason: string; expiresAt: Date | null }> {
   const reason = given(parameters, 'reason')?.trim() ?? '';
 
   if (reason === '') {

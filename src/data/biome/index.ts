@@ -48,6 +48,7 @@ export {
   isAwaitingEvolution,
   isGrownSpecies,
   isLegendarySpecies,
+  getSpeciesHome,
   listSpeciesHabitats,
   listTownHabitats,
   TIMES_OF_DAY,

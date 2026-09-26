@@ -175,7 +175,7 @@ export async function saveProfile(uid: string, details: ProfileDetails): Promise
     .eq('id', uid);
 
   if (error != null) {
-    throw new Error(error.message);
+    throw new Error('Could not save your name just now.');
   }
 }
 
@@ -192,7 +192,7 @@ export async function setBuddyField(uid: string, catchId: string): Promise<void>
     .eq('id', uid);
 
   if (error != null) {
-    throw new Error(error.message);
+    throw new Error('Could not change your buddy just now.');
   }
 }
 

@@ -11,7 +11,7 @@ import { CLAIM_CHUNK_LIMIT } from '../auth/snapshot-record';
 import { Depth } from '../overworld/depth';
 import { GiftKind } from '../auth/gift-record';
 import { LobbyRole } from '../auth/lobby-role';
-import { MAX_EFFORT_PER_STAT } from '../data/constants/stats';
+import { MAX_EFFORT_PER_STAT, MAX_PACKED_IVS, Stats } from '../data/constants/stats';
 import { MAX_LEVEL } from '../data/constants/levels';
 import Npc from '../data/overworld/npc';
 import { RaidKind } from '../auth/raid-record';
@@ -168,8 +168,8 @@ export const PAGE = whole(0, MAX_PAGE);
 /** A level a pokemon can stand at */
 export const LEVEL = whole(1, MAX_LEVEL);
 
-/** A place in one of a pokemon's lists */
-const LIST_POSITION = whole(0, mostSlots(Slots.Move) - 1);
+/** Six individual values packed five bits apiece, which runs past MAX_AMOUNT */
+const PACKED_IVS = whole(0, MAX_PACKED_IVS);
 
 /**
  * Which known move a new one goes over. Below nothing where the
@@ -215,17 +215,29 @@ export const PARENTS = v.tuple([MAYBE_ID, MAYBE_ID]);
 /** What a shopper is buying or selling, as pairs of item and amount */
 export const BASKET = listOf(v.tuple([GAME_ID, AMOUNT]), BASKET_LIMIT);
 
+/** One of the six stats, or none where the caller has no choice to make */
+export const MAYBE_STAT = v.nullable(
+  v.picklist([
+    Stats.HP,
+    Stats.Attack,
+    Stats.Defense,
+    Stats.SpecialAttack,
+    Stats.SpecialDefense,
+    Stats.Speed,
+  ]),
+);
+
 /** Effort points to move, keyed by the stat they go on */
 export const EFFORT_SPREAD = v.record(
   v.picklist(['0', '1', '2', '3', '4', '5']),
   whole(0, MAX_EFFORT_PER_STAT),
 );
 
-/** The lists a rearranging player wants, in the order they want them */
+/** The lists a rearranging player wants, as ids in the order they want them */
 export const CATCH_ORDER = v.object({
-  moves: v.optional(listOf(LIST_POSITION, mostSlots(Slots.Move))),
-  abilities: v.optional(listOf(LIST_POSITION, mostSlots(Slots.Ability))),
-  items: v.optional(listOf(LIST_POSITION, mostSlots(Slots.Item))),
+  moves: v.optional(listOf(GAME_ID, mostSlots(Slots.Move))),
+  abilities: v.optional(listOf(GAME_ID, mostSlots(Slots.Ability))),
+  items: v.optional(listOf(GAME_ID, mostSlots(Slots.Item))),
 });
 
 /** What a proposer put on the table */
@@ -288,7 +300,7 @@ export const TELEPORT_WANTED = v.object({
 /** What every gift says, wherever it was made */
 const GIFT_BASE = {
   reason: TEXT,
-  expiresAt: v.nullable(COUNT),
+  expiresAt: v.nullable(v.date()),
 };
 
 /** What a gifted pokemon is, before it is rolled into a record */
@@ -299,7 +311,7 @@ const GIFT_POKEMON = {
   shadow: FLAG,
   gender: MAYBE_GAME_ID,
   nature: MAYBE_GAME_ID,
-  ivs: v.nullable(COUNT),
+  ivs: v.nullable(PACKED_IVS),
   abilities: listOf(GAME_ID, mostSlots(Slots.Ability)),
   moves: listOf(GAME_ID, mostSlots(Slots.Move)),
   items: listOf(GAME_ID, mostSlots(Slots.Item)),

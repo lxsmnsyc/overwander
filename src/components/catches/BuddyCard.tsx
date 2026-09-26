@@ -17,7 +17,7 @@ import { getSpeciesData } from '../../data/species';
 import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
 import CatchPicker from './catch-picker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
-import { Badge, Button, Card, Meta, Note, Row, Status } from '../styled';
+import { Badge, Button, Meta, Note, Row, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 /**
@@ -171,10 +171,8 @@ function BuddyBody(
   const walker = (): string => (props.viewOnly === true ? 'them' : 'you');
 
   return (
-    // No heading. The card is one line — a pokemon and the button that
-    // swaps it — and a title over a single row is a word taking up as
-    // much of the profile as the thing it names
-    <Card>
+    // No frame of its own: it is the right half of the profile's trainer card
+    <div class="flex flex-col gap-2">
       <Row class="flex-nowrap">
         <Show
           when={buddy()}
@@ -326,7 +324,7 @@ function BuddyBody(
           onPick={choose}
         />
       </Show>
-    </Card>
+    </div>
   );
 }
 

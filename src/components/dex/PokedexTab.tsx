@@ -1,18 +1,22 @@
 import {
+  For,
   type JSX,
   type Resource,
   Suspense,
   createEffect,
+  createMemo,
   createResource,
   createSignal,
 } from 'solid-js';
+import Regions from '../../data/ids/regions';
+import { REGIONS, REGION_NAMES, getRegionSpan, getSpeciesRegion } from '../../data/species/regions';
 import { type PokedexView, getPokedex } from '../../auth/pokedex';
 import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import type { Species } from '../../data/ids/species';
 import { getBaseFormSpecies } from '../../data/ids/species';
 import { getBaseForms, getSpeciesData, getSpeciesForms } from '../../data/species';
 import PokedexGrid, { DEX_PAGE, type DexEntry, dexLabel } from './PokedexGrid';
-import { Badge, Button, Meta, Note, Panel, Row } from '../styled';
+import { Badge, Button, Meta, Note, Panel, Row, TextField } from '../styled';
 import { useGame } from '../app/game-context';
 
 /**
@@ -40,6 +44,35 @@ export interface PokedexTabProps {
  * `Suspense` written there and lands on the boundary around the whole
  * page, so the reading half is its own component
  */
+type DexFilter = 'all' | 'caught' | 'missing';
+
+const FILTERS: [DexFilter, string][] = [
+  ['all', 'All'],
+  ['caught', 'Caught'],
+  ['missing', 'Missing'],
+];
+
+const FILTER_CHIP = `cursor-pointer rounded-full border-2 border-line bg-paper px-3 py-1 text-xs
+  font-bold text-ink shadow-none transition-colors hover:border-tide active:translate-y-0
+  aria-checked:border-tide-dark aria-checked:bg-tide aria-checked:text-on-accent
+  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide`;
+
+interface RegionTally {
+  region: Regions;
+  /** The region's first dex number, where pressing its chip turns to */
+  first: number;
+  total: number;
+  seen: number;
+  caught: number;
+}
+
+/** A region's name for reading; the stored one is lower case for the sheet folders */
+function regionName(region: Regions): string {
+  const name = REGION_NAMES[region];
+
+  return `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
+}
+
 function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
   const game = useGame();
 
@@ -92,48 +125,190 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
    * square of the same page — which is what makes it findable by
    * looking rather than by reading every number
    */
+  /** Which squares the page draws from: everything, what is owned, or what is still to catch */
+  const [filter, setFilter] = createSignal<DexFilter>('all');
+  const [query, setQuery] = createSignal('');
+
+  /** A number typed into the search, which finds a page rather than narrowing the list */
+  const asked = (): number | null => {
+    const typed = query().trim().replace(/^#/, '');
+
+    return /^\d+$/.test(typed) ? Number(typed) : null;
+  };
+
+  const listed = createMemo((): DexEntry[] => {
+    const wanted = query().trim().toLowerCase();
+    const byName = wanted !== '' && asked() == null;
+    const rows: DexEntry[] = [];
+
+    for (const entry of entries()) {
+      if (filter() === 'caught' && !entry.caught) {
+        continue;
+      }
+      if (filter() === 'missing' && entry.caught) {
+        continue;
+      }
+      // Only a name already met can be found by name, so the search never gives one away
+      if (byName && !((entry.seen || entry.caught) && entry.name.toLowerCase().includes(wanted))) {
+        continue;
+      }
+      rows.push(entry);
+    }
+    return rows;
+  });
+
   const [page, setPage] = createSignal(0);
 
-  const pages = (): number => Math.max(1, Math.ceil(entries().length / DEX_PAGE));
+  const pages = (): number => Math.max(1, Math.ceil(listed().length / DEX_PAGE));
 
-  // The registry cannot shrink under a running game, but a page beyond
-  // the end would draw an empty box; this is the same guard the catch
-  // picker keeps for a search that empties its last box
+  // A narrower list can leave the page past its end
   createEffect(() => {
     setPage((at) => Math.min(at, pages() - 1));
   });
 
-  const shown = (): DexEntry[] => entries().slice(page() * DEX_PAGE, (page() + 1) * DEX_PAGE);
+  /** Turn to the page holding the first entry at or past this dex number */
+  const turnTo = (dexNumber: number): void => {
+    for (const [at, entry] of listed().entries()) {
+      if (entry.dexNumber >= dexNumber) {
+        setPage(Math.floor(at / DEX_PAGE));
+        return;
+      }
+    }
+  };
 
-  /**
-   * What the page is called: the numbers it holds rather than "page 2
-   * of 6". A dex is addressed by its numbers, and #031–#060 is where a
-   * player already knows Nidoran lives
-   */
+  createEffect(() => {
+    const number = asked();
+
+    if (number != null) {
+      turnTo(number);
+    }
+  });
+
+  const highlight = (): Species | null => {
+    const number = asked();
+
+    if (number == null) {
+      return null;
+    }
+    for (const entry of listed()) {
+      if (entry.dexNumber === number) {
+        return entry.species;
+      }
+    }
+    return null;
+  };
+
+  const shown = (): DexEntry[] => listed().slice(page() * DEX_PAGE, (page() + 1) * DEX_PAGE);
+
+  /** Each region with any species registered: how many there are, and how many are met and owned */
+  const regions = createMemo(() => {
+    const tallies: RegionTally[] = [];
+
+    for (const region of REGIONS) {
+      if (region === Regions.Unknown) {
+        continue;
+      }
+      const span = getRegionSpan(region);
+      const tally: RegionTally = { region, first: span?.[0] ?? 0, total: 0, seen: 0, caught: 0 };
+
+      for (const entry of entries()) {
+        if (getSpeciesRegion(entry.species) === region) {
+          tally.total += 1;
+          tally.seen += entry.seen || entry.caught ? 1 : 0;
+          tally.caught += entry.caught ? 1 : 0;
+        }
+      }
+      if (tally.total > 0) {
+        tallies.push(tally);
+      }
+    }
+    return tallies;
+  });
+
   const span = (): string => {
-    const listed = shown();
-    const first = listed.at(0);
-    const last = listed.at(-1);
+    const onPage = shown();
+    const first = onPage.at(0);
+    const last = onPage.at(-1);
 
-    return first == null || last == null
-      ? ''
-      : `${dexLabel(first.dexNumber)} – ${dexLabel(last.dexNumber)}`;
+    if (first == null || last == null) {
+      return 'Nothing here';
+    }
+    return `${dexLabel(first.dexNumber)} – ${dexLabel(last.dexNumber)} · ${regionName(
+      getSpeciesRegion(first.species),
+    )}`;
   };
 
   return (
     <Panel>
-      {/* The two figures a dex is kept for, over the squares that
-          explain them */}
       <Row class="justify-center">
         <Badge tone="tide">{props.dex()?.seenSpecies ?? 0} seen</Badge>
         <Badge tone="leaf">{props.dex()?.caughtSpecies ?? 0} caught</Badge>
         <Badge>of {entries().length}</Badge>
       </Row>
 
-      {/* Thirty at a time, addressed by the numbers on the page.
-          Above the squares rather than under them: five rows of six
-          fill a laptop screen on their own, and paging buttons below
-          them are buttons a player has to scroll to reach */}
+      {/* A chip per region: seen out of how many, with the caught share as a bar under it */}
+      <div class="flex flex-wrap justify-center gap-1.5">
+        <For each={regions()}>
+          {(tally) => (
+            <button
+              type="button"
+              class="flex cursor-pointer flex-col gap-1 rounded-xl border-2 border-line bg-paper px-2.5
+                py-1 text-left text-xs font-bold text-ink shadow-pop-sm transition-colors
+                hover:border-tide active:translate-y-0 focus-visible:outline-2
+                focus-visible:outline-offset-2 focus-visible:outline-tide"
+              aria-label={`${regionName(tally.region)}: ${tally.seen} of ${tally.total} seen, ${tally.caught} caught`}
+              onClick={() => {
+                turnTo(tally.first);
+              }}
+            >
+              <span>
+                {regionName(tally.region)}{' '}
+                <span class="font-normal text-muted tabular-nums">
+                  {tally.seen}/{tally.total}
+                </span>
+              </span>
+              <span class="block h-1 overflow-hidden rounded-full bg-line-soft">
+                <span
+                  class="block h-full rounded-full bg-leaf"
+                  style={{ width: `${(tally.caught / tally.total) * 100}%` }}
+                />
+              </span>
+            </button>
+          )}
+        </For>
+      </div>
+
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-end">
+        <TextField
+          class="grow"
+          label="Find"
+          placeholder="A number, or the name of one you have met"
+          value={query()}
+          onChange={(typed) => {
+            setQuery(typed);
+          }}
+        />
+        <div role="radiogroup" aria-label="Show" class="flex shrink-0 gap-1">
+          <For each={FILTERS}>
+            {([value, said]) => (
+              <button
+                type="button"
+                role="radio"
+                aria-checked={filter() === value}
+                class={FILTER_CHIP}
+                onClick={() => {
+                  setFilter(value);
+                }}
+              >
+                {said}
+              </button>
+            )}
+          </For>
+        </div>
+      </div>
+
+      {/* Above the squares: five rows of six fill a laptop screen, and
+          paging under them is paging a player has to scroll to reach */}
       <Row class="justify-center">
         <Button
           label="Earlier pokemon"
@@ -144,7 +319,7 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
         >
           <ArrowLeftIcon class="size-4" aria-hidden="true" />
         </Button>
-        <Meta>{span()}</Meta>
+        <Meta class="tabular-nums">{span()}</Meta>
         <Button
           label="Later pokemon"
           disabled={page() >= pages() - 1}
@@ -156,18 +331,11 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
         </Button>
       </Row>
 
-      <PokedexGrid entries={shown()} onOpen={open} />
+      <PokedexGrid entries={shown()} onOpen={open} highlight={highlight()} />
     </Panel>
   );
 }
 
-/**
- * Every pokemon there is, and how many of each the player has met.
- *
- * The record is read one component down, under this boundary: read
- * here it would throw to the page and take the world with it, and
- * this panel is re-read every time anything the player owns changes
- */
 export default function PokedexTab(props: PokedexTabProps): JSX.Element {
   const game = useGame();
 

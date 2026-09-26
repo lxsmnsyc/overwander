@@ -42,6 +42,9 @@ export const MAX_IV = 31;
  */
 const IV_BITS = 5;
 
+/** All six at their best, the largest packed value there is */
+export const MAX_PACKED_IVS = 2 ** (IV_BITS * STAT_ORDER.length) - 1;
+
 /**
  * The value of one stat, read out of the packed integer
  */

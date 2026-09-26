@@ -209,6 +209,7 @@ describe('achievements', () => {
       TrainerClass.JohtoSwimmer,
       TrainerClass.HoennSwimmer,
       TrainerClass.SinnohSwimmer,
+      TrainerClass.UnovaSwimmer,
     ]);
     expect(TRAINER_TRADES).not.toContain(TrainerClass.JohtoSwimmer);
     expect(ACHIEVEMENT_TRAINERS).toEqual(TRAINER_TRADES);
@@ -357,6 +358,7 @@ describe('achievements', () => {
           TrainerClass.JohtoAceTrainer,
           TrainerClass.HoennAceTrainer,
           TrainerClass.SinnohAceTrainer,
+          TrainerClass.UnovaAceTrainer,
           ...standing,
         ]);
       }
@@ -650,6 +652,31 @@ describe('a region’s pokedex chain', () => {
     });
 
     expect(REGION_DEXES[Regions.Sinnoh]?.milestones.at(-1)).toBe(walked.length);
+  });
+
+  it('gives Unova its own ladder, all but the four mythicals', () => {
+    expect(getDexRegions()).toContain(Regions.Unova);
+    expect(CHAINS[dexChainId(Regions.Unova)].name).toBe('Unova Pokedex');
+
+    const last = getDexQuests(Regions.Unova).get(dexQuestId(Regions.Unova, 2));
+
+    expect(last?.name).toBe('Unova Complete');
+    expect(
+      last?.rewards.some(
+        (reward) => reward.kind === QuestRewardKind.Award && reward.award === Awards.UnovaDexMedal,
+      ),
+    ).toBe(true);
+
+    // Victini, Keldeo, Meloetta and Genesect are the four left out,
+    // each called by a relic rather than walked into
+    const [from, to] = getRegionSpan(Regions.Unova) ?? [0, 0];
+    const walked = getRegisteredSpecies().filter((species) => {
+      const dex = getSpeciesData(species).dexNumber;
+
+      return isBaseForm(species) && !isMythicalSpecies(species) && dex >= from && dex <= to;
+    });
+
+    expect(REGION_DEXES[Regions.Unova]?.milestones.at(-1)).toBe(walked.length);
   });
 
   it('leaves a region with no dex alone rather than inventing one', () => {

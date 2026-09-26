@@ -18,6 +18,7 @@ import { MAX_IV_STARS, Stats, getIVStars } from '../../data/constants/stats';
 import type { Items } from '../../data/ids/items';
 import { NATURE_NAMES } from '../../data/ids/natures';
 import { getSpeciesData } from '../../data/species';
+import StatusSquares from './StatusSquares';
 import TypeBadge from '../sprites/TypeBadge';
 import { describeMove, detailAbility } from '../details';
 import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
@@ -201,6 +202,8 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
           <span class="shrink-0 tabular-nums text-muted">
             {Math.max(0, Math.round(caught().health))}/{getMaxHealth(caught())}
           </span>
+          {/* What it is still carrying from its last fight */}
+          <StatusSquares statuses={caught().statuses} />
         </div>
 
         {/* Three columns, because they answer three different

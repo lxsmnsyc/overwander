@@ -110,6 +110,11 @@ const AWARDED_CHARSETS: { sheet: string; name: string; awards: Awards[] }[] = [
   // Both of Rowan's looks, the way Kanto's medal pays both of Oak's
   { sheet: 'characters/dppt/rowan', name: 'Professor Rowan', awards: [Awards.SinnohDexMedal] },
   { sheet: 'characters/dppt/rowan-2', name: 'Professor Rowan', awards: [Awards.SinnohDexMedal] },
+  {
+    sheet: 'characters/b2w2/aurea-juniper',
+    name: 'Professor Juniper',
+    awards: [Awards.UnovaDexMedal],
+  },
 ];
 
 /**

@@ -1,5 +1,6 @@
 import BasicSprite from './basic-sprite';
 import sheetStamp from './sprite-stamps';
+import { spriteUrl } from './sprite-origin';
 
 /**
  * The still sheets, loaded once each.
@@ -16,7 +17,7 @@ import sheetStamp from './sprite-stamps';
 /**
  * Where the sheets the interface draws from live
  */
-export const UI_SPRITE_ROOT = '/sprites/ui';
+export const UI_SPRITE_ROOT = spriteUrl('/sprites/ui');
 
 const SHEETS = new Map<string, Promise<BasicSprite | null>>();
 

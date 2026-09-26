@@ -7,6 +7,10 @@ description: How a step between terrace levels works in the overworld, what a cl
 
 `levelAt` in `src/overworld/terrace.ts` says how high a cell stands. A level only counts where the cell belongs to a 2x2 block standing at least that high, so a cliff is never one cell wide. The first step stands above the beaches and wetlands, so the sea and the low shore beside it are both level 0 and a coast meets open sea without a cliff.
 
+The steps belong to the generation (`world.terraceSteps`). The first generation climbs through 3 levels and is frozen. The second climbs through 20 evenly spaced ones (`SECOND_TERRACE_COUNT`), a cliff about every ten cells. Anything written as a count of levels has to be carried over as a height (`levelBelow`), the way the cave water table is, since a level means a different height in each generation.
+
+In the second generation a town is flat: every cell within two cells of its footprint (`plateauAt`) stands on its middle's level. Only cells in a 2x2 block wholly inside that circle count, so its edge obeys the 2x2 rule like any other step and leaves no lone cell. The town's own footprint (`townAt`) is squared off the same way, since a plain circle leaves one cell sticking out at each of its four points. The cliff where the slope resumes is outside the town, so no lot, street or plaza is ever on a face. Past the levelled ground the town's skirt (`townSkirts`) lets the ground stand one more level off the town's for every step out, counted in king's moves so diagonals count as one, until the natural slope catches up. The town meets the country in a staircase of one-level cliffs with no ledge between them, so nothing can be placed on it and stranded. Where two skirts reach a cell it keeps within both.
+
 ## The edge tile is the cliff
 
 A cell standing higher than **any** of its eight neighbours is a face (`isFace` in `src/overworld/cliff.ts`). Diagonals count: a cell touching lower ground only at a corner is where the ring's inside corner is drawn, and that tile is as much the cliff as a side.

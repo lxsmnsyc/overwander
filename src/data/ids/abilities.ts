@@ -988,6 +988,12 @@ const enum Abilities {
   HeelAudience = 200367,
   // Popplio
   AriaAudience = 200368,
+  // Pikipek
+  Drumroll = 200369,
+  // Yungoos
+  ScoreToSettle = 200370,
+  // Grubbin
+  TrickleCharge = 200371,
 }
 
 export default Abilities;

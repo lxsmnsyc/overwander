@@ -6,9 +6,14 @@ import { UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
  * TropicalRainforest spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerTropicalRainforestSpawns(): void {
+  // The Pikipek line is written but waits on sprites, since the
+  // collection has drawn no Trumbeak and no finished Toucannon. Once it
+  // does, mornings and days take Pikipek in base at 24, Trumbeak in
+  // rare at 8 and Toucannon in elusive at 5
   registerSpawnPool(Biome.TropicalRainforest, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Grubbin, weight: 22 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Treecko, weight: 2 },
         { species: Species.Slakoth, weight: 20 },
@@ -19,6 +24,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [
+        { species: Species.Charjabug, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Grovyle, weight: 1 },
         { species: Species.Vigoroth, weight: 10 },
@@ -31,6 +37,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vikavolt, weight: 4 },
         { species: Species.Hawlucha, weight: 6 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Carnivine, weight: 6 },
@@ -45,6 +52,7 @@ export default function registerTropicalRainforestSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Grubbin, weight: 22 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Treecko, weight: 2 },
         { species: Species.Slakoth, weight: 20 },
@@ -55,6 +63,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [
+        { species: Species.Charjabug, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Grovyle, weight: 1 },
         { species: Species.Vigoroth, weight: 10 },
@@ -67,6 +76,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vikavolt, weight: 4 },
         { species: Species.Hawlucha, weight: 6 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Carnivine, weight: 6 },

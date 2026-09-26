@@ -268,7 +268,9 @@ describe('where a species lives', () => {
     // The Pidove and Blitzle lines name where they live, but the
     // sprite collection has drawn no Tranquill, Blitzle or Zebstrika,
     // so neither line is staged until it does. The pools they are
-    // waiting for are written as comments in the biome files
+    // waiting for are written as comments in the biome files. So are
+    // the Pikipek and Yungoos lines', since the collection has drawn no
+    // Trumbeak, finished Toucannon or Gumshoos
     const unstaged = new Set<Species>([
       Species.Phione,
       ...ROTOM_FORMS.slice(1),
@@ -300,6 +302,11 @@ describe('where a species lives', () => {
       Species.Simipour,
       Species.Dwebble,
       Species.Crustle,
+      Species.Pikipek,
+      Species.Trumbeak,
+      Species.Toucannon,
+      Species.Yungoos,
+      Species.Gumshoos,
     ]);
     const staged = new Set<Species>();
 

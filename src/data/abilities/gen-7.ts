@@ -16,4 +16,10 @@ export default function registerGen7Abilities(): void {
     name: 'Liquid Voice',
     description: 'Its sound moves are Water moves instead.',
   });
+  // Yungoos
+  registerAbility(Abilities.Stakeout, {
+    name: 'Stakeout',
+    description:
+      'Its moves hit 2x against an enemy that has not acted since it came onto the field.',
+  });
 }

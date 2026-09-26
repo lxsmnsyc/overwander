@@ -11,7 +11,8 @@ import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import { RaidKind, type RaidRecord, type RaidView, asRaidRecord } from './raid-record';
 import { hasAnyCaught } from './caught';
 import { LobbyRole } from './lobby-role';
-import { requireUid } from '../server/auth';
+import { requireUid, requireUidFor } from '../server/auth';
+import { Feature } from '../server/switches';
 import check, {
   CELL,
   CHUNK_COORDINATE,
@@ -375,7 +376,7 @@ async function enterRaidOnServer(
   check(OFFSET, offset);
   check(DEPTH, depth);
   return enterOnServer(
-    await requireUid(token),
+    await requireUidFor(token, Feature.Raids),
     x,
     y,
     cell,
@@ -423,7 +424,7 @@ async function hostMythicalOnServer(
   check(GAME_ID, item);
   check(OFFSET, offset);
   return hostMythicalOnServerSide(
-    await requireUid(token),
+    await requireUidFor(token, Feature.Raids),
     x,
     y,
     item,
@@ -623,7 +624,13 @@ async function inviteToRaidOnServer(
   check(ID, id);
   check(UID, friend);
   check(LOBBY_ROLE, role);
-  return inviteOnServer(await requireUid(token), id, friend, await syncServerClock(), role);
+  return inviteOnServer(
+    await requireUidFor(token, Feature.Raids),
+    id,
+    friend,
+    await syncServerClock(),
+    role,
+  );
 }
 
 /** Put an invite away unanswered */
@@ -686,7 +693,7 @@ async function joinRaidOnServer(
   check(TOKEN, token);
   check(ID, id);
   check(PARTY, catches);
-  return joinOnServer(await requireUid(token), id, catches);
+  return joinOnServer(await requireUidFor(token, Feature.Raids), id, catches);
 }
 
 /**
@@ -742,5 +749,5 @@ async function startRaidOnServer(token: string, id: string): Promise<string | nu
   'use server';
   check(TOKEN, token);
   check(ID, id);
-  return startOnServer(await requireUid(token), id, await syncServerClock());
+  return startOnServer(await requireUidFor(token, Feature.Raids), id, await syncServerClock());
 }

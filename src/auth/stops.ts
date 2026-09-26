@@ -1,4 +1,5 @@
-import { requireUid } from '../server/auth';
+import { requireUid, requireUidFor } from '../server/auth';
+import { Feature } from '../server/switches';
 import check, { CELL, CHUNK_COORDINATE, DEPTH, ID, OFFSET, PARTY, TOKEN } from '../server/validate';
 import {
   type StopEntry,
@@ -54,7 +55,15 @@ async function enterStopOnServer(
   check(CELL, cell);
   check(OFFSET, offset);
   check(DEPTH, depth);
-  return enterOnServer(await requireUid(token), x, y, cell, await syncServerClock(), offset, depth);
+  return enterOnServer(
+    await requireUidFor(token, Feature.Stops),
+    x,
+    y,
+    cell,
+    await syncServerClock(),
+    offset,
+    depth,
+  );
 }
 
 /**
@@ -75,7 +84,12 @@ async function startBattleOnServer(
   check(TOKEN, token);
   check(ID, stop);
   check(PARTY, catches);
-  return startOnServer(await requireUid(token), stop, catches, await syncServerClock());
+  return startOnServer(
+    await requireUidFor(token, Feature.Stops),
+    stop,
+    catches,
+    await syncServerClock(),
+  );
 }
 
 /**

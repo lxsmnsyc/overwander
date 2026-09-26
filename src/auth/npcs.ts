@@ -3,7 +3,8 @@ import type { Moves } from '../data/ids/moves';
 import Npc from '../data/overworld/npc';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { WORLD_GENERATION } from '../overworld/current';
-import { requireUid } from '../server/auth';
+import { requireUidFor } from '../server/auth';
+import { Feature } from '../server/switches';
 import check, {
   BASKET,
   CATCH_LIST,
@@ -103,7 +104,7 @@ async function breedOnServer(
   check(PARENTS, parents);
   check(OFFSET, offset);
   check(LOCALE, locale);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -152,7 +153,7 @@ async function boostOnServer(
   check(CELL, cell);
   check(ID, catchId);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -203,7 +204,7 @@ async function visitNurseOnServer(
   check(CELL, cell);
   check(CATCH_LIST, catches);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -251,7 +252,7 @@ async function groomOnServer(
   check(CELL, cell);
   check(ID, catchId);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -313,7 +314,7 @@ async function remindOnServer(
   check(GAME_ID, move);
   check(REPLACED_SLOT, replaces);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -378,7 +379,7 @@ async function tutorOnServer(
   check(GAME_ID, move);
   check(REPLACED_SLOT, replaces);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -440,7 +441,7 @@ async function channelOnServer(
   check(CELL, cell);
   check(ID, catchId);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -497,7 +498,7 @@ async function buyOnServer(
   check(BASKET, basket);
   check(OFFSET, offset);
   check(NPC, trader);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   // The server refuses a trader that is not one, and refuses a cell
   // where they are not standing — so the caller's word only picks
@@ -554,7 +555,7 @@ async function sellOnServer(
   check(BASKET, basket);
   check(OFFSET, offset);
   check(NPC, trader);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -605,7 +606,7 @@ async function buyFossilOnServer(
   check(CELL, cell);
   check(GAME_ID, item);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -670,7 +671,7 @@ async function carveOnServer(
   check(GAME_ID, item);
   check(COUNT, amount);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -716,7 +717,7 @@ async function reviveOnServer(
   check(COUNT, amount);
   check(OFFSET, offset);
   check(LOCALE, locale);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,

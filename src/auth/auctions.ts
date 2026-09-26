@@ -5,7 +5,8 @@ import {
   openAuction as openOnServerSide,
   reclaimAuction as reclaimOnServerSide,
 } from '../server/auctions';
-import { requireUid } from '../server/auth';
+import { requireUid, requireUidFor } from '../server/auth';
+import { Feature } from '../server/switches';
 import check, { AUCTION_OFFER, AUCTION_TERMS, GOLD, ID, OFFSET, TOKEN } from '../server/validate';
 import {
   AuctionLot,
@@ -418,7 +419,13 @@ async function openAuctionOnServer(
   check(AUCTION_OFFER, offer);
   check(AUCTION_TERMS, terms);
   check(OFFSET, offset);
-  return openOnServerSide(await requireUid(token), offer, terms, await syncServerClock(), offset);
+  return openOnServerSide(
+    await requireUidFor(token, Feature.Auctions),
+    offer,
+    terms,
+    await syncServerClock(),
+    offset,
+  );
 }
 
 /**
@@ -446,7 +453,12 @@ async function placeBidOnServer(token: string, id: string, amount: number): Prom
   check(TOKEN, token);
   check(ID, id);
   check(GOLD, amount);
-  return bidOnServerSide(await requireUid(token), id, amount, await syncServerClock());
+  return bidOnServerSide(
+    await requireUidFor(token, Feature.Auctions),
+    id,
+    amount,
+    await syncServerClock(),
+  );
 }
 
 /**

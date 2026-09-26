@@ -5,7 +5,8 @@ import {
   declineTrade as declineOnServerSide,
   offerTrade as offerOnServerSide,
 } from '../server/trades';
-import { requireUid } from '../server/auth';
+import { requireUid, requireUidFor } from '../server/auth';
+import { Feature } from '../server/switches';
 import check, { ID, MAYBE_ID, OFFSET, TOKEN, TRADE_OFFER } from '../server/validate';
 import { type TradeRecord, asTradeRecord } from './trade-record';
 import { syncServerClock } from './clock';
@@ -118,7 +119,12 @@ async function offerTradeOnServer(
   check(TOKEN, token);
   check(TRADE_OFFER, offer);
   check(OFFSET, offset);
-  return offerOnServerSide(await requireUid(token), offer, await syncServerClock(), offset);
+  return offerOnServerSide(
+    await requireUidFor(token, Feature.Trades),
+    offer,
+    await syncServerClock(),
+    offset,
+  );
 }
 
 /**
@@ -145,7 +151,13 @@ async function acceptTradeOnServer(
   check(ID, id);
   check(MAYBE_ID, pick);
   check(OFFSET, offset);
-  return acceptOnServerSide(await requireUid(token), id, pick, await syncServerClock(), offset);
+  return acceptOnServerSide(
+    await requireUidFor(token, Feature.Trades),
+    id,
+    pick,
+    await syncServerClock(),
+    offset,
+  );
 }
 
 /**

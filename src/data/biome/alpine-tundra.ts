@@ -14,6 +14,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Bergmite, weight: 24 },
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Bronzor, weight: 20 },
         { species: Species.Snover, weight: 20 },
@@ -24,6 +25,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
       ],
       scarce: [
+        { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Abomasnow, weight: 6 },
@@ -54,6 +56,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Bergmite, weight: 24 },
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Bronzor, weight: 20 },
         { species: Species.Snover, weight: 20 },
@@ -65,6 +68,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
       ],
       scarce: [
+        { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Abomasnow, weight: 6 },
@@ -94,6 +98,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Bergmite, weight: 24 },
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Sneasel, weight: 5 },
         { species: Species.Bronzor, weight: 20 },
@@ -104,6 +109,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
       ],
       scarce: [
+        { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Abomasnow, weight: 6 },
@@ -129,6 +135,7 @@ export default function registerAlpineTundraSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [
+        { species: Species.Bergmite, weight: 24 },
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Sneasel, weight: 5 },
         { species: Species.Bronzor, weight: 20 },
@@ -136,6 +143,7 @@ export default function registerAlpineTundraSpawns(): void {
       ],
       rare: [{ species: Species.Piloswine, weight: 5 }],
       scarce: [
+        { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Abomasnow, weight: 6 },

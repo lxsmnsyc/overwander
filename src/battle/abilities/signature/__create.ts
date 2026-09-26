@@ -22,7 +22,7 @@ import {
 } from '../../events';
 import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { isPrimalWeather, onUnitActs, slipsTraps } from '../../utils';
+import { isPrimalWeather, onUnitActs, slipsTraps, unitTarget } from '../../utils';
 import { createAbility, getAbilityHolders } from '../__create';
 
 /**
@@ -1826,4 +1826,37 @@ export function createBondAbility(
       }
     });
   });
+}
+
+/**
+ * What a version pair's two curses share: a move it lands puts the
+ * caster's own type onto the target, cast as the line's signature
+ * move so the move's own rules stand. A target already carrying that
+ * type is left alone, which is what keeps it to once each
+ */
+export function createCurseAbility(
+  ability: Abilities,
+  move: Moves,
+  type: Types,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      const target = event.target;
+      const cause = event.cause;
+
+      if (
+        !event.success ||
+        (event.flags & DamageFlags.Indirect) !== 0 ||
+        cause.type !== EffectType.Move ||
+        cause.unit.team === target.team ||
+        !cause.unit.hasAbility(ability) ||
+        target.types.has(type)
+      ) {
+        return;
+      }
+
+      cause.unit.triggerAbility(ability);
+      cause.unit.triggerMove(move, unitTarget(target), 0);
+    }),
+  );
 }

@@ -59,7 +59,7 @@ describe('egg moves', () => {
     expect(carried).toBeGreaterThan(0);
   });
 
-  it('gives them to the base stage, and to nothing that cannot breed', () => {
+  it('gives them to the base stage, and only in a family that breeds', () => {
     for (const species of getRegisteredSpecies()) {
       const data = getSpeciesData(species);
 
@@ -72,17 +72,20 @@ describe('egg moves', () => {
       for (const evolution of data.evolvesInto ?? []) {
         expect(getEggMoves(evolution.species)).toEqual([]);
       }
-      // Nothing that can never be hatched inherits anything. A baby
-      // is the exception: it is Undiscovered itself, since it cannot
-      // be a parent, and the stage above it is the one that lays it
-      const hatchable = (data.evolvesInto ?? []).some(
-        (evolution) =>
-          !new Set(getSpeciesData(evolution.species).eggGroups).has(EggGroups.NoEggsDiscovered),
-      );
+      // Egg moves belong to a family that breeds: a baby, or a form
+      // met in the wild, keeps them when some member of its family can
+      // lay an egg
+      let breeds = false;
 
-      if (!hatchable) {
-        expect(new Set(data.eggGroups).has(EggGroups.NoEggsDiscovered)).toBe(false);
+      for (const member of getRegisteredSpecies()) {
+        const other = getSpeciesData(member);
+
+        if (other.family === data.family && !other.eggGroups.includes(EggGroups.NoEggsDiscovered)) {
+          breeds = true;
+          break;
+        }
       }
+      expect(breeds, data.name).toBe(true);
     }
   });
 

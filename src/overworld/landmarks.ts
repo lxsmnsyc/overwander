@@ -49,14 +49,11 @@ export function resolveNest(
   biome: Biome,
   time: TimeOfDay,
   random: () => number,
-  featured: Families | null = null,
+  featured: readonly Families[] = [],
 ): Species | null {
   const pool = getEggPool(biome, time);
 
-  return pickFromEntries(
-    featured == null ? pool : boostFamilyEntries(pool, featured, SPECIES_DAY_WEIGHT_BOOST),
-    random,
-  );
+  return pickFromEntries(boostFamilyEntries(pool, featured, SPECIES_DAY_WEIGHT_BOOST), random);
 }
 
 /**
@@ -173,7 +170,7 @@ function fitting(entries: SpawnEntry[], groups: Set<EggGroups> | undefined): Spa
  * nothing of the kind answers null, and the caller hands over what the
  * phenomenon was carrying instead.
  *
- * The day's featured family, when one is given, crowds the pool
+ * The day's featured families, when there are any, crowd the pool
  * exactly as it crowds the overworld's
  */
 function startled(
@@ -181,14 +178,14 @@ function startled(
   biome: Biome,
   time: TimeOfDay,
   random: () => number,
-  featured: Families | null,
+  featured: readonly Families[],
   surface: SpawnSurface,
 ): Species | null {
-  const biomePool = getSpawnPool(biome, time, false, surface);
-  const pool =
-    featured == null
-      ? biomePool
-      : boostFamilyWeights(biomePool, featured, SPECIES_DAY_WEIGHT_BOOST);
+  const pool = boostFamilyWeights(
+    getSpawnPool(biome, time, false, surface),
+    featured,
+    SPECIES_DAY_WEIGHT_BOOST,
+  );
   const groups = PHENOMENON_EGG_GROUPS[phenomenon];
   const rare = random() < PHENOMENON_RARE_CHANCE;
   const [, middle, grown] = spawnRanks(pool);
@@ -229,7 +226,7 @@ export function resolvePhenomenon(
   biome: Biome,
   time: TimeOfDay,
   random: () => number,
-  featured: Families | null = null,
+  featured: readonly Families[] = [],
   surface = SpawnSurface.Land,
 ): PhenomenonReward | null {
   // One piece. Everything a phenomenon leaves is worth carrying home

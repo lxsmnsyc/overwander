@@ -1187,7 +1187,7 @@ describe('world', () => {
         const values = [0.9, 0.5, 0];
         return () => values.shift() ?? 0.999;
       })(),
-      null,
+      [],
       SpawnSurface.Water,
     );
 

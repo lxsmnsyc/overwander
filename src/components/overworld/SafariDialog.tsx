@@ -21,7 +21,7 @@ import { getSpeciesData } from '../../data/species';
 import type SafariSession from '../../overworld/safari';
 import { FEED_CATCH_BONUS, SafariState, ThrowResult, describeFlight } from '../../overworld/safari';
 import { describeAbility, describeItem } from '../details';
-import playEffect, { Effect } from '../app/sound';
+import playEffect, { Effect, playEffectAfter } from '../app/sound';
 import InventoryPicker from '../items/InventoryPicker';
 import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
@@ -225,6 +225,9 @@ function SafariBody(
     if (still) {
       playEffect(Effect.BallShake);
     } else {
+      // The throw is timed to be over as the ball lands, where the
+      // first knock starts
+      playEffect(Effect.BallThrow);
       for (let shake = 0; shake < shakes; shake += 1) {
         setTimeout(
           () => {
@@ -487,7 +490,13 @@ function SafariBody(
       // Said as the ball stops: one sound for it opening again, and
       // another for a pokemon that used the moment to bolt
       if (thrownAt.result === ThrowResult.Caught) {
-        playEffect(Effect.PokemonGet);
+        playEffect(Effect.CatchSuccess);
+        // A species this player never owned is a new line in the dex,
+        // said once the fanfare is done. Strictly false, so a dex
+        // entry still loading does not count as missing
+        if (props.owned.latest === false) {
+          playEffectAfter(Effect.DexEntry, Effect.CatchSuccess);
+        }
       }
       if (thrownAt.result === ThrowResult.BrokeFree) {
         playEffect(Effect.CatchFailed);

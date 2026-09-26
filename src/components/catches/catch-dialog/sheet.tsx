@@ -852,6 +852,9 @@ export function CatchSheetBody(
     }
     hatchEgg(catchId)
       .then((species) => {
+        if (species != null) {
+          playEffect(Effect.EggHatch);
+        }
         say(
           species == null
             ? 'It is not ready yet.'
@@ -893,7 +896,7 @@ export function CatchSheetBody(
     if (species == null) {
       say('That is no longer possible.');
     } else {
-      playEffect(Effect.PokemonGet);
+      playEffect(Effect.Evolution);
       say(said, 'leaf');
     }
     props.onRecordChanged();
@@ -952,7 +955,7 @@ export function CatchSheetBody(
     evolveCatch(catchId, into)
       .then((species) => {
         if (species != null) {
-          playEffect(Effect.PokemonGet);
+          playEffect(Effect.Evolution);
         }
         if (species == null) {
           say('That evolution is no longer available.');

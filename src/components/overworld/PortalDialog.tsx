@@ -39,6 +39,7 @@ import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-s
 import describeWhere from '../../overworld/bearing';
 import FeeLine from './npc-dialog/counters/price';
 import { failed, readable } from '../app/resource-reads';
+import playEffect, { Effect } from '../app/sound';
 
 /** The portal at twice the size it stands on the board */
 const PORTAL_SPRITE = 88;
@@ -174,6 +175,7 @@ function PortalBody(
           props.onSpent();
           return;
         }
+        playEffect(Effect.PortalCross);
         props.onTravel(arrived);
         close();
       })

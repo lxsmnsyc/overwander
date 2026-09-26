@@ -16,6 +16,11 @@
   Access-Control-Allow-Origin: *
   Cache-Control: public, max-age=31536000, immutable
 
+# The sound effects, stamped the same way by scripts/sound-stamps.ts
+/sounds/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=31536000, immutable
+
 # Except the two indexes that hand out those digests. They keep one
 # address, so they are checked with the host on every read; cached for
 # a year, a browser kept asking for sheets that had since been redrawn.

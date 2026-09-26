@@ -129,7 +129,5 @@ export default function registerPichuSpecies(): void {
     evolvesInto: undefined,
     // Met in Ilex Forest, where Celebi is, and only in the mythical band
     biomes: [Biome.TemperateForest],
-    // Never hatched, so nothing is inherited
-    learnSet: { ...PICHU.learnSet, egg: [] },
   });
 }

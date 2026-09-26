@@ -103,6 +103,8 @@ export default function registerChimechoSpecies(): void {
         Moves.Telekinesis,
         Moves.Round,
         Moves.EchoedVoice,
+        Moves.Confide,
+        Moves.DazzlingGleam,
       ],
     },
   });

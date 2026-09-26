@@ -102,6 +102,7 @@ export default function registerUmbreonSpecies(): void {
         Moves.Retaliate,
         Moves.WorkUp,
         Moves.Snarl,
+        Moves.Confide,
       ],
     },
   });

@@ -1,5 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
-import { Moves } from '../../data/ids/moves';
+import { MoveCategories, Moves } from '../../data/ids/moves';
+import { getMoveData } from '../../data/moves';
+import { guardOf } from '../moves/protect';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
@@ -16,11 +18,18 @@ const setupTimer = createTimedStatus(Statuses.Protected, DURATION);
 
 /**
  * The moves a guard does not stop by themselves: Feint walks through
- * it and Shadow Force comes back from off the field. Anything else
+ * it, Shadow Force and Phantom Force come back from off the field, and
+ * Hoopa's two moves reach round it from somewhere else. Anything else
  * that walks through, an ability among them, answers the question
  * below instead of being listed here
  */
-const WALKS_THROUGH = new Set<Moves>([Moves.Feint, Moves.ShadowForce]);
+const WALKS_THROUGH = new Set<Moves>([
+  Moves.Feint,
+  Moves.ShadowForce,
+  Moves.PhantomForce,
+  Moves.HyperspaceHole,
+  Moves.HyperspaceFury,
+]);
 
 /**
  * Guarding: everything aimed at the unit from outside is turned away
@@ -49,6 +58,15 @@ export default function setupProtectedStatus(battle: Battle): void {
     // A guard turns away what somebody else aims at it, never what the
     // unit does to itself
     if (target === event.source || guard == null) {
+      return;
+    }
+
+    // A King's Shield is raised against blows, so a status move walks
+    // straight past it without breaking it
+    if (
+      guardOf(target) === Moves.KingsShield &&
+      getMoveData(event.move).category === MoveCategories.Status
+    ) {
       return;
     }
 

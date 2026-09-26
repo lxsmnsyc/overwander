@@ -43,6 +43,7 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.Venoshock,
   Moves.Round,
+  Moves.Confide,
 ];
 
 export default function registerShroomishSpecies(): void {
@@ -161,6 +162,7 @@ export default function registerShroomishSpecies(): void {
         Moves.LowSweep,
         Moves.Retaliate,
         Moves.WorkUp,
+        Moves.PowerUpPunch,
       ],
     },
   });

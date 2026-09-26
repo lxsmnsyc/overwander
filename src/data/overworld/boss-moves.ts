@@ -52,7 +52,8 @@ import { getSpeciesData } from '../species';
  * lobby and spend the pool doing it. **Quash** would send every
  * enemy's wind-up back to the start at once. **After You**, **Ally
  * Switch** and **Bestow** are spent on a teammate a lone boss does
- * not have.
+ * not have. **Hold Hands** and **Aromatic Mist** are the same, and
+ * **Celebrate** and **Happy Hour** do nothing a boss can use.
  *
  * **Rest** is the one heal still barred. A boss may put back an
  * eighth of its pool, which is what every other heal is worth to it
@@ -95,6 +96,10 @@ const BANNED_BOSS_MOVES = new Set<Moves>([
   Moves.AfterYou,
   Moves.AllySwitch,
   Moves.Bestow,
+  Moves.HoldHands,
+  Moves.AromaticMist,
+  Moves.Celebrate,
+  Moves.HappyHour,
   // TODO: temporary. A boss is already immune to Perishing, so the
   // song costs it a move slot and does nothing. Drop this line when
   // there is something for it to do

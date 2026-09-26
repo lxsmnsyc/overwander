@@ -37,6 +37,7 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.VoltSwitch,
   Moves.WildCharge,
+  Moves.Confide,
 ];
 
 /**
@@ -141,6 +142,7 @@ export default function registerBlitzleSpecies(): void {
         42: [Moves.Agility],
         47: [Moves.WildCharge],
         53: [Moves.Thrash],
+        58: [Moves.IonDeluge],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

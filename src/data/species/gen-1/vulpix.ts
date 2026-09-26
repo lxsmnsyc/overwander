@@ -51,6 +51,7 @@ const FAMILY_TEACHABLE = [
   Moves.FoulPlay,
   Moves.Round,
   Moves.Incinerate,
+  Moves.Confide,
 ];
 
 export default function registerVulpixSpecies(): void {
@@ -88,6 +89,7 @@ export default function registerVulpixSpecies(): void {
       level: {
         1: [Moves.Ember, Moves.TailWhip],
         7: [Moves.QuickAttack],
+        9: [Moves.BabyDollEyes],
         13: [Moves.Roar],
         17: [Moves.WillOWisp],
         19: [Moves.ConfuseRay],

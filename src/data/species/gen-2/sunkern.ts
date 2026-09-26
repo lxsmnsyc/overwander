@@ -46,6 +46,7 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.AfterYou,
   Moves.Round,
+  Moves.Confide,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll, Abilities.SolarPower];
@@ -100,6 +101,7 @@ export default function registerSunkernSpecies(): void {
         Moves.HelpingHand,
         Moves.LeechSeed,
         Moves.NaturePower,
+        Moves.GrassyTerrain,
       ],
     },
   });
@@ -135,13 +137,14 @@ export default function registerSunkernSpecies(): void {
       level: {
         18: [Moves.Ingrain],
         25: [Moves.BulletSeed, Moves.WorrySeed],
-        1: [Moves.Absorb, Moves.Pound],
+        1: [Moves.Absorb, Moves.Pound, Moves.FlowerShield],
         4: [Moves.Growth],
         10: [Moves.RazorLeaf],
         19: [Moves.SunnyDay],
         31: [Moves.PetalDance],
         43: [Moves.LeafStorm],
         46: [Moves.SolarBeam],
+        50: [Moves.PetalBlizzard],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.SeedBomb],
     },

@@ -95,6 +95,7 @@ export default function registerTropiusSpecies(): void {
         Moves.WorrySeed,
         Moves.Round,
         Moves.Bulldoze,
+        Moves.Confide,
       ],
       egg: [Moves.LeechSeed, Moves.Headbutt, Moves.Slam, Moves.RazorWind, Moves.NaturePower],
     },

@@ -66,6 +66,8 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Uproar,
   Moves.ZenHeadbutt,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 /**

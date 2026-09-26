@@ -101,6 +101,11 @@ export function decay(share: number): number {
   return Math.max(0, 1 - share);
 }
 
+/** Full until `from`, then gone by the end. */
+export function late(share: number, from: number): number {
+  return share < from ? 1 : Math.max(0, 1 - (share - from) / (1 - from));
+}
+
 export interface Painted {
   color: string;
   alpha?: number;

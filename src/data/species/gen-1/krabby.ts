@@ -57,6 +57,7 @@ const FAMILY_TEACHABLE = [
   Moves.HoneClaws,
   Moves.Round,
   Moves.Scald,
+  Moves.Confide,
 ];
 
 const FAMILY_ABILITIES = [Abilities.HyperCutter, Abilities.ShellArmor];

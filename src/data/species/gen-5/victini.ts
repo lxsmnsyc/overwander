@@ -142,6 +142,9 @@ export default function registerVictiniSpecies(): void {
         Moves.WillOWisp,
         Moves.WorkUp,
         Moves.ZenHeadbutt,
+        Moves.Confide,
+        Moves.DazzlingGleam,
+        Moves.PowerUpPunch,
       ],
     },
   });

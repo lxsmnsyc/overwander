@@ -49,6 +49,7 @@ export default function registerFireflySpecies(): void {
         33: [Moves.HelpingHand],
         37: [Moves.DoubleEdge, Moves.ZenHeadbutt],
         41: [Moves.BugBuzz],
+        43: [Moves.PlayRough],
       },
       teachable: [
         Moves.FocusPunch,
@@ -108,6 +109,9 @@ export default function registerFireflySpecies(): void {
         Moves.Round,
         Moves.Acrobatics,
         Moves.StruggleBug,
+        Moves.Confide,
+        Moves.DazzlingGleam,
+        Moves.PowerUpPunch,
       ],
       egg: [Moves.BatonPass, Moves.SilverWind, Moves.Trick],
     },
@@ -138,7 +142,7 @@ export default function registerFireflySpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Tackle],
+        1: [Moves.Tackle, Moves.PlayNice],
         5: [Moves.SweetScent],
         9: [Moves.Charm],
         13: [Moves.Moonlight],
@@ -149,6 +153,7 @@ export default function registerFireflySpecies(): void {
         33: [Moves.HelpingHand],
         37: [Moves.Covet, Moves.ZenHeadbutt],
         41: [Moves.BugBuzz],
+        43: [Moves.PlayRough],
       },
       teachable: [
         Moves.FocusPunch,
@@ -208,6 +213,9 @@ export default function registerFireflySpecies(): void {
         Moves.Round,
         Moves.Acrobatics,
         Moves.StruggleBug,
+        Moves.Confide,
+        Moves.DazzlingGleam,
+        Moves.PowerUpPunch,
       ],
       egg: [Moves.BatonPass, Moves.Growth, Moves.SilverWind],
     },

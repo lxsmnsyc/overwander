@@ -4,18 +4,26 @@ import { decay, lighten, mix, noise, spread, swell } from '../__paint';
 import {
   CANNON_ARRIVE,
   GRIP_CLOSE,
+  JETSTREAM_FIRES,
   LUSTRE_GATHER,
+  OVERLOAD_DRIVE,
+  OVERLOAD_GATHER,
+  OVERLOAD_HOLD,
   RAINBOW,
+  RESOLUTE_CUTS,
+  RESOLUTE_FINALE,
+  SEED_FLARES,
   STALL_BREAK,
   STALL_FREEZE,
   STARFALL_DROP,
   SURGE_PULL,
+  VERDICT_WHEEL,
   VOID_RIM,
   gapeOf,
 } from '../effect/legends';
 import { type EffectShape, many } from '../effect/shapes';
 import { backToward } from './contact';
-import { TAU, arcing, debris, gathering, smoke, sparks } from './pieces';
+import { TAU, arcing, debris, gathering, jet, sickle, smoke, sparks } from './pieces';
 import {
   type LitShapePainter,
   aside,
@@ -69,26 +77,6 @@ function shaft(kit: EffectBatch, ground: Spot, reach: number, held: number, colo
 
   kit.pool(ground, reach * 0.9, colour, decay(hit) * 0.7);
   kit.ripple(ground, reach * (0.2 + hit * 0.8), 0.1, lighten(colour, 0.3), decay(hit));
-}
-
-/** A jet out of the floor, of fire or of water */
-function jet(
-  kit: EffectBatch,
-  base: Spot,
-  height: number,
-  width: number,
-  colour: string,
-  hot: string,
-  alpha: number,
-  flow: number,
-): void {
-  const path: Spot[] = [];
-
-  for (let step = 0; step <= 6; step += 1) {
-    path.push([base[0], (step / 6) * height, base[2]]);
-  }
-  kit.ribbon(path, width * 2, colour, alpha * 0.45, flow);
-  kit.ribbon(path, width, hot, alpha, flow * 1.4);
 }
 
 /** A great hand of four fingers reaching in from one side */
@@ -191,43 +179,80 @@ const legends = {
     }
   },
 
-  // Space torn open: a cut across it that gapes onto the dark and snaps shut
+  // Space warping round it, two tears opening across it onto the dark between the stars, then snapping shut in pieces
   Rend(kit, stage, share, { paint, seed, weight }) {
     const at = landed(stage);
+    const floor = floorOf(at);
     const reach = reachOf(stage, weight);
     const colour = paint.color;
-    const from = aside(kit, at, -reach * 1.6, reach * 1.1);
-    const to = aside(kit, at, reach * 1.6, -reach * 1.1);
-    const drawn = Math.min(1, share / 0.2);
-    const gape = gapeOf(share);
-    const angle = kit.angleOn(from, to);
-    const middle = toward(from, to, drawn / 2);
+    const light = lighten(colour, 0.4);
     const shown = share < 0.7 ? 1 : Math.min(1, decay(share) * 3);
+    const tears: [from: Spot, to: Spot, drawn: number, gape: number][] = [
+      [
+        aside(kit, at, -reach * 2.2, reach * 1.5),
+        aside(kit, at, reach * 2.2, -reach * 1.5),
+        Math.min(1, share / 0.2),
+        gapeOf(share),
+      ],
+      [
+        aside(kit, at, -reach * 2, -reach * 1.1),
+        aside(kit, at, reach * 2, reach * 1.1),
+        Math.min(1, Math.max(0, (share - 0.2) / 0.15)),
+        share < 0.7 ? Math.min(1, Math.max(0, (share - 0.3) / 0.35)) : gapeOf(share),
+      ],
+    ];
+    const gape = gapeOf(share);
 
-    kit.glow(at, reach * (0.8 + gape * 0.8), colour, gape * 0.45, 0.3);
-    kit.streak(
-      middle,
-      reach * 1.94 * drawn,
-      reach * (0.1 + gape * 0.45),
-      angle,
-      lighten(colour, 0.3),
-      shown,
-    );
-    kit.streak(middle, reach * 1.84 * drawn, reach * gape * 0.32, angle, '#12061c', gape, {
-      add: 0,
-    });
-    // Motes drawn into the tear while it is open
-    for (let mote = 0; mote < many(10, weight); mote += 1) {
+    for (let band = 0; band < 3; band += 1) {
+      const held = (share * 2 + band / 3) % 1;
+
+      kit.oval(
+        at,
+        reach * (3 - held * 2.4),
+        reach * (3 - held * 2.4) * 0.45,
+        band * 1.05 + share * 2,
+        0.05,
+        light,
+        swell(held) * shown * 0.7,
+      );
+    }
+    kit.glow(at, reach * (1 + gape * 1.2), colour, gape * 0.5, 0.3);
+    kit.pool(floor, reach * (1.6 + gape * 1.4), colour, gape * 0.4);
+    for (const [index, [from, to, drawn, open]] of tears.entries()) {
+      if (drawn <= 0) {
+        continue;
+      }
+      const angle = kit.angleOn(from, to);
+      const middle = toward(from, to, drawn / 2);
+      const long = Math.hypot(to[0] - from[0], to[1] - from[1], to[2] - from[2]) / 2;
+
+      kit.streak(middle, long * drawn, reach * (0.12 + open * 0.55), angle, light, shown);
+      kit.streak(middle, long * 0.95 * drawn, reach * open * 0.4, angle, '#12061c', open, {
+        add: 0,
+      });
+      // Stars showing through the dark inside it
+      for (let glint = 0; glint < 5; glint += 1) {
+        kit.star(
+          toward(from, to, (glint + 0.5 + spread(seed, glint + index * 9) * 0.3) / 5),
+          reach * 0.14 * open,
+          share * 4 + glint,
+          '#ffffff',
+          open * swell((share * 3 + noise(seed, glint + index * 9)) % 1),
+        );
+      }
+    }
+    // Motes drawn into the tears while they are open
+    for (let mote = 0; mote < many(14, weight); mote += 1) {
       const held = (share * 1.5 + noise(seed, mote)) % 1;
 
       kit.glow(
         aside(
           kit,
           at,
-          spread(seed, mote + 10) * reach * 2 * (1 - held),
-          spread(seed, mote + 20) * reach * 1.5 * (1 - held),
+          spread(seed, mote + 10) * reach * 2.6 * (1 - held),
+          spread(seed, mote + 20) * reach * 1.8 * (1 - held),
         ),
-        reach * 0.07,
+        reach * 0.08,
         lighten(colour, 0.5),
         swell(held) * gape,
         0.8,
@@ -238,27 +263,62 @@ const legends = {
     }
     const snap = (share - 0.7) / 0.3;
 
-    kit.star(at, reach * (1 + snap * 1.5), angle, '#ffffff', decay(snap));
-    kit.ring(at, reach * (0.6 + snap * 2), 0.08, lighten(colour, 0.4), decay(snap));
-    sparks(kit, at, reach * 1.4, many(8, weight), seed, snap, lighten(colour, 0.5), decay(snap));
+    kit.star(at, reach * (1.4 + snap * 2.4), 0.4, '#ffffff', decay(Math.min(1, snap * 2)));
+    kit.ring(at, reach * (0.6 + snap * 3), 0.08, light, decay(snap));
+    kit.ripple(floor, reach * (0.8 + snap * 3), 0.08, colour, decay(snap) * 0.8);
+    for (let piece = 0; piece < many(14, weight); piece += 1) {
+      kit.shard(
+        thrown(at, seed, piece, snap, reach * 3, reach * 2),
+        reach * 0.3,
+        piece + snap * 6,
+        piece % 2 === 0 ? light : '#ffffff',
+        decay(snap),
+        { add: 0.5 },
+      );
+    }
+    sparks(kit, at, reach * 2, many(10, weight), seed, snap, lighten(colour, 0.5), decay(snap));
   },
 
-  // Shafts of light coming down all round it, and the light gathering on it
+  // A wheel of light turning over it, shafts coming down all round it, then a pillar of judgement on it
   Verdict(kit, stage, share, { paint, seed, weight }) {
     const at = landed(stage);
     const floor = floorOf(at);
     const reach = reachOf(stage, weight);
     const colour = paint.color;
-    const shafts = many(6, weight);
+    const light = lighten(colour, 0.5);
+    const wheel = Math.min(1, share / VERDICT_WHEEL);
+    const shown = late(share, 0.7);
+    const crown = aside(kit, at, 0, reach * 5);
+    const shafts = many(10, weight);
 
+    kit.ripple(crown, reach * 2.2 * wheel, 0.08, light, shown * wheel);
+    kit.glow(crown, reach * 1.2 * wheel, colour, shown * 0.5, 0.4);
+    for (let glint = 0; glint < 12; glint += 1) {
+      const angle = (glint / 12) * TAU + share * 3;
+
+      kit.star(
+        [
+          crown[0] + Math.cos(angle) * reach * 2.2 * wheel,
+          crown[1],
+          crown[2] + Math.sin(angle) * reach * 2.2 * wheel,
+        ],
+        reach * 0.3,
+        angle,
+        '#ffffff',
+        shown * wheel,
+      );
+    }
     for (let one = 0; one < shafts; one += 1) {
-      const held = staged(share, 1.6, (one / shafts) * 0.5);
+      const held = Math.max(
+        0,
+        Math.min(1, (share - VERDICT_WHEEL * 0.8 - (one / shafts) * 0.3) * 1.8),
+      );
 
       if (held <= 0) {
         continue;
       }
       const angle = (one / shafts) * TAU + noise(seed, one) * 0.5;
-      const round = reach * (1.2 + noise(seed, one + 10) * 0.6);
+      const round = reach * (1.4 + noise(seed, one + 10) * 0.8);
 
       shaft(
         kit,
@@ -268,52 +328,102 @@ const legends = {
         colour,
       );
     }
-    if (share <= 0.5) {
+    if (share <= 0.55) {
       return;
     }
-    const judged = (share - 0.5) * 2;
+    const judged = (share - 0.55) / 0.45;
 
-    kit.pool(floor, reach * 3, colour, swell(judged) * 0.6);
-    kit.glow(at, reach * (0.8 + judged * 1.2), colour, swell(judged) * 0.9, 1);
-    sparks(kit, at, reach * 1.6, many(8, weight), seed, judged, '#ffffff', swell(judged));
+    jet(
+      kit,
+      floor,
+      reach * 7,
+      reach * 0.9 * decay(judged),
+      colour,
+      '#ffffff',
+      decay(judged),
+      share * 12,
+    );
+    kit.pool(floor, reach * (2.4 + judged * 2), colour, decay(judged) * 0.7);
+    kit.glow(at, reach * (1 + judged * 1.6), light, decay(judged));
+    kit.star(at, reach * (1.6 + judged * 2.4), judged, '#ffffff', decay(Math.min(1, judged * 2.5)));
+    kit.ring(at, reach * (0.6 + judged * 3), 0.1, light, decay(judged));
+    kit.ripple(floor, reach * (0.8 + judged * 3), 0.1, colour, decay(judged) * 0.8);
+    sparks(kit, at, reach * (1.6 + judged * 2), 14, seed, judged, '#ffffff', decay(judged));
   },
 
-  // A flash on it and the light bursting upward off it
+  // Light drawn in across the ground under it, then flaring straight up in a column and rays
   Sunburst(kit, stage, share, { paint, seed, weight }) {
     const at = landed(stage);
+    const floor = floorOf(at);
     const reach = reachOf(stage, weight);
-    const light = lighten(paint.color, 0.6);
-    const flash = share < 0.12 ? share / 0.12 : decay((share - 0.12) / 0.88);
+    const colour = paint.color;
+    const light = lighten(colour, 0.6);
 
-    kit.pool(floorOf(at), reach * (1.6 + share * 2), paint.color, flash * 0.7);
-    kit.glow(at, reach * (0.6 + flash * 1.6), light, flash, 1);
-    for (let ray = 0; ray < 7; ray += 1) {
-      const angle = Math.PI / 2 + (ray / 6 - 0.5) * 1.8;
-      const length = reach * (1 + share * 3.5);
+    if (share < SEED_FLARES) {
+      const gather = share / SEED_FLARES;
+
+      kit.pool(floor, reach * (0.6 + gather * 1.8), colour, gather * 0.7);
+      kit.ripple(floor, reach * (2.6 - gather * 1.8), 0.1, light, gather);
+      kit.glow(at, reach * 0.8 * gather, light, gather * 0.6);
+      for (let mote = 0; mote < many(12, weight); mote += 1) {
+        const held = (share * 3 + noise(seed, mote)) % 1;
+        const angle = noise(seed, mote + 10) * TAU;
+        const out = reach * 2.6 * (1 - held);
+
+        kit.glow(
+          [floor[0] + Math.cos(angle) * out, 0.1, floor[2] + Math.sin(angle) * out],
+          reach * 0.1,
+          light,
+          swell(held),
+          0.8,
+        );
+      }
+      return;
+    }
+    const flare = (share - SEED_FLARES) / (1 - SEED_FLARES);
+    const flash = flare < 0.1 ? flare / 0.1 : decay((flare - 0.1) / 0.9);
+
+    jet(
+      kit,
+      floor,
+      reach * 7 * Math.min(1, flare * 4),
+      reach * 1.1 * flash,
+      colour,
+      '#ffffff',
+      flash,
+      share * 12,
+    );
+    kit.pool(floor, reach * (2.4 + flare * 2.4), colour, flash * 0.8, { add: 0.5 });
+    kit.glow(at, reach * (0.8 + flash * 2), light, flash, 1);
+    kit.star(at, reach * (2 + flare * 3), flare, '#ffffff', flash);
+    for (let ray = 0; ray < 12; ray += 1) {
+      const angle = (ray / 12) * TAU + noise(seed, ray) * 0.2;
+      const length = reach * (1 + flare * 4.5);
 
       kit.ribbon(
         [at, aside(kit, at, Math.cos(angle) * length, Math.sin(angle) * length)],
-        reach * 0.18 * flash,
+        reach * 0.2 * flash,
         light,
         flash * 0.8,
       );
     }
-    for (let mote = 0; mote < many(14, weight); mote += 1) {
+    for (let spore = 0; spore < many(18, weight); spore += 1) {
       kit.glow(
         aside(
           kit,
           at,
-          spread(seed, mote) * reach * 1.4 * share,
-          share * reach * (2 + noise(seed, mote + 20) * 3),
-          spread(seed, mote + 40) * reach * share,
+          spread(seed, spore) * reach * 2 * flare,
+          flare * reach * (2 + noise(seed, spore + 20) * 4),
+          spread(seed, spore + 40) * reach * flare,
         ),
-        reach * 0.08,
+        reach * 0.09,
         light,
-        decay(share),
+        decay(flare),
         0.9,
       );
     }
-    kit.ring(at, reach * (0.5 + share * 2.4), 0.06, light, decay(share));
+    kit.ring(at, reach * (0.5 + flare * 3), 0.06, light, decay(flare));
+    kit.ripple(floor, reach * (0.8 + flare * 3.2), 0.08, colour, decay(flare) * 0.8);
   },
 
   // It goes dark, and the cut comes out of the dark from behind it
@@ -920,6 +1030,245 @@ const legends = {
         reach * 0.07,
         foam,
         late(splash, 0.5),
+      );
+    }
+  },
+  // Psychic power gathered round the caster, a shell of shards hung round it, then all driven in at once
+  Overload(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const light = lighten(colour, 0.5);
+    const count = many(12, weight);
+
+    if (share < OVERLOAD_GATHER + 0.1) {
+      const charge = Math.min(1, share / OVERLOAD_GATHER);
+      const kept = share < OVERLOAD_GATHER ? 1 : decay((share - OVERLOAD_GATHER) / 0.1);
+
+      kit.glow(stage.source, reach * (0.6 + charge * 1.1), colour, charge * kept * 0.8, 0.4);
+      for (let band = 0; band < 3; band += 1) {
+        kit.oval(
+          stage.source,
+          reach * (1.4 + band * 0.3),
+          reach * 0.45,
+          share * 6 + band * 1.05,
+          0.08,
+          light,
+          charge * kept * 0.8,
+        );
+      }
+      gathering(kit, stage.source, reach * 2, 12, seed, share, light);
+    }
+    if (share < OVERLOAD_GATHER) {
+      return;
+    }
+    const drive = Math.min(1, Math.max(0, (share - OVERLOAD_HOLD) / OVERLOAD_DRIVE));
+
+    if (drive < 1) {
+      const appear = Math.min(1, (share - OVERLOAD_GATHER) / 0.1);
+
+      kit.glow(at, reach * 1.2, colour, appear * 0.35, 0.2);
+      for (let band = 0; band < 2; band += 1) {
+        const held = (share * 3 + band / 2) % 1;
+
+        kit.ring(at, reach * (2.6 - held * 1.8), 0.06, light, swell(held) * appear);
+      }
+      for (let shard = 0; shard < count; shard += 1) {
+        const angle = (shard / count) * TAU + noise(seed, shard) * 0.3 + share * 1.2;
+        const tilt = (noise(seed, shard + 10) - 0.5) * Math.PI * 0.8;
+        const out = reach * (2.4 - drive * 2.1) + reach * 0.3;
+        const spot: Spot = [
+          at[0] + Math.cos(angle) * Math.cos(tilt) * out,
+          at[1] + Math.sin(tilt) * out,
+          at[2] + Math.sin(angle) * Math.cos(tilt) * out,
+        ];
+
+        // A streak is pointed at both ends, which is the shard's edge
+        kit.streak(spot, reach * 0.45, reach * 0.16, kit.angleOn(spot, at), light, appear);
+        kit.glow(spot, reach * 0.25, colour, appear * 0.6, 0.6);
+      }
+      return;
+    }
+    const hit = (share - OVERLOAD_HOLD - OVERLOAD_DRIVE) / (1 - OVERLOAD_HOLD - OVERLOAD_DRIVE);
+
+    kit.pool(floor, reach * (2 + hit * 2.4), colour, decay(hit) * 0.7, { add: 0.4 });
+    kit.glow(at, reach * (1 + hit * 2), light, decay(Math.min(1, hit * 1.3)));
+    kit.star(at, reach * (1.8 + hit * 2.4), hit, '#ffffff', decay(Math.min(1, hit * 2.5)));
+    for (let wave = 0; wave < 3; wave += 1) {
+      const held = staged(hit, 1.6, wave * 0.2);
+
+      if (held > 0) {
+        const radius = reach * (0.6 + held * 3.2);
+
+        kit.oval(at, radius, radius * 0.35, wave * 1.05, 0.06, light, decay(held));
+      }
+    }
+    kit.ripple(floor, reach * (0.8 + hit * 3), 0.1, colour, decay(hit) * 0.8);
+    for (let shard = 0; shard < count; shard += 1) {
+      const angle = (shard / count) * TAU + noise(seed, shard) * 0.3;
+      const out = reach * (0.6 + hit * 3);
+
+      kit.streak(
+        aside(kit, at, Math.cos(angle) * out, Math.sin(angle) * out),
+        reach * 0.4,
+        reach * 0.12,
+        angle,
+        light,
+        decay(hit),
+      );
+    }
+    sparks(kit, at, reach * (1.6 + hit * 1.6), 12, seed, hit, '#ffffff', decay(hit));
+  },
+
+  // Air wound into a ball on the caster, loosed as a spiralling blast, and bursting over it in a gale
+  Jetstream(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const light = lighten(colour, 0.6);
+
+    if (share < JETSTREAM_FIRES + 0.1) {
+      const charge = Math.min(1, share / JETSTREAM_FIRES);
+      const kept = share < JETSTREAM_FIRES ? 1 : decay((share - JETSTREAM_FIRES) / 0.1);
+
+      kit.glow(stage.source, reach * (0.5 + charge * 0.9), colour, charge * kept * 0.7, 0.5);
+      for (let gust = 0; gust < 8; gust += 1) {
+        const angle = (gust / 8) * TAU + share * 14;
+        const out = reach * (1.6 - charge * 0.8);
+
+        kit.streak(
+          aside(kit, stage.source, Math.cos(angle) * out, Math.sin(angle) * out),
+          reach * 0.5,
+          reach * 0.05,
+          angle + Math.PI / 2,
+          light,
+          charge * kept * 0.8,
+        );
+      }
+    }
+    if (share < JETSTREAM_FIRES) {
+      return;
+    }
+    const blow = (share - JETSTREAM_FIRES) / (1 - JETSTREAM_FIRES);
+    const drawn = Math.min(1, blow * 5);
+    const kept = late(blow, 0.6);
+    const core: Spot[] = [];
+    const strands: Spot[][] = [[], [], []];
+
+    for (let step = 0; step <= 14; step += 1) {
+      const along = (step / 14) * drawn;
+      const base = toward(stage.source, at, along);
+      const widen = reach * (0.3 + along * 0.9);
+
+      core.push(base);
+      for (const [strand, path] of strands.entries()) {
+        const turn = along * TAU * 3 - share * 30 + (strand / 3) * TAU;
+
+        path.push(aside(kit, base, 0, Math.sin(turn) * widen, Math.cos(turn) * widen));
+      }
+    }
+    kit.ribbon(core, reach * 1.4, colour, kept * 0.4, share * 10);
+    kit.ribbon(core, reach * 0.5, light, kept * 0.9, share * 14);
+    kit.ribbon(core, reach * 0.16, '#ffffff', kept);
+    for (const path of strands) {
+      kit.ribbon(path, reach * 0.1, '#ffffff', kept * 0.7);
+    }
+    if (drawn < 1) {
+      return;
+    }
+    const hit = (blow - 0.2) / 0.8;
+
+    kit.glow(at, reach * (1 + hit * 1.6), light, decay(hit));
+    kit.star(at, reach * (1.4 + hit * 2), 0, '#ffffff', decay(Math.min(1, hit * 2.5)));
+    for (let wave = 0; wave < 2; wave += 1) {
+      const held = staged(hit, 1.5, wave * 0.3);
+
+      if (held > 0) {
+        kit.ring(at, reach * (0.6 + held * 3), 0.08, light, decay(held));
+        kit.ripple(floor, reach * (0.8 + held * 3), 0.08, colour, decay(held) * 0.8);
+      }
+    }
+    for (let gust = 0; gust < many(14, weight); gust += 1) {
+      const angle = (gust / 14) * TAU + noise(seed, gust) * 0.4;
+      const out = reach * (0.6 + hit * 3.4);
+
+      kit.streak(
+        aside(kit, at, Math.cos(angle) * out, Math.sin(angle) * out * 0.8),
+        reach * 0.6 * (1 - hit * 0.5),
+        reach * 0.05,
+        angle,
+        light,
+        decay(hit),
+      );
+    }
+    smoke(kit, floor, reach * 2.4, 6, seed, hit, '#f4f8fc', decay(hit) * 0.5);
+  },
+
+  // A blade of light drawn in three quick cuts across it, the cuts left hanging, then going off together
+  Resolute(kit, stage, share, { paint, seed, weight }) {
+    const at = landed(stage);
+    const floor = floorOf(at);
+    const reach = reachOf(stage, weight);
+    const colour = paint.color;
+    const light = lighten(colour, 0.5);
+    const [first] = RESOLUTE_CUTS[0];
+
+    // The blade catching the light where the first cut starts
+    if (share < 0.16) {
+      kit.star(
+        aside(kit, at, Math.cos(first) * reach * 1.6, Math.sin(first) * reach * 1.6),
+        reach * 0.8,
+        share * 6,
+        '#ffffff',
+        swell(share / 0.16),
+      );
+    }
+    for (const [index, [from, to]] of RESOLUTE_CUTS.entries()) {
+      const start = 0.08 + index * 0.16;
+      const swing = (share - start) / 0.12;
+
+      if (swing <= 0) {
+        continue;
+      }
+      const end = from + (to - from) * Math.min(1, swing);
+      const kept = late(share, RESOLUTE_FINALE + 0.1);
+
+      sickle(kit, at, reach * 1.6, from, end, reach * 0.45, colour, kept * 0.6);
+      sickle(kit, at, reach * 1.6, from, end, reach * 0.16, '#ffffff', kept);
+      if (swing < 1) {
+        kit.streak(
+          aside(kit, at, Math.cos(end) * reach * 1.6, Math.sin(end) * reach * 1.6),
+          reach * 1.2,
+          reach * 0.14,
+          end + Math.PI / 2,
+          light,
+          1,
+        );
+        continue;
+      }
+      const after = Math.min(1, (swing - 1) / 2);
+
+      sparks(kit, at, reach * 1.2, 6, seed + index, after, light, decay(after));
+    }
+    if (share < RESOLUTE_FINALE) {
+      return;
+    }
+    const finale = (share - RESOLUTE_FINALE) / (1 - RESOLUTE_FINALE);
+
+    kit.pool(floor, reach * (2 + finale * 2), colour, decay(finale) * 0.7, { add: 0.4 });
+    kit.glow(at, reach * (1 + finale * 1.6), light, decay(finale));
+    kit.star(at, reach * (1.6 + finale * 2.4), 0.4, '#ffffff', decay(Math.min(1, finale * 2.5)));
+    kit.ring(at, reach * (0.6 + finale * 3), 0.08, light, decay(finale));
+    kit.ripple(floor, reach * (0.8 + finale * 3), 0.08, colour, decay(finale) * 0.8);
+    for (let drop = 0; drop < many(12, weight); drop += 1) {
+      kit.trail(
+        thrown(at, seed, drop, Math.max(0, finale - 0.07), reach * 2.6, reach * 1.6),
+        thrown(at, seed, drop, finale, reach * 2.6, reach * 1.6),
+        reach * 0.07,
+        light,
+        late(finale, 0.5),
       );
     }
   },

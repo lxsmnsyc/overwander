@@ -124,6 +124,9 @@ export default function registerDusknoirSpecies(): void {
         Moves.Trick,
         Moves.TrickRoom,
         Moves.WillOWisp,
+        Moves.Confide,
+        Moves.Infestation,
+        Moves.PowerUpPunch,
       ],
     },
   });

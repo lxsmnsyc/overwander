@@ -112,6 +112,8 @@ export default function registerGirafarigSpecies(): void {
         Moves.Retaliate,
         Moves.Bulldoze,
         Moves.WorkUp,
+        Moves.Confide,
+        Moves.DazzlingGleam,
       ],
       egg: [
         Moves.Amnesia,

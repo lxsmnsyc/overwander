@@ -62,6 +62,7 @@ const FAMILY_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.Retaliate,
   Moves.WorkUp,
+  Moves.Confide,
 ];
 
 export default function registerZigzagoonSpecies(): void {
@@ -100,6 +101,7 @@ export default function registerZigzagoonSpecies(): void {
         1: [Moves.Tackle, Moves.Growl],
         5: [Moves.TailWhip],
         9: [Moves.Headbutt],
+        12: [Moves.BabyDollEyes],
         13: [Moves.SandAttack],
         17: [Moves.OdorSleuth],
         21: [Moves.MudSport],
@@ -144,7 +146,15 @@ export default function registerZigzagoonSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.Growl, Moves.TailWhip, Moves.Headbutt, Moves.Switcheroo],
+        1: [
+          Moves.Tackle,
+          Moves.Growl,
+          Moves.TailWhip,
+          Moves.Headbutt,
+          Moves.Switcheroo,
+          Moves.Rototiller,
+          Moves.PlayRough,
+        ],
         13: [Moves.SandAttack],
         17: [Moves.OdorSleuth],
         23: [Moves.MudSport],

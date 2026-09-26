@@ -100,6 +100,7 @@ export default function registerFoongusSpecies(): void {
         Moves.Toxic,
         Moves.Venoshock,
         Moves.WorrySeed,
+        Moves.Confide,
       ],
     },
   });
@@ -179,6 +180,7 @@ export default function registerFoongusSpecies(): void {
         Moves.Toxic,
         Moves.Venoshock,
         Moves.WorrySeed,
+        Moves.Confide,
       ],
     },
   });

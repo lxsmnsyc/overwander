@@ -53,6 +53,7 @@ const SWORD_TEACHABLE = [
   Moves.WorkUp,
   Moves.XScissor,
   Moves.ZenHeadbutt,
+  Moves.Confide,
 ];
 
 /** The levels the three share, filled in with each one's own move */

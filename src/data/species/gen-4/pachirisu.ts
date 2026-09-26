@@ -46,6 +46,7 @@ export default function registerPachirisuSpecies(): void {
         9: [Moves.Charm],
         13: [Moves.Spark],
         17: [Moves.Endure],
+        19: [Moves.Nuzzle],
         21: [Moves.Swift],
         25: [Moves.SweetKiss],
         29: [Moves.Discharge],
@@ -94,7 +95,9 @@ export default function registerPachirisuSpecies(): void {
         Moves.Toxic,
         Moves.UTurn,
         Moves.Uproar,
+        Moves.Confide,
       ],
+      egg: [Moves.IonDeluge],
     },
   });
 }

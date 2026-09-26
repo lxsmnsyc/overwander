@@ -3,9 +3,14 @@ import {
   BattleEvents,
   type CheckUnitAIMoveScoreEvent,
   type CheckUnitAIMoveUsableEvent,
+  EffectType,
   MoveTargetType,
 } from '../../../src/battle/events';
 import { beatUpStrikes } from '../../../src/battle/moves/beat-up';
+import { layersUnder } from '../../../src/battle/moves/spikes';
+import { stonesOver } from '../../../src/battle/moves/stealth-rock';
+import { webOver } from '../../../src/battle/moves/sticky-web';
+import { toxicLayersUnder } from '../../../src/battle/moves/toxic-spikes';
 import Abilities from '../../../src/data/ids/abilities';
 import { PERISH_DURATION } from '../../../src/battle/status/perishing';
 import type Unit from '../../../src/battle/unit';
@@ -413,6 +418,39 @@ describe('Spikes', () => {
     walking.setHealth(160);
     walking.enter();
     expect(walking.health).toBe(160);
+  });
+
+  it('sweeps every hazard off its own side with Rapid Spin, and spins free of a bind and a seed', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const layer = createUnit(battle, teamA);
+    const spinner = createUnit(battle, teamB);
+    const own = { type: MoveTargetType.Team, team: teamB } as const;
+    const far = { type: MoveTargetType.Team, team: teamA } as const;
+    const cause = { type: EffectType.None } as const;
+
+    pinRandom(battle, 1);
+    layer.enter();
+    spinner.enter();
+
+    layer.triggerMoveEffect(Moves.Spikes, own, 0);
+    layer.triggerMoveEffect(Moves.ToxicSpikes, own, 0);
+    layer.triggerMoveEffect(Moves.StealthRock, own, 0);
+    layer.triggerMoveEffect(Moves.StickyWeb, own, 0);
+    spinner.triggerMoveEffect(Moves.StealthRock, far, 0);
+    spinner.addStatus(Statuses.Trapped, cause);
+    spinner.addStatus(Statuses.Seeding, cause);
+
+    spinner.triggerMoveEffect(Moves.RapidSpin, unitTarget(layer), 0);
+
+    expect(layersUnder(teamB)).toBe(0);
+    expect(toxicLayersUnder(teamB)).toBe(0);
+    expect(stonesOver(teamB)).toBe(false);
+    expect(webOver(teamB)).toBe(false);
+    expect(spinner.status[Statuses.Trapped]).toBeUndefined();
+    expect(spinner.status[Statuses.Seeding]).toBeUndefined();
+
+    // Only its own side: what it laid across the field stays laid
+    expect(stonesOver(teamA)).toBe(true);
   });
 
   it('is worth laying whoever is standing about, and only stops when it is full', () => {

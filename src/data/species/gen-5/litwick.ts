@@ -63,6 +63,7 @@ const FAMILY_TEACHABLE = [
   Moves.Trick,
   Moves.TrickRoom,
   Moves.WillOWisp,
+  Moves.Confide,
 ];
 
 // What the flame works out how to do, at whichever size

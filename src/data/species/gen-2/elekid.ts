@@ -107,6 +107,8 @@ export default function registerElekidSpecies(): void {
         Moves.Electroweb,
         Moves.WildCharge,
         Moves.DualChop,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
       egg: [
         Moves.Barrier,

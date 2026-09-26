@@ -100,6 +100,8 @@ export default function registerMagbySpecies(): void {
         Moves.Round,
         Moves.Incinerate,
         Moves.DualChop,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
       egg: [
         Moves.Barrier,
@@ -108,6 +110,7 @@ export default function registerMagbySpecies(): void {
         Moves.MegaPunch,
         Moves.Screech,
         Moves.FlareBlitz,
+        Moves.Belch,
       ],
     },
   });

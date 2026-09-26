@@ -70,6 +70,8 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.UTurn,
   Moves.WorkUp,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 // The forms both of them drill, at the same counts

@@ -86,6 +86,8 @@ const FAMILY_TEACHABLE = [
   Moves.Bulldoze,
   Moves.WorkUp,
   Moves.DualChop,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerMankeySpecies(): void {

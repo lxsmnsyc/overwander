@@ -1,5 +1,6 @@
 import { type EventListenerLifecycle, EventPriority } from '../core/event-emitter';
 import { Slots } from '../data/constants/slots';
+import { Types } from '../data/constants/types';
 import { ItemFlags, type Items } from '../data/ids/items';
 import { getItemData } from '../data/items';
 import { type Statuses, Weathers } from '../data/ids/status';
@@ -103,6 +104,16 @@ export function hasAnyStatus(unit: Unit, statuses: Iterable<Statuses>): boolean 
     }
   }
   return false;
+}
+
+/**
+ * Whether a unit slips out of whatever an opponent traps it with. A
+ * Ghost type does, as in every modern game: binds, Mean Look and every
+ * trapping ability. What a unit does to itself (Ingrain, a channel)
+ * still holds it, so only the traps ask this
+ */
+export function slipsTraps(unit: Unit): boolean {
+  return unit.types.has(Types.Ghost);
 }
 
 /**

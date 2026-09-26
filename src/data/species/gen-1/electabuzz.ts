@@ -122,6 +122,8 @@ export default function registerElectabuzzSpecies(): void {
         Moves.Electroweb,
         Moves.WildCharge,
         Moves.DualChop,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
     },
   });

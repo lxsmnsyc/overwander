@@ -157,7 +157,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Growlithe, Abilities.ChaseDown, {
     name: 'Chase Down',
     description:
-      'Its moves hit 1.5x against a target at or below 1/3 HP, and such a target cannot flee from it.',
+      'Its moves hit 1.5x against a target at or below 1/3 HP, and such a target cannot flee from it, ghosts aside.',
   });
 
   registerSignature(Families.Poliwag, Abilities.HypnoticSpiral, {
@@ -185,7 +185,8 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Tentacool, Abilities.TentacleGrasp, {
     name: 'Tentacle Grasp',
-    description: 'No enemy it has landed a move on may flee while it is still standing.',
+    description:
+      'No enemy it has landed a move on may flee while it is still standing, ghosts aside.',
   });
 
   registerSignature(Families.Geodude, Abilities.SolidCore, {
@@ -1029,7 +1030,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Lileep, Abilities.RootHold, {
     name: 'Root Hold',
     description:
-      'A move it lands stops that target fleeing for 6 seconds and counts their Speed 0.7x meanwhile.',
+      'A move it lands stops that target fleeing for 6 seconds, ghosts aside, and counts their Speed 0.7x meanwhile.',
   });
 
   registerSignature(Families.Anorith, Abilities.ClawRush, {
@@ -1809,7 +1810,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Tynamo, Abilities.LatchOn, {
     name: 'Latch On',
     description:
-      'Whatever its contact moves land on cannot flee and loses 1/16 of its HP each time it acts. One at a time.',
+      'Whatever its contact moves land on cannot flee, ghosts aside, and loses 1/16 of its HP each time it acts. One at a time.',
   });
 
   registerSignature(Families.Cubchoo, Abilities.FrostFangs, {
@@ -1983,5 +1984,23 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Bouffalant, Abilities.HerdBond, {
     name: 'Herd Bond',
     description: 'Attack rises 10% for each other pokemon on its team still standing.',
+  });
+
+  // Kalos's three starters, each standing for the team rather than
+  // for itself
+  registerSignature(Families.Chespin, Abilities.SpineBond, {
+    name: 'Spine Bond',
+    description: 'Its team, itself included, takes 0.85x from physical moves while it stands.',
+  });
+
+  registerSignature(Families.Fennekin, Abilities.EmberBond, {
+    name: 'Ember Bond',
+    description: 'Its team, itself included, deals 1.15x with special moves while it stands.',
+  });
+
+  registerSignature(Families.Froakie, Abilities.ShadeBond, {
+    name: 'Shade Bond',
+    description:
+      'Its team, itself included, casts and channels at 0.85x the time while it stands. Cooldowns are untouched.',
   });
 }

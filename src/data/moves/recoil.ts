@@ -21,6 +21,7 @@ export const RECOIL_MOVES: { [key in Moves]?: number } = {
   [Moves.HeadSmash]: 1 / 2,
   [Moves.WildCharge]: 1 / 4,
   [Moves.HeadCharge]: 1 / 4,
+  [Moves.LightOfRuin]: 1 / 2,
 };
 
 export function isRecoilMove(move: Moves): boolean {

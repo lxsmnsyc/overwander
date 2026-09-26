@@ -1,5 +1,5 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { MoveAffects, MoveTargets, Moves } from '../../data/ids/moves';
+import { MoveAffects, MoveCategories, MoveTargets, Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { USELESS_PENALTY } from '../ai/score';
@@ -9,9 +9,9 @@ import type Team from '../team';
 import turns from '../turn';
 
 /**
- * Wide Guard and Quick Guard: Protect over a whole team, for one kind
- * of move each. They hold as long as a Protect does, and the modern
- * rule lets them be raised back to back
+ * Wide Guard, Quick Guard, Mat Block and Crafty Shield: Protect over a
+ * whole team, for one kind of move each. They hold as long as a
+ * Protect does, and the modern rule lets them be raised back to back
  * https://bulbapedia.bulbagarden.net/wiki/Wide_Guard_(move)
  */
 const DURATION = turns(1);
@@ -19,6 +19,8 @@ const DURATION = turns(1);
 const GUARDS: { [key in Moves]?: TeamStatuses } = {
   [Moves.WideGuard]: TeamStatuses.WideGuard,
   [Moves.QuickGuard]: TeamStatuses.QuickGuard,
+  [Moves.MatBlock]: TeamStatuses.MatBlock,
+  [Moves.CraftyShield]: TeamStatuses.CraftyShield,
 };
 
 /** A move that goes out to several pokemon at once */
@@ -86,6 +88,8 @@ export default function setupTeamGuards(battle: Battle): void {
     const team = target.team;
     let guard: TeamStatuses;
 
+    const status = getMoveData(event.move).category === MoveCategories.Status;
+
     if (team.status[TeamStatuses.WideGuard] != null && isSpread(event.move)) {
       guard = TeamStatuses.WideGuard;
     } else if (
@@ -93,6 +97,10 @@ export default function setupTeamGuards(battle: Battle): void {
       event.source.checkMovePriority(event.move, event.target) > 0
     ) {
       guard = TeamStatuses.QuickGuard;
+    } else if (team.status[TeamStatuses.MatBlock] != null && !status) {
+      guard = TeamStatuses.MatBlock;
+    } else if (team.status[TeamStatuses.CraftyShield] != null && status) {
+      guard = TeamStatuses.CraftyShield;
     } else {
       return;
     }

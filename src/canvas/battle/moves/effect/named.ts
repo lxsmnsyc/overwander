@@ -19,6 +19,7 @@ export const BY_TYPE: Partial<Record<Types, EffectShape>> = {
   [Types.Flying]: 'Leafy',
   [Types.Dark]: 'Shade',
   [Types.Ghost]: 'Shade',
+  [Types.Fairy]: 'Sparkle',
 };
 
 /**
@@ -173,7 +174,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   // named here is what those rules would have drawn wrong
   // Wind that keeps blowing out of it rather than a jet: the move is
   // a storm aimed at something
-  [Moves.Aeroblast]: 'Gale',
+  [Moves.Aeroblast]: 'Jetstream',
   [Moves.DragonBreath]: 'Beam',
   [Moves.Twister]: 'Swirl',
   [Moves.RapidSpin]: 'Swirl',
@@ -323,6 +324,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
 
   // Laid on the ground for whatever walks in next, the way Spikes is
   [Moves.StealthRock]: 'Caltrops',
+  [Moves.StickyWeb]: 'Caltrops',
   [Moves.ToxicSpikes]: 'Caltrops',
 
   // Held between the two of them: an item, a stat, a move. Trick and
@@ -545,6 +547,10 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Hurricane]: 'Gale',
   [Moves.WideGuard]: 'Shell',
   [Moves.QuickGuard]: 'Shell',
+  [Moves.MatBlock]: 'Shell',
+  [Moves.CraftyShield]: 'Shell',
+  [Moves.SpikyShield]: 'Shell',
+  [Moves.KingsShield]: 'Shell',
   [Moves.WonderRoom]: 'Grid',
   [Moves.MagicRoom]: 'Grid',
   [Moves.RagePowder]: 'Haze',
@@ -558,7 +564,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.HeartStamp]: 'Hearts',
   // The moves whose type drew them as a flower burst
   [Moves.Psyshock]: 'Converge',
-  [Moves.Psystrike]: 'Converge',
+  [Moves.Psystrike]: 'Overload',
   [Moves.Synchronoise]: 'Resonance',
   [Moves.StoredPower]: 'Orbit',
   [Moves.FinalGambit]: 'Gambit',
@@ -575,7 +581,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.IceBurn]: 'Frostfire',
   [Moves.Glaciate]: 'Glaze',
   [Moves.SacredSword]: 'Smite',
-  [Moves.SecretSword]: 'Smite',
+  [Moves.SecretSword]: 'Resolute',
   [Moves.RelicSong]: 'Aria',
   // Stat moves drawn as what the pokemon does, a body coming down with its weight, and the Pledges
   [Moves.QuiverDance]: 'Flutter',
@@ -602,7 +608,61 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Incinerate]: 'Scorch',
   [Moves.FlameBurst]: 'Spatter',
 
+  // Kalos. The legendary and mythical signatures
+  [Moves.ThousandArrows]: 'Arrows',
+  [Moves.ThousandWaves]: 'Groundswell',
+  [Moves.LandsWrath]: 'Rift',
+  [Moves.PrecipiceBlades]: 'Precipice',
+  [Moves.OriginPulse]: 'Origin',
+  [Moves.DragonAscent]: 'Ascent',
+  [Moves.OblivionWing]: 'Oblivion',
+  [Moves.LightOfRuin]: 'Ruin',
+  [Moves.Geomancy]: 'Geo',
+  [Moves.HyperspaceHole]: 'Portal',
+  [Moves.HyperspaceFury]: 'Fury',
+  [Moves.DiamondStorm]: 'Diamonds',
+  [Moves.SteamEruption]: 'Steam',
+  // The terrains, which light the floor rather than land on anybody
+  [Moves.ElectricTerrain]: 'Terrain',
+  [Moves.GrassyTerrain]: 'Terrain',
+  [Moves.MistyTerrain]: 'Terrain',
+  // Attacks with a picture of their own
+  [Moves.Moonblast]: 'Lunar',
+  [Moves.PlayRough]: 'Scuffle',
+  [Moves.WaterShuriken]: 'Shuriken',
+  // Moves that are an earlier move's picture in all but name
+  [Moves.PhantomForce]: 'Ambush',
+  [Moves.FlyingPress]: 'Plummet',
+  [Moves.FellStinger]: 'Spike',
+  [Moves.PetalBlizzard]: 'Petals',
+  [Moves.Infestation]: 'Buzz',
+  [Moves.ParabolicCharge]: 'Drain',
+  [Moves.DrainingKiss]: 'Drain',
+  [Moves.FreezeDry]: 'Freeze',
+  [Moves.MysticalFire]: 'Blaze',
+  [Moves.FairyWind]: 'Swirl',
+  [Moves.Boomburst]: 'Roar',
+  [Moves.NobleRoar]: 'Roar',
+  [Moves.EerieImpulse]: 'Pulse',
+  [Moves.VenomDrench]: 'Toxin',
+  [Moves.MagneticFlux]: 'Crackle',
+  [Moves.Electrify]: 'Crackle',
+  [Moves.IonDeluge]: 'Crackle',
+  [Moves.BabyDollEyes]: 'Hearts',
+  [Moves.PlayNice]: 'Hearts',
+  [Moves.HoldHands]: 'Hearts',
+  [Moves.HappyHour]: 'Applause',
+  [Moves.Celebrate]: 'Applause',
+  [Moves.Rototiller]: 'Sprout',
+  [Moves.ForestsCurse]: 'Greening',
+  [Moves.TrickOrTreat]: 'Shade',
+  [Moves.FlowerShield]: 'Petals',
+  [Moves.AromaticMist]: 'Petals',
+  [Moves.TopsyTurvy]: 'Warp',
+  [Moves.FairyLock]: 'Grid',
+
   // Struck and gone: the blow is the first step and the walk off the
   // field is the second, which is why the landing here is the leaving
   [Moves.UTurn]: 'Relay',
+  [Moves.PartingShot]: 'Relay',
 };

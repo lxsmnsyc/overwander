@@ -41,6 +41,8 @@ const FAMILY_TEACHABLE = [
   Moves.Taunt,
   Moves.Toxic,
   Moves.WorrySeed,
+  Moves.Confide,
+  Moves.DazzlingGleam,
 ];
 
 /**
@@ -80,7 +82,7 @@ export default function registerCottoneeSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Absorb],
+        1: [Moves.Absorb, Moves.FairyWind],
         4: [Moves.Growth],
         8: [Moves.LeechSeed],
         10: [Moves.StunSpore],
@@ -144,6 +146,7 @@ export default function registerCottoneeSpecies(): void {
         10: [Moves.Gust],
         28: [Moves.Tailwind],
         46: [Moves.Hurricane],
+        50: [Moves.Moonblast],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

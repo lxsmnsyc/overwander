@@ -96,6 +96,7 @@ export default function registerPichuSpecies(): void {
         Moves.EchoedVoice,
         Moves.VoltSwitch,
         Moves.WildCharge,
+        Moves.Confide,
       ],
       egg: [
         Moves.Bide,
@@ -107,6 +108,7 @@ export default function registerPichuSpecies(): void {
         Moves.VoltTackle,
         Moves.Wish,
         Moves.Bestow,
+        Moves.DisarmingVoice,
       ],
     },
   });

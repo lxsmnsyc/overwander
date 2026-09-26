@@ -19,7 +19,7 @@ import type { CaughtPokemon } from '../auth/caught';
 import { Moves } from '../data/ids/moves';
 import { getRegisteredMoves } from '../data/moves';
 import BATTLE_TIMEOUT from '../auth/battle-lock';
-import { payDayCeiling } from '../battle/moves/pay-day';
+import { canCallHappyHour, payDayCeiling } from '../battle/moves/pay-day';
 
 /**
  * What a Sketch leaves behind: the move set to write, or nothing when
@@ -189,13 +189,21 @@ export default async function recordAftermath(
   // replays the fight, so a report under it is taken at its word
   const lasted = Math.min(Date.now() - asNumber(battles[0].started_at), BATTLE_TIMEOUT);
   let coins = 0;
+  // Happy Hour doubles the whole side's coins, so the ceiling doubles
+  // when anybody on it could have called one: in a raid that is a
+  // stranger's pokemon, which this player's snapshots cannot answer for
+  let happy = battles[0].raid_id != null;
+
+  for (const snapshot of fielded.values()) {
+    happy ||= canCallHappyHour(snapshot.moves, snapshot.abilities);
+  }
 
   for (const entry of reported) {
     const snapshot = fielded.get(entry.caught);
     const ceiling =
       snapshot == null
         ? 0
-        : payDayCeiling(snapshot.level, snapshot.moves, snapshot.abilities, lasted);
+        : payDayCeiling(snapshot.level, snapshot.moves, snapshot.abilities, lasted, happy);
 
     coins += Math.min(Math.max(0, Math.floor(entry.coins)), ceiling);
   }

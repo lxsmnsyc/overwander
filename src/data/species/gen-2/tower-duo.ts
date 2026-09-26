@@ -48,6 +48,7 @@ const DUO_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.SkyDrop,
   Moves.Bulldoze,
+  Moves.Confide,
 ];
 
 // Both learn the same list at the same levels, either side of their

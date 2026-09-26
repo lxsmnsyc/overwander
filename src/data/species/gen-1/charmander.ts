@@ -71,6 +71,8 @@ const FAMILY_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.Incinerate,
   Moves.FirePledge,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerCharmanderSpecies(): void {

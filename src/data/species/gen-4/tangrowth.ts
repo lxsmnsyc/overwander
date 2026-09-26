@@ -56,7 +56,7 @@ export default function registerTangrowthSpecies(): void {
         40: [Moves.NaturalGift],
         43: [Moves.Slam],
         47: [Moves.Tickle],
-        50: [Moves.WringOut],
+        50: [Moves.WringOut, Moves.GrassyTerrain],
         54: [Moves.PowerWhip],
         57: [Moves.Block],
       },
@@ -110,6 +110,8 @@ export default function registerTangrowthSpecies(): void {
         Moves.Synthesis,
         Moves.Thief,
         Moves.Toxic,
+        Moves.Confide,
+        Moves.Infestation,
       ],
     },
   });

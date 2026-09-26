@@ -71,6 +71,9 @@ const LAKE_TEACHABLE = [
   Moves.UTurn,
   Moves.WaterPulse,
   Moves.ZenHeadbutt,
+  Moves.Confide,
+  Moves.DazzlingGleam,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerLakeTrioSpecies(): void {

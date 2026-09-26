@@ -98,6 +98,7 @@ const KELDEO: SpeciesData = {
       Moves.Toxic,
       Moves.WorkUp,
       Moves.XScissor,
+      Moves.Confide,
     ],
   },
 };

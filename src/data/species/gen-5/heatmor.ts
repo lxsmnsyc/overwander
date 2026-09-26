@@ -103,6 +103,8 @@ export default function registerHeatmorSpecies(): void {
         Moves.ThunderPunch,
         Moves.Toxic,
         Moves.WillOWisp,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
       egg: [
         Moves.BodySlam,
@@ -115,6 +117,7 @@ export default function registerHeatmorSpecies(): void {
         Moves.SuckerPunch,
         Moves.Tickle,
         Moves.Wrap,
+        Moves.Belch,
       ],
     },
   });

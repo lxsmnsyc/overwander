@@ -76,6 +76,8 @@ const FAMILY_TEACHABLE = [
   Moves.Bulldoze,
   Moves.WorkUp,
   Moves.DualChop,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Guts, Abilities.NoGuard];

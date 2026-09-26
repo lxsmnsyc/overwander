@@ -49,6 +49,7 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.EchoedVoice,
   Moves.Scald,
+  Moves.Confide,
 ];
 
 // What the two above the base pick up: a lily pad has no arms to
@@ -65,6 +66,7 @@ const GROWN_TEACHABLE = [
   Moves.FirePunch,
   Moves.ThunderPunch,
   Moves.HoneClaws,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerLotadSpecies(): void {

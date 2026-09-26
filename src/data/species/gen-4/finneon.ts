@@ -50,6 +50,7 @@ const FAMILY_TEACHABLE = [
   Moves.UTurn,
   Moves.WaterPulse,
   Moves.Waterfall,
+  Moves.Confide,
 ];
 
 /**

@@ -82,6 +82,7 @@ const FAMILY_TEACHABLE = [
   Moves.Scald,
   Moves.Incinerate,
   Moves.Bulldoze,
+  Moves.Confide,
 ];
 
 // Slowbro's claws open up the fighting-style TMs
@@ -153,6 +154,7 @@ export default function registerSlowpokeSpecies(): void {
         Moves.MudSport,
         Moves.MeFirst,
         Moves.WonderRoom,
+        Moves.Belch,
       ],
     },
   });

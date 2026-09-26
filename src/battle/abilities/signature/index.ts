@@ -50,6 +50,7 @@ import snivyToOshawott from './snivy-to-oshawott';
 import swordsOfJustice from './swords-of-justice';
 import taoTrio from './tao-trio';
 import unovaMythicals from './unova-mythicals';
+import chespinToFroakie from './chespin-to-froakie';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -103,6 +104,7 @@ const setupAbilities = [
   ...swordsOfJustice,
   ...taoTrio,
   ...unovaMythicals,
+  ...chespinToFroakie,
   ...deerling,
   ...emolga,
   ...tirtougaToBouffalant,

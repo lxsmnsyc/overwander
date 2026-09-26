@@ -54,6 +54,8 @@ const FAMILY_TEACHABLE = [
   Moves.Torment,
   Moves.Toxic,
   Moves.XScissor,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 /**
@@ -102,6 +104,7 @@ export default function registerSkorupiSpecies(): void {
         34: [Moves.BugBite],
         39: [Moves.PoisonFang],
         45: [Moves.Crunch],
+        47: [Moves.FellStinger],
         50: [Moves.CrossPoison],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -164,6 +167,7 @@ export default function registerSkorupiSpecies(): void {
         34: [Moves.BugBite],
         39: [Moves.PoisonFang],
         49: [Moves.Crunch],
+        53: [Moves.FellStinger],
         58: [Moves.CrossPoison],
       },
       teachable: [

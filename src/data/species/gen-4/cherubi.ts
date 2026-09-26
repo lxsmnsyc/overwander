@@ -41,6 +41,8 @@ const FAMILY_TEACHABLE = [
   Moves.Synthesis,
   Moves.Toxic,
   Moves.WorrySeed,
+  Moves.Confide,
+  Moves.DazzlingGleam,
 ];
 
 /**
@@ -90,6 +92,7 @@ export default function registerCherubiSpecies(): void {
         31: [Moves.TakeDown],
         37: [Moves.SolarBeam],
         40: [Moves.LuckyChant],
+        47: [Moves.PetalBlizzard],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -100,6 +103,7 @@ export default function registerCherubiSpecies(): void {
         Moves.SweetScent,
         Moves.Tickle,
         Moves.WeatherBall,
+        Moves.FlowerShield,
       ],
     },
   });
@@ -143,6 +147,7 @@ export default function registerCherubiSpecies(): void {
         35: [Moves.TakeDown],
         43: [Moves.SolarBeam],
         48: [Moves.LuckyChant],
+        50: [Moves.PetalBlizzard],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam],
     },
@@ -186,6 +191,7 @@ export default function registerCherubiSpecies(): void {
         35: [Moves.TakeDown],
         43: [Moves.SolarBeam],
         48: [Moves.LuckyChant],
+        50: [Moves.PetalBlizzard],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam],
     },

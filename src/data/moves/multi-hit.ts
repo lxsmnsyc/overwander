@@ -47,6 +47,7 @@ export const MULTI_HIT_MOVES: { [key in Moves]?: MultiHitConfig } = {
   [Moves.DualChop]: { min: 2, max: 2 },
   [Moves.GearGrind]: { min: 2, max: 2 },
   [Moves.TailSlap]: { min: 2, max: 5 },
+  [Moves.WaterShuriken]: { min: 2, max: 5 },
 };
 
 /** What the 2-5 distribution below averages out at */

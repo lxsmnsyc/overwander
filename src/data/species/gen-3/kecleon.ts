@@ -128,6 +128,8 @@ export default function registerKecleonSpecies(): void {
         Moves.Incinerate,
         Moves.Retaliate,
         Moves.WorkUp,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
       egg: [Moves.Disable, Moves.MagicCoat, Moves.Trick, Moves.NastyPlot, Moves.FoulPlay],
     },

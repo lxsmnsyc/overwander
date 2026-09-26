@@ -50,6 +50,7 @@ const FAMILY_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.Incinerate,
   Moves.WildCharge,
+  Moves.Confide,
 ];
 
 const FAMILY_ABILITIES = [Abilities.RunAway, Abilities.FlashFire];

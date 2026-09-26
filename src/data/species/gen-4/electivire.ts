@@ -42,7 +42,14 @@ export default function registerElectivireSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.FirePunch, Moves.Leer, Moves.LowKick, Moves.QuickAttack, Moves.ThunderShock],
+        1: [
+          Moves.FirePunch,
+          Moves.Leer,
+          Moves.LowKick,
+          Moves.QuickAttack,
+          Moves.ThunderShock,
+          Moves.IonDeluge,
+        ],
         7: [Moves.ThunderShock],
         10: [Moves.LowKick],
         16: [Moves.Swift],
@@ -53,6 +60,7 @@ export default function registerElectivireSpecies(): void {
         43: [Moves.Thunderbolt],
         52: [Moves.Screech],
         58: [Moves.Thunder],
+        65: [Moves.ElectricTerrain],
         67: [Moves.GigaImpact],
       },
       teachable: [
@@ -108,6 +116,8 @@ export default function registerElectivireSpecies(): void {
         Moves.Thunderbolt,
         Moves.Torment,
         Moves.Toxic,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
     },
   });

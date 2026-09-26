@@ -40,6 +40,7 @@ const FAMILY_TEACHABLE = [
   Moves.ThunderWave,
   Moves.Torment,
   Moves.Toxic,
+  Moves.Confide,
 ];
 
 /**
@@ -95,6 +96,7 @@ export default function registerPurrloinSpecies(): void {
         39: [Moves.Snatch],
         42: [Moves.NastyPlot],
         46: [Moves.SuckerPunch],
+        49: [Moves.PlayRough],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -151,6 +153,7 @@ export default function registerPurrloinSpecies(): void {
         47: [Moves.Snatch],
         50: [Moves.NastyPlot],
         55: [Moves.SuckerPunch],
+        58: [Moves.PlayRough],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam, Moves.RockSmash],
     },

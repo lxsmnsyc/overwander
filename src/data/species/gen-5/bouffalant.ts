@@ -101,7 +101,9 @@ export default function registerBouffalantSpecies(): void {
         Moves.WildCharge,
         Moves.WorkUp,
         Moves.ZenHeadbutt,
+        Moves.Confide,
       ],
+      egg: [Moves.Belch],
     },
   });
 }

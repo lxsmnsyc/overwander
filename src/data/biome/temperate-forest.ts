@@ -9,6 +9,7 @@ export default function registerTemperateForestSpawns(): void {
   registerSpawnPool(Biome.TemperateForest, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Chespin, weight: 2 },
         { species: Species.Timburr, weight: 25 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Caterpie, weight: 30 },
@@ -36,6 +37,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Quilladin, weight: 2 },
         { species: Species.Gurdurr, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Metapod, weight: 15 },
@@ -68,6 +70,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Sawk, weight: 5 },
         { species: Species.Throh, weight: 5 },
         { species: Species.Emolga, weight: 8 },
@@ -106,6 +109,7 @@ export default function registerTemperateForestSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Chespin, weight: 2 },
         { species: Species.Timburr, weight: 25 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Caterpie, weight: 30 },
@@ -133,6 +137,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Quilladin, weight: 2 },
         { species: Species.Gurdurr, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Metapod, weight: 15 },
@@ -165,6 +170,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Sawk, weight: 5 },
         { species: Species.Throh, weight: 5 },
         { species: Species.Emolga, weight: 8 },

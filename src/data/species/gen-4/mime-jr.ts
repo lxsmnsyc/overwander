@@ -114,6 +114,8 @@ export default function registerMimeJrSpecies(): void {
         Moves.Trick,
         Moves.TrickRoom,
         Moves.Uproar,
+        Moves.Confide,
+        Moves.Infestation,
       ],
       egg: [
         Moves.Charm,

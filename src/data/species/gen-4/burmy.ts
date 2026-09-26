@@ -45,6 +45,8 @@ const CLOAK_TEACHABLE = [
   Moves.Thief,
   Moves.Toxic,
   Moves.Uproar,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 /**
@@ -451,6 +453,8 @@ export default function registerBurmySpecies(): void {
         Moves.Toxic,
         Moves.Twister,
         Moves.UTurn,
+        Moves.Confide,
+        Moves.Infestation,
       ],
     },
   });

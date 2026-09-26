@@ -45,6 +45,8 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.StruggleBug,
   Moves.Electroweb,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 export default function registerSpinarakSpecies(): void {
@@ -91,6 +93,7 @@ export default function registerSpinarakSpecies(): void {
         37: [Moves.SpiderWeb],
         43: [Moves.PoisonJab],
         45: [Moves.Screech, Moves.Agility],
+        50: [Moves.StickyWeb],
         53: [Moves.Psychic],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.BugBite],
@@ -137,7 +140,15 @@ export default function registerSpinarakSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.PoisonSting, Moves.StringShot, Moves.Constrict, Moves.ScaryFace, Moves.BugBite],
+        1: [
+          Moves.PoisonSting,
+          Moves.StringShot,
+          Moves.Constrict,
+          Moves.ScaryFace,
+          Moves.BugBite,
+          Moves.FellStinger,
+          Moves.VenomDrench,
+        ],
         17: [Moves.NightShade],
         19: [Moves.ShadowSneak],
         25: [Moves.LeechLife],
@@ -146,6 +157,7 @@ export default function registerSpinarakSpecies(): void {
         43: [Moves.SpiderWeb],
         50: [Moves.PoisonJab],
         53: [Moves.Screech, Moves.Agility],
+        58: [Moves.StickyWeb],
         63: [Moves.Psychic],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],

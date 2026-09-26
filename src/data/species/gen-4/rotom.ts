@@ -58,6 +58,7 @@ const ROTOM_TEACHABLE = [
   Moves.Trick,
   Moves.Uproar,
   Moves.WillOWisp,
+  Moves.Confide,
 ];
 
 const ROTOM_BIOMES = [Biome.Woodland, Biome.TemperateForest];

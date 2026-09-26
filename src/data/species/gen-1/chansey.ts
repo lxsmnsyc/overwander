@@ -149,6 +149,9 @@ export default function registerChanseySpecies(): void {
         Moves.Bulldoze,
         Moves.WorkUp,
         Moves.WildCharge,
+        Moves.Confide,
+        Moves.DazzlingGleam,
+        Moves.PowerUpPunch,
       ],
     },
   });

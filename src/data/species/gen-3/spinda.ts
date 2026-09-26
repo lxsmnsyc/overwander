@@ -113,6 +113,8 @@ export default function registerSpindaSpecies(): void {
         Moves.Retaliate,
         Moves.WorkUp,
         Moves.WildCharge,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
       egg: [
         Moves.Disable,

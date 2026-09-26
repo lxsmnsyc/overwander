@@ -7,7 +7,7 @@ import {
 } from '../data/constants/battle-limits';
 import { type Slots, getSlots } from '../data/constants/slots';
 import { EventEngine } from '../core/event-engine';
-import { Weathers } from '../data/ids/status';
+import { Terrains, Weathers } from '../data/ids/status';
 import type Alliance from './alliance';
 import type { BattleEventMap } from './events';
 import { BattleEvents } from './events';
@@ -147,6 +147,20 @@ export default class Battle extends EventEngine<BattleEventMap> {
     current: Weathers.None,
     disabled: false,
   };
+
+  terrain = {
+    current: Terrains.None,
+  };
+
+  /** Lay a terrain over the whole field, for `duration` milliseconds */
+  setTerrain(terrain: Terrains, duration = 0): void {
+    this.emit(BattleEvents.SetTerrain, {
+      id: 'SetTerrain',
+      disabled: false,
+      terrain,
+      duration,
+    });
+  }
 
   /**
    * Put weather over the whole field. The duration is how long it

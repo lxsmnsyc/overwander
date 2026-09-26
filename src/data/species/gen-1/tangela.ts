@@ -51,6 +51,7 @@ export default function registerTangelaSpecies(): void {
         34: [Moves.StunSpore],
         40: [Moves.Slam, Moves.NaturalGift],
         46: [Moves.Growth, Moves.Tickle],
+        48: [Moves.GrassyTerrain],
         50: [Moves.WringOut],
         54: [Moves.PowerWhip],
       },
@@ -100,6 +101,8 @@ export default function registerTangelaSpecies(): void {
         Moves.SeedBomb,
         Moves.WorrySeed,
         Moves.Round,
+        Moves.Confide,
+        Moves.Infestation,
       ],
       egg: [
         Moves.MegaDrain,

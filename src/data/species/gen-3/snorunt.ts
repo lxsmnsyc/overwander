@@ -44,6 +44,7 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.Round,
   Moves.FrostBreath,
+  Moves.Confide,
 ];
 
 export default function registerSnoruntSpecies(): void {
@@ -135,7 +136,7 @@ export default function registerSnoruntSpecies(): void {
         25: [Moves.Protect],
         28: [Moves.Crunch, Moves.IceFang],
         34: [Moves.IceBeam],
-        42: [Moves.Hail],
+        42: [Moves.Hail, Moves.FreezeDry],
         53: [Moves.Blizzard],
         61: [Moves.SheerCold],
       },

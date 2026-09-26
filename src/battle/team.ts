@@ -1,4 +1,4 @@
-import { type TeamStatuses, Weathers } from '../data/ids/status';
+import { type TeamStatuses, Terrains, Weathers } from '../data/ids/status';
 import type Alliance from './alliance';
 import type Battle from './core';
 import {
@@ -87,6 +87,20 @@ export default class Team {
     current: Weathers.None,
     disabled: false,
   };
+
+  terrain = {
+    current: Terrains.None,
+  };
+
+  setTerrain(terrain: Terrains, duration = 0): void {
+    this.battle.emit(BattleEvents.TeamSetTerrain, {
+      id: 'TeamSetTerrain',
+      disabled: false,
+      terrain,
+      duration,
+      team: this,
+    });
+  }
 
   setWeather(weather: Weathers, duration = 0): void {
     this.battle.emit(BattleEvents.TeamSetWeather, {

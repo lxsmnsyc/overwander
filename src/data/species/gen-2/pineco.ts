@@ -49,6 +49,7 @@ const FAMILY_TEACHABLE = [
   Moves.StruggleBug,
   Moves.Bulldoze,
   Moves.DrillRun,
+  Moves.Confide,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Sturdy];

@@ -48,6 +48,7 @@ const FAMILY_TEACHABLE = [
   Moves.Uproar,
   Moves.VoltSwitch,
   Moves.WildCharge,
+  Moves.Confide,
 ];
 
 // What the gears learn however many of them are meshed
@@ -185,6 +186,7 @@ export default function registerKlinkSpecies(): void {
         42: [Moves.ShiftGear],
         48: [Moves.ZapCannon],
         54: [Moves.HyperBeam],
+        76: [Moves.MagneticFlux],
       },
       teachable: [...FAMILY_TEACHABLE],
     },

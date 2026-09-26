@@ -111,6 +111,7 @@ export default function registerTirtougaSpecies(): void {
         Moves.WaterPulse,
         Moves.Waterfall,
         Moves.Whirlpool,
+        Moves.Confide,
       ],
     },
   });
@@ -205,6 +206,7 @@ export default function registerTirtougaSpecies(): void {
         Moves.Swagger,
         Moves.Toxic,
         Moves.Waterfall,
+        Moves.Confide,
       ],
     },
   });

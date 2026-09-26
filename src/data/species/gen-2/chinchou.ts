@@ -50,6 +50,8 @@ const FAMILY_TEACHABLE = [
   Moves.Scald,
   Moves.VoltSwitch,
   Moves.WildCharge,
+  Moves.Confide,
+  Moves.DazzlingGleam,
 ];
 
 const FAMILY_ABILITIES = [Abilities.VoltAbsorb, Abilities.Illuminate];
@@ -91,6 +93,7 @@ export default function registerChinchouSpecies(): void {
         28: [Moves.ElectroBall],
         34: [Moves.Discharge],
         39: [Moves.AquaRing],
+        47: [Moves.IonDeluge],
         49: [Moves.Charge],
         1: [Moves.Bubble, Moves.ThunderWave],
         5: [Moves.Supersonic],
@@ -139,8 +142,9 @@ export default function registerChinchouSpecies(): void {
         30: [Moves.ElectroBall],
         40: [Moves.Discharge],
         47: [Moves.AquaRing],
+        54: [Moves.IonDeluge],
         61: [Moves.Charge],
-        1: [Moves.Bubble, Moves.Supersonic, Moves.ThunderWave],
+        1: [Moves.Bubble, Moves.Supersonic, Moves.ThunderWave, Moves.EerieImpulse],
         13: [Moves.Flail],
         17: [Moves.WaterGun],
         25: [Moves.Spark],

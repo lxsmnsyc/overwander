@@ -59,6 +59,7 @@ const FAMILY_TEACHABLE = [
   Moves.Venoshock,
   Moves.Round,
   Moves.Acrobatics,
+  Moves.Confide,
 ];
 
 export default function registerZubatSpecies(): void {
@@ -114,6 +115,7 @@ export default function registerZubatSpecies(): void {
         Moves.Pursuit,
         Moves.BraveBird,
         Moves.NastyPlot,
+        Moves.VenomDrench,
       ],
     },
   });

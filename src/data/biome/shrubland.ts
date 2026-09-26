@@ -65,6 +65,7 @@ export default function registerShrublandSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Fennekin, weight: 2 },
         { species: Species.Solosis, weight: 24 },
         { species: Species.Snivy, weight: 3 },
         { species: Species.Mareep, weight: 25 },
@@ -84,6 +85,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Cottonee, weight: 24 },
       ],
       rare: [
+        { species: Species.Braixen, weight: 2 },
         { species: Species.Duosion, weight: 10 },
         { species: Species.Servine, weight: 2 },
         { species: Species.Flaaffy, weight: 5 },
@@ -104,6 +106,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Whimsicott, weight: 7 },
       ],
       elusive: [
+        { species: Species.Delphox, weight: 2 },
         { species: Species.Reuniclus, weight: 5 },
         { species: Species.Serperior, weight: 2 },
         { species: Species.Smeargle, weight: 5 },
@@ -121,6 +124,7 @@ export default function registerShrublandSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Fennekin, weight: 2 },
         { species: Species.Gothita, weight: 24 },
         { species: Species.Seedot, weight: 20 },
         { species: Species.Shinx, weight: 25 },
@@ -136,6 +140,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Skorupi, weight: 20 },
       ],
       rare: [
+        { species: Species.Braixen, weight: 2 },
         { species: Species.Gothorita, weight: 10 },
         { species: Species.Nuzleaf, weight: 10 },
         { species: Species.Luxio, weight: 5 },
@@ -152,6 +157,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Roserade, weight: 6 },
       ],
       elusive: [
+        { species: Species.Delphox, weight: 2 },
         { species: Species.Gothitelle, weight: 5 },
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Shiftry, weight: 5 },

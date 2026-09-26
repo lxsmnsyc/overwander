@@ -64,6 +64,8 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.VacuumWave,
   Moves.XScissor,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 /**
@@ -117,6 +119,7 @@ export default function registerCroagunkSpecies(): void {
         38: [Moves.PoisonJab],
         43: [Moves.SludgeBomb],
         45: [Moves.Flatter],
+        47: [Moves.Belch],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -176,6 +179,7 @@ export default function registerCroagunkSpecies(): void {
         41: [Moves.PoisonJab],
         49: [Moves.SludgeBomb],
         54: [Moves.Flatter],
+        58: [Moves.Belch],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

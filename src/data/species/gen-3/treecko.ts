@@ -63,6 +63,8 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.Acrobatics,
   Moves.GrassPledge,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerTreeckoSpecies(): void {
@@ -119,6 +121,7 @@ export default function registerTreeckoSpecies(): void {
         Moves.Endeavor,
         Moves.CrushClaw,
         Moves.LeafStorm,
+        Moves.GrassyTerrain,
       ],
     },
   });

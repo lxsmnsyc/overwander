@@ -108,6 +108,8 @@ export default function registerNosepassSpecies(): void {
         Moves.Round,
         Moves.VoltSwitch,
         Moves.Bulldoze,
+        Moves.Confide,
+        Moves.DazzlingGleam,
       ],
       egg: [Moves.Explosion, Moves.Magnitude, Moves.Rollout, Moves.HeadSmash],
     },

@@ -245,7 +245,7 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.ArenaTrap, {
     name: 'Arena Trap',
     description:
-      'Grounded enemies cannot flee. As a buddy, 3 more wild pokemon appear and each is half as likely to flee.',
+      'Grounded enemies cannot flee, ghosts aside. As a buddy, 3 more wild pokemon appear and each is half as likely to flee.',
   });
   registerAbility(Abilities.SandForce, {
     name: 'Sand Force',
@@ -378,7 +378,8 @@ export default function registerGen1Abilities(): void {
   // Magnemite
   registerAbility(Abilities.MagnetPull, {
     name: 'Magnet Pull',
-    description: 'Steel enemies cannot flee. As a buddy, wild Steel types cannot flee at all.',
+    description:
+      'Steel enemies cannot flee, ghosts aside. As a buddy, wild Steel types cannot flee at all.',
   });
   registerAbility(Abilities.Analytic, {
     name: 'Analytic',

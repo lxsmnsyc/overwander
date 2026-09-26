@@ -50,6 +50,7 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.Payback,
   Moves.Round,
+  Moves.Confide,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ShellArmor, Abilities.SkillLink];

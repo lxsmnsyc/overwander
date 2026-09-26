@@ -230,6 +230,26 @@ export type EffectShape =
   | 'Blaze'
   | 'Firedance'
   | 'Spatter'
+  | 'Sparkle'
+  | 'Geo'
+  | 'Terrain'
+  | 'Arrows'
+  | 'Groundswell'
+  | 'Precipice'
+  | 'Ascent'
+  | 'Fury'
+  | 'Portal'
+  | 'Scuffle'
+  | 'Diamonds'
+  | 'Oblivion'
+  | 'Ruin'
+  | 'Origin'
+  | 'Lunar'
+  | 'Steam'
+  | 'Shuriken'
+  | 'Overload'
+  | 'Jetstream'
+  | 'Resolute'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -296,9 +316,9 @@ export const SPANS: Record<EffectShape, number> = {
   Torrent: 700,
   Rush: 620,
   Stall: 1000,
-  Rend: 820,
-  Verdict: 900,
-  Sunburst: 760,
+  Rend: 1000,
+  Verdict: 1000,
+  Sunburst: 950,
   Ambush: 720,
   Vortex: 900,
   Pyre: 900,
@@ -383,16 +403,16 @@ export const SPANS: Record<EffectShape, number> = {
   Orbit: 900,
   Gambit: 900,
   Buzz: 820,
-  Techno: 760,
-  Victory: 900,
-  Azure: 900,
+  Techno: 900,
+  Victory: 1000,
+  Azure: 1000,
   Thunderclap: 820,
-  Fusion: 900,
-  Frostbolt: 900,
-  Frostfire: 900,
+  Fusion: 950,
+  Frostbolt: 1000,
+  Frostfire: 1000,
   Glaze: 1000,
   Searing: 900,
-  Smite: 820,
+  Smite: 950,
   Aria: 1000,
   Flutter: 1000,
   Smash: 900,
@@ -410,6 +430,26 @@ export const SPANS: Record<EffectShape, number> = {
   Blaze: 1000,
   Firedance: 900,
   Spatter: 700,
+  Sparkle: 520,
+  Geo: 1000,
+  Terrain: 1100,
+  Arrows: 1100,
+  Groundswell: 1000,
+  Precipice: 1000,
+  Ascent: 1000,
+  Fury: 1100,
+  Portal: 950,
+  Scuffle: 820,
+  Diamonds: 1000,
+  Oblivion: 1000,
+  Ruin: 1100,
+  Origin: 1100,
+  Lunar: 900,
+  Steam: 1000,
+  Shuriken: 900,
+  Overload: 1000,
+  Jetstream: 1000,
+  Resolute: 950,
   Whiff: 320,
 };
 

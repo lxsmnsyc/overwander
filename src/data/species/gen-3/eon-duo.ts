@@ -74,6 +74,7 @@ const EON_TEACHABLE = [
   Moves.Round,
   Moves.Retaliate,
   Moves.Bulldoze,
+  Moves.Confide,
 ];
 
 export default function registerEonDuoSpecies(): void {

@@ -132,6 +132,9 @@ export default function registerBlisseySpecies(): void {
         Moves.Bulldoze,
         Moves.WorkUp,
         Moves.WildCharge,
+        Moves.Confide,
+        Moves.DazzlingGleam,
+        Moves.PowerUpPunch,
       ],
     },
   });

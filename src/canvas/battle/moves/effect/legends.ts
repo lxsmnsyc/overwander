@@ -6,9 +6,11 @@ import {
   decay,
   edge,
   fade,
+  funnel,
   heart,
   hoop,
   lash,
+  late,
   lighten,
   mix,
   motes,
@@ -18,6 +20,8 @@ import {
   ring,
   ripple,
   shards,
+  sickle,
+  spiral,
   spread,
   star,
   swell,
@@ -84,6 +88,28 @@ export const VOID_RIM = '#c8283c';
 
 /** Hydro Cannon: the share spent flying in before it bursts */
 export const CANNON_ARRIVE = 0.3;
+
+/** Judgment: the share the wheel over it has opened by */
+export const VERDICT_WHEEL = 0.3;
+
+/** Seed Flare: the share the light has gathered under it by */
+export const SEED_FLARES = 0.3;
+
+/** Psystrike: the share the caster stops gathering, the share the shards start in, and how long that takes */
+export const OVERLOAD_GATHER = 0.25;
+export const OVERLOAD_HOLD = 0.45;
+export const OVERLOAD_DRIVE = 0.1;
+
+/** Aeroblast: the share the blast is loosed at */
+export const JETSTREAM_FIRES = 0.2;
+
+/** Secret Sword: each cut's swing round it as start and end angles, and the share they all go off */
+export const RESOLUTE_CUTS: [from: number, to: number][] = [
+  [2.6, 5.4],
+  [0.6, -2.2],
+  [Math.PI + 0.3, -0.3],
+];
+export const RESOLUTE_FINALE = 0.62;
 
 /** A flat disc of colour. `orb` whitens its middle, which turns darkness grey */
 function hole(
@@ -179,98 +205,212 @@ const legends = {
     context.stroke();
   },
 
-  // Space torn open: a cut across it that gapes onto the dark and snaps shut
+  // Space warping round it, two tears opening across it onto the dark between the stars, then snapping shut in pieces
   Rend(context, stage, share, { paint, seed, weight }) {
     const at = landing(stage);
     const size = REACH * stage.scale * weight;
-    const from: Point = [at[0] - size * 1.6, at[1] - size * 1.1];
-    const tip = between(from, [at[0] + size * 1.6, at[1] + size * 1.1], Math.min(1, share / 0.2));
-    const gape = gapeOf(share);
+    const light = lighten(paint.color, 0.4);
     const shown = share < 0.7 ? 1 : Math.min(1, decay(share) * 3);
+    const tears: [from: Point, to: Point, drawn: number, gape: number][] = [
+      [
+        [at[0] - size * 2.2, at[1] - size * 1.5],
+        [at[0] + size * 2.2, at[1] + size * 1.5],
+        Math.min(1, share / 0.2),
+        gapeOf(share),
+      ],
+      [
+        [at[0] - size * 2, at[1] + size * 1.1],
+        [at[0] + size * 2, at[1] - size * 1.1],
+        Math.min(1, Math.max(0, (share - 0.2) / 0.15)),
+        share < 0.7 ? Math.min(1, Math.max(0, (share - 0.3) / 0.35)) : gapeOf(share),
+      ],
+    ];
 
-    edge(context, from, tip, size * (0.12 + gape * 0.45), 0, { ...paint, alpha: shown });
-    edge(context, from, tip, size * gape * 0.32, 0, { color: '#12061c', alpha: gape });
-    if (share > 0.7) {
-      const snap = (share - 0.7) / 0.3;
+    for (let band = 0; band < 3; band += 1) {
+      const held = (share * 2 + band / 3) % 1;
 
-      burst(context, at, size * (0.6 + snap * 1.4), 10, seed, {
-        color: lighten(paint.color, 0.4),
-        alpha: decay(snap),
-        width: 2.4 * stage.scale,
-      });
-      ring(context, at, size * (0.6 + snap * 2), {
-        ...paint,
-        alpha: decay(snap),
+      hoop(context, at, size * (3 - held * 2.4), 0.45, band * 1.05 + share * 2, {
+        color: light,
+        alpha: swell(held) * shown * 0.7,
         width: 2 * stage.scale,
       });
     }
+    orb(context, at, size * (1 + gapeOf(share) * 1.2), { ...paint, alpha: gapeOf(share) * 0.4 });
+    for (const [index, [from, to, drawn, open]] of tears.entries()) {
+      if (drawn <= 0) {
+        continue;
+      }
+      const tip = between(from, to, drawn);
+
+      edge(context, from, tip, size * (0.12 + open * 0.55), 0, { color: light, alpha: shown });
+      edge(context, from, tip, size * open * 0.4, 0, { color: '#12061c', alpha: open });
+      for (let glint = 0; glint < 5; glint += 1) {
+        star(
+          context,
+          between(from, to, (glint + 0.5 + spread(seed, glint + index * 9) * 0.3) / 5),
+          size * 0.14 * open,
+          share * 4 + glint,
+          {
+            color: '#ffffff',
+            alpha: open * swell((share * 3 + noise(seed, glint + index * 9)) % 1),
+          },
+        );
+      }
+    }
+    if (share <= 0.7) {
+      return;
+    }
+    const snap = (share - 0.7) / 0.3;
+
+    star(context, at, size * (1.4 + snap * 2.4), 0.4, {
+      color: '#ffffff',
+      alpha: decay(Math.min(1, snap * 2)),
+    });
+    ring(context, at, size * (0.6 + snap * 3), {
+      color: light,
+      alpha: decay(snap),
+      width: 2.6 * stage.scale,
+    });
+    shards(context, at, size * 3, many(14, weight), seed, snap, {
+      color: light,
+      alpha: decay(snap),
+      width: 2.6 * stage.scale,
+    });
   },
 
-  // Shafts of light coming down all round it, and the light gathering on it
+  // A wheel of light turning over it, shafts coming down all round it, then a pillar of judgement on it
   Verdict(context, stage, share, { paint, seed, weight }) {
     const at = landing(stage);
     const size = REACH * stage.scale * weight;
-    const shafts = many(6, weight);
+    const light = lighten(paint.color, 0.5);
+    const wheel = Math.min(1, share / VERDICT_WHEEL);
+    const shown = late(share, 0.7);
+    const crown: Point = [at[0], at[1] - size * 5];
+    const shafts = many(10, weight);
 
+    ripple(context, crown, size * 2.2 * wheel, {
+      color: light,
+      alpha: shown * wheel,
+      width: 3 * stage.scale,
+    });
+    for (let glint = 0; glint < 12; glint += 1) {
+      const angle = (glint / 12) * Math.PI * 2 + share * 3;
+
+      star(
+        context,
+        [
+          crown[0] + Math.cos(angle) * size * 2.2 * wheel,
+          crown[1] + Math.sin(angle) * size * 0.75 * wheel,
+        ],
+        size * 0.3,
+        angle,
+        { color: '#ffffff', alpha: shown * wheel },
+      );
+    }
     for (let shaft = 0; shaft < shafts; shaft += 1) {
-      const held = Math.max(0, Math.min(1, share * 1.6 - (shaft / shafts) * 0.5));
+      const held = Math.max(
+        0,
+        Math.min(1, (share - VERDICT_WHEEL * 0.8 - (shaft / shafts) * 0.3) * 1.8),
+      );
 
       if (held <= 0) {
         continue;
       }
       const angle = (shaft / shafts) * Math.PI * 2 + noise(seed, shaft) * 0.5;
       const foot: Point = [
-        at[0] + Math.cos(angle) * size * 1.5,
-        at[1] + size * 0.6 + Math.sin(angle) * size * 0.5,
+        at[0] + Math.cos(angle) * size * 1.8,
+        at[1] + size * 0.6 + Math.sin(angle) * size * 0.6,
       ];
 
-      beam(context, [foot[0], foot[1] - size * 7], foot, Math.min(1, held * 3), size * 0.22, {
+      beam(context, [foot[0], foot[1] - size * 7], foot, Math.min(1, held * 3), size * 0.3, {
         ...paint,
         alpha: decay(held),
       });
-      ripple(context, foot, size * (0.2 + held * 0.6), {
+      ripple(context, foot, size * (0.2 + held * 0.8), {
         ...paint,
         alpha: decay(held),
         width: 2 * stage.scale,
       });
     }
-    if (share > 0.5) {
-      orb(context, at, size * (0.8 + share * 1.2), { ...paint, alpha: swell((share - 0.5) * 2) });
+    if (share <= 0.55) {
+      return;
     }
+    const judged = (share - 0.55) / 0.45;
+
+    beam(
+      context,
+      [at[0], at[1] + size * 0.9],
+      [at[0], at[1] - size * 7],
+      1,
+      size * 1.8 * decay(judged),
+      {
+        ...paint,
+        alpha: decay(judged),
+      },
+    );
+    orb(context, at, size * (1 + judged * 1.6), { color: light, alpha: decay(judged) });
+    star(context, at, size * (1.6 + judged * 2.4), judged, {
+      color: '#ffffff',
+      alpha: decay(Math.min(1, judged * 2.5)),
+    });
+    ring(context, at, size * (0.6 + judged * 3), {
+      color: light,
+      alpha: decay(judged),
+      width: 3 * stage.scale,
+    });
   },
 
-  // A flash on it and the light bursting upward off it
+  // Light drawn in across the ground under it, then flaring straight up in a column and rays
   Sunburst(context, stage, share, { paint, seed, weight }) {
     const at = landing(stage);
     const size = REACH * stage.scale * weight;
     const light = lighten(paint.color, 0.6);
-    const flash = share < 0.12 ? share / 0.12 : decay((share - 0.12) / 0.88);
+    const foot: Point = [at[0], at[1] + size * 0.9];
 
-    orb(context, at, size * (0.6 + flash * 1.6), { color: light, alpha: flash });
-    for (let ray = 0; ray < 7; ray += 1) {
-      const angle = -Math.PI / 2 + (ray / 6 - 0.5) * 1.8;
-      const length = size * (1 + share * 3.5);
+    if (share < SEED_FLARES) {
+      const gather = share / SEED_FLARES;
+
+      ripple(context, foot, size * (2.6 - gather * 1.8), {
+        color: light,
+        alpha: gather,
+        width: 2.6 * stage.scale,
+      });
+      orb(context, at, size * 0.8 * gather, { color: light, alpha: gather * 0.6 });
+      return;
+    }
+    const flare = (share - SEED_FLARES) / (1 - SEED_FLARES);
+    const flash = flare < 0.1 ? flare / 0.1 : decay((flare - 0.1) / 0.9);
+
+    beam(context, foot, [foot[0], foot[1] - size * 7], Math.min(1, flare * 4), size * 2.2 * flash, {
+      ...paint,
+      alpha: flash,
+    });
+    orb(context, at, size * (0.8 + flash * 2), { color: light, alpha: flash });
+    star(context, at, size * (2 + flare * 3), flare, { color: '#ffffff', alpha: flash });
+    for (let ray = 0; ray < 12; ray += 1) {
+      const angle = (ray / 12) * Math.PI * 2 + noise(seed, ray) * 0.2;
+      const length = size * (1 + flare * 4.5);
 
       lash(context, at, [at[0] + Math.cos(angle) * length, at[1] + Math.sin(angle) * length], 0, {
         color: light,
         alpha: flash * 0.8,
-        width: 2.4 * stage.scale,
+        width: 3 * stage.scale,
       });
     }
-    for (let mote = 0; mote < many(12, weight); mote += 1) {
+    for (let spore = 0; spore < many(18, weight); spore += 1) {
       orb(
         context,
         [
-          at[0] + spread(seed, mote) * size * 1.4 * share,
-          at[1] - share * size * (2 + noise(seed, mote + 20) * 3),
+          at[0] + spread(seed, spore) * size * 2 * flare,
+          at[1] - flare * size * (2 + noise(seed, spore + 20) * 4),
         ],
         2.4 * stage.scale,
-        { color: light, alpha: decay(share) },
+        { color: light, alpha: decay(flare) },
       );
     }
-    ring(context, at, size * (0.5 + share * 2.4), {
+    ring(context, at, size * (0.5 + flare * 3), {
       color: light,
-      alpha: decay(share),
+      alpha: decay(flare),
       width: 2 * stage.scale,
     });
   },
@@ -788,6 +928,195 @@ const legends = {
     motes(context, at, size * 2.2, many(10, weight), seed, splash, {
       color: foam,
       alpha: decay(splash),
+      width: 2.4 * stage.scale,
+    });
+  },
+  // Psychic power gathered round the caster, a shell of shards hung round it, then all driven in at once
+  Overload(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const light = lighten(paint.color, 0.5);
+    const count = many(12, weight);
+
+    if (share < OVERLOAD_GATHER + 0.1) {
+      const charge = Math.min(1, share / OVERLOAD_GATHER);
+      const kept = share < OVERLOAD_GATHER ? 1 : decay((share - OVERLOAD_GATHER) / 0.1);
+
+      orb(context, stage.source, size * (0.6 + charge * 1.1), {
+        ...paint,
+        alpha: charge * kept * 0.7,
+      });
+      for (let band = 0; band < 3; band += 1) {
+        hoop(context, stage.source, size * (1.4 + band * 0.3), 0.32, share * 6 + band * 1.05, {
+          color: light,
+          alpha: charge * kept * 0.8,
+          width: 2 * stage.scale,
+        });
+      }
+    }
+    if (share < OVERLOAD_GATHER) {
+      return;
+    }
+    const drive = Math.min(1, Math.max(0, (share - OVERLOAD_HOLD) / OVERLOAD_DRIVE));
+
+    if (drive < 1) {
+      const appear = Math.min(1, (share - OVERLOAD_GATHER) / 0.1);
+
+      for (let shard = 0; shard < count; shard += 1) {
+        const angle = (shard / count) * Math.PI * 2 + noise(seed, shard) * 0.3 + share * 1.2;
+        const out = size * (2.4 - drive * 2.1) + size * 0.3;
+        const spot: Point = [at[0] + Math.cos(angle) * out, at[1] + Math.sin(angle) * out * 0.8];
+
+        edge(context, between(spot, at, -0.12), between(spot, at, 0.12), size * 0.16, 0, {
+          color: light,
+          alpha: appear,
+        });
+      }
+      ring(context, at, size * (2.6 - ((share * 3) % 1) * 1.8), {
+        color: light,
+        alpha: appear * 0.6,
+        width: 2 * stage.scale,
+      });
+      return;
+    }
+    const hit = (share - OVERLOAD_HOLD - OVERLOAD_DRIVE) / (1 - OVERLOAD_HOLD - OVERLOAD_DRIVE);
+
+    orb(context, at, size * (1 + hit * 2), { color: light, alpha: decay(Math.min(1, hit * 1.3)) });
+    star(context, at, size * (1.8 + hit * 2.4), hit, {
+      color: '#ffffff',
+      alpha: decay(Math.min(1, hit * 2.5)),
+    });
+    for (let wave = 0; wave < 3; wave += 1) {
+      const held = Math.max(0, Math.min(1, hit * 1.6 - wave * 0.2));
+
+      if (held > 0) {
+        hoop(context, at, size * (0.6 + held * 3.2), 0.35, wave * 1.05, {
+          color: light,
+          alpha: decay(held),
+          width: 2.6 * stage.scale,
+        });
+      }
+    }
+    burst(context, at, size * (1.6 + hit * 2.4), count, seed, {
+      color: light,
+      alpha: decay(hit),
+      width: 3 * stage.scale,
+    });
+  },
+
+  // Air wound into a ball on the caster, loosed as a spiralling blast, and bursting over it in a gale
+  Jetstream(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const light = lighten(paint.color, 0.6);
+
+    if (share < JETSTREAM_FIRES + 0.1) {
+      const charge = Math.min(1, share / JETSTREAM_FIRES);
+      const kept = share < JETSTREAM_FIRES ? 1 : decay((share - JETSTREAM_FIRES) / 0.1);
+
+      orb(context, stage.source, size * (0.5 + charge * 0.9), {
+        ...paint,
+        alpha: charge * kept * 0.7,
+      });
+      spiral(context, stage.source, size * (1.6 - charge * 0.8), 2, share * 6, {
+        color: light,
+        alpha: charge * kept,
+        width: 2.4 * stage.scale,
+      });
+    }
+    if (share < JETSTREAM_FIRES) {
+      return;
+    }
+    const blow = (share - JETSTREAM_FIRES) / (1 - JETSTREAM_FIRES);
+    const drawn = Math.min(1, blow * 5);
+    const kept = late(blow, 0.6);
+
+    beam(context, stage.source, at, drawn, size * 1.2, { ...paint, alpha: kept });
+    funnel(context, stage.source, at, drawn, 3, size * 1.1, share * 30, {
+      color: '#ffffff',
+      alpha: kept * 0.7,
+      width: 2.4 * stage.scale,
+    });
+    if (drawn < 1) {
+      return;
+    }
+    const hit = (blow - 0.2) / 0.8;
+
+    orb(context, at, size * (1 + hit * 1.6), { color: light, alpha: decay(hit) });
+    star(context, at, size * (1.4 + hit * 2), 0, {
+      color: '#ffffff',
+      alpha: decay(Math.min(1, hit * 2.5)),
+    });
+    ring(context, at, size * (0.6 + hit * 3), {
+      color: light,
+      alpha: decay(hit),
+      width: 2.6 * stage.scale,
+    });
+    burst(context, at, size * (1.2 + hit * 3), many(14, weight), seed, {
+      color: light,
+      alpha: decay(hit),
+      width: 2 * stage.scale,
+    });
+  },
+
+  // A blade of light drawn in three quick cuts across it, the cuts left hanging, then going off together
+  Resolute(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const light = lighten(paint.color, 0.5);
+    const [first] = RESOLUTE_CUTS[0];
+
+    // The blade catching the light where the first cut starts
+    if (share < 0.16) {
+      star(
+        context,
+        [at[0] + Math.cos(-first) * size * 1.6, at[1] + Math.sin(-first) * size * 1.6],
+        size * 0.8,
+        share * 6,
+        { color: '#ffffff', alpha: swell(share / 0.16) },
+      );
+    }
+    for (const [index, [from, to]] of RESOLUTE_CUTS.entries()) {
+      const start = 0.08 + index * 0.16;
+      const swing = (share - start) / 0.12;
+
+      if (swing <= 0) {
+        continue;
+      }
+      // The picture's y runs down, so the scene's angles turn the other way
+      const end = from + (to - from) * Math.min(1, swing);
+      const kept = late(share, RESOLUTE_FINALE + 0.1);
+
+      sickle(context, at, size * 1.6, -from, -end, size * 0.45, { ...paint, alpha: kept * 0.6 });
+      sickle(context, at, size * 1.6, -from, -end, size * 0.16, { color: '#ffffff', alpha: kept });
+      if (swing >= 1) {
+        const after = Math.min(1, (swing - 1) / 2);
+
+        burst(context, at, size * 1.2, 6, seed + index, {
+          color: light,
+          alpha: decay(after),
+          width: 2 * stage.scale,
+        });
+      }
+    }
+    if (share < RESOLUTE_FINALE) {
+      return;
+    }
+    const finale = (share - RESOLUTE_FINALE) / (1 - RESOLUTE_FINALE);
+
+    orb(context, at, size * (1 + finale * 1.6), { color: light, alpha: decay(finale) });
+    star(context, at, size * (1.6 + finale * 2.4), 0.4, {
+      color: '#ffffff',
+      alpha: decay(Math.min(1, finale * 2.5)),
+    });
+    ring(context, at, size * (0.6 + finale * 3), {
+      color: light,
+      alpha: decay(finale),
+      width: 2.6 * stage.scale,
+    });
+    motes(context, at, size * 2.6, many(12, weight), seed, finale, {
+      color: light,
+      alpha: decay(finale),
       width: 2.4 * stage.scale,
     });
   },

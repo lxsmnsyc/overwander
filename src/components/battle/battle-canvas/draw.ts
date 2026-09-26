@@ -22,6 +22,7 @@ import type { Point } from '../../../canvas/sprite-sheet';
 import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
+import { Species } from '../../../data/ids/species';
 
 /**
  * Painting one slot: the pokemon, the bars over it and the words under
@@ -256,7 +257,8 @@ function baseScaleOf(slot: Slot): number {
 export function scaleOf(slot: Slot): number {
   const sprite = slot.sprite;
 
-  return sprite == null
+  // The doll has no species data to size it by, so it keeps the base scale
+  return sprite == null || slot.unit.appearance === Species.Substitute
     ? baseScaleOf(slot)
     : baseScaleOf(slot) * speciesSize(slot.unit.appearance, sprite);
 }

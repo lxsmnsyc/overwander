@@ -64,6 +64,7 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Trick,
   Moves.WillOWisp,
+  Moves.Confide,
 ];
 
 /**
@@ -166,6 +167,7 @@ export default function registerDrifloonSpecies(): void {
         37: [Moves.BatonPass],
         44: [Moves.ShadowBall],
         51: [Moves.Explosion],
+        65: [Moves.PhantomForce],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Fly, Moves.GigaImpact, Moves.HyperBeam],
     },

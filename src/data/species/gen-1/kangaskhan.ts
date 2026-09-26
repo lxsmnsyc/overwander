@@ -130,6 +130,8 @@ export default function registerKangaskhanSpecies(): void {
         Moves.Retaliate,
         Moves.Bulldoze,
         Moves.WorkUp,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
       egg: [
         Moves.Stomp,

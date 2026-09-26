@@ -46,6 +46,8 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.Scald,
   Moves.StruggleBug,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 export default function registerSurskitSpecies(): void {
@@ -96,9 +98,17 @@ export default function registerSurskitSpecies(): void {
         25: [Moves.BubbleBeam],
         31: [Moves.Agility],
         37: [Moves.Haze, Moves.Mist],
+        38: [Moves.StickyWeb],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Foresight, Moves.MindReader, Moves.Psybeam, Moves.MudShot, Moves.HydroPump],
+      egg: [
+        Moves.Foresight,
+        Moves.MindReader,
+        Moves.Psybeam,
+        Moves.MudShot,
+        Moves.HydroPump,
+        Moves.FellStinger,
+      ],
     },
   });
 

@@ -63,4 +63,53 @@ export default function setupTypingMoves(battle: Battle): void {
         changes(event.move, event.source, event.target.unit);
     }
   });
+
+  setupAddedTypes(battle);
+}
+
+/**
+ * Trick-or-Treat and Forest's Curse add a type on top of what the
+ * target already is. There is room for one added type at a time, so
+ * either move takes the place of whatever the other one added
+ * https://bulbapedia.bulbagarden.net/wiki/Trick-or-Treat_(move)
+ */
+const ADDED_TYPES: { [key in Moves]?: Types } = {
+  [Moves.TrickOrTreat]: Types.Ghost,
+  [Moves.ForestsCurse]: Types.Grass,
+};
+
+function setupAddedTypes(battle: Battle): void {
+  const added = new WeakMap<Unit, Types>();
+
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
+    const type = ADDED_TYPES[event.move];
+
+    if (type == null || event.target.type !== MoveTargetType.Unit) {
+      return;
+    }
+
+    const target = event.target.unit;
+
+    if (target.types.has(type)) {
+      event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
+      return;
+    }
+
+    const previous = added.get(target);
+
+    if (previous != null) {
+      target.removeType(previous);
+    }
+    target.addType(type);
+    added.set(target, type);
+  });
+
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    const type = ADDED_TYPES[event.move];
+
+    if (event.usable && type != null) {
+      event.usable =
+        event.target.type === MoveTargetType.Unit && !event.target.unit.types.has(type);
+    }
+  });
 }

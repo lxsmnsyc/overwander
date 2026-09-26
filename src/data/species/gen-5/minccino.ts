@@ -64,6 +64,8 @@ const FAMILY_TEACHABLE = [
   Moves.UTurn,
   Moves.Uproar,
   Moves.WorkUp,
+  Moves.Confide,
+  Moves.DazzlingGleam,
 ];
 
 /**
@@ -106,7 +108,7 @@ export default function registerMinccinoSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Pound],
-        3: [Moves.Growl],
+        3: [Moves.Growl, Moves.BabyDollEyes],
         4: [Moves.HelpingHand],
         8: [Moves.EchoedVoice],
         9: [Moves.Tickle],

@@ -45,6 +45,7 @@ const FAMILY_TEACHABLE = [
   Moves.Synthesis,
   Moves.Toxic,
   Moves.WorrySeed,
+  Moves.Confide,
 ];
 
 /**
@@ -89,6 +90,7 @@ export default function registerSewaddleSpecies(): void {
         15: [Moves.RazorLeaf],
         22: [Moves.StruggleBug],
         29: [Moves.Endure],
+        31: [Moves.StickyWeb],
         36: [Moves.BugBuzz],
         43: [Moves.Flail],
       },
@@ -178,6 +180,7 @@ export default function registerSewaddleSpecies(): void {
         22: [Moves.StruggleBug],
         29: [Moves.Slash],
         32: [Moves.HelpingHand],
+        34: [Moves.FellStinger],
         36: [Moves.LeafBlade],
         39: [Moves.XScissor],
         43: [Moves.Entrainment],

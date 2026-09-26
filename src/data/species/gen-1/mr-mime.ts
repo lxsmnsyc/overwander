@@ -45,6 +45,7 @@ export default function registerMrMimeSpecies(): void {
           Moves.PowerSwap,
           Moves.WideGuard,
           Moves.QuickGuard,
+          Moves.MistyTerrain,
         ],
         4: [Moves.Copycat],
         11: [Moves.Substitute],
@@ -140,6 +141,10 @@ export default function registerMrMimeSpecies(): void {
         Moves.MagicRoom,
         Moves.FoulPlay,
         Moves.Round,
+        Moves.Confide,
+        Moves.DazzlingGleam,
+        Moves.Infestation,
+        Moves.PowerUpPunch,
       ],
     },
   });

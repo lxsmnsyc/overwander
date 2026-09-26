@@ -103,6 +103,7 @@ export default function registerStantlerSpecies(): void {
         Moves.Bulldoze,
         Moves.WorkUp,
         Moves.WildCharge,
+        Moves.Confide,
       ],
       egg: [
         Moves.Bite,

@@ -156,7 +156,8 @@ export default function setupMoveMechanics(battle: Battle): void {
    */
   battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Exact, (event) => {
     if (event.type === Types.Ground && event.target.type === MoveTargetType.Unit) {
-      event.immune = !event.target.unit.checkGrounded();
+      // Thousand Arrows is the one Ground move aimed at the air
+      event.immune = event.move !== Moves.ThousandArrows && !event.target.unit.checkGrounded();
     }
   });
   battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Exact, (event) => {

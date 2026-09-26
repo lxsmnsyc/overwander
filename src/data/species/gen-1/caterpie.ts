@@ -181,6 +181,8 @@ export default function registerCaterpieSpecies(): void {
         Moves.Acrobatics,
         Moves.StruggleBug,
         Moves.Electroweb,
+        Moves.Confide,
+        Moves.Infestation,
       ],
     },
   });

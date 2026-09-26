@@ -6,10 +6,6 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
  * Grassland spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerGrasslandSpawns(): void {
-  // The Blitzle line is written but waits on sprites, since the
-  // collection has drawn neither Blitzle nor Zebstrika. Once it does,
-  // mornings and days take Blitzle in uncommon at 25 and Zebstrika in
-  // scarce at 6
   registerSpawnPool(Biome.Grassland, {
     [TimeOfDay.Morning]: {
       base: [
@@ -27,6 +23,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Blitzle, weight: 25 },
         { species: Species.Deerling, weight: 18 },
         { species: Species.Minccino, weight: 26 },
         { species: Species.Swablu, weight: 22 },
@@ -71,6 +68,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Zebstrika, weight: 6 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Altaria, weight: 5 },
@@ -167,6 +165,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Blitzle, weight: 25 },
         { species: Species.Deerling, weight: 18 },
         { species: Species.Minccino, weight: 26 },
         { species: Species.Swablu, weight: 22 },
@@ -213,6 +212,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Zebstrika, weight: 6 },
         { species: Species.Sawsbuck, weight: 7 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Altaria, weight: 5 },

@@ -256,12 +256,7 @@ describe('where a species lives', () => {
     // Porygon is met on town streets, which no biome pool holds, and
     // what it evolves into is made rather than met. The far shore's
     // shell is staged by the pool its west counterpart sits in, and
-    // swapped for as the world hands it over, so no pool names it either.
-    //
-    // The Blitzle line names where it lives, but the sprite collection
-    // has drawn neither Blitzle nor Zebstrika, so it is not staged
-    // until it does. The pools the waiting
-    // lines will take are written as comments in the biome files
+    // swapped for as the world hands it over, so no pool names it either
     const unstaged = new Set<Species>([
       Species.Phione,
       ...ROTOM_FORMS.slice(1),
@@ -275,16 +270,6 @@ describe('where a species lives', () => {
       // no pool names them either
       ...DEERLING_FORMS.slice(1),
       ...SAWSBUCK_FORMS.slice(1),
-      Species.Blitzle,
-      Species.Zebstrika,
-      Species.Throh,
-      Species.Sawk,
-      Species.Pansage,
-      Species.Simisage,
-      Species.Pansear,
-      Species.Simisear,
-      Species.Panpour,
-      Species.Simipour,
     ]);
     const staged = new Set<Species>();
 

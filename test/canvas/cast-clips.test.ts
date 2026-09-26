@@ -94,8 +94,16 @@ function loaded(species: number): SpeciesSpriteAnimation {
  * gap is worth knowing about even when nothing has tripped over it yet
  */
 const KNOWN_GAPS: Record<number, SpriteAnim[] | undefined> = {
+  516: [SpriteAnim.Charge, SpriteAnim.Double, SpriteAnim.Swing],
+  522: [SpriteAnim.Swing],
+  523: [SpriteAnim.Swing],
+  538: [SpriteAnim.Swing],
+  564: [SpriteAnim.Swing],
+  565: [SpriteAnim.Swing],
   591: [SpriteAnim.Double, SpriteAnim.Swing],
   593: [SpriteAnim.Hurt, SpriteAnim.Attack, SpriteAnim.Charge, SpriteAnim.Double, SpriteAnim.Hop],
+  618: [SpriteAnim.Swing],
+  626: [SpriteAnim.Swing],
 };
 
 /**

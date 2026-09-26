@@ -8,6 +8,6 @@ Kalos's slug and bat:
 - Noibat and Noivern hunt over the woodland and the tropical rainforest after dark, and Noibat becomes Noivern at 48.
 - Gooey is built: whatever makes contact with a Goomy, Sliggoo or Goodra loses 1 stage of Speed.
 - Goodra's Seepage holds back 40% of every direct blow it takes and pays it out over the next 4 seconds, so a heal can outrun the damage.
-- Noivern's Outpace hits 1.3x against any target whose Speed is lower than its own.
+- Noivern's Echolocation hears whoever lands a move on it, and its next damaging move at that enemy is a critical hit.
 - Goodra takes Water Absorb and Noivern takes Soundproof as their fourth abilities.
 - All five learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.

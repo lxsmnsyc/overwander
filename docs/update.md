@@ -5,15 +5,24 @@ to go and look at first. The early ones are named after the region they opened.
 A release now covers a family or a group rather than a whole region, and is
 named for what it brings.
 
-| Release                  | What it brought                                                                                                                |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| [Unova's second road and first cave](update/unovas-road-and-cave.md) | Six more families: Munna, Pidove and Blitzle along the road, and Roggenrola, Woobat and Drilbur under it |
-| [The fifth generation's moves](update/fifth-generation-moves.md) | 92 moves taught to everyone already here, with pictures of their own, and three more starters |
-| [Sinnoh](update/sinnoh.md) | 107 more pokemon, a signature ability for 246 families, 113 new moves, a fourth league and Frontier, and Team Galactic |
-| [Open world](update/open-world.md) | A map with no edges, caves under the world, named towns with streets, and ground drawn from tilesets |
-| [Hoenn](update/hoenn.md) | 135 more pokemon, 102 new moves, the Battle Frontier, a third league, and Team Aqua and Team Magma |
-| [Johto](update/johto.md) | The other hundred pokemon, 83 new moves, a second league, the Legend tier, Team Rocket's executives, and Kurt's apricorn balls |
-| [Kanto](update/kanto.md) | The first release: an endless world, 151 pokemon, real-time battles, raids, eggs and the auction house                         |
+| Release                                                               | What it brought                                                                                                                |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| [Unova's league](update/unovas-league.md) | Thirteen gym leaders, the Elite Four, Iris, N and Alder, Team Plasma, 48 trainer classes, and the whole ladder in every town |
+| [Seasons and the last of Unova's lines](update/seasons-and-the-last-lines.md) | Monthly seasons with Deerling's four coats, Emolga, and the fourteen Unova lines still missing |
+| [Unova's legends](update/unovas-legends.md) | The Tao trio with Kyurem's fusions, the forces of nature, and Victini, Meloetta and Genesect |
+| [Twist Mountain and the Swords of Justice](update/twist-mountain-and-the-swords.md) | Seven more families along the last roads and Twist Mountain, and Cobalion, Terrakion, Virizion and Keldeo |
+| [Opelucid and the towers](update/opelucid-and-the-towers.md) | Nine more families around Celestial Tower, Dragonspiral Tower and Opelucid's last roads, and higher wild levels |
+| [From Route 5 to Driftveil](update/route-five-to-driftveil.md) | Eleven more families along Unova's fifth road, in Chargestone Cave and around Driftveil, with Illusion and Iron Barbs working at last |
+| [The desert and the Relic Castle](update/desert-and-relic-castle.md)  | Ten more families across Unova's desert and ruins, with Mummy and Perish Body working at last                                  |
+| [Pinwheel Forest](update/pinwheel-forest.md)                          | Nine more families: the tailors, centipedes, cotton and lilies of the forest, with Timburr, Tympole, Audino and the dojo pair  |
+| [Unova's second road and first cave](update/unovas-road-and-cave.md)  | Six more families: Munna, Pidove and Blitzle along the road, and Roggenrola, Woobat and Drilbur under it                       |
+| [Unova's first three families](update/unovas-first-three-families.md) | Patrat, Lillipup and Purrloin and their evolutions, each family with a signature ability                                       |
+| [The fifth generation's moves](update/fifth-generation-moves.md)      | 92 moves taught to everyone already here, with pictures of their own, and three more starters                                  |
+| [Sinnoh](update/sinnoh.md)                                            | 107 more pokemon, a signature ability for 246 families, 113 new moves, a fourth league and Frontier, and Team Galactic         |
+| [Open world](update/open-world.md)                                    | A map with no edges, caves under the world, named towns with streets, and ground drawn from tilesets                           |
+| [Hoenn](update/hoenn.md)                                              | 135 more pokemon, 102 new moves, the Battle Frontier, a third league, and Team Aqua and Team Magma                             |
+| [Johto](update/johto.md)                                              | The other hundred pokemon, 83 new moves, a second league, the Legend tier, Team Rocket's executives, and Kurt's apricorn balls |
+| [Kanto](update/kanto.md)                                              | The first release: an endless world, 151 pokemon, real-time battles, raids, eggs and the auction house                         |
 
 The rules themselves live in the [Player's guide](mechanics.md). A release page
 says what is new; the guide says how it works.

@@ -16,6 +16,7 @@ import { healedByItem } from '../../auth/health';
 import usePurifyingGem from '../../auth/purify';
 import { useAbilityCapsule } from '../../auth/ability-items';
 import useUtilityBelt from '../../auth/utility-belt';
+import playEffect, { Effect } from '../app/sound';
 import { feedEffortBerry, useEffortItem } from '../../auth/training';
 import { MAX_LEVEL } from '../../data/constants/levels';
 import type { Stats } from '../../data/constants/stats';
@@ -32,7 +33,7 @@ import {
   isAbilityCapsule,
   isAbilityPatch,
 } from '../../data/items/ability-items';
-import { isBottleCap, isPerfectIVs } from '../../data/items/bottle-caps';
+import { capAsksForStat, isBottleCap, isPerfectIVs } from '../../data/items/bottle-caps';
 import { getMintNature, isMint } from '../../data/items/mints';
 import { isHerbal } from '../../data/items/medicine';
 import { isPurifyingGem } from '../../data/items/purifying-gem';
@@ -144,12 +145,12 @@ export function isUsableOn(item: Items, caught: CaughtPokemon): boolean {
 
 /**
  * Whether the item asks a question back before it is spent. A machine
- * asks which move is given up for it, and a bottle which move the
- * points land on. Neither can be taken back afterwards, so neither
- * leaves the bag until the question is answered
+ * asks which move is given up for it, a bottle which move the points
+ * land on, and a Bottle Cap which stat it polishes. None can be taken
+ * back afterwards, so none leaves the bag until the question is answered
  */
 export function asksAQuestion(item: Items): boolean {
-  return isMachineItem(item) || isPPItem(item) || isAbilityPatch(item);
+  return isMachineItem(item) || isPPItem(item) || isAbilityPatch(item) || capAsksForStat(item);
 }
 
 /**
@@ -312,9 +313,11 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
   if (item === Items.RareCandy) {
     const level = await useRareCandy(catchId);
 
-    return level == null
-      ? { said: 'That candy could not be used.', tone: 'ember', level: null }
-      : { said: `Grew to level ${level}.`, tone: 'neutral', level };
+    if (level == null) {
+      return { said: 'That candy could not be used.', tone: 'ember', level: null };
+    }
+    playEffect(Effect.LevelUp);
+    return { said: `Grew to level ${level}.`, tone: 'neutral', level };
   }
 
   if (getBall(item) != null) {
@@ -348,29 +351,35 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
   if (isPurifyingGem(item)) {
     const ivs = await usePurifyingGem(catchId, item);
 
-    return ivs == null
-      ? refused(item)
-      : { said: `The shadow is gone — ${describeIVs(ivs)}.`, tone: 'neutral', level: null };
+    if (ivs == null) {
+      return refused(item);
+    }
+    playEffect(Effect.Purified);
+    return { said: `The shadow is gone — ${describeIVs(ivs)}.`, tone: 'neutral', level: null };
   }
 
   if (isUtilityBelt(item)) {
     const slots = await useUtilityBelt(catchId);
 
-    return slots == null
-      ? refused(item)
-      : { said: `Room for ${slots} held items now.`, tone: 'neutral', level: null };
+    if (slots == null) {
+      return refused(item);
+    }
+    playEffect(Effect.ItemSlot);
+    return { said: `Room for ${slots} held items now.`, tone: 'neutral', level: null };
   }
 
   if (isAbilityCapsule(item)) {
     const drawn = await useAbilityCapsule(catchId);
 
-    return drawn == null
-      ? refused(item)
-      : {
-          said: `${getAbilityData(drawn.ability).name} came up — ${drawn.slots} abilities now.`,
-          tone: 'neutral',
-          level: null,
-        };
+    if (drawn == null) {
+      return refused(item);
+    }
+    playEffect(Effect.AbilityLearned);
+    return {
+      said: `${getAbilityData(drawn.ability).name} came up — ${drawn.slots} abilities now.`,
+      tone: 'neutral',
+      level: null,
+    };
   }
 
   // Both of these move one stat's effort, and what the player wants to

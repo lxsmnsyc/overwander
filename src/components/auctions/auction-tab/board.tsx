@@ -47,6 +47,7 @@ import {
 import AuctionDialog, { type AuctionSubject } from '../AuctionDialog';
 import { AUCTION_DURATION } from '../../../auth/auction-record';
 import { type JSX, type Resource, Show, createSignal, from } from 'solid-js';
+import playEffect, { Effect } from '../../app/sound';
 
 export interface AuctionTabProps {
   /**
@@ -216,6 +217,9 @@ export function AuctionBoard(
     setStatus(null);
     claimAuction(id)
       .then((claimed) => {
+        if (claimed) {
+          playEffect(Effect.TradeComplete);
+        }
         setStatus(claimed ? 'Collected.' : 'That lot could not be collected.');
         refresh();
       })

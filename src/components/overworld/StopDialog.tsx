@@ -17,7 +17,8 @@ import { NPC_QUOTES } from './npc-dialog/shared';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
 import NpcSprite from './NpcSprite';
-import { Button, Dialog, DialogActions, Meta, Status } from '../styled';
+import { Badge, Button, Dialog, DialogActions, Meta, Row, Status } from '../styled';
+import { TEAM_SIZE } from '../../auth/teams';
 import { useGame } from '../app/game-context';
 
 /**
@@ -247,6 +248,14 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
                 {greeting()}
               </blockquote>
 
+              {/* What the fight asks of a party before the line-up is read */}
+              <Row class="justify-center">
+                <Badge tone="tide">
+                  Lv. {levels()[0]}–{levels()[1]}
+                </Badge>
+                <Badge>Bring up to {props.challenger?.bring ?? TEAM_SIZE}</Badge>
+              </Row>
+
               {/* What they are fielding, in the same box of squares
                   the player reads their own pokemon in: a lineup laid
                   out the way a box is laid out is one they already
@@ -264,6 +273,16 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
                   columns={3}
                   cardOnly
                 />
+              </Show>
+
+              {/* What winning pays and losing costs, written with the challenge */}
+              <Show when={props.challenger?.stakes}>
+                {(stakes) => (
+                  <div class="flex max-w-prose flex-col gap-1">
+                    <span class="text-xs font-semibold text-muted uppercase">Stakes</span>
+                    <Meta>{stakes()}</Meta>
+                  </div>
+                )}
               </Show>
             </div>
           )}

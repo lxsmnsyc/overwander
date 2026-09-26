@@ -5,6 +5,7 @@ import { MARKET_GEAR } from '../items/gear';
 import { ONE_SHOTS } from '../items/one-shots';
 import { ORBS } from '../items/orbs';
 import { PLATES } from '../items/plates';
+import { VITAMIN_STATS } from '../items/vitamins';
 import { MINT_NATURES } from '../items/mints';
 import { POWER_ITEMS } from '../items/power-items';
 import { GENERAL_STAT_BOOSTERS } from '../items/stat-boosters';
@@ -36,6 +37,11 @@ export function evenlyWeighted(items: Iterable<Items>, weight: number): ItemPool
 export interface ItemRarityGroups {
   base: ItemPoolEntry[];
   uncommon: ItemPoolEntry[];
+  /**
+   * Between uncommon and rare: what changes a fight or a build rather
+   * than restocking a bag
+   */
+  scarce: ItemPoolEntry[];
   rare: ItemPoolEntry[];
   /**
    * Between rare and special: the things that change a pokemon for
@@ -115,7 +121,6 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.Honey, weight: 6 },
   ],
   uncommon: [
-    { item: Items.UltraBall, weight: 15 },
     { item: Items.NetBall, weight: 10 },
     { item: Items.DiveBall, weight: 10 },
     { item: Items.NestBall, weight: 10 },
@@ -123,17 +128,16 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.TimerBall, weight: 10 },
     { item: Items.QuickBall, weight: 10 },
     { item: Items.DuskBall, weight: 10 },
-    { item: Items.BigPearl, weight: 8 },
-    { item: Items.StarPiece, weight: 8 },
+    // A shade thinner than the base valuables would make them, so the
+    // band's doubled width never makes a dearer find the commoner one
+    { item: Items.BigPearl, weight: 7 },
+    { item: Items.StarPiece, weight: 7 },
     { item: Items.BigMushroom, weight: 6 },
+    // Priced with the Big Mushroom, so it is hidden with it: a bone in
+    // a richer band than a dearer pearl would break the ladder
     { item: Items.RareBone, weight: 5 },
-    { item: Items.RelicSilver, weight: 4 },
     { item: Items.SuperPotion, weight: 10 },
-    { item: Items.HyperPotion, weight: 6 },
     { item: Items.FullHeal, weight: 6 },
-    // The root is a Hyper Potion's worth and then some, so it sits in
-    // the band the Hyper Potion sits in rather than with the powders
-    { item: Items.EnergyRoot, weight: 6 },
     // The only thing the Move Reminder takes. It is dug up rather than
     // bought because nothing sells one — a forgotten move costs a walk,
     // which is what the move cost in the first place
@@ -141,6 +145,28 @@ export const ITEM_POOL: ItemRarityGroups = {
     // Holding a line one stage short of where it would go is a
     // decision players make early and often, so the stone is common
     { item: Items.Everstone, weight: 6 },
+  ],
+  scarce: [
+    { item: Items.UltraBall, weight: 15 },
+    // Kurt's balls, dropped by whoever carried one out of his shop.
+    // Thin, since nobody sells them and each is for one kind of catch
+    { item: Items.LevelBall, weight: 3 },
+    { item: Items.LureBall, weight: 3 },
+    { item: Items.MoonBall, weight: 3 },
+    { item: Items.FriendBall, weight: 3 },
+    { item: Items.LoveBall, weight: 3 },
+    { item: Items.HeavyBall, weight: 3 },
+    { item: Items.FastBall, weight: 3 },
+    { item: Items.RelicSilver, weight: 4 },
+    { item: Items.HyperPotion, weight: 6 },
+    // The root is a Hyper Potion's worth and then some, so it sits in
+    // the band the Hyper Potion sits in rather than with the powders
+    { item: Items.EnergyRoot, weight: 6 },
+    // What a party comes back from a lost fight on, all of it bottled
+    // and sold. The herb is a Revive that grows out of the ground
+    { item: Items.MaxPotion, weight: 6 },
+    { item: Items.Revive, weight: 6 },
+    { item: Items.RevivalHerb, weight: 4 },
     // The stones that hold a sky out longer, and the clay that does
     // the same for a screen. Thin slots: each is worth nothing to a
     // party not built around the thing it lengthens
@@ -161,6 +187,28 @@ export const ITEM_POOL: ItemRarityGroups = {
     // one thing to happen to its holder and is spent on it, which is
     // the band's own test: through the next fight and no further
     ...evenlyWeighted(ONE_SHOTS.keys(), 2),
+    // The everyday held gear: a type lifted by a fifth, a tenth more
+    // damage, a lens. Thin slots each, since there are forty-five of
+    // them. The type boosters also drop off the wild species that
+    // carry them
+    ...evenlyWeighted(TYPE_BOOSTERS.keys(), 1),
+    ...evenlyWeighted(MARKET_GEAR.keys(), 1),
+    // Left behind by whatever wriggled out of it, which is what it
+    // does for whoever picks it up
+    { item: Items.ShedShell, weight: 4 },
+    // Boots somebody walked out of: worth a slot to anything that has
+    // to walk back onto a field somebody else laid spikes on
+    { item: Items.HeavyDutyBoots, weight: 4 },
+    // Somebody's weighted dice, which is worth a slot to the handful
+    // of pokemon that throw a move several times over
+    { item: Items.LoadedDice, weight: 3 },
+    // The training kit: a brace heavier than anything wants to wear, a
+    // bell rung for a pokemon that was not caught in a comfortable
+    // ball, and the candy pair, a walk's worth of extra candy each
+    { item: Items.MachoBrace, weight: 3 },
+    { item: Items.SootheBell, weight: 3 },
+    { item: Items.ExpShare, weight: 2 },
+    { item: Items.LuckyEgg, weight: 2 },
   ],
   rare: [
     { item: Items.FireStone, weight: 10 },
@@ -179,6 +227,30 @@ export const ITEM_POOL: ItemRarityGroups = {
     // on a pokemon and spent. Thinner, because a Rotom wants more
     // than one of them and nobody sells any
     { item: Items.RotomCatalog, weight: 6 },
+    // What a trade or a held evolution asks for, on the stones' terms
+    // but thinner: each is wanted by one line rather than several
+    { item: Items.KingsRock, weight: 3 },
+    { item: Items.DragonScale, weight: 3 },
+    { item: Items.UpGrade, weight: 3 },
+    { item: Items.Protector, weight: 3 },
+    { item: Items.Electirizer, weight: 3 },
+    { item: Items.Magmarizer, weight: 3 },
+    { item: Items.ReaperCloth, weight: 3 },
+    { item: Items.DubiousDisc, weight: 3 },
+    { item: Items.DeepSeaTooth, weight: 3 },
+    { item: Items.DeepSeaScale, weight: 3 },
+    { item: Items.PrismScale, weight: 3 },
+    { item: Items.OvalStone, weight: 3 },
+    { item: Items.RazorClaw, weight: 3 },
+    { item: Items.RazorFang, weight: 3 },
+    { item: Items.LinkingCord, weight: 4 },
+    // A level for any line, whatever candy it takes
+    { item: Items.RareCandy, weight: 5 },
+    // 10 effort a bottle, one step past the wings' 3
+    ...evenlyWeighted(VITAMIN_STATS.keys(), 3),
+    // A step off one move's cooldown for good; its bigger bottle is
+    // prized
+    { item: Items.PPUp, weight: 3 },
     { item: Items.Nugget, weight: 8 },
     // The middle of the ladder, thinning as it climbs
     // Cut off a Slowpoke, and worth more than the nugget it is found
@@ -188,15 +260,11 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.RelicGold, weight: 4 },
     { item: Items.BalmMushroom, weight: 4 },
     { item: Items.BigNugget, weight: 2 },
-    // What a party comes back from a lost raid on. The Max Revive is
-    // deliberately the thinner slot of the two
-    { item: Items.MaxPotion, weight: 6 },
+    // The top of the medicine: the Full Restore, and the Max Revive
+    // that brings a pokemon back from nothing at full health. Both are
+    // bottled and sold, so a find is a saving rather than a prize
     { item: Items.FullRestore, weight: 4 },
-    { item: Items.Revive, weight: 6 },
-    // A Max Revive that grows out of the ground. It is the commoner of
-    // the two — the Max Revive itself is prized now — because what it
-    // asks for is not gold
-    { item: Items.RevivalHerb, weight: 4 },
+    { item: Items.MaxRevive, weight: 5 },
     // The relics: a Cubone's bone, a Ditto's dust. Thinner than the
     // band's staples because each is worth nothing to anybody who has
     // not caught that one species, and one to anybody who has
@@ -208,21 +276,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     // and a Farfetch'd leek
     { item: Items.LuckyPunch, weight: 3 },
     { item: Items.Stick, weight: 3 },
-    // Left behind by whatever wriggled out of it, which is what it
-    // does for whoever picks it up
-    { item: Items.ShedShell, weight: 4 },
-    // Boots somebody walked out of: worth a slot to anything that has
-    // to walk back onto a field somebody else laid spikes on
-    { item: Items.HeavyDutyBoots, weight: 4 },
-    // The two relics. A Soul Dew is nothing to anybody but the pair it
-    // belongs to, and a brace is heavier than anything wants to wear
+    // A Soul Dew is nothing to anybody but the pair it belongs to
     { item: Items.SoulDew, weight: 2 },
-    // Somebody's weighted dice, which is worth a slot to the handful
-    // of pokemon that throw a move several times over
-    { item: Items.LoadedDice, weight: 3 },
-    { item: Items.MachoBrace, weight: 3 },
-    // Rung for a pokemon that was not caught in a comfortable ball
-    { item: Items.SootheBell, weight: 3 },
     // A stone's weight, because every pokemon a player owns wants one
     // — a Fire Stone is wanted once, by one line
     { item: Items.Leftovers, weight: 10 },
@@ -231,18 +286,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     ...evenlyWeighted(PLATES.keys(), 1),
     // The Drives are found on the same terms as the plates
     ...evenlyWeighted(DRIVES.keys(), 1),
-    // The held-item shelves, on the plates' terms: whole families of
-    // thin slots, so the band stays the stones' and finding a Choice
-    // Band stays an event. The type boosters also drop off the wild
-    // species that carry them; the rest have no source but here
-    ...evenlyWeighted(TYPE_BOOSTERS.keys(), 1),
-    ...evenlyWeighted(MARKET_GEAR.keys(), 1),
+    // The strongest gear, on the plates' terms: thin slots, so the
+    // band stays the stones' and finding a Choice Band stays an event
     ...evenlyWeighted(ORBS.keys(), 1),
     ...evenlyWeighted(GENERAL_STAT_BOOSTERS.keys(), 1),
-    // The candy pair: a walk's worth of extra candy, hidden where the
-    // Leftovers are and half as often
-    { item: Items.ExpShare, weight: 2 },
-    { item: Items.LuckyEgg, weight: 2 },
   ],
   prized: [
     // A dug-up cap fixes one stat of one pokemon, and nothing else in
@@ -262,13 +309,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     // cannot reach four on its own needs one before she is any use
     { item: Items.AbilityCapsule, weight: 6 },
     // The one ability nothing rolls, written into a pokemon that
-    // already has everything its line can be born with. Thin, and
-    // the thinnest thing in the band: it cannot be taken back
-    { item: Items.AbilityPatch, weight: 3 },
-    // The one item that brings a pokemon back from nothing at full
-    // health. The Revive and the Revival Herb are the rare band's
-    // answer to a lost fight; this is the answer to a lost party
-    { item: Items.MaxRevive, weight: 5 },
+    // already has everything its line can be born with. Thin: it
+    // cannot be taken back
+    { item: Items.AbilityPatch, weight: 4 },
     // One crossing of the world. It is spent in the crossing, so it
     // changes where a player is rather than what a pokemon is — but it
     // is the only thing that does, and a network nobody can reach is
@@ -293,6 +336,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.ClawFossil, weight: 8 },
     { item: Items.SkullFossil, weight: 8 },
     { item: Items.ArmorFossil, weight: 8 },
+    { item: Items.CoverFossil, weight: 8 },
+    { item: Items.PlumeFossil, weight: 8 },
     // The rock a Deoxys rearranges itself with, spent on each
     // rearrangement. Prized rather than special: it is worth nothing
     // to anybody who has not been to the island, and everything to
@@ -307,6 +352,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LustrousOrb, weight: 3 },
     { item: Items.GriseousOrb, weight: 3 },
     { item: Items.Gracidea, weight: 3 },
+    // As thin as the orbs, for the same reason: the splicers are worth
+    // nothing until a Kyurem has been caught
+    { item: Items.DnaSplicers, weight: 3 },
     // Three purses instead of one, for good, and nothing sells one.
     // Here rather than in rare so that parting with it is asked about
     // twice
@@ -326,7 +374,11 @@ export const ITEM_POOL: ItemRarityGroups = {
     // The power items: each decides what a player's next fifty eggs
     // are made of, which is the band's permanence test passed on the
     // next generation rather than on the holder
-    ...evenlyWeighted(POWER_ITEMS.keys(), 2),
+    ...evenlyWeighted(POWER_ITEMS.keys(), 3),
+    // A move's cooldown taken as far down as it goes, for good
+    { item: Items.PPMax, weight: 2 },
+    // A lamp for the dark underground, and nobody sells one
+    { item: Items.ExplorerKit, weight: 3 },
     // The mints. A nature is two stats for the rest of a pokemon's
     // life and nothing else touches one, which is this band exactly.
     // The thinnest weight there is, because there are twenty-one of
@@ -388,7 +440,7 @@ export function getItemBand(item: Items): ItemBand | null {
   if (bands == null) {
     bands = new Map();
     // Commonest first, so a rarer listing overwrites it
-    for (const band of ['base', 'uncommon', 'rare', 'prized', 'special'] as const) {
+    for (const band of ['base', 'uncommon', 'scarce', 'rare', 'prized', 'special'] as const) {
       for (const entry of ITEM_POOL[band]) {
         bands.set(entry.item, band);
       }
@@ -417,23 +469,23 @@ export interface ItemBandOdds {
   special: number;
   prized: number;
   rare: number;
+  scarce: number;
   uncommon: number;
 }
 
 /**
- * How often a walk turns up something from the prized band. It sits
- * eight times commoner than a special and eight times scarcer than a
- * rare, which is the gap the two left between them: a find of a
- * season rather than a find of a lifetime
+ * How often a walk turns up something from the prized band: four times
+ * scarcer than a rare, sixteen times commoner than a special. A find
+ * of a season rather than a find of a lifetime
  */
-export const PRIZED_ITEM_ODDS = 1 / 512;
+export const PRIZED_ITEM_ODDS = 1 / 256;
 
 /**
- * The item pool's own ordinary bands. They are the ladder the spawn
- * pools used to run on, kept here because a thing on the ground has
- * no stages to be dealt into
+ * The item pool's ordinary bands, each four times scarcer than the
+ * one below it
  */
-export const UNCOMMON_ITEM_ODDS = 1 / 8;
+export const UNCOMMON_ITEM_ODDS = 1 / 4;
+export const SCARCE_ITEM_ODDS = 1 / 16;
 export const RARE_ITEM_ODDS = 1 / 64;
 
 /**
@@ -445,6 +497,7 @@ export const ITEM_BAND_ODDS: ItemBandOdds = {
   special: SPECIAL_SPAWN_ODDS,
   prized: PRIZED_ITEM_ODDS,
   rare: RARE_ITEM_ODDS,
+  scarce: SCARCE_ITEM_ODDS,
   uncommon: UNCOMMON_ITEM_ODDS,
 };
 
@@ -476,7 +529,9 @@ export function getItemOdds(item: Items, odds: ItemBandOdds = ITEM_BAND_ODDS): n
   // Base is whatever the named bands leave, so it is subtracted rather
   // than looked up: a band added later takes its slice out of base
   const width =
-    band === 'base' ? 1 - odds.special - odds.prized - odds.rare - odds.uncommon : odds[band];
+    band === 'base'
+      ? 1 - odds.special - odds.prized - odds.rare - odds.scarce - odds.uncommon
+      : odds[band];
 
   return total === 0 ? 0 : width * (weight / total);
 }
@@ -503,9 +558,11 @@ export function getItemOdds(item: Items, odds: ItemBandOdds = ITEM_BAND_ODDS): n
  */
 export const PHENOMENON_BAND_ODDS: ItemBandOdds = {
   special: 0,
-  prized: 1 / 64,
-  rare: 1 / 8,
-  uncommon: 1 - 1 / 64 - 1 / 8,
+  prized: 8 * PRIZED_ITEM_ODDS,
+  rare: 8 * RARE_ITEM_ODDS,
+  // The ground's scarce is folded into the floor here, see `bandOf`
+  scarce: 0,
+  uncommon: 1 - 8 * PRIZED_ITEM_ODDS - 8 * RARE_ITEM_ODDS,
 };
 
 /**
@@ -520,6 +577,7 @@ export const PICKUP_BAND_ODDS: ItemBandOdds = {
   special: 0,
   prized: 0,
   rare: RARE_ITEM_ODDS,
+  scarce: SCARCE_ITEM_ODDS,
   uncommon: UNCOMMON_ITEM_ODDS,
 };
 
@@ -550,6 +608,7 @@ export const MAX_KINDS = 3;
 const HAUL_BANDS: (keyof Omit<ItemRarityGroups, 'special'>)[] = [
   'prized',
   'rare',
+  'scarce',
   'uncommon',
   'base',
 ];
@@ -568,7 +627,11 @@ function bandIndex(roll: number, odds: ItemBandOdds): number {
   if (roll < edge) {
     return 1;
   }
-  return roll < edge + odds.uncommon ? 2 : 3;
+  edge += odds.scarce;
+  if (roll < edge) {
+    return 2;
+  }
+  return roll < edge + odds.uncommon ? 3 : 4;
 }
 
 /**
@@ -630,7 +693,7 @@ export function pickItems(
   // Bands that leave no room for a base roll leave none in a haul
   // either: a grotto holds nothing common
   const commonest =
-    odds.special + odds.prized + odds.rare + odds.uncommon >= 1
+    odds.special + odds.prized + odds.rare + odds.scarce + odds.uncommon >= 1
       ? HAUL_BANDS.length - 2
       : HAUL_BANDS.length - 1;
   // A stash that opened on a special goes on with prized; anything
@@ -706,7 +769,7 @@ export function pickItem(
   // prized still rolls its rares
   let edge = 0;
 
-  for (const tier of ['special', 'prized', 'rare', 'uncommon'] as const) {
+  for (const tier of ['special', 'prized', 'rare', 'scarce', 'uncommon'] as const) {
     edge += odds[tier];
 
     if (band < edge && groups[tier].length > 0) {

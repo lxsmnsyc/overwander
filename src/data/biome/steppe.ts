@@ -6,10 +6,6 @@ import { UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
  * Steppe spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerSteppeSpawns(): void {
-  // The Blitzle line is written but waits on sprites, since the
-  // collection has drawn neither Blitzle nor Zebstrika. Once it does,
-  // mornings and days take Blitzle in uncommon at 25 and Zebstrika in
-  // scarce at 6
   registerSpawnPool(Biome.Steppe, {
     [TimeOfDay.Morning]: {
       base: [
@@ -19,6 +15,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Whismur, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Blitzle, weight: 25 },
         { species: Species.Rufflet, weight: 16 },
         { species: Species.Spearow, weight: 20 },
         { species: Species.Growlithe, weight: 10 },
@@ -40,6 +37,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Flaaffy, weight: 5 },
       ],
       scarce: [
+        { species: Species.Zebstrika, weight: 6 },
         { species: Species.Braviary, weight: 6 },
         { species: Species.Fearow, weight: 10 },
         { species: Species.Arcanine, weight: 5 },
@@ -53,6 +51,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Bouffalant, weight: 6 },
         { species: Species.Serperior, weight: 2 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Kangaskhan, weight: 5 },
@@ -79,6 +78,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Whismur, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Blitzle, weight: 25 },
         { species: Species.Rufflet, weight: 16 },
         { species: Species.Spearow, weight: 20 },
         { species: Species.Ekans, weight: 20 },
@@ -101,6 +101,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Flaaffy, weight: 5 },
       ],
       scarce: [
+        { species: Species.Zebstrika, weight: 6 },
         { species: Species.Braviary, weight: 6 },
         { species: Species.Fearow, weight: 10 },
         { species: Species.Arbok, weight: 10 },
@@ -115,6 +116,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Bouffalant, weight: 6 },
         { species: Species.Serperior, weight: 2 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Kangaskhan, weight: 5 },

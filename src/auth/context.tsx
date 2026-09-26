@@ -77,9 +77,19 @@ export default function AuthProvider(props: ParentProps): JSX.Element {
           return;
         }
 
-        const { data } = getSupabase().auth.onAuthStateChange((_event, next) => {
+        const { data } = getSupabase().auth.onAuthStateChange((event, next) => {
           setUser(asPlayerIdentity(next));
           setLoading(false);
+          // The boxes kept for the last player are not the next one's business
+          if (event === 'SIGNED_OUT') {
+            import('./box')
+              .then(({ forgetBoxes }) => {
+                forgetBoxes();
+              })
+              .catch(() => {
+                // Nothing kept, so nothing to forget
+              });
+          }
         });
 
         session.unsubscribe = () => {

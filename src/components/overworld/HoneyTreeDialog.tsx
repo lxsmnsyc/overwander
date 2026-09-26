@@ -1,4 +1,4 @@
-import { type JSX, type Resource, Suspense, createResource, createSignal } from 'solid-js';
+import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
 import type { EncounterRecord } from '../../auth/encounter-record';
 import { getItemCount } from '../../auth/inventory';
 import { latherHoneyTree } from '../../auth/snapshots';
@@ -6,7 +6,20 @@ import { Items } from '../../data/ids/items';
 import { LATHER_COST } from '../../data/overworld/honey-tree';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import ItemSprite from '../items/ItemSprite';
+import AtlasSprite from '../sprites/AtlasSprite';
+import { OW_SPRITE_ROOT } from '../../canvas/ow-char-sprites';
+import Landmark from '../../data/overworld/landmark';
+import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
+
 import { Badge, Button, Dialog, DialogActions, Note, Status } from '../styled';
+import { failed, readable } from '../app/resource-reads';
+import playEffect, { Effect } from '../app/sound';
+
+/** The tree at twice the size it stands on the board */
+const TREE_SPRITE = 88;
+
+/** The jar on the button, the size the safari draws its ball */
+const LATHER_SPRITE = 28;
 
 export interface HoneyTreeDialogProps {
   player: string;
@@ -27,7 +40,7 @@ function HoneyTreeBody(
   const [status, setStatus] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
 
-  const jars = (): number => props.jars() ?? 0;
+  const jars = (): number => readable(props.jars) ?? 0;
 
   const close = (): void => {
     setStatus(null);
@@ -60,6 +73,7 @@ function HoneyTreeBody(
           props.onLathered(cell, null);
           return;
         }
+        playEffect(Effect.HoneyLather);
         props.onSpent();
         props.onLathered(cell, result.encounter);
         close();
@@ -73,11 +87,20 @@ function HoneyTreeBody(
   return (
     <>
       <div class="flex justify-center">
+        <AtlasSprite
+          sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
+          name={landmarkPicture(Landmark.HoneyTree) ?? ''}
+          size={TREE_SPRITE}
+          label="The honey tree"
+        />
+      </div>
+      <div class="flex justify-center">
         <Badge tone={jars() >= LATHER_COST ? 'gold' : 'neutral'}>
           <ItemSprite item={Items.Honey} size={16} label="" />
           {jars()} Honey
         </Badge>
       </div>
+      <Show when={failed(props.jars)}>{(said) => <Note class="text-center">{said()}</Note>}</Show>
       <Note class="text-center">
         {props.lathered
           ? 'The bark is still sticky. Come back next window.'
@@ -85,12 +108,15 @@ function HoneyTreeBody(
       </Note>
       <Status message={status()} />
       <DialogActions>
+        {/* Drawn like the safari's Throw: the jar is the label, with what is left beside it */}
         <Button
           tone="primary"
           disabled={busy() || props.lathered || jars() < LATHER_COST}
+          label={`Lather with Honey, ${jars()} left`}
           onClick={lather}
         >
-          Lather (<ItemSprite item={Items.Honey} size={16} label="" /> x {LATHER_COST})
+          <ItemSprite item={Items.Honey} size={LATHER_SPRITE} label="" />
+          Lather × {jars()}
         </Button>
         <Button onClick={close}>Close</Button>
       </DialogActions>

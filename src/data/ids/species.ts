@@ -1200,6 +1200,9 @@ export const DARMANITAN_FORMS = [Species.Darmanitan, Species.DarmanitanZen];
 /** Cherrim shut and Cherrim open, the shut one first */
 export const CHERRIM_FORMS = [Species.Cherrim, Species.CherrimSunshine];
 
+/** Keldeo, and the shape it takes once it has learned Secret Sword */
+export const KELDEO_FORMS = [Species.Keldeo, Species.KeldeoResolute];
+
 /**
  * Castform's four shapes, its plain one first. Unlike an unown's,
  * these are not caught: Forecast puts the holder into whichever the

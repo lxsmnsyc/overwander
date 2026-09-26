@@ -83,7 +83,7 @@ export default function registerWingullSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Flying],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Beach, Biome.RockyCoast],
+    biomes: [Biome.Beach, Biome.RockyCoast, Biome.CoralReef, Biome.KelpForest],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -126,7 +126,7 @@ export default function registerWingullSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Flying],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Beach, Biome.RockyCoast],
+    biomes: [Biome.Beach, Biome.RockyCoast, Biome.CoralReef, Biome.KelpForest],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

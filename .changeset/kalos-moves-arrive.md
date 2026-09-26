@@ -5,7 +5,7 @@
 Kalos's 62 moves:
 
 - Every move generation 6 introduced is in the move list, from Flying Press to Hyperspace Fury.
-- Terrain is in: Electric, Grassy and Misty Terrain each hold for 10 seconds and reach only pokemon on the ground. They cover the whole field in a fight between players and the layer's own team in a raid, the way weather does.
+- Terrain is in: Electric, Grassy and Misty Terrain each hold for 10 seconds and reach only pokemon on the ground. They cover the whole field in a fight between players and the layer's own team in a raid, the way weather does. A computer-controlled pokemon never lays a terrain over one its own side still has down.
 - The ring under a side takes the colour of the terrain it stands on for as long as the terrain holds.
 - Sticky Web is a new entry hazard, and Defog clears it with the others.
 - Spiky Shield and King's Shield guard the user and punish whatever touches them. King's Shield lets status moves through.

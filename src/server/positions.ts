@@ -37,6 +37,22 @@ import { asString } from './read';
 const lastStoodIn = new Map<string, Biome>();
 
 /**
+ * Standing in a biome is what discovers it. Which biome a chunk is is
+ * derived from the world seed here rather than taken from the caller,
+ * so a browser that saves its own position cannot claim ground it has
+ * never walked
+ */
+export async function markBiomeStoodIn(uid: string, chunkX: number, chunkY: number): Promise<void> {
+  const biome = getWorld().getChunk(asChunkCoordinate(chunkX), asChunkCoordinate(chunkY)).biome;
+
+  if (lastStoodIn.get(uid) === biome) {
+    return;
+  }
+  await markProgress(uid, Metric.Biomes, biome);
+  lastStoodIn.set(uid, biome);
+}
+
+/**
  * Remember where the player is standing. Stamped as it is written, so
  * a later look can tell a stale record from a fresh one. Standing in
  * a biome is also what discovers it, so the mark rides the same save.
@@ -64,12 +80,7 @@ export default async function savePosition(
       moved_at = excluded.moved_at
   `;
 
-  const biome = getWorld().getChunk(asChunkCoordinate(chunkX), asChunkCoordinate(chunkY)).biome;
-
-  if (lastStoodIn.get(uid) !== biome) {
-    await markProgress(uid, Metric.Biomes, biome);
-    lastStoodIn.set(uid, biome);
-  }
+  await markBiomeStoodIn(uid, chunkX, chunkY);
   return now;
 }
 

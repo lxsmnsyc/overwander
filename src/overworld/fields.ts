@@ -1,5 +1,5 @@
 import Biome, { BIOME_CONFIGS, isOpenSea, isWaterBiome } from '../data/ids/biome';
-import { ORTHOGONAL, SQUARES } from './grid';
+import { ORTHOGONAL, SQUARES, SURROUNDING } from './grid';
 import type World from './world';
 
 /**
@@ -16,11 +16,23 @@ import type World from './world';
  * How wide the standing water is, and how much of the land it takes.
  *
  * A lake wants to be worth walking round rather than stepped over, so
- * the field is read at about a lake every twenty cells and cut high
+ * the field is read at about a lake every thirty cells and cut high
  * enough that most of the country is still country
  */
-const LAKE_FREQUENCY = 1 / 16;
-const LAKE_LEVEL = 0.34;
+const LAKE_FREQUENCY = 1 / 30;
+const LAKE_LEVEL = 0.36;
+
+/**
+ * Where the country holds standing water at all.
+ *
+ * A second, far slower read of the same field: a lake needs a basin
+ * as well as the pool, so the pools gather in a few low stretches of
+ * country and the rest of it is dry. Without it every country carried
+ * a pond every thirty cells or so, which reads as marsh wherever you
+ * stand rather than as a lake worth walking to
+ */
+const BASIN_FREQUENCY = 1 / 110;
+const BASIN_LEVEL = 0.1;
 
 /**
  * The same field read the other way for the wetlands: a swamp is
@@ -36,6 +48,107 @@ const BANK_LEVEL = 0.3;
  */
 const RIVER_FREQUENCY = 1 / 150;
 const RIVER_WIDTH = 0.012;
+
+/**
+ * Whether water at this cell is allowed to stand at all, as far as the
+ * lava rule goes.
+ *
+ * A volcano's water is lava, and lava reaching into the water next
+ * door reads as one pool of two liquids. So lava dries wherever the
+ * volcano ends within a cell, which leaves bare ground between the
+ * crater and whatever is beyond it. Only the lava is held back: water
+ * on the far side of the border can then never be touching any, and a
+ * cell that is not in a volcano pays nothing for the rule.
+ *
+ * Both layers keep it. A cave under a crater carries the same lava
+ * and the same border
+ */
+export function isSealedVolcano(world: World, x: number, y: number, biome: Biome): boolean {
+  if (biome !== Biome.Volcano) {
+    return true;
+  }
+  for (const [dx, dy] of SURROUNDING) {
+    if (world.getCellBiome(x + dx, y + dy) !== Biome.Volcano) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * The water underground.
+ *
+ * No rain falls in a cave, so what water is down there came through
+ * the rock and stayed. Two things make it.
+ *
+ * A **waterway** is a passage in its own right, cut the way a vein is
+ * and then filled: it joins one chamber to the next, and it is water
+ * from wall to wall rather than a stream with a towpath. Crossing a
+ * cave system may mean swimming part of it.
+ *
+ * An **aquifer** is the water table itself. A wet stretch of rock
+ * stands water up to a level, and every open cell at or below that
+ * level is under it, so the low chambers fill completely and the high
+ * ones stay dry. That is what makes a body of water rather than a
+ * puddle: the shape comes from the cave's own floor rather than from
+ * a threshold on a field.
+ *
+ * Both are held to the stretches the wet field calls wet at all, so a
+ * cave system is flooded or dry rather than every cave in the world
+ * being damp.
+ */
+const WATERWAY_FREQUENCY = 1 / 44;
+const WATERWAY_OFFSET = 53.25;
+const WATERWAY_CUT = 0.03;
+
+const WET_ROCK_FREQUENCY = 1 / 90;
+const WET_ROCK_LEVEL = 0.14;
+
+/** How high the water stands where the rock is wettest, in terrace levels */
+const TABLE_TOP = 2;
+
+/** How wet the rock is here, from 0 where it is dry to 1 where it is drowned */
+function wetness(world: World, x: number, y: number): number {
+  const held =
+    world.lakes.noise(x * WET_ROCK_FREQUENCY + 5.25, y * WET_ROCK_FREQUENCY + 88.5) -
+    WET_ROCK_LEVEL;
+
+  return held <= 0 ? 0 : Math.min(1, held / (1 - WET_ROCK_LEVEL));
+}
+
+/** Whether the rock holds any water in this stretch of the world */
+export function isWetRock(world: World, x: number, y: number): boolean {
+  return wetness(world, x, y) > 0;
+}
+
+/**
+ * How high the water stands in this stretch of rock, as the terrace
+ * level it reaches. Below zero where the rock is dry, which is most of
+ * the world
+ */
+export function caveWaterTable(world: World, x: number, y: number): number {
+  const wet = wetness(world, x, y);
+
+  return wet <= 0 ? -1 : Math.floor(wet * (TABLE_TOP + 1));
+}
+
+/**
+ * Whether a waterway runs through this cell. It is cave whether or not
+ * a vein reaches it: the water cut this passage itself
+ */
+export function isCaveWaterway(world: World, x: number, y: number): boolean {
+  if (!isWetRock(world, x, y)) {
+    return false;
+  }
+  return (
+    Math.abs(
+      world.stone.noise(
+        x * WATERWAY_FREQUENCY + WATERWAY_OFFSET,
+        y * WATERWAY_FREQUENCY + WATERWAY_OFFSET,
+      ),
+    ) < WATERWAY_CUT
+  );
+}
 
 /**
  * Where the rock comes through. Tighter than the water, since an
@@ -118,11 +231,16 @@ function isCarved(world: World, x: number, y: number, country: () => Biome): boo
   if (stone > ROCK_LEVEL || (stone > ROCK_LEVEL - ROCK_LIFT && stone > rockLevel(country()))) {
     return true;
   }
-  return (
+  if (
     Math.abs(
       world.stone.noise(x * VEIN_FREQUENCY + VEIN_OFFSET, y * VEIN_FREQUENCY + VEIN_OFFSET),
     ) < VEIN_WIDTH
-  );
+  ) {
+    return true;
+  }
+  // A waterway is a passage in its own right, cut wherever the rock is
+  // wet rather than only where a vein already runs
+  return isCaveWaterway(world, x, y);
 }
 
 /** Whether the shore runs through this cell, which is solid underground */
@@ -204,6 +322,15 @@ export function isCaveFloor(world: World, x: number, y: number, biome: Biome): b
     }
   }
   return true;
+}
+
+/**
+ * Whether this stretch of country is low enough to hold a lake. Read
+ * off a corner of the lake field of its own, so a basin does not sit
+ * where the pools already are
+ */
+function inBasin(world: World, x: number, y: number): boolean {
+  return world.lakes.noise(x * BASIN_FREQUENCY + 41.5, y * BASIN_FREQUENCY + 17.25) > BASIN_LEVEL;
 }
 
 /** Whether a river runs through this cell */
@@ -314,5 +441,7 @@ export function isWaterAt(world: World, x: number, y: number, biome: Biome): boo
     // rule read backwards
     return pooled > -BANK_LEVEL;
   }
-  return pooled > LAKE_LEVEL || isRiver(world, x, y);
+  // A pool needs a basin under it as well as the field above the line:
+  // the field alone put one in every country, everywhere
+  return (pooled > LAKE_LEVEL && inBasin(world, x, y)) || isRiver(world, x, y);
 }

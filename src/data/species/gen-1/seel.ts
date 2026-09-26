@@ -99,6 +99,7 @@ export default function registerSeelSpecies(): void {
       Biome.Taiga,
       Biome.Tundra,
       Biome.Glacier,
+      Biome.KelpForest,
     ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
@@ -161,6 +162,7 @@ export default function registerSeelSpecies(): void {
       Biome.RockyCoast,
       Biome.Taiga,
       Biome.Glacier,
+      Biome.KelpForest,
     ],
     activeTimes: AnyTimeOfDay,
     learnSet: {

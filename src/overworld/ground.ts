@@ -1,5 +1,5 @@
 import Biome, { isWaterBiome } from '../data/ids/biome';
-import { isCaveOpen } from './cave';
+import { isCaveOpen, isCaveWater } from './cave';
 import { STONE_FREQUENCY, rockLevel } from './fields';
 import { isSurfaceWater } from './surface';
 import type World from './world';
@@ -43,7 +43,12 @@ export function readGround(world: World, x: number, y: number): { biome: Biome; 
   // overhead still decides what lives down there, so the biome is the
   // surface's, but nothing else about the cell is
   if (world.depth === Depth.Cave) {
-    return { biome, role: isCaveOpen(world, x, y) ? 'ground' : 'wall' };
+    if (!isCaveOpen(world, x, y)) {
+      return { biome, role: 'wall' };
+    }
+    // Rain never reaches a cave, but water does: what the rock holds
+    // stands in the tunnels the same way a lake stands in a field
+    return { biome, role: isCaveWater(world, x, y) ? 'water' : 'ground' };
   }
   // Everything that is not water is walked on. The stone field still
   // says where a hillside is, for the caves and for the shelf, but it

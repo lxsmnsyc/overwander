@@ -1,13 +1,21 @@
 import { registerMoves } from '../../../src/data/moves';
+import namePlace from '../../../src/overworld/place';
+import { townAt } from '../../../src/overworld/town';
+import { worldCell } from '../../../src/overworld/grid';
 import { describe, expect, it } from 'vitest';
 import AleaRNG from '../../../src/core/alea';
 import Abilities from '../../../src/data/ids/abilities';
 import registerAbilities from '../../../src/data/abilities';
 import registerBiomeSpawns, {
+  BIOME_NAMES,
+  SPAWN_BAND_KEYS,
   SpawnRarity,
+  type SpawnRarityGroups,
   fitsSurface,
+  getSpawnPool,
   getSpawnRarity,
   pickSpawn,
+  spawnBand,
 } from '../../../src/data/biome';
 import Biome, { SpawnSurface, getTimeOfDay, isOpenSea } from '../../../src/data/ids/biome';
 import Lairs from '../../../src/data/overworld/lair';
@@ -61,6 +69,7 @@ import deriveEncounter, {
 import Landmark from '../../../src/data/overworld/landmark';
 import { SHINY_CHARM_BOOST } from '../../../src/overworld/items/key-items';
 import World from '../../../src/overworld/world';
+import { Depth } from '../../../src/overworld/depth';
 import findChunk from './helpers';
 
 // Spawn rolls read the species registry and the biome spawn pools;
@@ -144,6 +153,74 @@ describe('chunk snapshot', () => {
     );
   });
 
+  it("names a cell by the country it stands in, not the chunk's middle", () => {
+    const world = new World('overworld');
+    let named = 0;
+
+    for (let x = 0; x < 24 && named < 1; x++) {
+      for (let y = 0; y < 24 && named < 1; y++) {
+        const chunk = world.getChunk(x, y);
+
+        for (let cell = 0; cell < CELL_COUNT; cell++) {
+          const cellX = worldCell(x, cell % CHUNK_CELLS);
+          const cellY = worldCell(y, Math.floor(cell / CHUNK_CELLS));
+          const biome = world.getCellBiome(cellX, cellY);
+
+          if (biome === chunk.biome || townAt(world, cellX, cellY) != null) {
+            continue;
+          }
+          named += 1;
+          expect(namePlace(x, y, cellX, cellY)).toBe(`${BIOME_NAMES[biome]} (${x}, ${y})`);
+          // The chunk on its own still answers with its middle
+          expect(namePlace(x, y)).toBe(`${BIOME_NAMES[chunk.biome]} (${x}, ${y})`);
+          break;
+        }
+      }
+    }
+    expect(named).toBe(1);
+  });
+
+  it('rolls each cell out of the country that cell belongs to', () => {
+    const world = new World('overworld');
+    const NOON = 12 * 60 * 60 * 1000;
+    let crossed = 0;
+
+    // A border runs through a chunk wherever the climate puts it, so
+    // the cells either side of one roll out of their own countries
+    for (let x = 0; x < 24 && crossed < 4; x++) {
+      for (let y = 0; y < 24 && crossed < 4; y++) {
+        const chunk = world.getChunk(x, y);
+        const snapshot = new ChunkSnapshot(chunk, NOON);
+        const foreign: number[] = [];
+
+        for (let cell = 0; cell < CELL_COUNT; cell++) {
+          if (snapshot.biomeAt(cell) !== chunk.biome) {
+            foreign.push(cell);
+          }
+        }
+
+        if (foreign.length === 0) {
+          continue;
+        }
+        crossed += 1;
+
+        for (const cell of foreign) {
+          const biome = snapshot.biomeAt(cell);
+
+          const pool = snapshot.getCellPool(cell);
+
+          for (const band of SPAWN_BAND_KEYS) {
+            for (const entry of pool[band] ?? []) {
+              expect(getSpeciesData(entry.species).biomes).toContain(biome);
+            }
+          }
+        }
+      }
+    }
+    // The sweep found borders to read at all
+    expect(crossed).toBeGreaterThan(0);
+  });
+
   it('rolls cached, biome-appropriate spawns', () => {
     const world = new World('overworld');
     const chunk = world.getChunk(0, 0);
@@ -152,9 +229,11 @@ describe('chunk snapshot', () => {
 
     const spawns = snapshot.getSpawns(4);
     expect(spawns).toHaveLength(4);
-    for (const [species, individualValue, traitValue] of spawns) {
-      // The rolled species lives here and is awake in this window
-      expect(getSpeciesData(species).biomes).toContain(chunk.biome);
+    for (const [cell, [species, individualValue, traitValue]] of snapshot.getSpawnCells()) {
+      // The rolled species lives in the country that cell belongs to,
+      // which is the chunk's only where no border runs through it,
+      // and is awake in this window
+      expect(getSpeciesData(species).biomes).toContain(snapshot.biomeAt(cell));
       expect(getSpeciesData(species).activeTimes & getTimeOfDay(NOON)).not.toBe(0);
       for (const value of [individualValue, traitValue]) {
         // Signed 32-bit by construction: what an integer column holds
@@ -233,6 +312,34 @@ describe('chunk snapshot', () => {
     for (const cell of stocked) {
       expect(filled).toContain(cell);
     }
+  });
+
+  it('rolls the cave pool underground rather than the country overhead', () => {
+    const NOON = 12 * 60 * 60 * 1000;
+    const chunk = new World('overworld').getChunk(0, 0);
+    const under = new World('overworld', Depth.Cave).getChunk(0, 0);
+    const named = (groups: SpawnRarityGroups): Set<Species> => {
+      const species = new Set<Species>();
+
+      for (const band of SPAWN_BAND_KEYS) {
+        for (const entry of spawnBand(groups, band)) {
+          species.add(entry.species);
+        }
+      }
+      return species;
+    };
+    const cell = centeredCells(PLACEMENT_AREA)[0];
+    const time = getTimeOfDay(NOON);
+
+    // The cave carries the biome overhead so its lairs know where they
+    // are, but what lives in the dark is the cave's own pool
+    expect(under.biome).toBe(chunk.biome);
+    expect(named(new ChunkSnapshot(under, NOON).getCellPool(cell))).toEqual(
+      named(getSpawnPool(chunk.biome, time, true)),
+    );
+    expect(named(new ChunkSnapshot(chunk, NOON).getCellPool(cell))).not.toEqual(
+      named(getSpawnPool(chunk.biome, time, true)),
+    );
   });
 
   it('stands every spawn on a surface its species lives on', () => {

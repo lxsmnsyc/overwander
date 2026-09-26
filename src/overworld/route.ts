@@ -3,7 +3,7 @@ import { TOWN_RADIUS, type Town, regionOfCell, townOfRegion } from './town';
 import type World from './world';
 import { Depth } from './depth';
 import { isOpenSea } from '../data/ids/biome';
-import { type GroundRole, roleAt } from './ground';
+import { isRock, isWaterAt } from './fields';
 
 /**
  * The roads between towns.
@@ -124,15 +124,27 @@ function spline(before: number, start: number, end: number, after: number, held:
   );
 }
 
-/** What a cell of each role costs a candidate line */
-const ROLE_COST: Record<GroundRole, number> = { ground: 0, water: WATER_COST, wall: ROCK_COST };
-
-/** What a line costs to walk: the water and the rock it has to cross */
+/**
+ * What a line costs to walk: the water and the rock it has to cross.
+ *
+ * Read off the fields rather than off the finished ground, because the
+ * finished ground is dry wherever a route runs: a route asking what it
+ * costs to cross a lake would be asking about the causeway it is
+ * about to build
+ */
 function roughness(world: World, line: [x: number, y: number][]): number {
   let cost = 0;
 
   for (const [x, y] of line) {
-    cost += ROLE_COST[roleAt(world, Math.round(x), Math.round(y))];
+    const cellX = Math.round(x);
+    const cellY = Math.round(y);
+    const biome = world.getCellBiome(cellX, cellY);
+
+    if (isWaterAt(world, cellX, cellY, biome)) {
+      cost += WATER_COST;
+    } else if (isRock(world, cellX, cellY, biome)) {
+      cost += ROCK_COST;
+    }
   }
   return cost;
 }

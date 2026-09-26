@@ -32,9 +32,12 @@ export const DAILY_SLOTS = 3;
 
 const DAY = 24 * 60 * 60 * 1000;
 
-/** The daily window's key: the UTC date, same rollover as the species day */
-export function dailyWindow(now: number): string {
-  const date = new Date(now);
+/**
+ * The daily window's key. `local` is local wall-clock time, so its
+ * UTC date is the player's date and the day turns at their midnight
+ */
+export function dailyWindow(local: number): string {
+  const date = new Date(local);
 
   return `d${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
 }

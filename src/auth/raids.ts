@@ -42,7 +42,8 @@ import {
 } from '../server/raids';
 import { serverNow, syncServerClock } from './clock';
 import { asOffset, toLocalTime } from './local-time';
-import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
+import { REALTIME_SUBSCRIBE_STATES } from '@supabase/supabase-js';
+import getSupabase, { type Unwatch, watchTable } from './supabase';
 import getIdToken from './session';
 import batchedQuery from '../utils/batched-query';
 
@@ -66,15 +67,28 @@ const RAID_TABLE = 'raids';
 
 const RAID_EMBED = '*, teams(id, joined_seq)';
 
-/** One raid row plus its team list, in the record shape */
-function fromRaidRow(row: Record<string, unknown>): RaidRecord {
-  const teams = asRecordArray(row.teams).sort(
-    (left, right) => Number(left.joined_seq ?? 0) - Number(right.joined_seq ?? 0),
-  );
+/** A lobby's teams, each id to the place it joined in */
+type Joined = Map<string, number>;
+
+/** The teams embedded in a raid row, as `Joined` */
+function joinedOf(row: Record<string, unknown>): Joined {
+  const joined: Joined = new Map();
+
+  for (const entry of asRecordArray(row.teams)) {
+    joined.set(String(entry.id), Number(entry.joined_seq ?? 0));
+  }
+  return joined;
+}
+
+/**
+ * One raid row plus its team list, in the record shape. The teams come
+ * embedded in the row unless the caller holds them separately
+ */
+function fromRaidRow(row: Record<string, unknown>, joined = joinedOf(row)): RaidRecord {
   const ids: string[] = [];
 
-  for (const entry of teams) {
-    ids.push(String(entry.id));
+  for (const [id] of [...joined].sort((left, right) => left[1] - right[1])) {
+    ids.push(id);
   }
   return asRaidRecord({
     kind: row.kind,
@@ -94,13 +108,9 @@ function fromRaidRow(row: Record<string, unknown>): RaidRecord {
 }
 
 export async function getRaid(id: string): Promise<RaidRecord | null> {
-  const { data }: { data: unknown } = await getSupabase()
-    .from(RAID_TABLE)
-    .select(RAID_EMBED)
-    .eq('id', id)
-    .maybeSingle();
+  const row = await readLobby(id);
 
-  return data == null ? null : fromRaidRow(asRecord(data));
+  return row == null ? null : fromRaidRow(row);
 }
 
 /**
@@ -128,18 +138,111 @@ export const getRaidBatched = batchedQuery(
 
 /**
  * Follow a lobby: teams join and leave it, and the host's start
- * writes the battle id everyone else is waiting on
+ * writes the battle id everyone else is waiting on.
+ *
+ * Every member of a lobby watches it, so a read per change is a read
+ * per member per join. The stream already says what changed, so it is
+ * folded into what is held instead: the lobby row arrives whole, a
+ * joining team brings its id and its place, and a leaving one its id.
+ * Only the first look and a reconnect read the lobby, and a change
+ * that says too little to fold is read like a reconnect
  */
 export function watchRaid(id: string, onChange: (raid: RaidRecord | null) => void): Unwatch {
-  // The teams table pings too: a join is an INSERT there, not an
-  // UPDATE of the lobby row, and the lobby view is both together
-  const unwatchRow = watchRow(RAID_TABLE, `id=eq.${id}`, async () => getRaid(id), onChange);
-  const unwatchTeams = watchTable('teams', [`raid_id=eq.${id}`], async () => getRaid(id), onChange);
+  const supabase = getSupabase();
+  // What is held: nothing until the first read lands, then the lobby
+  // row (or null once it is gone) and its teams
+  let held: { row: Record<string, unknown> | null; joined: Joined } | null = null;
+  const publish = (): void => {
+    if (held != null) {
+      onChange(held.row == null ? null : fromRaidRow(held.row, held.joined));
+    }
+  };
+  const refetch = (): void => {
+    readLobby(id)
+      .then((row) => {
+        held = { row, joined: row == null ? new Map() : joinedOf(row) };
+        publish();
+      })
+      .catch(() => {
+        // A read that failed mid-watch is a blink, not a sign-out; the
+        // next change or reconnect tries again
+      });
+  };
+  let connected = false;
+  const channel = supabase
+    .channel(`raid:${id}:${Math.random().toString(36).slice(2)}`)
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: RAID_TABLE, filter: `id=eq.${id}` },
+      (payload) => {
+        const row: Record<string, unknown> = payload.new;
+
+        if (held == null) {
+          refetch();
+        } else if (payload.eventType === 'DELETE') {
+          held = { row: null, joined: new Map() };
+          publish();
+        } else if (Object.keys(row).length === 0) {
+          refetch();
+        } else {
+          held.row = row;
+          publish();
+        }
+      },
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'teams', filter: `raid_id=eq.${id}` },
+      (payload) => {
+        const joining: Record<string, unknown> = payload.new;
+        const leaving: Record<string, unknown> = payload.old;
+
+        if (held == null) {
+          refetch();
+        } else if (payload.eventType === 'INSERT' && typeof joining.id === 'string') {
+          // A team is written once and never changed, so its id and
+          // its place in the queue are all the lobby needs
+          held.joined.set(joining.id, Number(joining.joined_seq ?? 0));
+          publish();
+        } else if (payload.eventType === 'DELETE' && typeof leaving.id === 'string') {
+          held.joined.delete(leaving.id);
+          publish();
+        } else {
+          refetch();
+        }
+      },
+    )
+    .subscribe((status) => {
+      if (status !== REALTIME_SUBSCRIBE_STATES.SUBSCRIBED) {
+        return;
+      }
+      // The first subscribe rides the read below; a resubscribe may
+      // have missed changes while the socket was away
+      if (connected) {
+        refetch();
+      }
+      connected = true;
+    });
+
+  // The first paint cannot wait for the socket
+  refetch();
 
   return () => {
-    unwatchRow();
-    unwatchTeams();
+    supabase.removeChannel(channel).catch(() => {
+      // A channel that cannot be removed is already gone
+    });
   };
+}
+
+/** A lobby's row with its teams embedded, or null when it is gone */
+async function readLobby(id: string): Promise<Record<string, unknown> | null> {
+  const { data }: { data: unknown } = await getSupabase()
+    .from(RAID_TABLE)
+    .select(RAID_EMBED)
+    .eq('id', id)
+    .maybeSingle();
+
+  return data == null ? null : asRecord(data);
 }
 
 /**

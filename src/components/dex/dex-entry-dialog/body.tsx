@@ -51,7 +51,7 @@ import {
   TooltipHost,
 } from '../../styled';
 import { For, type JSX, type Resource, Show, createEffect, createSignal, on } from 'solid-js';
-import { answered } from '../../app/resource-reads';
+import { answered, failed, readable } from '../../app/resource-reads';
 
 /** How many stages a line is walked to, so a data loop cannot run away */
 const LINE_LIMIT = 24;
@@ -360,7 +360,8 @@ export function DexEntryBody(
                 <Badge>{entry().data.height} m</Badge>
                 <Badge>{entry().data.weight} kg</Badge>
                 <Badge tone="gold">
-                  {props.candy() ?? 0} {getFamilyName(entry().data.family)} candy
+                  {failed(props.candy) == null ? (readable(props.candy) ?? 0) : '?'}{' '}
+                  {getFamilyName(entry().data.family)} candy
                 </Badge>
                 <Badge>{EGG_HATCH_STEPS} steps to hatch</Badge>
               </div>

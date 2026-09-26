@@ -21,10 +21,13 @@ import SafariSession, {
   SafariEvents,
   SafariState,
   ThrowResult,
+  applyTally,
+  asSafariTally,
   describeFlight,
   encounterKey,
   levelCatchFactor,
   masteryOf,
+  tallyOf,
 } from '../../src/overworld/safari';
 import { CATCHING_CHARM_BOOST } from '../../src/overworld/items/key-items';
 import { TRAP_FLEE_FACTOR } from '../../src/overworld/abilities/__create';
@@ -738,5 +741,39 @@ describe('safari session', () => {
     const encounter = makeEncounter();
 
     expect(encounterKey(encounter)).toBe(`0,0@0:0`);
+  });
+});
+
+describe('a stored tally', () => {
+  it('carries a session from one look to the next', () => {
+    const encounter = makeEncounter();
+    const first = new SafariSession(encounter, rolls([]));
+
+    first.feed(Items.RazzBerry);
+    first.throwBall();
+
+    const second = new SafariSession(encounter, rolls([]));
+
+    applyTally(second, asSafariTally(JSON.parse(JSON.stringify(tallyOf(first)))));
+    expect(tallyOf(second)).toEqual(tallyOf(first));
+    expect(second.getCatchChance()).toBeCloseTo(first.getCatchChance());
+  });
+
+  it('leaves a fresh session alone when there is nothing stored', () => {
+    const session = new SafariSession(makeEncounter(), rolls([]));
+    const before = tallyOf(session);
+
+    applyTally(session, asSafariTally(null));
+    expect(tallyOf(session)).toEqual(before);
+  });
+
+  it('reads anything malformed as a fresh start rather than a bonus', () => {
+    expect(asSafariTally({ catchBonus: -5, throws: 'lots', fed: 'yes' })).toEqual({
+      catchBonus: 1,
+      turn: 0,
+      throws: 0,
+      fed: false,
+      fedItem: null,
+    });
   });
 });

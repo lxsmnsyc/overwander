@@ -15,8 +15,9 @@ import { townAt } from '../../../src/overworld/town';
 import { SPAWN_COUNT } from '../../../src/overworld/chunk-snapshot';
 import pickStartPosition, { START_AREA, pickFreeCell } from '../../../src/overworld/start';
 import type { Encounter } from '../../../src/overworld/encounter/shape';
-import { EncounterType } from '../../../src/overworld/encounter';
+import { EncounterType, SPECIAL_SPAWN_LEVELS } from '../../../src/overworld/encounter';
 import { MAX_CATCH_BONUS, SHADOW_CATCH_FACTOR } from '../../../src/overworld/safari';
+import { MAX_LEVEL } from '../../../src/data/constants/levels';
 import { DARK_DAY_LAMP_CELLS } from '../../../src/data/overworld/weather';
 import {
   KINSHIP_CATCH_BOOST,
@@ -241,6 +242,22 @@ describe('world', () => {
         [10, 11],
       ),
     ).toEqual([11, 11]);
+
+    // A legendary's band already tops out at the cap, and a lifted
+    // ceiling may not carry it past one: the caught rows hold nothing
+    // above MAX_LEVEL
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Hustle])).checkEncounterLevels(
+        'spawn@0',
+        SPECIAL_SPAWN_LEVELS,
+      ),
+    ).toEqual([SPECIAL_SPAWN_LEVELS[0], MAX_LEVEL]);
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Hustle])).checkEncounterLevels('spawn@0', [
+        MAX_LEVEL,
+        MAX_LEVEL,
+      ]),
+    ).toEqual([MAX_LEVEL, MAX_LEVEL]);
   });
 
   it('finds what a meeting is carrying, and says so', () => {

@@ -1,0 +1,17 @@
+// The sprite host, which serves the sound effects as well.
+//
+// This Worker carries no code: it publishes `public/` as static
+// assets, which are free and unlimited to serve, and the app itself
+// stays on its own host. The response headers the sprites need are in
+// `public/_headers`, which the assets runtime reads.
+//
+// `public/sprites` and `public/sounds` are deliberately the folders the
+// app's own build excludes, so the files are published here once and
+// counted nowhere else.
+{
+  "name": "overwander-sprites",
+  "compatibility_date": "2026-09-19",
+  "assets": {
+    "directory": "./public"
+  }
+}

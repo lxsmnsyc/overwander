@@ -35,7 +35,7 @@ export default function registerSlowkingSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 70,
-    biomes: [Biome.Beach, Biome.Swamp, Biome.Mangrove],
+    biomes: [Biome.Beach, Biome.Swamp, Biome.Mangrove, Biome.CoralReef],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

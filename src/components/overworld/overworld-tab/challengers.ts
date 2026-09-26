@@ -114,6 +114,19 @@ const GYM_LEADER_QUOTES: Record<GymLeader, string> = {
   [GymLeader.Byron]: 'My son keeps a gym of his own. Neither of us gives anything away.',
   [GymLeader.Candice]: 'Focus! That is all it takes. Mine has never once slipped.',
   [GymLeader.Volkner]: 'I have been bored for years. Please be worth the electricity.',
+  [GymLeader.Cilan]: 'Allow me to taste your battling style. I expect it is undercooked.',
+  [GymLeader.Chili]: 'My fire burns hotter than my brothers put together! Ready?',
+  [GymLeader.Cress]: 'Composure wins battles. I have rather a lot of it.',
+  [GymLeader.Lenora]: 'You want the badge? Then show me something worth putting in my museum.',
+  [GymLeader.Burgh]: 'My bug pokemon and I are making something beautiful. Try not to spoil it.',
+  [GymLeader.Elesa]: 'The lights are on you now. Let us see how you look losing.',
+  [GymLeader.Clay]: 'I dug this gym out of the ground myself. You will not walk off with it cheap.',
+  [GymLeader.Skyla]: 'I have flown every route in this region. You will not outrun me.',
+  [GymLeader.Brycen]: 'I left the stage for the ice. Nothing here is acting.',
+  [GymLeader.Drayden]: 'A dragon is not tamed by wanting it. Show me what you have.',
+  [GymLeader.Cheren]: 'I used to chase strength. Now I teach it. Let us see what you have learned.',
+  [GymLeader.Roxie]: 'Turn it up! If my poison does not get you, the noise will!',
+  [GymLeader.Marlon]: 'The sea does what it wants, and so do I. Let us have a good one.',
 };
 
 /** Which league each champion is the top of */
@@ -122,6 +135,7 @@ const CHAMPION_LEAGUES: Record<Champion, string> = {
   [Champion.Lance]: 'Johto',
   [Champion.Wallace]: 'Hoenn',
   [Champion.Cynthia]: 'Sinnoh',
+  [Champion.Iris]: 'Unova',
 };
 
 /** Which league each seat belongs to, for the copy that names it */
@@ -142,6 +156,10 @@ const ELITE_MEMBER_LEAGUES: Record<EliteMember, string> = {
   [EliteMember.Bertha]: 'Sinnoh',
   [EliteMember.Flint]: 'Sinnoh',
   [EliteMember.Lucian]: 'Sinnoh',
+  [EliteMember.Shauntal]: 'Unova',
+  [EliteMember.Marshal]: 'Unova',
+  [EliteMember.Grimsley]: 'Unova',
+  [EliteMember.Caitlin]: 'Unova',
 };
 
 const ELITE_QUOTES: Record<EliteMember, string> = {
@@ -161,12 +179,18 @@ const ELITE_QUOTES: Record<EliteMember, string> = {
   [EliteMember.Bertha]: 'I have been at this longer than you have been alive, dear.',
   [EliteMember.Flint]: 'My hair is not the hottest thing here. Watch.',
   [EliteMember.Lucian]: 'One moment, let me finish this page. Now then.',
+  [EliteMember.Shauntal]: 'I am writing a book about trainers like you. Give me a good ending.',
+  [EliteMember.Marshal]: 'My master taught me to seek strength. You look like a step on the way.',
+  [EliteMember.Grimsley]: 'Win or lose, the cards fall. Let us see how they fall for you.',
+  [EliteMember.Caitlin]: 'I fight my own battles now. You may regret that I do.',
 };
 
 /** What a legend says, where they say anything at all */
 const LEGEND_GREETINGS: Record<Legend, string> = {
   [Legend.Red]: 'Red says nothing. He reaches for a ball.',
   [Legend.Steven]: 'Steven turns a stone over in his hand. “I was hoping for a real fight.”',
+  [Legend.N]: 'N tilts his head. “Show me what you and your pokemon are to each other.”',
+  [Legend.Alder]: 'Alder laughs and rolls his shoulders. “Let us enjoy this one, shall we?”',
 };
 
 /** What a champion says as the last fight of their league is put */
@@ -176,6 +200,8 @@ const CHAMPION_GREETINGS: Record<Champion, string> = {
   [Champion.Wallace]: 'Wallace bows. “Let us make this beautiful, and let us make it brief.”',
   [Champion.Cynthia]:
     'Cynthia closes her book. “I have been waiting for somebody worth the whole team.”',
+  [Champion.Iris]:
+    'Iris grins. “Everyone told me I was too young for this seat. Come and find out.”',
 };
 
 /**

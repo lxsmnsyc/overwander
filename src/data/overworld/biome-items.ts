@@ -152,6 +152,7 @@ export function getItemPool(biome: Biome): ItemRarityGroups {
   const pool: ItemRarityGroups = {
     base: hereOnly(ITEM_POOL.base, biome),
     uncommon: hereOnly(ITEM_POOL.uncommon, biome),
+    scarce: hereOnly(ITEM_POOL.scarce, biome),
     rare: hereOnly(ITEM_POOL.rare, biome),
     prized: hereOnly(ITEM_POOL.prized, biome),
     special: hereOnly(ITEM_POOL.special, biome),

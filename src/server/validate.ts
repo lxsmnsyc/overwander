@@ -204,6 +204,9 @@ export const SPAWN_ROLLS = listOf(
 /** As many row ids as one batched read in the browser sends */
 export const ID_BATCH = listOf(ID, BATCH_LIMIT);
 
+/** As many accounts as one batched read in the browser sends */
+export const UID_BATCH = listOf(UID, BATCH_LIMIT);
+
 /** Row ids keyed by the cells of one chunk, at most one per cell */
 const CHUNK_IDS = listOf(ID, CELL_COUNT);
 
@@ -215,6 +218,9 @@ export const STANDING_IDS = v.object({
   visits: CHUNK_IDS,
   nests: CHUNK_IDS,
 });
+
+/** Which of a player's friend lists a read is for */
+export const LINK_TABLE = v.picklist(['friends', 'blocks']);
 
 /** Which mark a bulk call is setting */
 export const MARK_FIELD = v.picklist(['favorite', 'guarded']);

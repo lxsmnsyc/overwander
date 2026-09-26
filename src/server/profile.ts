@@ -77,3 +77,27 @@ export async function grantGold(uid: string, amount: number, reason: string): Pr
 export async function spendGold(uid: string, amount: number, reason: string): Promise<boolean> {
   return moveGold(uid, -amount, reason, true);
 }
+
+/** Profile rows by uid, in the loose shape the browser reads */
+export async function readProfileRows(uids: string[]): Promise<Record<string, unknown>[]> {
+  if (uids.length === 0) {
+    return [];
+  }
+
+  const rows = await getSql()`
+    select id, nickname, sprite, gold, role, banned, ban_reason, buddy_id, title
+    from profiles where id = any(${uids})
+  `;
+
+  return [...rows];
+}
+
+/** Rename the player. The column's own constraint has the last word on what a name may be */
+export async function writeNickname(uid: string, nickname: string): Promise<void> {
+  await getSql()`update profiles set nickname = ${nickname} where id = ${uid}`;
+}
+
+/** Point the buddy at a catch, or clear it with null. A trigger refuses a catch the player does not own */
+export async function writeBuddy(uid: string, catchId: string | null): Promise<void> {
+  await getSql()`update profiles set buddy_id = ${catchId} where id = ${uid}`;
+}

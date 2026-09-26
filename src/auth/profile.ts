@@ -1,15 +1,19 @@
 import claimDevAdmin from './roles';
 import { DEFAULT_CHARSET } from '../data/overworld/charsets';
 import { DEFAULT_PLAYER_NAME, asPlayerName } from './nickname';
-import getSupabase, { type Unwatch, watchRow } from './supabase';
+import { type Unwatch, watchRow } from './supabase';
+import getIdToken from './session';
+import { readOnly } from '../utils/server-calls';
+import { requireReader, requireUid } from '../server/auth';
+import check, { MAYBE_ID, PLAYER_NAME, TOKEN, UID, UID_BATCH } from '../server/validate';
+import { readProfileRows, writeBuddy, writeNickname } from '../server/profile';
 import batchedQuery from '../utils/batched-query';
 import type { PlayerIdentity } from './user';
 
 /**
  * The minimal personal details a player can set, plus their gold
- * balance. Stored per user in `profiles`; row-level security
- * restricts writes to the owning uid, and to the three fields that
- * are theirs to set
+ * balance. Stored per user in `profiles`; a player may only write
+ * their own nickname and buddy, both through the server
  */
 export interface Profile {
   /**
@@ -69,8 +73,6 @@ export interface Profile {
 
 const PROFILE_TABLE = 'profiles';
 
-const PROFILE_COLUMNS = 'nickname, sprite, gold, role, banned, ban_reason, buddy_id, title';
-
 /**
  * The store hands back untyped rows; normalize the fields instead of
  * blindly asserting the shape
@@ -92,13 +94,7 @@ function asProfile(data: Record<string, unknown>): Profile {
 }
 
 export async function getProfile(uid: string): Promise<Profile | null> {
-  const { data } = await getSupabase()
-    .from(PROFILE_TABLE)
-    .select(PROFILE_COLUMNS)
-    .eq('id', uid)
-    .maybeSingle();
-
-  return data == null ? null : asProfile(data);
+  return (await getProfiles([uid])).get(uid) ?? null;
 }
 
 /**
@@ -120,16 +116,23 @@ export async function getProfiles(uids: string[]): Promise<Map<string, Profile>>
     return found;
   }
 
-  const { data } = await getSupabase()
-    .from(PROFILE_TABLE)
-    .select(`id, ${PROFILE_COLUMNS}`)
-    .in('id', wanted);
-
-  for (const row of data ?? []) {
-    found.set(String((row as Record<string, unknown>).id), asProfile(row));
+  for (const row of await readProfilesOnServer(await getIdToken(), wanted)) {
+    found.set(String(row.id), asProfile(row));
   }
   return found;
 }
+
+async function readProfilesOnServer(
+  token: string,
+  uids: string[],
+): Promise<Record<string, unknown>[]> {
+  'use server';
+  check(TOKEN, token);
+  check(UID_BATCH, uids);
+  await requireReader(token);
+  return readProfileRows(uids);
+}
+readOnly(readProfilesOnServer);
 
 /**
  * `getProfile` for a list whose every row watches its own player: the
@@ -139,7 +142,6 @@ export async function getProfiles(uids: string[]): Promise<Map<string, Profile>>
 export const getProfileBatched = batchedQuery(
   getProfiles,
   (found, uid: string): Profile | null => found.get(uid) ?? null,
-  // The uids travel in the request's address, which has a length limit
   { limit: 50 },
 );
 
@@ -169,13 +171,23 @@ export async function saveProfile(uid: string, details: ProfileDetails): Promise
   // constraint is what makes the rule true — this row is the one thing
   // a browser writes for itself — and this is what keeps a name the
   // player typed from being refused outright when it can be trimmed
-  const { error } = await getSupabase()
-    .from(PROFILE_TABLE)
-    .update({ nickname: asPlayerName(details.nickname) })
-    .eq('id', uid);
+  await saveNicknameOnServer(await getIdToken(), uid, asPlayerName(details.nickname));
+}
 
-  if (error != null) {
-    throw new Error('Could not save your name just now.');
+/** A player renames themselves only, so another uid writes nothing */
+async function saveNicknameOnServer(
+  token: string,
+  player: string,
+  nickname: string,
+): Promise<void> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  check(PLAYER_NAME, nickname);
+  const uid = await requireUid(token);
+
+  if (player === uid) {
+    await writeNickname(uid, nickname);
   }
 }
 
@@ -186,13 +198,18 @@ export async function saveProfile(uid: string, details: ProfileDetails): Promise
  * [`src/auth/buddy.ts`](./buddy.ts) for what the field means
  */
 export async function setBuddyField(uid: string, catchId: string): Promise<void> {
-  const { error } = await getSupabase()
-    .from(PROFILE_TABLE)
-    .update({ buddy_id: catchId === '' ? null : catchId })
-    .eq('id', uid);
+  await setBuddyOnServer(await getIdToken(), uid, catchId);
+}
 
-  if (error != null) {
-    throw new Error('Could not change your buddy just now.');
+async function setBuddyOnServer(token: string, player: string, catchId: string): Promise<void> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  check(MAYBE_ID, catchId);
+  const uid = await requireUid(token);
+
+  if (player === uid) {
+    await writeBuddy(uid, catchId === '' ? null : catchId);
   }
 }
 

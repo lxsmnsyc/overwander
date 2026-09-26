@@ -591,3 +591,67 @@ export async function startDuel(uid: string, id: string, now: number): Promise<s
 
   return battleId;
 }
+
+/** The lobbies among `ids` this player hosts, stands in or has been called into, read whole */
+export async function readVisibleDuels(
+  uid: string,
+  ids: string[],
+): Promise<[string, DuelRecord][]> {
+  if (ids.length === 0) {
+    return [];
+  }
+
+  const rows = await getSql()`
+    select id from duels d
+    where id = any(${ids}) and (
+      host = ${uid}
+      or exists (select 1 from duel_members m where m.duel_id = d.id and m.player = ${uid})
+      or exists (select 1 from duel_invites i where i.duel_id = d.id and i.recipient = ${uid})
+    )
+  `;
+  const found: [string, DuelRecord][] = [];
+
+  for (const row of rows) {
+    const id = asString(row.id);
+    const duel = await readDuel(id);
+
+    if (duel != null) {
+      found.push([id, duel]);
+    }
+  }
+  return found;
+}
+
+/** The lobbies this player is standing in */
+export async function readMyDuelIds(uid: string): Promise<string[]> {
+  const rows = await getSql()`select duel_id from duel_members where player = ${uid}`;
+  const ids: string[] = [];
+
+  for (const row of rows) {
+    ids.push(asString(row.duel_id));
+  }
+  return ids;
+}
+
+/** The calls waiting on this player into lobbies that have not started, newest first */
+export async function readDuelInvites(
+  uid: string,
+): Promise<{ duel: string; sender: string; role: number; sentAt: number }[]> {
+  const rows = await getSql()`
+    select i.duel_id, i.sender, i.role, i.sent_at from duel_invites i
+    join duels d on d.id = i.duel_id
+    where i.recipient = ${uid} and d.battle_id is null
+    order by i.sent_at desc
+  `;
+  const invites: { duel: string; sender: string; role: number; sentAt: number }[] = [];
+
+  for (const row of rows) {
+    invites.push({
+      duel: asString(row.duel_id),
+      sender: asString(row.sender),
+      role: asNumber(row.role),
+      sentAt: asNumber(row.sent_at),
+    });
+  }
+  return invites;
+}

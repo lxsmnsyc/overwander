@@ -5,16 +5,18 @@ import {
   dropFriendRequest as dropOnServerSide,
   findPlayerByCode as findOnServerSide,
   getFriendCode as getCodeOnServerSide,
+  readFriendLinks,
+  readFriendRequests,
   readFriendTie as readTieOnServerSide,
   removeFriend as removeOnServerSide,
   sendFriendRequest as sendOnServerSide,
   unblockPlayer as unblockOnServerSide,
 } from '../server/friends';
-import { asNumber, asRecordArray, asString } from './__normalize';
-import { requireUid } from '../server/auth';
-import check, { TEXT, TOKEN, UID } from '../server/validate';
+import { requireReader, requireUid } from '../server/auth';
+import check, { LINK_TABLE, TEXT, TOKEN, UID } from '../server/validate';
 import { syncServerClock } from './clock';
-import getSupabase, { type Unwatch, watchTable } from './supabase';
+import { type Unwatch, watchTable } from './supabase';
+import { readOnly } from '../utils/server-calls';
 import getIdToken from './session';
 
 /**
@@ -45,35 +47,36 @@ function byNewest(left: FriendLink, right: FriendLink): number {
  * on the far side of the tie
  */
 function watchLinks(
-  table: string,
+  table: 'friends' | 'blocks',
   mine: string,
   uid: string,
-  theirs: string,
-  stamp: string,
   onChange: (rows: FriendLink[]) => void,
 ): Unwatch {
-  const read = async (): Promise<FriendLink[]> => {
-    const { data } = await getSupabase().from(table).select('*').eq(mine, uid);
-
-    const links: FriendLink[] = [];
-
-    for (const row of asRecordArray(data)) {
-      links.push({ uid: asString(row[theirs]), since: asNumber(row[stamp]) });
-    }
-    return links.sort(byNewest);
-  };
+  const read = async (): Promise<FriendLink[]> =>
+    (await readLinksOnServer(await getIdToken(), table)).sort(byNewest);
 
   return watchTable(table, [`${mine}=eq.${uid}`], read, onChange);
 }
 
+async function readLinksOnServer(
+  token: string,
+  table: 'friends' | 'blocks',
+): Promise<FriendLink[]> {
+  'use server';
+  check(TOKEN, token);
+  check(LINK_TABLE, table);
+  return readFriendLinks(await requireReader(token), table);
+}
+readOnly(readLinksOnServer);
+
 /** Everybody this player has agreed with */
 export function watchFriends(uid: string, onChange: (rows: FriendLink[]) => void): Unwatch {
-  return watchLinks('friends', 'owner', uid, 'friend', 'since', onChange);
+  return watchLinks('friends', 'owner', uid, onChange);
 }
 
 /** Everybody this player has shut out */
 export function watchBlocked(uid: string, onChange: (rows: FriendLink[]) => void): Unwatch {
-  return watchLinks('blocks', 'blocker', uid, 'blocked', 'since', onChange);
+  return watchLinks('blocks', 'blocker', uid, onChange);
 }
 
 /**
@@ -85,19 +88,15 @@ export function watchFriendRequests(
   onChange: (requests: FriendRequests) => void,
 ): Unwatch {
   const read = async (): Promise<FriendRequests> => {
-    const { data } = await getSupabase()
-      .from('friend_requests')
-      .select('sender, recipient, sent_at')
-      .or(`sender.eq.${uid},recipient.eq.${uid}`);
     const incoming: FriendLink[] = [];
     const outgoing: FriendLink[] = [];
 
-    for (const row of asRecordArray(data)) {
+    for (const row of await readRequestsOnServer(await getIdToken())) {
       if (row.recipient === uid) {
-        incoming.push({ uid: asString(row.sender), since: asNumber(row.sent_at) });
+        incoming.push({ uid: row.sender, since: row.sentAt });
       }
       if (row.sender === uid) {
-        outgoing.push({ uid: asString(row.recipient), since: asNumber(row.sent_at) });
+        outgoing.push({ uid: row.recipient, since: row.sentAt });
       }
     }
     return { incoming: incoming.sort(byNewest), outgoing: outgoing.sort(byNewest) };
@@ -105,6 +104,15 @@ export function watchFriendRequests(
 
   return watchTable('friend_requests', [`sender=eq.${uid}`, `recipient=eq.${uid}`], read, onChange);
 }
+
+async function readRequestsOnServer(
+  token: string,
+): Promise<{ sender: string; recipient: string; sentAt: number }[]> {
+  'use server';
+  check(TOKEN, token);
+  return readFriendRequests(await requireReader(token));
+}
+readOnly(readRequestsOnServer);
 
 /** Where this player stands with another, for the button that offers it */
 export async function readFriendTie(other: string): Promise<FriendTie> {

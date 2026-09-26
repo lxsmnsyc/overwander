@@ -2,15 +2,15 @@
 // assertions that tsc requires but tsgolint (resolving const enums to
 // number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
-import { type DuelInvite, type DuelRecord, type DuelRules, asDuelRecord } from './duel-record';
+import type { DuelInvite, DuelRecord, DuelRules } from './duel-record';
 import type { LobbyRole } from './lobby-role';
-import { requireUid, requireUidFor } from '../server/auth';
+import { requireReader, requireUid, requireUidFor } from '../server/auth';
 import { Feature } from '../server/switches';
 import check, {
   DUEL_RULES,
   FLAG,
   ID,
+  ID_BATCH,
   LOBBY_ROLE,
   PARTY,
   TEXT,
@@ -24,6 +24,9 @@ import {
   inviteToDuel as inviteOnServer,
   joinDuel as joinOnServer,
   leaveDuel as leaveOnServer,
+  readDuelInvites,
+  readMyDuelIds,
+  readVisibleDuels,
   setDuelParty as setPartyOnServer,
   setDuelReady as setReadyOnServer,
   setDuelRole as setRoleOnServer,
@@ -31,7 +34,8 @@ import {
   startDuel as startOnServer,
 } from '../server/duels';
 import { syncServerClock } from './clock';
-import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
+import { type Unwatch, watchRow, watchTable } from './supabase';
+import { readOnly } from '../utils/server-calls';
 import getIdToken from './session';
 
 export {
@@ -50,78 +54,18 @@ export async function getDuel(id: string): Promise<DuelRecord | null> {
   return (await readDuels([id])).get(id) ?? null;
 }
 
-/**
- * Lobbies by id, with their members and parties. Two reads however many
- * lobbies, rather than two per lobby
- */
+/** Lobbies by id, with their members and parties, leaving out any the player cannot see */
 async function readDuels(ids: string[]): Promise<Map<string, DuelRecord>> {
-  const found = new Map<string, DuelRecord>();
-
-  if (ids.length === 0) {
-    return found;
-  }
-
-  const supabase = getSupabase();
-  const [lobbies, parties] = await Promise.all([
-    supabase
-      .from(DUEL_TABLE)
-      .select(
-        'id, host, battle_id, created_at, limits, team_size, ' +
-          'duel_members(player, role, ready, joined_seq)',
-      )
-      .in('id', ids),
-    supabase.from('duel_catches').select('duel_id, player, slot, caught_id').in('duel_id', ids),
-  ]);
-  // Each lobby's parties, by player, as slot and catch pairs
-  const held = new Map<string, Map<string, [number, string][]>>();
-
-  for (const entry of asRecordArray(parties.data)) {
-    const duel = asString(entry.duel_id);
-    const players = held.get(duel) ?? new Map<string, [number, string][]>();
-    const player = asString(entry.player);
-
-    players.set(player, [
-      ...(players.get(player) ?? []),
-      [asNumber(entry.slot), asString(entry.caught_id)],
-    ]);
-    held.set(duel, players);
-  }
-  for (const row of asRecordArray(lobbies.data)) {
-    const id = asString(row.id);
-
-    found.set(id, fromDuelRow(row, held.get(id) ?? new Map<string, [number, string][]>()));
-  }
-  return found;
+  return new Map(ids.length === 0 ? [] : await readDuelsOnServer(await getIdToken(), ids));
 }
 
-function fromDuelRow(
-  row: Record<string, unknown>,
-  held: Map<string, [number, string][]>,
-): DuelRecord {
-  const members = asRecordArray(row.duel_members).sort(
-    (left, right) => asNumber(left.joined_seq) - asNumber(right.joined_seq),
-  );
-  const seated: Record<string, unknown>[] = [];
-
-  for (const entry of members) {
-    const catches: string[] = [];
-
-    for (const [, caught] of (held.get(asString(entry.player)) ?? []).sort(
-      ([left], [right]) => left - right,
-    )) {
-      catches.push(caught);
-    }
-    seated.push({ player: entry.player, role: entry.role, ready: entry.ready, catches });
-  }
-  return asDuelRecord({
-    host: row.host,
-    battle: row.battle_id,
-    createdAt: row.created_at,
-    limits: row.limits,
-    teamSize: row.team_size,
-    members: seated,
-  });
+async function readDuelsOnServer(token: string, ids: string[]): Promise<[string, DuelRecord][]> {
+  'use server';
+  check(TOKEN, token);
+  check(ID_BATCH, ids);
+  return readVisibleDuels(await requireReader(token), ids);
 }
+readOnly(readDuelsOnServer);
 
 /**
  * Follow a lobby. Everything in one moves while somebody is looking
@@ -148,13 +92,7 @@ export function watchDuel(id: string, onChange: (duel: DuelRecord | null) => voi
  * one: a player hosts one at a time and is called into few
  */
 export async function listMyDuels(uid: string): Promise<[string, DuelRecord][]> {
-  const { data } = await getSupabase().from('duel_members').select('duel_id').eq('player', uid);
-  const ids: string[] = [];
-
-  for (const row of asRecordArray(data)) {
-    ids.push(asString(row.duel_id));
-  }
-
+  const ids = await readMyDuelIdsOnServer(await getIdToken(), uid);
   const found = await readDuels(ids);
   const duels: [string, DuelRecord][] = [];
 
@@ -167,6 +105,16 @@ export async function listMyDuels(uid: string): Promise<[string, DuelRecord][]> 
   }
   return duels;
 }
+
+async function readMyDuelIdsOnServer(token: string, player: string): Promise<string[]> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  const uid = await requireReader(token);
+
+  return player === uid ? readMyDuelIds(uid) : [];
+}
+readOnly(readMyDuelIdsOnServer);
 
 /** Follow that list, so a lobby opened or shut elsewhere moves it */
 export function watchMyDuels(
@@ -202,31 +150,25 @@ export function watchMyDuels(
 /** The calls waiting on this player */
 export function watchDuelInvites(uid: string, onChange: (invites: DuelInvite[]) => void): Unwatch {
   const read = async (): Promise<DuelInvite[]> => {
-    const { data } = await getSupabase()
-      .from('duel_invites')
-      .select('duel_id, sender, role, sent_at, duels(battle_id)')
-      .eq('recipient', uid)
-      .order('sent_at', { ascending: false });
-
     const invites: DuelInvite[] = [];
 
-    for (const row of asRecordArray(data)) {
-      // A call into a lobby that has started answers nothing
-      if (asRecord(row.duels).battle_id != null) {
-        continue;
-      }
-      invites.push({
-        duel: asString(row.duel_id),
-        sender: asString(row.sender),
-        role: asNumber(row.role) as LobbyRole,
-        sentAt: asNumber(row.sent_at),
-      });
+    for (const invite of await readInvitesOnServer(await getIdToken())) {
+      invites.push({ ...invite, role: invite.role as LobbyRole });
     }
     return invites;
   };
 
   return watchTable('duel_invites', [`recipient=eq.${uid}`], read, onChange);
 }
+
+async function readInvitesOnServer(
+  token: string,
+): Promise<{ duel: string; sender: string; role: number; sentAt: number }[]> {
+  'use server';
+  check(TOKEN, token);
+  return readDuelInvites(await requireReader(token));
+}
+readOnly(readInvitesOnServer);
 
 /**
  * Open a lobby, or step back into the one already open. `watching`

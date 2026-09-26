@@ -7,6 +7,7 @@ named for what it brings.
 
 | Release                                                               | What it brought                                                                                                                |
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| [Unova's league](update/unovas-league.md) | Thirteen gym leaders, the Elite Four, Iris, N and Alder, Team Plasma, 48 trainer classes, and the whole ladder in every town |
 | [Seasons and the last of Unova's lines](update/seasons-and-the-last-lines.md) | Monthly seasons with Deerling's four coats, Emolga, and the fourteen Unova lines still missing |
 | [Unova's legends](update/unovas-legends.md) | The Tao trio with Kyurem's fusions, the forces of nature, and Victini, Meloetta and Genesect |
 | [Twist Mountain and the Swords of Justice](update/twist-mountain-and-the-swords.md) | Seven more families along the last roads and Twist Mountain, and Cobalion, Terrakion, Virizion and Keldeo |

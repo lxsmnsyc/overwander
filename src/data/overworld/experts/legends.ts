@@ -84,15 +84,13 @@ export const LEGEND_PARTIES: Record<Legend, Species[]> = {
   /*
    * His castle six, with both dragons rather than the one his version
    * hands him: he is the only person either of them answers to. The
-   * Carracosta and Archeops they crowd out are pokemon nobody can
-   * meet while Unova's fossils wait on a Tirtouga being drawn, and
-   * the Darmanitan is his own, off the fight in the desert
+   * Vanilluxe is the one left out for them, which Alder carries anyway
    */
   [Legend.N]: [
-    Species.Vanilluxe,
-    Species.Klinklang,
-    Species.Darmanitan,
     Species.Zoroark,
+    Species.Carracosta,
+    Species.Archeops,
+    Species.Klinklang,
     Species.Reshiram,
     Species.Zekrom,
   ],

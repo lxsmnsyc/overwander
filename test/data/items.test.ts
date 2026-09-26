@@ -324,6 +324,8 @@ describe('item data', () => {
       Species.Anorith,
       Species.Cranidos,
       Species.Shieldon,
+      Species.Tirtouga,
+      Species.Archen,
     ]);
 
     for (const [item, species] of FOSSIL_SPECIES) {

@@ -126,16 +126,12 @@ export const CHAMPION_PARTIES: Record<Champion, Species[]> = {
     Species.Milotic,
     Species.Garchomp,
   ],
-  // The six she defends Unova with in the sequels, Haxorus last. The
-  // Archeops among them is hers and nobody can meet one: Unova's two
-  // fossils wait on a Tirtouga being drawn. The Excadrill standing in
-  // its place is hers as well, off the Opelucid gym team she keeps
-  // before the crown
+  // The six she defends Unova with in the sequels, Haxorus last
   [Champion.Iris]: [
     Species.Hydreigon,
     Species.Druddigon,
     Species.Aggron,
-    Species.Excadrill,
+    Species.Archeops,
     Species.Lapras,
     Species.Haxorus,
   ],

@@ -49,6 +49,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Stunfisk, weight: 6 },
         { species: Species.Carnivine, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Farfetchd, weight: 5 },
@@ -101,6 +102,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Stunfisk, weight: 6 },
         { species: Species.Carnivine, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Farfetchd, weight: 5 },
@@ -142,6 +144,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Stunfisk, weight: 6 },
         { species: Species.Seismitoad, weight: 5 },
         { species: Species.Carnivine, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
@@ -185,6 +188,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Stunfisk, weight: 6 },
         { species: Species.Seismitoad, weight: 5 },
         { species: Species.Carnivine, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },

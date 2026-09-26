@@ -338,10 +338,7 @@ describe('type experts', () => {
     expect(canMeetSpecies(Species.Kabutops)).toBe(true);
     expect(canMeetSpecies(Species.Heracross)).toBe(true);
     expect(canMeetSpecies(Species.Phione)).toBe(true);
-    // And a line written before the world has a place for it: Unova's
-    // fossils wait on their fossils being registered
-    expect(canMeetSpecies(Species.Carracosta)).toBe(false);
-    expect(canMeetSpecies(Species.Zebstrika)).toBe(true);
+    expect(canMeetSpecies(Species.Carracosta)).toBe(true);
   });
 
   it('gives every leader a signature of their own type', () => {
@@ -448,8 +445,8 @@ describe('type experts', () => {
   it('gives every champion and legend a party a player could have walked', () => {
     // These six are written out rather than rolled, so nothing filters
     // them: a hand-written party is where a pokemon nobody can meet
-    // slips onto a team. Iris' Archeops and N's Carracosta are the
-    // live cases, since Unova's fossils wait on a Tirtouga being drawn
+    // slips onto a team. Iris' Archeops and N's Carracosta are only
+    // met by reviving a fossil
     for (const party of [...Object.values(CHAMPION_PARTIES), ...Object.values(LEGEND_PARTIES)]) {
       for (const species of party) {
         expect(canMeetSpecies(species), getSpeciesData(species).name).toBe(true);

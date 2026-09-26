@@ -25,13 +25,7 @@ export type { DueQuest } from '../server/due';
  * standings themselves
  */
 export async function getDueQuests(): Promise<DueQuest[]> {
-  return listDueOnServer(await getIdToken());
-}
-
-async function listDueOnServer(token: string): Promise<DueQuest[]> {
-  'use server';
-  check(TOKEN, token);
-  return listDue(await requireUid(token), await syncServerClock());
+  return listDueInZoneOnServer(await getIdToken(), getLocalOffset());
 }
 
 export async function getQuests(): Promise<QuestStanding[]> {
@@ -64,4 +58,11 @@ async function claimOnServer2(
   check(OFFSET, offset);
   check(LOCALE, locale);
   return claimOnServer(await requireUid(token), quest, await syncServerClock(), offset, locale);
+}
+
+async function listDueInZoneOnServer(token: string, offset: number): Promise<DueQuest[]> {
+  'use server';
+  check(TOKEN, token);
+  check(OFFSET, offset);
+  return listDue(await requireUid(token), await syncServerClock(), offset);
 }

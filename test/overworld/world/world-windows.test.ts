@@ -19,6 +19,8 @@ import registerItems, { getItemData } from '../../../src/data/items';
 import { isValuable } from '../../../src/data/items/valuables';
 import {
   ITEM_BAND_ODDS,
+  MAX_KINDS,
+  MAX_STACK,
   PHENOMENON_BAND_ODDS,
   getItemBand,
   getItemOdds,
@@ -1005,11 +1007,14 @@ describe('world', () => {
 
       expect(found?.kind).toBe('item');
       if (found?.kind === 'item') {
-        expect(found.items.length).toBe(1);
-        // One piece: everything a phenomenon leaves is worth carrying
-        // home on its own
-        expect(found.items[0].amount).toBe(1);
-        expect(new Set(getPhenomenonItems(phenomenon)).has(found.items[0].item)).toBe(true);
+        // A stash on a cache's terms
+        expect(found.items.length).toBeGreaterThanOrEqual(1);
+        expect(found.items.length).toBeLessThanOrEqual(MAX_KINDS);
+        for (const { item, amount } of found.items) {
+          expect(amount).toBeGreaterThanOrEqual(1);
+          expect(amount).toBeLessThanOrEqual(MAX_STACK);
+          expect(new Set(getPhenomenonItems(phenomenon)).has(item)).toBe(true);
+        }
       }
 
       // Past the item draw it is a pokemon, the same two bands

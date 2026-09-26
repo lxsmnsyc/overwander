@@ -47,3 +47,28 @@ export function answered<T>(resource: Resource<T>): T | undefined {
     ? resource.latest
     : undefined;
 }
+
+/**
+ * `settled`, for a resource whose read can fail: a failed one answers
+ * `undefined` rather than throwing, since nothing above catches a
+ * throw. The body says the failure itself with `failed`, rather than
+ * drawing the missing answer as an empty one.
+ */
+export function readable<T>(resource: Resource<T>): T | undefined {
+  return resource.state === 'errored' ? undefined : settled(resource);
+}
+
+/**
+ * What a failed resource says, or null while it has not failed. Only
+ * for reads whose errors are written for a player, such as the bag's:
+ * a store's own message is never one of those
+ */
+export function failed(resource: Resource<unknown>): string | null {
+  if (resource.state !== 'errored') {
+    return null;
+  }
+
+  const error: unknown = resource.error;
+
+  return error instanceof Error ? error.message : null;
+}

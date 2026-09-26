@@ -12,18 +12,18 @@ import Weather from './kinds';
  *
  * The same reading against different ground is the same weather system
  * over a different country: the front that is a thunderstorm in the
- * rainforest is a sandstorm over the desert it crosses next
+ * rainforest is a blizzard over the glacier it crosses next
  */
 export interface WeatherBands {
   /** Driest and calmest, which is most windows */
   clear: Weather;
   /** Dry, but the air is doing something */
   stirred: Weather;
-  /** Damp and calm: the front on its way */
+  /** The edge of a front: on its way */
   damp: Weather;
-  /** Wet and calm */
+  /** Inside a front */
   wet: Weather;
-  /** Wet and wild */
+  /** The core of a front */
   storm: Weather;
   /**
    * Both channels at an extreme, which smooth noise reaches rarely and
@@ -69,27 +69,42 @@ export interface WeatherBands {
 }
 
 /**
- * What the reading has to reach for each band. A front is wet before
- * it is a storm, so the thresholds are ordered rather than even: most
- * of the field is dry and calm, which is what makes the rest worth
- * walking into
+ * What the front has to reach for each ring. A front is damp at its
+ * edge, wet inside and a storm at its core, so walking into one passes
+ * through each in turn. Most of the field is dry, which is what makes
+ * the rest worth walking into
  */
 const DAMP = 0.15;
 const WET = 0.45;
+const STORM = 0.8;
+
+/** How wild the air has to be for a dry sky to be stirred rather than clear */
 const WILD = 0.4;
 
-/** Both channels this far out, which is a corner of the field */
+/** Both readings this far out, which is a corner of the field */
 const RARE = 0.6;
 
 /**
- * Further out again, and the narrowest band there is.
+ * Further out again, and the narrowest band there is: one reading per
+ * corner of the field.
  *
- * It is set against the map rather than picked: the sky above it falls
- * over every country, so the band is the only thing holding it rare.
- * At this reading it lands on about one window in thirteen hundred,
- * which is half as often as the next rarest sky
+ * The band rather than the map is what holds these four rare, since
+ * the sky above them falls over every country. Each lands on about
+ * one window in four hundred, which is half as often as the next
+ * rarest sky.
+ *
+ * The four differ because the corners of the noise are not the same
+ * thickness: measured over the whole world, one flat reading leaves
+ * the wild corner about a fifth commoner than the wet, calm one. They
+ * are worth the same to a player, so each corner carries the reading
+ * that evens them out rather than one shared figure
  */
-const RAREST = 0.92;
+const RAREST: Record<'wildest' | 'stillest' | 'bleakest' | 'thickest', number> = {
+  wildest: 0.75,
+  stillest: 0.744,
+  bleakest: 0.747,
+  thickest: 0.745,
+};
 
 /**
  * Nothing lives in `Beyond` and nothing happens over it, which is why
@@ -461,35 +476,40 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
 /**
  * The sky a reading lands on over this ground.
  *
- * `wetness` and `energy` both run from -1 to 1. The bands are read
- * from the outside in, so a showpiece beats a storm and a storm beats
- * the rain it is made of
+ * `front` is how much is falling and `character` how calm or wild the
+ * air is, both from -1 to 1. The front alone sets the rings, clear to
+ * damp to wet to a storm at its core; the character only stirs a dry
+ * sky. The showpieces sit in the corners where both are extreme, read
+ * from the outside in
  */
-export function classifyWeather(biome: Biome, wetness: number, energy: number): Weather {
+export function classifyWeather(biome: Biome, front: number, character: number): Weather {
   const bands = BIOME_WEATHER[biome];
 
-  if (bands.wildest != null && wetness >= RAREST && energy >= RAREST) {
+  if (bands.wildest != null && front >= RAREST.wildest && character >= RAREST.wildest) {
     return bands.wildest;
   }
-  if (bands.stillest != null && wetness <= -RAREST && energy <= -RAREST) {
+  if (bands.stillest != null && front <= -RAREST.stillest && character <= -RAREST.stillest) {
     return bands.stillest;
   }
-  if (bands.bleakest != null && wetness <= -RAREST && energy >= RAREST) {
+  if (bands.bleakest != null && front <= -RAREST.bleakest && character >= RAREST.bleakest) {
     return bands.bleakest;
   }
-  if (bands.thickest != null && wetness >= RAREST && energy <= -RAREST) {
+  if (bands.thickest != null && front >= RAREST.thickest && character <= -RAREST.thickest) {
     return bands.thickest;
   }
-  if (bands.rare != null && wetness >= RARE && energy >= RARE) {
+  if (bands.rare != null && front >= RARE && character >= RARE) {
     return bands.rare;
   }
-  if (wetness >= WET) {
-    return energy >= WILD ? bands.storm : bands.wet;
+  if (front >= STORM) {
+    return bands.storm;
   }
-  if (wetness >= DAMP) {
+  if (front >= WET) {
+    return bands.wet;
+  }
+  if (front >= DAMP) {
     return bands.damp;
   }
-  return energy >= WILD ? bands.stirred : bands.clear;
+  return character >= WILD ? bands.stirred : bands.clear;
 }
 
 /**

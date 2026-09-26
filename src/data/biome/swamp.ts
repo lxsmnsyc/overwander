@@ -9,6 +9,7 @@ export default function registerSwampSpawns(): void {
   registerSpawnPool(Biome.Swamp, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.FlabebeBlue, weight: 24 },
         { species: Species.Squirtle, weight: 2 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Totodile, weight: 2 },
@@ -28,6 +29,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.FloetteBlue, weight: 8 },
         { species: Species.Wartortle, weight: 1 },
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Croconaw, weight: 1 },
@@ -49,6 +51,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.FlorgesBlue, weight: 5 },
         { species: Species.Stunfisk, weight: 6 },
         { species: Species.Carnivine, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },
@@ -62,6 +65,7 @@ export default function registerSwampSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.FlabebeBlue, weight: 24 },
         { species: Species.Squirtle, weight: 2 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Totodile, weight: 2 },
@@ -81,6 +85,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.FloetteBlue, weight: 8 },
         { species: Species.Wartortle, weight: 1 },
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Croconaw, weight: 1 },
@@ -102,6 +107,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.FlorgesBlue, weight: 5 },
         { species: Species.Stunfisk, weight: 6 },
         { species: Species.Carnivine, weight: 6 },
         { species: Species.Poliwrath, weight: 5 },

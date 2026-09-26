@@ -2015,6 +2015,24 @@ export default function registerSignatureAbilities(): void {
       "Each move it lands drops that target's Accuracy a stage, to 2 stages from this dust.",
   });
 
+  // The flower road out of the second town
+  registerSignature(Families.Flabebe, Abilities.Hothouse, {
+    name: 'Hothouse',
+    description:
+      'A teammate defends special moves with its Special Defense whenever theirs is lower.',
+  });
+
+  registerSignature(Families.Skiddo, Abilities.SaddleBurden, {
+    name: 'Saddle Burden',
+    description:
+      'A status aimed at a teammate lands on it instead, while it is above 1/2 HP and carries none.',
+  });
+
+  registerSignature(Families.Furfrou, Abilities.PedigreeCoat, {
+    name: 'Pedigree Coat',
+    description: 'Special moves hit it at 0.8x while it is at or above 1/2 HP.',
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:

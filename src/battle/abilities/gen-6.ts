@@ -1,10 +1,33 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { Stats } from '../../data/constants/stats';
+import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { DamageFlags, Moves } from '../../data/ids/moves';
+import { Terrains } from '../../data/ids/status';
+import { MergedLifecycle } from '../lifecycle';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import type Unit from '../unit';
 import { hasFreeItemSlot, stealableItem } from '../utils';
 import { createAbility } from './__create';
+
+/** What a pelt of grass is worth while there is grass to stand on */
+const GRASS_PELT_SCALE = 1.5;
+
+/** The teammate holding the veil over this one, if one is standing */
+function veiledBy(unit: Unit, ability: Abilities): Unit | undefined {
+  if (!unit.types.has(Types.Grass)) {
+    return undefined;
+  }
+
+  for (const mate of unit.team.units) {
+    if (mate.alive && mate.hasAbility(ability)) {
+      return mate;
+    }
+  }
+
+  return undefined;
+}
 
 /**
  * What a shell thick enough to stop a shot turns away: everything
@@ -83,6 +106,108 @@ const setupAbilities = [
       });
       thief.addItem(item);
     }),
+  ),
+
+  // Flabebe: the flower keeps the bed, so the veil is over every
+  // grass on its own team rather than over itself alone
+  createAbility(
+    Abilities.FlowerVeil,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (!event.immune && veiledBy(event.source, Abilities.FlowerVeil) != null) {
+            event.immune = true;
+          }
+        }),
+        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+          veiledBy(event.source, Abilities.FlowerVeil)?.triggerAbility(Abilities.FlowerVeil);
+        }),
+        // A drop it puts on itself still lands, the way Clear Body's does
+        battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
+          const keeper = veiledBy(event.source, Abilities.FlowerVeil);
+
+          if (
+            event.success &&
+            event.value < 0 &&
+            keeper != null &&
+            event.cause.type !== EffectType.None &&
+            event.cause.unit !== event.source
+          ) {
+            event.success = false;
+
+            if (!event.simulated) {
+              keeper.triggerAbility(Abilities.FlowerVeil);
+            }
+          }
+        }),
+      ]),
+  ),
+
+  // Flabebe: what a teammate eats is replaced out of its own hands.
+  // Only an item the holder spent itself counts, so one knocked off
+  // is nobody's cue
+  createAbility(Abilities.Symbiosis, (battle) =>
+    battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
+      const eater = event.source;
+
+      if (event.cause.type !== EffectType.Item || !eater.alive || !hasFreeItemSlot(eater)) {
+        return;
+      }
+
+      for (const mate of eater.team.units) {
+        if (mate === eater || !mate.alive || !mate.hasAbility(Abilities.Symbiosis)) {
+          continue;
+        }
+
+        const item = stealableItem(mate);
+
+        if (item == null) {
+          continue;
+        }
+
+        mate.triggerAbility(Abilities.Symbiosis);
+        mate.removeItem(item, {
+          type: EffectType.Ability,
+          ability: Abilities.Symbiosis,
+          unit: mate,
+        });
+        eater.addItem(item);
+        return;
+      }
+    }),
+  ),
+
+  // Skiddo: the pelt is worth something only where there is grass
+  // under it
+  createAbility(Abilities.GrassPelt, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (
+        event.stat === Stats.Defense &&
+        event.source.hasAbility(Abilities.GrassPelt) &&
+        event.source.checkTerrain() === Terrains.Grassy
+      ) {
+        event.value *= GRASS_PELT_SCALE;
+      }
+    }),
+  ),
+
+  // Florges: the mist comes up with it, cast as the move rather than
+  // laid by hand, so the terrain's own clock runs it
+  createAbility(
+    Abilities.MistySurge,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (event.source.hasAbility(Abilities.MistySurge)) {
+            event.source.triggerAbility(Abilities.MistySurge);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.MistySurge) {
+            event.source.triggerMove(Moves.MistyTerrain, { type: MoveTargetType.None }, 0);
+          }
+        }),
+      ]),
   ),
 ];
 

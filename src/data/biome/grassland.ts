@@ -9,6 +9,7 @@ export default function registerGrasslandSpawns(): void {
   registerSpawnPool(Biome.Grassland, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Flabebe, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Fletchling, weight: 26 },
         { species: Species.Pidove, weight: 30 },
@@ -25,6 +26,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Skiddo, weight: 24 },
         { species: Species.Bunnelby, weight: 26 },
         { species: Species.Blitzle, weight: 25 },
         { species: Species.Deerling, weight: 18 },
@@ -57,6 +59,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Floette, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Fletchinder, weight: 8 },
         { species: Species.Tranquill, weight: 12 },
@@ -73,6 +76,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Gogoat, weight: 6 },
         { species: Species.Diggersby, weight: 6 },
         { species: Species.Zebstrika, weight: 6 },
         { species: Species.Sawsbuck, weight: 7 },
@@ -105,6 +109,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Furfrou, weight: 5 },
+        { species: Species.Florges, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Talonflame, weight: 5 },
         { species: Species.Bouffalant, weight: 6 },
@@ -158,6 +164,7 @@ export default function registerGrasslandSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Flabebe, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Fletchling, weight: 26 },
         { species: Species.Pidove, weight: 30 },
@@ -175,6 +182,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Skiddo, weight: 24 },
         { species: Species.Bunnelby, weight: 26 },
         { species: Species.Blitzle, weight: 25 },
         { species: Species.Deerling, weight: 18 },
@@ -208,6 +216,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Floette, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Fletchinder, weight: 8 },
         { species: Species.Tranquill, weight: 12 },
@@ -225,6 +234,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Gogoat, weight: 6 },
         { species: Species.Diggersby, weight: 6 },
         { species: Species.Zebstrika, weight: 6 },
         { species: Species.Sawsbuck, weight: 7 },
@@ -258,6 +268,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Furfrou, weight: 5 },
+        { species: Species.Florges, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Talonflame, weight: 5 },
         { species: Species.Bouffalant, weight: 6 },
@@ -362,6 +374,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Furfrou, weight: 5 },
         { species: Species.Gothitelle, weight: 5 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Nidoqueen, weight: 5 },

@@ -9,6 +9,7 @@ export default function registerTemperateForestSpawns(): void {
   registerSpawnPool(Biome.TemperateForest, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Flabebe, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Chespin, weight: 2 },
         { species: Species.Timburr, weight: 25 },
@@ -38,6 +39,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Floette, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Quilladin, weight: 2 },
         { species: Species.Gurdurr, weight: 10 },
@@ -72,6 +74,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Florges, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Chesnaught, weight: 2 },
         { species: Species.Sawk, weight: 5 },
@@ -112,6 +115,7 @@ export default function registerTemperateForestSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Flabebe, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Chespin, weight: 2 },
         { species: Species.Timburr, weight: 25 },
@@ -141,6 +145,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Floette, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Quilladin, weight: 2 },
         { species: Species.Gurdurr, weight: 10 },
@@ -175,6 +180,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Florges, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Chesnaught, weight: 2 },
         { species: Species.Sawk, weight: 5 },

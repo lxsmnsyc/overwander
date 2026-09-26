@@ -128,7 +128,8 @@ database since the move is left behind.
 
 ## After the move
 
-- Players keep their sessions, since the sessions and signing keys are copied too.
+- Players who were signed in through Supabase sign in once more. Their accounts,
+  links and passwords are all there, so it is the same account they come back to.
 - Once going back is off the table, remove `SUPABASE_DB_URL` from `.env` and pause
   the Supabase project. Keep it paused for a few weeks before deleting it.
 - The repository's `supabase/` folder is only needed for step 2. Remove it once

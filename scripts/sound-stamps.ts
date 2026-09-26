@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -7,9 +8,9 @@ import { join } from 'node:path';
  * re-rendered one is still fetched.
  *
  * The same idea as `sprite-stamps.ts`, but written as a module rather
- * than a list fetched at runtime: the sounds ship with the app rather
- * than on the sprite host, so the stamps can ride in the bundle and a
- * sound is never held up waiting on a list.
+ * than a list fetched at runtime: the files are served from the sprite
+ * host, but the stamps ride in the app's bundle, so a sound is never
+ * held up waiting on a list.
  *
  * It runs as part of the build, so what ships is always a digest of
  * what shipped beside it. The committed copy is for `pnpm dev`.
@@ -27,8 +28,17 @@ const EXTENSION = '.ogg';
 
 async function main(): Promise<void> {
   const lines: string[] = [];
+  const found = existsSync(ROOT) ? (await readdir(ROOT)).sort() : [];
 
-  for (const file of (await readdir(ROOT)).sort()) {
+  // The sounds are published to the sprite host, so a build for the
+  // app alone has none of them. Writing then would empty the stamps
+  // every sound is asked for with, so the committed copy is left alone
+  if (!found.some((file) => file.endsWith(EXTENSION))) {
+    process.stdout.write(`${ROOT}: no sounds here, so nothing to stamp\n`);
+    return;
+  }
+
+  for (const file of found) {
     if (!file.endsWith(EXTENSION)) {
       continue;
     }

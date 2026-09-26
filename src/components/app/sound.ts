@@ -1,3 +1,4 @@
+import { spriteUrl } from '../../canvas/sprite-origin';
 import SOUND_STAMPS from './sound-stamps';
 import settings from './settings';
 
@@ -164,7 +165,10 @@ function sourceOf(effect: Effect): HTMLAudioElement | null {
 
   // Stamped, so a sound can be cached for a year and a re-rendered one is a new address
   const stamp = SOUND_STAMPS[name];
-  const made = new Audio(`/sounds/effects/${name}.ogg${stamp == null ? '' : `?v=${stamp}`}`);
+  // On the sprite host with the sheets, which serves them for nothing
+  const made = new Audio(
+    spriteUrl(`/sounds/effects/${name}.ogg${stamp == null ? '' : `?v=${stamp}`}`),
+  );
 
   made.preload = 'auto';
   loaded.set(effect, made);

@@ -1,6 +1,10 @@
 import { REALTIME_SUBSCRIBE_STATES, type RealtimeChannel } from '@supabase/supabase-js';
-import { serverCallsSeen } from '../utils/server-calls';
-import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
+import { readOnly, serverCallsSeen } from '../utils/server-calls';
+import { asNumber, asRecord, asString } from './__normalize';
+import getIdToken from './session';
+import { requireUid } from '../server/auth';
+import check, { TOKEN, UID } from '../server/validate';
+import { readBag } from '../server/inventory';
 import getSupabase from './supabase';
 
 /**
@@ -50,26 +54,23 @@ interface Watched {
 let watched: Watched | null = null;
 
 async function readWhole(uid: string): Promise<HeldBag> {
-  const supabase = getSupabase();
-  const [items, candies] = await Promise.all([
-    supabase.from('bag_items').select('item, count').eq('player', uid),
-    supabase.from('bag_candies').select('family, count').eq('player', uid),
-  ]);
+  const { items, candies } = await readWholeOnServer(await getIdToken(), uid);
 
-  if (items.error != null || candies.error != null) {
-    throw new Error('Could not read your bag just now.');
-  }
-
-  const bag: HeldBag = { items: new Map(), candies: new Map() };
-
-  for (const row of asRecordArray(items.data)) {
-    bag.items.set(asNumber(row.item), asNumber(row.count));
-  }
-  for (const row of asRecordArray(candies.data)) {
-    bag.candies.set(asNumber(row.family), asNumber(row.count));
-  }
-  return bag;
+  return { items: new Map(items), candies: new Map(candies) };
 }
+
+async function readWholeOnServer(
+  token: string,
+  player: string,
+): Promise<{ items: [number, number][]; candies: [number, number][] }> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  const uid = await requireUid(token);
+
+  return player === uid ? readBag(uid) : { items: [], candies: [] };
+}
+readOnly(readWholeOnServer);
 
 /** Fold one change the channel carried into the copy */
 function applyChange(bag: HeldBag, message: Record<string, unknown>): void {

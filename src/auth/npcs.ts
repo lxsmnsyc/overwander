@@ -1,9 +1,10 @@
+import { readOnly } from '../utils/server-calls';
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import Npc from '../data/overworld/npc';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-import { WORLD_GENERATION } from '../overworld/current';
-import { requireUidFor } from '../server/auth';
+import { requireUid, requireUidFor } from '../server/auth';
+import { readVisited } from '../server/npcs/visits';
 import { Feature } from '../server/switches';
 import check, {
   BASKET,
@@ -42,7 +43,6 @@ import type { LearnResult } from './learn-refusal';
 import { syncServerClock } from './clock';
 import { getLocale } from './local-time';
 import getIdToken from './session';
-import getSupabase from './supabase';
 
 /**
  * The wandering NPCs, as the client asks them for things.
@@ -738,20 +738,21 @@ async function reviveOnServer(
 
 /**
  * Whether whoever is standing at the cell has already dealt with the
- * signed-in player this window. The claim rows are readable by their
- * owner, so a dialog can show "sold" instead of offering a press the
- * server would only refuse
+ * signed-in player this window, so a dialog can show "sold" instead of
+ * offering a press the server would only refuse
  */
 export async function hasVisited(
   snapshot: ChunkSnapshot,
   tag: string,
   cell: number,
 ): Promise<boolean> {
-  const { data } = await getSupabase()
-    .from('npc_claims')
-    .select('marker')
-    .eq('generation', WORLD_GENERATION)
-    .eq('marker', snapshot.visitMarker(tag, cell));
-
-  return (data ?? []).length > 0;
+  return hasVisitedOnServer(await getIdToken(), snapshot.visitMarker(tag, cell));
 }
+
+async function hasVisitedOnServer(token: string, marker: string): Promise<boolean> {
+  'use server';
+  check(TOKEN, token);
+  check(ID, marker);
+  return readVisited(await requireUid(token), marker);
+}
+readOnly(hasVisitedOnServer);

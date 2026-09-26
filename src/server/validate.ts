@@ -183,6 +183,18 @@ export const PARTY = listOf(ID, TEAM_SIZE);
 /** The catches one call acts on at once */
 export const CATCH_LIST = listOf(ID, BULK_LIMIT);
 
+/** Row ids keyed by the cells of one chunk, at most one per cell */
+const CHUNK_IDS = listOf(ID, CELL_COUNT);
+
+/** The row ids one chunk's landmark standings are asked by */
+export const STANDING_IDS = v.object({
+  lairs: CHUNK_IDS,
+  stops: CHUNK_IDS,
+  seats: CHUNK_IDS,
+  visits: CHUNK_IDS,
+  nests: CHUNK_IDS,
+});
+
 /** Which mark a bulk call is setting */
 export const MARK_FIELD = v.picklist(['favorite', 'guarded']);
 

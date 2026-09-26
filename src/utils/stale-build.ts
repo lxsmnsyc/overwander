@@ -38,8 +38,12 @@ export default function guardServerCalls(): void {
 
     // Counted as it goes out and again once it is answered, so a copy
     // read while it was in flight is not taken for one read after it
-    countServerCall();
-    const response = await send(new Request(request, { headers })).finally(countServerCall);
+    const serverId = request.headers.get('X-Server-Id');
+
+    countServerCall(serverId);
+    const response = await send(new Request(request, { headers })).finally(() => {
+      countServerCall(serverId);
+    });
 
     if (response.headers.has(STALE_BUILD_HEADER)) {
       reloadForNewBuild();

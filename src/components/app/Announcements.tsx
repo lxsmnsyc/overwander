@@ -43,7 +43,7 @@ function writeDismissed(dismissed: ReadonlySet<number>): void {
  * shows however many were put away before it
  */
 export default function Announcements(): JSX.Element {
-  const announcements = watchLive<Announcement[]>((set) => watchAnnouncements(serverNow, set));
+  const announcements = watchLive<Announcement[]>((set) => watchAnnouncements(set));
   const [now, setNow] = createSignal(0);
   const [dismissed, setDismissed] = createSignal<ReadonlySet<number>>(new Set());
 

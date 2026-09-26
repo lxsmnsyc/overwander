@@ -11,6 +11,7 @@ let heard: Heard = () => undefined;
 let status: (state: string) => void = () => undefined;
 let items: Record<string, unknown>[] = [];
 let reads = 0;
+let uid = '';
 let answer: () => Promise<void> = async () => Promise.resolve();
 
 vi.mock('../src/auth/supabase', () => {
@@ -29,29 +30,35 @@ vi.mock('../src/auth/supabase', () => {
     default: () => ({
       channel: () => channel,
       removeChannel: async () => Promise.resolve(),
-      from: (table: string) => ({
-        select: () => ({
-          eq: async () => {
-            if (table === 'bag_items') {
-              reads += 1;
-              const rows = structuredClone(items);
-
-              await answer();
-              return { data: rows, error: null };
-            }
-            return { data: [], error: null };
-          },
-        }),
-      }),
     }),
   };
 });
+
+// The read is a server call now, which runs only inside a request, and
+// the player is whoever the test says
+vi.mock('solid-js/web', async (original) => ({
+  ...(await original<object>()),
+  getRequestEvent: () => ({ locals: {} }),
+}));
+vi.mock('../src/auth/session', () => ({ default: async () => Promise.resolve('token') }));
+vi.mock('../src/server/auth', () => ({ requireUid: async () => Promise.resolve(uid) }));
+vi.mock('../src/server/inventory', () => ({
+  readBag: async () => {
+    reads += 1;
+    const rows: [number, number][] = [];
+
+    for (const row of structuredClone(items)) {
+      rows.push([Number(row.item), Number(row.count)]);
+    }
+    await answer();
+    return { items: rows, candies: [] };
+  },
+}));
 
 const { default: readHeldBag } = await import('../src/auth/live-bag');
 const { countServerCall } = await import('../src/utils/server-calls');
 
 let player = 0;
-let uid = '';
 
 function said(operation: string, item: number, count: number | null): void {
   heard({
@@ -68,7 +75,7 @@ describe('the kept bag', () => {
   beforeEach(async () => {
     // A new player each time, so every test starts on a fresh channel
     player += 1;
-    uid = `player-${player}`;
+    uid = `00000000-0000-4000-8000-${String(player).padStart(12, '0')}`;
     items = [{ item: 1, count: 5 }];
     reads = 0;
     answer = async () => Promise.resolve();
@@ -96,7 +103,7 @@ describe('the kept bag', () => {
   });
 
   it('reads again after a server call of its own', async () => {
-    countServerCall();
+    countServerCall(null);
     items = [{ item: 1, count: 4 }];
 
     expect((await readHeldBag(uid)).items.get(1)).toBe(4);
@@ -113,7 +120,7 @@ describe('the kept bag', () => {
   });
 
   it('lays a change heard during a read over what the read brings back', async () => {
-    countServerCall();
+    countServerCall(null);
     // The read is answered from before the change and lands after it
     answer = async () => {
       // A message arrives on a later turn, never inside the call

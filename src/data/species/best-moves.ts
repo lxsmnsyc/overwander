@@ -4,7 +4,7 @@ import { Stats } from '../constants/stats';
 import type { Species } from '../ids/species';
 import { TYPE_EFFECTIVENESS, TypeEffectiveness, Types } from '../constants/types';
 import { Weathers } from '../ids/status';
-import { getLearnableMoves, getSpeciesData } from './__create';
+import { getReachableMoves, getSpeciesData } from './__create';
 import { getMoveData } from '../moves/__create';
 import { isRecoilMove } from '../moves/recoil';
 import { MOVE_WEATHERS, getWeatherMove } from '../moves/weather';
@@ -32,38 +32,74 @@ import { isRechargeMove } from '../moves/recharge';
 export const BEST_MOVE_COUNT = 4;
 
 /**
- * What a pokemon is on the sheet it was built for.
- *
- * A party of six identical hitters is six copies of one plan, so an
- * expert fields two of them and four of everything else: the cores
- * are there to take something off the field, and the rest are there
- * to keep the cores standing and the far side hampered
+ * What a pokemon is on the sheet it was built for. Two cores take
+ * things off the field, one leaning on each half of the split, and the
+ * four behind them each hold one job: keeping the side healed, keeping
+ * it protected, drawing the hits, and hampering the far side
  */
 export const enum BuildRole {
-  /** Attacks and the setup that sharpens them */
-  Core = 0,
-  /** Health, screens, hazards and whatever cripples the other side */
-  Support = 1,
+  /** Hits hardest from Special Attack */
+  SpecialCore = 0,
+  /** Hits hardest from Attack */
+  PhysicalCore = 1,
+  /** The frailest able to heal, cure or raise the rest of the side */
+  Healer = 2,
+  /** Screens, guards and whatever else keeps the whole side standing */
+  Protector = 3,
+  /** The bulkiest able to draw the other side's moves onto itself */
+  Redirector = 4,
+  /** Lays statuses and hazards on the other side */
+  FieldControl = 5,
+}
+
+/** Whether a role is one of the two built to hit */
+export function isCoreRole(role: BuildRole): boolean {
+  return role === BuildRole.SpecialCore || role === BuildRole.PhysicalCore;
+}
+
+/** The core a species makes on its own, by the stronger of its two attacking stats */
+export function coreRoleOf(species: Species): BuildRole {
+  const stats = getSpeciesData(species).stats;
+
+  return stats[Stats.Attack] > stats[Stats.SpecialAttack]
+    ? BuildRole.PhysicalCore
+    : BuildRole.SpecialCore;
+}
+
+/** The half of the split a core leans on, and nothing for the other roles */
+export function coreCategory(role: BuildRole): MoveCategories | null {
+  if (role === BuildRole.SpecialCore) {
+    return MoveCategories.Special;
+  }
+  return role === BuildRole.PhysicalCore ? MoveCategories.Physical : null;
 }
 
 /** What a status move is for, which is what a role has an opinion about */
-const enum StatusKind {
+export const enum StatusKind {
   /** A stat raised on the user, worth what the stat is worth to it */
   Setup = 0,
-  /** Health back */
+  /** Health back for the user */
   Heal = 1,
-  /** Something done to the other side that is not damage */
+  /** A status or a drop laid on the other side */
   Cripple = 2,
-  /** Something laid over the side or the field */
-  Guard = 3,
+  /** A screen or a guard laid over the whole side */
+  Screen = 3,
   /** A sky, worth nothing unless something is waiting for it */
   Weather = 4,
-  /**
-   * Something done for somebody else on the field. Every fight here
-   * stands the whole party up at once, so a move aimed at an ally is
-   * a move with somebody to aim at
-   */
-  Ally = 5,
+  /** Something done for a teammate: a raise, a hand, a pass */
+  Boost = 5,
+  /** Health back for a teammate */
+  Mend = 6,
+  /** A status cleared off the side */
+  Cure = 7,
+  /** The user kept standing on its own: a Protect or a Substitute */
+  Shield = 8,
+  /** The other side's moves drawn onto the user */
+  Redirect = 9,
+  /** Something laid under the other side's feet */
+  Hazard = 10,
+  /** The field itself turned over: a room */
+  Room = 11,
 }
 
 /**
@@ -184,6 +220,16 @@ const STATUS_WORTH: Partial<Record<Moves, number>> = {
   [Moves.Mist]: 70,
   [Moves.WideGuard]: 75,
   [Moves.QuickGuard]: 70,
+  [Moves.MatBlock]: 70,
+  [Moves.CraftyShield]: 65,
+  [Moves.Detect]: 80,
+  [Moves.Endure]: 60,
+  [Moves.KingsShield]: 90,
+  [Moves.SpikyShield]: 90,
+  [Moves.StickyWeb]: 85,
+  [Moves.Refresh]: 60,
+  [Moves.AromaticMist]: 70,
+  [Moves.AllySwitch]: 70,
   [Moves.WonderRoom]: 60,
   [Moves.MagicRoom]: 60,
 
@@ -246,54 +292,75 @@ const STATUS_KINDS: Partial<Record<Moves, StatusKind>> = {
   [Moves.Autotomize]: StatusKind.Setup,
 
   [Moves.Recover]: StatusKind.Heal,
-  [Moves.SoftBoiled]: StatusKind.Heal,
-  [Moves.MilkDrink]: StatusKind.Heal,
   [Moves.SlackOff]: StatusKind.Heal,
   [Moves.Synthesis]: StatusKind.Heal,
   [Moves.MorningSun]: StatusKind.Heal,
   [Moves.Moonlight]: StatusKind.Heal,
-  [Moves.Wish]: StatusKind.Heal,
   [Moves.Roost]: StatusKind.Heal,
   [Moves.HealOrder]: StatusKind.Heal,
   [Moves.AquaRing]: StatusKind.Heal,
   [Moves.Rest]: StatusKind.Heal,
   [Moves.LeechSeed]: StatusKind.Heal,
 
-  [Moves.Reflect]: StatusKind.Guard,
-  [Moves.LightScreen]: StatusKind.Guard,
-  [Moves.Protect]: StatusKind.Guard,
-  [Moves.Substitute]: StatusKind.Guard,
-  [Moves.Safeguard]: StatusKind.Guard,
-  [Moves.HealBell]: StatusKind.Guard,
-  [Moves.Aromatherapy]: StatusKind.Guard,
-  [Moves.Mist]: StatusKind.Guard,
-  [Moves.Haze]: StatusKind.Guard,
-  [Moves.Spikes]: StatusKind.Guard,
-  [Moves.StealthRock]: StatusKind.Guard,
-  [Moves.ToxicSpikes]: StatusKind.Guard,
-  [Moves.TrickRoom]: StatusKind.Guard,
-  [Moves.LuckyChant]: StatusKind.Guard,
-  [Moves.SleepTalk]: StatusKind.Guard,
-  [Moves.WideGuard]: StatusKind.Guard,
-  [Moves.QuickGuard]: StatusKind.Guard,
-  [Moves.WonderRoom]: StatusKind.Guard,
-  [Moves.MagicRoom]: StatusKind.Guard,
+  [Moves.Refresh]: StatusKind.Heal,
 
-  [Moves.HelpingHand]: StatusKind.Ally,
-  [Moves.FollowMe]: StatusKind.Ally,
-  [Moves.BatonPass]: StatusKind.Ally,
-  [Moves.Tailwind]: StatusKind.Ally,
-  [Moves.HealingWish]: StatusKind.Ally,
-  [Moves.LunarDance]: StatusKind.Ally,
-  [Moves.RagePowder]: StatusKind.Ally,
-  [Moves.HealPulse]: StatusKind.Ally,
-  [Moves.AfterYou]: StatusKind.Ally,
+  [Moves.Reflect]: StatusKind.Screen,
+  [Moves.LightScreen]: StatusKind.Screen,
+  [Moves.Safeguard]: StatusKind.Screen,
+  [Moves.Mist]: StatusKind.Screen,
+  [Moves.Haze]: StatusKind.Screen,
+  [Moves.LuckyChant]: StatusKind.Screen,
+  [Moves.WideGuard]: StatusKind.Screen,
+  [Moves.QuickGuard]: StatusKind.Screen,
+  [Moves.MatBlock]: StatusKind.Screen,
+  [Moves.CraftyShield]: StatusKind.Screen,
+  [Moves.Tailwind]: StatusKind.Screen,
+
+  [Moves.Protect]: StatusKind.Shield,
+  [Moves.Detect]: StatusKind.Shield,
+  [Moves.Endure]: StatusKind.Shield,
+  [Moves.KingsShield]: StatusKind.Shield,
+  [Moves.SpikyShield]: StatusKind.Shield,
+  [Moves.Substitute]: StatusKind.Shield,
+  [Moves.SleepTalk]: StatusKind.Shield,
+
+  [Moves.HealBell]: StatusKind.Cure,
+  [Moves.Aromatherapy]: StatusKind.Cure,
+
+  [Moves.Spikes]: StatusKind.Hazard,
+  [Moves.StealthRock]: StatusKind.Hazard,
+  [Moves.ToxicSpikes]: StatusKind.Hazard,
+  [Moves.StickyWeb]: StatusKind.Hazard,
+
+  [Moves.TrickRoom]: StatusKind.Room,
+  [Moves.WonderRoom]: StatusKind.Room,
+  [Moves.MagicRoom]: StatusKind.Room,
+
+  [Moves.HelpingHand]: StatusKind.Boost,
+  [Moves.BatonPass]: StatusKind.Boost,
+  [Moves.AfterYou]: StatusKind.Boost,
+  [Moves.AromaticMist]: StatusKind.Boost,
+
+  [Moves.HealPulse]: StatusKind.Mend,
+  // Cast at the user or a teammate: see `EITHER_HEALS`
+  [Moves.SoftBoiled]: StatusKind.Mend,
+  [Moves.MilkDrink]: StatusKind.Mend,
+  [Moves.Wish]: StatusKind.Mend,
+  [Moves.HealingWish]: StatusKind.Mend,
+  [Moves.LunarDance]: StatusKind.Mend,
+
+  [Moves.FollowMe]: StatusKind.Redirect,
+  [Moves.RagePowder]: StatusKind.Redirect,
+  [Moves.AllySwitch]: StatusKind.Redirect,
 
   [Moves.SunnyDay]: StatusKind.Weather,
   [Moves.RainDance]: StatusKind.Weather,
   [Moves.Sandstorm]: StatusKind.Weather,
   [Moves.Hail]: StatusKind.Weather,
 };
+
+/** Heals cast at the user or a teammate, priced as whichever the role pays more for */
+const EITHER_HEALS = new Set<Moves>([Moves.SoftBoiled, Moves.MilkDrink]);
 
 /**
  * The ones that raise something on the user, which is what a Baton
@@ -314,44 +381,130 @@ export const SETUP_MOVES: ReadonlySet<Moves> = (() => {
 })();
 
 /**
- * What each role pays for each kind, and for an attack. A core is
- * built to hit and buys setup at face value; a support is built to
- * hold a fight open, so health, screens and everything that hampers
- * the far side are worth more to it than the attack they displace
+ * What each role pays for each kind, and for an attack. The cores buy
+ * their hits and the setup that sharpens them; each of the four behind
+ * them pays most for the kinds its job is made of
  */
 const ROLE_WEIGHTS: Record<BuildRole, { attack: number } & Record<StatusKind, number>> = {
-  [BuildRole.Core]: {
-    attack: 1,
-    [StatusKind.Setup]: 1,
-    [StatusKind.Heal]: 0.7,
-    [StatusKind.Cripple]: 0.75,
-    [StatusKind.Guard]: 0.6,
-    [StatusKind.Weather]: 1,
-    // A core spending a cast on somebody else's hit is a core not
-    // taking its own
-    [StatusKind.Ally]: 0.4,
-  },
-  [BuildRole.Support]: {
-    attack: 0.8,
-    [StatusKind.Setup]: 0.55,
-    [StatusKind.Heal]: 1.3,
-    [StatusKind.Cripple]: 1.3,
-    [StatusKind.Guard]: 1.35,
+  [BuildRole.SpecialCore]: coreWeights(),
+  [BuildRole.PhysicalCore]: coreWeights(),
+  [BuildRole.Healer]: {
+    attack: 0.7,
+    [StatusKind.Setup]: 0.5,
+    [StatusKind.Heal]: 1.2,
+    [StatusKind.Cripple]: 0.8,
+    [StatusKind.Screen]: 0.9,
     [StatusKind.Weather]: 1.1,
-    // And a support's whole job is the two in front of it
-    [StatusKind.Ally]: 1.4,
+    [StatusKind.Boost]: 1.5,
+    [StatusKind.Mend]: 1.7,
+    [StatusKind.Cure]: 1.6,
+    [StatusKind.Shield]: 0.9,
+    [StatusKind.Redirect]: 0.5,
+    [StatusKind.Hazard]: 0.6,
+    [StatusKind.Room]: 0.7,
+  },
+  [BuildRole.Protector]: {
+    attack: 0.75,
+    [StatusKind.Setup]: 0.6,
+    [StatusKind.Heal]: 1.1,
+    [StatusKind.Cripple]: 0.9,
+    [StatusKind.Screen]: 1.8,
+    [StatusKind.Weather]: 1.1,
+    [StatusKind.Boost]: 1,
+    [StatusKind.Mend]: 1,
+    [StatusKind.Cure]: 1.1,
+    [StatusKind.Shield]: 1.2,
+    [StatusKind.Redirect]: 0.8,
+    [StatusKind.Hazard]: 0.8,
+    [StatusKind.Room]: 1,
+  },
+  [BuildRole.Redirector]: {
+    attack: 0.8,
+    [StatusKind.Setup]: 0.6,
+    [StatusKind.Heal]: 1.4,
+    [StatusKind.Cripple]: 0.9,
+    [StatusKind.Screen]: 1,
+    [StatusKind.Weather]: 1,
+    [StatusKind.Boost]: 0.8,
+    [StatusKind.Mend]: 0.6,
+    [StatusKind.Cure]: 0.6,
+    [StatusKind.Shield]: 1.3,
+    [StatusKind.Redirect]: 1.9,
+    [StatusKind.Hazard]: 0.6,
+    [StatusKind.Room]: 0.6,
+  },
+  [BuildRole.FieldControl]: {
+    attack: 0.8,
+    [StatusKind.Setup]: 0.5,
+    [StatusKind.Heal]: 0.9,
+    [StatusKind.Cripple]: 1.6,
+    [StatusKind.Screen]: 0.8,
+    [StatusKind.Weather]: 1.1,
+    [StatusKind.Boost]: 0.8,
+    [StatusKind.Mend]: 0.5,
+    [StatusKind.Cure]: 0.5,
+    [StatusKind.Shield]: 0.9,
+    [StatusKind.Redirect]: 0.5,
+    [StatusKind.Hazard]: 1.5,
+    [StatusKind.Room]: 1.2,
   },
 };
 
 /**
- * How many slots a role gives to moves that deal no damage. A support
- * is half a sheet of them and half attacks: three left it with one
- * way to hurt anybody, which is a pokemon the far side can ignore
- * while it deals with the cores
+ * What a core pays: its hits and the setup that sharpens them, and
+ * little for a cast spent on anybody else
+ */
+function coreWeights(): { attack: number } & Record<StatusKind, number> {
+  return {
+    attack: 1,
+    [StatusKind.Setup]: 1,
+    [StatusKind.Heal]: 0.7,
+    [StatusKind.Cripple]: 0.75,
+    [StatusKind.Screen]: 0.5,
+    [StatusKind.Weather]: 1,
+    [StatusKind.Boost]: 0.4,
+    [StatusKind.Mend]: 0.3,
+    [StatusKind.Cure]: 0.3,
+    [StatusKind.Shield]: 0.6,
+    [StatusKind.Redirect]: 0.2,
+    [StatusKind.Hazard]: 0.6,
+    [StatusKind.Room]: 0.6,
+  };
+}
+
+/**
+ * What a core's attacks from the half of the split it does not lean
+ * on are worth, so a special core fills its sheet from Special Attack
+ */
+const OFF_SIDE_ATTACK = 0.6;
+
+/**
+ * Setup that raises a defence or evasion rather than what a core hits
+ * with or how often, which a core pays this share of
+ */
+const GUARD_SETUP = new Set<Moves>([
+  Moves.Amnesia,
+  Moves.IronDefense,
+  Moves.CosmicPower,
+  Moves.DefendOrder,
+  Moves.CottonGuard,
+  Moves.DoubleTeam,
+  Moves.Acupressure,
+]);
+const CORE_GUARD_SETUP = 0.5;
+
+/**
+ * How many slots a role gives to moves that deal no damage. Every
+ * role keeps one attack: a pokemon that cannot hit is one the far side
+ * ignores. The healer's job is almost all quiet moves
  */
 const ROLE_QUIET_SLOTS: Record<BuildRole, number> = {
-  [BuildRole.Core]: 1,
-  [BuildRole.Support]: 2,
+  [BuildRole.SpecialCore]: 1,
+  [BuildRole.PhysicalCore]: 1,
+  [BuildRole.Healer]: 3,
+  [BuildRole.Protector]: 2,
+  [BuildRole.Redirector]: 2,
+  [BuildRole.FieldControl]: 2,
 };
 
 /** The abilities that bring their own sky, so nothing has to cast one */
@@ -447,7 +600,7 @@ function canKeepPromise(species: Species, move: Moves): boolean {
     return true;
   }
 
-  for (const learnable of getLearnableMoves(species)) {
+  for (const learnable of getReachableMoves(species)) {
     if (wanted.has(learnable)) {
       return true;
     }
@@ -490,6 +643,42 @@ const MOVE_PARTNERS: Partial<Record<Moves, (chosen: ReadonlySet<Moves>) => boole
 
 /** What a move promising more than it can keep is worth without its partner */
 const UNPARTNERED = 0.5;
+
+/** The kinds of quiet move each supporting role is made of */
+const ROLE_KINDS: Partial<Record<BuildRole, readonly StatusKind[]>> = {
+  [BuildRole.Healer]: [StatusKind.Mend, StatusKind.Cure, StatusKind.Boost],
+  [BuildRole.Protector]: [StatusKind.Screen],
+  [BuildRole.Redirector]: [StatusKind.Redirect],
+  [BuildRole.FieldControl]: [StatusKind.Cripple, StatusKind.Hazard, StatusKind.Room],
+};
+
+/**
+ * How well a species can do a supporting role's job with its moves:
+ * the two best moves of the kinds the job is made of, on the scale
+ * where 1 is a quiet move worth an ordinary hit. Nothing it can learn
+ * is zero
+ */
+export function roleCapability(species: Species, role: BuildRole): number {
+  const kinds = ROLE_KINDS[role];
+
+  return kinds == null ? 0 : kindCapability(species, kinds);
+}
+
+/** The same reading over any set of kinds */
+export function kindCapability(species: Species, kinds: readonly StatusKind[]): number {
+  const found: number[] = [];
+
+  for (const move of getReachableMoves(species)) {
+    const worth = STATUS_WORTH[move];
+    const kind = STATUS_KINDS[move] ?? StatusKind.Cripple;
+
+    if (worth != null && kinds.includes(kind)) {
+      found.push(worth / 100);
+    }
+  }
+  found.sort((one, two) => two - one);
+  return (found[0] ?? 0) + (found[1] ?? 0);
+}
 
 /**
  * What the build knows about itself while it is being scored: the
@@ -642,6 +831,9 @@ const MOVE_DRAWBACKS: Partial<Record<Moves, number>> = {
   [Moves.FocusPunch]: 0.5,
   // And only against something already asleep
   [Moves.DreamEater]: 0.5,
+  // And only against what shares a type with the user, which most of
+  // the far side does not
+  [Moves.Synchronoise]: 0.25,
   // Paid for later rather than now
   [Moves.FutureSight]: 0.7,
   [Moves.DoomDesire]: 0.7,
@@ -1029,9 +1221,30 @@ function priorityFactor(move: Moves): number {
   return CAST_FRAMES / Math.max(PRIORITY_FRAMES, CAST_FRAMES - priority * PRIORITY_FRAMES);
 }
 
+/** The attacks that also land on any teammate sharing a type with the user */
+const HITS_KIN = new Set<Moves>([Moves.Synchronoise]);
+
+/** Whether a teammate shares a type with this species */
+function hasKin(species: Species, allies: readonly BuildAlly[]): boolean {
+  const own = getSpeciesData(species).types;
+
+  for (const ally of allies) {
+    for (const type of getSpeciesData(ally.species).types) {
+      if (own.includes(type)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 /** What one move is worth to this species, as effective power */
 function moveWorth(species: Species, move: Moves, context: BuildContext): number {
   const data = getMoveData(move);
+
+  if (HITS_KIN.has(move) && hasKin(species, context.allies)) {
+    return 0;
+  }
   const weights = ROLE_WEIGHTS[context.role];
   // A move promising something the rest of the sheet has to keep is
   // worth half of it until the partner is actually there
@@ -1067,10 +1280,13 @@ function moveWorth(species: Species, move: Moves, context: BuildContext): number
     const own = selfDefeating(move, context.abilities)
       ? 0
       : (STATUS_WORTH[move] ?? 0) *
-        weights[STATUS_KINDS[move] ?? StatusKind.Cripple] *
-        (serves == null ? 1 : categoryShare(species, serves, context.abilities));
+        (EITHER_HEALS.has(move)
+          ? Math.max(weights[StatusKind.Mend], weights[StatusKind.Heal])
+          : weights[STATUS_KINDS[move] ?? StatusKind.Cripple]) *
+        (serves == null ? 1 : categoryShare(species, serves, context.abilities)) *
+        (isCoreRole(context.role) && GUARD_SETUP.has(move) ? CORE_GUARD_SETUP : 1);
     // Or what it is worth cast at the teammate it helps, where it helps one
-    const aimed = allyWorth(move, context.allies) * weights[StatusKind.Ally];
+    const aimed = allyWorth(move, context.allies) * weights[StatusKind.Boost];
 
     return promise * Math.max(own, aimed) * REPEATED_SUPPORT ** (context.taken.get(move) ?? 0);
   }
@@ -1116,6 +1332,9 @@ function moveWorth(species: Species, move: Moves, context: BuildContext): number
       : (MOVE_DRAWBACKS[move] ?? 1)) *
     selfHurtFactor(species, move, context.abilities) *
     weights.attack *
+    (coreCategory(context.role) == null || coreCategory(context.role) === data.category
+      ? 1
+      : OFF_SIDE_ATTACK) *
     promise *
     repeated
   );
@@ -1173,7 +1392,7 @@ function buildWeather(abilities: Abilities[], chosen: ReadonlySet<Moves>): Weath
 function pickMoves(species: Species, context: BuildContext): Moves[] {
   const scored: { move: Moves; worth: number }[] = [];
 
-  for (const move of getLearnableMoves(species)) {
+  for (const move of getReachableMoves(species)) {
     if (canKeepPromise(species, move)) {
       scored.push({ move, worth: moveWorth(species, move, context) });
     }
@@ -1200,7 +1419,7 @@ function pickMoves(species: Species, context: BuildContext): Moves[] {
   if (context.planned && context.setter && context.weather !== Weathers.None) {
     const called = getWeatherMove(context.weather);
 
-    if (called != null && getLearnableMoves(species).includes(called)) {
+    if (called != null && getReachableMoves(species).includes(called)) {
       chosen.push(called);
       quiet += 1;
     }
@@ -1230,13 +1449,38 @@ function pickMoves(species: Species, context: BuildContext): Moves[] {
     chosen.push(move);
   }
 
+  // A hard promise whose partner lost its slot is dropped, not kept at
+  // half: a Dream Eater with nothing to put anybody to sleep never lands
+  const broken = new Set<Moves>();
+
+  for (const move of chosen) {
+    const kept = MOVE_PARTNERS[move];
+
+    if (MOVE_REQUIREMENTS[move] != null && kept != null && !kept(new Set(chosen))) {
+      broken.add(move);
+    }
+  }
+  if (broken.size > 0) {
+    const whole: Moves[] = [];
+
+    for (const move of chosen) {
+      if (!broken.has(move)) {
+        whole.push(move);
+      }
+    }
+    chosen.length = 0;
+    chosen.push(...whole);
+  }
+
   // Whatever is left over fills the slots coverage could not: a
   // species with two types worth carrying still fights with four
   for (const move of skipped) {
     if (chosen.length >= BEST_MOVE_COUNT) {
       break;
     }
-    chosen.push(move);
+    if (!broken.has(move)) {
+      chosen.push(move);
+    }
   }
 
   // And a species the scoring found nothing to say about still walks
@@ -1262,7 +1506,7 @@ function pickMoves(species: Species, context: BuildContext): Moves[] {
       if (chosen.length >= BEST_MOVE_COUNT) {
         break;
       }
-      if (!held.has(move)) {
+      if (!held.has(move) && !broken.has(move)) {
         held.add(move);
         chosen.push(move);
       }
@@ -1299,7 +1543,7 @@ export function getBestMoves(
     return [...written];
   }
 
-  const role = options.role ?? BuildRole.Core;
+  const role = options.role ?? coreRoleOf(species);
   const taken = options.taken ?? new Map<Moves, number>();
   const planned = options.weather;
   let chosen: Moves[] = [];

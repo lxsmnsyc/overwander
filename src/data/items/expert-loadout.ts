@@ -10,7 +10,7 @@ import { MARKET_GEAR } from './gear';
 import { ORBS } from './orbs';
 import { TYPE_BOOSTERS } from './type-boosters';
 import { getSpeciesData } from '../species/__create';
-import { BuildRole } from '../species/best-moves';
+import { type BuildRole, coreRoleOf, isCoreRole } from '../species/best-moves';
 import { getSpeciesHeldItems } from '../species/held-items';
 import { isFullyEvolved } from '../species/evolution';
 
@@ -191,7 +191,7 @@ function trainedSpeed(species: Species): number {
 function orbCost(species: Species, role: BuildRole): number {
   const acting = 1 / getSpeedCooldownFactor(trainedSpeed(species));
 
-  return ORB_COST * acting * (role === BuildRole.Support ? SUPPORT_ORB_COST : 1);
+  return ORB_COST * acting * (isCoreRole(role) ? 1 : SUPPORT_ORB_COST);
 }
 
 function pressure(species: Species): number {
@@ -498,7 +498,7 @@ export function getExpertHeldItems(
   }
 
   const split = splitOf(species, moves);
-  const role = loadout.role ?? BuildRole.Core;
+  const role = loadout.role ?? coreRoleOf(species);
   const ranked: { item: Items; worth: number }[] = [];
 
   for (const item of candidates(species)) {

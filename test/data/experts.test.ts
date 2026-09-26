@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns from '../../src/data/biome';
-import registerAbilities from '../../src/data/abilities';
+import registerAbilities, { getSignatureAbility } from '../../src/data/abilities';
 import Abilities from '../../src/data/ids/abilities';
 import {
   TYPE_EFFECTIVENESS,
@@ -21,7 +21,7 @@ import { TYPE_BOOSTERS } from '../../src/data/items/type-boosters';
 import canMeetSpecies from '../../src/data/overworld/reach';
 import {
   getGrowthRoads,
-  getLearnableMoves,
+  getReachableMoves,
   getSpeciesAbilityPools,
   getSpeciesData,
   registerSpecies,
@@ -33,6 +33,8 @@ import Awards, {
   HOENN_HONORS,
   JOHTO_BADGES,
   JOHTO_HONORS,
+  KALOS_BADGES,
+  KALOS_HONORS,
   KANTO_BADGES,
   KANTO_HONORS,
   SINNOH_BADGES,
@@ -113,6 +115,7 @@ import {
   BuildRole,
   SETUP_MOVES,
   getBestMoves,
+  isCoreRole,
 } from '../../src/data/species/best-moves';
 import {
   CORE_COUNT,
@@ -124,6 +127,14 @@ import {
 } from '../../src/data/species/best-build';
 import { NATURE_EFFECTS } from '../../src/data/ids/natures';
 import { isRecoilMove } from '../../src/data/moves/recoil';
+
+const SUPPORT_ROLES = [
+  BuildRole.Healer,
+  BuildRole.Protector,
+  BuildRole.Redirector,
+  BuildRole.FieldControl,
+];
+const ALL_ROLES = [BuildRole.SpecialCore, BuildRole.PhysicalCore, ...SUPPORT_ROLES];
 
 // Registry-only tests: no battle is involved, the data just has to
 // be registered (re-registration is an idempotent map overwrite)
@@ -142,9 +153,10 @@ describe('type experts', () => {
       ...HOENN_BADGES,
       ...SINNOH_BADGES,
       ...UNOVA_BADGES,
+      ...KALOS_BADGES,
     ];
 
-    // Every leader carries a badge, and between the five regions the
+    // Every leader carries a badge, and between the six regions the
     // leaders account for every badge there is. There are more
     // leaders than badges, because a gym kept by several people pays
     // the one badge between them: Mossdeep, Striaton, and Nacrene's
@@ -167,7 +179,14 @@ describe('type experts', () => {
     // one Blue used to take all comers at, and no region runs the
     // same fight twice. Across regions they repeat: Roxanne's gym is
     // Brock's fight in another country
-    for (const region of [KANTO_BADGES, JOHTO_BADGES, HOENN_BADGES, SINNOH_BADGES, UNOVA_BADGES]) {
+    for (const region of [
+      KANTO_BADGES,
+      JOHTO_BADGES,
+      HOENN_BADGES,
+      SINNOH_BADGES,
+      UNOVA_BADGES,
+      KALOS_BADGES,
+    ]) {
       const held = new Map<Awards, Set<Types>>();
 
       for (const leader of GYM_LEADERS.filter((one) => region.includes(GYM_LEADER_BADGES[one]))) {
@@ -202,10 +221,11 @@ describe('type experts', () => {
       ...HOENN_HONORS,
       ...SINNOH_HONORS,
       ...UNOVA_HONORS,
+      ...KALOS_HONORS,
     ]);
 
-    // Twenty seats between five leagues, four apiece: Bruno keeps one
-    // in each of the first two, and no mark is shared between them
+    // Four seats a league: Bruno keeps one in each of the first two,
+    // and no mark is shared between them
     expect(new Set(honors).size).toBe(marks.size);
     expect(honors.every((honor) => marks.has(honor))).toBe(true);
     expect(marks.size).toBe(
@@ -213,7 +233,8 @@ describe('type experts', () => {
         JOHTO_HONORS.length +
         HOENN_HONORS.length +
         SINNOH_HONORS.length +
-        UNOVA_HONORS.length,
+        UNOVA_HONORS.length +
+        KALOS_HONORS.length,
     );
 
     for (const member of ELITE_MEMBERS) {
@@ -234,11 +255,13 @@ describe('type experts', () => {
       ...HOENN_BADGES,
       ...SINNOH_BADGES,
       ...UNOVA_BADGES,
+      ...KALOS_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
       ...HOENN_HONORS,
       ...SINNOH_HONORS,
       ...UNOVA_HONORS,
+      ...KALOS_HONORS,
       Awards.KantoChampion,
     ]) {
       expect(AWARD_NAMES[award].length).toBeGreaterThan(0);
@@ -390,6 +413,7 @@ describe('type experts', () => {
       [HOENN_HONORS, HOENN_BADGES],
       [SINNOH_HONORS, SINNOH_BADGES],
       [UNOVA_HONORS, UNOVA_BADGES],
+      [KALOS_HONORS, KALOS_BADGES],
     ] as const;
 
     for (const member of ELITE_MEMBERS) {
@@ -414,6 +438,31 @@ describe('type experts', () => {
     // And Wallace stands above them, asking for all four
     expect(CHAMPION_HONORS[Champion.Wallace]).toEqual(HOENN_HONORS);
     expect(CHAMPION_TITLES[Champion.Wallace]).toBe(Awards.HoennChampion);
+  });
+
+  it('keeps Synchronoise off a sheet it would rarely land from', () => {
+    // It only reaches what shares a type with the user, teammates included
+    expect(getBestMoves(Species.Gardevoir)).not.toContain(Moves.Synchronoise);
+    for (const build of getBestParty(CHAMPION_PARTIES[Champion.Diantha], 2)) {
+      expect(build.moves).not.toContain(Moves.Synchronoise);
+    }
+  });
+
+  it('crowns Kalos with Diantha, who asks for its own four', () => {
+    expect(CHAMPION_HONORS[Champion.Diantha]).toEqual(KALOS_HONORS);
+    expect(CHAMPION_TITLES[Champion.Diantha]).toBe(Awards.KalosChampion);
+  });
+
+  it('seats Kalos’s four on Kalos’s badges', () => {
+    for (const member of [
+      EliteMember.Malva,
+      EliteMember.Siebold,
+      EliteMember.Wikstrom,
+      EliteMember.Drasna,
+    ]) {
+      expect(KALOS_HONORS).toContain(ELITE_MEMBER_HONORS[member]);
+      expect(getEliteBadges(member), ELITE_MEMBER_NAMES[member]).toEqual(KALOS_BADGES);
+    }
   });
 
   it('seats Sinnoh’s four on Sinnoh’s badges, with Cynthia above them', () => {
@@ -691,7 +740,7 @@ describe('type experts', () => {
   it('builds every species an expert can field with four moves it can learn', () => {
     for (const species of getRentalPool()) {
       const built = getBestMoves(species);
-      const legal = new Set(getLearnableMoves(species));
+      const legal = new Set(getReachableMoves(species));
       const name = getSpeciesData(species).name;
 
       expect(built.length, name).toBeLessThanOrEqual(BEST_MOVE_COUNT);
@@ -790,7 +839,7 @@ describe('type experts', () => {
     const core = getExpertHeldItems(Species.Gengar, 2, { moves, best: true });
     const support = getExpertHeldItems(Species.Gengar, 2, {
       moves,
-      role: BuildRole.Support,
+      role: BuildRole.Protector,
       best: true,
     });
 
@@ -834,8 +883,8 @@ describe('type experts', () => {
   it('builds a support out of the same species as a core', () => {
     for (const species of getRentalPool()) {
       const name = getSpeciesData(species).name;
-      const legal = new Set(getLearnableMoves(species));
-      const support = getBestMoves(species, [], { role: BuildRole.Support });
+      const legal = new Set(getReachableMoves(species));
+      const support = getBestMoves(species, [], { role: BuildRole.Protector });
       const quiet = (moves: Moves[]): number =>
         moves.filter((move) => getMoveData(move).category === MoveCategories.Status).length;
 
@@ -858,7 +907,7 @@ describe('type experts', () => {
     // fight open it reaches for what holds it open
     const core = getBestMoves(Species.Blissey, [Abilities.NaturalCure]);
     const support = getBestMoves(Species.Blissey, [Abilities.NaturalCure], {
-      role: BuildRole.Support,
+      role: BuildRole.Redirector,
     });
 
     expect(support).not.toEqual(core);
@@ -984,7 +1033,7 @@ describe('type experts', () => {
   it('spends a support slot on the two in front of it', () => {
     // Every fight here stands the whole party up at once, so a move
     // aimed at an ally has somebody to aim at
-    const support = getBestMoves(Species.Espeon, [], { role: BuildRole.Support });
+    const support = getBestMoves(Species.Espeon, [], { role: BuildRole.Healer });
 
     expect(support).toContain(Moves.HelpingHand);
     // A core spending a cast on somebody else's hit is a core not
@@ -993,7 +1042,7 @@ describe('type experts', () => {
 
     // And nothing passes a baton with nothing raised to pass
     for (const species of getRentalPool()) {
-      for (const role of [BuildRole.Core, BuildRole.Support]) {
+      for (const role of ALL_ROLES) {
         const built = getBestMoves(species, [], { role });
 
         if (built.includes(Moves.BatonPass)) {
@@ -1008,7 +1057,7 @@ describe('type experts', () => {
 
   it('never promises what the rest of the sheet cannot keep', () => {
     for (const species of getRentalPool()) {
-      for (const role of [BuildRole.Core, BuildRole.Support]) {
+      for (const role of ALL_ROLES) {
         const built = getBestMoves(species, [], { role });
         const name = getSpeciesData(species).name;
 
@@ -1038,12 +1087,14 @@ describe('type experts', () => {
 
   it('awakens the abilities the job asks for', () => {
     // The sky it brings with it is the whole of what a Groudon is
-    expect(getBestAbilities(Species.Groudon, 1, BuildRole.Core)).toEqual([Abilities.Drought]);
+    expect(getBestAbilities(Species.Groudon, 1, BuildRole.PhysicalCore)).toEqual([
+      Abilities.Drought,
+    ]);
 
     // The same species leans one way as a core and the other behind
     // one: what sharpens a hit against what survives one
-    expect(getBestAbilities(Species.Salamence, 1, BuildRole.Core)).not.toEqual(
-      getBestAbilities(Species.Salamence, 1, BuildRole.Support),
+    expect(getBestAbilities(Species.Salamence, 1, BuildRole.PhysicalCore)).not.toEqual(
+      getBestAbilities(Species.Salamence, 1, BuildRole.Redirector),
     );
 
     // A species with fewer than asked carries what it has, and never
@@ -1053,7 +1104,7 @@ describe('type experts', () => {
         ...getSpeciesAbilityPools(species).regular,
         ...getSpeciesAbilityPools(species).hidden,
       ]);
-      const held = getBestAbilities(species, 3, BuildRole.Support);
+      const held = getBestAbilities(species, 3, BuildRole.Protector);
 
       expect(held.length, getSpeciesData(species).name).toBe(Math.min(3, pool.size));
       expect(new Set(held).size).toBe(held.length);
@@ -1067,7 +1118,9 @@ describe('type experts', () => {
     // Overheat halves the stat it just fired from, and a fight here is
     // cast after cast rather than turn after turn, so its face value
     // is a price paid once and collected once
-    const arcanine = getBestMoves(Species.Arcanine, [Abilities.Intimidate]);
+    const arcanine = getBestMoves(Species.Arcanine, [Abilities.Intimidate], {
+      role: BuildRole.SpecialCore,
+    });
 
     expect(arcanine).toContain(Moves.FireBlast);
     expect(arcanine).not.toContain(Moves.Overheat);
@@ -1087,9 +1140,10 @@ describe('type experts', () => {
     const tempo = {
       species: Species.Lickilicky,
       abilities: [Abilities.OwnTempo],
-      role: BuildRole.Core,
+      role: BuildRole.PhysicalCore,
     };
-    const support = { role: BuildRole.Support };
+    // Raising a teammate is the healer's job
+    const support = { role: BuildRole.Healer };
 
     // A Swagger is 2 stages of Attack for a teammate that cannot be confused
     expect(getBestMoves(Species.Umbreon, [], support)).not.toContain(Moves.Swagger);
@@ -1130,14 +1184,14 @@ describe('type experts', () => {
     // none is a sheet it does nothing on. The two are picked apart,
     // so the abilities are priced again once the moves are known
     expect(
-      getBestAbilities(Species.Arcanine, 1, BuildRole.Core, undefined, [Moves.DoubleEdge]),
+      getBestAbilities(Species.Arcanine, 1, BuildRole.PhysicalCore, undefined, [Moves.DoubleEdge]),
     ).toEqual([Abilities.Reckless]);
     expect(
-      getBestAbilities(Species.Arcanine, 1, BuildRole.Core, undefined, [Moves.Overheat]),
+      getBestAbilities(Species.Arcanine, 1, BuildRole.PhysicalCore, undefined, [Moves.Overheat]),
     ).not.toEqual([Abilities.Reckless]);
 
     // And what the builder actually fields agrees with its own sheet
-    const built = getBestBuild(Species.Arcanine, BuildRole.Core, 2);
+    const built = getBestBuild(Species.Arcanine, BuildRole.PhysicalCore, 2);
 
     if (built.abilities.includes(Abilities.Reckless)) {
       expect(built.moves.some((move) => isRecoilMove(move))).toBe(true);
@@ -1145,8 +1199,8 @@ describe('type experts', () => {
   });
 
   it('picks the nature the sheet it built actually wants', () => {
-    const machamp = getBestBuild(Species.Machamp, BuildRole.Core, 1);
-    const gengar = getBestBuild(Species.Gengar, BuildRole.Core, 1);
+    const machamp = getBestBuild(Species.Machamp, BuildRole.PhysicalCore, 1);
+    const gengar = getBestBuild(Species.Gengar, BuildRole.SpecialCore, 1);
 
     // The drop belongs on the side it never casts from
     expect(NATURE_EFFECTS[machamp.nature]?.up).toBe(Stats.Attack);
@@ -1157,26 +1211,22 @@ describe('type experts', () => {
     // A support is bought defence rather than power, and never pays
     // for it with the defence it is there for
     for (const species of getRentalPool()) {
-      const nature = getBestNature(
-        species,
-        BuildRole.Support,
-        getBestMoves(species, [], {
-          role: BuildRole.Support,
-        }),
-      );
-      const effect = NATURE_EFFECTS[nature];
-      const name = getSpeciesData(species).name;
+      for (const role of SUPPORT_ROLES) {
+        const nature = getBestNature(species, role, getBestMoves(species, [], { role }));
+        const effect = NATURE_EFFECTS[nature];
+        const name = getSpeciesData(species).name;
 
-      expect(effect, name).toBeDefined();
-      expect([Stats.Defense, Stats.SpecialDefense, Stats.Speed], name).toContain(effect?.up);
+        expect(effect, name).toBeDefined();
+        expect([Stats.Defense, Stats.SpecialDefense, Stats.Speed], name).toContain(effect?.up);
+      }
     }
     // And the same species answers the same way twice
-    expect(getBestNature(Species.Machamp, BuildRole.Core)).toBe(
-      getBestNature(Species.Machamp, BuildRole.Core),
+    expect(getBestNature(Species.Machamp, BuildRole.PhysicalCore)).toBe(
+      getBestNature(Species.Machamp, BuildRole.PhysicalCore),
     );
   });
 
-  it('fields two cores behind four supports', () => {
+  it('gives each of six its own job', () => {
     const six = [
       Species.Blissey,
       Species.Skarmory,
@@ -1187,25 +1237,117 @@ describe('type experts', () => {
     ];
     const roles = assignBuildRoles(six);
 
-    expect(roles.filter((role) => role === BuildRole.Core)).toHaveLength(CORE_COUNT);
-    // Read off the species rather than the slot: the two that can
-    // take something off the field are the two asked to
-    expect(roles[six.indexOf(Species.Salamence)]).toBe(BuildRole.Core);
-    expect(roles[six.indexOf(Species.Blissey)]).toBe(BuildRole.Support);
+    // One of each: a core on either side of the split, and the four
+    // supporting jobs behind them
+    expect([...roles].sort((one, two) => one - two)).toEqual(
+      [...ALL_ROLES].sort((one, two) => one - two),
+    );
+    // Read off the species rather than the slot
+    expect(roles[six.indexOf(Species.Gengar)]).toBe(BuildRole.SpecialCore);
+    expect(roles[six.indexOf(Species.Salamence)]).toBe(BuildRole.PhysicalCore);
+    expect(isCoreRole(roles[six.indexOf(Species.Blissey)])).toBe(false);
 
-    // A house that fields three has one, since two attackers and one
-    // support is not a plan
+    // A house that fields three has one core, since two attackers and
+    // one support is not a plan
     expect(
-      assignBuildRoles([Species.Blissey, Species.Salamence, Species.Skarmory]).filter(
-        (role) => role === BuildRole.Core,
+      assignBuildRoles([Species.Blissey, Species.Salamence, Species.Skarmory]).filter((role) =>
+        isCoreRole(role),
       ),
     ).toHaveLength(1);
+  });
+
+  it('hands the healing to the frailest that can', () => {
+    // Audino and Chansey can both heal a teammate; Audino is the frailer
+    const roles = assignBuildRoles([
+      Species.Gengar,
+      Species.Machamp,
+      Species.Audino,
+      Species.Chansey,
+      Species.Skarmory,
+      Species.Tyranitar,
+    ]);
+
+    expect(roles[2]).toBe(BuildRole.Healer);
+  });
+
+  it('never fields more than two cores', () => {
+    // Darmanitan hits harder than most cores, and still takes a support job
+    const roles = assignBuildRoles([
+      Species.Vanilluxe,
+      Species.Klinklang,
+      Species.Darmanitan,
+      Species.Zoroark,
+      Species.Reshiram,
+      Species.Zekrom,
+    ]);
+    let cores = 0;
+
+    for (const role of roles) {
+      if (isCoreRole(role)) {
+        cores += 1;
+      }
+    }
+    expect(cores).toBe(CORE_COUNT);
+  });
+
+  it('leads a legend’s six with their signatures', () => {
+    for (const party of Object.values(LEGEND_PARTIES)) {
+      const signed = getBestParty(party, 3, true);
+      const plain = getBestParty(party, 3);
+
+      for (const [at, species] of party.entries()) {
+        const signature = getSignatureAbility(getSpeciesData(species).family);
+
+        if (signature == null) {
+          continue;
+        }
+        expect(signed[at].abilities[0], getSpeciesData(species).name).toBe(signature);
+        expect(signed[at].abilities).toHaveLength(3);
+        expect(plain[at].abilities).not.toContain(signature);
+      }
+    }
+  });
+
+  it('leaves a job nobody can do empty', () => {
+    // Nothing of Steven's heals, cures or raises a teammate
+    const roles = assignBuildRoles([
+      Species.Skarmory,
+      Species.Claydol,
+      Species.Aggron,
+      Species.Cradily,
+      Species.Armaldo,
+      Species.Metagross,
+    ]);
+
+    expect(roles).not.toContain(BuildRole.Healer);
+    expect(roles).toContain(BuildRole.Redirector);
+  });
+
+  it('prefers a healer that mends over a frailer one that only boosts', () => {
+    // Lucario only has Helping Hand, so Chansey heals despite its bulk
+    const roles = assignBuildRoles([
+      Species.Gengar,
+      Species.Machamp,
+      Species.Lucario,
+      Species.Chansey,
+      Species.Skarmory,
+      Species.Tyranitar,
+    ]);
+
+    expect(roles[3]).toBe(BuildRole.Healer);
+  });
+
+  it('reaches the moves an earlier stage learned or hatched with', () => {
+    // Wish is Togetic's, not Togekiss's own
+    const built = getBestMoves(Species.Togekiss, [], { role: BuildRole.Healer });
+
+    expect(built).toContain(Moves.Wish);
   });
 
   it('keeps every written override to something its species can learn', () => {
     for (const [key, moves] of Object.entries(BEST_MOVE_OVERRIDES)) {
       const species: Species = Number(key);
-      const legal = new Set(getLearnableMoves(species));
+      const legal = new Set(getReachableMoves(species));
 
       expect(moves, getSpeciesData(species).name).toHaveLength(BEST_MOVE_COUNT);
       for (const move of moves) {
@@ -1357,10 +1499,12 @@ describe('type experts', () => {
       ...HOENN_BADGES,
       ...SINNOH_BADGES,
       ...UNOVA_BADGES,
+      ...KALOS_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
       ...HOENN_HONORS,
       ...SINNOH_HONORS,
+      ...KALOS_HONORS,
       ...CHAMPIONS.map((champion) => CHAMPION_TITLES[champion]),
     ]);
 

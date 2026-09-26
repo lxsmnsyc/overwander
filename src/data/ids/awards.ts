@@ -149,6 +149,29 @@ const enum Awards {
   GhetsisDefeated = 121,
   /** Unova's champion before Iris, met where a champion would be */
   AlderDefeated = 122,
+  BugBadge = 123,
+  CliffBadge = 124,
+  RumbleBadge = 125,
+  PlantBadge = 126,
+  VoltageBadge = 127,
+  FairyBadge = 128,
+  PsychicBadge = 129,
+  IcebergBadge = 130,
+  MalvaDefeated = 131,
+  SieboldDefeated = 132,
+  WikstromDefeated = 133,
+  DrasnaDefeated = 134,
+  KalosChampion = 135,
+  /** The king who ended a war with a weapon, met where a champion would be */
+  AZDefeated = 136,
+  /** Any one of Team Flare's rank and file put down */
+  FlareGruntDefeated = 137,
+  XerosicDefeated = 138,
+  AlianaDefeated = 139,
+  BryonyDefeated = 140,
+  CelosiaDefeated = 141,
+  MableDefeated = 142,
+  LysandreDefeated = 143,
 }
 
 export default Awards;
@@ -278,6 +301,27 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.ZinzolinDefeated]: 'Zinzolin Defeated',
   [Awards.GhetsisDefeated]: 'Ghetsis Defeated',
   [Awards.AlderDefeated]: 'Alder Defeated',
+  [Awards.BugBadge]: 'Bug Badge',
+  [Awards.CliffBadge]: 'Cliff Badge',
+  [Awards.RumbleBadge]: 'Rumble Badge',
+  [Awards.PlantBadge]: 'Plant Badge',
+  [Awards.VoltageBadge]: 'Voltage Badge',
+  [Awards.FairyBadge]: 'Fairy Badge',
+  [Awards.PsychicBadge]: 'Psychic Badge',
+  [Awards.IcebergBadge]: 'Iceberg Badge',
+  [Awards.MalvaDefeated]: 'Malva Defeated',
+  [Awards.SieboldDefeated]: 'Siebold Defeated',
+  [Awards.WikstromDefeated]: 'Wikstrom Defeated',
+  [Awards.DrasnaDefeated]: 'Drasna Defeated',
+  [Awards.KalosChampion]: 'Kalos Champion',
+  [Awards.AZDefeated]: 'AZ Defeated',
+  [Awards.FlareGruntDefeated]: 'Team Flare Repelled',
+  [Awards.XerosicDefeated]: 'Xerosic Defeated',
+  [Awards.AlianaDefeated]: 'Aliana Defeated',
+  [Awards.BryonyDefeated]: 'Bryony Defeated',
+  [Awards.CelosiaDefeated]: 'Celosia Defeated',
+  [Awards.MableDefeated]: 'Mable Defeated',
+  [Awards.LysandreDefeated]: 'Lysandre Defeated',
 };
 
 /**
@@ -364,6 +408,18 @@ export const SINNOH_BADGES: Awards[] = [
   Awards.BeaconBadge,
 ];
 
+/** And Kalos's 8, in gym order */
+export const KALOS_BADGES: Awards[] = [
+  Awards.BugBadge,
+  Awards.CliffBadge,
+  Awards.RumbleBadge,
+  Awards.PlantBadge,
+  Awards.VoltageBadge,
+  Awards.FairyBadge,
+  Awards.PsychicBadge,
+  Awards.IcebergBadge,
+];
+
 /**
  * And Unova's 10, in gym order, the sequels' two gyms last. The
  * region runs more gyms than any other because two of its towns
@@ -401,6 +457,14 @@ export const SINNOH_HONORS: Awards[] = [
   Awards.BerthaDefeated,
   Awards.FlintDefeated,
   Awards.LucianDefeated,
+];
+
+/** And Kalos's 4 */
+export const KALOS_HONORS: Awards[] = [
+  Awards.MalvaDefeated,
+  Awards.SieboldDefeated,
+  Awards.WikstromDefeated,
+  Awards.DrasnaDefeated,
 ];
 
 /**

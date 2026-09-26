@@ -195,6 +195,11 @@ const enum Executive {
   Saturn = 10,
   Colress = 11,
   Zinzolin = 12,
+  Xerosic = 13,
+  Aliana = 14,
+  Bryony = 15,
+  Celosia = 16,
+  Mable = 17,
 }
 
 export { Executive };
@@ -213,6 +218,11 @@ export const EXECUTIVE_NAMES: Record<Executive, string> = {
   [Executive.Saturn]: 'Saturn',
   [Executive.Colress]: 'Colress',
   [Executive.Zinzolin]: 'Zinzolin',
+  [Executive.Xerosic]: 'Xerosic',
+  [Executive.Aliana]: 'Aliana',
+  [Executive.Bryony]: 'Bryony',
+  [Executive.Celosia]: 'Celosia',
+  [Executive.Mable]: 'Mable',
 };
 
 export const EXECUTIVE_CHARSETS: Record<Executive, string[]> = {
@@ -231,6 +241,11 @@ export const EXECUTIVE_CHARSETS: Record<Executive, string[]> = {
   // wears once the machine is his own
   [Executive.Colress]: ['characters/b2w2/colress-1', 'characters/b2w2/colress-2'],
   [Executive.Zinzolin]: ['characters/b2w2/zinzolin'],
+  [Executive.Xerosic]: ['characters/xy/xerosic'],
+  [Executive.Aliana]: ['characters/xy/aliana'],
+  [Executive.Bryony]: ['characters/xy/bryony'],
+  [Executive.Celosia]: ['characters/xy/celosia'],
+  [Executive.Mable]: ['characters/xy/mable'],
 };
 
 /** The mark putting one of them down is worth, one to each */
@@ -248,6 +263,11 @@ export const EXECUTIVE_HONORS: Record<Executive, Awards> = {
   [Executive.Saturn]: Awards.SaturnDefeated,
   [Executive.Colress]: Awards.ColressDefeated,
   [Executive.Zinzolin]: Awards.ZinzolinDefeated,
+  [Executive.Xerosic]: Awards.XerosicDefeated,
+  [Executive.Aliana]: Awards.AlianaDefeated,
+  [Executive.Bryony]: Awards.BryonyDefeated,
+  [Executive.Celosia]: Awards.CelosiaDefeated,
+  [Executive.Mable]: Awards.MableDefeated,
 };
 
 /** What each says as they bar the cell */
@@ -265,6 +285,11 @@ export const EXECUTIVE_QUOTES: Record<Executive, string> = {
   [Executive.Saturn]: 'I have my doubts about all this. None of them are about beating you.',
   [Executive.Colress]: 'I want to see the strength a pokemon reaches with you. Purely as data.',
   [Executive.Zinzolin]: 'You will be cold long before you are finished. Begin.',
+  [Executive.Xerosic]: 'Fascinating. Let me see how your pokemon hold up under stress.',
+  [Executive.Aliana]: 'The world is ugly, so we are fixing it. You are part of the ugly.',
+  [Executive.Bryony]: 'Calculating your odds. They round down to nothing.',
+  [Executive.Celosia]: 'Only the beautiful get to stay. I will judge whether you do.',
+  [Executive.Mable]: 'We scientists are busy. Let us make this quick and quiet.',
 };
 
 /**

@@ -127,6 +127,14 @@ const GYM_LEADER_QUOTES: Record<GymLeader, string> = {
   [GymLeader.Cheren]: 'I used to chase strength. Now I teach it. Let us see what you have learned.',
   [GymLeader.Roxie]: 'Turn it up! If my poison does not get you, the noise will!',
   [GymLeader.Marlon]: 'The sea does what it wants, and so do I. Let us have a good one.',
+  [GymLeader.Viola]: 'Hold still, I want this shot. It is the one where you lose.',
+  [GymLeader.Grant]: 'Every wall has a way up. Let us see if you can find mine.',
+  [GymLeader.Korrina]: 'Roller skates on, fists up! I hope you can keep pace!',
+  [GymLeader.Ramos]: 'A garden takes patience, and so does beating me.',
+  [GymLeader.Clemont]: 'The future is now, thanks to science! Watch my invention at work.',
+  [GymLeader.Valerie]: 'Oh, a visitor. My fairies are gentle, until they are not.',
+  [GymLeader.Olympia]: 'I have already seen how this ends. Shall we play it out?',
+  [GymLeader.Wulfric]: 'Ha! A good fight warms the bones. Come on, then!',
 };
 
 /** Which league each champion is the top of */
@@ -136,6 +144,7 @@ const CHAMPION_LEAGUES: Record<Champion, string> = {
   [Champion.Wallace]: 'Hoenn',
   [Champion.Cynthia]: 'Sinnoh',
   [Champion.Iris]: 'Unova',
+  [Champion.Diantha]: 'Kalos',
 };
 
 /** Which league each seat belongs to, for the copy that names it */
@@ -160,6 +169,10 @@ const ELITE_MEMBER_LEAGUES: Record<EliteMember, string> = {
   [EliteMember.Marshal]: 'Unova',
   [EliteMember.Grimsley]: 'Unova',
   [EliteMember.Caitlin]: 'Unova',
+  [EliteMember.Malva]: 'Kalos',
+  [EliteMember.Siebold]: 'Kalos',
+  [EliteMember.Wikstrom]: 'Kalos',
+  [EliteMember.Drasna]: 'Kalos',
 };
 
 const ELITE_QUOTES: Record<EliteMember, string> = {
@@ -183,6 +196,10 @@ const ELITE_QUOTES: Record<EliteMember, string> = {
   [EliteMember.Marshal]: 'My master taught me to seek strength. You look like a step on the way.',
   [EliteMember.Grimsley]: 'Win or lose, the cards fall. Let us see how they fall for you.',
   [EliteMember.Caitlin]: 'I fight my own battles now. You may regret that I do.',
+  [EliteMember.Malva]: 'I report on the news. Today it is your defeat, live.',
+  [EliteMember.Siebold]: 'A battle is a dish. I shall serve you something unforgettable.',
+  [EliteMember.Wikstrom]: 'Well met, challenger! My blade and I await your mettle!',
+  [EliteMember.Drasna]: 'Oh my, a challenger! My dragons have been so looking forward to this.',
 };
 
 /** What a legend says, where they say anything at all */
@@ -191,6 +208,7 @@ const LEGEND_GREETINGS: Record<Legend, string> = {
   [Legend.Steven]: 'Steven turns a stone over in his hand. “I was hoping for a real fight.”',
   [Legend.N]: 'N tilts his head. “Show me what you and your pokemon are to each other.”',
   [Legend.Alder]: 'Alder laughs and rolls his shoulders. “Let us enjoy this one, shall we?”',
+  [Legend.AZ]: 'AZ looks down at you. “I was a king once. Show me what a trainer is.”',
 };
 
 /** What a champion says as the last fight of their league is put */
@@ -202,6 +220,8 @@ const CHAMPION_GREETINGS: Record<Champion, string> = {
     'Cynthia closes her book. “I have been waiting for somebody worth the whole team.”',
   [Champion.Iris]:
     'Iris grins. “Everyone told me I was too young for this seat. Come and find out.”',
+  [Champion.Diantha]:
+    'Diantha smiles as if the cameras were rolling. “Shall we give them a scene worth remembering?”',
 };
 
 /**

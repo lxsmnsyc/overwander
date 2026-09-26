@@ -12,8 +12,9 @@ import { EXECUTIVE_HONORS, EXECUTIVE_NAMES, Executive } from './npc';
  * country; Team Aqua wants it drowned and holds the water; Team
  * Galactic wants it unmade and holds the cold and the thin places;
  * Team Plasma wants every pokemon let go and holds the woods, which
- * is where a released one would end up; Team Rocket has no ambition
- * beyond the money and holds everywhere else.
+ * is where a released one would end up; Team Flare wants a beautiful
+ * world kept for the few and holds the flower meadows; Team Rocket has
+ * no ambition beyond the money and holds everywhere else.
  *
  * It is a fixture, not a window roll: a player who learns that the
  * coast is Aqua's has learned something about the world
@@ -24,6 +25,7 @@ const enum Syndicate {
   Aqua = 2,
   Galactic = 3,
   Plasma = 4,
+  Flare = 5,
 }
 
 export { Syndicate };
@@ -34,6 +36,7 @@ export const SYNDICATES: Syndicate[] = [
   Syndicate.Aqua,
   Syndicate.Galactic,
   Syndicate.Plasma,
+  Syndicate.Flare,
 ];
 
 export const SYNDICATE_NAMES: Record<Syndicate, string> = {
@@ -42,6 +45,7 @@ export const SYNDICATE_NAMES: Record<Syndicate, string> = {
   [Syndicate.Aqua]: 'Team Aqua',
   [Syndicate.Galactic]: 'Team Galactic',
   [Syndicate.Plasma]: 'Team Plasma',
+  [Syndicate.Flare]: 'Team Flare',
 };
 
 /** The uniform the rank and file are met in */
@@ -58,6 +62,13 @@ export const SYNDICATE_GRUNT_CHARSETS: Record<Syndicate, string[]> = {
     'characters/b2w2/neo-plasma-f',
     'characters/b2w2/neo-plasma-m',
   ],
+  // The red suits, and the admins who wear the same colour a rank up
+  [Syndicate.Flare]: [
+    'characters/xy/flare-grunt-f',
+    'characters/xy/flare-grunt-m',
+    'characters/xy/flare-admin-f',
+    'characters/xy/flare-admin',
+  ],
 };
 
 /**
@@ -70,6 +81,7 @@ export const SYNDICATE_GRUNT_HONORS: Record<Syndicate, Awards> = {
   [Syndicate.Aqua]: Awards.AquaGruntDefeated,
   [Syndicate.Galactic]: Awards.GalacticGruntDefeated,
   [Syndicate.Plasma]: Awards.PlasmaGruntDefeated,
+  [Syndicate.Flare]: Awards.FlareGruntDefeated,
 };
 
 /**
@@ -87,6 +99,14 @@ export const SYNDICATE_EXECUTIVES: Record<Syndicate, Executive[]> = {
   // soldier and never raises a hand in his own games, so he keeps no
   // cell, and the Shadow Triad answer to Ghetsis alone
   [Syndicate.Plasma]: [Executive.Colress, Executive.Zinzolin],
+  // Its five scientists, who each fight in their own games
+  [Syndicate.Flare]: [
+    Executive.Xerosic,
+    Executive.Aliana,
+    Executive.Bryony,
+    Executive.Celosia,
+    Executive.Mable,
+  ],
 };
 
 export const SYNDICATE_BOSS_NAMES: Record<Syndicate, string> = {
@@ -95,6 +115,7 @@ export const SYNDICATE_BOSS_NAMES: Record<Syndicate, string> = {
   [Syndicate.Aqua]: 'Archie',
   [Syndicate.Galactic]: 'Cyrus',
   [Syndicate.Plasma]: 'Ghetsis',
+  [Syndicate.Flare]: 'Lysandre',
 };
 
 export const SYNDICATE_BOSS_CHARSETS: Record<Syndicate, string[]> = {
@@ -106,6 +127,7 @@ export const SYNDICATE_BOSS_CHARSETS: Record<Syndicate, string[]> = {
   [Syndicate.Galactic]: ['characters/dppt/cyrus'],
   // The robed sage and the man underneath it
   [Syndicate.Plasma]: ['characters/b2w2/ghetsis-1', 'characters/b2w2/ghetsis-2'],
+  [Syndicate.Flare]: ['characters/xy/lysandre'],
 };
 
 export const SYNDICATE_BOSS_HONORS: Record<Syndicate, Awards> = {
@@ -114,6 +136,7 @@ export const SYNDICATE_BOSS_HONORS: Record<Syndicate, Awards> = {
   [Syndicate.Aqua]: Awards.ArchieDefeated,
   [Syndicate.Galactic]: Awards.CyrusDefeated,
   [Syndicate.Plasma]: Awards.GhetsisDefeated,
+  [Syndicate.Flare]: Awards.LysandreDefeated,
 };
 
 /** What each boss says as they bar the cell */
@@ -125,6 +148,8 @@ export const SYNDICATE_BOSS_QUOTES: Record<Syndicate, string> = {
     'This world is built out of spirit, and spirit is the flaw. I will do without it.',
   [Syndicate.Plasma]:
     'Every pokemon behind you is a pokemon I will take back. Starting with those.',
+  [Syndicate.Flare]:
+    'The world is too full of people who take. Your pokemon will be the last thing you take.',
 };
 
 /** What the rank and file say as they bar the cell */
@@ -134,6 +159,7 @@ export const SYNDICATE_GRUNT_QUOTES: Record<Syndicate, string> = {
   [Syndicate.Aqua]: 'The tide is coming in whether you move or not.',
   [Syndicate.Galactic]: 'The old world ends here. You can go first if you like.',
   [Syndicate.Plasma]: 'Release them, or we will. Those are the two doors.',
+  [Syndicate.Flare]: 'Only the stylish get a future. Sorry, you do not qualify.',
 };
 
 /**
@@ -142,7 +168,7 @@ export const SYNDICATE_GRUNT_QUOTES: Record<Syndicate, string> = {
  * belongs to Rocket until somebody says otherwise
  */
 const SYNDICATE_BIOMES: Record<
-  Syndicate.Magma | Syndicate.Aqua | Syndicate.Galactic | Syndicate.Plasma,
+  Syndicate.Magma | Syndicate.Aqua | Syndicate.Galactic | Syndicate.Plasma | Syndicate.Flare,
   Biome[]
 > = {
   // Fire and raised ground: what Magma is for
@@ -186,6 +212,8 @@ const SYNDICATE_BIOMES: Record<
     Biome.TropicalSeasonalForest,
     Biome.Woodland,
   ],
+  // The flower meadows: the beautiful world it means to keep for itself
+  [Syndicate.Flare]: [Biome.Grassland, Biome.Shrubland],
 };
 
 const CLAIMED = (() => {
@@ -196,6 +224,7 @@ const CLAIMED = (() => {
     Syndicate.Aqua,
     Syndicate.Galactic,
     Syndicate.Plasma,
+    Syndicate.Flare,
   ] as const) {
     for (const biome of SYNDICATE_BIOMES[syndicate]) {
       claimed.set(biome, syndicate);
@@ -221,6 +250,7 @@ export const SYNDICATE_BOSS_TITLES: Record<Syndicate, string> = {
   [Syndicate.Aqua]: 'Leader',
   [Syndicate.Galactic]: 'Boss',
   [Syndicate.Plasma]: 'Sage',
+  [Syndicate.Flare]: 'Boss',
 };
 
 export const SYNDICATE_EXECUTIVE_TITLES: Record<Syndicate, string> = {
@@ -229,6 +259,7 @@ export const SYNDICATE_EXECUTIVE_TITLES: Record<Syndicate, string> = {
   [Syndicate.Aqua]: 'Admin',
   [Syndicate.Galactic]: 'Commander',
   [Syndicate.Plasma]: 'Admin',
+  [Syndicate.Flare]: 'Scientist',
 };
 
 /** "Team Aqua Leader Archie" */
@@ -247,6 +278,7 @@ export function gruntName(syndicate: Syndicate): string {
 }
 
 /** Every mark the five of them pay, for the shelf that lists them */
+/** Every mark they pay, for the shelf that lists them */
 export const SYNDICATE_HONORS: Awards[] = (() => {
   const honors: Awards[] = [];
 

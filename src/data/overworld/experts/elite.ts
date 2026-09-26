@@ -4,6 +4,8 @@ import Awards, {
   HOENN_HONORS,
   JOHTO_BADGES,
   JOHTO_HONORS,
+  KALOS_BADGES,
+  KALOS_HONORS,
   KANTO_BADGES,
   KANTO_HONORS,
   SINNOH_BADGES,
@@ -14,12 +16,12 @@ import Awards, {
 import Biome from '../../ids/biome';
 
 /**
- * The five leagues' Elite Four, numbered Kanto's, Johto's, Hoenn's,
- * Sinnoh's then Unova's. Bruno is here twice because he keeps a seat
- * in each of the first two: two fights, two marks, and a challenger
- * who has only walked one region's gyms is taken by the Bruno of that
- * region alone. Unova's four keep their seats in both of its leagues,
- * so they are one seat each
+ * The leagues' Elite Four, numbered Kanto's, Johto's, Hoenn's,
+ * Sinnoh's, Unova's then Kalos's. Bruno is here twice because he keeps
+ * a seat in each of the first two: two fights, two marks, and a
+ * challenger who has only walked one region's gyms is taken by the
+ * Bruno of that region alone. Unova's four keep their seats in both
+ * of its leagues, so they are one seat each
  */
 const enum EliteMember {
   Lorelei = 0,
@@ -42,6 +44,10 @@ const enum EliteMember {
   Marshal = 17,
   Grimsley = 18,
   Caitlin = 19,
+  Malva = 20,
+  Siebold = 21,
+  Wikstrom = 22,
+  Drasna = 23,
 }
 
 export { EliteMember };
@@ -67,6 +73,10 @@ export const ELITE_MEMBERS: EliteMember[] = [
   EliteMember.Marshal,
   EliteMember.Grimsley,
   EliteMember.Caitlin,
+  EliteMember.Malva,
+  EliteMember.Siebold,
+  EliteMember.Wikstrom,
+  EliteMember.Drasna,
 ];
 
 export const ELITE_MEMBER_NAMES: Record<EliteMember, string> = {
@@ -92,6 +102,10 @@ export const ELITE_MEMBER_NAMES: Record<EliteMember, string> = {
   // The Battle Castle's lady, grown into a league seat. The Frontier
   // keeps its own Caitlin, and the two are the same person
   [EliteMember.Caitlin]: 'Caitlin',
+  [EliteMember.Malva]: 'Malva',
+  [EliteMember.Siebold]: 'Siebold',
+  [EliteMember.Wikstrom]: 'Wikstrom',
+  [EliteMember.Drasna]: 'Drasna',
 };
 
 export const ELITE_MEMBER_TYPES: Record<EliteMember, Types> = {
@@ -115,6 +129,10 @@ export const ELITE_MEMBER_TYPES: Record<EliteMember, Types> = {
   [EliteMember.Marshal]: Types.Fighting,
   [EliteMember.Grimsley]: Types.Dark,
   [EliteMember.Caitlin]: Types.Psychic,
+  [EliteMember.Malva]: Types.Fire,
+  [EliteMember.Siebold]: Types.Water,
+  [EliteMember.Wikstrom]: Types.Steel,
+  [EliteMember.Drasna]: Types.Dragon,
 };
 
 export const ELITE_MEMBER_HONORS: Record<EliteMember, Awards> = {
@@ -138,6 +156,10 @@ export const ELITE_MEMBER_HONORS: Record<EliteMember, Awards> = {
   [EliteMember.Marshal]: Awards.MarshalDefeated,
   [EliteMember.Grimsley]: Awards.GrimsleyDefeated,
   [EliteMember.Caitlin]: Awards.CaitlinDefeated,
+  [EliteMember.Malva]: Awards.MalvaDefeated,
+  [EliteMember.Siebold]: Awards.SieboldDefeated,
+  [EliteMember.Wikstrom]: Awards.WikstromDefeated,
+  [EliteMember.Drasna]: Awards.DrasnaDefeated,
 };
 
 /**
@@ -155,6 +177,7 @@ export function getEliteBadges(member: EliteMember): Awards[] {
     ...(HOENN_HONORS.includes(honor) ? HOENN_BADGES : []),
     ...(SINNOH_HONORS.includes(honor) ? SINNOH_BADGES : []),
     ...(UNOVA_HONORS.includes(honor) ? UNOVA_BADGES : []),
+    ...(KALOS_HONORS.includes(honor) ? KALOS_BADGES : []),
   ];
 }
 
@@ -186,6 +209,10 @@ export const ELITE_MEMBER_CHARSETS: Record<EliteMember, string[]> = {
   // Her league sheet. The Frontier seat keeps the one she is drawn
   // in at the Battle Castle, and each is worn off its own deed
   [EliteMember.Caitlin]: ['characters/b2w2/caitlin'],
+  [EliteMember.Malva]: ['characters/xy/malva'],
+  [EliteMember.Siebold]: ['characters/xy/siebold'],
+  [EliteMember.Wikstrom]: ['characters/xy/wikstrom'],
+  [EliteMember.Drasna]: ['characters/xy/drasna'],
 };
 
 /**
@@ -199,7 +226,12 @@ export const ELITE_MEMBER_CHARSETS: Record<EliteMember, string[]> = {
 export const BIOME_ELITE_MEMBERS: Record<Biome, EliteMember[]> = {
   [Biome.Glacier]: [EliteMember.Lorelei, EliteMember.Glacia],
   [Biome.Tundra]: [EliteMember.Lorelei, EliteMember.Glacia],
-  [Biome.ColdDesert]: [EliteMember.Lorelei, EliteMember.Glacia, EliteMember.Bertha],
+  [Biome.ColdDesert]: [
+    EliteMember.Lorelei,
+    EliteMember.Glacia,
+    EliteMember.Bertha,
+    EliteMember.Wikstrom,
+  ],
   [Biome.AlpineTundra]: [EliteMember.Lorelei, EliteMember.Glacia],
   [Biome.Taiga]: [
     EliteMember.Lorelei,
@@ -209,12 +241,13 @@ export const BIOME_ELITE_MEMBERS: Record<Biome, EliteMember[]> = {
     EliteMember.Aaron,
     EliteMember.Grimsley,
   ],
-  [Biome.PolarOcean]: [EliteMember.Lorelei, EliteMember.Glacia],
+  [Biome.PolarOcean]: [EliteMember.Lorelei, EliteMember.Glacia, EliteMember.Siebold],
   [Biome.Mountain]: [
     EliteMember.Bruno,
     EliteMember.JohtoBruno,
     EliteMember.Bertha,
     EliteMember.Marshal,
+    EliteMember.Wikstrom,
   ],
   [Biome.Badlands]: [
     EliteMember.Bruno,
@@ -225,6 +258,7 @@ export const BIOME_ELITE_MEMBERS: Record<Biome, EliteMember[]> = {
     EliteMember.Bertha,
     EliteMember.Marshal,
     EliteMember.Grimsley,
+    EliteMember.Wikstrom,
   ],
   [Biome.Desert]: [
     EliteMember.Bruno,
@@ -232,6 +266,7 @@ export const BIOME_ELITE_MEMBERS: Record<Biome, EliteMember[]> = {
     EliteMember.Bertha,
     EliteMember.Flint,
     EliteMember.Marshal,
+    EliteMember.Malva,
   ],
   [Biome.Steppe]: [
     EliteMember.Bruno,
@@ -304,16 +339,28 @@ export const BIOME_ELITE_MEMBERS: Record<Biome, EliteMember[]> = {
     EliteMember.Grimsley,
     EliteMember.Caitlin,
   ],
-  [Biome.DeepOcean]: [EliteMember.Lance, EliteMember.Drake],
-  [Biome.Ocean]: [EliteMember.Lance, EliteMember.Drake],
-  [Biome.CoralReef]: [EliteMember.Lance, EliteMember.Drake],
-  [Biome.Beach]: [EliteMember.Lance, EliteMember.Drake],
+  [Biome.DeepOcean]: [
+    EliteMember.Lance,
+    EliteMember.Drake,
+    EliteMember.Siebold,
+    EliteMember.Drasna,
+  ],
+  [Biome.Ocean]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Siebold, EliteMember.Drasna],
+  [Biome.CoralReef]: [
+    EliteMember.Lance,
+    EliteMember.Drake,
+    EliteMember.Siebold,
+    EliteMember.Drasna,
+  ],
+  [Biome.Beach]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Siebold, EliteMember.Drasna],
   [Biome.KelpForest]: [
     EliteMember.Lance,
     EliteMember.Will,
     EliteMember.Drake,
     EliteMember.Lucian,
     EliteMember.Caitlin,
+    EliteMember.Siebold,
+    EliteMember.Drasna,
   ],
   [Biome.TropicalRainforest]: [
     EliteMember.Lance,
@@ -323,11 +370,22 @@ export const BIOME_ELITE_MEMBERS: Record<Biome, EliteMember[]> = {
     EliteMember.Aaron,
     EliteMember.Lucian,
     EliteMember.Caitlin,
+    EliteMember.Drasna,
   ],
-  [Biome.TropicalSeasonalForest]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Aaron],
-  [Biome.Grassland]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Aaron],
-  [Biome.TemperateForest]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Aaron],
-  [Biome.Woodland]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Aaron],
+  [Biome.TropicalSeasonalForest]: [
+    EliteMember.Lance,
+    EliteMember.Drake,
+    EliteMember.Aaron,
+    EliteMember.Drasna,
+  ],
+  [Biome.Grassland]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Aaron, EliteMember.Drasna],
+  [Biome.TemperateForest]: [
+    EliteMember.Lance,
+    EliteMember.Drake,
+    EliteMember.Aaron,
+    EliteMember.Drasna,
+  ],
+  [Biome.Woodland]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Aaron, EliteMember.Drasna],
   [Biome.MontaneForest]: [
     EliteMember.Lance,
     EliteMember.Will,
@@ -335,6 +393,14 @@ export const BIOME_ELITE_MEMBERS: Record<Biome, EliteMember[]> = {
     EliteMember.Aaron,
     EliteMember.Lucian,
     EliteMember.Caitlin,
+    EliteMember.Drasna,
   ],
-  [Biome.Volcano]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Flint],
+  [Biome.Volcano]: [
+    EliteMember.Lance,
+    EliteMember.Drake,
+    EliteMember.Flint,
+    EliteMember.Malva,
+    EliteMember.Wikstrom,
+    EliteMember.Drasna,
+  ],
 };

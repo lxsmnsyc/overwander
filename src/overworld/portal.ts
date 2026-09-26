@@ -24,8 +24,8 @@ import type World from './world';
  * holds is only **which towns anybody has walked into**, since that
  * is the one thing about a town no derivation can answer.
  *
- * A region with no town still has a portal, out in the country. It is
- * somewhere to leave from and nowhere to arrive at: nothing names it.
+ * A region with no town has no portal: a gate nobody can name is a
+ * gate nobody can be sent to.
  */
 
 /** One end of a crossing */
@@ -69,7 +69,13 @@ export function portalInRegion(
     return null;
   }
 
-  const [x, y] = portalSpot(world, regionX, regionY);
+  const spot = portalSpot(world, regionX, regionY);
+
+  if (spot == null) {
+    return null;
+  }
+
+  const [x, y] = spot;
   const chunkX = chunkOfCell(x);
   const chunkY = chunkOfCell(y);
 

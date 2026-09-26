@@ -1,5 +1,7 @@
 import { type JSX, Show } from 'solid-js';
-import { Species } from '../../data/ids/species';
+import { Genders, Species } from '../../data/ids/species';
+import { getSpeciesData } from '../../data/species';
+import type { Buddy } from '../../overworld/core';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta, Note } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
@@ -63,6 +65,8 @@ export interface NestDialogProps {
    * twice into two eggs
    */
   busy: boolean;
+  /** Who walks with the player now, since taking the egg puts them down */
+  buddy: Buddy | null;
   onAccept: () => void;
   onClose: () => void;
 }
@@ -129,6 +133,34 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
                 Only your buddy can walk it warm, so taking it means putting down whoever walks with
                 you now. What is inside stays a secret until it opens.
               </Meta>
+              {/* Who that is, so the trade is plain before it is made */}
+              <div class="flex items-center gap-2 rounded-panel border-2 border-line bg-paper px-3 py-1.5">
+                <Show
+                  when={props.buddy}
+                  fallback={<span class="text-sm">It will walk with you.</span>}
+                >
+                  {(walking) => (
+                    <>
+                      <span class="flex size-8 shrink-0 items-center justify-center">
+                        <AnimatedSprite
+                          species={walking().species}
+                          shiny={walking().shiny}
+                          female={walking().gender === Genders.Female}
+                          direction="DownLeft"
+                          still
+                          fill
+                          label=""
+                        />
+                      </span>
+                      <span class="text-sm">
+                        {walking().species === Species.Egg
+                          ? 'The egg you carry now is put down.'
+                          : `${getSpeciesData(walking().species).name} stops walking with you.`}
+                      </span>
+                    </>
+                  )}
+                </Show>
+              </div>
             </Show>
           </div>
         )}

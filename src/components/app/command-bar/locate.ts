@@ -6,7 +6,7 @@ import {
   TIME_OF_DAY_NAMES,
   listSpeciesHabitats,
 } from '../../../data/biome';
-import { WEATHER_INTERVAL } from '../../../overworld/chunk-snapshot';
+import { weatherWindowOf } from '../../../overworld/chunk-snapshot';
 import { WEATHER_NAMES } from '../../../data/overworld/weather';
 import { biomeEntries, findNamed, speciesEntries, weatherEntries } from './names';
 import type Biome from '../../../data/ids/biome';
@@ -173,7 +173,7 @@ export default function locate(ask: LocateAsk, origin: Origin, now: number): str
     return found == null ? null : `${placed(found)}, ${stepsAway(origin, found)}.`;
   }
   if (ask.kind === LocateKind.Weather) {
-    const window = Math.floor(now / WEATHER_INTERVAL);
+    const window = weatherWindowOf(now);
     const found = nearest(
       origin,
       (at) => world.getWeather(at.chunkX, at.chunkY, window) === ask.weather,

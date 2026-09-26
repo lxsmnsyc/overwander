@@ -13,12 +13,18 @@ import {
 } from '../../../src/data/species/best-build';
 import Biome, { getTimeOfDay } from '../../../src/data/ids/biome';
 import { EVERY_LAIR, getBiomeLairs, getLairResidents } from '../../../src/data/overworld/lair';
+import canMeetSpecies from '../../../src/data/overworld/reach';
 import { Items } from '../../../src/data/ids/items';
 import registerItems, { getItemData } from '../../../src/data/items';
 import { getExpertHeldItems } from '../../../src/data/items/expert-loadout';
 import { Slots, countAbilitySlots, getSlots } from '../../../src/data/constants/slots';
 import type { CatchSnapshot } from '../../../src/auth/catch-snapshot';
-import { type ItemBand, getItemBand } from '../../../src/data/overworld/item-pool';
+import {
+  type ItemBand,
+  MAX_KINDS,
+  MAX_STACK,
+  getItemBand,
+} from '../../../src/data/overworld/item-pool';
 import { Species } from '../../../src/data/ids/species';
 import { getSpeciesAbilityPools, getSpeciesData, registerSpecies } from '../../../src/data/species';
 import { isShiny } from '../../../src/auth/caught-record';
@@ -134,10 +140,13 @@ describe('world', () => {
 
     const snapshot = new ChunkSnapshot(chunk, 0);
     const stops = snapshot.getRocketStops();
-    const pool = getBiomeRoster(chunk.biome, getTimeOfDay(0));
 
     expect(stops.size).toBeGreaterThan(0);
     for (const [cell, party] of stops) {
+      // The country the stop itself stands in, which is the chunk's
+      // only where no border runs through it
+      const pool = getBiomeRoster(snapshot.biomeAt(cell), getTimeOfDay(0));
+
       // A stop stands at Team Rocket's own landmark now
       expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.TeamRocket);
 
@@ -257,9 +266,10 @@ describe('world', () => {
         continue;
       }
 
-      // Whoever is standing there is one this country puts on the
-      // road, or the Ace, who belongs to no country
-      expect(getBiomeTrainers(chunk.biome)).toContain(trainer);
+      // Whoever is standing there is one that cell's own country puts
+      // on the road, or the Ace, who belongs to no country. A chunk
+      // may cross a border, so it is the cell that is asked
+      expect(getBiomeTrainers(snapshot.biomeAt(cell))).toContain(trainer);
 
       // The Ace fields five of anything; a type expert three to five
       // of their own kind, and nothing of the biome's choosing
@@ -298,6 +308,11 @@ describe('world', () => {
       expect(TRAINER_NAMES[trainer]).not.toBe('');
       expect(TRAINER_CHARSETS[trainer].length).toBeGreaterThan(0);
       expect(getTrainerPool(trainer).length).toBeGreaterThan(0);
+      // And nothing in it that nobody could be walking: a line the
+      // world has nowhere to put yet is nobody's to field
+      for (const species of getTrainerPool(trainer)) {
+        expect(canMeetSpecies(species), getSpeciesData(species).name).toBe(true);
+      }
       expect(trainerLevels(trainer)).toEqual(
         isAceTrainer(trainer) ? ACE_TRAINER_LEVELS : TYPE_TRAINER_LEVELS,
       );
@@ -389,8 +404,6 @@ describe('world', () => {
     for (let x = 0; x < 48; x++) {
       for (let y = 0; y < 8; y++) {
         const chunk = world.getChunk(x, y);
-        const homes = getBiomeLairs(chunk.biome);
-        const endemic = new Set(homes.flatMap((lair) => getLairResidents(lair)));
 
         for (const [cell, landmark] of chunk.getLandmarkCells()) {
           if (landmark !== Landmark.TeamRocket) {
@@ -398,6 +411,9 @@ describe('world', () => {
           }
           for (let window = 0; window < 16; window++) {
             const snapshot = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
+            // The lairs of the country the stop stands in
+            const homes = getBiomeLairs(snapshot.biomeAt(cell));
+            const endemic = new Set(homes.flatMap((lair) => getLairResidents(lair)));
 
             if (!snapshot.isRocketBoss(cell)) {
               continue;
@@ -843,67 +859,78 @@ describe('world', () => {
     expect(MYTHICAL_RAID_GOLD).toBeLessThan(CHAMPION_GOLD[1]);
   });
 
-  it('leaves an item behind only on the rungs that have one', () => {
-    const rolls = (landmark: Landmark, rank: RocketRank): Items[] => {
-      const rng = new AleaRNG(`loot-${landmark}-${rank}`);
+  it('leaves a stash behind only on the rungs that have one', () => {
+    const order: ItemBand[] = ['base', 'uncommon', 'scarce', 'rare', 'prized', 'special'];
+    /** The best band in each of `count` stashes, checking each stash's shape on the way */
+    const rolls = (
+      landmark: Landmark,
+      rank: RocketRank,
+      count: number,
+      legend = false,
+    ): { best: ItemBand[]; seen: Set<ItemBand> } => {
+      const rng = new AleaRNG(`loot-${landmark}-${rank}-${legend}`);
+      const best: ItemBand[] = [];
+      const seen = new Set<ItemBand>();
 
-      return Array.from({ length: 400 }, () =>
-        rollStopLoot(landmark, rank, Biome.Grassland, () => rng.random()),
-      ).filter((item): item is Items => item != null);
+      for (let at = 0; at < count; at++) {
+        const stash = rollStopLoot(landmark, rank, Biome.Grassland, () => rng.random(), legend);
+        let top = 0;
+
+        // One to three kinds, one to three of each, like a dug-up cache
+        expect(stash.length).toBeGreaterThan(0);
+        expect(stash.length).toBeLessThanOrEqual(MAX_KINDS);
+        for (const { item, amount } of stash) {
+          const band = getItemBand(item) ?? 'base';
+
+          seen.add(band);
+          top = Math.max(top, order.indexOf(band));
+          expect(amount).toBeGreaterThan(0);
+          expect(amount).toBeLessThanOrEqual(band === 'special' ? 1 : MAX_STACK);
+        }
+        best.push(order[top]);
+      }
+      return { best, seen };
     };
+    const share = (best: ItemBand[], band: ItemBand): number =>
+      best.filter((one) => one === band).length / best.length;
 
     // A duelling trainer keeps their party and their pockets, and so
     // do the two lower Team Rocket ranks. The gym leader is not here
     // either: theirs is a machine of their own type
-    expect(rollStopLoot(Landmark.Trainer, RocketRank.Grunt, Biome.Grassland, () => 0.5)).toBeNull();
-    expect(
-      rollStopLoot(Landmark.TeamRocket, RocketRank.Grunt, Biome.Grassland, () => 0.5),
-    ).toBeNull();
-    expect(
-      rollStopLoot(Landmark.GymLeader, RocketRank.Grunt, Biome.Grassland, () => 0.5),
-    ).toBeNull();
+    expect(rollStopLoot(Landmark.Trainer, RocketRank.Grunt, Biome.Grassland, () => 0.5)).toEqual(
+      [],
+    );
+    expect(rollStopLoot(Landmark.TeamRocket, RocketRank.Grunt, Biome.Grassland, () => 0.5)).toEqual(
+      [],
+    );
+    expect(rollStopLoot(Landmark.GymLeader, RocketRank.Grunt, Biome.Grassland, () => 0.5)).toEqual(
+      [],
+    );
 
-    const executive = rolls(Landmark.TeamRocket, RocketRank.Executive);
-    const elite = rolls(Landmark.EliteFour, RocketRank.Grunt);
-    const champion = rolls(Landmark.Champion, RocketRank.Grunt);
+    const executive = rolls(Landmark.TeamRocket, RocketRank.Executive, 600);
+    const elite = rolls(Landmark.EliteFour, RocketRank.Grunt, 600);
+    const champion = rolls(Landmark.Champion, RocketRank.Grunt, 2000);
+    const legend = rolls(Landmark.Champion, RocketRank.Grunt, 2000, true);
 
-    // Every one of them lands something, and never out of the base
-    // band: the odds shut it out
-    for (const drawn of [executive, elite, champion]) {
-      expect(drawn).toHaveLength(400);
-      for (const item of drawn) {
-        expect(getItemBand(item)).not.toBe('base');
-        expect(getItemBand(item)).not.toBe('uncommon');
-      }
+    // A thief and the Elite Four reach from scarce to prized, and a
+    // champion and a legend from rare to special
+    for (const band of [...executive.seen, ...elite.seen]) {
+      expect(['scarce', 'rare', 'prized']).toContain(band);
+    }
+    for (const band of [...champion.seen, ...legend.seen]) {
+      expect(['rare', 'prized', 'special']).toContain(band);
     }
 
-    const share = (items: Items[], band: ItemBand): number =>
-      items.filter((item) => getItemBand(item) === band).length / items.length;
-
-    // A thief carries loot and the league reaches higher, but nobody
-    // reaches the special band: a champion's seat can be fought every
-    // window, and a Master Ball handed out at that rate is not a find
-    // of a lifetime any more
-    for (const drawn of [executive, elite, champion]) {
-      expect(share(drawn, 'special')).toBe(0);
-    }
-    expect(share(elite, 'prized')).toBeGreaterThan(share(executive, 'prized'));
-    expect(share(champion, 'prized')).toBeGreaterThan(share(elite, 'prized'));
-
-    // The one exception, and the whole reason to walk into a legend:
-    // a rare or a special at twenty to one, which is the only draw in
-    // the game that reaches the special band
-    const rng = new AleaRNG('loot-legend');
-    const legend = Array.from({ length: 4200 }, () =>
-      rollStopLoot(Landmark.Champion, RocketRank.Grunt, Biome.Grassland, () => rng.random(), true),
-    ).filter((item): item is Items => item != null);
-
-    expect(legend).toHaveLength(4200);
-    for (const item of legend) {
-      expect(['rare', 'special']).toContain(getItemBand(item));
-    }
-    expect(share(legend, 'special')).toBeGreaterThan(0.02);
-    expect(share(legend, 'special')).toBeLessThan(0.08);
+    // Each rung reaches higher than the one below it, and a legend is
+    // the richest fight there is
+    expect(share(elite.best, 'prized')).toBeGreaterThan(share(executive.best, 'prized'));
+    expect(share(champion.best, 'prized')).toBeGreaterThan(share(elite.best, 'prized'));
+    expect(share(legend.best, 'special')).toBeGreaterThan(share(champion.best, 'special'));
+    // A seat fought every window hands out a special now and then
+    // rather than routinely; a legend, one window in sixty-four, does
+    expect(share(champion.best, 'special')).toBeLessThan(0.02);
+    expect(share(legend.best, 'special')).toBeGreaterThan(0.06);
+    expect(share(legend.best, 'special')).toBeLessThan(0.14);
   });
 
   it('puts a legend in the champion’s seat now and then, and always under the rarest sky', () => {

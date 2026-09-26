@@ -5,17 +5,16 @@ import {
   signInWithGithub,
   signInWithGoogle,
 } from '../../auth/actions';
+import EMAIL_SIGN_IN from '../../auth/sign-in-options';
 import { Button, Row, Status } from '../styled';
 
 /**
- * The way in: Google or GitHub, and — on a development build alone —
- * an address and a password.
+ * The way in: Google or GitHub, and, where the host asks for it, an
+ * address and a password.
  *
- * The email pair is kept for local work and for the browser tests,
- * which need an account they can make and throw away without another
- * site in the loop. A player meets the two buttons and nothing
- * else: an account the game holds a password for is an account the
- * game has to keep one safe for
+ * Whether the pair of fields is drawn is `EMAIL_SIGN_IN`, which is on
+ * for a local run and for the browser tests, and off everywhere else
+ * until a host asks for it
  */
 export default function LoginForm(): JSX.Element {
   const [email, setEmail] = createSignal('');
@@ -38,10 +37,10 @@ export default function LoginForm(): JSX.Element {
 
   return (
     <div class="flex flex-col gap-3 text-left">
-      {/* Not drawn in a build: the pair of fields is here for a
-          local run and for the browser tests, which make and
-          throw away accounts of their own */}
-      <Show when={import.meta.env.DEV}>
+      {/* Off unless the host asks for it: the pair of fields is for a
+          local run, for the browser tests, which make and throw away
+          accounts of their own, and for a host with no OAuth apps */}
+      <Show when={EMAIL_SIGN_IN}>
         <form
           class="flex flex-col gap-3"
           onSubmit={(event) => {

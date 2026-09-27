@@ -5,8 +5,8 @@ import * as hub from '../src/server/live/hub';
 import { LIVE_TABLES, matchesFilter, parseFilter, visibleRow } from '../src/server/live/rules';
 
 /**
- * The live feed that replaced Supabase Realtime: which changes reach
- * whom, and how much of each row they see.
+ * The live feed: which changes reach whom, and how much of each row
+ * they see.
  */
 
 const ME = '00000000-0000-4000-8000-000000000001';

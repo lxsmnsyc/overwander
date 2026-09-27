@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { hashSync } from 'bcryptjs';
+import { hashPassword } from 'better-auth/crypto';
 import postgres from 'postgres';
 import { TEST_DATABASE_URL, assertTestDatabase } from '../test/test-database.ts';
 
@@ -28,7 +28,7 @@ export async function stageAccount(email: string, password: string): Promise<str
   await sql`insert into users (id, name, email, email_verified) values (${uid}, '', ${email}, true)`;
   await sql`
     insert into identities (account_id, provider_id, user_id, password, updated_at)
-    values (${uid}, 'credential', ${uid}, ${hashSync(password, 10)}, now())
+    values (${uid}, 'credential', ${uid}, ${await hashPassword(password)}, now())
   `;
   await sql`insert into profiles (id, nickname) values (${uid}, 'Trainer')`;
   return uid;

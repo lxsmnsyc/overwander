@@ -8,8 +8,6 @@ The live game is two pieces:
 - **The sprite host** serves the sprites and sounds, published to Cloudflare
   from `public/` on each release.
 
-A game still on Supabase moves over once, with [Moving off Supabase](deploy/moving-off-supabase.md).
-
 There is no separate API, no queue and no file storage. The world is derived
 rather than stored.
 
@@ -39,13 +37,12 @@ migration in it. [Operating the game](deploy/operating.md) covers running it.
 
 ## Contents
 
-| Page                                                 | What it covers                                                                                        |
-| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| [Moving off Supabase](deploy/moving-off-supabase.md) | The one-time move of a live game's data from Supabase to the server's own database                    |
-| [Authentication](deploy/authentication.md)           | The redirect list, the GitHub and Google OAuth apps, and signing in locally                           |
-| [The server](deploy/server.md)                       | The tunnel, every environment variable, which key is which, the release deploy, first deploy, backups |
-| [Schema changes](deploy/schema-changes.md)           | Writing a migration, and the order against a deploy                                                   |
-| [Operating the game](deploy/operating.md)            | Admin, what a deployed build will not do, upkeep, and what each failure means                         |
+| Page                                       | What it covers                                                                                        |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| [Authentication](deploy/authentication.md) | The redirect list, the GitHub and Google OAuth apps, and signing in locally                           |
+| [The server](deploy/server.md)             | The tunnel, every environment variable, which key is which, the release deploy, first deploy, backups |
+| [Schema changes](deploy/schema-changes.md) | Writing a migration, and the order against a deploy                                                   |
+| [Operating the game](deploy/operating.md)  | Admin, what a deployed build will not do, upkeep, and what each failure means                         |
 
 To run it without Cloudflare, see [Without Cloudflare](deploy/server.md#without-cloudflare).
 

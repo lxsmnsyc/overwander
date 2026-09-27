@@ -4,7 +4,6 @@ Running the app on a machine you control, behind a Cloudflare tunnel, and
 shipping each release to it.
 
 **Assumes:** the providers are set up. See [Authentication](authentication.md).
-For the one-time move of the live data, see [Moving off Supabase](moving-off-supabase.md).
 
 ## 1. The machine
 
@@ -189,4 +188,3 @@ their usual reverse proxy settings. With no sprite host, leave
 - [Authentication](authentication.md), the step before this one
 - [Schema changes](schema-changes.md), for the next release with a migration
 - [Operating the game](operating.md), for what each failure means
-- [Moving off Supabase](moving-off-supabase.md), for the one-time move of the live data

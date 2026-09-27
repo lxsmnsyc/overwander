@@ -1,10 +1,6 @@
--- The whole schema as of the move off Supabase, in one file.
---
--- Squashed from the 66 migrations that were under supabase/migrations,
--- without what only Supabase used: row-level security and its
--- policies, the API roles' grants, the realtime publication and its
--- bag broadcast, and the SQL functions the browser once called. Every
--- read and write now goes through the server, over the owner connection.
+-- The whole schema up to the move to the self-hosted server, in one
+-- file. Every read and write goes through the server, over the owner
+-- connection, so there are no row policies or API roles.
 
 create extension if not exists pg_cron;
 create extension if not exists pg_trgm with schema public;

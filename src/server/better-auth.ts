@@ -1,12 +1,11 @@
 import 'server-only';
 import { APIError, createAuthMiddleware, getSessionFromCtx } from 'better-auth/api';
 import { betterAuth } from 'better-auth';
-import { hashPassword } from 'better-auth/crypto';
 import { jwt } from 'better-auth/plugins/jwt';
 import { passkey } from '@better-auth/passkey';
 import { twoFactor } from 'better-auth/plugins/two-factor';
 import { Pool } from 'pg';
-import { checkPassword, securityUnlocked } from './security';
+import { securityUnlocked } from './security';
 import { createProfile } from './profile';
 
 /**
@@ -111,14 +110,7 @@ function createAuth() {
       modelName: 'verifications',
       fields: { expiresAt: 'expires_at', createdAt: 'created_at', updatedAt: 'updated_at' },
     },
-    emailAndPassword: {
-      enabled: true,
-      autoSignIn: true,
-      password: {
-        hash: hashPassword,
-        verify: async ({ hash, password }) => checkPassword(hash, password),
-      },
-    },
+    emailAndPassword: { enabled: true, autoSignIn: true },
     socialProviders: {
       ...(google == null ? {} : { google }),
       ...(github == null ? {} : { github }),

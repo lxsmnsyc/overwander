@@ -2,11 +2,11 @@
  * Dev seed: a couple of accounts and enough rows to walk the game.
  *
  * Runs against the development database (`compose.dev.yaml`) after a
- * reset, over the owner connection, and refuses any other. Accounts are written straight into Better Auth's tables
- * with a bcrypt hash, which the server's password check accepts.
+ * reset, over the owner connection, and refuses any other. Accounts are
+ * written straight into Better Auth's tables, with its own password hash.
  */
 import { randomUUID } from 'node:crypto';
-import bcrypt from 'bcryptjs';
+import { hashPassword } from 'better-auth/crypto';
 import postgres from 'postgres';
 
 const DB_URL =
@@ -38,7 +38,7 @@ async function ensureUser(email: string, nickname: string): Promise<string> {
   await sql`insert into users (id, name, email, email_verified) values (${uid}, ${nickname}, ${email}, true)`;
   await sql`
     insert into identities (account_id, provider_id, user_id, password, updated_at)
-    values (${uid}, 'credential', ${uid}, ${bcrypt.hashSync(PASSWORD, 10)}, now())
+    values (${uid}, 'credential', ${uid}, ${await hashPassword(PASSWORD)}, now())
   `;
   await sql`insert into profiles (id, nickname, role) values (${uid}, ${nickname}, 'admin')`;
   return uid;

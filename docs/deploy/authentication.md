@@ -112,21 +112,6 @@ Put the id and the secret in `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
 users, and its sessions expire after seven days. Publishing is a button on the
 consent screen, and with the default scopes it takes effect at once.
 
-## Moving from Supabase Auth
-
-Migration `20261003000200_accounts.sql` copies every account into the new
-tables with the same id. It also copies each Google and GitHub link, and each
-password hash. Players sign in exactly as before.
-
-Only the OAuth callbacks change, because Supabase's callback is replaced by the
-site's own:
-
-- **Google.** Add `https://your-domain/api/auth/callback/google` to the existing
-  client's redirect URIs, beside Supabase's. Both work until the new build is live.
-- **GitHub.** An OAuth app holds one callback, so make a second app for the new
-  server. Accounts are matched by the player's GitHub user id, which is the same
-  under every app.
-
 ## Signing in with a provider locally
 
 Most of the time this is not needed. `pnpm seed` makes two accounts that sign in

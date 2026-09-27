@@ -166,7 +166,6 @@ give a player a **password link** from the player's admin page instead, or with
 | `sprite-pipeline.json` | What has been done to each sheet, and to which version of it                                                              |
 | `test/`                | Vitest suites, mirroring the source tree                                                                                  |
 | `db/`                  | The migrations, their runner and the database image                                                                       |
-| `supabase/`            | The Supabase migrations, kept until the live game has moved off it                                                        |
 | `docs/`                | The player's guide, the database pages and the engine notes                                                               |
 
 Two conventions are worth knowing before reading the source. Every module has a

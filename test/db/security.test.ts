@@ -1,5 +1,4 @@
 import { hashPassword } from 'better-auth/crypto';
-import bcrypt from 'bcryptjs';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { type Actor, actor, clearAll, sql } from './clients';
 import { readSecurity, securityUnlocked, unlockSecurity } from '../../src/server/security';
@@ -61,12 +60,6 @@ describe('unlockSecurity', () => {
     expect(await unlockSecurity(player.uid, 'right password')).toBe('unlocked');
     expect(await securityUnlocked(player.uid)).toBe(true);
     expect(await securityUnlocked(staff.uid)).toBe(false);
-  });
-
-  it('checks a bcrypt hash brought over from Supabase', async () => {
-    await givePassword(player.uid, await bcrypt.hash('old password', 4));
-
-    expect(await unlockSecurity(player.uid, 'old password')).toBe('unlocked');
   });
 
   it('closes again once the unlock expires', async () => {

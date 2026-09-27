@@ -1,6 +1,5 @@
 import 'server-only';
 import { verifyPassword } from 'better-auth/crypto';
-import bcrypt from 'bcryptjs';
 import { getSql } from './db';
 import { asString } from './read';
 
@@ -14,13 +13,6 @@ import { asString } from './read';
 const UNLOCK_MS = 15 * 60_000;
 
 const unlockKey = (uid: string): string => `security-unlock:${uid}`;
-
-/** Whether a password matches a stored hash, including bcrypt hashes brought over from Supabase */
-export async function checkPassword(hash: string, password: string): Promise<boolean> {
-  return hash.startsWith('$2')
-    ? bcrypt.compare(password, hash)
-    : verifyPassword({ hash, password });
-}
 
 /** The account's password hash, or empty where it signs in some other way only */
 async function passwordHash(uid: string): Promise<string> {
@@ -41,7 +33,7 @@ export async function unlockSecurity(uid: string, password: string): Promise<Unl
   if (hash === '') {
     return 'no-password';
   }
-  if (!(await checkPassword(hash, password))) {
+  if (!(await verifyPassword({ hash, password }))) {
     return 'wrong';
   }
 

@@ -91,7 +91,7 @@ export default defineConfig(({ mode }) => ({
             preset: 'node-server',
             ignore: publicIgnore(mode),
             routeRules: ROUTE_RULES,
-            // The live feed that replaced Supabase Realtime (src/server/live)
+            // The live feed that follows table changes (src/server/live)
             features: { websocket: true },
             handlers: [{ route: '/_live', handler: './src/server/live/socket.ts' }],
             // Brings the database up to date before the first request is served

@@ -134,8 +134,10 @@ these four things. Each one tests a different part of the setup:
    socket at `/_live`, through the tunnel, fed by the database's change
    triggers.
 
-`docker compose logs -f app` follows the server's output, and
-`docker compose logs -f tunnel` the tunnel's.
+`pnpm server:logs app` follows the server's output, and
+`pnpm server:logs tunnel` the tunnel's. The tunnel is up when it logs
+`Registered tunnel connection`. `pnpm server` starts everything, and
+`pnpm server:tunnel` starts the tunnel alone.
 
 ## 6. Backups
 

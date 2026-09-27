@@ -134,6 +134,10 @@ give a player a **password link** from the player's admin page instead, or with
 | `pnpm db:migrate`      | Apply pending migrations to the development database                                |
 | `pnpm migrate`         | Apply pending migrations to production, from the root `.env`                        |
 | `pnpm seed`            | Fill a fresh database with accounts and sample rows                                 |
+| `pnpm server`          | Build and start production (database, app and tunnel), from the root `.env`         |
+| `pnpm server:tunnel`   | Start the tunnel alone, when the app is already up                                  |
+| `pnpm server:ps`       | Show production's services and their health                                         |
+| `pnpm server:logs`     | Follow production's logs; name a service to follow one, such as `tunnel`            |
 | `pnpm import-sprites`  | Copy the pokemon sheets in from `../SpriteCollab`, the `lxsmnsyc/SpriteCollab` fork |
 | `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel                                    |
 | `pnpm sprite-coats`    | Restamp `coats.json` after anything writes a sheet                                  |

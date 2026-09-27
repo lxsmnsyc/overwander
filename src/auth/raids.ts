@@ -16,7 +16,6 @@ import { Feature } from '../server/switches';
 import check, {
   CELL,
   CHUNK_COORDINATE,
-  COUNT,
   DEPTH,
   GAME_ID,
   ID,
@@ -25,6 +24,7 @@ import check, {
   OFFSET,
   PARTY,
   RAID_KIND,
+  TIME,
   TOKEN,
   UID,
 } from '../server/validate';
@@ -471,7 +471,7 @@ async function readLiveOnServer(
 ): Promise<Record<string, unknown>[]> {
   'use server';
   check(TOKEN, token);
-  check(COUNT, windowAt);
+  check(TIME, windowAt);
   check(OFFSET, offset);
   await requireReader(token);
   return readLiveLobbyRows(windowAt, offset);

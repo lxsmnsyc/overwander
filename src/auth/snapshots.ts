@@ -25,13 +25,13 @@ import check, {
   CELL,
   CHUNK_COORDINATE,
   CLAIM_QUERIES,
-  COUNT,
   DEPTH,
   ID,
   LOCALE,
   MAYBE_OFFSET,
   OFFSET,
   SPAWN_ROLLS,
+  TIME,
   TOKEN,
 } from '../server/validate';
 import {
@@ -214,7 +214,7 @@ async function publishOnServer(
   check(TOKEN, token);
   check(ID, seed);
   check(OFFSET, offset);
-  check(COUNT, windowAt);
+  check(TIME, windowAt);
   check(SPAWN_ROLLS, spawns);
   await requireUid(token);
   return writeSnapshotWindow(seed, offset, windowAt, spawns);

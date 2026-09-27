@@ -170,6 +170,9 @@ export const TEXT = v.pipe(v.string(), v.maxLength(TEXT_LIMIT));
 /** A password as typed, bounded at Better Auth's own longest */
 export const PASSWORD = v.pipe(v.string(), v.maxLength(128));
 
+/** A moment, in milliseconds since the epoch, such as the start of a window */
+export const TIME = whole(0, Number.MAX_SAFE_INTEGER);
+
 /** A page of an admin listing */
 export const PAGE = whole(0, MAX_PAGE);
 

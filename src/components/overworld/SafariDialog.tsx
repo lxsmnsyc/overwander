@@ -27,7 +27,7 @@ import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { FireIcon, SparklesIcon } from '../icons';
 import { getSpeciesDexEntry } from '../../auth/pokedex';
-import { Badge, Button, Dialog, DialogActions, Status } from '../styled';
+import { Badge, Button, Dialog, DialogActions, Status, useToast } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import settings, { setSetting } from '../app/settings';
 import { failed, readable } from '../app/resource-reads';
@@ -165,7 +165,7 @@ function SafariBody(
     onSpent: (item: Items) => void;
   },
 ): JSX.Element {
-  const [status, setStatus] = createSignal<string | null>(null);
+  const toast = useToast();
   // Whether the bag is open over the three actions. The picker is not
   // a dialog of its own: this is already one, and a modal over a
   // modal fights it for the click that closes it
@@ -287,7 +287,6 @@ function SafariBody(
         if (active == null) {
           return;
         }
-        setStatus(null);
         setRummaging(false);
         setTreat(null);
         setCaught(null);
@@ -400,8 +399,12 @@ function SafariBody(
    */
   const inHand = (): Items => treat() ?? BALL_ITEMS[session()?.ball ?? Balls.PokeBall];
 
+  // What each throw came to is said in a toast, the way every other
+  // result is: the field itself already shows the ball and who is in it
   const settle = (message: string | null): void => {
-    setStatus(message);
+    if (message != null) {
+      toast.push({ message, tone: 'neutral' });
+    }
     setRevision((value) => value + 1);
   };
 
@@ -413,7 +416,10 @@ function SafariBody(
     action()
       .then(settle)
       .catch((failure: unknown) => {
-        setStatus(failure instanceof Error ? failure.message : String(failure));
+        toast.push({
+          message: failure instanceof Error ? failure.message : String(failure),
+          tone: 'ember',
+        });
       })
       .finally(() => {
         setThrowing(false);
@@ -428,7 +434,6 @@ function SafariBody(
     const ball = getBall(item);
 
     setRummaging(false);
-    setStatus(null);
     if (ball == null) {
       setTreat(item);
       return;
@@ -763,14 +768,14 @@ function SafariBody(
                 it, the badge beside it counts what is left, and a
                 treat that would catch nothing is a treat the player
                 chose to take out */}
-            <Status message={status() ?? failed(props.bag)} />
+            <Status message={failed(props.bag)} />
           </>
         )}
       </Show>
 
       {/* Items, throw, run away: what the player is reaching for most
           often sits nearest the way out */}
-      <DialogActions>
+      <DialogActions centred>
         <Show when={session()?.state === SafariState.Active}>
           <Show
             when={rummaging()}
@@ -779,7 +784,6 @@ function SafariBody(
                 <Button
                   disabled={throwing()}
                   onClick={() => {
-                    setStatus(null);
                     setRummaging(true);
                   }}
                 >
@@ -831,7 +835,7 @@ function SafariBody(
           disabled={throwing()}
           onClick={leave}
         >
-          {session()?.state === SafariState.Active ? 'Run away' : 'Close'}
+          {session()?.state === SafariState.Active ? 'Run away' : 'Walk on'}
         </Button>
       </DialogActions>
     </Dialog>

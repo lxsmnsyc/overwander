@@ -17,7 +17,6 @@ import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { chunkOfCell } from '../../overworld/grid';
 import type { PortalDestination } from '../../overworld/portal';
 import {
-  Badge,
   Button,
   Dialog,
   DialogActions,
@@ -27,22 +26,21 @@ import {
   Meta,
   Note,
   RowButton,
-  Status,
   TextField,
   createPager,
+  useToast,
 } from '../styled';
-import ItemSprite from '../items/ItemSprite';
 import AtlasSprite from '../sprites/AtlasSprite';
 import { OW_SPRITE_ROOT } from '../../canvas/ow-char-sprites';
 import Landmark from '../../data/overworld/landmark';
 import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
 import describeWhere from '../../overworld/bearing';
-import FeeLine from './npc-dialog/counters/price';
+import { CostBadge, CounterStep, CounterTerms, HeadingPortrait } from './npc-dialog/terms';
 import { failed, readable } from '../app/resource-reads';
 import playEffect, { Effect } from '../app/sound';
 
-/** The portal at twice the size it stands on the board */
-const PORTAL_SPRITE = 88;
+/** The portal beside the heading */
+const PORTAL_SPRITE = 44;
 
 /**
  * A portal, and the name of somewhere to come out.
@@ -91,7 +89,7 @@ function PortalBody(
     onDone: () => void;
   },
 ): JSX.Element {
-  const [status, setStatus] = createSignal<string | null>(null);
+  const toast = useToast();
   /**
    * The name the player has settled on. Naming is not going: the box
    * is typed into and the crossing is confirmed underneath it, so a
@@ -149,7 +147,6 @@ function PortalBody(
   const page = createPager(listed, LIST_PAGE);
 
   const close = (): void => {
-    setStatus(null);
     setNamed(null);
     setBusy(false);
     props.onDone();
@@ -163,15 +160,16 @@ function PortalBody(
     if (snapshot == null || cell == null || town == null) {
       return;
     }
-
-    setStatus(null);
     setBusy(true);
     usePortalOnServer(snapshot, cell, town.regionX, town.regionY)
       .then((arrived) => {
         setBusy(false);
 
         if (arrived == null) {
-          setStatus('The portal stayed shut. A key opens one, and only one.');
+          toast.push({
+            message: 'The portal stayed shut. A key opens one, and only one.',
+            tone: 'ember',
+          });
           props.onSpent();
           return;
         }
@@ -181,27 +179,31 @@ function PortalBody(
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        toast.push({
+          message: caught instanceof Error ? caught.message : String(caught),
+          tone: 'ember',
+        });
       });
   };
 
   return (
     <>
-      <div class="flex justify-center">
-        <AtlasSprite
-          sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
-          name={landmarkPicture(Landmark.Portal) ?? ''}
-          size={PORTAL_SPRITE}
-          label="The portal"
-        />
-      </div>
-      <FeeLine fee={Items.PortalKey} scales={readable(props.keys) ?? 0} name="Portal Key" />
-      <Show when={failed(props.keys)}>{(said) => <Note class="text-center">{said()}</Note>}</Show>
+      <CounterTerms
+        cost={{ item: Items.PortalKey }}
+        have={{
+          amount: readable(props.keys) ?? 0,
+          short: (readable(props.keys) ?? 0) === 0,
+          unit: (readable(props.keys) ?? 0) === 1 ? 'Portal Key' : 'Portal Keys',
+        }}
+        often="One key a crossing"
+      />
+      <Show when={failed(props.keys)}>{(said) => <Note>{said()}</Note>}</Show>
 
       <Show
         when={towns().length > 0}
         fallback={<Note class="text-center">Nobody has walked into a town yet.</Note>}
       >
+        <CounterStep>Choose a town</CounterStep>
         <TextField
           label="Town"
           placeholder="Search towns"
@@ -219,7 +221,6 @@ function PortalBody(
                     pressed={named() === town.name}
                     disabled={busy()}
                     onClick={() => {
-                      setStatus(null);
                       setNamed(town.name);
                     }}
                   >
@@ -240,7 +241,6 @@ function PortalBody(
         </Show>
       </Show>
 
-      <Status message={status()} />
       <DialogActions>
         <Button
           tone="primary"
@@ -248,12 +248,9 @@ function PortalBody(
           label="Cross, 1 Portal Key"
           onClick={cross}
         >
-          Cross{' '}
-          <Badge tone="gold">
-            <ItemSprite item={Items.PortalKey} size={16} label="" />1
-          </Badge>
+          Cross <CostBadge cost={{ item: Items.PortalKey }} />
         </Button>
-        <Button onClick={close}>Close</Button>
+        <Button onClick={close}>Walk on</Button>
       </DialogActions>
     </>
   );
@@ -291,11 +288,19 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
       isOpen={props.cell != null}
       onClose={props.onClose}
       title="Portal"
-      terse
-      description="A ring of standing stones, and a way through. Name a town and it opens onto
-        the portal standing in its plaza. One key per crossing."
+      lead={
+        <HeadingPortrait>
+          <AtlasSprite
+            sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
+            name={landmarkPicture(Landmark.Portal) ?? ''}
+            size={PORTAL_SPRITE}
+            label=""
+          />
+        </HeadingPortrait>
+      }
+      description="A ring of standing stones, and a way through to any town's plaza."
     >
-      <Suspense fallback={<Note class="text-center">Reading the register…</Note>}>
+      <Suspense fallback={<Note>Reading the register…</Note>}>
         <PortalBody
           {...props}
           keys={keys}

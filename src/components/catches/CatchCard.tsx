@@ -236,7 +236,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
             <For each={caught().abilities} fallback={<Meta>No ability</Meta>}>
               {(ability) => (
                 <li>
-                  <TooltipHost class="block" {...detailAbility(ability)}>
+                  <TooltipHost class="block" kind="ability" {...detailAbility(ability)}>
                     <span
                       class="block truncate rounded border border-line-soft bg-tide-soft px-1 py-0.5
                         text-tide-dark"

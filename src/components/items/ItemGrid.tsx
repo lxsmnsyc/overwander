@@ -359,6 +359,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
               fallback={
                 <TooltipHost
                   class="block w-full"
+                  kind="item"
                   {...detailItem(cell().item)}
                   extra={() => aside(cell())}
                 >

@@ -1,4 +1,13 @@
-import { type JSX, type ParentProps, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import {
+  type JSX,
+  type ParentProps,
+  Show,
+  createContext,
+  createEffect,
+  createSignal,
+  onCleanup,
+  useContext,
+} from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { Transition } from 'terracotta';
 import closeWhenGone from './gone';
@@ -17,8 +26,21 @@ import { SHEER } from './transition';
  * covers whatever it is over, so it should cover as little as it can.
  */
 
+/** What kind of thing a tooltip names, which picks the chip beside the name */
+export type TooltipKind = 'item' | 'candy' | 'type' | 'weather' | 'ability' | 'status';
+
+const KIND_CHIPS: Record<TooltipKind, { label: string; tone: string }> = {
+  item: { label: 'Item', tone: 'bg-leaf-soft text-leaf-dark' },
+  candy: { label: 'Candy', tone: 'bg-leaf-soft text-leaf-dark' },
+  type: { label: 'Type', tone: 'bg-ember-soft text-ember-dark' },
+  weather: { label: 'Weather', tone: 'bg-gold-soft text-gold' },
+  ability: { label: 'Ability', tone: 'bg-tide-soft text-tide-dark' },
+  status: { label: 'Status', tone: 'bg-line-soft text-arcane' },
+};
+
 export interface TooltipProps {
   name: string;
+  kind?: TooltipKind;
   /**
    * The line worth reading, where the subject has one. A picture whose
    * card is entirely made of other pictures leaves it out
@@ -40,47 +62,123 @@ export interface TooltipProps {
  */
 const WIDTH = 240;
 
-/**
- * How far above the thing it describes the card floats, and how much
- * room it needs up there before it gives up and drops below instead
- */
+/** How far the card keeps from the screen's edges */
 const GAP = 8;
-const ROOM = 160;
 
 /**
- * One labelled box: a word for what this is, and the thing itself in a
- * box of its own. Exported because a hover card says the same things
- * about an item in the same shape, only larger
+ * How far the notch's tip stands from the pointer: close above it, and
+ * further below, where the cursor itself hangs
+ */
+const ABOVE_POINTER = 10;
+const BELOW_POINTER = 26;
+
+/** How much room the card needs above before it drops below instead */
+const ROOM = 160;
+
+/** How far the notch keeps from the card's rounded corners */
+const NOTCH_INSET = 16;
+
+/**
+ * Inside a tooltip a detail is a row, label left and value right; in a
+ * hover card it keeps its labelled box
+ */
+const DetailRows = createContext(false);
+
+/**
+ * One labelled fact. Exported because a hover card says the same things
+ * about an item, and the same extras are drawn in both
  */
 export function Detail(props: { label: string; children: JSX.Element }): JSX.Element {
+  const rows = useContext(DetailRows);
+
   return (
-    <div class="flex flex-col gap-0.5">
-      <span class="text-[10px] font-bold tracking-wide text-muted uppercase">{props.label}</span>
-      <span class="rounded-lg border border-line bg-paper px-1.5 py-0.5 text-xs text-ink">
-        {props.children}
-      </span>
-    </div>
+    <Show
+      when={rows}
+      fallback={
+        <div class="flex flex-col gap-0.5">
+          <span class="text-[10px] font-bold tracking-wide text-muted uppercase">
+            {props.label}
+          </span>
+          <span class="rounded-lg border border-line bg-paper px-1.5 py-0.5 text-xs text-ink">
+            {props.children}
+          </span>
+        </div>
+      }
+    >
+      <div class="flex items-center justify-between gap-3">
+        <span class="shrink-0 font-semibold text-muted">{props.label}</span>
+        <span class="flex min-w-0 justify-end text-right font-bold text-ink tabular-nums">
+          {props.children}
+        </span>
+      </div>
+    </Show>
   );
 }
 
+/** Which way the notch points, and how far off the card's middle */
+export interface TooltipNotch {
+  below: boolean;
+  offset: number;
+}
+
 /**
- * The card on its own, for a caller placing it itself
+ * The card on its own, for a caller placing it itself. The notch is
+ * drawn only when the caller says where the thing it points at is
  */
-export function Tooltip(props: TooltipProps): JSX.Element {
+export function Tooltip(props: TooltipProps & { notch?: TooltipNotch }): JSX.Element {
+  const chip = (): { label: string; tone: string } | null =>
+    props.kind == null ? null : KIND_CHIPS[props.kind];
+
   return (
     <div
       role="tooltip"
-      // The card's own transitions stay with it; the fade above ends on
-      // the first one it hears
       style={{ 'max-width': `${WIDTH}px` }}
-      class={`flex flex-col gap-1.5 rounded-panel border-2 border-line bg-line-soft p-1.5
-        shadow-window ${props.class ?? ''}`}
+      class={`relative flex w-max flex-col gap-1.5 rounded-xl border-2 border-line bg-paper px-3
+        pt-2 pb-2.5 text-ink shadow-[0_3px_0_0_var(--drop),0_16px_28px_-14px_var(--drop-cast)] ${
+          props.class ?? ''
+        }`}
     >
-      <Detail label="Name">{props.name}</Detail>
+      <div class="flex items-center justify-between gap-2">
+        <span class="text-sm font-extrabold">{props.name}</span>
+        <Show when={chip()}>
+          {(shown) => (
+            <span
+              class={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-extrabold
+                tracking-wide uppercase ${shown().tone}`}
+            >
+              {shown().label}
+            </span>
+          )}
+        </Show>
+      </div>
       <Show when={props.description}>
-        {(line) => <Detail label="Description">{line()}</Detail>}
+        {(line) => <p class="m-0 text-xs leading-snug text-muted">{line()}</p>}
       </Show>
-      {props.extra?.()}
+      <Show when={props.extra}>
+        {(extra) => (
+          <DetailRows.Provider value>
+            {/* Emptied by an extra with nothing to say, so the panel goes with it */}
+            <div class="grid gap-1 rounded-lg bg-line-soft px-2 py-1.5 text-xs empty:hidden">
+              {extra()()}
+            </div>
+          </DetailRows.Provider>
+        )}
+      </Show>
+      <Show when={props.notch}>
+        {(notch) => (
+          <span
+            aria-hidden="true"
+            class={`absolute size-3 -translate-x-1/2 rotate-45 border-line bg-paper ${
+              notch().below
+                ? '-top-[7px] border-t-2 border-l-2'
+                : '-bottom-[7px] border-r-2 border-b-2'
+            }`}
+            style={{
+              left: `clamp(${NOTCH_INSET}px, calc(50% + ${notch().offset}px), calc(100% - ${NOTCH_INSET}px))`,
+            }}
+          />
+        )}
+      </Show>
     </div>
   );
 }
@@ -113,7 +211,17 @@ export interface TooltipHostProps extends ParentProps, TooltipProps {
 export function TooltipHost(props: TooltipHostProps): JSX.Element {
   let host: HTMLSpanElement | undefined;
   const drawnIn = usePortalHost();
-  const [at, setAt] = createSignal<{ x: number; y: number; below: boolean } | null>(null);
+  const [at, setAt] = createSignal<{
+    x: number;
+    y: number;
+    below: boolean;
+    offset: number;
+  } | null>(null);
+  /**
+   * Where a mouse is over the trigger, which the card follows. Null for
+   * a keyboard or a finger, where the card stands over the trigger
+   */
+  let pointer: { x: number; y: number } | null = null;
   /**
    * Whether the card is wanted, which is not the same as whether it is
    * on screen: it is still there, fading, for a moment after the
@@ -137,8 +245,9 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
   onCleanup(cancel);
 
   /**
-   * Where the card goes, measured now rather than when the pointer
-   * arrived: the row under it may have moved in the meantime
+   * Where the card goes: over the pointer when a mouse is on the
+   * trigger, over the trigger itself otherwise. Measured now rather
+   * than when the pointer arrived, since the row may have moved
    */
   const place = (): void => {
     const bounds = host?.getBoundingClientRect();
@@ -147,15 +256,17 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
       return;
     }
 
-    const below = bounds.top < ROOM;
-    // Kept off both edges, so a square in the first column does not
-    // hang the card half off the screen
-    const x = Math.min(
-      Math.max(bounds.left + bounds.width / 2, WIDTH / 2 + GAP),
-      globalThis.innerWidth - WIDTH / 2 - GAP,
-    );
+    const aim = pointer ?? { x: bounds.left + bounds.width / 2, y: bounds.top };
+    const below = aim.y < ROOM;
+    let y = below ? bounds.bottom + ABOVE_POINTER : bounds.top - ABOVE_POINTER;
 
-    setAt({ x, y: below ? bounds.bottom + GAP : bounds.top - GAP, below });
+    if (pointer != null) {
+      y = below ? pointer.y + BELOW_POINTER : pointer.y - ABOVE_POINTER;
+    }
+    // Kept off both edges, with the notch still pointing at the aim
+    const x = Math.min(Math.max(aim.x, WIDTH / 2 + GAP), globalThis.innerWidth - WIDTH / 2 - GAP);
+
+    setAt({ x, y, below, offset: aim.x - x });
     setWanted(true);
   };
 
@@ -219,11 +330,23 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
       {...held}
       onPointerEnter={(event) => {
         if (event.pointerType !== 'touch') {
+          pointer = { x: event.clientX, y: event.clientY };
           show();
+        }
+      }}
+      // Followed while it is up, and remembered while it waits to open
+      onPointerMove={(event) => {
+        if (event.pointerType === 'touch') {
+          return;
+        }
+        pointer = { x: event.clientX, y: event.clientY };
+        if (wanted()) {
+          place();
         }
       }}
       onPointerLeave={(event) => {
         if (event.pointerType !== 'touch') {
+          pointer = null;
           hide();
         }
       }}
@@ -247,7 +370,9 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
       {/* The portal stands outside the fade rather than inside it: the
           card is drawn somewhere else in the document, where an opacity
           set on an ancestor here would never reach it */}
-      <Show when={at()} keyed>
+      {/* Not keyed: the spot changes with every move of the pointer,
+          and a keyed show would build the card again each time */}
+      <Show when={at()}>
         {(spot) => (
           <Portal mount={drawnIn()}>
             <Transition
@@ -263,11 +388,17 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
               // Nothing to click: the card is a label, and a pointer
               // that landed on it would leave whatever it describes
               class={`pointer-events-none fixed z-50 -translate-x-1/2 ${
-                spot.below ? '' : '-translate-y-full'
+                spot().below ? '' : '-translate-y-full'
               }`}
-              style={{ left: `${spot.x}px`, top: `${spot.y}px` }}
+              style={{ left: `${spot().x}px`, top: `${spot().y}px` }}
             >
-              <Tooltip name={props.name} description={props.description} extra={props.extra} />
+              <Tooltip
+                name={props.name}
+                kind={props.kind}
+                description={props.description}
+                extra={props.extra}
+                notch={{ below: spot().below, offset: spot().offset }}
+              />
             </Transition>
           </Portal>
         )}

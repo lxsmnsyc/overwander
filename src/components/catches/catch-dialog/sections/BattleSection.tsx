@@ -243,7 +243,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
             <Index each={abilities()}>
               {(ability, at) => (
                 <li {...abilitiesOrder.itemProps(at)} class={grip(abilitiesOrder.held() === at)}>
-                  <TooltipHost class="block" {...detailAbility(ability())}>
+                  <TooltipHost class="block" kind="ability" {...detailAbility(ability())}>
                     <Badge class="w-full justify-center" wrap>
                       {describeAbility(ability())}
                     </Badge>

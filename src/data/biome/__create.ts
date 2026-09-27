@@ -727,6 +727,9 @@ const UNOWN_SPECIES = new Set<Species>(UNOWN_FORMS);
  */
 const PRIZED_BY_HAND = new Set<Species>([Species.Larvesta]);
 
+/** Met as rarely as a mythical, but no relic calls it and no raid stages it */
+const MYTHICAL_BY_HAND = new Set<Species>([Species.PichuSpikyEared]);
+
 /**
  * The unowns as prized-band entries, for a pool to spread into its
  * own. They stand in **every** biome and at equal weight, so which
@@ -898,7 +901,7 @@ export function getSpawnRarity(species: Species): SpawnRarity {
   // The two are asked apart rather than together: what stages one is
   // a lair and what stages the other is a relic, and everything that
   // reads a rarity wants to know which
-  if (MYTHICAL_SPECIES.has(species)) {
+  if (MYTHICAL_SPECIES.has(species) || MYTHICAL_BY_HAND.has(species)) {
     return SpawnRarity.Mythical;
   }
   if (LEGENDARY_SPECIES.has(species)) {

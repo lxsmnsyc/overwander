@@ -69,9 +69,10 @@ export default function Announcements(): JSX.Element {
   };
 
   return (
+    // aria-live rather than role="status", which app.css draws as a panel even when empty
     <div
       class="pointer-events-none fixed inset-x-0 top-2 z-50 flex flex-col items-center gap-2 px-4"
-      role="status"
+      aria-live="polite"
     >
       <For each={liveAnnouncements(announcements() ?? [], now(), dismissed())}>
         {(announcement) => (

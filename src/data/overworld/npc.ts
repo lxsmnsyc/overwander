@@ -114,6 +114,13 @@ const enum Npc {
    * of them, and like the chef he serves as often as the purse holds
    */
   Geologist = 14,
+  /**
+   * Takes a Heart Scale and trains a pokemon to hold one more move, up
+   * to the most any pokemon can. The Skill Book's work done for a
+   * scale, and like the Move Reminder he serves as often as a player
+   * has scales
+   */
+  DojoMaster = 15,
 }
 
 export default Npc;
@@ -140,6 +147,7 @@ export const NPCS: Npc[] = [
   Npc.Channeler,
   Npc.Kurt,
   Npc.Geologist,
+  Npc.DojoMaster,
 ];
 
 /** The people who keep a crate to buy from, and take what a player sells */
@@ -197,6 +205,12 @@ const NPC_CHARSETS: Record<Npc, string[]> = {
     'characters/lgpe/hiker',
     'characters/dppt/hiker',
     'characters/b2w2/hiker',
+  ],
+  [Npc.DojoMaster]: [
+    'characters/lgpe/black-belt',
+    'characters/hgss/black-belt',
+    'characters/dppt/black-belt',
+    'characters/b2w2/black-belt',
   ],
 };
 
@@ -322,6 +336,7 @@ export const NPC_NAMES: Record<Npc, string> = {
   [Npc.Channeler]: 'Channeler',
   [Npc.Kurt]: 'Kurt',
   [Npc.Geologist]: 'Geologist',
+  [Npc.DojoMaster]: 'Dojo Master',
 };
 
 /**
@@ -418,6 +433,9 @@ export function getTutorableMoves(species: Species, known: Iterable<Moves>): Mov
  * walking rather than a purse
  */
 export const CHANNELER_FEE = Items.HeartScale;
+
+/** What the Dojo Master charges for one more move slot: the same scale */
+export const DOJO_MASTER_FEE = Items.HeartScale;
 
 /**
  * What she can still draw out of the pokemon: everything it could ever

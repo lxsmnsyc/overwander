@@ -27288,15 +27288,15 @@
       }
     },
     "public/sprites/ui/items/key/image.png": {
-      "digest": "833da88340c6b952",
-      "bytes": 55549,
-      "width": 378,
-      "height": 286,
+      "digest": "7eb1c7b66b32c8db",
+      "bytes": 55637,
+      "width": 299,
+      "height": 364,
       "compact": {
-        "at": "2026-09-18T14:10:04Z",
+        "at": "2026-09-27T15:01:29Z",
         "as": "already compact",
-        "was": 55549,
-        "bytes": 55549
+        "was": 55637,
+        "bytes": 55637
       }
     },
     "public/sprites/ui/items/medicine/image.png": {

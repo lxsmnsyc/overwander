@@ -15,6 +15,7 @@ import useHealingItem from '../../auth/healing';
 import { healedByItem } from '../../auth/health';
 import usePurifyingGem from '../../auth/purify';
 import { useAbilityCapsule } from '../../auth/ability-items';
+import useSkillBook from '../../auth/skill-book';
 import useUtilityBelt from '../../auth/utility-belt';
 import playEffect, { Effect } from '../app/sound';
 import { feedEffortBerry, useEffortItem } from '../../auth/training';
@@ -37,6 +38,7 @@ import { capAsksForStat, isBottleCap, isPerfectIVs } from '../../data/items/bott
 import { getMintNature, isMint } from '../../data/items/mints';
 import { isHerbal } from '../../data/items/medicine';
 import { isPurifyingGem } from '../../data/items/purifying-gem';
+import { SKILL_BOOK_SLOT, isSkillBook } from '../../data/items/skill-book';
 import { UTILITY_BELT_SLOT, isUtilityBelt } from '../../data/items/utility-belt';
 import { MAX_VITAMIN_STATS, VITAMIN_STATS, isPPItem, isVitamin } from '../../data/items/vitamins';
 import { MAX_WING_STATS, WING_STATS, isWing } from '../../data/items/wings';
@@ -100,6 +102,9 @@ export function isUsableOn(item: Items, caught: CaughtPokemon): boolean {
   // A belt is offered only where there is room to add: the record's
   // own count rather than the game's default, since a pokemon that has
   // worn one already has more
+  if (isSkillBook(item)) {
+    return getCatchSlots(caught, SKILL_BOOK_SLOT) < mostSlots(SKILL_BOOK_SLOT);
+  }
   if (isUtilityBelt(item)) {
     return getCatchSlots(caught, UTILITY_BELT_SLOT) < MAX_SLOTS;
   }
@@ -395,6 +400,16 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     }
     playEffect(Effect.ItemSlot);
     return { said: `Room for ${slots} held items now.`, tone: 'neutral', level: null };
+  }
+
+  if (isSkillBook(item)) {
+    const slots = await useSkillBook(catchId);
+
+    if (slots == null) {
+      return refused(item);
+    }
+    playEffect(Effect.ItemSlot);
+    return { said: `Room for ${slots} moves now.`, tone: 'neutral', level: null };
   }
 
   if (isAbilityCapsule(item)) {

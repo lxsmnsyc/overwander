@@ -134,6 +134,7 @@ import {
   polishIVs,
 } from '../../src/data/items/bottle-caps';
 import { MINT_NATURES, describeMint, getMintNature, isMint } from '../../src/data/items/mints';
+import { SKILL_BOOK_SLOT, isSkillBook } from '../../src/data/items/skill-book';
 import { UTILITY_BELT_SLOT, isUtilityBelt } from '../../src/data/items/utility-belt';
 import {
   ABILITY_CAPSULE_SLOT,
@@ -791,6 +792,20 @@ describe('item data', () => {
       limits: packSlots(2, 2, 2),
       teamSize: 3,
     });
+  });
+
+  it('buries the Skill Book beside the belt, for moves', () => {
+    const data = getItemData(Items.SkillBook);
+    const prized = new Set(ITEM_POOL.prized.map((entry) => entry.item));
+
+    expect(data.type).toBe(ItemTypes.Training);
+    expect(data.flags & ItemFlags.Usable).not.toBe(0);
+    expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+    expect(data.flags & ItemFlags.Marketable).toBe(0);
+    expect(isSkillBook(Items.SkillBook)).toBe(true);
+    expect(SKILL_BOOK_SLOT).toBe(Slots.Move);
+    expect(prized.has(Items.SkillBook)).toBe(true);
+    expect(isPreciousItem(Items.SkillBook)).toBe(true);
   });
 
   it('buries the Utility Belt with the things that change a pokemon', () => {

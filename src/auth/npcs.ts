@@ -36,6 +36,7 @@ import {
   remindMove as remindOnServerSide,
   reviveFossil as reviveOnServerSide,
   sellToVendor as sellOnServerSide,
+  trainMoveSlot as trainSlotOnServerSide,
   tutorMove as tutorOnServerSide,
   visitNurse as visitNurseOnServerSide,
 } from '../server/npcs';
@@ -756,3 +757,47 @@ async function hasVisitedOnServer(token: string, marker: string): Promise<boolea
   return readVisited(await requireReader(token), marker);
 }
 readOnly(hasVisitedOnServer);
+
+/**
+ * Have the Dojo Master make room for one more move on one of the
+ * player's catches, for a Heart Scale. Resolves the move slots it now
+ * has, or null when he refuses
+ */
+export async function trainMoveSlot(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  catchId: string,
+): Promise<number | null> {
+  return trainSlotOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    catchId,
+    snapshot.offset,
+  );
+}
+
+async function trainSlotOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  catchId: string,
+  offset: number,
+): Promise<number | null> {
+  'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(ID, catchId);
+  check(OFFSET, offset);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
+
+  return countVisit(
+    uid,
+    Npc.DojoMaster,
+    await trainSlotOnServerSide(uid, x, y, cell, catchId, await syncServerClock(), offset),
+  );
+}

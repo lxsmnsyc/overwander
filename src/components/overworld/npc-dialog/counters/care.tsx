@@ -290,3 +290,45 @@ export function ChannelerCounter(props: ChannelerCounterProps): JSX.Element {
     </DialogSection>
   );
 }
+
+export interface DojoCounterProps {
+  options: CatchOption[];
+  /** How many Heart Scales the player is carrying */
+  scales: number;
+  fee: Items;
+  busy: boolean;
+  onTrain: (catchId: string) => void;
+}
+
+export function DojoCounter(props: DojoCounterProps): JSX.Element {
+  return (
+    <DialogSection class={CENTRED}>
+      <FeeLine fee={props.fee} scales={props.scales} />
+      {/* One press, one move slot. A pokemon already holding as many
+          moves as any can is filtered out rather than shown and refused */}
+      <CatchPicker
+        inline
+        disabled={props.busy || props.scales < 1}
+        options={props.options}
+        value={null}
+        verb="Train"
+        empty="You have nothing he can train further."
+        filter={(option) =>
+          !isEgg(option.caught) &&
+          !option.fighting &&
+          getCatchSlots(option.caught, Slots.Move) < mostSlots(Slots.Move)
+        }
+        note={(option) =>
+          `${getCatchSlots(option.caught, Slots.Move)} → ${getCatchSlots(option.caught, Slots.Move) + 1} moves`
+        }
+        onPick={(id) => {
+          if (id != null) {
+            props.onTrain(id);
+          }
+        }}
+      />
+      <Status message={props.scales < 1 ? 'He wants a Heart Scale, and you have none.' : null} />
+      <Meta class="block">One Heart Scale a move slot, as often as you have them.</Meta>
+    </DialogSection>
+  );
+}

@@ -10,7 +10,7 @@ export { countVisit } from './visits';
 export { default as breedCatches } from './breeder';
 export { boostEgg, visitNurse } from './nurse';
 export { default as groomCatch } from './groomer';
-export { channelAbility, remindMove, tutorMove } from './moves';
+export { channelAbility, remindMove, trainMoveSlot, tutorMove } from './moves';
 export type { TradeResult } from './moves';
 export { buyFromVendor, sellToVendor } from './vendor';
 export { buyFossil, carveApricorns, reviveFossil } from './fossils';

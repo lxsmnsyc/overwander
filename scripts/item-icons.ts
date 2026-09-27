@@ -669,6 +669,27 @@ function rainbow(colour: string, x: number, y: number, width: number, height: nu
   return hslToHex(band * 55, 0.85, Math.min(0.88, Math.max(0.3, lightness)));
 }
 
+/** The Skill Book: the rule book with its cover turned from rose to a deep blue */
+const SKILL_BOOK: Tint = {
+  from: 'key/rule-book',
+  to: 'key/skill-book',
+  why: 'the rule book is a key item of its own, and the Skill Book needs its own cover',
+  swaps: {
+    '#202020': '#202020',
+    '#ffffff': '#ffffff',
+    '#e6dec5': '#e6dec5',
+    '#a49c83': '#a49c83',
+    '#acacac': '#acacac',
+    '#737373': '#737373',
+    '#cda4bd': '#a4bdee',
+    '#bd83a4': '#8ba4e6',
+    '#ac738b': '#6a83cd',
+    '#73415a': '#31417b',
+  },
+};
+
+TINTS.push(SKILL_BOOK);
+
 const MAX_TINTS: Tint[] = [
   maxVitamin('hp-up', ['#5abd5a', '#a4f6a4', '#418b41'], ['#94cdff', '#6aa4ee']),
   maxVitamin('protein', ['#c56262', '#f6a4a4', '#8b4141'], ['#f6a400']),

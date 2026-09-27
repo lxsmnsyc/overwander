@@ -49,6 +49,7 @@ const FAMILY_TEACHABLE = [
   Moves.StealthRock,
   Moves.Round,
   Moves.Bulldoze,
+  Moves.Confide,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Oblivious, Abilities.SnowCloak];
@@ -105,6 +106,7 @@ export default function registerSwinubSpecies(): void {
         Moves.IcicleSpear,
         Moves.MudShot,
         Moves.IcicleCrash,
+        Moves.FreezeDry,
       ],
     },
   });

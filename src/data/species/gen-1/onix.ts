@@ -111,8 +111,9 @@ export default function registerOnixSpecies(): void {
         Moves.Round,
         Moves.Bulldoze,
         Moves.DragonTail,
+        Moves.Confide,
       ],
-      egg: [Moves.RockSlide, Moves.Flail, Moves.Block, Moves.HeavySlam],
+      egg: [Moves.RockSlide, Moves.Flail, Moves.Block, Moves.HeavySlam, Moves.Rototiller],
     },
   });
 }

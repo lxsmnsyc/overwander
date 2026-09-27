@@ -73,6 +73,7 @@ const FAMILY_TEACHABLE = [
   Moves.Torment,
   Moves.Toxic,
   Moves.Uproar,
+  Moves.Confide,
 ];
 
 // What the whole line does once it is big enough to do it
@@ -209,6 +210,7 @@ export default function registerSandileSpecies(): void {
         Moves.Revenge,
         Moves.RockSmash,
         Moves.Strength,
+        Moves.PowerUpPunch,
       ],
     },
   });
@@ -273,6 +275,7 @@ export default function registerSandileSpecies(): void {
         Moves.SmackDown,
         Moves.Strength,
         Moves.Superpower,
+        Moves.PowerUpPunch,
       ],
     },
   });

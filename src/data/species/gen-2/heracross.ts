@@ -104,6 +104,7 @@ export default function registerHeracrossSpecies(): void {
         Moves.StruggleBug,
         Moves.Bulldoze,
         Moves.WorkUp,
+        Moves.Confide,
       ],
       egg: [Moves.Bide, Moves.Flail, Moves.Harden, Moves.FalseSwipe],
     },

@@ -107,6 +107,7 @@ export default function registerCombeeSpecies(): void {
         37: [Moves.AttackOrder],
         39: [Moves.Swagger],
         43: [Moves.DestinyBond],
+        57: [Moves.FellStinger],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -143,6 +144,8 @@ export default function registerCombeeSpecies(): void {
         Moves.Toxic,
         Moves.UTurn,
         Moves.XScissor,
+        Moves.Confide,
+        Moves.Infestation,
       ],
     },
   });

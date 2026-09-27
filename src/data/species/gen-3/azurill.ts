@@ -85,6 +85,7 @@ export default function registerAzurillSpecies(): void {
         Moves.Round,
         Moves.Scald,
         Moves.WorkUp,
+        Moves.Confide,
       ],
       // The whole line's inheritance, since the egg is laid as an
       // Azurill: what a Marill used to carry is carried here

@@ -22,9 +22,18 @@ export const ABSORB_MOVES = new Set<Moves>([
   Moves.GigaDrain,
   Moves.DrainPunch,
   Moves.HornLeech,
+  Moves.ParabolicCharge,
+  Moves.DrainingKiss,
+  Moves.OblivionWing,
 ]);
 
 const HEALING_FACTOR = 0.5;
+
+/** The drains that take back more than half of what they deal */
+const DRAIN_SHARES: { [key in Moves]?: number } = {
+  [Moves.DrainingKiss]: 0.75,
+  [Moves.OblivionWing]: 0.75,
+};
 
 /**
  * The share of its health below which a unit values the drain as well
@@ -81,7 +90,10 @@ export default function setupAbsorb(battle: Battle): void {
       event.cause.type === EffectType.Move &&
       ABSORB_MOVES.has(event.cause.move)
     ) {
-      const amount = event.source.checkDrain(event.target, event.value * HEALING_FACTOR);
+      const amount = event.source.checkDrain(
+        event.target,
+        event.value * (DRAIN_SHARES[event.cause.move] ?? HEALING_FACTOR),
+      );
 
       if (amount >= 0) {
         event.source.heal(event.cause, event.source, amount, 0);

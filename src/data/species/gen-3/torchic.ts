@@ -56,6 +56,7 @@ const FAMILY_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.Incinerate,
   Moves.FirePledge,
+  Moves.Confide,
 ];
 
 // What the two above the base pick up: the machines and tutors that
@@ -71,6 +72,7 @@ const GROWN_TEACHABLE = [
   Moves.LowSweep,
   Moves.WorkUp,
   Moves.DualChop,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerTorchicSpecies(): void {

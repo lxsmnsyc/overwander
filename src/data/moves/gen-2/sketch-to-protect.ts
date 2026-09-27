@@ -45,7 +45,8 @@ export default function registerSketchToProtect(): void {
   });
   registerMove(Moves.SpiderWeb, {
     name: 'Spider Web',
-    description: 'The target cannot be swapped out for 10 seconds. It takes no damage from it.',
+    description:
+      'The target cannot be swapped out for 10 seconds, ghosts aside. It takes no damage from it.',
     type: Types.Bug,
     category: MoveCategories.Status,
     pp: 10,

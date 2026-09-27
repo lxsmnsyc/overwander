@@ -53,6 +53,7 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.Scald,
   Moves.Incinerate,
+  Moves.Confide,
 ];
 
 // The three beams all land together, at the same level up the line

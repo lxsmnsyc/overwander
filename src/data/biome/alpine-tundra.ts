@@ -9,6 +9,7 @@ export default function registerAlpineTundraSpawns(): void {
   registerSpawnPool(Biome.AlpineTundra, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Machop, weight: 20 },
         { species: Species.Swinub, weight: 25 },
       ],
@@ -18,6 +19,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Snover, weight: 20 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Machoke, weight: 5 },
         { species: Species.Piloswine, weight: 5 },
       ],
@@ -29,6 +31,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Machamp, weight: 5 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Skarmory, weight: 5 },
@@ -44,6 +47,7 @@ export default function registerAlpineTundraSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Bagon, weight: 3 },
         { species: Species.Machop, weight: 20 },
         { species: Species.Swinub, weight: 25 },
@@ -54,6 +58,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Snover, weight: 20 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Shelgon, weight: 1 },
         { species: Species.Machoke, weight: 5 },
         { species: Species.Piloswine, weight: 5 },
@@ -66,6 +71,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Salamence, weight: 2 },
         { species: Species.Machamp, weight: 5 },
         { species: Species.Delibird, weight: 5 },

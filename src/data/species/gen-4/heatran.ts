@@ -105,6 +105,7 @@ export default function registerHeatranSpecies(): void {
         Moves.Toxic,
         Moves.Uproar,
         Moves.WillOWisp,
+        Moves.Confide,
       ],
     },
   });

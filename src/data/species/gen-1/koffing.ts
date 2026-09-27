@@ -52,6 +52,8 @@ const FAMILY_TEACHABLE = [
   Moves.Venoshock,
   Moves.Round,
   Moves.Incinerate,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Levitate, Abilities.NeutralizingGas];
@@ -96,6 +98,7 @@ export default function registerKoffingSpecies(): void {
         25: [Moves.SmokeScreen],
         33: [Moves.Haze, Moves.GyroBall],
         41: [Moves.Explosion],
+        42: [Moves.Belch],
         45: [Moves.DestinyBond],
         49: [Moves.Memento],
       },
@@ -142,7 +145,7 @@ export default function registerKoffingSpecies(): void {
         25: [Moves.SmokeScreen],
         33: [Moves.Haze, Moves.DoubleHit],
         44: [Moves.Explosion],
-        51: [Moves.DestinyBond],
+        51: [Moves.DestinyBond, Moves.Belch],
         58: [Moves.Memento],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.GyroBall],

@@ -150,7 +150,8 @@ export default function registerOdorSleuthToHowl(): void {
   });
   registerMove(Moves.SandTomb, {
     name: 'Sand Tomb',
-    description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape.',
+    description:
+      'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside.',
     type: Types.Ground,
     category: MoveCategories.Physical,
     power: 35,
@@ -233,7 +234,7 @@ export default function registerOdorSleuthToHowl(): void {
   });
   registerMove(Moves.Block, {
     name: 'Block',
-    description: 'The target cannot be swapped out for 10 seconds.',
+    description: 'The target cannot be swapped out for 10 seconds, ghosts aside.',
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 5,

@@ -62,6 +62,8 @@ const FAMILY_TEACHABLE = [
   Moves.WillOWisp,
   Moves.WonderRoom,
   Moves.ZenHeadbutt,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 // What it does whether it is carrying the mask or wearing the coffin

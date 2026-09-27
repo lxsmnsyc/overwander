@@ -61,7 +61,7 @@ export default function registerCryogonalSpecies(): void {
         29: [Moves.LightScreen],
         33: [Moves.Reflect],
         44: [Moves.Recover],
-        50: [Moves.SolarBeam],
+        50: [Moves.SolarBeam, Moves.FreezeDry],
       },
       teachable: [
         Moves.Acrobatics,
@@ -105,6 +105,7 @@ export default function registerCryogonalSpecies(): void {
         Moves.TakeDown,
         Moves.Toxic,
         Moves.WaterPulse,
+        Moves.Confide,
       ],
       egg: [Moves.Explosion, Moves.FrostBreath],
     },

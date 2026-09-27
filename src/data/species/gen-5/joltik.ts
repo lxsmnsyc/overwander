@@ -58,6 +58,8 @@ const FAMILY_TEACHABLE = [
   Moves.VoltSwitch,
   Moves.WildCharge,
   Moves.XScissor,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 // What the spider works out how to do at whichever size
@@ -170,6 +172,7 @@ export default function registerJoltikSpecies(): void {
         ...FAMILY_LEVEL,
         39: [Moves.Discharge],
         56: [Moves.BugBuzz],
+        65: [Moves.StickyWeb],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Charge, Moves.GigaImpact, Moves.HyperBeam],
     },

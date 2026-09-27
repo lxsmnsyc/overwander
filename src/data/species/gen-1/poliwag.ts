@@ -55,6 +55,7 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.Round,
   Moves.Scald,
+  Moves.Confide,
 ];
 
 // The evolved forms grow arms: fighting-style TMs and HM Strength
@@ -72,6 +73,7 @@ const EVOLVED_TEACHABLE = [
   Moves.Detect,
   Moves.RockSmash,
   Moves.Bulldoze,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerPoliwagSpecies(): void {

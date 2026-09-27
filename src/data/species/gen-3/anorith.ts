@@ -50,6 +50,7 @@ const FAMILY_TEACHABLE = [
   Moves.SmackDown,
   Moves.Round,
   Moves.StruggleBug,
+  Moves.Confide,
 ];
 
 export default function registerAnorithSpecies(): void {

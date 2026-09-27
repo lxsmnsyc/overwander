@@ -57,6 +57,8 @@ const FAMILY_TEACHABLE = [
   Moves.WonderRoom,
   Moves.WorrySeed,
   Moves.ZenHeadbutt,
+  Moves.Confide,
+  Moves.DazzlingGleam,
 ];
 
 /**

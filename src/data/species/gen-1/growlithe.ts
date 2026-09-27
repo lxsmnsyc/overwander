@@ -58,6 +58,7 @@ const FAMILY_TEACHABLE = [
   Moves.Retaliate,
   Moves.WildCharge,
   Moves.Snarl,
+  Moves.Confide,
 ];
 
 export default function registerGrowlitheSpecies(): void {

@@ -17,6 +17,7 @@ import {
   isWeatherSandstorm,
   isWeatherSunny,
   onUnitActs,
+  slipsTraps,
 } from '../../utils';
 import {
   ABSORB_HEAL_FRACTION,
@@ -198,7 +199,7 @@ const parasToTentacool = [
         // Away escapes regardless: the explicit check (instead of a
         // Post override) keeps the trap cue from firing spuriously
         !source.checkGrounded() ||
-        source.types.has(Types.Ghost) ||
+        slipsTraps(source) ||
         source.hasAbility(Abilities.RunAway)
       ) {
         return;

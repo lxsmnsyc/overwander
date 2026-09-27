@@ -13,6 +13,7 @@ import {
   getConsumedItem,
   getSpeciesData,
   getSpentHeldItem,
+  getWingPattern,
   meetsEvolutionCriteria,
 } from '../data/species';
 import { Metric } from '../auth/quest-record';
@@ -153,17 +154,21 @@ export default async function evolveCatch(
     // of health it had is what it keeps, so a Charmander at half
     // stays a Charmeleon at half
     const record = asCaughtPokemon(caught);
+    // The wings a butterfly comes out with are the country it was met
+    // in, read off its own record rather than off wherever its owner
+    // happens to be standing now
+    const grown = getWingPattern(into, record.origin.biome);
 
     sparkles = record.shiny;
 
-    const whole = getMaxHealth({ ...record, species: into });
+    const whole = getMaxHealth({ ...record, species: grown });
     // The swap would have eaten it, so the cord standing in for the
     // swap does: a Seadra that pulled the cord arrives without its
     // Dragon Scale, the way a traded one does
     const worn = getSpentHeldItem(evolution, context.canEvolve);
 
     await updateCaughtIn(transaction, catchId, {
-      species: into,
+      species: grown,
       ...(worn == null ? {} : { items: withoutHeld(record.items, worn) }),
       // Spent by the evolution it opened, and cleared by any other
       // change of shape: a handover earned by one species is never
@@ -172,7 +177,7 @@ export default async function evolveCatch(
       // No Gen 1 line evolves into a legendary, so this changes
       // nothing today. It is written anyway because the day a line
       // does, a silent wrong answer here would be very hard to see
-      auctionable: isAuctionableCatch({ ...record, species: into }),
+      auctionable: isAuctionableCatch({ ...record, species: grown }),
       health: rescaleHealth(record.health, getMaxHealth(record), whole),
       maxHealth: whole,
     });
@@ -234,7 +239,7 @@ export default async function evolveCatch(
       );
       husks.push(entry.species);
     }
-    return into;
+    return grown;
   });
 
   // oxlint-disable-next-line typescript/no-unnecessary-condition

@@ -51,6 +51,7 @@ const FAMILY_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.Incinerate,
   Moves.Bulldoze,
+  Moves.Confide,
 ];
 
 export default function registerNumelSpecies(): void {

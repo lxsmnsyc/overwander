@@ -60,6 +60,8 @@ const GOLEM_TEACHABLE = [
   Moves.DefenseCurl,
   Moves.Round,
   Moves.Bulldoze,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerRegiSpecies(): void {

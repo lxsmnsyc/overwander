@@ -38,6 +38,7 @@ const FAMILY_TEACHABLE = [
   Moves.UTurn,
   Moves.Uproar,
   Moves.WorkUp,
+  Moves.Confide,
 ];
 
 /**

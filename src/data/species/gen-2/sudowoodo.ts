@@ -106,6 +106,8 @@ export default function registerSudowoodoSpecies(): void {
         Moves.AfterYou,
         Moves.Round,
         Moves.Bulldoze,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
     },
   });

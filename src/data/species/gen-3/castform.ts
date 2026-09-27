@@ -118,6 +118,7 @@ export default function registerCastformSpecies(): void {
           Moves.Incinerate,
           Moves.Retaliate,
           Moves.WorkUp,
+          Moves.Confide,
         ],
         egg: [Moves.FutureSight, Moves.LuckyChant, Moves.OminousWind, Moves.ClearSmog, Moves.Hex],
       },

@@ -64,6 +64,7 @@ const FAMILY_TEACHABLE = [
   Moves.Retaliate,
   Moves.WorkUp,
   Moves.WildCharge,
+  Moves.Confide,
 ];
 
 export default function registerRattataSpecies(): void {

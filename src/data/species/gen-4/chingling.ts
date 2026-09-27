@@ -101,6 +101,8 @@ export default function registerChinglingSpecies(): void {
         Moves.TrickRoom,
         Moves.Uproar,
         Moves.ZenHeadbutt,
+        Moves.Confide,
+        Moves.DazzlingGleam,
       ],
       egg: [
         Moves.Curse,

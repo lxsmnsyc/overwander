@@ -46,6 +46,7 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.Scald,
   Moves.Bulldoze,
+  Moves.Confide,
 ];
 
 export default function registerBarboachSpecies(): void {

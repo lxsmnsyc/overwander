@@ -44,6 +44,8 @@ const FAMILY_TEACHABLE = [
   Moves.AfterYou,
   Moves.Round,
   Moves.Incinerate,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 const FAMILY_ABILITIES = [Abilities.MagmaArmor, Abilities.FlameBody];

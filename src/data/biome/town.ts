@@ -39,8 +39,9 @@ const DAY: SpawnRarityGroups = {
     { species: Species.Kecleon, weight: 8 },
     { species: Species.Magnezone, weight: 4 },
   ],
-  prized: [],
+  prized: [{ species: Species.VivillonFancy, weight: 2 }],
   special: [],
+  mythical: [{ species: Species.VivillonPokeBall, weight: 1 }],
 };
 
 const EVENING: SpawnRarityGroups = {
@@ -67,8 +68,9 @@ const EVENING: SpawnRarityGroups = {
     { species: Species.Rotom, weight: 8 },
     { species: Species.Magnezone, weight: 4 },
   ],
-  prized: [],
+  prized: [{ species: Species.VivillonFancy, weight: 2 }],
   special: [],
+  mythical: [{ species: Species.VivillonPokeBall, weight: 1 }],
 };
 
 const NIGHT: SpawnRarityGroups = {
@@ -87,8 +89,9 @@ const NIGHT: SpawnRarityGroups = {
     { species: Species.Weezing, weight: 8 },
   ],
   elusive: EVENING.elusive,
-  prized: [],
+  prized: [{ species: Species.VivillonFancy, weight: 2 }],
   special: [],
+  mythical: [{ species: Species.VivillonPokeBall, weight: 1 }],
 };
 
 export default function registerTownSpawns(): void {

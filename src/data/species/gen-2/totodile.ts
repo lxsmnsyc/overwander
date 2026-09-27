@@ -62,6 +62,8 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.Scald,
   Moves.WaterPledge,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 // What the two above the base pick up: the machines that ask for a

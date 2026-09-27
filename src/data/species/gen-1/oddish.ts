@@ -51,6 +51,9 @@ const FAMILY_TEACHABLE = [
   Moves.Venoshock,
   Moves.AfterYou,
   Moves.Round,
+  Moves.Confide,
+  Moves.DazzlingGleam,
+  Moves.Infestation,
 ];
 
 export default function registerOddishSpecies(): void {
@@ -96,7 +99,9 @@ export default function registerOddishSpecies(): void {
         29: [Moves.NaturalGift],
         32: [Moves.Moonlight],
         33: [Moves.PetalDance],
+        43: [Moves.Moonblast],
         46: [Moves.SolarBeam],
+        47: [Moves.GrassyTerrain],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -155,7 +160,9 @@ export default function registerOddishSpecies(): void {
         29: [Moves.LuckyChant],
         35: [Moves.Moonlight, Moves.NaturalGift],
         38: [Moves.PetalDance],
+        49: [Moves.PetalBlizzard],
         52: [Moves.SolarBeam],
+        54: [Moves.GrassyTerrain],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.DrainPunch, Moves.Fling],
     },
@@ -195,6 +202,7 @@ export default function registerOddishSpecies(): void {
           Moves.SweetScent,
           Moves.Aromatherapy,
         ],
+        49: [Moves.PetalBlizzard],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

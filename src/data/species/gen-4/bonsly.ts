@@ -94,6 +94,7 @@ export default function registerBonslySpecies(): void {
         Moves.Thief,
         Moves.Toxic,
         Moves.Uproar,
+        Moves.Confide,
       ],
       egg: [
         Moves.DefenseCurl,

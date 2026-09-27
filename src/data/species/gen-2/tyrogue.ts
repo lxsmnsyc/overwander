@@ -51,6 +51,7 @@ const FAMILY_TEACHABLE = [
   Moves.Retaliate,
   Moves.Bulldoze,
   Moves.WorkUp,
+  Moves.Confide,
 ];
 
 // Which of the three it becomes, decided the way the games decide it

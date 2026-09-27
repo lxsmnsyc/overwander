@@ -97,6 +97,9 @@ export default function registerJirachiSpecies(): void {
         Moves.Telekinesis,
         Moves.MagicRoom,
         Moves.Round,
+        Moves.Confide,
+        Moves.DazzlingGleam,
+        Moves.PowerUpPunch,
       ],
     },
   });

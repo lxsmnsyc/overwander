@@ -22,7 +22,7 @@ import {
 } from '../../events';
 import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { isPrimalWeather, onUnitActs } from '../../utils';
+import { isPrimalWeather, onUnitActs, slipsTraps } from '../../utils';
 import { createAbility, getAbilityHolders } from '../__create';
 
 /**
@@ -1339,7 +1339,7 @@ export function createFossilPairAbility(
         }
       }),
       battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
-        if (event.success && held.has(event.source)) {
+        if (event.success && held.has(event.source) && !slipsTraps(event.source)) {
           event.success = false;
         }
       }),
@@ -1767,4 +1767,63 @@ export function createGenieAbility(
       }
     }),
   );
+}
+
+/** What each Kalos starter's bond is worth to the team standing with it */
+export const BOND_SHELTER_SCALE = 0.85;
+export const BOND_KINDLE_SCALE = 1.15;
+export const BOND_SHADE_SCALE = 0.85;
+
+/** Which of the three bonds this is */
+export type BondKind = 'shelter' | 'kindle' | 'shade';
+
+/** Whether this unit's own team has a standing holder of the ability */
+function bonded(unit: Unit, ability: Abilities): boolean {
+  for (const mate of unit.team.units) {
+    if (mate.alive && mate.hasAbility(ability)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * What the Kalos starters share: standing there is worth something to
+ * the whole team rather than to itself. Each covers one thing, so a
+ * team fielding all three is sheltered, sharper and quicker at once,
+ * and a second copy of one is worth nothing
+ */
+export function createBondAbility(
+  ability: Abilities,
+  kind: BondKind,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) => {
+    if (kind === 'shade') {
+      const quicken = (event: { source: Unit; duration: number }): void => {
+        if (bonded(event.source, ability)) {
+          event.duration *= BOND_SHADE_SCALE;
+        }
+      };
+
+      return new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitMoveCastTime, EventPriority.Post, quicken),
+        battle.on(BattleEvents.CheckUnitMoveChannelTime, EventPriority.Post, quicken),
+      ]);
+    }
+
+    return battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const parent = event.parent;
+
+      if (kind === 'shelter') {
+        if (parent.category === MoveCategories.Physical && bonded(parent.target, ability)) {
+          event.value *= BOND_SHELTER_SCALE;
+        }
+        return;
+      }
+      if (parent.category === MoveCategories.Special && bonded(parent.source, ability)) {
+        event.value *= BOND_KINDLE_SCALE;
+      }
+    });
+  });
 }

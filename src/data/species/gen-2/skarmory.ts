@@ -99,6 +99,7 @@ export default function registerSkarmorySpecies(): void {
         Moves.XScissor,
         Moves.Round,
         Moves.SkyDrop,
+        Moves.Confide,
       ],
       egg: [
         Moves.DrillPeck,

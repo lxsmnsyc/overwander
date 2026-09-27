@@ -64,6 +64,8 @@ const FAMILY_TEACHABLE = [
   Moves.WonderRoom,
   Moves.Telekinesis,
   Moves.Round,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 export default function registerDuskullSpecies(): void {
@@ -184,6 +186,7 @@ export default function registerDuskullSpecies(): void {
         Moves.FirePunch,
         Moves.GigaImpact,
         Moves.Bulldoze,
+        Moves.PowerUpPunch,
       ],
     },
   });

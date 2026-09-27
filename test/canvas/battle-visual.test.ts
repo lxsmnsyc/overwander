@@ -152,7 +152,7 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Press', Moves.Gravity],
   ['Grid', Moves.TrickRoom],
   // Wind that keeps coming, and water left turning about a pokemon
-  ['Gale', Moves.Aeroblast],
+  ['Gale', Moves.Hurricane],
   ['Gyro', Moves.AquaRing],
   // Blown over it rather than done to it
   ['Petals', Moves.SweetScent],
@@ -285,7 +285,6 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Clear', Moves.Defog],
   // Unova's own
   ['Converge', Moves.Psyshock],
-  ['Converge', Moves.Psystrike],
   ['Resonance', Moves.Synchronoise],
   ['Orbit', Moves.StoredPower],
   ['Gambit', Moves.FinalGambit],
@@ -301,7 +300,6 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Frostfire', Moves.IceBurn],
   ['Glaze', Moves.Glaciate],
   ['Smite', Moves.SacredSword],
-  ['Smite', Moves.SecretSword],
   ['Aria', Moves.RelicSong],
   ['Flutter', Moves.QuiverDance],
   ['Smash', Moves.ShellSmash],
@@ -325,6 +323,29 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Firedance', Moves.FieryDance],
   ['Scorch', Moves.Incinerate],
   ['Spatter', Moves.FlameBurst],
+  // Kalos: the fairy type's own, the terrains, and the signatures
+  ['Sparkle', Moves.DazzlingGleam],
+  ['Terrain', Moves.ElectricTerrain],
+  ['Terrain', Moves.GrassyTerrain],
+  ['Terrain', Moves.MistyTerrain],
+  ['Arrows', Moves.ThousandArrows],
+  ['Groundswell', Moves.ThousandWaves],
+  ['Precipice', Moves.PrecipiceBlades],
+  ['Origin', Moves.OriginPulse],
+  ['Ascent', Moves.DragonAscent],
+  ['Oblivion', Moves.OblivionWing],
+  ['Ruin', Moves.LightOfRuin],
+  ['Geo', Moves.Geomancy],
+  ['Portal', Moves.HyperspaceHole],
+  ['Fury', Moves.HyperspaceFury],
+  ['Diamonds', Moves.DiamondStorm],
+  ['Steam', Moves.SteamEruption],
+  ['Lunar', Moves.Moonblast],
+  ['Scuffle', Moves.PlayRough],
+  ['Shuriken', Moves.WaterShuriken],
+  ['Overload', Moves.Psystrike],
+  ['Jetstream', Moves.Aeroblast],
+  ['Resolute', Moves.SecretSword],
 ];
 
 /**

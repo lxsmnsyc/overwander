@@ -54,6 +54,7 @@ const FAMILY_TEACHABLE = [
   Moves.ThunderWave,
   Moves.Thunderbolt,
   Moves.Toxic,
+  Moves.Confide,
 ];
 
 /**
@@ -148,7 +149,7 @@ export default function registerBidoofSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Growl, Moves.Tackle],
+        1: [Moves.Growl, Moves.Tackle, Moves.Rototiller],
         5: [Moves.Growl],
         9: [Moves.DefenseCurl],
         13: [Moves.Rollout],

@@ -40,9 +40,18 @@ export default function registerAudinoSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Pound, Moves.Growl, Moves.HelpingHand, Moves.HyperVoice, Moves.LastResort],
-        5: [Moves.Refresh],
+        1: [
+          Moves.Pound,
+          Moves.Growl,
+          Moves.HelpingHand,
+          Moves.HyperVoice,
+          Moves.LastResort,
+          Moves.MistyTerrain,
+          Moves.PlayNice,
+        ],
+        5: [Moves.Refresh, Moves.BabyDollEyes],
         10: [Moves.DoubleSlap],
+        13: [Moves.DisarmingVoice],
         15: [Moves.Attract],
         20: [Moves.SecretPower, Moves.ZenHeadbutt],
         25: [Moves.Entrainment],
@@ -132,6 +141,9 @@ export default function registerAudinoSpecies(): void {
         Moves.WildCharge,
         Moves.WorkUp,
         Moves.ZenHeadbutt,
+        Moves.Confide,
+        Moves.DazzlingGleam,
+        Moves.PowerUpPunch,
       ],
       egg: [
         Moves.Amnesia,
@@ -144,6 +156,7 @@ export default function registerAudinoSpecies(): void {
         Moves.SweetKiss,
         Moves.Wish,
         Moves.Yawn,
+        Moves.DrainingKiss,
       ],
     },
   });

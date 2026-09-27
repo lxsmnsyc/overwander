@@ -14,6 +14,7 @@ import {
 import setupTeamMechanics from './team';
 import setupUnitMechanics from './unit';
 import setupWeatherMechanics from './weather';
+import setupTerrainMechanics from './terrain';
 
 export default function setupBaseMechanics(battle: Battle): void {
   setupAbilityMechanics(battle);
@@ -31,4 +32,5 @@ export default function setupBaseMechanics(battle: Battle): void {
   setupTeamMechanics(battle);
   setupUnitMechanics(battle);
   setupWeatherMechanics(battle);
+  setupTerrainMechanics(battle);
 }

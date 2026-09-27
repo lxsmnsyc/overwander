@@ -60,6 +60,8 @@ const FAMILY_TEACHABLE = [
   Moves.TrickRoom,
   Moves.Telekinesis,
   Moves.Round,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll];
@@ -119,6 +121,7 @@ export default function registerExeggcuteSpecies(): void {
         Moves.LeafStorm,
         Moves.LuckyChant,
         Moves.PowerSwap,
+        Moves.GrassyTerrain,
       ],
     },
   });

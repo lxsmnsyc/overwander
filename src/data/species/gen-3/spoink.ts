@@ -55,6 +55,7 @@ const FAMILY_TEACHABLE = [
   Moves.Psyshock,
   Moves.Telekinesis,
   Moves.Round,
+  Moves.Confide,
 ];
 
 export default function registerSpoinkSpecies(): void {
@@ -166,6 +167,7 @@ export default function registerSpoinkSpecies(): void {
         Moves.FocusBlast,
         Moves.GigaImpact,
         Moves.Bulldoze,
+        Moves.PowerUpPunch,
       ],
     },
   });

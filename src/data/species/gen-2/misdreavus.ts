@@ -111,6 +111,8 @@ export default function registerMisdreavusSpecies(): void {
         Moves.FoulPlay,
         Moves.Round,
         Moves.EchoedVoice,
+        Moves.Confide,
+        Moves.DazzlingGleam,
       ],
       egg: [
         Moves.DestinyBond,

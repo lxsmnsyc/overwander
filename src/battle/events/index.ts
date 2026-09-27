@@ -23,6 +23,13 @@ export type {
   WeatherEvent,
 } from './weather';
 export type {
+  CheckUnitTerrainDurationEvent,
+  TeamTerrainEvent,
+  TerrainEvent,
+  UnitSetTerrainEvent,
+  UnitTerrainEvent,
+} from './terrain';
+export type {
   AllianceEvent,
   AllianceTeamEvent,
   CheckTeamStatusDurationEvent,

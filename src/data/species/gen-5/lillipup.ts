@@ -37,6 +37,7 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.WildCharge,
   Moves.WorkUp,
+  Moves.Confide,
 ];
 
 /**
@@ -80,6 +81,7 @@ export default function registerLillipupSpecies(): void {
         1: [Moves.Tackle, Moves.Leer],
         5: [Moves.OdorSleuth],
         8: [Moves.Bite],
+        10: [Moves.BabyDollEyes],
         12: [Moves.HelpingHand],
         15: [Moves.TakeDown],
         19: [Moves.WorkUp],
@@ -89,6 +91,7 @@ export default function registerLillipupSpecies(): void {
         33: [Moves.Reversal],
         36: [Moves.LastResort],
         40: [Moves.GigaImpact],
+        45: [Moves.PlayRough],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -156,6 +159,7 @@ export default function registerLillipupSpecies(): void {
         38: [Moves.Reversal],
         42: [Moves.LastResort],
         47: [Moves.GigaImpact],
+        52: [Moves.PlayRough],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Payback, Moves.Strength, Moves.Surf],
     },
@@ -211,6 +215,7 @@ export default function registerLillipupSpecies(): void {
         42: [Moves.Reversal],
         51: [Moves.LastResort],
         59: [Moves.GigaImpact],
+        63: [Moves.PlayRough],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

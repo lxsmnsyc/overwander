@@ -107,6 +107,8 @@ export default function registerPolitoedSpecies(): void {
         Moves.EchoedVoice,
         Moves.Scald,
         Moves.Bulldoze,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
     },
   });

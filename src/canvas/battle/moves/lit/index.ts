@@ -2,6 +2,7 @@ import type { EffectShape } from '../effect/shapes';
 import care from './care';
 import contact from './contact';
 import elements from './elements';
+import kalos from './kalos';
 import legends from './legends';
 import minds from './minds';
 import ohko from './ohko';
@@ -21,4 +22,5 @@ export const LIT: Partial<Record<EffectShape, LitShapePainter>> = {
   ...ohko,
   ...stats,
   ...unova,
+  ...kalos,
 };

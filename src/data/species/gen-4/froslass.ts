@@ -45,6 +45,7 @@ export default function registerFroslassSpecies(): void {
         13: [Moves.IcyWind],
         19: [Moves.ConfuseRay],
         22: [Moves.OminousWind],
+        23: [Moves.DrainingKiss],
         28: [Moves.WakeUpSlap],
         31: [Moves.Captivate],
         37: [Moves.IceShard],
@@ -104,6 +105,7 @@ export default function registerFroslassSpecies(): void {
         Moves.Toxic,
         Moves.Trick,
         Moves.WaterPulse,
+        Moves.Confide,
       ],
     },
   });

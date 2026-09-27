@@ -794,9 +794,50 @@ export const enum Species {
   Keldeo = 647,
   Meloetta = 648,
   Genesect = 649,
+
+  // Kalos
+  Chespin = 650,
+  Quilladin = 651,
+  Chesnaught = 652,
+  Fennekin = 653,
+  Braixen = 654,
+  Delphox = 655,
+  Froakie = 656,
+  Frogadier = 657,
+  Greninja = 658,
+  Bunnelby = 659,
+  Diggersby = 660,
+  Fletchling = 661,
+  Fletchinder = 662,
+  Talonflame = 663,
+  Scatterbug = 664,
+  Spewpa = 665,
+  Vivillon = 666,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
+
+  /** The wings a butterfly comes out with, one per country it grew up in */
+  VivillonIcySnow = 1066601,
+  VivillonPolar = 1066602,
+  VivillonTundra = 1066603,
+  VivillonContinental = 1066604,
+  VivillonGarden = 1066605,
+  VivillonElegant = 1066606,
+  VivillonModern = 1066607,
+  VivillonMarine = 1066608,
+  VivillonArchipelago = 1066609,
+  VivillonHighPlains = 1066610,
+  VivillonSandstorm = 1066611,
+  VivillonRiver = 1066612,
+  VivillonMonsoon = 1066613,
+  VivillonSavannah = 1066614,
+  VivillonSun = 1066615,
+  VivillonOcean = 1066616,
+  VivillonJungle = 1066617,
+  /** The two nobody's country grows: they are met in a town or not at all */
+  VivillonFancy = 1066618,
+  VivillonPokeBall = 1066619,
 
   /** The shapes the creation trio take in the world behind this one */
   DialgaOrigin = 1048301,
@@ -895,6 +936,16 @@ export const enum Species {
   /** The two Hisui draws differently, of the lines Unova started */
   SamurottHisui = 1050301,
   LilligantHisui = 1054901,
+
+  /**
+   * The true shadows: a pokemon that is a shadow by what it is rather
+   * than by what was done to it. The form index is the collection's
+   * own Shadow slot, so the art imports under it
+   */
+  ArticunoShadow = 1014404,
+  ZapdosShadow = 1014504,
+  MoltresShadow = 1014604,
+  MewtwoShadow = 1015003,
 }
 
 /**
@@ -1021,6 +1072,30 @@ export const THUNDURUS_FORMS = [Species.Thundurus, Species.ThundurusTherian];
 export const LANDORUS_FORMS = [Species.Landorus, Species.LandorusTherian];
 
 /** Each deer's four coats, spring first, in the order the year turns */
+/** Vivillon and the seventeen countries' wings it comes out with */
+export const VIVILLON_FORMS: Species[] = [
+  Species.Vivillon,
+  Species.VivillonIcySnow,
+  Species.VivillonPolar,
+  Species.VivillonTundra,
+  Species.VivillonContinental,
+  Species.VivillonGarden,
+  Species.VivillonElegant,
+  Species.VivillonModern,
+  Species.VivillonMarine,
+  Species.VivillonArchipelago,
+  Species.VivillonHighPlains,
+  Species.VivillonSandstorm,
+  Species.VivillonRiver,
+  Species.VivillonMonsoon,
+  Species.VivillonSavannah,
+  Species.VivillonSun,
+  Species.VivillonOcean,
+  Species.VivillonJungle,
+  Species.VivillonFancy,
+  Species.VivillonPokeBall,
+];
+
 export const DEERLING_FORMS = [
   Species.Deerling,
   Species.DeerlingSummer,

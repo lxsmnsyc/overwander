@@ -141,8 +141,17 @@ export default function registerLickitungSpecies(): void {
         Moves.Bulldoze,
         Moves.DragonTail,
         Moves.WorkUp,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
-      egg: [Moves.BodySlam, Moves.BellyDrum, Moves.Magnitude, Moves.SmellingSalts, Moves.HammerArm],
+      egg: [
+        Moves.BodySlam,
+        Moves.BellyDrum,
+        Moves.Magnitude,
+        Moves.SmellingSalts,
+        Moves.HammerArm,
+        Moves.Belch,
+      ],
     },
   });
 }

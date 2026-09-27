@@ -95,6 +95,7 @@ const PICHU: SpeciesData = {
       Moves.EchoedVoice,
       Moves.VoltSwitch,
       Moves.WildCharge,
+      Moves.Confide,
     ],
     egg: [
       Moves.Bide,
@@ -106,6 +107,7 @@ const PICHU: SpeciesData = {
       Moves.VoltTackle,
       Moves.Wish,
       Moves.Bestow,
+      Moves.DisarmingVoice,
     ],
   },
 };

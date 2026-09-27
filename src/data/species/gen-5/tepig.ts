@@ -48,6 +48,7 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.WildCharge,
   Moves.WillOWisp,
+  Moves.Confide,
 ];
 
 /** What the two that fight hand to hand pick up on top of the family's */
@@ -64,6 +65,7 @@ const FIGHTER_TEACHABLE = [
   Moves.StoneEdge,
   Moves.ThunderPunch,
   Moves.WorkUp,
+  Moves.PowerUpPunch,
 ];
 
 /**

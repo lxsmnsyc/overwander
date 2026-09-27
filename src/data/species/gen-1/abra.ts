@@ -84,6 +84,8 @@ const FAMILY_TEACHABLE = [
   Moves.FoulPlay,
   Moves.Round,
   Moves.AllySwitch,
+  Moves.Confide,
+  Moves.DazzlingGleam,
 ];
 
 const ABRA_STATS = {

@@ -106,6 +106,7 @@ export default function registerMurkrowSpecies(): void {
         Moves.Quash,
         Moves.Retaliate,
         Moves.Snarl,
+        Moves.Confide,
       ],
       egg: [
         Moves.DrillPeck,

@@ -57,6 +57,9 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.Acrobatics,
   Moves.StruggleBug,
+  Moves.Confide,
+  Moves.Infestation,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerLedybaSpecies(): void {

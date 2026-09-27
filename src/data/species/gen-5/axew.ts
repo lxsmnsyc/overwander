@@ -68,6 +68,7 @@ const FAMILY_TEACHABLE = [
   Moves.Taunt,
   Moves.Toxic,
   Moves.XScissor,
+  Moves.Confide,
 ];
 
 // What the tusks work out how to do, whatever size they have grown to

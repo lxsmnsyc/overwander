@@ -159,6 +159,8 @@ export default function registerMewtwoSpecies(): void {
         Moves.Round,
         Moves.Incinerate,
         Moves.Bulldoze,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
     },
   });

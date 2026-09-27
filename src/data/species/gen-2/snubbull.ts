@@ -77,6 +77,9 @@ const FAMILY_TEACHABLE = [
   Moves.WorkUp,
   Moves.WildCharge,
   Moves.Snarl,
+  Moves.Confide,
+  Moves.DazzlingGleam,
+  Moves.PowerUpPunch,
 ];
 
 const FAMILY_LEVEL = {
@@ -124,6 +127,7 @@ export default function registerSnubbullSpecies(): void {
         1: [Moves.FireFang, Moves.IceFang, Moves.ThunderFang],
         26: [Moves.Roar],
         34: [Moves.Rage],
+        37: [Moves.PlayRough],
         43: [Moves.TakeDown, Moves.Payback],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -170,6 +174,7 @@ export default function registerSnubbullSpecies(): void {
       level: {
         ...FAMILY_LEVEL,
         1: [Moves.FireFang, Moves.IceFang, Moves.ThunderFang],
+        43: [Moves.PlayRough],
         61: [Moves.Crunch],
         28: [Moves.Roar],
         38: [Moves.Rage],

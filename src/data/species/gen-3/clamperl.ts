@@ -41,10 +41,11 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.Round,
   Moves.Scald,
+  Moves.Confide,
 ];
 
 // What both halves of the shell pick up once they are out of it
-const OPENED_TEACHABLE = [Moves.HyperBeam, Moves.MudSlap, Moves.Swift];
+const OPENED_TEACHABLE = [Moves.HyperBeam, Moves.MudSlap, Moves.Swift, Moves.Infestation];
 
 export default function registerClamperlSpecies(): void {
   registerSpecies(Species.Clamperl, {
@@ -183,6 +184,7 @@ export default function registerClamperlSpecies(): void {
       level: {
         1: [Moves.Whirlpool],
         8: [Moves.Confusion],
+        11: [Moves.DrainingKiss],
         15: [Moves.Agility],
         22: [Moves.WaterPulse],
         24: [Moves.AquaRing],

@@ -39,7 +39,60 @@ function ahead(source: Unit, target: Unit, stages: Stages[]): number {
   return stages.reduce((total, stage) => total + target.stages[stage] - source.stages[stage], 0);
 }
 
+/**
+ * Topsy-Turvy: every stage on the target is turned the other way up,
+ * so a +2 becomes a -2 and a drop becomes a rise
+ * https://bulbapedia.bulbagarden.net/wiki/Topsy-Turvy_(move)
+ */
+const INVERTED = [
+  Stages.Attack,
+  Stages.Defense,
+  Stages.SpecialAttack,
+  Stages.SpecialDefense,
+  Stages.Speed,
+  Stages.Accuracy,
+  Stages.Evasion,
+];
+
+function hasStages(unit: Unit): boolean {
+  for (const stage of INVERTED) {
+    if (unit.stages[stage] !== 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export default function setupStageSwaps(battle: Battle): void {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
+    if (event.move !== Moves.TopsyTurvy || event.target.type !== MoveTargetType.Unit) {
+      return;
+    }
+
+    const target = event.target.unit;
+
+    if (!hasStages(target)) {
+      event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
+      return;
+    }
+
+    const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
+
+    for (const stage of INVERTED) {
+      const held = target.stages[stage];
+
+      if (held !== 0) {
+        target.addStage(stage, -2 * held, cause);
+      }
+    }
+  });
+
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && event.move === Moves.TopsyTurvy) {
+      event.usable = event.target.type === MoveTargetType.Unit && hasStages(event.target.unit);
+    }
+  });
+
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const stages = SWAPPED[event.move];
 

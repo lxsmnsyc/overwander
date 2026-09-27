@@ -8,7 +8,10 @@ import { UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
 export default function registerBeachSpawns(): void {
   registerSpawnPool(Biome.Beach, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Squirtle, weight: 2 }],
+      base: [
+        { species: Species.Scatterbug, weight: 24 },
+        { species: Species.Squirtle, weight: 2 },
+      ],
       uncommon: [
         { species: Species.Psyduck, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
@@ -18,7 +21,10 @@ export default function registerBeachSpawns(): void {
         { species: Species.BurmySandy, weight: 20 },
         { species: Species.Buizel, weight: 25 },
       ],
-      rare: [{ species: Species.Wartortle, weight: 1 }],
+      rare: [
+        { species: Species.Spewpa, weight: 8 },
+        { species: Species.Wartortle, weight: 1 },
+      ],
       scarce: [
         { species: Species.Golduck, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
@@ -30,7 +36,10 @@ export default function registerBeachSpawns(): void {
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Floatzel, weight: 8 },
       ],
-      elusive: [{ species: Species.Blastoise, weight: 2 }],
+      elusive: [
+        { species: Species.Vivillon, weight: 5 },
+        { species: Species.Blastoise, weight: 2 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Groudon, weight: 10 },
@@ -39,7 +48,10 @@ export default function registerBeachSpawns(): void {
       mythical: [{ species: Species.Deoxys, weight: 10 }],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Squirtle, weight: 2 }],
+      base: [
+        { species: Species.Scatterbug, weight: 24 },
+        { species: Species.Squirtle, weight: 2 },
+      ],
       uncommon: [
         { species: Species.Psyduck, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
@@ -49,7 +61,10 @@ export default function registerBeachSpawns(): void {
         { species: Species.BurmySandy, weight: 20 },
         { species: Species.Buizel, weight: 25 },
       ],
-      rare: [{ species: Species.Wartortle, weight: 1 }],
+      rare: [
+        { species: Species.Spewpa, weight: 8 },
+        { species: Species.Wartortle, weight: 1 },
+      ],
       scarce: [
         { species: Species.Golduck, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
@@ -61,7 +76,10 @@ export default function registerBeachSpawns(): void {
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Floatzel, weight: 8 },
       ],
-      elusive: [{ species: Species.Blastoise, weight: 2 }],
+      elusive: [
+        { species: Species.Vivillon, weight: 5 },
+        { species: Species.Blastoise, weight: 2 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Groudon, weight: 10 },

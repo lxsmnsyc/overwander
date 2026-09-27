@@ -131,6 +131,7 @@ const SEASON_TEACHABLE = [
   Moves.WorkUp,
   Moves.WorrySeed,
   Moves.ZenHeadbutt,
+  Moves.Confide,
 ];
 
 const SAWSBUCK_TEACHABLE = [

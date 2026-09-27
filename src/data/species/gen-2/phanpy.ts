@@ -47,6 +47,7 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.EchoedVoice,
   Moves.Bulldoze,
+  Moves.Confide,
 ];
 
 export default function registerPhanpySpecies(): void {
@@ -103,6 +104,7 @@ export default function registerPhanpySpecies(): void {
         Moves.HeadSmash,
         Moves.IceShard,
         Moves.HeavySlam,
+        Moves.PlayRough,
       ],
     },
   });

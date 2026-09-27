@@ -63,6 +63,8 @@ const FAMILY_TEACHABLE = [
   Moves.UTurn,
   Moves.VacuumWave,
   Moves.WillOWisp,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 /**

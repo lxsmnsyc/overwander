@@ -57,6 +57,7 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.EchoedVoice,
   Moves.GrassPledge,
+  Moves.Confide,
 ];
 
 export default function registerBulbasaurSpecies(): void {
@@ -117,6 +118,7 @@ export default function registerBulbasaurSpecies(): void {
         Moves.MagicalLeaf,
         Moves.LeafStorm,
         Moves.PowerWhip,
+        Moves.GrassyTerrain,
       ],
     },
   });
@@ -200,6 +202,7 @@ export default function registerBulbasaurSpecies(): void {
         29: [Moves.SweetScent],
         39: [Moves.WorrySeed],
         41: [Moves.Growth],
+        50: [Moves.PetalBlizzard],
         53: [Moves.Synthesis],
         65: [Moves.SolarBeam],
       },

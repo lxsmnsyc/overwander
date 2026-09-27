@@ -51,6 +51,7 @@ const FAMILY_TEACHABLE = [
   Moves.UTurn,
   Moves.Round,
   Moves.WorkUp,
+  Moves.Confide,
 ];
 
 export default function registerPidgeySpecies(): void {

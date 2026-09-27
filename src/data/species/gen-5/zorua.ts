@@ -75,6 +75,7 @@ const FAMILY_TEACHABLE = [
   Moves.Trick,
   Moves.UTurn,
   Moves.Uproar,
+  Moves.Confide,
 ];
 
 // What the fox learns whichever size it is pretending to be

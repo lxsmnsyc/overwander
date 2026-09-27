@@ -58,6 +58,9 @@ const FAMILY_TEACHABLE = [
   Moves.SludgeWave,
   Moves.Round,
   Moves.Scald,
+  Moves.Confide,
+  Moves.DazzlingGleam,
+  Moves.Infestation,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ClearBody, Abilities.LiquidOoze];

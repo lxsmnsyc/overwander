@@ -50,6 +50,8 @@ const SHAYMIN_TEACHABLE = [
   Moves.Synthesis,
   Moves.Toxic,
   Moves.ZenHeadbutt,
+  Moves.Confide,
+  Moves.DazzlingGleam,
 ];
 
 export default function registerShayminSpecies(): void {

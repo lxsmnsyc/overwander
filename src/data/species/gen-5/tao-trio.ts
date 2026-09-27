@@ -59,6 +59,7 @@ const TAO_TEACHABLE = [
   Moves.Swagger,
   Moves.Toxic,
   Moves.ZenHeadbutt,
+  Moves.Confide,
 ];
 
 // The husk's own machines and tutors, which its fused shapes keep
@@ -74,6 +75,7 @@ const KYUREM_TEACHABLE = [
   Moves.RainDance,
   Moves.SignalBeam,
   Moves.SunnyDay,
+  Moves.Confide,
 ];
 
 /** What the husk learns before either dragon is put into it */

@@ -45,6 +45,7 @@ const BIRD_TEACHABLE = [
   Moves.RockSmash,
   Moves.Round,
   Moves.SkyDrop,
+  Moves.Confide,
 ];
 
 export default function registerLegendaryBirdSpecies(): void {
@@ -73,7 +74,7 @@ export default function registerLegendaryBirdSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Peck, Moves.IceBeam, Moves.Gust, Moves.PowderSnow],
+        1: [Moves.Peck, Moves.IceBeam, Moves.Gust, Moves.PowderSnow, Moves.FreezeDry],
         13: [Moves.Mist],
         15: [Moves.IceShard],
         25: [Moves.Agility],

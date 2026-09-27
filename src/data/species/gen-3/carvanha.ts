@@ -52,6 +52,7 @@ const FAMILY_TEACHABLE = [
   Moves.Scald,
   Moves.Retaliate,
   Moves.Snarl,
+  Moves.Confide,
 ];
 
 export default function registerCarvanhaSpecies(): void {

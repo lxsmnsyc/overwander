@@ -14,6 +14,7 @@ const MINIMIZE_PUNISHERS = new Set<Moves>([
   Moves.Steamroller,
   Moves.HeavySlam,
   Moves.HeatCrash,
+  Moves.FlyingPress,
 ]);
 
 // https://bulbapedia.bulbagarden.net/wiki/Body_Slam_(move)

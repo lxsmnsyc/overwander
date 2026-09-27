@@ -51,6 +51,7 @@ const FAMILY_TEACHABLE = [
   Moves.HoneClaws,
   Moves.Round,
   Moves.Incinerate,
+  Moves.Confide,
 ];
 
 // What the shell brings: a Bagon has nothing to curl up into

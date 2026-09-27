@@ -102,6 +102,8 @@ export default function registerMagmortarSpecies(): void {
         Moves.Torment,
         Moves.Toxic,
         Moves.WillOWisp,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
     },
   });

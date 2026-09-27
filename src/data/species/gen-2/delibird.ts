@@ -89,6 +89,8 @@ export default function registerDelibirdSpecies(): void {
         Moves.SeedBomb,
         Moves.Round,
         Moves.FrostBreath,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
       egg: [
         Moves.AuroraBeam,
@@ -99,6 +101,7 @@ export default function registerDelibirdSpecies(): void {
         Moves.IceBall,
         Moves.IceShard,
         Moves.Bestow,
+        Moves.FreezeDry,
       ],
     },
   });

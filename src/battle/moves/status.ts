@@ -138,6 +138,12 @@ const EFFECT_STATUS_MOVES: {
   [Moves.FreezeShock]: { status: Statuses.Paralyzed, chance: 30 },
   [Moves.IceBurn]: { status: Statuses.Burned, chance: 30 },
   [Moves.IcicleCrash]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.SteamEruption]: { status: Statuses.Burned, chance: 30 },
+  [Moves.FreezeDry]: { status: Statuses.Frozen, chance: 10 },
+  [Moves.Nuzzle]: { status: Statuses.Paralyzed, chance: 100 },
+  [Moves.Infestation]: { status: Statuses.Trapped, chance: 100 },
+  // Mean Look's hold, thrown by a wave rather than a stare
+  [Moves.ThousandWaves]: { status: Statuses.Cornered, chance: 100 },
 };
 
 /**
@@ -275,6 +281,18 @@ const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
     chance: 10,
     self: true,
   },
+  [Moves.PlayRough]: { stage: Stages.Attack, value: -1, chance: 10 },
+  [Moves.Moonblast]: { stage: Stages.SpecialAttack, value: -1, chance: 30 },
+  [Moves.MysticalFire]: { stage: Stages.SpecialAttack, value: -1, chance: 100 },
+  [Moves.DiamondStorm]: { stage: Stages.Defense, value: 2, chance: 50, self: true },
+  [Moves.PowerUpPunch]: { stage: Stages.Attack, value: 1, chance: 100, self: true },
+  [Moves.DragonAscent]: {
+    stage: [Stages.Defense, Stages.SpecialDefense],
+    value: -1,
+    chance: 100,
+    self: true,
+  },
+  [Moves.HyperspaceFury]: { stage: Stages.Defense, value: -1, chance: 100, self: true },
 };
 
 /**

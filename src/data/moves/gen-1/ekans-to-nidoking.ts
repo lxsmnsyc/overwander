@@ -10,7 +10,8 @@ import { PROJECTILE_DELAY, registerMove } from '../__create';
 export default function registerEkansToNidokingMoves(): void {
   registerMove(Moves.Wrap, {
     name: 'Wrap',
-    description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape.',
+    description:
+      'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 20,

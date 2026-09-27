@@ -52,6 +52,7 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.VoltSwitch,
   Moves.WildCharge,
+  Moves.Confide,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Soundproof, Abilities.Static];
@@ -90,6 +91,7 @@ export default function registerVoltorbSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.Screech, Moves.Charge],
+        6: [Moves.EerieImpulse],
         17: [Moves.SonicBoom],
         21: [Moves.Spark],
         22: [Moves.SelfDestruct],
@@ -130,7 +132,15 @@ export default function registerVoltorbSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.Screech, Moves.SonicBoom, Moves.SelfDestruct, Moves.Charge],
+        1: [
+          Moves.Tackle,
+          Moves.Screech,
+          Moves.SonicBoom,
+          Moves.SelfDestruct,
+          Moves.Charge,
+          Moves.MagneticFlux,
+        ],
+        6: [Moves.EerieImpulse],
         21: [Moves.Spark],
         26: [Moves.ChargeBeam],
         29: [Moves.Rollout, Moves.ElectroBall],

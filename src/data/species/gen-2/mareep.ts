@@ -46,6 +46,7 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.EchoedVoice,
   Moves.WildCharge,
+  Moves.Confide,
 ];
 
 // What the two evolved stages pick up once they stand on two legs
@@ -56,6 +57,7 @@ const EVOLVED_TEACHABLE = [
   Moves.RockSmash,
   Moves.Strength,
   Moves.VoltSwitch,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerMareepSpecies(): void {
@@ -112,6 +114,8 @@ export default function registerMareepSpecies(): void {
         Moves.Charge,
         Moves.OdorSleuth,
         Moves.AfterYou,
+        Moves.EerieImpulse,
+        Moves.ElectricTerrain,
       ],
     },
   });
@@ -204,7 +208,14 @@ export default function registerMareepSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.Growl, Moves.ThunderShock, Moves.ThunderWave],
+        1: [
+          Moves.Tackle,
+          Moves.Growl,
+          Moves.ThunderShock,
+          Moves.ThunderWave,
+          Moves.IonDeluge,
+          Moves.MagneticFlux,
+        ],
         25: [Moves.ElectroBall],
         27: [Moves.CottonSpore],
         30: [Moves.ThunderPunch],

@@ -96,6 +96,8 @@ export default function registerSpiritombSpecies(): void {
         Moves.Uproar,
         Moves.WaterPulse,
         Moves.WillOWisp,
+        Moves.Confide,
+        Moves.Infestation,
       ],
     },
   });

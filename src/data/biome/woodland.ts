@@ -9,6 +9,9 @@ export default function registerWoodlandSpawns(): void {
   registerSpawnPool(Biome.Woodland, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
+        { species: Species.Fletchling, weight: 26 },
+        { species: Species.Chespin, weight: 2 },
         { species: Species.Pidove, weight: 30 },
         { species: Species.Timburr, weight: 25 },
         { species: Species.Bulbasaur, weight: 2 },
@@ -45,6 +48,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Glameow, weight: 25 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
+        { species: Species.Fletchinder, weight: 8 },
+        { species: Species.Quilladin, weight: 2 },
         { species: Species.Tranquill, weight: 12 },
         { species: Species.Gurdurr, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
@@ -86,6 +92,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
+        { species: Species.Talonflame, weight: 5 },
+        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Sawk, weight: 5 },
         { species: Species.Throh, weight: 5 },
         { species: Species.Unfezant, weight: 6 },
@@ -132,6 +141,9 @@ export default function registerWoodlandSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
+        { species: Species.Fletchling, weight: 26 },
+        { species: Species.Chespin, weight: 2 },
         { species: Species.Pidove, weight: 30 },
         { species: Species.Timburr, weight: 25 },
         { species: Species.Bulbasaur, weight: 2 },
@@ -168,6 +180,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Glameow, weight: 25 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
+        { species: Species.Fletchinder, weight: 8 },
+        { species: Species.Quilladin, weight: 2 },
         { species: Species.Tranquill, weight: 12 },
         { species: Species.Gurdurr, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
@@ -209,6 +224,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
+        { species: Species.Talonflame, weight: 5 },
+        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Sawk, weight: 5 },
         { species: Species.Throh, weight: 5 },
         { species: Species.Unfezant, weight: 6 },

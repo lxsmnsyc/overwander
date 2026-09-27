@@ -62,6 +62,8 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.Round,
   Moves.Scald,
+  Moves.Confide,
+  Moves.DazzlingGleam,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Illuminate, Abilities.NaturalCure];

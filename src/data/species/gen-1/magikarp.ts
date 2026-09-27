@@ -190,6 +190,7 @@ export default function registerMagikarpSpecies(): void {
         Moves.Incinerate,
         Moves.Bulldoze,
         Moves.DragonTail,
+        Moves.Confide,
       ],
     },
   });

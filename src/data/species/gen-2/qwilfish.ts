@@ -49,6 +49,7 @@ export default function registerQwilfishSpecies(): void {
         37: [Moves.TakeDown],
         46: [Moves.HydroPump],
         49: [Moves.PoisonJab],
+        60: [Moves.FellStinger],
       },
       teachable: [
         Moves.Toxic,
@@ -96,6 +97,7 @@ export default function registerQwilfishSpecies(): void {
         Moves.SludgeWave,
         Moves.Round,
         Moves.Scald,
+        Moves.Confide,
       ],
       egg: [
         Moves.BubbleBeam,

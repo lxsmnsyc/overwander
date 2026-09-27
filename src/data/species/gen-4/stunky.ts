@@ -51,6 +51,7 @@ const FAMILY_TEACHABLE = [
   Moves.Thief,
   Moves.Torment,
   Moves.Toxic,
+  Moves.Confide,
 ];
 
 /**
@@ -101,6 +102,7 @@ export default function registerStunkySpecies(): void {
         32: [Moves.NightSlash],
         38: [Moves.Memento],
         44: [Moves.Explosion],
+        46: [Moves.Belch],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -112,6 +114,7 @@ export default function registerStunkySpecies(): void {
         Moves.Pursuit,
         Moves.ScaryFace,
         Moves.Smog,
+        Moves.PlayRough,
       ],
     },
   });
@@ -155,6 +158,7 @@ export default function registerStunkySpecies(): void {
         34: [Moves.Flamethrower],
         42: [Moves.Memento],
         52: [Moves.Explosion],
+        56: [Moves.Belch],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

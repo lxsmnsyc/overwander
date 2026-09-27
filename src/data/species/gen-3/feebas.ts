@@ -41,6 +41,7 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.Round,
   Moves.Scald,
+  Moves.Confide,
 ];
 
 export default function registerFeebasSpecies(): void {
@@ -135,6 +136,7 @@ export default function registerFeebasSpecies(): void {
         1: [Moves.WaterGun],
         5: [Moves.Wrap],
         10: [Moves.WaterSport],
+        11: [Moves.DisarmingVoice],
         15: [Moves.Refresh],
         20: [Moves.WaterPulse],
         25: [Moves.Twister, Moves.Captivate],

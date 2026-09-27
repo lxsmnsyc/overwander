@@ -36,7 +36,8 @@ export default function registerEncoreToBeatUp(): void {
   });
   registerMove(Moves.RapidSpin, {
     name: 'Rapid Spin',
-    description: "Always raises the user's Speed a stage, and clears the spikes under its side.",
+    description:
+      "Always raises the user's Speed a stage, clears every hazard under its side, and frees the user from a bind or Leech Seed.",
     type: Types.Normal,
     category: MoveCategories.Physical,
     power: 50,
@@ -264,7 +265,7 @@ export default function registerEncoreToBeatUp(): void {
   registerMove(Moves.Whirlpool, {
     name: 'Whirlpool',
     description:
-      'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape. 2x on anything underwater from Dive.',
+      'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside. 2x on anything underwater from Dive.',
     type: Types.Water,
     category: MoveCategories.Special,
     power: 35,

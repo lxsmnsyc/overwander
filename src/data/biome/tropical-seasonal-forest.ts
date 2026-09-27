@@ -9,6 +9,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
   registerSpawnPool(Biome.TropicalSeasonalForest, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Treecko, weight: 2 },
       ],
@@ -17,6 +18,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Cherubi, weight: 22 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Weepinbell, weight: 5 },
         { species: Species.Grovyle, weight: 1 },
       ],
@@ -26,6 +28,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Chatot, weight: 6 },
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Sceptile, weight: 2 },
@@ -37,6 +40,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Treecko, weight: 2 },
       ],
@@ -45,6 +49,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Cherubi, weight: 22 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Weepinbell, weight: 5 },
         { species: Species.Grovyle, weight: 1 },
       ],
@@ -54,6 +59,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Chatot, weight: 6 },
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Sceptile, weight: 2 },

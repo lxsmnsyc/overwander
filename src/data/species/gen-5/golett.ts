@@ -80,6 +80,8 @@ const FAMILY_TEACHABLE = [
   Moves.Thief,
   Moves.ThunderPunch,
   Moves.Toxic,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 // The orders the clay was fired with, which neither size forgets
@@ -182,6 +184,7 @@ export default function registerGolettSpecies(): void {
         ...FAMILY_LEVEL,
         50: [Moves.Earthquake],
         52: [Moves.HammerArm],
+        75: [Moves.PhantomForce],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

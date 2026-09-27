@@ -93,6 +93,7 @@ export default function registerMantykeSpecies(): void {
         Moves.Toxic,
         Moves.WaterPulse,
         Moves.Waterfall,
+        Moves.Confide,
       ],
       egg: [
         Moves.Haze,

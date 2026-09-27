@@ -75,6 +75,8 @@ const FAMILY_TEACHABLE = [
   Moves.Incinerate,
   Moves.Retaliate,
   Moves.Bulldoze,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 const FAMILY_ABILITIES = [Abilities.RockHead, Abilities.LightningRod];

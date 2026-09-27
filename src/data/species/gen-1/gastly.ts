@@ -60,6 +60,9 @@ const FAMILY_TEACHABLE = [
   Moves.Telekinesis,
   Moves.FoulPlay,
   Moves.Round,
+  Moves.Confide,
+  Moves.DazzlingGleam,
+  Moves.Infestation,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Levitate];
@@ -239,6 +242,7 @@ export default function registerGastlySpecies(): void {
         Moves.GigaImpact,
         Moves.PoisonJab,
         Moves.ShadowClaw,
+        Moves.PowerUpPunch,
       ],
     },
   });

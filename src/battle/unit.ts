@@ -8,7 +8,7 @@ import type { Items } from '../data/ids/items';
 import { type MoveCategories, MoveTargets, type Moves } from '../data/ids/moves';
 import Natures from '../data/ids/natures';
 import { Genders, Species } from '../data/ids/species';
-import { type Statuses, Weathers } from '../data/ids/status';
+import { type Statuses, Terrains, Weathers } from '../data/ids/status';
 import type Battle from './core';
 import type {
   CastingData,
@@ -42,6 +42,7 @@ import type {
   CheckUnitStatEvent,
   CheckUnitStatusDurationEvent,
   CheckUnitStatusImmunityEvent,
+  CheckUnitTerrainDurationEvent,
   CheckUnitTriggerMoveEvent,
   CheckUnitWeatherDurationEvent,
   CheckUnitWeightEvent,
@@ -51,6 +52,7 @@ import type {
   ProgressData,
   UnitAttackEvent,
   UnitDamageEvent,
+  UnitTerrainEvent,
   UnitWeatherEvent,
 } from './events';
 import { BattleEvents, EffectType } from './events';
@@ -1387,6 +1389,46 @@ export default class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitStatusImmunity, event);
     return event.immune;
+  }
+
+  /**
+   * Lay a terrain. Where it reaches is resolved by the terrain
+   * mechanics, the way a weather's is
+   */
+  setTerrain(terrain: Terrains, duration = 0): void {
+    this.battle.emit(BattleEvents.UnitSetTerrain, {
+      id: 'UnitSetTerrain',
+      disabled: false,
+      source: this,
+      terrain,
+      global: false,
+      duration,
+    });
+  }
+
+  /** The terrain under this unit, which is None while it is off the ground */
+  checkTerrain(): Terrains {
+    const event: UnitTerrainEvent = {
+      id: 'CheckUnitTerrain',
+      disabled: false,
+      source: this,
+      terrain: Terrains.None,
+    };
+    this.battle.emit(BattleEvents.CheckUnitTerrain, event);
+    return event.terrain;
+  }
+
+  /** How long a terrain this unit lays holds */
+  checkTerrainDuration(terrain: Terrains, duration: number): number {
+    const event: CheckUnitTerrainDurationEvent = {
+      id: 'CheckUnitTerrainDuration',
+      disabled: false,
+      source: this,
+      terrain,
+      duration,
+    };
+    this.battle.emit(BattleEvents.CheckUnitTerrainDuration, event);
+    return event.duration;
   }
 
   checkWeather(): Weathers {

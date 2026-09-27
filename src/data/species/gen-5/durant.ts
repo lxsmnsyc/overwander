@@ -105,6 +105,7 @@ export default function registerDurantSpecies(): void {
         Moves.ThunderWave,
         Moves.Toxic,
         Moves.XScissor,
+        Moves.Confide,
       ],
       egg: [
         Moves.BatonPass,

@@ -7,6 +7,7 @@ import { BattleEvents, type EffectCause, EffectType } from '../events';
 import turns from '../turn';
 import type Unit from '../unit';
 import { checkStatusDamage } from './__create';
+import { slipsTraps } from '../utils';
 
 interface TrappedData {
   duration: number;
@@ -41,9 +42,9 @@ export default function setupTrappedStatus(battle: Battle): void {
 
   timer.stop();
 
-  // A trapped unit cannot escape or switch out
+  // A trapped unit cannot escape or switch out, bar a Ghost
   battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
-    if (event.success && event.source.status[Statuses.Trapped]) {
+    if (event.success && event.source.status[Statuses.Trapped] && !slipsTraps(event.source)) {
       event.success = false;
 
       event.source.triggerStatus(Statuses.Trapped, {

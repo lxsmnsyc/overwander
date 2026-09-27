@@ -58,6 +58,8 @@ export const NPC_QUOTES: Record<Npc, string> = {
     'A pokemon can carry more than it thinks. One Heart Scale and I will make room for another move.',
   [Npc.Trader]:
     'Brought these a long way. Any one of them for one of yours, as long as it is the same sort.',
+  [Npc.HyperTrainer]:
+    'Good is not the same as the best. Show me one and pick the stat, and I will take it all the way. It will cost you.',
   [Npc.Geologist]:
     'Every one of these came out of a hillside with my own pick. Stones, gems, the lot. Take your pick of mine.',
 };

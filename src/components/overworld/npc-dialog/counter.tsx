@@ -8,6 +8,7 @@ import NpcSprite from '../NpcSprite';
 import Breeder from './counters/breeder';
 import Channeler from './counters/channeler';
 import Dojo from './counters/dojo';
+import Hyper from './counters/hyper';
 import Trader from './counters/trader';
 import Daycare from './counters/daycare';
 import Groomer from './counters/groomer';
@@ -182,6 +183,9 @@ export default function NpcCounter(
               </Show>
               <Show when={standing()[1] === Npc.Trader}>
                 <Trader {...handed()} />
+              </Show>
+              <Show when={standing()[1] === Npc.HyperTrainer}>
+                <Hyper {...handed()} />
               </Show>
               <Show when={TRADERS.has(standing()[1])}>
                 <Vendor {...handed()} />

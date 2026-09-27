@@ -315,17 +315,18 @@ export const PARENTS = v.tuple([MAYBE_ID, MAYBE_ID]);
 /** What a shopper is buying or selling, as pairs of item and amount */
 export const BASKET = listOf(v.tuple([GAME_ID, AMOUNT]), BASKET_LIMIT);
 
+/** One of the six stats */
+export const STAT = v.picklist([
+  Stats.HP,
+  Stats.Attack,
+  Stats.Defense,
+  Stats.SpecialAttack,
+  Stats.SpecialDefense,
+  Stats.Speed,
+]);
+
 /** One of the six stats, or none where the caller has no choice to make */
-export const MAYBE_STAT = v.nullable(
-  v.picklist([
-    Stats.HP,
-    Stats.Attack,
-    Stats.Defense,
-    Stats.SpecialAttack,
-    Stats.SpecialDefense,
-    Stats.Speed,
-  ]),
-);
+export const MAYBE_STAT = v.nullable(STAT);
 
 /** Effort points to move, keyed by the stat they go on */
 export const EFFORT_SPREAD = v.record(

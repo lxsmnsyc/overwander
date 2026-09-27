@@ -1,4 +1,5 @@
 import { countsAgainstSlots } from '../constants/slots';
+import { MAX_IV } from '../constants/stats';
 import Awards from '../ids/awards';
 import type Abilities from '../ids/abilities';
 import { Items } from '../ids/items';
@@ -127,6 +128,12 @@ const enum Npc {
    * what he hands over arrives traded, so a trade evolution opens
    */
   Trader = 16,
+  /**
+   * Trains one of a pokemon's values all the way up, for gold by the
+   * point. Dear on purpose: this is for players who already have the
+   * pokemon they want and the purse to finish it. Once a window
+   */
+  HyperTrainer = 17,
 }
 
 export default Npc;
@@ -155,6 +162,7 @@ export const NPCS: Npc[] = [
   Npc.Geologist,
   Npc.DojoMaster,
   Npc.Trader,
+  Npc.HyperTrainer,
 ];
 
 /** The people who keep a crate to buy from, and take what a player sells */
@@ -171,6 +179,7 @@ export const NPC_VISIT_TAGS = new Map<Npc, string>([
   [Npc.FossilManiac, 'fossil'],
   [Npc.Channeler, 'channel'],
   [Npc.Trader, 'swap'],
+  [Npc.HyperTrainer, 'hyper'],
 ]);
 
 /**
@@ -225,6 +234,11 @@ const NPC_CHARSETS: Record<Npc, string[]> = {
     'characters/b2w2/backpacker-f',
     'characters/dppt/collector',
     'characters/oras/collector',
+  ],
+  [Npc.HyperTrainer]: [
+    'characters/b2w2/veteran',
+    'characters/dppt/expert',
+    'characters/oras/expert',
   ],
 };
 
@@ -352,6 +366,7 @@ export const NPC_NAMES: Record<Npc, string> = {
   [Npc.Geologist]: 'Geologist',
   [Npc.DojoMaster]: 'Dojo Master',
   [Npc.Trader]: 'Trader',
+  [Npc.HyperTrainer]: 'Hyper Trainer',
 };
 
 /**
@@ -448,6 +463,14 @@ export function getTutorableMoves(species: Species, known: Iterable<Moves>): Mov
  * walking rather than a purse
  */
 export const CHANNELER_FEE = Items.HeartScale;
+
+/** What the Hyper Trainer charges for each point a value is trained up */
+export const HYPER_TRAINING_PER_POINT = 10_000;
+
+/** What training this value to the top costs: every point it has left to climb */
+export function hyperTrainingCost(iv: number): number {
+  return Math.max(0, MAX_IV - iv) * HYPER_TRAINING_PER_POINT;
+}
 
 /** How many pokemon the trader has on offer at once */
 export const TRADER_OFFERS = 6;

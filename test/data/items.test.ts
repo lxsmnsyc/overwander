@@ -135,6 +135,7 @@ import {
 } from '../../src/data/items/bottle-caps';
 import { MINT_NATURES, describeMint, getMintNature, isMint } from '../../src/data/items/mints';
 import { SKILL_BOOK_SLOT, isSkillBook } from '../../src/data/items/skill-book';
+import { HYPER_TRAINING_PER_POINT, hyperTrainingCost } from '../../src/data/overworld/npc';
 import { UTILITY_BELT_SLOT, isUtilityBelt } from '../../src/data/items/utility-belt';
 import {
   ABILITY_CAPSULE_SLOT,
@@ -792,6 +793,14 @@ describe('item data', () => {
       limits: packSlots(2, 2, 2),
       teamSize: 3,
     });
+  });
+
+  it('charges the Hyper Trainer by the point a value has left to climb', () => {
+    expect(hyperTrainingCost(MAX_IV)).toBe(0);
+    expect(hyperTrainingCost(MAX_IV - 1)).toBe(HYPER_TRAINING_PER_POINT);
+    expect(hyperTrainingCost(0)).toBe(MAX_IV * HYPER_TRAINING_PER_POINT);
+    // Dearer than any single find a player would trade away for one stat
+    expect(hyperTrainingCost(0)).toBeGreaterThan(getItemData(Items.BigNugget).sell);
   });
 
   it('buries the Skill Book beside the belt, for moves', () => {

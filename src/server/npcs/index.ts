@@ -15,4 +15,5 @@ export type { TradeResult } from './moves';
 export { buyFromVendor, sellToVendor } from './vendor';
 export { buyFossil, carveApricorns, reviveFossil } from './fossils';
 export { default as tradeWithTrader } from './trader';
+export { default as hyperTrain } from './hyper';
 export type { RevivedFossil } from './fossils';

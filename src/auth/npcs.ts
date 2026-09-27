@@ -1,6 +1,7 @@
 import { readOnly } from '../utils/server-calls';
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
+import type { Stats } from '../data/constants/stats';
 import Npc from '../data/overworld/npc';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { requireReader, requireUidFor } from '../server/auth';
@@ -19,6 +20,7 @@ import check, {
   OFFSET,
   PARENTS,
   REPLACED_SLOT,
+  STAT,
   TOKEN,
   TRADER_OFFER,
 } from '../server/validate';
@@ -34,6 +36,7 @@ import {
   channelAbility as channelOnServerSide,
   countVisit,
   groomCatch as groomOnServerSide,
+  hyperTrain as hyperOnServerSide,
   remindMove as remindOnServerSide,
   reviveFossil as reviveOnServerSide,
   sellToVendor as sellOnServerSide,
@@ -862,5 +865,53 @@ async function tradeOnServer(
       offset,
       locale,
     ),
+  );
+}
+
+/**
+ * Have the Hyper Trainer take one value of one of the player's catches
+ * to the top, for gold by the point, once a window. Resolves the values
+ * it now has, or null when refused
+ */
+export async function hyperTrain(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  catchId: string,
+  stat: Stats,
+): Promise<number | null> {
+  return hyperOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    catchId,
+    stat,
+    snapshot.offset,
+  );
+}
+
+async function hyperOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  catchId: string,
+  stat: Stats,
+  offset: number,
+): Promise<number | null> {
+  'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(ID, catchId);
+  check(STAT, stat);
+  check(OFFSET, offset);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
+
+  return countVisit(
+    uid,
+    Npc.HyperTrainer,
+    await hyperOnServerSide(uid, x, y, cell, catchId, stat, await syncServerClock(), offset),
   );
 }

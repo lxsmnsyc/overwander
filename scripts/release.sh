@@ -33,6 +33,9 @@ gh release create "$tag" --title "Overwander $tag" --notes-file "$notes" --verif
 # The server picks the new tag up itself (scripts/deploy.sh), so the sprite host
 # is the one thing a release publishes
 if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
+  # Stamped here as the build does, or a redrawn sheet ships under the
+  # digest browsers already hold for the old one
+  node scripts/sprite-stamps.ts
   pnpm dlx wrangler@4 deploy
   echo "Sprite host deployed for $tag"
 else

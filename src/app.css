@@ -109,7 +109,7 @@
   --shadow-float: 0 3px 0 0 var(--drop), 0 16px 28px -14px var(--drop-cast);
 
   /* A dialog, which floats further off than a menu does */
-  --shadow-sheet: 0 4px 0 0 var(--drop), 0 28px 50px -18px var(--drop-cast);
+  --shadow-sheet: 0 6px 0 0 var(--drop), 0 30px 60px -22px var(--drop-cast);
 }
 
 /**
@@ -157,6 +157,12 @@
   /* The two halves of the daylight over the page */
   --sky-high: #eef5fe;
   --sky-glow: #ffffff;
+  /* The safari's field: sky over grass, and the base the pokemon stands on */
+  --field-sky: #bfe3ff;
+  --field-haze: #e6f6ff;
+  --field-grass: #9fd87f;
+  --field-grass-deep: #6fb458;
+  --field-base: #7cc36a;
 }
 
 /**
@@ -208,6 +214,11 @@
 
   --sky-high: #121c33;
   --sky-glow: #1d2a48;
+  --field-sky: #1b2d55;
+  --field-haze: #2a3f6b;
+  --field-grass: #2f5a3a;
+  --field-grass-deep: #234630;
+  --field-base: #3b6d45;
 }
 
 @layer base {

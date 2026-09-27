@@ -240,7 +240,7 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
         title={props.challenger?.name ?? 'Team Rocket'}
         lead={
           <HeadingPortrait>
-            <NpcSprite npc={props.npc} sheet={props.sheet} size={44} label="" />
+            <NpcSprite npc={props.npc} sheet={props.sheet} size={28} label="" />
           </HeadingPortrait>
         }
         description={<span class="italic">{greeting()}</span>}

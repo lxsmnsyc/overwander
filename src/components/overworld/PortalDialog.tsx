@@ -40,7 +40,7 @@ import { failed, readable } from '../app/resource-reads';
 import playEffect, { Effect } from '../app/sound';
 
 /** The portal beside the heading */
-const PORTAL_SPRITE = 44;
+const PORTAL_SPRITE = 28;
 
 /**
  * A portal, and the name of somewhere to come out.

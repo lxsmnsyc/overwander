@@ -127,7 +127,7 @@ export default function NpcCounter(
                 <NpcSprite
                   npc={standing()[1]}
                   sheet={props.snapshot?.getWandererCoats().get(standing()[0])}
-                  size={44}
+                  size={28}
                   label=""
                 />
               </HeadingPortrait>

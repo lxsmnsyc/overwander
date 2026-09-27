@@ -49,24 +49,38 @@ const WIDTHS: Record<DialogWidth, string> = {
 };
 
 /**
- * The same family as the tooltip and the hover card: a white sheet on a
- * soft edge, with no bar across the top
+ * Where a dialog stands and how wide it is. Room is left over the top
+ * for the nameplate, which sits across the sheet's top edge
  */
-const PANEL =
-  'fixed left-1/2 top-[8%] max-h-[84vh] -translate-x-1/2 overflow-y-auto rounded-panel' +
-  ' border-2 border-line bg-paper px-4 text-left sm:px-5' +
-  ' shadow-sheet';
+const PLACE = 'fixed left-1/2 top-[7%] -translate-x-1/2';
+const SHEET_PLACE = 'fixed left-1/2 top-[3vh] -translate-x-1/2';
+
+/**
+ * The sheet itself: white on a soft edge, round and chunky, standing on
+ * the game's hard drop. It is what scrolls, so the nameplate stands
+ * outside it rather than being clipped by it
+ */
+const SHEET =
+  'relative overflow-y-auto rounded-[22px] border-2 border-line bg-paper px-4 text-left' +
+  ' shadow-sheet sm:px-5';
+const PANEL = `${SHEET} max-h-[84vh]`;
 
 /**
  * A sheet: one screen of fixed height that is laid out to fit rather
  * than scrolled. Below `md` there is no room for its columns, so it
  * falls back to scrolling like any other panel
  */
-const SHEET_PANEL =
-  'fixed left-1/2 top-[4vh] max-h-[92vh] -translate-x-1/2 overflow-y-auto rounded-panel' +
-  ' border-2 border-line bg-paper px-4 text-left sm:px-5' +
-  ' shadow-sheet' +
-  ' md:h-[min(92vh,46rem)] md:overflow-hidden';
+const SHEET_PANEL = `${SHEET} max-h-[92vh] md:h-[min(92vh,46rem)] md:overflow-hidden`;
+
+/**
+ * The name box, sat across the top edge the way a handheld names who
+ * is talking. Its edge and drop are dark in both themes, since the blue
+ * under them is the same by day and by night
+ */
+const PLATE =
+  'absolute top-0 left-4 z-30 flex max-w-[calc(100%-2rem)] items-center gap-2 rounded-xl' +
+  ' border-2 border-black/25 bg-tide py-1 pr-3 text-on-accent' +
+  ' shadow-[0_3px_0_0_rgb(0_0_0/0.25)]';
 
 /**
  * The panel's vertical padding, which lives on the **content** rather
@@ -109,10 +123,13 @@ const PAD_IN = 'px-4 sm:px-5';
 const STUCK_TOP = `sticky top-0 z-20 -mt-4 sm:-mt-5 ${BLEED_OUT}`;
 
 /**
- * And the buttons, held at the bottom for the same reason: the way out
- * of a long dialog should not be somewhere a player has to travel to
+ * The dock the sheet ends on, held at the bottom for the same reason:
+ * the way out of a long dialog should not be somewhere a player has to
+ * travel to
  */
-const STUCK_BOTTOM = `sticky bottom-0 z-20 -mb-4 bg-paper pb-4 sm:-mb-5 sm:pb-5 ${BLEED}`;
+const STUCK_BOTTOM =
+  'sticky bottom-0 z-20 -mb-4 border-t-2 border-line bg-line-soft pt-3 pb-3.5 sm:-mb-5 sm:pb-4' +
+  ` ${BLEED}`;
 
 export interface DialogProps extends ParentProps {
   isOpen: boolean;
@@ -266,6 +283,26 @@ export function Dialog(props: DialogProps): JSX.Element {
     }
   };
 
+  /** The name box across the top edge, with the face of whoever is talking */
+  const Plate = (): JSX.Element => {
+    const lead = children(() => props.lead);
+
+    return (
+      <div class={`${PLATE} ${lead() == null ? 'pl-3' : 'pl-1.5'}`}>
+        {lead() == null ? null : (
+          <span class="flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/20">
+            {lead()}
+          </span>
+        )}
+        {/* A heading rather than bold text: it is what a screen reader
+            announces the dialog by */}
+        <HeadlessDialogTitle class="truncate text-base font-extrabold tracking-tight">
+          {props.title}
+        </HeadlessDialogTitle>
+      </div>
+    );
+  };
+
   /**
    * The panel itself, held in a component of its own so that the
    * slots and the children resolve under the boundary below rather
@@ -286,7 +323,6 @@ export function Dialog(props: DialogProps): JSX.Element {
      * button in the page whose component is the copy that was thrown
      * away. `children` keeps one of each
      */
-    const lead = children(() => props.lead);
     const aside = children(() => props.aside);
     const bar = children(() => props.bar);
 
@@ -301,28 +337,28 @@ export function Dialog(props: DialogProps): JSX.Element {
           and the heading is a line taller when it carries its
           sentence than when it does not */}
         <div class={props.quiet === true && bar() == null ? 'sr-only' : STUCK_TOP}>
+          {/* The title is on the nameplate; what is left here is the line
+              under it, or only the room the plate takes */}
           <header
             class={
               props.quiet === true
                 ? 'sr-only'
-                : `flex items-start gap-3 border-b-2 border-line-soft bg-paper pt-4 pb-3 sm:pt-5
-                sm:pb-4 ${PAD_IN}`
+                : `flex items-start gap-3 bg-paper pb-1 ${PAD_IN} ${
+                    // With nothing but an aside to show, the row stands level
+                    // with the nameplate on a wide screen instead of under it
+                    props.terse === true && aside() != null ? 'pt-6 md:pt-2' : 'pt-6'
+                  }`
             }
           >
-            {lead() == null ? null : <div class="shrink-0">{lead()}</div>}
-            {/* A heading rather than bold text: it is what a screen
-              reader announces the dialog by */}
-            <div class="flex min-w-0 grow flex-col gap-0.5">
-              <HeadlessDialogTitle class="text-lg font-extrabold tracking-tight text-ink">
-                {props.title}
-              </HeadlessDialogTitle>
-              <HeadlessDialogDescription
-                class={props.terse === true ? 'sr-only' : 'text-sm text-muted'}
-              >
-                {props.description}
-              </HeadlessDialogDescription>
-            </div>
-            {aside() == null ? null : <div class="shrink-0">{aside()}</div>}
+            <Show when={props.quiet === true}>
+              <HeadlessDialogTitle>{props.title}</HeadlessDialogTitle>
+            </Show>
+            <HeadlessDialogDescription
+              class={props.terse === true ? 'sr-only' : 'min-w-0 grow text-sm text-muted'}
+            >
+              {props.description}
+            </HeadlessDialogDescription>
+            {aside() == null ? null : <div class="ml-auto shrink-0">{aside()}</div>}
           </header>
           {/* What can be done to whatever the dialog is showing,
             under the heading and stuck with it */}
@@ -394,12 +430,17 @@ export function Dialog(props: DialogProps): JSX.Element {
             <Suspense>
               <TransitionChild
                 {...FADE}
-                class={`${props.layout === 'sheet' ? SHEET_PANEL : PANEL} ${
-                  WIDTHS[props.width ?? 'narrow']
-                }`}
+                class={`${props.layout === 'sheet' ? SHEET_PLACE : PLACE} ${
+                  props.quiet === true ? '' : 'pt-[17px]'
+                } ${WIDTHS[props.width ?? 'narrow']}`}
               >
                 <DialogPanel class="contents">
-                  <Frame />
+                  <Show when={props.quiet !== true}>
+                    <Plate />
+                  </Show>
+                  <div class={props.layout === 'sheet' ? SHEET_PANEL : PANEL}>
+                    <Frame />
+                  </div>
                 </DialogPanel>
               </TransitionChild>
             </Suspense>
@@ -445,32 +486,36 @@ export function DialogSection(
 }
 
 /**
- * The row a dialog ends on. Buttons sit to the right, in the order
- * they are written, with the way out last
+ * The dock a dialog ends on: the actions on the right in the order they
+ * are written, and the way out, written last, on the left
  */
 export function DialogActions(
   props: ParentProps & {
     /**
-     * Centred under the field for the one dialog that is a game screen
-     * rather than a form: the safari
+     * A line of fact the dock carries beside the actions, such as where
+     * a catch came from: its own line over the buttons on a phone
      */
-    centred?: boolean;
+    note?: JSX.Element;
   },
 ): JSX.Element {
+  const note = children(() => props.note);
+
   return (
-    <div
-      // One line, whatever is on it. Wrapped, a dialog with three
-      // buttons dropped the last one — usually the way out — onto a
-      // row of its own the moment the panel was a little narrow, which
-      // reads as two bars rather than one and moves the button a
-      // player reaches for without looking. It scrolls sideways
-      // instead, the way the grunt's roster does
-      class={`flex flex-nowrap items-center ${
-        props.centred === true ? 'justify-center' : 'justify-end'
-      } gap-2 overflow-x-auto border-t-2
-        border-line-soft pt-4 sm:pt-5 ${STUCK_BOTTOM}`}
-    >
-      {props.children}
+    <div class={`flex flex-col gap-2 sm:flex-row sm:items-center ${STUCK_BOTTOM}`}>
+      {note() == null ? null : <div class="min-w-0">{note()}</div>}
+      <div
+        // One line, scrolling sideways rather than wrapping, so the way
+        // out never drops onto a row of its own. It is written last and
+        // drawn first, on the left, with the actions on the right. With
+        // a note, the buttons join the dock's row so the note stands
+        // between the way out and the actions
+        class={`flex flex-nowrap items-center justify-end gap-2 overflow-x-auto
+          [&>*:last-child]:order-first [&>*:last-child]:mr-auto ${
+            note() == null ? 'w-full' : 'sm:contents'
+          }`}
+      >
+        {props.children}
+      </div>
     </div>
   );
 }

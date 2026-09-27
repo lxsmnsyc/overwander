@@ -216,7 +216,7 @@ function SeatCounter(
             <AtlasSprite
               sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
               name={landmarkPicture(Landmark.GymSeat) ?? ''}
-              size={44}
+              size={28}
               label=""
             />
           </HeadingPortrait>

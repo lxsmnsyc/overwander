@@ -6,7 +6,7 @@ import { getItemData } from '../../../data/items';
 import CatchPicker, { type CatchOption } from '../../catches/catch-picker';
 import ItemSprite from '../../items/ItemSprite';
 import AnimatedSprite from '../../sprites/AnimatedSprite';
-import { Badge, Button, Detail, DetailRowsProvider, ListRow, Meta } from '../../styled';
+import { Badge, Button, ListRow, Meta } from '../../styled';
 
 /**
  * The furniture every counter shares, so each reads the same: what it
@@ -16,16 +16,16 @@ import { Badge, Button, Detail, DetailRowsProvider, ListRow, Meta } from '../../
 /** What a counter charges: gold, or some of an item (one unless it says) */
 export type CounterCost = { gold: number } | { item: Items; amount?: number };
 
-/** The price written out: a gold badge, or the item and its name */
-function costLine(cost: CounterCost): JSX.Element {
+/** The price written out: gold, or the item, how many, and its name */
+function costChip(cost: CounterCost): JSX.Element {
   if ('gold' in cost) {
-    return <CostBadge cost={cost} />;
+    return `${cost.gold.toLocaleString()} gold`;
   }
   return (
-    <span class="inline-flex items-center gap-1">
+    <>
       <ItemSprite item={cost.item} size={16} label="" />
       {cost.amount ?? 1} {getItemData(cost.item).name}
-    </span>
+    </>
   );
 }
 
@@ -56,38 +56,46 @@ export interface CounterTermsProps {
   often?: string;
 }
 
+/** One term as a chip: gold for money, ember when the player is short */
+const CHIP = 'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold';
+
 /**
- * Always the first thing in a counter: the price, what the player
- * holds, and how often, said before anything is pressed
+ * Always the first thing in a counter, as a row of chips: the price,
+ * what the player carries, and anything else read before pressing
  */
 export function CounterTerms(props: CounterTermsProps): JSX.Element {
   return (
-    <DetailRowsProvider>
-      <div class="grid gap-1 rounded-lg bg-line-soft px-2.5 py-1.5 text-xs">
-        <Show when={props.cost}>{(cost) => <Detail label="Costs">{costLine(cost())}</Detail>}</Show>
-        <Show when={props.have}>
-          {(have) => (
-            <Detail label="You have">
-              <span class={have().short ? 'text-ember-dark' : ''}>
-                {have().amount.toLocaleString()} {have().unit}
-              </span>
-            </Detail>
-          )}
-        </Show>
-        <For each={props.rows ?? []}>{(row) => <Detail label={row.label}>{row.value}</Detail>}</For>
-        <Show when={props.often}>{(often) => <Detail label="How often">{often()}</Detail>}</Show>
-      </div>
-    </DetailRowsProvider>
+    <div class="flex flex-wrap gap-1.5">
+      <Show when={props.cost}>
+        {(cost) => <span class={`${CHIP} bg-gold-soft text-gold`}>{costChip(cost())}</span>}
+      </Show>
+      <Show when={props.have}>
+        {(have) => (
+          <span
+            class={`${CHIP} ${have().short ? 'bg-ember-soft text-ember-dark' : 'bg-line-soft'}`}
+          >
+            You carry {have().amount.toLocaleString()} {have().unit}
+          </span>
+        )}
+      </Show>
+      <For each={props.rows ?? []}>
+        {(row) => (
+          <span class={`${CHIP} bg-line-soft`}>
+            <span class="font-semibold text-muted">{row.label}</span>
+            {row.value}
+          </span>
+        )}
+      </For>
+      <Show when={props.often}>
+        {(often) => <span class={`${CHIP} bg-line-soft`}>{often()}</span>}
+      </Show>
+    </div>
   );
 }
 
-/** The person or the place, in the square beside a dialog's title */
+/** The person or the place, drawn small enough for the face on a dialog's nameplate */
 export function HeadingPortrait(props: { children: JSX.Element }): JSX.Element {
-  return (
-    <span class="flex size-12 items-center justify-center overflow-hidden rounded-xl bg-line-soft">
-      {props.children}
-    </span>
-  );
+  return <span class="flex size-7 items-end justify-center">{props.children}</span>;
 }
 
 /** The label over a counter's picker */

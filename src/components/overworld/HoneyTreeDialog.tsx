@@ -16,7 +16,7 @@ import { failed, readable } from '../app/resource-reads';
 import playEffect, { Effect } from '../app/sound';
 
 /** The tree beside the heading */
-const TREE_SPRITE = 44;
+const TREE_SPRITE = 28;
 
 export interface HoneyTreeDialogProps {
   player: string;

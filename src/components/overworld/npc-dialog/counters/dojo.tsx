@@ -1,7 +1,8 @@
 import { type JSX, createSignal } from 'solid-js';
 import { trainMoveSlot } from '../../../../auth/npcs';
 import { DOJO_MASTER_FEE } from '../../../../data/overworld/npc';
-import { DialogActions, useToast } from '../../../styled';
+import { Button, DialogActions, useToast } from '../../../styled';
+import { CostBadge } from '../terms';
 import { type CounterProps, optionsOf, refusal, scalesIn, useSaying } from '../shared';
 import { DojoCounter } from './care';
 import playEffect, { Effect } from '../../../app/sound';
@@ -11,12 +12,14 @@ export default function Dojo(props: CounterProps): JSX.Element {
   const said = useSaying();
   const toast = useToast();
   const [busy, setBusy] = createSignal(false);
+  const [picked, setPicked] = createSignal<string | null>(null);
 
-  const train = (id: string): void => {
+  const train = (): void => {
     const snapshot = props.snapshot;
     const standing = props.standing;
+    const id = picked();
 
-    if (snapshot == null || standing == null) {
+    if (snapshot == null || standing == null || id == null) {
       return;
     }
     setBusy(true);
@@ -28,6 +31,7 @@ export default function Dojo(props: CounterProps): JSX.Element {
           said('He would not. No scale, or a pokemon he cannot train further.', 'ember');
           return;
         }
+        setPicked(null);
         playEffect(Effect.ItemSlot);
         toast.push({
           title: 'Trained',
@@ -48,12 +52,24 @@ export default function Dojo(props: CounterProps): JSX.Element {
     <>
       <DojoCounter
         options={optionsOf(props)}
+        picked={picked()}
         scales={scalesIn(props)}
         fee={DOJO_MASTER_FEE}
         busy={busy()}
-        onTrain={train}
+        onPick={(next) => {
+          setPicked(next);
+        }}
       />
-      <DialogActions>{props.walkOn()}</DialogActions>
+      <DialogActions>
+        <Button
+          tone="primary"
+          disabled={busy() || picked() == null || scalesIn(props) < 1}
+          onClick={train}
+        >
+          Train <CostBadge cost={{ item: DOJO_MASTER_FEE }} />
+        </Button>
+        {props.walkOn()}
+      </DialogActions>
     </>
   );
 }

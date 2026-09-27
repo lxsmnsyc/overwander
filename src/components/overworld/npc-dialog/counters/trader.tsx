@@ -7,10 +7,11 @@ import { getSpeciesData } from '../../../../data/species';
 import type { Encounter } from '../../../../overworld/encounter';
 import { deriveTraderPokemon, paysForOffer } from '../../../../overworld/trader';
 import CatchBox, { type BoxEntry } from '../../../catches/CatchBox';
-import CatchPicker from '../../../catches/catch-picker';
 import playEffect, { Effect } from '../../../app/sound';
-import { DialogActions, DialogSection, Meta, Note, useToast } from '../../../styled';
-import { CENTRED, type CounterProps, optionsOf, refusal, useSaying } from '../shared';
+import Npc from '../../../../data/overworld/npc';
+import { Button, DialogActions, DialogSection, Meta, useToast } from '../../../styled';
+import { CounterSpent, CounterStep, PickOne } from '../terms';
+import { type CounterProps, NPC_SPENT, optionsOf, refusal, useSaying } from '../shared';
 
 /**
  * The trader: six pokemon from far off, and any one of them for one of
@@ -22,6 +23,8 @@ export default function Trader(props: CounterProps): JSX.Element {
   const toast = useToast();
   const [busy, setBusy] = createSignal(false);
   const [chosen, setChosen] = createSignal<number | null>(null);
+  /** Which of the player's own goes the other way */
+  const [giving, setGiving] = createSignal<string | null>(null);
 
   /** His six, as the player would receive each of them */
   const offers = (): Encounter[] => {
@@ -64,13 +67,14 @@ export default function Trader(props: CounterProps): JSX.Element {
     return at == null ? undefined : offers().at(at);
   };
 
-  const trade = (catchId: string): void => {
+  const trade = (): void => {
     const snapshot = props.snapshot;
     const standing = props.standing;
     const at = chosen();
     const offer = picked();
+    const catchId = giving();
 
-    if (snapshot == null || standing == null || at == null || offer == null) {
+    if (snapshot == null || standing == null || at == null || offer == null || catchId == null) {
       return;
     }
     setBusy(true);
@@ -89,6 +93,7 @@ export default function Trader(props: CounterProps): JSX.Element {
           tone: 'leaf',
         });
         setChosen(null);
+        setGiving(null);
         props.onTraded();
         props.onServed();
         props.onChange?.();
@@ -99,37 +104,37 @@ export default function Trader(props: CounterProps): JSX.Element {
       });
   };
 
+  const done = (): boolean => props.spent.latest === true;
+
   return (
     <>
-      <DialogSection class={CENTRED}>
-        <Show
-          when={props.spent.latest !== true}
-          fallback={<Note>He has traded with you this while.</Note>}
-        >
+      <DialogSection class="flex flex-col gap-3">
+        <Show when={!done()} fallback={<CounterSpent says={NPC_SPENT[Npc.Trader] ?? ''} />}>
+          <CounterStep>Choose one of his</CounterStep>
           <CatchBox
             entries={entries()}
             columns={3}
             capacity={entries().length}
             onOpen={(id) => {
               setChosen(Number(id));
+              setGiving(null);
             }}
           />
-          <Show
-            when={picked()}
-            fallback={<Meta class="block">Pick one of his, then one of yours to give.</Meta>}
-          >
+          <Show when={picked()}>
             {(offer) => (
               <>
                 <Meta class="block">
                   {getSpeciesData(offer().species).name}, level {offer().level}. He takes any of
                   yours that is {SPAWN_RARITY_NAMES[getSpawnRarity(offer().species)]}.
                 </Meta>
-                <CatchPicker
-                  inline
-                  disabled={busy()}
+                <PickOne
                   options={optionsOf(props)}
-                  value={null}
-                  verb="Trade"
+                  picked={giving()}
+                  onPick={(next) => {
+                    setGiving(next);
+                  }}
+                  busy={busy()}
+                  verb="Give"
                   empty="You have nothing of that sort to give."
                   filter={(option) =>
                     !isEgg(option.caught) &&
@@ -138,18 +143,24 @@ export default function Trader(props: CounterProps): JSX.Element {
                     !isGuarded(option.caught) &&
                     paysForOffer(option.caught.species, offer().species)
                   }
-                  onPick={(id) => {
-                    if (id != null) {
-                      trade(id);
-                    }
-                  }}
                 />
               </>
             )}
           </Show>
         </Show>
       </DialogSection>
-      <DialogActions>{props.walkOn()}</DialogActions>
+      <DialogActions>
+        <Show when={!done()}>
+          <Button
+            tone="primary"
+            disabled={busy() || picked() == null || giving() == null}
+            onClick={trade}
+          >
+            Trade
+          </Button>
+        </Show>
+        {props.walkOn()}
+      </DialogActions>
     </>
   );
 }

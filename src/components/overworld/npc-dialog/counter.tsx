@@ -23,6 +23,7 @@ import type { NpcDialogProps } from './index';
 import { LearnRefusal, type LearnResult } from '../../../auth/learn-refusal';
 import TeachMoveDialog from '../../catches/TeachMoveDialog';
 import { type CounterProps, type CounterQuestion, NPC_QUOTES } from './shared';
+import { HeadingPortrait } from './terms';
 
 /**
  * The person a player has walked up to, and the dialog they are met
@@ -117,10 +118,23 @@ export default function NpcCounter(
         isOpen={props.standing != null && asked() == null}
         onClose={props.onClose}
         title={who()}
-        terse
-        description="Somebody passing through with an offer, gone when the window turns. Most
-        will serve you once; the vendor trades as long as your purse holds, and the two who take
-        a Heart Scale as long as you have scales."
+        // The person beside their name, off the same charset the player
+        // just walked up to, and what they say as the heading's line
+        lead={
+          <Show when={showing()}>
+            {(standing) => (
+              <HeadingPortrait>
+                <NpcSprite
+                  npc={standing()[1]}
+                  sheet={props.snapshot?.getWandererCoats().get(standing()[0])}
+                  size={44}
+                  label=""
+                />
+              </HeadingPortrait>
+            )}
+          </Show>
+        }
+        description={<span class="italic">“{NPC_QUOTES[showing()?.[1] ?? Npc.NurseJoy]}”</span>}
       >
         <Show when={showing()}>
           {(standing) => (
@@ -128,25 +142,6 @@ export default function NpcCounter(
               <Show when={failed(props.bag)}>
                 {(said) => <Note class="text-center">{said()}</Note>}
               </Show>
-              {/* The person themselves, off their overworld charset —
-                the same figure the player just walked up to. The room
-                is held whether or not the sheet has landed, so the
-                dialog does not change shape under a player who already
-                knows it.
-
-                What they say goes under them rather than in the
-                dialog's description, where it was the game's voice
-                rather than theirs */}
-              <div class="flex flex-col items-center gap-2 pt-1 text-center">
-                <NpcSprite
-                  npc={standing()[1]}
-                  sheet={props.snapshot?.getWandererCoats().get(standing()[0])}
-                  label=""
-                />
-                <blockquote class="m-0 max-w-prose text-sm text-muted italic">
-                  “{NPC_QUOTES[standing()[1]]}”
-                </blockquote>
-              </div>
 
               <Show when={standing()[1] === Npc.Breeder}>
                 <Breeder {...handed()} />

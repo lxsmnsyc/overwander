@@ -65,6 +65,20 @@ export const NPC_QUOTES: Record<Npc, string> = {
 };
 
 /**
+ * What each of the once-a-while people says once they have done their
+ * one thing for this player, in place of their counter
+ */
+export const NPC_SPENT: Partial<Record<Npc, string>> = {
+  [Npc.Breeder]: 'That pair has done its part. Bring me another when I am next through.',
+  [Npc.DaycareLady]: 'I have warmed one for you already, dear. Come back when I am next here.',
+  [Npc.Groomer]: 'One brushing a visit, that is my rule. Catch me next time.',
+  [Npc.Channeler]: 'I called up what I could. The rest will keep until I pass this way again.',
+  [Npc.Trader]: 'One trade a stop. I will have new faces with me next time.',
+  [Npc.HyperTrainer]: 'One a visit. Bring me the next one when I am back.',
+  [Npc.FossilManiac]: 'That was my one to spare. I will have dug up more next time.',
+};
+
+/**
  * A catch as the breeding rules read one
  */
 export function asParent(caught: CaughtPokemon): BreedingParent {
@@ -96,9 +110,6 @@ export function priceOf(item: Items, buying: boolean): number {
 
   return buying ? data.buy : data.sell;
 }
-
-/** What a counter's own column is laid out as: one thing at a time, centred */
-export const CENTRED = 'items-center text-center';
 
 /**
  * What every counter is handed.
@@ -168,6 +179,11 @@ export function scalesIn(props: CounterProps): number {
     }
   }
   return 0;
+}
+
+/** How much gold the player is carrying, zero until it has been read */
+export function goldOf(props: CounterProps): number {
+  return readable(props.gold) ?? 0;
 }
 
 /** What went wrong, said the way every counter says it */

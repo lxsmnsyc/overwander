@@ -198,6 +198,29 @@ describe('where a species lives', () => {
     }
   });
 
+  it('stages a legendary nowhere its lairs do not stand', () => {
+    // The other half of the rule: a legendary lives where its lair is
+    // and nowhere else, so a roaming one needs a lair in that biome
+    const hosts = new Map<Species, Set<Biome>>();
+
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const lair of getBiomeLairs(biome)) {
+        for (const species of getLairResidents(lair)) {
+          hosts.set(species, (hosts.get(species) ?? new Set()).add(biome));
+        }
+      }
+    }
+
+    expect(hosts.size).toBeGreaterThan(0);
+    for (const [species, biomes] of hosts) {
+      const { name } = getSpeciesData(species);
+
+      for (const biome of getSpeciesData(species).biomes) {
+        expect(biomes.has(biome), `${name} in ${BIOME_NAMES[biome]}`).toBe(true);
+      }
+    }
+  });
+
   it('says the same thing the pools do about every species', () => {
     // Nothing is invented and nothing is dropped: the number of
     // habitat entries is exactly the number of times the registry

@@ -1,0 +1,58 @@
+# The self-hosted game: the database, the app server and the Cloudflare
+# tunnel in front of it. See docs/deploy/server.md.
+#
+# `app` and `tunnel` are in the `server` profile, so `pnpm db` starts the
+# database alone for development. Only the tunnel reaches the app, and
+# the database listens on this machine's loopback address and nowhere else.
+
+name: overwander
+
+services:
+  db:
+    build: db
+    environment:
+      POSTGRES_DB: overwander
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports:
+      - 127.0.0.1:54322:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD, pg_isready, -U, postgres, -d, overwander]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+  app:
+    profiles: [server]
+    build:
+      context: .
+      args:
+        BUILD_ID: ${BUILD_ID:-}
+      secrets:
+        - env
+    env_file: .env
+    environment:
+      # Inside compose the database is `db`, whatever .env says for the host's own tools
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/overwander
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  tunnel:
+    profiles: [server]
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:-}
+    depends_on:
+      - app
+    restart: unless-stopped
+
+secrets:
+  env:
+    file: .env
+
+volumes:
+  db:

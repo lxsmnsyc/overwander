@@ -344,9 +344,12 @@ export function Dialog(props: DialogProps): JSX.Element {
             <div
               // To the right, where the rest of the game keeps what can
               // be done to a thing. The heading stays centred and the
-              // row under it does not compete with it for the middle
-              class={`flex flex-wrap items-center justify-end gap-2 bg-transparent pt-2
-              ${PAD_IN}`}
+              // row under it does not compete with it for the middle.
+              // Without a heading it is the top of the panel, so it is
+              // painted for what scrolls under it and padded evenly
+              class={`flex flex-wrap items-center justify-end gap-2 ${
+                props.quiet === true ? 'bg-paper py-3 sm:py-4' : 'bg-transparent pt-2'
+              } ${PAD_IN}`}
             >
               {bar()}
             </div>

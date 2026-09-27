@@ -280,6 +280,7 @@ export function assembleCaught(
     guarded: row.guarded,
     traded: row.traded,
     canEvolve: row.can_evolve,
+    learnFrom: row.learn_from,
     auctionable: row.auctionable,
     hidden: row.hidden,
     // What is folded into it, which is how a fusion comes apart
@@ -340,6 +341,7 @@ const SCALAR_COLUMNS: Record<string, string> = {
   guarded: 'guarded',
   traded: 'traded',
   canEvolve: 'can_evolve',
+  learnFrom: 'learn_from',
   auctionable: 'auctionable',
   // Written by the splicers alone: the base names what is inside it,
   // and what is inside says it is out of play

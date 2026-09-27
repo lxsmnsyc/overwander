@@ -1,6 +1,7 @@
+import { readOnly } from '../utils/server-calls';
 import { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
-import { requireUid } from '../server/auth';
+import { requireReader, requireUid } from '../server/auth';
 import { Pace } from '../server/pace';
 import check, {
   CELL_COORDINATE,
@@ -15,8 +16,7 @@ import { type WalkReport, recordSteps } from '../server/eggs';
 import savePositionOnServerSide, { markBiomeStoodIn, readPosition } from '../server/positions';
 import { syncServerClock } from './clock';
 import { getLocalOffset } from './local-time';
-import getSupabase, { type Unwatch, watchRow } from './supabase';
-import { asNumber, asRecord } from './__normalize';
+import { type Unwatch, watchRow } from './watch';
 import { type PositionRecord, asPositionRecord } from './position-record';
 import getIdToken from './session';
 
@@ -49,19 +49,18 @@ function fromPositionRow(row: Record<string, unknown>): PositionRecord {
  * anywhere — a new player is placed by `pickStartPosition` instead
  */
 export async function getPosition(uid: string): Promise<PositionRecord | null> {
-  const { data, error } = await getSupabase()
-    .from('positions')
-    .select('player, chunk_x, chunk_y, cell_x, cell_y, depth, moved_at')
-    .eq('player', uid)
-    .eq('generation', WORLD_GENERATION)
-    .maybeSingle();
-
-  // Thrown rather than read as "never walked", which would put a start position over the real one
-  if (error != null) {
-    throw new Error('Could not read where you are just now.');
-  }
-  return data == null ? null : fromPositionRow(asRecord(data));
+  return getPositionOnServer(await getIdToken(), uid);
 }
+
+async function getPositionOnServer(token: string, player: string): Promise<PositionRecord | null> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  const uid = await requireReader(token);
+
+  return player === uid ? readPosition(uid) : null;
+}
+readOnly(getPositionOnServer);
 
 /**
  * Where anybody is standing, read through the server.
@@ -117,21 +116,35 @@ async function writePosition(
   cellY: number,
   depth: Depth,
 ): Promise<number> {
-  // The client carries no generated schema, so the answer is read the
-  // way a row is: whatever came back, narrowed here
-  const { data, error } = (await getSupabase().rpc('save_position', {
-    p_generation: WORLD_GENERATION,
-    p_chunk_x: chunkX,
-    p_chunk_y: chunkY,
-    p_cell_x: cellX,
-    p_cell_y: cellY,
-    p_depth: depth,
-  })) as { data: unknown; error: { message: string } | null };
+  return writePositionOnServer(await getIdToken(), chunkX, chunkY, cellX, cellY, depth);
+}
 
-  if (error != null) {
-    throw new Error('Could not save where you are just now.');
-  }
-  return typeof data === 'string' ? Number(data) : asNumber(data);
+async function writePositionOnServer(
+  token: string,
+  chunkX: number,
+  chunkY: number,
+  cellX: number,
+  cellY: number,
+  depth: Depth,
+): Promise<number> {
+  'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, chunkX);
+  check(CHUNK_COORDINATE, chunkY);
+  check(CELL_COORDINATE, cellX);
+  check(CELL_COORDINATE, cellY);
+  check(DEPTH, depth);
+  const uid = await requireUid(token);
+
+  return savePositionOnServerSide(
+    uid,
+    chunkX,
+    chunkY,
+    cellX,
+    cellY,
+    depth,
+    await syncServerClock(),
+  );
 }
 
 /**

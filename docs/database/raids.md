@@ -241,8 +241,8 @@ goes. A player who owns no pokemon can do nothing else, and the row is what lets
 the lobby list them. Tier 1, the way the lobby itself is, since who is watching
 a raid is as public as who has joined it.
 
-Both are published to realtime, so an invited list and a crowd both move while
-somebody is looking at them.
+Both are followed live, so an invited list and a crowd both move while somebody
+is looking at them.
 
 ## See also
 

@@ -1,3 +1,4 @@
+import { MAX_WING_STATS } from '../../../src/data/items/wings';
 import { registerMoves } from '../../../src/data/moves';
 import { describe, expect, it } from 'vitest';
 import registerAbilities from '../../../src/data/abilities';
@@ -1044,16 +1045,20 @@ describe('world', () => {
       const groups = getPhenomenonGroups(phenomenon);
       const listed = getPhenomenonItems(phenomenon);
       const bands = ['uncommon', 'rare', 'prized'] as const;
+      const drawn = [...bands, 'special'] as const;
 
       // Nothing is lost on the way into the bands, and nothing is
       // invented: the same items, sorted
-      expect(new Set(bands.flatMap((band) => groups[band].map((entry) => entry.item)))).toEqual(
+      expect(new Set(drawn.flatMap((band) => groups[band].map((entry) => entry.item)))).toEqual(
         new Set(listed),
       );
-      // Neither base nor special has any width here, so anything left
-      // in one would be an item the phenomenon could never leave
+      // Base has no width here, so anything left in it would be an
+      // item the phenomenon could never leave
       expect(groups.base).toEqual([]);
-      expect(groups.special).toEqual([]);
+      // Special holds a shadow's Max wings and nothing else
+      expect(new Set(groups.special.map((entry) => entry.item))).toEqual(
+        new Set(phenomenon === Phenomenon.FlyingShadow ? MAX_WING_STATS.keys() : []),
+      );
 
       for (const band of bands) {
         const entries = groups[band];
@@ -1117,14 +1122,17 @@ describe('world', () => {
       }
     }
 
-    // The bands themselves are the ground's, one step richer, and what
-    // is left over is nothing: no base, no special
+    // The bands themselves are the ground's, one step richer, special
+    // as wide as the ground's, and nothing left over for base
     expect(PHENOMENON_BAND_ODDS.rare).toBe(8 * ITEM_BAND_ODDS.rare);
     expect(PHENOMENON_BAND_ODDS.prized).toBe(8 * ITEM_BAND_ODDS.prized);
-    expect(PHENOMENON_BAND_ODDS.special).toBe(0);
+    expect(PHENOMENON_BAND_ODDS.special).toBe(ITEM_BAND_ODDS.special);
     expect(
-      PHENOMENON_BAND_ODDS.prized + PHENOMENON_BAND_ODDS.rare + PHENOMENON_BAND_ODDS.uncommon,
-    ).toBe(1);
+      PHENOMENON_BAND_ODDS.special +
+        PHENOMENON_BAND_ODDS.prized +
+        PHENOMENON_BAND_ODDS.rare +
+        PHENOMENON_BAND_ODDS.uncommon,
+    ).toBeCloseTo(1, 12);
   });
 
   it('startles what the phenomenon looks like', () => {

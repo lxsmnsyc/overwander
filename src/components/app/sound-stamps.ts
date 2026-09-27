@@ -3,6 +3,7 @@
 /** The digest each sound under `public/sounds/effects` is asked for with */
 const SOUND_STAMPS: Readonly<Partial<Record<string, string>>> = {
   ability_learned: 'a73abb3a',
+  ball_click: 'e5529537',
   ball_shake: 'ebdd23cd',
   ball_throw: '2d27cd79',
   battle_draw: '2a46b1fe',
@@ -12,8 +13,10 @@ const SOUND_STAMPS: Readonly<Partial<Record<string, string>>> = {
   catch_failed: 'b2599b42',
   catch_success: 'b6fe08a8',
   dex_entry: '4b680f38',
+  egg_get: '9898d31d',
   egg_hatch: 'fe0a386f',
   evolution: '11f7a4ed',
+  flight: '690602e0',
   fossil_revive: 'bb320981',
   honey_lather: '7bb75181',
   item_slot: 'cc392987',
@@ -21,6 +24,9 @@ const SOUND_STAMPS: Readonly<Partial<Record<string, string>>> = {
   level_up: 'd1377b61',
   move_learned: 'f1264179',
   mythical_appears: 'd536d0cf',
+  notice: '8ced5889',
+  nurse_heal: '1e33b502',
+  pokemon_get: '902727f5',
   portal_cross: '1a8a105d',
   prized_item: 'ea932303',
   purified: '0c2ed6c8',

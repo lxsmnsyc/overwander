@@ -1,5 +1,28 @@
 # overwander
 
+## 4.20.0
+
+### Minor Changes
+
+- 22f9d99: - Every player can sign in with an email and a password, and Google and GitHub appear only where the server offers them.
+  - Staff can give a player a one-time link to choose a password for the account they already have.
+  - Settings has a Security section, opened with your password, for an authenticator app and passkeys.
+  - Signing in can use a passkey, and asks for the authenticator code when one is set up.
+
+### Patch Changes
+
+- 9fc5de8: The game can show a line to everybody with it open, such as a maintenance
+  window or an event starting, and each player can put it away.
+- 49530ca: The announcement banner no longer shows as an empty box at the top of the screen when there are no announcements.
+- 994282f: A server can switch on three optional features: a ledger of every gold, item
+  and candy change, a log of what staff did, and a day's grace on releases, when
+  a released pokemon can be taken back for the candy it paid.
+- 4dc8c12: The game runs on its own server now, accounts included. Everybody signs in once
+  more after the move, and GitHub asks to authorise the game again the first time.
+- dc52f18: Parts of the game, or the whole game for maintenance, can be closed for a while
+  without an update. Leaving, cancelling and finishing what is already under way
+  always stays open.
+
 ## 4.19.0
 
 ### Minor Changes

@@ -12,7 +12,8 @@ import makePasswordLink from '../server/password-links';
 import { syncServerClock } from './clock';
 import getIdToken from './session';
 import { StaffAction, recordStaffAction } from '../server/staff-log';
-import { type SwitchRow, readSwitches, writeSwitch } from '../server/switches';
+import type { SwitchRow } from '../server/switches';
+import { readSwitches, writeSwitch } from '../server/switches';
 
 /**
  * What the dashboard asks the server for.

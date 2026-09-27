@@ -1,4 +1,4 @@
-import { STAT_NAMES, Stats } from '../constants/stats';
+import { MAX_EFFORT_PER_STAT, STAT_NAMES, Stats } from '../constants/stats';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { PP_UP_LIMIT } from '../moves';
 import { nameToIcon, registerItem } from './__create';
@@ -50,8 +50,19 @@ const NAMES: { [key in Items]?: string } = {
   [Items.Carbos]: 'Carbos',
 };
 
+/** The Max vitamins, each filling its stat's effort at once. Found, never bought */
+export const MAX_VITAMIN_STATS = new Map<Items, Stats>([
+  [Items.HPUpMax, Stats.HP],
+  [Items.ProteinMax, Stats.Attack],
+  [Items.IronMax, Stats.Defense],
+  [Items.CalciumMax, Stats.SpecialAttack],
+  [Items.ZincMax, Stats.SpecialDefense],
+  [Items.CarbosMax, Stats.Speed],
+]);
+
+/** Whether the item is a vitamin, Max or not */
 export function isVitamin(item: Items): boolean {
-  return VITAMIN_STATS.has(item);
+  return VITAMIN_STATS.has(item) || MAX_VITAMIN_STATS.has(item);
 }
 
 /**
@@ -73,6 +84,16 @@ export const PP_ITEMS = new Map<Items, number>([
   [Items.PPMax, PP_UP_LIMIT],
 ]);
 
+/** The plain vitamin each Max one is drawn from and named after */
+const VITAMIN_OF_MAX = new Map<Items, Items>([
+  [Items.HPUpMax, Items.HPUp],
+  [Items.ProteinMax, Items.Protein],
+  [Items.IronMax, Items.Iron],
+  [Items.CalciumMax, Items.Calcium],
+  [Items.ZincMax, Items.Zinc],
+  [Items.CarbosMax, Items.Carbos],
+]);
+
 export function isPPItem(item: Items): boolean {
   return PP_ITEMS.has(item);
 }
@@ -91,6 +112,20 @@ export default function registerVitamins(): void {
       flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
       buy: VITAMIN_PRICE,
       sell: VITAMIN_PRICE / 2,
+    });
+  }
+
+  for (const [item, stat] of MAX_VITAMIN_STATS) {
+    const name = `${NAMES[VITAMIN_OF_MAX.get(item) ?? item] ?? 'Vitamin'} Max`;
+
+    registerItem(item, {
+      name,
+      description: `Sets ${STAT_NAMES[stat]} effort to ${MAX_EFFORT_PER_STAT}. Spent on use.`,
+      type: ItemTypes.Training,
+      icon: nameToIcon('medicine', name),
+      flags: ItemFlags.Usable | ItemFlags.Consumable,
+      buy: 0,
+      sell: 0,
     });
   }
 

@@ -158,3 +158,27 @@ export async function writeEncounter(transaction: Tx, record: EncounterRecord): 
     `;
   }
 }
+
+/** The keys of every encounter that has run from this player, in the live generation */
+export async function readRetiredKeys(uid: string): Promise<string[]> {
+  const rows = await getSql()`
+    select key from fled_encounters
+    where player = ${uid} and generation = ${WORLD_GENERATION}
+  `;
+  const keys: string[] = [];
+
+  for (const row of rows) {
+    keys.push(String(row.key));
+  }
+  return keys;
+}
+
+/** The safari tally stored on this player's encounter, as it was written */
+export async function readSafariTally(spawnId: string, player: string): Promise<unknown> {
+  const rows = await getSql()`
+    select safari from encounters
+    where generation = ${WORLD_GENERATION} and spawn_id = ${spawnId} and player = ${player}
+  `;
+
+  return rows.at(0)?.safari ?? null;
+}

@@ -1,6 +1,6 @@
-# What the sprite host answers with. Cloudflare Pages reads this from
-# the root of what it publishes; Vercel ignores it, and the rules it
-# needs stay in vercel.json.
+# What the sprite host answers with. Cloudflare reads this from the
+# root of what it publishes. A server with no sprite host serves the
+# same headers through the route rules in vite.config.ts.
 #
 # The app is served from a different origin to the sprites, so every
 # one of these is read cross-origin: the sheets and frame packs are

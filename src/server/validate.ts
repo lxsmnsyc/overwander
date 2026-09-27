@@ -15,7 +15,7 @@ import { MAX_EFFORT_PER_STAT, MAX_PACKED_IVS, Stats } from '../data/constants/st
 import { MAX_LEVEL } from '../data/constants/levels';
 import Npc from '../data/overworld/npc';
 import { RaidKind } from '../auth/raid-record';
-import { TEAM_SIZE } from '../auth/teams';
+import TEAM_SIZE from '../auth/team-size';
 import { TRADE_GOLD_LIMIT } from '../auth/trade-record';
 
 /**
@@ -24,10 +24,9 @@ import { TRADE_GOLD_LIMIT } from '../auth/trade-record';
  * Every argument on the other side of a `'use server'` boundary is
  * whatever the caller sent, not what the parameter list says: the
  * types are erased and the call is an ordinary HTTP request anybody
- * can shape. The modules under `src/server/` then read those
- * arguments over the table-owner connection, which row-level security
- * does not bind, so the shape has to be checked here rather than
- * assumed.
+ * can shape. The modules under `src/server/` then act on those
+ * arguments over the table-owner connection, so the shape has to be
+ * checked here rather than assumed.
  *
  * This is a check, not a rule. A schema says an argument is a number
  * in the world or a text id of a sane length; whether the player may
@@ -52,6 +51,12 @@ const MAX_AMOUNT = 1e9;
 
 /** The most rows an admin listing may page to */
 const MAX_PAGE = 10_000;
+
+/** The most spawns one chunk window may store */
+const MAX_WINDOW_SPAWNS = 64;
+
+/** The most keys one batched read in the browser gathers */
+const BATCH_LIMIT = 50;
 
 /** The most pokemon one call may act on at once */
 const BULK_LIMIT = 200;
@@ -100,7 +105,7 @@ function whole(least: number, most: number): v.BaseSchema<unknown, unknown, v.Ba
 export const TOKEN = v.string();
 
 /**
- * An account, which is a Supabase uid. Empty stands for nobody, the
+ * An account's uuid. Empty stands for nobody, the
  * way it does everywhere else, and the calls that take it refuse it
  * themselves
  */
@@ -162,6 +167,12 @@ export const MAYBE_PLAYER_NAME = v.nullable(PLAYER_NAME);
 /** A line a player or a staff member wrote: a reason, a search */
 export const TEXT = v.pipe(v.string(), v.maxLength(TEXT_LIMIT));
 
+/** A password as typed, bounded at Better Auth's own longest */
+export const PASSWORD = v.pipe(v.string(), v.maxLength(128));
+
+/** A moment, in milliseconds since the epoch, such as the start of a window */
+export const TIME = whole(0, Number.MAX_SAFE_INTEGER);
+
 /** A page of an admin listing */
 export const PAGE = whole(0, MAX_PAGE);
 
@@ -182,6 +193,92 @@ export const PARTY = listOf(ID, TEAM_SIZE);
 
 /** The catches one call acts on at once */
 export const CATCH_LIST = listOf(ID, BULK_LIMIT);
+
+/** The caller's zone offset, or null for every zone */
+export const MAYBE_OFFSET = v.nullable(OFFSET);
+
+/** Any value a Postgres `integer` column holds, such as a packed roll */
+const INT32 = whole(-(2 ** 31), 2 ** 31 - 1);
+
+/** A chunk window's spawn rolls, as a publisher sends them */
+export const SPAWN_ROLLS = listOf(
+  v.object({ species: GAME_ID, individualValue: INT32, traitValue: INT32 }),
+  MAX_WINDOW_SPAWNS,
+);
+
+/** As many row ids as one batched read in the browser sends */
+export const ID_BATCH = listOf(ID, BATCH_LIMIT);
+
+/** As many accounts as one batched read in the browser sends */
+export const UID_BATCH = listOf(UID, BATCH_LIMIT);
+
+/** Row ids keyed by the cells of one chunk, at most one per cell */
+const CHUNK_IDS = listOf(ID, CELL_COUNT);
+
+/** The row ids one chunk's landmark standings are asked by */
+export const STANDING_IDS = v.object({
+  lairs: CHUNK_IDS,
+  stops: CHUNK_IDS,
+  seats: CHUNK_IDS,
+  visits: CHUNK_IDS,
+  nests: CHUNK_IDS,
+});
+
+/** Which of a player's friend lists a read is for */
+export const LINK_TABLE = v.picklist(['friends', 'blocks']);
+
+/** A column name the search planner writes, checked as a plain lower-case identifier */
+const COLUMN = v.pipe(v.string(), v.regex(/^[a-z_]{1,64}$/));
+
+/** A join's own name in a search plan, which the server does not use */
+const ALIAS = v.pipe(v.string(), v.regex(/^[a-z0-9_]{1,64}$/));
+
+/** An operator the search planner uses */
+const CATCH_OP = v.picklist(['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'in', 'nin', 'ilike']);
+
+/** One value a constraint compares against */
+const CATCH_VALUE = v.union([
+  v.pipe(v.string(), v.maxLength(TEXT_LIMIT)),
+  v.number(),
+  v.boolean(),
+  listOf(v.union([v.pipe(v.string(), v.maxLength(TEXT_LIMIT)), v.number()]), MAX_PAGE),
+]);
+
+/** The store's half of a box search, as `catch-search.ts` plans it */
+export const CATCH_CONSTRAINTS = listOf(
+  v.variant('on', [
+    v.object({ on: v.literal('row'), column: COLUMN, op: CATCH_OP, value: CATCH_VALUE }),
+    v.object({
+      on: v.literal('child'),
+      alias: ALIAS,
+      table: v.picklist(['caught_moves', 'caught_abilities', 'caught_items', 'caught_history']),
+      column: COLUMN,
+      op: CATCH_OP,
+      value: CATCH_VALUE,
+    }),
+    v.object({
+      on: v.literal('exists'),
+      alias: ALIAS,
+      table: v.picklist(['team_catches', 'auctions', 'profiles']),
+      equals: v.record(COLUMN, v.union([v.string(), v.number(), v.boolean()])),
+    }),
+  ]),
+  64,
+);
+
+/** A flag column a box may be listed by */
+export const CATCH_MARK = v.picklist([
+  'shiny',
+  'shadow',
+  'egg',
+  'favorite',
+  'guarded',
+  'auctionable',
+  'hurt',
+]);
+
+/** As many catches as one read by id asks for */
+export const CATCH_IDS = listOf(ID, MAX_PAGE);
 
 /** Which mark a bulk call is setting */
 export const MARK_FIELD = v.picklist(['favorite', 'guarded']);

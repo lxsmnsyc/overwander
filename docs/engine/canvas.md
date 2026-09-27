@@ -78,11 +78,11 @@ browser is here, so the server sends the title and a space for it.
 
 They also carry no session. `/demo/*` is named in `AuthProvider` as sessionless:
 the provider is still mounted so `useAuth` works anywhere, but it opens no
-listener and never builds a Supabase client, which is imported **on demand**
+listener and never builds the auth client, which is imported **on demand**
 inside `onMount` rather than at the top of the module. A demo battle that opened
-an auth listener would be reading a real Supabase project. The side effect is
-that the SDK, by a long way the heaviest thing the browser downloads, sits in a
-chunk of its own, asked for only by the pages that have a player.
+an auth listener would be asking the server for a session. The side effect is
+that the auth client sits in a chunk of its own, asked for only by the pages that
+have a player.
 
 The parties are rolled between `DEMO_MIN_LEVEL` (70) and `DEMO_MAX_LEVEL` (80),
 high enough that a field of them lasts long enough against a maxed boss to be

@@ -1,10 +1,17 @@
 import { A } from '@solidjs/router';
 import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
 import type { PlayerRow } from '../../auth/admin';
-import { ROLES, ROLE_NAMES, type Role, canActOn, grantableRoles } from '../../auth/staff';
+import {
+  ROLES,
+  ROLE_NAMES,
+  type Role,
+  canActOn,
+  grantableRoles,
+  runsTheGame,
+} from '../../auth/staff';
 import { Badge, Button, Card, Meta, Note, Row, Select, Status, TextField } from '../styled';
 import ProfileTab from '../profile/ProfileTab';
-import { getPlayer, setPlayerBan, setPlayerRole } from '../../auth/admin';
+import { createPasswordLink, getPlayer, setPlayerBan, setPlayerRole } from '../../auth/admin';
 import useStaff from './staff-context';
 
 /**
@@ -29,6 +36,64 @@ function asRole(role: string): Role {
 /** The day the account was opened, said the way a date is said locally */
 function opened(at: number): string {
   return Number.isNaN(at) ? 'unknown' : new Date(at).toLocaleDateString();
+}
+
+/**
+ * A one-time link the player opens to choose a password, handed to
+ * them by staff since the game sends no email
+ */
+function PasswordLinkCard(props: { uid: string }): JSX.Element {
+  const [link, setLink] = createSignal<string | null>(null);
+  const [busy, setBusy] = createSignal(false);
+  const [wrong, setWrong] = createSignal<string | null>(null);
+
+  const make = (): void => {
+    setWrong(null);
+    setBusy(true);
+    createPasswordLink(props.uid)
+      .then((made) => {
+        if (made == null) {
+          setWrong('That account is not yours to make a link for.');
+          return;
+        }
+        setLink(made);
+      })
+      .catch((caught: unknown) => {
+        setWrong(caught instanceof Error ? caught.message : String(caught));
+      })
+      .finally(() => {
+        setBusy(false);
+      });
+  };
+
+  return (
+    <Card title="Password">
+      <Note>
+        A link that lets this player choose a password, then sign in with their address and it. It
+        works once, for 7 days, and a new one replaces it.
+      </Note>
+      <Show when={link()}>
+        {(made) => (
+          <Row class="items-center">
+            <Meta class="grow font-mono break-all">{made()}</Meta>
+            <Button
+              onClick={() => {
+                navigator.clipboard.writeText(made()).catch(() => undefined);
+              }}
+            >
+              Copy
+            </Button>
+          </Row>
+        )}
+      </Show>
+      <Row>
+        <Button tone="primary" disabled={busy()} onClick={make}>
+          {link() == null ? 'Make a password link' : 'Make a new one'}
+        </Button>
+      </Row>
+      <Status message={wrong()} tone="alert" />
+    </Card>
+  );
 }
 
 /**
@@ -193,6 +258,10 @@ function PlayerCard(props: { uid: string; player: Resource<PlayerRow | null> }):
             </Show>
             <Status message={wrong()} tone="alert" />
           </Card>
+
+          <Show when={beneath(row()) && runsTheGame(staff.role())}>
+            <PasswordLinkCard uid={row().uid} />
+          </Show>
 
           {/* The game's own profile, with everything that writes taken
               off it. Staff read a player the way a player does */}

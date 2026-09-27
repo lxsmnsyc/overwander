@@ -14,7 +14,7 @@ import type Unit from '../unit';
  * helping, so the wish goes with it
  * https://bulbapedia.bulbagarden.net/wiki/Wish_(move)
  */
-const DELAY = turns(2);
+export const WISH_DELAY = turns(2);
 
 /** What it puts back when it lands */
 const SHARE = 0.5;
@@ -64,7 +64,7 @@ export default function setupWish(battle: Battle): void {
       return;
     }
 
-    wishes.push({ unit: wishedOn(event.source, event.target), remaining: DELAY });
+    wishes.push({ unit: wishedOn(event.source, event.target), remaining: WISH_DELAY });
     timer.start();
   });
 

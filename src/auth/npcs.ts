@@ -20,6 +20,7 @@ import check, {
   PARENTS,
   REPLACED_SLOT,
   TOKEN,
+  TRADER_OFFER,
 } from '../server/validate';
 import type { Awakening } from '../server/awaken';
 import {
@@ -36,6 +37,7 @@ import {
   remindMove as remindOnServerSide,
   reviveFossil as reviveOnServerSide,
   sellToVendor as sellOnServerSide,
+  tradeWithTrader as tradeOnServerSide,
   trainMoveSlot as trainSlotOnServerSide,
   tutorMove as tutorOnServerSide,
   visitNurse as visitNurseOnServerSide,
@@ -799,5 +801,66 @@ async function trainSlotOnServer(
     uid,
     Npc.DojoMaster,
     await trainSlotOnServerSide(uid, x, y, cell, catchId, await syncServerClock(), offset),
+  );
+}
+
+/**
+ * Swap one of the player's catches for the trader's pokemon at
+ * `offer`, once a window. Resolves the new catch's id, or null when he
+ * refuses
+ */
+export async function tradeWithTrader(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  offer: number,
+  catchId: string,
+): Promise<string | null> {
+  return tradeOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    offer,
+    catchId,
+    snapshot.offset,
+    getLocale(),
+  );
+}
+
+async function tradeOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  offer: number,
+  catchId: string,
+  offset: number,
+  locale: string,
+): Promise<string | null> {
+  'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(TRADER_OFFER, offer);
+  check(ID, catchId);
+  check(OFFSET, offset);
+  check(LOCALE, locale);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
+
+  return countVisit(
+    uid,
+    Npc.Trader,
+    await tradeOnServerSide(
+      uid,
+      x,
+      y,
+      cell,
+      offer,
+      catchId,
+      await syncServerClock(),
+      offset,
+      locale,
+    ),
   );
 }

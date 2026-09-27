@@ -84,6 +84,7 @@ import {
   isAceTrainer,
 } from '../data/overworld/trainers';
 import Phenomenon, { BIOME_PHENOMENA } from '../data/overworld/phenomenon';
+import { rollTraderOffer } from './trader';
 import {
   VENDOR_KINDS,
   type VendorKind,
@@ -1704,6 +1705,26 @@ export default class ChunkSnapshot {
     const rng = new AleaRNG(`${this.key}${this.npcTimestamp}fossils${cell}`);
 
     return rollFossilOffer(() => rng.random());
+  }
+
+  /**
+   * The six pokemon the trader at this cell brought, or nothing when
+   * somebody else is standing there. Derived like the maniac's fossils,
+   * so every player sees the same six this window
+   */
+  getTraderOffer(cell: number): Spawn[] {
+    if (this.getWanderingNpcs().get(cell) !== Npc.Trader) {
+      return [];
+    }
+
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}swaps${cell}`);
+
+    return rollTraderOffer(
+      this.biomeAt(cell),
+      getTimeOfDay(this.npcTimestamp),
+      () => rng.random(),
+      () => rng.int32(),
+    );
   }
 
   /**

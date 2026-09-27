@@ -13,7 +13,7 @@ import { GiftKind } from '../auth/gift-record';
 import { LobbyRole } from '../auth/lobby-role';
 import { MAX_EFFORT_PER_STAT, MAX_PACKED_IVS, Stats } from '../data/constants/stats';
 import { MAX_LEVEL } from '../data/constants/levels';
-import Npc from '../data/overworld/npc';
+import Npc, { TRADER_OFFERS } from '../data/overworld/npc';
 import { RaidKind } from '../auth/raid-record';
 import TEAM_SIZE from '../auth/team-size';
 import { TRADE_GOLD_LIMIT } from '../auth/trade-record';
@@ -187,6 +187,9 @@ const PACKED_IVS = whole(0, MAX_PACKED_IVS);
  * pokemon still has room, which is what the counters send then
  */
 export const REPLACED_SLOT = whole(-1, mostSlots(Slots.Move) - 1);
+
+/** Which of the trader's pokemon is asked for */
+export const TRADER_OFFER = whole(0, TRADER_OFFERS - 1);
 
 /** The catches a player brings to a fight */
 export const PARTY = listOf(ID, TEAM_SIZE);

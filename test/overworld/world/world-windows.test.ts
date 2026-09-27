@@ -58,6 +58,7 @@ import { getPortalCell, portalInRegion } from '../../../src/overworld/portal';
 import Npc, {
   NPCS,
   TRADERS,
+  TRADER_OFFERS,
   npcSheet,
   npcSheets,
 } from '../../../src/data/overworld/npc';
@@ -769,6 +770,49 @@ describe('world', () => {
     expect(found).toBeGreaterThan(0);
     // And he is not carrying the same pair every window
     expect(offers.size).toBeGreaterThan(1);
+  });
+
+  it('hands the trader six pokemon from away, the same six to everybody', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.WanderingNpc),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    let found = 0;
+
+    for (let window = 0; window < 64; window++) {
+      const at = window * NPC_INTERVAL;
+      const snapshot = new ChunkSnapshot(chunk, at);
+
+      for (const [cell, npc] of snapshot.getWanderingNpcs()) {
+        const offer = snapshot.getTraderOffer(cell);
+
+        if (npc !== Npc.Trader) {
+          expect(offer).toEqual([]);
+          continue;
+        }
+        found++;
+
+        const species = new Set<Species>();
+
+        for (const [one] of offer) {
+          species.add(one);
+          // Young bands only, so never a legendary or a mythical
+          expect(getSpawnRarity(one)).not.toBe(SpawnRarity.Special);
+          expect(getSpawnRarity(one)).not.toBe(SpawnRarity.Mythical);
+        }
+        expect(offer.length).toBe(TRADER_OFFERS);
+        expect(species.size).toBe(offer.length);
+        expect(new ChunkSnapshot(chunk, at + 1).getTraderOffer(cell)).toEqual(offer);
+      }
+    }
+
+    expect(found).toBeGreaterThan(0);
   });
 
   it('opens a portal onto the portal in the town named', () => {

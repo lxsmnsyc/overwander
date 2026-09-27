@@ -121,6 +121,12 @@ const enum Npc {
    * has scales
    */
   DojoMaster = 15,
+  /**
+   * Brings six pokemon from other biomes and swaps one of them for any
+   * of the player's own from the same spawn band. Once a window, and
+   * what he hands over arrives traded, so a trade evolution opens
+   */
+  Trader = 16,
 }
 
 export default Npc;
@@ -148,6 +154,7 @@ export const NPCS: Npc[] = [
   Npc.Kurt,
   Npc.Geologist,
   Npc.DojoMaster,
+  Npc.Trader,
 ];
 
 /** The people who keep a crate to buy from, and take what a player sells */
@@ -163,6 +170,7 @@ export const NPC_VISIT_TAGS = new Map<Npc, string>([
   [Npc.Groomer, 'groom'],
   [Npc.FossilManiac, 'fossil'],
   [Npc.Channeler, 'channel'],
+  [Npc.Trader, 'swap'],
 ]);
 
 /**
@@ -211,6 +219,12 @@ const NPC_CHARSETS: Record<Npc, string[]> = {
     'characters/hgss/black-belt',
     'characters/dppt/black-belt',
     'characters/b2w2/black-belt',
+  ],
+  [Npc.Trader]: [
+    'characters/b2w2/backpacker-m',
+    'characters/b2w2/backpacker-f',
+    'characters/dppt/collector',
+    'characters/oras/collector',
   ],
 };
 
@@ -337,6 +351,7 @@ export const NPC_NAMES: Record<Npc, string> = {
   [Npc.Kurt]: 'Kurt',
   [Npc.Geologist]: 'Geologist',
   [Npc.DojoMaster]: 'Dojo Master',
+  [Npc.Trader]: 'Trader',
 };
 
 /**
@@ -433,6 +448,9 @@ export function getTutorableMoves(species: Species, known: Iterable<Moves>): Mov
  * walking rather than a purse
  */
 export const CHANNELER_FEE = Items.HeartScale;
+
+/** How many pokemon the trader has on offer at once */
+export const TRADER_OFFERS = 6;
 
 /** What the Dojo Master charges for one more move slot: the same scale */
 export const DOJO_MASTER_FEE = Items.HeartScale;

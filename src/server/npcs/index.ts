@@ -14,4 +14,5 @@ export { channelAbility, remindMove, trainMoveSlot, tutorMove } from './moves';
 export type { TradeResult } from './moves';
 export { buyFromVendor, sellToVendor } from './vendor';
 export { buyFossil, carveApricorns, reviveFossil } from './fossils';
+export { default as tradeWithTrader } from './trader';
 export type { RevivedFossil } from './fossils';

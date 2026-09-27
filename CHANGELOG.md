@@ -1,5 +1,12 @@
 # overwander
 
+## 4.22.1
+
+### Patch Changes
+
+- 94aa69f: The evolve button turns on at the level an evolution asks for, rather than one level later.
+- 94aa69f: Redrawn item sheets, such as the one with the Max items, now load in place of the old pictures.
+
 ## 4.22.0
 
 ### Minor Changes

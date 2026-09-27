@@ -288,8 +288,12 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
           />
           {/* Only its own room is drawn, and only for somebody who can
                 fill it: an empty square on a stranger's pokemon is a
-                button nobody may press */}
-          <ul class="m-0 grid list-none grid-cols-8 gap-1 p-0" {...itemsOrder.listProps}>
+                button nobody may press. Four to a row below `md`, where
+                eight squares are too small to press */}
+          <ul
+            class="m-0 grid list-none grid-cols-4 gap-1 p-0 md:grid-cols-8"
+            {...itemsOrder.listProps}
+          >
             <Index each={itemSlots(props.caught, props.owned)}>
               {(_, at) => (
                 <li

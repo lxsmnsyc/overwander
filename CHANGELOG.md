@@ -1,5 +1,18 @@
 # overwander
 
+## 4.21.0
+
+### Minor Changes
+
+- af35a0f: - The nurse's heal, a pokemon fleeing or being run from, taking an egg, receiving a pokemon, and a caught ball clicking shut all have their own sounds.
+  - A new notice (an invite, a trade offer, a friend request, or an auction won, outbid or unsold) plays a chime.
+
+### Patch Changes
+
+- af35a0f: The Selling tab no longer fails to open when a settled lot no longer holds its pokemon.
+- 88f69fd: - The fullscreen button is on the overworld bar on phones too.
+  - The top bar of the catch sheet, the dex entry and the world map covers what scrolls under it, and its contents sit in the middle of it.
+
 ## 4.20.0
 
 ### Minor Changes

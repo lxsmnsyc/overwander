@@ -38,8 +38,8 @@ test.describe('the catch sheet', () => {
   test('is headed by the pokemon itself, beside its actions', async ({ page }) => {
     const sheet = await openCatch(page);
 
-    // No title bar: the pokemon's name heads the top row instead
-    await expect(sheet.getByRole('heading', { level: 3 }).first()).toBeVisible();
+    // Its name is on the nameplate, with the actions beside the badges
+    await expect(sheet.getByRole('heading', { level: 2 }).locator('[data-name]')).toBeVisible();
     await expect(sheet.getByRole('button', { name: /Actions/ })).toBeVisible();
     await expect(sheet.getByRole('button', { name: 'Close' })).toBeVisible();
 
@@ -147,14 +147,15 @@ test.describe('the catch sheet', () => {
     const torn = await page.evaluate(() => window.torn?.count ?? -1);
 
     expect(torn, 'nothing should have been unmounted while the favorite was written').toBe(0);
-    await expect(sheet.getByText(SHEET)).toBeVisible();
+    await expect(sheet.getByRole('heading', { level: 2 })).toContainText(SHEET);
   });
 
   test('names a pokemon and calls it that afterwards', async ({ page }) => {
     const sheet = await openCatch(page);
     // Whatever the starter is, the sheet is headed by its species
     // until somebody says otherwise
-    const species = (await sheet.getByRole('heading', { level: 3 }).first().textContent()) ?? '';
+    const name = sheet.getByRole('heading', { level: 2 }).locator('[data-name]');
+    const species = (await name.textContent()) ?? '';
 
     await chooseAction(page, sheet, 'Set nickname');
 
@@ -174,9 +175,9 @@ test.describe('the catch sheet', () => {
     await expect(naming.getByText('It will be called Sir Scratch.')).toBeVisible();
     await naming.getByRole('button', { name: 'Save' }).click();
 
-    // The sheet is headed by the name now, with the species under it
-    await expect(sheet.getByRole('heading', { level: 3, name: 'Sir Scratch' })).toBeVisible();
-    await expect(sheet.getByText(species.replace('✦ ', ''), { exact: true })).toBeVisible();
+    // The sheet is headed by the name now, with the species beside it
+    await expect(name).toHaveText('Sir Scratch');
+    await expect(sheet.getByRole('heading', { level: 2 })).toContainText(`(${species})`);
 
     // ...and the menu offers to change it rather than to set one
     await chooseAction(page, sheet, 'Change nickname');
@@ -185,8 +186,6 @@ test.describe('the catch sheet', () => {
     // Emptying the box hands the pokemon back to its species
     await box.fill('');
     await naming.getByRole('button', { name: 'Save' }).click();
-    await expect(
-      sheet.getByRole('heading', { level: 3, name: species.replace('✦ ', '') }),
-    ).toBeVisible();
+    await expect(name).toHaveText(species);
   });
 });

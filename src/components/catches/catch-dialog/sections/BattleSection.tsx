@@ -116,7 +116,9 @@ function Heading(props: {
   return (
     <div class="flex min-h-9 items-center justify-between gap-2">
       <span class="flex items-center gap-1.5">
-        <h3 class="text-left">{props.title}</h3>
+        <h3 class="text-left text-xs font-extrabold tracking-wider text-muted uppercase">
+          {props.title}
+        </h3>
         {props.hint}
       </span>
       <Show when={props.shifted}>
@@ -204,10 +206,10 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
   };
 
   return (
-    <section class="flex flex-col">
-      {/* Abilities and held items side by side, over the moves */}
-      <div class="grid grid-cols-2">
-        <div class="flex min-w-0 flex-col gap-1 border-r border-line-soft pb-3 pr-3">
+    <section class="flex flex-col gap-3 md:h-full">
+      {/* Abilities and held items side by side in one card, over the moves */}
+      <div class="grid grid-cols-2 rounded-2xl border-2 border-line-soft p-3">
+        <div class="flex min-w-0 flex-col gap-1 border-r border-line-soft pr-3">
           <Heading
             title="Abilities"
             hint={
@@ -261,7 +263,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
           </ul>
         </div>
 
-        <div class="flex min-w-0 flex-col gap-1 pb-3 pl-3">
+        <div class="flex min-w-0 flex-col gap-1 pl-3">
           <Heading
             title="Held items"
             hint={
@@ -361,7 +363,8 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
       </div>
 
       {/* The moves under them: the longest of the three lists */}
-      <div class="flex min-w-0 flex-col gap-1 border-t border-line-soft pt-3">
+      {/* Grows to the foot of the column, so the right side ends level with the left */}
+      <div class="flex min-w-0 flex-col gap-1 rounded-2xl border-2 border-line-soft p-3 md:flex-1">
         <Heading
           title="Moves"
           hint={

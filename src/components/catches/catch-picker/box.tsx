@@ -18,6 +18,7 @@ import {
   untrack,
 } from 'solid-js';
 import type { CatchOption, CatchPickerProps } from './options';
+import { titleCatch } from '../../details';
 
 /**
  * Whether a pokemon is allowed to hold it at all. An item the registry
@@ -486,7 +487,8 @@ export default function PickerBox(
               <HoverCard
                 class="block size-full"
                 trigger={<span class="block size-full" />}
-                title="Info"
+                title={titleCatch(option().caught)}
+                kind="Pokémon"
                 footer={
                   <>
                     <Button

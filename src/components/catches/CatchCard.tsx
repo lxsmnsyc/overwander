@@ -21,7 +21,7 @@ import { NATURE_NAMES } from '../../data/ids/natures';
 import { getSpeciesData } from '../../data/species';
 import StatusSquares from './StatusSquares';
 import TypeBadge from '../sprites/TypeBadge';
-import { describeMove, detailAbility } from '../details';
+import { describeMove, detailAbility, detailItem } from '../details';
 import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
 import MoveHoverCard from '../moves/MoveHoverCard';
 import ItemCard from '../items/ItemCard';
@@ -283,7 +283,8 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
                   >
                     <HoverCard
                       class="block"
-                      title="Info"
+                      title={detailItem(caught().items[at]).name}
+                      kind="Item"
                       footer={(close) => (
                         <Show
                           when={props.owned === true}

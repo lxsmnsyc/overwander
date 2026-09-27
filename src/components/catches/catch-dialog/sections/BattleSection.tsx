@@ -23,7 +23,7 @@ import type { Moves } from '../../../../data/ids/moves';
 
 import { getMoveData } from '../../../../data/moves';
 
-import { describeAbility, describeItem, detailAbility } from '../../../details';
+import { describeAbility, describeItem, detailAbility, detailItem } from '../../../details';
 import { CHANNELER_FEE } from '../../../../data/overworld/npc';
 
 import InventoryPicker from '../../../items/InventoryPicker';
@@ -322,7 +322,8 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                   >
                     <HoverCard
                       class="block"
-                      title="Info"
+                      title={detailItem(items()[at]).name}
+                      kind="Item"
                       footer={(close) => (
                         <Show when={props.owned} fallback={<Button onClick={close}>Close</Button>}>
                           <Button

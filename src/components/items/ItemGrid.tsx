@@ -372,7 +372,8 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
                   take it back */}
               <HoverCard
                 class="block w-full"
-                title="Info"
+                title={detailItem(cell().item).name}
+                kind="Item"
                 footer={
                   <For each={cell().actions}>
                     {(action) => (

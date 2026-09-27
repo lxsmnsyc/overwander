@@ -9,6 +9,7 @@ import {
   useContext,
 } from 'solid-js';
 import { Portal } from 'solid-js/web';
+import { arrow, autoUpdate, flip, offset, shift, useFloating } from 'solid-floating-ui';
 import { Transition } from 'terracotta';
 import closeWhenGone from './gone';
 import { holds } from './hover-card/placing';
@@ -56,13 +57,11 @@ export interface TooltipProps {
 }
 
 /**
- * How wide the card is allowed to be, in pixels. It also decides how
- * far from an edge the card can be placed, so it is a number rather
- * than a class
+ * How wide the card is allowed to be, in pixels
  */
 const WIDTH = 240;
 
-/** How far the card keeps from the screen's edges */
+/** How far the card keeps from the screen's edges, for Floating UI's flip and shift */
 const GAP = 8;
 
 /**
@@ -72,10 +71,7 @@ const GAP = 8;
 const ABOVE_POINTER = 10;
 const BELOW_POINTER = 26;
 
-/** How much room the card needs above before it drops below instead */
-const ROOM = 160;
-
-/** How far the notch keeps from the card's rounded corners */
+/** How far the notch keeps from the card's rounded corners, for Floating UI's arrow */
 const NOTCH_INSET = 16;
 
 /**
@@ -83,6 +79,11 @@ const NOTCH_INSET = 16;
  * hover card it keeps its labelled box
  */
 const DetailRows = createContext(false);
+
+/** Draws every `Detail` inside it as a row */
+export function DetailRowsProvider(props: ParentProps): JSX.Element {
+  return <DetailRows.Provider value>{props.children}</DetailRows.Provider>;
+}
 
 /**
  * One labelled fact. Exported because a hover card says the same things
@@ -115,10 +116,11 @@ export function Detail(props: { label: string; children: JSX.Element }): JSX.Ele
   );
 }
 
-/** Which way the notch points, and how far off the card's middle */
+/** Which way the notch points, where Floating UI put it, and its element */
 export interface TooltipNotch {
   below: boolean;
-  offset: number;
+  x: number | undefined;
+  ref: (element: HTMLSpanElement) => void;
 }
 
 /**
@@ -167,15 +169,14 @@ export function Tooltip(props: TooltipProps & { notch?: TooltipNotch }): JSX.Ele
       <Show when={props.notch}>
         {(notch) => (
           <span
+            ref={notch().ref}
             aria-hidden="true"
-            class={`absolute size-3 -translate-x-1/2 rotate-45 border-line bg-paper ${
+            class={`absolute size-3 rotate-45 border-line bg-paper ${
               notch().below
                 ? '-top-[7px] border-t-2 border-l-2'
                 : '-bottom-[7px] border-r-2 border-b-2'
             }`}
-            style={{
-              left: `clamp(${NOTCH_INSET}px, calc(50% + ${notch().offset}px), calc(100% - ${NOTCH_INSET}px))`,
-            }}
+            style={{ left: notch().x == null ? 'calc(50% - 6px)' : `${notch().x}px` }}
           />
         )}
       </Show>
@@ -211,23 +212,30 @@ export interface TooltipHostProps extends ParentProps, TooltipProps {
 export function TooltipHost(props: TooltipHostProps): JSX.Element {
   let host: HTMLSpanElement | undefined;
   const drawnIn = usePortalHost();
-  const [at, setAt] = createSignal<{
-    x: number;
-    y: number;
-    below: boolean;
-    offset: number;
-  } | null>(null);
-  /**
-   * Where a mouse is over the trigger, which the card follows. Null for
-   * a keyboard or a finger, where the card stands over the trigger
-   */
-  let pointer: { x: number; y: number } | null = null;
   /**
    * Whether the card is wanted, which is not the same as whether it is
    * on screen: it is still there, fading, for a moment after the
-   * pointer has gone. Where it goes is forgotten only once that is over
+   * pointer has gone
    */
   const [wanted, setWanted] = createSignal(false);
+  /** Whether the card is mounted, which lasts past `wanted` by the fade */
+  const [present, setPresent] = createSignal(false);
+  const [notch, setNotch] = createSignal<HTMLSpanElement | null>(null);
+  const floating = useFloating({
+    get open() {
+      return wanted();
+    },
+    placement: 'top',
+    strategy: 'fixed',
+    whileElementsMounted: autoUpdate,
+    middleware: [
+      // Below the pointer it has to clear the cursor hanging off it
+      offset(({ placement }) => (placement.startsWith('bottom') ? BELOW_POINTER : ABOVE_POINTER)),
+      flip({ padding: GAP }),
+      shift({ padding: GAP }),
+      arrow({ element: notch, padding: NOTCH_INSET }),
+    ],
+  });
   /**
    * The wait, whichever way it is going. One handle for both, since a
    * pointer that comes back before the card has gone is cancelling a
@@ -245,34 +253,28 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
   onCleanup(cancel);
 
   /**
-   * Where the card goes: over the pointer when a mouse is on the
-   * trigger, over the trigger itself otherwise. Measured now rather
-   * than when the pointer arrived, since the row may have moved
+   * Point the card at the mouse, or back at the trigger for a keyboard
+   * or a finger. The point is a zero-size box, which is all Floating UI
+   * needs to aim at
    */
-  const place = (): void => {
-    const bounds = host?.getBoundingClientRect();
+  const aimAt = (point: { x: number; y: number } | null): void => {
+    floating.refs.setPositionReference(
+      point == null
+        ? null
+        : {
+            getBoundingClientRect: () => new DOMRect(point.x, point.y, 0, 0),
+          },
+    );
+  };
 
-    if (bounds == null) {
-      return;
-    }
-
-    const aim = pointer ?? { x: bounds.left + bounds.width / 2, y: bounds.top };
-    const below = aim.y < ROOM;
-    let y = below ? bounds.bottom + ABOVE_POINTER : bounds.top - ABOVE_POINTER;
-
-    if (pointer != null) {
-      y = below ? pointer.y + BELOW_POINTER : pointer.y - ABOVE_POINTER;
-    }
-    // Kept off both edges, with the notch still pointing at the aim
-    const x = Math.min(Math.max(aim.x, WIDTH / 2 + GAP), globalThis.innerWidth - WIDTH / 2 - GAP);
-
-    setAt({ x, y, below, offset: aim.x - x });
+  const open = (): void => {
+    setPresent(true);
     setWanted(true);
   };
 
   const show = (): void => {
     cancel();
-    timer = setTimeout(place, OPEN_DELAY);
+    timer = setTimeout(open, OPEN_DELAY);
   };
 
   const hide = (delay = CLOSE_DELAY): void => {
@@ -307,7 +309,8 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
   /** The touch's way in: hold to ask, rather than hover to ask */
   const held = createLongPress(() => {
     cancel();
-    place();
+    aimAt(null);
+    open();
   });
 
   // The label goes with what it labels, the same as a hover card does,
@@ -322,7 +325,10 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
 
   return (
     <span
-      ref={host}
+      ref={(element) => {
+        host = element;
+        floating.refs.setReference(element);
+      }}
       // Nothing to select: a hold on the trigger is asking about it,
       // and a phone that answers by selecting the word instead has
       // put a text caret over the card
@@ -330,23 +336,18 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
       {...held}
       onPointerEnter={(event) => {
         if (event.pointerType !== 'touch') {
-          pointer = { x: event.clientX, y: event.clientY };
+          aimAt({ x: event.clientX, y: event.clientY });
           show();
         }
       }}
-      // Followed while it is up, and remembered while it waits to open
+      // The card follows the mouse for as long as it is over the trigger
       onPointerMove={(event) => {
-        if (event.pointerType === 'touch') {
-          return;
-        }
-        pointer = { x: event.clientX, y: event.clientY };
-        if (wanted()) {
-          place();
+        if (event.pointerType !== 'touch') {
+          aimAt({ x: event.clientX, y: event.clientY });
         }
       }}
       onPointerLeave={(event) => {
         if (event.pointerType !== 'touch') {
-          pointer = null;
           hide();
         }
       }}
@@ -360,7 +361,8 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
           return;
         }
         cancel();
-        place();
+        aimAt(null);
+        open();
       }}
       onFocusOut={() => {
         hide(0);
@@ -370,38 +372,45 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
       {/* The portal stands outside the fade rather than inside it: the
           card is drawn somewhere else in the document, where an opacity
           set on an ancestor here would never reach it */}
-      {/* Not keyed: the spot changes with every move of the pointer,
-          and a keyed show would build the card again each time */}
-      <Show when={at()}>
-        {(spot) => (
-          <Portal mount={drawnIn()}>
+      <Show when={present()}>
+        <Portal mount={drawnIn()}>
+          {/* Placed outside the fade, so the fade never moves what is placed */}
+          <div
+            ref={(element) => {
+              floating.refs.setFloating(element);
+            }}
+            // Nothing to click: the card is a label, and a pointer that
+            // landed on it would leave whatever it describes
+            class="pointer-events-none z-50"
+            style={floating.floatingStyles}
+          >
             <Transition
               show={wanted()}
               {...SHEER}
               // Once it has faded out there is nowhere for it to be
               afterLeave={() => {
-                setAt(null);
+                setPresent(false);
               }}
               // Read out only while it is wanted: one fading out and
               // the next arriving are two labels for one thing
               aria-hidden={wanted() ? undefined : 'true'}
-              // Nothing to click: the card is a label, and a pointer
-              // that landed on it would leave whatever it describes
-              class={`pointer-events-none fixed z-50 -translate-x-1/2 ${
-                spot().below ? '' : '-translate-y-full'
-              }`}
-              style={{ left: `${spot().x}px`, top: `${spot().y}px` }}
             >
               <Tooltip
                 name={props.name}
                 kind={props.kind}
                 description={props.description}
                 extra={props.extra}
-                notch={{ below: spot().below, offset: spot().offset }}
+                notch={{
+                  below: floating.placement.startsWith('bottom'),
+                  x: floating.middlewareData.arrow?.x,
+                  ref: (element) => {
+                    setNotch(element);
+                  },
+                }}
               />
             </Transition>
-          </Portal>
-        )}
+          </div>
+        </Portal>
       </Show>
     </span>
   );

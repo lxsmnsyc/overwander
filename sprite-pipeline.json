@@ -26304,15 +26304,15 @@
       }
     },
     "public/sprites/ui/items/medicine/image.png": {
-      "digest": "ea48d98b48755f38",
-      "bytes": 8617,
-      "width": 134,
-      "height": 141,
+      "digest": "81e1f22c9c4be609",
+      "bytes": 9463,
+      "width": 185,
+      "height": 123,
       "compact": {
-        "at": "2026-08-17T06:50:23Z",
-        "as": "truecolour, none",
-        "was": 16496,
-        "bytes": 8617
+        "at": "2026-09-27T07:58:39Z",
+        "as": "already compact",
+        "was": 9463,
+        "bytes": 9463
       }
     },
     "public/sprites/ui/items/mega-stones/image.png": {

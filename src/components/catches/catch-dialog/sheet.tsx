@@ -1241,7 +1241,7 @@ export function CatchSheetBody(
         props.onChange?.();
 
         if (result.level != null) {
-          offerLevelMoves(catchId, recordOf(catchId), result.level);
+          offerLevelMoves(catchId, recordOf(catchId), result.from ?? result.level, result.level);
         }
       })
       .catch((caught: unknown) => {

@@ -1,5 +1,79 @@
 # overwander
 
+## 4.22.0
+
+### Minor Changes
+
+- 5665e3f: The families the first roads out of Kalos's towns walk past:
+  
+  - Bunnelby and Diggersby live in the grassland and the steppe by morning and day. Fletchling, Fletchinder and Talonflame keep to the grassland and the woodland at the same hours.
+  - Scatterbug, Spewpa and Vivillon live in eighteen countries, from the glacier to the volcano.
+  - A Vivillon wears the wings of the country its scatterbug was met in: 17 patterns, with the meadow wings anywhere without one of its own.
+  - Two more patterns are met on a town's streets and nowhere else: the fancy one in the prized band, and the Poke Ball one rarer still. No Spewpa ever comes out as either.
+  - Each family has a signature ability. Loosened Earth puts its Ground moves under whatever Defense the target has built up. Stoop hits 1.3x with Flying moves on a target that is casting or channelling. Wingscale takes a stage of Accuracy off whatever it lands a move on, down to 2 stages.
+  - All eight learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- f409d31: Kalos's 62 moves:
+  
+  - Every move generation 6 introduced is in the move list, from Flying Press to Hyperspace Fury.
+  - Terrain is in: Electric, Grassy and Misty Terrain each hold for 10 seconds and reach only pokemon on the ground. They cover the whole field in a fight between players and the layer's own team in a raid, the way weather does. A computer-controlled pokemon never lays a terrain over one its own side still has down.
+  - The ring under a side takes the colour of the terrain it stands on for as long as the terrain holds.
+  - Sticky Web is a new entry hazard, and Defog clears it with the others.
+  - Spiky Shield and King's Shield guard the user and punish whatever touches them. King's Shield lets status moves through.
+  - Mat Block and Crafty Shield guard the whole team, one against damaging moves and one against status moves. Mat Block works once a trip onto the field, and throwing it spends Fake Out's chance too.
+  - Fairy Lock stops anybody on the field being swapped out for 2 seconds, except Ghost types.
+  - A raid boss is immune to Powder and Electrify, and is never given Hold Hands, Aromatic Mist, Celebrate or Happy Hour.
+  - The moves look like themselves. Fairy moves burst into sparkles, and a terrain lights the floor across the field.
+  - The legendary and mythical signatures each have their own picture: Thousand Arrows rains arrows of earth, Precipice Blades drives stone blades up through magma, Origin Pulse fans beams down onto the target, Dragon Ascent dives out of the sky, and Hyperspace Hole and Fury strike out of rings.
+  - Moonblast brings a full moon down, Play Rough is a dust cloud of stars and hearts, and Water Shuriken throws spinning stars of water.
+  - A move that does what an older one does is drawn like it: Phantom Force strikes out of the dark like Shadow Force, Flying Press comes down like Sky Drop, and Draining Kiss drains like Giga Drain.
+  - Older legendary signatures have bigger pictures: Freeze Shock and Ice Burn raise a crown of ice that shatters, Blue Flare stands up as a column of blue fire, Fusion Flare and Fusion Bolt break open over the ground, and Techno Blast fires a beam ringed with hexagons.
+  - V-create drives a great burning V down, Glaciate raises ice spikes in a freezing wind, Judgment opens a wheel of light before its pillar lands, and Seed Flare gathers light before it flares.
+  - Psystrike, Aeroblast and Secret Sword each have their own picture: a shell of psychic shards driven in, a spiralling blast of air, and three cuts of a blade of light.
+  - Sacred Sword brings down three great swords, and Spacial Rend tears space open twice onto a starry dark before it shatters.
+- 3c2fbba: Kalos's three starters, and the two abilities they carry:
+  
+  - Chespin, Quilladin and Chesnaught live in the temperate forest and the woodland by morning and day. Fennekin, Braixen and Delphox live in the shrubland and the savanna by day and evening. Froakie, Frogadier and Greninja live in the swamp and the bog in the evening and at night, on land or in the water.
+  - Each family has a signature ability that pays out to its whole team: Spine Bond takes 0.85x off physical damage the team takes, Ember Bond puts 1.15x on the special moves it throws, and Shade Bond cuts cast and channel times to 0.85x.
+  - Bulletproof turns away every move that is thrown rather than swung. Magician takes the held item off whatever it lands a move on.
+  - All nine learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- f81647a: - The Max vitamins set one stat's effort to 252. Item caches hide them as a special find.
+  - The Max wings do the same, and only a flying shadow drops them, as a special find.
+  - Rare Candy Max raises a pokemon to level 100 and offers every move it learns on the way. Item caches hide it as a special find.
+  - A candy used from the bag now teaches the move its level offers for free, rather than refusing it.
+- 107484d: - Spiky-eared Pichu can be met in the temperate forest at any hour, as rarely as a mythical. No relic calls it.
+  - Its stats are Pichu's, 65 higher in each.
+  - It never evolves.
+- bc1ae37: True shadows, starting with the three Kanto birds and Mewtwo:
+  
+  - A true shadow is a form of an ordinary pokemon with ten points on every stat. It goes by a code name rather than by the pokemon it stands for: XD-144, XD-145, XD-146 and XD-150.
+  - It is a shadow by what it is rather than by what was done to it, so it always arrives shadowed and carries the Shadow ability.
+  - Nothing puts one right. A Purifying Gem is refused, and it never turns into its counterpart or back.
+  - A dark day is the only way to meet one. Under that sky they stand in the special band of every chunk's pool, and under every other sky they are not in the pool at all.
+  - A dark day also takes over every shadow lair in the chunk, so a shadow raid under one is a true shadow rather than a roll for one.
+
+### Patch Changes
+
+- 2c4d49f: - A Ghost type can always be swapped out, whatever an opponent has trapped it with: binding moves, Mean Look, Spider Web, Block, Thousand Waves, Fairy Lock, Arena Trap, Shadow Tag, Magnet Pull, Latch On, Tentacle Grasp, Chase Down and Root Hold.
+  - What a pokemon does to itself still holds a Ghost in place, so Ingrain roots it like anything else.
+- 8414802: - A Flying type brought down to the ground takes Ground moves at 1x. Knocked down by Smack Down, held by Gravity or weighed down by an Iron Ball, it used to take no damage from them at all.
+- f6088ea: On a phone, the catch sheet shows held items four to a row instead of eight.
+- df1b114: Kanto's, Johto's, Hoenn's, Sinnoh's and Unova's pokemon learn Kalos's moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- 82c9308: Legendaries are met only where their lairs stand:
+  
+  - Seafoam Islands and Island Cave no longer appear on glaciers, so Articuno and Regice are no longer met there. Articuno is no longer met on the alpine tundra either.
+  - Mt. Ember stands on volcanoes and mountains rather than in deserts, and Moltres is no longer met in deserts.
+  - Zapdos is no longer met on mountains.
+  - Raikou is no longer met on the steppe, Entei in volcanoes or badlands, and Suicune in the taiga or tundra.
+  - Ho-Oh is no longer met in volcanoes.
+- 1df2e8a: - Other players no longer vanish and pop back further along when they walk from one stretch of the world into the next.
+  - Other players standing within view are no longer missing after the connection comes back on a busy screen.
+- f6088ea: - On a phone, the profile's trainer card puts the name and actions beside the face, the title and gold under the name, and where they stand on the lines below.
+  - The buddy's gender mark sits level with its name.
+  - On a phone, a battle history row puts the replay and share buttons beside the fight's title, and the team on the line below.
+  - On a phone, a friend's row puts the date beside their name, and the Trade and Remove buttons on the line below.
+- 450cae9: - Rapid Spin clears every hazard under the user's side, not only the spikes: toxic spikes, stones and a sticky web go with them.
+  - Rapid Spin also frees the user from a bind or a Leech Seed.
+
 ## 4.21.0
 
 ### Minor Changes

@@ -60,7 +60,6 @@ export default function registerDesertSpawns(): void {
       special: [
         { species: Species.Volcarona, weight: 10 },
         { species: Species.Regirock, weight: 10 },
-        { species: Species.Moltres, weight: 10 },
       ],
       mythical: [{ species: Species.Genesect, weight: 10 }],
     },
@@ -121,7 +120,6 @@ export default function registerDesertSpawns(): void {
       special: [
         { species: Species.Volcarona, weight: 10 },
         { species: Species.Regirock, weight: 10 },
-        { species: Species.Moltres, weight: 10 },
       ],
       mythical: [{ species: Species.Genesect, weight: 10 }],
     },
@@ -153,10 +151,7 @@ export default function registerDesertSpawns(): void {
       ],
       elusive: [{ species: Species.Garchomp, weight: 2 }],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
-      special: [
-        { species: Species.Regirock, weight: 10 },
-        { species: Species.Moltres, weight: 10 },
-      ],
+      special: [{ species: Species.Regirock, weight: 10 }],
       mythical: [{ species: Species.Genesect, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -187,10 +182,7 @@ export default function registerDesertSpawns(): void {
       ],
       elusive: [{ species: Species.Garchomp, weight: 2 }],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
-      special: [
-        { species: Species.Regirock, weight: 10 },
-        { species: Species.Moltres, weight: 10 },
-      ],
+      special: [{ species: Species.Regirock, weight: 10 }],
       mythical: [{ species: Species.Genesect, weight: 10 }],
     },
   });

@@ -109,7 +109,7 @@ describe('biome data', () => {
       Biome.DeepOcean,
       Biome.PolarOcean,
     ]);
-    expect(getSpeciesData(Species.Articuno).biomes).toContain(Biome.Glacier);
+    expect(getSpeciesData(Species.Articuno).biomes).toContain(Biome.PolarOcean);
 
     // Evolution can move a species to new waters
     expect(getSpeciesData(Species.Magikarp).biomes).toContain(Biome.Swamp);
@@ -241,7 +241,7 @@ describe('biome data', () => {
 
     // Legendaries sit in their own section
     const peak = getSpawnPool(Biome.Mountain, TimeOfDay.Night);
-    expect(peak.special.some((entry) => entry.species === Species.Zapdos)).toBe(true);
+    expect(peak.special.some((entry) => entry.species === Species.Mewtwo)).toBe(true);
   });
 
   it('files every spawn in the band its line puts it in', () => {

@@ -27,8 +27,8 @@ export { showSafeAreas };
 /**
  * A card that opens on hover: what a row is about, without opening it.
  *
- * It is a slim window: a blue bar with the name and what kind of thing
- * it is, where `Tooltip` is a label. Reach for that one for a
+ * The tooltip's white card grown into a small window: the name and what
+ * kind of thing it is, then the body, then anything to press. Reach for that one for a
  * name and a line; reach for this when the answer is a small screen of
  * its own, and keep anything that has to be pressed in the dialog the
  * row opens.
@@ -46,8 +46,8 @@ const WIDTHS: Record<HoverCardWidth, string> = {
 };
 
 const CARD =
-  'pointer-events-auto overflow-hidden rounded-xl border-2 border-tide bg-paper text-left' +
-  ' shadow-[0_4px_0_0_var(--drop-window),0_18px_32px_-14px_var(--drop-cast)]';
+  'pointer-events-auto overflow-hidden rounded-xl border-2 border-line bg-paper text-left' +
+  ' shadow-float';
 
 /** How far the card stands from its trigger and keeps from the window's edges */
 const GAP = 8;
@@ -58,8 +58,8 @@ const GAP = 8;
  */
 const PLACED = 'pointer-events-none z-50';
 
-/** The name on the left and what kind of thing it is on the right */
-const BAR = 'flex items-center justify-between gap-2 bg-tide px-3 py-1.5 text-left text-on-accent';
+/** The name on the left and what kind of thing it is on the right, on white like a tooltip's */
+const BAR = 'flex items-center justify-between gap-2 px-3 pt-2.5 text-left text-ink';
 
 const BODY = 'flex flex-col gap-2 px-3 py-2.5 text-sm';
 
@@ -552,7 +552,10 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
                   </strong>
                   <Show when={props.kind}>
                     {(kind) => (
-                      <span class="shrink-0 text-[10px] font-extrabold tracking-wide uppercase opacity-85">
+                      <span
+                        class="shrink-0 rounded-full bg-tide-soft px-1.5 py-0.5 text-[10px]
+                          font-extrabold tracking-wide text-tide-dark uppercase"
+                      >
                         {kind()}
                       </span>
                     )}

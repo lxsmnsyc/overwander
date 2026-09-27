@@ -19,7 +19,6 @@ import {
 } from 'terracotta';
 import FADE, { SHEER } from './transition';
 import { PortalHost, usePortalHost } from './portal-host';
-import { CloseIcon } from '../icons';
 
 /**
  * The game's dialogs, as a set rather than as a habit.
@@ -324,19 +323,6 @@ export function Dialog(props: DialogProps): JSX.Element {
               </HeadlessDialogDescription>
             </div>
             {aside() == null ? null : <div class="shrink-0">{aside()}</div>}
-            {/* An insistent dialog is closed by a button on it and nothing else */}
-            <Show when={props.insistent !== true}>
-              <button
-                type="button"
-                aria-label="Close"
-                class="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full
-                  border-0 bg-line-soft p-0 text-muted shadow-none transition-colors
-                  hover:bg-tide-soft hover:text-tide-dark active:translate-y-0"
-                onClick={close}
-              >
-                <CloseIcon class="size-4" aria-hidden="true" />
-              </button>
-            </Show>
           </header>
           {/* What can be done to whatever the dialog is showing,
             under the heading and stuck with it */}
@@ -462,7 +448,15 @@ export function DialogSection(
  * The row a dialog ends on. Buttons sit to the right, in the order
  * they are written, with the way out last
  */
-export function DialogActions(props: ParentProps): JSX.Element {
+export function DialogActions(
+  props: ParentProps & {
+    /**
+     * Centred under the field for the one dialog that is a game screen
+     * rather than a form: the safari
+     */
+    centred?: boolean;
+  },
+): JSX.Element {
   return (
     <div
       // One line, whatever is on it. Wrapped, a dialog with three
@@ -471,7 +465,9 @@ export function DialogActions(props: ParentProps): JSX.Element {
       // reads as two bars rather than one and moves the button a
       // player reaches for without looking. It scrolls sideways
       // instead, the way the grunt's roster does
-      class={`flex flex-nowrap items-center justify-end gap-2 overflow-x-auto border-t-2
+      class={`flex flex-nowrap items-center ${
+        props.centred === true ? 'justify-center' : 'justify-end'
+      } gap-2 overflow-x-auto border-t-2
         border-line-soft pt-4 sm:pt-5 ${STUCK_BOTTOM}`}
     >
       {props.children}

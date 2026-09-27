@@ -45,6 +45,10 @@ const presences = new Map<string, Map<string, Presence>>();
 
 let presenceRef = 0;
 
+/** The most follows and joins one connection may hold, far past what a screen uses */
+export const MOST_SUBSCRIPTIONS = 128;
+export const MOST_TOPICS = 32;
+
 function send(connection: Connection, message: unknown): void {
   connection.peer.send(JSON.stringify(message));
 }
@@ -70,8 +74,18 @@ export function isConnected(peerId: string): boolean {
   return connections.has(peerId);
 }
 
-export function subscribe(peerId: string, id: string, table: string, filters: Filter[]): void {
-  connections.get(peerId)?.subscriptions.set(id, { table, filters });
+/** Follow a table. False when the connection already holds as many as it may */
+export function subscribe(peerId: string, id: string, table: string, filters: Filter[]): boolean {
+  const subscriptions = connections.get(peerId)?.subscriptions;
+
+  if (
+    subscriptions == null ||
+    (!subscriptions.has(id) && subscriptions.size >= MOST_SUBSCRIPTIONS)
+  ) {
+    return false;
+  }
+  subscriptions.set(id, { table, filters });
+  return true;
 }
 
 export function unsubscribe(peerId: string, id: string): void {
@@ -145,14 +159,16 @@ function announcePresence(topic: string): void {
   }
 }
 
-export function join(peerId: string, id: string, topic: string): void {
+/** Join a topic. False when the connection already holds as many as it may */
+export function join(peerId: string, id: string, topic: string): boolean {
   const connection = connections.get(peerId);
 
-  if (connection == null) {
-    return;
+  if (connection == null || (!connection.topics.has(id) && connection.topics.size >= MOST_TOPICS)) {
+    return false;
   }
   connection.topics.set(id, topic);
   send(connection, { t: 'presence', id, state: presenceOf(topic) });
+  return true;
 }
 
 export function leave(peerId: string, id: string): void {

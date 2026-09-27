@@ -30,7 +30,13 @@ import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
 import { getBiomeLairs, getLairResidents, pickLairSpecies } from '../data/overworld/lair';
-import Npc, { EXECUTIVE_CHARSETS, type Executive, NPCS, npcSheets } from '../data/overworld/npc';
+import Npc, {
+  EXECUTIVE_CHARSETS,
+  type Executive,
+  NPCS,
+  TRADERS,
+  npcSheets,
+} from '../data/overworld/npc';
 import {
   SYNDICATE_BOSS_CHARSETS,
   SYNDICATE_EXECUTIVES,
@@ -82,6 +88,7 @@ import {
   VENDOR_KINDS,
   type VendorKind,
   rollChefStock,
+  rollGeologistStock,
   rollVendorStock,
 } from '../data/overworld/vendor';
 import Weather, {
@@ -1664,15 +1671,19 @@ export default class ChunkSnapshot {
   getVendorStock(cell: number): Items[] {
     const standing = this.getStandingNpc(cell);
 
-    if (standing !== Npc.Vendor && standing !== Npc.Chef) {
+    if (standing == null || !TRADERS.has(standing)) {
       return [];
     }
 
     const rng = new AleaRNG(`${this.key}${this.npcTimestamp}wares${cell}`);
 
-    return standing === Npc.Chef
-      ? rollChefStock(() => rng.random())
-      : rollVendorStock(() => rng.random(), this.getVendorKind(cell) ?? undefined);
+    if (standing === Npc.Chef) {
+      return rollChefStock(() => rng.random());
+    }
+    if (standing === Npc.Geologist) {
+      return rollGeologistStock(() => rng.random());
+    }
+    return rollVendorStock(() => rng.random(), this.getVendorKind(cell) ?? undefined);
   }
 
   /**

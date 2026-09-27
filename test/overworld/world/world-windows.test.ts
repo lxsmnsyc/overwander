@@ -55,7 +55,12 @@ import { FOSSIL_OFFER_KINDS, getFossilPrice } from '../../../src/data/overworld/
 import { isFossil } from '../../../src/data/items/fossils';
 import Landmark from '../../../src/data/overworld/landmark';
 import { getPortalCell, portalInRegion } from '../../../src/overworld/portal';
-import Npc, { NPCS, npcSheet, npcSheets } from '../../../src/data/overworld/npc';
+import Npc, {
+  NPCS,
+  TRADERS,
+  npcSheet,
+  npcSheets,
+} from '../../../src/data/overworld/npc';
 import Phenomenon, {
   getPhenomenonGroups,
   getPhenomenonItems,
@@ -65,6 +70,7 @@ import {
   VENDOR_STOCK_KINDS,
   type VendorKind,
   getChefGoods,
+  getGeologistGoods,
   getVendorGoods,
   isMarketable,
 } from '../../../src/data/overworld/vendor';
@@ -411,7 +417,7 @@ describe('world', () => {
         const stock = snapshot.getVendorStock(cell);
 
         // Anybody else's cell holds no crate at all
-        if (npc !== Npc.Vendor && npc !== Npc.Chef) {
+        if (!TRADERS.has(npc)) {
           expect(stock).toEqual([]);
           expect(snapshot.getVendorKind(cell)).toBeNull();
           continue;
@@ -421,15 +427,16 @@ describe('world', () => {
 
         // A dozen kinds, none of them twice, or the whole shelf where
         // that counter is carrying fewer than a dozen
-        const kind = npc === Npc.Chef ? null : snapshot.getVendorKind(cell);
-        const shelf = kind == null ? getChefGoods() : getVendorGoods(kind);
+        const kind = npc === Npc.Vendor ? snapshot.getVendorKind(cell) : null;
+        const own = npc === Npc.Geologist ? getGeologistGoods() : getChefGoods();
+        const shelf = kind == null ? own : getVendorGoods(kind);
 
         expect(stock.length).toBe(Math.min(VENDOR_STOCK_KINDS, shelf.length));
         expect(new Set(stock).size).toBe(stock.length);
 
-        if (npc === Npc.Chef) {
-          // Everything on his counter came out of his own larder
-          const larder = new Set(getChefGoods());
+        if (npc === Npc.Chef || npc === Npc.Geologist) {
+          // Everything on the chef's or the geologist's counter came off his own shelf
+          const larder = new Set(own);
 
           expect(snapshot.getVendorKind(cell)).toBeNull();
           for (const item of stock) {

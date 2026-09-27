@@ -83,6 +83,7 @@ import {
   VENDOR_STOCK_KINDS,
   VendorKind,
   getChefGoods,
+  getGeologistGoods,
   getVendorGoods,
   isMarketable,
   rollVendorStock,
@@ -90,6 +91,9 @@ import {
   vendorStockSize,
 } from '../../src/data/overworld/vendor';
 import { VALUABLE_SELL, isValuable } from '../../src/data/items/valuables';
+import { EVOLUTION_STONES } from '../../src/data/items/stones';
+import { GEMS } from '../../src/data/items/gems';
+import { QUARRIED_GEAR } from '../../src/data/items/gear';
 import { PP_ITEMS, VITAMIN_STATS } from '../../src/data/items/vitamins';
 import { TREATS } from '../../src/data/items/treats';
 import { asBoolean } from '../../src/auth/__normalize';
@@ -675,6 +679,37 @@ describe('item data', () => {
       expect(data.buy).toBeGreaterThan(0);
       // Nothing bought off his counter sells back at a profit
       expect(data.sell).toBeLessThan(data.buy);
+    }
+  });
+
+  it('stocks the geologist with the stones and gems, and nobody else with them', () => {
+    const quarry = getGeologistGoods();
+
+    expect(new Set(quarry)).toEqual(
+      new Set([
+        ...EVOLUTION_STONES,
+        Items.OvalStone,
+        Items.HardStone,
+        Items.FloatStone,
+        Items.Everstone,
+        ...QUARRIED_GEAR,
+        ...GEMS.keys(),
+      ]),
+    );
+    for (const item of quarry) {
+      expect(isMarketable(item)).toBe(true);
+      expect(getItemData(item).sell).toBeLessThan(getItemData(item).buy);
+    }
+
+    const elsewhere = new Set(getChefGoods());
+
+    for (const kind of VENDOR_KINDS) {
+      for (const item of getVendorGoods(kind)) {
+        elsewhere.add(item);
+      }
+    }
+    for (const item of quarry) {
+      expect(elsewhere.has(item), getItemData(item).name).toBe(false);
     }
   });
 

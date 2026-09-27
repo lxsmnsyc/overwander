@@ -288,7 +288,7 @@ export const ROTATION_SCOPE = v.picklist(['daily', 'weekly']);
 
 /** Who stands at a counter */
 /** Who a basket is bought from or sold to: the market stall or the Chef */
-export const NPC = v.picklist([Npc.Vendor, Npc.Chef]);
+export const NPC = v.picklist([Npc.Vendor, Npc.Chef, Npc.Geologist]);
 
 /** What somebody is in a lobby for */
 export const LOBBY_ROLE = v.picklist([LobbyRole.Fighter, LobbyRole.Spectator]);

@@ -1,5 +1,5 @@
 import 'server-only';
-import Npc from '../../data/overworld/npc';
+import Npc, { TRADERS } from '../../data/overworld/npc';
 import { VENDOR_TRADE_LIMIT, sellPrice } from '../../data/overworld/vendor';
 import type { Items } from '../../data/ids/items';
 import { getItemData } from '../../data/items';
@@ -124,7 +124,7 @@ export async function buyFromVendor(
   offset: number,
   trader: Npc = Npc.Vendor,
 ): Promise<TradeResult | null> {
-  if (trader !== Npc.Vendor && trader !== Npc.Chef) {
+  if (!TRADERS.has(trader)) {
     return null;
   }
 
@@ -168,7 +168,7 @@ export async function sellToVendor(
   offset: number,
   trader: Npc = Npc.Vendor,
 ): Promise<TradeResult | null> {
-  if (trader !== Npc.Vendor && trader !== Npc.Chef) {
+  if (!TRADERS.has(trader)) {
     return null;
   }
 

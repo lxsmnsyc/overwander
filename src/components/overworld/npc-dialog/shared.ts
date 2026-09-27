@@ -54,6 +54,8 @@ export const NPC_QUOTES: Record<Npc, string> = {
     'There is more in it than it knows. One Heart Scale and I will call it up. What answers is not mine to choose.',
   [Npc.Kurt]:
     'Apricorns, is it? Hand them over. One ball for each, and the colour decides which. No charge, you did the picking.',
+  [Npc.Geologist]:
+    'Every one of these came out of a hillside with my own pick. Stones, gems, the lot. Take your pick of mine.',
 };
 
 /**

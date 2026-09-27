@@ -108,6 +108,12 @@ const enum Npc {
    * price, and his seven balls are sold nowhere else at all
    */
   Kurt = 13,
+  /**
+   * Carries a crate of stones: the evolution stones, the gems and the
+   * rocks a holder is built around. He is the only one who sells any
+   * of them, and like the chef he serves as often as the purse holds
+   */
+  Geologist = 14,
 }
 
 export default Npc;
@@ -133,7 +139,11 @@ export const NPCS: Npc[] = [
   Npc.Chef,
   Npc.Channeler,
   Npc.Kurt,
+  Npc.Geologist,
 ];
+
+/** The people who keep a crate to buy from, and take what a player sells */
+export const TRADERS = new Set<Npc>([Npc.Vendor, Npc.Chef, Npc.Geologist]);
 
 /**
  * The wanderers who serve a player once a window, and the visit marker
@@ -155,7 +165,16 @@ export const NPC_VISIT_TAGS = new Map<Npc, string>([
  * new one cannot be added without being dressed
  */
 const NPC_CHARSETS: Record<Npc, string[]> = {
-  [Npc.Breeder]: ['characters/frlg/camper-f', 'characters/lgpe/picnicker'],
+  [Npc.Breeder]: [
+    'characters/frlg/camper-f',
+    'characters/lgpe/picnicker',
+    'characters/dppt/breeder-f',
+    'characters/dppt/breeder-m',
+    'characters/oras/breeder-f',
+    'characters/oras/breeder-m',
+    'characters/b2w2/breeder-f',
+    'characters/b2w2/breeder-m',
+  ],
   [Npc.DaycareLady]: ['characters/frlg/woman'],
   [Npc.NurseJoy]: ['characters/extra/nurse'],
   [Npc.Groomer]: ['characters/frlg/daisy-oak', 'characters/lgpe/daisy-oak'],
@@ -173,6 +192,12 @@ const NPC_CHARSETS: Record<Npc, string[]> = {
   [Npc.Chef]: ['characters/frlg/chef'],
   [Npc.Channeler]: ['characters/lgpe/channeler'],
   [Npc.Kurt]: ['characters/hgss/kurt'],
+  [Npc.Geologist]: [
+    'characters/frlg/hiker',
+    'characters/lgpe/hiker',
+    'characters/dppt/hiker',
+    'characters/b2w2/hiker',
+  ],
 };
 
 /**
@@ -296,6 +321,7 @@ export const NPC_NAMES: Record<Npc, string> = {
   [Npc.Chef]: 'Chef',
   [Npc.Channeler]: 'Channeler',
   [Npc.Kurt]: 'Kurt',
+  [Npc.Geologist]: 'Geologist',
 };
 
 /**

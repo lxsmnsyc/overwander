@@ -1,6 +1,6 @@
 import { type JSX, type Resource, Show, createMemo, createSignal } from 'solid-js';
 import type { InventoryEntry } from '../../../auth/inventory';
-import Npc, { NPC_NAMES } from '../../../data/overworld/npc';
+import Npc, { NPC_NAMES, TRADERS } from '../../../data/overworld/npc';
 import type { CatchOption } from '../../catches/catch-picker';
 import { Button, Dialog, Note } from '../../styled';
 import { failed } from '../../app/resource-reads';
@@ -175,7 +175,7 @@ export default function NpcCounter(
               <Show when={standing()[1] === Npc.Kurt}>
                 <Kurt {...handed()} />
               </Show>
-              <Show when={standing()[1] === Npc.Vendor || standing()[1] === Npc.Chef}>
+              <Show when={TRADERS.has(standing()[1])}>
                 <Vendor {...handed()} />
               </Show>
             </>

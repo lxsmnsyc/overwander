@@ -19,6 +19,7 @@ import {
 } from 'terracotta';
 import FADE, { SHEER } from './transition';
 import { PortalHost, usePortalHost } from './portal-host';
+import { CloseIcon } from '../icons';
 
 /**
  * The game's dialogs, as a set rather than as a habit.
@@ -49,13 +50,13 @@ const WIDTHS: Record<DialogWidth, string> = {
 };
 
 /**
- * The window itself: a thick blue frame around white, standing off the
- * page on a hard shadow. It is the series' message box rather than a
- * card — what the game has to say has always arrived in a frame
+ * The same family as the tooltip and the hover card: a white sheet on a
+ * soft edge, with no bar across the top
  */
 const PANEL =
   'fixed left-1/2 top-[8%] max-h-[84vh] -translate-x-1/2 overflow-y-auto rounded-panel' +
-  ' border-4 border-tide bg-paper px-4 text-left shadow-window sm:px-5';
+  ' border-2 border-line bg-paper px-4 text-left sm:px-5' +
+  ' shadow-sheet';
 
 /**
  * A sheet: one screen of fixed height that is laid out to fit rather
@@ -64,7 +65,8 @@ const PANEL =
  */
 const SHEET_PANEL =
   'fixed left-1/2 top-[4vh] max-h-[92vh] -translate-x-1/2 overflow-y-auto rounded-panel' +
-  ' border-4 border-tide bg-paper px-4 text-left shadow-window sm:px-5' +
+  ' border-2 border-line bg-paper px-4 text-left sm:px-5' +
+  ' shadow-sheet' +
   ' md:h-[min(92vh,46rem)] md:overflow-hidden';
 
 /**
@@ -92,14 +94,9 @@ const INSET = 'py-4 sm:py-5';
 const BLEED = '-mx-4 px-4 sm:-mx-5 sm:px-5';
 
 /**
- * The same trick split in two, for the top of the panel: the row
- * reaches past the panel's padding, and each thing inside it pays the
- * padding back for itself.
- *
- * It is two rows now rather than one — the heading, and the bar of
- * things that can be done under it — and only the heading is painted.
- * A single bleeding element cannot do that: the blue would either stop
- * short of the panel's edge or run under the transparent row below it
+ * The same trick split in two, for the top of the panel: the stuck
+ * block reaches past the panel's padding, and each row inside it (the
+ * heading, and the bar under it) pays the padding back for itself
  */
 const BLEED_OUT = '-mx-4 sm:-mx-5';
 const PAD_IN = 'px-4 sm:px-5';
@@ -180,10 +177,9 @@ export interface DialogProps extends ParentProps {
    */
   aside?: JSX.Element;
   /**
-   * And the same on the left. The pair of them is what a sheet showing
-   * one of a run puts its "previous" and "next" in: they belong to the
-   * panel rather than to anything in it, and the heading stays centred
-   * between them
+   * And the same on the left of the title. The pair of them is what a
+   * sheet showing one of a run puts its "previous" and "next" in: they
+   * belong to the panel rather than to anything in it
    */
   lead?: JSX.Element;
   /**
@@ -310,45 +306,48 @@ export function Dialog(props: DialogProps): JSX.Element {
             class={
               props.quiet === true
                 ? 'sr-only'
-                : `flex flex-col gap-1 border-b-2 border-tide-dark bg-tide pt-4 pb-3
-                text-on-accent sm:pt-5 sm:pb-4 ${PAD_IN}`
+                : `flex items-start gap-3 border-b-2 border-line-soft bg-paper pt-4 pb-3 sm:pt-5
+                sm:pb-4 ${PAD_IN}`
             }
           >
+            {lead() == null ? null : <div class="shrink-0">{lead()}</div>}
             {/* A heading rather than bold text: it is what a screen
-              reader announces the dialog by. It sits in the middle
-              of the panel, and anything standing beside it is
-              pinned to an edge rather than allowed to push it off
-              centre */}
-            <div class="relative flex min-h-8 items-center justify-center">
-              {/* Back to ink: the bar is blue and its text is white,
-                which a button standing on it would otherwise
-                inherit — a white label on a white button */}
-              {lead() == null ? null : <div class="absolute left-0 text-ink">{lead()}</div>}
-              <HeadlessDialogTitle class="text-center text-lg font-extrabold tracking-tight">
+              reader announces the dialog by */}
+            <div class="flex min-w-0 grow flex-col gap-0.5">
+              <HeadlessDialogTitle class="text-lg font-extrabold tracking-tight text-ink">
                 {props.title}
               </HeadlessDialogTitle>
-              {aside() == null ? null : <div class="absolute right-0 text-ink">{aside()}</div>}
+              <HeadlessDialogDescription
+                class={props.terse === true ? 'sr-only' : 'text-sm text-muted'}
+              >
+                {props.description}
+              </HeadlessDialogDescription>
             </div>
-            <HeadlessDialogDescription
-              class={props.terse === true ? 'sr-only' : 'text-center text-sm text-on-accent/85'}
-            >
-              {props.description}
-            </HeadlessDialogDescription>
+            {aside() == null ? null : <div class="shrink-0">{aside()}</div>}
+            {/* An insistent dialog is closed by a button on it and nothing else */}
+            <Show when={props.insistent !== true}>
+              <button
+                type="button"
+                aria-label="Close"
+                class="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full
+                  border-0 bg-line-soft p-0 text-muted shadow-none transition-colors
+                  hover:bg-tide-soft hover:text-tide-dark active:translate-y-0"
+                onClick={close}
+              >
+                <CloseIcon class="size-4" aria-hidden="true" />
+              </button>
+            </Show>
           </header>
           {/* What can be done to whatever the dialog is showing,
-            under the heading and stuck with it. It carries no
-            fill of its own: it is a row of buttons standing on
-            the page rather than a second header competing with
-            the first */}
+            under the heading and stuck with it */}
           {bar() == null ? null : (
             <div
               // To the right, where the rest of the game keeps what can
-              // be done to a thing. The heading stays centred and the
-              // row under it does not compete with it for the middle.
-              // Without a heading it is the top of the panel, so it is
-              // painted for what scrolls under it and padded evenly
-              class={`flex flex-wrap items-center justify-end gap-2 ${
-                props.quiet === true ? 'bg-paper py-3 sm:py-4' : 'bg-transparent pt-2'
+              // be done to a thing. Painted, since it is stuck over what
+              // scrolls under it, and padded evenly where it is the top
+              // of the panel on its own
+              class={`flex flex-wrap items-center justify-end gap-2 bg-paper ${
+                props.quiet === true ? 'py-3 sm:py-4' : 'py-2'
               } ${PAD_IN}`}
             >
               {bar()}
@@ -460,9 +459,8 @@ export function DialogSection(
 }
 
 /**
- * The row a dialog ends on. Buttons sit in the middle of it, in the
- * order they are written, with the way out last: the bars at both
- * ends of a panel keep to the centre
+ * The row a dialog ends on. Buttons sit to the right, in the order
+ * they are written, with the way out last
  */
 export function DialogActions(props: ParentProps): JSX.Element {
   return (
@@ -473,7 +471,7 @@ export function DialogActions(props: ParentProps): JSX.Element {
       // reads as two bars rather than one and moves the button a
       // player reaches for without looking. It scrolls sideways
       // instead, the way the grunt's roster does
-      class={`flex flex-nowrap items-center justify-center gap-2 overflow-x-auto border-t-2
+      class={`flex flex-nowrap items-center justify-end gap-2 overflow-x-auto border-t-2
         border-line-soft pt-4 sm:pt-5 ${STUCK_BOTTOM}`}
     >
       {props.children}

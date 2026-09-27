@@ -136,9 +136,7 @@ export function Tooltip(props: TooltipProps & { notch?: TooltipNotch }): JSX.Ele
       role="tooltip"
       style={{ 'max-width': `${WIDTH}px` }}
       class={`relative flex w-max flex-col gap-1.5 rounded-xl border-2 border-line bg-paper px-3
-        pt-2 pb-2.5 text-ink shadow-[0_3px_0_0_var(--drop),0_16px_28px_-14px_var(--drop-cast)] ${
-          props.class ?? ''
-        }`}
+        pt-2 pb-2.5 text-ink shadow-float ${props.class ?? ''}`}
     >
       <div class="flex items-center justify-between gap-2">
         <span class="text-sm font-extrabold">{props.name}</span>

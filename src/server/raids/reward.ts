@@ -14,7 +14,7 @@ import { foughtBattle, readBattle, readRaid } from '../raid-io';
 import { startEncounter } from '../overworld';
 import { grantGold } from '../profile';
 import { asOutcome } from './outcome';
-import { RAID_ENCOUNTER_TYPES, RAID_GOLD, RAID_REWARD_LEVELS } from './spoils';
+import { RAID_ENCOUNTER_TYPES, RAID_GOLD, RAID_REWARD_LEVELS, RAID_SHINY_BOOST } from './spoils';
 
 /** What a beaten boss leaves, and claiming it */
 /**
@@ -90,6 +90,7 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
     lair: raid.lair,
     biome: raid.kind === RaidKind.Mythical ? Biome.Beyond : undefined,
     level: RAID_REWARD_LEVELS[raid.kind],
+    shinyBoost: RAID_SHINY_BOOST,
   });
 
   return { encounter, gold };

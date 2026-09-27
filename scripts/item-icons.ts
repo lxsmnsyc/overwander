@@ -330,6 +330,8 @@ interface Tint {
    * A pixel the source left empty stays empty
    */
   paint?: { rows: string[]; colours: Record<string, string> };
+  /** A colour worked out per pixel after the swap, for a gradient no swap can draw */
+  shade?: (colour: string, x: number, y: number, width: number, height: number) => string;
 }
 
 const TINTS: Tint[] = [
@@ -550,6 +552,155 @@ const TINTS: Tint[] = [
   },
 ];
 
+/** The colour every Max item is marked in */
+const MAX_VIOLET = { dark: '#6a3194', mid: '#a462de', light: '#e6b4ff' };
+
+/** A Max vitamin is its vitamin in a violet bottle, the cap still saying which stat */
+function maxVitamin(name: string, cap: string[], label: string[]): Tint {
+  const swaps: Record<string, string> = {
+    '#202020': '#202020',
+    '#945a39': MAX_VIOLET.dark,
+    '#bd9429': MAX_VIOLET.mid,
+    '#ffc573': MAX_VIOLET.light,
+    '#acc5ac': '#acc5ac',
+    '#c5dec5': '#c5dec5',
+    '#e6f6e6': '#e6f6e6',
+    '#f6fff6': '#f6fff6',
+  };
+
+  for (const colour of [...cap, ...label]) {
+    swaps[colour] = colour;
+  }
+  return {
+    from: `medicine/${name}`,
+    to: `medicine/${name}-max`,
+    why: 'the Max vitamins belong to this engine alone, and no rip drew them',
+    swaps,
+  };
+}
+
+/** A Max wing is its wing with a violet tip */
+function maxWing(name: string, spot: string[]): Tint {
+  const swaps: Record<string, string> = {
+    '#202020': '#202020',
+    '#cdeeff': '#cdeeff',
+    '#eeffff': '#eeffff',
+    '#9cd5e6': '#9cd5e6',
+    '#8ba4ac': '#8ba4ac',
+  };
+
+  for (const colour of spot) {
+    swaps[colour] = colour;
+  }
+  return {
+    from: `medicine/${name}`,
+    to: `medicine/${name}-max`,
+    why: 'the Max wings belong to this engine alone, and no rip drew them',
+    swaps,
+    paint: {
+      rows: [
+        '................',
+        '..........MLLM..',
+        '........MLMLLMM.',
+        '.......DMLMLMMM.',
+        '...........DMMM.',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+      ],
+      colours: { D: MAX_VIOLET.dark, M: MAX_VIOLET.mid, L: MAX_VIOLET.light },
+    },
+  };
+}
+
+function hexToRgb(hex: string): number[] {
+  const packed = Number.parseInt(hex.slice(1), 16);
+
+  return [(packed >> 16) & 0xff, (packed >> 8) & 0xff, packed & 0xff];
+}
+
+/** A hue at a lightness, as `#rrggbb` */
+function hslToHex(hue: number, saturation: number, lightness: number): string {
+  const chroma = (1 - Math.abs(2 * lightness - 1)) * saturation;
+  const part = chroma * (1 - Math.abs(((hue / 60) % 2) - 1));
+  const base = lightness - chroma / 2;
+  const sector = Math.floor(hue / 60) % 6;
+  const [red, green, blue] = [
+    [chroma, part, 0],
+    [part, chroma, 0],
+    [0, chroma, part],
+    [0, part, chroma],
+    [part, 0, chroma],
+    [chroma, 0, part],
+  ][sector];
+
+  return `#${[red, green, blue]
+    .map((channel) =>
+      Math.round((channel + base) * 255)
+        .toString(16)
+        .padStart(2, '0'),
+    )
+    .join('')}`;
+}
+
+/**
+ * Rare Candy Max: the candy's own tones run red to violet from one
+ * wrapped end to the other. Six bands rather than a smooth ramp, so it
+ * stays drawn in flat tones like the rest of the sheet
+ */
+function rainbow(colour: string, x: number, y: number, width: number, height: number): string {
+  if (colour === '#202020') {
+    return colour;
+  }
+  const [red, green, blue] = hexToRgb(colour);
+  const lightness = (Math.max(red, green, blue) + Math.min(red, green, blue)) / 510;
+  // The candy sits diagonally, so its ends fall short of the cell's corners
+  const along = ((x + (height - 1 - y)) / (width + height - 2) - 0.2) / 0.65;
+  const band = Math.min(5, Math.max(0, Math.floor(along * 6)));
+
+  return hslToHex(band * 55, 0.85, Math.min(0.88, Math.max(0.3, lightness)));
+}
+
+const MAX_TINTS: Tint[] = [
+  maxVitamin('hp-up', ['#5abd5a', '#a4f6a4', '#418b41'], ['#94cdff', '#6aa4ee']),
+  maxVitamin('protein', ['#c56262', '#f6a4a4', '#8b4141'], ['#f6a400']),
+  maxVitamin('iron', ['#bdbd5a', '#f6f6a4', '#8b8b41'], ['#31a400']),
+  maxVitamin('calcium', ['#d5834a', '#ffcda4', '#b46a31'], ['#f64100']),
+  maxVitamin('zinc', ['#bd8331', '#eecd6a', '#7b6a00'], ['#83de00']),
+  maxVitamin('carbos', ['#5abdbd', '#a4f6f6', '#418b8b'], ['#29a4f6']),
+  maxWing('health-wing', ['#b4a483', '#ffe683', '#ffcd18']),
+  maxWing('muscle-wing', ['#ac8b94', '#ff7b83', '#f63941']),
+  maxWing('resist-wing', ['#3162b4', '#7ba4f6', '#5283e6']),
+  maxWing('genius-wing', ['#94bdc5', '#8bf6ff', '#5ae6ee']),
+  maxWing('clever-wing', ['#9c629c', '#e694ee', '#d562d5']),
+  maxWing('swift-wing', ['#529c41', '#a4ee83', '#52c541']),
+  {
+    from: 'medicine/rare-candy',
+    to: 'medicine/rare-candy-max',
+    why: 'Rare Candy Max belongs to this engine alone, and no rip drew it',
+    swaps: {
+      '#202020': '#202020',
+      '#9cbdff': '#9cbdff',
+      '#6273d5': '#6273d5',
+      '#5262c5': '#5262c5',
+      '#d5eeff': '#d5eeff',
+      '#7b94ee': '#7b94ee',
+      '#29399c': '#29399c',
+    },
+    shade: rainbow,
+  },
+];
+
+TINTS.push(...MAX_TINTS);
+
 /**
  * The marks a swap cannot make, painted on where the picture already
  * has a pixel. Nothing is drawn outside the silhouette: a mark is on
@@ -624,6 +775,30 @@ function tinted(tint: Tint, sheets: Map<string, Sheet>): Picture {
   }
   if (tint.paint != null) {
     painted(tint.to, image, tint.paint);
+  }
+  if (tint.shade != null) {
+    for (let at = 0; at < image.rgba.length; at += 4) {
+      if (image.rgba[at + 3] === 0) {
+        continue;
+      }
+      const pixel = at / 4;
+      const packedColour = Number.parseInt(
+        tint
+          .shade(
+            hexOf(image, at),
+            pixel % image.width,
+            Math.floor(pixel / image.width),
+            image.width,
+            image.height,
+          )
+          .slice(1),
+        16,
+      );
+
+      image.rgba[at] = (packedColour >> 16) & 0xff;
+      image.rgba[at + 1] = (packedColour >> 8) & 0xff;
+      image.rgba[at + 2] = packedColour & 0xff;
+    }
   }
   return { name: tint.to.split('/')[1], image, trim: [source.trim[0], source.trim[1]] };
 }

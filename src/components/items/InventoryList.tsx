@@ -11,6 +11,7 @@ import {
 } from 'solid-js';
 import { type CandyStack, getCandies } from '../../auth/candy';
 import { getCaught } from '../../auth/caught';
+import { learnLevelUpMove } from '../../auth/moves';
 import { capAsksForStat } from '../../data/items/bottle-caps';
 import {
   ItemFlags,
@@ -38,7 +39,7 @@ import TeachMoveDialog from '../catches/TeachMoveDialog';
 import CandyGrid, { type CandyPile } from './CandyGrid';
 import ItemGrid, { type ItemCell } from './ItemGrid';
 import { describeItem } from '../details';
-import spendItemOn, { getLevelMoves, isUsableOn } from './use-item';
+import spendItemOn, { getLevelMovesBetween, isUsableOn } from './use-item';
 import spentToast from './spent-toast';
 import { GameDialog, useGame } from '../app/game-context';
 import { Hint, HintList, Note, TabBar, TabButton, TabGroup, TabPane, useToast } from '../styled';
@@ -132,6 +133,8 @@ interface Teaching {
   catchId: string;
   move: Moves;
   rest: Moves[];
+  /** A move a candy grew it into, which is free, rather than a machine's */
+  levelled: boolean;
 }
 
 /**
@@ -354,7 +357,7 @@ function BagBody(
     const move = isMachineItem(item) ? getMachineMove(item) : null;
 
     if (move != null) {
-      setTeaching({ catchId, move, rest: [] });
+      setTeaching({ catchId, move, rest: [], levelled: false });
       return;
     }
     if (isPPItem(item)) {
@@ -382,10 +385,13 @@ function BagBody(
         }
 
         const caught = await getCaught(catchId);
-        const learning = caught == null ? [] : getLevelMoves(caught, result.level);
+        const learning =
+          caught == null
+            ? []
+            : getLevelMovesBetween(caught, result.from ?? result.level, result.level);
 
         if (learning.length > 0) {
-          setTeaching({ catchId, move: learning[0], rest: learning.slice(1) });
+          setTeaching({ catchId, move: learning[0], rest: learning.slice(1), levelled: true });
         }
       })
       .catch((caught: unknown) => {
@@ -492,6 +498,8 @@ function BagBody(
       <TeachMoveDialog
         catchId={teaching()?.catchId ?? null}
         move={teaching()?.move ?? null}
+        cost={teaching()?.levelled === true ? 'Nothing' : undefined}
+        teach={teaching()?.levelled === true ? learnLevelUpMove : undefined}
         onClose={nextTeaching}
         onTaught={() => {
           said('Taught.');

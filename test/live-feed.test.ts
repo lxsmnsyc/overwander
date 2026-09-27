@@ -152,6 +152,15 @@ describe('the hub', () => {
     expect(heard.get('theirs')?.at(-1)).toEqual({ t: 'presence', id: 'b', state: [] });
   });
 
+  it('refuses a join past what one connection may hold, and keeps the rest', () => {
+    for (let index = 0; index < hub.MOST_TOPICS; index += 1) {
+      expect(hub.join('mine', `t${index}`, `sight:2:0:${index}:0`)).toBe(true);
+    }
+    expect(hub.join('mine', 'extra', 'sight:2:0:99:0')).toBe(false);
+    // A join it already holds is not a new one
+    expect(hub.join('mine', 't0', 'sight:2:0:0:0')).toBe(true);
+  });
+
   it('tells everybody to read again after the listener reconnects', () => {
     hub.resync();
 

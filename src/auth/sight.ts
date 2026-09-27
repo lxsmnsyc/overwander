@@ -238,25 +238,26 @@ export default function openSight(uid: string, pace: number): Sight {
   const track = (): void => {
     const key = home == null ? null : sectorKey(home);
     const target = key == null ? null : joined.get(key);
-    const wanted = seen && target?.ready === true ? key : null;
+    const payload = presence();
+    const wanted = seen && target?.ready === true && payload != null ? key : null;
+    const previous = trackedOn;
 
-    if (trackedOn != null && trackedOn !== wanted) {
-      joined.get(trackedOn)?.topic.untrack();
+    if (wanted != null && target != null && payload != null) {
+      if (refreshing != null) {
+        clearTimeout(refreshing);
+        refreshing = null;
+      }
+      trackedOn = wanted;
+      trackedAt = serverNow();
+      target.topic.track({ ...payload });
+    } else {
       trackedOn = null;
     }
-
-    const payload = presence();
-
-    if (wanted == null || target == null || payload == null) {
-      return;
+    // The old sector lets go only after the new one lists them, so a
+    // watcher of both never sees them missing in between
+    if (previous != null && previous !== trackedOn) {
+      joined.get(previous)?.topic.untrack();
     }
-    if (refreshing != null) {
-      clearTimeout(refreshing);
-      refreshing = null;
-    }
-    trackedOn = wanted;
-    trackedAt = serverNow();
-    target.topic.track({ ...payload });
   };
 
   const join = (sector: Sector): void => {

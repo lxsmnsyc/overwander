@@ -14,7 +14,12 @@ import * as hub from './hub';
 /** The most a message may be, which a walk or a presence is well under */
 const MESSAGE_LIMIT = 16_384;
 
-/** How many messages a connection may send in a burst, and how many a second after it */
+/**
+ * How many relayed messages a connection may send in a burst, and how
+ * many a second after it. Only what reaches other tabs is limited: a
+ * reconnect resends every follow and join at once, and dropping one of
+ * those would leave the tab deaf to it until it reloads
+ */
 const BURST = 60;
 const PER_SECOND = 20;
 
@@ -91,7 +96,10 @@ async function handle(peer: hub.LivePeer, message: Message): Promise<void> {
         reply({ t: 'error', id: message.id });
         return;
       }
-      hub.subscribe(peer.id, message.id, message.table, filters);
+      if (!hub.subscribe(peer.id, message.id, message.table, filters)) {
+        reply({ t: 'error', id: message.id });
+        return;
+      }
       reply({ t: 'subscribed', id: message.id });
       return;
     }
@@ -99,7 +107,10 @@ async function handle(peer: hub.LivePeer, message: Message): Promise<void> {
       hub.unsubscribe(peer.id, message.id);
       return;
     case 'join':
-      hub.join(peer.id, message.id, message.topic);
+      if (!hub.join(peer.id, message.id, message.topic)) {
+        reply({ t: 'error', id: message.id });
+        return;
+      }
       reply({ t: 'subscribed', id: message.id });
       return;
     case 'leave':
@@ -117,7 +128,7 @@ export default defineWebSocketHandler({
   message(peer, raw) {
     const text = raw.text();
 
-    if (text.length > MESSAGE_LIMIT || !allowed(peer.id)) {
+    if (text.length > MESSAGE_LIMIT) {
       return;
     }
 
@@ -132,6 +143,9 @@ export default defineWebSocketHandler({
     const checked = v.safeParse(MESSAGE, parsed);
 
     if (!checked.success) {
+      return;
+    }
+    if ((checked.output.t === 'send' || checked.output.t === 'track') && !allowed(peer.id)) {
       return;
     }
     handle(

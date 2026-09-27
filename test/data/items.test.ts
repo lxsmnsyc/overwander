@@ -1312,6 +1312,13 @@ describe('item data', () => {
       Items.MusicBox,
       Items.ColressMachine,
       Items.GoldenBottleCap,
+      Items.HPUpMax,
+      Items.ProteinMax,
+      Items.IronMax,
+      Items.CalciumMax,
+      Items.ZincMax,
+      Items.CarbosMax,
+      Items.RareCandyMax,
       // The one thing in the band that is only gold, and there because
       // it is more of it than anything else in the game pays
       Items.RelicCrown,

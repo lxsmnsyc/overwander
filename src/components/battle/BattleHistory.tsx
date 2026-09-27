@@ -209,52 +209,56 @@ function HistoryRow(props: {
       tone={OUTCOME_ROW_TONES[props.record.outcome]}
       title={OUTCOME_LABELS[props.record.outcome]}
     >
-      <Badge>{BATTLE_KIND_NAMES[kind()]}</Badge>
-      <Meta>vs</Meta>
-      <Switch>
-        <Match when={kind() === BattleKind.Raid}>
-          <span class="flex items-center gap-1.5 font-medium">
-            {/* Fitted to a square of its own rather than drawn at a
-                multiple of the sheet: a raid boss is whatever size its
-                sheet is, and one tall one stretched every row in the
-                list to its height */}
-            <span class="flex size-10 shrink-0 items-center justify-center">
-              <AnimatedSprite
-                species={props.record.species}
-                animation={SpriteAnim.Idle}
-                direction="DownLeft"
-                fill
-                label={getSpeciesData(props.record.species).name}
-              />
+      {/* What the fight was, kept on one line */}
+      <span class="flex min-w-0 items-center gap-2">
+        <Badge>{BATTLE_KIND_NAMES[kind()]}</Badge>
+        <Meta>vs</Meta>
+        <Switch>
+          <Match when={kind() === BattleKind.Raid}>
+            <span class="flex items-center gap-1.5 font-medium">
+              {/* Fitted to a square of its own rather than drawn at a
+                  multiple of the sheet: a raid boss is whatever size its
+                  sheet is, and one tall one stretched every row in the
+                  list to its height */}
+              <span class="flex size-10 shrink-0 items-center justify-center">
+                <AnimatedSprite
+                  species={props.record.species}
+                  animation={SpriteAnim.Idle}
+                  direction="DownLeft"
+                  fill
+                  label={getSpeciesData(props.record.species).name}
+                />
+              </span>
+              {getSpeciesData(props.record.species).name}
             </span>
-            {getSpeciesData(props.record.species).name}
-          </span>
-        </Match>
-        <Match when={kind() === BattleKind.Npc}>
-          {/* Whoever was standing there, kept on the record: a stop
-              stages a grunt, a duelling trainer, a gym leader or the
-              Champion, and calling every one of them a grunt was the
-              history saying the same wrong thing about all of them.
-              A fight stored before the name was kept has none, and
-              falls back to what it used to say */}
-          <span class="flex items-center gap-1.5 font-medium">
-            <PlayerFace sprite={props.record.opponentSprite} size={NPC_FACE} />
-            {props.record.opponent === '' ? NPC_NAMES[Npc.RocketGrunt] : props.record.opponent}
-          </span>
-        </Match>
-        <Match when={kind() === BattleKind.Player}>
-          <Suspense fallback={<Meta>A trainer</Meta>}>
-            <RivalPlate
-              fought={fought}
-              onVisit={(uid) => {
-                game.setVisiting(uid);
-              }}
-            />
-          </Suspense>
-        </Match>
-      </Switch>
+          </Match>
+          <Match when={kind() === BattleKind.Npc}>
+            {/* Whoever was standing there, kept on the record: a stop
+                stages a grunt, a duelling trainer, a gym leader or the
+                Champion, and calling every one of them a grunt was the
+                history saying the same wrong thing about all of them.
+                A fight stored before the name was kept has none, and
+                falls back to what it used to say */}
+            <span class="flex items-center gap-1.5 font-medium">
+              <PlayerFace sprite={props.record.opponentSprite} size={NPC_FACE} />
+              {props.record.opponent === '' ? NPC_NAMES[Npc.RocketGrunt] : props.record.opponent}
+            </span>
+          </Match>
+          <Match when={kind() === BattleKind.Player}>
+            <Suspense fallback={<Meta>A trainer</Meta>}>
+              <RivalPlate
+                fought={fought}
+                onVisit={(uid) => {
+                  game.setVisiting(uid);
+                }}
+              />
+            </Suspense>
+          </Match>
+        </Switch>
+      </span>
       <Show when={props.owes}>
         <Button
+          class="order-last sm:order-none"
           tone="primary"
           onClick={() => {
             // The overworld meets it: the encounter derives from the
@@ -268,9 +272,12 @@ function HistoryRow(props: {
         </Button>
       </Show>
       <span class="grow" />
-      <Suspense fallback={<Note>Reading the team…</Note>}>
-        <OwnStrip fought={fought} />
-      </Suspense>
+      {/* Under the title on a phone, with the buttons kept beside it */}
+      <div class="order-last basis-full sm:order-none sm:basis-auto">
+        <Suspense fallback={<Note>Reading the team…</Note>}>
+          <OwnStrip fought={fought} />
+        </Suspense>
+      </div>
       {/* Watching it back, from the row's end: the same fight again, with nothing at stake */}
       <Button
         label="Watch replay"

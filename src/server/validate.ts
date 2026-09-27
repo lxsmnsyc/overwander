@@ -16,6 +16,7 @@ import { MAX_LEVEL } from '../data/constants/levels';
 import Npc, { TRADER_OFFERS } from '../data/overworld/npc';
 import { RaidKind } from '../auth/raid-record';
 import TEAM_SIZE from '../auth/team-size';
+import { FEATURES } from './switches';
 import { TRADE_GOLD_LIMIT } from '../auth/trade-record';
 
 /**
@@ -445,3 +446,6 @@ export const STAFF_GIFT = giftVariants({ ...GIFT_BASE, player: v.nullable(UID) }
  * in its own argument, so the gift itself does not
  */
 export const COMMAND_GIFT = giftVariants(GIFT_BASE);
+
+/** A part of the game a staff switch closes */
+export const FEATURE = v.picklist(FEATURES);

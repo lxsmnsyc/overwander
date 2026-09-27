@@ -175,10 +175,10 @@ says so.
 
 `switches` has one row per part of the game (`auctions`, `trades`, `stops`,
 `raids`, `duels`, `gym-seats`, `gifts`, `townsfolk`, `catching`, `claims`) and
-one for `everything`. Ticking `closed` on a row in the dashboard closes that
-part at once, without a deploy, which is the answer to an exploit found before
-its fix can ship. `message` is what players are told; an empty one uses the
-game's own line.
+one for `everything`. Turning a part off under Switches in the staff dashboard
+(`/admin/switches`, admins and owners only) closes that part at once, without a
+deploy, which is the answer to an exploit found before its fix can ship.
+`message` is what players are told; an empty one uses the game's own line.
 
 The server reads the switches in the same statement as the ban check and the
 paces, so they cost no round trip. A server function that **starts** something

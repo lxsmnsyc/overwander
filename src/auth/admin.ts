@@ -1,5 +1,5 @@
 import type { Listing, PlayerRow, RaidRow } from '../server/admin';
-import check, { FLAG, PAGE, STAFF_GIFT, TEXT, TOKEN, UID } from '../server/validate';
+import check, { FEATURE, FLAG, PAGE, STAFF_GIFT, TEXT, TOKEN, UID } from '../server/validate';
 import {
   listPlayers as listPlayersOnServer,
   listRaids as listRaidsOnServer,
@@ -12,6 +12,7 @@ import makePasswordLink from '../server/password-links';
 import { syncServerClock } from './clock';
 import getIdToken from './session';
 import { StaffAction, recordStaffAction } from '../server/staff-log';
+import { type SwitchRow, readSwitches, writeSwitch } from '../server/switches';
 
 /**
  * What the dashboard asks the server for.
@@ -21,7 +22,7 @@ import { StaffAction, recordStaffAction } from '../server/staff-log';
  * are what would happen if somebody called them anyway
  */
 
-export type { GiftLedgerRow, Listing, PlayerRow, RaidRow, StaffGift };
+export type { GiftLedgerRow, Listing, PlayerRow, RaidRow, StaffGift, SwitchRow };
 
 export async function listPlayers(search: string, page: number): Promise<Listing<PlayerRow>> {
   return playersOnServer(await getIdToken(), search, page);
@@ -166,4 +167,41 @@ async function passwordLinkOnServer(token: string, uid: string): Promise<string 
   check(TOKEN, token);
   check(UID, uid);
   return makePasswordLink(await requireAdmin(token), uid);
+}
+
+/** Every part of the game a switch closes, as it stands now */
+export async function listSwitches(): Promise<SwitchRow[]> {
+  return switchesOnServer(await getIdToken());
+}
+
+async function switchesOnServer(token: string): Promise<SwitchRow[]> {
+  'use server';
+  check(TOKEN, token);
+  await requireAdmin(token);
+  return readSwitches();
+}
+
+/**
+ * Open or close one part of the game, and set what a refused player is
+ * told. It takes effect on the next call anybody makes
+ */
+export async function setSwitch(feature: string, closed: boolean, message: string): Promise<void> {
+  return switchOnServer(await getIdToken(), feature, closed, message);
+}
+
+async function switchOnServer(
+  token: string,
+  feature: string,
+  closed: boolean,
+  message: string,
+): Promise<void> {
+  'use server';
+  check(TOKEN, token);
+  check(FEATURE, feature);
+  check(FLAG, closed);
+  check(TEXT, message);
+  const caller = await requireAdmin(token);
+
+  await writeSwitch(feature, closed, message);
+  await recordStaffAction(caller, StaffAction.Switch, null, { feature, closed, message });
 }

@@ -19,7 +19,7 @@ import {
 } from '../auth/gym-seat-record';
 import { getMaxHealth, isFainted } from '../auth/health';
 import { Foe, Metric } from '../auth/quest-record';
-import { TEAM_SIZE } from '../auth/teams';
+import TEAM_SIZE from '../auth/team-size';
 import Landmark from '../data/overworld/landmark';
 import getWorld, { WORLD_GENERATION } from '../overworld/current';
 import { isEggRecord, isGuardedRecord } from './catch-fields';

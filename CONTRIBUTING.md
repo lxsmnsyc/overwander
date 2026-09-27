@@ -24,8 +24,8 @@ that first if you have not run it yet.
 
 ```bash
 pnpm install
-cp .env.example .env    # fill it in, see the README
-pnpm db                 # the local Supabase stack
+pnpm db                 # the development database
+pnpm db:migrate         # its schema
 pnpm dev                # http://localhost:3000
 ```
 
@@ -82,15 +82,15 @@ pnpm test                   # the whole unit suite
 pnpm exec oxfmt src test    # format
 ```
 
-Two suites need the local stack and are not run by CI:
+Two suites need Docker and are not run by CI. Both start the throwaway
+development database (port 54324) and never touch production:
 
 ```bash
-pnpm db          # in one terminal
-pnpm test:rules  # the row-level security suite
+pnpm test:db     # the server modules against the development database
 pnpm test:e2e    # the Playwright suites
 ```
 
-Run those two **one at a time**. The rules suite clears game rows between cases
+Run those two **one at a time**. The database suite clears game rows between cases
 and will delete the accounts the browser tests are signed in as.
 
 ## What reviewers look for
@@ -125,7 +125,7 @@ rather than reimplementing it.
 
 ### The server boundary
 
-- `src/auth/` runs in the browser and reads under row-level security.
+- `src/auth/` runs in the browser, and reads and writes through server functions.
 - `src/server/` is privileged. Every module opens with `import 'server-only'`.
 
 A server function checks each of its arguments with `check` from

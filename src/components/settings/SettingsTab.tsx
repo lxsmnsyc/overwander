@@ -27,6 +27,7 @@ import {
   TabPane,
 } from '../styled';
 import CreditsCard from './CreditsCard';
+import SecurityPane from './SecurityPane';
 
 /**
  * How the game is set up for this player, and what it is made of.
@@ -340,6 +341,7 @@ const PANE_LABELS: Record<SettingsPane, string> = {
   world: 'World',
   play: 'Play',
   audio: 'Audio',
+  security: 'Security',
   about: 'About',
   development: 'Development',
 };
@@ -350,6 +352,7 @@ const PANE_BODIES: Record<SettingsPane, () => JSX.Element> = {
   world: WorldPane,
   play: PlayPane,
   audio: AudioPane,
+  security: SecurityPane,
   about: AboutPane,
   development: DevelopmentPane,
 };

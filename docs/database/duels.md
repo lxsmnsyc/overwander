@@ -51,23 +51,13 @@ refused.
 One call per lobby and player, keyed by `(duel_id, recipient)`, carrying the
 `role` they are called in as. A recipient may decline, which drops the row.
 
-## `in_duel(target, who)`
-
-Whether somebody has any business seeing a lobby: they are in it, or they have
-been called into it.
-
-It is a `security definer` function rather than a subquery written into the
-policies, because a policy on `duel_members` that reads `duel_members` is
-recursion, which Postgres refuses outright. Running as the owner is what steps
-outside the policy that is being evaluated.
-
 ## Access
 
-Every table here is tier 2: readable only by the people in the lobby, through
-`in_duel`, and written by nobody but the server. All four are published to
-realtime with `replica identity full`, because everything in a lobby moves while
-somebody is looking at it: a second player arriving, a party assembled, a ready
-taken back, the host's start.
+Every table here is tier 2: readable only by the host, the people in the lobby
+and whoever was called into it, and written by nobody but the server. All four
+are followed live, because everything in a lobby moves while somebody is looking
+at it: a second player arriving, a party assembled, a ready taken back, the
+host's start. Anybody else following them gets only the lobby's id.
 
 ## The fight
 

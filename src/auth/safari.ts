@@ -1,3 +1,4 @@
+import { readOnly } from '../utils/server-calls';
 import type { PlayerIdentity } from '../auth/user';
 import { BALL_ITEMS, type Balls, type Items } from '../data/ids/items';
 import SafariSession, {
@@ -10,19 +11,18 @@ import SafariSession, {
   encounterKey,
 } from '../overworld/safari';
 import { safariContextOf } from '../overworld/safari-context';
-import { requireUid, requireUidFor } from '../server/auth';
+import { requireReader, requireUid, requireUidFor } from '../server/auth';
 import { Feature } from '../server/switches';
 import { Pace } from '../server/pace';
-import check, { GAME_ID, ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
+import check, { GAME_ID, ID, LOCALE, OFFSET, TOKEN, UID } from '../server/validate';
+import { readRetiredKeys, readSafariTally } from '../server/encounter-io';
 import { type ThrowReport, feedAt, throwAt } from '../server/throws';
-import { WORLD_GENERATION } from '../overworld/current';
 import { buddyEffectsOf, resolveBuddy } from './buddy';
 import { hasCaughtSpecies } from './caught';
 import { getCaughtSpeciesCount } from './pokedex';
 import { syncServerClock } from './clock';
 import { getLocalOffset, getLocale } from './local-time';
 import type { EncounterRecord } from './encounter-record';
-import getSupabase from './supabase';
 import { getInventory } from './inventory';
 import getIdToken from './session';
 
@@ -104,19 +104,18 @@ export async function countBalls(uid: string): Promise<number> {
  * checks every spawn it is about to draw against the set
  */
 export async function getRetiredKeys(uid: string): Promise<Set<string>> {
-  const { data } = await getSupabase()
-    .from('fled_encounters')
-    .select('key')
-    .eq('player', uid)
-    .eq('generation', WORLD_GENERATION);
-
-  const keys = new Set<string>();
-
-  for (const row of data ?? []) {
-    keys.add(String(row.key));
-  }
-  return keys;
+  return new Set(await getRetiredKeysOnServer(await getIdToken(), uid));
 }
+
+async function getRetiredKeysOnServer(token: string, player: string): Promise<string[]> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  const uid = await requireReader(token);
+
+  return player === uid ? readRetiredKeys(uid) : [];
+}
+readOnly(getRetiredKeysOnServer);
 
 /**
  * Whether this encounter is over for this player — it ran off, or it
@@ -287,20 +286,18 @@ export async function feedEncounter(
   return session.feed(item);
 }
 
-/**
- * Where tallies are read from: the meeting's own row, which only its
- * player can read
- */
+/** Where tallies are read from: the meeting's own row, the player's alone */
 async function readTally(spawn: string): Promise<SafariTally | null> {
-  const { data } = await getSupabase()
-    .from('encounters')
-    .select('safari')
-    .eq('generation', WORLD_GENERATION)
-    .eq('spawn_id', spawn)
-    .maybeSingle();
-
-  return asSafariTally((data as { safari?: unknown } | null)?.safari);
+  return asSafariTally(await readTallyOnServer(await getIdToken(), spawn));
 }
+
+async function readTallyOnServer(token: string, spawn: string): Promise<unknown> {
+  'use server';
+  check(TOKEN, token);
+  check(ID, spawn);
+  return readSafariTally(spawn, await requireReader(token));
+}
+readOnly(readTallyOnServer);
 
 /**
  * One throw, decided here: the ball spent, the roll made, and a catch

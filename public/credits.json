@@ -67,14 +67,15 @@
       "href": "https://tailwindcss.com"
     },
     {
-      "name": "@supabase/supabase-js",
-      "what": "Auth, the client's reads under row-level security, and the realtime socket",
+      "name": "better-auth",
+      "what": "Accounts, sessions, passwords, two-factor and passkeys",
       "licence": "MIT",
-      "kind": "runtime"
+      "kind": "runtime",
+      "href": "https://better-auth.com"
     },
     {
       "name": "postgres",
-      "what": "The direct connection the privileged writes in `src/server/` travel over",
+      "what": "The connection every read and write in `src/server/` travels over",
       "licence": "Unlicense",
       "kind": "runtime"
     },
@@ -167,12 +168,6 @@
       "name": "@lxsmnsyc/oxlint-config",
       "what": "The lint configuration this project starts from",
       "licence": "MIT",
-      "kind": "build"
-    },
-    {
-      "name": "Supabase CLI",
-      "what": "The local stack the tests run against",
-      "licence": "Apache-2.0",
       "kind": "build"
     },
     {

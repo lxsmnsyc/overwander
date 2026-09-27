@@ -147,9 +147,8 @@ the first piece of overworld state that cannot be computed and has to be sent.
 What already exists:
 
 - `positions` holds every player's `chunk_x, chunk_y, cell_x, cell_y, depth,
-moved_at` (`supabase/migrations/20260820000300_world.sql:81`), and the table is
-  already in the realtime publication
-  (`supabase/migrations/20260831000100_position_realtime.sql`).
+moved_at` (`db/migrations/0001_baseline.sql:732`), and the table already sends
+  its changes to the live feed (`src/server/live/rules.ts:34`).
 - `profiles.sprite` already holds the charset a trainer walks as, and it is
   already readable by anybody.
 - `readPositions(uids)` already reads many players' rows in one query
@@ -165,11 +164,10 @@ moved_at` (`supabase/migrations/20260820000300_world.sql:81`), and the table is
 
 What is in the way:
 
-- [ ] **The read policy on `positions` is self-only**
-      (`supabase/migrations/20260820000900_rls.sql:53`), so a socket watching the
-      table sees one row. This is deliberate, and the realtime migration says so,
-      but it was written when the stream was only for reconciling one player's
-      two devices. The project has already made the opposite call elsewhere:
+- [ ] **The live feed sends a position to its own player only**
+      (`src/server/live/rules.ts:34`), so a socket watching the table sees one
+      row. This is deliberate, but it was decided when the stream was only for
+      reconciling one player's two devices. The project has already made the opposite call elsewhere:
       `getPlayerPosition` says where a trainer is standing is as public as their
       nickname.
 - [ ] **Nothing queries by region.** The key is `(player, generation)` and there

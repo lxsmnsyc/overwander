@@ -153,7 +153,7 @@ The dialog asks twice before calling it, and by default there is no undo.
 With the server's `RELEASE_GRACE` variable on, a release is held for a day
 before it is final, the way rAthena waits `char_del_delay` before a deleted
 character is gone. The row is not deleted. Its `owner` is cleared, which hides
-it from every policy and refuses it to every server call exactly as
+it from every read and refuses it to every server call exactly as
 [escrow](#escrow) does, and three columns say who let it go (`released_by`),
 when (`released_at`) and what candy it paid (`released_candy`). An escrowed lot
 never has a `released_by`, which is what tells the two apart.

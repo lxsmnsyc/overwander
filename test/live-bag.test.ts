@@ -5,62 +5,73 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  * again only when it cannot be sure it has heard everything.
  */
 
-type Heard = (message: { payload: Record<string, unknown> }) => void;
+type Heard = (change: {
+  op: string;
+  new: Record<string, unknown>;
+  old: Record<string, unknown>;
+}) => void;
 
-let heard: Heard = () => undefined;
-let status: (state: string) => void = () => undefined;
+const heard = new Map<string, Heard>();
+const readies = new Map<string, () => void>();
+const losses = new Map<string, () => void>();
 let items: Record<string, unknown>[] = [];
 let reads = 0;
+let uid = '';
 let answer: () => Promise<void> = async () => Promise.resolve();
 
-vi.mock('../src/auth/supabase', () => {
-  const channel = {
-    on(_kind: string, _filter: unknown, listener: Heard) {
-      heard = listener;
-      return channel;
-    },
-    subscribe(callback: (state: string) => void) {
-      status = callback;
-      return channel;
-    },
-  };
+/** The live feed coming up, or dropping, for every table the bag follows */
+function status(state: 'up' | 'down'): void {
+  for (const signal of (state === 'up' ? readies : losses).values()) {
+    signal();
+  }
+}
 
-  return {
-    default: () => ({
-      channel: () => channel,
-      removeChannel: async () => Promise.resolve(),
-      from: (table: string) => ({
-        select: () => ({
-          eq: async () => {
-            if (table === 'bag_items') {
-              reads += 1;
-              const rows = structuredClone(items);
+vi.mock('../src/auth/live', () => ({
+  followChanges: (
+    table: string,
+    _filters: string[],
+    listener: Heard,
+    ready: () => void,
+    lost: () => void,
+  ) => {
+    heard.set(table, listener);
+    readies.set(table, ready);
+    losses.set(table, lost);
+    return () => undefined;
+  },
+}));
 
-              await answer();
-              return { data: rows, error: null };
-            }
-            return { data: [], error: null };
-          },
-        }),
-      }),
-    }),
-  };
-});
+// The read is a server call now, which runs only inside a request, and
+// the player is whoever the test says
+vi.mock('solid-js/web', async (original) => ({
+  ...(await original<object>()),
+  getRequestEvent: () => ({ locals: {} }),
+}));
+vi.mock('../src/auth/session', () => ({ default: async () => Promise.resolve('token') }));
+vi.mock('../src/server/auth', () => ({ requireReader: async () => Promise.resolve(uid) }));
+vi.mock('../src/server/inventory', () => ({
+  readBag: async () => {
+    reads += 1;
+    const rows: [number, number][] = [];
+
+    for (const row of structuredClone(items)) {
+      rows.push([Number(row.item), Number(row.count)]);
+    }
+    await answer();
+    return { items: rows, candies: [] };
+  },
+}));
 
 const { default: readHeldBag } = await import('../src/auth/live-bag');
 const { countServerCall } = await import('../src/utils/server-calls');
 
 let player = 0;
-let uid = '';
 
-function said(operation: string, item: number, count: number | null): void {
-  heard({
-    payload: {
-      operation,
-      table: 'bag_items',
-      record: count == null ? null : { player: uid, item, count },
-      old_record: { player: uid, item },
-    },
+function said(op: string, item: number, count: number | null): void {
+  heard.get('bag_items')?.({
+    op,
+    new: count == null ? {} : { player: uid, item, count },
+    old: { player: uid, item },
   });
 }
 
@@ -68,12 +79,12 @@ describe('the kept bag', () => {
   beforeEach(async () => {
     // A new player each time, so every test starts on a fresh channel
     player += 1;
-    uid = `player-${player}`;
+    uid = `00000000-0000-4000-8000-${String(player).padStart(12, '0')}`;
     items = [{ item: 1, count: 5 }];
     reads = 0;
     answer = async () => Promise.resolve();
     await readHeldBag(uid);
-    status('SUBSCRIBED');
+    status('up');
     await readHeldBag(uid);
     reads = 0;
   });
@@ -96,7 +107,7 @@ describe('the kept bag', () => {
   });
 
   it('reads again after a server call of its own', async () => {
-    countServerCall();
+    countServerCall(null);
     items = [{ item: 1, count: 4 }];
 
     expect((await readHeldBag(uid)).items.get(1)).toBe(4);
@@ -104,8 +115,8 @@ describe('the kept bag', () => {
   });
 
   it('reads again after a reconnect, which may have missed changes', async () => {
-    status('CHANNEL_ERROR');
-    status('SUBSCRIBED');
+    status('down');
+    status('up');
     items = [{ item: 1, count: 9 }];
 
     expect((await readHeldBag(uid)).items.get(1)).toBe(9);
@@ -113,7 +124,7 @@ describe('the kept bag', () => {
   });
 
   it('lays a change heard during a read over what the read brings back', async () => {
-    countServerCall();
+    countServerCall(null);
     // The read is answered from before the change and lands after it
     answer = async () => {
       // A message arrives on a later turn, never inside the call

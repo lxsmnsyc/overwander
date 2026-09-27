@@ -23,7 +23,7 @@ async function useMintOnServer(token: string, catchId: string, item: Items): Pro
 
 ## The rules
 
-- **One line per parameter**, in the order the parameters are declared, before anything else in the body. `requireUid` comes after them.
+- **One line per parameter**, in the order the parameters are declared, before anything else in the body. `requireUid` comes after them, or `requireReader` for a read (see `server-reads`).
 - **Reuse a schema.** `ID` for a row key, `GAME_ID` for a registry id, `CHUNK_COORDINATE` and `CELL` for where somebody says they are, `OFFSET` and `LOCALE` for the caller's zone, `UID` for an account. A new shape gets a new exported schema in `validate.ts` rather than an inline one at the call site.
 - **Bound every list.** An array schema carries a `maxLength`, since an unbounded list is a request to do unbounded work.
 - **Check the shape, not the rule.** A schema says an argument is a chunk inside the world or a text id of a sane length. Whether the player owns that catch, can afford it or may reach that landmark stays in `src/server/`.

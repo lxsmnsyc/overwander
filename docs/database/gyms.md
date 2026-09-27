@@ -31,8 +31,7 @@ Sitting down reads the row `for update`, so two players cannot both find a seat
 free and both take it.
 
 Tier 1: a seat is a public fact about a cell, the way a raid lobby is, and it
-rides the realtime stream so a seat changing hands is visible from across the
-chunk.
+is followed live so a seat changing hands is visible from across the chunk.
 
 ## `gym_challenges`
 

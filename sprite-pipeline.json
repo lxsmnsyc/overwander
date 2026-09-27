@@ -10729,6 +10729,30 @@
         "bytes": 6942
       }
     },
+    "public/sprites/pokemon/johto/1017201/regular.png": {
+      "digest": "fcd7433c8a6e1b7a",
+      "bytes": 9131,
+      "width": 286,
+      "height": 183,
+      "compact": {
+        "at": "2026-09-26T16:12:53Z",
+        "as": "already compact",
+        "was": 9131,
+        "bytes": 9131
+      }
+    },
+    "public/sprites/pokemon/johto/1017201/shiny.png": {
+      "digest": "ebc35c52c853dd5c",
+      "bytes": 9131,
+      "width": 286,
+      "height": 183,
+      "compact": {
+        "at": "2026-09-26T16:12:53Z",
+        "as": "already compact",
+        "was": 9131,
+        "bytes": 9131
+      }
+    },
     "public/sprites/pokemon/johto/1020101/regular.png": {
       "digest": "56c4813faee238f2",
       "bytes": 1095,
@@ -27276,15 +27300,15 @@
       }
     },
     "public/sprites/ui/items/medicine/image.png": {
-      "digest": "ea48d98b48755f38",
-      "bytes": 8617,
-      "width": 134,
-      "height": 141,
+      "digest": "81e1f22c9c4be609",
+      "bytes": 9463,
+      "width": 185,
+      "height": 123,
       "compact": {
-        "at": "2026-08-17T06:50:23Z",
-        "as": "truecolour, none",
-        "was": 16496,
-        "bytes": 8617
+        "at": "2026-09-27T07:58:39Z",
+        "as": "already compact",
+        "was": 9463,
+        "bytes": 9463
       }
     },
     "public/sprites/ui/items/mega-stones/image.png": {

@@ -1,17 +1,23 @@
-/**
- * Whether the way in offers an address and a password beside the two
- * buttons.
- *
- * The hosted game offers only Google and GitHub: an account it holds a
- * password for is an account it has to keep one safe for. A
- * development build offers the pair as well, since the browser tests
- * make and throw away accounts of their own, and so does any host that
- * sets `VITE_EMAIL_SIGN_IN` to `1` or `true`, which is what a
- * self-hosted game without OAuth apps of its own needs.
- */
-const EMAIL_SIGN_IN =
-  import.meta.env.DEV ||
-  import.meta.env.VITE_EMAIL_SIGN_IN === '1' ||
-  import.meta.env.VITE_EMAIL_SIGN_IN === 'true';
+import type { SignInProvider } from '../server/better-auth';
+import { signInProviders } from '../server/better-auth';
+import { readOnly } from '../utils/server-calls';
 
-export default EMAIL_SIGN_IN;
+export type { SignInProvider };
+
+/**
+ * The OAuth providers the sign-in form offers, beside the email and
+ * password it always has. The server offers one only where both of its
+ * credentials are set, so this is asked of the server rather than baked
+ * into the build
+ */
+export default async function listSignInProviders(): Promise<SignInProvider[]> {
+  return providersOnServer();
+}
+
+// Read before anybody is signed in, so there is no token to check. A server function has to be async
+// oxlint-disable-next-line typescript/require-await
+async function providersOnServer(): Promise<SignInProvider[]> {
+  'use server';
+  return signInProviders();
+}
+readOnly(providersOnServer);

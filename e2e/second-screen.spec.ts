@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { GENERATION, admin, uidOf } from './admin';
+import { GENERATION, sql, uidOf } from './admin';
 import { newPlayer, settled, signIn } from './game';
 
 /**
@@ -22,16 +22,13 @@ test('a screen stands down when the walk moves elsewhere', async ({ page }) => {
   await settled(page);
 
   const uid = await uidOf(player);
-  const { data } = await admin
-    .from('positions')
-    .select('chunk_x')
-    .eq('player', uid)
-    .eq('generation', GENERATION)
-    .maybeSingle();
+  const standing = (
+    await sql`select chunk_x from positions where player = ${uid} and generation = ${GENERATION}`
+  ).at(0);
 
-  expect(data).not.toBeNull();
+  expect(standing).not.toBeUndefined();
 
-  const startedAt = Number(data?.chunk_x);
+  const startedAt = Number(standing?.chunk_x);
 
   const takeOver = page.getByRole('button', { name: 'Walk here instead' });
 
@@ -40,16 +37,10 @@ test('a screen stands down when the walk moves elsewhere', async ({ page }) => {
 
   // Stamped ahead of anything this screen has written, since a screen
   // that took a foreign write for its own would never stand down
-  const { error } = await admin
-    .from('positions')
-    .update({
-      chunk_x: startedAt + AWAY,
-      moved_at: Date.now() + 60_000,
-    })
-    .eq('player', uid)
-    .eq('generation', GENERATION);
-
-  expect(error).toBeNull();
+  await sql`
+    update positions set chunk_x = ${startedAt + AWAY}, moved_at = ${Date.now() + 60_000}
+    where player = ${uid} and generation = ${GENERATION}
+  `;
   await expect(takeOver).toBeVisible({ timeout: 30_000 });
 
   // Taking it back stands this screen up where the other one left off,
@@ -59,12 +50,9 @@ test('a screen stands down when the walk moves elsewhere', async ({ page }) => {
 
   await expect
     .poll(async () => {
-      const { data: after } = await admin
-        .from('positions')
-        .select('chunk_x')
-        .eq('player', uid)
-        .eq('generation', GENERATION)
-        .maybeSingle();
+      const after = (
+        await sql`select chunk_x from positions where player = ${uid} and generation = ${GENERATION}`
+      ).at(0);
 
       return Number(after?.chunk_x);
     })

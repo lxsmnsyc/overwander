@@ -32,6 +32,7 @@ export const SETTINGS_PANES = [
   'world',
   'play',
   'audio',
+  'security',
   'about',
   'development',
 ] as const;

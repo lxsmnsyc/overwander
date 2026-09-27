@@ -1,4 +1,3 @@
-import { REALTIME_SUBSCRIBE_STATES, type RealtimeChannel } from '@supabase/supabase-js';
 import { DEFAULT_CHARSET, getCharset } from '../data/overworld/charsets';
 import { CHUNK_CELLS } from '../overworld/chunk';
 import { WORLD_GENERATION } from '../overworld/current';
@@ -16,7 +15,7 @@ import Strangers, {
 import { WORLD_MAX, WORLD_MIN } from '../overworld/world';
 import { asNumber, asRecord, asString } from './__normalize';
 import { serverNow } from './clock';
-import getSupabase from './supabase';
+import { type LivePresence, type Topic, joinTopic } from './live';
 
 /**
  * Seeing the other players on the overworld, over one realtime
@@ -124,8 +123,10 @@ export function asLeg(value: unknown): Leg | null {
 
 interface Joined {
   sector: Sector;
-  channel: RealtimeChannel;
+  topic: Topic;
   ready: boolean;
+  /** Who the feed last said is present */
+  presence: LivePresence;
   /** Who is present in it, and the presence ref last taken from each */
   members: Map<string, string>;
 }
@@ -166,7 +167,6 @@ export interface Sight {
  * board's and every other board's are the same
  */
 export default function openSight(uid: string, pace: number): Sight {
-  const supabase = getSupabase();
   const strangers = new Strangers(serverNow, pace);
   const joined = new Map<string, Joined>();
 
@@ -200,17 +200,16 @@ export default function openSight(uid: string, pace: number): Sight {
   };
 
   const synced = (sector: Joined): void => {
-    const state = sector.channel.presenceState<Partial<TrackedPresence>>();
     const present = new Set<string>();
 
-    for (const [key, metas] of Object.entries(state)) {
+    for (const [key, metas] of sector.presence) {
       // Another screen of the same player is the player, not a stranger
       if (key === uid) {
         continue;
       }
 
       const meta = metas.at(-1);
-      const sighting = meta == null ? null : asSighting(key, meta);
+      const sighting = meta == null ? null : asSighting(key, meta.state);
 
       if (meta == null || sighting == null) {
         continue;
@@ -218,8 +217,10 @@ export default function openSight(uid: string, pace: number): Sight {
       present.add(key);
       // A sync repeats everybody. Only a changed presence is news: an
       // unchanged one would put a walker back where they last stopped
-      if (sector.members.get(key) !== meta.presence_ref) {
-        sector.members.set(key, meta.presence_ref);
+      const ref = String(meta.ref);
+
+      if (sector.members.get(key) !== ref) {
+        sector.members.set(key, ref);
         strangers.see(sighting);
       }
     }
@@ -237,62 +238,56 @@ export default function openSight(uid: string, pace: number): Sight {
   const track = (): void => {
     const key = home == null ? null : sectorKey(home);
     const target = key == null ? null : joined.get(key);
-    const wanted = seen && target?.ready === true ? key : null;
+    const payload = presence();
+    const wanted = seen && target?.ready === true && payload != null ? key : null;
+    const previous = trackedOn;
 
-    if (trackedOn != null && trackedOn !== wanted) {
-      joined
-        .get(trackedOn)
-        ?.channel.untrack()
-        .catch(() => {
-          // A presence that cannot be taken down goes when the channel does
-        });
+    if (wanted != null && target != null && payload != null) {
+      if (refreshing != null) {
+        clearTimeout(refreshing);
+        refreshing = null;
+      }
+      trackedOn = wanted;
+      trackedAt = serverNow();
+      target.topic.track({ ...payload });
+    } else {
       trackedOn = null;
     }
-
-    const payload = presence();
-
-    if (wanted == null || target == null || payload == null) {
-      return;
+    // The old sector lets go only after the new one lists them, so a
+    // watcher of both never sees them missing in between
+    if (previous != null && previous !== trackedOn) {
+      joined.get(previous)?.topic.untrack();
     }
-    if (refreshing != null) {
-      clearTimeout(refreshing);
-      refreshing = null;
-    }
-    trackedOn = wanted;
-    trackedAt = serverNow();
-    target.channel.track({ ...payload }).catch(() => {
-      // Not seen for a moment; the next stop tracks again
-    });
   };
 
   const join = (sector: Sector): void => {
     const key = sectorKey(sector);
-    const channel = supabase.channel(sectorTopic(WORLD_GENERATION, sector), {
-      config: {
-        private: true,
-        broadcast: { self: false },
-        presence: { key: uid, enabled: true },
-      },
-    });
-    const entry: Joined = { sector, channel, ready: false, members: new Map() };
+    const entry: Joined = {
+      sector,
+      ready: false,
+      presence: new Map(),
+      members: new Map(),
+      topic: joinTopic(sectorTopic(WORLD_GENERATION, sector), {
+        onPresence: (listed) => {
+          entry.presence = listed;
+          synced(entry);
+        },
+        onMessage: (event, payload) => {
+          const leg = event === WALK_EVENT ? asLeg(payload) : null;
 
-    channel
-      .on('presence', { event: 'sync' }, () => {
-        synced(entry);
-      })
-      .on('broadcast', { event: WALK_EVENT }, ({ payload }) => {
-        const leg = asLeg(payload);
+          if (leg != null && leg.uid !== uid) {
+            strangers.hear(leg);
+          }
+        },
+        onReady: (ready) => {
+          entry.ready = ready;
+          if (ready && home != null && sectorKey(home) === key) {
+            track();
+          }
+        },
+      }),
+    };
 
-        if (leg != null && leg.uid !== uid) {
-          strangers.hear(leg);
-        }
-      })
-      .subscribe((status) => {
-        entry.ready = status === REALTIME_SUBSCRIBE_STATES.SUBSCRIBED;
-        if (entry.ready && home != null && sectorKey(home) === key) {
-          track();
-        }
-      });
     joined.set(key, entry);
   };
 
@@ -308,9 +303,7 @@ export default function openSight(uid: string, pace: number): Sight {
         strangers.forget(member);
       }
     }
-    supabase.removeChannel(entry.channel).catch(() => {
-      // A channel that cannot be removed is already gone
-    });
+    entry.topic.leave();
   };
 
   /** Say something about the walk, on the sector the player speaks on. False when there is nowhere to say it yet */
@@ -324,12 +317,8 @@ export default function openSight(uid: string, pace: number): Sight {
     if (planned) {
       message.p = 1;
     }
-    joined
-      .get(trackedOn)
-      ?.channel.send({ type: 'broadcast', event: WALK_EVENT, payload: message })
-      .catch(() => {
-        // A lost run shows as a jump to the start of the next one
-      });
+    // A lost run shows as a jump to the start of the next one
+    joined.get(trackedOn)?.topic.send(WALK_EVENT, message);
     return true;
   };
 

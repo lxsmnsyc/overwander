@@ -110,3 +110,13 @@ export async function releaseVisit(id: string): Promise<void> {
       and player = ${id.slice(at + 1)}
   `;
 }
+
+/** Whether this player holds the claim a visit writes under `marker` */
+export async function readVisited(uid: string, marker: string): Promise<boolean> {
+  const rows = await getSql()`
+    select 1 from npc_claims
+    where player = ${uid} and generation = ${WORLD_GENERATION} and marker = ${marker}
+  `;
+
+  return rows.length > 0;
+}

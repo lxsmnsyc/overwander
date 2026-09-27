@@ -1,94 +1,207 @@
-import { type JSX, Show, createSignal } from 'solid-js';
+import {
+  For,
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createResource,
+  createSignal,
+} from 'solid-js';
 import {
   registerWithEmail,
   signInWithEmail,
   signInWithGithub,
   signInWithGoogle,
+  signInWithPasskey,
+  verifyBackupCode,
+  verifySignInCode,
 } from '../../auth/actions';
-import EMAIL_SIGN_IN from '../../auth/sign-in-options';
-import { Button, Row, Status } from '../styled';
+import listSignInProviders, { type SignInProvider } from '../../auth/sign-in-options';
+import { Button, Checkbox, Row, Status } from '../styled';
+import createClientSignal from './client-signal';
 
 /**
- * The way in: Google or GitHub, and, where the host asks for it, an
- * address and a password.
- *
- * Whether the pair of fields is drawn is `EMAIL_SIGN_IN`, which is on
- * for a local run and for the browser tests, and off everywhere else
- * until a host asks for it
+ * The way in: an address and a password, a passkey, and Google or
+ * GitHub where the server has credentials for them. An account with
+ * two-factor on asks for a code after its password.
  */
-export default function LoginForm(): JSX.Element {
+
+type Run = (action: () => Promise<unknown>) => () => void;
+
+const PROVIDERS: Record<SignInProvider, { label: string; signIn: () => Promise<void> }> = {
+  google: { label: 'Sign in with Google', signIn: signInWithGoogle },
+  github: { label: 'Sign in with GitHub', signIn: signInWithGithub },
+};
+
+function PasswordStep(props: { run: Run; onSecondFactor: () => void }): JSX.Element {
   const [email, setEmail] = createSignal('');
   const [password, setPassword] = createSignal('');
+
+  return (
+    <form
+      class="flex flex-col gap-3"
+      onSubmit={(event) => {
+        event.preventDefault();
+      }}
+    >
+      <input
+        type="email"
+        placeholder="Email"
+        autocomplete="username webauthn"
+        value={email()}
+        onInput={(event) => {
+          setEmail(event.currentTarget.value);
+        }}
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        autocomplete="current-password"
+        value={password()}
+        onInput={(event) => {
+          setPassword(event.currentTarget.value);
+        }}
+      />
+      <Row>
+        <Button
+          type="submit"
+          tone="primary"
+          class="grow justify-center"
+          onClick={props.run(async () => {
+            if (await signInWithEmail(email(), password())) {
+              props.onSecondFactor();
+            }
+          })}
+        >
+          Sign in
+        </Button>
+        <Button
+          class="grow justify-center"
+          onClick={props.run(async () => registerWithEmail(email(), password()))}
+        >
+          Register
+        </Button>
+      </Row>
+    </form>
+  );
+}
+
+/** The second step, for an account with two-factor on */
+function CodeStep(props: { run: Run; onBack: () => void }): JSX.Element {
+  const [code, setCode] = createSignal('');
+  const [backup, setBackup] = createSignal(false);
+  const [trust, setTrust] = createSignal(false);
+
+  return (
+    <form
+      class="flex flex-col gap-3"
+      onSubmit={(event) => {
+        event.preventDefault();
+      }}
+    >
+      <input
+        type="text"
+        inputmode={backup() ? 'text' : 'numeric'}
+        placeholder={backup() ? 'Backup code' : 'Code from your authenticator app'}
+        autocomplete="one-time-code"
+        value={code()}
+        onInput={(event) => {
+          setCode(event.currentTarget.value);
+        }}
+      />
+      <Show when={!backup()}>
+        <Checkbox
+          label="Trust this device for 30 days"
+          checked={trust()}
+          onChange={(value) => {
+            setTrust(value);
+          }}
+        />
+      </Show>
+      <Button
+        type="submit"
+        tone="primary"
+        class="justify-center"
+        onClick={props.run(async () =>
+          backup() ? verifyBackupCode(code().trim()) : verifySignInCode(code().trim(), trust()),
+        )}
+      >
+        Continue
+      </Button>
+      <Row>
+        <Button
+          class="grow justify-center"
+          onClick={() => {
+            setBackup(!backup());
+            setCode('');
+          }}
+        >
+          {backup() ? 'Use the app instead' : 'Use a backup code'}
+        </Button>
+        <Button class="grow justify-center" onClick={props.onBack}>
+          Back
+        </Button>
+      </Row>
+    </form>
+  );
+}
+
+function ProviderButtons(props: { run: Run; providers: Resource<SignInProvider[]> }): JSX.Element {
+  return (
+    <For each={props.providers() ?? []}>
+      {(provider) => (
+        <Button class="justify-center" onClick={props.run(PROVIDERS[provider].signIn)}>
+          {PROVIDERS[provider].label}
+        </Button>
+      )}
+    </For>
+  );
+}
+
+export default function LoginForm(): JSX.Element {
+  const client = createClientSignal();
+  const [providers] = createResource(client, async () => listSignInProviders());
+  const [secondFactor, setSecondFactor] = createSignal(false);
   const [error, setError] = createSignal<string | null>(null);
 
   // Auth calls run fire-and-forget so DOM handlers stay void;
   // failures land in the error signal
-  const run = (action: () => Promise<unknown>) => (): void => {
+  const run: Run = (action) => (): void => {
     setError(null);
     action().catch((caught: unknown) => {
       setError(caught instanceof Error ? caught.message : String(caught));
     });
   };
 
-  // A sign-in that went the redirect way comes back here. Landing
-  // signed in needs nothing from this — the auth listener has it —
-  // but one that failed on the way would otherwise come back to a
-  // form with nothing to say about why
-
   return (
     <div class="flex flex-col gap-3 text-left">
-      {/* Off unless the host asks for it: the pair of fields is for a
-          local run, for the browser tests, which make and throw away
-          accounts of their own, and for a host with no OAuth apps */}
-      <Show when={EMAIL_SIGN_IN}>
-        <form
-          class="flex flex-col gap-3"
-          onSubmit={(event) => {
-            event.preventDefault();
+      <Show
+        when={secondFactor()}
+        fallback={
+          <>
+            <PasswordStep
+              run={run}
+              onSecondFactor={() => {
+                setSecondFactor(true);
+              }}
+            />
+            <Button class="justify-center" onClick={run(signInWithPasskey)}>
+              Sign in with a passkey
+            </Button>
+            <Suspense>
+              <ProviderButtons run={run} providers={providers} />
+            </Suspense>
+          </>
+        }
+      >
+        <CodeStep
+          run={run}
+          onBack={() => {
+            setSecondFactor(false);
+            setError(null);
           }}
-        >
-          <input
-            type="email"
-            placeholder="Email"
-            autocomplete="email"
-            value={email()}
-            onInput={(event) => {
-              setEmail(event.currentTarget.value);
-            }}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            autocomplete="current-password"
-            value={password()}
-            onInput={(event) => {
-              setPassword(event.currentTarget.value);
-            }}
-          />
-          <Row>
-            <Button
-              type="submit"
-              tone="primary"
-              class="grow justify-center"
-              onClick={run(async () => signInWithEmail(email(), password()))}
-            >
-              Sign in
-            </Button>
-            <Button
-              class="grow justify-center"
-              onClick={run(async () => registerWithEmail(email(), password()))}
-            >
-              Register
-            </Button>
-          </Row>
-        </form>
+        />
       </Show>
-      <Button class="justify-center" onClick={run(signInWithGoogle)}>
-        Sign in with Google
-      </Button>
-      <Button class="justify-center" onClick={run(signInWithGithub)}>
-        Sign in with GitHub
-      </Button>
       <Status message={error()} tone="alert" />
     </div>
   );

@@ -105,9 +105,8 @@ signing in together cannot both find nothing there. Claiming writes the claim ro
 **before** anything is handed over, so a second press or a second tab finds it
 already taken rather than being paid twice.
 
-Both tables are **closed to clients**: row-level security is on and no policy is
-written, so a browser reading them gets nothing back. Shelves and claims travel
-through the server.
+Both tables are **closed to clients**: no server read hands them to a browser.
+Shelves and claims travel through the server's own functions.
 
 Offers and claims are both kept rather than deleted: what has been given out, and
 to whom, stays readable.

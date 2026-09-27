@@ -7,21 +7,24 @@ import { RAID_INTERVAL } from '../overworld/chunk-snapshot';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
-import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
+import { asRecordArray, asString } from './__normalize';
 import { RaidKind, type RaidRecord, type RaidView, asRaidRecord } from './raid-record';
 import { hasAnyCaught } from './caught';
 import { LobbyRole } from './lobby-role';
-import { requireUid } from '../server/auth';
+import { requireReader, requireUid, requireUidFor } from '../server/auth';
+import { Feature } from '../server/switches';
 import check, {
   CELL,
   CHUNK_COORDINATE,
   DEPTH,
   GAME_ID,
   ID,
+  ID_BATCH,
   LOBBY_ROLE,
   OFFSET,
   PARTY,
   RAID_KIND,
+  TIME,
   TOKEN,
   UID,
 } from '../server/validate';
@@ -42,10 +45,18 @@ import {
 } from '../server/raids';
 import { serverNow, syncServerClock } from './clock';
 import { asOffset, toLocalTime } from './local-time';
-import { REALTIME_SUBSCRIBE_STATES } from '@supabase/supabase-js';
-import getSupabase, { type Unwatch, watchTable } from './supabase';
+import { followChanges } from './live';
+import { type Unwatch, watchTable } from './watch';
 import getIdToken from './session';
 import batchedQuery from '../utils/batched-query';
+import { readOnly } from '../utils/server-calls';
+import {
+  readClaimedRaids,
+  readLiveLobbyRows,
+  readLobbyRows,
+  readRaidInvites,
+  readRaidWatchers,
+} from '../server/raid-reads';
 
 export {
   RAID_PLAYER_LIMIT,
@@ -64,8 +75,6 @@ export type { RaidRecord, RaidView } from './raid-record';
 export { BOSS_ALLIANCE, PLAYER_ALLIANCE } from '../overworld/raid';
 
 const RAID_TABLE = 'raids';
-
-const RAID_EMBED = '*, teams(id, joined_seq)';
 
 /** A lobby's teams, each id to the place it joined in */
 type Joined = Map<string, number>;
@@ -120,21 +129,28 @@ export async function getRaid(id: string): Promise<RaidRecord | null> {
  */
 export const getRaidBatched = batchedQuery(
   async (ids: string[]): Promise<Map<string, RaidRecord>> => {
-    const { data }: { data: unknown } = await getSupabase()
-      .from(RAID_TABLE)
-      .select(RAID_EMBED)
-      .in('id', ids);
     const found = new Map<string, RaidRecord>();
 
-    for (const row of asRecordArray(data)) {
+    for (const row of await readLobbiesOnServer(await getIdToken(), ids)) {
       found.set(asString(row.id), fromRaidRow(row));
     }
     return found;
   },
   (found, id: string): RaidRecord | null => found.get(id) ?? null,
-  // The ids travel in the request's address, which has a length limit
   { limit: 50 },
 );
+
+async function readLobbiesOnServer(
+  token: string,
+  ids: string[],
+): Promise<Record<string, unknown>[]> {
+  'use server';
+  check(TOKEN, token);
+  check(ID_BATCH, ids);
+  await requireReader(token);
+  return readLobbyRows(ids);
+}
+readOnly(readLobbiesOnServer);
 
 /**
  * Follow a lobby: teams join and leave it, and the host's start
@@ -148,7 +164,6 @@ export const getRaidBatched = batchedQuery(
  * that says too little to fold is read like a reconnect
  */
 export function watchRaid(id: string, onChange: (raid: RaidRecord | null) => void): Unwatch {
-  const supabase = getSupabase();
   // What is held: nothing until the first read lands, then the lobby
   // row (or null once it is gone) and its teams
   let held: { row: Record<string, unknown> | null; joined: Joined } | null = null;
@@ -168,18 +183,31 @@ export function watchRaid(id: string, onChange: (raid: RaidRecord | null) => voi
         // next change or reconnect tries again
       });
   };
-  let connected = false;
-  const channel = supabase
-    .channel(`raid:${id}:${Math.random().toString(36).slice(2)}`)
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: RAID_TABLE, filter: `id=eq.${id}` },
-      (payload) => {
-        const row: Record<string, unknown> = payload.new;
+  // The first subscribe of each rides the read below; a resubscribe
+  // may have missed changes while the socket was away
+  const connected = new Set<string>();
+  // Both subscriptions come back together, and one read answers both
+  let rereading = false;
+  const resubscribed = (table: string) => (): void => {
+    if (connected.has(table) && !rereading) {
+      rereading = true;
+      queueMicrotask(() => {
+        rereading = false;
+        refetch();
+      });
+    }
+    connected.add(table);
+  };
+  const closers = [
+    followChanges(
+      RAID_TABLE,
+      [`id=eq.${id}`],
+      (change) => {
+        const row = change.new;
 
         if (held == null) {
           refetch();
-        } else if (payload.eventType === 'DELETE') {
+        } else if (change.op === 'DELETE') {
           held = { row: null, joined: new Map() };
           publish();
         } else if (Object.keys(row).length === 0) {
@@ -189,60 +217,46 @@ export function watchRaid(id: string, onChange: (raid: RaidRecord | null) => voi
           publish();
         }
       },
-    )
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'teams', filter: `raid_id=eq.${id}` },
-      (payload) => {
-        const joining: Record<string, unknown> = payload.new;
-        const leaving: Record<string, unknown> = payload.old;
+      resubscribed(RAID_TABLE),
+    ),
+    followChanges(
+      'teams',
+      [`raid_id=eq.${id}`],
+      (change) => {
+        const joining = change.new;
+        const leaving = change.old;
 
         if (held == null) {
           refetch();
-        } else if (payload.eventType === 'INSERT' && typeof joining.id === 'string') {
+        } else if (change.op === 'INSERT' && typeof joining.id === 'string') {
           // A team is written once and never changed, so its id and
           // its place in the queue are all the lobby needs
           held.joined.set(joining.id, Number(joining.joined_seq ?? 0));
           publish();
-        } else if (payload.eventType === 'DELETE' && typeof leaving.id === 'string') {
+        } else if (change.op === 'DELETE' && typeof leaving.id === 'string') {
           held.joined.delete(leaving.id);
           publish();
         } else {
           refetch();
         }
       },
-    )
-    .subscribe((status) => {
-      if (status !== REALTIME_SUBSCRIBE_STATES.SUBSCRIBED) {
-        return;
-      }
-      // The first subscribe rides the read below; a resubscribe may
-      // have missed changes while the socket was away
-      if (connected) {
-        refetch();
-      }
-      connected = true;
-    });
+      resubscribed('teams'),
+    ),
+  ];
 
   // The first paint cannot wait for the socket
   refetch();
 
   return () => {
-    supabase.removeChannel(channel).catch(() => {
-      // A channel that cannot be removed is already gone
-    });
+    for (const close of closers) {
+      close();
+    }
   };
 }
 
 /** A lobby's row with its teams embedded, or null when it is gone */
 async function readLobby(id: string): Promise<Record<string, unknown> | null> {
-  const { data }: { data: unknown } = await getSupabase()
-    .from(RAID_TABLE)
-    .select(RAID_EMBED)
-    .eq('id', id)
-    .maybeSingle();
-
-  return data == null ? null : asRecord(data);
+  return (await readLobbiesOnServer(await getIdToken(), [id])).at(0) ?? null;
 }
 
 /**
@@ -375,7 +389,7 @@ async function enterRaidOnServer(
   check(OFFSET, offset);
   check(DEPTH, depth);
   return enterOnServer(
-    await requireUid(token),
+    await requireUidFor(token, Feature.Raids),
     x,
     y,
     cell,
@@ -423,7 +437,7 @@ async function hostMythicalOnServer(
   check(GAME_ID, item);
   check(OFFSET, offset);
   return hostMythicalOnServerSide(
-    await requireUid(token),
+    await requireUidFor(token, Feature.Raids),
     x,
     y,
     item,
@@ -442,21 +456,27 @@ export async function listLiveRaids(
 ): Promise<[string, RaidRecord][]> {
   // The window is local, so two zones can floor to the same one; the
   // offset is what keeps a listing to the lobbies of its own world
-  const { data } = await getSupabase()
-    .from(RAID_TABLE)
-    .select(RAID_EMBED)
-    .eq('generation', WORLD_GENERATION)
-    .eq('window_at', raidTimestamp)
-    .eq('utc_offset', asOffset(offset))
-    .is('battle_id', null)
-    .eq('cleared', false);
   const raids: [string, RaidRecord][] = [];
 
-  for (const row of asRecordArray(data)) {
+  for (const row of await readLiveOnServer(await getIdToken(), raidTimestamp, offset)) {
     raids.push([String(row.id), fromRaidRow(row)]);
   }
   return raids;
 }
+
+async function readLiveOnServer(
+  token: string,
+  windowAt: number,
+  offset: number,
+): Promise<Record<string, unknown>[]> {
+  'use server';
+  check(TOKEN, token);
+  check(TIME, windowAt);
+  check(OFFSET, offset);
+  await requireReader(token);
+  return readLiveLobbyRows(windowAt, offset);
+}
+readOnly(readLiveOnServer);
 
 /**
  * Walk out of a lobby: the player's teams come out with them, so a
@@ -510,22 +530,19 @@ async function unwatchRaidLobbyOnServer(token: string, id: string): Promise<void
  * leaving the room
  */
 export function watchRaidWatchers(id: string, onChange: (players: string[]) => void): Unwatch {
-  const read = async (): Promise<string[]> => {
-    const { data } = await getSupabase()
-      .from('raid_watchers')
-      .select('player')
-      .eq('raid_id', id)
-      .order('seen_at');
-    const players: string[] = [];
-
-    for (const row of asRecordArray(data)) {
-      players.push(asString(row.player));
-    }
-    return players;
-  };
+  const read = async (): Promise<string[]> => readWatchersOnServer(await getIdToken(), id);
 
   return watchTable('raid_watchers', [`raid_id=eq.${id}`], read, onChange);
 }
+
+async function readWatchersOnServer(token: string, id: string): Promise<string[]> {
+  'use server';
+  check(TOKEN, token);
+  check(ID, id);
+  await requireReader(token);
+  return readRaidWatchers(id);
+}
+readOnly(readWatchersOnServer);
 
 /**
  * Follow the invites waiting on this player: one arriving, one
@@ -559,30 +576,19 @@ export function watchRaidInvites(uid: string, onChange: (invites: RaidInvite[]) 
   };
 
   const read = async (): Promise<[RaidInvite, number][]> => {
-    const { data } = await getSupabase()
-      .from('raid_invites')
-      .select('raid_id, sender, role, sent_at, raids(battle_id, cleared, window_at, utc_offset)')
-      .eq('recipient', uid)
-      .order('sent_at', { ascending: false });
     const found: [RaidInvite, number][] = [];
 
-    for (const row of asRecordArray(data)) {
-      const raid = asRecord(row.raids);
-
-      // A call into a lobby that has started or been cleared answers nothing
-      if (raid.battle_id != null || raid.cleared === true) {
-        continue;
-      }
+    for (const invite of await readInvitesOnServer(await getIdToken())) {
       found.push([
         {
-          raid: asString(row.raid_id),
-          sender: asString(row.sender),
-          role: asNumber(row.role) as LobbyRole,
-          sentAt: asNumber(row.sent_at),
+          raid: invite.raid,
+          sender: invite.sender,
+          role: invite.role as LobbyRole,
+          sentAt: invite.sentAt,
         },
         // The window is counted in the raid's own zone, so its close is
         // taken back onto the server's clock
-        asNumber(raid.window_at) + RAID_INTERVAL - toLocalTime(0, asNumber(raid.utc_offset)),
+        invite.windowAt + RAID_INTERVAL - toLocalTime(0, invite.offset),
       ]);
     }
     return found;
@@ -598,6 +604,17 @@ export function watchRaidInvites(uid: string, onChange: (invites: RaidInvite[]) 
     unwatch();
   };
 }
+
+async function readInvitesOnServer(
+  token: string,
+): Promise<
+  { raid: string; sender: string; role: number; sentAt: number; windowAt: number; offset: number }[]
+> {
+  'use server';
+  check(TOKEN, token);
+  return readRaidInvites(await requireReader(token));
+}
+readOnly(readInvitesOnServer);
 
 /**
  * Call a friend into the lobby the player is standing in. Resolves
@@ -623,7 +640,13 @@ async function inviteToRaidOnServer(
   check(ID, id);
   check(UID, friend);
   check(LOBBY_ROLE, role);
-  return inviteOnServer(await requireUid(token), id, friend, await syncServerClock(), role);
+  return inviteOnServer(
+    await requireUidFor(token, Feature.Raids),
+    id,
+    friend,
+    await syncServerClock(),
+    role,
+  );
 }
 
 /** Put an invite away unanswered */
@@ -686,7 +709,7 @@ async function joinRaidOnServer(
   check(TOKEN, token);
   check(ID, id);
   check(PARTY, catches);
-  return joinOnServer(await requireUid(token), id, catches);
+  return joinOnServer(await requireUidFor(token, Feature.Raids), id, catches);
 }
 
 /**
@@ -716,15 +739,18 @@ async function claimRewardOnServer(token: string, id: string): Promise<RaidRewar
  * The raids this player has already collected from
  */
 export async function listClaimedRaids(uid: string): Promise<Set<string>> {
-  const { data } = await getSupabase().from('raid_rewards').select('raid_id').eq('player', uid);
-
-  const claimed = new Set<string>();
-
-  for (const row of (data ?? []) as { raid_id: unknown }[]) {
-    claimed.add(asString(row.raid_id));
-  }
-  return claimed;
+  return new Set(await readClaimedOnServer(await getIdToken(), uid));
 }
+
+async function readClaimedOnServer(token: string, player: string): Promise<string[]> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  const uid = await requireReader(token);
+
+  return player === uid ? readClaimedRaids(uid) : [];
+}
+readOnly(readClaimedOnServer);
 
 /**
  * Start the raid: every joined team is frozen into a team snapshot,
@@ -742,5 +768,5 @@ async function startRaidOnServer(token: string, id: string): Promise<string | nu
   'use server';
   check(TOKEN, token);
   check(ID, id);
-  return startOnServer(await requireUid(token), id, await syncServerClock());
+  return startOnServer(await requireUidFor(token, Feature.Raids), id, await syncServerClock());
 }

@@ -1,63 +1,37 @@
-import { createClient } from '@supabase/supabase-js';
+import { randomUUID } from 'node:crypto';
+import { hashPassword } from 'better-auth/crypto';
+import postgres from 'postgres';
+import { TEST_DATABASE_URL, assertTestDatabase } from '../test/test-database.ts';
 
 /**
- * What the staging client believes about the schema: any table, rows
- * of plain columns. Wide on purpose — the specs stage whatever table
- * a test needs, and the real shape check is the database's own
- */
-type StageTable = {
-  Row: Record<string, unknown>;
-  Insert: Record<string, unknown>;
-  Update: Record<string, unknown>;
-  Relationships: [];
-};
-
-type StageDatabase = {
-  public: {
-    Tables: Record<string, StageTable>;
-    Views: Record<string, never>;
-    Functions: Record<string, { Args: Record<string, unknown>; Returns: unknown }>;
-    Enums: Record<string, never>;
-    CompositeTypes: Record<string, never>;
-  };
-};
-
-/**
- * The service-role door into the local stack, for staging what a spec
- * cannot click into being: accounts, gold, bag rows, lots. It is the
- * successor of the emulator's Bearer-owner REST backdoor; RLS does
- * not bind the service role, the way the rules did not bind the owner
- * token.
+ * The owner connection into the development database, for staging what a
+ * spec cannot click into being: accounts, gold, bag rows, lots. Nothing
+ * a browser does reaches the database this way; only the specs do.
  */
 
-const SUPABASE_URL = process.env.SUPABASE_URL ?? 'http://127.0.0.1:54321';
-
-const SERVICE_KEY =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ??
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU';
-
-export const admin = createClient<StageDatabase>(SUPABASE_URL, SERVICE_KEY, {
-  auth: { persistSession: false },
+export const sql = postgres(assertTestDatabase(TEST_DATABASE_URL), {
+  prepare: false,
+  max: 2,
+  onnotice: () => undefined,
 });
 
-/**
- * A real confirmed account, so the app can sign in as it and a friend
- * can find it by address. Resolves the uid
- */
 /** The world generation the dev server under test reads and writes */
 export const GENERATION = process.env.VITE_WORLD_GENERATION === '2' ? 2 : 1;
 
+/**
+ * A real account with a password, so the app can sign in as it and a
+ * friend can find it by address. Resolves the uid
+ */
 export async function stageAccount(email: string, password: string): Promise<string> {
-  const { data, error } = await admin.auth.admin.createUser({
-    email,
-    password,
-    email_confirm: true,
-  });
+  const uid = randomUUID();
 
-  if (error != null) {
-    throw new Error(`cannot stage ${email}: ${error.message}`);
-  }
-  return data.user.id;
+  await sql`insert into users (id, name, email, email_verified) values (${uid}, '', ${email}, true)`;
+  await sql`
+    insert into identities (account_id, provider_id, user_id, password, updated_at)
+    values (${uid}, 'credential', ${uid}, ${await hashPassword(password)}, now())
+  `;
+  await sql`insert into profiles (id, nickname) values (${uid}, 'Trainer')`;
+  return uid;
 }
 
 /**
@@ -66,33 +40,25 @@ export async function stageAccount(email: string, password: string): Promise<str
  */
 export async function uidOf(player: string | { email: string }): Promise<string> {
   const email = typeof player === 'string' ? player : player.email;
-  const { data } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
-  const found = data.users.find((user) => user.email === email);
+  const found = (await sql`select id from users where email = ${email}`).at(0);
 
   if (found == null) {
     throw new Error(`no account at ${email}`);
   }
-  return found.id;
+  return String(found.id);
 }
 
 /** Set a player's purse outright */
 export async function setGold(uid: string, gold: number): Promise<void> {
-  const { error } = await admin.from('profiles').update({ gold }).eq('id', uid);
-
-  if (error != null) {
-    throw new Error(error.message);
-  }
+  await sql`update profiles set gold = ${gold} where id = ${uid}`;
 }
 
 /** Put a stack in the bag, replacing whatever count stood there */
 export async function setBagItem(uid: string, item: number, count: number): Promise<void> {
-  const { error } = await admin
-    .from('bag_items')
-    .upsert({ player: uid, item, count }, { onConflict: 'player,item' });
-
-  if (error != null) {
-    throw new Error(error.message);
-  }
+  await sql`
+    insert into bag_items (player, item, count) values (${uid}, ${item}, ${count})
+    on conflict (player, item) do update set count = excluded.count
+  `;
 }
 
 /**
@@ -100,13 +66,11 @@ export async function setBagItem(uid: string, item: number, count: number): Prom
  * each, the figure the specs have always staged and asserted against
  */
 export async function setDexCounts(uid: string, species: number[]): Promise<void> {
-  const rows = species.map((one) => ({ player: uid, species: one, seen: 2, caught: 2 }));
-  const { error } = await admin
-    .from('pokedex_entries')
-    .upsert(rows, { onConflict: 'player,species' });
-
-  if (error != null) {
-    throw new Error(error.message);
+  for (const one of species) {
+    await sql`
+      insert into pokedex_entries (player, species, seen, caught) values (${uid}, ${one}, 2, 2)
+      on conflict (player, species) do update set seen = 2, caught = 2
+    `;
   }
 }
 
@@ -116,11 +80,7 @@ export async function setDexCounts(uid: string, species: number[]): Promise<void
  * earlier specs left, or the first row it clicks is somebody else's
  */
 export async function clearIdleRaids(): Promise<void> {
-  const { error } = await admin.from('raids').delete().is('battle_id', null);
-
-  if (error != null) {
-    throw new Error(`raids: ${error.message}`);
-  }
+  await sql`delete from raids where battle_id is null`;
 }
 
 /**
@@ -132,23 +92,12 @@ export async function clearIdleRaids(): Promise<void> {
  * one particular lot, starts by clearing it
  */
 export async function clearAuctions(): Promise<void> {
-  // Children first: a bid and a seller's daily marker both name the
-  // lot they belong to. Each is cleared through the column it actually
-  // has, since only the lot itself is keyed by an id
-  for (const [table, column] of [
-    ['bids', 'auction'],
-    ['auction_sellers', 'auction'],
-    ['auctions', 'id'],
-  ]) {
-    const { error } = await admin.from(table).delete().neq(column, '');
-
-    if (error != null) {
-      throw new Error(`${table}: ${error.message}`);
-    }
-  }
+  // Children first: a bid and a seller's daily marker both name their lot
+  await sql`delete from bids`;
+  await sql`delete from auction_sellers`;
+  await sql`delete from auctions`;
 }
 
-/** One row into any table, service-role, plain columns */
 /**
  * The columns Postgres works out for itself: the unpacked individual
  * values, the statuses and what is left of a hatch. A copy is a
@@ -177,11 +126,18 @@ export function copyable(row: Record<string, unknown>): Record<string, unknown> 
 }
 
 export async function insertRow(table: string, row: Record<string, unknown>): Promise<void> {
-  const { error } = await admin.from(table).insert(row);
+  await sql`insert into ${sql(table)} ${sql(row)}`;
+}
 
-  if (error != null) {
-    throw new Error(`${table}: ${error.message}`);
-  }
+/** A table's primary key columns, which an upsert conflicts on */
+async function keyOf(table: string): Promise<string[]> {
+  const rows = await sql`
+    select a.attname from pg_index i
+    join pg_attribute a on a.attrelid = i.indrelid and a.attnum = any(i.indkey)
+    where i.indrelid = ${`public.${table}`}::regclass and i.indisprimary
+  `;
+
+  return rows.map((row) => String(row.attname));
 }
 
 /**
@@ -189,11 +145,13 @@ export async function insertRow(table: string, row: Record<string, unknown>): Pr
  * already has a row in by the time a spec wants to move them
  */
 export async function upsertRow(table: string, row: Record<string, unknown>): Promise<void> {
-  const { error } = await admin.from(table).upsert(row);
+  const key = await keyOf(table);
+  const rest = Object.keys(row).filter((column) => !key.includes(column));
 
-  if (error != null) {
-    throw new Error(`${table}: ${error.message}`);
-  }
+  await sql`
+    insert into ${sql(table)} ${sql(row)}
+    on conflict (${sql(key)}) do update set ${sql(Object.fromEntries(rest.map((column) => [column, row[column]])))}
+  `;
 }
 
 /** Patch one row by id column */
@@ -203,11 +161,7 @@ export async function patchRow(
   id: string,
   fields: Record<string, unknown>,
 ): Promise<void> {
-  const { error } = await admin.from(table).update(fields).eq(key, id);
-
-  if (error != null) {
-    throw new Error(`${table}: ${error.message}`);
-  }
+  await sql`update ${sql(table)} set ${sql(fields)} where ${sql(key)} = ${id}`;
 }
 
 /** The rows of a table matching one column, whole */
@@ -216,10 +170,5 @@ export async function findRows(
   column: string,
   value: string | number,
 ): Promise<Record<string, unknown>[]> {
-  const { data, error } = await admin.from(table).select('*').eq(column, value);
-
-  if (error != null) {
-    throw new Error(`${table}: ${error.message}`);
-  }
-  return data;
+  return [...(await sql`select * from ${sql(table)} where ${sql(column)} = ${value}`)];
 }

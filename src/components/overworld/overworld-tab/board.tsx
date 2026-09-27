@@ -12,7 +12,7 @@ import challengerOf, { championGate, eliteGate, frontierGate } from './challenge
 import { describeItem } from '../../details';
 import { type Journey, stateOf } from './journey';
 import { useAuth } from '../../../auth/context';
-import type { Unwatch } from '../../../auth/supabase';
+import type { Unwatch } from '../../../auth/watch';
 import LRUMap from '../../../core/lru-map';
 import { settled } from '../../app/resource-reads';
 import { type Direction, actionOf, forTheGame } from '../../app/keys';

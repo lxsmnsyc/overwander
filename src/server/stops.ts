@@ -11,7 +11,7 @@ import {
   stopIdOf,
   toSpawns,
 } from '../auth/stop-record';
-import { TEAM_SIZE } from '../auth/teams';
+import TEAM_SIZE from '../auth/team-size';
 import ChunkSnapshot, { NPC_INTERVAL, RocketRank, type Spawn } from '../overworld/chunk-snapshot';
 import getWorld, { WORLD_GENERATION } from '../overworld/current';
 import { EncounterType } from '../overworld/encounter';
@@ -687,7 +687,7 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
     ),
   );
 
-  await grantGold(uid, gold);
+  await grantGold(uid, gold, 'stop-reward');
 
   // A first claim is the one moment a beaten stop counts once. A
   // duellist counts twice over: once as a trainer beaten, and once

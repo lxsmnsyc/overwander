@@ -23,7 +23,6 @@ export default function registerTaigaSpawns(): void {
       special: [
         { species: Species.Reshiram, weight: 10 },
         { species: Species.Zekrom, weight: 10 },
-        { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regice, weight: 10 },
       ],
@@ -44,7 +43,6 @@ export default function registerTaigaSpawns(): void {
       special: [
         { species: Species.Reshiram, weight: 10 },
         { species: Species.Zekrom, weight: 10 },
-        { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regice, weight: 10 },
       ],
@@ -70,7 +68,6 @@ export default function registerTaigaSpawns(): void {
       special: [
         { species: Species.Reshiram, weight: 10 },
         { species: Species.Zekrom, weight: 10 },
-        { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regice, weight: 10 },
       ],
@@ -98,7 +95,6 @@ export default function registerTaigaSpawns(): void {
       special: [
         { species: Species.Reshiram, weight: 10 },
         { species: Species.Zekrom, weight: 10 },
-        { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regice, weight: 10 },
       ],

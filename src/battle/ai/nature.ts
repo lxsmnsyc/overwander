@@ -4,7 +4,7 @@ import { MoveCategories } from '../../data/ids/moves';
 import { NATURE_EFFECTS } from '../../data/ids/natures';
 import { Stats } from '../../data/constants/stats';
 import type Battle from '../core';
-import { checkUnitRating } from './rating';
+import { getAIContext } from './context';
 import { getMoveData } from '../../data/moves';
 import type Natures from '../../data/ids/natures';
 import type Unit from '../unit';
@@ -62,18 +62,7 @@ const TARGET_BONUS = 6;
  * reading them backwards reads the same field the default AI does
  */
 function threatShare(battle: Battle, source: Unit, target: Unit): number {
-  const ratio = checkUnitRating(battle, target) / Math.max(1, checkUnitRating(battle, source));
-
-  if (ratio >= 1.5) {
-    return 1;
-  }
-  if (ratio >= 1) {
-    return 2 / 3;
-  }
-  if (ratio >= 0.5) {
-    return 1 / 3;
-  }
-  return 0;
+  return getAIContext(battle, source).threatBand(target) / 3;
 }
 
 /**

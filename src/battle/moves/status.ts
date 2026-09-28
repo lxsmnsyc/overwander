@@ -1,12 +1,12 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { Stages, Stats } from '../../data/constants/stats';
+import { Stages } from '../../data/constants/stats';
 import { MoveAffects, MoveCategories, Moves } from '../../data/ids/moves';
 import { Statuses, TeamStatuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
-import type Team from '../team';
 import { getStageMoveEffects } from './stage';
+import { getAIContext } from '../ai/context';
 
 export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.PoisonPowder]: Statuses.Poisoned,
@@ -465,40 +465,6 @@ const VEIL_THREATS: { [key in TeamStatuses]?: (move: Moves) => boolean } = {
   [TeamStatuses.Mist]: lowersFoeStages,
 };
 
-function isVeilThreatened(battle: Battle, team: Team, status: TeamStatuses): boolean {
-  const threatens = VEIL_THREATS[status];
-
-  if (threatens == null) {
-    return false;
-  }
-  for (const unit of battle.units(team.alliance)) {
-    if (!unit.alive) {
-      continue;
-    }
-    for (const state of Object.values(unit.moves)) {
-      // oxlint-disable-next-line typescript/no-unnecessary-condition
-      if (state && threatens(state.move)) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-/** The team's remaining health over its full health, fainted units counting as none */
-function teamHealthShare(team: Team): number {
-  let health = 0;
-  let max = 0;
-
-  for (const unit of team.units) {
-    max += Math.max(1, unit.checkStat(Stats.HP, 0));
-    if (unit.alive) {
-      health += unit.health;
-    }
-  }
-  return max > 0 ? health / max : 0;
-}
-
 function setupTeamStatusMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const targetStatus = TEAM_STATUS_MOVES[event.move];
@@ -528,10 +494,16 @@ function setupTeamStatusMoves(battle: Battle): void {
   // what it stops earns nothing
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
     const status = TEAM_STATUS_MOVES[event.move];
-    const team = event.source.team;
+    const threatens = status == null ? undefined : VEIL_THREATS[status];
 
-    if (status != null && isVeilThreatened(battle, team, status)) {
-      event.score += Math.round(VEIL_BONUS * teamHealthShare(team));
+    if (threatens == null) {
+      return;
+    }
+
+    const context = getAIContext(battle, event.source);
+
+    if (context.foesKnow(threatens)) {
+      event.score += Math.round(VEIL_BONUS * context.healthShare());
     }
   });
 }

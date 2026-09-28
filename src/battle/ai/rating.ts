@@ -3,15 +3,11 @@ import { Stats } from '../../data/constants/stats';
 import { MoveTargetPriorities } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
-import {
-  BattleEvents,
-  type CheckTeamAIUnitEvent,
-  type CheckUnitAIRatingEvent,
-  MoveTargetType,
-} from '../events';
+import { BattleEvents, type CheckTeamAIUnitEvent, MoveTargetType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
 import { hasAnyStatus } from '../utils';
+import { checkUnitRating, getAIContext } from './context';
 
 const RATED_STATS = [
   Stats.Attack,
@@ -36,19 +32,7 @@ const HAMPERING_STATUS = new Set<Statuses>([
 
 const HAMPERING_FACTOR = 0.75;
 
-/**
- * How strong a unit currently is. Internal to the AI module.
- */
-export function checkUnitRating(battle: Battle, source: Unit): number {
-  const event: CheckUnitAIRatingEvent = {
-    id: 'CheckUnitAIRating',
-    disabled: false,
-    source,
-    rating: 0,
-  };
-  battle.emit(BattleEvents.CheckUnitAIRating, event);
-  return event.rating;
-}
+export { checkUnitRating };
 
 /**
  * Pick a unit from a team by rating priority. Internal to the AI
@@ -108,15 +92,8 @@ export function setupRatingAI(battle: Battle): void {
       return;
     }
 
-    const ratio = checkUnitRating(battle, target) / Math.max(1, checkUnitRating(battle, source));
-
-    if (ratio >= 1.5) {
-      event.score += 3;
-    } else if (ratio >= 1) {
-      event.score += 2;
-    } else if (ratio >= 0.5) {
-      event.score += 1;
-    }
+    // Concentrate fire on the biggest current threat: +1 to +3 by band
+    event.score += getAIContext(battle, source).threatBand(target);
   });
 
   // Resolver: pick the team's unit by priority

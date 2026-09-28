@@ -154,6 +154,21 @@ relevance and the fight's phase scale it. The order is:
 A test fails when a registered move has no role, so a new move cannot go
 unscored without anyone noticing. The scoring does not read the sheet yet.
 
+## The decision context
+
+Each decision runs inside one `AIContext`
+([`src/battle/ai/context.ts`](../../src/battle/ai/context.ts)). A scoring
+listener asks for it with `getAIContext(battle, source)` rather than working the
+field out again for every move and target:
+
+- the living friends and foes;
+- each unit's rating and threat band, computed once per decision;
+- a team's health share, with fainted units counting as no health;
+- `foesKnow(test)`, which asks whether a foe is known to carry a matching move.
+
+`foesKnow` is where the fog will narrow what a foe is known to have. A question
+asked outside a decision, as a test does, gets a fresh context.
+
 ## See also
 
 - [The battle engine](../engine.md): the index for these pages

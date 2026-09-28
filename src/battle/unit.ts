@@ -38,6 +38,7 @@ import type {
   CheckUnitMoveTargetingEvent,
   CheckUnitMoveTimeEvent,
   CheckUnitMoveTypeEvent,
+  CheckUnitSlotsEvent,
   CheckUnitStageEvent,
   CheckUnitStatEvent,
   CheckUnitStatusDurationEvent,
@@ -186,7 +187,15 @@ export default class Unit {
    * that allows one
    */
   checkSlots(kind: Slots): number {
-    return Math.min(getSlots(this.slots, kind), this.battle.checkLimit(kind));
+    const event: CheckUnitSlotsEvent = {
+      id: 'CheckUnitSlots',
+      disabled: false,
+      source: this,
+      kind,
+      value: Math.min(getSlots(this.slots, kind), this.battle.checkLimit(kind)),
+    };
+    this.battle.emit(BattleEvents.CheckUnitSlots, event);
+    return event.value;
   }
 
   /**

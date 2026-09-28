@@ -3,7 +3,9 @@ import { type Actor, actor, clearAll, sql } from './clients';
 import { BALL_ITEMS, Balls } from '../../src/data/ids/items';
 import { WORLD_GENERATION } from '../../src/overworld/current';
 import { ThrowResult } from '../../src/overworld/safari';
+import { EncounterType } from '../../src/overworld/encounter/kinds';
 import { throwAt } from '../../src/server/throws';
+import { readWaitingEncounters } from '../../src/server/encounter-io';
 import registerData from '../../src/data';
 
 /**
@@ -20,7 +22,10 @@ const OFFSET = 480;
 let player: Actor;
 let meeting = 0;
 
-async function stageMeeting(uid: string): Promise<string> {
+async function stageMeeting(
+  uid: string,
+  type: EncounterType = EncounterType.Wild,
+): Promise<string> {
   meeting += 1;
 
   const spawn = `throw-${meeting}`;
@@ -30,7 +35,7 @@ async function stageMeeting(uid: string): Promise<string> {
       generation: WORLD_GENERATION,
       spawn_id: spawn,
       player: uid,
-      type: 0,
+      type,
       species: 25,
       level: 5,
       individual_value: 1000 + meeting,
@@ -61,6 +66,12 @@ async function ballsLeft(uid: string): Promise<number> {
   const rows = await sql`select count from bag_items where player = ${uid} and item = ${ITEM}`;
 
   return rows.length === 0 ? 0 : Number(rows[0].count);
+}
+
+async function meetingStands(uid: string, spawn: string): Promise<boolean> {
+  const rows = await sql`select 1 from encounters where player = ${uid} and spawn_id = ${spawn}`;
+
+  return rows.length > 0;
 }
 
 async function caughtCount(uid: string): Promise<number> {
@@ -110,6 +121,20 @@ describe('throwing at a meeting', () => {
     expect(report?.catchId).not.toBeNull();
     expect(await ballsLeft(player.uid)).toBe(2);
     expect(await caughtCount(player.uid)).toBe(1);
+    // A wild meeting keeps its row: the marker is what stops a second catch in its window
+    expect(await meetingStands(player.uid, spawn)).toBe(true);
+  });
+
+  it('forgets a caught raid reward, so it cannot be claimed again', async () => {
+    const reward = await stageMeeting(player.uid, EncounterType.ShadowRaid);
+
+    await carry(player.uid, 3);
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+
+    await throwAt(player.uid, reward, BALL, Date.now(), OFFSET, 'en');
+
+    expect(await caughtCount(player.uid)).toBe(1);
+    expect(await meetingStands(player.uid, reward)).toBe(false);
   });
 
   it('never catches the same meeting twice', async () => {
@@ -168,5 +193,33 @@ describe('throwing at a meeting', () => {
 
     expect(rows[0].safari).toMatchObject({ throws: 1 });
     expect(await caughtCount(player.uid)).toBe(0);
+  });
+});
+
+describe('meetings left waiting', () => {
+  it('lists an owed meeting until it is caught, and never a wild one', async () => {
+    await sql`delete from encounters where player = ${player.uid}`;
+
+    const gift = await stageMeeting(player.uid, EncounterType.Fateful);
+    const prize = await stageMeeting(player.uid, EncounterType.LegendaryRaid);
+
+    await stageMeeting(player.uid);
+
+    const listed = async (): Promise<string[]> => {
+      const spawns: string[] = [];
+
+      for (const record of await readWaitingEncounters(player.uid)) {
+        spawns.push(String(record.spawn));
+      }
+      return spawns.sort();
+    };
+
+    expect(await listed()).toEqual([gift, prize].sort());
+
+    await carry(player.uid, 1);
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    await throwAt(player.uid, prize, BALL, Date.now(), OFFSET, 'en');
+
+    expect(await listed()).toEqual([gift]);
   });
 });

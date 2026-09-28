@@ -15,14 +15,14 @@ import { requireReader, requireUid, requireUidFor } from '../server/auth';
 import { Feature } from '../server/switches';
 import { Pace } from '../server/pace';
 import check, { GAME_ID, ID, LOCALE, OFFSET, TOKEN, UID } from '../server/validate';
-import { readRetiredKeys, readSafariTally } from '../server/encounter-io';
+import { readRetiredKeys, readSafariTally, readWaitingEncounters } from '../server/encounter-io';
 import { type ThrowReport, feedAt, throwAt } from '../server/throws';
 import { buddyEffectsOf, resolveBuddy } from './buddy';
 import { hasCaughtSpecies } from './caught';
 import { getCaughtSpeciesCount } from './pokedex';
 import { syncServerClock } from './clock';
 import { getLocalOffset, getLocale } from './local-time';
-import type { EncounterRecord } from './encounter-record';
+import { type EncounterRecord, asEncounterRecord } from './encounter-record';
 import { getInventory } from './inventory';
 import getIdToken from './session';
 
@@ -325,3 +325,23 @@ async function throwOnServer(
     locale,
   );
 }
+
+/**
+ * The meetings owed to the signed-in player that they left without
+ * catching: raid prizes, grunts' pokemon, gifts and revived fossils
+ */
+export async function listWaitingEncounters(): Promise<EncounterRecord[]> {
+  const waiting: EncounterRecord[] = [];
+
+  for (const row of await waitingOnServer(await getIdToken())) {
+    waiting.push(asEncounterRecord(row));
+  }
+  return waiting;
+}
+
+async function waitingOnServer(token: string): Promise<Record<string, unknown>[]> {
+  'use server';
+  check(TOKEN, token);
+  return readWaitingEncounters(await requireReader(token));
+}
+readOnly(waitingOnServer);

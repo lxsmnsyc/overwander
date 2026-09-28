@@ -13,6 +13,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Piplup, weight: 3 },
       ],
       uncommon: [
+        { species: Species.Binacle, weight: 24 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
@@ -26,6 +27,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Prinplup, weight: 2 },
       ],
       scarce: [
+        { species: Species.Barbaracle, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
@@ -49,6 +51,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Piplup, weight: 3 },
       ],
       uncommon: [
+        { species: Species.Binacle, weight: 24 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
@@ -62,6 +65,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Prinplup, weight: 2 },
       ],
       scarce: [
+        { species: Species.Barbaracle, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Slowbro, weight: 10 },

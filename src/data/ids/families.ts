@@ -337,6 +337,15 @@ const enum Families {
   Bunnelby = 332,
   Fletchling = 333,
   Scatterbug = 334,
+  Flabebe = 335,
+  Skiddo = 336,
+  Furfrou = 337,
+  Espurr = 338,
+  Honedge = 339,
+  Binacle = 340,
+  Skrelp = 341,
+  Clauncher = 342,
+  Klefki = 343,
 }
 
 export default Families;
@@ -691,4 +700,13 @@ export const FAMILY_NAMES: Record<Families, string> = {
   [Families.Bunnelby]: 'Bunnelby',
   [Families.Fletchling]: 'Fletchling',
   [Families.Scatterbug]: 'Scatterbug',
+  [Families.Flabebe]: 'Flabebe',
+  [Families.Skiddo]: 'Skiddo',
+  [Families.Furfrou]: 'Furfrou',
+  [Families.Espurr]: 'Espurr',
+  [Families.Honedge]: 'Honedge',
+  [Families.Binacle]: 'Binacle',
+  [Families.Skrelp]: 'Skrelp',
+  [Families.Clauncher]: 'Clauncher',
+  [Families.Klefki]: 'Klefki',
 };

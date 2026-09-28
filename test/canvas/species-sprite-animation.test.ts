@@ -1171,3 +1171,15 @@ describe('drawing from a deduped sheet', () => {
     }
   });
 });
+
+describe('a form drawn on another sheet', () => {
+  it('asks for a female Meowstic as the female coat of the male sheet', () => {
+    expect(spriteSheetPath(Species.MeowsticFemale)).toBe(spriteSheetPath(Species.Meowstic));
+    expect(spriteImagePath(Species.MeowsticFemale)).toBe(
+      spriteImagePath(Species.Meowstic, false, true),
+    );
+    expect(spriteImagePath(Species.MeowsticFemale, true)).toBe(
+      spriteImagePath(Species.Meowstic, true, true),
+    );
+  });
+});

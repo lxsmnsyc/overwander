@@ -1,9 +1,9 @@
 import 'server-only';
 import BattleOutcome from '../../auth/battle-outcome';
-import type { EncounterRecord } from '../../auth/encounter-record';
+import { type EncounterRecord, asEncounterRecord } from '../../auth/encounter-record';
 import { RaidKind, type RaidRecord, asRaidRecord, deriveRaidReward } from '../../auth/raid-record';
 import ChunkSnapshot from '../../overworld/chunk-snapshot';
-import getWorld from '../../overworld/current';
+import getWorld, { WORLD_GENERATION } from '../../overworld/current';
 import createOverworld from '../../overworld/setup';
 import resolveBuddy from '../buddy';
 import { Metric } from '../../auth/quest-record';
@@ -12,6 +12,8 @@ import Biome from '../../data/ids/biome';
 import { getSql } from '../db';
 import { foughtBattle, readBattle, readRaid } from '../raid-io';
 import { startEncounter } from '../overworld';
+import { readEncounter } from '../encounter-io';
+import { encounterKey } from '../../overworld/safari';
 import { grantGold } from '../profile';
 import { asOutcome } from './outcome';
 import { RAID_ENCOUNTER_TYPES, RAID_GOLD, RAID_REWARD_LEVELS, RAID_SHINY_BOOST } from './spoils';
@@ -71,7 +73,7 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   `;
 
   if (claimed.count === 0) {
-    return null;
+    return reopenReward(uid, deriveRaidReward(raid, lobby, uid)[0]);
   }
   await grantGold(uid, gold, 'raid-reward');
   await bumpProgress(uid, [[Metric.GoldEarned, 0, gold]]);
@@ -94,4 +96,24 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   });
 
   return { encounter, gold };
+}
+
+/**
+ * A reward already paid, whose pokemon was left uncaught: the same
+ * encounter again, with no gold, so closing the meeting loses nothing
+ */
+async function reopenReward(uid: string, spawnId: string): Promise<RaidReward | null> {
+  const existing = await readEncounter(spawnId, uid);
+
+  if (existing == null) {
+    return null;
+  }
+
+  const encounter = asEncounterRecord(existing);
+  const gone = await getSql()`
+    select 1 from fled_encounters
+    where player = ${uid} and generation = ${WORLD_GENERATION} and key = ${encounterKey(encounter)}
+  `;
+
+  return gone.length > 0 ? null : { encounter, gold: 0 };
 }

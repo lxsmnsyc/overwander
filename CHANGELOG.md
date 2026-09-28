@@ -1,5 +1,32 @@
 # overwander
 
+## 4.22.4
+
+### Patch Changes
+
+- 946abdd: - Raid prizes, grunts' pokemon, gifts and revived fossils left uncaught wait at the top of the battle history, and Meet opens them again.
+  - One already caught or run off is no longer offered again.
+
+## 4.22.3
+
+### Patch Changes
+
+- 0b004ca: - A cave stages raids only from the underground lairs its biome hosts, such as Cerulean Cave, Terra Cave and Turnback Cave.
+  - Those lairs' legendaries also spawn wild in the caves under that biome, and a water legendary such as Kyogre only on cave water.
+- 039f1b3: A raid's pokemon left uncaught after its meeting was closed can be met again from the battle history.
+
+## 4.22.2
+
+### Patch Changes
+
+- 21e785c: - Every IV of a raid's prize pokemon is at least 9.
+  - On the family's featured day, a raid prize's IVs are at least 18.
+  - Weather that favours a pokemon's type raises each of its IVs to at least 9, rather than 10.
+- 21e785c: A raid's prize pokemon is 8x as likely to be shiny.
+- 1df5d7a: Visiting the site over plain http now moves to https, so signing in no longer fails there.
+- 3bdfc08: - Wish's star stays in the air for the whole wait and lands as the heal arrives.
+  - Doom Desire's star falls for the whole wait and hits as the damage lands.
+
 ## 4.22.1
 
 ### Patch Changes

@@ -738,21 +738,16 @@ describe('what lives underground', () => {
     expect(cave.base.some((entry) => entry.species === Species.Zubat)).toBe(true);
   });
 
-  it('is the same pool under every country and at every hour', () => {
+  it('is the same pool under every country and at every hour, legendaries aside', () => {
     const day = getSpawnPool(Biome.Grassland, TimeOfDay.Day, true);
 
     // There is no sky down there for an hour to come out of, and a
-    // cave under a desert is the same cave as one under a taiga
+    // cave under a desert is the same cave as one under a taiga. Only
+    // the legendaries follow the lairs overhead
     for (const time of TIMES_OF_DAY) {
-      expect(getSpawnPool(Biome.Glacier, time, true)).toEqual(day);
-      expect(getSpawnPool(Biome.Desert, time, true)).toEqual(day);
+      expect({ ...getSpawnPool(Biome.Glacier, time, true), special: [] }).toEqual(day);
+      expect({ ...getSpawnPool(Biome.Desert, time, true), special: [] }).toEqual(day);
     }
-  });
-
-  it('stages no legendary in a passage', () => {
-    // A legendary underground is at home in a lair rather than
-    // standing about in a tunnel
-    expect(getSpawnPool(Biome.Mountain, TimeOfDay.Day, true).special).toEqual([]);
   });
 
   it('lights the dark the same way from either source', () => {

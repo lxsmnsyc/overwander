@@ -455,6 +455,50 @@ export function getBiomeLairs(biome: Biome): Lairs[] {
 }
 
 /**
+ * The lairs whose real place is underground: a cave, a buried chamber
+ * or a cavern inside a mountain. A cave stages the ones its biome
+ * hosts and nothing else, and the surface keeps them too
+ */
+const SUBTERRANEAN_LAIRS = new Set<Lairs>([
+  Lairs.SeafoamIslands,
+  Lairs.CeruleanCave,
+  Lairs.WhirlIslands,
+  Lairs.DesertRuins,
+  Lairs.IslandCave,
+  Lairs.AncientTomb,
+  Lairs.MarineCave,
+  Lairs.TerraCave,
+  Lairs.TurnbackCave,
+  Lairs.StarkMountain,
+  Lairs.SnowpointTemple,
+  Lairs.RockPeakRuins,
+  Lairs.IcebergRuins,
+  Lairs.IronRuins,
+  Lairs.EmbeddedTower,
+  Lairs.RelicCastle,
+  Lairs.GuidanceChamber,
+  Lairs.TrialChamber,
+  Lairs.GiantChasm,
+]);
+
+/** Whether the lair's real place is underground */
+export function isSubterraneanLair(lair: Lairs): boolean {
+  return SUBTERRANEAN_LAIRS.has(lair);
+}
+
+/** The lairs the caves under this biome can host */
+export function getCaveLairs(biome: Biome): Lairs[] {
+  const lairs: Lairs[] = [];
+
+  for (const lair of getBiomeLairs(biome)) {
+    if (SUBTERRANEAN_LAIRS.has(lair)) {
+      lairs.push(lair);
+    }
+  }
+  return lairs;
+}
+
+/**
  * Everyone at home in the lair
  */
 export function getLairResidents(lair: Lairs): Species[] {

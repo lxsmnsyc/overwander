@@ -13,6 +13,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Squirtle, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Binacle, weight: 24 },
         { species: Species.Psyduck, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Krabby, weight: 20 },
@@ -26,6 +27,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Wartortle, weight: 1 },
       ],
       scarce: [
+        { species: Species.Barbaracle, weight: 6 },
         { species: Species.Golduck, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Kingler, weight: 10 },
@@ -53,6 +55,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Squirtle, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Binacle, weight: 24 },
         { species: Species.Psyduck, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Krabby, weight: 20 },
@@ -66,6 +69,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Wartortle, weight: 1 },
       ],
       scarce: [
+        { species: Species.Barbaracle, weight: 6 },
         { species: Species.Golduck, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Kingler, weight: 10 },

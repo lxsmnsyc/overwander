@@ -99,6 +99,7 @@ export type {
   CheckUnitGroundedEvent,
   CheckUnitItemEvent,
   CheckUnitItemThresholdEvent,
+  CheckUnitSlotsEvent,
   CheckUnitStageEvent,
   CheckUnitStatEvent,
   CheckUnitStatusDamageEvent,

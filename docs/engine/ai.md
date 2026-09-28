@@ -132,6 +132,28 @@ spent making the rest of them count.
 are already doubled. A boss cast spent winding up a Withdraw is an opening
 handed to the lobby.
 
+## Move roles
+
+[`src/battle/ai/roles.ts`](../../src/battle/ai/roles.ts) gives every move one
+or more roles. `getMoveRoles(move)` reads them from the move data and the
+registries in `src/battle/moves`. A move may hold several roles: Fly is damage,
+a wind-up and a shield all at once.
+
+`ROLE_BASE` says what each role is worth at the start of a fight, before
+relevance and the fight's phase scale it. The order is:
+
+1. Shield: moves that keep the damage off, such as Protect, Substitute and Fly.
+2. Team setup and hazards.
+3. Field effects: weather, terrain and rooms.
+4. Status: afflicting a foe.
+5. Self boosts.
+6. Disruption.
+7. Foe drops and support for a teammate.
+8. Damage, which is scored by the hit itself.
+
+A test fails when a registered move has no role, so a new move cannot go
+unscored without anyone noticing. The scoring does not read the sheet yet.
+
 ## See also
 
 - [The battle engine](../engine.md): the index for these pages

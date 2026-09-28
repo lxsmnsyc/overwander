@@ -48,7 +48,7 @@ export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.RagePowder]: Statuses.Centered,
 };
 
-const EFFECT_STATUS_MOVES: {
+export const EFFECT_STATUS_MOVES: {
   [key in Moves]?: { status: Statuses; chance: number };
 } = {
   [Moves.BodySlam]: { status: Statuses.Paralyzed, chance: 30 },
@@ -169,14 +169,14 @@ for (const [move, effect] of Object.entries(EFFECT_STATUS_MOVES)) {
  * A stage a move pushes on the side as it lands. `self` is which side:
  * a Metal Claw sharpens its own claws, an Iron Tail dents what it hit
  */
-interface AttackStageEffect {
+export interface AttackStageEffect {
   stage: Stages | Stages[];
   value: number;
   chance: number;
   self?: boolean;
 }
 
-const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
+export const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
   [Moves.Bubble]: { stage: Stages.Speed, value: -1, chance: 10 },
   [Moves.BubbleBeam]: { stage: Stages.Speed, value: -1, chance: 10 },
   [Moves.Psychic]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
@@ -430,7 +430,7 @@ function setupUnitStatusMoves(battle: Battle): void {
   });
 }
 
-const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
+export const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
   [Moves.Reflect]: TeamStatuses.Reflect,
   [Moves.LightScreen]: TeamStatuses.LightScreen,
   [Moves.Mist]: TeamStatuses.Mist,

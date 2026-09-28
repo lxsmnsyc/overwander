@@ -17,7 +17,7 @@ import type Unit from '../unit';
  * and the doubling happens between its own passes rather than between
  * casts.
  */
-const ROLLING_MOVES = new Set<Moves>([Moves.Rollout, Moves.FuryCutter, Moves.IceBall]);
+export const ROLLING_MOVES = new Set<Moves>([Moves.Rollout, Moves.FuryCutter, Moves.IceBall]);
 
 /** The rolls a Defense Curl doubles again */
 const CURLED_MOVES = new Set<Moves>([Moves.Rollout, Moves.IceBall]);

@@ -12,7 +12,7 @@ import { holdsAnyItem } from '../utils';
  * health back on. Neither touches the thing itself, so both come off
  * on their own and leave the target as they found it
  */
-const LOCKOUTS = new Map<Moves, Statuses>([
+export const LOCKOUTS = new Map<Moves, Statuses>([
   [Moves.Embargo, Statuses.Embargoed],
   [Moves.HealBlock, Statuses.HealBlocked],
 ]);

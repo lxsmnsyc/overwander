@@ -16,7 +16,7 @@ import { hasFreeItemSlot, stealableItem } from '../utils';
  * own business.
  */
 /** The two that trade hands, which differ in nothing but their name */
-const TRADING_MOVES = new Set<Moves>([Moves.Trick, Moves.Switcheroo]);
+export const TRADING_MOVES = new Set<Moves>([Moves.Trick, Moves.Switcheroo]);
 
 export default function setupItemMoves(battle: Battle): void {
   /** What each unit last used up, which is what a Recycle gets back */

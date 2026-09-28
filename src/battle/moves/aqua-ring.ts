@@ -19,7 +19,7 @@ import { onUnitActs } from '../utils';
 const RING_SHARE = 1 / 16;
 
 /** What each of the two draws round its user */
-const WORN = new Map<Moves, Statuses>([
+export const WORN = new Map<Moves, Statuses>([
   [Moves.AquaRing, Statuses.AquaRinged],
   [Moves.MagnetRise, Statuses.MagnetRisen],
 ]);

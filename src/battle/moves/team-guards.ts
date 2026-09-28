@@ -16,7 +16,7 @@ import turns from '../turn';
  */
 const DURATION = turns(1);
 
-const GUARDS: { [key in Moves]?: TeamStatuses } = {
+export const GUARDS: { [key in Moves]?: TeamStatuses } = {
   [Moves.WideGuard]: TeamStatuses.WideGuard,
   [Moves.QuickGuard]: TeamStatuses.QuickGuard,
   [Moves.MatBlock]: TeamStatuses.MatBlock,

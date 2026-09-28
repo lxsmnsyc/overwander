@@ -23,7 +23,7 @@ import type Unit from '../unit';
  * comes round afterwards
  * https://bulbapedia.bulbagarden.net/wiki/Healing_Wish_(move)
  */
-const SACRIFICES = new Set<Moves>([Moves.HealingWish, Moves.LunarDance]);
+export const SACRIFICES = new Set<Moves>([Moves.HealingWish, Moves.LunarDance]);
 
 /** The share of its health above which the trade is not worth making */
 const LAST_LEGS = 0.5;

@@ -22,7 +22,7 @@ export const OHKO_MOVES = new Set<Moves>([
   Moves.SheerCold,
 ]);
 
-const FIXED_DAMAGE_MOVES: {
+export const FIXED_DAMAGE_MOVES: {
   [key in Moves]?: (source: Unit, target: Unit) => number;
 } = {
   // https://bulbapedia.bulbagarden.net/wiki/Seismic_Toss_(move)

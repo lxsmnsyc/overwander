@@ -38,6 +38,7 @@
     "password-link": "node --env-file=.env scripts/password-link.ts",
     "server": "docker compose --profile server up --detach --build",
     "server:tunnel": "docker compose --profile server up --detach tunnel",
+    "server:tunnel:restart": "docker compose --profile server restart tunnel",
     "server:ps": "docker compose --profile server ps",
     "server:logs": "docker compose --profile server logs --follow"
   },

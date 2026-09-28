@@ -32,9 +32,14 @@ hard drop, and a handheld's name box on its frame.
 - Use `Dialog` and `DialogActions` from `../styled` and the layout
   comes for free. Do not re-align them per dialog, and do not add
   alignment props to `DialogActions`.
-- Write the way out (Close, Walk on, Never mind, Leave) last in
-  `DialogActions`. A dialog never has two ways out, and the heading
-  carries no close button.
+- Write the way out (Close, Walk on, Never mind, Cancel, Keep it) last
+  in `DialogActions`, so the main action always stands on the right. A
+  dialog never has two ways out, and the heading carries no close
+  button. Any other row pairing a way out with an action (an inline
+  confirm) reads the same way: way out on the left.
+- The main action is what the player came to the dialog to do. On an
+  ended battle that is leaving it, so Leave battle is the primary on
+  the right and Stay and look is the way out.
 - Terms a player reads before pressing (price, what they carry,
   stakes) are chips, through `CounterTerms`.
 - A control that belongs to the panel rather than its content goes in
@@ -42,4 +47,5 @@ hard drop, and a handheld's name box on its frame.
   not in the heading's `aside`.
 - The safari is a battle screen rather than a form: a field, a textbox
   that narrates each throw, and a command menu of tiles in place of
-  the dock.
+  the dock. Its tiles follow the dock's order too: Run, and after an
+  encounter Walk on, stand on the left.

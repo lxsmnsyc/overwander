@@ -1891,14 +1891,6 @@ export function CatchSheetBody(
 
         <DialogActions>
           <Button
-            disabled={renaming()}
-            onClick={() => {
-              setNaming(null);
-            }}
-          >
-            Never mind
-          </Button>
-          <Button
             tone="primary"
             // Nothing to do where the name has not changed: the same
             // name written again is a write for the sake of one
@@ -1906,6 +1898,14 @@ export function CatchSheetBody(
             onClick={rename}
           >
             Save
+          </Button>
+          <Button
+            disabled={renaming()}
+            onClick={() => {
+              setNaming(null);
+            }}
+          >
+            Never mind
           </Button>
         </DialogActions>
       </Dialog>

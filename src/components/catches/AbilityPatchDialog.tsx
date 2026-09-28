@@ -210,15 +210,15 @@ function PatchBody(
       <Status message={status()} />
 
       <DialogActions>
-        <Button disabled={busy()} onClick={close}>
-          Cancel
-        </Button>
         <Button
           tone="primary"
           disabled={busy() || signature() == null || (!roomy() && given().length === 0)}
           onClick={use}
         >
           {busy() ? 'Using…' : 'Use Ability Patch'}
+        </Button>
+        <Button disabled={busy()} onClick={close}>
+          Cancel
         </Button>
       </DialogActions>
     </>

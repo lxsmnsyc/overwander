@@ -300,6 +300,7 @@ function SafariBody(
         if (active == null) {
           return;
         }
+        setNarrated(null);
         setRummaging(false);
         setTreat(null);
         setCaught(null);
@@ -424,8 +425,14 @@ function SafariBody(
       return;
     }
     setThrowing(true);
+    const asked = props.session;
     action()
-      .then(settle)
+      .then((message) => {
+        // A late answer belongs to the encounter it was thrown at
+        if (props.session === asked) {
+          settle(message);
+        }
+      })
       .catch((failure: unknown) => {
         toast.push({
           message: failure instanceof Error ? failure.message : String(failure),
@@ -785,11 +792,11 @@ function SafariBody(
                         </button>
                       }
                     >
-                      <button type="button" class={`${TILE} ${TILE_PRIMARY}`} onClick={openSheet}>
-                        Have a look
-                      </button>
                       <button type="button" class={TILE} onClick={leave}>
                         Walk on
+                      </button>
+                      <button type="button" class={`${TILE} ${TILE_PRIMARY}`} onClick={openSheet}>
+                        Have a look
                       </button>
                     </Show>
                   </div>
@@ -798,19 +805,17 @@ function SafariBody(
                 <Show
                   when={rummaging()}
                   fallback={
-                    // The command menu: the bag, the throw, and the way out
+                    // The command menu: the way out on the left, as a dock has it, then the throw and the bag
                     <div class="grid grid-cols-[1fr_1.4fr_1fr] gap-2">
                       <button
                         type="button"
-                        class={TILE}
+                        class={`${TILE} text-ember-dark`}
                         disabled={throwing()}
-                        onClick={() => {
-                          setRummaging(true);
-                        }}
+                        onClick={leave}
                       >
-                        <BagIcon class="size-5" aria-hidden="true" />
-                        Bag
-                        <span class={TILE_NOTE}>Balls, treats</span>
+                        <ArrowLeftIcon class="size-5" aria-hidden="true" />
+                        Run
+                        <span class={TILE_NOTE}>Walk away</span>
                       </button>
                       {/* The ball in hand is the label: it is the one thing
                         checked between every throw */}
@@ -829,13 +834,15 @@ function SafariBody(
                       </button>
                       <button
                         type="button"
-                        class={`${TILE} text-ember-dark`}
+                        class={TILE}
                         disabled={throwing()}
-                        onClick={leave}
+                        onClick={() => {
+                          setRummaging(true);
+                        }}
                       >
-                        <ArrowLeftIcon class="size-5" aria-hidden="true" />
-                        Run
-                        <span class={TILE_NOTE}>Walk away</span>
+                        <BagIcon class="size-5" aria-hidden="true" />
+                        Bag
+                        <span class={TILE_NOTE}>Balls, treats</span>
                       </button>
                     </div>
                   }

@@ -149,15 +149,15 @@ function CapBody(
       <Status message={status()} />
 
       <DialogActions>
-        <Button disabled={busy()} onClick={props.onClose}>
-          Cancel
-        </Button>
         <Button
           tone="primary"
           disabled={busy() || chosen() == null || valueOf(chosen() ?? STAT_ORDER[0]) >= MAX_IV}
           onClick={use}
         >
           {busy() ? 'Using…' : 'Use Bottle Cap'}
+        </Button>
+        <Button disabled={busy()} onClick={props.onClose}>
+          Cancel
         </Button>
       </DialogActions>
     </>

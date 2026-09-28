@@ -119,7 +119,6 @@ export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Elemen
       </Note>
 
       <DialogActions>
-        <Button onClick={props.onClose}>Cancel</Button>
         <Button
           tone="primary"
           onClick={() => {
@@ -128,6 +127,7 @@ export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Elemen
         >
           Save
         </Button>
+        <Button onClick={props.onClose}>Cancel</Button>
       </DialogActions>
     </Dialog>
   );

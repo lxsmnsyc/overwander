@@ -5,7 +5,7 @@
 import { asNumber, asRecord, asRecordArray, asString, asStringArray } from './__normalize';
 import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { LobbyRole } from './lobby-role';
-import { TEAM_SIZE } from './teams';
+import TEAM_SIZE from './team-size';
 
 /**
  * What a battle lobby is, and how a stored one is read back. Both the

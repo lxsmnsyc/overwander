@@ -39,12 +39,15 @@ function PlaceLine(props: { place: Resource<PositionRecord | null> }): JSX.Eleme
               worldCell(at().chunkY, at().cellY),
             )}
           </Badge>
-          <Meta>
-            cell {at().cellX}, {at().cellY}
-          </Meta>
-          {/* In flow rather than pushed to the far edge, where it
-              crowded whatever stood to the card's right */}
-          <Meta>last moved {walked(at().movedAt)}</Meta>
+          {/* On a line of their own under the place on a phone. In flow
+              rather than pushed to the far edge, where it crowded
+              whatever stood to the card's right */}
+          <span class="flex flex-wrap items-center gap-2 max-sm:basis-full">
+            <Meta>
+              cell {at().cellX}, {at().cellY}
+            </Meta>
+            <Meta>last moved {walked(at().movedAt)}</Meta>
+          </span>
         </Row>
       )}
     </Show>

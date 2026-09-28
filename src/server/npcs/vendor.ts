@@ -1,5 +1,5 @@
 import 'server-only';
-import Npc from '../../data/overworld/npc';
+import Npc, { TRADERS } from '../../data/overworld/npc';
 import { VENDOR_TRADE_LIMIT, sellPrice } from '../../data/overworld/vendor';
 import type { Items } from '../../data/ids/items';
 import { getItemData } from '../../data/items';
@@ -11,6 +11,7 @@ import { bumpProgress } from '../quest-progress';
 import { asNumber } from '../read';
 import type { TradeResult } from './moves';
 import { resolveNpc } from './visits';
+import { moveGoldIn } from '../profile';
 
 /** The counter itself: what is bought and what is sold back */
 /**
@@ -63,7 +64,7 @@ export async function trade(
       return null;
     }
 
-    await transaction`update profiles set gold = ${balance} where id = ${uid}`;
+    await moveGoldIn(transaction, uid, gold, 'shop');
     for (const [at, [item]] of basket.entries()) {
       await writeStackIn(transaction, ITEM_STACKS, uid, item, held[at]);
     }
@@ -123,7 +124,7 @@ export async function buyFromVendor(
   offset: number,
   trader: Npc = Npc.Vendor,
 ): Promise<TradeResult | null> {
-  if (trader !== Npc.Vendor && trader !== Npc.Chef) {
+  if (!TRADERS.has(trader)) {
     return null;
   }
 
@@ -167,7 +168,7 @@ export async function sellToVendor(
   offset: number,
   trader: Npc = Npc.Vendor,
 ): Promise<TradeResult | null> {
-  if (trader !== Npc.Vendor && trader !== Npc.Chef) {
+  if (!TRADERS.has(trader)) {
     return null;
   }
 

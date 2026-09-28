@@ -51,8 +51,6 @@ export default function registerVolcanoSpawns(): void {
       special: [
         { species: Species.Groudon, weight: 10 },
         { species: Species.Moltres, weight: 10 },
-        { species: Species.Entei, weight: 10 },
-        { species: Species.HoOh, weight: 10 },
         { species: Species.Heatran, weight: 10 },
       ],
     },
@@ -98,8 +96,6 @@ export default function registerVolcanoSpawns(): void {
       special: [
         { species: Species.Groudon, weight: 10 },
         { species: Species.Moltres, weight: 10 },
-        { species: Species.Entei, weight: 10 },
-        { species: Species.HoOh, weight: 10 },
         { species: Species.Heatran, weight: 10 },
       ],
     },
@@ -124,8 +120,6 @@ export default function registerVolcanoSpawns(): void {
       special: [
         { species: Species.Groudon, weight: 10 },
         { species: Species.Moltres, weight: 10 },
-        { species: Species.Entei, weight: 10 },
-        { species: Species.HoOh, weight: 10 },
         { species: Species.Heatran, weight: 10 },
       ],
     },
@@ -152,8 +146,6 @@ export default function registerVolcanoSpawns(): void {
       special: [
         { species: Species.Groudon, weight: 10 },
         { species: Species.Moltres, weight: 10 },
-        { species: Species.Entei, weight: 10 },
-        { species: Species.HoOh, weight: 10 },
         { species: Species.Heatran, weight: 10 },
       ],
     },

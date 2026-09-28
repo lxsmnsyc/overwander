@@ -4,7 +4,7 @@ import type { MoveData } from '../../data/moves';
 import { getMoveCooldown, getMoveData, getMovePP } from '../../data/moves';
 import MoveCategorySprite from '../sprites/MoveCategorySprite';
 import TypeBadge from '../sprites/TypeBadge';
-import { Detail } from '../styled';
+import { StatTile } from '../styled';
 
 /**
  * What a move is, in the shape a player already reads it in: what it
@@ -54,7 +54,7 @@ export default function MoveCard(props: MoveCardProps): JSX.Element {
   };
 
   return (
-    <div class="flex flex-col gap-1.5">
+    <div class="flex flex-col gap-2">
       {/* What it fights as and how it fights, one at each end: the two
           pictures a move list is scanned by, and neither is read as
           part of the other */}
@@ -66,26 +66,26 @@ export default function MoveCard(props: MoveCardProps): JSX.Element {
           </div>
         )}
       </Show>
-      <div class="grid grid-cols-3 gap-1.5">
-        <Detail label="Power">{data()?.power ?? NONE}</Detail>
-        <Detail label="Accuracy">
+      <div class="grid grid-cols-4 gap-1">
+        <StatTile label="Power">{data()?.power ?? NONE}</StatTile>
+        <StatTile label="Acc">
           {data() == null || data()?.accuracy == null ? NONE : `${data()?.accuracy}%`}
-        </Detail>
+        </StatTile>
         {/* Its own PP with whatever has been spent on it, and what
             that comes to at the field: the number a player is deciding
             with is the wait, not the count behind it */}
-        <Detail label="PP">
+        <StatTile label="PP">
           {data() == null ? NONE : getMovePP(props.move, props.points ?? 0)}
-        </Detail>
-      </div>
-      <div class="grid grid-cols-1 gap-1.5">
-        <Detail label="Cooldown">
+        </StatTile>
+        <StatTile label="Cool">
           {data() == null
             ? NONE
             : `${(getMoveCooldown(props.move, props.points ?? 0, props.speed ?? 0) / 1000).toFixed(1)}s`}
-        </Detail>
+        </StatTile>
       </div>
-      <Detail label="Description">{data()?.description ?? 'Nothing is known about this.'}</Detail>
+      <p class="m-0 text-xs leading-snug text-muted">
+        {data()?.description ?? 'Nothing is known about this.'}
+      </p>
     </div>
   );
 }

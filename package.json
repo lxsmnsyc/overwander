@@ -17,6 +17,7 @@
     "apricorn-trees": "node scripts/apricorn-trees.ts",
     "item-icons": "node scripts/item-icons.ts",
     "family-candies": "node scripts/family-candies.ts",
+    "species-compact": "node scripts/species-compact.ts",
     "import-sprites": "node scripts/import-sprites.ts",
     "sprite-stamps": "node scripts/sprite-stamps.ts",
     "sound-stamps": "node scripts/sound-stamps.ts",

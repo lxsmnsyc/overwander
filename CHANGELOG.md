@@ -1,5 +1,13 @@
 # overwander
 
+## 4.22.3
+
+### Patch Changes
+
+- 0b004ca: - A cave stages raids only from the underground lairs its biome hosts, such as Cerulean Cave, Terra Cave and Turnback Cave.
+  - Those lairs' legendaries also spawn wild in the caves under that biome, and a water legendary such as Kyogre only on cave water.
+- 039f1b3: A raid's pokemon left uncaught after its meeting was closed can be met again from the battle history.
+
 ## 4.22.2
 
 ### Patch Changes

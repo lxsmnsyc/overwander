@@ -31,6 +31,12 @@ import {
 } from '../__create';
 import { MergedLifecycle } from '../../lifecycle';
 import { knowsAbility } from '../../ai/fog';
+import { registerWeatherWant } from '../../ai/weather-wants';
+
+// The skies these thrive under, so the AI weighs a weather move by who gains from it
+registerWeatherWant(Abilities.SwiftSwim, [Weathers.Rain]);
+registerWeatherWant(Abilities.DrySkin, [Weathers.Rain]);
+registerWeatherWant(Abilities.SandForce, [Weathers.Sandstorm]);
 
 /**
  * Paras to Tentacool: the spore carriers, the sleepers and what a

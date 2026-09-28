@@ -35,6 +35,7 @@ import { TERRAIN_MOVES } from '../moves/terrain';
 import type Unit from '../unit';
 import { type AIContext, getAIContext } from './context';
 import { knowsMove } from './fog';
+import { wantsWeather } from './weather-wants';
 import { AFFLICTIONS, MoveRole, ROLE_BASE, getMoveRoles } from './roles';
 import { KILL_BONUS } from './score';
 
@@ -208,7 +209,7 @@ const field: Relevance = (event, context) => {
     const boosts = WEATHER_DAMAGE[weather];
     const spared = CHIP_IMMUNE_TYPES[weather];
 
-    ours = (unit) => gainsFromWeather(source, unit, boosts, spared);
+    ours = (unit) => gainsFromWeather(source, unit, boosts, spared) || wantsWeather(unit, weather);
     lasting = source.checkWeatherDuration(weather, DURATION_PROBE) / DURATION_PROBE;
   } else if (terrain != null) {
     const boosted = TERRAIN_BOOSTED[terrain];
@@ -233,10 +234,15 @@ const field: Relevance = (event, context) => {
   for (const foe of context.foes()) {
     foes ||= ours(foe);
   }
-  if (!friends) {
-    return 0;
+  // A sky that only the foe gains from is one worth not calling up
+  let side = 0;
+
+  if (friends) {
+    side = foes ? 0.5 : 1;
+  } else if (foes) {
+    side = -1;
   }
-  return (foes ? 0.5 : 1) * lasting * context.healthShare();
+  return side * lasting * context.healthShare();
 };
 
 // --- Afflicting ---

@@ -180,6 +180,37 @@ describe('own-side synergy', () => {
     expect(scoreMove(battle, unit, Moves.FlameCharge, target)).toBeLessThan(fresh);
   });
 
+  it('calls up the sky a teammate’s ability wants', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const swimmer = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+
+    expect(scoreMove(battle, unit, Moves.RainDance, NONE)).toBe(BASE_SCORE);
+
+    swimmer.addAbility(Abilities.SwiftSwim);
+
+    expect(scoreMove(battle, unit, Moves.RainDance, NONE)).toBe(
+      BASE_SCORE + ROLE_BASE[MoveRole.Field],
+    );
+  });
+
+  it('keeps the sky away from a foe it has seen wants it', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const swimmer = createUnit(battle, teamB);
+    swimmer.addAbility(Abilities.SwiftSwim);
+
+    // Unshown, the foe's ability is nothing the AI plans around
+    expect(scoreMove(battle, unit, Moves.RainDance, NONE)).toBe(BASE_SCORE);
+
+    swimmer.triggerAbility(Abilities.SwiftSwim);
+
+    expect(scoreMove(battle, unit, Moves.RainDance, NONE)).toBe(
+      BASE_SCORE - ROLE_BASE[MoveRole.Field],
+    );
+  });
+
   it('holds back a hit whose Life Orb recoil would finish its holder', () => {
     const { battle, teamA, teamB } = createAIBattle();
     const unit = createUnit(battle, teamA);

@@ -33,6 +33,10 @@ import {
   createWeightAbility,
   movesOfType,
 } from './__create';
+import { registerWeatherWant } from '../ai/weather-wants';
+
+// The skies these thrive under, so the AI weighs a weather move by who gains from it
+registerWeatherWant(Abilities.FlowerGift, [Weathers.Sunny]);
 
 const FLOWER_GIFT_BOOST = 1.5;
 

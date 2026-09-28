@@ -229,6 +229,11 @@ The AI reads its own side in full, so its kit shapes the score:
   Contrary. A Contrary holder does not cast Swords Dance.
 - Recoil and crash cost nothing when the engine says the user would not be
   hurt: Rock Head refuses the recoil, and Magic Guard the damage.
+- A weather move is worth more when a teammate's ability thrives under that
+  sky (Swift Swim, Chlorophyll, Sand Rush and the rest). Each such ability
+  registers the skies it wants with `registerWeatherWant`, from its own
+  module, so the AI never names one. A sky only the foe gains from, including
+  a foe's weather ability once it has shown itself, counts against the move.
 - A drain is worth more under a Big Root.
 - A hit whose Life Orb recoil would finish its holder is marked down.
 - Light Screen is guessed at, for half its worth, when a foe is built to hit

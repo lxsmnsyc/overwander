@@ -7,6 +7,7 @@ import { Species, getBaseFormSpecies } from '../../data/ids/species';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { checkTeamUnit } from '../ai/rating';
+import { abilitiesOf } from '../moves/ability-moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
@@ -36,6 +37,25 @@ export const WATER_BUBBLE_SCALE = 2;
 export const WIMP_OUT_THRESHOLD = 1 / 2;
 
 const FIRE = new Set([Types.Fire]);
+
+/**
+ * What Receiver will not take up: the ones that copy in their own
+ * right, and the ones only a particular shape can use
+ */
+const UNRECEIVABLE = new Set<Abilities>([
+  Abilities.Receiver,
+  Abilities.Trace,
+  Abilities.Forecast,
+  Abilities.FlowerGift,
+  Abilities.Multitype,
+  Abilities.Illusion,
+  Abilities.WonderGuard,
+  Abilities.ZenMode,
+  Abilities.Imposter,
+  Abilities.StanceChange,
+  Abilities.PowerConstruct,
+  Abilities.Schooling,
+]);
 
 /** Whether a move is carried on sound, which is what a voice can wet */
 function isSound(move: Moves): boolean {
@@ -146,6 +166,33 @@ const setupAbilities = [
         parent.source.hasAbility(Abilities.WaterBubble)
       ) {
         event.value *= WATER_BUBBLE_SCALE;
+      }
+    }),
+  ),
+
+  /**
+   * Passimian: a fallen teammate's ability is picked up where Receiver
+   * was, the first one it does not already carry. Once it has, there is
+   * no Receiver left to take another
+   * https://bulbapedia.bulbagarden.net/wiki/Receiver_(Ability)
+   */
+  createAbility(Abilities.Receiver, (battle) =>
+    battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+      const fallen = event.source;
+
+      for (const holder of fallen.team.units) {
+        if (holder === fallen || !holder.alive || !holder.hasAbility(Abilities.Receiver)) {
+          continue;
+        }
+
+        for (const ability of abilitiesOf(fallen)) {
+          if (!UNRECEIVABLE.has(ability) && !holder.hasAbility(ability)) {
+            holder.triggerAbility(Abilities.Receiver);
+            holder.removeAbility(Abilities.Receiver);
+            holder.addAbility(ability);
+            return;
+          }
+        }
       }
     }),
   ),

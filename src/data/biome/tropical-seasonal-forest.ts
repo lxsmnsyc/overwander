@@ -44,6 +44,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Comfey, weight: 5 },
         { species: Species.Tsareena, weight: 4 },
         { species: Species.Vikavolt, weight: 4 },
         { species: Species.FlorgesOrange, weight: 5 },
@@ -90,6 +91,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Comfey, weight: 5 },
         { species: Species.Tsareena, weight: 4 },
         { species: Species.Vikavolt, weight: 4 },
         { species: Species.FlorgesOrange, weight: 5 },

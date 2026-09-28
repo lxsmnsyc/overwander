@@ -30,7 +30,7 @@ export const ABILITY_MOVES = new Set<Moves>([
  * talked out of being one would lose its health pool mid-fight. An
  * ability worn with a form is left out for the same reason
  */
-function abilitiesOf(unit: Unit): Abilities[] {
+export function abilitiesOf(unit: Unit): Abilities[] {
   const abilities: Abilities[] = [];
 
   for (const [ability, carried] of Object.entries(unit.abilities)) {

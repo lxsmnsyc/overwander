@@ -33,6 +33,11 @@ export default function registerGen7Abilities(): void {
     name: 'Water Bubble',
     description: 'Fire moves hit it at 0.5x, it cannot be burned, and its Water moves hit 2x.',
   });
+  // Passimian
+  registerAbility(Abilities.Receiver, {
+    name: 'Receiver',
+    description: 'When a teammate faints, it takes that teammate’s ability in place of this one.',
+  });
   // Wimpod
   registerAbility(Abilities.WimpOut, {
     name: 'Wimp Out',

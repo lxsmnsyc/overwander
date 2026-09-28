@@ -343,6 +343,12 @@ describe('where a species lives', () => {
       Species.Toucannon,
       Species.Yungoos,
       Species.Gumshoos,
+      // Shiinotic and Oranguru are undrawn, and Passimian waits on its
+      // counterpart
+      Species.Morelull,
+      Species.Shiinotic,
+      Species.Oranguru,
+      Species.Passimian,
     ]);
     const staged = new Set<Species>();
 

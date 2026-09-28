@@ -1012,6 +1012,14 @@ const enum Abilities {
   OrchidGuise = 200379,
   // Bounsweet
   TropStride = 200380,
+  // Morelull
+  DrowsyGlow = 200381,
+  // Comfey
+  LeiGift = 200382,
+  // Oranguru
+  SagesCall = 200383,
+  // Passimian
+  RushPass = 200384,
 }
 
 export default Abilities;

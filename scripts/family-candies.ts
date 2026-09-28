@@ -135,6 +135,24 @@ const PART_COLOURS: number[][] = [
 const COLOURS = 4;
 
 /**
+ * The colours of a family whose pokemon the collection has not drawn
+ * yet, by the family's enum name, most of it first. A candy is owed as
+ * soon as the family is written, and there is no sheet to read it off
+ */
+const HAND_PAINTED = new Map<string, [number, number, number][]>([
+  // White fur, the purple cape, the grey face and the orange crest
+  [
+    'Oranguru',
+    [
+      [236, 236, 240],
+      [122, 74, 150],
+      [96, 96, 112],
+      [232, 164, 64],
+    ],
+  ],
+]);
+
+/**
  * The lightest the ball is painted, and the darkest a stripe is. The
  * drawing is a dark ball under light stripes, and a family whose
  * colours run the other way still has to read as that candy
@@ -727,7 +745,7 @@ for (const family of [...new Set(entries.map((entry) => entry.family))].sort(
   const base = members.find((entry) => entry.key === key) ?? members[0];
   const region = regionOf(members[0].dex);
   const sheet = sheetOf(base.species, base.dex);
-  const colours = sheet == null ? [] : coloursOf(sheet);
+  const colours = sheet == null ? (HAND_PAINTED.get(key ?? '') ?? []) : coloursOf(sheet);
 
   if (region == null || colours.length === 0) {
     undrawn.push(family);

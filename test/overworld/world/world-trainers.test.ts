@@ -88,6 +88,7 @@ import {
   EXPERT_PARTY_SIZE,
   GYM_LEADER_CHARSETS,
   GYM_LEADER_TYPES,
+  type GymLeader,
   LEGEND_CHARSETS,
   getEliteMemberRoster,
 } from '../../../src/data/overworld/experts';
@@ -1010,9 +1011,18 @@ describe('world', () => {
         continue;
       }
       // The biome names the candidates, so a badge has a country to
-      // be hunted in — and the next window keeps whoever was seated
+      // be hunted in, whoever the window seats
       expect(BIOME_GYM_LEADERS[chunk.biome]).toContain(leader);
-      expect(new ChunkSnapshot(chunk, NPC_INTERVAL).getGymLeader(cell)).toBe(leader);
+
+      // And the seat turns over, so a known town cycles through them
+      if (BIOME_GYM_LEADERS[chunk.biome].length > 1) {
+        const seated = new Set<GymLeader | null>();
+
+        for (let window = 0; window < 32; window++) {
+          seated.add(new ChunkSnapshot(chunk, window * NPC_INTERVAL).getGymLeader(cell));
+        }
+        expect(seated.size).toBeGreaterThan(1);
+      }
 
       // Every fielded species carries the gym's type
       for (const [species] of party) {

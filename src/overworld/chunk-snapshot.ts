@@ -1383,11 +1383,10 @@ export default class ChunkSnapshot {
   }
 
   /**
-   * Which gym leader keeps the gym at this cell, or null when the
-   * cell holds no gym. The biome names the candidates — every gym in
-   * fire country is a fire gym, so a player hunting one badge knows
-   * which country to walk — and the chunk's own fixture roll picks
-   * among the leaders who share it, the same one every visit
+   * Which gym leader keeps the gym at this cell this window, or null
+   * when the cell holds no gym. The biome names the candidates, so a
+   * badge still has a country to hunt in, and the seat turns over
+   * every window so a town already found cycles through them
    */
   getGymLeader(cell: number): GymLeader | null {
     if (this.chunk.getLandmarkCells().get(cell) !== Landmark.GymLeader) {
@@ -1395,15 +1394,15 @@ export default class ChunkSnapshot {
     }
 
     const seated = BIOME_GYM_LEADERS[this.chunk.biome];
-    const rng = new AleaRNG(`${this.chunk.seed}leader${cell}`);
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}leader${cell}`);
 
     return seated[Math.floor(rng.random() * seated.length)] ?? null;
   }
 
   /**
-   * Which of the Elite Four holds this cell, or null. The biome
-   * names the candidates the way it does for the gyms, and the
-   * fixture roll seats one of them for good
+   * Which of the Elite Four holds this cell this window, or null. The
+   * biome names the candidates the way it does for the gyms, and the
+   * seat turns over every window the same way
    */
   getEliteMember(cell: number): EliteMember | null {
     if (this.chunk.getLandmarkCells().get(cell) !== Landmark.EliteFour) {
@@ -1411,7 +1410,7 @@ export default class ChunkSnapshot {
     }
 
     const seated = BIOME_ELITE_MEMBERS[this.chunk.biome];
-    const rng = new AleaRNG(`${this.chunk.seed}elite${cell}`);
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}elite${cell}`);
 
     return seated[Math.floor(rng.random() * seated.length)] ?? null;
   }
@@ -1497,17 +1496,17 @@ export default class ChunkSnapshot {
   }
 
   /**
-   * Which champion holds the seat at this cell, or null when the cell
-   * holds none. A league rather than a country decides who a champion
-   * is, so unlike the gyms this is a plain fixture roll over the
-   * champions there are, fixed for the cell the way a gym's leader is
+   * Which champion holds the seat at this cell this window, or null
+   * when the cell holds none. A league rather than a country decides
+   * who a champion is, so this rolls over every champion, and turns
+   * over every window the way a gym's leader does
    */
   getChampion(cell: number): Champion | null {
     if (this.chunk.getLandmarkCells().get(cell) !== Landmark.Champion) {
       return null;
     }
 
-    const rng = new AleaRNG(`${this.chunk.seed}champion${cell}`);
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}champion${cell}`);
 
     return CHAMPIONS[Math.floor(rng.random() * CHAMPIONS.length)] ?? null;
   }

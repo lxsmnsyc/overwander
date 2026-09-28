@@ -5,7 +5,12 @@ import type Abilities from '../ids/abilities';
 import { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
 import type { Species } from '../ids/species';
-import { getLevelUpMoves, getSpeciesAbilities, getTeachableMoves } from '../species';
+import {
+  getLevelUpMoves,
+  getSpeciesAbilities,
+  getSpeciesData,
+  getTeachableMoves,
+} from '../species';
 
 /**
  * The people who stand at the world's people landmarks. Most pass
@@ -402,20 +407,13 @@ export const GROOMING_FEE = 2500;
 export const REMINDER_FEE = Items.HeartScale;
 
 /**
- * What the reminder can put back on a pokemon: everything its species
- * has learned by levelling up to its level, minus the ones it still
- * knows, in the order it learned them.
+ * What the reminder can put back on a pokemon: everything its line has
+ * learned by levelling up to its level, pre-evolutions included, minus
+ * the ones it still knows. Earlier stages come first.
  *
- * The list is read off the **species standing in front of him** rather
- * than off any history of the pokemon, because there is no history to
- * read — a record stores the four moves it knows and nothing about the
- * ones it dropped. That makes the rule a simple one to say: he can
- * give back anything this species could have known by now.
- *
- * A pre-evolution's list is not walked. An evolved species relists the
- * moves its line starts with at level 1, which is where it actually
- * learns them, so the chain adds nothing but a way for a Charizard to
- * be offered a move a Charizard never learns
+ * The list is read off the species rather than the pokemon's history,
+ * since a record keeps only the moves it knows now. The chain is walked
+ * because an evolved species does not relist its pre-evolutions' moves.
  */
 export function getRecallableMoves(
   species: Species,
@@ -424,10 +422,19 @@ export function getRecallableMoves(
 ): Moves[] {
   const knows = new Set(known);
   const moves: Moves[] = [];
+  const line: Species[] = [];
 
-  for (const move of getLevelUpMoves(species, level)) {
-    if (!knows.has(move)) {
-      moves.push(move);
+  for (let stage: Species | undefined = species; stage != null;) {
+    line.unshift(stage);
+    const previous: Species | undefined = getSpeciesData(stage).evolvesFrom;
+    stage = previous === stage ? undefined : previous;
+  }
+  for (const stage of line) {
+    for (const move of getLevelUpMoves(stage, level)) {
+      if (!knows.has(move)) {
+        knows.add(move);
+        moves.push(move);
+      }
     }
   }
   return moves;

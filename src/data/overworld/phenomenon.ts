@@ -5,7 +5,7 @@ import { GEMS } from '../items/gems';
 import { MEGA_STONES } from '../items/mega-stones';
 import { PLATES } from '../items/plates';
 import { isValuable } from '../items/valuables';
-import { WING_STATS } from '../items/wings';
+import { MAX_WING_STATS, WING_STATS } from '../items/wings';
 import { type ItemPoolEntry, type ItemRarityGroups, getItemBand, getItemOdds } from './item-pool';
 import { EvolutionMethod } from '../ids/species';
 import { getRegisteredSpecies, getSpeciesData } from '../species';
@@ -233,11 +233,16 @@ function weigh(items: Items[]): ItemPoolEntry[] {
  * has ever held — since the floor is where a thing with no scarcity of
  * its own belongs.
  *
- * **Special** goes down to prized rather than to the floor. A pool
- * picked by type reaches exactly one of the ground's specials, and a
- * band of one hands its whole width to whatever stands in it
+ * The ground's **special** goes down to prized rather than to the
+ * floor. A pool picked by type reaches exactly one of the ground's
+ * specials, and a band of one hands its whole width to whatever stands
+ * in it. The special band holds the Max wings alone
  */
 function bandOf(item: Items): keyof ItemRarityGroups {
+  // The Max wings are a shadow's own special, found nowhere else
+  if (MAX_WING_STATS.has(item)) {
+    return 'special';
+  }
   const band = getItemBand(item);
 
   if (band === 'special') {
@@ -272,10 +277,9 @@ export function getPhenomenonGroups(phenomenon: Phenomenon): ItemRarityGroups {
     sorted.set(band, [...(sorted.get(band) ?? []), item]);
   }
   const groups: ItemRarityGroups = {
-    // Neither is ever drawn from: the odds leave them no width, and
-    // `bandOf` puts nothing in them
+    // Never drawn from: the odds leave it no width
     base: [],
-    special: [],
+    special: weigh(sorted.get('special') ?? []),
     uncommon: weigh(sorted.get('uncommon') ?? []),
     scarce: [],
     rare: weigh(sorted.get('rare') ?? []),
@@ -304,5 +308,7 @@ function buildPool(phenomenon: Phenomenon): Items[] {
   }
   // A grotto hides a pokemon and nothing a player picks up, so it is
   // the empty list the fall-through gives
-  return phenomenon === Phenomenon.FlyingShadow ? [...WING_STATS.keys()] : [];
+  return phenomenon === Phenomenon.FlyingShadow
+    ? [...WING_STATS.keys(), ...MAX_WING_STATS.keys()]
+    : [];
 }

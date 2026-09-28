@@ -4,6 +4,8 @@ import type { EncounterRecord } from '../auth/encounter-record';
 import { WORLD_GENERATION } from '../overworld/current';
 import { type Tx, getSql } from './db';
 import { asNumber } from './read';
+import { isOwedEncounter } from '../overworld/encounter/kinds';
+import { spawnKey } from '../overworld/safari';
 
 /**
  * The encounter tables in and out of the legacy record shape, the
@@ -20,69 +22,135 @@ export async function readEncounter(
   spawnId: string,
   player: string,
 ): Promise<Record<string, unknown> | null> {
-  const sql = getSql();
-  const rows = await sql`
-    select * from encounters
-    where generation = ${WORLD_GENERATION} and spawn_id = ${spawnId} and player = ${player}
-  `;
-  const row = rows.at(0);
+  return (await readEncounters([spawnId], player)).get(spawnId) ?? null;
+}
 
-  if (row == null) {
-    return null;
+/** Several of one player's staged encounters in the record shape, by spawn id */
+export async function readEncounters(
+  spawnIds: string[],
+  player: string,
+): Promise<Map<string, Record<string, unknown>>> {
+  const found = new Map<string, Record<string, unknown>>();
+
+  if (spawnIds.length === 0) {
+    return found;
   }
 
-  const [moves, items, abilities] = await Promise.all([
-    sql`select move from encounter_moves
-        where generation = ${WORLD_GENERATION} and spawn_id = ${spawnId} and player = ${player}
+  const sql = getSql();
+  const [rows, moves, items, abilities] = await Promise.all([
+    sql`select * from encounters
+        where generation = ${WORLD_GENERATION} and spawn_id = any(${spawnIds}) and player = ${player}`,
+    sql`select spawn_id, move from encounter_moves
+        where generation = ${WORLD_GENERATION} and spawn_id = any(${spawnIds}) and player = ${player}
         order by slot`,
-    sql`select item from encounter_items
-        where generation = ${WORLD_GENERATION} and spawn_id = ${spawnId} and player = ${player}
+    sql`select spawn_id, item from encounter_items
+        where generation = ${WORLD_GENERATION} and spawn_id = any(${spawnIds}) and player = ${player}
         order by slot`,
-    sql`select ability from encounter_abilities
-        where generation = ${WORLD_GENERATION} and spawn_id = ${spawnId} and player = ${player}
+    sql`select spawn_id, ability from encounter_abilities
+        where generation = ${WORLD_GENERATION} and spawn_id = any(${spawnIds}) and player = ${player}
         order by slot`,
   ]);
 
-  const moveIds: number[] = [];
-  const itemIds: number[] = [];
-  const abilityIds: number[] = [];
+  const moveIds = new Map<string, number[]>();
+  const itemIds = new Map<string, number[]>();
+  const abilityIds = new Map<string, number[]>();
 
   for (const entry of moves) {
-    moveIds.push(asNumber(entry.move));
+    pushTo(moveIds, String(entry.spawn_id), asNumber(entry.move));
   }
   for (const entry of items) {
-    itemIds.push(asNumber(entry.item));
+    pushTo(itemIds, String(entry.spawn_id), asNumber(entry.item));
   }
   for (const entry of abilities) {
-    abilityIds.push(asNumber(entry.ability));
+    pushTo(abilityIds, String(entry.spawn_id), asNumber(entry.ability));
   }
 
-  return {
-    spawn: spawnId,
-    player,
-    type: row.type,
-    species: row.species,
-    level: row.level,
-    individualValue: row.individual_value,
-    traitValue: row.trait_value,
-    ivs: row.ivs,
-    lair: row.lair,
-    nature: row.nature,
-    ability: row.ability,
-    gender: row.gender,
-    shiny: row.shiny,
-    shadow: row.shadow,
-    moves: moveIds,
-    items: itemIds,
-    timestamp: row.window_at,
-    x: row.x,
-    y: row.y,
-    biome: row.biome,
-    ...(row.place == null ? {} : { place: row.place }),
-    ...(row.slots == null ? {} : { slots: row.slots }),
-    ...(abilityIds.length > 0 ? { abilities: abilityIds } : {}),
-    ...(row.fed == null ? {} : { fed: row.fed }),
-  };
+  for (const row of rows) {
+    const spawnId = String(row.spawn_id);
+    const rolled = abilityIds.get(spawnId) ?? [];
+
+    found.set(spawnId, {
+      spawn: spawnId,
+      player,
+      type: row.type,
+      species: row.species,
+      level: row.level,
+      individualValue: row.individual_value,
+      traitValue: row.trait_value,
+      ivs: row.ivs,
+      lair: row.lair,
+      nature: row.nature,
+      ability: row.ability,
+      gender: row.gender,
+      shiny: row.shiny,
+      shadow: row.shadow,
+      moves: moveIds.get(spawnId) ?? [],
+      items: itemIds.get(spawnId) ?? [],
+      timestamp: row.window_at,
+      x: row.x,
+      y: row.y,
+      biome: row.biome,
+      ...(row.place == null ? {} : { place: row.place }),
+      ...(row.slots == null ? {} : { slots: row.slots }),
+      ...(rolled.length > 0 ? { abilities: rolled } : {}),
+      ...(row.fed == null ? {} : { fed: row.fed }),
+    });
+  }
+  return found;
+}
+
+function pushTo(lists: Map<string, number[]>, key: string, value: number): void {
+  const list = lists.get(key);
+
+  if (list == null) {
+    lists.set(key, [value]);
+  } else {
+    list.push(value);
+  }
+}
+
+/**
+ * Every meeting owed to this player that is still open: a raid prize,
+ * a grunt's pokemon, a gift or a revived fossil they closed without
+ * catching. Newest first
+ */
+export async function readWaitingEncounters(uid: string): Promise<Record<string, unknown>[]> {
+  const sql = getSql();
+  const [rows, retired] = await Promise.all([
+    sql`
+      select spawn_id, type, x, y, window_at, individual_value from encounters
+      where player = ${uid} and generation = ${WORLD_GENERATION}
+      order by window_at desc
+    `,
+    readRetiredKeys(uid),
+  ]);
+  const gone = new Set(retired);
+  const open: string[] = [];
+
+  for (const row of rows) {
+    const key = spawnKey(
+      asNumber(row.x),
+      asNumber(row.y),
+      asNumber(row.window_at),
+      asNumber(row.individual_value),
+    );
+
+    if (isOwedEncounter(asNumber(row.type)) && !gone.has(key)) {
+      open.push(String(row.spawn_id));
+    }
+  }
+
+  const records = await readEncounters(open, uid);
+  const waiting: Record<string, unknown>[] = [];
+
+  for (const spawnId of open) {
+    const record = records.get(spawnId);
+
+    if (record != null) {
+      waiting.push(record);
+    }
+  }
+  return waiting;
 }
 
 /**
@@ -157,4 +225,28 @@ export async function writeEncounter(transaction: Tx, record: EncounterRecord): 
       insert into encounter_abilities ${transaction(abilities, 'generation', 'spawn_id', 'player', 'slot', 'ability')}
     `;
   }
+}
+
+/** The keys of every encounter that has run from this player, in the live generation */
+export async function readRetiredKeys(uid: string): Promise<string[]> {
+  const rows = await getSql()`
+    select key from fled_encounters
+    where player = ${uid} and generation = ${WORLD_GENERATION}
+  `;
+  const keys: string[] = [];
+
+  for (const row of rows) {
+    keys.push(String(row.key));
+  }
+  return keys;
+}
+
+/** The safari tally stored on this player's encounter, as it was written */
+export async function readSafariTally(spawnId: string, player: string): Promise<unknown> {
+  const rows = await getSql()`
+    select safari from encounters
+    where generation = ${WORLD_GENERATION} and spawn_id = ${spawnId} and player = ${player}
+  `;
+
+  return rows.at(0)?.safari ?? null;
 }

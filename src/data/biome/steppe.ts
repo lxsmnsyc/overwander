@@ -79,10 +79,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Stoutland, weight: 6 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [
-        { species: Species.Raikou, weight: 10 },
-        { species: Species.Zapdos, weight: 10 },
-      ],
+      special: [{ species: Species.Zapdos, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -158,10 +155,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Stoutland, weight: 6 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [
-        { species: Species.Raikou, weight: 10 },
-        { species: Species.Zapdos, weight: 10 },
-      ],
+      special: [{ species: Species.Zapdos, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -206,10 +200,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Rhyperior, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [
-        { species: Species.Raikou, weight: 10 },
-        { species: Species.Zapdos, weight: 10 },
-      ],
+      special: [{ species: Species.Zapdos, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -254,10 +245,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Rhyperior, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [
-        { species: Species.Raikou, weight: 10 },
-        { species: Species.Zapdos, weight: 10 },
-      ],
+      special: [{ species: Species.Zapdos, weight: 10 }],
     },
   });
   registerWaterPool(Biome.Steppe, {

@@ -24,8 +24,7 @@ modern ones.
   battle canvas actually run.
 - [The database](docs/database.md): every table the game writes to, what it
   holds, and who may touch it.
-- [Deploying it](docs/deploy.md): standing the game up on Vercel and a hosted
-  Supabase project.
+- [Deploying it](docs/deploy.md): standing the game up on your own server.
 - [Credits](docs/credits.md): who wrote it, what it is built from, and where the
   art and rules come from.
 - [Contributing](CONTRIBUTING.md): branches, changesets, the checks to run, and
@@ -39,8 +38,9 @@ modern ones.
 | Solid 1.9      | Signals and resources; no virtual DOM                          |
 | terracotta     | Headless, accessible dialogs, tabs, listboxes and buttons      |
 | Tailwind CSS 4 | Styling, configured in `src/app.css` rather than a config file |
-| Supabase       | Postgres, auth, row-level security and the realtime stream     |
-| postgres.js    | The direct connection every privileged write travels over      |
+| Postgres 17    | Every row, with `pg_cron` for the sweeps, in Docker            |
+| postgres.js    | The one connection every read and write travels over           |
+| Better Auth    | Accounts, sessions, Google and GitHub sign-in                  |
 | valibot        | The schemas every server function checks its arguments against |
 | Vitest         | The tests, which run the real engines rather than mocks        |
 | oxlint / oxfmt | Linting and formatting                                         |
@@ -52,55 +52,39 @@ modern ones.
 - **Node 22 or newer**, which the Vite 8 toolchain expects.
 - **pnpm 12**. The version is pinned in `packageManager`, so Corepack picks it
   up. The lockfile is `pnpm-lock.yaml`; npm and yarn will fight it.
-- **The Supabase CLI** and **Docker**, for the local stack. A hosted project
-  works too, but nothing about development needs one.
+- **Docker** with the compose plugin, for the local database.
 
 ### Install and run
 
 ```bash
 pnpm install
-cp .env.example .env    # then fill it in, see below
-pnpm db                 # starts the local stack and prints its keys
+pnpm db                 # the development database on 127.0.0.1:54324
+pnpm db:migrate         # the schema
+pnpm seed               # two accounts and a few rows
 pnpm dev                # http://localhost:3000
 ```
 
-`pnpm db` is `supabase start`. It prints the API URL, the anon key and the
-service-role key; `pnpm db:stop` puts it away and `pnpm db:reset` rebuilds the
-database from the migrations. `pnpm seed` fills a fresh stack with a couple of
-accounts and enough rows to walk the game. The whole of it, including what to do
-when something is wrong, is in
+The whole of it, including what to do when something is wrong, is in
 [Running the database locally](docs/database/local-stack.md).
 
 ### Configuring it
 
-`.env.example` documents every variable and its local default. There are two
-groups.
+The script's name says which settings it reads:
 
-The **browser's pair** is public by design and lets the client reach auth, the
-tables it may read, and the realtime socket:
+- **Development** (`pnpm dev`, `pnpm db:*`, `pnpm seed`) reads the committed
+  `.env.development`, which sets every database, account and sign-in value.
+  Personal changes go in `.env.development.local`.
+- **Production** (`pnpm start`, `pnpm migrate`) reads the root `.env`.
+  `.env.example` documents every variable it takes.
 
-| Variable                 | Where it comes from                             |
-| ------------------------ | ----------------------------------------------- |
-| `VITE_SUPABASE_URL`      | `supabase start`, or the project's API settings |
-| `VITE_SUPABASE_ANON_KEY` | The same                                        |
-| `VITE_WORLD_SEED`        | Any string; the world everyone shares           |
+- **`VITE_` variables** are baked into the browser bundle, so they are public.
+  `VITE_WORLD_SEED` is the world everyone shares.
+- **Everything else is the server's**, and secret: `DATABASE_URL`,
+  `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` and the OAuth apps' credentials.
 
-The **server's** variables are secret. Everything that creates or moves value,
-recording a catch, paying gold, granting an item, raising a level, settling an
-auction, is written by `src/server/*` over a direct Postgres connection as the
-table owner, which row-level security does not bind:
-
-| Variable                    | What it is for                                                   |
-| --------------------------- | ---------------------------------------------------------------- |
-| `SUPABASE_DB_URL`           | The owner connection every privileged write travels over         |
-| `SUPABASE_URL`              | Where tokens are verified and the auth admin API lives           |
-| `SUPABASE_JWT_SECRET`       | Checking an HS256 token's signature without a round trip         |
-| `SUPABASE_SERVICE_ROLE_KEY` | Auth admin calls alone: finding a player by email, the dashboard |
-
-Against a hosted project, point `SUPABASE_DB_URL` at the **transaction-mode
-pooler** (port 6543), and leave `SUPABASE_JWT_SECRET` empty so the server fetches
-the project's JWKS instead. Without `SUPABASE_DB_URL` the game reads fine and
-refuses every write.
+The browser never reaches the database. Every read and write is a server
+function in `src/auth/` calling into `src/server/`, which verifies the caller and
+decides what they may see or change.
 
 Changing `VITE_WORLD_SEED` changes the world. Chunk seeds, biomes, landmark
 placement, spawn rolls and lair contents all derive from it. Two deployments with
@@ -109,67 +93,63 @@ point at ground that no longer looks the same.
 
 ### The schema
 
-[`supabase/migrations/`](supabase/migrations) is the whole database, applied in
-filename order: the tables, the functions and triggers, the row-level security,
-and what is published to realtime. [Security](docs/database/security.md) explains
-what the policies say and why.
+[`db/migrations/`](db/migrations) is the whole database, applied in filename
+order. `pnpm db:migrate` applies what is pending, and the server does the same as it
+starts. [Schema changes](docs/deploy/schema-changes.md) covers writing one.
+
+The database suite runs the server modules against a real Postgres:
 
 ```bash
-supabase db push --project-ref <ref>   # apply them to a hosted project
+pnpm test:db
 ```
 
-[Deploying the game](docs/deploy.md) is the whole of that side: the hosted
-project, the sign-in providers, and what Vercel needs in its environment.
-
-Most tables are read-only to clients on purpose: the server owns anything worth
-cheating for. The exceptions are a player's own profile and the shared snapshot
-window, which goes through a function rather than a table write.
-
-The policies have their own tests, since nothing outside a real Postgres can say
-what a policy does:
-
-```bash
-pnpm db          # in one terminal
-pnpm test:rules  # in another
-```
-
-`test/rls/` signs two accounts in and checks what each may read and write. It is
-separate from `pnpm test` because it is the only suite that needs the stack
-running, and because it **clears the game rows between cases**: run it while the
-e2e suite is using the same stack and it will delete the accounts those browsers
-are signed in as.
+It uses the throwaway development database on port 54324, which it starts and
+migrates itself, and never production. It refuses any database whose name does
+not end in `_dev`. It **clears the game rows between cases**, so run it apart
+from the e2e suite, which shares that database. Every suite reads
+`test/env/.env.test` rather than the root `.env`.
 
 ### Signing in
 
-A deployed game offers **Google and GitHub**, both redirect-based. The **email
-and password form is drawn on a development build**, and on any build whose host
-sets `VITE_EMAIL_SIGN_IN` to `1` or `true`. It is what the browser tests sign in
-with: the local stack skips address confirmation, so a sign-up answers with a
-live session. A development build also
+Every build offers an **email and password**, and a **passkey**. **Google and
+GitHub** buttons appear only where the server has both of that provider's
+credentials. A sign-up answers with a live session. A development build also
 hands every account it creates the `admin` role, granted on the server.
+
+An account can turn on an authenticator app and add passkeys under Settings,
+Security, after typing its password again. The game sends no email, so staff
+give a player a **password link** from the player's admin page instead, or with
+`pnpm password-link <email>` for an account no staff member ranks above.
 
 ## Commands
 
-| Command                | What it does                                        |
-| ---------------------- | --------------------------------------------------- |
-| `pnpm dev`             | Development server with HMR                         |
-| `pnpm build`           | Production build (client, server and Nitro output)  |
-| `pnpm start`           | Serve the built output from `.output/`              |
-| `pnpm preview`         | Preview the build locally                           |
-| `pnpm db`              | Start the local Supabase stack                      |
-| `pnpm db:reset`        | Rebuild the database from `supabase/migrations/`    |
-| `pnpm seed`            | Fill a fresh stack with accounts and sample rows    |
-| `pnpm import-sprites`  | Copy the pokemon sheets in from `../SpriteCollab`, the `lxsmnsyc/SpriteCollab` fork |
-| `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel    |
-| `pnpm sprite-coats`    | Restamp `coats.json` after anything writes a sheet  |
-| `pnpm sprite-stamps`   | Restamp every other sheet, which `pnpm build` also does |
-| `pnpm test`            | The whole test suite, once                          |
-| `pnpm test:rules`      | The row-level security suite, against a local stack |
-| `pnpm test:e2e`        | The Playwright suites under `e2e/`                  |
-| `npx tsc --noEmit`     | Type-check                                          |
-| `npx oxlint src test`  | Lint                                                |
-| `npx oxfmt src test`   | Format                                              |
-| `pnpm cs:add`          | Add a changeset                                     |
+| Command                      | What it does                                                                        |
+| ---------------------------- | ----------------------------------------------------------------------------------- |
+| `pnpm dev`                   | Development server with HMR                                                         |
+| `pnpm build`                 | Production build (client, server and Nitro output)                                  |
+| `pnpm start`                 | Serve the built output from `.output/`                                              |
+| `pnpm preview`               | Preview the build locally                                                           |
+| `pnpm db`                    | Start the development database (`compose.dev.yaml`)                                 |
+| `pnpm db:reset`              | Delete the development data and rebuild it from `db/migrations/`                    |
+| `pnpm db:migrate`            | Apply pending migrations to the development database                                |
+| `pnpm migrate`               | Apply pending migrations to production, from the root `.env`                        |
+| `pnpm seed`                  | Fill a fresh database with accounts and sample rows                                 |
+| `pnpm server`                | Build and start production (database, app and tunnel), from the root `.env`         |
+| `pnpm server:tunnel`         | Start the tunnel alone, when the app is already up                                  |
+| `pnpm server:tunnel:restart` | Restart the tunnel alone, when the site answers 502 or 1033 but the app is up       |
+| `pnpm server:ps`             | Show production's services and their health                                         |
+| `pnpm server:logs`           | Follow production's logs; name a service to follow one, such as `tunnel`            |
+| `pnpm import-sprites`        | Copy the pokemon sheets in from `../SpriteCollab`, the `lxsmnsyc/SpriteCollab` fork |
+| `pnpm compact-sprites`       | Rewrite the sprite PNGs smaller, pixel for pixel                                    |
+| `pnpm sprite-coats`          | Restamp `coats.json` after anything writes a sheet                                  |
+| `pnpm sprite-stamps`         | Restamp every other sheet, which `pnpm build` also does                             |
+| `pnpm test`                  | The whole test suite, once                                                          |
+| `pnpm test:db`               | The server modules against the development database                                 |
+| `pnpm test:e2e`              | The Playwright suites under `e2e/`                                                  |
+| `npx tsc --noEmit`           | Type-check                                                                          |
+| `npx oxlint src test`        | Lint                                                                                |
+| `npx oxfmt src test`         | Format                                                                              |
+| `pnpm cs:add`                | Add a changeset                                                                     |
 
 ## Where things live
 
@@ -178,15 +158,15 @@ hands every account it creates the `admin` role, granted on the server.
 | `src/data/`            | The dex: species, moves, abilities, items, biomes, spawn and item pools                                                   |
 | `src/overworld/`       | The world: chunks, snapshots, landmarks, encounters, safari, breeding, raids                                              |
 | `src/battle/`          | The battle engine: events, units, moves, statuses, abilities, items, AI                                                   |
-| `src/auth/`            | Client-side reads under row-level security, and the `'use server'` wrappers around the writes                             |
-| `src/server/`          | Privileged writes over the owner connection, behind a verified caller                                                     |
+| `src/auth/`            | The browser's side: `'use server'` wrappers around every read and write, sign-in, and the live feed                       |
+| `src/server/`          | Reads and writes over the owner connection, behind a verified caller                                                      |
 | `src/components/`      | The UI, in a folder per feature (`overworld/`, `catches/`, `battle/`, …) over the shared `sprites/`, `styled/` and `app/` |
 | `src/canvas/`          | Sprite sheets and the animation class the map and battle canvases draw with                                               |
 | `src/core/`            | The shared primitives: seeded RNG, Perlin noise, the event engine                                                         |
 | `public/sprites/`      | Sprite sheets by region: a folder per pokemon holding its layout, its frames and a PNG per coat                           |
 | `sprite-pipeline.json` | What has been done to each sheet, and to which version of it                                                              |
 | `test/`                | Vitest suites, mirroring the source tree                                                                                  |
-| `supabase/`            | The migrations, and the local stack's configuration                                                                       |
+| `db/`                  | The migrations, their runner and the database image                                                                       |
 | `docs/`                | The player's guide, the database pages and the engine notes                                                               |
 
 Two conventions are worth knowing before reading the source. Every module has a

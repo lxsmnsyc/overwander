@@ -7,6 +7,7 @@ import ensureBattleData from './data/battle-data';
 import registerWorldData from './data/world';
 import ThemeProvider from './components/app/theme';
 import settings, { loadSettings } from './components/app/settings';
+import Announcements from './components/app/Announcements';
 import { ToastProvider } from './components/styled';
 import { ROOT_HOST } from './components/styled/portal-host';
 import './app.css';
@@ -63,6 +64,10 @@ export default function App(): JSX.Element {
                   it would say so over a battle too */}
                 <ToastProvider>
                   <Suspense>{props.children}</Suspense>
+                  {/* What the game says to everybody sits over every
+                    page, the sign-in included: "down for maintenance"
+                    is most use to somebody who cannot get in */}
+                  <Announcements />
                 </ToastProvider>
               </AuthProvider>
             </ThemeProvider>

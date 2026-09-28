@@ -58,6 +58,7 @@ import deriveEncounter, {
   MAX_SIZE_SCALE,
   MIN_SIZE_SCALE,
   RAID_FAMILY_DAY_MIN_IV,
+  RAID_MIN_IV,
   deriveAbility,
   deriveMoves,
   deriveSize,
@@ -830,7 +831,7 @@ describe('chunk snapshot', () => {
     expect(deriveSize(Species.Gastly, traitValue).weight).toBeGreaterThan(0);
   });
 
-  it('floors a family-day raid reward at ten in every IV', () => {
+  it('floors every raid reward, and a family-day one further', () => {
     const world = new World('overworld');
     // The first day of the year features Bulbasaur's family
     const day = Date.UTC(2026, 0, 1);
@@ -842,16 +843,11 @@ describe('chunk snapshot', () => {
       type: EncounterType.LegendaryRaid,
     });
 
-    expect(Object.values(unpackIVs(raid.ivs))).toEqual([
-      RAID_FAMILY_DAY_MIN_IV,
-      RAID_FAMILY_DAY_MIN_IV,
-      RAID_FAMILY_DAY_MIN_IV,
-      RAID_FAMILY_DAY_MIN_IV,
-      RAID_FAMILY_DAY_MIN_IV,
-      RAID_FAMILY_DAY_MIN_IV,
-    ]);
+    expect(Object.values(unpackIVs(raid.ivs))).toEqual(
+      Array.from({ length: 6 }, () => RAID_MIN_IV + RAID_FAMILY_DAY_MIN_IV),
+    );
 
-    // Only raids on the family's own day get the floor
+    // A wild meeting gets neither floor
     const wild = deriveEncounter(snapshot, [...spawn], 'trainer-red');
 
     // Every slice zero packs to zero, which is the whole point of
@@ -860,9 +856,14 @@ describe('chunk snapshot', () => {
 
     const offDay = new ChunkSnapshot(world.getChunk(0, 0), day + 200 * 24 * 60 * 60 * 1000);
 
-    expect(
-      deriveEncounter(offDay, [...spawn], 'trainer-red', { type: EncounterType.LegendaryRaid }).ivs,
-    ).toBe(0);
+    // Off the family's day a raid keeps its own floor alone
+    const ordinary = deriveEncounter(offDay, [...spawn], 'trainer-red', {
+      type: EncounterType.LegendaryRaid,
+    });
+
+    expect(Object.values(unpackIVs(ordinary.ivs))).toEqual(
+      Array.from({ length: 6 }, () => RAID_MIN_IV),
+    );
 
     // A rolled value above the floor is left alone
     const rolled = deriveEncounter(snapshot, [Species.Bulbasaur, 0xffffffff, 0], 'trainer-red', {

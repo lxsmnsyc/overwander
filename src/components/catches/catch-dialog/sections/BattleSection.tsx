@@ -23,7 +23,7 @@ import type { Moves } from '../../../../data/ids/moves';
 
 import { getMoveData } from '../../../../data/moves';
 
-import { describeAbility, describeItem, detailAbility } from '../../../details';
+import { describeAbility, describeItem, detailAbility, detailItem } from '../../../details';
 import { CHANNELER_FEE } from '../../../../data/overworld/npc';
 
 import InventoryPicker from '../../../items/InventoryPicker';
@@ -116,7 +116,9 @@ function Heading(props: {
   return (
     <div class="flex min-h-9 items-center justify-between gap-2">
       <span class="flex items-center gap-1.5">
-        <h3 class="text-left">{props.title}</h3>
+        <h3 class="text-left text-xs font-extrabold tracking-wider text-muted uppercase">
+          {props.title}
+        </h3>
         {props.hint}
       </span>
       <Show when={props.shifted}>
@@ -204,10 +206,10 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
   };
 
   return (
-    <section class="flex flex-col">
-      {/* Abilities and held items side by side, over the moves */}
-      <div class="grid grid-cols-2">
-        <div class="flex min-w-0 flex-col gap-1 border-r border-line-soft pb-3 pr-3">
+    <section class="flex flex-col gap-3 md:h-full">
+      {/* Abilities and held items side by side in one card, over the moves */}
+      <div class="grid grid-cols-2 rounded-2xl border-2 border-line-soft p-3">
+        <div class="flex min-w-0 flex-col gap-1 border-r border-line-soft pr-3">
           <Heading
             title="Abilities"
             hint={
@@ -243,7 +245,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
             <Index each={abilities()}>
               {(ability, at) => (
                 <li {...abilitiesOrder.itemProps(at)} class={grip(abilitiesOrder.held() === at)}>
-                  <TooltipHost class="block" {...detailAbility(ability())}>
+                  <TooltipHost class="block" kind="ability" {...detailAbility(ability())}>
                     <Badge class="w-full justify-center" wrap>
                       {describeAbility(ability())}
                     </Badge>
@@ -261,7 +263,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
           </ul>
         </div>
 
-        <div class="flex min-w-0 flex-col gap-1 pb-3 pl-3">
+        <div class="flex min-w-0 flex-col gap-1 pl-3">
           <Heading
             title="Held items"
             hint={
@@ -288,8 +290,12 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
           />
           {/* Only its own room is drawn, and only for somebody who can
                 fill it: an empty square on a stranger's pokemon is a
-                button nobody may press */}
-          <ul class="m-0 grid list-none grid-cols-8 gap-1 p-0" {...itemsOrder.listProps}>
+                button nobody may press. Four to a row below `md`, where
+                eight squares are too small to press */}
+          <ul
+            class="m-0 grid list-none grid-cols-4 gap-1 p-0 md:grid-cols-8"
+            {...itemsOrder.listProps}
+          >
             <Index each={itemSlots(props.caught, props.owned)}>
               {(_, at) => (
                 <li
@@ -318,7 +324,8 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                   >
                     <HoverCard
                       class="block"
-                      title="Info"
+                      title={detailItem(items()[at]).name}
+                      kind="Item"
                       footer={(close) => (
                         <Show when={props.owned} fallback={<Button onClick={close}>Close</Button>}>
                           <Button
@@ -356,7 +363,8 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
       </div>
 
       {/* The moves under them: the longest of the three lists */}
-      <div class="flex min-w-0 flex-col gap-1 border-t border-line-soft pt-3">
+      {/* Grows to the foot of the column, so the right side ends level with the left */}
+      <div class="flex min-w-0 flex-col gap-1 rounded-2xl border-2 border-line-soft p-3 md:flex-1">
         <Heading
           title="Moves"
           hint={

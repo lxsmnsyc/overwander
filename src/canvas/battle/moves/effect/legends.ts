@@ -28,7 +28,8 @@ import {
 } from '../__paint';
 import { backToward } from './contact';
 import type { EffectShape, ShapePainter } from './shapes';
-import { REACH, landing, many } from './shapes';
+import { REACH, STARFALL_SPAN, landing, many } from './shapes';
+import { FUTURE_SIGHT_DELAY } from '../../../../battle/moves/future-sight';
 
 /** Roar of Time: the share at which its rings stop spreading, and the share at which they break */
 export const STALL_FREEZE = 0.35;
@@ -75,7 +76,7 @@ function ringPieces(
 export const LUSTRE_GATHER = 0.25;
 
 /** Doom Desire: the share spent falling before the star goes off */
-export const STARFALL_DROP = 0.35;
+export const STARFALL_DROP = FUTURE_SIGHT_DELAY / STARFALL_SPAN;
 
 /** Crush Grip: the share spent closing before the hands squeeze */
 export const GRIP_CLOSE = 0.45;

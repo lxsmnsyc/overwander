@@ -3,21 +3,11 @@ import { isEgg } from '../../../../auth/egg';
 import type { Items } from '../../../../data/ids/items';
 import type { Moves } from '../../../../data/ids/moves';
 import { getRecallableMoves, getTutorableMoves } from '../../../../data/overworld/npc';
-import CatchPicker, { type CatchOption } from '../../../catches/catch-picker';
+import type { CatchOption } from '../../../catches/catch-picker';
 import { MoveLine } from '../../../catches/TeachMoveDialog';
-import FeeLine from './price';
-import AnimatedSprite from '../../../sprites/AnimatedSprite';
-import { getCatchName, isGuarded, isShiny } from '../../../../auth/caught-record';
-import { Genders } from '../../../../data/ids/species';
-import {
-  Button,
-  DialogSection,
-  LIST_PAGE,
-  List,
-  ListRow,
-  RowButton,
-  createPager,
-} from '../../../styled';
+import { CounterStep, CounterTerms, PickOne } from '../terms';
+import { isGuarded } from '../../../../auth/caught-record';
+import { DialogSection, LIST_PAGE, List, ListRow, RowButton, createPager } from '../../../styled';
 
 /**
  * The two counters that sell a move: the reminder, who gives back what
@@ -77,79 +67,51 @@ function MoveCounter(
 
   return (
     <DialogSection class="flex flex-col gap-3">
-      <FeeLine fee={props.fee} scales={props.scales} />
-
-      <Show
-        when={standing()}
-        fallback={
-          <>
-            <span class="text-xs font-semibold text-muted uppercase">Choose a pokemon</span>
-            <CatchPicker
-              inline
-              options={props.options}
-              value={props.picked}
-              verb={props.verb}
-              empty={props.empty}
-              filter={(option) =>
-                !isEgg(option.caught) && !option.fighting && props.movesOf(option).length > 0
-              }
-              reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
-              note={(option) => `${props.movesOf(option).length} ${props.counted}`}
-              onPick={props.onPick}
-            />
-          </>
+      <CounterTerms
+        cost={{ item: props.fee }}
+        have={{
+          amount: props.scales,
+          short: props.scales < 1,
+          unit: props.scales === 1 ? 'Heart Scale' : 'Heart Scales',
+        }}
+      />
+      <PickOne
+        options={props.options}
+        picked={props.picked}
+        onPick={props.onPick}
+        busy={props.busy}
+        verb={props.verb}
+        empty={props.empty}
+        filter={(option) =>
+          !isEgg(option.caught) && !option.fighting && props.movesOf(option).length > 0
         }
-      >
-        {(option) => (
-          <>
-            <ListRow class="flex-nowrap">
-              <span class="flex size-12 shrink-0 items-center justify-center">
-                <AnimatedSprite
-                  species={option().caught.species}
-                  shiny={isShiny(option().caught)}
-                  female={option().caught.gender === Genders.Female}
-                  direction="DownLeft"
-                  still
-                  fill
-                  label=""
-                />
-              </span>
-              <span class="min-w-0 grow truncate text-left font-semibold">
-                Lv. {option().caught.level} {getCatchName(option().caught)}
-              </span>
-              <Button
-                disabled={props.busy}
-                onClick={() => {
-                  props.onPick(null);
-                }}
-              >
-                Change
-              </Button>
-            </ListRow>
-
-            <span class="text-xs font-semibold text-muted uppercase">
-              {props.heading} · {moves().length}
-            </span>
-            <List>
-              <For each={page.shown()}>
-                {(move) => (
-                  <ListRow selected={props.chosen === move}>
-                    <RowButton
-                      pressed={props.chosen === move}
-                      disabled={props.busy}
-                      onClick={() => {
-                        props.onChoose(move);
-                      }}
-                    >
-                      <MoveLine move={move} />
-                    </RowButton>
-                  </ListRow>
-                )}
-              </For>
-            </List>
-            {page.controls()}
-          </>
-        )}
+        reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
+        note={(option) => `${props.movesOf(option).length} ${props.counted}`}
+      />
+      <Show when={standing() != null}>
+        <>
+          <CounterStep>
+            {props.heading} · {moves().length}
+          </CounterStep>
+          <List>
+            <For each={page.shown()}>
+              {(move) => (
+                <ListRow selected={props.chosen === move}>
+                  <RowButton
+                    pressed={props.chosen === move}
+                    disabled={props.busy}
+                    onClick={() => {
+                      props.onChoose(move);
+                    }}
+                  >
+                    <MoveLine move={move} />
+                  </RowButton>
+                </ListRow>
+              )}
+            </For>
+          </List>
+          {page.controls()}
+        </>
       </Show>
     </DialogSection>
   );

@@ -109,8 +109,8 @@ the truth, and a stored tier would only be something to fall out of step with.
 ## Access
 
 `quest_progress`, `quest_baselines`, `quest_claims`, `rotation_baselines` and
-`rotation_claims` are **closed** end to end: row-level security is on and no policy is written, so a
-browser reading them gets nothing back. Everything is served through the server.
+`rotation_claims` are **closed** end to end: no server read hands them to a
+browser. Everything is served through the server's own functions.
 `awards` is tier 1, readable by anybody signed in.
 
 ## See also

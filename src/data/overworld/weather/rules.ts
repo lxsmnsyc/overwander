@@ -10,7 +10,7 @@ import Weather, { WEATHER_TYPES } from './kinds';
  * reason to go out. Rain over everything would be a floor under the
  * whole game rather than a reason to walk anywhere
  */
-export const WEATHER_MIN_IV = 10;
+export const WEATHER_MIN_IV = 9;
 
 /**
  * How much more heavily a sky crowds its own types into a chunk's

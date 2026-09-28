@@ -2,10 +2,9 @@
  * A party a player saved under a name, so forming one for a raid or a
  * duel is a press rather than six.
  *
- * It is written apart from the reads in
- * [`team-presets.ts`](team-presets.ts) because the server writes it
- * too, and a server module may not pull the browser's Supabase client
- * in behind it.
+ * It is written apart from [`team-presets.ts`](team-presets.ts)
+ * because the server writes it too, and a server module may not pull
+ * the browser's server-function stubs in behind it.
  */
 export interface TeamPresetRecord {
   name: string;

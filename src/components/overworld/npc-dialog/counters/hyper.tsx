@@ -12,7 +12,15 @@ import {
 import Npc, { hyperTrainingCost } from '../../../../data/overworld/npc';
 import type { CatchOption } from '../../../catches/catch-picker';
 import playEffect, { Effect } from '../../../app/sound';
-import { Button, DialogActions, DialogSection, useToast } from '../../../styled';
+import {
+  Button,
+  DialogActions,
+  DialogSection,
+  List,
+  ListRow,
+  RowButton,
+  useToast,
+} from '../../../styled';
 import { CostBadge, CounterSpent, CounterStep, CounterTerms, PickOne } from '../terms';
 import { type CounterProps, NPC_SPENT, goldOf, optionsOf, refusal, useSaying } from '../shared';
 
@@ -114,32 +122,38 @@ export default function Hyper(props: CounterProps): JSX.Element {
             {(chosen) => (
               <>
                 <CounterStep>Choose a value</CounterStep>
-                <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {/* A list rather than a grid, so the cost has room beside each value */}
+                <List>
                   <For each={STAT_ORDER}>
                     {(one) => {
                       const iv = (): number => getIV(chosen().caught.ivs, one);
                       const cost = (): number => hyperTrainingCost(iv());
 
                       return (
-                        <Button
-                          tone={stat() === one ? 'primary' : undefined}
-                          disabled={busy() || iv() >= MAX_IV || cost() > gold()}
-                          label={`${STAT_NAMES[one]} from ${iv()} to ${MAX_IV}, ${cost()} gold`}
-                          onClick={() => {
-                            setStat(one);
-                          }}
-                        >
-                          {STAT_NAMES[one]} {iv()} → {MAX_IV}
-                          <span class="block text-xs opacity-70">
-                            {iv() >= MAX_IV
-                              ? 'At the top'
-                              : `${cost().toLocaleString('en-US')} gold`}
-                          </span>
-                        </Button>
+                        <ListRow class="flex-nowrap p-0" selected={stat() === one}>
+                          <RowButton
+                            class="flex items-center gap-2 px-3 py-2"
+                            pressed={stat() === one}
+                            disabled={busy() || iv() >= MAX_IV || cost() > gold()}
+                            onClick={() => {
+                              setStat(one);
+                            }}
+                          >
+                            <span class="grow font-semibold">{STAT_NAMES[one]}</span>
+                            <span class="tabular-nums">
+                              {iv()} → {MAX_IV}
+                            </span>
+                            <span class="w-24 shrink-0 text-right text-xs text-muted tabular-nums">
+                              {iv() >= MAX_IV
+                                ? 'At the top'
+                                : `${cost().toLocaleString('en-US')} gold`}
+                            </span>
+                          </RowButton>
+                        </ListRow>
                       );
                     }}
                   </For>
-                </div>
+                </List>
               </>
             )}
           </Show>

@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { getLearnSet, getSpeciesData } from '../../src/data/species/__create';
 import {
+  COMPACT_REGIONS,
   type LearnSetFile,
   type RecordFile,
   decodeLearnSet,
   decodeRecord,
 } from '../../src/data/species/compact';
-import { compactFiles, compactSource } from '../../src/data/species/source';
+import { SOURCE_REGIONS, compactFiles, compactSource } from '../../src/data/species/source';
 
 // The committed rows, by file name
 const committed = import.meta.glob<string>('../../src/data/species/compact/*.json', {
@@ -33,6 +34,15 @@ function fileOf(name: string): string | undefined {
 const regions = compactSource();
 
 describe('the compact species rows', () => {
+  it('are loaded in the order the source registers them', () => {
+    const names: string[] = [];
+
+    for (const [name] of SOURCE_REGIONS) {
+      names.push(name);
+    }
+    expect(names).toEqual(COMPACT_REGIONS);
+  });
+
   it('match the source, so nobody forgot pnpm species-compact', () => {
     for (const region of regions) {
       for (const [name, text] of compactFiles(region)) {

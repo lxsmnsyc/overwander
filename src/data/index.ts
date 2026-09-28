@@ -3,6 +3,7 @@ import registerBiomeSpawns from './biome';
 import registerItems from './items';
 import { registerMoves } from './moves';
 import { registerSpecies } from './species';
+import registerSpeciesLearnSets from './species/learn-sets';
 
 /**
  * Fill every runtime registry at once, synchronously.
@@ -23,6 +24,7 @@ export default function registerGameData(): void {
   registerMoves();
   registerAbilities();
   registerSpecies();
+  registerSpeciesLearnSets();
   registerItems();
   registerBiomeSpawns();
 }

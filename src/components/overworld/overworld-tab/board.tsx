@@ -8,6 +8,7 @@ import {
   runningWindows,
   viewChunks,
 } from './board-view';
+import { battleDataReady } from '../../app/battle-data';
 import challengerOf, { championGate, eliteGate, frontierGate } from './challengers';
 import { describeItem } from '../../details';
 import { type Journey, stateOf } from './journey';
@@ -2147,8 +2148,12 @@ export default function OverworldBoard(props: {
   const standable = (loaded: BoardView, index: number): boolean =>
     canEnter(travel(), factsAt(loaded, cell()), factsAt(loaded, index));
 
-  /** Whether the buddy can learn a field move, which is all a field move asks */
-  const knows = (field: FieldMove): boolean => canUseFieldMove(buddy()?.species, field);
+  /**
+   * Whether the buddy can learn a field move, which is all a field move
+   * asks. Learn sets load with the fight data, so the buttons wait for it
+   */
+  const knows = (field: FieldMove): boolean =>
+    battleDataReady() && canUseFieldMove(buddy()?.species, field);
 
   /** Whether open water touches the player's cell, which is where Surf starts */
   const besideWater = (loaded: BoardView): boolean => {

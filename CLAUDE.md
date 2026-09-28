@@ -34,6 +34,8 @@ Everything in `src/data/` describes itself and registers itself; nothing is quer
 
 Each registry is a folder with `__create.ts` (the `Map`, the `registerX`/`getXData` pair, and any shared factories), a `gen-1.ts` of entries, and an `index.ts` that re-exports and registers. Ids are `const enum`s in `src/data/ids/`. Every entry carries a required one-line player-facing `description`; a test asserts each ends in a full stop.
 
+Species load differently. The game reads compact JSON rows under `src/data/species/compact/`, which `pnpm species-compact` writes from the `gen-*` source files. Run it after editing a species; a test fails when the two drift. Records load at boot. Learn sets load with the fight data (`battle-data.ts`), so read one through `getLearnSet` and only where that data has landed.
+
 Ability pools have their own rules about what a species may reach, which the `ability-pools` skill states.
 
 ## Battle engine

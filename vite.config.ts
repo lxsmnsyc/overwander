@@ -136,6 +136,9 @@ export default defineConfig(({ mode }) => ({
     // The world tests generate thousands of chunks and sit near 5 seconds alone,
     // so the default timeout fails them whenever the machine is busy
     testTimeout: 20_000,
+    // Learn sets load apart from the species records, as they do on the
+    // server, so every test can read one after registering the species
+    setupFiles: ['test/setup/learn-sets.ts'],
     /**
      * The battle engine and the modules that field it are
      * `client-only`: they are played in a browser and nothing on the

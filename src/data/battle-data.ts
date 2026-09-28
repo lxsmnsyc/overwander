@@ -1,9 +1,9 @@
 /**
  * The registries a fight needs, loaded when something needs them.
  *
- * Moves, abilities and items are two thirds of the data in the game
- * and none of it is read to draw the overworld: a player walking
- * around is not using a move card, a bag or an ability. So they are
+ * Moves, abilities, items and the species' learn sets are most of the
+ * data in the game, and none of it is read to draw the overworld: a
+ * player walking around is not using a move card, a bag or an ability. So they are
  * imported dynamically and registered on first ask, which keeps them
  * out of the chunk the first frame waits for.
  *
@@ -30,15 +30,17 @@ export function isBattleDataReady(): boolean {
 
 export default async function ensureBattleData(): Promise<void> {
   loading ??= (async (): Promise<void> => {
-    const [moves, abilities, items] = await Promise.all([
+    const [moves, abilities, items, learnSets] = await Promise.all([
       import('./moves'),
       import('./abilities'),
       import('./items'),
+      import('./species/learn-sets'),
     ]);
 
     moves.registerMoves();
     abilities.default();
     items.default();
+    learnSets.default();
 
     loaded = true;
   })();

@@ -1,5 +1,5 @@
-import { type JSX, type ParentProps, Suspense, createResource } from 'solid-js';
-import ensureBattleData from '../../data/battle-data';
+import { type JSX, type ParentProps, Suspense, createResource, createSignal } from 'solid-js';
+import ensureBattleData, { isBattleDataReady } from '../../data/battle-data';
 
 /**
  * The moves, abilities and items, waited for.
@@ -30,4 +30,22 @@ export default function BattleData(props: ParentProps<{ fallback?: JSX.Element }
       <Loaded ready={ready}>{props.children}</Loaded>
     </Suspense>
   );
+}
+
+const [ready, setReady] = createSignal(isBattleDataReady());
+
+/**
+ * Whether the fight data has landed, read as a signal, for something
+ * drawn without waiting on it that can simply stay hidden until then
+ */
+export function battleDataReady(): boolean {
+  if (!ready()) {
+    ensureBattleData().then(
+      () => setReady(true),
+      () => {
+        // Retried by whatever asks next
+      },
+    );
+  }
+  return ready();
 }

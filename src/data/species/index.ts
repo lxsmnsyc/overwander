@@ -1,10 +1,4 @@
-import {
-  type LearnSetFile,
-  type RecordFile,
-  registerLearnSetRows,
-  registerRecordRows,
-} from './compact';
-import registerTrueShadowSpecies from './true-shadow';
+import { COMPACT_REGIONS, type RecordFile, registerRecordRows } from './compact';
 
 export {
   getBaseForms,
@@ -78,49 +72,16 @@ export {
   trueShadowName,
 } from './true-shadow';
 
-// The regions already loaded from their compact rows rather than their source
-const COMPACT_RECORDS = import.meta.glob<RecordFile>(
-  [
-    './compact/gen-1.records.json',
-    './compact/gen-2.records.json',
-    './compact/gen-3.records.json',
-    './compact/gen-4.records.json',
-    './compact/gen-5.records.json',
-    './compact/gen-6.records.json',
-  ],
-  {
-    eager: true,
-    import: 'default',
-  },
-);
-const COMPACT_LEARN_SETS = import.meta.glob<LearnSetFile>(
-  [
-    './compact/gen-1.learnsets.json',
-    './compact/gen-2.learnsets.json',
-    './compact/gen-3.learnsets.json',
-    './compact/gen-4.learnsets.json',
-    './compact/gen-5.learnsets.json',
-    './compact/gen-6.learnsets.json',
-  ],
-  {
-    eager: true,
-    import: 'default',
-  },
-);
+// Eager, since the world reads the records at boot. Learn sets are
+// loaded apart, with the fight data: see learn-sets.ts
+const RECORDS = import.meta.glob<RecordFile>('./compact/*.records.json', {
+  eager: true,
+  import: 'default',
+});
 
+/** The species records, without their learn sets */
 export function registerSpecies(): void {
-  registerRecordRows(COMPACT_RECORDS['./compact/gen-1.records.json']);
-  registerLearnSetRows(COMPACT_LEARN_SETS['./compact/gen-1.learnsets.json']);
-  registerRecordRows(COMPACT_RECORDS['./compact/gen-2.records.json']);
-  registerLearnSetRows(COMPACT_LEARN_SETS['./compact/gen-2.learnsets.json']);
-  registerRecordRows(COMPACT_RECORDS['./compact/gen-3.records.json']);
-  registerLearnSetRows(COMPACT_LEARN_SETS['./compact/gen-3.learnsets.json']);
-  registerRecordRows(COMPACT_RECORDS['./compact/gen-4.records.json']);
-  registerLearnSetRows(COMPACT_LEARN_SETS['./compact/gen-4.learnsets.json']);
-  registerRecordRows(COMPACT_RECORDS['./compact/gen-5.records.json']);
-  registerLearnSetRows(COMPACT_LEARN_SETS['./compact/gen-5.learnsets.json']);
-  registerRecordRows(COMPACT_RECORDS['./compact/gen-6.records.json']);
-  registerLearnSetRows(COMPACT_LEARN_SETS['./compact/gen-6.learnsets.json']);
-  // Last: each one is a copy of a counterpart that has to exist first
-  registerTrueShadowSpecies();
+  for (const region of COMPACT_REGIONS) {
+    registerRecordRows(RECORDS[`./compact/${region}.records.json`]);
+  }
 }

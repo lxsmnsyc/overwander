@@ -54,6 +54,17 @@ export type LearnSetRow = [
   egg?: Moves[],
 ];
 
+/** Every region's files, in the order they register: the true shadows copy earlier species */
+export const COMPACT_REGIONS = [
+  'gen-1',
+  'gen-2',
+  'gen-3',
+  'gen-4',
+  'gen-5',
+  'gen-6',
+  'true-shadow',
+] as const;
+
 export type RecordFile = RecordRow[];
 export type LearnSetFile = LearnSetRow[];
 

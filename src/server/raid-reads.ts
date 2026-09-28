@@ -1,7 +1,6 @@
 import 'server-only';
 import { WORLD_GENERATION } from '../overworld/current';
 import { asOffset } from '../auth/local-time';
-import { spawnKey } from '../overworld/safari';
 import { getSql } from './db';
 import { asNumber, asString } from './read';
 
@@ -115,49 +114,13 @@ export async function readRaidInvites(uid: string): Promise<
   return invites;
 }
 
-/**
- * The raids this player has collected from, leaving out any whose
- * pokemon is still waiting uncaught, so the history offers it again
- */
+/** The raids this player has collected from */
 export async function readClaimedRaids(uid: string): Promise<string[]> {
-  const sql = getSql();
-  const [rows, open, retired] = await Promise.all([
-    sql`select raid_id from raid_rewards where player = ${uid}`,
-    sql`
-      select spawn_id, x, y, window_at, individual_value from encounters
-      where player = ${uid} and generation = ${WORLD_GENERATION} and spawn_id like '%$reward'
-    `,
-    sql`select key from fled_encounters where player = ${uid} and generation = ${WORLD_GENERATION}`,
-  ]);
-  const gone = new Set<string>();
-
-  for (const row of retired) {
-    gone.add(asString(row.key));
-  }
-
-  const waiting = new Set<string>();
-
-  for (const row of open) {
-    const key = spawnKey(
-      asNumber(row.x),
-      asNumber(row.y),
-      asNumber(row.window_at),
-      asNumber(row.individual_value),
-    );
-
-    if (!gone.has(key)) {
-      waiting.add(asString(row.spawn_id));
-    }
-  }
-
+  const rows = await getSql()`select raid_id from raid_rewards where player = ${uid}`;
   const claimed: string[] = [];
 
   for (const row of rows) {
-    const raid = asString(row.raid_id);
-
-    if (!waiting.has(`${raid}$reward`)) {
-      claimed.push(raid);
-    }
+    claimed.push(asString(row.raid_id));
   }
   return claimed;
 }

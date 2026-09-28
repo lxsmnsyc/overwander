@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import { Statuses } from '../../data/ids/status';
-import { STEP_PENALTY, USELESS_PENALTY } from '../ai/score';
+import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
 import type Unit from '../unit';
@@ -107,10 +107,6 @@ export default function setupEncore(battle: Battle): void {
     const friendly = event.target.unit.team.alliance === event.source.team.alliance;
 
     event.score += friendly ? ENCORE_BONUS : -USELESS_PENALTY;
-
-    // Each step plays a repeat rather than winding one up, so the
-    // chooser's per-step charge is handed back
-    event.score += STEP_PENALTY * event.source.checkMoveSteps(event.move, event.target);
   });
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {

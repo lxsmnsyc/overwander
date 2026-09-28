@@ -6,3 +6,4 @@
 - Protect, Detect and the team guards go up when a hit is already on its way.
 - Stat boosts, weather, terrain and Trick Room are used when they help the caster's side.
 - Setup fades as the team loses health, and finishing a foe always beats it.
+- The AI no longer takes down a Trick Room that is working for its own side.

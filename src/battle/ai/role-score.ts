@@ -172,7 +172,7 @@ const field: Relevance = (event, context) => {
     ours = (unit) =>
       carries(source, unit, (move) => isDamaging(move) && getMoveData(move).type === boosted);
   } else if (event.move === Moves.TrickRoom) {
-    return slowerSide(context) ? context.healthShare() : 0;
+    return context.slowerSide() ? context.healthShare() : 0;
   } else {
     return 0;
   }
@@ -191,24 +191,6 @@ const field: Relevance = (event, context) => {
   }
   return (foes ? 0.5 : 1) * context.healthShare();
 };
-
-/** Whether the caster's side is the slower one on average */
-function slowerSide(context: AIContext): boolean {
-  let ours = 0;
-  let friends = 0;
-  let theirs = 0;
-  let foes = 0;
-
-  for (const friend of context.friends()) {
-    ours += friend.resolveStat(Stats.Speed, 0);
-    friends += 1;
-  }
-  for (const foe of context.foes()) {
-    theirs += foe.resolveStat(Stats.Speed, 0);
-    foes += 1;
-  }
-  return friends > 0 && foes > 0 && ours / friends < theirs / foes;
-}
 
 // --- Afflicting ---
 

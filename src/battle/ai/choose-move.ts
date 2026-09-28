@@ -4,7 +4,7 @@ import {
   MoveAttackFlags,
   MoveCategories,
   MoveTargets,
-  type Moves,
+  Moves,
 } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
@@ -23,6 +23,8 @@ import {
 } from '../events';
 import { HEALTH_SCALED_MOVES, estimateFixedDamage } from '../moves/fixed-damage';
 import { MULTI_HIT_MOVES, estimateMoveHits } from '../moves/multi-hit';
+import { RAMPAGE_MOVES } from '../moves/rampage';
+import { ROLLING_MOVES } from '../moves/rolling';
 import { feedsOwnSide } from '../moves/friendly-fire';
 import resolveMoveTargets from '../mechanics/move/targeting';
 import { ACCURACY_PENALTY, BASE_SCORE, STEP_PENALTY, USELESS_PENALTY } from './score';
@@ -37,6 +39,18 @@ import setupRoleScoring from './role-score';
  * so finishing a foe beats any setup, and above every chip and heal
  */
 const KILL_BONUS = 20;
+
+/**
+ * Moves whose steps are the move itself rather than a wind-up before
+ * it: a rampage strikes on each, a roll rolls, Stockpile banks a charge
+ * and Encore plays a repeat
+ */
+const STEPS_ARE_THE_MOVE = new Set<Moves>([
+  ...RAMPAGE_MOVES,
+  ...ROLLING_MOVES,
+  Moves.Stockpile,
+  Moves.Encore,
+]);
 
 /** Extra for getting there first */
 const PRIORITY_KILL_BONUS = 2;
@@ -508,7 +522,9 @@ export function setupChooseMoveAI(battle: Battle): void {
 
   // A move that has to wind up first pays for the cast it spends there
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    event.score -= STEP_PENALTY * event.source.checkMoveSteps(event.move, event.target);
+    if (!STEPS_ARE_THE_MOVE.has(event.move)) {
+      event.score -= STEP_PENALTY * event.source.checkMoveSteps(event.move, event.target);
+    }
   });
 
   // An unreliable move is worth what it lands, so it gives up ground

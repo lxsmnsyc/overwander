@@ -2,7 +2,6 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MoveAffects, MoveCategories, MoveTargets, Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
-import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
@@ -118,11 +117,11 @@ export default function setupTeamGuards(battle: Battle): void {
     event.immune = true;
   });
 
-  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     const status = GUARDS[event.move];
 
-    if (status != null && event.source.team.status[status] != null) {
-      event.score -= USELESS_PENALTY;
+    if (event.usable && status != null && event.source.team.status[status] != null) {
+      event.usable = false;
     }
   });
 }

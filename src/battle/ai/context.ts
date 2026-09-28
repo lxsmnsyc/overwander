@@ -112,6 +112,24 @@ export class AIContext {
     return false;
   }
 
+  /** Whether the caster's side is the slower one on average */
+  slowerSide(): boolean {
+    let ours = 0;
+    let friends = 0;
+    let theirs = 0;
+    let foes = 0;
+
+    for (const friend of this.friends()) {
+      ours += friend.resolveStat(Stats.Speed, 0);
+      friends += 1;
+    }
+    for (const foe of this.foes()) {
+      theirs += foe.resolveStat(Stats.Speed, 0);
+      foes += 1;
+    }
+    return friends > 0 && foes > 0 && ours / friends < theirs / foes;
+  }
+
   rating(unit: Unit): number {
     let rating = this.ratings.get(unit);
 

@@ -6,6 +6,7 @@ import { BattleModes } from '../../src/battle/core';
 import {
   BattleEvents,
   type CheckUnitAIMoveScoreEvent,
+  type CheckUnitAIMoveUsableEvent,
   EffectType,
   type MoveTarget,
   MoveTargetType,
@@ -47,6 +48,24 @@ function scoreMove(
   return event.score;
 }
 
+function usableMove(
+  battle: BattleHarness['battle'],
+  source: Unit,
+  move: Moves,
+  target: MoveTarget,
+): boolean {
+  const event: CheckUnitAIMoveUsableEvent = {
+    id: 'CheckUnitAIMoveUsable',
+    disabled: false,
+    source,
+    move,
+    target,
+    usable: true,
+  };
+  battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
+  return event.usable;
+}
+
 describe('scoring by role', () => {
   it('raises Protect only when a hit is on its way', () => {
     const { battle, teamA, teamB } = createAIBattle();
@@ -76,6 +95,23 @@ describe('scoring by role', () => {
     expect(scoreMove(battle, unit, Moves.TrickRoom, NONE)).toBe(
       BASE_SCORE + ROLE_BASE[MoveRole.Field],
     );
+  });
+
+  it('takes a standing Trick Room down only when it helps the foe', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    unit.addMove(Moves.TrickRoom);
+    foe.addMove(Moves.TrickRoom);
+    foe.setStat(StatsKind.Base, Stats.Speed, 150);
+
+    unit.cast(Moves.TrickRoom, NONE);
+    battle.tick(4000);
+
+    // The caster is the slower side, so the room is working for it
+    expect(usableMove(battle, unit, Moves.TrickRoom, NONE)).toBe(false);
+    // The faster foe would be glad to take it down
+    expect(usableMove(battle, foe, Moves.TrickRoom, NONE)).toBe(true);
   });
 
   it('calls up a sky only for a side that gains from it', () => {

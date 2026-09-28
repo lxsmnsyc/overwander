@@ -7,54 +7,10 @@ import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
+import { WING_PATTERNS } from '../met-forms';
 
 // TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [Moves.BugBite];
-
-/**
- * The wings a Vivillon comes out with, one per country.
- *
- * The mainline decides the pattern by the part of the world the game
- * is played in; here the world is the world, so it is the country the
- * scatterbug was met in that the wings remember. Anywhere without a
- * pattern of its own leaves the meadow wings, which are the base form
- */
-const WING_PATTERNS: { species: Species; name: string; biome: Biome }[] = [
-  { species: Species.VivillonIcySnow, name: 'Icy Snow Vivillon', biome: Biome.Glacier },
-  { species: Species.VivillonPolar, name: 'Polar Vivillon', biome: Biome.AlpineTundra },
-  { species: Species.VivillonTundra, name: 'Tundra Vivillon', biome: Biome.Tundra },
-  {
-    species: Species.VivillonContinental,
-    name: 'Continental Vivillon',
-    biome: Biome.TemperateForest,
-  },
-  { species: Species.VivillonGarden, name: 'Garden Vivillon', biome: Biome.Grassland },
-  { species: Species.VivillonElegant, name: 'Elegant Vivillon', biome: Biome.Woodland },
-  { species: Species.VivillonModern, name: 'Modern Vivillon', biome: Biome.Steppe },
-  { species: Species.VivillonMarine, name: 'Marine Vivillon', biome: Biome.CoralReef },
-  { species: Species.VivillonArchipelago, name: 'Archipelago Vivillon', biome: Biome.Beach },
-  { species: Species.VivillonHighPlains, name: 'High Plains Vivillon', biome: Biome.Badlands },
-  { species: Species.VivillonSandstorm, name: 'Sandstorm Vivillon', biome: Biome.Desert },
-  { species: Species.VivillonRiver, name: 'River Vivillon', biome: Biome.Bog },
-  { species: Species.VivillonMonsoon, name: 'Monsoon Vivillon', biome: Biome.TropicalRainforest },
-  { species: Species.VivillonSavannah, name: 'Savannah Vivillon', biome: Biome.Savanna },
-  { species: Species.VivillonSun, name: 'Sun Vivillon', biome: Biome.Volcano },
-  { species: Species.VivillonOcean, name: 'Ocean Vivillon', biome: Biome.Ocean },
-  { species: Species.VivillonJungle, name: 'Jungle Vivillon', biome: Biome.TropicalSeasonalForest },
-];
-
-const PATTERN_BY_BIOME = new Map<Biome, Species>(
-  WING_PATTERNS.map((pattern) => [pattern.biome, pattern.species]),
-);
-
-/**
- * The wings this country hands a butterfly. Anything that is not a
- * Vivillon, and any country with no pattern of its own, comes back
- * unchanged
- */
-export function getWingPattern(species: Species, biome: Biome): Species {
-  return species === Species.Vivillon ? (PATTERN_BY_BIOME.get(biome) ?? species) : species;
-}
 
 export default function registerScatterbugSpecies(): void {
   registerSpecies(Species.Scatterbug, {

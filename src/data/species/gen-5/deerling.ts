@@ -8,46 +8,6 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-/**
- * The deer that wears the year. Which coat a player meets is decided
- * by the month rather than by the ground: the season turns for
- * everybody at once, so two people walking far apart still meet the
- * same coat and the four are collected over a year rather than
- * walked to
- */
-
-/** Each season's coat, spring first, in the order the year turns */
-const DEERLING_COATS = [
-  Species.Deerling,
-  Species.DeerlingSummer,
-  Species.DeerlingAutumn,
-  Species.DeerlingWinter,
-];
-
-const SAWSBUCK_COATS = [
-  Species.Sawsbuck,
-  Species.SawsbuckSummer,
-  Species.SawsbuckAutumn,
-  Species.SawsbuckWinter,
-];
-
-const SEASONAL_COATS = new Map<Species, Species[]>([
-  [Species.Deerling, DEERLING_COATS],
-  [Species.Sawsbuck, SAWSBUCK_COATS],
-]);
-
-/**
- * The coat this season hands over, or the species itself for anything
- * that does not change with the year. The season is an index, spring
- * first, so this stays out of the biome clock's way
- */
-export function getSeasonalCoat(species: Species, season: number): Species {
-  return SEASONAL_COATS.get(species)?.[season] ?? species;
-}
-
-/** The coats a Deerling and a Sawsbuck wear, for anything listing them */
-export { DEERLING_COATS, SAWSBUCK_COATS };
-
 const DEERLING_LEVELS = {
   1: [Moves.Tackle, Moves.Camouflage],
   4: [Moves.Growl],

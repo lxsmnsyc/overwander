@@ -48,21 +48,6 @@ const FAMILY_TEACHABLE = [
 ];
 
 /**
- * Which shell a shore hands over, by the side of the world it is on.
- * The mainline splits the two seas at a mountain range; here the
- * meridian is what a chunk's own x already is, so west of nothing is
- * the pink one and east of it the blue
- */
-const EAST_SHELLS = new Map<Species, Species>([
-  [Species.Shellos, Species.ShellosEast],
-  [Species.Gastrodon, Species.GastrodonEast],
-]);
-
-export function getShoreForm(species: Species, x: number): Species {
-  return x < 0 ? species : (EAST_SHELLS.get(species) ?? species);
-}
-
-/**
  * The sea slug that comes in two shells. Which one a player meets is
  * decided by the side of the world they are standing on rather than
  * by the shore itself: west of the meridian is the pink one, east of

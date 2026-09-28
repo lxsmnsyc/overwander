@@ -4,7 +4,6 @@ import {
   registerLearnSetRows,
   registerRecordRows,
 } from './compact';
-import registerGen4Species from './gen-4';
 import registerGen5Species from './gen-5';
 import registerGen6Species from './gen-6';
 import registerTrueShadowSpecies from './true-shadow';
@@ -70,9 +69,7 @@ export {
 } from './evolution';
 export type { EvolutionContext, Handover } from './evolution';
 export { REGIONS, REGION_NAMES, getSpeciesByRegion, getSpeciesRegion } from './regions';
-export { getShoreForm } from './gen-4/shellos';
-export { getWingPattern } from './gen-6/scatterbug';
-export { getSeasonalCoat } from './gen-5/deerling';
+export { getSeasonalCoat, getShoreForm, getWingPattern } from './met-forms';
 export {
   TRUE_SHADOW_BONUS,
   TRUE_SHADOW_WEIGHT,
@@ -85,7 +82,12 @@ export {
 
 // The regions already loaded from their compact rows rather than their source
 const COMPACT_RECORDS = import.meta.glob<RecordFile>(
-  ['./compact/gen-1.records.json', './compact/gen-2.records.json', './compact/gen-3.records.json'],
+  [
+    './compact/gen-1.records.json',
+    './compact/gen-2.records.json',
+    './compact/gen-3.records.json',
+    './compact/gen-4.records.json',
+  ],
   {
     eager: true,
     import: 'default',
@@ -96,6 +98,7 @@ const COMPACT_LEARN_SETS = import.meta.glob<LearnSetFile>(
     './compact/gen-1.learnsets.json',
     './compact/gen-2.learnsets.json',
     './compact/gen-3.learnsets.json',
+    './compact/gen-4.learnsets.json',
   ],
   {
     eager: true,
@@ -110,7 +113,8 @@ export function registerSpecies(): void {
   registerLearnSetRows(COMPACT_LEARN_SETS['./compact/gen-2.learnsets.json']);
   registerRecordRows(COMPACT_RECORDS['./compact/gen-3.records.json']);
   registerLearnSetRows(COMPACT_LEARN_SETS['./compact/gen-3.learnsets.json']);
-  registerGen4Species();
+  registerRecordRows(COMPACT_RECORDS['./compact/gen-4.records.json']);
+  registerLearnSetRows(COMPACT_LEARN_SETS['./compact/gen-4.learnsets.json']);
   registerGen5Species();
   registerGen6Species();
   // Last: each one is a copy of a counterpart that has to exist first

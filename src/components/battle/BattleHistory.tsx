@@ -422,9 +422,8 @@ function BattleList(
  * The player's finished battles. Replaying one hands the whole page
  * over to the battle view, which rebuilds the fight from the same
  * seed and the same frozen teams — so it plays out as it did, and
- * awards nothing. A won raid whose legendary was never collected —
- * the player ran from it, or left before the end — is claimed from
- * here instead
+ * awards nothing. A won raid whose legendary was never collected, or
+ * was met and left uncaught, is claimed from here instead
  */
 export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
   const [claimed, { refetch }] = createResource(() => props.player, listClaimedRaids);

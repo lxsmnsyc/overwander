@@ -3,7 +3,12 @@ import { describe, expect, it } from 'vitest';
 import AleaRNG from '../../../src/core/alea';
 import Abilities from '../../../src/data/ids/abilities';
 import registerAbilities from '../../../src/data/abilities';
-import registerBiomeSpawns, { getBiomeRoster, spawnRanks } from '../../../src/data/biome';
+import registerBiomeSpawns, {
+  SpawnRarity,
+  getBiomeRoster,
+  getSpawnRarity,
+  spawnRanks,
+} from '../../../src/data/biome';
 import { BuildRole } from '../../../src/data/species/best-moves';
 import {
   CORE_COUNT,
@@ -313,6 +318,8 @@ describe('world', () => {
       // world has nowhere to put yet is nobody's to field
       for (const species of getTrainerPool(trainer)) {
         expect(canMeetSpecies(species), getSpeciesData(species).name).toBe(true);
+        // Nor anything out of the prized band, which is a find rather than a partner
+        expect(getSpawnRarity(species), getSpeciesData(species).name).not.toBe(SpawnRarity.Prized);
       }
       expect(trainerLevels(trainer)).toEqual(
         isAceTrainer(trainer) ? ACE_TRAINER_LEVELS : TYPE_TRAINER_LEVELS,

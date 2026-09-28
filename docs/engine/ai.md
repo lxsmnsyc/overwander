@@ -193,6 +193,26 @@ and the hit is scored on its own.
 
 Every other role adds nothing yet, and is weighed by the move's own rules.
 
+No role adds more than one point under `KILL_BONUS`, so finishing a foe always
+wins.
+
+## What the caster's own side brings
+
+The AI reads its own side in full, so its kit shapes the score:
+
+- A screen or a weather is worth more when the caster's gear makes it last
+  longer. The AI asks the engine's own duration checks, so Light Clay and the
+  weather rocks count without being named.
+- A stage change is weighed as the unit would really take it:
+  `resolveStageChange` answers doubled for a Simple and turned round for a
+  Contrary. A Contrary holder does not cast Swords Dance.
+- Recoil and crash cost nothing when the engine says the user would not be
+  hurt: Rock Head refuses the recoil, and Magic Guard the damage.
+- A drain is worth more under a Big Root.
+- A hit whose Life Orb recoil would finish its holder is marked down.
+- Light Screen is guessed at, for half its worth, when a foe is built to hit
+  harder specially than physically, before it has shown a special move.
+
 ## The decision context
 
 Each decision runs inside one `AIContext`

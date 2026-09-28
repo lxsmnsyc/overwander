@@ -937,6 +937,25 @@ export default class Unit {
     return event.success;
   }
 
+  /**
+   * The stage change this unit would really take, asked speculatively:
+   * doubled by a Simple, turned round by a Contrary, 0 when refused
+   */
+  resolveStageChange(stage: Stages, value: number, cause: EffectCause): number {
+    const event: CheckUnitCanUpdateStageEvent = {
+      id: 'CheckUnitCanAddStage',
+      disabled: false,
+      source: this,
+      stage,
+      value,
+      cause,
+      success: true,
+      simulated: true,
+    };
+    this.battle.emit(BattleEvents.CheckUnitCanAddStage, event);
+    return event.success ? event.value : 0;
+  }
+
   addStage(stage: Stages, value: number, cause: EffectCause): void {
     if (this.checkCanAddStage(stage, value, cause)) {
       this.battle.emit(BattleEvents.UnitAddStage, {

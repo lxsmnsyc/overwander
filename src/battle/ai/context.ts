@@ -1,5 +1,6 @@
 import { Stats } from '../../data/constants/stats';
 import { MoveAffects, type Moves } from '../../data/ids/moves';
+import { TeamStatuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import {
@@ -106,6 +107,23 @@ export class AIContext {
       const cast = foe.casting;
 
       if (cast != null && test(cast.move) && reaches(foe, cast.move, cast.target, unit)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Whether a foe's stats lean towards what a screen stops: its Attack
+   * over its Special Attack for Reflect, the other way for Light Screen.
+   * A species' build is plain to see, so this is a guess, not a peek
+   */
+  foesLean(screen: TeamStatuses): boolean {
+    for (const foe of this.foes()) {
+      const physical = foe.checkStat(Stats.Attack, 0);
+      const special = foe.checkStat(Stats.SpecialAttack, 0);
+
+      if (screen === TeamStatuses.Reflect ? physical >= special : special >= physical) {
         return true;
       }
     }

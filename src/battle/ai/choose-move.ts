@@ -27,18 +27,12 @@ import { RAMPAGE_MOVES } from '../moves/rampage';
 import { ROLLING_MOVES } from '../moves/rolling';
 import { feedsOwnSide } from '../moves/friendly-fire';
 import resolveMoveTargets from '../mechanics/move/targeting';
-import { ACCURACY_PENALTY, BASE_SCORE, STEP_PENALTY, USELESS_PENALTY } from './score';
+import { ACCURACY_PENALTY, BASE_SCORE, KILL_BONUS, STEP_PENALTY, USELESS_PENALTY } from './score';
 import { SELF_STATUS_MOVES } from '../moves/status';
 import type Unit from '../unit';
 import { withAIContext } from './context';
 import setupFog from './fog';
 import setupRoleScoring from './role-score';
-
-/**
- * What taking a unit off the field is worth: above every role's base,
- * so finishing a foe beats any setup, and above every chip and heal
- */
-const KILL_BONUS = 20;
 
 /**
  * Moves whose steps are the move itself rather than a wind-up before

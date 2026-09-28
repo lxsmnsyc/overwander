@@ -8,7 +8,13 @@ import { getMoveData } from '../../data/moves';
 import { MOVE_WEATHERS } from '../../data/moves/weather';
 import type Battle from '../core';
 import { BattleModes } from '../core';
-import { BattleEvents, type CheckUnitAIMoveScoreEvent, MoveTargetType } from '../events';
+import {
+  BattleEvents,
+  type CheckUnitAIMoveScoreEvent,
+  type EffectCause,
+  EffectType,
+  MoveTargetType,
+} from '../events';
 import { TERRAIN_BOOSTED } from '../mechanics/terrain';
 import { CHIP_IMMUNE_TYPES, WEATHER_DAMAGE } from '../mechanics/weather';
 import resolveMoveTargets from '../mechanics/move/targeting';
@@ -21,8 +27,19 @@ import type Unit from '../unit';
 import { type AIContext, getAIContext } from './context';
 import { knowsMove } from './fog';
 import { MoveRole, ROLE_BASE, getMoveRoles } from './roles';
+import { KILL_BONUS } from './score';
 
 type Relevance = (event: CheckUnitAIMoveScoreEvent, context: AIContext) => number;
+
+/** No role, however long it lasts, outbids finishing a foe */
+const ROLE_CAP = KILL_BONUS - 1;
+
+/** Any duration will do: only the ratio a caster's gear stretches it by is read */
+const DURATION_PROBE = 1000;
+
+function moveCause(event: CheckUnitAIMoveScoreEvent): EffectCause {
+  return { type: EffectType.Move, move: event.move, unit: event.source };
+}
 
 function isDamaging(move: Moves): boolean {
   return getMoveData(move).category !== MoveCategories.Status;
@@ -114,7 +131,25 @@ const teamSetup: Relevance = (event, context) => {
   if (status != null) {
     const threatens = VEIL_THREATS[status];
 
-    return threatens != null && context.foesKnow(threatens) ? context.healthShare() : 0;
+    if (threatens == null) {
+      return 0;
+    }
+
+    // A foe that has shown the threat is a sure thing; one whose stats
+    // lean that way is a fair guess
+    let expected = 0;
+
+    if (context.foesKnow(threatens)) {
+      expected = 1;
+    } else if (context.foesLean(status)) {
+      expected = 0.5;
+    }
+
+    const lasting =
+      event.source.team.checkStatusDuration(status, DURATION_PROBE, moveCause(event)) /
+      DURATION_PROBE;
+
+    return expected * lasting * context.healthShare();
   }
   if (event.move === Moves.LuckyChant) {
     return context.healthShare() / 4;
@@ -158,11 +193,14 @@ const field: Relevance = (event, context) => {
   const weather = MOVE_WEATHERS.get(event.move);
   const terrain = TERRAIN_MOVES.get(event.move);
 
+  let lasting = 1;
+
   if (weather != null) {
     const boosts = WEATHER_DAMAGE[weather];
     const spared = CHIP_IMMUNE_TYPES[weather];
 
     ours = (unit) => gainsFromWeather(source, unit, boosts, spared);
+    lasting = source.checkWeatherDuration(weather, DURATION_PROBE) / DURATION_PROBE;
   } else if (terrain != null) {
     const boosted = TERRAIN_BOOSTED[terrain];
 
@@ -189,7 +227,7 @@ const field: Relevance = (event, context) => {
   if (!friends) {
     return 0;
   }
-  return (foes ? 0.5 : 1) * context.healthShare();
+  return (foes ? 0.5 : 1) * lasting * context.healthShare();
 };
 
 // --- Afflicting ---
@@ -251,10 +289,13 @@ const selfBoost: Relevance = (event, context) => {
 
   const receiver = event.target.type === MoveTargetType.Unit ? event.target.unit : source;
   const effects = getStageMoveEffects(event.move);
+  const cause = moveCause(event);
   let best = effects.length > 0 ? 0 : 0.5;
 
   for (const effect of effects) {
-    if (effect.value > 0) {
+    // What the receiver would really take: a Contrary turns a rise into
+    // a drop, which is no boost at all
+    if (effect.value > 0 && receiver.resolveStageChange(effect.stage, effect.value, cause) > 0) {
       const worth =
         stageMatters(source, receiver, effect.stage) *
         Math.min(1, room(receiver.stages[effect.stage], true));
@@ -274,7 +315,10 @@ const foeDrop: Relevance = (event, context) => {
       continue;
     }
     for (const effect of getStageMoveEffects(event.move)) {
-      if (effect.value < 0) {
+      if (
+        effect.value < 0 &&
+        unit.resolveStageChange(effect.stage, effect.value, moveCause(event)) < 0
+      ) {
         best = Math.max(best, Math.min(1, room(unit.stages[effect.stage], false)));
       }
     }
@@ -352,7 +396,7 @@ export default function setupRoleScoring(battle: Battle): void {
       if (relevance == null || (damaging && role !== MoveRole.Shield)) {
         continue;
       }
-      event.score += Math.round(ROLE_BASE[role] * relevance(event, context));
+      event.score += Math.min(ROLE_CAP, Math.round(ROLE_BASE[role] * relevance(event, context)));
     }
   });
 }

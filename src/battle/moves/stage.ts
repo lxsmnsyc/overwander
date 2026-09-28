@@ -271,11 +271,14 @@ function stageMoves(
       continue;
     }
 
+    // Speculative: the AI is weighing the move, not casting it. A
+    // Contrary turns the change round, so the direction is the one the
+    // receiver would really take
+    const change = receiver.resolveStageChange(effect.stage, effect.value, cause);
     const current = receiver.stages[effect.stage];
-    const pinned = effect.value > 0 ? current >= MAX_STAGE : current <= MIN_STAGE;
+    const pinned = change > 0 ? current >= MAX_STAGE : current <= MIN_STAGE;
 
-    // Speculative: the AI is weighing the move, not casting it
-    if (!pinned && receiver.checkCanAddStage(effect.stage, effect.value, cause, true)) {
+    if (change !== 0 && !pinned && (wanted === 0 || change > 0 === friendly)) {
       return true;
     }
   }

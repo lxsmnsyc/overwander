@@ -242,6 +242,25 @@ already covers:
 A cast is on show, so reading it is no peek. Only casts still winding up are
 read; a move already in flight for its last quarter of a second is not.
 
+## Measuring a change
+
+Two tools show what a scoring change does, so tuning is measured rather than
+guessed.
+
+- **`pnpm ai:sim`** plays AI-against-AI battles headless and prints what was
+  cast: each role's share of all casts, its share on the winning and the losing
+  side, and the most cast moves. The parties are random, built the way an
+  expert's are. `SIM_BATTLES`, `SIM_SIZE` and `SIM_LEVEL` override the defaults
+  of 40 battles, three a side, at level 50. It runs on its own config
+  (`vitest.sim.ts`), since a run takes minutes.
+- **`test/battle/ai-openings.test.ts`** pins how a few fixed fights open, as a
+  snapshot. A scoring change that moves an opening fails it, and a deliberate
+  one updates it with `vitest -u`.
+
+The "lean" column in the report is the winners' share of a role over the
+losers'. Above 1, the winning side cast that role more. It is a correlation over
+random parties, not proof that the role wins fights.
+
 ## See also
 
 - [The battle engine](../engine.md): the index for these pages

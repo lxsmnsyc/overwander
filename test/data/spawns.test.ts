@@ -13,7 +13,7 @@ import registerBiomeSpawns, {
   listSpeciesHabitats,
   spawnBand,
 } from '../../src/data/biome';
-import { getBiomeLairs, getLairResidents } from '../../src/data/overworld/lair';
+import { getBiomeLairs, getCaveLairs, getLairResidents } from '../../src/data/overworld/lair';
 import registerAbilities from '../../src/data/abilities';
 import { Types } from '../../src/data/constants/types';
 import Biome, { SpawnSurface, TimeOfDay } from '../../src/data/ids/biome';
@@ -195,6 +195,36 @@ describe('where a species lives', () => {
 
         expect(band.has(species), `${name} in ${BIOME_NAMES[biome]}`).toBe(true);
       }
+    }
+  });
+
+  it('stages a cave legendary wild under its own lair, and only there', () => {
+    // A cave keeps the legendaries of the underground lairs its biome
+    // hosts, each on the surface it can stand on
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const surface of SURFACES) {
+        const residents = new Set<Species>();
+
+        for (const lair of getCaveLairs(biome)) {
+          for (const species of getLairResidents(lair)) {
+            if (fitsSurface(species, surface)) {
+              residents.add(species);
+            }
+          }
+        }
+        for (const time of TIMES_OF_DAY) {
+          const band = new Set<Species>();
+
+          for (const entry of spawnBand(getSpawnPool(biome, time, true, surface), 'special')) {
+            band.add(entry.species);
+          }
+          expect(band, `${BIOME_NAMES[biome]} caves`).toEqual(residents);
+        }
+      }
+    }
+    // Kyogre swims in a cave's water and never stands on its floor
+    for (const entry of spawnBand(getSpawnPool(Biome.Beach, TimeOfDay.Day, true), 'special')) {
+      expect(entry.species).not.toBe(Species.Kyogre);
     }
   });
 

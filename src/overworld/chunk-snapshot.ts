@@ -29,7 +29,12 @@ import type { Species } from '../data/ids/species';
 import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
-import { getBiomeLairs, getLairResidents, pickLairSpecies } from '../data/overworld/lair';
+import {
+  getBiomeLairs,
+  getCaveLairs,
+  getLairResidents,
+  pickLairSpecies,
+} from '../data/overworld/lair';
 import Npc, { EXECUTIVE_CHARSETS, type Executive, NPCS, npcSheets } from '../data/overworld/npc';
 import {
   SYNDICATE_BOSS_CHARSETS,
@@ -815,11 +820,16 @@ export default class ChunkSnapshot {
     return this.raids;
   }
 
-  /** The biome's lairs with at least one resident a raid can stage */
+  /** The biome's lairs, only its underground ones in a cave */
+  private lairsHere(biome: Biome): Lairs[] {
+    return this.depth === Depth.Cave ? getCaveLairs(biome) : getBiomeLairs(biome);
+  }
+
+  /** The lairs here with at least one resident a raid can stage */
   private stageableLairs(): Lairs[] {
     const lairs: Lairs[] = [];
 
-    for (const lair of getBiomeLairs(this.chunk.biome)) {
+    for (const lair of this.lairsHere(this.chunk.biome)) {
       for (const resident of getLairResidents(lair)) {
         if (canStageBoss(resident)) {
           lairs.push(lair);
@@ -1264,7 +1274,7 @@ export default class ChunkSnapshot {
             // lair is a place, so a biome that hosts none has no
             // legendary to have been taken from it and the boss
             // fields a sixth rare
-            const homes = getBiomeLairs(this.biomeAt(cell));
+            const homes = this.lairsHere(this.biomeAt(cell));
             const party = drawMany(rares, ROCKET_PARTY_SIZE - 1);
 
             if (homes.length > 0) {

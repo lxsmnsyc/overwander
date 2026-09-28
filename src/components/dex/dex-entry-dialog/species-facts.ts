@@ -14,7 +14,12 @@ import type Biome from '../../../data/ids/biome';
 import BiomeId from '../../../data/ids/biome';
 import type { Moves } from '../../../data/ids/moves';
 import type { Species } from '../../../data/ids/species';
-import { LAIR_NAMES, getBiomeLairs, getSpeciesLairs } from '../../../data/overworld/lair';
+import {
+  LAIR_NAMES,
+  getBiomeLairs,
+  getSpeciesLairs,
+  isSubterraneanLair,
+} from '../../../data/overworld/lair';
 import { getBaseForms, getSpeciesData } from '../../../data/species';
 
 /**
@@ -189,6 +194,10 @@ export function describeLairs(species: Species): { name: string; where: string[]
       if (new Set(getBiomeLairs(biome)).has(lair)) {
         where.push(BIOME_NAMES[biome]);
       }
+    }
+    // An underground lair is also in the caves under each of those
+    if (isSubterraneanLair(lair)) {
+      where.push('their caves');
     }
     lairs.push({ name: LAIR_NAMES[lair], where });
   }

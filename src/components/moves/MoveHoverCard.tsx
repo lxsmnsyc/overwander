@@ -23,10 +23,10 @@ export default function MoveHoverCard(props: MoveHoverCardProps): JSX.Element {
   return (
     <HoverCard
       class={props.class}
-      title="Info"
-      // The move's own name, since the bar says what the card is and
-      // the trigger underneath is about to be covered by it
-      description={describeMove(props.move)}
+      // The move's own name, since the trigger underneath is about to
+      // be covered by the card
+      title={describeMove(props.move)}
+      kind="Move"
       trigger={props.children}
     >
       <MoveCard move={props.move} points={props.points} speed={props.speed} />

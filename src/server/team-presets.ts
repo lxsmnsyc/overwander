@@ -1,6 +1,6 @@
 import 'server-only';
 import { TEAM_PRESET_LIMIT, type TeamPresetRecord } from '../auth/team-preset-record';
-import { TEAM_SIZE } from '../auth/teams';
+import TEAM_SIZE from '../auth/team-size';
 import { asNickname } from '../auth/nickname';
 import { type Tx, getSql, newDocId, tx } from './db';
 import { readCaughtMany } from './caught-io';

@@ -48,9 +48,8 @@ and only the server writes it. `watchOpenAuctions` follows the unsettled lots,
 on the partial `auctions_live` index, which covers both the ones still taking
 bids and the ones whose winner has not come back for them. Which of the two a
 listing is depends on the clock rather than the row, so the caller splits them
-with `isLive`. The table is published to realtime with `replica identity full`,
-so the board sees the old row on a delete or a filtered update and can merge it
-away.
+with `isLive`. The table is followed live, and a change carries the old row as
+well as the new one, so the board can merge a lot away when it settles.
 
 **Nothing is polled.** The closing time is a number written into the listing,
 and whether it has passed is the reader's own clock against it: no timer, no

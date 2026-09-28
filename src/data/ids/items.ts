@@ -953,6 +953,28 @@ export const enum Items {
   /** The two Kalos fossils, which are shipped with their lines */
   JawFossil = 444,
   SailFossil = 445,
+
+  // 446 to 563 are held for the Kalos and Alola items the gen 7
+  // branches number
+
+  /** The Max vitamins, which fill one stat's effort at once */
+  HPUpMax = 564,
+  ProteinMax = 565,
+  IronMax = 566,
+  CalciumMax = 567,
+  ZincMax = 568,
+  CarbosMax = 569,
+  /** The Max wings, the same for what a flying shadow drops */
+  HealthWingMax = 570,
+  MuscleWingMax = 571,
+  ResistWingMax = 572,
+  GeniusWingMax = 573,
+  CleverWingMax = 574,
+  SwiftWingMax = 575,
+  /** A Rare Candy that goes all the way to the level cap */
+  RareCandyMax = 576,
+  /** Room for one more move, the way a Utility Belt is room for one more item */
+  SkillBook = 577,
 }
 
 /**

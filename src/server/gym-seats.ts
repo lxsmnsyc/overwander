@@ -19,7 +19,7 @@ import {
 } from '../auth/gym-seat-record';
 import { getMaxHealth, isFainted } from '../auth/health';
 import { Foe, Metric } from '../auth/quest-record';
-import { TEAM_SIZE } from '../auth/teams';
+import TEAM_SIZE from '../auth/team-size';
 import Landmark from '../data/overworld/landmark';
 import getWorld, { WORLD_GENERATION } from '../overworld/current';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
@@ -32,6 +32,7 @@ import { foughtBattle, readBattle } from './raid-io';
 import { isAnyCatchQueued, publishTeamSnapshot } from './raids';
 import { recordSeenOpponents } from './pokedex';
 import { asNumber, asString } from './read';
+import { moveGoldIn } from './profile';
 
 /**
  * Gym seats: asynchronous fights between players.
@@ -193,8 +194,8 @@ async function strip(
     return 0;
   }
 
-  await transaction`update profiles set gold = gold - ${moved} where id = ${loser}`;
-  await transaction`update profiles set gold = gold + ${moved} where id = ${winner}`;
+  await moveGoldIn(transaction, loser, -moved, 'gym-stake');
+  await moveGoldIn(transaction, winner, moved, 'gym-stake');
   return moved;
 }
 

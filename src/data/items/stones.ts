@@ -13,6 +13,20 @@ const SINNOH_STONES: [item: Items, name: string, icon: string][] = [
   [Items.IceStone, 'Ice Stone', 'ice-stone'],
 ];
 
+/** The ten evolution stones, the older six and then Sinnoh's four */
+export const EVOLUTION_STONES: Items[] = [
+  Items.FireStone,
+  Items.WaterStone,
+  Items.ThunderStone,
+  Items.LeafStone,
+  Items.MoonStone,
+  Items.SunStone,
+  Items.ShinyStone,
+  Items.DuskStone,
+  Items.DawnStone,
+  Items.IceStone,
+];
+
 /**
  * Evolution stones: used on a pokemon to trigger a UsedItem
  * evolution.

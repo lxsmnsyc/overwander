@@ -4,6 +4,8 @@ import type { Moves } from '../data/ids/moves';
 import { getAbilityData } from '../data/abilities';
 import { getItemData } from '../data/items';
 import { getMoveData } from '../data/moves';
+import { type CaughtPokemon, getCatchName } from '../auth/caught-record';
+import { isEgg } from '../auth/egg';
 
 /**
  * What an ability, a move or an item is called, and what it does,
@@ -70,4 +72,15 @@ export function detailItem(item: Items): { name: string; description: string } {
   } catch {
     return { name: describeItem(item), description: 'Nothing is known about this.' };
   }
+}
+
+/**
+ * What a hover card over a catch is titled. An egg is only an egg: its
+ * species is what hatching it tells you
+ */
+export function titleCatch(caught: CaughtPokemon | undefined): string {
+  if (caught == null) {
+    return 'Pokémon';
+  }
+  return isEgg(caught) ? 'Egg' : getCatchName(caught);
 }

@@ -1,10 +1,6 @@
-import { execSync } from 'node:child_process';
+import { prepareTestDatabase } from '../test/test-database.ts';
 
-/**
- * Make sure the local stack is standing before any spec runs.
- * `supabase start` is idempotent: a running stack is left alone, the
- * way the old harness reused a live emulator set.
- */
-export default function globalSetup(): void {
-  execSync('supabase start', { stdio: 'inherit' });
+/** The development database, started and migrated before any spec runs */
+export default async function globalSetup(): Promise<void> {
+  await prepareTestDatabase();
 }

@@ -261,3 +261,47 @@ export async function readCaughtDexCount(uid: string, region?: Regions): Promise
 
   return asNumber(rows.at(0)?.held);
 }
+
+/** The four count columns of a dex, each keyed by species id, for the maps `pokedex-record.ts` reads */
+export interface StoredDex {
+  seen: Record<string, number>;
+  seenShiny: Record<string, number>;
+  caught: Record<string, number>;
+  caughtShiny: Record<string, number>;
+}
+
+/** The player's whole dex, with zero counts left out */
+export async function readPokedex(uid: string): Promise<StoredDex> {
+  const rows = await getSql()`
+    select species, seen, seen_shiny, caught, caught_shiny from pokedex_entries
+    where player = ${uid}
+  `;
+  const stored: StoredDex = { seen: {}, seenShiny: {}, caught: {}, caughtShiny: {} };
+
+  for (const row of rows) {
+    const key = String(row.species);
+    const counts: [Record<string, number>, unknown][] = [
+      [stored.seen, row.seen],
+      [stored.seenShiny, row.seen_shiny],
+      [stored.caught, row.caught],
+      [stored.caughtShiny, row.caught_shiny],
+    ];
+
+    for (const [bucket, count] of counts) {
+      if (Number(count) > 0) {
+        bucket[key] = Number(count);
+      }
+    }
+  }
+  return stored;
+}
+
+/** How many dex rows have one owned, counted by row, so each form counts on its own */
+export async function readCaughtEntryCount(uid: string): Promise<number> {
+  const rows = await getSql()`
+    select count(*)::int as held from pokedex_entries
+    where player = ${uid} and (caught > 0 or caught_shiny > 0)
+  `;
+
+  return asNumber(rows.at(0)?.held);
+}

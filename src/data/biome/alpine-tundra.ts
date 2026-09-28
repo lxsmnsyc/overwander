@@ -40,7 +40,6 @@ export default function registerAlpineTundraSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Riolu, weight: PRIZED_WEIGHT }],
       special: [
-        { species: Species.Articuno, weight: 10 },
         { species: Species.Dialga, weight: 10 },
         { species: Species.Palkia, weight: 10 },
       ],
@@ -82,7 +81,6 @@ export default function registerAlpineTundraSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Riolu, weight: PRIZED_WEIGHT }],
       special: [
-        { species: Species.Articuno, weight: 10 },
         { species: Species.Dialga, weight: 10 },
         { species: Species.Palkia, weight: 10 },
       ],
@@ -120,7 +118,6 @@ export default function registerAlpineTundraSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
-        { species: Species.Articuno, weight: 10 },
         { species: Species.Dialga, weight: 10 },
         { species: Species.Palkia, weight: 10 },
       ],
@@ -151,7 +148,6 @@ export default function registerAlpineTundraSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
-        { species: Species.Articuno, weight: 10 },
         { species: Species.Dialga, weight: 10 },
         { species: Species.Palkia, weight: 10 },
         { species: Species.Mewtwo, weight: 10 },

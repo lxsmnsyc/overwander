@@ -69,6 +69,13 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     runs: true,
   },
   {
+    href: '/admin/switches',
+    label: 'Switches',
+    title: 'Switches',
+    lede: 'Close a part of the game at once, or all of it for maintenance, without a deploy.',
+    runs: true,
+  },
+  {
     href: '/admin/player',
     label: 'Player',
     title: 'Player',

@@ -716,7 +716,24 @@ export default function GameProvider(props: ParentProps): JSX.Element {
       return;
     }
 
+    // What was already waiting at sign-in is not news, so the first
+    // report only fills this; after it, one chime per report with anything new
+    const heard = new Set<string>();
+    let seeded = false;
+
     const stop = watchNotifications(user.uid, (waiting) => {
+      let fresh = false;
+
+      for (const notice of waiting) {
+        if (!heard.has(notice.id)) {
+          heard.add(notice.id);
+          fresh = true;
+        }
+      }
+      if (fresh && seeded) {
+        playEffect(Effect.Notice);
+      }
+      seeded = true;
       setNotices(waiting);
     });
 

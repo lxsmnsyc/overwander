@@ -1,3 +1,4 @@
+import { MAX_LEVEL } from '../constants/levels';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { registerItem } from './__create';
 
@@ -17,6 +18,16 @@ export default function registerRareCandy(): void {
       'Raises any pokemon 1 level, whatever candy its family takes. The level restores full HP, clears status and revives a fainted pokemon.',
     type: ItemTypes.Medicine,
     icon: 'medicine/rare-candy',
+    flags: ItemFlags.Consumable | ItemFlags.Usable,
+    buy: 0,
+    sell: 0,
+  });
+  // Found as a special, never bought: every level-up move on the way stays on offer
+  registerItem(Items.RareCandyMax, {
+    name: 'Rare Candy Max',
+    description: `Raises any pokemon to level ${MAX_LEVEL}, offering every move it learns on the way. The levels restore full HP, clear status and revive a fainted pokemon.`,
+    type: ItemTypes.Medicine,
+    icon: 'medicine/rare-candy-max',
     flags: ItemFlags.Consumable | ItemFlags.Usable,
     buy: 0,
     sell: 0,

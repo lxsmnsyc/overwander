@@ -2,11 +2,14 @@ import { BALL_ITEMS, ItemFlags, Items, getMachineItem } from '../ids/items';
 import { getItemData } from '../items';
 import { BATTLE_ITEMS } from '../items/battle-items';
 import { DRINKS } from '../items/drinks';
+import { QUARRIED_GEAR } from '../items/gear';
+import { GEMS } from '../items/gems';
 import { INCENSES } from '../items/incenses';
 import { getTeachableMoves } from '../items/machines';
 import { MEDICINES } from '../items/medicine';
 import { MINT_NATURES } from '../items/mints';
 import { TREATS } from '../items/treats';
+import { EVOLUTION_STONES } from '../items/stones';
 import { PP_ITEMS, VITAMIN_STATS } from '../items/vitamins';
 
 /**
@@ -232,6 +235,31 @@ export function getChefGoods(): Items[] {
  */
 export function rollChefStock(random: () => number): Items[] {
   return fillCrate([], getChefGoods(), random, VENDOR_STOCK_KINDS);
+}
+
+/**
+ * The geologist's whole shelf: the evolution stones, the gems, the
+ * held stones and rocks, and the Light Clay. He is the only one who
+ * stocks any of them. The plates are found, never sold
+ */
+let quarry: Items[] | null = null;
+
+export function getGeologistGoods(): Items[] {
+  quarry ??= marketableOnly([
+    ...EVOLUTION_STONES,
+    Items.OvalStone,
+    Items.HardStone,
+    Items.FloatStone,
+    Items.Everstone,
+    ...QUARRIED_GEAR,
+    ...GEMS.keys(),
+  ]);
+  return quarry;
+}
+
+/** What the geologist has dug up this window, a dozen kinds like every crate */
+export function rollGeologistStock(random: () => number): Items[] {
+  return fillCrate([], getGeologistGoods(), random, VENDOR_STOCK_KINDS);
 }
 
 /**

@@ -252,8 +252,8 @@ export default function CommandBar(props: CommandBarProps): JSX.Element {
               class="fixed top-[12%] left-1/2 w-[min(92vw,34rem)] -translate-x-1/2"
             >
               <DialogPanel
-                class="flex flex-col gap-2 rounded-panel border-4 border-tide bg-paper
-              px-4 py-3 text-left shadow-window"
+                class="flex flex-col gap-2 rounded-panel border-2 border-line bg-paper
+              px-4 py-3 text-left shadow-sheet"
               >
                 <HeadlessDialogTitle class="sr-only">Command bar</HeadlessDialogTitle>
                 <HeadlessDialogDescription class="sr-only">

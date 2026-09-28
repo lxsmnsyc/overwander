@@ -94,7 +94,7 @@ export async function grantCandies(
  * catch already sits at MAX_LEVEL
  */
 export async function useCandy(uid: string, catchId: string, levels = 1): Promise<number | null> {
-  return feed(uid, catchId, levels, async (transaction, caught, record, wanted) => {
+  const fed = await feed(uid, catchId, levels, async (transaction, caught, record, wanted) => {
     const { family } = getSpeciesData(asSpecies(caught.species));
     const held = await readStackIn(transaction, CANDY_STACKS, uid, family);
     const cost = getCandyCost(record);
@@ -110,6 +110,8 @@ export async function useCandy(uid: string, catchId: string, levels = 1): Promis
       ? grown
       : 0;
   });
+
+  return fed?.level ?? null;
 }
 
 /**
@@ -121,23 +123,58 @@ export async function useCandy(uid: string, catchId: string, levels = 1): Promis
  * same reasons a family candy is, or the bag holds none
  */
 export async function useRareCandy(uid: string, catchId: string): Promise<number | null> {
-  const level = await feed(uid, catchId, 1, async (transaction) => {
+  const grown = await feed(uid, catchId, 1, async (transaction) => {
     const held = await readStackIn(transaction, ITEM_STACKS, uid, Items.RareCandy);
 
     return (await spendStackIn(transaction, ITEM_STACKS, uid, Items.RareCandy, held, 1)) ? 1 : 0;
   });
 
-  if (level != null) {
+  if (grown != null) {
     await bumpProgress(uid, [[Metric.ItemUses, Items.RareCandy, 1]]);
   }
+  return grown?.level ?? null;
+}
+
+/**
+ * A Rare Candy Max: every level to the cap for one item, with the
+ * moves of every level it passed left on offer.
+ *
+ * Resolves the first level it grew into and the level it reached, or
+ * null for the same refusals as a Rare Candy
+ */
+export async function useRareCandyMax(
+  uid: string,
+  catchId: string,
+): Promise<{ from: number; level: number } | null> {
+  const level = await feed(
+    uid,
+    catchId,
+    MAX_LEVEL,
+    async (transaction, _caught, _record, wanted) => {
+      const held = await readStackIn(transaction, ITEM_STACKS, uid, Items.RareCandyMax);
+
+      return (await spendStackIn(transaction, ITEM_STACKS, uid, Items.RareCandyMax, held, 1))
+        ? wanted
+        : 0;
+    },
+    true,
+  );
+
+  if (level == null) {
+    return null;
+  }
+  await bumpProgress(uid, [[Metric.ItemUses, Items.RareCandyMax, 1]]);
   return level;
 }
 
 /**
- * The feeding both candies share: the same refusals, the same levels,
+ * The feeding every candy shares: the same refusals, the same levels,
  * the same transaction. `pay` is the only difference (which stack
  * covers it, and how many levels it could cover), and a payment that
- * fails leaves everything unwritten
+ * fails leaves everything unwritten.
+ *
+ * `opensRun` leaves every level grown through on offer for its moves;
+ * otherwise only the level reached is
  */
 async function feed(
   uid: string,
@@ -149,7 +186,8 @@ async function feed(
     record: CaughtPokemon,
     wanted: number,
   ) => Promise<number>,
-): Promise<number | null> {
+  opensRun = false,
+): Promise<{ from: number; level: number } | null> {
   const grown = await tx(async (transaction) => {
     // A level reads the row it is written on: what the pokemon knows
     // is not part of feeding it
@@ -194,6 +232,7 @@ async function feed(
 
     await updateCaughtIn(transaction, catchId, {
       level,
+      learnFrom: opensRun ? record.level + 1 : null,
       // A level restores what the last fight took, status and all
       health: whole,
       maxHealth: whole,
@@ -209,11 +248,12 @@ async function feed(
         friendshipFactor(record.ball, record.items),
       ),
     });
-    return { level, paid };
+    return { from: record.level + 1, level, paid };
   });
 
-  if (grown != null) {
-    await bumpProgress(uid, [[Metric.LevelUps, 0, grown.paid]]);
+  if (grown == null) {
+    return null;
   }
-  return grown?.level ?? null;
+  await bumpProgress(uid, [[Metric.LevelUps, 0, grown.paid]]);
+  return { from: grown.from, level: grown.level };
 }

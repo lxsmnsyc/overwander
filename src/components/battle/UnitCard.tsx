@@ -382,7 +382,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
           <For each={view().abilities} fallback={<Meta>No ability</Meta>}>
             {(ability) => (
               <li>
-                <TooltipHost class="block" {...ability}>
+                <TooltipHost class="block" kind="ability" {...ability}>
                   <span
                     class="block truncate rounded border border-line-soft bg-tide-soft px-1 py-0.5
                       text-tide-dark"
@@ -399,7 +399,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
           <For each={view().items} fallback={<Meta>No item</Meta>}>
             {(item) => (
               <li>
-                <TooltipHost class="block" {...item}>
+                <TooltipHost class="block" kind="item" {...item}>
                   <span
                     class="block truncate rounded border border-line-soft bg-gold-soft px-1 py-0.5
                       text-gold"

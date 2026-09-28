@@ -1,3 +1,4 @@
+import { MAX_WING_STATS } from '../../../src/data/items/wings';
 import { registerMoves } from '../../../src/data/moves';
 import { describe, expect, it } from 'vitest';
 import registerAbilities from '../../../src/data/abilities';
@@ -54,7 +55,13 @@ import { FOSSIL_OFFER_KINDS, getFossilPrice } from '../../../src/data/overworld/
 import { isFossil } from '../../../src/data/items/fossils';
 import Landmark from '../../../src/data/overworld/landmark';
 import { getPortalCell, portalInRegion } from '../../../src/overworld/portal';
-import Npc, { NPCS, npcSheet, npcSheets } from '../../../src/data/overworld/npc';
+import Npc, {
+  NPCS,
+  TRADERS,
+  TRADER_OFFERS,
+  npcSheet,
+  npcSheets,
+} from '../../../src/data/overworld/npc';
 import Phenomenon, {
   getPhenomenonGroups,
   getPhenomenonItems,
@@ -64,6 +71,7 @@ import {
   VENDOR_STOCK_KINDS,
   type VendorKind,
   getChefGoods,
+  getGeologistGoods,
   getVendorGoods,
   isMarketable,
 } from '../../../src/data/overworld/vendor';
@@ -410,7 +418,7 @@ describe('world', () => {
         const stock = snapshot.getVendorStock(cell);
 
         // Anybody else's cell holds no crate at all
-        if (npc !== Npc.Vendor && npc !== Npc.Chef) {
+        if (!TRADERS.has(npc)) {
           expect(stock).toEqual([]);
           expect(snapshot.getVendorKind(cell)).toBeNull();
           continue;
@@ -420,15 +428,16 @@ describe('world', () => {
 
         // A dozen kinds, none of them twice, or the whole shelf where
         // that counter is carrying fewer than a dozen
-        const kind = npc === Npc.Chef ? null : snapshot.getVendorKind(cell);
-        const shelf = kind == null ? getChefGoods() : getVendorGoods(kind);
+        const kind = npc === Npc.Vendor ? snapshot.getVendorKind(cell) : null;
+        const own = npc === Npc.Geologist ? getGeologistGoods() : getChefGoods();
+        const shelf = kind == null ? own : getVendorGoods(kind);
 
         expect(stock.length).toBe(Math.min(VENDOR_STOCK_KINDS, shelf.length));
         expect(new Set(stock).size).toBe(stock.length);
 
-        if (npc === Npc.Chef) {
-          // Everything on his counter came out of his own larder
-          const larder = new Set(getChefGoods());
+        if (npc === Npc.Chef || npc === Npc.Geologist) {
+          // Everything on the chef's or the geologist's counter came off his own shelf
+          const larder = new Set(own);
 
           expect(snapshot.getVendorKind(cell)).toBeNull();
           for (const item of stock) {
@@ -763,6 +772,49 @@ describe('world', () => {
     expect(offers.size).toBeGreaterThan(1);
   });
 
+  it('hands the trader six pokemon from away, the same six to everybody', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.WanderingNpc),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    let found = 0;
+
+    for (let window = 0; window < 64; window++) {
+      const at = window * NPC_INTERVAL;
+      const snapshot = new ChunkSnapshot(chunk, at);
+
+      for (const [cell, npc] of snapshot.getWanderingNpcs()) {
+        const offer = snapshot.getTraderOffer(cell);
+
+        if (npc !== Npc.Trader) {
+          expect(offer).toEqual([]);
+          continue;
+        }
+        found++;
+
+        const species = new Set<Species>();
+
+        for (const [one] of offer) {
+          species.add(one);
+          // Young bands only, so never a legendary or a mythical
+          expect(getSpawnRarity(one)).not.toBe(SpawnRarity.Special);
+          expect(getSpawnRarity(one)).not.toBe(SpawnRarity.Mythical);
+        }
+        expect(offer.length).toBe(TRADER_OFFERS);
+        expect(species.size).toBe(offer.length);
+        expect(new ChunkSnapshot(chunk, at + 1).getTraderOffer(cell)).toEqual(offer);
+      }
+    }
+
+    expect(found).toBeGreaterThan(0);
+  });
+
   it('opens a portal onto the portal in the town named', () => {
     const world = new World('overworld');
     const chunk = findChunk(world, (candidate) =>
@@ -1044,16 +1096,20 @@ describe('world', () => {
       const groups = getPhenomenonGroups(phenomenon);
       const listed = getPhenomenonItems(phenomenon);
       const bands = ['uncommon', 'rare', 'prized'] as const;
+      const drawn = [...bands, 'special'] as const;
 
       // Nothing is lost on the way into the bands, and nothing is
       // invented: the same items, sorted
-      expect(new Set(bands.flatMap((band) => groups[band].map((entry) => entry.item)))).toEqual(
+      expect(new Set(drawn.flatMap((band) => groups[band].map((entry) => entry.item)))).toEqual(
         new Set(listed),
       );
-      // Neither base nor special has any width here, so anything left
-      // in one would be an item the phenomenon could never leave
+      // Base has no width here, so anything left in it would be an
+      // item the phenomenon could never leave
       expect(groups.base).toEqual([]);
-      expect(groups.special).toEqual([]);
+      // Special holds a shadow's Max wings and nothing else
+      expect(new Set(groups.special.map((entry) => entry.item))).toEqual(
+        new Set(phenomenon === Phenomenon.FlyingShadow ? MAX_WING_STATS.keys() : []),
+      );
 
       for (const band of bands) {
         const entries = groups[band];
@@ -1117,14 +1173,17 @@ describe('world', () => {
       }
     }
 
-    // The bands themselves are the ground's, one step richer, and what
-    // is left over is nothing: no base, no special
+    // The bands themselves are the ground's, one step richer, special
+    // as wide as the ground's, and nothing left over for base
     expect(PHENOMENON_BAND_ODDS.rare).toBe(8 * ITEM_BAND_ODDS.rare);
     expect(PHENOMENON_BAND_ODDS.prized).toBe(8 * ITEM_BAND_ODDS.prized);
-    expect(PHENOMENON_BAND_ODDS.special).toBe(0);
+    expect(PHENOMENON_BAND_ODDS.special).toBe(ITEM_BAND_ODDS.special);
     expect(
-      PHENOMENON_BAND_ODDS.prized + PHENOMENON_BAND_ODDS.rare + PHENOMENON_BAND_ODDS.uncommon,
-    ).toBe(1);
+      PHENOMENON_BAND_ODDS.special +
+        PHENOMENON_BAND_ODDS.prized +
+        PHENOMENON_BAND_ODDS.rare +
+        PHENOMENON_BAND_ODDS.uncommon,
+    ).toBeCloseTo(1, 12);
   });
 
   it('startles what the phenomenon looks like', () => {

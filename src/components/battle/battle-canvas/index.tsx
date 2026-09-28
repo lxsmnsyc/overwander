@@ -15,6 +15,7 @@ import createLongPress from '../../styled/long-press';
 import paintWeather, { batchHaze } from '../../../canvas/battle/weather';
 import buildWeather from '../../../canvas/battle/field-weather';
 import {
+  RIDES_THE_WAIT,
   delayShapeFor,
   moveDelayVisual,
   moveEffectVisual,
@@ -999,6 +1000,11 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       BattleEvents.UnitTriggerMoveEffect,
       AttackPriority.Post,
       (event) => {
+        // Already falling since it was queued, see `queued` below
+        if (RIDES_THE_WAIT.has(event.move)) {
+          return;
+        }
+
         const struck: Unit[] = [];
 
         if (event.target.type === MoveTargetType.Unit) {
@@ -1016,6 +1022,24 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
         if (landing != null) {
           paint(landing, event.source, struck);
+        }
+      },
+    );
+
+    // A strike queued to land later is drawn from now, so its star is
+    // in the air for the whole wait and lands with the blow
+    const queued = props.battle.on(
+      BattleEvents.UnitTriggerMoveTarget,
+      AttackPriority.Post,
+      (event) => {
+        if (!RIDES_THE_WAIT.has(event.move) || event.target.type !== MoveTargetType.Unit) {
+          return;
+        }
+
+        const falling = moveEffectVisual(event.move, event.steps);
+
+        if (falling != null) {
+          paint(falling, event.source, [event.target.unit]);
         }
       },
     );
@@ -1572,6 +1596,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       element.removeEventListener('pointercancel', release);
       firing.stop();
       landed.stop();
+      queued.stop();
       missing.stop();
       ailing.stop();
       biting.stop();

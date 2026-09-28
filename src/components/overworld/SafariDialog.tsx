@@ -657,211 +657,220 @@ function SafariBody(
         turn gives it another chance to bolt."
     >
       <Show when={session()}>
-        {(active) => (
-          <>
-            {/* The field: sky over grass, and the pokemon on its base.
+        {(held) => {
+          // Show only hands on a new object, and the session is mutated
+          // in place, so each read also follows the nudge that says it changed
+          const active = (): SafariSession<EncounterRecord> => {
+            revision();
+            return held();
+          };
+
+          return (
+            <>
+              {/* The field: sky over grass, and the pokemon on its base.
                 Its height is held whatever stands on it, so a throw
                 never moves the controls out from under the finger */}
-            <div
-              class="relative -mx-4 -mt-4 h-60 overflow-hidden rounded-t-[20px] sm:-mx-5 sm:-mt-5"
-              style={{
-                background:
-                  'linear-gradient(var(--field-sky), var(--field-haze) 55%, var(--field-grass) 55%, var(--field-grass-deep))',
-              }}
-            >
-              <span
-                aria-hidden="true"
-                class="absolute bottom-8 left-1/2 h-9 w-40 -translate-x-1/2 rounded-[50%]
-                  shadow-[inset_0_-5px_0_rgb(0_0_0/0.15)]"
-                style={{ background: 'var(--field-base)' }}
-              />
-              {/* The pokemon's box, the way a battle names who is standing there */}
               <div
-                class="absolute top-3 left-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-col gap-1
+                class="relative -mx-4 -mt-4 h-60 overflow-hidden rounded-t-[20px] sm:-mx-5 sm:-mt-5"
+                style={{
+                  background:
+                    'linear-gradient(var(--field-sky), var(--field-haze) 55%, var(--field-grass) 55%, var(--field-grass-deep))',
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  class="absolute bottom-8 left-1/2 h-9 w-40 -translate-x-1/2 rounded-[50%]
+                  shadow-[inset_0_-5px_0_rgb(0_0_0/0.15)]"
+                  style={{ background: 'var(--field-base)' }}
+                />
+                {/* The pokemon's box, the way a battle names who is standing there */}
+                <div
+                  class="absolute top-3 left-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-col gap-1
                   rounded-xl border-2 border-line bg-paper px-2.5 py-1.5 text-sm font-extrabold
                   shadow-pop"
-              >
-                {met()}
-                <Show
-                  when={
-                    (props.revealsHeld === true && active().encounter.items.length > 0) ||
-                    props.revealsFlight === true ||
-                    props.revealsAbility === true
-                  }
                 >
-                  <span class="flex flex-wrap gap-1">
-                    <Show when={props.revealsHeld === true}>
-                      <For each={active().encounter.items}>
-                        {(item) => (
-                          <Badge tone="tide">
-                            <ItemSprite item={item} size={HELD_SPRITE} label="" />
-                            {describeItem(item)}
-                          </Badge>
-                        )}
-                      </For>
-                    </Show>
-                    {/* What a Forewarn buddy passes on: how ready it is to be gone */}
-                    <Show when={props.revealsFlight === true}>
-                      <Badge tone="ember">{describeFlight(active().getFleeChance())}</Badge>
-                    </Show>
-                    {/* And what a Trace buddy reads off it */}
-                    <Show when={props.revealsAbility === true}>
-                      <Badge tone="leaf">{describeAbility(active().encounter.ability)}</Badge>
-                    </Show>
-                  </span>
-                </Show>
-              </div>
-              <div class="absolute inset-x-0 bottom-12 flex justify-center">
-                {/* The ball stands where the pokemon did while it rocks:
-                    what is inside the ball is not also in the field */}
-                <Show
-                  when={rocking() != null}
-                  fallback={
-                    <AnimatedSprite
-                      species={active().encounter.species}
-                      shiny={isShiny(active().encounter)}
-                      female={active().encounter.gender === Genders.Female}
-                      sparkle={isShiny(active().encounter)}
-                      aura={isShadow(active().encounter) ? 'shadow' : undefined}
-                      animation={SpriteAnim.Idle}
-                      direction="Down"
-                      scale={4}
-                      label={`${getSpeciesData(active().encounter.species).name}, standing in front of you`}
-                    />
-                  }
-                >
-                  <span
-                    class="block pb-2"
-                    style={{ animation: `ball-land ${BALL_LAND}ms ease-out both` }}
-                  >
-                    <span
-                      class="block"
-                      style={{
-                        animation: `ball-shake ${BALL_SHAKE + BALL_REST}ms ease-in-out ${BALL_LAND}ms ${rocking() ?? 0} both`,
-                      }}
-                    >
-                      <ItemSprite
-                        item={BALL_ITEMS[active().ball]}
-                        size={BALL_SPRITE}
-                        label={
-                          active().state === SafariState.Caught
-                            ? 'The ball holds'
-                            : 'The ball rocks'
-                        }
-                      />
-                    </span>
-                  </span>
-                </Show>
-              </div>
-            </div>
-
-            {/* The textbox: what happened, said where the player is looking */}
-            <p
-              class="relative z-10 -mt-7 mb-0 rounded-xl border-2 border-line bg-paper px-3 py-2
-                text-sm font-bold shadow-pop"
-              role="status"
-            >
-              {narration()}
-            </p>
-            <Status message={failed(props.bag)} />
-
-            <Show
-              when={active().state === SafariState.Active}
-              fallback={
-                <div class="grid grid-cols-2 gap-2">
+                  {met()}
                   <Show
-                    when={caught()}
-                    fallback={
-                      <button type="button" class={`${TILE} col-span-2`} onClick={leave}>
-                        Walk on
-                      </button>
+                    when={
+                      (props.revealsHeld === true && active().encounter.items.length > 0) ||
+                      props.revealsFlight === true ||
+                      props.revealsAbility === true
                     }
                   >
-                    <button type="button" class={`${TILE} ${TILE_PRIMARY}`} onClick={openSheet}>
-                      Have a look
-                    </button>
-                    <button type="button" class={TILE} onClick={leave}>
-                      Walk on
-                    </button>
+                    <span class="flex flex-wrap gap-1">
+                      <Show when={props.revealsHeld === true}>
+                        <For each={active().encounter.items}>
+                          {(item) => (
+                            <Badge tone="tide">
+                              <ItemSprite item={item} size={HELD_SPRITE} label="" />
+                              {describeItem(item)}
+                            </Badge>
+                          )}
+                        </For>
+                      </Show>
+                      {/* What a Forewarn buddy passes on: how ready it is to be gone */}
+                      <Show when={props.revealsFlight === true}>
+                        <Badge tone="ember">{describeFlight(active().getFleeChance())}</Badge>
+                      </Show>
+                      {/* And what a Trace buddy reads off it */}
+                      <Show when={props.revealsAbility === true}>
+                        <Badge tone="leaf">{describeAbility(active().encounter.ability)}</Badge>
+                      </Show>
+                    </span>
                   </Show>
                 </div>
-              }
-            >
-              <Show
-                when={rummaging()}
-                fallback={
-                  // The command menu: the bag, the throw, and the way out
-                  <div class="grid grid-cols-[1fr_1.4fr_1fr] gap-2">
-                    <button
-                      type="button"
-                      class={TILE}
-                      disabled={throwing()}
-                      onClick={() => {
-                        setRummaging(true);
-                      }}
+                <div class="absolute inset-x-0 bottom-12 flex justify-center">
+                  {/* The ball stands where the pokemon did while it rocks:
+                    what is inside the ball is not also in the field */}
+                  <Show
+                    when={rocking() != null}
+                    fallback={
+                      <AnimatedSprite
+                        species={active().encounter.species}
+                        shiny={isShiny(active().encounter)}
+                        female={active().encounter.gender === Genders.Female}
+                        sparkle={isShiny(active().encounter)}
+                        aura={isShadow(active().encounter) ? 'shadow' : undefined}
+                        animation={SpriteAnim.Idle}
+                        direction="Down"
+                        scale={4}
+                        label={`${getSpeciesData(active().encounter.species).name}, standing in front of you`}
+                      />
+                    }
+                  >
+                    <span
+                      class="block pb-2"
+                      style={{ animation: `ball-land ${BALL_LAND}ms ease-out both` }}
                     >
-                      <BagIcon class="size-5" aria-hidden="true" />
-                      Bag
-                      <span class={TILE_NOTE}>Balls, treats</span>
-                    </button>
-                    {/* The ball in hand is the label: it is the one thing
-                        checked between every throw */}
-                    <button
-                      type="button"
-                      class={`${TILE} ${TILE_PRIMARY}`}
-                      disabled={throwing() || stockOf(inHand()) === 0}
-                      aria-label={`Throw ${describeItem(inHand())}, ${stockOf(inHand())} left`}
-                      onClick={hurl}
-                    >
-                      <ItemSprite item={inHand()} size={THROW_SPRITE} label="" class="-my-1" />
-                      Throw
-                      <span class={`${TILE_NOTE} text-on-accent/85`}>
-                        {describeItem(inHand())} × {stockOf(inHand())}
+                      <span
+                        class="block"
+                        style={{
+                          animation: `ball-shake ${BALL_SHAKE + BALL_REST}ms ease-in-out ${BALL_LAND}ms ${rocking() ?? 0} both`,
+                        }}
+                      >
+                        <ItemSprite
+                          item={BALL_ITEMS[active().ball]}
+                          size={BALL_SPRITE}
+                          label={
+                            active().state === SafariState.Caught
+                              ? 'The ball holds'
+                              : 'The ball rocks'
+                          }
+                        />
                       </span>
-                    </button>
-                    <button
-                      type="button"
-                      class={`${TILE} text-ember-dark`}
-                      disabled={throwing()}
-                      onClick={leave}
+                    </span>
+                  </Show>
+                </div>
+              </div>
+
+              {/* The textbox: what happened, said where the player is looking */}
+              <p
+                class="relative z-10 -mt-7 mb-0 rounded-xl border-2 border-line bg-paper px-3 py-2
+                text-sm font-bold shadow-pop"
+                role="status"
+              >
+                {narration()}
+              </p>
+              <Status message={failed(props.bag)} />
+
+              <Show
+                when={active().state === SafariState.Active}
+                fallback={
+                  <div class="grid grid-cols-2 gap-2">
+                    <Show
+                      when={caught()}
+                      fallback={
+                        <button type="button" class={`${TILE} col-span-2`} onClick={leave}>
+                          Walk on
+                        </button>
+                      }
                     >
-                      <ArrowLeftIcon class="size-5" aria-hidden="true" />
-                      Run
-                      <span class={TILE_NOTE}>Walk away</span>
-                    </button>
+                      <button type="button" class={`${TILE} ${TILE_PRIMARY}`} onClick={openSheet}>
+                        Have a look
+                      </button>
+                      <button type="button" class={TILE} onClick={leave}>
+                        Walk on
+                      </button>
+                    </Show>
                   </div>
                 }
               >
-                {/* Balls and treats only, and no treat while it is
-                    still chewing the last one */}
-                <InventoryPicker
-                  inline
-                  player={props.user.uid}
-                  value={inHand()}
-                  empty="Nothing in the bag to throw."
-                  filter={(entry) =>
-                    getBall(entry.item) != null || (isTreat(entry.item) && active().canFeed())
+                <Show
+                  when={rummaging()}
+                  fallback={
+                    // The command menu: the bag, the throw, and the way out
+                    <div class="grid grid-cols-[1fr_1.4fr_1fr] gap-2">
+                      <button
+                        type="button"
+                        class={TILE}
+                        disabled={throwing()}
+                        onClick={() => {
+                          setRummaging(true);
+                        }}
+                      >
+                        <BagIcon class="size-5" aria-hidden="true" />
+                        Bag
+                        <span class={TILE_NOTE}>Balls, treats</span>
+                      </button>
+                      {/* The ball in hand is the label: it is the one thing
+                        checked between every throw */}
+                      <button
+                        type="button"
+                        class={`${TILE} ${TILE_PRIMARY}`}
+                        disabled={throwing() || stockOf(inHand()) === 0}
+                        aria-label={`Throw ${describeItem(inHand())}, ${stockOf(inHand())} left`}
+                        onClick={hurl}
+                      >
+                        <ItemSprite item={inHand()} size={THROW_SPRITE} label="" class="-my-1" />
+                        Throw
+                        <span class={`${TILE_NOTE} text-on-accent/85`}>
+                          {describeItem(inHand())} × {stockOf(inHand())}
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        class={`${TILE} text-ember-dark`}
+                        disabled={throwing()}
+                        onClick={leave}
+                      >
+                        <ArrowLeftIcon class="size-5" aria-hidden="true" />
+                        Run
+                        <span class={TILE_NOTE}>Walk away</span>
+                      </button>
+                    </div>
                   }
-                  entries={readable(props.bag)}
-                  onPick={(item) => {
-                    if (item != null) {
-                      take(item);
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  class={TILE}
-                  onClick={() => {
-                    setRummaging(false);
-                  }}
                 >
-                  Never mind
-                </button>
+                  {/* Balls and treats only, and no treat while it is
+                    still chewing the last one */}
+                  <InventoryPicker
+                    inline
+                    player={props.user.uid}
+                    value={inHand()}
+                    empty="Nothing in the bag to throw."
+                    filter={(entry) =>
+                      getBall(entry.item) != null || (isTreat(entry.item) && active().canFeed())
+                    }
+                    entries={readable(props.bag)}
+                    onPick={(item) => {
+                      if (item != null) {
+                        take(item);
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    class={TILE}
+                    onClick={() => {
+                      setRummaging(false);
+                    }}
+                  >
+                    Never mind
+                  </button>
+                </Show>
               </Show>
-            </Show>
-          </>
-        )}
+            </>
+          );
+        }}
       </Show>
     </Dialog>
   );

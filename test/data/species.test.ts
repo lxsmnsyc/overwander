@@ -374,6 +374,14 @@ describe('species measurements', () => {
 });
 
 describe('species forms', () => {
+  it('keeps each Meowstic record to its own sex', () => {
+    // Drawn from the record rather than the roll: a female-form
+    // Meowstic that rolled male was drawn in the female coat and
+    // marked ♂, and the male form the other way round
+    expect(getSpeciesData(Species.Meowstic).genderRatio).toEqual([1, 0]);
+    expect(getSpeciesData(Species.MeowsticFemale).genderRatio).toEqual([0, 1]);
+  });
+
   it('treats every registered species but the unowns and the worn shapes as a default form', () => {
     // The flag is absent almost everywhere and answers true rather
     // than being written out three hundred times. The variants are

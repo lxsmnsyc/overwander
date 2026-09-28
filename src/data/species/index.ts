@@ -4,7 +4,6 @@ import {
   registerLearnSetRows,
   registerRecordRows,
 } from './compact';
-import registerGen3Species from './gen-3';
 import registerGen4Species from './gen-4';
 import registerGen5Species from './gen-5';
 import registerGen6Species from './gen-6';
@@ -86,14 +85,18 @@ export {
 
 // The regions already loaded from their compact rows rather than their source
 const COMPACT_RECORDS = import.meta.glob<RecordFile>(
-  ['./compact/gen-1.records.json', './compact/gen-2.records.json'],
+  ['./compact/gen-1.records.json', './compact/gen-2.records.json', './compact/gen-3.records.json'],
   {
     eager: true,
     import: 'default',
   },
 );
 const COMPACT_LEARN_SETS = import.meta.glob<LearnSetFile>(
-  ['./compact/gen-1.learnsets.json', './compact/gen-2.learnsets.json'],
+  [
+    './compact/gen-1.learnsets.json',
+    './compact/gen-2.learnsets.json',
+    './compact/gen-3.learnsets.json',
+  ],
   {
     eager: true,
     import: 'default',
@@ -105,7 +108,8 @@ export function registerSpecies(): void {
   registerLearnSetRows(COMPACT_LEARN_SETS['./compact/gen-1.learnsets.json']);
   registerRecordRows(COMPACT_RECORDS['./compact/gen-2.records.json']);
   registerLearnSetRows(COMPACT_LEARN_SETS['./compact/gen-2.learnsets.json']);
-  registerGen3Species();
+  registerRecordRows(COMPACT_RECORDS['./compact/gen-3.records.json']);
+  registerLearnSetRows(COMPACT_LEARN_SETS['./compact/gen-3.learnsets.json']);
   registerGen4Species();
   registerGen5Species();
   registerGen6Species();

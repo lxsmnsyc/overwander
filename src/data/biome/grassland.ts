@@ -29,6 +29,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Fomantis, weight: 22 },
+        { species: Species.Mudbray, weight: 22 },
         { species: Species.Cutiefly, weight: 24 },
         { species: Species.Rockruff, weight: 22 },
         { species: Species.Swirlix, weight: 24 },
@@ -82,6 +84,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Lurantis, weight: 6 },
+        { species: Species.Mudsdale, weight: 6 },
         { species: Species.Ribombee, weight: 6 },
         { species: Species.Lycanroc, weight: 6 },
         { species: Species.Sylveon, weight: 6 },
@@ -194,6 +198,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Fomantis, weight: 22 },
+        { species: Species.Mudbray, weight: 22 },
         { species: Species.Cutiefly, weight: 24 },
         { species: Species.Rockruff, weight: 22 },
         { species: Species.Swirlix, weight: 24 },
@@ -249,6 +255,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Lurantis, weight: 6 },
+        { species: Species.Mudsdale, weight: 6 },
         { species: Species.Ribombee, weight: 6 },
         { species: Species.Lycanroc, weight: 6 },
         { species: Species.Sylveon, weight: 6 },
@@ -354,6 +362,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Mudbray, weight: 22 },
         { species: Species.Rockruff, weight: 22 },
         { species: Species.Pumpkaboo, weight: 12 },
         { species: Species.PumpkabooSuper, weight: 12 },
@@ -381,6 +390,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Mudsdale, weight: 6 },
         { species: Species.LycanrocDusk, weight: 6 },
         { species: Species.Sylveon, weight: 6 },
         { species: Species.Gourgeist, weight: 3 },
@@ -449,6 +459,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Mudbray, weight: 22 },
         { species: Species.Rockruff, weight: 22 },
         { species: Species.Pumpkaboo, weight: 12 },
         { species: Species.PumpkabooSuper, weight: 12 },
@@ -478,6 +489,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Mudsdale, weight: 6 },
         { species: Species.LycanrocMidnight, weight: 6 },
         { species: Species.Sylveon, weight: 6 },
         { species: Species.Gourgeist, weight: 3 },

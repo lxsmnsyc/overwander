@@ -2253,4 +2253,32 @@ export default function registerSignatureAbilities(): void {
     name: 'Provoke',
     description: 'An enemy it hits must aim its next single-target move at it.',
   });
+
+  // Akala's first roads and Brooklet Hill
+  registerSignature(Families.Wishiwashi, Abilities.Regroup, {
+    name: 'Regroup',
+    description:
+      'While it swims alone it heals 1/8 of its HP each time it acts, so the school can gather again.',
+  });
+
+  registerSignature(Families.Mudbray, Abilities.HeavyHooves, {
+    name: 'Heavy Hooves',
+    description: 'Its physical moves hit 1% harder for every 20 kg it weighs, up to 1.4x.',
+  });
+
+  registerSignature(Families.Dewpider, Abilities.BubbleWard, {
+    name: 'Bubble Ward',
+    description: 'While it stands, its teammates take Fire moves at 0.75x and cannot be burned.',
+  });
+
+  registerSignature(Families.Fomantis, Abilities.OrchidGuise, {
+    name: 'Orchid Guise',
+    description:
+      'Enemies cannot aim a single-target move at it until it lands its first attack, which hits 1.3x.',
+  });
+
+  registerSignature(Families.Bounsweet, Abilities.TropStride, {
+    name: 'Trop Stride',
+    description: 'Its kicking moves hit 1.3x.',
+  });
 }

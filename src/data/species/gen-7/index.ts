@@ -8,6 +8,11 @@ import registerCrabrawlerSpecies from './crabrawler';
 import registerOricorioSpecies from './oricorio';
 import registerCutieflySpecies from './cutiefly';
 import registerRockruffSpecies from './rockruff';
+import registerWishiwashiSpecies from './wishiwashi';
+import registerMudbraySpecies from './mudbray';
+import registerDewpiderSpecies from './dewpider';
+import registerFomantisSpecies from './fomantis';
+import registerBounsweetSpecies from './bounsweet';
 
 /** Alola, as far as it is written */
 export default function registerGen7Species(): void {
@@ -21,4 +26,9 @@ export default function registerGen7Species(): void {
   registerOricorioSpecies();
   registerCutieflySpecies();
   registerRockruffSpecies();
+  registerWishiwashiSpecies();
+  registerMudbraySpecies();
+  registerDewpiderSpecies();
+  registerFomantisSpecies();
+  registerBounsweetSpecies();
 }

@@ -133,6 +133,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Lotad, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Dewpider, weight: 22 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Krabby, weight: 20 },
@@ -144,6 +145,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Lombre, weight: 10 },
       ],
       scarce: [
+        { species: Species.Araquanid, weight: 6 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Kingler, weight: 10 },
@@ -152,6 +154,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Gastrodon, weight: 10 },
       ],
       elusive: [
+        { species: Species.Wishiwashi, weight: 5 },
         { species: Species.Feraligatr, weight: 2 },
         { species: Species.Ludicolo, weight: 5 },
       ],
@@ -163,6 +166,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Lotad, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Dewpider, weight: 22 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Krabby, weight: 20 },
@@ -174,6 +178,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Lombre, weight: 10 },
       ],
       scarce: [
+        { species: Species.Araquanid, weight: 6 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Kingler, weight: 10 },
@@ -182,6 +187,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Gastrodon, weight: 10 },
       ],
       elusive: [
+        { species: Species.Wishiwashi, weight: 5 },
         { species: Species.Feraligatr, weight: 2 },
         { species: Species.Ludicolo, weight: 5 },
       ],
@@ -190,6 +196,7 @@ export default function registerMangroveSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [],
       uncommon: [
+        { species: Species.Dewpider, weight: 22 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Wooper, weight: 25 },
@@ -197,17 +204,19 @@ export default function registerMangroveSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.Araquanid, weight: 6 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Quagsire, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
       ],
-      elusive: [],
+      elusive: [{ species: Species.Wishiwashi, weight: 5 }],
       special: [],
     },
     [TimeOfDay.Night]: {
       base: [],
       uncommon: [
+        { species: Species.Dewpider, weight: 22 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Wooper, weight: 25 },
@@ -215,12 +224,13 @@ export default function registerMangroveSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.Araquanid, weight: 6 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Quagsire, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
       ],
-      elusive: [],
+      elusive: [{ species: Species.Wishiwashi, weight: 5 }],
       special: [],
     },
   });

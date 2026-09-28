@@ -1540,6 +1540,9 @@ export const LYCANROC_FORMS: Species[] = [
   Species.LycanrocDusk,
 ];
 
+/** A Wishiwashi alone, and the school it calls together from level 20 */
+export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];
+
 /** Rotom and the five machines it gets into */
 export const ROTOM_FORMS: Species[] = [
   Species.Rotom,

@@ -5,6 +5,7 @@ import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { holdsAnyItem } from '../utils';
+import { seesFully } from '../ai/fog';
 
 /**
  * The two moves that take something away from a target rather than
@@ -47,6 +48,7 @@ export default function setupLockouts(battle: Battle): void {
     if (
       event.move === Moves.Embargo &&
       event.target.type === MoveTargetType.Unit &&
+      seesFully(event.source, event.target.unit) &&
       !holdsAnyItem(event.target.unit)
     ) {
       event.score -= USELESS_PENALTY;

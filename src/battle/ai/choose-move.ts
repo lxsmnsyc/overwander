@@ -33,6 +33,7 @@ import { ACCURACY_PENALTY, BASE_SCORE, STEP_PENALTY, USELESS_PENALTY } from './s
 import { SELF_STATUS_MOVES, STATUS_MOVES } from '../moves/status';
 import type Unit from '../unit';
 import { withAIContext } from './context';
+import setupFog from './fog';
 
 /**
  * Raid battles favor setting up: enough to outbid any non-KO damage
@@ -78,6 +79,9 @@ export function chooseMove(battle: Battle, source: Unit): AIMoveChoice | undefin
 }
 
 export function setupChooseMoveAI(battle: Battle): void {
+  // What the AI may know about a foe is settled before anything is weighed
+  setupFog(battle);
+
   /**
    * Expected damage simulated through the engine's own resolver: a
    * synthetic UnitAttackResolveDamage event runs the real damage

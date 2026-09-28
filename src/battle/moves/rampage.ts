@@ -16,7 +16,12 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
  * its steps and comes out of it clear-headed, and the racket it makes
  * while it runs is the Uproaring status' own business
  */
-export const RAMPAGE_MOVES = new Set<Moves>([Moves.Thrash, Moves.PetalDance, Moves.Outrage, Moves.Uproar]);
+export const RAMPAGE_MOVES = new Set<Moves>([
+  Moves.Thrash,
+  Moves.PetalDance,
+  Moves.Outrage,
+  Moves.Uproar,
+]);
 
 /** The ones that leave the user reeling when they finally stop */
 const FATIGUING_MOVES = new Set<Moves>([Moves.Thrash, Moves.PetalDance, Moves.Outrage]);

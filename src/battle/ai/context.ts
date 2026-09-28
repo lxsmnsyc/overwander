@@ -4,6 +4,7 @@ import type Battle from '../core';
 import { BattleEvents, type CheckUnitAIRatingEvent } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
+import { knowsMove } from './fog';
 
 /** How strong a unit currently is. Internal to the AI module */
 export function checkUnitRating(battle: Battle, source: Unit): number {
@@ -59,11 +60,11 @@ export class AIContext {
     }
   }
 
-  /** Whether any living foe is known to have a move that passes the test */
+  /** Whether any living foe has shown a move that passes the test */
   foesKnow(test: (move: Moves) => boolean): boolean {
     for (const foe of this.foes()) {
       for (const move of carriedMoves(foe)) {
-        if (test(move)) {
+        if (knowsMove(this.source, foe, move) && test(move)) {
           return true;
         }
       }

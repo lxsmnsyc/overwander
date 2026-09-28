@@ -6,6 +6,7 @@ import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
 import { hasFreeItemSlot, stealableItem } from '../utils';
+import { seesFully } from '../ai/fog';
 
 /**
  * The moves that move held items about rather than damage: one knocks
@@ -116,7 +117,7 @@ export default function setupItemMoves(battle: Battle): void {
       event.usable =
         stealableItem(event.source) != null &&
         event.target.type === MoveTargetType.Unit &&
-        hasFreeItemSlot(event.target.unit);
+        (!seesFully(event.source, event.target.unit) || hasFreeItemSlot(event.target.unit));
     }
   });
 
@@ -124,6 +125,7 @@ export default function setupItemMoves(battle: Battle): void {
     if (
       event.move === Moves.KnockOff &&
       event.target.type === MoveTargetType.Unit &&
+      seesFully(event.source, event.target.unit) &&
       stealableItem(event.target.unit) == null
     ) {
       event.score -= USELESS_PENALTY;

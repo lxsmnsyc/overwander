@@ -98,6 +98,31 @@ Damp is the exception, because its veto lives on the cast check and the AI
 **cannot ask that**. Infatuation answers the same question with a coin toss, and
 a speculative flip would pull every replay off its seed.
 
+## The fog
+
+The AI only knows what a foe has shown
+([`src/battle/ai/fog.ts`](../../src/battle/ai/fog.ts)). This applies to both
+sides, since the AI drives every unit.
+
+- An ability is known once it cues (`UnitTriggerAbility`). Boss is always known.
+- A held item is known once it cues (`UnitTriggerItem`).
+- A move is known once it is cast. Attack and Struggle are always known, since
+  every unit carries them.
+- Types, health, statuses and stages are always known.
+- The caster's own side hides nothing.
+
+While the AI weighs a move, every hidden ability and item on another side reads
+as absent. The fog opens on the same `Prepare`/`Cleanup` bracket as Mold
+Breaker, so the damage estimate, the immunity checks, the stage checks and the
+ratings all see only what has been shown. A Levitate that has not cued is not
+something the AI plans around; once a Ground move fails against it, it is.
+
+Hidden is not the same as absent. A rule that reads a foe's item or ability list
+directly assumes the move works until it knows otherwise: Knock Off, Bug Bite,
+Pluck and Embargo are not marked down against a foe whose items are unknown, and
+Role Play, Gastro Acid and Skill Swap assume the foe holds an ability. Damp
+refuses an Explosion only once the caster knows about the Damp.
+
 ## Scoring a hit
 
 - Taking a unit off the field is worth `KILL_BONUS` (8). That sits above the
@@ -164,10 +189,9 @@ field out again for every move and target:
 - the living friends and foes;
 - each unit's rating and threat band, computed once per decision;
 - a team's health share, with fainted units counting as no health;
-- `foesKnow(test)`, which asks whether a foe is known to carry a matching move.
+- `foesKnow(test)`, which asks whether a foe has shown a matching move.
 
-`foesKnow` is where the fog will narrow what a foe is known to have. A question
-asked outside a decision, as a test does, gets a fresh context.
+A question asked outside a decision, as a test does, gets a fresh context.
 
 ## See also
 

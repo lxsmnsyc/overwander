@@ -336,14 +336,18 @@ describe('choose move', () => {
     floater.addAbility(Abilities.Levitate);
     unit.addMove(Moves.BoneClub);
 
-    // Ground cannot reach something airborne, so there is nothing
-    // worth casting at it
+    // A Levitate that has not shown itself is not something the AI knows
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.BoneClub);
+
+    // Once it has, Ground cannot reach something airborne, so there is
+    // nothing worth casting at it
+    floater.triggerAbility(Abilities.Levitate);
+
     expect(chooseMove(battle, unit)?.move).toBe(Moves.Attack);
 
     // Mold Breaker resolves its moves as though the target had no
     // ability at all, and the AI is asked through the same brackets
-    // the move itself resolves through — otherwise the holder refuses
-    // the one move its ability exists to let it use
+    // the move itself resolves through
     unit.addAbility(Abilities.MoldBreaker);
 
     expect(chooseMove(battle, unit)?.move).toBe(Moves.BoneClub);
@@ -376,6 +380,7 @@ describe('choose move', () => {
 
       // Damp tracks who is on the field, so the holder has to arrive
       enemy.addAbility(Abilities.Damp);
+      enemy.triggerAbility(Abilities.Damp);
       enemy.enter();
 
       // The cast would be refused every tick, so picking it is a tick
@@ -390,6 +395,7 @@ describe('choose move', () => {
       const plain = createUnit(battle, teamB);
       const ooze = createUnit(battle, teamB);
       ooze.addAbility(Abilities.LiquidOoze);
+      ooze.triggerAbility(Abilities.LiquidOoze);
       unit.addMove(Moves.Absorb);
 
       // The two are identical but for the ability, and the pinned
@@ -405,6 +411,7 @@ describe('choose move', () => {
       const plain = createUnit(battle, teamB);
       const mirror = createUnit(battle, teamB);
       mirror.addAbility(Abilities.Synchronize);
+      mirror.triggerAbility(Abilities.Synchronize);
       unit.addMove(Moves.ThunderWave);
 
       // Paralysing it would paralyse the user back, so the tie the
@@ -423,6 +430,7 @@ describe('choose move', () => {
 
       // The status still lands; the only thing it does does not
       guarded.addAbility(Abilities.MagicGuard);
+      guarded.triggerAbility(Abilities.MagicGuard);
 
       expect(chooseMove(battle, unit)?.move).toBe(Moves.Attack);
     });
@@ -434,6 +442,7 @@ describe('choose move', () => {
       const plain = createUnit(battle, teamB);
       const shocking = createUnit(battle, teamB);
       shocking.addAbility(Abilities.Static);
+      shocking.triggerAbility(Abilities.Static);
       // Tackle makes contact; Absorb does not
       unit.addMove(Moves.Tackle);
 
@@ -904,6 +913,8 @@ describe('weighing a move', () => {
 
     enemy.addAbility(Abilities.Simple);
 
+    enemy.triggerAbility(Abilities.Simple);
+
     expect(usableMove(battle, unit, Moves.SimpleBeam, target)).toBe(false);
   });
 
@@ -935,6 +946,8 @@ describe('weighing a move', () => {
     const open = scoreMove(battle, unit, Moves.StormThrow, target);
 
     enemy.addAbility(Abilities.BattleArmor);
+
+    enemy.triggerAbility(Abilities.BattleArmor);
 
     expect(scoreMove(battle, unit, Moves.StormThrow, target)).toBeLessThan(open);
   });
@@ -1017,6 +1030,7 @@ describe('weighing a move', () => {
     first.addStatus(Statuses.Perishing, cause);
     expect(usableMove(battle, singer, Moves.PerishSong, target)).toBe(true);
     second.addAbility(Abilities.Soundproof);
+    second.triggerAbility(Abilities.Soundproof);
     expect(usableMove(battle, singer, Moves.PerishSong, target)).toBe(false);
   });
 

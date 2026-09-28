@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getAIContext, withAIContext } from '../../src/battle/ai/context';
+import setupFog from '../../src/battle/ai/fog';
+import { unitTarget } from '../../src/battle/utils';
 import { BattleEvents } from '../../src/battle/events';
 import { EventPriority } from '../../src/core/event-emitter';
 import { Moves } from '../../src/data/ids/moves';
@@ -50,14 +52,21 @@ describe('AI context', () => {
     expect(getAIContext(battle, unit).healthShare()).toBeCloseTo(0.5);
   });
 
-  it('knows the moves its foes carry', () => {
+  it('knows only the moves its foes have shown', () => {
     const { battle, teamA, teamB } = createBattle();
     const unit = createUnit(battle, teamA);
     const foe = createUnit(battle, teamB);
+    setupFog(battle);
     foe.addMove(Moves.Ember);
-    const context = getAIContext(battle, unit);
+    const isEmber = (move: Moves): boolean => move === Moves.Ember;
 
-    expect(context.foesKnow((move) => move === Moves.Ember)).toBe(true);
-    expect(context.foesKnow((move) => move === Moves.Surf)).toBe(false);
+    // Carried is not shown: only a cast tells the field what a foe has
+    expect(getAIContext(battle, unit).foesKnow(isEmber)).toBe(false);
+
+    foe.cast(Moves.Ember, unitTarget(unit));
+
+    expect(getAIContext(battle, unit).foesKnow(isEmber)).toBe(true);
+    // The basic swing is one every unit has
+    expect(getAIContext(battle, unit).foesKnow((move) => move === Moves.Attack)).toBe(true);
   });
 });

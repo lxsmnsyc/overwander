@@ -1,9 +1,12 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { Stages } from '../../data/constants/stats';
-import { Moves } from '../../data/ids/moves';
+import { Stages, Stats } from '../../data/constants/stats';
+import { MoveAffects, MoveCategories, Moves } from '../../data/ids/moves';
 import { Statuses, TeamStatuses } from '../../data/ids/status';
+import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import type Team from '../team';
+import { getStageMoveEffects } from './stage';
 
 export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.PoisonPowder]: Statuses.Poisoned,
@@ -434,6 +437,68 @@ const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
   [Moves.Safeguard]: TeamStatuses.Safeguard,
 };
 
+/**
+ * A veil pays off over the whole fight, so it is worth most on the
+ * first casts: enough to beat any hit short of a KO while the team is
+ * whole, shrinking as the team loses health
+ */
+export const VEIL_BONUS = 12;
+
+function lowersFoeStages(move: Moves): boolean {
+  if (getMoveData(move).affects & MoveAffects.Enemy) {
+    for (const effect of getStageMoveEffects(move)) {
+      if (effect.value < 0) {
+        return true;
+      }
+    }
+  }
+  const effect = EFFECT_STAGE_MOVES[move];
+  return effect != null && !effect.self && effect.value < 0;
+}
+
+/** Whether a foe's move is one the veil would stop */
+const VEIL_THREATS: { [key in TeamStatuses]?: (move: Moves) => boolean } = {
+  [TeamStatuses.Reflect]: (move) => getMoveData(move).category === MoveCategories.Physical,
+  [TeamStatuses.LightScreen]: (move) => getMoveData(move).category === MoveCategories.Special,
+  [TeamStatuses.Safeguard]: (move) =>
+    STATUS_MOVES[move] != null || EFFECT_STATUS_MOVES[move] != null,
+  [TeamStatuses.Mist]: lowersFoeStages,
+};
+
+function isVeilThreatened(battle: Battle, team: Team, status: TeamStatuses): boolean {
+  const threatens = VEIL_THREATS[status];
+
+  if (threatens == null) {
+    return false;
+  }
+  for (const unit of battle.units(team.alliance)) {
+    if (!unit.alive) {
+      continue;
+    }
+    for (const state of Object.values(unit.moves)) {
+      // oxlint-disable-next-line typescript/no-unnecessary-condition
+      if (state && threatens(state.move)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/** The team's remaining health over its full health, fainted units counting as none */
+function teamHealthShare(team: Team): number {
+  let health = 0;
+  let max = 0;
+
+  for (const unit of team.units) {
+    max += Math.max(1, unit.checkStat(Stats.HP, 0));
+    if (unit.alive) {
+      health += unit.health;
+    }
+  }
+  return max > 0 ? health / max : 0;
+}
+
 function setupTeamStatusMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const targetStatus = TEAM_STATUS_MOVES[event.move];
@@ -456,6 +521,17 @@ function setupTeamStatusMoves(battle: Battle): void {
     // Explicit null check: the first TeamStatuses enum member is 0
     if (event.usable && status != null && event.source.team.status[status] != null) {
       event.usable = false;
+    }
+  });
+
+  // Raised early or not at all: a veil against a side that cannot use
+  // what it stops earns nothing
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    const status = TEAM_STATUS_MOVES[event.move];
+    const team = event.source.team;
+
+    if (status != null && isVeilThreatened(battle, team, status)) {
+      event.score += Math.round(VEIL_BONUS * teamHealthShare(team));
     }
   });
 }

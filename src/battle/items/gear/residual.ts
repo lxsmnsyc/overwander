@@ -165,22 +165,40 @@ export const setupLaggingTail = createHeldItem(Items.LaggingTail, (battle) =>
  * types are what explain it, so a Levitate or an absorbing ability
  * keeps its answer
  */
-export const setupRingTarget = createHeldItem(Items.RingTarget, (battle) =>
-  battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
-    if (
-      !event.immune ||
-      event.target.type !== MoveTargetType.Unit ||
-      !holds(event.target.unit, Items.RingTarget)
-    ) {
-      return;
+function typingImmune(unit: Unit, type: Types): boolean {
+  for (const defending of unit.types) {
+    if (TYPE_EFFECTIVENESS[type][defending] === TypeEffectiveness.Immune) {
+      return true;
     }
+  }
+  return false;
+}
 
-    for (const defending of event.target.unit.types) {
-      if (TYPE_EFFECTIVENESS[event.type][defending] === TypeEffectiveness.Immune) {
-        event.immune = false;
-        event.target.unit.triggerItem(Items.RingTarget);
-        return;
-      }
-    }
-  }),
+export const setupRingTarget = createHeldItem(
+  Items.RingTarget,
+  (battle) =>
+    new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+        if (
+          event.immune &&
+          event.target.type === MoveTargetType.Unit &&
+          holds(event.target.unit, Items.RingTarget) &&
+          typingImmune(event.target.unit, event.type)
+        ) {
+          event.immune = false;
+        }
+      }),
+
+      // The immunity check is also asked while the AI weighs a move, so
+      // the cue waits for a hit that actually lands
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        if (
+          event.success &&
+          holds(event.target, Items.RingTarget) &&
+          typingImmune(event.target, event.type)
+        ) {
+          event.target.triggerItem(Items.RingTarget);
+        }
+      }),
+    ]),
 );

@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Items } from '../../data/ids/items';
 import { MoveCategories, type Moves } from '../../data/ids/moves';
@@ -119,6 +119,16 @@ function setupChoiceItem(item: Items, stat: Stats): (battle: Battle) => void {
         }
       }),
 
+      // The AI is told before it picks, or it keeps choosing a move the
+      // lock refuses and never acts
+      battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Post, (event) => {
+        const locked = committed.get(event.source);
+
+        if (event.usable && locked != null && locked !== event.move) {
+          event.usable = !holds(event.source, item);
+        }
+      }),
+
       // The lock is the item's, so it goes when the item does; leaving
       // the field clears it the way switching out does in the mainline
       battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
@@ -157,6 +167,16 @@ const setupAssaultVest = createHeldItem(
           getMoveData(event.move).category === MoveCategories.Status
         ) {
           event.success = false;
+        }
+      }),
+
+      battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Post, (event) => {
+        if (
+          event.usable &&
+          holds(event.source, Items.AssaultVest) &&
+          getMoveData(event.move).category === MoveCategories.Status
+        ) {
+          event.usable = false;
         }
       }),
     ]),

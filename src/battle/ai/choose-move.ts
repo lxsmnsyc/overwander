@@ -25,9 +25,10 @@ import {
 } from '../events';
 import { BattleModes } from '../core';
 import { HEALTH_SCALED_MOVES, estimateFixedDamage } from '../moves/fixed-damage';
-import { estimateMoveHits } from '../moves/multi-hit';
+import { MULTI_HIT_MOVES, estimateMoveHits } from '../moves/multi-hit';
 import { feedsOwnSide } from '../moves/friendly-fire';
 import { getStageMoveEffects } from '../moves/stage';
+import resolveMoveTargets from '../mechanics/move/targeting';
 import { ACCURACY_PENALTY, BASE_SCORE, STEP_PENALTY, USELESS_PENALTY } from './score';
 import { SELF_STATUS_MOVES, STATUS_MOVES } from '../moves/status';
 import type Unit from '../unit';
@@ -132,8 +133,33 @@ export function setupChooseMoveAI(battle: Battle): void {
     battle.emit(BattleEvents.UnitAttackResolveDamage, event);
 
     // The resolver answers for one strike; a multi-hit move lands
-    // several off the same cast
-    return event.value * estimateMoveHits(move);
+    // several off the same cast, as many as the user's own kit rolls
+    const hits = source.checkMoveHits(
+      move,
+      moveTarget,
+      estimateMoveHits(move),
+      MULTI_HIT_MOVES[move]?.max ?? 1,
+    );
+    return event.value * hits;
+  }
+
+  /**
+   * What one hit is worth to its caster: a KO, or the share of the
+   * target's remaining health it takes. Undefined for a hit that does
+   * nothing
+   */
+  function hitWorth(source: Unit, move: Moves, target: Unit): number | undefined {
+    const damage = estimateDamage(source, move, target);
+
+    if (damage <= 0) {
+      return undefined;
+    }
+    if (damage >= target.health) {
+      // Gen 4 "try to KO" bonus, and more for getting there first
+      const priority = source.checkMovePriority(move, { type: MoveTargetType.Unit, unit: target });
+      return KILL_BONUS + (priority > 0 ? PRIORITY_KILL_BONUS : 0);
+    }
+    return Math.floor((DAMAGE_SCALE * damage) / target.health);
   }
 
   /**
@@ -419,28 +445,57 @@ export function setupChooseMoveAI(battle: Battle): void {
       return;
     }
 
-    const damage = estimateDamage(event.source, event.move, target);
+    // Immune target: the move does nothing
+    event.score += hitWorth(event.source, event.move, target) ?? -USELESS_PENALTY;
+  });
 
-    if (damage <= 0) {
-      // Immune target: the move does nothing
-      event.score -= USELESS_PENALTY;
+  // A move that goes out to everybody is worth what it does to each
+  // foe, less what it does to the caster's own side
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (event.target.type !== MoveTargetType.None) {
       return;
     }
 
-    if (damage >= target.health) {
-      // Gen 4 "try to KO" bonus
-      event.score += KILL_BONUS;
+    const data = getMoveData(event.move);
 
-      // Priority moves are extra attractive for the kill
-      if ((data.priority ?? 0) > 0) {
-        event.score += PRIORITY_KILL_BONUS;
+    if (data.category === MoveCategories.Status) {
+      return;
+    }
+
+    const source = event.source;
+    let worth = 0;
+    let lands = false;
+
+    for (const reached of resolveMoveTargets(
+      battle,
+      source,
+      event.target,
+      data.target,
+      data.affects,
+    )) {
+      if (reached.type !== MoveTargetType.Unit || reached.unit === source) {
+        continue;
       }
-      return;
+      if (
+        source.checkMoveImmunity(event.move, reached, source.checkMoveType(event.move, reached))
+      ) {
+        continue;
+      }
+
+      const hit = hitWorth(source, event.move, reached.unit);
+
+      if (hit == null) {
+        continue;
+      }
+      if (reached.unit.team.alliance === source.team.alliance) {
+        worth -= hit;
+      } else {
+        worth += hit;
+        lands = true;
+      }
     }
 
-    // Stand-in for the "highest expected damage" bonus: scale by how
-    // much of the target's remaining health the hit removes
-    event.score += Math.floor((DAMAGE_SCALE * damage) / target.health);
+    event.score += lands ? worth : worth - USELESS_PENALTY;
   });
 
   // Status-inflicting moves: a target that cannot receive the status
@@ -454,6 +509,11 @@ export function setupChooseMoveAI(battle: Battle): void {
     }
 
     const target = event.target.unit;
+
+    // A status aimed at a teammate (Helping Hand) is a gift, not a spread
+    if (target.team.alliance === event.source.team.alliance) {
+      return;
+    }
 
     // Status spreads early: better against a healthy target
     const maxHP = Math.max(1, target.checkStat(Stats.HP, 0));

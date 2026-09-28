@@ -1,10 +1,18 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { MAX_STAGE, MIN_STAGE, Stages } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
-import { Moves } from '../../data/ids/moves';
+import { MoveAffects, Moves } from '../../data/ids/moves';
+import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { USELESS_PENALTY } from '../ai/score';
-import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import {
+  BattleEvents,
+  type EffectCause,
+  EffectType,
+  type MoveTarget,
+  MoveTargetType,
+} from '../events';
+import resolveMoveTargets from '../mechanics/move/targeting';
 import type Unit from '../unit';
 
 type StageMovesConfig = { [key in Moves]?: number };
@@ -215,6 +223,65 @@ function setupFriendlyDrops(battle: Battle): void {
   });
 }
 
+/**
+ * Who a stage move changes: the unit it was aimed at, everybody a move
+ * cast at nobody fans out to (Growl), or else the caster itself
+ */
+function stageReceivers(battle: Battle, source: Unit, move: Moves, target: MoveTarget): Unit[] {
+  if (target.type === MoveTargetType.Unit) {
+    return [target.unit];
+  }
+
+  const data = getMoveData(move);
+  const receivers: Unit[] = [];
+
+  if (target.type === MoveTargetType.None && data.affects & MoveAffects.Unit) {
+    for (const reached of resolveMoveTargets(battle, source, target, data.target, data.affects)) {
+      if (reached.type === MoveTargetType.Unit) {
+        receivers.push(reached.unit);
+      }
+    }
+  }
+  return receivers.length > 0 ? receivers : [source];
+}
+
+/**
+ * Whether any change the move is cast for would still move a stage on
+ * this receiver: a rise on the caster's side, a drop on the other.
+ * Shell Smash's drops are its price. A move with none of those
+ * (Swagger's gift) is judged on everything it does
+ */
+function stageMoves(
+  receiver: Unit,
+  source: Unit,
+  effects: StageMoveEffect[],
+  cause: EffectCause,
+): boolean {
+  const friendly = receiver.team.alliance === source.team.alliance;
+  let wanted = 0;
+
+  for (const effect of effects) {
+    if (effect.value > 0 === friendly) {
+      wanted += 1;
+    }
+  }
+
+  for (const effect of effects) {
+    if (wanted > 0 && effect.value > 0 !== friendly) {
+      continue;
+    }
+
+    const current = receiver.stages[effect.stage];
+    const pinned = effect.value > 0 ? current >= MAX_STAGE : current <= MIN_STAGE;
+
+    // Speculative: the AI is weighing the move, not casting it
+    if (!pinned && receiver.checkCanAddStage(effect.stage, effect.value, cause, true)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export default function setupStageMoves(battle: Battle): void {
   setupFriendlyDrops(battle);
 
@@ -234,34 +301,13 @@ export default function setupStageMoves(battle: Battle): void {
       return;
     }
 
-    const receiver = event.target.type === MoveTargetType.Unit ? event.target.unit : event.source;
-    const friendly = receiver.team.alliance === event.source.team.alliance;
     const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
-
-    // Only the changes the move is cast for count: a rise on the
-    // caster's side, a drop on the other. Shell Smash's drops are its
-    // price. A move with none of those (Swagger's gift) is judged on
-    // everything it does
-    let wanted = 0;
     let moving = false;
 
-    for (const effect of effects) {
-      if (effect.value > 0 === friendly) {
-        wanted += 1;
-      }
-    }
-
-    for (const effect of effects) {
-      if (wanted > 0 && effect.value > 0 !== friendly) {
-        continue;
-      }
-
-      const current = receiver.stages[effect.stage];
-      const pinned = effect.value > 0 ? current >= MAX_STAGE : current <= MIN_STAGE;
-
-      // Speculative: the AI is weighing the move, not casting it
-      if (!pinned && receiver.checkCanAddStage(effect.stage, effect.value, cause, true)) {
+    for (const receiver of stageReceivers(battle, event.source, event.move, event.target)) {
+      if (stageMoves(receiver, event.source, effects, cause)) {
         moving = true;
+        break;
       }
     }
 

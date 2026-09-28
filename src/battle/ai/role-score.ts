@@ -2,7 +2,7 @@ import { AttackPriority } from '../../core/event-emitter';
 import { MAX_STAGE, MIN_STAGE, Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
-import { MoveCategories, MoveTargets, Moves } from '../../data/ids/moves';
+import { MoveAttackFlags, MoveCategories, MoveTargets, Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { MOVE_WEATHERS } from '../../data/moves/weather';
@@ -11,22 +11,31 @@ import { BattleModes } from '../core';
 import {
   BattleEvents,
   type CheckUnitAIMoveScoreEvent,
+  type CheckUnitAttackEffectChanceEvent,
+  type CheckUnitAttackEffectEvent,
   type EffectCause,
   EffectType,
   MoveTargetType,
+  type UnitAttackEvent,
 } from '../events';
 import { TERRAIN_BOOSTED } from '../mechanics/terrain';
 import { CHIP_IMMUNE_TYPES, WEATHER_DAMAGE } from '../mechanics/weather';
 import resolveMoveTargets from '../mechanics/move/targeting';
 import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
 import { getStageMoveEffects } from '../moves/stage';
-import { TEAM_STATUS_MOVES, VEIL_THREATS } from '../moves/status';
+import {
+  type AttackStageEffect,
+  EFFECT_STAGE_MOVES,
+  EFFECT_STATUS_MOVES,
+  TEAM_STATUS_MOVES,
+  VEIL_THREATS,
+} from '../moves/status';
 import { GUARDS } from '../moves/team-guards';
 import { TERRAIN_MOVES } from '../moves/terrain';
 import type Unit from '../unit';
 import { type AIContext, getAIContext } from './context';
 import { knowsMove } from './fog';
-import { MoveRole, ROLE_BASE, getMoveRoles } from './roles';
+import { AFFLICTIONS, MoveRole, ROLE_BASE, getMoveRoles } from './roles';
 import { KILL_BONUS } from './score';
 
 type Relevance = (event: CheckUnitAIMoveScoreEvent, context: AIContext) => number;
@@ -380,6 +389,130 @@ const RELEVANCE: { [role in MoveRole]?: Relevance } = {
   [MoveRole.Support]: support,
 };
 
+// --- A hit's side effects ---
+
+/**
+ * How often a hit's side effect lands, from the engine's own checks:
+ * Serene Grace doubles it and Sheer Force closes it off. Only a hit
+ * aimed at one target is read, which is where the effects are
+ */
+function effectChance(event: CheckUnitAIMoveScoreEvent): number {
+  const source = event.source;
+
+  // Only a foe the hit can touch takes what comes with it
+  if (
+    event.target.type !== MoveTargetType.Unit ||
+    event.target.unit.team.alliance === source.team.alliance ||
+    source.checkMoveImmunity(
+      event.move,
+      event.target,
+      source.checkMoveType(event.move, event.target),
+    )
+  ) {
+    return 0;
+  }
+
+  const data = getMoveData(event.move);
+  const parent: UnitAttackEvent = {
+    id: 'UnitAttack',
+    disabled: false,
+    source,
+    target: event.target.unit,
+    move: event.move,
+    value: data.power ?? 0,
+    category: data.category,
+    type: source.checkMoveType(event.move, event.target),
+    flags: MoveAttackFlags.Simulated,
+    success: true,
+  };
+  const gate: CheckUnitAttackEffectEvent = {
+    id: 'CheckUnitAttackEffect',
+    disabled: false,
+    parent,
+    success: true,
+  };
+  source.battle.emit(BattleEvents.CheckUnitAttackEffect, gate);
+
+  if (!gate.success) {
+    return 0;
+  }
+
+  const chance: CheckUnitAttackEffectChanceEvent = {
+    id: 'CheckUnitAttackEffectChance',
+    disabled: false,
+    parent,
+    value: 0,
+  };
+  source.battle.emit(BattleEvents.CheckUnitAttackEffectChance, chance);
+  return Math.min(1, (chance.value ?? 0) / 100);
+}
+
+function stagesOf(effect: AttackStageEffect): Stages[] {
+  return Array.isArray(effect.stage) ? effect.stage : [effect.stage];
+}
+
+/** A status the target can still take, worth most on a healthy one */
+const afflicts: Relevance = (event) => {
+  const effect = EFFECT_STATUS_MOVES[event.move];
+
+  if (
+    effect == null ||
+    event.target.type !== MoveTargetType.Unit ||
+    !AFFLICTIONS.has(effect.status)
+  ) {
+    return 0;
+  }
+
+  const target = event.target.unit;
+
+  return target.checkStatusImmunity(effect.status, moveCause(event)) ? 0 : healthRatio(target);
+};
+
+/** A drop the target would really take, with room left to fall */
+const weakens: Relevance = (event) => {
+  const effect = EFFECT_STAGE_MOVES[event.move];
+
+  if (effect == null || effect.self === true || event.target.type !== MoveTargetType.Unit) {
+    return 0;
+  }
+
+  const target = event.target.unit;
+  let best = 0;
+
+  for (const stage of stagesOf(effect)) {
+    if (target.resolveStageChange(stage, effect.value, moveCause(event)) < 0) {
+      best = Math.max(best, room(target.stages[stage], false));
+    }
+  }
+  return best;
+};
+
+/** A rise on the user it would really take, on a stat it uses */
+const boostsSelf: Relevance = (event) => {
+  const effect = EFFECT_STAGE_MOVES[event.move];
+  const source = event.source;
+
+  if (effect == null || !effect.self || effect.value <= 0) {
+    return 0;
+  }
+
+  let best = 0;
+
+  for (const stage of stagesOf(effect)) {
+    if (source.resolveStageChange(stage, effect.value, moveCause(event)) > 0) {
+      best = Math.max(best, stageMatters(source, source, stage) * room(source.stages[stage], true));
+    }
+  }
+  return best * healthRatio(source);
+};
+
+/** Each side effect, weighed as the role it stands for */
+const SECONDARY: { [role in MoveRole]?: [MoveRole, Relevance] } = {
+  [MoveRole.Afflicts]: [MoveRole.Status, afflicts],
+  [MoveRole.Weakens]: [MoveRole.FoeDrop, weakens],
+  [MoveRole.SelfBoost]: [MoveRole.SelfBoost, boostsSelf],
+};
+
 /**
  * Scores a move by what it is cast for: each role's base, scaled by how
  * much it matters here. A damaging move counts only its shield, since
@@ -389,8 +522,21 @@ export default function setupRoleScoring(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
     const damaging = isDamaging(event.move);
     const context = getAIContext(battle, event.source);
+    const chance = damaging ? effectChance(event) : 0;
 
     for (const role of getMoveRoles(event.move)) {
+      // A hit's side effect is worth its role times how often it lands
+      const secondary = damaging ? SECONDARY[role] : undefined;
+
+      if (secondary != null) {
+        const [as, relevance] = secondary;
+
+        if (chance > 0) {
+          event.score += Math.round(ROLE_BASE[as] * chance * relevance(event, context));
+        }
+        continue;
+      }
+
       const relevance = RELEVANCE[role];
 
       if (relevance == null || (damaging && role !== MoveRole.Shield)) {

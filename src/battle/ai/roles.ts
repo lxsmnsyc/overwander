@@ -136,7 +136,7 @@ export const ROLE_BASE: Record<MoveRole, number> = {
 };
 
 /** The statuses that make a lasting affliction rather than a restriction */
-const AFFLICTIONS = new Set<Statuses>([
+export const AFFLICTIONS = new Set<Statuses>([
   Statuses.Poisoned,
   Statuses.BadlyPoisoned,
   Statuses.Burned,

@@ -193,6 +193,13 @@ and the hit is scored on its own.
 
 Every other role adds nothing yet, and is weighed by the move's own rules.
 
+A damaging move's side effect adds the role it stands for, times the odds it
+lands: a status chance is weighed as Status, a stat drop as FoeDrop, and a rise
+on the user as SelfBoost. The odds come from the engine's own effect checks, so
+Serene Grace doubles them and Sheer Force gives them up. Only a foe the hit can
+touch counts, and flinching is left out, since in real time it only matters if
+the hit lands mid-cast.
+
 No role adds more than one point under `KILL_BONUS`, so finishing a foe always
 wins.
 

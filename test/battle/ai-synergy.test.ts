@@ -5,15 +5,17 @@ import { BASE_SCORE, KILL_BONUS } from '../../src/battle/ai/score';
 import {
   BattleEvents,
   type CheckUnitAIMoveScoreEvent,
+  EffectType,
   type MoveTarget,
   MoveTargetType,
 } from '../../src/battle/events';
 import type Unit from '../../src/battle/unit';
 import { unitTarget } from '../../src/battle/utils';
-import { Stats, StatsKind } from '../../src/data/constants/stats';
+import { Stages, Stats, StatsKind } from '../../src/data/constants/stats';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import { Moves } from '../../src/data/ids/moves';
+import { Statuses } from '../../src/data/ids/status';
 import { type BattleHarness, createBattle, createUnit, pinRandom } from './harness';
 
 const NONE: MoveTarget = { type: MoveTargetType.None };
@@ -138,6 +140,44 @@ describe('own-side synergy', () => {
     unit.addItem(Items.BigRoot);
 
     expect(scoreMove(battle, unit, Moves.GigaDrain, target)).toBeGreaterThan(plain);
+  });
+
+  it('adds what a hit’s side effect is worth, at the odds it lands', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const target = unitTarget(foe);
+
+    const healthy = scoreMove(battle, unit, Moves.BodySlam, target);
+
+    // A foe already paralysed has nothing left for the chance to give
+    foe.addStatus(Statuses.Paralyzed, { type: EffectType.None });
+    const taken = scoreMove(battle, unit, Moves.BodySlam, target);
+
+    expect(healthy).toBeGreaterThan(taken);
+
+    foe.removeStatus(Statuses.Paralyzed, { type: EffectType.None });
+
+    // Serene Grace doubles the odds, and Sheer Force gives the effect up
+    unit.addAbility(Abilities.SereneGrace);
+    expect(scoreMove(battle, unit, Moves.BodySlam, target)).toBeGreaterThan(healthy);
+
+    unit.removeAbility(Abilities.SereneGrace);
+    unit.addAbility(Abilities.SheerForce);
+    expect(scoreMove(battle, unit, Moves.BodySlam, target)).toBeLessThan(healthy);
+  });
+
+  it('counts a hit that raises its user, on a stat with room to rise', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const target = unitTarget(foe);
+
+    const fresh = scoreMove(battle, unit, Moves.FlameCharge, target);
+
+    unit.stages[Stages.Speed] = 6;
+
+    expect(scoreMove(battle, unit, Moves.FlameCharge, target)).toBeLessThan(fresh);
   });
 
   it('holds back a hit whose Life Orb recoil would finish its holder', () => {

@@ -726,23 +726,28 @@ function SafariBody(
                     </span>
                   </Show>
                 </div>
-                <div class="absolute inset-x-0 bottom-12 flex justify-center">
+                <div class="absolute inset-x-0 top-4 bottom-12 flex items-end justify-center">
                   {/* The ball stands where the pokemon did while it rocks:
                     what is inside the ball is not also in the field */}
                   <Show
                     when={rocking() != null}
                     fallback={
-                      <AnimatedSprite
-                        species={active().encounter.species}
-                        shiny={isShiny(active().encounter)}
-                        female={active().encounter.gender === Genders.Female}
-                        sparkle={isShiny(active().encounter)}
-                        aura={isShadow(active().encounter) ? 'shadow' : undefined}
-                        animation={SpriteAnim.Idle}
-                        direction="Down"
-                        scale={4}
-                        label={`${getSpeciesData(active().encounter.species).name}, standing in front of you`}
-                      />
+                      // Fitted to a square as tall as the field, as the catch
+                      // sheet does, so a tall species shrinks rather than crops
+                      <div class="relative flex aspect-square h-full max-w-full items-end justify-center">
+                        <AnimatedSprite
+                          species={active().encounter.species}
+                          shiny={isShiny(active().encounter)}
+                          female={active().encounter.gender === Genders.Female}
+                          sparkle={isShiny(active().encounter)}
+                          aura={isShadow(active().encounter) ? 'shadow' : undefined}
+                          animation={SpriteAnim.Idle}
+                          direction="Down"
+                          fill
+                          sized
+                          label={`${getSpeciesData(active().encounter.species).name}, standing in front of you`}
+                        />
+                      </div>
                     }
                   >
                     <span

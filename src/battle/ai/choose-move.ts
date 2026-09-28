@@ -1,6 +1,4 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { MAX_STAGE, Stats } from '../../data/constants/stats';
-import Abilities from '../../data/ids/abilities';
 import {
   MoveAffects,
   MoveAttackFlags,
@@ -23,30 +21,22 @@ import {
   type UnitTriggerMoveEvent,
   type UnitTriggerMoveResolveAccuracyEvent,
 } from '../events';
-import { BattleModes } from '../core';
 import { HEALTH_SCALED_MOVES, estimateFixedDamage } from '../moves/fixed-damage';
 import { MULTI_HIT_MOVES, estimateMoveHits } from '../moves/multi-hit';
 import { feedsOwnSide } from '../moves/friendly-fire';
-import { getStageMoveEffects } from '../moves/stage';
 import resolveMoveTargets from '../mechanics/move/targeting';
 import { ACCURACY_PENALTY, BASE_SCORE, STEP_PENALTY, USELESS_PENALTY } from './score';
-import { SELF_STATUS_MOVES, STATUS_MOVES } from '../moves/status';
+import { SELF_STATUS_MOVES } from '../moves/status';
 import type Unit from '../unit';
 import { withAIContext } from './context';
 import setupFog from './fog';
+import setupRoleScoring from './role-score';
 
 /**
- * Raid battles favor setting up: enough to outbid any non-KO damage
- * bonus, which caps at +4
+ * What taking a unit off the field is worth: above every role's base,
+ * so finishing a foe beats any setup, and above every chip and heal
  */
-const RAID_BUFF_BONUS = 6;
-
-/**
- * What taking a unit off the field is worth. Above the widest chip,
- * above a heal, and far enough above both that no wind-up a killing
- * move has to pay can make chipping look better than finishing
- */
-const KILL_BONUS = 8;
+const KILL_BONUS = 20;
 
 /** Extra for getting there first */
 const PRIORITY_KILL_BONUS = 2;
@@ -81,6 +71,7 @@ export function chooseMove(battle: Battle, source: Unit): AIMoveChoice | undefin
 export function setupChooseMoveAI(battle: Battle): void {
   // What the AI may know about a foe is settled before anything is weighed
   setupFog(battle);
+  setupRoleScoring(battle);
 
   /**
    * Expected damage simulated through the engine's own resolver: a
@@ -506,84 +497,12 @@ export function setupChooseMoveAI(battle: Battle): void {
     event.score += lands ? worth : worth - USELESS_PENALTY;
   });
 
-  // Status-inflicting moves: a target that cannot receive the status
-  // is refused by the usability rule in the status move group, so what
-  // is left to weigh is only who is worth spending it on
-  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    const status = STATUS_MOVES[event.move];
-
-    if (status == null || event.target.type !== MoveTargetType.Unit) {
-      return;
-    }
-
-    const target = event.target.unit;
-
-    // A status aimed at a teammate (Helping Hand) is a gift, not a spread
-    if (target.team.alliance === event.source.team.alliance) {
-      return;
-    }
-
-    // Status spreads early: better against a healthy target
-    const maxHP = Math.max(1, target.checkStat(Stats.HP, 0));
-
-    if (target.health / maxHP > 0.5) {
-      event.score += 5;
-    }
-  });
-
-  // Self statuses (e.g. Focus Energy): useless when already active,
-  // reckless when about to go down
-  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+  // A self status already in place (Focus Energy) changes nothing
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     const status = SELF_STATUS_MOVES[event.move];
 
-    if (status == null) {
-      return;
-    }
-
-    const source = event.source;
-
-    if (source.status[status]) {
-      event.score -= USELESS_PENALTY;
-      return;
-    }
-
-    const maxHP = Math.max(1, source.checkStat(Stats.HP, 0));
-    const ratio = source.health / maxHP;
-
-    if (ratio > 0.7) {
-      event.score += 3;
-    } else if (ratio < 0.3) {
-      event.score -= 5;
-    }
-  });
-
-  // Raid battles: friendly stage-boosting moves take priority — for
-  // the party, and only the party. Setting up is what a side that has
-  // to survive a long fight does with its first few casts, and the
-  // boss is not that side: it is the clock everybody else is racing,
-  // and a boss spending its doubled cast time on a Withdraw is a boss
-  // handing the lobby the fight. It attacks, and the buffs it does
-  // pick it picks on their own merits
-  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (battle.mode !== BattleModes.Raid || event.source.hasAbility(Abilities.Boss)) {
-      return;
-    }
-
-    // Only boosts pointed at the own side qualify
-    if (getMoveData(event.move).affects & MoveAffects.Enemy) {
-      return;
-    }
-
-    const receiver = event.target.type === MoveTargetType.Unit ? event.target.unit : event.source;
-
-    // Any rise with room left earns it. A stage that will not move is
-    // not worth a bonus; the stage move group is what says it is worth
-    // a penalty
-    for (const effect of getStageMoveEffects(event.move)) {
-      if (effect.value > 0 && receiver.stages[effect.stage] < MAX_STAGE) {
-        event.score += RAID_BUFF_BONUS;
-        return;
-      }
+    if (event.usable && status != null && event.source.status[status] != null) {
+      event.usable = false;
     }
   });
 

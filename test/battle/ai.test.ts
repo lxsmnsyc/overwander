@@ -15,6 +15,7 @@ import { BASE_SCORE, HEAL_BONUS, STEP_PENALTY, USELESS_PENALTY } from '../../src
 import { PERISH_TRADE_BONUS } from '../../src/battle/moves/perish-song';
 import type Unit from '../../src/battle/unit';
 import { unitTarget } from '../../src/battle/utils';
+import { MoveRole, ROLE_BASE } from '../../src/battle/ai/roles';
 import { EventPriority } from '../../src/core/event-emitter';
 import Abilities from '../../src/data/ids/abilities';
 import { Stages, Stats } from '../../src/data/constants/stats';
@@ -296,7 +297,7 @@ describe('choose move', () => {
 
     // Most of the team already gone: the screen has little fight left to cover
     ally.setHealth(0);
-    unit.setHealth(30);
+    unit.setHealth(20);
 
     expect(chooseMove(battle, unit)?.move).toBe(Moves.Tackle);
   });
@@ -458,7 +459,7 @@ describe('choose move', () => {
     });
   });
 
-  it('does not favor stage boosts outside raids', () => {
+  it('sets up before it chips, and chips once the boost has stacked', () => {
     const { battle, teamA, teamB } = createAIBattle();
     pinRandom(battle, 0.99);
     const unit = createUnit(battle, teamA);
@@ -466,9 +467,11 @@ describe('choose move', () => {
     unit.addMove(Moves.Tackle);
     unit.addMove(Moves.SwordsDance);
 
-    const choice = chooseMove(battle, unit);
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.SwordsDance);
 
-    expect(choice?.move).toBe(Moves.Tackle);
+    unit.stages[Stages.Attack] = 6;
+
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Tackle);
   });
 });
 
@@ -780,7 +783,7 @@ describe('weighing a move', () => {
     // Its drops are the price, so pinned rises alone make it useless
     unit.addStage(Stages.SpecialAttack, 6, NONE_CAUSE);
     unit.addStage(Stages.Speed, 6, NONE_CAUSE);
-    expect(fresh - scoreMove(battle, unit, Moves.ShellSmash, target)).toBe(USELESS_PENALTY);
+    expect(scoreMove(battle, unit, Moves.ShellSmash, target)).toBe(BASE_SCORE - USELESS_PENALTY);
   });
 
   it('weighs a spread drop against the foes it reaches, not the caster', () => {
@@ -790,7 +793,7 @@ describe('weighing a move', () => {
     const target: MoveTarget = { type: MoveTargetType.None };
 
     unit.stages[Stages.Attack] = -6;
-    expect(scoreMove(battle, unit, Moves.Growl, target)).toBe(BASE_SCORE);
+    expect(scoreMove(battle, unit, Moves.Growl, target)).toBeGreaterThan(BASE_SCORE);
 
     foe.stages[Stages.Attack] = -6;
     expect(scoreMove(battle, unit, Moves.Growl, target)).toBe(BASE_SCORE - USELESS_PENALTY);
@@ -860,16 +863,18 @@ describe('weighing a move', () => {
     expect(usableMove(battle, unit, Moves.Tackle, unitTarget(foe))).toBe(true);
   });
 
-  it('gives a teammate no bonus for being healthy enough to help', () => {
+  it('weighs a Helping Hand as support, not as a status on a foe', () => {
     const { battle, teamA, teamB } = createAIBattle();
     const unit = createUnit(battle, teamA);
     const ally = createUnit(battle, teamA);
     const foe = createUnit(battle, teamB);
 
-    // The same +5 a healthy foe earns a Toxic is not what a Helping
-    // Hand to a healthy teammate is worth
-    expect(scoreMove(battle, unit, Moves.Toxic, unitTarget(foe))).toBeGreaterThan(BASE_SCORE);
-    expect(scoreMove(battle, unit, Moves.HelpingHand, unitTarget(ally))).toBe(BASE_SCORE);
+    expect(scoreMove(battle, unit, Moves.Toxic, unitTarget(foe))).toBeGreaterThan(
+      BASE_SCORE + ROLE_BASE[MoveRole.Status] - 1,
+    );
+    expect(scoreMove(battle, unit, Moves.HelpingHand, unitTarget(ally))).toBe(
+      BASE_SCORE + ROLE_BASE[MoveRole.Support],
+    );
   });
 
   it('still throws a U-turn with nobody to swap in', () => {
@@ -1135,7 +1140,7 @@ describe('weighing a move', () => {
     createUnit(battle, teamB);
     unit.removeMove(Moves.Attack);
     unit.addMove(Moves.SeismicToss);
-    unit.addMove(Moves.Growl);
+    unit.addMove(Moves.Splash);
 
     // Seismic Toss carries no power at all, so a reading that went by
     // the move data would call it a move that does nothing

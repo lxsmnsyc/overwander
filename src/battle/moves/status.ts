@@ -6,7 +6,6 @@ import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { getStageMoveEffects } from './stage';
-import { getAIContext } from '../ai/context';
 
 export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.PoisonPowder]: Statuses.Poisoned,
@@ -437,13 +436,6 @@ export const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
   [Moves.Safeguard]: TeamStatuses.Safeguard,
 };
 
-/**
- * A veil pays off over the whole fight, so it is worth most on the
- * first casts: enough to beat any hit short of a KO while the team is
- * whole, shrinking as the team loses health
- */
-export const VEIL_BONUS = 12;
-
 function lowersFoeStages(move: Moves): boolean {
   if (getMoveData(move).affects & MoveAffects.Enemy) {
     for (const effect of getStageMoveEffects(move)) {
@@ -457,7 +449,7 @@ function lowersFoeStages(move: Moves): boolean {
 }
 
 /** Whether a foe's move is one the veil would stop */
-const VEIL_THREATS: { [key in TeamStatuses]?: (move: Moves) => boolean } = {
+export const VEIL_THREATS: { [key in TeamStatuses]?: (move: Moves) => boolean } = {
   [TeamStatuses.Reflect]: (move) => getMoveData(move).category === MoveCategories.Physical,
   [TeamStatuses.LightScreen]: (move) => getMoveData(move).category === MoveCategories.Special,
   [TeamStatuses.Safeguard]: (move) =>
@@ -487,23 +479,6 @@ function setupTeamStatusMoves(battle: Battle): void {
     // Explicit null check: the first TeamStatuses enum member is 0
     if (event.usable && status != null && event.source.team.status[status] != null) {
       event.usable = false;
-    }
-  });
-
-  // Raised early or not at all: a veil against a side that cannot use
-  // what it stops earns nothing
-  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    const status = TEAM_STATUS_MOVES[event.move];
-    const threatens = status == null ? undefined : VEIL_THREATS[status];
-
-    if (threatens == null) {
-      return;
-    }
-
-    const context = getAIContext(battle, event.source);
-
-    if (context.foesKnow(threatens)) {
-      event.score += Math.round(VEIL_BONUS * context.healthShare());
     }
   });
 }

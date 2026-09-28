@@ -1,7 +1,13 @@
 import { Stats } from '../../data/constants/stats';
-import type { Moves } from '../../data/ids/moves';
+import { MoveAffects, type Moves } from '../../data/ids/moves';
+import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
-import { BattleEvents, type CheckUnitAIRatingEvent } from '../events';
+import {
+  BattleEvents,
+  type CheckUnitAIRatingEvent,
+  type MoveTarget,
+  MoveTargetType,
+} from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
 import { knowsMove } from './fog';
@@ -24,6 +30,25 @@ function* carriedMoves(unit: Unit): IterableIterator<Moves> {
     // oxlint-disable-next-line typescript/no-unnecessary-condition
     if (state) {
       yield state.move;
+    }
+  }
+}
+
+/** Whether a move cast at this target lands on the unit */
+function reaches(caster: Unit, move: Moves, target: MoveTarget, unit: Unit): boolean {
+  switch (target.type) {
+    case MoveTargetType.Unit:
+      return target.unit === unit;
+    case MoveTargetType.Team:
+      return target.team === unit.team;
+    default: {
+      const { affects } = getMoveData(move);
+      const enemy = caster.team.alliance !== unit.team.alliance;
+
+      return (
+        (affects & MoveAffects.Unit) !== 0 &&
+        (affects & (enemy ? MoveAffects.Enemy : MoveAffects.Own)) !== 0
+      );
     }
   }
 }
@@ -67,6 +92,21 @@ export class AIContext {
         if (knowsMove(this.source, foe, move) && test(move)) {
           return true;
         }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Whether a foe is winding up a move that will reach this unit and
+   * passes the test. A cast is on show, so this is no peek
+   */
+  incoming(unit: Unit, test: (move: Moves) => boolean): boolean {
+    for (const foe of this.foes()) {
+      const cast = foe.casting;
+
+      if (cast != null && test(cast.move) && reaches(foe, cast.move, cast.target, unit)) {
+        return true;
       }
     }
     return false;

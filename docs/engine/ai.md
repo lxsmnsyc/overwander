@@ -125,9 +125,8 @@ refuses an Explosion only once the caster knows about the Damp.
 
 ## Scoring a hit
 
-- Taking a unit off the field is worth `KILL_BONUS` (8). That sits above the
-  widest chip and above a heal, far enough above both that no wind-up a killing
-  move has to pay makes chipping look better than finishing.
+- Taking a unit off the field is worth `KILL_BONUS` (20). That sits above every
+  role's base, so finishing a foe beats any setup, and above every chip and heal.
 - Getting there first is worth `PRIORITY_KILL_BONUS` (2) more.
 - A hit that leaves the target standing is scored on the share of the remaining
   health it takes, out of `DAMAGE_SCALE` (5). Such a hit falls short of a kill
@@ -147,15 +146,11 @@ nothing else: **no cue, no stage of its own, nothing a watcher could see.** An
 ability that blocks a stat drop shows its cue when the drop is really aimed at
 it, not each time the AI weighs a move.
 
-## Stage boosts in a raid
+## A raid boss does not set up
 
-In a raid the AI adds a bonus to friendly stage boosts, big enough to outbid any
-non-lethal damage. A party facing a health pool that size wants its first casts
-spent making the rest of them count.
-
-**The boss is exempt.** It does not have to survive a long fight, and its casts
-are already doubled. A boss cast spent winding up a Withdraw is an opening
-handed to the lobby.
+A raid boss never scores a self boost. It does not have to survive a long fight,
+and its casts are already doubled. A boss cast spent winding up a Withdraw is an
+opening handed to the lobby.
 
 ## Move roles
 
@@ -177,7 +172,26 @@ relevance and the fight's phase scale it. The order is:
 8. Damage, which is scored by the hit itself.
 
 A test fails when a registered move has no role, so a new move cannot go
-unscored without anyone noticing. The scoring does not read the sheet yet.
+unscored without anyone noticing.
+
+[`src/battle/ai/role-score.ts`](../../src/battle/ai/role-score.ts) scores a
+status move by its roles: each role adds its base times a relevance from 0 to 1.
+A damaging move counts only its Shield role, since its side effects are chances
+and the hit is scored on its own.
+
+| Role       | Relevant when                                                                              |
+| ---------- | ------------------------------------------------------------------------------------------ |
+| Shield     | A foe is winding up a hit that reaches the unit; Substitute above half health              |
+| TeamSetup  | A foe has shown a move the veil stops; fades with team health                              |
+| Hazard     | Always; fades with team health                                                             |
+| Field      | The weather or terrain favours the caster's side; Trick Room for the slower side           |
+| Status     | Scaled by the target's remaining health                                                    |
+| SelfBoost  | The stat is one the unit uses, with room left to rise; scaled by its health                |
+| FoeDrop    | The stat has room left to fall; fades with team health                                     |
+| Disruption | Taunt against a foe that has shown a status move; Roar and Whirlwind against raised stages |
+| Support    | Helping Hand for a teammate with a damaging move                                           |
+
+Every other role adds nothing yet, and is weighed by the move's own rules.
 
 ## The decision context
 

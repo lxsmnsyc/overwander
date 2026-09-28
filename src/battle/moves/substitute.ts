@@ -22,12 +22,6 @@ function canSubstitute(source: Unit): boolean {
   return source.status[Statuses.Substituted] == null && source.health > getSubstituteCost(source);
 }
 
-/**
- * What a substitute is worth at full health. It is raised early, while
- * the quarter it costs still leaves a healthy unit behind it
- */
-export const SUBSTITUTE_BONUS = 6;
-
 /** The share of its health below which paying for a substitute is a risk */
 const SUBSTITUTE_FLOOR = 0.5;
 
@@ -39,19 +33,14 @@ export default function setupSubstitute(battle: Battle): void {
     }
   });
 
-  // Worth the most at full health, nothing at half, and a risk below
+  // Its worth is the shield role's; below half health the price is a risk
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (event.move !== Moves.Substitute) {
-      return;
+    if (
+      event.move === Moves.Substitute &&
+      event.source.health / Math.max(1, event.source.checkStat(Stats.HP, 0)) < SUBSTITUTE_FLOOR
+    ) {
+      event.score -= RISKY_PENALTY;
     }
-
-    const source = event.source;
-    const ratio = source.health / Math.max(1, source.checkStat(Stats.HP, 0));
-
-    event.score +=
-      ratio < SUBSTITUTE_FLOOR
-        ? -RISKY_PENALTY
-        : Math.round((SUBSTITUTE_BONUS * (ratio - SUBSTITUTE_FLOOR)) / (1 - SUBSTITUTE_FLOOR));
   });
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {

@@ -321,7 +321,7 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
                 <PopoverButton class={CHIP}>Key</PopoverButton>
                 <PopoverPanel
                   class="absolute top-full right-0 z-30 mt-1 flex max-h-72 w-52 flex-col gap-1
-                    overflow-y-auto rounded-panel border-2 border-tide bg-paper p-2 text-xs shadow-pop"
+                    overflow-y-auto rounded-panel border-2 border-line bg-paper p-2 text-xs shadow-float"
                 >
                   <span class="flex items-center gap-2">
                     <span class="size-3 shrink-0 border-2 border-white bg-ink/40" />

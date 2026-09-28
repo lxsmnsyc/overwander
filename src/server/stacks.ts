@@ -1,6 +1,7 @@
 import 'server-only';
 import type { StackSpec } from '../auth/stacks';
 import { type Sql, type Tx, getSql, tx } from './db';
+import { type LedgerEntry, LedgerKind, isLedgerOn, writeLedgerIn } from './ledger';
 import { asNumber } from './read';
 
 /**
@@ -21,7 +22,22 @@ import { asNumber } from './read';
  * A stack spent to its last is **deleted** rather than left at zero,
  * so the bag holds what is carried and nothing else. The tables
  * enforce it: `count > 0` is a constraint, not a habit.
+ *
+ * Every write here also writes its ledger row when the ledger is on
+ * (see `./ledger`), on the same transaction. The self-contained writes
+ * open one for the purpose then, and stay single statements when it
+ * is off.
  */
+
+/** What a kind of stack is called in the ledger */
+function ledgerKind(spec: StackSpec): LedgerKind {
+  return spec.field === 'candies' ? LedgerKind.Candy : LedgerKind.Item;
+}
+
+/** Whether a connection is already a transaction the caller opened */
+function isTransaction(sql: Sql | Tx): sql is Tx {
+  return 'savepoint' in sql;
+}
 
 /** The table and key column a kind of stack lives in */
 function tableOf(spec: StackSpec): { table: string; key: string } {
@@ -101,6 +117,8 @@ export async function writeStackIn(
 ): Promise<void> {
   const { table, key: column } = tableOf(spec);
   const held = Math.max(0, Math.floor(count));
+  // What it stood at is only asked for when there is a ledger to tell
+  const before = isLedgerOn() ? await readStackIn(transaction, spec, uid, key) : held;
 
   if (held > 0) {
     await transaction`
@@ -114,6 +132,9 @@ export async function writeStackIn(
       where player = ${uid} and ${transaction(column)} = ${key}
     `;
   }
+  await writeLedgerIn(transaction, [
+    { player: uid, kind: ledgerKind(spec), key, delta: held - before, balance: held },
+  ]);
 }
 
 /**
@@ -159,6 +180,11 @@ export async function grantStack(
   key: number,
   count = 1,
 ): Promise<void> {
+  if (isLedgerOn()) {
+    await grantStacks(spec, uid, [[key, count]]);
+    return;
+  }
+
   const { table, key: column } = tableOf(spec);
   const sql = getSql();
 
@@ -189,9 +215,14 @@ export async function spendStack(
     const spent = await transaction`
       update ${transaction(table)} set count = count - ${count}
       where player = ${uid} and ${transaction(column)} = ${key} and count > ${count}
+      returning count
     `;
+    const kind = ledgerKind(spec);
 
     if (spent.count > 0) {
+      await writeLedgerIn(transaction, [
+        { player: uid, kind, key, delta: -count, balance: asNumber(spent[0].count) },
+      ]);
       return true;
     }
 
@@ -200,7 +231,11 @@ export async function spendStack(
       where player = ${uid} and ${transaction(column)} = ${key} and count = ${count}
     `;
 
-    return emptied.count > 0;
+    if (emptied.count > 0) {
+      await writeLedgerIn(transaction, [{ player: uid, kind, key, delta: -count, balance: 0 }]);
+      return true;
+    }
+    return false;
   });
 }
 
@@ -213,7 +248,9 @@ export async function grantStacks(
   uid: string,
   granted: Iterable<[key: number, count: number]>,
 ): Promise<void> {
-  return grantStacksIn(getSql(), spec, uid, granted);
+  return isLedgerOn()
+    ? tx(async (transaction) => grantStacksIn(transaction, spec, uid, granted))
+    : grantStacksIn(getSql(), spec, uid, granted);
 }
 
 /**
@@ -229,19 +266,44 @@ export async function grantStacksIn(
 ): Promise<void> {
   const { table, key: column } = tableOf(spec);
   const rows: { [column: string]: string | number }[] = [];
+  const given = new Map<number, number>();
 
   for (const [key, count] of granted) {
     if (count > 0) {
       rows.push({ player: uid, [column]: key, count });
+      given.set(key, count);
     }
   }
   if (rows.length === 0) {
     return;
   }
+  // A grant and its ledger rows land together, so a caller that passed
+  // a bare connection gets a transaction when there is a ledger to
+  // write. What is handed on is the list already read, since `granted`
+  // may be an iterator that has been spent
+  if (isLedgerOn() && !isTransaction(transaction)) {
+    await tx(async (opened) => grantStacksIn(opened, spec, uid, given));
+    return;
+  }
 
-  await transaction`
+  const landed = await transaction`
     insert into ${transaction(table)} ${transaction(rows, 'player', column, 'count')}
     on conflict (player, ${transaction(column)})
       do update set count = ${transaction(table)}.count + excluded.count
+    returning ${transaction(column)} as key, count
   `;
+  const entries: LedgerEntry[] = [];
+
+  for (const row of landed) {
+    const key = asNumber(row.key);
+
+    entries.push({
+      player: uid,
+      kind: ledgerKind(spec),
+      key,
+      delta: given.get(key) ?? 0,
+      balance: asNumber(row.count),
+    });
+  }
+  await writeLedgerIn(transaction, entries);
 }

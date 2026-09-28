@@ -50,6 +50,7 @@ import {
   MELOETTA_FORMS,
   MEOWSTIC_FORMS,
   PALKIA_FORMS,
+  PICHU_FORMS,
   ROTOM_FORMS,
   SAWSBUCK_FORMS,
   SHAYMIN_FORMS,
@@ -373,6 +374,14 @@ describe('species measurements', () => {
 });
 
 describe('species forms', () => {
+  it('keeps each Meowstic record to its own sex', () => {
+    // Drawn from the record rather than the roll: a female-form
+    // Meowstic that rolled male was drawn in the female coat and
+    // marked ♂, and the male form the other way round
+    expect(getSpeciesData(Species.Meowstic).genderRatio).toEqual([1, 0]);
+    expect(getSpeciesData(Species.MeowsticFemale).genderRatio).toEqual([0, 1]);
+  });
+
   it('treats every registered species but the unowns and the worn shapes as a default form', () => {
     // The flag is absent almost everywhere and answers true rather
     // than being written out three hundred times. The variants are
@@ -399,6 +408,7 @@ describe('species forms', () => {
       ...GIRATINA_FORMS.slice(1),
       ...SHAYMIN_FORMS.slice(1),
       ...KELDEO_FORMS.slice(1),
+      ...PICHU_FORMS.slice(1),
       ...ROTOM_FORMS.slice(1),
       ...ARCEUS_FORMS.slice(1),
       ...KYUREM_FORMS.slice(1),

@@ -50,7 +50,9 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
           </Show>
         }
       >
-        <h3 class="text-left">Evolves into</h3>
+        <h3 class="text-left text-xs font-extrabold tracking-wider text-muted uppercase">
+          Evolves into
+        </h3>
         {/* A line with many branches scrolls inside its own box
             rather than pushing the rest of the sheet down */}
         <List class="min-h-0 gap-1 overflow-y-auto">

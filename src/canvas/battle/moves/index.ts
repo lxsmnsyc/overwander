@@ -1,6 +1,12 @@
 export { default as moveDelayVisual, delayShapeFor } from './delay';
 export type { DelayShape } from './delay';
-export { default as moveEffectVisual, effectShapeFor, moveMissVisual, weightOf } from './effect';
+export {
+  RIDES_THE_WAIT,
+  default as moveEffectVisual,
+  effectShapeFor,
+  moveMissVisual,
+  weightOf,
+} from './effect';
 export type { EffectShape } from './effect';
 
 /**

@@ -1,4 +1,4 @@
-import { type JSX, type ParentProps, Show, from } from 'solid-js';
+import { type JSX, type ParentProps, Show, children, from } from 'solid-js';
 import { type Profile, watchProfile } from '../../auth/profile';
 import { ListRow, Meta } from '../styled';
 import { PlayerFace } from '../profile/PlayerPlate';
@@ -40,6 +40,8 @@ export default function FriendEntry(props: FriendEntryProps): JSX.Element {
     return nickname === '' ? 'Unnamed trainer' : nickname;
   };
 
+  const actions = children(() => props.children);
+
   return (
     <ListRow>
       <Show
@@ -72,7 +74,10 @@ export default function FriendEntry(props: FriendEntryProps): JSX.Element {
           {props.when} {new Date(props.since ?? 0).toLocaleDateString()}
         </Meta>
       </Show>
-      {props.children}
+      {/* On a line of their own on a phone, under the name and the date */}
+      <Show when={actions.toArray().length > 0}>
+        <div class="flex basis-full items-center gap-2 sm:basis-auto">{actions()}</div>
+      </Show>
     </ListRow>
   );
 }

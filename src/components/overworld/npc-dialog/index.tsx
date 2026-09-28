@@ -53,6 +53,8 @@ const ONCE_A_WINDOW = new Map<Npc, string>([
   [Npc.Breeder, 'breed'],
   [Npc.Groomer, 'groom'],
   [Npc.Channeler, 'channel'],
+  [Npc.Trader, 'swap'],
+  [Npc.HyperTrainer, 'hyper'],
 ]);
 
 /**

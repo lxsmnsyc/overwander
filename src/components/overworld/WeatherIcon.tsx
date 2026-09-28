@@ -116,6 +116,7 @@ export default function WeatherIcon(props: WeatherIconProps): JSX.Element {
   return (
     <TooltipHost
       class="inline-flex items-center"
+      kind="weather"
       name={WEATHER_NAMES[props.weather]}
       description={WEATHER_DESCRIPTIONS[props.weather]}
       extra={() => <WeatherFavors weather={props.weather} />}

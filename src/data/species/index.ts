@@ -4,7 +4,6 @@ import {
   registerLearnSetRows,
   registerRecordRows,
 } from './compact';
-import registerGen5Species from './gen-5';
 import registerGen6Species from './gen-6';
 import registerTrueShadowSpecies from './true-shadow';
 
@@ -87,6 +86,7 @@ const COMPACT_RECORDS = import.meta.glob<RecordFile>(
     './compact/gen-2.records.json',
     './compact/gen-3.records.json',
     './compact/gen-4.records.json',
+    './compact/gen-5.records.json',
   ],
   {
     eager: true,
@@ -99,6 +99,7 @@ const COMPACT_LEARN_SETS = import.meta.glob<LearnSetFile>(
     './compact/gen-2.learnsets.json',
     './compact/gen-3.learnsets.json',
     './compact/gen-4.learnsets.json',
+    './compact/gen-5.learnsets.json',
   ],
   {
     eager: true,
@@ -115,7 +116,8 @@ export function registerSpecies(): void {
   registerLearnSetRows(COMPACT_LEARN_SETS['./compact/gen-3.learnsets.json']);
   registerRecordRows(COMPACT_RECORDS['./compact/gen-4.records.json']);
   registerLearnSetRows(COMPACT_LEARN_SETS['./compact/gen-4.learnsets.json']);
-  registerGen5Species();
+  registerRecordRows(COMPACT_RECORDS['./compact/gen-5.records.json']);
+  registerLearnSetRows(COMPACT_LEARN_SETS['./compact/gen-5.learnsets.json']);
   registerGen6Species();
   // Last: each one is a copy of a counterpart that has to exist first
   registerTrueShadowSpecies();

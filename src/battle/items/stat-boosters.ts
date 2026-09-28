@@ -4,6 +4,7 @@ import { Items } from '../../data/ids/items';
 import { MoveCategories, type Moves } from '../../data/ids/moves';
 import { Species } from '../../data/ids/species';
 import { getMoveData } from '../../data/moves';
+import { isPseudoMove } from '../../data/moves/pseudo';
 import { isFullyEvolved } from '../../data/species';
 import { BattleEvents } from '../events';
 import { MergedLifecycle } from '../lifecycle';
@@ -98,6 +99,13 @@ function setupChoiceItem(item: Items, stat: Stats): (battle: Battle) => void {
      */
     const committed = new Map<Unit, Moves>();
 
+    /** Whether the lock refuses this move: any other move of its own, never a fallback */
+    function isLockedOut(unit: Unit, move: Moves): boolean {
+      const locked = committed.get(unit);
+
+      return locked != null && locked !== move && !isPseudoMove(move) && holds(unit, item);
+    }
+
     return new MergedLifecycle([
       battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
         if (event.stat === stat && holds(event.source, item)) {
@@ -105,27 +113,25 @@ function setupChoiceItem(item: Items, stat: Stats): (battle: Battle) => void {
         }
       }),
 
+      // Only a move of the holder's own locks it: the basic swing and
+      // Struggle are what it falls back on, never what it chose
       battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
-        if (holds(event.source, item)) {
+        if (holds(event.source, item) && !isPseudoMove(event.move)) {
           committed.set(event.source, event.move);
         }
       }),
 
       battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
-        const locked = committed.get(event.source);
-
-        if (event.success && locked != null && locked !== event.move) {
-          event.success = !holds(event.source, item);
+        if (event.success && isLockedOut(event.source, event.move)) {
+          event.success = false;
         }
       }),
 
       // The AI is told before it picks, or it keeps choosing a move the
       // lock refuses and never acts
       battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Post, (event) => {
-        const locked = committed.get(event.source);
-
-        if (event.usable && locked != null && locked !== event.move) {
-          event.usable = !holds(event.source, item);
+        if (event.usable && isLockedOut(event.source, event.move)) {
+          event.usable = false;
         }
       }),
 

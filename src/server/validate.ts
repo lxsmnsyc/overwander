@@ -13,9 +13,10 @@ import { GiftKind } from '../auth/gift-record';
 import { LobbyRole } from '../auth/lobby-role';
 import { MAX_EFFORT_PER_STAT, MAX_PACKED_IVS, Stats } from '../data/constants/stats';
 import { MAX_LEVEL } from '../data/constants/levels';
-import Npc from '../data/overworld/npc';
+import Npc, { TRADER_OFFERS } from '../data/overworld/npc';
 import { RaidKind } from '../auth/raid-record';
 import TEAM_SIZE from '../auth/team-size';
+import { FEATURES } from './switches';
 import { TRADE_GOLD_LIMIT } from '../auth/trade-record';
 
 /**
@@ -188,6 +189,9 @@ const PACKED_IVS = whole(0, MAX_PACKED_IVS);
  */
 export const REPLACED_SLOT = whole(-1, mostSlots(Slots.Move) - 1);
 
+/** Which of the trader's pokemon is asked for */
+export const TRADER_OFFER = whole(0, TRADER_OFFERS - 1);
+
 /** The catches a player brings to a fight */
 export const PARTY = listOf(ID, TEAM_SIZE);
 
@@ -288,7 +292,7 @@ export const ROTATION_SCOPE = v.picklist(['daily', 'weekly']);
 
 /** Who stands at a counter */
 /** Who a basket is bought from or sold to: the market stall or the Chef */
-export const NPC = v.picklist([Npc.Vendor, Npc.Chef]);
+export const NPC = v.picklist([Npc.Vendor, Npc.Chef, Npc.Geologist]);
 
 /** What somebody is in a lobby for */
 export const LOBBY_ROLE = v.picklist([LobbyRole.Fighter, LobbyRole.Spectator]);
@@ -312,17 +316,18 @@ export const PARENTS = v.tuple([MAYBE_ID, MAYBE_ID]);
 /** What a shopper is buying or selling, as pairs of item and amount */
 export const BASKET = listOf(v.tuple([GAME_ID, AMOUNT]), BASKET_LIMIT);
 
+/** One of the six stats */
+export const STAT = v.picklist([
+  Stats.HP,
+  Stats.Attack,
+  Stats.Defense,
+  Stats.SpecialAttack,
+  Stats.SpecialDefense,
+  Stats.Speed,
+]);
+
 /** One of the six stats, or none where the caller has no choice to make */
-export const MAYBE_STAT = v.nullable(
-  v.picklist([
-    Stats.HP,
-    Stats.Attack,
-    Stats.Defense,
-    Stats.SpecialAttack,
-    Stats.SpecialDefense,
-    Stats.Speed,
-  ]),
-);
+export const MAYBE_STAT = v.nullable(STAT);
 
 /** Effort points to move, keyed by the stat they go on */
 export const EFFORT_SPREAD = v.record(
@@ -441,3 +446,6 @@ export const STAFF_GIFT = giftVariants({ ...GIFT_BASE, player: v.nullable(UID) }
  * in its own argument, so the gift itself does not
  */
 export const COMMAND_GIFT = giftVariants(GIFT_BASE);
+
+/** A part of the game a staff switch closes */
+export const FEATURE = v.picklist(FEATURES);

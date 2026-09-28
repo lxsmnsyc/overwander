@@ -11,6 +11,20 @@ describe('a sign-in refusal', () => {
     );
   });
 
+  it('names a malformed email, which comes back as a generic validation error', () => {
+    const refused = {
+      code: 'VALIDATION_ERROR',
+      status: 400,
+      message: '[body.email] Invalid email address',
+    };
+
+    expect(authRefusal(refused).message).toBe('That is not an email address.');
+    // Some other field's validation still falls back
+    expect(authRefusal({ ...refused, message: '[body.name] Required' }).message).toBe(
+      'Could not sign you in just now.',
+    );
+  });
+
   it('never passes the service’s own words on', () => {
     const refused = { code: 'FAILED_TO_CREATE_USER', status: 500 };
 

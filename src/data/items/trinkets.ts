@@ -20,7 +20,7 @@ export const MARKET_TRINKETS: Map<Items, [name: string, description: string]> = 
 ]);
 
 /**
- * The two nobody sells: a stone dug out of the ground, and a coin no
+ * The two no stall sells: a stone the geologist digs up, and a coin no
  * shopkeeper would part with for gold. Being unbuyable is what keeps
  * the coin from simply being a better Luck Incense on the same shelf
  */
@@ -78,14 +78,17 @@ export default function registerTrinkets(): void {
   }
 
   for (const [item, [name, description]] of FOUND_TRINKETS) {
+    // The Everstone is a stone, so the geologist sells it as well
+    const quarried = item === Items.Everstone;
+
     registerItem(item, {
       name,
       description,
       type: ItemTypes.Held,
       icon: nameToIcon('held', name),
-      flags: ItemFlags.Holdable,
-      buy: 0,
-      sell: FOUND_TRINKET_RESALE,
+      flags: quarried ? ItemFlags.Holdable | ItemFlags.Marketable : ItemFlags.Holdable,
+      buy: quarried ? TRINKET_PRICE : 0,
+      sell: quarried ? TRINKET_PRICE * TRINKET_RESALE : FOUND_TRINKET_RESALE,
     });
   }
 }

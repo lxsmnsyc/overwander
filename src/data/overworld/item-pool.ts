@@ -304,6 +304,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     // Thin: a second held item is a whole build, and one belt is one
     // pokemon's worth of it
     { item: Items.UtilityBelt, weight: 4 },
+    // Room for another move, as thin as the belt: a fifth move is a
+    // whole new way for one pokemon to fight
+    { item: Items.SkillBook, weight: 4 },
     // Room for another ability, which the Channeler then has
     // something to fill. Commoner than the belt: a species that
     // cannot reach four on its own needs one before she is any use

@@ -9,6 +9,7 @@
 export interface AuthFailure {
   code?: string;
   status?: number;
+  message?: string;
 }
 
 /** Refusals a player can do something about, by Better Auth's code */
@@ -38,6 +39,11 @@ const AUTH_FALLBACK = 'Could not sign you in just now.';
 export default function authRefusal(error: AuthFailure, fallback = AUTH_FALLBACK): Error {
   if (error.status === TOO_MANY) {
     return new Error('Too many tries. Wait a moment and try again.');
+  }
+  // A malformed address comes back as a generic validation error that
+  // only its message ties to the email field
+  if (error.code === 'VALIDATION_ERROR' && error.message?.includes('body.email') === true) {
+    return new Error('That is not an email address.');
   }
   return new Error((error.code == null ? undefined : AUTH_REFUSALS.get(error.code)) ?? fallback);
 }

@@ -10,7 +10,13 @@ import { isMarketable } from '../../src/data/overworld/vendor';
 import { isHeartScale } from '../../src/data/items/heart-scale';
 import { MEDICINES } from '../../src/data/items/medicine';
 import { GEMS, GEM_PRICE } from '../../src/data/items/gems';
-import { FOUND_GEAR, GEAR_PRICE, MARKET_GEAR, isGear } from '../../src/data/items/gear';
+import {
+  FOUND_GEAR,
+  GEAR_PRICE,
+  MARKET_GEAR,
+  QUARRIED_GEAR,
+  isGear,
+} from '../../src/data/items/gear';
 import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../../src/data/items/incenses';
 import { BATTLE_ITEMS, BATTLE_ITEM_PRICE, isBattleItem } from '../../src/data/items/battle-items';
 import { ONE_SHOTS, ONE_SHOT_PRICE, isOneShot } from '../../src/data/items/one-shots';
@@ -244,9 +250,15 @@ describe('type-enhancing items', () => {
 
       expect(data.type).toBe(ItemTypes.Held);
       expect(data.flags & ItemFlags.Holdable).not.toBe(0);
-      // Found rather than stocked: no listing, only a resale price
-      expect(data.flags & ItemFlags.Marketable).toBe(0);
-      expect(data.buy).toBe(0);
+      // Found rather than stocked, except the rocks and clay the
+      // geologist digs up, which he lists at the gear price
+      if (QUARRIED_GEAR.has(item)) {
+        expect(data.flags & ItemFlags.Marketable).not.toBe(0);
+        expect(data.buy).toBe(GEAR_PRICE);
+      } else {
+        expect(data.flags & ItemFlags.Marketable).toBe(0);
+        expect(data.buy).toBe(0);
+      }
       expect(data.sell).toBeGreaterThan(0);
       expect(isGear(item)).toBe(true);
       expect(pooled.has(item)).toBe(true);
@@ -312,12 +324,15 @@ describe('type-enhancing items', () => {
       expect(pooled.has(item)).toBe(false);
     }
 
-    // The two nobody sells are the two the ground hides
+    // The two no stall sells are the two the ground hides. The
+    // geologist lists the Everstone at the trinket price
     for (const [item] of FOUND_TRINKETS) {
       const data = getItemData(item);
 
-      expect(data.flags & ItemFlags.Marketable).toBe(0);
-      expect(data.buy).toBe(0);
+      expect(data.flags & ItemFlags.Marketable).toBe(
+        item === Items.Everstone ? ItemFlags.Marketable : 0,
+      );
+      expect(data.buy).toBe(item === Items.Everstone ? TRINKET_PRICE : 0);
       expect(data.sell).toBeGreaterThan(0);
       expect(pooled.has(item)).toBe(true);
     }

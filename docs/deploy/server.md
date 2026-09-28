@@ -138,6 +138,11 @@ these four things. Each one tests a different part of the setup:
 `Registered tunnel connection`. `pnpm server` starts everything, and
 `pnpm server:tunnel` starts the tunnel alone.
 
+If the site answers 502 or 1033 while `pnpm server:ps` shows the app running,
+the tunnel's connections have usually gone stale, for example after the machine
+slept or lost its network. `pnpm server:tunnel:restart` restarts the tunnel
+alone, which takes a few seconds and leaves the app and the database running.
+
 ## 6. Backups
 
 [`scripts/backup.sh`](../../scripts/backup.sh) dumps the database, keeps two

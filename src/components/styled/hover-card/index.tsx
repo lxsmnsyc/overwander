@@ -17,7 +17,7 @@ import closeWhenGone from '../gone';
 import { DetailRowsProvider, TooltipLayer } from '../tooltip';
 import { SHEER } from '../transition';
 import { type HoverCardPlacement, type Point, apart, holds, within } from './placing';
-import { CLOSE_DELAY, OPEN_DELAY } from '../hover-delay';
+import { CLOSE_DELAY, OPEN_DELAY, WARM } from '../hover-delay';
 import createLongPress from '../long-press';
 import { GRACE, LINGER, type SafeShape, painting, showSafeAreas } from './safe-area';
 
@@ -83,6 +83,15 @@ interface CardHold {
 }
 
 const Holding = createContext<CardHold>();
+
+/**
+ * The card up at each level (keyed by the card it was opened from, or
+ * null at the top), and when the last one there went. A card opened
+ * beside one already up takes over at once rather than waiting behind
+ * it, which read as the interface lagging
+ */
+const SHOWING = new Map<CardHold | null, () => void>();
+const SHUT_AT = new Map<CardHold | null, number>();
 
 export interface HoverCardProps extends ParentProps {
   /**
@@ -191,8 +200,28 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
     crossing?.();
   };
 
+  const level = outer ?? null;
+
+  /** Put this card away now, without its fade, for the next one at its level */
+  const shut = (): void => {
+    cancel();
+    setOpen(false);
+    setPresent(false);
+  };
+
   const show = (): void => {
     cancel();
+    const showing = SHOWING.get(level);
+
+    if (showing != null && showing !== shut) {
+      showing();
+      setOpen(true);
+      return;
+    }
+    if (performance.now() - (SHUT_AT.get(level) ?? -Infinity) < WARM) {
+      setOpen(true);
+      return;
+    }
     timer = setTimeout(() => {
       setOpen(true);
     }, OPEN_DELAY);
@@ -416,6 +445,19 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
     if (open()) {
       setPresent(true);
     }
+  });
+
+  createEffect(() => {
+    if (!open()) {
+      return;
+    }
+    SHOWING.set(level, shut);
+    onCleanup(() => {
+      if (SHOWING.get(level) === shut) {
+        SHOWING.delete(level);
+        SHUT_AT.set(level, performance.now());
+      }
+    });
   });
 
   onCleanup(() => {

@@ -18,7 +18,7 @@ import { blocksWalk } from '../../../overworld/cliff';
 import { isLavaAt } from '../../../overworld/ground';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
-import deriveEncounter from '../../../overworld/encounter';
+import { deriveShiny } from '../../../overworld/encounter';
 import namePlace from '../../../overworld/place';
 import { spawnKey } from '../../../overworld/safari';
 import { DARK_DAY_LAMP_CELLS } from '../../../data/overworld/weather';
@@ -402,9 +402,9 @@ export function buildBoardView(
         // surprise sprung after the ball is thrown
         shiny:
           player != null &&
-          deriveEncounter(snapshot, spawn, player, {
+          deriveShiny(snapshot, spawn, player, {
             shinyBoost: overworld.checkEncounterShiny(id),
-          }).shiny,
+          }),
       });
     }
   }

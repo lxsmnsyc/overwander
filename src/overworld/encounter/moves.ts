@@ -1,7 +1,7 @@
 import AleaRNG from '../../core/alea';
 import type { Moves } from '../../data/ids/moves';
 import type { Species } from '../../data/ids/species';
-import { getBaseSpecies, getEggMoves, getSpeciesData, getTeachableMoves } from '../../data/species';
+import { getBaseSpecies, getEggMoves, getLearnSet, getTeachableMoves } from '../../data/species';
 import { MOVE_LIMIT } from './traits';
 
 /** What it knows when it is met, and what it was hatched knowing */
@@ -9,10 +9,10 @@ import { MOVE_LIMIT } from './traits';
  * The last four level-up moves the species knows at that level
  */
 export function deriveMoves(species: Species, level: number, banned?: Set<Moves>): Moves[] {
-  const data = getSpeciesData(species);
+  const { level: byLevel } = getLearnSet(species);
   const thresholds: number[] = [];
 
-  for (const key of Object.keys(data.learnSet.level)) {
+  for (const key of Object.keys(byLevel)) {
     const threshold = Number(key);
 
     if (threshold <= level) {
@@ -24,7 +24,7 @@ export function deriveMoves(species: Species, level: number, banned?: Set<Moves>
   const learned: Moves[] = [];
 
   for (const threshold of thresholds) {
-    for (const move of data.learnSet.level[threshold]) {
+    for (const move of byLevel[threshold]) {
       // Dropped before the four are taken rather than after, so a
       // pokemon barred from one move still comes with four
       if (banned?.has(move) !== true) {

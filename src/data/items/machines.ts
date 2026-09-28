@@ -3,7 +3,7 @@ import { ItemFlags, ItemTypes, getMachineItem } from '../ids/items';
 import type { Moves } from '../ids/moves';
 import { MoveCategories } from '../ids/moves';
 import { getMoveData } from '../moves';
-import { getRegisteredSpecies, getSpeciesData } from '../species';
+import { getLearnSet, getRegisteredSpecies } from '../species';
 import { registerItem } from './__create';
 
 /**
@@ -40,7 +40,7 @@ export function getTeachableMoves(): Moves[] {
   const moves = new Set<Moves>();
 
   for (const species of getRegisteredSpecies()) {
-    for (const move of getSpeciesData(species).learnSet.teachable) {
+    for (const move of getLearnSet(species).teachable) {
       moves.add(move);
     }
   }

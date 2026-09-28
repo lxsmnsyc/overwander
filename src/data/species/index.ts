@@ -27,11 +27,18 @@ export {
   isWornForm,
   getTeachableMoves,
   getHabitat,
+  getLearnSet,
   isBaseForm,
   getGrowthRoads,
   isCosmeticForm,
 } from './__create';
-export type { EvolutionData, LearnSetData, SpeciesAbilityPools, SpeciesData } from './__create';
+export type {
+  EvolutionData,
+  LearnSetData,
+  SpeciesAbilityPools,
+  SpeciesData,
+  SpeciesEntry,
+} from './__create';
 export { DEFAULT_EGG_CYCLES, getEggCycles } from './egg-cycles';
 export {
   SPECIES_DAY_CATCH_BOOST,

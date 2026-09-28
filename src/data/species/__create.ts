@@ -207,13 +207,21 @@ export interface SpeciesData {
    * active in
    */
   activeTimes: number;
-  /**
-   * Learn Set
-   */
+}
+
+/**
+ * A species as its source file writes it: the record plus its learn
+ * set. The two are kept apart once registered, because the world
+ * reads the record at boot and only fights, dexes and teaching read
+ * the learn set
+ */
+export interface SpeciesEntry extends SpeciesData {
   learnSet: LearnSetData;
 }
 
 const SPECIES_MAP = new Map<Species, SpeciesData>();
+
+const LEARN_SETS = new Map<Species, LearnSetData>();
 
 /**
  * Lazily built biome -> species index; registration invalidates it
@@ -233,11 +241,23 @@ let familyIndex: Families[] | null = null;
  */
 let formIndex: Map<Species, Species[]> | null = null;
 
-export function registerSpecies(species: Species, data: SpeciesData): void {
+export function registerSpecies(species: Species, entry: SpeciesEntry): void {
+  const { learnSet, ...data } = entry;
+
+  registerSpeciesRecord(species, data);
+  registerLearnSet(species, learnSet);
+}
+
+/** The record alone, for a loader that brings the learn sets later */
+export function registerSpeciesRecord(species: Species, data: SpeciesData): void {
   SPECIES_MAP.set(species, data);
   biomeIndex = null;
   familyIndex = null;
   formIndex = null;
+}
+
+export function registerLearnSet(species: Species, learnSet: LearnSetData): void {
+  LEARN_SETS.set(species, learnSet);
 }
 
 /**
@@ -293,6 +313,19 @@ export function getSpeciesData(species: Species): SpeciesData {
     return result;
   }
   throw new Error('Missing species data for ' + species);
+}
+
+/**
+ * What the species learns. The browser loads learn sets with the
+ * fight data, so reading one before that has landed is a bug rather
+ * than an empty list
+ */
+export function getLearnSet(species: Species): LearnSetData {
+  const result = LEARN_SETS.get(species);
+  if (result) {
+    return result;
+  }
+  throw new Error('Missing learn set for ' + species);
 }
 
 /** Where the species is met, ground unless its data says otherwise */
@@ -441,7 +474,7 @@ export interface SpeciesAbilityPools {
  * with no known eggs
  */
 export function getEggMoves(species: Species): Moves[] {
-  return getSpeciesData(species).learnSet.egg ?? [];
+  return getLearnSet(species).egg ?? [];
 }
 
 /**
@@ -449,7 +482,7 @@ export function getEggMoves(species: Species): Moves[] {
  * never grows into on its own
  */
 export function getTeachableMoves(species: Species): Moves[] {
-  return getSpeciesData(species).learnSet.teachable;
+  return getLearnSet(species).teachable;
 }
 
 /**
@@ -461,7 +494,7 @@ export function getTeachableMoves(species: Species): Moves[] {
  * the half of it that depends on how far it has grown
  */
 export function getLearnableMoves(species: Species): Moves[] {
-  const { level, teachable, egg } = getSpeciesData(species).learnSet;
+  const { level, teachable, egg } = getLearnSet(species);
 
   return [...new Set([...Object.values(level).flat(), ...teachable, ...(egg ?? [])])];
 }
@@ -477,7 +510,7 @@ export function getLearnableMoves(species: Species): Moves[] {
  * is what `getRecallableMoves` is for
  */
 export function getMovesLearnedAt(species: Species, level: number): Moves[] {
-  return getSpeciesData(species).learnSet.level[level] ?? [];
+  return getLearnSet(species).level[level] ?? [];
 }
 
 /**
@@ -517,7 +550,7 @@ export function getMovesLearnedBetween(species: Species, from: number, to: numbe
  * move, yield it once, at the earliest of them
  */
 export function getLevelUpMoves(species: Species, level: number): Moves[] {
-  const { level: learned } = getSpeciesData(species).learnSet;
+  const { level: learned } = getLearnSet(species);
   const thresholds: number[] = [];
 
   for (const key of Object.keys(learned)) {

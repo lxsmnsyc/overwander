@@ -41,7 +41,12 @@ import { UTILITY_BELT_SLOT, isUtilityBelt } from '../../data/items/utility-belt'
 import { MAX_VITAMIN_STATS, VITAMIN_STATS, isPPItem, isVitamin } from '../../data/items/vitamins';
 import { MAX_WING_STATS, WING_STATS, isWing } from '../../data/items/wings';
 import { PP_UP_LIMIT } from '../../data/moves';
-import { getMovesLearnedAt, getMovesLearnedBetween, getSpeciesData } from '../../data/species';
+import {
+  getLearnSet,
+  getMovesLearnedAt,
+  getMovesLearnedBetween,
+  getSpeciesData,
+} from '../../data/species';
 import type { ToastTone } from '../styled';
 import { describeItem } from '../details';
 import { describeIVs, withArticle } from '../catches/catch-dialog/describe';
@@ -129,7 +134,7 @@ export function isUsableOn(item: Items, caught: CaughtPokemon): boolean {
 
     return (
       move != null &&
-      new Set(getSpeciesData(caught.species).learnSet.teachable).has(move) &&
+      new Set(getLearnSet(caught.species).teachable).has(move) &&
       !new Set(caught.moves).has(move)
     );
   }

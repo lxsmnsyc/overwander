@@ -79,7 +79,7 @@ import {
   listTrueShadows,
   registerSpecies,
 } from '../../src/data/species';
-import { registerSpecies as registerSpeciesData } from '../../src/data/species/__create';
+import { registerSpeciesRecord as registerSpeciesData } from '../../src/data/species/__create';
 import Regions from '../../src/data/ids/regions';
 import { getSpeciesRegion } from '../../src/data/species/regions';
 

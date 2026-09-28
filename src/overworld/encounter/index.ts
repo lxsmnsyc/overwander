@@ -130,6 +130,35 @@ export interface EncounterOptions {
   skyGifts?: boolean;
 }
 
+/**
+ * Whether this player sees the spawn sparkle, without deriving the rest
+ * of it: the board asks this of every spawn, before any learn set has
+ * loaded. The day's featured family sparkles eight times as often, the
+ * rarest sky doubles whatever is standing under it, and whatever the
+ * player carries multiplies that further
+ */
+export function deriveShiny(
+  snapshot: ChunkSnapshot,
+  spawn: Spawn,
+  userId?: string,
+  options: EncounterOptions = {},
+): boolean {
+  const [species, , traitValue] = spawn;
+  const featured = isFeaturedSpecies(species, snapshot.timestamp);
+  const sky = options.weather;
+
+  return (
+    userId != null &&
+    isShinyFor(
+      userId,
+      traitValue,
+      (featured ? SPECIES_DAY_SHINY_BOOST : 1) *
+        (sky == null ? 1 : shinyBoostOf(sky)) *
+        (options.shinyBoost ?? 1),
+    )
+  );
+}
+
 export default function deriveEncounter(
   snapshot: ChunkSnapshot,
   spawn: Spawn,
@@ -244,18 +273,7 @@ export default function deriveEncounter(
     ability,
     ...(abilities.length > 1 ? { abilities } : {}),
     gender,
-    // The day's featured family sparkles eight times as often, the
-    // rarest sky doubles whatever is standing under it, and whatever
-    // the player carries multiplies that further
-    shiny:
-      userId != null &&
-      isShinyFor(
-        userId,
-        traitValue,
-        (featured ? SPECIES_DAY_SHINY_BOOST : 1) *
-          (sky == null ? 1 : shinyBoostOf(sky)) *
-          (options.shinyBoost ?? 1),
-      ),
+    shiny: deriveShiny(snapshot, spawn, userId, options),
     // A dark day closes a share of the hearts that arrive under it,
     // rolled per pokemon and per player the way the sparkle is. A
     // caller that already knows keeps saying: a shadow raid's prize

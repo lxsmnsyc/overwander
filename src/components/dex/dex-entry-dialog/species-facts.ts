@@ -20,7 +20,7 @@ import {
   getSpeciesLairs,
   isSubterraneanLair,
 } from '../../../data/overworld/lair';
-import { getBaseForms, getSpeciesData } from '../../../data/species';
+import { getBaseForms, getLearnSet, getSpeciesData } from '../../../data/species';
 
 /**
  * The ceiling the stat bars are drawn against.
@@ -56,7 +56,7 @@ export const STAT_BARS: Record<Stats, string> = {
  * learns there
  */
 export function listLevelMoves(species: Species): [level: number, moves: Moves[]][] {
-  const { level } = getSpeciesData(species).learnSet;
+  const { level } = getLearnSet(species);
 
   const thresholds: number[] = [];
 

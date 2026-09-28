@@ -24,6 +24,7 @@ import registerItems from '../../../src/data/items';
 import { Genders, Species } from '../../../src/data/ids/species';
 import {
   SPECIES_DAY_HIDDEN_ABILITY_BOOST,
+  getLearnSet,
   getRegisteredSpecies,
   getSpeciesAbilityPools,
   getSpeciesData,
@@ -679,7 +680,7 @@ describe('chunk snapshot', () => {
     }
     expect(instance.moves.length).toBeGreaterThan(0);
     expect(instance.moves.length).toBeLessThanOrEqual(4);
-    const learnable = Object.entries(data.learnSet.level)
+    const learnable = Object.entries(getLearnSet(instance.species).level)
       .filter(([threshold]) => Number(threshold) <= instance.level)
       .flatMap(([, moves]) => moves);
     for (const move of instance.moves) {

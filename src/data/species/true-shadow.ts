@@ -1,6 +1,6 @@
 import { STAT_ORDER } from '../constants/stats';
 import { Species, speciesDexNumber } from '../ids/species';
-import { getSpeciesData, registerSpecies } from './__create';
+import { getLearnSet, getSpeciesData, registerSpecies } from './__create';
 
 /**
  * The true shadows: a pokemon that is a shadow by what it is rather
@@ -80,6 +80,7 @@ export default function registerTrueShadowSpecies(): void {
 
     registerSpecies(shadow, {
       ...base,
+      learnSet: getLearnSet(counterpart),
       baseForm: false,
       name: trueShadowName(shadow),
       stats,

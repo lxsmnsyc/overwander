@@ -25,6 +25,7 @@ import {
 import pickStatusCast, { STATUS_CAST } from '../../src/data/constants/status-cast';
 import {
   getEggMoves,
+  getLearnSet,
   getRegisteredSpecies,
   getSpeciesData,
   registerSpecies,
@@ -142,7 +143,7 @@ describe('the moves nobody knows', () => {
 
   it('leaves the moves nobody knows out of every list one can be reached from', () => {
     for (const species of getRegisteredSpecies()) {
-      const { learnSet } = getSpeciesData(species);
+      const learnSet = getLearnSet(species);
       const teachable = new Set(learnSet.teachable);
       const named = getSpeciesData(species).name;
 
@@ -167,21 +168,15 @@ describe('the moves added back to the dex', () => {
     // Both were missing, and both are the move the species is known
     // for: Porygon knows Conversion from the moment it is switched on,
     // and Kinesis is the spoon-bending Kadabra is named after
-    expect(new Set(getSpeciesData(Species.Porygon).learnSet.level[1]).has(Moves.Conversion)).toBe(
-      true,
-    );
-    expect(new Set(getSpeciesData(Species.Kadabra).learnSet.level[1]).has(Moves.Kinesis)).toBe(
-      true,
-    );
+    expect(new Set(getLearnSet(Species.Porygon).level[1]).has(Moves.Conversion)).toBe(true);
+    expect(new Set(getLearnSet(Species.Kadabra).level[1]).has(Moves.Kinesis)).toBe(true);
     // Alakazam keeps what Kadabra learned
-    expect(new Set(getSpeciesData(Species.Alakazam).learnSet.level[1]).has(Moves.Kinesis)).toBe(
-      true,
-    );
+    expect(new Set(getLearnSet(Species.Alakazam).level[1]).has(Moves.Kinesis)).toBe(true);
   });
 
   it('teaches Soft-Boiled to Chansey, the fairies and the one who was not supposed to exist', () => {
     const taught = getRegisteredSpecies().filter((species) =>
-      new Set(getSpeciesData(species).learnSet.teachable).has(Moves.SoftBoiled),
+      new Set(getLearnSet(species).teachable).has(Moves.SoftBoiled),
     );
 
     // The fairies come by it from a gen 3 tutor rather than from the

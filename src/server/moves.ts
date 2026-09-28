@@ -6,7 +6,7 @@ import { type Items, getMachineMove } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type { Species } from '../data/ids/species';
 import { Slots, getSlots } from '../data/constants/slots';
-import { getMovesLearnedBetween, getSpeciesData } from '../data/species';
+import { getLearnSet, getMovesLearnedBetween } from '../data/species';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { Metric } from '../auth/quest-record';
 import { readStackIn, writeStackIn } from './stacks';
@@ -208,6 +208,6 @@ export default async function teachMove(
     return { refused: LearnRefusal.NotLearnable };
   }
   return learnMove(uid, catchId, move, item, replaces, (species) =>
-    new Set(getSpeciesData(species).learnSet.teachable).has(move),
+    new Set(getLearnSet(species).teachable).has(move),
   );
 }

@@ -6,9 +6,9 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
 import { Habitat, Species } from '../../ids/species';
-import { type SpeciesData, registerSpecies } from '../__create';
+import { type SpeciesEntry, registerSpecies } from '../__create';
 
-const KELDEO: SpeciesData = {
+const KELDEO: SpeciesEntry = {
   dexNumber: 647,
   name: 'Keldeo',
   category: 'Colt Pokemon',

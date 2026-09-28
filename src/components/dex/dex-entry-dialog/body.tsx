@@ -21,6 +21,7 @@ import {
   type SpeciesData,
   getBaseSpecies,
   getFamilyName,
+  getLearnSet,
   getSpeciesData,
 } from '../../../data/species';
 import {
@@ -683,22 +684,26 @@ export function DexEntryBody(
                     the same question to a player holding the item */}
                   <TabPane value={MoveTab.Machines}>
                     <Show
-                      when={entry().data.learnSet.teachable.length}
+                      when={getLearnSet(entry().species).teachable.length}
                       fallback={<Note>Nothing can be taught to it.</Note>}
                     >
                       <List>
-                        <For each={entry().data.learnSet.teachable}>{(move) => moveRow(move)}</For>
+                        <For each={getLearnSet(entry().species).teachable}>
+                          {(move) => moveRow(move)}
+                        </For>
                       </List>
                     </Show>
                   </TabPane>
 
                   <TabPane value={MoveTab.Egg}>
                     <Show
-                      when={(entry().data.learnSet.egg ?? []).length}
+                      when={(getLearnSet(entry().species).egg ?? []).length}
                       fallback={<Note>It inherits nothing.</Note>}
                     >
                       <List>
-                        <For each={entry().data.learnSet.egg ?? []}>{(move) => moveRow(move)}</For>
+                        <For each={getLearnSet(entry().species).egg ?? []}>
+                          {(move) => moveRow(move)}
+                        </For>
                       </List>
                     </Show>
                   </TabPane>

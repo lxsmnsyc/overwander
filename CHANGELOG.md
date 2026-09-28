@@ -1,5 +1,76 @@
 # overwander
 
+## 4.23.0
+
+### Minor Changes
+
+- f5a7939: - A Geologist now wanders the world, selling 12 kinds at a time from the evolution stones, the gems, the held stones, the weather rocks, the Everstone and Light Clay.
+  - The weather rocks, the Everstone and Light Clay can now be bought from him, and still turn up on the ground as before.
+  - The Breeder can now turn up in the breeder outfits from Diamond and Pearl, Omega Ruby and Alpha Sapphire, and Black 2 and White 2.
+- a1d3bcb: A Hyper Trainer now wanders the world, taking one IV of a pokemon to 31 for 10,000 gold per point it climbs, once each time he turns up.
+- ce61ae6: The families the flower road out of Kalos's towns walks past:
+  
+  - Flabebe, Floette and Florges grow in twelve countries, a colour to each. Skiddo and Gogoat graze the grassland, the shrubland, the steppe and the montane forests. Furfrou keeps the grassland, the woodland and the shrubland into the evening.
+  - A flower is picked in the colour of the country it grew in: red in the grassland, the temperate forests and the woodland, yellow in the savanna and the steppe, orange in the shrubland and the tropical seasonal forests, blue in the bog, the swamp and the mangroves, white in the taiga and the tundra. A Flabebe carries that colour through both evolutions.
+  - Eternal Floette is met on a town's streets and nowhere else, in the mythical band. No Flabebe grows into one, and no stone changes it.
+  - Each family has a signature ability. Hothouse lets a teammate defend special moves with Florges's Special Defense whenever theirs is lower. Saddle Burden takes a status aimed at a teammate onto the goat instead, while it is above 1/2 HP and carries none of its own. Pedigree Coat turns special moves aside at 0.8x while the poodle is at or above 1/2 HP.
+  - Four abilities the mainline gives these lines are built: Flower Veil, Symbiosis, Grass Pelt and Misty Surge.
+  - All six learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- 2e9a393: The families the sword and the key bring:
+  
+  - Espurr and Meowstic keep the woodland and the temperate forests through the evening and the night. Honedge, Doublade and Aegislash lie in the badlands and the mountains at the same hours, and Klefki rattles about the shrubland and the badlands by morning and day.
+  - Stance Change is built: an Aegislash draws the blade to attack, which is 150 Attack and Special Attack behind a 50 guard, and sheathes it again on King's Shield.
+  - Each family has a signature ability. Restraint holds Espurr's first 3 moves each fight to 0.8x and lets every move after them hit 1.25x. Turn the Blade halves the first blow the sword takes in each stance. Keyring gives Klefki room for 1 held item more than it was born with, as far as the fight allows.
+  - A pokemon's held-item room is now asked through the battle's own event, so an ability can widen it, and the catch sheet counts the extra pocket outside a fight as well.
+  - A female Espurr grows into a female Meowstic, who is her own pokemon: Competitive rather than Prankster, and her own moves from level 1. She is drawn from the female coat the sprite collection packs beside the male's frames.
+  - All six learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- a70db18: The families the sea brings:
+  
+  - Binacle and Barbaracle cling to the rocky coasts and the beaches by morning and day. Skrelp and Dragalge lie in the kelp forests and the coral reefs, and Clauncher and Clawitzer cross the reefs and the open ocean, all three in the water rather than on the sand.
+  - Mega Launcher is built: an Aura Sphere, Dark Pulse, Dragon Pulse, Origin Pulse or Water Pulse hits 1.5x out of that claw, and a Heal Pulse gives back 1.5x as much.
+  - Skrelp and Clauncher are a designed pair, so their signatures answer each other. Deep Kelp means a blow that would take less than 1/8 of Dragalge's HP does nothing at all, and Ranging Shot means Clawitzer's special moves deal at least 1/8 of the target's HP however they are resisted. Neither is worth anything against the other.
+  - Binacle has Many Hands: every stat stage it holds counts 1.5x, raises and drops alike.
+  - All six learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- b7b554d: - A Dojo Master now wanders the world, giving a pokemon one more move slot for a Heart Scale, up to 8.
+  - A new Skill Book item gives a pokemon one more move slot. It is found beside the Utility Belt and never sold.
+- b352e6b: The staff dashboard has a Switches page for closing a part of the game, or all of it for maintenance, while the game runs, with the message players are told.
+- 9ac43ef: - A Trader now wanders the world with 6 pokemon from other biomes, and swaps one of them for any of yours from the same spawn band, once each time he turns up.
+  - A pokemon from the Trader arrives traded, so it can take a trade evolution.
+
+### Patch Changes
+
+- 6b93d58: - The catch sheet's name box carries the pokemon's name, its species when it is nicknamed, and its marks, with its ball as the face.
+  - The pokemon stands on a field with its level in the corner, and its facts sit under it as chips, before the candy and Level Up.
+  - Stats, abilities and items, moves and evolutions each sit in a card of their own.
+  - Where the pokemon came from sits at the foot beside History, with Close on the left.
+- fe6527d: - Dialogs are white sheets with round corners on the game's hard drop, with the title on a blue name box across the top edge.
+  - A dialog ends on a tinted dock, with the way out on the left and the actions on the right.
+  - What something costs, what you carry and what is at stake are shown as chips.
+  - Menus, dropdowns, search suggestions and the overworld bar's popups share the same soft edge and shadow as the tooltips.
+- 29cf8e9: Gym leaders, Elite Four members and champions change every 3 hours, drawn from the biome's own list, so one town cycles through them.
+- 7272b66: - The Portal, Honey Tree, Nest, Stop, Gym Seat and Raid dialogs share the NPC counters' layout: the place or person in the heading, then what it costs, what you have, what is at stake and how often.
+  - A honey tree already lathered, an egg already taken, and a gym seat that has given all it will today say so in place of their buttons.
+  - Crossing, lathering, taking an egg and seating a team report in a toast rather than a line in the dialog.
+  - The way out of an overworld dialog is Walk on.
+- fc7f5a0: Registering with a malformed email address now says so, rather than "Could not sign you in just now."
+- 0eec9ac: - Every NPC counter shares one layout: the person and their words in the heading, then what it costs and what you have, then what you pick.
+  - Every NPC counter that takes gold or a Heart Scale shows how much you carry.
+  - Picking a pokemon or a rock no longer spends anything by itself: the button at the foot pays, with the price on it, and Change puts the box back.
+  - Once a counter has done its one thing this while, the person says so in place of the box.
+  - The vendor and the fossil maniac say when a trade did not go through, and a sale to the vendor gets its own note.
+- 7272b66: - A dialog has one way out, its own Close or Walk on button, rather than a second × beside it.
+  - The safari is a battle screen: the pokemon on a field with its name box, a textbox that says how each throw went, and Bag, Throw and Run tiles.
+  - A trainer's dialog says in one line what beating them pays, in place of a paragraph of stakes. A Frontier Brain's house rule is still said in full.
+- 3bd4f32: The Move Reminder also offers what a pokemon's pre-evolutions learn by levelling, up to its current level.
+- 93e47f5: - Hover cards are white cards like the tooltips, with no bar: the name in bold with what kind of thing it is beside it, and facts as rows rather than boxes.
+  - A move's hover card shows its power, accuracy, PP and cooldown as a row of four numbers.
+  - Tooltips and hover cards flip, shift and keep their place as the page scrolls, measured against the card's real size.
+- 035e7ce: - The sign-in screen is drawn on the same white sheet as the dialogs, with the game's name and one line about it at the top.
+  - Signing in and creating an account are two tabs, each with one button, and the email and password fields carry labels.
+  - Google or GitHub sign-in sits under an "or", with the passkey beside it on the Sign in tab, since a passkey only opens an account that already has one.
+- 42b2e15: - Tooltips are redrawn as a small white tag: the name in bold with a chip saying what it is (item, candy, type, weather, ability or status), the description under it, and any extra facts as rows in a tinted panel.
+  - A tooltip follows the mouse, with its notch pointing at the cursor.
+
 ## 4.22.4
 
 ### Patch Changes

@@ -32,6 +32,7 @@ import { SELF_STATUS_MOVES } from '../moves/status';
 import type Unit from '../unit';
 import { withAIContext } from './context';
 import setupFog from './fog';
+import setupCoordination from './coordination';
 import setupRoleScoring from './role-score';
 
 /**
@@ -80,6 +81,7 @@ export function setupChooseMoveAI(battle: Battle): void {
   // What the AI may know about a foe is settled before anything is weighed
   setupFog(battle);
   setupRoleScoring(battle);
+  setupCoordination(battle);
 
   /**
    * Expected damage simulated through the engine's own resolver: a

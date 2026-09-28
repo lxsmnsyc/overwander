@@ -227,6 +227,21 @@ field out again for every move and target:
 
 A question asked outside a decision, as a test does, gets a fresh context.
 
+## Teammates casting over each other
+
+Teammates decide one at a time but cast over each other, and a cast takes about
+1.7 seconds to wind up. [`src/battle/ai/coordination.ts`](../../src/battle/ai/coordination.ts)
+reads what each friend is already casting, and refuses a move the friend's cast
+already covers:
+
+- the same veil, tailwind or team guard over the same team;
+- the same weather, terrain or room over the field;
+- the same hazard on the same side, except Spikes and Toxic Spikes, which stack;
+- an affliction at a foe a friend is already afflicting.
+
+A cast is on show, so reading it is no peek. Only casts still winding up are
+read; a move already in flight for its last quarter of a second is not.
+
 ## See also
 
 - [The battle engine](../engine.md): the index for these pages

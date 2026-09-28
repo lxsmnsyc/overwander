@@ -196,6 +196,20 @@ Every other role adds nothing yet, and is weighed by the move's own rules.
 No role adds more than one point under `KILL_BONUS`, so finishing a foe always
 wins.
 
+## Moves that call another
+
+A caller is worth what it would call. `weighCall` in the chooser scores the
+called move exactly as the AI would score casting it, and each caller asks it
+from its own module:
+
+- Nature Power, Copycat and Mirror Move score as the one move they would call.
+- Me First scores as the move it would take, at its extra power.
+- Sleep Talk and Assist score as the average of the moves they could draw.
+- Metronome could call anything, so it only beats doing nothing.
+
+The focus-fire bonus and a Palace nature's aim skip callers, since the called
+move's score already carries them.
+
 ## What the caster's own side brings
 
 The AI reads its own side in full, so its kit shapes the score:

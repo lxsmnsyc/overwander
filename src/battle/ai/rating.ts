@@ -7,6 +7,7 @@ import { BattleEvents, type CheckTeamAIUnitEvent, MoveTargetType } from '../even
 import type Team from '../team';
 import type Unit from '../unit';
 import { hasAnyStatus } from '../utils';
+import CALLERS from './callers';
 import { checkUnitRating, getAIContext } from './context';
 
 const RATED_STATS = [
@@ -88,7 +89,11 @@ export function setupRatingAI(battle: Battle): void {
     const source = event.source;
     const target = event.target.unit;
 
-    if (target === source || target.team.alliance === source.team.alliance) {
+    if (
+      target === source ||
+      target.team.alliance === source.team.alliance ||
+      CALLERS.has(event.move)
+    ) {
       return;
     }
 

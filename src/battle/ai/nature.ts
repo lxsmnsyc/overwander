@@ -4,6 +4,7 @@ import { MoveCategories } from '../../data/ids/moves';
 import { NATURE_EFFECTS } from '../../data/ids/natures';
 import { Stats } from '../../data/constants/stats';
 import type Battle from '../core';
+import CALLERS from './callers';
 import { getAIContext } from './context';
 import { getMoveData } from '../../data/moves';
 import type Natures from '../../data/ids/natures';
@@ -99,7 +100,11 @@ export default function setupNatureAI(battle: Battle): void {
     const target = event.target.unit;
     const style = getMoveStyle(source.nature);
 
-    if (style === MoveStyle.Balanced || target.team.alliance === source.team.alliance) {
+    if (
+      style === MoveStyle.Balanced ||
+      target.team.alliance === source.team.alliance ||
+      CALLERS.has(event.move)
+    ) {
       return;
     }
 

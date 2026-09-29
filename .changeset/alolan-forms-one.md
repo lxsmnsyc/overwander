@@ -15,5 +15,5 @@ The first Alolan forms:
 - Surge Surfer doubles its holder's Speed on Electric Terrain.
 - Tangling Hair takes 1 stage of Speed off whoever lands a contact move on its holder.
 - Ripen makes Berries its holder eats heal 2x as much and raise 2x as many stages.
-- Alolan Raticate can also be born with Ripen, Alolan Sandslash with Iron Barbs or Ice Body, Alolan Ninetales with Ice Body or Refrigerate, and Alolan Dugtrio with Steelworker.
+- Alolan Raticate can also be born with Ripen, Alolan Sandslash with Iron Barbs or Ice Body, Alolan Ninetales with Ice Body or Refrigerate, and Alolan Dugtrio with Steelworker, and Alolan Raichu with Levitate.
 - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.

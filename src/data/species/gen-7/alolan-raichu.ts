@@ -84,7 +84,7 @@ export default function registerAlolanRaichuSpecies(): void {
     },
     types: [Types.Electric, Types.Psychic],
     abilities: [Abilities.SurgeSurfer],
-    hiddenAbilities: [Abilities.VoltAbsorb, Abilities.QuickFeet],
+    hiddenAbilities: [Abilities.Levitate],
     eggGroups: [EggGroups.Field, EggGroups.Fairy],
     genderRatio: [4, 4],
     catchRate: 75,

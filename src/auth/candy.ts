@@ -4,7 +4,11 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type Families from '../data/ids/families';
 import { CANDY_STACKS, getStack, listStacks } from './stacks';
-import { useCandy as feedOnServer, useRareCandy as rareOnServer } from '../server/candy';
+import {
+  useCandy as feedOnServer,
+  useRareCandyMax as rareMaxOnServer,
+  useRareCandy as rareOnServer,
+} from '../server/candy';
 import { requireUid } from '../server/auth';
 import check, { COUNT, ID, TOKEN } from '../server/validate';
 import readHeldBag from './live-bag';
@@ -126,4 +130,24 @@ async function feedRareOnServer(token: string, catchId: string): Promise<number 
   check(TOKEN, token);
   check(ID, catchId);
   return rareOnServer(await requireUid(token), catchId);
+}
+
+/**
+ * Spend one Rare Candy Max for every level to the cap. Resolves the
+ * first level it grew into and the level reached, or null when refused
+ */
+export async function useRareCandyMax(
+  catchId: string,
+): Promise<{ from: number; level: number } | null> {
+  return feedRareMaxOnServer(await getIdToken(), catchId);
+}
+
+async function feedRareMaxOnServer(
+  token: string,
+  catchId: string,
+): Promise<{ from: number; level: number } | null> {
+  'use server';
+  check(TOKEN, token);
+  check(ID, catchId);
+  return rareMaxOnServer(await requireUid(token), catchId);
 }

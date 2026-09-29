@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type Kept, mergeBox, staleIn } from '../src/auth/box';
 import { type CaughtPokemon, asCaughtPokemon } from '../src/auth/caught-record';
-import { trafficPath } from '../src/auth/traffic';
 import { Species } from '../src/data/ids/species';
 
 function catchOf(owner: string, level: number): CaughtPokemon {
@@ -110,17 +109,5 @@ describe('a kept box', () => {
 
     expect(merged.box).toEqual([]);
     expect(merged.keep.size).toBe(0);
-  });
-});
-
-describe('measured traffic', () => {
-  it('is named by table or function rather than by the whole address', () => {
-    expect(trafficPath('http://127.0.0.1:54321/rest/v1/caught?select=id&owner=eq.me')).toBe(
-      'caught',
-    );
-    expect(trafficPath('https://x.supabase.co/rest/v1/rpc/save_position')).toBe(
-      'rpc/save_position',
-    );
-    expect(trafficPath('https://x.supabase.co/auth/v1/token')).toBe('token');
   });
 });

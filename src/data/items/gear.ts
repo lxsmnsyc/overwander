@@ -139,6 +139,19 @@ const GEAR_RESALE = 0.5;
  */
 const FOUND_GEAR_RESALE = 1000;
 
+/**
+ * The found gear the geologist also sells, since each is a rock or a
+ * clay he can dig up: the sky stones and the Light Clay. Still found
+ * where they always were, and priced like the rest of the gear
+ */
+export const QUARRIED_GEAR = new Set<Items>([
+  Items.DampRock,
+  Items.HeatRock,
+  Items.IcyRock,
+  Items.SmoothRock,
+  Items.LightClay,
+]);
+
 export function isGear(item: Items): boolean {
   return MARKET_GEAR.has(item) || FOUND_GEAR.has(item);
 }
@@ -159,14 +172,16 @@ export default function registerGear(): void {
   }
 
   for (const [item, [name, description]] of FOUND_GEAR) {
+    const quarried = QUARRIED_GEAR.has(item);
+
     registerItem(item, {
       name,
       description,
       type: ItemTypes.Held,
       icon: nameToIcon('held', name),
-      flags: ItemFlags.Holdable,
-      buy: 0,
-      sell: FOUND_GEAR_RESALE,
+      flags: quarried ? ItemFlags.Holdable | ItemFlags.Marketable : ItemFlags.Holdable,
+      buy: quarried ? GEAR_PRICE : 0,
+      sell: quarried ? GEAR_PRICE * GEAR_RESALE : FOUND_GEAR_RESALE,
     });
   }
 }

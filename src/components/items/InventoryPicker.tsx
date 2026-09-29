@@ -506,6 +506,13 @@ function PickerList(
 
               <Row class="justify-center">
                 <Button
+                  onClick={() => {
+                    setPending(null);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
                   tone="primary"
                   disabled={props.disabled === true || refused(asked.item) != null}
                   onClick={() => {
@@ -515,13 +522,6 @@ function PickerList(
                   {props.most == null
                     ? `${props.verb ?? 'Pick'} ${describeItem(asked.item)}?`
                     : `${props.verb ?? 'Take'} ${taking()}`}
-                </Button>
-                <Button
-                  onClick={() => {
-                    setPending(null);
-                  }}
-                >
-                  Cancel
                 </Button>
               </Row>
             </div>

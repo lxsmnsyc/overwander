@@ -166,6 +166,8 @@ export default function registerEspurrSpecies(): void {
   registerSpecies(Species.Meowstic, {
     ...MEOWSTIC_SHARED,
     name: 'Meowstic',
+    // Each sex is its own record, so each is only ever that sex
+    genderRatio: [1, 0],
     // Synchronize is this line's invented filler: the mainline gives a
     // male Meowstic Prankster and nothing else, and her Competitive
     // is her own
@@ -202,6 +204,7 @@ export default function registerEspurrSpecies(): void {
     // is born Competitive where he is born Prankster, and she learns
     // to throw where he learns to guard
     baseForm: false,
+    genderRatio: [0, 1],
     hiddenAbilities: [Abilities.Competitive, Abilities.Synchronize],
     learnSet: {
       level: {

@@ -25,11 +25,14 @@ import {
  */
 export const MOVE_LIMIT = 4;
 
+/** Every raid prize's individual values start here, whatever the day */
+export const RAID_MIN_IV = 9;
+
 /**
  * A raid cleared on the featured family's own day hands over a
  * pokemon with no hopeless stat: every individual value starts here
  */
-export const RAID_FAMILY_DAY_MIN_IV = 10;
+export const RAID_FAMILY_DAY_MIN_IV = 9;
 
 /**
  * XOR results under this sparkle: 16 in 65536, i.e. the modern

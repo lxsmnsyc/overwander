@@ -19,9 +19,10 @@ function CatchLotName(props: { caught: Resource<CaughtPokemon | null> }): JSX.El
 }
 
 function CatchLot(props: { catchId: string }): JSX.Element {
-  // One per lot row, so the rows on screen share a read
+  // One per lot row, so the rows on screen share a read. A settled lot
+  // whose catch has moved on names none, and there is nothing to read
   const [caught] = createResource(
-    () => props.catchId,
+    () => props.catchId || false,
     async (id) => getCaughtBatched(id),
   );
 

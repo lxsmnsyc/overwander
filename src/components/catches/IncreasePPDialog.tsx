@@ -242,11 +242,11 @@ function BottleBody(
       <Status message={status()} />
 
       <DialogActions>
-        <Button disabled={busy()} onClick={close}>
-          Cancel
-        </Button>
         <Button tone="primary" disabled={busy() || refused(picked()) != null} onClick={use}>
           {busy() ? 'Using…' : `Use ${bottle()}`}
+        </Button>
+        <Button disabled={busy()} onClick={close}>
+          Cancel
         </Button>
       </DialogActions>
     </>

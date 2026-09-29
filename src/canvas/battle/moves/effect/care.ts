@@ -24,7 +24,8 @@ import {
 } from '../__paint';
 import { RAINBOW } from './legends';
 import type { EffectShape, ShapePainter } from './shapes';
-import { REACH, landing, many } from './shapes';
+import { REACH, WISH_SPAN, landing, many } from './shapes';
+import { WISH_DELAY } from '../../../../battle/moves/wish';
 
 /** Protect: a shell hexagon's size, as a share of the shell's radius */
 export const SHELL_CELL = 0.3;
@@ -42,20 +43,27 @@ export const BLADES = 4;
 export const SCHEME_GATHER = 0.6;
 
 /** Wish: the share by which its star is back down on it */
-export const WISH_LANDS = 0.85;
+export const WISH_LANDS = WISH_DELAY / WISH_SPAN;
+
+/** How long the star takes to climb, and to come back down onto it */
+const WISH_RISE = 500 / WISH_SPAN;
+const WISH_FALL = 700 / WISH_SPAN;
 
 /** A worker bee's yellow, for Heal Order */
 export const BEE = '#f0c040';
 
-/** How high Wish's star is, as a share of its climb: up, held a moment, and back down */
+/** How high Wish's star is: up, held there for the wait, and back down as the heal lands */
 export function wishHeight(share: number): number {
-  if (share < 0.4) {
-    return 1 - (1 - share / 0.4) ** 2;
+  const falls = WISH_LANDS - WISH_FALL;
+
+  if (share < WISH_RISE) {
+    return 1 - (1 - share / WISH_RISE) ** 2;
   }
-  if (share < 0.55) {
-    return 1;
+  // Bobbing in the sky for the length of the wait
+  if (share < falls) {
+    return 1 - 0.06 * Math.sin(((share - WISH_RISE) / (falls - WISH_RISE)) * Math.PI * 3) ** 2;
   }
-  return Math.max(0, 1 - ((share - 0.55) / (WISH_LANDS - 0.55)) ** 2);
+  return Math.max(0, 1 - ((share - falls) / WISH_FALL) ** 2);
 }
 
 /** The middles of a shell's hexagons inside `radius`, laid out in axial rows */

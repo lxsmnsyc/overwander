@@ -228,11 +228,11 @@ function TeachBody(
         <Status message={status()} />
 
         <DialogActions>
-          <Button disabled={busy()} onClick={close}>
-            Cancel
-          </Button>
           <Button tone="primary" disabled={busy() || record() == null} onClick={teach}>
             {busy() ? 'Teaching…' : `Forget ${getMoveData(known()[forgetting()] ?? 0).name}`}
+          </Button>
+          <Button disabled={busy()} onClick={close}>
+            Cancel
           </Button>
         </DialogActions>
       </Dialog>
@@ -272,11 +272,11 @@ function TeachBody(
         <Status message={status()} />
 
         <DialogActions>
-          <Button disabled={busy()} onClick={close}>
-            Cancel
-          </Button>
           <Button tone="primary" disabled={busy() || record() == null} onClick={teach}>
             {busy() ? 'Teaching…' : 'Teach it'}
+          </Button>
+          <Button disabled={busy()} onClick={close}>
+            Cancel
           </Button>
         </DialogActions>
       </Dialog>

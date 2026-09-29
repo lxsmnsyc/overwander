@@ -94,7 +94,7 @@ export default function Menu(props: MenuProps): JSX.Element {
           which keeps the transform off the panel the list is measured
           from */}
       <Transition show={open()} {...SHEER} class="absolute top-full right-0 z-30 mt-1.5 w-max">
-        <PopoverPanel class="min-w-44 rounded-xl border-2 border-tide bg-paper p-1 shadow-pop">
+        <PopoverPanel class="min-w-44 rounded-xl border-2 border-line bg-paper p-1 shadow-float">
           <HeadlessMenu class="flex list-none flex-col gap-0.5">
             <For each={props.actions}>
               {(action) => (

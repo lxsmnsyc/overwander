@@ -8,6 +8,7 @@ import {
   isCosmeticForm,
   isWornForm,
 } from '../../species';
+import { SpawnRarity, getSpawnRarity } from '../../biome';
 import { EVERY_LAIR, getLairResidents } from '../lair';
 import canMeetSpecies from '../reach';
 import { EliteMember } from './elite';
@@ -258,10 +259,12 @@ function inExpertPool(
   named: Set<Species>,
 ): boolean {
   // A worn shape is nobody's to walk with; a rearrangement that is
-  // kept, such as a Rotom in an appliance, is owned like anything else
+  // kept, such as a Rotom in an appliance, is owned like anything else.
+  // The prized band is a find, not an expert's partner
   if (
     species === Species.Egg ||
     LAIR_SPECIES.has(getBaseFormSpecies(species)) ||
+    getSpawnRarity(species) === SpawnRarity.Prized ||
     isWornForm(species) ||
     isCosmeticForm(species)
   ) {

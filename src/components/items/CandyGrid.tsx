@@ -58,6 +58,7 @@ export default function CandyGrid(props: CandyGridProps): JSX.Element {
           {(pile) => (
             <TooltipHost
               class="block w-full"
+              kind="candy"
               name={`${getFamilyName(pile().family)} candy`}
               description={`${pile().count} in the jar. It raises anything of that family, and letting one go pays more of it.`}
             >

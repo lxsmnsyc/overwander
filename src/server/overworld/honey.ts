@@ -2,7 +2,7 @@ import 'server-only';
 import AleaRNG from '../../core/alea';
 import type { EncounterRecord } from '../../auth/encounter-record';
 import { Items } from '../../data/ids/items';
-import { LATHER_COST, rollHoneyTree } from '../../data/overworld/honey-tree';
+import { HONEY_TREE_MIN_IV, LATHER_COST, rollHoneyTree } from '../../data/overworld/honey-tree';
 import Landmark from '../../data/overworld/landmark';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import type { Spawn } from '../../overworld/chunk-snapshot';
@@ -85,5 +85,10 @@ export async function latherHoneyTree(
 
   const spawn: Spawn = [species, rng.int32(), rng.int32()];
 
-  return { kind: 'encounter', encounter: await startEncounter(uid, snapshot, key, spawn) };
+  return {
+    kind: 'encounter',
+    encounter: await startEncounter(uid, snapshot, key, spawn, {
+      minimumIV: HONEY_TREE_MIN_IV,
+    }),
+  };
 }

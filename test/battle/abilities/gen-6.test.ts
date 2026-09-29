@@ -190,6 +190,25 @@ describe('Misty Surge', () => {
   });
 });
 
+describe('Electric Surge', () => {
+  it('charges the ground as it comes in', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const pichu = createUnit(battle, teamA, [Types.Electric]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    pichu.addAbility(Abilities.ElectricSurge);
+    foe.enter();
+
+    expect(foe.checkTerrain()).toBe(Terrains.None);
+
+    pichu.enter();
+    battle.tick(turns(1));
+
+    expect(foe.checkTerrain()).toBe(Terrains.Electric);
+  });
+});
+
 describe('Stance Change', () => {
   it("draws the blade to attack and sheathes it on King's Shield", () => {
     const { battle, teamA, teamB } = createBattle();
@@ -309,5 +328,25 @@ describe('Refrigerate', () => {
     expect(aurora.checkMovePower(Moves.RockSlide, at)).toBe(
       createUnit(battle, teamA, [Types.Rock]).checkMovePower(Moves.RockSlide, at),
     );
+  });
+});
+
+describe('Pixilate', () => {
+  it('throws its Normal moves as Fairy, and pays a fifth again for them', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const floette = createUnit(battle, teamA, [Types.Fairy]);
+    const foe = createUnit(battle, teamB, [Types.Dragon]);
+
+    pinRandom(battle, 1);
+    floette.enter();
+    foe.enter();
+
+    const at = { type: MoveTargetType.Unit, unit: foe } as const;
+    const plain = floette.checkMovePower(Moves.Tackle, at);
+
+    floette.addAbility(Abilities.Pixilate);
+
+    expect(floette.checkMoveType(Moves.Tackle, at)).toBe(Types.Fairy);
+    expect(floette.checkMovePower(Moves.Tackle, at)).toBeCloseTo((plain ?? 0) * 1.2, 5);
   });
 });

@@ -37,4 +37,5 @@ export {
   createCloudNineAbility,
   createDrizzleAbility,
   createSandRushAbility,
+  createSurgeAbility,
 } from './weather';

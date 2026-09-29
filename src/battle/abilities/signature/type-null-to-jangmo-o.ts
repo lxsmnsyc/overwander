@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages } from '../../../data/constants/stats';
 import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
-import { MoveFlags, Moves } from '../../../data/ids/moves';
+import { MoveFlags, type Moves } from '../../../data/ids/moves';
 import { Statuses } from '../../../data/ids/status';
 import { getMoveData } from '../../../data/moves';
 import { BattleEvents, EffectType, type UnitAttackEvent } from '../../events';

@@ -48,6 +48,7 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.EchoedVoice,
   Moves.GrassPledge,
+  Moves.Confide,
 ];
 
 // What the two above the base pick up: the machines that ask for a
@@ -111,6 +112,7 @@ export default function registerChikoritaSpecies(): void {
         Moves.LeafStorm,
         Moves.WringOut,
         Moves.HealPulse,
+        Moves.GrassyTerrain,
       ],
     },
   });
@@ -199,6 +201,7 @@ export default function registerChikoritaSpecies(): void {
         41: [Moves.LightScreen],
         51: [Moves.Safeguard],
         61: [Moves.SolarBeam],
+        70: [Moves.PetalBlizzard],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

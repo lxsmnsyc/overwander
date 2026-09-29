@@ -60,6 +60,8 @@ const GOLEM_TEACHABLE = [
   Moves.DefenseCurl,
   Moves.Round,
   Moves.Bulldoze,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerRegiSpecies(): void {
@@ -149,7 +151,7 @@ export default function registerRegiSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Glacier, Biome.PolarOcean, Biome.Taiga, Biome.Tundra],
+    biomes: [Biome.PolarOcean, Biome.Taiga, Biome.Tundra],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

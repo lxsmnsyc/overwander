@@ -9,6 +9,9 @@ export default function registerTemperateForestSpawns(): void {
   registerSpawnPool(Biome.TemperateForest, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Flabebe, weight: 24 },
+        { species: Species.Scatterbug, weight: 24 },
+        { species: Species.Chespin, weight: 2 },
         { species: Species.Timburr, weight: 25 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Caterpie, weight: 30 },
@@ -36,6 +39,9 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Floette, weight: 8 },
+        { species: Species.Spewpa, weight: 8 },
+        { species: Species.Quilladin, weight: 2 },
         { species: Species.Gurdurr, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Metapod, weight: 15 },
@@ -68,6 +74,9 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Florges, weight: 5 },
+        { species: Species.Vivillon, weight: 5 },
+        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Sawk, weight: 5 },
         { species: Species.Throh, weight: 5 },
         { species: Species.Emolga, weight: 8 },
@@ -102,10 +111,16 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],
-      mythical: [{ species: Species.Celebi, weight: 10 }],
+      mythical: [
+        { species: Species.Celebi, weight: 10 },
+        { species: Species.PichuSpikyEared, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Flabebe, weight: 24 },
+        { species: Species.Scatterbug, weight: 24 },
+        { species: Species.Chespin, weight: 2 },
         { species: Species.Timburr, weight: 25 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Caterpie, weight: 30 },
@@ -133,6 +148,9 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Petilil, weight: 24 },
       ],
       rare: [
+        { species: Species.Floette, weight: 8 },
+        { species: Species.Spewpa, weight: 8 },
+        { species: Species.Quilladin, weight: 2 },
         { species: Species.Gurdurr, weight: 10 },
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Metapod, weight: 15 },
@@ -165,6 +183,9 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Florges, weight: 5 },
+        { species: Species.Vivillon, weight: 5 },
+        { species: Species.Chesnaught, weight: 2 },
         { species: Species.Sawk, weight: 5 },
         { species: Species.Throh, weight: 5 },
         { species: Species.Emolga, weight: 8 },
@@ -199,7 +220,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],
-      mythical: [{ species: Species.Celebi, weight: 10 }],
+      mythical: [
+        { species: Species.Celebi, weight: 10 },
+        { species: Species.PichuSpikyEared, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -207,6 +231,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Espurr, weight: 24 },
         { species: Species.Foongus, weight: 20 },
         { species: Species.Shelmet, weight: 20 },
         { species: Species.Deerling, weight: 18 },
@@ -229,6 +254,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Meowstic, weight: 3 },
+        { species: Species.MeowsticFemale, weight: 3 },
         { species: Species.Amoonguss, weight: 6 },
         { species: Species.Accelgor, weight: 5 },
         { species: Species.Sawsbuck, weight: 7 },
@@ -274,7 +301,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],
-      mythical: [{ species: Species.Celebi, weight: 10 }],
+      mythical: [
+        { species: Species.Celebi, weight: 10 },
+        { species: Species.PichuSpikyEared, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -282,6 +312,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Espurr, weight: 24 },
         { species: Species.Foongus, weight: 20 },
         { species: Species.Shelmet, weight: 20 },
         { species: Species.Deerling, weight: 18 },
@@ -305,6 +336,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Meowstic, weight: 3 },
+        { species: Species.MeowsticFemale, weight: 3 },
         { species: Species.Amoonguss, weight: 6 },
         { species: Species.Accelgor, weight: 5 },
         { species: Species.Sawsbuck, weight: 7 },
@@ -351,7 +384,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],
-      mythical: [{ species: Species.Celebi, weight: 10 }],
+      mythical: [
+        { species: Species.Celebi, weight: 10 },
+        { species: Species.PichuSpikyEared, weight: 10 },
+      ],
     },
   });
   registerWaterPool(Biome.TemperateForest, {

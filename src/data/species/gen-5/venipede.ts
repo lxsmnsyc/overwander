@@ -36,6 +36,8 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.Toxic,
   Moves.Venoshock,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 /**
@@ -143,6 +145,7 @@ export default function registerVenipedeSpecies(): void {
         32: [Moves.Agility],
         37: [Moves.Steamroller],
         41: [Moves.Toxic],
+        43: [Moves.VenomDrench],
         46: [Moves.RockClimb],
         50: [Moves.DoubleEdge],
       },
@@ -187,6 +190,7 @@ export default function registerVenipedeSpecies(): void {
         33: [Moves.Agility],
         39: [Moves.Steamroller],
         44: [Moves.Toxic],
+        47: [Moves.VenomDrench],
         50: [Moves.RockClimb],
         55: [Moves.DoubleEdge],
       },

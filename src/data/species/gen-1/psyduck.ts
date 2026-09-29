@@ -78,6 +78,8 @@ const FAMILY_TEACHABLE = [
   Moves.Telekinesis,
   Moves.Round,
   Moves.Scald,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerPsyduckSpecies(): void {

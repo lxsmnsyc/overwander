@@ -44,6 +44,9 @@ const FAMILY_TEACHABLE = [
   Moves.SeedBomb,
   Moves.Round,
   Moves.Acrobatics,
+  Moves.Confide,
+  Moves.DazzlingGleam,
+  Moves.Infestation,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll, Abilities.LeafGuard];
@@ -90,7 +93,7 @@ export default function registerHoppipSpecies(): void {
       level: {
         1: [Moves.Splash, Moves.Synthesis],
         5: [Moves.TailWhip],
-        10: [Moves.Tackle],
+        10: [Moves.Tackle, Moves.FairyWind],
         ...POWDERS,
         20: [Moves.LeechSeed],
         25: [Moves.CottonSpore],
@@ -112,6 +115,7 @@ export default function registerHoppipSpecies(): void {
         Moves.HelpingHand,
         Moves.PsychUp,
         Moves.CottonGuard,
+        Moves.GrassyTerrain,
       ],
     },
   });
@@ -151,6 +155,7 @@ export default function registerHoppipSpecies(): void {
       level: {
         1: [Moves.Splash, Moves.Synthesis, Moves.TailWhip, Moves.Tackle],
         ...POWDERS,
+        10: [Moves.FairyWind],
         22: [Moves.LeechSeed],
         29: [Moves.CottonSpore],
         32: [Moves.Acrobatics],
@@ -192,6 +197,7 @@ export default function registerHoppipSpecies(): void {
       level: {
         1: [Moves.Splash, Moves.Synthesis, Moves.TailWhip, Moves.Tackle],
         ...POWDERS,
+        10: [Moves.FairyWind],
         22: [Moves.LeechSeed],
         33: [Moves.CottonSpore],
         34: [Moves.Acrobatics],

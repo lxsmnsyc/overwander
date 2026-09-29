@@ -71,6 +71,8 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.Retaliate,
   Moves.WorkUp,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerMedititeSpecies(): void {

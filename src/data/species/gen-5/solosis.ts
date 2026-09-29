@@ -76,6 +76,8 @@ const FAMILY_TEACHABLE = [
   Moves.TrickRoom,
   Moves.WonderRoom,
   Moves.ZenHeadbutt,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 // What the cell works out how to do, however many of it there are
@@ -258,6 +260,7 @@ export default function registerSolosisSpecies(): void {
         Moves.GigaImpact,
         Moves.HyperBeam,
         Moves.LowSweep,
+        Moves.PowerUpPunch,
       ],
     },
   });

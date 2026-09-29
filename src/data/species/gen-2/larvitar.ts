@@ -52,6 +52,8 @@ const FAMILY_TEACHABLE = [
   Moves.Retaliate,
   Moves.Bulldoze,
   Moves.Snarl,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 // The line's own moves come at the same order the whole way up, only

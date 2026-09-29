@@ -54,6 +54,8 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Uproar,
   Moves.WaterPulse,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 /**
@@ -95,6 +97,7 @@ export default function registerBunearySpecies(): void {
       level: {
         1: [Moves.DefenseCurl, Moves.Foresight, Moves.Pound, Moves.Splash],
         6: [Moves.Endure],
+        10: [Moves.BabyDollEyes],
         13: [Moves.Frustration],
         16: [Moves.QuickAttack],
         23: [Moves.JumpKick],
@@ -156,6 +159,7 @@ export default function registerBunearySpecies(): void {
           Moves.MirrorCoat,
           Moves.Pound,
           Moves.Splash,
+          Moves.Rototiller,
         ],
         6: [Moves.Endure],
         13: [Moves.Return],

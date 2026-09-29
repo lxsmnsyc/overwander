@@ -7,6 +7,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import { clearSpikes, layersUnder } from './spikes';
 import { clearStealthRock, stonesOver } from './stealth-rock';
+import { clearStickyWeb, webOver } from './sticky-web';
 import { clearToxicSpikes, toxicLayersUnder } from './toxic-spikes';
 
 /**
@@ -28,7 +29,7 @@ const SCREENS = [
 ];
 
 function hazardsUnder(team: Team): boolean {
-  return layersUnder(team) > 0 || toxicLayersUnder(team) > 0 || stonesOver(team);
+  return layersUnder(team) > 0 || toxicLayersUnder(team) > 0 || stonesOver(team) || webOver(team);
 }
 
 function screensOver(team: Team): boolean {
@@ -50,6 +51,7 @@ export default function setupDefog(battle: Battle): void {
       clearSpikes(team);
       clearToxicSpikes(team);
       clearStealthRock(team);
+      clearStickyWeb(team);
     }
 
     const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;

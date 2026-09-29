@@ -379,3 +379,23 @@ export function gathering(
     );
   }
 }
+
+/** A jet out of the floor, of fire or of water */
+export function jet(
+  kit: EffectBatch,
+  base: Spot,
+  height: number,
+  width: number,
+  colour: string,
+  hot: string,
+  alpha: number,
+  flow: number,
+): void {
+  const path: Spot[] = [];
+
+  for (let step = 0; step <= 6; step += 1) {
+    path.push([base[0], (step / 6) * height, base[2]]);
+  }
+  kit.ribbon(path, width * 2, colour, alpha * 0.45, flow);
+  kit.ribbon(path, width, hot, alpha, flow * 1.4);
+}

@@ -9,6 +9,7 @@ export default function registerDesertSpawns(): void {
   registerSpawnPool(Biome.Desert, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Sandile, weight: 25 },
         { species: Species.Tepig, weight: 3 },
         { species: Species.Trapinch, weight: 20 },
@@ -27,6 +28,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Drilbur, weight: 16 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Krokorok, weight: 10 },
         { species: Species.Pignite, weight: 2 },
         { species: Species.Vibrava, weight: 10 },
@@ -44,6 +46,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Sigilyph, weight: 6 },
         { species: Species.Maractus, weight: 8 },
         { species: Species.Krookodile, weight: 5 },
@@ -60,12 +63,12 @@ export default function registerDesertSpawns(): void {
       special: [
         { species: Species.Volcarona, weight: 10 },
         { species: Species.Regirock, weight: 10 },
-        { species: Species.Moltres, weight: 10 },
       ],
       mythical: [{ species: Species.Genesect, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Sandile, weight: 25 },
         { species: Species.Tepig, weight: 3 },
         { species: Species.Rhyhorn, weight: 20 },
@@ -86,6 +89,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Drilbur, weight: 16 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Krokorok, weight: 10 },
         { species: Species.Pignite, weight: 2 },
         { species: Species.Vibrava, weight: 10 },
@@ -105,6 +109,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Sigilyph, weight: 6 },
         { species: Species.Maractus, weight: 8 },
         { species: Species.Krookodile, weight: 5 },
@@ -121,7 +126,6 @@ export default function registerDesertSpawns(): void {
       special: [
         { species: Species.Volcarona, weight: 10 },
         { species: Species.Regirock, weight: 10 },
-        { species: Species.Moltres, weight: 10 },
       ],
       mythical: [{ species: Species.Genesect, weight: 10 }],
     },
@@ -153,10 +157,7 @@ export default function registerDesertSpawns(): void {
       ],
       elusive: [{ species: Species.Garchomp, weight: 2 }],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
-      special: [
-        { species: Species.Regirock, weight: 10 },
-        { species: Species.Moltres, weight: 10 },
-      ],
+      special: [{ species: Species.Regirock, weight: 10 }],
       mythical: [{ species: Species.Genesect, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -187,10 +188,7 @@ export default function registerDesertSpawns(): void {
       ],
       elusive: [{ species: Species.Garchomp, weight: 2 }],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
-      special: [
-        { species: Species.Regirock, weight: 10 },
-        { species: Species.Moltres, weight: 10 },
-      ],
+      special: [{ species: Species.Regirock, weight: 10 }],
       mythical: [{ species: Species.Genesect, weight: 10 }],
     },
   });

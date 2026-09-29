@@ -1,8 +1,8 @@
 name: Test
 
 # Every push and every pull request: the type-check, the linter and the
-# unit suite. The RLS and end-to-end suites are left out, since both
-# need the local Supabase stack and have to run one at a time.
+# unit suite. The database and end-to-end suites are left out, since both
+# need the local database and have to run one at a time.
 on:
   push:
     branches: [main]

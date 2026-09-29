@@ -13,7 +13,14 @@ import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
 import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
-import { hasFreeItemSlot, isWeatherSunny, onUnitActs, stealableItem, unitTarget } from '../utils';
+import {
+  hasFreeItemSlot,
+  isWeatherSunny,
+  onUnitActs,
+  slipsTraps,
+  stealableItem,
+  unitTarget,
+} from '../utils';
 import {
   createAbility,
   createAbsorbStageAbility,
@@ -503,7 +510,7 @@ const setupAbilities = [
 
       if (
         !event.success ||
-        source.types.has(Types.Ghost) ||
+        slipsTraps(source) ||
         source.hasAbility(Abilities.RunAway) ||
         source.hasAbility(Abilities.ShadowTag)
       ) {

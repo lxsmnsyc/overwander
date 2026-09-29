@@ -53,7 +53,7 @@ export default function registerRoseliaSpecies(): void {
         28: [Moves.ToxicSpikes],
         29: [Moves.GrassWhistle],
         33: [Moves.GigaDrain],
-        37: [Moves.SweetScent],
+        37: [Moves.SweetScent, Moves.PetalBlizzard],
         41: [Moves.Ingrain],
         45: [Moves.Toxic],
         49: [Moves.PetalDance],
@@ -101,6 +101,8 @@ export default function registerRoseliaSpecies(): void {
         Moves.WorrySeed,
         Moves.Venoshock,
         Moves.Round,
+        Moves.Confide,
+        Moves.DazzlingGleam,
       ],
     },
   });

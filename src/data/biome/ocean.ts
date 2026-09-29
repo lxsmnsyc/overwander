@@ -8,14 +8,21 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
 export default function registerOceanSpawns(): void {
   registerSpawnPool(Biome.Ocean, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Dratini, weight: 2 }],
+      base: [
+        { species: Species.Scatterbug, weight: 24 },
+        { species: Species.Dratini, weight: 2 },
+      ],
       uncommon: [{ species: Species.Seel, weight: 20 }],
-      rare: [{ species: Species.Dragonair, weight: 1 }],
+      rare: [
+        { species: Species.Spewpa, weight: 8 },
+        { species: Species.Dragonair, weight: 1 },
+      ],
       scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Blastoise, weight: 2 },
         { species: Species.Dragonite, weight: 2 },
       ],
@@ -29,14 +36,21 @@ export default function registerOceanSpawns(): void {
       ],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Dratini, weight: 2 }],
+      base: [
+        { species: Species.Scatterbug, weight: 24 },
+        { species: Species.Dratini, weight: 2 },
+      ],
       uncommon: [{ species: Species.Seel, weight: 20 }],
-      rare: [{ species: Species.Dragonair, weight: 1 }],
+      rare: [
+        { species: Species.Spewpa, weight: 8 },
+        { species: Species.Dragonair, weight: 1 },
+      ],
       scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Blastoise, weight: 2 },
         { species: Species.Dragonite, weight: 2 },
       ],
@@ -93,6 +107,7 @@ export default function registerOceanSpawns(): void {
     [TimeOfDay.Morning]: {
       base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
+        { species: Species.Clauncher, weight: 24 },
         { species: Species.Frillish, weight: 20 },
         { species: Species.Carvanha, weight: 20 },
         { species: Species.Wailmer, weight: 15 },
@@ -107,6 +122,7 @@ export default function registerOceanSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Clawitzer, weight: 6 },
         { species: Species.Jellicent, weight: 5 },
         { species: Species.Sharpedo, weight: 6 },
         { species: Species.Wailord, weight: 4 },
@@ -135,6 +151,7 @@ export default function registerOceanSpawns(): void {
     [TimeOfDay.Day]: {
       base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
+        { species: Species.Clauncher, weight: 24 },
         { species: Species.Frillish, weight: 20 },
         { species: Species.Carvanha, weight: 20 },
         { species: Species.Wailmer, weight: 15 },
@@ -149,6 +166,7 @@ export default function registerOceanSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Clawitzer, weight: 6 },
         { species: Species.Jellicent, weight: 5 },
         { species: Species.Sharpedo, weight: 6 },
         { species: Species.Wailord, weight: 4 },

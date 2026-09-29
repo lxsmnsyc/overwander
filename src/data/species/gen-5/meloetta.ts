@@ -121,6 +121,9 @@ const MELOETTA_TEACHABLE = [
   Moves.WonderRoom,
   Moves.WorkUp,
   Moves.ZenHeadbutt,
+  Moves.Confide,
+  Moves.DazzlingGleam,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerMeloettaSpecies(): void {

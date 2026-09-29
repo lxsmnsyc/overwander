@@ -53,6 +53,8 @@ const FAMILY_TEACHABLE = [
   Moves.WorrySeed,
   Moves.Venoshock,
   Moves.Round,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll];
@@ -116,6 +118,7 @@ export default function registerBellsproutSpecies(): void {
         Moves.Ingrain,
         Moves.MagicalLeaf,
         Moves.ClearSmog,
+        Moves.Belch,
       ],
     },
   });

@@ -320,6 +320,16 @@ const enum BattleEvents {
    * a whole side is never asked: there is nobody it missed
    */
   CheckUnitMoveRedirect = 150,
+
+  // Terrain, beside SetTerrain among the field events
+  TeamSetTerrain = 151,
+  UnitSetTerrain = 152,
+  /** The terrain under a unit: None for anything off the ground */
+  CheckUnitTerrain = 153,
+  /** How long the terrain a unit lays holds */
+  CheckUnitTerrainDuration = 154,
+  /** How much room a unit has for moves, abilities or held items */
+  CheckUnitSlots = 155,
 }
 
 export default BattleEvents;

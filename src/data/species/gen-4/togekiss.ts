@@ -106,6 +106,8 @@ export default function registerTogekissSpecies(): void {
         Moves.Twister,
         Moves.WaterPulse,
         Moves.ZenHeadbutt,
+        Moves.Confide,
+        Moves.DazzlingGleam,
       ],
     },
   });

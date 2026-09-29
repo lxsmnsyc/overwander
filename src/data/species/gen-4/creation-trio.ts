@@ -63,6 +63,7 @@ const CREATION_TEACHABLE = [
   Moves.Thunderbolt,
   Moves.Toxic,
   Moves.Twister,
+  Moves.Confide,
 ];
 
 export default function registerCreationTrioSpecies(): void {

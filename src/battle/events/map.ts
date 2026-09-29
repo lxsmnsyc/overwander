@@ -67,6 +67,7 @@ import type {
   CheckUnitGroundedEvent,
   CheckUnitItemEvent,
   CheckUnitItemThresholdEvent,
+  CheckUnitSlotsEvent,
   CheckUnitStageEvent,
   CheckUnitStatEvent,
   CheckUnitStatusDamageEvent,
@@ -103,6 +104,13 @@ import type {
   UnitWeatherEvent,
   WeatherEvent,
 } from './weather';
+import type {
+  CheckUnitTerrainDurationEvent,
+  TeamTerrainEvent,
+  TerrainEvent,
+  UnitSetTerrainEvent,
+  UnitTerrainEvent,
+} from './terrain';
 
 /** Which event carries which shape, which is what the bus is typed by */
 export interface BattleEventMap extends EventMap {
@@ -272,6 +280,12 @@ export interface BattleEventMap extends EventMap {
 
   // Field events
   [BattleEvents.SetWeather]: [WeatherEvent, EventPriority];
+  [BattleEvents.SetTerrain]: [TerrainEvent, EventPriority];
+  [BattleEvents.TeamSetTerrain]: [TeamTerrainEvent, EventPriority];
+  [BattleEvents.UnitSetTerrain]: [UnitSetTerrainEvent, EventPriority];
+  [BattleEvents.CheckUnitSlots]: [CheckUnitSlotsEvent, EventPriority];
+  [BattleEvents.CheckUnitTerrain]: [UnitTerrainEvent, EventPriority];
+  [BattleEvents.CheckUnitTerrainDuration]: [CheckUnitTerrainDurationEvent, EventPriority];
   [BattleEvents.AddAlliance]: [AllianceEvent, EventPriority];
   [BattleEvents.RemoveAlliance]: [AllianceEvent, EventPriority];
 

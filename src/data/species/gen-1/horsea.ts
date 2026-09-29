@@ -52,6 +52,7 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.Round,
   Moves.Scald,
+  Moves.Confide,
 ];
 
 export default function registerHorseaSpecies(): void {

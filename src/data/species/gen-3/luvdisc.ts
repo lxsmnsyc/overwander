@@ -37,6 +37,7 @@ export default function registerLuvdiscSpecies(): void {
       level: {
         1: [Moves.Tackle],
         4: [Moves.Charm],
+        9: [Moves.DrainingKiss],
         12: [Moves.WaterGun],
         16: [Moves.Agility],
         17: [Moves.LuckyChant],
@@ -81,6 +82,7 @@ export default function registerLuvdiscSpecies(): void {
         Moves.NaturalGift,
         Moves.Round,
         Moves.Scald,
+        Moves.Confide,
       ],
       egg: [
         Moves.Splash,

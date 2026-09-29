@@ -54,6 +54,7 @@ const FAMILY_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.Bulldoze,
   Moves.FrostBreath,
+  Moves.Confide,
 ];
 
 export default function registerSphealSpecies(): void {

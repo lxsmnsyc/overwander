@@ -108,7 +108,8 @@ export default function registerCharmToBatonPass(): void {
   });
   registerMove(Moves.MeanLook, {
     name: 'Mean Look',
-    description: 'The target cannot be swapped out for 10 seconds. It takes no damage from it.',
+    description:
+      'The target cannot be swapped out for 10 seconds, ghosts aside. It takes no damage from it.',
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 5,

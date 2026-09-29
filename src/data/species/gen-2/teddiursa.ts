@@ -70,6 +70,8 @@ const FAMILY_TEACHABLE = [
   Moves.Retaliate,
   Moves.Bulldoze,
   Moves.WorkUp,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 // Both learn the same list, only later once it has grown
@@ -113,9 +115,10 @@ export default function registerTeddiursaSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Leer, Moves.Scratch],
+        1: [Moves.Leer, Moves.Scratch, Moves.BabyDollEyes],
         ...FAMILY_LEVEL,
         19: [Moves.FakeTears],
+        25: [Moves.PlayNice],
         36: [Moves.Slash],
         43: [Moves.Snore],
         50: [Moves.Thrash],
@@ -134,6 +137,7 @@ export default function registerTeddiursaSpecies(): void {
         Moves.CloseCombat,
         Moves.NightSlash,
         Moves.ChipAway,
+        Moves.PlayRough,
       ],
     },
   });
@@ -169,6 +173,7 @@ export default function registerTeddiursaSpecies(): void {
         19: [Moves.FakeTears],
         1: [Moves.Leer, Moves.Scratch, Moves.Lick, Moves.FurySwipes],
         22: [Moves.FeintAttack],
+        25: [Moves.PlayNice],
         29: [Moves.Rest],
         39: [Moves.Slash],
         49: [Moves.Snore],

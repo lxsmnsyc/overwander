@@ -70,6 +70,8 @@ const FAMILY_TEACHABLE = [
   Moves.Incinerate,
   Moves.Retaliate,
   Moves.WorkUp,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 // What the two above the base pick up: the sloth in the tree is not
@@ -115,6 +117,7 @@ export default function registerSlakothSpecies(): void {
         25: [Moves.Amnesia],
         31: [Moves.Covet],
         37: [Moves.Counter, Moves.ChipAway],
+        38: [Moves.PlayRough],
         43: [Moves.Flail],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Fling],

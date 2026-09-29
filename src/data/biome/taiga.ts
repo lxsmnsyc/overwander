@@ -8,14 +8,18 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerIcePool, registerSpawnPool } from 
 export default function registerTaigaSpawns(): void {
   registerSpawnPool(Biome.Taiga, {
     [TimeOfDay.Morning]: {
-      base: [],
+      base: [{ species: Species.FlabebeWhite, weight: 24 }],
       uncommon: [
         { species: Species.Stantler, weight: 5 },
         { species: Species.Snover, weight: 20 },
       ],
-      rare: [{ species: Species.Ursaring, weight: 5 }],
+      rare: [
+        { species: Species.FloetteWhite, weight: 8 },
+        { species: Species.Ursaring, weight: 5 },
+      ],
       scarce: [{ species: Species.Abomasnow, weight: 6 }],
       elusive: [
+        { species: Species.FlorgesWhite, weight: 5 },
         { species: Species.Pachirisu, weight: 8 },
         { species: Species.Snorlax, weight: 5 },
       ],
@@ -23,20 +27,23 @@ export default function registerTaigaSpawns(): void {
       special: [
         { species: Species.Reshiram, weight: 10 },
         { species: Species.Zekrom, weight: 10 },
-        { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regice, weight: 10 },
       ],
     },
     [TimeOfDay.Day]: {
-      base: [],
+      base: [{ species: Species.FlabebeWhite, weight: 24 }],
       uncommon: [
         { species: Species.Stantler, weight: 5 },
         { species: Species.Snover, weight: 20 },
       ],
-      rare: [{ species: Species.Ursaring, weight: 5 }],
+      rare: [
+        { species: Species.FloetteWhite, weight: 8 },
+        { species: Species.Ursaring, weight: 5 },
+      ],
       scarce: [{ species: Species.Abomasnow, weight: 6 }],
       elusive: [
+        { species: Species.FlorgesWhite, weight: 5 },
         { species: Species.Pachirisu, weight: 8 },
         { species: Species.Snorlax, weight: 5 },
       ],
@@ -44,7 +51,6 @@ export default function registerTaigaSpawns(): void {
       special: [
         { species: Species.Reshiram, weight: 10 },
         { species: Species.Zekrom, weight: 10 },
-        { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regice, weight: 10 },
       ],
@@ -70,7 +76,6 @@ export default function registerTaigaSpawns(): void {
       special: [
         { species: Species.Reshiram, weight: 10 },
         { species: Species.Zekrom, weight: 10 },
-        { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regice, weight: 10 },
       ],
@@ -98,7 +103,6 @@ export default function registerTaigaSpawns(): void {
       special: [
         { species: Species.Reshiram, weight: 10 },
         { species: Species.Zekrom, weight: 10 },
-        { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regice, weight: 10 },
       ],

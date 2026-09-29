@@ -91,6 +91,8 @@ export const enum Effect {
   PokemonGet = 34,
   /** The ball clicking shut, on the beat it stops moving */
   BallClick = 35,
+  /** Something new waiting in the notices: an invite, an offer, a lot won or lost */
+  Notice = 36,
 }
 
 /**
@@ -128,6 +130,12 @@ const FILES: Partial<Record<Effect, string>> = {
   [Effect.Purified]: 'purified',
   [Effect.LegendaryAppears]: 'legendary_appears',
   [Effect.MythicalAppears]: 'mythical_appears',
+  [Effect.NurseHeal]: 'nurse_heal',
+  [Effect.Flight]: 'flight',
+  [Effect.EggGet]: 'egg_get',
+  [Effect.PokemonGet]: 'pokemon_get',
+  [Effect.BallClick]: 'ball_click',
+  [Effect.Notice]: 'notice',
 };
 
 /**

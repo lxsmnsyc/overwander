@@ -47,6 +47,8 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.ToxicSpikes,
   Moves.Venoshock,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 // What comes out of the bag, whichever size the bag is
@@ -105,7 +107,7 @@ export default function registerTrubbishSpecies(): void {
         24: [Moves.TakeDown],
         37: [Moves.PainSplit],
         39: [Moves.GunkShot],
-        42: [Moves.Explosion],
+        42: [Moves.Explosion, Moves.Belch],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -163,6 +165,7 @@ export default function registerTrubbishSpecies(): void {
         39: [Moves.PainSplit],
         43: [Moves.GunkShot],
         48: [Moves.Explosion],
+        49: [Moves.Belch],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

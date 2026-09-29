@@ -11,7 +11,7 @@ import {
   stopIdOf,
   toSpawns,
 } from '../auth/stop-record';
-import { TEAM_SIZE } from '../auth/teams';
+import TEAM_SIZE from '../auth/team-size';
 import ChunkSnapshot, { NPC_INTERVAL, RocketRank, type Spawn } from '../overworld/chunk-snapshot';
 import getWorld, { WORLD_GENERATION } from '../overworld/current';
 import { EncounterType } from '../overworld/encounter';

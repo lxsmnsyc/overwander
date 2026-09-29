@@ -92,6 +92,7 @@ export default function registerGlaceonSpecies(): void {
         Moves.Swift,
         Moves.Toxic,
         Moves.WaterPulse,
+        Moves.Confide,
       ],
     },
   });

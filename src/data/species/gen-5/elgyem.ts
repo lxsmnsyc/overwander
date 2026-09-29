@@ -64,6 +64,7 @@ const FAMILY_TEACHABLE = [
   Moves.Uproar,
   Moves.WonderRoom,
   Moves.ZenHeadbutt,
+  Moves.Confide,
 ];
 
 // What both sizes work out how to do, at the same levels

@@ -100,6 +100,9 @@ const FAMILY_TEACHABLE = [
   Moves.Incinerate,
   Moves.Retaliate,
   Moves.WorkUp,
+  Moves.Confide,
+  Moves.DazzlingGleam,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerClefairySpecies(): void {
@@ -136,7 +139,7 @@ export default function registerClefairySpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Pound, Moves.Growl],
+        1: [Moves.Pound, Moves.Growl, Moves.DisarmingVoice],
         4: [Moves.Encore],
         8: [Moves.Sing],
         13: [Moves.DoubleSlap],
@@ -150,7 +153,7 @@ export default function registerClefairySpecies(): void {
         34: [Moves.Gravity],
         43: [Moves.Moonlight],
         45: [Moves.MeteorMash],
-        46: [Moves.HealingWish],
+        46: [Moves.HealingWish, Moves.Moonblast],
         48: [Moves.LightScreen],
         58: [Moves.AfterYou],
       },
@@ -184,7 +187,14 @@ export default function registerClefairySpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Sing, Moves.DoubleSlap, Moves.Minimize, Moves.Metronome, Moves.Moonlight],
+        1: [
+          Moves.Sing,
+          Moves.DoubleSlap,
+          Moves.Minimize,
+          Moves.Metronome,
+          Moves.Moonlight,
+          Moves.DisarmingVoice,
+        ],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

@@ -66,6 +66,7 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.UTurn,
   Moves.Uproar,
+  Moves.Confide,
 ];
 
 // What the vulture works out how to do, at either size

@@ -103,7 +103,10 @@ export default function registerStunfiskSpecies(): void {
         Moves.Toxic,
         Moves.Uproar,
         Moves.Yawn,
+        Moves.Confide,
+        Moves.Infestation,
       ],
+      egg: [Moves.EerieImpulse],
     },
   });
 }

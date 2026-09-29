@@ -42,6 +42,7 @@ const FAMILY_TEACHABLE = [
   Moves.HoneClaws,
   Moves.Round,
   Moves.StruggleBug,
+  Moves.Confide,
 ];
 
 export default function registerNincadaSpecies(): void {
@@ -201,7 +202,7 @@ export default function registerNincadaSpecies(): void {
         25: [Moves.Spite],
         31: [Moves.ConfuseRay],
         38: [Moves.ShadowBall, Moves.ShadowSneak],
-        45: [Moves.Grudge],
+        45: [Moves.Grudge, Moves.PhantomForce],
         52: [Moves.HealBlock],
       },
       teachable: [

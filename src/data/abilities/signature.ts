@@ -157,7 +157,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Growlithe, Abilities.ChaseDown, {
     name: 'Chase Down',
     description:
-      'Its moves hit 1.5x against a target at or below 1/3 HP, and such a target cannot flee from it.',
+      'Its moves hit 1.5x against a target at or below 1/3 HP, and such a target cannot flee from it, ghosts aside.',
   });
 
   registerSignature(Families.Poliwag, Abilities.HypnoticSpiral, {
@@ -185,7 +185,8 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Tentacool, Abilities.TentacleGrasp, {
     name: 'Tentacle Grasp',
-    description: 'No enemy it has landed a move on may flee while it is still standing.',
+    description:
+      'No enemy it has landed a move on may flee while it is still standing, ghosts aside.',
   });
 
   registerSignature(Families.Geodude, Abilities.SolidCore, {
@@ -1029,7 +1030,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Lileep, Abilities.RootHold, {
     name: 'Root Hold',
     description:
-      'A move it lands stops that target fleeing for 6 seconds and counts their Speed 0.7x meanwhile.',
+      'A move it lands stops that target fleeing for 6 seconds, ghosts aside, and counts their Speed 0.7x meanwhile.',
   });
 
   registerSignature(Families.Anorith, Abilities.ClawRush, {
@@ -1809,7 +1810,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Tynamo, Abilities.LatchOn, {
     name: 'Latch On',
     description:
-      'Whatever its contact moves land on cannot flee and loses 1/16 of its HP each time it acts. One at a time.',
+      'Whatever its contact moves land on cannot flee, ghosts aside, and loses 1/16 of its HP each time it acts. One at a time.',
   });
 
   registerSignature(Families.Cubchoo, Abilities.FrostFangs, {
@@ -1983,5 +1984,92 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Bouffalant, Abilities.HerdBond, {
     name: 'Herd Bond',
     description: 'Attack rises 10% for each other pokemon on its team still standing.',
+  });
+
+  // Kalos's three starters, each standing for the team rather than
+  // for itself
+  registerSignature(Families.Chespin, Abilities.SpineBond, {
+    name: 'Spine Bond',
+    description: 'Its team, itself included, takes 0.85x from physical moves while it stands.',
+  });
+
+  registerSignature(Families.Fennekin, Abilities.EmberBond, {
+    name: 'Ember Bond',
+    description: 'Its team, itself included, deals 1.15x with special moves while it stands.',
+  });
+
+  // The three the first roads out of Kalos's towns walk past
+  registerSignature(Families.Bunnelby, Abilities.LoosenedEarth, {
+    name: 'Loosened Earth',
+    description: 'Its Ground moves ignore whatever Defense the target has built up.',
+  });
+
+  registerSignature(Families.Fletchling, Abilities.Stoop, {
+    name: 'Stoop',
+    description: 'Its Flying moves hit 1.3x a target that is casting or channelling.',
+  });
+
+  registerSignature(Families.Scatterbug, Abilities.Wingscale, {
+    name: 'Wingscale',
+    description:
+      "Each move it lands drops that target's Accuracy a stage, to 2 stages from this dust.",
+  });
+
+  // The flower road out of the second town
+  registerSignature(Families.Flabebe, Abilities.Hothouse, {
+    name: 'Hothouse',
+    description:
+      'A teammate defends special moves with its Special Defense whenever theirs is lower.',
+  });
+
+  registerSignature(Families.Skiddo, Abilities.SaddleBurden, {
+    name: 'Saddle Burden',
+    description:
+      'A status aimed at a teammate lands on it instead, while it is above 1/2 HP and carries none.',
+  });
+
+  registerSignature(Families.Furfrou, Abilities.PedigreeCoat, {
+    name: 'Pedigree Coat',
+    description: 'Special moves hit it at 0.8x while it is at or above 1/2 HP.',
+  });
+
+  // The sword and the key
+  registerSignature(Families.Espurr, Abilities.Restraint, {
+    name: 'Restraint',
+    description: 'Its first 3 moves each fight hit 0.8x, and every move after them hits 1.25x.',
+  });
+
+  registerSignature(Families.Honedge, Abilities.TurnTheBlade, {
+    name: 'Turn the Blade',
+    description: 'The first blow it takes in each stance lands at 0.5x.',
+  });
+
+  registerSignature(Families.Klefki, Abilities.Keyring, {
+    name: 'Keyring',
+    description:
+      'It has room for 1 held item more than it was born with, as far as the fight allows.',
+  });
+
+  // The sea, and the pair its two routes hand out one apiece
+  registerSignature(Families.Binacle, Abilities.ManyHands, {
+    name: 'Many Hands',
+    description: 'Every stat stage it holds counts 1.5x, raises and drops alike.',
+  });
+
+  registerSignature(Families.Skrelp, Abilities.DeepKelp, {
+    name: 'Deep Kelp',
+    description: 'A blow that would take less than 1/8 of its HP does nothing at all.',
+  });
+
+  registerSignature(Families.Clauncher, Abilities.RangingShot, {
+    name: 'Ranging Shot',
+    description:
+      "Its special moves deal at least 1/8 of the target's HP, however they are resisted.",
+  });
+
+  registerSignature(Families.Froakie, Abilities.ShadeBond, {
+    name: 'Shade Bond',
+    description:
+      'Its team, itself included, casts and channels at 0.85x the time while it stands. Cooldowns are untouched.',
   });
 }

@@ -45,6 +45,8 @@ const WINGED_TEACHABLE = [
   Moves.Acrobatics,
   Moves.StruggleBug,
   Moves.Electroweb,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 export default function registerWurmpleSpecies(): void {

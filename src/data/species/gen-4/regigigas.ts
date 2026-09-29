@@ -103,6 +103,8 @@ export default function registerRegigigasSpecies(): void {
         Moves.Thunderbolt,
         Moves.Toxic,
         Moves.ZenHeadbutt,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
     },
   });

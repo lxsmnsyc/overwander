@@ -119,6 +119,8 @@ export default function registerWeavileSpecies(): void {
         Moves.Torment,
         Moves.Toxic,
         Moves.XScissor,
+        Moves.Confide,
+        Moves.PowerUpPunch,
       ],
     },
   });

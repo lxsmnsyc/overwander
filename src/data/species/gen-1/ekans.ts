@@ -59,6 +59,8 @@ const FAMILY_TEACHABLE = [
   Moves.SludgeWave,
   Moves.Round,
   Moves.Bulldoze,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 export default function registerEkansSpecies(): void {
@@ -102,6 +104,7 @@ export default function registerEkansSpecies(): void {
         29: [Moves.Screech],
         33: [Moves.GastroAcid],
         37: [Moves.Acid, Moves.SpitUp, Moves.Stockpile, Moves.Swallow],
+        38: [Moves.Belch],
         41: [Moves.GunkShot],
         43: [Moves.Haze],
         44: [Moves.Coil],
@@ -161,6 +164,7 @@ export default function registerEkansSpecies(): void {
         42: [Moves.GastroAcid],
         43: [Moves.Acid],
         46: [Moves.SpitUp, Moves.Stockpile, Moves.Swallow],
+        48: [Moves.Belch],
         51: [Moves.Haze],
         56: [Moves.GunkShot, Moves.Coil],
       },

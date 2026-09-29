@@ -134,7 +134,8 @@ export default function registerGeodudeToMewMoves(): void {
   });
   registerMove(Moves.Clamp, {
     name: 'Clamp',
-    description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape.',
+    description:
+      'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside.',
     type: Types.Water,
     category: MoveCategories.Physical,
     pp: 15,
@@ -194,7 +195,8 @@ export default function registerGeodudeToMewMoves(): void {
   });
   registerMove(Moves.Bind, {
     name: 'Bind',
-    description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape.',
+    description:
+      'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 20,

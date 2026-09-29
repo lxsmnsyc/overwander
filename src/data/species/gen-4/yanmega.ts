@@ -105,6 +105,7 @@ export default function registerYanmegaSpecies(): void {
         Moves.Toxic,
         Moves.UTurn,
         Moves.Uproar,
+        Moves.Confide,
       ],
     },
   });

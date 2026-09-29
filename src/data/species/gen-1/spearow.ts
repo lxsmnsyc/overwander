@@ -52,6 +52,7 @@ const FAMILY_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.WorkUp,
   Moves.DrillRun,
+  Moves.Confide,
 ];
 
 export default function registerSpearowSpecies(): void {

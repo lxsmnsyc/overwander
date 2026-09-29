@@ -14,6 +14,7 @@ import { getCandyCount } from '../../../auth/candy';
 
 import { useAuth } from '../../../auth/context';
 import { listEvolutionOptions } from '../../../auth/evolution';
+import { getStats } from '../../../auth/health';
 
 import { getSpeciesData } from '../../../data/species';
 
@@ -136,7 +137,7 @@ function CatchSheet(
           held.push(entry.item);
         }
       }
-      return `${uid}/${catchId}/${view()?.species ?? ''}/${held.sort((a, b) => a - b).join(',')}`;
+      return `${uid}/${catchId}/${held.sort((a, b) => a - b).join(',')}/${evolutionKey(view())}`;
     },
     async () => {
       const uid = owned();
@@ -206,6 +207,32 @@ function CatchSheet(
       }}
     />
   );
+}
+
+/**
+ * What of the record an evolution reads. A candy's refetch runs before
+ * the new record lands, so the level has to be here for the landing to
+ * ask again
+ */
+function evolutionKey(caught: CaughtPokemon | null | undefined): string {
+  if (caught == null) {
+    return '';
+  }
+
+  const stats: number[] = [];
+
+  for (const value of Object.values(getStats(caught))) {
+    stats.push(value);
+  }
+  return [
+    caught.species,
+    caught.level,
+    caught.friendship,
+    caught.canEvolve,
+    caught.items.join(','),
+    caught.moves.join(','),
+    stats.join(','),
+  ].join('/');
 }
 
 /**

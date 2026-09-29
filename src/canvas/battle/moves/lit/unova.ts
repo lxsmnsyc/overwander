@@ -6,10 +6,13 @@ import { type EffectShape, many } from '../effect/shapes';
 import { settle, showing } from '../effect/stats';
 import {
   ARIA_TONES,
+  AZURE_FLIES,
+  AZURE_HITS,
   CONVERGE_DRIVE,
   CONVERGE_HOLD,
   FUSION_LANDS,
   GAMBIT_LANDS,
+  KYUREM_BREAK,
   KYUREM_FIRE,
   KYUREM_SPARK,
   ORBIT_CLOSE,
@@ -17,17 +20,31 @@ import {
   PLUMMET_LANDS,
   RAM_HITS,
   SMASH_BREAKS,
+  SMITE_BLADES,
   SMITE_LANDS,
+  TECHNO_FIRES,
+  TECHNO_HITS,
   TONNAGE_LANDS,
   TURN_BACK,
   VICTORY_LANDS,
+  VICTORY_RISES,
 } from '../effect/unova';
 import { backToward } from './contact';
 import { note } from './minds';
-import { TAU, bolt, debris, imbue, sickle, smoke, sparks } from './pieces';
-import { type LitShapePainter, aside, floorOf, landed, late, reachOf, toward } from './shapes';
+import { TAU, arcing, bolt, debris, gathering, imbue, jet, sickle, smoke, sparks } from './pieces';
+import {
+  type LitShapePainter,
+  aside,
+  floorOf,
+  landed,
+  late,
+  reachOf,
+  staged,
+  toward,
+} from './shapes';
+import type { LitStage } from '../__painted';
 
-/** Ice spikes standing up out of the floor round a spot, `grow` from 0 to 1 */
+/** A crown of ice spikes standing up out of the floor round a spot, `grow` from 0 to 1 */
 function iceSpikes(
   kit: EffectBatch,
   at: Spot,
@@ -38,31 +55,139 @@ function iceSpikes(
   alpha: number,
 ): void {
   const floor = floorOf(at);
+  const count = 11;
 
-  for (let spike = 0; spike < 7; spike += 1) {
-    const across = (spike / 6 - 0.5) * reach * 2.6 + spread(seed, spike) * reach * 0.15;
+  for (let spike = 0; spike < count; spike += 1) {
+    const angle = (spike / count) * TAU + noise(seed, spike) * 0.4;
+    const round = reach * (1 + noise(seed, spike + 30) * 0.9);
     const tall =
-      reach * (0.8 + noise(seed, spike + 10) * 0.9) * grow * (1 - Math.abs(spike / 6 - 0.5));
+      reach *
+      (1.4 + noise(seed, spike + 10) * 1.8) *
+      Math.min(1, grow * (1 + noise(seed, spike + 40)));
 
     if (tall <= 0) {
       continue;
     }
-    const base = aside(kit, floor, across, 0, -reach * 0.3);
-    const top = aside(kit, base, -across * 0.2, tall * 1.6);
+    const base = aside(kit, floor, Math.cos(angle) * round, 0, Math.sin(angle) * round * 0.7);
+    // Leaning in over it
+    const top = aside(kit, base, -Math.cos(angle) * reach * 0.35, tall * 1.6);
+    const turn = kit.angleOn(base, top);
 
     // A streak is pointed at both ends, which is the spike's point
-    kit.streak(
-      toward(base, top, 0.5),
-      tall * 0.8,
-      reach * 0.2,
-      kit.angleOn(base, top),
-      colour,
-      alpha,
-      {
-        add: 0.25,
-      },
-    );
+    kit.streak(toward(base, top, 0.5), tall * 0.8, reach * 0.34, turn, colour, alpha, {
+      add: 0.25,
+    });
+    kit.streak(toward(base, top, 0.6), tall * 0.5, reach * 0.1, turn, '#ffffff', alpha * 0.8);
   }
+}
+
+/** A hexagon standing on the picture, turned by `turn` */
+function hexagon(
+  kit: EffectBatch,
+  at: Spot,
+  radius: number,
+  turn: number,
+  width: number,
+  colour: string,
+  alpha: number,
+): void {
+  const path: Spot[] = [];
+
+  for (let corner = 0; corner <= 6; corner += 1) {
+    const angle = turn + (corner / 6) * TAU;
+
+    path.push(aside(kit, at, Math.cos(angle) * radius, Math.sin(angle) * radius));
+  }
+  kit.ribbon(path, width, colour, alpha);
+}
+
+/** Kyurem's pair: a crown of ice round it, the element coming through, and the ice shattering */
+function frozen(
+  kit: EffectBatch,
+  stage: LitStage,
+  share: number,
+  colour: string,
+  seed: number,
+  weight: number,
+  element: Types,
+  spark: string,
+): void {
+  const at = landed(stage);
+  const floor = floorOf(at);
+  const reach = reachOf(stage, weight);
+  const ice = lighten(colour, 0.4);
+  const grow = settle(share * 3);
+  const broken = Math.max(0, (share - KYUREM_BREAK) / (1 - KYUREM_BREAK));
+  const kept = Math.min(1, share * 20) * decay(broken);
+  const flick = Math.floor(share * 14);
+
+  kit.pool(floor, reach * (1.2 + grow * 2), ice, kept * 0.5);
+  kit.ripple(floor, reach * (0.8 + grow * 2.4), 0.08, '#ffffff', kept * 0.7);
+  iceSpikes(kit, at, reach, grow, seed, ice, kept);
+  smoke(kit, floor, reach * 2, 6, seed, share, '#eef6ff', kept * 0.5);
+  if (element === Types.Electric) {
+    for (let one = 0; one < 3; one += 1) {
+      bolt(
+        kit,
+        aside(kit, at, (one - 1) * reach * 2, reach * 7),
+        at,
+        seed + flick * 7 + one,
+        reach,
+        reach * 0.18,
+        spark,
+        kept * (flick % 3 === 2 ? 0.4 : 1),
+      );
+    }
+  } else {
+    for (let one = 0; one < 5; one += 1) {
+      const angle = (one / 5) * TAU + noise(seed, one + 60) * 0.5;
+
+      jet(
+        kit,
+        [floor[0] + Math.cos(angle) * reach * 1.3, 0, floor[2] + Math.sin(angle) * reach * 0.9],
+        reach * (2 + noise(seed, one + 70) * 1.5) * grow,
+        reach * 0.22,
+        spark,
+        mix(spark, '#ffd84a', 0.6),
+        kept,
+        share * 12,
+      );
+    }
+  }
+  imbue(kit, at, reach * 1.2, share, seed, element, spark, 8);
+  if (broken > 0) {
+    debris(
+      kit,
+      aside(kit, floor, 0, reach),
+      reach * 1.6,
+      many(14, weight),
+      seed,
+      broken,
+      ice,
+      decay(broken),
+    );
+    kit.star(at, reach * 2.4 * decay(broken), 0, '#ffffff', decay(broken));
+    sparks(kit, at, reach * 2, 10, seed, broken, spark, decay(broken));
+  }
+}
+
+/** A great sword standing point down on `tip` */
+function sword(
+  kit: EffectBatch,
+  tip: Spot,
+  size: number,
+  light: string,
+  colour: string,
+  alpha: number,
+): void {
+  const hilt = aside(kit, tip, 0, size * 3);
+  const middle = toward(hilt, tip, 0.5);
+
+  kit.glow(middle, size * 1.2, colour, alpha * 0.35, 0.3);
+  kit.streak(middle, size * 1.5, size * 0.32, Math.PI / 2, colour, alpha, { add: 0.5 });
+  kit.streak(middle, size * 1.5, size * 0.12, Math.PI / 2, '#ffffff', alpha);
+  kit.streak(aside(kit, hilt, 0, -size * 0.4), size * 0.7, size * 0.12, 0, light, alpha);
+  kit.streak(aside(kit, hilt, 0, size * 0.2), size * 0.35, size * 0.1, Math.PI / 2, light, alpha);
 }
 
 /** A gear on the picture: a ring with square teeth round it, turned by `turn` */
@@ -257,108 +382,257 @@ const unova = {
     }
   },
 
-  // A shot of plasma: a hard line from the pokemon that fired it, and hexagons ringing out off the hit
+  // Plasma gathered in turning hexagons on the caster, a hard beam with rings running down it, and hexagons ringing off the hit
   Techno(kit, stage, share, { paint, seed, weight }) {
     const at = landed(stage);
+    const floor = floorOf(at);
     const reach = reachOf(stage, weight);
     const colour = paint.color;
     const light = lighten(colour, 0.6);
     const flick = Math.floor(share * 14);
 
-    if (share < 0.35) {
-      kit.ribbon(
-        [stage.source, toward(stage.source, at, Math.min(1, share / 0.2))],
-        reach * 0.18,
+    if (share < TECHNO_FIRES) {
+      const charge = share / TECHNO_FIRES;
+
+      kit.glow(stage.source, reach * (0.4 + charge * 0.8), colour, charge * 0.8, 0.6);
+      hexagon(
+        kit,
+        stage.source,
+        reach * (1.6 - charge * 0.8),
+        share * 6,
+        reach * 0.08,
         light,
-        decay(share / 0.35),
+        charge,
       );
+      hexagon(
+        kit,
+        stage.source,
+        reach * (1.1 - charge * 0.5),
+        -share * 8,
+        reach * 0.06,
+        light,
+        charge,
+      );
+      gathering(kit, stage.source, reach * 1.8, 10, seed, share, light);
+      return;
     }
-    kit.glow(at, reach * (0.5 + swell(share) * 0.5), colour, decay(share), 0.9);
-    for (let hex = 0; hex < 3; hex += 1) {
-      const held = Math.max(0, Math.min(1, (share - 0.15 - hex * 0.12) / 0.6));
+    if (share < TECHNO_HITS + 0.12) {
+      const drawn = Math.min(1, (share - TECHNO_FIRES) / (TECHNO_HITS - TECHNO_FIRES));
+      const kept = share < TECHNO_HITS ? 1 : decay((share - TECHNO_HITS) / 0.12);
+      const path = [stage.source, toward(stage.source, at, drawn)];
 
-      if (held <= 0) {
-        continue;
+      kit.glow(stage.source, reach * 0.8, light, kept * 0.7);
+      kit.ribbon(path, reach * 0.9, colour, kept * 0.5, share * 10);
+      kit.ribbon(path, reach * 0.35, light, kept, share * 14);
+      kit.ribbon(path, reach * 0.1, '#ffffff', kept);
+      for (let band = 0; band < 3; band += 1) {
+        const along = ((share * 4 + band / 3) % 1) * drawn;
+
+        hexagon(
+          kit,
+          toward(stage.source, at, along),
+          reach * 0.6,
+          share * 6 + band,
+          reach * 0.06,
+          light,
+          kept * 0.8,
+        );
       }
-      const radius = reach * (0.5 + held * 2);
-      const path: Spot[] = [];
+    }
+    if (share < TECHNO_HITS) {
+      return;
+    }
+    const hit = (share - TECHNO_HITS) / (1 - TECHNO_HITS);
 
-      for (let corner = 0; corner <= 6; corner += 1) {
-        const angle = hex * 0.5 + share + (corner / 6) * TAU;
+    kit.pool(floor, reach * (1.8 + hit * 2), colour, decay(hit) * 0.7);
+    kit.glow(at, reach * (0.9 + hit * 1.4), light, decay(hit));
+    kit.star(at, reach * (1.4 + hit * 1.6), 0, '#ffffff', decay(Math.min(1, hit * 2.5)));
+    for (let band = 0; band < 3; band += 1) {
+      const held = staged(hit, 1.6, band * 0.2);
 
-        path.push(aside(kit, at, Math.cos(angle) * radius, Math.sin(angle) * radius));
+      if (held > 0) {
+        hexagon(
+          kit,
+          at,
+          reach * (0.6 + held * 2.6),
+          band * 0.5 + share,
+          reach * 0.1,
+          light,
+          decay(held),
+        );
       }
-      kit.ribbon(path, reach * 0.08, light, decay(held));
     }
     sparks(
       kit,
       at,
-      reach * 1.4,
-      6,
+      reach * (1.4 + hit * 1.4),
+      12,
       seed + flick,
-      0.5,
+      hit,
       colour,
-      decay(share) * (flick % 2 === 0 ? 1 : 0.4),
+      decay(hit) * (flick % 2 === 0 ? 1 : 0.5),
     );
   },
 
-  // A V of fire driven down onto it, going off as it lands
+  // Wreathed in fire, then a great burning V driven down onto it and the ground going up in flames
   Victory(kit, stage, share, { paint, seed, weight }) {
     const at = landed(stage);
+    const floor = floorOf(at);
     const reach = reachOf(stage, weight);
     const colour = paint.color;
     const hot = mix(colour, '#ffd84a', 0.6);
-    const fall = Math.min(1, share / VICTORY_LANDS);
-    const point = aside(kit, at, 0, reach * 3 * (1 - fall) ** 2);
+
+    if (share < VICTORY_RISES) {
+      const up = share / VICTORY_RISES;
+
+      kit.glow(stage.source, reach * (0.6 + up * 1.2), colour, up * 0.8, 0.4);
+      kit.glow(stage.source, reach * 0.6 * up, hot, up);
+      imbue(kit, stage.source, reach * 1.2, up * 0.5, seed, Types.Fire, colour, 8);
+      return;
+    }
+    const fall = Math.min(1, (share - VICTORY_RISES) / (VICTORY_LANDS - VICTORY_RISES));
+    const point = aside(kit, at, 0, reach * 5 * (1 - fall) ** 2);
     const kept = late(share, VICTORY_LANDS);
 
     for (const side of [-1, 1]) {
-      const arm = aside(kit, point, side * reach * 1.3, reach * 1.8);
+      const arm = aside(kit, point, side * reach * 2.2, reach * 3);
       const middle = toward(arm, point, 0.5);
       const angle = kit.angleOn(arm, point);
 
-      kit.streak(middle, reach * 1.1, reach * 0.32, angle, colour, kept, { add: 0.6 });
-      kit.streak(middle, reach * 1.1, reach * 0.12, angle, hot, kept);
+      kit.streak(middle, reach * 1.9, reach * 0.55, angle, colour, kept, { add: 0.6 });
+      kit.streak(middle, reach * 1.9, reach * 0.2, angle, hot, kept);
+      for (let lick = 0; lick <= 5; lick += 1) {
+        const spot = toward(arm, point, lick / 5);
+
+        kit.glow(
+          aside(kit, spot, 0, reach * 0.4 * swell((share * 6 + lick * 0.3) % 1)),
+          reach * 0.35,
+          hot,
+          kept * 0.7,
+          0.5,
+        );
+      }
     }
     if (share < VICTORY_LANDS) {
+      kit.pool(floor, reach * (0.6 + fall * 1.6), colour, fall * 0.5);
       return;
     }
     const hit = (share - VICTORY_LANDS) / (1 - VICTORY_LANDS);
+    const jets = many(5, weight);
 
-    kit.pool(floorOf(at), reach * 2.4, colour, decay(hit) * 0.7);
-    kit.glow(at, reach * (0.8 + hit * 1.2), hot, decay(hit));
-    sparks(kit, at, reach * (1.4 + hit * 1.4), 12, seed, hit, hot, decay(hit));
-    imbue(kit, at, reach * 1.2, hit, seed, Types.Fire, colour, 8);
+    kit.pool(floor, reach * (2.4 + hit * 2), colour, decay(hit) * 0.8, { add: 0.5 });
+    kit.glow(at, reach * (1.2 + hit * 2), hot, decay(Math.min(1, hit * 1.3)));
+    kit.star(at, reach * (1.8 + hit * 2.4), 0, '#ffffff', decay(Math.min(1, hit * 3)));
+    for (let wave = 0; wave < 2; wave += 1) {
+      const held = staged(hit, 1.5, wave * 0.3);
+
+      if (held > 0) {
+        kit.ring(at, reach * (0.6 + held * 3), 0.1, hot, decay(held));
+        kit.ripple(floor, reach * (0.8 + held * 3), 0.1, colour, decay(held) * 0.8);
+      }
+    }
+    for (let one = 0; one < jets; one += 1) {
+      const angle = (one / jets) * TAU + noise(seed, one) * 0.5;
+
+      jet(
+        kit,
+        [floor[0] + Math.cos(angle) * reach * 1.6, 0, floor[2] + Math.sin(angle) * reach * 1.6],
+        reach * (2.4 + noise(seed, one + 10) * 2) * Math.min(1, hit * 3),
+        reach * 0.3,
+        colour,
+        hot,
+        late(hit, 0.4),
+        share * 12,
+      );
+    }
+    sparks(kit, at, reach * (1.6 + hit * 1.8), 16, seed, hit, hot, decay(hit));
+    imbue(kit, at, reach * 1.6, hit, seed, Types.Fire, colour, 14);
+    debris(
+      kit,
+      aside(kit, floor, 0, reach * 0.3),
+      reach * 1.3,
+      many(10, weight),
+      seed,
+      hit,
+      mix(colour, '#3a1a0a', 0.6),
+      late(hit, 0.6),
+    );
   },
 
-  // Blue fire rising up round it in a column, white at the heart
+  // Blue fire gathered on the caster, flung onto it, and a twisting column of it standing up white at the heart
   Azure(kit, stage, share, { paint, seed, weight }) {
     const at = landed(stage);
+    const floor = floorOf(at);
     const reach = reachOf(stage, weight);
     const colour = paint.color;
-    const shown = showing(share, 5, 0.7);
     const core = lighten(colour, 0.7);
 
-    kit.pool(floorOf(at), reach * 1.8, colour, shown * 0.6);
-    kit.glow(at, reach * (0.8 + swell(share) * 0.8), core, shown * 0.8, 1);
+    if (share < AZURE_FLIES) {
+      const charge = share / AZURE_FLIES;
+
+      kit.glow(stage.source, reach * (0.4 + charge), colour, charge * 0.8, 0.5);
+      kit.glow(stage.source, reach * 0.5 * charge, core, charge);
+      gathering(kit, stage.source, reach * 1.8, 12, seed, share, core);
+      return;
+    }
+    if (share < AZURE_HITS) {
+      const flight = (share - AZURE_FLIES) / (AZURE_HITS - AZURE_FLIES);
+      const ball = arcing(stage.source, at, flight, reach * 1.5);
+
+      kit.trail(
+        arcing(stage.source, at, Math.max(0, flight - 0.25), reach * 1.5),
+        ball,
+        reach * 0.7,
+        colour,
+        0.6,
+      );
+      kit.glow(ball, reach * 1.2, colour, 0.8, 0.3);
+      kit.glow(ball, reach * 0.6, core, 1);
+      return;
+    }
+    const burn = (share - AZURE_HITS) / (1 - AZURE_HITS);
+    const kept = late(burn, 0.55);
+    const tall = reach * 6 * Math.min(1, burn * 4);
+
+    kit.pool(floor, reach * (1.8 + burn * 1.4), colour, kept * 0.7, { add: 0.5 });
+    for (let tongue = 0; tongue < 3; tongue += 1) {
+      const path: Spot[] = [];
+
+      for (let step = 0; step <= 10; step += 1) {
+        const along = step / 10;
+        const turn = along * TAU * 1.2 + share * TAU * 2 + tongue * 2.1;
+        const round = reach * 0.6 * (1 - along * 0.6);
+
+        path.push([
+          floor[0] + Math.cos(turn) * round,
+          along * tall,
+          floor[2] + Math.sin(turn) * round,
+        ]);
+      }
+      kit.ribbon(path, reach * 0.8, colour, kept * 0.6, share * 12);
+      kit.ribbon(path, reach * 0.3, core, kept, share * 16);
+    }
+    kit.glow(at, reach * (1 + swell(burn)), core, kept * 0.9);
     for (let lick = 0; lick < many(12, weight); lick += 1) {
       const rise = (share * 1.8 + noise(seed, lick)) % 1;
-      const spot = aside(
-        kit,
-        at,
-        spread(seed, lick + 5) * reach * 1.2 * (1 - rise * 0.5),
-        -reach * 0.9 + rise * reach * 3,
-        spread(seed, lick + 15) * reach * 0.6,
-      );
 
       kit.glow(
-        [spot[0], Math.max(0.05, spot[1]), spot[2]],
+        aside(
+          kit,
+          floor,
+          spread(seed, lick + 5) * reach * 1.4 * (1 - rise * 0.5),
+          rise * tall,
+          spread(seed, lick + 15) * reach * 0.6,
+        ),
         reach * 0.4 * (1 - rise * 0.6),
         rise < 0.35 ? core : colour,
-        swell(rise) * shown,
+        swell(rise) * kept,
         rise < 0.35 ? 0.6 : 0.1,
       );
     }
+    kit.ring(at, reach * (0.6 + burn * 3), 0.1, core, decay(burn));
+    kit.ripple(floor, reach * (0.8 + burn * 3), 0.1, colour, decay(burn) * 0.8);
+    sparks(kit, at, reach * (1.6 + burn * 1.6), 12, seed, burn, core, decay(burn));
   },
 
   // Bolts coming down on it from every side at once, and a dark shock ring off the hit
@@ -389,111 +663,161 @@ const unova = {
     kit.ripple(floorOf(at), reach * (0.5 + share * 2.4), 0.08, colour, decay(share) * 0.7);
   },
 
-  // A ball of fire or lightning dropping out of the sky onto it and breaking open
+  // A great ball of fire or lightning dropping out of the sky with a ring round it, and breaking open over the ground
   Fusion(kit, stage, share, { paint, seed, weight, type }) {
     const at = landed(stage);
+    const floor = floorOf(at);
     const reach = reachOf(stage, weight);
     const colour = paint.color;
     const light = lighten(colour, 0.6);
 
     if (share < FUSION_LANDS) {
       const fall = share / FUSION_LANDS;
-      const spot = aside(kit, at, reach * 1.5 * (1 - fall), reach * 6 * (1 - fall));
+      const place = (along: number): Spot =>
+        aside(kit, at, reach * 2 * (1 - along), reach * 8 * (1 - along));
+      const path: Spot[] = [];
 
-      kit.trail(aside(kit, spot, reach * 0.85, reach * 3.4), spot, reach * 0.5, colour, 0.5);
-      kit.glow(spot, reach * 0.9, colour, 1, 0.3);
-      kit.glow(spot, reach * 0.45, light, 1, 1);
+      for (let step = 0; step <= 5; step += 1) {
+        path.push(place(Math.max(0, fall - 0.4 + (step / 5) * 0.4)));
+      }
+      const ball = place(fall);
+
+      kit.pool(floor, reach * (0.6 + fall * 1.8), colour, fall * 0.5);
+      kit.ribbon(path, reach * 1.2, colour, 0.5, share * 10);
+      kit.ribbon(path, reach * 0.45, light, 0.9, share * 14);
+      kit.glow(ball, reach * 1.4, colour, 1, 0.3);
+      kit.glow(ball, reach * 0.7, light, 1, 1);
+      kit.oval(ball, reach * 1.2, reach * 0.4, share * 8, 0.08, light, 0.8);
       return;
     }
     const hit = (share - FUSION_LANDS) / (1 - FUSION_LANDS);
+    const flick = Math.floor(share * 14);
 
-    kit.pool(floorOf(at), reach * 2.4, colour, decay(hit) * 0.7);
-    kit.glow(at, reach * (1 + hit * 1.4), light, decay(hit));
-    kit.ring(at, reach * (0.6 + hit * 2), 0.1, colour, decay(hit));
-    imbue(kit, at, reach * 1.4, hit, seed, type, colour, 8);
+    kit.pool(floor, reach * (2 + hit * 2.4), colour, decay(hit) * 0.8, { add: 0.4 });
+    kit.glow(at, reach * (1.2 + hit * 1.8), light, decay(Math.min(1, hit * 1.4)));
+    kit.star(at, reach * (1.6 + hit * 2.4), hit, '#ffffff', decay(Math.min(1, hit * 2.5)));
+    for (let wave = 0; wave < 2; wave += 1) {
+      const held = staged(hit, 1.5, wave * 0.3);
+
+      if (held > 0) {
+        kit.ring(at, reach * (0.6 + held * 3), 0.1, colour, decay(held));
+        kit.ripple(floor, reach * (0.8 + held * 3), 0.1, light, decay(held) * 0.8);
+      }
+    }
+    for (let one = 0; one < 5; one += 1) {
+      const angle = (one / 5) * TAU + noise(seed, one) * 0.5;
+
+      if (type === Types.Electric) {
+        bolt(
+          kit,
+          at,
+          aside(kit, floor, Math.cos(angle) * reach * 3, reach * 0.1, Math.sin(angle) * reach * 2),
+          seed + flick * 7 + one,
+          reach,
+          reach * 0.14,
+          colour,
+          decay(hit) * (flick % 3 === 2 ? 0.5 : 1),
+        );
+        continue;
+      }
+      jet(
+        kit,
+        [floor[0] + Math.cos(angle) * reach * 1.6, 0, floor[2] + Math.sin(angle) * reach * 1.6],
+        reach * (2.2 + noise(seed, one + 10) * 1.8) * Math.min(1, hit * 3),
+        reach * 0.28,
+        colour,
+        light,
+        late(hit, 0.4),
+        share * 12,
+      );
+    }
+    imbue(kit, at, reach * 1.6, hit, seed, type, colour, 14);
+    debris(
+      kit,
+      aside(kit, floor, 0, reach * 0.3),
+      reach * 1.2,
+      many(8, weight),
+      seed,
+      hit,
+      colour,
+      late(hit, 0.6),
+    );
   },
 
-  // Ice spikes breaking up round it, crackling with electricity
+  // A crown of ice bursting up round it, lightning coming down through it, and the ice shattering
   Frostbolt(kit, stage, share, { paint, seed, weight }) {
-    const at = landed(stage);
-    const reach = reachOf(stage, weight);
-
-    iceSpikes(
-      kit,
-      at,
-      reach,
-      settle(share * 3),
-      seed,
-      lighten(paint.color, 0.4),
-      showing(share, 20, 0.7),
-    );
-    imbue(kit, at, reach, share, seed, Types.Electric, KYUREM_SPARK, 3);
+    frozen(kit, stage, share, paint.color, seed, weight, Types.Electric, KYUREM_SPARK);
   },
 
-  // Ice spikes breaking up round it, with fire licking off them
+  // A crown of ice bursting up round it, fire pouring up between the spikes, and the ice shattering
   Frostfire(kit, stage, share, { paint, seed, weight }) {
-    const at = landed(stage);
-    const reach = reachOf(stage, weight);
-
-    iceSpikes(
-      kit,
-      at,
-      reach,
-      settle(share * 3),
-      seed,
-      lighten(paint.color, 0.4),
-      showing(share, 20, 0.7),
-    );
-    imbue(kit, at, reach, share, seed, Types.Fire, KYUREM_FIRE, 5);
+    frozen(kit, stage, share, paint.color, seed, weight, Types.Fire, KYUREM_FIRE);
   },
 
-  // Frost spreading across the ground under it and freezing air blowing over
+  // Frost racing across the ground, spikes of ice rising round it in a freezing wind, then breaking off
   Glaze(kit, stage, share, { paint, seed, weight }) {
     const at = landed(stage);
     const floor = floorOf(at);
     const reach = reachOf(stage, weight);
     const reached = settle(share * 2);
-    const kept = showing(share, 20, 0.75);
+    const broken = Math.max(0, (share - 0.75) / 0.25);
+    const kept = Math.min(1, share * 20) * decay(broken);
     const light = lighten(paint.color, 0.5);
 
-    kit.pool(floor, reach * (1 + reached * 2), light, kept * 0.4);
+    kit.pool(floor, reach * (1 + reached * 2.4), light, kept * 0.5);
     for (let band = 0; band < 3; band += 1) {
       kit.ripple(
         floor,
-        reach * (0.6 + reached * (1.4 + band * 0.6)),
+        reach * (0.6 + reached * (1.6 + band * 0.7)),
         0.06,
         light,
         kept * (0.8 - band * 0.2),
       );
     }
-    for (let crystal = 0; crystal < many(8, weight); crystal += 1) {
+    iceSpikes(kit, at, reach * 0.8, settle(Math.max(0, share - 0.15) * 3), seed, light, kept);
+    smoke(kit, floor, reach * 2.4, 6, seed, share, '#eef6ff', kept * 0.5);
+    for (let crystal = 0; crystal < many(10, weight); crystal += 1) {
       const angle = noise(seed, crystal) * TAU;
-      const out = reach * (0.4 + noise(seed, crystal + 10) * 1.6) * reached;
+      const out = reach * (0.4 + noise(seed, crystal + 10) * 2) * reached;
 
       kit.star(
         [floor[0] + Math.cos(angle) * out, 0.05, floor[2] + Math.sin(angle) * out],
-        reach * 0.18,
+        reach * 0.22,
         angle,
         '#ffffff',
         kept * swell((share * 2 + noise(seed, crystal + 20)) % 1),
       );
     }
-    for (let flake = 0; flake < 10; flake += 1) {
-      const held = (share * 1.5 + noise(seed, flake + 30)) % 1;
+    for (let gust = 0; gust < 10; gust += 1) {
+      const held = (share * 2 + noise(seed, gust + 30)) % 1;
 
-      kit.glow(
+      kit.streak(
         aside(
           kit,
           at,
-          -reach * 2.5 + held * reach * 5,
-          spread(seed, flake + 40) * reach * 1.2,
-          spread(seed, flake + 50) * reach * 0.8,
+          -reach * 3 + held * reach * 6,
+          spread(seed, gust + 40) * reach * 1.4,
+          spread(seed, gust + 50) * reach,
         ),
-        reach * 0.06,
+        reach * 0.8,
+        reach * 0.04,
+        0,
         '#ffffff',
-        swell(held) * kept,
-        0.8,
+        swell(held) * kept * 0.7,
       );
+    }
+    if (broken > 0) {
+      debris(
+        kit,
+        aside(kit, floor, 0, reach),
+        reach * 1.4,
+        many(12, weight),
+        seed,
+        broken,
+        light,
+        decay(broken),
+      );
+      sparks(kit, at, reach * 2, 10, seed, broken, '#ffffff', decay(broken));
     }
   },
 
@@ -539,30 +863,56 @@ const unova = {
     }
   },
 
-  // A great sword falling point first through it, and the light of the cut left standing
+  // Three great swords falling point first round it, the middle one through it, and the light of the strike left standing
   Smite(kit, stage, share, { paint, seed, weight }) {
     const at = landed(stage);
+    const floor = floorOf(at);
     const reach = reachOf(stage, weight);
     const colour = paint.color;
     const light = lighten(colour, 0.6);
-    const drop = Math.min(1, share / SMITE_LANDS);
-    const kept = late(share, SMITE_LANDS);
-    const tip = aside(kit, at, 0, -reach * (1 - 4 * (1 - drop) ** 2));
-    const hilt = aside(kit, tip, 0, reach * 3);
-    const middle = toward(hilt, tip, 0.5);
+    const kept = late(share, 0.65);
 
-    kit.streak(middle, reach * 1.5, reach * 0.28, Math.PI / 2, colour, kept, { add: 0.5 });
-    kit.streak(middle, reach * 1.5, reach * 0.1, Math.PI / 2, light, kept);
-    kit.streak(aside(kit, hilt, 0, -reach * 0.4), reach * 0.6, reach * 0.1, 0, light, kept);
+    for (const [right, away, scale, lands] of SMITE_BLADES) {
+      const drop = Math.min(1, share / lands);
+      const base = aside(kit, floor, right * reach, 0, away * reach);
+      const tip = aside(kit, base, 0, reach * 9 * (1 - drop) ** 2 - reach * 0.3 * drop);
+
+      sword(kit, tip, reach * scale, light, colour, kept);
+      if (drop < 1) {
+        kit.trail(
+          aside(kit, tip, 0, reach * (3 * scale + 2)),
+          aside(kit, tip, 0, reach * 3 * scale),
+          reach * 0.3 * scale,
+          colour,
+          0.5,
+        );
+        continue;
+      }
+      const land = (share - lands) / (1 - lands);
+
+      kit.pool(base, reach * 1.2 * scale, colour, decay(land) * 0.6);
+      kit.ripple(base, reach * (0.3 + land * 1.6) * scale, 0.1, light, decay(land));
+    }
     if (share < SMITE_LANDS) {
       return;
     }
     const hit = (share - SMITE_LANDS) / (1 - SMITE_LANDS);
 
-    kit.pool(floorOf(at), reach * 1.8, colour, decay(hit) * 0.6);
-    kit.ring(at, reach * (0.4 + hit * 1.8), 0.08, light, decay(hit));
-    kit.star(at, reach * 0.8 * decay(hit), 0, '#ffffff', decay(hit));
-    sparks(kit, at, reach * (1 + hit * 1.2), 8, seed, hit, light, decay(hit));
+    kit.glow(at, reach * (1 + hit * 1.6), light, decay(Math.min(1, hit * 1.3)));
+    kit.star(at, reach * (1.6 + hit * 2), 0, '#ffffff', decay(Math.min(1, hit * 2.5)));
+    kit.ring(at, reach * (0.6 + hit * 3), 0.08, light, decay(hit));
+    kit.ripple(floor, reach * (1 + hit * 3), 0.1, colour, decay(hit) * 0.8);
+    sparks(kit, at, reach * (1.4 + hit * 1.6), 12, seed, hit, light, decay(hit));
+    debris(
+      kit,
+      aside(kit, floor, 0, reach * 0.3),
+      reach * 1.2,
+      many(8, weight),
+      seed,
+      hit,
+      mix(colour, '#5b4636', 0.5),
+      late(hit, 0.6),
+    );
   },
 
   // Notes spiralling up round it through rings in a song's colours

@@ -56,6 +56,8 @@ const FAMILY_TEACHABLE = [
   Moves.WorrySeed,
   Moves.Venoshock,
   Moves.Round,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerCacneaSpecies(): void {
@@ -105,7 +107,15 @@ export default function registerCacneaSpecies(): void {
         45: [Moves.Sandstorm],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Acid, Moves.GrassWhistle, Moves.TeeterDance, Moves.NastyPlot],
+      egg: [
+        Moves.Acid,
+        Moves.GrassWhistle,
+        Moves.TeeterDance,
+        Moves.NastyPlot,
+        Moves.Belch,
+        Moves.Rototiller,
+        Moves.FellStinger,
+      ],
     },
   });
 
@@ -145,6 +155,7 @@ export default function registerCacneaSpecies(): void {
         21: [Moves.PinMissile],
         25: [Moves.Ingrain],
         29: [Moves.FeintAttack],
+        32: [Moves.SpikyShield],
         35: [Moves.Spikes],
         41: [Moves.NeedleArm, Moves.SuckerPunch],
         47: [Moves.CottonSpore, Moves.Payback],

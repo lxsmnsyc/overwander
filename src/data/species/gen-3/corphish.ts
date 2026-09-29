@@ -57,6 +57,7 @@ const FAMILY_TEACHABLE = [
   Moves.HoneClaws,
   Moves.Round,
   Moves.Scald,
+  Moves.Confide,
 ];
 
 export default function registerCorphishSpecies(): void {

@@ -88,6 +88,8 @@ export default function registerBudewSpecies(): void {
         Moves.Synthesis,
         Moves.Toxic,
         Moves.Uproar,
+        Moves.Confide,
+        Moves.DazzlingGleam,
       ],
       egg: [
         Moves.CottonSpore,
@@ -134,6 +136,8 @@ export default function registerBudewSpecies(): void {
           Moves.PoisonSting,
           Moves.SweetScent,
           Moves.WeatherBall,
+          Moves.GrassyTerrain,
+          Moves.VenomDrench,
         ],
       },
       teachable: [
@@ -175,6 +179,8 @@ export default function registerBudewSpecies(): void {
         Moves.SwordsDance,
         Moves.Synthesis,
         Moves.Toxic,
+        Moves.Confide,
+        Moves.DazzlingGleam,
       ],
     },
   });

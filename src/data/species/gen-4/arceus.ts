@@ -115,6 +115,7 @@ const ARCEUS_TEACHABLE = [
   Moves.WillOWisp,
   Moves.XScissor,
   Moves.ZenHeadbutt,
+  Moves.Confide,
 ];
 
 /** The stats it has in every shape, which are the same six numbers */

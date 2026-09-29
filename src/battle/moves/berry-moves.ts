@@ -33,6 +33,28 @@ function heldBerry(unit: Unit): Items | undefined {
 }
 
 export default function setupBerryMoves(battle: Battle): void {
+  // Belch needs a berry in the belly first: one eaten this battle, by
+  // whatever means, and it stays eaten
+  const fed = new WeakSet<Unit>();
+
+  battle.on(BattleEvents.UnitTriggerItem, EventPriority.Post, (event) => {
+    if (isBerry(event.item)) {
+      fed.add(event.source);
+    }
+  });
+
+  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
+    if (event.success && event.move === Moves.Belch && !fed.has(event.source)) {
+      event.success = false;
+    }
+  });
+
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && event.move === Moves.Belch) {
+      event.usable = fed.has(event.source);
+    }
+  });
+
   // Natural Gift is nothing at all without a berry to throw
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     if (event.usable && event.move === Moves.NaturalGift) {

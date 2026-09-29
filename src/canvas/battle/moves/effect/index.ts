@@ -12,6 +12,7 @@ import care from './care';
 import colorOf from './colors';
 import contact from './contact';
 import elements from './elements';
+import kalos from './kalos';
 import legends from './legends';
 import ohko from './ohko';
 import minds from './minds';
@@ -20,6 +21,7 @@ import stats from './stats';
 import unova from './unova';
 
 import {
+  EXACT_SPANS,
   type EffectShape,
   ON_THE_CASTER,
   OVER_A_SIDE,
@@ -48,6 +50,8 @@ const WINDING_UP = new Set<Moves>([
   Moves.Dive,
   Moves.Bounce,
   Moves.ShadowForce,
+  Moves.PhantomForce,
+  Moves.Geomancy,
   Moves.Teleport,
   Moves.Bide,
   Moves.FreezeShock,
@@ -98,6 +102,7 @@ const PAINTERS: Record<EffectShape, ShapePainter> = {
   ...ohko,
   ...stats,
   ...unova,
+  ...kalos,
 };
 
 /**
@@ -179,6 +184,13 @@ export function effectShapeFor(move: Moves): EffectShape {
   }
   return BY_TYPE[data.type] ?? 'Bloom';
 }
+
+/**
+ * The moves queued now and landing later whose picture is a fall onto
+ * the target: it is painted when the strike is queued, and runs for
+ * the engine's wait so it lands with the blow
+ */
+export const RIDES_THE_WAIT = new Set<Moves>([Moves.DoomDesire]);
 
 /**
  * The picture of this move landing, or nothing where the step that
@@ -293,7 +305,7 @@ function painted(
   // A heavy hit hangs about longer than a light one, but not in
   // proportion: doubling the power should not double the wait
   return new PaintedVisual(
-    SPANS[shape] * (0.8 + weight * 0.3),
+    EXACT_SPANS.has(shape) ? SPANS[shape] : SPANS[shape] * (0.8 + weight * 0.3),
     painter,
     lit,
     (JOLTS[shape] ?? 0) * weight,

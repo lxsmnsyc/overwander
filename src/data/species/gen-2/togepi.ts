@@ -68,6 +68,8 @@ const FAMILY_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.Incinerate,
   Moves.WorkUp,
+  Moves.Confide,
+  Moves.DazzlingGleam,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Hustle, Abilities.SereneGrace];
@@ -178,6 +180,7 @@ export default function registerTogepiSpecies(): void {
       level: {
         ...FAMILY_LEVEL,
         1: [...FAMILY_LEVEL[1], Moves.MagicalLeaf],
+        14: [Moves.FairyWind],
         16: [Moves.Yawn],
         21: [Moves.AncientPower],
         25: [...FAMILY_LEVEL[25], Moves.Bestow],

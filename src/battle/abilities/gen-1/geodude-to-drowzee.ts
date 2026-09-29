@@ -9,7 +9,14 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { OHKO_MOVES } from '../../moves/fixed-damage';
 import { ASLEEP_STATUSES } from '../../status';
 import type Unit from '../../unit';
-import { hasAnyStatus, isWeatherHail, isWeatherRainy, onUnitActs, unitTarget } from '../../utils';
+import {
+  hasAnyStatus,
+  isWeatherHail,
+  isWeatherRainy,
+  onUnitActs,
+  slipsTraps,
+  unitTarget,
+} from '../../utils';
 import {
   chipImmunity,
   createAbility,
@@ -268,7 +275,7 @@ const geodudeToDrowzee = [
         // Away escape regardless (the explicit check keeps the cue
         // from firing spuriously)
         !source.types.has(Types.Steel) ||
-        source.types.has(Types.Ghost) ||
+        slipsTraps(source) ||
         source.hasAbility(Abilities.RunAway)
       ) {
         return;

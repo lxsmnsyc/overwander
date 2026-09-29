@@ -50,6 +50,7 @@ const FAMILY_TEACHABLE = [
   Moves.FoulPlay,
   Moves.Round,
   Moves.Retaliate,
+  Moves.Confide,
 ];
 
 // What the two above the base pick up: an acorn hanging in a tree
@@ -69,6 +70,7 @@ const GROWN_TEACHABLE = [
   Moves.Swift,
   Moves.LowSweep,
   Moves.Snarl,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerSeedotSpecies(): void {
@@ -123,6 +125,7 @@ export default function registerSeedotSpecies(): void {
         Moves.NastyPlot,
         Moves.PowerSwap,
         Moves.FoulPlay,
+        Moves.GrassyTerrain,
       ],
     },
   });

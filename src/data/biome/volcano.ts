@@ -14,6 +14,7 @@ export default function registerVolcanoSpawns(): void {
   registerSpawnPool(Biome.Volcano, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Charmander, weight: 6 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cyndaquil, weight: 6 },
@@ -26,6 +27,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Magmar, weight: 10 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Charmeleon, weight: 3 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Quilava, weight: 3 },
@@ -38,6 +40,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Charizard, weight: 3 },
         { species: Species.Golem, weight: 5 },
         { species: Species.Typhlosion, weight: 3 },
@@ -48,13 +51,12 @@ export default function registerVolcanoSpawns(): void {
       special: [
         { species: Species.Groudon, weight: 10 },
         { species: Species.Moltres, weight: 10 },
-        { species: Species.Entei, weight: 10 },
-        { species: Species.HoOh, weight: 10 },
         { species: Species.Heatran, weight: 10 },
       ],
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Charmander, weight: 6 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cyndaquil, weight: 6 },
@@ -69,6 +71,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Magmar, weight: 10 },
       ],
       rare: [
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Charmeleon, weight: 3 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Quilava, weight: 3 },
@@ -82,6 +85,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Charizard, weight: 3 },
         { species: Species.Golem, weight: 5 },
         { species: Species.Typhlosion, weight: 3 },
@@ -92,8 +96,6 @@ export default function registerVolcanoSpawns(): void {
       special: [
         { species: Species.Groudon, weight: 10 },
         { species: Species.Moltres, weight: 10 },
-        { species: Species.Entei, weight: 10 },
-        { species: Species.HoOh, weight: 10 },
         { species: Species.Heatran, weight: 10 },
       ],
     },
@@ -118,8 +120,6 @@ export default function registerVolcanoSpawns(): void {
       special: [
         { species: Species.Groudon, weight: 10 },
         { species: Species.Moltres, weight: 10 },
-        { species: Species.Entei, weight: 10 },
-        { species: Species.HoOh, weight: 10 },
         { species: Species.Heatran, weight: 10 },
       ],
     },
@@ -146,8 +146,6 @@ export default function registerVolcanoSpawns(): void {
       special: [
         { species: Species.Groudon, weight: 10 },
         { species: Species.Moltres, weight: 10 },
-        { species: Species.Entei, weight: 10 },
-        { species: Species.HoOh, weight: 10 },
         { species: Species.Heatran, weight: 10 },
       ],
     },

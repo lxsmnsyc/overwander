@@ -45,6 +45,7 @@ const BIRD_TEACHABLE = [
   Moves.RockSmash,
   Moves.Round,
   Moves.SkyDrop,
+  Moves.Confide,
 ];
 
 export default function registerLegendaryBirdSpecies(): void {
@@ -69,11 +70,11 @@ export default function registerLegendaryBirdSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Glacier, Biome.AlpineTundra, Biome.PolarOcean, Biome.DeepOcean],
+    biomes: [Biome.PolarOcean, Biome.DeepOcean],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Peck, Moves.IceBeam, Moves.Gust, Moves.PowderSnow],
+        1: [Moves.Peck, Moves.IceBeam, Moves.Gust, Moves.PowderSnow, Moves.FreezeDry],
         13: [Moves.Mist],
         15: [Moves.IceShard],
         25: [Moves.Agility],
@@ -131,7 +132,7 @@ export default function registerLegendaryBirdSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Mountain, Biome.Grassland, Biome.Steppe],
+    biomes: [Biome.Grassland, Biome.Steppe],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -192,7 +193,7 @@ export default function registerLegendaryBirdSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Mountain, Biome.Desert, Biome.Volcano],
+    biomes: [Biome.Mountain, Biome.Volcano],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

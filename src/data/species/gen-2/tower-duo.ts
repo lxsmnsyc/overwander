@@ -48,6 +48,7 @@ const DUO_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.SkyDrop,
   Moves.Bulldoze,
+  Moves.Confide,
 ];
 
 // Both learn the same list at the same levels, either side of their
@@ -171,7 +172,7 @@ export default function registerTowerDuoSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Mountain, Biome.Volcano, Biome.DeepOcean],
+    biomes: [Biome.Mountain, Biome.DeepOcean],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

@@ -9,6 +9,8 @@ export default function registerTundraSpawns(): void {
   registerSpawnPool(Biome.Tundra, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.FlabebeWhite, weight: 24 },
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Swinub, weight: 25 },
         { species: Species.Vanillite, weight: 24 },
       ],
@@ -17,6 +19,8 @@ export default function registerTundraSpawns(): void {
         { species: Species.Cubchoo, weight: 20 },
       ],
       rare: [
+        { species: Species.FloetteWhite, weight: 8 },
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Piloswine, weight: 10 },
         { species: Species.Vanillish, weight: 10 },
       ],
@@ -27,6 +31,8 @@ export default function registerTundraSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.FlorgesWhite, weight: 5 },
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Vanilluxe, weight: 5 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Mamoswine, weight: 5 },
@@ -37,7 +43,6 @@ export default function registerTundraSpawns(): void {
         { species: Species.Reshiram, weight: 10 },
         { species: Species.Zekrom, weight: 10 },
         { species: Species.Kyurem, weight: 10 },
-        { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regigigas, weight: 10 },
         { species: Species.Regice, weight: 10 },
@@ -45,6 +50,8 @@ export default function registerTundraSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.FlabebeWhite, weight: 24 },
+        { species: Species.Scatterbug, weight: 24 },
         { species: Species.Swinub, weight: 25 },
         { species: Species.Vanillite, weight: 24 },
       ],
@@ -53,6 +60,8 @@ export default function registerTundraSpawns(): void {
         { species: Species.Cubchoo, weight: 20 },
       ],
       rare: [
+        { species: Species.FloetteWhite, weight: 8 },
+        { species: Species.Spewpa, weight: 8 },
         { species: Species.Piloswine, weight: 10 },
         { species: Species.Vanillish, weight: 10 },
       ],
@@ -63,6 +72,8 @@ export default function registerTundraSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.FlorgesWhite, weight: 5 },
+        { species: Species.Vivillon, weight: 5 },
         { species: Species.Vanilluxe, weight: 5 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Mamoswine, weight: 5 },
@@ -73,7 +84,6 @@ export default function registerTundraSpawns(): void {
         { species: Species.Reshiram, weight: 10 },
         { species: Species.Zekrom, weight: 10 },
         { species: Species.Kyurem, weight: 10 },
-        { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regigigas, weight: 10 },
         { species: Species.Regice, weight: 10 },
@@ -102,7 +112,6 @@ export default function registerTundraSpawns(): void {
         { species: Species.Reshiram, weight: 10 },
         { species: Species.Zekrom, weight: 10 },
         { species: Species.Kyurem, weight: 10 },
-        { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regigigas, weight: 10 },
         { species: Species.Regice, weight: 10 },
@@ -131,7 +140,6 @@ export default function registerTundraSpawns(): void {
         { species: Species.Reshiram, weight: 10 },
         { species: Species.Zekrom, weight: 10 },
         { species: Species.Kyurem, weight: 10 },
-        { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regigigas, weight: 10 },
         { species: Species.Regice, weight: 10 },

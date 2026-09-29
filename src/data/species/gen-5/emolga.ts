@@ -46,6 +46,7 @@ export default function registerEmolgaSpecies(): void {
         5: [Moves.DoubleTeam],
         10: [Moves.Charge],
         13: [Moves.Spark],
+        15: [Moves.Nuzzle],
         16: [Moves.Pursuit],
         22: [Moves.ShockWave],
         25: [Moves.Acrobatics],
@@ -108,7 +109,9 @@ export default function registerEmolgaSpecies(): void {
         Moves.UTurn,
         Moves.VoltSwitch,
         Moves.WildCharge,
+        Moves.Confide,
       ],
+      egg: [Moves.IonDeluge],
     },
   });
 }

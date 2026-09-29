@@ -156,15 +156,55 @@ export function registerIcePool(biome: Biome, pool: SpawnPool): void {
 
 /**
  * What lives underground, which is one pool for the whole of it
- * rather than one per biome. The country overhead still decides which
- * cave a player is standing in and how far they walked to reach it,
- * but what is living in the dark is much the same wherever the dark is
+ * rather than one per biome, legendaries aside. The country overhead
+ * still decides which cave a player is standing in and how far they
+ * walked to reach it, but what is living in the dark is much the same
+ * wherever the dark is
  */
 let cavePool: SpawnPool | null = null;
+
+/**
+ * The legendaries a biome's caves keep: the residents of the
+ * underground lairs that biome hosts. Unlike the rest of the cave pool
+ * these follow the country overhead, since a lair is a place
+ */
+const CAVE_LEGENDS = new Map<Biome, SpawnEntry[]>();
+
+/** The cave pool with a biome's legendaries on it, per hour and surface */
+const CAVE_POOLS = new Map<string, SpawnRarityGroups>();
 
 export function registerCavePool(pool: SpawnPool): void {
   cavePool = pool;
   habitatIndex = null;
+  CAVE_POOLS.clear();
+}
+
+export function registerCaveLegends(biome: Biome, legends: SpawnEntry[]): void {
+  CAVE_LEGENDS.set(biome, legends);
+  CAVE_POOLS.clear();
+}
+
+function getCavePool(biome: Biome, time: TimeOfDay, surface: SpawnSurface): SpawnRarityGroups {
+  const key = `${biome}:${time}:${surface}`;
+  const known = CAVE_POOLS.get(key);
+
+  if (known != null) {
+    return known;
+  }
+
+  // Only what can stand on the cell, so Kyogre keeps to the water
+  const special: SpawnEntry[] = [];
+
+  for (const entry of CAVE_LEGENDS.get(biome) ?? []) {
+    if (fitsSurface(entry.species, surface)) {
+      special.push(entry);
+    }
+  }
+
+  const pool = { ...(cavePool?.[time] ?? EMPTY_GROUPS), special };
+
+  CAVE_POOLS.set(key, pool);
+  return pool;
 }
 
 /**
@@ -194,7 +234,7 @@ export function getSpawnPool(
   surface = SpawnSurface.Land,
 ): SpawnRarityGroups {
   if (underground) {
-    return cavePool?.[time] ?? EMPTY_GROUPS;
+    return getCavePool(biome, time, surface);
   }
   return poolsOn(surface).get(biome)?.[time] ?? EMPTY_GROUPS;
 }
@@ -606,6 +646,12 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Articuno,
   Species.Zapdos,
   Species.Moltres,
+  // The true shadows, which a dark day stages in the same band their
+  // counterparts stand in
+  Species.ArticunoShadow,
+  Species.ZapdosShadow,
+  Species.MoltresShadow,
+  Species.MewtwoShadow,
   Species.Mewtwo,
   Species.Raikou,
   Species.Entei,
@@ -723,9 +769,15 @@ const UNOWN_SPECIES = new Set<Species>(UNOWN_FORMS);
  * Staged above the band its line's shape would earn. A Larvesta is
  * met as rarely as a baby, which is half of what the games make of
  * the moth the desert once mistook for the sun. The other half is the
- * moth itself, which is a legendary here and sits in that set
+ * moth itself, which is a legendary here and sits in that set.
+ *
+ * The fancy Vivillon is the other: no country grows those wings, so a
+ * town is the only place one is ever met
  */
-const PRIZED_BY_HAND = new Set<Species>([Species.Larvesta]);
+const PRIZED_BY_HAND = new Set<Species>([Species.Larvesta, Species.VivillonFancy]);
+
+/** Met as rarely as a mythical, but no relic calls it and no raid stages it */
+const MYTHICAL_BY_HAND = new Set<Species>([Species.PichuSpikyEared]);
 
 /**
  * The unowns as prized-band entries, for a pool to spread into its
@@ -898,7 +950,7 @@ export function getSpawnRarity(species: Species): SpawnRarity {
   // The two are asked apart rather than together: what stages one is
   // a lair and what stages the other is a relic, and everything that
   // reads a rarity wants to know which
-  if (MYTHICAL_SPECIES.has(species)) {
+  if (MYTHICAL_SPECIES.has(species) || MYTHICAL_BY_HAND.has(species)) {
     return SpawnRarity.Mythical;
   }
   if (LEGENDARY_SPECIES.has(species)) {

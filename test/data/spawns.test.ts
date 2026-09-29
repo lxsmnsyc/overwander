@@ -13,11 +13,17 @@ import registerBiomeSpawns, {
   listSpeciesHabitats,
   spawnBand,
 } from '../../src/data/biome';
-import { getBiomeLairs, getLairResidents } from '../../src/data/overworld/lair';
+import { getBiomeLairs, getCaveLairs, getLairResidents } from '../../src/data/overworld/lair';
 import registerAbilities from '../../src/data/abilities';
 import { Types } from '../../src/data/constants/types';
 import Biome, { SpawnSurface, TimeOfDay } from '../../src/data/ids/biome';
-import { DEERLING_FORMS, ROTOM_FORMS, SAWSBUCK_FORMS, Species } from '../../src/data/ids/species';
+import {
+  DEERLING_FORMS,
+  ROTOM_FORMS,
+  SAWSBUCK_FORMS,
+  Species,
+  VIVILLON_FORMS,
+} from '../../src/data/ids/species';
 import registerItems from '../../src/data/items';
 import { registerMoves } from '../../src/data/moves';
 import {
@@ -192,6 +198,59 @@ describe('where a species lives', () => {
     }
   });
 
+  it('stages a cave legendary wild under its own lair, and only there', () => {
+    // A cave keeps the legendaries of the underground lairs its biome
+    // hosts, each on the surface it can stand on
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const surface of SURFACES) {
+        const residents = new Set<Species>();
+
+        for (const lair of getCaveLairs(biome)) {
+          for (const species of getLairResidents(lair)) {
+            if (fitsSurface(species, surface)) {
+              residents.add(species);
+            }
+          }
+        }
+        for (const time of TIMES_OF_DAY) {
+          const band = new Set<Species>();
+
+          for (const entry of spawnBand(getSpawnPool(biome, time, true, surface), 'special')) {
+            band.add(entry.species);
+          }
+          expect(band, `${BIOME_NAMES[biome]} caves`).toEqual(residents);
+        }
+      }
+    }
+    // Kyogre swims in a cave's water and never stands on its floor
+    for (const entry of spawnBand(getSpawnPool(Biome.Beach, TimeOfDay.Day, true), 'special')) {
+      expect(entry.species).not.toBe(Species.Kyogre);
+    }
+  });
+
+  it('stages a legendary nowhere its lairs do not stand', () => {
+    // The other half of the rule: a legendary lives where its lair is
+    // and nowhere else, so a roaming one needs a lair in that biome
+    const hosts = new Map<Species, Set<Biome>>();
+
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const lair of getBiomeLairs(biome)) {
+        for (const species of getLairResidents(lair)) {
+          hosts.set(species, (hosts.get(species) ?? new Set()).add(biome));
+        }
+      }
+    }
+
+    expect(hosts.size).toBeGreaterThan(0);
+    for (const [species, biomes] of hosts) {
+      const { name } = getSpeciesData(species);
+
+      for (const biome of getSpeciesData(species).biomes) {
+        expect(biomes.has(biome), `${name} in ${BIOME_NAMES[biome]}`).toBe(true);
+      }
+    }
+  });
+
   it('says the same thing the pools do about every species', () => {
     // Nothing is invented and nothing is dropped: the number of
     // habitat entries is exactly the number of times the registry
@@ -265,6 +324,9 @@ describe('where a species lives', () => {
       Species.PorygonZ,
       Species.ShellosEast,
       Species.GastrodonEast,
+      // The wings a country hands a Vivillon, which the meeting puts
+      // on rather than the pool holding one of each
+      ...VIVILLON_FORMS.slice(1),
       // The three coats past spring are staged by the pool the spring
       // one sits in, and swapped for as the month hands them over, so
       // no pool names them either

@@ -6,7 +6,7 @@ import { Statuses } from '../../../data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { onUnitActs } from '../../utils';
+import { onUnitActs, slipsTraps } from '../../utils';
 import { createAbility, getAbilityHolders } from '../__create';
 
 /**
@@ -122,7 +122,7 @@ const setupAbilities = [
       }),
 
       battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
-        if (!event.success) {
+        if (!event.success || slipsTraps(event.source)) {
           return;
         }
 

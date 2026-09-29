@@ -65,6 +65,7 @@ const FAMILY_TEACHABLE = [
   Moves.WaterPulse,
   Moves.Waterfall,
   Moves.WorkUp,
+  Moves.Confide,
 ];
 
 /**
@@ -106,7 +107,7 @@ export default function registerPanpourSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Scratch],
+        1: [Moves.Scratch, Moves.PlayNice],
         4: [Moves.Leer],
         7: [Moves.Lick],
         10: [Moves.WaterGun],
@@ -134,6 +135,7 @@ export default function registerPanpourSpecies(): void {
         Moves.NastyPlot,
         Moves.RolePlay,
         Moves.Tickle,
+        Moves.DisarmingVoice,
       ],
     },
   });
@@ -182,6 +184,7 @@ export default function registerPanpourSpecies(): void {
         Moves.HyperBeam,
         Moves.RockSlide,
         Moves.Superpower,
+        Moves.PowerUpPunch,
       ],
     },
   });

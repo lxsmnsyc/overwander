@@ -65,6 +65,7 @@ const FAMILY_TEACHABLE = [
   Moves.UTurn,
   Moves.Uproar,
   Moves.ZenHeadbutt,
+  Moves.Confide,
 ];
 
 /**
@@ -125,6 +126,7 @@ export default function registerWoobatSpecies(): void {
         Moves.StoredPower,
         Moves.Supersonic,
         Moves.Synchronoise,
+        Moves.VenomDrench,
       ],
     },
   });

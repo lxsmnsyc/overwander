@@ -267,6 +267,8 @@ export const enum Species {
   Chinchou = 170,
   Lanturn = 171,
   Pichu = 172,
+  /** The Pichu that followed Celebi out of the past, and never grows up */
+  PichuSpikyEared = 1017201,
   Cleffa = 173,
   Igglybuff = 174,
   Togepi = 175,
@@ -792,9 +794,90 @@ export const enum Species {
   Keldeo = 647,
   Meloetta = 648,
   Genesect = 649,
+
+  // Kalos
+  Chespin = 650,
+  Quilladin = 651,
+  Chesnaught = 652,
+  Fennekin = 653,
+  Braixen = 654,
+  Delphox = 655,
+  Froakie = 656,
+  Frogadier = 657,
+  Greninja = 658,
+  Bunnelby = 659,
+  Diggersby = 660,
+  Fletchling = 661,
+  Fletchinder = 662,
+  Talonflame = 663,
+  Scatterbug = 664,
+  Spewpa = 665,
+  Vivillon = 666,
+  Flabebe = 669,
+  Floette = 670,
+  Florges = 671,
+  Skiddo = 672,
+  Gogoat = 673,
+  Furfrou = 676,
+  Espurr = 677,
+  Meowstic = 678,
+  Honedge = 679,
+  Doublade = 680,
+  Aegislash = 681,
+  Binacle = 688,
+  Barbaracle = 689,
+  Skrelp = 690,
+  Dragalge = 691,
+  Clauncher = 692,
+  Clawitzer = 693,
+  Klefki = 707,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
+
+  /** The wings a butterfly comes out with, one per country it grew up in */
+  VivillonIcySnow = 1066601,
+  VivillonPolar = 1066602,
+  VivillonTundra = 1066603,
+  VivillonContinental = 1066604,
+  VivillonGarden = 1066605,
+  VivillonElegant = 1066606,
+  VivillonModern = 1066607,
+  VivillonMarine = 1066608,
+  VivillonArchipelago = 1066609,
+  VivillonHighPlains = 1066610,
+  VivillonSandstorm = 1066611,
+  VivillonRiver = 1066612,
+  VivillonMonsoon = 1066613,
+  VivillonSavannah = 1066614,
+  VivillonSun = 1066615,
+  VivillonOcean = 1066616,
+  VivillonJungle = 1066617,
+  /** The two nobody's country grows: they are met in a town or not at all */
+  VivillonFancy = 1066618,
+  VivillonPokeBall = 1066619,
+
+  /** The colour of the flower a Flabebe picked, the red one at the base */
+  FlabebeYellow = 1066901,
+  FlabebeOrange = 1066902,
+  FlabebeBlue = 1066903,
+  FlabebeWhite = 1066904,
+  FloetteYellow = 1067001,
+  FloetteOrange = 1067002,
+  FloetteBlue = 1067003,
+  FloetteWhite = 1067004,
+  /** The flower that never wilts, which is nobody's to pick */
+  FloetteEternal = 1067005,
+  FlorgesYellow = 1067101,
+  FlorgesOrange = 1067102,
+  FlorgesBlue = 1067103,
+  FlorgesWhite = 1067104,
+
+  /** The female of the line, who evolves out of a female Espurr */
+  MeowsticFemale = 1067801,
+
+  /** The sword drawn, which is what an Aegislash is while it attacks */
+  AegislashBlade = 1068101,
 
   /** The shapes the creation trio take in the world behind this one */
   DialgaOrigin = 1048301,
@@ -893,6 +976,16 @@ export const enum Species {
   /** The two Hisui draws differently, of the lines Unova started */
   SamurottHisui = 1050301,
   LilligantHisui = 1054901,
+
+  /**
+   * The true shadows: a pokemon that is a shadow by what it is rather
+   * than by what was done to it. The form index is the collection's
+   * own Shadow slot, so the art imports under it
+   */
+  ArticunoShadow = 1014404,
+  ZapdosShadow = 1014504,
+  MoltresShadow = 1014604,
+  MewtwoShadow = 1015003,
 }
 
 /**
@@ -1018,6 +1111,64 @@ export const TORNADUS_FORMS = [Species.Tornadus, Species.TornadusTherian];
 export const THUNDURUS_FORMS = [Species.Thundurus, Species.ThundurusTherian];
 export const LANDORUS_FORMS = [Species.Landorus, Species.LandorusTherian];
 
+/** Vivillon and the seventeen countries' wings it comes out with */
+export const VIVILLON_FORMS: Species[] = [
+  Species.Vivillon,
+  Species.VivillonIcySnow,
+  Species.VivillonPolar,
+  Species.VivillonTundra,
+  Species.VivillonContinental,
+  Species.VivillonGarden,
+  Species.VivillonElegant,
+  Species.VivillonModern,
+  Species.VivillonMarine,
+  Species.VivillonArchipelago,
+  Species.VivillonHighPlains,
+  Species.VivillonSandstorm,
+  Species.VivillonRiver,
+  Species.VivillonMonsoon,
+  Species.VivillonSavannah,
+  Species.VivillonSun,
+  Species.VivillonOcean,
+  Species.VivillonJungle,
+  Species.VivillonFancy,
+  Species.VivillonPokeBall,
+];
+
+/** Each deer's four coats, spring first, in the order the year turns */
+/** The two Meowstic, the male first: what a cat's own Espurr grew into */
+export const MEOWSTIC_FORMS: Species[] = [Species.Meowstic, Species.MeowsticFemale];
+
+/** The two stances a royal sword takes, the shield first */
+export const AEGISLASH_FORMS: Species[] = [Species.Aegislash, Species.AegislashBlade];
+
+/** Each colour of flower, the red one first: what a Flabebe was met carrying */
+export const FLABEBE_FORMS: Species[] = [
+  Species.Flabebe,
+  Species.FlabebeYellow,
+  Species.FlabebeOrange,
+  Species.FlabebeBlue,
+  Species.FlabebeWhite,
+];
+
+/** The same colours grown, with the flower that never wilts at the end */
+export const FLOETTE_FORMS: Species[] = [
+  Species.Floette,
+  Species.FloetteYellow,
+  Species.FloetteOrange,
+  Species.FloetteBlue,
+  Species.FloetteWhite,
+  Species.FloetteEternal,
+];
+
+export const FLORGES_FORMS: Species[] = [
+  Species.Florges,
+  Species.FlorgesYellow,
+  Species.FlorgesOrange,
+  Species.FlorgesBlue,
+  Species.FlorgesWhite,
+];
+
 /** Each deer's four coats, spring first, in the order the year turns */
 export const DEERLING_FORMS = [
   Species.Deerling,
@@ -1050,6 +1201,9 @@ export const DARMANITAN_FORMS = [Species.Darmanitan, Species.DarmanitanZen];
 
 /** Cherrim shut and Cherrim open, the shut one first */
 export const CHERRIM_FORMS = [Species.Cherrim, Species.CherrimSunshine];
+
+/** Pichu, and the spiky-eared one Celebi brought */
+export const PICHU_FORMS = [Species.Pichu, Species.PichuSpikyEared];
 
 /** Keldeo, and the shape it takes once it has learned Secret Sword */
 export const KELDEO_FORMS = [Species.Keldeo, Species.KeldeoResolute];

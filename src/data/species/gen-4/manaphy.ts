@@ -55,6 +55,8 @@ const SEA_TEACHABLE = [
   Moves.Uproar,
   Moves.WaterPulse,
   Moves.Waterfall,
+  Moves.Confide,
+  Moves.DazzlingGleam,
 ];
 
 export default function registerManaphySpecies(): void {

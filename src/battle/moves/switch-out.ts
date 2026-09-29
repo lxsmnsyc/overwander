@@ -32,7 +32,14 @@ const SELF_SWITCH_MOVES = new Set<Moves>([
   Moves.BatonPass,
   Moves.UTurn,
   Moves.VoltSwitch,
+  Moves.PartingShot,
 ]);
+
+/**
+ * What Parting Shot takes off its target on the wind-up step, before
+ * the user walks off: a stage of each attacking stat
+ */
+export const PARTING_SHOT_STAGES = [Stages.Attack, Stages.SpecialAttack];
 
 /** The blows that throw their target out once they land */
 const DRAGGING_MOVES = new Set<Moves>([Moves.CircleThrow, Moves.DragonTail]);
@@ -122,6 +129,24 @@ export default function setupSwitchOutMoves(battle: Battle): void {
 
     if (switched != null && getReplacement(battle, switched) == null) {
       event.usable = false;
+    }
+  });
+
+  // Parting Shot's parting words land on the wind-up step, the way
+  // U-turn's blow does, so the drop is paid once and before the walk
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
+    if (
+      event.move !== Moves.PartingShot ||
+      event.steps === 0 ||
+      event.target.type !== MoveTargetType.Unit
+    ) {
+      return;
+    }
+
+    const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
+
+    for (const stage of PARTING_SHOT_STAGES) {
+      event.target.unit.addStage(stage, -1, cause);
     }
   });
 

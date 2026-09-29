@@ -99,6 +99,7 @@ export default function registerHappinySpecies(): void {
         Moves.Uproar,
         Moves.WaterPulse,
         Moves.ZenHeadbutt,
+        Moves.Confide,
       ],
       egg: [
         Moves.Aromatherapy,

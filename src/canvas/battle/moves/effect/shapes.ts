@@ -2,6 +2,8 @@ import { Types } from '../../../../data/constants/types';
 import type { Weathers } from '../../../../data/ids/status';
 import { MoveCategories, type Moves } from '../../../../data/ids/moves';
 import { getMoveData } from '../../../../data/moves';
+import { FUTURE_SIGHT_DELAY } from '../../../../battle/moves/future-sight';
+import { WISH_DELAY } from '../../../../battle/moves/wish';
 import type { Point, Stage } from '../../stage';
 import type { Painted } from '../__paint';
 
@@ -230,7 +232,40 @@ export type EffectShape =
   | 'Blaze'
   | 'Firedance'
   | 'Spatter'
+  | 'Sparkle'
+  | 'Geo'
+  | 'Terrain'
+  | 'Arrows'
+  | 'Groundswell'
+  | 'Precipice'
+  | 'Ascent'
+  | 'Fury'
+  | 'Portal'
+  | 'Scuffle'
+  | 'Diamonds'
+  | 'Oblivion'
+  | 'Ruin'
+  | 'Origin'
+  | 'Lunar'
+  | 'Steam'
+  | 'Shuriken'
+  | 'Overload'
+  | 'Jetstream'
+  | 'Resolute'
   | 'Whiff';
+
+/** How long Wish's star rings where it lands, after the heal */
+export const WISH_TAIL = 400;
+/** Wish's star is in the air for the engine's whole wait, so it lands with the heal */
+export const WISH_SPAN = WISH_DELAY + WISH_TAIL;
+
+/** How long Doom Desire's star goes off for, after it lands */
+export const STARFALL_BLAST = 600;
+/** Doom Desire's star falls for the engine's whole wait, so it lands with the strike */
+export const STARFALL_SPAN = FUTURE_SIGHT_DELAY + STARFALL_BLAST;
+
+/** Shapes timed to the engine rather than to the move's weight */
+export const EXACT_SPANS = new Set<EffectShape>(['Wishing', 'Starfall']);
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
 export const SPANS: Record<EffectShape, number> = {
@@ -296,16 +331,16 @@ export const SPANS: Record<EffectShape, number> = {
   Torrent: 700,
   Rush: 620,
   Stall: 1000,
-  Rend: 820,
-  Verdict: 900,
-  Sunburst: 760,
+  Rend: 1000,
+  Verdict: 1000,
+  Sunburst: 950,
   Ambush: 720,
   Vortex: 900,
   Pyre: 900,
   Upheaval: 820,
   Plume: 820,
   Lustre: 820,
-  Starfall: 900,
+  Starfall: STARFALL_SPAN,
   Grip: 900,
   Surge: 900,
   Moonlit: 1000,
@@ -343,7 +378,7 @@ export const SPANS: Record<EffectShape, number> = {
   Sunbeam: 900,
   Moonbeam: 900,
   Greening: 900,
-  Wishing: 1200,
+  Wishing: WISH_SPAN,
   Feathers: 1000,
   Swarm: 1000,
   Song: 1000,
@@ -383,16 +418,16 @@ export const SPANS: Record<EffectShape, number> = {
   Orbit: 900,
   Gambit: 900,
   Buzz: 820,
-  Techno: 760,
-  Victory: 900,
-  Azure: 900,
+  Techno: 900,
+  Victory: 1000,
+  Azure: 1000,
   Thunderclap: 820,
-  Fusion: 900,
-  Frostbolt: 900,
-  Frostfire: 900,
+  Fusion: 950,
+  Frostbolt: 1000,
+  Frostfire: 1000,
   Glaze: 1000,
   Searing: 900,
-  Smite: 820,
+  Smite: 950,
   Aria: 1000,
   Flutter: 1000,
   Smash: 900,
@@ -410,6 +445,26 @@ export const SPANS: Record<EffectShape, number> = {
   Blaze: 1000,
   Firedance: 900,
   Spatter: 700,
+  Sparkle: 520,
+  Geo: 1000,
+  Terrain: 1100,
+  Arrows: 1100,
+  Groundswell: 1000,
+  Precipice: 1000,
+  Ascent: 1000,
+  Fury: 1100,
+  Portal: 950,
+  Scuffle: 820,
+  Diamonds: 1000,
+  Oblivion: 1000,
+  Ruin: 1100,
+  Origin: 1100,
+  Lunar: 900,
+  Steam: 1000,
+  Shuriken: 900,
+  Overload: 1000,
+  Jetstream: 1000,
+  Resolute: 950,
   Whiff: 320,
 };
 

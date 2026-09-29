@@ -23,6 +23,7 @@ import {
   SPECIES_DAY_SHINY_BOOST,
   getSpeciesData,
   isFeaturedSpecies,
+  isTrueShadow,
 } from '../../data/species';
 import type ChunkSnapshot from '../chunk-snapshot';
 import type { Spawn } from '../chunk-snapshot';
@@ -33,6 +34,7 @@ import type { Encounter } from './shape';
 import { IV_BITS, IV_MASK, TRAIT_MASK, TRAIT_RANGE } from './bits';
 import {
   RAID_FAMILY_DAY_MIN_IV,
+  RAID_MIN_IV,
   deriveAbility,
   deriveExtraHidden,
   deriveGender,
@@ -137,8 +139,8 @@ export default function deriveEncounter(
   const [species, individualValue, traitValue] = spawn;
   const type = options.type ?? EncounterType.Wild;
   const featured = isFeaturedSpecies(species, snapshot.timestamp);
-  // A raid staged on the family's own day hands over a pokemon worth
-  // keeping: no stat comes out of it hopeless
+  // A raid prize is worth keeping, and one on the family's own day more
+  // so: no stat comes out of it hopeless
   // The weather's floor reaches only what the sky is about, so rain is
   // worth walking into for a Water type and worth nothing for a rat.
   // The two stack rather than the kinder one winning, and the total is
@@ -147,7 +149,8 @@ export default function deriveEncounter(
   const sky = options.weather;
   const minimumIV = Math.min(
     MAX_IV,
-    (isRaidEncounter(type) && featured ? RAID_FAMILY_DAY_MIN_IV : 0) +
+    (isRaidEncounter(type) ? RAID_MIN_IV : 0) +
+      (isRaidEncounter(type) && featured ? RAID_FAMILY_DAY_MIN_IV : 0) +
       (sky != null && isWeatherFavored(sky, getSpeciesData(species).types) ? WEATHER_MIN_IV : 0),
   );
 
@@ -256,14 +259,17 @@ export default function deriveEncounter(
     // A dark day closes a share of the hearts that arrive under it,
     // rolled per pokemon and per player the way the sparkle is. A
     // caller that already knows keeps saying: a shadow raid's prize
-    // and a syndicate's pokemon are shadowed whatever the sky is doing
+    // and a syndicate's pokemon are shadowed whatever the sky is doing.
+    // A true shadow is one whatever it was met in: the shadow is what
+    // it is rather than something done to it
     shadow:
-      options.shadow ??
-      (userId != null &&
-        sky != null &&
-        shadowsMeetings(sky) &&
-        isShadowableEncounter(type) &&
-        isShadowedFor(userId, traitValue, DARK_DAY_SHADOW_CHANCE)),
+      isTrueShadow(species) ||
+      (options.shadow ??
+        (userId != null &&
+          sky != null &&
+          shadowsMeetings(sky) &&
+          isShadowableEncounter(type) &&
+          isShadowedFor(userId, traitValue, DARK_DAY_SHADOW_CHANCE))),
     moves,
     // Wild meetings only: a raid prize and a hatchling arrive with
     // empty hands, and a Rocket's pokemon is carrying whatever its
@@ -298,6 +304,7 @@ export {
   MIN_SIZE_SCALE,
   MOVE_LIMIT,
   RAID_FAMILY_DAY_MIN_IV,
+  RAID_MIN_IV,
   deriveAbility,
   deriveGender,
   deriveHeldItems,

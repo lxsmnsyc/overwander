@@ -61,6 +61,7 @@ const FAMILY_TEACHABLE = [
   Moves.Incinerate,
   Moves.Retaliate,
   Moves.WorkUp,
+  Moves.Confide,
 ];
 
 // What the two above the base pick up: a whisper has nothing to swing
@@ -77,6 +78,7 @@ const GROWN_TEACHABLE = [
   Moves.RockSmash,
   Moves.SmackDown,
   Moves.Bulldoze,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerWhismurSpecies(): void {
@@ -130,6 +132,7 @@ export default function registerWhismurSpecies(): void {
         Moves.SmellingSalts,
         Moves.HammerArm,
         Moves.CircleThrow,
+        Moves.DisarmingVoice,
       ],
     },
   });
@@ -223,6 +226,7 @@ export default function registerWhismurSpecies(): void {
         40: [Moves.HyperBeam],
         45: [Moves.Roar],
         55: [Moves.Rest, Moves.SleepTalk, Moves.Synchronoise],
+        58: [Moves.Boomburst],
         63: [Moves.HyperVoice],
       },
       teachable: [

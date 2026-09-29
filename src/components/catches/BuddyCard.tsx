@@ -240,7 +240,10 @@ function BuddyBody(
                       Lv. {pair()[1].level} {getSpeciesData(pair()[1].species).name}
                     </span>
                     <Show when={GENDER_MARKS[pair()[1].gender] !== ''}>
+                      {/* The glyph's font sits it low, so its line box is
+                          trimmed to keep it level with the name */}
                       <span
+                        class="leading-none"
                         title={GENDER_LABELS[pair()[1].gender]}
                         aria-label={GENDER_LABELS[pair()[1].gender]}
                         role="img"

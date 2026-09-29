@@ -433,3 +433,15 @@ export async function cancelTrade(uid: string, tradeId: string, now: number): Pr
     return returnTradeIn(transaction, tradeId, trade, TradeStatus.Cancelled, now);
   });
 }
+
+/** Every trade this player is on either end of, newest first, as raw rows */
+export async function readTradeRows(uid: string): Promise<Record<string, unknown>[]> {
+  const rows = await getSql()`
+    select id, proposer, receiver, offered_caught, asked_caught, given_caught,
+           gold, status, created_at, resolved_at, utc_offset
+    from trades where proposer = ${uid} or receiver = ${uid}
+    order by created_at desc
+  `;
+
+  return [...rows];
+}

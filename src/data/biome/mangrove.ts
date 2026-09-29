@@ -9,6 +9,7 @@ export default function registerMangroveSpawns(): void {
   registerSpawnPool(Biome.Mangrove, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.FlabebeBlue, weight: 24 },
         { species: Species.Totodile, weight: 2 },
         { species: Species.Lotad, weight: 20 },
       ],
@@ -21,6 +22,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.FloetteBlue, weight: 8 },
         { species: Species.Croconaw, weight: 1 },
         { species: Species.Lombre, weight: 10 },
       ],
@@ -34,6 +36,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Toxicroak, weight: 6 },
       ],
       elusive: [
+        { species: Species.FlorgesBlue, weight: 5 },
         { species: Species.Carnivine, weight: 6 },
         { species: Species.Farfetchd, weight: 5 },
         { species: Species.Feraligatr, weight: 2 },
@@ -44,6 +47,7 @@ export default function registerMangroveSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.FlabebeBlue, weight: 24 },
         { species: Species.Totodile, weight: 2 },
         { species: Species.Lotad, weight: 20 },
       ],
@@ -56,6 +60,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
+        { species: Species.FloetteBlue, weight: 8 },
         { species: Species.Croconaw, weight: 1 },
         { species: Species.Lombre, weight: 10 },
       ],
@@ -69,6 +74,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Toxicroak, weight: 6 },
       ],
       elusive: [
+        { species: Species.FlorgesBlue, weight: 5 },
         { species: Species.Carnivine, weight: 6 },
         { species: Species.Farfetchd, weight: 5 },
         { species: Species.Feraligatr, weight: 2 },

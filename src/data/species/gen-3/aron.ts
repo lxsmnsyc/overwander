@@ -57,6 +57,7 @@ const FAMILY_TEACHABLE = [
   Moves.HoneClaws,
   Moves.Round,
   Moves.Bulldoze,
+  Moves.Confide,
 ];
 
 export default function registerAronSpecies(): void {
@@ -242,6 +243,7 @@ export default function registerAronSpecies(): void {
         Moves.SmackDown,
         Moves.Incinerate,
         Moves.DragonTail,
+        Moves.PowerUpPunch,
       ],
     },
   });

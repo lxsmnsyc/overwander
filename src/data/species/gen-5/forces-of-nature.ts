@@ -52,6 +52,7 @@ const GENIE_TEACHABLE = [
   Moves.Toxic,
   Moves.UTurn,
   Moves.WeatherBall,
+  Moves.Confide,
 ];
 
 /** The levels the three share, filled in with each one's own weather */

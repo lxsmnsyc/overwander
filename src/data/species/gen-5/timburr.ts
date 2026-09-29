@@ -67,6 +67,8 @@ const FAMILY_TEACHABLE = [
   Moves.ThunderPunch,
   Moves.Toxic,
   Moves.WorkUp,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 // What the line carries, in the order it grows into: a square timber,

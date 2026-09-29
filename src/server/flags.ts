@@ -2,9 +2,9 @@ import 'server-only';
 
 /**
  * The parts of the game a self-hosted server may leave out. Each is an
- * environment variable, off unless it is exactly `1` or `true`, the way
- * `VITE_EMAIL_SIGN_IN` is: what they add is record keeping that costs
- * rows and writes, and a small private server may not want either.
+ * environment variable, off unless it is exactly `1` or `true`: what
+ * they add is record keeping that costs rows and writes, and a small
+ * private server may not want either.
  *
  * Read at call time rather than at load, so a deployment's variables
  * are what count however the bundle was built.

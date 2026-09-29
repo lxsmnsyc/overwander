@@ -47,6 +47,8 @@ const FAMILY_TEACHABLE = [
   Moves.WorrySeed,
   Moves.SmackDown,
   Moves.Round,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 export default function registerLileepSpecies(): void {

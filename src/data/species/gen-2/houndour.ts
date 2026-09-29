@@ -60,6 +60,7 @@ const FAMILY_TEACHABLE = [
   Moves.Incinerate,
   Moves.Retaliate,
   Moves.Snarl,
+  Moves.Confide,
 ];
 
 const FAMILY_ABILITIES = [Abilities.EarlyBird, Abilities.FlashFire];

@@ -8,9 +8,9 @@ import type { Moves } from '../data/ids/moves';
 import { friendshipFactor, gainFriendship } from '../data/constants/friendship';
 import { Items } from '../data/ids/items';
 import { BERRY_EFFORT_DROP, BERRY_EFFORT_DROPS } from '../data/items/berries';
-import { PP_ITEMS, VITAMIN_EFFORT, VITAMIN_STATS } from '../data/items/vitamins';
+import { MAX_VITAMIN_STATS, PP_ITEMS, VITAMIN_EFFORT, VITAMIN_STATS } from '../data/items/vitamins';
 import { MACHO_BRACE_EFFORT } from '../data/items/power-items';
-import { WING_EFFORT, WING_STATS } from '../data/items/wings';
+import { MAX_WING_STATS, WING_EFFORT, WING_STATS } from '../data/items/wings';
 import { PP_UP_LIMIT, getMovePP } from '../data/moves';
 import { Metric } from '../auth/quest-record';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
@@ -152,7 +152,14 @@ function effortGrant(item: Items): [stat: Stats, amount: number] | null {
 
   const vitamin = VITAMIN_STATS.get(item);
 
-  return vitamin == null ? null : [vitamin, VITAMIN_EFFORT];
+  if (vitamin != null) {
+    return [vitamin, VITAMIN_EFFORT];
+  }
+
+  // A Max one is worth the whole cap, which the grant clamps to
+  const filled = MAX_VITAMIN_STATS.get(item) ?? MAX_WING_STATS.get(item);
+
+  return filled == null ? null : [filled, MAX_EFFORT_PER_STAT];
 }
 
 /**

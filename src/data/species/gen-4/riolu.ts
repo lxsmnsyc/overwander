@@ -57,6 +57,8 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.VacuumWave,
   Moves.ZenHeadbutt,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 /**
@@ -151,7 +153,7 @@ export default function registerRioluSpecies(): void {
         1: [Moves.DarkPulse, Moves.Detect, Moves.Foresight, Moves.MetalClaw, Moves.QuickAttack],
         6: [Moves.Counter],
         11: [Moves.ForcePalm],
-        15: [Moves.Feint],
+        15: [Moves.Feint, Moves.PowerUpPunch],
         19: [Moves.BoneRush],
         24: [Moves.MetalSound],
         29: [Moves.MeFirst],

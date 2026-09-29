@@ -79,6 +79,7 @@ const FAMILY_TEACHABLE = [
   Moves.TrickRoom,
   Moves.Uproar,
   Moves.ZenHeadbutt,
+  Moves.Confide,
 ];
 
 // What the stare learns to do, at whichever stage
@@ -133,6 +134,7 @@ export default function registerGothitaSpecies(): void {
       level: {
         1: [Moves.Pound, Moves.Confusion],
         7: [Moves.Tickle],
+        8: [Moves.PlayNice],
         10: [Moves.FakeTears],
         ...FAMILY_LEVEL,
         33: [Moves.PsychUp, Moves.HealBlock],
@@ -187,7 +189,7 @@ export default function registerGothitaSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Pound, Moves.Confusion, Moves.FakeTears, Moves.Tickle],
+        1: [Moves.Pound, Moves.Confusion, Moves.FakeTears, Moves.Tickle, Moves.PlayNice],
         ...FAMILY_LEVEL,
         34: [Moves.HealBlock],
         35: [Moves.PsychUp],
@@ -226,7 +228,7 @@ export default function registerGothitaSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Pound, Moves.Confusion, Moves.FakeTears, Moves.Tickle],
+        1: [Moves.Pound, Moves.Confusion, Moves.FakeTears, Moves.Tickle, Moves.PlayNice],
         ...FAMILY_LEVEL,
         34: [Moves.HealBlock],
         35: [Moves.PsychUp],
@@ -244,6 +246,7 @@ export default function registerGothitaSpecies(): void {
         Moves.HyperBeam,
         Moves.LowSweep,
         Moves.Metronome,
+        Moves.PowerUpPunch,
       ],
     },
   });

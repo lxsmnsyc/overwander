@@ -18,6 +18,7 @@ import {
 import setupTeamMechanics from '../../src/battle/mechanics/team';
 import setupUnitMechanics from '../../src/battle/mechanics/unit';
 import setupWeatherMechanics from '../../src/battle/mechanics/weather';
+import setupTerrainMechanics from '../../src/battle/mechanics/terrain';
 import setupMoves from '../../src/battle/moves';
 import setupStatus from '../../src/battle/status';
 import Team from '../../src/battle/team';
@@ -63,6 +64,7 @@ export function createBattle(
   setupAbilityMechanics(battle);
   setupItemMechanics(battle);
   setupWeatherMechanics(battle);
+  setupTerrainMechanics(battle);
   setupMoveMechanics(battle);
   setupCastingMechanics(battle);
   setupChannelingMechanics(battle);

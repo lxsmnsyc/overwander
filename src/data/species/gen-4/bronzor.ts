@@ -55,6 +55,7 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Trick,
   Moves.TrickRoom,
+  Moves.Confide,
 ];
 
 /**

@@ -49,6 +49,8 @@ export default function registerMagnezoneSpecies(): void {
           Moves.Supersonic,
           Moves.Tackle,
           Moves.ThunderShock,
+          Moves.MagneticFlux,
+          Moves.ElectricTerrain,
         ],
         6: [Moves.ThunderShock],
         11: [Moves.Supersonic],
@@ -103,6 +105,7 @@ export default function registerMagnezoneSpecies(): void {
         Moves.ThunderWave,
         Moves.Thunderbolt,
         Moves.Toxic,
+        Moves.Confide,
       ],
     },
   });

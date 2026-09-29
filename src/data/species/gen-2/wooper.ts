@@ -58,6 +58,8 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.Scald,
   Moves.Bulldoze,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Damp, Abilities.WaterAbsorb];
@@ -125,6 +127,7 @@ export default function registerWooperSpecies(): void {
         Moves.Swallow,
         Moves.AcidSpray,
         Moves.AfterYou,
+        Moves.EerieImpulse,
       ],
     },
   });
@@ -193,6 +196,7 @@ export default function registerWooperSpecies(): void {
         Moves.FocusBlast,
         Moves.GigaImpact,
         Moves.StoneEdge,
+        Moves.PowerUpPunch,
       ],
     },
   });

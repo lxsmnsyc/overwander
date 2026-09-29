@@ -64,6 +64,8 @@ const FAMILY_TEACHABLE = [
   Moves.Retaliate,
   Moves.Bulldoze,
   Moves.WorkUp,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerTyrogueSpecies(): void {

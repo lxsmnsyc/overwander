@@ -2,6 +2,8 @@ import { PURIFIED_FRIENDSHIP_BONUS } from '../constants/friendship';
 import { MAX_IV, STAT_ORDER, getIV, setIV } from '../constants/stats';
 import Abilities from '../ids/abilities';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
+import type { Species } from '../ids/species';
+import { isTrueShadow } from '../species/true-shadow';
 import { registerItem } from './__create';
 
 /**
@@ -37,10 +39,14 @@ export function isPurifyingGem(item: Items): boolean {
 /**
  * Whether the pokemon is one the gem has anything to do: a shadow, and
  * nothing else. Purifying what is already purified would spend a rare
- * item on nothing
+ * item on nothing.
+ *
+ * A true shadow is refused however dark it is. It is not a pokemon
+ * with something done to it, so there is nothing to undo and no
+ * counterpart underneath for it to turn back into
  */
-export function isPurifiable(caught: { shadow: boolean }): boolean {
-  return caught.shadow;
+export function isPurifiable(caught: { shadow: boolean; species: Species }): boolean {
+  return caught.shadow && !isTrueShadow(caught.species);
 }
 
 /**

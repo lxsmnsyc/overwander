@@ -73,7 +73,10 @@ export function isPurifiableRecord(caught: Record<string, unknown>, uid: string)
   }
   // An egg is not a pokemon yet; whatever is inside it was decided
   // when it was found, and it keeps until it hatches
-  return !isEggRecord(caught) && isPurifiable({ shadow: asBoolean(caught.shadow) });
+  return (
+    !isEggRecord(caught) &&
+    isPurifiable({ shadow: asBoolean(caught.shadow), species: asNumber(caught.species) })
+  );
 }
 
 /**

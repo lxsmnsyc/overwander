@@ -7,6 +7,7 @@ import abilityCueFor, {
   statusTriggerFor,
 } from '../../src/canvas/battle/cues';
 import {
+  RIDES_THE_WAIT,
   delayShapeFor,
   effectShapeFor,
   moveDelayVisual,
@@ -22,6 +23,10 @@ import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import { Moves } from '../../src/data/ids/moves';
 import { SPANS } from '../../src/canvas/battle/moves/effect/shapes';
+import { WISH_LANDS } from '../../src/canvas/battle/moves/effect/care';
+import { STARFALL_DROP } from '../../src/canvas/battle/moves/effect/legends';
+import { FUTURE_SIGHT_DELAY } from '../../src/battle/moves/future-sight';
+import { WISH_DELAY } from '../../src/battle/moves/wish';
 import { Statuses } from '../../src/data/ids/status';
 import registerGameData from '../../src/data';
 
@@ -152,7 +157,7 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Press', Moves.Gravity],
   ['Grid', Moves.TrickRoom],
   // Wind that keeps coming, and water left turning about a pokemon
-  ['Gale', Moves.Aeroblast],
+  ['Gale', Moves.Hurricane],
   ['Gyro', Moves.AquaRing],
   // Blown over it rather than done to it
   ['Petals', Moves.SweetScent],
@@ -285,7 +290,6 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Clear', Moves.Defog],
   // Unova's own
   ['Converge', Moves.Psyshock],
-  ['Converge', Moves.Psystrike],
   ['Resonance', Moves.Synchronoise],
   ['Orbit', Moves.StoredPower],
   ['Gambit', Moves.FinalGambit],
@@ -301,7 +305,6 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Frostfire', Moves.IceBurn],
   ['Glaze', Moves.Glaciate],
   ['Smite', Moves.SacredSword],
-  ['Smite', Moves.SecretSword],
   ['Aria', Moves.RelicSong],
   ['Flutter', Moves.QuiverDance],
   ['Smash', Moves.ShellSmash],
@@ -325,6 +328,29 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Firedance', Moves.FieryDance],
   ['Scorch', Moves.Incinerate],
   ['Spatter', Moves.FlameBurst],
+  // Kalos: the fairy type's own, the terrains, and the signatures
+  ['Sparkle', Moves.DazzlingGleam],
+  ['Terrain', Moves.ElectricTerrain],
+  ['Terrain', Moves.GrassyTerrain],
+  ['Terrain', Moves.MistyTerrain],
+  ['Arrows', Moves.ThousandArrows],
+  ['Groundswell', Moves.ThousandWaves],
+  ['Precipice', Moves.PrecipiceBlades],
+  ['Origin', Moves.OriginPulse],
+  ['Ascent', Moves.DragonAscent],
+  ['Oblivion', Moves.OblivionWing],
+  ['Ruin', Moves.LightOfRuin],
+  ['Geo', Moves.Geomancy],
+  ['Portal', Moves.HyperspaceHole],
+  ['Fury', Moves.HyperspaceFury],
+  ['Diamonds', Moves.DiamondStorm],
+  ['Steam', Moves.SteamEruption],
+  ['Lunar', Moves.Moonblast],
+  ['Scuffle', Moves.PlayRough],
+  ['Shuriken', Moves.WaterShuriken],
+  ['Overload', Moves.Psystrike],
+  ['Jetstream', Moves.Aeroblast],
+  ['Resolute', Moves.SecretSword],
 ];
 
 /**
@@ -370,6 +396,18 @@ describe('a painted move', () => {
         struck: true,
       }).drawLit,
     ).toBeDefined();
+  });
+
+  it('lands a delayed star on the frame the engine resolves it', () => {
+    // Wish's star is drawn as the wish is made, and heals as it lands
+    const wish = moveEffectVisual(Moves.Wish);
+
+    expect((wish?.duration ?? 0) * WISH_LANDS).toBeCloseTo(WISH_DELAY, 6);
+    // Doom Desire's is drawn as the strike is queued, and hits as it lands
+    const doom = moveEffectVisual(Moves.DoomDesire);
+
+    expect((doom?.duration ?? 0) * STARFALL_DROP).toBeCloseTo(FUTURE_SIGHT_DELAY, 6);
+    expect(RIDES_THE_WAIT.has(Moves.DoomDesire)).toBe(true);
   });
 
   it('draws something at every instant of every shape it can land as', () => {

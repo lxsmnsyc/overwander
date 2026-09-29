@@ -100,6 +100,7 @@ export default function registerCrobatSpecies(): void {
         Moves.Venoshock,
         Moves.Round,
         Moves.Acrobatics,
+        Moves.Confide,
       ],
     },
   });

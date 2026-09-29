@@ -61,6 +61,12 @@ const SEMI_INVULNERABLE_MOVES: { [key in Moves]?: SemiInvulnerableConfig } = {
     bypass: new Set(),
     doubled: new Set(),
   },
+  // Shadow Force's step off the field, on a Ghost that is not Giratina
+  // https://bulbapedia.bulbagarden.net/wiki/Phantom_Force_(move)
+  [Moves.PhantomForce]: {
+    bypass: new Set(),
+    doubled: new Set(),
+  },
   // Up where Fly goes, so what reaches one reaches the other. Sky
   // Uppercut is the fist that follows it up there
   // https://bulbapedia.bulbagarden.net/wiki/Bounce_(move)

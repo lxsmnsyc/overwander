@@ -910,6 +910,36 @@ const enum Abilities {
   StillWater = 200326,
   Shockmud = 200327,
   HerdBond = 200328,
+  // Chespin
+  SpineBond = 200329,
+  // Fennekin
+  EmberBond = 200330,
+  // Froakie
+  ShadeBond = 200331,
+  // Bunnelby
+  LoosenedEarth = 200332,
+  // Fletchling
+  Stoop = 200333,
+  // Scatterbug
+  Wingscale = 200334,
+  // Flabebe
+  Hothouse = 200335,
+  // Skiddo
+  SaddleBurden = 200336,
+  // Furfrou
+  PedigreeCoat = 200337,
+  // Espurr
+  Restraint = 200338,
+  // Honedge
+  TurnTheBlade = 200339,
+  // Klefki
+  Keyring = 200340,
+  // Binacle
+  ManyHands = 200341,
+  // Skrelp
+  DeepKelp = 200342,
+  // Clauncher
+  RangingShot = 200343,
 }
 
 export default Abilities;

@@ -72,6 +72,8 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.Scald,
   Moves.WaterPledge,
+  Moves.Confide,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerSquirtleSpecies(): void {

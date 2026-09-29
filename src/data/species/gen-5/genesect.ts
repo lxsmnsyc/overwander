@@ -32,6 +32,7 @@ const GENESECT_LEVELS = {
     Moves.MetalClaw,
     Moves.MagnetRise,
     Moves.TechnoBlast,
+    Moves.FellStinger,
   ],
   11: [Moves.LockOn],
   18: [Moves.FlameCharge],
@@ -115,6 +116,8 @@ const GENESECT_TEACHABLE = [
   Moves.UTurn,
   Moves.XScissor,
   Moves.ZenHeadbutt,
+  Moves.Confide,
+  Moves.Infestation,
 ];
 
 /** Each cassette's shape. The machine stays Bug and Steel in all of

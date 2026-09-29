@@ -27,6 +27,7 @@ import {
 import Biome, { TimeOfDay, WILD_BIOMES } from '../../src/data/ids/biome';
 import { Moves } from '../../src/data/ids/moves';
 import {
+  AEGISLASH_FORMS,
   ARCEUS_FORMS,
   BASCULIN_FORMS,
   BURMY_FORMS,
@@ -37,6 +38,9 @@ import {
   DEOXYS_FORMS,
   DIALGA_FORMS,
   EvolutionMethod,
+  FLABEBE_FORMS,
+  FLOETTE_FORMS,
+  FLORGES_FORMS,
   GASTRODON_FORMS,
   GENESECT_FORMS,
   GIRATINA_FORMS,
@@ -44,7 +48,9 @@ import {
   KYUREM_FORMS,
   LANDORUS_FORMS,
   MELOETTA_FORMS,
+  MEOWSTIC_FORMS,
   PALKIA_FORMS,
+  PICHU_FORMS,
   ROTOM_FORMS,
   SAWSBUCK_FORMS,
   SHAYMIN_FORMS,
@@ -53,6 +59,7 @@ import {
   THUNDURUS_FORMS,
   TORNADUS_FORMS,
   UNOWN_FORMS,
+  VIVILLON_FORMS,
   WORMADAM_FORMS,
   getBaseFormSpecies,
   speciesDexNumber,
@@ -74,6 +81,7 @@ import {
   getSpeciesForms,
   getWornForms,
   isBaseForm,
+  listTrueShadows,
   registerSpecies,
 } from '../../src/data/species';
 import { registerSpecies as registerSpeciesData } from '../../src/data/species/__create';
@@ -366,6 +374,14 @@ describe('species measurements', () => {
 });
 
 describe('species forms', () => {
+  it('keeps each Meowstic record to its own sex', () => {
+    // Drawn from the record rather than the roll: a female-form
+    // Meowstic that rolled male was drawn in the female coat and
+    // marked ♂, and the male form the other way round
+    expect(getSpeciesData(Species.Meowstic).genderRatio).toEqual([1, 0]);
+    expect(getSpeciesData(Species.MeowsticFemale).genderRatio).toEqual([0, 1]);
+  });
+
   it('treats every registered species but the unowns and the worn shapes as a default form', () => {
     // The flag is absent almost everywhere and answers true rather
     // than being written out three hundred times. The variants are
@@ -392,6 +408,7 @@ describe('species forms', () => {
       ...GIRATINA_FORMS.slice(1),
       ...SHAYMIN_FORMS.slice(1),
       ...KELDEO_FORMS.slice(1),
+      ...PICHU_FORMS.slice(1),
       ...ROTOM_FORMS.slice(1),
       ...ARCEUS_FORMS.slice(1),
       ...KYUREM_FORMS.slice(1),
@@ -401,7 +418,16 @@ describe('species forms', () => {
       ...MELOETTA_FORMS.slice(1),
       ...GENESECT_FORMS.slice(1),
       ...DEERLING_FORMS.slice(1),
+      ...VIVILLON_FORMS.slice(1),
+      ...FLABEBE_FORMS.slice(1),
+      ...FLOETTE_FORMS.slice(1),
+      ...FLORGES_FORMS.slice(1),
+      ...AEGISLASH_FORMS.slice(1),
+      ...MEOWSTIC_FORMS.slice(1),
       ...SAWSBUCK_FORMS.slice(1),
+      // The true shadows, which are forms of the birds they are the
+      // shadow of rather than pokemon of their own
+      ...listTrueShadows(),
     ]);
 
     expect(registered.length).toBeGreaterThan(0);

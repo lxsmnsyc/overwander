@@ -54,6 +54,7 @@ const FAMILY_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.Scald,
   Moves.WaterPledge,
+  Moves.Confide,
 ];
 
 // What the two above the base pick up: the machines and tutors that
@@ -68,6 +69,7 @@ const GROWN_TEACHABLE = [
   Moves.RockSlide,
   Moves.IcePunch,
   Moves.Bulldoze,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerMudkipSpecies(): void {

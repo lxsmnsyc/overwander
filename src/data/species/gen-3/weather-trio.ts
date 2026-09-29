@@ -50,6 +50,7 @@ const TRIO_TEACHABLE = [
   Moves.Swift,
   Moves.Round,
   Moves.Bulldoze,
+  Moves.Confide,
 ];
 
 export default function registerWeatherTrioSpecies(): void {
@@ -87,7 +88,7 @@ export default function registerWeatherTrioSpecies(): void {
         20: [Moves.BodySlam],
         30: [Moves.CalmMind, Moves.AquaRing],
         35: [Moves.IceBeam],
-        45: [Moves.HydroPump],
+        45: [Moves.HydroPump, Moves.OriginPulse],
         50: [Moves.Rest],
         60: [Moves.SheerCold],
         65: [Moves.DoubleEdge, Moves.AquaTail],
@@ -151,7 +152,7 @@ export default function registerWeatherTrioSpecies(): void {
         20: [Moves.Slash, Moves.HammerArm],
         30: [Moves.BulkUp],
         35: [Moves.Earthquake],
-        45: [Moves.FireBlast],
+        45: [Moves.FireBlast, Moves.PrecipiceBlades],
         50: [Moves.Rest],
         60: [Moves.Fissure],
         65: [Moves.SolarBeam, Moves.EarthPower],
@@ -199,6 +200,7 @@ export default function registerWeatherTrioSpecies(): void {
         Moves.SmackDown,
         Moves.Incinerate,
         Moves.DragonTail,
+        Moves.PowerUpPunch,
       ],
     },
   });
@@ -286,6 +288,7 @@ export default function registerWeatherTrioSpecies(): void {
         Moves.SkyDrop,
         Moves.Incinerate,
         Moves.DragonTail,
+        Moves.DragonAscent,
       ],
     },
   });

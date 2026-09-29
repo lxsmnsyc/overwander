@@ -6,7 +6,7 @@ import { ServerFlag, isFlagOn } from './flags';
  * A record of what staff did, kept while `STAFF_LOG` is on.
  *
  * Every change staff can make passes through here once it has landed:
- * roles, bans, gifts and teleports. The record is written after the
+ * roles, bans, gifts, teleports and switches. The record is written after the
  * change rather than inside it, and a record that fails is swallowed,
  * the way rAthena's own logs are: a ban that did not happen because
  * its log line could not be written is worse than a missing line.
@@ -16,6 +16,8 @@ export const enum StaffAction {
   Ban = 'ban',
   Gift = 'gift',
   Teleport = 'teleport',
+  PasswordLink = 'password-link',
+  Switch = 'switch',
 }
 
 export async function recordStaffAction(

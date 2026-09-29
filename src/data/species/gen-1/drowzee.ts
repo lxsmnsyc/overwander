@@ -78,6 +78,9 @@ const FAMILY_TEACHABLE = [
   Moves.LowSweep,
   Moves.FoulPlay,
   Moves.Round,
+  Moves.Confide,
+  Moves.DazzlingGleam,
+  Moves.PowerUpPunch,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Insomnia, Abilities.Forewarn];

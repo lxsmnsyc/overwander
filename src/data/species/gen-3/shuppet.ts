@@ -57,6 +57,8 @@ const FAMILY_TEACHABLE = [
   Moves.MagicRoom,
   Moves.FoulPlay,
   Moves.Round,
+  Moves.Confide,
+  Moves.DazzlingGleam,
 ];
 
 export default function registerShuppetSpecies(): void {
@@ -104,10 +106,18 @@ export default function registerShuppetSpecies(): void {
         38: [Moves.Embargo],
         44: [Moves.ShadowBall],
         49: [Moves.Snatch],
+        54: [Moves.PhantomForce],
         56: [Moves.Grudge],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Astonish, Moves.DestinyBond, Moves.Disable, Moves.Foresight, Moves.Imprison],
+      egg: [
+        Moves.Astonish,
+        Moves.DestinyBond,
+        Moves.Disable,
+        Moves.Foresight,
+        Moves.Imprison,
+        Moves.PhantomForce,
+      ],
     },
   });
 
@@ -149,7 +159,7 @@ export default function registerShuppetSpecies(): void {
         42: [Moves.Embargo],
         48: [Moves.ShadowBall],
         55: [Moves.Snatch],
-        64: [Moves.Grudge],
+        64: [Moves.Grudge, Moves.PhantomForce],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -159,6 +169,7 @@ export default function registerShuppetSpecies(): void {
         Moves.Fling,
         Moves.GigaImpact,
         Moves.ShadowClaw,
+        Moves.Infestation,
       ],
     },
   });

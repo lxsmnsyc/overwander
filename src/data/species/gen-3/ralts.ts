@@ -67,6 +67,8 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.EchoedVoice,
   Moves.AllySwitch,
+  Moves.Confide,
+  Moves.DazzlingGleam,
 ];
 
 export default function registerRaltsSpecies(): void {
@@ -104,10 +106,11 @@ export default function registerRaltsSpecies(): void {
       level: {
         1: [Moves.Growl],
         6: [Moves.Confusion],
-        11: [Moves.DoubleTeam],
+        11: [Moves.DoubleTeam, Moves.DisarmingVoice],
         16: [Moves.Teleport],
         17: [Moves.LuckyChant],
         21: [Moves.CalmMind],
+        22: [Moves.DrainingKiss],
         23: [Moves.HealPulse],
         26: [Moves.Psychic],
         31: [Moves.Imprison],
@@ -125,6 +128,7 @@ export default function registerRaltsSpecies(): void {
         Moves.Memento,
         Moves.ShadowSneak,
         Moves.Synchronoise,
+        Moves.MistyTerrain,
       ],
     },
   });
@@ -169,8 +173,10 @@ export default function registerRaltsSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Growl, Moves.Confusion, Moves.DoubleTeam, Moves.Teleport],
+        11: [Moves.DisarmingVoice],
         17: [Moves.LuckyChant],
         21: [Moves.CalmMind],
+        23: [Moves.DrainingKiss],
         25: [Moves.HealPulse],
         26: [Moves.Psychic],
         33: [Moves.Imprison],
@@ -212,8 +218,17 @@ export default function registerRaltsSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Growl, Moves.Confusion, Moves.DoubleTeam, Moves.Teleport, Moves.HealingWish],
+        1: [
+          Moves.Growl,
+          Moves.Confusion,
+          Moves.DoubleTeam,
+          Moves.Teleport,
+          Moves.HealingWish,
+          Moves.MistyTerrain,
+        ],
+        11: [Moves.DisarmingVoice],
         21: [Moves.CalmMind],
+        23: [Moves.DrainingKiss],
         25: [Moves.HealPulse],
         26: [Moves.Psychic],
         33: [Moves.Imprison],
@@ -221,6 +236,7 @@ export default function registerRaltsSpecies(): void {
         51: [Moves.Hypnosis],
         53: [Moves.Captivate],
         60: [Moves.DreamEater],
+        62: [Moves.Moonblast],
         80: [Moves.StoredPower],
       },
       teachable: [

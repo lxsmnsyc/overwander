@@ -15,6 +15,9 @@ import type Unit from '../unit';
 /** The moves that take their user up out of reach, which Smack Down ends */
 const TAKEN_UP = new Set<Moves>([Moves.Fly, Moves.Bounce, Moves.SkyDrop]);
 
+/** The blows that bring whatever they hit down to the ground */
+const GROUNDING_MOVES = new Set<Moves>([Moves.SmackDown, Moves.ThousandArrows]);
+
 /** What keeps a pokemon off the ground on top of its type */
 const HELD_UP = [Statuses.MagnetRisen, Statuses.Telekinetic, Statuses.SkyDropped];
 
@@ -29,7 +32,7 @@ function canLift(unit: Unit): boolean {
 
 export default function setupAirborneMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
-    if (event.move !== Moves.SmackDown || !event.success || !event.target.alive) {
+    if (!GROUNDING_MOVES.has(event.move) || !event.success || !event.target.alive) {
       return;
     }
 
@@ -51,7 +54,7 @@ export default function setupAirborneMoves(battle: Battle): void {
     // Grounded takes the place of Floating by itself
     target.addStatus(Statuses.Grounded, {
       type: EffectType.Move,
-      move: Moves.SmackDown,
+      move: event.move,
       unit: event.source,
     });
   });

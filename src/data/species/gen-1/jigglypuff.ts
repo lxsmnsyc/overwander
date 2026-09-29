@@ -94,6 +94,9 @@ const FAMILY_TEACHABLE = [
   Moves.Retaliate,
   Moves.WorkUp,
   Moves.WildCharge,
+  Moves.Confide,
+  Moves.DazzlingGleam,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerJigglypuffSpecies(): void {
@@ -132,7 +135,9 @@ export default function registerJigglypuffSpecies(): void {
       level: {
         1: [Moves.Sing],
         4: [Moves.DefenseCurl],
+        8: [Moves.PlayNice],
         9: [Moves.Pound],
+        11: [Moves.DisarmingVoice],
         14: [Moves.Disable],
         17: [Moves.Round],
         19: [Moves.Rollout],
@@ -174,7 +179,7 @@ export default function registerJigglypuffSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Sing, Moves.Disable, Moves.DefenseCurl, Moves.DoubleSlap],
+        1: [Moves.Sing, Moves.Disable, Moves.DefenseCurl, Moves.DoubleSlap, Moves.PlayRough],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

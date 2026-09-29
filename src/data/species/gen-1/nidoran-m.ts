@@ -61,6 +61,7 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.EchoedVoice,
   Moves.DrillRun,
+  Moves.Confide,
 ];
 
 // Additional TM/HM moves for the fully evolved form
@@ -78,6 +79,7 @@ const EVOLVED_TEACHABLE = [
   Moves.RockSlide,
   Moves.Surf,
   Moves.Strength,
+  Moves.PowerUpPunch,
 ];
 
 export default function registerNidoranMSpecies(): void {
@@ -137,6 +139,7 @@ export default function registerNidoranMSpecies(): void {
         Moves.BeatUp,
         Moves.HeadSmash,
         Moves.ChipAway,
+        Moves.VenomDrench,
       ],
     },
   });

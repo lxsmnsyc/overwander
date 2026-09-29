@@ -38,7 +38,7 @@ export default function registerCheeringPairSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Growl],
+        1: [Moves.Growl, Moves.PlayNice, Moves.Nuzzle],
         4: [Moves.ThunderWave],
         10: [Moves.QuickAttack],
         13: [Moves.HelpingHand],
@@ -103,6 +103,7 @@ export default function registerCheeringPairSpecies(): void {
         Moves.EchoedVoice,
         Moves.VoltSwitch,
         Moves.WildCharge,
+        Moves.Confide,
       ],
       egg: [Moves.Wish, Moves.Discharge],
     },
@@ -133,7 +134,7 @@ export default function registerCheeringPairSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Growl],
+        1: [Moves.Growl, Moves.PlayNice, Moves.Nuzzle],
         4: [Moves.ThunderWave],
         10: [Moves.QuickAttack],
         13: [Moves.HelpingHand],
@@ -199,6 +200,7 @@ export default function registerCheeringPairSpecies(): void {
         Moves.EchoedVoice,
         Moves.VoltSwitch,
         Moves.WildCharge,
+        Moves.Confide,
       ],
       egg: [Moves.Wish, Moves.Discharge],
     },

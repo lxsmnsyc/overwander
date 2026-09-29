@@ -61,6 +61,7 @@ const FAMILY_TEACHABLE = [
   Moves.Uproar,
   Moves.WorkUp,
   Moves.ZenHeadbutt,
+  Moves.Confide,
 ];
 
 // What it learns by biting things, however many heads it has grown

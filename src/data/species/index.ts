@@ -3,6 +3,8 @@ import registerGen2Species from './gen-2';
 import registerGen3Species from './gen-3';
 import registerGen4Species from './gen-4';
 import registerGen5Species from './gen-5';
+import registerGen6Species from './gen-6';
+import registerTrueShadowSpecies from './true-shadow';
 
 export {
   getBaseForms,
@@ -59,7 +61,17 @@ export {
 export type { EvolutionContext, Handover } from './evolution';
 export { REGIONS, REGION_NAMES, getSpeciesByRegion, getSpeciesRegion } from './regions';
 export { getShoreForm } from './gen-4/shellos';
+export { getWingPattern } from './gen-6/scatterbug';
 export { getSeasonalCoat } from './gen-5/deerling';
+export {
+  TRUE_SHADOW_BONUS,
+  TRUE_SHADOW_WEIGHT,
+  getTrueShadow,
+  getTrueShadowCounterpart,
+  isTrueShadow,
+  listTrueShadows,
+  trueShadowName,
+} from './true-shadow';
 
 export function registerSpecies(): void {
   registerGen1Species();
@@ -67,4 +79,7 @@ export function registerSpecies(): void {
   registerGen3Species();
   registerGen4Species();
   registerGen5Species();
+  registerGen6Species();
+  // Last: each one is a copy of a counterpart that has to exist first
+  registerTrueShadowSpecies();
 }

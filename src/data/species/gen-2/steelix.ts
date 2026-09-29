@@ -106,6 +106,7 @@ export default function registerSteelixSpecies(): void {
         Moves.Round,
         Moves.Bulldoze,
         Moves.DragonTail,
+        Moves.Confide,
       ],
     },
   });

@@ -90,6 +90,8 @@ export default function registerCarnivineSpecies(): void {
         Moves.Synthesis,
         Moves.Thief,
         Moves.Toxic,
+        Moves.Confide,
+        Moves.Infestation,
       ],
     },
   });

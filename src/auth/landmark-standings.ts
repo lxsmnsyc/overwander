@@ -1,12 +1,20 @@
+import { readOnly } from '../utils/server-calls';
 import Landmark from '../data/overworld/landmark';
 import { NPC_VISIT_TAGS } from '../data/overworld/npc';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-import { WORLD_GENERATION } from '../overworld/current';
-import { asNumber, asString } from './__normalize';
 import { RaidKind, raidId } from './raid-record';
 import { seatId } from './gym-seat-record';
 import { stopIdOf } from './stop-record';
-import getSupabase from './supabase';
+import getIdToken from './session';
+import { requireReader } from '../server/auth';
+import check, { STANDING_IDS, TOKEN, UID } from '../server/validate';
+import {
+  type StandingIds,
+  type StandingRows,
+  readStandingRows,
+} from '../server/landmark-standings';
+
+const EMPTY_IDS: StandingIds = { lairs: [], stops: [], seats: [], visits: [], nests: [] };
 
 /** Where the signed-in player stands with a chunk's landmarks, by cell */
 export interface LandmarkStandings {
@@ -22,16 +30,12 @@ export interface LandmarkStandings {
   taken: Set<number>;
 }
 
-/** The cells whose row id is in `ids`, read back through the id they were asked by */
-function cellsOf<K extends string>(
-  ids: Map<string, number>,
-  rows: Record<K, unknown>[],
-  column: K,
-): Set<number> {
+/** The cells whose row id came back, read through the id they were asked by */
+function cellsOf(ids: Map<string, number>, found: readonly string[]): Set<number> {
   const cells = new Set<number>();
 
-  for (const row of rows) {
-    const cell = ids.get(asString(row[column]));
+  for (const id of found) {
+    const cell = ids.get(id);
 
     if (cell != null) {
       cells.add(cell);
@@ -40,10 +44,7 @@ function cellsOf<K extends string>(
   return cells;
 }
 
-/**
- * Read under row-level security rather than through the server: every
- * row asked for is either public or the player's own
- */
+/** Every row asked for is either public (the seats) or the player's own */
 export async function readLandmarkStandings(
   snapshot: ChunkSnapshot,
   uid: string,
@@ -96,60 +97,35 @@ export async function readLandmarkStandings(
     nests.set(snapshot.nestMarker(cell), cell);
   }
 
-  const supabase = getSupabase();
-  const [rewards, defeated, held, claims, eggs] = await Promise.all([
-    lairs.size === 0
-      ? null
-      : supabase
-          .from('raid_rewards')
-          .select('raid_id')
-          .eq('player', uid)
-          .in('raid_id', [...lairs.keys()]),
-    stops.size === 0
-      ? null
-      : supabase
-          .from('rocket_stops')
-          .select('stop_id')
-          .eq('generation', WORLD_GENERATION)
-          .eq('player', uid)
-          .eq('defeated', true)
-          .in('stop_id', [...stops.keys()]),
-    seats.size === 0
-      ? null
-      : supabase
-          .from('gym_seats')
-          .select('cell, holder')
-          .eq('generation', WORLD_GENERATION)
-          .in('seat_id', [...seats.keys()])
-          .not('holder', 'is', null),
-    visits.size === 0
-      ? null
-      : supabase
-          .from('npc_claims')
-          .select('marker')
-          .eq('generation', WORLD_GENERATION)
-          .eq('player', uid)
-          .in('marker', [...visits.keys()]),
-    nests.size === 0
-      ? null
-      : supabase
-          .from('nest_claims')
-          .select('marker')
-          .eq('generation', WORLD_GENERATION)
-          .eq('player', uid)
-          .in('marker', [...nests.keys()]),
-  ]);
+  const rows = await readStandingsOnServer(await getIdToken(), uid, {
+    lairs: [...lairs.keys()],
+    stops: [...stops.keys()],
+    seats: [...seats.keys()],
+    visits: [...visits.keys()],
+    nests: [...nests.keys()],
+  });
 
-  const holders = new Map<number, string>();
-
-  for (const row of (held?.data ?? []) as { cell: unknown; holder: unknown }[]) {
-    holders.set(asNumber(row.cell), asString(row.holder));
-  }
   return {
-    cleared: cellsOf(lairs, (rewards?.data ?? []) as { raid_id: unknown }[], 'raid_id'),
-    beaten: cellsOf(stops, (defeated?.data ?? []) as { stop_id: unknown }[], 'stop_id'),
-    seats: holders,
-    visited: cellsOf(visits, (claims?.data ?? []) as { marker: unknown }[], 'marker'),
-    taken: cellsOf(nests, (eggs?.data ?? []) as { marker: unknown }[], 'marker'),
+    cleared: cellsOf(lairs, rows.cleared),
+    beaten: cellsOf(stops, rows.beaten),
+    seats: new Map(rows.held),
+    visited: cellsOf(visits, rows.visited),
+    taken: cellsOf(nests, rows.taken),
   };
 }
+
+/** Another player's standings are never read, so their own rows come back empty */
+async function readStandingsOnServer(
+  token: string,
+  player: string,
+  ids: StandingIds,
+): Promise<StandingRows> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  check(STANDING_IDS, ids);
+  const uid = await requireReader(token);
+
+  return readStandingRows(uid, player === uid ? ids : { ...EMPTY_IDS, seats: ids.seats });
+}
+readOnly(readStandingsOnServer);

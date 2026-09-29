@@ -1,12 +1,12 @@
-import { type JSX, Show } from 'solid-js';
+import { type JSX, type ParentProps, Show } from 'solid-js';
 import type { InventoryEntry } from '../../../../auth/inventory';
 import type { Items } from '../../../../data/ids/items';
 import { FOSSIL_REVIVE_LEVEL, getFossilPrice } from '../../../../data/overworld/fossil';
 import ItemGrid, { type ItemCell } from '../../../items/ItemGrid';
 import InventoryPicker from '../../../items/InventoryPicker';
 import { describeItem } from '../../../details';
-import { Badge, Detail, DialogSection, Meta, Note, Row } from '../../../styled';
-import { CENTRED } from '../shared';
+import { Detail, DialogSection, Meta, Note } from '../../../styled';
+import { CounterSpent, CounterStep, CounterTerms } from '../terms';
 
 /**
  * The counters that deal in things rather than in pokemon: the rocks
@@ -15,23 +15,17 @@ import { CENTRED } from '../shared';
  * decides whether a square can be pressed.
  */
 
-/** What is in the purse, over whatever it is about to be spent on */
-function Purse(props: { gold: number }): JSX.Element {
-  return (
-    <Row class="justify-center">
-      <Badge tone="gold">{props.gold} gold</Badge>
-    </Row>
-  );
-}
-
 export interface FossilCounterProps {
   /** The rocks he is carrying this window */
   offer: Items[];
   gold: number;
   busy: boolean;
+  /** The rock picked, paid for at the foot */
+  picked: Items | null;
   /** Whether he has already sold his one this window */
   sold: boolean;
-  onBuy: (item: Items) => void;
+  spent: string;
+  onPick: (item: Items) => void;
 }
 
 export function FossilCounter(props: FossilCounterProps): JSX.Element {
@@ -42,7 +36,8 @@ export function FossilCounter(props: FossilCounterProps): JSX.Element {
       cells.push({
         item,
         note: `${getFossilPrice(item)} gold`,
-        said: `Buy ${describeItem(item)}, ${getFossilPrice(item)} gold`,
+        said: `Pick ${describeItem(item)}, ${getFossilPrice(item)} gold`,
+        selected: props.picked === item,
         blocked: getFossilPrice(item) > props.gold ? 'More than you hold' : null,
         card: () => <Detail label="Costs">{getFossilPrice(item)} gold</Detail>,
       });
@@ -51,23 +46,21 @@ export function FossilCounter(props: FossilCounterProps): JSX.Element {
   };
 
   return (
-    <DialogSection class={CENTRED}>
-      <Purse gold={props.gold} />
-
-      {/* Two rocks, and nothing about what is in them. He is selling
-          the dig rather than the pokemon, and a player who knew which
-          species each held would be buying a name off a shelf.
-
-          Sold is a state of the shelf, not a message: one a window is
-          his rule, and after it the squares would only offer a press
-          the server refuses */}
-      <Show when={!props.sold} fallback={<Note>He has sold you his one for today.</Note>}>
+    <DialogSection class="flex flex-col gap-3">
+      {/* Each rock carries its own price, so the terms say the purse */}
+      <CounterTerms have={{ amount: props.gold, short: false, unit: 'gold' }} />
+      {/* Two rocks, and nothing about what is in them: he sells the dig,
+          not the pokemon */}
+      <Show when={!props.sold} fallback={<CounterSpent says={props.spent} />}>
         <Show when={props.offer.length > 0} fallback={<Note>He has nothing on him just now.</Note>}>
-          {/* The bag's own tray, trading the way the vendor's crate
-              does: the press is the purchase, with the price on the
-              square and the purse greying what it will not stretch
-              to */}
-          <ItemGrid bare verb="Buy" disabled={props.busy} entries={shelf()} onPress={props.onBuy} />
+          <CounterStep>Choose a rock</CounterStep>
+          <ItemGrid
+            bare
+            verb="Pick"
+            disabled={props.busy}
+            entries={shelf()}
+            onPress={props.onPick}
+          />
         </Show>
       </Show>
     </DialogSection>
@@ -80,14 +73,16 @@ export interface ReviveCounterProps {
 }
 
 /** What his bench promises, over the fossils laid out on it */
-export function ReviveCounter(props: ReviveCounterProps): JSX.Element {
+export function ReviveCounter(props: ReviveCounterProps & ParentProps): JSX.Element {
   return (
-    <DialogSection class={CENTRED}>
+    <DialogSection class="flex flex-col gap-3">
       <Show when={props.carrying > 0} fallback={<Note>You are carrying nothing he can open.</Note>}>
-        {/* What comes out is the rock's business, but the level is not
-            — a party picked around it is worth planning before the
-            fossil is spent */}
+        {/* What comes out is the rock's business, but the level is not:
+            a party planned around it is worth knowing before the fossil
+            is spent */}
         <Meta class="block">Whatever is in there comes out at level {FOSSIL_REVIVE_LEVEL}.</Meta>
+        <CounterStep>Choose a fossil</CounterStep>
+        {props.children}
       </Show>
     </DialogSection>
   );
@@ -121,15 +116,15 @@ export function KurtCounter(props: KurtCounterProps): JSX.Element {
   };
 
   return (
-    <DialogSection class={CENTRED}>
+    <DialogSection class="flex flex-col gap-3">
+      <CounterTerms have={{ amount: carrying(), short: carrying() === 0, unit: 'apricorns' }} />
       <Show
         when={props.apricorns.length > 0}
         fallback={<Note>You are carrying nothing he can carve.</Note>}
       >
-        <Row class="justify-center">
-          <Badge tone="leaf">{carrying()} apricorns</Badge>
-        </Row>
+        <CounterStep>Choose an apricorn</CounterStep>
         <InventoryPicker
+          keepOpen
           inline
           counts
           entries={props.apricorns}

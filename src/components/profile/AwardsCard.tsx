@@ -414,7 +414,8 @@ function Slot(props: { award: Awards; wins: number | null }): JSX.Element {
   return (
     <HoverCard
       class="block w-full"
-      title="Info"
+      title={name()}
+      kind="Award"
       trigger={
         <button
           type="button"
@@ -595,7 +596,8 @@ function LineSlot(props: {
   return (
     <HoverCard
       class="block w-full"
-      title="Info"
+      title={props.name}
+      kind="Achievement"
       trigger={
         <button
           type="button"

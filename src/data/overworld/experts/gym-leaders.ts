@@ -9,9 +9,8 @@ import { getMoveData } from '../../moves';
 /**
  * The type experts who stand at the fighting landmarks above a plain
  * trainer: gym leaders, the Elite Four and the Champion. Who stands
- * at a given cell is a fixture of the chunk rather than the window's
- * roll — a gym does not change hands with the window — and what they
- * field turns over with the window like any other stop
+ * at a given cell and what they field both turn over with the window,
+ * like any other stop
  */
 
 /**

@@ -137,7 +137,7 @@ export default function Filter<V>(props: {
           // however long it takes to go
           aria-hidden={open() ? undefined : 'true'}
           class="flex max-h-64 w-full list-none flex-col gap-0.5 overflow-y-auto rounded-xl
-            border-2 border-tide bg-paper p-1 shadow-pop"
+            border-2 border-line bg-paper p-1 shadow-float"
         >
           <For each={props.options}>
             {(option) => (

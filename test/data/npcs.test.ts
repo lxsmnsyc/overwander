@@ -153,6 +153,16 @@ describe('wandering NPCs', () => {
     expect(new Set(getRecallableMoves(Species.Bulbasaur, 48, carrying)).has(Moves.PetalDance)).toBe(
       false,
     );
+
+    // An evolved pokemon reaches its pre-evolutions' moves too, up to
+    // its own level: Caterpie's Bug Bite comes at 15
+    const butterfree = new Set(getRecallableMoves(Species.Butterfree, 12, []));
+
+    for (const move of [Moves.Tackle, Moves.StringShot, Moves.Harden, Moves.Confusion]) {
+      expect(butterfree.has(move)).toBe(true);
+    }
+    expect(butterfree.has(Moves.BugBite)).toBe(false);
+    expect(new Set(getRecallableMoves(Species.Butterfree, 15, [])).has(Moves.BugBite)).toBe(true);
   });
 });
 

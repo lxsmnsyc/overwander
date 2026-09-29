@@ -4,8 +4,9 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // What a Zygarde knows however much of itself it has gathered
@@ -320,6 +321,16 @@ export default function registerKalosTrioSpecies(): void {
   });
   registerSpecies(Species.Zygarde, {
     dexNumber: 718,
+    // The cube holds the cells, so the two shapes are a switch rather
+    // than a ladder: it scatters half of one down to a tenth, and
+    // gathers a tenth back up to half. A cube is spent either way
+    evolvesInto: [
+      {
+        species: Species.ZygardeTenPercent,
+        method: EvolutionMethod.UsedItem,
+        item: Items.ZygardeCube,
+      },
+    ],
     name: 'Zygarde',
     category: 'Order Pokemon',
     height: 5.0,
@@ -335,16 +346,11 @@ export default function registerKalosTrioSpecies(): void {
     },
     types: [Types.Dragon, Types.Ground],
     abilities: [Abilities.AuraBreak],
-    // Aura Break and Power Construct are what the mainline gives it,
-    // so the rest are this registry's: a swarm that eats the ground
-    // it lives in, puts itself back together, and cannot be ended in
-    // one blow
-    hiddenAbilities: [
-      Abilities.PowerConstruct,
-      Abilities.EarthEater,
-      Abilities.Regenerator,
-      Abilities.Sturdy,
-    ],
+    // Power Construct is rare to hatch, since the shape it gathers
+    // into is the biggest thing the line has. The other two are this
+    // registry's: a swarm that eats the ground it lives in and cannot
+    // be ended in one blow
+    hiddenAbilities: [Abilities.PowerConstruct, Abilities.EarthEater, Abilities.Sturdy],
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
@@ -357,6 +363,15 @@ export default function registerKalosTrioSpecies(): void {
   });
   registerSpecies(Species.ZygardeTenPercent, {
     dexNumber: 718,
+    // The half it was cut from is the shape it walks back to
+    evolvesFrom: Species.Zygarde,
+    evolvesInto: [
+      {
+        species: Species.Zygarde,
+        method: EvolutionMethod.UsedItem,
+        item: Items.ZygardeCube,
+      },
+    ],
     name: 'Zygarde 10%',
     category: 'Order Pokemon',
     height: 1.2,
@@ -373,12 +388,7 @@ export default function registerKalosTrioSpecies(): void {
     },
     types: [Types.Dragon, Types.Ground],
     abilities: [Abilities.AuraBreak],
-    hiddenAbilities: [
-      Abilities.PowerConstruct,
-      Abilities.EarthEater,
-      Abilities.Regenerator,
-      Abilities.Sturdy,
-    ],
+    hiddenAbilities: [Abilities.PowerConstruct, Abilities.EarthEater, Abilities.Sturdy],
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
@@ -409,7 +419,7 @@ export default function registerKalosTrioSpecies(): void {
     },
     types: [Types.Dragon, Types.Ground],
     abilities: [Abilities.PowerConstruct],
-    hiddenAbilities: [Abilities.EarthEater, Abilities.Regenerator, Abilities.Sturdy],
+    hiddenAbilities: [Abilities.EarthEater, Abilities.Sturdy],
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,

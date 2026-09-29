@@ -2,6 +2,8 @@ import 'server-only';
 import { ITEM_STACKS } from '../auth/stacks';
 import type { Items } from '../data/ids/items';
 import { grantStack, grantStacks, readStack, spendStack } from './stacks';
+import { getSql } from './db';
+import { asNumber } from './read';
 
 /**
  * The bag, written over the owner connection. Items are value: a
@@ -51,4 +53,27 @@ export async function grantItems(
   granted: Iterable<[item: Items, count: number]>,
 ): Promise<void> {
   return grantStacks(ITEM_STACKS, uid, granted);
+}
+
+/** Every item and candy stack the player holds, as key and count pairs */
+export async function readBag(
+  uid: string,
+): Promise<{ items: [number, number][]; candies: [number, number][] }> {
+  const sql = getSql();
+  const [items, candies] = await Promise.all([
+    sql`select item, count from bag_items where player = ${uid}`,
+    sql`select family, count from bag_candies where player = ${uid}`,
+  ]);
+  const bag: { items: [number, number][]; candies: [number, number][] } = {
+    items: [],
+    candies: [],
+  };
+
+  for (const row of items) {
+    bag.items.push([asNumber(row.item), asNumber(row.count)]);
+  }
+  for (const row of candies) {
+    bag.candies.push([asNumber(row.family), asNumber(row.count)]);
+  }
+  return bag;
 }

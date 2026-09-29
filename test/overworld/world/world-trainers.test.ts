@@ -3,7 +3,12 @@ import { describe, expect, it } from 'vitest';
 import AleaRNG from '../../../src/core/alea';
 import Abilities from '../../../src/data/ids/abilities';
 import registerAbilities, { getSignatureAbility } from '../../../src/data/abilities';
-import registerBiomeSpawns, { getBiomeRoster, spawnRanks } from '../../../src/data/biome';
+import registerBiomeSpawns, {
+  SpawnRarity,
+  getBiomeRoster,
+  getSpawnRarity,
+  spawnRanks,
+} from '../../../src/data/biome';
 import { isCoreRole } from '../../../src/data/species/best-moves';
 import { getStoneMega } from '../../../src/data/items/mega-stones';
 import {
@@ -92,6 +97,7 @@ import {
   EXPERT_PARTY_SIZE,
   GYM_LEADER_CHARSETS,
   GYM_LEADER_TYPES,
+  type GymLeader,
   LEGEND_CHARSETS,
   getEliteMemberRoster,
 } from '../../../src/data/overworld/experts';
@@ -316,6 +322,8 @@ describe('world', () => {
       // world has nowhere to put yet is nobody's to field
       for (const species of getTrainerPool(trainer)) {
         expect(canMeetSpecies(species), getSpeciesData(species).name).toBe(true);
+        // Nor anything out of the prized band, which is a find rather than a partner
+        expect(getSpawnRarity(species), getSpeciesData(species).name).not.toBe(SpawnRarity.Prized);
       }
       expect(trainerLevels(trainer)).toEqual(
         isAceTrainer(trainer) ? ACE_TRAINER_LEVELS : TYPE_TRAINER_LEVELS,
@@ -1082,9 +1090,18 @@ describe('world', () => {
         continue;
       }
       // The biome names the candidates, so a badge has a country to
-      // be hunted in — and the next window keeps whoever was seated
+      // be hunted in, whoever the window seats
       expect(BIOME_GYM_LEADERS[chunk.biome]).toContain(leader);
-      expect(new ChunkSnapshot(chunk, NPC_INTERVAL).getGymLeader(cell)).toBe(leader);
+
+      // And the seat turns over, so a known town cycles through them
+      if (BIOME_GYM_LEADERS[chunk.biome].length > 1) {
+        const seated = new Set<GymLeader | null>();
+
+        for (let window = 0; window < 32; window++) {
+          seated.add(new ChunkSnapshot(chunk, window * NPC_INTERVAL).getGymLeader(cell));
+        }
+        expect(seated.size).toBeGreaterThan(1);
+      }
 
       // Every fielded species carries the gym's type
       for (const [species] of party) {

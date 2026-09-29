@@ -8,7 +8,7 @@ import type Unit from '../unit';
 /**
  * How long the strike hangs over the target before it lands
  */
-const DELAY = turns(2);
+export const FUTURE_SIGHT_DELAY = turns(2);
 
 /** The moves that are cast now and land later */
 const DELAYED_MOVES = new Set<Moves>([Moves.FutureSight, Moves.DoomDesire]);
@@ -86,7 +86,7 @@ export default function setupFutureSight(battle: Battle): void {
       source: event.source,
       target: event.target.unit,
       move: event.move,
-      remaining: DELAY,
+      remaining: FUTURE_SIGHT_DELAY,
     });
     timer.start();
   });

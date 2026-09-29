@@ -4,8 +4,8 @@ import { detailItem } from '../details';
 import { Detail } from '../styled';
 
 /**
- * What one thing in a tray is, said in the boxes the tooltip says it
- * in: the same words, in a window that can carry a button.
+ * What one thing in a tray is, in a window that can carry a button.
+ * The hover card's bar names it; this says what it does.
  *
  * A square of the bag shows a picture and a number, which between them
  * say neither what the thing does nor whether it is worth what he is
@@ -25,12 +25,14 @@ export interface ItemCardProps {
 export default function ItemCard(props: ItemCardProps): JSX.Element {
   const detail = (): { name: string; description: string } => detailItem(props.item);
 
+  // The name is on the card's bar, so the body starts at what it does
   return (
-    <div class="flex flex-col gap-1.5">
-      <Detail label="Name">{detail().name}</Detail>
-      <Detail label="Description">{detail().description}</Detail>
+    <div class="flex flex-col gap-2">
+      <p class="m-0 text-xs leading-snug text-muted">{detail().description}</p>
       <Show when={props.carried != null}>
-        <Detail label="Amount in bag">{props.carried}</Detail>
+        <div class="border-t-2 border-line-soft pt-1.5 text-xs">
+          <Detail label="Amount in bag">{props.carried}</Detail>
+        </div>
       </Show>
     </div>
   );

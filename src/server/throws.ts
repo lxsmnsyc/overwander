@@ -14,6 +14,7 @@ import SafariSession, {
   encounterWindow,
   tallyOf,
 } from '../overworld/safari';
+import { isOwedEncounter } from '../overworld/encounter/kinds';
 import { type SafariFacts, safariContextOf } from '../overworld/safari-context';
 import { asBuddy, resolveBuddyCatch } from './buddy';
 import { insertCaughtIn, payCatch } from './caught';
@@ -201,6 +202,14 @@ export async function throwAt(
         offset,
         locale,
       );
+    }
+    // An owed meeting is offered again while its row stands, and the
+    // retired marker above is swept after an hour, so an ended one goes
+    if (result !== ThrowResult.BrokeFree && isOwedEncounter(encounter.type)) {
+      await transaction`
+        delete from encounters
+        where generation = ${WORLD_GENERATION} and spawn_id = ${spawnId} and player = ${uid}
+      `;
     }
     return {
       result,

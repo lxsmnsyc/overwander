@@ -1,10 +1,10 @@
-import { asNumber, asRecordArray, asString } from './__normalize';
+import { readOnly } from '../utils/server-calls';
 import type { TeamPresetRecord } from './team-preset-record';
 import getIdToken from './session';
-import getSupabase from './supabase';
-import { requireUid } from '../server/auth';
-import check, { ID, NICKNAME, PARTY, TOKEN } from '../server/validate';
+import { requireReader, requireUid } from '../server/auth';
+import check, { ID, NICKNAME, PARTY, TOKEN, UID } from '../server/validate';
 import {
+  readTeamPresets as readOnServer,
   removeTeamPreset as removeOnServer,
   writeTeamPreset as writeOnServer,
 } from '../server/team-presets';
@@ -13,39 +13,28 @@ export { TEAM_PRESET_LIMIT } from './team-preset-record';
 export type { TeamPresetRecord } from './team-preset-record';
 
 /**
- * The parties a player saved for themselves.
- *
- * Reads run in the browser under row-level security, which only ever
- * hands back the reader's own. Writes go through the server, since a
- * preset names catch ids and only the server can say whose they are.
+ * The parties a player saved for themselves. Reads and writes both go
+ * through the server, since a preset names catch ids and only the
+ * server can say whose they are.
  */
 
-/** Every preset this player has saved, oldest first */
+/** Every preset this player has saved, oldest first. Another player's are never read */
 export async function listTeamPresets(player: string): Promise<[string, TeamPresetRecord][]> {
-  const { data } = await getSupabase()
-    .from('team_presets')
-    .select('id, name, made_at, team_preset_catches(slot, caught_id)')
-    .eq('player', player)
-    .order('made_at');
-
-  const presets: [string, TeamPresetRecord][] = [];
-
-  for (const row of asRecordArray(data)) {
-    const held = asRecordArray(row.team_preset_catches).sort(
-      (left, right) => Number(left.slot ?? 0) - Number(right.slot ?? 0),
-    );
-    const catches: string[] = [];
-
-    for (const entry of held) {
-      catches.push(asString(entry.caught_id));
-    }
-    presets.push([
-      asString(row.id),
-      { name: asString(row.name), madeAt: asNumber(row.made_at), catches },
-    ]);
-  }
-  return presets;
+  return listTeamPresetsOnServer(await getIdToken(), player);
 }
+
+async function listTeamPresetsOnServer(
+  token: string,
+  player: string,
+): Promise<[string, TeamPresetRecord][]> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  const uid = await requireReader(token);
+
+  return player === uid ? readOnServer(uid) : [];
+}
+readOnly(listTeamPresetsOnServer);
 
 /**
  * Save a party under a name, or rewrite one that already exists.

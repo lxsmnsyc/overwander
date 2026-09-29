@@ -6,7 +6,7 @@ import { type Items, getMachineMove } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type { Species } from '../data/ids/species';
 import { Slots, getSlots } from '../data/constants/slots';
-import { getMovesLearnedAt, getSpeciesData } from '../data/species';
+import { getMovesLearnedBetween, getSpeciesData } from '../data/species';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { Metric } from '../auth/quest-record';
 import { readStackIn, writeStackIn } from './stacks';
@@ -37,7 +37,12 @@ import { asNumber, asRecord } from './read';
  * already knows. A machine asks the species' teachable list; the Move
  * Reminder asks what it has learned by levelling and lost
  */
-export type MoveSource = (species: Species, level: number, known: Moves[]) => boolean;
+export type MoveSource = (
+  species: Species,
+  level: number,
+  known: Moves[],
+  learnFrom: number | null,
+) => boolean;
 
 /**
  * Put one move on one of the player's catches and take the price for
@@ -91,7 +96,9 @@ export async function learnMove(
     if (new Set(known).has(move)) {
       return { refused: LearnRefusal.Known };
     }
-    if (!allowed(species, asNumber(caught.level), known)) {
+    const learnFrom = caught.learnFrom == null ? null : asNumber(caught.learnFrom);
+
+    if (!allowed(species, asNumber(caught.level), known, learnFrom)) {
       return { refused: LearnRefusal.NotLearnable };
     }
 
@@ -176,8 +183,9 @@ export async function learnLevelUpMove(
   move: Moves,
   replaces = 0,
 ): Promise<LearnResult> {
-  return learnMove(uid, catchId, move, null, replaces, (species, level) =>
-    new Set(getMovesLearnedAt(species, level)).has(move),
+  // A Rare Candy Max leaves open every level it jumped through
+  return learnMove(uid, catchId, move, null, replaces, (species, level, _known, learnFrom) =>
+    new Set(getMovesLearnedBetween(species, learnFrom ?? level, level)).has(move),
   );
 }
 

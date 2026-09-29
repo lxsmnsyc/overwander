@@ -112,7 +112,7 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
             <ListboxOptions
               unmount={false}
               class="flex max-h-64 w-full list-none flex-col gap-0.5 overflow-y-auto rounded-xl
-                border-2 border-tide bg-paper p-1 shadow-pop"
+                border-2 border-line bg-paper p-1 shadow-float"
             >
               <For each={props.options}>
                 {(option) => (

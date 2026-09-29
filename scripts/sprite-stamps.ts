@@ -135,7 +135,21 @@ async function main(): Promise<void> {
   for (const [sheet, files] of sheets) {
     stamps.set(sheet, await stampOf(files));
   }
-  await writeFile(OUTPUT, format(stamps), 'utf8');
+  const written = format(stamps);
+
+  // `--check` compares rather than writes: a repacked sheet whose stamp
+  // was never refreshed keeps a browser on the old picture under the new
+  // description, which cuts every moved icon from the wrong place
+  if (process.argv.includes('--check')) {
+    const committed = existsSync(OUTPUT) ? await readFile(OUTPUT, 'utf8') : '';
+
+    if (committed !== written) {
+      process.stderr.write(`${OUTPUT} is stale: run \`pnpm sprite-stamps\`\n`);
+      process.exitCode = 1;
+    }
+    return;
+  }
+  await writeFile(OUTPUT, written, 'utf8');
   process.stdout.write(`${OUTPUT}: ${stamps.size} sheets\n`);
 }
 

@@ -41,6 +41,11 @@ export default function registerGen6Abilities(): void {
     name: 'Mega Launcher',
     description: 'Pulses and aura moves hit 1.5x, and a Heal Pulse gives back 1.5x as much.',
   });
+  // Amaura
+  registerAbility(Abilities.Refrigerate, {
+    name: 'Refrigerate',
+    description: 'Its Normal moves are Ice moves instead, and hit 1.2x.',
+  });
   // Honedge
   registerAbility(Abilities.StanceChange, {
     name: 'Stance Change',

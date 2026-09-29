@@ -2067,6 +2067,51 @@ export default function registerSignatureAbilities(): void {
       "Its special moves deal at least 1/8 of the target's HP, however they are resisted.",
   });
 
+  // Kalos's two fossils, which both attack the clock
+  registerSignature(Families.Tyrunt, Abilities.JawSnap, {
+    name: 'Jaw Snap',
+    description:
+      'A move it lands cancels whatever the target was casting or channelling, once every 8 seconds per target.',
+  });
+
+  registerSignature(Families.Amaura, Abilities.Frostbound, {
+    name: 'Frostbound',
+    description: 'A target it damages casts and channels 30% slower for the next 6 seconds.',
+  });
+
+  // The three Kalos meets on its way up out of the towns
+  registerSignature(Families.Inkay, Abilities.Overturn, {
+    name: 'Overturn',
+    description:
+      'A move it lands flips every stat stage the target holds, once every 10 seconds per target.',
+  });
+
+  registerSignature(Families.Helioptile, Abilities.Backfeed, {
+    name: 'Backfeed',
+    description: 'Each Electric move it lands heals its whole team 1/16 of the damage it dealt.',
+  });
+
+  registerSignature(Families.Hawlucha, Abilities.TopRope, {
+    name: 'Top Rope',
+    description: 'Its contact moves hit 10% harder for each 50 kg the target weighs, up to 1.5x.',
+  });
+
+  // The two the versions keep apart, and the ice beside them
+  registerSignature(Families.Phantump, Abilities.Undergrowth, {
+    name: 'Undergrowth',
+    description: 'A move it lands adds the Grass type to the target, once per target.',
+  });
+
+  registerSignature(Families.Pumpkaboo, Abilities.Hollowing, {
+    name: 'Hollowing',
+    description: 'A move it lands adds the Ghost type to the target, once per target.',
+  });
+
+  registerSignature(Families.Bergmite, Abilities.Deadweight, {
+    name: 'Deadweight',
+    description: 'Its physical moves use its Defense in place of its Attack while it is higher.',
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:

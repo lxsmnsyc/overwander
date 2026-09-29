@@ -94,6 +94,7 @@ export default function registerBeachSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [],
       uncommon: [
+        { species: Species.Inkay, weight: 24 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellos, weight: 25 },
         { species: Species.BurmySandy, weight: 20 },
@@ -101,6 +102,7 @@ export default function registerBeachSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.Malamar, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Gastrodon, weight: 10 },
@@ -118,6 +120,7 @@ export default function registerBeachSpawns(): void {
     [TimeOfDay.Night]: {
       base: [],
       uncommon: [
+        { species: Species.Inkay, weight: 24 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellos, weight: 25 },
         { species: Species.BurmySandy, weight: 20 },
@@ -125,6 +128,7 @@ export default function registerBeachSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.Malamar, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Gastrodon, weight: 10 },
@@ -196,6 +200,7 @@ export default function registerBeachSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Horsea, weight: 10 }],
       uncommon: [
+        { species: Species.Inkay, weight: 24 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Tentacool, weight: 20 },
@@ -205,6 +210,7 @@ export default function registerBeachSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 5 }],
       scarce: [
+        { species: Species.Malamar, weight: 6 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Tentacruel, weight: 8 },
@@ -221,6 +227,7 @@ export default function registerBeachSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Horsea, weight: 10 }],
       uncommon: [
+        { species: Species.Inkay, weight: 24 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Tentacool, weight: 20 },
@@ -230,6 +237,7 @@ export default function registerBeachSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 5 }],
       scarce: [
+        { species: Species.Malamar, weight: 6 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Tentacruel, weight: 8 },

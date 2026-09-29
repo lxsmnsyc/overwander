@@ -16,6 +16,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Helioptile, weight: 24 },
         { species: Species.Dwebble, weight: 22 },
         { species: Species.Vullaby, weight: 16 },
         { species: Species.Darumaka, weight: 22 },
@@ -35,6 +36,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Heliolisk, weight: 6 },
         { species: Species.Crustle, weight: 7 },
         { species: Species.Mandibuzz, weight: 6 },
         { species: Species.Darmanitan, weight: 7 },
@@ -76,6 +78,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Helioptile, weight: 24 },
         { species: Species.Dwebble, weight: 22 },
         { species: Species.Vullaby, weight: 16 },
         { species: Species.Darumaka, weight: 22 },
@@ -97,6 +100,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Heliolisk, weight: 6 },
         { species: Species.Crustle, weight: 7 },
         { species: Species.Mandibuzz, weight: 6 },
         { species: Species.Darmanitan, weight: 7 },

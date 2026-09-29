@@ -824,13 +824,28 @@ export const enum Species {
   Honedge = 679,
   Doublade = 680,
   Aegislash = 681,
+  Inkay = 686,
+  Malamar = 687,
   Binacle = 688,
   Barbaracle = 689,
   Skrelp = 690,
   Dragalge = 691,
   Clauncher = 692,
   Clawitzer = 693,
+  Helioptile = 694,
+  Heliolisk = 695,
+  Tyrunt = 696,
+  Tyrantrum = 697,
+  Amaura = 698,
+  Aurorus = 699,
+  Hawlucha = 701,
   Klefki = 707,
+  Phantump = 708,
+  Trevenant = 709,
+  Pumpkaboo = 710,
+  Gourgeist = 711,
+  Bergmite = 712,
+  Avalugg = 713,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
@@ -875,6 +890,14 @@ export const enum Species {
 
   /** The female of the line, who evolves out of a female Espurr */
   MeowsticFemale = 1067801,
+
+  /** How big the pumpkin grew, the middling one at the base */
+  PumpkabooSmall = 1071001,
+  PumpkabooLarge = 1071002,
+  PumpkabooSuper = 1071003,
+  GourgeistSmall = 1071101,
+  GourgeistLarge = 1071102,
+  GourgeistSuper = 1071103,
 
   /** The sword drawn, which is what an Aegislash is while it attacks */
   AegislashBlade = 1068101,
@@ -1167,6 +1190,22 @@ export const FLORGES_FORMS: Species[] = [
   Species.FlorgesOrange,
   Species.FlorgesBlue,
   Species.FlorgesWhite,
+];
+
+/** Each size a pumpkin comes in, the middling one first */
+export const PUMPKABOO_FORMS: Species[] = [
+  Species.Pumpkaboo,
+  Species.PumpkabooSmall,
+  Species.PumpkabooLarge,
+  Species.PumpkabooSuper,
+];
+
+/** The same four sizes grown */
+export const GOURGEIST_FORMS: Species[] = [
+  Species.Gourgeist,
+  Species.GourgeistSmall,
+  Species.GourgeistLarge,
+  Species.GourgeistSuper,
 ];
 
 /** Each deer's four coats, spring first, in the order the year turns */

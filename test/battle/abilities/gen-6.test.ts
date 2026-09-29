@@ -273,3 +273,41 @@ describe('Mega Launcher', () => {
     ).toBeCloseTo(swung, 5);
   });
 });
+
+describe('Refrigerate', () => {
+  it('throws its Normal moves as Ice, and pays a fifth again for them', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const aurora = createUnit(battle, teamA, [Types.Rock, Types.Ice]);
+    const foe = createUnit(battle, teamB, [Types.Grass]);
+
+    pinRandom(battle, 1);
+    aurora.enter();
+    foe.enter();
+
+    const at = { type: MoveTargetType.Unit, unit: foe } as const;
+    const plain = aurora.checkMovePower(Moves.Tackle, at);
+
+    aurora.addAbility(Abilities.Refrigerate);
+
+    expect(aurora.checkMoveType(Moves.Tackle, at)).toBe(Types.Ice);
+    expect(aurora.checkMovePower(Moves.Tackle, at)).toBeCloseTo((plain ?? 0) * 1.2, 5);
+  });
+
+  it('leaves everything that was never Normal as it was', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const aurora = createUnit(battle, teamA, [Types.Rock, Types.Ice]);
+    const foe = createUnit(battle, teamB, [Types.Grass]);
+
+    pinRandom(battle, 1);
+    aurora.addAbility(Abilities.Refrigerate);
+    aurora.enter();
+    foe.enter();
+
+    const at = { type: MoveTargetType.Unit, unit: foe } as const;
+
+    expect(aurora.checkMoveType(Moves.RockSlide, at)).toBe(Types.Rock);
+    expect(aurora.checkMovePower(Moves.RockSlide, at)).toBe(
+      createUnit(battle, teamA, [Types.Rock]).checkMovePower(Moves.RockSlide, at),
+    );
+  });
+});

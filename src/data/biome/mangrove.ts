@@ -14,6 +14,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Lotad, weight: 20 },
       ],
       uncommon: [
+        { species: Species.GrimerAlola, weight: 22 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Krabby, weight: 20 },
@@ -27,6 +28,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Lombre, weight: 10 },
       ],
       scarce: [
+        { species: Species.MukAlola, weight: 6 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Kingler, weight: 10 },
@@ -52,6 +54,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Lotad, weight: 20 },
       ],
       uncommon: [
+        { species: Species.GrimerAlola, weight: 22 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Krabby, weight: 20 },
@@ -65,6 +68,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Lombre, weight: 10 },
       ],
       scarce: [
+        { species: Species.MukAlola, weight: 6 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Kingler, weight: 10 },
@@ -86,6 +90,7 @@ export default function registerMangroveSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [],
       uncommon: [
+        { species: Species.GrimerAlola, weight: 22 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Wooper, weight: 25 },
@@ -94,6 +99,7 @@ export default function registerMangroveSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.MukAlola, weight: 6 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Quagsire, weight: 10 },
@@ -107,6 +113,7 @@ export default function registerMangroveSpawns(): void {
     [TimeOfDay.Night]: {
       base: [],
       uncommon: [
+        { species: Species.GrimerAlola, weight: 22 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Wooper, weight: 25 },
@@ -115,6 +122,7 @@ export default function registerMangroveSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.MukAlola, weight: 6 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Quagsire, weight: 10 },

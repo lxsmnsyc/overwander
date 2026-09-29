@@ -84,11 +84,19 @@ const FAMILY_ABILITIES = [Abilities.RockHead, Abilities.LightningRod];
 export default function registerCuboneSpecies(): void {
   registerSpecies(Species.Cubone, {
     dexNumber: 104,
+    // By day it grows into a Kanto Marowak, and by night into an Alolan one
     evolvesInto: [
       {
         species: Species.Marowak,
-        method: EvolutionMethod.Level,
+        method: EvolutionMethod.Level | EvolutionMethod.TimeOfDay,
         level: 28,
+        time: TimeOfDay.Morning | TimeOfDay.Day,
+      },
+      {
+        species: Species.MarowakAlola,
+        method: EvolutionMethod.Level | EvolutionMethod.TimeOfDay,
+        level: 28,
+        time: TimeOfDay.Evening | TimeOfDay.Night,
       },
     ],
     name: 'Cubone',

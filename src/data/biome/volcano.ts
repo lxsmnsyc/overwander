@@ -120,6 +120,7 @@ export default function registerVolcanoSpawns(): void {
       ],
       rare: [{ species: Species.Zweilous, weight: 1 }],
       scarce: [
+        { species: Species.MarowakAlola, weight: 6 },
         { species: Species.DugtrioAlola, weight: 6 },
         { species: Species.Salazzle, weight: 6 },
         { species: Species.Ninetales, weight: 5 },
@@ -150,6 +151,7 @@ export default function registerVolcanoSpawns(): void {
       ],
       rare: [{ species: Species.Zweilous, weight: 1 }],
       scarce: [
+        { species: Species.MarowakAlola, weight: 6 },
         { species: Species.DugtrioAlola, weight: 6 },
         { species: Species.Salazzle, weight: 6 },
         { species: Species.Weezing, weight: 5 },

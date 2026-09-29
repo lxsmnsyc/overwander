@@ -96,4 +96,14 @@ export default function registerGen7Abilities(): void {
     name: 'Ripen',
     description: 'Berries it eats heal it 2x as much and raise its stats 2x as many stages.',
   });
+  // Alolan Geodude
+  registerAbility(Abilities.Galvanize, {
+    name: 'Galvanize',
+    description: 'Its Normal moves are Electric moves instead, and hit 1.2x.',
+  });
+  // Alolan Grimer
+  registerAbility(Abilities.PowerOfAlchemy, {
+    name: 'Power of Alchemy',
+    description: 'When a teammate faints, it takes that teammate’s ability in place of this one.',
+  });
 }

@@ -2365,4 +2365,16 @@ export default function registerSignatureAbilities(): void {
     name: 'Taunting Gaze',
     description: 'It casts Taunt at an enemy as it arrives on the field.',
   });
+  registerFormSignature(
+    [Species.GeodudeAlola, Species.GravelerAlola, Species.GolemAlola],
+    Abilities.MagnetFloat,
+    {
+      name: 'Magnet Float',
+      description: 'It casts Magnet Rise on itself as it arrives on the field.',
+    },
+  );
+  registerFormSignature([Species.GrimerAlola, Species.MukAlola], Abilities.CrystalToxin, {
+    name: 'Crystal Toxin',
+    description: 'Poison it puts on an enemy cannot be cured.',
+  });
 }

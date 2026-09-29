@@ -92,4 +92,31 @@ describe('the Alolan forms', () => {
       targets(getAvailableEvolutions(context(Species.RattataAlola, 20, TimeOfDay.Night))),
     ).toEqual([Species.RaticateAlola]);
   });
+
+  it('offers an Exeggcute both Exeggutor for the same stone', () => {
+    const exeggcute = context(Species.Exeggcute, 10, TimeOfDay.Day, [Items.LeafStone]);
+
+    expect(targets(getAvailableEvolutions(exeggcute))).toEqual([
+      Species.Exeggutor,
+      Species.ExeggutorAlola,
+    ]);
+  });
+
+  it('grows a Cubone into a Kanto Marowak by day and an Alolan one by night', () => {
+    expect(targets(getAvailableEvolutions(context(Species.Cubone, 28, TimeOfDay.Day)))).toEqual([
+      Species.Marowak,
+    ]);
+    expect(targets(getAvailableEvolutions(context(Species.Cubone, 28, TimeOfDay.Night)))).toEqual([
+      Species.MarowakAlola,
+    ]);
+  });
+
+  it('gives the fully regional Geodude and Grimer lines their own signatures', () => {
+    expect(getSpeciesSignature(Species.GolemAlola)).toBe(Abilities.MagnetFloat);
+    expect(getSpeciesSignature(Species.MukAlola)).toBe(Abilities.CrystalToxin);
+    expect(getSpeciesSignature(Species.ExeggutorAlola)).toBe(
+      getSpeciesSignature(Species.Exeggcute),
+    );
+    expect(getSpeciesSignature(Species.MarowakAlola)).toBe(getSpeciesSignature(Species.Cubone));
+  });
 });

@@ -3,6 +3,7 @@ import { Stages } from '../../../data/constants/stats';
 import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
 import { DamageFlags, Moves } from '../../../data/ids/moves';
+import { Statuses } from '../../../data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import { isOwnBerry, isWeatherHail, unitTarget } from '../../utils';
@@ -14,10 +15,13 @@ export const FROSTFORGED_SCALE = 0.75;
 
 const FORGED_AGAINST = new Set([Types.Fire, Types.Fighting]);
 
+const POISONS = new Set([Statuses.Poisoned, Statuses.BadlyPoisoned]);
+
 /**
  * The Alolan lines: the rat that grows on rich food, the mouse forged
  * in the snow, the fox that raises the aurora, the mole whose hair
- * snares, and the cat too proud to be ignored
+ * snares, the cat too proud to be ignored, the charged boulder that
+ * floats, and the sludge whose poison sets hard
  */
 const setupAbilities = [
   // Alolan Rattata: a berry it eats itself goes straight to its bite
@@ -137,6 +141,49 @@ const setupAbilities = [
           }
         }),
       ]),
+  ),
+
+  // Alolan Geodude: the charge in its body lifts it clear of the ground
+  // as it arrives. Magnet Rise answers for how long it floats
+  createAbility(
+    Abilities.MagnetFloat,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(Abilities.MagnetFloat)) {
+            event.source.triggerAbility(Abilities.MagnetFloat);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.MagnetFloat) {
+            event.source.triggerMove(Moves.MagnetRise, { type: MoveTargetType.None }, 0);
+          }
+        }),
+      ]),
+  ),
+
+  // Alolan Grimer: the poison crystallises in whoever it went into. Only
+  // the poisoner itself may still change it
+  createAbility(Abilities.CrystalToxin, (battle) =>
+    battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Pre, (event) => {
+      const target = event.source;
+      const poisoner = target.status[event.status];
+
+      if (
+        POISONS.has(event.status) &&
+        target.alive &&
+        poisoner != null &&
+        poisoner.type !== EffectType.None &&
+        poisoner.type !== EffectType.Weather &&
+        poisoner.unit !== target &&
+        poisoner.unit.hasAbility(Abilities.CrystalToxin) &&
+        (event.cause.type === EffectType.None ||
+          event.cause.type === EffectType.Weather ||
+          event.cause.unit !== poisoner.unit)
+      ) {
+        event.disabled = true;
+      }
+    }),
   ),
 ];
 

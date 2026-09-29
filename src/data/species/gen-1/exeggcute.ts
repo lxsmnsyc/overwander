@@ -75,6 +75,12 @@ export default function registerExeggcuteSpecies(): void {
         method: EvolutionMethod.UsedItem,
         item: Items.LeafStone,
       },
+      // Both Exeggutor take the same stone, and the catch sheet lets the player pick
+      {
+        species: Species.ExeggutorAlola,
+        method: EvolutionMethod.UsedItem,
+        item: Items.LeafStone,
+      },
     ],
     name: 'Exeggcute',
     category: 'Egg Pokemon',

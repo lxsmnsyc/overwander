@@ -1,8 +1,8 @@
-// The first Alolan forms, with Surge Surfer, Tangling Hair and Ripen.
+// The Alolan forms, with Surge Surfer, Tangling Hair, Ripen, Galvanize and Power of Alchemy.
 
 import { describe, expect, it } from 'vitest';
 import { AttackPriority } from '../../../../src/core/event-emitter';
-import { BattleEvents, MoveTargetType } from '../../../../src/battle/events';
+import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import turns from '../../../../src/battle/turn';
 import { unitTarget } from '../../../../src/battle/utils';
 import { FROSTFORGED_SCALE } from '../../../../src/battle/abilities/signature/alolan-rattata-to-meowth';
@@ -11,7 +11,7 @@ import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';
 import { Items } from '../../../../src/data/ids/items';
 import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
-import { Terrains, Weathers } from '../../../../src/data/ids/status';
+import { Statuses, Terrains, Weathers } from '../../../../src/data/ids/status';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { dealDamage } from './helpers';
 
@@ -190,5 +190,74 @@ describe('Taunting Gaze', () => {
     cat.enter();
 
     expect(casts).toEqual([[Moves.Taunt, unitTarget(foe)]]);
+  });
+});
+
+describe('Galvanize', () => {
+  it('turns its Normal moves Electric', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const rock = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const at = unitTarget(foe);
+
+    rock.addAbility(Abilities.Galvanize);
+
+    expect(rock.checkMoveType(Moves.Tackle, at)).toBe(Types.Electric);
+    expect(rock.checkMoveType(Moves.Ember, at)).toBe(Types.Fire);
+  });
+});
+
+describe('Power of Alchemy', () => {
+  it('takes up a fallen teammate’s ability in its place', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const sludge = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    sludge.addAbility(Abilities.PowerOfAlchemy);
+    mate.addAbility(Abilities.Intimidate);
+    sludge.enter();
+    mate.enter();
+    foe.enter();
+
+    foe.damage({ type: EffectType.None }, mate, mate.checkStat(Stats.HP, 0) * 2, 0);
+
+    expect(sludge.hasAbility(Abilities.Intimidate)).toBe(true);
+    expect(sludge.hasAbility(Abilities.PowerOfAlchemy)).toBe(false);
+  });
+});
+
+describe('Magnet Float', () => {
+  it('casts Magnet Rise on itself as it arrives', () => {
+    const { battle, teamA } = createBattle();
+    const rock = createUnit(battle, teamA);
+    const casts = watchCasts(battle);
+
+    rock.addAbility(Abilities.MagnetFloat);
+    rock.enter();
+
+    expect(casts).toEqual([[Moves.MagnetRise, { type: MoveTargetType.None }]]);
+  });
+});
+
+describe('Crystal Toxin', () => {
+  it('keeps its own poison from being cured, and nobody else’s', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const sludge = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+    const from = (unit: typeof sludge) =>
+      ({ type: EffectType.Move, move: Moves.Toxic, unit }) as const;
+
+    sludge.addAbility(Abilities.CrystalToxin);
+    foe.addStatus(Statuses.BadlyPoisoned, from(sludge));
+    other.addStatus(Statuses.BadlyPoisoned, from(plain));
+
+    foe.cure({ type: EffectType.None });
+    other.cure({ type: EffectType.None });
+
+    expect(foe.status[Statuses.BadlyPoisoned]).toBeDefined();
+    expect(other.status[Statuses.BadlyPoisoned]).toBeUndefined();
   });
 });

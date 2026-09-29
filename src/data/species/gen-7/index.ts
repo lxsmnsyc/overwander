@@ -31,6 +31,10 @@ import registerAlolanSandshrewSpecies from './alolan-sandshrew';
 import registerAlolanVulpixSpecies from './alolan-vulpix';
 import registerAlolanDiglettSpecies from './alolan-diglett';
 import registerAlolanMeowthSpecies from './alolan-meowth';
+import registerAlolanGeodudeSpecies from './alolan-geodude';
+import registerAlolanGrimerSpecies from './alolan-grimer';
+import registerAlolanExeggutorSpecies from './alolan-exeggutor';
+import registerAlolanMarowakSpecies from './alolan-marowak';
 
 /** Alola, as far as it is written */
 export default function registerGen7Species(): void {
@@ -67,4 +71,8 @@ export default function registerGen7Species(): void {
   registerAlolanVulpixSpecies();
   registerAlolanDiglettSpecies();
   registerAlolanMeowthSpecies();
+  registerAlolanGeodudeSpecies();
+  registerAlolanGrimerSpecies();
+  registerAlolanExeggutorSpecies();
+  registerAlolanMarowakSpecies();
 }

@@ -1046,6 +1046,10 @@ const enum Abilities {
   WireSnare = 200396,
   // Alolan Meowth
   TauntingGaze = 200397,
+  // Alolan Geodude
+  MagnetFloat = 200398,
+  // Alolan Grimer
+  CrystalToxin = 200399,
 }
 
 export default Abilities;

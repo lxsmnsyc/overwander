@@ -1684,8 +1684,8 @@ describe('item data', () => {
   });
 
   it('paints an Arceus with every Plate it can hold', () => {
-    // Multitype is not battle machinery: a Plate names one shape, and
-    // the shape's own species data carries the type the Plate lifts
+    // A Plate names one shape for a Multitype holder, and the shape's
+    // own species data carries the type the Plate lifts
     for (const [plate, type] of PLATES) {
       const shapes = getItemForms(plate);
 

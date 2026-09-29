@@ -120,6 +120,12 @@ export const PHENOMENON_ITEM_CHANCE = 0.5;
 export const PHENOMENON_RARE_CHANCE = 1 / 8;
 
 /**
+ * The floor under every value of a pokemon a phenomenon startles out,
+ * the raid's and the sky's number. It stacks with a favouring sky
+ */
+export const PHENOMENON_MIN_IV = 9;
+
+/**
  * How often a grotto holds an **egg** of the biome instead of the
  * pokemon it was going to hide. One in sixty-four, which is the rare
  * band's odds again — an egg found this way costs no walk to a nest

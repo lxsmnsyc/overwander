@@ -1,5 +1,63 @@
 # overwander
 
+## 4.24.1
+
+### Patch Changes
+
+- fcc89ca: Teaching a pokemon its 8th move no longer fails.
+- bcbf001: - The Move Tutor, the Move Reminder and the teach-move dialog list each move by name, type and category, with the full entry on hover.
+  - The Move Tutor and Move Reminder have a search box.
+- 96a50db: - Eternal Floette, Poké Ball Vivillon and Spiky-eared Pichu stand in the mythical aura on the overworld.
+  - Eternal Floette and Poké Ball Vivillon also count as mythicals for their spawn levels, candy and whether a catch is notable.
+- 7fda394: - A raid boss's move that would hit the whole side is drawn by Lightning Rod, Storm Drain or a Follow Me instead, and then lands on that pokemon alone.
+  - Storm Drain draws Water moves aimed at a teammate onto its holder, as Lightning Rod does for Electric moves.
+
+## 4.24.0
+
+### Minor Changes
+
+- e428d48: Kalos's sun and sky:
+  
+  - Inkay and Malamar hang in the shallows off the beaches and the kelp, in the evening and at night. Inkay becomes Malamar at 30, and only while it knows Topsy-Turvy.
+  - Helioptile and Heliolisk run the deserts and the badlands by day. A Sun Stone turns one into the other.
+  - Hawlucha fights in the tropical rainforest and the montane forest, and never evolves.
+  - Malamar's Overturn flips every stat stage the target holds, once every 10 seconds per target. Heliolisk's Backfeed heals its whole team 1/16 of the damage each Electric move deals. Hawlucha's Top Rope hits 10% harder for each 50 kg the target weighs, up to 1.5x.
+  - Malamar takes Analytic, Heliolisk takes Overcoat and Hawlucha takes Sheer Force as their fourth abilities.
+  - All five learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- e1623d4: Kalos's two fossils:
+  
+  - The Jaw Fossil brings back Tyrunt and the Sail Fossil brings back Amaura, at level 20 like every other fossil. Both rocks are dug out of the ground or bought from the Fossil Maniac, and neither line is met in the world any other way.
+  - Tyrunt becomes Tyrantrum at 39 by day, and Amaura becomes Aurorus at 39 at night.
+  - Refrigerate is built: a Normal move thrown by an Amaura or an Aurorus lands as Ice and hits 1.2x.
+  - The pair's signatures both attack the clock. Jaw Snap cancels whatever the target was casting or channelling, once every 8 seconds per target. Frostbound leaves a target it damaged casting and channelling 30% slower for the next 6 seconds.
+  - Normalize and Refrigerate now share one factory, so any later -ate ability is a single line.
+  - All four learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- 9d7a231: Kalos's woods and ice:
+  
+  - Phantump and Trevenant haunt the woodland and the temperate forest after dark, and Phantump becomes Trevenant by trade.
+  - Pumpkaboo and Gourgeist sit in the grassland and the woodland after dark, and Pumpkaboo becomes Gourgeist by trade. Two of the four sizes are here, the average one and the super one; the small and large sizes wait until their grown shapes are drawn.
+  - Bergmite and Avalugg grind across the glaciers and the alpine tundra at any hour, and Bergmite becomes Avalugg at 37.
+  - The two the versions keep apart carry matching signatures. Trevenant's Undergrowth adds the Grass type to a target it damages and Gourgeist's Hollowing adds the Ghost type, each once per target, and a target both have hit carries both.
+  - Avalugg's Deadweight uses its Defense in place of its Attack for physical moves while Defense is the higher of the two, which on an Avalugg is always.
+  - Trevenant and Gourgeist both take Cursed Body as their fourth ability, and Avalugg takes Snow Warning.
+  - All six learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+
+## 4.23.3
+
+### Patch Changes
+
+- 20887ff: Dialogs are centred on the screen instead of sitting near the top.
+- 20887ff: The Move Tutor and Move Reminder list moves by name, type and category, with the full entry on hover and a search box.
+- a51900a: A Plate puts an Arceus in its shape only when that Arceus has Multitype. An Arceus born with another ability stays Normal.
+- 20887ff: A pokemon found at a phenomenon or drawn out of a honey tree starts with every IV at 9 or higher. This stacks with the floor from favourable weather.
+- 20887ff: A true shadow's raid is held in its counterpart's lair, so XD-144 is met in Shadow Seafoam Islands.
+- 20887ff: - Dragon Ascent, Secret Sword and Relic Song are taught only by the Move Tutor, and only to a pokemon at max friendship.
+  - Their machines are no longer sold or given out by gyms.
+  - A machine already in a bag can still be used, or sold to any vendor for its full price.
+- 20887ff: - Frillish, Archen, Shelmet, Karrablast, Tirtouga, Foongus, Stunfisk and Bouffalant no longer have egg moves listed as machine moves.
+  - Those lines now have their full egg move lists.
+  - The 22 machines for those moves are no longer sold. Any vendor buys one back for its full price.
+
 ## 4.23.2
 
 ### Patch Changes

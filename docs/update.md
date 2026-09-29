@@ -7,6 +7,7 @@ named for what it brings.
 
 | Release                                                                             | What it brought                                                                                                                                               |
 | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Kalos's last families and its legends](update/kalos-last-families-and-legends.md)  | Goomy, Noibat, Pancham, Swirlix, Sylveon, Dedenne and Carbink, then Xerneas, Yveltal and Zygarde with the Zygarde Cube                                        |
 | [Kalos's fossils, sun and ice](update/kalos-fossils-sun-and-ice.md)                 | Tyrunt and Amaura from their fossils, Inkay, Helioptile, Hawlucha, Phantump, Pumpkaboo and Bergmite, each family with a signature ability                     |
 | [Four new wanderers](update/four-new-wanderers.md)                                  | A Geologist, a Dojo Master, a Trader and a Hyper Trainer, the Skill Book, rotating league seats, and every dialog redrawn                                     |
 | [The sixth generation's moves](update/sixth-generation-moves.md)                    | 62 moves taught to everyone already here, terrain under the field, and three more starters                                                                    |

@@ -4,7 +4,7 @@ import { watchFriendRequests } from './friends';
 import { watchRaidInvites } from './raids';
 import { TradeStatus } from './trade-record';
 import { watchTrades } from './trades';
-import type { Unwatch } from './supabase';
+import type { Unwatch } from './watch';
 
 /**
  * Everything waiting on the player, gathered in one place.

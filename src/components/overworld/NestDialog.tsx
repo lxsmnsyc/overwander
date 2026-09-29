@@ -3,8 +3,8 @@ import { Genders, Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import type { Buddy } from '../../overworld/core';
 import AnimatedSprite from '../sprites/AnimatedSprite';
-import { Button, Dialog, DialogActions, Meta, Note } from '../styled';
-import { SpriteAnim } from '../../data/ids/sprite-anims';
+import { Button, Dialog, DialogActions, Meta } from '../styled';
+import { CounterSpent, CounterTerms, HeadingPortrait } from './npc-dialog/terms';
 
 /**
  * An egg that has been found, put to the player before it is theirs.
@@ -59,7 +59,7 @@ export interface NestDialogProps {
   /**
    * The egg on offer, or null when the player is not standing at one
    */
-  offer: { from: EggSource; state: EggState; message: string | null } | null;
+  offer: { from: EggSource; state: EggState } | null;
   /**
    * Whether the claim is in flight, so the button cannot be pressed
    * twice into two eggs
@@ -71,69 +71,56 @@ export interface NestDialogProps {
   onClose: () => void;
 }
 
-export default function NestDialog(props: NestDialogProps): JSX.Element {
-  /**
-   * Whether there is still a question on the table. Once it has been
-   * answered — taken, or refused by the world in the moment between
-   * looking and taking — the dialog has nothing left to ask
-   */
-  const asking = (): boolean => props.offer?.state === 'offered' && props.offer.message == null;
+/** How often each kind hands one out, for the terms */
+const OFTEN: Record<EggSource, string> = {
+  nest: 'One egg a player between refills',
+  grotto: 'One find an hour',
+};
 
-  /**
-   * What the dialog is saying, before anything has been agreed to
-   */
-  const said = (offer: NonNullable<NestDialogProps['offer']>): string =>
-    offer.message ?? (offer.state === 'bare' ? BARE[offer.from] : FOUND[offer.from]);
+export default function NestDialog(props: NestDialogProps): JSX.Element {
+  const asking = (): boolean => props.offer?.state === 'offered';
+
+  /** The line under the title: what is lying there, or that nothing is */
+  const heading = (): string => {
+    const offer = props.offer;
+
+    if (offer == null) {
+      return 'An egg, and whether you want to carry it.';
+    }
+    return offer.state === 'bare' ? BARE[offer.from] : FOUND[offer.from];
+  };
 
   return (
     <Dialog
       isOpen={props.offer != null}
       onClose={props.onClose}
       title="Egg"
-      terse
-      description={
-        props.offer == null ? 'An egg, and whether you want to carry it.' : said(props.offer)
+      lead={
+        <HeadingPortrait>
+          <AnimatedSprite species={Species.Egg} direction="Down" still fill label="" />
+        </HeadingPortrait>
       }
+      description={heading()}
     >
       <Show when={props.offer}>
         {(offer) => (
-          <div class="flex flex-col items-center gap-2 py-2 text-center">
-            {/* Nothing to draw where there is nothing lying there:
-                an empty nest is not a picture of an egg */}
-            <Show when={offer().state !== 'bare'}>
-              {/* On the floor of its box, so the line under it sits
-                  where it sits for every other sprite in the game */}
-              <div class="flex items-end justify-center">
-                <AnimatedSprite
-                  species={Species.Egg}
-                  animation={SpriteAnim.Idle}
-                  direction="Down"
-                  scale={4}
-                  shadow
-                  label="An egg"
-                />
-              </div>
+          <div class="flex flex-col gap-3">
+            <CounterTerms
+              often={offer().state === 'taken' ? 'Used this while' : OFTEN[offer().from]}
+            />
+            <Show when={offer().state === 'taken'}>
+              <CounterSpent says={AGAIN[offer().from]} quoted={false} />
             </Show>
-
-            <p class="text-lg">{said(offer())}</p>
-
-            <Show
-              when={asking()}
-              fallback={
-                <Show when={offer().state === 'taken'}>
-                  <Note class="max-w-prose">{AGAIN[offer().from]}</Note>
-                </Show>
-              }
-            >
-              {/* What taking it commits the player to, which is the
-                  whole of the decision: an egg is not carried for
-                  nothing, and the pokemon already walking with them is
-                  what pays for it */}
-              <Meta class="max-w-prose">
+            <Show when={offer().state === 'bare'}>
+              <CounterSpent title="Nothing here" says={BARE[offer().from]} quoted={false} />
+            </Show>
+            <Show when={asking()}>
+              {/* What taking it commits the player to: the pokemon
+                  already walking with them is what pays for it */}
+              <Meta>
                 Only your buddy can walk it warm, so taking it means putting down whoever walks with
                 you now. What is inside stays a secret until it opens.
               </Meta>
-              {/* Who that is, so the trade is plain before it is made */}
               <div class="flex items-center gap-2 rounded-panel border-2 border-line bg-paper px-3 py-1.5">
                 <Show
                   when={props.buddy}
@@ -172,9 +159,7 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
             Take it
           </Button>
         </Show>
-        {/* "Leave it" while there is something to leave, and the plain
-            way out once there is not */}
-        <Button onClick={props.onClose}>{asking() ? 'Leave it' : 'Close'}</Button>
+        <Button onClick={props.onClose}>Walk on</Button>
       </DialogActions>
     </Dialog>
   );

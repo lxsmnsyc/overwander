@@ -17,7 +17,8 @@ import { NPC_QUOTES } from './npc-dialog/shared';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
 import NpcSprite from './NpcSprite';
-import { Badge, Button, Dialog, DialogActions, Meta, Row, Status } from '../styled';
+import { Button, Dialog, DialogActions, Meta, useToast } from '../styled';
+import { CounterStep, CounterTerms, HeadingPortrait } from './npc-dialog/terms';
 import { TEAM_SIZE } from '../../auth/teams';
 import { useGame } from '../app/game-context';
 
@@ -31,7 +32,10 @@ export interface StopChallenge {
   name: string;
   levels: LevelBand;
   greeting: string;
-  stakes: string;
+  /** What beating them pays, in a line. Losing costs nothing but the fight */
+  wins: string;
+  /** A Frontier facility's house rule, said before the fight */
+  rule?: string;
   /**
    * The most this fight takes, where the house sets it: a Frontier
    * facility is three a side. Absent everywhere else, which is the
@@ -81,7 +85,7 @@ export interface StopDialogProps {
 export default function StopDialog(props: StopDialogProps): JSX.Element {
   const game = useGame();
   const [picking, setPicking] = createSignal(false);
-  const [status, setStatus] = createSignal<string | null>(null);
+  const toast = useToast();
 
   const stop = (): string | null => props.challenge?.[0] ?? null;
 
@@ -194,7 +198,6 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
   // stop, the dialog must not greet the player with the last one's
   createEffect(() => {
     if (props.challenge != null) {
-      setStatus(null);
       setTaken([]);
     }
   });
@@ -206,11 +209,10 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
       return;
     }
     setPicking(false);
-    setStatus(null);
     startStopBattle(id, catches)
       .then((battle) => {
         if (battle == null) {
-          setStatus(refusal());
+          toast.push({ message: refusal(), tone: 'ember' });
           return;
         }
         props.onClose();
@@ -223,7 +225,10 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
         });
       })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        toast.push({
+          message: caught instanceof Error ? caught.message : String(caught),
+          tone: 'ember',
+        });
       });
   };
 
@@ -233,29 +238,29 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
         isOpen={props.challenge != null && !picking()}
         onClose={props.onClose}
         title={props.challenger?.name ?? 'Team Rocket'}
-        terse
-        description={greeting()}
+        lead={
+          <HeadingPortrait>
+            <NpcSprite npc={props.npc} sheet={props.sheet} size={28} label="" />
+          </HeadingPortrait>
+        }
+        description={<span class="italic">{greeting()}</span>}
       >
         <Show when={props.challenge?.[1]}>
           {(record) => (
-            <div class="flex flex-col items-center gap-3 py-2 text-center">
-              {/* The challenger themselves, from the overworld's own
-                  charset: the dialog already names them, so the
-                  picture is not read out */}
-              <NpcSprite npc={props.npc} sheet={props.sheet} label="" />
-              {/* Their line under them, the way a counter's is */}
-              <blockquote class="m-0 max-w-prose text-sm text-muted italic">
-                {greeting()}
-              </blockquote>
-
+            <div class="flex flex-col gap-3">
               {/* What the fight asks of a party before the line-up is read */}
-              <Row class="justify-center">
-                <Badge tone="tide">
-                  Lv. {levels()[0]}–{levels()[1]}
-                </Badge>
-                <Badge>Bring up to {props.challenger?.bring ?? TEAM_SIZE}</Badge>
-              </Row>
-
+              <CounterTerms
+                rows={[
+                  { label: 'Levels', value: `${levels()[0]} to ${levels()[1]}` },
+                  { label: 'You bring', value: `Up to ${props.challenger?.bring ?? TEAM_SIZE}` },
+                  ...(props.challenger == null
+                    ? []
+                    : [{ label: 'Win', value: props.challenger.wins }]),
+                ]}
+              />
+              {/* A Frontier house rule changes the whole fight, so it is said in full */}
+              <Show when={props.challenger?.rule}>{(rule) => <Meta>{rule()}</Meta>}</Show>
+              <CounterStep>Their line-up</CounterStep>
               {/* What they are fielding, in the same box of squares
                   the player reads their own pokemon in: a lineup laid
                   out the way a box is laid out is one they already
@@ -274,16 +279,6 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
                   cardOnly
                 />
               </Show>
-
-              {/* What winning pays and losing costs, written with the challenge */}
-              <Show when={props.challenger?.stakes}>
-                {(stakes) => (
-                  <div class="flex max-w-prose flex-col gap-1">
-                    <span class="text-xs font-semibold text-muted uppercase">Stakes</span>
-                    <Meta>{stakes()}</Meta>
-                  </div>
-                )}
-              </Show>
             </div>
           )}
         </Show>
@@ -292,11 +287,11 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
             party: the six are laid out with the fight rather than
             behind a second dialog, and the button waits for three */}
         <Show when={rented()}>
-          <div class="flex flex-col items-center gap-2 py-2 text-center">
+          <div class="flex flex-col gap-2 pt-3">
+            <CounterStep>
+              Choose {FRONTIER_TEAM_SIZE} to rent · {taken().length} taken
+            </CounterStep>
             <CatchBox entries={crate()} capacity={crate().length} columns={3} onOpen={toggle} />
-            <Meta>
-              Pick {FRONTIER_TEAM_SIZE} of {crate().length} to rent. {taken().length} taken.
-            </Meta>
           </div>
         </Show>
 
@@ -319,9 +314,8 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
           >
             Battle
           </Button>
-          <Button onClick={props.onClose}>Walk away</Button>
+          <Button onClick={props.onClose}>Walk on</Button>
         </DialogActions>
-        <Status message={status()} />
       </Dialog>
 
       <TeamPickerDialog

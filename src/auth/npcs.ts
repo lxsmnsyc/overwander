@@ -1,9 +1,12 @@
+import { readOnly } from '../utils/server-calls';
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
+import type { Stats } from '../data/constants/stats';
 import Npc from '../data/overworld/npc';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-import { WORLD_GENERATION } from '../overworld/current';
-import { requireUid } from '../server/auth';
+import { requireReader, requireUidFor } from '../server/auth';
+import { readVisited } from '../server/npcs/visits';
+import { Feature } from '../server/switches';
 import check, {
   BASKET,
   CATCH_LIST,
@@ -17,7 +20,9 @@ import check, {
   OFFSET,
   PARENTS,
   REPLACED_SLOT,
+  STAT,
   TOKEN,
+  TRADER_OFFER,
 } from '../server/validate';
 import type { Awakening } from '../server/awaken';
 import {
@@ -31,9 +36,12 @@ import {
   channelAbility as channelOnServerSide,
   countVisit,
   groomCatch as groomOnServerSide,
+  hyperTrain as hyperOnServerSide,
   remindMove as remindOnServerSide,
   reviveFossil as reviveOnServerSide,
   sellToVendor as sellOnServerSide,
+  tradeWithTrader as tradeOnServerSide,
+  trainMoveSlot as trainSlotOnServerSide,
   tutorMove as tutorOnServerSide,
   visitNurse as visitNurseOnServerSide,
 } from '../server/npcs';
@@ -41,7 +49,6 @@ import type { LearnResult } from './learn-refusal';
 import { syncServerClock } from './clock';
 import { getLocale } from './local-time';
 import getIdToken from './session';
-import getSupabase from './supabase';
 
 /**
  * The wandering NPCs, as the client asks them for things.
@@ -103,7 +110,7 @@ async function breedOnServer(
   check(PARENTS, parents);
   check(OFFSET, offset);
   check(LOCALE, locale);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -152,7 +159,7 @@ async function boostOnServer(
   check(CELL, cell);
   check(ID, catchId);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -203,7 +210,7 @@ async function visitNurseOnServer(
   check(CELL, cell);
   check(CATCH_LIST, catches);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -251,7 +258,7 @@ async function groomOnServer(
   check(CELL, cell);
   check(ID, catchId);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -313,7 +320,7 @@ async function remindOnServer(
   check(GAME_ID, move);
   check(REPLACED_SLOT, replaces);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -378,7 +385,7 @@ async function tutorOnServer(
   check(GAME_ID, move);
   check(REPLACED_SLOT, replaces);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -440,7 +447,7 @@ async function channelOnServer(
   check(CELL, cell);
   check(ID, catchId);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -497,7 +504,7 @@ async function buyOnServer(
   check(BASKET, basket);
   check(OFFSET, offset);
   check(NPC, trader);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   // The server refuses a trader that is not one, and refuses a cell
   // where they are not standing — so the caller's word only picks
@@ -554,7 +561,7 @@ async function sellOnServer(
   check(BASKET, basket);
   check(OFFSET, offset);
   check(NPC, trader);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -605,7 +612,7 @@ async function buyFossilOnServer(
   check(CELL, cell);
   check(GAME_ID, item);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -670,7 +677,7 @@ async function carveOnServer(
   check(GAME_ID, item);
   check(COUNT, amount);
   check(OFFSET, offset);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -716,7 +723,7 @@ async function reviveOnServer(
   check(COUNT, amount);
   check(OFFSET, offset);
   check(LOCALE, locale);
-  const uid = await requireUid(token);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
 
   return countVisit(
     uid,
@@ -737,20 +744,174 @@ async function reviveOnServer(
 
 /**
  * Whether whoever is standing at the cell has already dealt with the
- * signed-in player this window. The claim rows are readable by their
- * owner, so a dialog can show "sold" instead of offering a press the
- * server would only refuse
+ * signed-in player this window, so a dialog can show "sold" instead of
+ * offering a press the server would only refuse
  */
 export async function hasVisited(
   snapshot: ChunkSnapshot,
   tag: string,
   cell: number,
 ): Promise<boolean> {
-  const { data } = await getSupabase()
-    .from('npc_claims')
-    .select('marker')
-    .eq('generation', WORLD_GENERATION)
-    .eq('marker', snapshot.visitMarker(tag, cell));
+  return hasVisitedOnServer(await getIdToken(), snapshot.visitMarker(tag, cell));
+}
 
-  return (data ?? []).length > 0;
+async function hasVisitedOnServer(token: string, marker: string): Promise<boolean> {
+  'use server';
+  check(TOKEN, token);
+  check(ID, marker);
+  return readVisited(await requireReader(token), marker);
+}
+readOnly(hasVisitedOnServer);
+
+/**
+ * Have the Dojo Master make room for one more move on one of the
+ * player's catches, for a Heart Scale. Resolves the move slots it now
+ * has, or null when he refuses
+ */
+export async function trainMoveSlot(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  catchId: string,
+): Promise<number | null> {
+  return trainSlotOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    catchId,
+    snapshot.offset,
+  );
+}
+
+async function trainSlotOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  catchId: string,
+  offset: number,
+): Promise<number | null> {
+  'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(ID, catchId);
+  check(OFFSET, offset);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
+
+  return countVisit(
+    uid,
+    Npc.DojoMaster,
+    await trainSlotOnServerSide(uid, x, y, cell, catchId, await syncServerClock(), offset),
+  );
+}
+
+/**
+ * Swap one of the player's catches for the trader's pokemon at
+ * `offer`, once a window. Resolves the new catch's id, or null when he
+ * refuses
+ */
+export async function tradeWithTrader(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  offer: number,
+  catchId: string,
+): Promise<string | null> {
+  return tradeOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    offer,
+    catchId,
+    snapshot.offset,
+    getLocale(),
+  );
+}
+
+async function tradeOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  offer: number,
+  catchId: string,
+  offset: number,
+  locale: string,
+): Promise<string | null> {
+  'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(TRADER_OFFER, offer);
+  check(ID, catchId);
+  check(OFFSET, offset);
+  check(LOCALE, locale);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
+
+  return countVisit(
+    uid,
+    Npc.Trader,
+    await tradeOnServerSide(
+      uid,
+      x,
+      y,
+      cell,
+      offer,
+      catchId,
+      await syncServerClock(),
+      offset,
+      locale,
+    ),
+  );
+}
+
+/**
+ * Have the Hyper Trainer take one value of one of the player's catches
+ * to the top, for gold by the point, once a window. Resolves the values
+ * it now has, or null when refused
+ */
+export async function hyperTrain(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  catchId: string,
+  stat: Stats,
+): Promise<number | null> {
+  return hyperOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    catchId,
+    stat,
+    snapshot.offset,
+  );
+}
+
+async function hyperOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  catchId: string,
+  stat: Stats,
+  offset: number,
+): Promise<number | null> {
+  'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(ID, catchId);
+  check(STAT, stat);
+  check(OFFSET, offset);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
+
+  return countVisit(
+    uid,
+    Npc.HyperTrainer,
+    await hyperOnServerSide(uid, x, y, cell, catchId, stat, await syncServerClock(), offset),
+  );
 }

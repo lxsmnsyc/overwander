@@ -1,32 +1,137 @@
 # TODOS
 
-- [ ] Remaining Held Items
+Ordered by priority, highest first. The platform work leads because every
+later feature adds more text to translate and more data to load at boot.
+
+## 1. Platform
+
+The three plans touch the same registries, so they are sequenced: decide how
+text leaves the registries (i18n) before splitting them for loading, and keep
+the database copy independent of both. Game data stays hand-written TypeScript
+throughout; nothing here turns it into generated JSON.
+
+### Internationalization
+
+Nothing is translatable today: there is no i18n library, and every player-facing
+string is hard-coded English, in registry `name` and `description` fields, the
+`*_NAMES` tables, component copy, toasts, NPC quotes and server refusals.
+
+- [ ] **Pick the library.** Paraglide JS is the lead candidate: typed message
+      functions, one reviewable message file per locale, and each locale split
+      into its own chunk so a player downloads only theirs.
+      `@solid-primitives/i18n` is the lighter fallback.
+- [ ] **Locale plumbing.** A locale setting beside the theme, defaulting from
+      `Accept-Language` on the server render, reflected in `<html lang>`.
+- [ ] **Formatting.** Replace the four `toLocaleString('en-US')` calls and any
+      hand-built dates with `Intl`, reading the active locale.
+- [ ] **Registry text out of the entries.** Names and descriptions move into
+      per-locale text tables keyed by id (for example
+      `src/data/text/en/species.ts`), read through `getSpeciesName(id)` and
+      friends. Derived descriptions (`describeBerry`, the gems, valuables)
+      become message templates with parameters rather than string
+      concatenation.
+- [ ] **Interface copy.** Extract component strings into message files, one
+      area at a time, most-seen first: overworld HUD, battle, bag, catch sheet,
+      then the dialogs.
+- [ ] **Server text.** Server functions answer with a code and parameters, not
+      an English sentence, and the browser renders the message.
+- [ ] **First extra locale.** Species, move, ability and item names come from
+      PokeAPI's localized names for free. Descriptions describe this engine
+      rather than the mainline, so they need translating.
+- [ ] **Tests.** Every key exists in every locale, and English is the fallback.
+
+### Deferring data and runtime at boot
+
+Everything in `src/data/` registers at boot today. The overworld needs only a
+thin slice of it.
+
+- [ ] **Measure first.** Walk the Vite manifest's static graph for the main
+      route to get today's startup total and the size of each chunk.
+- [ ] **Stop the board deriving whole encounters.**
+      `board-view.ts:405` calls `deriveEncounter` for every visible spawn only
+      to read `.shiny`, which rolls moves, abilities, held items and level.
+      Split out a `deriveShiny`. After this the overworld needs no learn sets,
+      ability pools or held-item tables.
+- [ ] **Split the species record in two, as source files.** The world half is
+      what spawning and the board read: id, name, family, types, habitat,
+      `evolvesFrom`, `evolvesInto`, `dexNumber`, `eggGroups`, plus the spawn
+      pools. The detail half holds learn sets, stats, ability pools, held
+      items, catch rate, height, weight and gender ratio, in a matching file
+      that loads later.
+- [ ] **Load moves, abilities and items on demand** in the browser, behind a
+      Suspense gate around the panels and the battle view. The server keeps
+      registering everything eagerly.
+- [ ] **Give learn sets their own loader.** They are read by encounter
+      and NPC team building, breeding, the dex, the reminder and tutor
+      counters, TMs and catch search, but never by the battle engine, so they
+      should not ride on the fight data's loader.
+- [ ] **Set abilities up on demand.** An ability's listeners are attached when
+      a unit on the field first gains it, with listener ranks reserved up front
+      so a late setup still answers in list order.
+- [ ] **Later: load by id.** A loader map per registry from id to its family
+      file, an `await load(ids)` at each entry point (chunk derive, panel open,
+      battle start, NPC team build), and getters that stay synchronous.
+      Metronome and other moves that call moves preload their pool.
+
+### Game data in the database
+
+The registries are copied into Postgres so player rows can be searched against
+them in SQL. The TypeScript stays the source.
+
+- [ ] **Schema.** A `game_data` schema holding `species` (base stats as
+      columns, types, egg groups and biomes as `smallint[]` with a GIN index),
+      `species_abilities`, `species_evolutions`, `learn_set` (one row per
+      species, move and source, indexed on move), `moves`, `abilities`, `items`
+      and a `version` row.
+- [ ] **Sync.** At server start, after the migrations: hash the rows built from
+      the registries, and when the hash differs, truncate and reload the schema
+      in one transaction. A failed sync stops the server, as a failed
+      migration does.
+- [ ] **No foreign keys from player tables** into `game_data`, and none from
+      the join tables to moves or abilities, since a species may name one not
+      written up yet (Archen and Archeops name Defeatist, which has no
+      registry entry).
+- [ ] **Move box search and auction search to SQL**, which lets them filter
+      rows the browser never downloads.
+- [ ] **Localized names.** Once i18n lands, a `names (kind, id, locale, name)`
+      table so search works in the player's language.
+- [ ] **Later: a data endpoint.** Serve registry entries by id from these
+      tables, cached under the build hash, as the transport for loading by id.
+
+## 2. Next up
+
+Small and unblocked.
+
 - [ ] add Jeweler
 - [ ] add Archaeologist
 - [ ] adjacent chunk preload
 - [ ] Mini Boss ability
 - [ ] catch tags
 
-Held items blocked on engine features (13): the four terrain seeds and Terrain Extender (no terrain), Heavy-Duty Boots (no entry hazards), Room Service (no Trick Room)
+## 3. Remaining items
 
-Held items I'd leave alone (22): the signature items whose species are past gen 1 — Adamant/Lustrous/Griseous/Red/Blue Orb, Soul Dew, Rusted Sword and Shield, the four Genesect drives.
+Shortest path to real value, in order:
 
-Battle items — Max Mushrooms.
+- [ ] **The four PP restoratives:** Ether, Max Ether, Elixir, Max Elixir. They
+      map onto clearing cooldowns the way the Leppa Berry already does.
+- [ ] **The three charms left:** Exp Charm, Oval Charm, Mark Charm, on the
+      pattern the Shiny and Catching Charms already use.
+- [ ] **Terrain seeds, Terrain Extender and Room Service.** The engine now has
+      terrain and Trick Room, which is what blocked them.
 
-Medicine — 21 missing. The interesting ones: Ether / Max Ether / Elixir / Max Elixir, which map cleanly onto clearing cooldowns the way the Leppa Berry already does; Rare Candy; Sacred Ash (revive the whole party); Ability Capsule.
+After that:
 
-Poké Balls — 24 missing, 8 of them implementable now with the catch-rate hooks that already exist: Level, Lure, Moon, Friend, Love, Heavy, Fast, Safari/Sport. The rest are Hisui and legend-specific (Beast, Cherish, Dream, Park, Origin, Strange, the Hisuian and feather/wing/jet sets).
+- Battle items: Max Mushrooms.
+- Poké Balls: Safari and Sport, then the Hisui and legend-specific sets (Beast,
+  Cherish, Dream, Park, Origin, Strange, the Hisuian and feather/wing/jet sets).
+- Flutes, all 5. The Poké Flute wakes sleepers; Black and White adjust
+  encounter rate and level, which is overworld work.
+- Key items: Coin Case, Berry Pots, Poké Radar, Vs Seeker, Dowsing Machine.
+- Left alone until their species exist: Rusted Sword and Rusted Shield.
 
-Flutes — all 5 missing. Poké Flute wakes sleepers; Black and White adjust encounter rate and level, which is overworld work.
+## 4. Engine gaps in Johto moves
 
-Key items — mostly plot props, but four are the same shape as the Shiny Charm you already have: Exp Charm, Oval Charm, Catching Charm, Mark Charm. Also plausible: Coin Case, Berry Pots, Poké Radar, Vs Seeker, Dowsing Machine.
-
-Shortest path to real value, in order: the four PP restoratives (the Leppa hook is written), the four charms (the Shiny Charm pattern is written), the eight ball variants, then Everstone. The X items need a battle bag flow before any of them mean anything.
-
-## Johto moves
-
-All 83 are registered, in the Kanto learnsets, and backed by the engine. What
-is still short of the mainline, in rough order of how much it matters:
+What is still short of the mainline, in rough order of how much it matters:
 
 - **Sketch** keeps what it drew, but only out of a raid or an npc fight: a
   sketch drawn in any fight between players ends with the battle.
@@ -37,9 +142,14 @@ is still short of the mainline, in rough order of how much it matters:
   is already casting something else.
 - **Present** and **Magnitude** roll their power per cast, so neither can be
   read off a card before it is thrown.
-- **Whirlpool** does not yet reach a submerged target, because Dive is not in.
 
-## Available Mega Sprites
+## 5. Content
+
+### True Species
+
+- Pre-existing species with new types
+
+### Available Mega Sprites
 
 - [ ] Venusaur
 - [x] Charizard X
@@ -68,77 +178,65 @@ is still short of the mainline, in rough order of how much it matters:
 - [x] Houndoom
 - [ ] Tyranitar
 
-## True Species
+## 6. Ideas, not committed to
 
-- Pre-existing species with new types
+### Open world gimmicks
 
-## Non-canon abilities
+Secret bases are deliberately left out: they were already on the table when this
+list was drawn up. Each line says what the mechanic does and what it would cost
+a player, since a gimmick whose payoff is invisible or already reachable is not
+worth building.
 
-- Add non-canon abilities per family.
-  
-## Open world gimmicks
-
-Candidates, none committed to. Secret bases are deliberately left out: they were
-already on the table when this list was drawn up. Each line says what the
-mechanic does and what it would cost a player, since a gimmick whose payoff is
-invisible or already reachable is not worth building.
-
-- [ ] **Rides.** Read off the buddy already carried: deep water opens to a Water
-      or Flying buddy, surface rock to a Rock, Ground or Fighting one, and a
-      Flying or Dragon buddy glides a straight line of up to 5 cells, landing on
-      the first walkable cell. Shelf water stays open to everyone, so nobody
-      loses ground they walk on today. Makes the buddy slot a route choice as
-      well as an odds choice, against the lure and shiny boost it already holds.
 - [ ] **Fishing.** Three rods, never consumed. Press an adjacent water cell,
       rolled from `${window}:${worldCell}:cast:${n}` so everyone standing there
       in that window sees the same fish, on a 20 second cooldown. Rod tier and
       shelf versus deep water pick the band; a fish that breaks off is gone from
       that cell for the window. Reaches for what is under the water rather than
       filling an empty cell, since water already holds swimmers and floaters.
-- [ ] **Seasons.** Four, world wide, on the UTC clock the daily board uses, one
-      per real week. A quarter of every biome's rolls comes from a season pool.
-      Winter freezes water touching ground into walkable ice and spring floods
-      the lowest ground band, so routes open and close. A generation change, so
-      the world moves under everybody at once and a stored position can wake up
-      in water.
-- [ ] **Camp cooking.** Pitch every 30 minutes for 3 berries and run one
-      encounter power for 20 minutes, picked by dominant flavour: spawn count,
-      shiny odds, egg steps, wild levels or item finds. No stacking. The weakest
-      of the set, since lures and the buddy already hand out most of it.
 - [ ] **Tracks.** A rare spawn does not stand in the open. It leaves three or
       four footprints on the ground pointing the way it went, redrawn each
       window, and the trail can go cold. Chase it or keep walking.
-- [ ] **Itemfinder.** Caches stop being visible landmarks and become buried,
-      with a bag tool that pings by distance. Turns a chunk into something to
-      sweep rather than something to cross.
+- [ ] **A camera.** Photograph a wild pokemon instead of catching it: it fills
+      the dex sighting and pays nothing else, so the choice is on the encounter
+      itself.
 - [ ] **A roaming legendary.** One per region, in a real chunk each three hour
       window and moving when the window turns. The world map names the region it
       is in, never the cell. It flees on contact; corner it three times in three
       windows and it stands.
-- [ ] **Berry farming.** Plant in a cell you pick rather than harvesting what
-      the world placed. Hours to grow, waterable, and the plot is public the way
-      a gym seat is, so a stranger can water it or take the crop.
-- [ ] **A phone.** A beaten trainer gives you their number. Once a window one
-      calls, names the cell they are standing on, and wants a rematch with a
-      stronger party.
-- [ ] **A bike.** Halves the step pace, and an egg counts no steps while riding.
-      Speed against the thing walking is for.
-- [ ] **Deliveries.** A wanderer hands over a parcel for a town six or eight
-      chunks off, payable inside one window. A detour with a clock on it.
-- [ ] **A camera.** Photograph a wild pokemon instead of catching it: it fills
-      the dex sighting and pays nothing else, so the choice is on the encounter
-      itself.
+- [ ] **Itemfinder.** Caches stop being visible landmarks and become buried,
+      with a bag tool that pings by distance. Turns a chunk into something to
+      sweep rather than something to cross.
 - [ ] **Contests.** A second axis of worth for a catch that is not its stats,
       scored off nature, friendship and a move's flavour. Nothing currently makes
       a pokemon worth raising for anything but a fight.
+- [ ] **A phone.** A beaten trainer gives you their number. Once a window one
+      calls, names the cell they are standing on, and wants a rematch with a
+      stronger party.
+- [ ] **Berry farming.** Plant in a cell you pick rather than harvesting what
+      the world placed. Hours to grow, waterable, and the plot is public the way
+      a gym seat is, so a stranger can water it or take the crop.
+- [ ] **Seasons.** Four, world wide, one per real week. A quarter of every
+      biome's rolls comes from a season pool. Winter freezes water touching
+      ground into walkable ice and spring floods the lowest ground band, so
+      routes open and close. A generation change, so the world moves under
+      everybody at once and a stored position can wake up in water. Deerling's
+      coats already put four seasons on the clock at one month each, but only
+      for the coat a deer is met in, not for terrain or spawn rolls.
+- [ ] **Deliveries.** A wanderer hands over a parcel for a town six or eight
+      chunks off, payable inside one window. A detour with a clock on it.
+- [ ] **A bike.** Halves the step pace, and an egg counts no steps while riding.
+      Speed against the thing walking is for.
+- [ ] **Camp cooking.** Pitch every 30 minutes for 3 berries and run one
+      encounter power for 20 minutes, picked by dominant flavour: spawn count,
+      shiny odds, egg steps, wild levels or item finds. No stacking. The weakest
+      of the set, since lures and the buddy already hand out most of it.
 
-Pairs that would ship as one release: rides and fishing, both wanting the same
-water; tracks and the camera, which turn a walk into looking; seasons and rides,
-since a frozen lake and a Lapras answer the same closed route.
+Pairs that would ship as one release: tracks and the camera, which turn a walk
+into looking; fishing and seasons, since both change what water holds.
 
-## Seeing other players in the overworld
+### Seeing other players in the overworld
 
-Feasible, and most of it is already written. Nothing here is committed to.
+Feasible, and most of it is already written.
 
 Every other thing on the map is derived from the world seed plus the coordinates
 plus the clock, and generation runs on the client. Another player's position is
@@ -147,9 +245,8 @@ the first piece of overworld state that cannot be computed and has to be sent.
 What already exists:
 
 - `positions` holds every player's `chunk_x, chunk_y, cell_x, cell_y, depth,
-  moved_at` (`supabase/migrations/20260820000300_world.sql:81`), and the table is
-  already in the realtime publication
-  (`supabase/migrations/20260831000100_position_realtime.sql`).
+moved_at` (`db/migrations/0001_baseline.sql:732`), and the table already sends
+  its changes to the live feed (`src/server/live/rules.ts:34`).
 - `profiles.sprite` already holds the charset a trainer walks as, and it is
   already readable by anybody.
 - `readPositions(uids)` already reads many players' rows in one query
@@ -165,13 +262,12 @@ What already exists:
 
 What is in the way:
 
-- [ ] **The read policy on `positions` is self-only**
-      (`supabase/migrations/20260820000900_rls.sql:53`), so a socket watching the
-      table sees one row. This is deliberate, and the realtime migration says so,
-      but it was written when the stream was only for reconciling one player's
-      two devices. The project has already made the opposite call elsewhere:
-      `getPlayerPosition` says where a trainer is standing is as public as their
-      nickname.
+- [ ] **The live feed sends a position to its own player only**
+      (`src/server/live/rules.ts:34`), so a socket watching the table sees one
+      row. This is deliberate, but it was decided when the stream was only for
+      reconciling one player's two devices. The project has already made the
+      opposite call elsewhere: `getPlayerPosition` says where a trainer is
+      standing is as public as their nickname.
 - [ ] **Nothing queries by region.** The key is `(player, generation)` and there
       is no index on `chunk_x, chunk_y`. "Who else is in this chunk" is a query
       that does not exist.
@@ -187,58 +283,11 @@ rather than who walked past it.
 
 Three scopes, ascending in cost:
 
-- [ ] **Where people already converge.** Towns, gyms and raid landmarks only.
-      `towns` is already readable by anybody and raid lobbies are already live,
-      so people appear exactly where there was a reason to be.
 - [ ] **Friends only.** `friends` already exists, the query stays a list of uids,
       and `readPositions` already takes one, so no spatial index is needed at all.
       Cheapest of the three by a wide margin.
+- [ ] **Where people already converge.** Towns, gyms and raid landmarks only.
+      `towns` is already readable by anybody and raid lobbies are already live,
+      so people appear exactly where there was a reason to be.
 - [ ] **Ambient presence.** Everyone nearby, wanting the policy change, the
       spatial index and per-character interpolation.
-
-Note the seasons entry above overlaps what Deerling shipped. That work put four
-seasons on the clock at one month each and used them for the coat a deer is met
-in, not for terrain or a quarter of every biome's rolls. The gimmick as written
-here is still unbuilt.
-
-## Economy ledger
-
-Deferred on purpose. The design, what it was measured to cost and why it waits
-are in [Player-owned tables](docs/database/player-stores.md#not-built-yet-an-economy-ledger).
-
-- [ ] **An append-only record of every gold, item and candy change**, the way
-      rAthena keeps `picklog` and `zenylog`. Postgres triggers on
-      `profiles.gold`, `bag_items` and `bag_candies`, so every writer is covered
-      without a call of its own, each row carrying the player, the stack, the
-      amount it moved by, the balance after, the transaction id and a reason. A
-      pg_cron sweep keeps it to a retention window.
-
-Worth building when any of these happens:
-
-- the player count grows well past a dozen, or players stop knowing each other;
-- auctions and trades start carrying a real economy;
-- something looks duplicated and needs tracing.
-
-It costs about 190 bytes a row and 0.1 ms a write, roughly 40 MB a month at 12
-players, so it needs the sweep on the Free plan's 500 MB. Nothing that happens
-before it exists can be traced afterwards.
-
-## Taking back a release
-
-- [ ] **A day's grace before a release is final**, the way rAthena waits
-      `char_del_delay` (24 hours) before a deleted character is gone. Today a
-      release deletes the pokemon at once ([`src/server/caught.ts`](src/server/caught.ts)),
-      and a bulk release takes many in one press, so a slip or a stolen login is
-      permanent. A release would mark the pokemon and hide it instead, a sweep
-      would delete it a day later, and it could be taken back until then. The
-      release candy is paid when the sweep runs rather than at the press, or
-      releasing and taking back would print candy. Every box query has to leave
-      the marked ones out, which is most of the work.
-
-## A record of what staff did
-
-- [ ] **One row per staff action**, the way rAthena logs every GM command to
-      `atcommandlog`: who acted, on whom, what they did and when. The dashboard
-      only reads today, and bans, roles and grants are made by hand, so there is
-      nothing to log yet. It becomes worth building the moment the dashboard
-      writes anything, or somebody besides the owner holds a role.

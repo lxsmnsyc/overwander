@@ -107,7 +107,6 @@ export function BidDialog(props: {
       </Row>
 
       <DialogActions>
-        <Button onClick={props.onClose}>Never mind</Button>
         <Button
           tone="primary"
           disabled={amount() > props.gold}
@@ -118,6 +117,7 @@ export function BidDialog(props: {
         >
           Bid {amount()} gold
         </Button>
+        <Button onClick={props.onClose}>Never mind</Button>
       </DialogActions>
     </Dialog>
   );

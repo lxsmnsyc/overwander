@@ -9,17 +9,15 @@ import './game-data';
 import './timezone';
 
 /**
- * The one Postgres connection the privileged writes travel over.
+ * The one Postgres connection every read and write travels over, as
+ * the table owner. Browsers never reach the database: they call server
+ * functions, which decide what each player may read or change.
  *
- * It connects as the table owner, which row-level security does not
- * bind: this is the Supabase shape of the admin SDK's rules bypass,
- * and it is why every policy in the schema only describes browsers.
- *
- * `prepare: false` because the hosted pooler runs in transaction mode
- * and cannot track prepared statements; locally it costs nothing.
+ * `prepare: false` so a transaction-mode pooler can sit in front of it
+ * without breaking; against a direct connection it costs little.
  */
 
-const DB_URL_VAR = 'SUPABASE_DB_URL';
+const DB_URL_VAR = 'DATABASE_URL';
 
 let connection: postgres.Sql | null = null;
 
@@ -38,7 +36,7 @@ export function getSql(): postgres.Sql {
     if (url == null || url === '') {
       throw new Error(
         `${DB_URL_VAR} is not set. Copy .env.example to .env, ` +
-          'or run `supabase start` and use the local default.',
+          'and run `pnpm db` for the local database it names.',
       );
     }
     connection = postgres(url, {

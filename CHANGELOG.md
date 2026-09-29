@@ -1,5 +1,17 @@
 # overwander
 
+## 4.24.1
+
+### Patch Changes
+
+- fcc89ca: Teaching a pokemon its 8th move no longer fails.
+- bcbf001: - The Move Tutor, the Move Reminder and the teach-move dialog list each move by name, type and category, with the full entry on hover.
+  - The Move Tutor and Move Reminder have a search box.
+- 96a50db: - Eternal Floette, Poké Ball Vivillon and Spiky-eared Pichu stand in the mythical aura on the overworld.
+  - Eternal Floette and Poké Ball Vivillon also count as mythicals for their spawn levels, candy and whether a catch is notable.
+- 7fda394: - A raid boss's move that would hit the whole side is drawn by Lightning Rod, Storm Drain or a Follow Me instead, and then lands on that pokemon alone.
+  - Storm Drain draws Water moves aimed at a teammate onto its holder, as Lightning Rod does for Electric moves.
+
 ## 4.24.0
 
 ### Minor Changes

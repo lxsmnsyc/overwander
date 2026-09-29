@@ -2322,4 +2322,23 @@ export default function registerSignatureAbilities(): void {
     name: 'Opening Slash',
     description: 'The first move it lands after each entrance hits 1.5x.',
   });
+  registerSignature(Families.Sandygast, Abilities.CastleDrain, {
+    name: 'Castle Drain',
+    description:
+      'Whoever lands a contact move on it loses 1/8 of their HP, and it heals that much.',
+  });
+  registerSignature(Families.Pyukumuku, Abilities.TossedBack, {
+    name: 'Tossed Back',
+    description:
+      'The first blow that would knock it out leaves it on 1 HP and sends it off the field for its strongest teammate. Once per battle.',
+  });
+  registerSignature(Families.Minior, Abilities.Starfall, {
+    name: 'Starfall',
+    description: 'The first move it casts after each entrance is cast 50% faster.',
+  });
+  registerSignature(Families.Togedemaru, Abilities.ChargedSpines, {
+    name: 'Charged Spines',
+    description:
+      'A contact move landing on it charges it, and its next Electric move that lands hits 1.5x.',
+  });
 }

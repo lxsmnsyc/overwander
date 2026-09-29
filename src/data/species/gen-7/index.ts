@@ -21,6 +21,10 @@ import registerComfeySpecies from './comfey';
 import registerOranguruSpecies from './oranguru';
 import registerPassimianSpecies from './passimian';
 import registerWimpodSpecies from './wimpod';
+import registerSandygastSpecies from './sandygast';
+import registerPyukumukuSpecies from './pyukumuku';
+import registerMiniorSpecies from './minior';
+import registerTogedemaruSpecies from './togedemaru';
 
 /** Alola, as far as it is written */
 export default function registerGen7Species(): void {
@@ -47,4 +51,8 @@ export default function registerGen7Species(): void {
   registerOranguruSpecies();
   registerPassimianSpecies();
   registerWimpodSpecies();
+  registerSandygastSpecies();
+  registerPyukumukuSpecies();
+  registerMiniorSpecies();
+  registerTogedemaruSpecies();
 }

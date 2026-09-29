@@ -42,6 +42,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
+        { species: Species.Pyukumuku, weight: 5 },
         { species: Species.Primarina, weight: 2 },
         { species: Species.Samurott, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
@@ -86,6 +87,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
+        { species: Species.Pyukumuku, weight: 5 },
         { species: Species.Primarina, weight: 2 },
         { species: Species.Samurott, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
@@ -115,7 +117,10 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Floatzel, weight: 8 },
       ],
-      elusive: [{ species: Species.Shuckle, weight: 5 }],
+      elusive: [
+        { species: Species.Pyukumuku, weight: 5 },
+        { species: Species.Shuckle, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [],
       mythical: [{ species: Species.Victini, weight: 10 }],
@@ -140,7 +145,10 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Floatzel, weight: 8 },
       ],
-      elusive: [{ species: Species.Shuckle, weight: 5 }],
+      elusive: [
+        { species: Species.Pyukumuku, weight: 5 },
+        { species: Species.Shuckle, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [],
       mythical: [{ species: Species.Victini, weight: 10 }],

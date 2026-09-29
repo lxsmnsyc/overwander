@@ -1028,6 +1028,14 @@ const enum Abilities {
   FondCrush = 200387,
   // Wimpod
   OpeningSlash = 200388,
+  // Sandygast
+  CastleDrain = 200389,
+  // Pyukumuku
+  TossedBack = 200390,
+  // Minior
+  Starfall = 200391,
+  // Togedemaru
+  ChargedSpines = 200392,
 }
 
 export default Abilities;

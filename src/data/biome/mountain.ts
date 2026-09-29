@@ -67,6 +67,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Probopass, weight: 6 },
       ],
       elusive: [
+        { species: Species.Minior, weight: 5 },
+        { species: Species.Togedemaru, weight: 5 },
         { species: Species.Carbink, weight: 6 },
         { species: Species.Durant, weight: 6 },
         { species: Species.Druddigon, weight: 5 },
@@ -175,6 +177,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Probopass, weight: 6 },
       ],
       elusive: [
+        { species: Species.Minior, weight: 5 },
+        { species: Species.Togedemaru, weight: 5 },
         { species: Species.Carbink, weight: 6 },
         { species: Species.Durant, weight: 6 },
         { species: Species.Druddigon, weight: 5 },
@@ -270,6 +274,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Swoobat, weight: 8 },
       ],
       elusive: [
+        { species: Species.Minior, weight: 5 },
+        { species: Species.Togedemaru, weight: 5 },
         { species: Species.Carbink, weight: 6 },
         { species: Species.Aegislash, weight: 5 },
         { species: Species.Eelektross, weight: 4 },
@@ -360,6 +366,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Swoobat, weight: 8 },
       ],
       elusive: [
+        { species: Species.Minior, weight: 5 },
+        { species: Species.Togedemaru, weight: 5 },
         { species: Species.Carbink, weight: 6 },
         { species: Species.Aegislash, weight: 5 },
         { species: Species.Eelektross, weight: 4 },

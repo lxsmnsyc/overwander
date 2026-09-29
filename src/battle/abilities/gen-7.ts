@@ -1,17 +1,18 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { Stats } from '../../data/constants/stats';
+import { hashString } from '../../core/hash';
+import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
-import { MoveFlags, type Moves } from '../../data/ids/moves';
-import { Species, getBaseFormSpecies } from '../../data/ids/species';
-import { Statuses } from '../../data/ids/status';
+import { DamageFlags, MoveCategories, MoveFlags, Moves } from '../../data/ids/moves';
+import { MINIOR_FORMS, Species, getBaseFormSpecies } from '../../data/ids/species';
+import { NON_VOLATILE_STATUSES, Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { abilitiesOf } from '../moves/ability-moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
-import { onUnitActs } from '../utils';
+import { isPrimalWeather, onUnitActs } from '../utils';
 import {
   createAbility,
   createLimberAbility,
@@ -33,6 +34,12 @@ export const SCHOOLING_THRESHOLD = 1 / 4;
 /** What the bubble does for its own Water moves */
 export const WATER_BUBBLE_SCALE = 2;
 
+/** What a Water move packs onto the sand's Defense */
+export const WATER_COMPACTION_STAGES = 2;
+
+/** The share of its HP a Minior keeps its shell above */
+export const SHIELDS_DOWN_THRESHOLD = 1 / 2;
+
 /** What the fur makes of a touching blow, and of a Fire one */
 export const FLUFFY_CONTACT_SCALE = 0.5;
 export const FLUFFY_FIRE_SCALE = 2;
@@ -40,6 +47,19 @@ export const FLUFFY_FIRE_SCALE = 2;
 const FIRE = new Set([Types.Fire]);
 
 const POISONS = new Set([Statuses.Poisoned, Statuses.BadlyPoisoned]);
+
+/** What a Minior's shell keeps out: the major statuses, and Yawn's drowsiness */
+const SHELL_PROOF = new Set([...NON_VOLATILE_STATUSES, Statuses.Drowsy]);
+
+/**
+ * The core under an individual Minior's shell. Read off its catch id,
+ * or off its own measurements when it stands for no record
+ */
+export function getMiniorCore(unit: Unit): Species {
+  const key = unit.caught === '' ? `${unit.height}:${unit.weight}` : unit.caught;
+
+  return MINIOR_FORMS[1 + (hashString(key) % (MINIOR_FORMS.length - 1))];
+}
 
 /**
  * What Receiver will not take up: the ones that copy in their own
@@ -246,6 +266,134 @@ const setupAbilities = [
   // and what it spent on purpose does not count
   createRetreatAbility(Abilities.WimpOut),
   createRetreatAbility(Abilities.EmergencyExit),
+
+  // Sandygast: water packs the sand harder
+  // https://bulbapedia.bulbagarden.net/wiki/Water_Compaction_(Ability)
+  createAbility(Abilities.WaterCompaction, (battle) =>
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+      const { source, target } = event;
+
+      if (
+        event.success &&
+        event.type === Types.Water &&
+        source !== target &&
+        target.alive &&
+        target.hasAbility(Abilities.WaterCompaction)
+      ) {
+        target.triggerAbility(Abilities.WaterCompaction);
+        target.addStage(Stages.Defense, WATER_COMPACTION_STAGES, {
+          type: EffectType.Ability,
+          ability: Abilities.WaterCompaction,
+          unit: target,
+        });
+      }
+    }),
+  ),
+
+  // Palossand: a blow that lands on it throws its sand into the air. The
+  // sky is called up by casting Sandstorm, the way Sand Stream does
+  // https://bulbapedia.bulbagarden.net/wiki/Sand_Spit_(Ability)
+  createAbility(Abilities.SandSpit, (battle) =>
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+      const { source, target } = event;
+
+      if (
+        event.success &&
+        event.category !== MoveCategories.Status &&
+        source !== target &&
+        target.alive &&
+        target.hasAbility(Abilities.SandSpit) &&
+        !isPrimalWeather(battle.weather.current)
+      ) {
+        target.triggerAbility(Abilities.SandSpit);
+        target.triggerMove(Moves.Sandstorm, { type: MoveTargetType.None }, 0);
+      }
+    }),
+  ),
+
+  // Pyukumuku: whoever finishes it takes the HP it had left before the blow
+  // https://bulbapedia.bulbagarden.net/wiki/Innards_Out_(Ability)
+  createAbility(Abilities.InnardsOut, (battle) => {
+    const before = new Map<Unit, number>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
+        before.set(event.target, event.target.health);
+      }),
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const { cause, target } = event;
+        const left = before.get(target) ?? 0;
+
+        before.delete(target);
+        if (
+          !event.success ||
+          target.alive ||
+          cause.type !== EffectType.Move ||
+          cause.unit === target ||
+          !cause.unit.alive ||
+          !target.hasAbility(Abilities.InnardsOut)
+        ) {
+          return;
+        }
+        target.triggerAbility(Abilities.InnardsOut);
+        target.damage(
+          { type: EffectType.Ability, ability: Abilities.InnardsOut, unit: target },
+          cause.unit,
+          left,
+          DamageFlags.Indirect,
+        );
+      }),
+    ]);
+  }),
+
+  /**
+   * Minior: above 1/2 HP it keeps its shell, which no major status gets
+   * through, and at or below it the shell cracks open on its core. Which
+   * core is fixed per individual, read off its record
+   * https://bulbapedia.bulbagarden.net/wiki/Shields_Down_(Ability)
+   */
+  createAbility(Abilities.ShieldsDown, (battle) => {
+    function shelled(unit: Unit): boolean {
+      return unit.species === Species.Minior && unit.hasAbility(Abilities.ShieldsDown);
+    }
+
+    function settle(unit: Unit): void {
+      if (
+        !unit.alive ||
+        !unit.hasAbility(Abilities.ShieldsDown) ||
+        getBaseFormSpecies(unit.species) !== Species.Minior
+      ) {
+        return;
+      }
+
+      const shell = unit.health > unit.checkStat(Stats.HP, 0) * SHIELDS_DOWN_THRESHOLD;
+      const shape = shell ? Species.Minior : getMiniorCore(unit);
+
+      if (unit.species === shape) {
+        return;
+      }
+      unit.triggerAbility(Abilities.ShieldsDown);
+      // The shell and the core share an HP stat, so its health stands
+      unit.setSpecies(shape);
+    }
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        settle(event.target);
+      }),
+      battle.on(BattleEvents.UnitHeal, EventPriority.Post, (event) => {
+        settle(event.source);
+      }),
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        settle(event.source);
+      }),
+      battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+        if (!event.immune && SHELL_PROOF.has(event.status) && shelled(event.source)) {
+          event.immune = true;
+        }
+      }),
+    ]);
+  }),
 ];
 
 export default function setupGen7Abilities(battle: Battle): void {

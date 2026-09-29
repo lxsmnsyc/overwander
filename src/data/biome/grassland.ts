@@ -125,6 +125,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Togedemaru, weight: 5 },
         { species: Species.Comfey, weight: 5 },
         { species: Species.OricorioPomPom, weight: 5 },
         { species: Species.Dedenne, weight: 6 },
@@ -300,6 +301,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Togedemaru, weight: 5 },
         { species: Species.Comfey, weight: 5 },
         { species: Species.OricorioPomPom, weight: 5 },
         { species: Species.Dedenne, weight: 6 },
@@ -422,6 +424,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Togedemaru, weight: 5 },
         { species: Species.Incineroar, weight: 2 },
         { species: Species.Dedenne, weight: 6 },
         { species: Species.Furfrou, weight: 5 },
@@ -525,6 +528,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Togedemaru, weight: 5 },
         { species: Species.Incineroar, weight: 2 },
         { species: Species.Dedenne, weight: 6 },
         { species: Species.Gothitelle, weight: 5 },

@@ -34,6 +34,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Minior, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Machamp, weight: 5 },
         { species: Species.Delibird, weight: 5 },
@@ -77,6 +78,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Minior, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Salamence, weight: 2 },
         { species: Species.Machamp, weight: 5 },
@@ -119,6 +121,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Minior, weight: 5 },
         { species: Species.Cryogonal, weight: 4 },
         { species: Species.Salamence, weight: 2 },
         { species: Species.Delibird, weight: 5 },
@@ -153,6 +156,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Minior, weight: 5 },
         { species: Species.Cryogonal, weight: 4 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Absol, weight: 5 },

@@ -1066,6 +1066,11 @@ const enum Abilities {
   GhostShip = 200406,
   // Jangmo-o
   WarClangor = 200407,
+  // The Tapus: each island's guardian blesses its own under its terrain
+  StormBlessing = 200408,
+  MindBlessing = 200409,
+  WildBlessing = 200410,
+  MistBlessing = 200411,
 }
 
 export default Abilities;

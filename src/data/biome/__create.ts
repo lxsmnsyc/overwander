@@ -694,6 +694,10 @@ const LEGENDARY_SPECIES = new Set<Species>([
   // Staged by its lair and raided there. Type: Null below it is prized
   // instead: the line is made rather than born, so it is never common
   Species.Silvally,
+  Species.TapuKoko,
+  Species.TapuLele,
+  Species.TapuBulu,
+  Species.TapuFini,
 ]);
 
 /**

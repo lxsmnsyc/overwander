@@ -6,6 +6,19 @@ import { registerAbility } from './__create';
  * the mainline's
  */
 export default function registerGen7Abilities(): void {
+  // The Tapus
+  registerAbility(Abilities.ElectricSurge, {
+    name: 'Electric Surge',
+    description: 'Lays Electric Terrain as it takes the field.',
+  });
+  registerAbility(Abilities.PsychicSurge, {
+    name: 'Psychic Surge',
+    description: 'Lays Psychic Terrain as it takes the field.',
+  });
+  registerAbility(Abilities.GrassySurge, {
+    name: 'Grassy Surge',
+    description: 'Lays Grassy Terrain as it takes the field.',
+  });
   // Rowlet
   registerAbility(Abilities.LongReach, {
     name: 'Long Reach',

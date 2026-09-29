@@ -206,6 +206,14 @@ const enum Lairs {
   NebelPlateau = 51,
   /** The artificial island the synthetic beast was made and kept on */
   AetherParadise = 52,
+  /** The ruin off Melemele's Mahalo Trail, which is Tapu Koko's */
+  RuinsOfConflict = 53,
+  /** The ruin in Akala's green south, which is Tapu Lele's */
+  RuinsOfLife = 54,
+  /** The ruin at the far end of the Haina Desert, which is Tapu Bulu's */
+  RuinsOfAbundance = 55,
+  /** The ruin on Poni's stony shore, which is Tapu Fini's */
+  RuinsOfHope = 56,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -262,6 +270,10 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.DaharaRuins]: 'Dahara Ruins',
   [Lairs.NebelPlateau]: 'Nebel Plateau',
   [Lairs.AetherParadise]: 'Aether Paradise',
+  [Lairs.RuinsOfConflict]: 'Ruins of Conflict',
+  [Lairs.RuinsOfLife]: 'Ruins of Life',
+  [Lairs.RuinsOfAbundance]: 'Ruins of Abundance',
+  [Lairs.RuinsOfHope]: 'Ruins of Hope',
 };
 
 /**
@@ -325,6 +337,10 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.DaharaRuins]: [Species.Hoopa],
   [Lairs.NebelPlateau]: [Species.Volcanion],
   [Lairs.AetherParadise]: [Species.Silvally],
+  [Lairs.RuinsOfConflict]: [Species.TapuKoko],
+  [Lairs.RuinsOfLife]: [Species.TapuLele],
+  [Lairs.RuinsOfAbundance]: [Species.TapuBulu],
+  [Lairs.RuinsOfHope]: [Species.TapuFini],
 };
 
 /**
@@ -384,6 +400,10 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.DaharaRuins,
   Lairs.NebelPlateau,
   Lairs.AetherParadise,
+  Lairs.RuinsOfConflict,
+  Lairs.RuinsOfLife,
+  Lairs.RuinsOfAbundance,
+  Lairs.RuinsOfHope,
 ];
 
 /**
@@ -463,7 +483,15 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.FrostCavern,
   ],
   [Biome.Steppe]: [Lairs.PowerPlant],
-  [Biome.Desert]: [Lairs.DesertRuins, Lairs.RockPeakRuins, Lairs.RelicCastle],
+  [Biome.Desert]: [
+    Lairs.DesertRuins,
+    Lairs.RockPeakRuins,
+    Lairs.RelicCastle,
+    Lairs.RuinsOfAbundance,
+  ],
+  [Biome.TropicalSeasonalForest]: [Lairs.RuinsOfConflict],
+  [Biome.TropicalRainforest]: [Lairs.RuinsOfLife],
+  [Biome.RockyCoast]: [Lairs.RuinsOfHope],
   [Biome.Badlands]: [
     Lairs.DesertRuins,
     Lairs.AncientTomb,

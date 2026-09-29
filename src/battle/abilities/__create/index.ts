@@ -41,6 +41,7 @@ export {
 export { default as createMoldBreakerAbility } from './pierce';
 export { default as createReceiverAbility } from './receive';
 export { RETREAT_THRESHOLD, createRetreatAbility } from './retreat';
+export { default as createSurgeAbility } from './terrain';
 export {
   chipImmunity,
   createCloudNineAbility,

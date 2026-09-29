@@ -24,6 +24,7 @@ import {
   createAbility,
   createGooeyAbility,
   createPrimalWeatherAbility,
+  createSurgeAbility,
   createTypeShiftAbility,
   createWaterAbsorbAbility,
 } from './__create';
@@ -284,24 +285,8 @@ const setupAbilities = [
     }),
   ),
 
-  // Florges: the mist comes up with it, cast as the move rather than
-  // laid by hand, so the terrain's own clock runs it
-  createAbility(
-    Abilities.MistySurge,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-          if (event.source.hasAbility(Abilities.MistySurge)) {
-            event.source.triggerAbility(Abilities.MistySurge);
-          }
-        }),
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability === Abilities.MistySurge) {
-            event.source.triggerMove(Moves.MistyTerrain, { type: MoveTargetType.None }, 0);
-          }
-        }),
-      ]),
-  ),
+  // Florges: the mist comes up with it
+  createSurgeAbility(Abilities.MistySurge, Moves.MistyTerrain),
 
   // Clauncher: the claw is a barrel, so anything fired down it lands
   // harder, and the one pulse that mends rather than hurts mends more

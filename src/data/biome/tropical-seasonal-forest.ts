@@ -62,7 +62,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Tropius, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [{ species: Species.TapuKoko, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -115,7 +115,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Tropius, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [{ species: Species.TapuKoko, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Rowlet, weight: 2 }],
@@ -143,7 +143,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Decidueye, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [{ species: Species.TapuKoko, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Rowlet, weight: 2 }],
@@ -169,7 +169,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Decidueye, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [{ species: Species.TapuKoko, weight: 10 }],
     },
   });
   registerWaterPool(Biome.TropicalSeasonalForest, {

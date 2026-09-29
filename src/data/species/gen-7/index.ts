@@ -43,6 +43,7 @@ import registerAlolanGeodudeSpecies from './alolan-geodude';
 import registerAlolanGrimerSpecies from './alolan-grimer';
 import registerAlolanExeggutorSpecies from './alolan-exeggutor';
 import registerAlolanMarowakSpecies from './alolan-marowak';
+import registerTapuSpecies from './tapus';
 
 /** Alola, as far as it is written */
 export default function registerGen7Species(): void {
@@ -91,4 +92,5 @@ export default function registerGen7Species(): void {
   registerAlolanGrimerSpecies();
   registerAlolanExeggutorSpecies();
   registerAlolanMarowakSpecies();
+  registerTapuSpecies();
 }

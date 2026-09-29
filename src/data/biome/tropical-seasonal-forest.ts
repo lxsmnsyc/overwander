@@ -48,6 +48,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Komala, weight: 5 },
         { species: Species.RaichuAlola, weight: 4 },
         { species: Species.Comfey, weight: 5 },
         { species: Species.Tsareena, weight: 4 },
@@ -100,6 +101,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Komala, weight: 5 },
         { species: Species.RaichuAlola, weight: 4 },
         { species: Species.Comfey, weight: 5 },
         { species: Species.Tsareena, weight: 4 },
@@ -136,6 +138,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Komala, weight: 5 },
         { species: Species.RaichuAlola, weight: 4 },
         { species: Species.Decidueye, weight: 2 },
       ],
@@ -161,6 +164,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Komala, weight: 5 },
         { species: Species.RaichuAlola, weight: 4 },
         { species: Species.Decidueye, weight: 2 },
       ],

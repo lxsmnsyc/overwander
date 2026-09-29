@@ -44,6 +44,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Turtonator, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Charizard, weight: 3 },
         { species: Species.Golem, weight: 5 },
@@ -94,6 +95,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Turtonator, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Charizard, weight: 3 },
         { species: Species.Golem, weight: 5 },
@@ -128,6 +130,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Turtonator, weight: 5 },
         { species: Species.Hydreigon, weight: 2 },
         { species: Species.Heatmor, weight: 6 },
       ],
@@ -160,6 +163,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Turtonator, weight: 5 },
         { species: Species.Hydreigon, weight: 2 },
         { species: Species.Heatmor, weight: 6 },
       ],

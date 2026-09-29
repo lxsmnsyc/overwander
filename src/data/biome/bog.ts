@@ -163,6 +163,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Mimikyu, weight: 5 },
         { species: Species.Goodra, weight: 3 },
         { species: Species.Greninja, weight: 2 },
         { species: Species.Stunfisk, weight: 6 },
@@ -226,6 +227,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Mimikyu, weight: 5 },
         { species: Species.Goodra, weight: 3 },
         { species: Species.Greninja, weight: 2 },
         { species: Species.Stunfisk, weight: 6 },

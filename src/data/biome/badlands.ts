@@ -75,6 +75,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Turtonator, weight: 5 },
         { species: Species.Carbink, weight: 6 },
         { species: Species.Klefki, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
@@ -184,6 +185,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Turtonator, weight: 5 },
         { species: Species.Carbink, weight: 6 },
         { species: Species.Klefki, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
@@ -281,6 +283,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Turtonator, weight: 5 },
         { species: Species.Carbink, weight: 6 },
         { species: Species.Aegislash, weight: 5 },
         { species: Species.Heatmor, weight: 6 },
@@ -373,6 +376,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Turtonator, weight: 5 },
         { species: Species.Carbink, weight: 6 },
         { species: Species.Aegislash, weight: 5 },
         { species: Species.Heatmor, weight: 6 },

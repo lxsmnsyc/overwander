@@ -106,4 +106,10 @@ export default function registerGen7Abilities(): void {
     name: 'Power of Alchemy',
     description: 'When a teammate faints, it takes that teammate’s ability in place of this one.',
   });
+  // Mimikyu
+  registerAbility(Abilities.Disguise, {
+    name: 'Disguise',
+    description:
+      'The first move to hit it deals no damage and breaks its disguise, which costs it 1/8 of its HP.',
+  });
 }

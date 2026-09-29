@@ -384,6 +384,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Mimikyu, weight: 5 },
         { species: Species.Dedenne, weight: 6 },
         { species: Species.Furfrou, weight: 5 },
         { species: Species.Emolga, weight: 8 },
@@ -514,6 +515,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Mimikyu, weight: 5 },
         { species: Species.Dedenne, weight: 6 },
         { species: Species.Emolga, weight: 8 },
         { species: Species.Chandelure, weight: 5 },

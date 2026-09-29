@@ -10,7 +10,12 @@ import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
 import { hasFreeItemSlot, stealableItem, unitTarget } from '../utils';
-import { createAbility, createContactHazard, createTypeShiftAbility } from './__create';
+import {
+  createAbility,
+  createContactHazard,
+  createSurgeAbility,
+  createTypeShiftAbility,
+} from './__create';
 
 /** What a pelt of grass is worth while there is grass to stand on */
 const GRASS_PELT_SCALE = 1.5;
@@ -47,8 +52,8 @@ const PULSE_MOVES = new Set<Moves>([
 /** What a launcher is worth to a pulse, thrown or given */
 const MEGA_LAUNCHER_SCALE = 1.5;
 
-/** What the cold is worth to a move it froze on the way out */
-const REFRIGERATE_SCALE = 1.2;
+/** What a Normal move is worth once an ability has shifted its type */
+const TYPE_SHIFT_SCALE = 1.2;
 
 /**
  * What a shell thick enough to stop a shot turns away: everything
@@ -212,24 +217,11 @@ const setupAbilities = [
     }),
   ),
 
-  // Florges: the mist comes up with it, cast as the move rather than
-  // laid by hand, so the terrain's own clock runs it
-  createAbility(
-    Abilities.MistySurge,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-          if (event.source.hasAbility(Abilities.MistySurge)) {
-            event.source.triggerAbility(Abilities.MistySurge);
-          }
-        }),
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability === Abilities.MistySurge) {
-            event.source.triggerMove(Moves.MistyTerrain, { type: MoveTargetType.None }, 0);
-          }
-        }),
-      ]),
-  ),
+  // Florges: the mist comes up with it
+  createSurgeAbility(Abilities.MistySurge, Moves.MistyTerrain),
+
+  // Spiky-eared Pichu: the charge in its ears spills into the ground
+  createSurgeAbility(Abilities.ElectricSurge, Moves.ElectricTerrain),
 
   // Clauncher: the claw is a barrel, so anything fired down it lands
   // harder, and the one pulse that mends rather than hurts mends more
@@ -259,7 +251,10 @@ const setupAbilities = [
 
   // Amaura: what it throws freezes on the way out, which is worth a
   // fifth again on top of landing as Ice
-  createTypeShiftAbility(Abilities.Refrigerate, Types.Normal, Types.Ice, REFRIGERATE_SCALE),
+  createTypeShiftAbility(Abilities.Refrigerate, Types.Normal, Types.Ice, TYPE_SHIFT_SCALE),
+
+  // Eternal Floette: the same shift, into the light of its flower
+  createTypeShiftAbility(Abilities.Pixilate, Types.Normal, Types.Fairy, TYPE_SHIFT_SCALE),
 
   // Goomy: the slime comes off on whatever touches it, and a foot
   // in it is a foot that is slower afterwards

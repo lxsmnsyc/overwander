@@ -36,6 +36,11 @@ export default function registerGen6Abilities(): void {
     name: 'Misty Surge',
     description: 'Lays Misty Terrain as it takes the field.',
   });
+  // Spiky-eared Pichu, which the mainline leaves two abilities short
+  registerAbility(Abilities.ElectricSurge, {
+    name: 'Electric Surge',
+    description: 'Lays Electric Terrain as it takes the field.',
+  });
   // Clauncher
   registerAbility(Abilities.MegaLauncher, {
     name: 'Mega Launcher',
@@ -50,6 +55,11 @@ export default function registerGen6Abilities(): void {
   registerAbility(Abilities.Gooey, {
     name: 'Gooey',
     description: 'Whatever makes contact with it loses 1 stage of Speed.',
+  });
+  // Eternal Floette, which the mainline leaves two abilities short
+  registerAbility(Abilities.Pixilate, {
+    name: 'Pixilate',
+    description: 'Its Normal moves are Fairy moves instead, and hit 1.2x.',
   });
   // Honedge
   registerAbility(Abilities.StanceChange, {

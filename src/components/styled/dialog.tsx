@@ -49,11 +49,10 @@ const WIDTHS: Record<DialogWidth, string> = {
 };
 
 /**
- * Where a dialog stands and how wide it is. Room is left over the top
- * for the nameplate, which sits across the sheet's top edge
+ * Where a dialog stands: centred both ways, so the space over it
+ * matches the space under it. The nameplate is inside the placed box
  */
-const PLACE = 'fixed left-1/2 top-[7%] -translate-x-1/2';
-const SHEET_PLACE = 'fixed left-1/2 top-[3vh] -translate-x-1/2';
+const PLACE = 'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2';
 
 /**
  * The sheet itself: white on a soft edge, round and chunky, standing on
@@ -430,7 +429,7 @@ export function Dialog(props: DialogProps): JSX.Element {
             <Suspense>
               <TransitionChild
                 {...FADE}
-                class={`${props.layout === 'sheet' ? SHEET_PLACE : PLACE} ${
+                class={`${PLACE} ${
                   props.quiet === true ? '' : 'pt-[17px]'
                 } ${WIDTHS[props.width ?? 'narrow']}`}
               >

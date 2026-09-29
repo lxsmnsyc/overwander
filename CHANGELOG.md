@@ -1,5 +1,27 @@
 # overwander
 
+## 4.23.2
+
+### Patch Changes
+
+- 2fb81de: - Family candies paint the edges of the ball in the band they belong to, and keep the shine off the top stripe.
+
+## 4.23.1
+
+### Patch Changes
+
+- 1d5c690: - Every dialog puts its way out on the left and its main action on the right.
+  - An ended battle offers Leave battle as its main action, with Stay and look beside it.
+  - A safari encounter no longer opens on the last encounter's "It fled!" or "Caught!".
+- 9f24d6d: - The Old Sea Map and the other key items moved by the last repack draw their own picture again.
+- fa41815: The Hyper Trainer lists each IV on its own row, with its cost beside it.
+- 51ea3a3: - Tooltips appear and disappear the moment the pointer arrives or leaves.
+  - Moving from one hover card's square to the next swaps the card at once.
+- 76e95d7: - Trainers, gym leaders, the Elite Four and the Battle Factory's rentals no longer field the prized band's Unown or Fancy Vivillon.
+- c6dcd44: - A safari catch swaps the Bag, Throw and Run buttons for Have a look and Walk on, so the catch can be opened straight away.
+  - A wild Meowstic is always the sex its drawing shows.
+- 5e7631a: A tall pokemon in the Safari Zone is shrunk to fit the field instead of being cut off at the top.
+
 ## 4.23.0
 
 ### Minor Changes

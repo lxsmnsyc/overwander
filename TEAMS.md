@@ -63,6 +63,67 @@ whatever gets imported: **Wish** (Clefable), **Heal Bell** and **Aromatherapy**
 (Blissey), and **Morning Sun** (Volcarona). Blissey losing both cleansing moves is
 therefore permanent, not a gap that a later import closes.
 
+## Megas
+
+Megas are not on `main` yet: everything here reads the `kalos-megas` branch
+([`src/data/species/megas.ts`](src/data/species/megas.ts) and
+[`src/battle/items/megas.ts`](src/battle/items/megas.ts)). If you are playing `main`,
+skip this section.
+
+**The rules, as that branch has them:**
+
+- A Mega Stone is an ordinary **held item**, so it takes one of the eight item slots.
+  Rayquaza is the exception: it needs no stone, only to know **Dragon Ascent**.
+- Stones are **never sold**. They sit in the rarest band of the item pool, one weight
+  each alongside the plates, so they are dug up rather than bought. A shop buys one
+  back for 2,000.
+- **A team Mega Evolves once per fight**, and the game picks who: the **highest level**
+  first, then the **biggest Mega** by base-stat total, then whoever stands earliest in
+  the party. It happens as that unit takes the field.
+- The Mega's own ability is **worn on top** of the catch's four, the way an Origin
+  forme's is, so nothing is given up. Stats and types change; moves, the other items
+  and the catch's own abilities stay.
+
+**The Megas these teams can reach:**
+
+| Mega | Stat line | Ability it wears | What changes |
+| --- | --- | --- | --- |
+| **Mega Metagross** | 80/145/150/105/110/110 | Tough Claws (contact moves 1.3x) | +10 Attack, +20 Defense, +20 Special Defense, **+40 Speed**, and every move on its set is a contact move |
+| **Mega Latias** | 80/100/120/140/150/110 | Levitate | +30 Defense, +30 Special Attack, +20 Special Defense, with Eon Shield still covering the team |
+| **Mega Mewtwo Y** | 106/150/70/194/120/140 | Insomnia | +40 Special Attack and +10 Speed over Mewtwo, at the cost of 20 Defense |
+| **Mega Mewtwo X** | 106/190/100/154/100/130 | Steadfast | Psychic and Fighting, with 190 Attack, for a physical build only |
+| **Mega Rayquaza** | 105/180/100/180/100/115 | Delta Stream | +30 in both attacking stats and +20 Speed, and it needs no stone |
+
+**What to do on each team:**
+
+- **PvP without legendaries**: the stone goes on **Metagross** (Metagrossite). Tough
+  Claws gives Meteor Mash, Bullet Punch, Zen Headbutt and Ice Punch 1.3x each, all
+  four being contact moves, and 110 Speed turns it from the slow half of the team into
+  the fast half. It is the only Mega on that six.
+- **PvP with legendaries**: **Mega Rayquaza** takes the slot for free, since Dragon
+  Ascent is already in its set and no stone is needed. Do not also carry a stone for
+  Mewtwo or Latias: the team only gets one Mega, and Rayquaza is both the highest
+  base-stat total and, at the levels these fights run at, usually the pick.
+- **Raids without legendaries**: **Metagross** again, for the same reason. Against a
+  boss it also gains from Tough Claws stacking with Steelworker and Hive Mind.
+- **Raids with legendaries**: this is the real choice. **Mega Latias** keeps Eon Shield
+  running and adds 30 Special Defense to the unit the party leans on, while **Mega
+  Metagross** is 1.3x on the team's main attacker. Take Latias for a boss that is
+  killing you and Metagross for a boss you are failing to out-damage.
+
+**Two traps in the automatic pick:**
+
+1. **It reads level before anything else.** A higher-level teammate holding any stone
+   takes the Mega, whatever you intended. The simplest rule is one stone per team.
+2. **Rayquaza cannot opt out.** Knowing Dragon Ascent is enough, so it will consume the
+   team's one Mega even if you would rather Mega Evolve something else. Drop Dragon
+   Ascent from its set if you want the Mega elsewhere.
+
+**Worth knowing for other builds:** **Mega Audino** (103/60/126/80/126/50, Healer) is
+the best Mega available to a stall team, and the weather Megas set weather without a
+move: **Mega Charizard Y** carries Drought, **Mega Tyranitar** Sand Stream and
+**Mega Abomasnow** Snow Warning.
+
 ---
 
 ## NPC and PvP battles, without legendaries

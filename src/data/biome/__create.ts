@@ -781,7 +781,11 @@ const UNOWN_SPECIES = new Set<Species>(UNOWN_FORMS);
 const PRIZED_BY_HAND = new Set<Species>([Species.Larvesta, Species.VivillonFancy]);
 
 /** Met as rarely as a mythical, but no relic calls it and no raid stages it */
-const MYTHICAL_BY_HAND = new Set<Species>([Species.PichuSpikyEared]);
+const MYTHICAL_BY_HAND = new Set<Species>([
+  Species.PichuSpikyEared,
+  Species.FloetteEternal,
+  Species.VivillonPokeBall,
+]);
 
 /**
  * The unowns as prized-band entries, for a pool to spread into its

@@ -14,7 +14,7 @@ import {
   STEP_PACE,
 } from '../../overworld/overworld-tab/metrics';
 import ChunkCanvas, { type SpawnCoat } from '../../overworld/chunk-canvas';
-import { CellAura, type SpawnRank } from '../../overworld/chunk-canvas/scenery';
+import { CellAura, rankOf } from '../../overworld/chunk-canvas/scenery';
 import { getSkybox, latitudeOf } from '../../../canvas/daylight';
 import { CAVERN } from '../../../canvas/sky';
 import { asOffset, getLocalOffset } from '../../../auth/local-time';
@@ -24,8 +24,6 @@ import { NPC_VISIT_TAGS } from '../../../data/overworld/npc';
 import { CHARSETS, FREE_CHARSETS } from '../../../data/overworld/charsets';
 import { getSpeciesData } from '../../../data/species';
 import { isFeaturedSpecies } from '../../../data/species/day';
-import { isLegendarySpecies, isMythicalSpecies } from '../../../data/biome';
-import type { Species } from '../../../data/ids/species';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
 import getWorld from '../../../overworld/current';
 import type { Depth } from '../../../overworld/depth';
@@ -43,14 +41,6 @@ const EXPERT_LANDMARKS = new Set<Landmark>([
 /** How many other trainers wander the board, and how often each picks somewhere new */
 const STRANGER_COUNT = 3;
 const STRANGER_REPLAN = 5000;
-
-/** Which of the one-per-world kinds a spawn is, as the game's board ranks it */
-function rankOf(species: Species): SpawnRank {
-  if (isLegendarySpecies(species)) {
-    return 'legendary';
-  }
-  return isMythicalSpecies(species) ? 'mythical' : null;
-}
 
 export interface WorldSceneProps {
   start: [number, number];

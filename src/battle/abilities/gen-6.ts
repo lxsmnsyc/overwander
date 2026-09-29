@@ -15,6 +15,7 @@ import { fieldHolder } from './signature/__create';
 import {
   createAbility,
   createContactHazard,
+  createSurgeAbility,
   createTypeShiftAbility,
   createWaterAbsorbAbility,
 } from './__create';
@@ -54,11 +55,8 @@ const PULSE_MOVES = new Set<Moves>([
 /** What a launcher is worth to a pulse, thrown or given */
 const MEGA_LAUNCHER_SCALE = 1.5;
 
-/** What the cold is worth to a move it froze on the way out */
-const REFRIGERATE_SCALE = 1.2;
-
-/** What the ribbon is worth to a move it wrapped on the way out */
-const PIXILATE_SCALE = 1.2;
+/** What a Normal move is worth once an ability has shifted its type */
+const TYPE_SHIFT_SCALE = 1.2;
 
 /**
  * What an aura is worth to the type it carries, and what it is worth
@@ -266,24 +264,11 @@ const setupAbilities = [
     }),
   ),
 
-  // Florges: the mist comes up with it, cast as the move rather than
-  // laid by hand, so the terrain's own clock runs it
-  createAbility(
-    Abilities.MistySurge,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-          if (event.source.hasAbility(Abilities.MistySurge)) {
-            event.source.triggerAbility(Abilities.MistySurge);
-          }
-        }),
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability === Abilities.MistySurge) {
-            event.source.triggerMove(Moves.MistyTerrain, { type: MoveTargetType.None }, 0);
-          }
-        }),
-      ]),
-  ),
+  // Florges: the mist comes up with it
+  createSurgeAbility(Abilities.MistySurge, Moves.MistyTerrain),
+
+  // Spiky-eared Pichu: the charge in its ears spills into the ground
+  createSurgeAbility(Abilities.ElectricSurge, Moves.ElectricTerrain),
 
   // Clauncher: the claw is a barrel, so anything fired down it lands
   // harder, and the one pulse that mends rather than hurts mends more
@@ -313,7 +298,7 @@ const setupAbilities = [
 
   // Amaura: what it throws freezes on the way out, which is worth a
   // fifth again on top of landing as Ice
-  createTypeShiftAbility(Abilities.Refrigerate, Types.Normal, Types.Ice, REFRIGERATE_SCALE),
+  createTypeShiftAbility(Abilities.Refrigerate, Types.Normal, Types.Ice, TYPE_SHIFT_SCALE),
 
   // Swirlix: the cream is a bed, so nothing on its team goes to sleep
   createAbility(
@@ -338,7 +323,7 @@ const setupAbilities = [
   ),
 
   // Sylveon: what it throws goes out as ribbon rather than as noise
-  createTypeShiftAbility(Abilities.Pixilate, Types.Normal, Types.Fairy, PIXILATE_SCALE),
+  createTypeShiftAbility(Abilities.Pixilate, Types.Normal, Types.Fairy, TYPE_SHIFT_SCALE),
 
   // Xerneas and Yveltal: each lays its own type over the whole field
   createAuraAbility(Abilities.FairyAura, Types.Fairy),

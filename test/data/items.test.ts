@@ -61,7 +61,7 @@ import {
   isBerry,
 } from '../../src/data/items/berries';
 import BERRY_POOL from '../../src/data/overworld/berry-pool';
-import { getMoveData, registerMoves } from '../../src/data/moves';
+import { TUTOR_ONLY_MOVES, getMoveData, registerMoves } from '../../src/data/moves';
 import AleaRNG from '../../src/core/alea';
 import {
   ITEM_POOL,
@@ -228,6 +228,26 @@ describe('item data', () => {
     // The hand-written items are not machines
     expect(isMachineItem(Items.MasterBall)).toBe(false);
     expect(getMachineMove(Items.MasterBall)).toBeNull();
+  });
+
+  it('stocks no machine for a tutor-only move, and buys a withdrawn one back in full', () => {
+    const stocked = new Set(getVendorGoods(VendorKind.Moves));
+
+    for (const move of TUTOR_ONLY_MOVES) {
+      const item = getMachineItem(move);
+
+      expect(getTeachableMoves()).not.toContain(move);
+      expect(stocked.has(item)).toBe(false);
+      expect(isMarketable(item)).toBe(false);
+      // Still in the registry, so a bag that already holds one reads it
+      expect(sellPrice(item)).toBe(getItemData(item).buy);
+      expect(sellPrice(item)).toBeGreaterThan(0);
+    }
+    // A retired one too: Head Smash was only ever an egg move
+    expect(stocked.has(getMachineItem(Moves.HeadSmash))).toBe(false);
+    expect(sellPrice(getMachineItem(Moves.HeadSmash))).toBe(
+      getItemData(getMachineItem(Moves.HeadSmash)).buy,
+    );
   });
 
   it('keeps machines out of the overworld and in the market', () => {
@@ -1686,8 +1706,8 @@ describe('item data', () => {
   });
 
   it('paints an Arceus with every Plate it can hold', () => {
-    // Multitype is not battle machinery: a Plate names one shape, and
-    // the shape's own species data carries the type the Plate lifts
+    // A Plate names one shape for a Multitype holder, and the shape's
+    // own species data carries the type the Plate lifts
     for (const [plate, type] of PLATES) {
       const shapes = getItemForms(plate);
 

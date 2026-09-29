@@ -1,4 +1,5 @@
 import { SPRITE_FACINGS } from '../../../canvas/board';
+import { SpawnRarity, getSpawnRarity } from '../../../data/biome';
 import type { Species } from '../../../data/ids/species';
 import Landmark from '../../../data/overworld/landmark';
 import Phenomenon from '../../../data/overworld/phenomenon';
@@ -54,6 +55,19 @@ export interface SpawnCoat {
 
 /** The two kinds worth an aura of their own */
 export type SpawnRank = 'legendary' | 'mythical' | null;
+
+/**
+ * Which of the one-per-world kinds a spawn is, read off its band so a
+ * species met as rarely as a mythical wears the mythical's seal too
+ */
+export function rankOf(species: Species): SpawnRank {
+  const rarity = getSpawnRarity(species);
+
+  if (rarity === SpawnRarity.Special) {
+    return 'legendary';
+  }
+  return rarity === SpawnRarity.Mythical ? 'mythical' : null;
+}
 
 /** The pokemon a player rides while surfing or flying, in the coat it wears */
 export interface RiddenCoat {

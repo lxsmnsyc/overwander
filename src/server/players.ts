@@ -1,6 +1,5 @@
 import 'server-only';
 import { asString } from './read';
-import getAdminApi from './admin-api';
 import { getSql } from './db';
 import { normalizeFriendCode } from './friends';
 
@@ -16,16 +15,6 @@ import { normalizeFriendCode } from './friends';
 
 /** The word that means whoever is typing */
 export const SELF = 'self';
-
-/**
- * How many accounts are read looking for an address.
- *
- * Emails live in Supabase Auth rather than in a table, so there is
- * nothing to query and the list has to be walked. The same ceiling
- * the staff player list uses
- */
-const SCAN_LIMIT = 2_000;
-const SCAN_PAGE = 1_000;
 
 /** What a player is called, for a line that reports what happened */
 export async function nameOf(uid: string): Promise<string> {
@@ -45,25 +34,12 @@ async function byCode(code: string): Promise<string | null> {
 
 /** The account behind an email address, or null where nobody holds it */
 async function byEmail(typed: string): Promise<string | null> {
-  const wanted = typed.trim().toLowerCase();
-  const api = getAdminApi();
+  const rows = await getSql()`
+    select id from users where lower(email) = ${typed.trim().toLowerCase()}
+  `;
+  const found = asString(rows.at(0)?.id);
 
-  for (let page = 1; page * SCAN_PAGE <= SCAN_LIMIT; page++) {
-    const { data, error } = await api.auth.admin.listUsers({ page, perPage: SCAN_PAGE });
-
-    if (error != null) {
-      throw new Error(error.message);
-    }
-    for (const user of data.users) {
-      if (user.email?.toLowerCase() === wanted) {
-        return user.id;
-      }
-    }
-    if (data.users.length < SCAN_PAGE) {
-      break;
-    }
-  }
-  return null;
+  return found === '' ? null : found;
 }
 
 /**

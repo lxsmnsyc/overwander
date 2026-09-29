@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import registerBiomeSpawns from '../../src/data/biome';
+import registerBiomeSpawns, { SpawnRarity, getSpawnRarity } from '../../src/data/biome';
 import registerAbilities from '../../src/data/abilities';
 import Abilities from '../../src/data/ids/abilities';
 import {
@@ -288,6 +288,10 @@ describe('type experts', () => {
 
     // Sabrina's pool holds no Mewtwo: lair species belong to raids
     expect(psychic).not.toContain(Species.Mewtwo);
+    // ...nor an unown: the prized band is a find, not a partner
+    for (const species of open) {
+      expect(getSpawnRarity(species), getSpeciesData(species).name).not.toBe(SpawnRarity.Prized);
+    }
     // ...nor the half-grown a walk turns up on its own
     expect(psychic).not.toContain(Species.Kadabra);
     // Blue's gym takes all comers, out of the whole band

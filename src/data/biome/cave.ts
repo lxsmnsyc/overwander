@@ -1,7 +1,7 @@
-import { TimeOfDay } from '../ids/biome';
+import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import type { SpawnRarityGroups } from './__create';
-import { UNOWN_SPAWNS, registerCavePool } from './__create';
+import type { SpawnEntry, SpawnRarityGroups } from './__create';
+import { UNOWN_SPAWNS, registerCaveLegends, registerCavePool } from './__create';
 
 /**
  * What lives in the caves.
@@ -100,11 +100,29 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Gigalith, weight: 4 },
   ],
   prized: [...UNOWN_SPAWNS],
-  // Nothing. A legendary underground is at home in a lair rather than
-  // standing about in a passage, and the cave lairs already stage the
-  // five whose real address is a cave
+  // The legendaries follow the biome overhead: see CAVE_LEGENDS below
   special: [],
 };
+
+/**
+ * The residents of the underground lairs each biome hosts, met wild in
+ * the caves under it
+ */
+const CAVE_LEGENDS: [Biome, Species[]][] = [
+  [Biome.DeepOcean, [Species.Articuno, Species.Lugia, Species.Kyogre]],
+  [Biome.Ocean, [Species.Lugia, Species.Registeel]],
+  [Biome.Beach, [Species.Kyogre, Species.Groudon, Species.Rayquaza]],
+  [Biome.PolarOcean, [Species.Articuno, Species.Regice]],
+  [Biome.Glacier, [Species.Regigigas, Species.Kyurem]],
+  [Biome.Bog, [Species.Giratina]],
+  [Biome.Taiga, [Species.Regice]],
+  [Biome.Tundra, [Species.Regigigas, Species.Regice, Species.Kyurem]],
+  [Biome.Desert, [Species.Regirock, Species.Volcarona]],
+  [Biome.Badlands, [Species.Regirock, Species.Registeel, Species.Giratina, Species.Terrakion]],
+  [Biome.Mountain, [Species.Mewtwo, Species.Registeel, Species.Cobalion, Species.Terrakion]],
+  [Biome.AlpineTundra, [Species.Mewtwo]],
+  [Biome.Volcano, [Species.Groudon, Species.Heatran]],
+];
 
 /** The one pool every cave in the world draws from, at every hour */
 export default function registerCaveSpawns(): void {
@@ -114,4 +132,12 @@ export default function registerCaveSpawns(): void {
     [TimeOfDay.Evening]: CAVE_SPAWNS,
     [TimeOfDay.Night]: CAVE_SPAWNS,
   });
+  for (const [biome, species] of CAVE_LEGENDS) {
+    const legends: SpawnEntry[] = [];
+
+    for (const legend of species) {
+      legends.push({ species: legend, weight: 10 });
+    }
+    registerCaveLegends(biome, legends);
+  }
 }

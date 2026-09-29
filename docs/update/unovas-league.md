@@ -3,7 +3,8 @@
 **Unova's trainers take the road.** Thirteen gym leaders and ten new badges, an
 Elite Four, **Iris** in the champion's seat, **N and Alder** above her, **Team
 Plasma** in the woods, and 48 trainer classes. **Every town now stands the whole
-ladder**, from a gym leader up to a champion.
+ladder**, from a gym leader up to a champion. **Spiky-eared Pichu** turns up in
+the forest, and the **Max items** take a stat or a level straight to the top.
 
 Everything from before is still here.
 
@@ -93,6 +94,25 @@ the first league, and Cheren, Roxie and Marlon from the sequels.
   is not something a walk turns up.
 - **The medal also pays Professor Juniper's coat**, the way each other region's
   medal pays its own professor's.
+
+## Spiky-eared Pichu
+
+- **It can be met in the temperate forest at any hour**, as rarely as a
+  mythical. No relic calls it.
+- **Its stats are Pichu's, each 65 higher.**
+- **It never evolves.**
+
+## The Max items
+
+| Item           | What it does                  | Where it is found           |
+| -------------- | ----------------------------- | --------------------------- |
+| Max vitamins   | Set one stat's effort to 252  | Item caches, a special find |
+| Max wings      | Set one stat's effort to 252  | Flying shadows only         |
+| Rare Candy Max | Raises a pokemon to level 100 | Item caches, a special find |
+
+- **Rare Candy Max offers every move** the pokemon learns on the way to 100.
+- **A candy used from the bag now teaches the move its level offers**, for
+  free, rather than refusing it.
 
 ## See also
 

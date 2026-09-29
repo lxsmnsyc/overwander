@@ -1,4 +1,4 @@
-import { type JSX, Show, createSignal } from 'solid-js';
+import { type JSX, createSignal } from 'solid-js';
 import type { InventoryEntry } from '../../../../auth/inventory';
 import { reviveFossil } from '../../../../auth/npcs';
 import type { Items } from '../../../../data/ids/items';
@@ -106,21 +106,17 @@ export default function Scientist(props: CounterProps): JSX.Element {
 
   return (
     <>
-      <ReviveCounter carrying={fossils().length} />
-      {/* The bench stands in the dialog, the way the vendor's crate does */}
-      <Show when={fossils().length > 0}>
+      <ReviveCounter carrying={fossils().length}>
+        {/* The bench stands in the dialog, the way the vendor's crate does */}
         <InventoryPicker
           inline
           keepOpen
           player={props.player}
-          title="On the bench"
-          description="Press a fossil, then say how many of it to open."
           verb="Revive"
           entries={fossils()}
           disabled={busy()}
           value={null}
           counts
-          empty="You are carrying nothing he can open."
           card={(entry) => <Detail label="Inside">{inside(entry.item)}</Detail>}
           most={(entry) => Math.min(FOSSIL_BENCH_LIMIT, entry.amount)}
           onPick={(item, amount) => {
@@ -129,7 +125,7 @@ export default function Scientist(props: CounterProps): JSX.Element {
             }
           }}
         />
-      </Show>
+      </ReviveCounter>
       <DialogActions>{props.walkOn()}</DialogActions>
     </>
   );

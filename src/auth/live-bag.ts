@@ -1,28 +1,31 @@
-import { REALTIME_SUBSCRIBE_STATES, type RealtimeChannel } from '@supabase/supabase-js';
-import { serverCallsSeen } from '../utils/server-calls';
-import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
-import getSupabase from './supabase';
+import { readOnly, serverCallsSeen } from '../utils/server-calls';
+import { asNumber, asRecord, asString } from './__normalize';
+import getIdToken from './session';
+import { requireReader } from '../server/auth';
+import check, { TOKEN, UID } from '../server/validate';
+import { readBag } from '../server/inventory';
+import { followChanges } from './live';
 
 /**
  * The player's bag, read once and kept.
  *
  * Every screen that shows the bag asks for it whole, and most ask
  * again after every action. So the browser holds one copy per player,
- * and the database tells it what changed on the private channel
- * `bag:<uid>`: each stack written or spent to its last. Asking for the
- * bag answers from that copy without a read.
+ * and the live feed tells it what changed in the player's own stacks:
+ * each one written or spent to its last. Asking for the bag answers
+ * from that copy without a read.
  *
  * The copy is only trusted while nothing could have moved it without
- * the channel saying so. It is read again when:
+ * the feed saying so. It is read again when:
  *
- * - it has never been read, or the channel is not listening, since
+ * - it has never been read, or the feed is not listening, since
  *   whatever changed meanwhile was said to nobody;
- * - the channel (re)connects, for the same reason;
+ * - the feed (re)connects, for the same reason;
  * - this tab has made a server call since it was read. The call's own
- *   change may still be on its way down the channel when the screen
+ *   change may still be on its way down the feed when the screen
  *   that made it asks for the bag again, and that screen must see it.
  *
- * What comes down the channel is the stack as it now stands rather
+ * What comes down the feed is the stack as it now stands rather
  * than a difference, so a message that arrives after a read that
  * already saw it changes nothing.
  */
@@ -33,9 +36,14 @@ export interface HeldBag {
   candies: Map<number, number>;
 }
 
+/** The two tables a bag is kept in, each followed for the player's own rows */
+const BAG_TABLES = ['bag_items', 'bag_candies'];
+
 interface Watched {
   uid: string;
-  channel: RealtimeChannel;
+  unfollow: () => void;
+  /** The tables whose subscription is up */
+  ready: Set<string>;
   listening: boolean;
   bag: HeldBag | null;
   /** The server calls seen when `bag` was read */
@@ -50,28 +58,25 @@ interface Watched {
 let watched: Watched | null = null;
 
 async function readWhole(uid: string): Promise<HeldBag> {
-  const supabase = getSupabase();
-  const [items, candies] = await Promise.all([
-    supabase.from('bag_items').select('item, count').eq('player', uid),
-    supabase.from('bag_candies').select('family, count').eq('player', uid),
-  ]);
+  const { items, candies } = await readWholeOnServer(await getIdToken(), uid);
 
-  if (items.error != null || candies.error != null) {
-    throw new Error('Could not read your bag just now.');
-  }
-
-  const bag: HeldBag = { items: new Map(), candies: new Map() };
-
-  for (const row of asRecordArray(items.data)) {
-    bag.items.set(asNumber(row.item), asNumber(row.count));
-  }
-  for (const row of asRecordArray(candies.data)) {
-    bag.candies.set(asNumber(row.family), asNumber(row.count));
-  }
-  return bag;
+  return { items: new Map(items), candies: new Map(candies) };
 }
 
-/** Fold one change the channel carried into the copy */
+async function readWholeOnServer(
+  token: string,
+  player: string,
+): Promise<{ items: [number, number][]; candies: [number, number][] }> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  const uid = await requireReader(token);
+
+  return player === uid ? readBag(uid) : { items: [], candies: [] };
+}
+readOnly(readWholeOnServer);
+
+/** Fold one change the feed carried into the copy */
 function applyChange(bag: HeldBag, message: Record<string, unknown>): void {
   const table = asString(message.table);
   const stacks = table === 'bag_candies' ? bag.candies : bag.items;
@@ -91,19 +96,12 @@ function watch(uid: string): Watched {
   if (watched?.uid === uid) {
     return watched;
   }
+  watched?.unfollow();
 
-  const supabase = getSupabase();
-
-  if (watched != null) {
-    supabase.removeChannel(watched.channel).catch(() => {
-      // A channel that cannot be removed is already gone
-    });
-  }
-
-  const channel = supabase.channel(`bag:${uid}`, { config: { private: true } });
   const entry: Watched = {
     uid,
-    channel,
+    unfollow: () => undefined,
+    ready: new Set(),
     listening: false,
     bag: null,
     readAt: 0,
@@ -111,27 +109,46 @@ function watch(uid: string): Watched {
     heard: [],
     epoch: 0,
   };
+  const follow = (table: string): (() => void) =>
+    followChanges(
+      table,
+      [`player=eq.${uid}`],
+      (change) => {
+        const message = { table, operation: change.op, record: change.new, old_record: change.old };
 
-  channel
-    .on('broadcast', { event: '*' }, ({ payload }) => {
-      const change = asRecord(payload);
+        if (entry.bag != null) {
+          applyChange(entry.bag, message);
+        }
+        // A read that is out may have been answered before this change,
+        // so it is laid over whatever that read brings back
+        if (entry.reading != null) {
+          entry.heard.push(message);
+        }
+      },
+      () => {
+        entry.ready.add(table);
+        entry.listening = entry.ready.size === BAG_TABLES.length;
+        // Whatever changed while the feed was away was said to nobody
+        entry.bag = null;
+        entry.epoch += 1;
+      },
+      () => {
+        entry.ready.clear();
+        entry.listening = false;
+        entry.bag = null;
+        entry.epoch += 1;
+      },
+    );
+  const closers: (() => void)[] = [];
 
-      if (entry.bag != null) {
-        applyChange(entry.bag, change);
-      }
-      // A read that is out may have been answered before this change,
-      // so it is laid over whatever that read brings back
-      if (entry.reading != null) {
-        entry.heard.push(change);
-      }
-    })
-    .subscribe((status) => {
-      entry.listening = status === REALTIME_SUBSCRIBE_STATES.SUBSCRIBED;
-      // Whatever changed while the channel was away was said to nobody
-      entry.bag = null;
-      entry.epoch += 1;
-    });
-
+  for (const table of BAG_TABLES) {
+    closers.push(follow(table));
+  }
+  entry.unfollow = () => {
+    for (const close of closers) {
+      close();
+    }
+  };
   watched = entry;
   return entry;
 }

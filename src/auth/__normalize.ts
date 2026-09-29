@@ -1,7 +1,7 @@
 import { Stats } from '../data/constants/stats';
 
 /**
- * Rows arrive untyped from PostgREST; these helpers normalize a field
+ * Rows and messages arrive untyped; these helpers normalize a field
  * defensively rather than asserting a row's shape
  */
 

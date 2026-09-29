@@ -533,7 +533,7 @@ export function DexEntryBody(
                     <For each={entry().data.abilities}>
                       {(ability) => (
                         <li>
-                          <TooltipHost class="block" {...detailAbility(ability)}>
+                          <TooltipHost class="block" kind="ability" {...detailAbility(ability)}>
                             <Badge class="w-full justify-center" wrap>
                               {describeAbility(ability)}
                             </Badge>
@@ -544,7 +544,7 @@ export function DexEntryBody(
                     <For each={entry().data.hiddenAbilities}>
                       {(hidden) => (
                         <li>
-                          <TooltipHost class="block" {...detailAbility(hidden)}>
+                          <TooltipHost class="block" kind="ability" {...detailAbility(hidden)}>
                             <Badge tone="tide" class="w-full justify-center" wrap>
                               {describeAbility(hidden)}
                             </Badge>
@@ -555,7 +555,7 @@ export function DexEntryBody(
                     <Show when={getSignatureAbility(entry().data.family)}>
                       {(signature) => (
                         <li>
-                          <TooltipHost class="block" {...detailAbility(signature())}>
+                          <TooltipHost class="block" kind="ability" {...detailAbility(signature())}>
                             <Badge tone="gold" class="w-full justify-center" wrap>
                               {describeAbility(signature())}
                             </Badge>

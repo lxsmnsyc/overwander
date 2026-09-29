@@ -13,6 +13,9 @@ import {
 import BattleKind, { BATTLE_KIND_NAMES, getBattleKind } from '../../auth/battle-kind';
 import { BattleOutcome, type BattleRecord, watchBattleHistory } from '../../auth/battles';
 import { listClaimedRaids } from '../../auth/raids';
+import { listWaitingEncounters } from '../../auth/safari';
+import type { EncounterRecord } from '../../auth/encounter-record';
+import { EncounterType } from '../../overworld/encounter/kinds';
 import { getSpeciesData } from '../../data/species';
 import {
   Badge,
@@ -209,52 +212,56 @@ function HistoryRow(props: {
       tone={OUTCOME_ROW_TONES[props.record.outcome]}
       title={OUTCOME_LABELS[props.record.outcome]}
     >
-      <Badge>{BATTLE_KIND_NAMES[kind()]}</Badge>
-      <Meta>vs</Meta>
-      <Switch>
-        <Match when={kind() === BattleKind.Raid}>
-          <span class="flex items-center gap-1.5 font-medium">
-            {/* Fitted to a square of its own rather than drawn at a
-                multiple of the sheet: a raid boss is whatever size its
-                sheet is, and one tall one stretched every row in the
-                list to its height */}
-            <span class="flex size-10 shrink-0 items-center justify-center">
-              <AnimatedSprite
-                species={props.record.species}
-                animation={SpriteAnim.Idle}
-                direction="DownLeft"
-                fill
-                label={getSpeciesData(props.record.species).name}
-              />
+      {/* What the fight was, kept on one line */}
+      <span class="flex min-w-0 items-center gap-2">
+        <Badge>{BATTLE_KIND_NAMES[kind()]}</Badge>
+        <Meta>vs</Meta>
+        <Switch>
+          <Match when={kind() === BattleKind.Raid}>
+            <span class="flex items-center gap-1.5 font-medium">
+              {/* Fitted to a square of its own rather than drawn at a
+                  multiple of the sheet: a raid boss is whatever size its
+                  sheet is, and one tall one stretched every row in the
+                  list to its height */}
+              <span class="flex size-10 shrink-0 items-center justify-center">
+                <AnimatedSprite
+                  species={props.record.species}
+                  animation={SpriteAnim.Idle}
+                  direction="DownLeft"
+                  fill
+                  label={getSpeciesData(props.record.species).name}
+                />
+              </span>
+              {getSpeciesData(props.record.species).name}
             </span>
-            {getSpeciesData(props.record.species).name}
-          </span>
-        </Match>
-        <Match when={kind() === BattleKind.Npc}>
-          {/* Whoever was standing there, kept on the record: a stop
-              stages a grunt, a duelling trainer, a gym leader or the
-              Champion, and calling every one of them a grunt was the
-              history saying the same wrong thing about all of them.
-              A fight stored before the name was kept has none, and
-              falls back to what it used to say */}
-          <span class="flex items-center gap-1.5 font-medium">
-            <PlayerFace sprite={props.record.opponentSprite} size={NPC_FACE} />
-            {props.record.opponent === '' ? NPC_NAMES[Npc.RocketGrunt] : props.record.opponent}
-          </span>
-        </Match>
-        <Match when={kind() === BattleKind.Player}>
-          <Suspense fallback={<Meta>A trainer</Meta>}>
-            <RivalPlate
-              fought={fought}
-              onVisit={(uid) => {
-                game.setVisiting(uid);
-              }}
-            />
-          </Suspense>
-        </Match>
-      </Switch>
+          </Match>
+          <Match when={kind() === BattleKind.Npc}>
+            {/* Whoever was standing there, kept on the record: a stop
+                stages a grunt, a duelling trainer, a gym leader or the
+                Champion, and calling every one of them a grunt was the
+                history saying the same wrong thing about all of them.
+                A fight stored before the name was kept has none, and
+                falls back to what it used to say */}
+            <span class="flex items-center gap-1.5 font-medium">
+              <PlayerFace sprite={props.record.opponentSprite} size={NPC_FACE} />
+              {props.record.opponent === '' ? NPC_NAMES[Npc.RocketGrunt] : props.record.opponent}
+            </span>
+          </Match>
+          <Match when={kind() === BattleKind.Player}>
+            <Suspense fallback={<Meta>A trainer</Meta>}>
+              <RivalPlate
+                fought={fought}
+                onVisit={(uid) => {
+                  game.setVisiting(uid);
+                }}
+              />
+            </Suspense>
+          </Match>
+        </Switch>
+      </span>
       <Show when={props.owes}>
         <Button
+          class="order-last sm:order-none"
           tone="primary"
           onClick={() => {
             // The overworld meets it: the encounter derives from the
@@ -268,9 +275,12 @@ function HistoryRow(props: {
         </Button>
       </Show>
       <span class="grow" />
-      <Suspense fallback={<Note>Reading the team…</Note>}>
-        <OwnStrip fought={fought} />
-      </Suspense>
+      {/* Under the title on a phone, with the buttons kept beside it */}
+      <div class="order-last basis-full sm:order-none sm:basis-auto">
+        <Suspense fallback={<Note>Reading the team…</Note>}>
+          <OwnStrip fought={fought} />
+        </Suspense>
+      </div>
       {/* Watching it back, from the row's end: the same fight again, with nothing at stake */}
       <Button
         label="Watch replay"
@@ -298,6 +308,64 @@ function HistoryRow(props: {
         <ShareIcon class="size-5" aria-hidden="true" />
       </Button>
     </ListRow>
+  );
+}
+
+/** What each kind of owed meeting is called in the waiting list */
+const WAITING_KINDS: Partial<Record<EncounterType, string>> = {
+  [EncounterType.LegendaryRaid]: 'Raid prize',
+  [EncounterType.ShadowRaid]: 'Shadow raid prize',
+  [EncounterType.MythicalRaid]: 'Mythical raid prize',
+  [EncounterType.Rocket]: 'Left behind',
+  [EncounterType.Fateful]: 'Gift',
+  [EncounterType.Revived]: 'Revived fossil',
+};
+
+/**
+ * Meetings owed to the player that they closed without catching. Each
+ * opens the same meeting again, with every throw it has had so far
+ */
+function WaitingList(props: { waiting: Resource<EncounterRecord[]> }): JSX.Element {
+  const game = useGame();
+  const paged = createPager(() => props.waiting() ?? [], LIST_PAGE);
+
+  return (
+    <Show when={(props.waiting() ?? []).length > 0}>
+      <div class="flex flex-col gap-2">
+        <Meta>Waiting to be caught</Meta>
+        <List>
+          <For each={paged.shown()}>
+            {(encounter) => (
+              <ListRow>
+                <span class="flex size-10 shrink-0 items-center justify-center">
+                  <AnimatedSprite
+                    species={encounter.species}
+                    animation={SpriteAnim.Idle}
+                    direction="DownLeft"
+                    shiny={encounter.shiny}
+                    fill
+                    label={getSpeciesData(encounter.species).name}
+                  />
+                </span>
+                <span class="font-medium">{getSpeciesData(encounter.species).name}</span>
+                <Badge>{WAITING_KINDS[encounter.type] ?? 'Owed'}</Badge>
+                <span class="grow" />
+                <Button
+                  tone="primary"
+                  onClick={() => {
+                    game.setEncounter(encounter);
+                    game.setDialog(GameDialog.None);
+                  }}
+                >
+                  Meet
+                </Button>
+              </ListRow>
+            )}
+          </For>
+        </List>
+        {paged.controls()}
+      </div>
+    </Show>
   );
 }
 
@@ -415,23 +483,33 @@ function BattleList(
  * The player's finished battles. Replaying one hands the whole page
  * over to the battle view, which rebuilds the fight from the same
  * seed and the same frozen teams — so it plays out as it did, and
- * awards nothing. A won raid whose legendary was never collected —
- * the player ran from it, or left before the end — is claimed from
- * here instead
+ * awards nothing. A won raid whose legendary was never collected is
+ * claimed from here instead, and anything owed that was met and left
+ * uncaught waits above the list
  */
 export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
   const [claimed, { refetch }] = createResource(() => props.player, listClaimedRaids);
+  // The player's own only: another trainer's history has nothing owed to the reader
+  const [waiting] = createResource(
+    () => props.viewOnly !== true,
+    async () => listWaitingEncounters(),
+  );
 
   return (
-    <Suspense fallback={<Note>Loading battles…</Note>}>
-      <BattleList
-        player={props.player}
-        viewOnly={props.viewOnly}
-        claimed={claimed}
-        onClaimed={() => {
-          Promise.resolve(refetch()).catch(() => undefined);
-        }}
-      />
-    </Suspense>
+    <div class="flex flex-col gap-3">
+      <Suspense>
+        <WaitingList waiting={waiting} />
+      </Suspense>
+      <Suspense fallback={<Note>Loading battles…</Note>}>
+        <BattleList
+          player={props.player}
+          viewOnly={props.viewOnly}
+          claimed={claimed}
+          onClaimed={() => {
+            Promise.resolve(refetch()).catch(() => undefined);
+          }}
+        />
+      </Suspense>
+    </div>
   );
 }

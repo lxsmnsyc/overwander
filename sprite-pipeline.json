@@ -10729,6 +10729,30 @@
         "bytes": 6942
       }
     },
+    "public/sprites/pokemon/johto/1017201/regular.png": {
+      "digest": "fcd7433c8a6e1b7a",
+      "bytes": 9131,
+      "width": 286,
+      "height": 183,
+      "compact": {
+        "at": "2026-09-29T02:06:56Z",
+        "as": "already compact",
+        "was": 9131,
+        "bytes": 9131
+      }
+    },
+    "public/sprites/pokemon/johto/1017201/shiny.png": {
+      "digest": "ebc35c52c853dd5c",
+      "bytes": 9131,
+      "width": 286,
+      "height": 183,
+      "compact": {
+        "at": "2026-09-29T02:06:56Z",
+        "as": "already compact",
+        "was": 9131,
+        "bytes": 9131
+      }
+    },
     "public/sprites/pokemon/johto/1020101/regular.png": {
       "digest": "56c4813faee238f2",
       "bytes": 1095,
@@ -28646,75 +28670,75 @@
       }
     },
     "public/sprites/ui/candies/hoenn/image.png": {
-      "digest": "070aa588e69ea116",
-      "bytes": 8942,
+      "digest": "d358584604f9fc02",
+      "bytes": 8833,
       "width": 144,
       "height": 144,
       "compact": {
-        "at": "2026-09-12T07:21:26Z",
+        "at": "2026-09-29T02:06:56Z",
         "as": "already compact",
-        "was": 8942,
-        "bytes": 8942
+        "was": 8833,
+        "bytes": 8833
       }
     },
     "public/sprites/ui/candies/johto/image.png": {
-      "digest": "5d9d25229ffc481b",
-      "bytes": 7127,
+      "digest": "146612067c9d74f9",
+      "bytes": 7082,
       "width": 128,
       "height": 112,
       "compact": {
-        "at": "2026-09-12T07:21:26Z",
+        "at": "2026-09-29T02:06:56Z",
         "as": "already compact",
-        "was": 7127,
-        "bytes": 7127
+        "was": 7082,
+        "bytes": 7082
       }
     },
     "public/sprites/ui/candies/kalos/image.png": {
-      "digest": "84537398c5f8ebc1",
-      "bytes": 5044,
+      "digest": "7212f4bda36f2e79",
+      "bytes": 5058,
       "width": 96,
       "height": 96,
       "compact": {
-        "at": "2026-09-21T13:59:38Z",
+        "at": "2026-09-29T02:06:56Z",
         "as": "already compact",
-        "was": 5044,
-        "bytes": 5044
+        "was": 5058,
+        "bytes": 5058
       }
     },
     "public/sprites/ui/candies/kanto/image.png": {
-      "digest": "f09e552257356884",
-      "bytes": 9757,
+      "digest": "c58f1d3508e1028d",
+      "bytes": 9681,
       "width": 144,
       "height": 144,
       "compact": {
-        "at": "2026-09-12T07:21:26Z",
+        "at": "2026-09-29T02:06:56Z",
         "as": "already compact",
-        "was": 9757,
-        "bytes": 9757
+        "was": 9681,
+        "bytes": 9681
       }
     },
     "public/sprites/ui/candies/sinnoh/image.png": {
-      "digest": "d809fd685a8b6003",
-      "bytes": 6711,
+      "digest": "bef107bb2aebb3b9",
+      "bytes": 6682,
       "width": 112,
       "height": 112,
       "compact": {
-        "at": "2026-09-12T07:21:26Z",
+        "at": "2026-09-29T02:06:56Z",
         "as": "already compact",
-        "was": 6711,
-        "bytes": 6711
+        "was": 6682,
+        "bytes": 6682
       }
     },
     "public/sprites/ui/candies/unova/image.png": {
-      "digest": "92c733e42e83294c",
-      "bytes": 12503,
+      "digest": "5d8b6cd743d46598",
+      "bytes": 12547,
       "width": 160,
       "height": 144,
       "compact": {
-        "at": "2026-09-26T14:38:04Z",
+        "at": "2026-09-29T02:06:56Z",
         "as": "already compact",
-        "was": 12503,
-        "bytes": 12503
+        "was": 12547,
+        "bytes": 12547
       }
     },
     "public/sprites/ui/items/apricorn/image.png": {
@@ -28872,27 +28896,27 @@
       }
     },
     "public/sprites/ui/items/key/image.png": {
-      "digest": "833da88340c6b952",
-      "bytes": 55549,
-      "width": 378,
-      "height": 286,
+      "digest": "7eb1c7b66b32c8db",
+      "bytes": 55637,
+      "width": 299,
+      "height": 364,
       "compact": {
-        "at": "2026-09-18T14:10:04Z",
+        "at": "2026-09-29T02:06:56Z",
         "as": "already compact",
-        "was": 55549,
-        "bytes": 55549
+        "was": 55637,
+        "bytes": 55637
       }
     },
     "public/sprites/ui/items/medicine/image.png": {
-      "digest": "ea48d98b48755f38",
-      "bytes": 8617,
-      "width": 134,
-      "height": 141,
+      "digest": "81e1f22c9c4be609",
+      "bytes": 9463,
+      "width": 185,
+      "height": 123,
       "compact": {
-        "at": "2026-08-17T06:50:23Z",
-        "as": "truecolour, none",
-        "was": 16496,
-        "bytes": 8617
+        "at": "2026-09-29T02:06:56Z",
+        "as": "already compact",
+        "was": 9463,
+        "bytes": 9463
       }
     },
     "public/sprites/ui/items/mega-stones/image.png": {

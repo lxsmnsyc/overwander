@@ -329,3 +329,40 @@ export async function findPlayerByCode(uid: string, typed: string): Promise<Foun
 
   return { uid: other, tie: await readFriendTie(uid, other) };
 }
+
+/** Who is on the far side of this player's friends or blocks, with when */
+export async function readFriendLinks(
+  uid: string,
+  kind: 'friends' | 'blocks',
+): Promise<{ uid: string; since: number }[]> {
+  const rows =
+    kind === 'friends'
+      ? await getSql()`select friend as other, since from friends where owner = ${uid}`
+      : await getSql()`select blocked as other, since from blocks where blocker = ${uid}`;
+  const links: { uid: string; since: number }[] = [];
+
+  for (const row of rows) {
+    links.push({ uid: asString(row.other), since: asNumber(row.since) });
+  }
+  return links;
+}
+
+/** Every friend request this player sent or was sent */
+export async function readFriendRequests(
+  uid: string,
+): Promise<{ sender: string; recipient: string; sentAt: number }[]> {
+  const rows = await getSql()`
+    select sender, recipient, sent_at from friend_requests
+    where sender = ${uid} or recipient = ${uid}
+  `;
+  const requests: { sender: string; recipient: string; sentAt: number }[] = [];
+
+  for (const row of rows) {
+    requests.push({
+      sender: asString(row.sender),
+      recipient: asString(row.recipient),
+      sentAt: asNumber(row.sent_at),
+    });
+  }
+  return requests;
+}

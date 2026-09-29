@@ -571,10 +571,10 @@ describe('chunk snapshot', () => {
     const world = new World('overworld');
     const snapshot = new ChunkSnapshot(world.getChunk(3, -7), 12 * 60 * 60 * 1000);
 
-    // A species that carries nothing is met empty-handed whatever it
-    // rolled
+    // A species that carries nothing, a legendary here, is met
+    // empty-handed whatever it rolled
     for (const trait of [0, 0x4000_0000, 0xffff_ffff]) {
-      expect(deriveEncounter(snapshot, [Species.Eevee, 0, trait]).items).toEqual([]);
+      expect(deriveEncounter(snapshot, [Species.Mewtwo, 0, trait]).items).toEqual([]);
     }
 
     // Three slots, three items, and the rarest is the one only that

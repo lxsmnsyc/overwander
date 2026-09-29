@@ -22,6 +22,11 @@ registries in `src/data`.
   priority pick**.
 - **Natures** name the stat raised and the stat dropped, so a support never pays for
   an attacking stat it does not use.
+- **Each team ends with "Collect this before you build the team"**: the machines to
+  buy and what they cost, the moves that have to be learned before the pokemon
+  evolves, the moves only the Move Tutor teaches, and the held items with how many
+  copies you need. Machines are consumed when used, so a move two pokemon both want
+  is two machines.
 
 Mechanics that shaped these picks, all verified in the engine:
 
@@ -157,6 +162,66 @@ therefore permanent, not a gap that a later import closes.
   standing, so Meteor Mash lands around 175 effective power. Bullet Punch is the
   team's only priority move. Wide Lens covers Meteor Mash's 90 accuracy.
 
+
+### Collect this before you build the team
+
+**Machines to buy.** A machine is stocked by the item market as `TM <move name>`, and
+it is **spent on use**, so the counts below are per pokemon rather than per move: two
+pokemon wanting Protect need two machines.
+
+| Price each | Moves |
+| --- | --- |
+| 2,000 | Hone Claws, Light Screen, Protect x2, Reflect, Roost, Soft-Boiled, Substitute x2, Tailwind, Taunt, Thunder Wave x2 |
+| 5,000 | Dark Pulse, Dazzling Gleam, Dragon Claw, Fire Punch, Flash Cannon, Ice Punch, Iron Head x2, Rock Slide, Thunder Punch, Waterfall |
+| 12,000 | Draco Meteor, Earth Power, Flamethrower |
+
+Machines for this team come to **117,000** in total.
+
+**Learn these before evolving**, since they sit on a pre-evolution's level-up list. If you miss one, the Move Reminder will put it back for a Heart Scale:
+
+- Bullet Punch (Metagross: level 32 as Metang)
+- Charm (Clefable: level 1 as Cleffa)
+- Charm (Whimsicott: level 28 as Cottonee)
+- Cotton Spore (Whimsicott: level 17 as Cottonee)
+- Encore (Clefable: level 4 as Cleffa)
+- Encore (Togekiss: level 25 as Togepi)
+- Follow Me (Clefable: level 17 as Clefairy)
+- Follow Me (Togekiss: level 26 as Togepi)
+- Leech Seed (Whimsicott: level 8 as Cottonee)
+- Light Screen (Clefable: level 48 as Clefairy)
+- Meteor Mash (Metagross: level 50 as Metang)
+- Moonblast (Clefable: level 46 as Clefairy)
+- Nasty Plot (Hydreigon: level 56 as Deino)
+- Stun Spore (Whimsicott: level 10 as Cottonee)
+- Wish (Togekiss: level 31 as Togepi)
+- Zen Headbutt (Metagross: level 52 as Metang)
+
+**Held items to buy:**
+
+| Item | Copies | Price each |
+| --- | --- | --- |
+| Shell Bell | 6 | 5,000 |
+| Quick Claw | 4 | 5,000 |
+| Wide Lens | 4 | 5,000 |
+| Bright Powder | 3 | 5,000 |
+| Expert Belt | 3 | 5,000 |
+| Focus Sash | 3 | 3,000 |
+| Lax Incense | 3 | 3,000 |
+| Focus Band | 2 | 5,000 |
+| Light Clay | 2 | 5,000 |
+| Mental Herb | 2 | 3,000 |
+| Muscle Band | 2 | 5,000 |
+| Protective Pads | 2 | 5,000 |
+| Scope Lens | 2 | 5,000 |
+| Clear Amulet | 1 | 5,000 |
+| Rocky Helmet | 1 | 5,000 |
+| White Herb | 1 | 3,000 |
+| Wise Glasses | 1 | 5,000 |
+
+Items for this team come to **192,000**, so the whole team costs about **309,000** plus what you find.
+
+**Not stocked by the market, so these have to be found**: Leftovers x6.
+
 ---
 
 ## NPC and PvP battles, with legendaries
@@ -248,6 +313,68 @@ therefore permanent, not a gap that a later import closes.
   Mental Herb, Lax Incense, Quick Claw.
 - Friend Guard 0.75x multiplies with Latias's Eon Shield 0.8x, so a hit on anyone but
   Latias lands at 0.6x before screens.
+
+
+### Collect this before you build the team
+
+**Machines to buy.** A machine is stocked by the item market as `TM <move name>`, and
+it is **spent on use**, so the counts below are per pokemon rather than per move: two
+pokemon wanting Protect need two machines.
+
+| Price each | Moves |
+| --- | --- |
+| 2,000 | Calm Mind, Light Screen x2, Protect, Reflect x2, Roost, Soft-Boiled, Tailwind, Taunt x2, Thunder Wave x2 |
+| 5,000 | Dazzling Gleam, Iron Head, Knock Off, Shadow Ball, U-turn, Waterfall |
+| 12,000 | Heat Wave, Ice Beam, Stone Edge, Thunderbolt |
+
+Machines for this team come to **104,000** in total.
+
+**Move Tutor, one Heart Scale each**: Dragon Ascent (Rayquaza). No machine is sold for these, and the tutor only teaches them at full friendship.
+
+**Learn these before evolving**, since they sit on a pre-evolution's level-up list. If you miss one, the Move Reminder will put it back for a Heart Scale:
+
+- Charm (Clefable: level 1 as Cleffa)
+- Encore (Clefable: level 4 as Cleffa)
+- Encore (Togekiss: level 25 as Togepi)
+- Follow Me (Clefable: level 17 as Clefairy)
+- Follow Me (Togekiss: level 26 as Togepi)
+- Light Screen (Clefable: level 48 as Clefairy)
+- Moonblast (Clefable: level 46 as Clefairy)
+- Wish (Togekiss: level 31 as Togepi)
+
+**Late level-up moves**, which the pokemon only reaches near the level cap:
+
+- Aura Sphere (Mewtwo: level 100)
+- Dragon Pulse (Latias: level 70)
+- Extreme Speed (Rayquaza: level 60)
+- Heal Pulse (Latias: level 65)
+- Psystrike (Mewtwo: level 100)
+- Recover (Mewtwo: level 70)
+
+**Held items to buy:**
+
+| Item | Copies | Price each |
+| --- | --- | --- |
+| Shell Bell | 6 | 5,000 |
+| Bright Powder | 5 | 5,000 |
+| Focus Sash | 4 | 3,000 |
+| Wide Lens | 4 | 5,000 |
+| Expert Belt | 3 | 5,000 |
+| Lax Incense | 3 | 3,000 |
+| Light Clay | 3 | 5,000 |
+| Focus Band | 2 | 5,000 |
+| Quick Claw | 2 | 5,000 |
+| Scope Lens | 2 | 5,000 |
+| Wise Glasses | 2 | 5,000 |
+| Mental Herb | 1 | 3,000 |
+| Muscle Band | 1 | 5,000 |
+| Protective Pads | 1 | 5,000 |
+| Rocky Helmet | 1 | 5,000 |
+| Zoom Lens | 1 | 5,000 |
+
+Items for this team come to **189,000**, so the whole team costs about **293,000** plus what you find.
+
+**Not stocked by the market, so these have to be found**: Leftovers x6, Soul Dew x1.
 
 ---
 
@@ -391,6 +518,73 @@ A boss rolls one of its own species abilities alongside Boss
 
 Two of this team's six are Fire, but its damage core is Metagross (Steel) and Breloom
 (Fighting and Grass), so a Fire-immune boss costs it the burn rather than the fight.
+
+
+### Collect this before you build the team
+
+**Machines to buy.** A machine is stocked by the item market as `TM <move name>`, and
+it is **spent on use**, so the counts below are per pokemon rather than per move: two
+pokemon wanting Protect need two machines.
+
+| Price each | Moves |
+| --- | --- |
+| 2,000 | Helping Hand, Protect x6, Reflect x2, Rest, Safeguard, Soft-Boiled, Substitute, Swords Dance, Toxic x2 |
+| 5,000 | Drain Punch, Facade, Ice Punch, Iron Head, Rock Slide |
+| 12,000 | Fire Blast x2 |
+
+Machines for this team come to **81,000** in total.
+
+**Learn these before evolving**, since they sit on a pre-evolution's level-up list. If you miss one, the Move Reminder will put it back for a Heart Scale:
+
+- Bullet Punch (Metagross: level 32 as Metang)
+- Charm (Clefable: level 1 as Cleffa)
+- Confuse Ray (Chandelure: level 10 as Litwick)
+- Cosmic Power (Clefable: level 33 as Clefairy)
+- Curse (Chandelure: level 32 as Litwick)
+- Earth Power (Magcargo: level 56 as Slugma)
+- Heal Pulse (Blissey: level 38 as Chansey)
+- Hex (Chandelure: level 16 as Litwick)
+- Lava Plume (Magcargo: level 38 as Slugma)
+- Leech Seed (Breloom: level 10 as Shroomish)
+- Light Screen (Blissey: level 48 as Chansey)
+- Light Screen (Clefable: level 48 as Clefairy)
+- Meteor Mash (Metagross: level 50 as Metang)
+- Moonblast (Clefable: level 46 as Clefairy)
+- Overheat (Chandelure: level 52 as Litwick)
+- Rock Slide (Magcargo: level 43 as Slugma)
+- Seed Bomb (Breloom: level 41 as Shroomish)
+- Shadow Ball (Chandelure: level 36 as Litwick)
+- Soft-Boiled (Blissey: level 13 as Chansey)
+- Tail Whip (Blissey: level 9 as Chansey)
+- Will-O-Wisp (Chandelure: level 16 as Litwick)
+- Yawn (Magcargo: level 1 as Slugma)
+- Zen Headbutt (Metagross: level 52 as Metang)
+
+**Held items to buy:**
+
+| Item | Copies | Price each |
+| --- | --- | --- |
+| Shell Bell | 6 | 5,000 |
+| Bright Powder | 4 | 5,000 |
+| Focus Band | 4 | 5,000 |
+| Wide Lens | 4 | 5,000 |
+| Expert Belt | 3 | 5,000 |
+| Light Clay | 3 | 5,000 |
+| Lax Incense | 2 | 3,000 |
+| Mental Herb | 2 | 3,000 |
+| Muscle Band | 2 | 5,000 |
+| Protective Pads | 2 | 5,000 |
+| Quick Claw | 2 | 5,000 |
+| Wise Glasses | 2 | 5,000 |
+| Focus Sash | 1 | 3,000 |
+| Rocky Helmet | 1 | 5,000 |
+| Scope Lens | 1 | 5,000 |
+| Toxic Orb | 1 | 6,000 |
+| Zoom Lens | 1 | 5,000 |
+
+Items for this team come to **196,000**, so the whole team costs about **277,000** plus what you find.
+
+**Not stocked by the market, so these have to be found**: Leftovers x6, Big Root x1.
 
 ---
 
@@ -542,3 +736,69 @@ are paid per boss action.
 
 The rule this team is built around: **never let one type carry both the status engine
 and the damage**, because a single rolled ability takes out both at once.
+
+### Collect this before you build the team
+
+**Machines to buy.** A machine is stocked by the item market as `TM <move name>`, and
+it is **spent on use**, so the counts below are per pokemon rather than per move: two
+pokemon wanting Protect need two machines.
+
+| Price each | Moves |
+| --- | --- |
+| 2,000 | Light Screen, Protect x7, Reflect x2, Roost, Soft-Boiled, Substitute, Swords Dance, Toxic, Will-O-Wisp |
+| 5,000 | Drain Punch, Facade, Flash Cannon, Giga Drain, Ice Punch, Iron Head, Rock Slide |
+| 12,000 | Fire Blast, Flamethrower x2 |
+
+Machines for this team come to **103,000** in total.
+
+**Learn these before evolving**, since they sit on a pre-evolution's level-up list. If you miss one, the Move Reminder will put it back for a Heart Scale:
+
+- Bug Buzz (Volcarona: level 42 as Larvesta)
+- Bullet Punch (Metagross: level 32 as Metang)
+- Charm (Clefable: level 1 as Cleffa)
+- Confuse Ray (Chandelure: level 10 as Litwick)
+- Cosmic Power (Clefable: level 33 as Clefairy)
+- Curse (Chandelure: level 32 as Litwick)
+- Hex (Chandelure: level 16 as Litwick)
+- Leech Seed (Breloom: level 10 as Shroomish)
+- Light Screen (Clefable: level 48 as Clefairy)
+- Meteor Mash (Metagross: level 50 as Metang)
+- Moonblast (Clefable: level 46 as Clefairy)
+- Overheat (Chandelure: level 52 as Litwick)
+- Seed Bomb (Breloom: level 41 as Shroomish)
+- Shadow Ball (Chandelure: level 36 as Litwick)
+- Will-O-Wisp (Chandelure: level 16 as Litwick)
+- Zen Headbutt (Metagross: level 52 as Metang)
+
+**Late level-up moves**, which the pokemon only reaches near the level cap:
+
+- Dragon Pulse (Latias: level 70)
+- Earth Power (Heatran: level 73)
+- Heal Pulse (Latias: level 65)
+- Heat Wave (Heatran: level 81)
+- Magma Storm (Heatran: level 96)
+
+**Held items to buy:**
+
+| Item | Copies | Price each |
+| --- | --- | --- |
+| Shell Bell | 7 | 5,000 |
+| Wide Lens | 6 | 5,000 |
+| Bright Powder | 5 | 5,000 |
+| Expert Belt | 5 | 5,000 |
+| Focus Sash | 4 | 3,000 |
+| Wise Glasses | 3 | 5,000 |
+| Zoom Lens | 3 | 5,000 |
+| Focus Band | 2 | 5,000 |
+| Lax Incense | 2 | 3,000 |
+| Light Clay | 2 | 5,000 |
+| Muscle Band | 2 | 5,000 |
+| Protective Pads | 2 | 5,000 |
+| Mental Herb | 1 | 3,000 |
+| Quick Claw | 1 | 5,000 |
+| Scope Lens | 1 | 5,000 |
+| Toxic Orb | 1 | 6,000 |
+
+Items for this team come to **222,000**, so the whole team costs about **325,000** plus what you find.
+
+**Not stocked by the market, so these have to be found**: Leftovers x7, Big Root x1, Soul Dew x1.

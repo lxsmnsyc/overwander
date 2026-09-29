@@ -11,13 +11,13 @@ import type { CatchOption } from '../../../catches/catch-picker';
 import { getMoveData } from '../../../../data/moves';
 import { TYPE_NAMES } from '../../../../data/constants/types';
 import MoveHoverCard from '../../../moves/MoveHoverCard';
-import MoveCategorySprite from '../../../sprites/MoveCategorySprite';
-import { Sigil } from '../../../sprites/TypeBadge';
+import { MoveLabel } from '../../../catches/MovePicker';
 import { CounterStep, CounterTerms, PickOne } from '../terms';
 import { isGuarded } from '../../../../auth/caught-record';
 import {
   DialogSection,
   LIST_PAGE,
+  List,
   ListRow,
   Meta,
   Note,
@@ -33,10 +33,6 @@ import {
  * knew. Both take one heart scale and ask the same two questions in
  * the same order — which pokemon, then which move.
  */
-
-/** The type mark and category badge, at the catch sheet's sizes */
-const MARK_SIZE = 18;
-const CATEGORY_SIZE = 45;
 
 interface MoveCounterProps {
   options: CatchOption[];
@@ -159,11 +155,11 @@ function MoveCounter(
           </Show>
           {/* Name, type and category at a glance, as the catch sheet
               draws them; what the move does is on the card over it */}
-          <ul class="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2">
+          <List>
             <For
               each={page.shown()}
               fallback={
-                <li class="col-span-full">
+                <li>
                   <Note>No move matches that.</Note>
                 </li>
               }
@@ -186,12 +182,7 @@ function MoveCounter(
                           props.onChoose(move);
                         }}
                       >
-                        <span class="grow truncate font-medium">{getMoveData(move).name}</span>
-                        <Sigil type={getMoveData(move).type} size={MARK_SIZE} />
-                        <MoveCategorySprite
-                          category={getMoveData(move).category}
-                          size={CATEGORY_SIZE}
-                        />
+                        <MoveLabel move={move} />
                       </RowButton>
                     </MoveHoverCard>
                     <Show when={refused()}>
@@ -201,7 +192,7 @@ function MoveCounter(
                 );
               }}
             </For>
-          </ul>
+          </List>
           {page.controls()}
         </>
       </Show>

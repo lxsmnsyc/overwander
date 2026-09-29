@@ -30,6 +30,7 @@ export {
   CONTACT_RECOIL_FRACTION,
   createContactRecoilAbility,
   createFilterAbility,
+  createGooeyAbility,
   createKeenEyeAbility,
   createLimberAbility,
   createRestageAbility,

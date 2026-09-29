@@ -83,6 +83,12 @@ export default function registerPikachuSpecies(): void {
         method: EvolutionMethod.UsedItem,
         item: Items.ThunderStone,
       },
+      // Both Raichu take the same stone, and the catch sheet lets the player pick
+      {
+        species: Species.RaichuAlola,
+        method: EvolutionMethod.UsedItem,
+        item: Items.ThunderStone,
+      },
     ],
     name: 'Pikachu',
     category: 'Mouse Pokemon',

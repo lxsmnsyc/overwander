@@ -5,19 +5,21 @@ import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { DamageFlags, MoveCategories, MoveFlags, Moves } from '../../data/ids/moves';
 import { MINIOR_FORMS, Species, getBaseFormSpecies } from '../../data/ids/species';
-import { NON_VOLATILE_STATUSES, Statuses } from '../../data/ids/status';
+import { NON_VOLATILE_STATUSES, Statuses, Terrains } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { abilitiesOf } from '../moves/ability-moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
-import { isPrimalWeather, onUnitActs } from '../utils';
+import { isOwnBerry, isPrimalWeather, onUnitActs } from '../utils';
 import {
   createAbility,
+  createGooeyAbility,
   createLimberAbility,
   createNoContactAbility,
   createRetreatAbility,
+  createSandRushAbility,
   createThickFatAbility,
   createTypeShiftAbility,
 } from './__create';
@@ -36,6 +38,9 @@ export const WATER_BUBBLE_SCALE = 2;
 
 /** What a Water move packs onto the sand's Defense */
 export const WATER_COMPACTION_STAGES = 2;
+
+/** What a berry does for a Ripen holder that eats it */
+export const RIPEN_SCALE = 2;
 
 /** The share of its HP a Minior keeps its shell above */
 export const SHIELDS_DOWN_THRESHOLD = 1 / 2;
@@ -394,6 +399,47 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  // Alolan Raichu: it rides the current the way a surfer rides a wave
+  // https://bulbapedia.bulbagarden.net/wiki/Surge_Surfer_(Ability)
+  createSandRushAbility(Abilities.SurgeSurfer, (unit) => unit.checkTerrain() === Terrains.Electric),
+
+  // Alolan Diglett: its metal hair slows whatever touches it, as Gooey does
+  createGooeyAbility(Abilities.TanglingHair),
+
+  // Alolan Raticate: a berry it eats itself does twice the good, both
+  // the HP it gives back and the stages it raises
+  // https://bulbapedia.bulbagarden.net/wiki/Ripen_(Ability)
+  createAbility(
+    Abilities.Ripen,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitHeal, EventPriority.Pre, (event) => {
+          const eater = event.target;
+
+          if (
+            event.value > 0 &&
+            isOwnBerry(event.cause, eater) &&
+            eater.hasAbility(Abilities.Ripen)
+          ) {
+            eater.triggerAbility(Abilities.Ripen);
+            event.value *= RIPEN_SCALE;
+          }
+        }),
+        battle.on(BattleEvents.UnitAddStage, EventPriority.Pre, (event) => {
+          const eater = event.source;
+
+          if (
+            event.value > 0 &&
+            isOwnBerry(event.cause, eater) &&
+            eater.hasAbility(Abilities.Ripen)
+          ) {
+            eater.triggerAbility(Abilities.Ripen);
+            event.value *= RIPEN_SCALE;
+          }
+        }),
+      ]),
+  ),
 ];
 
 export default function setupGen7Abilities(battle: Battle): void {

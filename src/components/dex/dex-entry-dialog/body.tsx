@@ -29,7 +29,7 @@ import {
   describeEvolutionMethod,
 } from '../../catches/catch-dialog/describe';
 import MoveHoverCard from '../../moves/MoveHoverCard';
-import { getSignatureAbility } from '../../../data/abilities';
+import { getSpeciesSignature } from '../../../data/abilities';
 import { describeAbility, detailAbility } from '../../details';
 import MoveCategorySprite from '../../sprites/MoveCategorySprite';
 import SpeciesCoat from '../../sprites/SpeciesCoat';
@@ -552,7 +552,7 @@ export function DexEntryBody(
                         </li>
                       )}
                     </For>
-                    <Show when={getSignatureAbility(entry().data.family)}>
+                    <Show when={getSpeciesSignature(entry().species)}>
                       {(signature) => (
                         <li>
                           <TooltipHost class="block" kind="ability" {...detailAbility(signature())}>

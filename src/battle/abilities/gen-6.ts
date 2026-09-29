@@ -22,7 +22,7 @@ import { HEALING_MOVES } from '../moves/recover';
 import { fieldHolder } from './signature/__create';
 import {
   createAbility,
-  createContactHazard,
+  createGooeyAbility,
   createPrimalWeatherAbility,
   createTypeShiftAbility,
   createWaterAbsorbAbility,
@@ -438,34 +438,7 @@ const setupAbilities = [
 
   // Goomy: the slime comes off on whatever touches it, and a foot
   // in it is a foot that is slower afterwards
-  createAbility(
-    Abilities.Gooey,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-          if (
-            !event.success ||
-            (event.flags & DamageFlags.Indirect) !== 0 ||
-            event.cause.type !== EffectType.Move ||
-            event.cause.unit === event.target ||
-            !event.target.hasAbility(Abilities.Gooey) ||
-            !event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target))
-          ) {
-            return;
-          }
-
-          event.target.triggerAbility(Abilities.Gooey);
-          event.cause.unit.addStage(Stages.Speed, -1, {
-            type: EffectType.Ability,
-            ability: Abilities.Gooey,
-            unit: event.target,
-          });
-        }),
-        // Touching it costs something, so the AI is told before it
-        // decides to
-        createContactHazard(battle, Abilities.Gooey),
-      ]),
-  ),
+  createGooeyAbility(Abilities.Gooey),
 
   // Honedge: the sword is a shield until it swings. Both shapes carry
   // their own stats and share an HP stat, so turning over moves

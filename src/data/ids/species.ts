@@ -1546,6 +1546,21 @@ export const LYCANROC_FORMS: Species[] = [
 ];
 
 /** A Wishiwashi alone, and the school it calls together from level 20 */
+/** The Alolan forms written so far, each a variant of the Kanto species it is named after */
+export const ALOLAN_FORMS: Species[] = [
+  Species.RattataAlola,
+  Species.RaticateAlola,
+  Species.RaichuAlola,
+  Species.SandshrewAlola,
+  Species.SandslashAlola,
+  Species.VulpixAlola,
+  Species.NinetalesAlola,
+  Species.DiglettAlola,
+  Species.DugtrioAlola,
+  Species.MeowthAlola,
+  Species.PersianAlola,
+];
+
 export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];
 
 /** Minior in its shell, and the seven cores Shields Down can crack it open to */

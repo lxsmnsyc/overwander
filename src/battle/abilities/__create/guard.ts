@@ -9,6 +9,7 @@ import type { Statuses } from '../../../data/ids/status';
 import type Battle from '../../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
+import { unitTarget } from '../../utils';
 import { createAbility, createContactHazard } from './create';
 
 /** Abilities that refuse something: a status, a stat drop, a critical, an aim */
@@ -279,6 +280,44 @@ export function createContactRecoilAbility(ability: Abilities): (battle: Battle)
             DamageFlags.Indirect,
           );
         }),
+        createContactHazard(battle, ability),
+      ]),
+  );
+}
+
+/**
+ * Meta ability for the ones whose touch slows whoever lands it (Gooey,
+ * Tangling Hair): a contact move that lands costs the attacker a stage
+ * of Speed
+ * https://bulbapedia.bulbagarden.net/wiki/Gooey_(Ability)
+ * https://bulbapedia.bulbagarden.net/wiki/Tangling_Hair_(Ability)
+ */
+export function createGooeyAbility(ability: Abilities): (battle: Battle) => void {
+  return createAbility(
+    ability,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+          if (
+            !event.success ||
+            (event.flags & DamageFlags.Indirect) !== 0 ||
+            event.cause.type !== EffectType.Move ||
+            event.cause.unit === event.target ||
+            !event.target.hasAbility(ability) ||
+            !event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target))
+          ) {
+            return;
+          }
+
+          event.target.triggerAbility(ability);
+          event.cause.unit.addStage(Stages.Speed, -1, {
+            type: EffectType.Ability,
+            ability,
+            unit: event.target,
+          });
+        }),
+        // Touching it costs something, so the AI is told before it
+        // decides to
         createContactHazard(battle, ability),
       ]),
   );

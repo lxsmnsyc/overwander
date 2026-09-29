@@ -1570,6 +1570,28 @@ export const ALOLAN_FORMS: Species[] = [
 
 export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];
 
+/** Silvally, and the seventeen types a Memory sets it to, in the Memories' order */
+export const SILVALLY_FORMS: Species[] = [
+  Species.Silvally,
+  Species.SilvallyFighting,
+  Species.SilvallyFlying,
+  Species.SilvallyPoison,
+  Species.SilvallyGround,
+  Species.SilvallyRock,
+  Species.SilvallyBug,
+  Species.SilvallyGhost,
+  Species.SilvallySteel,
+  Species.SilvallyFire,
+  Species.SilvallyWater,
+  Species.SilvallyGrass,
+  Species.SilvallyElectric,
+  Species.SilvallyPsychic,
+  Species.SilvallyIce,
+  Species.SilvallyDragon,
+  Species.SilvallyDark,
+  Species.SilvallyFairy,
+];
+
 /** Mimikyu under its rag, and the rag once a blow has broken it */
 export const MIMIKYU_FORMS: Species[] = [Species.Mimikyu, Species.MimikyuBusted];
 

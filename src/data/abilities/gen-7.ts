@@ -112,4 +112,15 @@ export default function registerGen7Abilities(): void {
     description:
       'The first move to hit it deals no damage and breaks its disguise, which costs it 1/8 of its HP.',
   });
+  // Silvally
+  registerAbility(Abilities.RksSystem, {
+    name: 'RKS System',
+    description: 'It is whatever type the Memory in its hands is.',
+  });
+  // Bruxish
+  registerAbility(Abilities.Dazzling, {
+    name: 'Dazzling',
+    description:
+      'Nothing on its side can be struck by an enemy move whose priority quickens its wind-up.',
+  });
 }

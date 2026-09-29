@@ -2365,6 +2365,23 @@ export default function registerSignatureAbilities(): void {
     description: 'The first time each enemy lands a move on it, it casts Spite at them.',
   });
 
+  registerSignature(Families.TypeNull, Abilities.MemoryEcho, {
+    name: 'Memory Echo',
+    description: 'Its super-effective moves hit 1.2x.',
+  });
+  registerSignature(Families.Bruxish, Abilities.PsychicGnash, {
+    name: 'Psychic Gnash',
+    description: 'Its biting moves confuse the target 20% of the time.',
+  });
+  registerSignature(Families.Dhelmise, Abilities.GhostShip, {
+    name: 'Ghost Ship',
+    description: 'Its Ghost and Grass moves hit 1.3x while rain falls.',
+  });
+  registerSignature(Families.JangmoO, Abilities.WarClangor, {
+    name: 'War Clangor',
+    description: 'Each sound move it lands raises its Defense 1 stage, up to 3 stages.',
+  });
+
   // The Alolan lines whose every stage is regional carry their own
   registerFormSignature([Species.RattataAlola, Species.RaticateAlola], Abilities.RichDiet, {
     name: 'Rich Diet',

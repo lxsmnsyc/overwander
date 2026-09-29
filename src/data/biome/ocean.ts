@@ -136,6 +136,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Dhelmise, weight: 5 },
         { species: Species.Wishiwashi, weight: 5 },
         { species: Species.Alomomola, weight: 7 },
         { species: Species.Blastoise, weight: 2 },
@@ -181,6 +182,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Dhelmise, weight: 5 },
         { species: Species.Wishiwashi, weight: 5 },
         { species: Species.Alomomola, weight: 7 },
         { species: Species.Blastoise, weight: 2 },
@@ -224,6 +226,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Dhelmise, weight: 5 },
         { species: Species.Wishiwashi, weight: 5 },
         { species: Species.Alomomola, weight: 7 },
         { species: Species.Lapras, weight: 5 },
@@ -265,6 +268,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Dhelmise, weight: 5 },
         { species: Species.Wishiwashi, weight: 5 },
         { species: Species.Alomomola, weight: 7 },
         { species: Species.Lapras, weight: 5 },

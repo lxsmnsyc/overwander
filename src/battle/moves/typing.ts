@@ -28,8 +28,12 @@ function retype(unit: Unit, types: Types[]): void {
 /** Whether the move would change anything, which is also when it works */
 function changes(move: Moves, source: Unit, target: Unit): boolean {
   if (move === Moves.Soak) {
-    // A Multitype pokemon's type is its plate's, not something to wash off
-    return !hasExactly(target, [Types.Water]) && !target.hasAbility(Abilities.Multitype);
+    // A Multitype or RKS System pokemon's type is its item's, not something to wash off
+    return (
+      !hasExactly(target, [Types.Water]) &&
+      !target.hasAbility(Abilities.Multitype) &&
+      !target.hasAbility(Abilities.RksSystem)
+    );
   }
   return target.types.size > 0 && !hasExactly(source, [...target.types]);
 }

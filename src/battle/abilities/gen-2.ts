@@ -8,7 +8,7 @@ import type Battle from '../core';
 import { Items } from '../../data/ids/items';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
 import { Statuses, Weathers } from '../../data/ids/status';
-import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
+import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
 import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
@@ -29,6 +29,7 @@ import {
   createHugePowerAbility,
   createLimberAbility,
   createPolarityAbility,
+  createQueenlyMajestyAbility,
   createRestageAbility,
   createWeightAbility,
   movesOfType,
@@ -46,32 +47,6 @@ for (const stage of Object.keys(STAGE_NAMES)) {
   MOODY_STAGES.push(Number(stage));
 }
 const MOODY_RISE = 2;
-
-/**
- * Whoever on the struck side turns a queue-jumping move away, and an
- * empty list where nothing does.
- *
- * The priority is asked of the caster rather than read off the move,
- * so a Prankster's status move counts and the move's printed priority
- * is only where the answer starts
- */
-function queenlyGuards(source: Unit, move: Moves, target: MoveTarget): Unit[] {
-  if (target.type !== MoveTargetType.Unit) {
-    return [];
-  }
-
-  const guards: Unit[] = [];
-
-  for (const unit of target.unit.team.units) {
-    if (unit === source) {
-      return [];
-    }
-    if (unit.alive && unit.hasAbility(Abilities.QueenlyMajesty)) {
-      guards.push(unit);
-    }
-  }
-  return guards.length > 0 && source.checkMovePriority(move, target) > 0 ? guards : [];
-}
 
 const setupAbilities = [
   // https://bulbapedia.bulbagarden.net/wiki/Berserk_(Ability)
@@ -570,27 +545,7 @@ const setupAbilities = [
   // The whole side is covered, the way the mainline has it: what the
   // ability answers is the queue rather than the target
   // https://bulbapedia.bulbagarden.net/wiki/Queenly_Majesty_(Ability)
-  createAbility(
-    Abilities.QueenlyMajesty,
-    (battle) =>
-      new MergedLifecycle([
-        // Pure query: a move that cuts ahead of the queue cannot land
-        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
-          if (!event.immune && queenlyGuards(event.source, event.move, event.target).length > 0) {
-            event.immune = true;
-          }
-        }),
-        // The cue only fires when a real use was blocked, and on the
-        // unit that actually holds it
-        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
-          const parent = event.parent;
-
-          for (const unit of queenlyGuards(parent.source, parent.move, parent.target)) {
-            unit.triggerAbility(Abilities.QueenlyMajesty);
-          }
-        }),
-      ]),
-  ),
+  createQueenlyMajestyAbility(Abilities.QueenlyMajesty),
 
   // Unown Z
   // Nothing is left for a status to do to something already asleep

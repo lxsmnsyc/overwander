@@ -134,6 +134,8 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Dhelmise, weight: 5 },
+        { species: Species.Bruxish, weight: 5 },
         { species: Species.Samurott, weight: 2 },
         { species: Species.Mantine, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
@@ -167,6 +169,8 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Dhelmise, weight: 5 },
+        { species: Species.Bruxish, weight: 5 },
         { species: Species.Samurott, weight: 2 },
         { species: Species.Mantine, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
@@ -196,6 +200,8 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Dhelmise, weight: 5 },
+        { species: Species.Bruxish, weight: 5 },
         { species: Species.Mantine, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
       ],
@@ -224,6 +230,8 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Dhelmise, weight: 5 },
+        { species: Species.Bruxish, weight: 5 },
         { species: Species.Mantine, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
       ],

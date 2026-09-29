@@ -204,6 +204,8 @@ const enum Lairs {
   DaharaRuins = 50,
   /** The mountain shelf the steam machine keeps to */
   NebelPlateau = 51,
+  /** The artificial island the synthetic beast was made and kept on */
+  AetherParadise = 52,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -259,6 +261,7 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.DiamondDomain]: 'Diamond Domain',
   [Lairs.DaharaRuins]: 'Dahara Ruins',
   [Lairs.NebelPlateau]: 'Nebel Plateau',
+  [Lairs.AetherParadise]: 'Aether Paradise',
 };
 
 /**
@@ -321,6 +324,7 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.DiamondDomain]: [Species.Diancie],
   [Lairs.DaharaRuins]: [Species.Hoopa],
   [Lairs.NebelPlateau]: [Species.Volcanion],
+  [Lairs.AetherParadise]: [Species.Silvally],
 };
 
 /**
@@ -379,6 +383,7 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.DiamondDomain,
   Lairs.DaharaRuins,
   Lairs.NebelPlateau,
+  Lairs.AetherParadise,
 ];
 
 /**
@@ -436,7 +441,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.IronRuins,
     Lairs.SkyPillar,
   ],
-  [Biome.Beach]: [Lairs.EmbeddedTower],
+  [Biome.Beach]: [Lairs.EmbeddedTower, Lairs.AetherParadise],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Glacier]: [Lairs.SnowpointTemple, Lairs.GiantChasm],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor, Lairs.AbundantShrine],

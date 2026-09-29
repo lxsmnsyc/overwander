@@ -33,6 +33,7 @@ export {
   createGooeyAbility,
   createKeenEyeAbility,
   createLimberAbility,
+  createQueenlyMajestyAbility,
   createRestageAbility,
   createShellArmorAbility,
   createThickFatAbility,

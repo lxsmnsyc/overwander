@@ -5,6 +5,7 @@ import { MARKET_GEAR } from '../items/gear';
 import { ONE_SHOTS } from '../items/one-shots';
 import { ORBS } from '../items/orbs';
 import { MEGA_STONES } from '../items/mega-stones';
+import { MEMORIES } from '../items/memories';
 import { PLATES } from '../items/plates';
 import { MAX_VITAMIN_STATS, VITAMIN_STATS } from '../items/vitamins';
 import { MINT_NATURES } from '../items/mints';
@@ -366,6 +367,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     // nothing until a Kyurem has been caught
     { item: Items.DnaSplicers, weight: 3 },
     { item: Items.PrisonBottle, weight: 3 },
+    // The Memories, on the plates' terms: worth nothing but to a
+    // Silvally, so each is the thinnest slot there is
+    ...evenlyWeighted(MEMORIES.keys(), 1),
     // Three purses instead of one, for good, and nothing sells one.
     // Here rather than in rare so that parting with it is asked about
     // twice

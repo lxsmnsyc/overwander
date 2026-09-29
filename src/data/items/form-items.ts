@@ -1,5 +1,6 @@
-import { Species } from '../ids/species';
+import { SILVALLY_FORMS, Species } from '../ids/species';
 import { DRIVES } from './drives';
+import { MEMORIES } from './memories';
 import { PLATES } from './plates';
 import { Types } from '../constants/types';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
@@ -61,6 +62,18 @@ const GENESECT_DRIVES: [Items, Species[]][] = [...DRIVES].flatMap(([drive, type]
   return shape == null ? [] : [[drive, [shape]] as [Items, Species[]]];
 });
 
+/** Which shape each Memory sets a Silvally to, by the type it holds */
+const SILVALLY_MEMORIES: [Items, Species[]][] = (() => {
+  const rows: [Items, Species[]][] = [];
+  let at = 1;
+
+  for (const memory of MEMORIES.keys()) {
+    rows.push([memory, [SILVALLY_FORMS[at]]]);
+    at += 1;
+  }
+  return rows;
+})();
+
 export const FORM_ITEMS = new Map<Items, Species[]>([
   // One shape each rather than a set, so an orb is a switch a player
   // sets rather than a roll
@@ -82,6 +95,9 @@ export const FORM_ITEMS = new Map<Items, Species[]>([
   // type. Holding one repaints the machine round the cannon, which
   // is all the mainline means by a Genesect form
   ...GENESECT_DRIVES,
+  // The seventeen Memories, each of which already sets a Multi-Attack's
+  // type. Holding one sets a Silvally's own, which RKS System answers for
+  ...SILVALLY_MEMORIES,
 ]);
 
 /**

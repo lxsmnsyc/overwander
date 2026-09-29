@@ -1,0 +1,112 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { Habitat, Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM and tutor moves shared by the whole family
+const FAMILY_TEACHABLE = [
+  Moves.AerialAce,
+  Moves.AfterYou,
+  Moves.AllySwitch,
+  Moves.AquaTail,
+  Moves.Attract,
+  Moves.Blizzard,
+  Moves.BulkUp,
+  Moves.CalmMind,
+  Moves.Confide,
+  Moves.DoubleTeam,
+  Moves.DreamEater,
+  Moves.Embargo,
+  Moves.Facade,
+  Moves.Fling,
+  Moves.FrostBreath,
+  Moves.Frustration,
+  Moves.GigaImpact,
+  Moves.HiddenPower,
+  Moves.IceBeam,
+  Moves.IronTail,
+  Moves.LightScreen,
+  Moves.Liquidation,
+  Moves.MagicCoat,
+  Moves.MagicRoom,
+  Moves.PainSplit,
+  Moves.Payback,
+  Moves.Protect,
+  Moves.Psychic,
+  Moves.RainDance,
+  Moves.Reflect,
+  Moves.Rest,
+  Moves.Return,
+  Moves.Round,
+  Moves.Safeguard,
+  Moves.Scald,
+  Moves.SignalBeam,
+  Moves.SleepTalk,
+  Moves.Snatch,
+  Moves.Snore,
+  Moves.Substitute,
+  Moves.Surf,
+  Moves.Swagger,
+  Moves.SwordsDance,
+  Moves.Taunt,
+  Moves.Telekinesis,
+  Moves.Torment,
+  Moves.Toxic,
+  Moves.TrickRoom,
+  Moves.Uproar,
+  Moves.Venoshock,
+  Moves.WaterPulse,
+  Moves.Waterfall,
+  Moves.WonderRoom,
+];
+
+export default function registerBruxishSpecies(): void {
+  registerSpecies(Species.Bruxish, {
+    dexNumber: 779,
+    name: 'Bruxish',
+    category: 'Gnash Teeth Pokemon',
+    height: 0.9,
+    weight: 19,
+    family: Families.Bruxish,
+    habitat: Habitat.Water,
+    stats: {
+      [Stats.HP]: 68,
+      [Stats.Attack]: 105,
+      [Stats.Defense]: 70,
+      [Stats.SpecialAttack]: 70,
+      [Stats.SpecialDefense]: 70,
+      [Stats.Speed]: 92,
+    },
+    types: [Types.Water, Types.Psychic],
+    abilities: [Abilities.Dazzling, Abilities.StrongJaw],
+    hiddenAbilities: [Abilities.WonderSkin, Abilities.SwiftSwim],
+    eggGroups: [EggGroups.Water2],
+    genderRatio: [4, 4],
+    catchRate: 80,
+    biomes: [Biome.CoralReef, Biome.KelpForest],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day | TimeOfDay.Evening | TimeOfDay.Night,
+    learnSet: {
+      level: {
+        1: [Moves.WaterGun],
+        4: [Moves.Astonish],
+        9: [Moves.Confusion],
+        12: [Moves.Bite],
+        17: [Moves.AquaJet],
+        20: [Moves.Disable],
+        25: [Moves.Psywave],
+        28: [Moves.Crunch],
+        33: [Moves.AquaTail],
+        36: [Moves.Screech],
+        41: [Moves.PsychicFangs],
+        44: [Moves.Synchronoise],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.IceFang, Moves.PoisonFang, Moves.Rage, Moves.WaterPulse],
+    },
+  });
+}

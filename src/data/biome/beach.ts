@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
 
 /**
  * Beach spawn pool, grouped by day-cycle period and rarity band
@@ -56,8 +56,9 @@ export default function registerBeachSpawns(): void {
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Blastoise, weight: 2 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.TypeNull, weight: PRIZED_WEIGHT }],
       special: [
+        { species: Species.Silvally, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Rayquaza, weight: 10 },
       ],
@@ -112,8 +113,9 @@ export default function registerBeachSpawns(): void {
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Blastoise, weight: 2 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.TypeNull, weight: PRIZED_WEIGHT }],
       special: [
+        { species: Species.Silvally, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Rayquaza, weight: 10 },
       ],
@@ -149,8 +151,9 @@ export default function registerBeachSpawns(): void {
         { species: Species.RaichuAlola, weight: 4 },
         { species: Species.Pyukumuku, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.TypeNull, weight: PRIZED_WEIGHT }],
       special: [
+        { species: Species.Silvally, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Rayquaza, weight: 10 },
       ],
@@ -186,8 +189,9 @@ export default function registerBeachSpawns(): void {
         { species: Species.RaichuAlola, weight: 4 },
         { species: Species.Pyukumuku, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.TypeNull, weight: PRIZED_WEIGHT }],
       special: [
+        { species: Species.Silvally, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Rayquaza, weight: 10 },
       ],

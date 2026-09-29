@@ -691,6 +691,9 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Tornadus,
   Species.Thundurus,
   Species.Landorus,
+  // Staged by its lair and raided there. Type: Null below it is prized
+  // instead: the line is made rather than born, so it is never common
+  Species.Silvally,
 ]);
 
 /**
@@ -782,7 +785,11 @@ const UNOWN_SPECIES = new Set<Species>(UNOWN_FORMS);
  * The fancy Vivillon is the other: no country grows those wings, so a
  * town is the only place one is ever met
  */
-const PRIZED_BY_HAND = new Set<Species>([Species.Larvesta, Species.VivillonFancy]);
+const PRIZED_BY_HAND = new Set<Species>([
+  Species.Larvesta,
+  Species.VivillonFancy,
+  Species.TypeNull,
+]);
 
 /** Met as rarely as a mythical, but no relic calls it and no raid stages it */
 const MYTHICAL_BY_HAND = new Set<Species>([Species.PichuSpikyEared]);

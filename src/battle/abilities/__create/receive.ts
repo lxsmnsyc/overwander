@@ -6,8 +6,8 @@ import { abilitiesOf } from '../../moves/ability-moves';
 import { createAbility } from './create';
 
 /**
- * What Receiver and Power of Alchemy will not take up: the ones that copy in their own
- * right, and the ones only a particular shape can use
+ * What Receiver and Power of Alchemy will not take up: the ones that
+ * copy in their own right, and the ones only a particular shape can use
  */
 const UNRECEIVABLE = new Set<Abilities>([
   Abilities.Receiver,
@@ -23,6 +23,10 @@ const UNRECEIVABLE = new Set<Abilities>([
   Abilities.StanceChange,
   Abilities.PowerConstruct,
   Abilities.Schooling,
+  Abilities.ShieldsDown,
+  Abilities.Comatose,
+  Abilities.Disguise,
+  Abilities.RksSystem,
 ]);
 
 /**

@@ -34,7 +34,7 @@ export default function registerMemories(): void {
     registerItem(item, {
       name: `${TYPE_NAMES[type]} Memory`,
       type: ItemTypes.Held,
-      description: `Multi-Attack is ${TYPE_NAMES[type]}-type while it is held.`,
+      description: `Multi-Attack is ${TYPE_NAMES[type]}-type while it is held, and so is a Silvally with RKS System.`,
       icon: `memories/${TYPE_NAMES[type].toLowerCase()}`,
       flags: ItemFlags.Holdable,
       buy: 0,

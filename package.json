@@ -1,6 +1,6 @@
 {
   "name": "overwander",
-  "version": "4.23.0",
+  "version": "4.23.2",
   "private": true,
   "type": "module",
   "publishConfig": {
@@ -37,7 +37,7 @@
     "seed": "node --env-file=.env.development scripts/seed-dev.ts",
     "migrate": "node --env-file=.env scripts/migrate.ts",
     "password-link": "node --env-file=.env scripts/password-link.ts",
-    "server": "docker compose --profile server up --detach --build",
+    "server": "pnpm build && docker compose --profile server up --detach --build",
     "server:tunnel": "docker compose --profile server up --detach tunnel",
     "server:tunnel:restart": "docker compose --profile server restart tunnel",
     "server:ps": "docker compose --profile server ps",

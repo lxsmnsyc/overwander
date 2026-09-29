@@ -25,12 +25,8 @@ services:
 
   app:
     profiles: [server]
-    build:
-      context: .
-      args:
-        BUILD_ID: ${BUILD_ID:-}
-      secrets:
-        - env
+    # Packages the host's `pnpm build`; see Dockerfile
+    build: .
     env_file: .env
     environment:
       # Inside compose the database is `db`, whatever .env says for the host's own tools
@@ -49,10 +45,6 @@ services:
     depends_on:
       - app
     restart: unless-stopped
-
-secrets:
-  env:
-    file: .env
 
 volumes:
   db:

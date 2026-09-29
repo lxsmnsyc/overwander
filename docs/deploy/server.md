@@ -17,8 +17,9 @@ It needs three things:
 
 - `db`, Postgres 17 with `pg_cron`, built from [`db/Dockerfile`](../../db/Dockerfile).
   Its data is in the `overwander_db` volume.
-- `app`, the Node server built by the [`Dockerfile`](../../Dockerfile). It applies
-  any pending migration as it starts, before it answers a request.
+- `app`, the Node server. `pnpm build` runs on the host, and the
+  [`Dockerfile`](../../Dockerfile) only packages its `.output`. It applies any
+  pending migration as it starts, before it answers a request.
 - `tunnel`, `cloudflared`, which connects out to Cloudflare.
 
 The tunnel is the only way in, so the machine needs no open ports and no fixed
@@ -79,8 +80,8 @@ Some of those need explaining:
 - **`VITE_SPRITE_ORIGIN` empty** makes the server serve the sprites and sounds
   itself, with the same cache headers the sprite host sends.
 
-The build reads `.env` as a Docker build secret, so it is never stored in an
-image layer.
+The build runs on the host and reads `.env` there, so the image holds only the
+build's output and never the file itself. The host needs Node and pnpm.
 
 ## 4. Deploy on release
 
@@ -101,7 +102,7 @@ that the sprite host was not deployed. To publish it by hand, run
 
 The server fetches the release itself, so GitHub never needs a way in.
 [`scripts/deploy.sh`](../../scripts/deploy.sh) checks out the newest `v*` tag,
-rebuilds the `app` image and restarts it. When that tag is already live it does
+installs, builds, then rebuilds the `app` image and restarts it. When that tag is already live it does
 nothing, so it is safe to run from cron:
 
 ```bash

@@ -345,21 +345,45 @@ with Hive Mind 1.3x on Metagross.
 Do not paralyse the boss with this team. Paralysis halves its Speed, and both Curse
 and Magma Trail are paid per boss action.
 
+### Matchups that break this team
+
+A boss rolls one of its own species abilities alongside Boss
+([`raid.ts`](src/overworld/raid.ts)), so plan for the roll.
+
+| Boss trait | What it takes away | What to do |
+| --- | --- | --- |
+| Fire type | Fire cannot be burned, so Will-O-Wisp fails and Lavadome-style burn payoffs are dead. Chandelure and Magcargo are both resisted | Clefable's Toxic becomes the status that feeds Mycelium and Hexlight. Metagross and Breloom carry the damage |
+| Flash Fire, Heatproof or Thick Fat | Fire damage blanked or halved | Same answer. Swap Magcargo for a second support, since only its Magma Trail still works |
+| Steel or Poison type | Toxic fails | Keep the burn as the status, and let Magcargo apply it through Lava Plume and Flame Body |
+| Grass type | Leech Seed fails | Breloom runs Swords Dance in its place |
+| Levitate or Flying | Magcargo's Earth Power misses | Rock Slide instead |
+
+Two of this team's six are Fire, but its damage core is Metagross (Steel) and Breloom
+(Fighting and Grass), so a Fire-immune boss costs it the burn rather than the fight.
+
 ---
 
 ## Raid battles, with legendaries
 
-Same plan, with a sun core: three Fire attackers under permanent Drought, and two
-signature multipliers that key on the burn.
+Same plan, with a sun core, but deliberately not built entirely out of Fire. A boss
+rolls one of its own species abilities alongside Boss
+([`raid.ts`](src/overworld/raid.ts)), so a single roll of Flash Fire, Heatproof or
+Thick Fat, or simply a Fire-type boss, can blank a team whose damage and status both
+come from Fire.
 
 | Role | Pokemon |
 | --- | --- |
 | Burn, Curse and special damage | Chandelure |
-| Burn multiplier and special damage | Heatran |
 | Sun setter, per-action clock, sweeper | Volcarona |
+| Primary physical damage | Metagross |
 | Leech Seed and party damage multiplier | Breloom |
 | Protector and healer | Latias |
 | Second protector and Toxic clock | Clefable |
+
+**Heatran is the conditional swap.** Its Lavadome gives the whole party 1.25x against
+a burned boss, which is the best multiplier available to this team, but it is
+burn-locked and Heatran is a third Fire body. Put it in for Metagross once you know
+the boss is neither Fire-type nor carrying Flash Fire, Heatproof or Thick Fat.
 
 ### Chandelure (raid, legendaries) 60/55/90/145/90/80
 
@@ -371,22 +395,6 @@ signature multipliers that key on the burn.
 - **Items**: Wide Lens, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell,
   Bright Powder, Zoom Lens.
 - Under Volcarona's sun its Fire moves gain another 1.5x.
-
-### Heatran (raid, legendaries) 91/90/106/130/106/77
-
-- **Role**: burn multiplier and second special attacker.
-- **Nature**: Modest (Special Attack up, Attack down).
-- **Abilities**: Lavadome, Flash Fire, Flame Body, Magma Armor.
-- **Moves**: Lava Plume, Earth Power, Flamethrower, Protect, then Magma Storm,
-  Flash Cannon, Will-O-Wisp, Heat Wave.
-- **Items**: Expert Belt, Leftovers, Wise Glasses, Wide Lens, Shell Bell, Focus Sash,
-  Bright Powder, Zoom Lens.
-- Lavadome makes a burned enemy take 1.25x **from everything**, so it multiplies the
-  whole party, not just itself, and that multiplier is not capped. It is the single
-  best reason to bring a legendary to this team. Will-O-Wisp is a backup burn if
-  Chandelure falls. Magma Storm is demoted out of the priority four because its bind
-  does not hold on a boss: Trapped is one of the statuses a boss refuses, so it is
-  only a 100 power move at 75 accuracy there.
 
 ### Volcarona (raid, legendaries) 85/60/65/135/105/100
 
@@ -403,6 +411,35 @@ signature multipliers that key on the burn.
   per-action clock beside Curse, and unlike Curse it costs nothing to set up and needs
   no cast. Magic Guard means it pays nothing for residuals. Quiver Dance makes it the
   only unit here that grows through a long fight.
+
+### Metagross (raid, legendaries) 80/135/130/95/90/70
+
+- **Role**: primary physical damage, and the team's answer to a Fire-immune boss.
+- **Nature**: Adamant (Attack up, Special Attack down).
+- **Abilities**: Hive Mind, Steelworker, Clear Body, Levitate.
+- **Moves**: Meteor Mash, Bullet Punch, Zen Headbutt, Ice Punch, then Iron Head,
+  Hammer Arm, Rock Slide, Protect.
+- **Items**: Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens,
+  Protective Pads, Focus Band.
+- Steelworker 1.5x and Hive Mind 1.3x are uncapped and owe nothing to Fire, the sun or
+  the burn, which is exactly why this slot exists. Levitate also answers a Ground
+  boss.
+
+### Heatran (raid, legendaries, conditional swap) 91/90/106/130/106/77
+
+- **Role**: burn multiplier and second special attacker.
+- **Nature**: Modest (Special Attack up, Attack down).
+- **Abilities**: Lavadome, Flash Fire, Flame Body, Magma Armor.
+- **Moves**: Lava Plume, Earth Power, Flamethrower, Protect, then Magma Storm,
+  Flash Cannon, Will-O-Wisp, Heat Wave.
+- **Items**: Expert Belt, Leftovers, Wise Glasses, Wide Lens, Shell Bell, Focus Sash,
+  Bright Powder, Zoom Lens.
+- Lavadome makes a burned enemy take 1.25x **from everything**, so it multiplies the
+  whole party, not just itself, and that multiplier is not capped. It is the single
+  best reason to bring a legendary to this team. Will-O-Wisp is a backup burn if
+  Chandelure falls. Magma Storm is demoted out of the priority four because its bind
+  does not hold on a boss: Trapped is one of the statuses a boss refuses, so it is
+  only a 100 power move at 75 accuracy there.
 
 ### Breloom (raid, legendaries) 60/130/80/60/60/70
 
@@ -440,7 +477,7 @@ signature multipliers that key on the burn.
 
 | Clock | Source | Written as | Against a boss | When |
 | --- | --- | --- | --- | --- |
-| Burn | Chandelure, three Flame Bodies as backup | 1/16 of max HP | 200 | every 2 seconds |
+| Burn | Chandelure, Volcarona's Flame Body as backup | 1/16 of max HP | 200 | every 2 seconds |
 | Badly poisoned | Clefable | a growing share | 200 | every 2 seconds |
 | Leech Seed | Breloom | 1/8 of max HP | 200 | every 2 seconds |
 | Curse | Chandelure, for half its own HP | 1/4 of max HP | 200 | every boss action |
@@ -451,9 +488,26 @@ per-action clocks pay 200 every time the boss acts. Against a pool of 60x HP non
 them is a share of anything: they are five flat trickles that ignore the boss's
 defences entirely.
 
-Multipliers on top: sun 1.5x on Fire, Lavadome 1.25x on everything against the burn,
-Mycelium 1.2x for the party, Hexlight 1.4x for Chandelure, and Quiver Dance stacking
-on Volcarona.
+Uncapped multipliers on top: sun 1.5x on Fire, Mycelium 1.2x for the party, Hexlight
+1.4x for Chandelure, Steelworker 1.5x with Hive Mind 1.3x on Metagross, and Quiver
+Dance stacking on Volcarona. With Heatran swapped in, Lavadome adds 1.25x for
+everybody against a burned boss.
 
 Do not add paralysis to this team. It slows the boss, and both Curse and Ember Halo
 are paid per boss action.
+
+### Matchups that break this team
+
+| Boss trait | What it takes away | What to do |
+| --- | --- | --- |
+| Fire type | Fire cannot be burned, so Will-O-Wisp fails, Lavadome is dead, and Fire damage is resisted | Lead with Clefable's Toxic as the status that feeds Mycelium and Hexlight. Keep Metagross, leave Heatran out |
+| Flash Fire | Fire moves do nothing, and the boss's own Fire moves gain 1.5x | Same answer. Chandelure still contributes Curse, Hex and the burn |
+| Heatproof or Thick Fat | Fire damage halved | Metagross and Breloom carry the damage; Heatran stays out |
+| Air Lock or Cloud Nine | Drought is cancelled, so the sun's 1.5x disappears | Volcarona still brings Ember Halo and Quiver Dance, which do not need the sun |
+| Steel or Poison type | Toxic fails | The burn is your status instead, so this is the case where Heatran is best |
+| Grass type | Leech Seed fails | Drop it for Swords Dance on Breloom |
+| Electric type | Paralysis fails, which this team never used anyway | Nothing |
+| Dry Skin | Nothing: it takes 1.25x from Fire | Bring Heatran and both Fire attackers |
+
+The rule this team is built around: **never let one type carry both the status engine
+and the damage**, because a single rolled ability takes out both at once.

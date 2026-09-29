@@ -294,7 +294,7 @@ export default function registerFlabebeSpecies(): void {
     },
     types: [Types.Fairy],
     abilities: [Abilities.FlowerVeil],
-    hiddenAbilities: [Abilities.Symbiosis],
+    hiddenAbilities: [Abilities.Symbiosis, Abilities.Pixilate, Abilities.FlowerGift],
     eggGroups: [EggGroups.Fairy],
     genderRatio: [0, 1],
     catchRate: 45,

@@ -5,6 +5,13 @@ import { Species } from '../ids/species';
 export const LATHER_COST = 1;
 
 /**
+ * The floor under every value of what a lather draws out, since the
+ * jar was paid for. The phenomenon's number, and it stacks with a
+ * favouring sky
+ */
+export const HONEY_TREE_MIN_IV = 9;
+
+/**
  * What a lathered tree draws out, banded by where each sits in its
  * line the way a biome pool is. Nothing listed here spawns in the wild:
  * a honey tree is the only way to meet them

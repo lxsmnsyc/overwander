@@ -10,9 +10,9 @@ requests, and stops either of them asking the other again. A block is one-sided
 to read: nothing tells the blocked player, which is the whole point of one.
 
 The three tables are **read by the player they are about and written by
-nobody**. Each policy matches on the column naming that player, the way `bids`
-does, and all three are published to realtime, so the lists follow the database
-live and a request that arrives while the panel is open appears in it. Every write goes through
+nobody**. Each read matches on the column naming that player, the way `bids`
+does, and all three are followed live, so a request that arrives while the panel
+is open appears in it. Every write goes through
 [`src/server/friends.ts`](../../src/server/friends.ts): a client that could write
 a friendship could put itself on somebody else's list, and one that could delete
 a block could lift somebody else's.
@@ -87,7 +87,7 @@ A partial unique index holds one open offer per direction of a pair, so a
 proposer cannot bury a friend under offers.
 
 Tier 2: a trade is the two parties' business and nobody else's, and it is
-published to realtime so an inbox sees an offer arrive.
+followed live so an inbox sees an offer arrive.
 
 `TRADE_GOLD_LIMIT` caps what may ride along at a million either way.
 

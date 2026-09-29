@@ -4,8 +4,8 @@ Written by `recordCatch` in
 [`src/server/caught.ts`](../../src/server/caught.ts). A catch is one `caught`
 row under a 20-character id, plus four child tables that hang off it by foreign
 key: `caught_moves`, `caught_abilities`, `caught_items` and `caught_history`.
-All five are written in one transaction, and a reader unpacks them in one query
-with PostgREST embeds.
+All five are written in one transaction, and read together in a few queries
+however many catches are asked for.
 
 This page covers the row itself and the search over a box of them. The rest of a
 catch is on the pages beside it:
@@ -22,45 +22,45 @@ catch is on the pages beside it:
 
 ## `caught`
 
-| Column                                | Type        | Notes                                                    |
-| ------------------------------------- | ----------- | -------------------------------------------------------- |
-| `id`                                  | `text`      | 20-character id, and the primary key                     |
-| `owner`                               | `uuid`      | Current owner; null while a lot sits in escrow           |
-| `type`                                | `smallint`  | `EncounterType`: how it was originally met               |
-| `species`                             | `integer`   |                                                          |
-| `nickname`                            | `text`      | What its owner calls it; empty until named               |
-| `level`                               | `smallint`  | 1 to 100, checked                                        |
-| `individual_value`                    | `integer`   | 32-bit roll the values were sliced from                  |
-| `trait_value`                         | `integer`   | 32-bit roll driving level, gender, ability, nature       |
-| `ivs`                                 | `integer`   | The six 0-31 values, five bits each, in stat order       |
-| `gender`, `nature`                    | `smallint`  |                                                          |
-| `slots`                               | `smallint`  | Room for abilities, held items and moves                 |
-| `shiny`, `shadow`, `egg`              | `boolean`   | What it is                                               |
-| `traded`                              | `boolean`   | Has changed hands; what the box search reads             |
-| `can_evolve`                          | `boolean`   | A handover has met what a trade evolution asks           |
-| `favorite`, `guarded`                 | `boolean`   | See [What the player sets][player-sets]                  |
-| `auctionable`                         | `boolean`   | Advisory; the opener re-derives it                       |
-| `hidden`                              | `boolean`   | Folded into a fusion; nothing reads it yet               |
-| `locked_at`                           | `bigint`    | `started_at` of the battle holding it; 0 when free       |
-| `steps`                               | `integer`   | Steps walked in the shell; only eggs accrue any          |
-| `hatch_steps`                         | `integer`   | What hatching costs, frozen when the egg was found       |
-| `stepped_at`                          | `bigint`    | Server instant steps were last credited at               |
-| `walked`                              | `integer`   | Steps walked as buddy since hatching                     |
-| `health`                              | `integer`   | Health left; 0 is fainted                                |
-| `max_health`                          | `integer`   | What it is measured against; advisory                    |
-| `hurt`                                | `boolean`   | Generated: `health < max_health`                         |
-| `statuses`                            | `smallint`  | Mask of the non-volatile statuses it carries             |
-| `lair`                                | `smallint`  | Where a raid prize was won, else null                    |
-| `ball`                                | `integer`   | Ball the catch was made with                             |
-| `caught_at_local`, `caught_at_offset` | `timestamp` | The catcher's wall clock and their zone ([Time][time])   |
-| `locale`                              | `text`      | The catcher's locale tag, e.g. `en-PH`                   |
-| `ev_hp` … `ev_spe`                    | `smallint`  | Training put into each stat; starts at zero              |
-| `effort_bonus`                        | `smallint`  | Effort granted by wings, over the level allowance        |
-| `friendship`                          | `smallint`  | 0 to 255, checked                                        |
-| `origin_timestamp`                    | `bigint`    | Snapshot window the spawn belonged to                    |
-| `origin_x`, `origin_y`                | `integer`   | Chunk coordinates                                        |
-| `origin_biome`                        | `smallint`  |                                                          |
-| `origin_place`                        | `text`      | The named place, where there was one                     |
+| Column                                | Type        | Notes                                                  |
+| ------------------------------------- | ----------- | ------------------------------------------------------ |
+| `id`                                  | `text`      | 20-character id, and the primary key                   |
+| `owner`                               | `uuid`      | Current owner; null while a lot sits in escrow         |
+| `type`                                | `smallint`  | `EncounterType`: how it was originally met             |
+| `species`                             | `integer`   |                                                        |
+| `nickname`                            | `text`      | What its owner calls it; empty until named             |
+| `level`                               | `smallint`  | 1 to 100, checked                                      |
+| `individual_value`                    | `integer`   | 32-bit roll the values were sliced from                |
+| `trait_value`                         | `integer`   | 32-bit roll driving level, gender, ability, nature     |
+| `ivs`                                 | `integer`   | The six 0-31 values, five bits each, in stat order     |
+| `gender`, `nature`                    | `smallint`  |                                                        |
+| `slots`                               | `smallint`  | Room for abilities, held items and moves               |
+| `shiny`, `shadow`, `egg`              | `boolean`   | What it is                                             |
+| `traded`                              | `boolean`   | Has changed hands; what the box search reads           |
+| `can_evolve`                          | `boolean`   | A handover has met what a trade evolution asks         |
+| `favorite`, `guarded`                 | `boolean`   | See [What the player sets][player-sets]                |
+| `auctionable`                         | `boolean`   | Advisory; the opener re-derives it                     |
+| `hidden`                              | `boolean`   | Folded into a fusion; nothing reads it yet             |
+| `locked_at`                           | `bigint`    | `started_at` of the battle holding it; 0 when free     |
+| `steps`                               | `integer`   | Steps walked in the shell; only eggs accrue any        |
+| `hatch_steps`                         | `integer`   | What hatching costs, frozen when the egg was found     |
+| `stepped_at`                          | `bigint`    | Server instant steps were last credited at             |
+| `walked`                              | `integer`   | Steps walked as buddy since hatching                   |
+| `health`                              | `integer`   | Health left; 0 is fainted                              |
+| `max_health`                          | `integer`   | What it is measured against; advisory                  |
+| `hurt`                                | `boolean`   | Generated: `health < max_health`                       |
+| `statuses`                            | `smallint`  | Mask of the non-volatile statuses it carries           |
+| `lair`                                | `smallint`  | Where a raid prize was won, else null                  |
+| `ball`                                | `integer`   | Ball the catch was made with                           |
+| `caught_at_local`, `caught_at_offset` | `timestamp` | The catcher's wall clock and their zone ([Time][time]) |
+| `locale`                              | `text`      | The catcher's locale tag, e.g. `en-PH`                 |
+| `ev_hp` … `ev_spe`                    | `smallint`  | Training put into each stat; starts at zero            |
+| `effort_bonus`                        | `smallint`  | Effort granted by wings, over the level allowance      |
+| `friendship`                          | `smallint`  | 0 to 255, checked                                      |
+| `origin_timestamp`                    | `bigint`    | Snapshot window the spawn belonged to                  |
+| `origin_x`, `origin_y`                | `integer`   | Chunk coordinates                                      |
+| `origin_biome`                        | `smallint`  |                                                        |
+| `origin_place`                        | `text`      | The named place, where there was one                   |
 
 Four child tables carry what a pokemon has several of, one row per slot:
 
@@ -82,9 +82,10 @@ writes it, and it accepts only a rearrangement of what is already stored, so
 nothing is learned or handed over by arranging.
 
 Columns are snake_case and the TypeScript record that reads them is camelCase;
-[`caught-rows.ts`](../../src/auth/caught-rows.ts) is where the two meet. A box
-is still one query however many pokemon are in it, because the children ride
-along as PostgREST embeds (`CAUGHT_EMBED`).
+[`caught-io.ts`](../../src/server/caught-io.ts) is where the two meet. A box is
+read in two steps however many pokemon are in it: the ids a filter answers, then
+those catches with their children
+([`caught-reads.ts`](../../src/server/caught-reads.ts)).
 
 The two 32-bit rolls, the packed `ivs`, the `slots` triple and the `statuses`
 mask stay packed integers. The engine consumes each whole, so unpacking them
@@ -182,9 +183,8 @@ knows both rather than one move that is somehow both. The aliased join also sits
 beside the embed the reader unpacks rather than filtering it, so a pokemon does
 not come back holding only the move that was searched for.
 
-Three shapes are not stored as they are asked, so
-[`20260821000100_search.sql`](../../supabase/migrations/20260821000100_search.sql)
-generates a column each: the six values out of the packed `ivs`, the six
+Three shapes are not stored as they are asked, so the schema generates a column
+each: the six values out of the packed `ivs`, the six
 statuses out of the packed mask, `hatch_left` out of the difference between two
 columns, and trigram indexes for the substring matches.
 

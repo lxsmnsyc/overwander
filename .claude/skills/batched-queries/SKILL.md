@@ -9,13 +9,13 @@ description: Where `batchedQuery` from src/utils/batched-query.ts belongs, which
 
 ## Use it in the browser
 
-Reach for it where many components each read one key as they mount: list rows, cards, lobby parties, a page of history. Every row asks in the same instant, so twenty reads become one, whether the read goes to Supabase directly or through a server function.
+Reach for it where many components each read one key as they mount: list rows, cards, lobby parties, a page of history. Every row asks in the same instant, so twenty server calls become one.
 
 The existing ones show the shape: `getCaughtBatched` in `src/auth/caught.ts`, `getTeamBatched` and `getTeamSnapshotBatched` in `src/auth/teams.ts`, and `getProfileBatched` in `src/auth/profile.ts`. Each sits beside the single-key read it batches, which stays for one-off callers.
 
 ## Not to merge separate server requests
 
-Do not use it on the server to merge calls from different requests. The app runs on serverless instances, so separate requests may never land together and the batch does nothing but add a timer. When they do land together, one failed query fails every request in it, other players' included. A batched `requireUid` was tried for this and reverted.
+Do not use it on the server to merge calls from different requests. Separate requests rarely land in the same moment, so the batch mostly adds a timer. When they do land together, one failed query fails every request in it, other players' included. A batched `requireUid` was tried for this and reverted.
 
 ## Within one server request, query many keys directly
 
@@ -26,6 +26,6 @@ Use `batchedQuery` inside a single request only when that request fans out throu
 ## Setting one up
 
 - Give `key` for object queries, since without it only the same object is read once.
-- Give `limit` for a read that puts its ids in a URL, such as a Supabase `.in('id', ids)`. The existing ones use 50.
+- Give `limit`, since the server function checks the list's length (`ID_BATCH` allows 50). The existing ones use 50.
 - Have the callback return a `Map` by key, so `lookup` is one `get` rather than a search.
 - Read the result through `settled` where a list re-reads, so a refetch keeps the rows on screen rather than suspending them.

@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Overwander: a seed-generated Pokémon-style overworld with a real-time battle engine, on SolidStart 2 + Supabase. [README.md](README.md) covers setup, the stack and where things live; [docs/engine.md](docs/engine.md) covers the battle engine in depth. This file covers what those do not: the patterns that only show up after reading several files.
+Overwander: a seed-generated Pokémon-style overworld with a real-time battle engine, on SolidStart 2 and Postgres, self-hosted in Docker. [README.md](README.md) covers setup, the stack and where things live; [docs/engine.md](docs/engine.md) covers the battle engine in depth. This file covers what those do not: the patterns that only show up after reading several files.
 
 ## Commands
 
@@ -18,7 +18,9 @@ pnpm exec oxlint src test                 # lint (never biome — this repo migr
 pnpm exec oxfmt src test                  # format
 ```
 
-`pnpm test:rules` and `pnpm test:e2e` both need `pnpm db` (the local Supabase stack) running. Run them one at a time: the RLS suite clears game rows between cases and will delete the accounts the e2e browsers are signed in as.
+The `db` service in `compose.yaml` (port 54322, `overwander`) is production, and on a machine that self-hosts the game it is the live player data: never reset, seed or experiment against it. The root `.env` is production's configuration and is not edited. The script's name says which settings it reads: `pnpm dev`, `pnpm db:*` and `pnpm seed` read the committed `.env.development`, which overrides every data, account and sign-in value; `pnpm start` and `pnpm migrate` read `.env`.
+
+`pnpm db` starts the throwaway database development and the tests share (`compose.dev.yaml`, port 54324, `overwander_dev`), which keeps its data in memory. `pnpm test:db` and `pnpm test:e2e` start and migrate it themselves, reach it only through `TEST_DATABASE_URL`, and refuse a database not named `*_dev` ([test/test-database.ts](test/test-database.ts)); `pnpm seed` refuses the same. Run the two suites one at a time: the database suite clears game rows between cases and will delete the accounts the e2e browsers are signed in as. Every suite reads `test/env/.env.test` rather than the root `.env`.
 
 ## Conventions live in skills
 
@@ -50,10 +52,10 @@ The map is never stored. A chunk's terrain, landmarks, spawns, stashes and raids
 
 ## Reads, writes and the server boundary
 
-- `src/auth/` runs in the browser: Supabase reads under row-level security, plus thin wrappers around the writes.
-- `src/server/` is privileged. Every module starts with `import 'server-only'` and writes over the table-owner connection ([src/server/db.ts](src/server/db.ts)), which RLS does not bind. That is why the policies in `supabase/` only ever describe browsers.
+- `src/auth/` runs in the browser: thin wrappers around server functions, for reads and writes alike. No browser code reaches the database.
+- `src/server/` is privileged. Every module starts with `import 'server-only'` and reads and writes over the table-owner connection ([src/server/db.ts](src/server/db.ts)). There are no row policies, so a server function is what decides who may see or change a row.
 
-The wrapper shape is fixed: an exported client function calls an inner function whose body opens with `'use server'`, passing an id token, and that inner function checks each of its arguments with `check` from [src/server/validate.ts](src/server/validate.ts) and then calls `requireUid(token)` before anything in `src/server/`. SolidStart's transform strips module-level imports that only the server function uses, so import server modules statically at the top of the file rather than dynamically inside it.
+The wrapper shape is fixed: an exported client function calls an inner function whose body opens with `'use server'`, passing an id token, and that inner function checks each of its arguments with `check` from [src/server/validate.ts](src/server/validate.ts) and then calls `requireUid(token)` (a write) or `requireReader(token)` (a read, see the `server-reads` skill) before anything in `src/server/`. Accounts are Better Auth's ([src/server/better-auth.ts](src/server/better-auth.ts)), and the token is its short-lived JWT. Live views follow table changes over the server's own socket (`src/server/live`). SolidStart's transform strips module-level imports that only the server function uses, so import server modules statically at the top of the file rather than dynamically inside it.
 
 ## UI
 

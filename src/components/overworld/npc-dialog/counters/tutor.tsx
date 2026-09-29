@@ -1,10 +1,10 @@
-import { type JSX, Show, createSignal } from 'solid-js';
+import { type JSX, createSignal } from 'solid-js';
 import { LearnRefusal, type LearnResult } from '../../../../auth/learn-refusal';
 import { tutorMove } from '../../../../auth/npcs';
 import type { Moves } from '../../../../data/ids/moves';
 import { TUTOR_FEE } from '../../../../data/overworld/npc';
-import ItemSprite from '../../../items/ItemSprite';
-import { Badge, Button, DialogActions } from '../../../styled';
+import { CostBadge } from '../terms';
+import { Button, DialogActions } from '../../../styled';
 import { type CounterProps, optionsOf, scalesIn, useSaying } from '../shared';
 import { TutorCounter } from './moves';
 
@@ -56,33 +56,27 @@ export default function Tutor(props: CounterProps): JSX.Element {
         }}
       />
       <DialogActions>
-        {/* Only once there is a pokemon to spend it on */}
-        <Show when={picked() != null}>
-          <Button
-            tone="primary"
-            disabled={scalesIn(props) < 1 || picked() == null || chosen() == null}
-            label="Teach, 1 Heart Scale"
-            onClick={() => {
-              const id = picked();
-              const move = chosen();
+        <Button
+          tone="primary"
+          disabled={scalesIn(props) < 1 || picked() == null || chosen() == null}
+          label="Teach, 1 Heart Scale"
+          onClick={() => {
+            const id = picked();
+            const move = chosen();
 
-              if (id != null && move != null) {
-                props.ask({
-                  catchId: id,
-                  move,
-                  cost: 'The Heart Scale',
-                  teach: tutor,
-                  onTaught: tutored,
-                });
-              }
-            }}
-          >
-            Teach{' '}
-            <Badge tone="gold">
-              <ItemSprite item={TUTOR_FEE} size={16} label="" />1
-            </Badge>
-          </Button>
-        </Show>
+            if (id != null && move != null) {
+              props.ask({
+                catchId: id,
+                move,
+                cost: 'The Heart Scale',
+                teach: tutor,
+                onTaught: tutored,
+              });
+            }
+          }}
+        >
+          Teach <CostBadge cost={{ item: TUTOR_FEE }} />
+        </Button>
         {props.walkOn()}
       </DialogActions>
     </>

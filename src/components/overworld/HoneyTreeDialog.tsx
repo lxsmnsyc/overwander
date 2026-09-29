@@ -5,21 +5,18 @@ import { latherHoneyTree } from '../../auth/snapshots';
 import { Items } from '../../data/ids/items';
 import { LATHER_COST } from '../../data/overworld/honey-tree';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
-import ItemSprite from '../items/ItemSprite';
 import AtlasSprite from '../sprites/AtlasSprite';
 import { OW_SPRITE_ROOT } from '../../canvas/ow-char-sprites';
 import Landmark from '../../data/overworld/landmark';
 import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
 
-import { Badge, Button, Dialog, DialogActions, Note, Status } from '../styled';
+import { Button, Dialog, DialogActions, Note, useToast } from '../styled';
+import { CostBadge, CounterSpent, CounterTerms, HeadingPortrait } from './npc-dialog/terms';
 import { failed, readable } from '../app/resource-reads';
 import playEffect, { Effect } from '../app/sound';
 
-/** The tree at twice the size it stands on the board */
-const TREE_SPRITE = 88;
-
-/** The jar on the button, the size the safari draws its ball */
-const LATHER_SPRITE = 28;
+/** The tree beside the heading */
+const TREE_SPRITE = 28;
 
 export interface HoneyTreeDialogProps {
   player: string;
@@ -37,13 +34,12 @@ export interface HoneyTreeDialogProps {
 function HoneyTreeBody(
   props: HoneyTreeDialogProps & { jars: Resource<number>; onSpent: () => void },
 ): JSX.Element {
-  const [status, setStatus] = createSignal<string | null>(null);
+  const toast = useToast();
   const [busy, setBusy] = createSignal(false);
 
   const jars = (): number => readable(props.jars) ?? 0;
 
   const close = (): void => {
-    setStatus(null);
     setBusy(false);
     props.onClose();
   };
@@ -55,17 +51,16 @@ function HoneyTreeBody(
     if (snapshot == null || cell == null) {
       return;
     }
-    setStatus(null);
     setBusy(true);
     latherHoneyTree(snapshot, cell)
       .then((result) => {
         setBusy(false);
         if (result == null) {
-          setStatus('The tree will not take honey right now.');
+          toast.push({ message: 'The tree will not take honey right now.', tone: 'ember' });
           return;
         }
         if (result.kind === 'no-honey') {
-          setStatus('You have no Honey to lather it with.');
+          toast.push({ message: 'You have no Honey to lather it with.', tone: 'ember' });
           props.onSpent();
           return;
         }
@@ -80,45 +75,41 @@ function HoneyTreeBody(
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        toast.push({
+          message: caught instanceof Error ? caught.message : String(caught),
+          tone: 'ember',
+        });
       });
   };
 
   return (
     <>
-      <div class="flex justify-center">
-        <AtlasSprite
-          sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
-          name={landmarkPicture(Landmark.HoneyTree) ?? ''}
-          size={TREE_SPRITE}
-          label="The honey tree"
-        />
-      </div>
-      <div class="flex justify-center">
-        <Badge tone={jars() >= LATHER_COST ? 'gold' : 'neutral'}>
-          <ItemSprite item={Items.Honey} size={16} label="" />
-          {jars()} Honey
-        </Badge>
-      </div>
-      <Show when={failed(props.jars)}>{(said) => <Note class="text-center">{said()}</Note>}</Show>
-      <Note class="text-center">
-        {props.lathered
-          ? 'The bark is still sticky. Come back next window.'
-          : 'Lather it with honey and see what comes down for it.'}
-      </Note>
-      <Status message={status()} />
+      <CounterTerms
+        cost={{ item: Items.Honey, amount: LATHER_COST }}
+        have={{ amount: jars(), short: jars() < LATHER_COST, unit: 'Honey' }}
+        often={props.lathered ? 'Used this while' : 'One lather a window'}
+      />
+      <Show when={failed(props.jars)}>{(said) => <Note>{said()}</Note>}</Show>
+      <Show
+        when={!props.lathered}
+        fallback={
+          <CounterSpent says="The bark is still sticky. Come back next window." quoted={false} />
+        }
+      >
+        <Note>Lather it with honey and see what comes down for it.</Note>
+      </Show>
       <DialogActions>
-        {/* Drawn like the safari's Throw: the jar is the label, with what is left beside it */}
-        <Button
-          tone="primary"
-          disabled={busy() || props.lathered || jars() < LATHER_COST}
-          label={`Lather with Honey, ${jars()} left`}
-          onClick={lather}
-        >
-          <ItemSprite item={Items.Honey} size={LATHER_SPRITE} label="" />
-          Lather × {jars()}
-        </Button>
-        <Button onClick={close}>Close</Button>
+        <Show when={!props.lathered}>
+          <Button
+            tone="primary"
+            disabled={busy() || jars() < LATHER_COST}
+            label={`Lather, ${LATHER_COST} Honey`}
+            onClick={lather}
+          >
+            Lather <CostBadge cost={{ item: Items.Honey, amount: LATHER_COST }} />
+          </Button>
+        </Show>
+        <Button onClick={close}>Walk on</Button>
       </DialogActions>
     </>
   );
@@ -136,10 +127,19 @@ export default function HoneyTreeDialog(props: HoneyTreeDialogProps): JSX.Elemen
       isOpen={props.cell != null}
       onClose={props.onClose}
       title="Honey Tree"
-      terse
-      description="Something lives in this tree, and it cannot resist honey. One lather a window."
+      lead={
+        <HeadingPortrait>
+          <AtlasSprite
+            sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
+            name={landmarkPicture(Landmark.HoneyTree) ?? ''}
+            size={TREE_SPRITE}
+            label=""
+          />
+        </HeadingPortrait>
+      }
+      description="Something lives in this tree, and it cannot resist honey."
     >
-      <Suspense fallback={<Note class="text-center">Counting jars…</Note>}>
+      <Suspense fallback={<Note>Counting jars…</Note>}>
         <HoneyTreeBody
           {...props}
           jars={jars}

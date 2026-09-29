@@ -26,6 +26,7 @@ import deriveEncounter, {
   type Encounter,
   EncounterType,
   RAID_FAMILY_DAY_MIN_IV,
+  RAID_MIN_IV,
 } from '../src/overworld/encounter';
 import { Species } from '../src/data/ids/species';
 import type { Moves } from '../src/data/ids/moves';
@@ -182,7 +183,7 @@ describe('classifying a sky', () => {
     expect(isBoostingWeather(Weather.Cloudy)).toBe(true);
     expect(isBoostingWeather(Weather.Rain)).toBe(true);
     expect(isBoostingWeather(Weather.Aurora)).toBe(true);
-    expect(WEATHER_MIN_IV).toBe(10);
+    expect(WEATHER_MIN_IV).toBe(9);
     // What a sky boosts is its own types and nothing else, so a plain
     // sky is one that favours nobody
     expect(WEATHER_TYPES[Weather.Clear]).toEqual([]);
@@ -331,10 +332,12 @@ describe('what weather is worth', () => {
         STAT_ORDER[0],
       );
 
-    expect(prize(undefined)).toBe(RAID_FAMILY_DAY_MIN_IV);
+    const floor = RAID_MIN_IV + RAID_FAMILY_DAY_MIN_IV;
+
+    expect(prize(undefined)).toBe(floor);
     // A rat is Normal, so dust is the sky its raid is worth more under
-    expect(prize(Weather.Rain)).toBe(RAID_FAMILY_DAY_MIN_IV);
-    expect(prize(Weather.DustHaze)).toBe(RAID_FAMILY_DAY_MIN_IV + WEATHER_MIN_IV);
+    expect(prize(Weather.Rain)).toBe(floor);
+    expect(prize(Weather.DustHaze)).toBe(floor + WEATHER_MIN_IV);
   });
 
   it('hands a fogbow meeting room for a fifth move, and sometimes a sixth', () => {
@@ -529,7 +532,9 @@ describe('what weather is worth', () => {
   });
 
   it('never floors a pokemon above what the game can roll', () => {
-    expect(Math.min(MAX_IV, RAID_FAMILY_DAY_MIN_IV + WEATHER_MIN_IV)).toBeLessThanOrEqual(MAX_IV);
+    expect(
+      Math.min(MAX_IV, RAID_MIN_IV + RAID_FAMILY_DAY_MIN_IV + WEATHER_MIN_IV),
+    ).toBeLessThanOrEqual(MAX_IV);
   });
 });
 

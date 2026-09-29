@@ -5,6 +5,7 @@ import { HoverCard } from '../styled';
 import CatchBox, { type BoxEntry } from './CatchBox';
 import CatchCard from './CatchCard';
 import { asBoxEntry } from './catch-summary';
+import { titleCatch } from '../details';
 
 export interface TeamStripProps {
   /** The party, as records — live ones, or snapshots read back */
@@ -52,7 +53,8 @@ export default function TeamStrip(props: TeamStripProps): JSX.Element {
           <HoverCard
             class="block size-full"
             trigger={<span class="block size-full" />}
-            title="Info"
+            title={titleCatch(recordOf(entry().id)?.[1])}
+            kind="Pokémon"
           >
             <Show when={recordOf(entry().id)}>{(found) => <CatchCard caught={found()[1]} />}</Show>
           </HoverCard>

@@ -194,7 +194,7 @@ export const ELITE_MEMBER_CHARSETS: Record<EliteMember, string[]> = {
  * Bruno's, the damp is Agatha's, and everything green or under water
  * is Lance's. The later leagues take the countries their own kind
  * answers to, so a seat holds several names across four leagues and
- * the chunk's fixture roll says whose it is
+ * the window's roll says whose it is
  */
 export const BIOME_ELITE_MEMBERS: Record<Biome, EliteMember[]> = {
   [Biome.Glacier]: [EliteMember.Lorelei, EliteMember.Glacia],

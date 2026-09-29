@@ -29,8 +29,19 @@ import type { Species } from '../data/ids/species';
 import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
-import { getBiomeLairs, getLairResidents, pickLairSpecies } from '../data/overworld/lair';
-import Npc, { EXECUTIVE_CHARSETS, type Executive, NPCS, npcSheets } from '../data/overworld/npc';
+import {
+  getBiomeLairs,
+  getCaveLairs,
+  getLairResidents,
+  pickLairSpecies,
+} from '../data/overworld/lair';
+import Npc, {
+  EXECUTIVE_CHARSETS,
+  type Executive,
+  NPCS,
+  TRADERS,
+  npcSheets,
+} from '../data/overworld/npc';
 import {
   SYNDICATE_BOSS_CHARSETS,
   SYNDICATE_EXECUTIVES,
@@ -78,10 +89,12 @@ import {
   isAceTrainer,
 } from '../data/overworld/trainers';
 import Phenomenon, { BIOME_PHENOMENA } from '../data/overworld/phenomenon';
+import { rollTraderOffer } from './trader';
 import {
   VENDOR_KINDS,
   type VendorKind,
   rollChefStock,
+  rollGeologistStock,
   rollVendorStock,
 } from '../data/overworld/vendor';
 import Weather, {
@@ -815,11 +828,16 @@ export default class ChunkSnapshot {
     return this.raids;
   }
 
-  /** The biome's lairs with at least one resident a raid can stage */
+  /** The biome's lairs, only its underground ones in a cave */
+  private lairsHere(biome: Biome): Lairs[] {
+    return this.depth === Depth.Cave ? getCaveLairs(biome) : getBiomeLairs(biome);
+  }
+
+  /** The lairs here with at least one resident a raid can stage */
   private stageableLairs(): Lairs[] {
     const lairs: Lairs[] = [];
 
-    for (const lair of getBiomeLairs(this.chunk.biome)) {
+    for (const lair of this.lairsHere(this.chunk.biome)) {
       for (const resident of getLairResidents(lair)) {
         if (canStageBoss(resident)) {
           lairs.push(lair);
@@ -1264,7 +1282,7 @@ export default class ChunkSnapshot {
             // lair is a place, so a biome that hosts none has no
             // legendary to have been taken from it and the boss
             // fields a sixth rare
-            const homes = getBiomeLairs(this.biomeAt(cell));
+            const homes = this.lairsHere(this.biomeAt(cell));
             const party = drawMany(rares, ROCKET_PARTY_SIZE - 1);
 
             if (homes.length > 0) {
@@ -1375,11 +1393,10 @@ export default class ChunkSnapshot {
   }
 
   /**
-   * Which gym leader keeps the gym at this cell, or null when the
-   * cell holds no gym. The biome names the candidates — every gym in
-   * fire country is a fire gym, so a player hunting one badge knows
-   * which country to walk — and the chunk's own fixture roll picks
-   * among the leaders who share it, the same one every visit
+   * Which gym leader keeps the gym at this cell this window, or null
+   * when the cell holds no gym. The biome names the candidates, so a
+   * badge still has a country to hunt in, and the seat turns over
+   * every window so a town already found cycles through them
    */
   getGymLeader(cell: number): GymLeader | null {
     if (this.chunk.getLandmarkCells().get(cell) !== Landmark.GymLeader) {
@@ -1387,15 +1404,15 @@ export default class ChunkSnapshot {
     }
 
     const seated = BIOME_GYM_LEADERS[this.chunk.biome];
-    const rng = new AleaRNG(`${this.chunk.seed}leader${cell}`);
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}leader${cell}`);
 
     return seated[Math.floor(rng.random() * seated.length)] ?? null;
   }
 
   /**
-   * Which of the Elite Four holds this cell, or null. The biome
-   * names the candidates the way it does for the gyms, and the
-   * fixture roll seats one of them for good
+   * Which of the Elite Four holds this cell this window, or null. The
+   * biome names the candidates the way it does for the gyms, and the
+   * seat turns over every window the same way
    */
   getEliteMember(cell: number): EliteMember | null {
     if (this.chunk.getLandmarkCells().get(cell) !== Landmark.EliteFour) {
@@ -1403,7 +1420,7 @@ export default class ChunkSnapshot {
     }
 
     const seated = BIOME_ELITE_MEMBERS[this.chunk.biome];
-    const rng = new AleaRNG(`${this.chunk.seed}elite${cell}`);
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}elite${cell}`);
 
     return seated[Math.floor(rng.random() * seated.length)] ?? null;
   }
@@ -1489,17 +1506,17 @@ export default class ChunkSnapshot {
   }
 
   /**
-   * Which champion holds the seat at this cell, or null when the cell
-   * holds none. A league rather than a country decides who a champion
-   * is, so unlike the gyms this is a plain fixture roll over the
-   * champions there are, fixed for the cell the way a gym's leader is
+   * Which champion holds the seat at this cell this window, or null
+   * when the cell holds none. A league rather than a country decides
+   * who a champion is, so this rolls over every champion, and turns
+   * over every window the way a gym's leader does
    */
   getChampion(cell: number): Champion | null {
     if (this.chunk.getLandmarkCells().get(cell) !== Landmark.Champion) {
       return null;
     }
 
-    const rng = new AleaRNG(`${this.chunk.seed}champion${cell}`);
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}champion${cell}`);
 
     return CHAMPIONS[Math.floor(rng.random() * CHAMPIONS.length)] ?? null;
   }
@@ -1664,15 +1681,19 @@ export default class ChunkSnapshot {
   getVendorStock(cell: number): Items[] {
     const standing = this.getStandingNpc(cell);
 
-    if (standing !== Npc.Vendor && standing !== Npc.Chef) {
+    if (standing == null || !TRADERS.has(standing)) {
       return [];
     }
 
     const rng = new AleaRNG(`${this.key}${this.npcTimestamp}wares${cell}`);
 
-    return standing === Npc.Chef
-      ? rollChefStock(() => rng.random())
-      : rollVendorStock(() => rng.random(), this.getVendorKind(cell) ?? undefined);
+    if (standing === Npc.Chef) {
+      return rollChefStock(() => rng.random());
+    }
+    if (standing === Npc.Geologist) {
+      return rollGeologistStock(() => rng.random());
+    }
+    return rollVendorStock(() => rng.random(), this.getVendorKind(cell) ?? undefined);
   }
 
   /**
@@ -1693,6 +1714,26 @@ export default class ChunkSnapshot {
     const rng = new AleaRNG(`${this.key}${this.npcTimestamp}fossils${cell}`);
 
     return rollFossilOffer(() => rng.random());
+  }
+
+  /**
+   * The six pokemon the trader at this cell brought, or nothing when
+   * somebody else is standing there. Derived like the maniac's fossils,
+   * so every player sees the same six this window
+   */
+  getTraderOffer(cell: number): Spawn[] {
+    if (this.getWanderingNpcs().get(cell) !== Npc.Trader) {
+      return [];
+    }
+
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}swaps${cell}`);
+
+    return rollTraderOffer(
+      this.biomeAt(cell),
+      getTimeOfDay(this.npcTimestamp),
+      () => rng.random(),
+      () => rng.int32(),
+    );
   }
 
   /**

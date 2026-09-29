@@ -600,28 +600,27 @@ export default function Home(): JSX.Element {
         fallback={
           <div class="flex h-full items-center justify-center px-4">
             <Show when={!auth.loading()} fallback={<Note>Loading session…</Note>}>
-              {/* The whole of the game before signing in: what it is,
-                  and the one thing there is to do about it. It is drawn
-                  as a title screen — the game's own window, with the
-                  name across the top of it — because it is the first
-                  thing anybody sees of the game and a bare form says
-                  nothing about what they are signing in to */}
+              {/* The title screen: the game's name and what it is, then
+                  the one thing there is to do about it, on the same white
+                  sheet every dialog is drawn on */}
               <div
-                class="flex w-full max-w-sm flex-col gap-4 overflow-hidden rounded-panel border-4
-                  border-tide bg-paper text-center shadow-window"
+                class="relative flex w-full max-w-sm flex-col gap-4 rounded-panel border-2 border-line
+                  bg-paper px-5 pt-7 pb-5 shadow-sheet"
               >
-                <header class="relative flex flex-col gap-1 bg-tide px-4 py-4 text-on-accent">
-                  <h1 class="text-3xl">Overwander</h1>
-                  <p class="text-sm text-on-accent/85">Sign in to walk the overworld.</p>
-                  {/* The theme is worth changing before signing in as
-                      much as after it — the menu that carries it is
-                      behind the sign-in, and this is the whole game
-                      until somebody does */}
-                  <ThemeToggle class="absolute top-3 right-3 px-2.5 text-ink" />
+                <header class="flex flex-col items-center gap-1 text-center">
+                  <h1 class="text-4xl font-black tracking-tight">Overwander</h1>
+                  <p class="text-sm text-muted">
+                    A world grown from a seed, and real-time battles in it.
+                  </p>
                 </header>
-                <div class="px-4 pb-4">
-                  <LoginForm />
-                </div>
+                {/* Worth changing before signing in as much as after: the
+                    menu that carries it is behind the sign-in */}
+                <ThemeToggle
+                  class="absolute top-3 right-3 flex size-8 cursor-pointer items-center justify-center
+                    rounded-full border-0 bg-line-soft p-0 text-muted shadow-none transition-colors
+                    hover:bg-tide-soft hover:text-tide-dark active:translate-y-0 [&_svg]:size-4"
+                />
+                <LoginForm />
               </div>
             </Show>
           </div>

@@ -1298,6 +1298,100 @@ function battleDraw(): Note[] {
   ];
 }
 
+/**
+ * The party handed back whole: a calm tune in F on bells over harp,
+ * rising and settling on the chord, with a shimmer as it finishes
+ */
+function nurseHeal(): Note[] {
+  const notes: Note[] = [];
+  const beat = 0.16;
+
+  for (const [beats, hold, pitch] of [
+    [0, 0.1, 77],
+    [1, 0.1, 81],
+    [2, 0.1, 84],
+    [3, 0.25, 89],
+    [5, 0.1, 88],
+    [6, 0.1, 84],
+    [7, 0.7, 89],
+  ] as const) {
+    notes.push({ at: beats * beat, hold, pitch, instrument: 'bell', volume: 0.22, pan: 0.2 });
+    notes.push({
+      at: beats * beat,
+      hold,
+      pitch: pitch - 12,
+      instrument: 'harp',
+      volume: 0.18,
+      pan: -0.2,
+    });
+  }
+  notes.push(...chord([53, 57, 60, 65], 0, 7 * beat, 'strings', 0.07));
+  notes.push(...chord([53, 57, 60, 65, 69], 7 * beat, 0.9, 'strings', 0.1));
+  notes.push({ at: 7 * beat, hold: 0.8, pitch: 41, instrument: 'bass', volume: 0.24 });
+  notes.push({ at: 7 * beat, hold: 0.7, pitch: 77, instrument: 'rise', volume: 0.06 });
+  return notes;
+}
+
+/** Something bolting from the encounter: a rush of air and quick steps fading off to one side */
+function flight(): Note[] {
+  const notes: Note[] = [
+    { at: 0, hold: 0.35, pitch: 72, instrument: 'whoosh', volume: 0.5, pan: 0.3 },
+  ];
+
+  for (let index = 0; index < 5; index++) {
+    notes.push({
+      at: 0.05 + index * 0.085,
+      hold: 0,
+      pitch: 64 - index,
+      instrument: 'knock',
+      volume: 0.4 * (1 - index / 6),
+      pan: 0.1 + index * 0.15,
+    });
+  }
+  notes.push({ at: 0.45, hold: 0.06, pitch: 67, instrument: 'harp', volume: 0.12, pan: 0.6 });
+  return notes;
+}
+
+/** An egg taken in: a soft rock of the shell, and a warm two-note chime */
+function eggGet(): Note[] {
+  return [
+    { at: 0, hold: 0.07, pitch: 88, instrument: 'rattle', volume: 0.25, pan: -0.2 },
+    { at: 0.06, hold: 0, pitch: 76, instrument: 'knock', volume: 0.3, pan: -0.2 },
+    ...run([72, 77], 0.2, 0.16, 'bell', 0.22, 0),
+    ...run([60, 65, 69], 0.2, 0.06, 'harp', 0.18),
+    ...chord([53, 60, 65], 0.36, 0.5, 'strings', 0.07),
+  ];
+}
+
+/**
+ * A pokemon handed over: not the catch's call but an arrival, a harp
+ * sweep and one bright brass chord in G with bells over it
+ */
+function pokemonGet(): Note[] {
+  return [
+    ...run([55, 59, 62, 67, 71, 74], 0, 0.04, 'harp', 0.22),
+    ...chord([67, 71, 74, 79], 0.26, 0.9, 'brass', 0.13),
+    { at: 0.26, hold: 0.9, pitch: 43, instrument: 'bass', volume: 0.32 },
+    { at: 0.26, hold: 0, pitch: 43, instrument: 'timpani', volume: 0.35, pan: -0.2 },
+    ...chord([55, 62, 67, 71], 0.26, 1.1, 'strings', 0.08),
+    ...run([91, 95, 98, 103], 0.5, 0.12, 'bell', 0.12, 0),
+  ];
+}
+
+/** The ball latching shut as it stops rocking: a sharp click and the catch settling */
+function ballClick(): Note[] {
+  return [
+    { at: 0, hold: 0, pitch: 84, instrument: 'knock', volume: 0.8 },
+    { at: 0.012, hold: 0.02, pitch: 96, instrument: 'coin', volume: 0.35 },
+    { at: 0.09, hold: 0, pitch: 72, instrument: 'knock', volume: 0.3 },
+  ];
+}
+
+/** Something waiting for the player: a soft ding-dong, up a fourth and back */
+function notice(): Note[] {
+  return [...run([84, 89], 0, 0.14, 'bell', 0.22, 0), ...run([72, 77], 0, 0.14, 'harp', 0.14)];
+}
+
 interface Effect {
   seconds: number;
   notes: () => Note[];
@@ -1340,6 +1434,12 @@ const EFFECTS: Record<string, Effect> = {
   battle_won: { seconds: 3.6, notes: battleWon, echo: HALL, group: 'outcome' },
   battle_lost: { seconds: 3.6, notes: battleLost, echo: HALL, group: 'outcome' },
   battle_draw: { seconds: 3.2, notes: battleDraw, echo: HALL, group: 'outcome' },
+  nurse_heal: { seconds: 2.6, notes: nurseHeal, echo: CHAMBER },
+  flight: { seconds: 0.9, notes: flight, echo: ROOM },
+  egg_get: { seconds: 1.3, notes: eggGet, echo: ROOM },
+  pokemon_get: { seconds: 2.2, notes: pokemonGet, echo: CHAMBER },
+  ball_click: { seconds: 0.3, notes: ballClick, echo: ROOM, group: 'throw' },
+  notice: { seconds: 1, notes: notice, echo: ROOM },
 };
 
 /** Every note laid down and echoed, not yet levelled */

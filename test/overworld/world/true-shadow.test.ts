@@ -19,6 +19,7 @@ import { Stats } from '../../../src/data/constants/stats';
 import { Species } from '../../../src/data/ids/species';
 import Weather from '../../../src/data/overworld/weather';
 import Landmark from '../../../src/data/overworld/landmark';
+import { getSpeciesLairs } from '../../../src/data/overworld/lair';
 import ChunkSnapshot, {
   RAID_INTERVAL,
   WEATHER_INTERVAL,
@@ -192,7 +193,19 @@ describe('where a true shadow is met', () => {
       // Guaranteed rather than rolled for: the sky is the whole draw
       expect(isTrueShadow(roll.species)).toBe(true);
       expect(canStageBoss(roll.species)).toBe(true);
-      expect(roll.lair).toBeNull();
+      // In its counterpart's lair, so the raid is named for the place
+      expect(roll.lair).toBe(
+        getSpeciesLairs(getTrueShadowCounterpart(roll.species) ?? roll.species)[0],
+      );
+    }
+  });
+
+  it('is at home where its counterpart is', () => {
+    for (const shadow of listTrueShadows()) {
+      const counterpart = getTrueShadowCounterpart(shadow) ?? shadow;
+
+      expect(getSpeciesLairs(shadow)).toEqual(getSpeciesLairs(counterpart));
+      expect(getSpeciesLairs(shadow).length).toBeGreaterThan(0);
     }
   });
 

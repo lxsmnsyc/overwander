@@ -191,6 +191,25 @@ describe('Misty Surge', () => {
   });
 });
 
+describe('Electric Surge', () => {
+  it('charges the ground as it comes in', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const pichu = createUnit(battle, teamA, [Types.Electric]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    pichu.addAbility(Abilities.ElectricSurge);
+    foe.enter();
+
+    expect(foe.checkTerrain()).toBe(Terrains.None);
+
+    pichu.enter();
+    battle.tick(turns(1));
+
+    expect(foe.checkTerrain()).toBe(Terrains.Electric);
+  });
+});
+
 describe('Stance Change', () => {
   it("draws the blade to attack and sheathes it on King's Shield", () => {
     const { battle, teamA, teamB } = createBattle();

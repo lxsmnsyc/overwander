@@ -4,6 +4,7 @@ import registerBiomeSpawns from '../../src/data/biome';
 import registerAbilities from '../../src/data/abilities';
 import Biome, { WILD_BIOMES } from '../../src/data/ids/biome';
 import { Items } from '../../src/data/ids/items';
+import { MAX_FRIENDSHIP } from '../../src/data/constants/friendship';
 import { Moves } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
 import registerItems from '../../src/data/items';
@@ -18,8 +19,10 @@ import Npc, {
   NPC_NAMES,
   REMINDER_FEE,
   getRecallableMoves,
+  getTutorableMoves,
   npcSheet,
   npcSheets,
+  tutorRefuses,
 } from '../../src/data/overworld/npc';
 import {
   getBaseForms,
@@ -163,6 +166,17 @@ describe('wandering NPCs', () => {
     }
     expect(butterfree.has(Moves.BugBite)).toBe(false);
     expect(new Set(getRecallableMoves(Species.Butterfree, 15, [])).has(Moves.BugBite)).toBe(true);
+  });
+});
+
+describe("the tutor's signature moves", () => {
+  it('offers one but teaches it only at the most friendship', () => {
+    expect(getTutorableMoves(Species.Rayquaza, [])).toContain(Moves.DragonAscent);
+    expect(tutorRefuses(Moves.DragonAscent, MAX_FRIENDSHIP - 1)).toBe(true);
+    expect(tutorRefuses(Moves.DragonAscent, MAX_FRIENDSHIP)).toBe(false);
+    expect(tutorRefuses(Moves.SecretSword, 0)).toBe(true);
+    // Everything else he teaches at any friendship
+    expect(tutorRefuses(Moves.Surf, 0)).toBe(false);
   });
 });
 

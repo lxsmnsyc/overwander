@@ -22,6 +22,12 @@ const SHAPE_ABILITIES = new Map<Species, Abilities>([
 ]);
 
 /**
+ * The pokemon that only answer their form item through an ability of
+ * their own. An Arceus born with a filler keeps its Normal type
+ */
+const SHAPE_NEEDS = new Map<Species, Abilities>([[Species.Arceus, Abilities.Multitype]]);
+
+/**
  * The form items: a held thing that decides which shape its holder
  * fights in.
  *
@@ -47,7 +53,13 @@ export default function setupFormItems(battle: Battle): void {
             inner.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
               const unit = event.source;
 
-              if (getBaseFormSpecies(unit.species) !== base || !holds(unit, item)) {
+              const needs = SHAPE_NEEDS.get(base);
+
+              if (
+                getBaseFormSpecies(unit.species) !== base ||
+                !holds(unit, item) ||
+                (needs != null && !unit.hasAbility(needs))
+              ) {
                 return;
               }
 

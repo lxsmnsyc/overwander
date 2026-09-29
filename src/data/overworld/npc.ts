@@ -1,4 +1,5 @@
 import { countsAgainstSlots } from '../constants/slots';
+import { MAX_FRIENDSHIP } from '../constants/friendship';
 import { MAX_IV } from '../constants/stats';
 import Awards from '../ids/awards';
 import type Abilities from '../ids/abilities';
@@ -11,6 +12,7 @@ import {
   getSpeciesData,
   getTeachableMoves,
 } from '../species';
+import { isTutorOnlyMove } from '../moves/tutor-only';
 
 /**
  * The people who stand at the world's people landmarks. Most pass
@@ -477,6 +479,14 @@ export const TUTOR_FEE = Items.HeartScale;
  * machines' own — he teaches nothing a machine could not — so what he
  * sells is the lesson without the hunt for the disc
  */
+/**
+ * Whether the tutor turns this lesson down: a signature move of his
+ * own is taught only to a pokemon at the most friendship it can have
+ */
+export function tutorRefuses(move: Moves, friendship: number): boolean {
+  return isTutorOnlyMove(move) && friendship < MAX_FRIENDSHIP;
+}
+
 export function getTutorableMoves(species: Species, known: Iterable<Moves>): Moves[] {
   const knows = new Set(known);
   const moves: Moves[] = [];

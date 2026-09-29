@@ -33,6 +33,7 @@ import {
   getBiomeLairs,
   getCaveLairs,
   getLairResidents,
+  getSpeciesLairs,
   pickLairSpecies,
 } from '../data/overworld/lair';
 import Npc, {
@@ -900,9 +901,12 @@ export default class ChunkSnapshot {
         const rng = new AleaRNG(`${this.key}${this.raidTimestamp}shadow${cell}`);
 
         if (shadows.length > 0) {
+          const species = shadows[Math.floor(rng.random() * shadows.length)];
+
+          // Named for its counterpart's lair, so XD-144 is met in Shadow Seafoam Islands
           raids.set(cell, {
-            lair: null,
-            species: shadows[Math.floor(rng.random() * shadows.length)],
+            lair: getSpeciesLairs(species)[0] ?? null,
+            species,
             traitValue: rng.int32(),
           });
           continue;

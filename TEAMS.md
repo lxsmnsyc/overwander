@@ -12,6 +12,10 @@ registries in `src/data`.
 - **Moves** are listed eight at a time, because that is the cap
   ([`slots.ts`](src/data/constants/slots.ts)). The **first four are the priority
   selection**: take those first, and add the rest as the pokemon earns slots.
+- **Egg moves are excluded throughout.** Every move below is reachable from the
+  species' own level-up list or its teachable list, or from a pre-evolution's, so a
+  caught pokemon can get there without breeding for it. See the note below on the ones
+  the main series later turned into TMs.
 - **Abilities** are four, which is the cap. A signature ability counts against that
   cap, so a species with a signature runs it plus three of its pool.
 - **Items** are listed eight at a time, which is also the cap. The **first is the
@@ -36,6 +40,24 @@ Mechanics that shaped these picks, all verified in the engine:
   60x, so any share of it lands far above the cap, and the clocks are worth a flat 200
   each rather than a proportion.
 
+## Egg moves that later generations made TMs
+
+Three of the moves left out above are egg moves in this game only because its
+learnsets stop at the generations it has imported. The main series later handed them
+out as machines, and where this game and the mainline diverge it follows the newest
+generation's rule. If those machine lists are ever imported, these sets get better:
+
+| Move | Main-series machine | What it changes here |
+| --- | --- | --- |
+| Dragon Dance | TR51 in Sword and Shield, TM100 in Scarlet and Violet | Dragonite goes back to Dragon Dance over Hone Claws: +1 Attack and +1 Speed rather than +1 Attack and +1 accuracy |
+| Encore | TM122 in Scarlet and Violet | Whimsicott takes Encore back into its priority four, locking an enemy into one move under Prankster |
+| Fake Tears | TM47 in Sword and Shield, TM003 in Scarlet and Violet | Whimsicott or Breloom gets -2 Special Defense on the target, which is the biggest single damage swing available to a support |
+
+The other three exclusions are not machines in any generation, so they stay out
+whatever gets imported: **Wish** (Clefable), **Heal Bell** and **Aromatherapy**
+(Blissey), and **Morning Sun** (Volcarona). Blissey losing both cleansing moves is
+therefore permanent, not a gap that a later import closes.
+
 ---
 
 ## NPC and PvP battles, without legendaries
@@ -55,13 +77,16 @@ Mechanics that shaped these picks, all verified in the engine:
   is allowed to do.
 - **Nature**: Timid (Speed up, Attack down).
 - **Abilities**: Spore Drift, Prankster, Magic Bounce, Infiltrator.
-- **Moves**: Taunt, Encore, Tailwind, Stun Spore, then Leech Seed, Fake Tears,
+- **Moves**: Taunt, Cotton Spore, Tailwind, Stun Spore, then Leech Seed, Charm,
   Moonblast, Substitute.
 - **Items**: Focus Sash, Leftovers, Bright Powder, Clear Amulet, Lax Incense,
   Mental Herb, Shell Bell, Quick Claw.
 - Prankster puts its status moves a priority step ahead, Magic Bounce returns an
-  enemy status move to its sender, and Spore Drift makes Stun Spore unmissable and
-  ignores immunity to it.
+  enemy status move to its sender, and Spore Drift makes both Stun Spore and Cotton
+  Spore unmissable and ignores immunity to them. Cotton Spore drops the target's Speed
+  two stages, which slows its cooldowns. Encore and Fake Tears are egg-only on this
+  line, so Charm takes the debuff slot instead; both are machines in the later main
+  series games.
 
 ### Togekiss (PvP, no legendaries) 85/50/95/120/115/80
 
@@ -80,12 +105,12 @@ Mechanics that shaped these picks, all verified in the engine:
 - **Role**: protector and healer, in one slot.
 - **Nature**: Bold (Defense up, Attack down).
 - **Abilities**: Wishing Well, Magic Guard, Unaware, Friend Guard.
-- **Moves**: Reflect, Light Screen, Soft-Boiled, Moonblast, then Encore, Wish,
+- **Moves**: Reflect, Light Screen, Soft-Boiled, Moonblast, then Encore, Charm,
   Thunder Wave, Follow Me.
 - **Items**: Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Band,
   Mental Herb, Lax Incense, Quick Claw.
 - Wishing Well casts Wish on the lowest teammate every time it acts, so healing costs
-  no move slot. Unaware ignores an enemy sweeper's boosts, and Magic Guard makes it
+  no move slot, which matters because Wish itself is egg-only on this line. Unaware ignores an enemy sweeper's boosts, and Magic Guard makes it
   immune to poison, burn, weather and hazards.
 
 ### Hydreigon (PvP, no legendaries) 92/105/90/125/90/98
@@ -106,11 +131,15 @@ Mechanics that shaped these picks, all verified in the engine:
 - **Role**: core, setup sweeper.
 - **Nature**: Adamant (Attack up, Special Attack down).
 - **Abilities**: Serene Storm, Multiscale, Marvel Scale, Inner Focus.
-- **Moves**: Dragon Dance, Dragon Claw, Fire Punch, Roost, then Iron Head,
+- **Moves**: Hone Claws, Dragon Claw, Fire Punch, Roost, then Iron Head,
   Thunder Punch, Waterfall, Substitute.
 - **Items**: Protective Pads, Leftovers, Expert Belt, Muscle Band, Shell Bell,
   Focus Sash, Wide Lens, Quick Claw.
-- Everything on this set is physical, so Dragon Dance boosts all of it. Fire Punch
+- Dragon Dance is egg-only on this line, so the setup move is Hone Claws, which raises
+  Attack and accuracy a stage each. Dragon Dance is a machine from Sword and Shield
+  onwards in the main series, so this is the first swap to revisit if those lists are
+  imported. Everything on this set is physical, so it boosts
+  all of it, and the accuracy half also helps Waterfall and Iron Head. Fire Punch
   answers Steel; swap in Iron Head against a Fairy-heavy field, since Dragon moves do
   nothing there. Protective Pads stops Rough Skin and Rocky Helmet punishing its
   contact moves.
@@ -213,7 +242,7 @@ Mechanics that shaped these picks, all verified in the engine:
 - **Role**: second protector, and the team's passive healer.
 - **Nature**: Bold (Defense up, Attack down).
 - **Abilities**: Wishing Well, Magic Guard, Unaware, Friend Guard.
-- **Moves**: Reflect, Light Screen, Soft-Boiled, Moonblast, then Encore, Wish,
+- **Moves**: Reflect, Light Screen, Soft-Boiled, Moonblast, then Encore, Charm,
   Thunder Wave, Follow Me.
 - **Items**: Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Band,
   Mental Herb, Lax Incense, Quick Claw.
@@ -305,8 +334,8 @@ attackers.
 - **Role**: protector and passive healer.
 - **Nature**: Bold (Defense up, Attack down).
 - **Abilities**: Wishing Well, Magic Guard, Unaware, Friend Guard.
-- **Moves**: Reflect, Light Screen, Soft-Boiled, Toxic, then Moonblast, Charm, Wish,
-  Protect.
+- **Moves**: Reflect, Light Screen, Soft-Boiled, Toxic, then Moonblast, Charm,
+  Cosmic Power, Protect.
 - **Items**: Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Band,
   Mental Herb, Lax Incense, Quick Claw.
 - It applies the Toxic clock rather than Magcargo, because it acts far more often.
@@ -320,13 +349,15 @@ attackers.
 - **Role**: cleric and damage support.
 - **Nature**: Calm (Special Defense up, Attack down).
 - **Abilities**: Cushioned, Healer, Friend Guard, Serene Grace.
-- **Moves**: Soft-Boiled, Heal Bell, Heal Pulse, Helping Hand, then Light Screen,
-  Aromatherapy, Tail Whip, Protect.
+- **Moves**: Soft-Boiled, Heal Pulse, Helping Hand, Safeguard, then Light Screen,
+  Reflect, Tail Whip, Protect.
 - **Items**: Leftovers, Light Clay, Bright Powder, Shell Bell, Focus Band,
   Lax Incense, Mental Herb, Quick Claw.
 - Cushioned caps any single hit at a quarter of its HP, so a 255 HP body cannot be
   burst down. Helping Hand pointed at Metagross's Meteor Mash is worth more than
-  anything Blissey could throw itself.
+  anything Blissey could throw itself. Heal Bell and Aromatherapy are both egg-only on
+  this line, so the team prevents status with Safeguard rather than curing it: nothing
+  here cleanses, and Natural Cure needs a switch that this game does not have.
 
 ### What runs at once on this team
 
@@ -401,12 +432,12 @@ the boss is neither Fire-type nor carrying Flash Fire, Heatproof or Thick Fat.
 - **Role**: sun setter, per-action clock, and the team's sweeper.
 - **Nature**: Modest (Special Attack up, Attack down).
 - **Abilities**: Ember Halo, Drought, Magic Guard, Flame Body.
-- **Moves**: Quiver Dance, Fiery Dance, Bug Buzz, Morning Sun, then Heat Wave,
-  Flamethrower, Roost, Protect.
+- **Moves**: Quiver Dance, Fiery Dance, Bug Buzz, Roost, then Heat Wave,
+  Flamethrower, Giga Drain, Protect.
 - **Items**: Leftovers, Expert Belt, Wise Glasses, Shell Bell, Focus Sash,
   Bright Powder, Wide Lens, Zoom Lens.
-- Drought gives every Fire move on the team 1.5x and lifts Morning Sun from half its
-  HP to two thirds. Ember Halo is written as 1/16 of each enemy's HP every time that
+- Drought gives every Fire move on the team 1.5x. Morning Sun would heal two thirds of
+  its HP under that sun, but it is egg-only on this line, so Roost is the heal. Ember Halo is written as 1/16 of each enemy's HP every time that
   enemy acts, so against a boss it pays the capped 200 per action. That is a second
   per-action clock beside Curse, and unlike Curse it costs nothing to set up and needs
   no cast. Magic Guard means it pays nothing for residuals. Quiver Dance makes it the
@@ -468,8 +499,8 @@ the boss is neither Fire-type nor carrying Flash Fire, Heatproof or Thick Fat.
 - **Role**: second protector and the Toxic clock.
 - **Nature**: Bold (Defense up, Attack down).
 - **Abilities**: Wishing Well, Magic Guard, Unaware, Friend Guard.
-- **Moves**: Toxic, Reflect, Light Screen, Soft-Boiled, then Charm, Moonblast, Wish,
-  Protect.
+- **Moves**: Toxic, Reflect, Light Screen, Soft-Boiled, then Charm, Moonblast,
+  Cosmic Power, Protect.
 - **Items**: Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Band,
   Mental Herb, Lax Incense, Quick Claw.
 

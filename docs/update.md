@@ -7,6 +7,7 @@ named for what it brings.
 
 | Release                                                                             | What it brought                                                                                                                                               |
 | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Kalos's fossils, sun and ice](update/kalos-fossils-sun-and-ice.md)                 | Tyrunt and Amaura from their fossils, Inkay, Helioptile, Hawlucha, Phantump, Pumpkaboo and Bergmite, each family with a signature ability                     |
 | [Four new wanderers](update/four-new-wanderers.md)                                  | A Geologist, a Dojo Master, a Trader and a Hyper Trainer, the Skill Book, rotating league seats, and every dialog redrawn                                     |
 | [The sixth generation's moves](update/sixth-generation-moves.md)                    | 62 moves taught to everyone already here, terrain under the field, and three more starters                                                                    |
 | [Unova's league](update/unovas-league.md)                                           | Thirteen gym leaders, the Elite Four, Iris, N and Alder, Team Plasma, 48 trainer classes, the whole ladder in every town, Spiky-eared Pichu and the Max items |

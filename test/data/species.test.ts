@@ -627,6 +627,19 @@ describe('the unowns', () => {
   });
 });
 
+describe('forms met on their own', () => {
+  it('reach four abilities with nothing above them', () => {
+    for (const species of [
+      Species.PichuSpikyEared,
+      Species.FloetteEternal,
+      Species.VivillonFancy,
+      Species.VivillonPokeBall,
+    ]) {
+      expect(getSpeciesAbilities(species).size, getSpeciesData(species).name).toBe(4);
+    }
+  });
+});
+
 describe('fusions', () => {
   it('joins each dragon to the shape it makes, and back again', () => {
     for (const shape of KYUREM_FORMS.slice(1)) {

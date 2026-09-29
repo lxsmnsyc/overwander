@@ -3,8 +3,9 @@ import { RadioGroup, RadioGroupOption } from 'terracotta';
 import type { Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import MoveCategorySprite from '../sprites/MoveCategorySprite';
-import TypeBadge from '../sprites/TypeBadge';
-import { Badge, Meta } from '../styled';
+import { Sigil } from '../sprites/TypeBadge';
+import MoveHoverCard from '../moves/MoveHoverCard';
+import { Badge } from '../styled';
 
 /**
  * Choosing one of a pokemon's moves.
@@ -19,26 +20,30 @@ import { Badge, Meta } from '../styled';
  * move and which rows are refused, so both are the caller's to supply.
  */
 
+/** The type mark and category badge, at the catch sheet's sizes */
+const MARK_SIZE = 18;
+const CATEGORY_SIZE = 45;
+
 /**
- * One move as the game draws it: what it is, what kind it is, and what
- * it is worth
+ * One move as the game draws it in a list: its name, type and
+ * category. What it does is on the card over it
  */
+export function MoveLabel(props: { move: Moves }): JSX.Element {
+  return (
+    <span class="flex min-w-0 grow items-center gap-2 text-left">
+      <span class="grow truncate font-medium">{getMoveData(props.move).name}</span>
+      <Sigil type={getMoveData(props.move).type} size={MARK_SIZE} />
+      <MoveCategorySprite category={getMoveData(props.move).category} size={CATEGORY_SIZE} />
+    </span>
+  );
+}
+
+/** The label with the move's card over it */
 export function MoveLine(props: { move: Moves }): JSX.Element {
   return (
-    <span class="flex flex-col gap-0.5 text-left">
-      <span class="flex flex-wrap items-center gap-2">
-        <TypeBadge type={getMoveData(props.move).type} />
-        <MoveCategorySprite category={getMoveData(props.move).category} />
-        <span class="font-medium">{getMoveData(props.move).name}</span>
-        <Meta>
-          {getMoveData(props.move).power == null ? '' : `${getMoveData(props.move).power} power · `}
-          {getMoveData(props.move).pp} PP
-        </Meta>
-      </span>
-      {/* What it actually does, which is what a player is choosing
-          between — the figures above only say how hard and how often */}
-      <Meta>{getMoveData(props.move).description}</Meta>
-    </span>
+    <MoveHoverCard class="flex min-w-0 grow" move={props.move}>
+      <MoveLabel move={props.move} />
+    </MoveHoverCard>
   );
 }
 

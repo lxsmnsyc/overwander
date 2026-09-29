@@ -1,13 +1,31 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, type JSX, Show, createEffect, createSignal, on } from 'solid-js';
 import { isEgg } from '../../../../auth/egg';
 import type { Items } from '../../../../data/ids/items';
 import type { Moves } from '../../../../data/ids/moves';
-import { getRecallableMoves, getTutorableMoves } from '../../../../data/overworld/npc';
+import {
+  getRecallableMoves,
+  getTutorableMoves,
+  tutorRefuses,
+} from '../../../../data/overworld/npc';
 import type { CatchOption } from '../../../catches/catch-picker';
-import { MoveLine } from '../../../catches/TeachMoveDialog';
+import { getMoveData } from '../../../../data/moves';
+import { TYPE_NAMES } from '../../../../data/constants/types';
+import MoveHoverCard from '../../../moves/MoveHoverCard';
+import { MoveLabel } from '../../../catches/MovePicker';
 import { CounterStep, CounterTerms, PickOne } from '../terms';
 import { isGuarded } from '../../../../auth/caught-record';
-import { DialogSection, LIST_PAGE, List, ListRow, RowButton, createPager } from '../../../styled';
+import {
+  DialogSection,
+  LIST_PAGE,
+  List,
+  ListRow,
+  Meta,
+  Note,
+  RowButton,
+  SEARCH_FROM,
+  Search,
+  createPager,
+} from '../../../styled';
 
 /**
  * The two counters that sell a move: the reminder, who gives back what
@@ -55,6 +73,8 @@ function MoveCounter(
     heading: string;
     counted: string;
     movesOf: (option: CatchOption) => Moves[];
+    /** Why a move on offer cannot be taught to this one yet, or null */
+    refuses?: (option: CatchOption, move: Moves) => string | null;
   },
 ): JSX.Element {
   const standing = (): CatchOption | null => pickedOf(props);
@@ -63,7 +83,38 @@ function MoveCounter(
 
     return option == null ? [] : props.movesOf(option);
   };
-  const page = createPager(moves, LIST_PAGE);
+  const [query, setQuery] = createSignal('');
+  // A search for the last pokemon's moves means nothing for the next one
+  createEffect(
+    on(
+      () => props.picked,
+      () => {
+        setQuery('');
+      },
+    ),
+  );
+  /** The moves on offer whose name or type holds what was typed */
+  const found = (): Moves[] => {
+    const typed = query().trim().toLowerCase();
+
+    if (typed === '') {
+      return moves();
+    }
+    const matched: Moves[] = [];
+
+    for (const move of moves()) {
+      const data = getMoveData(move);
+
+      if (
+        data.name.toLowerCase().includes(typed) ||
+        TYPE_NAMES[data.type].toLowerCase().includes(typed)
+      ) {
+        matched.push(move);
+      }
+    }
+    return matched;
+  };
+  const page = createPager(found, LIST_PAGE);
 
   return (
     <DialogSection class="flex flex-col gap-3">
@@ -93,21 +144,53 @@ function MoveCounter(
           <CounterStep>
             {props.heading} · {moves().length}
           </CounterStep>
+          <Show when={moves().length >= SEARCH_FROM}>
+            <Search
+              value={query()}
+              placeholder="Name or type"
+              onChange={(typed) => {
+                setQuery(typed);
+              }}
+            />
+          </Show>
+          {/* Name, type and category at a glance, as the catch sheet
+              draws them; what the move does is on the card over it */}
           <List>
-            <For each={page.shown()}>
-              {(move) => (
-                <ListRow selected={props.chosen === move}>
-                  <RowButton
-                    pressed={props.chosen === move}
-                    disabled={props.busy}
-                    onClick={() => {
-                      props.onChoose(move);
-                    }}
-                  >
-                    <MoveLine move={move} />
-                  </RowButton>
-                </ListRow>
-              )}
+            <For
+              each={page.shown()}
+              fallback={
+                <li>
+                  <Note>No move matches that.</Note>
+                </li>
+              }
+            >
+              {(move) => {
+                const refused = (): string | null => {
+                  const option = standing();
+
+                  return option == null ? null : (props.refuses?.(option, move) ?? null);
+                };
+
+                return (
+                  <ListRow class="flex-nowrap p-0" selected={props.chosen === move}>
+                    <MoveHoverCard class="block grow" move={move}>
+                      <RowButton
+                        class="flex w-full items-center gap-2 px-3 py-2"
+                        pressed={props.chosen === move}
+                        disabled={props.busy || refused() != null}
+                        onClick={() => {
+                          props.onChoose(move);
+                        }}
+                      >
+                        <MoveLabel move={move} />
+                      </RowButton>
+                    </MoveHoverCard>
+                    <Show when={refused()}>
+                      {(why) => <Meta class="shrink-0 pr-3">{why()}</Meta>}
+                    </Show>
+                  </ListRow>
+                );
+              }}
             </For>
           </List>
           {page.controls()}
@@ -141,6 +224,9 @@ export function TutorCounter(props: MoveCounterProps): JSX.Element {
       heading="What he could teach it"
       counted="to learn"
       movesOf={(option) => getTutorableMoves(option.caught.species, option.caught.moves)}
+      refuses={(option, move) =>
+        tutorRefuses(move, option.caught.friendship) ? 'Needs max friendship' : null
+      }
     />
   );
 }

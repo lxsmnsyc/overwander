@@ -12,12 +12,21 @@ registries in `src/data`.
 - **Moves** are listed eight at a time, because that is the cap
   ([`slots.ts`](src/data/constants/slots.ts)). The **first four are the priority
   selection**: take those first, and add the rest as the pokemon earns slots.
+- **Egg moves are excluded throughout.** Every move below is reachable from the
+  species' own level-up list or its teachable list, or from a pre-evolution's, so a
+  caught pokemon can get there without breeding for it. See the note below on the ones
+  the main series later turned into TMs.
 - **Abilities** are four, which is the cap. A signature ability counts against that
   cap, so a species with a signature runs it plus three of its pool.
 - **Items** are listed eight at a time, which is also the cap. The **first is the
   priority pick**.
 - **Natures** name the stat raised and the stat dropped, so a support never pays for
   an attacking stat it does not use.
+- **Each team ends with "Collect this before you build the team"**: the machines to
+  buy and what they cost, the moves that have to be learned before the pokemon
+  evolves, the moves only the Move Tutor teaches, and the held items with how many
+  copies you need. Machines are consumed when used, so a move two pokemon both want
+  is two machines.
 
 Mechanics that shaped these picks, all verified in the engine:
 
@@ -35,6 +44,85 @@ Mechanics that shaped these picks, all verified in the engine:
   is the rule as written; against a boss each one pays at most 200.** A boss's pool is
   60x, so any share of it lands far above the cap, and the clocks are worth a flat 200
   each rather than a proportion.
+
+## Egg moves that later generations made TMs
+
+Three of the moves left out above are egg moves in this game only because its
+learnsets stop at the generations it has imported. The main series later handed them
+out as machines, and where this game and the mainline diverge it follows the newest
+generation's rule. If those machine lists are ever imported, these sets get better:
+
+| Move | Main-series machine | What it changes here |
+| --- | --- | --- |
+| Dragon Dance | TR51 in Sword and Shield, TM100 in Scarlet and Violet | Dragonite goes back to Dragon Dance over Hone Claws: +1 Attack and +1 Speed rather than +1 Attack and +1 accuracy |
+| Encore | TM122 in Scarlet and Violet | Whimsicott takes Encore back into its priority four, locking an enemy into one move under Prankster |
+| Fake Tears | TM47 in Sword and Shield, TM003 in Scarlet and Violet | Whimsicott or Breloom gets -2 Special Defense on the target, which is the biggest single damage swing available to a support |
+
+The other three exclusions are not machines in any generation, so they stay out
+whatever gets imported: **Wish** (Clefable), **Heal Bell** and **Aromatherapy**
+(Blissey), and **Morning Sun** (Volcarona). Blissey losing both cleansing moves is
+therefore permanent, not a gap that a later import closes.
+
+## Megas
+
+Megas are not on `main` yet: everything here reads the `kalos-megas` branch
+([`src/data/species/megas.ts`](src/data/species/megas.ts) and
+[`src/battle/items/megas.ts`](src/battle/items/megas.ts)). If you are playing `main`,
+skip this section.
+
+**The rules, as that branch has them:**
+
+- A Mega Stone is an ordinary **held item**, so it takes one of the eight item slots.
+  Rayquaza is the exception: it needs no stone, only to know **Dragon Ascent**.
+- Stones are **never sold**. They sit in the rarest band of the item pool, one weight
+  each alongside the plates, so they are dug up rather than bought. A shop buys one
+  back for 2,000.
+- **A team Mega Evolves once per fight**, and the game picks who: the **highest level**
+  first, then the **biggest Mega** by base-stat total, then whoever stands earliest in
+  the party. It happens as that unit takes the field.
+- The Mega's own ability is **worn on top** of the catch's four, the way an Origin
+  forme's is, so nothing is given up. Stats and types change; moves, the other items
+  and the catch's own abilities stay.
+
+**The Megas these teams can reach:**
+
+| Mega | Stat line | Ability it wears | What changes |
+| --- | --- | --- | --- |
+| **Mega Metagross** | 80/145/150/105/110/110 | Tough Claws (contact moves 1.3x) | +10 Attack, +20 Defense, +20 Special Defense, **+40 Speed**, and every move on its set is a contact move |
+| **Mega Latias** | 80/100/120/140/150/110 | Levitate | +30 Defense, +30 Special Attack, +20 Special Defense, with Eon Shield still covering the team |
+| **Mega Mewtwo Y** | 106/150/70/194/120/140 | Insomnia | +40 Special Attack and +10 Speed over Mewtwo, at the cost of 20 Defense |
+| **Mega Mewtwo X** | 106/190/100/154/100/130 | Steadfast | Psychic and Fighting, with 190 Attack, for a physical build only |
+| **Mega Rayquaza** | 105/180/100/180/100/115 | Delta Stream | +30 in both attacking stats and +20 Speed, and it needs no stone |
+
+**What to do on each team:**
+
+- **PvP without legendaries**: the stone goes on **Metagross** (Metagrossite). Tough
+  Claws gives Meteor Mash, Bullet Punch, Zen Headbutt and Ice Punch 1.3x each, all
+  four being contact moves, and 110 Speed turns it from the slow half of the team into
+  the fast half. It is the only Mega on that six.
+- **PvP with legendaries**: **Mega Rayquaza** takes the slot for free, since Dragon
+  Ascent is already in its set and no stone is needed. Do not also carry a stone for
+  Mewtwo or Latias: the team only gets one Mega, and Rayquaza is both the highest
+  base-stat total and, at the levels these fights run at, usually the pick.
+- **Raids without legendaries**: **Metagross** again, for the same reason. Against a
+  boss it also gains from Tough Claws stacking with Steelworker and Hive Mind.
+- **Raids with legendaries**: this is the real choice. **Mega Latias** keeps Eon Shield
+  running and adds 30 Special Defense to the unit the party leans on, while **Mega
+  Metagross** is 1.3x on the team's main attacker. Take Latias for a boss that is
+  killing you and Metagross for a boss you are failing to out-damage.
+
+**Two traps in the automatic pick:**
+
+1. **It reads level before anything else.** A higher-level teammate holding any stone
+   takes the Mega, whatever you intended. The simplest rule is one stone per team.
+2. **Rayquaza cannot opt out.** Knowing Dragon Ascent is enough, so it will consume the
+   team's one Mega even if you would rather Mega Evolve something else. Drop Dragon
+   Ascent from its set if you want the Mega elsewhere.
+
+**Worth knowing for other builds:** **Mega Audino** (103/60/126/80/126/50, Healer) is
+the best Mega available to a stall team, and the weather Megas set weather without a
+move: **Mega Charizard Y** carries Drought, **Mega Tyranitar** Sand Stream and
+**Mega Abomasnow** Snow Warning.
 
 ---
 
@@ -55,13 +143,16 @@ Mechanics that shaped these picks, all verified in the engine:
   is allowed to do.
 - **Nature**: Timid (Speed up, Attack down).
 - **Abilities**: Spore Drift, Prankster, Magic Bounce, Infiltrator.
-- **Moves**: Taunt, Encore, Tailwind, Stun Spore, then Leech Seed, Fake Tears,
+- **Moves**: Taunt, Cotton Spore, Tailwind, Stun Spore, then Leech Seed, Charm,
   Moonblast, Substitute.
 - **Items**: Focus Sash, Leftovers, Bright Powder, Clear Amulet, Lax Incense,
   Mental Herb, Shell Bell, Quick Claw.
 - Prankster puts its status moves a priority step ahead, Magic Bounce returns an
-  enemy status move to its sender, and Spore Drift makes Stun Spore unmissable and
-  ignores immunity to it.
+  enemy status move to its sender, and Spore Drift makes both Stun Spore and Cotton
+  Spore unmissable and ignores immunity to them. Cotton Spore drops the target's Speed
+  two stages, which slows its cooldowns. Encore and Fake Tears are egg-only on this
+  line, so Charm takes the debuff slot instead; both are machines in the later main
+  series games.
 
 ### Togekiss (PvP, no legendaries) 85/50/95/120/115/80
 
@@ -80,12 +171,12 @@ Mechanics that shaped these picks, all verified in the engine:
 - **Role**: protector and healer, in one slot.
 - **Nature**: Bold (Defense up, Attack down).
 - **Abilities**: Wishing Well, Magic Guard, Unaware, Friend Guard.
-- **Moves**: Reflect, Light Screen, Soft-Boiled, Moonblast, then Encore, Wish,
+- **Moves**: Reflect, Light Screen, Soft-Boiled, Moonblast, then Encore, Charm,
   Thunder Wave, Follow Me.
 - **Items**: Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Band,
   Mental Herb, Lax Incense, Quick Claw.
 - Wishing Well casts Wish on the lowest teammate every time it acts, so healing costs
-  no move slot. Unaware ignores an enemy sweeper's boosts, and Magic Guard makes it
+  no move slot, which matters because Wish itself is egg-only on this line. Unaware ignores an enemy sweeper's boosts, and Magic Guard makes it
   immune to poison, burn, weather and hazards.
 
 ### Hydreigon (PvP, no legendaries) 92/105/90/125/90/98
@@ -106,11 +197,15 @@ Mechanics that shaped these picks, all verified in the engine:
 - **Role**: core, setup sweeper.
 - **Nature**: Adamant (Attack up, Special Attack down).
 - **Abilities**: Serene Storm, Multiscale, Marvel Scale, Inner Focus.
-- **Moves**: Dragon Dance, Dragon Claw, Fire Punch, Roost, then Iron Head,
+- **Moves**: Hone Claws, Dragon Claw, Fire Punch, Roost, then Iron Head,
   Thunder Punch, Waterfall, Substitute.
 - **Items**: Protective Pads, Leftovers, Expert Belt, Muscle Band, Shell Bell,
   Focus Sash, Wide Lens, Quick Claw.
-- Everything on this set is physical, so Dragon Dance boosts all of it. Fire Punch
+- Dragon Dance is egg-only on this line, so the setup move is Hone Claws, which raises
+  Attack and accuracy a stage each. Dragon Dance is a machine from Sword and Shield
+  onwards in the main series, so this is the first swap to revisit if those lists are
+  imported. Everything on this set is physical, so it boosts
+  all of it, and the accuracy half also helps Waterfall and Iron Head. Fire Punch
   answers Steel; swap in Iron Head against a Fairy-heavy field, since Dragon moves do
   nothing there. Protective Pads stops Rough Skin and Rocky Helmet punishing its
   contact moves.
@@ -127,6 +222,66 @@ Mechanics that shaped these picks, all verified in the engine:
 - Steelworker gives Steel moves 1.5x and Hive Mind another 1.3x with three teammates
   standing, so Meteor Mash lands around 175 effective power. Bullet Punch is the
   team's only priority move. Wide Lens covers Meteor Mash's 90 accuracy.
+
+
+### Collect this before you build the team
+
+**Machines to buy.** A machine is stocked by the item market as `TM <move name>`, and
+it is **spent on use**, so the counts below are per pokemon rather than per move: two
+pokemon wanting Protect need two machines.
+
+| Price each | Moves |
+| --- | --- |
+| 2,000 | Hone Claws, Light Screen, Protect x2, Reflect, Roost, Soft-Boiled, Substitute x2, Tailwind, Taunt, Thunder Wave x2 |
+| 5,000 | Dark Pulse, Dazzling Gleam, Dragon Claw, Fire Punch, Flash Cannon, Ice Punch, Iron Head x2, Rock Slide, Thunder Punch, Waterfall |
+| 12,000 | Draco Meteor, Earth Power, Flamethrower |
+
+Machines for this team come to **117,000** in total.
+
+**Learn these before evolving**, since they sit on a pre-evolution's level-up list. If you miss one, the Move Reminder will put it back for a Heart Scale:
+
+- Bullet Punch (Metagross: level 32 as Metang)
+- Charm (Clefable: level 1 as Cleffa)
+- Charm (Whimsicott: level 28 as Cottonee)
+- Cotton Spore (Whimsicott: level 17 as Cottonee)
+- Encore (Clefable: level 4 as Cleffa)
+- Encore (Togekiss: level 25 as Togepi)
+- Follow Me (Clefable: level 17 as Clefairy)
+- Follow Me (Togekiss: level 26 as Togepi)
+- Leech Seed (Whimsicott: level 8 as Cottonee)
+- Light Screen (Clefable: level 48 as Clefairy)
+- Meteor Mash (Metagross: level 50 as Metang)
+- Moonblast (Clefable: level 46 as Clefairy)
+- Nasty Plot (Hydreigon: level 56 as Deino)
+- Stun Spore (Whimsicott: level 10 as Cottonee)
+- Wish (Togekiss: level 31 as Togepi)
+- Zen Headbutt (Metagross: level 52 as Metang)
+
+**Held items to buy:**
+
+| Item | Copies | Price each |
+| --- | --- | --- |
+| Shell Bell | 6 | 5,000 |
+| Quick Claw | 4 | 5,000 |
+| Wide Lens | 4 | 5,000 |
+| Bright Powder | 3 | 5,000 |
+| Expert Belt | 3 | 5,000 |
+| Focus Sash | 3 | 3,000 |
+| Lax Incense | 3 | 3,000 |
+| Focus Band | 2 | 5,000 |
+| Light Clay | 2 | 5,000 |
+| Mental Herb | 2 | 3,000 |
+| Muscle Band | 2 | 5,000 |
+| Protective Pads | 2 | 5,000 |
+| Scope Lens | 2 | 5,000 |
+| Clear Amulet | 1 | 5,000 |
+| Rocky Helmet | 1 | 5,000 |
+| White Herb | 1 | 3,000 |
+| Wise Glasses | 1 | 5,000 |
+
+Items for this team come to **192,000**, so the whole team costs about **309,000** plus what you find.
+
+**Not stocked by the market, so these have to be found**: Leftovers x6.
 
 ---
 
@@ -213,12 +368,74 @@ Mechanics that shaped these picks, all verified in the engine:
 - **Role**: second protector, and the team's passive healer.
 - **Nature**: Bold (Defense up, Attack down).
 - **Abilities**: Wishing Well, Magic Guard, Unaware, Friend Guard.
-- **Moves**: Reflect, Light Screen, Soft-Boiled, Moonblast, then Encore, Wish,
+- **Moves**: Reflect, Light Screen, Soft-Boiled, Moonblast, then Encore, Charm,
   Thunder Wave, Follow Me.
 - **Items**: Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Band,
   Mental Herb, Lax Incense, Quick Claw.
 - Friend Guard 0.75x multiplies with Latias's Eon Shield 0.8x, so a hit on anyone but
   Latias lands at 0.6x before screens.
+
+
+### Collect this before you build the team
+
+**Machines to buy.** A machine is stocked by the item market as `TM <move name>`, and
+it is **spent on use**, so the counts below are per pokemon rather than per move: two
+pokemon wanting Protect need two machines.
+
+| Price each | Moves |
+| --- | --- |
+| 2,000 | Calm Mind, Light Screen x2, Protect, Reflect x2, Roost, Soft-Boiled, Tailwind, Taunt x2, Thunder Wave x2 |
+| 5,000 | Dazzling Gleam, Iron Head, Knock Off, Shadow Ball, U-turn, Waterfall |
+| 12,000 | Heat Wave, Ice Beam, Stone Edge, Thunderbolt |
+
+Machines for this team come to **104,000** in total.
+
+**Move Tutor, one Heart Scale each**: Dragon Ascent (Rayquaza). No machine is sold for these, and the tutor only teaches them at full friendship.
+
+**Learn these before evolving**, since they sit on a pre-evolution's level-up list. If you miss one, the Move Reminder will put it back for a Heart Scale:
+
+- Charm (Clefable: level 1 as Cleffa)
+- Encore (Clefable: level 4 as Cleffa)
+- Encore (Togekiss: level 25 as Togepi)
+- Follow Me (Clefable: level 17 as Clefairy)
+- Follow Me (Togekiss: level 26 as Togepi)
+- Light Screen (Clefable: level 48 as Clefairy)
+- Moonblast (Clefable: level 46 as Clefairy)
+- Wish (Togekiss: level 31 as Togepi)
+
+**Late level-up moves**, which the pokemon only reaches near the level cap:
+
+- Aura Sphere (Mewtwo: level 100)
+- Dragon Pulse (Latias: level 70)
+- Extreme Speed (Rayquaza: level 60)
+- Heal Pulse (Latias: level 65)
+- Psystrike (Mewtwo: level 100)
+- Recover (Mewtwo: level 70)
+
+**Held items to buy:**
+
+| Item | Copies | Price each |
+| --- | --- | --- |
+| Shell Bell | 6 | 5,000 |
+| Bright Powder | 5 | 5,000 |
+| Focus Sash | 4 | 3,000 |
+| Wide Lens | 4 | 5,000 |
+| Expert Belt | 3 | 5,000 |
+| Lax Incense | 3 | 3,000 |
+| Light Clay | 3 | 5,000 |
+| Focus Band | 2 | 5,000 |
+| Quick Claw | 2 | 5,000 |
+| Scope Lens | 2 | 5,000 |
+| Wise Glasses | 2 | 5,000 |
+| Mental Herb | 1 | 3,000 |
+| Muscle Band | 1 | 5,000 |
+| Protective Pads | 1 | 5,000 |
+| Rocky Helmet | 1 | 5,000 |
+| Zoom Lens | 1 | 5,000 |
+
+Items for this team come to **189,000**, so the whole team costs about **293,000** plus what you find.
+
+**Not stocked by the market, so these have to be found**: Leftovers x6, Soul Dew x1.
 
 ---
 
@@ -305,8 +522,8 @@ attackers.
 - **Role**: protector and passive healer.
 - **Nature**: Bold (Defense up, Attack down).
 - **Abilities**: Wishing Well, Magic Guard, Unaware, Friend Guard.
-- **Moves**: Reflect, Light Screen, Soft-Boiled, Toxic, then Moonblast, Charm, Wish,
-  Protect.
+- **Moves**: Reflect, Light Screen, Soft-Boiled, Toxic, then Moonblast, Charm,
+  Cosmic Power, Protect.
 - **Items**: Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Band,
   Mental Herb, Lax Incense, Quick Claw.
 - It applies the Toxic clock rather than Magcargo, because it acts far more often.
@@ -320,13 +537,15 @@ attackers.
 - **Role**: cleric and damage support.
 - **Nature**: Calm (Special Defense up, Attack down).
 - **Abilities**: Cushioned, Healer, Friend Guard, Serene Grace.
-- **Moves**: Soft-Boiled, Heal Bell, Heal Pulse, Helping Hand, then Light Screen,
-  Aromatherapy, Tail Whip, Protect.
+- **Moves**: Soft-Boiled, Heal Pulse, Helping Hand, Safeguard, then Light Screen,
+  Reflect, Tail Whip, Protect.
 - **Items**: Leftovers, Light Clay, Bright Powder, Shell Bell, Focus Band,
   Lax Incense, Mental Herb, Quick Claw.
 - Cushioned caps any single hit at a quarter of its HP, so a 255 HP body cannot be
   burst down. Helping Hand pointed at Metagross's Meteor Mash is worth more than
-  anything Blissey could throw itself.
+  anything Blissey could throw itself. Heal Bell and Aromatherapy are both egg-only on
+  this line, so the team prevents status with Safeguard rather than curing it: nothing
+  here cleanses, and Natural Cure needs a switch that this game does not have.
 
 ### What runs at once on this team
 
@@ -360,6 +579,73 @@ A boss rolls one of its own species abilities alongside Boss
 
 Two of this team's six are Fire, but its damage core is Metagross (Steel) and Breloom
 (Fighting and Grass), so a Fire-immune boss costs it the burn rather than the fight.
+
+
+### Collect this before you build the team
+
+**Machines to buy.** A machine is stocked by the item market as `TM <move name>`, and
+it is **spent on use**, so the counts below are per pokemon rather than per move: two
+pokemon wanting Protect need two machines.
+
+| Price each | Moves |
+| --- | --- |
+| 2,000 | Helping Hand, Protect x6, Reflect x2, Rest, Safeguard, Soft-Boiled, Substitute, Swords Dance, Toxic x2 |
+| 5,000 | Drain Punch, Facade, Ice Punch, Iron Head, Rock Slide |
+| 12,000 | Fire Blast x2 |
+
+Machines for this team come to **81,000** in total.
+
+**Learn these before evolving**, since they sit on a pre-evolution's level-up list. If you miss one, the Move Reminder will put it back for a Heart Scale:
+
+- Bullet Punch (Metagross: level 32 as Metang)
+- Charm (Clefable: level 1 as Cleffa)
+- Confuse Ray (Chandelure: level 10 as Litwick)
+- Cosmic Power (Clefable: level 33 as Clefairy)
+- Curse (Chandelure: level 32 as Litwick)
+- Earth Power (Magcargo: level 56 as Slugma)
+- Heal Pulse (Blissey: level 38 as Chansey)
+- Hex (Chandelure: level 16 as Litwick)
+- Lava Plume (Magcargo: level 38 as Slugma)
+- Leech Seed (Breloom: level 10 as Shroomish)
+- Light Screen (Blissey: level 48 as Chansey)
+- Light Screen (Clefable: level 48 as Clefairy)
+- Meteor Mash (Metagross: level 50 as Metang)
+- Moonblast (Clefable: level 46 as Clefairy)
+- Overheat (Chandelure: level 52 as Litwick)
+- Rock Slide (Magcargo: level 43 as Slugma)
+- Seed Bomb (Breloom: level 41 as Shroomish)
+- Shadow Ball (Chandelure: level 36 as Litwick)
+- Soft-Boiled (Blissey: level 13 as Chansey)
+- Tail Whip (Blissey: level 9 as Chansey)
+- Will-O-Wisp (Chandelure: level 16 as Litwick)
+- Yawn (Magcargo: level 1 as Slugma)
+- Zen Headbutt (Metagross: level 52 as Metang)
+
+**Held items to buy:**
+
+| Item | Copies | Price each |
+| --- | --- | --- |
+| Shell Bell | 6 | 5,000 |
+| Bright Powder | 4 | 5,000 |
+| Focus Band | 4 | 5,000 |
+| Wide Lens | 4 | 5,000 |
+| Expert Belt | 3 | 5,000 |
+| Light Clay | 3 | 5,000 |
+| Lax Incense | 2 | 3,000 |
+| Mental Herb | 2 | 3,000 |
+| Muscle Band | 2 | 5,000 |
+| Protective Pads | 2 | 5,000 |
+| Quick Claw | 2 | 5,000 |
+| Wise Glasses | 2 | 5,000 |
+| Focus Sash | 1 | 3,000 |
+| Rocky Helmet | 1 | 5,000 |
+| Scope Lens | 1 | 5,000 |
+| Toxic Orb | 1 | 6,000 |
+| Zoom Lens | 1 | 5,000 |
+
+Items for this team come to **196,000**, so the whole team costs about **277,000** plus what you find.
+
+**Not stocked by the market, so these have to be found**: Leftovers x6, Big Root x1.
 
 ---
 
@@ -401,12 +687,12 @@ the boss is neither Fire-type nor carrying Flash Fire, Heatproof or Thick Fat.
 - **Role**: sun setter, per-action clock, and the team's sweeper.
 - **Nature**: Modest (Special Attack up, Attack down).
 - **Abilities**: Ember Halo, Drought, Magic Guard, Flame Body.
-- **Moves**: Quiver Dance, Fiery Dance, Bug Buzz, Morning Sun, then Heat Wave,
-  Flamethrower, Roost, Protect.
+- **Moves**: Quiver Dance, Fiery Dance, Bug Buzz, Roost, then Heat Wave,
+  Flamethrower, Giga Drain, Protect.
 - **Items**: Leftovers, Expert Belt, Wise Glasses, Shell Bell, Focus Sash,
   Bright Powder, Wide Lens, Zoom Lens.
-- Drought gives every Fire move on the team 1.5x and lifts Morning Sun from half its
-  HP to two thirds. Ember Halo is written as 1/16 of each enemy's HP every time that
+- Drought gives every Fire move on the team 1.5x. Morning Sun would heal two thirds of
+  its HP under that sun, but it is egg-only on this line, so Roost is the heal. Ember Halo is written as 1/16 of each enemy's HP every time that
   enemy acts, so against a boss it pays the capped 200 per action. That is a second
   per-action clock beside Curse, and unlike Curse it costs nothing to set up and needs
   no cast. Magic Guard means it pays nothing for residuals. Quiver Dance makes it the
@@ -468,8 +754,8 @@ the boss is neither Fire-type nor carrying Flash Fire, Heatproof or Thick Fat.
 - **Role**: second protector and the Toxic clock.
 - **Nature**: Bold (Defense up, Attack down).
 - **Abilities**: Wishing Well, Magic Guard, Unaware, Friend Guard.
-- **Moves**: Toxic, Reflect, Light Screen, Soft-Boiled, then Charm, Moonblast, Wish,
-  Protect.
+- **Moves**: Toxic, Reflect, Light Screen, Soft-Boiled, then Charm, Moonblast,
+  Cosmic Power, Protect.
 - **Items**: Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Band,
   Mental Herb, Lax Incense, Quick Claw.
 
@@ -511,3 +797,69 @@ are paid per boss action.
 
 The rule this team is built around: **never let one type carry both the status engine
 and the damage**, because a single rolled ability takes out both at once.
+
+### Collect this before you build the team
+
+**Machines to buy.** A machine is stocked by the item market as `TM <move name>`, and
+it is **spent on use**, so the counts below are per pokemon rather than per move: two
+pokemon wanting Protect need two machines.
+
+| Price each | Moves |
+| --- | --- |
+| 2,000 | Light Screen, Protect x7, Reflect x2, Roost, Soft-Boiled, Substitute, Swords Dance, Toxic, Will-O-Wisp |
+| 5,000 | Drain Punch, Facade, Flash Cannon, Giga Drain, Ice Punch, Iron Head, Rock Slide |
+| 12,000 | Fire Blast, Flamethrower x2 |
+
+Machines for this team come to **103,000** in total.
+
+**Learn these before evolving**, since they sit on a pre-evolution's level-up list. If you miss one, the Move Reminder will put it back for a Heart Scale:
+
+- Bug Buzz (Volcarona: level 42 as Larvesta)
+- Bullet Punch (Metagross: level 32 as Metang)
+- Charm (Clefable: level 1 as Cleffa)
+- Confuse Ray (Chandelure: level 10 as Litwick)
+- Cosmic Power (Clefable: level 33 as Clefairy)
+- Curse (Chandelure: level 32 as Litwick)
+- Hex (Chandelure: level 16 as Litwick)
+- Leech Seed (Breloom: level 10 as Shroomish)
+- Light Screen (Clefable: level 48 as Clefairy)
+- Meteor Mash (Metagross: level 50 as Metang)
+- Moonblast (Clefable: level 46 as Clefairy)
+- Overheat (Chandelure: level 52 as Litwick)
+- Seed Bomb (Breloom: level 41 as Shroomish)
+- Shadow Ball (Chandelure: level 36 as Litwick)
+- Will-O-Wisp (Chandelure: level 16 as Litwick)
+- Zen Headbutt (Metagross: level 52 as Metang)
+
+**Late level-up moves**, which the pokemon only reaches near the level cap:
+
+- Dragon Pulse (Latias: level 70)
+- Earth Power (Heatran: level 73)
+- Heal Pulse (Latias: level 65)
+- Heat Wave (Heatran: level 81)
+- Magma Storm (Heatran: level 96)
+
+**Held items to buy:**
+
+| Item | Copies | Price each |
+| --- | --- | --- |
+| Shell Bell | 7 | 5,000 |
+| Wide Lens | 6 | 5,000 |
+| Bright Powder | 5 | 5,000 |
+| Expert Belt | 5 | 5,000 |
+| Focus Sash | 4 | 3,000 |
+| Wise Glasses | 3 | 5,000 |
+| Zoom Lens | 3 | 5,000 |
+| Focus Band | 2 | 5,000 |
+| Lax Incense | 2 | 3,000 |
+| Light Clay | 2 | 5,000 |
+| Muscle Band | 2 | 5,000 |
+| Protective Pads | 2 | 5,000 |
+| Mental Herb | 1 | 3,000 |
+| Quick Claw | 1 | 5,000 |
+| Scope Lens | 1 | 5,000 |
+| Toxic Orb | 1 | 6,000 |
+
+Items for this team come to **222,000**, so the whole team costs about **325,000** plus what you find.
+
+**Not stocked by the market, so these have to be found**: Leftovers x7, Big Root x1, Soul Dew x1.

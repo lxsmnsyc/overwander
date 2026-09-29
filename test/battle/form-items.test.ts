@@ -25,6 +25,26 @@ describe('Form items', () => {
     expect(dragon.hasAbility(Abilities.Pressure)).toBe(true);
   });
 
+  it('paints an Arceus with its Plate only through Multitype', () => {
+    const { battle, teamA } = createBattle();
+    const god = createUnit(battle, teamA);
+    const filler = createUnit(battle, teamA);
+
+    for (const unit of [god, filler]) {
+      unit.setSpecies(Species.Arceus);
+      unit.addItem(Items.FlamePlate);
+    }
+    god.addAbility(Abilities.Multitype);
+    filler.addAbility(Abilities.Adaptability);
+    god.enter();
+    filler.enter();
+
+    expect(god.species).toBe(Species.ArceusFire);
+    expect([...god.types]).toEqual([Types.Fire]);
+    expect(filler.species).toBe(Species.Arceus);
+    expect([...filler.types]).toEqual([Types.Normal]);
+  });
+
   it('gives Origin Dialga Unaware and Origin Palkia Shadow Tag', () => {
     const { battle, teamA } = createBattle();
     const time = createUnit(battle, teamA);

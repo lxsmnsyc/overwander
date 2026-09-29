@@ -36,6 +36,11 @@ export default function registerGen6Abilities(): void {
     name: 'Misty Surge',
     description: 'Lays Misty Terrain as it takes the field.',
   });
+  // Spiky-eared Pichu, which the mainline leaves two abilities short
+  registerAbility(Abilities.ElectricSurge, {
+    name: 'Electric Surge',
+    description: 'Lays Electric Terrain as it takes the field.',
+  });
   // Clauncher
   registerAbility(Abilities.MegaLauncher, {
     name: 'Mega Launcher',

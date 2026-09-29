@@ -17,6 +17,7 @@ import { encounterKey } from '../../overworld/safari';
 import { grantGold } from '../profile';
 import { asOutcome } from './outcome';
 import { RAID_ENCOUNTER_TYPES, RAID_GOLD, RAID_REWARD_LEVELS, RAID_SHINY_BOOST } from './spoils';
+import { Boost, boostOf, boosted } from '../boosts';
 
 /** What a beaten boss leaves, and claiming it */
 /**
@@ -65,7 +66,10 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   // What the boss is worth, and then what the claimant brought along:
   // a buddy burning a Luck Incense doubles the purse
   const overworld = createOverworld(uid, await resolveBuddy(uid));
-  const gold = overworld.checkGoldReward(lobby, RAID_GOLD[raid.kind]);
+  const gold = boosted(
+    overworld.checkGoldReward(lobby, RAID_GOLD[raid.kind]),
+    await boostOf(Boost.Gold, Date.now()),
+  );
   const claimed = await getSql()`
     insert into raid_rewards (raid_id, player, gold)
     values (${lobby}, ${uid}, ${gold})

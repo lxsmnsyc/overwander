@@ -78,6 +78,7 @@ import { recordSeenOpponents } from './pokedex';
 import { foughtBattle, readBattle } from './raid-io';
 import { isAnyCatchQueued, publishTeamSnapshot, readPublishedSpecies } from './raids';
 import { asNumber, asString } from './read';
+import { Boost, boostOf, boosted } from './boosts';
 
 /** Which BattleWins foe a fighting landmark's resident counts as */
 const FOE_OF: Partial<Record<Landmark, Foe>> = {
@@ -674,17 +675,20 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
   // for Giovanni and the Champion — and then what the winner brought
   // along: a buddy burning a Luck Incense doubles it
   const overworld = createOverworld(uid, await resolveBuddy(uid));
-  const gold = overworld.checkGoldReward(
-    stop,
-    rollStopGold(
-      `${stop}:purse:${uid}`,
-      stopGoldBand(
-        landmark ?? Landmark.TeamRocket,
-        rank,
-        snapshot.getTrainerClass(record.cell) ?? undefined,
-        legend,
+  const gold = boosted(
+    overworld.checkGoldReward(
+      stop,
+      rollStopGold(
+        `${stop}:purse:${uid}`,
+        stopGoldBand(
+          landmark ?? Landmark.TeamRocket,
+          rank,
+          snapshot.getTrainerClass(record.cell) ?? undefined,
+          legend,
+        ),
       ),
     ),
+    await boostOf(Boost.Gold, Date.now()),
   );
 
   await grantGold(uid, gold, 'stop-reward');

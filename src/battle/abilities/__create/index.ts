@@ -37,6 +37,7 @@ export {
   createThickFatAbility,
 } from './guard';
 export { default as createMoldBreakerAbility } from './pierce';
+export { RETREAT_THRESHOLD, createRetreatAbility } from './retreat';
 export {
   chipImmunity,
   createCloudNineAbility,

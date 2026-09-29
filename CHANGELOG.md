@@ -1,5 +1,21 @@
 # overwander
 
+## 4.23.3
+
+### Patch Changes
+
+- 20887ff: Dialogs are centred on the screen instead of sitting near the top.
+- 20887ff: The Move Tutor and Move Reminder list moves by name, type and category, with the full entry on hover and a search box.
+- a51900a: A Plate puts an Arceus in its shape only when that Arceus has Multitype. An Arceus born with another ability stays Normal.
+- 20887ff: A pokemon found at a phenomenon or drawn out of a honey tree starts with every IV at 9 or higher. This stacks with the floor from favourable weather.
+- 20887ff: A true shadow's raid is held in its counterpart's lair, so XD-144 is met in Shadow Seafoam Islands.
+- 20887ff: - Dragon Ascent, Secret Sword and Relic Song are taught only by the Move Tutor, and only to a pokemon at max friendship.
+  - Their machines are no longer sold or given out by gyms.
+  - A machine already in a bag can still be used, or sold to any vendor for its full price.
+- 20887ff: - Frillish, Archen, Shelmet, Karrablast, Tirtouga, Foongus, Stunfisk and Bouffalant no longer have egg moves listed as machine moves.
+  - Those lines now have their full egg move lists.
+  - The 22 machines for those moves are no longer sold. Any vendor buys one back for its full price.
+
 ## 4.23.2
 
 ### Patch Changes

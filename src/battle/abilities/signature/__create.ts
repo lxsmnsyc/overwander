@@ -2020,3 +2020,31 @@ export function createBlessingAbility(
     }),
   );
 }
+
+/** The most the light trio's moves are lifted by, at the far end of their health */
+export const SKY_ARC_RISE = 0.3;
+
+/**
+ * What the light trio share: its damaging moves are lifted in a
+ * straight line by how much health it has. `rising` holders burn
+ * brightest whole, the rest brightest broken
+ */
+export function createSkyArcAbility(
+  ability: Abilities,
+  rising: boolean,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      const unit = event.source;
+
+      if (event.power == null || event.power <= 0 || !unit.hasAbility(ability)) {
+        return;
+      }
+
+      const full = unit.checkStat(Stats.HP, 0);
+      const share = full > 0 ? Math.min(1, unit.health / full) : 0;
+
+      event.power *= 1 + SKY_ARC_RISE * (rising ? share : 1 - share);
+    }),
+  );
+}

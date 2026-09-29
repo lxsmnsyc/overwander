@@ -8,14 +8,17 @@ import { MINIOR_FORMS, Species, getBaseFormSpecies } from '../../data/ids/specie
 import { NON_VOLATILE_STATUSES, Statuses, Terrains } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
-import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { BattleEvents, EffectType, MoveTargetType, type UnitAttackEvent } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
 import { isOwnBerry, isPrimalWeather, onUnitActs } from '../utils';
 import {
   createAbility,
+  createClearBodyAbility,
+  createFilterAbility,
   createGooeyAbility,
   createLimberAbility,
+  createMultiscaleAbility,
   createNoContactAbility,
   createQueenlyMajestyAbility,
   createReceiverAbility,
@@ -25,6 +28,9 @@ import {
   createThickFatAbility,
   createTypeShiftAbility,
 } from './__create';
+
+/** What Neuroforce makes a super-effective blow worth */
+export const NEUROFORCE_SCALE = 1.25;
 
 /** What a blow on something that has not yet acted is worth */
 export const STAKEOUT_SCALE = 2;
@@ -85,6 +91,33 @@ const setupAbilities = [
   createSurgeAbility(Abilities.ElectricSurge, Moves.ElectricTerrain),
   createSurgeAbility(Abilities.PsychicSurge, Moves.PsychicTerrain),
   createSurgeAbility(Abilities.GrassySurge, Moves.GrassyTerrain),
+
+  // The light trio's armour: older abilities that nothing which
+  // ignores abilities sees past (see MOLD_PROOF_ABILITIES)
+  createClearBodyAbility(Abilities.FullMetalBody),
+  createMultiscaleAbility(Abilities.ShadowShield),
+  createFilterAbility(Abilities.PrismArmor),
+
+  // Ultra Necrozma: the light it let out lands hardest where it
+  // already lands well
+  createAbility(Abilities.Neuroforce, (battle) => {
+    const totals = new WeakMap<UnitAttackEvent, number>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitAttackResolveEffectiveness, EventPriority.Post, (event) => {
+        if (event.parent.source.hasAbility(Abilities.Neuroforce)) {
+          totals.set(event.parent, (totals.get(event.parent) ?? 1) * event.multiplier);
+        }
+      }),
+      battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+        const total = totals.get(event.parent);
+
+        if (total != null && total > 1) {
+          event.value *= NEUROFORCE_SCALE;
+        }
+      }),
+    ]);
+  }),
 
   // Rowlet: it shoots its quills from where it stands
   createNoContactAbility(Abilities.LongReach),

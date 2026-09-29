@@ -197,6 +197,22 @@ export default function registerFormItems(): void {
     sell: SPLICERS_PRICE / 2,
   });
 
+  // Necrozma's pair, one for each of the light it can take in
+  for (const [item, name, icon, partner] of [
+    [Items.NSolarizer, 'N-Solarizer', 'n-solarizer', 'Solgaleo'],
+    [Items.NLunarizer, 'N-Lunarizer', 'n-lunarizer', 'Lunala'],
+  ] as const) {
+    registerItem(item, {
+      name,
+      description: `Folds a ${partner} into a Necrozma, and pulls it back out. Never spent.`,
+      type: ItemTypes.Evolution,
+      icon: `key/${icon}`,
+      flags: ItemFlags.Usable,
+      buy: 0,
+      sell: SPLICERS_PRICE / 2,
+    });
+  }
+
   registerItem(Items.PrisonBottle, {
     name: 'Prison Bottle',
     description: DESCRIPTIONS[Items.PrisonBottle] ?? '',

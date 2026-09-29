@@ -197,6 +197,23 @@ export function createFilterAbility(targetAbility: Abilities): (battle: Battle) 
 }
 
 /**
+ * Meta ability for the two that halve a blow landing on a full health
+ * bar (Multiscale, Shadow Shield). It mutates the in-flight damage
+ * https://bulbapedia.bulbagarden.net/wiki/Multiscale_(Ability)
+ */
+export function createMultiscaleAbility(targetAbility: Abilities): (battle: Battle) => void {
+  return createAbility(targetAbility, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const target = event.parent.target;
+
+      if (target.hasAbility(targetAbility) && target.health >= target.checkStat(Stats.HP, 0)) {
+        event.value *= 0.5;
+      }
+    }),
+  );
+}
+
+/**
  * Meta ability for the two that rewrite a stat change on its way in
  * (Contrary, Simple). The change is refused and re-made through
  * `restage`, with the holder held aside so the second call does not

@@ -7,4 +7,14 @@ import Abilities from '../../data/ids/abilities';
  */
 const PROTECTED_ABILITIES = new Set<Abilities>([Abilities.Boss, Abilities.Shadow]);
 
+/**
+ * The ones Mold Breaker and the moves that pierce like it cannot see
+ * past, though Neutralizing Gas still quiets them
+ */
+export const MOLD_PROOF_ABILITIES = new Set<Abilities>([
+  Abilities.FullMetalBody,
+  Abilities.ShadowShield,
+  Abilities.PrismArmor,
+]);
+
 export default PROTECTED_ABILITIES;

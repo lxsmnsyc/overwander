@@ -698,6 +698,9 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.TapuLele,
   Species.TapuBulu,
   Species.TapuFini,
+  Species.Solgaleo,
+  Species.Lunala,
+  Species.Necrozma,
 ]);
 
 /**
@@ -793,6 +796,10 @@ const PRIZED_BY_HAND = new Set<Species>([
   Species.Larvesta,
   Species.VivillonFancy,
   Species.TypeNull,
+  // The nebula and the protostar are the light pair before it grows,
+  // so they are as rare as the line is
+  Species.Cosmog,
+  Species.Cosmoem,
 ]);
 
 /** Met as rarely as a mythical, but no relic calls it and no raid stages it */

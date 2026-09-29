@@ -1071,6 +1071,9 @@ const enum Abilities {
   MindBlessing = 200409,
   WildBlessing = 200410,
   MistBlessing = 200411,
+  // The light trio: one reads its health from the top, one from the bottom
+  Zenith = 200412,
+  Nadir = 200413,
 }
 
 export default Abilities;

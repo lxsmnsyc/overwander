@@ -214,6 +214,12 @@ const enum Lairs {
   RuinsOfAbundance = 55,
   /** The ruin on Poni's stony shore, which is Tapu Fini's */
   RuinsOfHope = 56,
+  /** The altar at the top of Vast Poni Canyon the sun is called down to */
+  AltarOfTheSunne = 57,
+  /** The same altar in the other version, where the moon is */
+  AltarOfTheMoone = 58,
+  /** The hollow at the back of Melemele's crystal cave, where the prism waits */
+  TenCaratHill = 59,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -274,6 +280,9 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.RuinsOfLife]: 'Ruins of Life',
   [Lairs.RuinsOfAbundance]: 'Ruins of Abundance',
   [Lairs.RuinsOfHope]: 'Ruins of Hope',
+  [Lairs.AltarOfTheSunne]: 'Altar of the Sunne',
+  [Lairs.AltarOfTheMoone]: 'Altar of the Moone',
+  [Lairs.TenCaratHill]: 'Ten Carat Hill',
 };
 
 /**
@@ -341,6 +350,9 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.RuinsOfLife]: [Species.TapuLele],
   [Lairs.RuinsOfAbundance]: [Species.TapuBulu],
   [Lairs.RuinsOfHope]: [Species.TapuFini],
+  [Lairs.AltarOfTheSunne]: [Species.Solgaleo],
+  [Lairs.AltarOfTheMoone]: [Species.Lunala],
+  [Lairs.TenCaratHill]: [Species.Necrozma],
 };
 
 /**
@@ -404,6 +416,9 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.RuinsOfLife,
   Lairs.RuinsOfAbundance,
   Lairs.RuinsOfHope,
+  Lairs.AltarOfTheSunne,
+  Lairs.AltarOfTheMoone,
+  Lairs.TenCaratHill,
 ];
 
 /**
@@ -499,6 +514,8 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.RockPeakRuins,
     Lairs.TrialChamber,
     Lairs.TerminusCave,
+    Lairs.AltarOfTheSunne,
+    Lairs.AltarOfTheMoone,
   ],
   [Biome.Mountain]: [
     Lairs.MtEmber,
@@ -509,6 +526,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.TrialChamber,
     Lairs.FrostCavern,
     Lairs.TerminusCave,
+    Lairs.TenCaratHill,
   ],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave, Lairs.SpearPillar],
   [Biome.Volcano]: [Lairs.MtEmber, Lairs.TerraCave, Lairs.StarkMountain],

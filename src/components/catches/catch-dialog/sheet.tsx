@@ -54,7 +54,7 @@ import { isPreciousItem } from '../../../data/overworld/item-pool';
 import { isAbilityPatch } from '../../../data/items/ability-items';
 import { isPurifyingGem } from '../../../data/items/purifying-gem';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
-import { getFusionPartner, isFusedSpecies } from '../../../data/species/fusion';
+import { getFusionHusk, getFusionPartner, isFusedSpecies } from '../../../data/species/fusion';
 
 import { ActionsIcon, HeartIcon, LockIcon, SparklesIcon, StarIcon } from '../../icons';
 import TypeBadge from '../../sprites/TypeBadge';
@@ -884,7 +884,15 @@ export function CatchSheetBody(
   const dragonName = (): string => {
     const dragon = dragonWanted();
 
-    return dragon == null ? 'dragon' : getSpeciesData(dragon).name;
+    return dragon == null ? 'partner' : getSpeciesData(dragon).name;
+  };
+
+  /** What it is folded into, named for the picker */
+  const huskName = (): string => {
+    const into = folding();
+    const husk = into == null ? null : getFusionHusk(into);
+
+    return husk == null ? 'husk' : getSpeciesData(husk).name;
   };
 
   /**
@@ -1970,9 +1978,9 @@ export function CatchSheetBody(
         open={folding() != null}
         value={null}
         title={`Fold in a ${dragonName()}?`}
-        description="It goes inside the Kyurem until you take the two apart again."
+        description={`It goes inside the ${huskName()} until you take the two apart again.`}
         verb="Fold in"
-        empty="You have none of that dragon."
+        empty={`You have no ${dragonName()}.`}
         filter={(option) =>
           option.caught.species === dragonWanted() &&
           !option.fighting &&

@@ -364,8 +364,11 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.RedOrb, weight: 3 },
     { item: Items.Gracidea, weight: 3 },
     // As thin as the orbs, for the same reason: the splicers are worth
-    // nothing until a Kyurem has been caught
+    // nothing until a Kyurem has been caught, and Necrozma's pair until
+    // a Necrozma has
     { item: Items.DnaSplicers, weight: 3 },
+    { item: Items.NSolarizer, weight: 3 },
+    { item: Items.NLunarizer, weight: 3 },
     { item: Items.PrisonBottle, weight: 3 },
     // The Memories, on the plates' terms: worth nothing but to a
     // Silvally, so each is the thinnest slot there is

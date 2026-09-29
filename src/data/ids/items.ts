@@ -970,6 +970,8 @@ export const enum Items {
   SwiftWingMax = 575,
   /** A Rare Candy that goes all the way to the level cap */
   RareCandyMax = 576,
+  /** Room for one more move, the way a Utility Belt is room for one more item */
+  SkillBook = 577,
 }
 
 /**

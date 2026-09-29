@@ -485,8 +485,8 @@ export default function GameMenu(): JSX.Element {
               -translate-x-1/2"
           >
             <PopoverPanel
-              class="flex flex-col gap-2 rounded-panel border-2 border-tide bg-paper p-3 text-sm
-                shadow-pop"
+              class="flex flex-col gap-2 rounded-panel border-2 border-line bg-paper p-3 text-sm
+                shadow-float"
             >
               <div class="flex items-center justify-between gap-3">
                 <span class="min-w-0 truncate font-bold text-ink">{place()}</span>
@@ -574,7 +574,7 @@ export default function GameMenu(): JSX.Element {
               {...SHEER}
               class="absolute bottom-full left-1/2 z-30 mb-2 w-max -translate-x-1/2"
             >
-              <PopoverPanel class="flex gap-1 rounded-panel border-2 border-tide bg-paper p-2 shadow-pop">
+              <PopoverPanel class="flex gap-1 rounded-panel border-2 border-line bg-paper p-2 shadow-float">
                 <For each={game.fieldMoves()}>
                   {(offer) => (
                     <button
@@ -619,7 +619,7 @@ export default function GameMenu(): JSX.Element {
           class="absolute bottom-full left-1/2 z-30 mb-2 w-[21rem] max-w-[calc(100vw-2rem)]
             -translate-x-1/2"
         >
-          <PopoverPanel class="flex flex-col gap-1 rounded-panel border-2 border-tide bg-paper p-2 shadow-pop">
+          <PopoverPanel class="flex flex-col gap-1 rounded-panel border-2 border-line bg-paper p-2 shadow-float">
             <For each={GROUPS}>
               {(group) => (
                 <div role="group" aria-label={group.label}>

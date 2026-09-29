@@ -44,6 +44,20 @@ export const enum EncounterType {
 }
 
 /**
+ * Whether the meeting is owed to one player rather than rolled by a
+ * chunk: a prize, a gift or a revived fossil. It stands until it is
+ * caught or runs, and one left open is offered again
+ */
+export function isOwedEncounter(type: EncounterType): boolean {
+  return (
+    isRaidEncounter(type) ||
+    type === EncounterType.Rocket ||
+    type === EncounterType.Fateful ||
+    type === EncounterType.Revived
+  );
+}
+
+/**
  * Whether the meeting was a raid of any kind. What a raid gives — the
  * species-day IV floor, a prize that never bolts — belongs to all of
  * them, so records tell them apart without listing each one everywhere

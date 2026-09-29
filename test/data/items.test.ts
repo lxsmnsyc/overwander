@@ -83,6 +83,7 @@ import {
   VENDOR_STOCK_KINDS,
   VendorKind,
   getChefGoods,
+  getGeologistGoods,
   getVendorGoods,
   isMarketable,
   rollVendorStock,
@@ -90,6 +91,9 @@ import {
   vendorStockSize,
 } from '../../src/data/overworld/vendor';
 import { VALUABLE_SELL, isValuable } from '../../src/data/items/valuables';
+import { EVOLUTION_STONES } from '../../src/data/items/stones';
+import { GEMS } from '../../src/data/items/gems';
+import { QUARRIED_GEAR } from '../../src/data/items/gear';
 import { PP_ITEMS, VITAMIN_STATS } from '../../src/data/items/vitamins';
 import { TREATS } from '../../src/data/items/treats';
 import { asBoolean } from '../../src/auth/__normalize';
@@ -130,6 +134,8 @@ import {
   polishIVs,
 } from '../../src/data/items/bottle-caps';
 import { MINT_NATURES, describeMint, getMintNature, isMint } from '../../src/data/items/mints';
+import { SKILL_BOOK_SLOT, isSkillBook } from '../../src/data/items/skill-book';
+import { HYPER_TRAINING_PER_POINT, hyperTrainingCost } from '../../src/data/overworld/npc';
 import { UTILITY_BELT_SLOT, isUtilityBelt } from '../../src/data/items/utility-belt';
 import {
   ABILITY_CAPSULE_SLOT,
@@ -678,6 +684,37 @@ describe('item data', () => {
     }
   });
 
+  it('stocks the geologist with the stones and gems, and nobody else with them', () => {
+    const quarry = getGeologistGoods();
+
+    expect(new Set(quarry)).toEqual(
+      new Set([
+        ...EVOLUTION_STONES,
+        Items.OvalStone,
+        Items.HardStone,
+        Items.FloatStone,
+        Items.Everstone,
+        ...QUARRIED_GEAR,
+        ...GEMS.keys(),
+      ]),
+    );
+    for (const item of quarry) {
+      expect(isMarketable(item)).toBe(true);
+      expect(getItemData(item).sell).toBeLessThan(getItemData(item).buy);
+    }
+
+    const elsewhere = new Set(getChefGoods());
+
+    for (const kind of VENDOR_KINDS) {
+      for (const item of getVendorGoods(kind)) {
+        elsewhere.add(item);
+      }
+    }
+    for (const item of quarry) {
+      expect(elsewhere.has(item), getItemData(item).name).toBe(false);
+    }
+  });
+
   it('sells herbal medicine cheaper than the bottle it competes with', () => {
     // Each herb undercuts its bottled counterpart and does more, and
     // the difference is charged to the pokemon instead
@@ -756,6 +793,28 @@ describe('item data', () => {
       limits: packSlots(2, 2, 2),
       teamSize: 3,
     });
+  });
+
+  it('charges the Hyper Trainer by the point a value has left to climb', () => {
+    expect(hyperTrainingCost(MAX_IV)).toBe(0);
+    expect(hyperTrainingCost(MAX_IV - 1)).toBe(HYPER_TRAINING_PER_POINT);
+    expect(hyperTrainingCost(0)).toBe(MAX_IV * HYPER_TRAINING_PER_POINT);
+    // Dearer than any single find a player would trade away for one stat
+    expect(hyperTrainingCost(0)).toBeGreaterThan(getItemData(Items.BigNugget).sell);
+  });
+
+  it('buries the Skill Book beside the belt, for moves', () => {
+    const data = getItemData(Items.SkillBook);
+    const prized = new Set(ITEM_POOL.prized.map((entry) => entry.item));
+
+    expect(data.type).toBe(ItemTypes.Training);
+    expect(data.flags & ItemFlags.Usable).not.toBe(0);
+    expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+    expect(data.flags & ItemFlags.Marketable).toBe(0);
+    expect(isSkillBook(Items.SkillBook)).toBe(true);
+    expect(SKILL_BOOK_SLOT).toBe(Slots.Move);
+    expect(prized.has(Items.SkillBook)).toBe(true);
+    expect(isPreciousItem(Items.SkillBook)).toBe(true);
   });
 
   it('buries the Utility Belt with the things that change a pokemon', () => {

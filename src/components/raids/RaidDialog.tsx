@@ -3,7 +3,8 @@ import { RaidAction, RaidKind, type RaidView, enterRaid } from '../../auth/raids
 import { getLairTitle } from '../../data/overworld/lair';
 import { getSpeciesData } from '../../data/species';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
-import { Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';
+import { Button, Dialog, DialogActions, Meta, useToast } from '../styled';
+import { CounterSpent, CounterTerms } from '../overworld/npc-dialog/terms';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import TypeBadge from '../sprites/TypeBadge';
 import { GameDialog, useGame } from '../app/game-context';
@@ -92,7 +93,7 @@ export interface RaidDialogProps {
  */
 export default function RaidDialog(props: RaidDialogProps): JSX.Element {
   const game = useGame();
-  const [status, setStatus] = createSignal<string | null>(null);
+  const toast = useToast();
   const [busy, setBusy] = createSignal(false);
 
   const view = (): RaidView | null => props.lair?.[1] ?? null;
@@ -121,7 +122,6 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
   };
 
   const close = (): void => {
-    setStatus(null);
     setBusy(false);
     props.onClose();
   };
@@ -153,8 +153,6 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
       spectate(standing);
       return;
     }
-
-    setStatus(null);
     setBusy(true);
     // Hosting and joining are the same call: the first arrival of the
     // window stages the lobby, and everyone after adopts what is
@@ -164,7 +162,10 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
         setBusy(false);
 
         if (lobby == null) {
-          setStatus('The lair is quiet — somebody may have cleared it since you looked.');
+          toast.push({
+            message: 'The lair is quiet. Somebody may have cleared it since you looked.',
+            tone: 'ember',
+          });
           return;
         }
         const [id, record] = lobby;
@@ -182,7 +183,10 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        toast.push({
+          message: caught instanceof Error ? caught.message : String(caught),
+          tone: 'ember',
+        });
       });
   };
 
@@ -191,8 +195,7 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
       isOpen={props.lair != null}
       onClose={close}
       title={title()}
-      terse
-      description={summary()}
+      description={view() == null ? 'A lair, and nothing in it just now.' : summary()}
     >
       <Show
         when={view()}
@@ -201,21 +204,18 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
             {/* A lair with nothing in it is still a lair, and a player
                 who pressed it is owed an answer where they are looking
                 rather than in a line under the map */}
-            <Note class="py-4 text-center">{summary()}</Note>
+            <CounterSpent title="Quiet for now" says={summary()} quoted={false} />
             <DialogActions>
-              <Button onClick={close}>Close</Button>
+              <Button onClick={close}>Walk on</Button>
             </DialogActions>
           </>
         }
       >
         {(standing) => (
           <>
-            {/* What is waiting in there, asleep until somebody
-                walks in on it, with its name under it and a word about
-                what it is. The sprite stands on the floor of its box
-                rather than in the middle of one, so a tall boss and a
-                short one put their feet on the same line and the name
-                below does not move */}
+            {/* What is waiting in there, asleep until somebody walks in
+                on it. The sprite stands on the floor of its box, so a
+                tall boss and a short one put their feet on one line */}
             <div class="flex flex-col items-center gap-2 py-2 text-center">
               {/* Room kept for a wingspan: the row is the width of the
                   panel and the picture is as wide as it happens to be,
@@ -230,29 +230,33 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
                   label={`${getSpeciesData(standing().species).name}, waiting in the lair`}
                 />
               </div>
-              <span class="text-lg font-medium">{getSpeciesData(standing().species).name}</span>
-              <div class="flex flex-wrap justify-center gap-1">
-                <For each={getSpeciesData(standing().species).types}>
-                  {(type) => <TypeBadge type={type} />}
-                </For>
-              </div>
-              {/* What fighting it means, which is the decision the
-                  button below asks for. The dex's word for its kind —
-                  a Freeze Pokemon — went with the types above it: the
-                  badges say what it fights as, which is the half of it
-                  that changes how the raid goes */}
-              <Meta class="max-w-prose">{describeRaid(standing())}</Meta>
             </div>
+            <CounterTerms
+              rows={[
+                { label: 'Waiting', value: getSpeciesData(standing().species).name },
+                {
+                  label: 'Types',
+                  value: (
+                    <span class="flex flex-wrap justify-end gap-1">
+                      <For each={getSpeciesData(standing().species).types}>
+                        {(type) => <TypeBadge type={type} />}
+                      </For>
+                    </span>
+                  ),
+                },
+              ]}
+            />
+            {/* What fighting it means, which is the decision the button asks for */}
+            <Meta class="pt-3">{describeRaid(standing())}</Meta>
             <DialogActions>
               <Button tone="primary" disabled={busy()} onClick={act}>
                 {ACTION_LABELS[standing().action]}
               </Button>
-              <Button onClick={close}>Close</Button>
+              <Button onClick={close}>Walk on</Button>
             </DialogActions>
           </>
         )}
       </Show>
-      <Status message={status()} />
     </Dialog>
   );
 }

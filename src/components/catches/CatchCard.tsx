@@ -2,7 +2,7 @@ import { For, Index, type JSX, Show } from 'solid-js';
 import type { CaughtPokemon } from '../../auth/caught';
 import {
   getCatchName,
-  getCatchSlots,
+  getHeldItemRoom,
   getMovePoints,
   isFavorite,
   isGuarded,
@@ -15,13 +15,12 @@ import { getMaxHealth, getStats, isFainted } from '../../auth/health';
 import getSigil from '../../data/constants/sigil';
 import { LockIcon, MoonIcon, SparklesIcon, StarIcon, SunIcon } from '../icons';
 import { MAX_IV_STARS, Stats, getIVStars } from '../../data/constants/stats';
-import { Slots } from '../../data/constants/slots';
 import type { Items } from '../../data/ids/items';
 import { NATURE_NAMES } from '../../data/ids/natures';
 import { getSpeciesData } from '../../data/species';
 import StatusSquares from './StatusSquares';
 import TypeBadge from '../sprites/TypeBadge';
-import { describeMove, detailAbility } from '../details';
+import { describeMove, detailAbility, detailItem } from '../details';
 import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
 import MoveHoverCard from '../moves/MoveHoverCard';
 import ItemCard from '../items/ItemCard';
@@ -94,7 +93,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
     // stranger's pokemon an empty slot is a button nobody may press
     const length =
       props.owned === true
-        ? Math.max(caught().items.length, getCatchSlots(caught(), Slots.Item))
+        ? Math.max(caught().items.length, getHeldItemRoom(caught()))
         : caught().items.length;
     const made: null[] = [];
 
@@ -236,7 +235,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
             <For each={caught().abilities} fallback={<Meta>No ability</Meta>}>
               {(ability) => (
                 <li>
-                  <TooltipHost class="block" {...detailAbility(ability)}>
+                  <TooltipHost class="block" kind="ability" {...detailAbility(ability)}>
                     <span
                       class="block truncate rounded border border-line-soft bg-tide-soft px-1 py-0.5
                         text-tide-dark"
@@ -283,7 +282,8 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
                   >
                     <HoverCard
                       class="block"
-                      title="Info"
+                      title={detailItem(caught().items[at]).name}
+                      kind="Item"
                       footer={(close) => (
                         <Show
                           when={props.owned === true}

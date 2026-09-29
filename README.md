@@ -123,32 +123,33 @@ give a player a **password link** from the player's admin page instead, or with
 
 ## Commands
 
-| Command                | What it does                                                                        |
-| ---------------------- | ----------------------------------------------------------------------------------- |
-| `pnpm dev`             | Development server with HMR                                                         |
-| `pnpm build`           | Production build (client, server and Nitro output)                                  |
-| `pnpm start`           | Serve the built output from `.output/`                                              |
-| `pnpm preview`         | Preview the build locally                                                           |
-| `pnpm db`              | Start the development database (`compose.dev.yaml`)                                 |
-| `pnpm db:reset`        | Delete the development data and rebuild it from `db/migrations/`                    |
-| `pnpm db:migrate`      | Apply pending migrations to the development database                                |
-| `pnpm migrate`         | Apply pending migrations to production, from the root `.env`                        |
-| `pnpm seed`            | Fill a fresh database with accounts and sample rows                                 |
-| `pnpm server`          | Build and start production (database, app and tunnel), from the root `.env`         |
-| `pnpm server:tunnel`   | Start the tunnel alone, when the app is already up                                  |
-| `pnpm server:ps`       | Show production's services and their health                                         |
-| `pnpm server:logs`     | Follow production's logs; name a service to follow one, such as `tunnel`            |
-| `pnpm import-sprites`  | Copy the pokemon sheets in from `../SpriteCollab`, the `lxsmnsyc/SpriteCollab` fork |
-| `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel                                    |
-| `pnpm sprite-coats`    | Restamp `coats.json` after anything writes a sheet                                  |
-| `pnpm sprite-stamps`   | Restamp every other sheet, which `pnpm build` also does                             |
-| `pnpm test`            | The whole test suite, once                                                          |
-| `pnpm test:db`         | The server modules against the development database                                 |
-| `pnpm test:e2e`        | The Playwright suites under `e2e/`                                                  |
-| `npx tsc --noEmit`     | Type-check                                                                          |
-| `npx oxlint src test`  | Lint                                                                                |
-| `npx oxfmt src test`   | Format                                                                              |
-| `pnpm cs:add`          | Add a changeset                                                                     |
+| Command                      | What it does                                                                        |
+| ---------------------------- | ----------------------------------------------------------------------------------- |
+| `pnpm dev`                   | Development server with HMR                                                         |
+| `pnpm build`                 | Production build (client, server and Nitro output)                                  |
+| `pnpm start`                 | Serve the built output from `.output/`                                              |
+| `pnpm preview`               | Preview the build locally                                                           |
+| `pnpm db`                    | Start the development database (`compose.dev.yaml`)                                 |
+| `pnpm db:reset`              | Delete the development data and rebuild it from `db/migrations/`                    |
+| `pnpm db:migrate`            | Apply pending migrations to the development database                                |
+| `pnpm migrate`               | Apply pending migrations to production, from the root `.env`                        |
+| `pnpm seed`                  | Fill a fresh database with accounts and sample rows                                 |
+| `pnpm server`                | Build and start production (database, app and tunnel), from the root `.env`         |
+| `pnpm server:tunnel`         | Start the tunnel alone, when the app is already up                                  |
+| `pnpm server:tunnel:restart` | Restart the tunnel alone, when the site answers 502 or 1033 but the app is up       |
+| `pnpm server:ps`             | Show production's services and their health                                         |
+| `pnpm server:logs`           | Follow production's logs; name a service to follow one, such as `tunnel`            |
+| `pnpm import-sprites`        | Copy the pokemon sheets in from `../SpriteCollab`, the `lxsmnsyc/SpriteCollab` fork |
+| `pnpm compact-sprites`       | Rewrite the sprite PNGs smaller, pixel for pixel                                    |
+| `pnpm sprite-coats`          | Restamp `coats.json` after anything writes a sheet                                  |
+| `pnpm sprite-stamps`         | Restamp every other sheet, which `pnpm build` also does                             |
+| `pnpm test`                  | The whole test suite, once                                                          |
+| `pnpm test:db`               | The server modules against the development database                                 |
+| `pnpm test:e2e`              | The Playwright suites under `e2e/`                                                  |
+| `npx tsc --noEmit`           | Type-check                                                                          |
+| `npx oxlint src test`        | Lint                                                                                |
+| `npx oxfmt src test`         | Format                                                                              |
+| `pnpm cs:add`                | Add a changeset                                                                     |
 
 ## Where things live
 

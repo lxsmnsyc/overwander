@@ -328,6 +328,8 @@ const enum BattleEvents {
   CheckUnitTerrain = 153,
   /** How long the terrain a unit lays holds */
   CheckUnitTerrainDuration = 154,
+  /** How much room a unit has for moves, abilities or held items */
+  CheckUnitSlots = 155,
 }
 
 export default BattleEvents;

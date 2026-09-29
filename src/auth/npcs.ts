@@ -1,6 +1,7 @@
 import { readOnly } from '../utils/server-calls';
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
+import type { Stats } from '../data/constants/stats';
 import Npc from '../data/overworld/npc';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { requireReader, requireUidFor } from '../server/auth';
@@ -19,7 +20,9 @@ import check, {
   OFFSET,
   PARENTS,
   REPLACED_SLOT,
+  STAT,
   TOKEN,
+  TRADER_OFFER,
 } from '../server/validate';
 import type { Awakening } from '../server/awaken';
 import {
@@ -33,9 +36,12 @@ import {
   channelAbility as channelOnServerSide,
   countVisit,
   groomCatch as groomOnServerSide,
+  hyperTrain as hyperOnServerSide,
   remindMove as remindOnServerSide,
   reviveFossil as reviveOnServerSide,
   sellToVendor as sellOnServerSide,
+  tradeWithTrader as tradeOnServerSide,
+  trainMoveSlot as trainSlotOnServerSide,
   tutorMove as tutorOnServerSide,
   visitNurse as visitNurseOnServerSide,
 } from '../server/npcs';
@@ -756,3 +762,156 @@ async function hasVisitedOnServer(token: string, marker: string): Promise<boolea
   return readVisited(await requireReader(token), marker);
 }
 readOnly(hasVisitedOnServer);
+
+/**
+ * Have the Dojo Master make room for one more move on one of the
+ * player's catches, for a Heart Scale. Resolves the move slots it now
+ * has, or null when he refuses
+ */
+export async function trainMoveSlot(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  catchId: string,
+): Promise<number | null> {
+  return trainSlotOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    catchId,
+    snapshot.offset,
+  );
+}
+
+async function trainSlotOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  catchId: string,
+  offset: number,
+): Promise<number | null> {
+  'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(ID, catchId);
+  check(OFFSET, offset);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
+
+  return countVisit(
+    uid,
+    Npc.DojoMaster,
+    await trainSlotOnServerSide(uid, x, y, cell, catchId, await syncServerClock(), offset),
+  );
+}
+
+/**
+ * Swap one of the player's catches for the trader's pokemon at
+ * `offer`, once a window. Resolves the new catch's id, or null when he
+ * refuses
+ */
+export async function tradeWithTrader(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  offer: number,
+  catchId: string,
+): Promise<string | null> {
+  return tradeOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    offer,
+    catchId,
+    snapshot.offset,
+    getLocale(),
+  );
+}
+
+async function tradeOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  offer: number,
+  catchId: string,
+  offset: number,
+  locale: string,
+): Promise<string | null> {
+  'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(TRADER_OFFER, offer);
+  check(ID, catchId);
+  check(OFFSET, offset);
+  check(LOCALE, locale);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
+
+  return countVisit(
+    uid,
+    Npc.Trader,
+    await tradeOnServerSide(
+      uid,
+      x,
+      y,
+      cell,
+      offer,
+      catchId,
+      await syncServerClock(),
+      offset,
+      locale,
+    ),
+  );
+}
+
+/**
+ * Have the Hyper Trainer take one value of one of the player's catches
+ * to the top, for gold by the point, once a window. Resolves the values
+ * it now has, or null when refused
+ */
+export async function hyperTrain(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  catchId: string,
+  stat: Stats,
+): Promise<number | null> {
+  return hyperOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    catchId,
+    stat,
+    snapshot.offset,
+  );
+}
+
+async function hyperOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  catchId: string,
+  stat: Stats,
+  offset: number,
+): Promise<number | null> {
+  'use server';
+  check(TOKEN, token);
+  check(CHUNK_COORDINATE, x);
+  check(CHUNK_COORDINATE, y);
+  check(CELL, cell);
+  check(ID, catchId);
+  check(STAT, stat);
+  check(OFFSET, offset);
+  const uid = await requireUidFor(token, Feature.Townsfolk);
+
+  return countVisit(
+    uid,
+    Npc.HyperTrainer,
+    await hyperOnServerSide(uid, x, y, cell, catchId, stat, await syncServerClock(), offset),
+  );
+}

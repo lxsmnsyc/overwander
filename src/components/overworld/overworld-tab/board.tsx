@@ -1329,7 +1329,6 @@ export default function OverworldBoard(props: {
     cell: number;
     from: EggSource;
     state: EggState;
-    message: string | null;
   } | null>(null);
   const [taking, setTaking] = createSignal(false);
 
@@ -1380,15 +1379,18 @@ export default function OverworldBoard(props: {
     )
       .then((catchId) => {
         setTaking(false);
-        setEggOffer((standing) =>
-          standing == null
-            ? null
+        // Said in a toast and the dialog put away, whichever way it went
+        setEggOffer(null);
+        toast.push(
+          catchId == null
+            ? {
+                message: 'It is gone. Somebody beat you to it, or the window turned over.',
+                tone: 'ember',
+              }
             : {
-                ...standing,
-                message:
-                  catchId == null
-                    ? 'It is gone. Somebody beat you to it, or the window turned over.'
-                    : 'Yours now. Walk it warm and see what hatches.',
+                title: 'An egg',
+                message: 'Yours now. Walk it warm and see what hatches.',
+                tone: 'leaf',
               },
         );
 
@@ -1409,14 +1411,10 @@ export default function OverworldBoard(props: {
       })
       .catch((caught: unknown) => {
         setTaking(false);
-        setEggOffer((standing) =>
-          standing == null
-            ? null
-            : {
-                ...standing,
-                message: caught instanceof Error ? caught.message : String(caught),
-              },
-        );
+        toast.push({
+          message: caught instanceof Error ? caught.message : String(caught),
+          tone: 'ember',
+        });
       });
   };
 
@@ -1835,7 +1833,6 @@ export default function OverworldBoard(props: {
         cell: at,
         from: 'nest',
         state: offer == null ? 'bare' : stateOf(offer),
-        message: null,
       });
       return null;
     }
@@ -1849,7 +1846,7 @@ export default function OverworldBoard(props: {
       const hidden = await peekPhenomenonEgg(spot.snapshot, spot.cell);
 
       if (hidden != null) {
-        setEggOffer({ spot, cell: at, from: 'grotto', state: stateOf(hidden), message: null });
+        setEggOffer({ spot, cell: at, from: 'grotto', state: stateOf(hidden) });
         return null;
       }
 

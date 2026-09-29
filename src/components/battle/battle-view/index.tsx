@@ -800,15 +800,15 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       >
         <p class="text-center">{leavingSaid()}</p>
         <DialogActions>
+          <Button tone="primary" onClick={leave}>
+            Leave anyway
+          </Button>
           <Button
             onClick={() => {
               setLeaving(false);
             }}
           >
             Keep fighting
-          </Button>
-          <Button tone="primary" onClick={leave}>
-            Leave anyway
           </Button>
         </DialogActions>
       </Dialog>

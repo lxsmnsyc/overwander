@@ -391,6 +391,7 @@ function GiftShelf(props: {
           class="block size-full"
           trigger={<span class="block size-full" />}
           title="Gift"
+          kind="Mystery gift"
           footer={
             <Show when={props.viewOnly !== true && found(entry().id)}>
               {(row) => (

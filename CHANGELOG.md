@@ -1,5 +1,11 @@
 # overwander
 
+## 4.23.2
+
+### Patch Changes
+
+- 2fb81de: - Family candies paint the edges of the ball in the band they belong to, and keep the shine off the top stripe.
+
 ## 4.23.1
 
 ### Patch Changes

@@ -21,7 +21,7 @@ import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
 import { type LearnResult, describeLearnRefusal } from '../../auth/learn-refusal';
 
-import { MoveLine } from './MovePicker';
+import { MOVE_SLOT, MOVE_SLOTS, MoveLine } from './MovePicker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import {
   type CounterCost,
@@ -78,10 +78,6 @@ export interface TeachMoveDialogProps {
  * draws, so it comes from there too
  */
 export { MoveLine };
-
-/** The known moves as slots, two to a row like the catch sheet's */
-const SLOTS = 'm-0 grid list-none grid-cols-1 gap-1.5 p-0 sm:grid-cols-2';
-const SLOT = 'flex items-center rounded-lg border-2 px-2 py-1 text-left text-sm';
 
 /**
  * The two dialogs, which is where the record is read.
@@ -271,14 +267,14 @@ function TeachBody(
         {offered()}
 
         <CounterStep>Choose one to forget</CounterStep>
-        <ul class={SLOTS}>
+        <ul class={MOVE_SLOTS}>
           <Index each={known()}>
             {(move, at) => (
               <li>
                 <button
                   type="button"
                   aria-pressed={forgetting() === at}
-                  class={`${SLOT} w-full cursor-pointer ${
+                  class={`${MOVE_SLOT} w-full cursor-pointer ${
                     forgetting() === at
                       ? 'border-ember bg-ember-soft text-ember-dark [&_.truncate]:line-through'
                       : 'border-line bg-paper hover:border-tide'
@@ -326,16 +322,18 @@ function TeachBody(
         {offered()}
 
         <CounterStep>Its moves</CounterStep>
-        <ul class={SLOTS}>
+        <ul class={MOVE_SLOTS}>
           <For each={known()}>
             {(move) => (
-              <li class={`${SLOT} border-line bg-paper`}>
+              <li class={`${MOVE_SLOT} border-line bg-paper`}>
                 <MoveLine move={move} />
               </li>
             )}
           </For>
           {/* Where the new one will go */}
-          <li class={`${SLOT} border-dashed border-leaf bg-leaf-soft font-bold text-leaf-dark`}>
+          <li
+            class={`${MOVE_SLOT} border-dashed border-leaf bg-leaf-soft font-bold text-leaf-dark`}
+          >
             + {taught()}
           </li>
         </ul>

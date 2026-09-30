@@ -38,6 +38,13 @@ export function MoveLabel(props: { move: Moves }): JSX.Element {
   );
 }
 
+/**
+ * A list of moves as slots, two to a row where there is room, each
+ * drawn the way the catch sheet draws a move
+ */
+export const MOVE_SLOTS = 'm-0 grid list-none grid-cols-1 gap-1.5 p-0 sm:grid-cols-2';
+export const MOVE_SLOT = 'flex items-center gap-2 rounded-lg border-2 px-2 py-1 text-left text-sm';
+
 /** The label with the move's card over it */
 export function MoveLine(props: { move: Moves }): JSX.Element {
   return (

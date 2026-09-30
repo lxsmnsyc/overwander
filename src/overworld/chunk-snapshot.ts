@@ -3,6 +3,7 @@ import AleaRNG from '../core/alea';
 import {
   boostFamilyWeights,
   boostTypeWeights,
+  fitsSurface,
   getBiomeRoster,
   getSpawnPool,
   getTownPool,
@@ -487,6 +488,7 @@ export default class ChunkSnapshot {
       pool = this.crowd(
         this.darkened(
           getSpawnPool(biome, getTimeOfDay(this.timestamp), this.depth === Depth.Cave, surface),
+          surface,
         ),
       );
       this.pools.set(key, pool);
@@ -513,14 +515,16 @@ export default class ChunkSnapshot {
    * stand in the special band beside the legendaries, and under every
    * other sky they are not in the pool at all
    */
-  private darkened(pool: SpawnRarityGroups): SpawnRarityGroups {
+  private darkened(pool: SpawnRarityGroups, surface: SpawnSurface): SpawnRarityGroups {
     if (this.weather !== Weather.DarkDay) {
       return pool;
     }
     const special = [...spawnBand(pool, 'special')];
 
     for (const species of listTrueShadows()) {
-      special.push({ species, weight: TRUE_SHADOW_WEIGHT });
+      if (fitsSurface(species, surface)) {
+        special.push({ species, weight: TRUE_SHADOW_WEIGHT });
+      }
     }
 
     return { ...pool, special };
@@ -1928,8 +1932,6 @@ export default class ChunkSnapshot {
       getTimeOfDay(this.phenomenonTimestamp),
       () => rng.random(),
       getFeaturedFamily(this.phenomenonTimestamp),
-      // Only a ripple is the water's; the rest are over dry ground
-      phenomenon === Phenomenon.RipplingWater ? this.drawnSurface(cell) : SpawnSurface.Land,
     );
 
     // A pokemon out of a phenomenon answers the meridian too

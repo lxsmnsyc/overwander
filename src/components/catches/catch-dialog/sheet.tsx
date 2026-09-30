@@ -30,6 +30,9 @@ import { useAuth } from '../../../auth/context';
 import { answered, failed, readable } from '../../app/resource-reads';
 
 import { canHatch, isEgg } from '../../../auth/egg';
+import AnimatedSprite from '../../sprites/AnimatedSprite';
+import { HeadingPortrait } from '../../overworld/npc-dialog/terms';
+import TargetStrip from '../TargetStrip';
 import { hatchEgg } from '../../../auth/eggs';
 import { deriveSize } from '../../../overworld/encounter';
 import { type EvolutionOption, evolveCatch } from '../../../auth/evolution';
@@ -47,7 +50,7 @@ import { BALL_ITEMS, type Items, getMachineMove, isMachineItem } from '../../../
 import { MAX_FRIENDSHIP, describeFriendship } from '../../../data/constants/friendship';
 import ItemSprite from '../../items/ItemSprite';
 import type { Moves } from '../../../data/ids/moves';
-import type { Species } from '../../../data/ids/species';
+import { Species } from '../../../data/ids/species';
 
 import { isPPItem } from '../../../data/items/vitamins';
 import { isPreciousItem } from '../../../data/overworld/item-pool';
@@ -1926,6 +1929,24 @@ export function CatchSheetBody(
         }}
         title="Use item"
         description={`Choose what to spend on ${named()}.`}
+        terse
+        lead={
+          <Show when={view()}>
+            {(loaded) => (
+              <HeadingPortrait>
+                <AnimatedSprite
+                  species={isEgg(loaded()) ? Species.Egg : loaded().species}
+                  shiny={!isEgg(loaded()) && isShiny(loaded())}
+                  direction="Down"
+                  still
+                  fill
+                  label=""
+                />
+              </HeadingPortrait>
+            )}
+          </Show>
+        }
+        header={<Show when={view()}>{(loaded) => <TargetStrip caught={loaded()} />}</Show>}
         entries={readable(props.bag)}
         disabled={frozen()}
         // Only the prized and special bands ask twice. Everything a

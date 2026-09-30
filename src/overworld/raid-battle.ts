@@ -258,11 +258,23 @@ export function collectAftermath(built: RaidBattle, player: string): BattleAfter
  * so the server clamps it to the party it actually staged
  */
 export function countDefeated(built: RaidBattle, player: string): number {
+  let mine: Alliance | null = null;
+
+  for (const fielded of built.units.values()) {
+    for (const unit of fielded) {
+      if (unit.team.player === player) {
+        mine = unit.team.alliance;
+      }
+    }
+  }
+
+  // Only the other alliance counts: the other parties in a raid lobby
+  // fight beside this player, so their faints are no win of theirs
   let downed = 0;
 
   for (const fielded of built.units.values()) {
     for (const unit of fielded) {
-      if (unit.team.player !== player && unit.health <= 0) {
+      if (unit.team.alliance !== mine && unit.health <= 0) {
         downed += 1;
       }
     }

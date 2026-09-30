@@ -1,7 +1,6 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MoveAttackFlags, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
-import { STEP_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
@@ -17,7 +16,7 @@ import type Unit from '../unit';
  * and the doubling happens between its own passes rather than between
  * casts.
  */
-const ROLLING_MOVES = new Set<Moves>([Moves.Rollout, Moves.FuryCutter, Moves.IceBall]);
+export const ROLLING_MOVES = new Set<Moves>([Moves.Rollout, Moves.FuryCutter, Moves.IceBall]);
 
 /** The rolls a Defense Curl doubles again */
 const CURLED_MOVES = new Set<Moves>([Moves.Rollout, Moves.IceBall]);
@@ -77,17 +76,6 @@ export default function setupRollingMoves(battle: Battle): void {
       getMoveData(event.move).category,
       MoveAttackFlags.Critical,
     );
-  });
-
-  /**
-   * The passes are the move rather than a wind-up before it, so the
-   * chooser's per-step charge is handed back: a roll that goes the
-   * distance is the hardest thing either of these does
-   */
-  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (ROLLING_MOVES.has(event.move)) {
-      event.score += STEP_PENALTY * event.source.checkMoveSteps(event.move, event.target);
-    }
   });
 
   function forget(unit: Unit): void {

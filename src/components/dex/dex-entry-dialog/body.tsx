@@ -28,7 +28,7 @@ import {
   STAT_LABELS,
   describeEvolutionMethod,
 } from '../../catches/catch-dialog/describe';
-import MoveHoverCard from '../../moves/MoveHoverCard';
+import MoveTooltip from '../../moves/MoveTooltip';
 import { getSignatureAbility } from '../../../data/abilities';
 import { describeAbility, detailAbility } from '../../details';
 import MoveCategorySprite from '../../sprites/MoveCategorySprite';
@@ -259,7 +259,7 @@ export function DexEntryBody(
     <li class="list-none">
       {/* The whole row opens the move's card, so its type mark is a plain
           picture rather than a tooltip of its own */}
-      <MoveHoverCard class="block" move={move}>
+      <MoveTooltip class="block" move={move}>
         <span class="flex items-center justify-between gap-2 rounded-lg px-1 py-0.5 hover:bg-tide-soft">
           <span class="flex items-center gap-2">
             <Show when={level != null}>
@@ -274,7 +274,7 @@ export function DexEntryBody(
             {getMoveData(move).pp} PP
           </Meta>
         </span>
-      </MoveHoverCard>
+      </MoveTooltip>
     </li>
   );
 

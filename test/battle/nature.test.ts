@@ -29,7 +29,7 @@ function pickWith(nature: Natures, byNature: boolean): Moves | undefined {
   source.setNature(nature);
   source.addMove(Moves.Tackle);
   source.addMove(Moves.WaterGun);
-  source.addMove(Moves.Growl);
+  source.addMove(Moves.Taunt);
 
   return chooseMove(battle, source)?.move;
 }
@@ -94,8 +94,8 @@ describe('fighting by nature', () => {
   });
 
   it('sends a defensive nature to a status move it would not otherwise cast', () => {
-    expect(pickWith(Natures.Bold, false)).not.toBe(Moves.Growl);
-    expect(pickWith(Natures.Bold, true)).toBe(Moves.Growl);
+    expect(pickWith(Natures.Bold, false)).not.toBe(Moves.Taunt);
+    expect(pickWith(Natures.Bold, true)).toBe(Moves.Taunt);
   });
 
   it('picks the half of the split an attacking nature raised', () => {

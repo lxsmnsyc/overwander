@@ -172,6 +172,8 @@ export default function registerRattataSpecies(): void {
 
         Moves.Counter,
         Moves.GigaImpact,
+        Moves.StompingTantrum,
+        Moves.ThroatChop,
       ],
     },
   });

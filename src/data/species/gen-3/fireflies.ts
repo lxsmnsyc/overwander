@@ -113,7 +113,7 @@ export default function registerFireflySpecies(): void {
         Moves.DazzlingGleam,
         Moves.PowerUpPunch,
       ],
-      egg: [Moves.BatonPass, Moves.SilverWind, Moves.Trick],
+      egg: [Moves.BatonPass, Moves.SilverWind, Moves.Trick, Moves.Lunge],
     },
   });
 

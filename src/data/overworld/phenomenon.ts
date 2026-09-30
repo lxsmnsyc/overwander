@@ -4,6 +4,7 @@ import { listItemsByType } from '../items';
 import { GEMS } from '../items/gems';
 import { MEGA_STONES } from '../items/mega-stones';
 import { PLATES } from '../items/plates';
+import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../items/z-crystals';
 import { isValuable } from '../items/valuables';
 import { WING_STATS } from '../items/wings';
 import { type ItemPoolEntry, type ItemRarityGroups, getItemBand, getItemOdds } from './item-pool';
@@ -296,6 +297,8 @@ function buildPool(phenomenon: Phenomenon): Items[] {
       ...spendableStones(),
       ...PLATES.keys(),
       ...MEGA_STONES.keys(),
+      ...TYPE_CRYSTALS.keys(),
+      ...SIGNATURE_CRYSTALS.keys(),
       ...listItemsByType(ItemTypes.Valuable),
     ];
   }

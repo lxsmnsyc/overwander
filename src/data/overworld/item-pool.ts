@@ -5,7 +5,9 @@ import { MARKET_GEAR } from '../items/gear';
 import { ONE_SHOTS } from '../items/one-shots';
 import { ORBS } from '../items/orbs';
 import { MEGA_STONES } from '../items/mega-stones';
+import { MEMORIES } from '../items/memories';
 import { PLATES } from '../items/plates';
+import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../items/z-crystals';
 import { VITAMIN_STATS } from '../items/vitamins';
 import { MINT_NATURES } from '../items/mints';
 import { POWER_ITEMS } from '../items/power-items';
@@ -129,6 +131,7 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.TimerBall, weight: 10 },
     { item: Items.QuickBall, weight: 10 },
     { item: Items.DuskBall, weight: 10 },
+    { item: Items.BeastBall, weight: 3 },
     // A shade thinner than the base valuables would make them, so the
     // band's doubled width never makes a dearer find the commoner one
     { item: Items.BigPearl, weight: 7 },
@@ -176,6 +179,7 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.IcyRock, weight: 3 },
     { item: Items.SmoothRock, weight: 3 },
     { item: Items.LightClay, weight: 3 },
+    { item: Items.TerrainExtender, weight: 3 },
     // Pulled up with them, and about as particular: everything to a
     // pokemon that drains, nothing to anything else
     { item: Items.BigRoot, weight: 4 },
@@ -289,6 +293,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     ...evenlyWeighted(DRIVES.keys(), 1),
     // And the Mega Stones, which are held for a shape the way a plate is
     ...evenlyWeighted(MEGA_STONES.keys(), 1),
+    // The Memories on the plates' terms, and the Z-Crystals on the stones'
+    ...evenlyWeighted(MEMORIES.keys(), 1),
+    ...evenlyWeighted(TYPE_CRYSTALS.keys(), 1),
+    ...evenlyWeighted(SIGNATURE_CRYSTALS.keys(), 1),
     // The strongest gear, on the plates' terms: thin slots, so the
     // band stays the stones' and finding a Choice Band stays an event
     ...evenlyWeighted(ORBS.keys(), 1),
@@ -363,6 +371,15 @@ export const ITEM_POOL: ItemRarityGroups = {
     // nothing until a Kyurem has been caught
     { item: Items.DnaSplicers, weight: 3 },
     { item: Items.PrisonBottle, weight: 3 },
+    // The prisms, on the orbs' terms: each names one pokemon
+    { item: Items.NSolarizer, weight: 3 },
+    { item: Items.NLunarizer, weight: 3 },
+    // The nectars, spent the way the meteorite is and as thin: four
+    // styles of one pokemon share them
+    { item: Items.RedNectar, weight: 1 },
+    { item: Items.YellowNectar, weight: 1 },
+    { item: Items.PinkNectar, weight: 1 },
+    { item: Items.PurpleNectar, weight: 1 },
     // Three purses instead of one, for good, and nothing sells one.
     // Here rather than in rare so that parting with it is asked about
     // twice

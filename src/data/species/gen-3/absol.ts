@@ -122,6 +122,9 @@ export default function registerAbsolSpecies(): void {
         Moves.Retaliate,
         Moves.Snarl,
         Moves.Confide,
+        Moves.BrutalSwing,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
       egg: [
         Moves.Curse,

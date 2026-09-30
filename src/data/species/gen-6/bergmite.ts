@@ -181,6 +181,7 @@ export default function registerBergmiteSpecies(): void {
         Moves.Roar,
         Moves.ScaryFace,
         Moves.Superpower,
+        Moves.StompingTantrum,
       ],
     },
   });

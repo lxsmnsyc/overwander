@@ -112,6 +112,7 @@ export default function registerOddishSpecies(): void {
         Moves.Synthesis,
         Moves.Ingrain,
         Moves.AfterYou,
+        Moves.StrengthSap,
       ],
     },
   });

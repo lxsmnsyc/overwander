@@ -28,6 +28,14 @@ const TRUE_SHADOWS = new Map<Species, Species>([
   [Species.Zapdos, Species.ZapdosShadow],
   [Species.Moltres, Species.MoltresShadow],
   [Species.Mewtwo, Species.MewtwoShadow],
+  [Species.Regirock, Species.RegirockShadow],
+  [Species.Regice, Species.RegiceShadow],
+  [Species.Registeel, Species.RegisteelShadow],
+  [Species.Latias, Species.LatiasShadow],
+  [Species.Latios, Species.LatiosShadow],
+  [Species.Kyogre, Species.KyogreShadow],
+  [Species.Groudon, Species.GroudonShadow],
+  [Species.Rayquaza, Species.RayquazaShadow],
 ]);
 
 /** The same pairing read backwards, since no two counterparts share one */

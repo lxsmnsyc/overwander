@@ -369,6 +369,42 @@ describe('chunk snapshot', () => {
     expect(swimming).toBeGreaterThan(0);
   });
 
+  it("keeps the ground species off a cave's water", () => {
+    const world = new World('overworld', Depth.Cave);
+    const NOON = 12 * 60 * 60 * 1000;
+    let flooded = 0;
+
+    for (let x = -12; x < 12; x++) {
+      for (let y = -12; y < 12; y++) {
+        const chunk = world.getChunk(x, y);
+        const snapshot = new ChunkSnapshot(chunk, NOON);
+
+        for (const cell of chunk.getWaterCells()) {
+          const surface = chunk.getCellSurface(cell);
+          const pool = snapshot.getCellPool(cell);
+
+          flooded++;
+          for (const band of SPAWN_BAND_KEYS) {
+            for (const entry of spawnBand(pool, band)) {
+              expect(fitsSurface(entry.species, surface), getSpeciesData(entry.species).name).toBe(
+                true,
+              );
+            }
+          }
+        }
+        snapshot.getSpawns(SPAWN_COUNT);
+        for (const [cell, spawn] of snapshot.getSpawnCells()) {
+          expect(
+            fitsSurface(spawn[0], chunk.getCellSurface(cell)),
+            getSpeciesData(spawn[0]).name,
+          ).toBe(true);
+        }
+      }
+    }
+    // Caves with no water at all would leave this test checking nothing
+    expect(flooded).toBeGreaterThan(0);
+  });
+
   it("keeps a sea's islands to what lives on land", () => {
     const world = new World('overworld');
     const NOON = 12 * 60 * 60 * 1000;

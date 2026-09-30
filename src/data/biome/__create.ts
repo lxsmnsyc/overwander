@@ -192,16 +192,22 @@ function getCavePool(biome: Biome, time: TimeOfDay, surface: SpawnSurface): Spaw
     return known;
   }
 
-  // Only what can stand on the cell, so Kyogre keeps to the water
-  const special: SpawnEntry[] = [];
+  // Only what can stand on the cell, so a ground species keeps off the
+  // cave's water and Kyogre keeps to it
+  const shared = cavePool?.[time] ?? EMPTY_GROUPS;
+  const pool: SpawnRarityGroups = { ...EMPTY_GROUPS };
 
-  for (const entry of CAVE_LEGENDS.get(biome) ?? []) {
-    if (fitsSurface(entry.species, surface)) {
-      special.push(entry);
+  for (const band of SPAWN_BAND_KEYS) {
+    const fitting: SpawnEntry[] = [];
+    const entries = band === 'special' ? (CAVE_LEGENDS.get(biome) ?? []) : spawnBand(shared, band);
+
+    for (const entry of entries) {
+      if (fitsSurface(entry.species, surface)) {
+        fitting.push(entry);
+      }
     }
+    pool[band] = fitting;
   }
-
-  const pool = { ...(cavePool?.[time] ?? EMPTY_GROUPS), special };
 
   CAVE_POOLS.set(key, pool);
   return pool;

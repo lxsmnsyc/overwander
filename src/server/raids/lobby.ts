@@ -106,7 +106,7 @@ export async function peekRaid(
     action,
     kind,
     lair: existing?.lair ?? roll.lair,
-    biome: chunk.biome,
+    biome: snapshot.biomeAt(cell),
     species: existing?.species ?? roll.species,
     battle: existing?.battle ?? null,
     teams: existing?.teams.length ?? 0,
@@ -172,7 +172,8 @@ export async function enterRaid(
       timestamp: snapshot.raidTimestamp,
       offset: zone,
       chunk: { seed: chunk.seed, x: chunk.x, y: chunk.y },
-      biome: chunk.biome,
+      // The lair's own tile, which may stand across a border from the chunk's middle
+      biome: snapshot.biomeAt(cell),
       cell,
       cleared: false,
     };

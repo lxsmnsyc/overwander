@@ -6,7 +6,7 @@ import registerAbilities from '../../../src/data/abilities';
 import registerBiomeSpawns, {
   BIOME_NAMES,
   SpawnRarity,
-  getBiomeRoster,
+  fitsSurface,
   getSpawnPool,
   getSpawnRarity,
   spawnRanks,
@@ -887,33 +887,62 @@ describe('world', () => {
     }
 
     const time = getTimeOfDay(0);
-    const pool = getBiomeRoster(chunk.biome, time);
-    const hosted = new Set(getBiomeLairs(chunk.biome));
-    const raids = new ChunkSnapshot(chunk, 0).getShadowLairs();
+    const snapshot = new ChunkSnapshot(chunk, 0);
+    const raids = snapshot.getShadowLairs();
 
     expect(raids.size).toBeGreaterThan(0);
     for (const [cell, roll] of raids) {
       expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.ShadowLair);
 
+      // Read off the lair's own tile rather than the chunk's middle
+      const biome = snapshot.biomeAt(cell);
+      const pool = getSpawnPool(biome, time, false, chunk.getCellSurface(cell));
+
       if (roll.lair == null) {
         // No named place behind it, so it is one of the biome's own
         // grown species and it is called after the ground
         expect(spawnRanks(pool)[2].some((entry) => entry.species === roll.species)).toBe(true);
-        expect(getLairTitle(roll.lair, chunk.biome, true)).toBe(
-          `Shadow ${BIOME_NAMES[chunk.biome]} Lair`,
-        );
+        expect(getLairTitle(roll.lair, biome, true)).toBe(`Shadow ${BIOME_NAMES[biome]} Lair`);
         continue;
       }
 
       // Otherwise it has taken over one of the biome's own lairs, and
       // is called that place with a word in front of it
-      expect(hosted.has(roll.lair)).toBe(true);
+      expect(new Set(getBiomeLairs(biome)).has(roll.lair)).toBe(true);
       expect(getLairResidents(roll.lair)).toContain(roll.species);
       expect(getSpawnRarity(roll.species)).toBe(SpawnRarity.Special);
     }
 
     // The window holds the roll, the same way legendary raids do
     expect([...new ChunkSnapshot(chunk, 30 * 60 * 1000).getShadowLairs()]).toEqual([...raids]);
+  });
+
+  it('stages on each lair only what stands on its tile, from the tile own biome', () => {
+    const world = new World('overworld');
+    let staged = 0;
+
+    for (let window = 0; window < 6; window++) {
+      for (let x = -16; x < 16; x++) {
+        for (let y = -16; y < 16; y++) {
+          const chunk = world.getChunk(x, y);
+          const snapshot = new ChunkSnapshot(chunk, window * RAID_INTERVAL);
+
+          for (const [cell, roll] of [
+            ...snapshot.getLegendaryLairs(),
+            ...snapshot.getShadowLairs(),
+          ]) {
+            const name = getSpeciesData(roll.species).name;
+
+            staged++;
+            expect(fitsSurface(roll.species, chunk.getCellSurface(cell)), name).toBe(true);
+          }
+          for (const [cell, roll] of snapshot.getLegendaryLairs()) {
+            expect(getBiomeLairs(snapshot.biomeAt(cell))).toContain(roll.lair);
+          }
+        }
+      }
+    }
+    expect(staged).toBeGreaterThan(0);
   });
 
   it('lets a shadow take over one of the biome own lairs', () => {

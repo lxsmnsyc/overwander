@@ -95,6 +95,8 @@ export default function registerSpinarakSpecies(): void {
         45: [Moves.Screech, Moves.Agility],
         50: [Moves.StickyWeb],
         53: [Moves.Psychic],
+
+        54: [Moves.ToxicThread],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.BugBite],
       egg: [
@@ -107,6 +109,7 @@ export default function registerSpinarakSpecies(): void {
         Moves.ToxicSpikes,
         Moves.RagePowder,
         Moves.Electroweb,
+        Moves.Lunge,
       ],
     },
   });
@@ -158,9 +161,16 @@ export default function registerSpinarakSpecies(): void {
         50: [Moves.PoisonJab],
         53: [Moves.Screech, Moves.Agility],
         58: [Moves.StickyWeb],
-        63: [Moves.Psychic],
+        63: [Moves.Psychic, Moves.ToxicThread],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.GigaImpact,
+        Moves.StompingTantrum,
+        Moves.ThroatChop,
+        Moves.SmartStrike,
+      ],
     },
   });
 }

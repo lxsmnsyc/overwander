@@ -210,6 +210,8 @@ export default function registerPsyduckSpecies(): void {
         Moves.GigaImpact,
         Moves.RockClimb,
         Moves.LowSweep,
+        Moves.Liquidation,
+        Moves.LaserFocus,
       ],
     },
   });

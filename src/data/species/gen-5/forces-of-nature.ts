@@ -112,6 +112,7 @@ const TORNADUS_LEARNSET = {
     Moves.Thief,
     Moves.Torment,
     Moves.Uproar,
+    Moves.BrutalSwing,
   ],
 };
 
@@ -169,6 +170,8 @@ const THUNDURUS_LEARNSET = {
     Moves.VoltSwitch,
     Moves.WildCharge,
     Moves.ZenHeadbutt,
+    Moves.BrutalSwing,
+    Moves.SmartStrike,
   ],
 };
 
@@ -222,6 +225,7 @@ const LANDORUS_LEARNSET = {
     Moves.StoneEdge,
     Moves.SwordsDance,
     Moves.Taunt,
+    Moves.BrutalSwing,
   ],
 };
 

@@ -184,6 +184,7 @@ export default function registerRuffletSpecies(): void {
         Moves.IronHead,
         Moves.MetalClaw,
         Moves.Reversal,
+        Moves.LaserFocus,
       ],
     },
   });

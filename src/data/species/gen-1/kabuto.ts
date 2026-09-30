@@ -192,6 +192,7 @@ export default function registerKabutoSpecies(): void {
         Moves.RockClimb,
         Moves.StoneEdge,
         Moves.XScissor,
+        Moves.Liquidation,
       ],
     },
   });

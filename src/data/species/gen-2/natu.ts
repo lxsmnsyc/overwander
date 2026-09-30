@@ -174,6 +174,7 @@ export default function registerNatuSpecies(): void {
         Moves.Defog,
         Moves.GigaImpact,
         Moves.FoulPlay,
+        Moves.LaserFocus,
       ],
     },
   });

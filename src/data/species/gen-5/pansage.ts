@@ -180,6 +180,7 @@ export default function registerPansageSpecies(): void {
         Moves.RockSlide,
         Moves.Superpower,
         Moves.PowerUpPunch,
+        Moves.ThroatChop,
       ],
     },
   });

@@ -111,6 +111,7 @@ export default function registerAlomomolaSpecies(): void {
         Moves.Whirlpool,
         Moves.ZenHeadbutt,
         Moves.Confide,
+        Moves.Liquidation,
       ],
       egg: [
         Moves.Bounce,

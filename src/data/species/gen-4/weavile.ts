@@ -121,6 +121,8 @@ export default function registerWeavileSpecies(): void {
         Moves.XScissor,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

@@ -114,6 +114,7 @@ export default function registerProbopassSpecies(): void {
         Moves.Toxic,
         Moves.Confide,
         Moves.DazzlingGleam,
+        Moves.StompingTantrum,
       ],
     },
   });

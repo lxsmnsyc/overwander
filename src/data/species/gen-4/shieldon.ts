@@ -173,6 +173,7 @@ export default function registerShieldonSpecies(): void {
         Moves.HyperBeam,
         Moves.MagicCoat,
         Moves.Outrage,
+        Moves.StompingTantrum,
       ],
     },
   });

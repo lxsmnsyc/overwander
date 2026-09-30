@@ -6,7 +6,7 @@ import { Types } from '../data/constants/types';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import { Balls, Items } from '../data/ids/items';
 import { getNatureFactor } from '../data/ids/natures';
-import { Genders, ULTRA_BEASTS } from '../data/ids/species';
+import { Genders } from '../data/ids/species';
 import type { Species } from '../data/ids/species';
 
 import {
@@ -22,6 +22,7 @@ import {
   isFeaturedSpecies,
   lineEvolvesByItem,
 } from '../data/species';
+import { isUltraBeast } from '../data/species/ultra-beasts';
 import Phenomenon from '../data/overworld/phenomenon';
 import { type Encounter, EncounterType, isRaidEncounter } from './encounter';
 
@@ -133,10 +134,6 @@ export const BALL_MODIFIERS: Record<Balls, number> = {
   [Balls.BeastBall]: 1,
 };
 
-/** Mainline Beast Ball: made for the Ultra Beasts, and poor on anything else */
-export const BEAST_BALL_MODIFIER = 5;
-export const BEAST_BALL_ELSEWHERE = 0.1;
-
 /**
  * Mainline Quick Ball: a strong opener, neutral afterwards
  */
@@ -165,6 +162,10 @@ const DIVE_BALL_MODIFIER = 3.5;
  * Mainline Fast Ball: shines on whatever would have outrun it
  */
 const FAST_BALL_MODIFIER = 4;
+
+/** A Beast Ball on an Ultra Beast, and on anything else */
+const BEAST_BALL_MODIFIER = 5;
+const BEAST_BALL_ELSEWHERE = 0.1;
 const FAST_BALL_SPEED = 100;
 
 /**
@@ -635,6 +636,8 @@ export default class SafariSession<
         return this.context.speciesCaught === true ? REPEAT_BALL_MODIFIER : 1;
       case Balls.DuskBall:
         return (getTimeOfDay(this.encounter.timestamp) & DUSK_TIMES) === 0 ? 1 : DUSK_BALL_MODIFIER;
+      case Balls.BeastBall:
+        return isUltraBeast(this.encounter.species) ? BEAST_BALL_MODIFIER : BEAST_BALL_ELSEWHERE;
       case Balls.FastBall:
         return getSpeciesData(this.encounter.species).stats[Stats.Speed] >= FAST_BALL_SPEED
           ? FAST_BALL_MODIFIER
@@ -653,10 +656,6 @@ export default class SafariSession<
         }
         return 1;
       }
-      case Balls.BeastBall:
-        return ULTRA_BEASTS.has(this.encounter.species)
-          ? BEAST_BALL_MODIFIER
-          : BEAST_BALL_ELSEWHERE;
       case Balls.LevelBall: {
         const { buddy } = this.context;
 

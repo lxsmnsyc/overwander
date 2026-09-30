@@ -74,7 +74,6 @@ export const enum Balls {
   LoveBall = 18,
   HeavyBall = 19,
   FastBall = 20,
-  // The ball made for the Ultra Beasts
   BeastBall = 21,
 }
 
@@ -1050,7 +1049,7 @@ export const enum Items {
   NSolarizer = 522,
   NLunarizer = 523,
 
-  /** What a trainer wears to call up a Z-Move */
+  /** Kept for its number only: a Z-Move needs no ring here, so it is never registered */
   ZRing = 524,
 
   /** The Z-Crystals of each type, Normal first */

@@ -204,39 +204,49 @@ const enum Lairs {
   DaharaRuins = 50,
   /** The mountain shelf the steam machine keeps to */
   NebelPlateau = 51,
+  // Alola's, reserved ahead of the batches that stage them. Each is
+  // named and peopled, but is in no biome and not in EVERY_LAIR until
+  // its batch lists it, so nothing stages one early
+  /** The kingdom the machine was built in, five hundred years ago */
+  AzothKingdom = 52,
+  /** The mountain the hero climbed, with something watching from its shadows */
+  MtTensei = 53,
+  /** The forest behind the city of windmills */
+  FulaForest = 54,
+  /** The park the pokemon of another world are let out into */
+  GoPark = 55,
   /** The artificial island the synthetic beast was made and kept on */
-  AetherParadise = 52,
+  AetherParadise = 56,
   /** The ruin off Melemele's Mahalo Trail, which is Tapu Koko's */
-  RuinsOfConflict = 53,
+  RuinsOfConflict = 57,
   /** The ruin in Akala's green south, which is Tapu Lele's */
-  RuinsOfLife = 54,
+  RuinsOfLife = 58,
   /** The ruin at the far end of the Haina Desert, which is Tapu Bulu's */
-  RuinsOfAbundance = 55,
+  RuinsOfAbundance = 59,
   /** The ruin on Poni's stony shore, which is Tapu Fini's */
-  RuinsOfHope = 56,
+  RuinsOfHope = 60,
   /** The altar at the top of Vast Poni Canyon the sun is called down to */
-  AltarOfTheSunne = 57,
+  AltarOfTheSunne = 61,
   /** The same altar in the other version, where the moon is */
-  AltarOfTheMoone = 58,
+  AltarOfTheMoone = 62,
   /** The hollow at the back of Melemele's crystal cave, where the prism waits */
-  TenCaratHill = 59,
-  // The Ultra Beasts' own worlds, across the wormholes
+  TenCaratHill = 63,
   /** The drowned dark Nihilego drifts through */
-  UltraDeepSea = 60,
+  UltraDeepSea = 64,
   /** The jungle Buzzwole flexes in */
-  UltraJungle = 61,
+  UltraJungle = 65,
   /** The white desert Pheromosa runs across */
-  UltraDesert = 62,
+  UltraDesert = 66,
   /** The power plant Xurkitree roots itself in */
-  UltraPlant = 63,
+  UltraPlant = 67,
   /** The crater Celesteela launches from */
-  UltraCrater = 64,
+  UltraCrater = 68,
   /** The paper forest Kartana cuts through */
-  UltraForest = 65,
+  UltraForest = 69,
   /** The ruined city Guzzlord ate */
-  UltraRuin = 66,
+  UltraRuin = 70,
   /** The grove on Poni the last two came through into */
-  PoniGrove = 67,
+  PoniGrove = 71,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -292,6 +302,10 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.DiamondDomain]: 'Diamond Domain',
   [Lairs.DaharaRuins]: 'Dahara Ruins',
   [Lairs.NebelPlateau]: 'Nebel Plateau',
+  [Lairs.AzothKingdom]: 'Azoth Kingdom',
+  [Lairs.MtTensei]: 'Mt. Tensei',
+  [Lairs.FulaForest]: 'Fula Forest',
+  [Lairs.GoPark]: 'GO Park',
   [Lairs.AetherParadise]: 'Aether Paradise',
   [Lairs.RuinsOfConflict]: 'Ruins of Conflict',
   [Lairs.RuinsOfLife]: 'Ruins of Life',
@@ -370,6 +384,10 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.DiamondDomain]: [Species.Diancie],
   [Lairs.DaharaRuins]: [Species.Hoopa],
   [Lairs.NebelPlateau]: [Species.Volcanion],
+  [Lairs.AzothKingdom]: [Species.Magearna],
+  [Lairs.MtTensei]: [Species.Marshadow],
+  [Lairs.FulaForest]: [Species.Zeraora],
+  [Lairs.GoPark]: [Species.Meltan],
   [Lairs.AetherParadise]: [Species.Silvally],
   [Lairs.RuinsOfConflict]: [Species.TapuKoko],
   [Lairs.RuinsOfLife]: [Species.TapuLele],
@@ -444,6 +462,10 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.DiamondDomain,
   Lairs.DaharaRuins,
   Lairs.NebelPlateau,
+  Lairs.AzothKingdom,
+  Lairs.MtTensei,
+  Lairs.FulaForest,
+  Lairs.GoPark,
   Lairs.AetherParadise,
   Lairs.RuinsOfConflict,
   Lairs.RuinsOfLife,

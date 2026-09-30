@@ -198,6 +198,7 @@ export default function registerNoibatSpecies(): void {
         Moves.HoneClaws,
         Moves.HyperBeam,
         Moves.ScaryFace,
+        Moves.LaserFocus,
       ],
     },
   });

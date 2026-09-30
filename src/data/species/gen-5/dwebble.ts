@@ -171,7 +171,13 @@ export default function registerDwebbleSpecies(): void {
         38: [Moves.XScissor],
         55: [Moves.RockWrecker],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HeavySlam, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.GigaImpact,
+        Moves.HeavySlam,
+        Moves.HyperBeam,
+        Moves.StompingTantrum,
+      ],
     },
   });
 }

@@ -1,3 +1,4 @@
+import { isUltraBeast } from '../../src/data/species/ultra-beasts';
 import { describe, expect, it } from 'vitest';
 import { MAX_IV, Stats, getIV, getOtherStat, setIV } from '../../src/data/constants/stats';
 import Biome from '../../src/data/ids/biome';
@@ -11,8 +12,6 @@ import ChunkSnapshot from '../../src/overworld/chunk-snapshot';
 import deriveEncounter, { type Encounter, EncounterType } from '../../src/overworld/encounter';
 import { EventPriority } from '../../src/core/event-emitter';
 import SafariSession, {
-  BEAST_BALL_ELSEWHERE,
-  BEAST_BALL_MODIFIER,
   CRITICAL_SHAKES,
   CRITICAL_SHARE,
   LEVEL_CATCH_FLOOR,
@@ -221,6 +220,14 @@ describe('safari session', () => {
     expect(beach.getBallModifier(Balls.DiveBall)).toBe(1);
   });
 
+  it('answers a Beast Ball by whether the species is an Ultra Beast', () => {
+    expect(isUltraBeast(Species.Nihilego)).toBe(true);
+    expect(isUltraBeast(Species.Tauros)).toBe(false);
+    expect(new SafariSession(makeEncounter(), rolls([])).getBallModifier(Balls.BeastBall)).toBe(
+      0.1,
+    );
+  });
+
   it("answers the Fast, Heavy and Moon Balls off the species' own numbers", () => {
     // Tauros is 110 base Speed; Caterpie is 45
     expect(new SafariSession(makeEncounter(), rolls([])).getBallModifier(Balls.FastBall)).toBe(4);
@@ -248,14 +255,6 @@ describe('safari session', () => {
       ).toBe(4);
     }
     expect(new SafariSession(makeEncounter(), rolls([])).getBallModifier(Balls.MoonBall)).toBe(1);
-
-    // The Beast Ball is made for the Ultra Beasts and poor on anything else
-    expect(
-      new SafariSession(makeEncounter(Species.Kartana), rolls([])).getBallModifier(Balls.BeastBall),
-    ).toBe(BEAST_BALL_MODIFIER);
-    expect(new SafariSession(makeEncounter(), rolls([])).getBallModifier(Balls.BeastBall)).toBe(
-      BEAST_BALL_ELSEWHERE,
-    );
   });
 
   it('gives the Lure Ball whatever a ripple brought up', () => {

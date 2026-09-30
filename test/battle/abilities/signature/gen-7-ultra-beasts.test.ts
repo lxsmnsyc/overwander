@@ -6,7 +6,8 @@ import { Stages } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
-import { Species, ULTRA_BEASTS } from '../../../../src/data/ids/species';
+import { Species } from '../../../../src/data/ids/species';
+import { ULTRA_BEASTS } from '../../../../src/data/species/ultra-beasts';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { dealDamage } from './helpers';
 

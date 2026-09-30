@@ -193,6 +193,7 @@ export default function registerHelioptileSpecies(): void {
         Moves.SunnyDay,
         Moves.ThunderPunch,
         Moves.WeatherBall,
+        Moves.BrutalSwing,
       ],
     },
   });

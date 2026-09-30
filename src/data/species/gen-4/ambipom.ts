@@ -114,6 +114,7 @@ export default function registerAmbipomSpecies(): void {
         Moves.WaterPulse,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.LaserFocus,
       ],
     },
   });

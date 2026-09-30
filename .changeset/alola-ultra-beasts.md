@@ -32,5 +32,4 @@ The Ultra Beasts come through the wormholes:
   - Naganadel: Corrosion, Poison Point or Infiltrator.
   - Stakataka: Sturdy, Solid Rock or Stamina.
   - Blacephalon: Magic Guard, Aftermath or Flash Fire.
-- The Beast Ball catches an Ultra Beast at 5x and anything else at 0.1x. Nothing sells it, and it is dug up in the scarce band.
 - All of them learn their moves by level, machine and tutor, as they do in Ultra Sun and Ultra Moon.

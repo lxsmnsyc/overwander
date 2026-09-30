@@ -1,5 +1,29 @@
 # overwander
 
+## 4.25.2
+
+### Patch Changes
+
+- 8d1ece8: - The catch sheet tells empty move, ability and item slots apart from locked ones. A locked slot shows a lock, and its tooltip says what opens it.
+  - Hidden abilities are drawn in violet and signature abilities in gold, on the catch sheet, the box card and the battle card.
+  - Moves show their details in a tooltip instead of a hover card everywhere, the battle card included.
+  - Opening a catch shows a loading sheet instead of blanking the page.
+  - The Safari name box reads caught mark, level, shiny and shadow marks, then the name.
+- fda1b26: - Kyogre no longer fills every water tile in a cave.
+  - A cave legend now appears only at its own rare odds.
+  - Caves now hold amphibious pokemon, which spawn on both the floor and the water: the Wooper, Psyduck, Seel, Slowpoke, Krabby and Tympole lines.
+  - Changes cave spawns: cave windows roll different spawns than before.
+- 209abe9: - Encore now locks its target instead of tying up its user.
+  - The target's current cast, or its next one if it is idle, is used 3 times in a row. It pays PP and cooldown once.
+  - A move that winds up or takes several steps is not locked, and the Encore is spent.
+  - Interrupting the target ends the repeats.
+  - The user of Encore is free as soon as it lands.
+  - Computer opponents aim Encore at an enemy casting a status move, or at a teammate.
+- 5badda4: - Flower Veil no longer stops a Grass-type teammate's own moves and items.
+  - Substitute, Rest and a Toxic or Flame Orb work beside a Flower Veil again. Substitute used to take its HP cost and put up nothing.
+  - Flower Veil now blocks only major statuses and drowsiness, and only when another pokemon causes them.
+- 65aa748: - Learning a move by levelling no longer fails on a move that no machine teaches.
+
 ## 4.25.1
 
 ### Patch Changes

@@ -144,6 +144,9 @@ export default function registerAudinoSpecies(): void {
         Moves.Confide,
         Moves.DazzlingGleam,
         Moves.PowerUpPunch,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
       egg: [
         Moves.Amnesia,

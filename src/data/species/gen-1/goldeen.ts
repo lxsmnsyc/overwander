@@ -51,6 +51,8 @@ const FAMILY_TEACHABLE = [
   Moves.Scald,
   Moves.DrillRun,
   Moves.Confide,
+  Moves.SmartStrike,
+  Moves.ThroatChop,
 ];
 
 const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.WaterVeil];

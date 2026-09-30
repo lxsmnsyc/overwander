@@ -72,6 +72,7 @@ const FAMILY_TEACHABLE = [
   Moves.VoltSwitch,
   Moves.WildCharge,
   Moves.Confide,
+  Moves.LaserFocus,
 ];
 
 export default function registerPikachuSpecies(): void {

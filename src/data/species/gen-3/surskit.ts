@@ -48,6 +48,7 @@ const FAMILY_TEACHABLE = [
   Moves.StruggleBug,
   Moves.Confide,
   Moves.Infestation,
+  Moves.Liquidation,
 ];
 
 export default function registerSurskitSpecies(): void {
@@ -108,6 +109,7 @@ export default function registerSurskitSpecies(): void {
         Moves.MudShot,
         Moves.HydroPump,
         Moves.FellStinger,
+        Moves.Lunge,
       ],
     },
   });

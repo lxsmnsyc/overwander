@@ -169,6 +169,8 @@ export default function registerGlameowSpecies(): void {
         Moves.HyperBeam,
         Moves.Roar,
         Moves.Rollout,
+        Moves.StompingTantrum,
+        Moves.ThroatChop,
       ],
     },
   });

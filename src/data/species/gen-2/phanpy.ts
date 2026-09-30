@@ -105,6 +105,7 @@ export default function registerPhanpySpecies(): void {
         Moves.IceShard,
         Moves.HeavySlam,
         Moves.PlayRough,
+        Moves.HighHorsepower,
       ],
     },
   });
@@ -167,6 +168,8 @@ export default function registerPhanpySpecies(): void {
         Moves.PoisonJab,
         Moves.RockPolish,
         Moves.StoneEdge,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
       ],
     },
   });

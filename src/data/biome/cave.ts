@@ -29,6 +29,8 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Larvitar, weight: 3 },
     { species: Species.Gible, weight: 3 },
     { species: Species.Roggenrola, weight: 24 },
+    // The amphibious ones stand on the floor and swim the cave's water
+    { species: Species.Tympole, weight: 8 },
   ],
   uncommon: [
     { species: Species.Ferroseed, weight: 16 },
@@ -46,6 +48,11 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Slugma, weight: 5 },
     { species: Species.Woobat, weight: 16 },
     { species: Species.Drilbur, weight: 12 },
+    { species: Species.Wooper, weight: 8 },
+    { species: Species.Psyduck, weight: 7 },
+    { species: Species.Seel, weight: 6 },
+    { species: Species.Slowpoke, weight: 6 },
+    { species: Species.Krabby, weight: 7 },
   ],
   rare: [
     { species: Species.Klang, weight: 8 },
@@ -58,6 +65,7 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Pupitar, weight: 3 },
     { species: Species.Gabite, weight: 3 },
     { species: Species.Boldore, weight: 12 },
+    { species: Species.Palpitoad, weight: 4 },
   ],
   scarce: [
     { species: Species.Ferrothorn, weight: 5 },
@@ -75,6 +83,11 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Probopass, weight: 4 },
     { species: Species.Swoobat, weight: 8 },
     { species: Species.Excadrill, weight: 7 },
+    { species: Species.Quagsire, weight: 5 },
+    { species: Species.Golduck, weight: 4 },
+    { species: Species.Dewgong, weight: 4 },
+    { species: Species.Slowbro, weight: 4 },
+    { species: Species.Kingler, weight: 4 },
   ],
   elusive: [
     { species: Species.Klinklang, weight: 4 },
@@ -98,6 +111,7 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Garchomp, weight: 2 },
     { species: Species.Tyranitar, weight: 2 },
     { species: Species.Gigalith, weight: 4 },
+    { species: Species.Seismitoad, weight: 3 },
   ],
   prized: [...UNOWN_SPAWNS],
   // The legendaries follow the biome overhead: see CAVE_LEGENDS below

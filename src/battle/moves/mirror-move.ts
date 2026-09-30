@@ -3,6 +3,7 @@ import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
+import { scoreAsCall } from '../ai/choose-move';
 
 const NOT_MIRRORED = new Set<Moves>([Moves.MirrorMove, Moves.Struggle, Moves.Attack, Moves.Sketch]);
 
@@ -36,6 +37,18 @@ export default function setupMirrorMove(battle: Battle): void {
     if (event.usable && event.move === Moves.MirrorMove) {
       event.usable =
         event.target.type === MoveTargetType.Unit && lastMove.get(event.target.unit) != null;
+    }
+  });
+
+  // Worth what it would throw back
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    const copied =
+      event.move === Moves.MirrorMove && event.target.type === MoveTargetType.Unit
+        ? lastMove.get(event.target.unit)
+        : undefined;
+
+    if (copied != null) {
+      scoreAsCall(battle, event, copied);
     }
   });
 

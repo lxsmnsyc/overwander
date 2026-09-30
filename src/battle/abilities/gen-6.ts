@@ -10,12 +10,12 @@ import {
   Moves,
 } from '../../data/ids/moves';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
-import { Statuses, Terrains, Weathers } from '../../data/ids/status';
+import { NON_VOLATILE_STATUSES, Statuses, Terrains, Weathers } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { MULTI_HIT_MOVES } from '../../data/moves/multi-hit';
 import { MergedLifecycle } from '../lifecycle';
 import type Battle from '../core';
-import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
 import { hasFreeItemSlot, stealableItem, unitTarget } from '../utils';
 import { HEALING_MOVES } from '../moves/recover';
@@ -33,6 +33,7 @@ import {
 const GRASS_PELT_SCALE = 1.5;
 
 /** The teammate holding the veil over this one, if one is standing */
+
 function veiledBy(unit: Unit, ability: Abilities): Unit | undefined {
   if (!unit.types.has(Types.Grass)) {
     return undefined;
@@ -45,6 +46,29 @@ function veiledBy(unit: Unit, ability: Abilities): Unit | undefined {
   }
 
   return undefined;
+}
+
+/** What Flower Veil keeps off a grass teammate */
+const FLOWER_VEILED = new Set<Statuses>([...NON_VOLATILE_STATUSES, Statuses.Drowsy]);
+
+/**
+ * The teammate whose Flower Veil turns this status away, if any. Only a
+ * major status or a Yawn from somebody else: a Substitute, a Rest or
+ * its own orb still lands
+ */
+function flowerVeiled(event: {
+  source: Unit;
+  status: Statuses;
+  cause: EffectCause;
+}): Unit | undefined {
+  if (
+    !FLOWER_VEILED.has(event.status) ||
+    !('unit' in event.cause) ||
+    event.cause.unit === event.source
+  ) {
+    return undefined;
+  }
+  return veiledBy(event.source, Abilities.FlowerVeil);
 }
 
 /**
@@ -206,12 +230,12 @@ const setupAbilities = [
     (battle) =>
       new MergedLifecycle([
         battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
-          if (!event.immune && veiledBy(event.source, Abilities.FlowerVeil) != null) {
+          if (!event.immune && flowerVeiled(event) != null) {
             event.immune = true;
           }
         }),
         battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
-          veiledBy(event.source, Abilities.FlowerVeil)?.triggerAbility(Abilities.FlowerVeil);
+          flowerVeiled(event)?.triggerAbility(Abilities.FlowerVeil);
         }),
         // A drop it puts on itself still lands, the way Clear Body's does
         battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {

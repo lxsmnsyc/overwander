@@ -10,7 +10,7 @@ import type Unit from '../unit';
  * The guards, and what each one puts on the user. Protect and Detect
  * turn a hit away; Endure takes it and refuses to fall
  */
-const GUARD_MOVES: { [key in Moves]?: Statuses } = {
+export const GUARD_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Protect]: Statuses.Protected,
   [Moves.Detect]: Statuses.Protected,
   [Moves.Endure]: Statuses.Enduring,

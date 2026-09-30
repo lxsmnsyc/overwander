@@ -37,14 +37,12 @@ import setupRoleScoring from './role-score';
 
 /**
  * Moves whose steps are the move itself rather than a wind-up before
- * it: a rampage strikes on each, a roll rolls, Stockpile banks a charge
- * and Encore plays a repeat
+ * it: a rampage strikes on each, a roll rolls and Stockpile banks a charge
  */
 const STEPS_ARE_THE_MOVE = new Set<Moves>([
   ...RAMPAGE_MOVES,
   ...ROLLING_MOVES,
   Moves.Stockpile,
-  Moves.Encore,
 ]);
 
 /** Extra for getting there first */

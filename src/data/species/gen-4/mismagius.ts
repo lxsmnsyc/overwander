@@ -107,6 +107,7 @@ export default function registerMismagiusSpecies(): void {
         Moves.WillOWisp,
         Moves.Confide,
         Moves.DazzlingGleam,
+        Moves.LaserFocus,
       ],
     },
   });

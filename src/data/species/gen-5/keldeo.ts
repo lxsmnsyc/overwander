@@ -99,6 +99,7 @@ const KELDEO: SpeciesData = {
       Moves.WorkUp,
       Moves.XScissor,
       Moves.Confide,
+      Moves.Liquidation,
     ],
   },
 };

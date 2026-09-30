@@ -69,6 +69,7 @@ const FAMILY_TEACHABLE = [
   Moves.WorkUp,
   Moves.Confide,
   Moves.PowerUpPunch,
+  Moves.BrutalSwing,
 ];
 
 export default function registerSentretSpecies(): void {

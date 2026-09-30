@@ -15,7 +15,7 @@ import type { SpawnRarityGroups } from '../data/biome';
 import {
   SPECIES_DAY_WEIGHT_BOOST,
   TRUE_SHADOW_WEIGHT,
-  getFeaturedFamily,
+  getFeaturedFamilies,
   getSeasonalCoat,
   getShoreForm,
   getWingPattern,
@@ -513,9 +513,11 @@ export default class ChunkSnapshot {
   }
 
   private crowd(pool: SpawnRarityGroups): SpawnRarityGroups {
-    const featured = getFeaturedFamily(this.timestamp);
-    const dayed =
-      featured == null ? pool : boostFamilyWeights(pool, featured, SPECIES_DAY_WEIGHT_BOOST);
+    const dayed = boostFamilyWeights(
+      pool,
+      getFeaturedFamilies(this.timestamp),
+      SPECIES_DAY_WEIGHT_BOOST,
+    );
 
     return boostTypeWeights(dayed, spawnFavoredTypes(this.weather), WEATHER_SPAWN_BOOST);
   }
@@ -951,7 +953,7 @@ export default class ChunkSnapshot {
           this.biomeAt(cell),
           time,
           () => rng.random(),
-          getFeaturedFamily(this.nestTimestamp),
+          getFeaturedFamilies(this.nestTimestamp),
         );
 
         if (species != null) {
@@ -1882,7 +1884,7 @@ export default class ChunkSnapshot {
       this.biomeAt(cell),
       getTimeOfDay(this.phenomenonTimestamp),
       () => rng.random(),
-      getFeaturedFamily(this.phenomenonTimestamp),
+      getFeaturedFamilies(this.phenomenonTimestamp),
       // Only a ripple is the water's; the rest are over dry ground
       phenomenon === Phenomenon.RipplingWater ? this.drawnSurface(cell) : SpawnSurface.Land,
     );

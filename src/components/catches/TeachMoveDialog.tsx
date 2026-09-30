@@ -124,9 +124,20 @@ function TeachBody(
    */
   const spent = (): string => props.cost ?? 'The machine';
 
-  /** What it is paid with: the caller's item, or the machine for the move */
-  const price = (): Items | null =>
-    props.price ?? (props.move == null ? null : getMachineItem(props.move));
+  /**
+   * What it is paid with: the caller's item, or the machine for the
+   * move. A caller teaching its own way pays its own way, and a
+   * level-up move has no machine to draw when it is learned for free
+   */
+  const price = (): Items | null => {
+    if (props.price != null) {
+      return props.price;
+    }
+    if (props.teach != null || props.move == null) {
+      return null;
+    }
+    return getMachineItem(props.move);
+  };
 
   const costOf = (): CounterCost | undefined => {
     const item = price();

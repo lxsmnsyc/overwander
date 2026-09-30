@@ -1,5 +1,6 @@
 import {
   For,
+  Index,
   type JSX,
   type Resource,
   Show,
@@ -14,16 +15,21 @@ import { Slots } from '../../data/constants/slots';
 import { isEgg } from '../../auth/egg';
 import teachMove from '../../auth/moves';
 import type { Moves } from '../../data/ids/moves';
-import { getMachineItem } from '../../data/ids/items';
+import { type Items, getMachineItem } from '../../data/ids/items';
 import { Species } from '../../data/ids/species';
 import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
 import { type LearnResult, describeLearnRefusal } from '../../auth/learn-refusal';
 
-import MovePicker, { MoveLine } from './MovePicker';
+import { MoveLine } from './MovePicker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
-import { Button, Dialog, DialogActions, List, Meta, Note, Status } from '../styled';
-import { SpriteAnim } from '../../data/ids/sprite-anims';
+import {
+  type CounterCost,
+  CounterStep,
+  CounterTerms,
+  HeadingPortrait,
+} from '../overworld/npc-dialog/terms';
+import { Button, Dialog, DialogActions, Meta, Status } from '../styled';
 import playEffect, { Effect } from '../app/sound';
 
 /**
@@ -52,6 +58,8 @@ export interface TeachMoveDialogProps {
    * machine is spent teaching it." Defaults to the machine
    */
   cost?: string;
+  /** The item it spends, drawn as a chip. Defaults to the move's machine */
+  price?: Items;
   /**
    * How the teaching is actually paid for and written. Defaults to
    * using the machine for the move out of the player's bag
@@ -70,6 +78,10 @@ export interface TeachMoveDialogProps {
  * draws, so it comes from there too
  */
 export { MoveLine };
+
+/** The known moves as slots, two to a row like the catch sheet's */
+const SLOTS = 'm-0 grid list-none grid-cols-1 gap-1.5 p-0 sm:grid-cols-2';
+const SLOT = 'flex items-center rounded-lg border-2 px-2 py-1 text-left text-sm';
 
 /**
  * The two dialogs, which is where the record is read.
@@ -115,6 +127,23 @@ function TeachBody(
    * What the teaching costs, as the dialog says it
    */
   const spent = (): string => props.cost ?? 'The machine';
+
+  /** What it is paid with: the caller's item, or the machine for the move */
+  const price = (): Items | null =>
+    props.price ?? (props.move == null ? null : getMachineItem(props.move));
+
+  const costOf = (): CounterCost | undefined => {
+    const item = price();
+
+    return item == null ? undefined : { item };
+  };
+
+  /** How many moves the record has room for */
+  const room = (): number => {
+    const loaded = record();
+
+    return loaded == null ? 0 : getCatchSlots(loaded, Slots.Move);
+  };
 
   const named = (): string => {
     const loaded = record();
@@ -170,21 +199,53 @@ function TeachBody(
       });
   };
 
-  /**
-   * What is being taught, drawn the size a dialog can hold
-   */
-  const portrait = (): JSX.Element => (
-    <Show when={record()} fallback={<Note>Reading the record…</Note>}>
+  /** The pokemon's face, on the nameplate */
+  const face = (): JSX.Element => (
+    <Show when={record()}>
       {(loaded) => (
-        <div class="flex justify-center">
+        <HeadingPortrait>
           <AnimatedSprite
             species={isEgg(loaded()) ? Species.Egg : loaded().species}
             shiny={!isEgg(loaded()) && isShiny(loaded())}
-            animation={SpriteAnim.Idle}
             direction="Down"
-            scale={4}
-            shadow
-            label={named()}
+            still
+            fill
+            label=""
+          />
+        </HeadingPortrait>
+      )}
+    </Show>
+  );
+
+  /** How full its list is, and what the lesson spends */
+  const terms = (): JSX.Element => (
+    <CounterTerms
+      cost={costOf()}
+      rows={[{ label: named(), value: `knows ${known().length} of ${room()}` }]}
+    />
+  );
+
+  /** The move on offer, set apart from the ones it already knows */
+  const offered = (): JSX.Element => (
+    <Show when={props.move} keyed>
+      {(move) => (
+        <div class="flex flex-col gap-2 rounded-2xl border-2 border-tide bg-tide-soft px-3 py-2.5">
+          <div class="flex items-center gap-2">
+            <span
+              class="shrink-0 rounded-full bg-tide px-2 py-0.5 text-[10px] font-extrabold
+                tracking-wide text-white uppercase"
+            >
+              New
+            </span>
+            <MoveLine move={move} />
+          </div>
+          <CounterTerms
+            rows={[
+              ...(getMoveData(move).power == null
+                ? []
+                : [{ label: 'Power', value: String(getMoveData(move).power) }]),
+              { label: 'PP', value: String(getMoveData(move).pp) },
+            ]}
           />
         </div>
       )}
@@ -194,36 +255,48 @@ function TeachBody(
   return (
     <>
       {/* A full list: the machine costs a move, so the question is
-          which one. Both dialogs are siblings — only one is ever open
-          — rather than one over the other */}
+          which one. Both dialogs are siblings, and only one is ever open */}
       <Dialog
         isOpen={open() && full()}
         onClose={close}
-        // Answered by its buttons alone. A level hands a move over
-        // once, and the overlay was close enough to the panel that a
-        // press meant to land on it threw the offer away
+        // Answered by its buttons alone: a level hands a move over once
         insistent
+        width="wide"
+        terse
+        lead={face()}
         title={`Teach ${taught()}?`}
-        description={`${named()} already knows ${known().length}. Choose the one it forgets — only
-          a level-up move ever comes back, and only from the Move Reminder.`}
+        description={`${named()} already knows ${known().length}. Choose the one it forgets.`}
       >
-        {portrait()}
+        {terms()}
+        {offered()}
 
-        <Show when={props.move} keyed>
-          {(move) => (
-            <div class="rounded-lg border border-line-soft bg-parchment px-3 py-2">
-              <MoveLine move={move} />
-            </div>
-          )}
-        </Show>
-
-        <MovePicker
-          moves={known()}
-          value={forgetting()}
-          onPick={(at) => {
-            setForgetting(at);
-          }}
-        />
+        <CounterStep>Choose one to forget</CounterStep>
+        <ul class={SLOTS}>
+          <Index each={known()}>
+            {(move, at) => (
+              <li>
+                <button
+                  type="button"
+                  aria-pressed={forgetting() === at}
+                  class={`${SLOT} w-full cursor-pointer ${
+                    forgetting() === at
+                      ? 'border-ember bg-ember-soft text-ember-dark [&_.truncate]:line-through'
+                      : 'border-line bg-paper hover:border-tide'
+                  }`}
+                  onClick={() => {
+                    setForgetting(at);
+                  }}
+                >
+                  <MoveLine move={move()} />
+                </button>
+              </li>
+            )}
+          </Index>
+        </ul>
+        <Meta>
+          {getMoveData(known()[forgetting()] ?? 0).name} → {taught()}. Only a level-up move comes
+          back, and only from the Move Reminder.
+        </Meta>
 
         <Status message={status()} />
 
@@ -237,37 +310,35 @@ function TeachBody(
         </DialogActions>
       </Dialog>
 
-      {/* Room for another: nothing is given up, so there is nothing to
-          choose between — only whether to spend the machine */}
+      {/* Room for another: nothing is given up, so the only question is
+          whether to spend what it costs */}
       <Dialog
         isOpen={open() && !full()}
         onClose={close}
         insistent
+        width="wide"
+        terse
+        lead={face()}
         title={`Teach ${taught()}?`}
         description={`${named()} has room for it. ${spent()} is spent teaching it.`}
       >
-        {portrait()}
+        {terms()}
+        {offered()}
 
-        <Show when={props.move} keyed>
-          {(move) => (
-            <div class="rounded-lg border border-line-soft bg-parchment px-3 py-2">
-              <MoveLine move={move} />
-            </div>
-          )}
-        </Show>
-
-        <Show when={known().length} fallback={<Note>It knows nothing yet.</Note>}>
-          <Meta>It already knows:</Meta>
-          <List>
-            <For each={known()}>
-              {(move) => (
-                <li class="rounded-xl border-2 border-line bg-paper px-3 py-2 text-sm shadow-pop-sm">
-                  <MoveLine move={move} />
-                </li>
-              )}
-            </For>
-          </List>
-        </Show>
+        <CounterStep>Its moves</CounterStep>
+        <ul class={SLOTS}>
+          <For each={known()}>
+            {(move) => (
+              <li class={`${SLOT} border-line bg-paper`}>
+                <MoveLine move={move} />
+              </li>
+            )}
+          </For>
+          {/* Where the new one will go */}
+          <li class={`${SLOT} border-dashed border-leaf bg-leaf-soft font-bold text-leaf-dark`}>
+            + {taught()}
+          </li>
+        </ul>
 
         <Status message={status()} />
 

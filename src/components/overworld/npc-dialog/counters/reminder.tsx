@@ -78,6 +78,7 @@ export default function Reminder(props: CounterProps): JSX.Element {
                 catchId: id,
                 move,
                 cost: 'The Heart Scale',
+                price: REMINDER_FEE,
                 teach: remind,
                 onTaught: remembered,
               });

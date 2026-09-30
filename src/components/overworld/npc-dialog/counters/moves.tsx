@@ -17,7 +17,6 @@ import { isGuarded } from '../../../../auth/caught-record';
 import {
   DialogSection,
   LIST_PAGE,
-  List,
   ListRow,
   Meta,
   Note,
@@ -155,11 +154,11 @@ function MoveCounter(
           </Show>
           {/* Name, type and category at a glance, as the catch sheet
               draws them; what the move does is on the card over it */}
-          <List>
+          <ul class="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2">
             <For
               each={page.shown()}
               fallback={
-                <li>
+                <li class="col-span-full">
                   <Note>No move matches that.</Note>
                 </li>
               }
@@ -192,7 +191,7 @@ function MoveCounter(
                 );
               }}
             </For>
-          </List>
+          </ul>
           {page.controls()}
         </>
       </Show>

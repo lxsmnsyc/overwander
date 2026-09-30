@@ -69,6 +69,7 @@ export default function Tutor(props: CounterProps): JSX.Element {
                 catchId: id,
                 move,
                 cost: 'The Heart Scale',
+                price: TUTOR_FEE,
                 teach: tutor,
                 onTaught: tutored,
               });

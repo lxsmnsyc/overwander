@@ -105,6 +105,7 @@ export default function registerChimechoSpecies(): void {
         Moves.EchoedVoice,
         Moves.Confide,
         Moves.DazzlingGleam,
+        Moves.LaserFocus,
       ],
     },
   });

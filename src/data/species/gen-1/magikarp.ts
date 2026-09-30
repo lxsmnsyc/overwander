@@ -191,6 +191,7 @@ export default function registerMagikarpSpecies(): void {
         Moves.Bulldoze,
         Moves.DragonTail,
         Moves.Confide,
+        Moves.BrutalSwing,
       ],
     },
   });

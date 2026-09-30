@@ -54,6 +54,13 @@ export const ONE_SHOTS: Map<Items, [name: string, description: string]> = new Ma
     Items.AdrenalineOrb,
     ['Adrenaline Orb', '+1 Speed when its holder is stared down by an Intimidate.'],
   ],
+  [Items.ElectricSeed, ['Electric Seed', '+1 Defense once Electric Terrain covers its holder.']],
+  [Items.GrassySeed, ['Grassy Seed', '+1 Defense once Grassy Terrain covers its holder.']],
+  [Items.MistySeed, ['Misty Seed', '+1 Special Defense once Misty Terrain covers its holder.']],
+  [
+    Items.PsychicSeed,
+    ['Psychic Seed', '+1 Special Defense once Psychic Terrain covers its holder.'],
+  ],
   [
     Items.RedCard,
     [

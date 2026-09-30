@@ -144,6 +144,7 @@ export default function registerTowerDuoSpecies(): void {
         Moves.Psyshock,
         Moves.Telekinesis,
         Moves.DragonTail,
+        Moves.LaserFocus,
       ],
     },
   });
@@ -215,6 +216,7 @@ export default function registerTowerDuoSpecies(): void {
         Moves.ZenHeadbutt,
         Moves.FlameCharge,
         Moves.Incinerate,
+        Moves.LaserFocus,
       ],
     },
   });

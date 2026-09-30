@@ -91,6 +91,7 @@ export default function registerKingdraSpecies(): void {
         Moves.Scald,
         Moves.Quash,
         Moves.Confide,
+        Moves.LaserFocus,
       ],
     },
   });

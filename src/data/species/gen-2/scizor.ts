@@ -100,6 +100,8 @@ export default function registerScizorSpecies(): void {
         Moves.Acrobatics,
         Moves.StruggleBug,
         Moves.Confide,
+        Moves.BrutalSwing,
+        Moves.LaserFocus,
       ],
     },
   });

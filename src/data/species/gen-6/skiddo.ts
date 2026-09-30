@@ -162,6 +162,7 @@ export default function registerSkiddoSpecies(): void {
         Moves.GigaImpact,
         Moves.HyperBeam,
         Moves.Superpower,
+        Moves.StompingTantrum,
       ],
     },
   });

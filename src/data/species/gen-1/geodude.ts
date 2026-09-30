@@ -170,7 +170,7 @@ export default function registerGeodudeSpecies(): void {
         43: [Moves.Explosion],
         49: [Moves.StoneEdge],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.StompingTantrum],
     },
   });
 
@@ -226,6 +226,7 @@ export default function registerGeodudeSpecies(): void {
         Moves.FocusBlast,
         Moves.GigaImpact,
         Moves.IronHead,
+        Moves.StompingTantrum,
       ],
     },
   });

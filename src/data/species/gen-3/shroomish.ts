@@ -163,6 +163,7 @@ export default function registerShroomishSpecies(): void {
         Moves.Retaliate,
         Moves.WorkUp,
         Moves.PowerUpPunch,
+        Moves.LaserFocus,
       ],
     },
   });

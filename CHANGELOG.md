@@ -1,5 +1,20 @@
 # overwander
 
+## 4.25.1
+
+### Patch Changes
+
+- fdbe113: - A pokemon's card in battle lists every move it knows, not only the first four.
+  - The status squares on that card show their name in a tooltip.
+- 3ba0b19: - A hover card always waits a moment before it opens, even when the pointer comes straight from another one.
+  - The card that was open goes away as soon as the pointer rests on another square.
+- 52512ec: - A party is freed as soon as its fight ends.
+  - Pokemon that fainted in a raid can be healed by Nurse Joy or revived right away, instead of waiting 10 minutes.
+- bf84d4a: - Form a team shows the party in a row of six above the box, with the count on the nameplate and Join in the dock.
+  - Teach move shows the pokemon on the nameplate, the new move as a card, and the known moves two to a row. The move to forget is struck through.
+  - Use item shows the pokemon it goes on, with its health and statuses. A rare item's second press is in the dock.
+  - The Move Tutor and Move Reminder list moves two to a row in a wider window.
+
 ## 4.25.0
 
 ### Minor Changes

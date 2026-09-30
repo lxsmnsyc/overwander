@@ -142,6 +142,7 @@ const SAWSBUCK_TEACHABLE = [
   Moves.HyperBeam,
   Moves.RockSmash,
   Moves.SwordsDance,
+  Moves.StompingTantrum,
 ];
 
 const DEERLING_BIOMES = [Biome.Grassland, Biome.TemperateForest];

@@ -245,6 +245,7 @@ export default function registerRaltsSpecies(): void {
         Moves.EnergyBall,
         Moves.FocusBlast,
         Moves.GigaImpact,
+        Moves.LaserFocus,
       ],
     },
   });

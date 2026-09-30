@@ -172,6 +172,8 @@ export default function registerZigzagoonSpecies(): void {
         Moves.Strength,
         Moves.GigaImpact,
         Moves.ShadowClaw,
+        Moves.StompingTantrum,
+        Moves.ThroatChop,
       ],
     },
   });

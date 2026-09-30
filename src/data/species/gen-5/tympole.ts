@@ -253,6 +253,7 @@ export default function registerTympoleSpecies(): void {
         Moves.Strength,
         Moves.Venoshock,
         Moves.PowerUpPunch,
+        Moves.StompingTantrum,
       ],
     },
   });

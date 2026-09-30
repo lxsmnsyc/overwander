@@ -28,6 +28,14 @@ registries in `src/data`.
   rest into the second. Nothing here needs a third.
 - **Backup pick** is who to field instead when the matchup is bad. It keeps the role,
   not the species.
+- **Protect or Substitute** is decided per unit rather than by habit. Substitute costs
+  1/4 of the user's HP and the decoy holds 1/4 of its HP, but **overkill is discarded**
+  ([`substituted.ts`](src/battle/status/substituted.ts)), so it eats one hit of any
+  size, and it blocks the other side's status and stat drops while it stands. Protect
+  is free and turns away everything for 2 seconds, but it cannot be cast twice in a row
+  and both moves come round only every 12 to 16 seconds. So: **Substitute on anything
+  the team heals, Protect on anything it does not, and Protect against sound moves and
+  Infiltrator**, which walk straight through a decoy.
 - **Each team ends with "Collect this before you build the team"**: the machines to
   buy and what they cost, the moves that have to be learned before the pokemon
   evolves, the moves only the Move Tutor teaches, and the held items with how many
@@ -400,10 +408,10 @@ A boss has 60x HP, doubled stats, and its single-target moves hit your whole sid
 
 | Pokemon | Abilities (4) | Moves, priority four | Moves 5 to 8 | Items, priority first |
 | --- | --- | --- | --- | --- |
-| Chandelure | Hexlight, Infiltrator, Flash Fire, Flame Body | Will-O-Wisp, Curse, Hex, Fire Blast | Overheat, Shadow Ball, Protect, Confuse Ray | Wide Lens, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Bright Powder, Zoom Lens |
-| Breloom | Mycelium, Poison Heal, Technician, Quick Feet | Leech Seed, Drain Punch, Facade, Mach Punch | Seed Bomb, Swords Dance, Protect, Substitute | Toxic Orb, Big Root, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Protective Pads |
+| Chandelure | Hexlight, Infiltrator, Flash Fire, Flame Body | Will-O-Wisp, Curse, Hex, Fire Blast | Overheat, Shadow Ball, Substitute, Confuse Ray | Wide Lens, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Bright Powder, Zoom Lens |
+| Breloom | Mycelium, Poison Heal, Technician, Quick Feet | Leech Seed, Drain Punch, Facade, Mach Punch | Seed Bomb, Swords Dance, Substitute, Sludge Bomb | Toxic Orb, Big Root, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Protective Pads |
 | Magcargo | Magma Trail, Flame Body, Solid Rock, Magma Armor | Lava Plume, Fire Blast, Protect, Toxic | Earth Power, Rock Slide, Yawn, Rest | Leftovers, Rocky Helmet, Shell Bell, Wide Lens, Wise Glasses, Bright Powder, Focus Band, Light Clay |
-| Metagross | Hive Mind, Steelworker, Clear Body, Levitate | Meteor Mash, Bullet Punch, Zen Headbutt, Ice Punch | Iron Head, Hammer Arm, Rock Slide, Protect | Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens, Protective Pads, Focus Band |
+| Metagross | Hive Mind, Steelworker, Clear Body, Levitate | Meteor Mash, Bullet Punch, Zen Headbutt, Ice Punch | Iron Head, Hammer Arm, Rock Slide, Substitute | Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens, Protective Pads, Focus Band |
 | Clefable | Wishing Well, Magic Guard, Unaware, Friend Guard | Reflect, Light Screen, Soft-Boiled, Toxic | Moonblast, Charm, Cosmic Power, Protect | Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
 | Florges | Hothouse, Flower Veil, Unaware, Symbiosis | Wish, Heal Bell, Aromatherapy, Moonblast | Light Screen, Safeguard, Helping Hand, Protect | Leftovers, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
 
@@ -456,11 +464,11 @@ pokemon wanting Protect need two machines.
 
 | Price each | Moves |
 | --- | --- |
-| 2,000 | Heal Bell, Helping Hand, Light Screen, Protect x6, Reflect, Rest, Safeguard, Soft-Boiled, Substitute, Swords Dance, Toxic x2 |
+| 2,000 | Heal Bell, Helping Hand, Light Screen, Protect x3, Reflect, Rest, Safeguard, Soft-Boiled, Substitute x3, Swords Dance, Toxic x2 |
 | 5,000 | Drain Punch, Facade, Ice Punch, Iron Head, Rock Slide |
-| 12,000 | Fire Blast x2 |
+| 12,000 | Fire Blast x2, Sludge Bomb |
 
-Machines for this team come to **83,000** in total.
+Machines for this team come to **93,000** in total.
 
 **Learn these before evolving**, since they sit on a pre-evolution's level-up list. If you miss one, the Move Reminder will put it back for a Heart Scale:
 
@@ -509,7 +517,7 @@ Machines for this team come to **83,000** in total.
 | Toxic Orb | 1 | 6,000 |
 | Zoom Lens | 1 | 5,000 |
 
-Items for this team come to **196,000**, so the whole team costs about **279,000** plus what you find.
+Items for this team come to **196,000**, so the whole team costs about **289,000** plus what you find.
 
 **Not stocked by the market, so these have to be found**: Leftovers x6, Big Root x1.
 
@@ -532,10 +540,10 @@ The same five clocks, with a sun core, and deliberately not built entirely out o
 
 | Pokemon | Abilities (4) | Moves, priority four | Moves 5 to 8 | Items, priority first |
 | --- | --- | --- | --- | --- |
-| Chandelure | Hexlight, Infiltrator, Flash Fire, Flame Body | Will-O-Wisp, Curse, Hex, Fire Blast | Overheat, Shadow Ball, Protect, Confuse Ray | Wide Lens, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Bright Powder, Zoom Lens |
-| Volcarona | Ember Halo, Drought, Magic Guard, Flame Body | Quiver Dance, Fiery Dance, Bug Buzz, Roost | Heat Wave, Flamethrower, Giga Drain, Protect | Leftovers, Expert Belt, Wise Glasses, Shell Bell, Focus Sash, Bright Powder, Wide Lens, Zoom Lens |
-| Metagross | Hive Mind, Steelworker, Clear Body, Levitate | Meteor Mash, Bullet Punch, Zen Headbutt, Ice Punch | Iron Head, Hammer Arm, Rock Slide, Protect | Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens, Protective Pads, Focus Band |
-| Breloom | Mycelium, Poison Heal, Technician, Quick Feet | Leech Seed, Drain Punch, Facade, Mach Punch | Seed Bomb, Swords Dance, Protect, Substitute | Toxic Orb, Big Root, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Protective Pads |
+| Chandelure | Hexlight, Infiltrator, Flash Fire, Flame Body | Will-O-Wisp, Curse, Hex, Fire Blast | Overheat, Shadow Ball, Substitute, Confuse Ray | Wide Lens, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Bright Powder, Zoom Lens |
+| Volcarona | Ember Halo, Drought, Magic Guard, Flame Body | Quiver Dance, Fiery Dance, Bug Buzz, Roost | Heat Wave, Flamethrower, Giga Drain, Substitute | Leftovers, Expert Belt, Wise Glasses, Shell Bell, Focus Sash, Bright Powder, Wide Lens, Zoom Lens |
+| Metagross | Hive Mind, Steelworker, Clear Body, Levitate | Meteor Mash, Bullet Punch, Zen Headbutt, Ice Punch | Iron Head, Hammer Arm, Rock Slide, Substitute | Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens, Protective Pads, Focus Band |
+| Breloom | Mycelium, Poison Heal, Technician, Quick Feet | Leech Seed, Drain Punch, Facade, Mach Punch | Seed Bomb, Swords Dance, Substitute, Sludge Bomb | Toxic Orb, Big Root, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Protective Pads |
 | Latias | Eon Shield, Levitate, Healer, Multiscale | Wish, Heal Pulse, Reflect, Light Screen | Recover, Helping Hand, Dragon Pulse, Protect | Soul Dew, Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Sash, Lax Incense, Wide Lens |
 | Clefable | Wishing Well, Magic Guard, Unaware, Friend Guard | Toxic, Reflect, Light Screen, Soft-Boiled | Charm, Moonblast, Cosmic Power, Protect | Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
 
@@ -593,11 +601,11 @@ pokemon wanting Protect need two machines.
 
 | Price each | Moves |
 | --- | --- |
-| 2,000 | Light Screen, Protect x6, Reflect x2, Roost, Soft-Boiled, Substitute, Swords Dance, Toxic |
+| 2,000 | Light Screen, Protect x2, Reflect x2, Roost, Soft-Boiled, Substitute x4, Swords Dance, Toxic |
 | 5,000 | Drain Punch, Facade, Giga Drain, Ice Punch, Iron Head, Rock Slide |
-| 12,000 | Fire Blast, Flamethrower |
+| 12,000 | Fire Blast, Flamethrower, Sludge Bomb |
 
-Machines for this team come to **82,000** in total.
+Machines for this team come to **92,000** in total.
 
 **Learn these before evolving**, since they sit on a pre-evolution's level-up list. If you miss one, the Move Reminder will put it back for a Heart Scale:
 
@@ -644,6 +652,6 @@ Machines for this team come to **82,000** in total.
 | Scope Lens | 1 | 5,000 |
 | Toxic Orb | 1 | 6,000 |
 
-Items for this team come to **189,000**, so the whole team costs about **271,000** plus what you find.
+Items for this team come to **189,000**, so the whole team costs about **281,000** plus what you find.
 
 **Not stocked by the market, so these have to be found**: Leftovers x6, Big Root x1, Soul Dew x1.

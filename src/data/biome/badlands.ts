@@ -69,6 +69,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Carbink, weight: 6 },
         { species: Species.Klefki, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Durant, weight: 6 },
@@ -94,6 +95,8 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },
@@ -169,6 +172,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Excadrill, weight: 8 },
       ],
       elusive: [
+        { species: Species.Carbink, weight: 6 },
         { species: Species.Klefki, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Durant, weight: 6 },
@@ -194,6 +198,8 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },
@@ -257,6 +263,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Carbink, weight: 6 },
         { species: Species.Aegislash, weight: 5 },
         { species: Species.Heatmor, weight: 6 },
         { species: Species.Hydreigon, weight: 2 },
@@ -272,6 +279,8 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },
@@ -340,6 +349,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Carbink, weight: 6 },
         { species: Species.Aegislash, weight: 5 },
         { species: Species.Heatmor, weight: 6 },
         { species: Species.Hydreigon, weight: 2 },
@@ -356,6 +366,8 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Regirock, weight: 10 },
         { species: Species.Registeel, weight: 10 },

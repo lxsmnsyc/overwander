@@ -81,6 +81,8 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     // The ones that never evolve are the reason to be down here at
     // all: none of them stands anywhere else in the world
     { species: Species.Druddigon, weight: 5 },
+    { species: Species.Dedenne, weight: 10 },
+    { species: Species.Carbink, weight: 8 },
     { species: Species.Dunsparce, weight: 10 },
     { species: Species.Wobbuffet, weight: 8 },
     { species: Species.Sableye, weight: 7 },

@@ -92,6 +92,13 @@ export default function registerEeveeSpecies(): void {
         method: EvolutionMethod.Friendship | EvolutionMethod.TimeOfDay,
         time: TimeOfDay.Evening | TimeOfDay.Night,
       },
+      {
+        // The mainline asks for any Fairy move; Baby-Doll Eyes is the
+        // one an Eevee learns by itself, so it stands for the lot
+        species: Species.Sylveon,
+        method: EvolutionMethod.Friendship | EvolutionMethod.KnownMove,
+        move: Moves.BabyDollEyes,
+      },
     ],
     name: 'Eevee',
     category: 'Evolution Pokemon',

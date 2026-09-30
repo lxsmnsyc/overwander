@@ -227,6 +227,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     // on a pokemon and spent. Thinner, because a Rotom wants more
     // than one of them and nobody sells any
     { item: Items.RotomCatalog, weight: 6 },
+    // Beside it for the same reason, and as thin: a Zygarde goes both
+    // ways between its shapes, so one cube is never enough either
+    { item: Items.ZygardeCube, weight: 6 },
     // What a trade or a held evolution asks for, on the stones' terms
     // but thinner: each is wanted by one line rather than several
     { item: Items.KingsRock, weight: 3 },

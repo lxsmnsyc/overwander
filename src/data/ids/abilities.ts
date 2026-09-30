@@ -956,6 +956,24 @@ const enum Abilities {
   Hollowing = 200350,
   // Bergmite
   Deadweight = 200351,
+  // Goomy
+  Seepage = 200352,
+  // Noibat
+  Echolocation = 200353,
+  // Pancham
+  Begrudge = 200354,
+  // Swirlix
+  SugarRush = 200355,
+  /** Swirlix's counterpart, reserved until Aromatisse is drawn */
+  CalmingScent = 200356,
+  // Dedenne
+  QuickWhiskers = 200357,
+  // Carbink
+  CrystalGrowth = 200358,
+  // The Kalos trio: one axis, three ways
+  Quickening = 200359,
+  Withering = 200360,
+  EvenKeel = 200361,
 }
 
 export default Abilities;

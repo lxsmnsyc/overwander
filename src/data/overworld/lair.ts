@@ -188,6 +188,17 @@ const enum Lairs {
    * so no biome hosts it
    */
   P2Laboratory = 45,
+  /**
+   * The wood the stag slept through as a tree. Kalos catches its
+   * mascots in a laboratory under a town, which is nowhere a world
+   * made of country can put them, so each is at home where its own
+   * story happens instead
+   */
+  WindingWoods = 46,
+  /** The frozen cave the bird of death folds itself away in */
+  FrostCavern = 47,
+  /** The cave the cells gather in, which is where Kalos finds it */
+  TerminusCave = 48,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -237,6 +248,9 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.LibertyGarden]: 'Liberty Garden',
   [Lairs.AbyssalRuins]: 'Abyssal Ruins',
   [Lairs.P2Laboratory]: 'P2 Laboratory',
+  [Lairs.WindingWoods]: 'Winding Woods',
+  [Lairs.FrostCavern]: 'Frost Cavern',
+  [Lairs.TerminusCave]: 'Terminus Cave',
 };
 
 /**
@@ -293,6 +307,9 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.LibertyGarden]: [Species.Victini],
   [Lairs.AbyssalRuins]: [Species.Meloetta],
   [Lairs.P2Laboratory]: [Species.Genesect],
+  [Lairs.WindingWoods]: [Species.Xerneas],
+  [Lairs.FrostCavern]: [Species.Yveltal],
+  [Lairs.TerminusCave]: [Species.Zygarde, Species.ZygardeTenPercent],
 };
 
 /**
@@ -345,6 +362,9 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.LibertyGarden,
   Lairs.AbyssalRuins,
   Lairs.P2Laboratory,
+  Lairs.WindingWoods,
+  Lairs.FrostCavern,
+  Lairs.TerminusCave,
 ];
 
 /**
@@ -407,8 +427,13 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   [Biome.Glacier]: [Lairs.SnowpointTemple, Lairs.GiantChasm],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor, Lairs.AbundantShrine],
   [Biome.Bog]: [Lairs.LakeValor, Lairs.TurnbackCave],
-  [Biome.TemperateForest]: [Lairs.LakeVerity, Lairs.RuminationField],
-  [Biome.Woodland]: [Lairs.BurnedTower, Lairs.LakeVerity, Lairs.RuminationField],
+  [Biome.TemperateForest]: [Lairs.LakeVerity, Lairs.RuminationField, Lairs.WindingWoods],
+  [Biome.Woodland]: [
+    Lairs.BurnedTower,
+    Lairs.LakeVerity,
+    Lairs.RuminationField,
+    Lairs.WindingWoods,
+  ],
   [Biome.Taiga]: [Lairs.LakeAcuity, Lairs.IcebergRuins, Lairs.DragonspiralTower],
   [Biome.Tundra]: [
     Lairs.LakeAcuity,
@@ -416,6 +441,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.IcebergRuins,
     Lairs.DragonspiralTower,
     Lairs.GiantChasm,
+    Lairs.FrostCavern,
   ],
   [Biome.Steppe]: [Lairs.PowerPlant],
   [Biome.Desert]: [Lairs.DesertRuins, Lairs.RockPeakRuins, Lairs.RelicCastle],
@@ -425,6 +451,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.TurnbackCave,
     Lairs.RockPeakRuins,
     Lairs.TrialChamber,
+    Lairs.TerminusCave,
   ],
   [Biome.Mountain]: [
     Lairs.MtEmber,
@@ -433,6 +460,8 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.AncientTomb,
     Lairs.GuidanceChamber,
     Lairs.TrialChamber,
+    Lairs.FrostCavern,
+    Lairs.TerminusCave,
   ],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave, Lairs.SpearPillar],
   [Biome.Volcano]: [Lairs.MtEmber, Lairs.TerraCave, Lairs.StarkMountain],

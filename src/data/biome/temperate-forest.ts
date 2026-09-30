@@ -108,6 +108,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Xerneas, weight: 10 },
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],
@@ -217,6 +218,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Xerneas, weight: 10 },
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],
@@ -300,6 +302,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Xerneas, weight: 10 },
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],
@@ -385,6 +388,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Xerneas, weight: 10 },
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],

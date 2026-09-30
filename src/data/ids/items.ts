@@ -954,7 +954,12 @@ export const enum Items {
   JawFossil = 444,
   SailFossil = 445,
 
-  // 446 to 563 are held for the Kalos and Alola items the gen 7
+  /**
+   * The box the cells are gathered in, spent putting a tenth of a
+   * Zygarde back up to half of one
+   */
+  ZygardeCube = 446,
+  // 447 to 563 are held for the Kalos and Alola items the gen 7
   // branches number
 
   /** The Max vitamins, which fill one stat's effort at once */

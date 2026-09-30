@@ -1,16 +1,24 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { Stats } from '../../data/constants/stats';
+import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { DamageFlags, MoveAttackFlags, MoveCategories, Moves } from '../../data/ids/moves';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
-import { Terrains } from '../../data/ids/status';
+import { Statuses, Terrains } from '../../data/ids/status';
 import { MergedLifecycle } from '../lifecycle';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
-import { hasFreeItemSlot, stealableItem } from '../utils';
-import { createAbility, createSurgeAbility, createTypeShiftAbility } from './__create';
+import { hasFreeItemSlot, stealableItem, unitTarget } from '../utils';
+import { HEALING_MOVES } from '../moves/recover';
+import { fieldHolder } from './signature/__create';
+import {
+  createAbility,
+  createContactHazard,
+  createSurgeAbility,
+  createTypeShiftAbility,
+  createWaterAbsorbAbility,
+} from './__create';
 
 /** What a pelt of grass is worth while there is grass to stand on */
 const GRASS_PELT_SCALE = 1.5;
@@ -51,6 +59,32 @@ const MEGA_LAUNCHER_SCALE = 1.5;
 const TYPE_SHIFT_SCALE = 1.2;
 
 /**
+ * What an aura is worth to the type it carries, and what it is worth
+ * once something on the field is breaking auras rather than casting
+ * them
+ * https://bulbapedia.bulbagarden.net/wiki/Fairy_Aura_(Ability)
+ */
+const AURA_SCALE = 4 / 3;
+const BROKEN_AURA_SCALE = 3 / 4;
+
+/** How much of itself a Zygarde has to lose before the rest gathers */
+const POWER_CONSTRUCT_THRESHOLD = 1 / 2;
+
+/** What Triage moves a heal ahead by, which here is cast time */
+const TRIAGE_PRIORITY = 3;
+
+/** The teammate keeping this one awake, if one is standing */
+function sweetenedBy(unit: Unit): Unit | undefined {
+  for (const mate of unit.team.units) {
+    if (mate.alive && mate.hasAbility(Abilities.SweetVeil)) {
+      return mate;
+    }
+  }
+
+  return undefined;
+}
+
+/**
  * What a shell thick enough to stop a shot turns away: everything
  * thrown rather than swung, which the mainline calls ballistic
  * https://bulbapedia.bulbagarden.net/wiki/Bulletproof_(Ability)
@@ -79,6 +113,24 @@ const BALLISTIC_MOVES = new Set<Moves>([
   Moves.WeatherBall,
   Moves.ZapCannon,
 ]);
+
+/**
+ * One aura over the whole field, its own side included. A break on
+ * the field turns every aura round rather than switching it off,
+ * which is what the mainline does with it
+ */
+function createAuraAbility(ability: Abilities, type: Types): (battle: Battle) => void {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      if (event.parent.type !== type || fieldHolder(battle, ability) == null) {
+        return;
+      }
+
+      event.value *=
+        fieldHolder(battle, Abilities.AuraBreak) == null ? AURA_SCALE : BROKEN_AURA_SCALE;
+    }),
+  );
+}
 
 /** Kalos's abilities, which are the same list its starters need */
 const setupAbilities = [
@@ -248,8 +300,109 @@ const setupAbilities = [
   // fifth again on top of landing as Ice
   createTypeShiftAbility(Abilities.Refrigerate, Types.Normal, Types.Ice, TYPE_SHIFT_SCALE),
 
-  // Eternal Floette: the same shift, into the light of its flower
+  // Swirlix: the cream is a bed, so nothing on its team goes to sleep
+  createAbility(
+    Abilities.SweetVeil,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            event.status === Statuses.Sleeping &&
+            sweetenedBy(event.source) != null
+          ) {
+            event.immune = true;
+          }
+        }),
+        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+          if (event.status === Statuses.Sleeping) {
+            sweetenedBy(event.source)?.triggerAbility(Abilities.SweetVeil);
+          }
+        }),
+      ]),
+  ),
+
+  // Sylveon: what it throws goes out as ribbon rather than as noise
   createTypeShiftAbility(Abilities.Pixilate, Types.Normal, Types.Fairy, TYPE_SHIFT_SCALE),
+
+  // Xerneas and Yveltal: each lays its own type over the whole field
+  createAuraAbility(Abilities.FairyAura, Types.Fairy),
+  createAuraAbility(Abilities.DarkAura, Types.Dark),
+
+  // Zygarde: it casts no aura of its own and turns the ones that are
+  // cast, which the two aura abilities read for themselves
+  createAbility(Abilities.AuraBreak, (battle) =>
+    battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+      if (event.source.hasAbility(Abilities.AuraBreak)) {
+        event.source.triggerAbility(Abilities.AuraBreak);
+      }
+    }),
+  ),
+
+  // Zygarde: the rest of the cells come when half of what is here is
+  // gone. The shape it gathers into carries its own stats, so the
+  // health it is on stays where it is
+  createAbility(Abilities.PowerConstruct, (battle) =>
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      const unit = event.target;
+
+      if (
+        !unit.alive ||
+        !unit.hasAbility(Abilities.PowerConstruct) ||
+        unit.species === Species.ZygardeComplete ||
+        getBaseFormSpecies(unit.species) !== Species.Zygarde ||
+        unit.health > unit.checkStat(Stats.HP, 0) * POWER_CONSTRUCT_THRESHOLD
+      ) {
+        return;
+      }
+
+      unit.triggerAbility(Abilities.PowerConstruct);
+      unit.setSpecies(Species.ZygardeComplete);
+    }),
+  ),
+
+  // Xerneas: a heal it reaches for is already on its way
+  createAbility(Abilities.Triage, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Post, (event) => {
+      if (HEALING_MOVES.has(event.move) && event.source.hasAbility(Abilities.Triage)) {
+        event.priority += TRIAGE_PRIORITY;
+      }
+    }),
+  ),
+
+  // Zygarde: the ground it is made of is something it can take back
+  createWaterAbsorbAbility(Abilities.EarthEater, Types.Ground),
+
+  // Goomy: the slime comes off on whatever touches it, and a foot
+  // in it is a foot that is slower afterwards
+  createAbility(
+    Abilities.Gooey,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+          if (
+            !event.success ||
+            (event.flags & DamageFlags.Indirect) !== 0 ||
+            event.cause.type !== EffectType.Move ||
+            event.cause.unit === event.target ||
+            !event.target.hasAbility(Abilities.Gooey) ||
+            !event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target))
+          ) {
+            return;
+          }
+
+          event.target.triggerAbility(Abilities.Gooey);
+          event.cause.unit.addStage(Stages.Speed, -1, {
+            type: EffectType.Ability,
+            ability: Abilities.Gooey,
+            unit: event.target,
+          });
+        }),
+        // Touching it costs something, so the AI is told before it
+        // decides to
+        createContactHazard(battle, Abilities.Gooey),
+      ]),
+  ),
 
   // Honedge: the sword is a shield until it swings. Both shapes carry
   // their own stats and share an HP stat, so turning over moves

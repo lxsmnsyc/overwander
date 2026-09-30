@@ -126,8 +126,9 @@ describe('evolution data', () => {
       { species: Species.Ivysaur, method: EvolutionMethod.Level, level: 16 },
     ]);
 
-    // Seven roads out of one Eevee: five stones and two friendships
-    expect(getSpeciesData(Species.Eevee).evolvesInto).toHaveLength(7);
+    // Eight roads out of one Eevee: five stones, two friendships by
+    // the clock, and the ribboned one that also asks for a move
+    expect(getSpeciesData(Species.Eevee).evolvesInto).toHaveLength(8);
     expect(getSpeciesData(Species.Eevee).evolvesInto?.[0]).toEqual({
       species: Species.Vaporeon,
       method: EvolutionMethod.UsedItem,

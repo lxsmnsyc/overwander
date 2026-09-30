@@ -82,6 +82,7 @@ export default function registerTropicalRainforestSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [],
       uncommon: [
+        { species: Species.Noibat, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Spinarak, weight: 20 },
         { species: Species.Pineco, weight: 20 },
@@ -90,6 +91,7 @@ export default function registerTropicalRainforestSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.Noivern, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Ariados, weight: 8 },
         { species: Species.Breloom, weight: 10 },
@@ -109,6 +111,7 @@ export default function registerTropicalRainforestSpawns(): void {
     [TimeOfDay.Night]: {
       base: [],
       uncommon: [
+        { species: Species.Noibat, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Spinarak, weight: 20 },
         { species: Species.Pineco, weight: 20 },
@@ -117,6 +120,7 @@ export default function registerTropicalRainforestSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.Noivern, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Ariados, weight: 8 },
         { species: Species.Breloom, weight: 10 },

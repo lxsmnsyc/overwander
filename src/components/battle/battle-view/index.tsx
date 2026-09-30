@@ -537,9 +537,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
     (async () => {
       if (aftermath.length > 0) {
-        sayCandy(
-          await recordAftermath(props.active.id, aftermath, defeated, BattleOutcome.Lost),
-        );
+        sayCandy(await recordAftermath(props.active.id, aftermath, defeated, BattleOutcome.Lost));
       }
       await finishBattle(props.active.id, BattleOutcome.Lost);
     })().catch(() => {

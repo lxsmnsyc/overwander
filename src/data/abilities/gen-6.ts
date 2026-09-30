@@ -20,7 +20,7 @@ export default function registerGen6Abilities(): void {
   registerAbility(Abilities.FlowerVeil, {
     name: 'Flower Veil',
     description:
-      'Grass-type teammates, itself included, cannot be given a status or have a stat lowered by anybody else.',
+      'Nobody else can poison, burn, paralyze, freeze, put to sleep, make drowsy or lower a stat of its Grass-type teammates, itself included.',
   });
   registerAbility(Abilities.Symbiosis, {
     name: 'Symbiosis',

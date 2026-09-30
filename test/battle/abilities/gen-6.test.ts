@@ -82,9 +82,11 @@ describe('Flower Veil', () => {
     plain.enter();
     foe.enter();
 
-    grass.addStatus(Statuses.Poisoned, { type: EffectType.None });
+    const powder = { type: EffectType.Move, unit: foe, move: Moves.PoisonPowder } as const;
+
+    grass.addStatus(Statuses.Poisoned, powder);
     grass.addStage(Stages.Attack, -1, { type: EffectType.Move, unit: foe, move: Moves.Growl });
-    plain.addStatus(Statuses.Poisoned, { type: EffectType.None });
+    plain.addStatus(Statuses.Poisoned, powder);
 
     expect(grass.getStatus(Statuses.Poisoned)).toBeFalsy();
     expect(grass.stages[Stages.Attack]).toBe(0);
@@ -110,6 +112,31 @@ describe('Flower Veil', () => {
     });
 
     expect(grass.stages[Stages.Defense]).toBe(-1);
+  });
+
+  it('lets the grass put up its own substitute and eat its own orb', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const flower = createUnit(battle, teamA, [Types.Fairy]);
+    const grass = createUnit(battle, teamA, [Types.Grass]);
+
+    pinRandom(battle, 1);
+    flower.addAbility(Abilities.FlowerVeil);
+    flower.enter();
+    grass.enter();
+    createUnit(battle, teamB).enter();
+
+    const whole = grass.health;
+
+    grass.triggerMoveEffect(Moves.Substitute, { type: MoveTargetType.None }, 0);
+    grass.addStatus(Statuses.BadlyPoisoned, {
+      type: EffectType.Item,
+      item: Items.ToxicOrb,
+      unit: grass,
+    });
+
+    expect(grass.health).toBeLessThan(whole);
+    expect(grass.getStatus(Statuses.Substituted)).toBeTruthy();
+    expect(grass.getStatus(Statuses.BadlyPoisoned)).toBeTruthy();
   });
 });
 

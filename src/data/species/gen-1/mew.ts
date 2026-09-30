@@ -241,6 +241,13 @@ export default function registerMewSpecies(): void {
         Moves.DazzlingGleam,
         Moves.Infestation,
         Moves.PowerUpPunch,
+        Moves.BrutalSwing,
+        Moves.AuroraVeil,
+        Moves.StompingTantrum,
+        Moves.Liquidation,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
+        Moves.SmartStrike,
       ],
     },
   });

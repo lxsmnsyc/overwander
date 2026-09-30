@@ -157,6 +157,8 @@ export default function registerClauncherSpecies(): void {
         Moves.GigaImpact,
         Moves.HyperBeam,
         Moves.ShadowBall,
+        Moves.Liquidation,
+        Moves.LaserFocus,
       ],
     },
   });

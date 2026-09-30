@@ -228,6 +228,9 @@ export default function registerTreeckoSpecies(): void {
         Moves.HoneClaws,
         Moves.LowSweep,
         Moves.Bulldoze,
+        Moves.BrutalSwing,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

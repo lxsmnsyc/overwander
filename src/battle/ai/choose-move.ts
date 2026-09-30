@@ -1,12 +1,10 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { MAX_STAGE, Stats } from '../../data/constants/stats';
-import Abilities from '../../data/ids/abilities';
 import {
   MoveAffects,
   MoveAttackFlags,
   MoveCategories,
   MoveTargets,
-  type Moves,
+  Moves,
 } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
@@ -23,27 +21,31 @@ import {
   type UnitTriggerMoveEvent,
   type UnitTriggerMoveResolveAccuracyEvent,
 } from '../events';
-import { BattleModes } from '../core';
 import { HEALTH_SCALED_MOVES, estimateFixedDamage } from '../moves/fixed-damage';
-import { estimateMoveHits } from '../moves/multi-hit';
+import { MULTI_HIT_MOVES, estimateMoveHits } from '../moves/multi-hit';
+import { RAMPAGE_MOVES } from '../moves/rampage';
+import { ROLLING_MOVES } from '../moves/rolling';
 import { feedsOwnSide } from '../moves/friendly-fire';
-import { getStageMoveEffects } from '../moves/stage';
-import { ACCURACY_PENALTY, BASE_SCORE, STEP_PENALTY, USELESS_PENALTY } from './score';
-import { SELF_STATUS_MOVES, STATUS_MOVES } from '../moves/status';
+import resolveMoveTargets from '../mechanics/move/targeting';
+import { ACCURACY_PENALTY, BASE_SCORE, KILL_BONUS, STEP_PENALTY, USELESS_PENALTY } from './score';
+import { SELF_STATUS_MOVES } from '../moves/status';
 import type Unit from '../unit';
+import { withAIContext } from './context';
+import setupFog from './fog';
+import setupCoordination from './coordination';
+import setupRoleScoring from './role-score';
 
 /**
- * Raid battles favor setting up: enough to outbid any non-KO damage
- * bonus, which caps at +4
+ * Moves whose steps are the move itself rather than a wind-up before
+ * it: a rampage strikes on each, a roll rolls, Stockpile banks a charge
+ * and Encore plays a repeat
  */
-const RAID_BUFF_BONUS = 6;
-
-/**
- * What taking a unit off the field is worth. Above the widest chip,
- * above a heal, and far enough above both that no wind-up a killing
- * move has to pay can make chipping look better than finishing
- */
-const KILL_BONUS = 8;
+const STEPS_ARE_THE_MOVE = new Set<Moves>([
+  ...RAMPAGE_MOVES,
+  ...ROLLING_MOVES,
+  Moves.Stockpile,
+  Moves.Encore,
+]);
 
 /** Extra for getting there first */
 const PRIORITY_KILL_BONUS = 2;
@@ -68,11 +70,213 @@ export function chooseMove(battle: Battle, source: Unit): AIMoveChoice | undefin
     choice: undefined,
     waiting: false,
   };
-  battle.emit(BattleEvents.UnitAIChooseMove, event);
-  return event.choice;
+  // One context for every question the decision asks
+  return withAIContext(battle, source, () => {
+    battle.emit(BattleEvents.UnitAIChooseMove, event);
+    return event.choice;
+  });
+}
+
+/**
+ * Whether the move would do anything against this target. A move
+ * that answers no is not scored at all, so the AI never spends a
+ * cast on something that resolves to "but it failed!"
+ */
+function isMoveUsable(battle: Battle, source: Unit, move: Moves, target: MoveTarget): boolean {
+  const event: CheckUnitAIMoveUsableEvent = {
+    id: 'CheckUnitAIMoveUsable',
+    disabled: false,
+    source,
+    move,
+    target,
+    usable: true,
+  };
+  battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
+  return event.usable;
+}
+
+function scoreMove(battle: Battle, source: Unit, move: Moves, target: MoveTarget): number {
+  const event: CheckUnitAIMoveScoreEvent = {
+    id: 'CheckUnitAIMoveScore',
+    disabled: false,
+    source,
+    move,
+    target,
+    score: BASE_SCORE,
+  };
+  battle.emit(BattleEvents.CheckUnitAIMoveScore, event);
+  return event.score;
+}
+
+/**
+ * Whether the side a move reaches for still has anybody on it.
+ *
+ * A move that only reaches the enemy has nothing left to do once the
+ * enemy is down: the fan-out at trigger time would find nobody, and
+ * the cast, the cooldown and the opening would all be spent on
+ * empty air. Anything that reaches its own side always has at least
+ * the user to reach
+ */
+function hasLivingTarget(battle: Battle, source: Unit, affects: number): boolean {
+  if (!(affects & MoveAffects.Enemy)) {
+    return true;
+  }
+  for (const unit of battle.units(source.team.alliance)) {
+    if (unit.alive) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Collect the candidate targets on the field for a move, from the
+ * way it is cast and what it says it reaches. **No candidates means
+ * the move is not a candidate**: a move with nothing to aim at is
+ * left out of the running rather than offered with nothing named,
+ * which is how a unit ends up winding up move after move at an
+ * empty field
+ */
+function collectTargets(battle: Battle, source: Unit, move: Moves): MoveTarget[] {
+  // The move's own table, not the resolved targeting: what a
+  // caster may point at is the move's, while what the move reaches
+  // once it goes off is whatever widened it. A boss still aims its
+  // Tackle at one enemy, and the fan-out is what carries it to the
+  // rest, so the chooser still weighs the move per target
+  const { target, affects } = getMoveData(move);
+
+  /**
+   * A move cast at nobody picks nothing: who it reaches is worked
+   * out when it goes off, so it scores as a single targetless use
+   */
+  if (target === MoveTargets.None) {
+    return hasLivingTarget(battle, source, affects) ? [{ type: MoveTargetType.None }] : [];
+  }
+
+  const targets: MoveTarget[] = [];
+  const ownTeam = source.team;
+  const ownAlliance = ownTeam.alliance;
+
+  function addUnits(units: Iterable<Unit>, skipSource: boolean): void {
+    for (const unit of units) {
+      if (unit.alive && !(skipSource && unit === source)) {
+        targets.push({ type: MoveTargetType.Unit, unit });
+      }
+    }
+  }
+
+  if (target === MoveTargets.Unit) {
+    if (affects & MoveAffects.Self) {
+      targets.push({ type: MoveTargetType.Unit, unit: source });
+    }
+    if (affects & MoveAffects.Own) {
+      addUnits(ownTeam.units, true);
+    }
+    if (affects & MoveAffects.Ally) {
+      for (const team of ownAlliance.teams) {
+        if (team !== ownTeam) {
+          addUnits(team.units, false);
+        }
+      }
+    }
+    if (affects & MoveAffects.Enemy) {
+      addUnits(battle.units(ownAlliance), false);
+    }
+    // A plain attack may also be fed to whatever on the caster's
+    // own team absorbs it; the usability rule refuses the rest
+    if (feedsOwnSide(move)) {
+      addUnits(ownTeam.units, true);
+    }
+  } else {
+    if (affects & MoveAffects.Own) {
+      targets.push({ type: MoveTargetType.Team, team: ownTeam });
+    }
+    if (affects & MoveAffects.Ally) {
+      for (const team of ownAlliance.teams) {
+        if (team !== ownTeam) {
+          targets.push({ type: MoveTargetType.Team, team });
+        }
+      }
+    }
+    if (affects & MoveAffects.Enemy) {
+      for (const team of battle.teams(ownAlliance)) {
+        targets.push({ type: MoveTargetType.Team, team });
+      }
+    }
+  }
+
+  return targets;
+}
+
+/** Callers in the middle of being weighed, so one that calls another stops there */
+const weighing = new Set<Moves>();
+
+/**
+ * What a called move is worth to its caller: the best score the AI
+ * would give casting it directly, at the caller's target where it can
+ * be aimed there and at its own best target otherwise. Undefined when
+ * it would do nothing anywhere
+ */
+export function weighCall(
+  battle: Battle,
+  source: Unit,
+  move: Moves,
+  target: MoveTarget,
+): number | undefined {
+  if (weighing.has(move)) {
+    return undefined;
+  }
+
+  const aimed =
+    target.type === MoveTargetType.Unit && getMoveData(move).target === MoveTargets.Unit;
+  let best: number | undefined;
+
+  weighing.add(move);
+  try {
+    for (const candidate of aimed ? [target] : collectTargets(battle, source, move)) {
+      if (isMoveUsable(battle, source, move, candidate)) {
+        const score = scoreMove(battle, source, move, candidate);
+
+        best = best == null ? score : Math.max(best, score);
+      }
+    }
+  } finally {
+    weighing.delete(move);
+  }
+  return best;
+}
+
+/** Score a caller as the one move it would call */
+export function scoreAsCall(battle: Battle, event: CheckUnitAIMoveScoreEvent, called: Moves): void {
+  const weighed = weighCall(battle, event.source, called, event.target);
+
+  event.score += (weighed ?? BASE_SCORE - USELESS_PENALTY) - BASE_SCORE;
+}
+
+/** Score a caller that picks at random from a pool as the pool's average */
+export function scoreAsAverage(
+  battle: Battle,
+  event: CheckUnitAIMoveScoreEvent,
+  pool: Iterable<Moves>,
+): void {
+  let total = 0;
+  let count = 0;
+
+  for (const called of pool) {
+    total += weighCall(battle, event.source, called, event.target) ?? BASE_SCORE - USELESS_PENALTY;
+    count += 1;
+  }
+  if (count > 0) {
+    event.score += Math.round(total / count) - BASE_SCORE;
+  }
 }
 
 export function setupChooseMoveAI(battle: Battle): void {
+  // What the AI may know about a foe is settled before anything is weighed
+  setupFog(battle);
+  setupRoleScoring(battle);
+  setupCoordination(battle);
+
   /**
    * Expected damage simulated through the engine's own resolver: a
    * synthetic UnitAttackResolveDamage event runs the real damage
@@ -132,8 +336,33 @@ export function setupChooseMoveAI(battle: Battle): void {
     battle.emit(BattleEvents.UnitAttackResolveDamage, event);
 
     // The resolver answers for one strike; a multi-hit move lands
-    // several off the same cast
-    return event.value * estimateMoveHits(move);
+    // several off the same cast, as many as the user's own kit rolls
+    const hits = source.checkMoveHits(
+      move,
+      moveTarget,
+      estimateMoveHits(move),
+      MULTI_HIT_MOVES[move]?.max ?? 1,
+    );
+    return event.value * hits;
+  }
+
+  /**
+   * What one hit is worth to its caster: a KO, or the share of the
+   * target's remaining health it takes. Undefined for a hit that does
+   * nothing
+   */
+  function hitWorth(source: Unit, move: Moves, target: Unit): number | undefined {
+    const damage = estimateDamage(source, move, target);
+
+    if (damage <= 0) {
+      return undefined;
+    }
+    if (damage >= target.health) {
+      // Gen 4 "try to KO" bonus, and more for getting there first
+      const priority = source.checkMovePriority(move, { type: MoveTargetType.Unit, unit: target });
+      return KILL_BONUS + (priority > 0 ? PRIORITY_KILL_BONUS : 0);
+    }
+    return Math.floor((DAMAGE_SCALE * damage) / target.health);
   }
 
   /**
@@ -164,137 +393,6 @@ export function setupChooseMoveAI(battle: Battle): void {
   }
 
   /**
-   * Whether the move would do anything against this target. A move
-   * that answers no is not scored at all, so the AI never spends a
-   * cast on something that resolves to "but it failed!"
-   */
-  function isMoveUsable(source: Unit, move: Moves, target: MoveTarget): boolean {
-    const event: CheckUnitAIMoveUsableEvent = {
-      id: 'CheckUnitAIMoveUsable',
-      disabled: false,
-      source,
-      move,
-      target,
-      usable: true,
-    };
-    battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
-    return event.usable;
-  }
-
-  function scoreMove(source: Unit, move: Moves, target: MoveTarget): number {
-    const event: CheckUnitAIMoveScoreEvent = {
-      id: 'CheckUnitAIMoveScore',
-      disabled: false,
-      source,
-      move,
-      target,
-      score: BASE_SCORE,
-    };
-    battle.emit(BattleEvents.CheckUnitAIMoveScore, event);
-    return event.score;
-  }
-
-  /**
-   * Whether the side a move reaches for still has anybody on it.
-   *
-   * A move that only reaches the enemy has nothing left to do once the
-   * enemy is down: the fan-out at trigger time would find nobody, and
-   * the cast, the cooldown and the opening would all be spent on
-   * empty air. Anything that reaches its own side always has at least
-   * the user to reach
-   */
-  function hasLivingTarget(source: Unit, affects: number): boolean {
-    if (!(affects & MoveAffects.Enemy)) {
-      return true;
-    }
-    for (const unit of battle.units(source.team.alliance)) {
-      if (unit.alive) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Collect the candidate targets on the field for a move, from the
-   * way it is cast and what it says it reaches. **No candidates means
-   * the move is not a candidate**: a move with nothing to aim at is
-   * left out of the running rather than offered with nothing named,
-   * which is how a unit ends up winding up move after move at an
-   * empty field
-   */
-  function collectTargets(source: Unit, move: Moves): MoveTarget[] {
-    // The move's own table, not the resolved targeting: what a
-    // caster may point at is the move's, while what the move reaches
-    // once it goes off is whatever widened it. A boss still aims its
-    // Tackle at one enemy, and the fan-out is what carries it to the
-    // rest, so the chooser still weighs the move per target
-    const { target, affects } = getMoveData(move);
-
-    /**
-     * A move cast at nobody picks nothing: who it reaches is worked
-     * out when it goes off, so it scores as a single targetless use
-     */
-    if (target === MoveTargets.None) {
-      return hasLivingTarget(source, affects) ? [{ type: MoveTargetType.None }] : [];
-    }
-
-    const targets: MoveTarget[] = [];
-    const ownTeam = source.team;
-    const ownAlliance = ownTeam.alliance;
-
-    function addUnits(units: Iterable<Unit>, skipSource: boolean): void {
-      for (const unit of units) {
-        if (unit.alive && !(skipSource && unit === source)) {
-          targets.push({ type: MoveTargetType.Unit, unit });
-        }
-      }
-    }
-
-    if (target === MoveTargets.Unit) {
-      if (affects & MoveAffects.Self) {
-        targets.push({ type: MoveTargetType.Unit, unit: source });
-      }
-      if (affects & MoveAffects.Own) {
-        addUnits(ownTeam.units, true);
-      }
-      if (affects & MoveAffects.Ally) {
-        for (const team of ownAlliance.teams) {
-          if (team !== ownTeam) {
-            addUnits(team.units, false);
-          }
-        }
-      }
-      if (affects & MoveAffects.Enemy) {
-        addUnits(battle.units(ownAlliance), false);
-      }
-      // A plain attack may also be fed to whatever on the caster's
-      // own team absorbs it; the usability rule refuses the rest
-      if (feedsOwnSide(move)) {
-        addUnits(ownTeam.units, true);
-      }
-    } else {
-      if (affects & MoveAffects.Own) {
-        targets.push({ type: MoveTargetType.Team, team: ownTeam });
-      }
-      if (affects & MoveAffects.Ally) {
-        for (const team of ownAlliance.teams) {
-          if (team !== ownTeam) {
-            targets.push({ type: MoveTargetType.Team, team });
-          }
-        }
-      }
-      if (affects & MoveAffects.Enemy) {
-        for (const team of battle.teams(ownAlliance)) {
-          targets.push({ type: MoveTargetType.Team, team });
-        }
-      }
-    }
-
-    return targets;
-  }
-
-  /**
    * Resolver: enumerate the unit's usable moves against the collected
    * targets, score every pair, keep the best (random tie-break).
    */
@@ -304,7 +402,7 @@ export function setupChooseMoveAI(battle: Battle): void {
     let best: AIMoveChoice[] = [];
 
     function consider(move: Moves, target: MoveTarget): void {
-      const score = scoreMove(source, move, target);
+      const score = scoreMove(battle, source, move, target);
 
       if (best.length === 0 || score > best[0].score) {
         best = [{ move, target, score }];
@@ -330,11 +428,11 @@ export function setupChooseMoveAI(battle: Battle): void {
         continue;
       }
 
-      for (const target of collectTargets(source, state.move)) {
+      for (const target of collectTargets(battle, source, state.move)) {
         // A move that cannot work here is not a low-scoring option, it
         // is not an option: casting it would spend the cast time, the
         // cooldown and the opening for nothing
-        if (!isMoveUsable(source, state.move, target)) {
+        if (!isMoveUsable(battle, source, state.move, target)) {
           continue;
         }
 
@@ -419,109 +517,73 @@ export function setupChooseMoveAI(battle: Battle): void {
       return;
     }
 
-    const damage = estimateDamage(event.source, event.move, target);
-
-    if (damage <= 0) {
-      // Immune target: the move does nothing
-      event.score -= USELESS_PENALTY;
-      return;
-    }
-
-    if (damage >= target.health) {
-      // Gen 4 "try to KO" bonus
-      event.score += KILL_BONUS;
-
-      // Priority moves are extra attractive for the kill
-      if ((data.priority ?? 0) > 0) {
-        event.score += PRIORITY_KILL_BONUS;
-      }
-      return;
-    }
-
-    // Stand-in for the "highest expected damage" bonus: scale by how
-    // much of the target's remaining health the hit removes
-    event.score += Math.floor((DAMAGE_SCALE * damage) / target.health);
+    // Immune target: the move does nothing
+    event.score += hitWorth(event.source, event.move, target) ?? -USELESS_PENALTY;
   });
 
-  // Status-inflicting moves: a target that cannot receive the status
-  // is refused by the usability rule in the status move group, so what
-  // is left to weigh is only who is worth spending it on
+  // A move that goes out to everybody is worth what it does to each
+  // foe, less what it does to the caster's own side
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    const status = STATUS_MOVES[event.move];
-
-    if (status == null || event.target.type !== MoveTargetType.Unit) {
+    if (event.target.type !== MoveTargetType.None) {
       return;
     }
 
-    const target = event.target.unit;
+    const data = getMoveData(event.move);
 
-    // Status spreads early: better against a healthy target
-    const maxHP = Math.max(1, target.checkStat(Stats.HP, 0));
-
-    if (target.health / maxHP > 0.5) {
-      event.score += 5;
-    }
-  });
-
-  // Self statuses (e.g. Focus Energy): useless when already active,
-  // reckless when about to go down
-  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    const status = SELF_STATUS_MOVES[event.move];
-
-    if (status == null) {
+    if (data.category === MoveCategories.Status) {
       return;
     }
 
     const source = event.source;
+    let worth = 0;
+    let lands = false;
 
-    if (source.status[status]) {
-      event.score -= USELESS_PENALTY;
-      return;
+    for (const reached of resolveMoveTargets(
+      battle,
+      source,
+      event.target,
+      data.target,
+      data.affects,
+    )) {
+      if (reached.type !== MoveTargetType.Unit || reached.unit === source) {
+        continue;
+      }
+      if (
+        source.checkMoveImmunity(event.move, reached, source.checkMoveType(event.move, reached))
+      ) {
+        continue;
+      }
+
+      const hit = hitWorth(source, event.move, reached.unit);
+
+      if (hit == null) {
+        continue;
+      }
+      if (reached.unit.team.alliance === source.team.alliance) {
+        worth -= hit;
+      } else {
+        worth += hit;
+        lands = true;
+      }
     }
 
-    const maxHP = Math.max(1, source.checkStat(Stats.HP, 0));
-    const ratio = source.health / maxHP;
-
-    if (ratio > 0.7) {
-      event.score += 3;
-    } else if (ratio < 0.3) {
-      event.score -= 5;
-    }
+    event.score += lands ? worth : worth - USELESS_PENALTY;
   });
 
-  // Raid battles: friendly stage-boosting moves take priority — for
-  // the party, and only the party. Setting up is what a side that has
-  // to survive a long fight does with its first few casts, and the
-  // boss is not that side: it is the clock everybody else is racing,
-  // and a boss spending its doubled cast time on a Withdraw is a boss
-  // handing the lobby the fight. It attacks, and the buffs it does
-  // pick it picks on their own merits
-  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (battle.mode !== BattleModes.Raid || event.source.hasAbility(Abilities.Boss)) {
-      return;
-    }
+  // A self status already in place (Focus Energy) changes nothing
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    const status = SELF_STATUS_MOVES[event.move];
 
-    // Only boosts pointed at the own side qualify
-    if (getMoveData(event.move).affects & MoveAffects.Enemy) {
-      return;
-    }
-
-    const receiver = event.target.type === MoveTargetType.Unit ? event.target.unit : event.source;
-
-    // Any rise with room left earns it. A stage that will not move is
-    // not worth a bonus; the stage move group is what says it is worth
-    // a penalty
-    for (const effect of getStageMoveEffects(event.move)) {
-      if (effect.value > 0 && receiver.stages[effect.stage] < MAX_STAGE) {
-        event.score += RAID_BUFF_BONUS;
-        return;
-      }
+    if (event.usable && status != null && event.source.status[status] != null) {
+      event.usable = false;
     }
   });
 
   // A move that has to wind up first pays for the cast it spends there
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    event.score -= STEP_PENALTY * event.source.checkMoveSteps(event.move, event.target);
+    if (!STEPS_ARE_THE_MOVE.has(event.move)) {
+      event.score -= STEP_PENALTY * event.source.checkMoveSteps(event.move, event.target);
+    }
   });
 
   // An unreliable move is worth what it lands, so it gives up ground

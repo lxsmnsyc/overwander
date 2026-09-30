@@ -1925,6 +1925,12 @@ export default function OverworldBoard(props: {
       // standing in. Straight through to the lobby, or to the fight
       // where they have already started it. A fight they lost is not
       // theirs any more: the lair is open to host again
+      // A fight they fielded a party in is theirs again rather than a
+      // replay, whoever hosted it
+      if (standing?.action === RaidAction.Rejoin && standing.battle != null) {
+        game.setBattle({ id: standing.battle, replay: false, raid: standing.lobby });
+        return null;
+      }
       if (standing?.hosting === true && standing.action !== RaidAction.Host) {
         if (standing.battle != null) {
           game.setBattle({ id: standing.battle, replay: true });

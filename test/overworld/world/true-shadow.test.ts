@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 import registerAbilities from '../../../src/data/abilities';
-import registerBiomeSpawns, { spawnBand } from '../../../src/data/biome';
+import registerBiomeSpawns, { fitsSurface, spawnBand } from '../../../src/data/biome';
 import registerItems from '../../../src/data/items';
 import { registerMoves } from '../../../src/data/moves';
 import {
@@ -183,6 +183,23 @@ describe('where a true shadow is met', () => {
 
       for (const shadow of listTrueShadows()) {
         expect(ordinary.has(shadow)).toBe(false);
+      }
+    }
+  });
+
+  it('keeps to the surface it lives on', () => {
+    const world = new World('overworld');
+    const dark = findDarkDay(world, (chunk) => chunk.getWaterCells().size > 0);
+
+    expect(dark).not.toBeNull();
+
+    const { x, y, window } = dark ?? { x: 0, y: 0, window: 0 };
+    const chunk = world.getChunk(x, y);
+    const under = new ChunkSnapshot(chunk, window * WEATHER_INTERVAL);
+
+    for (const cell of chunk.getWaterCells()) {
+      for (const entry of spawnBand(under.getCellPool(cell), 'special')) {
+        expect(fitsSurface(entry.species, chunk.getCellSurface(cell))).toBe(true);
       }
     }
   });

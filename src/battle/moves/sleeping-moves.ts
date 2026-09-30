@@ -5,6 +5,7 @@ import { BattleEvents } from '../events';
 import { ASLEEP_STATUSES } from '../status';
 import type Unit from '../unit';
 import { hasAnyStatus } from '../utils';
+import { scoreAsAverage } from '../ai/choose-move';
 
 /**
  * The two moves that only work while the user is asleep. Sleep is not
@@ -32,7 +33,31 @@ function isAsleep(unit: Unit): boolean {
   return hasAnyStatus(unit, ASLEEP_STATUSES);
 }
 
+/** What Sleep Talk may draw from: the unit's own moves, bar the ones it will not call */
+function talkPool(unit: Unit): Moves[] {
+  const pool: Moves[] = [];
+
+  for (const key of Object.keys(unit.moves)) {
+    // The move table is keyed by the move enum, which comes back as
+    // a string from Object.keys
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    const move = Number(key) as Moves;
+
+    if (!NOT_CALLED.has(move)) {
+      pool.push(move);
+    }
+  }
+  return pool;
+}
+
 export default function setupSleepingMoves(battle: Battle): void {
+  // It draws at random, so it is worth the average of what it could draw
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (event.move === Moves.SleepTalk) {
+      scoreAsAverage(battle, event, talkPool(event.source));
+    }
+  });
+
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     if (event.usable && ASLEEP_ONLY.has(event.move)) {
       event.usable = isAsleep(event.source);
@@ -52,18 +77,7 @@ export default function setupSleepingMoves(battle: Battle): void {
       return;
     }
 
-    const pool: Moves[] = [];
-
-    for (const key of Object.keys(event.source.moves)) {
-      // The move table is keyed by the move enum, which comes back as
-      // a string from Object.keys
-      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-      const move = Number(key) as Moves;
-
-      if (!NOT_CALLED.has(move)) {
-        pool.push(move);
-      }
-    }
+    const pool = talkPool(event.source);
 
     if (pool.length === 0) {
       event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);

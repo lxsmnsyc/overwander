@@ -17,7 +17,7 @@ import closeWhenGone from '../gone';
 import { DetailRowsProvider, TooltipLayer } from '../tooltip';
 import { SHEER } from '../transition';
 import { type HoverCardPlacement, type Point, apart, holds, within } from './placing';
-import { CLOSE_DELAY, OPEN_DELAY, WARM } from '../hover-delay';
+import { CLOSE_DELAY, OPEN_DELAY } from '../hover-delay';
 import createLongPress from '../long-press';
 import { GRACE, LINGER, type SafeShape, painting, showSafeAreas } from './safe-area';
 
@@ -85,13 +85,11 @@ interface CardHold {
 const Holding = createContext<CardHold>();
 
 /**
- * The card up at each level (keyed by the card it was opened from, or
- * null at the top), and when the last one there went. A card opened
- * beside one already up takes over at once rather than waiting behind
- * it, which read as the interface lagging
+ * The card on screen at each level, keyed by the card it was opened
+ * from or null at the top. Resting on another trigger puts it away at
+ * once, fade and all, so it never lingers over the next one
  */
 const SHOWING = new Map<CardHold | null, () => void>();
-const SHUT_AT = new Map<CardHold | null, number>();
 
 export interface HoverCardProps extends ParentProps {
   /**
@@ -215,13 +213,9 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
 
     if (showing != null && showing !== shut) {
       showing();
-      setOpen(true);
-      return;
     }
-    if (performance.now() - (SHUT_AT.get(level) ?? -Infinity) < WARM) {
-      setOpen(true);
-      return;
-    }
+    // Every card waits, even one taking over from another: opening at
+    // once covered whatever the pointer was on its way to
     timer = setTimeout(() => {
       setOpen(true);
     }, OPEN_DELAY);
@@ -447,15 +441,15 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
     }
   });
 
+  // While it is on screen at all, fading out included
   createEffect(() => {
-    if (!open()) {
+    if (!present()) {
       return;
     }
     SHOWING.set(level, shut);
     onCleanup(() => {
       if (SHOWING.get(level) === shut) {
         SHOWING.delete(level);
-        SHUT_AT.set(level, performance.now());
       }
     });
   });

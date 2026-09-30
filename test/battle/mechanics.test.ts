@@ -509,6 +509,32 @@ describe('stat-enhancing held items', () => {
     expect(holder.checkStat(Stats.Attack, 0)).toBe(attack);
   });
 
+  it('locks only on a move of the holder’s own, never on the basic swing', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const target = unitTarget(enemy);
+
+    holder.addMove(Moves.Tackle);
+    holder.addMove(Moves.Ember);
+    holder.addItem(Items.ChoiceBand);
+
+    // The swing thrown while its moves cool locks nothing
+    holder.cast(Moves.Attack, target);
+    holder.stopCast();
+
+    expect(holder.checkCanCast(Moves.Ember, target)).toBe(true);
+    expect(holder.checkCanCast(Moves.Tackle, target)).toBe(true);
+
+    holder.cast(Moves.Tackle, target);
+    holder.stopCast();
+    holder.finishCooldown(Moves.Tackle);
+
+    // Locked on Tackle, it may still fall back on the swing
+    expect(holder.checkCanCast(Moves.Ember, target)).toBe(false);
+    expect(holder.checkCanCast(Moves.Attack, target)).toBe(true);
+  });
+
   it('trades every status move for half a special defense', () => {
     const { battle, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);

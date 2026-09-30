@@ -12,7 +12,7 @@ import type Unit from '../unit';
  * stat rather than written into it, like Power Trick
  * https://bulbapedia.bulbagarden.net/wiki/Guard_Split_(move)
  */
-const SPLITS: { [key in Moves]?: Stats[] } = {
+export const SPLITS: { [key in Moves]?: Stats[] } = {
   [Moves.GuardSplit]: [Stats.Defense, Stats.SpecialDefense],
   [Moves.PowerSplit]: [Stats.Attack, Stats.SpecialAttack],
 };

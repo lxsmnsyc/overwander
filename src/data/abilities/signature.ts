@@ -2112,6 +2112,59 @@ export default function registerSignatureAbilities(): void {
     description: 'Its physical moves use its Defense in place of its Attack while it is higher.',
   });
 
+  // The slug that soaks a blow and the bat that hears where it came from
+  registerSignature(Families.Goomy, Abilities.Seepage, {
+    name: 'Seepage',
+    description: '40% of every direct blow it takes is paid over the next 4 seconds instead.',
+  });
+
+  registerSignature(Families.Noibat, Abilities.Echolocation, {
+    name: 'Echolocation',
+    description:
+      'An enemy that lands a move on it is heard: its next damaging move at that enemy is a critical hit.',
+  });
+
+  // The four Kalos keeps for last
+  registerSignature(Families.Pancham, Abilities.Begrudge, {
+    name: 'Begrudge',
+    description: 'It gains 1 stage of Attack every time an enemy is healed.',
+  });
+
+  registerSignature(Families.Swirlix, Abilities.SugarRush, {
+    name: 'Sugar Rush',
+    description: 'Its whole team gains 1 stage of Speed whenever it uses up its own held item.',
+  });
+
+  registerSignature(Families.Dedenne, Abilities.QuickWhiskers, {
+    name: 'Quick Whiskers',
+    description: 'Its moves cast at 1 step higher priority. Cooldowns are untouched.',
+  });
+
+  registerSignature(Families.Carbink, Abilities.CrystalGrowth, {
+    name: 'Crystal Growth',
+    description:
+      'It gains 1 stage of Defense and 1 of Special Defense every 10 seconds, up to 3 of each.',
+  });
+
+  /**
+   * Kalos's three, on one axis: a stat stage is life given or taken,
+   * and the thing in the ground will have neither
+   */
+  registerSignature(Families.Xerneas, Abilities.Quickening, {
+    name: 'Quickening',
+    description: 'Every stat rise on its team is 1 stage bigger.',
+  });
+
+  registerSignature(Families.Yveltal, Abilities.Withering, {
+    name: 'Withering',
+    description: 'Every stat drop it lands on an enemy is 1 stage deeper.',
+  });
+
+  registerSignature(Families.Zygarde, Abilities.EvenKeel, {
+    name: 'Even Keel',
+    description: 'Every stat stage on the field counts 0.5x, its own included.',
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:

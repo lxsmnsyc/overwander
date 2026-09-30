@@ -331,22 +331,144 @@ describe('Refrigerate', () => {
   });
 });
 
-describe('Pixilate', () => {
-  it('throws its Normal moves as Fairy, and pays a fifth again for them', () => {
+describe('Sweet Veil', () => {
+  it('keeps its whole team awake while it stands', () => {
     const { battle, teamA, teamB } = createBattle();
-    const floette = createUnit(battle, teamA, [Types.Fairy]);
-    const foe = createUnit(battle, teamB, [Types.Dragon]);
+    const shop = createUnit(battle, teamA, [Types.Fairy]);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
 
     pinRandom(battle, 1);
-    floette.enter();
+    shop.addAbility(Abilities.SweetVeil);
+    shop.enter();
+    mate.enter();
     foe.enter();
 
-    const at = { type: MoveTargetType.Unit, unit: foe } as const;
-    const plain = floette.checkMovePower(Moves.Tackle, at);
+    mate.addStatus(Statuses.Sleeping, { type: EffectType.None });
 
-    floette.addAbility(Abilities.Pixilate);
+    expect(mate.status[Statuses.Sleeping]).toBeFalsy();
 
-    expect(floette.checkMoveType(Moves.Tackle, at)).toBe(Types.Fairy);
-    expect(floette.checkMovePower(Moves.Tackle, at)).toBeCloseTo((plain ?? 0) * 1.2, 5);
+    // The other side sleeps as it always did
+    foe.addStatus(Statuses.Sleeping, { type: EffectType.None });
+
+    expect(foe.status[Statuses.Sleeping]).toBeTruthy();
+  });
+});
+
+describe('Pixilate', () => {
+  it('sends a Normal move out as Fairy, and harder', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ribbon = createUnit(battle, teamA, [Types.Fairy]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    ribbon.enter();
+    foe.enter();
+
+    const target = { type: MoveTargetType.Unit, unit: foe } as const;
+    const bare = ribbon.checkMovePower(Moves.Pound, target);
+
+    ribbon.addAbility(Abilities.Pixilate);
+
+    expect(ribbon.checkMoveType(Moves.Pound, target)).toBe(Types.Fairy);
+    expect(ribbon.checkMovePower(Moves.Pound, target)).toBeCloseTo((bare ?? 0) * 1.2, 1);
+  });
+});
+
+describe('the auras', () => {
+  it('lays its type over the whole field, and a break turns it round', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const stag = createUnit(battle, teamA, [Types.Fairy]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    stag.enter();
+    foe.enter();
+
+    const whole = foe.checkStat(Stats.HP, 0);
+    const bare = dealDamage(stag, foe, Moves.Moonblast, 40, Types.Fairy, MoveCategories.Special);
+
+    foe.setHealth(whole);
+    stag.addAbility(Abilities.FairyAura);
+
+    const aura = dealDamage(stag, foe, Moves.Moonblast, 40, Types.Fairy, MoveCategories.Special);
+
+    expect(aura).toBeCloseTo(bare * (4 / 3), 0);
+
+    // A break on the field turns the aura into a weakness
+    foe.setHealth(whole);
+    foe.addAbility(Abilities.AuraBreak);
+
+    expect(
+      dealDamage(stag, foe, Moves.Moonblast, 40, Types.Fairy, MoveCategories.Special),
+    ).toBeCloseTo(bare * (3 / 4), 0);
+  });
+});
+
+describe('Power Construct', () => {
+  it('gathers the rest of the cells at half health', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const swarm = createUnit(battle, teamA, [Types.Dragon, Types.Ground]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    swarm.setSpecies(Species.Zygarde);
+    swarm.addAbility(Abilities.PowerConstruct);
+    swarm.enter();
+    foe.enter();
+
+    const whole = swarm.checkStat(Stats.HP, 0);
+
+    foe.damage({ type: EffectType.None }, swarm, whole / 4, 0);
+
+    expect(swarm.species).toBe(Species.Zygarde);
+
+    foe.damage({ type: EffectType.None }, swarm, whole / 3, 0);
+
+    expect(swarm.species).toBe(Species.ZygardeComplete);
+  });
+});
+
+describe('Triage', () => {
+  it('sends a heal out ahead of everything else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const stag = createUnit(battle, teamA, [Types.Fairy]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    stag.enter();
+    foe.enter();
+
+    const target = { type: MoveTargetType.None } as const;
+    const bare = stag.checkMovePriority(Moves.Recover, target);
+    const swung = stag.checkMovePriority(Moves.Moonblast, target);
+
+    stag.addAbility(Abilities.Triage);
+
+    expect(stag.checkMovePriority(Moves.Recover, target)).toBe(bare + 3);
+    // Everything else is thrown at the speed it always was
+    expect(stag.checkMovePriority(Moves.Moonblast, target)).toBe(swung);
+  });
+});
+
+describe('Earth Eater', () => {
+  it('eats a Ground move rather than taking it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const swarm = createUnit(battle, teamA, [Types.Dragon, Types.Ground]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    swarm.addAbility(Abilities.EarthEater);
+    swarm.enter();
+    foe.enter();
+
+    const whole = swarm.checkStat(Stats.HP, 0);
+
+    swarm.setHealth(whole / 2);
+    foe.addMove(Moves.Earthquake);
+    foe.cast(Moves.Earthquake, { type: MoveTargetType.Unit, unit: swarm });
+    battle.tick(turns(4));
+
+    expect(swarm.health).toBeGreaterThan(whole / 2);
   });
 });

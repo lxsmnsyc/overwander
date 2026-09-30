@@ -121,7 +121,7 @@ describe('what a fought team is paid', () => {
   it('pays a win for the whole party', async () => {
     await stage(BattleOutcome.Won);
 
-    const earned = await recordAftermath(player.uid, BATTLE, report(), 0);
+    const earned = await recordAftermath(player.uid, BATTLE, report(), 0, BattleOutcome.Won);
 
     // Every pokemon fielded, however the fight went for the other side
     expect(earned.reduce((sum, one) => sum + one.count, 0)).toBe(PARTY.length);
@@ -131,7 +131,7 @@ describe('what a fought team is paid', () => {
   it('pays a loss only for what it put down', async () => {
     await stage(BattleOutcome.Lost);
 
-    const earned = await recordAftermath(player.uid, BATTLE, report(), 1);
+    const earned = await recordAftermath(player.uid, BATTLE, report(), 1, BattleOutcome.Lost);
 
     expect(earned.reduce((sum, one) => sum + one.count, 0)).toBe(1);
     expect(await candies()).toBe(1);
@@ -140,7 +140,7 @@ describe('what a fought team is paid', () => {
   it('pays a fight given up on nothing at all', async () => {
     await stage(BattleOutcome.Lost);
 
-    const earned = await recordAftermath(player.uid, BATTLE, report(), 0);
+    const earned = await recordAftermath(player.uid, BATTLE, report(), 0, BattleOutcome.Lost);
 
     expect(earned).toEqual([]);
     expect(await candies()).toBe(0);
@@ -151,7 +151,13 @@ describe('what a fought team is paid', () => {
 
     // Three stood against two: beating all three is still worth two,
     // since a candy is paid per pokemon fielded rather than per kill
-    const earned = await recordAftermath(player.uid, BATTLE, report(), AGAINST.length);
+    const earned = await recordAftermath(
+      player.uid,
+      BATTLE,
+      report(),
+      AGAINST.length,
+      BattleOutcome.Lost,
+    );
 
     expect(earned.reduce((sum, one) => sum + one.count, 0)).toBe(PARTY.length);
   });
@@ -161,16 +167,66 @@ describe('what a fought team is paid', () => {
 
     // The count is the client's word, so it is held to the party the
     // server itself staged
-    await recordAftermath(player.uid, BATTLE, report(), 9999);
+    await recordAftermath(player.uid, BATTLE, report(), 9999, BattleOutcome.Lost);
 
     expect(await candies()).toBe(PARTY.length);
+  });
+
+  it('pays a win reported before anybody stamped the outcome', async () => {
+    // The client writes the aftermath before it frees the party, so the
+    // battle is still unfinished when a win is paid
+    await stage(BattleOutcome.Unfinished);
+
+    const earned = await recordAftermath(player.uid, BATTLE, report(), 1, BattleOutcome.Won);
+
+    expect(earned.reduce((sum, one) => sum + one.count, 0)).toBe(PARTY.length);
+    const stamped = await sql`select outcome from battles where id = ${BATTLE}`;
+
+    expect(Number(stamped[0]?.outcome)).toBe(BattleOutcome.Won);
+  });
+
+  it('keeps an outcome somebody else already stamped', async () => {
+    await stage(BattleOutcome.Lost);
+
+    const earned = await recordAftermath(player.uid, BATTLE, report(), 1, BattleOutcome.Won);
+
+    expect(earned.reduce((sum, one) => sum + one.count, 0)).toBe(1);
+  });
+
+  it("pays a lost raid nothing for an ally's faints", async () => {
+    await stage(BattleOutcome.Unfinished);
+    // Another party on the player's own side, as in a raid lobby
+    await sql`
+      insert into team_snapshots (id, player, alliance, catches)
+      values ('candy-ally', null, 0,
+              ${jsonOf(sql, [snapshot('candy-ally-0', Species.Pidgey), snapshot('candy-ally-1', Species.Rattata)])})
+    `;
+    await sql`
+      insert into battle_teams (battle_id, position, snapshot_id, player)
+      values (${BATTLE}, 2, 'candy-ally', null)
+    `;
+    await sql`delete from battle_teams where snapshot_id = ${THEIRS}`;
+    await sql`
+      insert into team_snapshots (id, player, alliance, catches)
+      values ('candy-boss', null, 1, ${jsonOf(sql, [snapshot('candy-boss-0', Species.Onix)])})
+    `;
+    await sql`
+      insert into battle_teams (battle_id, position, snapshot_id, player)
+      values (${BATTLE}, 0, 'candy-boss', null)
+    `;
+
+    // Claiming the allies' two faints as well as nothing on the boss
+    // is clamped to the one boss that stood against them
+    const earned = await recordAftermath(player.uid, BATTLE, report(), 3, BattleOutcome.Lost);
+
+    expect(earned.reduce((sum, one) => sum + one.count, 0)).toBe(1);
   });
 
   it('pays one battle once, however often the report arrives', async () => {
     await stage(BattleOutcome.Lost);
 
-    await recordAftermath(player.uid, BATTLE, report(), 1);
-    const again = await recordAftermath(player.uid, BATTLE, report(), 1);
+    await recordAftermath(player.uid, BATTLE, report(), 1, BattleOutcome.Lost);
+    const again = await recordAftermath(player.uid, BATTLE, report(), 1, BattleOutcome.Lost);
 
     expect(again).toEqual([]);
     expect(await candies()).toBe(1);
@@ -188,7 +244,7 @@ describe('what a Pay Day report is paid', () => {
     await stage(BattleOutcome.Won);
     const before = await gold();
 
-    await recordAftermath(player.uid, BATTLE, report(1000), 0);
+    await recordAftermath(player.uid, BATTLE, report(1000), 0, BattleOutcome.Won);
 
     expect(await gold()).toBe(before);
   });
@@ -201,7 +257,7 @@ describe('what a Pay Day report is paid', () => {
     await stage(BattleOutcome.Won, [Moves.PayDay], Date.now() - lasted);
     const before = await gold();
 
-    await recordAftermath(player.uid, BATTLE, report(1_000_000), 0);
+    await recordAftermath(player.uid, BATTLE, report(1_000_000), 0, BattleOutcome.Won);
 
     expect((await gold()) - before).toBe(PAY_DAY_COINS_PER_LEVEL * 5 * 4);
   });

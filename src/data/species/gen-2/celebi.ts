@@ -114,6 +114,7 @@ export default function registerCelebiSpecies(): void {
         Moves.EchoedVoice,
         Moves.Confide,
         Moves.DazzlingGleam,
+        Moves.LaserFocus,
       ],
     },
   });

@@ -164,6 +164,7 @@ export default function registerVulpixSpecies(): void {
         Moves.GigaImpact,
         Moves.Payback,
         Moves.Psyshock,
+        Moves.LaserFocus,
       ],
     },
   });

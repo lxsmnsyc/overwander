@@ -107,6 +107,8 @@ export default function registerTaurosSpecies(): void {
         Moves.WorkUp,
         Moves.WildCharge,
         Moves.Confide,
+        Moves.StompingTantrum,
+        Moves.SmartStrike,
       ],
     },
   });

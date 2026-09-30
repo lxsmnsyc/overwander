@@ -103,6 +103,8 @@ export default function registerUmbreonSpecies(): void {
         Moves.WorkUp,
         Moves.Snarl,
         Moves.Confide,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

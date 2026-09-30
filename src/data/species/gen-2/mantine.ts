@@ -98,6 +98,7 @@ export default function registerMantineSpecies(): void {
         Moves.Acrobatics,
         Moves.Bulldoze,
         Moves.Confide,
+        Moves.Liquidation,
       ],
     },
   });

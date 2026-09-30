@@ -211,6 +211,9 @@ export default function registerVenipedeSpecies(): void {
         Moves.Superpower,
         Moves.SwordsDance,
         Moves.XScissor,
+        Moves.StompingTantrum,
+        Moves.ThroatChop,
+        Moves.SmartStrike,
       ],
     },
   });

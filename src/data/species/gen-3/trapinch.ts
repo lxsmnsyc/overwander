@@ -155,6 +155,7 @@ export default function registerTrapinchSpecies(): void {
         Moves.Roost,
         Moves.Tailwind,
         Moves.UTurn,
+        Moves.ThroatChop,
       ],
     },
   });
@@ -216,6 +217,9 @@ export default function registerTrapinchSpecies(): void {
         Moves.Incinerate,
         Moves.DragonTail,
         Moves.PowerUpPunch,
+        Moves.BrutalSwing,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

@@ -143,7 +143,7 @@ export default function registerTaillowSpecies(): void {
         49: [Moves.Agility],
         61: [Moves.AirSlash],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.LaserFocus],
     },
   });
 }

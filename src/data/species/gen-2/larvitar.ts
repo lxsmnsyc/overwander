@@ -260,6 +260,8 @@ export default function registerLarvitarSpecies(): void {
         Moves.FoulPlay,
         Moves.Incinerate,
         Moves.DragonTail,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
       ],
     },
   });

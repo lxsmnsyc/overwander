@@ -98,7 +98,7 @@ import { useDig, useTeleport } from '../../../auth/field-moves';
 import { type FieldMoveOffer, GameDialog, useGame } from '../../app/game-context';
 import { createCellNotes } from '../cell-notes';
 import ItemSprite from '../../items/ItemSprite';
-import sayItems from '../../items/say-items';
+import sayItems, { FIND_TONES } from '../../items/say-items';
 import RaidDialog from '../../raids/RaidDialog';
 import { Badge, Button, Note, useToast } from '../../styled';
 import NestDialog, { type EggSource, type EggState } from '../NestDialog';
@@ -352,11 +352,12 @@ export default function OverworldBoard(props: {
     for (const stack of items) {
       const said = `${describeItem(stack.item)} ×${stack.amount}`;
       const art = (): JSX.Element => <ItemSprite item={stack.item} size={ICON_SIZE} label="" />;
+      const tone = FIND_TONES[getItemBand(stack.item) ?? 'base'];
 
       // Over the cell where there is a board to hang it on, and in the
       // corner where there is not: a list has no square to point at
-      if (!notes.say(x, y, { message: said, art, tone: 'leaf' })) {
-        toast.push({ message: said, art, tone: 'leaf' });
+      if (!notes.say(x, y, { message: said, art, tone })) {
+        toast.push({ message: said, art, tone });
       }
     }
   };

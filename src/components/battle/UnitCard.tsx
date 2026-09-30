@@ -10,6 +10,7 @@ import type Abilities from '../../data/ids/abilities';
 import type { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
+import { STATUS_NAMES } from '../../auth/health';
 import { detailAbility, detailItem } from '../details';
 import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
@@ -96,67 +97,6 @@ export const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.SkyDropped]: '#8ab4e0',
 };
 
-const STATUS_NAMES: Record<Statuses, string> = {
-  [Statuses.Seeding]: 'Seeded',
-  [Statuses.Poisoned]: 'Poisoned',
-  [Statuses.Sleeping]: 'Asleep',
-  [Statuses.BadlyPoisoned]: 'Badly poisoned',
-  [Statuses.Paralyzed]: 'Paralyzed',
-  [Statuses.Minimized]: 'Minimized',
-  [Statuses.Invulnerable]: 'Invulnerable',
-  [Statuses.Raging]: 'Raging',
-  [Statuses.Biding]: 'Biding',
-  [Statuses.Confused]: 'Confused',
-  [Statuses.Recharging]: 'Recharging',
-  [Statuses.Substituted]: 'Substitute',
-  [Statuses.Burned]: 'Burned',
-  [Statuses.Trapped]: 'Trapped',
-  [Statuses.Flinched]: 'Flinched',
-  [Statuses.Frozen]: 'Frozen',
-  [Statuses.FocusEnergy]: 'Focused',
-  [Statuses.Infatuated]: 'Infatuated',
-  [Statuses.Grounded]: 'Grounded',
-  [Statuses.Floating]: 'Floating',
-  [Statuses.Submerged]: 'Submerged',
-  [Statuses.Dormant]: 'Dormant',
-  [Statuses.Switching]: 'Switching',
-  [Statuses.Protected]: 'Protected',
-  [Statuses.Enduring]: 'Enduring',
-  [Statuses.Cornered]: 'Cornered',
-  [Statuses.Nightmared]: 'Nightmare',
-  [Statuses.Perishing]: 'Perishing',
-  [Statuses.Bonded]: 'Bonded',
-  [Statuses.Cursed]: 'Cursed',
-  [Statuses.Encored]: 'Encored',
-  [Statuses.Identified]: 'Identified',
-  [Statuses.Comatose]: 'Comatose',
-  [Statuses.Taunted]: 'Taunted',
-  [Statuses.Tormented]: 'Tormented',
-  [Statuses.Imprisoned]: 'Imprisoned',
-  [Statuses.Rooted]: 'Rooted',
-  [Statuses.Drowsy]: 'Drowsy',
-  [Statuses.Centered]: 'Centered',
-  [Statuses.Coated]: 'Coated',
-  [Statuses.Snatching]: 'Snatching',
-  [Statuses.Grudging]: 'Grudging',
-  [Statuses.Uproaring]: 'Uproar',
-  [Statuses.Helped]: 'Helped',
-  [Statuses.MindRead]: 'Read',
-  [Statuses.Embargoed]: 'Embargoed',
-  [Statuses.HealBlocked]: 'Heal Blocked',
-  [Statuses.PowerTricked]: 'Power Trick',
-  [Statuses.Roosting]: 'Roosting',
-  [Statuses.MagnetRisen]: 'Magnet Rise',
-  [Statuses.AquaRinged]: 'Aqua Ring',
-  [Statuses.Telekinetic]: 'Telekinesis',
-  [Statuses.SkyDropped]: 'Sky Drop',
-};
-
-/**
- * How many move boxes the column holds: what a pokemon carries
- */
-const MOVE_SLOTS = 4;
-
 /**
  * How far along a timed thing is, as a fraction of itself. Everything
  * the engine times — a cooldown coming back, a move being wound up —
@@ -209,11 +149,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
     const moves: { name: string; disabled: boolean; ready: number }[] = [];
 
     for (const move of Object.values(unit.moves)) {
-      if (moves.length >= MOVE_SLOTS) {
-        break;
-      }
-      // The plain swing every unit is fielded with comes first, so
-      // listing it would push the fourth real move off the card
+      // The plain swing every unit is fielded with is not one of its moves
       if (move.move === Moves.Attack) {
         continue;
       }
@@ -346,12 +282,12 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
         {/* The moves, each box a bar of its own cooldown. A full box is
             a move that can be thrown now.
 
-            `Index` rather than `For`: the boxes are four slots that go
+            `Index` rather than `For`: the boxes are slots that go
             on saying different things, not a list of things that come
             and go. `For` keys on the item, and an item reduced to what
             it draws is a new object on every tick — which would rebuild
-            all four rows sixty times a second. `Index` keys on the slot
-            and hands the row a signal, so a tick moves four widths and
+            every row sixty times a second. `Index` keys on the slot
+            and hands the row a signal, so a tick moves the widths and
             touches nothing else */}
         <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
           <Index each={view().moves}>
@@ -413,20 +349,20 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
         </ul>
       </div>
 
-      {/* And whatever is stuck to it, as colours. There is a name on
-          each for anyone hovering or listening, since a colour on its
-          own says nothing to somebody who cannot see it */}
+      {/* And whatever is stuck to it, as colours, each named in a
+          tooltip and to a screen reader */}
       <Show when={view().statuses.length}>
         <div class="flex flex-wrap gap-0.5">
           <For each={view().statuses}>
             {(status) => (
-              <span
-                class="size-2.5 rounded-[2px]"
-                style={{ 'background-color': STATUS_COLORS[status] }}
-                title={STATUS_NAMES[status]}
-                aria-label={STATUS_NAMES[status]}
-                role="img"
-              />
+              <TooltipHost class="inline-flex" kind="status" name={STATUS_NAMES[status]}>
+                <span
+                  class="size-2.5 rounded-[2px]"
+                  style={{ 'background-color': STATUS_COLORS[status] }}
+                  aria-label={STATUS_NAMES[status]}
+                  role="img"
+                />
+              </TooltipHost>
             )}
           </For>
         </div>

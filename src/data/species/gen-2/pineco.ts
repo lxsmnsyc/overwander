@@ -168,6 +168,7 @@ export default function registerPinecoSpecies(): void {
         Moves.GigaImpact,
         Moves.RockPolish,
         Moves.VoltSwitch,
+        Moves.LaserFocus,
       ],
     },
   });

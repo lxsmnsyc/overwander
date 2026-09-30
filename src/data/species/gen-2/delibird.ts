@@ -91,6 +91,8 @@ export default function registerDelibirdSpecies(): void {
         Moves.FrostBreath,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.BrutalSwing,
+        Moves.AuroraVeil,
       ],
       egg: [
         Moves.AuroraBeam,

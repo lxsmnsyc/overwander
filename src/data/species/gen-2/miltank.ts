@@ -123,6 +123,7 @@ export default function registerMiltankSpecies(): void {
         Moves.WorkUp,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.StompingTantrum,
       ],
       egg: [
         Moves.Present,

@@ -719,6 +719,13 @@ const MYTHICAL_SPECIES = new Set<Species>([
   // The bound shape only: unbound is worn while the bottle is held
   Species.Hoopa,
   Species.Volcanion,
+  // Both colours of Magearna are owned rather than worn
+  Species.Magearna,
+  Species.MagearnaOriginal,
+  Species.Marshadow,
+  Species.Zeraora,
+  Species.Meltan,
+  Species.Melmetal,
 ]);
 
 /**

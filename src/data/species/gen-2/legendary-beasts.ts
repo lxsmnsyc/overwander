@@ -106,6 +106,8 @@ export default function registerLegendaryBeastSpecies(): void {
         Moves.RockClimb,
         Moves.VoltSwitch,
         Moves.WildCharge,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });
@@ -167,6 +169,8 @@ export default function registerLegendaryBeastSpecies(): void {
         Moves.StoneEdge,
         Moves.FlameCharge,
         Moves.Incinerate,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
       ],
     },
   });
@@ -237,6 +241,7 @@ export default function registerLegendaryBeastSpecies(): void {
         Moves.OminousWind,
         Moves.RockClimb,
         Moves.Scald,
+        Moves.LaserFocus,
       ],
     },
   });

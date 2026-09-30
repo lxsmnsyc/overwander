@@ -216,6 +216,8 @@ export default function registerZoruaSpecies(): void {
         Moves.MegaPunch,
         Moves.Psychic,
         Moves.RockSmash,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

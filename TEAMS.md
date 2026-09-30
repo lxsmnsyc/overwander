@@ -124,6 +124,51 @@ the best Mega available to a stall team, and the weather Megas set weather witho
 move: **Mega Charizard Y** carries Drought, **Mega Tyranitar** Sand Stream and
 **Mega Abomasnow** Snow Warning.
 
+## Shadows
+
+A shadow is caught from a shadow raid and carries the **Shadow** ability for good. It
+is a stat trade, read straight off the sheet
+([`special.ts`](src/battle/abilities/special.ts)):
+
+- **Attack and Special Attack count 1.25x.**
+- **Defense and Special Defense count 0.75x**, so it takes about a third more damage.
+- HP and Speed are untouched.
+- Shadow is in the special tier, so it **costs no ability slot** and cannot be
+  suppressed. A shadow still holds its own four abilities.
+
+Two costs that are not on the stat sheet:
+
+- A shadow **pays twice the candy at every level**.
+- A shadow **arrives with zero friendship**, and no groomer will take one, so every
+  point has to be walked for. That matters for Return and for the Move Tutor, who only
+  teaches at the most friendship a pokemon can have.
+- A **Purifying Gem** undoes all of it: Shadow becomes the cosmetic `Purified`, the
+  candy cost drops back, **every value goes up by two**, and it is handed the
+  friendship a fresh catch gets. Purifying is the right move on a shadow you wanted for
+  its values rather than for the trade.
+
+A shadow can still Mega Evolve, and the Mega's ability is worn on top, so the two stack.
+
+**Who should be a shadow**
+
+| Pokemon | Shadow? | Why |
+| --- | --- | --- |
+| **Metagross** | **Yes**, first pick | Attack reads 169 rather than 135, and its 130 Defense can afford to drop to 98. It is the one unit on three of the four teams whose whole job is damage |
+| **Hydreigon** | **Yes** | Special Attack reads 156. Its damage is the PvP team's spread threat, and Levitate plus the team's screens cover the softer defences |
+| **Mewtwo** | **Yes** | Special Attack reads 193, and Magic Guard plus Recover keep it standing without needing its defences |
+| **Rayquaza** | **Yes, with a warning** | 188 in both attacking stats, but Dragon Ascent comes from the Move Tutor at full friendship, and a shadow starts at zero. Walk the friendship up before the tutor, or it has no Mega and no Flying move |
+| **Chandelure** | **Only in PvP** | 181 Special Attack is the biggest single gain on any of these teams, but in a raid the boss hits your whole side and 68/68 defences on a 60 HP body will not survive it |
+| **Breloom** | **No** | Its defences are already 80/60, and Mycelium only multiplies the party's damage **while it stands**. A dead Breloom costs more than 162 Attack is worth |
+| **Volcarona** | **No** | It wins by surviving long enough to stack Quiver Dance. Dropping its 105 Special Defense works against the only plan it has |
+| **Clefable, Blissey, Latias, Togekiss, Magcargo, Whimsicott** | **Never** | Every one of them is paid for by standing: Friend Guard, Eon Shield, Wishing Well, Ward, Magma Trail, Follow Me and the screens all stop the moment they fall. A third more damage taken is the exact opposite of what they are for |
+
+**The rule of thumb**: shadow the units whose contribution is the damage they deal, and
+never the units whose contribution is that they are still on the field. On these four
+teams that means one or two shadows, not six.
+
+**If you catch a shadow of a support**, purify it. The gem turns a liability into two
+extra points in every value, which is a straight upgrade for a Clefable or a Blissey.
+
 ---
 
 ## NPC and PvP battles, without legendaries

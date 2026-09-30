@@ -4,7 +4,7 @@ import type { Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import MoveCategorySprite from '../sprites/MoveCategorySprite';
 import { Sigil } from '../sprites/TypeBadge';
-import MoveHoverCard from '../moves/MoveHoverCard';
+import MoveTooltip from '../moves/MoveTooltip';
 import { Badge } from '../styled';
 
 /**
@@ -48,9 +48,9 @@ export const MOVE_SLOT = 'flex items-center gap-2 rounded-lg border-2 px-2 py-1 
 /** The label with the move's card over it */
 export function MoveLine(props: { move: Moves }): JSX.Element {
   return (
-    <MoveHoverCard class="flex min-w-0 grow" move={props.move}>
+    <MoveTooltip class="flex min-w-0 grow" move={props.move}>
       <MoveLabel move={props.move} />
-    </MoveHoverCard>
+    </MoveTooltip>
   );
 }
 

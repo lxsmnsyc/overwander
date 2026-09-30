@@ -11,9 +11,16 @@ import type { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { STATUS_NAMES } from '../../auth/health';
-import { detailAbility, detailItem } from '../details';
+import {
+  ABILITY_PILLS,
+  type AbilityKind,
+  abilityKind,
+  detailAbility,
+  detailItem,
+} from '../details';
 import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
+import MoveTooltip from '../moves/MoveTooltip';
 import { Meta, TooltipHost } from '../styled';
 
 /**
@@ -146,7 +153,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
 
     // Reduced here in the memo, because a `For` row reads its item once
     // and a cooldown read in the markup would never move
-    const moves: { name: string; disabled: boolean; ready: number }[] = [];
+    const moves: { move: Moves; name: string; disabled: boolean; ready: number }[] = [];
 
     for (const move of Object.values(unit.moves)) {
       // The plain swing every unit is fielded with is not one of its moves
@@ -154,6 +161,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
         continue;
       }
       moves.push({
+        move: move.move,
         name: getMoveData(move.move).name,
         disabled: move.disabled,
         ready: fractionOf(move.cooldown),
@@ -162,13 +170,13 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
 
     // Only the enabled half: a suppressed ability or an eaten item is
     // one the pokemon no longer has
-    const abilities: { name: string; description: string }[] = [];
+    const abilities: { name: string; description: string; kind: AbilityKind }[] = [];
 
     for (const key of Object.keys(unit.abilities)) {
       const ability: Abilities = Number(key);
 
       if (unit.abilities[ability] === true) {
-        abilities.push(detailAbility(ability));
+        abilities.push({ ...detailAbility(ability), kind: abilityKind(unit.species, ability) });
       }
     }
 
@@ -292,20 +300,23 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
         <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
           <Index each={view().moves}>
             {(move) => (
-              <li
-                class="relative overflow-hidden rounded border border-line-soft bg-line-soft px-1
-                  py-0.5"
-                title={`${move().name}${move().disabled ? ' — disabled' : ''}`}
-              >
-                <div
-                  class={`absolute inset-y-0 left-0 ${
-                    move().disabled ? 'bg-muted/30' : 'bg-tide/30'
-                  }`}
-                  style={{ width: `${move().ready * 100}%` }}
-                />
-                <span class={`relative block truncate ${move().disabled ? 'text-muted' : ''}`}>
-                  {move().name}
-                </span>
+              <li>
+                <MoveTooltip class="block" move={move().move}>
+                  <span
+                    class="relative block overflow-hidden rounded border border-line-soft
+                      bg-line-soft px-1 py-0.5"
+                  >
+                    <span
+                      class={`absolute inset-y-0 left-0 ${
+                        move().disabled ? 'bg-muted/30' : 'bg-tide/30'
+                      }`}
+                      style={{ width: `${move().ready * 100}%` }}
+                    />
+                    <span class={`relative block truncate ${move().disabled ? 'text-muted' : ''}`}>
+                      {move().name}
+                    </span>
+                  </span>
+                </MoveTooltip>
               </li>
             )}
           </Index>
@@ -318,10 +329,14 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
           <For each={view().abilities} fallback={<Meta>No ability</Meta>}>
             {(ability) => (
               <li>
-                <TooltipHost class="block" kind="ability" {...ability}>
+                <TooltipHost
+                  class="block"
+                  kind="ability"
+                  name={ability.name}
+                  description={ability.description}
+                >
                   <span
-                    class="block truncate rounded border border-line-soft bg-tide-soft px-1 py-0.5
-                      text-tide-dark"
+                    class={`block truncate rounded border px-1 py-0.5 ${ABILITY_PILLS[ability.kind]}`}
                   >
                     {ability.name}
                   </span>

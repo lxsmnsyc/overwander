@@ -373,6 +373,7 @@ describe('chunk snapshot', () => {
     const world = new World('overworld', Depth.Cave);
     const NOON = 12 * 60 * 60 * 1000;
     let flooded = 0;
+    let swimming = 0;
 
     for (let x = -12; x < 12; x++) {
       for (let y = -12; y < 12; y++) {
@@ -394,15 +395,19 @@ describe('chunk snapshot', () => {
         }
         snapshot.getSpawns(SPAWN_COUNT);
         for (const [cell, spawn] of snapshot.getSpawnCells()) {
-          expect(
-            fitsSurface(spawn[0], chunk.getCellSurface(cell)),
-            getSpeciesData(spawn[0]).name,
-          ).toBe(true);
+          const surface = chunk.getCellSurface(cell);
+
+          expect(fitsSurface(spawn[0], surface), getSpeciesData(spawn[0]).name).toBe(true);
+          if (surface === SpawnSurface.Water) {
+            swimming++;
+          }
         }
       }
     }
-    // Caves with no water at all would leave this test checking nothing
+    // Caves with no water at all would leave this test checking nothing,
+    // and the amphibious residents are what keeps the water from standing empty
     expect(flooded).toBeGreaterThan(0);
+    expect(swimming).toBeGreaterThan(0);
   });
 
   it("keeps a sea's islands to what lives on land", () => {

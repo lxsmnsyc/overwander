@@ -1932,8 +1932,6 @@ export default class ChunkSnapshot {
       getTimeOfDay(this.phenomenonTimestamp),
       () => rng.random(),
       getFeaturedFamily(this.phenomenonTimestamp),
-      // Only a ripple is the water's; the rest are over dry ground
-      phenomenon === Phenomenon.RipplingWater ? this.drawnSurface(cell) : SpawnSurface.Land,
     );
 
     // A pokemon out of a phenomenon answers the meridian too

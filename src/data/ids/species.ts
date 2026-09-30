@@ -1046,6 +1046,10 @@ export const enum Species {
   KyogreShadow = 1038203,
   GroudonShadow = 1038304,
   RayquazaShadow = 1038404,
+  // The shapes a true shadow can be worn into, in the collection's own slots
+  KyogreShadowPrimal = 1038204,
+  GroudonShadowPrimal = 1038305,
+  RayquazaShadowMega = 1038405,
 
   /**
    * The Megas. The form index is the collection's own Mega slot, so

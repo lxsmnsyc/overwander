@@ -4,6 +4,7 @@ import { type SpriteQuad, cornersOf } from '../../../canvas/placement';
 import { Species } from '../../../data/ids/species';
 import { MEGA_STONES, getMegaStone } from '../../../data/items/mega-stones';
 import { isMegaSpecies } from '../../../data/species/megas';
+import { getShadowlessSpecies } from '../../../data/species/true-shadow';
 import type { SlotBatch } from './draw';
 
 /**
@@ -45,7 +46,9 @@ function sheetOf(name: string): BasicSprite | null {
   return sheets.get(name) ?? null;
 }
 
-function iconOf(species: Species): { sheet: string; name: string } | null {
+function iconOf(worn: Species): { sheet: string; name: string } | null {
+  // A true shadow's shape wears what its counterpart's does
+  const species = getShadowlessSpecies(worn) ?? worn;
   const orb = PRIMAL_ORBS.get(species);
 
   if (orb != null) {

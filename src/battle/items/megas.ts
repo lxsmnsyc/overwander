@@ -4,6 +4,7 @@ import { Moves } from '../../data/ids/moves';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
 import { MEGA_STONES } from '../../data/items/mega-stones';
 import { getSpeciesData } from '../../data/species/__create';
+import { getShadowlessSpecies, getTrueShadowShape } from '../../data/species/true-shadow';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
 import type Team from '../team';
@@ -15,13 +16,21 @@ import type Unit from '../unit';
  * stone, only Dragon Ascent
  */
 export function megaOf(unit: Unit): Species | null {
-  if (unit.species === Species.Rayquaza && unit.moves[Moves.DragonAscent] != null) {
+  // A true shadow Mega Evolves as its counterpart would, into its own colours
+  const plain = getShadowlessSpecies(unit.species);
+  const mega = plainMegaOf(unit, plain ?? unit.species);
+
+  return plain == null || mega == null ? mega : getTrueShadowShape(mega);
+}
+
+function plainMegaOf(unit: Unit, species: Species): Species | null {
+  if (species === Species.Rayquaza && unit.moves[Moves.DragonAscent] != null) {
     return Species.RayquazaMega;
   }
   for (const [item, stone] of MEGA_STONES) {
     // Held rather than enabled: nothing that stops an item working
     // stops a stone, the way the mainline has it
-    if (unit.items[item] != null && getBaseFormSpecies(stone.mega) === unit.species) {
+    if (unit.items[item] != null && getBaseFormSpecies(stone.mega) === species) {
       return stone.mega;
     }
   }

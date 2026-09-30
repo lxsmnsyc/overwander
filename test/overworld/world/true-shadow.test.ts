@@ -10,6 +10,7 @@ import {
   getSpeciesData,
   getTrueShadow,
   getTrueShadowCounterpart,
+  getTrueShadowShape,
   isTrueShadow,
   listTrueShadows,
   registerSpecies,
@@ -85,6 +86,24 @@ describe('what a true shadow is', () => {
       // Met under a sky rather than in a country, so no biome lists one
       expect(data.biomes).toEqual([]);
     }
+  });
+
+  it('has its own Primal and Mega shapes, ten points better than the ordinary ones', () => {
+    for (const [shape, shadow] of [
+      [Species.KyogrePrimal, Species.KyogreShadowPrimal],
+      [Species.GroudonPrimal, Species.GroudonShadowPrimal],
+      [Species.RayquazaMega, Species.RayquazaShadowMega],
+    ] as const) {
+      const base = getSpeciesData(shape);
+      const data = getSpeciesData(shadow);
+
+      expect(getTrueShadowShape(shape)).toBe(shadow);
+      expect(data.worn).toBe(true);
+      expect(data.stats[Stats.Attack]).toBe(base.stats[Stats.Attack] + TRUE_SHADOW_BONUS);
+    }
+    expect(getSpeciesData(Species.KyogreShadowPrimal).name).toBe('Primal XD-382');
+    expect(getSpeciesData(Species.RayquazaShadowMega).name).toBe('Mega XD-384');
+    expect(getTrueShadowShape(Species.MewtwoMegaX)).toBeNull();
   });
 
   it('goes by its dex number rather than by the bird it is the shadow of', () => {

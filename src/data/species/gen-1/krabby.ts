@@ -58,6 +58,7 @@ const FAMILY_TEACHABLE = [
   Moves.Round,
   Moves.Scald,
   Moves.Confide,
+  Moves.Liquidation,
 ];
 
 const FAMILY_ABILITIES = [Abilities.HyperCutter, Abilities.ShellArmor];
@@ -154,7 +155,14 @@ export default function registerKrabbySpecies(): void {
         51: [Moves.Brine],
         65: [Moves.Flail],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Dig, Moves.GigaImpact, Moves.Quash],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Dig,
+        Moves.GigaImpact,
+        Moves.Quash,
+        Moves.StompingTantrum,
+      ],
     },
   });
 }

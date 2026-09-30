@@ -114,7 +114,14 @@ export default function registerBeltPairSpecies(): void {
         41: [Moves.Superpower],
         45: [Moves.Reversal],
       },
-      teachable: [...PAIR_TEACHABLE, Moves.Bind, Moves.BodySlam, Moves.Revenge],
+      teachable: [
+        ...PAIR_TEACHABLE,
+        Moves.Bind,
+        Moves.BodySlam,
+        Moves.Revenge,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
+      ],
     },
   });
   registerSpecies(Species.Sawk, {
@@ -158,7 +165,14 @@ export default function registerBeltPairSpecies(): void {
         41: [Moves.CloseCombat],
         45: [Moves.Reversal],
       },
-      teachable: [...PAIR_TEACHABLE, Moves.CloseCombat, Moves.DualChop, Moves.Revenge],
+      teachable: [
+        ...PAIR_TEACHABLE,
+        Moves.CloseCombat,
+        Moves.DualChop,
+        Moves.Revenge,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
+      ],
     },
   });
 }

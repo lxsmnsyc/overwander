@@ -232,6 +232,7 @@ export default function registerTotodileSpecies(): void {
         Moves.RockClimb,
         Moves.Bulldoze,
         Moves.DragonTail,
+        Moves.Liquidation,
       ],
     },
   });

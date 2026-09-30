@@ -155,7 +155,7 @@ export default function registerHoothootSpecies(): void {
         52: [Moves.Roost],
         57: [Moves.DreamEater],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.LaserFocus],
     },
   });
 }

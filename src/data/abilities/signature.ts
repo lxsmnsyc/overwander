@@ -2468,6 +2468,27 @@ export default function registerSignatureAbilities(): void {
     description: 'Water moves hit it for neutral damage rather than super effective.',
   });
 
+  // Alola's mythicals, which the mainline does not present as a set
+  registerSignature(Families.Magearna, Abilities.SoulRelay, {
+    name: 'Soul Relay',
+    description: 'When a teammate faints, it takes on every stat stage that teammate had raised.',
+  });
+
+  registerSignature(Families.Marshadow, Abilities.UmbralStrike, {
+    name: 'Umbral Strike',
+    description: 'Its moves hit 1.25x against a target with any stat stage raised.',
+  });
+
+  registerSignature(Families.Zeraora, Abilities.IonField, {
+    name: 'Ion Field',
+    description: "Enemies' Normal moves are Electric moves while it is on the field.",
+  });
+
+  registerSignature(Families.Meltan, Abilities.MetalEater, {
+    name: 'Metal Eater',
+    description: 'Steel moves heal it 1/4 of its max HP rather than hurting it.',
+  });
+
   // The Alolan lines whose every stage is regional carry their own
   registerFormSignature([Species.RattataAlola, Species.RaticateAlola], Abilities.RichDiet, {
     name: 'Rich Diet',

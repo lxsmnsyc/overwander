@@ -27,6 +27,7 @@ import {
   createSurgeAbility,
   createThickFatAbility,
   createTypeShiftAbility,
+  getAbilityHolders,
 } from './__create';
 import { STAT_STAGES, createStatExtremes } from './signature/__create';
 
@@ -98,6 +99,23 @@ const setupAbilities = [
   createClearBodyAbility(Abilities.FullMetalBody),
   createMultiscaleAbility(Abilities.ShadowShield),
   createFilterAbility(Abilities.PrismArmor),
+
+  // Magearna: every faint on the field but its own feeds the heart
+  // https://bulbapedia.bulbagarden.net/wiki/Soul-Heart_(Ability)
+  createAbility(Abilities.SoulHeart, (battle) =>
+    battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+      for (const holder of getAbilityHolders(battle, Abilities.SoulHeart)) {
+        if (holder !== event.source && holder.alive && holder.hasAbility(Abilities.SoulHeart)) {
+          holder.triggerAbility(Abilities.SoulHeart);
+          holder.addStage(Stages.SpecialAttack, 1, {
+            type: EffectType.Ability,
+            ability: Abilities.SoulHeart,
+            unit: holder,
+          });
+        }
+      }
+    }),
+  ),
 
   // The Ultra Beasts: whatever it knocks out makes it stronger where
   // it is already strongest

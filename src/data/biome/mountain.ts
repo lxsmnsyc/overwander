@@ -119,7 +119,12 @@ export default function registerMountainSpawns(): void {
         { species: Species.Moltres, weight: 10 },
         { species: Species.HoOh, weight: 10 },
       ],
-      mythical: [{ species: Species.Diancie, weight: 10 }],
+      mythical: [
+        { species: Species.Magearna, weight: 5 },
+        { species: Species.MagearnaOriginal, weight: 5 },
+        { species: Species.Marshadow, weight: 10 },
+        { species: Species.Diancie, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -236,7 +241,12 @@ export default function registerMountainSpawns(): void {
         { species: Species.Moltres, weight: 10 },
         { species: Species.HoOh, weight: 10 },
       ],
-      mythical: [{ species: Species.Diancie, weight: 10 }],
+      mythical: [
+        { species: Species.Magearna, weight: 5 },
+        { species: Species.MagearnaOriginal, weight: 5 },
+        { species: Species.Marshadow, weight: 10 },
+        { species: Species.Diancie, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -328,7 +338,12 @@ export default function registerMountainSpawns(): void {
         { species: Species.Moltres, weight: 10 },
         { species: Species.HoOh, weight: 10 },
       ],
-      mythical: [{ species: Species.Diancie, weight: 10 }],
+      mythical: [
+        { species: Species.Magearna, weight: 5 },
+        { species: Species.MagearnaOriginal, weight: 5 },
+        { species: Species.Marshadow, weight: 10 },
+        { species: Species.Diancie, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -428,7 +443,12 @@ export default function registerMountainSpawns(): void {
         { species: Species.Mewtwo, weight: 10 },
         { species: Species.HoOh, weight: 10 },
       ],
-      mythical: [{ species: Species.Diancie, weight: 10 }],
+      mythical: [
+        { species: Species.Magearna, weight: 5 },
+        { species: Species.MagearnaOriginal, weight: 5 },
+        { species: Species.Marshadow, weight: 10 },
+        { species: Species.Diancie, weight: 10 },
+      ],
     },
   });
   registerWaterPool(Biome.Mountain, {

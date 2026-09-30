@@ -33,6 +33,11 @@ export default function registerGen7Abilities(): void {
     name: 'Prism Armor',
     description: 'Super-effective blows on it hit 1/4 softer, even through Mold Breaker.',
   });
+  // Magearna
+  registerAbility(Abilities.SoulHeart, {
+    name: 'Soul-Heart',
+    description: '+1 Special Attack whenever any other pokemon on the field faints.',
+  });
   // The Ultra Beasts
   registerAbility(Abilities.BeastBoost, {
     name: 'Beast Boost',

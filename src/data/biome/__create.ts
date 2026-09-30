@@ -1024,6 +1024,9 @@ export function pickFromEntries(entries: SpawnEntry[], random: () => number): Sp
  * totals, so a band added between two others takes its share out of
  * **base** and leaves every other band as wide as it was
  */
+/** The bands a roll only reaches on its own odds, never by falling into them */
+const LEGEND_BANDS = new Set<keyof SpawnRarityGroups>(['special', 'mythical']);
+
 const SPAWN_BANDS: [band: keyof SpawnRarityGroups, odds: number][] = [
   ['mythical', MYTHICAL_SPAWN_ODDS],
   ['special', SPECIAL_SPAWN_ODDS],
@@ -1045,7 +1048,9 @@ const SPAWN_BANDS: [band: keyof SpawnRarityGroups, odds: number][] = [
  * leave the prized band out altogether and still roll their rares.
  * An empty base band falls the other way, up to the richest band that
  * holds anything: a coast whose every pokemon is one stage from
- * finished still has pokemon on it
+ * finished still has pokemon on it. That climb stops short of the
+ * legends, so a pool holding only a legend stays empty rather than
+ * staging it on every roll
  */
 export function pickSpawn(groups: SpawnRarityGroups, random: () => number): Species | null {
   const roll = random();
@@ -1067,7 +1072,7 @@ export function pickSpawn(groups: SpawnRarityGroups, random: () => number): Spec
   for (const [band] of [...SPAWN_BANDS].reverse()) {
     const tier = spawnBand(groups, band);
 
-    if (tier.length > 0) {
+    if (tier.length > 0 && !LEGEND_BANDS.has(band)) {
       return pickFromEntries(tier, random);
     }
   }

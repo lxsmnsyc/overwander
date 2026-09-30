@@ -25,7 +25,7 @@ import { usePortalHost } from './portal-host';
  */
 
 /** What kind of thing a tooltip names, which picks the chip beside the name */
-export type TooltipKind = 'item' | 'candy' | 'type' | 'weather' | 'ability' | 'status';
+export type TooltipKind = 'item' | 'candy' | 'type' | 'weather' | 'ability' | 'status' | 'move';
 
 const KIND_CHIPS: Record<TooltipKind, { label: string; tone: string }> = {
   item: { label: 'Item', tone: 'bg-leaf-soft text-leaf-dark' },
@@ -34,6 +34,7 @@ const KIND_CHIPS: Record<TooltipKind, { label: string; tone: string }> = {
   weather: { label: 'Weather', tone: 'bg-gold-soft text-gold' },
   ability: { label: 'Ability', tone: 'bg-tide-soft text-tide-dark' },
   status: { label: 'Status', tone: 'bg-line-soft text-arcane' },
+  move: { label: 'Move', tone: 'bg-tide-soft text-tide-dark' },
 };
 
 export interface TooltipProps {

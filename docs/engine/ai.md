@@ -98,11 +98,35 @@ Damp is the exception, because its veto lives on the cast check and the AI
 **cannot ask that**. Infatuation answers the same question with a coin toss, and
 a speculative flip would pull every replay off its seed.
 
+## The fog
+
+The AI only knows what a foe has shown
+([`src/battle/ai/fog.ts`](../../src/battle/ai/fog.ts)). This applies to both
+sides, since the AI drives every unit.
+
+- An ability is known once it cues (`UnitTriggerAbility`). Boss is always known.
+- A held item is known once it cues (`UnitTriggerItem`).
+- A move is known once it is cast. Attack and Struggle are always known, since
+  every unit carries them.
+- Types, health, statuses and stages are always known.
+- The caster's own side hides nothing.
+
+While the AI weighs a move, every hidden ability and item on another side reads
+as absent. The fog opens on the same `Prepare`/`Cleanup` bracket as Mold
+Breaker, so the damage estimate, the immunity checks, the stage checks and the
+ratings all see only what has been shown. A Levitate that has not cued is not
+something the AI plans around; once a Ground move fails against it, it is.
+
+Hidden is not the same as absent. A rule that reads a foe's item or ability list
+directly assumes the move works until it knows otherwise: Knock Off, Bug Bite,
+Pluck and Embargo are not marked down against a foe whose items are unknown, and
+Role Play, Gastro Acid and Skill Swap assume the foe holds an ability. Damp
+refuses an Explosion only once the caster knows about the Damp.
+
 ## Scoring a hit
 
-- Taking a unit off the field is worth `KILL_BONUS` (8). That sits above the
-  widest chip and above a heal, far enough above both that no wind-up a killing
-  move has to pay makes chipping look better than finishing.
+- Taking a unit off the field is worth `KILL_BONUS` (20). That sits above every
+  role's base, so finishing a foe beats any setup, and above every chip and heal.
 - Getting there first is worth `PRIORITY_KILL_BONUS` (2) more.
 - A hit that leaves the target standing is scored on the share of the remaining
   health it takes, out of `DAMAGE_SCALE` (5). Such a hit falls short of a kill
@@ -122,15 +146,146 @@ nothing else: **no cue, no stage of its own, nothing a watcher could see.** An
 ability that blocks a stat drop shows its cue when the drop is really aimed at
 it, not each time the AI weighs a move.
 
-## Stage boosts in a raid
+## A raid boss does not set up
 
-In a raid the AI adds a bonus to friendly stage boosts, big enough to outbid any
-non-lethal damage. A party facing a health pool that size wants its first casts
-spent making the rest of them count.
+A raid boss never scores a self boost. It does not have to survive a long fight,
+and its casts are already doubled. A boss cast spent winding up a Withdraw is an
+opening handed to the lobby.
 
-**The boss is exempt.** It does not have to survive a long fight, and its casts
-are already doubled. A boss cast spent winding up a Withdraw is an opening
-handed to the lobby.
+## Move roles
+
+[`src/battle/ai/roles.ts`](../../src/battle/ai/roles.ts) gives every move one
+or more roles. `getMoveRoles(move)` reads them from the move data and the
+registries in `src/battle/moves`. A move may hold several roles: Fly is damage,
+a wind-up and a shield all at once.
+
+`ROLE_BASE` says what each role is worth at the start of a fight, before
+relevance and the fight's phase scale it. The order is:
+
+1. Shield: moves that keep the damage off, such as Protect, Substitute and Fly.
+2. Team setup and hazards.
+3. Field effects: weather, terrain and rooms.
+4. Status: afflicting a foe.
+5. Self boosts.
+6. Disruption.
+7. Foe drops and support for a teammate.
+8. Damage, which is scored by the hit itself.
+
+A test fails when a registered move has no role, so a new move cannot go
+unscored without anyone noticing.
+
+[`src/battle/ai/role-score.ts`](../../src/battle/ai/role-score.ts) scores a
+status move by its roles: each role adds its base times a relevance from 0 to 1.
+A damaging move counts only its Shield role, since its side effects are chances
+and the hit is scored on its own.
+
+| Role       | Relevant when                                                                              |
+| ---------- | ------------------------------------------------------------------------------------------ |
+| Shield     | A foe is winding up a hit that reaches the unit; Substitute above half health              |
+| TeamSetup  | A foe has shown a move the veil stops; fades with team health                              |
+| Hazard     | Always; fades with team health                                                             |
+| Field      | The weather or terrain favours the caster's side; Trick Room for the slower side           |
+| Status     | Scaled by the target's remaining health                                                    |
+| SelfBoost  | The stat is one the unit uses, with room left to rise; scaled by its health                |
+| FoeDrop    | The stat has room left to fall; fades with team health                                     |
+| Disruption | Taunt against a foe that has shown a status move; Roar and Whirlwind against raised stages |
+| Support    | Helping Hand for a teammate with a damaging move                                           |
+
+Every other role adds nothing yet, and is weighed by the move's own rules.
+
+A damaging move's side effect adds the role it stands for, times the odds it
+lands: a status chance is weighed as Status, a stat drop as FoeDrop, and a rise
+on the user as SelfBoost. The odds come from the engine's own effect checks, so
+Serene Grace doubles them and Sheer Force gives them up. Only a foe the hit can
+touch counts, and flinching is left out, since in real time it only matters if
+the hit lands mid-cast.
+
+No role adds more than one point under `KILL_BONUS`, so finishing a foe always
+wins.
+
+## Moves that call another
+
+A caller is worth what it would call. `weighCall` in the chooser scores the
+called move exactly as the AI would score casting it, and each caller asks it
+from its own module:
+
+- Nature Power, Copycat and Mirror Move score as the one move they would call.
+- Me First scores as the move it would take, at its extra power.
+- Sleep Talk and Assist score as the average of the moves they could draw.
+- Metronome could call anything, so it only beats doing nothing.
+
+The focus-fire bonus and a Palace nature's aim skip callers, since the called
+move's score already carries them.
+
+## What the caster's own side brings
+
+The AI reads its own side in full, so its kit shapes the score:
+
+- A screen or a weather is worth more when the caster's gear makes it last
+  longer. The AI asks the engine's own duration checks, so Light Clay and the
+  weather rocks count without being named.
+- A stage change is weighed as the unit would really take it:
+  `resolveStageChange` answers doubled for a Simple and turned round for a
+  Contrary. A Contrary holder does not cast Swords Dance.
+- Recoil and crash cost nothing when the engine says the user would not be
+  hurt: Rock Head refuses the recoil, and Magic Guard the damage.
+- A weather move is worth more when a teammate's ability thrives under that
+  sky (Swift Swim, Chlorophyll, Sand Rush and the rest). Each such ability
+  registers the skies it wants with `registerWeatherWant`, from its own
+  module, so the AI never names one. A sky only the foe gains from, including
+  a foe's weather ability once it has shown itself, counts against the move.
+- A drain is worth more under a Big Root.
+- A hit whose Life Orb recoil would finish its holder is marked down.
+- Light Screen is guessed at, for half its worth, when a foe is built to hit
+  harder specially than physically, before it has shown a special move.
+
+## The decision context
+
+Each decision runs inside one `AIContext`
+([`src/battle/ai/context.ts`](../../src/battle/ai/context.ts)). A scoring
+listener asks for it with `getAIContext(battle, source)` rather than working the
+field out again for every move and target:
+
+- the living friends and foes;
+- each unit's rating and threat band, computed once per decision;
+- a team's health share, with fainted units counting as no health;
+- `foesKnow(test)`, which asks whether a foe has shown a matching move.
+
+A question asked outside a decision, as a test does, gets a fresh context.
+
+## Teammates casting over each other
+
+Teammates decide one at a time but cast over each other, and a cast takes about
+1.7 seconds to wind up. [`src/battle/ai/coordination.ts`](../../src/battle/ai/coordination.ts)
+reads what each friend is already casting, and refuses a move the friend's cast
+already covers:
+
+- the same veil, tailwind or team guard over the same team;
+- the same weather, terrain or room over the field;
+- the same hazard on the same side, except Spikes and Toxic Spikes, which stack;
+- an affliction at a foe a friend is already afflicting.
+
+A cast is on show, so reading it is no peek. Only casts still winding up are
+read; a move already in flight for its last quarter of a second is not.
+
+## Measuring a change
+
+Two tools show what a scoring change does, so tuning is measured rather than
+guessed.
+
+- **`pnpm ai:sim`** plays AI-against-AI battles headless and prints what was
+  cast: each role's share of all casts, its share on the winning and the losing
+  side, and the most cast moves. The parties are random, built the way an
+  expert's are. `SIM_BATTLES`, `SIM_SIZE` and `SIM_LEVEL` override the defaults
+  of 40 battles, three a side, at level 50. It runs on its own config
+  (`vitest.sim.ts`), since a run takes minutes.
+- **`test/battle/ai-openings.test.ts`** pins how a few fixed fights open, as a
+  snapshot. A scoring change that moves an opening fails it, and a deliberate
+  one updates it with `vitest -u`.
+
+The "lean" column in the report is the winners' share of a role over the
+losers'. Above 1, the winning side cast that role more. It is a correlation over
+random parties, not proof that the role wins fights.
 
 ## See also
 

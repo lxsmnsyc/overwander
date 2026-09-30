@@ -29,7 +29,7 @@ export const TERRAIN_BLUNTING = 0.5;
 export const GRASSY_HEAL_SHARE = 1 / 16;
 
 /** The type each terrain strengthens for whoever throws it from the ground */
-const BOOSTED: { [key in Terrains]?: Types } = {
+export const TERRAIN_BOOSTED: { [key in Terrains]?: Types } = {
   [Terrains.Electric]: Types.Electric,
   [Terrains.Grassy]: Types.Grass,
 };
@@ -79,7 +79,7 @@ export default function setupTerrainMechanics(battle: Battle): void {
       return;
     }
 
-    const boosted = BOOSTED[event.source.checkTerrain()];
+    const boosted = TERRAIN_BOOSTED[event.source.checkTerrain()];
 
     if (boosted != null && event.source.checkMoveType(event.move, event.target) === boosted) {
       event.power *= TERRAIN_BOOST;

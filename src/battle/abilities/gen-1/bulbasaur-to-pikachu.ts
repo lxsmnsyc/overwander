@@ -23,6 +23,12 @@ import {
   createToughClawsAbility,
 } from '../__create';
 import { MergedLifecycle } from '../../lifecycle';
+import { registerWeatherWant } from '../../ai/weather-wants';
+
+// The skies these thrive under, so the AI weighs a weather move by who gains from it
+registerWeatherWant(Abilities.Chlorophyll, [Weathers.Sunny]);
+registerWeatherWant(Abilities.SolarPower, [Weathers.Sunny]);
+registerWeatherWant(Abilities.RainDish, [Weathers.Rain]);
 
 /**
  * What the first stretch of the dex is born with, Bulbasaur to

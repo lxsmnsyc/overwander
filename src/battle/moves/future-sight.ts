@@ -11,7 +11,7 @@ import type Unit from '../unit';
 export const FUTURE_SIGHT_DELAY = turns(2);
 
 /** The moves that are cast now and land later */
-const DELAYED_MOVES = new Set<Moves>([Moves.FutureSight, Moves.DoomDesire]);
+export const DELAYED_MOVES = new Set<Moves>([Moves.FutureSight, Moves.DoomDesire]);
 
 interface Pending {
   source: Unit;

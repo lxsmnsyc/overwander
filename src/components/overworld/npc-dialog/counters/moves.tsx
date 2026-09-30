@@ -10,18 +10,14 @@ import {
 import type { CatchOption } from '../../../catches/catch-picker';
 import { getMoveData } from '../../../../data/moves';
 import { TYPE_NAMES } from '../../../../data/constants/types';
-import MoveHoverCard from '../../../moves/MoveHoverCard';
-import { MoveLabel } from '../../../catches/MovePicker';
+import { MOVE_SLOT, MOVE_SLOTS, MoveLine } from '../../../catches/MovePicker';
 import { CounterStep, CounterTerms, PickOne } from '../terms';
 import { isGuarded } from '../../../../auth/caught-record';
 import {
   DialogSection,
   LIST_PAGE,
-  List,
-  ListRow,
   Meta,
   Note,
-  RowButton,
   SEARCH_FROM,
   Search,
   createPager,
@@ -155,11 +151,11 @@ function MoveCounter(
           </Show>
           {/* Name, type and category at a glance, as the catch sheet
               draws them; what the move does is on the card over it */}
-          <List>
+          <ul class={MOVE_SLOTS}>
             <For
               each={page.shown()}
               fallback={
-                <li>
+                <li class="col-span-full">
                   <Note>No move matches that.</Note>
                 </li>
               }
@@ -172,27 +168,29 @@ function MoveCounter(
                 };
 
                 return (
-                  <ListRow class="flex-nowrap p-0" selected={props.chosen === move}>
-                    <MoveHoverCard class="block grow" move={move}>
-                      <RowButton
-                        class="flex w-full items-center gap-2 px-3 py-2"
-                        pressed={props.chosen === move}
-                        disabled={props.busy || refused() != null}
-                        onClick={() => {
-                          props.onChoose(move);
-                        }}
-                      >
-                        <MoveLabel move={move} />
-                      </RowButton>
-                    </MoveHoverCard>
-                    <Show when={refused()}>
-                      {(why) => <Meta class="shrink-0 pr-3">{why()}</Meta>}
-                    </Show>
-                  </ListRow>
+                  <li>
+                    <button
+                      type="button"
+                      aria-pressed={props.chosen === move}
+                      disabled={props.busy || refused() != null}
+                      class={`${MOVE_SLOT} w-full cursor-pointer disabled:cursor-not-allowed
+                        disabled:opacity-55 ${
+                          props.chosen === move
+                            ? 'border-leaf bg-leaf-soft'
+                            : 'border-line bg-paper hover:border-tide'
+                        }`}
+                      onClick={() => {
+                        props.onChoose(move);
+                      }}
+                    >
+                      <MoveLine move={move} />
+                      <Show when={refused()}>{(why) => <Meta class="shrink-0">{why()}</Meta>}</Show>
+                    </button>
+                  </li>
                 );
               }}
             </For>
-          </List>
+          </ul>
           {page.controls()}
         </>
       </Show>

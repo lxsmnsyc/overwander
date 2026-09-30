@@ -76,6 +76,8 @@ const KYUREM_TEACHABLE = [
   Moves.SignalBeam,
   Moves.SunnyDay,
   Moves.Confide,
+  Moves.BrutalSwing,
+  Moves.LaserFocus,
 ];
 
 /** What the husk learns before either dragon is put into it */
@@ -195,6 +197,8 @@ export default function registerTaoTrioSpecies(): void {
         Moves.SunnyDay,
         Moves.Tailwind,
         Moves.WillOWisp,
+        Moves.BrutalSwing,
+        Moves.LaserFocus,
       ],
     },
   });
@@ -256,6 +260,8 @@ export default function registerTaoTrioSpecies(): void {
         Moves.Thunderbolt,
         Moves.VoltSwitch,
         Moves.WildCharge,
+        Moves.BrutalSwing,
+        Moves.LaserFocus,
       ],
     },
   });

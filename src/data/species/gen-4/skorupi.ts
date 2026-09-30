@@ -178,6 +178,9 @@ export default function registerSkorupiSpecies(): void {
         Moves.Roar,
         Moves.RockClimb,
         Moves.RockSlide,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
+        Moves.ThroatChop,
       ],
     },
   });

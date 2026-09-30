@@ -99,7 +99,7 @@ export default function registerManaphySpecies(): void {
         61: [Moves.Dive],
         69: [Moves.RainDance],
       },
-      teachable: [...SEA_TEACHABLE],
+      teachable: [...SEA_TEACHABLE, Moves.Liquidation],
     },
   });
   registerSpecies(Species.Manaphy, {
@@ -157,6 +157,7 @@ export default function registerManaphySpecies(): void {
         Moves.Reflect,
         Moves.ShadowBall,
         Moves.SkillSwap,
+        Moves.Liquidation,
       ],
     },
   });

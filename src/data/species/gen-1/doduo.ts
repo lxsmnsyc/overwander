@@ -151,6 +151,7 @@ export default function registerDoduoSpecies(): void {
         Moves.Torment,
         Moves.GigaImpact,
         Moves.Payback,
+        Moves.StompingTantrum,
       ],
     },
   });

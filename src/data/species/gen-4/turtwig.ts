@@ -229,6 +229,7 @@ export default function registerTurtwigSpecies(): void {
         Moves.Sandstorm,
         Moves.StoneEdge,
         Moves.WorrySeed,
+        Moves.StompingTantrum,
       ],
     },
   });

@@ -108,6 +108,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Celesteela, weight: 10 },
         { species: Species.Necrozma, weight: 10 },
         { species: Species.ZygardeTenPercent, weight: 5 },
         { species: Species.Zygarde, weight: 5 },
@@ -224,6 +225,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Celesteela, weight: 10 },
         { species: Species.Necrozma, weight: 10 },
         { species: Species.ZygardeTenPercent, weight: 5 },
         { species: Species.Zygarde, weight: 5 },
@@ -315,6 +317,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Celesteela, weight: 10 },
         { species: Species.Necrozma, weight: 10 },
         { species: Species.ZygardeTenPercent, weight: 5 },
         { species: Species.Zygarde, weight: 5 },
@@ -413,6 +416,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Celesteela, weight: 10 },
         { species: Species.Necrozma, weight: 10 },
         { species: Species.ZygardeTenPercent, weight: 5 },
         { species: Species.Zygarde, weight: 5 },

@@ -6,7 +6,7 @@ import { Types } from '../data/constants/types';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import { Balls, Items } from '../data/ids/items';
 import { getNatureFactor } from '../data/ids/natures';
-import { Genders } from '../data/ids/species';
+import { Genders, ULTRA_BEASTS } from '../data/ids/species';
 import type { Species } from '../data/ids/species';
 
 import {
@@ -130,7 +130,12 @@ export const BALL_MODIFIERS: Record<Balls, number> = {
   [Balls.LoveBall]: 1,
   [Balls.HeavyBall]: 1,
   [Balls.FastBall]: 1,
+  [Balls.BeastBall]: 1,
 };
+
+/** Mainline Beast Ball: made for the Ultra Beasts, and poor on anything else */
+export const BEAST_BALL_MODIFIER = 5;
+export const BEAST_BALL_ELSEWHERE = 0.1;
 
 /**
  * Mainline Quick Ball: a strong opener, neutral afterwards
@@ -648,6 +653,10 @@ export default class SafariSession<
         }
         return 1;
       }
+      case Balls.BeastBall:
+        return ULTRA_BEASTS.has(this.encounter.species)
+          ? BEAST_BALL_MODIFIER
+          : BEAST_BALL_ELSEWHERE;
       case Balls.LevelBall: {
         const { buddy } = this.context;
 

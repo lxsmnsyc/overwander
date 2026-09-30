@@ -159,6 +159,17 @@ export default function registerBalls(): void {
     buy: 0,
     sell: 0,
   });
+  // Made for the Ultra Beasts, and next to useless on anything else.
+  // Nothing sells it, so it is only ever found
+  registerItem(Items.BeastBall, {
+    name: 'Beast Ball',
+    type: ItemTypes.PokeBall,
+    description: '5x on an Ultra Beast, and 0.1x on anything else.',
+    icon: 'balls/beast',
+    flags: ItemFlags.Usable | ItemFlags.Consumable,
+    buy: 0,
+    sell: 0,
+  });
   // Better on the line a Moon Stone answers
   registerItem(Items.MoonBall, {
     name: 'Moon Ball',

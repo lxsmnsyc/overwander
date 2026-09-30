@@ -159,6 +159,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LoveBall, weight: 3 },
     { item: Items.HeavyBall, weight: 3 },
     { item: Items.FastBall, weight: 3 },
+    // As thin as Kurt's, and for the same reason: it is for one kind of catch
+    { item: Items.BeastBall, weight: 3 },
     { item: Items.RelicSilver, weight: 4 },
     { item: Items.HyperPotion, weight: 6 },
     // The root is a Hyper Potion's worth and then some, so it sits in

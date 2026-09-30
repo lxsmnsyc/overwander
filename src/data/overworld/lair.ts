@@ -220,6 +220,23 @@ const enum Lairs {
   AltarOfTheMoone = 58,
   /** The hollow at the back of Melemele's crystal cave, where the prism waits */
   TenCaratHill = 59,
+  // The Ultra Beasts' own worlds, across the wormholes
+  /** The drowned dark Nihilego drifts through */
+  UltraDeepSea = 60,
+  /** The jungle Buzzwole flexes in */
+  UltraJungle = 61,
+  /** The white desert Pheromosa runs across */
+  UltraDesert = 62,
+  /** The power plant Xurkitree roots itself in */
+  UltraPlant = 63,
+  /** The crater Celesteela launches from */
+  UltraCrater = 64,
+  /** The paper forest Kartana cuts through */
+  UltraForest = 65,
+  /** The ruined city Guzzlord ate */
+  UltraRuin = 66,
+  /** The grove on Poni the last two came through into */
+  PoniGrove = 67,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -283,6 +300,14 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.AltarOfTheSunne]: 'Altar of the Sunne',
   [Lairs.AltarOfTheMoone]: 'Altar of the Moone',
   [Lairs.TenCaratHill]: 'Ten Carat Hill',
+  [Lairs.UltraDeepSea]: 'Ultra Deep Sea',
+  [Lairs.UltraJungle]: 'Ultra Jungle',
+  [Lairs.UltraDesert]: 'Ultra Desert',
+  [Lairs.UltraPlant]: 'Ultra Plant',
+  [Lairs.UltraCrater]: 'Ultra Crater',
+  [Lairs.UltraForest]: 'Ultra Forest',
+  [Lairs.UltraRuin]: 'Ultra Ruin',
+  [Lairs.PoniGrove]: 'Poni Grove',
 };
 
 /**
@@ -353,6 +378,14 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.AltarOfTheSunne]: [Species.Solgaleo],
   [Lairs.AltarOfTheMoone]: [Species.Lunala],
   [Lairs.TenCaratHill]: [Species.Necrozma],
+  [Lairs.UltraDeepSea]: [Species.Nihilego],
+  [Lairs.UltraJungle]: [Species.Buzzwole],
+  [Lairs.UltraDesert]: [Species.Pheromosa],
+  [Lairs.UltraPlant]: [Species.Xurkitree],
+  [Lairs.UltraCrater]: [Species.Celesteela],
+  [Lairs.UltraForest]: [Species.Kartana],
+  [Lairs.UltraRuin]: [Species.Guzzlord],
+  [Lairs.PoniGrove]: [Species.Stakataka, Species.Blacephalon],
 };
 
 /**
@@ -419,6 +452,14 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.AltarOfTheSunne,
   Lairs.AltarOfTheMoone,
   Lairs.TenCaratHill,
+  Lairs.UltraDeepSea,
+  Lairs.UltraJungle,
+  Lairs.UltraDesert,
+  Lairs.UltraPlant,
+  Lairs.UltraCrater,
+  Lairs.UltraForest,
+  Lairs.UltraRuin,
+  Lairs.PoniGrove,
 ];
 
 /**
@@ -475,13 +516,19 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.FullmoonIsland,
     Lairs.IronRuins,
     Lairs.SkyPillar,
+    Lairs.UltraDeepSea,
   ],
   [Biome.Beach]: [Lairs.EmbeddedTower, Lairs.AetherParadise],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Glacier]: [Lairs.SnowpointTemple, Lairs.GiantChasm],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor, Lairs.AbundantShrine],
   [Biome.Bog]: [Lairs.LakeValor, Lairs.TurnbackCave],
-  [Biome.TemperateForest]: [Lairs.LakeVerity, Lairs.RuminationField, Lairs.WindingWoods],
+  [Biome.TemperateForest]: [
+    Lairs.LakeVerity,
+    Lairs.RuminationField,
+    Lairs.WindingWoods,
+    Lairs.UltraForest,
+  ],
   [Biome.Woodland]: [
     Lairs.BurnedTower,
     Lairs.LakeVerity,
@@ -503,9 +550,10 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.RockPeakRuins,
     Lairs.RelicCastle,
     Lairs.RuinsOfAbundance,
+    Lairs.UltraDesert,
   ],
-  [Biome.TropicalSeasonalForest]: [Lairs.RuinsOfConflict],
-  [Biome.TropicalRainforest]: [Lairs.RuinsOfLife],
+  [Biome.TropicalSeasonalForest]: [Lairs.RuinsOfConflict, Lairs.PoniGrove],
+  [Biome.TropicalRainforest]: [Lairs.RuinsOfLife, Lairs.UltraJungle],
   [Biome.RockyCoast]: [Lairs.RuinsOfHope],
   [Biome.Badlands]: [
     Lairs.DesertRuins,
@@ -516,6 +564,8 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.TerminusCave,
     Lairs.AltarOfTheSunne,
     Lairs.AltarOfTheMoone,
+    Lairs.UltraPlant,
+    Lairs.UltraRuin,
   ],
   [Biome.Mountain]: [
     Lairs.MtEmber,
@@ -527,6 +577,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.FrostCavern,
     Lairs.TerminusCave,
     Lairs.TenCaratHill,
+    Lairs.UltraCrater,
   ],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave, Lairs.SpearPillar],
   [Biome.Volcano]: [Lairs.MtEmber, Lairs.TerraCave, Lairs.StarkMountain],

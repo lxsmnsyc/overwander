@@ -33,6 +33,11 @@ export default function registerGen7Abilities(): void {
     name: 'Prism Armor',
     description: 'Super-effective blows on it hit 1/4 softer, even through Mold Breaker.',
   });
+  // The Ultra Beasts
+  registerAbility(Abilities.BeastBoost, {
+    name: 'Beast Boost',
+    description: '+1 to its highest stat whenever it knocks something out.',
+  });
   registerAbility(Abilities.Neuroforce, {
     name: 'Neuroforce',
     description: 'Its super-effective moves hit 1.25x.',

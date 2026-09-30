@@ -701,6 +701,16 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Solgaleo,
   Species.Lunala,
   Species.Necrozma,
+  // The Ultra Beasts, staged by their lairs the way a legendary is
+  Species.Nihilego,
+  Species.Buzzwole,
+  Species.Pheromosa,
+  Species.Xurkitree,
+  Species.Celesteela,
+  Species.Kartana,
+  Species.Guzzlord,
+  Species.Stakataka,
+  Species.Blacephalon,
 ]);
 
 /**
@@ -800,6 +810,8 @@ const PRIZED_BY_HAND = new Set<Species>([
   // so they are as rare as the line is
   Species.Cosmog,
   Species.Cosmoem,
+  // A gift in the mainline, so it is as rare here as the made ones
+  Species.Poipole,
 ]);
 
 /** Met as rarely as a mythical, but no relic calls it and no raid stages it */

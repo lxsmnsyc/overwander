@@ -2048,3 +2048,26 @@ export function createSkyArcAbility(
     }),
   );
 }
+
+/**
+ * What the Ultra Beasts share: one type this world would beat it with
+ * lands only as hard as any other. The weakness goes the way Strong
+ * Winds takes a Flying type's, one defending type at a time, so it is
+ * never turned into a resistance
+ */
+export function createForeignBodyAbility(
+  ability: Abilities,
+  type: Types,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveEffectiveness, EventPriority.Post, (event) => {
+      if (
+        event.multiplier > 1 &&
+        event.parent.type === type &&
+        event.parent.target.hasAbility(ability)
+      ) {
+        event.multiplier = 1;
+      }
+    }),
+  );
+}

@@ -11,6 +11,8 @@ import ChunkSnapshot from '../../src/overworld/chunk-snapshot';
 import deriveEncounter, { type Encounter, EncounterType } from '../../src/overworld/encounter';
 import { EventPriority } from '../../src/core/event-emitter';
 import SafariSession, {
+  BEAST_BALL_ELSEWHERE,
+  BEAST_BALL_MODIFIER,
   CRITICAL_SHAKES,
   CRITICAL_SHARE,
   LEVEL_CATCH_FLOOR,
@@ -246,6 +248,14 @@ describe('safari session', () => {
       ).toBe(4);
     }
     expect(new SafariSession(makeEncounter(), rolls([])).getBallModifier(Balls.MoonBall)).toBe(1);
+
+    // The Beast Ball is made for the Ultra Beasts and poor on anything else
+    expect(
+      new SafariSession(makeEncounter(Species.Kartana), rolls([])).getBallModifier(Balls.BeastBall),
+    ).toBe(BEAST_BALL_MODIFIER);
+    expect(new SafariSession(makeEncounter(), rolls([])).getBallModifier(Balls.BeastBall)).toBe(
+      BEAST_BALL_ELSEWHERE,
+    );
   });
 
   it('gives the Lure Ball whatever a ripple brought up', () => {

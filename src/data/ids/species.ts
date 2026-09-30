@@ -1645,6 +1645,21 @@ export const SHAYMIN_FORMS: Species[] = [Species.Shaymin, Species.ShayminSky];
 /** The husk and the two shapes a dragon folded into it puts it in */
 export const KYUREM_FORMS: Species[] = [Species.Kyurem, Species.KyuremBlack, Species.KyuremWhite];
 
+/** The creatures that came through the wormholes, which the Beast Ball is made for */
+export const ULTRA_BEASTS = new Set<Species>([
+  Species.Nihilego,
+  Species.Buzzwole,
+  Species.Pheromosa,
+  Species.Xurkitree,
+  Species.Celesteela,
+  Species.Kartana,
+  Species.Guzzlord,
+  Species.Poipole,
+  Species.Naganadel,
+  Species.Stakataka,
+  Species.Blacephalon,
+]);
+
 /** Necrozma alone, with the sun or the moon inside it, and its light let out */
 export const NECROZMA_FORMS: Species[] = [
   Species.Necrozma,

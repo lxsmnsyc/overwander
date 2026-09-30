@@ -154,7 +154,7 @@ export default function registerElectrikeSpecies(): void {
         60: [Moves.ElectricTerrain],
         61: [Moves.WildCharge],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.LaserFocus],
     },
   });
 }

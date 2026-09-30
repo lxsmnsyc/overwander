@@ -128,6 +128,7 @@ export default function registerJynxSpecies(): void {
         Moves.FrostBreath,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.AuroraVeil,
       ],
     },
   });

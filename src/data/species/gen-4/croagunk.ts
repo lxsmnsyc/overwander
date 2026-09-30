@@ -188,6 +188,7 @@ export default function registerCroagunkSpecies(): void {
         Moves.HyperBeam,
         Moves.StoneEdge,
         Moves.SwordsDance,
+        Moves.ThroatChop,
       ],
     },
   });

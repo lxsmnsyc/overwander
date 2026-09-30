@@ -245,6 +245,7 @@ export default function registerSquirtleSpecies(): void {
         Moves.SmackDown,
         Moves.Bulldoze,
         Moves.DragonTail,
+        Moves.Liquidation,
       ],
     },
   });

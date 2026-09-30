@@ -96,8 +96,17 @@ export default function registerTropiusSpecies(): void {
         Moves.Round,
         Moves.Bulldoze,
         Moves.Confide,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
       ],
-      egg: [Moves.LeechSeed, Moves.Headbutt, Moves.Slam, Moves.RazorWind, Moves.NaturePower],
+      egg: [
+        Moves.LeechSeed,
+        Moves.Headbutt,
+        Moves.Slam,
+        Moves.RazorWind,
+        Moves.NaturePower,
+        Moves.DragonHammer,
+      ],
     },
   });
 }

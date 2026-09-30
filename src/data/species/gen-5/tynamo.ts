@@ -51,6 +51,7 @@ const FAMILY_TEACHABLE = [
   Moves.VoltSwitch,
   Moves.WildCharge,
   Moves.Confide,
+  Moves.ThroatChop,
 ];
 
 /**

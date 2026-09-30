@@ -197,7 +197,7 @@ export default function registerPidgeySpecies(): void {
         62: [Moves.AirSlash],
         68: [Moves.Hurricane],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.LaserFocus],
     },
   });
 }

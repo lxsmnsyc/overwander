@@ -1,5 +1,89 @@
 # overwander
 
+## 4.25.0
+
+### Minor Changes
+
+- 4c907c4: Kalos's three legendaries:
+  
+  - Xerneas stands in the temperate forest and the woodland, out of a Winding Woods lair. Yveltal is in the mountains and the tundra, out of a Frost Cavern lair. Zygarde is in the mountains and the badlands, out of a Terminus Cave lair. Kalos catches its mascots in a laboratory under a town, which a world made of country has nowhere to put, so each is at home where its own story happens.
+  - Zygarde carries three shapes. It is met as the half it has gathered, the 10% shape is its own entry, and Power Construct gathers the rest of the cells into the Complete shape at 1/2 HP.
+  - The Zygarde Cube is dug out of the ground. Used on a Zygarde it puts it into its other shape, either way round, and it is spent on each change.
+  - Fairy Aura, Dark Aura, Aura Break, Power Construct, Triage and Earth Eater are built. An aura makes every move of its type on the field hit 1.33x whoever throws it, and a break on the field turns each aura into 0.75x instead.
+  - The trio's signatures read one axis three ways. Xerneas's Quickening makes every stat rise on its team 1 stage bigger, Yveltal's Withering makes every stat drop it lands 1 stage deeper, and Zygarde's Even Keel counts every stat stage on the field at 0.5x, its own included.
+  - Xerneas takes Healer, Multiscale and Triage. Yveltal takes Moxie, Merciless and Shadow Tag. Zygarde is born with Aura Break, and takes Power Construct, Earth Eater and Sturdy in its hidden band.
+- f17f797: Kalos's slug and bat:
+  
+  - Goomy, Sliggoo and Goodra live in the bogs and swamps, on land and in the water alike. Goomy becomes Sliggoo at 40 and Sliggoo becomes Goodra at 50; the mainline asks for rain as well, which nothing here can measure yet.
+  - Noibat and Noivern hunt over the woodland and the tropical rainforest after dark, and Noibat becomes Noivern at 48.
+  - Gooey is built: whatever makes contact with a Goomy, Sliggoo or Goodra loses 1 stage of Speed.
+  - Goodra's Seepage holds back 40% of every direct blow it takes and pays it out over the next 4 seconds, so a heal can outrun the damage.
+  - Noivern's Echolocation hears whoever lands a move on it, and its next damaging move at that enemy is a critical hit.
+  - Goodra takes Water Absorb and Noivern takes Soundproof as their fourth abilities.
+  - All five learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- 9659d28: The rest of Kalos, legendaries aside:
+  
+  - Pancham and Pangoro chew bamboo in the tropical seasonal forest and the woodland. Pancham becomes Pangoro at 32; the mainline also asks for a Dark type in the party, which nothing here can measure yet.
+  - Swirlix and Slurpuff sit in the grassland and shrubland by day, and Swirlix becomes Slurpuff when it is handed over holding a Whipped Dream.
+  - Sylveon is here: an Eevee kept close that knows Baby-Doll Eyes becomes one. It stands in the grassland and woodland beside the other eeveelutions.
+  - Dedenne lives in the grassland, the woodland and underground; Carbink sits in the mountains, the badlands and the caves.
+  - Sweet Veil and Pixilate are built. Nothing on a Swirlix or Slurpuff's team can be put to sleep, and a Sylveon's Normal moves go out as Fairy moves at 1.2x.
+  - Pangoro's Begrudge gives it 1 stage of Attack every time an enemy is healed. Slurpuff's Sugar Rush gives its whole team 1 stage of Speed whenever it uses up its own held item. Dedenne's Quick Whiskers casts a step ahead, which is cast time rather than cooldown. Carbink's Crystal Growth adds 1 stage of Defense and 1 of Special Defense every 10 seconds, up to 3 of each.
+  - Pangoro takes Guts, Slurpuff takes Friend Guard and Thick Fat, Dedenne takes Minus, and Carbink takes Levitate and Solid Rock as their remaining abilities.
+  - Litleo and Spritzee wait: nobody has drawn a male Pyroar, and Aromatisse has only two of its animations.
+
+### Patch Changes
+
+- 4c31930: - The battle AI only plans around a foe's abilities, held items and moves once the foe has shown them.
+  - A Levitate, Air Balloon or Damp that has not shown itself no longer steers the AI away from a move.
+- dee9221: - The battle AI values screens and weather more when its held item makes them last longer.
+  - A Contrary holder no longer boosts itself into a drop, and a Simple holder's boosts are no longer read as useless.
+  - Rock Head and Magic Guard holders use recoil and crash moves without fear.
+  - Big Root holders favour draining moves.
+  - A Life Orb holder near the end holds back a hit whose recoil would finish it.
+  - Light Screen goes up against a foe built to hit specially, before it has shown a special move.
+- 21b3eb9: - Computer-controlled pokemon raise Reflect, Light Screen, Safeguard and Mist early in a fight, while their team is still healthy.
+  - They skip a veil when no foe has a move it would stop.
+  - They put up Substitute while healthy, and avoid it below half health.
+- 936a185: - The battle AI weighs a status move by what it is for: shielding first, then team setup and hazards, field effects, statuses, self boosts, disruption and stat drops.
+  - Protect, Detect and the team guards go up when a hit is already on its way.
+  - Stat boosts, weather, terrain and Trick Room are used when they help the caster's side.
+  - Setup fades as the team loses health, and finishing a foe always beats it.
+  - The AI no longer takes down a Trick Room that is working for its own side.
+- f2081d7: - The battle AI weighs Nature Power, Copycat, Mirror Move and Me First as the move each would use.
+  - Sleep Talk and Assist are weighed by the moves they could draw, and Metronome as a gamble.
+- 21b3eb9: - A pokemon holding a Choice item or an Assault Vest no longer stalls on a move its item refuses.
+  - Spread moves such as Earthquake are weighed by the foes they hit and the teammates they would hurt.
+  - Growl and other spread stat drops are skipped once every foe's stat is already at its lowest.
+  - Skill Link holders count every strike of a multi-hit move when picking one.
+  - Helping Hand is no longer picked as though it were a status for a foe.
+  - A Ring Target shows only when a hit actually lands on its holder.
+- 773f1cd: - The battle AI weighs a damaging move's chance to inflict a status, lower a stat or raise its user.
+  - Serene Grace makes those chances count for more, and Sheer Force for nothing.
+- 8bd3733: - Teammates no longer raise the same screen, weather, terrain, room or hazard twice at once.
+  - Teammates no longer wind up two afflictions at the same foe at once.
+- 7980e7e: - The battle AI calls up a weather when a teammate's ability thrives under it, such as Swift Swim under rain.
+  - It avoids a weather that only helps the foe, once the foe's ability has shown itself.
+- e2d2867: - Ground pokemon no longer spawn on a cave's water.
+  - Cave water now holds only pokemon that swim. The cave pool has none of those yet, so cave water stays empty for now.
+  - On a Dark Day, the true shadows no longer spawn on water.
+  - Changes cave spawns: some cave windows roll different spawns than before.
+- a5404f5: - A Choice item locks only on a move of the holder's own, never on the basic Attack or Struggle.
+  - A Choice-locked pokemon can still fall back on the basic Attack while its locked move cools.
+- 94549a7: - Spiky-eared Pichu can be born with Electric Surge or Friend Guard.
+  - Eternal Floette can be born with Pixilate or Flower Gift.
+  - Fancy Vivillon can be born with Cute Charm.
+  - Poké Ball Vivillon can be born with Pickup.
+  - Electric Surge lays Electric Terrain as its holder takes the field.
+  - Pixilate turns its holder's Normal moves into Fairy moves, which hit 1.2x.
+- 1f85166: - A raid boss now fights with up to 8 moves instead of 4.
+  - A boss takes the last 8 moves its species learns by level.
+  - The moves a boss may never have are still left out.
+- c16dc4b: A substitute blocks only the other side's moves: a teammate's or an ally's stat change or status now reaches the pokemon behind it.
+- c7db420: - A won raid, trainer or gym seat fight pays one candy for every pokemon fielded again, rather than only for what it knocked out.
+  - Raid wins count toward quests again.
+  - A lost raid no longer pays for the faints of the other parties fighting beside you.
+
 ## 4.24.1
 
 ### Patch Changes

@@ -72,7 +72,7 @@ import { PHENOMENON_NAMES } from '../../../data/overworld/phenomenon';
 import { getSpeciesData } from '../../../data/species';
 import { isFeaturedSpecies } from '../../../data/species/day';
 import { CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from '../../../overworld/chunk';
-import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
+import ChunkSnapshot, { RocketRank, SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
 import type World from '../../../overworld/world';
@@ -170,6 +170,13 @@ const keptWindows = new LRUMap<string, SnapshotRecord>(CLAIM_MEMORY);
  * `Suspense` written there and land on the boundary around the whole
  * page — the world is what that boundary would blank
  */
+/** The fight aura a syndicate stop wears, by who is standing there */
+const ROCKET_AURAS: Record<RocketRank, CellAura> = {
+  [RocketRank.Grunt]: CellAura.Fight,
+  [RocketRank.Executive]: CellAura.Executive,
+  [RocketRank.Boss]: CellAura.Boss,
+};
+
 /** The four who keep a house of their own, each a standing fight */
 const EXPERT_LANDMARKS = new Set<Landmark>([
   Landmark.GymLeader,
@@ -1139,7 +1146,9 @@ export default function OverworldBoard(props: {
           snapshot.getTrainerStops().has(inChunk) || snapshot.getRocketStops().has(inChunk);
 
         if (staged && !read.beaten.has(inChunk)) {
-          next.set(at, CellAura.Fight);
+          // An executive or a boss glows in a colour of its own, so the
+          // rank is seen from across the board rather than at the door
+          next.set(at, ROCKET_AURAS[snapshot.getRocketRank(inChunk) ?? RocketRank.Grunt]);
         }
       } else if (EXPERT_LANDMARKS.has(landmark)) {
         // An expert's house is a fight waiting like any other. Whether
@@ -1152,7 +1161,8 @@ export default function OverworldBoard(props: {
               snapshot.getChampionStops().has(inChunk);
 
         if (staged && !read.beaten.has(inChunk)) {
-          next.set(at, CellAura.Fight);
+          // A legend in the champion's seat is not the champion
+          next.set(at, snapshot.getLegend(inChunk) == null ? CellAura.Fight : CellAura.Legend);
         }
       } else if (landmark === Landmark.WanderingNpc) {
         const standing = snapshot.getStandingNpc(inChunk);

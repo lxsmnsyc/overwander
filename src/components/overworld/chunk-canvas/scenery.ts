@@ -404,6 +404,12 @@ export const enum CellAura {
   Fresh = 3,
   /** A hidden grotto this player has not claimed this hour */
   Grotto = 4,
+  /** A syndicate executive waiting to be fought, told apart from a grunt */
+  Executive = 5,
+  /** A syndicate's boss waiting to be fought */
+  Boss = 6,
+  /** A legend holding the champion's seat, told apart from the champion */
+  Legend = 7,
 }
 
 type Ink = readonly [number, number, number];
@@ -414,6 +420,9 @@ const AURA_INKS: Record<CellAura, Ink> = {
   [CellAura.Mine]: [80, 214, 104],
   [CellAura.Fresh]: [56, 146, 255],
   [CellAura.Grotto]: [64, 224, 200],
+  [CellAura.Executive]: [224, 64, 208],
+  [CellAura.Boss]: [136, 56, 255],
+  [CellAura.Legend]: [236, 240, 255],
 };
 
 /** The two halves of an aura: what lies under a landmark, and what rises over it */

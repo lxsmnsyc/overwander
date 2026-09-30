@@ -4,6 +4,7 @@ import BattleOutcome from '../../src/auth/battle-outcome';
 import { Species } from '../../src/data/ids/species';
 import registerData from '../../src/data';
 import recordAftermath from '../../src/server/battles';
+import { finishBattle } from '../../src/server/raids';
 import { jsonOf } from '../../src/server/db';
 import { Moves } from '../../src/data/ids/moves';
 import { getCastTime } from '../../src/battle/mechanics/move/timing';
@@ -260,5 +261,25 @@ describe('what a Pay Day report is paid', () => {
     await recordAftermath(player.uid, BATTLE, report(1_000_000), 0, BattleOutcome.Won);
 
     expect((await gold()) - before).toBe(PAY_DAY_COINS_PER_LEVEL * 5 * 4);
+  });
+});
+
+describe('the party after a fight', () => {
+  it('is freed once the fight is finished, whichever report stamped it', async () => {
+    const startedAt = Date.now();
+
+    await stage(BattleOutcome.Unfinished, [], startedAt);
+    await sql`update caught set locked_at = ${startedAt} where owner = ${player.uid}`;
+
+    // The client reports the aftermath first, which stamps the outcome
+    await recordAftermath(player.uid, BATTLE, report(), 0, BattleOutcome.Lost);
+    await finishBattle(player.uid, BATTLE, BattleOutcome.Lost);
+
+    const rows = await sql`select locked_at from caught where owner = ${player.uid}`;
+
+    expect(rows.length).toBe(PARTY.length);
+    for (const row of rows) {
+      expect(Number(row.locked_at)).toBe(0);
+    }
   });
 });

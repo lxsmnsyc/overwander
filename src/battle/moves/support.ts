@@ -32,7 +32,7 @@ const DRUM_COST = 0.5;
  * over the same events, not because they share behaviour
  */
 /** The moves that clear the whole party, however they carry */
-const PARTY_CURES = new Set<Moves>([Moves.HealBell, Moves.Aromatherapy]);
+export const PARTY_CURES = new Set<Moves>([Moves.HealBell, Moves.Aromatherapy]);
 
 /** The most a Pain Split is worth for the health it is sharing */
 const SHARE_BONUS = 5;

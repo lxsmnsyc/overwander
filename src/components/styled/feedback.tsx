@@ -10,7 +10,7 @@ import { type JSX, type ParentProps, Show } from 'solid-js';
  * what they just pressed.
  */
 
-export type BadgeTone = 'neutral' | 'leaf' | 'ember' | 'gold' | 'tide';
+export type BadgeTone = 'neutral' | 'leaf' | 'ember' | 'gold' | 'tide' | 'arcane';
 
 const BADGE_TONES: Record<BadgeTone, string> = {
   neutral: 'border-line bg-line-soft text-muted',
@@ -18,6 +18,7 @@ const BADGE_TONES: Record<BadgeTone, string> = {
   ember: 'border-ember bg-ember-soft text-ember-dark',
   gold: 'border-gold bg-gold-soft text-gold',
   tide: 'border-tide bg-tide-soft text-tide',
+  arcane: 'border-arcane bg-arcane/15 text-arcane',
 };
 
 /**
@@ -82,6 +83,7 @@ const DISMISS_TONES: Record<BadgeTone, string> = {
   ember: 'text-ember-dark outline-ember hover:bg-ember hover:text-on-accent',
   gold: 'text-gold outline-gold hover:bg-gold hover:text-on-accent',
   tide: 'text-tide-dark outline-tide hover:bg-tide hover:text-on-accent',
+  arcane: 'text-arcane outline-arcane hover:bg-arcane hover:text-on-accent',
 };
 
 /**

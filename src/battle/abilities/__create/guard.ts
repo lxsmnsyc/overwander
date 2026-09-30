@@ -221,13 +221,14 @@ export function createRestageAbility(
           return;
         }
 
-        event.success = false;
-
-        // The refusal is the whole answer for the AI weighing a move:
-        // the rewritten change belongs to a cast that actually happened
+        // Weighed rather than cast: the AI is told the change it would
+        // really get, with no cue and nothing applied
         if (event.simulated) {
+          event.value = restage(event.value);
           return;
         }
+
+        event.success = false;
         event.source.triggerAbility(targetAbility);
 
         rewriting.add(event.source);

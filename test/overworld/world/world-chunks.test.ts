@@ -28,6 +28,7 @@ import registerItems from '../../../src/data/items';
 import { Genders, Species } from '../../../src/data/ids/species';
 import { getRegisteredSpecies, getSpeciesData, registerSpecies } from '../../../src/data/species';
 import { MAX_LEVEL } from '../../../src/data/constants/levels';
+import { Slots, getSlots, mostSlots } from '../../../src/data/constants/slots';
 import { RaidKind, getRaidTitle } from '../../../src/auth/raids';
 import {
   BANNED_BOSS_MOVES,
@@ -719,12 +720,12 @@ describe('world', () => {
       Moves.Metronome,
     );
 
-    // The ban is applied before the four are taken, so a species with
+    // The ban is applied before the moves are taken, so a species with
     // more to draw on still comes with a full set
     const staged = createRaidBossSnapshot(Species.Pidgeot, 0x12345678);
 
     expect(staged.moves).not.toContain(Moves.MirrorMove);
-    expect(staged.moves).toHaveLength(MOVE_LIMIT);
+    expect(staged.moves).toHaveLength(mostSlots(Slots.Move));
   });
 
   it('never stages a Ditto, or anything with nothing left to cast', () => {
@@ -757,6 +758,13 @@ describe('world', () => {
         );
       }
     }
+  });
+
+  it('stages a boss with as many moves as a pokemon has room for', () => {
+    const boss = createRaidBossSnapshot(Species.Mewtwo, 0x12345678);
+
+    expect(boss.moves.length).toBe(mostSlots(Slots.Move));
+    expect(getSlots(boss.slots, Slots.Move)).toBe(mostSlots(Slots.Move));
   });
 
   it('fields a party at the share of health its records kept', () => {

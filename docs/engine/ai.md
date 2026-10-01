@@ -29,6 +29,10 @@ whether now is the moment:
 - **It stands guard.** A unit holding a ready Protect, Detect, Endure, Me First
   or Sucker Punch, with nothing worth 8 or more to do, waits for a foe to commit
   so the reactive move can answer it. It gives up after half a turn.
+- **It times what it raises.** Every cast lands after its remaining wind-up
+  and its travel delay, which the engine already reports. A Protect or team
+  guard counts only if it is up before the foe's hit lands, and Me First and
+  Sucker Punch only if the foe is still swinging when they go off.
 - **It counts what the team has on the way.** A hit is weighed against what
   friends' visible casts leave of the target, so a foe friends will finish is
   left alone and one they leave in reach counts as a KO.

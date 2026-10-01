@@ -35,6 +35,21 @@ function* carriedMoves(unit: Unit): IterableIterator<Moves> {
   }
 }
 
+/** Milliseconds until a unit's cast in progress lands: what is left of it, then its travel */
+export function landsIn(unit: Unit): number {
+  const cast = unit.casting;
+
+  if (cast == null) {
+    return 0;
+  }
+  return cast.time.duration - cast.time.progress + unit.checkMoveDelay(cast.move, cast.target);
+}
+
+/** Milliseconds from casting a move now until it takes effect */
+export function effectIn(unit: Unit, move: Moves, target: MoveTarget): number {
+  return unit.checkMoveCastTime(move, target) + unit.checkMoveDelay(move, target);
+}
+
 /** Whether a move cast at this target lands on the unit */
 export function reaches(caster: Unit, move: Moves, target: MoveTarget, unit: Unit): boolean {
   switch (target.type) {
@@ -99,14 +114,20 @@ export class AIContext {
   }
 
   /**
-   * Whether a foe is winding up a move that will reach this unit and
-   * passes the test. A cast is on show, so this is no peek
+   * Whether a foe is winding up a move that will reach this unit, passes
+   * the test, and lands no sooner than `after` milliseconds from now. A
+   * cast is on show, so this is no peek
    */
-  incoming(unit: Unit, test: (move: Moves) => boolean): boolean {
+  incoming(unit: Unit, test: (move: Moves) => boolean, after = 0): boolean {
     for (const foe of this.foes()) {
       const cast = foe.casting;
 
-      if (cast != null && test(cast.move) && reaches(foe, cast.move, cast.target, unit)) {
+      if (
+        cast != null &&
+        test(cast.move) &&
+        reaches(foe, cast.move, cast.target, unit) &&
+        landsIn(foe) >= after
+      ) {
         return true;
       }
     }

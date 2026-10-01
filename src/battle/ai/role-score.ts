@@ -33,7 +33,7 @@ import {
 import { GUARDS } from '../moves/team-guards';
 import { TERRAIN_MOVES } from '../moves/terrain';
 import type Unit from '../unit';
-import { type AIContext, getAIContext } from './context';
+import { type AIContext, effectIn, getAIContext } from './context';
 import { knowsMove } from './fog';
 import { wantsWeather } from './weather-wants';
 import { AFFLICTIONS, MoveRole, ROLE_BASE, getMoveRoles } from './roles';
@@ -114,13 +114,15 @@ const shield: Relevance = (event, context) => {
     return Math.max(0, (healthRatio(source) - 0.5) / 0.5);
   }
 
+  // Only worth raising if it is up before the hit lands
+  const ready = effectIn(source, event.move, event.target);
   const guard = GUARDS[event.move];
 
   if (guard != null) {
     const turns = GUARD_TURNS[guard] ?? isDamaging;
 
     for (const friend of context.friends()) {
-      if (context.incoming(friend, turns)) {
+      if (context.incoming(friend, turns, ready)) {
         return 1;
       }
     }
@@ -129,7 +131,7 @@ const shield: Relevance = (event, context) => {
   if (event.move === Moves.MagnetRise) {
     return context.foesKnow((move) => getMoveData(move).type === Types.Ground) ? 0.5 : 0;
   }
-  return context.incoming(source, isDamaging) ? 1 : 0;
+  return context.incoming(source, isDamaging, ready) ? 1 : 0;
 };
 
 // --- Team setup ---

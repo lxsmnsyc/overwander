@@ -187,7 +187,7 @@ export default function setupIdleAI(battle: Battle): void {
       }
 
       // The unit acts on its trainer's order, not its own choice
-      const order = getTrainer(battle, unit.team).order(unit);
+      const order = getTrainer(battle, unit.team).order(unit, clock);
 
       if (order) {
         unit.cast(order.move, order.target);

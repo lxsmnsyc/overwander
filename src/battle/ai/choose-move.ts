@@ -202,6 +202,50 @@ function collectTargets(battle: Battle, source: Unit, move: Moves): MoveTarget[]
   return targets;
 }
 
+/** A cooling move and how soon it is ready */
+export interface CoolingChoice extends AIMoveChoice {
+  /** Milliseconds until it comes off cooldown */
+  ready: number;
+}
+
+/**
+ * The best move still cooling that will be ready within `horizon`
+ * milliseconds, weighed as though it were ready now. What a trainer
+ * compares against acting at once
+ */
+export function bestCoolingMove(
+  battle: Battle,
+  source: Unit,
+  horizon: number,
+): CoolingChoice | undefined {
+  return withAIContext(battle, source, () => {
+    let best: CoolingChoice | undefined;
+
+    for (const state of Object.values(source.moves)) {
+      // oxlint-disable-next-line typescript/no-unnecessary-condition
+      if (!state || state.disabled || state.cooldown == null) {
+        continue;
+      }
+
+      const ready = state.cooldown.duration - state.cooldown.progress;
+
+      if (ready > horizon) {
+        continue;
+      }
+      for (const target of collectTargets(battle, source, state.move)) {
+        if (isMoveUsable(battle, source, state.move, target)) {
+          const score = scoreMove(battle, source, state.move, target);
+
+          if (best == null || score > best.score) {
+            best = { move: state.move, target, score, ready };
+          }
+        }
+      }
+    }
+    return best;
+  });
+}
+
 /** Callers in the middle of being weighed, so one that calls another stops there */
 const weighing = new Set<Moves>();
 

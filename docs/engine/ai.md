@@ -20,9 +20,18 @@ does not choose its own move: it asks its trainer for an order and carries it
 out, and a trainer may also leave it standing. The idle loop below still decides
 which units are free; the trainer decides what they do.
 
-For now a trainer orders the move each unit's own scoring picks. Planning across
-the team, waiting for a better moment, timed combos and skill by rank build on
-this.
+A trainer starts from the move each unit's own scoring picks, then decides
+whether now is the moment:
+
+- **It waits for a better move.** A move coming off cooldown within a turn is
+  weighed as if ready, less 4 points for each second of waiting. When that
+  beats acting now, the unit holds.
+- **It stands guard.** A unit holding a ready Protect, Detect, Endure, Me First
+  or Sucker Punch, with nothing worth 8 or more to do, waits for a foe to commit
+  so the reactive move can answer it. It gives up after half a turn.
+- **It counts what the team has on the way.** A hit is weighed against what
+  friends' visible casts leave of the target, so a foe friends will finish is
+  left alone and one they leave in reach counts as a KO.
 
 ## Keeping the idle set accurate
 

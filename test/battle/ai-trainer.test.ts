@@ -78,4 +78,51 @@ describe('the invisible trainer', () => {
 
     expect(chooseMove(battle, unit)?.target).toEqual(unitTarget(other));
   });
+
+  it('holds a unit for a much better move about to come off cooldown', () => {
+    const { battle, teamA, teamB } = createTrainerBattle();
+    const unit = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+    unit.addMove(Moves.Thunderbolt);
+    // Thunderbolt finishes it, a Tackle does not
+    foe.setHealth(35);
+
+    const cooling = unit.moves[Moves.Thunderbolt];
+    const trainer = getTrainer(battle, teamA);
+
+    if (cooling == null) {
+      throw new Error('Thunderbolt was not learned');
+    }
+    cooling.cooldown = { progress: 0, duration: 500 };
+
+    expect(trainer.order(unit, 0)).toBeUndefined();
+
+    // Too long a wait to be worth it, so it chips instead
+    cooling.cooldown = { progress: 0, duration: 10_000 };
+
+    expect(trainer.order(unit, 0)?.move).toBe(Moves.Tackle);
+  });
+
+  it('keeps a unit on guard with Protect, but not for ever', () => {
+    const { battle, teamA, teamB } = createTrainerBattle();
+    const unit = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+    unit.addMove(Moves.Protect);
+    foe.addMove(Moves.Tackle);
+    const trainer = getTrainer(battle, teamA);
+
+    expect(trainer.order(unit, 0)).toBeUndefined();
+    expect(trainer.order(unit, 500)).toBeUndefined();
+
+    // The foe commits, and the guard answers it
+    foe.cast(Moves.Tackle, unitTarget(unit));
+    expect(trainer.order(unit, 600)?.move).toBe(Moves.Protect);
+
+    // A foe that never commits is not waited out
+    foe.stopCast();
+    expect(trainer.order(unit, 700)).toBeUndefined();
+    expect(trainer.order(unit, 2000)?.move).toBe(Moves.Tackle);
+  });
 });

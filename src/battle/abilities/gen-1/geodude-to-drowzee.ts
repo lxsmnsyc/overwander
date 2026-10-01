@@ -29,6 +29,12 @@ import {
 } from '../__create';
 import { MergedLifecycle } from '../../lifecycle';
 import turns from '../../turn';
+import { registerWeatherWant } from '../../ai/weather-wants';
+
+// The skies these thrive under, so the AI weighs a weather move by who gains from it
+registerWeatherWant(Abilities.SlushRush, [Weathers.Hail, Weathers.Snow]);
+registerWeatherWant(Abilities.IceBody, [Weathers.Hail, Weathers.Snow]);
+registerWeatherWant(Abilities.Hydration, [Weathers.Rain]);
 
 /**
  * The swing every unit is fielded with, as the string key a move set

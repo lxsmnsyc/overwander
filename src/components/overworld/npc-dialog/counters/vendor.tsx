@@ -7,7 +7,6 @@ import { describeItem } from '../../../details';
 import InventoryPicker, { type ItemAmount } from '../../../items/InventoryPicker';
 import ItemSprite from '../../../items/ItemSprite';
 import {
-  Badge,
   Detail,
   DialogActions,
   Meta,
@@ -17,7 +16,8 @@ import {
   TabPane,
   useToast,
 } from '../../../styled';
-import { type CounterProps, priceOf, refusal, useSaying } from '../shared';
+import { type CounterProps, goldOf, priceOf, refusal, useSaying } from '../shared';
+import { CounterTerms } from '../terms';
 import { readable } from '../../../app/resource-reads';
 import playEffect, { Effect } from '../../../app/sound';
 
@@ -99,19 +99,21 @@ export default function Vendor(props: CounterProps): JSX.Element {
         setBusy(false);
 
         if (done == null) {
+          said(
+            buyingIt
+              ? 'He kept it. The purse may be short.'
+              : 'He would not take it. It may be gone from your bag.',
+            'ember',
+          );
           return;
         }
         playEffect(buyingIt ? Effect.ShopBuy : Effect.ShopSell);
-        // A purchase is worth a word in passing; a sale's receipt is
-        // the purse badge climbing, and a refusal is the greyed square
-        if (buyingIt) {
-          toast.push({
-            title: `${describeItem(item)}${amount > 1 ? ` ×${amount}` : ''}`,
-            message: `−${priceOf(item, true) * amount} gold`,
-            art: () => <ItemSprite item={item} size={24} label="" />,
-            tone: 'leaf',
-          });
-        }
+        toast.push({
+          title: `${describeItem(item)}${amount > 1 ? ` ×${amount}` : ''}`,
+          message: `${buyingIt ? '−' : '+'}${priceOf(item, buyingIt) * amount} gold`,
+          art: () => <ItemSprite item={item} size={24} label="" />,
+          tone: 'leaf',
+        });
         props.onTraded();
         props.onChange?.();
       })
@@ -144,9 +146,7 @@ export default function Vendor(props: CounterProps): JSX.Element {
       filter={(entry) => !selling || priceOf(entry.item, false) > 0}
       // Greyed rather than left out: what he stocks is the same crate whatever is in the purse
       blocked={(entry) =>
-        !selling && priceOf(entry.item, true) > (props.gold.latest ?? 0)
-          ? 'More than you hold'
-          : null
+        !selling && priceOf(entry.item, true) > goldOf(props) ? 'More than you hold' : null
       }
       note={(entry) => `${priceOf(entry.item, !selling)}g`}
       card={(entry) => (
@@ -160,7 +160,7 @@ export default function Vendor(props: CounterProps): JSX.Element {
               1,
               Math.min(
                 VENDOR_TRADE_LIMIT,
-                Math.floor((props.gold.latest ?? 0) / Math.max(1, priceOf(entry.item, true))),
+                Math.floor(goldOf(props) / Math.max(1, priceOf(entry.item, true))),
               ),
             )
       }
@@ -171,9 +171,7 @@ export default function Vendor(props: CounterProps): JSX.Element {
         </Meta>
       )}
       refuse={(item, amount) =>
-        !selling && priceOf(item, true) * amount > (props.gold.latest ?? 0)
-          ? 'More than you hold.'
-          : null
+        !selling && priceOf(item, true) * amount > goldOf(props) ? 'More than you hold.' : null
       }
       onPick={(item, amount) => {
         if (item != null && amount > 0) {
@@ -195,15 +193,12 @@ export default function Vendor(props: CounterProps): JSX.Element {
         }}
         class="flex flex-col gap-3"
       >
-        <div class="flex items-center gap-2">
-          <TabBar>
-            <TabButton value={Side.Buy}>Buy</TabButton>
-            <TabButton value={Side.Sell}>Sell</TabButton>
-          </TabBar>
-          <Badge tone="gold" class="ml-auto">
-            {(props.gold.latest ?? 0).toLocaleString()} gold
-          </Badge>
-        </div>
+        {/* Each thing carries its own price, so the terms say the purse */}
+        <CounterTerms have={{ amount: goldOf(props), short: false, unit: 'gold' }} />
+        <TabBar>
+          <TabButton value={Side.Buy}>Buy</TabButton>
+          <TabButton value={Side.Sell}>Sell</TabButton>
+        </TabBar>
         <TabPane value={Side.Buy}>{tray(false)}</TabPane>
         <TabPane value={Side.Sell}>{tray(true)}</TabPane>
       </TabGroup>

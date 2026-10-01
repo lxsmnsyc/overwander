@@ -1,4 +1,4 @@
-import { type JSX, type Resource, createResource } from 'solid-js';
+import { type JSX, type Resource, Suspense, createResource } from 'solid-js';
 import { isLockLive } from '../../../auth/battle-lock';
 import { getBuddy } from '../../../auth/buddy';
 import { syncServerClock } from '../../../auth/clock';
@@ -14,11 +14,13 @@ import { getCandyCount } from '../../../auth/candy';
 
 import { useAuth } from '../../../auth/context';
 import { listEvolutionOptions } from '../../../auth/evolution';
+import { getStats } from '../../../auth/health';
 
 import { getSpeciesData } from '../../../data/species';
 
 import { type CatchDialogProps, CatchSheetBody } from './sheet';
 import { answered } from '../../app/resource-reads';
+import { Button, Dialog, DialogActions, Note } from '../../styled';
 
 export type { CatchDialogProps };
 
@@ -136,7 +138,7 @@ function CatchSheet(
           held.push(entry.item);
         }
       }
-      return `${uid}/${catchId}/${view()?.species ?? ''}/${held.sort((a, b) => a - b).join(',')}`;
+      return `${uid}/${catchId}/${held.sort((a, b) => a - b).join(',')}/${evolutionKey(view())}`;
     },
     async () => {
       const uid = owned();
@@ -206,6 +208,32 @@ function CatchSheet(
       }}
     />
   );
+}
+
+/**
+ * What of the record an evolution reads. A candy's refetch runs before
+ * the new record lands, so the level has to be here for the landing to
+ * ask again
+ */
+function evolutionKey(caught: CaughtPokemon | null | undefined): string {
+  if (caught == null) {
+    return '';
+  }
+
+  const stats: number[] = [];
+
+  for (const value of Object.values(getStats(caught))) {
+    stats.push(value);
+  }
+  return [
+    caught.species,
+    caught.level,
+    caught.friendship,
+    caught.canEvolve,
+    caught.items.join(','),
+    caught.moves.join(','),
+    stats.join(','),
+  ].join('/');
 }
 
 /**
@@ -302,26 +330,46 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   );
 
   return (
-    <CatchSheet
-      {...props}
-      detail={detail}
-      dex={dex}
-      onlyOne={onlyOne}
-      selling={selling}
-      bag={bag}
-      buddy={buddy}
-      onRecordChanged={() => {
-        Promise.resolve(refetch()).catch(() => undefined);
-        // Evolving one registers what it became, so the line under it
-        // stops being a silhouette without the sheet being reopened
-        Promise.resolve(refetchDex()).catch(() => undefined);
-      }}
-      onBagChanged={() => {
-        Promise.resolve(refetchBag()).catch(() => undefined);
-      }}
-      onBuddyChanged={() => {
-        Promise.resolve(refetchBuddy()).catch(() => undefined);
-      }}
-    />
+    // The sheet's own boundary, so a read still arriving holds a sheet
+    // saying so rather than taking the page behind it down
+    <Suspense
+      fallback={
+        <Dialog
+          isOpen={props.catchId != null}
+          onClose={props.onClose}
+          width="broad"
+          layout="sheet"
+          title="Pokemon Info"
+          description="Reading the record."
+        >
+          <Note>Loading…</Note>
+          <DialogActions>
+            <Button onClick={props.onClose}>Close</Button>
+          </DialogActions>
+        </Dialog>
+      }
+    >
+      <CatchSheet
+        {...props}
+        detail={detail}
+        dex={dex}
+        onlyOne={onlyOne}
+        selling={selling}
+        bag={bag}
+        buddy={buddy}
+        onRecordChanged={() => {
+          Promise.resolve(refetch()).catch(() => undefined);
+          // Evolving one registers what it became, so the line under it
+          // stops being a silhouette without the sheet being reopened
+          Promise.resolve(refetchDex()).catch(() => undefined);
+        }}
+        onBagChanged={() => {
+          Promise.resolve(refetchBag()).catch(() => undefined);
+        }}
+        onBuddyChanged={() => {
+          Promise.resolve(refetchBuddy()).catch(() => undefined);
+        }}
+      />
+    </Suspense>
   );
 }

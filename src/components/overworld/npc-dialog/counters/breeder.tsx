@@ -1,11 +1,20 @@
-import { type JSX, createSignal } from 'solid-js';
+import { type JSX, Show, createSignal } from 'solid-js';
 import { breed } from '../../../../auth/npcs';
-import { BREEDING_FEE } from '../../../../data/overworld/npc';
+import Npc, { BREEDING_FEE } from '../../../../data/overworld/npc';
 import { canBreed } from '../../../../overworld/breeding';
 import type { CatchOption } from '../../../catches/catch-picker';
-import { Badge, Button, DialogActions, useToast } from '../../../styled';
+import { Button, DialogActions, useToast } from '../../../styled';
+import { CostBadge } from '../terms';
 import playEffect, { Effect } from '../../../app/sound';
-import { type CounterProps, asParent, optionsOf, refusal, useSaying } from '../shared';
+import {
+  type CounterProps,
+  NPC_SPENT,
+  asParent,
+  goldOf,
+  optionsOf,
+  refusal,
+  useSaying,
+} from '../shared';
 import { BreederCounter } from './care';
 
 /**
@@ -96,14 +105,23 @@ export default function Breeder(props: CounterProps): JSX.Element {
         options={optionsOf(props)}
         chosen={chosen()}
         compatible={compatible()}
+        gold={goldOf(props)}
+        fee={BREEDING_FEE}
+        spent={NPC_SPENT[Npc.Breeder] ?? ''}
         onPick={(picked) => {
           setChosen(picked);
         }}
       />
       <DialogActions>
-        <Button tone="primary" disabled={busy() || !compatible()} onClick={submitPair}>
-          Breed <Badge tone="gold">{BREEDING_FEE} gold</Badge>
-        </Button>
+        <Show when={props.spent.latest !== true}>
+          <Button
+            tone="primary"
+            disabled={busy() || !compatible() || goldOf(props) < BREEDING_FEE}
+            onClick={submitPair}
+          >
+            Breed <CostBadge cost={{ gold: BREEDING_FEE }} />
+          </Button>
+        </Show>
         {props.walkOn()}
       </DialogActions>
     </>

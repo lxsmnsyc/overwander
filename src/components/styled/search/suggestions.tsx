@@ -91,7 +91,7 @@ export default function Suggestions(props: SuggestionsProps): JSX.Element {
           role="listbox"
           aria-label="Suggestions"
           class="flex max-h-64 list-none flex-col gap-0.5 overflow-y-auto rounded-xl border-2
-          border-tide bg-paper p-1 shadow-pop"
+          border-tide bg-paper p-1 shadow-float"
         >
           <For each={props.suggestions}>
             {(suggestion, at) => (

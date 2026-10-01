@@ -1,14 +1,13 @@
 import { AttackPriority } from '../../../core/event-emitter';
-import type { EventListenerLifecycle } from '../../../core/event-emitter';
 import { MAX_STAGE, type Stages } from '../../../data/constants/stats';
-import { MoveCategories } from '../../../data/ids/moves';
+import { MoveCategories, type Moves } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
 import type { Types } from '../../../data/constants/types';
 import type Abilities from '../../../data/ids/abilities';
 import { FEED_BONUS, healWorth } from '../../ai/score';
 import type Battle from '../../core';
-import type { CheckUnitAIMoveScoreEvent } from '../../events';
-import { BattleEvents, MoveTargetType } from '../../events';
+import { BattleEvents, type MoveTarget, MoveTargetType } from '../../events';
+import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { type AbsorbMatcher, movesOfType } from './matchers';
 
@@ -30,8 +29,9 @@ export function createFeedScoring(
   targetAbility: Abilities,
   matches: AbsorbMatcher,
   worth: (holder: Unit) => number,
-): EventListenerLifecycle<CheckUnitAIMoveScoreEvent> {
-  return battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+): Lifecycle {
+  /** What the feed pays the holder, or null when this is not one */
+  function fed(event: { source: Unit; move: Moves; target: MoveTarget }): number | null {
     if (
       event.target.type !== MoveTargetType.Unit ||
       event.target.unit === event.source ||
@@ -45,11 +45,22 @@ export function createFeedScoring(
         event.source.checkMoveType(event.move, event.target),
       )
     ) {
-      return;
+      return null;
     }
+    return worth(event.target.unit);
+  }
 
-    event.score += worth(event.target.unit);
-  });
+  return new MergedLifecycle([
+    battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+      event.score += fed(event) ?? 0;
+    }),
+    // A feed that pays nothing, a stage already at its top, is no reason to aim
+    battle.on(BattleEvents.CheckUnitAIMoveFeeds, AttackPriority.Post, (event) => {
+      if ((fed(event) ?? 0) > 0) {
+        event.feeds = true;
+      }
+    }),
+  ]);
 }
 
 /**
@@ -61,7 +72,7 @@ export function createHealFeedScoring(
   targetAbility: Abilities,
   targetType: Types,
   fraction: number,
-): EventListenerLifecycle<CheckUnitAIMoveScoreEvent> {
+): Lifecycle {
   return createFeedScoring(battle, targetAbility, movesOfType(targetType), (holder) =>
     healWorth(holder, fraction),
   );
@@ -76,7 +87,7 @@ export function createStageFeedScoring(
   targetAbility: Abilities,
   targetType: Types,
   stage: Stages,
-): EventListenerLifecycle<CheckUnitAIMoveScoreEvent> {
+): Lifecycle {
   return createFeedScoring(battle, targetAbility, movesOfType(targetType), (holder) =>
     holder.stages[stage] >= MAX_STAGE ? 0 : FEED_BONUS,
   );

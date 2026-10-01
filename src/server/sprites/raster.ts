@@ -1,5 +1,4 @@
 import 'server-only';
-import sharp from 'sharp';
 import { type Encoded, encodeSmallest } from './png';
 
 /**
@@ -23,6 +22,9 @@ export interface Raster {
 
 /** Decodes any format sharp reads into RGBA. */
 export async function decode(bytes: Uint8Array): Promise<Raster> {
+  // Loaded on use: the sprite tools only run in development, and the
+  // production image carries the build machine's native binary, not Linux's
+  const { default: sharp } = await import('sharp');
   const { data, info } = await sharp(bytes)
     // Kept as authored: a sprite sheet is pixel art on a transparent
     // ground, and any resampling at all would smear its edges

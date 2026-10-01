@@ -485,8 +485,8 @@ export default function GameMenu(): JSX.Element {
               -translate-x-1/2"
           >
             <PopoverPanel
-              class="flex flex-col gap-2 rounded-panel border-2 border-tide bg-paper p-3 text-sm
-                shadow-pop"
+              class="flex flex-col gap-2 rounded-panel border-2 border-line bg-paper p-3 text-sm
+                shadow-float"
             >
               <div class="flex items-center justify-between gap-3">
                 <span class="min-w-0 truncate font-bold text-ink">{place()}</span>
@@ -524,11 +524,6 @@ export default function GameMenu(): JSX.Element {
                     [&_dd]:text-muted"
                 />
               </div>
-              <Show when={fullscreenOffered()}>
-                <div class="flex justify-end border-t-2 border-line-soft pt-2 sm:hidden">
-                  <FullscreenToggle class={TOGGLE} />
-                </div>
-              </Show>
             </PopoverPanel>
           </Transition>
         </Popover>
@@ -579,7 +574,7 @@ export default function GameMenu(): JSX.Element {
               {...SHEER}
               class="absolute bottom-full left-1/2 z-30 mb-2 w-max -translate-x-1/2"
             >
-              <PopoverPanel class="flex gap-1 rounded-panel border-2 border-tide bg-paper p-2 shadow-pop">
+              <PopoverPanel class="flex gap-1 rounded-panel border-2 border-line bg-paper p-2 shadow-float">
                 <For each={game.fieldMoves()}>
                   {(offer) => (
                     <button
@@ -605,16 +600,16 @@ export default function GameMenu(): JSX.Element {
           <Divider />
 
           <span class="shrink-0 text-sm font-bold whitespace-nowrap text-gold">{purse()}</span>
-
-          {/* On the bar rather than behind the button: taking the screen
-              is what a player does as they start walking. The divider
-              goes with it on a browser that will not fill the screen */}
-          <Show when={fullscreenOffered()}>
-            <Divider />
-          </Show>
-
-          <FullscreenToggle class={`${TOGGLE} shrink-0`} />
         </div>
+
+        {/* On the bar at every width: taking the screen is what a player
+            does as they start walking. The divider goes with it on a
+            browser that will not fill the screen */}
+        <Show when={fullscreenOffered()}>
+          <Divider />
+        </Show>
+
+        <FullscreenToggle class={`${TOGGLE} shrink-0`} />
 
         {/* Centred on the bar and pulled back by half its own width, so
             the panel stays over the middle of the screen */}
@@ -624,7 +619,7 @@ export default function GameMenu(): JSX.Element {
           class="absolute bottom-full left-1/2 z-30 mb-2 w-[21rem] max-w-[calc(100vw-2rem)]
             -translate-x-1/2"
         >
-          <PopoverPanel class="flex flex-col gap-1 rounded-panel border-2 border-tide bg-paper p-2 shadow-pop">
+          <PopoverPanel class="flex flex-col gap-1 rounded-panel border-2 border-line bg-paper p-2 shadow-float">
             <For each={GROUPS}>
               {(group) => (
                 <div role="group" aria-label={group.label}>

@@ -1,7 +1,6 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 import type Team from '../team';
@@ -35,6 +34,9 @@ function heldDown(unit: Unit): boolean {
   return false;
 }
 
+/** What a spin that has something to clear is worth over one that does not */
+const CLEAR_BONUS = 10;
+
 export default function setupRapidSpin(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
     if (event.move !== Moves.RapidSpin) {
@@ -65,7 +67,7 @@ export default function setupRapidSpin(battle: Battle): void {
       event.move === Moves.RapidSpin &&
       (hazardsUnder(event.source.team) || heldDown(event.source))
     ) {
-      event.score += USELESS_PENALTY;
+      event.score += CLEAR_BONUS;
     }
   });
 }

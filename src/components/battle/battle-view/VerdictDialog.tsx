@@ -340,15 +340,15 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
           </Show>
 
           <DialogActions>
+            <Button tone="primary" onClick={props.onLeave}>
+              {props.replay ? 'Exit replay' : 'Leave battle'}
+            </Button>
             <Button
               onClick={() => {
                 props.onDismiss();
               }}
             >
               Stay and look
-            </Button>
-            <Button tone="primary" onClick={props.onLeave}>
-              {props.replay ? 'Exit replay' : 'Leave battle'}
             </Button>
           </DialogActions>
         </Dialog>

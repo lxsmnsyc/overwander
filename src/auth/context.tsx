@@ -1,4 +1,5 @@
 import { useLocation } from '@solidjs/router';
+import { asRecord } from './__normalize';
 import {
   type Accessor,
   type JSX,
@@ -45,14 +46,13 @@ export function useAuth(): AuthState {
 const SESSIONLESS = '/demo';
 
 /**
- * Tracks the Supabase session for the whole app. The subscription
- * lives in onMount, which never runs during SSR, so the server
- * renders the signed-out shell and the client hydrates the session.
+ * Tracks the session for the whole app. The subscription lives in
+ * onMount, which never runs during SSR, so the server renders the
+ * signed-out shell and the client hydrates the session.
  *
- * The SDK is brought in **on demand** rather than imported at the
- * top, for the same reason its predecessor was: a page with no player
- * on it should neither fetch the auth machinery nor open a socket,
- * and loading it inside `onMount` keeps it in a chunk of its own
+ * The auth client is brought in **on demand**: a page with no player
+ * on it should not fetch the auth machinery, and loading it inside
+ * `onMount` keeps it in a chunk of its own
  */
 export default function AuthProvider(props: ParentProps): JSX.Element {
   const [user, setUser] = createSignal<PlayerIdentity | null>(null);
@@ -69,19 +69,30 @@ export default function AuthProvider(props: ParentProps): JSX.Element {
 
     const session = { unsubscribe: null as (() => void) | null, dropped: false };
 
-    Promise.all([import('./supabase'), import('./user')])
-      .then(([{ default: getSupabase }, { asPlayerIdentity }]) => {
-        // Unmounted while the SDK was in the air: nothing to subscribe
+    Promise.all([import('./auth-client'), import('./user'), import('./session')])
+      .then(([{ default: authClient }, { asPlayerIdentity }, { forgetIdToken }]) => {
+        // Unmounted while the client was in the air: nothing to subscribe
         // to any more, and nothing to leave running
         if (session.dropped) {
           return;
         }
 
-        const { data } = getSupabase().auth.onAuthStateChange((event, next) => {
-          setUser(asPlayerIdentity(next));
-          setLoading(false);
+        let previous: string | null = null;
+
+        session.unsubscribe = authClient.$store.atoms.session.subscribe((state) => {
+          const held = asRecord(state);
+
+          if (held.isPending === true) {
+            return;
+          }
+
+          const next = asPlayerIdentity(held.data);
+
+          if (next?.uid !== previous) {
+            forgetIdToken();
+          }
           // The boxes kept for the last player are not the next one's business
-          if (event === 'SIGNED_OUT') {
+          if (previous != null && next == null) {
             import('./box')
               .then(({ forgetBoxes }) => {
                 forgetBoxes();
@@ -90,21 +101,10 @@ export default function AuthProvider(props: ParentProps): JSX.Element {
                 // Nothing kept, so nothing to forget
               });
           }
+          previous = next?.uid ?? null;
+          setUser(next);
+          setLoading(false);
         });
-
-        session.unsubscribe = () => {
-          data.subscription.unsubscribe();
-        };
-        // The change listener fires INITIAL_SESSION on subscribe, but
-        // an explicit read keeps `loading` honest if that contract
-        // ever softens
-        getSupabase()
-          .auth.getSession()
-          .then(({ data: current }) => {
-            setUser(asPlayerIdentity(current.session));
-            setLoading(false);
-          })
-          .catch(() => setLoading(false));
       })
       .catch(() => {
         // Nothing to fall back to: a session that cannot be read is a

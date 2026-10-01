@@ -1,3 +1,4 @@
+import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -5,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { APRICORNS, ItemTypes, Items } from '../src/data/ids/items';
 import registerItems, { ITEM_TYPE_ORDER, getItemData, listItemsByType } from '../src/data/items';
 import { isMint } from '../src/data/items/mints';
+import { registerMoves } from '../src/data/moves';
 import Families from '../src/data/ids/families';
 import { getRegisteredFamilies, registerSpecies } from '../src/data/species';
 import familyCandyIcon from '../src/data/species/family-candy';
@@ -48,6 +50,8 @@ import decorationPicture, {
 
 const SPRITE_ROOT = 'public/sprites';
 
+// Moves first: the withdrawn machines are registered whatever species exist
+registerMoves();
 registerItems();
 registerSpecies();
 
@@ -136,6 +140,19 @@ const DRAWN_AS_PEOPLE = new Set<Landmark>([
 
 /** And the ones that grow their own picture */
 const GROWS_ITS_OWN = new Set<Landmark>([Landmark.BerryPatch, Landmark.ApricornTree]);
+
+describe('the sheet stamps', () => {
+  it('match every sheet as it is committed', () => {
+    // A sheet repacked without a fresh stamp is served from the cache as
+    // the old picture under the new description
+    const checked = spawnSync('node', ['scripts/sprite-stamps.ts', '--check'], {
+      encoding: 'utf8',
+    });
+
+    expect(checked.stderr).toBe('');
+    expect(checked.status).toBe(0);
+  });
+});
 
 describe('the sprite pipeline record', () => {
   it('has an entry for every sheet that ships', () => {
@@ -759,8 +776,9 @@ describe('the item pictures that ship', () => {
     for (const type of ITEM_TYPE_ORDER) {
       for (const item of listItemsByType(type)) {
         // A mint is drawn by the stat its nature raises, so the four
-        // that raise Attack share a jar on purpose
-        if (isMint(item)) {
+        // that raise Attack share a jar on purpose; a machine is drawn
+        // by its move's type, so every Fire one shares a disc
+        if (isMint(item) || getItemData(item).type === ItemTypes.Machine) {
           continue;
         }
 

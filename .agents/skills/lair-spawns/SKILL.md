@@ -1,6 +1,6 @@
 ---
 name: lair-spawns
-description: A legendary lair is also a wild spawn. Applies whenever adding, moving or removing a lair, a legendary's biomes, or a legendary in a biome's spawn pool.
+description: A legendary lair is also a wild spawn, and a legendary spawns only where its lairs stand. Applies whenever adding, moving or removing a lair, a legendary's biomes, or a legendary in a biome's spawn pool.
 ---
 
 # A lair is a wild spawn
@@ -24,4 +24,9 @@ A mythical's lair is never hosted by a biome: a relic is the only way into one, 
 
 ## The test
 
-`stages a legendary wild wherever its lair stands` in `test/data.test.ts` walks every hosted lair and fails on any resident missing from the special band of every one of the biome's pools. The rule only runs one way: a legendary may spawn in a biome that hosts none of its lairs.
+The rule runs both ways: a legendary lives where its lairs stand and nowhere else. A roaming legendary is not an exception; if it should be met in a biome, that biome hosts one of its lairs.
+
+Two tests in `test/data/spawns.test.ts` hold it:
+
+- `stages a legendary wild wherever its lair stands` fails on a hosted lair's resident missing from the special band of the biome's pools.
+- `stages a legendary nowhere its lairs do not stand` fails on a legendary whose `biomes` names a biome that hosts none of its lairs.

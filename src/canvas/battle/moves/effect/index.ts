@@ -26,6 +26,7 @@ import zLegends from './z-legends';
 import alola from './alola';
 
 import {
+  EXACT_SPANS,
   type EffectShape,
   ON_THE_CASTER,
   OVER_A_SIDE,
@@ -196,6 +197,13 @@ export function effectShapeFor(move: Moves): EffectShape {
 }
 
 /**
+ * The moves queued now and landing later whose picture is a fall onto
+ * the target: it is painted when the strike is queued, and runs for
+ * the engine's wait so it lands with the blow
+ */
+export const RIDES_THE_WAIT = new Set<Moves>([Moves.DoomDesire]);
+
+/**
  * The picture of this move landing, or nothing where the step that
  * resolved was only the wind-up
  */
@@ -308,7 +316,7 @@ function painted(
   // A heavy hit hangs about longer than a light one, but not in
   // proportion: doubling the power should not double the wait
   return new PaintedVisual(
-    SPANS[shape] * (0.8 + weight * 0.3),
+    EXACT_SPANS.has(shape) ? SPANS[shape] : SPANS[shape] * (0.8 + weight * 0.3),
     painter,
     lit,
     (JOLTS[shape] ?? 0) * weight,

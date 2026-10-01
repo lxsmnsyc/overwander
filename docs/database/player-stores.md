@@ -20,16 +20,13 @@ app having run.
 | `title`      | `smallint` | The title worn over their name, or null  |
 
 Anyone signed in may read it, since other players see nicknames and characters.
-The owner writes their own `nickname` and `buddy_id`, and nothing else:
-that limit is a **column grant** rather than a policy, because a policy can only
-choose rows.
+The owner sets their own `nickname` and `buddy_id` through the server, and
+nothing else: the functions that write those two write no other column.
 
 `role`, `banned` and `ban_reason` are the server's alone, see
-[Roles](security.md), and the insert policy refuses a row that arrives with a
-role, a balance or a ban already on it. So are `title` and `sprite`: what a
-player may wear is derived from their counters and awards, so neither column
-carries a client grant at
-all. See [Quests, achievements and awards](quests.md).
+[Roles](security.md). So are `title` and `sprite`: what a player may wear is
+derived from their counters and awards. See
+[Quests, achievements and awards](quests.md).
 
 The balance is not the player's to write. `grantGold` and `spendGold` live in
 [`src/server/profile.ts`](../../src/server/profile.ts) and read the row `for
@@ -47,8 +44,8 @@ with `viewOnly` set. That flag travels down to the buddy card and the battle
 history and removes everything that writes: the sign-out, the buddy swap, and the
 button that collects what a won raid still owes.
 
-None of it is a permission. The policies refuse every one of those writes for
-anybody but the owner, and the server refuses them again. The flag only stops a
+None of it is a permission. The server refuses every one of those writes for
+anybody but the owner. The flag only stops a
 reader being offered a button that could not work.
 
 A visitor is left with who the player is, who walks with them, and what they have
@@ -312,47 +309,43 @@ pacing costs no extra round trip. A call that any named bucket cannot cover is
 refused with "Slow down a moment." Buckets that could cover it are spent anyway,
 so a flood pays for itself. Only the server reads or writes this table.
 
-## Not built yet: an economy ledger
+## `ledger`
 
-Nothing records where gold, items or candy came from. A balance says what a
-player holds today and nothing about how it got there. Pokemon are the
-exception, since `caught_history` keeps every owner of a catch and what they
-paid (see [Ownership history](catch-history.md)).
+Every change to gold, an item stack or a candy stack, one row each, kept only
+while the server's `ECONOMY_LEDGER` variable is on. It is rAthena's `picklog`
+and `zenylog`, and it answers one kind of question: when something looks
+duplicated or a balance jumps, where it came from and how far it spread. A
+balance says what a player holds today and nothing about how it got there.
+Pokemon are not here, since `caught_history` already keeps every owner of a
+catch and what they paid (see [Ownership history](catch-history.md)).
 
-A ledger would be one append-only row per change: the player, which stack
-(gold, an item or a candy family), the amount it moved by, the balance after
-it, the transaction id, the time, and a reason. It is the same idea as
-rAthena's `picklog` and `zenylog`, and it answers one kind of question: when
-something looks duplicated or a balance jumps, where it came from and how far
-it spread.
+| Column    | Type       | Notes                                                    |
+| --------- | ---------- | -------------------------------------------------------- |
+| `player`  | `uuid`     | Whose gold or stack moved                                |
+| `kind`    | `smallint` | 0 gold, 1 an item, 2 a candy family                      |
+| `key`     | `integer`  | The item or family; 0 for gold                           |
+| `delta`   | `bigint`   | How much it moved by                                     |
+| `balance` | `bigint`   | What it came to                                          |
+| `reason`  | `text`     | What the gold was for (`auction-bid`, `pay-day`, ...)    |
+| `tx`      | `bigint`   | The transaction that moved it; a trade's two sides share |
+| `at`      | `bigint`   | When                                                     |
 
-**How it would be built.** Postgres triggers on `profiles.gold`, `bag_items`
-and `bag_candies`, rather than a call in every writer. Gold alone is written
-directly in more than a dozen places (auctions, trades, gym stakes, the vendor,
-Pay Day) besides `grantGold` and `spendGold`, and a trigger catches all of
-them, including ones written later. The trigger runs inside the writer's own
-transaction, so a change and its entry commit together or not at all. The
-transaction id groups the two sides of a trade or a sale, and a writer that
-wants a readable reason sets it with `set_config('ledger.reason', ..., true)`.
-A pg_cron job sweeps rows past a retention window, the way the battle sweep
-does.
+**It is written by the server, not by triggers.** Whether to keep it is the
+deployment's choice, and a trigger cannot read the server's environment, while a
+setting on the connection does not survive the transaction pooler. So gold only
+moves through `moveGoldIn`, `grantGold` and `spendGold` in
+[`src/server/profile.ts`](../../src/server/profile.ts), and stacks only through
+[`src/server/stacks.ts`](../../src/server/stacks.ts), and each writes its row in
+the same transaction as the move. A test holds every other file to that. With
+the variable off none of it runs, and the self-contained writes stay single
+statements.
 
-**What it was measured to cost** (local Postgres, September 2026):
+Gold moves carry a reason; stack moves do not yet, and are read by their
+transaction and time beside what else moved in it.
 
-- About 190 bytes a row with its `(player, at)` index.
-- About 0.1 ms added to each bag or gold write.
-- Nothing in egress or requests, since only the server writes it and no client
-  reads it.
-- At an estimated 600 changes a day per active player, 12 players come to
-  roughly 40 MB a month: about 80 MB at a 60-day retention, or around 490 MB a
-  year kept forever. The Free plan caps the whole database at 500 MB, so it
-  needs the sweep.
-
-**Why it waits.** It only helps after the fact, and the holes it would have
-helped chase are closed at the source: catches are rolled and written on the
-server, claims pay in one transaction, actions are paced, and Pay Day is capped
-by what the snapshot knows and how long the fight ran. With a small player
-base, asking is cheaper than 80 MB. It becomes worth building when the player
-count grows, when auctions and trades carry a real economy, or the first time
-something suspicious needs tracing. Nothing it would record before it exists
-can be recovered afterwards.
+**What it costs** (measured on local Postgres, September 2026): about 190 bytes a
+row with its indexes, and one more statement per move while it is on. At an
+estimated 600 moves a day per active player, a dozen players come to roughly 40
+MB a month. Rows are swept at 60 days, which holds that near 80 MB; the Free
+plan caps the whole database at 500 MB. Only the server reads or writes it, so
+it costs nothing in egress.

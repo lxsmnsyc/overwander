@@ -8,12 +8,12 @@ import { MEGA_STONES } from '../items/mega-stones';
 import { MEMORIES } from '../items/memories';
 import { PLATES } from '../items/plates';
 import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../items/z-crystals';
-import { VITAMIN_STATS } from '../items/vitamins';
+import { MAX_VITAMIN_STATS, VITAMIN_STATS } from '../items/vitamins';
 import { MINT_NATURES } from '../items/mints';
 import { POWER_ITEMS } from '../items/power-items';
 import { GENERAL_STAT_BOOSTERS } from '../items/stat-boosters';
 import { TYPE_BOOSTERS } from '../items/type-boosters';
-import { WING_STATS } from '../items/wings';
+import { MAX_WING_STATS, WING_STATS } from '../items/wings';
 
 /**
  * One weighted slot of an item pool
@@ -232,6 +232,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     // on a pokemon and spent. Thinner, because a Rotom wants more
     // than one of them and nobody sells any
     { item: Items.RotomCatalog, weight: 6 },
+    // Beside it for the same reason, and as thin: a Zygarde goes both
+    // ways between its shapes, so one cube is never enough either
+    { item: Items.ZygardeCube, weight: 6 },
     // What a trade or a held evolution asks for, on the stones' terms
     // but thinner: each is wanted by one line rather than several
     { item: Items.KingsRock, weight: 3 },
@@ -315,6 +318,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     // Thin: a second held item is a whole build, and one belt is one
     // pokemon's worth of it
     { item: Items.UtilityBelt, weight: 4 },
+    // Room for another move, as thin as the belt: a fifth move is a
+    // whole new way for one pokemon to fight
+    { item: Items.SkillBook, weight: 4 },
     // Room for another ability, which the Channeler then has
     // something to fill. Commoner than the belt: a species that
     // cannot reach four on its own needs one before she is any use
@@ -371,6 +377,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     // nothing until a Kyurem has been caught
     { item: Items.DnaSplicers, weight: 3 },
     { item: Items.PrisonBottle, weight: 3 },
+    // A little thicker than an orb: one mirror serves three genies
+    { item: Items.RevealGlass, weight: 4 },
     // The prisms, on the orbs' terms: each names one pokemon
     { item: Items.NSolarizer, weight: 3 },
     { item: Items.NLunarizer, weight: 3 },
@@ -438,6 +446,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     // Six stats made perfect at once. Nothing else undoes a bad roll,
     // so it belongs with the things gold cannot buy
     { item: Items.GoldenBottleCap, weight: 8 },
+    // A stat's effort filled in one go, and every level at once. Each
+    // stays wider than the crown, which is the rarest find there is
+    ...evenlyWeighted(MAX_VITAMIN_STATS.keys(), 4),
+    { item: Items.RareCandyMax, weight: 6 },
     // The one thing here that is only gold. Everything beside it is
     // something gold cannot buy, and the crown earns its place the
     // other way round: six hundred thousand is more than the game pays
@@ -485,7 +497,8 @@ export function getItemBand(item: Items): ItemBand | null {
 export function isPreciousItem(item: Items): boolean {
   const band = getItemBand(item);
 
-  return band === 'prized' || band === 'special';
+  // The Max wings are special where they drop, though the ground never holds one
+  return band === 'prized' || band === 'special' || MAX_WING_STATS.has(item);
 }
 
 /**
@@ -575,22 +588,22 @@ export function getItemOdds(item: Items, odds: ItemBandOdds = ITEM_BAND_ODDS): n
  * the floor here, and prized and rare are eight times as wide as the
  * ground makes them.
  *
- * **Special is nobody's here.** A phenomenon's pool is picked by type
- * rather than by band, and of the ground's five specials only the
- * relic crown is a valuable, so a special band would have been a band
- * of one and its whole width would have been that crown's rate. The
- * crown is drawn with the ruins instead, on its own weight among them.
+ * **Special keeps the ground's own width**, and holds only what a
+ * phenomenon drops of its own: the Max wings. The ground's specials go
+ * down to prized, so the relic crown is drawn with the ruins on its own
+ * weight, and a pool with no special of its own folds the width into
+ * prized.
  *
  * The widths sum to one, which is what leaves base nothing: what a
  * walk turns up anyway is not what a phenomenon leaves
  */
 export const PHENOMENON_BAND_ODDS: ItemBandOdds = {
-  special: 0,
+  special: SPECIAL_SPAWN_ODDS,
   prized: 8 * PRIZED_ITEM_ODDS,
   rare: 8 * RARE_ITEM_ODDS,
   // The ground's scarce is folded into the floor here, see `bandOf`
   scarce: 0,
-  uncommon: 1 - 8 * PRIZED_ITEM_ODDS - 8 * RARE_ITEM_ODDS,
+  uncommon: 1 - SPECIAL_SPAWN_ODDS - 8 * PRIZED_ITEM_ODDS - 8 * RARE_ITEM_ODDS,
 };
 
 /**

@@ -1,7 +1,7 @@
-import { TimeOfDay } from '../ids/biome';
+import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import type { SpawnRarityGroups } from './__create';
-import { UNOWN_SPAWNS, registerCavePool } from './__create';
+import type { SpawnEntry, SpawnRarityGroups } from './__create';
+import { UNOWN_SPAWNS, registerCaveLegends, registerCavePool } from './__create';
 
 /**
  * What lives in the caves.
@@ -29,6 +29,8 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Larvitar, weight: 3 },
     { species: Species.Gible, weight: 3 },
     { species: Species.Roggenrola, weight: 24 },
+    // The amphibious ones stand on the floor and swim the cave's water
+    { species: Species.Tympole, weight: 8 },
   ],
   uncommon: [
     { species: Species.Ferroseed, weight: 16 },
@@ -46,6 +48,11 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Slugma, weight: 5 },
     { species: Species.Woobat, weight: 16 },
     { species: Species.Drilbur, weight: 12 },
+    { species: Species.Wooper, weight: 8 },
+    { species: Species.Psyduck, weight: 7 },
+    { species: Species.Seel, weight: 6 },
+    { species: Species.Slowpoke, weight: 6 },
+    { species: Species.Krabby, weight: 7 },
   ],
   rare: [
     { species: Species.Klang, weight: 8 },
@@ -58,6 +65,7 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Pupitar, weight: 3 },
     { species: Species.Gabite, weight: 3 },
     { species: Species.Boldore, weight: 12 },
+    { species: Species.Palpitoad, weight: 4 },
   ],
   scarce: [
     { species: Species.Ferrothorn, weight: 5 },
@@ -75,6 +83,11 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Probopass, weight: 4 },
     { species: Species.Swoobat, weight: 8 },
     { species: Species.Excadrill, weight: 7 },
+    { species: Species.Quagsire, weight: 5 },
+    { species: Species.Golduck, weight: 4 },
+    { species: Species.Dewgong, weight: 4 },
+    { species: Species.Slowbro, weight: 4 },
+    { species: Species.Kingler, weight: 4 },
   ],
   elusive: [
     { species: Species.Klinklang, weight: 4 },
@@ -98,13 +111,32 @@ const CAVE_SPAWNS: SpawnRarityGroups = {
     { species: Species.Garchomp, weight: 2 },
     { species: Species.Tyranitar, weight: 2 },
     { species: Species.Gigalith, weight: 4 },
+    { species: Species.Seismitoad, weight: 3 },
   ],
   prized: [...UNOWN_SPAWNS],
-  // Nothing. A legendary underground is at home in a lair rather than
-  // standing about in a passage, and the cave lairs already stage the
-  // five whose real address is a cave
+  // The legendaries follow the biome overhead: see CAVE_LEGENDS below
   special: [],
 };
+
+/**
+ * The residents of the underground lairs each biome hosts, met wild in
+ * the caves under it
+ */
+const CAVE_LEGENDS: [Biome, Species[]][] = [
+  [Biome.DeepOcean, [Species.Articuno, Species.Lugia, Species.Kyogre]],
+  [Biome.Ocean, [Species.Lugia, Species.Registeel]],
+  [Biome.Beach, [Species.Kyogre, Species.Groudon, Species.Rayquaza]],
+  [Biome.PolarOcean, [Species.Articuno, Species.Regice]],
+  [Biome.Glacier, [Species.Regigigas, Species.Kyurem]],
+  [Biome.Bog, [Species.Giratina]],
+  [Biome.Taiga, [Species.Regice]],
+  [Biome.Tundra, [Species.Regigigas, Species.Regice, Species.Kyurem]],
+  [Biome.Desert, [Species.Regirock, Species.Volcarona]],
+  [Biome.Badlands, [Species.Regirock, Species.Registeel, Species.Giratina, Species.Terrakion]],
+  [Biome.Mountain, [Species.Mewtwo, Species.Registeel, Species.Cobalion, Species.Terrakion]],
+  [Biome.AlpineTundra, [Species.Mewtwo]],
+  [Biome.Volcano, [Species.Groudon, Species.Heatran]],
+];
 
 /** The one pool every cave in the world draws from, at every hour */
 export default function registerCaveSpawns(): void {
@@ -114,4 +146,12 @@ export default function registerCaveSpawns(): void {
     [TimeOfDay.Evening]: CAVE_SPAWNS,
     [TimeOfDay.Night]: CAVE_SPAWNS,
   });
+  for (const [biome, species] of CAVE_LEGENDS) {
+    const legends: SpawnEntry[] = [];
+
+    for (const legend of species) {
+      legends.push({ species: legend, weight: 10 });
+    }
+    registerCaveLegends(biome, legends);
+  }
 }

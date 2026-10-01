@@ -37,7 +37,7 @@ import type { CaughtPokemon } from '../../auth/caught';
 import { previewSnapshot } from '../../auth/catch-snapshot';
 import { getProfileBatched } from '../../auth/profile';
 import { type TeamSnapshotRecord, getTeamSnapshotBatched } from '../../auth/teams';
-import Npc, { NPC_NAMES } from '../../data/overworld/npc';
+import Npc, { npcName } from '../../data/overworld/npc';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import TeamStrip from '../catches/TeamStrip';
@@ -262,7 +262,7 @@ function HistoryRow(props: {
                 falls back to what it used to say */}
               <span class="flex items-center gap-1.5 font-medium">
                 <PlayerFace sprite={props.record.opponentSprite} size={NPC_FACE} />
-                {props.record.opponent === '' ? NPC_NAMES[Npc.RocketGrunt] : props.record.opponent}
+                {props.record.opponent === '' ? npcName(Npc.RocketGrunt) : props.record.opponent}
               </span>
             </Match>
             <Match when={kind() === BattleKind.Player}>

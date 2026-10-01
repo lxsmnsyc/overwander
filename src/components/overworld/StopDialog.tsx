@@ -2,7 +2,7 @@ import type { PlayerIdentity } from '../../auth/user';
 import { type JSX, Show, createEffect, createSignal } from 'solid-js';
 import type { StopRecord } from '../../auth/stop-record';
 import { startStopBattle } from '../../auth/stops';
-import Npc, { NPC_NAMES, npcSheet } from '../../data/overworld/npc';
+import Npc, { getNpcData, npcName, npcSheet } from '../../data/overworld/npc';
 import { getSpeciesData } from '../../data/species';
 import {
   FRONTIER_PARTY_LEVELS,
@@ -13,12 +13,11 @@ import {
 import { FRONTIER_TEAM_SIZE } from '../../data/overworld/experts';
 import type { Spawn } from '../../overworld/chunk-snapshot';
 import { levelInBand } from '../../overworld/encounter';
-import { NPC_QUOTES } from './npc-dialog/shared';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
 import NpcSprite from './NpcSprite';
 import { Button, Dialog, DialogActions, Meta, useToast } from '../styled';
-import { CounterStep, CounterTerms, HeadingPortrait } from './npc-dialog/terms';
+import { CounterStep, CounterTerms, HeadingPortrait } from '../forms/terms';
 import { TEAM_SIZE } from '../../auth/teams';
 import { useGame } from '../app/game-context';
 
@@ -171,7 +170,7 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
    * those parties belongs to nobody
    */
   const opponent = (): { name: string; sprite: string } => ({
-    name: props.challenger?.name ?? NPC_NAMES[Npc.RocketGrunt],
+    name: props.challenger?.name ?? npcName(Npc.RocketGrunt),
     // The style they were standing in, so the summary shows the same
     // person the player walked up to
     sprite: props.sheet ?? npcSheet(props.npc),
@@ -183,7 +182,7 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
     if (challenger != null) {
       return challenger.greeting;
     }
-    return `A Team Rocket grunt blocks the way. “${NPC_QUOTES[Npc.RocketGrunt]}”`;
+    return `A Team Rocket grunt blocks the way. “${getNpcData(Npc.RocketGrunt).quote}”`;
   };
 
   /** What a challenge that can no longer be taken says */

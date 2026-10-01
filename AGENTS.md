@@ -46,6 +46,9 @@ one that covers what you are about to do:
   tied to the ground carry a `generation` column that every query filters on.
 - `trigger-driven-abilities` - ability effects that do not mutate their
   detection event ride `UnitTriggerAbility` at `Exact` priority.
+- `action-forms` - a dialog that asks something is a form opened with
+  `openForm` and awaited; an NPC is an `NPC_DATA` entry plus a script that
+  talks through a conversation of forms, and the server still decides.
 - `changesets` - every change against `main` ships with one, and a fix for
   something the same branch broke ships with none. `patch` when something that
   already existed behaves differently, `minor` when something new exists,

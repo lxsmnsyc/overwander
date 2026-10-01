@@ -4,7 +4,7 @@ import { ITEM_STACKS } from '../../auth/stacks';
 import { Metric } from '../../auth/quest-record';
 import { Balls, type Items } from '../../data/ids/items';
 import type { Species } from '../../data/ids/species';
-import Npc, { NPC_NAMES } from '../../data/overworld/npc';
+import Npc, { npcName } from '../../data/overworld/npc';
 import { settleHandover } from '../../data/species';
 import { deriveTraderPokemon, paysForOffer } from '../../overworld/trader';
 import { isEggRecord, isFavoriteRecord, isGuardedRecord, withoutHeld } from '../catch-fields';
@@ -107,7 +107,7 @@ export default async function tradeWithTrader(
         now,
         offset,
         locale,
-        NPC_NAMES[Npc.Trader],
+        npcName(Npc.Trader),
       );
 
       // The swap is the trade a trade evolution asks for, and eats the

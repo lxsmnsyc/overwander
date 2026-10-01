@@ -60,7 +60,7 @@ import {
 } from '../../../data/overworld/experts';
 import { type ItemStack, getItemBand } from '../../../data/overworld/item-pool';
 import Landmark, { LANDMARK_NAMES } from '../../../data/overworld/landmark';
-import Npc, { NPC_NAMES, NPC_VISIT_TAGS } from '../../../data/overworld/npc';
+import Npc, { NPC_VISIT_TAGS, npcName } from '../../../data/overworld/npc';
 import type { GymSeatStanding } from '../../../auth/gym-seat-record';
 import { enterGymSeat } from '../../../auth/gym-seats';
 import { type LandmarkStandings, readLandmarkStandings } from '../../../auth/landmark-standings';
@@ -107,7 +107,9 @@ import HoneyTreeDialog from '../HoneyTreeDialog';
 import StopDialog, { type StopChallenge } from '../StopDialog';
 import SafariDialog from '../SafariDialog';
 import ChunkCanvas, { type CellSpot, type RiddenCoat, type SpawnCoat } from '../chunk-canvas';
-import NpcDialog from '../npc-dialog';
+import type { ConversationHandle } from '../../forms/conversation';
+import NPC_SCRIPTS from '../npcs/scripts';
+import { visitNpc } from '../npcs/visit';
 import {
   type JSX,
   type Resource,
@@ -440,15 +442,10 @@ export default function OverworldBoard(props: {
    */
   const [lairReason, setLairReason] = createSignal<string | null>(null);
   /**
-   * The two dialogs that are handed a window and a cell of it. The
-   * board says where things are in its own numbers, so the cell they
-   * are given is the chunk's rather than the board's
+   * The lair dialog is handed a window and a cell of it. The board says
+   * where things are in its own numbers, so the cell it is given is
+   * the chunk's rather than the board's
    */
-  const standingNpc = (): [number, Npc] | null => {
-    const open = wanderer();
-
-    return open == null ? null : [open[0].cell, open[1]];
-  };
   const standingLair = (): [number, RaidView | null] | null => {
     const open = lair();
 
@@ -1046,6 +1043,36 @@ export default function OverworldBoard(props: {
     setRechecked((count) => count + 1);
   };
 
+  /** The conversation the player is in, so a wanderer who walks on can end it */
+  let talking: ConversationHandle | undefined;
+
+  /** Walk up to whoever is standing there and hear them out */
+  const talkTo = (spot: Placed, npc: Npc, player: string): void => {
+    setWanderer([spot, npc]);
+    talking = visitNpc({
+      npc,
+      cell: spot.cell,
+      snapshot: spot.snapshot,
+      player,
+      sheet: spot.snapshot.getWandererCoats().get(spot.cell),
+      script: NPC_SCRIPTS[npc],
+      notify: (said) => {
+        toast.push(said);
+      },
+      // A served visit greys their glow, so the claims are read again
+      changed: recheck,
+    });
+    talking.done
+      .catch((caught: unknown) => {
+        remark(caught instanceof Error ? caught.message : String(caught), 'ember');
+      })
+      .finally(() => {
+        talking = undefined;
+        setWanderer(null);
+        recheck();
+      });
+  };
+
   // A step inside the same chunk and windows asks nothing new, so the
   // read waits for one of those, or a recheck, to change
   const standingsAsk = createMemo(
@@ -1241,7 +1268,7 @@ export default function OverworldBoard(props: {
     const open = wanderer();
 
     if (open != null && open[0].snapshot.getStandingNpc(open[0].cell) !== open[1]) {
-      setWanderer(null);
+      talking?.end();
     }
   });
 
@@ -1814,8 +1841,8 @@ export default function OverworldBoard(props: {
         return 'Nobody is passing through right now.';
       }
       // What they want is put to the player rather than taken from
-      // them; the dialog is where the fee is agreed to
-      setWanderer([spot, standing]);
+      // them; the conversation is where the fee is agreed to
+      talkTo(spot, standing, user.uid);
       return null;
     }
     if (landmark === Landmark.Nest) {
@@ -2803,7 +2830,7 @@ export default function OverworldBoard(props: {
     if (landmark === Landmark.WanderingNpc) {
       const standing = spot.snapshot.getWanderingNpcs().get(spot.cell);
 
-      return standing == null ? LANDMARK_NAMES[landmark] : NPC_NAMES[standing];
+      return standing == null ? LANDMARK_NAMES[landmark] : npcName(standing);
     }
     // A stall is named for the counter it set up this window, so a
     // player short of vitamins can see which one to walk to
@@ -3030,15 +3057,6 @@ export default function OverworldBoard(props: {
               challenger={challenger()}
               onClose={() => {
                 setChallenge(null);
-                recheck();
-              }}
-            />
-            <NpcDialog
-              player={user().uid}
-              snapshot={wanderer()?.[0].snapshot ?? null}
-              standing={standingNpc()}
-              onClose={() => {
-                setWanderer(null);
                 recheck();
               }}
             />

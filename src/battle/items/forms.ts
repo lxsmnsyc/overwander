@@ -17,6 +17,8 @@ const SHAPE_ABILITIES = new Map<Species, Abilities>([
   [Species.PalkiaOrigin, Abilities.ShadowTag],
   [Species.GiratinaOrigin, Abilities.Levitate],
   [Species.ShayminSky, Abilities.SereneGrace],
+  [Species.KyogrePrimal, Abilities.PrimordialSea],
+  [Species.GroudonPrimal, Abilities.DesolateLand],
 ]);
 
 /**

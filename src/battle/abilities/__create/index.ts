@@ -36,6 +36,7 @@ export {
   chipImmunity,
   createCloudNineAbility,
   createDrizzleAbility,
+  createPrimalWeatherAbility,
   createSandRushAbility,
   createSurgeAbility,
 } from './weather';

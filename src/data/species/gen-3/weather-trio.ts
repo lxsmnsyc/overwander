@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
 import { Habitat, Species } from '../../ids/species';
-import { registerSpecies } from '../__create';
+import { getSpeciesData, registerSpecies } from '../__create';
 
 /**
  * The three that decide what the sky is doing: the sea, the land, and
@@ -119,6 +119,28 @@ export default function registerWeatherTrioSpecies(): void {
     },
   });
 
+  // Worn rather than met: a Blue Orb held into a fight returns it to
+  // the shape it had before anybody was around to see it
+  registerSpecies(Species.KyogrePrimal, {
+    ...getSpeciesData(Species.Kyogre),
+    name: 'Primal Kyogre',
+    baseForm: false,
+    worn: true,
+    height: 9.8,
+    weight: 430.0,
+    stats: {
+      [Stats.HP]: 100,
+      [Stats.Attack]: 150,
+      [Stats.Defense]: 90,
+      [Stats.SpecialAttack]: 180,
+      [Stats.SpecialDefense]: 160,
+      [Stats.Speed]: 90,
+    },
+    types: [Types.Water],
+    abilities: [Abilities.Drizzle, Abilities.PrimordialSea],
+    biomes: [],
+  });
+
   registerSpecies(Species.Groudon, {
     dexNumber: 383,
     name: 'Groudon',
@@ -203,6 +225,27 @@ export default function registerWeatherTrioSpecies(): void {
         Moves.PowerUpPunch,
       ],
     },
+  });
+
+  // And the Red Orb does the same for the land
+  registerSpecies(Species.GroudonPrimal, {
+    ...getSpeciesData(Species.Groudon),
+    name: 'Primal Groudon',
+    baseForm: false,
+    worn: true,
+    height: 5.0,
+    weight: 999.7,
+    stats: {
+      [Stats.HP]: 100,
+      [Stats.Attack]: 180,
+      [Stats.Defense]: 160,
+      [Stats.SpecialAttack]: 150,
+      [Stats.SpecialDefense]: 90,
+      [Stats.Speed]: 90,
+    },
+    types: [Types.Ground, Types.Fire],
+    abilities: [Abilities.Drought, Abilities.DesolateLand],
+    biomes: [],
   });
 
   registerSpecies(Species.Rayquaza, {

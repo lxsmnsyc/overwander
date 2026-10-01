@@ -813,6 +813,8 @@ export const enum Species {
   Scatterbug = 664,
   Spewpa = 665,
   Vivillon = 666,
+  Litleo = 667,
+  Pyroar = 668,
   Flabebe = 669,
   Floette = 670,
   Florges = 671,
@@ -826,6 +828,8 @@ export const enum Species {
   Honedge = 679,
   Doublade = 680,
   Aegislash = 681,
+  Spritzee = 682,
+  Aromatisse = 683,
   Swirlix = 684,
   Slurpuff = 685,
   Inkay = 686,
@@ -861,6 +865,9 @@ export const enum Species {
   Xerneas = 716,
   Yveltal = 717,
   Zygarde = 718,
+  Diancie = 719,
+  Hoopa = 720,
+  Volcanion = 721,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
@@ -905,6 +912,9 @@ export const enum Species {
 
   /** The female of the line, who evolves out of a female Espurr */
   MeowsticFemale = 1067801,
+
+  /** The shape the rings let out when the bottle is opened */
+  HoopaUnbound = 1072001,
 
   /** The share of itself a Zygarde has gathered, half of it at the base */
   ZygardeTenPercent = 1071801,
@@ -1028,6 +1038,64 @@ export const enum Species {
   ZapdosShadow = 1014504,
   MoltresShadow = 1014604,
   MewtwoShadow = 1015003,
+
+  /**
+   * The Megas. The form index is the collection's own Mega slot, so
+   * the art imports under it: Slowbro's is 2 because its Galarian
+   * shape took 1
+   */
+  VenusaurMega = 1000301,
+  CharizardMegaX = 1000601,
+  CharizardMegaY = 1000602,
+  BlastoiseMega = 1000901,
+  BeedrillMega = 1001501,
+  PidgeotMega = 1001801,
+  AlakazamMega = 1006501,
+  SlowbroMega = 1008002,
+  GengarMega = 1009401,
+  KangaskhanMega = 1011501,
+  PinsirMega = 1012701,
+  GyaradosMega = 1013001,
+  AerodactylMega = 1014201,
+  MewtwoMegaX = 1015001,
+  MewtwoMegaY = 1015002,
+  AmpharosMega = 1018101,
+  SteelixMega = 1020801,
+  ScizorMega = 1021201,
+  HeracrossMega = 1021401,
+  HoundoomMega = 1022901,
+  TyranitarMega = 1024801,
+  SceptileMega = 1025401,
+  BlazikenMega = 1025701,
+  SwampertMega = 1026001,
+  GardevoirMega = 1028201,
+  SableyeMega = 1030201,
+  MawileMega = 1030301,
+  AggronMega = 1030601,
+  MedichamMega = 1030801,
+  ManectricMega = 1031001,
+  SharpedoMega = 1031901,
+  CameruptMega = 1032301,
+  AltariaMega = 1033401,
+  BanetteMega = 1035401,
+  AbsolMega = 1035901,
+  GlalieMega = 1036201,
+  SalamenceMega = 1037301,
+  MetagrossMega = 1037601,
+  LatiasMega = 1038001,
+  LatiosMega = 1038101,
+  RayquazaMega = 1038401,
+  LopunnyMega = 1042801,
+  GarchompMega = 1044501,
+  LucarioMega = 1044801,
+  AbomasnowMega = 1046001,
+  GalladeMega = 1047501,
+  AudinoMega = 1053101,
+  DiancieMega = 1071901,
+
+  /** The two Primals, in the collection's own Primal slot */
+  KyogrePrimal = 1038201,
+  GroudonPrimal = 1038301,
 }
 
 /**
@@ -1210,6 +1278,9 @@ export const FLORGES_FORMS: Species[] = [
   Species.FlorgesBlue,
   Species.FlorgesWhite,
 ];
+
+/** The two Hoopa, bound first: the rings in, then the rings out */
+export const HOOPA_FORMS: Species[] = [Species.Hoopa, Species.HoopaUnbound];
 
 /** What a Zygarde has gathered of itself, half first, then a tenth, then all */
 export const ZYGARDE_FORMS: Species[] = [

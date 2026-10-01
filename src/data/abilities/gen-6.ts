@@ -78,6 +78,11 @@ export default function registerGen6Abilities(): void {
     name: 'Earth Eater',
     description: 'Ground moves deal it nothing and heal it 1/4 of its HP instead.',
   });
+  // Volcanion
+  registerAbility(Abilities.SteamEngine, {
+    name: 'Steam Engine',
+    description: 'A Fire or Water move landing on it raises its Speed 6 stages.',
+  });
   // Swirlix
   registerAbility(Abilities.SweetVeil, {
     name: 'Sweet Veil',
@@ -97,5 +102,33 @@ export default function registerGen6Abilities(): void {
   registerAbility(Abilities.StanceChange, {
     name: 'Stance Change',
     description: "It draws the blade to attack and sheathes it again on King's Shield.",
+  });
+  // Mega Pinsir and Mega Salamence
+  registerAbility(Abilities.Aerilate, {
+    name: 'Aerilate',
+    description: 'Its Normal moves are Flying moves instead, and hit 1.2x.',
+  });
+  // Mega Kangaskhan
+  registerAbility(Abilities.ParentalBond, {
+    name: 'Parental Bond',
+    description: 'A move it casts at one target lands twice, the second hit at 0.25x.',
+  });
+  // Primal Kyogre
+  registerAbility(Abilities.PrimordialSea, {
+    name: 'Primordial Sea',
+    description:
+      'Raises heavy rain while it stands. Water moves hit 1.5x, Fire moves fail, and no other weather can be set.',
+  });
+  // Primal Groudon
+  registerAbility(Abilities.DesolateLand, {
+    name: 'Desolate Land',
+    description:
+      'Raises harsh sunlight while it stands. Fire moves hit 1.5x, Water moves fail, and no other weather can be set.',
+  });
+  // Mega Rayquaza
+  registerAbility(Abilities.DeltaStream, {
+    name: 'Delta Stream',
+    description:
+      'Raises strong winds while it stands. Moves super effective on a Flying type hit it at 1x, and no other weather can be set.',
   });
 }

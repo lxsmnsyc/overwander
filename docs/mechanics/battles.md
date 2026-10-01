@@ -192,6 +192,47 @@ fought under a clear sky whatever the world is doing.
 There are nine kinds of weather, from plain sun and rain up to the extreme
 forms. A raid changes who a new sky covers: see [Raids](raids.md).
 
+## Mega Evolution
+
+A pokemon holding its own **Mega Stone** takes its Mega shape as it takes the
+field. There are 48 Megas, from Mega Venusaur to Mega Diancie. Rayquaza needs no
+stone: it Mega Evolves if it knows Dragon Ascent.
+
+**One pokemon on a team Mega Evolves in a fight.** Where several hold a stone
+that fits them, it goes to the highest level. A tie on level goes to the bigger
+Mega by base stat total, and a full tie to whoever stands earlier in the party.
+Each side of a fight has its own.
+
+A Mega keeps its catch's ability and **wears the Mega's own on top**, the way an
+Origin Forme does. Where the line can already have that ability, the Mega wears
+another instead:
+
+| Mega       | Wears           | In place of  |
+| ---------- | --------------- | ------------ |
+| Scizor     | Tough Claws     | Technician   |
+| Tyranitar  | Sand Force      | Sand Stream  |
+| Blaziken   | Reckless        | Speed Boost  |
+| Medicham   | Iron Fist       | Pure Power   |
+| Latias     | Friend Guard    | Levitate     |
+| Latios     | Tinted Lens     | Levitate     |
+| Abomasnow  | Thick Fat       | Snow Warning |
+| Audino     | Triage          | Healer       |
+| Diancie    | Queenly Majesty | Magic Bounce |
+
+The stone glows over the pokemon's head for the rest of the fight, with a Key
+Stone over Mega Rayquaza. That is how a watcher can tell, since not every Mega
+has been drawn yet: one that has not is drawn as its ordinary self.
+
+### Primal Reversion
+
+A Kyogre holding a **Blue Orb** or a Groudon holding a **Red Orb** takes its
+Primal shape as it takes the field. It is not a Mega Evolution: it works the way
+an Origin Forme does, so every holder changes and none of them takes the team's
+one Mega. Primal Kyogre wears Primordial Sea and raises heavy rain, and Primal
+Groudon wears Desolate Land and raises harsh sunlight. Either sky holds while
+its Primal stands and shuts every ordinary weather out, and the orb floats over
+it the way a stone does over a Mega.
+
 ## How a fight ends
 
 A fight ends as soon as it can go nowhere: nothing is mid-move, and no surviving

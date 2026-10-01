@@ -2,6 +2,7 @@ import Biome from '../ids/biome';
 import { ItemTypes, Items } from '../ids/items';
 import { listItemsByType } from '../items';
 import { GEMS } from '../items/gems';
+import { MEGA_STONES } from '../items/mega-stones';
 import { PLATES } from '../items/plates';
 import { isValuable } from '../items/valuables';
 import { MAX_WING_STATS, WING_STATS } from '../items/wings';
@@ -304,6 +305,7 @@ function buildPool(phenomenon: Phenomenon): Items[] {
       ...GEMS.keys(),
       ...spendableStones(),
       ...PLATES.keys(),
+      ...MEGA_STONES.keys(),
       ...listItemsByType(ItemTypes.Valuable),
     ];
   }

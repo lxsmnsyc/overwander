@@ -4,6 +4,7 @@ import { DRIVES } from '../items/drives';
 import { MARKET_GEAR } from '../items/gear';
 import { ONE_SHOTS } from '../items/one-shots';
 import { ORBS } from '../items/orbs';
+import { MEGA_STONES } from '../items/mega-stones';
 import { PLATES } from '../items/plates';
 import { MAX_VITAMIN_STATS, VITAMIN_STATS } from '../items/vitamins';
 import { MINT_NATURES } from '../items/mints';
@@ -289,6 +290,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     ...evenlyWeighted(PLATES.keys(), 1),
     // The Drives are found on the same terms as the plates
     ...evenlyWeighted(DRIVES.keys(), 1),
+    // And the Mega Stones, which are held for a shape the way a plate is
+    ...evenlyWeighted(MEGA_STONES.keys(), 1),
     // The strongest gear, on the plates' terms: thin slots, so the
     // band stays the stones' and finding a Choice Band stays an event
     ...evenlyWeighted(ORBS.keys(), 1),
@@ -359,10 +362,13 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.AdamantOrb, weight: 3 },
     { item: Items.LustrousOrb, weight: 3 },
     { item: Items.GriseousOrb, weight: 3 },
+    { item: Items.BlueOrb, weight: 3 },
+    { item: Items.RedOrb, weight: 3 },
     { item: Items.Gracidea, weight: 3 },
     // As thin as the orbs, for the same reason: the splicers are worth
     // nothing until a Kyurem has been caught
     { item: Items.DnaSplicers, weight: 3 },
+    { item: Items.PrisonBottle, weight: 3 },
     // Three purses instead of one, for good, and nothing sells one.
     // Here rather than in rare so that parting with it is asked about
     // twice
@@ -415,6 +421,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LibertyPass, weight: 6 },
     { item: Items.MusicBox, weight: 6 },
     { item: Items.ColressMachine, weight: 6 },
+    { item: Items.HeartDiamond, weight: 6 },
+    { item: Items.SealedRing, weight: 6 },
+    { item: Items.SteamValve, weight: 6 },
     // Six stats made perfect at once. Nothing else undoes a bad roll,
     // so it belongs with the things gold cannot buy
     { item: Items.GoldenBottleCap, weight: 8 },

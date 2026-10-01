@@ -6,9 +6,7 @@ import { MergedLifecycle } from '../../lifecycle';
 import turns from '../../turn';
 import type Unit from '../../unit';
 import { createAbility, getAbilityHolders } from '../__create';
-
-/** What a sweet handed round is worth to whoever is standing with it */
-export const SUGAR_RUSH_STAGES = 1;
+import { createSpentItemAbility } from './__create';
 
 /** How long a jewel takes to grow another layer, and how many it grows */
 export const CRYSTAL_GROWTH_INTERVAL = turns(5);
@@ -43,29 +41,8 @@ const setupAbilities = [
     }),
   ),
 
-  // Swirlix: the shop hands its stock round. Only what it spends
-  // itself counts, so an item knocked off it is nobody's sugar
-  createAbility(Abilities.SugarRush, (battle) =>
-    battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
-      const shop = event.source;
-
-      if (event.cause.type !== EffectType.Item || !shop.hasAbility(Abilities.SugarRush)) {
-        return;
-      }
-
-      shop.triggerAbility(Abilities.SugarRush);
-
-      for (const mate of shop.team.units) {
-        if (mate.alive) {
-          mate.addStage(Stages.Speed, SUGAR_RUSH_STAGES, {
-            type: EffectType.Ability,
-            ability: Abilities.SugarRush,
-            unit: shop,
-          });
-        }
-      }
-    }),
-  ),
+  // Swirlix: the shop hands its stock round
+  createSpentItemAbility(Abilities.SugarRush, true),
 
   // Dedenne: it is already moving when the thought arrives. Priority
   // is cast time here, so nothing it does comes back off cooldown any

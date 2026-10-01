@@ -20,9 +20,9 @@ import { NATURE_NAMES } from '../../data/ids/natures';
 import { getSpeciesData } from '../../data/species';
 import StatusSquares from './StatusSquares';
 import TypeBadge from '../sprites/TypeBadge';
-import { describeMove, detailAbility, detailItem } from '../details';
+import { ABILITY_PILLS, abilityKind, describeMove, detailAbility, detailItem } from '../details';
 import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
-import MoveHoverCard from '../moves/MoveHoverCard';
+import MoveTooltip from '../moves/MoveTooltip';
 import ItemCard from '../items/ItemCard';
 import ItemSprite from '../items/ItemSprite';
 import { Button, HoverCard, Meta, TooltipHost } from '../styled';
@@ -216,7 +216,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
             <For each={caught().moves} fallback={<Meta>No move</Meta>}>
               {(move) => (
                 <li>
-                  <MoveHoverCard
+                  <MoveTooltip
                     class="block"
                     move={move}
                     points={getMovePoints(caught(), move)}
@@ -225,7 +225,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
                     <span class="block truncate rounded border border-line-soft bg-line-soft px-1 py-0.5">
                       {describeMove(move)}
                     </span>
-                  </MoveHoverCard>
+                  </MoveTooltip>
                 </li>
               )}
             </For>
@@ -237,8 +237,9 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
                 <li>
                   <TooltipHost class="block" kind="ability" {...detailAbility(ability)}>
                     <span
-                      class="block truncate rounded border border-line-soft bg-tide-soft px-1 py-0.5
-                        text-tide-dark"
+                      class={`block truncate rounded border px-1 py-0.5 ${
+                        ABILITY_PILLS[abilityKind(caught().species, ability)]
+                      }`}
                     >
                       {detailAbility(ability).name}
                     </span>

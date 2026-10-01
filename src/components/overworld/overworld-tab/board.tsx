@@ -64,17 +64,15 @@ import Npc, { NPC_NAMES, NPC_VISIT_TAGS } from '../../../data/overworld/npc';
 import type { GymSeatStanding } from '../../../auth/gym-seat-record';
 import { enterGymSeat } from '../../../auth/gym-seats';
 import { type LandmarkStandings, readLandmarkStandings } from '../../../auth/landmark-standings';
-import { CellAura, type SpawnRank } from '../chunk-canvas/scenery';
+import { CellAura, rankOf } from '../chunk-canvas/scenery';
 import GymSeatDialog from '../GymSeatDialog';
 import { VENDOR_KIND_NAMES } from '../../../data/overworld/vendor';
 import type Phenomenon from '../../../data/overworld/phenomenon';
 import { PHENOMENON_NAMES } from '../../../data/overworld/phenomenon';
-import type { Species } from '../../../data/ids/species';
 import { getSpeciesData } from '../../../data/species';
 import { isFeaturedSpecies } from '../../../data/species/day';
-import { isLegendarySpecies, isMythicalSpecies } from '../../../data/biome';
 import { CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from '../../../overworld/chunk';
-import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
+import ChunkSnapshot, { RocketRank, SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
 import type World from '../../../overworld/world';
@@ -100,7 +98,7 @@ import { useDig, useTeleport } from '../../../auth/field-moves';
 import { type FieldMoveOffer, GameDialog, useGame } from '../../app/game-context';
 import { createCellNotes } from '../cell-notes';
 import ItemSprite from '../../items/ItemSprite';
-import sayItems from '../../items/say-items';
+import sayItems, { FIND_TONES } from '../../items/say-items';
 import RaidDialog from '../../raids/RaidDialog';
 import { Badge, Button, Note, useToast } from '../../styled';
 import NestDialog, { type EggSource, type EggState } from '../NestDialog';
@@ -172,13 +170,12 @@ const keptWindows = new LRUMap<string, SnapshotRecord>(CLAIM_MEMORY);
  * `Suspense` written there and land on the boundary around the whole
  * page — the world is what that boundary would blank
  */
-/** Which of the one-per-world kinds a spawn is, or null for everything else */
-function rankOf(species: Species): SpawnRank {
-  if (isLegendarySpecies(species)) {
-    return 'legendary';
-  }
-  return isMythicalSpecies(species) ? 'mythical' : null;
-}
+/** The fight aura a syndicate stop wears, by who is standing there */
+const ROCKET_AURAS: Record<RocketRank, CellAura> = {
+  [RocketRank.Grunt]: CellAura.Fight,
+  [RocketRank.Executive]: CellAura.Executive,
+  [RocketRank.Boss]: CellAura.Boss,
+};
 
 /** The four who keep a house of their own, each a standing fight */
 const EXPERT_LANDMARKS = new Set<Landmark>([
@@ -362,11 +359,12 @@ export default function OverworldBoard(props: {
     for (const stack of items) {
       const said = `${describeItem(stack.item)} ×${stack.amount}`;
       const art = (): JSX.Element => <ItemSprite item={stack.item} size={ICON_SIZE} label="" />;
+      const tone = FIND_TONES[getItemBand(stack.item) ?? 'base'];
 
       // Over the cell where there is a board to hang it on, and in the
       // corner where there is not: a list has no square to point at
-      if (!notes.say(x, y, { message: said, art, tone: 'leaf' })) {
-        toast.push({ message: said, art, tone: 'leaf' });
+      if (!notes.say(x, y, { message: said, art, tone })) {
+        toast.push({ message: said, art, tone });
       }
     }
   };
@@ -1148,7 +1146,9 @@ export default function OverworldBoard(props: {
           snapshot.getTrainerStops().has(inChunk) || snapshot.getRocketStops().has(inChunk);
 
         if (staged && !read.beaten.has(inChunk)) {
-          next.set(at, CellAura.Fight);
+          // An executive or a boss glows in a colour of its own, so the
+          // rank is seen from across the board rather than at the door
+          next.set(at, ROCKET_AURAS[snapshot.getRocketRank(inChunk) ?? RocketRank.Grunt]);
         }
       } else if (EXPERT_LANDMARKS.has(landmark)) {
         // An expert's house is a fight waiting like any other. Whether
@@ -1161,7 +1161,8 @@ export default function OverworldBoard(props: {
               snapshot.getChampionStops().has(inChunk);
 
         if (staged && !read.beaten.has(inChunk)) {
-          next.set(at, CellAura.Fight);
+          // A legend in the champion's seat is not the champion
+          next.set(at, snapshot.getLegend(inChunk) == null ? CellAura.Fight : CellAura.Legend);
         }
       } else if (landmark === Landmark.WanderingNpc) {
         const standing = snapshot.getStandingNpc(inChunk);
@@ -1924,6 +1925,12 @@ export default function OverworldBoard(props: {
       // standing in. Straight through to the lobby, or to the fight
       // where they have already started it. A fight they lost is not
       // theirs any more: the lair is open to host again
+      // A fight they fielded a party in is theirs again rather than a
+      // replay, whoever hosted it
+      if (standing?.action === RaidAction.Rejoin && standing.battle != null) {
+        game.setBattle({ id: standing.battle, replay: false, raid: standing.lobby });
+        return null;
+      }
       if (standing?.hosting === true && standing.action !== RaidAction.Host) {
         if (standing.battle != null) {
           game.setBattle({ id: standing.battle, replay: true });

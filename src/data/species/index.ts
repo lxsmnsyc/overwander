@@ -15,6 +15,7 @@ export {
   getEggMoves,
   getFamilyName,
   getLearnableMoves,
+  getReachableMoves,
   getLevelUpMoves,
   getMovesLearnedAt,
   getMovesLearnedBetween,

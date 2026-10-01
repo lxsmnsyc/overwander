@@ -252,7 +252,6 @@ function ListingBody(
         <Status message={status()} />
 
         <DialogActions>
-          <Button onClick={close}>Never mind</Button>
           <Button
             tone="primary"
             disabled={
@@ -265,6 +264,7 @@ function ListingBody(
           >
             Put it up
           </Button>
+          <Button onClick={close}>Never mind</Button>
         </DialogActions>
       </Dialog>
 
@@ -294,6 +294,9 @@ function ListingBody(
         <Status message={status()} />
 
         <DialogActions>
+          <Button tone="danger" disabled={busy()} onClick={list}>
+            {busy() ? 'Putting it up…' : 'Put it up for a day'}
+          </Button>
           <Button
             disabled={busy()}
             onClick={() => {
@@ -301,9 +304,6 @@ function ListingBody(
             }}
           >
             Back
-          </Button>
-          <Button tone="danger" disabled={busy()} onClick={list}>
-            {busy() ? 'Putting it up…' : 'Put it up for a day'}
           </Button>
         </DialogActions>
       </Dialog>

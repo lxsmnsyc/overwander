@@ -8,6 +8,7 @@ import {
   isCosmeticForm,
   isWornForm,
 } from '../../species';
+import { SpawnRarity, getSpawnRarity } from '../../biome';
 import { EVERY_LAIR, getLairResidents } from '../lair';
 import canMeetSpecies from '../reach';
 import { TRAINER_REGIONS, TrainerClass } from './classes';
@@ -87,7 +88,8 @@ export function isGrownInRegion(species: Species, region: Regions): boolean {
  * a Johto Swimmer worth meeting on the same water as a Kanto one.
  *
  * Legendaries stay out, one belongs to its raid, and so do the
- * alternate forms and the egg. So does anything the world has nowhere
+ * prized band (a find, not a trainer's partner), the alternate forms
+ * and the egg. So does anything the world has nowhere
  * to put yet: a trainer fields what a player could be walking too
  */
 export function getTrainerPool(trainer: TrainerClass): Species[] {
@@ -102,6 +104,7 @@ export function getTrainerPool(trainer: TrainerClass): Species[] {
     if (
       species === Species.Egg ||
       LAIR_SPECIES.has(getBaseFormSpecies(species)) ||
+      getSpawnRarity(species) === SpawnRarity.Prized ||
       isWornForm(species) ||
       isCosmeticForm(species)
     ) {

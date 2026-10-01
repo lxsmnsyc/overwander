@@ -114,7 +114,7 @@ unlikely, and a board whose lots can vanish is not one anybody would bid on.
 ## Escrow
 
 A pokemon on the block keeps its row. Its `owner` is set to **null**, which is
-nobody, and no policy matches a null owner. Every write that touches a catch
+nobody, and no read or write matches a null owner. Every write that touches a catch
 asks whether the caller is its `owner`, and a uid is never null, so an escrowed
 pokemon is refused to the seller, the bidders and everyone else by the checks
 that were already there. It stays **readable**, which is what lets a bidder see

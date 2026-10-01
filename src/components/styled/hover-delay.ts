@@ -11,6 +11,8 @@
  *
  * A keyboard waits for neither. Tabbing to something is deliberate in
  * a way that moving a pointer over it is not.
+ *
+ * Tooltips wait for nothing at all: a label is read at a glance.
  */
 export const OPEN_DELAY = 400;
 export const CLOSE_DELAY = 400;

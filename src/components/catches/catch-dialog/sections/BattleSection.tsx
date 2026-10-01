@@ -2,7 +2,7 @@ import { ITEM_SPRITE, isHoldable, itemSlots } from '../describe';
 
 import type { CatchOrder, CaughtPokemon } from '../../../../auth/caught';
 
-import { getMovePoints } from '../../../../auth/caught-record';
+import { getCatchSlots, getHeldItemRoom, getMovePoints } from '../../../../auth/caught-record';
 import { getStats } from '../../../../auth/health';
 import {
   DEFAULT_ABILITY_SLOTS,
@@ -23,16 +23,25 @@ import type { Moves } from '../../../../data/ids/moves';
 
 import { getMoveData } from '../../../../data/moves';
 
-import { describeAbility, describeItem, detailAbility } from '../../../details';
+import {
+  type AbilityKind,
+  abilityKind,
+  describeAbility,
+  describeItem,
+  detailAbility,
+  detailItem,
+} from '../../../details';
 import { CHANNELER_FEE } from '../../../../data/overworld/npc';
 
 import InventoryPicker from '../../../items/InventoryPicker';
 import ItemCard from '../../../items/ItemCard';
 
 import ItemSprite from '../../../items/ItemSprite';
-import MoveHoverCard from '../../../moves/MoveHoverCard';
+import MoveTooltip from '../../../moves/MoveTooltip';
 import MoveCategorySprite from '../../../sprites/MoveCategorySprite';
 import { Sigil } from '../../../sprites/TypeBadge';
+import { LockIcon } from '../../../icons';
+import type { BadgeTone } from '../../../styled';
 
 import {
   Badge,
@@ -84,19 +93,63 @@ const MARK_SIZE = 18;
 const CATEGORY_SIZE = 45;
 
 /**
- * A slot the pokemon could fill but has not: drawn so the layout never
- * shifts, and muted and inert so it is not mistaken for a control
+ * A slot the pokemon has room for and has not filled, or one it has no
+ * room for yet. Both are drawn so the layout never shifts, and are told
+ * apart so a player can see what is free and what still has to be opened
  */
-const OPEN_SLOT = 'rounded-lg border-2 border-dashed border-line-soft bg-paper/40';
+type OpenSlot = 'empty' | 'locked';
 
-/** One entry per slot left open between what is shown and the most allowed */
-function unfilled(shown: number, kind: Slots): null[] {
-  const open: null[] = [];
+/** One entry per slot between what is shown and the most allowed, `room` of them open */
+function unfilled(shown: number, room: number, kind: Slots): OpenSlot[] {
+  const open: OpenSlot[] = [];
 
   for (let slot = shown; slot < mostSlots(kind); slot += 1) {
-    open.push(null);
+    open.push(slot < room ? 'empty' : 'locked');
   }
   return open;
+}
+
+/** An ability's badge colour by where it comes from: its hidden pool, or its family's signature */
+const ABILITY_BADGES: Record<AbilityKind, BadgeTone> = {
+  regular: 'neutral',
+  hidden: 'arcane',
+  signature: 'gold',
+};
+
+/** What opens a locked slot of each kind */
+const UNLOCKED_BY: Record<Slots, string> = {
+  [Slots.Ability]: 'The Channeler opens another when she calls up an ability.',
+  [Slots.Item]: 'A Utility Belt opens another for good.',
+  [Slots.Move]: 'The Dojo Master opens another for a Heart Scale.',
+};
+
+/** An unfilled slot: dashed while free, shaded with a lock while it still has to be opened */
+function Unfilled(props: { state: OpenSlot; kind: Slots; class: string }): JSX.Element {
+  return (
+    <Show
+      when={props.state === 'locked'}
+      fallback={
+        <li
+          aria-label="Empty slot"
+          class={`flex items-center justify-center rounded-lg border-2 border-dashed
+            border-line text-[10px] font-bold tracking-wide text-muted uppercase ${props.class}`}
+        >
+          Empty
+        </li>
+      }
+    >
+      <li>
+        <TooltipHost class="block" name="Locked slot" description={UNLOCKED_BY[props.kind]}>
+          <span
+            class={`flex items-center justify-center rounded-lg border-2 border-line-soft
+              bg-line-soft text-muted ${props.class}`}
+          >
+            <LockIcon class="size-3.5" aria-hidden="true" />
+          </span>
+        </TooltipHost>
+      </li>
+    </Show>
+  );
 }
 
 /**
@@ -116,7 +169,9 @@ function Heading(props: {
   return (
     <div class="flex min-h-9 items-center justify-between gap-2">
       <span class="flex items-center gap-1.5">
-        <h3 class="text-left">{props.title}</h3>
+        <h3 class="text-left text-xs font-extrabold tracking-wider text-muted uppercase">
+          {props.title}
+        </h3>
         {props.hint}
       </span>
       <Show when={props.shifted}>
@@ -192,7 +247,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
     if (!arrangeable()) {
       return '';
     }
-    return lifted ? 'cursor-grabbing opacity-50' : 'cursor-grab';
+    return lifted ? 'cursor-grabbing shadow-pop' : 'cursor-grab';
   };
 
   const save = (): void => {
@@ -204,10 +259,10 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
   };
 
   return (
-    <section class="flex flex-col">
-      {/* Abilities and held items side by side, over the moves */}
-      <div class="grid grid-cols-2">
-        <div class="flex min-w-0 flex-col gap-1 border-r border-line-soft pb-3 pr-3">
+    <section class="flex flex-col gap-3 md:h-full">
+      {/* Abilities and held items side by side in one card, over the moves */}
+      <div class="grid grid-cols-2 rounded-2xl border-2 border-line-soft p-3">
+        <div class="flex min-w-0 flex-col gap-1 border-r border-line-soft pr-3">
           <Heading
             title="Abilities"
             hint={
@@ -242,26 +297,36 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
           <ul class="m-0 grid list-none grid-cols-2 gap-1 p-0" {...abilitiesOrder.listProps}>
             <Index each={abilities()}>
               {(ability, at) => (
-                <li {...abilitiesOrder.itemProps(at)} class={grip(abilitiesOrder.held() === at)}>
-                  <TooltipHost class="block" {...detailAbility(ability())}>
-                    <Badge class="w-full justify-center" wrap>
+                <li
+                  {...abilitiesOrder.itemProps(at)}
+                  style={abilitiesOrder.style(at)}
+                  class={grip(abilitiesOrder.held() === at)}
+                >
+                  <TooltipHost class="block" kind="ability" {...detailAbility(ability())}>
+                    <Badge
+                      class="w-full justify-center"
+                      wrap
+                      tone={ABILITY_BADGES[abilityKind(props.caught.species, ability())]}
+                    >
                       {describeAbility(ability())}
                     </Badge>
                   </TooltipHost>
                 </li>
               )}
             </Index>
-            <Index each={unfilled(abilities().length, Slots.Ability)}>
-              {() => (
-                <li aria-hidden="true">
-                  <span class={`block h-7 ${OPEN_SLOT}`} />
-                </li>
+            <Index
+              each={unfilled(
+                abilities().length,
+                getCatchSlots(props.caught, Slots.Ability),
+                Slots.Ability,
               )}
+            >
+              {(state) => <Unfilled state={state()} kind={Slots.Ability} class="h-7" />}
             </Index>
           </ul>
         </div>
 
-        <div class="flex min-w-0 flex-col gap-1 pb-3 pl-3">
+        <div class="flex min-w-0 flex-col gap-1 pl-3">
           <Heading
             title="Held items"
             hint={
@@ -288,13 +353,18 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
           />
           {/* Only its own room is drawn, and only for somebody who can
                 fill it: an empty square on a stranger's pokemon is a
-                button nobody may press */}
-          <ul class="m-0 grid list-none grid-cols-8 gap-1 p-0" {...itemsOrder.listProps}>
+                button nobody may press. Four to a row below `md`, where
+                eight squares are too small to press */}
+          <ul
+            class="m-0 grid list-none grid-cols-4 gap-1 p-0 md:grid-cols-8"
+            {...itemsOrder.listProps}
+          >
             <Index each={itemSlots(props.caught, props.owned)}>
               {(_, at) => (
                 <li
                   class={`contents ${at < items().length ? grip(itemsOrder.held() === at) : ''}`}
                   {...(at < items().length ? itemsOrder.itemProps(at) : {})}
+                  style={itemsOrder.style(at)}
                 >
                   <Show
                     when={at < items().length}
@@ -318,7 +388,8 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                   >
                     <HoverCard
                       class="block"
-                      title="Info"
+                      title={detailItem(items()[at]).name}
+                      kind="Item"
                       footer={(close) => (
                         <Show when={props.owned} fallback={<Button onClick={close}>Close</Button>}>
                           <Button
@@ -348,15 +419,24 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                 </li>
               )}
             </Index>
-            <Index each={unfilled(itemSlots(props.caught, props.owned).length, Slots.Item)}>
-              {() => <li aria-hidden="true" class={`aspect-square ${OPEN_SLOT}`} />}
+            <Index
+              each={unfilled(
+                itemSlots(props.caught, props.owned).length,
+                getHeldItemRoom(props.caught),
+                Slots.Item,
+              )}
+            >
+              {(state) => (
+                <Unfilled state={state()} kind={Slots.Item} class="aspect-square w-full" />
+              )}
             </Index>
           </ul>
         </div>
       </div>
 
       {/* The moves under them: the longest of the three lists */}
-      <div class="flex min-w-0 flex-col gap-1 border-t border-line-soft pt-3">
+      {/* Grows to the foot of the column, so the right side ends level with the left */}
+      <div class="flex min-w-0 flex-col gap-1 rounded-2xl border-2 border-line-soft p-3 md:flex-1">
         <Heading
           title="Moves"
           hint={
@@ -390,8 +470,12 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
         <ul class="m-0 grid list-none grid-cols-2 gap-1 p-0" {...movesOrder.listProps}>
           <Index each={moves()}>
             {(move, at) => (
-              <li {...movesOrder.itemProps(at)} class={grip(movesOrder.held() === at)}>
-                <MoveHoverCard
+              <li
+                {...movesOrder.itemProps(at)}
+                style={movesOrder.style(at)}
+                class={grip(movesOrder.held() === at)}
+              >
+                <MoveTooltip
                   class="block"
                   move={move()}
                   points={getMovePoints(props.caught, move())}
@@ -410,16 +494,14 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                       size={CATEGORY_SIZE}
                     />
                   </span>
-                </MoveHoverCard>
+                </MoveTooltip>
               </li>
             )}
           </Index>
-          <Index each={unfilled(moves().length, Slots.Move)}>
-            {() => (
-              <li aria-hidden="true">
-                <span class={`block h-8 ${OPEN_SLOT}`} />
-              </li>
-            )}
+          <Index
+            each={unfilled(moves().length, getCatchSlots(props.caught, Slots.Move), Slots.Move)}
+          >
+            {(state) => <Unfilled state={state()} kind={Slots.Move} class="h-8" />}
           </Index>
         </ul>
       </div>

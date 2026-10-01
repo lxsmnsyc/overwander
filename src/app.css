@@ -69,6 +69,7 @@
   --color-tide-soft: var(--blue-wash);
 
   --color-arcane: var(--violet);
+  --color-arcane-soft: var(--violet-wash);
 
   /**
    * What is written *on* a filled colour — a green button, the blue
@@ -104,6 +105,12 @@
 
   /* And a window, which is further off the page than a button is */
   --shadow-window: 0 6px 0 0 var(--drop-window), 0 24px 48px -16px var(--drop-cast);
+
+  /* Something floating over the page: a tooltip, a menu, a dropdown */
+  --shadow-float: 0 3px 0 0 var(--drop), 0 16px 28px -14px var(--drop-cast);
+
+  /* A dialog, which floats further off than a menu does */
+  --shadow-sheet: 0 6px 0 0 var(--drop), 0 30px 60px -22px var(--drop-cast);
 }
 
 /**
@@ -142,6 +149,7 @@
 
   /* A move being channelled, which is neither a cast nor damage */
   --violet: #7b4fc0;
+  --violet-wash: #f1eafb;
 
   --drop: rgb(31 42 68 / 0.18);
   --drop-soft: rgb(31 42 68 / 0.16);
@@ -151,6 +159,12 @@
   /* The two halves of the daylight over the page */
   --sky-high: #eef5fe;
   --sky-glow: #ffffff;
+  /* The safari's field: sky over grass, and the base the pokemon stands on */
+  --field-sky: #bfe3ff;
+  --field-haze: #e6f6ff;
+  --field-grass: #9fd87f;
+  --field-grass-deep: #6fb458;
+  --field-base: #7cc36a;
 }
 
 /**
@@ -194,6 +208,7 @@
   --blue-wash: #13263f;
 
   --violet: #a077e6;
+  --violet-wash: #261a3d;
 
   --drop: rgb(0 0 0 / 0.55);
   --drop-soft: rgb(0 0 0 / 0.45);
@@ -202,6 +217,11 @@
 
   --sky-high: #121c33;
   --sky-glow: #1d2a48;
+  --field-sky: #1b2d55;
+  --field-haze: #2a3f6b;
+  --field-grass: #2f5a3a;
+  --field-grass-deep: #234630;
+  --field-base: #3b6d45;
 }
 
 @layer base {

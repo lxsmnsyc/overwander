@@ -1,0 +1,4 @@
+# The image takes the host's build and the migrations, and nothing else
+*
+!.output
+!db/migrations

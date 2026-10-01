@@ -3,7 +3,7 @@ import { solidStart } from '@solidjs/start/config';
 import tailwindcss from '@tailwindcss/vite';
 import { nitro } from 'nitro/vite';
 import solidMarked from 'vite-plugin-solid-marked';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 
 /**
  * Nitro is the server runtime: it is what turns the app into something
@@ -23,14 +23,51 @@ import { defineConfig } from 'vite';
 const forTests = process.env.VITEST != null;
 
 /**
+ * Where the tests' own environment lives, read in place of the root
+ * .env so a developer's settings never change what a test sees. The
+ * e2e dev server asks for it through OVERWANDER_ENV_DIR
+ */
+const ENV_DIR = forTests ? 'test/env' : process.env.OVERWANDER_ENV_DIR;
+
+/**
  * One id per build, shared by the client and server bundles. A tab
  * names it on every server call, and a call from a build that is no
  * longer live is refused: server functions are addressed by their
  * place in a file, so an old tab's arguments would reach the wrong one
  */
-const BUILD_ID = process.env.VERCEL_GIT_COMMIT_SHA ?? String(Date.now());
+const BUILD_ID =
+  process.env.BUILD_ID != null && process.env.BUILD_ID !== ''
+    ? process.env.BUILD_ID
+    : String(Date.now());
 
-export default defineConfig({
+/** The year-long cache the stamped files take, as `public/_headers` gives them */
+const IMMUTABLE = { 'cache-control': 'public, max-age=31536000, immutable' };
+
+/**
+ * The same headers for a server with no sprite host, which serves the
+ * files itself. The two indexes that hand out the stamps keep one
+ * address, so they are checked on every read
+ */
+const ROUTE_RULES = {
+  '/sprites/**': { headers: IMMUTABLE },
+  '/sounds/**': { headers: IMMUTABLE },
+  '/sprites/stamps.json': { headers: { 'cache-control': 'no-cache' } },
+  '/sprites/pokemon/coats.json': { headers: { 'cache-control': 'no-cache' } },
+};
+
+/**
+ * With a sprite host set, the sprites and sounds are served from there
+ * (see `wrangler.jsonc`), so the app's own output leaves them out
+ */
+function publicIgnore(mode: string): string[] {
+  const env = loadEnv(mode, ENV_DIR ?? process.cwd(), 'VITE_');
+  const hosted = 'VITE_SPRITE_ORIGIN' in env && env.VITE_SPRITE_ORIGIN !== '';
+
+  return hosted ? ['public/sprites/**', 'public/sounds/**'] : [];
+}
+
+export default defineConfig(({ mode }) => ({
+  ...(ENV_DIR == null ? {} : { envDir: ENV_DIR }),
   define: {
     'import.meta.env.VITE_BUILD_ID': JSON.stringify(BUILD_ID),
   },
@@ -47,7 +84,20 @@ export default defineConfig({
       devOverlay: false,
       middleware: 'src/middleware/index.ts',
     }),
-    ...(forTests ? [] : [nitro()]),
+    ...(forTests
+      ? []
+      : [
+          nitro({
+            preset: 'node-server',
+            ignore: publicIgnore(mode),
+            routeRules: ROUTE_RULES,
+            // The live feed that follows table changes (src/server/live)
+            features: { websocket: true },
+            handlers: [{ route: '/_live', handler: './src/server/live/socket.ts' }],
+            // Brings the database up to date before the first request is served
+            plugins: ['./src/server/migrate-on-start.ts'],
+          }),
+        ]),
   ],
   server: {
     watch: {
@@ -77,6 +127,11 @@ export default defineConfig({
     // plugin that understands it
     noExternal: ['server-only'],
   },
+  environments: {
+    // The same for Nitro's own handlers (the live socket), which the dev
+    // server otherwise loads with the real, throwing `server-only`
+    nitro: { resolve: { noExternal: ['server-only'] } },
+  },
   test: {
     // The world tests generate thousands of chunks and sit near 5 seconds alone,
     // so the default timeout fails them whenever the machine is busy
@@ -95,15 +150,12 @@ export default defineConfig({
       },
     ],
     /**
-     * `test/rls` needs the local Supabase stack and clears it between
-     * cases — run inside `pnpm test` it fails on a machine with no
-     * stack, and run beside the e2e suite it deletes the accounts the
-     * browsers are signed in as. It runs on its own as `pnpm
-     * test:rules` (see `vitest.rules.ts`).
+     * `test/db` needs the development database and clears it between cases,
+     * so it runs on its own as `pnpm test:db` (see `vitest.db.ts`).
      *
      * `e2e` is left out because those are Playwright specs, and
      * Playwright refuses to have its `test` called by another runner
      */
-    exclude: ['**/node_modules/**', '**/dist/**', '.output/**', 'test/rls/**', 'e2e/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', '.output/**', 'test/db/**', 'e2e/**'],
   },
-});
+}));

@@ -1,22 +1,21 @@
 # Security
 
-## Privileged writes
+## The server is the only door
 
-Anything that creates or moves value is written by the server rather than the
-browser. [`src/server/*`](../../src/server) talks to Postgres over a direct
-connection as the **table owner** ([`src/server/db.ts`](../../src/server/db.ts)),
-and an owner is not bound by row-level security. That is the Supabase shape of
-the old admin bypass, and it is why every policy in the schema describes a
-browser and nothing else.
+The browser never reaches the database. [`src/server/*`](../../src/server) reads
+and writes over one Postgres connection as the **table owner**
+([`src/server/db.ts`](../../src/server/db.ts)), and there are no row policies
+behind it. Every rule about who may see or change a row is in a server function.
 
-The client reaches those writes through `'use server'` functions that take the
-caller's Supabase access token and resolve it with `requireUid`
-([`src/server/auth.ts`](../../src/server/auth.ts)). The token's signature is
-checked locally, against `SUPABASE_JWT_SECRET` for an HS256 token and against
-the project's published JWKS otherwise, so no round trip is needed. A uid passed
+The client reaches the server through `'use server'` functions that take the
+caller's token: the short-lived JWT Better Auth signs
+([`src/server/better-auth.ts`](../../src/server/better-auth.ts)). A write
+resolves it with `requireUid`, and a read with `requireReader`
+([`src/server/auth.ts`](../../src/server/auth.ts)). The signature is checked
+against Better Auth's own keys, so no round trip is needed. A uid passed
 alongside a call is never trusted; only what the token proves is.
 
-| Written on the server                                    | What a policy could not enforce                                                                                                                                                                     |
+| Written on the server                                    | What a client could not be trusted with                                                                                                                                                             |
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `recordCatch`                                            | The record is built from the caller's own `encounters` row, so the pokemon written down is the one that was staged, not one the caller describes                                                    |
 | `grantItem` / `consumeItem`                              | Item stacks are currency; a client that could write them could mint Master Balls                                                                                                                    |
@@ -64,117 +63,72 @@ resolves that marker itself: an empty module on the server, and a **build
 failure** in the client bundle naming the file that reached across. The boundary
 is enforced by the build rather than by remembering where an import came from.
 
-The writes need `SUPABASE_DB_URL`. `SUPABASE_SERVICE_ROLE_KEY` is needed only
-for the auth admin API: looking a player up by the email they signed up with,
-and the staff dashboard's account list. Without it those two refuse and
-everything else runs. See `.env.example`.
+Two things a player sets for themselves still go through the server, like
+everything else:
 
-Three things stay client-side by design:
-
-- **Shared-world publishing**, the snapshot window and the spawns it rolled,
-  goes through the `publish_snapshot` function rather than a table write. The
-  function checks the shape, refuses to move a window backwards, and swaps the
-  spawn rows atomically. The rolls are deterministic from the chunk seed and the
-  window, so an honest client recomputes the same set and a dishonest one only
-  lies to itself: the server re-derives every reward from the seed regardless.
 - **Profile details.** Nickname and buddy are the player's to set. The purse in
-  the same row is not, and neither is `role`, `banned`, `title` or `sprite`: the
-  last two are earned, and what was earned is re-derived on the server before
-  either is written. This is enforced by **column grants** rather than by a
-  policy, because a policy can only say which rows may be written, not which
-  columns: `grant update (nickname, buddy_id) on profiles to authenticated`.
-- **Buddies.** Setting one is a preference, and a trigger checks that the catch
-  named belongs to the player setting it.
+  the same row is not, and neither is `role`, `banned`, `title` or `sprite`. The
+  functions that write the two write nothing else.
+- **Buddies.** A trigger checks that the catch named belongs to the player
+  setting it.
 
-## Row-level security
+The shared spawn window is published by whichever client finds it stale. The
+rolls are deterministic from the chunk seed and the window, so an honest client
+writes the same set and a dishonest one only lies to itself: the server
+re-derives every reward from the seed regardless.
 
-[`supabase/migrations/20260820000900_rls.sql`](../../supabase/migrations/20260820000900_rls.sql)
-holds the whole security surface in one file, the way the old ruleset did, and it
-is the authority; this page describes it. Every table has RLS enabled, and there
-are **no insert, update or delete policies** anywhere except on `profiles`. A
-browser reads; the server writes.
+## Who may read what
 
-Three tiers:
+The server functions that read apply three tiers. The live feed applies the same
+ones to what it sends ([`src/server/live/rules.ts`](../../src/server/live/rules.ts)).
 
 | Tier                  | Tables                                                                                                                                                                                                                                                                                    | Who reads                   |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| **Public to players** | `caught` and its children, `snapshots`, `snapshot_spawns`, `auctions`, `raids`, `teams`, `team_catches`, `team_snapshots`, `battles`, `battle_teams`, `rocket_stops`, `rocket_party`, `gym_seats`, `raid_watchers`, `awards`, `towns`                                                              | Any signed-in player        |
+| **Public to players** | `caught` and its children, `snapshots`, `snapshot_spawns`, `auctions`, `raids`, `teams`, `team_catches`, `team_snapshots`, `battles`, `battle_teams`, `rocket_stops`, `rocket_party`, `gym_seats`, `raid_watchers`, `awards`, `towns`, `profiles`                                         | Any signed-in player        |
 | **Own rows only**     | `bag_items`, `bag_candies`, `pokedex_entries`, `positions`, `fled_encounters`, `encounters` and its children, `bids`, `auction_sellers`, `friends`, `friend_requests`, `blocks`, `friend_codes`, `trades`, `raid_invites`, `gym_challenges`, the four duel tables, and every claim marker | The player named on the row |
-| **Closed**            | `gifts`, `gift_claims`, `quest_progress`, `quest_baselines`, `quest_claims`, `rotation_baselines`, `rotation_claims`                                                                                                                                                                                         | Nobody                      |
-
-`profiles` sits outside the three: everyone signed in reads every profile,
-because a trade or a raid lobby starts with looking somebody up, and a player may
-insert their own with an empty purse and no role, then update only the three
-columns granted above.
+| **Server only**       | `gifts`, `gift_claims`, the quest and rotation tables, and the account tables (`users`, `sessions`, `identities`, `verifications`, `jwks`, `two_factors`, `passkeys`)                                                                                                                     | Nobody but the server       |
 
 A few consequences worth having in hand:
 
 - **A catch is public.** Any signed-in player can read any pokemon record, which
   is what lets an auction lot, a raid party and a trainer's profile show real
-  pokemon without a server call for each.
-- **Claim markers are private.** Each is scoped to the player named on it. The
-  old ruleset let any signed-in player list them, which was a leak rather than a
-  feature.
+  pokemon.
 - **A block is readable by the blocker alone.** Nothing tells the blocked player.
   See [`friends.md`](./friends.md).
-- **Gifts are invisible.** RLS is on with no policy at all, so a browser reading
-  the table gets nothing back. Offers and claims travel through the server, and a
-  client that could write its own claim could take an open gift as often as it
-  liked.
-- **`positions` is private to its owner**, which is right for a table a client
-  could otherwise sweep, and wrong for the profile a raid lobby opens. Where a
-  trainer is standing is shown through a server call that reads one row for one
-  uid.
-
-A duel's four tables are the one place a policy cannot say the condition
-directly: a policy on `duel_members` that reads `duel_members` is recursion,
-which Postgres refuses. `in_duel(duel, player)` is a `security definer` function
-standing in for it. See [Battle lobbies](duels.md).
-
-### Grants back the policies
-
-Supabase hands the client roles nothing by default, so the grants are explicit:
-`select` on every table for `authenticated`, everything for `service_role`, and
-on `profiles` the three-column `insert` and `update` above.
-
-The blanket `grant ... on all tables` in the RLS migration only reached the
-tables that existed then, so **every table added since names its own grants**.
-A new table without them is readable by nobody, whatever its policy says. A policy decides
-which **rows**; a grant decides which **columns** and which verbs. Both are
-needed, and the column grant is the half that keeps a player from writing their
-own balance.
+- **A duel is visible to its host, its members and whoever was called into it.**
+  Anybody else following the tables gets only the lobby's id. See
+  [Battle lobbies](duels.md).
+- **Where a trainer stands** is shown through a server read of one row for one
+  uid, since a player's own position is otherwise theirs alone.
 
 ### What the database refuses outright
 
-Some rules are neither policy nor server code but constraints, so a bug on the
+Some rules are not server code but constraints, so a bug on the
 server cannot break them either:
 
-| Guard                                 | What it holds                                                                            |
-| ------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `write_once` triggers                 | Claim markers, raid rewards, aftermath markers and team snapshots never change           |
-| `append_only` on `caught_history`     | History is insert-only, with one lawful update: the cascade that nulls a deleted account |
-| `settle_once` on `battles`            | An outcome stamps once, from Unfinished, and nothing else on the row moves               |
-| `dex_monotonic`                       | Pokedex counts only rise                                                                 |
-| `trades_open_pair`                    | One open trade offer per direction of a pair                                             |
-| `buddy_owner` / `buddy_follows_owner` | A buddy must be an owned catch, and stops following when the catch changes hands         |
+| Guard                                 | What it holds                                                                                                                   |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `write_once` triggers                 | Claim markers, raid rewards, aftermath markers and team snapshots never change                                                  |
+| `append_only` on `caught_history`     | History is insert-only, with one lawful update: the cascade that nulls a deleted account                                        |
+| `settle_once` on `battles`            | An outcome stamps once, from Unfinished, and nothing else on the row moves                                                      |
+| `dex_monotonic`                       | Pokedex counts only rise                                                                                                        |
+| `trades_open_pair`                    | One open trade offer per direction of a pair                                                                                    |
+| `buddy_owner` / `buddy_follows_owner` | A buddy must be an owned catch, and stops following when the catch changes hands                                                |
 | `gift_claims` backfill guard          | A claim may be updated exactly once, to record the catch it became, and again to lose that pointer when the pokemon is released |
-| Column checks                         | Gold never negative, levels 1 to 100, friendship 0 to 255, a bid above zero              |
-| Foreign keys                          | A team names a real catch; deleting an account takes its rows with it                    |
+| Column checks                         | Gold never negative, levels 1 to 100, friendship 0 to 255, a bid above zero                                                     |
+| Foreign keys                          | A team names a real catch; deleting an account takes its rows with it                                                           |
 
-### Realtime is RLS
+### The live feed
 
-The browser follows live tables over `postgres_changes`, which checks the same
-policies per socket: a stream only carries rows the reader may already select.
-The published set is listed in the realtime migration and in the migrations that
-added tables since: `battles`, `auctions`, `raids`, `teams`, `battle_teams`,
-`snapshots`, `snapshot_spawns`, `friends`, `friend_requests`, `blocks`,
-`profiles`, `trades`, `raid_invites`, `raid_watchers`, `gym_seats`, and the four
-duel tables.
+The browser follows live tables over the server's own socket
+([`src/server/live`](../../src/server/live)). A trigger on each followed table
+sends its changes to the server, which passes each one on as its reader may see
+it: whole for a public row or the reader's own, and only its keys otherwise.
 
-The stream carries changes only, never current state, so the watch helpers in
-[`src/auth/supabase.ts`](../../src/auth/supabase.ts) do the first read
-themselves and re-read on every resubscribe. A dropped socket therefore cannot
-leave a stale screen.
+The feed carries changes only, never current state, so the watch helpers in
+[`src/auth/watch.ts`](../../src/auth/watch.ts) do the first read themselves and
+read again on every reconnect. A dropped socket therefore cannot leave a stale
+screen.
 
 ### Roles, and what each may do
 
@@ -200,6 +154,14 @@ The checks live on the server: `requireStaff` for anything the dashboard reads,
 the caller's stored role against the target's before writing. The dashboard hides
 what a role cannot use, which is a courtesy rather than a defence.
 
+### What staff did is kept, if the server wants it
+
+With the server's `STAFF_LOG` variable on, every role set, ban, gift and
+teleport is written to `staff_actions` once it has landed: who acted, on whom,
+the particulars, and when. It is rAthena's `atcommandlog`. A line that cannot be
+written is dropped rather than undoing the action, and only the server reads or
+writes the table. With the variable off it stays empty.
+
 ### A ban is one line
 
 `banned` on the profile, written by the server alone. `requireUid` refuses a
@@ -209,18 +171,35 @@ A banned player can still sign in and read: the game tells them they are banned
 and why, since a ban that looked like a broken game would be worse than one that
 says so.
 
-### Testing the policies
+### Switches close a part of the game
 
-[`test/rls/rls.test.ts`](../../test/rls/rls.test.ts) asks Postgres itself. It
-signs two real accounts in against the local stack, then for each table checks
-whether the owner may read it, whether a stranger may, whether a guest may, and
-whether the client is kept out of every write.
+`switches` has one row per part of the game (`auctions`, `trades`, `stops`,
+`raids`, `duels`, `gym-seats`, `gifts`, `townsfolk`, `catching`, `claims`) and
+one for `everything`. Turning a part off under Switches in the staff dashboard
+(`/admin/switches`, admins and owners only) closes that part at once, without a
+deploy, which is the answer to an exploit found before its fix can ship.
+`message` is what players are told; an empty one uses the game's own line.
 
-Run them with `pnpm test:rules`, which needs a local stack up (`pnpm db`). They
-are kept out of `pnpm test` because they are the only tests that need something
-running, and because the run **clears the game rows between cases**: pointed at a
-stack the e2e suite is using, it would delete the accounts those browsers are
-signed in as. One file at a time, for the same reason.
+The server reads the switches in the same statement as the ban check and the
+paces, so they cost no round trip. A server function that **starts** something
+names its part through `requireUidFor(token, Feature.Auctions)`; one that
+leaves, cancels, reads, collects what is owed or settles a fight already under
+way calls `requireUid` and is never refused, so closing a part strands nobody
+halfway through it. `everything` is maintenance: every call from a player
+without a role is refused, and staff still get in to check the game before it
+opens again. The feature list lives in
+[`src/server/switches.ts`](../../src/server/switches.ts).
+
+A server call refused by a closed part says so, and only staff change a switch.
+
+### Testing it
+
+[`test/db/`](../../test/db) runs the server modules against a real Postgres:
+the writes above, the switches, the paces and the sweeps. `pnpm test:db` starts
+the throwaway development database and migrates it, and refuses any database
+whose name does not end in `_dev`, so it never reaches production. It **clears
+the game rows between cases**, so it runs one file at a time and apart from the
+e2e suite, which shares that database.
 
 ## Indexes
 

@@ -17,6 +17,7 @@ import {
   giveItem,
   isFavorite,
   isGuarded,
+  isReleaseGraced,
   releaseCatch,
   setFavorite,
   setGuarded,
@@ -29,6 +30,9 @@ import { useAuth } from '../../../auth/context';
 import { answered, failed, readable } from '../../app/resource-reads';
 
 import { canHatch, isEgg } from '../../../auth/egg';
+import AnimatedSprite from '../../sprites/AnimatedSprite';
+import { HeadingPortrait } from '../../overworld/npc-dialog/terms';
+import TargetStrip from '../TargetStrip';
 import { hatchEgg } from '../../../auth/eggs';
 import { deriveSize } from '../../../overworld/encounter';
 import { type EvolutionOption, evolveCatch } from '../../../auth/evolution';
@@ -46,7 +50,7 @@ import { BALL_ITEMS, type Items, getMachineMove, isMachineItem } from '../../../
 import { MAX_FRIENDSHIP, describeFriendship } from '../../../data/constants/friendship';
 import ItemSprite from '../../items/ItemSprite';
 import type { Moves } from '../../../data/ids/moves';
-import type { Species } from '../../../data/ids/species';
+import { Species } from '../../../data/ids/species';
 
 import { isPPItem } from '../../../data/items/vitamins';
 import { isPreciousItem } from '../../../data/overworld/item-pool';
@@ -71,10 +75,8 @@ import spendItemOn, {
 import {
   Badge,
   Button,
-  CloseButton,
   Dialog,
   DialogActions,
-  Divider,
   Field,
   Menu,
   type MenuAction,
@@ -98,6 +100,7 @@ import {
   Show,
   batch,
   createEffect,
+  createResource,
   createSignal,
   onCleanup,
 } from 'solid-js';
@@ -1080,6 +1083,11 @@ export function CatchSheetBody(
    * second one says what it is doing
    */
   const [releasing, setReleasing] = createSignal(false);
+  /**
+   * Whether this server gives a day to take a release back, asked the
+   * first time the question is put and kept for the visit
+   */
+  const [graced] = createResource(releasing, isReleaseGraced);
   /** Whether the full ownership history is open over the sheet */
   const [tracing, setTracing] = createSignal(false);
 
@@ -1234,7 +1242,7 @@ export function CatchSheetBody(
         props.onChange?.();
 
         if (result.level != null) {
-          offerLevelMoves(catchId, recordOf(catchId), result.level);
+          offerLevelMoves(catchId, recordOf(catchId), result.from ?? result.level, result.level);
         }
       })
       .catch((caught: unknown) => {
@@ -1388,6 +1396,53 @@ export function CatchSheetBody(
     ];
   };
 
+  /**
+   * The badges and the Actions menu, in the heading row beside the
+   * nameplate rather than a bar of their own under it
+   */
+  const actionsRow = (): JSX.Element => (
+    <div class="flex flex-wrap items-center justify-end gap-2">
+      <Show when={view()}>
+        {(record) => (
+          <span class="mr-auto flex min-w-0 flex-wrap items-center gap-2 text-left">
+            <Show when={isFavorite(record())}>
+              <Badge tone="gold">
+                <StarIcon class="size-3.5" aria-hidden="true" />
+                Favorite
+              </Badge>
+            </Show>
+            <Show when={isGuarded(record())}>
+              <Badge tone="tide">
+                <LockIcon class="size-3.5" aria-hidden="true" />
+                Locked
+              </Badge>
+            </Show>
+            <Show when={isShadow(record())}>
+              <Badge>Shadow</Badge>
+            </Show>
+            <Show when={props.buddy.latest === props.catchId}>
+              <Badge tone="leaf">Buddy</Badge>
+            </Show>
+            <Show when={owned() != null && props.fighting.latest === true}>
+              <Badge tone="ember">In a raid</Badge>
+            </Show>
+          </span>
+        )}
+      </Show>
+      <Show when={owned() != null || props.onDex != null}>
+        <Menu label="Actions" icon={ActionsIcon} actions={menuActions()} />
+      </Show>
+    </div>
+  );
+
+  /** Put the sheet away. A release half-confirmed is a release declined */
+  const closeSheet = (): void => {
+    setReleasing(false);
+    setTracing(false);
+    setPanel(null);
+    props.onClose();
+  };
+
   return (
     <>
       <Dialog
@@ -1405,84 +1460,47 @@ export function CatchSheetBody(
           !releasing() &&
           panel() !== 'items'
         }
-        onClose={() => {
-          // A release half-confirmed is a release declined
-          setReleasing(false);
-          setTracing(false);
-          setPanel(null);
-          props.onClose();
-        }}
-        // Announced by what it is; the pokemon's own name heads the
-        // top row, where the mockup's title bar would have been
-        title="Pokemon Info"
-        quiet
-        bar={
-          // The menu stands from the first frame rather than hanging off
-          // the record: every re-read of the record would rebuild it,
-          // which closes it under the player's finger
-          <>
-            <Show when={view()}>
-              {(record) => (
-                <span class="mr-auto flex min-w-0 flex-wrap items-center gap-2 text-left">
-                  <h3 class="truncate">{named()}</h3>
-                  {/* The species only where a nickname took its place */}
-                  <Show when={!isEgg(record()) && record().nickname !== ''}>
-                    <Meta>
-                      (<span>{getSpeciesData(record().species).name}</span>)
-                    </Meta>
-                  </Show>
-                  <Show when={!isEgg(record()) && GENDER_MARKS[record().gender] !== ''}>
-                    <span
-                      class="text-lg leading-none"
-                      title={GENDER_LABELS[record().gender]}
-                      aria-label={GENDER_LABELS[record().gender]}
-                    >
-                      {GENDER_MARKS[record().gender]}
-                    </span>
-                  </Show>
-                  <Show when={isFavorite(record())}>
-                    <Badge tone="gold">
-                      <StarIcon class="size-3.5" aria-hidden="true" />
-                      Favorite
-                    </Badge>
-                  </Show>
-                  <Show when={isGuarded(record())}>
-                    <Badge tone="tide">
-                      <LockIcon class="size-3.5" aria-hidden="true" />
-                      Locked
-                    </Badge>
-                  </Show>
-                  <Show when={!isEgg(record()) && isShiny(record())}>
-                    <Badge tone="gold">
-                      <SparklesIcon class="size-3.5" aria-hidden="true" />
-                      Shiny
-                    </Badge>
-                  </Show>
-                  <Show when={isShadow(record())}>
-                    <Badge>Shadow</Badge>
-                  </Show>
-                  <Show when={props.buddy.latest === props.catchId}>
-                    <Badge tone="leaf">Buddy</Badge>
-                  </Show>
-                  <Show when={owned() != null && props.fighting.latest === true}>
-                    <Badge tone="ember">In a raid</Badge>
-                  </Show>
+        onClose={closeSheet}
+        // The name box carries who it is: its name, its species where a
+        // nickname took its place, and its marks, with its ball as the face
+        title={
+          <Show when={view()} fallback="Pokemon Info">
+            {(record) => (
+              <span class="flex min-w-0 items-center gap-1.5">
+                {/* What the sheet is announced as, the same for every catch */}
+                <span class="sr-only">Pokemon Info: </span>
+                <span class="truncate" data-name>
+                  {named()}
                 </span>
-              )}
-            </Show>
-            <Show when={owned() != null || props.onDex != null}>
-              <Menu label="Actions" icon={ActionsIcon} actions={menuActions()} />
-            </Show>
-            <CloseButton
-              onPress={() => {
-                setReleasing(false);
-                setTracing(false);
-                setPanel(null);
-                props.onClose();
-              }}
-            />
-          </>
+                <Show when={!isEgg(record()) && record().nickname !== ''}>
+                  <span class="shrink-0 font-bold opacity-80">
+                    ({getSpeciesData(record().species).name})
+                  </span>
+                </Show>
+                <Show when={!isEgg(record()) && GENDER_MARKS[record().gender] !== ''}>
+                  <span
+                    class="shrink-0"
+                    title={GENDER_LABELS[record().gender]}
+                    aria-label={GENDER_LABELS[record().gender]}
+                  >
+                    {GENDER_MARKS[record().gender]}
+                  </span>
+                </Show>
+                <Show when={!isEgg(record()) && isShiny(record())}>
+                  <SparklesIcon class="size-4 shrink-0" aria-label="Shiny" />
+                </Show>
+              </span>
+            )}
+          </Show>
         }
+        lead={
+          <Show when={view()}>
+            {(record) => <ItemSprite item={BALL_ITEMS[record().ball]} size={28} label="" />}
+          </Show>
+        }
+        terse
+        // Beside the nameplate, filling the band that would otherwise stand empty
+        aside={actionsRow()}
         description={
           props.readOnly === true
             ? 'One pokemon in full, as it stands. Nothing here can be changed, since it is not yours.'
@@ -1512,8 +1530,8 @@ export function CatchSheetBody(
                   when={!isEgg(loaded())}
                   fallback={
                     <div
-                      class="flex flex-col items-center justify-center gap-4 border-y-2
-                        border-line-soft py-4 text-center md:min-h-0 md:flex-1"
+                      class="flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-line-soft p-4
+                        text-center md:min-h-0 md:flex-1"
                     >
                       {/* Fitted to a square of its own: an egg drawn to
                           whatever width the panel has is a very large
@@ -1555,18 +1573,44 @@ export function CatchSheetBody(
                       one side never pushes the other. One scrolling column
                       on a phone, portrait, moves, evolutions, then stats */}
                   <div
-                    class="flex flex-col gap-3 border-y-2 border-line-soft md:grid md:min-h-0
-                      md:flex-1 md:grid-cols-[16rem_minmax(0,1fr)] md:gap-0"
+                    class="flex flex-col gap-3 md:grid md:min-h-0 md:flex-1
+                      md:grid-cols-[16rem_minmax(0,1fr)] md:gap-4"
                   >
                     {/* Scrolls like the right side does, so a short screen
                         never pushes the evolutions down over the history */}
-                    <div
-                      class="contents md:flex md:min-h-0 md:flex-col md:overflow-y-auto
-                        md:border-r-2 md:border-line-soft md:pr-4"
-                    >
-                      <div class="flex flex-col items-center gap-2 py-3 text-center md:flex-1">
-                        <PortraitSection caught={loaded()} named={named()} />
+                    <div class="contents md:flex md:min-h-0 md:flex-col md:gap-3 md:overflow-y-auto">
+                      <div
+                        class="flex flex-col items-center gap-2 rounded-2xl border-2 border-line-soft p-3 text-center
+                          md:flex-1"
+                      >
+                        <PortraitSection caught={loaded()} named={named()} level={shownLevel()} />
 
+                        {/* Its facts as chips: what it is, its size, and what walking
+                            with it has earned */}
+                        <div class="flex flex-wrap items-center justify-center gap-1.5">
+                          <Badge>{getSpeciesData(loaded().species).category}</Badge>
+                          <For each={getSpeciesData(loaded().species).types}>
+                            {(type) => <TypeBadge type={type} />}
+                          </For>
+                          <Badge>
+                            {deriveSize(loaded().species, loaded().traitValue).height.toFixed(2)} m
+                          </Badge>
+                          <Badge>
+                            {deriveSize(loaded().species, loaded().traitValue).weight.toFixed(1)} kg
+                          </Badge>
+                          <TooltipHost
+                            name="Friendship"
+                            description={`${loaded().friendship} of ${MAX_FRIENDSHIP}`}
+                          >
+                            <Badge tone="leaf">
+                              <HeartIcon class="size-3.5" aria-hidden="true" />
+                              {describeFriendship(loaded().friendship)}
+                            </Badge>
+                          </TooltipHost>
+                          <Badge>
+                            {loaded().walked} {loaded().walked === 1 ? 'step' : 'steps'}
+                          </Badge>
+                        </div>
                         <div class="flex flex-wrap items-center justify-center gap-1.5">
                           <Badge tone="gold">
                             <CandySprite
@@ -1580,10 +1624,7 @@ export function CatchSheetBody(
                           </Badge>
                           {/* The level and what raises it are one control:
                             where it stands and what the next step costs */}
-                          <Show
-                            when={owned() != null}
-                            fallback={<Badge tone="leaf">Lv. {loaded().level}</Badge>}
-                          >
+                          <Show when={owned() != null}>
                             {/* Presses are gathered and sent together once they stop */}
                             <Button
                               tone="primary"
@@ -1617,50 +1658,11 @@ export function CatchSheetBody(
                             </Button>
                           </Show>
                         </div>
-
-                        <div class="flex flex-wrap items-center justify-center gap-1.5">
-                          <span class="text-sm font-medium">Lv. {shownLevel()}</span>
-                          <Divider />
-                          <span class="text-sm font-medium">
-                            {getSpeciesData(loaded().species).category}
-                          </span>
-                          <Divider />
-                          <For each={getSpeciesData(loaded().species).types}>
-                            {(type) => <TypeBadge type={type} />}
-                          </For>
-                        </div>
-                        {/* This individual's own size, rolled from its trait
-                          value against the species as it stands now */}
-                        <div class="flex flex-wrap items-center justify-center gap-1.5">
-                          <Badge>
-                            {deriveSize(loaded().species, loaded().traitValue).height.toFixed(2)} m
-                          </Badge>
-                          <Badge>
-                            {deriveSize(loaded().species, loaded().traitValue).weight.toFixed(1)} kg
-                          </Badge>
-                        </div>
-                        {/* What walking with it has earned: how close it is,
-                          which friendship evolutions and Return read, and
-                          how far it has gone as a buddy */}
-                        <div class="flex flex-wrap items-center justify-center gap-1.5">
-                          <TooltipHost
-                            name="Friendship"
-                            description={`${loaded().friendship} of ${MAX_FRIENDSHIP}`}
-                          >
-                            <Badge tone="leaf">
-                              <HeartIcon class="size-3.5" aria-hidden="true" />
-                              {describeFriendship(loaded().friendship)}
-                            </Badge>
-                          </TooltipHost>
-                          <Badge>
-                            {loaded().walked} {loaded().walked === 1 ? 'step' : 'steps'}
-                          </Badge>
-                        </div>
                       </div>
 
                       <div
-                        class="order-3 flex min-h-0 flex-col border-t-2 border-line-soft py-3 md:order-none
-                        md:h-48 md:shrink-0"
+                        class="order-3 flex min-h-0 flex-col rounded-2xl border-2 border-line-soft p-3 md:order-none md:h-48
+                          md:shrink-0"
                       >
                         <EvolutionSection
                           options={props.evolutions.latest}
@@ -1673,10 +1675,10 @@ export function CatchSheetBody(
                       </div>
                     </div>
 
-                    <div class="contents md:flex md:min-h-0 md:flex-col md:pl-4">
+                    <div class="contents md:flex md:min-h-0 md:flex-col md:gap-3">
                       {/* Stats lead the column: they are what a player
                           opens a catch to read */}
-                      <div class="order-2 py-3 md:order-none md:shrink-0">
+                      <div class="order-2 rounded-2xl border-2 border-line-soft p-3 md:order-none md:shrink-0">
                         <StatsSection
                           caught={loaded()}
                           owned={owned() != null}
@@ -1685,10 +1687,7 @@ export function CatchSheetBody(
                         />
                       </div>
 
-                      <div
-                        class="order-4 min-h-0 border-t-2 border-line-soft py-3 md:order-none
-                        md:flex-1 md:overflow-y-auto"
-                      >
+                      <div class="order-4 min-h-0 md:order-none md:flex-1 md:overflow-y-auto">
                         {/* An egg has nothing to fight with yet, so its side
                           holds the way out of the shell */}
                         <BattleSection
@@ -1714,16 +1713,21 @@ export function CatchSheetBody(
                   </div>
                 </Show>
 
-                {/* Where it came from in one line. The full chain opens in
-                    its own dialog, since a traded pokemon's can run long */}
-                <div class="flex items-center gap-2">
-                  <ItemSprite
-                    item={BALL_ITEMS[loaded().ball]}
-                    size={HISTORY_BALL}
-                    class={HISTORY_BALL_INSET}
-                    label={describeItem(BALL_ITEMS[loaded().ball])}
-                  />
-                  <Meta class="grow truncate text-left">{describeHistory(loaded())}</Meta>
+                {/* Where it came from in one line, beside the full chain it
+                    begins, and the way out */}
+                <DialogActions
+                  note={
+                    <span class="flex min-w-0 items-center gap-2">
+                      <ItemSprite
+                        item={BALL_ITEMS[loaded().ball]}
+                        size={HISTORY_BALL}
+                        class={HISTORY_BALL_INSET}
+                        label={describeItem(BALL_ITEMS[loaded().ball])}
+                      />
+                      <Meta class="truncate text-left">{describeHistory(loaded())}</Meta>
+                    </span>
+                  }
+                >
                   <Show when={loaded().history.length > 0}>
                     <Button
                       onClick={() => {
@@ -1733,7 +1737,8 @@ export function CatchSheetBody(
                       History ({loaded().history.length})
                     </Button>
                   </Show>
-                </div>
+                  <Button onClick={closeSheet}>Close</Button>
+                </DialogActions>
               </>
             )}
           </Show>
@@ -1784,7 +1789,11 @@ export function CatchSheetBody(
           setReleasing(false);
         }}
         title="Release it?"
-        description="Letting a pokemon go cannot be undone."
+        description={
+          answered(graced) === true
+            ? 'It can be taken back within a day, for the candy it paid.'
+            : 'Letting a pokemon go cannot be undone.'
+        }
         terse
       >
         <Show when={view()}>
@@ -1885,14 +1894,6 @@ export function CatchSheetBody(
 
         <DialogActions>
           <Button
-            disabled={renaming()}
-            onClick={() => {
-              setNaming(null);
-            }}
-          >
-            Never mind
-          </Button>
-          <Button
             tone="primary"
             // Nothing to do where the name has not changed: the same
             // name written again is a write for the sake of one
@@ -1900,6 +1901,14 @@ export function CatchSheetBody(
             onClick={rename}
           >
             Save
+          </Button>
+          <Button
+            disabled={renaming()}
+            onClick={() => {
+              setNaming(null);
+            }}
+          >
+            Never mind
           </Button>
         </DialogActions>
       </Dialog>
@@ -1920,6 +1929,24 @@ export function CatchSheetBody(
         }}
         title="Use item"
         description={`Choose what to spend on ${named()}.`}
+        terse
+        lead={
+          <Show when={view()}>
+            {(loaded) => (
+              <HeadingPortrait>
+                <AnimatedSprite
+                  species={isEgg(loaded()) ? Species.Egg : loaded().species}
+                  shiny={!isEgg(loaded()) && isShiny(loaded())}
+                  direction="Down"
+                  still
+                  fill
+                  label=""
+                />
+              </HeadingPortrait>
+            )}
+          </Show>
+        }
+        header={<Show when={view()}>{(loaded) => <TargetStrip caught={loaded()} />}</Show>}
         entries={readable(props.bag)}
         disabled={frozen()}
         // Only the prized and special bands ask twice. Everything a

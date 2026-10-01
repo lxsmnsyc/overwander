@@ -14,6 +14,7 @@ import check, {
   OFFSET,
   PARTY,
   STAFF_GIFT,
+  TIME,
   TRADE_OFFER,
 } from '../src/server/validate';
 import { AuctionLot } from '../src/auth/auction-record';
@@ -41,6 +42,14 @@ describe('checking one argument', () => {
     expect(() => check(CELL, '3')).toThrow();
     expect(() => check(ID, 42)).toThrow();
     expect(() => check(GAME_ID, Number.NaN)).toThrow();
+  });
+});
+
+describe('times', () => {
+  it('takes a window start in milliseconds, which is far past any count', () => {
+    expect(() => check(TIME, 1_790_500_500_000)).not.toThrow();
+    expect(() => check(TIME, -1)).toThrow();
+    expect(() => check(TIME, 1.5)).toThrow();
   });
 });
 

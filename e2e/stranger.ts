@@ -4,7 +4,7 @@
 import { AUCTION_DURATION, AuctionLot } from '../src/auth/auction-record';
 import { getLocalOffset } from '../src/auth/local-time';
 import { Items } from '../src/data/ids/items';
-import { admin, copyable, findRows, insertRow, stageAccount } from './admin';
+import { copyable, findRows, insertRow, sql, stageAccount } from './admin';
 
 /**
  * Somebody who is not the player.
@@ -44,8 +44,7 @@ export interface Stranger {
 export async function stageSeller(called: string): Promise<Stranger> {
   const stamp = `${Date.now().toString(36)}${Math.floor(Math.random() * 1e6).toString(36)}`;
   const opened = Date.now();
-  // A real account rather than a profile alone: friend rows point
-  // into Supabase Auth
+  // A real account rather than a profile alone: friend rows point at users
   const email = `seller-${stamp}@example.com`;
   const uid = await stageAccount(email, 'walking-in-the-tall-grass');
   // Stamped, because the emulator is reused between runs: a lot stands
@@ -54,9 +53,8 @@ export async function stageSeller(called: string): Promise<Stranger> {
   // two of her
   const nickname = `${called} ${stamp}`;
 
-  // The trigger opened a bare profile; the name is what the board
-  // shows
-  await admin.from('profiles').update({ nickname }).eq('id', uid);
+  // Staging opened a bare profile; the name is what the board shows
+  await sql`update profiles set nickname = ${nickname} where id = ${uid}`;
 
   // The code a friend finds them by, written the way the server mints
   // one. Twelve digits off the stamp keep parallel sellers apart

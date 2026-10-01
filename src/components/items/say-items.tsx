@@ -1,5 +1,6 @@
 import type { Items } from '../../data/ids/items';
-import type { ToastState } from '../styled';
+import { type ItemBand, getItemBand } from '../../data/overworld/item-pool';
+import type { ToastState, ToastTone } from '../styled';
 import { describeItem } from '../details';
 import ItemSprite from './ItemSprite';
 
@@ -15,6 +16,16 @@ import ItemSprite from './ItemSprite';
 
 /** How large the item is drawn beside the line */
 const ICON_SIZE = 24;
+
+/** The colour a find is said in: gold for a prized item, violet for a special one */
+export const FIND_TONES: Record<ItemBand, ToastTone> = {
+  base: 'leaf',
+  uncommon: 'leaf',
+  scarce: 'leaf',
+  rare: 'leaf',
+  prized: 'gold',
+  special: 'arcane',
+};
 
 /** What a payout looks like, whoever is paying */
 export interface SaidStack {
@@ -32,7 +43,7 @@ export default function sayItems(toast: ToastState, items: SaidStack[], title?: 
       title,
       message: `${describeItem(stack.item)} ×${stack.amount}`,
       art: () => <ItemSprite item={stack.item} size={ICON_SIZE} label="" />,
-      tone: 'leaf',
+      tone: FIND_TONES[getItemBand(stack.item) ?? 'base'],
     });
   }
 }

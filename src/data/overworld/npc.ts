@@ -1,10 +1,18 @@
 import { countsAgainstSlots } from '../constants/slots';
+import { MAX_FRIENDSHIP } from '../constants/friendship';
+import { MAX_IV } from '../constants/stats';
 import Awards from '../ids/awards';
 import type Abilities from '../ids/abilities';
 import { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
 import type { Species } from '../ids/species';
-import { getLevelUpMoves, getSpeciesAbilities, getTeachableMoves } from '../species';
+import {
+  getLevelUpMoves,
+  getSpeciesAbilities,
+  getSpeciesData,
+  getTeachableMoves,
+} from '../species';
+import { isTutorOnlyMove } from '../moves/tutor-only';
 
 /**
  * The people who stand at the world's people landmarks. Most pass
@@ -108,6 +116,31 @@ const enum Npc {
    * price, and his seven balls are sold nowhere else at all
    */
   Kurt = 13,
+  /**
+   * Carries a crate of stones: the evolution stones, the gems and the
+   * rocks a holder is built around. He is the only one who sells any
+   * of them, and like the chef he serves as often as the purse holds
+   */
+  Geologist = 14,
+  /**
+   * Takes a Heart Scale and trains a pokemon to hold one more move, up
+   * to the most any pokemon can. The Skill Book's work done for a
+   * scale, and like the Move Reminder he serves as often as a player
+   * has scales
+   */
+  DojoMaster = 15,
+  /**
+   * Brings six pokemon from other biomes and swaps one of them for any
+   * of the player's own from the same spawn band. Once a window, and
+   * what he hands over arrives traded, so a trade evolution opens
+   */
+  Trader = 16,
+  /**
+   * Trains one of a pokemon's values all the way up, for gold by the
+   * point. Dear on purpose: this is for players who already have the
+   * pokemon they want and the purse to finish it. Once a window
+   */
+  HyperTrainer = 17,
 }
 
 export default Npc;
@@ -133,7 +166,14 @@ export const NPCS: Npc[] = [
   Npc.Chef,
   Npc.Channeler,
   Npc.Kurt,
+  Npc.Geologist,
+  Npc.DojoMaster,
+  Npc.Trader,
+  Npc.HyperTrainer,
 ];
+
+/** The people who keep a crate to buy from, and take what a player sells */
+export const TRADERS = new Set<Npc>([Npc.Vendor, Npc.Chef, Npc.Geologist]);
 
 /**
  * The wanderers who serve a player once a window, and the visit marker
@@ -145,6 +185,8 @@ export const NPC_VISIT_TAGS = new Map<Npc, string>([
   [Npc.Groomer, 'groom'],
   [Npc.FossilManiac, 'fossil'],
   [Npc.Channeler, 'channel'],
+  [Npc.Trader, 'swap'],
+  [Npc.HyperTrainer, 'hyper'],
 ]);
 
 /**
@@ -155,7 +197,16 @@ export const NPC_VISIT_TAGS = new Map<Npc, string>([
  * new one cannot be added without being dressed
  */
 const NPC_CHARSETS: Record<Npc, string[]> = {
-  [Npc.Breeder]: ['characters/frlg/camper-f', 'characters/lgpe/picnicker'],
+  [Npc.Breeder]: [
+    'characters/frlg/camper-f',
+    'characters/lgpe/picnicker',
+    'characters/dppt/breeder-f',
+    'characters/dppt/breeder-m',
+    'characters/oras/breeder-f',
+    'characters/oras/breeder-m',
+    'characters/b2w2/breeder-f',
+    'characters/b2w2/breeder-m',
+  ],
   [Npc.DaycareLady]: ['characters/frlg/woman'],
   [Npc.NurseJoy]: ['characters/extra/nurse'],
   [Npc.Groomer]: ['characters/frlg/daisy-oak', 'characters/lgpe/daisy-oak'],
@@ -173,6 +224,29 @@ const NPC_CHARSETS: Record<Npc, string[]> = {
   [Npc.Chef]: ['characters/frlg/chef'],
   [Npc.Channeler]: ['characters/lgpe/channeler'],
   [Npc.Kurt]: ['characters/hgss/kurt'],
+  [Npc.Geologist]: [
+    'characters/frlg/hiker',
+    'characters/lgpe/hiker',
+    'characters/dppt/hiker',
+    'characters/b2w2/hiker',
+  ],
+  [Npc.DojoMaster]: [
+    'characters/lgpe/black-belt',
+    'characters/hgss/black-belt',
+    'characters/dppt/black-belt',
+    'characters/b2w2/black-belt',
+  ],
+  [Npc.Trader]: [
+    'characters/b2w2/backpacker-m',
+    'characters/b2w2/backpacker-f',
+    'characters/dppt/collector',
+    'characters/oras/collector',
+  ],
+  [Npc.HyperTrainer]: [
+    'characters/b2w2/veteran',
+    'characters/dppt/expert',
+    'characters/oras/expert',
+  ],
 };
 
 /**
@@ -195,6 +269,11 @@ const enum Executive {
   Saturn = 10,
   Colress = 11,
   Zinzolin = 12,
+  Xerosic = 13,
+  Aliana = 14,
+  Bryony = 15,
+  Celosia = 16,
+  Mable = 17,
 }
 
 export { Executive };
@@ -213,6 +292,11 @@ export const EXECUTIVE_NAMES: Record<Executive, string> = {
   [Executive.Saturn]: 'Saturn',
   [Executive.Colress]: 'Colress',
   [Executive.Zinzolin]: 'Zinzolin',
+  [Executive.Xerosic]: 'Xerosic',
+  [Executive.Aliana]: 'Aliana',
+  [Executive.Bryony]: 'Bryony',
+  [Executive.Celosia]: 'Celosia',
+  [Executive.Mable]: 'Mable',
 };
 
 export const EXECUTIVE_CHARSETS: Record<Executive, string[]> = {
@@ -231,6 +315,11 @@ export const EXECUTIVE_CHARSETS: Record<Executive, string[]> = {
   // wears once the machine is his own
   [Executive.Colress]: ['characters/b2w2/colress-1', 'characters/b2w2/colress-2'],
   [Executive.Zinzolin]: ['characters/b2w2/zinzolin'],
+  [Executive.Xerosic]: ['characters/xy/xerosic'],
+  [Executive.Aliana]: ['characters/xy/aliana'],
+  [Executive.Bryony]: ['characters/xy/bryony'],
+  [Executive.Celosia]: ['characters/xy/celosia'],
+  [Executive.Mable]: ['characters/xy/mable'],
 };
 
 /** The mark putting one of them down is worth, one to each */
@@ -248,6 +337,11 @@ export const EXECUTIVE_HONORS: Record<Executive, Awards> = {
   [Executive.Saturn]: Awards.SaturnDefeated,
   [Executive.Colress]: Awards.ColressDefeated,
   [Executive.Zinzolin]: Awards.ZinzolinDefeated,
+  [Executive.Xerosic]: Awards.XerosicDefeated,
+  [Executive.Aliana]: Awards.AlianaDefeated,
+  [Executive.Bryony]: Awards.BryonyDefeated,
+  [Executive.Celosia]: Awards.CelosiaDefeated,
+  [Executive.Mable]: Awards.MableDefeated,
 };
 
 /** What each says as they bar the cell */
@@ -265,6 +359,11 @@ export const EXECUTIVE_QUOTES: Record<Executive, string> = {
   [Executive.Saturn]: 'I have my doubts about all this. None of them are about beating you.',
   [Executive.Colress]: 'I want to see the strength a pokemon reaches with you. Purely as data.',
   [Executive.Zinzolin]: 'You will be cold long before you are finished. Begin.',
+  [Executive.Xerosic]: 'Fascinating. Let me see how your pokemon hold up under stress.',
+  [Executive.Aliana]: 'The world is ugly, so we are fixing it. You are part of the ugly.',
+  [Executive.Bryony]: 'Calculating your odds. They round down to nothing.',
+  [Executive.Celosia]: 'Only the beautiful get to stay. I will judge whether you do.',
+  [Executive.Mable]: 'We scientists are busy. Let us make this quick and quiet.',
 };
 
 /**
@@ -296,6 +395,10 @@ export const NPC_NAMES: Record<Npc, string> = {
   [Npc.Chef]: 'Chef',
   [Npc.Channeler]: 'Channeler',
   [Npc.Kurt]: 'Kurt',
+  [Npc.Geologist]: 'Geologist',
+  [Npc.DojoMaster]: 'Dojo Master',
+  [Npc.Trader]: 'Trader',
+  [Npc.HyperTrainer]: 'Hyper Trainer',
 };
 
 /**
@@ -331,20 +434,13 @@ export const GROOMING_FEE = 2500;
 export const REMINDER_FEE = Items.HeartScale;
 
 /**
- * What the reminder can put back on a pokemon: everything its species
- * has learned by levelling up to its level, minus the ones it still
- * knows, in the order it learned them.
+ * What the reminder can put back on a pokemon: everything its line has
+ * learned by levelling up to its level, pre-evolutions included, minus
+ * the ones it still knows. Earlier stages come first.
  *
- * The list is read off the **species standing in front of him** rather
- * than off any history of the pokemon, because there is no history to
- * read — a record stores the four moves it knows and nothing about the
- * ones it dropped. That makes the rule a simple one to say: he can
- * give back anything this species could have known by now.
- *
- * A pre-evolution's list is not walked. An evolved species relists the
- * moves its line starts with at level 1, which is where it actually
- * learns them, so the chain adds nothing but a way for a Charizard to
- * be offered a move a Charizard never learns
+ * The list is read off the species rather than the pokemon's history,
+ * since a record keeps only the moves it knows now. The chain is walked
+ * because an evolved species does not relist its pre-evolutions' moves.
  */
 export function getRecallableMoves(
   species: Species,
@@ -353,10 +449,19 @@ export function getRecallableMoves(
 ): Moves[] {
   const knows = new Set(known);
   const moves: Moves[] = [];
+  const line: Species[] = [];
 
-  for (const move of getLevelUpMoves(species, level)) {
-    if (!knows.has(move)) {
-      moves.push(move);
+  for (let stage: Species | undefined = species; stage != null;) {
+    line.unshift(stage);
+    const previous: Species | undefined = getSpeciesData(stage).evolvesFrom;
+    stage = previous === stage ? undefined : previous;
+  }
+  for (const stage of line) {
+    for (const move of getLevelUpMoves(stage, level)) {
+      if (!knows.has(move)) {
+        knows.add(move);
+        moves.push(move);
+      }
     }
   }
   return moves;
@@ -374,6 +479,14 @@ export const TUTOR_FEE = Items.HeartScale;
  * machines' own — he teaches nothing a machine could not — so what he
  * sells is the lesson without the hunt for the disc
  */
+/**
+ * Whether the tutor turns this lesson down: a signature move of his
+ * own is taught only to a pokemon at the most friendship it can have
+ */
+export function tutorRefuses(move: Moves, friendship: number): boolean {
+  return isTutorOnlyMove(move) && friendship < MAX_FRIENDSHIP;
+}
+
 export function getTutorableMoves(species: Species, known: Iterable<Moves>): Moves[] {
   const knows = new Set(known);
   const moves: Moves[] = [];
@@ -392,6 +505,20 @@ export function getTutorableMoves(species: Species, known: Iterable<Moves>): Mov
  * walking rather than a purse
  */
 export const CHANNELER_FEE = Items.HeartScale;
+
+/** What the Hyper Trainer charges for each point a value is trained up */
+export const HYPER_TRAINING_PER_POINT = 10_000;
+
+/** What training this value to the top costs: every point it has left to climb */
+export function hyperTrainingCost(iv: number): number {
+  return Math.max(0, MAX_IV - iv) * HYPER_TRAINING_PER_POINT;
+}
+
+/** How many pokemon the trader has on offer at once */
+export const TRADER_OFFERS = 6;
+
+/** What the Dojo Master charges for one more move slot: the same scale */
+export const DOJO_MASTER_FEE = Items.HeartScale;
 
 /**
  * What she can still draw out of the pokemon: everything it could ever

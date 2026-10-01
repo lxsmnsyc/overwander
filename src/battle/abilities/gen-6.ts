@@ -10,12 +10,12 @@ import {
   Moves,
 } from '../../data/ids/moves';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
-import { Statuses, Terrains, Weathers } from '../../data/ids/status';
+import { NON_VOLATILE_STATUSES, Statuses, Terrains, Weathers } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { MULTI_HIT_MOVES } from '../../data/moves/multi-hit';
 import { MergedLifecycle } from '../lifecycle';
 import type Battle from '../core';
-import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
 import { hasFreeItemSlot, stealableItem, unitTarget } from '../utils';
 import { HEALING_MOVES } from '../moves/recover';
@@ -24,6 +24,7 @@ import {
   createAbility,
   createContactHazard,
   createPrimalWeatherAbility,
+  createSurgeAbility,
   createTypeShiftAbility,
   createWaterAbsorbAbility,
 } from './__create';
@@ -32,6 +33,7 @@ import {
 const GRASS_PELT_SCALE = 1.5;
 
 /** The teammate holding the veil over this one, if one is standing */
+
 function veiledBy(unit: Unit, ability: Abilities): Unit | undefined {
   if (!unit.types.has(Types.Grass)) {
     return undefined;
@@ -44,6 +46,29 @@ function veiledBy(unit: Unit, ability: Abilities): Unit | undefined {
   }
 
   return undefined;
+}
+
+/** What Flower Veil keeps off a grass teammate */
+const FLOWER_VEILED = new Set<Statuses>([...NON_VOLATILE_STATUSES, Statuses.Drowsy]);
+
+/**
+ * The teammate whose Flower Veil turns this status away, if any. Only a
+ * major status or a Yawn from somebody else: a Substitute, a Rest or
+ * its own orb still lands
+ */
+function flowerVeiled(event: {
+  source: Unit;
+  status: Statuses;
+  cause: EffectCause;
+}): Unit | undefined {
+  if (
+    !FLOWER_VEILED.has(event.status) ||
+    !('unit' in event.cause) ||
+    event.cause.unit === event.source
+  ) {
+    return undefined;
+  }
+  return veiledBy(event.source, Abilities.FlowerVeil);
 }
 
 /**
@@ -63,11 +88,8 @@ const PULSE_MOVES = new Set<Moves>([
 /** What a launcher is worth to a pulse, thrown or given */
 const MEGA_LAUNCHER_SCALE = 1.5;
 
-/** What the cold is worth to a move it froze on the way out */
-const REFRIGERATE_SCALE = 1.2;
-
-/** What the ribbon is worth to a move it wrapped on the way out */
-const PIXILATE_SCALE = 1.2;
+/** What a Normal move is worth once an ability has shifted its type */
+const TYPE_SHIFT_SCALE = 1.2;
 
 /** What the wind is worth to a move it carried on the way out */
 const AERILATE_SCALE = 1.2;
@@ -208,12 +230,12 @@ const setupAbilities = [
     (battle) =>
       new MergedLifecycle([
         battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
-          if (!event.immune && veiledBy(event.source, Abilities.FlowerVeil) != null) {
+          if (!event.immune && flowerVeiled(event) != null) {
             event.immune = true;
           }
         }),
         battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
-          veiledBy(event.source, Abilities.FlowerVeil)?.triggerAbility(Abilities.FlowerVeil);
+          flowerVeiled(event)?.triggerAbility(Abilities.FlowerVeil);
         }),
         // A drop it puts on itself still lands, the way Clear Body's does
         battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
@@ -284,24 +306,11 @@ const setupAbilities = [
     }),
   ),
 
-  // Florges: the mist comes up with it, cast as the move rather than
-  // laid by hand, so the terrain's own clock runs it
-  createAbility(
-    Abilities.MistySurge,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-          if (event.source.hasAbility(Abilities.MistySurge)) {
-            event.source.triggerAbility(Abilities.MistySurge);
-          }
-        }),
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability === Abilities.MistySurge) {
-            event.source.triggerMove(Moves.MistyTerrain, { type: MoveTargetType.None }, 0);
-          }
-        }),
-      ]),
-  ),
+  // Florges: the mist comes up with it
+  createSurgeAbility(Abilities.MistySurge, Moves.MistyTerrain),
+
+  // Spiky-eared Pichu: the charge in its ears spills into the ground
+  createSurgeAbility(Abilities.ElectricSurge, Moves.ElectricTerrain),
 
   // Clauncher: the claw is a barrel, so anything fired down it lands
   // harder, and the one pulse that mends rather than hurts mends more
@@ -331,7 +340,7 @@ const setupAbilities = [
 
   // Amaura: what it throws freezes on the way out, which is worth a
   // fifth again on top of landing as Ice
-  createTypeShiftAbility(Abilities.Refrigerate, Types.Normal, Types.Ice, REFRIGERATE_SCALE),
+  createTypeShiftAbility(Abilities.Refrigerate, Types.Normal, Types.Ice, TYPE_SHIFT_SCALE),
 
   // Swirlix: the cream is a bed, so nothing on its team goes to sleep
   createAbility(
@@ -356,7 +365,7 @@ const setupAbilities = [
   ),
 
   // Sylveon: what it throws goes out as ribbon rather than as noise
-  createTypeShiftAbility(Abilities.Pixilate, Types.Normal, Types.Fairy, PIXILATE_SCALE),
+  createTypeShiftAbility(Abilities.Pixilate, Types.Normal, Types.Fairy, TYPE_SHIFT_SCALE),
 
   // Xerneas and Yveltal: each lays its own type over the whole field
   createAuraAbility(Abilities.FairyAura, Types.Fairy),

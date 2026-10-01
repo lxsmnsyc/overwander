@@ -15,7 +15,7 @@ export default function StatusSquares(props: { statuses: number }): JSX.Element 
       <span class="flex shrink-0 items-center gap-0.5">
         <For each={unpackStatuses(props.statuses)}>
           {(status) => (
-            <TooltipHost class="inline-flex" name={STATUS_NAMES[status]}>
+            <TooltipHost class="inline-flex" kind="status" name={STATUS_NAMES[status]}>
               <span
                 class="size-2.5 rounded-[2px]"
                 style={{ 'background-color': STATUS_COLORS[status] }}

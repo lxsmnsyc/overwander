@@ -5,7 +5,7 @@ import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
 
-interface SemiInvulnerableConfig {
+export interface SemiInvulnerableConfig {
   /**
    * Moves that can still hit the semi-invulnerable unit
    */
@@ -35,7 +35,7 @@ const AIRBORNE_REACH = [
  * Two-step moves that hide the user on the charging step (Dig, Fly).
  * The damage on the final step is handled by the hit move group.
  */
-const SEMI_INVULNERABLE_MOVES: { [key in Moves]?: SemiInvulnerableConfig } = {
+export const SEMI_INVULNERABLE_MOVES: { [key in Moves]?: SemiInvulnerableConfig } = {
   // https://bulbapedia.bulbagarden.net/wiki/Dig_(move)
   [Moves.Dig]: {
     bypass: new Set([Moves.Earthquake, Moves.Fissure, Moves.Magnitude]),

@@ -1,5 +1,465 @@
 # overwander
 
+## 4.26.1
+
+### Patch Changes
+
+- 58df8e7: - Award squares on the profile stay square on a phone, with badges and portraits shrunk to fit instead of clipped.
+  - A battle history entry shows the team first, outside the tinted plate that holds the fight and its buttons, so the team is always visible.
+- f9514a2: - On a Dark Day, a shadow lair now holds a true shadow only where that shadow's counterpart has a lair in the same biome. The raid is named after that lair.
+  - A shadow lair in a biome with no such lair keeps its ordinary shadow raid. A Woodland lair no longer stages XD-144 as "Shadow Seafoam Islands".
+- c53d0fa: - A legendary lair that has no legendary to host this window now stands as a shadow lair instead of staying empty. This happens most often in kelp forests and cold deserts.
+- 4529b17: - Computer-controlled pokemon no longer attack a teammate who is merely immune to the move, such as a Ground move into a teammate with Levitate.
+  - They still aim a move at a teammate whose ability turns it into a heal or a boost, such as Fire into Flash Fire, and only while that teammate gains something from it.
+  - After a raid boss falls, its challengers no longer turn their attacks on each other.
+
+## 4.26.0
+
+### Minor Changes
+
+- 184ec88: - Wild pokemon are now placed by kind. Fliers and floaters appear over both ground and water.
+  - Water pokemon appear only on water, except amphibious ones, which also walk on land.
+  - Everything else keeps to the ground.
+  - Gyarados, Mantine and Mantyke stay in the water, and Skorupi and Drapion stay on land.
+  - Bidoof, Surskit, Palkia, Cradily and Armaldo are now amphibious.
+  - Dratini and Dragonair now appear only on water.
+  - A rippling water turns up a water pokemon, a flying shadow a flier, and a dust cloud something that keeps to the ground.
+  - Changes what every cell rolls: existing windows roll different spawns than before.
+
+### Patch Changes
+
+- 358ae05: - A syndicate cell in a cave is now fought and rewarded as one. Its boss or grunt hands over their pokemon, fields shadows, and is named in the battle history.
+  - A cave raid's prize now records the cave it was won in.
+- 6b56dc9: - On the catch sheet, a dragged move, ability or item follows the pointer.
+  - Prized items found in the world show in a gold popup, and special items in a violet one.
+  - Wish's star arcs from the caster to the pokemon it is left with, taking the whole wait to get there.
+- 9f74ce0: - A lair now hosts what its own tile allows. A lair on water holds only pokemon that swim or fly, and a lair on land only pokemon that can stand there.
+  - A lair reads the biome of its own tile, not the biome at the middle of its chunk, so a lair across a biome border hosts that biome's residents.
+  - A shadow raid with no named lair is now called after its own tile's biome.
+  - Changes raids: some lairs host a different pokemon than before.
+- 9e77d42: - Walking back up to a raid your party is still fighting now offers Rejoin, which puts you back in your own fight instead of watching it as a replay.
+  - Only a fight you are in is offered this way. Anyone else still gets a seat to watch.
+- dc8995f: - A syndicate executive waiting to be fought glows magenta on the board, and a boss glows violet. Grunts stay red.
+  - A legend holding the champion's seat glows pearl white, so it is told apart from the champion.
+
+## 4.25.2
+
+### Patch Changes
+
+- 8d1ece8: - The catch sheet tells empty move, ability and item slots apart from locked ones. A locked slot shows a lock, and its tooltip says what opens it.
+  - Hidden abilities are drawn in violet and signature abilities in gold, on the catch sheet, the box card and the battle card.
+  - Moves show their details in a tooltip instead of a hover card everywhere, the battle card included.
+  - Opening a catch shows a loading sheet instead of blanking the page.
+  - The Safari name box reads caught mark, level, shiny and shadow marks, then the name.
+- fda1b26: - Kyogre no longer fills every water tile in a cave.
+  - A cave legend now appears only at its own rare odds.
+  - Caves now hold amphibious pokemon, which spawn on both the floor and the water: the Wooper, Psyduck, Seel, Slowpoke, Krabby and Tympole lines.
+  - Changes cave spawns: cave windows roll different spawns than before.
+- 209abe9: - Encore now locks its target instead of tying up its user.
+  - The target's current cast, or its next one if it is idle, is used 3 times in a row. It pays PP and cooldown once.
+  - A move that winds up or takes several steps is not locked, and the Encore is spent.
+  - Interrupting the target ends the repeats.
+  - The user of Encore is free as soon as it lands.
+  - Computer opponents aim Encore at an enemy casting a status move, or at a teammate.
+- 5badda4: - Flower Veil no longer stops a Grass-type teammate's own moves and items.
+  - Substitute, Rest and a Toxic or Flame Orb work beside a Flower Veil again. Substitute used to take its HP cost and put up nothing.
+  - Flower Veil now blocks only major statuses and drowsiness, and only when another pokemon causes them.
+- 65aa748: - Learning a move by levelling no longer fails on a move that no machine teaches.
+
+## 4.25.1
+
+### Patch Changes
+
+- fdbe113: - A pokemon's card in battle lists every move it knows, not only the first four.
+  - The status squares on that card show their name in a tooltip.
+- 3ba0b19: - A hover card always waits a moment before it opens, even when the pointer comes straight from another one.
+  - The card that was open goes away as soon as the pointer rests on another square.
+- 52512ec: - A party is freed as soon as its fight ends.
+  - Pokemon that fainted in a raid can be healed by Nurse Joy or revived right away, instead of waiting 10 minutes.
+- bf84d4a: - Form a team shows the party in a row of six above the box, with the count on the nameplate and Join in the dock.
+  - Teach move shows the pokemon on the nameplate, the new move as a card, and the known moves two to a row. The move to forget is struck through.
+  - Use item shows the pokemon it goes on, with its health and statuses. A rare item's second press is in the dock.
+  - The Move Tutor and Move Reminder list moves two to a row in a wider window.
+
+## 4.25.0
+
+### Minor Changes
+
+- 4c907c4: Kalos's three legendaries:
+  
+  - Xerneas stands in the temperate forest and the woodland, out of a Winding Woods lair. Yveltal is in the mountains and the tundra, out of a Frost Cavern lair. Zygarde is in the mountains and the badlands, out of a Terminus Cave lair. Kalos catches its mascots in a laboratory under a town, which a world made of country has nowhere to put, so each is at home where its own story happens.
+  - Zygarde carries three shapes. It is met as the half it has gathered, the 10% shape is its own entry, and Power Construct gathers the rest of the cells into the Complete shape at 1/2 HP.
+  - The Zygarde Cube is dug out of the ground. Used on a Zygarde it puts it into its other shape, either way round, and it is spent on each change.
+  - Fairy Aura, Dark Aura, Aura Break, Power Construct, Triage and Earth Eater are built. An aura makes every move of its type on the field hit 1.33x whoever throws it, and a break on the field turns each aura into 0.75x instead.
+  - The trio's signatures read one axis three ways. Xerneas's Quickening makes every stat rise on its team 1 stage bigger, Yveltal's Withering makes every stat drop it lands 1 stage deeper, and Zygarde's Even Keel counts every stat stage on the field at 0.5x, its own included.
+  - Xerneas takes Healer, Multiscale and Triage. Yveltal takes Moxie, Merciless and Shadow Tag. Zygarde is born with Aura Break, and takes Power Construct, Earth Eater and Sturdy in its hidden band.
+- f17f797: Kalos's slug and bat:
+  
+  - Goomy, Sliggoo and Goodra live in the bogs and swamps, on land and in the water alike. Goomy becomes Sliggoo at 40 and Sliggoo becomes Goodra at 50; the mainline asks for rain as well, which nothing here can measure yet.
+  - Noibat and Noivern hunt over the woodland and the tropical rainforest after dark, and Noibat becomes Noivern at 48.
+  - Gooey is built: whatever makes contact with a Goomy, Sliggoo or Goodra loses 1 stage of Speed.
+  - Goodra's Seepage holds back 40% of every direct blow it takes and pays it out over the next 4 seconds, so a heal can outrun the damage.
+  - Noivern's Echolocation hears whoever lands a move on it, and its next damaging move at that enemy is a critical hit.
+  - Goodra takes Water Absorb and Noivern takes Soundproof as their fourth abilities.
+  - All five learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- 9659d28: The rest of Kalos, legendaries aside:
+  
+  - Pancham and Pangoro chew bamboo in the tropical seasonal forest and the woodland. Pancham becomes Pangoro at 32; the mainline also asks for a Dark type in the party, which nothing here can measure yet.
+  - Swirlix and Slurpuff sit in the grassland and shrubland by day, and Swirlix becomes Slurpuff when it is handed over holding a Whipped Dream.
+  - Sylveon is here: an Eevee kept close that knows Baby-Doll Eyes becomes one. It stands in the grassland and woodland beside the other eeveelutions.
+  - Dedenne lives in the grassland, the woodland and underground; Carbink sits in the mountains, the badlands and the caves.
+  - Sweet Veil and Pixilate are built. Nothing on a Swirlix or Slurpuff's team can be put to sleep, and a Sylveon's Normal moves go out as Fairy moves at 1.2x.
+  - Pangoro's Begrudge gives it 1 stage of Attack every time an enemy is healed. Slurpuff's Sugar Rush gives its whole team 1 stage of Speed whenever it uses up its own held item. Dedenne's Quick Whiskers casts a step ahead, which is cast time rather than cooldown. Carbink's Crystal Growth adds 1 stage of Defense and 1 of Special Defense every 10 seconds, up to 3 of each.
+  - Pangoro takes Guts, Slurpuff takes Friend Guard and Thick Fat, Dedenne takes Minus, and Carbink takes Levitate and Solid Rock as their remaining abilities.
+  - Litleo and Spritzee wait: nobody has drawn a male Pyroar, and Aromatisse has only two of its animations.
+
+### Patch Changes
+
+- 4c31930: - The battle AI only plans around a foe's abilities, held items and moves once the foe has shown them.
+  - A Levitate, Air Balloon or Damp that has not shown itself no longer steers the AI away from a move.
+- dee9221: - The battle AI values screens and weather more when its held item makes them last longer.
+  - A Contrary holder no longer boosts itself into a drop, and a Simple holder's boosts are no longer read as useless.
+  - Rock Head and Magic Guard holders use recoil and crash moves without fear.
+  - Big Root holders favour draining moves.
+  - A Life Orb holder near the end holds back a hit whose recoil would finish it.
+  - Light Screen goes up against a foe built to hit specially, before it has shown a special move.
+- 21b3eb9: - Computer-controlled pokemon raise Reflect, Light Screen, Safeguard and Mist early in a fight, while their team is still healthy.
+  - They skip a veil when no foe has a move it would stop.
+  - They put up Substitute while healthy, and avoid it below half health.
+- 936a185: - The battle AI weighs a status move by what it is for: shielding first, then team setup and hazards, field effects, statuses, self boosts, disruption and stat drops.
+  - Protect, Detect and the team guards go up when a hit is already on its way.
+  - Stat boosts, weather, terrain and Trick Room are used when they help the caster's side.
+  - Setup fades as the team loses health, and finishing a foe always beats it.
+  - The AI no longer takes down a Trick Room that is working for its own side.
+- f2081d7: - The battle AI weighs Nature Power, Copycat, Mirror Move and Me First as the move each would use.
+  - Sleep Talk and Assist are weighed by the moves they could draw, and Metronome as a gamble.
+- 21b3eb9: - A pokemon holding a Choice item or an Assault Vest no longer stalls on a move its item refuses.
+  - Spread moves such as Earthquake are weighed by the foes they hit and the teammates they would hurt.
+  - Growl and other spread stat drops are skipped once every foe's stat is already at its lowest.
+  - Skill Link holders count every strike of a multi-hit move when picking one.
+  - Helping Hand is no longer picked as though it were a status for a foe.
+  - A Ring Target shows only when a hit actually lands on its holder.
+- 773f1cd: - The battle AI weighs a damaging move's chance to inflict a status, lower a stat or raise its user.
+  - Serene Grace makes those chances count for more, and Sheer Force for nothing.
+- 8bd3733: - Teammates no longer raise the same screen, weather, terrain, room or hazard twice at once.
+  - Teammates no longer wind up two afflictions at the same foe at once.
+- 7980e7e: - The battle AI calls up a weather when a teammate's ability thrives under it, such as Swift Swim under rain.
+  - It avoids a weather that only helps the foe, once the foe's ability has shown itself.
+- e2d2867: - Ground pokemon no longer spawn on a cave's water.
+  - Cave water now holds only pokemon that swim. The cave pool has none of those yet, so cave water stays empty for now.
+  - On a Dark Day, the true shadows no longer spawn on water.
+  - Changes cave spawns: some cave windows roll different spawns than before.
+- a5404f5: - A Choice item locks only on a move of the holder's own, never on the basic Attack or Struggle.
+  - A Choice-locked pokemon can still fall back on the basic Attack while its locked move cools.
+- 94549a7: - Spiky-eared Pichu can be born with Electric Surge or Friend Guard.
+  - Eternal Floette can be born with Pixilate or Flower Gift.
+  - Fancy Vivillon can be born with Cute Charm.
+  - Poké Ball Vivillon can be born with Pickup.
+  - Electric Surge lays Electric Terrain as its holder takes the field.
+  - Pixilate turns its holder's Normal moves into Fairy moves, which hit 1.2x.
+- 1f85166: - A raid boss now fights with up to 8 moves instead of 4.
+  - A boss takes the last 8 moves its species learns by level.
+  - The moves a boss may never have are still left out.
+- c16dc4b: A substitute blocks only the other side's moves: a teammate's or an ally's stat change or status now reaches the pokemon behind it.
+- c7db420: - A won raid, trainer or gym seat fight pays one candy for every pokemon fielded again, rather than only for what it knocked out.
+  - Raid wins count toward quests again.
+  - A lost raid no longer pays for the faints of the other parties fighting beside you.
+
+## 4.24.1
+
+### Patch Changes
+
+- fcc89ca: Teaching a pokemon its 8th move no longer fails.
+- bcbf001: - The Move Tutor, the Move Reminder and the teach-move dialog list each move by name, type and category, with the full entry on hover.
+  - The Move Tutor and Move Reminder have a search box.
+- 96a50db: - Eternal Floette, Poké Ball Vivillon and Spiky-eared Pichu stand in the mythical aura on the overworld.
+  - Eternal Floette and Poké Ball Vivillon also count as mythicals for their spawn levels, candy and whether a catch is notable.
+- 7fda394: - A raid boss's move that would hit the whole side is drawn by Lightning Rod, Storm Drain or a Follow Me instead, and then lands on that pokemon alone.
+  - Storm Drain draws Water moves aimed at a teammate onto its holder, as Lightning Rod does for Electric moves.
+
+## 4.24.0
+
+### Minor Changes
+
+- e428d48: Kalos's sun and sky:
+  
+  - Inkay and Malamar hang in the shallows off the beaches and the kelp, in the evening and at night. Inkay becomes Malamar at 30, and only while it knows Topsy-Turvy.
+  - Helioptile and Heliolisk run the deserts and the badlands by day. A Sun Stone turns one into the other.
+  - Hawlucha fights in the tropical rainforest and the montane forest, and never evolves.
+  - Malamar's Overturn flips every stat stage the target holds, once every 10 seconds per target. Heliolisk's Backfeed heals its whole team 1/16 of the damage each Electric move deals. Hawlucha's Top Rope hits 10% harder for each 50 kg the target weighs, up to 1.5x.
+  - Malamar takes Analytic, Heliolisk takes Overcoat and Hawlucha takes Sheer Force as their fourth abilities.
+  - All five learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- e1623d4: Kalos's two fossils:
+  
+  - The Jaw Fossil brings back Tyrunt and the Sail Fossil brings back Amaura, at level 20 like every other fossil. Both rocks are dug out of the ground or bought from the Fossil Maniac, and neither line is met in the world any other way.
+  - Tyrunt becomes Tyrantrum at 39 by day, and Amaura becomes Aurorus at 39 at night.
+  - Refrigerate is built: a Normal move thrown by an Amaura or an Aurorus lands as Ice and hits 1.2x.
+  - The pair's signatures both attack the clock. Jaw Snap cancels whatever the target was casting or channelling, once every 8 seconds per target. Frostbound leaves a target it damaged casting and channelling 30% slower for the next 6 seconds.
+  - Normalize and Refrigerate now share one factory, so any later -ate ability is a single line.
+  - All four learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- 9d7a231: Kalos's woods and ice:
+  
+  - Phantump and Trevenant haunt the woodland and the temperate forest after dark, and Phantump becomes Trevenant by trade.
+  - Pumpkaboo and Gourgeist sit in the grassland and the woodland after dark, and Pumpkaboo becomes Gourgeist by trade. Two of the four sizes are here, the average one and the super one; the small and large sizes wait until their grown shapes are drawn.
+  - Bergmite and Avalugg grind across the glaciers and the alpine tundra at any hour, and Bergmite becomes Avalugg at 37.
+  - The two the versions keep apart carry matching signatures. Trevenant's Undergrowth adds the Grass type to a target it damages and Gourgeist's Hollowing adds the Ghost type, each once per target, and a target both have hit carries both.
+  - Avalugg's Deadweight uses its Defense in place of its Attack for physical moves while Defense is the higher of the two, which on an Avalugg is always.
+  - Trevenant and Gourgeist both take Cursed Body as their fourth ability, and Avalugg takes Snow Warning.
+  - All six learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+
+## 4.23.3
+
+### Patch Changes
+
+- 20887ff: Dialogs are centred on the screen instead of sitting near the top.
+- 20887ff: The Move Tutor and Move Reminder list moves by name, type and category, with the full entry on hover and a search box.
+- a51900a: A Plate puts an Arceus in its shape only when that Arceus has Multitype. An Arceus born with another ability stays Normal.
+- 20887ff: A pokemon found at a phenomenon or drawn out of a honey tree starts with every IV at 9 or higher. This stacks with the floor from favourable weather.
+- 20887ff: A true shadow's raid is held in its counterpart's lair, so XD-144 is met in Shadow Seafoam Islands.
+- 20887ff: - Dragon Ascent, Secret Sword and Relic Song are taught only by the Move Tutor, and only to a pokemon at max friendship.
+  - Their machines are no longer sold or given out by gyms.
+  - A machine already in a bag can still be used, or sold to any vendor for its full price.
+- 20887ff: - Frillish, Archen, Shelmet, Karrablast, Tirtouga, Foongus, Stunfisk and Bouffalant no longer have egg moves listed as machine moves.
+  - Those lines now have their full egg move lists.
+  - The 22 machines for those moves are no longer sold. Any vendor buys one back for its full price.
+
+## 4.23.2
+
+### Patch Changes
+
+- 2fb81de: - Family candies paint the edges of the ball in the band they belong to, and keep the shine off the top stripe.
+
+## 4.23.1
+
+### Patch Changes
+
+- 1d5c690: - Every dialog puts its way out on the left and its main action on the right.
+  - An ended battle offers Leave battle as its main action, with Stay and look beside it.
+  - A safari encounter no longer opens on the last encounter's "It fled!" or "Caught!".
+- 9f24d6d: - The Old Sea Map and the other key items moved by the last repack draw their own picture again.
+- fa41815: The Hyper Trainer lists each IV on its own row, with its cost beside it.
+- 51ea3a3: - Tooltips appear and disappear the moment the pointer arrives or leaves.
+  - Moving from one hover card's square to the next swaps the card at once.
+- 76e95d7: - Trainers, gym leaders, the Elite Four and the Battle Factory's rentals no longer field the prized band's Unown or Fancy Vivillon.
+- c6dcd44: - A safari catch swaps the Bag, Throw and Run buttons for Have a look and Walk on, so the catch can be opened straight away.
+  - A wild Meowstic is always the sex its drawing shows.
+- 5e7631a: A tall pokemon in the Safari Zone is shrunk to fit the field instead of being cut off at the top.
+
+## 4.23.0
+
+### Minor Changes
+
+- f5a7939: - A Geologist now wanders the world, selling 12 kinds at a time from the evolution stones, the gems, the held stones, the weather rocks, the Everstone and Light Clay.
+  - The weather rocks, the Everstone and Light Clay can now be bought from him, and still turn up on the ground as before.
+  - The Breeder can now turn up in the breeder outfits from Diamond and Pearl, Omega Ruby and Alpha Sapphire, and Black 2 and White 2.
+- a1d3bcb: A Hyper Trainer now wanders the world, taking one IV of a pokemon to 31 for 10,000 gold per point it climbs, once each time he turns up.
+- ce61ae6: The families the flower road out of Kalos's towns walks past:
+  
+  - Flabebe, Floette and Florges grow in twelve countries, a colour to each. Skiddo and Gogoat graze the grassland, the shrubland, the steppe and the montane forests. Furfrou keeps the grassland, the woodland and the shrubland into the evening.
+  - A flower is picked in the colour of the country it grew in: red in the grassland, the temperate forests and the woodland, yellow in the savanna and the steppe, orange in the shrubland and the tropical seasonal forests, blue in the bog, the swamp and the mangroves, white in the taiga and the tundra. A Flabebe carries that colour through both evolutions.
+  - Eternal Floette is met on a town's streets and nowhere else, in the mythical band. No Flabebe grows into one, and no stone changes it.
+  - Each family has a signature ability. Hothouse lets a teammate defend special moves with Florges's Special Defense whenever theirs is lower. Saddle Burden takes a status aimed at a teammate onto the goat instead, while it is above 1/2 HP and carries none of its own. Pedigree Coat turns special moves aside at 0.8x while the poodle is at or above 1/2 HP.
+  - Four abilities the mainline gives these lines are built: Flower Veil, Symbiosis, Grass Pelt and Misty Surge.
+  - All six learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- 2e9a393: The families the sword and the key bring:
+  
+  - Espurr and Meowstic keep the woodland and the temperate forests through the evening and the night. Honedge, Doublade and Aegislash lie in the badlands and the mountains at the same hours, and Klefki rattles about the shrubland and the badlands by morning and day.
+  - Stance Change is built: an Aegislash draws the blade to attack, which is 150 Attack and Special Attack behind a 50 guard, and sheathes it again on King's Shield.
+  - Each family has a signature ability. Restraint holds Espurr's first 3 moves each fight to 0.8x and lets every move after them hit 1.25x. Turn the Blade halves the first blow the sword takes in each stance. Keyring gives Klefki room for 1 held item more than it was born with, as far as the fight allows.
+  - A pokemon's held-item room is now asked through the battle's own event, so an ability can widen it, and the catch sheet counts the extra pocket outside a fight as well.
+  - A female Espurr grows into a female Meowstic, who is her own pokemon: Competitive rather than Prankster, and her own moves from level 1. She is drawn from the female coat the sprite collection packs beside the male's frames.
+  - All six learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- a70db18: The families the sea brings:
+  
+  - Binacle and Barbaracle cling to the rocky coasts and the beaches by morning and day. Skrelp and Dragalge lie in the kelp forests and the coral reefs, and Clauncher and Clawitzer cross the reefs and the open ocean, all three in the water rather than on the sand.
+  - Mega Launcher is built: an Aura Sphere, Dark Pulse, Dragon Pulse, Origin Pulse or Water Pulse hits 1.5x out of that claw, and a Heal Pulse gives back 1.5x as much.
+  - Skrelp and Clauncher are a designed pair, so their signatures answer each other. Deep Kelp means a blow that would take less than 1/8 of Dragalge's HP does nothing at all, and Ranging Shot means Clawitzer's special moves deal at least 1/8 of the target's HP however they are resisted. Neither is worth anything against the other.
+  - Binacle has Many Hands: every stat stage it holds counts 1.5x, raises and drops alike.
+  - All six learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- b7b554d: - A Dojo Master now wanders the world, giving a pokemon one more move slot for a Heart Scale, up to 8.
+  - A new Skill Book item gives a pokemon one more move slot. It is found beside the Utility Belt and never sold.
+- b352e6b: The staff dashboard has a Switches page for closing a part of the game, or all of it for maintenance, while the game runs, with the message players are told.
+- 9ac43ef: - A Trader now wanders the world with 6 pokemon from other biomes, and swaps one of them for any of yours from the same spawn band, once each time he turns up.
+  - A pokemon from the Trader arrives traded, so it can take a trade evolution.
+
+### Patch Changes
+
+- 6b93d58: - The catch sheet's name box carries the pokemon's name, its species when it is nicknamed, and its marks, with its ball as the face.
+  - The pokemon stands on a field with its level in the corner, and its facts sit under it as chips, before the candy and Level Up.
+  - Stats, abilities and items, moves and evolutions each sit in a card of their own.
+  - Where the pokemon came from sits at the foot beside History, with Close on the left.
+- fe6527d: - Dialogs are white sheets with round corners on the game's hard drop, with the title on a blue name box across the top edge.
+  - A dialog ends on a tinted dock, with the way out on the left and the actions on the right.
+  - What something costs, what you carry and what is at stake are shown as chips.
+  - Menus, dropdowns, search suggestions and the overworld bar's popups share the same soft edge and shadow as the tooltips.
+- 29cf8e9: Gym leaders, Elite Four members and champions change every 3 hours, drawn from the biome's own list, so one town cycles through them.
+- 7272b66: - The Portal, Honey Tree, Nest, Stop, Gym Seat and Raid dialogs share the NPC counters' layout: the place or person in the heading, then what it costs, what you have, what is at stake and how often.
+  - A honey tree already lathered, an egg already taken, and a gym seat that has given all it will today say so in place of their buttons.
+  - Crossing, lathering, taking an egg and seating a team report in a toast rather than a line in the dialog.
+  - The way out of an overworld dialog is Walk on.
+- fc7f5a0: Registering with a malformed email address now says so, rather than "Could not sign you in just now."
+- 0eec9ac: - Every NPC counter shares one layout: the person and their words in the heading, then what it costs and what you have, then what you pick.
+  - Every NPC counter that takes gold or a Heart Scale shows how much you carry.
+  - Picking a pokemon or a rock no longer spends anything by itself: the button at the foot pays, with the price on it, and Change puts the box back.
+  - Once a counter has done its one thing this while, the person says so in place of the box.
+  - The vendor and the fossil maniac say when a trade did not go through, and a sale to the vendor gets its own note.
+- 7272b66: - A dialog has one way out, its own Close or Walk on button, rather than a second × beside it.
+  - The safari is a battle screen: the pokemon on a field with its name box, a textbox that says how each throw went, and Bag, Throw and Run tiles.
+  - A trainer's dialog says in one line what beating them pays, in place of a paragraph of stakes. A Frontier Brain's house rule is still said in full.
+- 3bd4f32: The Move Reminder also offers what a pokemon's pre-evolutions learn by levelling, up to its current level.
+- 93e47f5: - Hover cards are white cards like the tooltips, with no bar: the name in bold with what kind of thing it is beside it, and facts as rows rather than boxes.
+  - A move's hover card shows its power, accuracy, PP and cooldown as a row of four numbers.
+  - Tooltips and hover cards flip, shift and keep their place as the page scrolls, measured against the card's real size.
+- 035e7ce: - The sign-in screen is drawn on the same white sheet as the dialogs, with the game's name and one line about it at the top.
+  - Signing in and creating an account are two tabs, each with one button, and the email and password fields carry labels.
+  - Google or GitHub sign-in sits under an "or", with the passkey beside it on the Sign in tab, since a passkey only opens an account that already has one.
+- 42b2e15: - Tooltips are redrawn as a small white tag: the name in bold with a chip saying what it is (item, candy, type, weather, ability or status), the description under it, and any extra facts as rows in a tinted panel.
+  - A tooltip follows the mouse, with its notch pointing at the cursor.
+
+## 4.22.4
+
+### Patch Changes
+
+- 946abdd: - Raid prizes, grunts' pokemon, gifts and revived fossils left uncaught wait at the top of the battle history, and Meet opens them again.
+  - One already caught or run off is no longer offered again.
+
+## 4.22.3
+
+### Patch Changes
+
+- 0b004ca: - A cave stages raids only from the underground lairs its biome hosts, such as Cerulean Cave, Terra Cave and Turnback Cave.
+  - Those lairs' legendaries also spawn wild in the caves under that biome, and a water legendary such as Kyogre only on cave water.
+- 039f1b3: A raid's pokemon left uncaught after its meeting was closed can be met again from the battle history.
+
+## 4.22.2
+
+### Patch Changes
+
+- 21e785c: - Every IV of a raid's prize pokemon is at least 9.
+  - On the family's featured day, a raid prize's IVs are at least 18.
+  - Weather that favours a pokemon's type raises each of its IVs to at least 9, rather than 10.
+- 21e785c: A raid's prize pokemon is 8x as likely to be shiny.
+- 1df5d7a: Visiting the site over plain http now moves to https, so signing in no longer fails there.
+- 3bdfc08: - Wish's star stays in the air for the whole wait and lands as the heal arrives.
+  - Doom Desire's star falls for the whole wait and hits as the damage lands.
+
+## 4.22.1
+
+### Patch Changes
+
+- 94aa69f: The evolve button turns on at the level an evolution asks for, rather than one level later.
+- 94aa69f: Redrawn item sheets, such as the one with the Max items, now load in place of the old pictures.
+
+## 4.22.0
+
+### Minor Changes
+
+- 5665e3f: The families the first roads out of Kalos's towns walk past:
+  
+  - Bunnelby and Diggersby live in the grassland and the steppe by morning and day. Fletchling, Fletchinder and Talonflame keep to the grassland and the woodland at the same hours.
+  - Scatterbug, Spewpa and Vivillon live in eighteen countries, from the glacier to the volcano.
+  - A Vivillon wears the wings of the country its scatterbug was met in: 17 patterns, with the meadow wings anywhere without one of its own.
+  - Two more patterns are met on a town's streets and nowhere else: the fancy one in the prized band, and the Poke Ball one rarer still. No Spewpa ever comes out as either.
+  - Each family has a signature ability. Loosened Earth puts its Ground moves under whatever Defense the target has built up. Stoop hits 1.3x with Flying moves on a target that is casting or channelling. Wingscale takes a stage of Accuracy off whatever it lands a move on, down to 2 stages.
+  - All eight learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- f409d31: Kalos's 62 moves:
+  
+  - Every move generation 6 introduced is in the move list, from Flying Press to Hyperspace Fury.
+  - Terrain is in: Electric, Grassy and Misty Terrain each hold for 10 seconds and reach only pokemon on the ground. They cover the whole field in a fight between players and the layer's own team in a raid, the way weather does. A computer-controlled pokemon never lays a terrain over one its own side still has down.
+  - The ring under a side takes the colour of the terrain it stands on for as long as the terrain holds.
+  - Sticky Web is a new entry hazard, and Defog clears it with the others.
+  - Spiky Shield and King's Shield guard the user and punish whatever touches them. King's Shield lets status moves through.
+  - Mat Block and Crafty Shield guard the whole team, one against damaging moves and one against status moves. Mat Block works once a trip onto the field, and throwing it spends Fake Out's chance too.
+  - Fairy Lock stops anybody on the field being swapped out for 2 seconds, except Ghost types.
+  - A raid boss is immune to Powder and Electrify, and is never given Hold Hands, Aromatic Mist, Celebrate or Happy Hour.
+  - The moves look like themselves. Fairy moves burst into sparkles, and a terrain lights the floor across the field.
+  - The legendary and mythical signatures each have their own picture: Thousand Arrows rains arrows of earth, Precipice Blades drives stone blades up through magma, Origin Pulse fans beams down onto the target, Dragon Ascent dives out of the sky, and Hyperspace Hole and Fury strike out of rings.
+  - Moonblast brings a full moon down, Play Rough is a dust cloud of stars and hearts, and Water Shuriken throws spinning stars of water.
+  - A move that does what an older one does is drawn like it: Phantom Force strikes out of the dark like Shadow Force, Flying Press comes down like Sky Drop, and Draining Kiss drains like Giga Drain.
+  - Older legendary signatures have bigger pictures: Freeze Shock and Ice Burn raise a crown of ice that shatters, Blue Flare stands up as a column of blue fire, Fusion Flare and Fusion Bolt break open over the ground, and Techno Blast fires a beam ringed with hexagons.
+  - V-create drives a great burning V down, Glaciate raises ice spikes in a freezing wind, Judgment opens a wheel of light before its pillar lands, and Seed Flare gathers light before it flares.
+  - Psystrike, Aeroblast and Secret Sword each have their own picture: a shell of psychic shards driven in, a spiralling blast of air, and three cuts of a blade of light.
+  - Sacred Sword brings down three great swords, and Spacial Rend tears space open twice onto a starry dark before it shatters.
+- 3c2fbba: Kalos's three starters, and the two abilities they carry:
+  
+  - Chespin, Quilladin and Chesnaught live in the temperate forest and the woodland by morning and day. Fennekin, Braixen and Delphox live in the shrubland and the savanna by day and evening. Froakie, Frogadier and Greninja live in the swamp and the bog in the evening and at night, on land or in the water.
+  - Each family has a signature ability that pays out to its whole team: Spine Bond takes 0.85x off physical damage the team takes, Ember Bond puts 1.15x on the special moves it throws, and Shade Bond cuts cast and channel times to 0.85x.
+  - Bulletproof turns away every move that is thrown rather than swung. Magician takes the held item off whatever it lands a move on.
+  - All nine learn their moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- f81647a: - The Max vitamins set one stat's effort to 252. Item caches hide them as a special find.
+  - The Max wings do the same, and only a flying shadow drops them, as a special find.
+  - Rare Candy Max raises a pokemon to level 100 and offers every move it learns on the way. Item caches hide it as a special find.
+  - A candy used from the bag now teaches the move its level offers for free, rather than refusing it.
+- 107484d: - Spiky-eared Pichu can be met in the temperate forest at any hour, as rarely as a mythical. No relic calls it.
+  - Its stats are Pichu's, 65 higher in each.
+  - It never evolves.
+- bc1ae37: True shadows, starting with the three Kanto birds and Mewtwo:
+  
+  - A true shadow is a form of an ordinary pokemon with ten points on every stat. It goes by a code name rather than by the pokemon it stands for: XD-144, XD-145, XD-146 and XD-150.
+  - It is a shadow by what it is rather than by what was done to it, so it always arrives shadowed and carries the Shadow ability.
+  - Nothing puts one right. A Purifying Gem is refused, and it never turns into its counterpart or back.
+  - A dark day is the only way to meet one. Under that sky they stand in the special band of every chunk's pool, and under every other sky they are not in the pool at all.
+  - A dark day also takes over every shadow lair in the chunk, so a shadow raid under one is a true shadow rather than a roll for one.
+
+### Patch Changes
+
+- 2c4d49f: - A Ghost type can always be swapped out, whatever an opponent has trapped it with: binding moves, Mean Look, Spider Web, Block, Thousand Waves, Fairy Lock, Arena Trap, Shadow Tag, Magnet Pull, Latch On, Tentacle Grasp, Chase Down and Root Hold.
+  - What a pokemon does to itself still holds a Ghost in place, so Ingrain roots it like anything else.
+- 8414802: - A Flying type brought down to the ground takes Ground moves at 1x. Knocked down by Smack Down, held by Gravity or weighed down by an Iron Ball, it used to take no damage from them at all.
+- f6088ea: On a phone, the catch sheet shows held items four to a row instead of eight.
+- df1b114: Kanto's, Johto's, Hoenn's, Sinnoh's and Unova's pokemon learn Kalos's moves by level, machine, tutor and egg, as they do in X, Y, Omega Ruby and Alpha Sapphire.
+- 82c9308: Legendaries are met only where their lairs stand:
+  
+  - Seafoam Islands and Island Cave no longer appear on glaciers, so Articuno and Regice are no longer met there. Articuno is no longer met on the alpine tundra either.
+  - Mt. Ember stands on volcanoes and mountains rather than in deserts, and Moltres is no longer met in deserts.
+  - Zapdos is no longer met on mountains.
+  - Raikou is no longer met on the steppe, Entei in volcanoes or badlands, and Suicune in the taiga or tundra.
+  - Ho-Oh is no longer met in volcanoes.
+- 1df2e8a: - Other players no longer vanish and pop back further along when they walk from one stretch of the world into the next.
+  - Other players standing within view are no longer missing after the connection comes back on a busy screen.
+- f6088ea: - On a phone, the profile's trainer card puts the name and actions beside the face, the title and gold under the name, and where they stand on the lines below.
+  - The buddy's gender mark sits level with its name.
+  - On a phone, a battle history row puts the replay and share buttons beside the fight's title, and the team on the line below.
+  - On a phone, a friend's row puts the date beside their name, and the Trade and Remove buttons on the line below.
+- 450cae9: - Rapid Spin clears every hazard under the user's side, not only the spikes: toxic spikes, stones and a sticky web go with them.
+  - Rapid Spin also frees the user from a bind or a Leech Seed.
+
+## 4.21.0
+
+### Minor Changes
+
+- af35a0f: - The nurse's heal, a pokemon fleeing or being run from, taking an egg, receiving a pokemon, and a caught ball clicking shut all have their own sounds.
+  - A new notice (an invite, a trade offer, a friend request, or an auction won, outbid or unsold) plays a chime.
+
+### Patch Changes
+
+- af35a0f: The Selling tab no longer fails to open when a settled lot no longer holds its pokemon.
+- 88f69fd: - The fullscreen button is on the overworld bar on phones too.
+  - The top bar of the catch sheet, the dex entry and the world map covers what scrolls under it, and its contents sit in the middle of it.
+
+## 4.20.0
+
+### Minor Changes
+
+- 22f9d99: - Every player can sign in with an email and a password, and Google and GitHub appear only where the server offers them.
+  - Staff can give a player a one-time link to choose a password for the account they already have.
+  - Settings has a Security section, opened with your password, for an authenticator app and passkeys.
+  - Signing in can use a passkey, and asks for the authenticator code when one is set up.
+
+### Patch Changes
+
+- 9fc5de8: The game can show a line to everybody with it open, such as a maintenance
+  window or an event starting, and each player can put it away.
+- 49530ca: The announcement banner no longer shows as an empty box at the top of the screen when there are no announcements.
+- 994282f: A server can switch on three optional features: a ledger of every gold, item
+  and candy change, a log of what staff did, and a day's grace on releases, when
+  a released pokemon can be taken back for the candy it paid.
+- 4dc8c12: The game runs on its own server now, accounts included. Everybody signs in once
+  more after the move, and GitHub asks to authorise the game again the first time.
+- dc52f18: Parts of the game, or the whole game for maintenance, can be closed for a while
+  without an update. Leaving, cancelling and finishing what is already under way
+  always stays open.
+
 ## 4.19.0
 
 ### Minor Changes

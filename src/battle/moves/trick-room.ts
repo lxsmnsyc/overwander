@@ -1,6 +1,6 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
-import { USELESS_PENALTY } from '../ai/score';
+import { getAIContext } from '../ai/context';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
 import { getCastTime } from '../mechanics/move/timing';
@@ -43,11 +43,11 @@ export default function setupTrickRoom(battle: Battle): void {
     }
   });
 
-  // Standing the room up inside itself only takes it down again, which
-  // is never what the AI wants
-  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (event.move === Moves.TrickRoom && remaining > 0) {
-      event.score -= USELESS_PENALTY;
+  // Casting into a standing room takes it down, which only the faster
+  // side wants
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && event.move === Moves.TrickRoom && remaining > 0) {
+      event.usable = !getAIContext(battle, event.source).slowerSide();
     }
   });
 }

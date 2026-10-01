@@ -1,150 +1,127 @@
 # Authentication
 
-The redirect list, the two OAuth apps, and signing in with a provider on the
-local stack.
+Accounts are run by the game's own server with [Better Auth](https://better-auth.com).
+Players sign in with an email and a password, or a passkey. Google and GitHub are
+optional. This page covers the settings, password links, two-factor and passkeys,
+the two OAuth apps, and signing in locally.
 
-**Assumes:** the Supabase project exists and the schema is pushed. See [The
-Supabase project](supabase-project.md).
+**Assumes:** nothing yet. This is the first step.
 
-## 1. Set the dashboard fields
+## 1. The server's settings
 
-Under Authentication in the dashboard:
+Set these in the server's `.env`. `.env.example` documents each one.
 
-| Setting                     | What to put there                                                       |
-| --------------------------- | ------------------------------------------------------------------------ |
-| **Site URL**                | The production origin, `https://your-domain`                            |
-| **Redirect URLs**           | `https://your-domain/**`, plus a preview pattern if you want previews    |
-| **Google**, **GitHub**      | Enabled, with the client id and secret from each provider                |
-| **Email sign-ups**          | Off, unless you want them: the form is not drawn on a deployed build     |
+| Variable                                   | What to put there                                                     |
+| ------------------------------------------ | --------------------------------------------------------------------- |
+| `BETTER_AUTH_SECRET`                       | A long random string, such as the output of `openssl rand -base64 32` |
+| `BETTER_AUTH_URL`                          | The production origin, `https://your-domain`                          |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Optional. From the Google OAuth client (step 3)                       |
+| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | Optional. From the GitHub OAuth app (step 2)                          |
 
-Sign-in is redirect-based. The player is sent back to **the page they left**
-rather than to a fixed callback route, so the redirect list needs the `/**`
-wildcard rather than a bare origin. Vercel's preview deployments each get their
-own hostname, so previews need a pattern of their own,
-`https://*-<your-team>.vercel.app/**`, or a second Supabase project to point at.
+- Changing `BETTER_AUTH_SECRET` signs every player out.
+- The email and password form is always offered.
+- A provider's button appears only when both of its values are set. Leave both
+  empty to turn that provider off. A restart is enough, with no new build.
+- Passkeys belong to the host in `BETTER_AUTH_URL`. Changing the domain means
+  every player adds their passkeys again.
+- The routes live under `/api/auth` on the site itself. Each provider's callback is
+  `https://your-domain/api/auth/callback/<provider>`.
+- Sign-in sends the player back to the page they left.
+  A first sign-in creates the account and its profile. The profile takes the
+  provider's name, or **Trainer** when there is none.
 
-In each provider's own console, the callback is Supabase's, not the site's:
+## Password links
 
-```text
-https://<ref>.supabase.co/auth/v1/callback
-```
+The game sends no email, so a player who needs a password gets a link from
+staff. It is how players who used to sign in with Google or GitHub move to a
+password: the link adds one to the account they already have, and nothing else
+about the account changes.
 
-That decides how many OAuth apps you need: **one per Supabase project, not one
-per hostname**. The player's browser goes to the provider, the provider returns
-to Supabase, and Supabase returns to whatever page the player left. The site's
-own origins are therefore configured in the redirect list above and nowhere
-else. Production and every preview deployment share one app.
+- **From the dashboard.** Open the player under Players, then **Make a password
+  link** and copy it. Only admins and the owner see this, and only for accounts
+  ranked below their own. Each link is recorded in the staff log.
+- **From the server,** for an account nobody ranks above, such as the owner's:
 
-Signing in for the first time creates the profile row through the `auth.users`
-trigger. Nothing about that needs configuring.
+  ```bash
+  pnpm password-link <email or nickname>
+  ```
 
-## 2. GitHub, step by step
+  It reads `.env`, so it reaches production.
 
-**In GitHub.** Settings, Developer settings, OAuth Apps, New OAuth App. It sits
-under your account, or under an organisation if the project should belong to
-one:
+A link opens `/reset-password`, works once, and lasts 7 days. A new link for the
+same account replaces the old one. The player then signs in with the account's
+email and the new password. The email is shown on the player's admin page.
 
-| Field                        | What to put there                          |
-| ---------------------------- | ------------------------------------------ |
-| Application name             | What the player is asked to authorise      |
-| Homepage URL                 | `https://your-domain`                      |
-| Authorization callback URL   | `https://<ref>.supabase.co/auth/v1/callback` |
+## Two-factor and passkeys
 
-Create it, then **Generate a new client secret**. The secret is shown once.
+Both are under Settings, **Security**. The section asks for the account's
+password first, and for 15 minutes after that the server accepts changes to
+either. An account without a password needs a password link before it can use
+them.
 
-**In Supabase.** Authentication, Providers, GitHub. Turn it on, paste the client
-id and the secret, and save. The callback URL is printed on that same page,
-which is the one to copy into GitHub if you are doing this in the other order.
+- **Authenticator app.** Setting it up shows a QR code and ten backup codes.
+  From then on, a password sign-in also asks for the app's code, or one backup
+  code. A device can be trusted for 30 days.
+- **Passkeys.** Each one signs in by itself, with no password or code.
 
-**Then check it.** Sign in on the deployed site. A first sign-in shows GitHub's
-authorisation screen once and comes back signed in.
+A player who loses both their authenticator app and their backup codes can't
+sign in with a password. Remove their `two_factors` row and set
+`two_factor_enabled` to false on their `users` row, then give them a password
+link.
 
-Three things worth knowing about GitHub in particular:
+## 2. GitHub
 
-- **The email may be private.** GitHub only hands over an address if the account
-  has a verified one, and Supabase asks for the `user:email` scope to reach it.
-  An account with no verified address is refused rather than let in without one.
-- **The display name is GitHub's `name`, not the login.** An account that has
-  left its name blank arrives with none, and the profile trigger writes
-  **Trainer** instead. The player renames themselves in the game, so this is a
-  starting point rather than a problem.
-- **The avatar is ignored.** A trainer is seen as the overworld character they
-  earned, so nothing reads the provider's picture.
+**In GitHub.** Settings, Developer settings, OAuth Apps, New OAuth App:
 
-## 3. Google, step by step
+| Field                      | What to put there                              |
+| -------------------------- | ---------------------------------------------- |
+| Application name           | What the player is asked to authorise          |
+| Homepage URL               | `https://your-domain`                          |
+| Authorization callback URL | `https://your-domain/api/auth/callback/github` |
 
-The same shape as GitHub, with more setup. Google wants to know what the app is
-before it lets strangers sign in to it.
+Create it, then **Generate a new client secret**. The secret is shown once. Put
+the id and the secret in `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
 
-**In Google Cloud.** Pick a project or make one, then go to the OAuth consent
-screen, which newer consoles file under Google Auth Platform:
+Things to know about GitHub:
 
-| Field                   | What to put there                                     |
-| ----------------------- | ------------------------------------------------------ |
+- An account with no verified email address is refused.
+- The name is GitHub's `name`, not the login. An account with a blank name
+  arrives as **Trainer**, and the player can rename themselves in the game.
+- The avatar is ignored. A trainer is seen as the overworld character they earned.
+
+## 3. Google
+
+**In Google Cloud.** Set up the OAuth consent screen first:
+
+| Field                   | What to put there                                            |
+| ----------------------- | ------------------------------------------------------------ |
 | User type or audience   | **External**, unless everyone signing in is in one Workspace |
-| App name, support email | What the player is shown on the consent screen         |
-| Developer contact       | Where Google writes to you about the app               |
-| Scopes                  | The default three: `openid`, `email`, `profile`        |
+| App name, support email | What the player is shown on the consent screen               |
+| Scopes                  | The default three: `openid`, `email`, `profile`              |
 
-Those scopes are the non-sensitive ones, so nothing here needs Google's
-verification review. Asking for more does.
+Then Credentials, Create credentials, **OAuth client ID**, type **Web application**:
 
-Then Credentials, Create credentials, **OAuth client ID**, application type
-**Web application**:
+| Field                         | What to put there                              |
+| ----------------------------- | ---------------------------------------------- |
+| Authorised redirect URI       | `https://your-domain/api/auth/callback/google` |
+| Authorised JavaScript origins | Nothing                                        |
 
-| Field                          | What to put there                            |
-| ------------------------------ | -------------------------------------------- |
-| Authorised redirect URI        | `https://<ref>.supabase.co/auth/v1/callback` |
-| Authorised JavaScript origins  | Nothing. The game uses the redirect flow, not One Tap |
+Put the id and the secret in `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
 
-Creating it shows the client id and secret.
-
-**In Supabase.** Authentication, Providers, Google. Turn it on, paste the id and
-the secret, save.
-
-**Then publish it.** An app left in **Testing** only admits the accounts listed
-as test users, and hands out sessions that expire after seven days. Players then
-look like they are being signed out at random. Publishing to Production is a
-button on the consent screen, and with only the default scopes it takes effect
-immediately.
-
-Google needs less attention afterwards. Every account has a verified address and
-the name comes through, so nobody arrives called **Trainer** unless they signed
-in with GitHub.
+**Publish the app.** An app left in **Testing** only admits its listed test
+users, and its sessions expire after seven days. Publishing is a button on the
+consent screen, and with the default scopes it takes effect at once.
 
 ## Signing in with a provider locally
 
-The local stack runs its own auth server, so it needs its own OAuth app: a
-second one whose callback is `http://127.0.0.1:54321/auth/v1/callback`. Most of
-the time this is not worth doing. A development build draws the email and
-password form, which `VITE_EMAIL_SIGN_IN` also turns on anywhere else, and
-`pnpm seed` leaves two accounts ready to use.
+Most of the time this is not needed. `pnpm seed` makes two accounts that sign in
+with the email and password form.
 
-If you do want it, add the provider to
-[`supabase/config.toml`](../../supabase/config.toml) and keep the secret out of
-the file:
-
-```toml
-[auth.external.github]
-enabled = true
-client_id = "env(SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID)"
-secret = "env(SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET)"
-
-[auth.external.google]
-enabled = true
-client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
-secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
-```
-
-Put the variables in `.env`, and restart the stack with `pnpm db:stop && pnpm db`
-so the auth container picks them up. While you are in that file, note that
-`site_url` and `additional_redirect_urls` still name port **4321** and the dev
-server runs on **3000**. A local sign-in comes back nowhere until one of them is
-corrected.
+To sign in with a provider anyway, make a separate OAuth app whose callback is
+`http://localhost:3000/api/auth/callback/<provider>`. Put its id and secret in
+`.env.development.local` and restart `pnpm dev`.
 
 ## See also
 
-- [The Supabase project](supabase-project.md), the step before this one
-- [Vercel](vercel.md), the step after it
+- [The server](server.md), the step after it
 - [Operating the game](operating.md), for what a failed sign-in means
-- [Running the database locally](../database/local-stack.md)

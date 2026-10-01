@@ -4,16 +4,19 @@ import registerBiomeSpawns, {
   MYTHICAL_SPAWN_ODDS,
   SPAWN_BAND_KEYS,
   SPECIAL_SPAWN_ODDS,
+  SpawnClass,
   SpawnRarity,
   TIMES_OF_DAY,
   fitsSurface,
+  getBiomeRoster,
+  getSpawnClass,
   getSpawnPool,
   isLegendarySpecies,
   isMythicalSpecies,
   listSpeciesHabitats,
   spawnBand,
 } from '../../src/data/biome';
-import { getBiomeLairs, getLairResidents } from '../../src/data/overworld/lair';
+import { getBiomeLairs, getCaveLairs, getLairResidents } from '../../src/data/overworld/lair';
 import registerAbilities from '../../src/data/abilities';
 import { Types } from '../../src/data/constants/types';
 import Biome, { SpawnSurface, TimeOfDay } from '../../src/data/ids/biome';
@@ -50,17 +53,35 @@ describe('which pool a species may stand in', () => {
     expect(fitsSurface(Species.Magikarp, SpawnSurface.Ice)).toBe(false);
     expect(fitsSurface(Species.Rhyhorn, SpawnSurface.Water)).toBe(false);
     expect(fitsSurface(Species.Rhyhorn, SpawnSurface.Ice)).toBe(true);
-    // A flier is ground unless its data says otherwise
-    expect(fitsSurface(Species.Pidgey, SpawnSurface.Water)).toBe(false);
-    // Something at home on both stands in either
+    // A flier or floater is over ground and water alike
+    expect(fitsSurface(Species.Pidgey, SpawnSurface.Water)).toBe(true);
+    expect(fitsSurface(Species.Pidgey, SpawnSurface.Land)).toBe(true);
+    expect(fitsSurface(Species.Gastly, SpawnSurface.Water)).toBe(true);
+    // ...save the flying types that live under the water
+    expect(fitsSurface(Species.Gyarados, SpawnSurface.Land)).toBe(false);
+    expect(fitsSurface(Species.Gyarados, SpawnSurface.Water)).toBe(true);
+    // An amphibious water species stands in either
     expect(fitsSurface(Species.Psyduck, SpawnSurface.Land)).toBe(true);
     expect(fitsSurface(Species.Psyduck, SpawnSurface.Water)).toBe(true);
+    // A water egg group does not put a desert scorpion in the water
+    expect(fitsSurface(Species.Skorupi, SpawnSurface.Water)).toBe(false);
+    expect(fitsSurface(Species.Skorupi, SpawnSurface.Land)).toBe(true);
+    // A water species with no mark of its own keeps to the water
+    expect(fitsSurface(Species.Dratini, SpawnSurface.Land)).toBe(false);
+  });
+
+  it('splits every species into the ground, the water or the air', () => {
+    expect(getSpawnClass(Species.Pidgey)).toBe(SpawnClass.Flying);
+    expect(getSpawnClass(Species.Bronzor)).toBe(SpawnClass.Flying);
+    expect(getSpawnClass(Species.Pelipper)).toBe(SpawnClass.Flying);
+    expect(getSpawnClass(Species.Gyarados)).toBe(SpawnClass.Water);
+    expect(getSpawnClass(Species.Magikarp)).toBe(SpawnClass.Water);
+    expect(getSpawnClass(Species.Bidoof)).toBe(SpawnClass.Water);
+    expect(getSpawnClass(Species.Drapion)).toBe(SpawnClass.Ground);
+    expect(getSpawnClass(Species.Rhyhorn)).toBe(SpawnClass.Ground);
   });
 
   it('gives every Water type a place in the water', () => {
-    // Palkia is Water by type and lives nowhere near it, Wash Rotom is
-    // only ever reached through a Catalog, and Volcanion carries its
-    // water in a boiler on a mountain
     const dry = new Set<Species>();
 
     for (const species of getRegisteredSpecies()) {
@@ -74,7 +95,7 @@ describe('which pool a species may stand in', () => {
         dry.add(species);
       }
     }
-    expect(dry).toEqual(new Set([Species.Palkia, Species.RotomWash, Species.Volcanion]));
+    expect(dry).toEqual(new Set());
   });
 
   it('writes every pool for the surface it stands on', () => {
@@ -199,6 +220,59 @@ describe('where a species lives', () => {
     }
   });
 
+  it('stages a cave legendary wild under its own lair, and only there', () => {
+    // A cave keeps the legendaries of the underground lairs its biome
+    // hosts, each on the surface it can stand on
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const surface of SURFACES) {
+        const residents = new Set<Species>();
+
+        for (const lair of getCaveLairs(biome)) {
+          for (const species of getLairResidents(lair)) {
+            if (fitsSurface(species, surface)) {
+              residents.add(species);
+            }
+          }
+        }
+        for (const time of TIMES_OF_DAY) {
+          const band = new Set<Species>();
+
+          for (const entry of spawnBand(getSpawnPool(biome, time, true, surface), 'special')) {
+            band.add(entry.species);
+          }
+          expect(band, `${BIOME_NAMES[biome]} caves`).toEqual(residents);
+        }
+      }
+    }
+    // Kyogre swims in a cave's water and never stands on its floor
+    for (const entry of spawnBand(getSpawnPool(Biome.Beach, TimeOfDay.Day, true), 'special')) {
+      expect(entry.species).not.toBe(Species.Kyogre);
+    }
+  });
+
+  it('stages a legendary nowhere its lairs do not stand', () => {
+    // The other half of the rule: a legendary lives where its lair is
+    // and nowhere else, so a roaming one needs a lair in that biome
+    const hosts = new Map<Species, Set<Biome>>();
+
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const lair of getBiomeLairs(biome)) {
+        for (const species of getLairResidents(lair)) {
+          hosts.set(species, (hosts.get(species) ?? new Set()).add(biome));
+        }
+      }
+    }
+
+    expect(hosts.size).toBeGreaterThan(0);
+    for (const [species, biomes] of hosts) {
+      const { name } = getSpeciesData(species);
+
+      for (const biome of getSpeciesData(species).biomes) {
+        expect(biomes.has(biome), `${name} in ${BIOME_NAMES[biome]}`).toBe(true);
+      }
+    }
+  });
+
   it('says the same thing the pools do about every species', () => {
     // Nothing is invented and nothing is dropped: the number of
     // habitat entries is exactly the number of times the registry
@@ -206,7 +280,11 @@ describe('where a species lives', () => {
     const counted = new Map<Species, number>();
 
     for (const [biome, time, surface] of everyPool()) {
-      const groups = getSpawnPool(biome, time, false, surface);
+      // One roster per biome and hour, whatever its surfaces
+      if (surface !== SpawnSurface.Land) {
+        continue;
+      }
+      const groups = getBiomeRoster(biome, time);
 
       for (const band of SPAWN_BAND_KEYS) {
         for (const entry of spawnBand(groups, band)) {

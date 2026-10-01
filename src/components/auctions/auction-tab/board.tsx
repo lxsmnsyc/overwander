@@ -26,7 +26,7 @@ import CatchCard from '../../catches/CatchCard';
 import CatchGrid, { type CatchGridEntry } from '../../catches/CatchGrid';
 import CatchPicker, { type CatchOption } from '../../catches/catch-picker';
 import { asBoxEntry, describeCatch } from '../../catches/catch-summary';
-import { describeItem } from '../../details';
+import { describeItem, titleCatch } from '../../details';
 import InventoryPicker from '../../items/InventoryPicker';
 import ItemGrid, { type ItemAction, type ItemCell } from '../../items/ItemGrid';
 import {
@@ -562,7 +562,8 @@ export function AuctionBoard(
                 <HoverCard
                   class="block size-full"
                   trigger={<span class="block size-full" />}
-                  title="Info"
+                  title={titleCatch(lots()?.get(entry().id))}
+                  kind="Lot"
                   footer={(close) => (
                     <>
                       {/* The whole record, read-only: a pokemon on the

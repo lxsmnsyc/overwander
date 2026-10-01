@@ -1310,6 +1310,24 @@ describe('the gear that costs its own carrier something', () => {
     expect(attacker.checkMoveImmunity(Moves.Tackle, unitTarget(ghost), Types.Normal)).toBe(false);
   });
 
+  it('shows the ring only when a hit lands, not while one is weighed', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ghost = createUnit(battle, teamA, [Types.Ghost]);
+    const attacker = createUnit(battle, teamB);
+    ghost.addItem(Items.RingTarget);
+    let cues = 0;
+
+    battle.on(BattleEvents.UnitTriggerItem, EventPriority.Post, () => {
+      cues += 1;
+    });
+
+    attacker.checkMoveImmunity(Moves.Tackle, unitTarget(ghost), Types.Normal);
+    expect(cues).toBe(0);
+
+    attacker.attack(ghost, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    expect(cues).toBe(1);
+  });
+
   it('leaves an immunity the holder’s typing does not explain', () => {
     const { battle, teamA, teamB } = createBattle();
     const floater = createUnit(battle, teamA, [Types.Normal]);

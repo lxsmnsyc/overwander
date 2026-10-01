@@ -1,5 +1,13 @@
+import { readOnly } from '../utils/server-calls';
 import type { Species } from '../data/ids/species';
-import getSupabase from './supabase';
+import check, { TOKEN, UID } from '../server/validate';
+import {
+  type StoredDex,
+  readCaughtEntryCount,
+  readPokedex as readStoredDex,
+} from '../server/pokedex';
+import getIdToken from './session';
+import { requireReader } from '../server/auth';
 import {
   DEX_CAUGHT,
   DEX_SEEN,
@@ -16,9 +24,9 @@ import {
  * in one read, collapsed into the map shape
  * [`pokedex-record.ts`](./pokedex-record.ts) describes.
  *
- * Read here and written only by the server: a dex is a record of what
- * actually happened, so a client that could write one could claim to
- * have met a Mewtwo it never faced
+ * Only the server writes one: a dex is a record of what actually
+ * happened, so a client that could write one could claim to have met
+ * a Mewtwo it never faced
  */
 
 /**
@@ -42,36 +50,22 @@ export interface PokedexView {
   caught: DexTally[];
 }
 
-/**
- * The player's whole dex, in one read
- */
-async function readPokedex(uid: string): Promise<unknown> {
-  const { data } = await getSupabase()
-    .from('pokedex_entries')
-    .select('species, seen, seen_shiny, caught, caught_shiny')
-    .eq('player', uid);
-  const seen: Record<string, number> = {};
-  const seenShiny: Record<string, number> = {};
-  const caught: Record<string, number> = {};
-  const caughtShiny: Record<string, number> = {};
-
-  for (const row of data ?? []) {
-    const key = String(row.species);
-    const counts: [Record<string, number>, unknown][] = [
-      [seen, row.seen],
-      [seenShiny, row.seen_shiny],
-      [caught, row.caught],
-      [caughtShiny, row.caught_shiny],
-    ];
-
-    for (const [bucket, count] of counts) {
-      if (Number(count) > 0) {
-        bucket[key] = Number(count);
-      }
-    }
-  }
-  return { seen, seenShiny, caught, caughtShiny };
+/** The player's whole dex, in one read. Another player's reads as empty */
+async function readPokedex(uid: string): Promise<StoredDex> {
+  return readPokedexOnServer(await getIdToken(), uid);
 }
+
+async function readPokedexOnServer(token: string, player: string): Promise<StoredDex> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  const uid = await requireReader(token);
+
+  return player === uid
+    ? readStoredDex(uid)
+    : { seen: {}, seenShiny: {}, caught: {}, caughtShiny: {} };
+}
+readOnly(readPokedexOnServer);
 
 /**
  * Everything the dex holds for this player. A dex that was never
@@ -97,14 +91,18 @@ export async function getPokedex(uid: string): Promise<PokedexView> {
  * is a large read for one number
  */
 export async function getCaughtSpeciesCount(uid: string): Promise<number> {
-  const { count } = await getSupabase()
-    .from('pokedex_entries')
-    .select('species', { count: 'exact', head: true })
-    .eq('player', uid)
-    .or('caught.gt.0,caught_shiny.gt.0');
-
-  return count ?? 0;
+  return getCaughtSpeciesCountOnServer(await getIdToken(), uid);
 }
+
+async function getCaughtSpeciesCountOnServer(token: string, player: string): Promise<number> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  const uid = await requireReader(token);
+
+  return player === uid ? readCaughtEntryCount(uid) : 0;
+}
+readOnly(getCaughtSpeciesCountOnServer);
 
 /**
  * What the dex says about one species: whether it has been met, whether

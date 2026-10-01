@@ -152,6 +152,10 @@ interface InventoryPickerCommonProps {
    * for a window that spends it
    */
   below?: JSX.Element;
+  /** What the bag is being opened for, drawn over the tray: the pokemon it is used on */
+  header?: JSX.Element;
+  /** A face for the window's nameplate */
+  lead?: JSX.Element;
   /**
    * The most of one thing that may be taken at once. Given one, the
    * picker asks **how many** before it hands anything back: a square
@@ -223,6 +227,11 @@ function PickerList(
     bag: Resource<InventoryEntry[]>;
     showing: boolean;
     onDone: () => void;
+    /**
+     * In a window, the dock this draws, since the second press it
+     * holds belongs beside the way out. Inline pickers have none
+     */
+    dock?: { close: () => void };
   },
 ): JSX.Element {
   const [pending, setPending] = createSignal<Items | null>(null);
@@ -403,6 +412,21 @@ function PickerList(
     pickMany();
   };
 
+  /** The second press on a pending square */
+  const confirmPending = (asked: InventoryEntry): JSX.Element => (
+    <Button
+      tone="primary"
+      disabled={props.disabled === true || refused(asked.item) != null}
+      onClick={() => {
+        pickOne(asked.item, taking());
+      }}
+    >
+      {props.most == null
+        ? `${props.verb ?? 'Pick'} ${describeItem(asked.item)}`
+        : `${props.verb ?? 'Take'} ${taking()}`}
+    </Button>
+  );
+
   return (
     // Full width rather than shrink-to-fit: inline, this is a flex
     // item of whatever laid the counter out, and a counter that
@@ -504,26 +528,18 @@ function PickerList(
                   the pressing happens */}
               <Status message={props.warn?.(asked) ?? null} tone="alert" />
 
-              <Row class="justify-center">
-                <Button
-                  tone="primary"
-                  disabled={props.disabled === true || refused(asked.item) != null}
-                  onClick={() => {
-                    pickOne(asked.item, taking());
-                  }}
-                >
-                  {props.most == null
-                    ? `${props.verb ?? 'Pick'} ${describeItem(asked.item)}?`
-                    : `${props.verb ?? 'Take'} ${taking()}`}
-                </Button>
-                <Button
-                  onClick={() => {
-                    setPending(null);
-                  }}
-                >
-                  Cancel
-                </Button>
-              </Row>
+              <Show when={props.dock == null}>
+                <Row class="justify-center">
+                  <Button
+                    onClick={() => {
+                      setPending(null);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  {confirmPending(asked)}
+                </Row>
+              </Show>
             </div>
           )}
         </Show>
@@ -552,6 +568,33 @@ function PickerList(
             </Button>
           </Show>
         </div>
+      </Show>
+
+      {/* In a window the way back from a pending square is another
+          square or Close, so the second press stands in the dock alone */}
+      <Show when={props.dock}>
+        {(dock) => (
+          <DialogActions>
+            <Show when={offeredOf(pending())} keyed>
+              {(asked) => confirmPending(asked)}
+            </Show>
+            {/* A single pick can also be no pick: the caller asked for an
+                item, and "none" is an answer to that */}
+            <Show when={props.multiple !== true && props.value != null}>
+              <Button
+                onClick={() => {
+                  if (props.multiple !== true) {
+                    props.onPick(null, 0);
+                  }
+                  dock().close();
+                }}
+              >
+                Pick none
+              </Button>
+            </Show>
+            <Button onClick={dock().close}>Close</Button>
+          </DialogActions>
+        )}
       </Show>
     </div>
   );
@@ -600,14 +643,31 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
     props.onClose?.();
   };
 
-  const tray = (): JSX.Element => (
-    <Suspense fallback={<Note>Looking through the bag…</Note>}>
-      <PickerList {...props} bag={bag} showing={showing()} onDone={close} />
+  const tray = (docked: boolean): JSX.Element => (
+    <Suspense
+      fallback={
+        <>
+          <Note>Looking through the bag…</Note>
+          <Show when={docked}>
+            <DialogActions>
+              <Button onClick={close}>Close</Button>
+            </DialogActions>
+          </Show>
+        </>
+      }
+    >
+      <PickerList
+        {...props}
+        bag={bag}
+        showing={showing()}
+        onDone={close}
+        dock={docked ? { close } : undefined}
+      />
     </Suspense>
   );
 
   return (
-    <Show when={props.inline !== true} fallback={tray()}>
+    <Show when={props.inline !== true} fallback={tray(false)}>
       {/* A caller that says whether the bag is open has its own way of
           opening it, and a second button beside that one is a button
           nobody presses */}
@@ -626,25 +686,10 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
         title={props.title ?? 'The bag'}
         description={purpose()}
         terse={props.terse}
+        lead={props.lead}
       >
-        {tray()}
-        <DialogActions>
-          {/* A single pick can also be no pick: the caller asked for an
-              item, and "none" is an answer to that */}
-          <Show when={props.multiple !== true && props.value != null}>
-            <Button
-              onClick={() => {
-                if (props.multiple !== true) {
-                  props.onPick(null, 0);
-                }
-                close();
-              }}
-            >
-              Pick none
-            </Button>
-          </Show>
-          <Button onClick={close}>Close</Button>
-        </DialogActions>
+        {props.header}
+        {tray(true)}
       </Dialog>
     </Show>
   );

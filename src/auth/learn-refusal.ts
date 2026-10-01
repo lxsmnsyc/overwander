@@ -29,6 +29,8 @@ export const enum LearnRefusal {
   Unpaid = 4,
   /** Nobody is standing there any more: the window turned over */
   Gone = 5,
+  /** The tutor teaches his signature moves only at the most friendship */
+  Unfriendly = 6,
 }
 
 /** What a teaching came to: the new list, or why there is not one */
@@ -65,6 +67,9 @@ export function describeLearnRefusal(refusal: LearnRefusal, named: string, move:
   }
   if (refusal === LearnRefusal.Unpaid) {
     return `What teaching ${move} costs is not in your bag.`;
+  }
+  if (refusal === LearnRefusal.Unfriendly) {
+    return `${named} is not close enough to you yet to learn ${move}.`;
   }
   if (refusal === LearnRefusal.Gone) {
     return 'Whoever was standing here has walked on.';

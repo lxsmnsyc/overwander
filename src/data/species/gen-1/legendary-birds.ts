@@ -70,7 +70,7 @@ export default function registerLegendaryBirdSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Glacier, Biome.AlpineTundra, Biome.PolarOcean, Biome.DeepOcean],
+    biomes: [Biome.PolarOcean, Biome.DeepOcean],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -134,7 +134,7 @@ export default function registerLegendaryBirdSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Mountain, Biome.Grassland, Biome.Steppe],
+    biomes: [Biome.Grassland, Biome.Steppe],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -196,7 +196,7 @@ export default function registerLegendaryBirdSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Mountain, Biome.Desert, Biome.Volcano],
+    biomes: [Biome.Mountain, Biome.Volcano],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

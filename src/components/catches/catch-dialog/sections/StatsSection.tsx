@@ -126,11 +126,14 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
       {/* Columns sized to their content with real gaps between them, so
           the headings and the numbers under them never run together */}
       <div
-        class="grid grid-cols-[0.75rem_max-content_minmax(3rem,1fr)_2.5rem_2rem_4rem]
-          items-center gap-x-3 gap-y-0.5 text-sm"
+        class="grid grid-cols-[0.75rem_max-content_minmax(2rem,1fr)_2.25rem_1.75rem_2.75rem]
+          items-center gap-x-2 gap-y-0.5 text-sm
+          sm:grid-cols-[0.75rem_max-content_minmax(3rem,1fr)_2.5rem_2rem_4rem] sm:gap-x-3"
       >
         <span class="col-span-3 flex items-center gap-1.5">
-          <h3 class="text-left">Stats</h3>
+          <h3 class="text-left text-xs font-extrabold tracking-wider text-muted uppercase">
+            Stats
+          </h3>
           <Hint title="About stats">
             <HintList>
               <li>IVs are what it was born with, from 0 to {MAX_IV}. They never change.</li>

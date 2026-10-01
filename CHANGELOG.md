@@ -1,5 +1,34 @@
 # overwander
 
+## 4.26.0
+
+### Minor Changes
+
+- 184ec88: - Wild pokemon are now placed by kind. Fliers and floaters appear over both ground and water.
+  - Water pokemon appear only on water, except amphibious ones, which also walk on land.
+  - Everything else keeps to the ground.
+  - Gyarados, Mantine and Mantyke stay in the water, and Skorupi and Drapion stay on land.
+  - Bidoof, Surskit, Palkia, Cradily and Armaldo are now amphibious.
+  - Dratini and Dragonair now appear only on water.
+  - A rippling water turns up a water pokemon, a flying shadow a flier, and a dust cloud something that keeps to the ground.
+  - Changes what every cell rolls: existing windows roll different spawns than before.
+
+### Patch Changes
+
+- 358ae05: - A syndicate cell in a cave is now fought and rewarded as one. Its boss or grunt hands over their pokemon, fields shadows, and is named in the battle history.
+  - A cave raid's prize now records the cave it was won in.
+- 6b56dc9: - On the catch sheet, a dragged move, ability or item follows the pointer.
+  - Prized items found in the world show in a gold popup, and special items in a violet one.
+  - Wish's star arcs from the caster to the pokemon it is left with, taking the whole wait to get there.
+- 9f74ce0: - A lair now hosts what its own tile allows. A lair on water holds only pokemon that swim or fly, and a lair on land only pokemon that can stand there.
+  - A lair reads the biome of its own tile, not the biome at the middle of its chunk, so a lair across a biome border hosts that biome's residents.
+  - A shadow raid with no named lair is now called after its own tile's biome.
+  - Changes raids: some lairs host a different pokemon than before.
+- 9e77d42: - Walking back up to a raid your party is still fighting now offers Rejoin, which puts you back in your own fight instead of watching it as a replay.
+  - Only a fight you are in is offered this way. Anyone else still gets a seat to watch.
+- dc8995f: - A syndicate executive waiting to be fought glows magenta on the board, and a boss glows violet. Grunts stay red.
+  - A legend holding the champion's seat glows pearl white, so it is told apart from the champion.
+
 ## 4.25.2
 
 ### Patch Changes

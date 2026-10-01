@@ -8,7 +8,7 @@ import {
   MoveCategories,
   MoveFlags,
   MoveTargets,
-  Moves,
+  type Moves,
 } from '../../../data/ids/moves';
 import { getMoveData, getWeatherMove } from '../../../data/moves';
 import { Statuses, TeamStatuses, type Weathers } from '../../../data/ids/status';
@@ -24,6 +24,9 @@ import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { isPrimalWeather, onUnitActs, slipsTraps, unitTarget } from '../../utils';
 import { createAbility, getAbilityHolders } from '../__create';
+import { PSEUDO_MOVES } from '../../../data/moves/pseudo';
+
+export { isPseudoMove } from '../../../data/moves/pseudo';
 
 /**
  * What the signature abilities that remember something share: state
@@ -189,18 +192,6 @@ export function allyHolder(battle: Battle, unit: Unit, ability: Abilities): Unit
   }
 
   return undefined;
-}
-
-/**
- * The moves no signature reads: a confused unit hitting itself, the
- * bare fallback swing and the last resort. None of them are the
- * pokemon's own attack, and one of them has no registry entry to ask
- */
-const PSEUDO_MOVES = new Set<Moves>([Moves._Confused, Moves.Struggle, Moves.Attack]);
-
-/** Whether the move is one of the three no signature reads */
-export function isPseudoMove(move: Moves): boolean {
-  return PSEUDO_MOVES.has(move);
 }
 
 /** Whether this is a physical move the pokemon actually chose */

@@ -172,19 +172,17 @@ export async function finishBattle(
   battleId: string,
   outcome: BattleOutcome,
 ): Promise<boolean> {
-  const stamped =
-    (await foughtBattle(battleId, uid)) &&
-    (
-      await getSql()`
-        update battles set outcome = ${outcome}
-        where id = ${battleId} and outcome = ${BattleOutcome.Unfinished}
-      `
-    ).count > 0;
-
-  if (stamped) {
-    await releaseBattleLocks(battleId);
+  if (!(await foughtBattle(battleId, uid))) {
+    return false;
   }
-  return stamped;
+  await getSql()`
+    update battles set outcome = ${outcome}
+    where id = ${battleId} and outcome = ${BattleOutcome.Unfinished}
+  `;
+  // The aftermath report may have stamped the outcome first, so the
+  // party is freed whenever the battle is over, not only by the stamp
+  await releaseBattleLocks(battleId);
+  return true;
 }
 
 /**

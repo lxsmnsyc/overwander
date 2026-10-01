@@ -119,7 +119,7 @@ Small and unblocked.
 - [ ] **Zenith forms, region by region.** The system and Zenith Arcanine are in
       (`src/data/species/zeniths.ts`). Each batch proposes, per species, the
       stat spread (+100), the worn ability and any type change for approval,
-      then adds the shape, its shard id (its species id less 800000), its tint in
+      then adds the shape, its shard id (200000 + dex), its tint in
       `scripts/item-icons.ts` and its `zenith/<region>` icon.
 - [ ] **The Kanto Zeniths**, waiting on the Gen 9 abilities so the batch can
       use them. Drafted and agreed so far: Marowak is Ground/Fighting with

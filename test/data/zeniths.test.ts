@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import registerGameData from '../../src/data';
 import { STAT_ORDER } from '../../src/data/constants/stats';
-import { type Species, getBaseFormSpecies } from '../../src/data/ids/species';
+import { type Species, getBaseFormSpecies, speciesDexNumber } from '../../src/data/ids/species';
 import { FORM_ITEMS } from '../../src/data/items/form-items';
 import { getItemBiomes } from '../../src/data/overworld/biome-items';
 import { getItemBand } from '../../src/data/overworld/item-pool';
@@ -17,7 +17,7 @@ import {
   RESERVED_FOR_MEGAS,
   ZENITH_BONUS,
   ZENITH_SHAPES,
-  ZENITH_SHARD_OFFSET,
+  ZENITH_SHARD_BAND,
 } from '../../src/data/species/zeniths';
 
 function totalOf(species: Species): number {
@@ -56,7 +56,7 @@ describe('Zeniths', () => {
       expect(spoken.has(shape.base), shape.holder).toBe(false);
       expect(seen.has(shape.base), shape.holder).toBe(false);
       expect(getBaseFormSpecies(shape.zenith), shape.holder).toBe(getBaseFormSpecies(shape.base));
-      expect(shape.shard, shape.holder).toBe(shape.zenith - ZENITH_SHARD_OFFSET);
+      expect(shape.shard, shape.holder).toBe(ZENITH_SHARD_BAND + speciesDexNumber(shape.base));
       seen.add(shape.base);
     }
   });

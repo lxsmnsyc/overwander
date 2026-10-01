@@ -945,6 +945,42 @@ describe('world', () => {
     expect(staged).toBeGreaterThan(0);
   });
 
+  it('stands a legendary lair with nobody to host as a shadow lair', () => {
+    const world = new World('overworld');
+    let fallen = 0;
+    let raided = 0;
+
+    for (let window = 0; window < 4; window++) {
+      for (let x = -24; x < 24; x++) {
+        for (let y = -24; y < 24; y++) {
+          const chunk = world.getChunk(x, y);
+          const snapshot = new ChunkSnapshot(chunk, window * RAID_INTERVAL);
+          const legendary = snapshot.getLegendaryLairs();
+          const shadow = snapshot.getShadowLairs();
+
+          for (const [cell, landmark] of chunk.getLandmarkCells()) {
+            if (landmark !== Landmark.LegendaryLair) {
+              continue;
+            }
+            // Never both, and never an empty legendary lair
+            expect(legendary.has(cell) && shadow.has(cell)).toBe(false);
+            if (!legendary.has(cell)) {
+              fallen++;
+              expect(snapshot.isShadowLair(cell)).toBe(true);
+              expect(snapshot.getFallenLairs().has(cell)).toBe(true);
+              if (shadow.has(cell)) {
+                raided++;
+              }
+            }
+          }
+        }
+      }
+    }
+    expect(fallen).toBeGreaterThan(0);
+    // ...and it holds a shadow raid rather than standing empty
+    expect(raided).toBeGreaterThan(0);
+  });
+
   it('lets a shadow take over one of the biome own lairs', () => {
     const world = new World('overworld');
     // A mountain has two lairs to be taken over, so a run of windows

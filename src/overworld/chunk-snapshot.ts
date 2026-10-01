@@ -836,6 +836,36 @@ export default class ChunkSnapshot {
     return this.raids;
   }
 
+  private fallenLairs: Set<number> | null = null;
+
+  /**
+   * The legendary lairs with no legendary to host this window, because
+   * no lair of the tile's biome has a resident that can stand on it.
+   * Each stands as a shadow lair instead rather than empty
+   */
+  getFallenLairs(): Set<number> {
+    if (this.fallenLairs == null) {
+      const hosted = this.getLegendaryLairs();
+      const fallen = new Set<number>();
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark === Landmark.LegendaryLair && !hosted.has(cell)) {
+          fallen.add(cell);
+        }
+      }
+      this.fallenLairs = fallen;
+    }
+    return this.fallenLairs;
+  }
+
+  /** Whether the lair at this cell stages a shadow raid this window */
+  isShadowLair(cell: number): boolean {
+    return (
+      this.chunk.getLandmarkCells().get(cell) === Landmark.ShadowLair ||
+      this.getFallenLairs().has(cell)
+    );
+  }
+
   /** The biome's lairs, only its underground ones in a cave */
   private lairsHere(biome: Biome): Lairs[] {
     return this.depth === Depth.Cave ? getCaveLairs(biome) : getBiomeLairs(biome);
@@ -885,8 +915,8 @@ export default class ChunkSnapshot {
       const time = getTimeOfDay(this.raidTimestamp);
       const dark = this.raidWeather === Weather.DarkDay;
 
-      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-        if (landmark !== Landmark.ShadowLair) {
+      for (const cell of this.chunk.getLandmarkCells().keys()) {
+        if (!this.isShadowLair(cell)) {
           continue;
         }
         const hosts = this.hostsAt(cell);

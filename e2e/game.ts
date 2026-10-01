@@ -57,12 +57,14 @@ export async function signIn(page: Page, player: Player = newPlayer()): Promise<
   // lands before the page has hydrated is wiped with the DOM it typed
   // into, and the local auth service answers an occasional signup with
   // a 504. Neither is what any spec is testing
-  const register = page.getByRole('button', { name: 'Register', exact: true });
+  const creating = page.getByRole('tab', { name: 'Create account' });
+  const register = page.getByRole('button', { name: 'Create account', exact: true });
 
   await expect(async () => {
-    if (await register.isVisible()) {
-      await page.getByPlaceholder('Email').fill(player.email);
-      await page.getByPlaceholder('Password').fill(player.password);
+    if (await creating.isVisible()) {
+      await creating.click();
+      await page.getByLabel('Email').fill(player.email);
+      await page.getByLabel('New password').fill(player.password);
       await register.click();
     }
     await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible({ timeout: 20_000 });

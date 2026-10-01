@@ -1,0 +1,23 @@
+# The throwaway database for development and the test suites, apart
+# from production: another project and another port, with its data in
+# memory, so it starts empty whenever it starts. `pnpm db`, `pnpm seed`
+# and the tests use it, and nothing here reaches the `db` service in
+# compose.yaml, which is the live game's.
+
+name: overwander-dev
+
+services:
+  db:
+    build: db
+    command: [postgres, -c, shared_preload_libraries=pg_cron, -c, cron.database_name=overwander_dev]
+    environment:
+      POSTGRES_DB: overwander_dev
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 127.0.0.1:54324:5432
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: [CMD, pg_isready, -U, postgres, -d, overwander_dev]
+      interval: 2s
+      retries: 30

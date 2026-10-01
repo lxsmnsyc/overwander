@@ -48,27 +48,8 @@ import {
   type LevelBand,
   rocketPartyLevels,
 } from '../../../overworld/stop';
-import {
-  TRAINER_QUOTES,
-  TRAINER_TYPES,
-  trainerLevels,
-  trainerNameIn,
-} from '../../../data/overworld/trainers';
-import { TYPE_NAMES, type Types } from '../../../data/constants/types';
+import { TRAINER_QUOTES, trainerLevels, trainerNameIn } from '../../../data/overworld/trainers';
 import type { StopChallenge } from '../StopDialog';
-
-/** The types a class fields, said as a list: "Water and Fighting" */
-function saidTypes(types: Types[]): string {
-  const named: string[] = [];
-
-  for (const type of types) {
-    named.push(TYPE_NAMES[type]);
-  }
-
-  return named.length < 2
-    ? (named[0] ?? '')
-    : `${named.slice(0, -1).join(', ')} and ${named.at(-1)}`;
-}
 
 /** A band said the way a lineup reads it: "levels 45-65" */
 export function saidLevels([lowest, highest]: LevelBand): string {
@@ -127,6 +108,14 @@ const GYM_LEADER_QUOTES: Record<GymLeader, string> = {
   [GymLeader.Cheren]: 'I used to chase strength. Now I teach it. Let us see what you have learned.',
   [GymLeader.Roxie]: 'Turn it up! If my poison does not get you, the noise will!',
   [GymLeader.Marlon]: 'The sea does what it wants, and so do I. Let us have a good one.',
+  [GymLeader.Viola]: 'Hold still, I want this shot. It is the one where you lose.',
+  [GymLeader.Grant]: 'Every wall has a way up. Let us see if you can find mine.',
+  [GymLeader.Korrina]: 'Roller skates on, fists up! I hope you can keep pace!',
+  [GymLeader.Ramos]: 'A garden takes patience, and so does beating me.',
+  [GymLeader.Clemont]: 'The future is now, thanks to science! Watch my invention at work.',
+  [GymLeader.Valerie]: 'Oh, a visitor. My fairies are gentle, until they are not.',
+  [GymLeader.Olympia]: 'I have already seen how this ends. Shall we play it out?',
+  [GymLeader.Wulfric]: 'Ha! A good fight warms the bones. Come on, then!',
 };
 
 /** Which league each champion is the top of */
@@ -136,6 +125,7 @@ const CHAMPION_LEAGUES: Record<Champion, string> = {
   [Champion.Wallace]: 'Hoenn',
   [Champion.Cynthia]: 'Sinnoh',
   [Champion.Iris]: 'Unova',
+  [Champion.Diantha]: 'Kalos',
 };
 
 /** Which league each seat belongs to, for the copy that names it */
@@ -160,6 +150,10 @@ const ELITE_MEMBER_LEAGUES: Record<EliteMember, string> = {
   [EliteMember.Marshal]: 'Unova',
   [EliteMember.Grimsley]: 'Unova',
   [EliteMember.Caitlin]: 'Unova',
+  [EliteMember.Malva]: 'Kalos',
+  [EliteMember.Siebold]: 'Kalos',
+  [EliteMember.Wikstrom]: 'Kalos',
+  [EliteMember.Drasna]: 'Kalos',
 };
 
 const ELITE_QUOTES: Record<EliteMember, string> = {
@@ -183,6 +177,10 @@ const ELITE_QUOTES: Record<EliteMember, string> = {
   [EliteMember.Marshal]: 'My master taught me to seek strength. You look like a step on the way.',
   [EliteMember.Grimsley]: 'Win or lose, the cards fall. Let us see how they fall for you.',
   [EliteMember.Caitlin]: 'I fight my own battles now. You may regret that I do.',
+  [EliteMember.Malva]: 'I report on the news. Today it is your defeat, live.',
+  [EliteMember.Siebold]: 'A battle is a dish. I shall serve you something unforgettable.',
+  [EliteMember.Wikstrom]: 'Well met, challenger! My blade and I await your mettle!',
+  [EliteMember.Drasna]: 'Oh my, a challenger! My dragons have been so looking forward to this.',
 };
 
 /** What a legend says, where they say anything at all */
@@ -191,6 +189,7 @@ const LEGEND_GREETINGS: Record<Legend, string> = {
   [Legend.Steven]: 'Steven turns a stone over in his hand. “I was hoping for a real fight.”',
   [Legend.N]: 'N tilts his head. “Show me what you and your pokemon are to each other.”',
   [Legend.Alder]: 'Alder laughs and rolls his shoulders. “Let us enjoy this one, shall we?”',
+  [Legend.AZ]: 'AZ looks down at you. “I was a king once. Show me what a trainer is.”',
 };
 
 /** What a champion says as the last fight of their league is put */
@@ -202,6 +201,8 @@ const CHAMPION_GREETINGS: Record<Champion, string> = {
     'Cynthia closes her book. “I have been waiting for somebody worth the whole team.”',
   [Champion.Iris]:
     'Iris grins. “Everyone told me I was too young for this seat. Come and find out.”',
+  [Champion.Diantha]:
+    'Diantha smiles as if the cameras were rolling. “Shall we give them a scene worth remembering?”',
 };
 
 /**
@@ -287,7 +288,7 @@ export function eliteGate(member: EliteMember): string {
 /**
  * The named challenger a fighting landmark stages, or null for the
  * rank and file — a Team Rocket grunt, whom the dialog names itself.
- * The name, the levels and the stakes are the dialog's copy; who
+ * The name, the levels and what a win pays are the dialog's copy; who
  * actually stands there is the chunk's roll
  */
 export default function challengerOf(
@@ -316,12 +317,7 @@ export default function challengerOf(
         name: boss,
         levels,
         greeting: `${boss} himself bars the way. “${SYNDICATE_BOSS_QUOTES[syndicate]}”`,
-        stakes: `Six of his at ${saidLevels(levels)}, each carrying two items and two abilities,
-          against as many as you bring. Beat him and he leaves one of the six behind, the
-          legendary among them, keeping both its abilities and the room for a second item, along
-          with a purse worth the trouble and the mark for
-          ${AWARD_NAMES[SYNDICATE_BOSS_HONORS[syndicate]]}. Lose and you lose nothing but the
-          fight.`,
+        wins: `One of his six, a purse and the mark for ${AWARD_NAMES[SYNDICATE_BOSS_HONORS[syndicate]]}`,
       };
     }
     if (executive != null) {
@@ -331,11 +327,7 @@ export default function challengerOf(
         name,
         levels,
         greeting: `${name} of ${team} blocks the way. “${EXECUTIVE_QUOTES[executive]}”`,
-        stakes: `Six of the country's best at ${saidLevels(levels)}, each carrying an item and
-          two abilities, against as many as you bring. Win and they drop a purse, one of the six
-          with both its abilities, whatever they were carrying, and the mark for
-          ${AWARD_NAMES[EXECUTIVE_HONORS[executive]]}. Lose and you lose nothing but the
-          fight. They will be here all window.`,
+        wins: `One of the six, what they carry, a purse and the mark for ${AWARD_NAMES[EXECUTIVE_HONORS[executive]]}`,
       };
     }
 
@@ -345,10 +337,7 @@ export default function challengerOf(
       name,
       levels,
       greeting: `A ${name} blocks the way. “${SYNDICATE_GRUNT_QUOTES[syndicate]}”`,
-      stakes: `Six of theirs at ${saidLevels(levels)} against as many as you bring. Win and the
-        grunt drops a purse, one of the three they were not fighting with, and the mark for
-        ${AWARD_NAMES[SYNDICATE_GRUNT_HONORS[syndicate]]} if you do not hold it yet. Lose and you
-        lose nothing but the fight. They will be here all window.`,
+      wins: `A purse, one of their spare three and the mark for ${AWARD_NAMES[SYNDICATE_GRUNT_HONORS[syndicate]]}`,
     };
   }
   if (landmark === Landmark.Trainer) {
@@ -360,19 +349,12 @@ export default function challengerOf(
 
     const name = trainerNameIn(trainer, snapshot.getWandererCoats().get(cell));
     const levels = trainerLevels(trainer);
-    const types = TRAINER_TYPES[trainer];
-    const fields =
-      types.length === 0
-        ? 'Five fully-grown pokemon of any type'
-        : `Their ${saidTypes(types)} pokemon`;
 
     return {
       name,
       levels,
       greeting: `A ${name} squares up. “${TRAINER_QUOTES[trainer]}”`,
-      stakes: `${fields} at ${saidLevels(levels)} against as many as you bring. Win and the purse
-        is yours; they keep their pokemon. Lose and you lose nothing but the fight. They will be
-        here all window.`,
+      wins: 'Their purse',
     };
   }
   if (landmark === Landmark.GymLeader) {
@@ -389,9 +371,7 @@ export default function challengerOf(
       name,
       levels: GYM_PARTY_LEVELS,
       greeting: `${name} takes the challenge. “${GYM_LEADER_QUOTES[leader]}”`,
-      stakes: `6 of their best at ${saidLevels(GYM_PARTY_LEVELS)}, every one of them holding
-        something, against as many as you bring. Win and the purse is yours, and the ${badge}
-        with it if you do not hold it yet. Lose and you lose nothing but the fight.`,
+      wins: `Their purse and the ${badge}`,
     };
   }
   if (landmark === Landmark.EliteFour) {
@@ -407,10 +387,7 @@ export default function challengerOf(
       name,
       levels: ELITE_PARTY_LEVELS,
       greeting: `${name} of the Elite Four rises. “${ELITE_QUOTES[member]}”`,
-      stakes: `6 at ${saidLevels(ELITE_PARTY_LEVELS)}, each carrying an item and two abilities,
-        against as many as you bring. Win and the purse is yours, along with something out of
-        their own bag; beat all 4 of the Elite Four and the Champion will see you. Lose and you
-        lose nothing but the fight.`,
+      wins: 'Their purse and something from their bag',
     };
   }
   if (landmark === Landmark.Champion) {
@@ -421,11 +398,7 @@ export default function challengerOf(
         name: LEGEND_NAMES[legend],
         levels: LEGEND_PARTY_LEVELS,
         greeting: LEGEND_GREETINGS[legend],
-        stakes: `Their own six at level ${LEGEND_PARTY_LEVELS[0]}, each carrying three items and
-          three abilities, against as many as you bring. No badge is asked for. Win and the mark
-          for ${AWARD_NAMES[LEGEND_HONORS[legend]]} is yours, with the largest purse in the game
-          and something out of the rarest two bands there are. Lose and you lose nothing but the
-          fight.`,
+        wins: `The mark for ${AWARD_NAMES[LEGEND_HONORS[legend]]}, the largest purse and a rare find`,
       };
     }
 
@@ -441,10 +414,7 @@ export default function challengerOf(
       name,
       levels: CHAMPION_PARTY_LEVELS,
       greeting: CHAMPION_GREETINGS[champion],
-      stakes: `Their own six at ${saidLevels(CHAMPION_PARTY_LEVELS)}, each carrying two items
-        and two abilities, against as many as you bring. Win and the title of
-        ${AWARD_NAMES[CHAMPION_TITLES[champion]]} is yours, with the largest purse a walk pays
-        and something worth keeping besides. Lose and you lose nothing but the fight.`,
+      wins: `The ${AWARD_NAMES[CHAMPION_TITLES[champion]]} title, the largest purse and a keepsake`,
     };
   }
   if (landmark === Landmark.FrontierBrain) {
@@ -455,7 +425,7 @@ export default function challengerOf(
     }
 
     const name = FRONTIER_BRAIN_NAMES[brain];
-    const [silver, gold] = FRONTIER_BRAIN_SYMBOLS[brain];
+    const [silver] = FRONTIER_BRAIN_SYMBOLS[brain];
 
     return {
       name,
@@ -467,12 +437,8 @@ export default function challengerOf(
         FRONTIER_BRAIN_RULES[brain] === FrontierRule.Singled,
       greeting: `${name} keeps the ${FRONTIER_FACILITY_NAMES[brain]}.
         “${FRONTIER_GREETINGS[brain]}”`,
-      stakes: `${FRONTIER_RULE_TERMS[FRONTIER_BRAIN_RULES[brain]]} ${frontierTeamSize(
-        FRONTIER_BRAIN_RULES[brain],
-      )} of theirs at level ${FRONTIER_PARTY_LEVELS[0]}, each carrying two items and two
-        abilities, against as many of yours. Win and the ${AWARD_NAMES[silver]} is yours, with a purse to match the rank. Hold
-        it and they bring their second three out next time, which is what the
-        ${AWARD_NAMES[gold]} is for. Lose and you lose nothing but the fight.`,
+      wins: `The ${AWARD_NAMES[silver]} and a purse`,
+      rule: FRONTIER_RULE_TERMS[FRONTIER_BRAIN_RULES[brain]].trim() || undefined,
     };
   }
   return null;

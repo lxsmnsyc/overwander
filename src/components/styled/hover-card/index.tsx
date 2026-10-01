@@ -11,11 +11,12 @@ import {
   useContext,
 } from 'solid-js';
 
+import { autoUpdate, flip, offset, shift, useFloating } from 'solid-floating-ui';
 import { Transition } from 'terracotta';
 import closeWhenGone from '../gone';
-import { TooltipLayer } from '../tooltip';
+import { DetailRowsProvider, TooltipLayer } from '../tooltip';
 import { SHEER } from '../transition';
-import { type HoverCardPlacement, type Point, apart, holds, place, within } from './placing';
+import { type HoverCardPlacement, type Point, apart, holds, within } from './placing';
 import { CLOSE_DELAY, OPEN_DELAY } from '../hover-delay';
 import createLongPress from '../long-press';
 import { GRACE, LINGER, type SafeShape, painting, showSafeAreas } from './safe-area';
@@ -26,8 +27,8 @@ export { showSafeAreas };
 /**
  * A card that opens on hover: what a row is about, without opening it.
  *
- * It is the dialog's window shrunk to a card — the same blue bar, the
- * same frame — where `Tooltip` is a label. Reach for that one for a
+ * The tooltip's white card grown into a small window: the name and what
+ * kind of thing it is, then the body, then anything to press. Reach for that one for a
  * name and a line; reach for this when the answer is a small screen of
  * its own, and keep anything that has to be pressed in the dialog the
  * row opens.
@@ -45,33 +46,26 @@ const WIDTHS: Record<HoverCardWidth, string> = {
 };
 
 const CARD =
-  'pointer-events-auto overflow-hidden rounded-panel border-4' +
-  ' border-tide bg-paper text-left shadow-window';
+  'pointer-events-auto overflow-hidden rounded-xl border-2 border-line bg-paper text-left' +
+  ' shadow-float';
+
+/** How far the card stands from its trigger and keeps from the window's edges */
+const GAP = 8;
 
 /**
- * The box the card is placed in, which is **outside** the fade.
- *
- * A transform on an ancestor becomes the containing block for
- * anything fixed inside it, and the fade scales what it wraps — so a
- * card fixed under it was placed against the fade's own box instead
- * of the window, a whole viewport down the page
+ * The box the card is placed in, which is **outside** the fade, so
+ * the fade never moves what Floating UI placed
  */
-const PLACED = 'pointer-events-none fixed top-0 left-0';
+const PLACED = 'pointer-events-none z-50';
 
-/**
- * The two bars read as the window's own furniture rather than as rows
- * of the card, so both are centred — the same way the dialog titles
- * they are shrunk from are
- */
-const BAR =
-  'flex flex-col items-center gap-0.5 border-b-2 border-tide-dark bg-tide px-3 py-2' +
-  ' text-center text-on-accent';
+/** The name on the left and what kind of thing it is on the right, on white like a tooltip's */
+const BAR = 'flex items-center justify-between gap-2 px-3 pt-2.5 text-left text-ink';
 
 const BODY = 'flex flex-col gap-2 px-3 py-2.5 text-sm';
 
 const FOOT =
-  'flex flex-wrap items-center justify-center gap-2 border-t-2 border-line-soft' +
-  ' bg-line-soft/60 px-3 py-2 text-center text-xs text-muted';
+  'flex flex-wrap items-center justify-end gap-1.5 border-t-2 border-line-soft px-3 py-2' +
+  ' text-xs text-muted';
 
 /**
  * What a card offers whatever is inside it: a way to shut itself, and
@@ -90,6 +84,13 @@ interface CardHold {
 
 const Holding = createContext<CardHold>();
 
+/**
+ * The card on screen at each level, keyed by the card it was opened
+ * from or null at the top. Resting on another trigger puts it away at
+ * once, fade and all, so it never lingers over the next one
+ */
+const SHOWING = new Map<CardHold | null, () => void>();
+
 export interface HoverCardProps extends ParentProps {
   /**
    * What is hovered. It is wrapped in a focusable span, so the card
@@ -101,7 +102,9 @@ export interface HoverCardProps extends ParentProps {
    * card to a screen reader
    */
   title: JSX.Element;
-  /** A line under the title, still in the bar */
+  /** What kind of thing it is (Move, Item, Help), at the bar's right */
+  kind?: string;
+  /** A line at the top of the body, under the bar */
   description?: JSX.Element;
   /**
    * The quieter bar along the bottom — where it is, what it costs.
@@ -143,12 +146,6 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
   /** How many cards opened from inside this one are still up */
   let inner = 0;
   const [open, setOpen] = createSignal(false);
-  /**
-   * Where the card is, once it has been measured. Until then it is
-   * rendered but not shown — a card cannot be placed before it has a
-   * size, and a card placed at the corner first is a card that jumps
-   */
-  const [spot, setSpot] = createSignal<Point | null>(null);
   /**
    * Whether the card is on screen at all, which lasts past `open` by
    * the length of the fade. The portal is what it gates: a portal
@@ -201,8 +198,24 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
     crossing?.();
   };
 
+  const level = outer ?? null;
+
+  /** Put this card away now, without its fade, for the next one at its level */
+  const shut = (): void => {
+    cancel();
+    setOpen(false);
+    setPresent(false);
+  };
+
   const show = (): void => {
     cancel();
+    const showing = SHOWING.get(level);
+
+    if (showing != null && showing !== shut) {
+      showing();
+    }
+    // Every card waits, even one taking over from another: opening at
+    // once covered whatever the pointer was on its way to
     timer = setTimeout(() => {
       setOpen(true);
     }, OPEN_DELAY);
@@ -375,42 +388,20 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
   });
 
   /**
-   * Placed once it is open, and again whenever the page moves under
-   * it: the trigger is usually a row in a list that scrolls
+   * Placed by Floating UI once it is open, and kept placed while the
+   * page scrolls or resizes under it: the trigger is usually a row in
+   * a list that scrolls
    */
-  createEffect(() => {
-    const box = card();
-
-    // Where it is stands until the card has finished fading out —
-    // cleared on the way in, it would vanish instead of fading
-    if (!open() || box == null) {
-      return;
-    }
-
-    const put = (): void => {
-      if (trigger != null) {
-        // The card's laid-out size rather than its drawn one: it is
-        // scaled while the fade runs, and a box measured mid-fade is
-        // half the box it is about to be
-        setSpot(
-          place(
-            trigger.getBoundingClientRect(),
-            { width: box.offsetWidth, height: box.offsetHeight },
-            props.placement ?? 'top',
-          ),
-        );
-      }
-    };
-
-    put();
-    // Captured, so a scroll inside a dialog counts as well as the
-    // window's own
-    window.addEventListener('scroll', put, true);
-    window.addEventListener('resize', put);
-    onCleanup(() => {
-      window.removeEventListener('scroll', put, true);
-      window.removeEventListener('resize', put);
-    });
+  const floating = useFloating({
+    get open() {
+      return open();
+    },
+    get placement() {
+      return props.placement ?? 'top';
+    },
+    strategy: 'fixed',
+    whileElementsMounted: autoUpdate,
+    middleware: [offset(GAP), flip({ padding: GAP }), shift({ padding: GAP })],
   });
 
   // The card goes with what it is about: a trigger taken out of the
@@ -450,6 +441,19 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
     }
   });
 
+  // While it is on screen at all, fading out included
+  createEffect(() => {
+    if (!present()) {
+      return;
+    }
+    SHOWING.set(level, shut);
+    onCleanup(() => {
+      if (SHOWING.get(level) === shut) {
+        SHOWING.delete(level);
+      }
+    });
+  });
+
   onCleanup(() => {
     cancel();
     drawSafeArea(null);
@@ -458,7 +462,10 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
   return (
     <>
       <span
-        ref={trigger}
+        ref={(element) => {
+          trigger = element;
+          floating.refs.setReference(element);
+        }}
         // Focusable, so the card is reachable without a pointer, and
         // described rather than labelled: the trigger already says
         // what it is
@@ -523,10 +530,14 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
             a card opened from a row inside a dialog has to clear it */}
         <TooltipLayer>
           <div
+            ref={(element) => {
+              floating.refs.setFloating(element);
+            }}
             class={PLACED}
+            // Hidden until it has been placed, so it never jumps from a corner
             style={{
-              transform: `translate(${spot()?.x ?? 0}px, ${spot()?.y ?? 0}px)`,
-              visibility: spot() == null ? 'hidden' : 'visible',
+              ...floating.floatingStyles,
+              visibility: floating.isPositioned ? 'visible' : 'hidden',
             }}
           >
             <Transition
@@ -534,7 +545,6 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
               {...SHEER}
               afterLeave={() => {
                 setPresent(false);
-                setSpot(null);
               }}
             >
               <div
@@ -573,15 +583,30 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
                 }}
               >
                 <header class={BAR}>
-                  <strong id={titleId} class="text-sm font-extrabold tracking-tight">
+                  <strong id={titleId} class="min-w-0 truncate text-sm font-extrabold">
                     {props.title}
                   </strong>
-                  <Show when={props.description}>
-                    {(said) => <span class="text-xs text-on-accent/85">{said()}</span>}
+                  <Show when={props.kind}>
+                    {(kind) => (
+                      <span
+                        class="shrink-0 rounded-full bg-tide-soft px-1.5 py-0.5 text-[10px]
+                          font-extrabold tracking-wide text-tide-dark uppercase"
+                      >
+                        {kind()}
+                      </span>
+                    )}
                   </Show>
                 </header>
                 <Holding.Provider value={holding}>
-                  <div class={BODY}>{props.children}</div>
+                  {/* Facts read as rows here, the same as in a tooltip */}
+                  <DetailRowsProvider>
+                    <div class={BODY}>
+                      <Show when={props.description}>
+                        {(said) => <p class="m-0 text-xs leading-snug text-muted">{said()}</p>}
+                      </Show>
+                      {props.children}
+                    </div>
+                  </DetailRowsProvider>
                   <Show when={props.footer}>
                     {(foot) => <footer class={FOOT}>{standing(foot())}</footer>}
                   </Show>

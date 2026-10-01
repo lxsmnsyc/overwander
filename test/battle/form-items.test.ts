@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { UNLIMITED_BATTLE_LIMITS } from '../../src/data/constants/battle-limits';
 import { packSlots } from '../../src/data/constants/slots';
-import { Stats } from '../../src/data/constants/stats';
+import { Stages, Stats } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
@@ -23,6 +23,26 @@ describe('Form items', () => {
     expect([...dragon.types]).toEqual([Types.Ghost, Types.Dragon]);
     expect(dragon.hasAbility(Abilities.Levitate)).toBe(true);
     expect(dragon.hasAbility(Abilities.Pressure)).toBe(true);
+  });
+
+  it('paints an Arceus with its Plate only through Multitype', () => {
+    const { battle, teamA } = createBattle();
+    const god = createUnit(battle, teamA);
+    const filler = createUnit(battle, teamA);
+
+    for (const unit of [god, filler]) {
+      unit.setSpecies(Species.Arceus);
+      unit.addItem(Items.FlamePlate);
+    }
+    god.addAbility(Abilities.Multitype);
+    filler.addAbility(Abilities.Adaptability);
+    god.enter();
+    filler.enter();
+
+    expect(god.species).toBe(Species.ArceusFire);
+    expect([...god.types]).toEqual([Types.Fire]);
+    expect(filler.species).toBe(Species.Arceus);
+    expect([...filler.types]).toEqual([Types.Normal]);
   });
 
   it('gives Origin Dialga Unaware and Origin Palkia Shadow Tag', () => {
@@ -62,6 +82,47 @@ describe('Form items', () => {
 
     expect(flower.hasAbility(Abilities.Guts)).toBe(true);
     expect(flower.hasAbility(Abilities.SereneGrace)).toBe(true);
+  });
+  it('shows each genie holding the Reveal Glass its own Therian shape', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const wind = createUnit(battle, teamA);
+    const bolt = createUnit(battle, teamA);
+    const land = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    wind.setSpecies(Species.Tornadus);
+    bolt.setSpecies(Species.Thundurus);
+    land.setSpecies(Species.Landorus);
+    for (const unit of [wind, bolt, land]) {
+      unit.addAbility(Abilities.Prankster);
+      unit.addItem(Items.RevealGlass);
+    }
+    foe.enter();
+
+    wind.enter();
+    bolt.enter();
+    land.enter();
+
+    expect(wind.species).toBe(Species.TornadusTherian);
+    expect(wind.hasAbility(Abilities.Regenerator)).toBe(true);
+    expect(bolt.species).toBe(Species.ThundurusTherian);
+    expect(bolt.hasAbility(Abilities.VoltAbsorb)).toBe(true);
+    expect(land.species).toBe(Species.LandorusTherian);
+    expect(land.hasAbility(Abilities.Intimidate)).toBe(true);
+    // What the genie was born with is still its own
+    expect(land.hasAbility(Abilities.Prankster)).toBe(true);
+    // Worn on the way in, the scowl still lands
+    expect(foe.stages[Stages.Attack]).toBe(-1);
+  });
+
+  it('leaves anybody but a genie holding the Reveal Glass as it is', () => {
+    const { battle, teamA } = createBattle();
+    const bird = createUnit(battle, teamA);
+    bird.setSpecies(Species.Pidgeot);
+    bird.addItem(Items.RevealGlass);
+
+    bird.enter();
+
+    expect(bird.species).toBe(Species.Pidgeot);
   });
 });
 

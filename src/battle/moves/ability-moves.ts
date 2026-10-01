@@ -5,6 +5,7 @@ import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
+import { seesFully } from '../ai/fog';
 
 /**
  * The four moves that move abilities about: two copy or trade, two
@@ -50,18 +51,23 @@ function abilitiesOf(unit: Unit): Abilities[] {
   return abilities;
 }
 
-/** Whether the move would do anything, which is also when it works */
-function works(move: Moves, source: Unit, target: Unit): boolean {
+/**
+ * Whether the move would do anything, which is also when it works.
+ * Asked by the AI, a foe's ability list is unknown, so it is assumed to hold one
+ */
+function works(move: Moves, source: Unit, target: Unit, known = true): boolean {
+  const holds = !known || abilitiesOf(target).length > 0;
+
   switch (move) {
     case Moves.RolePlay:
     case Moves.GastroAcid:
-      return abilitiesOf(target).length > 0;
+      return holds;
     case Moves.Entrainment:
       return abilitiesOf(source).length > 0;
     case Moves.SimpleBeam:
       return !target.hasAbility(Abilities.Simple);
     case Moves.SkillSwap:
-      return abilitiesOf(source).length > 0 || abilitiesOf(target).length > 0;
+      return abilitiesOf(source).length > 0 || holds;
     default:
       return true;
   }
@@ -180,7 +186,12 @@ export default function setupAbilityMoves(battle: Battle): void {
     if (event.usable && ABILITY_MOVES.has(event.move)) {
       event.usable =
         event.target.type === MoveTargetType.Unit &&
-        works(event.move, event.source, event.target.unit);
+        works(
+          event.move,
+          event.source,
+          event.target.unit,
+          seesFully(event.source, event.target.unit),
+        );
     }
   });
 }

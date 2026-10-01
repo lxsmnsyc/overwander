@@ -26,6 +26,9 @@ export const RAID_REWARD_LEVELS: Record<RaidKind, number> = {
   [RaidKind.Mythical]: MYTHICAL_RAID_REWARD_LEVEL,
 };
 
+/** A raid prize sparkles 8x as often as a wild meeting, on top of every other boost */
+export const RAID_SHINY_BOOST = 8;
+
 export const RAID_ENCOUNTER_TYPES: Record<RaidKind, EncounterType> = {
   [RaidKind.Legendary]: EncounterType.LegendaryRaid,
   [RaidKind.Shadow]: EncounterType.ShadowRaid,

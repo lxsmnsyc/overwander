@@ -87,6 +87,7 @@ export default function SearchGuide(props: SearchGuideProps): JSX.Element {
   return (
     <HoverCard
       title="Searching"
+      kind="Help"
       description="A word finds a name. Everything else narrows."
       placement="bottom"
       width="wide"

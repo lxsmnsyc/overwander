@@ -89,7 +89,7 @@ test.describe('the profile', () => {
     // The world is gone and the form is back. Signing out from inside
     // the profile means the dialog is unmounted along with the page
     // that held it, which is the part worth watching
-    await expect(page.getByPlaceholder('Email')).toBeVisible();
+    await expect(page.getByLabel('Email')).toBeVisible();
     await expect(page.getByRole('navigation', { name: 'Game' })).toBeHidden();
   });
 });

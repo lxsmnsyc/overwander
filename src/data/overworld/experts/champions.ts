@@ -1,6 +1,7 @@
 import Awards, {
   HOENN_HONORS,
   JOHTO_HONORS,
+  KALOS_HONORS,
   KANTO_HONORS,
   SINNOH_HONORS,
   UNOVA_HONORS,
@@ -20,6 +21,7 @@ const enum Champion {
   Wallace = 2,
   Cynthia = 3,
   Iris = 4,
+  Diantha = 5,
 }
 
 export { Champion };
@@ -30,6 +32,7 @@ export const CHAMPIONS: Champion[] = [
   Champion.Wallace,
   Champion.Cynthia,
   Champion.Iris,
+  Champion.Diantha,
 ];
 
 export const CHAMPION_NAMES: Record<Champion, string> = {
@@ -38,6 +41,7 @@ export const CHAMPION_NAMES: Record<Champion, string> = {
   [Champion.Wallace]: 'Wallace',
   [Champion.Cynthia]: 'Cynthia',
   [Champion.Iris]: 'Iris',
+  [Champion.Diantha]: 'Diantha',
 };
 
 export const CHAMPION_CHARSETS: Record<Champion, string[]> = {
@@ -50,6 +54,7 @@ export const CHAMPION_CHARSETS: Record<Champion, string[]> = {
   // Opelucid's gym is Drayden's here, so both of her looks are the
   // champion's, the way both of Wallace's are
   [Champion.Iris]: ['characters/b2w2/iris-1', 'characters/b2w2/iris-2'],
+  [Champion.Diantha]: ['characters/xy/diantha'],
 };
 
 /** The title a champion's seat is worth */
@@ -59,6 +64,7 @@ export const CHAMPION_TITLES: Record<Champion, Awards> = {
   [Champion.Wallace]: Awards.HoennChampion,
   [Champion.Cynthia]: Awards.SinnohChampion,
   [Champion.Iris]: Awards.UnovaChampion,
+  [Champion.Diantha]: Awards.KalosChampion,
 };
 
 /**
@@ -78,6 +84,7 @@ export const CHAMPION_HONORS: Record<Champion, Awards[]> = {
   [Champion.Wallace]: HOENN_HONORS,
   [Champion.Cynthia]: SINNOH_HONORS,
   [Champion.Iris]: UNOVA_HONORS,
+  [Champion.Diantha]: KALOS_HONORS,
 };
 
 /**
@@ -134,5 +141,15 @@ export const CHAMPION_PARTIES: Record<Champion, Species[]> = {
     Species.Archeops,
     Species.Lapras,
     Species.Haxorus,
+  ],
+  // The six she defends Kalos with, Gardevoir last. Both fossils are
+  // hers, so Tyrantrum and Aurorus stand side by side
+  [Champion.Diantha]: [
+    Species.Hawlucha,
+    Species.Tyrantrum,
+    Species.Aurorus,
+    Species.Gourgeist,
+    Species.Goodra,
+    Species.Gardevoir,
   ],
 };

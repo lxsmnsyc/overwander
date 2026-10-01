@@ -41,7 +41,7 @@ for (const unit of party) {
 - Methods that take no per-item callback: `sort`, `join`, `slice`, `includes`, `indexOf`, `concat`, `push`, `at`.
 - A `sort` comparator, which no loop replaces.
 - A list rendered in Solid JSX, which is `<For each={...}>` rather than an inline `map`.
-- Anything that only shares a name with an Array method: a Supabase query's `.filter(...)`, a promise's `.then(...)`.
+- Anything that only shares a name with an Array method: a promise's `.then(...)`, a string's `.includes(...)`.
 
 ## Traps
 

@@ -15,7 +15,12 @@ import { useGame } from '../app/game-context';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
 import PlayerPlate from '../profile/PlayerPlate';
-import { Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';
+import { Button, Dialog, DialogActions, Meta, Note, useToast } from '../styled';
+import AtlasSprite from '../sprites/AtlasSprite';
+import { OW_SPRITE_ROOT } from '../../canvas/ow-char-sprites';
+import Landmark from '../../data/overworld/landmark';
+import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
+import { CounterSpent, CounterStep, CounterTerms, HeadingPortrait } from './npc-dialog/terms';
 
 /**
  * A gym seat, put to whoever walked up to it.
@@ -65,7 +70,7 @@ function SeatCounter(
 ): JSX.Element {
   const game = useGame();
   const [picking, setPicking] = createSignal<'take' | 'challenge' | null>(null);
-  const [status, setStatus] = createSignal<string | null>(null);
+  const toast = useToast();
   const [busy, setBusy] = createSignal(false);
 
   const held = (): GymSeatStanding['seat'] => props.standing?.seat ?? null;
@@ -110,22 +115,24 @@ function SeatCounter(
   };
 
   const act = (run: () => Promise<unknown>, said: string, failed: string): void => {
-    setStatus(null);
     setBusy(true);
     run()
       .then((done) => {
         setBusy(false);
 
         if (done == null || done === false) {
-          setStatus(failed);
+          toast.push({ message: failed, tone: 'ember' });
           return;
         }
-        setStatus(said);
+        toast.push({ title: 'Gym Seat', message: said, tone: 'leaf' });
         props.onChange?.();
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        toast.push({
+          message: caught instanceof Error ? caught.message : String(caught),
+          tone: 'ember',
+        });
       });
   };
 
@@ -160,14 +167,16 @@ function SeatCounter(
       return;
     }
     setPicking(null);
-    setStatus(null);
     setBusy(true);
     challengeGymSeat(chunk, cell, catches)
       .then((battle) => {
         setBusy(false);
 
         if (battle == null) {
-          setStatus('The seat has moved on. Somebody else may be holding it now.');
+          toast.push({
+            message: 'The seat has moved on. Somebody else may be holding it now.',
+            tone: 'ember',
+          });
           return;
         }
         props.onClose();
@@ -175,7 +184,10 @@ function SeatCounter(
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        toast.push({
+          message: caught instanceof Error ? caught.message : String(caught),
+          tone: 'ember',
+        });
       });
   };
 
@@ -199,12 +211,30 @@ function SeatCounter(
         isOpen={props.cell != null && picking() == null}
         onClose={props.onClose}
         title="Gym Seat"
-        terse
-        description="A seat one player leaves a team standing on for the next to fight. Beating
-        the line-up empties the seat and takes a share of the holder's purse; losing hands
-        yours to them instead."
+        lead={
+          <HeadingPortrait>
+            <AtlasSprite
+              sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
+              name={landmarkPicture(Landmark.GymSeat) ?? ''}
+              size={28}
+              label=""
+            />
+          </HeadingPortrait>
+        }
+        description="A team left standing for the next trainer to fight."
       >
-        <div class="flex flex-col items-center gap-3 py-2 text-center">
+        <div class="flex flex-col gap-3">
+          {/* What a challenge moves either way, and how often it can be tried */}
+          <CounterTerms
+            rows={[
+              { label: 'Win', value: `The seat, and ${stake()}% of their purse` },
+              { label: 'Lose', value: `${stake()}% of your purse` },
+            ]}
+            often={`${SEAT_DAILY_TAKE} takes a day · ${Math.max(
+              0,
+              SEAT_DAILY_TAKE - (props.standing?.taken ?? 0),
+            )} left`}
+          />
           <Show
             when={held()}
             fallback={
@@ -245,6 +275,7 @@ function SeatCounter(
                   </Show>
                 </div>
 
+                <CounterStep>{mine() ? 'Your line-up' : 'Their line-up'}</CounterStep>
                 <CatchBox
                   entries={lineup()}
                   capacity={Math.max(1, lineup().length)}
@@ -255,42 +286,32 @@ function SeatCounter(
                 <Show
                   when={!mine()}
                   fallback={
-                    <Meta class="max-w-prose">
+                    <Meta>
                       They fight for you while you are away, at full health every time, and nothing
                       that happens to them is written back to your pokemon. What a beaten challenger
                       pays lands in your purse.
                     </Meta>
                   }
                 >
-                  <div class="grid w-full gap-2 text-left sm:grid-cols-2">
-                    <div class="flex flex-col gap-1 rounded-panel border-2 border-leaf bg-leaf-soft p-2">
-                      <span class="text-xs font-semibold text-muted uppercase">Win</span>
-                      <Meta class="text-left">The seat empties.</Meta>
-                      <Meta class="text-left">{stake()}% of their purse is yours.</Meta>
-                      <Meta class="text-left">You may sit down on it.</Meta>
-                    </div>
-                    <div class="flex flex-col gap-1 rounded-panel border-2 border-ember bg-ember-soft p-2">
-                      <span class="text-xs font-semibold text-muted uppercase">Lose</span>
-                      <Meta class="text-left">They take {stake()}% of your purse.</Meta>
-                      <Meta class="text-left">
-                        Your party carries the fight out with it. Theirs does not.
-                      </Meta>
-                    </div>
-                  </div>
+                  <Meta>Your party carries the fight out with it. Theirs does not.</Meta>
                 </Show>
-                <Show when={!mine() && (cooling() || spent())}>
-                  <Note>
-                    {spent()
-                      ? 'You have taken all this seat will give you today.'
-                      : `They have seen you off. Come back in
-                         ${minutes(props.standing?.cooldownUntil ?? 0)} minutes.`}
-                  </Note>
+                <Show when={!mine() && spent()}>
+                  <CounterSpent
+                    title="Done for today"
+                    says="You have taken all this seat will give you today."
+                    quoted={false}
+                  />
+                </Show>
+                <Show when={!mine() && !spent() && cooling()}>
+                  <CounterSpent
+                    title="Not just yet"
+                    says={`They have seen you off. Come back in ${minutes(props.standing?.cooldownUntil ?? 0)} minutes.`}
+                    quoted={false}
+                  />
                 </Show>
               </>
             )}
           </Show>
-
-          <Status message={status()} />
         </div>
 
         <DialogActions>
@@ -315,15 +336,18 @@ function SeatCounter(
               </>
             }
           >
-            <Button
-              tone="primary"
-              disabled={busy() || cooling() || spent()}
-              onClick={() => {
-                setPicking('challenge');
-              }}
-            >
-              Challenge
-            </Button>
+            {/* Gone while the spent panel above says why, rather than left dead */}
+            <Show when={!cooling() && !spent()}>
+              <Button
+                tone="primary"
+                disabled={busy()}
+                onClick={() => {
+                  setPicking('challenge');
+                }}
+              >
+                Challenge
+              </Button>
+            </Show>
           </Show>
           <Button onClick={props.onClose}>Walk on</Button>
         </DialogActions>

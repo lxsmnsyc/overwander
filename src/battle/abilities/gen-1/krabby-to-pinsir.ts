@@ -4,7 +4,7 @@ import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
 import { ItemTypes, type Items } from '../../../data/ids/items';
 import { DamageFlags, MoveFlags, Moves } from '../../../data/ids/moves';
-import { Statuses } from '../../../data/ids/status';
+import { Statuses, Weathers } from '../../../data/ids/status';
 import { getItemData } from '../../../data/items';
 import { getMoveData } from '../../../data/moves';
 import { checkUnitRating } from '../../ai/rating';
@@ -26,6 +26,11 @@ import {
   createShellArmorAbility,
 } from '../__create';
 import { MergedLifecycle } from '../../lifecycle';
+import { registerWeatherWant } from '../../ai/weather-wants';
+
+// The skies these thrive under, so the AI weighs a weather move by who gains from it
+registerWeatherWant(Abilities.LeafGuard, [Weathers.Sunny]);
+registerWeatherWant(Abilities.Harvest, [Weathers.Sunny]);
 
 /**
  * Krabby to Pinsir: the shells, the fists and what the odd ones do

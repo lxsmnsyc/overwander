@@ -1,15 +1,15 @@
 import 'server-only';
-import { type JWTPayload, createRemoteJWKSet, decodeProtectedHeader, jwtVerify } from 'jose';
+import { type JWTPayload, type JWTVerifyGetKey, createLocalJWKSet, errors, jwtVerify } from 'jose';
+import getAuth from './better-auth';
 import { getSql } from './db';
 import { PACE_MESSAGE, Pace, type PaceCost, admit } from './pace';
+import { CLOSED_MESSAGE, Feature, MAINTENANCE_MESSAGE } from './switches';
 
 /**
- * Who a token says the caller is, checked without a round trip.
- *
- * The token's own header decides how: an HS256 token is checked
- * against the shared `SUPABASE_JWT_SECRET`, anything else against the
- * stack's published JWKS — current stacks sign asymmetrically (ES256)
- * even locally. Each key is resolved once and reused.
+ * Who a token says the caller is, checked without a round trip: the
+ * short-lived JWT Better Auth signs (see `./better-auth.ts`), against
+ * its own key set. The keys are read once and read again only when a
+ * token names one this process has not seen, which a key rotation does
  */
 
 /**
@@ -17,49 +17,35 @@ import { PACE_MESSAGE, Pace, type PaceCost, admit } from './pace';
  */
 export const BANNED_MESSAGE = 'This account is banned.';
 
-const AUDIENCE = 'authenticated';
+let keys: Promise<JWTVerifyGetKey> | null = null;
 
-let sharedSecret: Uint8Array | null = null;
-
-let remoteKeys: ReturnType<typeof createRemoteJWKSet> | null = null;
-
-function secretKey(): Uint8Array {
-  if (sharedSecret == null) {
-    const secret = process.env.SUPABASE_JWT_SECRET;
-
-    if (secret == null || secret === '') {
-      throw new Error('Set SUPABASE_JWT_SECRET so HS256 tokens can be verified.');
-    }
-    sharedSecret = new TextEncoder().encode(secret);
+async function loadKeys(): Promise<JWTVerifyGetKey> {
+  try {
+    return createLocalJWKSet(await getAuth().api.getJwks());
+  } catch (error) {
+    // Read again by the next call rather than failing every one after
+    keys = null;
+    throw error;
   }
-  return sharedSecret;
-}
-
-function jwks(): ReturnType<typeof createRemoteJWKSet> {
-  if (remoteKeys == null) {
-    const origin = process.env.SUPABASE_URL;
-
-    if (origin == null || origin === '') {
-      throw new Error('Set SUPABASE_URL so tokens can be verified against its JWKS.');
-    }
-    remoteKeys = createRemoteJWKSet(new URL('/auth/v1/.well-known/jwks.json', origin));
-  }
-  return remoteKeys;
 }
 
 async function verify(token: string): Promise<JWTPayload> {
-  const { alg } = decodeProtectedHeader(token);
-
-  if (alg === 'HS256') {
-    return (await jwtVerify(token, secretKey(), { audience: AUDIENCE })).payload;
+  keys ??= loadKeys();
+  try {
+    return (await jwtVerify(token, await keys)).payload;
+  } catch (error) {
+    if (!(error instanceof errors.JWKSNoMatchingKey)) {
+      throw error;
+    }
+    keys = loadKeys();
+    return (await jwtVerify(token, await keys)).payload;
   }
-  return (await jwtVerify(token, jwks(), { audience: AUDIENCE })).payload;
 }
 
 /**
  * The caller is whoever their token says they are, never whoever the
  * request claims. Every privileged write starts here: signature and
- * audience are checked, and a missing, expired or forged token is
+ * expiry are checked, and a missing, expired or forged token is
  * refused rather than defaulted.
  *
  * A **banned** account is refused here too, which is what makes a ban
@@ -71,9 +57,54 @@ async function verify(token: string): Promise<JWTPayload> {
  * `pace` as well where the caller names one (see `./pace`). A player
  * acting faster than the game can is refused.
  *
+ * And maintenance is checked here, in the same statement again: while
+ * the `everything` switch is closed, every call from a player without a
+ * role is refused (see `./switches`).
+ *
  * Resolves the caller's uid
  */
 export async function requireUid(token: string, pace?: Pace, cost = 1): Promise<string> {
+  return admitCaller(token, pace, cost);
+}
+
+/**
+ * `requireUid` for a call that starts something in one part of the
+ * game, which that part's switch may have closed. Calls that leave,
+ * cancel, read or settle take `requireUid` instead, so a closed part
+ * never strands anybody halfway through it
+ */
+export async function requireUidFor(
+  token: string,
+  feature: Feature,
+  pace?: Pace,
+  cost = 1,
+): Promise<string> {
+  return admitCaller(token, pace, cost, feature);
+}
+
+/**
+ * The caller of a read, checked by signature alone. Reads move nothing,
+ * so they skip the pacing write, the ban and the switches
+ */
+export async function requireReader(token: string): Promise<string> {
+  if (token === '') {
+    throw new Error('Not signed in');
+  }
+
+  const uid = (await verify(token)).sub;
+
+  if (uid == null || uid === '') {
+    throw new Error('Not signed in');
+  }
+  return uid;
+}
+
+async function admitCaller(
+  token: string,
+  pace: Pace | undefined,
+  cost: number,
+  feature?: Feature,
+): Promise<string> {
   if (token === '') {
     throw new Error('Not signed in');
   }
@@ -91,10 +122,15 @@ export async function requireUid(token: string, pace?: Pace, cost = 1): Promise<
     costs.push({ pace, cost });
   }
 
-  const { banned, paced } = await admit(getSql(), uid, costs, Date.now());
+  const { banned, paced, closed } = await admit(getSql(), uid, costs, Date.now(), feature);
 
   if (banned) {
     throw new Error(BANNED_MESSAGE);
+  }
+  if (closed != null) {
+    const fallback = closed.feature === Feature.Everything ? MAINTENANCE_MESSAGE : CLOSED_MESSAGE;
+
+    throw new Error(closed.message === '' ? fallback : closed.message);
   }
   if (!paced) {
     throw new Error(PACE_MESSAGE);

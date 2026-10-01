@@ -13,6 +13,7 @@ import type Battle from './core';
 import type {
   CastingData,
   ChannelingData,
+  CheckUnitAIMoveFeedsEvent,
   CheckUnitAbilityEvent,
   CheckUnitCanCastEvent,
   CheckUnitCanChannelEvent,
@@ -937,6 +938,25 @@ export default class Unit {
     return event.success;
   }
 
+  /**
+   * The stage change this unit would really take, asked speculatively:
+   * doubled by a Simple, turned round by a Contrary, 0 when refused
+   */
+  resolveStageChange(stage: Stages, value: number, cause: EffectCause): number {
+    const event: CheckUnitCanUpdateStageEvent = {
+      id: 'CheckUnitCanAddStage',
+      disabled: false,
+      source: this,
+      stage,
+      value,
+      cause,
+      success: true,
+      simulated: true,
+    };
+    this.battle.emit(BattleEvents.CheckUnitCanAddStage, event);
+    return event.success ? event.value : 0;
+  }
+
   addStage(stage: Stages, value: number, cause: EffectCause): void {
     if (this.checkCanAddStage(stage, value, cause)) {
       this.battle.emit(BattleEvents.UnitAddStage, {
@@ -1133,6 +1153,20 @@ export default class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitMoveImmunity, event);
     return event.immune;
+  }
+
+  /** Whether aiming this move at a teammate feeds an ability of theirs */
+  checkAIMoveFeeds(move: Moves, target: MoveTarget): boolean {
+    const event: CheckUnitAIMoveFeedsEvent = {
+      id: 'CheckUnitAIMoveFeeds',
+      disabled: false,
+      source: this,
+      move,
+      target,
+      feeds: false,
+    };
+    this.battle.emit(BattleEvents.CheckUnitAIMoveFeeds, event);
+    return event.feeds;
   }
 
   checkMoveAccuracy(move: Moves, target: MoveTarget): number | undefined {

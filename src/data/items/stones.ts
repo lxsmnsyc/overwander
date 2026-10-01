@@ -13,6 +13,20 @@ const SINNOH_STONES: [item: Items, name: string, icon: string][] = [
   [Items.IceStone, 'Ice Stone', 'ice-stone'],
 ];
 
+/** The ten evolution stones, the older six and then Sinnoh's four */
+export const EVOLUTION_STONES: Items[] = [
+  Items.FireStone,
+  Items.WaterStone,
+  Items.ThunderStone,
+  Items.LeafStone,
+  Items.MoonStone,
+  Items.SunStone,
+  Items.ShinyStone,
+  Items.DuskStone,
+  Items.DawnStone,
+  Items.IceStone,
+];
+
 /**
  * Evolution stones: used on a pokemon to trigger a UsedItem
  * evolution.
@@ -109,6 +123,21 @@ export default function registerEvolutionStones(): void {
     type: ItemTypes.Evolution,
     // Drawn on the key sheet, which is where the collection packed it
     icon: 'key/rotom-catalog',
+    flags: ItemFlags.Usable,
+    buy: 0,
+    sell: 1500,
+  });
+
+  /**
+   * Also not a stone: the cells a Zygarde is not carrying are kept in
+   * it, so it takes the shape either way and is spent doing it
+   */
+  registerItem(Items.ZygardeCube, {
+    name: 'Zygarde Cube',
+    description: 'Puts the Zygarde it is used on into its other shape. Spent on each change.',
+    type: ItemTypes.Evolution,
+    // Drawn on the key sheet, which is where the collection packed it
+    icon: 'key/zygarde-cube',
     flags: ItemFlags.Usable,
     buy: 0,
     sell: 1500,

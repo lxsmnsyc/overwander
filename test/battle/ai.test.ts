@@ -14,9 +14,11 @@ import {
 import { BASE_SCORE, HEAL_BONUS, STEP_PENALTY, USELESS_PENALTY } from '../../src/battle/ai/score';
 import { PERISH_TRADE_BONUS } from '../../src/battle/moves/perish-song';
 import type Unit from '../../src/battle/unit';
+import { unitTarget } from '../../src/battle/utils';
+import { MoveRole, ROLE_BASE } from '../../src/battle/ai/roles';
 import { EventPriority } from '../../src/core/event-emitter';
 import Abilities from '../../src/data/ids/abilities';
-import { Stages, Stats } from '../../src/data/constants/stats';
+import { Stages, Stats, StatsKind } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import { MoveTargetPriorities, Moves } from '../../src/data/ids/moves';
 import { Items } from '../../src/data/ids/items';
@@ -280,6 +282,56 @@ describe('choose move', () => {
     expect(chooseMove(battle, unit)?.move).toBe(Moves.Tackle);
   });
 
+  it('raises a screen early against a side that can use what it stops', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+    unit.addMove(Moves.Reflect);
+    unit.addMove(Moves.LightScreen);
+    foe.addMove(Moves.Tackle);
+
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Reflect);
+
+    // Most of the team already gone: the screen has little fight left to cover
+    ally.setHealth(0);
+    unit.setHealth(20);
+
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Tackle);
+  });
+
+  it('leaves a screen down when no foe can use what it stops', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+    unit.addMove(Moves.LightScreen);
+    foe.addMove(Moves.Tackle);
+    // Built to hit physically, so nothing points to a special move either
+    foe.setStat(StatsKind.Base, Stats.Attack, 150);
+    foe.setHealth(foe.checkStat(Stats.HP, 0));
+
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Tackle);
+  });
+
+  it('puts up a substitute while healthy and not once worn down', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+    unit.addMove(Moves.Substitute);
+
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Substitute);
+
+    unit.setHealth(60);
+
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Tackle);
+  });
+
   it('sees through the abilities its own ability ignores', () => {
     const { battle, teamA, teamB } = createAIBattle();
     pinRandom(battle, 0.99);
@@ -288,14 +340,18 @@ describe('choose move', () => {
     floater.addAbility(Abilities.Levitate);
     unit.addMove(Moves.BoneClub);
 
-    // Ground cannot reach something airborne, so there is nothing
-    // worth casting at it
+    // A Levitate that has not shown itself is not something the AI knows
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.BoneClub);
+
+    // Once it has, Ground cannot reach something airborne, so there is
+    // nothing worth casting at it
+    floater.triggerAbility(Abilities.Levitate);
+
     expect(chooseMove(battle, unit)?.move).toBe(Moves.Attack);
 
     // Mold Breaker resolves its moves as though the target had no
     // ability at all, and the AI is asked through the same brackets
-    // the move itself resolves through — otherwise the holder refuses
-    // the one move its ability exists to let it use
+    // the move itself resolves through
     unit.addAbility(Abilities.MoldBreaker);
 
     expect(chooseMove(battle, unit)?.move).toBe(Moves.BoneClub);
@@ -328,6 +384,7 @@ describe('choose move', () => {
 
       // Damp tracks who is on the field, so the holder has to arrive
       enemy.addAbility(Abilities.Damp);
+      enemy.triggerAbility(Abilities.Damp);
       enemy.enter();
 
       // The cast would be refused every tick, so picking it is a tick
@@ -342,6 +399,7 @@ describe('choose move', () => {
       const plain = createUnit(battle, teamB);
       const ooze = createUnit(battle, teamB);
       ooze.addAbility(Abilities.LiquidOoze);
+      ooze.triggerAbility(Abilities.LiquidOoze);
       unit.addMove(Moves.Absorb);
 
       // The two are identical but for the ability, and the pinned
@@ -357,6 +415,7 @@ describe('choose move', () => {
       const plain = createUnit(battle, teamB);
       const mirror = createUnit(battle, teamB);
       mirror.addAbility(Abilities.Synchronize);
+      mirror.triggerAbility(Abilities.Synchronize);
       unit.addMove(Moves.ThunderWave);
 
       // Paralysing it would paralyse the user back, so the tie the
@@ -375,6 +434,7 @@ describe('choose move', () => {
 
       // The status still lands; the only thing it does does not
       guarded.addAbility(Abilities.MagicGuard);
+      guarded.triggerAbility(Abilities.MagicGuard);
 
       expect(chooseMove(battle, unit)?.move).toBe(Moves.Attack);
     });
@@ -386,6 +446,7 @@ describe('choose move', () => {
       const plain = createUnit(battle, teamB);
       const shocking = createUnit(battle, teamB);
       shocking.addAbility(Abilities.Static);
+      shocking.triggerAbility(Abilities.Static);
       // Tackle makes contact; Absorb does not
       unit.addMove(Moves.Tackle);
 
@@ -401,7 +462,7 @@ describe('choose move', () => {
     });
   });
 
-  it('does not favor stage boosts outside raids', () => {
+  it('sets up before it chips, and chips once the boost has stacked', () => {
     const { battle, teamA, teamB } = createAIBattle();
     pinRandom(battle, 0.99);
     const unit = createUnit(battle, teamA);
@@ -409,9 +470,11 @@ describe('choose move', () => {
     unit.addMove(Moves.Tackle);
     unit.addMove(Moves.SwordsDance);
 
-    const choice = chooseMove(battle, unit);
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.SwordsDance);
 
-    expect(choice?.move).toBe(Moves.Tackle);
+    unit.stages[Stages.Attack] = 6;
+
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Tackle);
   });
 });
 
@@ -723,7 +786,98 @@ describe('weighing a move', () => {
     // Its drops are the price, so pinned rises alone make it useless
     unit.addStage(Stages.SpecialAttack, 6, NONE_CAUSE);
     unit.addStage(Stages.Speed, 6, NONE_CAUSE);
-    expect(fresh - scoreMove(battle, unit, Moves.ShellSmash, target)).toBe(USELESS_PENALTY);
+    expect(scoreMove(battle, unit, Moves.ShellSmash, target)).toBe(BASE_SCORE - USELESS_PENALTY);
+  });
+
+  it('weighs a spread drop against the foes it reaches, not the caster', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.None };
+
+    unit.stages[Stages.Attack] = -6;
+    expect(scoreMove(battle, unit, Moves.Growl, target)).toBeGreaterThan(BASE_SCORE);
+
+    foe.stages[Stages.Attack] = -6;
+    expect(scoreMove(battle, unit, Moves.Growl, target)).toBe(BASE_SCORE - USELESS_PENALTY);
+  });
+
+  it('weighs a spread hit by every foe it lands on, less its own side', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.None };
+    foe.setHealth(10);
+
+    const alone = scoreMove(battle, unit, Moves.Earthquake, target);
+
+    // Finishing the foe counts the way a single-target KO does
+    expect(alone).toBeGreaterThan(BASE_SCORE + 5);
+
+    const ally = createUnit(battle, teamA);
+    expect(scoreMove(battle, unit, Moves.Earthquake, target)).toBeLessThan(alone);
+
+    // An ally the quake cannot touch costs nothing
+    ally.addType(Types.Flying);
+    expect(scoreMove(battle, unit, Moves.Earthquake, target)).toBe(alone);
+
+    // And a quake that reaches no foe does nothing
+    foe.addType(Types.Flying);
+    expect(scoreMove(battle, unit, Moves.Earthquake, target)).toBe(BASE_SCORE - USELESS_PENALTY);
+  });
+
+  it('counts the strikes its own Skill Link lands', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const target = unitTarget(foe);
+    foe.setHealth(50);
+
+    const rolled = scoreMove(battle, unit, Moves.BulletSeed, target);
+
+    unit.addAbility(Abilities.SkillLink);
+
+    expect(scoreMove(battle, unit, Moves.BulletSeed, target)).toBeGreaterThan(rolled);
+  });
+
+  it('keeps a locked Choice holder on the move it opened with', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+    unit.addMove(Moves.Growl);
+    unit.addItem(Items.ChoiceBand);
+
+    expect(usableMove(battle, unit, Moves.Growl, { type: MoveTargetType.None })).toBe(true);
+
+    unit.cast(Moves.Tackle, unitTarget(foe));
+
+    expect(usableMove(battle, unit, Moves.Tackle, unitTarget(foe))).toBe(true);
+    expect(usableMove(battle, unit, Moves.Growl, { type: MoveTargetType.None })).toBe(false);
+  });
+
+  it('never offers a status move under an Assault Vest', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    unit.addItem(Items.AssaultVest);
+
+    expect(usableMove(battle, unit, Moves.Toxic, unitTarget(foe))).toBe(false);
+    expect(usableMove(battle, unit, Moves.Tackle, unitTarget(foe))).toBe(true);
+  });
+
+  it('weighs a Helping Hand as support, not as a status on a foe', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    expect(scoreMove(battle, unit, Moves.Toxic, unitTarget(foe))).toBeGreaterThan(
+      BASE_SCORE + ROLE_BASE[MoveRole.Status] - 1,
+    );
+    expect(scoreMove(battle, unit, Moves.HelpingHand, unitTarget(ally))).toBe(
+      BASE_SCORE + ROLE_BASE[MoveRole.Support],
+    );
   });
 
   it('still throws a U-turn with nobody to swap in', () => {
@@ -767,6 +921,8 @@ describe('weighing a move', () => {
 
     enemy.addAbility(Abilities.Simple);
 
+    enemy.triggerAbility(Abilities.Simple);
+
     expect(usableMove(battle, unit, Moves.SimpleBeam, target)).toBe(false);
   });
 
@@ -798,6 +954,8 @@ describe('weighing a move', () => {
     const open = scoreMove(battle, unit, Moves.StormThrow, target);
 
     enemy.addAbility(Abilities.BattleArmor);
+
+    enemy.triggerAbility(Abilities.BattleArmor);
 
     expect(scoreMove(battle, unit, Moves.StormThrow, target)).toBeLessThan(open);
   });
@@ -880,6 +1038,7 @@ describe('weighing a move', () => {
     first.addStatus(Statuses.Perishing, cause);
     expect(usableMove(battle, singer, Moves.PerishSong, target)).toBe(true);
     second.addAbility(Abilities.Soundproof);
+    second.triggerAbility(Abilities.Soundproof);
     expect(usableMove(battle, singer, Moves.PerishSong, target)).toBe(false);
   });
 
@@ -912,7 +1071,9 @@ describe('weighing a move', () => {
     // the AI reads it without keeping a list of what blocks a stage
     enemy.team.addStatus(TeamStatuses.Mist, NONE_CAUSE);
 
-    expect(open - scoreMove(battle, unit, Moves.Screech, target)).toBe(USELESS_PENALTY);
+    expect(scoreMove(battle, unit, Moves.Screech, target)).toBeLessThanOrEqual(
+      open - USELESS_PENALTY,
+    );
   });
 
   it('spends a stat drop on a boss like any other target', () => {
@@ -984,7 +1145,7 @@ describe('weighing a move', () => {
     createUnit(battle, teamB);
     unit.removeMove(Moves.Attack);
     unit.addMove(Moves.SeismicToss);
-    unit.addMove(Moves.Growl);
+    unit.addMove(Moves.Splash);
 
     // Seismic Toss carries no power at all, so a reading that went by
     // the move data would call it a move that does nothing

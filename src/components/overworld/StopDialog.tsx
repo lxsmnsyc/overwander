@@ -13,7 +13,8 @@ import {
 import { FRONTIER_TEAM_SIZE } from '../../data/overworld/experts';
 import type { Spawn } from '../../overworld/chunk-snapshot';
 import { levelInBand } from '../../overworld/encounter';
-import TeamPickerDialog from '../battle/TeamPickerDialog';
+import { openForm } from '../forms/stack';
+import { PickTeamForm } from '../forms/pick-team';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
 import NpcSprite from './NpcSprite';
 import { Button, Dialog, DialogActions, Meta, useToast } from '../styled';
@@ -308,7 +309,19 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
                 accept(ids);
                 return;
               }
+              // The challenge steps aside while the team is picked
               setPicking(true);
+              openForm(PickTeamForm, { player: props.user.uid, max: props.challenger?.bring })
+                .then((team) => {
+                  if (team == null) {
+                    setPicking(false);
+                  } else {
+                    accept(team);
+                  }
+                })
+                .catch(() => {
+                  setPicking(false);
+                });
             }}
           >
             Battle
@@ -316,16 +329,6 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
           <Button onClick={props.onClose}>Walk on</Button>
         </DialogActions>
       </Dialog>
-
-      <TeamPickerDialog
-        player={props.user.uid}
-        max={props.challenger?.bring}
-        isOpen={picking()}
-        onClose={() => {
-          setPicking(false);
-        }}
-        onSubmit={accept}
-      />
     </>
   );
 }

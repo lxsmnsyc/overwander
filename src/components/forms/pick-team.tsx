@@ -7,13 +7,13 @@ import AnimatedSprite from '../sprites/AnimatedSprite';
 import { isFainted } from '../../auth/health';
 import { TEAM_SIZE } from '../../auth/teams';
 import { type TeamPresetRecord, listTeamPresets } from '../../auth/team-presets';
+import { type FormProps, defineForm } from './form';
 import { useAuth } from '../../auth/context';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import TeamStrip from '../catches/TeamStrip';
 import {
   Badge,
   Button,
-  Dialog,
   DialogActions,
   List,
   ListRow,
@@ -37,7 +37,7 @@ function heldBack(option: CatchOption): string | null {
   if (isFainted(option.caught)) {
     return 'fainted';
   }
-  // Put away by its owner. Nothing is wrong with it — they said so
+  // Put away by its owner. Nothing is wrong with it: they said so
   if (isGuarded(option.caught)) {
     return 'locked';
   }
@@ -112,29 +112,14 @@ function SavedTeam(props: { preset: TeamPresetRecord; onUse: () => void }): JSX.
   );
 }
 
-export interface TeamPickerDialogProps {
+export interface PickTeamInput {
+  /** Whose box; empty for the signed-in player */
   player: string;
-  isOpen: boolean;
-  onClose: () => void;
-  /**
-   * The most that may be brought. A duel's host sets this; anything
-   * else takes the game's own six
-   */
+  /** The most that may be brought. A duel's host sets this; anything else takes the game's six */
   max?: number;
-  /**
-   * Fired with the chosen catch ids, at most `max` of them
-   */
-  onSubmit: (catches: string[]) => void;
 }
 
-/**
- * Pick the catches to bring into a fight: the whole box on one tab and
- * the teams the player saved on the other. A saved team is loaded into
- * the box rather than fielded outright, since what it names may have
- * fainted or be fighting somewhere else, and the party stays theirs to
- * change either way
- */
-export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Element {
+function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
   const auth = useAuth();
   const [open, setOpen] = createSignal<TeamTab>(TeamTab.Box);
   /** The party so far, which the box lights and the row above it draws */
@@ -142,16 +127,12 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
   /** What the box is offering, so the party row can draw each pick */
   const [offered, setOffered] = createSignal<CatchOption[]>([]);
 
-  const max = (): number => props.max ?? TEAM_SIZE;
+  const max = (): number => props.input.max ?? TEAM_SIZE;
 
-  const owner = (): string | null => {
-    if (!props.isOpen) {
-      return null;
-    }
-    return props.player === '' ? (auth.user()?.uid ?? null) : props.player;
-  };
+  const owner = (): string | null =>
+    props.input.player === '' ? (auth.user()?.uid ?? null) : props.input.player;
 
-  // Read when the dialog opens rather than held: a team saved in the
+  // Read when the form opens rather than held: a team saved in the
   // profile a moment ago should be here without a reload
   const [presets] = createResource(owner, async (player): Promise<[string, TeamPresetRecord][]> =>
     listTeamPresets(player),
@@ -197,25 +178,8 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
     setPicks(rest);
   };
 
-  const close = (): void => {
-    setPicks([]);
-    setOpen(TeamTab.Box);
-    props.onClose();
-  };
-
   return (
-    <Dialog
-      isOpen={props.isOpen}
-      onClose={close}
-      title="Form a team"
-      description={`Tap to bring one, tap again to leave it. Up to ${max()}.`}
-      width="wide"
-      aside={
-        <span class="rounded-full bg-tide-soft px-2.5 py-1 text-xs font-extrabold text-tide-dark">
-          {picks().length} / {max()}
-        </span>
-      }
-    >
+    <>
       {/* The party before the box, so the team is in view however far
           down the box has been scrolled */}
       <ol
@@ -301,7 +265,7 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
             inline
             multiple
             live
-            player={props.player}
+            player={props.input.player}
             value={picks()}
             max={max()}
             // Strongest first. A team is picked for what it can win
@@ -344,14 +308,21 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
           tone="primary"
           disabled={picks().length === 0}
           onClick={() => {
-            props.onSubmit(picks());
-            close();
+            props.submit(picks());
           }}
         >
-          Join with {picks().length}
+          Join with {picks().length} / {max()}
         </Button>
-        <Button onClick={close}>Close</Button>
+        <Button onClick={props.cancel}>{props.leave}</Button>
       </DialogActions>
-    </Dialog>
+    </>
   );
 }
+
+/** The catches to bring into a fight, at most `max` of them */
+export const PickTeamForm = defineForm<PickTeamInput, string[]>({
+  title: () => 'Form a team',
+  prompt: (input) => `Tap to bring one, tap again to leave it. Up to ${input.max ?? TEAM_SIZE}.`,
+  width: 'wide',
+  view: (props) => <PickTeamView {...props} />,
+});

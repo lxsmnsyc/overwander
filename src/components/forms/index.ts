@@ -18,3 +18,4 @@ export { type PickItemInput, PickItemForm } from './pick-item';
 export { type PickMoveInput, PickMoveForm } from './pick-move';
 export { type TeachMoveInput, type Teaching, TeachMoveForm, askTeachings } from './teach-move';
 export { type PickBoxInput, PickBoxForm } from './pick-box';
+export { type PickTeamInput, PickTeamForm } from './pick-team';

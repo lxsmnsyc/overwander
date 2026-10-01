@@ -36,7 +36,8 @@ import LobbyInviteDialog from '../battle/LobbyInviteDialog';
 import LobbyParty from '../battle/LobbyParty';
 import PlayerPlate from '../profile/PlayerPlate';
 import SpectatorList from '../battle/SpectatorList';
-import TeamPickerDialog from '../battle/TeamPickerDialog';
+import { openForm } from '../forms/stack';
+import { PickTeamForm } from '../forms/pick-team';
 import watchLive from '../app/watch';
 import { Badge, Button, DialogActions, Note, Status } from '../styled';
 import { ChevronRightIcon } from '../icons';
@@ -66,7 +67,6 @@ function LobbyRows(
   },
 ): JSX.Element {
   const game = useGame();
-  const [picking, setPicking] = createSignal(false);
   const [calling, setCalling] = createSignal(false);
   const [arranging, setArranging] = createSignal(false);
   const [status, setStatus] = createSignal<string | null>(null);
@@ -200,7 +200,16 @@ function LobbyRows(
         <Button
           disabled={busy() || member.ready}
           onClick={() => {
-            setPicking(true);
+            openForm(PickTeamForm, { player: props.user.uid, max: teamSize() })
+              .then((catches) => {
+                if (catches != null) {
+                  act(
+                    async () => setDuelParty(props.duelId, catches),
+                    'That team could not be brought: one of them may already be in another lobby.',
+                  );
+                }
+              })
+              .catch(() => undefined);
           }}
         >
           {member.catches.length > 0 ? 'Change party' : 'Form a team'}
@@ -406,22 +415,6 @@ function LobbyRows(
         onSubmit={(rules) => {
           setArranging(false);
           act(async () => setDuelRules(props.duelId, rules), 'Those rules could not be set.');
-        }}
-      />
-
-      <TeamPickerDialog
-        player={props.user.uid}
-        max={teamSize()}
-        isOpen={picking()}
-        onClose={() => {
-          setPicking(false);
-        }}
-        onSubmit={(catches) => {
-          setPicking(false);
-          act(
-            async () => setDuelParty(props.duelId, catches),
-            'That team could not be brought: one of them may already be in another lobby.',
-          );
         }}
       />
     </>

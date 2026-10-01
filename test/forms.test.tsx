@@ -74,16 +74,20 @@ describe('action forms', () => {
     await expect(under).resolves.toBe('done');
   });
 
-  it('drops a frame answered while hidden, since nothing will see it fade', () => {
-    void openForm(EchoForm, 'under');
+  it('drops a frame answered while hidden, since nothing will see it fade', async () => {
+    const under = openForm(EchoForm, 'under');
+
     drawTop();
 
     const hidden = drawn;
+    const over = openForm(EchoForm, 'over');
 
-    void openForm(EchoForm, 'over');
     hidden?.submit('early');
-
     expect(frames().length).toBe(1);
+    await expect(under).resolves.toBe('early');
+
+    topFrame(frames())?.onDismiss();
+    await expect(over).resolves.toBeNull();
   });
 });
 
@@ -137,6 +141,7 @@ describe('conversations', () => {
 
   it('hands a script’s failure to whoever started it', async () => {
     const { done } = converse({ name: 'Somebody', greeting: 'Hello.' }, async () => {
+      await tick();
       throw new Error('The counter is shut.');
     });
 

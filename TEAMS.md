@@ -32,9 +32,8 @@ registries in `src/data`.
   attacking stats and -25% to both defending ones, so it suits the units paid for by
   the damage they deal and ruins the ones paid for by standing on the field. The rules
   are under "Shadows" below.
-- **Backups are rows of their own**, under a blank line in the same table, with the
-  same build detail as the six they stand in for. A backup keeps the role rather than
-  the species: read its row, swap it in, leave the other five alone.
+- **Backup pick** is who to field instead when the matchup is bad. It keeps the role,
+  not the species.
 - **Protect or Substitute** is decided per unit rather than by habit. Substitute costs
   1/4 of the user's HP and the decoy holds 1/4 of its HP, but **overkill is discarded**
   ([`substituted.ts`](src/battle/status/substituted.ts)), so it eats one hit of any
@@ -44,15 +43,13 @@ registries in `src/data`.
   the team heals, Protect on anything it does not, and Protect against sound moves and
   Infiltrator**, which walk straight through a decoy.
 - **One table per team.** Role, pokemon, nature, EVs, whether to shadow it, abilities,
-  the eight moves with the priority four in bold, and the eight items with the priority
-  one first. Everything about one pokemon is on its own row, mains first and backups
-  below them.
+  the eight moves with the priority four in bold, the eight items with the priority one
+  first, and the backup. Everything about one pokemon is on its own row.
 - **Each team ends with "Collect this before you build the team"**: the machines to
   buy and what they cost, the moves that have to be learned before the pokemon
   evolves, the moves only the Move Tutor teaches, and the held items with how many
   copies you need. Machines are consumed when used, so a move two pokemon both want
-  is two machines. **Those lists cover the six mains only**, so a backup you actually
-  field brings its own machines and items.
+  is two machines.
 
 Mechanics that shaped these picks, all verified in the engine:
 
@@ -201,6 +198,30 @@ teams that means one or two shadows, not six.
 **If you catch a shadow of a support**, purify it. The gem turns a liability into two
 extra points in every value, which is a straight upgrade for a Clefable or a Blissey.
 
+### True shadows
+
+Four species are shadows by what they are rather than by what was done to them:
+**XD-144, XD-145, XD-146 and XD-150**, the Articuno, Zapdos, Moltres and Mewtwo of the
+dark ([`true-shadow.ts`](src/data/species/true-shadow.ts)). Each copies its
+counterpart's types, abilities and learnset and adds **+10 to every stat**, and each
+carries the Shadow ability permanently.
+
+| | True shadow |
+| --- | --- |
+| Where | Only under a **dark day**: in the special band of the wild pool at a legendary's own weight, and in shadow lairs, which hold one instead of an ordinary shadow raid |
+| Stats | Its counterpart's, +10 in every stat, then Shadow's +25% attacking and -25% defending |
+| Purifying | **Never.** A Purifying Gem refuses one, because there is nothing done to it to undo |
+| Candy | Double at every level, for good |
+| Friendship | Starts at zero and never gets the base arrival back, so friendship-gated things stay slow |
+| Mega | **No.** `megaOf` matches a stone against the base form, and a true shadow is its own species, so no stone finds it |
+
+**My read:** XD-150 is the hardest-hitting special attacker in the game, at about 205
+effective Special Attack before Genetic Apex, and it is worth the trade on a team whose
+Mega is already spoken for. The three birds are not: Articuno and Zapdos are paid for by
+their bulk and their auras, and Shadow taxes exactly that. The +10 across the board is
+nearly irrelevant next to the ±25%, so what makes a true shadow strong is the ability
+rather than the tier.
+
 ### What the Kalos species changed
 
 The teams were first built before the Kalos species landed. Re-checking them against
@@ -307,6 +328,8 @@ Items for this team come to **192,000**, so the whole team costs about **309,000
 
 ---
 
+---
+
 ## NPC and PvP battles, with legendaries
 
 The same six roles, with legendaries allowed. Rayquaza is the Mega here, since Dragon Ascent needs no stone.
@@ -316,14 +339,14 @@ The same six roles, with legendaries allowed. Rayquaza is the Mega here, since D
 | Field control | **Tornadus** 79/115/70/125/80/111 | Timid | 252 Special Attack, 248 Speed | **Yes** | Windfall, Prankster, Defiant, Wind Rider | **Tailwind, Taunt, Hurricane, Heat Wave**, then Air Slash, Knock Off, Nasty Plot, U-turn | **Wide Lens**, Leftovers, Expert Belt, Wise Glasses, Focus Sash, Zoom Lens, Bright Powder, Shell Bell |
 | Protector and healer | **Latias** 80/80/90/110/130/110 | Calm | 252 HP, 248 Special Defense | No | Eon Shield, Levitate, Healer, Multiscale | **Wish, Heal Pulse, Reflect, Light Screen**, then Recover, Dragon Pulse, Tailwind, Helping Hand | **Soul Dew**, Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Sash, Lax Incense, Wide Lens |
 | Redirector | **Togekiss** 85/50/95/120/115/80 | Calm | 252 HP, 248 Special Defense | No | Fair Share, Serene Grace, Friend Guard, Super Luck | **Follow Me, Air Slash, Roost, Thunder Wave**, then Dazzling Gleam, Wish, Light Screen, Encore | **Rocky Helmet**, Leftovers, Bright Powder, Lax Incense, Shell Bell, Light Clay, Focus Band, Wide Lens |
-| Core, special | **Mewtwo** 106/110/90/154/90/130 | Timid | 252 Special Attack, 248 Speed | **Yes** | Genetic Apex, Magic Guard, Pressure, Unnerve | **Calm Mind, Psystrike, Aura Sphere, Ice Beam**, then Recover, Thunderbolt, Shadow Ball, Taunt | **Expert Belt**, Leftovers, Wise Glasses, Focus Sash, Shell Bell, Scope Lens, Bright Powder, Quick Claw |
+| Core, special | **XD-150** 116/120/100/164/100/140 | Timid | 252 Special Attack, 248 Speed | Always, it is one by nature | Genetic Apex, Magic Guard, Pressure, Unnerve | **Calm Mind, Psystrike, Aura Sphere, Ice Beam**, then Recover, Thunderbolt, Shadow Ball, Taunt | **Focus Sash**, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Scope Lens, Bright Powder, Quick Claw |
 | Core, physical | **Rayquaza** 105/150/90/150/90/95 | Adamant | 252 Attack, 248 Speed | Yes, but walk its friendship up first | Primal Sky, Multiscale, Intimidate, Air Lock | **Dragon Dance, Dragon Ascent, Extreme Speed, Dragon Claw**, then Iron Head, Stone Edge, Waterfall, Protect | **Protective Pads**, Leftovers, Muscle Band, Expert Belt, Shell Bell, Focus Sash, Scope Lens, Wide Lens |
 | Second protector | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | Wishing Well, Magic Guard, Unaware, Friend Guard | **Reflect, Light Screen, Soft-Boiled, Moonblast**, then Encore, Charm, Thunder Wave, Follow Me | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
 | | | | | | | | |
 | Field control, backup | **Whimsicott** 60/67/85/77/75/116 | Timid | 252 Speed, 248 HP | No | Spore Drift, Prankster, Magic Bounce, Infiltrator | **Taunt, Cotton Spore, Tailwind, Stun Spore**, then Leech Seed, Charm, Moonblast, Substitute | **Focus Sash**, Leftovers, Bright Powder, Clear Amulet, Lax Incense, Mental Herb, Shell Bell, Quick Claw |
 | Protector and healer, backup | **Florges** 78/65/68/112/154/75 | Calm | 252 HP, 248 Special Defense | Never, Hothouse shares its Special Defense | Hothouse, Flower Veil, Unaware, Symbiosis | **Wish, Heal Bell, Aromatherapy, Moonblast**, then Light Screen, Safeguard, Helping Hand, Protect | **Leftovers**, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
 | Redirector, backup | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | Wishing Well, Magic Guard, Unaware, Friend Guard | **Follow Me, Soft-Boiled, Reflect, Light Screen**, then Moonblast, Encore, Charm, Thunder Wave | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
-| Core, special, backup | **Hydreigon** 92/105/90/125/90/98 | Modest | 252 Special Attack, 248 Speed | **Yes** | Three Heads, Levitate, Berserk, Pressure | **Draco Meteor, Dark Pulse, Flamethrower, Nasty Plot**, then Earth Power, Flash Cannon, Tailwind, Protect | **White Herb**, Expert Belt, Leftovers, Wise Glasses, Focus Sash, Shell Bell, Wide Lens, Scope Lens |
+| Core, special, backup | **Mewtwo** 106/110/90/154/90/130 | Timid | 252 Special Attack, 248 Speed | **Yes** | Genetic Apex, Magic Guard, Pressure, Unnerve | **Calm Mind, Psystrike, Aura Sphere, Ice Beam**, then Recover, Thunderbolt, Shadow Ball, Taunt | **Expert Belt**, Leftovers, Wise Glasses, Focus Sash, Shell Bell, Scope Lens, Bright Powder, Quick Claw |
 | Core, physical, backup | **Dragonite** 91/134/95/100/100/80 | Adamant | 252 Attack, 248 Speed | Only if healed | Serene Storm, Multiscale, Marvel Scale, Inner Focus | **Hone Claws, Dragon Claw, Fire Punch, Roost**, then Iron Head, Thunder Punch, Waterfall, Substitute | **Protective Pads**, Leftovers, Expert Belt, Muscle Band, Shell Bell, Focus Sash, Wide Lens, Quick Claw |
 | Second protector, backup | **Goodra** 90/100/70/110/150/80 | Calm | 252 HP, 248 Special Defense | No, its 150 Special Defense is the point | Seepage, Sap Sipper, Hydration, Water Absorb | **Draco Meteor, Thunderbolt, Protect, Toxic**, then Flamethrower, Ice Beam, Sludge Bomb, Substitute | **Leftovers**, Shell Bell, Bright Powder, Wise Glasses, Expert Belt, Focus Band, Lax Incense, Wide Lens |
 
@@ -333,6 +356,7 @@ The same six roles, with legendaries allowed. Rayquaza is the Mega here, since D
 - Eon Shield 0.8x multiplies with Clefable's Friend Guard 0.75x, so a hit on anyone but Latias lands at 0.6x before screens.
 - Primal Sky pays in +2 Special Attack and 1.3x Dragon, so an Adamant Rayquaza collects the Dragon half only. Run Naughty or Hardy to keep both halves.
 - Rayquaza consumes the team's one Mega automatically once it knows Dragon Ascent. Drop the move if you want the Mega elsewhere.
+- **XD-150 takes the special core over Mewtwo** because this team's Mega is Rayquaza's anyway, and a true shadow cannot Mega Evolve. It gives up nothing here and gains +10 in every stat plus Shadow's 1.25x on Special Attack, which reads about 205. It pays for that with 75/75 effective defences, double candy at every level for good, and no way to purify it, so field it behind Follow Me and the screens. Run Mewtwo instead on any team that wants the Mega.
 
 ### Collect this before you build the team
 
@@ -397,17 +421,19 @@ Items for this team come to **189,000**, so the whole team costs about **293,000
 
 ---
 
+---
+
 ## Raid battles, without legendaries
 
 A boss has 60x HP, doubled stats, and its single-target moves hit your whole side. It is immune to sleep, freeze, flinch, trapping, infatuation, Taunt, Encore, Torment and Imprison, and to forced switching. Burn, poison, paralysis, Leech Seed, Curse and confusion all land, and redirection is worthless. The plan is several capped clocks at once, plus uncapped multipliers on three attackers.
 
 | Role | Pokemon | Nature | EV priority | Shadow? | Abilities (4) | Moves, priority four in bold | Items, priority first |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Burn, Curse, main special damage | **Chandelure** 60/55/90/145/90/80 | Modest | 252 Special Attack, 248 HP | No, it dies to the boss | Hexlight, Infiltrator, Flash Fire, Flame Body | **Will-O-Wisp, Curse, Hex, Fire Blast**, then Overheat, Shadow Ball, Substitute, Confuse Ray | **Wide Lens**, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Bright Powder, Zoom Lens |
+| Burn, Curse, main special damage | **Chandelure** 60/55/90/145/90/80 | Modest | 252 Special Attack, 248 HP | No, it dies to the boss | Hexlight, Infiltrator, Flash Fire, Flame Body | **Will-O-Wisp, Curse, Hex, Fire Blast**, then Calm Mind, Shadow Ball, Substitute, Confuse Ray | **Wide Lens**, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Bright Powder, Zoom Lens |
 | Leech Seed and party multiplier | **Breloom** 60/130/80/60/60/70 | Adamant | 252 Attack, 248 HP | No, Mycelium needs it standing | Mycelium, Poison Heal, Technician, Quick Feet | **Leech Seed, Drain Punch, Facade, Mach Punch**, then Seed Bomb, Swords Dance, Substitute, Sludge Bomb | **Toxic Orb**, Big Root, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Protective Pads |
 | Toxic and per-action chip | **Magcargo** 60/50/120/90/80/30 | Bold | 252 HP, 248 Defense | No | Magma Trail, Flame Body, Solid Rock, Magma Armor | **Lava Plume, Fire Blast, Protect, Toxic**, then Earth Power, Rock Slide, Yawn, Rest | **Leftovers**, Rocky Helmet, Shell Bell, Wide Lens, Wise Glasses, Bright Powder, Focus Band, Light Clay |
 | Primary physical damage | **Metagross** 80/135/130/95/90/70 | Adamant | 252 Attack, 248 HP | **Yes**, first pick | Hive Mind, Steelworker, Clear Body, Levitate | **Meteor Mash, Bullet Punch, Zen Headbutt, Ice Punch**, then Iron Head, Hammer Arm, Rock Slide, Substitute | **Expert Belt**, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens, Protective Pads, Focus Band |
-| Protector and passive healer | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | Wishing Well, Magic Guard, Unaware, Friend Guard | **Reflect, Light Screen, Soft-Boiled, Toxic**, then Moonblast, Charm, Cosmic Power, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
+| Protector and passive healer | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | Wishing Well, Magic Guard, Unaware, Friend Guard | **Reflect, Light Screen, Soft-Boiled, Toxic**, then Thunder Wave, Charm, Moonblast, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
 | Cleric and damage support | **Florges** 78/65/68/112/154/75 | Calm | 252 HP, 248 Special Defense | Never, Hothouse shares its Special Defense | Hothouse, Flower Veil, Unaware, Symbiosis | **Wish, Heal Bell, Aromatherapy, Moonblast**, then Light Screen, Safeguard, Helping Hand, Protect | **Leftovers**, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
 | | | | | | | | |
 | Burn and special damage, backup | **Cofagrigus** 58/50/145/95/105/30 | Modest | 252 HP, 248 Special Attack | No, its 145/105 defences are the point | Death Mask, Mummy, Cursed Body, Pressure | **Will-O-Wisp, Hex, Curse, Shadow Ball**, then Toxic, Nasty Plot, Pain Split, Protect | **Leftovers**, Expert Belt, Wise Glasses, Shell Bell, Light Clay, Bright Powder, Focus Band, Wide Lens |
@@ -423,6 +449,9 @@ A boss has 60x HP, doubled stats, and its single-target moves hit your whole sid
 - Cast Will-O-Wisp first. Against the burn, Hex doubles to 130 base and takes Hexlight 1.4x and Mycelium 1.2x, neither of which is capped.
 - Clefable applies the Toxic clock rather than Magcargo, because it acts far more often.
 - Blissey is still the better pick if the boss deals no status: 255 HP and Cushioned outlast Florges, they simply cannot cure anything.
+- **Clefable carries the paralysis.** Thunder Wave is the team's only one, and it is worth a slot: a quarter fewer boss actions, a 25% chance each attempt is stopped, and a second status keeping Mycelium and Hexlight paid if the burn cannot land on a Fire-type boss.
+- **Charm halves the boss's Attack stat** (-2 stages reads 0.5x), which roughly halves its physical damage and stacks with the burn halving it again, to about 0.25x. Two caveats: it does nothing against a special attacker, and **Clefable itself does not benefit**, because Unaware makes it ignore the other side's stat stages in blows it takes, so a charmed boss still hits Clefable at full Attack. The rest of the party gets the discount.
+- **Overheat is out, Calm Mind is in.** Overheat is 130 power at 90 accuracy but drops Chandelure's Special Attack two stages after it lands, and nothing here clears stat drops, so its own damage halves for the rest of a long fight. Calm Mind raises Special Attack and Special Defense a stage each, compounds over the fight, and helps the one unit whose defences the boss punishes. Keep Overheat only if you carry a White Herb, as a one-off opener.
 
 ### What runs at once on this team
 
@@ -438,8 +467,14 @@ Uncapped multipliers on top: Mycelium 1.2x for the whole party against the statu
 boss, Hexlight 1.4x for Chandelure, Hex doubling to 130 base, and Steelworker 1.5x
 with Hive Mind 1.3x on Metagross.
 
-Do not paralyse the boss with this team. Paralysis halves its Speed, and both Curse
-and Magma Trail are paid per boss action.
+**Paralysis is worth the clock it costs.** It halves the boss's Speed, which cuts its
+action rate by about a quarter, and it also gives every attempt a **25% chance of being
+stopped outright**, with a 2 second lockout after each proc
+([`paralyzed.ts`](src/battle/status/paralyzed.ts)). Statuses stack here, so Clefable's
+Thunder Wave sits on the boss beside the burn and the poison. The price is that Curse
+and Magma Trail are paid per boss action, so both lose roughly a quarter of their
+income. Take the trade when the party is dying and skip it when the fight is a damage
+race.
 
 ### Matchups that break this team
 
@@ -525,18 +560,20 @@ Items for this team come to **196,000**, so the whole team costs about **289,000
 
 ---
 
+---
+
 ## Raid battles, with legendaries
 
 The same five clocks, with a sun core, and deliberately not built entirely out of Fire: one rolled Flash Fire, Heatproof or Thick Fat, or simply a Fire-type boss, would otherwise blank both the damage and the status.
 
 | Role | Pokemon | Nature | EV priority | Shadow? | Abilities (4) | Moves, priority four in bold | Items, priority first |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Burn, Curse, special damage | **Chandelure** 60/55/90/145/90/80 | Modest | 252 Special Attack, 248 HP | No, it dies to the boss | Hexlight, Infiltrator, Flash Fire, Flame Body | **Will-O-Wisp, Curse, Hex, Fire Blast**, then Overheat, Shadow Ball, Substitute, Confuse Ray | **Wide Lens**, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Bright Powder, Zoom Lens |
+| Burn, Curse, special damage | **Chandelure** 60/55/90/145/90/80 | Modest | 252 Special Attack, 248 HP | No, it dies to the boss | Hexlight, Infiltrator, Flash Fire, Flame Body | **Will-O-Wisp, Curse, Hex, Fire Blast**, then Calm Mind, Shadow Ball, Substitute, Confuse Ray | **Wide Lens**, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Bright Powder, Zoom Lens |
 | Sun setter, per-action clock, sweeper | **Volcarona** 85/60/65/135/105/100 | Modest | 252 Special Attack, 248 HP | No, Quiver Dance needs it alive | Ember Halo, Drought, Magic Guard, Flame Body | **Quiver Dance, Fiery Dance, Bug Buzz, Roost**, then Heat Wave, Flamethrower, Giga Drain, Substitute | **Leftovers**, Expert Belt, Wise Glasses, Shell Bell, Focus Sash, Bright Powder, Wide Lens, Zoom Lens |
 | Primary physical damage | **Metagross** 80/135/130/95/90/70 | Adamant | 252 Attack, 248 HP | **Yes**, first pick | Hive Mind, Steelworker, Clear Body, Levitate | **Meteor Mash, Bullet Punch, Zen Headbutt, Ice Punch**, then Iron Head, Hammer Arm, Rock Slide, Substitute | **Expert Belt**, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens, Protective Pads, Focus Band |
 | Leech Seed and party multiplier | **Breloom** 60/130/80/60/60/70 | Adamant | 252 Attack, 248 HP | No, Mycelium needs it standing | Mycelium, Poison Heal, Technician, Quick Feet | **Leech Seed, Drain Punch, Facade, Mach Punch**, then Seed Bomb, Swords Dance, Substitute, Sludge Bomb | **Toxic Orb**, Big Root, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Protective Pads |
 | Protector and healer | **Latias** 80/80/90/110/130/110 | Calm | 252 HP, 248 Special Defense | Never, Eon Shield stops when it falls | Eon Shield, Levitate, Healer, Multiscale | **Wish, Heal Pulse, Reflect, Light Screen**, then Recover, Helping Hand, Dragon Pulse, Protect | **Soul Dew**, Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Sash, Lax Incense, Wide Lens |
-| Second protector and Toxic clock | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | Wishing Well, Magic Guard, Unaware, Friend Guard | **Toxic, Reflect, Light Screen, Soft-Boiled**, then Charm, Moonblast, Cosmic Power, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
+| Second protector and Toxic clock | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | Wishing Well, Magic Guard, Unaware, Friend Guard | **Toxic, Reflect, Light Screen, Soft-Boiled**, then Thunder Wave, Charm, Moonblast, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
 | | | | | | | | |
 | Burn and special damage, backup | **Cofagrigus** 58/50/145/95/105/30 | Modest | 252 HP, 248 Special Attack | No, its 145/105 defences are the point | Death Mask, Mummy, Cursed Body, Pressure | **Will-O-Wisp, Hex, Curse, Shadow Ball**, then Toxic, Nasty Plot, Pain Split, Protect | **Leftovers**, Expert Belt, Wise Glasses, Shell Bell, Light Clay, Bright Powder, Focus Band, Wide Lens |
 | Sun core, backup | **Heliolisk** 62/55/52/109/94/109 | Modest | 252 Special Attack, 248 Speed | **Yes** | Backfeed, Dry Skin, Solar Power, Overcoat | **Thunderbolt, Thunder, Dark Pulse, Solar Beam**, then Discharge, Thunder Wave, Protect, Substitute | **Expert Belt**, Wise Glasses, Leftovers, Focus Sash, Shell Bell, Wide Lens, Bright Powder, Zoom Lens |
@@ -551,6 +588,9 @@ The same five clocks, with a sun core, and deliberately not built entirely out o
 - **Clawitzer is worth testing, and may be a bug.** Ranging Shot puts a floor of 1/8 of the target's HP under every special move it lands, and it is applied to ordinary attack damage rather than to the indirect or share-of-HP damage the boss cap covers. Against 60x HP that reads as enormous. Treat it as untested rather than as a recommendation, and expect it to change.
 - Drought gives every Fire move on the team 1.5x. Morning Sun would heal two thirds under it, but it is egg-only on Volcarona, so Roost is the heal.
 - Ember Halo is a second per-action clock beside Curse, and unlike Curse it costs nothing to set up and needs no cast.
+- **Clefable carries the paralysis** here too, through Thunder Wave. Latias also learns it if you would rather spend Clefable's slot elsewhere.
+- **Charm halves the boss's Attack stat**, stacking with the burn's own halving, but Clefable's Unaware means Clefable itself still takes a charmed boss's hits at full Attack. The discount is for the other five.
+- **Chandelure runs Calm Mind rather than Overheat**, since Overheat's two-stage Special Attack drop is permanent in a fight nothing here can Haze, and the sun already gives its Fire moves 1.5x.
 
 ### What runs at once on this team
 
@@ -572,8 +612,11 @@ Uncapped multipliers on top: sun 1.5x on Fire, Mycelium 1.2x for the party, Hexl
 Dance stacking on Volcarona. With Heatran swapped in, Lavadome adds 1.25x for
 everybody against a burned boss.
 
-Do not add paralysis to this team. It slows the boss, and both Curse and Ember Halo
-are paid per boss action.
+**Paralysis is worth the clock it costs**, for the reasons the other raid team lists:
+a quarter fewer boss actions, a 25% chance each attempt is stopped outright, and a
+status that keeps Mycelium and Hexlight paying if the burn ever fails. Clefable's
+Thunder Wave carries it. Curse and Ember Halo each lose about a quarter of their income
+in exchange.
 
 ### Matchups that break this team
 

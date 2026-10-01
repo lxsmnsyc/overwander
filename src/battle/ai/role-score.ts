@@ -21,6 +21,7 @@ import {
 import { TERRAIN_BOOSTED } from '../mechanics/terrain';
 import { CHIP_IMMUNE_TYPES, WEATHER_DAMAGE } from '../mechanics/weather';
 import resolveMoveTargets from '../mechanics/move/targeting';
+import { CALLS } from '../moves/follow-me';
 import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
 import { getStageMoveEffects } from '../moves/stage';
 import {
@@ -33,7 +34,7 @@ import {
 import { GUARDS } from '../moves/team-guards';
 import { TERRAIN_MOVES } from '../moves/terrain';
 import type Unit from '../unit';
-import { type AIContext, effectIn, getAIContext } from './context';
+import { type AIContext, effectIn, getAIContext, landsIn } from './context';
 import { knowsMove } from './fog';
 import { wantsWeather } from './weather-wants';
 import { AFFLICTIONS, MoveRole, ROLE_BASE, getMoveRoles } from './roles';
@@ -375,14 +376,34 @@ const disruption: Relevance = (event) => {
   return 0;
 };
 
-const support: Relevance = (event) => {
-  if (event.move !== Moves.HelpingHand || event.target.type !== MoveTargetType.Unit) {
-    return 0;
+/**
+ * Support pays when it lands in time: Helping Hand before the partner's
+ * hit goes off, Follow Me before a foe's hit reaches a teammate
+ */
+const support: Relevance = (event, context) => {
+  const source = event.source;
+  const ready = effectIn(source, event.move, event.target);
+
+  if (event.move === Moves.HelpingHand) {
+    const ally = event.target.type === MoveTargetType.Unit ? event.target.unit : undefined;
+    const cast = ally?.casting;
+
+    return ally != null &&
+      ally !== source &&
+      cast != null &&
+      isDamaging(cast.move) &&
+      landsIn(ally) >= ready
+      ? 1
+      : 0;
   }
-
-  const ally = event.target.unit;
-
-  return ally !== event.source && carries(event.source, ally, isDamaging) ? 1 : 0;
+  if (CALLS.has(event.move)) {
+    for (const friend of context.friends()) {
+      if (friend !== source && context.incoming(friend, isDamaging, ready)) {
+        return 1;
+      }
+    }
+  }
+  return 0;
 };
 
 const RELEVANCE: { [role in MoveRole]?: Relevance } = {

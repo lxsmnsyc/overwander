@@ -33,6 +33,11 @@ whether now is the moment:
   and its travel delay, which the engine already reports. A Protect or team
   guard counts only if it is up before the foe's hit lands, and Me First and
   Sucker Punch only if the foe is still swinging when they go off.
+- **It times its combos.** Helping Hand counts only on a partner's hit that
+  lands after it, Follow Me only when a foe's hit at a teammate lands after the
+  redirect is up, and Encore only on a cast still winding up when it lands.
+- **It orders free units best-first.** When several units are free at once, the
+  most valuable order goes out first and the rest are planned again around it.
 - **It counts what the team has on the way.** A hit is weighed against what
   friends' visible casts leave of the target, so a foe friends will finish is
   left alone and one they leave in reach counts as a KO.

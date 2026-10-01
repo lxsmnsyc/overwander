@@ -125,4 +125,38 @@ describe('the invisible trainer', () => {
     expect(trainer.order(unit, 700)).toBeUndefined();
     expect(trainer.order(unit, 2000)?.move).toBe(Moves.Tackle);
   });
+
+  it('sends two free units after different foes rather than both after one', () => {
+    const { battle, teamA, teamB } = createTrainerBattle();
+    const first = createUnit(battle, teamA);
+    const second = createUnit(battle, teamA);
+    const weak = createUnit(battle, teamB);
+    const strong = createUnit(battle, teamB);
+    first.addMove(Moves.Tackle);
+    second.addMove(Moves.Tackle);
+    // Either Tackle finishes it, so only one is needed there
+    weak.setHealth(10);
+
+    getTrainer(battle, teamA).command([first, second], 0);
+
+    const targets = new Set([first.casting?.target, second.casting?.target]);
+
+    expect(targets).toEqual(new Set([unitTarget(weak), unitTarget(strong)]));
+  });
+
+  it('calls a foe’s hit onto itself to spare a teammate', () => {
+    const { battle, teamA, teamB } = createTrainerBattle();
+    const unit = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    unit.addMove(Moves.FollowMe);
+    unit.addMove(Moves.Tackle);
+    foe.addMove(Moves.Tackle);
+
+    expect(chooseMove(battle, unit)?.move).not.toBe(Moves.FollowMe);
+
+    foe.cast(Moves.Tackle, unitTarget(ally));
+
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.FollowMe);
+  });
 });

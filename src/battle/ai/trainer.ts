@@ -12,6 +12,8 @@ import { BASE_SCORE } from './score';
 export interface Order {
   move: Moves;
   target: MoveTarget;
+  /** What the order is worth, so the most valuable goes out first */
+  score?: number;
 }
 
 /** The longest a unit is held for a better move to come off cooldown */
@@ -76,7 +78,33 @@ export class Trainer {
     }
 
     this.freeSince.delete(unit);
-    return { move: choice.move, target: choice.target };
+    return { move: choice.move, target: choice.target, score: choice.score };
+  }
+
+  /**
+   * Order every free unit at once, the most valuable order first. Each
+   * cast is on show the moment it starts, so the units still waiting
+   * plan around it: a KO goes out, and the rest stop chasing that foe
+   */
+  command(units: Unit[], now: number): void {
+    const waiting = new Set(units);
+
+    while (waiting.size > 0) {
+      let best: { unit: Unit; order: Order } | undefined;
+
+      for (const unit of waiting) {
+        const order = this.order(unit, now);
+
+        if (order != null && (best == null || (order.score ?? 0) > (best.order.score ?? 0))) {
+          best = { unit, order };
+        }
+      }
+      if (best == null) {
+        return;
+      }
+      waiting.delete(best.unit);
+      best.unit.cast(best.order.move, best.order.target);
+    }
   }
 
   /**

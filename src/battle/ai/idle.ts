@@ -2,6 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
 import { MOVE_LOCKING_STATUS } from '../status';
+import type Team from '../team';
 import type Unit from '../unit';
 import { hasAnyStatus } from '../utils';
 import { getTrainer } from './trainer';
@@ -174,24 +175,27 @@ export default function setupIdleAI(battle: Battle): void {
       }
     }
 
-    // A copy, because casting mutates the set the loop is walking —
-    // and a unit that leaves it and comes back within the same tick
-    // would otherwise be visited twice
-    for (const unit of [...idle]) {
+    // Each team's free units go to its trainer together, so it can
+    // order them as one. Gathered first, because casting mutates the
+    // set the loop would otherwise be walking
+    const free = new Map<Team, Unit[]>();
+
+    for (const unit of idle) {
       // The set is a cache of the check, so the check has the last
-      // word: a unit that stopped being idle earlier in this very tick
-      // does not get to act on the strength of a stale entry
+      // word: a unit that stopped being idle does not get to act on
+      // the strength of a stale entry
       if (!isIdle(unit)) {
         idle.delete(unit);
         continue;
       }
 
-      // The unit acts on its trainer's order, not its own choice
-      const order = getTrainer(battle, unit.team).order(unit, clock);
+      const units = free.get(unit.team) ?? [];
 
-      if (order) {
-        unit.cast(order.move, order.target);
-      }
+      units.push(unit);
+      free.set(unit.team, units);
+    }
+    for (const [team, units] of free) {
+      getTrainer(battle, team).command(units, clock);
     }
   });
 }

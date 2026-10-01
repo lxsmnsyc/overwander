@@ -875,6 +875,12 @@ describe('weighing a move', () => {
     expect(scoreMove(battle, unit, Moves.Toxic, unitTarget(foe))).toBeGreaterThan(
       BASE_SCORE + ROLE_BASE[MoveRole.Status] - 1,
     );
+    // Only worth it with a hit of the partner's to land on
+    expect(scoreMove(battle, unit, Moves.HelpingHand, unitTarget(ally))).toBe(BASE_SCORE);
+
+    ally.addMove(Moves.Tackle);
+    ally.cast(Moves.Tackle, unitTarget(foe));
+
     expect(scoreMove(battle, unit, Moves.HelpingHand, unitTarget(ally))).toBe(
       BASE_SCORE + ROLE_BASE[MoveRole.Support],
     );

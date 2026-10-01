@@ -4,11 +4,11 @@ import { BattleEvents } from '../events';
 import { MOVE_LOCKING_STATUS } from '../status';
 import type Unit from '../unit';
 import { hasAnyStatus } from '../utils';
-import { chooseMove } from './choose-move';
+import { getTrainer } from './trainer';
 
 /**
- * Drives the units: every tick, any idle unit picks its best move and
- * casts it. A unit is idle when it is not casting or channeling, has
+ * Drives the units: every tick, any idle unit asks its team's trainer
+ * for an order and carries it out. A unit is idle when it is not casting or channeling, has
  * no triggered move whose effect is still pending, and is not locked
  * out of using moves by a status.
  *
@@ -186,10 +186,11 @@ export default function setupIdleAI(battle: Battle): void {
         continue;
       }
 
-      const choice = chooseMove(battle, unit);
+      // The unit acts on its trainer's order, not its own choice
+      const order = getTrainer(battle, unit.team).order(unit);
 
-      if (choice) {
-        unit.cast(choice.move, choice.target);
+      if (order) {
+        unit.cast(order.move, order.target);
       }
     }
   });

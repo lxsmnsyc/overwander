@@ -12,6 +12,18 @@ The idle set is maintained by the lifecycle events rather than rescanned. The
 outcome check never asks the AI what it _would_ do, because consuming a random
 would pull every replay off its seed.
 
+## The invisible trainer
+
+Every team has an invisible trainer
+([`src/battle/ai/trainer.ts`](../../src/battle/ai/trainer.ts)). A free unit
+does not choose its own move: it asks its trainer for an order and carries it
+out, and a trainer may also leave it standing. The idle loop below still decides
+which units are free; the trainer decides what they do.
+
+For now a trainer orders the move each unit's own scoring picks. Planning across
+the team, waiting for a better moment, timed combos and skill by rank build on
+this.
+
 ## Keeping the idle set accurate
 
 A set that stands in for a check is only worth keeping while it cannot go stale.

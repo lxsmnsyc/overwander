@@ -11,7 +11,7 @@ export default function registerEncoreToBeatUp(): void {
   registerMove(Moves.Encore, {
     name: 'Encore',
     description:
-      'Makes the target repeat its last used move 3 times over. Moves that wind up cannot be repeated.',
+      "Locks the target's current or next cast into 3 uses in a row, for one cooldown. Moves that wind up are not locked.",
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 5,
@@ -19,7 +19,6 @@ export default function registerEncoreToBeatUp(): void {
     target: MoveTargets.Unit,
     affects: MoveAffects.Unit | MoveAffects.Own | MoveAffects.Enemy,
     flags: 0,
-    steps: 2,
     cast: [SpriteAnim.Dance, SpriteAnim.RearUp, SpriteAnim.Charge],
   });
   registerMove(Moves.Pursuit, {

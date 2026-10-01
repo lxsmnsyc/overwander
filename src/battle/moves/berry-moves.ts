@@ -8,6 +8,7 @@ import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
 import { stealableItem } from '../utils';
+import { seesFully } from '../ai/fog';
 
 /**
  * The moves that go through a berry: Pluck and Bug Bite eat the
@@ -142,6 +143,7 @@ export default function setupBerryMoves(battle: Battle): void {
     if (
       EATING_MOVES.has(event.move) &&
       event.target.type === MoveTargetType.Unit &&
+      seesFully(event.source, event.target.unit) &&
       heldBerry(event.target.unit) == null
     ) {
       event.score -= USELESS_PENALTY / 2;

@@ -30,6 +30,16 @@ export interface CheckUnitAIMoveUsableEvent extends UnitMoveEvent {
   usable: boolean;
 }
 
+/**
+ * Whether aiming this move at a teammate feeds an ability of theirs,
+ * a heal or a stage, rather than landing on nothing
+ */
+export interface CheckUnitAIMoveFeedsEvent extends UnitMoveEvent {
+  target: MoveTarget;
+  /** Opens false; an absorber that would pay out answers true */
+  feeds: boolean;
+}
+
 export interface AIMoveChoice {
   move: Moves;
   target: MoveTarget;

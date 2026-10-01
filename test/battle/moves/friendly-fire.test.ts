@@ -68,13 +68,54 @@ describe('feeding a hit to one’s own side', () => {
     expect(usable(battle, caster, Moves.Thunderbolt, plain)).toBe(false);
   });
 
-  it('allows the teammate that drinks it', () => {
+  it('allows the teammate that drinks it, while there is something to gain', () => {
     const { battle, teamA } = createFeedBattle();
     const caster = createUnit(battle, teamA);
     const absorber = createUnit(battle, teamA);
 
     absorber.addAbility(Abilities.VoltAbsorb);
+    // Whole, there is nothing for the heal to put back
+    expect(usable(battle, caster, Moves.Thunderbolt, absorber)).toBe(false);
+
+    absorber.setHealth(absorber.health / 2);
     expect(usable(battle, caster, Moves.Thunderbolt, absorber)).toBe(true);
+  });
+
+  it('refuses a teammate that is only immune, with nothing to pay out', () => {
+    const { battle, teamA } = createFeedBattle();
+    const caster = createUnit(battle, teamA);
+    const floating = createUnit(battle, teamA);
+    const steel = createUnit(battle, teamA, [Types.Steel]);
+
+    floating.addAbility(Abilities.Levitate);
+    floating.setHealth(floating.health / 2);
+    steel.setHealth(steel.health / 2);
+
+    expect(usable(battle, caster, Moves.Bonemerang, floating)).toBe(false);
+    expect(usable(battle, caster, Moves.SludgeBomb, steel)).toBe(false);
+  });
+
+  it('turns on nobody once the other side is gone', () => {
+    const { battle, teamA, teamB } = createFeedBattle();
+    const caster = createUnit(battle, teamA);
+    const floating = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 0.5);
+    caster.addMove(Moves.Bonemerang);
+    floating.addAbility(Abilities.Levitate);
+    caster.enter();
+    floating.enter();
+    foe.enter();
+    foe.setHealth(0);
+
+    const choice = chooseMove(battle, caster);
+
+    expect(
+      choice != null &&
+        choice.target.type === MoveTargetType.Unit &&
+        choice.target.unit === floating,
+    ).toBe(false);
   });
 
   it('leaves a move whose table already names an ally alone', () => {

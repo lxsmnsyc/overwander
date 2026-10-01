@@ -1,6 +1,7 @@
 import 'server-only';
 import { WORLD_GENERATION } from '../../overworld/current';
 import { Depth } from '../../overworld/depth';
+import { PHENOMENON_MIN_IV } from '../../data/overworld/phenomenon';
 import AleaRNG from '../../core/alea';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import type { Spawn } from '../../overworld/chunk-snapshot';
@@ -154,6 +155,7 @@ export async function claimPhenomenon(
     kind: 'encounter',
     encounter: await startEncounter(uid, snapshot, key, spawn, {
       phenomenon: snapshot.getPhenomena().get(cell),
+      minimumIV: PHENOMENON_MIN_IV,
     }),
   };
 }

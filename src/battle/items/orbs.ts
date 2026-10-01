@@ -6,6 +6,8 @@ import { DamageFlags, MoveCategories } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { BattleEvents, EffectType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
+import { getMoveData } from '../../data/moves';
+import { RISKY_PENALTY } from '../ai/score';
 import { hasAttackEffect } from '../moves/status';
 import type Unit from '../unit';
 import type Battle from '../core';
@@ -79,6 +81,29 @@ const setupLifeOrb = createHeldItem(
           recoil,
           DamageFlags.Indirect,
         );
+      }),
+
+      // A hit whose recoil would finish its own holder is only worth it
+      // as a last one
+      battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+        const source = event.source;
+
+        if (
+          getMoveData(event.move).category === MoveCategories.Status ||
+          !holds(source, Items.LifeOrb) ||
+          (source.hasAbility(Abilities.SheerForce) && hasAttackEffect(event.move)) ||
+          !source.checkCanDamage(
+            { type: EffectType.Item, item: Items.LifeOrb, unit: source },
+            source,
+            1,
+            DamageFlags.Indirect,
+          )
+        ) {
+          return;
+        }
+        if (source.health <= Math.floor(source.checkStat(Stats.HP, 0) * LIFE_ORB_RECOIL)) {
+          event.score -= RISKY_PENALTY;
+        }
       }),
     ]),
 );

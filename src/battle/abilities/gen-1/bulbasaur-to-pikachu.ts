@@ -7,9 +7,8 @@ import { DamageFlags, MoveAttackFlags, MoveCategories, MoveFlags } from '../../.
 import { Statuses, TeamStatuses, Weathers } from '../../../data/ids/status';
 import { getItemData } from '../../../data/items';
 import { getMoveData } from '../../../data/moves';
-import { BattleEvents, EffectType, MoveTargetType, type UnitAttackEvent } from '../../events';
+import { BattleEvents, EffectType, type UnitAttackEvent } from '../../events';
 import { MAJOR_STATUS_CONDITIONS } from '../../status';
-import { isCentered } from '../../status/centered';
 import type Team from '../../team';
 import type Unit from '../../unit';
 import { hasAnyStatus, isWeatherRainy, isWeatherSunny, onUnitActs, unitTarget } from '../../utils';
@@ -19,12 +18,17 @@ import {
   createContactHazard,
   createDrizzleAbility,
   createKeenEyeAbility,
-  createStageFeedScoring,
+  createRodAbility,
   createThickFatAbility,
   createToughClawsAbility,
-  getAbilityHolders,
 } from '../__create';
 import { MergedLifecycle } from '../../lifecycle';
+import { registerWeatherWant } from '../../ai/weather-wants';
+
+// The skies these thrive under, so the AI weighs a weather move by who gains from it
+registerWeatherWant(Abilities.Chlorophyll, [Weathers.Sunny]);
+registerWeatherWant(Abilities.SolarPower, [Weathers.Sunny]);
+registerWeatherWant(Abilities.RainDish, [Weathers.Rain]);
 
 /**
  * What the first stretch of the dex is born with, Bulbasaur to
@@ -349,6 +353,13 @@ const bulbasaurToPikachu = [
             event.source.triggerAbility(Abilities.Intimidate);
           }
         }),
+        // A shape worn on the way in (a Mega, a Therian) arrives after
+        // the entry has been heard, so it scowls as it is put on
+        battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, (event) => {
+          if (event.worn && event.ability === Abilities.Intimidate) {
+            event.source.triggerAbility(Abilities.Intimidate);
+          }
+        }),
         // The enemy attack drop rides the trigger
         battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
           if (event.ability !== Abilities.Intimidate) {
@@ -473,83 +484,7 @@ const bulbasaurToPikachu = [
   }),
 
   // https://bulbapedia.bulbagarden.net/wiki/Lightning_Rod_(Ability)
-  createAbility(
-    Abilities.LightningRod,
-    (battle) =>
-      new MergedLifecycle([
-        // Electric moves are drawn to a rod on the defending side. The
-        // question is only asked of a move aimed at one thing, so a
-        // move that goes out to the whole side needs no test here
-        battle.on(BattleEvents.CheckUnitMoveRedirect, EventPriority.Post, (event) => {
-          const aimed = event.redirect;
-
-          if (
-            aimed.type !== MoveTargetType.Unit ||
-            aimed.unit.hasAbility(Abilities.LightningRod) ||
-            // A centre outranks a rod: Follow Me cost a cast
-            isCentered(aimed.unit) ||
-            event.source.checkMoveType(event.move, aimed) !== Types.Electric
-          ) {
-            return;
-          }
-
-          const alliance = aimed.unit.team.alliance;
-
-          for (const unit of getAbilityHolders(battle, Abilities.LightningRod)) {
-            if (
-              unit.alive &&
-              unit !== event.source &&
-              unit.team.alliance === alliance &&
-              unit.hasAbility(Abilities.LightningRod)
-            ) {
-              event.redirect = unitTarget(unit);
-              return;
-            }
-          }
-        }),
-        // Pure query: grants the immunity, no side effects
-        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
-          if (
-            event.type === Types.Electric &&
-            event.target.type === MoveTargetType.Unit &&
-            event.target.unit !== event.source &&
-            event.target.unit.hasAbility(Abilities.LightningRod)
-          ) {
-            event.immune = true;
-          }
-        }),
-        // The absorb only fires when a real move actually fails
-        // against the holder, never on speculative immunity checks
-        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
-          const parent = event.parent;
-
-          if (
-            parent.target.type === MoveTargetType.Unit &&
-            parent.target.unit !== parent.source &&
-            parent.target.unit.hasAbility(Abilities.LightningRod) &&
-            parent.source.checkMoveType(parent.move, parent.target) === Types.Electric
-          ) {
-            parent.target.unit.triggerAbility(Abilities.LightningRod);
-          }
-        }),
-        createStageFeedScoring(
-          battle,
-          Abilities.LightningRod,
-          Types.Electric,
-          Stages.SpecialAttack,
-        ),
-        // The special attack boost rides the trigger
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability === Abilities.LightningRod) {
-            event.source.addStage(Stages.SpecialAttack, 1, {
-              type: EffectType.Ability,
-              ability: Abilities.LightningRod,
-              unit: event.source,
-            });
-          }
-        }),
-      ]),
-  ),
+  createRodAbility(Abilities.LightningRod, Stages.SpecialAttack, Types.Electric),
 ];
 
 export default bulbasaurToPikachu;

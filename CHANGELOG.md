@@ -1,5 +1,18 @@
 # overwander
 
+## 4.26.1
+
+### Patch Changes
+
+- 58df8e7: - Award squares on the profile stay square on a phone, with badges and portraits shrunk to fit instead of clipped.
+  - A battle history entry shows the team first, outside the tinted plate that holds the fight and its buttons, so the team is always visible.
+- f9514a2: - On a Dark Day, a shadow lair now holds a true shadow only where that shadow's counterpart has a lair in the same biome. The raid is named after that lair.
+  - A shadow lair in a biome with no such lair keeps its ordinary shadow raid. A Woodland lair no longer stages XD-144 as "Shadow Seafoam Islands".
+- c53d0fa: - A legendary lair that has no legendary to host this window now stands as a shadow lair instead of staying empty. This happens most often in kelp forests and cold deserts.
+- 4529b17: - Computer-controlled pokemon no longer attack a teammate who is merely immune to the move, such as a Ground move into a teammate with Levitate.
+  - They still aim a move at a teammate whose ability turns it into a heal or a boost, such as Fire into Flash Fire, and only while that teammate gains something from it.
+  - After a raid boss falls, its challengers no longer turn their attacks on each other.
+
 ## 4.26.0
 
 ### Minor Changes

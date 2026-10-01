@@ -1,25 +1,35 @@
 import type BasicSprite from '../../../canvas/basic-sprite';
 import loadBasicSprite, { UI_SPRITE_ROOT } from '../../../canvas/basic-sprites';
 import { type SpriteQuad, cornersOf } from '../../../canvas/placement';
-import { Species } from '../../../data/ids/species';
+import type { Items } from '../../../data/ids/items';
+import type { Species } from '../../../data/ids/species';
+import { getItemData } from '../../../data/items';
+import { FORM_ITEMS } from '../../../data/items/form-items';
 import { MEGA_STONES, getMegaStone } from '../../../data/items/mega-stones';
 import { isMegaSpecies } from '../../../data/species/megas';
 import type { SlotBatch } from './draw';
 
 /**
- * The stone a Mega is wearing, or the orb a Primal is, floating over
- * it. Not every Mega has art of its own, so this is what tells a
- * watcher the shape has changed
+ * The stone a Mega is wearing, or the item a held shape is (an orb, a
+ * Plate, a Drive, the Reveal Glass), floating over it. Not every one
+ * of those shapes has art of its own, so this is what tells a watcher
+ * the shape has changed
  */
 
 /** What a Mega with no stone wears instead: Rayquaza's Key Stone */
 const KEY_STONE = { sheet: 'key', name: 'key-stone-gen6' };
 
-/** A Primal wears the orb that returned it to that shape */
-const PRIMAL_ORBS = new Map<Species, { sheet: string; name: string }>([
-  [Species.KyogrePrimal, { sheet: 'held', name: 'blue-orb' }],
-  [Species.GroudonPrimal, { sheet: 'held', name: 'red-orb' }],
-]);
+/** Which item holds each shape a form item puts its holder in */
+const SHAPE_ITEMS = (() => {
+  const items = new Map<Species, Items>();
+
+  for (const [item, forms] of FORM_ITEMS) {
+    for (const form of forms) {
+      items.set(form, item);
+    }
+  }
+  return items;
+})();
 
 /** How far above the cast plate it floats */
 const MARK_RISE = 22;
@@ -46,10 +56,13 @@ function sheetOf(name: string): BasicSprite | null {
 }
 
 function iconOf(species: Species): { sheet: string; name: string } | null {
-  const orb = PRIMAL_ORBS.get(species);
+  const item = SHAPE_ITEMS.get(species);
 
-  if (orb != null) {
-    return orb;
+  if (item != null) {
+    // An item's icon is written as its sheet and its name
+    const [sheet, name] = getItemData(item).icon.split('/');
+
+    return { sheet, name };
   }
   if (!isMegaSpecies(species)) {
     return null;
@@ -76,11 +89,11 @@ function paint(context: CanvasRenderingContext2D, quad: SpriteQuad, alpha: numbe
 }
 
 /**
- * The mark over one Mega, centred on `x` with the plate's line at `y`.
+ * The mark over one changed shape, centred on `x` with the plate's line at `y`.
  * The glow is the stone screened over itself at a larger size, so it
  * takes the stone's own colour
  */
-export default function drawMegaMark(
+export default function drawFormMark(
   context: CanvasRenderingContext2D,
   species: Species,
   x: number,

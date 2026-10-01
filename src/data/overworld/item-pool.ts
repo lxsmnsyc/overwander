@@ -369,6 +369,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     // nothing until a Kyurem has been caught
     { item: Items.DnaSplicers, weight: 3 },
     { item: Items.PrisonBottle, weight: 3 },
+    // A little thicker than an orb: one mirror serves three genies
+    { item: Items.RevealGlass, weight: 4 },
     // Three purses instead of one, for good, and nothing sells one.
     // Here rather than in rare so that parting with it is asked about
     // twice

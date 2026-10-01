@@ -1041,6 +1041,8 @@ export const enum Items {
   RareCandyMax = 576,
   /** Room for one more move, the way a Utility Belt is room for one more item */
   SkillBook = 577,
+  /** What shows the forces of nature their other shape */
+  RevealGlass = 578,
 }
 
 /**

@@ -1044,10 +1044,10 @@ export const enum Items {
 
   /**
    * The Zenith Shards, one per Zenith, in a band of their own from
-   * 100000: each is its Zenith's species id less 900000, so a regional
+   * 200000: each is its Zenith's species id less 800000, so a regional
    * form's Zenith has a shard of its own
    */
-  ArcanineZenithShard = 105999,
+  ArcanineZenithShard = 205999,
 }
 
 /**

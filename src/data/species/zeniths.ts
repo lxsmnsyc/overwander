@@ -92,7 +92,7 @@ export const RESERVED_FOR_MEGAS = new Set<Species>([
 export const NO_ZENITH = new Set<Species>([Species.Ditto]);
 
 /** Where a Zenith's shard id sits relative to its species id */
-export const ZENITH_SHARD_OFFSET = 900000;
+export const ZENITH_SHARD_OFFSET = 800000;
 
 /** What a Zenith adds to the base stat total of the pokemon it is a Zenith of */
 export const ZENITH_BONUS = 100;

@@ -684,35 +684,57 @@ describe('the item pictures that ship', () => {
     images: Placed[];
   }
 
-  const sheetsByName = new Map<string, ItemSheet>(
-    readdirSync(ITEM_ROOT, { withFileTypes: true })
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => {
-        const described = JSON.parse(
-          readFileSync(join(ITEM_ROOT, entry.name, 'data.json'), 'utf8'),
-        ) as unknown;
-        const images = fieldOf(described, 'images');
+  /**
+   * Every sheet under the item root, named by its path from there. A
+   * folder holding a `data.json` is a sheet, and any other folder
+   * holds sheets of its own (`zenith/kanto`)
+   */
+  function sheetFolders(under: string): string[] {
+    const found: string[] = [];
 
-        return [
-          entry.name,
-          {
-            width: Number(fieldOf(described, 'width')),
-            height: Number(fieldOf(described, 'height')),
-            images: (Array.isArray(images) ? images : []).map((one: unknown) => ({
-              name: String(fieldOf(one, 'name')).replace(/\.png$/, ''),
-              width: Number(fieldOf(one, 'width')),
-              height: Number(fieldOf(one, 'height')),
-              sourceWidth: Number(fieldOf(one, 'sourceWidth')),
-              sourceHeight: Number(fieldOf(one, 'sourceHeight')),
-              trim: trimOf(one),
-              base: pairOf(fieldOf(one, 'base')),
-              x: Number(fieldOf(one, 'x')),
-              y: Number(fieldOf(one, 'y')),
-            })),
-          },
-        ];
-      }),
-  );
+    for (const entry of readdirSync(join(ITEM_ROOT, under), { withFileTypes: true })) {
+      if (!entry.isDirectory()) {
+        continue;
+      }
+      const name = under === '' ? entry.name : `${under}/${entry.name}`;
+
+      if (existsSync(join(ITEM_ROOT, name, 'data.json'))) {
+        found.push(name);
+      } else {
+        found.push(...sheetFolders(name));
+      }
+    }
+    return found;
+  }
+
+  function readItemSheet(name: string): ItemSheet {
+    const described = JSON.parse(
+      readFileSync(join(ITEM_ROOT, name, 'data.json'), 'utf8'),
+    ) as unknown;
+    const images = fieldOf(described, 'images');
+
+    return {
+      width: Number(fieldOf(described, 'width')),
+      height: Number(fieldOf(described, 'height')),
+      images: (Array.isArray(images) ? images : []).map((one: unknown) => ({
+        name: String(fieldOf(one, 'name')).replace(/\.png$/, ''),
+        width: Number(fieldOf(one, 'width')),
+        height: Number(fieldOf(one, 'height')),
+        sourceWidth: Number(fieldOf(one, 'sourceWidth')),
+        sourceHeight: Number(fieldOf(one, 'sourceHeight')),
+        trim: trimOf(one),
+        base: pairOf(fieldOf(one, 'base')),
+        x: Number(fieldOf(one, 'x')),
+        y: Number(fieldOf(one, 'y')),
+      })),
+    };
+  }
+
+  const sheetsByName = new Map<string, ItemSheet>();
+
+  for (const name of sheetFolders('')) {
+    sheetsByName.set(name, readItemSheet(name));
+  }
 
   it('describes each sheet at the size its drawing actually is', () => {
     // What goes wrong when it drifts: the interface scrolls the sheet

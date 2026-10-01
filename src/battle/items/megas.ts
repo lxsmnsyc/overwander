@@ -28,30 +28,31 @@ export function megaOf(unit: Unit): Species | null {
   return null;
 }
 
-function megaTotal(mega: Species): number {
+function shapeTotal(shape: Species): number {
   let total = 0;
 
   for (const stat of STAT_ORDER) {
-    total += getSpeciesData(mega).stats[stat];
+    total += getSpeciesData(shape).stats[stat];
   }
   return total;
 }
 
 /**
- * The one unit on a team that Mega Evolves: the highest level, then
- * the biggest Mega, then whoever stands earlier in the party
+ * The one unit on a team that takes a once-a-team shape: the highest
+ * level, then the biggest shape, then whoever stands earlier in the
+ * party. Shared by the Megas and the Zeniths, which each have a slot
  */
-export function pickMega(team: Team): Unit | null {
+export function pickShapeHolder(team: Team, shapeOf: (unit: Unit) => Species | null): Unit | null {
   let best: Unit | null = null;
   let bestTotal = 0;
 
   for (const unit of team.units) {
-    const mega = megaOf(unit);
+    const shape = shapeOf(unit);
 
-    if (mega == null || !unit.alive) {
+    if (shape == null || !unit.alive) {
       continue;
     }
-    const total = megaTotal(mega);
+    const total = shapeTotal(shape);
 
     if (
       best == null ||
@@ -63,6 +64,11 @@ export function pickMega(team: Team): Unit | null {
     }
   }
   return best;
+}
+
+/** The one unit on a team that Mega Evolves */
+export function pickMega(team: Team): Unit | null {
+  return pickShapeHolder(team, megaOf);
 }
 
 /**

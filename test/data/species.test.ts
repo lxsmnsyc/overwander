@@ -87,6 +87,7 @@ import {
   isBaseForm,
   listMegas,
   listTrueShadows,
+  listZeniths,
   registerSpecies,
 } from '../../src/data/species';
 import { registerSpecies as registerSpeciesData } from '../../src/data/species/__create';
@@ -438,6 +439,7 @@ describe('species forms', () => {
       // shadow of rather than pokemon of their own
       ...listTrueShadows(),
       ...listMegas(),
+      ...listZeniths(),
       Species.KyogrePrimal,
       Species.GroudonPrimal,
     ]);

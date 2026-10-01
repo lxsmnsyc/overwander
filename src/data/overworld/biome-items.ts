@@ -2,6 +2,9 @@ import type Biome from '../ids/biome';
 import BiomeIds from '../ids/biome';
 import type { Items } from '../ids/items';
 import { Items as ItemIds } from '../ids/items';
+import type Families from '../ids/families';
+import { ZENITH_SHARDS } from '../items/zenith-shards';
+import { getRegisteredSpecies, getSpeciesData } from '../species/__create';
 import { ITEM_POOL, type ItemPoolEntry, type ItemRarityGroups } from './item-pool';
 
 /**
@@ -94,30 +97,52 @@ const GROUND_ITEMS: [item: Items, biomes: Biome[]][] = [
   [ItemIds.PrettyWing, [...OPEN, ...HIGHLAND, ...FOREST]],
 ];
 
-const HOMES = (() => {
-  const homes = new Map<Items, Set<Biome>>();
+let homes: Map<Items, Set<Biome>> | null = null;
 
-  for (const [item, biomes] of GROUND_ITEMS) {
-    homes.set(item, new Set(biomes));
+/**
+ * Where each Zenith Shard is buried: wherever any stage of its line
+ * is met, read off the species so a line moved to new ground takes
+ * its shard along. A final stage is often met nowhere itself
+ */
+function addZenithHomes(into: Map<Items, Set<Biome>>): void {
+  const families = new Map<Families, Set<Biome>>();
+
+  for (const species of getRegisteredSpecies()) {
+    const data = getSpeciesData(species);
+    const ground = families.get(data.family) ?? new Set<Biome>();
+
+    for (const biome of data.biomes) {
+      ground.add(biome);
+    }
+    families.set(data.family, ground);
+  }
+  for (const [item, shape] of ZENITH_SHARDS) {
+    into.set(item, families.get(getSpeciesData(shape.base).family) ?? new Set());
+  }
+}
+
+/** Built the first time it is asked for, since the shards read the species registry */
+function getHomes(): Map<Items, Set<Biome>> {
+  if (homes == null) {
+    homes = new Map();
+    for (const [item, biomes] of GROUND_ITEMS) {
+      homes.set(item, new Set(biomes));
+    }
+    addZenithHomes(homes);
   }
   return homes;
-})();
+}
 
 /** Which biomes hide this item, empty for one the whole world buries */
 export function getItemBiomes(item: Items): Biome[] {
-  for (const [one, biomes] of GROUND_ITEMS) {
-    if (one === item) {
-      return biomes;
-    }
-  }
-  return [];
+  return [...(getHomes().get(item) ?? [])];
 }
 
 /** Whether this ground hides this item, true for anything homeless */
 export function isItemBuriedIn(item: Items, biome: Biome): boolean {
-  const homes = HOMES.get(item);
+  const ground = getHomes().get(item);
 
-  return homes == null || homes.has(biome);
+  return ground == null || ground.has(biome);
 }
 
 const POOLS = new Map<Biome, ItemRarityGroups>();

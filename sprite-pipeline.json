@@ -31451,6 +31451,18 @@
         "bytes": 2683
       }
     },
+    "public/sprites/ui/items/zenith/kanto/image.png": {
+      "digest": "949a2ca3fc813aaf",
+      "bytes": 206,
+      "width": 15,
+      "height": 16,
+      "compact": {
+        "at": "2026-10-01T12:22:41Z",
+        "as": "already compact",
+        "was": 206,
+        "bytes": 206
+      }
+    },
     "public/sprites/ui/move-categories/image.png": {
       "digest": "daceb76248da2137",
       "bytes": 403,

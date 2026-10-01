@@ -1,0 +1,20 @@
+{
+  "compact": true,
+  "width": 15,
+  "height": 16,
+  "images": [
+    {
+      "name": "arcanine.png",
+      "x": 0,
+      "y": 0,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    }
+  ]
+}

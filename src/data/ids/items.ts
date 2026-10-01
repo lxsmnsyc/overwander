@@ -1041,6 +1041,12 @@ export const enum Items {
   RareCandyMax = 576,
   /** Room for one more move, the way a Utility Belt is room for one more item */
   SkillBook = 577,
+
+  /**
+   * The Zenith Shards, one per species, in a band of their own: each
+   * is 100000 plus the dex number of the pokemon it is for
+   */
+  ArcanineZenithShard = 100059,
 }
 
 /**

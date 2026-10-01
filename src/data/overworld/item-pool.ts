@@ -5,6 +5,7 @@ import { MARKET_GEAR } from '../items/gear';
 import { ONE_SHOTS } from '../items/one-shots';
 import { ORBS } from '../items/orbs';
 import { MEGA_STONES } from '../items/mega-stones';
+import { ZENITH_SHARDS } from '../items/zenith-shards';
 import { PLATES } from '../items/plates';
 import { MAX_VITAMIN_STATS, VITAMIN_STATS } from '../items/vitamins';
 import { MINT_NATURES } from '../items/mints';
@@ -298,6 +299,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     ...evenlyWeighted(GENERAL_STAT_BOOSTERS.keys(), 1),
   ],
   prized: [
+    // The Zenith Shards. Each is buried only where its own line lives
+    // (see biome-items.ts), so a shard is a reason to go there
+    ...evenlyWeighted(ZENITH_SHARDS.keys(), 2),
     // A dug-up cap fixes one stat of one pokemon, and nothing else in
     // the game touches what a catch was born with. The commonest of
     // the three, so the band has something a player can actually hope

@@ -1101,6 +1101,13 @@ export const enum Species {
   /** The two Primals, in the collection's own Primal slot */
   KyogrePrimal = 1038201,
   GroudonPrimal = 1038301,
+
+  /**
+   * The Zeniths, this engine's own. Each takes the last form slot of
+   * its species, 99, which no collection fills, so a form the art adds
+   * later never lands on one
+   */
+  ArcanineZenith = 1005999,
 }
 
 /**

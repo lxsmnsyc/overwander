@@ -2,14 +2,16 @@ import type BasicSprite from '../../../canvas/basic-sprite';
 import loadBasicSprite, { UI_SPRITE_ROOT } from '../../../canvas/basic-sprites';
 import { type SpriteQuad, cornersOf } from '../../../canvas/placement';
 import { Species } from '../../../data/ids/species';
+import { getItemData } from '../../../data/items';
 import { MEGA_STONES, getMegaStone } from '../../../data/items/mega-stones';
 import { isMegaSpecies } from '../../../data/species/megas';
+import { getZenithBase, getZenithShape } from '../../../data/species/zeniths';
 import type { SlotBatch } from './draw';
 
 /**
- * The stone a Mega is wearing, or the orb a Primal is, floating over
- * it. Not every Mega has art of its own, so this is what tells a
- * watcher the shape has changed
+ * The stone a Mega is wearing, the orb a Primal is, or the shard a
+ * Zenith is, floating over it. Not every Mega has art of its own, and
+ * no Zenith does, so this is what tells a watcher the shape has changed
  */
 
 /** What a Mega with no stone wears instead: Rayquaza's Key Stone */
@@ -50,6 +52,18 @@ function iconOf(species: Species): { sheet: string; name: string } | null {
 
   if (orb != null) {
     return orb;
+  }
+
+  const zenithBase = getZenithBase(species);
+  const zenith = zenithBase == null ? null : getZenithShape(zenithBase);
+
+  if (zenith != null) {
+    // An item's icon is its sheet and its name, cut at the last slash
+    // since a shard's sheet sits in a folder of its own
+    const icon = getItemData(zenith.shard).icon;
+    const cut = icon.lastIndexOf('/');
+
+    return { sheet: icon.slice(0, cut), name: icon.slice(cut + 1) };
   }
   if (!isMegaSpecies(species)) {
     return null;

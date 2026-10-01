@@ -116,6 +116,15 @@ Small and unblocked.
       should declare all of it in one place, the way `createAbility` does for
       abilities, so adding the Jeweler or the Archaeologist above is one file.
 
+- [ ] **Zenith forms, region by region.** The system and Zenith Arcanine are in
+      (`src/data/species/zeniths.ts`). Each batch proposes, per species, the
+      stat spread (+100), the worn ability and any type change for approval,
+      then adds the shape, its shard id (100000 + dex), its tint in
+      `scripts/item-icons.ts` and its `zenith/<region>` icon.
+- [ ] **Zeniths and Z-Moves.** Once the gen 7 branches merge, `isMegaHolder` in
+      `src/battle/moves/z-moves.ts` has to refuse a Zenith, or a unit holding a
+      shard, the way it refuses a Mega.
+
 ## 3. Player systems
 
 Things a player owns and arranges, rather than finds in the world. Each one is

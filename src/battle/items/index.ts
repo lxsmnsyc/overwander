@@ -8,6 +8,7 @@ import setupGems from './gems';
 import setupHoney from './honey';
 import setupIncenses from './incenses';
 import setupMegas from './megas';
+import setupZeniths from './zeniths';
 import setupOneShots from './one-shots';
 import setupOrbs from './orbs';
 import setupSacredAsh from './sacred-ash';
@@ -31,4 +32,5 @@ export default function setupItems(battle: Battle): void {
   setupHoney(battle);
   setupFormItems(battle);
   setupMegas(battle);
+  setupZeniths(battle);
 }

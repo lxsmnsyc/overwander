@@ -1,5 +1,5 @@
-import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import sharp from 'sharp';
 import decode, { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
 import { packSmallest } from '../src/server/sprites/packing.ts';
@@ -45,7 +45,24 @@ function hexOf(image: Image, at: number): string {
     .padStart(6, '0')}`;
 }
 
+/**
+ * A `sheet/name` spec cut at its last slash, since a sheet may sit in
+ * a folder of its own (`zenith/kanto/arcanine` is on `zenith/kanto`)
+ */
+function sheetOf(spec: string): string {
+  return spec.slice(0, spec.lastIndexOf('/'));
+}
+
+function nameOf(spec: string): string {
+  return spec.slice(spec.lastIndexOf('/') + 1);
+}
+
 function readSheet(name: string): Sheet {
+  // A sheet nothing has been put on yet starts empty, a cell wide so
+  // its first picture has somewhere to go
+  if (!existsSync(join(ROOT, name, 'data.json'))) {
+    return { atlas: { width: CELL, height: 0, rgba: Buffer.alloc(0) }, pictures: [] };
+  }
   const parsed: unknown = JSON.parse(readFileSync(join(ROOT, name, 'data.json'), 'utf8'));
 
   if (typeof parsed !== 'object' || parsed === null || !('images' in parsed)) {
@@ -141,6 +158,7 @@ function mark(taken: Uint8Array, width: number, at: [number, number], image: Ima
  * is one nothing can parse
  */
 function write(path: string, body: Buffer | string): void {
+  mkdirSync(dirname(path), { recursive: true });
   writeFileSync(`${path}.writing`, body);
   renameSync(`${path}.writing`, path);
 }
@@ -769,6 +787,64 @@ const MAX_TINTS: Tint[] = [
 
 TINTS.push(...MAX_TINTS);
 
+/** A hue and saturation, from `#rrggbb` */
+function hueOf(hex: string): [hue: number, saturation: number] {
+  const [red, green, blue] = hexToRgb(hex).map((channel) => channel / 255);
+  const high = Math.max(red, green, blue);
+  const low = Math.min(red, green, blue);
+  const chroma = high - low;
+  const lightness = (high + low) / 2;
+
+  if (chroma === 0) {
+    return [0, 0];
+  }
+  const saturation = chroma / (1 - Math.abs(2 * lightness - 1));
+  let sector = (red - green) / chroma + 4;
+
+  if (high === red) {
+    sector = ((green - blue) / chroma + 6) % 6;
+  } else if (high === green) {
+    sector = (blue - red) / chroma + 2;
+  }
+
+  return [sector * 60, saturation];
+}
+
+/** The comet shard's tones, light to dark, and which of the two types each is painted in */
+const SHARD_TONES: [colour: string, lightness: number, second: boolean][] = [
+  ['#c5dee6', 0.8, false],
+  ['#83ace6', 0.68, false],
+  ['#628bde', 0.56, false],
+  ['#4a52b4', 0.46, true],
+  ['#41397b', 0.32, true],
+];
+
+/**
+ * A Zenith Shard is the comet shard in its Zenith's colours: the body
+ * in the first type, the point it tapers to in the second, so a dual
+ * type reads at a glance. The colours are the type colours the game
+ * already draws its type chips in (`TYPE_COLORS`), copied rather than
+ * imported because the ids behind that table are a const enum
+ */
+function zenithShard(region: string, holder: string, first: string, second = first): Tint {
+  const swaps: Record<string, string> = { '#202020': '#202020', '#eefff6': '#fffaf2' };
+
+  for (const [colour, lightness, isSecond] of SHARD_TONES) {
+    const [hue, saturation] = hueOf(isSecond ? second : first);
+
+    swaps[colour] = hslToHex(hue, Math.min(0.9, saturation), lightness);
+  }
+  return {
+    from: 'valuables/comet-shard',
+    to: `zenith/${region}/${holder}`,
+    why: 'the Zenith Shards belong to this engine alone, and no rip drew them',
+    swaps,
+  };
+}
+
+/** Every Zenith Shard, with its Zenith's types' colours */
+TINTS.push(zenithShard('kanto', 'arcanine', '#e62829', '#5060e1'));
+
 /**
  * The marks a swap cannot make, painted on where the picture already
  * has a pixel. Nothing is drawn outside the silhouette: a mark is on
@@ -809,7 +885,7 @@ function painted(
 }
 
 function tinted(tint: Tint, sheets: Map<string, Sheet>): Picture {
-  const [fromSheet, fromName] = tint.from.split('/');
+  const [fromSheet, fromName] = [sheetOf(tint.from), nameOf(tint.from)];
   const source = sheets.get(fromSheet)?.pictures.find((one) => one.name === fromName);
 
   if (source == null) {
@@ -868,7 +944,7 @@ function tinted(tint: Tint, sheets: Map<string, Sheet>): Picture {
       image.rgba[at + 2] = packedColour & 0xff;
     }
   }
-  return { name: tint.to.split('/')[1], image, trim: [source.trim[0], source.trim[1]] };
+  return { name: nameOf(tint.to), image, trim: [source.trim[0], source.trim[1]] };
 }
 
 /**
@@ -1024,7 +1100,7 @@ async function shrunk(art: Shrunk): Promise<Picture> {
   outlined(image, dark[0]?.colour);
 
   return {
-    name: art.to.split('/')[1],
+    name: nameOf(art.to),
     image,
     trim: [Math.floor((CELL - image.width) / 2), Math.floor((CELL - image.height) / 2)],
   };
@@ -1229,7 +1305,7 @@ const reading = new Set(
     ...TINTS.flatMap((one) => [one.from, one.to]),
     ...DRAWN.map((one) => one.to),
     ...SHRUNK.map((one) => one.to),
-  ].map((spec) => spec.split('/')[0]),
+  ].map((spec) => sheetOf(spec)),
 );
 
 for (const name of reading) {
@@ -1263,17 +1339,17 @@ function put(sheetName: string, picture: Picture): void {
 }
 
 for (const tint of TINTS) {
-  put(tint.to.split('/')[0], tinted(tint, sheets));
+  put(sheetOf(tint.to), tinted(tint, sheets));
 }
 for (const one of DRAWN) {
-  put(one.to.split('/')[0], drawn(one.to.split('/')[1], one.rows, one.colours));
+  put(sheetOf(one.to), drawn(nameOf(one.to), one.rows, one.colours));
 }
 for (const one of SHRUNK) {
   if (!existsSync(join(ART, `${one.from}.png`))) {
     console.log(`  ${one.to} kept as it is: no ${ART}/${one.from}.png to shrink`);
     continue;
   }
-  put(one.to.split('/')[0], await shrunk(one));
+  put(sheetOf(one.to), await shrunk(one));
 }
 for (const name of touched) {
   const sheet = sheets.get(name);

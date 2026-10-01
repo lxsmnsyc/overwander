@@ -15,6 +15,10 @@ import { startEncounter } from '../overworld';
 import { readEncounter } from '../encounter-io';
 import { encounterKey } from '../../overworld/safari';
 import { grantGold } from '../profile';
+import { grantItem } from '../inventory';
+import AleaRNG from '../../core/alea';
+import type { ItemStack } from '../../data/overworld/item-pool';
+import { getTotemCrystal } from '../../data/overworld/totems';
 import { asOutcome } from './outcome';
 import { RAID_ENCOUNTER_TYPES, RAID_GOLD, RAID_REWARD_LEVELS, RAID_SHINY_BOOST } from './spoils';
 
@@ -26,6 +30,42 @@ import { RAID_ENCOUNTER_TYPES, RAID_GOLD, RAID_REWARD_LEVELS, RAID_SHINY_BOOST }
 export interface RaidReward {
   encounter: EncounterRecord;
   gold: number;
+  /** What else it left: a Totem's Z-Crystal, where it dropped one */
+  items: ItemStack[];
+}
+
+/** How often a Totem leaves its crystal again for somebody who has beaten that Totem before */
+export const TOTEM_CRYSTAL_REPEAT_CHANCE = 1 / 4;
+
+/**
+ * Whether a beaten Totem hands this player its Z-Crystal: always the
+ * first time they beat that Totem, and one time in four after that,
+ * rolled off the lobby so a claim asked twice answers the same
+ */
+async function totemCrystal(uid: string, lobby: string, raid: RaidRecord): Promise<ItemStack[]> {
+  if (raid.kind !== RaidKind.Totem) {
+    return [];
+  }
+
+  const before = await getSql()`
+    select 1 from raid_rewards r
+    join raids w on w.id = r.raid_id
+    where r.player = ${uid} and r.raid_id <> ${lobby}
+      and w.kind = ${RaidKind.Totem} and w.species = ${raid.species}
+    limit 1
+  `;
+  const dropped =
+    before.length === 0 ||
+    new AleaRNG(`${lobby}:${uid}:crystal`).random() < TOTEM_CRYSTAL_REPEAT_CHANCE;
+
+  if (!dropped) {
+    return [];
+  }
+
+  const item = getTotemCrystal(raid.species);
+
+  await grantItem(uid, item);
+  return [{ item, amount: 1 }];
 }
 
 /**
@@ -78,6 +118,8 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   await grantGold(uid, gold, 'raid-reward');
   await bumpProgress(uid, [[Metric.GoldEarned, 0, gold]]);
 
+  const items = await totemCrystal(uid, lobby, raid);
+
   // The raid's own world, so a cave lair's prize remembers the cave
   const chunk = getChunkOfSeed(raid.chunk.x, raid.chunk.y, raid.chunk.seed);
   // The raid's own window and zone, not wherever the claimant is now
@@ -96,7 +138,7 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
     shinyBoost: RAID_SHINY_BOOST,
   });
 
-  return { encounter, gold };
+  return { encounter, gold, items };
 }
 
 /**
@@ -116,5 +158,5 @@ async function reopenReward(uid: string, spawnId: string): Promise<RaidReward | 
     where player = ${uid} and generation = ${WORLD_GENERATION} and key = ${encounterKey(encounter)}
   `;
 
-  return gone.length > 0 ? null : { encounter, gold: 0 };
+  return gone.length > 0 ? null : { encounter, gold: 0, items: [] };
 }

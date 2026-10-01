@@ -16,7 +16,8 @@ import {
   shinyBoostOf,
   widensMoveSlots,
 } from '../../data/overworld/weather';
-import { MAX_IV, Stats, packIVs } from '../../data/constants/stats';
+import { MAX_IV, STAT_ORDER, Stats, packIVs } from '../../data/constants/stats';
+import { TOTEM_PERFECT_STATS, getTotemAbility } from '../../data/overworld/totems';
 import type Biome from '../../data/ids/biome';
 import {
   SPECIES_DAY_HIDDEN_ABILITY_BOOST,
@@ -168,8 +169,16 @@ export default function deriveEncounter(
   const level =
     options.level ?? lowest + Math.floor((levelSlice / TRAIT_RANGE) * (highest - lowest + 1));
 
+  // A Totem-sized pokemon is perfect in three stats at the least,
+  // which three read off the trait value so two prizes differ
+  const totem = type === EncounterType.TotemRaid;
+  const perfectFrom = (traitValue >>> 0) % STAT_ORDER.length;
+  const isPerfect = (index: number): boolean =>
+    totem && (index - perfectFrom + STAT_ORDER.length) % STAT_ORDER.length < TOTEM_PERFECT_STATS;
   const sliceIV = (index: number): number =>
-    Math.max(minimumIV, (individualValue >>> (IV_BITS * index)) & IV_MASK);
+    isPerfect(index)
+      ? MAX_IV
+      : Math.max(minimumIV, (individualValue >>> (IV_BITS * index)) & IV_MASK);
 
   const ivs = packIVs({
     [Stats.HP]: sliceIV(0),
@@ -183,11 +192,13 @@ export default function deriveEncounter(
   // The ability slice serves twice: its band picks the pool, and its
   // position within the band picks the pool index. On the family's own
   // day the hidden band is the wider one
-  const ability = deriveAbility(
-    species,
-    traitValue,
-    (featured ? SPECIES_DAY_HIDDEN_ABILITY_BOOST : 1) * (options.hiddenBoost ?? 1),
-  );
+  const ability = totem
+    ? getTotemAbility(species)
+    : deriveAbility(
+        species,
+        traitValue,
+        (featured ? SPECIES_DAY_HIDDEN_ABILITY_BOOST : 1) * (options.hiddenBoost ?? 1),
+      );
 
   // Modern mechanics: gender is a pure ratio roll independent of any
   // stat, from its own dedicated slice
@@ -253,7 +264,9 @@ export default function deriveEncounter(
     // The day's featured family sparkles eight times as often, the
     // rarest sky doubles whatever is standing under it, and whatever
     // the player carries multiplies that further
+    // A Totem-sized pokemon never sparkles
     shiny:
+      !totem &&
       userId != null &&
       isShinyFor(
         userId,
@@ -315,6 +328,7 @@ export {
   deriveGender,
   deriveHeldItems,
   deriveNature,
+  deriveCatchSize,
   deriveSize,
   deriveExtraHidden,
   deriveSignature,

@@ -27,6 +27,7 @@ const KINDS: Record<RaidKind, string> = {
   [RaidKind.Legendary]: 'legendary',
   [RaidKind.Shadow]: 'shadow',
   [RaidKind.Mythical]: 'mythical',
+  [RaidKind.Totem]: 'totem',
 };
 
 /**

@@ -255,13 +255,20 @@ function baseScaleOf(slot: Slot): number {
   return slot.radius / SPRITE_SCALE_DIVISOR;
 }
 
+/** How much bigger a Totem is drawn than its species */
+const TOTEM_DRAW_SCALE = 1.5;
+
 export function scaleOf(slot: Slot): number {
   const sprite = slot.sprite;
 
   // The doll has no species data to size it by, so it keeps the base scale
-  return sprite == null || slot.unit.appearance === Species.Substitute
-    ? baseScaleOf(slot)
-    : baseScaleOf(slot) * speciesSize(slot.unit.appearance, sprite);
+  if (sprite == null || slot.unit.appearance === Species.Substitute) {
+    return baseScaleOf(slot);
+  }
+  // A Totem towers over the rest of its kind
+  const towering = slot.unit.hasAbility(Abilities.Totem) ? TOTEM_DRAW_SCALE : 1;
+
+  return baseScaleOf(slot) * speciesSize(slot.unit.appearance, sprite) * towering;
 }
 
 /**

@@ -298,7 +298,12 @@ export const NPC = v.picklist([Npc.Vendor, Npc.Chef, Npc.Geologist]);
 export const LOBBY_ROLE = v.picklist([LobbyRole.Fighter, LobbyRole.Spectator]);
 
 /** What a raid lobby is staging */
-export const RAID_KIND = v.picklist([RaidKind.Legendary, RaidKind.Shadow, RaidKind.Mythical]);
+export const RAID_KIND = v.picklist([
+  RaidKind.Legendary,
+  RaidKind.Shadow,
+  RaidKind.Mythical,
+  RaidKind.Totem,
+]);
 
 /** How a battle ended */
 export const BATTLE_OUTCOME = v.picklist([

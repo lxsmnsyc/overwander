@@ -10,6 +10,7 @@ import type Biome from '../data/ids/biome';
 import createBattle from '../battle/setup';
 import Team from '../battle/team';
 import Unit from '../battle/unit';
+import { holdTotemAlly } from '../battle/abilities/special';
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { STAT_ORDER, Stats, StatsKind, getIV } from '../data/constants/stats';
 import {
@@ -36,7 +37,10 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   // record — the empty string travels through unchanged
   const unit = new Unit(battle, team, snapshot.caught);
 
-  team.addUnit(unit);
+  // A Totem's ally is built now but joins its team only when called
+  if (snapshot.called !== true) {
+    team.addUnit(unit);
+  }
   // Species first: it seeds the base stats and types the rest builds on
   unit.setSpecies(snapshot.species);
   unit.setLevel(snapshot.level);
@@ -180,7 +184,13 @@ export function fieldTeams(
     const party: Unit[] = [];
 
     for (const snapshot of record.catches) {
-      party.push(addUnit(battle, team, snapshot));
+      const unit = addUnit(battle, team, snapshot);
+
+      if (snapshot.called === true) {
+        holdTotemAlly(team, unit);
+      } else {
+        party.push(unit);
+      }
     }
 
     parties.push(party);

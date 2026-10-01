@@ -4,7 +4,8 @@ import { getMaxHealth } from '../auth/health';
 import {
   DEFAULT_ABILITY_SLOTS,
   DEFAULT_ITEM_SLOTS,
-  DEFAULT_MOVE_SLOTS,
+  Slots,
+  mostSlots,
   packSlots,
 } from '../data/constants/slots';
 import { getBannedBossMoves } from '../data/overworld/boss-moves';
@@ -85,13 +86,13 @@ function maxEffortValues(): Record<Stats, number> {
 }
 
 /**
- * The four moves a boss is staged with: what its species knows at
+ * The up to 8 moves a boss is staged with: what its species knows at
  * `RAID_BOSS_LEVEL`, less the ones a boss may never have. The ban is
- * applied before the four are taken, so a species with more to draw
+ * applied before the moves are taken, so a species with more to draw
  * on still comes with a full set
  */
 export function getBossMoves(species: Species): Moves[] {
-  return deriveMoves(species, RAID_BOSS_LEVEL, getBannedBossMoves(species));
+  return deriveMoves(species, RAID_BOSS_LEVEL, getBannedBossMoves(species), mostSlots(Slots.Move));
 }
 
 /**
@@ -166,8 +167,8 @@ export function createRaidBossSnapshot(
       : [Abilities.Boss, deriveAbility(species, traitValue)],
     items: [],
     // The Boss ability and the shadow are both special, so all a boss
-    // needs room for is the one it rolled
-    slots: packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS),
+    // needs room for is the one it rolled, and every move it knows
+    slots: packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, mostSlots(Slots.Move)),
     // A boss stands for no record either, and every lobby faces it at
     // full strength
     health: getMaxHealth({

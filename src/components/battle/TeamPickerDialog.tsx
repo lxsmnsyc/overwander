@@ -1,6 +1,9 @@
-import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
+import { For, type JSX, Show, createMemo, createResource, createSignal } from 'solid-js';
 import { type CaughtPokemon, getCaughtBatched, isGuarded } from '../../auth/caught';
+import { getCatchName, isShiny } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
+import { Genders } from '../../data/ids/species';
+import AnimatedSprite from '../sprites/AnimatedSprite';
 import { isFainted } from '../../auth/health';
 import { TEAM_SIZE } from '../../auth/teams';
 import { type TeamPresetRecord, listTeamPresets } from '../../auth/team-presets';
@@ -104,9 +107,7 @@ function SavedTeam(props: { preset: TeamPresetRecord; onUse: () => void }): JSX.
         </span>
         <TeamStrip catches={party.latest ?? []} />
       </span>
-      <Button tone="primary" onClick={props.onUse}>
-        Use
-      </Button>
+      <Button onClick={props.onUse}>Load</Button>
     </ListRow>
   );
 }
@@ -136,7 +137,12 @@ export interface TeamPickerDialogProps {
 export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Element {
   const auth = useAuth();
   const [open, setOpen] = createSignal<TeamTab>(TeamTab.Box);
-  const [loaded, setLoaded] = createSignal<string[] | undefined>();
+  /** The party so far, which the box lights and the row above it draws */
+  const [picks, setPicks] = createSignal<string[]>([]);
+  /** What the box is offering, so the party row can draw each pick */
+  const [offered, setOffered] = createSignal<CatchOption[]>([]);
+
+  const max = (): number => props.max ?? TEAM_SIZE;
 
   const owner = (): string | null => {
     if (!props.isOpen) {
@@ -153,14 +159,124 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
 
   const saved = (): [string, TeamPresetRecord][] => presets.latest ?? [];
 
+  const byId = createMemo(() => {
+    const options = new Map<string, CatchOption>();
+
+    for (const option of offered()) {
+      options.set(option.id, option);
+    }
+    return options;
+  });
+
+  /**
+   * A saved team, loaded into the party: everything it names that is on
+   * offer and fit to come, in the order it was saved
+   */
+  const load = (catches: readonly string[]): void => {
+    const taken: string[] = [];
+
+    for (const id of catches) {
+      const option = byId().get(id);
+
+      if (option != null && heldBack(option) == null && taken.length < max()) {
+        taken.push(id);
+      }
+    }
+    setPicks(taken);
+    setOpen(TeamTab.Box);
+  };
+
+  const drop = (id: string): void => {
+    const rest: string[] = [];
+
+    for (const one of picks()) {
+      if (one !== id) {
+        rest.push(one);
+      }
+    }
+    setPicks(rest);
+  };
+
+  const close = (): void => {
+    setPicks([]);
+    setOpen(TeamTab.Box);
+    props.onClose();
+  };
+
   return (
     <Dialog
       isOpen={props.isOpen}
-      onClose={props.onClose}
+      onClose={close}
       title="Form a team"
-      description={`Choose up to ${props.max ?? TEAM_SIZE} of your pokemon, or load a team you saved.`}
+      description={`Tap to bring one, tap again to leave it. Up to ${max()}.`}
       width="wide"
+      aside={
+        <span class="rounded-full bg-tide-soft px-2.5 py-1 text-xs font-extrabold text-tide-dark">
+          {picks().length} / {max()}
+        </span>
+      }
     >
+      {/* The party before the box, so the team is in view however far
+          down the box has been scrolled */}
+      <ol
+        class="m-0 grid list-none gap-1.5 rounded-2xl border-2 border-tide/35 bg-tide-soft p-2"
+        style={{ 'grid-template-columns': `repeat(${max()}, minmax(0, 1fr))` }}
+      >
+        <For each={Array.from({ length: max() }, (_, at) => at)}>
+          {(at) => (
+            <li class="aspect-square">
+              <Show
+                when={byId().get(picks()[at] ?? '')}
+                fallback={
+                  <span
+                    class="grid size-full place-items-center rounded-xl border-2 border-dashed
+                      border-line text-xs font-extrabold text-muted"
+                  >
+                    {at + 1}
+                  </span>
+                }
+              >
+                {(option) => (
+                  <button
+                    type="button"
+                    aria-label={`Take ${getCatchName(option().caught)} out of the team`}
+                    class="relative flex size-full cursor-pointer flex-col items-center
+                      justify-end rounded-xl border-2 border-line bg-paper p-1 shadow-pop-sm
+                      hover:border-ember"
+                    onClick={() => {
+                      drop(option().id);
+                    }}
+                  >
+                    <span class="min-h-0 w-full grow">
+                      <AnimatedSprite
+                        species={option().caught.species}
+                        shiny={isShiny(option().caught)}
+                        female={option().caught.gender === Genders.Female}
+                        direction="Down"
+                        still
+                        fill
+                        label=""
+                      />
+                    </span>
+                    <span class="text-[10px] font-extrabold text-muted">
+                      Lv {option().caught.level}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      class="absolute -top-1.5 -right-1.5 grid size-4 place-items-center
+                        rounded-full border-2 border-line bg-paper text-[9px] font-extrabold
+                        text-muted"
+                    >
+                      ✕
+                    </span>
+                  </button>
+                )}
+              </Show>
+            </li>
+          )}
+        </For>
+      </ol>
+
       <TabGroup
         horizontal
         value={open()}
@@ -169,7 +285,7 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
         }}
         class="flex flex-col gap-3"
       >
-        <TabBar>
+        <TabBar class="self-start">
           <TabButton value={TeamTab.Box}>Your pokemon</TabButton>
           <TabButton value={TeamTab.Saved}>
             Teams
@@ -180,27 +296,24 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
         </TabBar>
 
         <TabPane value={TeamTab.Box}>
+          {/* Live: the party is held here, and Join in the dock is the one press */}
           <CatchPicker
             inline
             multiple
-            // A press on a square takes it into the party, and a press
-            // on a taken one puts it back: forming a team is six of
-            // those, and a card and a button in the way of each is five
-            // steps too many
+            live
             player={props.player}
-            value={[]}
-            load={loaded()}
-            max={props.max ?? TEAM_SIZE}
-            // Strongest first. A team is picked for what it can win,
-            // and a box arriving newest-first made the player hunt for
-            // the six they would have chosen anyway
+            value={picks()}
+            max={max()}
+            // Strongest first. A team is picked for what it can win
             sort="level"
             verb="Join with"
             empty="No catches to bring."
             reason={heldBack}
+            onOptions={(options) => {
+              setOffered(options);
+            }}
             onPick={(catches) => {
-              props.onSubmit(catches);
-              props.onClose();
+              setPicks(catches);
             }}
           />
         </TabPane>
@@ -215,12 +328,8 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
                 {([, preset]) => (
                   <SavedTeam
                     preset={preset}
-                    // Loaded into the box rather than fielded outright:
-                    // the player sees what came and what did not, and
-                    // presses the same button anybody else does
                     onUse={() => {
-                      setLoaded([...preset.catches]);
-                      setOpen(TeamTab.Box);
+                      load(preset.catches);
                     }}
                   />
                 )}
@@ -231,7 +340,17 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
       </TabGroup>
 
       <DialogActions>
-        <Button onClick={props.onClose}>Close</Button>
+        <Button
+          tone="primary"
+          disabled={picks().length === 0}
+          onClick={() => {
+            props.onSubmit(picks());
+            close();
+          }}
+        >
+          Join with {picks().length}
+        </Button>
+        <Button onClick={close}>Close</Button>
       </DialogActions>
     </Dialog>
   );

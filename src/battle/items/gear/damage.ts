@@ -7,6 +7,7 @@ import { BattleEvents, EffectType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { createEffectivenessTracker, createHeldItem, holds } from '../__create';
+import { drainWorth } from '../../moves/absorb';
 import { heal } from './residual';
 import {
   BAND_FACTOR,
@@ -61,12 +62,22 @@ export const setupShellBell = createHeldItem(Items.ShellBell, (battle) =>
 // A Big Root deepens every drain. Only a drain that gives health back:
 // an ability that turns one against the drainer leaves a negative
 // behind, and a root is no reason to bleed harder for it
-export const setupBigRoot = createHeldItem(Items.BigRoot, (battle) =>
-  battle.on(BattleEvents.CheckUnitDrain, EventPriority.Post, (event) => {
-    if (event.value > 0 && holds(event.source, Items.BigRoot)) {
-      event.value *= BIG_ROOT_FACTOR;
-    }
-  }),
+export const setupBigRoot = createHeldItem(
+  Items.BigRoot,
+  (battle) =>
+    new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitDrain, EventPriority.Post, (event) => {
+        if (event.value > 0 && holds(event.source, Items.BigRoot)) {
+          event.value *= BIG_ROOT_FACTOR;
+        }
+      }),
+      // The AI weighs a drain by what it puts back, and the root puts back more
+      battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+        if (holds(event.source, Items.BigRoot)) {
+          event.score += Math.round(drainWorth(event.source, event.move) * (BIG_ROOT_FACTOR - 1));
+        }
+      }),
+    ]),
 );
 
 // A band lifts the half of the game it belongs to

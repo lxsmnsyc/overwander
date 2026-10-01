@@ -1,4 +1,13 @@
-import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import {
+  For,
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createResource,
+  createSignal,
+  onCleanup,
+} from 'solid-js';
 import { type AchievementSheet, listAchievements } from '../../auth/achievements';
 import listAwards, { type AwardRecord } from '../../auth/awards';
 import {
@@ -370,7 +379,25 @@ export function AwardArt(props: { award: Awards; size: number }): JSX.Element {
   );
 }
 
-function Slot(props: { award: Awards; wins: number | null }): JSX.Element {
+/** The tray's own edge and padding, and the gap between squares, in pixels */
+const TRAY_EDGE = 4 + 6;
+const TRAY_GAP = 6;
+/** A square's own border and padding, in pixels, which the art sits inside */
+const SLOT_EDGE = 2 + 4;
+
+/**
+ * How big a square's art can be drawn in a tray this wide. The art is
+ * sized to the square rather than drawn as cut, so a narrow screen
+ * shrinks it instead of stretching the square or clipping the badge
+ */
+function artFor(tray: number): number {
+  const square = (tray - TRAY_EDGE * 2 - TRAY_GAP * (GRID_COLUMNS - 1)) / GRID_COLUMNS;
+
+  // No bigger than an elite's portrait, so a wide screen does not blow the badges up
+  return Math.max(8, Math.min(ELITE_SPRITE_SIZE, Math.floor(square - SLOT_EDGE * 2)));
+}
+
+function Slot(props: { award: Awards; wins: number | null; art: number }): JSX.Element {
   const name = (): string => AWARD_NAMES[props.award];
   const held = (): boolean => props.wins != null;
   const mark = (): string => (CHAMPION_TITLES_SET.has(props.award) ? '★' : name().slice(0, 1));
@@ -388,8 +415,8 @@ function Slot(props: { award: Awards; wins: number | null }): JSX.Element {
               ? `${name()}, beaten ${props.wins} ${props.wins === 1 ? 'time' : 'times'}`
               : `${name()}, not yet earned`
           }
-          class="relative flex aspect-square w-full cursor-default items-center justify-center
-            rounded-lg border-2 border-line bg-paper p-1"
+          class="relative flex aspect-square w-full min-w-0 cursor-default items-center
+            justify-center overflow-hidden rounded-lg border-2 border-line bg-paper p-1"
         >
           <Show
             when={AWARD_SPRITES[props.award]}
@@ -416,7 +443,7 @@ function Slot(props: { award: Awards; wins: number | null }): JSX.Element {
                   <NpcSprite
                     npc={Npc.Trainer}
                     sheet={sheet}
-                    size={ELITE_SPRITE_SIZE}
+                    size={props.art}
                     label=""
                     class={`pointer-events-none ${held() ? '' : 'opacity-40 grayscale'}`}
                   />
@@ -429,6 +456,7 @@ function Slot(props: { award: Awards; wins: number | null }): JSX.Element {
                 sheet={sprite[0]}
                 name={sprite[1]}
                 label=""
+                size={props.art}
                 class={`pointer-events-none ${held() ? '' : 'opacity-40 grayscale'}`}
               />
             )}
@@ -498,13 +526,29 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
 
   const empties = (): number[] => fillers(SHELF.length);
 
+  /** How wide the tray is drawn, which sizes every square's art */
+  const [tray, setTray] = createSignal(0);
+  let observer: ResizeObserver | undefined;
+
+  onCleanup(() => {
+    observer?.disconnect();
+  });
+
   return (
     <div class="mx-auto flex w-full max-w-lg flex-col gap-2">
       <div
+        ref={(element) => {
+          observer = new ResizeObserver(([entry]) => {
+            setTray(entry.borderBoxSize[0]?.inlineSize ?? entry.contentRect.width);
+          });
+          observer.observe(element);
+        }}
         class="grid w-full grid-cols-6 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
           shadow-pop"
       >
-        <For each={SHELF}>{(award) => <Slot award={award} wins={wins().get(award) ?? null} />}</For>
+        <For each={SHELF}>
+          {(award) => <Slot award={award} wins={wins().get(award) ?? null} art={artFor(tray())} />}
+        </For>
         {/* The rest of the tray, drawn empty rather than left out: a
             half-built grid reads as a broken one */}
         <For each={empties()}>

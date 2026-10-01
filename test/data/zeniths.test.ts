@@ -12,7 +12,13 @@ import {
   listMegas,
 } from '../../src/data/species';
 import { getMegaBase } from '../../src/data/species/megas';
-import { RESERVED_FOR_MEGAS, ZENITH_BONUS, ZENITH_SHAPES } from '../../src/data/species/zeniths';
+import {
+  NO_ZENITH,
+  RESERVED_FOR_MEGAS,
+  ZENITH_BONUS,
+  ZENITH_SHAPES,
+  ZENITH_SHARD_OFFSET,
+} from '../../src/data/species/zeniths';
 
 function totalOf(species: Species): number {
   let total = 0;
@@ -31,7 +37,7 @@ describe('Zeniths', () => {
   it('gives each a final stage with no other held shape', () => {
     // The pokemon a held item already changes: every Mega, and every
     // shape a form item puts something in
-    const spoken = new Set<Species>(RESERVED_FOR_MEGAS);
+    const spoken = new Set<Species>([...RESERVED_FOR_MEGAS, ...NO_ZENITH]);
 
     for (const mega of listMegas()) {
       spoken.add(getMegaBase(mega)!);
@@ -49,7 +55,8 @@ describe('Zeniths', () => {
       expect(isFullyEvolved(shape.base), shape.holder).toBe(true);
       expect(spoken.has(shape.base), shape.holder).toBe(false);
       expect(seen.has(shape.base), shape.holder).toBe(false);
-      expect(getBaseFormSpecies(shape.zenith), shape.holder).toBe(shape.base);
+      expect(getBaseFormSpecies(shape.zenith), shape.holder).toBe(getBaseFormSpecies(shape.base));
+      expect(shape.shard, shape.holder).toBe(shape.zenith - ZENITH_SHARD_OFFSET);
       seen.add(shape.base);
     }
   });
@@ -62,7 +69,7 @@ describe('Zeniths', () => {
 
   it('wears an ability the line can never be born with', () => {
     for (const shape of ZENITH_SHAPES) {
-      expect(getSpeciesAbilities(shape.base), shape.holder).not.toContain(shape.ability);
+      expect(getSpeciesAbilities(shape.base).has(shape.ability), shape.holder).toBe(false);
     }
   });
 

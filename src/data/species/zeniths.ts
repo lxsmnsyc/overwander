@@ -84,6 +84,16 @@ export const RESERVED_FOR_MEGAS = new Set<Species>([
   Species.Zygarde,
 ]);
 
+/**
+ * The pokemon left without a Zenith although nothing else spoken for
+ * them. Ditto's whole kit is becoming something else, and a Zenith
+ * set on entry would undo the copy Imposter has just made
+ */
+export const NO_ZENITH = new Set<Species>([Species.Ditto]);
+
+/** Where a Zenith's shard id sits relative to its species id */
+export const ZENITH_SHARD_OFFSET = 900000;
+
 /** What a Zenith adds to the base stat total of the pokemon it is a Zenith of */
 export const ZENITH_BONUS = 100;
 

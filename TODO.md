@@ -121,6 +121,12 @@ Small and unblocked.
       stat spread (+100), the worn ability and any type change for approval,
       then adds the shape, its shard id (100000 + dex), its tint in
       `scripts/item-icons.ts` and its `zenith/<region>` icon.
+- [ ] **The Kanto Zeniths**, waiting on the Gen 9 abilities so the batch can
+      use them. Drafted and agreed so far: Marowak is Ground/Fighting with
+      Mummy, and Ditto has no Zenith (`NO_ZENITH`). Gen 7 picks to use once
+      the Alola stack lands: Electrode Galvanize, Lapras Liquid Voice,
+      Seaking Dazzling, Mr. Mime Prism Armor, Weezing Corrosion, Hitmonlee
+      Long Reach.
 - [ ] **Zeniths and Z-Moves.** Once the gen 7 branches merge, `isMegaHolder` in
       `src/battle/moves/z-moves.ts` has to refuse a Zenith, or a unit holding a
       shard, the way it refuses a Mega.

@@ -1103,9 +1103,10 @@ export const enum Species {
   GroudonPrimal = 1038301,
 
   /**
-   * The Zeniths, this engine's own. Each takes the last form slot of
-   * its species, 99, which no collection fills, so a form the art adds
-   * later never lands on one
+   * The Zeniths, this engine's own. They take the last form slots of
+   * their species, which no collection fills, so a form the art adds
+   * later never lands on one: 99 for the species itself, and counting
+   * down from there for its regional forms (98 for an Alolan one)
    */
   ArcanineZenith = 1005999,
 }

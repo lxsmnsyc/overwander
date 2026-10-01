@@ -219,6 +219,8 @@ export interface CounterQuestion {
   move: Moves;
   /** What it costs, said in the dialog that asks */
   cost: string;
+  /** And the item that is, drawn as a chip */
+  price?: Items;
   teach: (catchId: string, move: Moves, replaces: number) => Promise<LearnResult>;
   onTaught: () => void;
 }

@@ -571,6 +571,18 @@ describe('biome data', () => {
     expect(
       pickSpawn({ base: [], uncommon: [], rare: [], special: [] }, rolls([0.5, 0])),
     ).toBeNull();
+
+    // A pool holding only a legend stages it on its own odds, never as
+    // the fallback for every roll that missed
+    const kyogre = {
+      base: [],
+      uncommon: [],
+      rare: [],
+      special: [{ species: Species.Kyogre, weight: 1 }],
+    };
+
+    expect(pickSpawn(kyogre, rolls([0.5, 0]))).toBeNull();
+    expect(pickSpawn(kyogre, rolls([1 / 8192, 0]))).toBe(Species.Kyogre);
   });
 });
 

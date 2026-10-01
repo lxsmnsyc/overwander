@@ -107,8 +107,130 @@ Small and unblocked.
 - [ ] adjacent chunk preload
 - [ ] Mini Boss ability
 - [ ] catch tags
+- [ ] **An NPC API.** One NPC is spread over many places today: its id, name,
+      charsets and visit tag in `src/data/overworld/npc.ts`, its counter under
+      `src/components/overworld/npc-dialog/counters/` and its entry in
+      `counter.tsx`, its server handler under `src/server/npcs/` with a client
+      wrapper in `src/auth/npcs.ts`, the trader list in `src/server/validate.ts`,
+      and where it stands in `chunk-snapshot.ts`. A `createNpc` definition
+      should declare all of it in one place, the way `createAbility` does for
+      abilities, so adding the Jeweler or the Archaeologist above is one file.
 
-## 3. Remaining items
+- [ ] **Type: Null and Silvally.** When Gen 7 lands, Silvally's 17 Memories
+      are form items the way the Plates are: rows in `FORM_ITEMS` derived from
+      the type each Memory loads, gated on RKS System through `SHAPE_NEEDS` the
+      way Arceus is gated on Multitype, with the Memory floating over the
+      changed shape like every other held form (`form-mark.ts`). Type: Null has
+      no forms and evolves by friendship; its Battle Armor and the helmet are
+      the only thing to decide.
+
+## 3. Player systems
+
+Things a player owns and arranges, rather than finds in the world. Each one is
+private to its owner and stored, so none of them touches world generation.
+
+### Boxes
+
+Folders for catches. The catches list opens on the boxes instead of one long
+grid.
+
+- [ ] **Data.** A `box` table (`box id, name, catch id, position`), one row per
+      catch filed in a box, with `position` its place inside that box. The catch
+      keeps a nullable `caught.box` relation to its box, so reading a catch says
+      which box it is in without searching the `box` table. A catch with no box is
+      in the **Default** box, which is not a row and cannot be renamed or deleted,
+      so every existing catch lands there with no migration of its rows.
+- [ ] **Open questions on that shape.** Where an empty box lives, since it has no
+      catch to hang a row on, and where a box's own name and order are kept once
+      and not on every catch's row. Settle both before the migration.
+- [ ] **Actions.** Create, rename, reorder, delete a box. Deleting one moves its
+      catches back to Default rather than releasing anything, which clears their
+      `caught.box`. Move one catch or a picked set, through the multi-pick the
+      catch picker already has. Reorder inside a box by drag, written as a dense
+      `position` renumbered on drop.
+- [ ] **Limits.** A cap on box count (for example 32) and a name length, checked
+      in the server function. A box holds any number of catches; a box's grid
+      pages at `BOX_SIZE` like the list does today.
+- [ ] **Reads.** Listing a box is one query on `box (box id, position)`, so it
+      wants that index. Search keeps reading the whole collection, with
+      `box:<name>` added to the search grammar so a query can still narrow to one.
+- [ ] **What stays out.** A box is only presentation. The party, the buddy,
+      raids, trades and auctions read catches as they do now, and a catch in a
+      lot or a battle can still be filed.
+- [ ] **Overlap to settle first.** "Catch tags" in Next up covers some of the
+      same need. Decide whether tags ship as well (a catch in one box, with many
+      tags) or are dropped in favour of boxes.
+
+### Incubators
+
+Today only the buddy's egg earns steps, so a player hatches one egg at a time
+and the daycare lady's boost is the only way to hurry it.
+
+- [ ] **Pick the model.** Two shapes, not both:
+  - **Slots.** A fixed number of incubator slots per player (for example 3),
+    raised by a key item or a quest. Every egg in a slot earns the steps the
+    buddy walks. Simple, and a player always knows what they have.
+  - **Items.** An Incubator item used on an egg, spent after a set number of
+    hatches (for example 3), and an Infinite Incubator from a quest that is never
+    spent. It turns incubators into a gold and loot sink and a reason to dig.
+- [ ] **Recommendation.** Slots, with the item as a later extension that adds a
+      slot. It keeps one rule for how an egg earns steps, and the buddy stays the
+      only way to get the boosts (Flame Body, the species of the day).
+- [ ] **Where it hooks in.** Step credit already runs through one server path
+      for the buddy's egg (`creditedEggSteps` and the step report in
+      `src/server/eggs.ts`). Incubated eggs are credited from the same report, at
+      the same clamp, so walking faster than the clamp still earns nothing.
+- [ ] **Balance.** Incubated eggs could earn a share of the steps (for example
+      half) so the buddy slot keeps its value.
+
+### Garden
+
+A private patch of plots where berries are planted and harvested.
+
+- [ ] **Plots.** A small number per player (for example 4), raised later by a
+      quest or an item. Each plot holds one berry, its planting time and whether
+      it has been watered, in a `garden_plots` table.
+- [ ] **Growth.** Real time, several hours per berry (longer for rarer ones),
+      read off the planting time rather than ticked, like the egg clock. A ripe
+      plot yields 2 to 5 of the berry. An unharvested plot wilts after a day and
+      yields nothing.
+- [ ] **Care.** Watering once per growth stage raises the yield, and a Mulch
+      item can speed growth or delay wilting. Both are optional, so the garden
+      rewards checking in without punishing a player who does not.
+- [ ] **Why it matters.** Berries today come from bushes in the world. A garden
+      turns a rare berry into something a player can multiply, which gives the
+      flavour berries a use beyond bait once cooking lands.
+- [ ] **Relation to the idea below.** "Berry farming" under Ideas is a public
+      plot on a world cell that strangers can water or take. The garden is the
+      private, safe version; the public one could come after it.
+
+### Pokéblocks and Poffins
+
+Cooking berries into treats.
+
+- [ ] **What a treat does.** Pick one purpose before building, since the
+      mainline's purpose (contest condition) does not exist here yet:
+  - **Friendship and training.** A treat raises friendship, more if the flavour
+    matches the nature's liked flavour, and less or not at all if it is the
+    disliked one. The nature data already knows both flavours.
+  - **Encounters.** A treat set out in the overworld draws wild pokemon of a
+    type tied to its flavour for a while, like a lure. "Camp cooking" under Ideas
+    already sketches this.
+  - **Contests.** Only once "Contests" under Ideas is built, since that is where
+    the mainline's condition stats would live.
+- [ ] **Recommendation.** Friendship and training first. It uses data that
+      already exists, it does not overlap the lures, and it gives the flavour
+      berries a second use.
+- [ ] **Cooking.** Two to four berries in, one treat out. The treat's flavours are
+      the sum of the berries' flavours, and its level comes from how many distinct
+      berries went in. No timing minigame at first; a cooking step at a counter
+      NPC or from the bag.
+- [ ] **Items.** Pokéblocks and Poffins as one family of items with a flavour
+      profile, so the bag, the market and the auction house handle them like any
+      other item.
+- [ ] **Depends on.** The garden, so berries are not the bottleneck.
+
+## 4. Remaining items
 
 Shortest path to real value, in order:
 
@@ -129,7 +251,7 @@ After that:
 - Key items: Coin Case, Berry Pots, Poké Radar, Vs Seeker, Dowsing Machine.
 - Left alone until their species exist: Rusted Sword and Rusted Shield.
 
-## 4. Engine gaps in Johto moves
+## 5. Engine gaps in Johto moves
 
 What is still short of the mainline, in rough order of how much it matters:
 
@@ -138,12 +260,10 @@ What is still short of the mainline, in rough order of how much it matters:
 - **Beat Up** counts the party rather than reading each member's Attack, so
   every strike lands at the user's own figure.
 - **Hidden Power** takes its type off the genes but always hits at 60.
-- **Encore** locks what the AI may pick; nothing forces a move on a unit that
-  is already casting something else.
 - **Present** and **Magnitude** roll their power per cast, so neither can be
   read off a card before it is thrown.
 
-## 5. Content
+## 6. Content
 
 ### True Species
 
@@ -178,7 +298,7 @@ What is still short of the mainline, in rough order of how much it matters:
 - [x] Houndoom
 - [ ] Tyranitar
 
-## 6. Ideas, not committed to
+## 7. Ideas, not committed to
 
 ### Open world gimmicks
 

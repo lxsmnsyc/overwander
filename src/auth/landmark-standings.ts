@@ -57,7 +57,7 @@ export async function readLandmarkStandings(
 
   for (const [cell, landmark] of chunk.getLandmarkCells()) {
     if (landmark === Landmark.LegendaryLair || landmark === Landmark.ShadowLair) {
-      const kind = landmark === Landmark.ShadowLair ? RaidKind.Shadow : RaidKind.Legendary;
+      const kind = snapshot.isShadowLair(cell) ? RaidKind.Shadow : RaidKind.Legendary;
 
       lairs.set(raidId(chunk, snapshot.raidTimestamp, cell, kind, offset), cell);
     } else if (landmark === Landmark.GymSeat) {

@@ -78,6 +78,11 @@ export interface EncounterOptions {
    */
   phenomenon?: Phenomenon;
   /**
+   * A floor of the caller's own under every value, added to the raid's
+   * and the sky's: a phenomenon and a honey tree each pass one
+   */
+  minimumIV?: number;
+  /**
    * The sky the meeting happened under. A pokemon met under weather
    * comes with a floor under every one of its values, which is the
    * whole of what weather is worth: nothing about a fight changes.
@@ -151,7 +156,8 @@ export default function deriveEncounter(
     MAX_IV,
     (isRaidEncounter(type) ? RAID_MIN_IV : 0) +
       (isRaidEncounter(type) && featured ? RAID_FAMILY_DAY_MIN_IV : 0) +
-      (sky != null && isWeatherFavored(sky, getSpeciesData(species).types) ? WEATHER_MIN_IV : 0),
+      (sky != null && isWeatherFavored(sky, getSpeciesData(species).types) ? WEATHER_MIN_IV : 0) +
+      (options.minimumIV ?? 0),
   );
 
   // Slices in trait order: level, gender, ability, nature — all but

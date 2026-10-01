@@ -4,7 +4,7 @@ import type Biome from '../../../data/ids/biome';
 import type Weather from '../../../data/overworld/weather';
 import type Decoration from '../../../data/overworld/decoration';
 import type { ItemStack } from '../../../data/overworld/item-pool';
-import type Landmark from '../../../data/overworld/landmark';
+import Landmark from '../../../data/overworld/landmark';
 import type Npc from '../../../data/overworld/npc';
 import type Phenomenon from '../../../data/overworld/phenomenon';
 import ChunkSnapshot, {
@@ -307,6 +307,17 @@ export function buildBoardView(
       }
     };
 
+    // A legendary lair with nothing to host this window is a shadow lair
+    const standFallenLairs = (standing: ChunkSnapshot): void => {
+      for (const cell of standing.getFallenLairs()) {
+        const seat = board(cell);
+
+        if (seat != null) {
+          landmarks.set(seat, Landmark.ShadowLair);
+        }
+      }
+    };
+
     // The fixtures are the chunk seed's answer rather than a window's,
     // so they are drawn whether or not the window has landed. Pressing
     // one before it has says so
@@ -325,6 +336,7 @@ export function buildBoardView(
 
         carry(derived.getWanderingNpcs(), wanderers);
         carry(derived.getWandererCoats(), coats);
+        standFallenLairs(derived);
       }
       continue;
     }
@@ -351,6 +363,7 @@ export function buildBoardView(
     carry(snapshot.getApricornTrees(), berries);
     carry(snapshot.getWanderingNpcs(), wanderers);
     carry(snapshot.getWandererCoats(), coats);
+    standFallenLairs(snapshot);
 
     const cells = [...snapshot.getSpawnCells()];
     const drawn = everShown(

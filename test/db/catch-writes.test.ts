@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { type Actor, actor, caughtRow, clearAll, sql } from './clients';
 import { Acquisition, asCaughtPokemon } from '../../src/auth/caught-record';
+import { Slots, mostSlots } from '../../src/data/constants/slots';
 import { Moves } from '../../src/data/ids/moves';
 import { readCaughtIn, updateCaughtIn } from '../../src/server/caught-io';
 import { tx } from '../../src/server/db';
@@ -31,6 +32,18 @@ afterAll(async () => {
 beforeEach(async () => {
   await sql`delete from caught`;
 });
+
+/** One move for every slot a pokemon can have */
+const MOVE_ROOM = [
+  Moves.Tackle,
+  Moves.Growl,
+  Moves.QuickAttack,
+  Moves.TailWhip,
+  Moves.Ember,
+  Moves.WaterGun,
+  Moves.VineWhip,
+  Moves.ThunderShock,
+];
 
 /** One of the player's, knowing three moves */
 async function put(id: string): Promise<void> {
@@ -83,6 +96,25 @@ describe('the points spent on a move', () => {
     );
 
     expect(stored?.movePoints).toEqual({});
+  });
+});
+
+describe('the moves a pokemon knows', () => {
+  it('hold as many as the most room a pokemon can have', async () => {
+    const moves = [...MOVE_ROOM];
+
+    expect(moves).toHaveLength(mostSlots(Slots.Move));
+
+    await put('write-full');
+    await tx(async (transaction) => {
+      await updateCaughtIn(transaction, 'write-full', { moves, movePoints: {} });
+    });
+
+    const stored = await tx(async (transaction) =>
+      readCaughtIn(transaction, 'write-full', false, ['moves']),
+    );
+
+    expect(stored?.moves).toEqual(moves);
   });
 });
 

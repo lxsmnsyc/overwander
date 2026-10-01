@@ -83,6 +83,7 @@ export type {
 export type {
   AIMoveChoice,
   CheckTeamAIUnitEvent,
+  CheckUnitAIMoveFeedsEvent,
   CheckUnitAIMoveScoreEvent,
   CheckUnitAIMoveUsableEvent,
   CheckUnitAIRatingEvent,

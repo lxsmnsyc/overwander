@@ -645,6 +645,19 @@ describe('the unowns', () => {
   });
 });
 
+describe('forms met on their own', () => {
+  it('reach four abilities with nothing above them', () => {
+    for (const species of [
+      Species.PichuSpikyEared,
+      Species.FloetteEternal,
+      Species.VivillonFancy,
+      Species.VivillonPokeBall,
+    ]) {
+      expect(getSpeciesAbilities(species).size, getSpeciesData(species).name).toBe(4);
+    }
+  });
+});
+
 describe('fusions', () => {
   it('joins each dragon to the shape it makes, and back again', () => {
     for (const shape of KYUREM_FORMS.slice(1)) {
@@ -679,5 +692,41 @@ describe('fusions', () => {
     expect(getSpeciesData(Species.KyuremWhite).abilities).toEqual([Abilities.Turboblaze]);
     expect(getSpeciesData(Species.Zekrom).abilities).toEqual([Abilities.Teravolt]);
     expect(getSpeciesData(Species.Reshiram).abilities).toEqual([Abilities.Turboblaze]);
+  });
+});
+
+describe('the two shapes a Zygarde is carried in', () => {
+  it('turns one into the other with the cube, either way round', () => {
+    for (const [from, into] of [
+      [Species.Zygarde, Species.ZygardeTenPercent],
+      [Species.ZygardeTenPercent, Species.Zygarde],
+    ]) {
+      const roads = getSpeciesData(from).evolvesInto ?? [];
+
+      expect(roads.length).toBe(1);
+      expect(roads[0].species).toBe(into);
+      expect(roads[0].method).toBe(EvolutionMethod.UsedItem);
+      expect(roads[0].item).toBe(Items.ZygardeCube);
+    }
+    // The half is the shape the tenth is cut from, so it is the one
+    // the line stands on
+    expect(getSpeciesData(Species.ZygardeTenPercent).evolvesFrom).toBe(Species.Zygarde);
+    expect(getSpeciesData(Species.Zygarde).evolvesFrom).toBeUndefined();
+  });
+
+  it('leaves the complete shape to Power Construct', () => {
+    // It is gathered inside a fight rather than by anything the bag
+    // can reach, so no road runs to it or out of it
+    expect(getSpeciesData(Species.ZygardeComplete).evolvesFrom).toBeUndefined();
+    expect(getSpeciesData(Species.ZygardeComplete).evolvesInto).toBeUndefined();
+  });
+
+  it('gives both carried shapes the same pools, with the gathering rare', () => {
+    for (const species of [Species.Zygarde, Species.ZygardeTenPercent]) {
+      const pools = getSpeciesAbilityPools(species);
+
+      expect(pools.regular).toEqual([Abilities.AuraBreak]);
+      expect(pools.hidden).toContain(Abilities.PowerConstruct);
+    }
   });
 });

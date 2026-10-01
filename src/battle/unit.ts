@@ -13,6 +13,7 @@ import type Battle from './core';
 import type {
   CastingData,
   ChannelingData,
+  CheckUnitAIMoveFeedsEvent,
   CheckUnitAbilityEvent,
   CheckUnitCanCastEvent,
   CheckUnitCanChannelEvent,
@@ -1152,6 +1153,20 @@ export default class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitMoveImmunity, event);
     return event.immune;
+  }
+
+  /** Whether aiming this move at a teammate feeds an ability of theirs */
+  checkAIMoveFeeds(move: Moves, target: MoveTarget): boolean {
+    const event: CheckUnitAIMoveFeedsEvent = {
+      id: 'CheckUnitAIMoveFeeds',
+      disabled: false,
+      source: this,
+      move,
+      target,
+      feeds: false,
+    };
+    this.battle.emit(BattleEvents.CheckUnitAIMoveFeeds, event);
+    return event.feeds;
   }
 
   checkMoveAccuracy(move: Moves, target: MoveTarget): number | undefined {

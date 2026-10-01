@@ -61,6 +61,8 @@ import phantumpToBergmite from './phantump-to-bergmite';
 import goomyAndNoibat from './goomy-and-noibat';
 import panchamToCarbink from './pancham-to-carbink';
 import kalosTrio from './kalos-trio';
+import kalosMythicals from './kalos-mythicals';
+import litleoAndSpritzee from './litleo-and-spritzee';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -125,6 +127,8 @@ const setupAbilities = [
   ...goomyAndNoibat,
   ...panchamToCarbink,
   ...kalosTrio,
+  ...kalosMythicals,
+  ...litleoAndSpritzee,
   ...deerling,
   ...emolga,
   ...tirtougaToBouffalant,

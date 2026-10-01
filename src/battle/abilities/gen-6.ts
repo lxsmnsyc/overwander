@@ -2,9 +2,17 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
-import { DamageFlags, MoveAttackFlags, MoveCategories, Moves } from '../../data/ids/moves';
+import {
+  DamageFlags,
+  MoveAttackFlags,
+  MoveCategories,
+  MoveTargets,
+  Moves,
+} from '../../data/ids/moves';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
-import { NON_VOLATILE_STATUSES, Statuses, Terrains } from '../../data/ids/status';
+import { NON_VOLATILE_STATUSES, Statuses, Terrains, Weathers } from '../../data/ids/status';
+import { getMoveData } from '../../data/moves';
+import { MULTI_HIT_MOVES } from '../../data/moves/multi-hit';
 import { MergedLifecycle } from '../lifecycle';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
@@ -15,6 +23,7 @@ import { fieldHolder } from './signature/__create';
 import {
   createAbility,
   createContactHazard,
+  createPrimalWeatherAbility,
   createSurgeAbility,
   createTypeShiftAbility,
   createWaterAbsorbAbility,
@@ -82,6 +91,12 @@ const MEGA_LAUNCHER_SCALE = 1.5;
 /** What a Normal move is worth once an ability has shifted its type */
 const TYPE_SHIFT_SCALE = 1.2;
 
+/** What the wind is worth to a move it carried on the way out */
+const AERILATE_SCALE = 1.2;
+
+/** What the child's blow is worth beside the parent's */
+const PARENTAL_BOND_SCALE = 0.25;
+
 /**
  * What an aura is worth to the type it carries, and what it is worth
  * once something on the field is breaking auras rather than casting
@@ -93,6 +108,9 @@ const BROKEN_AURA_SCALE = 3 / 4;
 
 /** How much of itself a Zygarde has to lose before the rest gathers */
 const POWER_CONSTRUCT_THRESHOLD = 1 / 2;
+
+/** What a struck kettle gains, all at once */
+const STEAM_ENGINE_STAGES = 6;
 
 /** What Triage moves a heal ahead by, which here is cast time */
 const TRIAGE_PRIORITY = 3;
@@ -385,6 +403,36 @@ const setupAbilities = [
     }),
   ),
 
+  // Volcanion: a kettle struck by fire or water jumps
+  createAbility(Abilities.SteamEngine, (battle) =>
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      const cause = event.cause;
+
+      if (
+        !event.success ||
+        (event.flags & DamageFlags.Indirect) !== 0 ||
+        cause.type !== EffectType.Move ||
+        cause.unit === event.target ||
+        !event.target.hasAbility(Abilities.SteamEngine)
+      ) {
+        return;
+      }
+
+      const type = cause.unit.checkMoveType(cause.move, unitTarget(event.target));
+
+      if (type !== Types.Fire && type !== Types.Water) {
+        return;
+      }
+
+      event.target.triggerAbility(Abilities.SteamEngine);
+      event.target.addStage(Stages.Speed, STEAM_ENGINE_STAGES, {
+        type: EffectType.Ability,
+        ability: Abilities.SteamEngine,
+        unit: event.target,
+      });
+    }),
+  ),
+
   // Xerneas: a heal it reaches for is already on its way
   createAbility(Abilities.Triage, (battle) =>
     battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Post, (event) => {
@@ -466,6 +514,53 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  // Mega Pinsir and Mega Salamence: the wings carry a plain move
+  createTypeShiftAbility(Abilities.Aerilate, Types.Normal, Types.Flying, AERILATE_SCALE),
+
+  // Mega Kangaskhan: the child throws the same move again, softer.
+  // Only a move cast at one unit, and never one that already strikes
+  // more than once
+  createAbility(Abilities.ParentalBond, (battle) => {
+    const striking = new Set<Unit>();
+
+    return battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+      const source = event.source;
+
+      // Its own confused swing has no move data behind it, so the
+      // move is only read once everything else has said yes
+      if (
+        !event.success ||
+        !event.target.alive ||
+        event.target === source ||
+        event.flags & MoveAttackFlags.Simulated ||
+        striking.has(source) ||
+        !source.hasAbility(Abilities.ParentalBond) ||
+        MULTI_HIT_MOVES[event.move] != null ||
+        getMoveData(event.move).target !== MoveTargets.Unit
+      ) {
+        return;
+      }
+
+      striking.add(source);
+      source.triggerAbility(Abilities.ParentalBond);
+      source.attack(
+        event.target,
+        event.move,
+        event.value * PARENTAL_BOND_SCALE,
+        event.type,
+        event.category,
+        event.flags,
+      );
+      striking.delete(source);
+    });
+  }),
+
+  // Primal Kyogre, Primal Groudon and Mega Rayquaza: each raises its
+  // own primal sky for as long as it stands
+  createPrimalWeatherAbility(Abilities.PrimordialSea, Weathers.HeavyRain),
+  createPrimalWeatherAbility(Abilities.DesolateLand, Weathers.ExtremeSunny),
+  createPrimalWeatherAbility(Abilities.DeltaStream, Weathers.StrongWinds),
 ];
 
 export default function setupGen6Abilities(battle: Battle): void {

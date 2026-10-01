@@ -4,11 +4,13 @@ import registerFroakieSpecies from './froakie';
 import registerBunnelbySpecies from './bunnelby';
 import registerFletchlingSpecies from './fletchling';
 import registerScatterbugSpecies from './scatterbug';
+import registerLitleoSpecies from './litleo';
 import registerFlabebeSpecies from './flabebe';
 import registerSkiddoSpecies from './skiddo';
 import registerFurfrouSpecies from './furfrou';
 import registerEspurrSpecies from './espurr';
 import registerHonedgeSpecies from './honedge';
+import registerSpritzeeSpecies from './spritzee';
 import registerKlefkiSpecies from './klefki';
 import registerBinacleSpecies from './binacle';
 import registerSkrelpSpecies from './skrelp';
@@ -29,6 +31,7 @@ import registerDedenneSpecies from './dedenne';
 import registerCarbinkSpecies from './carbink';
 import registerSylveonSpecies from './sylveon';
 import registerKalosTrioSpecies from './kalos-trio';
+import registerKalosMythicalSpecies from './kalos-mythicals';
 
 /** Kalos, as far as it is written */
 export default function registerGen6Species(): void {
@@ -38,6 +41,7 @@ export default function registerGen6Species(): void {
   registerBunnelbySpecies();
   registerFletchlingSpecies();
   registerScatterbugSpecies();
+  registerLitleoSpecies();
   registerFlabebeSpecies();
   registerSkiddoSpecies();
   registerFurfrouSpecies();
@@ -59,8 +63,10 @@ export default function registerGen6Species(): void {
   registerCarbinkSpecies();
   registerSylveonSpecies();
   registerKalosTrioSpecies();
+  registerKalosMythicalSpecies();
   registerGoomySpecies();
   registerBergmiteSpecies();
   registerNoibatSpecies();
+  registerSpritzeeSpecies();
   registerKlefkiSpecies();
 }

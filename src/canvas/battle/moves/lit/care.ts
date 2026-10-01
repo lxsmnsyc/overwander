@@ -13,7 +13,7 @@ import {
   shellCells,
   shellFlash,
   wagOf,
-  wishHeight,
+  wishFlight,
 } from '../effect/care';
 import { RAINBOW } from '../effect/legends';
 import { type EffectShape, many } from '../effect/shapes';
@@ -750,14 +750,19 @@ const care = {
     }
   },
 
-  // A star rising off it into the sky and coming back down onto it
+  // A star arcing from the caster onto the one it is left with, over the whole wait
   Wishing(kit, stage, share, { paint, seed }) {
     const at = landed(stage);
     const reach = reachOf(stage);
     const colour = paint.color;
     const shown = late(share, WISH_LANDS);
-    const spot = aside(kit, at, 0, reach * (0.4 + wishHeight(share) * 5));
-    const was = aside(kit, at, 0, reach * (0.4 + wishHeight(Math.max(0, share - 0.05)) * 5));
+    const flying = (when: number): Spot => {
+      const { travel, lift } = wishFlight(when);
+
+      return aside(kit, toward(stage.source, at, travel), 0, reach * (0.4 + lift * 4));
+    };
+    const spot = flying(share);
+    const was = flying(Math.max(0, share - 0.03));
 
     kit.trail(was, spot, reach * 0.2, colour, shown * 0.6);
     kit.glow(spot, reach * 0.5, colour, shown, 0.9);

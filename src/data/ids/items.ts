@@ -953,13 +953,74 @@ export const enum Items {
   /** The two Kalos fossils, which are shipped with their lines */
   JawFossil = 444,
   SailFossil = 445,
+  /** The relics Kalos's three mythicals leave behind them */
+  HeartDiamond = 446,
+  SealedRing = 447,
+  SteamValve = 448,
+  /** What lets the rings out, and puts them back */
+  PrisonBottle = 449,
 
   /**
    * The box the cells are gathered in, spent putting a tenth of a
-   * Zygarde back up to half of one
+   * Zygarde back up to half of one. The legendaries branch numbered
+   * it 446 before the mythicals' relics took that
    */
-  ZygardeCube = 446,
-  // 447 to 563 are held for the Kalos and Alola items the gen 7
+  ZygardeCube = 450,
+
+  /** The Mega Stones, in the order the dex meets their pokemon */
+  Venusaurite = 451,
+  CharizarditeX = 452,
+  CharizarditeY = 453,
+  Blastoisinite = 454,
+  Beedrillite = 455,
+  Pidgeotite = 456,
+  Alakazite = 457,
+  Slowbronite = 458,
+  Gengarite = 459,
+  Kangaskhanite = 460,
+  Pinsirite = 461,
+  Gyaradosite = 462,
+  Aerodactylite = 463,
+  MewtwoniteX = 464,
+  MewtwoniteY = 465,
+  Ampharosite = 466,
+  Steelixite = 467,
+  Scizorite = 468,
+  Heracronite = 469,
+  Houndoominite = 470,
+  Tyranitarite = 471,
+  Sceptilite = 472,
+  Blazikenite = 473,
+  Swampertite = 474,
+  Gardevoirite = 475,
+  Sablenite = 476,
+  Mawilite = 477,
+  Aggronite = 478,
+  Medichamite = 479,
+  Manectite = 480,
+  Sharpedonite = 481,
+  Cameruptite = 482,
+  Altarianite = 483,
+  Banettite = 484,
+  Absolite = 485,
+  Glalitite = 486,
+  Salamencite = 487,
+  Metagrossite = 488,
+  Latiasite = 489,
+  Latiosite = 490,
+  Lopunnite = 491,
+  Garchompite = 492,
+  Lucarionite = 493,
+  Abomasite = 494,
+  Galladite = 495,
+  Audinite = 496,
+  Diancite = 497,
+
+  /** The orbs that return the sea and the land to their Primal shapes */
+  BlueOrb = 498,
+  RedOrb = 499,
+
+  // 500 to 563 are held for the Kalos and Alola items the gen 7
   // branches number
 
   /** The Max vitamins, which fill one stat's effort at once */

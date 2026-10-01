@@ -2165,6 +2165,33 @@ export default function registerSignatureAbilities(): void {
     description: 'Every stat stage on the field counts 0.5x, its own included.',
   });
 
+  // Kalos's three mythicals
+  registerSignature(Families.Diancie, Abilities.Regalia, {
+    name: 'Regalia',
+    description: 'Its whole team gains 1 stage of Defense every 10 seconds, up to 3.',
+  });
+
+  registerSignature(Families.Hoopa, Abilities.Ringback, {
+    name: 'Ringback',
+    description: '20% of single-target moves aimed at it are turned back on whoever threw them.',
+  });
+
+  registerSignature(Families.Volcanion, Abilities.Boiler, {
+    name: 'Boiler',
+    description: 'Its Fire moves hit 1.15x in rain and its Water moves hit 1.15x in sunlight.',
+  });
+
+  // The two Kalos lines that waited on their evolutions being drawn
+  registerSignature(Families.Litleo, Abilities.PrideCall, {
+    name: 'Pride Call',
+    description: 'It casts Noble Roar at an enemy as it arrives on the field.',
+  });
+
+  registerSignature(Families.Spritzee, Abilities.CalmingScent, {
+    name: 'Calming Scent',
+    description: 'The enemy side loses 1 stage of Speed whenever it uses up its own held item.',
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:

@@ -1,5 +1,71 @@
 # overwander
 
+## 4.26.1
+
+### Patch Changes
+
+- 58df8e7: - Award squares on the profile stay square on a phone, with badges and portraits shrunk to fit instead of clipped.
+  - A battle history entry shows the team first, outside the tinted plate that holds the fight and its buttons, so the team is always visible.
+- f9514a2: - On a Dark Day, a shadow lair now holds a true shadow only where that shadow's counterpart has a lair in the same biome. The raid is named after that lair.
+  - A shadow lair in a biome with no such lair keeps its ordinary shadow raid. A Woodland lair no longer stages XD-144 as "Shadow Seafoam Islands".
+- c53d0fa: - A legendary lair that has no legendary to host this window now stands as a shadow lair instead of staying empty. This happens most often in kelp forests and cold deserts.
+- 4529b17: - Computer-controlled pokemon no longer attack a teammate who is merely immune to the move, such as a Ground move into a teammate with Levitate.
+  - They still aim a move at a teammate whose ability turns it into a heal or a boost, such as Fire into Flash Fire, and only while that teammate gains something from it.
+  - After a raid boss falls, its challengers no longer turn their attacks on each other.
+
+## 4.26.0
+
+### Minor Changes
+
+- 184ec88: - Wild pokemon are now placed by kind. Fliers and floaters appear over both ground and water.
+  - Water pokemon appear only on water, except amphibious ones, which also walk on land.
+  - Everything else keeps to the ground.
+  - Gyarados, Mantine and Mantyke stay in the water, and Skorupi and Drapion stay on land.
+  - Bidoof, Surskit, Palkia, Cradily and Armaldo are now amphibious.
+  - Dratini and Dragonair now appear only on water.
+  - A rippling water turns up a water pokemon, a flying shadow a flier, and a dust cloud something that keeps to the ground.
+  - Changes what every cell rolls: existing windows roll different spawns than before.
+
+### Patch Changes
+
+- 358ae05: - A syndicate cell in a cave is now fought and rewarded as one. Its boss or grunt hands over their pokemon, fields shadows, and is named in the battle history.
+  - A cave raid's prize now records the cave it was won in.
+- 6b56dc9: - On the catch sheet, a dragged move, ability or item follows the pointer.
+  - Prized items found in the world show in a gold popup, and special items in a violet one.
+  - Wish's star arcs from the caster to the pokemon it is left with, taking the whole wait to get there.
+- 9f74ce0: - A lair now hosts what its own tile allows. A lair on water holds only pokemon that swim or fly, and a lair on land only pokemon that can stand there.
+  - A lair reads the biome of its own tile, not the biome at the middle of its chunk, so a lair across a biome border hosts that biome's residents.
+  - A shadow raid with no named lair is now called after its own tile's biome.
+  - Changes raids: some lairs host a different pokemon than before.
+- 9e77d42: - Walking back up to a raid your party is still fighting now offers Rejoin, which puts you back in your own fight instead of watching it as a replay.
+  - Only a fight you are in is offered this way. Anyone else still gets a seat to watch.
+- dc8995f: - A syndicate executive waiting to be fought glows magenta on the board, and a boss glows violet. Grunts stay red.
+  - A legend holding the champion's seat glows pearl white, so it is told apart from the champion.
+
+## 4.25.2
+
+### Patch Changes
+
+- 8d1ece8: - The catch sheet tells empty move, ability and item slots apart from locked ones. A locked slot shows a lock, and its tooltip says what opens it.
+  - Hidden abilities are drawn in violet and signature abilities in gold, on the catch sheet, the box card and the battle card.
+  - Moves show their details in a tooltip instead of a hover card everywhere, the battle card included.
+  - Opening a catch shows a loading sheet instead of blanking the page.
+  - The Safari name box reads caught mark, level, shiny and shadow marks, then the name.
+- fda1b26: - Kyogre no longer fills every water tile in a cave.
+  - A cave legend now appears only at its own rare odds.
+  - Caves now hold amphibious pokemon, which spawn on both the floor and the water: the Wooper, Psyduck, Seel, Slowpoke, Krabby and Tympole lines.
+  - Changes cave spawns: cave windows roll different spawns than before.
+- 209abe9: - Encore now locks its target instead of tying up its user.
+  - The target's current cast, or its next one if it is idle, is used 3 times in a row. It pays PP and cooldown once.
+  - A move that winds up or takes several steps is not locked, and the Encore is spent.
+  - Interrupting the target ends the repeats.
+  - The user of Encore is free as soon as it lands.
+  - Computer opponents aim Encore at an enemy casting a status move, or at a teammate.
+- 5badda4: - Flower Veil no longer stops a Grass-type teammate's own moves and items.
+  - Substitute, Rest and a Toxic or Flame Orb work beside a Flower Veil again. Substitute used to take its HP cost and put up nothing.
+  - Flower Veil now blocks only major statuses and drowsiness, and only when another pokemon causes them.
+- 65aa748: - Learning a move by levelling no longer fails on a move that no machine teaches.
+
 ## 4.25.1
 
 ### Patch Changes

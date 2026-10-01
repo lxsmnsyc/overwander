@@ -66,7 +66,10 @@ export default function registerDesertSpawns(): void {
         { species: Species.Volcarona, weight: 10 },
         { species: Species.Regirock, weight: 10 },
       ],
-      mythical: [{ species: Species.Genesect, weight: 10 }],
+      mythical: [
+        { species: Species.Hoopa, weight: 10 },
+        { species: Species.Genesect, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -131,7 +134,10 @@ export default function registerDesertSpawns(): void {
         { species: Species.Volcarona, weight: 10 },
         { species: Species.Regirock, weight: 10 },
       ],
-      mythical: [{ species: Species.Genesect, weight: 10 }],
+      mythical: [
+        { species: Species.Hoopa, weight: 10 },
+        { species: Species.Genesect, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Gible, weight: 2 }],
@@ -162,7 +168,10 @@ export default function registerDesertSpawns(): void {
       elusive: [{ species: Species.Garchomp, weight: 2 }],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Regirock, weight: 10 }],
-      mythical: [{ species: Species.Genesect, weight: 10 }],
+            mythical: [
+        { species: Species.Hoopa, weight: 10 },
+        { species: Species.Genesect, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Gible, weight: 2 }],
@@ -193,7 +202,10 @@ export default function registerDesertSpawns(): void {
       elusive: [{ species: Species.Garchomp, weight: 2 }],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Regirock, weight: 10 }],
-      mythical: [{ species: Species.Genesect, weight: 10 }],
+            mythical: [
+        { species: Species.Hoopa, weight: 10 },
+        { species: Species.Genesect, weight: 10 },
+      ],
     },
   });
   registerWaterPool(Biome.Desert, {

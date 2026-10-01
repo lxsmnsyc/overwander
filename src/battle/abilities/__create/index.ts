@@ -11,7 +11,7 @@ export {
   getAbilityHolders,
 } from './create';
 export { createFeedScoring, createHealFeedScoring, createStageFeedScoring } from './scoring';
-export { createAbsorbStageAbility, createClearBodyAbility } from './absorb';
+export { createAbsorbStageAbility, createClearBodyAbility, createRodAbility } from './absorb';
 export { movesFlagged, movesOfType } from './matchers';
 export type { AbsorbMatcher } from './matchers';
 export {
@@ -41,11 +41,11 @@ export {
 export { default as createMoldBreakerAbility } from './pierce';
 export { default as createReceiverAbility } from './receive';
 export { RETREAT_THRESHOLD, createRetreatAbility } from './retreat';
-export { default as createSurgeAbility } from './terrain';
 export {
   chipImmunity,
   createCloudNineAbility,
   createDrizzleAbility,
   createPrimalWeatherAbility,
   createSandRushAbility,
+  createSurgeAbility,
 } from './weather';

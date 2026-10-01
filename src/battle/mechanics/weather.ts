@@ -20,7 +20,7 @@ const CHIP_FRACTION = 1 / 16;
  * primal sky carries the same numbers as its ordinary counterpart;
  * what makes it primal is `WEATHER_NULLIFIED` below
  */
-const WEATHER_DAMAGE: { [key in Weathers]?: Map<Types, number> } = {
+export const WEATHER_DAMAGE: { [key in Weathers]?: Map<Types, number> } = {
   [Weathers.Sunny]: new Map([
     [Types.Fire, 1.5],
     [Types.Water, 0.5],
@@ -47,7 +47,7 @@ const SANDSTORM_DEFENSE_FACTOR = 1.5;
 // Damaging weathers, mapped to the types they cannot harm; ability
 // immunities (e.g. Sand Veil, Ice Body) answer CheckUnitCanDamage in
 // their own modules instead
-const CHIP_IMMUNE_TYPES: { [key in Weathers]?: Set<Types> } = {
+export const CHIP_IMMUNE_TYPES: { [key in Weathers]?: Set<Types> } = {
   [Weathers.Sandstorm]: new Set([Types.Rock, Types.Ground, Types.Steel]),
   [Weathers.Hail]: new Set([Types.Ice]),
 };

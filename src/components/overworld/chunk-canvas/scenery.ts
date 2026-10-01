@@ -1,4 +1,5 @@
 import { SPRITE_FACINGS } from '../../../canvas/board';
+import { SpawnRarity, getSpawnRarity } from '../../../data/biome';
 import type { Species } from '../../../data/ids/species';
 import Landmark from '../../../data/overworld/landmark';
 import Phenomenon from '../../../data/overworld/phenomenon';
@@ -54,6 +55,19 @@ export interface SpawnCoat {
 
 /** The two kinds worth an aura of their own */
 export type SpawnRank = 'legendary' | 'mythical' | null;
+
+/**
+ * Which of the one-per-world kinds a spawn is, read off its band so a
+ * species met as rarely as a mythical wears the mythical's seal too
+ */
+export function rankOf(species: Species): SpawnRank {
+  const rarity = getSpawnRarity(species);
+
+  if (rarity === SpawnRarity.Special) {
+    return 'legendary';
+  }
+  return rarity === SpawnRarity.Mythical ? 'mythical' : null;
+}
 
 /** The pokemon a player rides while surfing or flying, in the coat it wears */
 export interface RiddenCoat {
@@ -390,6 +404,12 @@ export const enum CellAura {
   Fresh = 3,
   /** A hidden grotto this player has not claimed this hour */
   Grotto = 4,
+  /** A syndicate executive waiting to be fought, told apart from a grunt */
+  Executive = 5,
+  /** A syndicate's boss waiting to be fought */
+  Boss = 6,
+  /** A legend holding the champion's seat, told apart from the champion */
+  Legend = 7,
 }
 
 type Ink = readonly [number, number, number];
@@ -400,6 +420,9 @@ const AURA_INKS: Record<CellAura, Ink> = {
   [CellAura.Mine]: [80, 214, 104],
   [CellAura.Fresh]: [56, 146, 255],
   [CellAura.Grotto]: [64, 224, 200],
+  [CellAura.Executive]: [224, 64, 208],
+  [CellAura.Boss]: [136, 56, 255],
+  [CellAura.Legend]: [236, 240, 255],
 };
 
 /** The two halves of an aura: what lies under a landmark, and what rises over it */

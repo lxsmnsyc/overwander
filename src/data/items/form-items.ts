@@ -98,6 +98,9 @@ export const FORM_ITEMS = new Map<Items, Species[]>([
   [Items.GriseousOrb, [Species.GiratinaOrigin]],
   [Items.Gracidea, [Species.ShayminSky]],
   [Items.PrisonBottle, [Species.HoopaUnbound]],
+  // One mirror for the three genies: each holder takes its own Therian
+  // shape, so it is still a switch rather than a roll
+  [Items.RevealGlass, [Species.TornadusTherian, Species.ThundurusTherian, Species.LandorusTherian]],
   // Primal Reversion is an Origin forme's rule rather than a Mega's:
   // every holder takes the shape, with no limit to a team
   [Items.BlueOrb, [Species.KyogrePrimal]],
@@ -185,6 +188,8 @@ const DESCRIPTIONS: { [key in Items]?: string } = {
   [Items.Gracidea]:
     'A Shaymin holding it fights in its other shape, which also brings Serene Grace.',
   [Items.PrisonBottle]: 'A Hoopa holding it fights unbound, with its rings let out.',
+  [Items.RevealGlass]:
+    'A Tornadus, Thundurus or Landorus holding it fights in its Therian shape, which also brings Regenerator, Volt Absorb or Intimidate.',
   [Items.BlueOrb]:
     'A Kyogre holding it fights in its Primal shape, which also brings Primordial Sea.',
   [Items.RedOrb]:
@@ -261,6 +266,17 @@ export default function registerFormItems(): void {
     type: ItemTypes.Held,
     // Drawn on the key sheet, which is where the collection packed it
     icon: 'key/prison-bottle',
+    flags: ItemFlags.Holdable,
+    buy: 0,
+    sell: ORB_PRICE / 2,
+  });
+
+  registerItem(Items.RevealGlass, {
+    name: 'Reveal Glass',
+    description: DESCRIPTIONS[Items.RevealGlass] ?? '',
+    type: ItemTypes.Held,
+    // Drawn on the key sheet, which is where the collection packed it
+    icon: 'key/reveal-glass',
     flags: ItemFlags.Holdable,
     buy: 0,
     sell: ORB_PRICE / 2,

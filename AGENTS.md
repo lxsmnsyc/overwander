@@ -37,8 +37,9 @@ one that covers what you are about to do:
 - `server-function-order` - a `'use server'` function is addressed by its place
   in its file; the build guard refuses every call from another build, so it
   must never be weakened and every server call must go through `fetch`.
-- `spawn-surfaces` - a spawn rolls from the land, water or ice pool of the cell
-  under it, and a species' `habitat` decides which of those pools may list it.
+- `spawn-surfaces` - a biome's pools are mixed into one roster that each cell
+  cuts by surface; a species' kind (ground, water or flying) decides where it
+  stands, and only an amphibious water species leaves the water.
 - `world-generation` - the live world's generation is frozen and pinned by a
   fingerprint test; every roll that places something on the ground goes through
   `world.draws(key)` with a name, and existing calls are never reordered; rows

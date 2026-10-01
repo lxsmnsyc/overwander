@@ -13,7 +13,7 @@ import {
 } from '../auth/stop-record';
 import TEAM_SIZE from '../auth/team-size';
 import ChunkSnapshot, { NPC_INTERVAL, RocketRank, type Spawn } from '../overworld/chunk-snapshot';
-import getWorld, { WORLD_GENERATION } from '../overworld/current';
+import getWorld, { WORLD_GENERATION, getChunkOfSeed, getWorldOfChunk } from '../overworld/current';
 import { EncounterType } from '../overworld/encounter';
 import { PLAYER_ALLIANCE } from '../overworld/raid';
 import { getMaxHealth } from '../auth/health';
@@ -411,7 +411,7 @@ export async function startStopBattle(
     return null;
   }
 
-  const chunk = getWorld().getChunk(record.chunk.x, record.chunk.y);
+  const chunk = getChunkOfSeed(record.chunk.x, record.chunk.y, record.chunk.seed);
   const snapshot = new ChunkSnapshot(chunk, record.timestamp, record.offset);
   const brain =
     chunk.getLandmarkCells().get(record.cell) === Landmark.FrontierBrain
@@ -507,7 +507,11 @@ export async function startStopBattle(
   // weather one; everywhere else it is the sky over the cell
   const weather =
     (panel == null ? null : ARCADE_PANEL_WEATHER[panel]) ??
-    getWorld().getWeather(record.chunk.x, record.chunk.y, snapshot.weatherWindow);
+    getWorldOfChunk(record.chunk.x, record.chunk.y, record.chunk.seed).getWeather(
+      record.chunk.x,
+      record.chunk.y,
+      snapshot.weatherWindow,
+    );
 
   await tx(async (transaction) => {
     // A rented party is the player's to field and nobody's to keep:
@@ -624,7 +628,8 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
     return null;
   }
 
-  const chunk = getWorld().getChunk(record.chunk.x, record.chunk.y);
+  // The stop's own world: a cave's cell is not the same cell on the surface
+  const chunk = getChunkOfSeed(record.chunk.x, record.chunk.y, record.chunk.seed);
   const snapshot = new ChunkSnapshot(chunk, record.timestamp, record.offset);
   const landmark = chunk.getLandmarkCells().get(record.cell);
   // Every expert counts as a trainer for the quest ledger: what sets

@@ -8,6 +8,7 @@ import {
   BattleEvents,
   type CheckUnitRecoilEvent,
   EffectType,
+  MoveTargetType,
   type UnitDamageEvent,
 } from '../events';
 
@@ -64,6 +65,26 @@ export default function setupRecoilMoves(battle: Battle): void {
     }
 
     const source = event.source;
+    const hit: UnitDamageEvent = {
+      id: 'UnitDamage',
+      disabled: false,
+      source,
+      target: event.target.type === MoveTargetType.Unit ? event.target.unit : source,
+      value: 1,
+      flags: 0,
+      cause: { type: EffectType.Move, move: event.move, unit: source },
+      success: true,
+    };
+
+    // Asked the way the hit asks: Rock Head refuses the recoil, and
+    // Magic Guard the damage it would do
+    if (
+      !checkRecoil(hit) ||
+      !source.checkCanDamage({ type: EffectType.None }, source, 1, DamageFlags.Indirect)
+    ) {
+      return;
+    }
+
     const ratio = source.health / Math.max(1, source.checkStat(Stats.HP, 0));
 
     event.score -= ratio < TOO_THIN ? USELESS_PENALTY : RISKY_PENALTY;

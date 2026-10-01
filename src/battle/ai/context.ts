@@ -12,6 +12,7 @@ import {
 import type Team from '../team';
 import type Unit from '../unit';
 import { knowsMove } from './fog';
+import { getTrainerSkill } from './skill';
 
 /** How strong a unit currently is. Internal to the AI module */
 export function checkUnitRating(battle: Battle, source: Unit): number {
@@ -78,10 +79,15 @@ export class AIContext {
   private readonly ratings = new Map<Unit, number>();
   private readonly healthShares = new Map<Team, number>();
 
+  /** Milliseconds into a foe's cast before this side's trainer reacts to it */
+  readonly reaction: number;
+
   constructor(
     readonly battle: Battle,
     readonly source: Unit,
-  ) {}
+  ) {
+    this.reaction = getTrainerSkill(source.team).reaction;
+  }
 
   /** The living units on the caster's side, the caster included */
   *friends(): IterableIterator<Unit> {
@@ -124,6 +130,7 @@ export class AIContext {
 
       if (
         cast != null &&
+        cast.time.progress >= this.reaction &&
         test(cast.move) &&
         reaches(foe, cast.move, cast.target, unit) &&
         landsIn(foe) >= after

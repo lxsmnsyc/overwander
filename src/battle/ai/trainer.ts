@@ -5,7 +5,8 @@ import { GUARD_MOVES } from '../moves/protect';
 import type Team from '../team';
 import turns from '../turn';
 import type Unit from '../unit';
-import { bestCoolingMove, chooseMove } from './choose-move';
+import { bestCoolingMove, chooseMove, randomMove } from './choose-move';
+import { TOP_SKILL, type TrainerSkill, getTrainerSkill } from './skill';
 import { BASE_SCORE } from './score';
 
 /** What a trainer tells one of its units to do */
@@ -15,9 +16,6 @@ export interface Order {
   /** What the order is worth, so the most valuable goes out first */
   score?: number;
 }
-
-/** The longest a unit is held for a better move to come off cooldown */
-const WAIT_HORIZON = turns(1);
 
 /** What a second of waiting costs, on the scoring scale: a whole chip */
 const WAIT_COST = 4;
@@ -55,17 +53,31 @@ export class Trainer {
   /** When each unit standing ready first came free, for the guard limit */
   private readonly freeSince = new Map<Unit, number>();
 
+  /** When each free unit was first noticed, for the time the trainer takes to think */
+  private readonly noticed = new Map<Unit, number>();
+
   constructor(
     readonly battle: Battle,
     readonly team: Team,
+    readonly skill: TrainerSkill = TOP_SKILL,
   ) {}
 
   /** The order for a unit that is free to act, or nothing to do yet */
   order(unit: Unit, now: number): Order | undefined {
+    // A trainer that misplays now and then throws something usable at random
+    if (this.skill.misplay > 0 && this.battle.random() < this.skill.misplay) {
+      const fumble = randomMove(this.battle, unit);
+
+      if (fumble != null) {
+        this.freeSince.delete(unit);
+        return { move: fumble.move, target: fumble.target, score: fumble.score };
+      }
+    }
+
     const choice = chooseMove(this.battle, unit);
 
     // A much better move coming off cooldown soon is worth the wait
-    const later = bestCoolingMove(this.battle, unit, WAIT_HORIZON);
+    const later = bestCoolingMove(this.battle, unit, this.skill.horizon);
 
     if (
       later != null &&
@@ -87,7 +99,17 @@ export class Trainer {
    * plan around it: a KO goes out, and the rest stop chasing that foe
    */
   command(units: Unit[], now: number): void {
-    const waiting = new Set(units);
+    const waiting = new Set<Unit>();
+
+    // A unit is ordered once the trainer has had its time to think
+    for (const unit of units) {
+      const since = this.noticed.get(unit) ?? now;
+
+      this.noticed.set(unit, since);
+      if (now - since >= this.skill.think) {
+        waiting.add(unit);
+      }
+    }
 
     while (waiting.size > 0) {
       let best: { unit: Unit; order: Order } | undefined;
@@ -103,6 +125,7 @@ export class Trainer {
         return;
       }
       waiting.delete(best.unit);
+      this.noticed.delete(best.unit);
       best.unit.cast(best.order.move, best.order.target);
     }
   }
@@ -138,7 +161,7 @@ export function getTrainer(battle: Battle, team: Team): Trainer {
   let trainer = trainers.get(team);
 
   if (trainer == null) {
-    trainer = new Trainer(battle, team);
+    trainer = new Trainer(battle, team, getTrainerSkill(team));
     trainers.set(team, trainer);
   }
   return trainer;

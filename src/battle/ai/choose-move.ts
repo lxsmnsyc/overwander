@@ -246,6 +246,29 @@ export function bestCoolingMove(
   });
 }
 
+/**
+ * A usable move and target picked at random, as a trainer that misplays
+ * throws it. Moves still cooling are left out
+ */
+export function randomMove(battle: Battle, source: Unit): AIMoveChoice | undefined {
+  return withAIContext(battle, source, () => {
+    const options: AIMoveChoice[] = [];
+
+    for (const state of Object.values(source.moves)) {
+      // oxlint-disable-next-line typescript/no-unnecessary-condition
+      if (!state || state.disabled || state.cooldown != null) {
+        continue;
+      }
+      for (const target of collectTargets(battle, source, state.move)) {
+        if (isMoveUsable(battle, source, state.move, target)) {
+          options.push({ move: state.move, target, score: BASE_SCORE });
+        }
+      }
+    }
+    return options.length === 0 ? undefined : options[Math.floor(battle.random() * options.length)];
+  });
+}
+
 /** Callers in the middle of being weighed, so one that calls another stops there */
 const weighing = new Set<Moves>();
 

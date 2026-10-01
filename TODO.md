@@ -107,6 +107,14 @@ Small and unblocked.
 - [ ] adjacent chunk preload
 - [ ] Mini Boss ability
 - [ ] catch tags
+- [ ] **An NPC API.** One NPC is spread over many places today: its id, name,
+      charsets and visit tag in `src/data/overworld/npc.ts`, its counter under
+      `src/components/overworld/npc-dialog/counters/` and its entry in
+      `counter.tsx`, its server handler under `src/server/npcs/` with a client
+      wrapper in `src/auth/npcs.ts`, the trader list in `src/server/validate.ts`,
+      and where it stands in `chunk-snapshot.ts`. A `createNpc` definition
+      should declare all of it in one place, the way `createAbility` does for
+      abilities, so adding the Jeweler or the Archaeologist above is one file.
 
 ## 3. Player systems
 

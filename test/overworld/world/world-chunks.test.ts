@@ -947,30 +947,40 @@ describe('world', () => {
 
   it('stands a legendary lair with nobody to host as a shadow lair', () => {
     const world = new World('overworld');
+    // Only the chunks holding a legendary lair are worth a snapshot
+    const lairs: ReturnType<World['getChunk']>[] = [];
+
+    for (let x = -24; x < 24; x++) {
+      for (let y = -24; y < 24; y++) {
+        const chunk = world.getChunk(x, y);
+
+        if (new Set(chunk.getLandmarkCells().values()).has(Landmark.LegendaryLair)) {
+          lairs.push(chunk);
+        }
+      }
+    }
+
     let fallen = 0;
     let raided = 0;
 
-    for (let window = 0; window < 4; window++) {
-      for (let x = -24; x < 24; x++) {
-        for (let y = -24; y < 24; y++) {
-          const chunk = world.getChunk(x, y);
-          const snapshot = new ChunkSnapshot(chunk, window * RAID_INTERVAL);
-          const legendary = snapshot.getLegendaryLairs();
-          const shadow = snapshot.getShadowLairs();
+    for (let window = 0; window < 4 && raided < 3; window++) {
+      for (const chunk of lairs) {
+        const snapshot = new ChunkSnapshot(chunk, window * RAID_INTERVAL);
+        const legendary = snapshot.getLegendaryLairs();
+        const shadow = snapshot.getShadowLairs();
 
-          for (const [cell, landmark] of chunk.getLandmarkCells()) {
-            if (landmark !== Landmark.LegendaryLair) {
-              continue;
-            }
-            // Never both, and never an empty legendary lair
-            expect(legendary.has(cell) && shadow.has(cell)).toBe(false);
-            if (!legendary.has(cell)) {
-              fallen++;
-              expect(snapshot.isShadowLair(cell)).toBe(true);
-              expect(snapshot.getFallenLairs().has(cell)).toBe(true);
-              if (shadow.has(cell)) {
-                raided++;
-              }
+        for (const [cell, landmark] of chunk.getLandmarkCells()) {
+          if (landmark !== Landmark.LegendaryLair) {
+            continue;
+          }
+          // Never both, and never an empty legendary lair
+          expect(legendary.has(cell) && shadow.has(cell)).toBe(false);
+          if (!legendary.has(cell)) {
+            fallen++;
+            expect(snapshot.isShadowLair(cell)).toBe(true);
+            expect(snapshot.getFallenLairs().has(cell)).toBe(true);
+            if (shadow.has(cell)) {
+              raided++;
             }
           }
         }

@@ -20,12 +20,15 @@ import Weather, {
   toBattleWeather,
   widensMoveSlots,
 } from '../src/data/overworld/weather';
+import { PHENOMENON_MIN_IV } from '../src/data/overworld/phenomenon';
+import { HONEY_TREE_MIN_IV } from '../src/data/overworld/honey-tree';
 import World from '../src/overworld/world';
 import ChunkSnapshot from '../src/overworld/chunk-snapshot';
 import deriveEncounter, {
   type Encounter,
   EncounterType,
   RAID_FAMILY_DAY_MIN_IV,
+  RAID_MIN_IV,
 } from '../src/overworld/encounter';
 import { Species } from '../src/data/ids/species';
 import type { Moves } from '../src/data/ids/moves';
@@ -182,7 +185,7 @@ describe('classifying a sky', () => {
     expect(isBoostingWeather(Weather.Cloudy)).toBe(true);
     expect(isBoostingWeather(Weather.Rain)).toBe(true);
     expect(isBoostingWeather(Weather.Aurora)).toBe(true);
-    expect(WEATHER_MIN_IV).toBe(10);
+    expect(WEATHER_MIN_IV).toBe(9);
     // What a sky boosts is its own types and nothing else, so a plain
     // sky is one that favours nobody
     expect(WEATHER_TYPES[Weather.Clear]).toEqual([]);
@@ -312,6 +315,24 @@ describe('what weather is worth', () => {
     }
   });
 
+  it("stacks a caller's own floor on the sky's", () => {
+    // What a phenomenon and a honey tree each pass
+    for (const floor of [PHENOMENON_MIN_IV, HONEY_TREE_MIN_IV]) {
+      const met = (weather: Weather | undefined): number[] => {
+        const encounter = deriveEncounter(snapshot, [...hopeless], 'trainer-red', {
+          type: EncounterType.Wild,
+          weather,
+          minimumIV: floor,
+        });
+        return STAT_ORDER.map((stat) => getIV(encounter.ivs, stat));
+      };
+
+      expect(met(undefined)).toEqual(Array(6).fill(floor));
+      // Rattata is Normal, which dust favours
+      expect(met(Weather.DustHaze)).toEqual(Array(6).fill(floor + WEATHER_MIN_IV));
+    }
+  });
+
   it('stacks with the family day rather than being beaten by it', () => {
     // A raid on the family's own day is already worth a floor; fought
     // under a sky that favours it, it is worth both, which is what
@@ -331,10 +352,12 @@ describe('what weather is worth', () => {
         STAT_ORDER[0],
       );
 
-    expect(prize(undefined)).toBe(RAID_FAMILY_DAY_MIN_IV);
+    const floor = RAID_MIN_IV + RAID_FAMILY_DAY_MIN_IV;
+
+    expect(prize(undefined)).toBe(floor);
     // A rat is Normal, so dust is the sky its raid is worth more under
-    expect(prize(Weather.Rain)).toBe(RAID_FAMILY_DAY_MIN_IV);
-    expect(prize(Weather.DustHaze)).toBe(RAID_FAMILY_DAY_MIN_IV + WEATHER_MIN_IV);
+    expect(prize(Weather.Rain)).toBe(floor);
+    expect(prize(Weather.DustHaze)).toBe(floor + WEATHER_MIN_IV);
   });
 
   it('hands a fogbow meeting room for a fifth move, and sometimes a sixth', () => {
@@ -529,7 +552,9 @@ describe('what weather is worth', () => {
   });
 
   it('never floors a pokemon above what the game can roll', () => {
-    expect(Math.min(MAX_IV, RAID_FAMILY_DAY_MIN_IV + WEATHER_MIN_IV)).toBeLessThanOrEqual(MAX_IV);
+    expect(
+      Math.min(MAX_IV, RAID_MIN_IV + RAID_FAMILY_DAY_MIN_IV + WEATHER_MIN_IV),
+    ).toBeLessThanOrEqual(MAX_IV);
   });
 });
 

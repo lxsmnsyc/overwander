@@ -18,6 +18,7 @@ export default function Hint(props: HintProps): JSX.Element {
   return (
     <HoverCard
       title={props.title}
+      kind="Help"
       description={props.description}
       placement={props.placement ?? 'bottom'}
       class="inline-flex rounded text-muted transition-colors hover:text-ink

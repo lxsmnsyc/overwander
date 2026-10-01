@@ -4,13 +4,15 @@ import {
   cancelTrade as cancelOnServerSide,
   declineTrade as declineOnServerSide,
   offerTrade as offerOnServerSide,
+  readTradeRows,
 } from '../server/trades';
-import { requireUid } from '../server/auth';
-import check, { ID, MAYBE_ID, OFFSET, TOKEN, TRADE_OFFER } from '../server/validate';
+import { requireReader, requireUid, requireUidFor } from '../server/auth';
+import { Feature } from '../server/switches';
+import check, { ID, MAYBE_ID, OFFSET, TOKEN, TRADE_OFFER, UID } from '../server/validate';
 import { type TradeRecord, asTradeRecord } from './trade-record';
 import { syncServerClock } from './clock';
-import getSupabase, { type Unwatch, watchTable } from './supabase';
-import { asRecordArray } from './__normalize';
+import { type Unwatch, watchTable } from './watch';
+import { readOnly } from '../utils/server-calls';
 import { getLocalOffset } from './local-time';
 import getIdToken from './session';
 
@@ -35,10 +37,6 @@ export type { TradeRecord } from './trade-record';
 
 const TRADE_TABLE = 'trades';
 
-const TRADE_COLUMNS =
-  'id, proposer, receiver, offered_caught, asked_caught, given_caught, ' +
-  'gold, status, created_at, resolved_at, utc_offset';
-
 /** One trade row in the record shape the rules read */
 function fromTradeRow(row: Record<string, unknown>): TradeRecord {
   return asTradeRecord({
@@ -60,19 +58,26 @@ function fromTradeRow(row: Record<string, unknown>): TradeRecord {
  * ones to answer or take back, and the settled ones as history
  */
 export async function listTrades(uid: string): Promise<[string, TradeRecord][]> {
-  const { data } = await getSupabase()
-    .from(TRADE_TABLE)
-    .select(TRADE_COLUMNS)
-    .or(`proposer.eq.${uid},receiver.eq.${uid}`)
-    .order('created_at', { ascending: false });
-
   const trades: [string, TradeRecord][] = [];
 
-  for (const row of asRecordArray(data)) {
+  for (const row of await listTradesOnServer(await getIdToken(), uid)) {
     trades.push([String(row.id), fromTradeRow(row)]);
   }
   return trades;
 }
+
+async function listTradesOnServer(
+  token: string,
+  player: string,
+): Promise<Record<string, unknown>[]> {
+  'use server';
+  check(TOKEN, token);
+  check(UID, player);
+  const uid = await requireReader(token);
+
+  return player === uid ? readTradeRows(uid) : [];
+}
+readOnly(listTradesOnServer);
 
 /**
  * Follow the player's trades from both ends: an offer arriving, an
@@ -118,7 +123,12 @@ async function offerTradeOnServer(
   check(TOKEN, token);
   check(TRADE_OFFER, offer);
   check(OFFSET, offset);
-  return offerOnServerSide(await requireUid(token), offer, await syncServerClock(), offset);
+  return offerOnServerSide(
+    await requireUidFor(token, Feature.Trades),
+    offer,
+    await syncServerClock(),
+    offset,
+  );
 }
 
 /**
@@ -145,7 +155,13 @@ async function acceptTradeOnServer(
   check(ID, id);
   check(MAYBE_ID, pick);
   check(OFFSET, offset);
-  return acceptOnServerSide(await requireUid(token), id, pick, await syncServerClock(), offset);
+  return acceptOnServerSide(
+    await requireUidFor(token, Feature.Trades),
+    id,
+    pick,
+    await syncServerClock(),
+    offset,
+  );
 }
 
 /**

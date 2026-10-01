@@ -6,7 +6,7 @@
 
 export { createAbility, createContactHazard, getAbilityHolders } from './create';
 export { createFeedScoring, createHealFeedScoring, createStageFeedScoring } from './scoring';
-export { createAbsorbStageAbility, createClearBodyAbility } from './absorb';
+export { createAbsorbStageAbility, createClearBodyAbility, createRodAbility } from './absorb';
 export { movesFlagged, movesOfType } from './matchers';
 export type { AbsorbMatcher } from './matchers';
 export {
@@ -38,4 +38,5 @@ export {
   createDrizzleAbility,
   createPrimalWeatherAbility,
   createSandRushAbility,
+  createSurgeAbility,
 } from './weather';

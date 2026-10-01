@@ -1,9 +1,11 @@
 import type Biome from '../ids/biome';
 import { SpawnSurface, TimeOfDay } from '../ids/biome';
+import EggGroups from '../ids/egg-groups';
 import type Families from '../ids/families';
-import { DEOXYS_FORMS, Habitat, Species, UNOWN_FORMS } from '../ids/species';
-import type { Types } from '../constants/types';
-import { getBaseSpecies, getHabitat, getSpeciesData } from '../species';
+import Abilities from '../ids/abilities';
+import { DEOXYS_FORMS, Habitat, Species, UNOWN_FORMS, getBaseFormSpecies } from '../ids/species';
+import { Types } from '../constants/types';
+import { getBaseSpecies, getHabitat, getSpeciesAbilities, getSpeciesData } from '../species';
 
 /**
  * One weighted slot of a biome's spawn pool
@@ -132,9 +134,13 @@ let habitatIndex: Map<Species, SpeciesHabitat[]> | null = null;
 /** Each biome and hour's pools merged, built on demand; see `getBiomeRoster` */
 const ROSTERS = new Map<string, SpawnRarityGroups>();
 
+/** Each biome, hour and surface's cut of the roster; see `getSpawnPool` */
+const SURFACE_CUTS = new Map<string, SpawnRarityGroups>();
+
 function forgetPools(): void {
   habitatIndex = null;
   ROSTERS.clear();
+  SURFACE_CUTS.clear();
 }
 
 export function registerSpawnPool(biome: Biome, pool: SpawnPool): void {
@@ -156,15 +162,61 @@ export function registerIcePool(biome: Biome, pool: SpawnPool): void {
 
 /**
  * What lives underground, which is one pool for the whole of it
- * rather than one per biome. The country overhead still decides which
- * cave a player is standing in and how far they walked to reach it,
- * but what is living in the dark is much the same wherever the dark is
+ * rather than one per biome, legendaries aside. The country overhead
+ * still decides which cave a player is standing in and how far they
+ * walked to reach it, but what is living in the dark is much the same
+ * wherever the dark is
  */
 let cavePool: SpawnPool | null = null;
+
+/**
+ * The legendaries a biome's caves keep: the residents of the
+ * underground lairs that biome hosts. Unlike the rest of the cave pool
+ * these follow the country overhead, since a lair is a place
+ */
+const CAVE_LEGENDS = new Map<Biome, SpawnEntry[]>();
+
+/** The cave pool with a biome's legendaries on it, per hour and surface */
+const CAVE_POOLS = new Map<string, SpawnRarityGroups>();
 
 export function registerCavePool(pool: SpawnPool): void {
   cavePool = pool;
   habitatIndex = null;
+  CAVE_POOLS.clear();
+}
+
+export function registerCaveLegends(biome: Biome, legends: SpawnEntry[]): void {
+  CAVE_LEGENDS.set(biome, legends);
+  CAVE_POOLS.clear();
+}
+
+function getCavePool(biome: Biome, time: TimeOfDay, surface: SpawnSurface): SpawnRarityGroups {
+  const key = `${biome}:${time}:${surface}`;
+  const known = CAVE_POOLS.get(key);
+
+  if (known != null) {
+    return known;
+  }
+
+  // Only what can stand on the cell, so a ground species keeps off the
+  // cave's water and Kyogre keeps to it
+  const shared = cavePool?.[time] ?? EMPTY_GROUPS;
+  const pool: SpawnRarityGroups = { ...EMPTY_GROUPS };
+
+  for (const band of SPAWN_BAND_KEYS) {
+    const fitting: SpawnEntry[] = [];
+    const entries = band === 'special' ? (CAVE_LEGENDS.get(biome) ?? []) : spawnBand(shared, band);
+
+    for (const entry of entries) {
+      if (fitsSurface(entry.species, surface)) {
+        fitting.push(entry);
+      }
+    }
+    pool[band] = fitting;
+  }
+
+  CAVE_POOLS.set(key, pool);
+  return pool;
 }
 
 /**
@@ -194,9 +246,37 @@ export function getSpawnPool(
   surface = SpawnSurface.Land,
 ): SpawnRarityGroups {
   if (underground) {
-    return cavePool?.[time] ?? EMPTY_GROUPS;
+    return getCavePool(biome, time, surface);
   }
-  return poolsOn(surface).get(biome)?.[time] ?? EMPTY_GROUPS;
+
+  const key = `${biome}:${time}:${surface}`;
+  const known = SURFACE_CUTS.get(key);
+
+  if (known != null) {
+    return known;
+  }
+
+  const pool = standingOn(getBiomeRoster(biome, time), surface);
+
+  SURFACE_CUTS.set(key, pool);
+  return pool;
+}
+
+/** The entries of a pool that can stand on this surface, band by band */
+function standingOn(groups: SpawnRarityGroups, surface: SpawnSurface): SpawnRarityGroups {
+  const pool: SpawnRarityGroups = { ...EMPTY_GROUPS };
+
+  for (const band of SPAWN_BAND_KEYS) {
+    const fitting: SpawnEntry[] = [];
+
+    for (const entry of spawnBand(groups, band)) {
+      if (fitsSurface(entry.species, surface)) {
+        fitting.push(entry);
+      }
+    }
+    pool[band] = fitting;
+  }
+  return pool;
 }
 
 function poolsOn(surface: SpawnSurface): Map<Biome, SpawnPool> {
@@ -212,25 +292,91 @@ export function hasSpawnPool(biome: Biome, surface: SpawnSurface): boolean {
 }
 
 /**
- * Whether a species may stand in a pool on this surface: nothing that
- * only swims on land or ice, and nothing of the ground in water
+ * The three kinds a biome's roster splits into. A flier or floater
+ * appears over ground and water alike, a water species only over water
+ * unless it is amphibious, and everything else only on the ground
  */
-export function fitsSurface(species: Species, surface: SpawnSurface): boolean {
-  const habitat = getHabitat(species);
+export const enum SpawnClass {
+  Ground = 0,
+  Water = 1,
+  Flying = 2,
+}
 
-  return surface === SpawnSurface.Water ? habitat !== Habitat.Ground : habitat !== Habitat.Water;
+/** Flying types that live in the water rather than over it */
+const WATER_ONLY_FLIERS = new Set<Species>([Species.Gyarados, Species.Mantine, Species.Mantyke]);
+
+/** Species a water egg group would count as water that live on dry land */
+const DRY_LAND_SPECIES = new Set<Species>([Species.Skorupi, Species.Drapion]);
+
+const WATER_EGG_GROUPS = new Set<EggGroups>([EggGroups.Water1, EggGroups.Water2, EggGroups.Water3]);
+
+/** Which of the three kinds a species is, read off its types, abilities and egg groups */
+export function getSpawnClass(species: Species): SpawnClass {
+  const data = getSpeciesData(species);
+  const line = getBaseFormSpecies(species);
+
+  if (
+    !WATER_ONLY_FLIERS.has(line) &&
+    (data.types.includes(Types.Flying) ||
+      data.eggGroups.includes(EggGroups.Flying) ||
+      getSpeciesAbilities(species).has(Abilities.Levitate))
+  ) {
+    return SpawnClass.Flying;
+  }
+  if (DRY_LAND_SPECIES.has(line)) {
+    return SpawnClass.Ground;
+  }
+  for (const group of data.eggGroups) {
+    if (WATER_EGG_GROUPS.has(group)) {
+      return SpawnClass.Water;
+    }
+  }
+  return data.types.includes(Types.Water) ? SpawnClass.Water : SpawnClass.Ground;
 }
 
 /**
- * Everything the biome's land, water and ice pools hold at this hour,
- * for what reads the biome rather than one cell: raids, nests and
- * trainers. A species in two pools counts once, at its heavier weight
+ * Whether a species may stand on this surface. Ice is walked like the
+ * ground, and only an amphibious water species leaves the water
+ */
+export function fitsSurface(species: Species, surface: SpawnSurface): boolean {
+  const kind = getSpawnClass(species);
+
+  if (kind === SpawnClass.Flying) {
+    return true;
+  }
+  if (surface === SpawnSurface.Water) {
+    return kind === SpawnClass.Water;
+  }
+  return kind === SpawnClass.Ground || getHabitat(species) === Habitat.Amphibious;
+}
+
+/** The biome's roster cut to one kind, which is what each phenomenon startles */
+export function getClassPool(biome: Biome, time: TimeOfDay, kind: SpawnClass): SpawnRarityGroups {
+  const roster = getBiomeRoster(biome, time);
+  const pool: SpawnRarityGroups = { ...EMPTY_GROUPS };
+
+  for (const band of SPAWN_BAND_KEYS) {
+    const fitting: SpawnEntry[] = [];
+
+    for (const entry of spawnBand(roster, band)) {
+      if (getSpawnClass(entry.species) === kind) {
+        fitting.push(entry);
+      }
+    }
+    pool[band] = fitting;
+  }
+  return pool;
+}
+
+/**
+ * Everything the biome's land, water and ice pools hold at this hour:
+ * the mixed pool every cell's surface is cut from, and what raids, nests
+ * and trainers read. A species in two pools counts once, at its heavier
+ * weight
  */
 export function getBiomeRoster(biome: Biome, time: TimeOfDay): SpawnRarityGroups {
-  const land = getSpawnPool(biome, time);
-
   if (!WATER_POOLS.has(biome) && !ICE_POOLS.has(biome)) {
-    return land;
+    return SPAWN_POOLS.get(biome)?.[time] ?? EMPTY_GROUPS;
   }
 
   const key = `${biome}:${time}`;
@@ -245,8 +391,8 @@ export function getBiomeRoster(biome: Biome, time: TimeOfDay): SpawnRarityGroups
   for (const band of SPAWN_BAND_KEYS) {
     const weights = new Map<Species, number>();
 
-    for (const [surface] of SURFACE_POOLS) {
-      for (const entry of spawnBand(getSpawnPool(biome, time, false, surface), band)) {
+    for (const [, pools] of SURFACE_POOLS) {
+      for (const entry of spawnBand(pools.get(biome)?.[time] ?? EMPTY_GROUPS, band)) {
         weights.set(entry.species, Math.max(weights.get(entry.species) ?? 0, entry.weight));
       }
     }
@@ -493,15 +639,18 @@ export interface SpeciesHabitat {
  */
 function buildHabitats(): Map<Species, SpeciesHabitat[]> {
   const found = new Map<Species, SpeciesHabitat[]>();
-
-  const registered: [Biome, SpawnPool][] = [];
+  const biomes = new Set<Biome>();
 
   for (const [, pools] of SURFACE_POOLS) {
-    registered.push(...pools);
+    for (const biome of pools.keys()) {
+      biomes.add(biome);
+    }
   }
-  for (const [biome, pool] of registered) {
+  // Read off the roster, so a species listed on two surfaces of one
+  // biome is one habitat rather than two
+  for (const biome of biomes) {
     for (const time of TIMES_OF_DAY) {
-      const groups = pool[time];
+      const groups = getBiomeRoster(biome, time);
 
       for (const [band, rarity] of BAND_RARITIES) {
         for (const entry of spawnBand(groups, band)) {
@@ -612,6 +761,11 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.ZapdosShadow,
   Species.MoltresShadow,
   Species.MewtwoShadow,
+  Species.RaikouShadow,
+  Species.EnteiShadow,
+  Species.SuicuneShadow,
+  Species.LugiaShadow,
+  Species.HoOhShadow,
   Species.Mewtwo,
   Species.Raikou,
   Species.Entei,
@@ -750,6 +904,13 @@ const UNOWN_SPECIES = new Set<Species>(UNOWN_FORMS);
  * town is the only place one is ever met
  */
 const PRIZED_BY_HAND = new Set<Species>([Species.Larvesta, Species.VivillonFancy]);
+
+/** Met as rarely as a mythical, but no relic calls it and no raid stages it */
+const MYTHICAL_BY_HAND = new Set<Species>([
+  Species.PichuSpikyEared,
+  Species.FloetteEternal,
+  Species.VivillonPokeBall,
+]);
 
 /**
  * The unowns as prized-band entries, for a pool to spread into its
@@ -922,7 +1083,7 @@ export function getSpawnRarity(species: Species): SpawnRarity {
   // The two are asked apart rather than together: what stages one is
   // a lair and what stages the other is a relic, and everything that
   // reads a rarity wants to know which
-  if (MYTHICAL_SPECIES.has(species)) {
+  if (MYTHICAL_SPECIES.has(species) || MYTHICAL_BY_HAND.has(species)) {
     return SpawnRarity.Mythical;
   }
   if (LEGENDARY_SPECIES.has(species)) {
@@ -982,6 +1143,9 @@ export function pickFromEntries(entries: SpawnEntry[], random: () => number): Sp
  * totals, so a band added between two others takes its share out of
  * **base** and leaves every other band as wide as it was
  */
+/** The bands a roll only reaches on its own odds, never by falling into them */
+const LEGEND_BANDS = new Set<keyof SpawnRarityGroups>(['special', 'mythical']);
+
 const SPAWN_BANDS: [band: keyof SpawnRarityGroups, odds: number][] = [
   ['mythical', MYTHICAL_SPAWN_ODDS],
   ['special', SPECIAL_SPAWN_ODDS],
@@ -1003,7 +1167,9 @@ const SPAWN_BANDS: [band: keyof SpawnRarityGroups, odds: number][] = [
  * leave the prized band out altogether and still roll their rares.
  * An empty base band falls the other way, up to the richest band that
  * holds anything: a coast whose every pokemon is one stage from
- * finished still has pokemon on it
+ * finished still has pokemon on it. That climb stops short of the
+ * legends, so a pool holding only a legend stays empty rather than
+ * staging it on every roll
  */
 export function pickSpawn(groups: SpawnRarityGroups, random: () => number): Species | null {
   const roll = random();
@@ -1025,7 +1191,7 @@ export function pickSpawn(groups: SpawnRarityGroups, random: () => number): Spec
   for (const [band] of [...SPAWN_BANDS].reverse()) {
     const tier = spawnBand(groups, band);
 
-    if (tier.length > 0) {
+    if (tier.length > 0 && !LEGEND_BANDS.has(band)) {
       return pickFromEntries(tier, random);
     }
   }

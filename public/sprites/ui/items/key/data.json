@@ -2760,6 +2760,19 @@
       ]
     },
     {
+      "name": "skill-book.png",
+      "x": 95,
+      "y": 363,
+      "width": 22,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        6
+      ]
+    },
+    {
       "name": "sonias-book.png",
       "x": 183,
       "y": 29,

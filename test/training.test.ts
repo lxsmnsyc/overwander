@@ -33,10 +33,21 @@ import { asCaughtPokemon, getMovePoints } from '../src/auth/caught-record';
 import { Balls, ItemFlags, ItemTypes, Items } from '../src/data/ids/items';
 import { Moves } from '../src/data/ids/moves';
 import registerItems, { getItemData } from '../src/data/items';
-import { PP_ITEMS, VITAMIN_EFFORT, VITAMIN_PRICE, VITAMIN_STATS } from '../src/data/items/vitamins';
-import { WING_EFFORT, WING_STATS } from '../src/data/items/wings';
+import {
+  MAX_VITAMIN_STATS,
+  PP_ITEMS,
+  VITAMIN_EFFORT,
+  VITAMIN_PRICE,
+  VITAMIN_STATS,
+  isVitamin,
+} from '../src/data/items/vitamins';
+import { MAX_WING_STATS, WING_EFFORT, WING_STATS, isWing } from '../src/data/items/wings';
+import Phenomenon, {
+  getPhenomenonGroups,
+  getPhenomenonItems,
+} from '../src/data/overworld/phenomenon';
 import { PP_UP_LIMIT, getMovePP, registerMoves } from '../src/data/moves';
-import { getItemBand } from '../src/data/overworld/item-pool';
+import { getItemBand, isPreciousItem } from '../src/data/overworld/item-pool';
 import { registerSpecies } from '../src/data/species';
 import { Species } from '../src/data/ids/species';
 import { raisedMovePoints } from '../src/server/training';
@@ -368,6 +379,46 @@ describe('vitamins', () => {
       expect(getItemData(item).flags & ItemFlags.Marketable).toBe(0);
       expect(getItemBand(item)).toBe('scarce');
     }
+  });
+
+  it('has a Max for every stat, found in a special band and never bought', () => {
+    expect(new Set(MAX_VITAMIN_STATS.values())).toEqual(new Set(STAT_ORDER));
+    expect(new Set(MAX_WING_STATS.values())).toEqual(new Set(STAT_ORDER));
+
+    for (const item of [...MAX_VITAMIN_STATS.keys(), ...MAX_WING_STATS.keys()]) {
+      const data = getItemData(item);
+
+      expect(data.type).toBe(ItemTypes.Training);
+      expect(data.flags & ItemFlags.Marketable).toBe(0);
+      expect(data.buy).toBe(0);
+      expect(isPreciousItem(item)).toBe(true);
+    }
+    // The vitamins are buried in caches, the wings dropped by a flying shadow alone
+    for (const item of MAX_VITAMIN_STATS.keys()) {
+      expect(isVitamin(item)).toBe(true);
+      expect(getItemBand(item)).toBe('special');
+    }
+
+    const shadow = new Set(getPhenomenonGroups(Phenomenon.FlyingShadow).special);
+
+    for (const item of MAX_WING_STATS.keys()) {
+      expect(isWing(item)).toBe(true);
+      expect(getItemBand(item)).toBeNull();
+      expect([...shadow].some((entry) => entry.item === item)).toBe(true);
+    }
+    for (const phenomenon of [Phenomenon.DustCloud, Phenomenon.RipplingWater]) {
+      for (const item of getPhenomenonItems(phenomenon)) {
+        expect(MAX_WING_STATS.has(item)).toBe(false);
+      }
+    }
+  });
+
+  it('keeps Rare Candy Max to the special band', () => {
+    const data = getItemData(Items.RareCandyMax);
+
+    expect(data.flags & ItemFlags.Marketable).toBe(0);
+    expect(data.buy).toBe(0);
+    expect(getItemBand(Items.RareCandyMax)).toBe('special');
   });
 
   it('sells a PP Max for what three PP Ups cost', () => {

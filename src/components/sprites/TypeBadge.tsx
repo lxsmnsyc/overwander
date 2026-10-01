@@ -154,6 +154,7 @@ export default function TypeBadge(props: TypeBadgeProps): JSX.Element {
   return (
     <TooltipHost
       class={`inline-flex items-center ${props.class ?? ''}`}
+      kind="type"
       name={TYPE_NAMES[props.type]}
       extra={() => <Matchups type={props.type} />}
     >

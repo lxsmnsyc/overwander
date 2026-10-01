@@ -2,7 +2,6 @@ import { AttackPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 import { onUnitActs } from '../utils';
@@ -19,7 +18,7 @@ import { onUnitActs } from '../utils';
 const RING_SHARE = 1 / 16;
 
 /** What each of the two draws round its user */
-const WORN = new Map<Moves, Statuses>([
+export const WORN = new Map<Moves, Statuses>([
   [Moves.AquaRing, Statuses.AquaRinged],
   [Moves.MagnetRise, Statuses.MagnetRisen],
 ]);
@@ -54,12 +53,6 @@ export default function setupAquaRing(battle: Battle): void {
     }
     if (event.usable && event.move === Moves.MagnetRise) {
       event.usable = event.source.status[Statuses.MagnetRisen] == null;
-    }
-  });
-
-  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (event.move === Moves.AquaRing && event.source.status[Statuses.AquaRinged] != null) {
-      event.score -= USELESS_PENALTY;
     }
   });
 }

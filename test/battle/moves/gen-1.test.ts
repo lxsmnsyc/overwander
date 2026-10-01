@@ -552,6 +552,34 @@ describe('Substitute', () => {
     expect(holder.status[Statuses.Substituted]).toBeUndefined();
     expect(holder.health).toBe(120);
   });
+
+  it("lets its own side's moves through to the pokemon behind it", () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    holder.triggerMoveEffect(Moves.Substitute, NONE_TARGET, 0);
+
+    // A teammate's stat change lands, where an enemy's is refused
+    pinRandom(battle, 0.5);
+    mate.triggerMoveEffect(Moves.Acupressure, unitTarget(holder), 0);
+    pinRandom(battle, 1);
+    const raised = Object.values(holder.stages).some((value) => value > 0);
+
+    expect(raised).toBe(true);
+
+    enemy.triggerMoveTarget(Moves.Growl, unitTarget(holder), 0);
+    expect(holder.stages[Stages.Attack]).toBe(0);
+
+    // And a teammate's Wish heals it
+    const before = holder.health;
+
+    mate.triggerMove(Moves.Wish, unitTarget(holder), 0);
+    battle.tick(turns(3));
+    expect(holder.health).toBeGreaterThan(before);
+  });
 });
 
 describe('Counter', () => {

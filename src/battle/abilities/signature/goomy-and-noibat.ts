@@ -1,23 +1,20 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
-import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
-import { DamageFlags, StatFlags } from '../../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags } from '../../../data/ids/moves';
 import { BattleEvents, EffectType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import turns from '../../turn';
 import type Unit from '../../unit';
 import { createAbility } from '../__create';
+import { createUnitState } from './__create';
 
 /** The share of a blow that is held back, and how long it takes to arrive */
 export const SEEPAGE_SHARE = 0.4;
 export const SEEPAGE_DELAY = turns(2);
 
-/** What outrunning the target is worth */
-export const OUTPACE_SCALE = 1.3;
-
 /**
- * The slug that soaks a blow and the bat that is already past it. One
- * argues with when damage lands, the other with who moved first
+ * The slug that soaks a blow and the bat that hears where it came
+ * from. One argues with when damage lands, the other answers it
  */
 const setupAbilities = [
   createAbility(Abilities.Seepage, (battle) => {
@@ -82,23 +79,54 @@ const setupAbilities = [
     ]);
   }),
 
-  createAbility(Abilities.Outpace, (battle) =>
-    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
-      const parent = event.parent;
-      const attacker = parent.source;
+  createAbility(Abilities.Echolocation, (battle) => {
+    // Every enemy each holder has heard land a move on it, and not yet answered
+    const { state: heard, lifecycles } = createUnitState<Set<Unit>>(battle);
 
-      if (event.value <= 0 || !attacker.hasAbility(Abilities.Outpace)) {
-        return;
-      }
+    return new MergedLifecycle([
+      ...lifecycles,
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        const holder = event.target;
 
-      const mine = attacker.resolveStat(Stats.Speed, StatFlags.Attack);
-      const theirs = parent.target.resolveStat(Stats.Speed, StatFlags.Attack);
+        if (
+          !event.success ||
+          event.flags & MoveAttackFlags.Simulated ||
+          event.source.team === holder.team ||
+          !holder.alive ||
+          !holder.hasAbility(Abilities.Echolocation)
+        ) {
+          return;
+        }
 
-      if (mine > theirs) {
-        event.value *= OUTPACE_SCALE;
-      }
-    }),
-  ),
+        const enemies = heard.get(holder) ?? new Set<Unit>();
+
+        enemies.add(event.source);
+        heard.set(holder, enemies);
+      }),
+      // Before the roll, the way Merciless answers, so armour still
+      // refuses it at Post
+      battle.on(BattleEvents.UnitAttackResolveCriticalHit, EventPriority.Pre, (event) => {
+        const parent = event.parent;
+        const holder = parent.source;
+
+        if (
+          event.critical ||
+          !heard.get(holder)?.has(parent.target) ||
+          !holder.hasAbility(Abilities.Echolocation)
+        ) {
+          return;
+        }
+        event.critical = true;
+
+        // The AI asking what a move would do reads the critical but
+        // does not spend it
+        if (!(parent.flags & MoveAttackFlags.Simulated)) {
+          heard.get(holder)?.delete(parent.target);
+          holder.triggerAbility(Abilities.Echolocation);
+        }
+      }),
+    ]);
+  }),
 ];
 
 export default setupAbilities;

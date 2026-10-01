@@ -2,6 +2,8 @@ import { Types } from '../../../../data/constants/types';
 import type { Weathers } from '../../../../data/ids/status';
 import { MoveCategories, type Moves } from '../../../../data/ids/moves';
 import { getMoveData } from '../../../../data/moves';
+import { FUTURE_SIGHT_DELAY } from '../../../../battle/moves/future-sight';
+import { WISH_DELAY } from '../../../../battle/moves/wish';
 import type { Point, Stage } from '../../stage';
 import type { Painted } from '../__paint';
 
@@ -300,6 +302,19 @@ export type EffectShape =
   | 'Detonate'
   | 'Whiff';
 
+/** How long Wish's star rings where it lands, after the heal */
+export const WISH_TAIL = 400;
+/** Wish's star is in the air for the engine's whole wait, so it lands with the heal */
+export const WISH_SPAN = WISH_DELAY + WISH_TAIL;
+
+/** How long Doom Desire's star goes off for, after it lands */
+export const STARFALL_BLAST = 600;
+/** Doom Desire's star falls for the engine's whole wait, so it lands with the strike */
+export const STARFALL_SPAN = FUTURE_SIGHT_DELAY + STARFALL_BLAST;
+
+/** Shapes timed to the engine rather than to the move's weight */
+export const EXACT_SPANS = new Set<EffectShape>(['Wishing', 'Starfall']);
+
 /** How long each of them takes at ordinary weight, in milliseconds. */
 export const SPANS: Record<EffectShape, number> = {
   Impact: 400,
@@ -373,7 +388,7 @@ export const SPANS: Record<EffectShape, number> = {
   Upheaval: 820,
   Plume: 820,
   Lustre: 820,
-  Starfall: 900,
+  Starfall: STARFALL_SPAN,
   Grip: 900,
   Surge: 900,
   Moonlit: 1000,
@@ -411,7 +426,7 @@ export const SPANS: Record<EffectShape, number> = {
   Sunbeam: 900,
   Moonbeam: 900,
   Greening: 900,
-  Wishing: 1200,
+  Wishing: WISH_SPAN,
   Feathers: 1000,
   Swarm: 1000,
   Song: 1000,

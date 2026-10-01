@@ -46,8 +46,6 @@ export default function registerGlacierSpawns(): void {
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Kyurem, weight: 10 },
-        { species: Species.Regice, weight: 10 },
-        { species: Species.Articuno, weight: 10 },
         { species: Species.Regigigas, weight: 10 },
       ],
     },
@@ -90,8 +88,6 @@ export default function registerGlacierSpawns(): void {
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Kyurem, weight: 10 },
-        { species: Species.Regice, weight: 10 },
-        { species: Species.Articuno, weight: 10 },
         { species: Species.Regigigas, weight: 10 },
       ],
     },
@@ -127,8 +123,6 @@ export default function registerGlacierSpawns(): void {
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [
         { species: Species.Kyurem, weight: 10 },
-        { species: Species.Regice, weight: 10 },
-        { species: Species.Articuno, weight: 10 },
         { species: Species.Regigigas, weight: 10 },
       ],
     },
@@ -164,8 +158,6 @@ export default function registerGlacierSpawns(): void {
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [
         { species: Species.Kyurem, weight: 10 },
-        { species: Species.Regice, weight: 10 },
-        { species: Species.Articuno, weight: 10 },
         { species: Species.Regigigas, weight: 10 },
       ],
     },

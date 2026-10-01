@@ -1,5 +1,6 @@
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-import { requireUid } from '../server/auth';
+import { requireUid, requireUidFor } from '../server/auth';
+import { Feature } from '../server/switches';
 import check, { CELL, CHUNK_COORDINATE, ID, OFFSET, PARTY, TOKEN, UID } from '../server/validate';
 import {
   type GymSeatResult,
@@ -92,7 +93,7 @@ async function takeSeatOnServer(
   check(PARTY, catches);
   check(OFFSET, offset);
   return takeOnServer(
-    await requireUid(token),
+    await requireUidFor(token, Feature.GymSeats),
     x,
     y,
     cell,
@@ -167,7 +168,7 @@ async function challengeSeatOnServer(
   check(PARTY, catches);
   check(OFFSET, offset);
   return challengeOnServer(
-    await requireUid(token),
+    await requireUidFor(token, Feature.GymSeats),
     x,
     y,
     cell,

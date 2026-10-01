@@ -267,6 +267,8 @@ export const enum Species {
   Chinchou = 170,
   Lanturn = 171,
   Pichu = 172,
+  /** The Pichu that followed Celebi out of the past, and never grows up */
+  PichuSpikyEared = 1017201,
   Cleffa = 173,
   Igglybuff = 174,
   Togepi = 175,
@@ -1126,6 +1128,11 @@ export const enum Species {
   ZapdosShadow = 1014504,
   MoltresShadow = 1014604,
   MewtwoShadow = 1015003,
+  RaikouShadow = 1024302,
+  EnteiShadow = 1024403,
+  SuicuneShadow = 1024503,
+  LugiaShadow = 1024901,
+  HoOhShadow = 1025002,
 
   /**
    * The Megas. The form index is the collection's own Mega slot, so
@@ -1499,6 +1506,9 @@ export const DARMANITAN_FORMS = [Species.Darmanitan, Species.DarmanitanZen];
 
 /** Cherrim shut and Cherrim open, the shut one first */
 export const CHERRIM_FORMS = [Species.Cherrim, Species.CherrimSunshine];
+
+/** Pichu, and the spiky-eared one Celebi brought */
+export const PICHU_FORMS = [Species.Pichu, Species.PichuSpikyEared];
 
 /** Keldeo, and the shape it takes once it has learned Secret Sword */
 export const KELDEO_FORMS = [Species.Keldeo, Species.KeldeoResolute];

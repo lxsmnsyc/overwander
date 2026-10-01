@@ -537,7 +537,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
     (async () => {
       if (aftermath.length > 0) {
-        sayCandy(await recordAftermath(props.active.id, aftermath, defeated));
+        sayCandy(await recordAftermath(props.active.id, aftermath, defeated, BattleOutcome.Lost));
       }
       await finishBattle(props.active.id, BattleOutcome.Lost);
     })().catch(() => {
@@ -649,6 +649,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
             props.active.id,
             aftermath,
             countDefeated(built, user.uid),
+            won ? BattleOutcome.Won : BattleOutcome.Lost,
           );
 
           // Onto the summary while it is up, in passing once the player has left
@@ -800,15 +801,15 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       >
         <p class="text-center">{leavingSaid()}</p>
         <DialogActions>
+          <Button tone="primary" onClick={leave}>
+            Leave anyway
+          </Button>
           <Button
             onClick={() => {
               setLeaving(false);
             }}
           >
             Keep fighting
-          </Button>
-          <Button tone="primary" onClick={leave}>
-            Leave anyway
           </Button>
         </DialogActions>
       </Dialog>

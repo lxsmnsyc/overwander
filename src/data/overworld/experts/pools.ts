@@ -8,6 +8,7 @@ import {
   isCosmeticForm,
   isWornForm,
 } from '../../species';
+import { SpawnRarity, getSpawnRarity } from '../../biome';
 import { EVERY_LAIR, getLairResidents } from '../lair';
 import canMeetSpecies from '../reach';
 import { EliteMember } from './elite';
@@ -111,6 +112,10 @@ export const ELITE_MEMBER_POOLS: Record<EliteMember, ExpertPool> = {
   [EliteMember.Marshal]: { types: [Types.Fighting] },
   [EliteMember.Grimsley]: { types: [Types.Dark] },
   [EliteMember.Caitlin]: { types: [Types.Psychic] },
+  [EliteMember.Malva]: { types: [Types.Fire] },
+  [EliteMember.Siebold]: { types: [Types.Water] },
+  [EliteMember.Wikstrom]: { types: [Types.Steel] },
+  [EliteMember.Drasna]: { types: [Types.Dragon] },
 };
 
 /**
@@ -145,6 +150,11 @@ export const ELITE_MEMBER_SIGNATURES: Record<EliteMember, Species> = {
   [EliteMember.Marshal]: Species.Conkeldurr,
   [EliteMember.Grimsley]: Species.Bisharp,
   [EliteMember.Caitlin]: Species.Reuniclus,
+  // The Talonflame she closes with, since her Pyroar is staged nowhere yet
+  [EliteMember.Malva]: Species.Talonflame,
+  [EliteMember.Siebold]: Species.Barbaracle,
+  [EliteMember.Wikstrom]: Species.Aegislash,
+  [EliteMember.Drasna]: Species.Noivern,
 };
 
 /**
@@ -224,6 +234,17 @@ export const GYM_LEADER_SIGNATURES: Record<GymLeader, Species> = {
   // The Jellicent he closes with is unwritten, and the Wailord is
   // his in the same team
   [GymLeader.Marlon]: Species.Wailord,
+  [GymLeader.Viola]: Species.Vivillon,
+  // The fossil he closes with in X, a first stage like Roark's Cranidos
+  [GymLeader.Grant]: Species.Tyrunt,
+  // Her gym ace rather than the Lucario she Mega Evolves on the tower,
+  // which is Maylene's already
+  [GymLeader.Korrina]: Species.Hawlucha,
+  [GymLeader.Ramos]: Species.Gogoat,
+  [GymLeader.Clemont]: Species.Heliolisk,
+  [GymLeader.Valerie]: Species.Sylveon,
+  [GymLeader.Olympia]: Species.Meowstic,
+  [GymLeader.Wulfric]: Species.Avalugg,
 };
 
 /**
@@ -258,10 +279,12 @@ function inExpertPool(
   named: Set<Species>,
 ): boolean {
   // A worn shape is nobody's to walk with; a rearrangement that is
-  // kept, such as a Rotom in an appliance, is owned like anything else
+  // kept, such as a Rotom in an appliance, is owned like anything else.
+  // The prized band is a find, not an expert's partner
   if (
     species === Species.Egg ||
     LAIR_SPECIES.has(getBaseFormSpecies(species)) ||
+    getSpawnRarity(species) === SpawnRarity.Prized ||
     isWornForm(species) ||
     isCosmeticForm(species)
   ) {

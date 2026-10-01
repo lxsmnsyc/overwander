@@ -4,6 +4,7 @@ import { Moves } from '../../data/ids/moves';
 import { getRegisteredMoves } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
+import { RISKY_PENALTY } from '../ai/score';
 
 /**
  * Moves Metronome never calls. The three nobody knows are in here for
@@ -40,6 +41,13 @@ export default function setupMetronome(battle: Battle): void {
       pool.push(move);
     }
   }
+
+  // Anything at all may come of it, so it only beats doing nothing
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (event.move === Moves.Metronome) {
+      event.score -= RISKY_PENALTY;
+    }
+  });
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.Metronome) {

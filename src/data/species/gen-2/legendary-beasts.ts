@@ -69,7 +69,7 @@ export default function registerLegendaryBeastSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Grassland, Biome.Steppe, Biome.Woodland],
+    biomes: [Biome.Grassland, Biome.Woodland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -135,7 +135,7 @@ export default function registerLegendaryBeastSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Volcano, Biome.Badlands, Biome.Grassland, Biome.Woodland],
+    biomes: [Biome.Grassland, Biome.Woodland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -199,7 +199,7 @@ export default function registerLegendaryBeastSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Taiga, Biome.Tundra, Biome.Grassland, Biome.Woodland],
+    biomes: [Biome.Grassland, Biome.Woodland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

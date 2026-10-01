@@ -1,13 +1,17 @@
 import 'server-only';
 import Npc, {
   CHANNELER_FEE,
+  DOJO_MASTER_FEE,
   REMINDER_FEE,
   TUTOR_FEE,
   getRecallableMoves,
   getTutorableMoves,
+  tutorRefuses,
 } from '../../data/overworld/npc';
 import type { Moves } from '../../data/ids/moves';
+import { Slots } from '../../data/constants/slots';
 import awakenAbility, { type Awakening } from '../awaken';
+import widenSlot from '../slot-items';
 import { learnMove } from '../moves';
 import { LearnRefusal, type LearnResult } from '../../auth/learn-refusal';
 import { releaseVisit, resolveNpc, takeVisit } from './visits';
@@ -83,8 +87,18 @@ export async function tutorMove(
   if (snapshot == null) {
     return { refused: LearnRefusal.Gone };
   }
-  return learnMove(uid, catchId, move, TUTOR_FEE, replaces, (species, _level, known) =>
-    new Set(getTutorableMoves(species, known)).has(move),
+  return learnMove(
+    uid,
+    catchId,
+    move,
+    TUTOR_FEE,
+    replaces,
+    (species, _level, known, _from, friendship) => {
+      if (!new Set(getTutorableMoves(species, known)).has(move)) {
+        return false;
+      }
+      return tutorRefuses(move, friendship) ? LearnRefusal.Unfriendly : true;
+    },
   );
 }
 
@@ -142,6 +156,25 @@ export async function channelAbility(
     await releaseVisit(visit);
   }
   return drawn;
+}
+
+/**
+ * Have the Dojo Master make room for one more move, for one Heart Scale.
+ * Resolves the move slots the pokemon now has, or null when he refuses:
+ * see `widenSlot`, and he has to be standing there
+ */
+export async function trainMoveSlot(
+  uid: string,
+  x: number,
+  y: number,
+  cell: number,
+  catchId: string,
+  now: number,
+  offset: number,
+): Promise<number | null> {
+  return resolveNpc(x, y, cell, now, offset, Npc.DojoMaster) == null
+    ? null
+    : widenSlot(uid, catchId, DOJO_MASTER_FEE, Slots.Move);
 }
 
 /**

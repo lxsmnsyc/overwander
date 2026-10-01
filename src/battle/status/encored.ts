@@ -5,9 +5,8 @@ import createTimedStatus from './__create';
 const DURATION = turns(3);
 
 /**
- * Encored: the unit is repeating its last move for the crowd. The
- * mark is what the performance looks like from outside, and it is
- * what stops a second encore being called over the first; the repeats
- * themselves belong to the move
+ * Encored: the unit's cast in progress, or its next one, is about to
+ * be locked into repeats. The mark lapses if no cast lands in time;
+ * the repeats themselves belong to the move
  */
 export default createTimedStatus(Statuses.Encored, DURATION);

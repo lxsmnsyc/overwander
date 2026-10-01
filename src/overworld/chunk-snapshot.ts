@@ -904,16 +904,24 @@ export default class ChunkSnapshot {
           }
         }
 
-        // Under a dark day every shadow lair holds a true shadow instead,
-        // so the sky is the one way to meet one. Held to the same rules
-        // as every other draw, and with none left to stage the lair falls
-        // back to an ordinary shadow raid rather than holding nothing
-        const shadows: Species[] = [];
+        // Under a dark day a shadow lair holds a true shadow instead, but
+        // only one at home here: its counterpart's lair has to be one this
+        // tile's biome hosts, and the raid is named for that lair. With
+        // none, the lair falls back to an ordinary shadow raid
+        const shadows: [Species, Lairs][] = [];
 
         if (dark) {
+          const local = new Set(this.lairsHere(this.biomeAt(cell)));
+
           for (const species of listTrueShadows()) {
-            if (hosts(species)) {
-              shadows.push(species);
+            if (!hosts(species)) {
+              continue;
+            }
+            for (const lair of getSpeciesLairs(species)) {
+              if (local.has(lair)) {
+                shadows.push([species, lair]);
+                break;
+              }
             }
           }
         }
@@ -921,14 +929,9 @@ export default class ChunkSnapshot {
         const rng = new AleaRNG(`${this.key}${this.raidTimestamp}shadow${cell}`);
 
         if (shadows.length > 0) {
-          const species = shadows[Math.floor(rng.random() * shadows.length)];
+          const [species, lair] = shadows[Math.floor(rng.random() * shadows.length)];
 
-          // Named for its counterpart's lair, so XD-144 is met in Shadow Seafoam Islands
-          raids.set(cell, {
-            lair: getSpeciesLairs(species)[0] ?? null,
-            species,
-            traitValue: rng.int32(),
-          });
+          raids.set(cell, { lair, species, traitValue: rng.int32() });
           continue;
         }
         // The draws land in order: which side of the fork, the thing

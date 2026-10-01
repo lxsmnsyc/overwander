@@ -11,7 +11,7 @@ import { isWeatherSandstorm, isWeatherSunny } from '../utils';
 /**
  * Self-healing moves and the fraction of max health they restore
  */
-const HEAL_FRACTION: { [key in Moves]?: number } = {
+export const HEAL_FRACTION: { [key in Moves]?: number } = {
   // https://bulbapedia.bulbagarden.net/wiki/Recover_(move)
   [Moves.Recover]: 0.5,
   // Chansey's own Recover, down to the fraction
@@ -38,7 +38,7 @@ const HEAL_FRACTION: { [key in Moves]?: number } = {
  * in the sun, and little enough under anything else that the weather
  * is worth changing first
  */
-const WEATHER_HEALS = new Set<Moves>([Moves.MorningSun, Moves.Synthesis, Moves.Moonlight]);
+export const WEATHER_HEALS = new Set<Moves>([Moves.MorningSun, Moves.Synthesis, Moves.Moonlight]);
 
 /**
  * Every move whose whole job is putting health back, for anything

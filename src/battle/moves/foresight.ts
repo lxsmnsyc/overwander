@@ -9,7 +9,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
  * to. Foresight and Odor Sleuth come to the same thing; Miracle Eye
  * reads a Dark type instead, so it puts its own mark on
  */
-const IDENTIFYING_MOVES = new Map<Moves, Statuses>([
+export const IDENTIFYING_MOVES = new Map<Moves, Statuses>([
   [Moves.Foresight, Statuses.Identified],
   [Moves.OdorSleuth, Statuses.Identified],
   [Moves.MiracleEye, Statuses.MindRead],

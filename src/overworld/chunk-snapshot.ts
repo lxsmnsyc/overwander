@@ -3,6 +3,7 @@ import AleaRNG from '../core/alea';
 import {
   boostFamilyWeights,
   boostTypeWeights,
+  fitsSurface,
   getBiomeRoster,
   getSpawnPool,
   getTownPool,
@@ -11,7 +12,7 @@ import {
   spawnBand,
   spawnRanks,
 } from '../data/biome';
-import type { SpawnRarityGroups } from '../data/biome';
+import type { SpawnEntry, SpawnRarityGroups } from '../data/biome';
 import {
   SPECIES_DAY_WEIGHT_BOOST,
   TRUE_SHADOW_WEIGHT,
@@ -33,6 +34,7 @@ import {
   getBiomeLairs,
   getCaveLairs,
   getLairResidents,
+  getSpeciesLairs,
   pickLairSpecies,
 } from '../data/overworld/lair';
 import Npc, {
@@ -486,6 +488,7 @@ export default class ChunkSnapshot {
       pool = this.crowd(
         this.darkened(
           getSpawnPool(biome, getTimeOfDay(this.timestamp), this.depth === Depth.Cave, surface),
+          surface,
         ),
       );
       this.pools.set(key, pool);
@@ -512,14 +515,16 @@ export default class ChunkSnapshot {
    * stand in the special band beside the legendaries, and under every
    * other sky they are not in the pool at all
    */
-  private darkened(pool: SpawnRarityGroups): SpawnRarityGroups {
+  private darkened(pool: SpawnRarityGroups, surface: SpawnSurface): SpawnRarityGroups {
     if (this.weather !== Weather.DarkDay) {
       return pool;
     }
     const special = [...spawnBand(pool, 'special')];
 
     for (const species of listTrueShadows()) {
-      special.push({ species, weight: TRUE_SHADOW_WEIGHT });
+      if (fitsSurface(species, surface)) {
+        special.push({ species, weight: TRUE_SHADOW_WEIGHT });
+      }
     }
 
     return { ...pool, special };
@@ -807,27 +812,60 @@ export default class ChunkSnapshot {
   getLegendaryLairs(): Map<number, RaidRoll> {
     if (this.raids == null) {
       const raids = new Map<number, RaidRoll>();
-      const lairs = this.stageableLairs();
 
-      if (lairs.length > 0) {
-        for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-          if (landmark === Landmark.LegendaryLair) {
-            const rng = new AleaRNG(`${this.key}${this.raidTimestamp}raid${cell}`);
-            // The draws land in order: the lair, then the trait value
-            // its resident's nature and ability derive from
-            const lair = lairs[Math.floor(rng.random() * lairs.length)];
-
-            raids.set(cell, {
-              lair,
-              species: pickLairSpecies(lair, canStageBoss, rng.int32()),
-              traitValue: rng.int32(),
-            });
-          }
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.LegendaryLair) {
+          continue;
         }
+        const lairs = this.stageableLairs(cell);
+
+        if (lairs.length === 0) {
+          continue;
+        }
+        const rng = new AleaRNG(`${this.key}${this.raidTimestamp}raid${cell}`);
+        // The draws land in order: the lair, then the trait value
+        // its resident's nature and ability derive from
+        const lair = lairs[Math.floor(rng.random() * lairs.length)];
+
+        raids.set(cell, {
+          lair,
+          species: pickLairSpecies(lair, this.hostsAt(cell), rng.int32()),
+          traitValue: rng.int32(),
+        });
       }
       this.raids = raids;
     }
     return this.raids;
+  }
+
+  private fallenLairs: Set<number> | null = null;
+
+  /**
+   * The legendary lairs with no legendary to host this window, because
+   * no lair of the tile's biome has a resident that can stand on it.
+   * Each stands as a shadow lair instead rather than empty
+   */
+  getFallenLairs(): Set<number> {
+    if (this.fallenLairs == null) {
+      const hosted = this.getLegendaryLairs();
+      const fallen = new Set<number>();
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark === Landmark.LegendaryLair && !hosted.has(cell)) {
+          fallen.add(cell);
+        }
+      }
+      this.fallenLairs = fallen;
+    }
+    return this.fallenLairs;
+  }
+
+  /** Whether the lair at this cell stages a shadow raid this window */
+  isShadowLair(cell: number): boolean {
+    return (
+      this.chunk.getLandmarkCells().get(cell) === Landmark.ShadowLair ||
+      this.getFallenLairs().has(cell)
+    );
   }
 
   /** The biome's lairs, only its underground ones in a cave */
@@ -835,13 +873,24 @@ export default class ChunkSnapshot {
     return this.depth === Depth.Cave ? getCaveLairs(biome) : getBiomeLairs(biome);
   }
 
-  /** The lairs here with at least one resident a raid can stage */
-  private stageableLairs(): Lairs[] {
+  /**
+   * Who a raid on this cell may stage: a boss that can stand on the
+   * cell's own surface, so a lair on the water holds what swims or flies
+   */
+  private hostsAt(cell: number): (species: Species) => boolean {
+    const surface = this.drawnSurface(cell);
+
+    return (species) => canStageBoss(species) && fitsSurface(species, surface);
+  }
+
+  /** The lairs of the cell's own biome with at least one resident it can stage */
+  private stageableLairs(cell: number): Lairs[] {
+    const hosts = this.hostsAt(cell);
     const lairs: Lairs[] = [];
 
-    for (const lair of this.lairsHere(this.chunk.biome)) {
+    for (const lair of this.lairsHere(this.biomeAt(cell))) {
       for (const resident of getLairResidents(lair)) {
-        if (canStageBoss(resident)) {
+        if (hosts(resident)) {
           lairs.push(lair);
           break;
         }
@@ -865,48 +914,56 @@ export default class ChunkSnapshot {
   getShadowLairs(): Map<number, RaidRoll> {
     if (this.shadowRaids == null) {
       const raids = new Map<number, RaidRoll>();
-      const pool = getBiomeRoster(this.chunk.biome, getTimeOfDay(this.raidTimestamp));
-      const lairs = this.stageableLairs();
-      const ranked = spawnRanks(pool)[2];
-      const rare: typeof ranked = [];
+      const time = getTimeOfDay(this.raidTimestamp);
+      const dark = this.raidWeather === Weather.DarkDay;
 
-      for (const entry of ranked) {
-        // A species with nothing left to cast once the boss bans are
-        // applied is no boss: it is left out of the draw rather than
-        // staged with an empty move list
-        if (canStageBoss(entry.species)) {
-          rare.push(entry);
+      for (const cell of this.chunk.getLandmarkCells().keys()) {
+        if (!this.isShadowLair(cell)) {
+          continue;
         }
-      }
+        const hosts = this.hostsAt(cell);
+        const lairs = this.stageableLairs(cell);
+        // The cell's own biome, cut to what stands on its surface. A
+        // species with nothing left to cast once the boss bans are
+        // applied is left out rather than staged with an empty move list
+        const rare: SpawnEntry[] = [];
 
-      // Under a dark day every shadow lair holds a true shadow instead,
-      // so the sky is the one way to meet one and finding the sky is
-      // enough: nothing else has to be drawn for. Held to the same boss
-      // rule as every other draw, and with none left to stage the lair
-      // falls back to an ordinary shadow raid rather than holding nothing
-      const shadows: Species[] = [];
-
-      if (this.raidWeather === Weather.DarkDay) {
-        for (const species of listTrueShadows()) {
-          if (canStageBoss(species)) {
-            shadows.push(species);
+        for (const entry of spawnRanks(
+          getSpawnPool(this.biomeAt(cell), time, false, this.drawnSurface(cell)),
+        )[2]) {
+          if (canStageBoss(entry.species)) {
+            rare.push(entry);
           }
         }
-      }
 
-      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-        if (landmark !== Landmark.ShadowLair) {
-          continue;
+        // Under a dark day a shadow lair holds a true shadow instead, but
+        // only one at home here: its counterpart's lair has to be one this
+        // tile's biome hosts, and the raid is named for that lair. With
+        // none, the lair falls back to an ordinary shadow raid
+        const shadows: [Species, Lairs][] = [];
+
+        if (dark) {
+          const local = new Set(this.lairsHere(this.biomeAt(cell)));
+
+          for (const species of listTrueShadows()) {
+            if (!hosts(species)) {
+              continue;
+            }
+            for (const lair of getSpeciesLairs(species)) {
+              if (local.has(lair)) {
+                shadows.push([species, lair]);
+                break;
+              }
+            }
+          }
         }
 
         const rng = new AleaRNG(`${this.key}${this.raidTimestamp}shadow${cell}`);
 
         if (shadows.length > 0) {
-          raids.set(cell, {
-            lair: null,
-            species: shadows[Math.floor(rng.random() * shadows.length)],
-            traitValue: rng.int32(),
-          });
+          const [species, lair] = shadows[Math.floor(rng.random() * shadows.length)];
+
+          raids.set(cell, { lair, species, traitValue: rng.int32() });
           continue;
         }
         // The draws land in order: which side of the fork, the thing
@@ -919,7 +976,7 @@ export default class ChunkSnapshot {
 
           raids.set(cell, {
             lair,
-            species: pickLairSpecies(lair, canStageBoss, rng.int32()),
+            species: pickLairSpecies(lair, hosts, rng.int32()),
             traitValue: rng.int32(),
           });
           continue;
@@ -1926,8 +1983,6 @@ export default class ChunkSnapshot {
       getTimeOfDay(this.phenomenonTimestamp),
       () => rng.random(),
       getFeaturedFamilies(this.phenomenonTimestamp),
-      // Only a ripple is the water's; the rest are over dry ground
-      phenomenon === Phenomenon.RipplingWater ? this.drawnSurface(cell) : SpawnSurface.Land,
     );
 
     // A pokemon out of a phenomenon answers the meridian too

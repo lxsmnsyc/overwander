@@ -1,7 +1,7 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
-import { STEP_PENALTY, USELESS_PENALTY } from '../ai/score';
+import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 import type Unit from '../unit';
@@ -91,18 +91,7 @@ export default function setupStockpile(battle: Battle): void {
     }
   });
 
-  /**
-   * The steps are what the move is rather than a wind-up before it, so
-   * the generic per-step penalty is handed back the way a rampage's
-   * is: a pokemon banking three charges is doing something on every
-   * one of them
-   */
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (event.move === Moves.Stockpile) {
-      event.score += STEP_PENALTY * event.source.checkMoveSteps(event.move, event.target);
-      return;
-    }
-
     // A Swallow at full health puts nothing back
     if (
       event.move === Moves.Swallow &&

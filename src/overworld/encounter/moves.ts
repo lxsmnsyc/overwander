@@ -6,9 +6,14 @@ import { MOVE_LIMIT } from './traits';
 
 /** What it knows when it is met, and what it was hatched knowing */
 /**
- * The last four level-up moves the species knows at that level
+ * The last `limit` level-up moves the species knows at that level
  */
-export function deriveMoves(species: Species, level: number, banned?: Set<Moves>): Moves[] {
+export function deriveMoves(
+  species: Species,
+  level: number,
+  banned?: Set<Moves>,
+  limit = MOVE_LIMIT,
+): Moves[] {
   const data = getSpeciesData(species);
   const thresholds: number[] = [];
 
@@ -52,7 +57,7 @@ export function deriveMoves(species: Species, level: number, banned?: Set<Moves>
     }
   }
 
-  return unique.slice(-MOVE_LIMIT);
+  return unique.slice(-limit);
 }
 
 /**

@@ -27,7 +27,7 @@ export const FORCED_SWITCH_MOVES = new Set<Moves>([Moves.Whirlwind, Moves.Roar])
 // U-turn is one of these that hits on the way out: the blow lands on
 // the wind-up step, which the shared resolver deals, and the walk off
 // the field is this module's on the step after it
-const SELF_SWITCH_MOVES = new Set<Moves>([
+export const SELF_SWITCH_MOVES = new Set<Moves>([
   Moves.Teleport,
   Moves.BatonPass,
   Moves.UTurn,
@@ -42,7 +42,7 @@ const SELF_SWITCH_MOVES = new Set<Moves>([
 export const PARTING_SHOT_STAGES = [Stages.Attack, Stages.SpecialAttack];
 
 /** The blows that throw their target out once they land */
-const DRAGGING_MOVES = new Set<Moves>([Moves.CircleThrow, Moves.DragonTail]);
+export const DRAGGING_MOVES = new Set<Moves>([Moves.CircleThrow, Moves.DragonTail]);
 
 /**
  * Every stage a Baton Pass hands over

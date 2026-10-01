@@ -22,7 +22,7 @@ import type Unit from '../unit';
  */
 
 /** The calls that pull the side's casts in; Rage Powder is the powder one */
-const CALLS = new Set<Moves>([Moves.FollowMe, Moves.RagePowder]);
+export const CALLS = new Set<Moves>([Moves.FollowMe, Moves.RagePowder]);
 
 /** Whether the move is one aimed at a single pokemon */
 function isSingleTarget(move: Moves): boolean {

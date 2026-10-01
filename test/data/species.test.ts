@@ -462,6 +462,7 @@ describe('species forms', () => {
       ...listTrueShadows(),
       ...listMegas(),
       Species.KyogrePrimal,
+      Species.GreninjaAsh,
       Species.GroudonPrimal,
     ]);
 

@@ -321,20 +321,16 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
       <Card class="md:flex-row md:items-stretch md:gap-0">
         <Show when={profile()} fallback={<Note>Loading profile…</Note>}>
           {(loaded) => (
-            <div class="flex min-w-0 items-start gap-4 md:w-1/2 md:border-r-2 md:border-line-soft md:pr-4">
-              <PlayerFace sprite={loaded().sprite} size={64} />
-              <div class="flex min-w-0 grow flex-col gap-2">
-                <span class="truncate text-lg font-semibold">{loaded().nickname}</span>
-                <Row>
-                  <Show when={loaded().title != null && getTitleName(loaded().title ?? -1)} keyed>
-                    {(worn) => (
-                      <TitleBadge player={props.player} title={loaded().title ?? -1} name={worn} />
-                    )}
-                  </Show>
-                  <Badge tone="gold">{loaded().gold.toLocaleString()} gold</Badge>
-                </Row>
-                <PlayerPlace player={props.player} />
+            // The face beside the name and badges, and where they stand
+            // under all of it on a phone rather than squeezed beside it
+            <div
+              class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-4
+                gap-y-2 md:w-1/2 md:items-start md:border-r-2 md:border-line-soft md:pr-4"
+            >
+              <div class="row-span-2 self-start md:row-span-3">
+                <PlayerFace sprite={loaded().sprite} size={64} />
               </div>
+              <span class="truncate text-lg font-semibold">{loaded().nickname}</span>
               {/* Visited, the menu holds what a reader can do to somebody else */}
               <Show
                 when={props.viewOnly !== true}
@@ -386,6 +382,17 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                   ]}
                 />
               </Show>
+              <Row class="col-span-2">
+                <Show when={loaded().title != null && getTitleName(loaded().title ?? -1)} keyed>
+                  {(worn) => (
+                    <TitleBadge player={props.player} title={loaded().title ?? -1} name={worn} />
+                  )}
+                </Show>
+                <Badge tone="gold">{loaded().gold.toLocaleString()} gold</Badge>
+              </Row>
+              <div class="col-span-3 md:col-span-2 md:col-start-2">
+                <PlayerPlace player={props.player} />
+              </div>
             </div>
           )}
         </Show>

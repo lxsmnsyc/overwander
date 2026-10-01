@@ -2,6 +2,7 @@ import Biome from '../ids/biome';
 import { isMythicalSpecies } from '../biome';
 import { BIOME_NAMES } from '../biome/names';
 import { Species } from '../ids/species';
+import { getTrueShadowCounterpart } from '../species/true-shadow';
 
 /**
  * The lairs: the places a legendary is found rather than the
@@ -497,7 +498,7 @@ const STAGED_LAIRS = new Set<Lairs>(EVERY_STAGED_LAIR);
  * mountain, and the Power Plant is the one building among them,
  * abandoned on flat ground, which is where the plains are. The three
  * sealed chambers sit where their doors were cut: ruins in the sand,
- * a cave in the ice, a tomb under the rock. Their Sinnoh ruins sit on
+ * a cave on an island in cold water, a tomb under the rock. Their Sinnoh ruins sit on
  * a sandstorm route, a snowbound one and an island mine.
  *
  * The three lakes sit in the country each of them was found in: the
@@ -521,12 +522,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   ],
   [Biome.Beach]: [Lairs.EmbeddedTower],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
-  [Biome.Glacier]: [
-    Lairs.SeafoamIslands,
-    Lairs.IslandCave,
-    Lairs.SnowpointTemple,
-    Lairs.GiantChasm,
-  ],
+  [Biome.Glacier]: [Lairs.SnowpointTemple, Lairs.GiantChasm],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor, Lairs.AbundantShrine],
   [Biome.Bog]: [Lairs.LakeValor, Lairs.TurnbackCave],
   [Biome.TemperateForest]: [Lairs.LakeVerity, Lairs.RuminationField, Lairs.WindingWoods],
@@ -546,7 +542,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.FrostCavern,
   ],
   [Biome.Steppe]: [Lairs.PowerPlant],
-  [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins, Lairs.RockPeakRuins, Lairs.RelicCastle],
+  [Biome.Desert]: [Lairs.DesertRuins, Lairs.RockPeakRuins, Lairs.RelicCastle],
   [Biome.Badlands]: [
     Lairs.DesertRuins,
     Lairs.AncientTomb,
@@ -566,7 +562,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.TerminusCave,
   ],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave, Lairs.SpearPillar],
-  [Biome.Volcano]: [Lairs.TerraCave, Lairs.StarkMountain],
+  [Biome.Volcano]: [Lairs.MtEmber, Lairs.TerraCave, Lairs.StarkMountain],
 };
 
 /**
@@ -580,6 +576,50 @@ export function getBiomeLairs(biome: Biome): Lairs[] {
 
   for (const lair of BIOME_LAIRS[biome] ?? []) {
     if (STAGED_LAIRS.has(lair)) {
+      lairs.push(lair);
+    }
+  }
+  return lairs;
+}
+
+/**
+ * The lairs whose real place is underground: a cave, a buried chamber
+ * or a cavern inside a mountain. A cave stages the ones its biome
+ * hosts and nothing else, and the surface keeps them too
+ */
+const SUBTERRANEAN_LAIRS = new Set<Lairs>([
+  Lairs.SeafoamIslands,
+  Lairs.CeruleanCave,
+  Lairs.WhirlIslands,
+  Lairs.DesertRuins,
+  Lairs.IslandCave,
+  Lairs.AncientTomb,
+  Lairs.MarineCave,
+  Lairs.TerraCave,
+  Lairs.TurnbackCave,
+  Lairs.StarkMountain,
+  Lairs.SnowpointTemple,
+  Lairs.RockPeakRuins,
+  Lairs.IcebergRuins,
+  Lairs.IronRuins,
+  Lairs.EmbeddedTower,
+  Lairs.RelicCastle,
+  Lairs.GuidanceChamber,
+  Lairs.TrialChamber,
+  Lairs.GiantChasm,
+]);
+
+/** Whether the lair's real place is underground */
+export function isSubterraneanLair(lair: Lairs): boolean {
+  return SUBTERRANEAN_LAIRS.has(lair);
+}
+
+/** The lairs the caves under this biome can host */
+export function getCaveLairs(biome: Biome): Lairs[] {
+  const lairs: Lairs[] = [];
+
+  for (const lair of getBiomeLairs(biome)) {
+    if (SUBTERRANEAN_LAIRS.has(lair)) {
       lairs.push(lair);
     }
   }
@@ -616,10 +656,13 @@ export function pickLairSpecies(
 
 /**
  * Every lair a species is at home in, in the order they are numbered,
- * and empty for anything that has no place of its own
+ * and empty for anything that has no place of its own. A true shadow
+ * is at home where its counterpart is
  */
 export function getSpeciesLairs(species: Species): Lairs[] {
-  return EVERY_LAIR.filter((lair) => LAIR_SPECIES[lair].includes(species));
+  const resident = getTrueShadowCounterpart(species) ?? species;
+
+  return EVERY_LAIR.filter((lair) => LAIR_SPECIES[lair].includes(resident));
 }
 
 /**

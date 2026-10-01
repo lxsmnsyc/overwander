@@ -246,10 +246,10 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
         </div>
 
         <DialogActions>
-          <Button onClick={props.onClose}>Never mind</Button>
           <Button tone="primary" disabled={!ready()} onClick={send}>
             Send offer
           </Button>
+          <Button onClick={props.onClose}>Never mind</Button>
         </DialogActions>
       </Dialog>
 

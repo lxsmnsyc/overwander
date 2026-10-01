@@ -24,7 +24,8 @@ import {
 } from '../__paint';
 import { RAINBOW } from './legends';
 import type { EffectShape, ShapePainter } from './shapes';
-import { REACH, landing, many } from './shapes';
+import { REACH, WISH_SPAN, landing, many } from './shapes';
+import { WISH_DELAY } from '../../../../battle/moves/wish';
 
 /** Protect: a shell hexagon's size, as a share of the shell's radius */
 export const SHELL_CELL = 0.3;
@@ -42,20 +43,20 @@ export const BLADES = 4;
 export const SCHEME_GATHER = 0.6;
 
 /** Wish: the share by which its star is back down on it */
-export const WISH_LANDS = 0.85;
+export const WISH_LANDS = WISH_DELAY / WISH_SPAN;
 
 /** A worker bee's yellow, for Heal Order */
 export const BEE = '#f0c040';
 
-/** How high Wish's star is, as a share of its climb: up, held a moment, and back down */
-export function wishHeight(share: number): number {
-  if (share < 0.4) {
-    return 1 - (1 - share / 0.4) ** 2;
-  }
-  if (share < 0.55) {
-    return 1;
-  }
-  return Math.max(0, 1 - ((share - 0.55) / (WISH_LANDS - 0.55)) ** 2);
+/**
+ * Where Wish's star is on its way: how far from the caster to the one
+ * it is left with, and how high on its arc. It travels the whole wait,
+ * so how far it has come says how long until the heal
+ */
+export function wishFlight(share: number): { travel: number; lift: number } {
+  const travel = Math.min(1, share / WISH_LANDS);
+
+  return { travel, lift: 4 * travel * (1 - travel) };
 }
 
 /** The middles of a shell's hexagons inside `radius`, laid out in axial rows */
@@ -714,13 +715,21 @@ const care = {
     }
   },
 
-  // A star rising off it into the sky and coming back down onto it
+  // A star arcing from the caster onto the one it is left with, over the whole wait
   Wishing(context, stage, share, { paint }) {
     const at = landing(stage);
     const size = REACH * stage.scale;
     const shown = share < WISH_LANDS ? 1 : decay((share - WISH_LANDS) / (1 - WISH_LANDS));
-    const spot: Point = [at[0], at[1] - size * (0.4 + wishHeight(share) * 5)];
-    const was: Point = [at[0], at[1] - size * (0.4 + wishHeight(Math.max(0, share - 0.05)) * 5)];
+    const flying = (when: number): Point => {
+      const { travel, lift } = wishFlight(when);
+
+      return [
+        stage.source[0] + (at[0] - stage.source[0]) * travel,
+        stage.source[1] + (at[1] - stage.source[1]) * travel - size * (0.4 + lift * 4),
+      ];
+    };
+    const spot = flying(share);
+    const was = flying(Math.max(0, share - 0.03));
 
     lash(context, was, spot, 0, { ...paint, alpha: shown * 0.6, width: 3 * stage.scale });
     orb(context, spot, size * 0.45, { ...paint, alpha: shown });

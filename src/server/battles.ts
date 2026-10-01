@@ -20,6 +20,7 @@ import { Moves } from '../data/ids/moves';
 import { getRegisteredMoves } from '../data/moves';
 import BATTLE_TIMEOUT from '../auth/battle-lock';
 import { canCallHappyHour, payDayCeiling } from '../battle/moves/pay-day';
+import { moveGoldIn } from './profile';
 
 /**
  * What a Sketch leaves behind: the move set to write, or nothing when
@@ -124,6 +125,7 @@ export default async function recordAftermath(
   battleId: string,
   aftermath: BattleAftermath[],
   defeated: number,
+  outcome: BattleOutcome,
 ): Promise<CandyEarned[]> {
   if (aftermath.length === 0) {
     return [];
@@ -142,6 +144,20 @@ export default async function recordAftermath(
   if (asNumber(teams.at(0)?.mine) === 0 || battles.at(0) == null) {
     return [];
   }
+
+  // The aftermath is written before the party is freed, so the
+  // outcome has to be stamped here for a win to be paid as one. The
+  // first report still stands; freeing the party stays with
+  // finishBattle
+  const stamped = await getSql()`
+    update battles set outcome = ${outcome}
+    where id = ${battleId} and outcome = ${BattleOutcome.Unfinished}
+    returning outcome
+  `;
+  const settledOutcome = asNumber(
+    stamped.at(0)?.outcome ??
+      (await getSql()`select outcome from battles where id = ${battleId}`).at(0)?.outcome,
+  );
 
   // A raid or an npc fight settles for whoever fought it. A fight
   // between players settles for **the challenger of a gym seat and
@@ -222,7 +238,7 @@ export default async function recordAftermath(
     }
 
     if (coins > 0) {
-      await transaction`update profiles set gold = gold + ${coins} where id = ${uid}`;
+      await moveGoldIn(transaction, uid, coins, 'pay-day');
     }
 
     // Locked together rather than one at a time: everything the fight
@@ -298,10 +314,10 @@ export default async function recordAftermath(
   }
 
   // Settling is the once-per-battle moment, so it is where a raid run
-  // counts; a win counts on top from the stamped outcome, and Pay Day
+  // counts; a win counts on top from the outcome stamped above, and Pay Day
   // gold counts as earned the moment it lands
   // oxlint-disable-next-line typescript/no-unsafe-enum-comparison
-  const won = asNumber(battles[0].outcome) === BattleOutcome.Won;
+  const won = settledOutcome === BattleOutcome.Won;
   const raid = battles[0].raid_id != null;
 
   await bumpProgress(uid, [
@@ -347,16 +363,26 @@ export default async function recordAftermath(
  */
 async function downed(battleId: string, player: string, reported: number): Promise<number> {
   const rows = await getSql()`
-    select ts.catches
+    select ts.catches, ts.alliance, bt.player
     from battle_teams bt
     join team_snapshots ts on ts.id = bt.snapshot_id
-    where bt.battle_id = ${battleId} and (bt.player is null or bt.player <> ${player})
+    where bt.battle_id = ${battleId}
   `;
+  let mine: number | null = null;
+
+  for (const row of rows) {
+    if (row.player === player) {
+      mine = asNumber(row.alliance);
+    }
+  }
+
+  // Only the other alliance counts: in a raid the other parties in the
+  // lobby fight beside this player, and their faints are no win of theirs
   let standing = 0;
 
-  for (const data of rows) {
-    if (Array.isArray(data.catches)) {
-      standing += data.catches.length;
+  for (const row of rows) {
+    if (asNumber(row.alliance) !== mine && Array.isArray(row.catches)) {
+      standing += row.catches.length;
     }
   }
   return Math.min(standing, Math.max(0, Math.floor(reported)));

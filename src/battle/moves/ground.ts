@@ -5,6 +5,7 @@ import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
+import { scoreAsCall } from '../ai/choose-move';
 
 /**
  * The three moves that read the ground they are fought on.
@@ -93,6 +94,13 @@ export function groundStatus(battle: Battle): Statuses {
 }
 
 export default function setupGroundMoves(battle: Battle): void {
+  // The ground decides the move, so it is worth exactly that move
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (event.move === Moves.NaturePower) {
+      scoreAsCall(battle, event, groundMove(battle));
+    }
+  });
+
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move === Moves.Camouflage) {
       const type = groundType(battle);

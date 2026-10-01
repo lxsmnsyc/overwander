@@ -1,7 +1,7 @@
 import useBall from '../../auth/balls';
 import useBottleCap from '../../auth/bottle-caps';
 import useMint from '../../auth/mints';
-import { useRareCandy } from '../../auth/candy';
+import { useRareCandy, useRareCandyMax } from '../../auth/candy';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
 import {
   getCatchName,
@@ -15,11 +15,12 @@ import useHealingItem from '../../auth/healing';
 import { healedByItem } from '../../auth/health';
 import usePurifyingGem from '../../auth/purify';
 import { useAbilityCapsule } from '../../auth/ability-items';
+import useSkillBook from '../../auth/skill-book';
 import useUtilityBelt from '../../auth/utility-belt';
 import playEffect, { Effect } from '../app/sound';
 import { feedEffortBerry, useEffortItem } from '../../auth/training';
 import { MAX_LEVEL } from '../../data/constants/levels';
-import type { Stats } from '../../data/constants/stats';
+import { MAX_EFFORT_PER_STAT, type Stats } from '../../data/constants/stats';
 import { MAX_SLOTS, countAbilitySlots, mostSlots } from '../../data/constants/slots';
 import { getAbilityData, getSignatureAbility } from '../../data/abilities';
 import { getAwakenableAbilities } from '../../data/overworld/npc';
@@ -37,9 +38,10 @@ import { capAsksForStat, isBottleCap, isPerfectIVs } from '../../data/items/bott
 import { getMintNature, isMint } from '../../data/items/mints';
 import { isHerbal } from '../../data/items/medicine';
 import { isPurifyingGem } from '../../data/items/purifying-gem';
+import { SKILL_BOOK_SLOT, isSkillBook } from '../../data/items/skill-book';
 import { UTILITY_BELT_SLOT, isUtilityBelt } from '../../data/items/utility-belt';
-import { VITAMIN_STATS, isPPItem, isVitamin } from '../../data/items/vitamins';
-import { WING_STATS, isWing } from '../../data/items/wings';
+import { MAX_VITAMIN_STATS, VITAMIN_STATS, isPPItem, isVitamin } from '../../data/items/vitamins';
+import { MAX_WING_STATS, WING_STATS, isWing } from '../../data/items/wings';
 import { PP_UP_LIMIT } from '../../data/moves';
 import { getMovesLearnedAt, getMovesLearnedBetween, getSpeciesData } from '../../data/species';
 import type { ToastTone } from '../styled';
@@ -72,9 +74,14 @@ export function isUsableOn(item: Items, caught: CaughtPokemon): boolean {
   if (isEgg(caught)) {
     return false;
   }
-  // The universal candy: a level for anything that can still grow
-  if (item === Items.RareCandy) {
+  // The universal candies: a level, or all of them, for anything that can still grow
+  if (item === Items.RareCandy || item === Items.RareCandyMax) {
     return caught.level < MAX_LEVEL;
+  }
+  const filled = MAX_VITAMIN_STATS.get(item) ?? MAX_WING_STATS.get(item);
+
+  if (filled != null) {
+    return caught.effortValues[filled] < MAX_EFFORT_PER_STAT;
   }
   if (isBottleCap(item)) {
     return !isPerfectIVs(caught.ivs);
@@ -95,6 +102,9 @@ export function isUsableOn(item: Items, caught: CaughtPokemon): boolean {
   // A belt is offered only where there is room to add: the record's
   // own count rather than the game's default, since a pokemon that has
   // worn one already has more
+  if (isSkillBook(item)) {
+    return getCatchSlots(caught, SKILL_BOOK_SLOT) < mostSlots(SKILL_BOOK_SLOT);
+  }
   if (isUtilityBelt(item)) {
     return getCatchSlots(caught, UTILITY_BELT_SLOT) < MAX_SLOTS;
   }
@@ -245,7 +255,14 @@ export function nextOfferLevel(caught: CaughtPokemon, above: number): number | n
  * for everything else, which is most of the bag
  */
 export function effortStatOf(item: Items): Stats | null {
-  return VITAMIN_STATS.get(item) ?? WING_STATS.get(item) ?? BERRY_EFFORT_DROPS.get(item) ?? null;
+  return (
+    VITAMIN_STATS.get(item) ??
+    WING_STATS.get(item) ??
+    MAX_VITAMIN_STATS.get(item) ??
+    MAX_WING_STATS.get(item) ??
+    BERRY_EFFORT_DROPS.get(item) ??
+    null
+  );
 }
 
 /** What spending it came to */
@@ -253,10 +270,12 @@ export interface Spent {
   said: string;
   tone: ToastTone;
   /**
-   * The level it grew to, for the one item that grows one. A level may
+   * The level it grew to, for the candies that grow one. A level may
    * have a move waiting behind it: see `getLevelMoves`
    */
   level: number | null;
+  /** The first level it grew into, where that was more than one level ago */
+  from?: number;
   /**
    * Who it was spent on, so the report can show them rather than name
    * them. Left out where nothing about the pokemon is worth drawing
@@ -320,6 +339,21 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     return { said: `Grew to level ${level}.`, tone: 'neutral', level };
   }
 
+  if (item === Items.RareCandyMax) {
+    const grown = await useRareCandyMax(catchId);
+
+    if (grown == null) {
+      return { said: 'That candy could not be used.', tone: 'ember', level: null };
+    }
+    playEffect(Effect.LevelUp);
+    return {
+      said: `Grew to level ${grown.level}.`,
+      tone: 'neutral',
+      level: grown.level,
+      from: grown.from,
+    };
+  }
+
   if (getBall(item) != null) {
     const ball = await useBall(catchId, item);
 
@@ -366,6 +400,16 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     }
     playEffect(Effect.ItemSlot);
     return { said: `Room for ${slots} held items now.`, tone: 'neutral', level: null };
+  }
+
+  if (isSkillBook(item)) {
+    const slots = await useSkillBook(catchId);
+
+    if (slots == null) {
+      return refused(item);
+    }
+    playEffect(Effect.ItemSlot);
+    return { said: `Room for ${slots} moves now.`, tone: 'neutral', level: null };
   }
 
   if (isAbilityCapsule(item)) {

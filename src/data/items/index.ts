@@ -35,6 +35,7 @@ import registerTradeItems from './trade-items';
 import registerTreats from './treats';
 import registerTrinkets from './trinkets';
 import registerAbilityItems from './ability-items';
+import registerSkillBook from './skill-book';
 import registerUtilityBelt from './utility-belt';
 import registerTypeBoosters from './type-boosters';
 import registerValuables from './valuables';
@@ -82,6 +83,7 @@ export default function registerItems(): void {
   registerBottleCaps();
   registerMints();
   registerUtilityBelt();
+  registerSkillBook();
   registerAbilityItems();
   registerPurifyingGem();
   registerSacredAsh();

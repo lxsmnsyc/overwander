@@ -1,7 +1,7 @@
 import { type JSX, createSignal } from 'solid-js';
 import { needsCare } from '../../../../auth/health';
 import { visitNurse } from '../../../../auth/npcs';
-import { DialogActions } from '../../../styled';
+import { Button, DialogActions } from '../../../styled';
 import playEffect, { Effect } from '../../../app/sound';
 import { type CounterProps, optionsOf, refusal, useSaying } from '../shared';
 import { NurseCounter } from './care';
@@ -10,10 +10,12 @@ import { NurseCounter } from './care';
 export default function Nurse(props: CounterProps): JSX.Element {
   const said = useSaying();
   const [busy, setBusy] = createSignal(false);
+  const [chosen, setChosen] = createSignal<string[]>([]);
 
-  const tendParty = (picked: string[]): void => {
+  const tendParty = (): void => {
     const snapshot = props.snapshot;
     const standing = props.standing;
+    const picked = chosen();
 
     if (snapshot == null || standing == null || picked.length === 0) {
       return;
@@ -25,6 +27,7 @@ export default function Nurse(props: CounterProps): JSX.Element {
         // Only where she actually did something: a party handed
         // straight back is not worth a fanfare
         if (tended != null) {
+          setChosen([]);
           playEffect(Effect.NurseHeal);
         }
         said(
@@ -46,11 +49,19 @@ export default function Nurse(props: CounterProps): JSX.Element {
     <>
       <NurseCounter
         options={optionsOf(props)}
+        picked={chosen()}
         busy={busy()}
         needsCare={(option) => needsCare(option.caught)}
-        onHeal={tendParty}
+        onPick={(next) => {
+          setChosen(next);
+        }}
       />
-      <DialogActions>{props.walkOn()}</DialogActions>
+      <DialogActions>
+        <Button tone="primary" disabled={busy() || chosen().length === 0} onClick={tendParty}>
+          Heal {chosen().length > 0 ? chosen().length : ''}
+        </Button>
+        {props.walkOn()}
+      </DialogActions>
     </>
   );
 }

@@ -2,7 +2,7 @@ import { AttackPriority } from '../../core/event-emitter';
 import { MoveAttackFlags, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
-import { RISKY_PENALTY, STEP_PENALTY } from '../ai/score';
+import { RISKY_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
@@ -16,7 +16,12 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
  * its steps and comes out of it clear-headed, and the racket it makes
  * while it runs is the Uproaring status' own business
  */
-const RAMPAGE_MOVES = new Set<Moves>([Moves.Thrash, Moves.PetalDance, Moves.Outrage, Moves.Uproar]);
+export const RAMPAGE_MOVES = new Set<Moves>([
+  Moves.Thrash,
+  Moves.PetalDance,
+  Moves.Outrage,
+  Moves.Uproar,
+]);
 
 /** The ones that leave the user reeling when they finally stop */
 const FATIGUING_MOVES = new Set<Moves>([Moves.Thrash, Moves.PetalDance, Moves.Outrage]);
@@ -50,18 +55,8 @@ export default function setupRampageMoves(battle: Battle): void {
     }
   });
 
-  /**
-   * A rampage strikes on every step, so the generic wind-up penalty is
-   * handed back: the steps are what the move is, not a delay before
-   * it. The fatigue at the end is what it does cost
-   */
+  // A rampage strikes on every step, so its cost is the fatigue at the end
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (!RAMPAGE_MOVES.has(event.move)) {
-      return;
-    }
-
-    event.score += STEP_PENALTY * event.source.checkMoveSteps(event.move, event.target);
-
     if (FATIGUING_MOVES.has(event.move)) {
       event.score -= RISKY_PENALTY;
     }

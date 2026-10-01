@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { AttackPriority } from '../../../src/core/event-emitter';
 import {
   BattleEvents,
   type CheckUnitAIMoveScoreEvent,
@@ -17,7 +18,7 @@ import type Unit from '../../../src/battle/unit';
 import { MAX_STAGE, Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import { MoveAffects, Moves } from '../../../src/data/ids/moves';
-import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
+import { Statuses, TeamStatuses } from '../../../src/data/ids/status';
 import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
 import turns from '../../../src/battle/turn';
 import { type BattleHarness, createBattle, createUnit, pinRandom } from '../harness';
@@ -877,40 +878,99 @@ describe('what a move may be aimed at on the caster’s own side', () => {
 });
 
 describe('the encore', () => {
-  it('plays the move the target last landed again', () => {
+  /** How many times each move's effect lands for a unit */
+  function counter(battle: BattleHarness['battle'], unit: Unit): Map<Moves, number> {
+    const landed = new Map<Moves, number>();
+
+    battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
+      if (event.source === unit) {
+        landed.set(event.move, (landed.get(event.move) ?? 0) + 1);
+      }
+    });
+    return landed;
+  }
+
+  it('locks the cast in progress into 3 uses', () => {
     const { battle, teamA, teamB } = createBattle();
     const singer = createUnit(battle, teamA);
     const target = createUnit(battle, teamB);
+    const landed = counter(battle, target);
 
+    pinRandom(battle, 0);
+    singer.enter();
+    target.enter();
     target.addMove(Moves.Tackle);
-    target.triggerMove(Moves.Tackle, unitTarget(singer), 0);
-    battle.tick(MOVE_DELAY);
-
-    const struck = singer.health;
-
-    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 2);
-    battle.tick(MOVE_DELAY);
+    target.cast(Moves.Tackle, unitTarget(singer));
+    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 0);
 
     expect(target.status[Statuses.Encored]).toBeDefined();
-    expect(singer.health).toBeLessThan(struck);
+
+    battle.tick(turns(10));
+
+    expect(landed.get(Moves.Tackle)).toBe(3);
+    expect(target.status[Statuses.Encored]).toBeUndefined();
   });
 
-  it('runs one repeat per step', () => {
-    expect(getMoveData(Moves.Encore).steps).toBe(2);
-  });
-
-  it('has nothing to call for when the target has landed nothing', () => {
+  it('waits for the next cast of an idle target', () => {
     const { battle, teamA, teamB } = createBattle();
     const singer = createUnit(battle, teamA);
-    const quiet = createUnit(battle, teamB);
-    const sung = createUnit(battle, teamB);
+    const target = createUnit(battle, teamB);
+    const landed = counter(battle, target);
 
-    sung.addMove(Moves.Tackle);
-    sung.triggerMove(Moves.Tackle, unitTarget(singer), 0);
-    battle.tick(MOVE_DELAY);
+    pinRandom(battle, 0);
+    singer.enter();
+    target.enter();
+    target.addMove(Moves.Tackle);
+    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 0);
+    target.cast(Moves.Tackle, unitTarget(singer));
+    battle.tick(turns(10));
 
-    expect(usable(battle, singer, Moves.Encore, quiet)).toBe(false);
-    expect(usable(battle, singer, Moves.Encore, sung)).toBe(true);
+    expect(landed.get(Moves.Tackle)).toBe(3);
+  });
+
+  it('leaves the caster free', () => {
+    expect(getMoveData(Moves.Encore).steps ?? 0).toBe(0);
+  });
+
+  it('spends the mark on a move that winds up, and adds nothing', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    const landed = counter(battle, target);
+
+    pinRandom(battle, 0);
+    singer.enter();
+    target.enter();
+    target.addMove(Moves.SkyAttack);
+    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 0);
+    target.cast(Moves.SkyAttack, unitTarget(singer));
+    battle.tick(turns(10));
+
+    expect(landed.get(Moves.SkyAttack)).toBe(getMoveData(Moves.SkyAttack).steps! + 1);
+    expect(target.status[Statuses.Encored]).toBeUndefined();
+  });
+
+  it('ends when a repeat is broken', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    const landed = counter(battle, target);
+
+    pinRandom(battle, 0);
+    singer.enter();
+    target.enter();
+    target.addMove(Moves.Tackle);
+    target.cast(Moves.Tackle, unitTarget(singer));
+    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 0);
+
+    while (target.channeling == null) {
+      battle.tick(1000 / 60);
+    }
+    target.interrupt();
+    battle.tick(turns(10));
+
+    expect(landed.get(Moves.Tackle)).toBe(1);
+    expect(target.status[Statuses.Encored]).toBeUndefined();
   });
 
   it('refuses a second encore over the first', () => {
@@ -918,57 +978,34 @@ describe('the encore', () => {
     const singer = createUnit(battle, teamA);
     const target = createUnit(battle, teamB);
 
-    target.addMove(Moves.Tackle);
-    target.triggerMove(Moves.Tackle, unitTarget(singer), 0);
-    battle.tick(MOVE_DELAY);
-    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 2);
+    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 0);
 
     expect(usable(battle, singer, Moves.Encore, target)).toBe(false);
   });
 
-  it('will not play back a move that winds up', () => {
-    const { battle, teamA, teamB } = createBattle();
-    const singer = createUnit(battle, teamA);
-    const target = createUnit(battle, teamB);
-
-    target.addMove(Moves.Rollout);
-    target.triggerMove(Moves.Rollout, unitTarget(singer), 4);
-    battle.tick(MOVE_DELAY);
-
-    const struck = singer.health;
-
-    expect(usable(battle, singer, Moves.Encore, target)).toBe(false);
-
-    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 2);
-    battle.tick(MOVE_DELAY);
-
-    // A lone trigger of a roll reads as its last pass, which is the
-    // reason nothing is played back here
-    expect(singer.health).toBe(struck);
-  });
-
-  it('plays back a Solar Beam that no longer winds up', () => {
-    const { battle, teamA, teamB } = createBattle();
-    const singer = createUnit(battle, teamA);
-    const target = createUnit(battle, teamB);
-
-    battle.setWeather(Weathers.Sunny, turns(5));
-    target.addMove(Moves.SolarBeam);
-    target.triggerMove(Moves.SolarBeam, unitTarget(singer), 0);
-    battle.tick(MOVE_DELAY);
-
-    expect(usable(battle, singer, Moves.Encore, target)).toBe(true);
-  });
-
-  it('is sung to a teammate rather than across the field', () => {
+  it('is aimed at an enemy stuck on a status move, or at a teammate', () => {
     const { battle, teamA, teamB } = createBattle();
     const singer = createUnit(battle, teamA);
     const friend = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
+    const growling = createUnit(battle, teamB);
+    const striking = createUnit(battle, teamB);
+
+    for (const unit of [singer, friend, growling, striking]) {
+      unit.enter();
+    }
+    growling.addMove(Moves.Growl);
+    striking.addMove(Moves.Tackle);
+    friend.addMove(Moves.Tackle);
+    growling.cast(Moves.Growl, NONE_TARGET);
+    striking.cast(Moves.Tackle, unitTarget(singer));
+    friend.cast(Moves.Tackle, unitTarget(striking));
 
     expect(getMoveData(Moves.Encore).affects & MoveAffects.Own).toBeTruthy();
+    expect(score(battle, singer, Moves.Encore, growling)).toBeGreaterThan(
+      score(battle, singer, Moves.Encore, striking),
+    );
     expect(score(battle, singer, Moves.Encore, friend)).toBeGreaterThan(
-      score(battle, singer, Moves.Encore, enemy),
+      score(battle, singer, Moves.Encore, striking),
     );
   });
 });

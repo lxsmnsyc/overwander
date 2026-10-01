@@ -2,7 +2,6 @@ import 'server-only';
 import { type RaidKind, asRaidRecord, getRaidTitle } from '../auth/raid-record';
 import type { Species } from '../data/ids/species';
 import { WORLD_GENERATION } from '../overworld/current';
-import getAdminApi from './admin-api';
 import { getSql } from './db';
 import type { PositionRecord } from '../auth/position-record';
 import { readPosition, readPositions } from './positions';
@@ -61,6 +60,11 @@ function pageOf<T>(matched: T[], page: number, capped: boolean): Listing<T> {
   };
 }
 
+/** A user row's creation stamp in milliseconds */
+function createdAtOf(value: unknown): number {
+  return value instanceof Date ? value.getTime() : Date.parse(asString(value)) || 0;
+}
+
 function contains(haystack: string, needle: string): boolean {
   return haystack.toLowerCase().includes(needle);
 }
@@ -87,74 +91,32 @@ export interface PlayerRow {
 }
 
 /**
- * Every account, newest first, filtered by name or address.
- *
- * The two halves of a player live apart: the address is in Supabase
- * Auth and everything else is in the profile row, so both are
- * read and joined by uid. An account with no profile yet is still a
- * player — it is somebody who signed in and closed the tab — so it is
- * listed with whatever the auth record knows
+ * Every account, newest first, filtered by name or address. An account
+ * with no profile yet is still a player, somebody who signed in and
+ * closed the tab, so it is listed with whatever its user row knows
  */
 export async function listPlayers(search: string, page: number): Promise<Listing<PlayerRow>> {
-  const api = getAdminApi();
-  const accounts: PlayerRow[] = [];
-  let pageAt = 1;
-
-  for (;;) {
-    const { data, error } = await api.auth.admin.listUsers({ page: pageAt, perPage: 1_000 });
-
-    if (error != null || data.users.length === 0) {
-      break;
-    }
-    for (const account of data.users) {
-      accounts.push({
-        uid: account.id,
-        nickname: '',
-        email: account.email ?? '',
-        gold: 0,
-        role: '',
-        banned: false,
-        banReason: '',
-        createdAt: Date.parse(account.created_at) || 0,
-        position: null,
-      });
-    }
-    pageAt += 1;
-    if (accounts.length >= SCAN_LIMIT || data.users.length < 1_000) {
-      break;
-    }
-  }
-
-  const capped = accounts.length >= SCAN_LIMIT;
-
-  // The profiles in one query rather than one read each
-  const uids: string[] = [];
-
-  for (const row of accounts) {
-    uids.push(row.uid);
-  }
-
   const stored = await getSql()`
-    select id, nickname, gold, role, banned, ban_reason
-    from profiles where id = any(${uids})
+    select u.id, u.email, u.created_at, p.nickname, p.gold, p.role, p.banned, p.ban_reason
+    from users u left join profiles p on p.id = u.id
+    order by u.created_at desc
+    limit ${SCAN_LIMIT}
   `;
-  const profiles = new Map<string, (typeof stored)[number]>();
+  const capped = stored.length >= SCAN_LIMIT;
+  const accounts: PlayerRow[] = [];
 
   for (const row of stored) {
-    profiles.set(asString(row.id), row);
-  }
-
-  for (const row of accounts) {
-    const data = profiles.get(row.uid);
-
-    if (data == null) {
-      continue;
-    }
-    row.nickname = asString(data.nickname);
-    row.gold = asNumber(data.gold);
-    row.role = asString(data.role);
-    row.banned = data.banned === true;
-    row.banReason = asString(data.ban_reason);
+    accounts.push({
+      uid: asString(row.id),
+      nickname: asString(row.nickname),
+      email: asString(row.email),
+      gold: asNumber(row.gold),
+      role: asString(row.role),
+      banned: row.banned === true,
+      banReason: asString(row.ban_reason),
+      createdAt: createdAtOf(row.created_at),
+      position: null,
+    });
   }
 
   const wanted = search.trim().toLowerCase();
@@ -165,7 +127,6 @@ export async function listPlayers(search: string, page: number): Promise<Listing
       matched.push(row);
     }
   }
-  matched.sort((left, right) => right.createdAt - left.createdAt);
 
   const listing = pageOf(matched, page, capped);
   const listed: string[] = [];
@@ -188,10 +149,8 @@ export async function listPlayers(search: string, page: number): Promise<Listing
  * standing. Resolves null for a uid no account was ever opened under
  */
 export async function readPlayer(uid: string): Promise<PlayerRow | null> {
-  const { data } = await getAdminApi()
-    .auth.admin.getUserById(uid)
-    .catch(() => ({ data: null }));
-  const account = data?.user ?? null;
+  const users = await getSql()`select email, created_at from users where id = ${uid}`;
+  const account = users.at(0);
 
   if (account == null) {
     return null;
@@ -205,12 +164,12 @@ export async function readPlayer(uid: string): Promise<PlayerRow | null> {
   return {
     uid,
     nickname: stored == null ? '' : asString(stored.nickname),
-    email: account.email ?? '',
+    email: asString(account.email),
     gold: asNumber(stored?.gold),
     role: asString(stored?.role),
     banned: stored?.banned === true,
     banReason: asString(stored?.ban_reason),
-    createdAt: Date.parse(account.created_at) || 0,
+    createdAt: createdAtOf(account.created_at),
     position: await readPosition(uid),
   };
 }

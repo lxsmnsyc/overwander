@@ -58,6 +58,7 @@ import deriveEncounter, {
   MAX_SIZE_SCALE,
   MIN_SIZE_SCALE,
   RAID_FAMILY_DAY_MIN_IV,
+  RAID_MIN_IV,
   deriveAbility,
   deriveMoves,
   deriveSize,
@@ -365,6 +366,47 @@ describe('chunk snapshot', () => {
       }
     }
     // A pond with nothing in it would mean the water pools were never reached
+    expect(swimming).toBeGreaterThan(0);
+  });
+
+  it("keeps the ground species off a cave's water", () => {
+    const world = new World('overworld', Depth.Cave);
+    const NOON = 12 * 60 * 60 * 1000;
+    let flooded = 0;
+    let swimming = 0;
+
+    for (let x = -12; x < 12; x++) {
+      for (let y = -12; y < 12; y++) {
+        const chunk = world.getChunk(x, y);
+        const snapshot = new ChunkSnapshot(chunk, NOON);
+
+        for (const cell of chunk.getWaterCells()) {
+          const surface = chunk.getCellSurface(cell);
+          const pool = snapshot.getCellPool(cell);
+
+          flooded++;
+          for (const band of SPAWN_BAND_KEYS) {
+            for (const entry of spawnBand(pool, band)) {
+              expect(fitsSurface(entry.species, surface), getSpeciesData(entry.species).name).toBe(
+                true,
+              );
+            }
+          }
+        }
+        snapshot.getSpawns(SPAWN_COUNT);
+        for (const [cell, spawn] of snapshot.getSpawnCells()) {
+          const surface = chunk.getCellSurface(cell);
+
+          expect(fitsSurface(spawn[0], surface), getSpeciesData(spawn[0]).name).toBe(true);
+          if (surface === SpawnSurface.Water) {
+            swimming++;
+          }
+        }
+      }
+    }
+    // Caves with no water at all would leave this test checking nothing,
+    // and the amphibious residents are what keeps the water from standing empty
+    expect(flooded).toBeGreaterThan(0);
     expect(swimming).toBeGreaterThan(0);
   });
 
@@ -830,7 +872,7 @@ describe('chunk snapshot', () => {
     expect(deriveSize(Species.Gastly, traitValue).weight).toBeGreaterThan(0);
   });
 
-  it('floors a family-day raid reward at ten in every IV', () => {
+  it('floors every raid reward, and a family-day one further', () => {
     const world = new World('overworld');
     // The first day of the year features Bulbasaur's family
     const day = Date.UTC(2026, 0, 1);
@@ -842,16 +884,11 @@ describe('chunk snapshot', () => {
       type: EncounterType.LegendaryRaid,
     });
 
-    expect(Object.values(unpackIVs(raid.ivs))).toEqual([
-      RAID_FAMILY_DAY_MIN_IV,
-      RAID_FAMILY_DAY_MIN_IV,
-      RAID_FAMILY_DAY_MIN_IV,
-      RAID_FAMILY_DAY_MIN_IV,
-      RAID_FAMILY_DAY_MIN_IV,
-      RAID_FAMILY_DAY_MIN_IV,
-    ]);
+    expect(Object.values(unpackIVs(raid.ivs))).toEqual(
+      Array.from({ length: 6 }, () => RAID_MIN_IV + RAID_FAMILY_DAY_MIN_IV),
+    );
 
-    // Only raids on the family's own day get the floor
+    // A wild meeting gets neither floor
     const wild = deriveEncounter(snapshot, [...spawn], 'trainer-red');
 
     // Every slice zero packs to zero, which is the whole point of
@@ -860,9 +897,14 @@ describe('chunk snapshot', () => {
 
     const offDay = new ChunkSnapshot(world.getChunk(0, 0), day + 200 * 24 * 60 * 60 * 1000);
 
-    expect(
-      deriveEncounter(offDay, [...spawn], 'trainer-red', { type: EncounterType.LegendaryRaid }).ivs,
-    ).toBe(0);
+    // Off the family's day a raid keeps its own floor alone
+    const ordinary = deriveEncounter(offDay, [...spawn], 'trainer-red', {
+      type: EncounterType.LegendaryRaid,
+    });
+
+    expect(Object.values(unpackIVs(ordinary.ivs))).toEqual(
+      Array.from({ length: 6 }, () => RAID_MIN_IV),
+    );
 
     // A rolled value above the floor is left alone
     const rolled = deriveEncounter(snapshot, [Species.Bulbasaur, 0xffffffff, 0], 'trainer-red', {

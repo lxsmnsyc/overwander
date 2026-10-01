@@ -3,7 +3,6 @@ import { Stats } from '../../data/constants/stats';
 import { TYPE_EFFECTIVENESS, TYPE_EFFECTIVENESS_FACTOR, Types } from '../../data/constants/types';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
-import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
@@ -107,16 +106,5 @@ export default function setupStealthRock(battle: Battle): void {
       unit.checkStat(Stats.HP, 0) * BASE_DAMAGE * factor,
       DamageFlags.Indirect | DamageFlags.HealthScaled,
     );
-  });
-
-  // Hanging them a second time does nothing
-  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (
-      event.move === Moves.StealthRock &&
-      event.target.type === MoveTargetType.Team &&
-      stonesOver(event.target.team)
-    ) {
-      event.score -= USELESS_PENALTY;
-    }
   });
 }

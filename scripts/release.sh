@@ -30,10 +30,14 @@ fi
 
 gh release create "$tag" --title "Overwander $tag" --notes-file "$notes" --verify-tag
 
-# Git pushes do not deploy (vercel.json), so a new release is what ships main
-if [ -n "${VERCEL_DEPLOY_HOOK:-}" ]; then
-  curl -fsS -X POST "$VERCEL_DEPLOY_HOOK" > /dev/null
-  echo "Deploy of $tag requested from Vercel"
+# The server picks the new tag up itself (scripts/deploy.sh), so the sprite host
+# is the one thing a release publishes
+if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
+  # Stamped here as the build does, or a redrawn sheet ships under the
+  # digest browsers already hold for the old one
+  node scripts/sprite-stamps.ts
+  pnpm dlx wrangler@4 deploy
+  echo "Sprite host deployed for $tag"
 else
-  echo "::warning::VERCEL_DEPLOY_HOOK is not set, so $tag was not deployed"
+  echo "::warning::CLOUDFLARE_API_TOKEN is not set, so the sprite host was not deployed"
 fi

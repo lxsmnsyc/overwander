@@ -112,7 +112,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],
-      mythical: [{ species: Species.Celebi, weight: 10 }],
+      mythical: [
+        { species: Species.Celebi, weight: 10 },
+        { species: Species.PichuSpikyEared, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -219,7 +222,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],
-      mythical: [{ species: Species.Celebi, weight: 10 }],
+      mythical: [
+        { species: Species.Celebi, weight: 10 },
+        { species: Species.PichuSpikyEared, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -300,7 +306,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],
-      mythical: [{ species: Species.Celebi, weight: 10 }],
+      mythical: [
+        { species: Species.Celebi, weight: 10 },
+        { species: Species.PichuSpikyEared, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -383,7 +392,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],
-      mythical: [{ species: Species.Celebi, weight: 10 }],
+      mythical: [
+        { species: Species.Celebi, weight: 10 },
+        { species: Species.PichuSpikyEared, weight: 10 },
+      ],
     },
   });
   registerWaterPool(Biome.TemperateForest, {

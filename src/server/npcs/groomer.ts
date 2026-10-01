@@ -67,7 +67,7 @@ export default async function groomCatch(
   if (visit == null) {
     return null;
   }
-  if (!(await spendGold(uid, GROOMING_FEE))) {
+  if (!(await spendGold(uid, GROOMING_FEE, 'groomer'))) {
     await releaseVisit(visit);
     return null;
   }
@@ -75,7 +75,7 @@ export default async function groomCatch(
   try {
     await getSql()`update caught set friendship = ${groomed} where id = ${catchId}`;
   } catch (error) {
-    await grantGold(uid, GROOMING_FEE);
+    await grantGold(uid, GROOMING_FEE, 'groomer-refund');
     await releaseVisit(visit);
     throw error;
   }

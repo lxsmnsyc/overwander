@@ -1,6 +1,21 @@
 import { createMiddleware } from '@solidjs/start/middleware';
 import { BUILD_HEADER, STALE_BUILD_HEADER, isStaleCall } from '../utils/build';
 
+/** The site's own address when it is https, which only production's is */
+function secureSite(): string | null {
+  const site = process.env.BETTER_AUTH_URL ?? '';
+
+  return site.startsWith('https://') ? site : null;
+}
+
+/** Whether the visitor reached the tunnel over http, as Cloudflare reports it */
+function visitedOverHttp(headers: Headers): boolean {
+  return (
+    headers.get('x-forwarded-proto') === 'http' ||
+    (headers.get('cf-visitor') ?? '').includes('"scheme":"http"')
+  );
+}
+
 /**
  * Refuse a server call from any build but the live one, before any
  * function runs. Server functions are addressed by their place in a
@@ -14,6 +29,18 @@ import { BUILD_HEADER, STALE_BUILD_HEADER, isStaleCall } from '../utils/build';
  * reaches one
  */
 export default createMiddleware([
+  // A visit over plain http is sent to https: sign-in trusts only the
+  // https origin, so from http it refuses the page's return address
+  (event, next) => {
+    const site = secureSite();
+
+    // The site's own address rather than the request's, which behind
+    // the tunnel is the container's
+    if (site != null && visitedOverHttp(event.req.headers)) {
+      return Response.redirect(new URL(`${event.url.pathname}${event.url.search}`, site), 308);
+    }
+    return next();
+  },
   (event, next) => {
     if (
       isStaleCall(

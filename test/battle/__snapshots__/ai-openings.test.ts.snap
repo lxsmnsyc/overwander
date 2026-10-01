@@ -1,0 +1,39 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`how a fight opens > kanto classics 1`] = `
+[
+  "b Alakazam: Psychic",
+  "a Gengar: Shadow Ball",
+  "b Blastoise: Reflect",
+  "a Clefable: Thunder Wave",
+  "b Machamp: Substitute",
+  "a Snorlax: Reflect",
+  "b Blastoise: Protect",
+  "a Clefable: Dazzling Gleam",
+  "b Machamp: Toxic",
+  "a Snorlax: Earthquake",
+  "a Clefable: Soft-Boiled",
+  "b Machamp: Cross Chop",
+  "a Snorlax: Protect",
+]
+`;
+
+exports[`how a fight opens > walls against sweepers 1`] = `
+[
+  "a Starmie: Thunderbolt",
+  "b Charizard: Fire Blast",
+  "b Gyarados: Dragon Dance",
+  "a Venusaur: Leech Seed",
+  "a Skarmory: Tailwind",
+  "b Tyranitar: Stealth Rock",
+  "a Starmie: Psychic",
+  "b Charizard: Air Slash",
+  "a Venusaur: Sleep Powder",
+  "a Skarmory: Roost",
+  "b Tyranitar: Foul Play",
+  "a Starmie: Ice Beam",
+  "b Charizard: Roost",
+  "a Venusaur: Sludge Bomb",
+  "a Skarmory: Drill Peck",
+]
+`;

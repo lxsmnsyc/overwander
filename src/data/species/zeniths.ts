@@ -2,7 +2,7 @@ import { Stats } from '../constants/stats';
 import { Types } from '../constants/types';
 import Abilities from '../ids/abilities';
 import { Items } from '../ids/items';
-import { Species } from '../ids/species';
+import { FORMS_PER_SPECIES, Species, speciesDexNumber, speciesFormIndex } from '../ids/species';
 import { getSpeciesData, registerSpecies } from './__create';
 
 /**
@@ -91,8 +91,21 @@ export const RESERVED_FOR_MEGAS = new Set<Species>([
  */
 export const NO_ZENITH = new Set<Species>([Species.Ditto]);
 
-/** What marks an item id as a Zenith Shard: each is this plus its pokemon's dex number */
-export const ZENITH_SHARD_BAND = 200000;
+/** What marks an item id as a Zenith Shard */
+export const ZENITH_SHARD_BAND = 2000000;
+
+/**
+ * The shard id a Zenith should have: the band, the dex number times
+ * 100, and 01 for the species' own Zenith (slot 99), 02 for the next
+ * one down, and so on
+ */
+export function zenithShardId(zenith: Species): number {
+  return (
+    ZENITH_SHARD_BAND +
+    speciesDexNumber(zenith) * FORMS_PER_SPECIES +
+    (FORMS_PER_SPECIES - speciesFormIndex(zenith))
+  );
+}
 
 /** What a Zenith adds to the base stat total of the pokemon it is a Zenith of */
 export const ZENITH_BONUS = 100;

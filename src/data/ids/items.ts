@@ -1043,10 +1043,12 @@ export const enum Items {
   SkillBook = 577,
 
   /**
-   * The Zenith Shards, one per Zenith: 200000 marks a shard as a
-   * Zenith's, plus the dex number of the pokemon it is for
+   * The Zenith Shards, one per Zenith: 2000000 marks a shard as a
+   * Zenith's, then the dex number of the pokemon it is for times 100,
+   * then which Zenith of that dex number it is. The species' own is 01
+   * (its slot 99), a regional form's counts up as its slot counts down
    */
-  ArcanineZenithShard = 200059,
+  ArcanineZenithShard = 2005901,
 }
 
 /**

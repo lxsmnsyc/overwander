@@ -3,7 +3,6 @@ import { Stages } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
-import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
@@ -89,15 +88,5 @@ export default function setupStickyWeb(battle: Battle): void {
       -STICKY_WEB_STAGES,
       unit.team.status[TeamStatuses.StickyWeb] ?? { type: EffectType.None },
     );
-  });
-
-  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (
-      event.move === Moves.StickyWeb &&
-      event.target.type === MoveTargetType.Team &&
-      webOver(event.target.team)
-    ) {
-      event.score -= USELESS_PENALTY;
-    }
   });
 }

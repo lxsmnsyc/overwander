@@ -38,6 +38,13 @@ export default function setupCrashMoves(battle: Battle): void {
     }
 
     const source = event.source;
+    const cause = { type: EffectType.Move, move: event.move, unit: source } as const;
+
+    // Magic Guard spares its holder the crash
+    if (!source.checkCanDamage(cause, source, 1, DamageFlags.Indirect | DamageFlags.HealthScaled)) {
+      return;
+    }
+
     const fatal = source.health <= source.checkStat(Stats.HP, 0) * CRASH_FRACTION;
 
     event.score -= fatal ? USELESS_PENALTY : RISKY_PENALTY;

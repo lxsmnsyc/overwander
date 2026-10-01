@@ -20,6 +20,7 @@ const ACTION_LABELS: Record<RaidAction, string> = {
   [RaidAction.Host]: 'Host',
   [RaidAction.Join]: 'Join',
   [RaidAction.Spectate]: 'Spectate',
+  [RaidAction.Rejoin]: 'Rejoin',
 };
 
 /**
@@ -54,6 +55,9 @@ function describeAction(view: RaidView): string {
   }
   if (view.action === RaidAction.Join) {
     return `A lobby is gathering — ${view.teams} team${view.teams === 1 ? '' : 's'} so far.`;
+  }
+  if (view.action === RaidAction.Rejoin) {
+    return 'Your party is still fighting in there.';
   }
   return view.battle == null
     ? 'You have no pokemon of your own to bring, so there is nothing to do here but watch.'
@@ -151,6 +155,12 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
     }
     if (standing.action === RaidAction.Spectate) {
       spectate(standing);
+      return;
+    }
+    // Back into their own fight, which settles like any fight they are in
+    if (standing.action === RaidAction.Rejoin && standing.battle != null) {
+      game.setBattle({ id: standing.battle, replay: false, raid: standing.lobby });
+      close();
       return;
     }
     setBusy(true);

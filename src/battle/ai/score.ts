@@ -22,6 +22,12 @@ export const BASE_SCORE = 100;
 export const USELESS_PENALTY = 10;
 
 /**
+ * What taking a unit off the field is worth: above every role's base,
+ * so finishing a foe beats any setup, and above every chip and heal
+ */
+export const KILL_BONUS = 20;
+
+/**
  * What a move costs to use when using it hands something back: a
  * drain into Liquid Ooze, a status into Synchronize, a punch into
  * Static. Smaller than the useless penalty on purpose — the move

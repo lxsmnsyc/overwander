@@ -1,4 +1,5 @@
-import World, { Depth, Generation } from './world';
+import type Chunk from './chunk';
+import World, { DEPTHS, Depth, Generation } from './world';
 
 /**
  * The world every player shares. The seed comes from the
@@ -27,4 +28,25 @@ let world: World | null = null;
 export default function getWorld(depth: Depth = Depth.Surface): World {
   world ??= new World(WORLD_SEED, Depth.Surface, WORLD_GENERATION);
   return world.at(depth);
+}
+
+/**
+ * The world a stored chunk was read from, told apart by its seed: a
+ * stop or a raid staged underground is kept by its coordinates alone,
+ * and the same coordinates on the surface are another place
+ */
+export function getWorldOfChunk(x: number, y: number, seed: string): World {
+  for (const depth of DEPTHS) {
+    const layer = getWorld(depth);
+
+    if (layer.getChunk(x, y).seed === seed) {
+      return layer;
+    }
+  }
+  return getWorld();
+}
+
+/** The stored chunk itself, out of whichever world it was read from */
+export function getChunkOfSeed(x: number, y: number, seed: string): Chunk {
+  return getWorldOfChunk(x, y, seed).getChunk(x, y);
 }

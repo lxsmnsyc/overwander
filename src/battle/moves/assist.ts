@@ -4,6 +4,7 @@ import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
 import type Unit from '../unit';
+import { scoreAsAverage } from '../ai/choose-move';
 
 /**
  * Assist reaches into the rest of the party and throws whatever it
@@ -77,6 +78,13 @@ export default function setupAssist(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     if (event.usable && event.move === Moves.Assist) {
       event.usable = borrowable(event.source).length > 0;
+    }
+  });
+
+  // It borrows at random, so it is worth the average of what it could borrow
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (event.move === Moves.Assist) {
+      scoreAsAverage(battle, event, borrowable(event.source));
     }
   });
 }

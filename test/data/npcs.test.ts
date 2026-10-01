@@ -4,6 +4,7 @@ import registerBiomeSpawns from '../../src/data/biome';
 import registerAbilities from '../../src/data/abilities';
 import Biome, { WILD_BIOMES } from '../../src/data/ids/biome';
 import { Items } from '../../src/data/ids/items';
+import { MAX_FRIENDSHIP } from '../../src/data/constants/friendship';
 import { Moves } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
 import registerItems from '../../src/data/items';
@@ -18,8 +19,10 @@ import Npc, {
   NPC_NAMES,
   REMINDER_FEE,
   getRecallableMoves,
+  getTutorableMoves,
   npcSheet,
   npcSheets,
+  tutorRefuses,
 } from '../../src/data/overworld/npc';
 import {
   getBaseForms,
@@ -166,6 +169,17 @@ describe('wandering NPCs', () => {
   });
 });
 
+describe("the tutor's signature moves", () => {
+  it('offers one but teaches it only at the most friendship', () => {
+    expect(getTutorableMoves(Species.Rayquaza, [])).toContain(Moves.DragonAscent);
+    expect(tutorRefuses(Moves.DragonAscent, MAX_FRIENDSHIP - 1)).toBe(true);
+    expect(tutorRefuses(Moves.DragonAscent, MAX_FRIENDSHIP)).toBe(false);
+    expect(tutorRefuses(Moves.SecretSword, 0)).toBe(true);
+    // Everything else he teaches at any friendship
+    expect(tutorRefuses(Moves.Surf, 0)).toBe(false);
+  });
+});
+
 describe('what an expert hands its party', () => {
   it('gives a species the gear that is its own, best first', () => {
     // A relic nothing else can use: the whole of what makes a gym
@@ -307,8 +321,8 @@ describe('the syndicates', () => {
       seen.set(syndicate, (seen.get(syndicate) ?? 0) + 1);
     }
 
-    // All five are somewhere, and the water, the fire, the cold and
-    // the woods are the four that were claimed
+    // All six are somewhere, and the water, the fire, the cold, the
+    // woods and the meadows are the five that were claimed
     for (const syndicate of SYNDICATES) {
       expect(seen.get(syndicate) ?? 0, SYNDICATE_NAMES[syndicate]).toBeGreaterThan(0);
     }
@@ -318,9 +332,9 @@ describe('the syndicates', () => {
     expect(getSyndicate(Biome.Beyond)).toBe(Syndicate.Galactic);
     expect(getSyndicate(Biome.TemperateForest)).toBe(Syndicate.Plasma);
     expect(getSyndicate(Biome.Woodland)).toBe(Syndicate.Plasma);
-    // The open country is what Rocket is left with, now that the
-    // trees are somebody's
-    expect(getSyndicate(Biome.Grassland)).toBe(Syndicate.Rocket);
+    expect(getSyndicate(Biome.Grassland)).toBe(Syndicate.Flare);
+    expect(getSyndicate(Biome.Shrubland)).toBe(Syndicate.Flare);
+    // The open country is what Rocket is left with
     expect(getSyndicate(Biome.Savanna)).toBe(Syndicate.Rocket);
   });
 });

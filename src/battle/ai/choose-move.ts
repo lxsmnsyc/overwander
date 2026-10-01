@@ -30,7 +30,7 @@ import resolveMoveTargets from '../mechanics/move/targeting';
 import { ACCURACY_PENALTY, BASE_SCORE, KILL_BONUS, STEP_PENALTY, USELESS_PENALTY } from './score';
 import { SELF_STATUS_MOVES } from '../moves/status';
 import type Unit from '../unit';
-import { withAIContext } from './context';
+import { getAIContext, reaches, withAIContext } from './context';
 import setupFog from './fog';
 import setupCoordination from './coordination';
 import setupRoleScoring from './role-score';
@@ -351,12 +351,43 @@ export function setupChooseMoveAI(battle: Battle): void {
     if (damage <= 0) {
       return undefined;
     }
-    if (damage >= target.health) {
+
+    // What friends already have on the way counts against the target
+    // first: a foe they will finish needs nothing more, and one they
+    // leave standing is finished by less
+    const left = target.health - queuedDamage(source, target);
+
+    if (left <= 0) {
+      return 0;
+    }
+    if (damage >= left) {
       // Gen 4 "try to KO" bonus, and more for getting there first
       const priority = source.checkMovePriority(move, { type: MoveTargetType.Unit, unit: target });
       return KILL_BONUS + (priority > 0 ? PRIORITY_KILL_BONUS : 0);
     }
-    return Math.floor((DAMAGE_SCALE * damage) / target.health);
+    return Math.floor((DAMAGE_SCALE * damage) / left);
+  }
+
+  /**
+   * The damage friends are already winding up at a target. A cast is on
+   * show, so this is what the team knows is on its way
+   */
+  function queuedDamage(source: Unit, target: Unit): number {
+    let total = 0;
+
+    for (const friend of getAIContext(battle, source).friends()) {
+      const cast = friend.casting;
+
+      if (
+        friend !== source &&
+        cast != null &&
+        getMoveData(cast.move).category !== MoveCategories.Status &&
+        reaches(friend, cast.move, cast.target, target)
+      ) {
+        total += estimateDamage(friend, cast.move, target);
+      }
+    }
+    return total;
   }
 
   /**

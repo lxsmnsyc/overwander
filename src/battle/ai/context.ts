@@ -36,7 +36,7 @@ function* carriedMoves(unit: Unit): IterableIterator<Moves> {
 }
 
 /** Whether a move cast at this target lands on the unit */
-function reaches(caster: Unit, move: Moves, target: MoveTarget, unit: Unit): boolean {
+export function reaches(caster: Unit, move: Moves, target: MoveTarget, unit: Unit): boolean {
   switch (target.type) {
     case MoveTargetType.Unit:
       return target.unit === unit;

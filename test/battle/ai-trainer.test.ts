@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { setupChooseMoveAI } from '../../src/battle/ai/choose-move';
+import { chooseMove, setupChooseMoveAI } from '../../src/battle/ai/choose-move';
 import setupIdleAI from '../../src/battle/ai/idle';
 import { getTrainer } from '../../src/battle/ai/trainer';
+import { unitTarget } from '../../src/battle/utils';
 import { MoveTargetType } from '../../src/battle/events';
 import { Moves } from '../../src/data/ids/moves';
 import { type BattleHarness, createBattle, createUnit, pinRandom } from './harness';
@@ -53,5 +54,28 @@ describe('the invisible trainer', () => {
     battle.tick(16);
 
     expect(unit.casting).toBeUndefined();
+  });
+
+  it('finishes a foe a teammate’s hit leaves in reach, and spares one it will finish', () => {
+    const { battle, teamA, teamB } = createTrainerBattle();
+    const unit = createUnit(battle, teamA);
+    const friend = createUnit(battle, teamA);
+    const doomed = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+    friend.addMove(Moves.Tackle);
+    friend.addMove(Moves.HyperBeam);
+
+    // Out of one Tackle's reach, but not of two
+    doomed.setHealth(30);
+    friend.cast(Moves.Tackle, unitTarget(doomed));
+
+    expect(chooseMove(battle, unit)?.target).toEqual(unitTarget(doomed));
+
+    // A Hyper Beam on the way finishes it, so the Tackle goes elsewhere
+    friend.stopCast();
+    friend.cast(Moves.HyperBeam, unitTarget(doomed));
+
+    expect(chooseMove(battle, unit)?.target).toEqual(unitTarget(other));
   });
 });

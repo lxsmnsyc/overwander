@@ -446,6 +446,21 @@ interface Painted {
   wrapper: boolean;
 }
 
+/**
+ * Template pixels whose colour says the wrong part, by row and column
+ * counted from 1: the shine is not a stripe, and the ball's edges run
+ * past where the stripes' colours stop
+ */
+const PAINTED_BY_HAND = new Map<string, Painted>([
+  ['6,6', { part: 0, wrapper: false }],
+  ['7,2', { part: 2, wrapper: false }],
+  ['7,3', { part: 2, wrapper: false }],
+  ['7,14', { part: 2, wrapper: false }],
+  ['7,15', { part: 2, wrapper: false }],
+  ['10,2', { part: 4, wrapper: false }],
+  ['10,15', { part: 4, wrapper: false }],
+]);
+
 /** Every pixel touching one, which is how a stripe is walked. */
 function neighbours(at: number, width: number, height: number): number[] {
   const x = at % width;
@@ -474,7 +489,10 @@ function neighbours(at: number, width: number, height: number): number[] {
  */
 function partsOf(template: Image): (Painted | null)[] {
   const { width, height, rgba } = template;
-  const wrapper = (at: number): boolean => rgba[at * 4 + 3] > 0 && WRAPPER.has(keyOf(rgba, at * 4));
+  const byHand = (at: number): Painted | undefined =>
+    PAINTED_BY_HAND.get(`${Math.floor(at / width) + 1},${(at % width) + 1}`);
+  const wrapper = (at: number): boolean =>
+    rgba[at * 4 + 3] > 0 && byHand(at) == null && WRAPPER.has(keyOf(rgba, at * 4));
   const stripes: number[][] = [];
   const seen = new Set<number>();
 
@@ -518,9 +536,12 @@ function partsOf(template: Image): (Painted | null)[] {
 
   for (let at = 0; at < width * height; at += 1) {
     const held = partOf.get(at);
+    const painted = byHand(at);
 
     if (rgba[at * 4 + 3] === 0 || keyOf(rgba, at * 4) === OUTLINE) {
       parts.push(null);
+    } else if (painted != null) {
+      parts.push(painted);
     } else if (held == null) {
       const above = crossing.filter((line) => Math.floor(at / width) > line).length;
 

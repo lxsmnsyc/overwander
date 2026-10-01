@@ -69,6 +69,7 @@
   --color-tide-soft: var(--blue-wash);
 
   --color-arcane: var(--violet);
+  --color-arcane-soft: var(--violet-wash);
 
   /**
    * What is written *on* a filled colour — a green button, the blue
@@ -148,6 +149,7 @@
 
   /* A move being channelled, which is neither a cast nor damage */
   --violet: #7b4fc0;
+  --violet-wash: #f1eafb;
 
   --drop: rgb(31 42 68 / 0.18);
   --drop-soft: rgb(31 42 68 / 0.16);
@@ -206,6 +208,7 @@
   --blue-wash: #13263f;
 
   --violet: #a077e6;
+  --violet-wash: #261a3d;
 
   --drop: rgb(0 0 0 / 0.55);
   --drop-soft: rgb(0 0 0 / 0.45);

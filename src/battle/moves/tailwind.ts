@@ -1,7 +1,6 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
-import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
 import type Team from '../team';
@@ -49,9 +48,9 @@ export default function setupTailwind(battle: Battle): void {
   });
 
   // A second wind while the first is still blowing adds nothing
-  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (event.move === Moves.Tailwind && remaining.has(event.source.team)) {
-      event.score -= USELESS_PENALTY;
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && event.move === Moves.Tailwind && remaining.has(event.source.team)) {
+      event.usable = false;
     }
   });
 }

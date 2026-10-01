@@ -118,6 +118,12 @@ export default function NpcCounter(
         isOpen={props.standing != null && asked() == null}
         onClose={props.onClose}
         title={who()}
+        // The move counters list moves two to a row, which needs the room
+        width={
+          showing()?.[1] === Npc.MoveTutor || showing()?.[1] === Npc.MoveReminder
+            ? 'wide'
+            : undefined
+        }
         // The person beside their name, off the same charset the player
         // just walked up to, and what they say as the heading's line
         lead={
@@ -199,6 +205,7 @@ export default function NpcCounter(
         catchId={asked()?.catchId ?? null}
         move={asked()?.move ?? null}
         cost={asked()?.cost ?? ''}
+        price={asked()?.price}
         teach={async (catchId, move, replaces): Promise<LearnResult> =>
           asked()?.teach(catchId, move, replaces) ?? { refused: LearnRefusal.Gone }
         }

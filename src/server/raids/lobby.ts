@@ -19,11 +19,12 @@ import Biome from '../../data/ids/biome';
 import { getSpeciesHome } from '../../data/biome';
 import { getSpeciesLairs } from '../../data/overworld/lair';
 import { getSql, tx } from '../db';
-import { readBattle, readRaid, readRaidIn, writeRaid } from '../raid-io';
+import { foughtBattle, readBattle, readRaid, readRaidIn, writeRaid } from '../raid-io';
 import { holdsItem } from '../inventory';
 import { asString } from '../read';
 import { hasAnyCaught } from '../caught';
-import { isBattleLost, isRaidLost } from './outcome';
+import BattleOutcome from '../../auth/battle-outcome';
+import { asOutcome, isBattleLost, isRaidLost } from './outcome';
 
 /**
  * The lobby itself: looking at one, opening one, leaving one, and
@@ -77,11 +78,17 @@ export async function peekRaid(
   // A lobby that has not started is one a party can still be brought
   // to
   const gathering = existing != null && existing.battle == null;
+  const battle = existing?.battle == null ? null : await readBattle(existing.battle);
   // A landmark with nothing standing, or with a party that failed at
   // it, is one to stage rather than to join
-  const open =
-    existing == null ||
-    (existing.battle != null && isBattleLost(await readBattle(existing.battle), now));
+  const open = existing == null || (existing.battle != null && isBattleLost(battle, now));
+  // A fight still going that the player fielded a party in is theirs to
+  // walk back into, not one to watch
+  const fighting =
+    existing?.battle != null &&
+    !open &&
+    asOutcome(battle?.outcome) === BattleOutcome.Unfinished &&
+    (await foughtBattle(existing.battle, uid));
 
   // Nothing is standing and they have nothing to stage it with, so
   // there is not even anything to watch
@@ -95,7 +102,9 @@ export async function peekRaid(
   // fight has started
   let action = RaidAction.Spectate;
 
-  if (staging && open) {
+  if (fighting) {
+    action = RaidAction.Rejoin;
+  } else if (staging && open) {
     action = RaidAction.Host;
   } else if (staging && gathering) {
     action = RaidAction.Join;
@@ -106,7 +115,7 @@ export async function peekRaid(
     action,
     kind,
     lair: existing?.lair ?? roll.lair,
-    biome: chunk.biome,
+    biome: snapshot.biomeAt(cell),
     species: existing?.species ?? roll.species,
     battle: existing?.battle ?? null,
     teams: existing?.teams.length ?? 0,
@@ -172,7 +181,8 @@ export async function enterRaid(
       timestamp: snapshot.raidTimestamp,
       offset: zone,
       chunk: { seed: chunk.seed, x: chunk.x, y: chunk.y },
-      biome: chunk.biome,
+      // The lair's own tile, which may stand across a border from the chunk's middle
+      biome: snapshot.biomeAt(cell),
       cell,
       cleared: false,
     };

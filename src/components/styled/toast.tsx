@@ -59,12 +59,14 @@ const WIDTH = 'w-[min(88vw,20rem)]';
 const ARRIVING = 200;
 const LEAVING = 180;
 
-export type ToastTone = 'neutral' | 'leaf' | 'ember';
+export type ToastTone = 'neutral' | 'leaf' | 'ember' | 'gold' | 'arcane';
 
 const TONES: Record<ToastTone, string> = {
   neutral: 'border-tide bg-paper',
   leaf: 'border-leaf bg-leaf-soft',
   ember: 'border-ember bg-ember-soft',
+  gold: 'border-gold bg-gold-soft',
+  arcane: 'border-arcane bg-arcane-soft',
 };
 
 export interface ToastRequest {

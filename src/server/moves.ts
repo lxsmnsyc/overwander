@@ -42,7 +42,8 @@ export type MoveSource = (
   level: number,
   known: Moves[],
   learnFrom: number | null,
-) => boolean;
+  friendship: number,
+) => boolean | LearnRefusal;
 
 /**
  * Put one move on one of the player's catches and take the price for
@@ -98,8 +99,16 @@ export async function learnMove(
     }
     const learnFrom = caught.learnFrom == null ? null : asNumber(caught.learnFrom);
 
-    if (!allowed(species, asNumber(caught.level), known, learnFrom)) {
-      return { refused: LearnRefusal.NotLearnable };
+    const answer = allowed(
+      species,
+      asNumber(caught.level),
+      known,
+      learnFrom,
+      asNumber(caught.friendship),
+    );
+
+    if (answer !== true) {
+      return { refused: answer === false ? LearnRefusal.NotLearnable : answer };
     }
 
     // A pokemon with room learns another move; one that is full puts

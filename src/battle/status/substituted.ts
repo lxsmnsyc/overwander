@@ -7,6 +7,11 @@ import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
 import type Unit from '../unit';
 
+/** Whether this is a move thrown by somebody the unit is fighting */
+function fromTheOtherSide(cause: EffectCause, unit: Unit): boolean {
+  return cause.type === EffectType.Move && cause.unit.team.alliance !== unit.team.alliance;
+}
+
 interface SubstitutedData {
   health: number;
   cause: EffectCause;
@@ -74,25 +79,25 @@ export default function setupSubstitutedStatus(battle: Battle): void {
     }
   });
 
-  // The substitute blocks status conditions inflicted by other units' moves
+  // The substitute blocks status conditions inflicted by the other
+  // side's moves. It is a decoy for attackers, so a teammate's or an
+  // ally's move still reaches the pokemon behind it
   battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
     if (
       !event.immune &&
       event.source.status[Statuses.Substituted] &&
-      event.cause.type === EffectType.Move &&
-      event.cause.unit !== event.source
+      fromTheOtherSide(event.cause, event.source)
     ) {
       event.immune = true;
     }
   });
 
-  // ...as well as stat stage changes from other units' moves
+  // ...as well as stat stage changes from the other side's moves
   battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
     if (
       event.success &&
       event.source.status[Statuses.Substituted] &&
-      event.cause.type === EffectType.Move &&
-      event.cause.unit !== event.source
+      fromTheOtherSide(event.cause, event.source)
     ) {
       event.success = false;
     }

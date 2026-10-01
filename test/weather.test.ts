@@ -20,6 +20,8 @@ import Weather, {
   toBattleWeather,
   widensMoveSlots,
 } from '../src/data/overworld/weather';
+import { PHENOMENON_MIN_IV } from '../src/data/overworld/phenomenon';
+import { HONEY_TREE_MIN_IV } from '../src/data/overworld/honey-tree';
 import World from '../src/overworld/world';
 import ChunkSnapshot from '../src/overworld/chunk-snapshot';
 import deriveEncounter, {
@@ -310,6 +312,24 @@ describe('what weather is worth', () => {
     // under the whole game
     for (const sky of [Weather.Rain, Weather.Snow, Weather.Fog, Weather.Aurora]) {
       expect(valuesOf(sky)).toEqual([0, 0, 0, 0, 0, 0]);
+    }
+  });
+
+  it("stacks a caller's own floor on the sky's", () => {
+    // What a phenomenon and a honey tree each pass
+    for (const floor of [PHENOMENON_MIN_IV, HONEY_TREE_MIN_IV]) {
+      const met = (weather: Weather | undefined): number[] => {
+        const encounter = deriveEncounter(snapshot, [...hopeless], 'trainer-red', {
+          type: EncounterType.Wild,
+          weather,
+          minimumIV: floor,
+        });
+        return STAT_ORDER.map((stat) => getIV(encounter.ivs, stat));
+      };
+
+      expect(met(undefined)).toEqual(Array(6).fill(floor));
+      // Rattata is Normal, which dust favours
+      expect(met(Weather.DustHaze)).toEqual(Array(6).fill(floor + WEATHER_MIN_IV));
     }
   });
 

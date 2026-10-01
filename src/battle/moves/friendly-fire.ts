@@ -11,7 +11,7 @@ import { BattleEvents, MoveTargetType } from '../events';
  * teammate, and the reason is absorption: a Thunderbolt into a Volt
  * Absorb is a heal, a Surf into a Storm Drain is a stage. So the
  * chooser offers every teammate as a target for these, and refuses
- * the aim unless the hit cannot land at all. What a feed is worth is
+ * the aim unless the hit cannot land and an ability of theirs pays out. What a feed is worth is
  * each absorbing ability's own answer, written where the ability is.
  *
  * A move whose own table names an ally is not one of these: it was
@@ -41,11 +41,13 @@ export default function setupFriendlyFire(battle: Battle): void {
       return;
     }
 
-    // Only a hit that cannot land is worth pointing that way
-    event.usable = event.source.checkMoveImmunity(
-      event.move,
-      event.target,
-      event.source.checkMoveType(event.move, event.target),
-    );
+    // Only a hit an ability of theirs turns into something: an immunity
+    // alone, a Levitate under a Ground move, is a wasted move
+    event.usable =
+      event.source.checkMoveImmunity(
+        event.move,
+        event.target,
+        event.source.checkMoveType(event.move, event.target),
+      ) && event.source.checkAIMoveFeeds(event.move, event.target);
   });
 }

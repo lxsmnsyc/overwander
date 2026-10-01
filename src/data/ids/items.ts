@@ -961,8 +961,12 @@ export const enum Items {
   /** What lets the rings out, and puts them back */
   PrisonBottle = 449,
 
-  // 450 is held for the Zygarde Cube, which the legendaries branch
-  // numbered 446 before the mythicals took it
+  /**
+   * The box the cells are gathered in, spent putting a tenth of a
+   * Zygarde back up to half of one. The legendaries branch numbered
+   * it 446 before the mythicals' relics took that
+   */
+  ZygardeCube = 450,
 
   /** The Mega Stones, in the order the dex meets their pokemon */
   Venusaurite = 451,
@@ -1115,6 +1119,8 @@ export const enum Items {
   RareCandyMax = 576,
   /** Room for one more move, the way a Utility Belt is room for one more item */
   SkillBook = 577,
+  /** What shows the forces of nature their other shape */
+  RevealGlass = 578,
 }
 
 /**

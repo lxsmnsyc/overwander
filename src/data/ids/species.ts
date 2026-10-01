@@ -1038,6 +1038,11 @@ export const enum Species {
   ZapdosShadow = 1014504,
   MoltresShadow = 1014604,
   MewtwoShadow = 1015003,
+  RaikouShadow = 1024302,
+  EnteiShadow = 1024403,
+  SuicuneShadow = 1024503,
+  LugiaShadow = 1024901,
+  HoOhShadow = 1025002,
 
   /**
    * The Megas. The form index is the collection's own Mega slot, so

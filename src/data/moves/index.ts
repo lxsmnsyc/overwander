@@ -21,6 +21,7 @@ export {
   getSpeedCooldownFactor,
 } from './__create';
 export type { MoveData } from './__create';
+export { TUTOR_ONLY_MOVES, isTutorOnlyMove } from './tutor-only';
 export { MOVE_WEATHERS, getWeatherMove } from './weather';
 
 export function registerMoves(): void {

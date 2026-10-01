@@ -959,7 +959,7 @@ const enum Abilities {
   // Goomy
   Seepage = 200352,
   // Noibat
-  Outpace = 200353,
+  Echolocation = 200353,
   // Pancham
   Begrudge = 200354,
   // Swirlix

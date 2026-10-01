@@ -31,9 +31,14 @@ import {
   createPolarityAbility,
   createQueenlyMajestyAbility,
   createRestageAbility,
+  createRodAbility,
   createWeightAbility,
   movesOfType,
 } from './__create';
+import { registerWeatherWant } from '../ai/weather-wants';
+
+// The skies these thrive under, so the AI weighs a weather move by who gains from it
+registerWeatherWant(Abilities.FlowerGift, [Weathers.Sunny]);
 
 const FLOWER_GIFT_BOOST = 1.5;
 
@@ -328,10 +333,7 @@ const setupAbilities = [
   createRestageAbility(Abilities.Contrary, (value) => -value),
 
   // https://bulbapedia.bulbagarden.net/wiki/Storm_Drain_(Ability)
-  // The mainline also pulls Water moves aimed elsewhere onto the
-  // holder. Nothing here redirects a move away from the target it
-  // committed to, so this is the immunity and the boost
-  createAbsorbStageAbility(Abilities.StormDrain, Stages.SpecialAttack, movesOfType(Types.Water)),
+  createRodAbility(Abilities.StormDrain, Stages.SpecialAttack, Types.Water),
 
   // https://bulbapedia.bulbagarden.net/wiki/Mirror_Armor_(Ability)
   // Two holders never volley a drop between them: the bounced call

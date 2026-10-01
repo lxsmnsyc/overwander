@@ -2,6 +2,7 @@ import Biome from '../ids/biome';
 import { isMythicalSpecies } from '../biome';
 import { BIOME_NAMES } from '../biome/names';
 import { Species } from '../ids/species';
+import { getTrueShadowCounterpart } from '../species/true-shadow';
 
 /**
  * The lairs: the places a legendary is found rather than the
@@ -678,10 +679,13 @@ export function pickLairSpecies(
 
 /**
  * Every lair a species is at home in, in the order they are numbered,
- * and empty for anything that has no place of its own
+ * and empty for anything that has no place of its own. A true shadow
+ * is at home where its counterpart is
  */
 export function getSpeciesLairs(species: Species): Lairs[] {
-  return EVERY_LAIR.filter((lair) => LAIR_SPECIES[lair].includes(species));
+  const resident = getTrueShadowCounterpart(species) ?? species;
+
+  return EVERY_LAIR.filter((lair) => LAIR_SPECIES[lair].includes(resident));
 }
 
 /**

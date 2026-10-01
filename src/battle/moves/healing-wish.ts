@@ -1,7 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { DamageFlags, Moves } from '../../data/ids/moves';
-import { RISKY_PENALTY, USELESS_PENALTY } from '../ai/score';
+import { USELESS_PENALTY, sacrificeCost } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
@@ -23,10 +23,7 @@ import type Unit from '../unit';
  * comes round afterwards
  * https://bulbapedia.bulbagarden.net/wiki/Healing_Wish_(move)
  */
-const SACRIFICES = new Set<Moves>([Moves.HealingWish, Moves.LunarDance]);
-
-/** The share of its health above which the trade is not worth making */
-const LAST_LEGS = 0.5;
+export const SACRIFICES = new Set<Moves>([Moves.HealingWish, Moves.LunarDance]);
 
 /** Whether the target has anything to gain from the sacrifice */
 function needs(unit: Unit): boolean {
@@ -85,8 +82,6 @@ export default function setupHealingWish(battle: Battle): void {
       return;
     }
 
-    const ratio = event.source.health / Math.max(1, event.source.checkStat(Stats.HP, 0));
-
-    event.score -= ratio > LAST_LEGS ? USELESS_PENALTY : RISKY_PENALTY;
+    event.score -= sacrificeCost(event.source);
   });
 }

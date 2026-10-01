@@ -330,6 +330,11 @@ const enum BattleEvents {
   CheckUnitTerrainDuration = 154,
   /** How much room a unit has for moves, abilities or held items */
   CheckUnitSlots = 155,
+  /**
+   * Whether a hit aimed at a teammate pays out through that teammate's
+   * ability. Only an absorber answers, so a plain immunity does not
+   */
+  CheckUnitAIMoveFeeds = 156,
 }
 
 export default BattleEvents;

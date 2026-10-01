@@ -3,6 +3,7 @@ import type { EventListenerLifecycle } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
 import { getWeatherMove } from '../../../data/moves';
 import type Abilities from '../../../data/ids/abilities';
+import type { Moves } from '../../../data/ids/moves';
 import { Weathers } from '../../../data/ids/status';
 import type Battle from '../../core';
 import type { CheckUnitCanDamageEvent } from '../../events';
@@ -124,6 +125,33 @@ export function createPrimalWeatherAbility(
       }),
     ]);
   });
+}
+
+/**
+ * Meta ability for the terrain setters (Misty Surge, Electric Surge):
+ * they cast the terrain's move on entry, so the move's own clock runs it
+ * https://bulbapedia.bulbagarden.net/wiki/Electric_Surge_(Ability)
+ */
+export function createSurgeAbility(
+  targetAbility: Abilities,
+  terrainMove: Moves,
+): (battle: Battle) => void {
+  return createAbility(
+    targetAbility,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (event.source.hasAbility(targetAbility)) {
+            event.source.triggerAbility(targetAbility);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === targetAbility) {
+            event.source.triggerMove(terrainMove, { type: MoveTargetType.None }, 0);
+          }
+        }),
+      ]),
+  );
 }
 
 /**

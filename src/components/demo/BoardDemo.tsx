@@ -3,11 +3,11 @@ import { atClockHour } from '../../data/day-clock';
 import { Badge, Button, Row, Select } from '../styled';
 import type Biome from '../../data/ids/biome';
 import BiomeId from '../../data/ids/biome';
-import { BIOME_NAMES, isLegendarySpecies, isMythicalSpecies } from '../../data/biome';
+import { BIOME_NAMES } from '../../data/biome';
 import type Decoration from '../../data/overworld/decoration';
 import Weather, { DARK_DAY_LAMP_CELLS, WEATHER_NAMES } from '../../data/overworld/weather';
 import ChunkCanvas from '../overworld/chunk-canvas';
-import type { SpawnCoat, SpawnRank } from '../overworld/chunk-canvas/scenery';
+import { type SpawnCoat, rankOf } from '../overworld/chunk-canvas/scenery';
 import { BOARD_CELLS, BOARD_CENTER, boardIndexOf, viewFor } from '../../canvas/board';
 import { SLIDE_PACE } from '../overworld/chunk-canvas/metrics';
 import { findPathNear } from '../../overworld/path';
@@ -242,14 +242,6 @@ function findRoute(world: World, from: [number, number]): [number, number] | nul
     }
   }
   return null;
-}
-
-/** Which of the one-per-world kinds a demo spawn is */
-function rankOf(species: Species): SpawnRank {
-  if (isLegendarySpecies(species)) {
-    return 'legendary';
-  }
-  return isMythicalSpecies(species) ? 'mythical' : null;
 }
 
 /** Where the pokemon stand, in cells from wherever the player landed */

@@ -1,6 +1,6 @@
 {
   "name": "overwander",
-  "version": "4.23.0",
+  "version": "4.26.1",
   "private": true,
   "type": "module",
   "publishConfig": {
@@ -24,6 +24,7 @@
     "test:db": "vitest run --config vitest.db.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "ai:sim": "vitest run --config vitest.sim.ts",
     "cs:ver": "changeset version",
     "cs:pub": "changeset publish",
     "cs:tag": "node scripts/tag-release.ts",

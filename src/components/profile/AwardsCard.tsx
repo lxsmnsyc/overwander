@@ -1,4 +1,13 @@
-import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import {
+  For,
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createResource,
+  createSignal,
+  onCleanup,
+} from 'solid-js';
 import { type AchievementSheet, listAchievements } from '../../auth/achievements';
 import listAwards, { type AwardRecord } from '../../auth/awards';
 import {
@@ -23,6 +32,8 @@ import Awards, {
   HOENN_HONORS,
   JOHTO_BADGES,
   JOHTO_HONORS,
+  KALOS_BADGES,
+  KALOS_HONORS,
   KANTO_BADGES,
   KANTO_HONORS,
   SINNOH_BADGES,
@@ -140,6 +151,16 @@ const AWARD_SPRITES: Partial<Record<Awards, [sheet: string, name: string]>> = {
   [Awards.LegendBadge]: ['badges/unova', '8'],
   [Awards.ToxicBadge]: ['badges/unova', '9'],
   [Awards.WaveBadge]: ['badges/unova', '10'],
+  // Kalos's sheet numbers its badges out of gym order, so each is named
+  // by what is drawn on it
+  [Awards.BugBadge]: ['badges/kalos', 'Kalos'],
+  [Awards.CliffBadge]: ['badges/kalos', 'Kalos (1)'],
+  [Awards.RumbleBadge]: ['badges/kalos', 'Kalos (2)'],
+  [Awards.PlantBadge]: ['badges/kalos', 'Kalos (3)'],
+  [Awards.VoltageBadge]: ['badges/kalos', 'Kalos (4)'],
+  [Awards.FairyBadge]: ['badges/kalos', 'Kalos (5)'],
+  [Awards.PsychicBadge]: ['badges/kalos', 'Kalos (6)'],
+  [Awards.IcebergBadge]: ['badges/kalos', 'Kalos (7)'],
 };
 
 /**
@@ -256,6 +277,27 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.MineBadge]: '#8f9aa8',
   [Awards.IcicleBadge]: '#9fd7e8',
   [Awards.BeaconBadge]: '#f2c14a',
+  [Awards.BugBadge]: '#7a8f3f',
+  [Awards.CliffBadge]: '#9a8a78',
+  [Awards.RumbleBadge]: '#c0584a',
+  [Awards.PlantBadge]: '#4f9a5f',
+  [Awards.VoltageBadge]: '#f0c93a',
+  [Awards.FairyBadge]: '#e87a9a',
+  [Awards.PsychicBadge]: '#9a5fc0',
+  [Awards.IcebergBadge]: '#6fb0e0',
+  [Awards.MalvaDefeated]: '#d9542f',
+  [Awards.SieboldDefeated]: '#3f7fc0',
+  [Awards.WikstromDefeated]: '#8f9aa8',
+  [Awards.DrasnaDefeated]: '#6a5fb0',
+  [Awards.KalosChampion]: '#e0b64f',
+  [Awards.AZDefeated]: '#6a5a8f',
+  [Awards.FlareGruntDefeated]: '#c8352a',
+  [Awards.XerosicDefeated]: '#8a9aa8',
+  [Awards.AlianaDefeated]: '#d9542f',
+  [Awards.BryonyDefeated]: '#7a8f9f',
+  [Awards.CelosiaDefeated]: '#e87a9a',
+  [Awards.MableDefeated]: '#c98a4b',
+  [Awards.LysandreDefeated]: '#b8322a',
   [Awards.AaronDefeated]: '#6fae5a',
   [Awards.BerthaDefeated]: '#b8935a',
   [Awards.FlintDefeated]: '#d9542f',
@@ -331,6 +373,9 @@ const SHELF = ((): Awards[] => {
     ...UNOVA_HONORS,
     Awards.UnovaChampion,
     Awards.UnovaDexMedal,
+    ...KALOS_BADGES,
+    ...KALOS_HONORS,
+    Awards.KalosChampion,
     ...FRONTIER_SYMBOLS,
     ...SYNDICATE_HONORS,
   ]);
@@ -370,7 +415,25 @@ export function AwardArt(props: { award: Awards; size: number }): JSX.Element {
   );
 }
 
-function Slot(props: { award: Awards; wins: number | null }): JSX.Element {
+/** The tray's own edge and padding, and the gap between squares, in pixels */
+const TRAY_EDGE = 4 + 6;
+const TRAY_GAP = 6;
+/** A square's own border and padding, in pixels, which the art sits inside */
+const SLOT_EDGE = 2 + 4;
+
+/**
+ * How big a square's art can be drawn in a tray this wide. The art is
+ * sized to the square rather than drawn as cut, so a narrow screen
+ * shrinks it instead of stretching the square or clipping the badge
+ */
+function artFor(tray: number): number {
+  const square = (tray - TRAY_EDGE * 2 - TRAY_GAP * (GRID_COLUMNS - 1)) / GRID_COLUMNS;
+
+  // No bigger than an elite's portrait, so a wide screen does not blow the badges up
+  return Math.max(8, Math.min(ELITE_SPRITE_SIZE, Math.floor(square - SLOT_EDGE * 2)));
+}
+
+function Slot(props: { award: Awards; wins: number | null; art: number }): JSX.Element {
   const name = (): string => AWARD_NAMES[props.award];
   const held = (): boolean => props.wins != null;
   const mark = (): string => (CHAMPION_TITLES_SET.has(props.award) ? '★' : name().slice(0, 1));
@@ -388,8 +451,8 @@ function Slot(props: { award: Awards; wins: number | null }): JSX.Element {
               ? `${name()}, beaten ${props.wins} ${props.wins === 1 ? 'time' : 'times'}`
               : `${name()}, not yet earned`
           }
-          class="relative flex aspect-square w-full cursor-default items-center justify-center
-            rounded-lg border-2 border-line bg-paper p-1"
+          class="relative flex aspect-square w-full min-w-0 cursor-default items-center
+            justify-center overflow-hidden rounded-lg border-2 border-line bg-paper p-1"
         >
           <Show
             when={AWARD_SPRITES[props.award]}
@@ -416,7 +479,7 @@ function Slot(props: { award: Awards; wins: number | null }): JSX.Element {
                   <NpcSprite
                     npc={Npc.Trainer}
                     sheet={sheet}
-                    size={ELITE_SPRITE_SIZE}
+                    size={props.art}
                     label=""
                     class={`pointer-events-none ${held() ? '' : 'opacity-40 grayscale'}`}
                   />
@@ -429,6 +492,7 @@ function Slot(props: { award: Awards; wins: number | null }): JSX.Element {
                 sheet={sprite[0]}
                 name={sprite[1]}
                 label=""
+                size={props.art}
                 class={`pointer-events-none ${held() ? '' : 'opacity-40 grayscale'}`}
               />
             )}
@@ -495,16 +559,34 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
   const seats = (): number => won(SINNOH_HONORS);
   const unova = (): number => won(UNOVA_BADGES);
   const seated = (): number => won(UNOVA_HONORS);
+  const kalos = (): number => won(KALOS_BADGES);
+  const chairs = (): number => won(KALOS_HONORS);
 
   const empties = (): number[] => fillers(SHELF.length);
+
+  /** How wide the tray is drawn, which sizes every square's art */
+  const [tray, setTray] = createSignal(0);
+  let observer: ResizeObserver | undefined;
+
+  onCleanup(() => {
+    observer?.disconnect();
+  });
 
   return (
     <div class="mx-auto flex w-full max-w-lg flex-col gap-2">
       <div
+        ref={(element) => {
+          observer = new ResizeObserver(([entry]) => {
+            setTray(entry.borderBoxSize[0]?.inlineSize ?? entry.contentRect.width);
+          });
+          observer.observe(element);
+        }}
         class="grid w-full grid-cols-6 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
           shadow-pop"
       >
-        <For each={SHELF}>{(award) => <Slot award={award} wins={wins().get(award) ?? null} />}</For>
+        <For each={SHELF}>
+          {(award) => <Slot award={award} wins={wins().get(award) ?? null} art={artFor(tray())} />}
+        </For>
         {/* The rest of the tray, drawn empty rather than left out: a
             half-built grid reads as a broken one */}
         <For each={empties()}>
@@ -525,7 +607,9 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
         of {SINNOH_HONORS.length} of the Elite Four
         {wins().has(Awards.SinnohChampion) ? ', Champion' : ''}. Unova: {unova()} of{' '}
         {UNOVA_BADGES.length} badges, {seated()} of {UNOVA_HONORS.length} of the Elite Four
-        {wins().has(Awards.UnovaChampion) ? ', Champion' : ''}.
+        {wins().has(Awards.UnovaChampion) ? ', Champion' : ''}. Kalos: {kalos()} of{' '}
+        {KALOS_BADGES.length} badges, {chairs()} of {KALOS_HONORS.length} of the Elite Four
+        {wins().has(Awards.KalosChampion) ? ', Champion' : ''}.
       </Meta>
     </div>
   );

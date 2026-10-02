@@ -1,10 +1,11 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
 import type Battle from '../core';
-import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { effectIn, landsIn } from '../ai/context';
+import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
 import type Team from '../team';
 import turns from '../turn';
 import type Unit from '../unit';
@@ -26,6 +27,9 @@ const SWAMP_SPEED = 0.25;
 const RAINBOW_CHANCE = 2;
 
 const PLEDGES = new Set<Moves>([Moves.WaterPledge, Moves.FirePledge, Moves.GrassPledge]);
+
+/** What landing a Pledge as the second of a pair is worth to the AI */
+export const PLEDGE_PAIR_BONUS = 8;
 
 interface Combo {
   type: Types;
@@ -63,6 +67,38 @@ export default function setupPledges(battle: Battle): void {
     }
     return comboOf(last.move, move);
   }
+
+  /**
+   * Whether a Pledge cast now lands as the second of a pair: after a
+   * teammate's different one, landed or still on its way, and inside
+   * the window
+   */
+  function pairs(source: Unit, move: Moves, target: MoveTarget): boolean {
+    const ready = effectIn(source, move, target);
+    const last = pledged.get(source.team);
+
+    if (last != null && last.unit !== source && last.move !== move && last.left >= ready) {
+      return true;
+    }
+    for (const friend of source.team.units) {
+      const cast = friend.casting;
+
+      if (friend !== source && cast != null && PLEDGES.has(cast.move) && cast.move !== move) {
+        const lands = landsIn(friend);
+
+        if (ready > lands && ready - lands <= WINDOW) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (PLEDGES.has(event.move) && pairs(event.source, event.move, event.target)) {
+      event.score += PLEDGE_PAIR_BONUS;
+    }
+  });
 
   const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     for (const [team, last] of pledged) {

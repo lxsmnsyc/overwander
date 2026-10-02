@@ -1,0 +1,85 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - WaterPulse
+  - CalmMind
+  - Toxic
+  - HiddenPower
+  - SunnyDay
+  - IceBeam
+  - Blizzard
+  - Protect
+  - RainDance
+  - Safeguard
+  - Frustration
+  - SolarBeam
+  - IronTail
+  - Thunderbolt
+  - Thunder
+  - Return
+  - Dig
+  - ShadowBall
+  - DoubleTeam
+  - ShockWave
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Flash
+  - BodySlam
+  - DoubleEdge
+  - Mimic
+  - DreamEater
+  - ThunderWave
+  - Substitute
+  - Rollout
+  - PsychUp
+  - Snore
+  - IcyWind
+  - Endure
+  - MudSlap
+  - Swagger
+  - SleepTalk
+  - DefenseCurl
+  - Swift
+  - ChargeBeam
+  - GrassKnot
+  - LastResort
+  - NaturalGift
+  - Payback
+  - SuckerPunch
+  - ZenHeadbutt
+  - Round
+  - EchoedVoice
+  - Retaliate
+  - WorkUp
+  - WildCharge
+  - Confide
+Skitty:
+  level:
+    '1': [Tackle, Growl]
+    '3': [TailWhip]
+    '7': [Attract]
+    '11': [Copycat]
+    '13': [Sing, DisarmingVoice]
+    '15': [DoubleSlap]
+    '19': [Assist]
+    '25': [Charm]
+    '27': [FeintAttack]
+    '29': [WakeUpSlap]
+    '31': [Covet]
+    '37': [HealBell]
+    '39': [DoubleEdge]
+    '42': [Captivate]
+    '46': [PlayRough]
+  egg: [Uproar, HelpingHand, BatonPass, Wish, Tickle, FakeTears, MudBomb, SimpleBeam]
+Delcatty:
+  level:
+    '1': [Growl, DoubleSlap, Sing, Attract]
+  teachable:
+    - HyperBeam
+    - Strength
+    - RockSmash
+    - Captivate
+    - GigaImpact
+    - StompingTantrum
+    - LaserFocus

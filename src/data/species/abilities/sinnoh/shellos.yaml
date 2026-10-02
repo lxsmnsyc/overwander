@@ -1,0 +1,16 @@
+Shellos:
+  abilities: [StickyHold, StormDrain]
+  hidden: [SandForce]
+ShellosEast:
+  abilities: [StickyHold, StormDrain]
+  hidden: [SandForce]
+Gastrodon:
+  abilities: [StickyHold, StormDrain]
+  # Liquid Ooze is this registry's rather than the mainline's:
+  # what the slug is made of is not worth drinking
+  hidden: [SandForce, LiquidOoze]
+GastrodonEast:
+  abilities: [StickyHold, StormDrain]
+  # Liquid Ooze is this registry's rather than the mainline's:
+  # what the slug is made of is not worth drinking
+  hidden: [SandForce, LiquidOoze]

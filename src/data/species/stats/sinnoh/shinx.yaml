@@ -1,0 +1,18 @@
+Shinx:
+  stats: { HP: 45, Attack: 65, Defense: 34, SpecialAttack: 40, SpecialDefense: 34, Speed: 45 }
+  catch-rate: 235
+  height: 0.5
+  weight: 9.5
+  gender: [1, 1]
+Luxio:
+  stats: { HP: 60, Attack: 85, Defense: 49, SpecialAttack: 60, SpecialDefense: 49, Speed: 60 }
+  catch-rate: 120
+  height: 0.9
+  weight: 30.5
+  gender: [1, 1]
+Luxray:
+  stats: { HP: 80, Attack: 120, Defense: 79, SpecialAttack: 95, SpecialDefense: 79, Speed: 70 }
+  catch-rate: 45
+  height: 1.4
+  weight: 42
+  gender: [1, 1]

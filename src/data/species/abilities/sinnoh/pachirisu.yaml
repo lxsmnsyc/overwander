@@ -1,0 +1,5 @@
+Pachirisu:
+  abilities: [RunAway, Pickup]
+  # Volt Absorb is the mainline's hidden one; the pouches are
+  # this registry's, and they are what the species is
+  hidden: [VoltAbsorb, CheekPouch]

@@ -1,0 +1,11 @@
+Cherubi:
+  abilities: [Chlorophyll]
+Cherrim:
+  abilities: [FlowerGift]
+  # Harvest and Healer are this registry's rather than the
+  # mainline's: the line is fruit, and a blossom opens for whoever
+  # is standing under it
+  hidden: [Harvest, Healer]
+CherrimSunshine:
+  abilities: [FlowerGift]
+  hidden: [Harvest, Healer]

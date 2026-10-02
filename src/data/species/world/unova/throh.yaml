@@ -1,0 +1,8 @@
+# The two halves of one dojo: Throh throws whoever comes at it and
+# Sawk strikes before they can. Neither is ever female, and neither
+# evolves, so what they are at level 1 is what they stay
+Throh:
+  types: [Fighting]
+  egg-groups: [HumanLike]
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]

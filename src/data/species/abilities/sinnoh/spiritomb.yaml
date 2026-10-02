@@ -1,0 +1,6 @@
+Spiritomb:
+  abilities: [Pressure]
+  # Infiltrator is the mainline's hidden one; the other two are
+  # this registry's, and both are the stone rather than the ghost:
+  # it reaches back out, and nobody it is holding gets to leave
+  hidden: [Infiltrator, CursedBody, ShadowTag]

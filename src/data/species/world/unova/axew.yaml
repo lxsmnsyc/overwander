@@ -1,0 +1,27 @@
+# The tusks: an Axew scores trees to mark where it has been, and the
+# tusk that breaks off doing it grows back harder than it was
+Axew:
+  types: [Dragon]
+  egg-groups: [Monster, Dragon]
+  biomes: [Mountain, MontaneForest]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Fraxure
+      method: [Level]
+      level: 38
+Fraxure:
+  types: [Dragon]
+  egg-groups: [Monster, Dragon]
+  biomes: [Mountain, MontaneForest]
+  active: [Morning, Day]
+  evolves-from: Axew
+  evolves-into:
+    - species: Haxorus
+      method: [Level]
+      level: 48
+Haxorus:
+  types: [Dragon]
+  egg-groups: [Monster, Dragon]
+  biomes: [Mountain, MontaneForest]
+  active: [Morning, Day]
+  evolves-from: Fraxure

@@ -1,0 +1,28 @@
+Chansey:
+  types: [Normal]
+  egg-groups: [Fairy]
+  biomes: [Grassland, Woodland]
+  active: [Morning, Day]
+  evolves-from: Happiny
+  evolves-into:
+    - species: Blissey
+      method: [Friendship]
+Blissey:
+  types: [Normal]
+  egg-groups: [Fairy]
+  biomes: [Grassland, Woodland]
+  active: [Morning, Day]
+  evolves-from: Chansey
+# A Chansey before it has an egg to carry: a Happiny finds a round
+# white stone instead and will not be told the difference
+Happiny:
+  types: [Normal]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Grassland, Shrubland, TemperateForest]
+  active: any
+  evolves-into:
+    - species: Chansey
+      method: [Level, HeldItem, TimeOfDay]
+      level: 15
+      item: OvalStone
+      time: [Morning, Day]

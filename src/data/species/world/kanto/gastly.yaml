@@ -1,0 +1,24 @@
+Gastly:
+  types: [Ghost, Poison]
+  egg-groups: [Amorphous]
+  biomes: [Mountain, Bog]
+  active: [Night]
+  evolves-into:
+    - species: Haunter
+      method: [Level]
+      level: 25
+Haunter:
+  types: [Ghost, Poison]
+  egg-groups: [Amorphous]
+  biomes: [Mountain, Bog]
+  active: [Night]
+  evolves-from: Gastly
+  evolves-into:
+    - species: Gengar
+      method: [Trade]
+Gengar:
+  types: [Ghost, Poison]
+  egg-groups: [Amorphous]
+  biomes: [Mountain, Bog]
+  active: [Night]
+  evolves-from: Haunter

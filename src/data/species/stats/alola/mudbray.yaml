@@ -1,0 +1,12 @@
+Mudbray:
+  stats: { HP: 70, Attack: 100, Defense: 70, SpecialAttack: 45, SpecialDefense: 55, Speed: 45 }
+  catch-rate: 190
+  height: 1
+  weight: 110
+  gender: [4, 4]
+Mudsdale:
+  stats: { HP: 100, Attack: 125, Defense: 100, SpecialAttack: 55, SpecialDefense: 85, Speed: 35 }
+  catch-rate: 60
+  height: 2.5
+  weight: 920
+  gender: [4, 4]

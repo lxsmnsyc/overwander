@@ -1,0 +1,108 @@
+Poipole:
+  # Dragon Pulse is the mainline's reminder-only first move. Left
+  # here, every Poipole would know it and evolve at once, so it
+  # is taught instead
+  level:
+    '1': [Acid, Growl, HelpingHand, Peck]
+    '7': [FuryAttack]
+    '13': [Venoshock]
+    '19': [Charm]
+    '23': [VenomDrench]
+    '31': [NastyPlot]
+    '37': [PoisonJab]
+    '41': [Toxic]
+    '47': [FellStinger]
+  teachable:
+    - Confide
+    - Covet
+    - DragonPulse
+    - EchoedVoice
+    - Facade
+    - Frustration
+    - GastroAcid
+    - GunkShot
+    - HelpingHand
+    - HiddenPower
+    - IronTail
+    - PoisonJab
+    - Protect
+    - Rest
+    - Return
+    - Round
+    - SignalBeam
+    - SleepTalk
+    - SludgeBomb
+    - SludgeWave
+    - Snatch
+    - Snore
+    - Substitute
+    - Toxic
+    - Uproar
+    - Venoshock
+Naganadel:
+  level:
+    '1': [Acid, AirCutter, DragonPulse, Growl, HelpingHand, Peck]
+    '7': [FuryAttack]
+    '13': [Venoshock]
+    '19': [Charm]
+    '23': [VenomDrench]
+    '31': [NastyPlot]
+    '37': [PoisonJab]
+    '41': [Toxic]
+    '47': [FellStinger]
+    '53': [AirSlash]
+    '61': [DragonPulse]
+  teachable:
+    - Acrobatics
+    - AerialAce
+    - AllySwitch
+    - Confide
+    - DarkPulse
+    - DoubleTeam
+    - DracoMeteor
+    - DragonClaw
+    - DragonPulse
+    - DragonTail
+    - EchoedVoice
+    - Facade
+    - FireBlast
+    - Flamethrower
+    - Fly
+    - Frustration
+    - GastroAcid
+    - GunkShot
+    - HeatWave
+    - HelpingHand
+    - HiddenPower
+    - HyperBeam
+    - IronTail
+    - LaserFocus
+    - LeechLife
+    - Outrage
+    - PoisonJab
+    - Protect
+    - Rest
+    - Return
+    - Round
+    - ShadowClaw
+    - ShockWave
+    - SignalBeam
+    - SkyAttack
+    - SkyDrop
+    - SleepTalk
+    - SludgeBomb
+    - SludgeWave
+    - SmartStrike
+    - Snarl
+    - Snatch
+    - Snore
+    - Substitute
+    - Tailwind
+    - Thief
+    - ThroatChop
+    - Thunderbolt
+    - Toxic
+    - UTurn
+    - Uproar
+    - Venoshock
+    - XScissor

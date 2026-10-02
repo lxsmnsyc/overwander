@@ -1,0 +1,12 @@
+Staryu:
+  stats: { HP: 30, Attack: 45, Defense: 55, SpecialAttack: 70, SpecialDefense: 55, Speed: 85 }
+  catch-rate: 225
+  height: 0.8
+  weight: 34.5
+  gender: genderless
+Starmie:
+  stats: { HP: 60, Attack: 75, Defense: 85, SpecialAttack: 100, SpecialDefense: 85, Speed: 115 }
+  catch-rate: 60
+  height: 1.1
+  weight: 80
+  gender: genderless

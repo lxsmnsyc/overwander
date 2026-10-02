@@ -1,0 +1,8 @@
+Weedle:
+  abilities: [ShieldDust]
+  hidden: [RunAway]
+Kakuna:
+  abilities: [ShedSkin]
+Beedrill:
+  abilities: [Swarm]
+  hidden: [Sniper]

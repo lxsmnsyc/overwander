@@ -1,0 +1,24 @@
+Oddish:
+  stats: { HP: 45, Attack: 50, Defense: 55, SpecialAttack: 75, SpecialDefense: 65, Speed: 30 }
+  catch-rate: 255
+  height: 0.5
+  weight: 5.4
+  gender: [1, 1]
+Gloom:
+  stats: { HP: 60, Attack: 65, Defense: 70, SpecialAttack: 85, SpecialDefense: 75, Speed: 40 }
+  catch-rate: 120
+  height: 0.8
+  weight: 8.6
+  gender: [1, 1]
+Vileplume:
+  stats: { HP: 75, Attack: 80, Defense: 85, SpecialAttack: 110, SpecialDefense: 90, Speed: 50 }
+  catch-rate: 45
+  height: 1.2
+  weight: 18.6
+  gender: [1, 1]
+Bellossom:
+  stats: { HP: 75, Attack: 80, Defense: 95, SpecialAttack: 90, SpecialDefense: 100, Speed: 50 }
+  catch-rate: 45
+  height: 0.4
+  weight: 5.8
+  gender: [1, 1]

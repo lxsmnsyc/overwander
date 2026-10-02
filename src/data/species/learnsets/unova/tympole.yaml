@@ -1,0 +1,110 @@
+# TM, HM and tutor moves shared by the whole family
+
+# The vibration the whole line works by, whatever stage it is at
+family-teachable:
+  - AfterYou
+  - Attract
+  - Bounce
+  - DoubleTeam
+  - EarthPower
+  - EchoedVoice
+  - Endeavor
+  - Endure
+  - Facade
+  - Frustration
+  - Hail
+  - HiddenPower
+  - HydroPump
+  - HyperVoice
+  - IcyWind
+  - MudShot
+  - MuddyWater
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - Round
+  - Scald
+  - Screech
+  - SecretPower
+  - SleepTalk
+  - SludgeBomb
+  - SludgeWave
+  - Snore
+  - Substitute
+  - Surf
+  - Swagger
+  - Toxic
+  - Uproar
+  - WaterPulse
+  - WeatherBall
+  - Confide
+  - Infestation
+Tympole:
+  level:
+    '1': [Growl, Bubble, EchoedVoice]
+    '4': [Acid]
+    '5': [Supersonic]
+    '9': [Round]
+    '12': [BubbleBeam, MudShot]
+    '20': [AquaRing]
+    '23': [Uproar]
+    '24': [Flail]
+    '27': [MuddyWater]
+    '31': [RainDance]
+    '36': [HyperVoice]
+    '42': [HydroPump]
+  egg: [AfterYou, EarthPower, Mist, MudBomb, MudSlap, MudSport, Refresh, WaterPulse]
+Palpitoad:
+  level:
+    '1': [Growl, Supersonic, Acid, Bubble, Round, EchoedVoice]
+    '12': [BubbleBeam, MudShot]
+    '20': [AquaRing]
+    '23': [Uproar]
+    '24': [Flail]
+    '28': [MuddyWater]
+    '33': [RainDance]
+    '42': [HyperVoice]
+    '47': [HydroPump]
+  teachable: [Bulldoze, FocusPunch, GastroAcid, PowerWhip, RockSmash, StealthRock]
+Seismitoad:
+  level:
+    '1': [Growl, Supersonic, Bubble, Acid, DrainPunch, GastroAcid, Round, EchoedVoice]
+    '12': [BubbleBeam, MudShot]
+    '20': [AquaRing]
+    '23': [Uproar]
+    '24': [Flail]
+    '28': [MuddyWater]
+    '33': [RainDance]
+    '46': [HyperVoice]
+    '53': [HydroPump]
+  teachable:
+    - BrickBreak
+    - Bulldoze
+    - Dig
+    - Dive
+    - DrainPunch
+    - Earthquake
+    - Fling
+    - FocusBlast
+    - FocusPunch
+    - GastroAcid
+    - GigaImpact
+    - GrassKnot
+    - HyperBeam
+    - IcePunch
+    - KnockOff
+    - LowKick
+    - MegaKick
+    - MegaPunch
+    - Payback
+    - PoisonJab
+    - PowerWhip
+    - RockSlide
+    - RockSmash
+    - RockTomb
+    - StealthRock
+    - Strength
+    - Venoshock
+    - PowerUpPunch
+    - StompingTantrum

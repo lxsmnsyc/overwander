@@ -1,0 +1,19 @@
+Nosepass:
+  types: [Rock]
+  egg-groups: [Mineral]
+  biomes: [Mountain, Badlands]
+  active: any
+  # A Thunder Stone rather than a magnetic field: the newer games
+  # sell the stone, and nowhere here is a place with a field in it
+  evolves-into:
+    - species: Probopass
+      method: [UsedItem]
+      item: ThunderStone
+# A Nosepass that grew a face of its own: a Probopass sends its three
+# small noses out and works whatever they find from where it stands
+Probopass:
+  types: [Rock, Steel]
+  egg-groups: [Mineral]
+  biomes: [Mountain, Badlands]
+  active: any
+  evolves-from: Nosepass

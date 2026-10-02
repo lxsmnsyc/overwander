@@ -1,0 +1,12 @@
+Ponyta:
+  stats: { HP: 50, Attack: 85, Defense: 55, SpecialAttack: 65, SpecialDefense: 65, Speed: 90 }
+  catch-rate: 190
+  height: 1
+  weight: 30
+  gender: [1, 1]
+Rapidash:
+  stats: { HP: 65, Attack: 100, Defense: 70, SpecialAttack: 80, SpecialDefense: 80, Speed: 105 }
+  catch-rate: 60
+  height: 1.7
+  weight: 95
+  gender: [1, 1]

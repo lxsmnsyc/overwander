@@ -1,0 +1,84 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Attract
+  - Avalanche
+  - Blizzard
+  - BulletSeed
+  - Captivate
+  - DoubleTeam
+  - Endure
+  - EnergyBall
+  - Facade
+  - Flash
+  - Frustration
+  - GigaDrain
+  - GrassKnot
+  - Hail
+  - HiddenPower
+  - IceBeam
+  - IcePunch
+  - IcyWind
+  - IronTail
+  - LightScreen
+  - MudSlap
+  - NaturalGift
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - Safeguard
+  - SecretPower
+  - SeedBomb
+  - ShadowBall
+  - SleepTalk
+  - Snore
+  - SolarBeam
+  - Substitute
+  - Swagger
+  - SwordsDance
+  - Synthesis
+  - Toxic
+  - WaterPulse
+  - Confide
+Snover:
+  level:
+    '1': [Leer, PowderSnow]
+    '5': [RazorLeaf]
+    '9': [IcyWind]
+    '13': [GrassWhistle]
+    '17': [Swagger]
+    '21': [Mist]
+    '26': [IceShard]
+    '31': [Ingrain]
+    '36': [WoodHammer]
+    '41': [Blizzard]
+    '46': [SheerCold]
+  egg: [DoubleEdge, Growth, LeechSeed, MagicalLeaf, Mist, SeedBomb, Stomp]
+Abomasnow:
+  level:
+    '1': [IcePunch, IcyWind, Leer, PowderSnow, RazorLeaf]
+    '5': [RazorLeaf]
+    '9': [IcyWind]
+    '13': [GrassWhistle]
+    '17': [Swagger]
+    '21': [Mist]
+    '26': [IceShard]
+    '31': [Ingrain]
+    '36': [WoodHammer]
+    '47': [Blizzard]
+    '58': [SheerCold]
+  teachable:
+    - BrickBreak
+    - Earthquake
+    - Fling
+    - FocusBlast
+    - FocusPunch
+    - GigaImpact
+    - HyperBeam
+    - Outrage
+    - RockClimb
+    - RockSlide
+    - RockSmash
+    - RockTomb
+    - Strength
+    - StompingTantrum

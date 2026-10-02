@@ -1,0 +1,12 @@
+Larvesta:
+  stats: { HP: 55, Attack: 85, Defense: 55, SpecialAttack: 50, SpecialDefense: 55, Speed: 60 }
+  catch-rate: 45
+  height: 1.1
+  weight: 28.8
+  gender: [1, 1]
+Volcarona:
+  stats: { HP: 85, Attack: 60, Defense: 65, SpecialAttack: 135, SpecialDefense: 105, Speed: 100 }
+  catch-rate: 15
+  height: 1.6
+  weight: 46
+  gender: [1, 1]

@@ -1,0 +1,86 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - BodySlam
+  - TakeDown
+  - DoubleEdge
+  - Rage
+  - DragonRage
+  - Dig
+  - Mimic
+  - DoubleTeam
+  - Reflect
+  - Bide
+  - FireBlast
+  - SkullBash
+  - Rest
+  - Substitute
+  - Headbutt
+  - Roar
+  - Swift
+  - Snore
+  - Curse
+  - Protect
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - DragonBreath
+  - IronTail
+  - HiddenPower
+  - SunnyDay
+  - RockSmash
+  - Flamethrower
+  - AerialAce
+  - Facade
+  - Overheat
+  - SecretPower
+  - Strength
+  - Thief
+  - Captivate
+  - NaturalGift
+  - FlameCharge
+  - Round
+  - Incinerate
+  - Retaliate
+  - WildCharge
+  - Snarl
+  - Confide
+Growlithe:
+  level:
+    '1': [Bite, Roar]
+    '9': [Ember]
+    '18': [Leer]
+    '19': [OdorSleuth]
+    '26': [TakeDown]
+    '28': [FireFang, FlameBurst]
+    '32': [Retaliate]
+    '34': [FlameWheel]
+    '37': [HelpingHand]
+    '39': [Agility]
+    '48': [FlareBlitz]
+    '50': [Flamethrower]
+  egg: [BodySlam, Thrash, FireSpin, Safeguard, Crunch, HeatWave, Howl, BurnUp]
+Arcanine:
+  level:
+    '1':
+      - Roar
+      - Ember
+      - Leer
+      - TakeDown
+      - FlameWheel
+      - Bite
+      - OdorSleuth
+      - FireFang
+      - ThunderFang
+    '50': [ExtremeSpeed]
+  teachable:
+    - HyperBeam
+    - DragonPulse
+    - GigaImpact
+    - IronHead
+    - RockClimb
+    - Bulldoze
+    - LaserFocus

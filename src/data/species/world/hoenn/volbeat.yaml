@@ -1,0 +1,7 @@
+# One male, one female, and nothing else: the two of them are the
+# only way either of them breeds
+Volbeat:
+  types: [Bug]
+  egg-groups: [Bug, HumanLike]
+  biomes: [Bog, TemperateForest]
+  active: [Evening, Night]

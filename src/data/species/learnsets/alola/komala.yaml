@@ -1,0 +1,53 @@
+# TM and tutor moves shared by the whole family
+
+Komala:
+  level:
+    '1': [DefenseCurl, Rollout]
+    '6': [SpitUp, Stockpile, Swallow]
+    '11': [RapidSpin]
+    '16': [Yawn]
+    '21': [Slam]
+    '26': [Flail]
+    '31': [SuckerPunch]
+    '36': [PsychUp]
+    '41': [WoodHammer]
+    '46': [Thrash]
+  teachable:
+    - Acrobatics
+    - Attract
+    - BrickBreak
+    - BulkUp
+    - Bulldoze
+    - CalmMind
+    - Confide
+    - DoubleTeam
+    - Earthquake
+    - Endeavor
+    - Facade
+    - Frustration
+    - HiddenPower
+    - IronHead
+    - KnockOff
+    - LastResort
+    - LowSweep
+    - Payback
+    - Protect
+    - PsychUp
+    - Quash
+    - Return
+    - RockSlide
+    - Round
+    - ShadowClaw
+    - SleepTalk
+    - Snore
+    - StompingTantrum
+    - Substitute
+    - SunnyDay
+    - Superpower
+    - Swagger
+    - SwordsDance
+    - Toxic
+    - UTurn
+    - WorkUp
+    - ZenHeadbutt
+  egg: [Charm, PlayRough, Sing, Wish]

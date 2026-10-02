@@ -1,0 +1,73 @@
+family-teachable:
+  - AquaTail
+  - Attract
+  - Bounce
+  - Confide
+  - Dive
+  - DoubleTeam
+  - DragonPulse
+  - Facade
+  - Frustration
+  - GunkShot
+  - Hail
+  - HiddenPower
+  - IcyWind
+  - IronTail
+  - Outrage
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - Round
+  - Scald
+  - SecretPower
+  - ShadowBall
+  - ShockWave
+  - SleepTalk
+  - SludgeBomb
+  - SludgeWave
+  - Snore
+  - Substitute
+  - Surf
+  - Swagger
+  - Thunderbolt
+  - Toxic
+  - Venoshock
+  - WaterPulse
+  - Waterfall
+Skrelp:
+  level:
+    '1': [Tackle, WaterGun, SmokeScreen]
+    '5': [FeintAttack]
+    '9': [TailWhip]
+    '12': [Bubble]
+    '15': [Acid]
+    '19': [Camouflage]
+    '23': [PoisonTail]
+    '25': [WaterPulse]
+    '28': [DoubleTeam]
+    '32': [Toxic]
+    '35': [AquaTail]
+    '38': [SludgeBomb]
+    '42': [HydroPump]
+    '49': [DragonPulse]
+  egg: [AcidArmor, Haze, PlayRough, ToxicSpikes, VenomDrench]
+Dragalge:
+  level:
+    '1': [Tackle, WaterGun, SmokeScreen]
+    '5': [FeintAttack]
+    '9': [TailWhip]
+    '12': [Bubble]
+    '15': [Acid]
+    '19': [Camouflage]
+    '23': [PoisonTail]
+    '25': [WaterPulse]
+    '28': [DoubleTeam]
+    '32': [Toxic]
+    '35': [AquaTail]
+    '38': [SludgeBomb]
+    '42': [HydroPump]
+    '53': [DragonPulse]
+    '59': [DragonTail]
+    '67': [Twister]
+  teachable: [DracoMeteor, DragonTail, FocusBlast, GigaImpact, HyperBeam, Thunder]

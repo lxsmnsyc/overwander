@@ -1,0 +1,12 @@
+Cubchoo:
+  stats: { HP: 55, Attack: 70, Defense: 40, SpecialAttack: 60, SpecialDefense: 40, Speed: 40 }
+  catch-rate: 120
+  height: 0.5
+  weight: 8.5
+  gender: [1, 1]
+Beartic:
+  stats: { HP: 95, Attack: 130, Defense: 80, SpecialAttack: 70, SpecialDefense: 80, Speed: 50 }
+  catch-rate: 60
+  height: 2.6
+  weight: 260
+  gender: [1, 1]

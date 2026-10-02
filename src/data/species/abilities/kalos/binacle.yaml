@@ -1,0 +1,8 @@
+Binacle:
+  abilities: [ToughClaws, Sniper]
+  hidden: [Pickpocket]
+Barbaracle:
+  abilities: [ToughClaws, Sniper]
+  # Solid Rock is this line's invented filler: the mainline gives
+  # Barbaracle the three above and nothing else
+  hidden: [Pickpocket, SolidRock]

@@ -1,0 +1,12 @@
+Poochyena:
+  stats: { HP: 35, Attack: 55, Defense: 35, SpecialAttack: 30, SpecialDefense: 30, Speed: 35 }
+  catch-rate: 255
+  height: 0.5
+  weight: 13.6
+  gender: [1, 1]
+Mightyena:
+  stats: { HP: 70, Attack: 90, Defense: 70, SpecialAttack: 60, SpecialDefense: 60, Speed: 70 }
+  catch-rate: 127
+  height: 1
+  weight: 37
+  gender: [1, 1]

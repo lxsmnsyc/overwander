@@ -1,0 +1,12 @@
+Groudon:
+  types: [Ground]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Volcano, Beach]
+  active: any
+# And the Red Orb does the same for the land
+GroudonPrimal:
+  types: [Ground, Fire]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true

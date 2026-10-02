@@ -1,0 +1,12 @@
+Archen:
+  stats: { HP: 55, Attack: 112, Defense: 45, SpecialAttack: 74, SpecialDefense: 45, Speed: 70 }
+  catch-rate: 45
+  height: 0.5
+  weight: 9.5
+  gender: [7, 1]
+Archeops:
+  stats: { HP: 75, Attack: 140, Defense: 65, SpecialAttack: 112, SpecialDefense: 65, Speed: 110 }
+  catch-rate: 45
+  height: 1.4
+  weight: 32
+  gender: [7, 1]

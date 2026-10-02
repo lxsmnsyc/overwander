@@ -1,0 +1,12 @@
+Spearow:
+  stats: { HP: 40, Attack: 60, Defense: 30, SpecialAttack: 31, SpecialDefense: 31, Speed: 70 }
+  catch-rate: 255
+  height: 0.3
+  weight: 2
+  gender: [1, 1]
+Fearow:
+  stats: { HP: 65, Attack: 90, Defense: 65, SpecialAttack: 61, SpecialDefense: 61, Speed: 100 }
+  catch-rate: 90
+  height: 1.2
+  weight: 38
+  gender: [1, 1]

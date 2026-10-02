@@ -1,0 +1,30 @@
+Genesect:
+  stats: { HP: 71, Attack: 120, Defense: 95, SpecialAttack: 120, SpecialDefense: 95, Speed: 99 }
+  catch-rate: 3
+  height: 1.5
+  weight: 82.5
+  gender: genderless
+GenesectDouse:
+  stats: { HP: 71, Attack: 120, Defense: 95, SpecialAttack: 120, SpecialDefense: 95, Speed: 99 }
+  catch-rate: 3
+  height: 1.5
+  weight: 82.5
+  gender: genderless
+GenesectShock:
+  stats: { HP: 71, Attack: 120, Defense: 95, SpecialAttack: 120, SpecialDefense: 95, Speed: 99 }
+  catch-rate: 3
+  height: 1.5
+  weight: 82.5
+  gender: genderless
+GenesectBurn:
+  stats: { HP: 71, Attack: 120, Defense: 95, SpecialAttack: 120, SpecialDefense: 95, Speed: 99 }
+  catch-rate: 3
+  height: 1.5
+  weight: 82.5
+  gender: genderless
+GenesectChill:
+  stats: { HP: 71, Attack: 120, Defense: 95, SpecialAttack: 120, SpecialDefense: 95, Speed: 99 }
+  catch-rate: 3
+  height: 1.5
+  weight: 82.5
+  gender: genderless

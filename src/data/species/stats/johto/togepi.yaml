@@ -1,0 +1,18 @@
+Togepi:
+  stats: { HP: 35, Attack: 20, Defense: 65, SpecialAttack: 40, SpecialDefense: 65, Speed: 20 }
+  catch-rate: 190
+  height: 0.3
+  weight: 1.5
+  gender: [7, 1]
+Togetic:
+  stats: { HP: 55, Attack: 40, Defense: 85, SpecialAttack: 80, SpecialDefense: 105, Speed: 40 }
+  catch-rate: 75
+  height: 0.6
+  weight: 3.2
+  gender: [7, 1]
+Togekiss:
+  stats: { HP: 85, Attack: 50, Defense: 95, SpecialAttack: 120, SpecialDefense: 115, Speed: 80 }
+  catch-rate: 30
+  height: 1.5
+  weight: 38
+  gender: [7, 1]

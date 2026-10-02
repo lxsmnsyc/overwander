@@ -1,0 +1,9 @@
+Clefairy:
+  abilities: [CuteCharm, MagicGuard]
+  hidden: [FriendGuard]
+Clefable:
+  abilities: [CuteCharm, MagicGuard]
+  hidden: [Unaware]
+Cleffa:
+  abilities: [CuteCharm, MagicGuard]
+  hidden: [FriendGuard]

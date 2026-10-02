@@ -1,0 +1,6 @@
+Foongus:
+  abilities: [EffectSpore]
+  hidden: [Regenerator]
+Amoonguss:
+  abilities: [EffectSpore]
+  hidden: [Regenerator, RainDish, Overcoat]

@@ -1,0 +1,6 @@
+Guzzlord:
+  types: [Dark, Dragon]
+  egg-groups: [NoEggsDiscovered]
+  # Ultra Ruin
+  biomes: [Badlands]
+  active: any

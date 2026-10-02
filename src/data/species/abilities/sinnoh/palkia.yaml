@@ -1,0 +1,11 @@
+Palkia:
+  abilities: [Pressure]
+  # Pressure and Telepathy are all the mainline gives it, so the
+  # other two are this registry's: it steps through the space a
+  # screen takes up, and what lands near it lands somewhere else
+  hidden: [Telepathy, Infiltrator, MagicGuard]
+PalkiaOrigin:
+  # Shadow Tag is the shape's own: folded shut, it decides where
+  # things are, and nothing it is holding gets to be elsewhere
+  abilities: [Pressure, ShadowTag]
+  hidden: [Telepathy]

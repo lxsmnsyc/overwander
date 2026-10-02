@@ -1,0 +1,4 @@
+Aerodactyl:
+  types: [Rock, Flying]
+  egg-groups: [Flying]
+  active: [Day]

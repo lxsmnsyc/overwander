@@ -1,0 +1,100 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - IceBeam
+  - Surf
+  - Earthquake
+  - Dig
+  - DoubleTeam
+  - Flash
+  - Rest
+  - Snore
+  - Curse
+  - Protect
+  - SludgeBomb
+  - Sandstorm
+  - Endure
+  - Rollout
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - IronTail
+  - HiddenPower
+  - RainDance
+  - Whirlpool
+  - DefenseCurl
+  - Headbutt
+  - IcePunch
+  - DynamicPunch
+  - MudSlap
+  - RockSmash
+  - Blizzard
+  - Dive
+  - DoubleEdge
+  - Facade
+  - Mimic
+  - SecretPower
+  - Substitute
+  - WaterPulse
+  - Waterfall
+  - AquaTail
+  - Captivate
+  - EarthPower
+  - NaturalGift
+  - SludgeWave
+  - AfterYou
+  - Round
+  - Scald
+  - Bulldoze
+  - Confide
+  - Infestation
+  - StompingTantrum
+Wooper:
+  level:
+    '1': [TailWhip, WaterGun]
+    '11': [Slam]
+    '16': [MudShot]
+    '19': [MudBomb]
+    '21': [Amnesia]
+    '31': [Earthquake, Yawn]
+    '41': [RainDance]
+    '51': [Haze, Mist]
+  egg:
+    - AncientPower
+    - BodySlam
+    - Safeguard
+    - MudSport
+    - SpitUp
+    - Stockpile
+    - Swallow
+    - AcidSpray
+    - AfterYou
+    - EerieImpulse
+Quagsire:
+  level:
+    '1': [TailWhip, WaterGun]
+    '11': [Slam]
+    '16': [MudShot]
+    '19': [MudBomb]
+    '23': [Amnesia]
+    '35': [Earthquake, Yawn]
+    '47': [RainDance]
+    '59': [Haze, Mist]
+  teachable:
+    - Strength
+    - HyperBeam
+    - BodySlam
+    - BrickBreak
+    - Counter
+    - FocusPunch
+    - MegaKick
+    - MegaPunch
+    - RockTomb
+    - SeismicToss
+    - Fling
+    - FocusBlast
+    - GigaImpact
+    - StoneEdge
+    - PowerUpPunch

@@ -1,0 +1,15 @@
+Sandygast:
+  types: [Ghost, Ground]
+  egg-groups: [Amorphous]
+  biomes: [Beach, Desert]
+  active: any
+  evolves-into:
+    - species: Palossand
+      method: [Level]
+      level: 42
+Palossand:
+  types: [Ghost, Ground]
+  egg-groups: [Amorphous]
+  biomes: [Beach, Desert]
+  active: any
+  evolves-from: Sandygast

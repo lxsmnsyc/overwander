@@ -1,0 +1,8 @@
+Carvanha:
+  abilities: [RoughSkin]
+  hidden: [SpeedBoost]
+Sharpedo:
+  abilities: [RoughSkin]
+  # Two the mainline never gave it: what surfaces beside it thinks
+  # better of swinging, and nothing eats while it is circling
+  hidden: [SpeedBoost, Intimidate, Unnerve]

@@ -1,0 +1,18 @@
+Piplup:
+  stats: { HP: 53, Attack: 51, Defense: 53, SpecialAttack: 61, SpecialDefense: 56, Speed: 40 }
+  catch-rate: 45
+  height: 0.4
+  weight: 5.2
+  gender: [7, 1]
+Prinplup:
+  stats: { HP: 64, Attack: 66, Defense: 68, SpecialAttack: 81, SpecialDefense: 76, Speed: 50 }
+  catch-rate: 45
+  height: 0.8
+  weight: 23
+  gender: [7, 1]
+Empoleon:
+  stats: { HP: 84, Attack: 86, Defense: 88, SpecialAttack: 111, SpecialDefense: 101, Speed: 60 }
+  catch-rate: 45
+  height: 1.7
+  weight: 84.5
+  gender: [7, 1]

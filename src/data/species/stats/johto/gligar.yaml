@@ -1,0 +1,12 @@
+Gligar:
+  stats: { HP: 65, Attack: 75, Defense: 105, SpecialAttack: 35, SpecialDefense: 65, Speed: 85 }
+  catch-rate: 60
+  height: 1.1
+  weight: 64.8
+  gender: [1, 1]
+Gliscor:
+  stats: { HP: 75, Attack: 95, Defense: 125, SpecialAttack: 45, SpecialDefense: 75, Speed: 95 }
+  catch-rate: 30
+  height: 2
+  weight: 42.5
+  gender: [1, 1]

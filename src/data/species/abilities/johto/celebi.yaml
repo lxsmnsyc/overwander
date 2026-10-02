@@ -1,0 +1,6 @@
+Celebi:
+  abilities: [NaturalCure]
+  # Anticipation, Regenerator and Healer are this registry's rather
+  # than the mainline's: it arrives already knowing, and the forest
+  # it has been in comes back
+  hidden: [Anticipation, Regenerator, Healer]

@@ -1,0 +1,39 @@
+# Which of the three it becomes, decided the way the games decide it
+
+Hitmonlee:
+  types: [Fighting]
+  egg-groups: [HumanLike]
+  biomes: [Grassland]
+  active: [Morning, Day]
+  evolves-from: Tyrogue
+Hitmonchan:
+  types: [Fighting]
+  egg-groups: [HumanLike]
+  biomes: [Grassland]
+  active: [Morning, Day]
+  evolves-from: Tyrogue
+Tyrogue:
+  types: [Fighting]
+  # A baby has nothing to breed with: it is what an egg holds
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Grassland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Hitmonlee
+      method: [Level, StatComparison]
+      level: 20
+      compare: { stat: Attack, against: Defense, order: greater }
+    - species: Hitmonchan
+      method: [Level, StatComparison]
+      level: 20
+      compare: { stat: Attack, against: Defense, order: lesser }
+    - species: Hitmontop
+      method: [Level, StatComparison]
+      level: 20
+      compare: { stat: Attack, against: Defense, order: equal }
+Hitmontop:
+  types: [Fighting]
+  egg-groups: [HumanLike]
+  biomes: [Grassland]
+  active: [Morning, Day]
+  evolves-from: Tyrogue

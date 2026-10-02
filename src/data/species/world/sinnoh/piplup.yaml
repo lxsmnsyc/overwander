@@ -1,0 +1,31 @@
+# The water starter of Sinnoh, a penguin too proud to take help: an
+# Empoleon's wings are blades and the three horns on its beak say
+# which one is the emperor
+Piplup:
+  types: [Water]
+  egg-groups: [Water1, Field]
+  habitat: Amphibious
+  biomes: [PolarOcean, RockyCoast, Glacier]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Prinplup
+      method: [Level]
+      level: 16
+Prinplup:
+  types: [Water]
+  egg-groups: [Water1, Field]
+  habitat: Amphibious
+  biomes: [PolarOcean, RockyCoast, Glacier]
+  active: [Morning, Day]
+  evolves-from: Piplup
+  evolves-into:
+    - species: Empoleon
+      method: [Level]
+      level: 36
+Empoleon:
+  types: [Water, Steel]
+  egg-groups: [Water1, Field]
+  habitat: Amphibious
+  biomes: [PolarOcean, RockyCoast, Glacier]
+  active: [Morning, Day]
+  evolves-from: Prinplup

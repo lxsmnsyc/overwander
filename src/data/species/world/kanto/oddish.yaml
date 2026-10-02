@@ -1,0 +1,34 @@
+Oddish:
+  types: [Grass, Poison]
+  egg-groups: [Grass]
+  biomes: [Grassland, TemperateForest, Woodland, Bog]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Gloom
+      method: [Level]
+      level: 21
+Gloom:
+  types: [Grass, Poison]
+  egg-groups: [Grass]
+  biomes: [Grassland, TemperateForest, Woodland, Bog]
+  active: [Evening, Night]
+  evolves-from: Oddish
+  evolves-into:
+    - species: Vileplume
+      method: [UsedItem]
+      item: LeafStone
+    - species: Bellossom
+      method: [UsedItem]
+      item: SunStone
+Vileplume:
+  types: [Grass, Poison]
+  egg-groups: [Grass]
+  biomes: [Grassland, TemperateForest, Woodland, Bog]
+  active: [Evening, Night]
+  evolves-from: Gloom
+Bellossom:
+  types: [Grass]
+  egg-groups: [Grass]
+  biomes: [Grassland, TemperateForest, Woodland]
+  active: [Evening, Night]
+  evolves-from: Gloom

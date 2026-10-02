@@ -1,0 +1,11 @@
+# The three that were made when the world was: one to know, one to
+# feel, one to decide. They are built to the same plan, three tiny
+# bodies with the same nine moves at the same nine levels, and only
+# the mind inside each of them differs
+
+Uxie:
+  types: [Psychic]
+  egg-groups: [NoEggsDiscovered]
+  habitat: Amphibious
+  biomes: [Taiga, Tundra]
+  active: any

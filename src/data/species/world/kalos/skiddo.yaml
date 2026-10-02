@@ -1,0 +1,17 @@
+# The pasture the goats graze, both stages alike
+
+Skiddo:
+  types: [Grass]
+  egg-groups: [Field]
+  biomes: [Grassland, Shrubland, Steppe, MontaneForest]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Gogoat
+      method: [Level]
+      level: 32
+Gogoat:
+  types: [Grass]
+  egg-groups: [Field]
+  biomes: [Grassland, Shrubland, Steppe, MontaneForest]
+  active: [Morning, Day]
+  evolves-from: Skiddo

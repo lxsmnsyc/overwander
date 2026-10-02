@@ -1,0 +1,51 @@
+Magikarp:
+  types: [Water]
+  egg-groups: [Water2, Dragon]
+  habitat: Water
+  biomes:
+    - Swamp
+    - Ocean
+    - DeepOcean
+    - RockyCoast
+    - Bog
+    - KelpForest
+    - TropicalRainforest
+    - TropicalSeasonalForest
+    - Savanna
+    - Desert
+    - Shrubland
+    - Grassland
+    - TemperateForest
+    - TemperateRainforest
+    - Mountain
+    - Woodland
+    - Steppe
+    - MontaneForest
+    - Badlands
+  active: any
+  evolves-into:
+    - species: Gyarados
+      method: [Level]
+      level: 20
+Gyarados:
+  types: [Water, Flying]
+  egg-groups: [Water2, Dragon]
+  habitat: Water
+  biomes:
+    - Ocean
+    - DeepOcean
+    - TropicalRainforest
+    - TropicalSeasonalForest
+    - Savanna
+    - Desert
+    - Shrubland
+    - Grassland
+    - TemperateForest
+    - TemperateRainforest
+    - Mountain
+    - Woodland
+    - Steppe
+    - MontaneForest
+    - Badlands
+  active: any
+  evolves-from: Magikarp

@@ -1,0 +1,63 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - WaterPulse
+  - Toxic
+  - HiddenPower
+  - SunnyDay
+  - IceBeam
+  - Blizzard
+  - Protect
+  - RainDance
+  - GigaDrain
+  - Frustration
+  - SolarBeam
+  - Return
+  - ShadowBall
+  - DoubleTeam
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Thief
+  - Flash
+  - DoubleEdge
+  - Mimic
+  - Substitute
+  - PsychUp
+  - Snore
+  - IcyWind
+  - Endure
+  - Swagger
+  - SleepTalk
+  - Swift
+  - BugBite
+  - Captivate
+  - NaturalGift
+  - Round
+  - Scald
+  - StruggleBug
+  - Confide
+  - Infestation
+  - Liquidation
+Surskit:
+  level:
+    '1': [Bubble]
+    '7': [QuickAttack]
+    '13': [SweetScent]
+    '19': [WaterSport]
+    '25': [BubbleBeam]
+    '31': [Agility]
+    '37': [Haze, Mist]
+    '38': [StickyWeb]
+  egg: [Foresight, MindReader, Psybeam, MudShot, HydroPump, FellStinger, Lunge]
+Masquerain:
+  level:
+    '1': [Bubble, QuickAttack, SweetScent, WaterSport, OminousWind]
+    '26': [Gust]
+    '33': [ScaryFace]
+    '40': [StunSpore]
+    '47': [SilverWind, AirSlash]
+    '53': [Whirlwind]
+    '61': [BugBuzz]
+    '68': [QuiverDance]
+  teachable: [AerialAce, HyperBeam, Defog, EnergyBall, GigaImpact, Roost, Tailwind, UTurn]

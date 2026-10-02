@@ -1,0 +1,12 @@
+Drowzee:
+  stats: { HP: 60, Attack: 48, Defense: 45, SpecialAttack: 43, SpecialDefense: 90, Speed: 42 }
+  catch-rate: 190
+  height: 1
+  weight: 32.4
+  gender: [1, 1]
+Hypno:
+  stats: { HP: 85, Attack: 73, Defense: 70, SpecialAttack: 73, SpecialDefense: 115, Speed: 67 }
+  catch-rate: 75
+  height: 1.6
+  weight: 75.6
+  gender: [1, 1]

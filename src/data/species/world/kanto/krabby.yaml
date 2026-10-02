@@ -1,0 +1,17 @@
+Krabby:
+  types: [Water]
+  egg-groups: [Water3]
+  habitat: Amphibious
+  biomes: [Beach, Mangrove, RockyCoast, CoralReef, KelpForest]
+  active: any
+  evolves-into:
+    - species: Kingler
+      method: [Level]
+      level: 28
+Kingler:
+  types: [Water]
+  egg-groups: [Water3]
+  habitat: Amphibious
+  biomes: [Beach, Mangrove, RockyCoast, CoralReef, KelpForest]
+  active: any
+  evolves-from: Krabby

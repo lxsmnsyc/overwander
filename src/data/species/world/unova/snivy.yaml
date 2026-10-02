@@ -1,0 +1,28 @@
+# The grass starter of Unova, a snake that stands on its tail: a
+# Serperior fights by looking at what it fights, and the sunlight it
+# gathers in its leaf is what the rest of it runs on
+Snivy:
+  types: [Grass]
+  egg-groups: [Field, Grass]
+  biomes: [Shrubland, Steppe]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Servine
+      method: [Level]
+      level: 17
+Servine:
+  types: [Grass]
+  egg-groups: [Field, Grass]
+  biomes: [Shrubland, Steppe]
+  active: [Morning, Day]
+  evolves-from: Snivy
+  evolves-into:
+    - species: Serperior
+      method: [Level]
+      level: 36
+Serperior:
+  types: [Grass]
+  egg-groups: [Field, Grass]
+  biomes: [Shrubland, Steppe]
+  active: [Morning, Day]
+  evolves-from: Servine

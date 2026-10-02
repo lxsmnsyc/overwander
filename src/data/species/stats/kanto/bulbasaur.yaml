@@ -1,0 +1,18 @@
+Bulbasaur:
+  stats: { HP: 45, Attack: 49, Defense: 49, SpecialAttack: 65, SpecialDefense: 65, Speed: 45 }
+  catch-rate: 45
+  height: 0.7
+  weight: 6.9
+  gender: [7, 1]
+Ivysaur:
+  stats: { HP: 60, Attack: 62, Defense: 63, SpecialAttack: 80, SpecialDefense: 80, Speed: 60 }
+  catch-rate: 45
+  height: 1
+  weight: 13
+  gender: [7, 1]
+Venusaur:
+  stats: { HP: 80, Attack: 82, Defense: 83, SpecialAttack: 100, SpecialDefense: 100, Speed: 80 }
+  catch-rate: 45
+  height: 2
+  weight: 100
+  gender: [7, 1]

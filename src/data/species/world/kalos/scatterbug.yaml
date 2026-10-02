@@ -1,0 +1,212 @@
+Scatterbug:
+  types: [Bug]
+  egg-groups: [Bug]
+  biomes:
+    - Glacier
+    - AlpineTundra
+    - Tundra
+    - TemperateForest
+    - Grassland
+    - Woodland
+    - Steppe
+    - Ocean
+    - CoralReef
+    - Badlands
+    - Desert
+    - Bog
+    - TropicalRainforest
+    - Savanna
+    - Volcano
+    - Beach
+    - TropicalSeasonalForest
+    - Shrubland
+  active: [Morning, Day]
+  evolves-into:
+    - species: Spewpa
+      method: [Level]
+      level: 9
+Spewpa:
+  types: [Bug]
+  egg-groups: [Bug]
+  biomes:
+    - Glacier
+    - AlpineTundra
+    - Tundra
+    - TemperateForest
+    - Grassland
+    - Woodland
+    - Steppe
+    - Ocean
+    - CoralReef
+    - Badlands
+    - Desert
+    - Bog
+    - TropicalRainforest
+    - Savanna
+    - Volcano
+    - Beach
+    - TropicalSeasonalForest
+    - Shrubland
+  active: [Morning, Day]
+  evolves-from: Scatterbug
+  evolves-into:
+    - species: Vivillon
+      method: [Level]
+      level: 12
+Vivillon:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes:
+    - Glacier
+    - AlpineTundra
+    - Tundra
+    - TemperateForest
+    - Grassland
+    - Woodland
+    - Steppe
+    - Ocean
+    - CoralReef
+    - Badlands
+    - Desert
+    - Bog
+    - TropicalRainforest
+    - Savanna
+    - Volcano
+    - Beach
+    - TropicalSeasonalForest
+    - Shrubland
+  active: [Morning, Day]
+  evolves-from: Spewpa
+VivillonIcySnow:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [Glacier]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonPolar:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [AlpineTundra]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonTundra:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [Tundra]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonContinental:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [TemperateForest]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonGarden:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [Grassland]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonElegant:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [Woodland]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonModern:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [Steppe]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonMarine:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [CoralReef]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonArchipelago:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [Beach]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonHighPlains:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [Badlands]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonSandstorm:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [Desert]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonRiver:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [Bog]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonMonsoon:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [TropicalRainforest]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonSavannah:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [Savanna]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonSun:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [Volcano]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonOcean:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [Ocean]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+VivillonJungle:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [TropicalSeasonalForest]
+  active: [Morning, Day]
+  base-form: false
+  evolves-from: Spewpa
+# The two the games hand out rather than grow: they are met on a
+# town's streets and nowhere else, and no Spewpa ever comes out as
+# one, so neither is on a country's list or on the road up from the
+# caterpillar
+VivillonFancy:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  active: any
+  base-form: false
+VivillonPokeBall:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  active: any
+  base-form: false

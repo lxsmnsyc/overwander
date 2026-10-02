@@ -1,0 +1,114 @@
+family-teachable:
+  - AllySwitch
+  - Attract
+  - Bulldoze
+  - Confide
+  - ConfuseRay
+  - Curse
+  - Cut
+  - DarkPulse
+  - Dig
+  - DoubleTeam
+  - DreamEater
+  - Endure
+  - EnergyBall
+  - Facade
+  - FoulPlay
+  - Frustration
+  - GigaDrain
+  - GrassKnot
+  - GrassyTerrain
+  - Hex
+  - HiddenPower
+  - Imprison
+  - MagicCoat
+  - MagicalLeaf
+  - NaturePower
+  - NightShade
+  - PainSplit
+  - PhantomForce
+  - PoisonJab
+  - Protect
+  - PsychUp
+  - Psychic
+  - RainDance
+  - Reflect
+  - Rest
+  - Return
+  - RockSlide
+  - RockSmash
+  - RolePlay
+  - Round
+  - Safeguard
+  - SecretPower
+  - SeedBomb
+  - ShadowBall
+  - ShadowClaw
+  - SkillSwap
+  - SleepTalk
+  - Snore
+  - SolarBeam
+  - Spite
+  - Strength
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Telekinesis
+  - Thief
+  - Toxic
+  - Trick
+  - TrickRoom
+  - VenomDrench
+  - WillOWisp
+  - WorrySeed
+Phantump:
+  level:
+    '1': [Tackle, ConfuseRay, Astonish]
+    '8': [Growth, LeechSeed]
+    '13': [Ingrain]
+    '16': [WillOWisp]
+    '19': [FeintAttack]
+    '20': [Hex]
+    '28': [Curse, HornLeech]
+    '35': [ForestsCurse]
+    '36': [PhantomForce]
+    '39': [DestinyBond]
+    '44': [WoodHammer]
+  egg:
+    - AllySwitch
+    - Bestow
+    - Disable
+    - Grudge
+    - Imprison
+    - PowerUpPunch
+    - SuckerPunch
+    - VenomDrench
+Trevenant:
+  level:
+    '1': [Tackle, ConfuseRay, Astonish, Growth, LeechSeed, HornLeech, ShadowClaw]
+    '13': [Ingrain]
+    '16': [WillOWisp]
+    '19': [FeintAttack]
+    '20': [Hex]
+    '28': [Curse]
+    '35': [ForestsCurse]
+    '36': [PhantomForce]
+    '39': [DestinyBond]
+    '44': [WoodHammer]
+  teachable:
+    - Block
+    - CalmMind
+    - DrainPunch
+    - Earthquake
+    - FocusBlast
+    - GigaImpact
+    - Haze
+    - HoneClaws
+    - HyperBeam
+    - KnockOff
+    - LeafStorm
+    - PowerUpPunch
+    - ScaryFace
+    - TakeDown
+    - XScissor
+    - BrutalSwing

@@ -1,0 +1,6 @@
+Nihilego:
+  stats: { HP: 109, Attack: 53, Defense: 47, SpecialAttack: 127, SpecialDefense: 131, Speed: 103 }
+  catch-rate: 45
+  height: 1.2
+  weight: 55.5
+  gender: genderless

@@ -1,0 +1,94 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - FocusPunch
+  - CalmMind
+  - Toxic
+  - BulkUp
+  - HiddenPower
+  - SunnyDay
+  - LightScreen
+  - Protect
+  - RainDance
+  - Frustration
+  - Return
+  - Psychic
+  - ShadowBall
+  - BrickBreak
+  - DoubleTeam
+  - Reflect
+  - RockTomb
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Flash
+  - Strength
+  - RockSmash
+  - MegaPunch
+  - MegaKick
+  - BodySlam
+  - DoubleEdge
+  - Counter
+  - SeismicToss
+  - Mimic
+  - Metronome
+  - DreamEater
+  - Substitute
+  - DynamicPunch
+  - PsychUp
+  - Snore
+  - Endure
+  - MudSlap
+  - IcePunch
+  - Swagger
+  - ThunderPunch
+  - FirePunch
+  - SleepTalk
+  - Swift
+  - Captivate
+  - DrainPunch
+  - Fling
+  - FocusBlast
+  - GrassKnot
+  - Gravity
+  - NaturalGift
+  - PoisonJab
+  - VacuumWave
+  - ZenHeadbutt
+  - Psyshock
+  - Telekinesis
+  - LowSweep
+  - Round
+  - Retaliate
+  - WorkUp
+  - Confide
+  - PowerUpPunch
+Meditite:
+  level:
+    '1': [Bide]
+    '4': [Meditate]
+    '9': [Confusion]
+    '12': [Detect]
+    '18': [HiddenPower]
+    '22': [MindReader, Feint]
+    '28': [CalmMind]
+    '29': [ForcePalm]
+    '32': [HiJumpKick]
+    '38': [PsychUp]
+    '39': [PowerTrick]
+    '42': [Reversal]
+    '48': [Recover]
+  egg: [Foresight, FakeOut, BatonPass, BulletPunch, GuardSwap, PowerSwap, PsychoCut]
+Medicham:
+  level:
+    '1': [Bide, Meditate, Confusion, Detect, FirePunch, IcePunch, ThunderPunch]
+    '18': [HiddenPower]
+    '22': [MindReader, Feint]
+    '28': [CalmMind]
+    '29': [ForcePalm]
+    '32': [HiJumpKick]
+    '40': [PsychUp]
+    '42': [PowerTrick]
+    '46': [Reversal]
+    '54': [Recover]
+  teachable: [HyperBeam, RockSlide, EnergyBall, GigaImpact, LaserFocus]

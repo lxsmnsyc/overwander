@@ -1,0 +1,12 @@
+Whismur:
+  abilities: [Soundproof]
+  hidden: [Rattled]
+Loudred:
+  abilities: [Soundproof]
+  hidden: [Scrappy]
+Exploud:
+  abilities: [Soundproof]
+  # Berserk is this registry's rather than the mainline's: it gets
+  # louder the worse things go, and a final evolution is filled to
+  # four
+  hidden: [Scrappy, Berserk]

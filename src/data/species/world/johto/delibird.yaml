@@ -1,0 +1,5 @@
+Delibird:
+  types: [Ice, Flying]
+  egg-groups: [Water1, Field]
+  biomes: [Tundra, Glacier, AlpineTundra, Taiga]
+  active: any

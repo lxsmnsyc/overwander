@@ -1,0 +1,17 @@
+# The one that croaks before it swings: a Croagunk unsettles whatever
+# it is facing, and a Toxicroak jabs with a claw it has poisoned
+Croagunk:
+  types: [Poison, Fighting]
+  egg-groups: [HumanLike]
+  biomes: [Swamp, Bog, Mangrove]
+  active: any
+  evolves-into:
+    - species: Toxicroak
+      method: [Level]
+      level: 37
+Toxicroak:
+  types: [Poison, Fighting]
+  egg-groups: [HumanLike]
+  biomes: [Swamp, Bog, Mangrove]
+  active: any
+  evolves-from: Croagunk

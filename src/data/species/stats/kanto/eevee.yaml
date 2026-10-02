@@ -1,0 +1,54 @@
+Eevee:
+  stats: { HP: 55, Attack: 55, Defense: 50, SpecialAttack: 45, SpecialDefense: 65, Speed: 55 }
+  catch-rate: 45
+  height: 0.3
+  weight: 6.5
+  gender: [7, 1]
+Vaporeon:
+  stats: { HP: 130, Attack: 65, Defense: 60, SpecialAttack: 110, SpecialDefense: 95, Speed: 65 }
+  catch-rate: 45
+  height: 1
+  weight: 29
+  gender: [7, 1]
+Jolteon:
+  stats: { HP: 65, Attack: 65, Defense: 60, SpecialAttack: 110, SpecialDefense: 95, Speed: 130 }
+  catch-rate: 45
+  height: 0.8
+  weight: 24.5
+  gender: [7, 1]
+Flareon:
+  stats: { HP: 65, Attack: 130, Defense: 60, SpecialAttack: 95, SpecialDefense: 110, Speed: 65 }
+  catch-rate: 45
+  height: 0.9
+  weight: 25
+  gender: [7, 1]
+Espeon:
+  stats: { HP: 65, Attack: 65, Defense: 60, SpecialAttack: 130, SpecialDefense: 95, Speed: 110 }
+  catch-rate: 45
+  height: 0.9
+  weight: 26.5
+  gender: [7, 1]
+Umbreon:
+  stats: { HP: 95, Attack: 65, Defense: 110, SpecialAttack: 60, SpecialDefense: 130, Speed: 65 }
+  catch-rate: 45
+  height: 1
+  weight: 27
+  gender: [7, 1]
+Leafeon:
+  stats: { HP: 65, Attack: 110, Defense: 130, SpecialAttack: 60, SpecialDefense: 65, Speed: 95 }
+  catch-rate: 45
+  height: 1
+  weight: 25.5
+  gender: [7, 1]
+Glaceon:
+  stats: { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 130, SpecialDefense: 95, Speed: 65 }
+  catch-rate: 45
+  height: 0.8
+  weight: 25.9
+  gender: [7, 1]
+Sylveon:
+  stats: { HP: 95, Attack: 65, Defense: 65, SpecialAttack: 110, SpecialDefense: 130, Speed: 60 }
+  catch-rate: 45
+  height: 1
+  weight: 23.5
+  gender: [7, 1]

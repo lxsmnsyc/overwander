@@ -1,0 +1,18 @@
+Chikorita:
+  stats: { HP: 45, Attack: 49, Defense: 65, SpecialAttack: 49, SpecialDefense: 65, Speed: 45 }
+  catch-rate: 45
+  height: 0.9
+  weight: 6.4
+  gender: [7, 1]
+Bayleef:
+  stats: { HP: 60, Attack: 62, Defense: 80, SpecialAttack: 63, SpecialDefense: 80, Speed: 60 }
+  catch-rate: 45
+  height: 1.2
+  weight: 15.8
+  gender: [7, 1]
+Meganium:
+  stats: { HP: 80, Attack: 82, Defense: 100, SpecialAttack: 83, SpecialDefense: 100, Speed: 80 }
+  catch-rate: 45
+  height: 1.8
+  weight: 100.5
+  gender: [7, 1]

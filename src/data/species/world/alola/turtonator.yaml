@@ -1,0 +1,5 @@
+Turtonator:
+  types: [Fire, Dragon]
+  egg-groups: [Monster, Dragon]
+  biomes: [Volcano, Badlands]
+  active: any

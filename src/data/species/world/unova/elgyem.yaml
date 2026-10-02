@@ -1,0 +1,18 @@
+# The ones that came down: an Elgyem was found beside a crater, and a
+# Beheeyem talks with its fingers and rearranges what you remember of
+# the conversation afterwards
+Elgyem:
+  types: [Psychic]
+  egg-groups: [HumanLike]
+  biomes: [Desert, ColdDesert]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Beheeyem
+      method: [Level]
+      level: 42
+Beheeyem:
+  types: [Psychic]
+  egg-groups: [HumanLike]
+  biomes: [Desert, ColdDesert]
+  active: [Evening, Night]
+  evolves-from: Elgyem

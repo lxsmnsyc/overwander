@@ -1,0 +1,10 @@
+# The three golems, sealed one to a chamber. They are built to the
+# same plan: one ability the mainline gave all three, one of its own,
+# and the same nine moves at the same nine levels, differing only in
+# the blow each throws at 9
+
+Regirock:
+  types: [Rock]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Desert, Badlands]
+  active: any

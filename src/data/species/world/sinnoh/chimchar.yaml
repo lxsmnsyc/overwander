@@ -1,0 +1,27 @@
+# The fire starter of Sinnoh, which climbs with its hands and fights
+# with them: the flame on its tail is out only while it sleeps
+Chimchar:
+  types: [Fire]
+  egg-groups: [Field, HumanLike]
+  biomes: [MontaneForest, Mountain]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Monferno
+      method: [Level]
+      level: 14
+Monferno:
+  types: [Fire, Fighting]
+  egg-groups: [Field, HumanLike]
+  biomes: [MontaneForest, Mountain]
+  active: [Morning, Day]
+  evolves-from: Chimchar
+  evolves-into:
+    - species: Infernape
+      method: [Level]
+      level: 36
+Infernape:
+  types: [Fire, Fighting]
+  egg-groups: [Field, HumanLike]
+  biomes: [MontaneForest, Mountain]
+  active: [Morning, Day]
+  evolves-from: Monferno

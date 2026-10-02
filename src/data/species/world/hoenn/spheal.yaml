@@ -1,0 +1,28 @@
+Spheal:
+  types: [Ice, Water]
+  egg-groups: [Water1, Field]
+  habitat: Amphibious
+  biomes: [Glacier, PolarOcean, Tundra]
+  active: any
+  evolves-into:
+    - species: Sealeo
+      method: [Level]
+      level: 32
+Sealeo:
+  types: [Ice, Water]
+  egg-groups: [Water1, Field]
+  habitat: Amphibious
+  biomes: [Glacier, PolarOcean, Tundra]
+  active: any
+  evolves-from: Spheal
+  evolves-into:
+    - species: Walrein
+      method: [Level]
+      level: 44
+Walrein:
+  types: [Ice, Water]
+  egg-groups: [Water1, Field]
+  habitat: Amphibious
+  biomes: [Glacier, PolarOcean, Tundra]
+  active: any
+  evolves-from: Sealeo

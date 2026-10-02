@@ -1,0 +1,15 @@
+Mudbray:
+  types: [Ground]
+  egg-groups: [Field]
+  biomes: [Savanna, Steppe, Grassland]
+  active: any
+  evolves-into:
+    - species: Mudsdale
+      method: [Level]
+      level: 30
+Mudsdale:
+  types: [Ground]
+  egg-groups: [Field]
+  biomes: [Savanna, Steppe, Grassland]
+  active: any
+  evolves-from: Mudbray

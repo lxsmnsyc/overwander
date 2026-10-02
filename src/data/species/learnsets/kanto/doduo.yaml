@@ -1,0 +1,65 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - BodySlam
+  - TakeDown
+  - DoubleEdge
+  - Whirlwind
+  - Rage
+  - Mimic
+  - DoubleTeam
+  - Bide
+  - SkyAttack
+  - Rest
+  - TriAttack
+  - Substitute
+  - Fly
+  - Swift
+  - Thief
+  - Snore
+  - Curse
+  - Protect
+  - MudSlap
+  - Endure
+  - Swagger
+  - SteelWing
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - HiddenPower
+  - SunnyDay
+  - AerialAce
+  - Facade
+  - SecretPower
+  - Captivate
+  - NaturalGift
+  - Roost
+  - Round
+  - EchoedVoice
+  - WorkUp
+  - Confide
+Doduo:
+  level:
+    '1': [Peck, Growl]
+    '9': [Pursuit]
+    '13': [FuryAttack]
+    '21': [TriAttack]
+    '25': [Rage]
+    '28': [Acupressure]
+    '30': [DrillPeck]
+    '32': [DoubleHit]
+    '33': [Uproar]
+    '37': [Agility]
+  teachable: [Pluck]
+  egg: [QuickAttack, Supersonic, Haze, Flail, FeintAttack, Endeavor, BraveBird]
+Dodrio:
+  level:
+    '1': [Peck, Growl, FuryAttack, Pursuit, Pluck]
+    '21': [TriAttack]
+    '25': [Rage]
+    '28': [Acupressure]
+    '30': [DrillPeck]
+    '38': [Uproar]
+    '47': [Agility]
+  teachable: [HyperBeam, Taunt, Torment, GigaImpact, Payback, StompingTantrum]

@@ -1,0 +1,67 @@
+Relicanth:
+  level:
+    '1': [Tackle, Harden]
+    '8': [WaterGun]
+    '15': [RockTomb]
+    '22': [Yawn]
+    '29': [TakeDown]
+    '36': [MudSport]
+    '43': [AncientPower]
+    '50': [Rest]
+    '57': [DoubleEdge]
+    '64': [HydroPump]
+    '78': [HeadSmash]
+  teachable:
+    - WaterPulse
+    - CalmMind
+    - Toxic
+    - Hail
+    - HiddenPower
+    - IceBeam
+    - Blizzard
+    - HyperBeam
+    - Protect
+    - RainDance
+    - Safeguard
+    - Frustration
+    - Earthquake
+    - Return
+    - DoubleTeam
+    - Sandstorm
+    - RockTomb
+    - Facade
+    - SecretPower
+    - Rest
+    - Attract
+    - Surf
+    - RockSmash
+    - Waterfall
+    - Dive
+    - BodySlam
+    - DoubleEdge
+    - Mimic
+    - RockSlide
+    - Substitute
+    - PsychUp
+    - Snore
+    - IcyWind
+    - Endure
+    - MudSlap
+    - Swagger
+    - SleepTalk
+    - AquaTail
+    - Brine
+    - Captivate
+    - EarthPower
+    - GigaImpact
+    - NaturalGift
+    - RockPolish
+    - StealthRock
+    - StoneEdge
+    - SmackDown
+    - Round
+    - Scald
+    - Bulldoze
+    - Confide
+    - StompingTantrum
+  egg: [Amnesia, SkullBash, Magnitude, WaterSport]

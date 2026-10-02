@@ -1,0 +1,15 @@
+Scyther:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [Grassland, TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Scizor
+      method: [HeldItem, Trade]
+      item: MetalCoat
+Scizor:
+  types: [Bug, Steel]
+  egg-groups: [Bug]
+  biomes: [Grassland, TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-from: Scyther

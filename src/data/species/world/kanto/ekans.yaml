@@ -1,0 +1,15 @@
+Ekans:
+  types: [Poison]
+  egg-groups: [Field, Dragon]
+  biomes: [Grassland, Savanna, Steppe, Badlands]
+  active: [Day, Evening, Night]
+  evolves-into:
+    - species: Arbok
+      method: [Level]
+      level: 22
+Arbok:
+  types: [Poison]
+  egg-groups: [Field, Dragon]
+  biomes: [Grassland, Savanna, Steppe, Badlands]
+  active: [Day, Evening, Night]
+  evolves-from: Ekans

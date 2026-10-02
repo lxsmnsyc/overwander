@@ -1,0 +1,102 @@
+# TM, HM and tutor moves shared by the whole family
+
+# What the aurora learns whichever size it is
+family-teachable:
+  - AquaTail
+  - Attract
+  - Blizzard
+  - Bulldoze
+  - CalmMind
+  - ChargeBeam
+  - Confide
+  - DarkPulse
+  - DoubleTeam
+  - DragonTail
+  - DreamEater
+  - EarthPower
+  - EchoedVoice
+  - Facade
+  - Flash
+  - FlashCannon
+  - FrostBreath
+  - Frustration
+  - Hail
+  - HiddenPower
+  - HyperBeam
+  - HyperVoice
+  - IceBeam
+  - IcyWind
+  - IronDefense
+  - IronHead
+  - IronTail
+  - LightScreen
+  - MagnetRise
+  - NaturePower
+  - Outrage
+  - Protect
+  - PsychUp
+  - RainDance
+  - Reflect
+  - Rest
+  - Return
+  - Roar
+  - RockPolish
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Round
+  - Safeguard
+  - Sandstorm
+  - SecretPower
+  - SleepTalk
+  - Snore
+  - StealthRock
+  - StoneEdge
+  - Substitute
+  - Swagger
+  - ThunderWave
+  - Thunderbolt
+  - Toxic
+  - WaterPulse
+  - ZenHeadbutt
+Amaura:
+  level:
+    '1': [Growl, PowderSnow]
+    '5': [ThunderWave]
+    '10': [RockThrow]
+    '13': [IcyWind]
+    '15': [TakeDown]
+    '18': [Mist]
+    '20': [AuroraBeam]
+    '26': [AncientPower]
+    '30': [Round]
+    '34': [Avalanche]
+    '38': [Hail]
+    '41': [NaturePower]
+    '44': [Encore]
+    '47': [LightScreen]
+    '50': [IceBeam]
+    '57': [HyperBeam]
+    '65': [Blizzard]
+  egg: [Barrier, Discharge, Haze, MagnetRise, MirrorCoat]
+Aurorus:
+  level:
+    '1': [Growl, PowderSnow]
+    '5': [ThunderWave]
+    '10': [RockThrow]
+    '13': [IcyWind]
+    '15': [TakeDown]
+    '18': [Mist]
+    '20': [AuroraBeam]
+    '26': [AncientPower]
+    '30': [Round]
+    '34': [Avalanche]
+    '38': [Hail]
+    '43': [NaturePower]
+    '46': [Encore]
+    '50': [LightScreen]
+    '56': [IceBeam]
+    '63': [HyperBeam]
+    '74': [Blizzard]
+    '77': [FreezeDry]
+  teachable: [Earthquake, GigaImpact, Psychic, Thunder]

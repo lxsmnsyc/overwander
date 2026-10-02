@@ -1,0 +1,5 @@
+Wimpod:
+  abilities: [WimpOut]
+Golisopod:
+  abilities: [EmergencyExit]
+  hidden: [BattleArmor, Sharpness, SwiftSwim]

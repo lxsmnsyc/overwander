@@ -1,0 +1,5 @@
+Comfey:
+  types: [Fairy]
+  egg-groups: [Grass]
+  biomes: [TropicalRainforest, TropicalSeasonalForest, Grassland]
+  active: [Morning, Day]

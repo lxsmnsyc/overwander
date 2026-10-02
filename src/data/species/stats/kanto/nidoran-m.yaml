@@ -1,0 +1,18 @@
+NidoranM:
+  stats: { HP: 46, Attack: 57, Defense: 40, SpecialAttack: 40, SpecialDefense: 40, Speed: 50 }
+  catch-rate: 235
+  height: 0.5
+  weight: 9
+  gender: [1, 0]
+Nidorino:
+  stats: { HP: 61, Attack: 72, Defense: 57, SpecialAttack: 55, SpecialDefense: 55, Speed: 65 }
+  catch-rate: 120
+  height: 0.9
+  weight: 19.5
+  gender: [1, 0]
+Nidoking:
+  stats: { HP: 81, Attack: 102, Defense: 77, SpecialAttack: 85, SpecialDefense: 75, Speed: 85 }
+  catch-rate: 45
+  height: 1.4
+  weight: 62
+  gender: [1, 0]

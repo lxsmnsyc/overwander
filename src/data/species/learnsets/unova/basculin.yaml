@@ -1,0 +1,108 @@
+family-teachable:
+  - Agility
+  - AquaTail
+  - Assurance
+  - Attract
+  - Blizzard
+  - Bounce
+  - Brine
+  - Crunch
+  - Cut
+  - Dive
+  - DoubleEdge
+  - DoubleTeam
+  - Endeavor
+  - Endure
+  - Facade
+  - Frustration
+  - GigaImpact
+  - Hail
+  - HiddenPower
+  - HydroPump
+  - HyperBeam
+  - IceBeam
+  - IceFang
+  - IcyWind
+  - MudShot
+  - MuddyWater
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - Revenge
+  - Reversal
+  - Round
+  - Scald
+  - ScaryFace
+  - SecretPower
+  - SleepTalk
+  - Snore
+  - Substitute
+  - Superpower
+  - Surf
+  - Swagger
+  - Swift
+  - TakeDown
+  - Taunt
+  - Toxic
+  - Uproar
+  - WaterPulse
+  - Waterfall
+  - Whirlpool
+  - ZenHeadbutt
+  - Confide
+  - Liquidation
+Basculin:
+  level:
+    '1': [Tackle, Thrash, TailWhip, WaterGun, Flail]
+    '3': [Uproar]
+    '5': [Headbutt]
+    '7': [Bite]
+    '9': [AquaJet]
+    '11': [ChipAway]
+    '14': [TakeDown]
+    '17': [Crunch]
+    '20': [ScaryFace, AquaTail]
+    '23': [Soak]
+    '26': [DoubleEdge]
+    '38': [FinalGambit]
+    '46': [HeadSmash]
+  egg:
+    - Agility
+    - Brine
+    - BubbleBeam
+    - Endeavor
+    - HeadSmash
+    - MudShot
+    - MuddyWater
+    - Rage
+    - Revenge
+    - Swift
+    - Whirlpool
+BasculinBlue:
+  level:
+    '1': [Tackle, Thrash, TailWhip, WaterGun, Flail]
+    '3': [Uproar]
+    '5': [Headbutt]
+    '7': [Bite]
+    '9': [AquaJet]
+    '11': [ChipAway]
+    '14': [TakeDown]
+    '17': [Crunch]
+    '20': [ScaryFace, AquaTail]
+    '23': [Soak]
+    '26': [DoubleEdge]
+    '38': [FinalGambit]
+    '46': [HeadSmash]
+  egg:
+    - Agility
+    - Brine
+    - BubbleBeam
+    - Endeavor
+    - HeadSmash
+    - MudShot
+    - MuddyWater
+    - Rage
+    - Revenge
+    - Swift
+    - Whirlpool

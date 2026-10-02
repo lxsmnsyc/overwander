@@ -1,0 +1,27 @@
+# The pigeons: a Pidove is underfoot in every town, and an Unfezant
+# wears the crest of a bird that has decided it is better than you
+Pidove:
+  types: [Normal, Flying]
+  egg-groups: [Flying]
+  biomes: [Grassland, Woodland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Tranquill
+      method: [Level]
+      level: 21
+Tranquill:
+  types: [Normal, Flying]
+  egg-groups: [Flying]
+  biomes: [Grassland, Woodland]
+  active: [Morning, Day]
+  evolves-from: Pidove
+  evolves-into:
+    - species: Unfezant
+      method: [Level]
+      level: 32
+Unfezant:
+  types: [Normal, Flying]
+  egg-groups: [Flying]
+  biomes: [Grassland, Woodland]
+  active: [Morning, Day]
+  evolves-from: Tranquill

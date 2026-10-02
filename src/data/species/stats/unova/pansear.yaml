@@ -1,0 +1,13 @@
+Pansear:
+  stats: { HP: 50, Attack: 53, Defense: 48, SpecialAttack: 53, SpecialDefense: 48, Speed: 64 }
+  catch-rate: 190
+  height: 0.6
+  weight: 11
+  # Seven males to every female, the way the whole trio is handed out
+  gender: [7, 1]
+Simisear:
+  stats: { HP: 75, Attack: 98, Defense: 63, SpecialAttack: 98, SpecialDefense: 63, Speed: 101 }
+  catch-rate: 75
+  height: 1
+  weight: 28
+  gender: [7, 1]

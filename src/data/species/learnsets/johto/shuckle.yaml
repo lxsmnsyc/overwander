@@ -1,0 +1,66 @@
+Shuckle:
+  level:
+    '1': [Constrict, Withdraw]
+    '9': [Wrap]
+    '12': [StruggleBug]
+    '14': [Encore]
+    '23': [Safeguard]
+    '28': [Bide]
+    '34': [ShellSmash]
+    '35': [GastroAcid]
+    '37': [Rest]
+    '40': [BugBite]
+    '45': [GuardSplit, PowerSplit]
+    '48': [PowerTrick]
+    '53': [StickyWeb]
+  teachable:
+    - Toxic
+    - Earthquake
+    - Dig
+    - Sandstorm
+    - SunnyDay
+    - SludgeBomb
+    - DoubleTeam
+    - Flash
+    - Rest
+    - Snore
+    - Curse
+    - Protect
+    - Endure
+    - Rollout
+    - Swagger
+    - Attract
+    - SleepTalk
+    - Return
+    - Frustration
+    - HiddenPower
+    - DefenseCurl
+    - Headbutt
+    - MudSlap
+    - RockSmash
+    - Strength
+    - BodySlam
+    - DoubleEdge
+    - Facade
+    - Mimic
+    - RockSlide
+    - RockTomb
+    - SecretPower
+    - Substitute
+    - Captivate
+    - EarthPower
+    - GyroBall
+    - NaturalGift
+    - RockPolish
+    - StealthRock
+    - StoneEdge
+    - Venoshock
+    - SmackDown
+    - SludgeWave
+    - AfterYou
+    - Round
+    - StruggleBug
+    - Bulldoze
+    - Confide
+    - Infestation
+  egg: [SweetScent, Acupressure, FinalGambit]

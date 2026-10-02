@@ -1,0 +1,85 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Attract
+  - Captivate
+  - Cut
+  - DarkPulse
+  - Defog
+  - Dig
+  - DoubleTeam
+  - Endure
+  - Explosion
+  - Facade
+  - FireBlast
+  - Flamethrower
+  - Frustration
+  - FuryCutter
+  - HiddenPower
+  - IronTail
+  - MudSlap
+  - NaturalGift
+  - Payback
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - Roar
+  - RockSmash
+  - SecretPower
+  - ShadowBall
+  - ShadowClaw
+  - SleepTalk
+  - SludgeBomb
+  - Snatch
+  - Snore
+  - Substitute
+  - SuckerPunch
+  - SunnyDay
+  - Swagger
+  - Swift
+  - Taunt
+  - Thief
+  - Torment
+  - Toxic
+  - Confide
+  - ThroatChop
+Stunky:
+  level:
+    '1': [FocusEnergy, Scratch]
+    '4': [PoisonGas]
+    '7': [Screech]
+    '10': [FurySwipes]
+    '14': [SmokeScreen]
+    '18': [Feint]
+    '22': [Slash]
+    '27': [Toxic]
+    '32': [NightSlash]
+    '38': [Memento]
+    '44': [Explosion]
+    '46': [Belch]
+  egg:
+    - Astonish
+    - Crunch
+    - DoubleEdge
+    - Leer
+    - Punishment
+    - Pursuit
+    - ScaryFace
+    - Smog
+    - PlayRough
+Skuntank:
+  level:
+    '1': [FocusEnergy, PoisonGas, Scratch]
+    '4': [PoisonGas]
+    '7': [Screech]
+    '10': [FurySwipes]
+    '14': [SmokeScreen]
+    '18': [Feint]
+    '22': [Slash]
+    '27': [Toxic]
+    '32': [NightSlash]
+    '34': [Flamethrower]
+    '42': [Memento]
+    '52': [Explosion]
+    '56': [Belch]
+  teachable: [GigaImpact, HyperBeam, PoisonJab, Strength]

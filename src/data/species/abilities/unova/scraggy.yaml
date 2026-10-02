@@ -1,0 +1,8 @@
+Scraggy:
+  abilities: [ShedSkin, Moxie]
+  hidden: [Intimidate]
+Scrafty:
+  abilities: [ShedSkin, Moxie]
+  # Guts is the invented fourth: the line reaches three, and a thug
+  # that fights better hurt is what it already looks like
+  hidden: [Intimidate, Guts]

@@ -1,0 +1,12 @@
+Electabuzz:
+  abilities: [Static]
+  hidden: [VitalSpirit]
+Elekid:
+  abilities: [Static]
+  hidden: [VitalSpirit]
+Electivire:
+  abilities: [MotorDrive]
+  # Iron Fist is this registry's rather than the mainline's: the
+  # line reaches three abilities and needs four, and it fights in
+  # punches with 123 Attack behind them
+  hidden: [VitalSpirit, IronFist]

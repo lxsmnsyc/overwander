@@ -1,0 +1,8 @@
+Inkay:
+  abilities: [Contrary, SuctionCups]
+  hidden: [Infiltrator]
+Malamar:
+  abilities: [Contrary, SuctionCups]
+  # Analytic is this line's invented filler: the mainline gives the
+  # squid Contrary, Suction Cups and Infiltrator and nothing else
+  hidden: [Infiltrator, Analytic]

@@ -1,0 +1,83 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Roar
+  - Toxic
+  - HiddenPower
+  - SunnyDay
+  - Taunt
+  - Protect
+  - RainDance
+  - Frustration
+  - IronTail
+  - Return
+  - Dig
+  - ShadowBall
+  - DoubleTeam
+  - Torment
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Thief
+  - Snatch
+  - RockSmash
+  - BodySlam
+  - DoubleEdge
+  - Counter
+  - Mimic
+  - Substitute
+  - PsychUp
+  - Snore
+  - Endure
+  - MudSlap
+  - Swagger
+  - SleepTalk
+  - Captivate
+  - DarkPulse
+  - NaturalGift
+  - Payback
+  - FoulPlay
+  - Round
+  - Incinerate
+  - Retaliate
+  - Snarl
+  - Confide
+Poochyena:
+  level:
+    '1': [Tackle]
+    '5': [Howl]
+    '9': [SandAttack]
+    '13': [Bite]
+    '17': [OdorSleuth]
+    '21': [Roar]
+    '25': [Swagger]
+    '29': [ScaryFace, Assurance]
+    '33': [TakeDown]
+    '37': [Taunt]
+    '41': [Crunch, Embargo]
+    '45': [Thief]
+    '49': [SuckerPunch]
+  egg:
+    - Astonish
+    - PoisonFang
+    - Covet
+    - Leer
+    - Yawn
+    - FireFang
+    - IceFang
+    - MeFirst
+    - ThunderFang
+    - PlayRough
+Mightyena:
+  level:
+    '1': [Tackle, Howl, SandAttack, Bite]
+    '17': [OdorSleuth]
+    '22': [Roar]
+    '27': [Swagger]
+    '32': [ScaryFace, Assurance]
+    '37': [TakeDown]
+    '42': [Taunt]
+    '47': [Crunch, Embargo]
+    '52': [Thief]
+    '62': [SuckerPunch]
+  teachable: [HyperBeam, Strength, GigaImpact, LaserFocus, ThroatChop]

@@ -1,0 +1,108 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - AerialAce
+  - AquaTail
+  - Attract
+  - Blizzard
+  - Covet
+  - Cut
+  - Dig
+  - Dive
+  - DoubleTeam
+  - Facade
+  - FalseSwipe
+  - Fling
+  - Frustration
+  - GrassKnot
+  - Hail
+  - HelpingHand
+  - HiddenPower
+  - IceBeam
+  - IcyWind
+  - IronTail
+  - Protect
+  - RainDance
+  - Rest
+  - Retaliate
+  - Return
+  - RockSmash
+  - Round
+  - Scald
+  - SleepTalk
+  - Snore
+  - Substitute
+  - Surf
+  - Swagger
+  - SwordsDance
+  - Taunt
+  - Toxic
+  - Waterfall
+  - WaterPledge
+  - XScissor
+  - Confide
+Oshawott:
+  level:
+    '1': [Tackle]
+    '5': [TailWhip]
+    '7': [WaterGun]
+    '11': [WaterSport]
+    '13': [FocusEnergy]
+    '17': [RazorShell]
+    '19': [FuryCutter]
+    '23': [WaterPulse]
+    '25': [Revenge]
+    '29': [AquaJet]
+    '31': [Encore]
+    '35': [AquaTail]
+    '37': [Retaliate]
+    '41': [SwordsDance]
+    '43': [HydroPump]
+  egg: [AirSlash, Assurance, Brine, Copycat, Detect, NightSlash, Screech, TrumpCard]
+Dewott:
+  level:
+    '1': [Tackle, TailWhip, WaterGun, WaterSport]
+    '5': [TailWhip]
+    '7': [WaterGun]
+    '11': [WaterSport]
+    '13': [FocusEnergy]
+    '17': [RazorShell]
+    '20': [FuryCutter]
+    '25': [WaterPulse]
+    '28': [Revenge]
+    '33': [AquaJet]
+    '36': [Encore]
+    '41': [AquaTail]
+    '44': [Retaliate]
+    '49': [SwordsDance]
+    '52': [HydroPump]
+  teachable: [BrickBreak]
+Samurott:
+  level:
+    '1': [Tackle, TailWhip, WaterGun, WaterSport, Megahorn]
+    '5': [TailWhip]
+    '7': [WaterGun]
+    '11': [WaterSport]
+    '13': [FocusEnergy]
+    '17': [RazorShell]
+    '20': [FuryCutter]
+    '25': [WaterPulse]
+    '28': [Revenge]
+    '33': [AquaJet]
+    '36': [Slash]
+    '38': [Encore]
+    '45': [AquaTail]
+    '50': [Retaliate]
+    '57': [SwordsDance]
+    '62': [HydroPump]
+  teachable:
+    - Block
+    - BrickBreak
+    - DragonTail
+    - GigaImpact
+    - HydroCannon
+    - HyperBeam
+    - KnockOff
+    - Strength
+    - Superpower
+    - Liquidation
+    - SmartStrike

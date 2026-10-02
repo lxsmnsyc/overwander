@@ -1,0 +1,63 @@
+Poliwag:
+  types: [Water]
+  egg-groups: [Water1]
+  habitat: Amphibious
+  biomes:
+    - Swamp
+    - Bog
+    - TropicalRainforest
+    - TropicalSeasonalForest
+    - Shrubland
+    - Grassland
+    - TemperateForest
+    - TemperateRainforest
+    - Woodland
+    - MontaneForest
+  active: any
+  evolves-into:
+    - species: Poliwhirl
+      method: [Level]
+      level: 25
+Poliwhirl:
+  types: [Water]
+  egg-groups: [Water1]
+  habitat: Amphibious
+  biomes:
+    - Swamp
+    - Bog
+    - TropicalSeasonalForest
+    - Shrubland
+    - Grassland
+    - TemperateForest
+    - TemperateRainforest
+    - Woodland
+    - MontaneForest
+  active: any
+  evolves-from: Poliwag
+  evolves-into:
+    - species: Poliwrath
+      method: [UsedItem]
+      item: WaterStone
+    - species: Politoed
+      method: [HeldItem, Trade]
+      item: KingsRock
+Poliwrath:
+  types: [Water, Fighting]
+  egg-groups: [Water1]
+  habitat: Amphibious
+  biomes: [Swamp, Bog, Shrubland, Grassland, MontaneForest]
+  active: any
+  evolves-from: Poliwhirl
+Politoed:
+  types: [Water]
+  egg-groups: [Water1]
+  habitat: Amphibious
+  biomes:
+    - Swamp
+    - TropicalSeasonalForest
+    - Grassland
+    - TemperateForest
+    - TemperateRainforest
+    - Woodland
+  active: any
+  evolves-from: Poliwhirl

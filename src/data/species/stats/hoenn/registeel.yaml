@@ -1,0 +1,6 @@
+Registeel:
+  stats: { HP: 80, Attack: 75, Defense: 150, SpecialAttack: 75, SpecialDefense: 150, Speed: 50 }
+  catch-rate: 3
+  height: 1.9
+  weight: 205
+  gender: genderless

@@ -1,0 +1,6 @@
+Kartana:
+  stats: { HP: 59, Attack: 181, Defense: 131, SpecialAttack: 59, SpecialDefense: 31, Speed: 109 }
+  catch-rate: 45
+  height: 0.3
+  weight: 0.1
+  gender: genderless

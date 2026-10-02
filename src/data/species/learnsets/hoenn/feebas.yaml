@@ -1,0 +1,71 @@
+# TM, HM and tutor moves both stages share
+family-teachable:
+  - WaterPulse
+  - Toxic
+  - Hail
+  - HiddenPower
+  - IceBeam
+  - Blizzard
+  - Protect
+  - RainDance
+  - Frustration
+  - Return
+  - DoubleTeam
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Surf
+  - Waterfall
+  - Dive
+  - DoubleEdge
+  - Mimic
+  - Substitute
+  - Snore
+  - IcyWind
+  - Endure
+  - Swagger
+  - SleepTalk
+  - Swift
+  - NaturalGift
+  - Round
+  - Scald
+  - Confide
+Feebas:
+  level:
+    '1': [Splash]
+    '15': [Tackle]
+    '30': [Flail]
+  teachable: [Captivate]
+  egg: [ConfuseRay, DragonBreath, Hypnosis, LightScreen, MirrorCoat, MudSport]
+Milotic:
+  level:
+    '1': [WaterGun]
+    '5': [Wrap]
+    '10': [WaterSport]
+    '11': [DisarmingVoice]
+    '15': [Refresh]
+    '20': [WaterPulse]
+    '25': [Twister, Captivate]
+    '29': [AquaTail]
+    '30': [Recover]
+    '35': [RainDance]
+    '40': [HydroPump]
+    '45': [Attract]
+    '49': [AquaRing]
+    '50': [Safeguard]
+  teachable:
+    - HyperBeam
+    - Safeguard
+    - IronTail
+    - BodySlam
+    - PsychUp
+    - MudSlap
+    - Avalanche
+    - DragonPulse
+    - GigaImpact
+    - IronHead
+    - Bulldoze
+    - DragonTail
+    - BrutalSwing
+    - LaserFocus

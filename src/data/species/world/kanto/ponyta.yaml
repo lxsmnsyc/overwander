@@ -1,0 +1,15 @@
+Ponyta:
+  types: [Fire]
+  egg-groups: [Field]
+  biomes: [Grassland, Steppe, Volcano]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Rapidash
+      method: [Level]
+      level: 40
+Rapidash:
+  types: [Fire]
+  egg-groups: [Field]
+  biomes: [Grassland, Steppe, Volcano]
+  active: [Morning, Day]
+  evolves-from: Ponyta

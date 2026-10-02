@@ -1,0 +1,151 @@
+# TM, HM and tutor moves shared by the whole family
+
+# Additional TM/HM moves for the fully evolved form
+family-teachable:
+  - Toxic
+  - HornDrill
+  - BodySlam
+  - TakeDown
+  - DoubleEdge
+  - BubbleBeam
+  - WaterGun
+  - Blizzard
+  - Rage
+  - Thunderbolt
+  - Thunder
+  - Mimic
+  - DoubleTeam
+  - Reflect
+  - Bide
+  - SkullBash
+  - Rest
+  - Substitute
+  - Headbutt
+  - DefenseCurl
+  - Thief
+  - Snore
+  - Curse
+  - Protect
+  - MudSlap
+  - Detect
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - IronTail
+  - HiddenPower
+  - RainDance
+  - SunnyDay
+  - Cut
+  - Facade
+  - SecretPower
+  - ShockWave
+  - SludgeBomb
+  - WaterPulse
+  - NaturalGift
+  - ShadowClaw
+  - SuckerPunch
+  - HoneClaws
+  - Venoshock
+  - Round
+  - EchoedVoice
+  - DrillRun
+  - Confide
+  - SmartStrike
+NidoranM:
+  level:
+    '1': [Leer, Tackle, Peck]
+    '8': [HornAttack]
+    '12': [DoubleKick]
+    '14': [PoisonSting]
+    '21': [FocusEnergy]
+    '23': [HelpingHand]
+    '29': [FuryAttack]
+    '31': [ToxicSpikes]
+    '36': [HornDrill]
+    '37': [PoisonJab]
+    '38': [Flatter]
+    '43': [Captivate]
+  teachable: [Dig, IceBeam, RockSmash, Strength]
+  egg:
+    - Supersonic
+    - Disable
+    - TakeDown
+    - Counter
+    - Confusion
+    - Amnesia
+    - BeatUp
+    - HeadSmash
+    - ChipAway
+    - VenomDrench
+Nidorino:
+  level:
+    '1': [Leer, Tackle, HornAttack, Peck]
+    '12': [DoubleKick]
+    '14': [PoisonSting]
+    '23': [FocusEnergy]
+    '26': [HelpingHand]
+    '32': [FuryAttack]
+    '35': [ToxicSpikes]
+    '41': [HornDrill]
+    '43': [Flatter, PoisonJab]
+    '50': [Captivate]
+  teachable: [Strength, RockSmash, IceBeam, Counter, Dig, StompingTantrum]
+Nidoking:
+  level:
+    '1': [Tackle, HornAttack, PoisonSting, DoubleKick, FocusEnergy, Peck]
+    '23': [Thrash, ChipAway]
+    '43': [Megahorn, EarthPower]
+  teachable:
+    - MegaPunch
+    - MegaKick
+    - IceBeam
+    - HyperBeam
+    - Submission
+    - SeismicToss
+    - Earthquake
+    - Fissure
+    - Dig
+    - FireBlast
+    - RockSlide
+    - Surf
+    - Strength
+    - PowerUpPunch
+    - FirePunch
+    - IcePunch
+    - ThunderPunch
+    - Roar
+    - IcyWind
+    - Sandstorm
+    - FuryCutter
+    - DynamicPunch
+    - ShadowBall
+    - RockSmash
+    - Flamethrower
+    - BrickBreak
+    - Counter
+    - FocusPunch
+    - RockTomb
+    - Taunt
+    - Torment
+    - AquaTail
+    - Avalanche
+    - Captivate
+    - DragonPulse
+    - Fling
+    - FocusBlast
+    - GigaImpact
+    - PoisonJab
+    - RockClimb
+    - StealthRock
+    - StoneEdge
+    - SmackDown
+    - SludgeWave
+    - Incinerate
+    - Quash
+    - Bulldoze
+    - DragonTail
+    - StompingTantrum
+    - ThroatChop

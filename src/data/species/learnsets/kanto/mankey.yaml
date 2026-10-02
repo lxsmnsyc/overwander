@@ -1,0 +1,120 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - MegaPunch
+  - MegaKick
+  - Toxic
+  - BodySlam
+  - TakeDown
+  - DoubleEdge
+  - PayDay
+  - Submission
+  - Counter
+  - SeismicToss
+  - Rage
+  - Thunderbolt
+  - Thunder
+  - Dig
+  - Mimic
+  - DoubleTeam
+  - Bide
+  - Metronome
+  - SkullBash
+  - Rest
+  - RockSlide
+  - Substitute
+  - Strength
+  - FirePunch
+  - IcePunch
+  - ThunderPunch
+  - Headbutt
+  - DefenseCurl
+  - Swift
+  - Thief
+  - Snore
+  - Curse
+  - Protect
+  - MudSlap
+  - Detect
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - DynamicPunch
+  - IronTail
+  - HiddenPower
+  - SunnyDay
+  - PsychUp
+  - RockSmash
+  - AerialAce
+  - BrickBreak
+  - BulkUp
+  - Earthquake
+  - Facade
+  - FocusPunch
+  - Overheat
+  - RockTomb
+  - SecretPower
+  - Taunt
+  - Captivate
+  - FocusBlast
+  - GunkShot
+  - NaturalGift
+  - Payback
+  - PoisonJab
+  - RockClimb
+  - SeedBomb
+  - UTurn
+  - VacuumWave
+  - HoneClaws
+  - SmackDown
+  - LowSweep
+  - Round
+  - Acrobatics
+  - Retaliate
+  - Bulldoze
+  - WorkUp
+  - DualChop
+  - Confide
+  - PowerUpPunch
+Mankey:
+  level:
+    '1': [Scratch, Leer]
+    '9': [LowKick]
+    '15': [KarateChop]
+    '21': [FurySwipes]
+    '25': [Assurance]
+    '27': [FocusEnergy]
+    '33': [SeismicToss]
+    '39': [Thrash, CrossChop]
+    '43': [StompingTantrum]
+    '45': [Screech, Punishment]
+    '49': [CloseCombat]
+    '53': [FinalGambit]
+  teachable: [Fling]
+  egg:
+    - RockSlide
+    - Meditate
+    - Counter
+    - Reversal
+    - Foresight
+    - BeatUp
+    - Revenge
+    - SmellingSalts
+    - PowerTrip
+Primeape:
+  level:
+    '1': [Scratch, Leer, KarateChop, LowKick, Rage, Fling]
+    '21': [FurySwipes]
+    '25': [Assurance]
+    '27': [FocusEnergy]
+    '36': [SeismicToss]
+    '45': [CrossChop]
+    '46': [Thrash]
+    '48': [StompingTantrum]
+    '53': [Punishment]
+    '54': [Screech]
+    '59': [CloseCombat]
+    '63': [FinalGambit]
+  teachable: [HyperBeam, GigaImpact, StoneEdge, ThroatChop]

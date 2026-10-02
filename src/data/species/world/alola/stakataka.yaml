@@ -1,0 +1,6 @@
+Stakataka:
+  types: [Rock, Steel]
+  egg-groups: [NoEggsDiscovered]
+  # Poni Grove
+  biomes: [TropicalSeasonalForest]
+  active: any

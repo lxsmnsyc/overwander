@@ -1,0 +1,5 @@
+Moltres:
+  types: [Fire, Flying]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Mountain, Volcano]
+  active: any

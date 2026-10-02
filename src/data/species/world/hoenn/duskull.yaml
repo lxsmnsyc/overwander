@@ -1,0 +1,32 @@
+# Duskull and Dusclops. **Dusclops is not a final evolution**: a
+# Dusknoir stands above it in a later generation, so nothing is
+# invented for it here. What it is short of is the slot that
+# evolution will fill
+
+Duskull:
+  types: [Ghost]
+  egg-groups: [Amorphous]
+  biomes: [Badlands, Woodland]
+  active: [Night]
+  evolves-into:
+    - species: Dusclops
+      method: [Level]
+      level: 37
+Dusclops:
+  types: [Ghost]
+  egg-groups: [Amorphous]
+  biomes: [Badlands, Woodland]
+  active: [Night]
+  evolves-from: Duskull
+  evolves-into:
+    - species: Dusknoir
+      method: [HeldItem, Trade]
+      item: ReaperCloth
+# What a Dusclops opens into: a Dusknoir listens for what the dead
+# still want and carries them off when they are done saying it
+Dusknoir:
+  types: [Ghost]
+  egg-groups: [Amorphous]
+  biomes: [Badlands, Woodland]
+  active: [Night]
+  evolves-from: Dusclops

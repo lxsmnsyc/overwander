@@ -1,0 +1,28 @@
+# The gears: two of them found each other in a cave and have turned
+# against each other ever since, and neither half is anything on its
+# own. None of them is male or female
+Klink:
+  types: [Steel]
+  egg-groups: [Mineral]
+  biomes: [Mountain]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Klang
+      method: [Level]
+      level: 38
+Klang:
+  types: [Steel]
+  egg-groups: [Mineral]
+  biomes: [Mountain]
+  active: [Morning, Day]
+  evolves-from: Klink
+  evolves-into:
+    - species: Klinklang
+      method: [Level]
+      level: 49
+Klinklang:
+  types: [Steel]
+  egg-groups: [Mineral]
+  biomes: [Mountain]
+  active: [Morning, Day]
+  evolves-from: Klang

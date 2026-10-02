@@ -1,0 +1,18 @@
+Pidgey:
+  stats: { HP: 40, Attack: 45, Defense: 40, SpecialAttack: 35, SpecialDefense: 35, Speed: 56 }
+  catch-rate: 255
+  height: 0.3
+  weight: 1.8
+  gender: [1, 1]
+Pidgeotto:
+  stats: { HP: 63, Attack: 60, Defense: 55, SpecialAttack: 50, SpecialDefense: 50, Speed: 71 }
+  catch-rate: 120
+  height: 1.1
+  weight: 30
+  gender: [1, 1]
+Pidgeot:
+  stats: { HP: 83, Attack: 80, Defense: 75, SpecialAttack: 70, SpecialDefense: 70, Speed: 101 }
+  catch-rate: 45
+  height: 1.5
+  weight: 39.5
+  gender: [1, 1]

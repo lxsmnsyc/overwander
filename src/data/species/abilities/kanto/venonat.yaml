@@ -1,0 +1,6 @@
+Venonat:
+  abilities: [CompoundEyes, TintedLens]
+  hidden: [RunAway]
+Venomoth:
+  abilities: [ShieldDust, TintedLens]
+  hidden: [WonderSkin]

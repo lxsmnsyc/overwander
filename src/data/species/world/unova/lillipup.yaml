@@ -1,0 +1,28 @@
+# The dogs of Unova: a Lillipup reads a face before it reads a fight,
+# a Herdier stands in front of what it is told to, and a Stoutland has
+# pulled people out of snow for as long as anybody has kept dogs
+Lillipup:
+  types: [Normal]
+  egg-groups: [Field]
+  biomes: [Grassland, Woodland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Herdier
+      method: [Level]
+      level: 16
+Herdier:
+  types: [Normal]
+  egg-groups: [Field]
+  biomes: [Grassland, Woodland]
+  active: [Morning, Day]
+  evolves-from: Lillipup
+  evolves-into:
+    - species: Stoutland
+      method: [Level]
+      level: 32
+Stoutland:
+  types: [Normal]
+  egg-groups: [Field]
+  biomes: [Grassland, Steppe, Tundra]
+  active: [Morning, Day]
+  evolves-from: Herdier

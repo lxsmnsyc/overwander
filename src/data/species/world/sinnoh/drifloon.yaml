@@ -1,0 +1,17 @@
+# The balloon that waits about at dusk. What it is full of is not air,
+# and a Drifblim carries off whatever takes hold of its string
+Drifloon:
+  types: [Ghost, Flying]
+  egg-groups: [Amorphous]
+  biomes: [Bog, Woodland, Steppe]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Drifblim
+      method: [Level]
+      level: 28
+Drifblim:
+  types: [Ghost, Flying]
+  egg-groups: [Amorphous]
+  biomes: [Bog, Woodland, Steppe]
+  active: [Evening, Night]
+  evolves-from: Drifloon

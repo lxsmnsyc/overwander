@@ -1,0 +1,12 @@
+Oddish:
+  abilities: [Chlorophyll]
+  hidden: [RunAway]
+Gloom:
+  abilities: [Chlorophyll]
+  hidden: [Stench]
+Vileplume:
+  abilities: [Chlorophyll]
+  hidden: [EffectSpore]
+Bellossom:
+  abilities: [Chlorophyll]
+  hidden: [Healer]

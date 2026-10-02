@@ -1,0 +1,20 @@
+# The ice both shapes grind across
+
+# The ice that grows a body. An Avalugg is a floe with a head on it,
+# and the wall it carries is what it hits with rather than anything
+# it swings
+Bergmite:
+  types: [Ice]
+  egg-groups: [Monster, Mineral]
+  biomes: [Glacier, AlpineTundra]
+  active: any
+  evolves-into:
+    - species: Avalugg
+      method: [Level]
+      level: 37
+Avalugg:
+  types: [Ice]
+  egg-groups: [Monster, Mineral]
+  biomes: [Glacier, AlpineTundra]
+  active: any
+  evolves-from: Bergmite

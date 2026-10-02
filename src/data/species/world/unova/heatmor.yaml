@@ -1,0 +1,8 @@
+# The anteater: the flame at the end of its tongue is what it opens a
+# nest with, and the nest it opens is a Durant's
+Heatmor:
+  types: [Fire]
+  egg-groups: [Field]
+  # The same badlands the ants work, after they have gone in
+  biomes: [Badlands, Volcano]
+  active: [Evening, Night]

@@ -1,0 +1,38 @@
+# The nebula that grows into the sun or the moon. Which one is the
+# hour it finishes growing at: by day a Solgaleo, by night a Lunala
+Cosmog:
+  types: [Psychic]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Grassland]
+  active: any
+  evolves-into:
+    - species: Cosmoem
+      method: [Level]
+      level: 43
+Cosmoem:
+  types: [Psychic]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Grassland]
+  active: any
+  evolves-from: Cosmog
+  evolves-into:
+    - species: Solgaleo
+      method: [Level, TimeOfDay]
+      level: 53
+      time: [Morning, Day]
+    - species: Lunala
+      method: [Level, TimeOfDay]
+      level: 53
+      time: [Evening, Night]
+Solgaleo:
+  types: [Psychic, Steel]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Badlands]
+  active: any
+  evolves-from: Cosmoem
+Lunala:
+  types: [Psychic, Ghost]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Badlands]
+  active: any
+  evolves-from: Cosmoem

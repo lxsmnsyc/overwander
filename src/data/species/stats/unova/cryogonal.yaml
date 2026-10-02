@@ -1,0 +1,6 @@
+Cryogonal:
+  stats: { HP: 80, Attack: 50, Defense: 50, SpecialAttack: 95, SpecialDefense: 135, Speed: 105 }
+  catch-rate: 25
+  height: 1.1
+  weight: 148
+  gender: genderless

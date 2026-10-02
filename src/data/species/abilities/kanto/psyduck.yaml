@@ -1,0 +1,6 @@
+Psyduck:
+  abilities: [Damp, CloudNine]
+  hidden: [SwiftSwim]
+Golduck:
+  abilities: [Damp, CloudNine]
+  hidden: [SwiftSwim, OwnTempo]

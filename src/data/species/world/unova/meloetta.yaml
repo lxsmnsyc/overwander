@@ -1,0 +1,17 @@
+# The song and the step: one pokemon in two shapes, singing with its
+# special half and dancing with its physical one. Relic Song is what
+# turns it over, so the dancer is worn for a fight rather than caught
+
+Meloetta:
+  types: [Normal, Psychic]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Woodland]
+  active: any
+MeloettaPirouette:
+  types: [Normal, Fighting]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  # Worn rather than met: Relic Song is what turns it over, so the
+  # dex fills the step in the day the song is
+  worn: true

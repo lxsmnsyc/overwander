@@ -1,0 +1,6 @@
+Emolga:
+  abilities: [Static]
+  # Wind Rider and Cheek Pouch are this registry's rather than the
+  # mainline's: it lives on the air it glides through, and the
+  # cheeks it stores its charge in hold a meal just as well
+  hidden: [MotorDrive, WindRider, CheekPouch]

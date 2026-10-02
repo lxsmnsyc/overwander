@@ -1,0 +1,6 @@
+Kartana:
+  types: [Grass, Steel]
+  egg-groups: [NoEggsDiscovered]
+  # Ultra Forest
+  biomes: [TemperateForest]
+  active: any

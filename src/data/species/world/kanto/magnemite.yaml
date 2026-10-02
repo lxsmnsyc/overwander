@@ -1,0 +1,29 @@
+Magnemite:
+  types: [Electric, Steel]
+  egg-groups: [Mineral]
+  biomes: [Grassland, Steppe]
+  active: any
+  evolves-into:
+    - species: Magneton
+      method: [Level]
+      level: 30
+Magneton:
+  types: [Electric, Steel]
+  egg-groups: [Mineral]
+  biomes: [Grassland, Steppe]
+  active: any
+  evolves-from: Magnemite
+  # A Thunder Stone rather than a magnetic field, the way Nosepass
+  # asks for one
+  evolves-into:
+    - species: Magnezone
+      method: [UsedItem]
+      item: ThunderStone
+# Three magnets that agreed to be one thing: a Magnezone puts out a
+# field strong enough to pull the ground up around it
+Magnezone:
+  types: [Electric, Steel]
+  egg-groups: [Mineral]
+  biomes: [Mountain, Badlands, Steppe]
+  active: any
+  evolves-from: Magneton

@@ -1,0 +1,76 @@
+Illumise:
+  level:
+    '1': [Tackle, PlayNice]
+    '5': [SweetScent]
+    '9': [Charm]
+    '13': [Moonlight]
+    '17': [QuickAttack]
+    '21': [Wish]
+    '25': [Encore]
+    '29': [Flatter]
+    '33': [HelpingHand]
+    '37': [Covet, ZenHeadbutt]
+    '41': [BugBuzz]
+    '43': [PlayRough]
+  teachable:
+    - FocusPunch
+    - WaterPulse
+    - Toxic
+    - HiddenPower
+    - SunnyDay
+    - LightScreen
+    - Protect
+    - RainDance
+    - GigaDrain
+    - Frustration
+    - SolarBeam
+    - Thunderbolt
+    - Thunder
+    - Return
+    - ShadowBall
+    - BrickBreak
+    - DoubleTeam
+    - ShockWave
+    - AerialAce
+    - Facade
+    - SecretPower
+    - Rest
+    - Attract
+    - Thief
+    - Flash
+    - MegaPunch
+    - MegaKick
+    - BodySlam
+    - DoubleEdge
+    - Counter
+    - SeismicToss
+    - Mimic
+    - Metronome
+    - ThunderWave
+    - Substitute
+    - DynamicPunch
+    - PsychUp
+    - Snore
+    - Endure
+    - MudSlap
+    - IcePunch
+    - Swagger
+    - ThunderPunch
+    - SleepTalk
+    - Swift
+    - BugBite
+    - Captivate
+    - ChargeBeam
+    - Fling
+    - NaturalGift
+    - OminousWind
+    - Roost
+    - Tailwind
+    - UTurn
+    - Round
+    - Acrobatics
+    - StruggleBug
+    - Confide
+    - DazzlingGleam
+    - PowerUpPunch
+  egg: [BatonPass, Growth, SilverWind]

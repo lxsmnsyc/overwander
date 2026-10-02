@@ -1,0 +1,12 @@
+Dewpider:
+  stats: { HP: 38, Attack: 40, Defense: 52, SpecialAttack: 40, SpecialDefense: 72, Speed: 27 }
+  catch-rate: 200
+  height: 0.3
+  weight: 4
+  gender: [4, 4]
+Araquanid:
+  stats: { HP: 68, Attack: 70, Defense: 92, SpecialAttack: 50, SpecialDefense: 132, Speed: 42 }
+  catch-rate: 100
+  height: 1.8
+  weight: 82
+  gender: [4, 4]

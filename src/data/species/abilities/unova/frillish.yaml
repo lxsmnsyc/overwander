@@ -1,0 +1,6 @@
+Frillish:
+  abilities: [WaterAbsorb, CursedBody]
+  hidden: [Damp]
+Jellicent:
+  abilities: [WaterAbsorb, CursedBody]
+  hidden: [Damp, LiquidOoze]

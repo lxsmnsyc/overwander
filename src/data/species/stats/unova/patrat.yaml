@@ -1,0 +1,12 @@
+Patrat:
+  stats: { HP: 45, Attack: 55, Defense: 39, SpecialAttack: 35, SpecialDefense: 39, Speed: 42 }
+  catch-rate: 255
+  height: 0.5
+  weight: 11.6
+  gender: [1, 1]
+Watchog:
+  stats: { HP: 60, Attack: 85, Defense: 69, SpecialAttack: 60, SpecialDefense: 69, Speed: 77 }
+  catch-rate: 255
+  height: 1.1
+  weight: 27
+  gender: [1, 1]

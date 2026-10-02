@@ -1,0 +1,18 @@
+Machop:
+  stats: { HP: 70, Attack: 80, Defense: 50, SpecialAttack: 35, SpecialDefense: 35, Speed: 35 }
+  catch-rate: 180
+  height: 0.8
+  weight: 19.5
+  gender: [3, 1]
+Machoke:
+  stats: { HP: 80, Attack: 100, Defense: 70, SpecialAttack: 50, SpecialDefense: 60, Speed: 45 }
+  catch-rate: 90
+  height: 1.5
+  weight: 70.5
+  gender: [3, 1]
+Machamp:
+  stats: { HP: 90, Attack: 130, Defense: 80, SpecialAttack: 65, SpecialDefense: 85, Speed: 55 }
+  catch-rate: 45
+  height: 1.6
+  weight: 130
+  gender: [3, 1]

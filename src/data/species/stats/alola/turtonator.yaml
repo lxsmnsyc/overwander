@@ -1,0 +1,6 @@
+Turtonator:
+  stats: { HP: 60, Attack: 78, Defense: 135, SpecialAttack: 91, SpecialDefense: 85, Speed: 36 }
+  catch-rate: 70
+  height: 2
+  weight: 212
+  gender: [4, 4]

@@ -1,0 +1,100 @@
+family-teachable:
+  - Toxic
+  - SolarBeam
+  - DoubleTeam
+  - Rest
+  - Cut
+  - Headbutt
+  - Flash
+  - Snore
+  - Curse
+  - Protect
+  - MudSlap
+  - Detect
+  - GigaDrain
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - SweetScent
+  - IronTail
+  - HiddenPower
+  - SunnyDay
+  - BulletSeed
+  - DoubleEdge
+  - Facade
+  - Mimic
+  - SecretPower
+  - Substitute
+  - SwordsDance
+  - Captivate
+  - EnergyBall
+  - GrassKnot
+  - SeedBomb
+  - WorrySeed
+  - Round
+  - EchoedVoice
+  - GrassPledge
+  - Confide
+Chikorita:
+  level:
+    '1': [Tackle, Growl]
+    '8': [RazorLeaf]
+    '12': [Reflect]
+    '15': [PoisonPowder]
+    '22': [Synthesis]
+    '23': [NaturalGift]
+    '29': [BodySlam]
+    '36': [LightScreen]
+    '43': [Safeguard]
+    '50': [SolarBeam]
+  egg:
+    - VineWhip
+    - Counter
+    - LeechSeed
+    - Flail
+    - AncientPower
+    - GrassWhistle
+    - Ingrain
+    - NaturePower
+    - LeafStorm
+    - WringOut
+    - HealPulse
+    - GrassyTerrain
+Bayleef:
+  level:
+    '1': [Tackle, Growl, RazorLeaf, Reflect]
+    '15': [PoisonPowder]
+    '23': [Synthesis]
+    '26': [NaturalGift]
+    '31': [BodySlam]
+    '39': [LightScreen]
+    '47': [Safeguard]
+    '55': [SolarBeam]
+  teachable: [Strength, FuryCutter, RockSmash, Counter, LaserFocus]
+Meganium:
+  level:
+    '1': [Tackle, Growl, RazorLeaf, Reflect]
+    '15': [PoisonPowder]
+    '23': [Synthesis]
+    '26': [NaturalGift]
+    '31': [BodySlam]
+    '41': [LightScreen]
+    '51': [Safeguard]
+    '61': [SolarBeam]
+    '70': [PetalBlizzard]
+  teachable:
+    - Strength
+    - FuryCutter
+    - RockSmash
+    - HyperBeam
+    - Earthquake
+    - Counter
+    - GigaImpact
+    - RockClimb
+    - Bulldoze
+    - DragonTail
+    - StompingTantrum
+    - LaserFocus

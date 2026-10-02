@@ -1,0 +1,19 @@
+Genesect:
+  abilities: [Download]
+  # Analytic, Synchronize and Adaptability are this registry's
+  # rather than the mainline's: a machine reads what it is aimed
+  # at, hands back whatever is done to it, and is built entirely
+  # for the shot it was built for
+  hidden: [Analytic, Synchronize, Adaptability]
+GenesectDouse:
+  abilities: [Download]
+  hidden: []
+GenesectShock:
+  abilities: [Download]
+  hidden: []
+GenesectBurn:
+  abilities: [Download]
+  hidden: []
+GenesectChill:
+  abilities: [Download]
+  hidden: []

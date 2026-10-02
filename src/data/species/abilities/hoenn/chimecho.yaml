@@ -1,0 +1,9 @@
+Chimecho:
+  abilities: [Levitate]
+  # Healer, Own Tempo and Forewarn are this registry's rather than
+  # the mainline's: a chime is rung over somebody, keeps its own
+  # time whatever blows through it, and is hung up to be read
+  hidden: [Healer, OwnTempo, Forewarn]
+Chingling:
+  abilities: [Levitate]
+  hidden: []

@@ -1,0 +1,9 @@
+# The eon pair: one sister, one brother, and nothing else of either.
+# Each is single-gendered, so the pair is only ever met as a pair,
+# and the mainline gives both of them one ability and nothing more
+
+Latias:
+  types: [Dragon, Psychic]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Ocean]
+  active: any

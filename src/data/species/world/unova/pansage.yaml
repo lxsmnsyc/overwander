@@ -1,0 +1,17 @@
+# The grass monkey: the leaf on its head is medicine to anybody who
+# eats it, and a Simisage swings the thorny tail it grows into
+Pansage:
+  types: [Grass]
+  egg-groups: [Field]
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Simisage
+      method: [UsedItem]
+      item: LeafStone
+Simisage:
+  types: [Grass]
+  egg-groups: [Field]
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-from: Pansage

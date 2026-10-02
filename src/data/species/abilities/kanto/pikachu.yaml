@@ -1,0 +1,15 @@
+Pikachu:
+  abilities: [Static]
+  hidden: [LightningRod]
+Raichu:
+  abilities: [Static]
+  hidden: [LightningRod, VoltAbsorb, QuickFeet]
+Pichu:
+  abilities: [Static]
+  hidden: [LightningRod]
+PichuSpikyEared:
+  abilities: [Static]
+  hidden: [LightningRod, ElectricSurge, FriendGuard]
+RaichuAlola:
+  abilities: [SurgeSurfer]
+  hidden: [Levitate]

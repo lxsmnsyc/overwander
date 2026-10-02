@@ -1,0 +1,80 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - Fly
+  - DoubleTeam
+  - Swift
+  - DreamEater
+  - Flash
+  - Rest
+  - Thief
+  - Nightmare
+  - Snore
+  - Curse
+  - Protect
+  - MudSlap
+  - Detect
+  - Endure
+  - Swagger
+  - SteelWing
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - HiddenPower
+  - SunnyDay
+  - AerialAce
+  - DoubleEdge
+  - Facade
+  - Mimic
+  - Psychic
+  - SecretPower
+  - ShadowBall
+  - Substitute
+  - Captivate
+  - Defog
+  - NaturalGift
+  - OminousWind
+  - Pluck
+  - Tailwind
+  - Round
+  - EchoedVoice
+  - WorkUp
+  - Confide
+Hoothoot:
+  level:
+    '1': [Tackle, Growl]
+    '6': [Foresight]
+    '11': [Peck]
+    '16': [Hypnosis]
+    '22': [Reflect]
+    '25': [EchoedVoice]
+    '28': [TakeDown]
+    '29': [AirSlash]
+    '33': [ZenHeadbutt]
+    '34': [Confusion]
+    '41': [PsychoShift, Synchronoise]
+    '45': [Roost]
+    '48': [DreamEater]
+  egg:
+    - WingAttack
+    - Whirlwind
+    - Supersonic
+    - MirrorMove
+    - FeintAttack
+    - FeatherDance
+    - SkyAttack
+Noctowl:
+  level:
+    '1': [Tackle, Growl, Foresight, Peck]
+    '16': [Hypnosis]
+    '25': [Reflect]
+    '27': [EchoedVoice]
+    '32': [AirSlash]
+    '33': [TakeDown]
+    '37': [ZenHeadbutt]
+    '41': [Confusion]
+    '47': [PsychoShift, Synchronoise]
+    '52': [Roost]
+    '57': [DreamEater]
+  teachable: [HyperBeam, GigaImpact, LaserFocus]

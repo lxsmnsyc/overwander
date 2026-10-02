@@ -1,0 +1,80 @@
+family-teachable:
+  - AfterYou
+  - Amnesia
+  - Attract
+  - CalmMind
+  - Charm
+  - Confide
+  - Covet
+  - DazzlingGleam
+  - DoubleTeam
+  - DrainingKiss
+  - DreamEater
+  - Endeavor
+  - Endure
+  - EnergyBall
+  - Facade
+  - FakeTears
+  - Flamethrower
+  - Flash
+  - Frustration
+  - GastroAcid
+  - HealBell
+  - HelpingHand
+  - HiddenPower
+  - LightScreen
+  - MagicCoat
+  - PlayRough
+  - Protect
+  - PsychUp
+  - Psychic
+  - RainDance
+  - Rest
+  - Return
+  - Round
+  - Safeguard
+  - SecretPower
+  - SleepTalk
+  - Snore
+  - Substitute
+  - SunnyDay
+  - Surf
+  - Swagger
+  - Thief
+  - Thunderbolt
+  - Toxic
+Swirlix:
+  level:
+    '1': [Tackle, SweetScent]
+    '3': [PlayNice]
+    '5': [FairyWind]
+    '9': [Aromatherapy]
+    '10': [FakeTears]
+    '12': [DrainingKiss]
+    '13': [Round]
+    '17': [CottonSpore]
+    '21': [Endeavor, StringShot]
+    '27': [EnergyBall]
+    '30': [Wish]
+    '33': [PlayRough]
+    '36': [CottonGuard]
+    '58': [LightScreen]
+    '67': [Safeguard]
+  egg: [AfterYou, BellyDrum, Copycat, StickyWeb, Yawn]
+Slurpuff:
+  level:
+    '1': [Tackle, SweetScent, PlayNice, FairyWind]
+    '9': [Aromatherapy]
+    '10': [FakeTears]
+    '12': [DrainingKiss]
+    '13': [Round]
+    '17': [CottonSpore]
+    '21': [Endeavor, StringShot]
+    '27': [EnergyBall]
+    '30': [Wish]
+    '33': [PlayRough]
+    '36': [CottonGuard]
+    '42': [StickyWeb]
+    '58': [LightScreen]
+    '67': [Safeguard]
+  teachable: [DrainPunch, GigaImpact, HyperBeam, Metronome, Thunder]

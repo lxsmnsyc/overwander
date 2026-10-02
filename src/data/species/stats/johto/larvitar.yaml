@@ -1,0 +1,18 @@
+Larvitar:
+  stats: { HP: 50, Attack: 64, Defense: 50, SpecialAttack: 45, SpecialDefense: 50, Speed: 41 }
+  catch-rate: 45
+  height: 0.6
+  weight: 72
+  gender: [1, 1]
+Pupitar:
+  stats: { HP: 70, Attack: 84, Defense: 70, SpecialAttack: 65, SpecialDefense: 70, Speed: 51 }
+  catch-rate: 45
+  height: 1.2
+  weight: 152
+  gender: [1, 1]
+Tyranitar:
+  stats: { HP: 100, Attack: 134, Defense: 110, SpecialAttack: 95, SpecialDefense: 100, Speed: 61 }
+  catch-rate: 45
+  height: 2
+  weight: 202
+  gender: [1, 1]

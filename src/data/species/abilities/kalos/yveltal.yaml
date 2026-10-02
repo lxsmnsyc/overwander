@@ -1,0 +1,6 @@
+Yveltal:
+  abilities: [DarkAura]
+  # Dark Aura is all the mainline gives it, so the other three are
+  # this registry's: what it takes from a kill, what it does to
+  # something already dying, and the fact that nothing walks away
+  hidden: [Moxie, Merciless, ShadowTag]

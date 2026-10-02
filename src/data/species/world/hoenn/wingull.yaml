@@ -1,0 +1,17 @@
+Wingull:
+  types: [Water, Flying]
+  egg-groups: [Water1, Flying]
+  habitat: Amphibious
+  biomes: [Beach, RockyCoast, CoralReef, KelpForest]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Pelipper
+      method: [Level]
+      level: 25
+Pelipper:
+  types: [Water, Flying]
+  egg-groups: [Water1, Flying]
+  habitat: Amphibious
+  biomes: [Beach, RockyCoast, CoralReef, KelpForest]
+  active: [Morning, Day]
+  evolves-from: Wingull

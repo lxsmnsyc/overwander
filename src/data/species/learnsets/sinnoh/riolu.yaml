@@ -1,0 +1,101 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Attract
+  - BrickBreak
+  - BulkUp
+  - Captivate
+  - Dig
+  - DoubleTeam
+  - DrainPunch
+  - Earthquake
+  - Endure
+  - Facade
+  - Fling
+  - FocusBlast
+  - FocusPunch
+  - Frustration
+  - FuryCutter
+  - HelpingHand
+  - HiddenPower
+  - IcePunch
+  - IronDefense
+  - IronTail
+  - MagnetRise
+  - MudSlap
+  - NaturalGift
+  - Payback
+  - PoisonJab
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - Roar
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - SecretPower
+  - ShadowClaw
+  - SleepTalk
+  - Snore
+  - Strength
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Swift
+  - SwordsDance
+  - ThunderPunch
+  - Toxic
+  - VacuumWave
+  - ZenHeadbutt
+  - Confide
+  - PowerUpPunch
+Riolu:
+  level:
+    '1': [Endure, Foresight, QuickAttack]
+    '6': [Counter]
+    '11': [ForcePalm]
+    '15': [Feint]
+    '19': [Reversal]
+    '24': [Screech]
+    '29': [Copycat]
+  teachable: [LaserFocus]
+  egg:
+    - Agility
+    - Bite
+    - BlazeKick
+    - BulletPunch
+    - CrossChop
+    - Crunch
+    - Detect
+    - HiJumpKick
+    - IronDefense
+    - LowKick
+    - MindReader
+    - SkyUppercut
+    - VacuumWave
+Lucario:
+  level:
+    '1': [DarkPulse, Detect, Foresight, MetalClaw, QuickAttack, LaserFocus]
+    '6': [Counter]
+    '11': [ForcePalm]
+    '15': [Feint, PowerUpPunch]
+    '19': [BoneRush]
+    '24': [MetalSound]
+    '29': [MeFirst]
+    '33': [SwordsDance]
+    '37': [AuraSphere]
+    '42': [CloseCombat]
+    '47': [DragonPulse]
+    '51': [ExtremeSpeed]
+  teachable:
+    - CalmMind
+    - DarkPulse
+    - DragonPulse
+    - FlashCannon
+    - GigaImpact
+    - HyperBeam
+    - Psychic
+    - RockClimb
+    - ShadowBall
+    - StoneEdge
+    - WaterPulse

@@ -1,0 +1,6 @@
+Terrakion:
+  abilities: [Justified]
+  # Sand Rush, Rock Head and Moxie are this registry's rather than
+  # the mainline's: the one that goes through the wall pays nothing
+  # for it and is worth more for every wall it went through
+  hidden: [SandRush, RockHead, Moxie]

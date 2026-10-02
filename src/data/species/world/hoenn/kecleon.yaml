@@ -1,0 +1,5 @@
+Kecleon:
+  types: [Normal]
+  egg-groups: [Field]
+  biomes: [TropicalRainforest, TropicalSeasonalForest]
+  active: [Morning, Day]

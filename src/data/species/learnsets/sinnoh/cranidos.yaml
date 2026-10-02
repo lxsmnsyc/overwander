@@ -1,0 +1,100 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - AncientPower
+  - Attract
+  - Blizzard
+  - Captivate
+  - Dig
+  - DoubleTeam
+  - DragonPulse
+  - EarthPower
+  - Earthquake
+  - Endeavor
+  - Endure
+  - Facade
+  - FireBlast
+  - FirePunch
+  - Flamethrower
+  - Fling
+  - Frustration
+  - Headbutt
+  - HiddenPower
+  - IceBeam
+  - IronHead
+  - IronTail
+  - MudSlap
+  - NaturalGift
+  - Payback
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - Roar
+  - RockClimb
+  - RockPolish
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Sandstorm
+  - SecretPower
+  - ShockWave
+  - SleepTalk
+  - Snore
+  - Spite
+  - StealthRock
+  - StoneEdge
+  - Strength
+  - Substitute
+  - SunnyDay
+  - Superpower
+  - Swagger
+  - SwordsDance
+  - Thief
+  - Thunder
+  - ThunderPunch
+  - Thunderbolt
+  - Toxic
+  - Uproar
+  - ZenHeadbutt
+  - Confide
+  - PowerUpPunch
+Cranidos:
+  level:
+    '1': [Headbutt, Leer]
+    '6': [FocusEnergy]
+    '10': [Pursuit]
+    '15': [TakeDown]
+    '19': [ScaryFace]
+    '24': [Assurance]
+    '28': [AncientPower]
+    '33': [ZenHeadbutt]
+    '37': [Screech]
+    '43': [HeadSmash]
+  egg: [Crunch, Curse, DoubleEdge, HammerArm, Leer, Slam, Stomp, Thrash, Whirlwind]
+Rampardos:
+  level:
+    '1': [Headbutt, Leer]
+    '6': [FocusEnergy]
+    '10': [Pursuit]
+    '15': [TakeDown]
+    '19': [ScaryFace]
+    '24': [Assurance]
+    '28': [AncientPower]
+    '30': [Endeavor]
+    '36': [ZenHeadbutt]
+    '43': [Screech]
+    '52': [HeadSmash]
+  teachable:
+    - Avalanche
+    - BrickBreak
+    - Cut
+    - FocusBlast
+    - FocusPunch
+    - GigaImpact
+    - HyperBeam
+    - Outrage
+    - PainSplit
+    - Surf
+    - Whirlpool
+    - StompingTantrum
+    - LaserFocus

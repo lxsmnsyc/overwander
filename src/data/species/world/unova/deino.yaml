@@ -1,0 +1,27 @@
+# The three heads: a Deino cannot see at all, so it bites whatever is
+# in front of it to find out what it was, and never fully stops
+Deino:
+  types: [Dark, Dragon]
+  egg-groups: [Dragon]
+  biomes: [Badlands, Volcano]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Zweilous
+      method: [Level]
+      level: 50
+Zweilous:
+  types: [Dark, Dragon]
+  egg-groups: [Dragon]
+  biomes: [Badlands, Volcano]
+  active: [Evening, Night]
+  evolves-from: Deino
+  evolves-into:
+    - species: Hydreigon
+      method: [Level]
+      level: 64
+Hydreigon:
+  types: [Dark, Dragon]
+  egg-groups: [Dragon]
+  biomes: [Badlands, Volcano]
+  active: [Evening, Night]
+  evolves-from: Zweilous

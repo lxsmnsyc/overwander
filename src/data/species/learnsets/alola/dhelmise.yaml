@@ -1,0 +1,69 @@
+# TM and tutor moves shared by the whole family
+
+Dhelmise:
+  level:
+    '1': [Absorb, Astonish, Growth, RapidSpin, Switcheroo]
+    '5': [MegaDrain]
+    '9': [Wrap]
+    '14': [GyroBall]
+    '18': [MetalSound]
+    '23': [GigaDrain]
+    '27': [Whirlpool]
+    '32': [AnchorShot]
+    '36': [ShadowBall]
+    '41': [EnergyBall]
+    '45': [Slam]
+    '50': [HeavySlam]
+    '54': [PhantomForce]
+    '59': [PowerWhip]
+  teachable:
+    - AerialAce
+    - AllySwitch
+    - Attract
+    - Block
+    - BrickBreak
+    - BrutalSwing
+    - Bulldoze
+    - Confide
+    - DoubleTeam
+    - Earthquake
+    - Embargo
+    - EnergyBall
+    - Facade
+    - FlashCannon
+    - Frustration
+    - GigaDrain
+    - GigaImpact
+    - GrassKnot
+    - GyroBall
+    - HelpingHand
+    - HiddenPower
+    - HyperBeam
+    - IronDefense
+    - IronHead
+    - KnockOff
+    - PainSplit
+    - Payback
+    - Protect
+    - RainDance
+    - Rest
+    - Return
+    - RockSlide
+    - RolePlay
+    - Round
+    - ShadowBall
+    - ShadowClaw
+    - SleepTalk
+    - SludgeWave
+    - Snore
+    - SolarBeam
+    - Spite
+    - Substitute
+    - SunnyDay
+    - Surf
+    - Swagger
+    - SwordsDance
+    - Synthesis
+    - Telekinesis
+    - Thief
+    - Toxic

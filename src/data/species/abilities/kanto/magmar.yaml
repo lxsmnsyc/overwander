@@ -1,0 +1,12 @@
+Magmar:
+  abilities: [FlameBody]
+  hidden: [VitalSpirit]
+Magby:
+  abilities: [FlameBody]
+  hidden: [VitalSpirit]
+Magmortar:
+  abilities: [FlameBody]
+  # Flash Fire and Solar Power are this registry's rather than the
+  # mainline's: the line reaches two abilities and needs four, and
+  # both are what a cannon that runs on its own heat would have
+  hidden: [VitalSpirit, FlashFire, SolarPower]

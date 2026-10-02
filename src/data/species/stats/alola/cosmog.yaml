@@ -1,0 +1,24 @@
+Cosmog:
+  stats: { HP: 43, Attack: 29, Defense: 31, SpecialAttack: 29, SpecialDefense: 31, Speed: 37 }
+  catch-rate: 45
+  height: 0.2
+  weight: 0.1
+  gender: genderless
+Cosmoem:
+  stats: { HP: 43, Attack: 29, Defense: 131, SpecialAttack: 29, SpecialDefense: 131, Speed: 37 }
+  catch-rate: 45
+  height: 0.1
+  weight: 999.9
+  gender: genderless
+Solgaleo:
+  stats: { HP: 137, Attack: 137, Defense: 107, SpecialAttack: 113, SpecialDefense: 89, Speed: 97 }
+  catch-rate: 45
+  height: 3.4
+  weight: 230
+  gender: genderless
+Lunala:
+  stats: { HP: 137, Attack: 113, Defense: 89, SpecialAttack: 137, SpecialDefense: 107, Speed: 97 }
+  catch-rate: 45
+  height: 4
+  weight: 120
+  gender: genderless

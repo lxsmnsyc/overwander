@@ -1,0 +1,75 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - AfterYou
+  - Attract
+  - CalmMind
+  - ChargeBeam
+  - DoubleTeam
+  - DreamEater
+  - EnergyBall
+  - Facade
+  - Flash
+  - Frustration
+  - Gravity
+  - GyroBall
+  - HealBell
+  - HelpingHand
+  - HiddenPower
+  - LightScreen
+  - MagicCoat
+  - PainSplit
+  - Protect
+  - PsychUp
+  - Psychic
+  - Psyshock
+  - RainDance
+  - Reflect
+  - Rest
+  - Return
+  - RockSlide
+  - RockTomb
+  - Round
+  - Safeguard
+  - ShadowBall
+  - SignalBeam
+  - SkillSwap
+  - SleepTalk
+  - Snore
+  - Substitute
+  - Swagger
+  - Telekinesis
+  - ThunderWave
+  - Torment
+  - Toxic
+  - Trick
+  - TrickRoom
+  - WonderRoom
+  - WorrySeed
+  - ZenHeadbutt
+  - Confide
+  - DazzlingGleam
+Munna:
+  level:
+    '1': [DefenseCurl, Psywave]
+    '5': [LuckyChant]
+    '7': [Yawn]
+    '11': [Psybeam]
+    '13': [Imprison]
+    '17': [Moonlight]
+    '19': [Hypnosis]
+    '23': [ZenHeadbutt]
+    '25': [Synchronoise]
+    '29': [Nightmare]
+    '31': [FutureSight]
+    '35': [CalmMind]
+    '37': [Psychic]
+    '41': [DreamEater]
+    '43': [Telekinesis]
+    '47': [StoredPower]
+  egg: [Barrier, BatonPass, Curse, SecretPower, SonicBoom, Swift]
+Musharna:
+  # A stone evolution learns nothing further: everything it knows
+  # it knew as a Munna
+  level:
+    '1': [DefenseCurl, Hypnosis, LuckyChant, Psybeam, PsychicTerrain]
+  teachable: [GigaImpact, HyperBeam]

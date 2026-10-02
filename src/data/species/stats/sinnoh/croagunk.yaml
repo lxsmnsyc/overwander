@@ -1,0 +1,12 @@
+Croagunk:
+  stats: { HP: 48, Attack: 61, Defense: 40, SpecialAttack: 61, SpecialDefense: 40, Speed: 50 }
+  catch-rate: 140
+  height: 0.7
+  weight: 23
+  gender: [1, 1]
+Toxicroak:
+  stats: { HP: 83, Attack: 106, Defense: 65, SpecialAttack: 86, SpecialDefense: 65, Speed: 85 }
+  catch-rate: 75
+  height: 1.3
+  weight: 44.4
+  gender: [1, 1]

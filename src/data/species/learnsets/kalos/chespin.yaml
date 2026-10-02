@@ -1,0 +1,130 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - AerialAce
+  - Attract
+  - BrickBreak
+  - BulkUp
+  - Bulldoze
+  - Confide
+  - Cut
+  - Dig
+  - DoubleTeam
+  - DrainPunch
+  - DualChop
+  - Endeavor
+  - EnergyBall
+  - Facade
+  - Flash
+  - Fling
+  - FocusPunch
+  - Frustration
+  - GigaDrain
+  - GrassKnot
+  - GrassPledge
+  - GyroBall
+  - HelpingHand
+  - HiddenPower
+  - IronDefense
+  - IronHead
+  - IronTail
+  - LowKick
+  - LowSweep
+  - NaturePower
+  - PainSplit
+  - Payback
+  - PoisonJab
+  - PowerUpPunch
+  - Protect
+  - Reflect
+  - Rest
+  - Retaliate
+  - Return
+  - Roar
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Round
+  - SecretPower
+  - SeedBomb
+  - ShadowClaw
+  - SleepTalk
+  - SludgeBomb
+  - SmackDown
+  - Snore
+  - SolarBeam
+  - StoneEdge
+  - Strength
+  - Substitute
+  - SunnyDay
+  - SuperFang
+  - Superpower
+  - Swagger
+  - SwordsDance
+  - Synthesis
+  - Taunt
+  - ThunderPunch
+  - Toxic
+  - WorrySeed
+  - ZenHeadbutt
+  - StompingTantrum
+Chespin:
+  level:
+    '1': [Tackle, Growl]
+    '5': [VineWhip]
+    '8': [Rollout]
+    '11': [Bite]
+    '15': [LeechSeed]
+    '18': [PinMissile]
+    '27': [TakeDown]
+    '32': [SeedBomb]
+    '35': [MudShot]
+    '39': [BulkUp]
+    '42': [BodySlam]
+    '45': [PainSplit]
+    '48': [WoodHammer]
+  egg: [BellyDrum, Curse, DefenseCurl, QuickGuard, Rollout, Spikes, Synthesis]
+Quilladin:
+  level:
+    '1': [Tackle, Growl]
+    '5': [VineWhip]
+    '8': [Rollout]
+    '11': [Bite]
+    '15': [LeechSeed]
+    '20': [PinMissile]
+    '26': [NeedleArm]
+    '30': [TakeDown]
+    '35': [SeedBomb]
+    '39': [MudShot]
+    '44': [BulkUp]
+    '48': [BodySlam]
+    '52': [PainSplit]
+    '55': [WoodHammer]
+  teachable: [HoneClaws]
+Chesnaught:
+  level:
+    '1': [Tackle, Growl, BellyDrum, Feint]
+    '5': [VineWhip]
+    '8': [Rollout]
+    '11': [Bite]
+    '15': [LeechSeed]
+    '20': [PinMissile]
+    '26': [NeedleArm]
+    '30': [TakeDown]
+    '35': [SeedBomb]
+    '41': [MudShot]
+    '44': [BulkUp]
+    '48': [BodySlam]
+    '52': [PainSplit]
+    '55': [WoodHammer]
+    '60': [HammerArm]
+    '70': [GigaImpact]
+    '75': [SpikyShield]
+  teachable:
+    - Block
+    - DragonClaw
+    - Earthquake
+    - FocusBlast
+    - FrenzyPlant
+    - GigaImpact
+    - HoneClaws
+    - HyperBeam

@@ -1,0 +1,6 @@
+Togedemaru:
+  stats: { HP: 65, Attack: 98, Defense: 63, SpecialAttack: 40, SpecialDefense: 73, Speed: 96 }
+  catch-rate: 180
+  height: 0.3
+  weight: 3.3
+  gender: [4, 4]

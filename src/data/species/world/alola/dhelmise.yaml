@@ -1,0 +1,6 @@
+Dhelmise:
+  types: [Ghost, Grass]
+  egg-groups: [Mineral]
+  habitat: Water
+  biomes: [Ocean, KelpForest]
+  active: any

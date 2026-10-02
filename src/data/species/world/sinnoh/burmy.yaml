@@ -1,0 +1,74 @@
+# The bagworm and what it grows into. A Burmy is met wearing whatever
+# the place it was met is made of, and it keeps that cloak for life:
+# the leaves, the sand or the scrap decide what a Wormadam is built
+# out of. A male leaves the case behind entirely and flies off as a
+# Mothim
+Burmy:
+  types: [Bug]
+  egg-groups: [Bug]
+  active: any
+  evolves-into:
+    - species: Wormadam
+      method: [Level, Gender]
+      level: 20
+      gender: Female
+    - species: Mothim
+      method: [Level, Gender]
+      level: 20
+      gender: Male
+BurmySandy:
+  types: [Bug]
+  egg-groups: [Bug]
+  biomes: [Beach, Desert, RockyCoast]
+  active: any
+  base-form: false
+  evolves-into:
+    - species: WormadamSandy
+      method: [Level, Gender]
+      level: 20
+      gender: Female
+    - species: Mothim
+      method: [Level, Gender]
+      level: 20
+      gender: Male
+BurmyTrash:
+  types: [Bug]
+  egg-groups: [Bug]
+  biomes: [Badlands, Mountain, Steppe]
+  active: any
+  base-form: false
+  evolves-into:
+    - species: WormadamTrash
+      method: [Level, Gender]
+      level: 20
+      gender: Female
+    - species: Mothim
+      method: [Level, Gender]
+      level: 20
+      gender: Male
+Wormadam:
+  types: [Bug, Grass]
+  egg-groups: [Bug]
+  biomes: [Woodland, TemperateForest, MontaneForest]
+  active: any
+  evolves-from: Burmy
+WormadamSandy:
+  types: [Bug, Ground]
+  egg-groups: [Bug]
+  biomes: [Beach, Desert, RockyCoast]
+  active: any
+  base-form: false
+  evolves-from: BurmySandy
+WormadamTrash:
+  types: [Bug, Steel]
+  egg-groups: [Bug]
+  biomes: [Badlands, Mountain, Steppe]
+  active: any
+  base-form: false
+  evolves-from: BurmyTrash
+Mothim:
+  types: [Bug, Flying]
+  egg-groups: [Bug]
+  biomes: [Woodland, TemperateForest, MontaneForest]
+  active: any
+  evolves-from: Burmy

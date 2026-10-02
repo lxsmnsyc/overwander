@@ -1,0 +1,12 @@
+Baltoy:
+  stats: { HP: 40, Attack: 40, Defense: 55, SpecialAttack: 40, SpecialDefense: 70, Speed: 55 }
+  catch-rate: 255
+  height: 0.5
+  weight: 21.5
+  gender: genderless
+Claydol:
+  stats: { HP: 60, Attack: 70, Defense: 105, SpecialAttack: 70, SpecialDefense: 120, Speed: 75 }
+  catch-rate: 90
+  height: 1.5
+  weight: 108
+  gender: genderless

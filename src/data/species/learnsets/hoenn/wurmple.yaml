@@ -1,0 +1,138 @@
+# The caterpillar and its two cocoons learn nothing but what they
+# level into, so only the two that come out with wings have a list
+
+Wurmple:
+  level:
+    '1': [Tackle, StringShot]
+    '5': [PoisonSting]
+    '15': [BugBite]
+  teachable: [Electroweb]
+Silcoon:
+  level:
+    '1': [Harden]
+  teachable: [BugBite, Electroweb]
+Beautifly:
+  level:
+    '1': [Absorb]
+    '13': [Gust]
+    '17': [StunSpore]
+    '20': [MorningSun]
+    '24': [MegaDrain]
+    '27': [Whirlwind]
+    '31': [Attract]
+    '34': [SilverWind]
+    '38': [GigaDrain]
+    '41': [BugBuzz]
+    '45': [QuiverDance]
+  teachable:
+    - Toxic
+    - HiddenPower
+    - SunnyDay
+    - HyperBeam
+    - Protect
+    - GigaDrain
+    - Frustration
+    - SolarBeam
+    - Return
+    - Psychic
+    - ShadowBall
+    - DoubleTeam
+    - AerialAce
+    - Facade
+    - SecretPower
+    - Rest
+    - Attract
+    - Thief
+    - Flash
+    - DoubleEdge
+    - Mimic
+    - Substitute
+    - Snore
+    - Endure
+    - Swagger
+    - SleepTalk
+    - Swift
+    - Venoshock
+    - Round
+    - Acrobatics
+    - StruggleBug
+    - Electroweb
+    - Confide
+    - Infestation
+    - Safeguard
+    - BugBite
+    - Captivate
+    - Defog
+    - EnergyBall
+    - GigaImpact
+    - NaturalGift
+    - OminousWind
+    - Roost
+    - Tailwind
+    - UTurn
+    - LaserFocus
+Cascoon:
+  level:
+    '1': [Harden]
+  teachable: [BugBite, Electroweb]
+Dustox:
+  level:
+    '1': [Confusion]
+    '13': [Gust]
+    '17': [Protect]
+    '20': [Moonlight]
+    '24': [Psybeam]
+    '27': [Whirlwind]
+    '31': [LightScreen]
+    '34': [SilverWind]
+    '38': [Toxic]
+    '41': [BugBuzz]
+    '45': [QuiverDance]
+  teachable:
+    - Toxic
+    - HiddenPower
+    - SunnyDay
+    - HyperBeam
+    - Protect
+    - GigaDrain
+    - Frustration
+    - SolarBeam
+    - Return
+    - Psychic
+    - ShadowBall
+    - DoubleTeam
+    - AerialAce
+    - Facade
+    - SecretPower
+    - Rest
+    - Attract
+    - Thief
+    - Flash
+    - DoubleEdge
+    - Mimic
+    - Substitute
+    - Snore
+    - Endure
+    - Swagger
+    - SleepTalk
+    - Swift
+    - Venoshock
+    - Round
+    - Acrobatics
+    - StruggleBug
+    - Electroweb
+    - Confide
+    - Infestation
+    - LightScreen
+    - SludgeBomb
+    - BugBite
+    - Captivate
+    - Defog
+    - EnergyBall
+    - GigaImpact
+    - NaturalGift
+    - OminousWind
+    - Roost
+    - Tailwind
+    - UTurn
+    - LaserFocus

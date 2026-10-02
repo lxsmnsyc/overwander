@@ -1,0 +1,56 @@
+TypeNull:
+  abilities: [BattleArmor]
+Silvally:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyFighting:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyFlying:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyPoison:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyGround:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyRock:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyBug:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyGhost:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallySteel:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyFire:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyWater:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyGrass:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyElectric:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyPsychic:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyIce:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyDragon:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyDark:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]
+SilvallyFairy:
+  abilities: [RksSystem]
+  hidden: [Adaptability, Download]

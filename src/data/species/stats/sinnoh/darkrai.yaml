@@ -1,0 +1,6 @@
+Darkrai:
+  stats: { HP: 70, Attack: 90, Defense: 90, SpecialAttack: 135, SpecialDefense: 90, Speed: 125 }
+  catch-rate: 3
+  height: 1.5
+  weight: 50.5
+  gender: genderless

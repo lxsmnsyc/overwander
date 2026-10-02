@@ -1,0 +1,17 @@
+Carvanha:
+  types: [Water, Dark]
+  egg-groups: [Water2]
+  habitat: Water
+  biomes: [Ocean, CoralReef]
+  active: any
+  evolves-into:
+    - species: Sharpedo
+      method: [Level]
+      level: 30
+Sharpedo:
+  types: [Water, Dark]
+  egg-groups: [Water2]
+  habitat: Water
+  biomes: [Ocean, CoralReef]
+  active: any
+  evolves-from: Carvanha

@@ -1,0 +1,9 @@
+Fletchling:
+  abilities: [BigPecks]
+  hidden: [GaleWings]
+Fletchinder:
+  abilities: [FlameBody]
+  hidden: [GaleWings]
+Talonflame:
+  abilities: [FlameBody]
+  hidden: [GaleWings, Reckless]

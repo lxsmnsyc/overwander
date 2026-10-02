@@ -1,0 +1,8 @@
+# The mouse with whiskers for antennas. It is already moving by the
+# time anything else has decided to, which its signature pays for in
+# cast time rather than in cooldowns
+Dedenne:
+  types: [Electric, Fairy]
+  egg-groups: [Field, Fairy]
+  biomes: [Grassland, Woodland]
+  active: any

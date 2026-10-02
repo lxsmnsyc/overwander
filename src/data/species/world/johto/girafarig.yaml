@@ -1,0 +1,5 @@
+Girafarig:
+  types: [Normal, Psychic]
+  egg-groups: [Field]
+  biomes: [Savanna, Grassland, Steppe]
+  active: any

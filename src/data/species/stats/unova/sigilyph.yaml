@@ -1,0 +1,6 @@
+Sigilyph:
+  stats: { HP: 72, Attack: 58, Defense: 80, SpecialAttack: 103, SpecialDefense: 80, Speed: 97 }
+  catch-rate: 45
+  height: 1.4
+  weight: 14
+  gender: [1, 1]

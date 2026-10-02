@@ -1,0 +1,6 @@
+Seel:
+  abilities: [ThickFat, Hydration]
+  hidden: [IceBody]
+Dewgong:
+  abilities: [ThickFat, Hydration]
+  hidden: [IceBody, SlushRush]

@@ -1,0 +1,114 @@
+# TM and tutor moves shared by both sizes
+
+# The forms both of them drill, at the same counts
+family-teachable:
+  - Acrobatics
+  - AerialAce
+  - Agility
+  - AllySwitch
+  - Attract
+  - AuraSphere
+  - BatonPass
+  - Bounce
+  - BrickBreak
+  - BulkUp
+  - CalmMind
+  - CloseCombat
+  - Dig
+  - DoubleTeam
+  - DrainPunch
+  - Endure
+  - Facade
+  - Fling
+  - FocusBlast
+  - FocusEnergy
+  - FocusPunch
+  - Frustration
+  - GrassKnot
+  - HelpingHand
+  - HiddenPower
+  - KnockOff
+  - LowKick
+  - LowSweep
+  - MegaKick
+  - MegaPunch
+  - Payback
+  - PoisonJab
+  - Protect
+  - PsychUp
+  - RainDance
+  - Reflect
+  - Rest
+  - Retaliate
+  - Return
+  - Revenge
+  - Reversal
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Round
+  - SecretPower
+  - SleepTalk
+  - Snore
+  - StoneEdge
+  - Strength
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Swift
+  - SwordsDance
+  - TakeDown
+  - Taunt
+  - Toxic
+  - UTurn
+  - WorkUp
+  - Confide
+  - PowerUpPunch
+Mienfoo:
+  level:
+    '1': [Pound, Detect]
+    '5': [Meditate, FakeOut]
+    '10': [Reversal]
+    '15': [FurySwipes]
+    '17': [DoubleSlap]
+    '20': [QuickGuard]
+    '21': [Swift]
+    '25': [CalmMind, ForcePalm]
+    '30': [UTurn]
+    '33': [DrainPunch]
+    '37': [JumpKick]
+    '40': [HoneClaws]
+    '45': [AuraSphere]
+    '49': [Bounce]
+  egg:
+    - AllySwitch
+    - BatonPass
+    - Endure
+    - Feint
+    - FocusPunch
+    - KnockOff
+    - LowKick
+    - MeFirst
+    - SmellingSalts
+    - VitalThrow
+Mienshao:
+  level:
+    '1': [Pound, Meditate, Reversal, Detect, FakeOut, AuraSphere, QuickGuard]
+    '15': [FurySwipes]
+    '17': [DoubleSlap]
+    '20': [WideGuard]
+    '21': [Swift]
+    '25': [CalmMind, ForcePalm]
+    '30': [UTurn]
+    '33': [DrainPunch]
+    '37': [JumpKick]
+    '40': [HoneClaws]
+    '49': [Bounce]
+  teachable:
+    - Assurance
+    - BlazeKick
+    - DoubleEdge
+    - GigaImpact
+    - HyperBeam
+    - VacuumWave
+    - LaserFocus

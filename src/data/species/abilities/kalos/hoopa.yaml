@@ -1,0 +1,9 @@
+Hoopa:
+  abilities: [Magician]
+  # Magician is all the mainline gives it, so the other three are
+  # this registry's: the ring it sits in, the hand that gets there
+  # first, and a thief that takes an ability rather than an item
+  hidden: [Levitate, Prankster, Trace]
+HoopaUnbound:
+  abilities: [Magician]
+  hidden: [Levitate, Prankster, Trace]

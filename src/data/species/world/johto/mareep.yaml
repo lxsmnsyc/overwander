@@ -1,0 +1,25 @@
+Mareep:
+  types: [Electric]
+  egg-groups: [Monster, Field]
+  biomes: [Grassland, Steppe, Shrubland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Flaaffy
+      method: [Level]
+      level: 15
+Flaaffy:
+  types: [Electric]
+  egg-groups: [Monster, Field]
+  biomes: [Grassland, Steppe, Shrubland]
+  active: [Morning, Day]
+  evolves-from: Mareep
+  evolves-into:
+    - species: Ampharos
+      method: [Level]
+      level: 30
+Ampharos:
+  types: [Electric]
+  egg-groups: [Monster, Field]
+  biomes: [Grassland, Steppe, Shrubland]
+  active: [Morning, Day]
+  evolves-from: Flaaffy

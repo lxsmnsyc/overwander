@@ -1,0 +1,6 @@
+Kabuto:
+  abilities: [SwiftSwim, BattleArmor]
+  hidden: [WeakArmor]
+Kabutops:
+  abilities: [SwiftSwim, BattleArmor]
+  hidden: [WeakArmor, Sharpness]

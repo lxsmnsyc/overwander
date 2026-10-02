@@ -1,0 +1,10 @@
+# The three that stood between the pokemon and a burning forest, and
+# have kept standing since. They are built to one plan: the same
+# fourteen moves at the same levels, the same 580 spread turned a
+# different way, and one of them carries Sacred Sword for the others
+
+Cobalion:
+  types: [Steel, Fighting]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Mountain]
+  active: any

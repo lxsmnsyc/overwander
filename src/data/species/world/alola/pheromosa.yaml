@@ -1,0 +1,6 @@
+Pheromosa:
+  types: [Bug, Fighting]
+  egg-groups: [NoEggsDiscovered]
+  # Ultra Desert
+  biomes: [Desert]
+  active: any

@@ -1,0 +1,17 @@
+Barboach:
+  types: [Water, Ground]
+  egg-groups: [Water2]
+  habitat: Water
+  biomes: [Swamp, Bog, TropicalRainforest, Savanna, Desert, Badlands]
+  active: any
+  evolves-into:
+    - species: Whiscash
+      method: [Level]
+      level: 30
+Whiscash:
+  types: [Water, Ground]
+  egg-groups: [Water2]
+  habitat: Water
+  biomes: [Swamp, Bog, TropicalRainforest, Savanna, Desert, Badlands]
+  active: any
+  evolves-from: Barboach

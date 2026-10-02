@@ -1,0 +1,12 @@
+Hoppip:
+  abilities: [Chlorophyll, LeafGuard]
+  hidden: [Infiltrator]
+Skiploom:
+  abilities: [Chlorophyll, LeafGuard]
+  hidden: [Infiltrator]
+Jumpluff:
+  abilities: [Chlorophyll, LeafGuard]
+  # Effect Spore is this registry's rather than the mainline's,
+  # filling a final evolution to four: the three powders it already
+  # learns are what it is covered in
+  hidden: [Infiltrator, EffectSpore]

@@ -1,0 +1,6 @@
+Salandit:
+  abilities: [Corrosion]
+  hidden: [Oblivious]
+Salazzle:
+  abilities: [Corrosion]
+  hidden: [Oblivious, FlameBody, PoisonTouch]

@@ -1,0 +1,15 @@
+Bunnelby:
+  types: [Normal]
+  egg-groups: [Field]
+  biomes: [Grassland, Steppe]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Diggersby
+      method: [Level]
+      level: 20
+Diggersby:
+  types: [Normal, Ground]
+  egg-groups: [Field]
+  biomes: [Grassland, Steppe]
+  active: [Morning, Day]
+  evolves-from: Bunnelby

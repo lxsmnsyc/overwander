@@ -1,0 +1,76 @@
+Registeel:
+  level:
+    '1': [Explosion]
+    '9': [MetalClaw]
+    '17': [Curse]
+    '25': [Superpower]
+    '33': [AncientPower]
+    '41': [Amnesia, IronDefense]
+    '49': [ZapCannon, ChargeBeam]
+    '57': [LockOn]
+    '65': [HyperBeam]
+    '73': [FlashCannon, IronHead]
+    '81': [HammerArm]
+  teachable:
+    - FocusPunch
+    - Toxic
+    - HiddenPower
+    - HyperBeam
+    - Protect
+    - Safeguard
+    - Frustration
+    - Thunderbolt
+    - Thunder
+    - Earthquake
+    - Return
+    - BrickBreak
+    - DoubleTeam
+    - ShockWave
+    - Facade
+    - SecretPower
+    - Rest
+    - Strength
+    - RockSmash
+    - MegaPunch
+    - MegaKick
+    - BodySlam
+    - DoubleEdge
+    - Counter
+    - SeismicToss
+    - Mimic
+    - ThunderWave
+    - Explosion
+    - RockSlide
+    - Substitute
+    - DynamicPunch
+    - Rollout
+    - PsychUp
+    - Snore
+    - Endure
+    - MudSlap
+    - IcePunch
+    - Swagger
+    - ThunderPunch
+    - SleepTalk
+    - DefenseCurl
+    - Round
+    - Bulldoze
+    - Confide
+    - PowerUpPunch
+    - SunnyDay
+    - RainDance
+    - Sandstorm
+    - RockTomb
+    - AerialAce
+    - Fling
+    - FocusBlast
+    - GigaImpact
+    - Gravity
+    - MagnetRise
+    - NaturalGift
+    - RockClimb
+    - RockPolish
+    - ShadowClaw
+    - StealthRock
+    - HoneClaws
+    - StompingTantrum

@@ -1,0 +1,137 @@
+# TM, HM and tutor moves shared by the whole family
+
+# What the cell works out how to do, however many of it there are
+family-teachable:
+  - AfterYou
+  - AllySwitch
+  - Attract
+  - CalmMind
+  - Charm
+  - ConfuseRay
+  - DoubleTeam
+  - DreamEater
+  - Embargo
+  - Encore
+  - Endeavor
+  - Endure
+  - EnergyBall
+  - Explosion
+  - Facade
+  - Flash
+  - FlashCannon
+  - Frustration
+  - FutureSight
+  - Gravity
+  - GuardSwap
+  - GyroBall
+  - HelpingHand
+  - HiddenPower
+  - Imprison
+  - IronDefense
+  - LightScreen
+  - MagicCoat
+  - NightShade
+  - PainSplit
+  - PowerSwap
+  - Protect
+  - Psybeam
+  - PsychUp
+  - Psychic
+  - Psyshock
+  - RainDance
+  - Reflect
+  - Rest
+  - Return
+  - RockSlide
+  - RockTomb
+  - RolePlay
+  - Round
+  - Safeguard
+  - SecretPower
+  - ShadowBall
+  - ShockWave
+  - SignalBeam
+  - SkillSwap
+  - SleepTalk
+  - Snatch
+  - Snore
+  - StoredPower
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Swift
+  - Telekinesis
+  - Thunder
+  - ThunderWave
+  - Toxic
+  - Trick
+  - TrickRoom
+  - WonderRoom
+  - ZenHeadbutt
+  - Confide
+  - Infestation
+Solosis:
+  level:
+    '1': [Confusion, Psywave, Protect]
+    '3': [Reflect]
+    '4': [Recover]
+    '7': [Rollout]
+    '8': [Endeavor]
+    '10': [Snatch]
+    '12': [Psybeam]
+    '14': [HiddenPower]
+    '16': [LightScreen, Charm]
+    '20': [Psyshock]
+    '28': [AllySwitch]
+    '31': [FutureSight]
+    '33': [PainSplit]
+    '36': [Psychic]
+    '40': [SkillSwap]
+    '46': [HealBlock]
+    '48': [WonderRoom]
+  egg:
+    - AcidArmor
+    - Astonish
+    - ConfuseRay
+    - HelpingHand
+    - Imprison
+    - NightShade
+    - SecretPower
+    - Trick
+Duosion:
+  level:
+    '1': [Confusion, Recover, Reflect, Psywave, Protect, Rollout, Endeavor, Snatch]
+    '12': [Psybeam]
+    '14': [HiddenPower]
+    '16': [LightScreen, Charm]
+    '20': [Psyshock]
+    '28': [AllySwitch]
+    '31': [FutureSight]
+    '34': [PainSplit]
+    '39': [Psychic]
+    '43': [SkillSwap]
+    '50': [HealBlock]
+    '53': [WonderRoom]
+Reuniclus:
+  level:
+    '1': [Confusion, Recover, Reflect, Psywave, Protect, Rollout, Endeavor, Snatch]
+    '12': [Psybeam]
+    '14': [HiddenPower]
+    '16': [LightScreen, Charm]
+    '20': [Psyshock]
+    '28': [AllySwitch]
+    '31': [FutureSight]
+    '34': [PainSplit]
+    '39': [Psychic]
+    '43': [SkillSwap]
+    '50': [HealBlock]
+    '53': [WonderRoom]
+  teachable:
+    - BodySlam
+    - BrickBreak
+    - FocusBlast
+    - GigaImpact
+    - HyperBeam
+    - LowSweep
+    - PowerUpPunch
+    - LaserFocus

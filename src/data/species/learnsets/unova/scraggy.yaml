@@ -1,0 +1,139 @@
+# TM, HM and tutor moves shared by the whole family
+
+# What the gang teaches itself, at whichever size
+family-teachable:
+  - AcidSpray
+  - Amnesia
+  - Assurance
+  - Attract
+  - BeatUp
+  - BrickBreak
+  - BulkUp
+  - CloseCombat
+  - Crunch
+  - Curse
+  - DarkPulse
+  - Dig
+  - DoubleEdge
+  - DoubleTeam
+  - DragonClaw
+  - DragonDance
+  - DragonPulse
+  - DragonTail
+  - DrainPunch
+  - DualChop
+  - Encore
+  - Endeavor
+  - Endure
+  - Facade
+  - FakeTears
+  - FirePunch
+  - Fling
+  - FocusBlast
+  - FocusPunch
+  - FoulPlay
+  - Frustration
+  - GrassKnot
+  - HelpingHand
+  - HiddenPower
+  - IcePunch
+  - Incinerate
+  - IronDefense
+  - IronHead
+  - IronTail
+  - KnockOff
+  - LowKick
+  - LowSweep
+  - MegaKick
+  - MegaPunch
+  - Payback
+  - PoisonJab
+  - Protect
+  - RainDance
+  - Rest
+  - Retaliate
+  - Return
+  - Revenge
+  - Roar
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Round
+  - ScaryFace
+  - SecretPower
+  - SleepTalk
+  - SludgeBomb
+  - SmackDown
+  - Snarl
+  - Snatch
+  - Snore
+  - Spite
+  - StoneEdge
+  - Strength
+  - Substitute
+  - SunnyDay
+  - SuperFang
+  - Swagger
+  - TakeDown
+  - Taunt
+  - Thief
+  - ThunderPunch
+  - Torment
+  - Toxic
+  - Uproar
+  - WorkUp
+  - ZenHeadbutt
+  - Confide
+  - PowerUpPunch
+Scraggy:
+  level:
+    '1': [Headbutt, Leer, LowKick]
+    '4': [Payback]
+    '5': [SandAttack]
+    '9': [FeintAttack]
+    '12': [Swagger]
+    '16': [Facade]
+    '20': [Protect, Torment, BrickBreak]
+    '24': [BeatUp]
+    '27': [ChipAway]
+    '28': [ScaryFace]
+    '38': [Crunch]
+    '45': [RockClimb]
+    '48': [FocusPunch]
+    '50': [HeadSmash]
+  egg:
+    - AcidSpray
+    - Amnesia
+    - Counter
+    - Detect
+    - DragonDance
+    - DrainPunch
+    - FakeOut
+    - FeintAttack
+    - FirePunch
+    - IcePunch
+    - QuickGuard
+    - ThunderPunch
+    - ZenHeadbutt
+Scrafty:
+  level:
+    '1': [SandAttack, Headbutt, Leer, LowKick, FeintAttack, Payback]
+    '12': [Swagger]
+    '16': [Facade]
+    '20': [Protect, Torment, BrickBreak]
+    '24': [BeatUp]
+    '27': [ChipAway]
+    '28': [ScaryFace]
+    '38': [Crunch]
+    '51': [RockClimb]
+    '54': [FocusPunch]
+    '60': [HeadSmash]
+  teachable:
+    - BodySlam
+    - GigaImpact
+    - HyperBeam
+    - Metronome
+    - Outrage
+    - Reversal
+    - SwordsDance
+    - ThroatChop

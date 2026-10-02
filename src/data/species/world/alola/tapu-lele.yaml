@@ -1,0 +1,5 @@
+TapuLele:
+  types: [Psychic, Fairy]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [TropicalRainforest]
+  active: any

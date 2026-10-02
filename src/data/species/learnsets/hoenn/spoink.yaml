@@ -1,0 +1,95 @@
+# TM and tutor moves both stages share
+family-teachable:
+  - CalmMind
+  - Toxic
+  - HiddenPower
+  - SunnyDay
+  - Taunt
+  - LightScreen
+  - Protect
+  - RainDance
+  - Frustration
+  - IronTail
+  - Return
+  - Psychic
+  - ShadowBall
+  - DoubleTeam
+  - Reflect
+  - ShockWave
+  - Torment
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Thief
+  - SkillSwap
+  - Snatch
+  - Flash
+  - BodySlam
+  - DoubleEdge
+  - Mimic
+  - DreamEater
+  - Substitute
+  - PsychUp
+  - Snore
+  - IcyWind
+  - Endure
+  - Swagger
+  - SleepTalk
+  - Swift
+  - Captivate
+  - ChargeBeam
+  - GrassKnot
+  - NaturalGift
+  - TrickRoom
+  - Psyshock
+  - Telekinesis
+  - Round
+  - Confide
+Spoink:
+  level:
+    '1': [Splash]
+    '7': [Psywave]
+    '10': [OdorSleuth]
+    '16': [Psybeam]
+    '19': [PsychUp]
+    '25': [ConfuseRay]
+    '26': [ZenHeadbutt]
+    '28': [MagicCoat]
+    '34': [Psychic, Payback]
+    '37': [Rest, Snore]
+    '38': [Psyshock]
+    '43': [Bounce]
+    '46': [PowerGem]
+  egg: [Extrasensory, FutureSight, Trick]
+Grumpig:
+  level:
+    '1': [Splash, Psywave, OdorSleuth, Psybeam]
+    '19': [PsychUp]
+    '25': [ConfuseRay]
+    '26': [ZenHeadbutt]
+    '28': [MagicCoat]
+    '37': [Psychic, Payback]
+    '42': [Psyshock]
+    '43': [Rest, Snore]
+    '55': [Bounce, PowerGem]
+  teachable:
+    - FocusPunch
+    - HyperBeam
+    - MegaPunch
+    - MegaKick
+    - Counter
+    - SeismicToss
+    - DynamicPunch
+    - MudSlap
+    - IcePunch
+    - ThunderPunch
+    - FirePunch
+    - DrainPunch
+    - EnergyBall
+    - Fling
+    - FocusBlast
+    - GigaImpact
+    - Bulldoze
+    - PowerUpPunch
+    - LaserFocus

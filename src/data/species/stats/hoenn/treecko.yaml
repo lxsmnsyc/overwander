@@ -1,0 +1,18 @@
+Treecko:
+  stats: { HP: 40, Attack: 45, Defense: 35, SpecialAttack: 65, SpecialDefense: 55, Speed: 70 }
+  catch-rate: 45
+  height: 0.5
+  weight: 5
+  gender: [7, 1]
+Grovyle:
+  stats: { HP: 50, Attack: 65, Defense: 45, SpecialAttack: 85, SpecialDefense: 65, Speed: 95 }
+  catch-rate: 45
+  height: 0.9
+  weight: 21.6
+  gender: [7, 1]
+Sceptile:
+  stats: { HP: 70, Attack: 85, Defense: 65, SpecialAttack: 105, SpecialDefense: 85, Speed: 120 }
+  catch-rate: 45
+  height: 1.7
+  weight: 52.2
+  gender: [7, 1]

@@ -1,0 +1,11 @@
+Starly:
+  abilities: [KeenEye]
+  hidden: [Reckless]
+Staravia:
+  abilities: [Intimidate]
+  hidden: [Reckless]
+Staraptor:
+  abilities: [Intimidate]
+  # Gale Wings is this registry's rather than the mainline's: the
+  # flock leaves the flock behind, and it gets there first
+  hidden: [Reckless, GaleWings]

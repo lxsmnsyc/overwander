@@ -1,0 +1,8 @@
+Blitzle:
+  abilities: [LightningRod, MotorDrive]
+  hidden: [SapSipper]
+Zebstrika:
+  abilities: [LightningRod, MotorDrive]
+  # Reckless is the invented fourth: the line reaches three, and it
+  # throws itself at things with Wild Charge and Take Down
+  hidden: [SapSipper, Reckless]

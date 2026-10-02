@@ -1,0 +1,33 @@
+# What a Kadabra comes out of the evolution knowing, taken across
+# both halves of the generation: Red and Blue start it with
+# Teleport, Confusion and Disable, and Yellow drops the latter two
+# from the first level and starts it with Kinesis instead — the
+# spoon-bending it is named for, which nothing at all could learn
+# in Red and Blue. There is one Kadabra here rather than two, so it
+# knows what a Gen 1 Kadabra could know. Johto brings the rest
+# forward a few levels and adds the Future Sight
+
+Abra:
+  types: [Psychic]
+  egg-groups: [HumanLike]
+  biomes: [Grassland]
+  active: [Day]
+  evolves-into:
+    - species: Kadabra
+      method: [Level]
+      level: 16
+Kadabra:
+  types: [Psychic]
+  egg-groups: [HumanLike]
+  biomes: [Grassland]
+  active: [Day]
+  evolves-from: Abra
+  evolves-into:
+    - species: Alakazam
+      method: [Trade]
+Alakazam:
+  types: [Psychic]
+  egg-groups: [HumanLike]
+  biomes: [Grassland]
+  active: [Day]
+  evolves-from: Kadabra

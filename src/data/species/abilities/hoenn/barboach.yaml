@@ -1,0 +1,8 @@
+Barboach:
+  abilities: [Oblivious, Anticipation]
+  hidden: [Hydration]
+Whiscash:
+  abilities: [Oblivious, Anticipation]
+  # One the mainline never gave it: something that sits out an
+  # earthquake under the mud is not taken down in one blow
+  hidden: [Hydration, Sturdy]

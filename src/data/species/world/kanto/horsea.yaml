@@ -1,0 +1,28 @@
+Horsea:
+  types: [Water]
+  egg-groups: [Water1, Dragon]
+  habitat: Water
+  biomes: [Ocean, CoralReef, DeepOcean, KelpForest, Beach, RockyCoast]
+  active: any
+  evolves-into:
+    - species: Seadra
+      method: [Level]
+      level: 32
+Seadra:
+  types: [Water]
+  egg-groups: [Water1, Dragon]
+  habitat: Water
+  biomes: [Ocean, CoralReef, KelpForest, Beach, RockyCoast]
+  active: any
+  evolves-from: Horsea
+  evolves-into:
+    - species: Kingdra
+      method: [HeldItem, Trade]
+      item: DragonScale
+Kingdra:
+  types: [Water, Dragon]
+  egg-groups: [Water1, Dragon]
+  habitat: Water
+  biomes: [Ocean, CoralReef, Beach, RockyCoast]
+  active: any
+  evolves-from: Seadra

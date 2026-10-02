@@ -1,0 +1,10 @@
+Basculin:
+  abilities: [Reckless, Adaptability]
+  # Swift Swim is the invented fourth, and both stripes take it: the
+  # line reaches three either way, and what they do is run a river
+  hidden: [MoldBreaker, SwiftSwim]
+BasculinBlue:
+  # The blue school takes the landing rather than the throw, which
+  # is the whole difference between them
+  abilities: [RockHead, Adaptability]
+  hidden: [MoldBreaker, SwiftSwim]

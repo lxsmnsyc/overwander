@@ -1,0 +1,11 @@
+Pidove:
+  abilities: [BigPecks, SuperLuck]
+  hidden: [Rivalry]
+Tranquill:
+  abilities: [BigPecks, SuperLuck]
+  hidden: [Rivalry]
+Unfezant:
+  abilities: [BigPecks, SuperLuck]
+  # Defiant is the invented fourth: the line reaches three, and a
+  # bird this proud answers being belittled
+  hidden: [Rivalry, Defiant]

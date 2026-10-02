@@ -1,0 +1,6 @@
+Girafarig:
+  stats: { HP: 70, Attack: 80, Defense: 65, SpecialAttack: 90, SpecialDefense: 65, Speed: 85 }
+  catch-rate: 60
+  height: 1.5
+  weight: 41.5
+  gender: [1, 1]

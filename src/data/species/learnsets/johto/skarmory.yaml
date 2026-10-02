@@ -1,0 +1,64 @@
+Skarmory:
+  level:
+    '1': [Leer, Peck]
+    '13': [SandAttack]
+    '19': [Swift]
+    '20': [Feint]
+    '25': [Agility]
+    '29': [AirCutter]
+    '37': [FuryAttack]
+    '39': [AirSlash, Autotomize]
+    '42': [Spikes]
+    '45': [MetalSound, NightSlash]
+    '49': [SteelWing]
+  teachable:
+    - Toxic
+    - SteelWing
+    - Fly
+    - Cut
+    - Sandstorm
+    - SunnyDay
+    - DoubleTeam
+    - Rest
+    - Thief
+    - Snore
+    - Curse
+    - Protect
+    - Detect
+    - Endure
+    - Swagger
+    - Attract
+    - SleepTalk
+    - Return
+    - Frustration
+    - HiddenPower
+    - MudSlap
+    - Swift
+    - AerialAce
+    - Counter
+    - DoubleEdge
+    - Facade
+    - Mimic
+    - Roar
+    - RockSlide
+    - RockSmash
+    - SecretPower
+    - Substitute
+    - Taunt
+    - Torment
+    - Captivate
+    - DarkPulse
+    - Defog
+    - FlashCannon
+    - NaturalGift
+    - OminousWind
+    - Payback
+    - Pluck
+    - Roost
+    - StealthRock
+    - Tailwind
+    - XScissor
+    - Round
+    - SkyDrop
+    - Confide
+  egg: [DrillPeck, Pursuit, SkyAttack, Whirlwind, Assurance, BraveBird, GuardSwap]

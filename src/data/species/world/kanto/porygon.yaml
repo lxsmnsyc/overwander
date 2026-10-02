@@ -1,0 +1,27 @@
+Porygon:
+  types: [Normal]
+  egg-groups: [Mineral]
+  biomes: [Grassland]
+  active: any
+  evolves-into:
+    - species: Porygon2
+      method: [HeldItem, Trade]
+      item: UpGrade
+Porygon2:
+  types: [Normal]
+  egg-groups: [Mineral]
+  biomes: [Grassland]
+  active: any
+  evolves-from: Porygon
+  evolves-into:
+    - species: PorygonZ
+      method: [HeldItem, Trade]
+      item: DubiousDisc
+# A Porygon2 somebody patched badly: a Porygon-Z moves in ways nobody
+# wrote down and is faster for it
+PorygonZ:
+  types: [Normal]
+  egg-groups: [Mineral]
+  biomes: [Grassland, Steppe]
+  active: any
+  evolves-from: Porygon2

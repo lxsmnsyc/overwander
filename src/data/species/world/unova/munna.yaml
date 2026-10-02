@@ -1,0 +1,17 @@
+# The dreamers: a Munna eats what somebody is dreaming, and a
+# Musharna breathes the pink mist of it back out
+Munna:
+  types: [Psychic]
+  egg-groups: [Field]
+  biomes: [Grassland, Woodland]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Musharna
+      method: [UsedItem]
+      item: MoonStone
+Musharna:
+  types: [Psychic]
+  egg-groups: [Field]
+  biomes: [Grassland, Woodland]
+  active: [Evening, Night]
+  evolves-from: Munna

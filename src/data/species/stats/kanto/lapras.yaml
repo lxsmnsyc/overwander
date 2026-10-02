@@ -1,0 +1,6 @@
+Lapras:
+  stats: { HP: 130, Attack: 85, Defense: 80, SpecialAttack: 85, SpecialDefense: 95, Speed: 60 }
+  catch-rate: 45
+  height: 2.5
+  weight: 220
+  gender: [1, 1]

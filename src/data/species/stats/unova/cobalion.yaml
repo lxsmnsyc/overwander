@@ -1,0 +1,6 @@
+Cobalion:
+  stats: { HP: 91, Attack: 90, Defense: 129, SpecialAttack: 90, SpecialDefense: 72, Speed: 108 }
+  catch-rate: 3
+  height: 2.1
+  weight: 250
+  gender: genderless

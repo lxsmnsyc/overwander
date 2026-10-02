@@ -1,0 +1,6 @@
+Krabby:
+  abilities: [HyperCutter, ShellArmor]
+  hidden: [SheerForce]
+Kingler:
+  abilities: [HyperCutter, ShellArmor]
+  hidden: [SheerForce, ToughClaws]

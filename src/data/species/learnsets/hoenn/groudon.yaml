@@ -1,0 +1,104 @@
+family-teachable:
+  - Roar
+  - Toxic
+  - HiddenPower
+  - HyperBeam
+  - Protect
+  - Frustration
+  - Thunderbolt
+  - Thunder
+  - Earthquake
+  - Return
+  - BrickBreak
+  - DoubleTeam
+  - ShockWave
+  - Facade
+  - SecretPower
+  - Rest
+  - Strength
+  - RockSmash
+  - BodySlam
+  - DoubleEdge
+  - Mimic
+  - ThunderWave
+  - RockSlide
+  - Substitute
+  - PsychUp
+  - Snore
+  - Endure
+  - MudSlap
+  - Swagger
+  - SleepTalk
+  - Swift
+  - Round
+  - Bulldoze
+  - Confide
+  - DragonClaw
+  - BulkUp
+  - SunnyDay
+  - Safeguard
+  - SolarBeam
+  - IronTail
+  - Dig
+  - Flamethrower
+  - Sandstorm
+  - FireBlast
+  - RockTomb
+  - AerialAce
+  - Overheat
+  - Cut
+  - MegaPunch
+  - SwordsDance
+  - MegaKick
+  - Counter
+  - SeismicToss
+  - DynamicPunch
+  - Rollout
+  - FuryCutter
+  - ThunderPunch
+  - FirePunch
+  - DefenseCurl
+  - DragonPulse
+  - Fling
+  - FocusBlast
+  - GigaImpact
+  - IronHead
+  - NaturalGift
+  - RockClimb
+  - RockPolish
+  - ShadowClaw
+  - StealthRock
+  - StoneEdge
+  - HoneClaws
+  - SmackDown
+  - Incinerate
+  - DragonTail
+  - PowerUpPunch
+  - BrutalSwing
+  - StompingTantrum
+Groudon:
+  level:
+    '1': [MudShot]
+    '5': [ScaryFace]
+    '15': [AncientPower, LavaPlume]
+    '20': [Slash, HammerArm]
+    '30': [BulkUp]
+    '35': [Earthquake]
+    '45': [FireBlast, PrecipiceBlades]
+    '50': [Rest]
+    '60': [Fissure]
+    '65': [SolarBeam, EarthPower]
+    '75': [Eruption]
+GroudonPrimal:
+  level:
+    '1': [MudShot]
+    '5': [ScaryFace]
+    '15': [AncientPower, LavaPlume]
+    '20': [Slash, HammerArm]
+    '30': [BulkUp]
+    '35': [Earthquake]
+    '45': [FireBlast, PrecipiceBlades]
+    '50': [Rest]
+    '60': [Fissure]
+    '65': [SolarBeam, EarthPower]
+    '75': [Eruption]

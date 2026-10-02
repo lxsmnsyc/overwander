@@ -1,0 +1,5 @@
+Drampa:
+  types: [Normal, Dragon]
+  egg-groups: [Monster, Dragon]
+  biomes: [Mountain, AlpineTundra]
+  active: any

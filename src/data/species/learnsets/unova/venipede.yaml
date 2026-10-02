@@ -1,0 +1,95 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Attract
+  - BugBite
+  - DoubleTeam
+  - Endeavor
+  - Facade
+  - Frustration
+  - GyroBall
+  - HiddenPower
+  - IronDefense
+  - Payback
+  - PoisonJab
+  - Protect
+  - Rest
+  - Return
+  - RockSmash
+  - Round
+  - SleepTalk
+  - SludgeBomb
+  - Snore
+  - SolarBeam
+  - StruggleBug
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Toxic
+  - Venoshock
+  - Confide
+  - Infestation
+Venipede:
+  level:
+    '1': [DefenseCurl, Rollout]
+    '5': [PoisonSting]
+    '8': [Screech]
+    '12': [Pursuit]
+    '15': [Protect]
+    '19': [PoisonTail]
+    '22': [BugBite]
+    '26': [Venoshock]
+    '29': [Agility]
+    '33': [Steamroller]
+    '36': [Toxic]
+    '40': [RockClimb]
+    '43': [DoubleEdge]
+  egg: [PinMissile, RockClimb, Spikes, TakeDown, ToxicSpikes, Twineedle]
+Whirlipede:
+  level:
+    '1': [DefenseCurl, PoisonSting, Rollout, Screech]
+    '12': [Pursuit]
+    '15': [Protect]
+    '19': [PoisonTail]
+    '22': [IronDefense]
+    '23': [BugBite]
+    '28': [Venoshock]
+    '32': [Agility]
+    '37': [Steamroller]
+    '41': [Toxic]
+    '43': [VenomDrench]
+    '46': [RockClimb]
+    '50': [DoubleEdge]
+Scolipede:
+  level:
+    '1': [DefenseCurl, Megahorn, PoisonSting, Rollout, Screech]
+    '12': [Pursuit]
+    '15': [Protect]
+    '19': [PoisonTail]
+    '23': [BugBite]
+    '28': [Venoshock]
+    '30': [BatonPass]
+    '33': [Agility]
+    '39': [Steamroller]
+    '44': [Toxic]
+    '47': [VenomDrench]
+    '50': [RockClimb]
+    '55': [DoubleEdge]
+  teachable:
+    - AquaTail
+    - Bulldoze
+    - Cut
+    - Dig
+    - Earthquake
+    - GigaImpact
+    - HyperBeam
+    - IronTail
+    - RockSlide
+    - RockTomb
+    - Snatch
+    - Strength
+    - Superpower
+    - SwordsDance
+    - XScissor
+    - StompingTantrum
+    - ThroatChop
+    - SmartStrike

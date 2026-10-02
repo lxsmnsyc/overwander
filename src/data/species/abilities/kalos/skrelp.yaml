@@ -1,0 +1,8 @@
+Skrelp:
+  abilities: [PoisonPoint, PoisonTouch]
+  hidden: [Adaptability]
+Dragalge:
+  abilities: [PoisonPoint, PoisonTouch]
+  # Liquid Ooze is this line's invented filler: the mainline gives
+  # Dragalge the three above and nothing else
+  hidden: [Adaptability, LiquidOoze]

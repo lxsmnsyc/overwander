@@ -1,0 +1,75 @@
+# TM and tutor moves shared by the whole family
+
+Togedemaru:
+  level:
+    '1': [Tackle, ThunderShock]
+    '5': [DefenseCurl]
+    '9': [Rollout]
+    '13': [Charge]
+    '17': [Spark]
+    '21': [Nuzzle]
+    '25': [MagnetRise]
+    '29': [Discharge]
+    '33': [ZingZap]
+    '37': [ElectricTerrain]
+    '41': [WildCharge]
+    '45': [PinMissile]
+    '49': [SpikyShield]
+    '53': [FellStinger]
+  teachable:
+    - AfterYou
+    - Attract
+    - Bounce
+    - ChargeBeam
+    - Confide
+    - Covet
+    - DoubleTeam
+    - Electroweb
+    - Endeavor
+    - Facade
+    - Fling
+    - Frustration
+    - GigaImpact
+    - GrassKnot
+    - Gravity
+    - GyroBall
+    - HelpingHand
+    - HiddenPower
+    - IronHead
+    - IronTail
+    - LastResort
+    - MagnetRise
+    - Payback
+    - PoisonJab
+    - Protect
+    - Reflect
+    - Rest
+    - Return
+    - RolePlay
+    - Round
+    - ShockWave
+    - SleepTalk
+    - Snore
+    - Substitute
+    - SuperFang
+    - Swagger
+    - Thief
+    - Thunder
+    - ThunderWave
+    - Thunderbolt
+    - Toxic
+    - UTurn
+    - VoltSwitch
+    - WildCharge
+    - WorkUp
+    - ZenHeadbutt
+  egg:
+    - DisarmingVoice
+    - Encore
+    - FakeOut
+    - Flail
+    - Present
+    - Reversal
+    - Tickle
+    - Twineedle
+    - Wish

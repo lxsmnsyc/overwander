@@ -1,0 +1,12 @@
+Yanma:
+  stats: { HP: 65, Attack: 65, Defense: 45, SpecialAttack: 75, SpecialDefense: 45, Speed: 95 }
+  catch-rate: 75
+  height: 1.2
+  weight: 38
+  gender: [1, 1]
+Yanmega:
+  stats: { HP: 86, Attack: 76, Defense: 86, SpecialAttack: 116, SpecialDefense: 56, Speed: 95 }
+  catch-rate: 30
+  height: 1.9
+  weight: 51.5
+  gender: [1, 1]

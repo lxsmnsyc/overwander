@@ -1,0 +1,87 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Attract
+  - Blizzard
+  - BrickBreak
+  - Brine
+  - BulkUp
+  - Captivate
+  - Dig
+  - Dive
+  - DoubleTeam
+  - Endure
+  - Facade
+  - FocusPunch
+  - Frustration
+  - Hail
+  - HiddenPower
+  - IceBeam
+  - IcePunch
+  - IcyWind
+  - IronTail
+  - NaturalGift
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - RockSmash
+  - RockTomb
+  - SecretPower
+  - SleepTalk
+  - Snore
+  - Strength
+  - Substitute
+  - Surf
+  - Swagger
+  - Swift
+  - Toxic
+  - WaterPulse
+  - Waterfall
+  - Whirlpool
+  - Confide
+  - PowerUpPunch
+Buizel:
+  level:
+    '1': [Growl, SonicBoom, WaterSport]
+    '3': [QuickAttack]
+    '6': [WaterGun]
+    '10': [Pursuit]
+    '15': [Swift]
+    '21': [AquaJet]
+    '28': [Agility]
+    '36': [Whirlpool]
+    '45': [RazorWind]
+  egg:
+    - BatonPass
+    - DoubleSlap
+    - FuryCutter
+    - FurySwipes
+    - Headbutt
+    - MudSlap
+    - OdorSleuth
+    - Slash
+Floatzel:
+  level:
+    '1': [Growl, IceFang, QuickAttack, SonicBoom, WaterSport]
+    '3': [QuickAttack]
+    '6': [WaterGun]
+    '10': [Pursuit]
+    '15': [Swift]
+    '21': [AquaJet]
+    '26': [Crunch]
+    '29': [Agility]
+    '39': [Whirlpool]
+    '50': [RazorWind]
+  teachable:
+    - AquaTail
+    - FocusBlast
+    - GigaImpact
+    - Headbutt
+    - HyperBeam
+    - LowKick
+    - MudSlap
+    - Payback
+    - Roar
+    - Taunt
+    - Torment
+    - Liquidation

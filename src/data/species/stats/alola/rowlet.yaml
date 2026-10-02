@@ -1,0 +1,18 @@
+Rowlet:
+  stats: { HP: 68, Attack: 55, Defense: 55, SpecialAttack: 50, SpecialDefense: 50, Speed: 42 }
+  catch-rate: 45
+  height: 0.3
+  weight: 1.5
+  gender: [7, 1]
+Dartrix:
+  stats: { HP: 78, Attack: 75, Defense: 75, SpecialAttack: 70, SpecialDefense: 70, Speed: 52 }
+  catch-rate: 45
+  height: 0.7
+  weight: 16
+  gender: [7, 1]
+Decidueye:
+  stats: { HP: 78, Attack: 107, Defense: 75, SpecialAttack: 100, SpecialDefense: 100, Speed: 70 }
+  catch-rate: 45
+  height: 1.6
+  weight: 36.6
+  gender: [7, 1]

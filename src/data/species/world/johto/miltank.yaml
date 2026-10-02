@@ -1,0 +1,5 @@
+Miltank:
+  types: [Normal]
+  egg-groups: [Field]
+  biomes: [Grassland, Steppe, Shrubland]
+  active: [Morning, Day]

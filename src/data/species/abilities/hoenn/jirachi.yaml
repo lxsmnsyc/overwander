@@ -1,0 +1,7 @@
+Jirachi:
+  abilities: [SereneGrace]
+  # Levitate, Healer and Magic Bounce are this registry's rather
+  # than the mainline's: it never touches the ground, a wish is
+  # granted for somebody else, and what is aimed at a charm comes
+  # back
+  hidden: [Levitate, Healer, MagicBounce]

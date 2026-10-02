@@ -1,0 +1,84 @@
+Magikarp:
+  level:
+    '1': [Splash]
+    '15': [Tackle]
+    '30': [Flail]
+Gyarados:
+  level:
+    '1': [Thrash]
+    '20': [Bite]
+    '25': [DragonRage]
+    '30': [Leer]
+    '32': [IceFang]
+    '35': [Twister, AquaTail]
+    '40': [HydroPump]
+    '45': [RainDance]
+    '50': [HyperBeam, DragonDance]
+  teachable:
+    - Toxic
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - BubbleBeam
+    - WaterGun
+    - IceBeam
+    - Blizzard
+    - HyperBeam
+    - Rage
+    - Thunderbolt
+    - Thunder
+    - Mimic
+    - DoubleTeam
+    - Bide
+    - FireBlast
+    - SkullBash
+    - Rest
+    - Substitute
+    - Surf
+    - Strength
+    - Headbutt
+    - Roar
+    - Waterfall
+    - Snore
+    - Curse
+    - Protect
+    - ZapCannon
+    - IcyWind
+    - Sandstorm
+    - Endure
+    - Swagger
+    - Attract
+    - SleepTalk
+    - Return
+    - Frustration
+    - DragonBreath
+    - HiddenPower
+    - RainDance
+    - RockSmash
+    - Whirlpool
+    - Flamethrower
+    - Dive
+    - Earthquake
+    - Facade
+    - SecretPower
+    - Taunt
+    - ThunderWave
+    - Torment
+    - WaterPulse
+    - Avalanche
+    - Brine
+    - Captivate
+    - DarkPulse
+    - DragonPulse
+    - GigaImpact
+    - IronHead
+    - NaturalGift
+    - Payback
+    - StoneEdge
+    - Round
+    - Scald
+    - Incinerate
+    - Bulldoze
+    - DragonTail
+    - Confide
+    - BrutalSwing

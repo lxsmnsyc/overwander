@@ -1,0 +1,12 @@
+Phanpy:
+  stats: { HP: 90, Attack: 60, Defense: 60, SpecialAttack: 40, SpecialDefense: 40, Speed: 40 }
+  catch-rate: 120
+  height: 0.5
+  weight: 33.5
+  gender: [1, 1]
+Donphan:
+  stats: { HP: 90, Attack: 120, Defense: 120, SpecialAttack: 60, SpecialDefense: 60, Speed: 50 }
+  catch-rate: 60
+  height: 1.1
+  weight: 120
+  gender: [1, 1]

@@ -1,0 +1,8 @@
+Swablu:
+  abilities: [NaturalCure]
+  hidden: [CloudNine]
+Altaria:
+  abilities: [NaturalCure]
+  # Two the mainline never gave it: what it sings for an ally, and
+  # a cloud's own way of getting somewhere first
+  hidden: [CloudNine, GaleWings, Healer]

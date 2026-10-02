@@ -1,0 +1,106 @@
+family-teachable:
+  - AerialAce
+  - AfterYou
+  - Attract
+  - BrickBreak
+  - Confide
+  - Cut
+  - DoubleTeam
+  - Facade
+  - FalseSwipe
+  - FlashCannon
+  - Frustration
+  - GyroBall
+  - HiddenPower
+  - IronDefense
+  - IronHead
+  - MagnetRise
+  - Protect
+  - RainDance
+  - Reflect
+  - Rest
+  - Retaliate
+  - Return
+  - RockSlide
+  - RockSmash
+  - SecretPower
+  - ShadowClaw
+  - ShockWave
+  - SleepTalk
+  - Snore
+  - Spite
+  - Substitute
+  - Swagger
+  - SwordsDance
+  - Toxic
+  - BrutalSwing
+  - LaserFocus
+Honedge:
+  level:
+    '1': [SwordsDance, Tackle]
+    '5': [FuryCutter]
+    '8': [MetalSound]
+    '13': [Pursuit]
+    '18': [Autotomize]
+    '20': [ShadowSneak]
+    '22': [AerialAce]
+    '26': [Retaliate]
+    '29': [Slash]
+    '32': [IronDefense]
+    '35': [NightSlash]
+    '39': [PowerTrick]
+    '42': [IronHead]
+    '47': [SacredSword]
+  egg: [DestinyBond, MetalSound, ShadowSneak, WideGuard]
+Doublade:
+  level:
+    '1': [SwordsDance, Tackle]
+    '5': [FuryCutter]
+    '8': [MetalSound]
+    '13': [Pursuit]
+    '18': [Autotomize]
+    '20': [ShadowSneak]
+    '22': [AerialAce]
+    '26': [Retaliate]
+    '29': [Slash]
+    '32': [IronDefense]
+    '36': [NightSlash]
+    '41': [PowerTrick]
+    '45': [IronHead]
+    '51': [SacredSword]
+Aegislash:
+  level:
+    '1':
+      - SwordsDance
+      - Slash
+      - FuryCutter
+      - Pursuit
+      - AerialAce
+      - IronDefense
+      - PowerTrick
+      - NightSlash
+      - ShadowSneak
+      - IronHead
+      - HeadSmash
+      - Autotomize
+      - SacredSword
+      - KingsShield
+  teachable: [Block, GigaImpact, HyperBeam, Round, ShadowBall, SunnyDay]
+AegislashBlade:
+  level:
+    '1':
+      - SwordsDance
+      - Slash
+      - FuryCutter
+      - Pursuit
+      - AerialAce
+      - IronDefense
+      - PowerTrick
+      - NightSlash
+      - ShadowSneak
+      - IronHead
+      - HeadSmash
+      - Autotomize
+      - SacredSword
+      - KingsShield
+  teachable: [Block, GigaImpact, HyperBeam, Round, ShadowBall, SunnyDay]

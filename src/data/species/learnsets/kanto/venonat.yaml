@@ -1,0 +1,82 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - TakeDown
+  - DoubleEdge
+  - Rage
+  - MegaDrain
+  - SolarBeam
+  - Psychic
+  - Mimic
+  - DoubleTeam
+  - Reflect
+  - Bide
+  - Rest
+  - Psywave
+  - Substitute
+  - Swift
+  - Thief
+  - Snore
+  - Curse
+  - Protect
+  - SludgeBomb
+  - GigaDrain
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - SweetScent
+  - HiddenPower
+  - SunnyDay
+  - Facade
+  - SecretPower
+  - SkillSwap
+  - BugBite
+  - Captivate
+  - NaturalGift
+  - Venoshock
+  - Round
+  - StruggleBug
+  - Confide
+  - Infestation
+Venonat:
+  level:
+    '1': [Tackle, Disable, Foresight]
+    '9': [Supersonic]
+    '17': [Confusion]
+    '20': [PoisonPowder]
+    '25': [LeechLife]
+    '28': [StunSpore]
+    '33': [Psybeam]
+    '36': [SleepPowder]
+    '37': [ZenHeadbutt]
+    '41': [Psychic]
+  teachable: [Flash]
+  egg: [Screech, GigaDrain, BatonPass, SignalBeam, ToxicSpikes, RagePowder]
+Venomoth:
+  level:
+    '1': [Tackle, Disable, PoisonPowder, Supersonic, Foresight, SilverWind]
+    '17': [Confusion]
+    '25': [LeechLife]
+    '28': [StunSpore]
+    '31': [Gust]
+    '36': [Psybeam]
+    '41': [ZenHeadbutt]
+    '42': [SleepPowder]
+    '50': [Psychic]
+    '59': [BugBuzz]
+    '63': [QuiverDance]
+  teachable:
+    - HyperBeam
+    - Flash
+    - AerialAce
+    - Defog
+    - EnergyBall
+    - GigaImpact
+    - OminousWind
+    - Roost
+    - Tailwind
+    - UTurn
+    - Acrobatics

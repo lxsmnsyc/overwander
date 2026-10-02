@@ -1,0 +1,24 @@
+Rockruff:
+  stats: { HP: 45, Attack: 65, Defense: 40, SpecialAttack: 30, SpecialDefense: 40, Speed: 60 }
+  catch-rate: 190
+  height: 0.5
+  weight: 9.2
+  gender: [4, 4]
+Lycanroc:
+  stats: { HP: 75, Attack: 115, Defense: 65, SpecialAttack: 55, SpecialDefense: 65, Speed: 112 }
+  catch-rate: 90
+  height: 0.8
+  weight: 25
+  gender: [4, 4]
+LycanrocMidnight:
+  stats: { HP: 85, Attack: 115, Defense: 75, SpecialAttack: 55, SpecialDefense: 75, Speed: 82 }
+  catch-rate: 90
+  height: 1.1
+  weight: 25
+  gender: [4, 4]
+LycanrocDusk:
+  stats: { HP: 75, Attack: 117, Defense: 65, SpecialAttack: 55, SpecialDefense: 65, Speed: 110 }
+  catch-rate: 90
+  height: 0.8
+  weight: 25
+  gender: [4, 4]

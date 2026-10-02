@@ -1,0 +1,18 @@
+Trapinch:
+  stats: { HP: 45, Attack: 100, Defense: 45, SpecialAttack: 45, SpecialDefense: 45, Speed: 10 }
+  catch-rate: 255
+  height: 0.7
+  weight: 15
+  gender: [1, 1]
+Vibrava:
+  stats: { HP: 50, Attack: 70, Defense: 50, SpecialAttack: 50, SpecialDefense: 50, Speed: 70 }
+  catch-rate: 120
+  height: 1.1
+  weight: 15.3
+  gender: [1, 1]
+Flygon:
+  stats: { HP: 80, Attack: 100, Defense: 80, SpecialAttack: 80, SpecialDefense: 80, Speed: 100 }
+  catch-rate: 45
+  height: 2
+  weight: 82
+  gender: [1, 1]

@@ -1,0 +1,8 @@
+Bronzor:
+  abilities: [Levitate, Heatproof]
+  hidden: [HeavyMetal]
+Bronzong:
+  abilities: [Levitate, Heatproof]
+  # Mirror Armor is this registry's rather than the mainline's: the
+  # face is polished, and 116 of each defense is worth keeping
+  hidden: [HeavyMetal, MirrorArmor]

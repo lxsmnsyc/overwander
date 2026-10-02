@@ -1,0 +1,12 @@
+Paras:
+  stats: { HP: 35, Attack: 70, Defense: 55, SpecialAttack: 45, SpecialDefense: 55, Speed: 25 }
+  catch-rate: 190
+  height: 0.3
+  weight: 5.4
+  gender: [1, 1]
+Parasect:
+  stats: { HP: 60, Attack: 95, Defense: 80, SpecialAttack: 60, SpecialDefense: 80, Speed: 30 }
+  catch-rate: 75
+  height: 1
+  weight: 29.5
+  gender: [1, 1]

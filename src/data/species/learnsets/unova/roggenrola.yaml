@@ -1,0 +1,86 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Attract
+  - Block
+  - Bulldoze
+  - DoubleTeam
+  - EarthPower
+  - Earthquake
+  - Explosion
+  - Facade
+  - FlashCannon
+  - Frustration
+  - Gravity
+  - HiddenPower
+  - IronDefense
+  - Protect
+  - Rest
+  - Return
+  - RockPolish
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Round
+  - Sandstorm
+  - SleepTalk
+  - SmackDown
+  - Snore
+  - StealthRock
+  - StoneEdge
+  - Strength
+  - Substitute
+  - Swagger
+  - Toxic
+  - Confide
+Roggenrola:
+  level:
+    '1': [Tackle]
+    '4': [Harden]
+    '7': [SandAttack]
+    '10': [Headbutt]
+    '14': [RockBlast]
+    '17': [MudSlap]
+    '20': [IronDefense]
+    '23': [SmackDown]
+    '27': [RockSlide]
+    '30': [StealthRock]
+    '33': [Sandstorm]
+    '36': [StoneEdge]
+    '40': [Explosion]
+  egg: [Autotomize, Curse, HeavySlam, LockOn, Magnitude, TakeDown]
+Boldore:
+  level:
+    '1': [Harden, Headbutt, SandAttack, Tackle]
+    '14': [RockBlast]
+    '17': [MudSlap]
+    '20': [IronDefense]
+    '23': [SmackDown]
+    '25': [PowerGem]
+    '30': [RockSlide]
+    '36': [StealthRock]
+    '42': [Sandstorm]
+    '48': [StoneEdge]
+    '55': [Explosion]
+  teachable: [StompingTantrum]
+Gigalith:
+  level:
+    '1': [Harden, Headbutt, SandAttack, Tackle]
+    '14': [RockBlast]
+    '17': [MudSlap]
+    '20': [IronDefense]
+    '23': [SmackDown]
+    '25': [PowerGem]
+    '30': [RockSlide]
+    '36': [StealthRock]
+    '42': [Sandstorm]
+    '48': [StoneEdge]
+    '55': [Explosion]
+  teachable:
+    - GigaImpact
+    - HyperBeam
+    - IronHead
+    - SolarBeam
+    - Superpower
+    - StompingTantrum
+    - LaserFocus
+    - ThroatChop

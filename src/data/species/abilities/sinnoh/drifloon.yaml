@@ -1,0 +1,8 @@
+Drifloon:
+  abilities: [Aftermath, Unburden]
+  hidden: [FlareBoost]
+Drifblim:
+  abilities: [Aftermath, Unburden]
+  # Multiscale is this registry's rather than the mainline's: a
+  # balloon is whole until something puts a hole in it
+  hidden: [FlareBoost, Multiscale]

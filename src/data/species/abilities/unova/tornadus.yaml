@@ -1,0 +1,10 @@
+Tornadus:
+  abilities: [Prankster]
+  # Wind Rider and Snow Warning are this registry's rather than the
+  # mainline's: it is the wind, so nothing the wind carries touches
+  # it, and the gale it arrives on is a freezing one. Regenerator
+  # belongs to its other shape and never counts toward these four
+  hidden: [Defiant, WindRider, SnowWarning]
+TornadusTherian:
+  abilities: [Regenerator]
+  hidden: []

@@ -1,0 +1,182 @@
+family-teachable:
+  - Acrobatics
+  - Attract
+  - Bulldoze
+  - CalmMind
+  - ChargeBeam
+  - Confide
+  - DazzlingGleam
+  - DoubleTeam
+  - Earthquake
+  - Endeavor
+  - Explosion
+  - Facade
+  - Frustration
+  - GigaImpact
+  - Gravity
+  - GyroBall
+  - HiddenPower
+  - HyperBeam
+  - IronHead
+  - LastResort
+  - LightScreen
+  - MagnetRise
+  - Protect
+  - PsychUp
+  - Psychic
+  - Reflect
+  - Rest
+  - Return
+  - RockPolish
+  - RockSlide
+  - RockTomb
+  - Round
+  - Safeguard
+  - Sandstorm
+  - SleepTalk
+  - Snore
+  - SolarBeam
+  - StealthRock
+  - StoneEdge
+  - Substitute
+  - Swagger
+  - Telekinesis
+  - Toxic
+  - UTurn
+  - ZenHeadbutt
+Minior:
+  level:
+    '1': [Tackle]
+    '3': [DefenseCurl]
+    '8': [Rollout]
+    '10': [ConfuseRay]
+    '15': [Swift]
+    '17': [AncientPower]
+    '22': [SelfDestruct]
+    '24': [StealthRock]
+    '29': [TakeDown]
+    '31': [Autotomize]
+    '36': [CosmicPower]
+    '38': [PowerGem]
+    '43': [DoubleEdge]
+    '45': [ShellSmash]
+    '50': [Explosion]
+MiniorRed:
+  level:
+    '1': [Tackle]
+    '3': [DefenseCurl]
+    '8': [Rollout]
+    '10': [ConfuseRay]
+    '15': [Swift]
+    '17': [AncientPower]
+    '22': [SelfDestruct]
+    '24': [StealthRock]
+    '29': [TakeDown]
+    '31': [Autotomize]
+    '36': [CosmicPower]
+    '38': [PowerGem]
+    '43': [DoubleEdge]
+    '45': [ShellSmash]
+    '50': [Explosion]
+MiniorOrange:
+  level:
+    '1': [Tackle]
+    '3': [DefenseCurl]
+    '8': [Rollout]
+    '10': [ConfuseRay]
+    '15': [Swift]
+    '17': [AncientPower]
+    '22': [SelfDestruct]
+    '24': [StealthRock]
+    '29': [TakeDown]
+    '31': [Autotomize]
+    '36': [CosmicPower]
+    '38': [PowerGem]
+    '43': [DoubleEdge]
+    '45': [ShellSmash]
+    '50': [Explosion]
+MiniorYellow:
+  level:
+    '1': [Tackle]
+    '3': [DefenseCurl]
+    '8': [Rollout]
+    '10': [ConfuseRay]
+    '15': [Swift]
+    '17': [AncientPower]
+    '22': [SelfDestruct]
+    '24': [StealthRock]
+    '29': [TakeDown]
+    '31': [Autotomize]
+    '36': [CosmicPower]
+    '38': [PowerGem]
+    '43': [DoubleEdge]
+    '45': [ShellSmash]
+    '50': [Explosion]
+MiniorGreen:
+  level:
+    '1': [Tackle]
+    '3': [DefenseCurl]
+    '8': [Rollout]
+    '10': [ConfuseRay]
+    '15': [Swift]
+    '17': [AncientPower]
+    '22': [SelfDestruct]
+    '24': [StealthRock]
+    '29': [TakeDown]
+    '31': [Autotomize]
+    '36': [CosmicPower]
+    '38': [PowerGem]
+    '43': [DoubleEdge]
+    '45': [ShellSmash]
+    '50': [Explosion]
+MiniorBlue:
+  level:
+    '1': [Tackle]
+    '3': [DefenseCurl]
+    '8': [Rollout]
+    '10': [ConfuseRay]
+    '15': [Swift]
+    '17': [AncientPower]
+    '22': [SelfDestruct]
+    '24': [StealthRock]
+    '29': [TakeDown]
+    '31': [Autotomize]
+    '36': [CosmicPower]
+    '38': [PowerGem]
+    '43': [DoubleEdge]
+    '45': [ShellSmash]
+    '50': [Explosion]
+MiniorIndigo:
+  level:
+    '1': [Tackle]
+    '3': [DefenseCurl]
+    '8': [Rollout]
+    '10': [ConfuseRay]
+    '15': [Swift]
+    '17': [AncientPower]
+    '22': [SelfDestruct]
+    '24': [StealthRock]
+    '29': [TakeDown]
+    '31': [Autotomize]
+    '36': [CosmicPower]
+    '38': [PowerGem]
+    '43': [DoubleEdge]
+    '45': [ShellSmash]
+    '50': [Explosion]
+MiniorViolet:
+  level:
+    '1': [Tackle]
+    '3': [DefenseCurl]
+    '8': [Rollout]
+    '10': [ConfuseRay]
+    '15': [Swift]
+    '17': [AncientPower]
+    '22': [SelfDestruct]
+    '24': [StealthRock]
+    '29': [TakeDown]
+    '31': [Autotomize]
+    '36': [CosmicPower]
+    '38': [PowerGem]
+    '43': [DoubleEdge]
+    '45': [ShellSmash]
+    '50': [Explosion]

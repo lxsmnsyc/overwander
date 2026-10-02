@@ -1,0 +1,149 @@
+# TM, HM and tutor moves shared by the whole family
+
+# Additional TM/HM moves for the fully evolved form
+family-teachable:
+  - Toxic
+  - BodySlam
+  - TakeDown
+  - DoubleEdge
+  - BubbleBeam
+  - WaterGun
+  - Blizzard
+  - Rage
+  - Thunderbolt
+  - Thunder
+  - Mimic
+  - DoubleTeam
+  - Reflect
+  - Bide
+  - SkullBash
+  - Rest
+  - Substitute
+  - Headbutt
+  - DefenseCurl
+  - Thief
+  - Snore
+  - Curse
+  - Protect
+  - MudSlap
+  - Detect
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - IronTail
+  - HiddenPower
+  - RainDance
+  - SunnyDay
+  - AerialAce
+  - Cut
+  - Facade
+  - SecretPower
+  - ShockWave
+  - SludgeBomb
+  - WaterPulse
+  - NaturalGift
+  - PoisonJab
+  - ShadowClaw
+  - HoneClaws
+  - Venoshock
+  - Round
+  - Confide
+NidoranF:
+  level:
+    '1': [Growl, Tackle]
+    '8': [Scratch]
+    '12': [DoubleKick]
+    '14': [PoisonSting]
+    '21': [TailWhip]
+    '23': [HelpingHand]
+    '29': [Bite]
+    '31': [ToxicSpikes]
+    '36': [FurySwipes]
+    '38': [Flatter]
+    '43': [Captivate]
+    '47': [Crunch]
+  teachable: [Dig, IceBeam, RockSmash, Strength]
+  egg:
+    - Supersonic
+    - Disable
+    - TakeDown
+    - Counter
+    - FocusEnergy
+    - Charm
+    - BeatUp
+    - ChipAway
+    - VenomDrench
+Nidorina:
+  level:
+    '1': [Growl, Tackle, Scratch]
+    '12': [DoubleKick]
+    '14': [PoisonSting]
+    '23': [TailWhip]
+    '26': [HelpingHand]
+    '32': [Bite]
+    '35': [ToxicSpikes]
+    '41': [FurySwipes]
+    '43': [Flatter]
+    '50': [Captivate]
+    '53': [Crunch]
+  teachable: [Strength, RockSmash, IceBeam, Counter, Dig, EchoedVoice, StompingTantrum]
+Nidoqueen:
+  level:
+    '1': [Tackle, Scratch, TailWhip, DoubleKick]
+    '14': [PoisonSting]
+    '23': [BodySlam, ChipAway]
+    '43': [Superpower, EarthPower]
+  teachable:
+    - MegaPunch
+    - MegaKick
+    - IceBeam
+    - HyperBeam
+    - Submission
+    - SeismicToss
+    - Earthquake
+    - Fissure
+    - Dig
+    - FireBlast
+    - RockSlide
+    - Surf
+    - Strength
+    - PowerUpPunch
+    - FirePunch
+    - IcePunch
+    - ThunderPunch
+    - Roar
+    - IcyWind
+    - Sandstorm
+    - FuryCutter
+    - DynamicPunch
+    - ShadowBall
+    - RockSmash
+    - Flamethrower
+    - BrickBreak
+    - Counter
+    - FocusPunch
+    - RockTomb
+    - Taunt
+    - Torment
+    - AquaTail
+    - Avalanche
+    - Captivate
+    - DragonPulse
+    - Fling
+    - FocusBlast
+    - GigaImpact
+    - RockClimb
+    - StealthRock
+    - StoneEdge
+    - SmackDown
+    - SludgeWave
+    - EchoedVoice
+    - Incinerate
+    - Quash
+    - Bulldoze
+    - DragonTail
+    - StompingTantrum
+    - ThroatChop

@@ -1,0 +1,12 @@
+Cosmog:
+  abilities: [Unaware]
+Cosmoem:
+  abilities: [Sturdy]
+Solgaleo:
+  abilities: [FullMetalBody]
+  # The line's own two come up from below it, so one of this registry's
+  hidden: [HeavyMetal]
+Lunala:
+  abilities: [ShadowShield]
+  # The line's own two come up from below it, so one of this registry's
+  hidden: [Infiltrator]

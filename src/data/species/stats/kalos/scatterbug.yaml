@@ -1,0 +1,132 @@
+Scatterbug:
+  stats: { HP: 38, Attack: 35, Defense: 40, SpecialAttack: 27, SpecialDefense: 25, Speed: 35 }
+  catch-rate: 255
+  height: 0.3
+  weight: 2.5
+  gender: [4, 4]
+Spewpa:
+  stats: { HP: 45, Attack: 22, Defense: 60, SpecialAttack: 27, SpecialDefense: 30, Speed: 29 }
+  catch-rate: 120
+  height: 0.3
+  weight: 8.4
+  gender: [4, 4]
+Vivillon:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonIcySnow:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonPolar:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonTundra:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonContinental:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonGarden:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonElegant:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonModern:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonMarine:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonArchipelago:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonHighPlains:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonSandstorm:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonRiver:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonMonsoon:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonSavannah:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonSun:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonOcean:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonJungle:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonFancy:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]
+VivillonPokeBall:
+  stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+  catch-rate: 45
+  height: 1.2
+  weight: 17
+  gender: [4, 4]

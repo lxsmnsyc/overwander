@@ -1,0 +1,12 @@
+Stufful:
+  stats: { HP: 70, Attack: 75, Defense: 50, SpecialAttack: 45, SpecialDefense: 50, Speed: 50 }
+  catch-rate: 140
+  height: 0.5
+  weight: 6.8
+  gender: [4, 4]
+Bewear:
+  stats: { HP: 120, Attack: 125, Defense: 80, SpecialAttack: 55, SpecialDefense: 60, Speed: 60 }
+  catch-rate: 70
+  height: 2.1
+  weight: 135
+  gender: [4, 4]

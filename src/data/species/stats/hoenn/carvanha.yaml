@@ -1,0 +1,12 @@
+Carvanha:
+  stats: { HP: 45, Attack: 90, Defense: 20, SpecialAttack: 65, SpecialDefense: 20, Speed: 65 }
+  catch-rate: 225
+  height: 0.8
+  weight: 20.8
+  gender: [1, 1]
+Sharpedo:
+  stats: { HP: 70, Attack: 120, Defense: 40, SpecialAttack: 95, SpecialDefense: 40, Speed: 95 }
+  catch-rate: 60
+  height: 1.8
+  weight: 88.8
+  gender: [1, 1]

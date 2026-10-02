@@ -1,0 +1,6 @@
+Illumise:
+  stats: { HP: 65, Attack: 47, Defense: 75, SpecialAttack: 73, SpecialDefense: 85, Speed: 85 }
+  catch-rate: 150
+  height: 0.6
+  weight: 17.7
+  gender: [0, 1]

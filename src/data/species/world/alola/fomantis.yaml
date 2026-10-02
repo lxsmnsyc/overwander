@@ -1,0 +1,16 @@
+Fomantis:
+  types: [Grass]
+  egg-groups: [Grass]
+  biomes: [TropicalRainforest, TropicalSeasonalForest, Grassland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Lurantis
+      method: [Level, TimeOfDay]
+      level: 34
+      time: [Morning, Day]
+Lurantis:
+  types: [Grass]
+  egg-groups: [Grass]
+  biomes: [TropicalRainforest, TropicalSeasonalForest, Grassland]
+  active: [Morning, Day]
+  evolves-from: Fomantis

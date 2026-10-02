@@ -1,0 +1,18 @@
+Cyndaquil:
+  stats: { HP: 39, Attack: 52, Defense: 43, SpecialAttack: 60, SpecialDefense: 50, Speed: 65 }
+  catch-rate: 45
+  height: 0.5
+  weight: 7.9
+  gender: [7, 1]
+Quilava:
+  stats: { HP: 58, Attack: 64, Defense: 58, SpecialAttack: 80, SpecialDefense: 65, Speed: 80 }
+  catch-rate: 45
+  height: 0.9
+  weight: 19
+  gender: [7, 1]
+Typhlosion:
+  stats: { HP: 78, Attack: 84, Defense: 78, SpecialAttack: 109, SpecialDefense: 85, Speed: 100 }
+  catch-rate: 45
+  height: 1.7
+  weight: 79.5
+  gender: [7, 1]

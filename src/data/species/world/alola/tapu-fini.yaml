@@ -1,0 +1,7 @@
+TapuFini:
+  types: [Water, Fairy]
+  egg-groups: [NoEggsDiscovered]
+  # Its ruin stands at the water's edge, so it rises from the sea as well
+  habitat: Amphibious
+  biomes: [RockyCoast]
+  active: any

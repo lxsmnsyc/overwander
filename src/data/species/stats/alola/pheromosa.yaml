@@ -1,0 +1,6 @@
+Pheromosa:
+  stats: { HP: 71, Attack: 137, Defense: 37, SpecialAttack: 137, SpecialDefense: 37, Speed: 151 }
+  catch-rate: 45
+  height: 1.8
+  weight: 25
+  gender: genderless

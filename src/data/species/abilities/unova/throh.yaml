@@ -1,0 +1,5 @@
+Throh:
+  abilities: [Guts, InnerFocus]
+  # Stamina is the invented fourth: the line reaches three, and a
+  # judoka on 120 HP wins by being the one still standing
+  hidden: [MoldBreaker, Stamina]

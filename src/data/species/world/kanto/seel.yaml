@@ -1,0 +1,17 @@
+Seel:
+  types: [Water]
+  egg-groups: [Water1, Field]
+  habitat: Amphibious
+  biomes: [Ocean, PolarOcean, RockyCoast, Taiga, Tundra, Glacier, KelpForest]
+  active: any
+  evolves-into:
+    - species: Dewgong
+      method: [Level]
+      level: 34
+Dewgong:
+  types: [Water, Ice]
+  egg-groups: [Water1, Field]
+  habitat: Amphibious
+  biomes: [Ocean, PolarOcean, Tundra, RockyCoast, Taiga, Glacier, KelpForest]
+  active: any
+  evolves-from: Seel

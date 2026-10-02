@@ -1,0 +1,23 @@
+Castform:
+  types: [Normal]
+  egg-groups: [Fairy, Amorphous]
+  biomes: [Grassland, Steppe]
+  active: any
+CastformSunny:
+  types: [Fire]
+  egg-groups: [Fairy, Amorphous]
+  active: any
+  base-form: false
+  worn: true
+CastformRainy:
+  types: [Water]
+  egg-groups: [Fairy, Amorphous]
+  active: any
+  base-form: false
+  worn: true
+CastformSnowy:
+  types: [Ice]
+  egg-groups: [Fairy, Amorphous]
+  active: any
+  base-form: false
+  worn: true

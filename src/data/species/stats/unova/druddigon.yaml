@@ -1,0 +1,6 @@
+Druddigon:
+  stats: { HP: 77, Attack: 120, Defense: 90, SpecialAttack: 60, SpecialDefense: 90, Speed: 48 }
+  catch-rate: 45
+  height: 1.6
+  weight: 139
+  gender: [1, 1]

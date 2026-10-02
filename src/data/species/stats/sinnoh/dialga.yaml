@@ -1,0 +1,12 @@
+Dialga:
+  stats: { HP: 100, Attack: 120, Defense: 120, SpecialAttack: 150, SpecialDefense: 100, Speed: 90 }
+  catch-rate: 3
+  height: 5.4
+  weight: 683
+  gender: genderless
+DialgaOrigin:
+  stats: { HP: 100, Attack: 100, Defense: 120, SpecialAttack: 150, SpecialDefense: 120, Speed: 90 }
+  catch-rate: 3
+  height: 7
+  weight: 848.7
+  gender: genderless

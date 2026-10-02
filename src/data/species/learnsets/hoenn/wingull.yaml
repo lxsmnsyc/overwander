@@ -1,0 +1,73 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - WaterPulse
+  - Toxic
+  - Hail
+  - HiddenPower
+  - IceBeam
+  - Blizzard
+  - Protect
+  - RainDance
+  - Frustration
+  - Return
+  - DoubleTeam
+  - ShockWave
+  - AerialAce
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Thief
+  - SteelWing
+  - Fly
+  - DoubleEdge
+  - Mimic
+  - Substitute
+  - Snore
+  - IcyWind
+  - Endure
+  - MudSlap
+  - Swagger
+  - SleepTalk
+  - Swift
+  - Brine
+  - Captivate
+  - Defog
+  - NaturalGift
+  - OminousWind
+  - Pluck
+  - UTurn
+  - Round
+  - EchoedVoice
+  - Scald
+  - Confide
+  - Liquidation
+Wingull:
+  level:
+    '1': [Growl, WaterGun]
+    '7': [Supersonic]
+    '13': [WingAttack]
+    '21': [Mist]
+    '29': [Roost]
+    '31': [QuickAttack]
+    '43': [Pursuit]
+    '47': [AirSlash]
+    '49': [Hurricane]
+    '55': [Agility]
+  teachable: [Tailwind]
+  egg: [Gust, WaterSport, Twister, AquaRing]
+Pelipper:
+  level:
+    '1': [Growl, WaterGun, WaterSport, WingAttack, Soak]
+    '7': [Supersonic]
+    '21': [Mist]
+    '24': [Payback]
+    '25': [Protect]
+    '31': [Roost]
+    '33': [Stockpile, Swallow]
+    '43': [Fling]
+    '47': [SpitUp]
+    '50': [Tailwind]
+    '61': [HydroPump]
+    '63': [Hurricane]
+  teachable: [Surf, HyperBeam, GigaImpact, GunkShot, SeedBomb, SkyDrop]

@@ -1,0 +1,12 @@
+Landorus:
+  stats: { HP: 89, Attack: 125, Defense: 90, SpecialAttack: 115, SpecialDefense: 80, Speed: 101 }
+  catch-rate: 3
+  height: 1.5
+  weight: 68
+  gender: [1, 0]
+LandorusTherian:
+  stats: { HP: 89, Attack: 145, Defense: 90, SpecialAttack: 105, SpecialDefense: 80, Speed: 91 }
+  catch-rate: 3
+  height: 1.3
+  weight: 68
+  gender: [1, 0]

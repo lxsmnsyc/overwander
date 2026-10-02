@@ -1,0 +1,12 @@
+Lotad:
+  abilities: [SwiftSwim, RainDish]
+  hidden: [OwnTempo]
+Lombre:
+  abilities: [SwiftSwim, RainDish]
+  hidden: [OwnTempo]
+Ludicolo:
+  abilities: [SwiftSwim, RainDish]
+  # Hydration is this registry's rather than the mainline's: it
+  # dances in its own Rain Dance beside Rain Dish, and a final
+  # evolution is filled to four
+  hidden: [OwnTempo, Hydration]

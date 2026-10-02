@@ -1,0 +1,12 @@
+Taillow:
+  stats: { HP: 40, Attack: 55, Defense: 30, SpecialAttack: 30, SpecialDefense: 30, Speed: 85 }
+  catch-rate: 200
+  height: 0.3
+  weight: 2.3
+  gender: [1, 1]
+Swellow:
+  stats: { HP: 60, Attack: 85, Defense: 60, SpecialAttack: 75, SpecialDefense: 50, Speed: 125 }
+  catch-rate: 45
+  height: 0.7
+  weight: 19.8
+  gender: [1, 1]

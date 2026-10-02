@@ -1,0 +1,26 @@
+# The tailors: a Sewaddle stitches its own clothes out of leaves, and
+# a Leavanny makes them for everything smaller than itself
+Sewaddle:
+  types: [Bug, Grass]
+  egg-groups: [Bug]
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Swadloon
+      method: [Level]
+      level: 20
+Swadloon:
+  types: [Bug, Grass]
+  egg-groups: [Bug]
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-from: Sewaddle
+  evolves-into:
+    - species: Leavanny
+      method: [Friendship]
+Leavanny:
+  types: [Bug, Grass]
+  egg-groups: [Bug]
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-from: Swadloon

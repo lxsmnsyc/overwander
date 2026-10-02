@@ -1,0 +1,6 @@
+Blacephalon:
+  types: [Fire, Ghost]
+  egg-groups: [NoEggsDiscovered]
+  # Poni Grove
+  biomes: [TropicalSeasonalForest]
+  active: any

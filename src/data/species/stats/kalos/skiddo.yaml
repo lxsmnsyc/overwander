@@ -1,0 +1,12 @@
+Skiddo:
+  stats: { HP: 66, Attack: 65, Defense: 48, SpecialAttack: 62, SpecialDefense: 57, Speed: 52 }
+  catch-rate: 200
+  height: 0.9
+  weight: 31
+  gender: [1, 1]
+Gogoat:
+  stats: { HP: 123, Attack: 100, Defense: 62, SpecialAttack: 97, SpecialDefense: 81, Speed: 68 }
+  catch-rate: 45
+  height: 1.7
+  weight: 91
+  gender: [1, 1]

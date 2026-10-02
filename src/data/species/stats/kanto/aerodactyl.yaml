@@ -1,0 +1,6 @@
+Aerodactyl:
+  stats: { HP: 80, Attack: 105, Defense: 65, SpecialAttack: 60, SpecialDefense: 75, Speed: 130 }
+  catch-rate: 45
+  height: 1.8
+  weight: 59
+  gender: [7, 1]

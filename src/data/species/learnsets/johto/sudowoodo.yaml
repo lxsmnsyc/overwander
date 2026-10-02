@@ -1,0 +1,123 @@
+family-teachable: [Attract]
+Sudowoodo:
+  level:
+    '1': [Mimic, RockThrow, Copycat, WoodHammer]
+    '10': [Flail]
+    '19': [LowKick]
+    '22': [TearfulLook]
+    '28': [RockSlide]
+    '33': [Block]
+    '37': [FeintAttack]
+    '41': [SuckerPunch]
+    '46': [Slam]
+    '49': [HammerArm]
+    '57': [DoubleEdge]
+  teachable:
+    - Curse
+    - DefenseCurl
+    - Dig
+    - DoubleTeam
+    - DynamicPunch
+    - Earthquake
+    - Endure
+    - FirePunch
+    - Frustration
+    - Headbutt
+    - HiddenPower
+    - IcePunch
+    - MudSlap
+    - Protect
+    - PsychUp
+    - Rest
+    - Return
+    - RockSmash
+    - Rollout
+    - Sandstorm
+    - SleepTalk
+    - Snore
+    - Strength
+    - SunnyDay
+    - Swagger
+    - Thief
+    - ThunderPunch
+    - Toxic
+    - BodySlam
+    - BrickBreak
+    - CalmMind
+    - Counter
+    - Explosion
+    - Facade
+    - FocusPunch
+    - MegaKick
+    - MegaPunch
+    - RockTomb
+    - SecretPower
+    - SeismicToss
+    - Substitute
+    - Taunt
+    - Captivate
+    - EarthPower
+    - Fling
+    - NaturalGift
+    - RockPolish
+    - StealthRock
+    - StoneEdge
+    - SmackDown
+    - FoulPlay
+    - AfterYou
+    - Round
+    - Bulldoze
+    - Confide
+    - PowerUpPunch
+    - StompingTantrum
+Bonsly:
+  level:
+    '1': [Copycat, FakeTears]
+    '6': [Flail]
+    '9': [LowKick]
+    '14': [RockThrow]
+    '17': [Mimic]
+    '22': [Block, TearfulLook]
+    '25': [FeintAttack]
+    '30': [RockTomb]
+    '33': [RockSlide]
+    '38': [Slam]
+    '41': [SuckerPunch]
+    '46': [DoubleEdge]
+  teachable:
+    - BrickBreak
+    - CalmMind
+    - Captivate
+    - Dig
+    - DoubleTeam
+    - EarthPower
+    - Endure
+    - Explosion
+    - Facade
+    - Frustration
+    - HelpingHand
+    - HiddenPower
+    - NaturalGift
+    - Protect
+    - PsychUp
+    - Rest
+    - Return
+    - RockPolish
+    - RockSlide
+    - RockTomb
+    - Rollout
+    - Sandstorm
+    - SecretPower
+    - SleepTalk
+    - Snore
+    - StealthRock
+    - Substitute
+    - SuckerPunch
+    - SunnyDay
+    - Swagger
+    - Thief
+    - Toxic
+    - Uproar
+    - Confide
+    - StompingTantrum
+  egg: [DefenseCurl, Harden, Headbutt, Rollout, SandTomb, SelfDestruct]

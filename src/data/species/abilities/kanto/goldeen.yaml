@@ -1,0 +1,6 @@
+Goldeen:
+  abilities: [SwiftSwim, WaterVeil]
+  hidden: [LightningRod]
+Seaking:
+  abilities: [SwiftSwim, WaterVeil]
+  hidden: [LightningRod, MoldBreaker]

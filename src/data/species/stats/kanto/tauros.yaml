@@ -1,0 +1,6 @@
+Tauros:
+  stats: { HP: 75, Attack: 100, Defense: 95, SpecialAttack: 40, SpecialDefense: 70, Speed: 110 }
+  catch-rate: 45
+  height: 1.4
+  weight: 88.4
+  gender: [1, 0]

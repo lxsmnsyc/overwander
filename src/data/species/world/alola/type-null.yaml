@@ -1,0 +1,137 @@
+# The seventeen types a Memory sets a Silvally to
+
+# Worn rather than met: a Memory in its hands is what sets it
+
+TypeNull:
+  types: [Normal]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Beach]
+  active: any
+  evolves-into:
+    - species: Silvally
+      method: [Friendship]
+Silvally:
+  types: [Normal]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Beach]
+  active: any
+  evolves-from: TypeNull
+SilvallyFighting:
+  types: [Fighting]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallyFlying:
+  types: [Flying]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallyPoison:
+  types: [Poison]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallyGround:
+  types: [Ground]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallyRock:
+  types: [Rock]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallyBug:
+  types: [Bug]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallyGhost:
+  types: [Ghost]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallySteel:
+  types: [Steel]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallyFire:
+  types: [Fire]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallyWater:
+  types: [Water]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallyGrass:
+  types: [Grass]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallyElectric:
+  types: [Electric]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallyPsychic:
+  types: [Psychic]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallyIce:
+  types: [Ice]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallyDragon:
+  types: [Dragon]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallyDark:
+  types: [Dark]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull
+SilvallyFairy:
+  types: [Fairy]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+  evolves-from: TypeNull

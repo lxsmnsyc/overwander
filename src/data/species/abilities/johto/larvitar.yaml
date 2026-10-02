@@ -1,0 +1,11 @@
+Larvitar:
+  abilities: [Guts]
+  hidden: [SandVeil]
+Pupitar:
+  abilities: [ShedSkin]
+Tyranitar:
+  abilities: [SandStream]
+  # Nothing invented here: the line already reaches five, since
+  # Pupitar's Shed Skin and Larvitar's Guts and Sand Veil all walk
+  # up to meet its own two
+  hidden: [Unnerve]

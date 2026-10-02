@@ -1,0 +1,80 @@
+Caterpie:
+  level:
+    '1': [Tackle, StringShot]
+    '15': [BugBite]
+  teachable: [Electroweb]
+Metapod:
+  level:
+    '1': [Harden]
+  teachable: [BugBite, Electroweb]
+Butterfree:
+  level:
+    '1': [Confusion]
+    '13': [PoisonPowder]
+    '14': [StunSpore]
+    '15': [SleepPowder]
+    '18': [Supersonic]
+    '23': [Whirlwind]
+    '28': [Gust]
+    '30': [Tailwind]
+    '32': [Psybeam]
+    '34': [RagePowder]
+    '36': [Captivate]
+    '40': [Safeguard, BugBuzz]
+    '46': [QuiverDance]
+    '47': [SilverWind]
+  teachable:
+    - Toxic
+    - TakeDown
+    - DoubleEdge
+    - HyperBeam
+    - Rage
+    - MegaDrain
+    - SolarBeam
+    - Psychic
+    - Teleport
+    - Mimic
+    - DoubleTeam
+    - Reflect
+    - Bide
+    - Swift
+    - Rest
+    - Psywave
+    - Substitute
+    - Flash
+    - Nightmare
+    - Snore
+    - Curse
+    - Protect
+    - GigaDrain
+    - Endure
+    - Swagger
+    - Attract
+    - SleepTalk
+    - Return
+    - Frustration
+    - SweetScent
+    - HiddenPower
+    - SunnyDay
+    - AerialAce
+    - DreamEater
+    - Facade
+    - SecretPower
+    - ShadowBall
+    - SkillSwap
+    - Thief
+    - BugBite
+    - Defog
+    - EnergyBall
+    - GigaImpact
+    - NaturalGift
+    - OminousWind
+    - Roost
+    - UTurn
+    - Venoshock
+    - Round
+    - Acrobatics
+    - StruggleBug
+    - Electroweb
+    - Confide
+    - Infestation

@@ -1,0 +1,36 @@
+Rotom:
+  stats: { HP: 50, Attack: 50, Defense: 77, SpecialAttack: 95, SpecialDefense: 77, Speed: 91 }
+  catch-rate: 45
+  height: 0.3
+  weight: 0.3
+  gender: genderless
+RotomHeat:
+  stats: { HP: 50, Attack: 65, Defense: 107, SpecialAttack: 105, SpecialDefense: 107, Speed: 86 }
+  catch-rate: 45
+  height: 0.3
+  weight: 0.3
+  gender: genderless
+RotomWash:
+  stats: { HP: 50, Attack: 65, Defense: 107, SpecialAttack: 105, SpecialDefense: 107, Speed: 86 }
+  catch-rate: 45
+  height: 0.3
+  weight: 0.3
+  gender: genderless
+RotomFrost:
+  stats: { HP: 50, Attack: 65, Defense: 107, SpecialAttack: 105, SpecialDefense: 107, Speed: 86 }
+  catch-rate: 45
+  height: 0.3
+  weight: 0.3
+  gender: genderless
+RotomFan:
+  stats: { HP: 50, Attack: 65, Defense: 107, SpecialAttack: 105, SpecialDefense: 107, Speed: 86 }
+  catch-rate: 45
+  height: 0.3
+  weight: 0.3
+  gender: genderless
+RotomMow:
+  stats: { HP: 50, Attack: 65, Defense: 107, SpecialAttack: 105, SpecialDefense: 107, Speed: 86 }
+  catch-rate: 45
+  height: 0.3
+  weight: 0.3
+  gender: genderless

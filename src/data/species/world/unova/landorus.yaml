@@ -1,0 +1,10 @@
+Landorus:
+  types: [Ground, Flying]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Grassland]
+  active: any
+LandorusTherian:
+  types: [Ground, Flying]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false

@@ -1,0 +1,5 @@
+Raikou:
+  types: [Electric]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Grassland, Woodland]
+  active: any

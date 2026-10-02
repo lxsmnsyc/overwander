@@ -1,0 +1,12 @@
+Pancham:
+  stats: { HP: 67, Attack: 82, Defense: 62, SpecialAttack: 46, SpecialDefense: 48, Speed: 43 }
+  catch-rate: 220
+  height: 0.6
+  weight: 8
+  gender: [1, 1]
+Pangoro:
+  stats: { HP: 95, Attack: 124, Defense: 78, SpecialAttack: 69, SpecialDefense: 71, Speed: 58 }
+  catch-rate: 65
+  height: 2.1
+  weight: 136
+  gender: [1, 1]

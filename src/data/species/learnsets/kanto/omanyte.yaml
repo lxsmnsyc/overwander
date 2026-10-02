@@ -1,0 +1,98 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - TakeDown
+  - DoubleEdge
+  - BubbleBeam
+  - WaterGun
+  - IceBeam
+  - Blizzard
+  - HornDrill
+  - Rage
+  - Mimic
+  - DoubleTeam
+  - Reflect
+  - Bide
+  - Rest
+  - Substitute
+  - Surf
+  - Headbutt
+  - Thief
+  - Snore
+  - Curse
+  - Protect
+  - IcyWind
+  - Sandstorm
+  - Endure
+  - Rollout
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - HiddenPower
+  - RainDance
+  - RockSmash
+  - Whirlpool
+  - Dive
+  - Facade
+  - RockTomb
+  - SecretPower
+  - WaterPulse
+  - Waterfall
+  - Captivate
+  - EarthPower
+  - GyroBall
+  - NaturalGift
+  - RockPolish
+  - StealthRock
+  - SmackDown
+  - Round
+  - Scald
+  - Confide
+Omanyte:
+  level:
+    '1': [WaterGun, Withdraw, Constrict]
+    '13': [Bite]
+    '25': [MudShot]
+    '28': [Brine]
+    '31': [Leer]
+    '34': [HornAttack]
+    '37': [Protect]
+    '43': [Tickle]
+    '46': [SpikeCannon]
+    '49': [AncientPower]
+    '52': [ShellSmash]
+    '53': [HydroPump]
+  teachable: [BodySlam]
+  egg:
+    - Slam
+    - Supersonic
+    - BubbleBeam
+    - AuroraBeam
+    - Haze
+    - RockSlide
+    - Spikes
+    - ToxicSpikes
+    - WringOut
+Omastar:
+  level:
+    '1': [WaterGun, Withdraw, HornAttack, Bite, Constrict]
+    '25': [MudShot]
+    '28': [Brine]
+    '31': [Leer]
+    '37': [Protect]
+    '40': [SpikeCannon]
+    '46': [Tickle]
+    '49': [HydroPump]
+    '54': [AncientPower]
+    '67': [ShellSmash]
+  teachable:
+    - HyperBeam
+    - BodySlam
+    - SeismicToss
+    - Submission
+    - RockSlide
+    - GigaImpact
+    - RockClimb
+    - StoneEdge

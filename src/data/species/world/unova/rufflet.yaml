@@ -1,0 +1,17 @@
+# The eagle: every Rufflet is male, and it will pick a fight with
+# anything at all so long as it has something to prove
+Rufflet:
+  types: [Normal, Flying]
+  egg-groups: [Flying]
+  biomes: [Mountain, Steppe]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Braviary
+      method: [Level]
+      level: 54
+Braviary:
+  types: [Normal, Flying]
+  egg-groups: [Flying]
+  biomes: [Mountain, Steppe]
+  active: [Morning, Day]
+  evolves-from: Rufflet

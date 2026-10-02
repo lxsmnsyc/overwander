@@ -1,0 +1,11 @@
+Seedot:
+  abilities: [Chlorophyll, EarlyBird]
+  hidden: [Pickpocket]
+Nuzleaf:
+  abilities: [Chlorophyll, EarlyBird]
+  hidden: [Pickpocket]
+Shiftry:
+  # Early Bird is the line's rather than its own, so it reaches
+  # this stage out of the hidden band
+  abilities: [Chlorophyll, WindRider]
+  hidden: [Pickpocket]

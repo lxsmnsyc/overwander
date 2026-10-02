@@ -1,0 +1,103 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Acrobatics
+  - AquaTail
+  - Attract
+  - Blizzard
+  - Covet
+  - Cut
+  - Dig
+  - Dive
+  - DoubleTeam
+  - Endeavor
+  - Facade
+  - Fling
+  - FocusPunch
+  - Frustration
+  - GastroAcid
+  - GrassKnot
+  - GunkShot
+  - Hail
+  - HelpingHand
+  - HiddenPower
+  - HoneClaws
+  - IceBeam
+  - IcePunch
+  - IcyWind
+  - IronTail
+  - KnockOff
+  - LowKick
+  - LowSweep
+  - Payback
+  - Protect
+  - RainDance
+  - Recycle
+  - Rest
+  - Return
+  - RockSmash
+  - RockTomb
+  - RolePlay
+  - Round
+  - Scald
+  - SecretPower
+  - ShadowClaw
+  - SleepTalk
+  - Snore
+  - Substitute
+  - Surf
+  - Swagger
+  - Taunt
+  - Thief
+  - Torment
+  - Toxic
+  - Uproar
+  - WaterPulse
+  - Waterfall
+  - WorkUp
+  - Confide
+Panpour:
+  level:
+    '1': [Scratch, PlayNice]
+    '4': [Leer]
+    '7': [Lick]
+    '10': [WaterGun]
+    '13': [FurySwipes]
+    '16': [WaterSport]
+    '19': [Bite]
+    '22': [Scald]
+    '25': [Taunt]
+    '28': [Fling]
+    '31': [Acrobatics]
+    '34': [Brine]
+    '37': [Recycle]
+    '40': [NaturalGift]
+    '43': [Crunch]
+  egg:
+    - AquaRing
+    - AquaTail
+    - Astonish
+    - Covet
+    - HydroPump
+    - LowKick
+    - MudSport
+    - NastyPlot
+    - RolePlay
+    - Tickle
+    - DisarmingVoice
+Simipour:
+  # A stone evolution learns nothing further on its own, beyond
+  # the pressure it comes into
+  level:
+    '1': [Leer, Lick, FurySwipes, Scald]
+    '10': [WaterPulse]
+    '28': [Brine]
+    '46': [HydroPump]
+  teachable:
+    - BrickBreak
+    - FocusBlast
+    - GigaImpact
+    - HyperBeam
+    - RockSlide
+    - Superpower
+    - PowerUpPunch
+    - ThroatChop

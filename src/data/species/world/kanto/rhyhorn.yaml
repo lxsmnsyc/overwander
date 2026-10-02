@@ -1,0 +1,27 @@
+Rhyhorn:
+  types: [Ground, Rock]
+  egg-groups: [Monster, Field]
+  biomes: [Savanna, Desert, Badlands]
+  active: [Day]
+  evolves-into:
+    - species: Rhydon
+      method: [Level]
+      level: 42
+Rhydon:
+  types: [Ground, Rock]
+  egg-groups: [Monster, Field]
+  biomes: [Savanna, Desert, Badlands]
+  active: [Day]
+  evolves-from: Rhyhorn
+  evolves-into:
+    - species: Rhyperior
+      method: [HeldItem, Trade]
+      item: Protector
+# A Rhydon in armour it grew itself: a Rhyperior loads rocks into the
+# holes in its hands and fires them off
+Rhyperior:
+  types: [Ground, Rock]
+  egg-groups: [Monster, Field]
+  biomes: [Badlands, Mountain, Steppe]
+  active: any
+  evolves-from: Rhydon

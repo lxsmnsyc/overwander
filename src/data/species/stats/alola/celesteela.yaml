@@ -1,0 +1,6 @@
+Celesteela:
+  stats: { HP: 97, Attack: 101, Defense: 103, SpecialAttack: 107, SpecialDefense: 101, Speed: 61 }
+  catch-rate: 45
+  height: 9.2
+  weight: 999.9
+  gender: genderless

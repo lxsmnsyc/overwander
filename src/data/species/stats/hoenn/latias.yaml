@@ -1,0 +1,7 @@
+Latias:
+  stats: { HP: 80, Attack: 80, Defense: 90, SpecialAttack: 110, SpecialDefense: 130, Speed: 110 }
+  catch-rate: 3
+  height: 1.4
+  weight: 40
+  # Always the sister of the two
+  gender: [0, 1]

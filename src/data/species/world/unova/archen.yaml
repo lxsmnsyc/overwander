@@ -1,0 +1,15 @@
+# The first bird, out of the Plume Fossil. It flew badly and knew
+# it: Defeatist is the whole line's, and nothing spawns from a fossil
+Archen:
+  types: [Rock, Flying]
+  egg-groups: [Flying, Water3]
+  active: any
+  evolves-into:
+    - species: Archeops
+      method: [Level]
+      level: 37
+Archeops:
+  types: [Rock, Flying]
+  egg-groups: [Flying, Water3]
+  active: any
+  evolves-from: Archen

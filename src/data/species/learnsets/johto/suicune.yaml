@@ -1,0 +1,71 @@
+Suicune:
+  level:
+    '1': [Bite, Leer]
+    '11': [WaterGun]
+    '21': [RainDance, Roar]
+    '31': [Gust]
+    '41': [AuroraBeam, BubbleBeam]
+    '50': [IceFang]
+    '51': [Mist]
+    '57': [Tailwind]
+    '61': [MirrorCoat]
+    '71': [HydroPump]
+    '81': [CalmMind]
+  teachable:
+    - Toxic
+    - Cut
+    - Strength
+    - Dig
+    - Flash
+    - HyperBeam
+    - DoubleTeam
+    - Rest
+    - Snore
+    - Curse
+    - Protect
+    - Detect
+    - Endure
+    - Swagger
+    - SleepTalk
+    - Return
+    - Frustration
+    - IronTail
+    - HiddenPower
+    - RainDance
+    - SunnyDay
+    - Sandstorm
+    - PsychUp
+    - MudSlap
+    - Headbutt
+    - RockSmash
+    - Roar
+    - Swift
+    - Round
+    - Quash
+    - Bulldoze
+    - Snarl
+    - Confide
+    - Surf
+    - Waterfall
+    - Whirlpool
+    - IcyWind
+    - Blizzard
+    - BodySlam
+    - Dive
+    - DoubleEdge
+    - Facade
+    - IceBeam
+    - Mimic
+    - Reflect
+    - SecretPower
+    - Substitute
+    - WaterPulse
+    - Avalanche
+    - Brine
+    - GigaImpact
+    - IronHead
+    - NaturalGift
+    - OminousWind
+    - RockClimb
+    - Scald
+    - LaserFocus

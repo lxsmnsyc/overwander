@@ -1,0 +1,96 @@
+Flabebe:
+  stats: { HP: 44, Attack: 38, Defense: 39, SpecialAttack: 61, SpecialDefense: 79, Speed: 42 }
+  catch-rate: 225
+  height: 0.1
+  weight: 0.1
+  gender: [0, 1]
+Floette:
+  stats: { HP: 54, Attack: 45, Defense: 47, SpecialAttack: 75, SpecialDefense: 98, Speed: 52 }
+  catch-rate: 120
+  height: 0.2
+  weight: 0.9
+  gender: [0, 1]
+Florges:
+  stats: { HP: 78, Attack: 65, Defense: 68, SpecialAttack: 112, SpecialDefense: 154, Speed: 75 }
+  catch-rate: 45
+  height: 1.1
+  weight: 10
+  gender: [0, 1]
+FlabebeYellow:
+  stats: { HP: 44, Attack: 38, Defense: 39, SpecialAttack: 61, SpecialDefense: 79, Speed: 42 }
+  catch-rate: 225
+  height: 0.1
+  weight: 0.1
+  gender: [0, 1]
+FloetteYellow:
+  stats: { HP: 54, Attack: 45, Defense: 47, SpecialAttack: 75, SpecialDefense: 98, Speed: 52 }
+  catch-rate: 120
+  height: 0.2
+  weight: 0.9
+  gender: [0, 1]
+FlorgesYellow:
+  stats: { HP: 78, Attack: 65, Defense: 68, SpecialAttack: 112, SpecialDefense: 154, Speed: 75 }
+  catch-rate: 45
+  height: 1.1
+  weight: 10
+  gender: [0, 1]
+FlabebeOrange:
+  stats: { HP: 44, Attack: 38, Defense: 39, SpecialAttack: 61, SpecialDefense: 79, Speed: 42 }
+  catch-rate: 225
+  height: 0.1
+  weight: 0.1
+  gender: [0, 1]
+FloetteOrange:
+  stats: { HP: 54, Attack: 45, Defense: 47, SpecialAttack: 75, SpecialDefense: 98, Speed: 52 }
+  catch-rate: 120
+  height: 0.2
+  weight: 0.9
+  gender: [0, 1]
+FlorgesOrange:
+  stats: { HP: 78, Attack: 65, Defense: 68, SpecialAttack: 112, SpecialDefense: 154, Speed: 75 }
+  catch-rate: 45
+  height: 1.1
+  weight: 10
+  gender: [0, 1]
+FlabebeBlue:
+  stats: { HP: 44, Attack: 38, Defense: 39, SpecialAttack: 61, SpecialDefense: 79, Speed: 42 }
+  catch-rate: 225
+  height: 0.1
+  weight: 0.1
+  gender: [0, 1]
+FloetteBlue:
+  stats: { HP: 54, Attack: 45, Defense: 47, SpecialAttack: 75, SpecialDefense: 98, Speed: 52 }
+  catch-rate: 120
+  height: 0.2
+  weight: 0.9
+  gender: [0, 1]
+FlorgesBlue:
+  stats: { HP: 78, Attack: 65, Defense: 68, SpecialAttack: 112, SpecialDefense: 154, Speed: 75 }
+  catch-rate: 45
+  height: 1.1
+  weight: 10
+  gender: [0, 1]
+FlabebeWhite:
+  stats: { HP: 44, Attack: 38, Defense: 39, SpecialAttack: 61, SpecialDefense: 79, Speed: 42 }
+  catch-rate: 225
+  height: 0.1
+  weight: 0.1
+  gender: [0, 1]
+FloetteWhite:
+  stats: { HP: 54, Attack: 45, Defense: 47, SpecialAttack: 75, SpecialDefense: 98, Speed: 52 }
+  catch-rate: 120
+  height: 0.2
+  weight: 0.9
+  gender: [0, 1]
+FlorgesWhite:
+  stats: { HP: 78, Attack: 65, Defense: 68, SpecialAttack: 112, SpecialDefense: 154, Speed: 75 }
+  catch-rate: 45
+  height: 1.1
+  weight: 10
+  gender: [0, 1]
+FloetteEternal:
+  stats: { HP: 74, Attack: 65, Defense: 67, SpecialAttack: 125, SpecialDefense: 128, Speed: 92 }
+  catch-rate: 45
+  height: 0.2
+  weight: 0.9
+  gender: [0, 1]

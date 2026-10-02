@@ -1,0 +1,12 @@
+Deino:
+  abilities: [Hustle]
+  hidden: []
+Zweilous:
+  abilities: [Hustle]
+  hidden: []
+Hydreigon:
+  abilities: [Levitate]
+  # Berserk and Pressure are the invented pair: the whole line
+  # reaches only Hustle and Levitate, which leaves it two short, and
+  # neither of those says anything about its 125 Special Attack
+  hidden: [Berserk, Pressure]

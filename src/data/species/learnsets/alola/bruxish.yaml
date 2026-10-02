@@ -1,0 +1,71 @@
+# TM and tutor moves shared by the whole family
+
+Bruxish:
+  level:
+    '1': [WaterGun]
+    '4': [Astonish]
+    '9': [Confusion]
+    '12': [Bite]
+    '17': [AquaJet]
+    '20': [Disable]
+    '25': [Psywave]
+    '28': [Crunch]
+    '33': [AquaTail]
+    '36': [Screech]
+    '41': [PsychicFangs]
+    '44': [Synchronoise]
+  teachable:
+    - AerialAce
+    - AfterYou
+    - AllySwitch
+    - AquaTail
+    - Attract
+    - Blizzard
+    - BulkUp
+    - CalmMind
+    - Confide
+    - DoubleTeam
+    - DreamEater
+    - Embargo
+    - Facade
+    - Fling
+    - FrostBreath
+    - Frustration
+    - GigaImpact
+    - HiddenPower
+    - IceBeam
+    - IronTail
+    - LightScreen
+    - Liquidation
+    - MagicCoat
+    - MagicRoom
+    - PainSplit
+    - Payback
+    - Protect
+    - Psychic
+    - RainDance
+    - Reflect
+    - Rest
+    - Return
+    - Round
+    - Safeguard
+    - Scald
+    - SignalBeam
+    - SleepTalk
+    - Snatch
+    - Snore
+    - Substitute
+    - Surf
+    - Swagger
+    - SwordsDance
+    - Taunt
+    - Telekinesis
+    - Torment
+    - Toxic
+    - TrickRoom
+    - Uproar
+    - Venoshock
+    - WaterPulse
+    - Waterfall
+    - WonderRoom
+  egg: [IceFang, PoisonFang, Rage, WaterPulse]

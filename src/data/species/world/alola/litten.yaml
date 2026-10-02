@@ -1,0 +1,25 @@
+Litten:
+  types: [Fire]
+  egg-groups: [Field]
+  biomes: [Grassland, Steppe]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Torracat
+      method: [Level]
+      level: 17
+Torracat:
+  types: [Fire]
+  egg-groups: [Field]
+  biomes: [Grassland, Steppe]
+  active: [Evening, Night]
+  evolves-from: Litten
+  evolves-into:
+    - species: Incineroar
+      method: [Level]
+      level: 34
+Incineroar:
+  types: [Fire, Dark]
+  egg-groups: [Field]
+  biomes: [Grassland, Steppe]
+  active: [Evening, Night]
+  evolves-from: Torracat

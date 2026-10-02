@@ -16,6 +16,7 @@
     "frontier-symbols": "node scripts/frontier-symbols.ts",
     "apricorn-trees": "node scripts/apricorn-trees.ts",
     "item-icons": "node scripts/item-icons.ts",
+    "id-names": "node scripts/id-names.ts",
     "family-candies": "node scripts/family-candies.ts",
     "import-sprites": "node scripts/import-sprites.ts",
     "sprite-stamps": "node scripts/sprite-stamps.ts",
@@ -81,7 +82,8 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vite-plugin-solid-marked": "^0.8.0",
-    "vitest": "^5.0.1"
+    "vitest": "^5.0.1",
+    "yaml": "^2.9.1"
   },
   "engines": {
     "node": ">=22"

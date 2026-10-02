@@ -1,0 +1,28 @@
+# The lion whose fur works like a circuit: the light in a Luxray's
+# eyes is the same current, and it sees through whatever it is aimed
+# at
+Shinx:
+  types: [Electric]
+  egg-groups: [Field]
+  biomes: [Grassland, Savanna, Shrubland]
+  active: any
+  evolves-into:
+    - species: Luxio
+      method: [Level]
+      level: 15
+Luxio:
+  types: [Electric]
+  egg-groups: [Field]
+  biomes: [Grassland, Savanna, Shrubland]
+  active: any
+  evolves-from: Shinx
+  evolves-into:
+    - species: Luxray
+      method: [Level]
+      level: 30
+Luxray:
+  types: [Electric]
+  egg-groups: [Field]
+  biomes: [Grassland, Savanna, Shrubland]
+  active: any
+  evolves-from: Luxio

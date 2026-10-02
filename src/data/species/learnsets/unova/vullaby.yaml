@@ -1,0 +1,108 @@
+# TM and tutor moves shared by the whole family
+
+# What the vulture works out how to do, at either size
+family-teachable:
+  - AerialAce
+  - AirCutter
+  - AirSlash
+  - Assurance
+  - Attract
+  - BraveBird
+  - Cut
+  - DarkPulse
+  - DoubleEdge
+  - DoubleTeam
+  - Embargo
+  - Endure
+  - Facade
+  - FakeTears
+  - FeatherDance
+  - Fly
+  - FoulPlay
+  - Frustration
+  - HeatWave
+  - HiddenPower
+  - Incinerate
+  - IronDefense
+  - KnockOff
+  - NastyPlot
+  - Payback
+  - Pluck
+  - Protect
+  - PsychUp
+  - RainDance
+  - Rest
+  - Retaliate
+  - Return
+  - RockSmash
+  - RockTomb
+  - Roost
+  - Round
+  - ScaryFace
+  - SecretPower
+  - ShadowBall
+  - SleepTalk
+  - Snarl
+  - Snore
+  - Spite
+  - SteelWing
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Swift
+  - Tailwind
+  - TakeDown
+  - Taunt
+  - Thief
+  - Torment
+  - Toxic
+  - UTurn
+  - Uproar
+  - Confide
+Vullaby:
+  level:
+    '1': [Gust, Leer]
+    '5': [FuryAttack]
+    '6': [Flatter]
+    '10': [Pluck]
+    '14': [NastyPlot]
+    '18': [Tailwind]
+    '23': [FeintAttack]
+    '24': [KnockOff]
+    '28': [Punishment]
+    '30': [IronDefense]
+    '32': [Defog]
+    '36': [Whirlwind]
+    '41': [AirSlash]
+    '46': [DarkPulse]
+    '50': [Embargo]
+    '59': [BraveBird]
+    '64': [MirrorMove]
+    '66': [Attract]
+  egg: [FakeTears, FoulPlay, KnockOff, MeanLook, Roost, ScaryFace, SteelWing, Toxic]
+Mandibuzz:
+  level:
+    '1':
+      - Gust
+      - Whirlwind
+      - FuryAttack
+      - Leer
+      - Toxic
+      - MirrorMove
+      - SkyAttack
+      - Flatter
+      - Pluck
+      - BraveBird
+      - BoneRush
+    '14': [NastyPlot]
+    '18': [Tailwind]
+    '23': [FeintAttack]
+    '24': [KnockOff]
+    '28': [Punishment]
+    '30': [IronDefense]
+    '32': [Defog]
+    '41': [AirSlash]
+    '46': [DarkPulse]
+    '50': [Embargo]
+    '72': [Attract]
+  teachable: [Acrobatics, GigaImpact, Hurricane, HyperBeam, Sandstorm]

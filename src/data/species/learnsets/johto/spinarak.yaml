@@ -1,0 +1,88 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - SolarBeam
+  - Dig
+  - Psychic
+  - DoubleTeam
+  - Flash
+  - Rest
+  - Thief
+  - Snore
+  - Curse
+  - Protect
+  - SludgeBomb
+  - GigaDrain
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - HiddenPower
+  - SunnyDay
+  - BodySlam
+  - DoubleEdge
+  - Facade
+  - Mimic
+  - SecretPower
+  - Substitute
+  - Captivate
+  - NaturalGift
+  - HoneClaws
+  - Venoshock
+  - FoulPlay
+  - Round
+  - StruggleBug
+  - Electroweb
+  - Confide
+  - Infestation
+Spinarak:
+  level:
+    '1': [PoisonSting, StringShot]
+    '6': [ScaryFace]
+    '11': [Constrict]
+    '17': [NightShade]
+    '19': [ShadowSneak]
+    '23': [LeechLife]
+    '26': [SuckerPunch]
+    '30': [FurySwipes]
+    '37': [SpiderWeb]
+    '43': [PoisonJab]
+    '45': [Screech, Agility]
+    '50': [StickyWeb]
+    '53': [Psychic]
+    '54': [ToxicThread]
+  teachable: [BugBite]
+  egg:
+    - SonicBoom
+    - Disable
+    - Psybeam
+    - BatonPass
+    - Pursuit
+    - SignalBeam
+    - ToxicSpikes
+    - RagePowder
+    - Electroweb
+    - Lunge
+Ariados:
+  level:
+    '1':
+      - PoisonSting
+      - StringShot
+      - Constrict
+      - ScaryFace
+      - BugBite
+      - FellStinger
+      - VenomDrench
+    '17': [NightShade]
+    '19': [ShadowSneak]
+    '25': [LeechLife]
+    '28': [SuckerPunch]
+    '34': [FurySwipes]
+    '43': [SpiderWeb]
+    '50': [PoisonJab]
+    '53': [Screech, Agility]
+    '58': [StickyWeb]
+    '63': [Psychic, ToxicThread]
+  teachable: [HyperBeam, GigaImpact, StompingTantrum, ThroatChop, SmartStrike]

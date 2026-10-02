@@ -1,0 +1,84 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - AerialAce
+  - AirCutter
+  - Attract
+  - Captivate
+  - Defog
+  - DoubleTeam
+  - Endeavor
+  - Endure
+  - Facade
+  - Fly
+  - Frustration
+  - HeatWave
+  - HiddenPower
+  - MudSlap
+  - NaturalGift
+  - OminousWind
+  - Pluck
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - Roost
+  - SecretPower
+  - SleepTalk
+  - Snore
+  - SteelWing
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Swift
+  - Tailwind
+  - Thief
+  - Toxic
+  - Twister
+  - UTurn
+  - Confide
+Starly:
+  level:
+    '1': [Growl, Tackle]
+    '5': [QuickAttack]
+    '9': [WingAttack]
+    '13': [DoubleTeam]
+    '17': [Endeavor]
+    '21': [Whirlwind]
+    '25': [AerialAce]
+    '29': [TakeDown]
+    '33': [Agility]
+    '37': [BraveBird]
+  egg:
+    - Astonish
+    - DoubleEdge
+    - FeatherDance
+    - Foresight
+    - FuryAttack
+    - Pursuit
+    - SandAttack
+Staravia:
+  level:
+    '1': [Growl, QuickAttack, Tackle]
+    '5': [QuickAttack]
+    '9': [WingAttack]
+    '13': [DoubleTeam]
+    '18': [Endeavor]
+    '23': [Whirlwind]
+    '28': [AerialAce]
+    '33': [TakeDown]
+    '38': [Agility]
+    '43': [BraveBird]
+Staraptor:
+  level:
+    '1': [Growl, QuickAttack, Tackle, WingAttack]
+    '5': [QuickAttack]
+    '9': [WingAttack]
+    '13': [DoubleTeam]
+    '18': [Endeavor]
+    '23': [Whirlwind]
+    '28': [AerialAce]
+    '33': [TakeDown]
+    '34': [CloseCombat]
+    '41': [Agility]
+    '49': [BraveBird]
+  teachable: [GigaImpact, HyperBeam, SkyAttack, LaserFocus]

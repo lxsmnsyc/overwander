@@ -1,0 +1,15 @@
+Omanyte:
+  types: [Rock, Water]
+  egg-groups: [Water1, Water3]
+  habitat: Water
+  active: any
+  evolves-into:
+    - species: Omastar
+      method: [Level]
+      level: 40
+Omastar:
+  types: [Rock, Water]
+  egg-groups: [Water1, Water3]
+  habitat: Water
+  active: any
+  evolves-from: Omanyte

@@ -1,0 +1,8 @@
+Croagunk:
+  abilities: [Anticipation, DrySkin]
+  hidden: [PoisonTouch]
+Toxicroak:
+  abilities: [Anticipation, DrySkin]
+  # Technician is this registry's rather than the mainline's: the
+  # line fights in short jabs, and nothing else it has pays for one
+  hidden: [PoisonTouch, Technician]

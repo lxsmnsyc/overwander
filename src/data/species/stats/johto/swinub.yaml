@@ -1,0 +1,18 @@
+Swinub:
+  stats: { HP: 50, Attack: 50, Defense: 40, SpecialAttack: 30, SpecialDefense: 30, Speed: 50 }
+  catch-rate: 225
+  height: 0.4
+  weight: 6.5
+  gender: [1, 1]
+Piloswine:
+  stats: { HP: 100, Attack: 100, Defense: 80, SpecialAttack: 60, SpecialDefense: 60, Speed: 50 }
+  catch-rate: 75
+  height: 1.1
+  weight: 55.8
+  gender: [1, 1]
+Mamoswine:
+  stats: { HP: 110, Attack: 130, Defense: 80, SpecialAttack: 70, SpecialDefense: 60, Speed: 80 }
+  catch-rate: 50
+  height: 2.5
+  weight: 291
+  gender: [1, 1]

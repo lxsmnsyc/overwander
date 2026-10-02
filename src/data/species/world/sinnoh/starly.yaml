@@ -1,0 +1,27 @@
+# Sinnoh's first bird, and the one that never flies alone: a flock of
+# Starly is loud enough to be heard from the next route over
+Starly:
+  types: [Normal, Flying]
+  egg-groups: [Flying]
+  biomes: [Grassland, Woodland, TemperateForest]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Staravia
+      method: [Level]
+      level: 14
+Staravia:
+  types: [Normal, Flying]
+  egg-groups: [Flying]
+  biomes: [Grassland, Woodland, TemperateForest]
+  active: [Morning, Day]
+  evolves-from: Starly
+  evolves-into:
+    - species: Staraptor
+      method: [Level]
+      level: 34
+Staraptor:
+  types: [Normal, Flying]
+  egg-groups: [Flying]
+  biomes: [Grassland, Woodland, TemperateForest]
+  active: [Morning, Day]
+  evolves-from: Staravia

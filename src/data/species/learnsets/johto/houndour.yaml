@@ -1,0 +1,97 @@
+# TM, HM and tutor moves shared by the whole family
+
+# What the pack learns at the same levels either side of evolving
+family-teachable:
+  - Toxic
+  - FireBlast
+  - Flamethrower
+  - SolarBeam
+  - SunnyDay
+  - ShadowBall
+  - SludgeBomb
+  - DoubleTeam
+  - Rest
+  - Thief
+  - Snore
+  - Curse
+  - Protect
+  - Detect
+  - DreamEater
+  - Nightmare
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - IronTail
+  - HiddenPower
+  - Headbutt
+  - MudSlap
+  - RockSmash
+  - Roar
+  - Swift
+  - BodySlam
+  - DoubleEdge
+  - Facade
+  - Mimic
+  - Overheat
+  - SecretPower
+  - Snatch
+  - Substitute
+  - Taunt
+  - Torment
+  - Captivate
+  - DarkPulse
+  - NaturalGift
+  - Payback
+  - SuckerPunch
+  - FlameCharge
+  - FoulPlay
+  - Round
+  - Incinerate
+  - Retaliate
+  - Snarl
+  - Confide
+Houndour:
+  level:
+    '1': [Ember, Leer]
+    '7': [Roar, Howl]
+    '13': [Smog]
+    '20': [Bite]
+    '27': [FeintAttack]
+    '30': [FireFang]
+    '31': [OdorSleuth]
+    '35': [Flamethrower]
+    '40': [Embargo, FoulPlay]
+    '43': [Crunch]
+    '53': [NastyPlot]
+    '56': [Inferno]
+  egg:
+    - BeatUp
+    - Counter
+    - FireSpin
+    - Pursuit
+    - Rage
+    - Reversal
+    - Spite
+    - WillOWisp
+    - Feint
+    - Punishment
+    - ThunderFang
+Houndoom:
+  level:
+    '1': [Ember, Leer, Howl, ThunderFang]
+    '7': [Roar]
+    '13': [Smog]
+    '20': [Bite]
+    '30': [FeintAttack]
+    '32': [FireFang]
+    '35': [OdorSleuth]
+    '41': [Flamethrower]
+    '44': [Embargo]
+    '45': [FoulPlay]
+    '52': [Crunch]
+    '60': [NastyPlot]
+    '65': [Inferno]
+  teachable: [Strength, HyperBeam, Counter, GigaImpact, LaserFocus, ThroatChop]

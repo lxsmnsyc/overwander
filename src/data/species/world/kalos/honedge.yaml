@@ -1,0 +1,39 @@
+# Ruins and bare rock, where a sword is left lying
+
+# What the royal sword carries whichever way round it is standing
+
+# The haunted sword. It is drawn as a shield until it swings, and
+# Stance Change is what turns it over mid-fight
+Honedge:
+  types: [Steel, Ghost]
+  egg-groups: [Mineral]
+  biomes: [Badlands, Mountain]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Doublade
+      method: [Level]
+      level: 35
+Doublade:
+  types: [Steel, Ghost]
+  egg-groups: [Mineral]
+  biomes: [Badlands, Mountain]
+  active: [Evening, Night]
+  evolves-from: Honedge
+  evolves-into:
+    - species: Aegislash
+      method: [UsedItem]
+      item: DuskStone
+Aegislash:
+  types: [Steel, Ghost]
+  egg-groups: [Mineral]
+  biomes: [Badlands, Mountain]
+  active: [Evening, Night]
+  evolves-from: Doublade
+AegislashBlade:
+  types: [Steel, Ghost]
+  egg-groups: [Mineral]
+  active: any
+  # Drawing the sword puts everything behind the edge and nothing
+  # behind the shield
+  base-form: false
+  evolves-from: Doublade

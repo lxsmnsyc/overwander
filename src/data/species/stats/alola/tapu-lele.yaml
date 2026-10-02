@@ -1,0 +1,6 @@
+TapuLele:
+  stats: { HP: 70, Attack: 85, Defense: 75, SpecialAttack: 130, SpecialDefense: 115, Speed: 95 }
+  catch-rate: 3
+  height: 1.2
+  weight: 18.6
+  gender: genderless

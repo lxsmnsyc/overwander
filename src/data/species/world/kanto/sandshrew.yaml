@@ -1,0 +1,32 @@
+Sandshrew:
+  types: [Ground]
+  egg-groups: [Field]
+  biomes: [Desert, Badlands]
+  active: [Day, Evening]
+  evolves-into:
+    - species: Sandslash
+      method: [Level]
+      level: 22
+Sandslash:
+  types: [Ground]
+  egg-groups: [Field]
+  biomes: [Desert, Badlands]
+  active: [Day, Evening]
+  evolves-from: Sandshrew
+SandshrewAlola:
+  types: [Ice, Steel]
+  egg-groups: [Field]
+  biomes: [AlpineTundra, Glacier, Tundra]
+  active: any
+  base-form: false
+  evolves-into:
+    - species: SandslashAlola
+      method: [UsedItem]
+      item: IceStone
+SandslashAlola:
+  types: [Ice, Steel]
+  egg-groups: [Field]
+  biomes: [AlpineTundra, Glacier, Tundra]
+  active: any
+  base-form: false
+  evolves-from: SandshrewAlola

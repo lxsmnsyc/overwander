@@ -1,0 +1,136 @@
+family-teachable:
+  - Toxic
+  - Earthquake
+  - Dig
+  - Sandstorm
+  - SunnyDay
+  - HyperBeam
+  - DoubleTeam
+  - Rest
+  - Snore
+  - Curse
+  - Protect
+  - Detect
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - HiddenPower
+  - RainDance
+  - Headbutt
+  - MudSlap
+  - BodySlam
+  - BrickBreak
+  - DoubleEdge
+  - Facade
+  - Mimic
+  - SecretPower
+  - Substitute
+  - Taunt
+  - Torment
+  - Captivate
+  - EarthPower
+  - IronHead
+  - NaturalGift
+  - RockPolish
+  - StealthRock
+  - SmackDown
+  - Round
+  - Retaliate
+  - Bulldoze
+  - Snarl
+  - Confide
+  - PowerUpPunch
+Larvitar:
+  level:
+    '1': [Bite, Leer]
+    '8': [Sandstorm]
+    '14': [ChipAway]
+    '15': [Screech]
+    '22': [RockSlide]
+    '28': [DarkPulse]
+    '29': [Thrash]
+    '32': [Payback]
+    '36': [ScaryFace]
+    '43': [Crunch]
+    '46': [StoneEdge]
+    '50': [Earthquake]
+    '57': [HyperBeam]
+  teachable: [RockSmash]
+  egg: [AncientPower, FocusEnergy, Outrage, Pursuit, Stomp, DragonDance, Assurance]
+Pupitar:
+  level:
+    '1': [Bite, Leer, Sandstorm, Screech]
+    '8': [Sandstorm]
+    '14': [ChipAway]
+    '15': [Screech]
+    '22': [RockSlide]
+    '28': [DarkPulse]
+    '29': [Thrash]
+    '34': [Payback]
+    '38': [ScaryFace]
+    '47': [Crunch]
+    '54': [StoneEdge]
+    '56': [Earthquake]
+    '65': [HyperBeam]
+  teachable: [RockSmash]
+Tyranitar:
+  level:
+    '1': [Bite, Leer, Sandstorm, Screech, FireFang, IceFang, ThunderFang]
+    '8': [Sandstorm]
+    '14': [ChipAway]
+    '15': [Screech]
+    '22': [RockSlide]
+    '28': [DarkPulse]
+    '29': [Thrash]
+    '34': [Payback]
+    '38': [ScaryFace]
+    '47': [Crunch]
+    '54': [StoneEdge]
+    '61': [Earthquake]
+    '75': [HyperBeam]
+  teachable:
+    - Flamethrower
+    - FireBlast
+    - FirePunch
+    - IceBeam
+    - Thunderbolt
+    - Surf
+    - Cut
+    - Strength
+    - RockSmash
+    - FuryCutter
+    - DragonBreath
+    - DynamicPunch
+    - IronTail
+    - Nightmare
+    - Roar
+    - AerialAce
+    - Blizzard
+    - Counter
+    - DragonClaw
+    - FocusPunch
+    - MegaKick
+    - MegaPunch
+    - RockTomb
+    - SeismicToss
+    - ShockWave
+    - Thunder
+    - ThunderWave
+    - WaterPulse
+    - AquaTail
+    - Avalanche
+    - DragonPulse
+    - Fling
+    - FocusBlast
+    - GigaImpact
+    - RockClimb
+    - ShadowClaw
+    - HoneClaws
+    - FoulPlay
+    - Incinerate
+    - DragonTail
+    - BrutalSwing
+    - StompingTantrum

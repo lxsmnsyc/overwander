@@ -1,0 +1,15 @@
+Electrike:
+  types: [Electric]
+  egg-groups: [Field]
+  biomes: [Savanna, Steppe]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Manectric
+      method: [Level]
+      level: 26
+Manectric:
+  types: [Electric]
+  egg-groups: [Field]
+  biomes: [Savanna, Steppe]
+  active: [Morning, Day]
+  evolves-from: Electrike

@@ -1,0 +1,43 @@
+# The prism that lost its light, the two shapes it takes with the sun
+# or the moon folded into it, and the one it bursts into to let the
+# light back out
+Necrozma:
+  types: [Psychic]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Mountain]
+  active: any
+  evolves-into:
+    - species: NecrozmaDuskMane
+      method: [UsedItem]
+      item: NSolarizer
+    - species: NecrozmaDawnWings
+      method: [UsedItem]
+      item: NLunarizer
+NecrozmaDuskMane:
+  types: [Psychic, Steel]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  evolves-from: Necrozma
+  evolves-into:
+    - species: Necrozma
+      method: [UsedItem]
+      item: NSolarizer
+NecrozmaDawnWings:
+  types: [Psychic, Ghost]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  evolves-from: Necrozma
+  evolves-into:
+    - species: Necrozma
+      method: [UsedItem]
+      item: NLunarizer
+# Burst into for a fight by a fused shape holding its crystal, and
+# never kept
+NecrozmaUltra:
+  types: [Psychic, Dragon]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true

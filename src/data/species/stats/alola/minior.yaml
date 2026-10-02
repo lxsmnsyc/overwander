@@ -1,0 +1,48 @@
+Minior:
+  stats: { HP: 60, Attack: 60, Defense: 100, SpecialAttack: 60, SpecialDefense: 100, Speed: 60 }
+  catch-rate: 30
+  height: 0.3
+  weight: 40
+  gender: &a1 [0, 0]
+MiniorRed:
+  stats: { HP: 60, Attack: 100, Defense: 60, SpecialAttack: 100, SpecialDefense: 60, Speed: 120 }
+  catch-rate: 30
+  height: 0.3
+  weight: 0.3
+  gender: *a1
+MiniorOrange:
+  stats: { HP: 60, Attack: 100, Defense: 60, SpecialAttack: 100, SpecialDefense: 60, Speed: 120 }
+  catch-rate: 30
+  height: 0.3
+  weight: 0.3
+  gender: *a1
+MiniorYellow:
+  stats: { HP: 60, Attack: 100, Defense: 60, SpecialAttack: 100, SpecialDefense: 60, Speed: 120 }
+  catch-rate: 30
+  height: 0.3
+  weight: 0.3
+  gender: *a1
+MiniorGreen:
+  stats: { HP: 60, Attack: 100, Defense: 60, SpecialAttack: 100, SpecialDefense: 60, Speed: 120 }
+  catch-rate: 30
+  height: 0.3
+  weight: 0.3
+  gender: *a1
+MiniorBlue:
+  stats: { HP: 60, Attack: 100, Defense: 60, SpecialAttack: 100, SpecialDefense: 60, Speed: 120 }
+  catch-rate: 30
+  height: 0.3
+  weight: 0.3
+  gender: *a1
+MiniorIndigo:
+  stats: { HP: 60, Attack: 100, Defense: 60, SpecialAttack: 100, SpecialDefense: 60, Speed: 120 }
+  catch-rate: 30
+  height: 0.3
+  weight: 0.3
+  gender: *a1
+MiniorViolet:
+  stats: { HP: 60, Attack: 100, Defense: 60, SpecialAttack: 100, SpecialDefense: 60, Speed: 120 }
+  catch-rate: 30
+  height: 0.3
+  weight: 0.3
+  gender: *a1

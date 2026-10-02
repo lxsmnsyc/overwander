@@ -1,0 +1,25 @@
+Chespin:
+  types: [Grass]
+  egg-groups: [Field]
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Quilladin
+      method: [Level]
+      level: 16
+Quilladin:
+  types: [Grass]
+  egg-groups: [Field]
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-from: Chespin
+  evolves-into:
+    - species: Chesnaught
+      method: [Level]
+      level: 36
+Chesnaught:
+  types: [Grass, Fighting]
+  egg-groups: [Field]
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-from: Quilladin

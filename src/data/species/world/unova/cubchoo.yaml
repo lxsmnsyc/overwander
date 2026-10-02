@@ -1,0 +1,17 @@
+# The bears: a Cubchoo's nose runs constantly and that is what it
+# freezes into the fangs and claws a Beartic fights with
+Cubchoo:
+  types: [Ice]
+  egg-groups: [Field]
+  biomes: [Tundra, Glacier]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Beartic
+      method: [Level]
+      level: 37
+Beartic:
+  types: [Ice]
+  egg-groups: [Field]
+  biomes: [Tundra, Glacier]
+  active: [Morning, Day]
+  evolves-from: Cubchoo

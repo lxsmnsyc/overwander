@@ -1,0 +1,17 @@
+# The automatons: the clay was fired five thousand years ago and
+# whatever was put inside it is still following the order it was given
+Golett:
+  types: [Ground, Ghost]
+  egg-groups: [Mineral]
+  biomes: [Badlands, Steppe]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Golurk
+      method: [Level]
+      level: 43
+Golurk:
+  types: [Ground, Ghost]
+  egg-groups: [Mineral]
+  biomes: [Badlands, Steppe]
+  active: [Evening, Night]
+  evolves-from: Golett

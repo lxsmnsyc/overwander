@@ -1,0 +1,12 @@
+Piplup:
+  abilities: [Torrent]
+  hidden: [Competitive]
+Prinplup:
+  abilities: [Torrent]
+  hidden: [Competitive]
+Empoleon:
+  abilities: [Torrent]
+  # Defiant and Filter are this registry's rather than the mainline's:
+  # it answers a stat drop whichever way it is built, and steel blunts
+  # what gets through
+  hidden: [Competitive, Defiant, Filter]

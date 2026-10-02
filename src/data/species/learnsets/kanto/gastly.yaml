@@ -1,0 +1,129 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - Rage
+  - MegaDrain
+  - Thunderbolt
+  - Thunder
+  - Psychic
+  - Mimic
+  - DoubleTeam
+  - Bide
+  - SelfDestruct
+  - DreamEater
+  - Rest
+  - Explosion
+  - Substitute
+  - Thief
+  - Nightmare
+  - Snore
+  - Curse
+  - Protect
+  - ZapCannon
+  - GigaDrain
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - HiddenPower
+  - RainDance
+  - SunnyDay
+  - PsychUp
+  - ShadowBall
+  - Facade
+  - SecretPower
+  - SkillSwap
+  - SludgeBomb
+  - Snatch
+  - Taunt
+  - Torment
+  - Captivate
+  - Embargo
+  - EnergyBall
+  - NaturalGift
+  - OminousWind
+  - TrickRoom
+  - WonderRoom
+  - Venoshock
+  - Telekinesis
+  - FoulPlay
+  - Round
+  - Confide
+  - DazzlingGleam
+  - Infestation
+Gastly:
+  level:
+    '1': [Lick, ConfuseRay, NightShade, Hypnosis]
+    '8': [Spite]
+    '13': [MeanLook]
+    '16': [Curse]
+    '22': [SuckerPunch]
+    '26': [Payback]
+    '33': [DreamEater]
+    '36': [DestinyBond, DarkPulse]
+    '43': [Hex]
+  egg:
+    - Psywave
+    - Haze
+    - FirePunch
+    - IcePunch
+    - ThunderPunch
+    - PerishSong
+    - Astonish
+    - Grudge
+    - WillOWisp
+    - ClearSmog
+Haunter:
+  level:
+    '1': [Lick, ConfuseRay, NightShade, Hypnosis, Spite]
+    '13': [MeanLook]
+    '16': [Curse]
+    '22': [SuckerPunch]
+    '25': [ShadowPunch]
+    '28': [Payback]
+    '38': [DreamEater]
+    '44': [DarkPulse]
+    '48': [DestinyBond]
+    '55': [Hex]
+  teachable: [Fling, PoisonJab, ShadowClaw]
+Gengar:
+  level:
+    '1': [Lick, ConfuseRay, NightShade, Hypnosis, Spite]
+    '13': [MeanLook]
+    '16': [Curse]
+    '22': [SuckerPunch]
+    '25': [ShadowPunch]
+    '28': [Payback]
+    '38': [DreamEater]
+    '44': [DarkPulse]
+    '48': [DestinyBond]
+    '55': [Hex]
+  teachable:
+    - MegaPunch
+    - MegaKick
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - SeismicToss
+    - Counter
+    - HyperBeam
+    - Strength
+    - FirePunch
+    - IcePunch
+    - ThunderPunch
+    - Headbutt
+    - DynamicPunch
+    - RockSmash
+    - BrickBreak
+    - FocusPunch
+    - Metronome
+    - DrainPunch
+    - Fling
+    - FocusBlast
+    - GigaImpact
+    - PoisonJab
+    - ShadowClaw
+    - PowerUpPunch
+    - LaserFocus

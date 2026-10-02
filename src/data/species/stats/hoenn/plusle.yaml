@@ -1,0 +1,6 @@
+Plusle:
+  stats: { HP: 60, Attack: 50, Defense: 40, SpecialAttack: 85, SpecialDefense: 75, Speed: 95 }
+  catch-rate: 200
+  height: 0.4
+  weight: 4.2
+  gender: [1, 1]

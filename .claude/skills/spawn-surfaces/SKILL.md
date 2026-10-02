@@ -33,4 +33,4 @@ Rippling water startles the water kind, a flying shadow the flying kind and a du
 
 ## Amphibious
 
-`habitat: Habitat.Amphibious` only matters for the water kind. Mark a water species amphibious when it is met on land as readily as in the water: frogs, turtles, crabs, otters, seals, the water starters. Fish, jellies, shellfish and whales stay water-only, and so does a water species with no habitat at all.
+`habitat: Amphibious` (in the species' `world/` YAML) only matters for the water kind. Mark a water species amphibious when it is met on land as readily as in the water: frogs, turtles, crabs, otters, seals, the water starters. Fish, jellies, shellfish and whales stay water-only, and so does a water species with no habitat at all.

@@ -1,0 +1,13 @@
+Wurmple:
+  abilities: [ShieldDust]
+  hidden: [RunAway]
+Silcoon:
+  abilities: [ShedSkin]
+Beautifly:
+  abilities: [Swarm]
+  hidden: [Rivalry]
+Cascoon:
+  abilities: [ShedSkin]
+Dustox:
+  abilities: [ShieldDust]
+  hidden: [CompoundEyes]

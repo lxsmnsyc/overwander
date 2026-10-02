@@ -1,0 +1,120 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - FocusPunch
+  - Toxic
+  - BulletSeed
+  - HiddenPower
+  - SunnyDay
+  - Protect
+  - GigaDrain
+  - Safeguard
+  - Frustration
+  - SolarBeam
+  - IronTail
+  - Return
+  - Dig
+  - BrickBreak
+  - DoubleTeam
+  - RockTomb
+  - AerialAce
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Cut
+  - Strength
+  - Flash
+  - RockSmash
+  - MegaPunch
+  - SwordsDance
+  - MegaKick
+  - BodySlam
+  - DoubleEdge
+  - Counter
+  - SeismicToss
+  - Mimic
+  - Substitute
+  - DynamicPunch
+  - Snore
+  - Endure
+  - MudSlap
+  - Swagger
+  - FuryCutter
+  - ThunderPunch
+  - SleepTalk
+  - Swift
+  - Captivate
+  - DrainPunch
+  - Fling
+  - GrassKnot
+  - NaturalGift
+  - SeedBomb
+  - WorrySeed
+  - Round
+  - Acrobatics
+  - GrassPledge
+  - Confide
+  - PowerUpPunch
+Treecko:
+  level:
+    '1': [Pound, Leer]
+    '6': [Absorb]
+    '11': [QuickAttack]
+    '16': [Pursuit]
+    '21': [Screech]
+    '26': [MegaDrain]
+    '31': [Agility]
+    '36': [Slam]
+    '41': [Detect]
+    '46': [GigaDrain]
+    '51': [EnergyBall]
+  egg:
+    - LeechSeed
+    - Crunch
+    - MudSport
+    - DragonBreath
+    - Endeavor
+    - CrushClaw
+    - LeafStorm
+    - GrassyTerrain
+Grovyle:
+  level:
+    '1': [Pound, Leer, Absorb, QuickAttack]
+    '16': [FuryCutter]
+    '17': [Pursuit]
+    '23': [Screech]
+    '29': [LeafBlade]
+    '35': [Agility]
+    '41': [Slam]
+    '47': [Detect]
+    '53': [FalseSwipe]
+    '59': [LeafStorm]
+  teachable: [EnergyBall, XScissor, LowSweep]
+Sceptile:
+  level:
+    '1': [Pound, Leer, Absorb, QuickAttack, NightSlash]
+    '16': [FuryCutter, XScissor]
+    '17': [Pursuit]
+    '23': [Screech]
+    '29': [LeafBlade]
+    '35': [Agility]
+    '43': [Slam]
+    '51': [Detect]
+    '59': [FalseSwipe]
+    '67': [LeafStorm]
+  teachable:
+    - DragonClaw
+    - Roar
+    - HyperBeam
+    - Earthquake
+    - DragonPulse
+    - EnergyBall
+    - FocusBlast
+    - GigaImpact
+    - RockClimb
+    - HoneClaws
+    - LowSweep
+    - Bulldoze
+    - BrutalSwing
+    - LaserFocus
+    - ThroatChop

@@ -1,0 +1,12 @@
+Wailmer:
+  stats: { HP: 130, Attack: 70, Defense: 35, SpecialAttack: 70, SpecialDefense: 35, Speed: 60 }
+  catch-rate: 125
+  height: 2
+  weight: 130
+  gender: [1, 1]
+Wailord:
+  stats: { HP: 170, Attack: 90, Defense: 45, SpecialAttack: 90, SpecialDefense: 45, Speed: 60 }
+  catch-rate: 60
+  height: 14.5
+  weight: 398
+  gender: [1, 1]

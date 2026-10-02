@@ -1,0 +1,15 @@
+Stufful:
+  types: [Normal, Fighting]
+  egg-groups: [Field]
+  biomes: [Grassland, TropicalSeasonalForest, Woodland]
+  active: any
+  evolves-into:
+    - species: Bewear
+      method: [Level]
+      level: 27
+Bewear:
+  types: [Normal, Fighting]
+  egg-groups: [Field]
+  biomes: [Grassland, TropicalSeasonalForest, Woodland]
+  active: any
+  evolves-from: Stufful

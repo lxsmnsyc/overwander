@@ -1,0 +1,8 @@
+Buizel:
+  abilities: [SwiftSwim]
+  hidden: [WaterVeil]
+Floatzel:
+  abilities: [SwiftSwim]
+  # Strong Jaw and Moxie are this registry's rather than the
+  # mainline's: what it hunts with, and what hunting does for it
+  hidden: [WaterVeil, StrongJaw, Moxie]

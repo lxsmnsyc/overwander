@@ -1,0 +1,7 @@
+# The cactus: it keeps the desert's water for the months there is
+# none, and it rattles its arms to put the birds off
+Maractus:
+  types: [Grass]
+  egg-groups: [Grass]
+  biomes: [Desert, Badlands]
+  active: [Morning, Day]

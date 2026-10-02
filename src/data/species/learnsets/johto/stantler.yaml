@@ -1,0 +1,72 @@
+Stantler:
+  level:
+    '1': [Tackle]
+    '8': [Leer]
+    '13': [Astonish]
+    '15': [Hypnosis]
+    '23': [Stomp]
+    '31': [SandAttack, RolePlay]
+    '38': [ZenHeadbutt]
+    '40': [TakeDown]
+    '49': [ConfuseRay, CalmMind, Captivate]
+    '53': [MeFirst]
+  teachable:
+    - Attract
+    - Curse
+    - Detect
+    - DoubleTeam
+    - DreamEater
+    - Earthquake
+    - Endure
+    - Flash
+    - Frustration
+    - Headbutt
+    - HiddenPower
+    - MudSlap
+    - Nightmare
+    - Protect
+    - PsychUp
+    - Psychic
+    - RainDance
+    - Rest
+    - Return
+    - Roar
+    - SleepTalk
+    - Snore
+    - SunnyDay
+    - Swagger
+    - Swift
+    - Thief
+    - Toxic
+    - BodySlam
+    - DoubleEdge
+    - Facade
+    - IronTail
+    - Mimic
+    - SecretPower
+    - ShadowBall
+    - ShockWave
+    - SkillSwap
+    - SolarBeam
+    - Substitute
+    - Thunder
+    - ThunderWave
+    - Thunderbolt
+    - ChargeBeam
+    - EnergyBall
+    - GigaImpact
+    - Gravity
+    - LastResort
+    - NaturalGift
+    - SuckerPunch
+    - TrickRoom
+    - Psyshock
+    - MagicRoom
+    - Round
+    - Retaliate
+    - Bulldoze
+    - WorkUp
+    - WildCharge
+    - Confide
+    - ThroatChop
+  egg: [Bite, Disable, LightScreen, Reflect, Spite, Extrasensory]

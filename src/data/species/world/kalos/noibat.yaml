@@ -1,0 +1,20 @@
+# The caves the colony hangs in, and the wood it hunts over
+
+# The bat that hunts by sound and outruns whatever it finds. A
+# Noivern at 123 Speed is faster than nearly everything it meets,
+# which is the whole of what its signature reads
+Noibat:
+  types: [Flying, Dragon]
+  egg-groups: [Flying, Dragon]
+  biomes: [Woodland, TropicalRainforest]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Noivern
+      method: [Level]
+      level: 48
+Noivern:
+  types: [Flying, Dragon]
+  egg-groups: [Flying, Dragon]
+  biomes: [Woodland, TropicalRainforest]
+  active: [Evening, Night]
+  evolves-from: Noibat

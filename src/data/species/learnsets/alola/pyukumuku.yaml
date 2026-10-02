@@ -1,0 +1,42 @@
+# TM and tutor moves shared by the whole family
+
+Pyukumuku:
+  level:
+    '1': [BatonPass, Bide, Harden, MudSport, WaterSport]
+    '5': [HelpingHand]
+    '9': [Taunt]
+    '13': [Safeguard]
+    '17': [Counter]
+    '21': [Purify]
+    '25': [Curse]
+    '29': [GastroAcid]
+    '33': [PainSplit]
+    '37': [Recover]
+    '41': [Soak]
+    '45': [Toxic]
+    '49': [Memento]
+  teachable:
+    - Attract
+    - Block
+    - Confide
+    - DoubleTeam
+    - GastroAcid
+    - Hail
+    - HelpingHand
+    - LightScreen
+    - PainSplit
+    - Protect
+    - PsychUp
+    - Quash
+    - RainDance
+    - Recycle
+    - Reflect
+    - Rest
+    - Safeguard
+    - SleepTalk
+    - Spite
+    - Substitute
+    - Swagger
+    - Taunt
+    - Toxic
+  egg: [Bestow, Endure, Spite, Tickle, VenomDrench]

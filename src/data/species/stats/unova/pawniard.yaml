@@ -1,0 +1,12 @@
+Pawniard:
+  stats: { HP: 45, Attack: 85, Defense: 70, SpecialAttack: 40, SpecialDefense: 40, Speed: 60 }
+  catch-rate: 120
+  height: 0.5
+  weight: 10.2
+  gender: [1, 1]
+Bisharp:
+  stats: { HP: 65, Attack: 125, Defense: 100, SpecialAttack: 60, SpecialDefense: 70, Speed: 70 }
+  catch-rate: 45
+  height: 1.6
+  weight: 70
+  gender: [1, 1]

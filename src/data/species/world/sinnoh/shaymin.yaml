@@ -1,0 +1,17 @@
+# The flower that grows back whatever was ruined, and the shape it
+# opens into with a Gracidea in its hands: the same pokemon lying
+# down and the same pokemon in the air
+
+Shaymin:
+  types: [Grass]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Grassland]
+  active: any
+ShayminSky:
+  types: [Grass, Flying]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  # Worn rather than met: the flower is what opens it, so the dex
+  # fills it in the day the shape it lies down in is
+  worn: true

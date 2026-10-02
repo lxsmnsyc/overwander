@@ -1,0 +1,60 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Attract
+  - Bounce
+  - ChargeBeam
+  - DoubleTeam
+  - Facade
+  - FlameCharge
+  - Flash
+  - Frustration
+  - HiddenPower
+  - LightScreen
+  - MagnetRise
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - Round
+  - SignalBeam
+  - SleepTalk
+  - Snore
+  - Substitute
+  - Swagger
+  - Thunder
+  - ThunderWave
+  - Thunderbolt
+  - Toxic
+  - VoltSwitch
+  - WildCharge
+  - Confide
+Blitzle:
+  level:
+    '1': [QuickAttack]
+    '4': [TailWhip]
+    '8': [Charge]
+    '11': [ShockWave]
+    '15': [ThunderWave]
+    '18': [FlameCharge]
+    '22': [Pursuit]
+    '25': [Spark]
+    '29': [Stomp]
+    '32': [Discharge]
+    '36': [Agility]
+    '39': [WildCharge]
+    '43': [Thrash]
+  egg: [DoubleEdge, DoubleKick, Endure, MeFirst, Rage, SandAttack, Screech, TakeDown]
+Zebstrika:
+  level:
+    '1': [Charge, QuickAttack, TailWhip, ThunderWave]
+    '11': [ShockWave]
+    '18': [FlameCharge]
+    '22': [Pursuit]
+    '25': [Spark]
+    '31': [Stomp]
+    '36': [Discharge]
+    '42': [Agility]
+    '47': [WildCharge]
+    '53': [Thrash]
+    '58': [IonDeluge]
+  teachable: [GigaImpact, HyperBeam, Overheat, RockSmash, LaserFocus]

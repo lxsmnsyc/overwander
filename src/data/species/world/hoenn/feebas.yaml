@@ -1,0 +1,25 @@
+Feebas:
+  types: [Water]
+  egg-groups: [Water1, Dragon]
+  habitat: Water
+  biomes: [Bog, Swamp, Desert]
+  active: any
+  # The mainline turns a Feebas on how beautiful it has been made,
+  # which is a contest stat this game does not keep. Two roads
+  # stand in for it, and either one is enough: a Prism Scale handed
+  # over, or a Feebas raised fond enough to be worth looking at by
+  # the time it reaches 40
+  evolves-into:
+    - species: Milotic
+      method: [HeldItem, Trade]
+      item: PrismScale
+    - species: Milotic
+      method: [Level, Friendship]
+      level: 40
+Milotic:
+  types: [Water]
+  egg-groups: [Water1, Dragon]
+  habitat: Water
+  biomes: [KelpForest, Desert]
+  active: any
+  evolves-from: Feebas

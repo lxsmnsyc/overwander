@@ -1,0 +1,8 @@
+Skitty:
+  abilities: [CuteCharm, Normalize]
+  hidden: [WonderSkin]
+Delcatty:
+  abilities: [CuteCharm, Normalize]
+  # Limber is this registry's rather than the mainline's: a cat
+  # that never seizes up, and a final evolution is filled to four
+  hidden: [WonderSkin, Limber]

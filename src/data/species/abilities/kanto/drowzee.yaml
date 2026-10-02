@@ -1,0 +1,6 @@
+Drowzee:
+  abilities: [Insomnia, Forewarn]
+  hidden: [InnerFocus]
+Hypno:
+  abilities: [Insomnia, Forewarn]
+  hidden: [InnerFocus, BadDreams]

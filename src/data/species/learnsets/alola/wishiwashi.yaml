@@ -1,0 +1,65 @@
+family-teachable:
+  - AquaTail
+  - Attract
+  - Bulldoze
+  - Confide
+  - Covet
+  - DoubleTeam
+  - Earthquake
+  - Endeavor
+  - Facade
+  - Frustration
+  - Hail
+  - HelpingHand
+  - HiddenPower
+  - IceBeam
+  - IronTail
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - Round
+  - Scald
+  - SleepTalk
+  - Snore
+  - Substitute
+  - Surf
+  - Swagger
+  - Toxic
+  - UTurn
+  - WaterPulse
+  - Waterfall
+Wishiwashi:
+  level:
+    '1': [Growl, WaterGun]
+    '6': [HelpingHand]
+    '9': [FeintAttack]
+    '14': [Brine]
+    '17': [AquaRing]
+    '22': [TearfulLook]
+    '25': [TakeDown]
+    '30': [Dive]
+    '33': [BeatUp]
+    '38': [AquaTail]
+    '41': [DoubleEdge]
+    '46': [Soak]
+    '49': [Endeavor]
+    '54': [HydroPump]
+  egg: [Mist, MuddyWater, WaterPulse, WaterSport, Whirlpool]
+WishiwashiSchool:
+  level:
+    '1': [Growl, WaterGun]
+    '6': [HelpingHand]
+    '9': [FeintAttack]
+    '14': [Brine]
+    '17': [AquaRing]
+    '22': [TearfulLook]
+    '25': [TakeDown]
+    '30': [Dive]
+    '33': [BeatUp]
+    '38': [AquaTail]
+    '41': [DoubleEdge]
+    '46': [Soak]
+    '49': [Endeavor]
+    '54': [HydroPump]
+  egg: [Mist, MuddyWater, WaterPulse, WaterSport, Whirlpool]

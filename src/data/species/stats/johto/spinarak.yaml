@@ -1,0 +1,12 @@
+Spinarak:
+  stats: { HP: 40, Attack: 60, Defense: 40, SpecialAttack: 40, SpecialDefense: 40, Speed: 30 }
+  catch-rate: 255
+  height: 0.5
+  weight: 8.5
+  gender: [1, 1]
+Ariados:
+  stats: { HP: 70, Attack: 90, Defense: 70, SpecialAttack: 60, SpecialDefense: 70, Speed: 40 }
+  catch-rate: 90
+  height: 1.1
+  weight: 33.5
+  gender: [1, 1]

@@ -1,0 +1,6 @@
+Suicune:
+  stats: { HP: 100, Attack: 75, Defense: 115, SpecialAttack: 90, SpecialDefense: 115, Speed: 85 }
+  catch-rate: 3
+  height: 2
+  weight: 187
+  gender: genderless

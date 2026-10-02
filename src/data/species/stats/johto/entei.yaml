@@ -1,0 +1,6 @@
+Entei:
+  stats: { HP: 115, Attack: 115, Defense: 85, SpecialAttack: 90, SpecialDefense: 75, Speed: 100 }
+  catch-rate: 3
+  height: 2.1
+  weight: 198
+  gender: genderless

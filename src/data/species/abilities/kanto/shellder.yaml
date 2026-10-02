@@ -1,0 +1,6 @@
+Shellder:
+  abilities: [ShellArmor, SkillLink]
+  hidden: [Overcoat]
+Cloyster:
+  abilities: [ShellArmor, SkillLink]
+  hidden: [Overcoat, Sturdy]

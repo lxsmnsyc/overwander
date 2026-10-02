@@ -1,0 +1,18 @@
+# The mushroom that grew into the shape of a ball somebody dropped,
+# and the bigger one it becomes, which does not bother hiding
+Foongus:
+  types: [Grass, Poison]
+  egg-groups: [Grass]
+  # Under the trees at dusk, where a dropped ball would lie
+  biomes: [TemperateForest, Woodland]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Amoonguss
+      method: [Level]
+      level: 39
+Amoonguss:
+  types: [Grass, Poison]
+  egg-groups: [Grass]
+  biomes: [TemperateForest, Woodland]
+  active: [Evening, Night]
+  evolves-from: Foongus

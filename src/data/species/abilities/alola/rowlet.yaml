@@ -1,0 +1,9 @@
+Rowlet:
+  abilities: [Overgrow]
+  hidden: [LongReach]
+Dartrix:
+  abilities: [Overgrow]
+  hidden: [LongReach]
+Decidueye:
+  abilities: [Overgrow]
+  hidden: [LongReach, Sniper, KeenEye]

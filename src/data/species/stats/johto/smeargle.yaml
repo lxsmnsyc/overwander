@@ -1,0 +1,6 @@
+Smeargle:
+  stats: { HP: 55, Attack: 20, Defense: 35, SpecialAttack: 20, SpecialDefense: 45, Speed: 75 }
+  catch-rate: 45
+  height: 1.2
+  weight: 58
+  gender: [1, 1]

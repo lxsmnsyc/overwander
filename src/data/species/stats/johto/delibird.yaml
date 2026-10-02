@@ -1,0 +1,6 @@
+Delibird:
+  stats: { HP: 45, Attack: 55, Defense: 45, SpecialAttack: 65, SpecialDefense: 45, Speed: 75 }
+  catch-rate: 45
+  height: 0.9
+  weight: 16
+  gender: [1, 1]

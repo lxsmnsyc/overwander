@@ -1,0 +1,17 @@
+# The fire monkey: the tuft on its head is the fire, and a Simisear
+# throws off enough of it to be felt across the room
+Pansear:
+  types: [Fire]
+  egg-groups: [Field]
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Simisear
+      method: [UsedItem]
+      item: FireStone
+Simisear:
+  types: [Fire]
+  egg-groups: [Field]
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-from: Pansear

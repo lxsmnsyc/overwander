@@ -1,0 +1,6 @@
+Sableye:
+  stats: { HP: 50, Attack: 75, Defense: 75, SpecialAttack: 65, SpecialDefense: 65, Speed: 50 }
+  catch-rate: 45
+  height: 0.5
+  weight: 11
+  gender: [1, 1]

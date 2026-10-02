@@ -1,0 +1,6 @@
+Cutiefly:
+  abilities: [HoneyGather, ShieldDust]
+  hidden: [SweetVeil]
+Ribombee:
+  abilities: [HoneyGather, ShieldDust]
+  hidden: [SweetVeil, FriendGuard]

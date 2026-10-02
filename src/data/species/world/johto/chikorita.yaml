@@ -1,0 +1,27 @@
+# What the two above the base pick up: the machines that ask for a
+
+Chikorita:
+  types: [Grass]
+  egg-groups: [Monster, Grass]
+  biomes: [Grassland, TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Bayleef
+      method: [Level]
+      level: 16
+Bayleef:
+  types: [Grass]
+  egg-groups: [Monster, Grass]
+  biomes: [Grassland, TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-from: Chikorita
+  evolves-into:
+    - species: Meganium
+      method: [Level]
+      level: 32
+Meganium:
+  types: [Grass]
+  egg-groups: [Monster, Grass]
+  biomes: [Grassland, TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-from: Bayleef

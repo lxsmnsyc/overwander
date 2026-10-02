@@ -1,0 +1,78 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - HornDrill
+  - BodySlam
+  - TakeDown
+  - DoubleEdge
+  - BubbleBeam
+  - WaterGun
+  - IceBeam
+  - Blizzard
+  - PayDay
+  - Rage
+  - Mimic
+  - DoubleTeam
+  - Reflect
+  - Bide
+  - SkullBash
+  - Rest
+  - Substitute
+  - Surf
+  - Strength
+  - Headbutt
+  - Waterfall
+  - Snore
+  - Curse
+  - Protect
+  - IcyWind
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - HiddenPower
+  - RainDance
+  - Whirlpool
+  - Dive
+  - Facade
+  - SecretPower
+  - Thief
+  - WaterPulse
+  - Captivate
+  - Fling
+  - NaturalGift
+  - Round
+  - EchoedVoice
+  - DrillRun
+  - Confide
+  - SmartStrike
+Seel:
+  level:
+    '1': [Headbutt]
+    '5': [Growl]
+    '16': [AuroraBeam]
+    '17': [IceShard]
+    '21': [Rest]
+    '23': [AquaRing]
+    '31': [AquaJet]
+    '32': [TakeDown]
+    '33': [Brine]
+    '37': [IceBeam]
+    '43': [AquaTail]
+    '48': [Safeguard]
+  egg: [Lick, Peck, Disable, Slam, PerishSong, Encore, FakeOut, IcicleSpear, Belch]
+Dewgong:
+  level:
+    '1': [Headbutt, Growl, AuroraBeam, SignalBeam]
+    '17': [IceShard]
+    '21': [Rest]
+    '23': [AquaRing]
+    '31': [AquaJet]
+    '32': [TakeDown]
+    '33': [Brine]
+    '34': [SheerCold]
+    '43': [IceBeam, AquaTail]
+    '60': [Safeguard]
+  teachable: [HyperBeam, Avalanche, GigaImpact, FrostBreath, Liquidation]

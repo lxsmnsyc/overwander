@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { parse } from 'yaml';
 import decode, { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
 import pack from '../src/server/sprites/packing.ts';
 
@@ -36,6 +37,9 @@ import pack from '../src/server/sprites/packing.ts';
  */
 
 const SPECIES_ROOT = 'src/data/species';
+
+/** Where form ids start; past it an id is the band plus the dex number times 100, plus the form */
+const FORM_BAND = 1000000;
 
 const SPRITE_ROOT = 'public/sprites/pokemon';
 
@@ -221,60 +225,68 @@ function idsOf(file: string, name: string): Map<string, number> {
   return ids;
 }
 
+/** The files under a folder, at any depth */
+function filesUnder(folder: string): string[] {
+  const found: string[] = [];
+
+  for (const entry of readdirSync(folder, { withFileTypes: true })) {
+    const path = join(folder, entry.name);
+
+    found.push(...(entry.isDirectory() ? filesUnder(path) : [path]));
+  }
+  return found;
+}
+
 /**
- * Every registered species with the three things a family needs of it:
+ * Every written species with the three things a family needs of it:
  * which family it belongs to, its dex number, and what it evolved
- * from. Read out of the registration calls as text, since their files
- * reach the `const enum`s node will not load
+ * from. Read out of the species YAML, where each family's file is named
+ * after it and an id past the form band names its dex number
  */
 function entriesOf(species: Map<string, number>, families: Map<string, number>): Entry[] {
   const entries: Entry[] = [];
 
-  for (const generation of readdirSync(SPECIES_ROOT).filter((name) => name.startsWith('gen-'))) {
-    const folder = join(SPECIES_ROOT, generation);
+  for (const file of filesUnder(join(SPECIES_ROOT, 'world'))) {
+    if (!file.endsWith('.yaml')) {
+      continue;
+    }
 
-    for (const file of readdirSync(folder).filter((name) => name.endsWith('.ts'))) {
-      const source = readFileSync(join(folder, file), 'utf8');
+    const base = file.slice(file.lastIndexOf('/') + 1, -'.yaml'.length);
+    const family = families.get(
+      base
+        .split('-')
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(''),
+    );
+    const written: unknown = parse(readFileSync(file, 'utf8'));
 
-      for (const block of source.split('registerSpecies(Species.').slice(1)) {
-        const key = block.slice(0, block.indexOf(','));
-        const id = species.get(key);
-        const family = families.get(/family: Families\.(\w+),/.exec(block)?.[1] ?? '');
-        const dex = Number(/dexNumber: (\d+),/.exec(block)?.[1] ?? 0);
-        const from = species.get(/evolvesFrom: Species\.(\w+),/.exec(block)?.[1] ?? '');
+    if (typeof written !== 'object' || written == null) {
+      continue;
+    }
+    for (const [key, part] of Object.entries(written)) {
+      const id = species.get(key);
+      const said: unknown = part;
 
-        if (id != null && family != null) {
-          entries.push({ species: id, key, dex, family, from: from ?? null });
-        }
+      if (id == null || family == null || typeof said !== 'object' || said == null) {
+        continue;
       }
+
+      const dex = 'dex' in said && typeof said.dex === 'number' ? said.dex : null;
+      const from =
+        'evolves-from' in said && typeof said['evolves-from'] === 'string'
+          ? said['evolves-from']
+          : '';
+
+      entries.push({
+        species: id,
+        key,
+        dex: dex ?? (id < FORM_BAND ? id : Math.floor((id - FORM_BAND) / 100)),
+        family,
+        from: species.get(from) ?? null,
+      });
     }
   }
   return entries;
-}
-
-/**
- * A family whose species are registered in a loop rather than one call
- * at a time, which the scan above cannot see. Unown is the only one:
- * its twenty-eight forms are written out of a list, so the family is
- * matched to the species of the same name instead, whose id is its dex
- * number
- */
-function loopRegistered(
-  entries: Entry[],
-  species: Map<string, number>,
-  families: Map<string, number>,
-): Entry[] {
-  const found = new Set(entries.map((entry) => entry.family));
-  const missed: Entry[] = [];
-
-  for (const [name, family] of families) {
-    const id = species.get(name);
-
-    if (!found.has(family) && id != null) {
-      missed.push({ species: id, key: name, dex: id, family, from: null });
-    }
-  }
-  return missed;
 }
 
 function toHsl(colour: [number, number, number]): Hsl {
@@ -742,8 +754,6 @@ const families = idsOf(IDS.families, 'Families');
 /** The enum's own name for each family, which is the pokemon it is called after */
 const familyKeys = new Map([...families].map(([key, id]) => [id, key]));
 const entries = entriesOf(species, families);
-
-entries.push(...loopRegistered(entries, species, families));
 
 const template = pictureOf(TEMPLATE.sheet, TEMPLATE.picture);
 const parts = partsOf(template);

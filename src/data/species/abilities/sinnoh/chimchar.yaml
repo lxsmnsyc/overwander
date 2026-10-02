@@ -1,0 +1,11 @@
+Chimchar:
+  abilities: [Blaze]
+  hidden: [IronFist]
+Monferno:
+  abilities: [Blaze]
+  hidden: [IronFist]
+Infernape:
+  abilities: [Blaze]
+  # Vital Spirit and Flash Fire are this registry's rather than the
+  # mainline's: the flame never goes out, and fire thrown at it feeds it
+  hidden: [IronFist, VitalSpirit, FlashFire]

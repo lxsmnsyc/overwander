@@ -1,0 +1,5 @@
+Chatot:
+  abilities: [KeenEye, TangledFeet]
+  # Big Pecks is the mainline's hidden one; the deafness is this
+  # registry's, and it is the other half of what an ear is for
+  hidden: [BigPecks, Soundproof]

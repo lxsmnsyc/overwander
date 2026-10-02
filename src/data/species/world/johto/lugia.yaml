@@ -1,0 +1,7 @@
+# Both learn the same list at the same levels, either side of their
+
+Lugia:
+  types: [Psychic, Flying]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [DeepOcean, Ocean]
+  active: any

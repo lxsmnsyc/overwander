@@ -1,0 +1,8 @@
+Misdreavus:
+  abilities: [Levitate]
+Mismagius:
+  abilities: [Levitate]
+  # Cursed Body, Infiltrator and Magic Bounce are this registry's
+  # rather than the mainline's: the line reaches one ability and
+  # needs four, and every one of these is something it is said to do
+  hidden: [CursedBody, Infiltrator, MagicBounce]

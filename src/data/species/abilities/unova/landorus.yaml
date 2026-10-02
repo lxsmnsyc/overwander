@@ -1,0 +1,10 @@
+Landorus:
+  abilities: [SandForce]
+  # Harvest and Sand Stream are this registry's rather than the
+  # mainline's: it follows the other two to make the ground rich
+  # again, and it brings its own sand to do it in. Intimidate
+  # belongs to its other shape and never counts toward these four
+  hidden: [SheerForce, Harvest, SandStream]
+LandorusTherian:
+  abilities: [Intimidate]
+  hidden: []

@@ -1,0 +1,15 @@
+Mankey:
+  types: [Fighting]
+  egg-groups: [Field]
+  biomes: [Mountain, MontaneForest, Badlands]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Primeape
+      method: [Level]
+      level: 28
+Primeape:
+  types: [Fighting]
+  egg-groups: [Field]
+  biomes: [Mountain, MontaneForest, Badlands]
+  active: [Morning, Day]
+  evolves-from: Mankey

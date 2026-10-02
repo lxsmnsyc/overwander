@@ -1,0 +1,10 @@
+Thundurus:
+  types: [Electric, Flying]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Grassland]
+  active: any
+ThundurusTherian:
+  types: [Electric, Flying]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false

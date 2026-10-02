@@ -1,0 +1,24 @@
+Deoxys:
+  stats: { HP: 50, Attack: 150, Defense: 50, SpecialAttack: 150, SpecialDefense: 50, Speed: 150 }
+  catch-rate: 3
+  height: 1.7
+  weight: 60.8
+  gender: genderless
+DeoxysAttack:
+  stats: { HP: 50, Attack: 180, Defense: 20, SpecialAttack: 180, SpecialDefense: 20, Speed: 150 }
+  catch-rate: 3
+  height: 1.7
+  weight: 60.8
+  gender: genderless
+DeoxysDefense:
+  stats: { HP: 50, Attack: 70, Defense: 160, SpecialAttack: 70, SpecialDefense: 160, Speed: 90 }
+  catch-rate: 3
+  height: 1.7
+  weight: 60.8
+  gender: genderless
+DeoxysSpeed:
+  stats: { HP: 50, Attack: 95, Defense: 90, SpecialAttack: 95, SpecialDefense: 90, Speed: 180 }
+  catch-rate: 3
+  height: 1.7
+  weight: 60.8
+  gender: genderless

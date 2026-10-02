@@ -1,0 +1,6 @@
+Klefki:
+  stats: { HP: 57, Attack: 80, Defense: 91, SpecialAttack: 80, SpecialDefense: 87, Speed: 75 }
+  catch-rate: 75
+  height: 0.2
+  weight: 3
+  gender: [1, 1]

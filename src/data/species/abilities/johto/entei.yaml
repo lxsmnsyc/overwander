@@ -1,0 +1,5 @@
+Entei:
+  abilities: [Pressure]
+  # Magma Armor and Intimidate are this registry's rather than the
+  # mainline's: a volcano for a body, and a roar that sets one off
+  hidden: [InnerFocus, MagmaArmor, Intimidate]

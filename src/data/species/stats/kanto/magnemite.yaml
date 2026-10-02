@@ -1,0 +1,18 @@
+Magnemite:
+  stats: { HP: 25, Attack: 35, Defense: 70, SpecialAttack: 95, SpecialDefense: 55, Speed: 45 }
+  catch-rate: 190
+  height: 0.3
+  weight: 6
+  gender: genderless
+Magneton:
+  stats: { HP: 50, Attack: 60, Defense: 95, SpecialAttack: 120, SpecialDefense: 70, Speed: 70 }
+  catch-rate: 60
+  height: 1
+  weight: 60
+  gender: genderless
+Magnezone:
+  stats: { HP: 70, Attack: 70, Defense: 115, SpecialAttack: 130, SpecialDefense: 90, Speed: 60 }
+  catch-rate: 30
+  height: 1.2
+  weight: 180
+  gender: genderless

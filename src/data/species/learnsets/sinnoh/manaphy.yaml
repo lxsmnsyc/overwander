@@ -1,0 +1,80 @@
+family-teachable:
+  - AncientPower
+  - Blizzard
+  - Bounce
+  - Brine
+  - Dive
+  - DoubleTeam
+  - Endure
+  - Facade
+  - Fling
+  - Frustration
+  - GrassKnot
+  - Hail
+  - HelpingHand
+  - HiddenPower
+  - IceBeam
+  - IcyWind
+  - KnockOff
+  - LastResort
+  - MudSlap
+  - NaturalGift
+  - Protect
+  - PsychUp
+  - RainDance
+  - Rest
+  - Return
+  - Safeguard
+  - SecretPower
+  - SignalBeam
+  - SleepTalk
+  - Snore
+  - Substitute
+  - Surf
+  - Swagger
+  - Swift
+  - Toxic
+  - UTurn
+  - Uproar
+  - WaterPulse
+  - Waterfall
+  - Confide
+  - DazzlingGleam
+Phione:
+  level:
+    '1': [Bubble, WaterSport]
+    '9': [Charm]
+    '16': [Supersonic]
+    '24': [BubbleBeam]
+    '31': [AcidArmor]
+    '39': [Whirlpool]
+    '46': [WaterPulse]
+    '54': [AquaRing]
+    '61': [Dive]
+    '69': [RainDance]
+  teachable: [Liquidation]
+Manaphy:
+  level:
+    '1': [Bubble, TailGlow, WaterSport]
+    '9': [Charm]
+    '16': [Supersonic]
+    '24': [BubbleBeam]
+    '31': [AcidArmor]
+    '39': [Whirlpool]
+    '46': [WaterPulse]
+    '54': [AquaRing]
+    '61': [Dive]
+    '69': [RainDance]
+    '76': [HeartSwap]
+  teachable:
+    - CalmMind
+    - EnergyBall
+    - Flash
+    - GigaImpact
+    - HyperBeam
+    - LightScreen
+    - Psychic
+    - Reflect
+    - ShadowBall
+    - SkillSwap
+    - Liquidation

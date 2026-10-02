@@ -1,0 +1,15 @@
+Snubbull:
+  types: [Fairy]
+  egg-groups: [Field, Fairy]
+  biomes: [Grassland, Shrubland, Woodland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Granbull
+      method: [Level]
+      level: 23
+Granbull:
+  types: [Fairy]
+  egg-groups: [Field, Fairy]
+  biomes: [Grassland, Shrubland, Woodland]
+  active: [Morning, Day]
+  evolves-from: Snubbull

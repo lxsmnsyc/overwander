@@ -1,0 +1,18 @@
+Dratini:
+  stats: { HP: 41, Attack: 64, Defense: 45, SpecialAttack: 50, SpecialDefense: 50, Speed: 50 }
+  catch-rate: 45
+  height: 1.8
+  weight: 3.3
+  gender: [1, 1]
+Dragonair:
+  stats: { HP: 61, Attack: 84, Defense: 65, SpecialAttack: 70, SpecialDefense: 70, Speed: 70 }
+  catch-rate: 45
+  height: 4
+  weight: 16.5
+  gender: [1, 1]
+Dragonite:
+  stats: { HP: 91, Attack: 134, Defense: 95, SpecialAttack: 100, SpecialDefense: 100, Speed: 80 }
+  catch-rate: 45
+  height: 2.2
+  weight: 210
+  gender: [1, 1]

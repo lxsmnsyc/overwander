@@ -1,0 +1,19 @@
+Sneasel:
+  types: [Dark, Ice]
+  egg-groups: [Field]
+  biomes: [AlpineTundra, Tundra, Glacier, ColdDesert, Taiga]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Weavile
+      method: [Level, HeldItem, TimeOfDay]
+      level: 35
+      item: RazorClaw
+      time: [Evening, Night]
+# A Sneasel that hunts in a group now: a Weavile carves marks into
+# trees to tell the others what it has found
+Weavile:
+  types: [Dark, Ice]
+  egg-groups: [Field]
+  biomes: [AlpineTundra, Tundra, Glacier, ColdDesert, Taiga]
+  active: [Evening, Night]
+  evolves-from: Sneasel

@@ -1,0 +1,18 @@
+Bounsweet:
+  stats: { HP: 42, Attack: 30, Defense: 38, SpecialAttack: 30, SpecialDefense: 38, Speed: 32 }
+  catch-rate: 235
+  height: 0.3
+  weight: 3.2
+  gender: [0, 8]
+Steenee:
+  stats: { HP: 52, Attack: 40, Defense: 48, SpecialAttack: 40, SpecialDefense: 48, Speed: 62 }
+  catch-rate: 120
+  height: 0.7
+  weight: 8.2
+  gender: [0, 8]
+Tsareena:
+  stats: { HP: 72, Attack: 120, Defense: 98, SpecialAttack: 50, SpecialDefense: 98, Speed: 72 }
+  catch-rate: 45
+  height: 1.2
+  weight: 21.4
+  gender: [0, 8]

@@ -1,0 +1,18 @@
+Beldum:
+  stats: { HP: 40, Attack: 55, Defense: 80, SpecialAttack: 35, SpecialDefense: 60, Speed: 30 }
+  catch-rate: 45
+  height: 0.6
+  weight: 95.2
+  gender: genderless
+Metang:
+  stats: { HP: 60, Attack: 75, Defense: 100, SpecialAttack: 55, SpecialDefense: 80, Speed: 50 }
+  catch-rate: 45
+  height: 1.2
+  weight: 202.5
+  gender: genderless
+Metagross:
+  stats: { HP: 80, Attack: 135, Defense: 130, SpecialAttack: 95, SpecialDefense: 90, Speed: 70 }
+  catch-rate: 45
+  height: 1.6
+  weight: 550
+  gender: genderless

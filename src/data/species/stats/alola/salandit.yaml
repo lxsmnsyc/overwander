@@ -1,0 +1,12 @@
+Salandit:
+  stats: { HP: 48, Attack: 44, Defense: 40, SpecialAttack: 71, SpecialDefense: 40, Speed: 77 }
+  catch-rate: 120
+  height: 0.6
+  weight: 4.8
+  gender: [7, 1]
+Salazzle:
+  stats: { HP: 68, Attack: 64, Defense: 60, SpecialAttack: 111, SpecialDefense: 60, Speed: 117 }
+  catch-rate: 45
+  height: 1.2
+  weight: 22.2
+  gender: [0, 1]

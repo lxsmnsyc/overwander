@@ -1,0 +1,9 @@
+Pidgey:
+  abilities: [KeenEye, TangledFeet]
+  hidden: [BigPecks]
+Pidgeotto:
+  abilities: [KeenEye, TangledFeet]
+  hidden: [BigPecks]
+Pidgeot:
+  abilities: [KeenEye, TangledFeet]
+  hidden: [BigPecks, GaleWings]

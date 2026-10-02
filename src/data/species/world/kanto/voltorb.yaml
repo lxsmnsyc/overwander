@@ -1,0 +1,15 @@
+Voltorb:
+  types: [Electric]
+  egg-groups: [Mineral]
+  biomes: [Grassland, Steppe]
+  active: any
+  evolves-into:
+    - species: Electrode
+      method: [Level]
+      level: 30
+Electrode:
+  types: [Electric]
+  egg-groups: [Mineral]
+  biomes: [Grassland, Steppe]
+  active: any
+  evolves-from: Voltorb

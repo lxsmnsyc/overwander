@@ -1,0 +1,81 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - AerialAce
+  - Attract
+  - Captivate
+  - Cut
+  - Dig
+  - DoubleTeam
+  - DreamEater
+  - Endure
+  - Facade
+  - Flash
+  - Frustration
+  - FuryCutter
+  - Headbutt
+  - HiddenPower
+  - IronTail
+  - KnockOff
+  - LastResort
+  - MudSlap
+  - NaturalGift
+  - Payback
+  - Protect
+  - PsychUp
+  - RainDance
+  - Rest
+  - Return
+  - SecretPower
+  - ShadowBall
+  - ShadowClaw
+  - ShockWave
+  - SleepTalk
+  - Snatch
+  - Snore
+  - Substitute
+  - SuckerPunch
+  - SunnyDay
+  - SuperFang
+  - Swagger
+  - Swift
+  - Taunt
+  - Thief
+  - Thunder
+  - Thunderbolt
+  - Torment
+  - Toxic
+  - UTurn
+  - WaterPulse
+  - Confide
+Glameow:
+  level:
+    '1': [FakeOut]
+    '5': [Scratch]
+    '8': [Growl]
+    '13': [Hypnosis]
+    '17': [FeintAttack]
+    '20': [FurySwipes]
+    '25': [Charm]
+    '29': [Assist]
+    '32': [Captivate]
+    '37': [Slash]
+    '41': [SuckerPunch]
+    '45': [Attract]
+    '50': [PlayRough]
+  egg: [Assurance, Bite, FakeTears, Flail, QuickAttack, SandAttack, TailWhip]
+Purugly:
+  level:
+    '1': [FakeOut, Growl, Scratch]
+    '5': [Scratch]
+    '8': [Growl]
+    '13': [Hypnosis]
+    '17': [FeintAttack]
+    '20': [FurySwipes]
+    '25': [Charm]
+    '29': [Assist]
+    '32': [Captivate]
+    '37': [Slash]
+    '38': [Swagger]
+    '45': [BodySlam]
+    '53': [Attract]
+  teachable: [GigaImpact, HyperBeam, Roar, Rollout, StompingTantrum, ThroatChop]

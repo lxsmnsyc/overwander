@@ -1,0 +1,83 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - BodySlam
+  - TakeDown
+  - DoubleEdge
+  - Rage
+  - MegaDrain
+  - Earthquake
+  - Fissure
+  - Dig
+  - Mimic
+  - DoubleTeam
+  - Reflect
+  - Bide
+  - SkullBash
+  - Rest
+  - RockSlide
+  - Substitute
+  - Strength
+  - Headbutt
+  - Thief
+  - Snore
+  - Curse
+  - Protect
+  - SludgeBomb
+  - GigaDrain
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - HiddenPower
+  - SunnyDay
+  - Facade
+  - IronTail
+  - SecretPower
+  - Snatch
+  - Torment
+  - AquaTail
+  - Captivate
+  - DarkPulse
+  - NaturalGift
+  - Payback
+  - PoisonJab
+  - SeedBomb
+  - Venoshock
+  - SludgeWave
+  - Round
+  - Bulldoze
+  - Confide
+  - Infestation
+  - BrutalSwing
+Ekans:
+  level:
+    '1': [Wrap, Leer]
+    '9': [PoisonSting]
+    '15': [Bite]
+    '23': [Glare]
+    '28': [MudBomb, AcidSpray]
+    '29': [Screech]
+    '33': [GastroAcid]
+    '37': [Acid, SpitUp, Stockpile, Swallow]
+    '38': [Belch]
+    '41': [GunkShot]
+    '43': [Haze]
+    '44': [Coil]
+  egg: [Slam, Spite, Pursuit, Crunch, BeatUp, PoisonFang, Switcheroo]
+Arbok:
+  level:
+    '1': [Wrap, Leer, PoisonSting, Bite, FireFang, IceFang, ThunderFang]
+    '25': [Glare]
+    '32': [AcidSpray]
+    '33': [Screech]
+    '34': [MudBomb]
+    '42': [GastroAcid]
+    '43': [Acid]
+    '46': [SpitUp, Stockpile, Swallow]
+    '48': [Belch]
+    '51': [Haze]
+    '56': [GunkShot, Coil]
+  teachable: [HyperBeam, GigaImpact, DragonTail, StompingTantrum, ThroatChop]

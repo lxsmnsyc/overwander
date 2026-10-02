@@ -1,0 +1,28 @@
+# The cells: a Solosis is a mind in a bag of fluid that nothing much
+# gets through, and by the last stage there are enough of them inside
+# one body to think in several directions at once
+Solosis:
+  types: [Psychic]
+  egg-groups: [Amorphous]
+  biomes: [Grassland, Shrubland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Duosion
+      method: [Level]
+      level: 32
+Duosion:
+  types: [Psychic]
+  egg-groups: [Amorphous]
+  biomes: [Grassland, Shrubland]
+  active: [Morning, Day]
+  evolves-from: Solosis
+  evolves-into:
+    - species: Reuniclus
+      method: [Level]
+      level: 41
+Reuniclus:
+  types: [Psychic]
+  egg-groups: [Amorphous]
+  biomes: [Grassland, Shrubland]
+  active: [Morning, Day]
+  evolves-from: Duosion

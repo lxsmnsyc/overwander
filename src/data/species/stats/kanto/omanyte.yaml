@@ -1,0 +1,12 @@
+Omanyte:
+  stats: { HP: 35, Attack: 40, Defense: 100, SpecialAttack: 90, SpecialDefense: 55, Speed: 35 }
+  catch-rate: 45
+  height: 0.4
+  weight: 7.5
+  gender: [7, 1]
+Omastar:
+  stats: { HP: 70, Attack: 60, Defense: 125, SpecialAttack: 115, SpecialDefense: 70, Speed: 55 }
+  catch-rate: 45
+  height: 1
+  weight: 35
+  gender: [7, 1]

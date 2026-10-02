@@ -1,0 +1,107 @@
+# TM and tutor moves shared by the whole family
+family-teachable:
+  - Attract
+  - Confide
+  - Covet
+  - Defog
+  - DoubleTeam
+  - EchoedVoice
+  - EnergyBall
+  - Facade
+  - FalseSwipe
+  - Frustration
+  - GigaDrain
+  - GrassKnot
+  - GrassPledge
+  - HiddenPower
+  - LightScreen
+  - NaturePower
+  - Protect
+  - Rest
+  - Return
+  - Roost
+  - Round
+  - Safeguard
+  - SeedBomb
+  - ShadowClaw
+  - SkyAttack
+  - SleepTalk
+  - Snore
+  - SolarBeam
+  - SteelWing
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - SwordsDance
+  - Synthesis
+  - Toxic
+  - WorkUp
+  - WorrySeed
+Rowlet:
+  level:
+    '1': [Tackle, Leafage]
+    '4': [Growl]
+    '8': [Peck]
+    '11': [Astonish]
+    '14': [RazorLeaf]
+    '16': [OminousWind]
+    '18': [Foresight]
+    '22': [Pluck]
+    '25': [Synthesis]
+    '29': [FuryAttack]
+    '32': [SuckerPunch]
+    '36': [LeafBlade]
+    '39': [FeatherDance]
+    '43': [BraveBird]
+    '46': [NastyPlot]
+  egg: [BatonPass, ConfuseRay, Curse, Defog, Haze, OminousWind]
+Dartrix:
+  level:
+    '1': [Growl, Peck, Tackle, Leafage]
+    '11': [Astonish]
+    '14': [RazorLeaf]
+    '16': [OminousWind]
+    '19': [Foresight]
+    '24': [Pluck]
+    '28': [Synthesis]
+    '33': [FuryAttack]
+    '37': [SuckerPunch]
+    '42': [LeafBlade]
+    '46': [FeatherDance]
+    '51': [BraveBird]
+    '55': [NastyPlot]
+Decidueye:
+  level:
+    '1':
+      - Growl
+      - LeafStorm
+      - Peck
+      - PhantomForce
+      - ShadowSneak
+      - Tackle
+      - UTurn
+      - SpiritShackle
+      - Leafage
+    '11': [Astonish]
+    '14': [RazorLeaf]
+    '16': [OminousWind]
+    '19': [Foresight]
+    '24': [Pluck]
+    '28': [Synthesis]
+    '33': [FuryAttack]
+    '38': [SuckerPunch]
+    '44': [LeafBlade]
+    '49': [FeatherDance]
+    '55': [BraveBird]
+    '60': [NastyPlot]
+  teachable:
+    - Acrobatics
+    - FrenzyPlant
+    - GigaImpact
+    - LowSweep
+    - ShadowBall
+    - SmackDown
+    - Spite
+    - Tailwind
+    - UTurn
+    - LaserFocus

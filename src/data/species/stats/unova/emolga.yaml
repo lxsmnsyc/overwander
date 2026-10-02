@@ -1,0 +1,6 @@
+Emolga:
+  stats: { HP: 55, Attack: 75, Defense: 60, SpecialAttack: 75, SpecialDefense: 60, Speed: 103 }
+  catch-rate: 200
+  height: 0.4
+  weight: 5
+  gender: [1, 1]

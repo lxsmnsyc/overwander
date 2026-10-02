@@ -1,0 +1,74 @@
+# TM, HM and tutor moves both stages share
+family-teachable:
+  - WaterPulse
+  - Roar
+  - Toxic
+  - Hail
+  - HiddenPower
+  - IceBeam
+  - Blizzard
+  - Protect
+  - RainDance
+  - Frustration
+  - Earthquake
+  - Return
+  - DoubleTeam
+  - RockTomb
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Surf
+  - Strength
+  - RockSmash
+  - Waterfall
+  - Dive
+  - BodySlam
+  - DoubleEdge
+  - Mimic
+  - Substitute
+  - Rollout
+  - Snore
+  - IcyWind
+  - Endure
+  - Swagger
+  - SleepTalk
+  - DefenseCurl
+  - Avalanche
+  - Captivate
+  - NaturalGift
+  - Round
+  - EchoedVoice
+  - Scald
+  - Bulldoze
+  - Confide
+Wailmer:
+  level:
+    '1': [Splash]
+    '5': [Growl]
+    '10': [WaterGun]
+    '14': [Rollout]
+    '19': [Whirlpool]
+    '23': [Astonish]
+    '28': [WaterPulse]
+    '31': [Brine]
+    '32': [Mist]
+    '37': [Rest]
+    '41': [WaterSpout]
+    '46': [Amnesia]
+    '50': [HydroPump, HeavySlam]
+  egg: [Curse, Fissure, Thrash, Tickle, AquaRing, Soak]
+Wailord:
+  level:
+    '1': [Splash, Growl, WaterGun, Rollout]
+    '19': [Whirlpool]
+    '23': [Astonish]
+    '28': [WaterPulse]
+    '31': [Brine]
+    '32': [Mist]
+    '37': [Rest]
+    '44': [WaterSpout]
+    '52': [Amnesia]
+    '59': [HydroPump]
+    '70': [HeavySlam]
+  teachable: [HyperBeam, GigaImpact, IronHead, Liquidation]

@@ -1,0 +1,17 @@
+# The scouts of the open country: a Patrat posts itself where it can
+# see, and a Watchog lights its stripes at whatever it catches coming
+Patrat:
+  types: [Normal]
+  egg-groups: [Field]
+  biomes: [Grassland, Steppe]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Watchog
+      method: [Level]
+      level: 20
+Watchog:
+  types: [Normal]
+  egg-groups: [Field]
+  biomes: [Grassland, Steppe]
+  active: [Evening, Night]
+  evolves-from: Patrat

@@ -1,0 +1,15 @@
+Cutiefly:
+  types: [Bug, Fairy]
+  egg-groups: [Bug, Fairy]
+  biomes: [Grassland, TemperateForest, TropicalSeasonalForest]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Ribombee
+      method: [Level]
+      level: 25
+Ribombee:
+  types: [Bug, Fairy]
+  egg-groups: [Bug, Fairy]
+  biomes: [Grassland, TemperateForest, TropicalSeasonalForest]
+  active: [Morning, Day]
+  evolves-from: Cutiefly

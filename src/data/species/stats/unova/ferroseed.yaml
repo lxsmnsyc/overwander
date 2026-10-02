@@ -1,0 +1,12 @@
+Ferroseed:
+  stats: { HP: 44, Attack: 50, Defense: 91, SpecialAttack: 24, SpecialDefense: 86, Speed: 10 }
+  catch-rate: 255
+  height: 0.6
+  weight: 18.8
+  gender: [1, 1]
+Ferrothorn:
+  stats: { HP: 74, Attack: 94, Defense: 131, SpecialAttack: 54, SpecialDefense: 116, Speed: 20 }
+  catch-rate: 90
+  height: 1
+  weight: 110
+  gender: [1, 1]

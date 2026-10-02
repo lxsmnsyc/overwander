@@ -1,0 +1,12 @@
+Yungoos:
+  stats: { HP: 48, Attack: 70, Defense: 30, SpecialAttack: 30, SpecialDefense: 30, Speed: 45 }
+  catch-rate: 255
+  height: 0.4
+  weight: 6
+  gender: [4, 4]
+Gumshoos:
+  stats: { HP: 88, Attack: 110, Defense: 60, SpecialAttack: 55, SpecialDefense: 60, Speed: 45 }
+  catch-rate: 127
+  height: 0.7
+  weight: 14.2
+  gender: [4, 4]

@@ -1,0 +1,12 @@
+Vulpix:
+  abilities: [FlashFire]
+  hidden: [Drought]
+Ninetales:
+  abilities: [FlashFire]
+  hidden: [Drought, FlameBody, Forewarn]
+VulpixAlola:
+  abilities: [SnowCloak]
+  hidden: [SnowWarning]
+NinetalesAlola:
+  abilities: [SnowCloak]
+  hidden: [SnowWarning, IceBody, Refrigerate]

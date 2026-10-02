@@ -1,0 +1,6 @@
+Stantler:
+  stats: { HP: 73, Attack: 95, Defense: 62, SpecialAttack: 85, SpecialDefense: 65, Speed: 85 }
+  catch-rate: 45
+  height: 1.4
+  weight: 71.2
+  gender: [1, 1]

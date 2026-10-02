@@ -1,0 +1,85 @@
+# TM, HM and tutor moves both stages share
+family-teachable:
+  - WaterPulse
+  - Toxic
+  - Hail
+  - HiddenPower
+  - Taunt
+  - IceBeam
+  - Blizzard
+  - Protect
+  - RainDance
+  - Frustration
+  - Return
+  - Dig
+  - BrickBreak
+  - DoubleTeam
+  - SludgeBomb
+  - RockTomb
+  - AerialAce
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Cut
+  - Surf
+  - Strength
+  - RockSmash
+  - Waterfall
+  - SwordsDance
+  - BodySlam
+  - DoubleEdge
+  - Counter
+  - Mimic
+  - Substitute
+  - Snore
+  - IcyWind
+  - Endure
+  - MudSlap
+  - Swagger
+  - FuryCutter
+  - SleepTalk
+  - Captivate
+  - Fling
+  - NaturalGift
+  - Payback
+  - XScissor
+  - HoneClaws
+  - Round
+  - Scald
+  - Confide
+Corphish:
+  level:
+    '1': [Bubble]
+    '7': [Harden]
+    '10': [ViceGrip]
+    '13': [Leer]
+    '20': [BubbleBeam]
+    '23': [Protect]
+    '26': [KnockOff]
+    '32': [Taunt]
+    '35': [Crabhammer, NightSlash]
+    '38': [SwordsDance]
+    '44': [Guillotine]
+  egg: [AncientPower, Endeavor, MudSport, ChipAway]
+Crawdaunt:
+  level:
+    '1': [Bubble, Harden, ViceGrip, Leer]
+    '20': [BubbleBeam]
+    '23': [Protect]
+    '26': [KnockOff]
+    '34': [Taunt]
+    '39': [Crabhammer, NightSlash]
+    '44': [SwordsDance]
+    '52': [Guillotine]
+  teachable:
+    - HyperBeam
+    - Dive
+    - Swift
+    - Avalanche
+    - DarkPulse
+    - GigaImpact
+    - SludgeWave
+    - Retaliate
+    - Snarl
+    - Liquidation

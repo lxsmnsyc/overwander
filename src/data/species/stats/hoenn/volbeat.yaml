@@ -1,0 +1,6 @@
+Volbeat:
+  stats: { HP: 65, Attack: 73, Defense: 75, SpecialAttack: 47, SpecialDefense: 85, Speed: 85 }
+  catch-rate: 150
+  height: 0.7
+  weight: 17.7
+  gender: [1, 0]

@@ -1,0 +1,18 @@
+Hoppip:
+  stats: { HP: 35, Attack: 35, Defense: 40, SpecialAttack: 35, SpecialDefense: 55, Speed: 50 }
+  catch-rate: 255
+  height: 0.4
+  weight: 0.5
+  gender: [1, 1]
+Skiploom:
+  stats: { HP: 55, Attack: 45, Defense: 50, SpecialAttack: 45, SpecialDefense: 65, Speed: 80 }
+  catch-rate: 120
+  height: 0.6
+  weight: 1
+  gender: [1, 1]
+Jumpluff:
+  stats: { HP: 75, Attack: 55, Defense: 70, SpecialAttack: 55, SpecialDefense: 95, Speed: 110 }
+  catch-rate: 45
+  height: 0.8
+  weight: 3
+  gender: [1, 1]

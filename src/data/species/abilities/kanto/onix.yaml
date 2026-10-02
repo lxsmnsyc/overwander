@@ -1,0 +1,6 @@
+Onix:
+  abilities: [RockHead, Sturdy]
+  hidden: [WeakArmor]
+Steelix:
+  abilities: [RockHead, Sturdy]
+  hidden: [SheerForce]

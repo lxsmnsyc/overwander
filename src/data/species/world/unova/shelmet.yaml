@@ -1,0 +1,18 @@
+# The snail in the helmet Karrablast is after. Trading the two
+# together leaves one armoured and the other bare and very fast
+Shelmet:
+  types: [Bug]
+  egg-groups: [Bug]
+  # The same woods, and the wet ground past them, after dark
+  biomes: [TemperateForest, Swamp]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Accelgor
+      method: [Trade]
+      partner: Karrablast
+Accelgor:
+  types: [Bug]
+  egg-groups: [Bug]
+  biomes: [TemperateForest, Swamp]
+  active: [Evening, Night]
+  evolves-from: Shelmet

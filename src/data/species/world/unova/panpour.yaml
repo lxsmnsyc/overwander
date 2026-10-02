@@ -1,0 +1,19 @@
+# The water monkey: it keeps its water in the tuft on its tail, and a
+# Simipour puts it out under enough pressure to cut
+Panpour:
+  types: [Water]
+  egg-groups: [Field]
+  habitat: Amphibious
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Simipour
+      method: [UsedItem]
+      item: WaterStone
+Simipour:
+  types: [Water]
+  egg-groups: [Field]
+  habitat: Amphibious
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-from: Panpour

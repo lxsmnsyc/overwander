@@ -1,0 +1,5 @@
+Carnivine:
+  abilities: [Levitate]
+  # The other three are this registry's: it is a mouth on a stem,
+  # it eats early, and nothing else opens its lunch in front of one
+  hidden: [StrongJaw, Gluttony, Unnerve]

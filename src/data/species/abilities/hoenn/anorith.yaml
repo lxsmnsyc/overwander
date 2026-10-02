@@ -1,0 +1,9 @@
+Anorith:
+  abilities: [BattleArmor]
+  hidden: [SwiftSwim]
+Armaldo:
+  abilities: [BattleArmor]
+  # Two the mainline never gave it: plate armour that will not be
+  # broken through in one blow, and a body built for exactly the
+  # two things it is made of
+  hidden: [SwiftSwim, Sturdy, Adaptability]

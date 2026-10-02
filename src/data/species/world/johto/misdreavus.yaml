@@ -1,0 +1,17 @@
+Misdreavus:
+  types: [Ghost]
+  egg-groups: [Amorphous]
+  biomes: [Mountain, Woodland, Badlands]
+  active: [Night]
+  evolves-into:
+    - species: Mismagius
+      method: [UsedItem]
+      item: DuskStone
+# What a Misdreavus becomes once its noise turns into words: a
+# Mismagius chants, and the chant is what does the damage
+Mismagius:
+  types: [Ghost]
+  egg-groups: [Amorphous]
+  biomes: [Mountain, Woodland, Badlands]
+  active: [Night]
+  evolves-from: Misdreavus

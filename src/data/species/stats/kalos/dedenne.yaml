@@ -1,0 +1,6 @@
+Dedenne:
+  stats: { HP: 67, Attack: 58, Defense: 57, SpecialAttack: 81, SpecialDefense: 67, Speed: 101 }
+  catch-rate: 180
+  height: 0.2
+  weight: 2.2
+  gender: [1, 1]

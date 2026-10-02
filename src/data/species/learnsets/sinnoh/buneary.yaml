@@ -1,0 +1,104 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Bounce
+  - Captivate
+  - ChargeBeam
+  - Cut
+  - Dig
+  - DoubleTeam
+  - DrainPunch
+  - Endeavor
+  - Endure
+  - Facade
+  - Fling
+  - FocusPunch
+  - Frustration
+  - GrassKnot
+  - Headbutt
+  - HealBell
+  - HelpingHand
+  - HiddenPower
+  - IceBeam
+  - IronTail
+  - LastResort
+  - MagicCoat
+  - MudSlap
+  - NaturalGift
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - RockSmash
+  - SecretPower
+  - ShadowBall
+  - ShockWave
+  - SleepTalk
+  - Snore
+  - SolarBeam
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Swift
+  - ThunderWave
+  - Thunderbolt
+  - Toxic
+  - Uproar
+  - WaterPulse
+  - Confide
+  - PowerUpPunch
+Buneary:
+  level:
+    '1': [DefenseCurl, Foresight, Pound, Splash]
+    '6': [Endure]
+    '10': [BabyDollEyes]
+    '13': [Frustration]
+    '16': [QuickAttack]
+    '23': [JumpKick]
+    '26': [BatonPass]
+    '33': [Agility]
+    '36': [DizzyPunch]
+    '43': [Charm]
+    '46': [Bounce]
+    '53': [HealingWish]
+  egg:
+    - Attract
+    - DoubleHit
+    - Encore
+    - FakeOut
+    - FakeTears
+    - FirePunch
+    - Flail
+    - IcePunch
+    - LowKick
+    - SkyUppercut
+    - SweetKiss
+    - Switcheroo
+    - ThunderPunch
+Lopunny:
+  level:
+    '1': [DefenseCurl, Foresight, MagicCoat, MirrorCoat, Pound, Splash, Rototiller]
+    '6': [Endure]
+    '13': [Return]
+    '16': [QuickAttack]
+    '23': [JumpKick]
+    '26': [BatonPass]
+    '33': [Agility]
+    '36': [DizzyPunch]
+    '43': [Charm]
+    '46': [Bounce]
+    '53': [HealingWish]
+  teachable:
+    - Attract
+    - Blizzard
+    - FirePunch
+    - FocusBlast
+    - FuryCutter
+    - GigaImpact
+    - HyperBeam
+    - IcePunch
+    - LowKick
+    - Strength
+    - Thunder
+    - ThunderPunch
+    - BrutalSwing
+    - LaserFocus

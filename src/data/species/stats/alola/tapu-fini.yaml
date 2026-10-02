@@ -1,0 +1,6 @@
+TapuFini:
+  stats: { HP: 70, Attack: 75, Defense: 115, SpecialAttack: 95, SpecialDefense: 130, Speed: 85 }
+  catch-rate: 3
+  height: 1.3
+  weight: 21.2
+  gender: genderless

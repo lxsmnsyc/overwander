@@ -1,0 +1,8 @@
+# The bird that wrestles. It fights off the canopy rather than on the
+# ground, and everything it does is a drop onto something heavier
+# than itself
+Hawlucha:
+  types: [Fighting, Flying]
+  egg-groups: [Flying, HumanLike]
+  biomes: [TropicalRainforest, MontaneForest]
+  active: [Morning, Day, Evening]

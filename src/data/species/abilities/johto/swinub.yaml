@@ -1,0 +1,14 @@
+Swinub:
+  abilities: [Oblivious, SnowCloak]
+  hidden: [ThickFat]
+Piloswine:
+  abilities: [Oblivious, SnowCloak]
+  # Nothing invented here: Piloswine gains Mamoswine in a later
+  # generation, so it is not a final evolution to fill
+  hidden: [ThickFat]
+Mamoswine:
+  abilities: [Oblivious, SnowCloak]
+  # Slush Rush is this registry's rather than the mainline's: the
+  # line reaches three abilities and needs four, and 80 Speed is
+  # what holds 130 Attack back
+  hidden: [ThickFat, SlushRush]

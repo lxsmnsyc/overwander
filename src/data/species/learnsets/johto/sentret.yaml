@@ -1,0 +1,95 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - FirePunch
+  - IcePunch
+  - ThunderPunch
+  - Toxic
+  - Surf
+  - Dig
+  - DoubleTeam
+  - DefenseCurl
+  - Swift
+  - Rest
+  - Cut
+  - Headbutt
+  - Thief
+  - Snore
+  - Curse
+  - Protect
+  - MudSlap
+  - Detect
+  - Endure
+  - Rollout
+  - Swagger
+  - FuryCutter
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - DynamicPunch
+  - IronTail
+  - HiddenPower
+  - SunnyDay
+  - ShadowBall
+  - BodySlam
+  - BrickBreak
+  - Facade
+  - Flamethrower
+  - FocusPunch
+  - IceBeam
+  - Mimic
+  - SecretPower
+  - ShockWave
+  - SolarBeam
+  - Thunderbolt
+  - WaterPulse
+  - AquaTail
+  - Captivate
+  - ChargeBeam
+  - Fling
+  - GrassKnot
+  - LastResort
+  - NaturalGift
+  - ShadowClaw
+  - UTurn
+  - HoneClaws
+  - Round
+  - EchoedVoice
+  - Retaliate
+  - WorkUp
+  - Confide
+  - PowerUpPunch
+  - BrutalSwing
+Sentret:
+  level:
+    '1': [Tackle, Scratch]
+    '5': [DefenseCurl]
+    '11': [QuickAttack]
+    '17': [FurySwipes, HelpingHand]
+    '25': [Slam]
+    '31': [FollowMe, SuckerPunch]
+    '33': [Rest]
+    '41': [Amnesia]
+    '42': [MeFirst]
+  egg: [DoubleEdge, FocusEnergy, Slash, Reversal, Pursuit, Assist, Substitute, Trick]
+Furret:
+  level:
+    '1': [Scratch, QuickAttack, DefenseCurl]
+    '18': [FurySwipes]
+    '19': [HelpingHand]
+    '28': [Slam]
+    '36': [SuckerPunch]
+    '37': [FollowMe]
+    '38': [Rest]
+    '48': [Amnesia]
+    '50': [MeFirst]
+  teachable:
+    - HyperBeam
+    - Strength
+    - Blizzard
+    - DoubleEdge
+    - RockSmash
+    - Substitute
+    - Thunder
+    - FocusBlast
+    - GigaImpact

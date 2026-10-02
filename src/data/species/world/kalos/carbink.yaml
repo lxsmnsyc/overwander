@@ -1,0 +1,8 @@
+# The jewel that formed underground and kept growing. It waits out a
+# fight rather than winning it quickly, and thickens by a layer for
+# every stretch it is left standing
+Carbink:
+  types: [Rock, Fairy]
+  egg-groups: [Fairy, Mineral]
+  biomes: [Mountain, Badlands]
+  active: any

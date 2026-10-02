@@ -1,0 +1,18 @@
+Kyurem:
+  stats: { HP: 125, Attack: 130, Defense: 90, SpecialAttack: 130, SpecialDefense: 90, Speed: 95 }
+  catch-rate: 3
+  height: 3
+  weight: 325
+  gender: genderless
+KyuremBlack:
+  stats: { HP: 125, Attack: 170, Defense: 100, SpecialAttack: 120, SpecialDefense: 90, Speed: 95 }
+  catch-rate: 3
+  height: 3.3
+  weight: 325
+  gender: genderless
+KyuremWhite:
+  stats: { HP: 125, Attack: 120, Defense: 90, SpecialAttack: 170, SpecialDefense: 100, Speed: 95 }
+  catch-rate: 3
+  height: 3.6
+  weight: 325
+  gender: genderless

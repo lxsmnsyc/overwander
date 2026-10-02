@@ -1,0 +1,6 @@
+Latios:
+  abilities: [Levitate]
+  # All three are this registry's: the brother turns a status move
+  # back on whoever cast it, and is the same untouched-and-climbing
+  # flier his sister is
+  hidden: [MagicBounce, Multiscale, SpeedBoost]

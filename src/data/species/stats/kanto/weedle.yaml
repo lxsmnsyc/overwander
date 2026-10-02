@@ -1,0 +1,18 @@
+Weedle:
+  stats: { HP: 40, Attack: 35, Defense: 30, SpecialAttack: 20, SpecialDefense: 20, Speed: 50 }
+  catch-rate: 255
+  height: 0.3
+  weight: 3.2
+  gender: [1, 1]
+Kakuna:
+  stats: { HP: 45, Attack: 25, Defense: 50, SpecialAttack: 25, SpecialDefense: 25, Speed: 35 }
+  catch-rate: 120
+  height: 0.6
+  weight: 10
+  gender: [1, 1]
+Beedrill:
+  stats: { HP: 65, Attack: 90, Defense: 40, SpecialAttack: 45, SpecialDefense: 80, Speed: 75 }
+  catch-rate: 45
+  height: 1
+  weight: 29.5
+  gender: [1, 1]

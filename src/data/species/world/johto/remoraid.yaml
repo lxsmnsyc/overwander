@@ -1,0 +1,19 @@
+# The three beams all land together, at the same level up the line
+
+Remoraid:
+  types: [Water]
+  egg-groups: [Water1, Water2]
+  habitat: Water
+  biomes: [Ocean, KelpForest, CoralReef, RockyCoast]
+  active: any
+  evolves-into:
+    - species: Octillery
+      method: [Level]
+      level: 25
+Octillery:
+  types: [Water]
+  egg-groups: [Water1, Water2]
+  habitat: Water
+  biomes: [Ocean, KelpForest, CoralReef, RockyCoast]
+  active: any
+  evolves-from: Remoraid

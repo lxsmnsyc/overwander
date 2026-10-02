@@ -1,0 +1,6 @@
+Suicune:
+  types: [Water]
+  egg-groups: [NoEggsDiscovered]
+  habitat: Amphibious
+  biomes: [Grassland, Woodland]
+  active: any

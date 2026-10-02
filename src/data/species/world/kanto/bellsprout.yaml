@@ -1,0 +1,25 @@
+Bellsprout:
+  types: [Grass, Poison]
+  egg-groups: [Grass]
+  biomes: [TemperateForest, TropicalSeasonalForest, TemperateRainforest, Bog]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Weepinbell
+      method: [Level]
+      level: 21
+Weepinbell:
+  types: [Grass, Poison]
+  egg-groups: [Grass]
+  biomes: [TemperateForest, TropicalSeasonalForest, TemperateRainforest, Bog]
+  active: [Morning, Day]
+  evolves-from: Bellsprout
+  evolves-into:
+    - species: Victreebel
+      method: [UsedItem]
+      item: LeafStone
+Victreebel:
+  types: [Grass, Poison]
+  egg-groups: [Grass]
+  biomes: [TemperateForest, TropicalSeasonalForest, TemperateRainforest, Bog]
+  active: [Morning, Day]
+  evolves-from: Weepinbell

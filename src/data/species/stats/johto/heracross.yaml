@@ -1,0 +1,6 @@
+Heracross:
+  stats: { HP: 80, Attack: 125, Defense: 75, SpecialAttack: 40, SpecialDefense: 95, Speed: 85 }
+  catch-rate: 45
+  height: 1.5
+  weight: 54
+  gender: [1, 1]

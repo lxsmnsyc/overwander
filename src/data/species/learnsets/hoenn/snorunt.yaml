@@ -1,0 +1,180 @@
+# TM and tutor moves both stages share
+
+Snorunt:
+  level:
+    '1': [Leer, PowderSnow]
+    '7': [DoubleTeam]
+    '10': [Bite]
+    '16': [IcyWind]
+    '19': [Headbutt]
+    '25': [Protect]
+    '28': [Crunch, IceFang]
+    '34': [IceBeam]
+    '37': [Hail, IceShard]
+    '43': [Blizzard]
+  teachable:
+    - WaterPulse
+    - Toxic
+    - Hail
+    - HiddenPower
+    - IceBeam
+    - Blizzard
+    - LightScreen
+    - Protect
+    - RainDance
+    - Safeguard
+    - Frustration
+    - Return
+    - ShadowBall
+    - DoubleTeam
+    - Facade
+    - SecretPower
+    - Rest
+    - Attract
+    - Flash
+    - BodySlam
+    - DoubleEdge
+    - Mimic
+    - Substitute
+    - Snore
+    - IcyWind
+    - Endure
+    - Swagger
+    - SleepTalk
+    - Avalanche
+    - Captivate
+    - NaturalGift
+    - Round
+    - FrostBreath
+    - Confide
+  egg: [Block, Spikes, Hex]
+Glalie:
+  level:
+    '1': [Leer, PowderSnow, DoubleTeam, Bite]
+    '16': [IcyWind]
+    '19': [Headbutt]
+    '25': [Protect]
+    '28': [Crunch, IceFang]
+    '34': [IceBeam]
+    '42': [Hail, FreezeDry]
+    '53': [Blizzard]
+    '61': [SheerCold]
+  teachable:
+    - WaterPulse
+    - Toxic
+    - Hail
+    - HiddenPower
+    - IceBeam
+    - Blizzard
+    - LightScreen
+    - Protect
+    - RainDance
+    - Safeguard
+    - Frustration
+    - Return
+    - ShadowBall
+    - DoubleTeam
+    - Facade
+    - SecretPower
+    - Rest
+    - Attract
+    - Flash
+    - BodySlam
+    - DoubleEdge
+    - Mimic
+    - Substitute
+    - Snore
+    - IcyWind
+    - Endure
+    - Swagger
+    - SleepTalk
+    - Avalanche
+    - Captivate
+    - NaturalGift
+    - Round
+    - FrostBreath
+    - Confide
+    - Taunt
+    - HyperBeam
+    - Earthquake
+    - Torment
+    - Explosion
+    - Rollout
+    - DefenseCurl
+    - DarkPulse
+    - GigaImpact
+    - GyroBall
+    - IronHead
+    - Payback
+    - Bulldoze
+    - LaserFocus
+Froslass:
+  level:
+    '1': [Astonish, DoubleTeam, Leer, PowderSnow]
+    '4': [DoubleTeam]
+    '10': [Astonish]
+    '13': [IcyWind]
+    '19': [ConfuseRay]
+    '22': [OminousWind]
+    '23': [DrainingKiss]
+    '28': [WakeUpSlap]
+    '31': [Captivate]
+    '37': [IceShard]
+    '40': [Hail]
+    '51': [Blizzard]
+    '59': [DestinyBond]
+  teachable:
+    - Attract
+    - Avalanche
+    - Blizzard
+    - Captivate
+    - DoubleTeam
+    - DreamEater
+    - Embargo
+    - Endure
+    - Facade
+    - Flash
+    - Fling
+    - Frustration
+    - GigaImpact
+    - Hail
+    - HiddenPower
+    - HyperBeam
+    - IceBeam
+    - IcePunch
+    - IcyWind
+    - LightScreen
+    - MudSlap
+    - NaturalGift
+    - OminousWind
+    - Payback
+    - Protect
+    - PsychUp
+    - Psychic
+    - RainDance
+    - Rest
+    - Return
+    - Rollout
+    - Safeguard
+    - SecretPower
+    - ShadowBall
+    - ShockWave
+    - SignalBeam
+    - SleepTalk
+    - Snatch
+    - Snore
+    - Spite
+    - Substitute
+    - SuckerPunch
+    - Swagger
+    - Taunt
+    - Thunder
+    - ThunderWave
+    - Thunderbolt
+    - Torment
+    - Toxic
+    - Trick
+    - WaterPulse
+    - Confide
+    - AuroraVeil
+    - LaserFocus

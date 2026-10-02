@@ -1,0 +1,5 @@
+Audino:
+  abilities: [Healer, Regenerator]
+  # Friend Guard is the invented fourth: the line reaches three, and
+  # a nurse that keeps the rest of the party standing is what it is
+  hidden: [Klutz, FriendGuard]

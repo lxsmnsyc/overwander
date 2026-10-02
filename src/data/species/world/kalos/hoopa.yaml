@@ -1,0 +1,10 @@
+Hoopa:
+  types: [Psychic, Ghost]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Desert]
+  active: any
+HoopaUnbound:
+  types: [Psychic, Dark]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false

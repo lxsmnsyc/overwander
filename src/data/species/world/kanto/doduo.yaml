@@ -1,0 +1,15 @@
+Doduo:
+  types: [Normal, Flying]
+  egg-groups: [Flying]
+  biomes: [Savanna, Steppe]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Dodrio
+      method: [Level]
+      level: 31
+Dodrio:
+  types: [Normal, Flying]
+  egg-groups: [Flying]
+  biomes: [Savanna, Steppe]
+  active: [Morning, Day]
+  evolves-from: Doduo

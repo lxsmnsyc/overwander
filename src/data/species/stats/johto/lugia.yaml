@@ -1,0 +1,6 @@
+Lugia:
+  stats: { HP: 106, Attack: 90, Defense: 130, SpecialAttack: 90, SpecialDefense: 154, Speed: 110 }
+  catch-rate: 3
+  height: 5.2
+  weight: 216
+  gender: genderless

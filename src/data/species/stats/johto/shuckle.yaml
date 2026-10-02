@@ -1,0 +1,6 @@
+Shuckle:
+  stats: { HP: 20, Attack: 10, Defense: 230, SpecialAttack: 10, SpecialDefense: 230, Speed: 5 }
+  catch-rate: 190
+  height: 0.6
+  weight: 20.5
+  gender: [1, 1]

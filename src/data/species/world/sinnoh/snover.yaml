@@ -1,0 +1,17 @@
+# The tree that brings its own winter: a Snover walks down to where
+# people are when the snow comes, and an Abomasnow makes the snow
+Snover:
+  types: [Grass, Ice]
+  egg-groups: [Monster, Grass]
+  biomes: [AlpineTundra, Taiga, Tundra]
+  active: any
+  evolves-into:
+    - species: Abomasnow
+      method: [Level]
+      level: 40
+Abomasnow:
+  types: [Grass, Ice]
+  egg-groups: [Monster, Grass]
+  biomes: [AlpineTundra, Taiga, Tundra]
+  active: any
+  evolves-from: Snover

@@ -1,0 +1,27 @@
+# The lamps: a Litwick walks ahead of you helpfully, and the flame on
+# its head is burning what it has already taken off whoever went first
+Litwick:
+  types: [Ghost, Fire]
+  egg-groups: [Amorphous]
+  biomes: [Bog, Woodland]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Lampent
+      method: [Level]
+      level: 41
+Lampent:
+  types: [Ghost, Fire]
+  egg-groups: [Amorphous]
+  biomes: [Bog, Woodland]
+  active: [Evening, Night]
+  evolves-from: Litwick
+  evolves-into:
+    - species: Chandelure
+      method: [UsedItem]
+      item: DuskStone
+Chandelure:
+  types: [Ghost, Fire]
+  egg-groups: [Amorphous]
+  biomes: [Bog, Woodland]
+  active: [Evening, Night]
+  evolves-from: Lampent

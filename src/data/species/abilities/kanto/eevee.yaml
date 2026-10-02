@@ -1,0 +1,27 @@
+Eevee:
+  abilities: [RunAway, Adaptability]
+  hidden: [Anticipation]
+Vaporeon:
+  abilities: [WaterAbsorb]
+  hidden: [Hydration]
+Jolteon:
+  abilities: [VoltAbsorb]
+  hidden: [QuickFeet]
+Flareon:
+  abilities: [FlashFire]
+  hidden: [Guts]
+Espeon:
+  abilities: [Synchronize]
+  hidden: [MagicBounce]
+Umbreon:
+  abilities: [Synchronize]
+  hidden: [InnerFocus]
+Leafeon:
+  abilities: [LeafGuard]
+  hidden: [Chlorophyll]
+Glaceon:
+  abilities: [SnowCloak]
+  hidden: [IceBody]
+Sylveon:
+  abilities: [CuteCharm]
+  hidden: [Pixilate]

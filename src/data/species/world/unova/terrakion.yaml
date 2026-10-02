@@ -1,0 +1,5 @@
+Terrakion:
+  types: [Rock, Fighting]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Mountain, Badlands]
+  active: any

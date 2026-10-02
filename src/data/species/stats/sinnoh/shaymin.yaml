@@ -1,0 +1,12 @@
+Shaymin:
+  stats: { HP: 100, Attack: 100, Defense: 100, SpecialAttack: 100, SpecialDefense: 100, Speed: 100 }
+  catch-rate: 45
+  height: 0.2
+  weight: 2.1
+  gender: genderless
+ShayminSky:
+  stats: { HP: 100, Attack: 103, Defense: 75, SpecialAttack: 120, SpecialDefense: 75, Speed: 127 }
+  catch-rate: 45
+  height: 0.4
+  weight: 5.2
+  gender: genderless

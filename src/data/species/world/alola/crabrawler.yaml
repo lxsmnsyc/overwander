@@ -1,0 +1,17 @@
+Crabrawler:
+  types: [Fighting]
+  egg-groups: [Water3]
+  biomes: [Beach, RockyCoast]
+  active: any
+  # An Ice Stone rather than the top of Mount Lanakila, the way the
+  # later games ask for one: nowhere here is that mountain
+  evolves-into:
+    - species: Crabominable
+      method: [UsedItem]
+      item: IceStone
+Crabominable:
+  types: [Fighting, Ice]
+  egg-groups: [Water3]
+  biomes: [Glacier, AlpineTundra]
+  active: any
+  evolves-from: Crabrawler

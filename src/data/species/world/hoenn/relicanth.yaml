@@ -1,0 +1,6 @@
+Relicanth:
+  types: [Water, Rock]
+  egg-groups: [Water1, Water2]
+  habitat: Water
+  biomes: [DeepOcean, Ocean]
+  active: [Morning, Day]

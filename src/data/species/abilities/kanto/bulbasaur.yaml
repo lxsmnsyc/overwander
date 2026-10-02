@@ -1,0 +1,9 @@
+Bulbasaur:
+  abilities: [Overgrow]
+  hidden: [Chlorophyll]
+Ivysaur:
+  abilities: [Overgrow]
+  hidden: [Chlorophyll]
+Venusaur:
+  abilities: [Overgrow]
+  hidden: [Chlorophyll, LeafGuard, EffectSpore]

@@ -1,0 +1,166 @@
+family-teachable:
+  - Agility
+  - Attract
+  - BatonPass
+  - BodySlam
+  - Bounce
+  - Bulldoze
+  - BulletSeed
+  - Charm
+  - Dig
+  - DoubleEdge
+  - DoubleTeam
+  - EchoedVoice
+  - Endeavor
+  - Endure
+  - EnergyBall
+  - Facade
+  - FakeTears
+  - Flash
+  - Frustration
+  - GigaDrain
+  - GrassKnot
+  - HelpingHand
+  - HiddenPower
+  - LastResort
+  - LeafStorm
+  - LightScreen
+  - MagicalLeaf
+  - NaturePower
+  - Protect
+  - RainDance
+  - Rest
+  - Retaliate
+  - Return
+  - Round
+  - Safeguard
+  - SecretPower
+  - SeedBomb
+  - ShadowBall
+  - SleepTalk
+  - Snore
+  - SolarBeam
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Synthesis
+  - TakeDown
+  - ThunderWave
+  - Toxic
+  - WildCharge
+  - WorkUp
+  - WorrySeed
+  - ZenHeadbutt
+  - Confide
+Deerling:
+  level:
+    '1': [Tackle, Camouflage]
+    '4': [Growl]
+    '7': [SandAttack]
+    '10': [DoubleKick]
+    '13': [LeechSeed]
+    '16': [FeintAttack, BulletSeed]
+    '20': [TakeDown]
+    '24': [JumpKick, ZenHeadbutt]
+    '28': [Aromatherapy, EnergyBall]
+    '32': [Charm]
+    '37': [DoubleEdge]
+    '41': [NaturePower]
+    '42': [SolarBeam]
+DeerlingSummer:
+  level:
+    '1': [Tackle, Camouflage]
+    '4': [Growl]
+    '7': [SandAttack]
+    '10': [DoubleKick]
+    '13': [LeechSeed]
+    '16': [FeintAttack, BulletSeed]
+    '20': [TakeDown]
+    '24': [JumpKick, ZenHeadbutt]
+    '28': [Aromatherapy, EnergyBall]
+    '32': [Charm]
+    '37': [DoubleEdge]
+    '41': [NaturePower]
+    '42': [SolarBeam]
+DeerlingAutumn:
+  level:
+    '1': [Tackle, Camouflage]
+    '4': [Growl]
+    '7': [SandAttack]
+    '10': [DoubleKick]
+    '13': [LeechSeed]
+    '16': [FeintAttack, BulletSeed]
+    '20': [TakeDown]
+    '24': [JumpKick, ZenHeadbutt]
+    '28': [Aromatherapy, EnergyBall]
+    '32': [Charm]
+    '37': [DoubleEdge]
+    '41': [NaturePower]
+    '42': [SolarBeam]
+DeerlingWinter:
+  level:
+    '1': [Tackle, Camouflage]
+    '4': [Growl]
+    '7': [SandAttack]
+    '10': [DoubleKick]
+    '13': [LeechSeed]
+    '16': [FeintAttack, BulletSeed]
+    '20': [TakeDown]
+    '24': [JumpKick, ZenHeadbutt]
+    '28': [Aromatherapy, EnergyBall]
+    '32': [Charm]
+    '37': [DoubleEdge]
+    '41': [NaturePower]
+    '42': [SolarBeam]
+Sawsbuck:
+  level:
+    '1': [HornLeech, Megahorn, Tackle, Camouflage, Growl]
+    '10': [DoubleKick]
+    '13': [LeechSeed]
+    '16': [FeintAttack, BulletSeed]
+    '20': [TakeDown]
+    '24': [JumpKick, ZenHeadbutt]
+    '28': [Aromatherapy, EnergyBall]
+    '36': [Charm]
+    '44': [DoubleEdge, NaturePower]
+    '52': [SolarBeam]
+  teachable: [Curse, Cut, GigaImpact, HyperBeam, RockSmash, SwordsDance, StompingTantrum]
+SawsbuckSummer:
+  level:
+    '1': [HornLeech, Megahorn, Tackle, Camouflage, Growl]
+    '10': [DoubleKick]
+    '13': [LeechSeed]
+    '16': [FeintAttack, BulletSeed]
+    '20': [TakeDown]
+    '24': [JumpKick, ZenHeadbutt]
+    '28': [Aromatherapy, EnergyBall]
+    '36': [Charm]
+    '44': [DoubleEdge, NaturePower]
+    '52': [SolarBeam]
+  teachable: [Curse, Cut, GigaImpact, HyperBeam, RockSmash, SwordsDance, StompingTantrum]
+SawsbuckAutumn:
+  level:
+    '1': [HornLeech, Megahorn, Tackle, Camouflage, Growl]
+    '10': [DoubleKick]
+    '13': [LeechSeed]
+    '16': [FeintAttack, BulletSeed]
+    '20': [TakeDown]
+    '24': [JumpKick, ZenHeadbutt]
+    '28': [Aromatherapy, EnergyBall]
+    '36': [Charm]
+    '44': [DoubleEdge, NaturePower]
+    '52': [SolarBeam]
+  teachable: [Curse, Cut, GigaImpact, HyperBeam, RockSmash, SwordsDance, StompingTantrum]
+SawsbuckWinter:
+  level:
+    '1': [HornLeech, Megahorn, Tackle, Camouflage, Growl]
+    '10': [DoubleKick]
+    '13': [LeechSeed]
+    '16': [FeintAttack, BulletSeed]
+    '20': [TakeDown]
+    '24': [JumpKick, ZenHeadbutt]
+    '28': [Aromatherapy, EnergyBall]
+    '36': [Charm]
+    '44': [DoubleEdge, NaturePower]
+    '52': [SolarBeam]
+  teachable: [Curse, Cut, GigaImpact, HyperBeam, RockSmash, SwordsDance, StompingTantrum]

@@ -1,0 +1,23 @@
+# The dark shallows both shapes hang in
+
+# The squid that hangs upside down and talks whoever looks at it into
+# doing the same. Its lights are the whole trick: what an enemy has
+# built up comes off it rather than being matched
+Inkay:
+  types: [Dark, Psychic]
+  egg-groups: [Water1]
+  habitat: Amphibious
+  biomes: [Beach, KelpForest]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Malamar
+      method: [Level, KnownMove]
+      level: 30
+      move: TopsyTurvy
+Malamar:
+  types: [Dark, Psychic]
+  egg-groups: [Water1]
+  habitat: Amphibious
+  biomes: [Beach, KelpForest]
+  active: [Evening, Night]
+  evolves-from: Inkay

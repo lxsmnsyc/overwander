@@ -1,0 +1,82 @@
+# TM, HM and tutor moves shared by the whole family
+
+# What the gears learn however many of them are meshed
+family-teachable:
+  - Assurance
+  - Bind
+  - ChargeBeam
+  - DoubleTeam
+  - Endure
+  - Facade
+  - FlashCannon
+  - Frustration
+  - Gravity
+  - HiddenPower
+  - HyperBeam
+  - IronDefense
+  - MagicCoat
+  - MagnetRise
+  - PowerGem
+  - Protect
+  - Recycle
+  - Rest
+  - Return
+  - RockPolish
+  - RockSmash
+  - Round
+  - Sandstorm
+  - Screech
+  - SecretPower
+  - ShockWave
+  - SignalBeam
+  - SleepTalk
+  - Snore
+  - Substitute
+  - Swagger
+  - Telekinesis
+  - ThunderWave
+  - Thunderbolt
+  - Toxic
+  - Uproar
+  - VoltSwitch
+  - WildCharge
+  - Confide
+Klink:
+  level:
+    '1': [ViceGrip, ThunderShock]
+    '4': [Bind]
+    '6': [Charge]
+    '12': [ChargeBeam]
+    '16': [MetalSound, GearGrind]
+    '20': [Autotomize]
+    '24': [Discharge]
+    '28': [Screech]
+    '36': [LockOn, MirrorShot]
+    '40': [ShiftGear]
+    '44': [ZapCannon]
+    '48': [HyperBeam]
+Klang:
+  level:
+    '1': [ViceGrip, Bind, ThunderShock, Charge, GearGrind]
+    '12': [ChargeBeam]
+    '16': [MetalSound]
+    '20': [Autotomize]
+    '24': [Discharge]
+    '28': [Screech]
+    '36': [LockOn, MirrorShot]
+    '42': [ShiftGear]
+    '48': [ZapCannon]
+    '54': [HyperBeam]
+Klinklang:
+  level:
+    '1': [ViceGrip, Bind, ThunderShock, Charge, GearGrind, GearUp]
+    '12': [ChargeBeam]
+    '16': [MetalSound]
+    '20': [Autotomize]
+    '24': [Discharge]
+    '28': [Screech]
+    '36': [LockOn, MirrorShot]
+    '42': [ShiftGear]
+    '48': [ZapCannon]
+    '54': [HyperBeam]
+    '76': [MagneticFlux]

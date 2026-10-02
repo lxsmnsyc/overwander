@@ -1,0 +1,6 @@
+Pyukumuku:
+  stats: { HP: 55, Attack: 60, Defense: 130, SpecialAttack: 30, SpecialDefense: 130, Speed: 5 }
+  catch-rate: 60
+  height: 0.3
+  weight: 1.2
+  gender: [4, 4]

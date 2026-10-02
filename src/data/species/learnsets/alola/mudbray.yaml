@@ -1,0 +1,64 @@
+# TM and tutor moves shared by the whole family
+family-teachable:
+  - Attract
+  - Bulldoze
+  - Confide
+  - DoubleTeam
+  - EarthPower
+  - Earthquake
+  - Endeavor
+  - Facade
+  - Frustration
+  - HiddenPower
+  - IronDefense
+  - IronHead
+  - LowKick
+  - LowSweep
+  - Payback
+  - Protect
+  - Rest
+  - Return
+  - Roar
+  - RockSlide
+  - RockTomb
+  - Round
+  - Sandstorm
+  - SleepTalk
+  - Snore
+  - StealthRock
+  - StompingTantrum
+  - Substitute
+  - Superpower
+  - Swagger
+  - Toxic
+Mudbray:
+  level:
+    '1': [MudSlap]
+    '3': [MudSport]
+    '8': [Rototiller]
+    '10': [Bulldoze]
+    '15': [DoubleKick]
+    '17': [Stomp]
+    '22': [Bide]
+    '24': [HighHorsepower]
+    '29': [IronDefense]
+    '31': [HeavySlam]
+    '36': [Counter]
+    '38': [Earthquake]
+    '43': [MegaKick]
+    '45': [Superpower]
+  egg: [BodySlam, CloseCombat, DoubleEdge, Magnitude, MudBomb]
+Mudsdale:
+  level:
+    '1': [Bulldoze, MudSlap, MudSport, Rototiller]
+    '15': [DoubleKick]
+    '17': [Stomp]
+    '22': [Bide]
+    '24': [HighHorsepower]
+    '29': [IronDefense]
+    '34': [HeavySlam]
+    '42': [Counter]
+    '47': [Earthquake]
+    '55': [MegaKick]
+    '60': [Superpower]
+  teachable: [FocusBlast, GigaImpact]

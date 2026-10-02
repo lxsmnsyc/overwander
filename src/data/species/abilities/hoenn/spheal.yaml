@@ -1,0 +1,11 @@
+Spheal:
+  abilities: [ThickFat, IceBody]
+  hidden: [Oblivious]
+Sealeo:
+  abilities: [ThickFat, IceBody]
+  hidden: [Oblivious]
+Walrein:
+  abilities: [ThickFat, IceBody]
+  # One the mainline never gave it: the sky its line already feeds
+  # on is one a bulk that size can move through
+  hidden: [Oblivious, SlushRush]

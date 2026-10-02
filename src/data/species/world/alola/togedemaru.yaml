@@ -1,0 +1,5 @@
+Togedemaru:
+  types: [Electric, Steel]
+  egg-groups: [Field, Fairy]
+  biomes: [Mountain, Grassland]
+  active: any

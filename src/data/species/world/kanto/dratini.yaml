@@ -1,0 +1,25 @@
+Dratini:
+  types: [Dragon]
+  egg-groups: [Water1, Dragon]
+  biomes: [Ocean, DeepOcean]
+  active: any
+  evolves-into:
+    - species: Dragonair
+      method: [Level]
+      level: 30
+Dragonair:
+  types: [Dragon]
+  egg-groups: [Water1, Dragon]
+  biomes: [Ocean, DeepOcean]
+  active: any
+  evolves-from: Dratini
+  evolves-into:
+    - species: Dragonite
+      method: [Level]
+      level: 55
+Dragonite:
+  types: [Dragon, Flying]
+  egg-groups: [Water1, Dragon]
+  biomes: [Ocean, DeepOcean]
+  active: any
+  evolves-from: Dragonair

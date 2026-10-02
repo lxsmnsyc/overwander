@@ -1,0 +1,76 @@
+# TM and tutor moves shared by the whole family
+
+Turtonator:
+  level:
+    '1': [Ember, Tackle]
+    '5': [Smog]
+    '9': [Protect]
+    '13': [Incinerate]
+    '17': [Flail]
+    '21': [Endure]
+    '25': [IronDefense]
+    '29': [Flamethrower]
+    '33': [BodySlam]
+    '37': [ShellSmash]
+    '41': [DragonPulse]
+    '45': [ShellTrap]
+    '49': [Overheat]
+    '53': [Explosion]
+  teachable:
+    - Attract
+    - Block
+    - BrutalSwing
+    - BulkUp
+    - Bulldoze
+    - ChargeBeam
+    - Confide
+    - DoubleTeam
+    - DracoMeteor
+    - DragonClaw
+    - DragonPulse
+    - DragonTail
+    - Earthquake
+    - Endeavor
+    - Explosion
+    - Facade
+    - FireBlast
+    - FlameCharge
+    - Flamethrower
+    - FlashCannon
+    - Fling
+    - FocusBlast
+    - Frustration
+    - GigaImpact
+    - HeatWave
+    - HiddenPower
+    - HyperBeam
+    - HyperVoice
+    - IronDefense
+    - IronHead
+    - IronTail
+    - Outrage
+    - Overheat
+    - Payback
+    - Protect
+    - Rest
+    - Return
+    - Roar
+    - RockTomb
+    - Round
+    - ShockWave
+    - SleepTalk
+    - SmackDown
+    - Snore
+    - SolarBeam
+    - StompingTantrum
+    - StoneEdge
+    - Substitute
+    - SunnyDay
+    - Swagger
+    - Taunt
+    - Toxic
+    - Uproar
+    - Venoshock
+    - WillOWisp
+    - WorkUp
+  egg: [FireSpin, HeadSmash, Revenge, WideGuard]

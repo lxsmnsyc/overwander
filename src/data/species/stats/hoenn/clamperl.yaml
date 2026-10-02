@@ -1,0 +1,18 @@
+Clamperl:
+  stats: { HP: 35, Attack: 64, Defense: 85, SpecialAttack: 74, SpecialDefense: 55, Speed: 32 }
+  catch-rate: 255
+  height: 0.4
+  weight: 52.5
+  gender: [1, 1]
+Huntail:
+  stats: { HP: 55, Attack: 104, Defense: 105, SpecialAttack: 94, SpecialDefense: 75, Speed: 52 }
+  catch-rate: 60
+  height: 1.7
+  weight: 27
+  gender: [1, 1]
+Gorebyss:
+  stats: { HP: 55, Attack: 84, Defense: 105, SpecialAttack: 114, SpecialDefense: 75, Speed: 52 }
+  catch-rate: 60
+  height: 1.8
+  weight: 22.6
+  gender: [1, 1]

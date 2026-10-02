@@ -1,0 +1,6 @@
+Ponyta:
+  abilities: [RunAway, FlashFire]
+  hidden: [FlameBody]
+Rapidash:
+  abilities: [RunAway, FlashFire]
+  hidden: [FlameBody, Reckless]

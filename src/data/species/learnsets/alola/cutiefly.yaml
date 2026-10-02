@@ -1,0 +1,73 @@
+# TM and tutor moves shared by the whole family
+family-teachable:
+  - Acrobatics
+  - AerialAce
+  - AfterYou
+  - AllySwitch
+  - Attract
+  - BugBite
+  - CalmMind
+  - Confide
+  - Covet
+  - DazzlingGleam
+  - Defog
+  - DoubleTeam
+  - DreamEater
+  - EnergyBall
+  - Facade
+  - Frustration
+  - HelpingHand
+  - HiddenPower
+  - Infestation
+  - LastResort
+  - LeechLife
+  - LightScreen
+  - MagicRoom
+  - Protect
+  - PsychUp
+  - Psychic
+  - Reflect
+  - Rest
+  - Return
+  - Roost
+  - Round
+  - Safeguard
+  - SignalBeam
+  - SkillSwap
+  - SleepTalk
+  - Snore
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Tailwind
+  - Telekinesis
+  - Thief
+  - Toxic
+  - Trick
+  - UTurn
+  - WonderRoom
+Cutiefly:
+  level:
+    '1': [Absorb]
+    '4': [FairyWind]
+    '7': [StunSpore]
+    '10': [StruggleBug]
+    '13': [SilverWind]
+    '16': [DrainingKiss]
+    '21': [SweetScent]
+    '26': [BugBuzz]
+    '31': [DazzlingGleam]
+    '36': [Aromatherapy]
+    '41': [QuiverDance]
+  egg: [BatonPass, Bestow, Moonblast, Powder, SkillSwap, SpeedSwap, StickyWeb]
+Ribombee:
+  level:
+    '1': [Absorb, FairyWind, PollenPuff, StruggleBug, StunSpore]
+    '13': [SilverWind]
+    '16': [DrainingKiss]
+    '21': [SweetScent]
+    '28': [BugBuzz]
+    '35': [DazzlingGleam]
+    '42': [Aromatherapy]
+    '49': [QuiverDance]
+  teachable: [NaturePower, SolarBeam]

@@ -1,0 +1,17 @@
+Corphish:
+  types: [Water]
+  egg-groups: [Water1, Water3]
+  habitat: Amphibious
+  biomes: [Mangrove, Swamp, TropicalSeasonalForest, Badlands, CoralReef]
+  active: any
+  evolves-into:
+    - species: Crawdaunt
+      method: [Level]
+      level: 30
+Crawdaunt:
+  types: [Water, Dark]
+  egg-groups: [Water1, Water3]
+  habitat: Amphibious
+  biomes: [Mangrove, Swamp, TropicalSeasonalForest, Badlands, CoralReef]
+  active: any
+  evolves-from: Corphish

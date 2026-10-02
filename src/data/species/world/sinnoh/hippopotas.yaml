@@ -1,0 +1,17 @@
+# The desert's own weather: a Hippopotas carries sand in its hide and
+# shakes it out, and a Hippowdon never stops shaking it out
+Hippopotas:
+  types: [Ground]
+  egg-groups: [Field]
+  biomes: [Desert, Badlands, Savanna]
+  active: any
+  evolves-into:
+    - species: Hippowdon
+      method: [Level]
+      level: 34
+Hippowdon:
+  types: [Ground]
+  egg-groups: [Field]
+  biomes: [Desert, Badlands, Savanna]
+  active: any
+  evolves-from: Hippopotas

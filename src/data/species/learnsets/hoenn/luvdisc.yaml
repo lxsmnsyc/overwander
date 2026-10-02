@@ -1,0 +1,51 @@
+Luvdisc:
+  level:
+    '1': [Tackle]
+    '4': [Charm]
+    '9': [DrainingKiss]
+    '12': [WaterGun]
+    '16': [Agility]
+    '17': [LuckyChant]
+    '24': [TakeDown]
+    '28': [Attract]
+    '36': [SweetKiss]
+    '37': [AquaRing]
+    '40': [Flail, Captivate]
+    '48': [Safeguard]
+  teachable:
+    - WaterPulse
+    - Toxic
+    - Hail
+    - HiddenPower
+    - IceBeam
+    - Blizzard
+    - Protect
+    - RainDance
+    - Safeguard
+    - Frustration
+    - Return
+    - DoubleTeam
+    - Facade
+    - SecretPower
+    - Rest
+    - Attract
+    - Surf
+    - Waterfall
+    - Dive
+    - DoubleEdge
+    - Mimic
+    - Substitute
+    - PsychUp
+    - Snore
+    - IcyWind
+    - Endure
+    - Swagger
+    - SleepTalk
+    - Swift
+    - Brine
+    - NaturalGift
+    - Round
+    - Scald
+    - Confide
+    - Liquidation
+  egg: [Splash, Supersonic, WaterSport, MudSport, AquaJet, HealPulse]

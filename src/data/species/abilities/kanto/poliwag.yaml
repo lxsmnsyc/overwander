@@ -1,0 +1,12 @@
+Poliwag:
+  abilities: [WaterAbsorb, Damp]
+  hidden: [SwiftSwim]
+Poliwhirl:
+  abilities: [WaterAbsorb, Damp]
+  hidden: [SwiftSwim]
+Poliwrath:
+  abilities: [WaterAbsorb, Damp]
+  hidden: [SwiftSwim, Guts]
+Politoed:
+  abilities: [WaterAbsorb, Damp]
+  hidden: [Drizzle]

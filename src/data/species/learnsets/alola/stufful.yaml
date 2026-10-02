@@ -1,0 +1,81 @@
+# TM and tutor moves shared by the whole family
+family-teachable:
+  - AerialAce
+  - Attract
+  - Bind
+  - BrickBreak
+  - BrutalSwing
+  - BulkUp
+  - Bulldoze
+  - Confide
+  - DoubleTeam
+  - DualChop
+  - Earthquake
+  - Facade
+  - Fling
+  - FocusBlast
+  - FocusPunch
+  - Frustration
+  - HiddenPower
+  - IcePunch
+  - IronHead
+  - LowSweep
+  - PainSplit
+  - Payback
+  - Protect
+  - Rest
+  - Return
+  - Roar
+  - RockSlide
+  - RockTomb
+  - RolePlay
+  - Round
+  - SleepTalk
+  - Snore
+  - StompingTantrum
+  - Substitute
+  - Superpower
+  - Swagger
+  - SwordsDance
+  - Taunt
+  - ThunderPunch
+  - Toxic
+  - WorkUp
+  - ZenHeadbutt
+Stufful:
+  level:
+    '1': [Leer, Tackle]
+    '5': [Bide]
+    '10': [BabyDollEyes]
+    '14': [BrutalSwing]
+    '19': [Flail]
+    '23': [Payback]
+    '28': [TakeDown]
+    '32': [HammerArm]
+    '37': [Thrash]
+    '41': [PainSplit]
+    '46': [DoubleEdge]
+    '50': [Superpower]
+  egg:
+    - Endure
+    - ForcePalm
+    - IcePunch
+    - MegaKick
+    - StompingTantrum
+    - ThunderPunch
+    - WideGuard
+Bewear:
+  level:
+    '1': [Bind, Leer, Tackle]
+    '5': [Bide]
+    '10': [BabyDollEyes]
+    '14': [BrutalSwing]
+    '19': [Flail]
+    '23': [Payback]
+    '30': [TakeDown]
+    '36': [HammerArm]
+    '43': [Thrash]
+    '49': [PainSplit]
+    '56': [DoubleEdge]
+    '62': [Superpower]
+  teachable: [DragonClaw, DrainPunch, GigaImpact, HyperBeam, LowKick, ShadowClaw]

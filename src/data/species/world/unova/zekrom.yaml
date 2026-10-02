@@ -1,0 +1,5 @@
+Zekrom:
+  types: [Dragon, Electric]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Taiga, Tundra]
+  active: any

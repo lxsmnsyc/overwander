@@ -1,0 +1,6 @@
+Pachirisu:
+  stats: { HP: 60, Attack: 45, Defense: 70, SpecialAttack: 45, SpecialDefense: 90, Speed: 95 }
+  catch-rate: 200
+  height: 0.4
+  weight: 3.9
+  gender: [1, 1]

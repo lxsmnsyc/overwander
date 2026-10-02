@@ -1,0 +1,98 @@
+family-teachable:
+  - AfterYou
+  - Attract
+  - Avalanche
+  - Blizzard
+  - BodySlam
+  - Bulldoze
+  - Confide
+  - Crunch
+  - Curse
+  - DoubleEdge
+  - DoubleTeam
+  - Endure
+  - Facade
+  - Flash
+  - FlashCannon
+  - FrostBreath
+  - Frustration
+  - GyroBall
+  - Hail
+  - HiddenPower
+  - IceBeam
+  - IceFang
+  - IcicleSpear
+  - IcyWind
+  - IronDefense
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - RockPolish
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Round
+  - Safeguard
+  - SecretPower
+  - SleepTalk
+  - Snore
+  - StoneEdge
+  - Strength
+  - Substitute
+  - Surf
+  - Swagger
+  - TakeDown
+  - Toxic
+  - WaterPulse
+Bergmite:
+  level:
+    '1': [Tackle, Harden, Bite, RapidSpin]
+    '5': [PowderSnow]
+    '9': [Curse, IceShard]
+    '10': [IcyWind]
+    '15': [Protect, TakeDown]
+    '18': [Avalanche]
+    '20': [Sharpen]
+    '21': [IronDefense]
+    '24': [IceFang]
+    '29': [Crunch]
+    '30': [IceBall, Recover]
+    '37': [Blizzard]
+    '42': [DoubleEdge]
+  egg: [Barrier, MirrorCoat, Mist, Recover]
+Avalugg:
+  level:
+    '1':
+      - Tackle
+      - Harden
+      - Bite
+      - RapidSpin
+      - PowderSnow
+      - Crunch
+      - IronDefense
+      - SkullBash
+      - WideGuard
+      - BodySlam
+    '9': [Curse]
+    '10': [IcyWind]
+    '15': [Protect, TakeDown]
+    '18': [Avalanche]
+    '20': [Sharpen]
+    '24': [IceFang]
+    '30': [IceBall, Recover]
+    '41': [Blizzard]
+    '46': [DoubleEdge]
+    '51': [IcicleCrash]
+  teachable:
+    - Block
+    - Earthquake
+    - GigaImpact
+    - HeavySlam
+    - HydroPump
+    - HyperBeam
+    - IronHead
+    - Roar
+    - ScaryFace
+    - Superpower
+    - StompingTantrum

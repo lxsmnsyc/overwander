@@ -1,0 +1,8 @@
+Gulpin:
+  abilities: [LiquidOoze, StickyHold]
+  hidden: [Gluttony]
+Swalot:
+  abilities: [LiquidOoze, StickyHold]
+  # One the mainline never gave it: what it swallows things with is
+  # the same stuff it is full of
+  hidden: [Gluttony, PoisonTouch]

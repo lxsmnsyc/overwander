@@ -1,0 +1,120 @@
+family-teachable:
+  - Attract
+  - Block
+  - BrickBreak
+  - BulkUp
+  - CloseCombat
+  - Curse
+  - Dig
+  - DoubleEdge
+  - DoubleTeam
+  - DrainPunch
+  - Endure
+  - Facade
+  - FirePunch
+  - Fling
+  - FocusBlast
+  - FocusEnergy
+  - FocusPunch
+  - Frustration
+  - GrassKnot
+  - HelpingHand
+  - HiddenPower
+  - IcePunch
+  - KnockOff
+  - LowKick
+  - LowSweep
+  - MegaKick
+  - MegaPunch
+  - Payback
+  - PoisonJab
+  - Protect
+  - RainDance
+  - Rest
+  - Retaliate
+  - Return
+  - Revenge
+  - Reversal
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Round
+  - ScaryFace
+  - SecretPower
+  - SleepTalk
+  - SmackDown
+  - Snore
+  - StoneEdge
+  - Strength
+  - Substitute
+  - SunnyDay
+  - Superpower
+  - Swagger
+  - TakeDown
+  - Taunt
+  - Thief
+  - ThunderPunch
+  - Toxic
+  - WorkUp
+  - Confide
+  - PowerUpPunch
+  - BrutalSwing
+Timburr:
+  level:
+    '1': [Pound, Leer]
+    '4': [LowKick, FocusEnergy]
+    '8': [RockThrow, Bide]
+    '16': [BulkUp]
+    '20': [RockSlide, WakeUpSlap]
+    '24': [Slam, ChipAway]
+    '28': [ScaryFace]
+    '32': [DynamicPunch]
+    '36': [HammerArm]
+    '40': [StoneEdge]
+    '44': [Superpower]
+    '46': [FocusPunch]
+  egg:
+    - CometPunch
+    - Counter
+    - Defog
+    - Detect
+    - DrainPunch
+    - Endure
+    - ForcePalm
+    - Foresight
+    - MachPunch
+    - Reversal
+    - SmellingSalts
+    - WideGuard
+Gurdurr:
+  level:
+    '1': [Pound, Leer, LowKick, RockThrow, FocusEnergy, Bide]
+    '16': [BulkUp]
+    '20': [RockSlide, WakeUpSlap]
+    '24': [Slam, ChipAway]
+    '30': [ScaryFace]
+    '36': [DynamicPunch]
+    '42': [HammerArm]
+    '48': [StoneEdge]
+    '53': [FocusPunch]
+    '54': [Superpower]
+Conkeldurr:
+  level:
+    '1': [Pound, Leer, LowKick, RockThrow, FocusEnergy, Bide]
+    '16': [BulkUp]
+    '20': [RockSlide, WakeUpSlap]
+    '24': [Slam, ChipAway]
+    '30': [ScaryFace]
+    '36': [DynamicPunch]
+    '42': [HammerArm]
+    '48': [StoneEdge]
+    '53': [FocusPunch]
+    '54': [Superpower]
+  teachable:
+    - BodySlam
+    - Bulldoze
+    - Earthquake
+    - GigaImpact
+    - HyperBeam
+    - RockBlast
+    - StompingTantrum

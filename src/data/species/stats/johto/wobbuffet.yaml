@@ -1,0 +1,12 @@
+Wobbuffet:
+  stats: { HP: 190, Attack: 33, Defense: 58, SpecialAttack: 33, SpecialDefense: 58, Speed: 33 }
+  catch-rate: 45
+  height: 1.3
+  weight: 28.5
+  gender: [1, 1]
+Wynaut:
+  stats: { HP: 95, Attack: 23, Defense: 48, SpecialAttack: 23, SpecialDefense: 48, Speed: 23 }
+  catch-rate: 125
+  height: 0.6
+  weight: 14
+  gender: [1, 1]

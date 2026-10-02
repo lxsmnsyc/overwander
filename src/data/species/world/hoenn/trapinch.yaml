@@ -1,0 +1,27 @@
+# What the two above the base pick up: a pit in the sand has no
+
+Trapinch:
+  types: [Ground]
+  egg-groups: [Bug, Dragon]
+  biomes: [Desert, Badlands]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Vibrava
+      method: [Level]
+      level: 35
+Vibrava:
+  types: [Ground, Dragon]
+  egg-groups: [Bug, Dragon]
+  biomes: [Desert, Badlands]
+  active: [Morning, Day]
+  evolves-from: Trapinch
+  evolves-into:
+    - species: Flygon
+      method: [Level]
+      level: 45
+Flygon:
+  types: [Ground, Dragon]
+  egg-groups: [Bug, Dragon]
+  biomes: [Desert, Badlands]
+  active: [Morning, Day]
+  evolves-from: Vibrava

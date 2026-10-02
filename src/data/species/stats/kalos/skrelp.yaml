@@ -1,0 +1,12 @@
+Skrelp:
+  stats: { HP: 50, Attack: 60, Defense: 60, SpecialAttack: 60, SpecialDefense: 60, Speed: 30 }
+  catch-rate: 225
+  height: 0.5
+  weight: 7.3
+  gender: [1, 1]
+Dragalge:
+  stats: { HP: 65, Attack: 75, Defense: 90, SpecialAttack: 97, SpecialDefense: 123, Speed: 44 }
+  catch-rate: 55
+  height: 1.8
+  weight: 81.5
+  gender: [1, 1]

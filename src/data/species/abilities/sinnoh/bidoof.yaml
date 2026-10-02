@@ -1,0 +1,8 @@
+Bidoof:
+  abilities: [Simple, Unaware]
+  hidden: [Moody]
+Bibarel:
+  abilities: [Simple, Unaware]
+  # Sturdy is this registry's rather than the mainline's: a dam is
+  # built to hold, and this line has no stat that stands out instead
+  hidden: [Moody, Sturdy]

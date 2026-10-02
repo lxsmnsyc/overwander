@@ -1,0 +1,337 @@
+family-teachable:
+  - AerialAce
+  - AncientPower
+  - AquaTail
+  - Avalanche
+  - Blizzard
+  - BrickBreak
+  - Brine
+  - BulletSeed
+  - CalmMind
+  - ChargeBeam
+  - Cut
+  - DarkPulse
+  - Defog
+  - Dive
+  - DoubleTeam
+  - DracoMeteor
+  - DragonClaw
+  - DragonPulse
+  - DreamEater
+  - EarthPower
+  - Earthquake
+  - Endure
+  - EnergyBall
+  - Facade
+  - FireBlast
+  - Flamethrower
+  - Flash
+  - FlashCannon
+  - Fly
+  - FocusBlast
+  - Frustration
+  - FuryCutter
+  - GigaDrain
+  - GigaImpact
+  - GrassKnot
+  - Hail
+  - HeatWave
+  - HiddenPower
+  - HyperBeam
+  - IceBeam
+  - IcyWind
+  - IronDefense
+  - IronHead
+  - IronTail
+  - LastResort
+  - LightScreen
+  - MudSlap
+  - NaturalGift
+  - OminousWind
+  - Outrage
+  - Overheat
+  - Payback
+  - PoisonJab
+  - Protect
+  - PsychUp
+  - Psychic
+  - RainDance
+  - Recycle
+  - Reflect
+  - Rest
+  - Return
+  - Roar
+  - RockClimb
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Safeguard
+  - Sandstorm
+  - SecretPower
+  - ShadowBall
+  - ShadowClaw
+  - ShockWave
+  - SignalBeam
+  - SilverWind
+  - SleepTalk
+  - SludgeBomb
+  - Snore
+  - SolarBeam
+  - StealthRock
+  - StoneEdge
+  - Strength
+  - Substitute
+  - SunnyDay
+  - Surf
+  - Swagger
+  - Swift
+  - SwordsDance
+  - Thunder
+  - ThunderWave
+  - Thunderbolt
+  - Toxic
+  - Trick
+  - TrickRoom
+  - Twister
+  - WaterPulse
+  - Waterfall
+  - WillOWisp
+  - XScissor
+  - ZenHeadbutt
+  - Confide
+  - Liquidation
+  - LaserFocus
+Arceus:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusBug:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusDark:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusDragon:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusElectric:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusFighting:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusFire:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusFlying:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusGhost:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusGrass:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusGround:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusIce:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusPoison:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusPsychic:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusRock:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusSteel:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusWater:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]
+ArceusFairy:
+  level:
+    '1': [CosmicPower, NaturalGift, Punishment, SeismicToss]
+    '10': [Gravity]
+    '20': [EarthPower]
+    '30': [HyperVoice]
+    '40': [ExtremeSpeed]
+    '50': [Refresh]
+    '60': [FutureSight]
+    '70': [Recover]
+    '80': [HyperBeam]
+    '90': [PerishSong]
+    '100': [Judgment]

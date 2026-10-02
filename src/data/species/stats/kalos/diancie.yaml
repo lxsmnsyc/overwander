@@ -1,0 +1,6 @@
+Diancie:
+  stats: { HP: 50, Attack: 100, Defense: 150, SpecialAttack: 100, SpecialDefense: 150, Speed: 50 }
+  catch-rate: 3
+  height: 0.7
+  weight: 8.8
+  gender: genderless

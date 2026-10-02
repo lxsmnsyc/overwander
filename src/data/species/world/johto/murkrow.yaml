@@ -1,0 +1,17 @@
+Murkrow:
+  types: [Dark, Flying]
+  egg-groups: [Flying]
+  biomes: [Woodland, TemperateForest, Mountain]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Honchkrow
+      method: [UsedItem]
+      item: DuskStone
+# The one the flock answers to: a Honchkrow calls in the night and
+# Murkrow arrive from everywhere to see what it wants
+Honchkrow:
+  types: [Dark, Flying]
+  egg-groups: [Flying]
+  biomes: [Woodland, TemperateForest, Mountain]
+  active: [Evening, Night]
+  evolves-from: Murkrow

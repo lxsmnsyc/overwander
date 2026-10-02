@@ -1,0 +1,133 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Attract
+  - Confide
+  - Covet
+  - Cut
+  - DoubleTeam
+  - DreamEater
+  - EchoedVoice
+  - Embargo
+  - Facade
+  - FireBlast
+  - FirePledge
+  - FlameCharge
+  - Flamethrower
+  - FoulPlay
+  - Frustration
+  - GrassKnot
+  - HeatWave
+  - HiddenPower
+  - Incinerate
+  - IronTail
+  - LightScreen
+  - MagicCoat
+  - MagicRoom
+  - Overheat
+  - PowerUpPunch
+  - Protect
+  - PsychUp
+  - Psychic
+  - Psyshock
+  - RainDance
+  - Rest
+  - Return
+  - Round
+  - Safeguard
+  - SecretPower
+  - SleepTalk
+  - Snore
+  - SolarBeam
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Thief
+  - Toxic
+  - WillOWisp
+Fennekin:
+  level:
+    '1': [Scratch, TailWhip]
+    '5': [Ember]
+    '11': [Howl]
+    '14': [FlameCharge]
+    '17': [Psybeam]
+    '20': [FireSpin]
+    '25': [LuckyChant]
+    '27': [LightScreen]
+    '31': [Psyshock]
+    '35': [Flamethrower]
+    '38': [WillOWisp]
+    '41': [Psychic]
+    '43': [SunnyDay]
+    '46': [MagicRoom]
+    '48': [FireBlast]
+  egg: [HeatWave, Hypnosis, MagicCoat, Wish, PsychicTerrain]
+Braixen:
+  level:
+    '1': [Scratch, TailWhip]
+    '5': [Ember]
+    '11': [Howl]
+    '14': [FlameCharge]
+    '18': [Psybeam]
+    '22': [FireSpin]
+    '27': [LuckyChant]
+    '30': [LightScreen]
+    '34': [Psyshock]
+    '41': [Flamethrower]
+    '45': [WillOWisp]
+    '48': [Psychic]
+    '51': [SunnyDay]
+    '53': [MagicRoom]
+    '55': [FireBlast]
+  teachable:
+    - FirePunch
+    - LowKick
+    - Recycle
+    - ShockWave
+    - SkillSwap
+    - Snatch
+    - ThunderPunch
+    - Trick
+    - WonderRoom
+    - ZenHeadbutt
+    - LaserFocus
+Delphox:
+  level:
+    '1': [Scratch, TailWhip, ShadowBall, RolePlay, Switcheroo]
+    '5': [Ember]
+    '11': [Howl]
+    '14': [FlameCharge]
+    '18': [Psybeam]
+    '22': [FireSpin]
+    '27': [LuckyChant]
+    '30': [LightScreen]
+    '34': [Psyshock]
+    '42': [Flamethrower]
+    '47': [WillOWisp]
+    '51': [Psychic]
+    '55': [SunnyDay]
+    '58': [MagicRoom]
+    '61': [FireBlast]
+    '69': [FutureSight]
+    '75': [MysticalFire]
+  teachable:
+    - BlastBurn
+    - CalmMind
+    - DazzlingGleam
+    - FirePunch
+    - GigaImpact
+    - HyperBeam
+    - LowKick
+    - Recycle
+    - RolePlay
+    - ShadowBall
+    - ShockWave
+    - SignalBeam
+    - SkillSwap
+    - Snatch
+    - ThunderPunch
+    - Trick
+    - TrickRoom
+    - WonderRoom
+    - ZenHeadbutt
+    - LaserFocus

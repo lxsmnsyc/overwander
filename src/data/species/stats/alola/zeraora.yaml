@@ -1,0 +1,6 @@
+Zeraora:
+  stats: { HP: 88, Attack: 112, Defense: 75, SpecialAttack: 102, SpecialDefense: 80, Speed: 143 }
+  catch-rate: 3
+  height: 1.5
+  weight: 44.5
+  gender: genderless

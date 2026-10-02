@@ -1,0 +1,12 @@
+Drifloon:
+  stats: { HP: 90, Attack: 50, Defense: 34, SpecialAttack: 60, SpecialDefense: 44, Speed: 70 }
+  catch-rate: 125
+  height: 0.4
+  weight: 1.2
+  gender: [1, 1]
+Drifblim:
+  stats: { HP: 150, Attack: 80, Defense: 44, SpecialAttack: 90, SpecialDefense: 54, Speed: 80 }
+  catch-rate: 60
+  height: 1.2
+  weight: 15
+  gender: [1, 1]

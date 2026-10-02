@@ -1,0 +1,153 @@
+Cosmog:
+  # Nothing can be taught to a nebula
+  level:
+    '1': [Splash]
+    '23': [Teleport]
+Cosmoem:
+  level:
+    '1': [CosmicPower, Teleport]
+Solgaleo:
+  level:
+    '1': [CosmicPower, MetalClaw, SunsteelStrike, Teleport, WakeUpSlap]
+    '7': [IronHead]
+    '13': [MetalSound]
+    '19': [ZenHeadbutt]
+    '23': [FlashCannon]
+    '31': [MorningSun]
+    '37': [Crunch]
+    '43': [MetalBurst]
+    '47': [SolarBeam]
+    '59': [NobleRoar]
+    '61': [FlareBlitz]
+    '67': [WideGuard]
+    '73': [GigaImpact]
+  teachable:
+    - Bulldoze
+    - CalmMind
+    - Confide
+    - DoubleTeam
+    - Earthquake
+    - Endeavor
+    - Facade
+    - FireBlast
+    - FlameCharge
+    - Flamethrower
+    - FlashCannon
+    - FocusBlast
+    - Frustration
+    - GigaImpact
+    - GyroBall
+    - HiddenPower
+    - HyperBeam
+    - HyperVoice
+    - IronDefense
+    - IronHead
+    - IronTail
+    - KnockOff
+    - LastResort
+    - LightScreen
+    - Outrage
+    - Protect
+    - PsychUp
+    - Psychic
+    - Psyshock
+    - Reflect
+    - Rest
+    - Return
+    - Roar
+    - RockSlide
+    - RockTomb
+    - Round
+    - Safeguard
+    - ShockWave
+    - SleepTalk
+    - Snarl
+    - Snore
+    - SolarBeam
+    - StoneEdge
+    - Substitute
+    - SunnyDay
+    - Superpower
+    - Swagger
+    - Thunder
+    - ThunderWave
+    - Thunderbolt
+    - Toxic
+    - TrickRoom
+    - WildCharge
+    - WorkUp
+    - ZenHeadbutt
+Lunala:
+  level:
+    '1': [Confusion, CosmicPower, Hypnosis, MoongeistBeam, Teleport]
+    '7': [NightShade]
+    '13': [ConfuseRay]
+    '19': [AirSlash]
+    '23': [ShadowBall]
+    '31': [Moonlight]
+    '37': [NightDaze]
+    '43': [MagicCoat]
+    '47': [Moonblast]
+    '59': [DreamEater]
+    '61': [PhantomForce]
+    '67': [WideGuard]
+    '73': [HyperBeam]
+  teachable:
+    - Acrobatics
+    - AerialAce
+    - Blizzard
+    - CalmMind
+    - ChargeBeam
+    - Confide
+    - DazzlingGleam
+    - Defog
+    - DoubleTeam
+    - DreamEater
+    - Facade
+    - Fly
+    - FocusBlast
+    - Frustration
+    - GigaImpact
+    - HeatWave
+    - HiddenPower
+    - HyperBeam
+    - IceBeam
+    - IcyWind
+    - LightScreen
+    - MagicCoat
+    - MagicRoom
+    - Protect
+    - PsychUp
+    - Psychic
+    - Psyshock
+    - Reflect
+    - Rest
+    - Return
+    - Roar
+    - Roost
+    - Round
+    - Safeguard
+    - ShadowBall
+    - ShadowClaw
+    - ShockWave
+    - SignalBeam
+    - SkyAttack
+    - SkyDrop
+    - SleepTalk
+    - Snore
+    - SolarBeam
+    - Spite
+    - Substitute
+    - SunnyDay
+    - Swagger
+    - Tailwind
+    - Telekinesis
+    - Thunder
+    - ThunderWave
+    - Thunderbolt
+    - Toxic
+    - Trick
+    - TrickRoom
+    - WillOWisp
+    - WonderRoom
+    - WorkUp

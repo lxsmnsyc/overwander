@@ -1,0 +1,60 @@
+Klefki:
+  level:
+    '1': [Tackle, FairyLock]
+    '5': [FairyWind]
+    '8': [Astonish]
+    '12': [MetalSound]
+    '15': [Spikes]
+    '18': [DrainingKiss]
+    '23': [CraftyShield]
+    '27': [FoulPlay]
+    '32': [Torment]
+    '34': [MirrorShot]
+    '36': [Imprison]
+    '40': [Recycle]
+    '43': [PlayRough]
+    '44': [MagicRoom]
+    '50': [HealBlock]
+  teachable:
+    - Attract
+    - CalmMind
+    - Confide
+    - Covet
+    - Cut
+    - DazzlingGleam
+    - DoubleTeam
+    - Facade
+    - FlashCannon
+    - FoulPlay
+    - Frustration
+    - GigaImpact
+    - HiddenPower
+    - HyperBeam
+    - IronDefense
+    - LastResort
+    - LightScreen
+    - MagicCoat
+    - MagicRoom
+    - MagnetRise
+    - Protect
+    - PsychUp
+    - Psychic
+    - Psyshock
+    - RainDance
+    - Recycle
+    - Reflect
+    - Rest
+    - Return
+    - Round
+    - Safeguard
+    - SecretPower
+    - SleepTalk
+    - Snore
+    - Substitute
+    - SunnyDay
+    - Swagger
+    - Thief
+    - ThunderWave
+    - Torment
+    - Toxic
+  egg: [IronDefense, LockOn, Switcheroo, Thief]

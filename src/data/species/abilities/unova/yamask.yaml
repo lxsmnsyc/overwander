@@ -1,0 +1,9 @@
+Yamask:
+  abilities: [Mummy]
+  hidden: []
+Cofagrigus:
+  abilities: [Mummy]
+  # The line reaches only Mummy, so three of the four are invented:
+  # a coffin takes the weapon off whoever opens it, wears out anybody
+  # who keeps trying, and takes the robber down with it
+  hidden: [CursedBody, Pressure, PerishBody]

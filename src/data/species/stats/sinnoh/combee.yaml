@@ -1,0 +1,12 @@
+Combee:
+  stats: { HP: 30, Attack: 30, Defense: 42, SpecialAttack: 30, SpecialDefense: 42, Speed: 70 }
+  catch-rate: 120
+  height: 0.3
+  weight: 5.5
+  gender: [7, 1]
+Vespiquen:
+  stats: { HP: 70, Attack: 80, Defense: 102, SpecialAttack: 80, SpecialDefense: 102, Speed: 40 }
+  catch-rate: 45
+  height: 1.2
+  weight: 38.5
+  gender: [0, 1]

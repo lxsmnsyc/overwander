@@ -1,0 +1,67 @@
+Scatterbug:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+Spewpa:
+  abilities: [ShedSkin]
+  hidden: [FriendGuard]
+Vivillon:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonIcySnow:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonPolar:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonTundra:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonContinental:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonGarden:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonElegant:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonModern:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonMarine:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonArchipelago:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonHighPlains:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonSandstorm:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonRiver:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonMonsoon:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonSavannah:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonSun:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonOcean:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+VivillonJungle:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard]
+# Without Spewpa below them they miss Shed Skin, so each gets a filler
+VivillonFancy:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard, CuteCharm]
+VivillonPokeBall:
+  abilities: [ShieldDust, CompoundEyes]
+  hidden: [FriendGuard, Pickup]

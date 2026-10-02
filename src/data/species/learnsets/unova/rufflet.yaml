@@ -1,0 +1,100 @@
+# TM and tutor moves shared by the whole family
+
+# What the eagle works out how to do, at either size
+family-teachable:
+  - Acrobatics
+  - AerialAce
+  - Agility
+  - AirCutter
+  - AirSlash
+  - Assurance
+  - Attract
+  - BodySlam
+  - BraveBird
+  - BulkUp
+  - CloseCombat
+  - Cut
+  - DoubleEdge
+  - DoubleTeam
+  - Endure
+  - Facade
+  - FeatherDance
+  - Fly
+  - Frustration
+  - HeatWave
+  - HelpingHand
+  - HiddenPower
+  - HoneClaws
+  - Hurricane
+  - Pluck
+  - Protect
+  - RainDance
+  - Rest
+  - Retaliate
+  - Return
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Roost
+  - Round
+  - ScaryFace
+  - SecretPower
+  - ShadowClaw
+  - SkyDrop
+  - SleepTalk
+  - Snore
+  - SteelWing
+  - Strength
+  - Substitute
+  - SunnyDay
+  - Superpower
+  - Swagger
+  - Swift
+  - Tailwind
+  - TakeDown
+  - Toxic
+  - UTurn
+  - WorkUp
+  - ZenHeadbutt
+  - Confide
+Rufflet:
+  level:
+    '1': [Leer, Peck, QuickAttack]
+    '5': [FuryAttack]
+    '6': [AerialAce, HoneClaws]
+    '10': [WingAttack]
+    '11': [Twister]
+    '18': [Tailwind]
+    '19': [ScaryFace]
+    '20': [AirSlash]
+    '25': [Roost]
+    '32': [Defog]
+    '34': [DoubleEdge]
+    '42': [Whirlwind]
+    '43': [BraveBird]
+    '46': [CrushClaw]
+    '50': [SkyDrop]
+    '64': [Thrash]
+  egg: [RockSmash, Roost]
+Braviary:
+  level:
+    '1':
+      - WingAttack
+      - Whirlwind
+      - FuryAttack
+      - Thrash
+      - Leer
+      - Peck
+      - SkyAttack
+      - BraveBird
+      - HoneClaws
+      - Superpower
+    '18': [Tailwind]
+    '19': [ScaryFace]
+    '23': [AerialAce]
+    '28': [Slash]
+    '32': [Defog]
+    '41': [AirSlash]
+    '46': [CrushClaw]
+    '50': [SkyDrop]
+  teachable: [GigaImpact, HyperBeam, IronHead, MetalClaw, Reversal, LaserFocus]

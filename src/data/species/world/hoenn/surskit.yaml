@@ -1,0 +1,17 @@
+Surskit:
+  types: [Bug, Water]
+  egg-groups: [Water1, Bug]
+  habitat: Amphibious
+  biomes: [Swamp, Bog, TropicalRainforest, Shrubland, Grassland, TemperateRainforest]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Masquerain
+      method: [Level]
+      level: 22
+Masquerain:
+  types: [Bug, Flying]
+  egg-groups: [Water1, Bug]
+  habitat: Amphibious
+  biomes: [Swamp, Bog, TropicalRainforest, Shrubland, Grassland, TemperateRainforest]
+  active: [Morning, Day]
+  evolves-from: Surskit

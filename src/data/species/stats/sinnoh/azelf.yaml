@@ -1,0 +1,6 @@
+Azelf:
+  stats: { HP: 75, Attack: 125, Defense: 70, SpecialAttack: 125, SpecialDefense: 70, Speed: 115 }
+  catch-rate: 3
+  height: 0.3
+  weight: 0.3
+  gender: genderless

@@ -1,0 +1,6 @@
+Patrat:
+  abilities: [RunAway, KeenEye]
+  hidden: [Analytic]
+Watchog:
+  abilities: [Illuminate, KeenEye]
+  hidden: [Analytic, RunAway]

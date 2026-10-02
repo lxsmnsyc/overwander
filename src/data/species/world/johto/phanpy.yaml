@@ -1,0 +1,15 @@
+Phanpy:
+  types: [Ground]
+  egg-groups: [Field]
+  biomes: [Savanna, Steppe, Badlands]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Donphan
+      method: [Level]
+      level: 25
+Donphan:
+  types: [Ground]
+  egg-groups: [Field]
+  biomes: [Savanna, Steppe, Badlands]
+  active: [Morning, Day]
+  evolves-from: Phanpy

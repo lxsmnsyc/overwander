@@ -1,0 +1,9 @@
+Meditite:
+  abilities: [PurePower]
+  hidden: [Telepathy]
+Medicham:
+  abilities: [PurePower]
+  # Inner Focus and Levitate are this registry's rather than the
+  # mainline's: it meditates through anything, and off the floor
+  # while it does, and a final evolution is filled to four
+  hidden: [Telepathy, InnerFocus, Levitate]

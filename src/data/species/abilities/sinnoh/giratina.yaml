@@ -1,0 +1,9 @@
+Giratina:
+  abilities: [Pressure]
+  # Pressure and Telepathy are all the mainline gives it, so the
+  # other two are this registry's. Levitate is not among them: that
+  # is Origin Forme's own, and a form's ability is never lent down
+  hidden: [Telepathy, Contrary, CursedBody]
+GiratinaOrigin:
+  abilities: [Levitate]
+  hidden: []

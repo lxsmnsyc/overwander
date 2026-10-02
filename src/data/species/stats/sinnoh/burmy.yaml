@@ -1,0 +1,42 @@
+Burmy:
+  stats: { HP: 40, Attack: 29, Defense: 45, SpecialAttack: 29, SpecialDefense: 45, Speed: 36 }
+  catch-rate: 120
+  height: 0.2
+  weight: 3.4
+  gender: [1, 1]
+BurmySandy:
+  stats: { HP: 40, Attack: 29, Defense: 45, SpecialAttack: 29, SpecialDefense: 45, Speed: 36 }
+  catch-rate: 120
+  height: 0.2
+  weight: 3.4
+  gender: [1, 1]
+BurmyTrash:
+  stats: { HP: 40, Attack: 29, Defense: 45, SpecialAttack: 29, SpecialDefense: 45, Speed: 36 }
+  catch-rate: 120
+  height: 0.2
+  weight: 3.4
+  gender: [1, 1]
+Wormadam:
+  stats: { HP: 60, Attack: 59, Defense: 85, SpecialAttack: 79, SpecialDefense: 105, Speed: 36 }
+  catch-rate: 45
+  height: 0.5
+  weight: 6.5
+  gender: [0, 1]
+WormadamSandy:
+  stats: { HP: 60, Attack: 79, Defense: 105, SpecialAttack: 59, SpecialDefense: 85, Speed: 36 }
+  catch-rate: 45
+  height: 0.5
+  weight: 6.5
+  gender: [0, 1]
+WormadamTrash:
+  stats: { HP: 60, Attack: 69, Defense: 95, SpecialAttack: 69, SpecialDefense: 95, Speed: 36 }
+  catch-rate: 45
+  height: 0.5
+  weight: 6.5
+  gender: [0, 1]
+Mothim:
+  stats: { HP: 70, Attack: 94, Defense: 50, SpecialAttack: 94, SpecialDefense: 50, Speed: 66 }
+  catch-rate: 45
+  height: 0.9
+  weight: 23.3
+  gender: [1, 0]

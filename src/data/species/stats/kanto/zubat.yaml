@@ -1,0 +1,18 @@
+Zubat:
+  stats: { HP: 40, Attack: 45, Defense: 35, SpecialAttack: 30, SpecialDefense: 40, Speed: 55 }
+  catch-rate: 255
+  height: 0.8
+  weight: 7.5
+  gender: [1, 1]
+Golbat:
+  stats: { HP: 75, Attack: 80, Defense: 70, SpecialAttack: 65, SpecialDefense: 75, Speed: 90 }
+  catch-rate: 90
+  height: 1.6
+  weight: 55
+  gender: [1, 1]
+Crobat:
+  stats: { HP: 85, Attack: 90, Defense: 80, SpecialAttack: 70, SpecialDefense: 80, Speed: 130 }
+  catch-rate: 90
+  height: 1.8
+  weight: 75
+  gender: [1, 1]

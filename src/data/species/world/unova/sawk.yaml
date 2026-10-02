@@ -1,0 +1,5 @@
+Sawk:
+  types: [Fighting]
+  egg-groups: [HumanLike]
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]

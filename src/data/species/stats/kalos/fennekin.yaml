@@ -1,0 +1,18 @@
+Fennekin:
+  stats: { HP: 40, Attack: 45, Defense: 40, SpecialAttack: 62, SpecialDefense: 60, Speed: 60 }
+  catch-rate: 45
+  height: 0.4
+  weight: 9.4
+  gender: [7, 1]
+Braixen:
+  stats: { HP: 59, Attack: 59, Defense: 58, SpecialAttack: 90, SpecialDefense: 70, Speed: 73 }
+  catch-rate: 45
+  height: 1
+  weight: 14.5
+  gender: [7, 1]
+Delphox:
+  stats: { HP: 75, Attack: 69, Defense: 72, SpecialAttack: 114, SpecialDefense: 100, Speed: 104 }
+  catch-rate: 45
+  height: 1.5
+  weight: 39
+  gender: [7, 1]

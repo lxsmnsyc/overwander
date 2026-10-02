@@ -1,0 +1,15 @@
+Meditite:
+  types: [Fighting, Psychic]
+  egg-groups: [HumanLike]
+  biomes: [Mountain, MontaneForest]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Medicham
+      method: [Level]
+      level: 37
+Medicham:
+  types: [Fighting, Psychic]
+  egg-groups: [HumanLike]
+  biomes: [Mountain, MontaneForest]
+  active: [Morning, Day]
+  evolves-from: Meditite

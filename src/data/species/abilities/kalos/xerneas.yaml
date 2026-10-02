@@ -1,0 +1,6 @@
+Xerneas:
+  abilities: [FairyAura]
+  # Fairy Aura is all the mainline gives it, so the other three are
+  # this registry's: the mending it does, the hide that turns a
+  # first blow, and a heal that arrives before anything else
+  hidden: [Healer, Multiscale, Triage]

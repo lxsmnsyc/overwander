@@ -1,0 +1,12 @@
+Surskit:
+  stats: { HP: 40, Attack: 30, Defense: 32, SpecialAttack: 50, SpecialDefense: 52, Speed: 65 }
+  catch-rate: 200
+  height: 0.5
+  weight: 1.7
+  gender: [1, 1]
+Masquerain:
+  stats: { HP: 70, Attack: 60, Defense: 62, SpecialAttack: 100, SpecialDefense: 82, Speed: 80 }
+  catch-rate: 75
+  height: 0.8
+  weight: 3.6
+  gender: [1, 1]

@@ -1,0 +1,6 @@
+Kangaskhan:
+  stats: { HP: 105, Attack: 95, Defense: 80, SpecialAttack: 40, SpecialDefense: 80, Speed: 90 }
+  catch-rate: 45
+  height: 2.2
+  weight: 80
+  gender: [0, 1]

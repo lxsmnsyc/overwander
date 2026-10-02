@@ -1,0 +1,87 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - Earthquake
+  - Sandstorm
+  - SunnyDay
+  - DoubleTeam
+  - Rest
+  - Snore
+  - Curse
+  - Protect
+  - Endure
+  - Rollout
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - HiddenPower
+  - DefenseCurl
+  - Headbutt
+  - MudSlap
+  - RockSmash
+  - Strength
+  - Roar
+  - Facade
+  - IronTail
+  - Mimic
+  - RockTomb
+  - SecretPower
+  - Substitute
+  - Captivate
+  - EarthPower
+  - GunkShot
+  - SeedBomb
+  - StealthRock
+  - Round
+  - EchoedVoice
+  - Bulldoze
+  - Confide
+Phanpy:
+  level:
+    '1': [Growl, Tackle, OdorSleuth]
+    '9': [DefenseCurl]
+    '17': [Flail]
+    '19': [NaturalGift]
+    '25': [TakeDown]
+    '33': [Rollout]
+    '37': [LastResort]
+    '41': [Endure]
+    '49': [DoubleEdge]
+  egg:
+    - AncientPower
+    - BodySlam
+    - FocusEnergy
+    - WaterGun
+    - Counter
+    - Fissure
+    - HeadSmash
+    - IceShard
+    - HeavySlam
+    - PlayRough
+    - HighHorsepower
+Donphan:
+  level:
+    '1': [Growl, HornAttack, OdorSleuth, FireFang, ThunderFang, Bulldoze]
+    '9': [DefenseCurl]
+    '17': [Flail]
+    '25': [FuryAttack]
+    '31': [Assurance]
+    '33': [Rollout]
+    '41': [RapidSpin]
+    '49': [Earthquake]
+    '54': [GigaImpact]
+  teachable:
+    - HyperBeam
+    - BodySlam
+    - Counter
+    - DoubleEdge
+    - RockSlide
+    - GyroBall
+    - NaturalGift
+    - PoisonJab
+    - RockPolish
+    - StoneEdge
+    - BrutalSwing
+    - StompingTantrum

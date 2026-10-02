@@ -1,0 +1,12 @@
+Cottonee:
+  stats: { HP: 40, Attack: 27, Defense: 60, SpecialAttack: 37, SpecialDefense: 50, Speed: 66 }
+  catch-rate: 190
+  height: 0.3
+  weight: 0.6
+  gender: [1, 1]
+Whimsicott:
+  stats: { HP: 60, Attack: 67, Defense: 85, SpecialAttack: 77, SpecialDefense: 75, Speed: 116 }
+  catch-rate: 75
+  height: 0.7
+  weight: 6.6
+  gender: [1, 1]

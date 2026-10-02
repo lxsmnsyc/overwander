@@ -1,0 +1,10 @@
+Thundurus:
+  abilities: [Prankster]
+  # Lightning Rod and Drizzle are this registry's rather than the
+  # mainline's: every bolt on the field belongs to it, and the
+  # downpour comes with the lightning. Volt Absorb belongs to its
+  # other shape and never counts toward these four
+  hidden: [Defiant, LightningRod, Drizzle]
+ThundurusTherian:
+  abilities: [VoltAbsorb]
+  hidden: []

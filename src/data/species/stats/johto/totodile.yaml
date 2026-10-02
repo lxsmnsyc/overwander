@@ -1,0 +1,18 @@
+Totodile:
+  stats: { HP: 50, Attack: 65, Defense: 64, SpecialAttack: 44, SpecialDefense: 48, Speed: 43 }
+  catch-rate: 45
+  height: 0.6
+  weight: 9.5
+  gender: [7, 1]
+Croconaw:
+  stats: { HP: 65, Attack: 80, Defense: 80, SpecialAttack: 59, SpecialDefense: 63, Speed: 58 }
+  catch-rate: 45
+  height: 1.1
+  weight: 25
+  gender: [7, 1]
+Feraligatr:
+  stats: { HP: 85, Attack: 105, Defense: 100, SpecialAttack: 79, SpecialDefense: 83, Speed: 78 }
+  catch-rate: 45
+  height: 2.3
+  weight: 88.8
+  gender: [7, 1]

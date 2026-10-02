@@ -1,0 +1,84 @@
+# TM, HM and tutor moves both stages share
+family-teachable:
+  - WaterPulse
+  - Toxic
+  - Hail
+  - HiddenPower
+  - Taunt
+  - IceBeam
+  - Blizzard
+  - Protect
+  - RainDance
+  - Frustration
+  - Return
+  - DoubleTeam
+  - Torment
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Thief
+  - Surf
+  - Waterfall
+  - Dive
+  - DoubleEdge
+  - Mimic
+  - Substitute
+  - Snore
+  - IcyWind
+  - Endure
+  - MudSlap
+  - Swagger
+  - FuryCutter
+  - SleepTalk
+  - Swift
+  - Brine
+  - Captivate
+  - DarkPulse
+  - NaturalGift
+  - Payback
+  - ZenHeadbutt
+  - Round
+  - Scald
+  - Retaliate
+  - Snarl
+  - Confide
+Carvanha:
+  level:
+    '1': [Leer, Bite]
+    '7': [Rage]
+    '13': [FocusEnergy]
+    '16': [ScaryFace, IceFang]
+    '22': [Crunch]
+    '26': [Assurance]
+    '28': [Screech]
+    '31': [TakeDown, AquaJet]
+    '37': [Swagger]
+    '43': [Agility]
+  egg: [HydroPump, Thrash, PsychicFangs]
+Sharpedo:
+  level:
+    '1': [Leer, Bite, Rage, FocusEnergy, Feint]
+    '16': [ScaryFace, IceFang]
+    '22': [Crunch]
+    '26': [Assurance]
+    '28': [Screech]
+    '33': [Slash]
+    '34': [AquaJet]
+    '38': [Taunt]
+    '43': [Swagger]
+    '48': [SkullBash]
+    '53': [Agility]
+    '56': [NightSlash]
+  teachable:
+    - Roar
+    - HyperBeam
+    - Earthquake
+    - RockTomb
+    - Strength
+    - RockSmash
+    - Avalanche
+    - GigaImpact
+    - PoisonJab
+    - Bulldoze
+    - Liquidation

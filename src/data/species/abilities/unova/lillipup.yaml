@@ -1,0 +1,9 @@
+Lillipup:
+  abilities: [VitalSpirit, Pickup]
+  hidden: [RunAway]
+Herdier:
+  abilities: [Intimidate, SandRush]
+  hidden: [Scrappy, VitalSpirit, Pickup, RunAway]
+Stoutland:
+  abilities: [Intimidate, SandRush]
+  hidden: [Scrappy, VitalSpirit, Pickup, RunAway]

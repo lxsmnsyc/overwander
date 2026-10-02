@@ -1,0 +1,5 @@
+Celebi:
+  types: [Psychic, Grass]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [TemperateForest]
+  active: any

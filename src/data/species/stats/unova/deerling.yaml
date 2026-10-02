@@ -1,0 +1,48 @@
+Deerling:
+  stats: { HP: 60, Attack: 60, Defense: 50, SpecialAttack: 40, SpecialDefense: 50, Speed: 75 }
+  catch-rate: 190
+  height: 0.6
+  weight: 19.5
+  gender: [1, 1]
+DeerlingSummer:
+  stats: { HP: 60, Attack: 60, Defense: 50, SpecialAttack: 40, SpecialDefense: 50, Speed: 75 }
+  catch-rate: 190
+  height: 0.6
+  weight: 19.5
+  gender: [1, 1]
+DeerlingAutumn:
+  stats: { HP: 60, Attack: 60, Defense: 50, SpecialAttack: 40, SpecialDefense: 50, Speed: 75 }
+  catch-rate: 190
+  height: 0.6
+  weight: 19.5
+  gender: [1, 1]
+DeerlingWinter:
+  stats: { HP: 60, Attack: 60, Defense: 50, SpecialAttack: 40, SpecialDefense: 50, Speed: 75 }
+  catch-rate: 190
+  height: 0.6
+  weight: 19.5
+  gender: [1, 1]
+Sawsbuck:
+  stats: { HP: 80, Attack: 100, Defense: 70, SpecialAttack: 60, SpecialDefense: 70, Speed: 95 }
+  catch-rate: 75
+  height: 1.9
+  weight: 92.5
+  gender: [1, 1]
+SawsbuckSummer:
+  stats: { HP: 80, Attack: 100, Defense: 70, SpecialAttack: 60, SpecialDefense: 70, Speed: 95 }
+  catch-rate: 75
+  height: 1.9
+  weight: 92.5
+  gender: [1, 1]
+SawsbuckAutumn:
+  stats: { HP: 80, Attack: 100, Defense: 70, SpecialAttack: 60, SpecialDefense: 70, Speed: 95 }
+  catch-rate: 75
+  height: 1.9
+  weight: 92.5
+  gender: [1, 1]
+SawsbuckWinter:
+  stats: { HP: 80, Attack: 100, Defense: 70, SpecialAttack: 60, SpecialDefense: 70, Speed: 95 }
+  catch-rate: 75
+  height: 1.9
+  weight: 92.5
+  gender: [1, 1]

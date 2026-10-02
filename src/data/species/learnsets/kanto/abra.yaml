@@ -1,0 +1,121 @@
+family-teachable:
+  - MegaPunch
+  - MegaKick
+  - Toxic
+  - BodySlam
+  - TakeDown
+  - DoubleEdge
+  - Submission
+  - Counter
+  - SeismicToss
+  - Rage
+  - Psychic
+  - Teleport
+  - Mimic
+  - DoubleTeam
+  - Reflect
+  - Bide
+  - Metronome
+  - SkullBash
+  - Rest
+  - ThunderWave
+  - Psywave
+  - Substitute
+  - Flash
+  - FirePunch
+  - IcePunch
+  - ThunderPunch
+  - Headbutt
+  - DreamEater
+  - Thief
+  - Nightmare
+  - Snore
+  - Curse
+  - Protect
+  - ZapCannon
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - DynamicPunch
+  - HiddenPower
+  - RainDance
+  - SunnyDay
+  - PsychUp
+  - ShadowBall
+  - Facade
+  - FocusPunch
+  - IronTail
+  - Safeguard
+  - SecretPower
+  - ShockWave
+  - SkillSwap
+  - Snatch
+  - Taunt
+  - Torment
+  - Captivate
+  - ChargeBeam
+  - DrainPunch
+  - Embargo
+  - EnergyBall
+  - Fling
+  - GrassKnot
+  - Gravity
+  - NaturalGift
+  - TrickRoom
+  - ZenHeadbutt
+  - WonderRoom
+  - Psyshock
+  - Telekinesis
+  - MagicRoom
+  - FoulPlay
+  - Round
+  - AllySwitch
+  - Confide
+  - DazzlingGleam
+Abra:
+  level:
+    '1': [Teleport]
+  teachable: [CalmMind]
+  egg:
+    - Barrier
+    - FirePunch
+    - IcePunch
+    - ThunderPunch
+    - LightScreen
+    - Encore
+    - KnockOff
+    - GuardSwap
+    - PowerTrick
+    - GuardSplit
+    - PsychicTerrain
+Kadabra:
+  level:
+    '1': [Teleport, Kinesis, Confusion, Disable]
+    '21': [Psybeam]
+    '22': [MiracleEye]
+    '24': [AllySwitch]
+    '26': [Recover]
+    '31': [FutureSight]
+    '33': [RolePlay]
+    '34': [PsychoCut, Telekinesis]
+    '38': [Psychic]
+    '42': [Reflect]
+    '43': [Trick]
+  teachable: [Dig, CalmMind, LightScreen]
+Alakazam:
+  level:
+    '1': [Teleport, Kinesis, Confusion, Disable]
+    '21': [Psybeam]
+    '22': [MiracleEye]
+    '24': [AllySwitch]
+    '26': [Recover]
+    '31': [FutureSight]
+    '33': [CalmMind]
+    '34': [PsychoCut, Telekinesis]
+    '38': [Psychic]
+    '42': [Reflect]
+    '43': [Trick]
+  teachable: [HyperBeam, Dig, LightScreen, FocusBlast, GigaImpact, LaserFocus]

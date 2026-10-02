@@ -1,0 +1,25 @@
+Fennekin:
+  types: [Fire]
+  egg-groups: [Field]
+  biomes: [Shrubland, Savanna]
+  active: [Day, Evening]
+  evolves-into:
+    - species: Braixen
+      method: [Level]
+      level: 16
+Braixen:
+  types: [Fire]
+  egg-groups: [Field]
+  biomes: [Shrubland, Savanna]
+  active: [Day, Evening]
+  evolves-from: Fennekin
+  evolves-into:
+    - species: Delphox
+      method: [Level]
+      level: 36
+Delphox:
+  types: [Fire, Psychic]
+  egg-groups: [Field]
+  biomes: [Shrubland, Savanna]
+  active: [Day, Evening]
+  evolves-from: Braixen

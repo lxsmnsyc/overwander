@@ -1,0 +1,12 @@
+Cyndaquil:
+  abilities: [Blaze]
+  hidden: [FlashFire]
+Quilava:
+  abilities: [Blaze]
+  hidden: [FlashFire]
+Typhlosion:
+  abilities: [Blaze]
+  # Flame Body and Berserk are this registry's rather than the
+  # mainline's, filling a final evolution to four: the neck vents
+  # burn what touches them, and the flames go up when it is cornered
+  hidden: [FlashFire, FlameBody, Berserk]

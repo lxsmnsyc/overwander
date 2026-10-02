@@ -1,0 +1,19 @@
+Mantine:
+  types: [Water, Flying]
+  egg-groups: [Water1]
+  habitat: Water
+  biomes: [Ocean, CoralReef, KelpForest]
+  active: any
+  evolves-from: Mantyke
+# A Mantine that has not grown its wings out: a Mantyke swims with
+# whatever is bigger than it and copies how that thing moves
+Mantyke:
+  types: [Water, Flying]
+  egg-groups: [NoEggsDiscovered]
+  habitat: Water
+  biomes: [Ocean, CoralReef, KelpForest]
+  active: any
+  evolves-into:
+    - species: Mantine
+      method: [Level]
+      level: 32

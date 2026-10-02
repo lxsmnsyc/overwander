@@ -1,0 +1,6 @@
+Audino:
+  stats: { HP: 103, Attack: 60, Defense: 86, SpecialAttack: 60, SpecialDefense: 86, Speed: 50 }
+  catch-rate: 255
+  height: 1.1
+  weight: 31
+  gender: [1, 1]

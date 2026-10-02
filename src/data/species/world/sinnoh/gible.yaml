@@ -1,0 +1,27 @@
+# The cave mouth that bites: Gible waits in a hole for something to
+# walk past, and a Garchomp does the same at the speed of a jet
+Gible:
+  types: [Dragon, Ground]
+  egg-groups: [Monster, Dragon]
+  biomes: [Mountain, Badlands, Desert]
+  active: any
+  evolves-into:
+    - species: Gabite
+      method: [Level]
+      level: 24
+Gabite:
+  types: [Dragon, Ground]
+  egg-groups: [Monster, Dragon]
+  biomes: [Mountain, Badlands, Desert]
+  active: any
+  evolves-from: Gible
+  evolves-into:
+    - species: Garchomp
+      method: [Level]
+      level: 48
+Garchomp:
+  types: [Dragon, Ground]
+  egg-groups: [Monster, Dragon]
+  biomes: [Mountain, Badlands, Desert]
+  active: any
+  evolves-from: Gabite

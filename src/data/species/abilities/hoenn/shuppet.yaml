@@ -1,0 +1,8 @@
+Shuppet:
+  abilities: [Insomnia, Frisk]
+  hidden: [CursedBody]
+Banette:
+  abilities: [Insomnia, Frisk]
+  # One the mainline never gave it: a doll thrown away takes a
+  # piece of whoever finished it
+  hidden: [CursedBody, Aftermath]

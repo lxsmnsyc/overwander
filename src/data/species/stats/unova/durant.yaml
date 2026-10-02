@@ -1,0 +1,6 @@
+Durant:
+  stats: { HP: 58, Attack: 109, Defense: 112, SpecialAttack: 48, SpecialDefense: 48, Speed: 109 }
+  catch-rate: 90
+  height: 0.3
+  weight: 33
+  gender: [1, 1]

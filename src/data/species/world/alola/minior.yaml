@@ -1,0 +1,51 @@
+# The shell and the cores share everything but their stats and their weight
+
+# Shields Down cracks the shell open mid-fight, so a core is never met on its own
+
+Minior:
+  types: [Rock, Flying]
+  egg-groups: [Mineral]
+  biomes: [Mountain, AlpineTundra]
+  active: any
+MiniorRed:
+  types: [Rock, Flying]
+  egg-groups: [Mineral]
+  active: any
+  base-form: false
+  worn: true
+MiniorOrange:
+  types: [Rock, Flying]
+  egg-groups: [Mineral]
+  active: any
+  base-form: false
+  worn: true
+MiniorYellow:
+  types: [Rock, Flying]
+  egg-groups: [Mineral]
+  active: any
+  base-form: false
+  worn: true
+MiniorGreen:
+  types: [Rock, Flying]
+  egg-groups: [Mineral]
+  active: any
+  base-form: false
+  worn: true
+MiniorBlue:
+  types: [Rock, Flying]
+  egg-groups: [Mineral]
+  active: any
+  base-form: false
+  worn: true
+MiniorIndigo:
+  types: [Rock, Flying]
+  egg-groups: [Mineral]
+  active: any
+  base-form: false
+  worn: true
+MiniorViolet:
+  types: [Rock, Flying]
+  egg-groups: [Mineral]
+  active: any
+  base-form: false
+  worn: true

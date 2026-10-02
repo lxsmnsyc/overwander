@@ -1,0 +1,13 @@
+Mareep:
+  abilities: [Static]
+  hidden: [Plus]
+Flaaffy:
+  abilities: [Static]
+  hidden: [Plus]
+Ampharos:
+  abilities: [Static]
+  # Illuminate and Motor Drive are this registry's rather than the
+  # mainline's, filling a final evolution to four: it is the
+  # lighthouse its ships steer by, and the current it stands in
+  # drives it rather than hurting it
+  hidden: [Plus, Illuminate, MotorDrive]

@@ -1,0 +1,6 @@
+Dunsparce:
+  stats: { HP: 100, Attack: 70, Defense: 70, SpecialAttack: 65, SpecialDefense: 65, Speed: 45 }
+  catch-rate: 190
+  height: 1.5
+  weight: 14
+  gender: [1, 1]

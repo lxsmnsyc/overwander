@@ -1,0 +1,12 @@
+Onix:
+  stats: { HP: 35, Attack: 45, Defense: 160, SpecialAttack: 30, SpecialDefense: 45, Speed: 70 }
+  catch-rate: 45
+  height: 8.8
+  weight: 210
+  gender: [1, 1]
+Steelix:
+  stats: { HP: 75, Attack: 85, Defense: 200, SpecialAttack: 55, SpecialDefense: 65, Speed: 30 }
+  catch-rate: 25
+  height: 9.2
+  weight: 400
+  gender: [1, 1]

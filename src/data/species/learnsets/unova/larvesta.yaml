@@ -1,0 +1,113 @@
+# TM and tutor moves shared by both sizes
+family-teachable:
+  - Acrobatics
+  - Amnesia
+  - Attract
+  - BodySlam
+  - BugBite
+  - BugBuzz
+  - CalmMind
+  - DoubleEdge
+  - DoubleTeam
+  - Endure
+  - Facade
+  - FireBlast
+  - FireSpin
+  - FlameCharge
+  - FlareBlitz
+  - Flamethrower
+  - Frustration
+  - GigaDrain
+  - HeatWave
+  - HiddenPower
+  - Incinerate
+  - LeechLife
+  - LightScreen
+  - Overheat
+  - Protect
+  - Psychic
+  - Rest
+  - Return
+  - Round
+  - Safeguard
+  - Screech
+  - SecretPower
+  - SleepTalk
+  - Snore
+  - SolarBeam
+  - StruggleBug
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - TakeDown
+  - Toxic
+  - UTurn
+  - WildCharge
+  - WillOWisp
+  - ZenHeadbutt
+  - Confide
+Larvesta:
+  level:
+    '1': [Ember, StringShot]
+    '6': [FlameCharge]
+    '10': [Absorb, LeechLife]
+    '12': [StruggleBug]
+    '18': [FlameWheel]
+    '20': [TakeDown]
+    '24': [BugBite]
+    '30': [Screech]
+    '42': [BugBuzz]
+    '50': [DoubleEdge]
+    '54': [Amnesia]
+    '66': [FlareBlitz]
+    '90': [Thrash]
+  egg:
+    - Absorb
+    - Endure
+    - Foresight
+    - Harden
+    - MagnetRise
+    - MorningSun
+    - StringShot
+    - Thrash
+    - ZenHeadbutt
+Volcarona:
+  level:
+    '1':
+      - QuiverDance
+      - Gust
+      - Whirlwind
+      - TakeDown
+      - Thrash
+      - DoubleEdge
+      - Ember
+      - Absorb
+      - StringShot
+      - FireSpin
+      - Amnesia
+      - LeechLife
+      - FlameWheel
+      - HeatWave
+      - FlareBlitz
+      - BugBuzz
+      - RagePowder
+      - FlameCharge
+      - StruggleBug
+      - Hurricane
+      - FieryDance
+    '24': [BugBite]
+    '30': [Screech]
+    '50': [SilverWind]
+    '70': [FireBlast]
+  teachable:
+    - AerialAce
+    - AirCutter
+    - AirSlash
+    - Fly
+    - GigaImpact
+    - Hurricane
+    - HyperBeam
+    - PoisonJab
+    - RainDance
+    - Roost
+    - Tailwind

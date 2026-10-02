@@ -1,0 +1,9 @@
+Machop:
+  abilities: [Guts, NoGuard]
+  hidden: [Steadfast]
+Machoke:
+  abilities: [Guts, NoGuard]
+  hidden: [Steadfast]
+Machamp:
+  abilities: [Guts, NoGuard]
+  hidden: [Steadfast, IronFist]

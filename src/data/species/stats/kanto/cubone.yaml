@@ -1,0 +1,18 @@
+Cubone:
+  stats: { HP: 50, Attack: 50, Defense: 95, SpecialAttack: 40, SpecialDefense: 50, Speed: 35 }
+  catch-rate: 190
+  height: 0.4
+  weight: 6.5
+  gender: [1, 1]
+Marowak:
+  stats: { HP: 60, Attack: 80, Defense: 110, SpecialAttack: 50, SpecialDefense: 80, Speed: 45 }
+  catch-rate: 75
+  height: 1
+  weight: 45
+  gender: [1, 1]
+MarowakAlola:
+  stats: { HP: 60, Attack: 80, Defense: 110, SpecialAttack: 50, SpecialDefense: 80, Speed: 45 }
+  catch-rate: 75
+  height: 1
+  weight: 34
+  gender: [4, 4]

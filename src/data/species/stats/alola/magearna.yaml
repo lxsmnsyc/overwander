@@ -1,0 +1,12 @@
+Magearna:
+  stats: { HP: 80, Attack: 95, Defense: 115, SpecialAttack: 130, SpecialDefense: 115, Speed: 65 }
+  catch-rate: 3
+  height: 1
+  weight: 80.5
+  gender: genderless
+MagearnaOriginal:
+  stats: { HP: 80, Attack: 95, Defense: 115, SpecialAttack: 130, SpecialDefense: 115, Speed: 65 }
+  catch-rate: 3
+  height: 1
+  weight: 80.5
+  gender: genderless

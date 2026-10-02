@@ -1,0 +1,15 @@
+Snorlax:
+  types: [Normal]
+  egg-groups: [Monster]
+  biomes: [Mountain, TemperateForest, Taiga]
+  active: any
+  evolves-from: Munchlax
+# A Snorlax that still has to look for its food: a Munchlax eats
+# whatever it finds and hides the rest in its fur
+Munchlax:
+  types: [Normal]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  evolves-into:
+    - species: Snorlax
+      method: [Friendship]

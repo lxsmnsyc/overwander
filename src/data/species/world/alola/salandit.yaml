@@ -1,0 +1,16 @@
+Salandit:
+  types: [Poison, Fire]
+  egg-groups: [Monster, Dragon]
+  biomes: [Volcano, Badlands]
+  active: any
+  evolves-into:
+    - species: Salazzle
+      method: [Level, Gender]
+      level: 33
+      gender: Female
+Salazzle:
+  types: [Poison, Fire]
+  egg-groups: [Monster, Dragon]
+  biomes: [Volcano, Badlands]
+  active: any
+  evolves-from: Salandit

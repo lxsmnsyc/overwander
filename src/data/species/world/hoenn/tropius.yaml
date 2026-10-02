@@ -1,0 +1,5 @@
+Tropius:
+  types: [Grass, Flying]
+  egg-groups: [Monster, Grass]
+  biomes: [TropicalRainforest, TropicalSeasonalForest]
+  active: [Morning, Day]

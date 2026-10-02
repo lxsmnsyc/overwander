@@ -1,0 +1,102 @@
+family-teachable:
+  - ChargeBeam
+  - DarkPulse
+  - DoubleTeam
+  - DreamEater
+  - Endure
+  - Facade
+  - Flash
+  - Frustration
+  - HiddenPower
+  - LightScreen
+  - MudSlap
+  - NaturalGift
+  - OminousWind
+  - Protect
+  - PsychUp
+  - RainDance
+  - Reflect
+  - Rest
+  - Return
+  - SecretPower
+  - ShadowBall
+  - ShockWave
+  - SignalBeam
+  - SleepTalk
+  - Snatch
+  - Snore
+  - Spite
+  - Substitute
+  - SuckerPunch
+  - SunnyDay
+  - Swagger
+  - Swift
+  - Thief
+  - Thunder
+  - ThunderWave
+  - Thunderbolt
+  - Toxic
+  - Trick
+  - Uproar
+  - WillOWisp
+  - Confide
+Rotom:
+  level:
+    '1': [Astonish, ConfuseRay, ThunderShock, ThunderWave, Trick]
+    '8': [Uproar]
+    '15': [DoubleTeam]
+    '22': [ShockWave]
+    '29': [OminousWind]
+    '36': [Substitute]
+    '43': [Charge]
+    '50': [Discharge]
+RotomHeat:
+  level:
+    '1': [Astonish, ConfuseRay, Overheat, ThunderShock, ThunderWave, Trick]
+    '8': [Uproar]
+    '15': [DoubleTeam]
+    '22': [ShockWave]
+    '29': [OminousWind]
+    '36': [Substitute]
+    '43': [Charge]
+    '50': [Discharge]
+RotomWash:
+  level:
+    '1': [Astonish, ConfuseRay, HydroPump, ThunderShock, ThunderWave, Trick]
+    '8': [Uproar]
+    '15': [DoubleTeam]
+    '22': [ShockWave]
+    '29': [OminousWind]
+    '36': [Substitute]
+    '43': [Charge]
+    '50': [Discharge]
+RotomFrost:
+  level:
+    '1': [Astonish, Blizzard, ConfuseRay, ThunderShock, ThunderWave, Trick]
+    '8': [Uproar]
+    '15': [DoubleTeam]
+    '22': [ShockWave]
+    '29': [OminousWind]
+    '36': [Substitute]
+    '43': [Charge]
+    '50': [Discharge]
+RotomFan:
+  level:
+    '1': [AirSlash, Astonish, ConfuseRay, ThunderShock, ThunderWave, Trick]
+    '8': [Uproar]
+    '15': [DoubleTeam]
+    '22': [ShockWave]
+    '29': [OminousWind]
+    '36': [Substitute]
+    '43': [Charge]
+    '50': [Discharge]
+RotomMow:
+  level:
+    '1': [Astonish, ConfuseRay, LeafStorm, ThunderShock, ThunderWave, Trick]
+    '8': [Uproar]
+    '15': [DoubleTeam]
+    '22': [ShockWave]
+    '29': [OminousWind]
+    '36': [Substitute]
+    '43': [Charge]
+    '50': [Discharge]

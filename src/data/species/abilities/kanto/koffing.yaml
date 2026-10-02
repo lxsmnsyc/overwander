@@ -1,0 +1,6 @@
+Koffing:
+  abilities: [Levitate, NeutralizingGas]
+  hidden: [Stench]
+Weezing:
+  abilities: [Levitate, NeutralizingGas]
+  hidden: [Stench, Aftermath]

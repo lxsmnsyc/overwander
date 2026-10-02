@@ -1,0 +1,6 @@
+Comfey:
+  stats: { HP: 51, Attack: 52, Defense: 90, SpecialAttack: 82, SpecialDefense: 110, Speed: 100 }
+  catch-rate: 60
+  height: 0.1
+  weight: 0.3
+  gender: [2, 6]

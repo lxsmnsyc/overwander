@@ -1,0 +1,6 @@
+Qwilfish:
+  abilities: [PoisonPoint, SwiftSwim]
+  # Rough Skin is this registry's rather than the mainline's,
+  # filling it to four: the spines are the whole animal, and
+  # whatever grabs it finds them
+  hidden: [Intimidate, RoughSkin]

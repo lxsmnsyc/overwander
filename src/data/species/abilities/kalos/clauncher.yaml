@@ -1,0 +1,7 @@
+Clauncher:
+  abilities: [MegaLauncher]
+Clawitzer:
+  abilities: [MegaLauncher]
+  # All three are this line's invented fillers: the mainline gives
+  # Clawitzer the launcher and nothing else
+  hidden: [Sniper, Analytic, Torrent]

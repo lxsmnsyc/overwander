@@ -1,0 +1,16 @@
+# The dragon that was one and was torn in three: the white half that
+# kept the truth, the black half that kept the ideal, and the husk
+# the two were pulled out of, which has wanted them back ever since
+
+# The two shapes a dragon folded into the husk puts it in. A fusion
+# is kept rather than worn, so each is a species of its own: it takes
+# the swallowed dragon's ability, its two attacking moves, and the
+# stats that dragon was built on
+
+# Fused into rather than met, so no pool stages one
+
+Reshiram:
+  types: [Dragon, Fire]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Taiga, Tundra]
+  active: any

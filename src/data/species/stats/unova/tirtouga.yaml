@@ -1,0 +1,12 @@
+Tirtouga:
+  stats: { HP: 54, Attack: 78, Defense: 103, SpecialAttack: 53, SpecialDefense: 45, Speed: 22 }
+  catch-rate: 45
+  height: 0.7
+  weight: 16.5
+  gender: [7, 1]
+Carracosta:
+  stats: { HP: 74, Attack: 108, Defense: 133, SpecialAttack: 83, SpecialDefense: 65, Speed: 32 }
+  catch-rate: 45
+  height: 1.2
+  weight: 81
+  gender: [7, 1]

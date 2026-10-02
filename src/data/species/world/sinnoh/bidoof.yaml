@@ -1,0 +1,19 @@
+# The river's engineer: Bidoof gnaws whatever it finds down to size,
+# and a Bibarel dams the water with what is left
+Bidoof:
+  types: [Normal]
+  egg-groups: [Water1, Field]
+  habitat: Amphibious
+  biomes: [Bog, Swamp, TemperateForest]
+  active: any
+  evolves-into:
+    - species: Bibarel
+      method: [Level]
+      level: 15
+Bibarel:
+  types: [Normal, Water]
+  egg-groups: [Water1, Field]
+  habitat: Amphibious
+  biomes: [Bog, Swamp, TemperateForest, Woodland]
+  active: any
+  evolves-from: Bidoof

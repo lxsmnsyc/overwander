@@ -1,0 +1,18 @@
+Geodude:
+  abilities: [RockHead, Sturdy]
+  hidden: [SandVeil]
+Graveler:
+  abilities: [RockHead, Sturdy]
+  hidden: [SandVeil]
+Golem:
+  abilities: [RockHead, Sturdy]
+  hidden: [SandVeil, SolidRock]
+GeodudeAlola:
+  abilities: [MagnetPull, Sturdy]
+  hidden: [Galvanize]
+GravelerAlola:
+  abilities: [MagnetPull, Sturdy]
+  hidden: [Galvanize]
+GolemAlola:
+  abilities: [MagnetPull, Sturdy]
+  hidden: [Galvanize, HeavyMetal]

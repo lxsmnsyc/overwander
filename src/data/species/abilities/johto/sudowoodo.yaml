@@ -1,0 +1,9 @@
+Sudowoodo:
+  abilities: [Sturdy, RockHead]
+  # Sap Sipper is this registry's rather than the mainline's,
+  # filling it to four: the imitation is good enough that a grass
+  # move treats it as the tree it is pretending to be
+  hidden: [Rattled, SapSipper]
+Bonsly:
+  abilities: [Sturdy, RockHead]
+  hidden: [Rattled]

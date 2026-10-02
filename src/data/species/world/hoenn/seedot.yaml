@@ -1,0 +1,27 @@
+# What the two above the base pick up: an acorn hanging in a tree
+
+Seedot:
+  types: [Grass]
+  egg-groups: [Field, Grass]
+  biomes: [Woodland, Shrubland]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Nuzleaf
+      method: [Level]
+      level: 14
+Nuzleaf:
+  types: [Grass, Dark]
+  egg-groups: [Field, Grass]
+  biomes: [Woodland, Shrubland]
+  active: [Evening, Night]
+  evolves-from: Seedot
+  evolves-into:
+    - species: Shiftry
+      method: [UsedItem]
+      item: LeafStone
+Shiftry:
+  types: [Grass, Dark]
+  egg-groups: [Field, Grass]
+  biomes: [Woodland, Shrubland]
+  active: [Evening, Night]
+  evolves-from: Nuzleaf

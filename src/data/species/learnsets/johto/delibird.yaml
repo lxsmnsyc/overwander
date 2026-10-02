@@ -1,0 +1,66 @@
+Delibird:
+  # Present is the whole of it, which is the joke: everything else
+  # it knows had to be taught
+  level:
+    '1': [Present]
+  teachable:
+    - Toxic
+    - IceBeam
+    - Blizzard
+    - IcyWind
+    - Fly
+    - DoubleTeam
+    - Rest
+    - Thief
+    - Snore
+    - Curse
+    - Protect
+    - Detect
+    - Endure
+    - Swagger
+    - Attract
+    - SleepTalk
+    - Return
+    - Frustration
+    - HiddenPower
+    - RainDance
+    - Headbutt
+    - MudSlap
+    - Swift
+    - AerialAce
+    - BodySlam
+    - Counter
+    - DoubleEdge
+    - Facade
+    - FocusPunch
+    - MegaKick
+    - MegaPunch
+    - Mimic
+    - SecretPower
+    - SeismicToss
+    - Substitute
+    - WaterPulse
+    - Avalanche
+    - Captivate
+    - Defog
+    - Fling
+    - GunkShot
+    - NaturalGift
+    - Pluck
+    - SeedBomb
+    - Round
+    - FrostBreath
+    - Confide
+    - PowerUpPunch
+    - BrutalSwing
+    - AuroraVeil
+  egg:
+    - AuroraBeam
+    - FutureSight
+    - QuickAttack
+    - RapidSpin
+    - Splash
+    - IceBall
+    - IceShard
+    - Bestow
+    - FreezeDry

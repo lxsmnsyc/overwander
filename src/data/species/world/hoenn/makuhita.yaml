@@ -1,0 +1,15 @@
+Makuhita:
+  types: [Fighting]
+  egg-groups: [HumanLike]
+  biomes: [Mountain, MontaneForest]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Hariyama
+      method: [Level]
+      level: 24
+Hariyama:
+  types: [Fighting]
+  egg-groups: [HumanLike]
+  biomes: [Mountain, MontaneForest]
+  active: [Morning, Day]
+  evolves-from: Makuhita

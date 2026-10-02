@@ -1,0 +1,6 @@
+Regigigas:
+  stats: { HP: 110, Attack: 160, Defense: 110, SpecialAttack: 80, SpecialDefense: 110, Speed: 100 }
+  catch-rate: 3
+  height: 3.7
+  weight: 420
+  gender: genderless

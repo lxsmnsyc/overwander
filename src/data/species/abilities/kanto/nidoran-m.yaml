@@ -1,0 +1,9 @@
+NidoranM:
+  abilities: [PoisonPoint, Rivalry]
+  hidden: [Hustle]
+Nidorino:
+  abilities: [PoisonPoint, Rivalry]
+  hidden: [Hustle]
+Nidoking:
+  abilities: [PoisonPoint, Rivalry]
+  hidden: [SheerForce]

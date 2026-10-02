@@ -1,0 +1,7 @@
+Latios:
+  stats: { HP: 80, Attack: 90, Defense: 80, SpecialAttack: 130, SpecialDefense: 110, Speed: 110 }
+  catch-rate: 3
+  height: 2
+  weight: 60
+  # Always the brother of the two
+  gender: [1, 0]

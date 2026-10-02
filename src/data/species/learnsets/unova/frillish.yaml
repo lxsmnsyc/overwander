@@ -1,0 +1,112 @@
+family-teachable:
+  - Attract
+  - Bind
+  - Blizzard
+  - DarkPulse
+  - Dive
+  - DoubleTeam
+  - DreamEater
+  - EnergyBall
+  - Facade
+  - Flash
+  - Frustration
+  - GigaDrain
+Frillish:
+  level:
+    '1': [Bubble, WaterSport]
+    '5': [Absorb]
+    '9': [NightShade]
+    '13': [BubbleBeam]
+    '17': [Recover]
+    '22': [WaterPulse]
+    '27': [OminousWind]
+    '32': [Brine]
+    '37': [RainDance]
+    '43': [Hex]
+    '49': [HydroPump]
+    '55': [WringOut]
+    '61': [WaterSpout]
+  teachable:
+    - Hail
+    - HiddenPower
+    - IceBeam
+    - IcyWind
+    - MagicCoat
+    - PainSplit
+    - Protect
+    - PsychUp
+    - Psychic
+    - RainDance
+    - Rest
+    - Return
+    - Round
+    - Safeguard
+    - Scald
+    - ShadowBall
+    - SleepTalk
+    - SludgeBomb
+    - SludgeWave
+    - Snore
+    - Spite
+    - Substitute
+    - Surf
+    - Swagger
+    - Taunt
+    - Toxic
+    - Trick
+    - TrickRoom
+    - Waterfall
+    - WillOWisp
+    - Confide
+    - DazzlingGleam
+  egg: [AcidArmor, BubbleBeam, ConfuseRay, Constrict, Mist, PainSplit, Recover]
+Jellicent:
+  level:
+    '1': [Absorb, Bubble, NightShade, WaterSport]
+    '5': [Absorb]
+    '9': [NightShade]
+    '13': [BubbleBeam]
+    '17': [Recover]
+    '22': [WaterPulse]
+    '27': [OminousWind]
+    '32': [Brine]
+    '37': [RainDance]
+    '45': [Hex]
+    '53': [HydroPump]
+    '61': [WringOut]
+    '69': [WaterSpout]
+  teachable:
+    - GigaImpact
+    - Hail
+    - HiddenPower
+    - HyperBeam
+    - IceBeam
+    - IcyWind
+    - MagicCoat
+    - PainSplit
+    - Protect
+    - PsychUp
+    - Psychic
+    - RainDance
+    - Rest
+    - Return
+    - Round
+    - Safeguard
+    - Scald
+    - ShadowBall
+    - SleepTalk
+    - SludgeBomb
+    - SludgeWave
+    - Snore
+    - Spite
+    - Substitute
+    - Surf
+    - Swagger
+    - Taunt
+    - Toxic
+    - Trick
+    - TrickRoom
+    - Waterfall
+    - WillOWisp
+    - Confide
+    - DazzlingGleam

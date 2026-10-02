@@ -1,0 +1,9 @@
+Panpour:
+  abilities: [Gluttony]
+  hidden: [Torrent]
+Simipour:
+  abilities: [Gluttony]
+  # The line reaches only two, so both of the last slots are
+  # invented: Water Absorb is the monkey drinking its own element,
+  # and Analytic is a geyser waiting for the moment to go off
+  hidden: [Torrent, WaterAbsorb, Analytic]

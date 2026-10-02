@@ -1,0 +1,88 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - AerialAce
+  - AirCutter
+  - AirSlash
+  - Attract
+  - BraveBird
+  - Defog
+  - Dive
+  - DoubleEdge
+  - DoubleTeam
+  - Endeavor
+  - Endure
+  - Facade
+  - FeatherDance
+  - Fly
+  - Frustration
+  - Hail
+  - HelpingHand
+  - HiddenPower
+  - Hurricane
+  - IceBeam
+  - IcyWind
+  - Pluck
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - Roost
+  - Round
+  - Scald
+  - SecretPower
+  - SleepTalk
+  - Snore
+  - SteelWing
+  - Substitute
+  - Surf
+  - Swagger
+  - Swift
+  - Tailwind
+  - Toxic
+  - Uproar
+  - WaterPulse
+  - Whirlpool
+  - Confide
+  - Liquidation
+Ducklett:
+  level:
+    '1': [WaterGun]
+    '3': [WaterSport]
+    '6': [Defog]
+    '9': [WingAttack]
+    '13': [WaterPulse]
+    '15': [AerialAce]
+    '19': [BubbleBeam]
+    '21': [FeatherDance]
+    '24': [AquaRing]
+    '27': [AirSlash]
+    '30': [Roost]
+    '34': [RainDance]
+    '37': [Tailwind]
+    '41': [BraveBird]
+    '46': [Hurricane]
+  egg:
+    - AirCutter
+    - AquaJet
+    - Brine
+    - Dive
+    - Endeavor
+    - Gust
+    - LuckyChant
+    - MeFirst
+    - MirrorMove
+    - MudSport
+    - SteelWing
+Swanna:
+  level:
+    '1': [WaterGun, WaterSport, Defog, WingAttack, WaterPulse, AerialAce]
+    '19': [BubbleBeam]
+    '21': [FeatherDance]
+    '24': [AquaRing]
+    '27': [AirSlash]
+    '30': [Roost]
+    '34': [RainDance]
+    '37': [Tailwind]
+    '44': [BraveBird]
+    '52': [Hurricane]
+  teachable: [GigaImpact, HyperBeam]

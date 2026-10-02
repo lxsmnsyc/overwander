@@ -1,0 +1,15 @@
+Natu:
+  types: [Psychic, Flying]
+  egg-groups: [Flying]
+  biomes: [Savanna, Grassland, Shrubland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Xatu
+      method: [Level]
+      level: 25
+Xatu:
+  types: [Psychic, Flying]
+  egg-groups: [Flying]
+  biomes: [Savanna, Grassland, Shrubland]
+  active: [Morning, Day]
+  evolves-from: Natu

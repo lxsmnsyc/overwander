@@ -1,0 +1,17 @@
+# The flowers: a Petilil's leaves are bitter enough to wake anybody
+# up, and a Lilligant is a garden nobody can keep
+Petilil:
+  types: [Grass]
+  egg-groups: [Grass]
+  biomes: [TemperateForest, Grassland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Lilligant
+      method: [UsedItem]
+      item: SunStone
+Lilligant:
+  types: [Grass]
+  egg-groups: [Grass]
+  biomes: [TemperateForest, Grassland]
+  active: [Morning, Day]
+  evolves-from: Petilil

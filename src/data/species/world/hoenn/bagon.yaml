@@ -1,0 +1,25 @@
+Bagon:
+  types: [Dragon]
+  egg-groups: [Dragon]
+  biomes: [Mountain, AlpineTundra]
+  active: [Day, Evening]
+  evolves-into:
+    - species: Shelgon
+      method: [Level]
+      level: 30
+Shelgon:
+  types: [Dragon]
+  egg-groups: [Dragon]
+  biomes: [Mountain, AlpineTundra]
+  active: [Day, Evening]
+  evolves-from: Bagon
+  evolves-into:
+    - species: Salamence
+      method: [Level]
+      level: 50
+Salamence:
+  types: [Dragon, Flying]
+  egg-groups: [Dragon]
+  biomes: [Mountain, AlpineTundra]
+  active: [Day, Evening]
+  evolves-from: Shelgon

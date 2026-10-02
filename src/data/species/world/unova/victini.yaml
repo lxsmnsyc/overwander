@@ -1,0 +1,8 @@
+# The one that brings a win to whoever it stands with. It is a
+# mythical, so a relic calls it rather than a lair staging it, and
+# the rocky little island it keeps to is where it is called from
+Victini:
+  types: [Psychic, Fire]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [RockyCoast]
+  active: any

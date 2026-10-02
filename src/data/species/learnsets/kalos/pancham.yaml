@@ -1,0 +1,132 @@
+family-teachable:
+  - AerialAce
+  - Attract
+  - Block
+  - BodySlam
+  - BrickBreak
+  - BulkUp
+  - Bulldoze
+  - Confide
+  - Covet
+  - Crunch
+  - Cut
+  - DarkPulse
+  - Dig
+  - DoubleTeam
+  - DrainPunch
+  - DualChop
+  - EchoedVoice
+  - Endeavor
+  - Endure
+  - Facade
+  - FalseSwipe
+  - FirePunch
+  - Fling
+  - FocusPunch
+  - FoulPlay
+  - Frustration
+  - GrassKnot
+  - GunkShot
+  - HelpingHand
+  - HiddenPower
+  - IcePunch
+  - IronHead
+  - KnockOff
+  - LowKick
+  - LowSweep
+  - MegaKick
+  - MegaPunch
+  - Payback
+  - PowerUpPunch
+  - Protect
+  - RainDance
+  - Rest
+  - Retaliate
+  - Return
+  - Roar
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Round
+  - SecretPower
+  - ShadowClaw
+  - SleepTalk
+  - SludgeBomb
+  - Snatch
+  - Snore
+  - Spite
+  - StoneEdge
+  - Strength
+  - Substitute
+  - SunnyDay
+  - Superpower
+  - Surf
+  - Swagger
+  - SwordsDance
+  - Taunt
+  - ThunderPunch
+  - Torment
+  - Toxic
+  - Uproar
+  - WorkUp
+  - ZenHeadbutt
+Pancham:
+  level:
+    '1': [Tackle, Leer]
+    '4': [ArmThrust]
+    '8': [Taunt]
+    '10': [WorkUp]
+    '12': [CircleThrow, KarateChop]
+    '15': [CometPunch]
+    '16': [LowSweep]
+    '20': [Slash]
+    '27': [VitalThrow]
+    '33': [BodySlam, Crunch]
+    '40': [PartingShot]
+    '42': [Entrainment]
+    '48': [SkyUppercut]
+  egg: [FoulPlay, MeFirst, Quash, QuickGuard, SeismicToss, StormThrow, PowerTrip]
+Pangoro:
+  level:
+    '1':
+      - Tackle
+      - Leer
+      - ArmThrust
+      - Taunt
+      - WorkUp
+      - LowSweep
+      - Entrainment
+      - HammerArm
+      - BulletPunch
+      - NightSlash
+    '12': [CircleThrow, KarateChop]
+    '15': [CometPunch]
+    '20': [Slash]
+    '27': [VitalThrow]
+    '35': [BodySlam, Crunch]
+    '46': [PartingShot]
+    '52': [SkyUppercut]
+  teachable:
+    - BeatUp
+    - CloseCombat
+    - DragonClaw
+    - Earthquake
+    - Embargo
+    - FocusBlast
+    - FocusEnergy
+    - GigaImpact
+    - HoneClaws
+    - HyperBeam
+    - Infestation
+    - Outrage
+    - PoisonJab
+    - Quash
+    - Revenge
+    - Reversal
+    - ScaryFace
+    - Snarl
+    - Thief
+    - XScissor
+    - StompingTantrum
+    - LaserFocus
+    - ThroatChop

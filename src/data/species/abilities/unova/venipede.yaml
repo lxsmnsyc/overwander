@@ -1,0 +1,11 @@
+Venipede:
+  abilities: [PoisonPoint, Swarm]
+  hidden: [SpeedBoost]
+Whirlipede:
+  abilities: [PoisonPoint, Swarm]
+  hidden: [SpeedBoost]
+Scolipede:
+  abilities: [PoisonPoint, Swarm]
+  # Rough Skin is the invented fourth: the line reaches three, and
+  # it is spines and horns from end to end
+  hidden: [SpeedBoost, RoughSkin]

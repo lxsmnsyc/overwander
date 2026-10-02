@@ -1,0 +1,28 @@
+# The two shapes share everything but their stats and the second type
+
+# The daruma dolls: a Darumaka burns whatever it eats down to coal in
+# its belly, and a Darmanitan that has taken enough sits down and
+# stops moving, which is when it is at its most dangerous
+Darumaka:
+  types: [Fire]
+  egg-groups: [Field]
+  biomes: [Desert, Badlands]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Darmanitan
+      method: [Level]
+      level: 35
+Darmanitan:
+  types: [Fire]
+  egg-groups: [Field]
+  biomes: [Desert, Badlands]
+  active: [Morning, Day]
+  evolves-from: Darumaka
+DarmanitanZen:
+  types: [Fire, Psychic]
+  egg-groups: [Field]
+  active: [Morning, Day]
+  # Sitting down turns it inside out: what it hit with becomes what
+  # it thinks with, and it is far harder to shift
+  base-form: false
+  evolves-from: Darumaka

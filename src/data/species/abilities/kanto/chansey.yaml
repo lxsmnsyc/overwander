@@ -1,0 +1,9 @@
+Chansey:
+  abilities: [NaturalCure, SereneGrace]
+  hidden: [Healer]
+Blissey:
+  abilities: [NaturalCure, SereneGrace]
+  hidden: [Healer]
+Happiny:
+  abilities: [NaturalCure, SereneGrace]
+  hidden: [FriendGuard]

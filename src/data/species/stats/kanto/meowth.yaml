@@ -1,0 +1,24 @@
+Meowth:
+  stats: { HP: 40, Attack: 45, Defense: 35, SpecialAttack: 40, SpecialDefense: 40, Speed: 90 }
+  catch-rate: 255
+  height: 0.4
+  weight: 4.2
+  gender: [1, 1]
+Persian:
+  stats: { HP: 65, Attack: 70, Defense: 60, SpecialAttack: 65, SpecialDefense: 65, Speed: 115 }
+  catch-rate: 90
+  height: 1
+  weight: 32
+  gender: [1, 1]
+MeowthAlola:
+  stats: { HP: 40, Attack: 35, Defense: 35, SpecialAttack: 50, SpecialDefense: 40, Speed: 90 }
+  catch-rate: 255
+  height: 0.4
+  weight: 4.2
+  gender: [4, 4]
+PersianAlola:
+  stats: { HP: 65, Attack: 60, Defense: 60, SpecialAttack: 75, SpecialDefense: 65, Speed: 115 }
+  catch-rate: 90
+  height: 1.1
+  weight: 33
+  gender: [4, 4]

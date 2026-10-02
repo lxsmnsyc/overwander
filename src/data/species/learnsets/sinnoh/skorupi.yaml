@@ -1,0 +1,94 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - AerialAce
+  - AquaTail
+  - Attract
+  - BrickBreak
+  - Captivate
+  - Cut
+  - DarkPulse
+  - Dig
+  - DoubleTeam
+  - Endure
+  - Facade
+  - FalseSwipe
+  - Flash
+  - Fling
+  - Frustration
+  - FuryCutter
+  - HiddenPower
+  - IronTail
+  - KnockOff
+  - MudSlap
+  - NaturalGift
+  - Payback
+  - PoisonJab
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - RockSmash
+  - RockTomb
+  - SecretPower
+  - ShadowBall
+  - SleepTalk
+  - SludgeBomb
+  - Snore
+  - Strength
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - SwordsDance
+  - Taunt
+  - Thief
+  - Torment
+  - Toxic
+  - XScissor
+  - Confide
+  - Infestation
+Skorupi:
+  level:
+    '1': [Bite, Leer, PoisonSting]
+    '6': [KnockOff]
+    '12': [PinMissile]
+    '17': [Acupressure]
+    '23': [ScaryFace]
+    '28': [ToxicSpikes]
+    '34': [BugBite]
+    '39': [PoisonFang]
+    '45': [Crunch]
+    '47': [FellStinger]
+    '50': [CrossPoison]
+  egg:
+    - Agility
+    - ConfuseRay
+    - FeintAttack
+    - NightSlash
+    - Pursuit
+    - SandAttack
+    - Screech
+    - Slash
+    - Whirlwind
+Drapion:
+  level:
+    '1': [Bite, FireFang, IceFang, KnockOff, Leer, PoisonSting, ThunderFang]
+    '6': [KnockOff]
+    '12': [PinMissile]
+    '17': [Acupressure]
+    '23': [ScaryFace]
+    '28': [ToxicSpikes]
+    '34': [BugBite]
+    '39': [PoisonFang]
+    '49': [Crunch]
+    '53': [FellStinger]
+    '58': [CrossPoison]
+  teachable:
+    - Earthquake
+    - GigaImpact
+    - HyperBeam
+    - Roar
+    - RockClimb
+    - RockSlide
+    - BrutalSwing
+    - StompingTantrum
+    - ThroatChop

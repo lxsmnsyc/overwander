@@ -1,0 +1,18 @@
+Starly:
+  stats: { HP: 40, Attack: 55, Defense: 30, SpecialAttack: 30, SpecialDefense: 30, Speed: 60 }
+  catch-rate: 255
+  height: 0.3
+  weight: 2
+  gender: [1, 1]
+Staravia:
+  stats: { HP: 55, Attack: 75, Defense: 50, SpecialAttack: 40, SpecialDefense: 40, Speed: 80 }
+  catch-rate: 120
+  height: 0.6
+  weight: 15.5
+  gender: [1, 1]
+Staraptor:
+  stats: { HP: 85, Attack: 120, Defense: 70, SpecialAttack: 50, SpecialDefense: 60, Speed: 100 }
+  catch-rate: 45
+  height: 1.2
+  weight: 24.9
+  gender: [1, 1]

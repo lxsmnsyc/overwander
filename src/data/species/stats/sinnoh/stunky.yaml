@@ -1,0 +1,12 @@
+Stunky:
+  stats: { HP: 63, Attack: 63, Defense: 47, SpecialAttack: 41, SpecialDefense: 41, Speed: 74 }
+  catch-rate: 225
+  height: 0.4
+  weight: 19.2
+  gender: [1, 1]
+Skuntank:
+  stats: { HP: 103, Attack: 93, Defense: 67, SpecialAttack: 71, SpecialDefense: 61, Speed: 84 }
+  catch-rate: 60
+  height: 1
+  weight: 38
+  gender: [1, 1]

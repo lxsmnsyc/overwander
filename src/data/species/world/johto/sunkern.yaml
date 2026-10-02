@@ -1,0 +1,15 @@
+Sunkern:
+  types: [Grass]
+  egg-groups: [Grass]
+  biomes: [Grassland, Savanna, Shrubland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Sunflora
+      method: [UsedItem]
+      item: SunStone
+Sunflora:
+  types: [Grass]
+  egg-groups: [Grass]
+  biomes: [Grassland, Savanna, Shrubland]
+  active: [Morning, Day]
+  evolves-from: Sunkern

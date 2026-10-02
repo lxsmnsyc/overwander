@@ -1,0 +1,105 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - SwordsDance
+  - TakeDown
+  - DoubleEdge
+  - BubbleBeam
+  - WaterGun
+  - IceBeam
+  - Blizzard
+  - Rage
+  - Mimic
+  - DoubleTeam
+  - Reflect
+  - Bide
+  - Rest
+  - Substitute
+  - Surf
+  - Thief
+  - Snore
+  - Curse
+  - Protect
+  - IcyWind
+  - Sandstorm
+  - GigaDrain
+  - Endure
+  - Rollout
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - HiddenPower
+  - RainDance
+  - RockSmash
+  - AerialAce
+  - Facade
+  - RockSlide
+  - RockTomb
+  - SecretPower
+  - WaterPulse
+  - Waterfall
+  - Brine
+  - Captivate
+  - EarthPower
+  - NaturalGift
+  - RockPolish
+  - StealthRock
+  - HoneClaws
+  - SmackDown
+  - Round
+  - Scald
+  - Confide
+Kabuto:
+  level:
+    '1': [Scratch, Harden]
+    '10': [Absorb]
+    '19': [Leer]
+    '25': [MudShot]
+    '28': [SandAttack]
+    '31': [AquaJet]
+    '37': [Endure]
+    '39': [Slash]
+    '43': [MetalSound]
+    '46': [MegaDrain]
+    '49': [HydroPump]
+    '51': [WringOut]
+    '55': [AncientPower]
+  teachable: [BodySlam]
+  egg: [BubbleBeam, AuroraBeam, Dig, Flail, RapidSpin, ConfuseRay, KnockOff]
+Kabutops:
+  level:
+    '1': [Scratch, Harden, Absorb, Feint]
+    '19': [Leer]
+    '25': [MudShot]
+    '28': [SandAttack]
+    '31': [AquaJet]
+    '37': [Endure]
+    '39': [Slash]
+    '46': [MetalSound]
+    '51': [MegaDrain]
+    '53': [HydroPump]
+    '63': [WringOut]
+    '65': [AncientPower]
+    '72': [NightSlash]
+  teachable:
+    - HyperBeam
+    - BodySlam
+    - SeismicToss
+    - Submission
+    - RazorWind
+    - Cut
+    - Headbutt
+    - FuryCutter
+    - Whirlpool
+    - BrickBreak
+    - Dig
+    - Dive
+    - MegaKick
+    - AquaTail
+    - GigaImpact
+    - RockClimb
+    - StoneEdge
+    - XScissor
+    - Liquidation

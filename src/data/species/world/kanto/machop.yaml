@@ -1,0 +1,24 @@
+Machop:
+  types: [Fighting]
+  egg-groups: [HumanLike]
+  biomes: [Mountain, AlpineTundra]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Machoke
+      method: [Level]
+      level: 28
+Machoke:
+  types: [Fighting]
+  egg-groups: [HumanLike]
+  biomes: [Mountain, AlpineTundra]
+  active: [Morning, Day]
+  evolves-from: Machop
+  evolves-into:
+    - species: Machamp
+      method: [Trade]
+Machamp:
+  types: [Fighting]
+  egg-groups: [HumanLike]
+  biomes: [Mountain, AlpineTundra]
+  active: [Morning, Day]
+  evolves-from: Machoke

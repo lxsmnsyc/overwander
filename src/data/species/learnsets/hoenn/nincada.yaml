@@ -1,0 +1,93 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - HiddenPower
+  - SunnyDay
+  - Protect
+  - GigaDrain
+  - Frustration
+  - SolarBeam
+  - Return
+  - Dig
+  - ShadowBall
+  - DoubleTeam
+  - Sandstorm
+  - AerialAce
+  - Facade
+  - SecretPower
+  - Rest
+  - Cut
+  - Flash
+  - DoubleEdge
+  - Mimic
+  - Substitute
+  - Snore
+  - Endure
+  - MudSlap
+  - Swagger
+  - FuryCutter
+  - SleepTalk
+  - NaturalGift
+  - HoneClaws
+  - Round
+  - StruggleBug
+  - Confide
+Nincada:
+  level:
+    '1': [Scratch, Harden]
+    '5': [LeechLife]
+    '9': [SandAttack]
+    '14': [FurySwipes]
+    '19': [MindReader]
+    '25': [FalseSwipe]
+    '31': [MudSlap]
+    '38': [MetalClaw]
+    '45': [Dig]
+  teachable: [BugBite, XScissor]
+  egg: [Gust, FeintAttack, SilverWind, BugBuzz, NightSlash, FinalGambit]
+Ninjask:
+  level:
+    '1': [Scratch, Harden, LeechLife, SandAttack, BugBite]
+    '14': [FurySwipes]
+    '19': [MindReader]
+    '20': [DoubleTeam, FuryCutter, Screech]
+    '25': [SwordsDance]
+    '31': [Slash]
+    '38': [Agility]
+    '45': [BatonPass]
+    '52': [XScissor]
+  teachable:
+    - HyperBeam
+    - Attract
+    - Thief
+    - Swift
+    - SwordsDance
+    - Captivate
+    - Defog
+    - GigaImpact
+    - OminousWind
+    - Roost
+    - UTurn
+    - LaserFocus
+Shedinja:
+  level:
+    '1': [Scratch, Harden]
+    '5': [LeechLife]
+    '9': [SandAttack]
+    '14': [FurySwipes]
+    '19': [MindReader]
+    '25': [Spite]
+    '31': [ConfuseRay]
+    '38': [ShadowBall, ShadowSneak]
+    '45': [Grudge, PhantomForce]
+    '52': [HealBlock]
+  teachable:
+    - HyperBeam
+    - DreamEater
+    - Thief
+    - BugBite
+    - GigaImpact
+    - ShadowClaw
+    - SuckerPunch
+    - XScissor
+    - Telekinesis

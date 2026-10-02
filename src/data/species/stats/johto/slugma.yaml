@@ -1,0 +1,12 @@
+Slugma:
+  stats: { HP: 40, Attack: 40, Defense: 40, SpecialAttack: 70, SpecialDefense: 40, Speed: 20 }
+  catch-rate: 190
+  height: 0.7
+  weight: 35
+  gender: [1, 1]
+Magcargo:
+  stats: { HP: 60, Attack: 50, Defense: 120, SpecialAttack: 90, SpecialDefense: 80, Speed: 30 }
+  catch-rate: 75
+  height: 0.8
+  weight: 55
+  gender: [1, 1]

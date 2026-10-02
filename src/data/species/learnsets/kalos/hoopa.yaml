@@ -1,0 +1,113 @@
+family-teachable:
+  - AllySwitch
+  - Block
+  - BrickBreak
+  - CalmMind
+  - ChargeBeam
+  - Confide
+  - Covet
+  - DarkPulse
+  - DoubleTeam
+  - DrainPunch
+  - DreamEater
+  - DualChop
+  - Embargo
+  - Endure
+  - EnergyBall
+  - Facade
+  - FirePunch
+  - Flash
+  - Fling
+  - FocusBlast
+  - FocusPunch
+  - FoulPlay
+  - Frustration
+  - FutureSight
+  - GigaImpact
+  - GrassKnot
+  - Gravity
+  - GunkShot
+  - HiddenPower
+  - HyperBeam
+  - IcePunch
+  - KnockOff
+  - LastResort
+  - LightScreen
+  - MagicCoat
+  - MagicRoom
+  - NastyPlot
+  - PhantomForce
+  - PowerUpPunch
+  - Protect
+  - Psybeam
+  - PsychUp
+  - Psychic
+  - Psyshock
+  - Quash
+  - RainDance
+  - Recycle
+  - Reflect
+  - Rest
+  - Return
+  - RockTomb
+  - RolePlay
+  - Round
+  - Safeguard
+  - Sandstorm
+  - ScaryFace
+  - SecretPower
+  - ShadowBall
+  - ShockWave
+  - SignalBeam
+  - SkillSwap
+  - SleepTalk
+  - Snatch
+  - Snore
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Swift
+  - TakeDown
+  - Taunt
+  - Telekinesis
+  - Thief
+  - ThunderPunch
+  - ThunderWave
+  - Thunderbolt
+  - Torment
+  - Toxic
+  - Trick
+  - TrickRoom
+  - Uproar
+  - WonderRoom
+  - ZenHeadbutt
+  - LaserFocus
+  - ThroatChop
+Hoopa:
+  level:
+    '1': [Confusion, AllySwitch, DestinyBond, HyperspaceHole, Trick]
+    '6': [Astonish]
+    '10': [MagicCoat]
+    '15': [LightScreen, Psybeam]
+    '25': [SkillSwap]
+    '29': [GuardSplit, PowerSplit]
+    '35': [PhantomForce]
+    '46': [ZenHeadbutt]
+    '50': [TrickRoom, WonderRoom]
+    '55': [ShadowBall]
+    '68': [NastyPlot]
+    '75': [Psychic]
+HoopaUnbound:
+  level:
+    '1': [Confusion, AllySwitch, DestinyBond, HyperspaceHole, Trick, HyperspaceFury]
+    '6': [Astonish]
+    '10': [MagicCoat]
+    '15': [LightScreen, Psybeam]
+    '25': [SkillSwap]
+    '29': [GuardSplit, PowerSplit]
+    '35': [PhantomForce]
+    '46': [ZenHeadbutt]
+    '50': [TrickRoom, WonderRoom]
+    '55': [ShadowBall]
+    '68': [NastyPlot]
+    '75': [Psychic]

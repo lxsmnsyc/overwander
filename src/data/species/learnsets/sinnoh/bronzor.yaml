@@ -1,0 +1,78 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - AncientPower
+  - CalmMind
+  - ChargeBeam
+  - DoubleTeam
+  - DreamEater
+  - Earthquake
+  - Endure
+  - Facade
+  - Flash
+  - FlashCannon
+  - Frustration
+  - GrassKnot
+  - GyroBall
+  - HiddenPower
+  - LightScreen
+  - NaturalGift
+  - Payback
+  - Protect
+  - PsychUp
+  - Psychic
+  - RainDance
+  - Recycle
+  - Reflect
+  - Rest
+  - Return
+  - RockPolish
+  - RockSlide
+  - RockTomb
+  - Rollout
+  - Safeguard
+  - Sandstorm
+  - SecretPower
+  - ShadowBall
+  - SignalBeam
+  - SkillSwap
+  - SleepTalk
+  - Snore
+  - SolarBeam
+  - StealthRock
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Toxic
+  - Trick
+  - TrickRoom
+  - Confide
+Bronzor:
+  level:
+    '1': [Confusion, Tackle]
+    '7': [Hypnosis]
+    '12': [Imprison]
+    '14': [ConfuseRay]
+    '19': [Extrasensory]
+    '26': [IronDefense]
+    '30': [Safeguard]
+    '35': [GyroBall]
+    '37': [FutureSight]
+    '41': [FeintAttack]
+    '49': [Payback]
+    '52': [HealBlock]
+Bronzong:
+  level:
+    '1': [Confusion, Hypnosis, Imprison, RainDance, SunnyDay, Tackle]
+    '7': [Hypnosis]
+    '12': [Imprison]
+    '14': [ConfuseRay]
+    '19': [Extrasensory]
+    '26': [IronDefense]
+    '30': [Safeguard]
+    '33': [Block]
+    '38': [GyroBall]
+    '43': [FutureSight]
+    '50': [FeintAttack]
+    '61': [Payback]
+    '67': [HealBlock]
+  teachable: [Explosion, GigaImpact, HyperBeam, IronHead, RockSmash, Strength, ZenHeadbutt]

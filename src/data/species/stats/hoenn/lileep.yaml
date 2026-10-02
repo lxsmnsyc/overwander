@@ -1,0 +1,12 @@
+Lileep:
+  stats: { HP: 66, Attack: 41, Defense: 77, SpecialAttack: 61, SpecialDefense: 87, Speed: 23 }
+  catch-rate: 45
+  height: 1
+  weight: 23.8
+  gender: [7, 1]
+Cradily:
+  stats: { HP: 86, Attack: 81, Defense: 97, SpecialAttack: 81, SpecialDefense: 107, Speed: 43 }
+  catch-rate: 45
+  height: 1.5
+  weight: 60.4
+  gender: [7, 1]

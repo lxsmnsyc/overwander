@@ -1,0 +1,28 @@
+Popplio:
+  types: [Water]
+  egg-groups: [Water1, Field]
+  habitat: Amphibious
+  biomes: [Beach, RockyCoast]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Brionne
+      method: [Level]
+      level: 17
+Brionne:
+  types: [Water]
+  egg-groups: [Water1, Field]
+  habitat: Amphibious
+  biomes: [Beach, RockyCoast]
+  active: [Morning, Day]
+  evolves-from: Popplio
+  evolves-into:
+    - species: Primarina
+      method: [Level]
+      level: 34
+Primarina:
+  types: [Water, Fairy]
+  egg-groups: [Water1, Field]
+  habitat: Amphibious
+  biomes: [Beach, RockyCoast]
+  active: [Morning, Day]
+  evolves-from: Brionne

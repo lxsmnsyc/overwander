@@ -1,0 +1,9 @@
+Cubone:
+  abilities: [RockHead, LightningRod]
+  hidden: [BattleArmor]
+Marowak:
+  abilities: [RockHead, LightningRod]
+  hidden: [BattleArmor, Technician]
+MarowakAlola:
+  abilities: [CursedBody, LightningRod]
+  hidden: [RockHead]

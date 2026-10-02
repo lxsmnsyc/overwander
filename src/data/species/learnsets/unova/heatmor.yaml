@@ -1,0 +1,79 @@
+Heatmor:
+  level:
+    '1': [Tackle, Lick, HoneClaws, Incinerate, Inferno]
+    '5': [FurySwipes]
+    '6': [OdorSleuth]
+    '11': [Bind]
+    '15': [BugBite]
+    '16': [FireSpin]
+    '20': [Stockpile, SpitUp, Swallow]
+    '25': [Slash]
+    '26': [Snatch]
+    '31': [FlameBurst]
+    '44': [Amnesia, FireLash]
+    '47': [Flamethrower]
+    '60': [FlareBlitz]
+  teachable:
+    - AerialAce
+    - Amnesia
+    - Attract
+    - BodySlam
+    - Cut
+    - Dig
+    - DoubleTeam
+    - DrainPunch
+    - Endure
+    - Facade
+    - FireBlast
+    - FirePunch
+    - FireSpin
+    - FlareBlitz
+    - Flamethrower
+    - Fling
+    - FocusBlast
+    - Frustration
+    - GigaDrain
+    - GigaImpact
+    - HeatWave
+    - HiddenPower
+    - HoneClaws
+    - Incinerate
+    - LowKick
+    - Overheat
+    - Protect
+    - RainDance
+    - Rest
+    - Return
+    - RockSmash
+    - RockTomb
+    - Round
+    - SecretPower
+    - ShadowClaw
+    - SleepTalk
+    - Snore
+    - SolarBeam
+    - Substitute
+    - SunnyDay
+    - Superpower
+    - Swagger
+    - Taunt
+    - Thief
+    - ThunderPunch
+    - Toxic
+    - WillOWisp
+    - Confide
+    - PowerUpPunch
+    - StompingTantrum
+    - ThroatChop
+  egg:
+    - BodySlam
+    - Curse
+    - FeintAttack
+    - HeatWave
+    - NightSlash
+    - Pursuit
+    - SleepTalk
+    - SuckerPunch
+    - Tickle
+    - Wrap
+    - Belch

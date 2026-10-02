@@ -1,0 +1,5 @@
+Zapdos:
+  types: [Electric, Flying]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Grassland, Steppe]
+  active: any

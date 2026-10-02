@@ -1,0 +1,112 @@
+family-teachable:
+  - Toxic
+  - HiddenPower
+  - SunnyDay
+  - HyperBeam
+  - Protect
+  - GigaDrain
+  - Frustration
+  - SolarBeam
+  - Earthquake
+  - Return
+  - Dig
+  - DoubleTeam
+  - Sandstorm
+  - RockTomb
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Strength
+  - RockSmash
+  - BodySlam
+  - DoubleEdge
+  - Mimic
+  - RockSlide
+  - Substitute
+  - Snore
+  - Endure
+  - MudSlap
+  - Swagger
+  - SleepTalk
+  - BugBite
+  - Captivate
+  - NaturalGift
+  - Round
+  - StruggleBug
+  - Bulldoze
+  - Confide
+Trapinch:
+  level:
+    '1': [Bite]
+    '9': [SandAttack]
+    '17': [FeintAttack]
+    '21': [Bulldoze]
+    '25': [SandTomb]
+    '33': [Crunch]
+    '41': [Dig]
+    '49': [Sandstorm]
+    '57': [HyperBeam]
+    '65': [EarthPower]
+    '81': [Feint]
+  egg: [FocusEnergy, QuickAttack, Gust]
+Vibrava:
+  level:
+    '1': [Bite, SandAttack, FeintAttack, SandTomb]
+    '21': [Bulldoze]
+    '33': [Crunch]
+    '35': [DragonBreath]
+    '41': [Screech]
+    '47': [Boomburst]
+    '49': [Sandstorm]
+    '57': [HyperBeam]
+  teachable:
+    - Fly
+    - SteelWing
+    - Swift
+    - Defog
+    - DracoMeteor
+    - DragonPulse
+    - EarthPower
+    - OminousWind
+    - Roost
+    - Tailwind
+    - UTurn
+    - ThroatChop
+Flygon:
+  level:
+    '1': [Bite, SandAttack, FeintAttack, SandTomb]
+    '21': [Bulldoze]
+    '33': [Crunch]
+    '35': [DragonBreath]
+    '41': [Screech]
+    '45': [DragonTail]
+    '53': [Sandstorm]
+    '65': [HyperBeam]
+  teachable:
+    - Fly
+    - SteelWing
+    - Swift
+    - DragonClaw
+    - Flamethrower
+    - FireBlast
+    - IronTail
+    - FuryCutter
+    - FirePunch
+    - Defog
+    - DracoMeteor
+    - DragonPulse
+    - EarthPower
+    - GigaImpact
+    - OminousWind
+    - Roost
+    - StoneEdge
+    - Tailwind
+    - UTurn
+    - HoneClaws
+    - Incinerate
+    - DragonTail
+    - PowerUpPunch
+    - BrutalSwing
+    - LaserFocus
+    - ThroatChop

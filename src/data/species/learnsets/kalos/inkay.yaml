@@ -1,0 +1,110 @@
+family-teachable:
+  - AerialAce
+  - AllySwitch
+  - Attract
+  - BatonPass
+  - Bind
+  - CalmMind
+  - Confide
+  - Cut
+  - DarkPulse
+  - DoubleTeam
+  - Embargo
+  - Endure
+  - Facade
+  - FakeTears
+  - Flamethrower
+  - Flash
+  - Fling
+  - FoulPlay
+  - Frustration
+  - FutureSight
+  - Gravity
+  - GuardSwap
+  - HelpingHand
+  - HiddenPower
+  - KnockOff
+  - LightScreen
+  - NastyPlot
+  - Payback
+  - Protect
+  - PsychUp
+  - Psybeam
+  - Psychic
+  - PsychoCut
+  - Psyshock
+  - RainDance
+  - Reflect
+  - Rest
+  - Retaliate
+  - Return
+  - RockSlide
+  - RolePlay
+  - Round
+  - SecretPower
+  - SkillSwap
+  - SleepTalk
+  - Snatch
+  - Snore
+  - Spite
+  - StoredPower
+  - Substitute
+  - SunnyDay
+  - Superpower
+  - Swagger
+  - Swift
+  - Taunt
+  - Telekinesis
+  - Thief
+  - Thunderbolt
+  - Torment
+  - Toxic
+  - Trick
+  - TrickRoom
+Inkay:
+  level:
+    '1': [Tackle, Peck, Constrict]
+    '3': [Hypnosis]
+    '4': [Reflect]
+    '6': [Wrap]
+    '8': [FoulPlay]
+    '9': [Payback]
+    '12': [Pluck, Swagger]
+    '13': [Psywave]
+    '15': [Psybeam, TopsyTurvy]
+    '21': [Slash]
+    '23': [Switcheroo]
+    '24': [NightSlash]
+    '27': [PsychoCut]
+    '31': [LightScreen]
+    '39': [Superpower]
+  egg:
+    - Acupressure
+    - DestinyBond
+    - Disable
+    - Flatter
+    - GuardSwap
+    - PowerSplit
+    - SimpleBeam
+Malamar:
+  level:
+    '1': [Tackle, Peck, Constrict, Hypnosis, Reflect, Wrap, Superpower, Reversal]
+    '8': [FoulPlay]
+    '9': [Payback]
+    '12': [Pluck, Swagger]
+    '13': [Psywave]
+    '15': [Psybeam, TopsyTurvy]
+    '21': [Slash]
+    '23': [Switcheroo]
+    '24': [NightSlash]
+    '27': [PsychoCut]
+    '31': [LightScreen]
+  teachable:
+    - Block
+    - GigaImpact
+    - HyperBeam
+    - Reversal
+    - ScaryFace
+    - SignalBeam
+    - BrutalSwing
+    - ThroatChop

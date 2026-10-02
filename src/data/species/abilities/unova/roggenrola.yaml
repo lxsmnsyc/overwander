@@ -1,0 +1,11 @@
+Roggenrola:
+  abilities: [Sturdy, WeakArmor]
+  hidden: [SandForce]
+Boldore:
+  abilities: [Sturdy, WeakArmor]
+  hidden: [SandForce]
+Gigalith:
+  # Weak Armor is reached through Roggenrola rather than its own,
+  # which is what the pools walk puts in the hidden band
+  abilities: [Sturdy, SandStream]
+  hidden: [SandForce]

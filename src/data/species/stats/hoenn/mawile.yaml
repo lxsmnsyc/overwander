@@ -1,0 +1,6 @@
+Mawile:
+  stats: { HP: 50, Attack: 85, Defense: 85, SpecialAttack: 55, SpecialDefense: 55, Speed: 50 }
+  catch-rate: 45
+  height: 0.6
+  weight: 11.5
+  gender: [1, 1]

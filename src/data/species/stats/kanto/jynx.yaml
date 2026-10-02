@@ -1,0 +1,12 @@
+Jynx:
+  stats: { HP: 65, Attack: 50, Defense: 35, SpecialAttack: 115, SpecialDefense: 95, Speed: 95 }
+  catch-rate: 45
+  height: 1.4
+  weight: 40.6
+  gender: [0, 1]
+Smoochum:
+  stats: { HP: 45, Attack: 30, Defense: 15, SpecialAttack: 85, SpecialDefense: 65, Speed: 65 }
+  catch-rate: 45
+  height: 0.4
+  weight: 6
+  gender: [0, 1]

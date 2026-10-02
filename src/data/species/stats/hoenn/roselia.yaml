@@ -1,0 +1,18 @@
+Roselia:
+  stats: { HP: 50, Attack: 60, Defense: 45, SpecialAttack: 100, SpecialDefense: 80, Speed: 65 }
+  catch-rate: 150
+  height: 0.3
+  weight: 2
+  gender: [1, 1]
+Budew:
+  stats: { HP: 40, Attack: 30, Defense: 35, SpecialAttack: 50, SpecialDefense: 70, Speed: 55 }
+  catch-rate: 255
+  height: 0.2
+  weight: 1.2
+  gender: [1, 1]
+Roserade:
+  stats: { HP: 60, Attack: 70, Defense: 65, SpecialAttack: 125, SpecialDefense: 105, Speed: 90 }
+  catch-rate: 75
+  height: 0.9
+  weight: 14.5
+  gender: [1, 1]

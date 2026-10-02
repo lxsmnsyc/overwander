@@ -1,0 +1,15 @@
+Growlithe:
+  types: [Fire]
+  egg-groups: [Field]
+  biomes: [Grassland, Savanna, Steppe, Volcano]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Arcanine
+      method: [UsedItem]
+      item: FireStone
+Arcanine:
+  types: [Fire]
+  egg-groups: [Field]
+  biomes: [Grassland, Savanna, Steppe, Volcano]
+  active: [Morning, Day]
+  evolves-from: Growlithe

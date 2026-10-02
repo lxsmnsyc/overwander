@@ -1,0 +1,16 @@
+# Alola's four mythicals, each called by its relic at a lair no
+# biome hosts, and met now and then in its home country
+Magearna:
+  types: [Steel, Fairy]
+  egg-groups: [NoEggsDiscovered]
+  # Its kingdom was built into the mountains
+  biomes: [Mountain]
+  active: any
+MagearnaOriginal:
+  types: [Steel, Fairy]
+  egg-groups: [NoEggsDiscovered]
+  # Its kingdom was built into the mountains
+  biomes: [Mountain]
+  active: any
+  # The colours it was first painted in, five hundred years ago
+  base-form: false

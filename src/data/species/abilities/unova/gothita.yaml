@@ -1,0 +1,11 @@
+Gothita:
+  abilities: [Frisk, Competitive]
+  hidden: [ShadowTag]
+Gothorita:
+  abilities: [Frisk, Competitive]
+  hidden: [ShadowTag]
+Gothitelle:
+  abilities: [Frisk, Competitive]
+  # Synchronize is the invented fourth: the line reaches three, and
+  # handing back what it is given is what a fixed stare does
+  hidden: [ShadowTag, Synchronize]

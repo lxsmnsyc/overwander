@@ -1,0 +1,5 @@
+Dunsparce:
+  types: [Normal]
+  egg-groups: [Field]
+  biomes: [Mountain, Steppe, Badlands]
+  active: any

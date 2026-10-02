@@ -1,0 +1,17 @@
+# The vulture: every Vullaby is female, and the bone it wears is not
+# armour it grew but armour it found and liked the fit of
+Vullaby:
+  types: [Dark, Flying]
+  egg-groups: [Flying]
+  biomes: [Badlands, Desert]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Mandibuzz
+      method: [Level]
+      level: 54
+Mandibuzz:
+  types: [Dark, Flying]
+  egg-groups: [Flying]
+  biomes: [Badlands, Desert]
+  active: [Morning, Day]
+  evolves-from: Vullaby

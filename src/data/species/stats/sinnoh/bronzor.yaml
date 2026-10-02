@@ -1,0 +1,12 @@
+Bronzor:
+  stats: { HP: 57, Attack: 24, Defense: 86, SpecialAttack: 24, SpecialDefense: 86, Speed: 23 }
+  catch-rate: 255
+  height: 0.5
+  weight: 60.5
+  gender: genderless
+Bronzong:
+  stats: { HP: 67, Attack: 89, Defense: 116, SpecialAttack: 79, SpecialDefense: 116, Speed: 33 }
+  catch-rate: 90
+  height: 1.3
+  weight: 187
+  gender: genderless

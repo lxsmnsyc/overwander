@@ -1,0 +1,12 @@
+Aron:
+  abilities: [Sturdy, RockHead]
+  hidden: [HeavyMetal]
+Lairon:
+  abilities: [Sturdy, RockHead]
+  hidden: [HeavyMetal]
+Aggron:
+  abilities: [Sturdy, RockHead]
+  # Battle Armor is this registry's rather than the mainline's: it
+  # is the Iron Armor Pokemon, and a final evolution is filled to
+  # four
+  hidden: [HeavyMetal, BattleArmor]

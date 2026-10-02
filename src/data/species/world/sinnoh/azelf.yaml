@@ -1,0 +1,6 @@
+Azelf:
+  types: [Psychic]
+  egg-groups: [NoEggsDiscovered]
+  habitat: Amphibious
+  biomes: [Grassland, Bog]
+  active: any

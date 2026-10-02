@@ -1,0 +1,37 @@
+Ralts:
+  types: [Psychic, Fairy]
+  egg-groups: [HumanLike, Amorphous]
+  biomes: [TemperateForest, MontaneForest]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Kirlia
+      method: [Level]
+      level: 20
+Kirlia:
+  types: [Psychic, Fairy]
+  egg-groups: [HumanLike, Amorphous]
+  biomes: [TemperateForest, MontaneForest]
+  active: [Morning, Day]
+  evolves-from: Ralts
+  evolves-into:
+    - species: Gardevoir
+      method: [Level]
+      level: 30
+    - species: Gallade
+      method: [UsedItem, Gender]
+      item: DawnStone
+      gender: Male
+Gardevoir:
+  types: [Psychic, Fairy]
+  egg-groups: [HumanLike, Amorphous]
+  biomes: [TemperateForest, MontaneForest]
+  active: [Morning, Day]
+  evolves-from: Kirlia
+# The other way a Kirlia can go: a Gallade fights with the blades in
+# its elbows and puts itself in front of whatever it is protecting
+Gallade:
+  types: [Psychic, Fighting]
+  egg-groups: [HumanLike, Amorphous]
+  biomes: [TemperateForest, MontaneForest]
+  active: [Morning, Day]
+  evolves-from: Kirlia

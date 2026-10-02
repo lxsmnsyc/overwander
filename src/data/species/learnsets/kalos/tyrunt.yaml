@@ -1,0 +1,88 @@
+# TM, HM and tutor moves shared by the whole family
+
+# What the king learns whichever size it is
+family-teachable:
+  - AerialAce
+  - Attract
+  - Block
+  - BrickBreak
+  - Bulldoze
+  - Confide
+  - DarkPulse
+  - Dig
+  - DoubleTeam
+  - DracoMeteor
+  - DragonClaw
+  - DragonPulse
+  - DragonTail
+  - EarthPower
+  - Earthquake
+  - Facade
+  - Frustration
+  - HiddenPower
+  - HoneClaws
+  - HyperVoice
+  - IronDefense
+  - IronHead
+  - IronTail
+  - Outrage
+  - Protect
+  - Rest
+  - Return
+  - Roar
+  - RockPolish
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Round
+  - Sandstorm
+  - SecretPower
+  - SleepTalk
+  - Snore
+  - StealthRock
+  - StoneEdge
+  - Strength
+  - Substitute
+  - SunnyDay
+  - Superpower
+  - Swagger
+  - Toxic
+  - ZenHeadbutt
+  - StompingTantrum
+Tyrunt:
+  level:
+    '1': [Tackle, TailWhip]
+    '6': [Roar]
+    '10': [Stomp]
+    '12': [Bide]
+    '15': [StealthRock]
+    '17': [Bite]
+    '20': [Charm]
+    '26': [AncientPower]
+    '30': [DragonTail]
+    '34': [Crunch]
+    '37': [DragonClaw]
+    '40': [Thrash]
+    '44': [Earthquake]
+    '49': [HornDrill]
+  egg: [Curse, DragonDance, FireFang, IceFang, PoisonFang, RockPolish, ThunderFang]
+Tyrantrum:
+  level:
+    '1': [Tackle, TailWhip]
+    '6': [Roar]
+    '10': [Stomp]
+    '12': [Bide]
+    '15': [StealthRock]
+    '17': [Bite]
+    '20': [Charm]
+    '26': [AncientPower]
+    '30': [DragonTail]
+    '34': [Crunch]
+    '37': [DragonClaw]
+    '42': [Thrash]
+    '47': [Earthquake]
+    '53': [HornDrill]
+    '58': [HeadSmash]
+    '68': [RockSlide]
+    '75': [GigaImpact]
+  teachable: [GigaImpact, HyperBeam, BrutalSwing]

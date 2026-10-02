@@ -1,0 +1,8 @@
+# The squirrel with its cheeks full: berries in one pouch and a
+# charge in the other, and it hands both out to whoever it lives
+# beside
+Pachirisu:
+  types: [Electric]
+  egg-groups: [Field, Fairy]
+  biomes: [TemperateForest, Woodland, Taiga]
+  active: any

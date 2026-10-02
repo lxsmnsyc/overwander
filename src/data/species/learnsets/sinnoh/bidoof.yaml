@@ -1,0 +1,101 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Attract
+  - Blizzard
+  - Captivate
+  - ChargeBeam
+  - Cut
+  - Dig
+  - DoubleTeam
+  - Endure
+  - Facade
+  - Frustration
+  - FuryCutter
+  - GrassKnot
+  - Headbutt
+  - HiddenPower
+  - IceBeam
+  - IcyWind
+  - IronTail
+  - LastResort
+  - MudSlap
+  - NaturalGift
+  - Pluck
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - RockSmash
+  - SecretPower
+  - ShadowBall
+  - ShockWave
+  - SleepTalk
+  - Snore
+  - StealthRock
+  - Substitute
+  - SunnyDay
+  - SuperFang
+  - Superpower
+  - Swagger
+  - Swift
+  - Taunt
+  - Thief
+  - Thunder
+  - ThunderWave
+  - Thunderbolt
+  - Toxic
+  - Confide
+Bidoof:
+  level:
+    '1': [Tackle]
+    '5': [Growl]
+    '9': [DefenseCurl]
+    '13': [Rollout]
+    '17': [Headbutt]
+    '21': [HyperFang]
+    '25': [Yawn]
+    '29': [Amnesia]
+    '33': [TakeDown]
+    '37': [SuperFang]
+    '41': [Superpower]
+    '45': [Curse]
+  egg:
+    - AquaTail
+    - DefenseCurl
+    - DoubleEdge
+    - FurySwipes
+    - OdorSleuth
+    - QuickAttack
+    - Rollout
+    - WaterSport
+Bibarel:
+  level:
+    '1': [Growl, Tackle, Rototiller]
+    '5': [Growl]
+    '9': [DefenseCurl]
+    '13': [Rollout]
+    '15': [WaterGun]
+    '18': [Headbutt]
+    '23': [HyperFang]
+    '28': [Yawn]
+    '33': [Amnesia]
+    '38': [TakeDown]
+    '43': [SuperFang]
+    '48': [Superpower]
+    '53': [Curse]
+  teachable:
+    - AquaTail
+    - Dive
+    - Fling
+    - FocusPunch
+    - GigaImpact
+    - HyperBeam
+    - RockClimb
+    - Rollout
+    - Strength
+    - Surf
+    - WaterPulse
+    - Waterfall
+    - Whirlpool
+    - StompingTantrum
+    - Liquidation

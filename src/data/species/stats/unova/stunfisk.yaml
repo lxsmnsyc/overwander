@@ -1,0 +1,6 @@
+Stunfisk:
+  stats: { HP: 109, Attack: 66, Defense: 84, SpecialAttack: 81, SpecialDefense: 99, Speed: 32 }
+  catch-rate: 75
+  height: 0.7
+  weight: 11
+  gender: [1, 1]

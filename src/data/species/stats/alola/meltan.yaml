@@ -1,0 +1,12 @@
+Meltan:
+  stats: { HP: 46, Attack: 65, Defense: 65, SpecialAttack: 55, SpecialDefense: 35, Speed: 34 }
+  catch-rate: 3
+  height: 0.2
+  weight: 8
+  gender: genderless
+Melmetal:
+  stats: { HP: 135, Attack: 143, Defense: 143, SpecialAttack: 80, SpecialDefense: 65, Speed: 34 }
+  catch-rate: 3
+  height: 2.5
+  weight: 800
+  gender: genderless

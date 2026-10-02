@@ -1,0 +1,6 @@
+Poochyena:
+  abilities: [RunAway, QuickFeet]
+  hidden: [Rattled]
+Mightyena:
+  abilities: [Intimidate, QuickFeet]
+  hidden: [Moxie]

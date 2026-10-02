@@ -1,0 +1,6 @@
+Drampa:
+  stats: { HP: 78, Attack: 60, Defense: 85, SpecialAttack: 135, SpecialDefense: 91, Speed: 36 }
+  catch-rate: 70
+  height: 3
+  weight: 185
+  gender: [4, 4]

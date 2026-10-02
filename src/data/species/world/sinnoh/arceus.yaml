@@ -1,0 +1,120 @@
+# The one that was there first, and the seventeen shapes a Plate puts
+# it in. Multitype is what lets a Plate do that, and the shape carries
+# the type, so an Arceus with it is whichever stone it is holding
+
+# The stats it has in every shape, which are the same six numbers
+
+# Each shape, and the type its own Plate paints it
+
+# Worn rather than met: a Plate in its hands is what paints it,
+# so the dex fills the shape in the day the bare one is
+
+# Worn rather than met, so no pool stages one
+
+Arceus:
+  types: [Normal]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [AlpineTundra]
+  active: any
+ArceusBug:
+  types: [Bug]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusDark:
+  types: [Dark]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusDragon:
+  types: [Dragon]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusElectric:
+  types: [Electric]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusFighting:
+  types: [Fighting]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusFire:
+  types: [Fire]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusFlying:
+  types: [Flying]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusGhost:
+  types: [Ghost]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusGrass:
+  types: [Grass]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusGround:
+  types: [Ground]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusIce:
+  types: [Ice]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusPoison:
+  types: [Poison]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusPsychic:
+  types: [Psychic]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusRock:
+  types: [Rock]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusSteel:
+  types: [Steel]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusWater:
+  types: [Water]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true
+ArceusFairy:
+  types: [Fairy]
+  egg-groups: [NoEggsDiscovered]
+  active: any
+  base-form: false
+  worn: true

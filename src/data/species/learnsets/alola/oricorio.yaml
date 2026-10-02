@@ -1,0 +1,113 @@
+family-teachable:
+  - Acrobatics
+  - AerialAce
+  - Attract
+  - CalmMind
+  - Confide
+  - Covet
+  - Defog
+  - DoubleTeam
+  - Embargo
+  - Facade
+  - Fly
+  - Frustration
+  - HelpingHand
+  - HiddenPower
+  - IcyWind
+  - Protect
+  - Quash
+  - Rest
+  - Return
+  - RolePlay
+  - Roost
+  - Round
+  - Safeguard
+  - Sandstorm
+  - SkyAttack
+  - SleepTalk
+  - Snore
+  - SteelWing
+  - Substitute
+  - Swagger
+  - SwordsDance
+  - Tailwind
+  - Taunt
+  - Toxic
+  - UTurn
+  - WorkUp
+Oricorio:
+  level:
+    '1': [Pound]
+    '4': [Growl]
+    '6': [Peck]
+    '10': [HelpingHand]
+    '13': [AirCutter]
+    '16': [BatonPass]
+    '20': [FeatherDance]
+    '23': [DoubleSlap]
+    '26': [TeeterDance]
+    '30': [Roost]
+    '33': [Captivate]
+    '36': [AirSlash]
+    '40': [RevelationDance]
+    '43': [MirrorMove]
+    '46': [Agility]
+    '50': [Hurricane]
+  egg: [Captivate, Pluck, Safeguard, Tailwind]
+OricorioPomPom:
+  level:
+    '1': [Pound]
+    '4': [Growl]
+    '6': [Peck]
+    '10': [HelpingHand]
+    '13': [AirCutter]
+    '16': [BatonPass]
+    '20': [FeatherDance]
+    '23': [DoubleSlap]
+    '26': [TeeterDance]
+    '30': [Roost]
+    '33': [Captivate]
+    '36': [AirSlash]
+    '40': [RevelationDance]
+    '43': [MirrorMove]
+    '46': [Agility]
+    '50': [Hurricane]
+  egg: [Captivate, Pluck, Safeguard, Tailwind]
+OricorioPau:
+  level:
+    '1': [Pound]
+    '4': [Growl]
+    '6': [Peck]
+    '10': [HelpingHand]
+    '13': [AirCutter]
+    '16': [BatonPass]
+    '20': [FeatherDance]
+    '23': [DoubleSlap]
+    '26': [TeeterDance]
+    '30': [Roost]
+    '33': [Captivate]
+    '36': [AirSlash]
+    '40': [RevelationDance]
+    '43': [MirrorMove]
+    '46': [Agility]
+    '50': [Hurricane]
+  egg: [Captivate, Pluck, Safeguard, Tailwind]
+OricorioSensu:
+  level:
+    '1': [Pound]
+    '4': [Growl]
+    '6': [Peck]
+    '10': [HelpingHand]
+    '13': [AirCutter]
+    '16': [BatonPass]
+    '20': [FeatherDance]
+    '23': [DoubleSlap]
+    '26': [TeeterDance]
+    '30': [Roost]
+    '33': [Captivate]
+    '36': [AirSlash]
+    '40': [RevelationDance]
+    '43': [MirrorMove]
+    '46': [Agility]
+    '50': [Hurricane]
+  egg: [Captivate, Pluck, Safeguard, Tailwind]

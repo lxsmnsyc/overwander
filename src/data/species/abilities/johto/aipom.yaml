@@ -1,0 +1,6 @@
+Aipom:
+  abilities: [RunAway, Pickup]
+  hidden: [SkillLink]
+Ambipom:
+  abilities: [Technician, Pickup]
+  hidden: [SkillLink]

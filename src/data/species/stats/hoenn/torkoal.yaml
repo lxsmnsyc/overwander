@@ -1,0 +1,6 @@
+Torkoal:
+  stats: { HP: 70, Attack: 85, Defense: 140, SpecialAttack: 85, SpecialDefense: 70, Speed: 20 }
+  catch-rate: 90
+  height: 0.5
+  weight: 80.4
+  gender: [1, 1]

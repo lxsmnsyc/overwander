@@ -1,0 +1,77 @@
+# TM and tutor moves shared by the whole family
+
+Passimian:
+  level:
+    '1': [Tackle]
+    '4': [Leer]
+    '8': [RockSmash]
+    '11': [FocusEnergy]
+    '15': [BeatUp]
+    '18': [ScaryFace]
+    '22': [TakeDown]
+    '25': [Bestow]
+    '29': [Thrash]
+    '32': [BulkUp]
+    '36': [DoubleEdge]
+    '39': [Fling]
+    '43': [CloseCombat]
+    '46': [Reversal]
+    '50': [GigaImpact]
+  teachable:
+    - Acrobatics
+    - AerialAce
+    - Attract
+    - Block
+    - BrickBreak
+    - BrutalSwing
+    - BulkUp
+    - Bulldoze
+    - Confide
+    - DoubleTeam
+    - DrainPunch
+    - Earthquake
+    - Electroweb
+    - Endeavor
+    - EnergyBall
+    - Facade
+    - Fling
+    - FocusBlast
+    - FocusPunch
+    - Frustration
+    - GigaImpact
+    - GrassKnot
+    - GunkShot
+    - GyroBall
+    - HiddenPower
+    - HyperBeam
+    - IronHead
+    - IronTail
+    - KnockOff
+    - LaserFocus
+    - LowSweep
+    - Payback
+    - Protect
+    - RainDance
+    - Rest
+    - Return
+    - RockSlide
+    - RockTomb
+    - Round
+    - SeedBomb
+    - ShadowBall
+    - ShockWave
+    - SleepTalk
+    - SmackDown
+    - Snatch
+    - Snore
+    - Substitute
+    - SunnyDay
+    - Superpower
+    - Swagger
+    - Taunt
+    - Thief
+    - Toxic
+    - UTurn
+    - Uproar
+    - WorkUp
+  egg: [Feint, IronHead, QuickAttack, QuickGuard, SeismicToss, VitalThrow]

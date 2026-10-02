@@ -1,0 +1,15 @@
+Spearow:
+  types: [Normal, Flying]
+  egg-groups: [Flying]
+  biomes: [Shrubland, Steppe]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Fearow
+      method: [Level]
+      level: 20
+Fearow:
+  types: [Normal, Flying]
+  egg-groups: [Flying]
+  biomes: [Shrubland, Steppe]
+  active: [Morning, Day]
+  evolves-from: Spearow

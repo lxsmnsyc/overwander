@@ -26,7 +26,7 @@ Because the members then share one behaviour, the implementation goes in a **met
 
 ## Read what the family already has
 
-**Before proposing anything, read that family's own ability pool** in `src/data/species/`, every stage of the line included. Two failures come out of skipping it, and both mean the concept has to be thrown away rather than tuned.
+**Before proposing anything, read that family's own ability pool** in `src/data/species/abilities/`, every stage of the line included. Two failures come out of skipping it, and both mean the concept has to be thrown away rather than tuned.
 
 The first is saying the same thing twice. Shroomish already has Effect Spore, so a signature that put a spore on whoever touched it was giving the line nothing it did not have.
 

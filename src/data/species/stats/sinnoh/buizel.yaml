@@ -1,0 +1,12 @@
+Buizel:
+  stats: { HP: 55, Attack: 65, Defense: 35, SpecialAttack: 60, SpecialDefense: 30, Speed: 85 }
+  catch-rate: 190
+  height: 0.7
+  weight: 29.5
+  gender: [1, 1]
+Floatzel:
+  stats: { HP: 85, Attack: 105, Defense: 55, SpecialAttack: 85, SpecialDefense: 50, Speed: 115 }
+  catch-rate: 75
+  height: 1.1
+  weight: 33.5
+  gender: [1, 1]

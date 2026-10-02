@@ -1,0 +1,9 @@
+MrMime:
+  abilities: [Soundproof, Filter]
+  # Magic Bounce is this registry's rather than the mainline's: Mime
+  # Jr. brings nothing the adult did not have, so the line reaches
+  # three abilities and needs four
+  hidden: [Technician, MagicBounce]
+MimeJr:
+  abilities: [Soundproof, Filter]
+  hidden: [Technician]

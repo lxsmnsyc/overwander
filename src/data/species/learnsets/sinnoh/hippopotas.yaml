@@ -1,0 +1,59 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Attract
+  - Captivate
+  - DoubleTeam
+  - EarthPower
+  - Earthquake
+  - Endure
+  - Facade
+  - Frustration
+  - HiddenPower
+  - IronTail
+  - MudSlap
+  - NaturalGift
+  - Protect
+  - Rest
+  - Return
+  - Roar
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Sandstorm
+  - SecretPower
+  - SleepTalk
+  - Snore
+  - StealthRock
+  - Strength
+  - Substitute
+  - SunnyDay
+  - Superpower
+  - Swagger
+  - Toxic
+  - WaterPulse
+  - Confide
+  - StompingTantrum
+Hippopotas:
+  level:
+    '1': [SandAttack, Tackle]
+    '7': [Bite]
+    '13': [Yawn]
+    '19': [TakeDown]
+    '25': [SandTomb]
+    '31': [Crunch]
+    '37': [Earthquake]
+    '44': [DoubleEdge]
+    '50': [Fissure]
+  egg: [BodySlam, Curse, SandTomb, SlackOff, SpitUp, Stockpile, Swallow]
+Hippowdon:
+  level:
+    '1': [Bite, FireFang, IceFang, SandAttack, Tackle, ThunderFang, Yawn]
+    '7': [Bite]
+    '13': [Yawn]
+    '19': [TakeDown]
+    '25': [SandTomb]
+    '31': [Crunch]
+    '40': [Earthquake]
+    '50': [DoubleEdge]
+    '60': [Fissure]
+  teachable: [GigaImpact, HyperBeam, IronHead, StoneEdge]

@@ -1,0 +1,5 @@
+Entei:
+  types: [Fire]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Grassland, Woodland]
+  active: any

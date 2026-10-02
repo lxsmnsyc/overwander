@@ -1,0 +1,119 @@
+family-teachable:
+  - Attract
+  - BodySlam
+  - BrickBreak
+  - BulkUp
+  - Crunch
+  - DoubleTeam
+  - Endure
+  - Facade
+  - Fling
+  - Fly
+  - FocusBlast
+  - Frustration
+  - GigaImpact
+  - GrassKnot
+  - HiddenPower
+  - HyperBeam
+  - IronTail
+  - NastyPlot
+  - Payback
+  - Protect
+  - Psychic
+  - RainDance
+  - Rest
+  - Return
+  - RockSmash
+  - Round
+  - ScaryFace
+  - SecretPower
+  - SleepTalk
+  - SludgeBomb
+  - SludgeWave
+  - SmackDown
+  - Snore
+  - Strength
+  - Substitute
+  - SunnyDay
+  - Superpower
+  - Swagger
+  - TakeDown
+  - Toxic
+  - UTurn
+  - WeatherBall
+  - Confide
+  - Bulldoze
+  - CalmMind
+  - Dig
+  - EarthPower
+  - Earthquake
+  - Explosion
+  - Gravity
+  - Imprison
+  - MudSlap
+  - Outrage
+  - RockPolish
+  - RockSlide
+  - RockTomb
+  - SandTomb
+  - Sandstorm
+  - SelfDestruct
+  - StealthRock
+  - StoneEdge
+  - SwordsDance
+  - Taunt
+  - BrutalSwing
+Landorus:
+  level:
+    '1':
+      - Tackle
+      - RockThrow
+      - Fissure
+      - Outrage
+      - Imprison
+      - RockTomb
+      - SandTomb
+      - Block
+      - MudShot
+      - HammerArm
+      - SmackDown
+    '5': [Leer]
+    '7': [Bite, Punishment]
+    '11': [Twister]
+    '13': [Bulldoze]
+    '22': [BulkUp]
+    '25': [SwordsDance, Extrasensory]
+    '35': [RockSlide]
+    '37': [EarthPower]
+    '40': [Crunch]
+    '41': [Crunch]
+    '49': [Earthquake]
+    '50': [StoneEdge]
+    '55': [Sandstorm]
+LandorusTherian:
+  level:
+    '1':
+      - Tackle
+      - RockThrow
+      - Fissure
+      - Outrage
+      - Imprison
+      - RockTomb
+      - SandTomb
+      - Block
+      - MudShot
+      - HammerArm
+      - SmackDown
+    '5': [Leer]
+    '7': [Bite, Punishment]
+    '11': [Twister]
+    '13': [Bulldoze]
+    '22': [BulkUp]
+    '25': [SwordsDance, Extrasensory]
+    '35': [RockSlide]
+    '37': [EarthPower]
+    '40': [Crunch]
+    '41': [Crunch]
+    '49': [Earthquake]
+    '50': [StoneEdge]
+    '55': [Sandstorm]

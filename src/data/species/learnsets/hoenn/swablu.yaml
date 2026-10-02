@@ -1,0 +1,90 @@
+# TM, HM and tutor moves both stages share
+family-teachable:
+  - Toxic
+  - HiddenPower
+  - SunnyDay
+  - IceBeam
+  - Protect
+  - RainDance
+  - Safeguard
+  - Frustration
+  - SolarBeam
+  - Return
+  - DoubleTeam
+  - AerialAce
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Thief
+  - SteelWing
+  - Fly
+  - BodySlam
+  - DoubleEdge
+  - Mimic
+  - DreamEater
+  - Substitute
+  - PsychUp
+  - Snore
+  - Endure
+  - MudSlap
+  - Swagger
+  - SleepTalk
+  - Swift
+  - Captivate
+  - OminousWind
+  - Roost
+  - Tailwind
+  - Round
+  - EchoedVoice
+  - Confide
+  - DazzlingGleam
+Swablu:
+  level:
+    '1': [Growl, Peck]
+    '8': [Astonish]
+    '11': [Sing, DisarmingVoice]
+    '18': [FuryAttack, Round]
+    '21': [Safeguard]
+    '28': [Mist]
+    '31': [TakeDown]
+    '32': [NaturalGift]
+    '38': [MirrorMove]
+    '39': [CottonGuard]
+    '41': [Refresh]
+    '45': [DragonPulse]
+    '46': [Moonblast]
+    '48': [PerishSong]
+  teachable: [Pluck]
+  egg: [Agility, Haze, Pursuit, Rage, DragonRush, PowerSwap]
+Altaria:
+  level:
+    '1': [Growl, Peck, Astonish, Sing, Pluck]
+    '11': [DisarmingVoice]
+    '18': [FuryAttack, Round]
+    '21': [Safeguard]
+    '28': [Mist]
+    '31': [TakeDown]
+    '32': [NaturalGift]
+    '35': [DragonBreath]
+    '40': [DragonDance]
+    '42': [CottonGuard]
+    '45': [Refresh]
+    '52': [Moonblast]
+    '54': [PerishSong, DragonPulse]
+    '59': [SkyAttack]
+  teachable:
+    - DragonClaw
+    - Roar
+    - HyperBeam
+    - IronTail
+    - Earthquake
+    - Flamethrower
+    - FireBlast
+    - RockSmash
+    - DracoMeteor
+    - GigaImpact
+    - HoneClaws
+    - WonderRoom
+    - Incinerate
+    - Bulldoze

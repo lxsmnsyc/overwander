@@ -1,0 +1,6 @@
+Heatran:
+  stats: { HP: 91, Attack: 90, Defense: 106, SpecialAttack: 130, SpecialDefense: 106, Speed: 77 }
+  catch-rate: 3
+  height: 1.7
+  weight: 430
+  gender: [1, 1]

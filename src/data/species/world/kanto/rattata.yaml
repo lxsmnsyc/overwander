@@ -1,0 +1,33 @@
+Rattata:
+  types: [Normal]
+  egg-groups: [Field]
+  biomes: [Grassland, Woodland]
+  active: any
+  evolves-into:
+    - species: Raticate
+      method: [Level]
+      level: 20
+Raticate:
+  types: [Normal]
+  egg-groups: [Field]
+  biomes: [Grassland, Woodland]
+  active: any
+  evolves-from: Rattata
+RattataAlola:
+  types: [Dark, Normal]
+  egg-groups: [Field]
+  biomes: [TropicalSeasonalForest, TropicalRainforest]
+  active: [Evening, Night]
+  base-form: false
+  evolves-into:
+    - species: RaticateAlola
+      method: [Level, TimeOfDay]
+      level: 20
+      time: [Evening, Night]
+RaticateAlola:
+  types: [Dark, Normal]
+  egg-groups: [Field]
+  biomes: [TropicalSeasonalForest, TropicalRainforest]
+  active: [Evening, Night]
+  base-form: false
+  evolves-from: RattataAlola

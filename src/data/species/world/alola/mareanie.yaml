@@ -1,0 +1,17 @@
+Mareanie:
+  types: [Poison, Water]
+  egg-groups: [Water1]
+  habitat: Water
+  biomes: [CoralReef, RockyCoast, Beach]
+  active: any
+  evolves-into:
+    - species: Toxapex
+      method: [Level]
+      level: 38
+Toxapex:
+  types: [Poison, Water]
+  egg-groups: [Water1]
+  habitat: Water
+  biomes: [CoralReef, RockyCoast, Beach]
+  active: any
+  evolves-from: Mareanie

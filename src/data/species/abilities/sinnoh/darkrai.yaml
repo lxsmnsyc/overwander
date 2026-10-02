@@ -1,0 +1,6 @@
+Darkrai:
+  abilities: [BadDreams]
+  # The other three are this registry's: nothing rests near it, it
+  # is under before anybody saw it coming, and no screen was ever
+  # in its way
+  hidden: [Unnerve, Prankster, Infiltrator]

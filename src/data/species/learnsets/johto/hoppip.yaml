@@ -1,0 +1,93 @@
+family-teachable:
+  - Toxic
+  - SolarBeam
+  - DoubleTeam
+  - Flash
+  - Rest
+  - Snore
+  - Curse
+  - Protect
+  - GigaDrain
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - HiddenPower
+  - SunnyDay
+  - SweetScent
+  - DefenseCurl
+  - Headbutt
+  - AerialAce
+  - BulletSeed
+  - Facade
+  - Mimic
+  - SecretPower
+  - Substitute
+  - SwordsDance
+  - Captivate
+  - EnergyBall
+  - GrassKnot
+  - NaturalGift
+  - SeedBomb
+  - Round
+  - Acrobatics
+  - Confide
+  - DazzlingGleam
+  - Infestation
+Hoppip:
+  level:
+    '1': [Splash, Synthesis]
+    '5': [TailWhip]
+    '10': [Tackle, FairyWind]
+    '13': [PoisonPowder]
+    '15': [StunSpore]
+    '17': [SleepPowder]
+    '20': [LeechSeed]
+    '25': [CottonSpore]
+    '28': [Acrobatics]
+    '30': [MegaDrain]
+    '31': [UTurn, RagePowder]
+    '34': [WorrySeed]
+  egg:
+    - Amnesia
+    - Confusion
+    - DoubleEdge
+    - Encore
+    - Growl
+    - PayDay
+    - Reflect
+    - HelpingHand
+    - PsychUp
+    - CottonGuard
+    - GrassyTerrain
+    - StrengthSap
+Skiploom:
+  level:
+    '1': [Splash, Synthesis, TailWhip, Tackle]
+    '10': [FairyWind]
+    '13': [PoisonPowder]
+    '15': [StunSpore]
+    '17': [SleepPowder]
+    '22': [LeechSeed]
+    '29': [CottonSpore]
+    '32': [Acrobatics]
+    '36': [MegaDrain, UTurn, RagePowder]
+    '40': [WorrySeed]
+  teachable: [DoubleEdge]
+Jumpluff:
+  level:
+    '1': [Splash, Synthesis, TailWhip, Tackle]
+    '10': [FairyWind]
+    '13': [PoisonPowder]
+    '15': [StunSpore]
+    '17': [SleepPowder]
+    '22': [LeechSeed]
+    '33': [CottonSpore]
+    '34': [Acrobatics]
+    '36': [UTurn]
+    '39': [RagePowder]
+    '40': [WorrySeed]
+    '44': [MegaDrain]
+  teachable: [HyperBeam, DoubleEdge, GigaImpact]

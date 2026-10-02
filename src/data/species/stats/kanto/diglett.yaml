@@ -1,0 +1,24 @@
+Diglett:
+  stats: { HP: 10, Attack: 55, Defense: 25, SpecialAttack: 35, SpecialDefense: 45, Speed: 95 }
+  catch-rate: 255
+  height: 0.2
+  weight: 0.8
+  gender: [1, 1]
+Dugtrio:
+  stats: { HP: 35, Attack: 100, Defense: 50, SpecialAttack: 50, SpecialDefense: 70, Speed: 120 }
+  catch-rate: 50
+  height: 0.7
+  weight: 33.3
+  gender: [1, 1]
+DiglettAlola:
+  stats: { HP: 10, Attack: 55, Defense: 30, SpecialAttack: 35, SpecialDefense: 45, Speed: 90 }
+  catch-rate: 255
+  height: 0.2
+  weight: 1
+  gender: [4, 4]
+DugtrioAlola:
+  stats: { HP: 35, Attack: 100, Defense: 60, SpecialAttack: 50, SpecialDefense: 70, Speed: 110 }
+  catch-rate: 50
+  height: 0.7
+  weight: 66.6
+  gender: [4, 4]

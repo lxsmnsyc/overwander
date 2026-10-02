@@ -1,0 +1,12 @@
+Pumpkaboo:
+  abilities: [Pickup, Frisk]
+  hidden: [Insomnia]
+Gourgeist:
+  abilities: [Pickup, Frisk]
+  hidden: [Insomnia, CursedBody]
+PumpkabooSuper:
+  abilities: [Pickup, Frisk]
+  hidden: [Insomnia]
+GourgeistSuper:
+  abilities: [Pickup, Frisk]
+  hidden: [Insomnia, CursedBody]

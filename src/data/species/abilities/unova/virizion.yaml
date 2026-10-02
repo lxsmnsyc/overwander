@@ -1,0 +1,6 @@
+Virizion:
+  abilities: [Justified]
+  # Chlorophyll, Leaf Guard and Serene Grace are this registry's
+  # rather than the mainline's: the sun is what the swordsman of
+  # the grassland fights in, and its blows carry what they carry
+  hidden: [Chlorophyll, LeafGuard, SereneGrace]

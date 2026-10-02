@@ -1,0 +1,18 @@
+Clefairy:
+  stats: { HP: 70, Attack: 45, Defense: 48, SpecialAttack: 60, SpecialDefense: 65, Speed: 35 }
+  catch-rate: 150
+  height: 0.6
+  weight: 7.5
+  gender: [1, 3]
+Clefable:
+  stats: { HP: 95, Attack: 70, Defense: 73, SpecialAttack: 95, SpecialDefense: 90, Speed: 60 }
+  catch-rate: 25
+  height: 1.3
+  weight: 40
+  gender: [1, 3]
+Cleffa:
+  stats: { HP: 50, Attack: 25, Defense: 28, SpecialAttack: 45, SpecialDefense: 55, Speed: 15 }
+  catch-rate: 150
+  height: 0.3
+  weight: 3
+  gender: [1, 3]

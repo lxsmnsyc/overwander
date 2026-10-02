@@ -1,0 +1,14 @@
+Smeargle:
+  # Sketch and nothing else, over and over: no machine teaches it
+  # anything, because it takes what it wants off whoever it meets
+  level:
+    '1': [Sketch]
+    '11': [Sketch]
+    '21': [Sketch]
+    '31': [Sketch]
+    '41': [Sketch]
+    '51': [Sketch]
+    '61': [Sketch]
+    '71': [Sketch]
+    '81': [Sketch]
+    '91': [Sketch]

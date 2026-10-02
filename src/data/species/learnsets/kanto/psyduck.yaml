@@ -1,0 +1,113 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - MegaPunch
+  - MegaKick
+  - Toxic
+  - BodySlam
+  - TakeDown
+  - DoubleEdge
+  - BubbleBeam
+  - WaterGun
+  - IceBeam
+  - Blizzard
+  - PayDay
+  - Submission
+  - Counter
+  - SeismicToss
+  - Rage
+  - Mimic
+  - DoubleTeam
+  - Bide
+  - SkullBash
+  - Rest
+  - Substitute
+  - Surf
+  - Strength
+  - IcePunch
+  - Headbutt
+  - Dig
+  - Waterfall
+  - Swift
+  - Flash
+  - Snore
+  - Curse
+  - Protect
+  - MudSlap
+  - IcyWind
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - DynamicPunch
+  - IronTail
+  - HiddenPower
+  - RainDance
+  - PsychUp
+  - RockSmash
+  - Whirlpool
+  - AerialAce
+  - BrickBreak
+  - CalmMind
+  - Dive
+  - Facade
+  - FocusPunch
+  - SecretPower
+  - WaterPulse
+  - AquaTail
+  - Brine
+  - Captivate
+  - Fling
+  - NaturalGift
+  - ShadowClaw
+  - WorrySeed
+  - HoneClaws
+  - WonderRoom
+  - Psyshock
+  - Telekinesis
+  - Round
+  - Scald
+  - Confide
+  - PowerUpPunch
+Psyduck:
+  level:
+    '1': [Scratch, WaterSport]
+    '5': [TailWhip]
+    '10': [Disable]
+    '16': [Confusion]
+    '23': [Screech]
+    '31': [PsychUp]
+    '36': [Soak]
+    '40': [FurySwipes, ZenHeadbutt]
+    '50': [HydroPump, WonderRoom]
+  egg:
+    - Hypnosis
+    - Psybeam
+    - LightScreen
+    - IceBeam
+    - Psychic
+    - Foresight
+    - CrossChop
+    - FutureSight
+    - Refresh
+    - MudBomb
+    - Synchronoise
+Golduck:
+  level:
+    '1': [Scratch, TailWhip, Disable, Confusion, WaterSport, AquaJet]
+    '23': [Screech]
+    '31': [PsychUp]
+    '38': [Soak]
+    '44': [FurySwipes, ZenHeadbutt]
+    '58': [HydroPump]
+    '60': [WonderRoom]
+  teachable:
+    - HyperBeam
+    - FuryCutter
+    - FocusBlast
+    - GigaImpact
+    - RockClimb
+    - LowSweep
+    - Liquidation
+    - LaserFocus

@@ -1,0 +1,12 @@
+Espurr:
+  abilities: [KeenEye, Infiltrator]
+  hidden: [OwnTempo]
+Meowstic:
+  abilities: [KeenEye, Infiltrator]
+  # Synchronize is this line's invented filler: the mainline gives a
+  # male Meowstic Prankster and nothing else, and her Competitive
+  # is her own
+  hidden: [Prankster, Synchronize]
+MeowsticFemale:
+  abilities: [KeenEye, Infiltrator]
+  hidden: [Competitive, Synchronize]

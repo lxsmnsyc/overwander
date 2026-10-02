@@ -1,0 +1,7 @@
+Gastly:
+  abilities: [Levitate]
+Haunter:
+  abilities: [Levitate]
+Gengar:
+  abilities: [Levitate]
+  hidden: [Infiltrator, Frisk, CursedBody]

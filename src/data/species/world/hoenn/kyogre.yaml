@@ -1,0 +1,20 @@
+# The three that decide what the sky is doing: the sea, the land, and
+# the thing that flies above both and calls the argument off. Each
+# carries one ability in the mainline and nothing else, so what fills
+# the other three slots is this registry's
+
+Kyogre:
+  types: [Water]
+  egg-groups: [NoEggsDiscovered]
+  habitat: Water
+  biomes: [DeepOcean, Beach]
+  active: any
+# Worn rather than met: a Blue Orb held into a fight returns it to
+# the shape it had before anybody was around to see it
+KyogrePrimal:
+  types: [Water]
+  egg-groups: [NoEggsDiscovered]
+  habitat: Water
+  active: any
+  base-form: false
+  worn: true

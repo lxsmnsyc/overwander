@@ -1,0 +1,6 @@
+Xurkitree:
+  stats: { HP: 83, Attack: 89, Defense: 71, SpecialAttack: 173, SpecialDefense: 71, Speed: 83 }
+  catch-rate: 45
+  height: 3.8
+  weight: 100
+  gender: genderless

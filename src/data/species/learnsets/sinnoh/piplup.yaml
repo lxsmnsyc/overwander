@@ -1,0 +1,126 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - AerialAce
+  - Attract
+  - Blizzard
+  - BrickBreak
+  - Brine
+  - Captivate
+  - Cut
+  - Defog
+  - Dig
+  - Dive
+  - DoubleTeam
+  - Endure
+  - Facade
+  - Fling
+  - Frustration
+  - GrassKnot
+  - Hail
+  - Headbutt
+  - HiddenPower
+  - IceBeam
+  - IcyWind
+  - MudSlap
+  - NaturalGift
+  - Pluck
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - RockTomb
+  - SecretPower
+  - SignalBeam
+  - SleepTalk
+  - Snore
+  - StealthRock
+  - Substitute
+  - Surf
+  - Swagger
+  - Toxic
+  - WaterPulse
+  - Waterfall
+  - Confide
+Piplup:
+  level:
+    '1': [Pound]
+    '4': [Growl]
+    '8': [Bubble]
+    '11': [WaterSport]
+    '15': [Peck]
+    '18': [BubbleBeam]
+    '22': [Bide]
+    '25': [FuryAttack]
+    '29': [Brine]
+    '32': [Whirlpool]
+    '36': [Mist]
+    '39': [DrillPeck]
+    '43': [HydroPump]
+  egg:
+    - Agility
+    - AquaRing
+    - DoubleHit
+    - FeatherDance
+    - Flail
+    - HydroPump
+    - MudSlap
+    - MudSport
+    - Snore
+    - Supersonic
+    - Yawn
+    - PowerTrip
+Prinplup:
+  level:
+    '1': [Growl, Tackle]
+    '4': [Growl]
+    '8': [Bubble]
+    '11': [WaterSport]
+    '15': [Peck]
+    '16': [MetalClaw]
+    '19': [BubbleBeam]
+    '24': [Bide]
+    '28': [FuryAttack]
+    '33': [Brine]
+    '37': [Whirlpool]
+    '42': [Mist]
+    '46': [DrillPeck]
+    '51': [HydroPump]
+  teachable: [RockSmash, ShadowClaw, Strength]
+Empoleon:
+  level:
+    '1': [Bubble, Growl, Tackle]
+    '4': [Growl]
+    '8': [Bubble]
+    '11': [SwordsDance]
+    '15': [Peck]
+    '16': [MetalClaw]
+    '19': [BubbleBeam]
+    '24': [Swagger]
+    '28': [FuryAttack]
+    '33': [Brine]
+    '36': [AquaJet]
+    '39': [Whirlpool]
+    '46': [Mist]
+    '52': [DrillPeck]
+    '59': [HydroPump]
+  teachable:
+    - Avalanche
+    - Earthquake
+    - FlashCannon
+    - FuryCutter
+    - GigaImpact
+    - HydroCannon
+    - HyperBeam
+    - IronDefense
+    - KnockOff
+    - Roar
+    - RockClimb
+    - RockSlide
+    - RockSmash
+    - ShadowClaw
+    - SteelWing
+    - Strength
+    - SwordsDance
+    - Liquidation
+    - LaserFocus
+    - ThroatChop

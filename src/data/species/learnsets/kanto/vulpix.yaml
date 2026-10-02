@@ -1,0 +1,249 @@
+# TM, HM and tutor moves shared by the whole family
+
+# TM and tutor moves shared by the whole family
+
+Vulpix:
+  level:
+    '1': [Ember, TailWhip]
+    '7': [QuickAttack]
+    '9': [BabyDollEyes]
+    '13': [Roar]
+    '17': [WillOWisp]
+    '19': [ConfuseRay]
+    '23': [FlameBurst]
+    '25': [Safeguard, Imprison]
+    '28': [Hex]
+    '31': [Flamethrower, Payback]
+    '37': [FireSpin, Grudge, Captivate]
+    '50': [Inferno]
+  teachable:
+    - Toxic
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - Rage
+    - Dig
+    - Mimic
+    - DoubleTeam
+    - Reflect
+    - Bide
+    - FireBlast
+    - SkullBash
+    - Rest
+    - Substitute
+    - Headbutt
+    - Swift
+    - Snore
+    - Curse
+    - Protect
+    - Endure
+    - Swagger
+    - Attract
+    - SleepTalk
+    - Return
+    - Frustration
+    - IronTail
+    - HiddenPower
+    - SunnyDay
+    - Flamethrower
+    - Facade
+    - Overheat
+    - SecretPower
+    - DarkPulse
+    - NaturalGift
+    - OminousWind
+    - ZenHeadbutt
+    - FlameCharge
+    - FoulPlay
+    - Round
+    - Incinerate
+    - Confide
+  egg:
+    - Hypnosis
+    - Disable
+    - Flail
+    - Spite
+    - FeintAttack
+    - HeatWave
+    - Howl
+    - PsychUp
+    - EnergyBall
+    - FlareBlitz
+    - PowerSwap
+    - Hex
+    - TailSlap
+Ninetales:
+  level:
+    '1': [Ember, TailWhip, QuickAttack, Roar, ConfuseRay, Safeguard, NastyPlot]
+    '43': [FireSpin]
+  teachable:
+    - Toxic
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - Rage
+    - Dig
+    - Mimic
+    - DoubleTeam
+    - Reflect
+    - Bide
+    - FireBlast
+    - SkullBash
+    - Rest
+    - Substitute
+    - Headbutt
+    - Swift
+    - Snore
+    - Curse
+    - Protect
+    - Endure
+    - Swagger
+    - Attract
+    - SleepTalk
+    - Return
+    - Frustration
+    - IronTail
+    - HiddenPower
+    - SunnyDay
+    - Flamethrower
+    - Facade
+    - Overheat
+    - SecretPower
+    - DarkPulse
+    - NaturalGift
+    - OminousWind
+    - ZenHeadbutt
+    - FlameCharge
+    - FoulPlay
+    - Round
+    - Incinerate
+    - Confide
+    - HyperBeam
+    - Roar
+    - Captivate
+    - GigaImpact
+    - Payback
+    - Psyshock
+    - LaserFocus
+VulpixAlola:
+  level:
+    '1': [PowderSnow]
+    '4': [TailWhip]
+    '7': [Roar]
+    '9': [BabyDollEyes]
+    '10': [IceShard]
+    '12': [ConfuseRay]
+    '15': [IcyWind]
+    '18': [Payback]
+    '20': [Mist]
+    '23': [FeintAttack]
+    '26': [Hex]
+    '28': [AuroraBeam]
+    '31': [Extrasensory]
+    '34': [Safeguard]
+    '36': [IceBeam]
+    '39': [Imprison]
+    '42': [Blizzard]
+    '44': [Grudge]
+    '47': [Captivate]
+    '50': [SheerCold]
+  teachable:
+    - AquaTail
+    - Attract
+    - AuroraVeil
+    - Blizzard
+    - Confide
+    - Covet
+    - DarkPulse
+    - DoubleTeam
+    - Facade
+    - FoulPlay
+    - FrostBreath
+    - Frustration
+    - Hail
+    - HealBell
+    - HiddenPower
+    - IceBeam
+    - IcyWind
+    - IronTail
+    - PainSplit
+    - Payback
+    - Protect
+    - PsychUp
+    - RainDance
+    - Rest
+    - Return
+    - Roar
+    - RolePlay
+    - Round
+    - Safeguard
+    - SleepTalk
+    - Snore
+    - Spite
+    - Substitute
+    - Swagger
+    - Toxic
+    - ZenHeadbutt
+  egg:
+    - Agility
+    - Charm
+    - Disable
+    - Encore
+    - Extrasensory
+    - Flail
+    - FreezeDry
+    - Howl
+    - Hypnosis
+    - Moonblast
+    - PowerSwap
+    - SecretPower
+    - Spite
+    - TailSlap
+NinetalesAlola:
+  level:
+    '1': [ConfuseRay, DazzlingGleam, IceBeam, IceShard, Imprison, NastyPlot, Safeguard]
+  teachable:
+    - AquaTail
+    - Attract
+    - AuroraVeil
+    - Blizzard
+    - Confide
+    - Covet
+    - DarkPulse
+    - DoubleTeam
+    - Facade
+    - FoulPlay
+    - FrostBreath
+    - Frustration
+    - Hail
+    - HealBell
+    - HiddenPower
+    - IceBeam
+    - IcyWind
+    - IronTail
+    - PainSplit
+    - Payback
+    - Protect
+    - PsychUp
+    - RainDance
+    - Rest
+    - Return
+    - Roar
+    - RolePlay
+    - Round
+    - Safeguard
+    - SleepTalk
+    - Snore
+    - Spite
+    - Substitute
+    - Swagger
+    - Toxic
+    - ZenHeadbutt
+    - CalmMind
+    - DazzlingGleam
+    - DreamEater
+    - GigaImpact
+    - HyperBeam
+    - LaserFocus
+    - Psyshock
+    - WonderRoom

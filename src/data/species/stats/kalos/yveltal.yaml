@@ -1,0 +1,6 @@
+Yveltal:
+  stats: { HP: 126, Attack: 131, Defense: 95, SpecialAttack: 131, SpecialDefense: 98, Speed: 99 }
+  catch-rate: 45
+  height: 5.8
+  weight: 203
+  gender: genderless

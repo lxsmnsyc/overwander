@@ -1,0 +1,12 @@
+Nincada:
+  abilities: [CompoundEyes]
+  hidden: [RunAway]
+Ninjask:
+  abilities: [SpeedBoost]
+  hidden: [Infiltrator]
+Shedinja:
+  abilities: [WonderGuard]
+  # Cursed Body is this registry's rather than the mainline's: a
+  # husk that answers whatever touches it, and a final evolution is
+  # filled to four
+  hidden: [CursedBody]

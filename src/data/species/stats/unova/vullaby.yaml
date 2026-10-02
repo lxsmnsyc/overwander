@@ -1,0 +1,14 @@
+Vullaby:
+  stats: { HP: 70, Attack: 55, Defense: 75, SpecialAttack: 45, SpecialDefense: 65, Speed: 60 }
+  catch-rate: 190
+  height: 0.5
+  weight: 9
+  # Female only, the way its counterpart on the far side of the ridge
+  # is male only
+  gender: [0, 1]
+Mandibuzz:
+  stats: { HP: 110, Attack: 65, Defense: 105, SpecialAttack: 55, SpecialDefense: 95, Speed: 80 }
+  catch-rate: 60
+  height: 1.2
+  weight: 39.5
+  gender: [0, 1]

@@ -1,0 +1,111 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - AerialAce
+  - Attract
+  - Captivate
+  - Cut
+  - Dig
+  - DoubleTeam
+  - DracoMeteor
+  - DragonClaw
+  - DragonPulse
+  - EarthPower
+  - Earthquake
+  - Endure
+  - Facade
+  - FireBlast
+  - Flamethrower
+  - Frustration
+  - FuryCutter
+  - HiddenPower
+  - IronHead
+  - MudSlap
+  - NaturalGift
+  - Outrage
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - Roar
+  - RockClimb
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Sandstorm
+  - SecretPower
+  - ShadowClaw
+  - SleepTalk
+  - Snore
+  - StealthRock
+  - StoneEdge
+  - Strength
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Swift
+  - Toxic
+  - Twister
+  - Confide
+Gible:
+  level:
+    '1': [Tackle]
+    '3': [SandAttack]
+    '7': [DragonRage]
+    '13': [Sandstorm]
+    '15': [TakeDown]
+    '19': [SandTomb]
+    '25': [Slash]
+    '27': [DragonClaw]
+    '31': [Dig]
+    '37': [DragonRush]
+  egg:
+    - BodySlam
+    - DoubleEdge
+    - DragonBreath
+    - IronHead
+    - MetalClaw
+    - Outrage
+    - SandTomb
+    - ScaryFace
+    - Thrash
+    - Twister
+Gabite:
+  level:
+    '1': [SandAttack, Tackle]
+    '3': [SandAttack]
+    '7': [DragonRage]
+    '13': [Sandstorm]
+    '15': [TakeDown]
+    '19': [SandTomb]
+    '28': [Slash]
+    '33': [DragonClaw]
+    '40': [Dig]
+    '49': [DragonRush]
+  teachable: [IronTail, LaserFocus]
+Garchomp:
+  level:
+    '1': [DragonRage, FireFang, SandAttack, Sandstorm, Tackle]
+    '3': [SandAttack]
+    '7': [DragonRage]
+    '13': [Sandstorm]
+    '15': [TakeDown]
+    '19': [SandTomb]
+    '28': [Slash]
+    '33': [DragonClaw]
+    '40': [Dig]
+    '48': [Crunch]
+    '55': [DragonRush]
+  teachable:
+    - AquaTail
+    - BrickBreak
+    - FalseSwipe
+    - Fling
+    - GigaImpact
+    - HyperBeam
+    - IronTail
+    - PoisonJab
+    - Surf
+    - SwordsDance
+    - BrutalSwing
+    - StompingTantrum
+    - LaserFocus

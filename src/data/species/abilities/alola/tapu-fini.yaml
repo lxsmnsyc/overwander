@@ -1,0 +1,4 @@
+TapuFini:
+  abilities: [MistySurge]
+  # Telepathy is the mainline's, and the last two are this registry's
+  hidden: [Telepathy, WaterAbsorb, Regenerator]

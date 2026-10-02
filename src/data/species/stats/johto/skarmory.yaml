@@ -1,0 +1,6 @@
+Skarmory:
+  stats: { HP: 65, Attack: 80, Defense: 140, SpecialAttack: 40, SpecialDefense: 70, Speed: 70 }
+  catch-rate: 25
+  height: 1.7
+  weight: 50.5
+  gender: [1, 1]

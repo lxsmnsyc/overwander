@@ -1,0 +1,54 @@
+Carnivine:
+  level:
+    '1': [Bind, Growth]
+    '7': [Bite]
+    '11': [VineWhip]
+    '17': [SweetScent]
+    '21': [Ingrain]
+    '27': [FeintAttack]
+    '31': [SpitUp, Stockpile, Swallow]
+    '37': [Crunch]
+    '41': [WringOut]
+    '47': [PowerWhip]
+  teachable:
+    - Attract
+    - BulletSeed
+    - Captivate
+    - Cut
+    - DoubleTeam
+    - Endure
+    - EnergyBall
+    - Facade
+    - Flash
+    - Fling
+    - Frustration
+    - FuryCutter
+    - GastroAcid
+    - GigaDrain
+    - GigaImpact
+    - GrassKnot
+    - HiddenPower
+    - HyperBeam
+    - KnockOff
+    - MudSlap
+    - NaturalGift
+    - Payback
+    - Protect
+    - Rest
+    - Return
+    - SecretPower
+    - SeedBomb
+    - SleepTalk
+    - SludgeBomb
+    - Snore
+    - SolarBeam
+    - Substitute
+    - SunnyDay
+    - Swagger
+    - SwordsDance
+    - Synthesis
+    - Thief
+    - Toxic
+    - Confide
+    - Infestation
+    - ThroatChop

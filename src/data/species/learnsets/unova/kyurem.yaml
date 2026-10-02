@@ -1,0 +1,102 @@
+family-teachable:
+  - Cut
+  - DoubleTeam
+  - DracoMeteor
+  - DragonClaw
+  - DragonPulse
+  - DragonTail
+  - EarthPower
+  - EchoedVoice
+  - Facade
+  - Fling
+  - Fly
+  - FocusBlast
+  - Frustration
+  - GigaImpact
+  - HiddenPower
+  - HoneClaws
+  - HyperBeam
+  - HyperVoice
+  - LightScreen
+  - Outrage
+  - Payback
+  - Protect
+  - Psychic
+  - Reflect
+  - Rest
+  - Return
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Roost
+  - Round
+  - Safeguard
+  - ShadowBall
+  - ShadowClaw
+  - SleepTalk
+  - Snore
+  - StoneEdge
+  - Strength
+  - Substitute
+  - Swagger
+  - Toxic
+  - ZenHeadbutt
+  - Confide
+  - Blizzard
+  - Endeavor
+  - FlashCannon
+  - Hail
+  - IceBeam
+  - IcyWind
+  - IronHead
+  - RainDance
+  - SignalBeam
+  - SunnyDay
+  - Confide
+  - BrutalSwing
+  - LaserFocus
+Kyurem:
+  level:
+    '1': [DragonRage, IcyWind]
+    '8': [Imprison]
+    '15': [AncientPower]
+    '22': [IceBeam]
+    '29': [DragonBreath]
+    '36': [Slash]
+    '43': [ScaryFace]
+    '50': [Glaciate]
+    '57': [DragonPulse]
+    '71': [Endeavor]
+    '78': [Blizzard]
+    '85': [Outrage]
+    '92': [HyperVoice]
+KyuremBlack:
+  level:
+    '1': [DragonRage, IcyWind]
+    '8': [Imprison]
+    '15': [AncientPower]
+    '22': [IceBeam]
+    '29': [DragonBreath]
+    '36': [Slash]
+    '43': [FusionBolt]
+    '50': [FreezeShock]
+    '57': [DragonPulse]
+    '71': [Endeavor]
+    '78': [Blizzard]
+    '85': [Outrage]
+    '92': [HyperVoice]
+KyuremWhite:
+  level:
+    '1': [DragonRage, IcyWind]
+    '8': [Imprison]
+    '15': [AncientPower]
+    '22': [IceBeam]
+    '29': [DragonBreath]
+    '36': [Slash]
+    '43': [FusionFlare]
+    '50': [IceBurn]
+    '57': [DragonPulse]
+    '71': [Endeavor]
+    '78': [Blizzard]
+    '85': [Outrage]
+    '92': [HyperVoice]

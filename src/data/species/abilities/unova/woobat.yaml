@@ -1,0 +1,8 @@
+Woobat:
+  abilities: [Unaware, Klutz]
+  hidden: [Simple]
+Swoobat:
+  abilities: [Unaware, Klutz]
+  # Infiltrator is the invented fourth: the line reaches three, and
+  # a bat this size gets in wherever it likes
+  hidden: [Simple, Infiltrator]

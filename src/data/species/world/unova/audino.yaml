@@ -1,0 +1,7 @@
+# The listener: it reads a heartbeat through those ears and knows how
+# whoever it touches is doing
+Audino:
+  types: [Normal]
+  egg-groups: [Fairy]
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]

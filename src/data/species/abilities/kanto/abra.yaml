@@ -1,0 +1,9 @@
+Abra:
+  abilities: [Synchronize, InnerFocus]
+  hidden: [MagicGuard]
+Kadabra:
+  abilities: [Synchronize, InnerFocus]
+  hidden: [MagicGuard]
+Alakazam:
+  abilities: [Synchronize, InnerFocus]
+  hidden: [MagicGuard, Forewarn]

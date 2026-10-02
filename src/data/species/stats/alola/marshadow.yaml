@@ -1,0 +1,6 @@
+Marshadow:
+  stats: { HP: 90, Attack: 125, Defense: 80, SpecialAttack: 90, SpecialDefense: 90, Speed: 125 }
+  catch-rate: 3
+  height: 0.7
+  weight: 22.2
+  gender: genderless

@@ -1,0 +1,5 @@
+Torkoal:
+  types: [Fire]
+  egg-groups: [Field]
+  biomes: [Volcano, Mountain]
+  active: [Morning, Day]

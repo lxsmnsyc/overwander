@@ -1,0 +1,18 @@
+Bellsprout:
+  stats: { HP: 50, Attack: 75, Defense: 35, SpecialAttack: 70, SpecialDefense: 30, Speed: 40 }
+  catch-rate: 255
+  height: 0.7
+  weight: 4
+  gender: [1, 1]
+Weepinbell:
+  stats: { HP: 65, Attack: 90, Defense: 50, SpecialAttack: 85, SpecialDefense: 45, Speed: 55 }
+  catch-rate: 120
+  height: 1
+  weight: 6.4
+  gender: [1, 1]
+Victreebel:
+  stats: { HP: 80, Attack: 105, Defense: 65, SpecialAttack: 100, SpecialDefense: 70, Speed: 70 }
+  catch-rate: 45
+  height: 1.7
+  weight: 15.5
+  gender: [1, 1]

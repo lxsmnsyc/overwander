@@ -1,0 +1,8 @@
+Wailmer:
+  abilities: [WaterVeil, Oblivious]
+  hidden: [Pressure]
+Wailord:
+  abilities: [WaterVeil, Oblivious]
+  # One the mainline never gave it: nothing goes off with that much
+  # water spouting over it
+  hidden: [Pressure, Damp]

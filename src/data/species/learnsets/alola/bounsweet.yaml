@@ -1,0 +1,82 @@
+# TM and tutor moves shared by the whole family
+family-teachable:
+  - Attract
+  - Bounce
+  - Confide
+  - Covet
+  - DazzlingGleam
+  - DoubleTeam
+  - Endeavor
+  - EnergyBall
+  - Facade
+  - Frustration
+  - GigaDrain
+  - GrassKnot
+  - HelpingHand
+  - HiddenPower
+  - LightScreen
+  - NaturePower
+  - Protect
+  - Reflect
+  - Rest
+  - Return
+  - Round
+  - Safeguard
+  - SeedBomb
+  - SleepTalk
+  - Snore
+  - SolarBeam
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Synthesis
+  - Toxic
+  - WorrySeed
+  - ZenHeadbutt
+Bounsweet:
+  level:
+    '1': [Splash]
+    '5': [PlayNice]
+    '9': [RapidSpin]
+    '13': [RazorLeaf]
+    '17': [SweetScent]
+    '21': [MagicalLeaf]
+    '25': [TeeterDance]
+    '29': [Flail]
+    '33': [AromaticMist]
+  egg: [Acupressure, Charm, Feint, GrassWhistle, PlayRough, Synthesis]
+Steenee:
+  level:
+    '1': [DoubleSlap, PlayNice, RapidSpin, RazorLeaf, Splash]
+    '17': [SweetScent]
+    '21': [MagicalLeaf]
+    '25': [TeeterDance]
+    '29': [Stomp]
+    '33': [AromaticMist]
+    '37': [Captivate]
+    '41': [Aromatherapy]
+    '45': [LeafStorm]
+  teachable: [Fling, KnockOff, LowSweep, Payback]
+Tsareena:
+  level:
+    '1': [DoubleSlap, Punishment, RapidSpin, RazorLeaf, Splash, Swagger, TropKick]
+    '17': [SweetScent]
+    '21': [MagicalLeaf]
+    '25': [TeeterDance]
+    '29': [Stomp]
+    '33': [AromaticMist]
+    '37': [Captivate]
+    '41': [Aromatherapy]
+    '45': [LeafStorm]
+    '49': [HiJumpKick]
+    '53': [PowerWhip]
+  teachable:
+    - Acrobatics
+    - Fling
+    - GigaImpact
+    - KnockOff
+    - LaserFocus
+    - LowKick
+    - LowSweep
+    - Payback
+    - UTurn

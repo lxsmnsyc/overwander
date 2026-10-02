@@ -1,0 +1,5 @@
+Mewtwo:
+  types: [Psychic]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Mountain, AlpineTundra]
+  active: [Night]

@@ -1,0 +1,16 @@
+# The perfume bird and the fragrance it becomes. Nothing is staged
+# yet: Aromatisse has only two of its animations drawn, so the line
+# waits for the rest
+Spritzee:
+  types: [Fairy]
+  egg-groups: [Fairy]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Aromatisse
+      method: [HeldItem, Trade]
+      item: Sachet
+Aromatisse:
+  types: [Fairy]
+  egg-groups: [Fairy]
+  active: [Morning, Day]
+  evolves-from: Spritzee

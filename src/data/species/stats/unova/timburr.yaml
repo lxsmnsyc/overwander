@@ -1,0 +1,18 @@
+Timburr:
+  stats: { HP: 75, Attack: 80, Defense: 55, SpecialAttack: 25, SpecialDefense: 35, Speed: 35 }
+  catch-rate: 180
+  height: 0.6
+  weight: 12.5
+  gender: [3, 1]
+Gurdurr:
+  stats: { HP: 85, Attack: 105, Defense: 85, SpecialAttack: 40, SpecialDefense: 50, Speed: 40 }
+  catch-rate: 90
+  height: 1.2
+  weight: 40
+  gender: [3, 1]
+Conkeldurr:
+  stats: { HP: 105, Attack: 140, Defense: 95, SpecialAttack: 55, SpecialDefense: 65, Speed: 45 }
+  catch-rate: 45
+  height: 1.4
+  weight: 87
+  gender: [3, 1]

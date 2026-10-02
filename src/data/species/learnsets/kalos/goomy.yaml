@@ -1,0 +1,124 @@
+family-teachable:
+  - Attract
+  - BodySlam
+  - Charm
+  - Confide
+  - Curse
+  - DoubleTeam
+  - DracoMeteor
+  - DragonPulse
+  - Endure
+  - Facade
+  - Frustration
+  - HiddenPower
+  - Infestation
+  - IronTail
+  - MudShot
+  - MuddyWater
+  - Outrage
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - RockSlide
+  - Round
+  - SecretPower
+  - ShockWave
+  - SleepTalk
+  - SludgeBomb
+  - SludgeWave
+  - Snore
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - TakeDown
+  - Thunderbolt
+  - Toxic
+  - WaterPulse
+Goomy:
+  level:
+    '1': [Tackle, Bubble, Absorb]
+    '5': [WaterGun]
+    '6': [AcidSpray]
+    '9': [Protect]
+    '10': [DragonBreath]
+    '11': [AcidArmor]
+    '13': [Bide]
+    '18': [WaterPulse]
+    '20': [Flail]
+    '25': [RainDance, WaterPulse]
+    '32': [BodySlam]
+    '38': [MuddyWater]
+    '41': [Curse]
+    '43': [Curse]
+  egg: [AcidArmor, Counter, Curse, Endure, IronTail, PoisonTail]
+Sliggoo:
+  level:
+    '1': [Tackle, Bubble, Absorb, WaterGun, AcidSpray, AcidArmor, DragonBreath]
+    '9': [Protect]
+    '13': [Bide]
+    '20': [Flail]
+    '25': [RainDance, WaterPulse]
+    '32': [BodySlam]
+    '35': [DragonPulse]
+    '38': [MuddyWater]
+    '43': [Curse]
+  teachable: [AcidSpray, Blizzard, IceBeam, Thunder]
+Goodra:
+  level:
+    '1':
+      - Tackle
+      - Bubble
+      - Absorb
+      - WaterGun
+      - AcidSpray
+      - DragonBreath
+      - Protect
+      - Feint
+      - Outrage
+      - PoisonTail
+      - AquaTail
+    '13': [Bide]
+    '20': [Flail]
+    '25': [RainDance, WaterPulse]
+    '32': [BodySlam]
+    '35': [DragonPulse]
+    '38': [MuddyWater]
+    '43': [Curse]
+    '50': [PowerWhip]
+  teachable:
+    - AcidSpray
+    - AquaTail
+    - Assurance
+    - Blizzard
+    - Bulldoze
+    - DragonClaw
+    - DragonTail
+    - Earthquake
+    - FireBlast
+    - FirePunch
+    - Flamethrower
+    - FocusBlast
+    - FocusPunch
+    - GigaImpact
+    - Hail
+    - HydroPump
+    - HyperBeam
+    - IceBeam
+    - Incinerate
+    - KnockOff
+    - MegaKick
+    - MegaPunch
+    - PoisonTail
+    - PowerWhip
+    - RockSmash
+    - Scald
+    - Strength
+    - Superpower
+    - Surf
+    - Thunder
+    - ThunderPunch
+    - WeatherBall
+    - BrutalSwing
+    - StompingTantrum
+    - LaserFocus

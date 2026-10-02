@@ -1,0 +1,12 @@
+Bergmite:
+  stats: { HP: 55, Attack: 69, Defense: 85, SpecialAttack: 32, SpecialDefense: 35, Speed: 28 }
+  catch-rate: 190
+  height: 1
+  weight: 99.5
+  gender: [1, 1]
+Avalugg:
+  stats: { HP: 95, Attack: 117, Defense: 184, SpecialAttack: 44, SpecialDefense: 46, Speed: 28 }
+  catch-rate: 55
+  height: 2
+  weight: 505
+  gender: [1, 1]

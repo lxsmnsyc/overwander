@@ -1,0 +1,9 @@
+Darumaka:
+  abilities: [Hustle]
+  hidden: [InnerFocus]
+Darmanitan:
+  abilities: [SheerForce]
+  hidden: [ZenMode]
+DarmanitanZen:
+  abilities: [SheerForce]
+  hidden: [ZenMode]

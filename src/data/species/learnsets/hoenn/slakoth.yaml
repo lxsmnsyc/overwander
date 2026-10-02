@@ -1,0 +1,111 @@
+family-teachable:
+  - FocusPunch
+  - WaterPulse
+  - Toxic
+  - BulkUp
+  - HiddenPower
+  - SunnyDay
+  - IceBeam
+  - Blizzard
+  - Protect
+  - RainDance
+  - Frustration
+  - SolarBeam
+  - Thunderbolt
+  - Thunder
+  - Return
+  - ShadowBall
+  - BrickBreak
+  - DoubleTeam
+  - ShockWave
+  - Flamethrower
+  - FireBlast
+  - AerialAce
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Cut
+  - Strength
+  - RockSmash
+  - MegaPunch
+  - MegaKick
+  - BodySlam
+  - DoubleEdge
+  - Counter
+  - SeismicToss
+  - Mimic
+  - RockSlide
+  - Substitute
+  - DynamicPunch
+  - Snore
+  - IcyWind
+  - Endure
+  - MudSlap
+  - IcePunch
+  - Swagger
+  - FuryCutter
+  - ThunderPunch
+  - FirePunch
+  - SleepTalk
+  - Captivate
+  - GunkShot
+  - NaturalGift
+  - ShadowClaw
+  - SuckerPunch
+  - HoneClaws
+  - AfterYou
+  - Round
+  - Incinerate
+  - Retaliate
+  - WorkUp
+  - Confide
+  - PowerUpPunch
+Slakoth:
+  level:
+    '1': [Scratch, Yawn]
+    '7': [Encore]
+    '13': [SlackOff]
+    '19': [FeintAttack]
+    '25': [Amnesia]
+    '31': [Covet]
+    '37': [Counter, ChipAway]
+    '38': [PlayRough]
+    '43': [Flail]
+  teachable: [Fling]
+  egg: [Slash, Pursuit, CrushClaw, Curse, HammerArm, NightSlash, AfterYou]
+Vigoroth:
+  level:
+    '1': [Scratch, FocusEnergy, Encore, Uproar]
+    '19': [FurySwipes]
+    '25': [Endure]
+    '31': [Slash]
+    '37': [Counter]
+    '43': [FocusPunch, ChipAway]
+    '49': [Reversal]
+  teachable: [Roar, Earthquake, Taunt, LowSweep, Bulldoze, Fling, FocusBlast, RockClimb]
+Slaking:
+  level:
+    '1': [Scratch, Yawn, Encore, SlackOff]
+    '19': [FeintAttack]
+    '25': [Amnesia]
+    '31': [Covet]
+    '36': [Swagger]
+    '37': [Counter, ChipAway]
+    '43': [Flail]
+    '49': [Fling]
+    '55': [Punishment]
+    '61': [HammerArm]
+  teachable:
+    - Roar
+    - Earthquake
+    - Taunt
+    - LowSweep
+    - Bulldoze
+    - HyperBeam
+    - FocusBlast
+    - GigaImpact
+    - RockClimb
+    - SmackDown
+    - Quash
+    - StompingTantrum

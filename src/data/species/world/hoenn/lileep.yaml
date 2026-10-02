@@ -1,0 +1,14 @@
+Lileep:
+  types: [Rock, Grass]
+  egg-groups: [Water3]
+  active: any
+  evolves-into:
+    - species: Cradily
+      method: [Level]
+      level: 40
+Cradily:
+  types: [Rock, Grass]
+  egg-groups: [Water3]
+  habitat: Amphibious
+  active: any
+  evolves-from: Lileep

@@ -1,0 +1,6 @@
+Wishiwashi:
+  abilities: [Schooling]
+  hidden: [SwiftSwim, WimpOut, Anticipation]
+WishiwashiSchool:
+  abilities: [Schooling]
+  hidden: [SwiftSwim, WimpOut, Anticipation]

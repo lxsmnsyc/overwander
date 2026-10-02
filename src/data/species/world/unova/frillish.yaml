@@ -1,0 +1,20 @@
+# The jellyfish that drifts under ships, and the one sailors blame
+# for the ones that never came back
+Frillish:
+  types: [Water, Ghost]
+  egg-groups: [Amorphous]
+  habitat: Water
+  # Drifting in open water, under the ships
+  biomes: [Ocean, DeepOcean]
+  active: any
+  evolves-into:
+    - species: Jellicent
+      method: [Level]
+      level: 40
+Jellicent:
+  types: [Water, Ghost]
+  egg-groups: [Amorphous]
+  habitat: Water
+  biomes: [Ocean, DeepOcean]
+  active: any
+  evolves-from: Frillish

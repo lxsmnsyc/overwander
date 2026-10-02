@@ -1,0 +1,59 @@
+Jirachi:
+  level:
+    '1': [Wish, Confusion]
+    '5': [Rest]
+    '10': [Swift]
+    '15': [HelpingHand]
+    '20': [Psychic]
+    '25': [Refresh]
+    '35': [DoubleEdge, ZenHeadbutt]
+    '40': [FutureSight]
+    '45': [CosmicPower, Gravity]
+    '50': [DoomDesire, HealingWish]
+    '65': [LastResort]
+  teachable:
+    - CalmMind
+    - Toxic
+    - HiddenPower
+    - SunnyDay
+    - Thunderbolt
+    - Thunder
+    - HyperBeam
+    - LightScreen
+    - Protect
+    - RainDance
+    - Safeguard
+    - Frustration
+    - Return
+    - Psychic
+    - ShadowBall
+    - DoubleTeam
+    - Reflect
+    - ShockWave
+    - Sandstorm
+    - AerialAce
+    - Facade
+    - SecretPower
+    - Rest
+    - SkillSwap
+    - Flash
+    - WaterPulse
+    - ChargeBeam
+    - DrainPunch
+    - EnergyBall
+    - FlashCannon
+    - Fling
+    - GigaImpact
+    - GrassKnot
+    - IronHead
+    - NaturalGift
+    - StealthRock
+    - TrickRoom
+    - UTurn
+    - Psyshock
+    - Telekinesis
+    - MagicRoom
+    - Round
+    - Confide
+    - DazzlingGleam
+    - PowerUpPunch

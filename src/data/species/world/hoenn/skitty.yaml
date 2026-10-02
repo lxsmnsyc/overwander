@@ -1,0 +1,15 @@
+Skitty:
+  types: [Normal]
+  egg-groups: [Field, Fairy]
+  biomes: [Grassland, Shrubland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Delcatty
+      method: [UsedItem]
+      item: MoonStone
+Delcatty:
+  types: [Normal]
+  egg-groups: [Field, Fairy]
+  biomes: [Grassland, Shrubland]
+  active: [Morning, Day]
+  evolves-from: Skitty

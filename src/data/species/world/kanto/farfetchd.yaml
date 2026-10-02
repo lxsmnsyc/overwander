@@ -1,0 +1,5 @@
+Farfetchd:
+  types: [Normal, Flying]
+  egg-groups: [Flying, Field]
+  biomes: [Grassland, Swamp, Mangrove]
+  active: [Morning, Day]

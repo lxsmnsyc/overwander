@@ -1,0 +1,125 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - MegaPunch
+  - MegaKick
+  - Toxic
+  - BodySlam
+  - TakeDown
+  - DoubleEdge
+  - BubbleBeam
+  - WaterGun
+  - IceBeam
+  - Blizzard
+  - Submission
+  - Counter
+  - SeismicToss
+  - Rage
+  - Dig
+  - Mimic
+  - DoubleTeam
+  - Reflect
+  - Bide
+  - SkullBash
+  - Rest
+  - Substitute
+  - Cut
+  - Surf
+  - Strength
+  - IcePunch
+  - Headbutt
+  - DefenseCurl
+  - Waterfall
+  - Snore
+  - Curse
+  - Protect
+  - MudSlap
+  - IcyWind
+  - Endure
+  - Rollout
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - DynamicPunch
+  - IronTail
+  - HiddenPower
+  - RainDance
+  - RockSmash
+  - Whirlpool
+  - BrickBreak
+  - Dive
+  - Facade
+  - FocusPunch
+  - SecretPower
+  - WaterPulse
+  - Brine
+  - Captivate
+  - Fling
+  - GyroBall
+  - NaturalGift
+  - ZenHeadbutt
+  - Round
+  - Scald
+  - WaterPledge
+  - Confide
+  - PowerUpPunch
+Squirtle:
+  level:
+    '1': [Tackle, TailWhip]
+    '7': [Bubble]
+    '10': [Withdraw]
+    '13': [WaterGun]
+    '18': [Bite]
+    '23': [RapidSpin]
+    '28': [Protect, AquaTail]
+    '33': [RainDance]
+    '35': [SkullBash]
+    '42': [HydroPump]
+  egg:
+    - Haze
+    - Mist
+    - Confusion
+    - Flail
+    - Foresight
+    - MirrorCoat
+    - MudSport
+    - Refresh
+    - Yawn
+    - AquaJet
+    - AquaRing
+Wartortle:
+  level:
+    '1': [Tackle, TailWhip, Bubble]
+    '10': [Withdraw]
+    '13': [WaterGun]
+    '19': [Bite]
+    '25': [RapidSpin]
+    '31': [Protect]
+    '32': [AquaTail]
+    '37': [RainDance]
+    '39': [SkullBash]
+    '47': [HydroPump]
+Blastoise:
+  level:
+    '1': [Tackle, TailWhip, Bubble, WaterGun, Withdraw, FlashCannon]
+    '19': [Bite]
+    '25': [RapidSpin]
+    '31': [Protect]
+    '32': [AquaTail]
+    '42': [SkullBash, RainDance]
+    '52': [HydroPump]
+  teachable:
+    - HyperBeam
+    - Earthquake
+    - Fissure
+    - Roar
+    - HydroCannon
+    - Avalanche
+    - FocusBlast
+    - GigaImpact
+    - RockClimb
+    - SmackDown
+    - Bulldoze
+    - DragonTail
+    - Liquidation

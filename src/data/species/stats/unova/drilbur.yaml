@@ -1,0 +1,12 @@
+Drilbur:
+  stats: { HP: 60, Attack: 85, Defense: 40, SpecialAttack: 30, SpecialDefense: 45, Speed: 68 }
+  catch-rate: 120
+  height: 0.3
+  weight: 8.5
+  gender: [1, 1]
+Excadrill:
+  stats: { HP: 110, Attack: 135, Defense: 60, SpecialAttack: 50, SpecialDefense: 65, Speed: 88 }
+  catch-rate: 60
+  height: 0.7
+  weight: 40.4
+  gender: [1, 1]

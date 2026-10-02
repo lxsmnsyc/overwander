@@ -1,0 +1,15 @@
+Drowzee:
+  types: [Psychic]
+  egg-groups: [HumanLike]
+  biomes: [Grassland, Woodland]
+  active: [Night]
+  evolves-into:
+    - species: Hypno
+      method: [Level]
+      level: 26
+Hypno:
+  types: [Psychic]
+  egg-groups: [HumanLike]
+  biomes: [Grassland, Woodland]
+  active: [Night]
+  evolves-from: Drowzee

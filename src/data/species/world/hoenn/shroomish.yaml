@@ -1,0 +1,15 @@
+Shroomish:
+  types: [Grass]
+  egg-groups: [Fairy, Grass]
+  biomes: [TemperateRainforest, TropicalRainforest]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Breloom
+      method: [Level]
+      level: 23
+Breloom:
+  types: [Grass, Fighting]
+  egg-groups: [Fairy, Grass]
+  biomes: [TemperateRainforest, TropicalRainforest]
+  active: [Evening, Night]
+  evolves-from: Shroomish

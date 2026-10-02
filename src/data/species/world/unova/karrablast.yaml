@@ -1,0 +1,18 @@
+# The bug that wants somebody else's shell. It only gets one by
+# being handed over as a Shelmet comes the other way
+Karrablast:
+  types: [Bug]
+  egg-groups: [Bug]
+  # The woods of Route 6 it shares with Shelmet, by daylight
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Escavalier
+      method: [Trade]
+      partner: Shelmet
+Escavalier:
+  types: [Bug, Steel]
+  egg-groups: [Bug]
+  biomes: [TemperateForest, Woodland]
+  active: [Morning, Day]
+  evolves-from: Karrablast

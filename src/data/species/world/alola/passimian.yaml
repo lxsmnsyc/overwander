@@ -1,0 +1,5 @@
+Passimian:
+  types: [Fighting]
+  egg-groups: [Field]
+  biomes: [TropicalRainforest, TropicalSeasonalForest]
+  active: [Morning, Day, Evening]

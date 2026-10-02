@@ -1,0 +1,12 @@
+Magnemite:
+  abilities: [MagnetPull, Sturdy]
+  hidden: [Analytic]
+Magneton:
+  abilities: [MagnetPull, Sturdy]
+  hidden: [Analytic]
+Magnezone:
+  abilities: [MagnetPull, Sturdy]
+  # Levitate is this registry's rather than the mainline's: it
+  # hangs in the air in every picture of it, and Electric with Steel
+  # takes Ground at 4x
+  hidden: [Analytic, Levitate]

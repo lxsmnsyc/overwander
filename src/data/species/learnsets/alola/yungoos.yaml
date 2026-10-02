@@ -1,0 +1,79 @@
+# TM and tutor moves shared by the whole family
+family-teachable:
+  - Attract
+  - Confide
+  - DoubleTeam
+  - Earthquake
+  - EchoedVoice
+  - Endeavor
+  - Facade
+  - Frustration
+  - HiddenPower
+  - IronTail
+  - LastResort
+  - Payback
+  - Protect
+  - Rest
+  - Return
+  - RockTomb
+  - Round
+  - Sandstorm
+  - ShockWave
+  - SleepTalk
+  - Snore
+  - StompingTantrum
+  - Substitute
+  - SuperFang
+  - Swagger
+  - Taunt
+  - Thief
+  - Torment
+  - Toxic
+  - UTurn
+  - Uproar
+  - WorkUp
+Yungoos:
+  level:
+    '1': [Tackle]
+    '3': [Leer]
+    '7': [Pursuit]
+    '10': [SandAttack]
+    '13': [OdorSleuth]
+    '16': [Bide]
+    '19': [Bite]
+    '22': [MudSlap]
+    '25': [SuperFang]
+    '28': [TakeDown]
+    '31': [ScaryFace]
+    '34': [Crunch]
+    '37': [HyperFang]
+    '40': [Yawn]
+    '43': [Thrash]
+    '46': [Rest]
+  egg: [FireFang, IceFang, LastResort, Revenge, ThunderFang]
+Gumshoos:
+  level:
+    '1': [Leer, Pursuit, SandAttack, Tackle]
+    '13': [OdorSleuth]
+    '16': [Bide]
+    '19': [Bite]
+    '23': [MudSlap]
+    '27': [SuperFang]
+    '31': [TakeDown]
+    '35': [ScaryFace]
+    '39': [Crunch]
+    '43': [HyperFang]
+    '47': [Yawn]
+    '51': [Thrash]
+    '55': [Rest]
+  teachable:
+    - Block
+    - Bulldoze
+    - DualChop
+    - FirePunch
+    - Fling
+    - IcePunch
+    - IronHead
+    - Roar
+    - ThunderPunch
+    - ZenHeadbutt

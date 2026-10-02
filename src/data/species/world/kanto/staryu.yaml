@@ -1,0 +1,17 @@
+Staryu:
+  types: [Water]
+  egg-groups: [Water3]
+  habitat: Water
+  biomes: [Beach, CoralReef, RockyCoast, KelpForest]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Starmie
+      method: [UsedItem]
+      item: WaterStone
+Starmie:
+  types: [Water, Psychic]
+  egg-groups: [Water3]
+  habitat: Water
+  biomes: [Beach, CoralReef, RockyCoast, KelpForest]
+  active: [Evening, Night]
+  evolves-from: Staryu

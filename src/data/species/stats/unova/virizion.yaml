@@ -1,0 +1,6 @@
+Virizion:
+  stats: { HP: 91, Attack: 90, Defense: 72, SpecialAttack: 90, SpecialDefense: 129, Speed: 108 }
+  catch-rate: 3
+  height: 2
+  weight: 200
+  gender: genderless

@@ -1,0 +1,73 @@
+# TM and tutor moves shared by the whole family
+
+Comfey:
+  level:
+    '1': [FlowerShield, HelpingHand, VineWhip]
+    '4': [LeechSeed]
+    '7': [DrainingKiss]
+    '10': [MagicalLeaf]
+    '13': [Growth]
+    '16': [Wrap]
+    '19': [SweetKiss]
+    '22': [NaturalGift]
+    '25': [PetalBlizzard]
+    '28': [Synthesis]
+    '31': [SweetScent]
+    '34': [GrassKnot]
+    '37': [FloralHealing]
+    '40': [PetalDance]
+    '43': [Aromatherapy]
+    '46': [GrassyTerrain]
+    '49': [PlayRough]
+  teachable:
+    - Acrobatics
+    - AfterYou
+    - AllySwitch
+    - Attract
+    - Bind
+    - CalmMind
+    - Confide
+    - Covet
+    - DazzlingGleam
+    - Defog
+    - DoubleTeam
+    - EchoedVoice
+    - EnergyBall
+    - Facade
+    - Fling
+    - Frustration
+    - GigaDrain
+    - GrassKnot
+    - HealBell
+    - HelpingHand
+    - HiddenPower
+    - HyperBeam
+    - LightScreen
+    - MagicCoat
+    - NaturePower
+    - PainSplit
+    - Protect
+    - PsychUp
+    - Rest
+    - Return
+    - RolePlay
+    - Round
+    - Safeguard
+    - SeedBomb
+    - SleepTalk
+    - Snore
+    - SolarBeam
+    - Substitute
+    - SunnyDay
+    - Swagger
+    - Synthesis
+    - Tailwind
+    - Taunt
+    - Telekinesis
+    - Thief
+    - Toxic
+    - Trick
+    - TrickRoom
+    - UTurn
+    - WorrySeed
+  egg: [AfterYou, Amnesia, Endure, LuckyChant]

@@ -1,0 +1,26 @@
+Deerling:
+  abilities: [Chlorophyll, SapSipper]
+  hidden: [SereneGrace]
+DeerlingSummer:
+  abilities: [Chlorophyll, SapSipper]
+  hidden: [SereneGrace]
+DeerlingAutumn:
+  abilities: [Chlorophyll, SapSipper]
+  hidden: [SereneGrace]
+DeerlingWinter:
+  abilities: [Chlorophyll, SapSipper]
+  hidden: [SereneGrace]
+Sawsbuck:
+  abilities: [Chlorophyll, SapSipper]
+  # Fur Coat is this registry's rather than the mainline's: the
+  # coat it changes with the year is the whole of what the line is
+  hidden: [SereneGrace, FurCoat]
+SawsbuckSummer:
+  abilities: [Chlorophyll, SapSipper]
+  hidden: [SereneGrace, FurCoat]
+SawsbuckAutumn:
+  abilities: [Chlorophyll, SapSipper]
+  hidden: [SereneGrace, FurCoat]
+SawsbuckWinter:
+  abilities: [Chlorophyll, SapSipper]
+  hidden: [SereneGrace, FurCoat]

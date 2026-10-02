@@ -1,0 +1,19 @@
+Gligar:
+  types: [Ground, Flying]
+  egg-groups: [Bug]
+  biomes: [Mountain, Badlands, ColdDesert]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Gliscor
+      method: [Level, HeldItem, TimeOfDay]
+      level: 35
+      item: RazorFang
+      time: [Evening, Night]
+# The shape that comes off the cliff at night: a Gliscor glides down
+# without a sound and is back up on the rock before anybody looks
+Gliscor:
+  types: [Ground, Flying]
+  egg-groups: [Bug]
+  biomes: [Mountain, Badlands, ColdDesert]
+  active: [Evening, Night]
+  evolves-from: Gligar

@@ -1,0 +1,9 @@
+Zigzagoon:
+  abilities: [Pickup, Gluttony]
+  hidden: [QuickFeet]
+Linoone:
+  abilities: [Pickup, Gluttony]
+  # Frisk is this registry's rather than the mainline's: it already
+  # rummages with Pickup, Covet and Thief, and a final evolution is
+  # filled to four
+  hidden: [QuickFeet, Frisk]

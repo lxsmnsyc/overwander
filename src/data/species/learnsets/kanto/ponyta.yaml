@@ -1,0 +1,71 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - BodySlam
+  - TakeDown
+  - DoubleEdge
+  - Rage
+  - Mimic
+  - DoubleTeam
+  - Reflect
+  - Bide
+  - FireBlast
+  - Swift
+  - SkullBash
+  - Rest
+  - Substitute
+  - Headbutt
+  - Snore
+  - Curse
+  - Protect
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - IronTail
+  - HiddenPower
+  - SunnyDay
+  - Flamethrower
+  - Facade
+  - Overheat
+  - SecretPower
+  - SolarBeam
+  - Strength
+  - Captivate
+  - NaturalGift
+  - FlameCharge
+  - Round
+  - EchoedVoice
+  - Incinerate
+  - WildCharge
+  - Confide
+Ponyta:
+  level:
+    '1': [Ember, Tackle]
+    '4': [Growl]
+    '8': [TailWhip]
+    '19': [Stomp]
+    '21': [FlameCharge]
+    '26': [FireSpin]
+    '33': [Inferno]
+    '34': [TakeDown]
+    '43': [Agility]
+    '45': [Bounce]
+    '46': [FlareBlitz]
+    '53': [FireBlast]
+  egg: [DoubleKick, Thrash, Hypnosis, QuickAttack, FlameWheel, Charm, HighHorsepower]
+Rapidash:
+  level:
+    '1': [Ember, TailWhip, Stomp, Growl, Tackle, QuickAttack, PoisonJab]
+    '21': [FlameCharge]
+    '26': [FireSpin]
+    '33': [Inferno]
+    '34': [TakeDown]
+    '40': [FuryAttack]
+    '47': [Agility]
+    '50': [Bounce]
+    '56': [FlareBlitz]
+    '61': [FireBlast]
+  teachable: [HyperBeam, GigaImpact, DrillRun, ThroatChop, SmartStrike]

@@ -1,0 +1,137 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - WaterPulse
+  - Roar
+  - Toxic
+  - HiddenPower
+  - SunnyDay
+  - Protect
+  - RainDance
+  - Frustration
+  - IronTail
+  - Earthquake
+  - Return
+  - Dig
+  - DoubleTeam
+  - ShockWave
+  - Sandstorm
+  - RockTomb
+  - AerialAce
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Cut
+  - Strength
+  - RockSmash
+  - BodySlam
+  - DoubleEdge
+  - Mimic
+  - RockSlide
+  - Substitute
+  - Rollout
+  - Snore
+  - Endure
+  - MudSlap
+  - Swagger
+  - FuryCutter
+  - SleepTalk
+  - DefenseCurl
+  - Captivate
+  - EarthPower
+  - MagnetRise
+  - NaturalGift
+  - RockPolish
+  - ShadowClaw
+  - StealthRock
+  - HoneClaws
+  - Round
+  - Bulldoze
+  - Confide
+Aron:
+  level:
+    '1': [Tackle]
+    '4': [Harden]
+    '7': [MudSlap]
+    '10': [Headbutt]
+    '13': [MetalClaw]
+    '17': [IronDefense]
+    '21': [Roar]
+    '25': [TakeDown]
+    '29': [IronTail, IronHead]
+    '34': [Protect]
+    '39': [MetalSound, Autotomize]
+    '43': [HeavySlam]
+    '44': [DoubleEdge]
+    '46': [MetalBurst]
+  egg: [Stomp, Endeavor, SmellingSalts, DragonRush, HeadSmash]
+Lairon:
+  level:
+    '1': [Tackle, Harden, MudSlap, Headbutt]
+    '13': [MetalClaw]
+    '17': [IronDefense]
+    '21': [Roar]
+    '25': [TakeDown]
+    '29': [IronTail, IronHead]
+    '37': [Protect]
+    '45': [MetalSound, Autotomize]
+    '51': [HeavySlam]
+    '53': [DoubleEdge]
+    '56': [MetalBurst]
+  teachable: [StoneEdge, StompingTantrum]
+Aggron:
+  level:
+    '1': [Tackle, Harden, MudSlap, Headbutt]
+    '13': [MetalClaw]
+    '17': [IronDefense]
+    '21': [Roar]
+    '25': [TakeDown]
+    '29': [IronTail, IronHead]
+    '37': [Protect]
+    '48': [Autotomize]
+    '50': [MetalSound]
+    '57': [HeavySlam]
+    '63': [DoubleEdge]
+    '65': [MetalBurst]
+  teachable:
+    - FocusPunch
+    - DragonClaw
+    - IceBeam
+    - Blizzard
+    - HyperBeam
+    - SolarBeam
+    - Thunderbolt
+    - Thunder
+    - BrickBreak
+    - Flamethrower
+    - FireBlast
+    - Taunt
+    - Surf
+    - MegaPunch
+    - MegaKick
+    - Counter
+    - SeismicToss
+    - DynamicPunch
+    - ThunderWave
+    - IcyWind
+    - IcePunch
+    - ThunderPunch
+    - FirePunch
+    - AquaTail
+    - Avalanche
+    - DarkPulse
+    - DragonPulse
+    - FlashCannon
+    - Fling
+    - FocusBlast
+    - GigaImpact
+    - Payback
+    - RockClimb
+    - StoneEdge
+    - SmackDown
+    - Incinerate
+    - DragonTail
+    - PowerUpPunch
+    - BrutalSwing
+    - StompingTantrum
+    - SmartStrike

@@ -1,0 +1,6 @@
+Absol:
+  stats: { HP: 65, Attack: 130, Defense: 60, SpecialAttack: 75, SpecialDefense: 60, Speed: 75 }
+  catch-rate: 30
+  height: 1.2
+  weight: 47
+  gender: [1, 1]

@@ -1,0 +1,6 @@
+Passimian:
+  stats: { HP: 100, Attack: 120, Defense: 90, SpecialAttack: 40, SpecialDefense: 60, Speed: 80 }
+  catch-rate: 45
+  height: 2
+  weight: 82.8
+  gender: [4, 4]

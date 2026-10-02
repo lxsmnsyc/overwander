@@ -1,0 +1,72 @@
+# TM, HM and tutor moves shared by all three birds
+
+Articuno:
+  level:
+    '1': [Peck, IceBeam, Gust, PowderSnow, FreezeDry]
+    '13': [Mist]
+    '15': [IceShard]
+    '25': [Agility]
+    '37': [MindReader]
+    '51': [Blizzard]
+    '57': [Roost]
+    '61': [Reflect]
+    '64': [Tailwind]
+    '85': [SheerCold]
+    '92': [Hurricane]
+  teachable:
+    - Toxic
+    - RazorWind
+    - Whirlwind
+    - TakeDown
+    - DoubleEdge
+    - HyperBeam
+    - Rage
+    - Mimic
+    - DoubleTeam
+    - Reflect
+    - Bide
+    - Swift
+    - SkyAttack
+    - Rest
+    - Substitute
+    - Fly
+    - Roar
+    - Snore
+    - Curse
+    - Protect
+    - MudSlap
+    - Detect
+    - Sandstorm
+    - Endure
+    - Swagger
+    - SteelWing
+    - SleepTalk
+    - Return
+    - Frustration
+    - HiddenPower
+    - RainDance
+    - SunnyDay
+    - RockSmash
+    - Round
+    - SkyDrop
+    - Confide
+    - IceBeam
+    - Blizzard
+    - BubbleBeam
+    - WaterGun
+    - Surf
+    - IcyWind
+    - AerialAce
+    - Facade
+    - SecretPower
+    - WaterPulse
+    - Avalanche
+    - Defog
+    - GigaImpact
+    - NaturalGift
+    - OminousWind
+    - Pluck
+    - UTurn
+    - FrostBreath
+    - AuroraVeil
+    - LaserFocus

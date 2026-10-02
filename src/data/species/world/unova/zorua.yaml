@@ -1,0 +1,18 @@
+# The tricksters: neither of them is ever what it looks like, and a
+# Zoroark will keep a whole wood looking like somewhere else to keep
+# people away from its den
+Zorua:
+  types: [Dark]
+  egg-groups: [Field]
+  biomes: [TemperateForest, Woodland]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Zoroark
+      method: [Level]
+      level: 30
+Zoroark:
+  types: [Dark]
+  egg-groups: [Field]
+  biomes: [TemperateForest, Woodland]
+  active: [Evening, Night]
+  evolves-from: Zorua

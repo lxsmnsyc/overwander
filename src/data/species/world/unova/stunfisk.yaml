@@ -1,0 +1,9 @@
+# The flat fish buried in the mud of a tidal flat, grinning at
+# whatever stands on it
+Stunfisk:
+  types: [Ground, Electric]
+  egg-groups: [Water1, Amorphous]
+  habitat: Amphibious
+  # Flat in the mud of the marshes, waiting to be stepped on
+  biomes: [Swamp, Bog]
+  active: any

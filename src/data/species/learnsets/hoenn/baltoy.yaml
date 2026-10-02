@@ -1,0 +1,88 @@
+# TM and tutor moves both stages share
+family-teachable:
+  - Toxic
+  - HiddenPower
+  - SunnyDay
+  - IceBeam
+  - LightScreen
+  - Protect
+  - RainDance
+  - Frustration
+  - SolarBeam
+  - Earthquake
+  - Return
+  - Dig
+  - Psychic
+  - ShadowBall
+  - DoubleTeam
+  - Reflect
+  - Sandstorm
+  - RockTomb
+  - Facade
+  - SecretPower
+  - Rest
+  - SkillSwap
+  - Flash
+  - DoubleEdge
+  - Mimic
+  - DreamEater
+  - Explosion
+  - RockSlide
+  - Substitute
+  - PsychUp
+  - Snore
+  - Endure
+  - MudSlap
+  - Swagger
+  - SleepTalk
+  - ChargeBeam
+  - GrassKnot
+  - Gravity
+  - GyroBall
+  - NaturalGift
+  - RockPolish
+  - StealthRock
+  - TrickRoom
+  - ZenHeadbutt
+  - WonderRoom
+  - Psyshock
+  - Telekinesis
+  - SmackDown
+  - Round
+  - AllySwitch
+  - Bulldoze
+  - DrillRun
+  - Confide
+  - DazzlingGleam
+Baltoy:
+  level:
+    '1': [Confusion]
+    '3': [Harden]
+    '5': [RapidSpin]
+    '7': [MudSlap]
+    '11': [Psybeam]
+    '15': [RockTomb]
+    '19': [SelfDestruct]
+    '25': [AncientPower]
+    '31': [Sandstorm, PowerTrick]
+    '34': [GuardSplit, PowerSplit]
+    '37': [CosmicPower]
+    '45': [Explosion]
+    '53': [EarthPower]
+    '61': [HealBlock]
+Claydol:
+  level:
+    '1': [Confusion, Teleport, Harden, RapidSpin]
+    '7': [MudSlap]
+    '11': [Psybeam]
+    '15': [RockTomb]
+    '19': [SelfDestruct]
+    '25': [AncientPower]
+    '31': [Sandstorm, PowerTrick]
+    '34': [GuardSplit, PowerSplit]
+    '36': [HyperBeam]
+    '42': [CosmicPower]
+    '55': [Explosion]
+    '62': [EarthPower]
+    '73': [HealBlock]
+  teachable: [HyperBeam, Strength, RockSmash, GigaImpact, StoneEdge]

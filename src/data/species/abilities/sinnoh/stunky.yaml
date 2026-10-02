@@ -1,0 +1,8 @@
+Stunky:
+  abilities: [Stench, Aftermath]
+  hidden: [KeenEye]
+Skuntank:
+  abilities: [Stench, Aftermath]
+  # Poison Touch is this registry's rather than the mainline's:
+  # the line fights close in, and nothing else it has puts poison on
+  hidden: [KeenEye, PoisonTouch]

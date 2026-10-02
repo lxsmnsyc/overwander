@@ -1,0 +1,20 @@
+# What a thing hanging off the ceiling learns to do to whatever walks
+
+# The thorn pods: a Ferroseed hooks itself to a cave roof and pulls
+# the minerals out of it, and a Ferrothorn lets go and drags the
+# spikes along with it
+Ferroseed:
+  types: [Grass, Steel]
+  egg-groups: [Grass, Mineral]
+  biomes: [Mountain]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Ferrothorn
+      method: [Level]
+      level: 40
+Ferrothorn:
+  types: [Grass, Steel]
+  egg-groups: [Grass, Mineral]
+  biomes: [Mountain]
+  active: [Evening, Night]
+  evolves-from: Ferroseed

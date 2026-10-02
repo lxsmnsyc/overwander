@@ -1,0 +1,12 @@
+Karrablast:
+  stats: { HP: 50, Attack: 75, Defense: 45, SpecialAttack: 40, SpecialDefense: 45, Speed: 60 }
+  catch-rate: 200
+  height: 0.5
+  weight: 5.9
+  gender: [1, 1]
+Escavalier:
+  stats: { HP: 70, Attack: 135, Defense: 105, SpecialAttack: 60, SpecialDefense: 105, Speed: 20 }
+  catch-rate: 75
+  height: 1
+  weight: 33
+  gender: [1, 1]

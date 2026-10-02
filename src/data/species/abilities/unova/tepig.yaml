@@ -1,0 +1,11 @@
+Tepig:
+  abilities: [Blaze]
+  hidden: [ThickFat]
+Pignite:
+  abilities: [Blaze]
+  hidden: [ThickFat]
+Emboar:
+  abilities: [Blaze]
+  # Iron Fist is this registry's rather than the mainline's: the fists
+  # are what it evolved into having, and both its punches are tutored
+  hidden: [Reckless, IronFist]

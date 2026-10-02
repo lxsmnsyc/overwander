@@ -1,0 +1,26 @@
+Bounsweet:
+  types: [Grass]
+  egg-groups: [Grass]
+  biomes: [TropicalRainforest, TropicalSeasonalForest]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Steenee
+      method: [Level]
+      level: 18
+Steenee:
+  types: [Grass]
+  egg-groups: [Grass]
+  biomes: [TropicalRainforest, TropicalSeasonalForest]
+  active: [Morning, Day]
+  evolves-from: Bounsweet
+  evolves-into:
+    - species: Tsareena
+      method: [Level, KnownMove]
+      level: 29
+      move: Stomp
+Tsareena:
+  types: [Grass]
+  egg-groups: [Grass]
+  biomes: [TropicalRainforest, TropicalSeasonalForest]
+  active: [Morning, Day]
+  evolves-from: Steenee

@@ -1,0 +1,14 @@
+Anorith:
+  types: [Rock, Bug]
+  egg-groups: [Water3]
+  active: any
+  evolves-into:
+    - species: Armaldo
+      method: [Level]
+      level: 40
+Armaldo:
+  types: [Rock, Bug]
+  egg-groups: [Water3]
+  habitat: Amphibious
+  active: any
+  evolves-from: Anorith

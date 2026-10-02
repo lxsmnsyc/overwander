@@ -1,0 +1,12 @@
+Gulpin:
+  stats: { HP: 70, Attack: 43, Defense: 53, SpecialAttack: 43, SpecialDefense: 53, Speed: 40 }
+  catch-rate: 225
+  height: 0.4
+  weight: 10.3
+  gender: [1, 1]
+Swalot:
+  stats: { HP: 100, Attack: 73, Defense: 83, SpecialAttack: 73, SpecialDefense: 83, Speed: 55 }
+  catch-rate: 75
+  height: 1.7
+  weight: 80
+  gender: [1, 1]

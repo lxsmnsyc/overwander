@@ -1,0 +1,17 @@
+Wimpod:
+  types: [Bug, Water]
+  egg-groups: [Bug, Water3]
+  habitat: Amphibious
+  biomes: [Beach, RockyCoast]
+  active: any
+  evolves-into:
+    - species: Golisopod
+      method: [Level]
+      level: 30
+Golisopod:
+  types: [Bug, Water]
+  egg-groups: [Bug, Water3]
+  habitat: Amphibious
+  biomes: [Beach, RockyCoast]
+  active: any
+  evolves-from: Wimpod

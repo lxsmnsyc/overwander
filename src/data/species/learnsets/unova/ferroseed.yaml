@@ -1,0 +1,102 @@
+family-teachable:
+  - Assurance
+  - Attract
+  - BulletSeed
+  - DoubleTeam
+  - Endeavor
+  - Endure
+  - EnergyBall
+  - Explosion
+  - Facade
+  - Flash
+  - FlashCannon
+  - Frustration
+  - GigaDrain
+  - Gravity
+  - GyroBall
+  - HiddenPower
+  - HoneClaws
+  - IronDefense
+  - IronHead
+  - KnockOff
+  - MagnetRise
+  - NaturePower
+  - Payback
+  - PinMissile
+  - PoisonJab
+  - Protect
+  - Rest
+  - Return
+  - Revenge
+  - RockPolish
+  - RockSmash
+  - Round
+  - SecretPower
+  - SeedBomb
+  - SelfDestruct
+  - SleepTalk
+  - Snore
+  - SolarBeam
+  - Spikes
+  - StealthRock
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - ThunderWave
+  - Thunderbolt
+  - Toxic
+  - WorrySeed
+  - Confide
+Ferroseed:
+  level:
+    '1': [Tackle, Harden]
+    '5': [MetalClaw]
+    '6': [Rollout]
+    '9': [Curse]
+    '10': [PinMissile]
+    '15': [Ingrain]
+    '20': [FlashCannon]
+    '21': [GyroBall]
+    '25': [IronHead]
+    '26': [IronDefense]
+    '30': [SelfDestruct, MirrorShot]
+    '47': [Payback]
+    '50': [Explosion]
+  egg:
+    - AcidSpray
+    - BulletSeed
+    - Gravity
+    - KnockOff
+    - LeechSeed
+    - RockClimb
+    - SeedBomb
+    - Spikes
+    - StealthRock
+    - Toxic
+    - WorrySeed
+Ferrothorn:
+  level:
+    '1': [Tackle, PinMissile, Harden, Curse, Rollout, MetalClaw, RockClimb, PowerWhip]
+    '15': [Ingrain]
+    '20': [FlashCannon]
+    '21': [GyroBall]
+    '25': [IronHead]
+    '26': [IronDefense]
+    '30': [SelfDestruct, MirrorShot]
+    '53': [Payback]
+    '56': [Explosion]
+  teachable:
+    - AerialAce
+    - Block
+    - Bulldoze
+    - Cut
+    - GigaImpact
+    - GrassKnot
+    - HeavySlam
+    - HyperBeam
+    - PowerWhip
+    - Sandstorm
+    - ShadowClaw
+    - Strength
+    - SwordsDance
+    - Thunder

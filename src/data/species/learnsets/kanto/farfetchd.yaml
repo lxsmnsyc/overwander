@@ -1,0 +1,78 @@
+# TM, HM and tutor moves
+
+Farfetchd:
+  level:
+    '1': [Peck, SandAttack, PoisonJab]
+    '7': [Leer]
+    '15': [FuryAttack]
+    '21': [KnockOff]
+    '23': [SwordsDance]
+    '26': [FuryCutter]
+    '31': [Agility]
+    '33': [NightSlash]
+    '37': [Slash, AirSlash, Acrobatics]
+    '43': [Feint]
+    '44': [FalseSwipe]
+  teachable:
+    - Toxic
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - RazorWind
+    - Whirlwind
+    - Rage
+    - Mimic
+    - DoubleTeam
+    - Bide
+    - Swift
+    - SkullBash
+    - Rest
+    - Substitute
+    - Cut
+    - Fly
+    - Round
+    - Acrobatics
+    - Retaliate
+    - WorkUp
+    - Confide
+    - Headbutt
+    - Thief
+    - Snore
+    - Curse
+    - Protect
+    - MudSlap
+    - Detect
+    - Endure
+    - Swagger
+    - SteelWing
+    - Attract
+    - SleepTalk
+    - Return
+    - Frustration
+    - IronTail
+    - HiddenPower
+    - SunnyDay
+    - PsychUp
+    - AerialAce
+    - Facade
+    - SecretPower
+    - Captivate
+    - Defog
+    - LastResort
+    - NaturalGift
+    - OminousWind
+    - Pluck
+    - Roost
+    - UTurn
+    - BrutalSwing
+    - LaserFocus
+    - ThroatChop
+  egg:
+    - Gust
+    - QuickAttack
+    - MirrorMove
+    - Flail
+    - Foresight
+    - SteelWing
+    - FeatherDance
+    - FirstImpression

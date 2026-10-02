@@ -1,0 +1,6 @@
+Xurkitree:
+  types: [Electric]
+  egg-groups: [NoEggsDiscovered]
+  # Ultra Plant
+  biomes: [Badlands]
+  active: any

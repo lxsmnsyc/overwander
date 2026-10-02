@@ -1,0 +1,15 @@
+Pineco:
+  types: [Bug]
+  egg-groups: [Bug]
+  biomes: [Woodland, TemperateForest, TropicalRainforest]
+  active: any
+  evolves-into:
+    - species: Forretress
+      method: [Level]
+      level: 31
+Forretress:
+  types: [Bug, Steel]
+  egg-groups: [Bug]
+  biomes: [Woodland, TemperateForest, TropicalRainforest]
+  active: any
+  evolves-from: Pineco

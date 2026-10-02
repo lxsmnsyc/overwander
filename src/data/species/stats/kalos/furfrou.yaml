@@ -1,0 +1,6 @@
+Furfrou:
+  stats: { HP: 75, Attack: 80, Defense: 60, SpecialAttack: 65, SpecialDefense: 90, Speed: 102 }
+  catch-rate: 160
+  height: 1.2
+  weight: 28
+  gender: [1, 1]

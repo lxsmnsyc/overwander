@@ -1,0 +1,79 @@
+# TM and tutor moves both stages share
+family-teachable:
+  - Toxic
+  - HiddenPower
+  - SunnyDay
+  - Protect
+  - Frustration
+  - Earthquake
+  - Return
+  - Dig
+  - DoubleTeam
+  - Flamethrower
+  - Sandstorm
+  - FireBlast
+  - RockTomb
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Overheat
+  - Strength
+  - RockSmash
+  - BodySlam
+  - DoubleEdge
+  - Mimic
+  - RockSlide
+  - Substitute
+  - Rollout
+  - Snore
+  - Endure
+  - MudSlap
+  - Swagger
+  - SleepTalk
+  - DefenseCurl
+  - Captivate
+  - NaturalGift
+  - StealthRock
+  - FlameCharge
+  - AfterYou
+  - Round
+  - EchoedVoice
+  - Incinerate
+  - Bulldoze
+  - Confide
+Numel:
+  level:
+    '1': [Tackle, Growl]
+    '11': [Ember]
+    '15': [FlameBurst]
+    '19': [Magnitude]
+    '25': [FocusEnergy]
+    '29': [TakeDown]
+    '31': [Amnesia, LavaPlume]
+    '35': [Earthquake, EarthPower]
+    '41': [Flamethrower]
+    '49': [DoubleEdge]
+  egg: [Howl, ScaryFace, Stomp, MudBomb]
+Camerupt:
+  level:
+    '1': [Tackle, Growl, Ember, Magnitude]
+    '15': [FlameBurst]
+    '25': [FocusEnergy]
+    '29': [TakeDown]
+    '31': [Amnesia, LavaPlume]
+    '33': [RockSlide]
+    '37': [Earthquake]
+    '39': [EarthPower]
+    '45': [Eruption]
+    '55': [Fissure]
+  teachable:
+    - Roar
+    - HyperBeam
+    - Explosion
+    - FlashCannon
+    - GigaImpact
+    - IronHead
+    - RockPolish
+    - StoneEdge
+    - StompingTantrum

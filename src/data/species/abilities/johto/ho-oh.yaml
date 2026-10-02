@@ -1,0 +1,6 @@
+HoOh:
+  abilities: [Pressure]
+  # Healer and Drought are this registry's rather than the
+  # mainline's: it brings back what died, and a rainbow wants the
+  # sun behind it
+  hidden: [Regenerator, Healer, Drought]

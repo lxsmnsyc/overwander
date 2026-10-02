@@ -1,0 +1,11 @@
+Vanillite:
+  abilities: [IceBody, SnowCloak]
+  hidden: [WeakArmor]
+Vanillish:
+  abilities: [IceBody, SnowCloak]
+  hidden: [WeakArmor]
+Vanilluxe:
+  # Snow Cloak walks up from the two stages below, so the line
+  # reaches four without an invention
+  abilities: [IceBody, SnowWarning]
+  hidden: [WeakArmor]

@@ -1,0 +1,25 @@
+Aron:
+  types: [Steel, Rock]
+  egg-groups: [Monster]
+  biomes: [Mountain, Badlands]
+  active: [Morning, Day]
+  evolves-into:
+    - species: Lairon
+      method: [Level]
+      level: 32
+Lairon:
+  types: [Steel, Rock]
+  egg-groups: [Monster]
+  biomes: [Mountain, Badlands]
+  active: [Morning, Day]
+  evolves-from: Aron
+  evolves-into:
+    - species: Aggron
+      method: [Level]
+      level: 42
+Aggron:
+  types: [Steel, Rock]
+  egg-groups: [Monster]
+  biomes: [Mountain, Badlands]
+  active: [Morning, Day]
+  evolves-from: Lairon

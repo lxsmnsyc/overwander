@@ -1,0 +1,18 @@
+Aron:
+  stats: { HP: 50, Attack: 70, Defense: 100, SpecialAttack: 40, SpecialDefense: 40, Speed: 30 }
+  catch-rate: 180
+  height: 0.4
+  weight: 60
+  gender: [1, 1]
+Lairon:
+  stats: { HP: 60, Attack: 90, Defense: 140, SpecialAttack: 50, SpecialDefense: 50, Speed: 40 }
+  catch-rate: 90
+  height: 0.9
+  weight: 120
+  gender: [1, 1]
+Aggron:
+  stats: { HP: 70, Attack: 110, Defense: 180, SpecialAttack: 60, SpecialDefense: 60, Speed: 50 }
+  catch-rate: 45
+  height: 2.1
+  weight: 360
+  gender: [1, 1]

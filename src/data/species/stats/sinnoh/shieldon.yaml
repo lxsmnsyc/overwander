@@ -1,0 +1,12 @@
+Shieldon:
+  stats: { HP: 30, Attack: 42, Defense: 118, SpecialAttack: 42, SpecialDefense: 88, Speed: 30 }
+  catch-rate: 45
+  height: 0.5
+  weight: 57
+  gender: [7, 1]
+Bastiodon:
+  stats: { HP: 60, Attack: 52, Defense: 168, SpecialAttack: 47, SpecialDefense: 138, Speed: 30 }
+  catch-rate: 45
+  height: 1.3
+  weight: 149.5
+  gender: [7, 1]

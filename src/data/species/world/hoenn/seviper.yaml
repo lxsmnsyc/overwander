@@ -1,0 +1,5 @@
+Seviper:
+  types: [Poison]
+  egg-groups: [Field, Dragon]
+  biomes: [Savanna, Steppe]
+  active: [Evening, Night]

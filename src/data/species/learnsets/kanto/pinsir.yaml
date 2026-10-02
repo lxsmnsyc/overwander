@@ -1,0 +1,69 @@
+Pinsir:
+  level:
+    '1': [ViceGrip]
+    '7': [FocusEnergy]
+    '13': [Bind]
+    '19': [SeismicToss]
+    '25': [Harden, Revenge]
+    '30': [Guillotine, XScissor]
+    '31': [BrickBreak]
+    '33': [StormThrow]
+    '37': [Submission]
+    '43': [SwordsDance]
+    '49': [Slash]
+  teachable:
+    - Toxic
+    - SwordsDance
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - HyperBeam
+    - Submission
+    - SeismicToss
+    - Rage
+    - Mimic
+    - DoubleTeam
+    - Bide
+    - Rest
+    - Substitute
+    - Cut
+    - Strength
+    - Headbutt
+    - Thief
+    - Snore
+    - Curse
+    - Protect
+    - Endure
+    - Swagger
+    - FuryCutter
+    - Attract
+    - SleepTalk
+    - Return
+    - Frustration
+    - HiddenPower
+    - SunnyDay
+    - RockSmash
+    - BulkUp
+    - Dig
+    - Earthquake
+    - Facade
+    - FocusPunch
+    - RockSlide
+    - RockTomb
+    - SecretPower
+    - Captivate
+    - Fling
+    - FocusBlast
+    - GigaImpact
+    - NaturalGift
+    - RockClimb
+    - StealthRock
+    - StoneEdge
+    - SmackDown
+    - Round
+    - StruggleBug
+    - Bulldoze
+    - Confide
+    - BrutalSwing
+    - ThroatChop
+  egg: [FuryAttack, Flail, FalseSwipe, FeintAttack, CloseCombat, Feint]

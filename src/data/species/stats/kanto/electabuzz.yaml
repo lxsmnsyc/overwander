@@ -1,0 +1,18 @@
+Electabuzz:
+  stats: { HP: 65, Attack: 83, Defense: 57, SpecialAttack: 95, SpecialDefense: 85, Speed: 105 }
+  catch-rate: 45
+  height: 1.1
+  weight: 30
+  gender: [3, 1]
+Elekid:
+  stats: { HP: 45, Attack: 63, Defense: 37, SpecialAttack: 65, SpecialDefense: 55, Speed: 95 }
+  catch-rate: 45
+  height: 0.6
+  weight: 23.5
+  gender: [3, 1]
+Electivire:
+  stats: { HP: 75, Attack: 123, Defense: 67, SpecialAttack: 95, SpecialDefense: 85, Speed: 95 }
+  catch-rate: 30
+  height: 1.8
+  weight: 138.6
+  gender: [3, 1]

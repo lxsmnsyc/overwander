@@ -1,0 +1,9 @@
+Tangela:
+  abilities: [Chlorophyll, LeafGuard]
+  hidden: [Regenerator]
+Tangrowth:
+  abilities: [Chlorophyll, LeafGuard]
+  # Sap Sipper is this registry's rather than the mainline's: the
+  # line reaches three abilities and needs four, and a ball of vines
+  # feeds on what other plants throw at it
+  hidden: [Regenerator, SapSipper]

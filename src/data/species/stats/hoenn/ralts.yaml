@@ -1,0 +1,24 @@
+Ralts:
+  stats: { HP: 28, Attack: 25, Defense: 25, SpecialAttack: 45, SpecialDefense: 35, Speed: 40 }
+  catch-rate: 235
+  height: 0.4
+  weight: 6.6
+  gender: [1, 1]
+Kirlia:
+  stats: { HP: 38, Attack: 35, Defense: 35, SpecialAttack: 65, SpecialDefense: 55, Speed: 50 }
+  catch-rate: 120
+  height: 0.8
+  weight: 20.2
+  gender: [1, 1]
+Gardevoir:
+  stats: { HP: 68, Attack: 65, Defense: 65, SpecialAttack: 125, SpecialDefense: 115, Speed: 80 }
+  catch-rate: 45
+  height: 1.6
+  weight: 48.4
+  gender: [1, 1]
+Gallade:
+  stats: { HP: 68, Attack: 125, Defense: 65, SpecialAttack: 65, SpecialDefense: 115, Speed: 80 }
+  catch-rate: 45
+  height: 1.6
+  weight: 52
+  gender: [1, 0]

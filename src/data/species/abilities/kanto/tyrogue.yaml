@@ -1,0 +1,14 @@
+Hitmonlee:
+  abilities: [Limber, Reckless]
+  hidden: [Unburden]
+Hitmonchan:
+  abilities: [KeenEye, IronFist]
+  hidden: [InnerFocus]
+Tyrogue:
+  abilities: [Guts, Steadfast]
+  hidden: [VitalSpirit]
+Hitmontop:
+  abilities: [Intimidate, Technician]
+  # Nothing invented here: Tyrogue's Guts and Vital Spirit walk up
+  # to meet its own three
+  hidden: [Steadfast]

@@ -1,0 +1,8 @@
+Cottonee:
+  abilities: [Prankster, Infiltrator]
+  hidden: [Chlorophyll]
+Whimsicott:
+  abilities: [Prankster, Infiltrator]
+  # Magic Bounce is the invented fourth: the line reaches three, and
+  # a trickster that hands a status back is what it already plays at
+  hidden: [Chlorophyll, MagicBounce]

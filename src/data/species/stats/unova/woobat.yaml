@@ -1,0 +1,12 @@
+Woobat:
+  stats: { HP: 65, Attack: 45, Defense: 43, SpecialAttack: 55, SpecialDefense: 43, Speed: 72 }
+  catch-rate: 190
+  height: 0.4
+  weight: 2.1
+  gender: [1, 1]
+Swoobat:
+  stats: { HP: 67, Attack: 57, Defense: 55, SpecialAttack: 77, SpecialDefense: 55, Speed: 114 }
+  catch-rate: 45
+  height: 0.9
+  weight: 10.5
+  gender: [1, 1]

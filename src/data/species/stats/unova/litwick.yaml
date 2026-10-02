@@ -1,0 +1,18 @@
+Litwick:
+  stats: { HP: 50, Attack: 30, Defense: 55, SpecialAttack: 65, SpecialDefense: 55, Speed: 20 }
+  catch-rate: 190
+  height: 0.3
+  weight: 3.1
+  gender: [1, 1]
+Lampent:
+  stats: { HP: 60, Attack: 40, Defense: 60, SpecialAttack: 95, SpecialDefense: 60, Speed: 55 }
+  catch-rate: 90
+  height: 0.6
+  weight: 13
+  gender: [1, 1]
+Chandelure:
+  stats: { HP: 60, Attack: 55, Defense: 90, SpecialAttack: 145, SpecialDefense: 90, Speed: 80 }
+  catch-rate: 45
+  height: 1
+  weight: 34.3
+  gender: [1, 1]

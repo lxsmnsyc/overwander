@@ -1,0 +1,5 @@
+Volcanion:
+  types: [Fire, Water]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Volcano]
+  active: any

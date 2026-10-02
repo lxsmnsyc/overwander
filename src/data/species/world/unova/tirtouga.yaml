@@ -1,0 +1,17 @@
+# The prehistoric turtle out of the Cover Fossil. Nothing that comes
+# out of a fossil spawns, so its biomes are empty on purpose
+Tirtouga:
+  types: [Water, Rock]
+  egg-groups: [Water1, Water3]
+  habitat: Amphibious
+  active: any
+  evolves-into:
+    - species: Carracosta
+      method: [Level]
+      level: 37
+Carracosta:
+  types: [Water, Rock]
+  egg-groups: [Water1, Water3]
+  habitat: Amphibious
+  active: any
+  evolves-from: Tirtouga

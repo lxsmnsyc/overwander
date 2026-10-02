@@ -1,0 +1,12 @@
+Poipole:
+  stats: { HP: 67, Attack: 73, Defense: 67, SpecialAttack: 73, SpecialDefense: 67, Speed: 73 }
+  catch-rate: 45
+  height: 0.6
+  weight: 1.8
+  gender: genderless
+Naganadel:
+  stats: { HP: 73, Attack: 73, Defense: 73, SpecialAttack: 127, SpecialDefense: 73, Speed: 121 }
+  catch-rate: 45
+  height: 3.6
+  weight: 150
+  gender: genderless

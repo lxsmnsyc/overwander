@@ -1,0 +1,18 @@
+Horsea:
+  stats: { HP: 30, Attack: 40, Defense: 70, SpecialAttack: 70, SpecialDefense: 25, Speed: 60 }
+  catch-rate: 225
+  height: 0.4
+  weight: 8
+  gender: [1, 1]
+Seadra:
+  stats: { HP: 55, Attack: 65, Defense: 95, SpecialAttack: 95, SpecialDefense: 45, Speed: 85 }
+  catch-rate: 75
+  height: 1.2
+  weight: 25
+  gender: [1, 1]
+Kingdra:
+  stats: { HP: 75, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 85 }
+  catch-rate: 45
+  height: 1.8
+  weight: 152
+  gender: [1, 1]

@@ -1,0 +1,73 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - SwordsDance
+  - BodySlam
+  - TakeDown
+  - DoubleEdge
+  - BubbleBeam
+  - WaterGun
+  - IceBeam
+  - Blizzard
+  - Rage
+  - Mimic
+  - DoubleTeam
+  - Bide
+  - Rest
+  - Substitute
+  - Cut
+  - Surf
+  - Strength
+  - Thief
+  - Snore
+  - Curse
+  - Protect
+  - MudSlap
+  - IcyWind
+  - Endure
+  - Swagger
+  - FuryCutter
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - HiddenPower
+  - RainDance
+  - RockSmash
+  - Whirlpool
+  - Dive
+  - Facade
+  - RockTomb
+  - SecretPower
+  - WaterPulse
+  - Captivate
+  - Fling
+  - NaturalGift
+  - XScissor
+  - HoneClaws
+  - Round
+  - Scald
+  - Confide
+  - Liquidation
+Krabby:
+  level:
+    '1': [Bubble, Leer]
+    '12': [ViceGrip]
+    '16': [Harden]
+    '23': [Stomp, MudShot]
+    '25': [Guillotine]
+    '34': [Protect]
+    '35': [Crabhammer]
+    '39': [Brine]
+  egg: [Dig, Haze, Amnesia, Slam, Flail, KnockOff, ChipAway]
+Kingler:
+  level:
+    '1': [Bubble, Leer, ViceGrip, MetalClaw, WideGuard]
+    '16': [Harden]
+    '23': [Stomp, MudShot]
+    '25': [Guillotine]
+    '38': [Protect]
+    '42': [Crabhammer]
+    '51': [Brine]
+    '65': [Flail]
+  teachable: [HyperBeam, Dig, GigaImpact, Quash, StompingTantrum]

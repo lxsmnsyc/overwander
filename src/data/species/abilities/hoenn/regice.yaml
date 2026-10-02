@@ -1,0 +1,5 @@
+Regice:
+  abilities: [ClearBody]
+  # Filter and Slush Rush are this registry's: an iceberg takes the
+  # worst of a blow, and hail is the one thing that moves it
+  hidden: [IceBody, Filter, SlushRush]

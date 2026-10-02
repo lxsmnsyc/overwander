@@ -1,0 +1,95 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - SwordsDance
+  - Toxic
+  - TakeDown
+  - DoubleEdge
+  - Rage
+  - MegaDrain
+  - SolarBeam
+  - Mimic
+  - DoubleTeam
+  - Reflect
+  - Bide
+  - Rest
+  - Substitute
+  - Cut
+  - Flash
+  - Snore
+  - Curse
+  - Protect
+  - SludgeBomb
+  - GigaDrain
+  - Endure
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - SweetScent
+  - HiddenPower
+  - SunnyDay
+  - BulletSeed
+  - Facade
+  - SecretPower
+  - Thief
+  - Captivate
+  - EnergyBall
+  - GrassKnot
+  - NaturalGift
+  - SeedBomb
+  - SuckerPunch
+  - WorrySeed
+  - Venoshock
+  - Round
+  - Confide
+  - Infestation
+Bellsprout:
+  level:
+    '1': [VineWhip, Growth]
+    '11': [Wrap]
+    '15': [PoisonPowder, SleepPowder]
+    '19': [StunSpore]
+    '23': [Acid]
+    '30': [SweetScent]
+    '33': [RazorLeaf]
+    '35': [GastroAcid]
+    '42': [Slam]
+    '47': [WringOut]
+  egg:
+    - SwordsDance
+    - Reflect
+    - LeechLife
+    - Encore
+    - Synthesis
+    - Ingrain
+    - MagicalLeaf
+    - ClearSmog
+    - Belch
+    - StrengthSap
+Weepinbell:
+  level:
+    '1': [VineWhip, Growth, Wrap]
+    '15': [PoisonPowder, SleepPowder]
+    '19': [StunSpore]
+    '24': [Acid]
+    '33': [SweetScent]
+    '35': [GastroAcid]
+    '38': [RazorLeaf]
+    '47': [WringOut]
+    '49': [Slam]
+Victreebel:
+  level:
+    '1':
+      - SleepPowder
+      - StunSpore
+      - Acid
+      - RazorLeaf
+      - VineWhip
+      - SweetScent
+      - SpitUp
+      - Stockpile
+      - Swallow
+    '27': [LeafTornado]
+    '47': [LeafStorm]
+  teachable: [HyperBeam, BodySlam, GastroAcid, GigaImpact]

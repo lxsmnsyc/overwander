@@ -1,0 +1,12 @@
+Sandshrew:
+  abilities: [SandVeil]
+  hidden: [SandRush]
+Sandslash:
+  abilities: [SandVeil]
+  hidden: [SandRush, SandForce, RoughSkin]
+SandshrewAlola:
+  abilities: [SnowCloak]
+  hidden: [SlushRush]
+SandslashAlola:
+  abilities: [SnowCloak]
+  hidden: [SlushRush, IronBarbs, IceBody]

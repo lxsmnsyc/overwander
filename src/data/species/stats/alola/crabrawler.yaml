@@ -1,0 +1,12 @@
+Crabrawler:
+  stats: { HP: 47, Attack: 82, Defense: 57, SpecialAttack: 42, SpecialDefense: 47, Speed: 63 }
+  catch-rate: 225
+  height: 0.6
+  weight: 7
+  gender: [4, 4]
+Crabominable:
+  stats: { HP: 97, Attack: 132, Defense: 77, SpecialAttack: 62, SpecialDefense: 67, Speed: 43 }
+  catch-rate: 60
+  height: 1.7
+  weight: 180
+  gender: [4, 4]

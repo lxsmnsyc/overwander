@@ -1,0 +1,12 @@
+Chimecho:
+  stats: { HP: 75, Attack: 50, Defense: 80, SpecialAttack: 95, SpecialDefense: 90, Speed: 65 }
+  catch-rate: 45
+  height: 0.6
+  weight: 1
+  gender: [1, 1]
+Chingling:
+  stats: { HP: 45, Attack: 30, Defense: 50, SpecialAttack: 65, SpecialDefense: 50, Speed: 45 }
+  catch-rate: 120
+  height: 0.2
+  weight: 0.6
+  gender: [1, 1]

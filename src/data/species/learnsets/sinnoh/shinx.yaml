@@ -1,0 +1,89 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Attract
+  - Captivate
+  - ChargeBeam
+  - DoubleTeam
+  - Endure
+  - Facade
+  - Flash
+  - Frustration
+  - FuryCutter
+  - Headbutt
+  - HiddenPower
+  - IronTail
+  - LightScreen
+  - MagnetRise
+  - MudSlap
+  - NaturalGift
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - Roar
+  - SecretPower
+  - ShockWave
+  - SignalBeam
+  - SleepTalk
+  - Snore
+  - Strength
+  - Substitute
+  - Swagger
+  - Swift
+  - Thief
+  - Thunder
+  - ThunderWave
+  - Thunderbolt
+  - Toxic
+  - Confide
+Shinx:
+  level:
+    '1': [Tackle]
+    '5': [Leer]
+    '9': [Charge]
+    '11': [BabyDollEyes]
+    '13': [Spark]
+    '17': [Bite]
+    '21': [Roar]
+    '25': [Swagger]
+    '29': [ThunderFang]
+    '33': [Crunch]
+    '37': [ScaryFace]
+    '41': [Discharge]
+  egg:
+    - FireFang
+    - Howl
+    - IceFang
+    - NightSlash
+    - QuickAttack
+    - TakeDown
+    - ThunderFang
+    - EerieImpulse
+Luxio:
+  level:
+    '1': [Leer, Tackle]
+    '5': [Leer]
+    '9': [Charge]
+    '13': [Spark]
+    '18': [Bite]
+    '23': [Roar]
+    '28': [Swagger]
+    '33': [ThunderFang]
+    '38': [Crunch]
+    '43': [ScaryFace]
+    '48': [Discharge]
+Luxray:
+  level:
+    '1': [Charge, Leer, Tackle]
+    '5': [Leer]
+    '9': [Charge]
+    '13': [Spark]
+    '18': [Bite]
+    '23': [Roar]
+    '28': [Swagger]
+    '35': [ThunderFang]
+    '42': [Crunch]
+    '49': [ScaryFace]
+    '56': [Discharge]
+    '67': [ElectricTerrain]
+  teachable: [GigaImpact, HyperBeam, Superpower, LaserFocus, ThroatChop]

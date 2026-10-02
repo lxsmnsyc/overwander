@@ -1,0 +1,82 @@
+# TM, HM and tutor moves the whole line shares
+family-teachable:
+  - WaterPulse
+  - Toxic
+  - Hail
+  - HiddenPower
+  - IceBeam
+  - Blizzard
+  - Protect
+  - RainDance
+  - Frustration
+  - IronTail
+  - Earthquake
+  - Return
+  - DoubleTeam
+  - RockTomb
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Surf
+  - Strength
+  - RockSmash
+  - Waterfall
+  - Dive
+  - BodySlam
+  - DoubleEdge
+  - Mimic
+  - RockSlide
+  - Substitute
+  - Rollout
+  - Snore
+  - IcyWind
+  - Endure
+  - MudSlap
+  - Swagger
+  - SleepTalk
+  - DefenseCurl
+  - AquaTail
+  - Brine
+  - Captivate
+  - NaturalGift
+  - Round
+  - EchoedVoice
+  - Bulldoze
+  - FrostBreath
+  - Confide
+Spheal:
+  level:
+    '1': [Growl, WaterGun, PowderSnow]
+    '7': [Encore]
+    '13': [IceBall]
+    '19': [BodySlam]
+    '25': [AuroraBeam]
+    '31': [Hail]
+    '37': [Rest, Snore]
+    '43': [Blizzard]
+    '49': [SheerCold]
+  egg: [Curse, Fissure, SpitUp, Stockpile, Swallow, WaterSport, Yawn, AquaRing]
+Sealeo:
+  level:
+    '1': [Growl, WaterGun, PowderSnow, Encore]
+    '13': [IceBall]
+    '19': [BodySlam]
+    '25': [AuroraBeam]
+    '31': [Hail]
+    '39': [Rest, Snore]
+    '47': [Blizzard]
+    '55': [SheerCold]
+  teachable: [Roar]
+Walrein:
+  level:
+    '1': [Growl, WaterGun, PowderSnow, Encore]
+    '13': [IceBall]
+    '19': [BodySlam]
+    '25': [AuroraBeam]
+    '31': [Hail]
+    '39': [Rest, Snore]
+    '44': [IceFang]
+    '50': [Blizzard]
+    '61': [SheerCold]
+  teachable: [Roar, HyperBeam, Avalanche, GigaImpact, IronHead, StompingTantrum]

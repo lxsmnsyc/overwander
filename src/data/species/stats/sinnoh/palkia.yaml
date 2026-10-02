@@ -1,0 +1,12 @@
+Palkia:
+  stats: { HP: 90, Attack: 120, Defense: 100, SpecialAttack: 150, SpecialDefense: 120, Speed: 100 }
+  catch-rate: 3
+  height: 4.2
+  weight: 336
+  gender: genderless
+PalkiaOrigin:
+  stats: { HP: 90, Attack: 100, Defense: 100, SpecialAttack: 150, SpecialDefense: 120, Speed: 120 }
+  catch-rate: 3
+  height: 6.3
+  weight: 659
+  gender: genderless

@@ -1,0 +1,66 @@
+Tropius:
+  level:
+    '1': [Leer, Gust]
+    '7': [Growth]
+    '11': [RazorLeaf]
+    '17': [Stomp]
+    '21': [SweetScent]
+    '27': [Whirlwind]
+    '31': [MagicalLeaf]
+    '37': [BodySlam]
+    '41': [SolarBeam]
+    '47': [Synthesis, AirSlash, LeafTornado]
+    '57': [NaturalGift, Bestow]
+    '61': [LeafStorm]
+  teachable:
+    - Roar
+    - Toxic
+    - BulletSeed
+    - HiddenPower
+    - SunnyDay
+    - HyperBeam
+    - Protect
+    - GigaDrain
+    - Safeguard
+    - Frustration
+    - SolarBeam
+    - Earthquake
+    - Return
+    - DoubleTeam
+    - AerialAce
+    - Facade
+    - SecretPower
+    - Rest
+    - Attract
+    - SteelWing
+    - Cut
+    - Fly
+    - Strength
+    - Flash
+    - RockSmash
+    - SwordsDance
+    - BodySlam
+    - DoubleEdge
+    - Mimic
+    - Substitute
+    - Snore
+    - Endure
+    - MudSlap
+    - Swagger
+    - FuryCutter
+    - SleepTalk
+    - Captivate
+    - Defog
+    - EnergyBall
+    - GigaImpact
+    - GrassKnot
+    - OminousWind
+    - Roost
+    - Tailwind
+    - WorrySeed
+    - Round
+    - Bulldoze
+    - Confide
+    - BrutalSwing
+    - StompingTantrum
+  egg: [LeechSeed, Headbutt, Slam, RazorWind, NaturePower, DragonHammer]

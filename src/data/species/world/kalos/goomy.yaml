@@ -1,0 +1,35 @@
+# The wet ground the slugs keep to
+
+# The weakest dragon there is, and what it grows into. The slime is
+# the point: a blow sinks into it rather than landing, and what it
+# costs arrives a moment later
+Goomy:
+  types: [Dragon]
+  egg-groups: [Dragon]
+  habitat: Amphibious
+  biomes: [Bog, Swamp]
+  active: any
+  evolves-into:
+    - species: Sliggoo
+      method: [Level]
+      level: 40
+Sliggoo:
+  types: [Dragon]
+  egg-groups: [Dragon]
+  habitat: Amphibious
+  biomes: [Bog, Swamp]
+  active: any
+  evolves-from: Goomy
+  # The mainline asks for rain as well, which nothing here can
+  # measure yet, so the level is the whole condition
+  evolves-into:
+    - species: Goodra
+      method: [Level]
+      level: 50
+Goodra:
+  types: [Dragon]
+  egg-groups: [Dragon]
+  habitat: Amphibious
+  biomes: [Bog, Swamp]
+  active: any
+  evolves-from: Sliggoo

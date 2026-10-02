@@ -1,0 +1,12 @@
+Shaymin:
+  abilities: [NaturalCure]
+  # Serene Grace is Sky Forme's own, so it stays there. The three
+  # here are this registry's: a flower answers the sun, and a thing
+  # that gives back is what the species is named for
+  hidden: [Chlorophyll, Harvest, LeafGuard]
+ShayminSky:
+  # Serene Grace is the shape's own, the way Levitate is Giratina
+  # Origin's: what it does on the ground it does on purpose, and
+  # what it does in the air keeps happening
+  abilities: [SereneGrace]
+  hidden: []

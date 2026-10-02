@@ -1,0 +1,17 @@
+Tentacool:
+  types: [Water, Poison]
+  egg-groups: [Water3]
+  habitat: Water
+  biomes: [Ocean, DeepOcean, KelpForest, Beach, RockyCoast]
+  active: any
+  evolves-into:
+    - species: Tentacruel
+      method: [Level]
+      level: 30
+Tentacruel:
+  types: [Water, Poison]
+  egg-groups: [Water3]
+  habitat: Water
+  biomes: [Ocean, KelpForest, Beach, RockyCoast]
+  active: any
+  evolves-from: Tentacool

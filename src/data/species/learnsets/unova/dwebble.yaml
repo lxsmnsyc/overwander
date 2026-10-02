@@ -1,0 +1,89 @@
+# TM, HM and tutor moves shared by the whole family
+
+# What it does from inside the rock, whichever rock it is carrying
+family-teachable:
+  - AerialAce
+  - Attract
+  - Block
+  - BugBite
+  - Bulldoze
+  - Cut
+  - Dig
+  - DoubleTeam
+  - Earthquake
+  - Endure
+  - Facade
+  - Frustration
+  - HiddenPower
+  - HoneClaws
+  - IronDefense
+  - KnockOff
+  - NaturePower
+  - PoisonJab
+  - Protect
+  - Rest
+  - Return
+  - RockBlast
+  - RockPolish
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - Round
+  - SandTomb
+  - Sandstorm
+  - SecretPower
+  - ShadowClaw
+  - SleepTalk
+  - SmackDown
+  - Snore
+  - SolarBeam
+  - Spikes
+  - StealthRock
+  - StoneEdge
+  - Strength
+  - StruggleBug
+  - Substitute
+  - Swagger
+  - SwordsDance
+  - Toxic
+  - XScissor
+  - Confide
+Dwebble:
+  level:
+    '1': [SandAttack, FuryCutter]
+    '4': [Withdraw]
+    '5': [RockBlast]
+    '8': [SmackDown]
+    '12': [BugBite]
+    '13': [FeintAttack]
+    '16': [Flail]
+    '19': [RockPolish]
+    '20': [Slash]
+    '24': [RockSlide, StealthRock]
+    '35': [XScissor]
+    '37': [ShellSmash]
+    '43': [RockWrecker]
+  egg:
+    - Block
+    - Counter
+    - Curse
+    - Endure
+    - IronDefense
+    - KnockOff
+    - NightSlash
+    - SandTomb
+    - Spikes
+    - WideGuard
+    - Rototiller
+Crustle:
+  level:
+    '1': [SandAttack, Withdraw, FuryCutter, RockBlast, SmackDown, ShellSmash]
+    '12': [BugBite]
+    '13': [FeintAttack]
+    '16': [Flail]
+    '19': [RockPolish]
+    '20': [Slash]
+    '24': [RockSlide, StealthRock]
+    '38': [XScissor]
+    '55': [RockWrecker]
+  teachable: [GigaImpact, HeavySlam, HyperBeam, StompingTantrum]

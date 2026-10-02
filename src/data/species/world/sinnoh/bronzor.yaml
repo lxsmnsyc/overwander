@@ -1,0 +1,17 @@
+# Found where people used to live: Bronzor is a mirror somebody
+# buried, and a Bronzong is the bell that was rung above it
+Bronzor:
+  types: [Steel, Psychic]
+  egg-groups: [Mineral]
+  biomes: [Mountain, Badlands, AlpineTundra]
+  active: any
+  evolves-into:
+    - species: Bronzong
+      method: [Level]
+      level: 33
+Bronzong:
+  types: [Steel, Psychic]
+  egg-groups: [Mineral]
+  biomes: [Mountain, Badlands, AlpineTundra]
+  active: any
+  evolves-from: Bronzor

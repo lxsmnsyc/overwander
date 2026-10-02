@@ -1,0 +1,7 @@
+Grubbin:
+  abilities: [Swarm]
+Charjabug:
+  abilities: [Battery]
+Vikavolt:
+  abilities: [Levitate]
+  hidden: [CompoundEyes]

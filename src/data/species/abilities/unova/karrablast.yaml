@@ -1,0 +1,6 @@
+Karrablast:
+  abilities: [Swarm, ShedSkin]
+  hidden: [NoGuard]
+Escavalier:
+  abilities: [Swarm, ShellArmor]
+  hidden: [Overcoat]

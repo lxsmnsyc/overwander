@@ -1,0 +1,10 @@
+Slakoth:
+  abilities: [Truant]
+Vigoroth:
+  abilities: [VitalSpirit]
+Slaking:
+  abilities: [Truant]
+  # Comatose and Oblivious are this registry's rather than the
+  # mainline's: it sleeps through most of the fight either way, and
+  # a final evolution is filled to four
+  hidden: [Comatose, Oblivious]

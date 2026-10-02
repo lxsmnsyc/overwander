@@ -1,0 +1,77 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Toxic
+  - FireBlast
+  - Flamethrower
+  - SunnyDay
+  - DoubleTeam
+  - Rest
+  - Snore
+  - Curse
+  - Protect
+  - Endure
+  - Rollout
+  - Swagger
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - HiddenPower
+  - MudSlap
+  - DefenseCurl
+  - RockSmash
+  - DoubleEdge
+  - Facade
+  - LightScreen
+  - Mimic
+  - Overheat
+  - Reflect
+  - SecretPower
+  - Substitute
+  - Captivate
+  - NaturalGift
+  - FlameCharge
+  - AfterYou
+  - Round
+  - Incinerate
+  - Confide
+  - Infestation
+Slugma:
+  level:
+    '1': [Smog, Yawn]
+    '8': [Ember]
+    '15': [RockThrow]
+    '22': [Harden]
+    '23': [FlameBurst]
+    '29': [Amnesia]
+    '36': [Flamethrower]
+    '38': [LavaPlume]
+    '43': [RockSlide]
+    '50': [BodySlam]
+    '56': [EarthPower]
+  egg: [AcidArmor, HeatWave, Inferno]
+Magcargo:
+  level:
+    '1': [Smog, Ember, RockThrow, Yawn]
+    '22': [Harden]
+    '23': [FlameBurst]
+    '29': [Amnesia]
+    '36': [Flamethrower]
+    '38': [ShellSmash]
+    '40': [LavaPlume]
+    '48': [RockSlide]
+    '60': [BodySlam]
+    '66': [EarthPower]
+  teachable:
+    - Earthquake
+    - Strength
+    - HyperBeam
+    - RockTomb
+    - GigaImpact
+    - GyroBall
+    - RockPolish
+    - StealthRock
+    - StoneEdge
+    - SmackDown
+    - Bulldoze
+    - StompingTantrum

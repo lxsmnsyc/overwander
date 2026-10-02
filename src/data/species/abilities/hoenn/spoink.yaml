@@ -1,0 +1,8 @@
+Spoink:
+  abilities: [ThickFat, OwnTempo]
+  hidden: [Gluttony]
+Grumpig:
+  abilities: [ThickFat, OwnTempo]
+  # One the mainline never gave it: the pearls are what it reads
+  # the other side with
+  hidden: [Gluttony, Forewarn]

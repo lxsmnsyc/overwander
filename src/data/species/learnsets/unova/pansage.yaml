@@ -1,0 +1,100 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Acrobatics
+  - Attract
+  - Covet
+  - Cut
+  - Dig
+  - DoubleTeam
+  - Endeavor
+  - EnergyBall
+  - Facade
+  - Flash
+  - Fling
+  - FocusPunch
+  - Frustration
+  - GastroAcid
+  - GigaDrain
+  - GrassKnot
+  - GunkShot
+  - HelpingHand
+  - HiddenPower
+  - HoneClaws
+  - IronTail
+  - KnockOff
+  - LowKick
+  - LowSweep
+  - NaturePower
+  - Payback
+  - Protect
+  - Recycle
+  - Rest
+  - Return
+  - RockSmash
+  - RockTomb
+  - RolePlay
+  - Round
+  - SecretPower
+  - SeedBomb
+  - ShadowClaw
+  - SleepTalk
+  - Snore
+  - SolarBeam
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Synthesis
+  - Taunt
+  - Thief
+  - Torment
+  - Toxic
+  - Uproar
+  - WorkUp
+  - WorrySeed
+  - Confide
+Pansage:
+  level:
+    '1': [Scratch, PlayNice]
+    '4': [Leer]
+    '7': [Lick]
+    '10': [VineWhip]
+    '13': [FurySwipes]
+    '16': [LeechSeed]
+    '19': [Bite]
+    '22': [SeedBomb]
+    '25': [Torment]
+    '28': [Fling]
+    '31': [Acrobatics]
+    '34': [GrassKnot]
+    '37': [Recycle]
+    '40': [NaturalGift]
+    '43': [Crunch]
+  egg:
+    - Astonish
+    - BulletSeed
+    - Covet
+    - GrassWhistle
+    - LeafStorm
+    - LowKick
+    - MagicalLeaf
+    - NastyPlot
+    - RolePlay
+    - Tickle
+    - DisarmingVoice
+Simisage:
+  # A stone evolution learns nothing further on its own, beyond
+  # the thorns it comes into
+  level:
+    '1': [Leer, Lick, FurySwipes, SeedBomb]
+    '10': [VineWhip]
+    '28': [GigaDrain]
+    '46': [LeafStorm]
+  teachable:
+    - BrickBreak
+    - FocusBlast
+    - GigaImpact
+    - HyperBeam
+    - RockSlide
+    - Superpower
+    - PowerUpPunch
+    - ThroatChop

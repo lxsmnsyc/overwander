@@ -1,0 +1,115 @@
+# TM and tutor moves shared by the whole family
+family-teachable:
+  - Acrobatics
+  - Attract
+  - BulkUp
+  - Confide
+  - Covet
+  - DoubleTeam
+  - Endeavor
+  - Facade
+  - FireBlast
+  - FirePledge
+  - FlameCharge
+  - Flamethrower
+  - Frustration
+  - HeatWave
+  - HiddenPower
+  - LeechLife
+  - Outrage
+  - Overheat
+  - Protect
+  - Rest
+  - Return
+  - Roar
+  - Round
+  - ShadowClaw
+  - SleepTalk
+  - Snore
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - SwordsDance
+  - Taunt
+  - Torment
+  - Toxic
+  - UTurn
+  - WillOWisp
+  - WorkUp
+Litten:
+  level:
+    '1': [Ember, Scratch]
+    '4': [Growl]
+    '8': [Lick]
+    '11': [Leer]
+    '14': [FireFang]
+    '16': [DoubleKick]
+    '18': [Roar]
+    '22': [Bite]
+    '25': [Swagger]
+    '29': [FurySwipes]
+    '32': [Thrash]
+    '36': [Flamethrower]
+    '39': [ScaryFace]
+    '43': [FlareBlitz]
+    '46': [Outrage]
+  egg: [BodySlam, Crunch, FakeOut, HeatWave, NastyPlot, Revenge, PowerTrip]
+Torracat:
+  level:
+    '1': [Ember, Growl, Lick, Scratch]
+    '11': [Leer]
+    '14': [FireFang]
+    '16': [DoubleKick]
+    '19': [Roar]
+    '24': [Bite]
+    '28': [Swagger]
+    '33': [FurySwipes]
+    '37': [Thrash]
+    '42': [Flamethrower]
+    '46': [ScaryFace]
+    '51': [FlareBlitz]
+    '55': [Outrage]
+  teachable: [DualChop]
+Incineroar:
+  level:
+    '1': [BulkUp, Ember, Growl, Lick, Scratch, DarkestLariat, ThroatChop]
+    '11': [Leer]
+    '14': [FireFang]
+    '16': [DoubleKick]
+    '19': [Roar]
+    '24': [Bite]
+    '28': [Swagger]
+    '33': [FurySwipes]
+    '38': [Thrash]
+    '44': [Flamethrower]
+    '49': [ScaryFace]
+    '55': [FlareBlitz]
+    '60': [Outrage]
+    '66': [CrossChop]
+  teachable:
+    - Bind
+    - BlastBurn
+    - BrickBreak
+    - Bulldoze
+    - DarkPulse
+    - DrainPunch
+    - DualChop
+    - Earthquake
+    - Embargo
+    - FirePunch
+    - Fling
+    - FocusBlast
+    - FocusPunch
+    - GigaImpact
+    - HyperBeam
+    - IronHead
+    - KnockOff
+    - LowKick
+    - LowSweep
+    - Quash
+    - Snarl
+    - Snatch
+    - Superpower
+    - ThunderPunch
+    - BrutalSwing
+    - StompingTantrum

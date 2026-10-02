@@ -1,0 +1,4 @@
+Pinsir:
+  types: [Bug]
+  egg-groups: [Bug]
+  active: [Day]

@@ -1,0 +1,25 @@
+Rowlet:
+  types: [Grass, Flying]
+  egg-groups: [Flying]
+  biomes: [TropicalSeasonalForest, TropicalRainforest]
+  active: [Evening, Night]
+  evolves-into:
+    - species: Dartrix
+      method: [Level]
+      level: 17
+Dartrix:
+  types: [Grass, Flying]
+  egg-groups: [Flying]
+  biomes: [TropicalSeasonalForest, TropicalRainforest]
+  active: [Evening, Night]
+  evolves-from: Rowlet
+  evolves-into:
+    - species: Decidueye
+      method: [Level]
+      level: 34
+Decidueye:
+  types: [Grass, Ghost]
+  egg-groups: [Flying]
+  biomes: [TropicalSeasonalForest, TropicalRainforest]
+  active: [Evening, Night]
+  evolves-from: Dartrix

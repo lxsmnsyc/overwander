@@ -1,0 +1,70 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - AirCutter
+  - BugBite
+  - Endeavor
+  - MudSlap
+  - OminousWind
+  - Snore
+  - StringShot
+  - Swift
+  - Tailwind
+Combee:
+  level:
+    '1': [Gust, SweetScent]
+    '13': [BugBite]
+Vespiquen:
+  level:
+    '1': [Gust, SweetScent]
+    '3': [PoisonSting]
+    '7': [ConfuseRay]
+    '9': [FuryCutter]
+    '13': [DefendOrder]
+    '15': [Pursuit]
+    '19': [FurySwipes]
+    '21': [PowerGem]
+    '25': [HealOrder]
+    '27': [Toxic]
+    '31': [Slash]
+    '33': [Captivate]
+    '37': [AttackOrder]
+    '39': [Swagger]
+    '43': [DestinyBond]
+    '57': [FellStinger]
+  teachable:
+    - AerialAce
+    - Attract
+    - Captivate
+    - Cut
+    - Defog
+    - DoubleTeam
+    - Endure
+    - Facade
+    - Flash
+    - Fling
+    - Frustration
+    - FuryCutter
+    - GigaImpact
+    - HiddenPower
+    - HyperBeam
+    - NaturalGift
+    - Protect
+    - RainDance
+    - Rest
+    - Return
+    - Roost
+    - SecretPower
+    - SignalBeam
+    - SilverWind
+    - SleepTalk
+    - SludgeBomb
+    - Substitute
+    - SunnyDay
+    - Swagger
+    - Thief
+    - Toxic
+    - UTurn
+    - XScissor
+    - Confide
+    - Infestation
+    - LaserFocus

@@ -1,0 +1,4 @@
+Xurkitree:
+  abilities: [BeastBoost]
+  # Beast Boost is all the mainline gives it, so these are this registry's
+  hidden: [LightningRod, VoltAbsorb, Static]

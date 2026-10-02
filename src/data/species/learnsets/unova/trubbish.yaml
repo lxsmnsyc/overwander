@@ -1,0 +1,99 @@
+# TM, HM and tutor moves shared by the whole family
+
+# What comes out of the bag, whichever size the bag is
+family-teachable:
+  - Amnesia
+  - Attract
+  - DarkPulse
+  - DoubleTeam
+  - DrainPunch
+  - Endure
+  - Explosion
+  - Facade
+  - Frustration
+  - GigaDrain
+  - GunkShot
+  - HiddenPower
+  - PainSplit
+  - Payback
+  - Protect
+  - RainDance
+  - Recycle
+  - Rest
+  - Return
+  - RockBlast
+  - Round
+  - SecretPower
+  - SeedBomb
+  - SelfDestruct
+  - SleepTalk
+  - SludgeBomb
+  - SludgeWave
+  - Snore
+  - Spikes
+  - Spite
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Thief
+  - Toxic
+  - ToxicSpikes
+  - Venoshock
+  - Confide
+  - Infestation
+Trubbish:
+  level:
+    '1': [Pound, PoisonGas]
+    '3': [Recycle]
+    '6': [AcidSpray]
+    '7': [ToxicSpikes]
+    '9': [Amnesia]
+    '12': [ClearSmog]
+    '14': [DoubleSlap]
+    '18': [Sludge]
+    '21': [Stockpile, Swallow]
+    '24': [TakeDown]
+    '27': [SludgeBomb]
+    '30': [Toxic]
+    '37': [PainSplit]
+    '39': [GunkShot]
+    '42': [Explosion, Belch]
+  egg:
+    - Autotomize
+    - Curse
+    - Haze
+    - MudSport
+    - RockBlast
+    - Rollout
+    - SandAttack
+    - SelfDestruct
+    - Spikes
+Garbodor:
+  level:
+    '1': [Pound, TakeDown, PoisonGas, MetalClaw, Recycle, ToxicSpikes, AcidSpray]
+    '9': [Amnesia]
+    '12': [ClearSmog]
+    '14': [DoubleSlap]
+    '18': [Sludge]
+    '21': [Stockpile, Swallow]
+    '24': [BodySlam]
+    '27': [SludgeBomb]
+    '30': [Toxic]
+    '39': [PainSplit]
+    '43': [GunkShot]
+    '48': [Explosion]
+    '49': [Belch]
+  teachable:
+    - BodySlam
+    - CrossPoison
+    - Fling
+    - FocusBlast
+    - GigaImpact
+    - HyperBeam
+    - Psychic
+    - RockPolish
+    - Screech
+    - SmackDown
+    - SolarBeam
+    - Thunderbolt
+    - StompingTantrum

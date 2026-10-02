@@ -1,0 +1,12 @@
+Groudon:
+  stats: { HP: 100, Attack: 150, Defense: 140, SpecialAttack: 100, SpecialDefense: 90, Speed: 90 }
+  catch-rate: 3
+  height: 3.5
+  weight: 950
+  gender: genderless
+GroudonPrimal:
+  stats: { HP: 100, Attack: 180, Defense: 160, SpecialAttack: 150, SpecialDefense: 90, Speed: 90 }
+  catch-rate: 3
+  height: 5
+  weight: 999.7
+  gender: genderless

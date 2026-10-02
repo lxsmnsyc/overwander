@@ -1,0 +1,9 @@
+Litten:
+  abilities: [Blaze]
+  hidden: [Intimidate]
+Torracat:
+  abilities: [Blaze]
+  hidden: [Intimidate]
+Incineroar:
+  abilities: [Blaze]
+  hidden: [Intimidate, ToughClaws, IronFist]

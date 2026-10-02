@@ -1,0 +1,147 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - MegaPunch
+  - SwordsDance
+  - MegaKick
+  - Toxic
+  - BodySlam
+  - TakeDown
+  - DoubleEdge
+  - Submission
+  - SeismicToss
+  - Rage
+  - DragonRage
+  - Dig
+  - Mimic
+  - DoubleTeam
+  - Reflect
+  - Bide
+  - FireBlast
+  - Swift
+  - SkullBash
+  - Rest
+  - Substitute
+  - Cut
+  - Strength
+  - FirePunch
+  - Headbutt
+  - DefenseCurl
+  - Snore
+  - Curse
+  - Protect
+  - MudSlap
+  - Endure
+  - Swagger
+  - FuryCutter
+  - Attract
+  - SleepTalk
+  - Return
+  - Frustration
+  - DynamicPunch
+  - DragonBreath
+  - IronTail
+  - HiddenPower
+  - SunnyDay
+  - RockSmash
+  - Flamethrower
+  - AerialAce
+  - BrickBreak
+  - Counter
+  - DragonClaw
+  - Facade
+  - FocusPunch
+  - Overheat
+  - SecretPower
+  - Captivate
+  - Fling
+  - NaturalGift
+  - HoneClaws
+  - FlameCharge
+  - Round
+  - EchoedVoice
+  - Incinerate
+  - FirePledge
+  - Confide
+  - PowerUpPunch
+Charmander:
+  level:
+    '1': [Scratch, Growl]
+    '7': [Ember]
+    '13': [SmokeScreen, MetalClaw]
+    '15': [Leer]
+    '19': [Rage]
+    '25': [ScaryFace, FireFang]
+    '28': [FlameBurst]
+    '30': [Slash]
+    '31': [Flamethrower]
+    '43': [DragonRage]
+    '46': [FireSpin, Inferno]
+  teachable: [ShadowClaw]
+  egg:
+    - RockSlide
+    - Bite
+    - BellyDrum
+    - Outrage
+    - AncientPower
+    - BeatUp
+    - DragonDance
+    - DragonRush
+    - FlareBlitz
+Charmeleon:
+  level:
+    '1': [Scratch, Growl, Ember]
+    '13': [SmokeScreen, MetalClaw]
+    '15': [Leer]
+    '20': [Rage]
+    '27': [ScaryFace]
+    '28': [FireFang]
+    '32': [FlameBurst]
+    '33': [Slash]
+    '34': [Flamethrower]
+    '48': [DragonRage]
+    '54': [Inferno]
+    '55': [FireSpin]
+  teachable: [RockSlide, ShadowClaw]
+Charizard:
+  level:
+    '1':
+      - Scratch
+      - Growl
+      - Ember
+      - Leer
+      - SmokeScreen
+      - HeatWave
+      - MetalClaw
+      - AirSlash
+      - ShadowClaw
+    '20': [Rage]
+    '27': [ScaryFace]
+    '28': [FireFang]
+    '32': [FlameBurst]
+    '34': [Flamethrower]
+    '36': [Slash, WingAttack]
+    '54': [DragonRage]
+    '55': [FireSpin]
+    '62': [Inferno]
+    '66': [FlareBlitz]
+  teachable:
+    - HyperBeam
+    - Earthquake
+    - Fissure
+    - Fly
+    - Roar
+    - Sandstorm
+    - SteelWing
+    - BlastBurn
+    - RockSlide
+    - Defog
+    - DragonPulse
+    - FocusBlast
+    - GigaImpact
+    - OminousWind
+    - Roost
+    - Tailwind
+    - SkyDrop
+    - Bulldoze
+    - DragonTail
+    - BrutalSwing

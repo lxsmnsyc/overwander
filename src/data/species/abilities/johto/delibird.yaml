@@ -1,0 +1,6 @@
+Delibird:
+  abilities: [VitalSpirit, Hustle]
+  # Gale Wings is this registry's rather than the mainline's,
+  # filling it to four: a delivery is only worth anything if it
+  # gets there first
+  hidden: [Insomnia, GaleWings]

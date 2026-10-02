@@ -1,0 +1,7 @@
+# A gem eater that turns up nowhere anybody else does: caves and the
+# dark of the badlands
+Sableye:
+  types: [Dark, Ghost]
+  egg-groups: [HumanLike]
+  biomes: [Badlands, MontaneForest]
+  active: [Evening, Night]

@@ -1,0 +1,134 @@
+# TM, HM and tutor moves shared by the whole family
+family-teachable:
+  - Acrobatics
+  - AerialAce
+  - Attract
+  - Blizzard
+  - Bounce
+  - Confide
+  - Cut
+  - Dig
+  - Dive
+  - DoubleTeam
+  - EchoedVoice
+  - Facade
+  - Fling
+  - Frustration
+  - GrassKnot
+  - HiddenPower
+  - IceBeam
+  - IcyWind
+  - PowerUpPunch
+  - Protect
+  - RainDance
+  - Rest
+  - Return
+  - RockSlide
+  - RockSmash
+  - RockTomb
+  - RolePlay
+  - Round
+  - Scald
+  - SecretPower
+  - SleepTalk
+  - SmackDown
+  - Snatch
+  - Snore
+  - Spite
+  - Strength
+  - Substitute
+  - Surf
+  - Swagger
+  - Taunt
+  - Thief
+  - Toxic
+  - UTurn
+  - WaterPledge
+  - WaterPulse
+  - Waterfall
+Froakie:
+  level:
+    '1': [Pound, Growl]
+    '5': [Bubble]
+    '8': [QuickAttack]
+    '10': [Lick]
+    '14': [WaterPulse]
+    '18': [SmokeScreen]
+    '21': [Round]
+    '25': [Fling]
+    '29': [SmackDown]
+    '35': [Substitute]
+    '39': [Bounce]
+    '43': [DoubleTeam]
+    '48': [HydroPump]
+  egg: [Bestow, Camouflage, MindReader, MudSport, ToxicSpikes, WaterSport]
+Frogadier:
+  level:
+    '1': [Pound, Growl]
+    '5': [Bubble]
+    '8': [QuickAttack]
+    '10': [Lick]
+    '14': [WaterPulse]
+    '20': [SmokeScreen]
+    '23': [Round]
+    '28': [Fling]
+    '33': [SmackDown]
+    '38': [Substitute]
+    '44': [Bounce]
+    '48': [DoubleTeam]
+    '55': [HydroPump]
+  teachable: [DarkPulse, GunkShot, IcePunch, LowKick]
+Greninja:
+  level:
+    '1': [Pound, Growl, RolePlay, MatBlock]
+    '5': [Bubble]
+    '8': [QuickAttack]
+    '10': [Lick]
+    '14': [WaterPulse]
+    '20': [SmokeScreen]
+    '23': [ShadowSneak]
+    '28': [Spikes]
+    '33': [FeintAttack]
+    '43': [Substitute]
+    '49': [Extrasensory]
+    '52': [DoubleTeam]
+    '56': [Haze]
+    '60': [HydroPump]
+    '70': [NightSlash]
+    '75': [WaterShuriken]
+  teachable:
+    - DarkPulse
+    - GigaImpact
+    - GunkShot
+    - HydroCannon
+    - HyperBeam
+    - IcePunch
+    - LowKick
+    - BrutalSwing
+GreninjaAsh:
+  level:
+    '1': [Pound, Growl, RolePlay, MatBlock]
+    '5': [Bubble]
+    '8': [QuickAttack]
+    '10': [Lick]
+    '14': [WaterPulse]
+    '20': [SmokeScreen]
+    '23': [ShadowSneak]
+    '28': [Spikes]
+    '33': [FeintAttack]
+    '43': [Substitute]
+    '49': [Extrasensory]
+    '52': [DoubleTeam]
+    '56': [Haze]
+    '60': [HydroPump]
+    '70': [NightSlash]
+    '75': [WaterShuriken]
+  teachable:
+    - DarkPulse
+    - GigaImpact
+    - GunkShot
+    - HydroCannon
+    - HyperBeam
+    - IcePunch
+    - LowKick
+    - BrutalSwing

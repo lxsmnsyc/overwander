@@ -1,0 +1,81 @@
+family-teachable:
+  - WaterPulse
+  - Toxic
+  - Hail
+  - HiddenPower
+  - SunnyDay
+  - IceBeam
+  - Blizzard
+  - Protect
+  - RainDance
+  - Frustration
+  - SolarBeam
+  - Thunderbolt
+  - Thunder
+  - Return
+  - ShadowBall
+  - DoubleTeam
+  - ShockWave
+  - Flamethrower
+  - Sandstorm
+  - FireBlast
+  - Facade
+  - SecretPower
+  - Rest
+  - Attract
+  - Thief
+  - Flash
+  - BodySlam
+  - DoubleEdge
+  - Mimic
+  - ThunderWave
+  - Substitute
+  - PsychUp
+  - Snore
+  - IcyWind
+  - Endure
+  - Swagger
+  - SleepTalk
+  - DefenseCurl
+  - Swift
+  - NaturalGift
+  - Tailwind
+  - LastResort
+  - EnergyBall
+  - Avalanche
+  - Captivate
+  - OminousWind
+  - Round
+  - Scald
+  - Incinerate
+  - Retaliate
+  - WorkUp
+  - Confide
+Castform:
+  level:
+    '1': [Tackle]
+    '10': [WaterGun, Ember, PowderSnow]
+    '20': [RainDance, SunnyDay, Hail]
+    '30': [WeatherBall]
+  egg: [FutureSight, LuckyChant, OminousWind, ClearSmog, Hex]
+CastformSunny:
+  level:
+    '1': [Tackle]
+    '10': [WaterGun, Ember, PowderSnow]
+    '20': [RainDance, SunnyDay, Hail]
+    '30': [WeatherBall]
+  egg: [FutureSight, LuckyChant, OminousWind, ClearSmog, Hex]
+CastformRainy:
+  level:
+    '1': [Tackle]
+    '10': [WaterGun, Ember, PowderSnow]
+    '20': [RainDance, SunnyDay, Hail]
+    '30': [WeatherBall]
+  egg: [FutureSight, LuckyChant, OminousWind, ClearSmog, Hex]
+CastformSnowy:
+  level:
+    '1': [Tackle]
+    '10': [WaterGun, Ember, PowderSnow]
+    '20': [RainDance, SunnyDay, Hail]
+    '30': [WeatherBall]
+  egg: [FutureSight, LuckyChant, OminousWind, ClearSmog, Hex]

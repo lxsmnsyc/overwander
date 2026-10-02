@@ -1,0 +1,6 @@
+Volcanion:
+  abilities: [WaterAbsorb]
+  # Water Absorb is all the mainline gives it, so the other three
+  # are this registry's: the other half of what it is made of, the
+  # jolt a kettle gives when it is struck, and a legendary's weight
+  hidden: [FlashFire, SteamEngine, Pressure]

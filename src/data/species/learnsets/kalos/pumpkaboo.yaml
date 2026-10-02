@@ -1,0 +1,125 @@
+family-teachable:
+  - AllySwitch
+  - Attract
+  - BulletSeed
+  - ChargeBeam
+  - Confide
+  - DarkPulse
+  - DoubleTeam
+  - DreamEater
+  - Endure
+  - EnergyBall
+  - Explosion
+  - Facade
+  - FireBlast
+  - FlameCharge
+  - Flamethrower
+  - Flash
+  - FoulPlay
+  - Frustration
+  - GigaDrain
+  - GrassKnot
+  - GyroBall
+  - Hex
+  - HiddenPower
+  - Imprison
+  - Incinerate
+  - LightScreen
+  - MagicCoat
+  - MysticalFire
+  - NaturePower
+  - PainSplit
+  - Protect
+  - Psychic
+  - Rest
+  - Return
+  - RockSlide
+  - RockSmash
+  - RolePlay
+  - Round
+  - Safeguard
+  - ScaryFace
+  - SecretPower
+  - SeedBomb
+  - ShadowBall
+  - SkillSwap
+  - SleepTalk
+  - SludgeBomb
+  - Snore
+  - SolarBeam
+  - Spite
+  - Substitute
+  - SunnyDay
+  - Swagger
+  - Synthesis
+  - Telekinesis
+  - Thief
+  - Toxic
+  - Trick
+  - TrickRoom
+  - WillOWisp
+  - WorrySeed
+Pumpkaboo:
+  level:
+    '1': [Astonish, ConfuseRay, Trick, TrickOrTreat]
+    '4': [ScaryFace, ShadowSneak]
+    '11': [WorrySeed]
+    '12': [RazorLeaf]
+    '16': [LeechSeed]
+    '20': [BulletSeed]
+    '32': [SeedBomb]
+    '36': [ShadowBall]
+    '42': [PainSplit]
+  egg: [Bestow, Curse, DestinyBond, Disable]
+Gourgeist:
+  level:
+    '1':
+      - Astonish
+      - ConfuseRay
+      - Trick
+      - TrickOrTreat
+      - ScaryFace
+      - ShadowSneak
+      - Explosion
+      - Moonblast
+      - PhantomForce
+    '11': [WorrySeed]
+    '12': [RazorLeaf]
+    '16': [LeechSeed]
+    '20': [BulletSeed]
+    '32': [SeedBomb]
+    '36': [ShadowBall]
+    '42': [PainSplit]
+  teachable: [FocusBlast, GigaImpact, HyperBeam, NastyPlot, PhantomForce, PowerWhip]
+PumpkabooSuper:
+  level:
+    '1': [Astonish, ConfuseRay, Trick, TrickOrTreat]
+    '4': [ScaryFace, ShadowSneak]
+    '11': [WorrySeed]
+    '12': [RazorLeaf]
+    '16': [LeechSeed]
+    '20': [BulletSeed]
+    '32': [SeedBomb]
+    '36': [ShadowBall]
+    '42': [PainSplit]
+  egg: [Bestow, Curse, DestinyBond, Disable]
+GourgeistSuper:
+  level:
+    '1':
+      - Astonish
+      - ConfuseRay
+      - Trick
+      - TrickOrTreat
+      - ScaryFace
+      - ShadowSneak
+      - Explosion
+      - Moonblast
+      - PhantomForce
+    '11': [WorrySeed]
+    '12': [RazorLeaf]
+    '16': [LeechSeed]
+    '20': [BulletSeed]
+    '32': [SeedBomb]
+    '36': [ShadowBall]
+    '42': [PainSplit]
+  teachable: [FocusBlast, GigaImpact, HyperBeam, NastyPlot, PhantomForce, PowerWhip]

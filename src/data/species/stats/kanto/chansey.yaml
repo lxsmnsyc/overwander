@@ -1,0 +1,18 @@
+Chansey:
+  stats: { HP: 250, Attack: 5, Defense: 5, SpecialAttack: 35, SpecialDefense: 105, Speed: 50 }
+  catch-rate: 30
+  height: 1.1
+  weight: 34.6
+  gender: [0, 1]
+Blissey:
+  stats: { HP: 255, Attack: 10, Defense: 10, SpecialAttack: 75, SpecialDefense: 135, Speed: 55 }
+  catch-rate: 30
+  height: 1.5
+  weight: 46.8
+  gender: [0, 1]
+Happiny:
+  stats: { HP: 100, Attack: 5, Defense: 5, SpecialAttack: 15, SpecialDefense: 65, Speed: 30 }
+  catch-rate: 130
+  height: 0.6
+  weight: 24.4
+  gender: [0, 1]

@@ -1,0 +1,9 @@
+Pansage:
+  abilities: [Gluttony]
+  hidden: [Overgrow]
+Simisage:
+  abilities: [Gluttony]
+  # The line reaches only two, so both of the last slots are
+  # invented: Sap Sipper is the monkey drinking its own element, the
+  # way its brothers do, and Harvest answers what Gluttony spends
+  hidden: [Overgrow, SapSipper, Harvest]

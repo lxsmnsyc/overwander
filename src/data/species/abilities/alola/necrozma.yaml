@@ -1,0 +1,14 @@
+Necrozma:
+  abilities: [PrismArmor]
+  # Prism Armor is all the mainline gives it, so the other three are
+  # this registry's
+  hidden: [TintedLens, MirrorArmor, Levitate]
+NecrozmaDuskMane:
+  abilities: [PrismArmor]
+  hidden: [TintedLens, MirrorArmor, Levitate]
+NecrozmaDawnWings:
+  abilities: [PrismArmor]
+  hidden: [TintedLens, MirrorArmor, Levitate]
+NecrozmaUltra:
+  abilities: [PrismArmor]
+  hidden: [TintedLens, MirrorArmor, Levitate]

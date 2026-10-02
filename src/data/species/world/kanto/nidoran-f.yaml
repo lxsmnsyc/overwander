@@ -1,0 +1,25 @@
+NidoranF:
+  types: [Poison]
+  egg-groups: [Monster, Field]
+  biomes: [Grassland, Savanna, Woodland]
+  active: any
+  evolves-into:
+    - species: Nidorina
+      method: [Level]
+      level: 16
+Nidorina:
+  types: [Poison]
+  egg-groups: [Monster, Field]
+  biomes: [Grassland, Savanna, Woodland]
+  active: any
+  evolves-from: NidoranF
+  evolves-into:
+    - species: Nidoqueen
+      method: [UsedItem]
+      item: MoonStone
+Nidoqueen:
+  types: [Poison, Ground]
+  egg-groups: [Monster, Field]
+  biomes: [Grassland, Savanna, Woodland]
+  active: any
+  evolves-from: Nidorina

@@ -1,0 +1,12 @@
+Phantump:
+  stats: { HP: 43, Attack: 70, Defense: 48, SpecialAttack: 50, SpecialDefense: 60, Speed: 38 }
+  catch-rate: 120
+  height: 0.4
+  weight: 7
+  gender: [1, 1]
+Trevenant:
+  stats: { HP: 85, Attack: 110, Defense: 76, SpecialAttack: 65, SpecialDefense: 82, Speed: 56 }
+  catch-rate: 60
+  height: 1.5
+  weight: 71
+  gender: [1, 1]

@@ -1,0 +1,5 @@
+Latios:
+  types: [Dragon, Psychic]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Ocean]
+  active: any

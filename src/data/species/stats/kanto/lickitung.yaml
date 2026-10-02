@@ -1,0 +1,12 @@
+Lickitung:
+  stats: { HP: 90, Attack: 55, Defense: 75, SpecialAttack: 60, SpecialDefense: 75, Speed: 30 }
+  catch-rate: 45
+  height: 1.2
+  weight: 65.5
+  gender: [1, 1]
+Lickilicky:
+  stats: { HP: 110, Attack: 85, Defense: 95, SpecialAttack: 80, SpecialDefense: 95, Speed: 50 }
+  catch-rate: 30
+  height: 1.7
+  weight: 140
+  gender: [1, 1]

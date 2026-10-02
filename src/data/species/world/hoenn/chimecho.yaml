@@ -1,0 +1,17 @@
+Chimecho:
+  types: [Psychic]
+  egg-groups: [Amorphous]
+  biomes: [Mountain, MontaneForest]
+  active: any
+  evolves-from: Chingling
+# The Chimecho that has not learned to hold its note: a Chingling
+# rings with every step it takes
+Chingling:
+  types: [Psychic]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Mountain, MontaneForest]
+  active: any
+  evolves-into:
+    - species: Chimecho
+      method: [Friendship, TimeOfDay]
+      time: [Evening, Night]

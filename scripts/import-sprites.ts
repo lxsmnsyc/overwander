@@ -137,11 +137,11 @@ function slotsOf(root: string): Slot[] {
  * species are written a line at a time, so a sheet for a line nobody
  * can meet yet is art that ships for nothing.
  *
- * Both files are read as text, since node refuses the `const enum`
- * they are written in. A name counts wherever it appears under
- * `src/data/species/`, and so does a form list the ids file exports,
- * because a form is as often registered through one of those as by
- * name
+ * Both are read as text, since node refuses the `const enum`s the
+ * code is written in. A name counts wherever it is written under
+ * `src/data/species/`, as a key of the species YAML or as
+ * `Species.Name` in the code beside it, and so does a form list the
+ * ids file exports
  */
 function writtenSpecies(): Set<number> {
   const source = readFileSync(IDS, 'utf8');
@@ -174,7 +174,10 @@ function writtenSpecies(): Set<number> {
   for (const file of sourceFiles(SPECIES)) {
     const text = readFileSync(file, 'utf8');
 
-    for (const [, name] of text.matchAll(/Species\.(\w+)/g)) {
+    // A YAML file names its species as keys, the code as `Species.Name`
+    const pattern = file.endsWith('.yaml') ? /^(\w+):/gm : /Species\.(\w+)/g;
+
+    for (const [, name] of text.matchAll(pattern)) {
       const id = numbered.get(name);
 
       if (id != null) {
@@ -227,7 +230,7 @@ function sourceFiles(folder: string): string[] {
 
     if (entry.isDirectory()) {
       found.push(...sourceFiles(path));
-    } else if (path.endsWith('.ts')) {
+    } else if (path.endsWith('.ts') || path.endsWith('.yaml')) {
       found.push(path);
     }
   }

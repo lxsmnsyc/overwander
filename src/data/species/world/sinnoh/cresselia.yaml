@@ -1,0 +1,9 @@
+# The two halves of one moon, met on two islands off the same coast:
+# the crescent that hands out a good night's sleep, and the shadow
+# that takes it away again
+
+Cresselia:
+  types: [Psychic]
+  egg-groups: [NoEggsDiscovered]
+  biomes: [Ocean]
+  active: [Evening, Night]

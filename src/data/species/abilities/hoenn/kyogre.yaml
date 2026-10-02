@@ -1,0 +1,8 @@
+Kyogre:
+  abilities: [Drizzle]
+  # All three are this registry's: it swims in the rain it brought,
+  # drinks what is thrown at it, and is expensive to fight at all
+  hidden: [SwiftSwim, WaterAbsorb, Pressure]
+KyogrePrimal:
+  abilities: [Drizzle, PrimordialSea]
+  hidden: [SwiftSwim, WaterAbsorb, Pressure]

@@ -1,0 +1,17 @@
+Aipom:
+  types: [Normal]
+  egg-groups: [Field]
+  active: any
+  evolves-into:
+    - species: Ambipom
+      method: [Level, KnownMove]
+      level: 32
+      move: DoubleHit
+# The tail that learned to do everything: an Ambipom stopped using
+# its hands years ago and has not missed them
+Ambipom:
+  types: [Normal]
+  egg-groups: [Field]
+  biomes: [TropicalRainforest, TemperateForest, Woodland]
+  active: any
+  evolves-from: Aipom

@@ -1,0 +1,31 @@
+Pikachu:
+  stats: { HP: 35, Attack: 55, Defense: 40, SpecialAttack: 50, SpecialDefense: 50, Speed: 90 }
+  catch-rate: 190
+  height: 0.4
+  weight: 6
+  gender: [1, 1]
+Raichu:
+  stats: { HP: 60, Attack: 90, Defense: 55, SpecialAttack: 90, SpecialDefense: 80, Speed: 110 }
+  catch-rate: 75
+  height: 0.8
+  weight: 30
+  gender: [1, 1]
+Pichu:
+  stats: { HP: 20, Attack: 40, Defense: 15, SpecialAttack: 35, SpecialDefense: 35, Speed: 60 }
+  catch-rate: 190
+  height: 0.3
+  weight: 2
+  gender: &a1 [1, 1]
+PichuSpikyEared:
+  # Pichu's own spread, 65 higher in every stat
+  stats: { HP: 85, Attack: 105, Defense: 80, SpecialAttack: 100, SpecialDefense: 100, Speed: 125 }
+  catch-rate: 190
+  height: 0.3
+  weight: 2
+  gender: *a1
+RaichuAlola:
+  stats: { HP: 60, Attack: 85, Defense: 50, SpecialAttack: 95, SpecialDefense: 85, Speed: 110 }
+  catch-rate: 75
+  height: 0.7
+  weight: 21
+  gender: [4, 4]

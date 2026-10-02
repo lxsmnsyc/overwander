@@ -1,0 +1,18 @@
+Oshawott:
+  stats: { HP: 55, Attack: 55, Defense: 45, SpecialAttack: 63, SpecialDefense: 45, Speed: 45 }
+  catch-rate: 45
+  height: 0.5
+  weight: 5.9
+  gender: [7, 1]
+Dewott:
+  stats: { HP: 75, Attack: 75, Defense: 60, SpecialAttack: 83, SpecialDefense: 60, Speed: 60 }
+  catch-rate: 45
+  height: 0.8
+  weight: 24.5
+  gender: [7, 1]
+Samurott:
+  stats: { HP: 95, Attack: 100, Defense: 85, SpecialAttack: 108, SpecialDefense: 70, Speed: 70 }
+  catch-rate: 45
+  height: 1.5
+  weight: 94.6
+  gender: [7, 1]

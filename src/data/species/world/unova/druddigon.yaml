@@ -1,0 +1,7 @@
+# The cave dragon: it runs the tunnels rather than flying them, and it
+# has to come out and lie in the sun before its body will work
+Druddigon:
+  types: [Dragon]
+  egg-groups: [Monster, Dragon]
+  biomes: [Mountain, Badlands]
+  active: [Morning, Day]

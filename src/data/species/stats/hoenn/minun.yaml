@@ -1,0 +1,6 @@
+Minun:
+  stats: { HP: 60, Attack: 40, Defense: 50, SpecialAttack: 75, SpecialDefense: 85, Speed: 95 }
+  catch-rate: 200
+  height: 0.4
+  weight: 4.2
+  gender: [1, 1]

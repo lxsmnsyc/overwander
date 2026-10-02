@@ -1,0 +1,7 @@
+Cresselia:
+  stats: { HP: 120, Attack: 70, Defense: 110, SpecialAttack: 75, SpecialDefense: 120, Speed: 85 }
+  catch-rate: 3
+  height: 1.5
+  weight: 85.6
+  # Always the sister of the two
+  gender: [0, 1]

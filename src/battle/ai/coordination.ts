@@ -58,6 +58,9 @@ const ONCE_AT_A_TARGET = new Set<Moves>([
   Moves.SimpleBeam,
 ]);
 
+/** Moves whose second cast at the same target turns the first back */
+const UNDONE_BY_A_SECOND = new Set<Moves>([Moves.TopsyTurvy]);
+
 /** Moves whose whole work is done across the field by the first */
 const ONCE_ON_THE_FIELD = new Set<Moves>([Moves.PerishSong, Moves.Haze, Moves.FairyLock]);
 
@@ -100,7 +103,8 @@ function covered(event: CheckUnitAIMoveUsableEvent, friend: Unit): boolean {
       hasRole(move, MoveRole.Field) ||
       (hasRole(move, MoveRole.Hazard) && !LAYERED.has(move)) ||
       ONCE_AT_A_TARGET.has(move) ||
-      ONCE_ON_THE_FIELD.has(move)
+      ONCE_ON_THE_FIELD.has(move) ||
+      UNDONE_BY_A_SECOND.has(move)
     ) {
       return true;
     }
@@ -115,6 +119,10 @@ function covered(event: CheckUnitAIMoveUsableEvent, friend: Unit): boolean {
     return friend.team === event.source.team;
   }
   if (CALLS.has(move) && CALLS.has(cast.move)) {
+    return true;
+  }
+  // Two partners trading places at once trade straight back
+  if (move === Moves.AllySwitch && cast.move === Moves.AllySwitch) {
     return true;
   }
 

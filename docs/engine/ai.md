@@ -322,6 +322,8 @@ already covers:
 - a second Follow Me or Rage Powder, since only one unit draws the hits;
 - a second Heal Bell or Aromatherapy for the same party;
 - a second Perish Song, Haze or Fairy Lock, whose first does the whole job.
+- a second Topsy-Turvy at the same foe, or a second Ally Switch, which would
+  turn the first straight back.
 
 A cast is on show, so reading it is no peek. Only casts still winding up are
 read; a move already in flight for its last quarter of a second is not.

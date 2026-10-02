@@ -9,6 +9,7 @@ import {
 import Team from '../../src/battle/team';
 import type Unit from '../../src/battle/unit';
 import { unitTarget } from '../../src/battle/utils';
+import { Stages } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import { Moves } from '../../src/data/ids/moves';
 import { type BattleHarness, createBattle, createUnit, pinRandom } from './harness';
@@ -160,6 +161,28 @@ describe('teammates casting over each other', () => {
     expect(usableMove(battle, unit, Moves.PerishSong, none)).toBe(true);
     friend.cast(Moves.PerishSong, none);
     expect(usableMove(battle, unit, Moves.PerishSong, none)).toBe(false);
+  });
+
+  it('leaves what a second cast would only turn back', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const friend = createUnit(battle, teamA);
+    const flipper = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    foe.stages[Stages.Attack] = 2;
+    friend.addMove(Moves.AllySwitch);
+    flipper.addMove(Moves.TopsyTurvy);
+    foe.addMove(Moves.Tackle);
+
+    expect(usableMove(battle, unit, Moves.TopsyTurvy, unitTarget(foe))).toBe(true);
+    flipper.cast(Moves.TopsyTurvy, unitTarget(foe));
+    expect(usableMove(battle, unit, Moves.TopsyTurvy, unitTarget(foe))).toBe(false);
+
+    // Ally Switch is only worth it with a hit on its way
+    foe.cast(Moves.Tackle, unitTarget(unit));
+    expect(usableMove(battle, unit, Moves.AllySwitch, unitTarget(friend))).toBe(true);
+    friend.cast(Moves.AllySwitch, unitTarget(unit));
+    expect(usableMove(battle, unit, Moves.AllySwitch, unitTarget(friend))).toBe(false);
   });
 
   it('still adds a layer of Spikes over a teammate’s', () => {

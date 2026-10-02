@@ -293,6 +293,37 @@ function stageMoves(
   return false;
 }
 
+/**
+ * The stage moves that do something besides: a weight shed, a charge
+ * held, a curl or a shrink remembered, hazards blown away, a faint, a
+ * stockpile, a confusion. A stage already as far as it goes leaves
+ * the rest of them worth casting, so they are only marked down
+ */
+const MORE_THAN_STAGES = new Set<Moves>([
+  Moves.Autotomize,
+  Moves.Charge,
+  Moves.DefenseCurl,
+  Moves.Defog,
+  Moves.Flatter,
+  Moves.Memento,
+  Moves.Minimize,
+  Moves.Stockpile,
+  Moves.Swagger,
+]);
+
+/** Whether casting the move at this target would still move a stage on somebody it reaches */
+function movesAnyStage(battle: Battle, source: Unit, move: Moves, target: MoveTarget): boolean {
+  const cause = { type: EffectType.Move, move, unit: source } as const;
+  const effects = getStageMoveEffects(move);
+
+  for (const receiver of stageReceivers(battle, source, move, target)) {
+    if (stageMoves(receiver, source, effects, cause)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export default function setupStageMoves(battle: Battle): void {
   setupFriendlyDrops(battle);
 
@@ -306,24 +337,25 @@ export default function setupStageMoves(battle: Battle): void {
   // The engine is asked about the second rather than the AI keeping
   // its own list of what blocks a stage
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    const effects = getStageMoveEffects(event.move);
-
-    if (effects.length === 0) {
-      return;
-    }
-
-    const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
-    let moving = false;
-
-    for (const receiver of stageReceivers(battle, event.source, event.move, event.target)) {
-      if (stageMoves(receiver, event.source, effects, cause)) {
-        moving = true;
-        break;
-      }
-    }
-
-    if (!moving) {
+    if (
+      getStageMoveEffects(event.move).length > 0 &&
+      !movesAnyStage(battle, event.source, event.move, event.target)
+    ) {
       event.score -= USELESS_PENALTY;
+    }
+  });
+
+  // And a move that does nothing but move stages is not offered at all
+  // where none would move: aimed elsewhere it still might, so the AI
+  // looks for that target rather than settling for a dead cast here
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (
+      event.usable &&
+      !MORE_THAN_STAGES.has(event.move) &&
+      getStageMoveEffects(event.move).length > 0 &&
+      !movesAnyStage(battle, event.source, event.move, event.target)
+    ) {
+      event.usable = false;
     }
   });
 }

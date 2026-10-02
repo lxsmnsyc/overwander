@@ -1064,6 +1064,41 @@ describe('weighing a move', () => {
     expect(usableMove(battle, unit, Moves.SunnyDay, target)).toBe(false);
   });
 
+  it('refuses a stage move that would move nothing, but not one that does more', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const self: MoveTarget = { type: MoveTargetType.None };
+    const foe: MoveTarget = { type: MoveTargetType.Unit, unit: enemy };
+
+    expect(usableMove(battle, unit, Moves.SwordsDance, self)).toBe(true);
+    unit.stages[Stages.Attack] = 6;
+    expect(usableMove(battle, unit, Moves.SwordsDance, self)).toBe(false);
+
+    // Pinned at the bottom, or held up by Mist, a drop moves nothing
+    expect(usableMove(battle, unit, Moves.Screech, foe)).toBe(true);
+    enemy.stages[Stages.Defense] = -6;
+    expect(usableMove(battle, unit, Moves.Screech, foe)).toBe(false);
+
+    // A spread drop is refused only once every foe it reaches is pinned
+    const growl: MoveTarget = { type: MoveTargetType.None };
+    const other = createUnit(battle, teamB);
+    other.stages[Stages.Attack] = -6;
+    expect(usableMove(battle, unit, Moves.Growl, growl)).toBe(true);
+    enemy.stages[Stages.Attack] = -6;
+    expect(usableMove(battle, unit, Moves.Growl, growl)).toBe(false);
+
+    enemy.stages[Stages.Defense] = 0;
+    enemy.team.addStatus(TeamStatuses.Mist, NONE_CAUSE);
+    expect(usableMove(battle, unit, Moves.Screech, foe)).toBe(false);
+
+    // Minimize's shrink is worth having whatever its evasion, so it is
+    // only marked down
+    unit.stages[Stages.Evasion] = 6;
+    expect(usableMove(battle, unit, Moves.Minimize, self)).toBe(true);
+    expect(scoreMove(battle, unit, Moves.Minimize, self)).toBeLessThan(BASE_SCORE);
+  });
+
   it('sees a stage held rather than only one pinned', () => {
     const { battle, teamA, teamB } = createAIBattle();
     pinRandom(battle, 0.99);

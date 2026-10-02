@@ -326,6 +326,10 @@ already covers:
 - a second Topsy-Turvy at the same foe, or a second Ally Switch, which would
   turn the first straight back.
 
+It also reads a friend's cast for a move worth pairing with: a Pledge that lands
+after a teammate's different one, inside the window, lands as the combined hit
+and scores `PLEDGE_PAIR_BONUS` more ([`src/battle/moves/pledges.ts`](../../src/battle/moves/pledges.ts)).
+
 A cast is on show, so reading it is no peek. Only casts still winding up are
 read; a move already in flight for its last quarter of a second is not.
 

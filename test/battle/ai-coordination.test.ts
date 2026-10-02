@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { setupChooseMoveAI } from '../../src/battle/ai/choose-move';
+import { BASE_SCORE } from '../../src/battle/ai/score';
 import {
   BattleEvents,
+  type CheckUnitAIMoveScoreEvent,
   type CheckUnitAIMoveUsableEvent,
   type MoveTarget,
   MoveTargetType,
 } from '../../src/battle/events';
+import { PLEDGE_PAIR_BONUS } from '../../src/battle/moves/pledges';
 import Team from '../../src/battle/team';
 import type Unit from '../../src/battle/unit';
 import { unitTarget } from '../../src/battle/utils';
@@ -37,6 +40,24 @@ function usableMove(
   };
   battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
   return event.usable;
+}
+
+function scoreMove(
+  battle: BattleHarness['battle'],
+  source: Unit,
+  move: Moves,
+  target: MoveTarget,
+): number {
+  const event: CheckUnitAIMoveScoreEvent = {
+    id: 'CheckUnitAIMoveScore',
+    disabled: false,
+    source,
+    move,
+    target,
+    score: BASE_SCORE,
+  };
+  battle.emit(BattleEvents.CheckUnitAIMoveScore, event);
+  return event.score;
 }
 
 function teamTarget(unit: Unit): MoveTarget {
@@ -224,5 +245,26 @@ describe('teammates casting over each other', () => {
     expect(usableMove(battle, unit, Moves.GrassyTerrain, none)).toBe(false);
     // The sky is a separate thing
     expect(usableMove(battle, unit, Moves.SunnyDay, none)).toBe(true);
+  });
+
+  it('pairs its Pledge with a different one a teammate is already casting', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const friend = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    friend.addMove(Moves.WaterPledge);
+
+    const fire = scoreMove(battle, unit, Moves.FirePledge, unitTarget(foe));
+    const water = scoreMove(battle, unit, Moves.WaterPledge, unitTarget(foe));
+
+    friend.cast(Moves.WaterPledge, unitTarget(foe));
+    battle.tick(500);
+
+    // Landing after the teammate's, it lands as the pair
+    expect(scoreMove(battle, unit, Moves.FirePledge, unitTarget(foe))).toBe(
+      fire + PLEDGE_PAIR_BONUS,
+    );
+    // The same Pledge twice is no pair
+    expect(scoreMove(battle, unit, Moves.WaterPledge, unitTarget(foe))).toBe(water);
   });
 });

@@ -1,5 +1,69 @@
 # overwander
 
+## 4.28.0
+
+### Minor Changes
+
+- 08bf4f9: Alola's moves:
+  
+  - Every move generation 7 introduced except the Z-Moves is in the move list, from Shore Up to Double Iron Bash, the Let's Go partner moves included.
+  - First Impression works once a trip onto the field, and throwing it spends Fake Out's and Mat Block's chance too.
+  - Psychic Terrain holds for 10 seconds. Grounded pokemon are safe from the other side's moves that wind up faster than an ordinary move, and their Psychic moves hit 1.3x.
+  - Aurora Veil only goes up in hail or snow, and cuts both physical and special damage against the side by 1/3. It does not stack with Reflect or Light Screen, and Brick Break, Psychic Fangs and Defog take it down.
+  - Baneful Bunker guards the user and poisons whatever touches it.
+  - Spotlight draws every single-target move aimed at the target's side to the target.
+  - Glitzy Glow and Baddy Bad put up Light Screen and Reflect over the user's side as they land.
+  - Shell Trap only goes off, at once, when a physical move hits the user during its wind-up. Beak Blast burns anything that touches the user during its wind-up.
+  - Instruct makes the target throw its last move again at once. Laser Focus makes the user's next move within 4 seconds a critical hit.
+  - Throat Chop stops the target using sound moves for 4 seconds. Pollen Puff heals a teammate instead of hitting it.
+  - Sunsteel Strike, Moongeist Beam and Photon Geyser ignore the target's abilities, and Photon Geyser lands as a physical move when the user's Attack is higher.
+  - Stomping Tantrum hits 2x after the user's last move failed. Core Enforcer takes an ability off each target that is not winding up a move.
+  - The 17 Memories are held items that set Multi-Attack's type.
+  - Z-Moves are in. A pokemon holding a Z-Crystal turns a matching damaging move into its Z-Move as it goes off, once a side a fight.
+  - A type crystal gives a status move of its type the mainline Z-effect before the move goes off, such as a stage raised, full HP or cleared drops.
+  - The 18 type crystals take their power from the move they replace, and the 17 signature crystals each turn one line's own move into its own Z-Move.
+  - A Mega, or a pokemon holding its Mega Stone, never throws a Z-Move.
+  - Every Z-Move has a picture of its own, opening with the user gathering its Z-Power under a gold Z.
+  - Alola's signature moves have pictures of their own, and Psychic Terrain washes the floor pink.
+- a6f377c: - A battle lobby's host can cap the base stat total a pokemon may bring. A held item that changes its form counts at that form's total.
+  - The host can also bar legendaries, mythicals, and pokemon holding an item that changes their form.
+  - A barred pokemon is greyed out in the team picker with the reason, and is taken out of a party when the rules change.
+- 52ea503: - New held item, the Reveal Glass: a Tornadus, Thundurus or Landorus holding it fights in its Therian Forme, which brings Regenerator, Volt Absorb or Intimidate on top of its own ability. It turns up in the prized band of the item pool.
+  - Every form held for a fight now floats its item over the pokemon, the way a Mega floats its stone: the Origin orbs, the Primal orbs, the Plates, the Drives, the Gracidea, the Prison Bottle and the Reveal Glass. Shapes without art of their own still read as changed.
+  - Intimidate now lands when it comes with a shape put on as the pokemon enters, so Mega Manectric scowls as it Mega Evolves.
+
+### Patch Changes
+
+- 585f26f: - The battle lobby is laid out like a battle screen: two seats face each other across a field, each with its trainer plate, a ready stamp and the party.
+  - The lobby is named for whoever hosts it, and the rules are chips, with Change rules beside them for the host.
+  - Ready is a stamp on your own seat, and Change team and Watch instead sit under it.
+  - Invite is in the dock only, and the dock says why Start is not ready yet.
+  - Watchers show as a row of faces.
+  - A seated player can only leave by Leave, so their party never stays behind in the lobby.
+- ef4526b: Teammates no longer double up on a move whose first cast does the whole job: the same restriction on the same foe (Mean Look, Foresight, Embargo, Soak, a Ghost's Curse and the like), Helping Hand on a partner already being helped, two units drawing hits with Follow Me or Rage Powder, two party cures, or a second Perish Song, Haze or Fairy Lock.
+- 0997fba: Teammates pair their Pledges: a unit favours a Pledge that would land just after a teammate's different one, so the two combine into the stronger hit and leave its field behind.
+- f164515: Teammates only hold back a status move when a teammate is already giving that same status to that foe. Statuses stack, so a Thunder Wave no longer waits on a teammate's Toxic, while a second Toxic (or a Spore behind a Sleep Powder) still does.
+- ad53f0f: Teammates no longer call up a different weather or terrain while a teammate is already calling one up, since the second would only replace the first.
+- 4df5596: Teammates no longer cast a second Topsy-Turvy at a foe a teammate is already flipping, or a second Ally Switch while a partner is already switching, since either would turn the first straight back.
+- 585f26f: Answering a battle invite from Notifications joins the lobby, so the player is still in the room when the battle starts.
+- 0502ee1: Kanto's, Johto's, Hoenn's, Sinnoh's, Unova's and Kalos's pokemon learn Alola's moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 05b2c2a: A shadow or purified pokemon with four abilities can have its abilities put in a new order.
+- c6e5079: The AI no longer casts a stat-stage move that would change nothing: a Swords Dance at +6, a Growl on foes already at -6, a Screech into Mist. It looks for a target where the move still works instead. Moves that do something besides (Minimize, Defog, Memento, Swagger and a few others) are still weighed on the rest of what they do.
+- 8ce4ff5: The AI no longer casts Teeter Dance when every foe it reaches is already confused, or Destiny Bond while its bond still holds.
+- b35f8d9: - Helping Hand is used just before a teammate's attack lands, and Follow Me when a foe's attack is about to hit a teammate.
+  - Encore is aimed at a move the foe is still winding up.
+  - When several teammates are free at once, the strongest play goes first and the others plan around it.
+- 8fc1f6d: - Teammates count the hits already on their way to a foe, so they finish a foe one more hit would take down.
+  - They stop piling more hits onto a foe that is already going down.
+- b248384: - How well a team is directed now depends on who it belongs to.
+  - Grunts, ordinary trainers and raid bosses react slower and now and then make a poor choice.
+  - Gym leaders and Ace Trainers are sharper, and the Elite, champions and your own team play their best.
+- f5d93cc: - Protect, Detect and the team guards are raised only when they will be up before the foe's hit lands.
+  - Me First and Sucker Punch are used only when the foe will still be winding up when they go off.
+- 2b0b274: - A pokemon may hold back for a much stronger move that is about to come off cooldown, instead of throwing a weak one.
+  - A pokemon holding Protect, Detect, Endure, Me First or Sucker Punch stands ready to answer a foe for a moment before acting.
+- 02fc6bf: Each family's species day is the day of the year its number comes round to, so every family has one day a year and some days feature two.
+
 ## 4.27.0
 
 ### Minor Changes

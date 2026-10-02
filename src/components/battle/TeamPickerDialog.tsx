@@ -30,11 +30,11 @@ import {
  * rather than hidden: a player counting their six should find out
  * where the sixth went instead of finding it gone
  */
-function heldBack(option: CatchOption): string | null {
+function heldBack(option: CatchOption, healed = false): string | null {
   if (isEgg(option.caught)) {
     return 'not hatched';
   }
-  if (isFainted(option.caught)) {
+  if (!healed && isFainted(option.caught)) {
     return 'fainted';
   }
   // Put away by its owner. Nothing is wrong with it — they said so
@@ -52,7 +52,11 @@ const enum TeamTab {
 }
 
 /** One saved team, drawn as its name over the pokemon in it */
-function SavedTeam(props: { preset: TeamPresetRecord; onUse: () => void }): JSX.Element {
+function SavedTeam(props: {
+  preset: TeamPresetRecord;
+  healed?: boolean;
+  onUse: () => void;
+}): JSX.Element {
   // A preset holds ids, and the batched read turns its six into one request
   const [party] = createResource(
     () => props.preset.catches.join(','),
@@ -89,7 +93,7 @@ function SavedTeam(props: { preset: TeamPresetRecord; onUse: () => void }): JSX.
     let missing = props.preset.catches.length - (party.latest?.length ?? 0);
 
     for (const [id, caught] of party.latest ?? []) {
-      if (heldBack({ id, caught, fighting: false }) != null) {
+      if (heldBack({ id, caught, fighting: false }, props.healed) != null) {
         missing += 1;
       }
     }
@@ -121,6 +125,13 @@ export interface TeamPickerDialogProps {
    * else takes the game's own six
    */
   max?: number;
+  /** Why the fight's own rules bar a pokemon, beside the reasons any fight does */
+  refuse?: (option: CatchOption) => string | null;
+  /**
+   * Whether the fight fields everyone at full health, so a fainted
+   * pokemon may come. A duel does; a raid takes what was left
+   */
+  healed?: boolean;
   /**
    * Fired with the chosen catch ids, at most `max` of them
    */
@@ -178,7 +189,12 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
     for (const id of catches) {
       const option = byId().get(id);
 
-      if (option != null && heldBack(option) == null && taken.length < max()) {
+      if (
+        option != null &&
+        heldBack(option, props.healed) == null &&
+        props.refuse?.(option) == null &&
+        taken.length < max()
+      ) {
         taken.push(id);
       }
     }
@@ -308,7 +324,7 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
             sort="level"
             verb="Join with"
             empty="No catches to bring."
-            reason={heldBack}
+            reason={(option) => heldBack(option, props.healed) ?? props.refuse?.(option) ?? null}
             onOptions={(options) => {
               setOffered(options);
             }}
@@ -328,6 +344,7 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
                 {([, preset]) => (
                   <SavedTeam
                     preset={preset}
+                    healed={props.healed}
                     onUse={() => {
                       load(preset.catches);
                     }}

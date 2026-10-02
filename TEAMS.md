@@ -1,8 +1,8 @@
 # Team suggestions
 
-Four suggested teams: NPC and PvP battles, and raid battles, each with and without
-legendaries. Every species, move, ability and item below was checked against the
-registries in `src/data`.
+Six suggested teams: NPC and PvP battles, and raid battles, each without legendaries,
+with legendaries, and with mythicals. Every species, move, ability and item below was
+checked against the registries in `src/data`.
 
 ---
 
@@ -94,12 +94,11 @@ permanent, which is why Florges took its slot on the raid team.
 
 ### Megas
 
-Megas are not on `main` yet: everything here reads the `kalos-megas` branch
-([`src/data/species/megas.ts`](src/data/species/megas.ts) and
-[`src/battle/items/megas.ts`](src/battle/items/megas.ts)). If you are playing `main`,
-skip this section.
+Megas are on `main` ([`src/data/species/megas.ts`](src/data/species/megas.ts) and
+[`src/battle/items/megas.ts`](src/battle/items/megas.ts)), 48 of them, so this section is
+live rather than a preview.
 
-**The rules, as that branch has them:**
+**The rules:**
 
 - A Mega Stone is an ordinary **held item**, so it takes one of the eight item slots.
   Rayquaza is the exception: it needs no stone, only to know **Dragon Ascent**.
@@ -118,10 +117,11 @@ skip this section.
 | Mega | Stat line | Ability it wears | What changes |
 | --- | --- | --- | --- |
 | **Mega Metagross** | 80/145/150/105/110/110 | Tough Claws (contact moves 1.3x) | +10 Attack, +20 Defense, +20 Special Defense, **+40 Speed**, and every move on its set is a contact move |
-| **Mega Latias** | 80/100/120/140/150/110 | Levitate | +30 Defense, +30 Special Attack, +20 Special Defense, with Eon Shield still covering the team |
+| **Mega Latias** | 80/100/120/140/150/110 | **Friend Guard** (everyone else takes 0.75x) | +30 Defense, +30 Special Attack, +20 Special Defense, with Eon Shield still covering the team. Latias already reaches Levitate, so the Mega wears a filler instead ([`megas.ts`](src/data/species/megas.ts)), and Friend Guard multiplies with Eon Shield's own 0.8x |
 | **Mega Mewtwo Y** | 106/150/70/194/120/140 | Insomnia | +40 Special Attack and +10 Speed over Mewtwo, at the cost of 20 Defense |
 | **Mega Mewtwo X** | 106/190/100/154/100/130 | Steadfast | Psychic and Fighting, with 190 Attack, for a physical build only |
 | **Mega Rayquaza** | 105/180/100/180/100/115 | Delta Stream | +30 in both attacking stats and +20 Speed, and it needs no stone |
+| **Mega Diancie** | 50/160/110/160/110/110 | **Queenly Majesty** (no priority move reaches your side) | +60 Attack, +60 Special Attack and +60 Speed, paid for with 40 off each defence. It trades Regalia's wall for a fast attacker, and Diancie already reaches Magic Bounce so the Mega wears a filler |
 
 **What to do on each team:**
 
@@ -148,10 +148,56 @@ skip this section.
    team's one Mega even if you would rather Mega Evolve something else. Drop Dragon
    Ascent from its set if you want the Mega elsewhere.
 
-**Worth knowing for other builds:** **Mega Audino** (103/60/126/80/126/50, Healer) is
-the best Mega available to a stall team, and the weather Megas set weather without a
-move: **Mega Charizard Y** carries Drought, **Mega Tyranitar** Sand Stream and
-**Mega Abomasnow** Snow Warning.
+**Worth knowing for other builds:** **Mega Audino** (103/60/126/80/126/50) is the best
+Mega available to a stall team, and it wears **Triage** rather than Healer, since Audino
+already reaches Healer: every heal it casts goes off 3 priority brackets early. The
+weather Megas set weather without a move: **Mega Charizard Y** carries Drought,
+**Mega Tyranitar** Sand Stream and **Mega Abomasnow** Snow Warning.
+
+### Worn shapes: orbs, bottles and plates
+
+A **form item** is an ordinary held item that decides which shape its holder fights in
+([`forms.ts`](src/battle/items/forms.ts)). It is **not** a Mega: it spends one of the
+eight item slots and leaves the team's one Mega free, and the shape's own ability is worn
+on top of the catch's four the way a Mega's is.
+
+| Item | Holder | Shape it fights in | Ability worn |
+| --- | --- | --- | --- |
+| **Red Orb** | Groudon | Primal Groudon 100/180/160/150/90/90, Ground and Fire | Desolate Land |
+| **Blue Orb** | Kyogre | Primal Kyogre 100/150/90/180/160/90, Water | Primordial Sea |
+| **Prison Bottle** | Hoopa | Hoopa Unbound 80/160/60/170/130/80, Psychic and Dark | none, it keeps its own four |
+| **Gracidea** | Shaymin | Sky Shaymin | Serene Grace |
+| **Adamant, Lustrous, Griseous Orb** | Dialga, Palkia, Giratina | the Origin forme | Unaware, Shadow Tag, Levitate |
+| **any Plate** | an Arceus with Multitype | Arceus of that Plate's type | none, Multitype is already the ability |
+
+**A primal sky is the strongest field effect in the game.** Desolate Land and Primordial
+Sea each raise their own weather for as long as their holder stands, and no ordinary
+setter can take it: Drizzle, Drought, Sand Stream, Rain Dance and Sunny Day all refuse
+while one is up ([`weather.ts`](src/battle/moves/weather.ts)). On top of the usual 1.5x,
+each **nullifies the opposite type's damaging moves outright**, read off the field rather
+than off the caster, so it binds both sides
+([`weather.ts`](src/battle/mechanics/weather.ts)):
+
+- **Desolate Land**: Fire moves hit 1.5x, and every Water damaging move fails.
+- **Primordial Sea**: Water moves hit 1.5x, and every Fire damaging move fails.
+- **Delta Stream**, which Mega Rayquaza wears: nothing is super effective on a Flying
+  type, and no other weather can be set.
+
+A **status** move of the nullified type still goes off, so Will-O-Wisp works in heavy
+rain and Rain Dance does not.
+
+**Two traps:**
+
+1. **Never field a primal beside Mega Rayquaza.** All three skies lock each other out,
+   the last holder to arrive owns the field, and the sky drops when it leaves.
+2. **A primal is one more body of its own type.** Primal Groudon on a Fire team is one
+   more thing a Flash Fire boss blanks.
+
+**Not on `main`**: the Reveal Glass, on branch `reveal-glass`, does the same for the three
+genies. A Tornadus Therian is 79/100/80/110/90/121 and wears Regenerator, which this
+engine makes nearly worthless because there is no bench, so the trade is the stat spread
+alone: 15 Special Attack paid for 10 Speed and 10 in both defences. That is still the
+better field control for the legendary PvP team the day it lands.
 
 ### Shadows
 
@@ -222,6 +268,58 @@ their bulk and their auras, and Shadow taxes exactly that. The +10 across the bo
 nearly irrelevant next to the ±25%, so what makes a true shadow strong is the ability
 rather than the tier.
 
+### Mythicals
+
+Fifteen species sit in the mythical band: Mew, Celebi, Jirachi, the four Deoxys, Darkrai,
+Manaphy, Shaymin, Arceus, Keldeo, Victini, Meloetta, Genesect, Diancie, Hoopa and
+Volcanion ([`__create.ts`](src/data/biome/__create.ts)). The world never stages one. The
+only way to meet a mythical is to carry the **relic** that calls it
+([`raid-items.ts`](src/data/items/raid-items.ts)), and the rules around that decide what
+one is worth on a team more than its stat line does.
+
+| Rule | What it means |
+| --- | --- |
+| **One relic, one call** | A relic sits in the rarest band of the item pool and is **spent** when the raid starts, so a mythical is a found thing rather than a farmed one |
+| **The prize arrives at level 30** | `MYTHICAL_RAID_REWARD_LEVEL` ([`raid.ts`](src/overworld/raid.ts)), against a legendary's 50 and a shadow's 25. Seventy levels of candy before it is finished |
+| **No mythical can ever be a Shadow** | A dark day cannot close the heart of something that stood nowhere ([`kinds.ts`](src/overworld/encounter/kinds.ts)), so the Shadow column reads never on every mythical row and none of them collects Shadow's +25% |
+| **No mythical has egg moves** | Every move any of them reaches is a level-up move or a machine, so none of this file's breeding caveats apply to them |
+| **A signature still costs a slot** | Regalia, Seven Wishes, Firstlight and the rest count against the four, so a mythical runs its signature plus three of its pool |
+| **Clearing one pays 200,000** | The largest purse in the game, which is most of what a relic is worth |
+
+**What decides a mythical build is its level-up list**, because several of the moves they
+are picked for sit at the very top of it:
+
+| Move | Level | Who, and what it means |
+| --- | --- | --- |
+| **Judgment** | **100** | Arceus. A level 30 Arceus has no Judgment at all, so until the cap it is a 120 stat line swinging machine coverage, and Firstlight has nothing of its own type to lift |
+| Aura Sphere | 100 | Mew |
+| Nasty Plot | 90, 75, 68 | Mew, Darkrai, Hoopa. Only Hoopa can buy the machine instead: on Mew and Darkrai it is level-up or nothing |
+| Dark Pulse | 93 | Darkrai, and a machine sells it |
+| Hydro Pump | 67 | Keldeo |
+| Dark Void | 66 | Darkrai |
+| Bug Buzz | 55 | Genesect |
+| Aqua Ring | 54 | Manaphy |
+| Relic Song | 50 | Meloetta, and the Move Tutor is the only other source |
+| **Heal Bell, Recover, Leech Seed** | **1** | Celebi, which is why it is the cleric that needs nothing bought and nothing grown into |
+| Wish | 1 | Jirachi |
+| Diamond Storm | 1 | Diancie |
+| Steam Eruption | 1 | Volcanion |
+| Techno Blast | 1 | Genesect |
+| Hyperspace Hole and Hyperspace Fury | 1 | Hoopa |
+| Tail Glow | 1 | Manaphy |
+| V-create | 1 | Victini |
+
+**Mythical signature moves are mostly 5 PP**, and PP is what sets a cooldown
+(`getMoveCooldown` in [`__create.ts`](src/data/moves/__create.ts) is
+`180 / pp` seconds before Speed cuts it), so V-create, Psycho Boost, Seed Flare, Diamond
+Storm, Steam Eruption and Hyperspace Fury are periodic nukes on a 36 second base cycle
+rather than a rotation. Hex, Judgment and Thunder Wave at 10 PP come round roughly three
+times as often.
+
+**One mythical move is friendly fire.** **Searing Shot** hits the user's own team as well
+as everything opposite, the same as Earthquake, so Victini never runs it: V-create is the
+Fire move.
+
 ### What the Kalos species changed
 
 The teams were first built before the Kalos species landed. Re-checking them against
@@ -234,6 +332,18 @@ the registries moved two things and added a row of backups.
 | **New backups across every role** | Klefki (Prankster, and Keyring grants a ninth item slot), Goodra (150 Special Defense, Seepage), Aegislash (Stance Change, 150 Attack in blade), Carbink (150/150 defences), Heliolisk (Backfeed heals the party on every Electric hit), and Slurpuff and Sylveon, which both reach Heal Bell without breeding |
 
 Everything else held: the attackers, the field control and the clock plan are unchanged.
+
+### What the mythicals and the primal formes changed
+
+Re-checking the four teams above once the megas, the Kalos mythicals and the primal
+formes were all on `main` moved two things. Everything else held: both non-legendary
+sixes are unchanged, and nothing new outside the legendary and mythical bands beats them.
+
+| Change | Why |
+| --- | --- |
+| **Primal Groudon is the better sky for the legendary raid team** | Extreme sun no ordinary setter can overwrite, Fire 1.5x for the whole party, and the boss's Water damaging moves blanked, for one item slot rather than the team's Mega. It gives up Volcarona's Ember Halo clock and Quiver Dance, so take Volcarona for the fifth clock and Groudon for the sky |
+| **Two new tiers, which are not strictly stronger** | The mythical sections at the end of this file. Arceus has no Judgment before level 100, Diancie walls on 50 HP, and the mythical raid six trades the fifth damage clock for Regalia and Seven Wishes |
+| **Pyroar and Aromatisse change nothing** | Pyroar (86/68/72/109/66/106) casts Noble Roar free as it arrives, which is -1 Attack and -1 Special Attack on one enemy, and that is the whole of it. Aromatisse (101/72/72/99/89/29) reaches Heal Bell and Aromatherapy without breeding and Aroma Veil covers the party against Taunt, Torment, Encore, Charm and Heal Block, but 29 Speed behind 72/89 defences keeps it under Florges |
 
 ---
 
@@ -587,6 +697,7 @@ The same five clocks, with a sun core, and deliberately not built entirely out o
 - **Heatran is the conditional swap.** Its Lavadome gives the whole party 1.25x against a burned boss, the best multiplier this team can reach, but it is burn-locked and a third Fire body. Put it in for Metagross once you know the boss is neither Fire-type nor carrying Flash Fire, Heatproof or Thick Fat.
 - **Clawitzer is worth testing, and may be a bug.** Ranging Shot puts a floor of 1/8 of the target's HP under every special move it lands, and it is applied to ordinary attack damage rather than to the indirect or share-of-HP damage the boss cap covers. Against 60x HP that reads as enormous. Treat it as untested rather than as a recommendation, and expect it to change.
 - Drought gives every Fire move on the team 1.5x. Morning Sun would heal two thirds under it, but it is egg-only on Volcarona, so Roost is the heal.
+- **Primal Groudon is the upgrade to this team's sky.** The Red Orb is a held item rather than the Mega, so Groudon raises extreme sun that no ordinary setter can overwrite, Fire keeps its 1.5x, and the boss's Water damaging moves fail outright. Swap it in for Volcarona against a boss that is not Fire-immune, and keep Volcarona when you want Ember Halo's per-action clock. Do not pair it with Mega Rayquaza: Delta Stream and Desolate Land lock each other out.
 - Ember Halo is a second per-action clock beside Curse, and unlike Curse it costs nothing to set up and needs no cast.
 - **Clefable carries the paralysis** here too, through Thunder Wave. Latias also learns it if you would rather spend Clefable's slot elsewhere.
 - **Charm halves the boss's Attack stat**, stacking with the burn's own halving, but Clefable's Unaware means Clefable itself still takes a charmed boss's hits at full Attack. The discount is for the other five.
@@ -696,5 +807,303 @@ Machines for this team come to **92,000** in total.
 Items for this team come to **189,000**, so the whole team costs about **281,000** plus what you find.
 
 **Not stocked by the market, so these have to be found**: Leftovers x6, Big Root x1, Soul Dew x1.
+
+---
+
+## NPC and PvP battles, with mythicals
+
+The same six roles with the mythical band allowed. Four of the six are mythicals and two
+are not, because **no mythical redirects**: not one of the fifteen learns Follow Me or
+Rage Powder, so Togekiss keeps that slot on merit, and Whimsicott's unmissable powder
+beats anything a mythical brings to field control.
+
+| Role | Pokemon | Nature | EV priority | Shadow? | Abilities (4) | Moves, priority four in bold | Items, priority first |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Field control | **Whimsicott** 60/67/85/77/75/116 | Timid | 252 Speed, 248 HP | No | Spore Drift, Prankster, Magic Bounce, Infiltrator | **Taunt, Cotton Spore, Tailwind, Stun Spore**, then Leech Seed, Charm, Moonblast, Substitute | **Focus Sash**, Leftovers, Bright Powder, Clear Amulet, Lax Incense, Mental Herb, Shell Bell, Quick Claw |
+| Redirector | **Togekiss** 85/50/95/120/115/80 | Calm | 252 HP, 248 Special Defense | No | Fair Share, Serene Grace, Friend Guard, Super Luck | **Follow Me, Air Slash, Roost, Thunder Wave**, then Dazzling Gleam, Wish, Light Screen, Encore | **Rocky Helmet**, Leftovers, Bright Powder, Lax Incense, Shell Bell, Light Clay, Focus Band, Wide Lens |
+| Protector and healer | **Jirachi** 100/100/100/100/100/100 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | Seven Wishes, Magic Bounce, Levitate, Healer | **Wish, Helping Hand, Reflect, Light Screen**, then Cosmic Power, Iron Head, Toxic, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
+| Cleric and second protector | **Celebi** 100/100/100/100/100/100 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | Timeline Split, Healer, Anticipation, Natural Cure | **Heal Bell, Recover, Leech Seed, Light Screen**, then Giga Drain, Perish Song, Reflect, Protect | **Big Root**, Leftovers, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb |
+| Core, special | **Arceus** 120/120/120/120/120/120 | Modest | 252 Special Attack, 248 HP | Never, no mythical can be shadowed | Firstlight, Multitype, Adaptability, Filter | **Judgment, Calm Mind, Recover, Thunder Wave**, then Ice Beam, Flamethrower, Earth Power, Protect | **Pixie Plate**, Leftovers, Wise Glasses, Expert Belt, Shell Bell, Bright Powder, Focus Sash, Wide Lens |
+| Core, second attacker | **Hoopa Unbound** 80/160/60/170/130/80 | Modest | 252 Special Attack, 248 HP | Never, no mythical can be shadowed | Ringback, Prankster, Levitate, Trace | **Nasty Plot, Hyperspace Hole, Dark Pulse, Thunder Wave**, then Psyshock, Focus Blast, Taunt, Substitute | **Prison Bottle**, Life Orb, Leftovers, Wise Glasses, Black Glasses, Shell Bell, Focus Sash, Bright Powder |
+| | | | | | | | |
+| Field control, backup | **Darkrai** 70/90/90/135/90/125 | Timid | 252 Special Attack, 248 Speed | Never, no mythical can be shadowed | Waxing Dark, Prankster, Bad Dreams, Infiltrator | **Taunt, Thunder Wave, Nasty Plot, Dark Pulse**, then Will-O-Wisp, Dark Void, Substitute, Protect | **Focus Sash**, Black Glasses, Leftovers, Wide Lens, Bright Powder, Lax Incense, Shell Bell, Quick Claw |
+| Redirector, backup | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | Wishing Well, Magic Guard, Unaware, Friend Guard | **Follow Me, Soft-Boiled, Reflect, Light Screen**, then Moonblast, Encore, Charm, Thunder Wave | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
+| Protector and healer, backup | **Manaphy** 100/100/100/100/100/100 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | Heartcurrent, Friend Guard, Healer, Water Absorb | **Reflect, Light Screen, Aqua Ring, Helping Hand**, then Tail Glow, Surf, Ice Beam, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
+| Cleric, backup | **Meloetta** 100/77/77/128/128/90 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | Countertune, Healer, Serene Grace, Soundproof | **Heal Bell, Light Screen, Thunder Wave, Psychic**, then Charm, Fake Tears, Helping Hand, Protect | **Leftovers**, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
+| Core, special, backup | **Mew** 100/100/100/100/100/100 | Modest | 252 Special Attack, 248 Speed | Never, no mythical can be shadowed | Ancestral Memory, Protean, Adaptability, Trace | **Nasty Plot, Aura Sphere, Psychic, Soft-Boiled**, then Taunt, Tailwind, Thunder Wave, Protect | **Wise Glasses**, Leftovers, Focus Sash, Shell Bell, Bright Powder, Lax Incense, Wide Lens, Quick Claw |
+| Core, second attacker, backup | **Keldeo** 91/72/90/129/90/108 | Timid | 252 Special Attack, 248 Speed | Never, no mythical can be shadowed | Tide Vigil, Justified, Analytic, Swift Swim | **Secret Sword, Hydro Pump, Calm Mind, Taunt**, then Scald, Icy Wind, Substitute, Protect | **Mystic Water**, Leftovers, Wise Glasses, Expert Belt, Shell Bell, Focus Sash, Bright Powder, Wide Lens |
+
+### Notes
+
+- **Arceus is the best single unit in the game and the slowest to finish.** Multitype makes
+  it whatever type the Plate in its hands is, Judgment is thrown as that type, Adaptability
+  doubles the same-type bonus rather than the usual 1.5x, and **Firstlight reads a
+  resistance as 1x**, so only an outright immunity stops it. The Pixie Plate is the default
+  because nothing at all is immune to Fairy, which leaves Firstlight no hole to cover: swap
+  in whatever Plate beats the field once you know it. **Judgment is a level 100 move**, so a
+  fresh level 30 prize is a 120 stat line throwing machine coverage until the cap.
+- **Hoopa Unbound spends one item slot on the Prison Bottle.** That is what keeps it
+  unbound, it costs nothing of the team's Mega, and Hyperspace Hole never misses and goes
+  straight through Protect. Hyperspace Fury is the physical half and wants an Adamant build
+  instead of this one.
+- **Jirachi heals without spending an action.** Seven Wishes hands the whole party a quarter
+  of its HP every seventh time Jirachi acts, and cures Jirachi itself, so Wish and Helping
+  Hand sit on top of a heal the team gets for free.
+- **Celebi is the cleric that needs nothing.** Heal Bell, Recover and Leech Seed are all
+  level 1 moves, and Timeline Split undoes every stat drop and clears every status on it the
+  first time it falls below half.
+- **Darkrai's sleep is a gamble, not a plan.** Dark Void is 50 accuracy, so even with
+  Prankster casting it first and Waxing Dark running it 1.5x as long, Whimsicott's unmissable
+  Stun Spore is the more reliable field control. What Darkrai is actually worth is Prankster
+  Taunt and Thunder Wave, and Waxing Dark lengthens the Taunt as well.
+- **Keldeo answers the stat-drop teams.** Tide Vigil means its teammates never flinch and
+  refuse every enemy stat drop while it stands, which blanks Charm, Snarl, Fake Tears,
+  Intimidate and Noble Roar. Secret Sword is **tutor-only**, and the tutor only teaches at
+  full friendship.
+- **Victini is the pick this table has no room for.** Victory Star gives the whole team 1.1x
+  accuracy, Magic Guard makes it immune to every residual, and Winner's Share hands the team
+  +1 Attack and +1 Special Attack for each enemy that faints. Run V-create with a White Herb
+  and **never Searing Shot**, which hits your own five.
+- Mew pairs Protean with Adaptability, so every move it throws becomes its own type and then
+  collects the doubled bonus. Aura Sphere is level 100 and Nasty Plot level 90, so buy the
+  Nasty Plot machine rather than waiting for it.
+
+### Collect this before you build the team
+
+**Relics to find.** A mythical is called by one relic, which sits in the rarest band of
+the item pool and is **spent** when the raid starts, so one relic is one mythical.
+
+| Relic | Calls |
+| --- | --- |
+| **Azure Flute** | Arceus |
+| **GS Ball** | Celebi |
+| **Member Card** | Darkrai |
+| **Sealed Ring** | Hoopa Unbound |
+| **Wish Tag** | Jirachi |
+| **Colt's Petal** | Keldeo |
+| **Manaphy Egg** | Manaphy |
+| **Music Box** | Meloetta |
+| **Old Sea Map** | Mew |
+
+**Machines to buy.** A machine is stocked by the item market as `TM <move name>`, and
+it is **spent on use**, so the counts below are per pokemon rather than per move: two
+pokemon wanting Protect need two machines.
+
+| Price each | Moves |
+| --- | --- |
+| 2,000 | Calm Mind x2, Charm, Fake Tears, Heal Bell, Helping Hand x2, Icy Wind, Light Screen x5, Protect x8, Reflect x4, Roost, Soft-Boiled x2, Substitute x4, Tailwind, Taunt x5, Thunder Wave x7, Toxic, Will-O-Wisp |
+| 5,000 | Dark Pulse, Dazzling Gleam, Giga Drain, Iron Head, Psyshock, Scald |
+| 12,000 | Flamethrower, Focus Blast, Ice Beam x2, Surf |
+
+Machines for this team come to **184,000** in total.
+
+**Learn these before evolving**, since they sit on a pre-evolution's level-up list. If you miss one, the Move Reminder will put it back for a Heart Scale:
+
+- Charm (Clefable: level 1 as Cleffa)
+- Charm (Whimsicott: level 28 as Cottonee)
+- Encore (Clefable: level 4 as Clefairy, or level 4 as Cleffa)
+- Encore (Togekiss: level 25 as Togetic, or level 25 as Togepi)
+- Follow Me (Clefable: level 17 as Clefairy)
+- Follow Me (Togekiss: level 26 as Togetic, or level 26 as Togepi)
+- Light Screen (Clefable: level 48 as Clefairy), or buy the machine
+- Moonblast (Clefable: level 46 as Clefairy)
+- Stun Spore (Whimsicott: level 10 as Cottonee)
+- Wish (Togekiss: level 31 as Togetic, or level 31 as Togepi)
+
+**Late level-up moves**, which the pokemon only reaches well up the ladder. A mythical arrives at level 30, so every one of these is candy away:
+
+- Judgment (Arceus: level 100)
+- Aura Sphere (Mew: level 100)
+- Dark Pulse (Darkrai: level 93), or buy the machine
+- Nasty Plot (Mew: level 90)
+- Nasty Plot (Darkrai: level 75)
+- Recover (Arceus: level 70)
+- Nasty Plot (Hoopa Unbound: level 68), or buy the machine
+- Hydro Pump (Keldeo: level 67)
+- Dark Void (Darkrai: level 66)
+- Psychic (Meloetta: level 57), or buy the machine
+- Aqua Ring (Manaphy: level 54)
+- Moonblast (Whimsicott: level 50)
+- Perish Song (Celebi: level 50)
+- Cosmic Power (Jirachi: level 45)
+- Psychic (Mew: level 40), or buy the machine
+
+**Tutor-only**: **Secret Sword** (Keldeo). No machine is sold for it, and the Move
+Tutor only teaches at the most friendship a pokemon can have.
+
+**Held items to buy:**
+
+| Item | Copies | Price each |
+| --- | --- | --- |
+| Bright Powder | 12 | 5,000 |
+| Shell Bell | 12 | 5,000 |
+| Lax Incense | 9 | 3,000 |
+| Quick Claw | 7 | 5,000 |
+| Focus Band | 6 | 5,000 |
+| Focus Sash | 6 | 3,000 |
+| Light Clay | 6 | 5,000 |
+| Mental Herb | 6 | 3,000 |
+| Wide Lens | 5 | 5,000 |
+| Wise Glasses | 4 | 5,000 |
+| Black Glasses | 2 | 4,000 |
+| Expert Belt | 2 | 5,000 |
+| Clear Amulet | 1 | 5,000 |
+| Life Orb | 1 | 6,000 |
+| Mystic Water | 1 | 4,000 |
+| Rocky Helmet | 1 | 5,000 |
+
+Items for this team come to **361,000**, so the whole team costs about **545,000** plus the relics and what you find.
+
+**Not stocked by the market, so these have to be found**: Big Root, Leftovers x12, Pixie Plate, Prison Bottle.
+
+## Raid battles, with mythicals
+
+Four damage clocks rather than five. The fifth slot buys what no ordinary support offers:
+**Regalia** hands the whole party +1 Defense every 10 seconds up to +3, and **Seven
+Wishes** heals all six a quarter of their HP for no action at all.
+
+| Role | Pokemon | Nature | EV priority | Shadow? | Abilities (4) | Moves, priority four in bold | Items, priority first |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Burn, Curse, main special damage | **Chandelure** 60/55/90/145/90/80 | Modest | 252 Special Attack, 248 HP | No, it dies to the boss | Hexlight, Infiltrator, Flash Fire, Flame Body | **Will-O-Wisp, Curse, Hex, Fire Blast**, then Calm Mind, Shadow Ball, Substitute, Confuse Ray | **Wide Lens**, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Bright Powder, Zoom Lens |
+| Leech Seed and party multiplier | **Breloom** 60/130/80/60/60/70 | Adamant | 252 Attack, 248 HP | No, Mycelium needs it standing | Mycelium, Poison Heal, Technician, Quick Feet | **Leech Seed, Drain Punch, Facade, Mach Punch**, then Seed Bomb, Swords Dance, Substitute, Sludge Bomb | **Toxic Orb**, Big Root, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Protective Pads |
+| Toxic, cleric and team Defense | **Diancie** 50/100/150/100/150/50 | Bold | 252 HP, 248 Defense | Never, no mythical can be shadowed | Regalia, Magic Bounce, Solid Rock, Clear Body | **Toxic, Heal Bell, Reflect, Light Screen**, then Charm, Fake Tears, Diamond Storm, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
+| Paralysis and flexible damage | **Arceus** 120/120/120/120/120/120 | Modest | 252 Special Attack, 248 HP | Never, no mythical can be shadowed | Firstlight, Multitype, Adaptability, Filter | **Judgment, Thunder Wave, Calm Mind, Recover**, then Will-O-Wisp, Toxic, Earth Power, Protect | **Pixie Plate**, Leftovers, Wise Glasses, Expert Belt, Shell Bell, Bright Powder, Focus Sash, Wide Lens |
+| Party heal and screens | **Jirachi** 100/100/100/100/100/100 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | Seven Wishes, Magic Bounce, Levitate, Healer | **Wish, Helping Hand, Reflect, Light Screen**, then Cosmic Power, Iron Head, Toxic, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
+| Primary physical damage | **Metagross** 80/135/130/95/90/70 | Adamant | 252 Attack, 248 HP | **Yes**, first pick | Hive Mind, Steelworker, Clear Body, Levitate | **Meteor Mash, Bullet Punch, Zen Headbutt, Ice Punch**, then Iron Head, Hammer Arm, Rock Slide, Substitute | **Expert Belt**, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens, Protective Pads, Focus Band |
+| | | | | | | | |
+| Burn and special damage, backup | **Volcanion** 80/110/120/130/90/70 | Modest | 252 Special Attack, 248 HP | Never, no mythical can be shadowed | Boiler, Water Absorb, Flash Fire, Steam Engine | **Steam Eruption, Will-O-Wisp, Flamethrower, Protect**, then Hydro Pump, Earth Power, Haze, Substitute | **Charcoal**, Leftovers, Wise Glasses, Expert Belt, Shell Bell, Bright Powder, Safety Goggles, Wide Lens |
+| Leech Seed and cleric, backup | **Celebi** 100/100/100/100/100/100 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | Timeline Split, Healer, Anticipation, Natural Cure | **Leech Seed, Heal Bell, Recover, Light Screen**, then Giga Drain, Toxic, Perish Song, Protect | **Big Root**, Leftovers, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb |
+| Toxic and protector, backup | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | Wishing Well, Magic Guard, Unaware, Friend Guard | **Reflect, Light Screen, Soft-Boiled, Toxic**, then Thunder Wave, Charm, Moonblast, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
+| Paralysis and damage, backup | **Genesect** 71/120/95/120/95/99 | Modest | 252 Special Attack, 248 HP | Never, no mythical can be shadowed | Overclock, Download, Analytic, Adaptability | **Techno Blast, Thunder Wave, Flamethrower, Bug Buzz**, then Ice Beam, Thunderbolt, Flash Cannon, Protect | **Burn Drive**, Leftovers, Wise Glasses, Expert Belt, Shell Bell, Bright Powder, Wide Lens, Focus Sash |
+| Party heal, backup | **Florges** 78/65/68/112/154/75 | Calm | 252 HP, 248 Special Defense | Never, Hothouse shares its Special Defense | Hothouse, Flower Veil, Unaware, Symbiosis | **Wish, Heal Bell, Aromatherapy, Moonblast**, then Light Screen, Safeguard, Helping Hand, Protect | **Leftovers**, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
+| Primary physical damage, backup | **Aegislash** 60/50/140/50/140/60 | Adamant | 252 Attack, 248 HP | No, the shield stance is half its value | Turn the Blade, Stance Change, Clear Body, Cursed Body | **Swords Dance, Iron Head, Sacred Sword, King's Shield**, then Shadow Ball, Flash Cannon, Substitute, Protect | **Leftovers**, Expert Belt, Muscle Band, Shell Bell, Wide Lens, Scope Lens, Focus Band, Protective Pads |
+
+### Notes
+
+- **Diancie is why this team survives.** Regalia reaches +3 Defense on everybody about 30
+  seconds in, which reads as roughly 0.4x incoming physical damage, and it stacks with
+  Reflect and with the burn halving the boss's Attack again. Magic Bounce returns the boss's
+  own status moves and Solid Rock softens what is super effective. The catch is **50 HP**:
+  those 150/150 defences sit on a body that cannot take a hit the party has not already
+  discounted, so Reflect goes up first.
+- **Jirachi replaces Florges as the healer**, and the trade is honest. The party gives up
+  Hothouse's shared 154 Special Defense and gets a free quarter-HP party heal every seventh
+  action, plus Magic Bounce and Levitate. Diancie carries Heal Bell, so nothing goes
+  uncleansed.
+- **Arceus carries the paralysis**, since neither Jirachi nor Diancie reaches Thunder Wave.
+  The Plate is the lever: it sets Arceus's own type and what Judgment is thrown as, so pick
+  the one the boss is weak to and Firstlight covers the rest. Before level 100 it is Earth
+  Power and the machines doing the damage.
+- **The fifth clock is what this team pays for Regalia.** Only a Ghost gets Curse's
+  per-action version, and the only Ghost here is already casting it. If you want Ember Halo
+  as well, Volcarona takes Jirachi's slot and the party heal goes with it.
+- **Keldeo is worth a slot against a boss that strips stats**, since Tide Vigil makes the
+  whole party refuse enemy stat drops: no Charm, no Snarl and no Icy Wind on your side.
+- **Volcanion is the designated body against a Fire or Water boss**, holding Water Absorb and
+  Flash Fire at once, and Steam Engine hands it +6 Speed the first time either type lands on
+  it. Two warnings: Boiler only pays in **ordinary** rain or sun, and under a teammate's
+  Primal Groudon its Water moves fail outright, Steam Eruption included.
+- **Genesect's Overclock is a half-health switch.** Above half HP it casts 25% faster; at or
+  below it, it pays 1/16 of its HP every time it acts.
+
+### What runs at once on this team
+
+| Clock | Source | Written as | Against a boss | When |
+| --- | --- | --- | --- | --- |
+| Burn | Chandelure | 1/16 of max HP | 200 | every 2 seconds |
+| Badly poisoned | Diancie | a growing share | 200 | every 2 seconds |
+| Leech Seed | Breloom | 1/8 of max HP | 200 | every 2 seconds |
+| Curse | Chandelure, for half its own HP | 1/4 of max HP | 200 | every boss action |
+| Paralysis | Arceus | no damage of its own | none | a quarter fewer boss actions |
+
+Four damage clocks rather than five, and the paralysis is the fourth status keeping Hexlight
+and Mycelium paying if the burn ever fails. Uncapped multipliers on top: Mycelium 1.2x for
+the party, Hexlight 1.4x for Chandelure, Steelworker 1.5x with Hive Mind 1.3x on Metagross,
+Adaptability on Judgment, and Regalia keeping all six alive long enough to collect them.
+
+### Matchups that break this team
+
+| Boss trait | What it takes away | What to do |
+| --- | --- | --- |
+| Fire type | Will-O-Wisp fails and Fire damage is resisted | Diancie's Toxic becomes the status that feeds Hexlight and Mycelium, and Arceus takes the Plate the boss is weak to |
+| Flash Fire or Heatproof | Chandelure's damage, but not its clocks | Curse, Hex and the burn still land. Arceus and Metagross carry the damage |
+| Steel or Poison type | Toxic fails | The burn is the status instead, and Diancie spends the slot on Charm and Fake Tears |
+| Grass type | Leech Seed fails | Breloom goes Swords Dance, and Celebi is a dead swap here |
+| Electric type | Paralysis fails | Arceus's slot becomes Will-O-Wisp or a second attack |
+| Magic Bounce | Toxic, Thunder Wave and Charm all come back at you | Diancie's own Magic Bounce sends them back again. Lead with damage and keep Heal Bell up |
+| Fire or Water moves | nothing | Volcanion in: Water Absorb and Flash Fire make it immune to both halves at once |
+
+### Collect this before you build the team
+
+**Relics to find.** A mythical is called by one relic, which sits in the rarest band of
+the item pool and is **spent** when the raid starts, so one relic is one mythical.
+
+| Relic | Calls |
+| --- | --- |
+| **Azure Flute** | Arceus |
+| **GS Ball** | Celebi |
+| **Heart Diamond** | Diancie |
+| **Colress Machine** | Genesect |
+| **Wish Tag** | Jirachi |
+| **Steam Valve** | Volcanion |
+
+**Machines to buy.** A machine is stocked by the item market as `TM <move name>`, and
+it is **spent on use**, so the counts below are per pokemon rather than per move: two
+pokemon wanting Protect need two machines.
+
+| Price each | Moves |
+| --- | --- |
+| 2,000 | Calm Mind x2, Charm, Fake Tears, Heal Bell x2, Helping Hand, Light Screen x3, Protect x9, Reflect x2, Safeguard, Soft-Boiled, Substitute x5, Swords Dance, Thunder Wave x3, Toxic x5, Will-O-Wisp x2 |
+| 5,000 | Drain Punch, Facade, Flash Cannon x2, Giga Drain, Ice Punch, Iron Head x2, Rock Slide, Shadow Ball |
+| 12,000 | Earth Power, Fire Blast, Flamethrower x2, Ice Beam, Sludge Bomb, Thunderbolt |
+
+Machines for this team come to **212,000** in total.
+
+**Learn these before evolving**, since they sit on a pre-evolution's level-up list. If you miss one, the Move Reminder will put it back for a Heart Scale:
+
+- Charm (Clefable: level 1 as Cleffa)
+- Light Screen (Clefable: level 48 as Clefairy), or buy the machine
+- Moonblast (Clefable: level 46 as Clefairy)
+
+**Late level-up moves**, which the pokemon only reaches well up the ladder. A mythical arrives at level 30, so every one of these is candy away:
+
+- Judgment (Arceus: level 100)
+- Recover (Arceus: level 70)
+- Bug Buzz (Genesect: level 55), or buy the machine
+- Zen Headbutt (Metagross: level 52 as Metang, or level 62)
+- Meteor Mash (Metagross: level 50 as Metang, or level 55)
+- Hydro Pump (Volcanion: level 50), or buy the machine
+- Perish Song (Celebi: level 50)
+- Cosmic Power (Jirachi: level 45)
+- Hammer Arm (Metagross: level 45)
+- Light Screen (Diancie: level 42), or buy the machine
+- Seed Bomb (Breloom: level 41, or level 41 as Shroomish)
+
+**Held items to buy:**
+
+| Item | Copies | Price each |
+| --- | --- | --- |
+| Shell Bell | 12 | 5,000 |
+| Bright Powder | 9 | 5,000 |
+| Expert Belt | 7 | 5,000 |
+| Focus Band | 7 | 5,000 |
+| Wide Lens | 7 | 5,000 |
+| Lax Incense | 5 | 3,000 |
+| Light Clay | 5 | 5,000 |
+| Mental Herb | 5 | 3,000 |
+| Quick Claw | 4 | 5,000 |
+| Wise Glasses | 4 | 5,000 |
+| Focus Sash | 3 | 3,000 |
+| Muscle Band | 3 | 5,000 |
+| Protective Pads | 3 | 5,000 |
+| Scope Lens | 2 | 5,000 |
+| Charcoal | 1 | 4,000 |
+| Safety Goggles | 1 | 5,000 |
+| Toxic Orb | 1 | 6,000 |
+| Zoom Lens | 1 | 5,000 |
+
+Items for this team come to **374,000**, so the whole team costs about **586,000** plus the relics and what you find.
+
+**Not stocked by the market, so these have to be found**: Big Root x2, Burn Drive, Leftovers x12, Pixie Plate.
 
 ---

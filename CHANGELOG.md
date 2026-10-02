@@ -1,5 +1,23 @@
 # overwander
 
+## 4.28.1
+
+### Patch Changes
+
+- 411681a: A shadow or purified aura sits just behind its own pokemon, so a pokemon standing further back no longer shows through it.
+- 411681a: Dragging the battlefield turns it round its middle, the way the overworld board turns, rather than spinning with sideways movement.
+- 411681a: The battlefield is fitted to the screen's height, so a phone held upright shows the fight larger.
+- 411681a: The ground beyond a fight fades into the sky in the overworld's dithered haze, in place of the dark edges.
+- 22c3d99: A team's pokemon stand further from their own middle so they no longer crowd it, and the battle camera takes in more of the field to keep the wider rings in view.
+- d78a543: A pokemon's sheet opens once its record has arrived, the way a trainer's dialog does, rather than opening first to say it is loading.
+- 89c90c1: A duel fields both parties at full health with no statuses, and a fainted pokemon can be brought. Nothing the duel does is written back.
+- 4b99f35: Pokemon walk onto the field when a battle starts rather than while it is being set up. The countdown shows each one as it was stored, and what arriving does (a form item's shape, a Mega Evolution, Intimidate, a weather ability) plays where it can be watched, form changes with their light.
+- ff25721: Family ids no longer skip 121, which was held for a Tyrogue family that already existed. Every family from Miltank on moves one id down, so its species day comes a day sooner and every day of the year features a family. Candy stacks were moved to match, along with the Unova candy that inserting Victini had left on the family before.
+- 411681a: A pokemon changing form in battle is wrapped in light that closes in, flashes as the new form takes over, and breaks outward.
+- 411681a: Moves whose landing already flies or falls onto the target, such as Moonblast, wind up at the caster instead of also throwing a projectile.
+- 411681a: A pokemon behind its substitute keeps its move plate and bars at full strength, so what it is casting can still be read.
+- 411681a: The card over a pokemon on the battlefield is a tooltip: it lets the pointer through and goes as soon as the pokemon is left.
+
 ## 4.28.0
 
 ### Minor Changes

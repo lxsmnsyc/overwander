@@ -31,12 +31,18 @@ export const DUEL_FIGHTERS = 2;
 export interface DuelRules {
   limits: number;
   teamSize: number;
+  /** The highest base stat total a pokemon may have, or 0 for none */
+  maxBst: number;
+  /** The `DuelBan` flags in force: legendaries, mythicals, held-item forms */
+  bans: number;
 }
 
 /** What a lobby is arranged under until its host says otherwise */
 export const DEFAULT_DUEL_RULES: DuelRules = {
   limits: PVP_BATTLE_LIMITS,
   teamSize: TEAM_SIZE,
+  maxBst: 0,
+  bans: 0,
 };
 
 /**
@@ -49,6 +55,8 @@ export function asDuelRules(value: unknown): DuelRules {
   return {
     limits: data.limits == null ? PVP_BATTLE_LIMITS : asNumber(data.limits),
     teamSize: data.teamSize == null ? TEAM_SIZE : asNumber(data.teamSize),
+    maxBst: data.maxBst == null ? 0 : asNumber(data.maxBst),
+    bans: data.bans == null ? 0 : asNumber(data.bans),
   };
 }
 

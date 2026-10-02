@@ -92,33 +92,33 @@ const ITEM_FAMILIES = [
  * The families whose lines follow their own tables, and the code that
  * writes each one out of its text file's templates
  */
-const DESCRIBERS: Partial<Record<(typeof ITEM_FAMILIES)[number], (item: Items) => string>> = {
-  'ability-items': describeAbilityItem,
-  apricorns: describeApricorn,
-  berries: describeBerry,
-  'bottle-caps': describeBottleCap,
-  drinks: describeDrink,
-  drives: describeDrive,
-  'escape-rope': describeEscapeRope,
-  gems: describeGem,
-  honey: describeHoney,
-  incenses: describeIncense,
-  'key-items': describeKeyItem,
-  medicine: describeMedicine,
-  'mega-stones': describeMegaStone,
-  memories: describeMemory,
-  mints: describeMintItem,
-  plates: describePlate,
-  'power-items': describePowerItem,
-  'purifying-gem': describePurifyingGem,
-  'rare-candy': describeRareCandy,
-  treats: describeTreat,
-  'type-boosters': describeTypeBooster,
-  valuables: describeValuable,
-  vitamins: describeVitamin,
-  wings: describeWing,
-  'z-crystals': describeZCrystal,
-};
+const DESCRIBERS = new Map<string, (item: Items) => string>([
+  ['ability-items', describeAbilityItem],
+  ['apricorns', describeApricorn],
+  ['berries', describeBerry],
+  ['bottle-caps', describeBottleCap],
+  ['drinks', describeDrink],
+  ['drives', describeDrive],
+  ['escape-rope', describeEscapeRope],
+  ['gems', describeGem],
+  ['honey', describeHoney],
+  ['incenses', describeIncense],
+  ['key-items', describeKeyItem],
+  ['medicine', describeMedicine],
+  ['mega-stones', describeMegaStone],
+  ['memories', describeMemory],
+  ['mints', describeMintItem],
+  ['plates', describePlate],
+  ['power-items', describePowerItem],
+  ['purifying-gem', describePurifyingGem],
+  ['rare-candy', describeRareCandy],
+  ['treats', describeTreat],
+  ['type-boosters', describeTypeBooster],
+  ['valuables', describeValuable],
+  ['vitamins', describeVitamin],
+  ['wings', describeWing],
+  ['z-crystals', describeZCrystal],
+]);
 
 /**
  * The machines are generated from the species learn sets, so the
@@ -143,7 +143,7 @@ export default function registerItems(): void {
   // Once every name is in, since a line may name another item
   for (const { family, item, data } of items) {
     if (data.description === '') {
-      const describe = DESCRIBERS[family as (typeof ITEM_FAMILIES)[number]];
+      const describe = DESCRIBERS.get(family);
 
       if (describe == null) {
         throw new Error(`${family}: ${data.name} has no description and nothing writes one`);

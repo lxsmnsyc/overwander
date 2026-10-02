@@ -2,7 +2,7 @@ Exeggcute:
   Exeggcute:
     types: [Grass, Psychic]
     egg-groups: [Grass]
-    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    biomes: [TropicalRainforest, TropicalSeasonalForest, Ocean, DeepOcean]
     active: any
     # Both Exeggutor take the same stone, and the catch sheet lets the player pick
     evolves-into:

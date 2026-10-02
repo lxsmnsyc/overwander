@@ -1,39 +1,51 @@
 land:
   morning: &land-morning
     base:
-      Bellsprout: 20
-      Turtwig: 3
+      Bellsprout: 1679
+      Poliwag: 1679
+      Lotad: 1679
+      Turtwig: 252
     uncommon:
-      Marill: 20
-      Tangela: 10
+      Wooper: 781
+      Surskit: 781
+      Marill: 625
+      Tangela: 313
     rare:
-      Weepinbell: 5
-      Grotle: 2
+      Lombre: 568
+      Weepinbell: 284
+      Poliwhirl: 284
+      Grotle: 114
     scarce:
-      Azumarill: 5
-      Tangrowth: 6
-      Leafeon: 6
+      Masquerain: 195
+      Tangrowth: 117
+      Leafeon: 117
+      Azumarill: 98
+      Quagsire: 98
     elusive:
-      Victreebel: 5
-      Torterra: 2
+      Victreebel: 92
+      Politoed: 92
+      Ludicolo: 92
+      Torterra: 37
     prized:
       Unown: forms
       Azurill: prized
     special: {}
   day: *land-morning
   evening: &land-evening
-    base: {}
+    base: { Poliwag: 2010 }
     uncommon:
-      Venonat: 20
-      Marill: 20
-      Shroomish: 25
-    rare: {}
+      Shroomish: 694
+      Wooper: 694
+      Venonat: 556
+      Marill: 556
+    rare: { Poliwhirl: 1250 }
     scarce:
-      Venomoth: 10
-      Azumarill: 5
-      Breloom: 10
-      Tangrowth: 6
-    elusive: {}
+      Venomoth: 174
+      Breloom: 174
+      Tangrowth: 104
+      Azumarill: 87
+      Quagsire: 87
+    elusive: { Politoed: 313 }
     prized:
       Unown: forms
       Azurill: prized
@@ -43,40 +55,40 @@ land:
 water:
   morning: &water-morning
     base:
-      Poliwag: 20
-      Lotad: 20
+      Poliwag: 2644
+      Lotad: 2644
     uncommon:
-      Magikarp: 30
-      Marill: 20
-      Wooper: 25
-      Surskit: 25
+      Magikarp: 750
+      Wooper: 625
+      Surskit: 625
+      Marill: 500
     rare:
-      Poliwhirl: 5
-      Lombre: 10
+      Lombre: 833
+      Poliwhirl: 417
     scarce:
-      Azumarill: 5
-      Quagsire: 5
-      Masquerain: 10
-      Gyarados: 4
+      Masquerain: 260
+      Azumarill: 130
+      Quagsire: 130
+      Gyarados: 104
     elusive:
-      Politoed: 5
-      Ludicolo: 5
+      Politoed: 156
+      Ludicolo: 156
     special: {}
   day: *water-morning
   evening: &water-evening
     base:
-      Poliwag: 20
+      Poliwag: 2009
     uncommon:
-      Magikarp: 30
-      Marill: 20
-      Wooper: 25
+      Magikarp: 1000
+      Wooper: 833
+      Marill: 667
     rare:
-      Poliwhirl: 5
+      Poliwhirl: 1250
     scarce:
-      Azumarill: 5
-      Quagsire: 5
-      Gyarados: 4
+      Azumarill: 223
+      Quagsire: 223
+      Gyarados: 179
     elusive:
-      Politoed: 5
+      Politoed: 313
     special: {}
   night: *water-evening

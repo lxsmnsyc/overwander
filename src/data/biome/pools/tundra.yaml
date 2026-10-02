@@ -1,34 +1,41 @@
 land:
   morning: &land-morning
     base:
-      FlabebeWhite: 24
-      Scatterbug: 24
-      Swinub: 25
-      Vanillite: 24
+      Swinub: 1084
+      Spheal: 1084
+      FlabebeWhite: 1040
+      Scatterbug: 1040
+      Vanillite: 1040
     uncommon:
-      VulpixAlola: 22
-      SandshrewAlola: 22
-      Snover: 20
-      Cubchoo: 20
+      VulpixAlola: 437
+      SandshrewAlola: 437
+      Snorunt: 437
+      Snover: 397
+      Cubchoo: 397
+      Seel: 397
     rare:
-      FloetteWhite: 8
-      Spewpa: 8
-      Piloswine: 10
-      Vanillish: 10
+      Piloswine: 284
+      Vanillish: 284
+      FloetteWhite: 227
+      Spewpa: 227
+      Sealeo: 227
     scarce:
-      NinetalesAlola: 6
-      SandslashAlola: 6
-      Beartic: 6
-      Dewgong: 10
-      Abomasnow: 6
-      Glaceon: 6
+      Dewgong: 120
+      NinetalesAlola: 72
+      SandslashAlola: 72
+      Beartic: 72
+      Abomasnow: 72
+      Glaceon: 72
+      Glalie: 72
+      Froslass: 72
     elusive:
-      FlorgesWhite: 5
-      Vivillon: 5
-      Vanilluxe: 5
-      Delibird: 5
-      Mamoswine: 5
-      Stoutland: 6
+      Stoutland: 52
+      FlorgesWhite: 43
+      Vivillon: 43
+      Vanilluxe: 43
+      Delibird: 43
+      Mamoswine: 43
+      Walrein: 43
     prized:
       Unown: forms
     special:
@@ -42,25 +49,32 @@ land:
   day: *land-morning
   evening: &land-evening
     base:
-      Swinub: 25
+      Swinub: 2644
+      Spheal: 2644
     uncommon:
-      VulpixAlola: 22
-      SandshrewAlola: 22
-      Sneasel: 5
-      Snover: 20
+      VulpixAlola: 495
+      SandshrewAlola: 495
+      Snorunt: 495
+      Snover: 450
+      Seel: 450
+      Sneasel: 113
     rare:
-      Piloswine: 5
+      Sealeo: 769
+      Piloswine: 481
     scarce:
-      NinetalesAlola: 6
-      SandslashAlola: 6
-      Dewgong: 10
-      Abomasnow: 6
-      Weavile: 6
-      Glaceon: 6
+      Dewgong: 120
+      NinetalesAlola: 72
+      SandslashAlola: 72
+      Abomasnow: 72
+      Weavile: 72
+      Glaceon: 72
+      Glalie: 72
+      Froslass: 72
     elusive:
-      Jynx: 5
-      Delibird: 5
-      Mamoswine: 5
+      Jynx: 78
+      Delibird: 78
+      Mamoswine: 78
+      Walrein: 78
     prized:
       Unown: forms
       Smoochum: prized
@@ -77,48 +91,72 @@ land:
 ice:
   morning: &ice-morning
     base:
-      Vanillite: 24
-      Spheal: 25
-      Swinub: 25
+      Spheal: 1084
+      Swinub: 1084
+      Vanillite: 1040
+      FlabebeWhite: 1040
+      Scatterbug: 1040
     uncommon:
-      Cubchoo: 20
-      Seel: 20
-      Snorunt: 22
+      Snorunt: 437
+      VulpixAlola: 437
+      SandshrewAlola: 437
+      Cubchoo: 397
+      Seel: 397
+      Snover: 397
     rare:
-      Vanillish: 10
-      Sealeo: 8
-      Piloswine: 5
+      Vanillish: 284
+      Piloswine: 284
+      Sealeo: 227
+      FloetteWhite: 227
+      Spewpa: 227
     scarce:
-      Beartic: 6
-      Dewgong: 10
-      Glalie: 6
-      Froslass: 6
-      Glaceon: 6
+      Dewgong: 120
+      Beartic: 72
+      Glalie: 72
+      Froslass: 72
+      Glaceon: 72
+      NinetalesAlola: 72
+      SandslashAlola: 72
+      Abomasnow: 72
     elusive:
-      Vanilluxe: 5
-      Walrein: 5
-      Mamoswine: 5
+      Stoutland: 52
+      Vanilluxe: 43
+      Walrein: 43
+      Mamoswine: 43
+      FlorgesWhite: 43
+      Vivillon: 43
+      Delibird: 43
     special:
       Uxie: 10
   day: *ice-morning
   evening: &ice-evening
     base:
-      Spheal: 25
-      Swinub: 25
+      Spheal: 2644
+      Swinub: 2644
     uncommon:
-      Seel: 20
-      Snorunt: 22
+      Snorunt: 495
+      VulpixAlola: 495
+      SandshrewAlola: 495
+      Seel: 450
+      Snover: 450
+      Sneasel: 113
     rare:
-      Sealeo: 8
-      Piloswine: 5
+      Sealeo: 769
+      Piloswine: 481
     scarce:
-      Dewgong: 10
-      Glalie: 6
-      Froslass: 6
-      Glaceon: 6
+      Dewgong: 120
+      Glalie: 72
+      Froslass: 72
+      Glaceon: 72
+      NinetalesAlola: 72
+      SandslashAlola: 72
+      Abomasnow: 72
+      Weavile: 72
     elusive:
-      Walrein: 5
-      Mamoswine: 5
+      Walrein: 78
+      Mamoswine: 78
+      Jynx: 78
+      Delibird: 78
     special:
       Uxie: 10
   night: *ice-evening

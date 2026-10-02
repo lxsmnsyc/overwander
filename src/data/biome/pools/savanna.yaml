@@ -1,183 +1,195 @@
 land:
   morning:
     base:
-      FlabebeYellow: 24
-      Scatterbug: 24
-      NidoranF: 20
-      NidoranM: 20
-      Torchic: 2
-      Shinx: 25
+      Shinx: 1150
+      FlabebeYellow: 1104
+      Scatterbug: 1104
+      NidoranF: 920
+      NidoranM: 920
+      Torchic: 92
     uncommon:
-      Mudbray: 22
-      Growlithe: 10
-      Doduo: 20
-      Natu: 20
-      Sunkern: 25
-      Phanpy: 20
-      Taillow: 25
-      Electrike: 25
-      Girafarig: 5
-      Hippopotas: 20
+      Sunkern: 264
+      Taillow: 264
+      Electrike: 264
+      Wooper: 264
+      Mudbray: 232
+      Doduo: 211
+      Natu: 211
+      Phanpy: 211
+      Hippopotas: 211
+      Psyduck: 211
+      Growlithe: 105
+      Girafarig: 53
     rare:
-      FloetteYellow: 8
-      Spewpa: 8
-      Nidorina: 5
-      Nidorino: 5
-      Combusken: 1
-      Luxio: 5
+      FloetteYellow: 313
+      Spewpa: 313
+      Nidorina: 195
+      Nidorino: 195
+      Luxio: 195
+      Combusken: 39
     scarce:
-      Mudsdale: 6
-      Arcanine: 5
-      Dodrio: 10
-      Swellow: 10
-      Manectric: 10
-      Xatu: 5
-      Sunflora: 5
-      Donphan: 5
-      Hippowdon: 6
-      Electivire: 6
+      Dodrio: 75
+      Swellow: 75
+      Manectric: 75
+      Golduck: 75
+      Mudsdale: 45
+      Hippowdon: 45
+      Electivire: 45
+      Arcanine: 38
+      Xatu: 38
+      Sunflora: 38
+      Donphan: 38
+      Quagsire: 38
     elusive:
-      Komala: 5
-      Oricorio: 5
-      FlorgesYellow: 5
-      Vivillon: 5
-      Nidoqueen: 5
-      Nidoking: 5
-      Kangaskhan: 5
-      Tauros: 10
-      Blaziken: 2
-      Plusle: 8
-      Minun: 8
-      Zangoose: 8
-      Luxray: 4
+      Tauros: 42
+      Plusle: 33
+      Minun: 33
+      Zangoose: 33
+      Komala: 21
+      Oricorio: 21
+      FlorgesYellow: 21
+      Vivillon: 21
+      Nidoqueen: 21
+      Nidoking: 21
+      Kangaskhan: 21
+      Luxray: 17
+      Blaziken: 8
     prized:
       Unown: forms
     special: {}
   day:
     base:
-      FlabebeYellow: 24
-      Scatterbug: 24
-      Fennekin: 2
-      NidoranF: 20
-      NidoranM: 20
-      Rhyhorn: 20
-      Torchic: 2
-      Shinx: 25
+      Shinx: 965
+      FlabebeYellow: 926
+      Scatterbug: 926
+      NidoranF: 772
+      NidoranM: 772
+      Rhyhorn: 772
+      Fennekin: 77
+      Torchic: 77
     uncommon:
-      Mudbray: 22
-      Ekans: 20
-      Growlithe: 10
-      Doduo: 20
-      Natu: 20
-      Sunkern: 25
-      Phanpy: 20
-      Taillow: 25
-      Electrike: 25
-      Girafarig: 5
-      Hippopotas: 20
+      Sunkern: 243
+      Taillow: 243
+      Electrike: 243
+      Wooper: 243
+      Mudbray: 214
+      Ekans: 195
+      Doduo: 195
+      Natu: 195
+      Phanpy: 195
+      Hippopotas: 195
+      Psyduck: 195
+      Growlithe: 97
+      Girafarig: 49
     rare:
-      FloetteYellow: 8
-      Spewpa: 8
-      Braixen: 2
-      Nidorina: 5
-      Nidorino: 5
-      Combusken: 1
-      Rhydon: 10
-      Luxio: 5
+      Rhydon: 284
+      FloetteYellow: 227
+      Spewpa: 227
+      Nidorina: 142
+      Nidorino: 142
+      Luxio: 142
+      Braixen: 57
+      Combusken: 28
     scarce:
-      Mudsdale: 6
-      Arbok: 10
-      Arcanine: 5
-      Dodrio: 10
-      Swellow: 10
-      Manectric: 10
-      Xatu: 5
-      Sunflora: 5
-      Donphan: 5
-      Hippowdon: 6
-      Electivire: 6
+      Arbok: 67
+      Dodrio: 67
+      Swellow: 67
+      Manectric: 67
+      Golduck: 67
+      Mudsdale: 40
+      Hippowdon: 40
+      Electivire: 40
+      Arcanine: 34
+      Xatu: 34
+      Sunflora: 34
+      Donphan: 34
+      Quagsire: 34
     elusive:
-      Komala: 5
-      Oricorio: 5
-      FlorgesYellow: 5
-      Vivillon: 5
-      Delphox: 2
-      Nidoqueen: 5
-      Nidoking: 5
-      Kangaskhan: 5
-      Tauros: 10
-      Blaziken: 2
-      Plusle: 8
-      Minun: 8
-      Zangoose: 8
-      Luxray: 4
+      Tauros: 41
+      Plusle: 32
+      Minun: 32
+      Zangoose: 32
+      Komala: 20
+      Oricorio: 20
+      FlorgesYellow: 20
+      Vivillon: 20
+      Nidoqueen: 20
+      Nidoking: 20
+      Kangaskhan: 20
+      Luxray: 16
+      Delphox: 8
+      Blaziken: 8
     prized:
       Unown: forms
     special: {}
   evening:
     base:
-      Fennekin: 2
-      NidoranF: 20
-      NidoranM: 20
-      Shinx: 25
+      Shinx: 1973
+      NidoranF: 1579
+      NidoranM: 1579
+      Fennekin: 158
     uncommon:
-      Mudbray: 22
-      Ekans: 20
-      Houndour: 20
-      Poochyena: 20
-      Girafarig: 5
-      Hippopotas: 20
+      Wooper: 473
+      Mudbray: 417
+      Ekans: 379
+      Houndour: 379
+      Poochyena: 379
+      Hippopotas: 379
+      Girafarig: 95
     rare:
-      Braixen: 2
-      Nidorina: 5
-      Nidorino: 5
-      Luxio: 5
+      Nidorina: 368
+      Nidorino: 368
+      Luxio: 368
+      Braixen: 147
     scarce:
-      Mudsdale: 6
-      Arbok: 10
-      Mightyena: 10
-      Houndoom: 5
-      Hippowdon: 6
-      Electivire: 6
+      Arbok: 130
+      Mightyena: 130
+      Mudsdale: 78
+      Hippowdon: 78
+      Electivire: 78
+      Houndoom: 65
+      Quagsire: 65
     elusive:
-      Komala: 5
-      Delphox: 2
-      Nidoqueen: 5
-      Nidoking: 5
-      Seviper: 8
-      Luxray: 4
+      Seviper: 86
+      Komala: 54
+      Nidoqueen: 54
+      Nidoking: 54
+      Luxray: 43
+      Delphox: 22
     prized:
       Unown: forms
     special: {}
   night:
     base:
-      NidoranF: 20
-      NidoranM: 20
-      Shinx: 25
+      Shinx: 2034
+      NidoranF: 1627
+      NidoranM: 1627
     uncommon:
-      Mudbray: 22
-      Ekans: 20
-      Houndour: 20
-      Poochyena: 20
-      Girafarig: 5
-      Hippopotas: 20
+      Wooper: 473
+      Mudbray: 417
+      Ekans: 379
+      Houndour: 379
+      Poochyena: 379
+      Hippopotas: 379
+      Girafarig: 95
     rare:
-      Nidorina: 5
-      Nidorino: 5
-      Luxio: 5
+      Nidorina: 417
+      Nidorino: 417
+      Luxio: 417
     scarce:
-      Mudsdale: 6
-      Arbok: 10
-      Mightyena: 10
-      Houndoom: 5
-      Hippowdon: 6
-      Electivire: 6
+      Arbok: 130
+      Mightyena: 130
+      Mudsdale: 78
+      Hippowdon: 78
+      Electivire: 78
+      Houndoom: 65
+      Quagsire: 65
     elusive:
-      Komala: 5
-      Nidoqueen: 5
-      Nidoking: 5
-      Seviper: 8
-      Luxray: 4
+      Seviper: 93
+      Komala: 58
+      Nidoqueen: 58
+      Nidoking: 58
+      Luxray: 46
     prized:
       Unown: forms
     special: {}
@@ -186,28 +198,37 @@ water:
   morning: &water-morning
     base: {}
     uncommon:
-      Magikarp: 30
-      Barboach: 25
-      Wooper: 25
-      Psyduck: 20
+      Magikarp: 1643
+      Barboach: 1369
+      Wooper: 1369
+      Taillow: 1369
+      Psyduck: 1096
+      Doduo: 1096
+      Natu: 1096
     rare: {}
     scarce:
-      Whiscash: 8
-      Quagsire: 5
-      Golduck: 10
-      Gyarados: 4
+      Golduck: 120
+      Dodrio: 120
+      Swellow: 120
+      Whiscash: 96
+      Quagsire: 60
+      Xatu: 60
+      Gyarados: 48
     special: {}
+    elusive:
+      Oricorio: 156
+      Vivillon: 156
   day: *water-morning
   evening: &water-evening
     base: {}
     uncommon:
-      Magikarp: 30
-      Barboach: 25
-      Wooper: 25
+      Magikarp: 3389
+      Barboach: 2824
+      Wooper: 2824
     rare: {}
     scarce:
-      Whiscash: 8
-      Quagsire: 5
-      Gyarados: 4
+      Whiscash: 441
+      Quagsire: 276
+      Gyarados: 221
     special: {}
   night: *water-evening

@@ -1,41 +1,46 @@
 land:
   morning: &land-morning
     base:
-      Axew: 5
-      Mankey: 20
-      Ralts: 20
-      Chimchar: 3
-      Turtwig: 3
+      Mankey: 1490
+      Ralts: 1490
+      Poliwag: 1490
+      Axew: 372
+      Chimchar: 223
+      Turtwig: 223
     uncommon:
-      Skiddo: 24
-      Mienfoo: 18
-      Makuhita: 20
-      Meditite: 25
-      Stantler: 5
+      Meditite: 534
+      Wooper: 534
+      Skiddo: 513
+      Makuhita: 427
+      Mienfoo: 385
+      Stantler: 107
     rare:
-      Fraxure: 3
-      Kirlia: 10
-      Primeape: 10
-      Ursaring: 5
-      Monferno: 2
-      Grotle: 2
+      Kirlia: 338
+      Primeape: 338
+      Ursaring: 169
+      Poliwhirl: 169
+      Fraxure: 101
+      Monferno: 68
+      Grotle: 68
     scarce:
-      Gogoat: 6
-      Mienshao: 6
-      Hariyama: 6
-      Medicham: 10
-      Wormadam: 4
-      Mothim: 4
+      Medicham: 152
+      Gogoat: 91
+      Mienshao: 91
+      Hariyama: 91
+      Quagsire: 76
+      Wormadam: 61
+      Mothim: 61
     elusive:
-      Hawlucha: 6
-      Haxorus: 3
-      Gardevoir: 5
-      Spinda: 12
-      Chimecho: 5
-      Infernape: 2
-      Torterra: 2
-      Lucario: 5
-      Gallade: 5
+      Spinda: 75
+      Hawlucha: 38
+      Gardevoir: 31
+      Chimecho: 31
+      Lucario: 31
+      Gallade: 31
+      Poliwrath: 31
+      Haxorus: 19
+      Infernape: 13
+      Torterra: 13
     prized:
       Unown: forms
       Riolu: prized
@@ -44,51 +49,61 @@ land:
   day: *land-morning
   evening:
     base:
-      Zubat: 30
+      Zubat: 3173
+      Poliwag: 2115
     uncommon:
-      Hoothoot: 25
-      Stantler: 5
-      Kricketot: 25
-      Woobat: 20
+      Hoothoot: 625
+      Kricketot: 625
+      Wooper: 625
+      Woobat: 500
+      Stantler: 125
     rare:
-      Golbat: 10
+      Golbat: 833
+      Poliwhirl: 417
     scarce:
-      Noctowl: 10
-      Wormadam: 4
-      Mothim: 4
-      Swoobat: 8
+      Noctowl: 202
+      Swoobat: 161
+      Quagsire: 101
+      Wormadam: 81
+      Mothim: 81
     elusive:
-      Hawlucha: 6
-      Crobat: 5
-      Sableye: 8
-      Chimecho: 5
-      Kricketune: 10
+      Kricketune: 80
+      Sableye: 64
+      Hawlucha: 48
+      Crobat: 40
+      Chimecho: 40
+      Poliwrath: 40
     prized:
       Unown: forms
       Chingling: prized
     special: {}
   night:
     base:
-      Zubat: 30
+      Zubat: 3173
+      Poliwag: 2115
     uncommon:
-      Paras: 20
-      Hoothoot: 25
-      Stantler: 5
-      Kricketot: 25
-      Woobat: 20
+      Hoothoot: 521
+      Kricketot: 521
+      Wooper: 521
+      Paras: 417
+      Woobat: 417
+      Stantler: 104
     rare:
-      Golbat: 10
+      Golbat: 833
+      Poliwhirl: 417
     scarce:
-      Parasect: 10
-      Noctowl: 10
-      Kricketune: 10
-      Wormadam: 4
-      Mothim: 4
-      Swoobat: 8
+      Parasect: 123
+      Noctowl: 123
+      Kricketune: 123
+      Swoobat: 98
+      Quagsire: 61
+      Wormadam: 49
+      Mothim: 49
     elusive:
-      Crobat: 5
-      Sableye: 8
-      Chimecho: 5
+      Sableye: 109
+      Crobat: 68
+      Chimecho: 68
+      Poliwrath: 68
     prized:
       Unown: forms
       Chingling: prized
@@ -97,18 +112,67 @@ land:
 water:
   morning: &water-morning
     base:
-      Poliwag: 20
+      Poliwag: 2010
     uncommon:
-      Magikarp: 30
-      Wooper: 25
+      Magikarp: 1364
+      Wooper: 1136
     rare:
-      Poliwhirl: 5
+      Poliwhirl: 1250
     scarce:
-      Quagsire: 5
-      Gyarados: 4
+      Medicham: 272
+      Quagsire: 136
+      Gyarados: 109
+      Mothim: 109
     elusive:
-      Poliwrath: 5
+      Hawlucha: 117
+      Poliwrath: 98
+      Chimecho: 98
     special: {}
   day: *water-morning
-  evening: *water-morning
-  night: *water-morning
+  evening:
+    base:
+      Zubat: 3173
+      Poliwag: 2115
+    uncommon:
+      Magikarp: 750
+      Wooper: 625
+      Hoothoot: 625
+      Woobat: 500
+    rare:
+      Golbat: 833
+      Poliwhirl: 417
+    scarce:
+      Noctowl: 202
+      Swoobat: 161
+      Quagsire: 101
+      Gyarados: 81
+      Mothim: 81
+    elusive:
+      Hawlucha: 89
+      Poliwrath: 74
+      Crobat: 74
+      Chimecho: 74
+    special: {}
+  night:
+    base:
+      Zubat: 3173
+      Poliwag: 2115
+    uncommon:
+      Magikarp: 750
+      Wooper: 625
+      Hoothoot: 625
+      Woobat: 500
+    rare:
+      Golbat: 833
+      Poliwhirl: 417
+    scarce:
+      Noctowl: 202
+      Swoobat: 161
+      Quagsire: 101
+      Gyarados: 81
+      Mothim: 81
+    elusive:
+      Poliwrath: 104
+      Crobat: 104
+      Chimecho: 104
+    special: {}

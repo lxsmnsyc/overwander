@@ -1,20 +1,23 @@
 land:
   morning: &land-morning
     base:
-      Scatterbug: 24
-      Dratini: 2
+      Scatterbug: 2010
+      Dratini: 407
     uncommon:
-      Seel: 20
+      Seel: 2500
+      Wingull: 2000
+      Exeggcute: 1500
     rare:
-      Spewpa: 8
-      Dragonair: 1
+      Spewpa: 1250
+      Dragonair: 139
     scarce:
-      Dewgong: 10
-      Vaporeon: 5
+      Dewgong: 417
+      Vaporeon: 208
     elusive:
-      Vivillon: 5
-      Blastoise: 2
-      Dragonite: 2
+      Vivillon: 112
+      Dhelmise: 112
+      Blastoise: 45
+      Dragonite: 45
     prized:
       Unown: forms
     special:
@@ -27,16 +30,18 @@ land:
   day: *land-morning
   evening:
     base:
-      Dratini: 2
+      Dratini: 5288
     uncommon:
-      Seel: 20
+      Seel: 1500
+      Exeggcute: 1500
     rare:
-      Dragonair: 1
+      Dragonair: 1250
     scarce:
-      Dewgong: 10
-      Vaporeon: 5
+      Dewgong: 417
+      Vaporeon: 208
     elusive:
-      Dragonite: 2
+      Dhelmise: 223
+      Dragonite: 89
     prized:
       Unown: forms
     special:
@@ -49,16 +54,18 @@ land:
       Registeel: 10
   night:
     base:
-      Dratini: 2
+      Dratini: 5288
     uncommon:
-      Seel: 20
+      Seel: 1500
+      Exeggcute: 1500
     rare:
-      Dragonair: 1
+      Dragonair: 1250
     scarce:
-      Dewgong: 10
-      Vaporeon: 5
+      Dewgong: 417
+      Vaporeon: 208
     elusive:
-      Dragonite: 2
+      Dhelmise: 223
+      Dragonite: 89
     prized:
       Unown: forms
     special:
@@ -75,46 +82,50 @@ land:
 water:
   morning: &water-morning
     base:
-      Horsea: 20
+      Horsea: 4807
+      Dratini: 481
     uncommon:
-      Clauncher: 24
-      Frillish: 20
-      Carvanha: 20
-      Wailmer: 15
-      Clamperl: 20
-      Tentacool: 30
-      Seel: 20
-      Shellder: 20
-      Magikarp: 30
-      Chinchou: 20
-      Remoraid: 20
-      Finneon: 20
+      Tentacool: 290
+      Magikarp: 290
+      Clauncher: 232
+      Frillish: 193
+      Carvanha: 193
+      Clamperl: 193
+      Seel: 193
+      Shellder: 193
+      Chinchou: 193
+      Remoraid: 193
+      Finneon: 193
+      Wailmer: 145
     rare:
-      Seadra: 10
+      Seadra: 1136
+      Dragonair: 114
     scarce:
-      Clawitzer: 6
-      Jellicent: 5
-      Sharpedo: 6
-      Wailord: 4
-      Tentacruel: 10
-      Dewgong: 10
-      Cloyster: 10
-      Gyarados: 10
-      Vaporeon: 5
-      Lanturn: 10
-      Octillery: 10
-      Lumineon: 6
+      Tentacruel: 68
+      Dewgong: 68
+      Cloyster: 68
+      Gyarados: 68
+      Lanturn: 68
+      Octillery: 68
+      Clawitzer: 41
+      Sharpedo: 41
+      Lumineon: 41
+      Jellicent: 34
+      Vaporeon: 34
+      Wailord: 27
     elusive:
-      Dhelmise: 5
-      Wishiwashi: 5
-      Alomomola: 7
-      Blastoise: 2
-      Lapras: 5
-      Mantine: 5
-      Kingdra: 5
-      Corsola: 20
-      Qwilfish: 15
-      Relicanth: 5
+      Corsola: 82
+      Qwilfish: 62
+      Alomomola: 29
+      Dhelmise: 21
+      Wishiwashi: 21
+      Lapras: 21
+      Mantine: 21
+      Kingdra: 21
+      Relicanth: 21
+      Vivillon: 21
+      Blastoise: 8
+      Dragonite: 8
     prized:
       Mantyke: prized
     special:
@@ -122,84 +133,90 @@ water:
   day: *water-morning
   evening:
     base:
-      Horsea: 20
+      Horsea: 4807
+      Dratini: 481
     uncommon:
-      Frillish: 20
-      Carvanha: 20
-      Wailmer: 15
-      Clamperl: 20
-      Tentacool: 30
-      Seel: 20
-      Shellder: 20
-      Magikarp: 30
-      Chinchou: 20
-      Remoraid: 20
-      Finneon: 20
+      Tentacool: 319
+      Magikarp: 319
+      Frillish: 213
+      Carvanha: 213
+      Clamperl: 213
+      Seel: 213
+      Shellder: 213
+      Chinchou: 213
+      Remoraid: 213
+      Finneon: 213
+      Wailmer: 160
     rare:
-      Seadra: 10
+      Seadra: 1136
+      Dragonair: 114
     scarce:
-      Jellicent: 5
-      Sharpedo: 6
-      Wailord: 4
-      Tentacruel: 10
-      Dewgong: 10
-      Cloyster: 10
-      Gyarados: 10
-      Vaporeon: 5
-      Lanturn: 10
-      Octillery: 10
-      Lumineon: 6
+      Tentacruel: 73
+      Dewgong: 73
+      Cloyster: 73
+      Gyarados: 73
+      Lanturn: 73
+      Octillery: 73
+      Sharpedo: 44
+      Lumineon: 44
+      Jellicent: 36
+      Vaporeon: 36
+      Wailord: 29
     elusive:
-      Dhelmise: 5
-      Wishiwashi: 5
-      Alomomola: 7
-      Lapras: 5
-      Mantine: 5
-      Kingdra: 5
-      Corsola: 20
-      Qwilfish: 15
+      Corsola: 98
+      Qwilfish: 73
+      Alomomola: 34
+      Wishiwashi: 24
+      Lapras: 24
+      Mantine: 24
+      Kingdra: 24
+      Dhelmise: 23
+      Dragonite: 10
     prized:
       Mantyke: prized
     special:
       Nihilego: 10
   night:
     base:
-      Horsea: 20
+      Horsea: 4807
+      Dratini: 481
     uncommon:
-      Frillish: 20
-      Carvanha: 20
-      Wailmer: 15
-      Clamperl: 20
-      Tentacool: 30
-      Seel: 20
-      Shellder: 20
-      Magikarp: 30
-      Chinchou: 20
-      Remoraid: 20
-      Finneon: 20
+      Tentacool: 319
+      Magikarp: 319
+      Frillish: 213
+      Carvanha: 213
+      Clamperl: 213
+      Seel: 213
+      Shellder: 213
+      Chinchou: 213
+      Remoraid: 213
+      Finneon: 213
+      Wailmer: 160
     rare:
-      Seadra: 10
+      Seadra: 1136
+      Dragonair: 114
     scarce:
-      Jellicent: 5
-      Sharpedo: 6
-      Wailord: 4
-      Tentacruel: 10
-      Dewgong: 10
-      Cloyster: 10
-      Gyarados: 10
-      Vaporeon: 5
-      Lanturn: 10
-      Octillery: 10
-      Lumineon: 6
+      Tentacruel: 73
+      Dewgong: 73
+      Cloyster: 73
+      Gyarados: 73
+      Lanturn: 73
+      Octillery: 73
+      Sharpedo: 44
+      Lumineon: 44
+      Jellicent: 36
+      Vaporeon: 36
+      Wailord: 29
     elusive:
-      Dhelmise: 5
-      Wishiwashi: 5
-      Alomomola: 7
-      Lapras: 5
-      Mantine: 5
-      Kingdra: 5
-      Corsola: 20
-      Qwilfish: 15
+      Corsola: 98
+      Qwilfish: 73
+      Alomomola: 34
+      Wishiwashi: 24
+      Lapras: 24
+      Mantine: 24
+      Kingdra: 24
+      Dhelmise: 23
+      Dragonite: 10
     prized:
       Mantyke: prized
     special:

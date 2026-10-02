@@ -30,7 +30,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -53,7 +53,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -76,7 +76,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -99,7 +99,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -122,7 +122,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -145,7 +145,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -168,7 +168,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -191,7 +191,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [
@@ -226,7 +226,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -249,7 +249,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -272,7 +272,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -295,7 +295,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -318,7 +318,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -341,7 +341,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -364,7 +364,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -387,7 +387,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [
@@ -422,7 +422,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -445,7 +445,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -468,7 +468,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -491,7 +491,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -514,7 +514,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -537,7 +537,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -560,7 +560,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -583,7 +583,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [
@@ -618,7 +618,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -641,7 +641,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -664,7 +664,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -687,7 +687,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -710,7 +710,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -733,7 +733,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -756,7 +756,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -779,7 +779,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [
@@ -826,7 +826,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -849,7 +849,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -872,7 +872,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -895,7 +895,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -918,7 +918,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -941,7 +941,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -964,7 +964,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -987,7 +987,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [
@@ -1022,7 +1022,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -1045,7 +1045,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -1068,7 +1068,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -1091,7 +1091,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -1114,7 +1114,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -1137,7 +1137,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -1160,7 +1160,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -1183,7 +1183,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [
@@ -1218,7 +1218,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -1241,7 +1241,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -1264,7 +1264,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -1287,7 +1287,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -1310,7 +1310,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -1333,7 +1333,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -1356,7 +1356,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -1379,7 +1379,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [
@@ -1414,7 +1414,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -1437,7 +1437,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -1460,7 +1460,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -1483,7 +1483,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -1506,7 +1506,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -1529,7 +1529,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -1552,7 +1552,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -1575,7 +1575,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [
@@ -1622,7 +1622,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -1645,7 +1645,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -1668,7 +1668,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -1691,7 +1691,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -1714,7 +1714,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -1737,7 +1737,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -1760,7 +1760,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -1783,7 +1783,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [
@@ -1818,7 +1818,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -1841,7 +1841,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -1864,7 +1864,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -1887,7 +1887,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -1910,7 +1910,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -1933,7 +1933,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -1956,7 +1956,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -1979,7 +1979,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [
@@ -2014,7 +2014,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -2037,7 +2037,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -2060,7 +2060,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -2083,7 +2083,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -2106,7 +2106,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -2129,7 +2129,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -2152,7 +2152,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -2175,7 +2175,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [
@@ -2210,7 +2210,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -2233,7 +2233,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -2256,7 +2256,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -2279,7 +2279,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -2302,7 +2302,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -2325,7 +2325,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -2348,7 +2348,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -2371,7 +2371,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [
@@ -2418,7 +2418,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -2441,7 +2441,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -2464,7 +2464,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -2487,7 +2487,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -2510,7 +2510,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -2533,7 +2533,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -2556,7 +2556,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -2579,7 +2579,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [
@@ -2614,7 +2614,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -2637,7 +2637,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -2660,7 +2660,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -2683,7 +2683,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -2706,7 +2706,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -2729,7 +2729,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -2752,7 +2752,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -2775,7 +2775,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [
@@ -2810,7 +2810,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -2833,7 +2833,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -2856,7 +2856,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -2879,7 +2879,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -2902,7 +2902,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -2925,7 +2925,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -2948,7 +2948,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -2971,7 +2971,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [
@@ -3006,7 +3006,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "uncommon": {
               "type": "object",
@@ -3029,7 +3029,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "rare": {
               "type": "object",
@@ -3052,7 +3052,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "scarce": {
               "type": "object",
@@ -3075,7 +3075,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "elusive": {
               "type": "object",
@@ -3098,7 +3098,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "prized": {
               "type": "object",
@@ -3121,7 +3121,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "special": {
               "type": "object",
@@ -3144,7 +3144,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             },
             "mythical": {
               "type": "object",
@@ -3167,7 +3167,7 @@
                   }
                 ]
               },
-              "description": "Species and weight, in the order a roll walks them"
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
             }
           },
           "required": [

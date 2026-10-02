@@ -1,74 +1,96 @@
 land:
   morning: &land-morning
     base:
-      Beldum: 2
-      Geodude: 20
+      Swinub: 2813
+      Geodude: 2250
+      Beldum: 225
     uncommon:
-      Cacnea: 20
-      Diglett: 20
-      Onix: 10
+      Snorunt: 764
+      Cacnea: 694
+      Diglett: 694
+      Onix: 347
     rare:
-      Metang: 1
-      Graveler: 5
+      Graveler: 568
+      Piloswine: 568
+      Metang: 114
     scarce:
-      Dugtrio: 10
-      Steelix: 5
+      Dugtrio: 231
+      Glalie: 139
+      Froslass: 139
+      Steelix: 116
     elusive:
-      Metagross: 1
-      Golem: 5
+      Golem: 142
+      Mamoswine: 142
+      Metagross: 28
     prized:
       Unown: forms
     special: {}
   day: *land-morning
   evening:
     base:
-      Beldum: 2
-      Geodude: 20
+      Swinub: 2813
+      Geodude: 2250
+      Beldum: 225
     uncommon:
-      Elgyem: 20
-      Diglett: 20
-      Onix: 10
-      Gligar: 5
+      Snorunt: 671
+      Elgyem: 610
+      Diglett: 610
+      Onix: 305
+      Gligar: 152
+      Sneasel: 152
     rare:
-      Metang: 1
-      Graveler: 5
+      Graveler: 568
+      Piloswine: 568
+      Metang: 114
     scarce:
-      Beheeyem: 7
-      Cacturne: 6
-      Dugtrio: 10
-      Steelix: 5
-      Gliscor: 6
+      Dugtrio: 120
+      Beheeyem: 84
+      Cacturne: 72
+      Gliscor: 72
+      Glalie: 72
+      Froslass: 72
+      Weavile: 72
+      Steelix: 60
     elusive:
-      Metagross: 1
-      Golem: 5
-      Lunatone: 5
+      Golem: 98
+      Lunatone: 98
+      Mamoswine: 98
+      Metagross: 20
     prized:
       Unown: forms
     special: {}
   night:
     base:
-      Beldum: 2
-      Geodude: 20
+      Swinub: 2813
+      Geodude: 2250
+      Beldum: 225
     uncommon:
-      Elgyem: 20
-      Diglett: 20
-      Cubone: 20
-      Onix: 10
-      Gligar: 5
+      Snorunt: 539
+      Elgyem: 490
+      Diglett: 490
+      Cubone: 490
+      Onix: 245
+      Gligar: 123
+      Sneasel: 123
     rare:
-      Metang: 1
-      Graveler: 5
+      Graveler: 568
+      Piloswine: 568
+      Metang: 114
     scarce:
-      Beheeyem: 7
-      Cacturne: 6
-      Dugtrio: 10
-      Marowak: 10
-      Steelix: 5
-      Gliscor: 6
+      Dugtrio: 101
+      Marowak: 101
+      Beheeyem: 71
+      Cacturne: 60
+      Gliscor: 60
+      Glalie: 60
+      Froslass: 60
+      Weavile: 60
+      Steelix: 50
     elusive:
-      Metagross: 1
-      Golem: 5
-      Lunatone: 5
+      Golem: 98
+      Lunatone: 98
+      Mamoswine: 98
+      Metagross: 20
     prized:
       Unown: forms
     special: {}
@@ -76,31 +98,90 @@ land:
 ice:
   morning: &ice-morning
     base:
-      Swinub: 25
+      Swinub: 2813
+      Geodude: 2250
+      Beldum: 225
     uncommon:
-      Snorunt: 22
+      Snorunt: 764
+      Cacnea: 694
+      Diglett: 694
+      Onix: 347
     rare:
-      Piloswine: 5
+      Piloswine: 568
+      Graveler: 568
+      Metang: 114
     scarce:
-      Glalie: 6
-      Froslass: 6
+      Dugtrio: 231
+      Glalie: 139
+      Froslass: 139
+      Steelix: 116
     elusive:
-      Mamoswine: 5
+      Mamoswine: 142
+      Golem: 142
+      Metagross: 28
     special: {}
   day: *ice-morning
-  evening: &ice-evening
+  evening:
     base:
-      Swinub: 25
+      Swinub: 2813
+      Geodude: 2250
+      Beldum: 225
     uncommon:
-      Snorunt: 22
-      Sneasel: 5
+      Snorunt: 671
+      Elgyem: 610
+      Diglett: 610
+      Onix: 305
+      Sneasel: 152
+      Gligar: 152
     rare:
-      Piloswine: 5
+      Piloswine: 568
+      Graveler: 568
+      Metang: 114
     scarce:
-      Glalie: 6
-      Froslass: 6
-      Weavile: 6
+      Dugtrio: 120
+      Beheeyem: 84
+      Glalie: 72
+      Froslass: 72
+      Weavile: 72
+      Cacturne: 72
+      Gliscor: 72
+      Steelix: 60
     elusive:
-      Mamoswine: 5
+      Mamoswine: 98
+      Golem: 98
+      Lunatone: 98
+      Metagross: 20
     special: {}
-  night: *ice-evening
+  night:
+    base:
+      Swinub: 2813
+      Geodude: 2250
+      Beldum: 225
+    uncommon:
+      Snorunt: 539
+      Elgyem: 490
+      Diglett: 490
+      Cubone: 490
+      Onix: 245
+      Sneasel: 123
+      Gligar: 123
+    rare:
+      Piloswine: 568
+      Graveler: 568
+      Metang: 114
+    scarce:
+      Dugtrio: 101
+      Marowak: 101
+      Beheeyem: 71
+      Glalie: 60
+      Froslass: 60
+      Weavile: 60
+      Cacturne: 60
+      Gliscor: 60
+      Steelix: 50
+    elusive:
+      Mamoswine: 98
+      Golem: 98
+      Lunatone: 98
+      Metagross: 20
+    special: {}

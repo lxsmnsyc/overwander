@@ -1,19 +1,26 @@
 land:
   morning: &land-morning
     base:
-      FlabebeWhite: 24
+      Swinub: 2698
+      FlabebeWhite: 2590
     uncommon:
-      Stantler: 5
-      Snover: 20
+      Snover: 1111
+      Seel: 1111
+      Stantler: 278
     rare:
-      FloetteWhite: 8
-      Ursaring: 5
+      FloetteWhite: 556
+      Ursaring: 347
+      Piloswine: 347
     scarce:
-      Abomasnow: 6
+      Dewgong: 284
+      Abomasnow: 170
+      Glaceon: 170
     elusive:
-      FlorgesWhite: 5
-      Pachirisu: 8
-      Snorlax: 5
+      Pachirisu: 89
+      FlorgesWhite: 56
+      Snorlax: 56
+      Mamoswine: 56
+      Delibird: 56
     prized:
       Unown: forms
     special:
@@ -23,19 +30,26 @@ land:
       Regice: 10
   day: *land-morning
   evening:
-    base: {}
+    base: { Swinub: 2009 }
     uncommon:
-      Vulpix: 10
-      Stantler: 5
-      Snover: 20
-    rare: {}
+      Snover: 833
+      Seel: 833
+      Vulpix: 417
+      Stantler: 208
+      Sneasel: 208
+    rare: { Piloswine: 1250 }
     scarce:
-      Ninetales: 5
-      Abomasnow: 6
+      Dewgong: 189
+      Abomasnow: 114
+      Glaceon: 114
+      Weavile: 114
+      Ninetales: 95
     elusive:
-      Pachirisu: 8
-      Jynx: 5
-      Snorlax: 5
+      Pachirisu: 89
+      Jynx: 56
+      Snorlax: 56
+      Mamoswine: 56
+      Delibird: 56
     prized:
       Unown: forms
       Smoochum: prized
@@ -45,21 +59,28 @@ land:
       Uxie: 10
       Regice: 10
   night:
-    base: {}
+    base: { Swinub: 2009 }
     uncommon:
-      Vulpix: 10
-      Paras: 20
-      Stantler: 5
-      Snover: 20
-    rare: {}
+      Paras: 625
+      Snover: 625
+      Seel: 625
+      Vulpix: 313
+      Stantler: 156
+      Sneasel: 156
+    rare: { Piloswine: 1250 }
     scarce:
-      Ninetales: 5
-      Parasect: 10
-      Abomasnow: 6
+      Parasect: 145
+      Dewgong: 145
+      Abomasnow: 87
+      Glaceon: 87
+      Weavile: 87
+      Ninetales: 73
     elusive:
-      Pachirisu: 8
-      Jynx: 5
-      Snorlax: 5
+      Pachirisu: 89
+      Jynx: 56
+      Snorlax: 56
+      Mamoswine: 56
+      Delibird: 56
     prized:
       Unown: forms
       Smoochum: prized
@@ -72,38 +93,81 @@ land:
 ice:
   morning: &ice-morning
     base:
-      Swinub: 25
+      Swinub: 2698
+      FlabebeWhite: 2590
     uncommon:
-      Seel: 20
+      Seel: 1111
+      Snover: 1111
+      Stantler: 278
     rare:
-      Piloswine: 5
+      FloetteWhite: 556
+      Piloswine: 347
+      Ursaring: 347
     scarce:
-      Dewgong: 10
-      Glaceon: 6
+      Dewgong: 284
+      Glaceon: 170
+      Abomasnow: 170
     elusive:
-      Mamoswine: 5
-      Delibird: 5
+      Pachirisu: 89
+      Mamoswine: 56
+      Delibird: 56
+      FlorgesWhite: 56
+      Snorlax: 56
     special:
       Uxie: 10
   day: *ice-morning
-  evening: &ice-evening
+  evening:
     base:
-      Swinub: 25
+      Swinub: 2009
     uncommon:
-      Seel: 20
-      Sneasel: 5
+      Seel: 833
+      Snover: 833
+      Vulpix: 417
+      Sneasel: 208
+      Stantler: 208
     rare:
-      Piloswine: 5
+      Piloswine: 1250
     scarce:
-      Dewgong: 10
-      Glaceon: 6
-      Weavile: 6
+      Dewgong: 189
+      Glaceon: 114
+      Weavile: 114
+      Abomasnow: 114
+      Ninetales: 95
     elusive:
-      Mamoswine: 5
-      Delibird: 5
+      Pachirisu: 89
+      Mamoswine: 56
+      Delibird: 56
+      Jynx: 56
+      Snorlax: 56
     special:
       Uxie: 10
-  night: *ice-evening
+  night:
+    base:
+      Swinub: 2009
+    uncommon:
+      Seel: 625
+      Paras: 625
+      Snover: 625
+      Vulpix: 313
+      Sneasel: 156
+      Stantler: 156
+    rare:
+      Piloswine: 1250
+    scarce:
+      Dewgong: 145
+      Parasect: 145
+      Glaceon: 87
+      Weavile: 87
+      Abomasnow: 87
+      Ninetales: 73
+    elusive:
+      Pachirisu: 89
+      Mamoswine: 56
+      Delibird: 56
+      Jynx: 56
+      Snorlax: 56
+    special:
+      Uxie: 10
 
 # The legendaries met wild in the caves under it
 cave-legends: { Regice: 10 }

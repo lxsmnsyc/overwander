@@ -1,66 +1,72 @@
 # The Yungoos line is written but waits on sprites, since the
 # collection has drawn no Gumshoos. Once it does, mornings and days
-# take Yungoos in uncommon at 25 and Gumshoos in scarce at 6
+# take Yungoos in uncommon and Gumshoos in scarce, each weighed like
+# the first stages and the finished lines already there
 land:
   morning:
     base:
-      GeodudeAlola: 22
-      FlabebeOrange: 24
-      Scatterbug: 24
-      Solosis: 24
-      Snivy: 3
-      Mareep: 25
-      Hoppip: 25
-      Shinx: 25
+      Mareep: 689
+      Hoppip: 689
+      Shinx: 689
+      FlabebeOrange: 661
+      Scatterbug: 661
+      Solosis: 661
+      GeodudeAlola: 606
+      Poliwag: 551
+      Snivy: 83
     uncommon:
-      Swirlix: 24
-      Skiddo: 24
-      Minccino: 26
-      Spoink: 20
-      Spearow: 20
-      Natu: 20
-      Sunkern: 25
-      Snubbull: 20
-      Skitty: 25
-      Roselia: 20
-      Glameow: 25
-      Cottonee: 24
+      Minccino: 218
+      Sunkern: 210
+      Skitty: 210
+      Glameow: 210
+      Surskit: 210
+      Swirlix: 201
+      Skiddo: 201
+      Cottonee: 201
+      Spoink: 168
+      Spearow: 168
+      Natu: 168
+      Snubbull: 168
+      Roselia: 168
     rare:
-      GravelerAlola: 8
-      FloetteOrange: 8
-      Spewpa: 8
-      Duosion: 10
-      Servine: 2
-      Flaaffy: 5
-      Skiploom: 5
-      Luxio: 5
+      Duosion: 223
+      GravelerAlola: 179
+      FloetteOrange: 179
+      Spewpa: 179
+      Flaaffy: 112
+      Skiploom: 112
+      Luxio: 112
+      Poliwhirl: 112
+      Servine: 45
     scarce:
-      Slurpuff: 6
-      Gogoat: 6
-      Cinccino: 7
-      Grumpig: 6
-      Fearow: 10
-      Flareon: 5
-      Delcatty: 10
-      Xatu: 5
-      Sunflora: 5
-      Granbull: 5
-      Purugly: 8
-      Roserade: 6
-      Whimsicott: 7
+      Fearow: 65
+      Delcatty: 65
+      Masquerain: 65
+      Purugly: 52
+      Cinccino: 46
+      Whimsicott: 46
+      Slurpuff: 39
+      Gogoat: 39
+      Grumpig: 39
+      Roserade: 39
+      Flareon: 33
+      Xatu: 33
+      Sunflora: 33
+      Granbull: 33
     elusive:
-      GolemAlola: 4
-      Klefki: 5
-      Furfrou: 5
-      FlorgesOrange: 5
-      Vivillon: 5
-      Reuniclus: 5
-      Serperior: 2
-      Smeargle: 5
-      Miltank: 5
-      Ampharos: 5
-      Jumpluff: 5
-      Luxray: 4
+      Klefki: 26
+      Furfrou: 26
+      FlorgesOrange: 26
+      Vivillon: 26
+      Reuniclus: 26
+      Smeargle: 26
+      Miltank: 26
+      Ampharos: 26
+      Jumpluff: 26
+      Poliwrath: 26
+      GolemAlola: 21
+      Luxray: 21
+      Serperior: 10
     prized:
       Unown: forms
       Budew: prized
@@ -68,66 +74,71 @@ land:
     special: {}
   day:
     base:
-      GeodudeAlola: 22
-      FlabebeOrange: 24
-      Scatterbug: 24
-      Fennekin: 2
-      Solosis: 24
-      Snivy: 3
-      Mareep: 25
-      Hoppip: 25
-      Shinx: 25
+      Mareep: 681
+      Hoppip: 681
+      Shinx: 681
+      FlabebeOrange: 654
+      Scatterbug: 654
+      Solosis: 654
+      GeodudeAlola: 600
+      Poliwag: 545
+      Snivy: 82
+      Fennekin: 55
     uncommon:
-      Swirlix: 24
-      Skiddo: 24
-      Minccino: 26
-      Spoink: 20
-      Spearow: 20
-      Natu: 20
-      Sunkern: 25
-      Snubbull: 20
-      Skitty: 25
-      Roselia: 20
-      Glameow: 25
-      Cottonee: 24
+      Minccino: 218
+      Sunkern: 210
+      Skitty: 210
+      Glameow: 210
+      Surskit: 210
+      Swirlix: 201
+      Skiddo: 201
+      Cottonee: 201
+      Spoink: 168
+      Spearow: 168
+      Natu: 168
+      Snubbull: 168
+      Roselia: 168
     rare:
-      GravelerAlola: 8
-      FloetteOrange: 8
-      Spewpa: 8
-      Braixen: 2
-      Duosion: 10
-      Servine: 2
-      Flaaffy: 5
-      Skiploom: 5
-      Luxio: 5
+      Duosion: 216
+      GravelerAlola: 172
+      FloetteOrange: 172
+      Spewpa: 172
+      Flaaffy: 108
+      Skiploom: 108
+      Luxio: 108
+      Poliwhirl: 108
+      Braixen: 43
+      Servine: 43
     scarce:
-      Slurpuff: 6
-      Gogoat: 6
-      Cinccino: 7
-      Grumpig: 6
-      Fearow: 10
-      Flareon: 5
-      Delcatty: 10
-      Xatu: 5
-      Sunflora: 5
-      Granbull: 5
-      Purugly: 8
-      Roserade: 6
-      Whimsicott: 7
+      Fearow: 65
+      Delcatty: 65
+      Masquerain: 65
+      Purugly: 52
+      Cinccino: 46
+      Whimsicott: 46
+      Slurpuff: 39
+      Gogoat: 39
+      Grumpig: 39
+      Roserade: 39
+      Flareon: 33
+      Xatu: 33
+      Sunflora: 33
+      Granbull: 33
     elusive:
-      GolemAlola: 4
-      Klefki: 5
-      Furfrou: 5
-      FlorgesOrange: 5
-      Vivillon: 5
-      Delphox: 2
-      Reuniclus: 5
-      Serperior: 2
-      Smeargle: 5
-      Miltank: 5
-      Ampharos: 5
-      Jumpluff: 5
-      Luxray: 4
+      Klefki: 25
+      Furfrou: 25
+      FlorgesOrange: 25
+      Vivillon: 25
+      Reuniclus: 25
+      Smeargle: 25
+      Miltank: 25
+      Ampharos: 25
+      Jumpluff: 25
+      Poliwrath: 25
+      GolemAlola: 20
+      Luxray: 20
+      Delphox: 10
+      Serperior: 10
     prized:
       Unown: forms
       Budew: prized
@@ -135,44 +146,47 @@ land:
     special: {}
   evening:
     base:
-      GeodudeAlola: 22
-      Fennekin: 2
-      Gothita: 24
-      Seedot: 20
-      Shinx: 25
+      Shinx: 1170
+      Gothita: 1123
+      GeodudeAlola: 1030
+      Seedot: 936
+      Poliwag: 936
+      Fennekin: 94
     uncommon:
-      Pawniard: 16
-      Vulpix: 10
-      Houndour: 20
-      Poochyena: 20
-      Roselia: 20
-      Glameow: 25
-      Stunky: 22
-      Skorupi: 20
+      Glameow: 408
+      Stunky: 359
+      Houndour: 327
+      Poochyena: 327
+      Roselia: 327
+      Skorupi: 327
+      Pawniard: 261
+      Vulpix: 163
     rare:
-      GravelerAlola: 8
-      Braixen: 2
-      Gothorita: 10
-      Nuzleaf: 10
-      Luxio: 5
+      Gothorita: 313
+      Nuzleaf: 313
+      GravelerAlola: 250
+      Luxio: 156
+      Poliwhirl: 156
+      Braixen: 63
     scarce:
-      Bisharp: 6
-      Ninetales: 5
-      Flareon: 5
-      Mightyena: 10
-      Houndoom: 5
-      Purugly: 8
-      Skuntank: 8
-      Drapion: 6
-      Roserade: 6
+      Mightyena: 106
+      Purugly: 85
+      Skuntank: 85
+      Bisharp: 64
+      Drapion: 64
+      Roserade: 64
+      Ninetales: 53
+      Flareon: 53
+      Houndoom: 53
     elusive:
-      GolemAlola: 4
-      Furfrou: 5
-      Delphox: 2
-      Gothitelle: 5
-      Smeargle: 5
-      Shiftry: 5
-      Luxray: 4
+      Furfrou: 45
+      Gothitelle: 45
+      Smeargle: 45
+      Shiftry: 45
+      Poliwrath: 45
+      GolemAlola: 36
+      Luxray: 36
+      Delphox: 18
     prized:
       Unown: forms
       Budew: prized
@@ -180,40 +194,43 @@ land:
     special: {}
   night:
     base:
-      GeodudeAlola: 22
-      Gothita: 24
-      Seedot: 20
-      Shinx: 25
+      Shinx: 1191
+      Gothita: 1143
+      GeodudeAlola: 1048
+      Seedot: 953
+      Poliwag: 953
     uncommon:
-      Pawniard: 16
-      Vulpix: 10
-      Houndour: 20
-      Poochyena: 20
-      Roselia: 20
-      Glameow: 25
-      Stunky: 22
-      Skorupi: 20
+      Glameow: 408
+      Stunky: 359
+      Houndour: 327
+      Poochyena: 327
+      Roselia: 327
+      Skorupi: 327
+      Pawniard: 261
+      Vulpix: 163
     rare:
-      GravelerAlola: 8
-      Gothorita: 10
-      Nuzleaf: 10
-      Luxio: 5
+      Gothorita: 329
+      Nuzleaf: 329
+      GravelerAlola: 263
+      Luxio: 164
+      Poliwhirl: 164
     scarce:
-      Bisharp: 6
-      Ninetales: 5
-      Flareon: 5
-      Mightyena: 10
-      Houndoom: 5
-      Purugly: 8
-      Skuntank: 8
-      Drapion: 6
-      Roserade: 6
+      Mightyena: 106
+      Purugly: 85
+      Skuntank: 85
+      Bisharp: 64
+      Drapion: 64
+      Roserade: 64
+      Ninetales: 53
+      Flareon: 53
+      Houndoom: 53
     elusive:
-      GolemAlola: 4
-      Gothitelle: 5
-      Smeargle: 5
-      Shiftry: 5
-      Luxray: 4
+      Gothitelle: 56
+      Smeargle: 56
+      Shiftry: 56
+      Poliwrath: 56
+      GolemAlola: 45
+      Luxray: 45
     prized:
       Unown: forms
       Budew: prized
@@ -223,33 +240,42 @@ land:
 water:
   morning: &water-morning
     base:
-      Poliwag: 20
+      Hoppip: 2938
+      Poliwag: 2350
     uncommon:
-      Magikarp: 30
-      Goldeen: 20
-      Surskit: 25
+      Magikarp: 652
+      Surskit: 543
+      Goldeen: 435
+      Spearow: 435
+      Natu: 435
     rare:
-      Poliwhirl: 5
+      Poliwhirl: 625
+      Skiploom: 625
     scarce:
-      Seaking: 10
-      Masquerain: 10
-      Gyarados: 4
+      Seaking: 160
+      Masquerain: 160
+      Fearow: 160
+      Xatu: 80
+      Gyarados: 64
     elusive:
-      Poliwrath: 5
+      Poliwrath: 78
+      Klefki: 78
+      Vivillon: 78
+      Jumpluff: 78
     special: {}
   day: *water-morning
   evening: &water-evening
     base:
-      Poliwag: 20
+      Poliwag: 2009
     uncommon:
-      Magikarp: 30
-      Goldeen: 20
+      Magikarp: 1500
+      Goldeen: 1000
     rare:
-      Poliwhirl: 5
+      Poliwhirl: 1250
     scarce:
-      Seaking: 10
-      Gyarados: 4
+      Seaking: 446
+      Gyarados: 179
     elusive:
-      Poliwrath: 5
+      Poliwrath: 313
     special: {}
   night: *water-evening

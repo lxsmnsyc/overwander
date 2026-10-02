@@ -1,13 +1,15 @@
 land:
   morning: &land-morning
     base:
-      Dratini: 4
-    uncommon: {}
+      Dratini: 7788
+    uncommon:
+      Wingull: 2500
+      Exeggcute: 2500
     rare:
-      Dragonair: 2
+      Dragonair: 1875
     scarce: {}
     elusive:
-      Dragonite: 2
+      Dragonite: 50
     prized:
       Unown: forms
     special:
@@ -16,30 +18,48 @@ land:
       HoOh: 10
     mythical: {}
   day: *land-morning
-  evening: *land-morning
-  night: *land-morning
+  evening: &land-evening
+    base:
+      Dratini: 7788
+    uncommon:
+      Exeggcute: 2500
+    rare:
+      Dragonair: 1875
+    scarce: {}
+    elusive:
+      Dragonite: 50
+    prized:
+      Unown: forms
+    special:
+      Lugia: 10
+      Articuno: 10
+      HoOh: 10
+    mythical: {}
+  night: *land-evening
 
 water:
   morning: &water-morning
     base:
-      Horsea: 20
+      Horsea: 4407
+      Dratini: 881
     uncommon:
-      Frillish: 20
-      Wailmer: 15
-      Tentacool: 20
-      Magikarp: 20
-      Chinchou: 20
-    rare: {}
+      Frillish: 526
+      Tentacool: 526
+      Magikarp: 526
+      Chinchou: 526
+      Wailmer: 395
+    rare: { Dragonair: 1250 }
     scarce:
-      Jellicent: 5
-      Wailord: 4
-      Huntail: 5
-      Gorebyss: 5
-      Gyarados: 10
-      Lanturn: 10
+      Gyarados: 160
+      Lanturn: 160
+      Jellicent: 80
+      Huntail: 80
+      Gorebyss: 80
+      Wailord: 64
     elusive:
-      Lapras: 5
-      Relicanth: 5
+      Lapras: 130
+      Relicanth: 130
+      Dragonite: 52
     special:
       Kyogre: 10
     mythical:
@@ -47,23 +67,25 @@ water:
   day: *water-morning
   evening: &water-evening
     base:
-      Horsea: 20
+      Horsea: 4407
+      Dratini: 881
     uncommon:
-      Frillish: 20
-      Wailmer: 15
-      Tentacool: 20
-      Magikarp: 20
-      Chinchou: 20
-    rare: {}
+      Frillish: 526
+      Tentacool: 526
+      Magikarp: 526
+      Chinchou: 526
+      Wailmer: 395
+    rare: { Dragonair: 1250 }
     scarce:
-      Jellicent: 5
-      Wailord: 4
-      Huntail: 5
-      Gorebyss: 5
-      Gyarados: 10
-      Lanturn: 10
+      Gyarados: 160
+      Lanturn: 160
+      Jellicent: 80
+      Huntail: 80
+      Gorebyss: 80
+      Wailord: 64
     elusive:
-      Lapras: 5
+      Lapras: 223
+      Dragonite: 89
     special:
       Kyogre: 10
     mythical:

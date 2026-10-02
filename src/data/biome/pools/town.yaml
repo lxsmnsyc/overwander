@@ -5,30 +5,30 @@
 pool:
   morning: &pool-morning
     base:
-      Pidgey: 30
-      Starly: 30
-      Magnemite: 25
-      Porygon: 15
+      Pidgey: 1586
+      Starly: 1586
+      Magnemite: 1322
+      Porygon: 793
     uncommon:
-      Rattata: 20
-      Zigzagoon: 20
-      Voltorb: 16
-      Glameow: 14
-      Buneary: 14
+      Rattata: 595
+      Zigzagoon: 595
+      Voltorb: 476
+      Glameow: 417
+      Buneary: 417
     rare:
-      Pidgeotto: 20
-      Staravia: 20
-      Magneton: 14
+      Pidgeotto: 463
+      Staravia: 463
+      Magneton: 324
     scarce:
-      Raticate: 12
-      Linoone: 12
-      Electrode: 10
-      Purugly: 8
+      Raticate: 179
+      Linoone: 179
+      Electrode: 149
+      Purugly: 119
     elusive:
-      Ditto: 10
-      Rotom: 8
-      Kecleon: 8
-      Magnezone: 4
+      Ditto: 104
+      Rotom: 83
+      Kecleon: 83
+      Magnezone: 42
     prized:
       VivillonFancy: 2
     special: {}
@@ -38,25 +38,25 @@ pool:
   day: *pool-morning
   evening:
     base:
-      Magnemite: 25
-      Porygon: 15
+      Magnemite: 3305
+      Porygon: 1983
     uncommon:
-      Rattata: 20
-      Zigzagoon: 20
-      Voltorb: 16
-      Glameow: 14
-      Buneary: 14
+      Rattata: 595
+      Zigzagoon: 595
+      Voltorb: 476
+      Glameow: 417
+      Buneary: 417
     rare:
-      Magneton: 14
+      Magneton: 1250
     scarce:
-      Raticate: 12
-      Linoone: 12
-      Electrode: 10
-      Purugly: 8
+      Raticate: 179
+      Linoone: 179
+      Electrode: 149
+      Purugly: 119
     elusive:
-      Ditto: 10
-      Rotom: 8
-      Magnezone: 4
+      Ditto: 142
+      Rotom: 114
+      Magnezone: 57
     prized:
       VivillonFancy: 2
     special: {}
@@ -65,31 +65,31 @@ pool:
       FloetteEternal: 1
   night:
     base:
-      Magnemite: 25
-      Porygon: 15
+      Magnemite: 3305
+      Porygon: 1983
     uncommon:
-      Rattata: 20
-      Zigzagoon: 20
-      Voltorb: 16
-      Glameow: 14
-      Buneary: 14
-      Meowth: 18
-      Grimer: 16
-      Koffing: 16
+      Rattata: 373
+      Zigzagoon: 373
+      Meowth: 336
+      Voltorb: 299
+      Grimer: 299
+      Koffing: 299
+      Glameow: 261
+      Buneary: 261
     rare:
-      Magneton: 14
+      Magneton: 1250
     scarce:
-      Raticate: 12
-      Linoone: 12
-      Electrode: 10
-      Purugly: 8
-      Persian: 10
-      Muk: 8
-      Weezing: 8
+      Raticate: 110
+      Linoone: 110
+      Electrode: 92
+      Persian: 92
+      Purugly: 74
+      Muk: 74
+      Weezing: 74
     elusive:
-      Ditto: 10
-      Rotom: 8
-      Magnezone: 4
+      Ditto: 142
+      Rotom: 114
+      Magnezone: 57
     prized:
       VivillonFancy: 2
     special: {}

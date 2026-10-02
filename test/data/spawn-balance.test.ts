@@ -15,7 +15,7 @@ import {
   spawnOdds,
 } from '../../src/data/biome';
 import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../../src/data/biome/names';
-import Biome, { SpawnSurface, type TimeOfDay } from '../../src/data/ids/biome';
+import Biome, { SpawnSurface, type TimeOfDay, isIceBiome } from '../../src/data/ids/biome';
 import EggGroups from '../../src/data/ids/egg-groups';
 import { FOSSIL_SPECIES } from '../../src/data/items/fossils';
 import { HONEY_TREE_SPECIES } from '../../src/data/overworld/honey-tree';
@@ -37,6 +37,23 @@ const SURFACES: [SpawnSurface, string][] = [
   [SpawnSurface.Ice, 'ice'],
 ];
 
+/**
+ * Whether the world ever rolls a spawn on this surface of this biome,
+ * the way a chunk decides it: water in an ice biome is ice, ice with no
+ * pool of its own is walked like land, and a volcano's water is lava
+ * that nothing stands on. A lake anywhere else is water, met from the
+ * biome's own water pool or else its land pool
+ */
+function staged(biome: Biome, surface: SpawnSurface): boolean {
+  if (surface === SpawnSurface.Land) {
+    return true;
+  }
+  if (surface === SpawnSurface.Ice) {
+    return isIceBiome(biome) && hasSpawnPool(biome, SpawnSurface.Ice);
+  }
+  return !isIceBiome(biome) && biome !== Biome.Volcano;
+}
+
 /** Every pool a roll is made from: each biome's surfaces, the caves under it, and the towns */
 function everyPool(): [where: string, pool: SpawnRarityGroups][] {
   const pools: [string, SpawnRarityGroups][] = [];
@@ -48,9 +65,11 @@ function everyPool(): [where: string, pool: SpawnRarityGroups][] {
       const id = Number(biome) as Biome;
 
       for (const [surface, name] of SURFACES) {
-        if (hasSpawnPool(id, surface)) {
+        if (staged(id, surface)) {
+          const from = hasSpawnPool(id, surface) ? '' : ' (from land)';
+
           pools.push([
-            `${BIOME_NAMES[id]} ${name}, ${when}`,
+            `${BIOME_NAMES[id]} ${name}${from}, ${when}`,
             getSpawnPool(id, time, false, surface),
           ]);
         }

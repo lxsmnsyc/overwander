@@ -51,13 +51,8 @@ import { FOSSIL_OFFER_KINDS, getFossilPrice } from '../../../src/data/overworld/
 import { isFossil } from '../../../src/data/items/fossils';
 import Landmark from '../../../src/data/overworld/landmark';
 import { getPortalCell, portalInRegion } from '../../../src/overworld/portal';
-import Npc, {
-  NPCS,
-  TRADERS,
-  TRADER_OFFERS,
-  npcSheet,
-  npcSheets,
-} from '../../../src/data/overworld/npc';
+import Npc, { TRADER_OFFERS } from '../../../src/data/overworld/npc';
+import { NPCS, TRADERS, npcSheet, npcSheets } from '../../../src/npcs';
 import Phenomenon, {
   getPhenomenonGroups,
   getPhenomenonItems,

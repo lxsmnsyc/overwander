@@ -2,7 +2,8 @@ import type { PlayerIdentity } from '../../auth/user';
 import { type JSX, Show, createEffect, createSignal } from 'solid-js';
 import type { StopRecord } from '../../auth/stop-record';
 import { startStopBattle } from '../../auth/stops';
-import Npc, { getNpcData, npcName, npcSheet } from '../../data/overworld/npc';
+import Npc from '../../data/overworld/npc';
+import { getNpc, npcName, npcSheet } from '../../npcs';
 import { getSpeciesData } from '../../data/species';
 import {
   FRONTIER_PARTY_LEVELS,
@@ -183,7 +184,7 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
     if (challenger != null) {
       return challenger.greeting;
     }
-    return `A Team Rocket grunt blocks the way. “${getNpcData(Npc.RocketGrunt).quote}”`;
+    return `A Team Rocket grunt blocks the way. “${getNpc(Npc.RocketGrunt).quote}”`;
   };
 
   /** What a challenge that can no longer be taken says */

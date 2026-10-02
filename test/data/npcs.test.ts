@@ -15,18 +15,20 @@ import Npc, {
   EXECUTIVE_HONORS,
   EXECUTIVE_NAMES,
   EXECUTIVE_QUOTES,
-  NPCS,
-  NPC_VISIT_TAGS,
   REMINDER_FEE,
-  TRADERS,
   getRecallableMoves,
   getTutorableMoves,
-  npcEntries,
+  tutorRefuses,
+} from '../../src/data/overworld/npc';
+import {
+  NPCS,
+  NPC_VISIT_TAGS,
+  TRADERS,
+  npcDefinitions,
   npcName,
   npcSheet,
   npcSheets,
-  tutorRefuses,
-} from '../../src/data/overworld/npc';
+} from '../../src/npcs';
 import {
   getBaseForms,
   getLevelUpMoves,
@@ -106,13 +108,19 @@ describe('wandering NPCs', () => {
   });
 
   it('gives everyone a description, an opening line, and words for a spent visit', () => {
-    for (const [npc, data] of npcEntries()) {
-      expect(data.description, npcName(npc)).toMatch(/\.$/);
-      expect(data.quote.length, npcName(npc)).toBeGreaterThan(0);
+    for (const npc of npcDefinitions()) {
+      expect(npc.description, npc.name).toMatch(/\.$/);
+      expect(npc.quote.length, npc.name).toBeGreaterThan(0);
       // Whoever serves once a window says so when asked again
-      if (data.visit != null) {
-        expect(data.spent, npcName(npc)).toBeDefined();
+      if (npc.visit != null) {
+        expect(npc.spent, npc.name).toBeDefined();
       }
+    }
+  });
+
+  it('files every definition under its own id', () => {
+    for (const [at, npc] of npcDefinitions().entries()) {
+      expect(npc.id, npc.name).toBe(at);
     }
   });
 

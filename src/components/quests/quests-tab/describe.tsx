@@ -7,7 +7,7 @@ import type { QuestPayout } from '../../../auth/quests';
 import { TYPE_NAMES } from '../../../data/constants/types';
 import { Items } from '../../../data/ids/items';
 import { getMoveData } from '../../../data/moves';
-import { npcName } from '../../../data/overworld/npc';
+import { npcName } from '../../../npcs';
 import {
   type QuestRequirement,
   type QuestReward,

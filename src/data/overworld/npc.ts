@@ -15,39 +15,8 @@ import {
 import { isTutorOnlyMove } from '../moves/tutor-only';
 
 import Npc from '../ids/npcs';
-import { getNpcData, npcEntries } from './npc-data';
 
 export default Npc;
-export { type NpcData, getNpcData, npcEntries } from './npc-data';
-
-/**
- * Everyone who wanders, for uniform rolls over the variants, in id
- * order. The rest keep a landmark of their own: the grunt and the
- * trainer, the vendor's Market and Nurse Joy's Pokémon Center. Each
- * name added makes every other name rarer
- */
-export const NPCS: Npc[] = [];
-
-/** The people who keep a crate to buy from, and take what a player sells */
-export const TRADERS = new Set<Npc>();
-
-/**
- * The wanderers who serve a player once a window, and the visit marker
- * the server takes for it. Everyone else can be visited again
- */
-export const NPC_VISIT_TAGS = new Map<Npc, string>();
-
-for (const [npc, data] of npcEntries()) {
-  if (data.wanders === true) {
-    NPCS.push(npc);
-  }
-  if (data.shop === true) {
-    TRADERS.add(npc);
-  }
-  if (data.visit != null) {
-    NPC_VISIT_TAGS.set(npc, data.visit);
-  }
-}
 
 /**
  * The people who answer to a syndicate's boss. Like Giovanni they are the grunt's
@@ -165,25 +134,6 @@ export const EXECUTIVE_QUOTES: Record<Executive, string> = {
   [Executive.Celosia]: 'Only the beautiful get to stay. I will judge whether you do.',
   [Executive.Mable]: 'We scientists are busy. Let us make this quick and quiet.',
 };
-
-/**
- * Every charset a wanderer of this role may be drawn with
- */
-export function npcSheets(npc: Npc): string[] {
-  return getNpcData(npc).sprites;
-}
-
-/**
- * The role's first style, for anywhere that has no window to roll one
- */
-export function npcSheet(npc: Npc): string {
-  return npcSheets(npc)[0];
-}
-
-/** What a role is called */
-export function npcName(npc: Npc): string {
-  return getNpcData(npc).name;
-}
 
 /**
  * What the breeder charges for an egg. It is dear on purpose: an egg

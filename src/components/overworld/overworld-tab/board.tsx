@@ -60,7 +60,8 @@ import {
 } from '../../../data/overworld/experts';
 import { type ItemStack, getItemBand } from '../../../data/overworld/item-pool';
 import Landmark, { LANDMARK_NAMES } from '../../../data/overworld/landmark';
-import Npc, { NPC_VISIT_TAGS, npcName } from '../../../data/overworld/npc';
+import Npc from '../../../data/overworld/npc';
+import { NPC_VISIT_TAGS, npcName } from '../../../npcs';
 import type { GymSeatStanding } from '../../../auth/gym-seat-record';
 import { enterGymSeat } from '../../../auth/gym-seats';
 import { type LandmarkStandings, readLandmarkStandings } from '../../../auth/landmark-standings';
@@ -108,8 +109,7 @@ import StopDialog, { type StopChallenge } from '../StopDialog';
 import SafariDialog from '../SafariDialog';
 import ChunkCanvas, { type CellSpot, type RiddenCoat, type SpawnCoat } from '../chunk-canvas';
 import type { ConversationHandle } from '../../forms/conversation';
-import NPC_SCRIPTS from '../npcs/scripts';
-import { visitNpc } from '../npcs/visit';
+import { visitNpc } from '../visit-npc';
 import {
   type JSX,
   type Resource,
@@ -1055,7 +1055,6 @@ export default function OverworldBoard(props: {
       snapshot: spot.snapshot,
       player,
       sheet: spot.snapshot.getWandererCoats().get(spot.cell),
-      script: NPC_SCRIPTS[npc],
       notify: (said) => {
         toast.push(said);
       },

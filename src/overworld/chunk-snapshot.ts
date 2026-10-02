@@ -37,13 +37,8 @@ import {
   getSpeciesLairs,
   pickLairSpecies,
 } from '../data/overworld/lair';
-import Npc, {
-  EXECUTIVE_CHARSETS,
-  type Executive,
-  NPCS,
-  TRADERS,
-  npcSheets,
-} from '../data/overworld/npc';
+import Npc, { EXECUTIVE_CHARSETS, type Executive } from '../data/overworld/npc';
+import { NPCS, TRADERS, npcSheets } from '../npcs';
 import {
   SYNDICATE_BOSS_CHARSETS,
   SYNDICATE_EXECUTIVES,

@@ -1,3 +1,4 @@
+import { GENERIC_Z_MOVES } from '../../src/data/moves/z-moves';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns from '../../src/data/biome';
 import EggGroups from '../../src/data/ids/egg-groups';
@@ -312,6 +313,15 @@ describe('move damage', () => {
     Moves.HeavySlam,
     Moves.HeatCrash,
     Moves.FinalGambit,
+    // Alola's own: power read off what the target has left, and off
+    // friendship for the two partner moves
+    Moves.NaturesMadness,
+    Moves.PikaPapow,
+    Moves.VeeveeVolley,
+    // And the Z-Moves read theirs off the move they replace, or the
+    // target's health for Guardian of Alola
+    ...GENERIC_Z_MOVES,
+    Moves.GuardianOfAlola,
   ]);
 
   it('gives every damaging move something to hit with', () => {

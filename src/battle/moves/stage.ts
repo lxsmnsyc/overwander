@@ -62,6 +62,8 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.NobleRoar]: -1,
       [Moves.PlayNice]: -1,
       [Moves.BabyDollEyes]: -1,
+      [Moves.TearfulLook]: -1,
+      [Moves.ExtremeEvoboost]: 2,
     },
   ],
   [
@@ -81,6 +83,8 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.NobleRoar]: -1,
       [Moves.Confide]: -1,
       [Moves.EerieImpulse]: -2,
+      [Moves.TearfulLook]: -1,
+      [Moves.ExtremeEvoboost]: 2,
     },
   ],
   [
@@ -97,6 +101,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.QuiverDance]: 1,
       [Moves.ShellSmash]: -1,
       [Moves.AromaticMist]: 1,
+      [Moves.ExtremeEvoboost]: 2,
     },
   ],
   [
@@ -119,6 +124,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.Coil]: 1,
       [Moves.ShellSmash]: -1,
       [Moves.CottonGuard]: 3,
+      [Moves.ExtremeEvoboost]: 2,
     },
   ],
   [
@@ -134,6 +140,8 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.QuiverDance]: 1,
       [Moves.ShellSmash]: 2,
       [Moves.ShiftGear]: 2,
+      [Moves.ToxicThread]: -1,
+      [Moves.ExtremeEvoboost]: 2,
     },
   ],
   [

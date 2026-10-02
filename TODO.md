@@ -116,6 +116,14 @@ Small and unblocked.
       should declare all of it in one place, the way `createAbility` does for
       abilities, so adding the Jeweler or the Archaeologist above is one file.
 
+- [ ] **Type: Null and Silvally.** When Gen 7 lands, Silvally's 17 Memories
+      are form items the way the Plates are: rows in `FORM_ITEMS` derived from
+      the type each Memory loads, gated on RKS System through `SHAPE_NEEDS` the
+      way Arceus is gated on Multitype, with the Memory floating over the
+      changed shape like every other held form (`form-mark.ts`). Type: Null has
+      no forms and evolves by friendship; its Battle Armor and the helmet are
+      the only thing to decide.
+
 ## 3. Player systems
 
 Things a player owns and arranges, rather than finds in the world. Each one is

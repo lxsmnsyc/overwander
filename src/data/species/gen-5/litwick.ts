@@ -225,7 +225,7 @@ export default function registerLitwickSpecies(): void {
           Moves.Inferno,
         ],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam, Moves.LaserFocus],
     },
   });
 }

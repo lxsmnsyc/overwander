@@ -119,6 +119,7 @@ export default function registerBellsproutSpecies(): void {
         Moves.MagicalLeaf,
         Moves.ClearSmog,
         Moves.Belch,
+        Moves.StrengthSap,
       ],
     },
   });

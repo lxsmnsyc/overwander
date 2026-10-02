@@ -1,3 +1,4 @@
+import { Z_MOVES } from '../../data/moves/z-moves';
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
@@ -5,7 +6,13 @@ import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
 import { scoreAsCall } from '../ai/choose-move';
 
-const NOT_MIRRORED = new Set<Moves>([Moves.MirrorMove, Moves.Struggle, Moves.Attack, Moves.Sketch]);
+const NOT_MIRRORED = new Set<Moves>([
+  Moves.MirrorMove,
+  Moves.Struggle,
+  Moves.Attack,
+  Moves.Sketch,
+  ...Z_MOVES,
+]);
 
 // https://bulbapedia.bulbagarden.net/wiki/Mirror_Move_(move)
 export default function setupMirrorMove(battle: Battle): void {

@@ -36,6 +36,9 @@ export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Yawn]: Statuses.Drowsy,
   [Moves.Imprison]: Statuses.Imprisoned,
   [Moves.HelpingHand]: Statuses.Helped,
+  [Moves.ToxicThread]: Statuses.Poisoned,
+  // Follow Me's pull, put on the target rather than taken on
+  [Moves.Spotlight]: Statuses.Centered,
 };
 
 export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
@@ -148,6 +151,15 @@ export const EFFECT_STATUS_MOVES: {
   [Moves.Infestation]: { status: Statuses.Trapped, chance: 100 },
   // Mean Look's hold, thrown by a wave rather than a stare
   [Moves.ThousandWaves]: { status: Statuses.Cornered, chance: 100 },
+  [Moves.SpiritShackle]: { status: Statuses.Cornered, chance: 100 },
+  [Moves.AnchorShot]: { status: Statuses.Cornered, chance: 100 },
+  [Moves.ZingZap]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.DoubleIronBash]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.SplishySplash]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.FloatyFall]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.BuzzyBuzz]: { status: Statuses.Paralyzed, chance: 100 },
+  [Moves.SizzlySlide]: { status: Statuses.Burned, chance: 100 },
+  [Moves.StokedSparksurfer]: { status: Statuses.Paralyzed, chance: 100 },
 };
 
 /**
@@ -297,6 +309,27 @@ export const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
     self: true,
   },
   [Moves.HyperspaceFury]: { stage: Stages.Defense, value: -1, chance: 100, self: true },
+  [Moves.IceHammer]: { stage: Stages.Speed, value: -1, chance: 100, self: true },
+  [Moves.Lunge]: { stage: Stages.Attack, value: -1, chance: 100 },
+  [Moves.FireLash]: { stage: Stages.Defense, value: -1, chance: 100 },
+  [Moves.TropKick]: { stage: Stages.Attack, value: -1, chance: 100 },
+  [Moves.ClangingScales]: { stage: Stages.Defense, value: -1, chance: 100, self: true },
+  [Moves.FleurCannon]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
+  [Moves.ShadowBone]: { stage: Stages.Defense, value: -1, chance: 20 },
+  [Moves.Liquidation]: { stage: Stages.Defense, value: -1, chance: 20 },
+  [Moves.ZippyZap]: { stage: Stages.Evasion, value: 1, chance: 100, self: true },
+  [Moves.ClangorousSoulblaze]: {
+    stage: [
+      Stages.Attack,
+      Stages.Defense,
+      Stages.SpecialAttack,
+      Stages.SpecialDefense,
+      Stages.Speed,
+    ],
+    value: 1,
+    chance: 100,
+    self: true,
+  },
 };
 
 /**
@@ -449,6 +482,10 @@ function setupUnitStatusMoves(battle: Battle): void {
 export const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
   [Moves.Reflect]: TeamStatuses.Reflect,
   [Moves.LightScreen]: TeamStatuses.LightScreen,
+  [Moves.AuroraVeil]: TeamStatuses.AuroraVeil,
+  // The partner moves that leave a screen behind as they land
+  [Moves.GlitzyGlow]: TeamStatuses.LightScreen,
+  [Moves.BaddyBad]: TeamStatuses.Reflect,
   [Moves.Mist]: TeamStatuses.Mist,
   [Moves.Safeguard]: TeamStatuses.Safeguard,
 };

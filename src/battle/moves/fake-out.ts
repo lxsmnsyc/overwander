@@ -5,11 +5,11 @@ import { BattleEvents } from '../events';
 import type Unit from '../unit';
 
 /**
- * The moves that only work on arrival, Fake Out and Mat Block. They
- * share the one surprise an entrance buys, so throwing either spends
- * it for both
+ * The moves that only work on arrival: Fake Out, Mat Block and First
+ * Impression. They share the one surprise an entrance buys, so
+ * throwing any of them spends it for all
  */
-const SURPRISE_MOVES = new Set<Moves>([Moves.FakeOut, Moves.MatBlock]);
+const SURPRISE_MOVES = new Set<Moves>([Moves.FakeOut, Moves.MatBlock, Moves.FirstImpression]);
 
 /**
  * Fake Out works on somebody who has not seen it yet.

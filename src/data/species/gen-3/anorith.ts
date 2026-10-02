@@ -155,6 +155,9 @@ export default function registerAnorithSpecies(): void {
         Moves.GigaImpact,
         Moves.StoneEdge,
         Moves.Bulldoze,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
+        Moves.Liquidation,
       ],
     },
   });

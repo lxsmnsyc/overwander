@@ -29,6 +29,7 @@ export const MULTI_HIT_MOVES: { [key in Moves]?: MultiHitConfig } = {
   [Moves.PinMissile]: { min: 2, max: 5 },
   [Moves.Twineedle]: { min: 2, max: 2 },
   [Moves.DoubleHit]: { min: 2, max: 2 },
+  [Moves.DoubleIronBash]: { min: 2, max: 2 },
   [Moves.FurySwipes]: { min: 2, max: 5 },
   [Moves.DoubleKick]: { min: 2, max: 2 },
   [Moves.DoubleSlap]: { min: 2, max: 5 },

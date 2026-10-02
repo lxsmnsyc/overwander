@@ -51,6 +51,7 @@ const FAMILY_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.Scald,
   Moves.Confide,
+  Moves.Liquidation,
 ];
 
 export default function registerWingullSpecies(): void {

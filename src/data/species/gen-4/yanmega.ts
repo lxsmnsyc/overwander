@@ -106,6 +106,7 @@ export default function registerYanmegaSpecies(): void {
         Moves.UTurn,
         Moves.Uproar,
         Moves.Confide,
+        Moves.LaserFocus,
       ],
     },
   });

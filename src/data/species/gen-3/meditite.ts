@@ -189,6 +189,7 @@ export default function registerMedititeSpecies(): void {
         Moves.RockSlide,
         Moves.EnergyBall,
         Moves.GigaImpact,
+        Moves.LaserFocus,
       ],
     },
   });

@@ -512,6 +512,15 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
   // The ground answers it the way it answers an Earthquake: the knot
   // comes up under whatever is standing on it
   [Moves.GrassKnot]: [undefined, 'Rise'],
+
+  // Alola. A blade charged the way Skull Bash is, a beam drawn up the way Hydro Pump's is,
+  // a ball lobbed, bubbles blown, a bone tumbling and a veil put up like a screen
+  [Moves.SolarBlade]: ['Charge'],
+  [Moves.FleurCannon]: [undefined, 'Charge'],
+  [Moves.PollenPuff]: [undefined, 'Lobbed'],
+  [Moves.BouncyBubble]: [undefined, 'Bubbles'],
+  [Moves.ShadowBone]: [undefined, 'Spun'],
+  [Moves.AuroraVeil]: [undefined, 'Brace'],
 };
 
 /**

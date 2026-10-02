@@ -263,6 +263,8 @@ export default function registerDeinoSpecies(): void {
         Moves.Tailwind,
         Moves.TriAttack,
         Moves.UTurn,
+        Moves.BrutalSwing,
+        Moves.ThroatChop,
       ],
     },
   });

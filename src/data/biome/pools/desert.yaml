@@ -1,0 +1,223 @@
+land:
+  morning:
+    base:
+      Scatterbug: 24
+      Sandile: 25
+      Tepig: 3
+      Trapinch: 20
+      Gible: 2
+    uncommon:
+      Sandygast: 22
+      Helioptile: 24
+      Dwebble: 22
+      Vullaby: 16
+      Darumaka: 22
+      Cacnea: 20
+      Baltoy: 22
+      Diglett: 20
+      Magmar: 5
+      BurmySandy: 20
+      Hippopotas: 20
+      Drilbur: 16
+    rare:
+      Spewpa: 8
+      Krokorok: 10
+      Pignite: 2
+      Vibrava: 10
+      Gabite: 1
+    scarce:
+      Palossand: 6
+      Heliolisk: 6
+      Crustle: 7
+      Mandibuzz: 6
+      Darmanitan: 7
+      Claydol: 6
+      Dugtrio: 10
+      WormadamSandy: 4
+      Hippowdon: 6
+      Magmortar: 6
+      Excadrill: 8
+    elusive:
+      Vivillon: 5
+      Sigilyph: 6
+      Maractus: 8
+      Krookodile: 5
+      Emboar: 2
+      Flygon: 5
+      Solrock: 5
+      Garchomp: 2
+    prized:
+      Unown: forms
+      Magby: prized
+      Larvesta: prized
+    special:
+      Pheromosa: 10
+      TapuBulu: 10
+      Volcarona: 10
+      Regirock: 10
+    mythical:
+      Hoopa: 10
+      Genesect: 10
+  day:
+    base:
+      Scatterbug: 24
+      Sandile: 25
+      Tepig: 3
+      Rhyhorn: 20
+      Trapinch: 20
+      Gible: 2
+    uncommon:
+      Sandygast: 22
+      Helioptile: 24
+      Dwebble: 22
+      Vullaby: 16
+      Darumaka: 22
+      Cacnea: 20
+      Baltoy: 22
+      Sandshrew: 20
+      Diglett: 20
+      Magmar: 5
+      BurmySandy: 20
+      Hippopotas: 20
+      Drilbur: 16
+    rare:
+      Spewpa: 8
+      Krokorok: 10
+      Pignite: 2
+      Vibrava: 10
+      Rhydon: 10
+      Gabite: 1
+    scarce:
+      Palossand: 6
+      Heliolisk: 6
+      Crustle: 7
+      Mandibuzz: 6
+      Darmanitan: 7
+      Claydol: 6
+      Sandslash: 10
+      Dugtrio: 10
+      WormadamSandy: 4
+      Hippowdon: 6
+      Magmortar: 6
+      Excadrill: 8
+    elusive:
+      Vivillon: 5
+      Sigilyph: 6
+      Maractus: 8
+      Krookodile: 5
+      Emboar: 2
+      Flygon: 5
+      Solrock: 5
+      Garchomp: 2
+    prized:
+      Unown: forms
+      Magby: prized
+      Larvesta: prized
+    special:
+      Pheromosa: 10
+      TapuBulu: 10
+      Volcarona: 10
+      Regirock: 10
+    mythical:
+      Hoopa: 10
+      Genesect: 10
+  evening:
+    base:
+      Gible: 2
+    uncommon:
+      Sandygast: 22
+      Elgyem: 20
+      Yamask: 22
+      Baltoy: 22
+      Sandshrew: 20
+      Diglett: 20
+      Magmar: 5
+      BurmySandy: 20
+      Skorupi: 20
+      Hippopotas: 20
+    rare:
+      Gabite: 1
+    scarce:
+      Palossand: 6
+      Beheeyem: 7
+      Cofagrigus: 7
+      Cacturne: 6
+      Claydol: 6
+      Sandslash: 10
+      Dugtrio: 10
+      WormadamSandy: 4
+      Drapion: 6
+      Hippowdon: 6
+      Magmortar: 6
+    elusive:
+      Garchomp: 2
+    prized:
+      Unown: forms
+      Magby: prized
+    special:
+      Pheromosa: 10
+      TapuBulu: 10
+      Regirock: 10
+    mythical:
+      Hoopa: 10
+      Genesect: 10
+  night:
+    base:
+      Gible: 2
+    uncommon:
+      Sandygast: 22
+      Elgyem: 20
+      Yamask: 22
+      Baltoy: 22
+      Diglett: 20
+      Cubone: 20
+      Magmar: 5
+      BurmySandy: 20
+      Skorupi: 20
+      Hippopotas: 20
+    rare:
+      Gabite: 1
+    scarce:
+      Palossand: 6
+      Beheeyem: 7
+      Cofagrigus: 7
+      Cacturne: 6
+      Claydol: 6
+      Dugtrio: 10
+      Marowak: 10
+      WormadamSandy: 4
+      Drapion: 6
+      Hippowdon: 6
+      Magmortar: 6
+    elusive:
+      Garchomp: 2
+    prized:
+      Unown: forms
+      Magby: prized
+    special:
+      Pheromosa: 10
+      TapuBulu: 10
+      Regirock: 10
+    mythical:
+      Hoopa: 10
+      Genesect: 10
+
+water:
+  morning: &water-morning
+    base: {}
+    uncommon:
+      Magikarp: 30
+      Barboach: 25
+      Feebas: 10
+    rare: {}
+    scarce:
+      Whiscash: 8
+      Milotic: 3
+      Gyarados: 4
+    special: {}
+  day: *water-morning
+  evening: *water-morning
+  night: *water-morning
+
+# The legendaries met wild in the caves under it
+cave-legends: { Regirock: 10, Volcarona: 10 }

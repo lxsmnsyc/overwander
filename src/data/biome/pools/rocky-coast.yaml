@@ -1,0 +1,132 @@
+land:
+  morning: &land-morning
+    base:
+      Popplio: 2
+      Oshawott: 3
+      Piplup: 3
+    uncommon:
+      Wimpod: 22
+      Crabrawler: 24
+      Binacle: 24
+      Krabby: 20
+      Seel: 20
+      Slowpoke: 20
+      Wingull: 25
+      Shellos: 25
+      BurmySandy: 20
+      Buizel: 25
+    rare:
+      Brionne: 2
+      Dewott: 2
+      Prinplup: 2
+    scarce:
+      Golisopod: 6
+      Barbaracle: 6
+      Kingler: 10
+      Dewgong: 10
+      Slowbro: 10
+      Pelipper: 10
+      Gastrodon: 10
+      WormadamSandy: 4
+      Floatzel: 8
+    elusive:
+      Pyukumuku: 5
+      Primarina: 2
+      Samurott: 2
+      Shuckle: 5
+      Empoleon: 2
+    prized:
+      Unown: forms
+    special:
+      TapuFini: 10
+    mythical:
+      Victini: 10
+  day: *land-morning
+  evening: &land-evening
+    base: {}
+    uncommon:
+      Wimpod: 22
+      Crabrawler: 24
+      Krabby: 20
+      Seel: 20
+      Shellos: 25
+      BurmySandy: 20
+      Buizel: 25
+    rare: {}
+    scarce:
+      Golisopod: 6
+      Kingler: 10
+      Dewgong: 10
+      Gastrodon: 10
+      WormadamSandy: 4
+      Floatzel: 8
+    elusive:
+      Pyukumuku: 5
+      Shuckle: 5
+    prized:
+      Unown: forms
+    special:
+      TapuFini: 10
+    mythical:
+      Victini: 10
+  night: *land-evening
+
+water:
+  morning: &water-morning
+    base:
+      Popplio: 2
+      Oshawott: 3
+      Horsea: 10
+    uncommon:
+      Mareanie: 22
+      Krabby: 20
+      Shellder: 20
+      Tentacool: 20
+      Remoraid: 20
+      Magikarp: 30
+    rare:
+      Brionne: 2
+      Dewott: 2
+      Seadra: 5
+    scarce:
+      Toxapex: 6
+      Kingler: 10
+      Cloyster: 10
+      Tentacruel: 8
+      Octillery: 8
+    elusive:
+      Primarina: 2
+      Samurott: 2
+      Qwilfish: 15
+      Corsola: 10
+      Kingdra: 2
+    special:
+      TapuFini: 10
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Horsea: 10
+    uncommon:
+      Mareanie: 22
+      Krabby: 20
+      Shellder: 20
+      Tentacool: 20
+      Remoraid: 20
+      Staryu: 20
+      Magikarp: 30
+    rare:
+      Seadra: 5
+    scarce:
+      Toxapex: 6
+      Kingler: 10
+      Cloyster: 10
+      Tentacruel: 8
+      Octillery: 8
+      Starmie: 10
+    elusive:
+      Qwilfish: 15
+      Corsola: 10
+      Kingdra: 2
+    special:
+      TapuFini: 10
+  night: *water-evening

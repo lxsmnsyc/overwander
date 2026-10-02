@@ -1,0 +1,127 @@
+land:
+  morning: &land-morning
+    base:
+      FlabebeWhite: 24
+      Scatterbug: 24
+      Swinub: 25
+      Vanillite: 24
+    uncommon:
+      VulpixAlola: 22
+      SandshrewAlola: 22
+      Snover: 20
+      Cubchoo: 20
+    rare:
+      FloetteWhite: 8
+      Spewpa: 8
+      Piloswine: 10
+      Vanillish: 10
+    scarce:
+      NinetalesAlola: 6
+      SandslashAlola: 6
+      Beartic: 6
+      Dewgong: 10
+      Abomasnow: 6
+      Glaceon: 6
+    elusive:
+      FlorgesWhite: 5
+      Vivillon: 5
+      Vanilluxe: 5
+      Delibird: 5
+      Mamoswine: 5
+      Stoutland: 6
+    prized:
+      Unown: forms
+    special:
+      Yveltal: 10
+      Reshiram: 10
+      Zekrom: 10
+      Kyurem: 10
+      Uxie: 10
+      Regigigas: 10
+      Regice: 10
+  day: *land-morning
+  evening: &land-evening
+    base:
+      Swinub: 25
+    uncommon:
+      VulpixAlola: 22
+      SandshrewAlola: 22
+      Sneasel: 5
+      Snover: 20
+    rare:
+      Piloswine: 5
+    scarce:
+      NinetalesAlola: 6
+      SandslashAlola: 6
+      Dewgong: 10
+      Abomasnow: 6
+      Weavile: 6
+      Glaceon: 6
+    elusive:
+      Jynx: 5
+      Delibird: 5
+      Mamoswine: 5
+    prized:
+      Unown: forms
+      Smoochum: prized
+    special:
+      Yveltal: 10
+      Reshiram: 10
+      Zekrom: 10
+      Kyurem: 10
+      Uxie: 10
+      Regigigas: 10
+      Regice: 10
+  night: *land-evening
+
+ice:
+  morning: &ice-morning
+    base:
+      Vanillite: 24
+      Spheal: 25
+      Swinub: 25
+    uncommon:
+      Cubchoo: 20
+      Seel: 20
+      Snorunt: 22
+    rare:
+      Vanillish: 10
+      Sealeo: 8
+      Piloswine: 5
+    scarce:
+      Beartic: 6
+      Dewgong: 10
+      Glalie: 6
+      Froslass: 6
+      Glaceon: 6
+    elusive:
+      Vanilluxe: 5
+      Walrein: 5
+      Mamoswine: 5
+    special:
+      Uxie: 10
+  day: *ice-morning
+  evening: &ice-evening
+    base:
+      Spheal: 25
+      Swinub: 25
+    uncommon:
+      Seel: 20
+      Snorunt: 22
+    rare:
+      Sealeo: 8
+      Piloswine: 5
+    scarce:
+      Dewgong: 10
+      Glalie: 6
+      Froslass: 6
+      Glaceon: 6
+    elusive:
+      Walrein: 5
+      Mamoswine: 5
+    special:
+      Uxie: 10
+  night: *ice-evening
+
+# The legendaries met wild in the caves under it
+cave-legends: { Regigigas: 10, Regice: 10, Kyurem: 10 }

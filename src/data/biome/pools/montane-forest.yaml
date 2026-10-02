@@ -1,0 +1,114 @@
+land:
+  morning: &land-morning
+    base:
+      Axew: 5
+      Mankey: 20
+      Ralts: 20
+      Chimchar: 3
+      Turtwig: 3
+    uncommon:
+      Skiddo: 24
+      Mienfoo: 18
+      Makuhita: 20
+      Meditite: 25
+      Stantler: 5
+    rare:
+      Fraxure: 3
+      Kirlia: 10
+      Primeape: 10
+      Ursaring: 5
+      Monferno: 2
+      Grotle: 2
+    scarce:
+      Gogoat: 6
+      Mienshao: 6
+      Hariyama: 6
+      Medicham: 10
+      Wormadam: 4
+      Mothim: 4
+    elusive:
+      Hawlucha: 6
+      Haxorus: 3
+      Gardevoir: 5
+      Spinda: 12
+      Chimecho: 5
+      Infernape: 2
+      Torterra: 2
+      Lucario: 5
+      Gallade: 5
+    prized:
+      Unown: forms
+      Riolu: prized
+      Chingling: prized
+    special: {}
+  day: *land-morning
+  evening:
+    base:
+      Zubat: 30
+    uncommon:
+      Hoothoot: 25
+      Stantler: 5
+      Kricketot: 25
+      Woobat: 20
+    rare:
+      Golbat: 10
+    scarce:
+      Noctowl: 10
+      Wormadam: 4
+      Mothim: 4
+      Swoobat: 8
+    elusive:
+      Hawlucha: 6
+      Crobat: 5
+      Sableye: 8
+      Chimecho: 5
+      Kricketune: 10
+    prized:
+      Unown: forms
+      Chingling: prized
+    special: {}
+  night:
+    base:
+      Zubat: 30
+    uncommon:
+      Paras: 20
+      Hoothoot: 25
+      Stantler: 5
+      Kricketot: 25
+      Woobat: 20
+    rare:
+      Golbat: 10
+    scarce:
+      Parasect: 10
+      Noctowl: 10
+      Kricketune: 10
+      Wormadam: 4
+      Mothim: 4
+      Swoobat: 8
+    elusive:
+      Crobat: 5
+      Sableye: 8
+      Chimecho: 5
+    prized:
+      Unown: forms
+      Chingling: prized
+    special: {}
+
+water:
+  morning: &water-morning
+    base:
+      Poliwag: 20
+    uncommon:
+      Magikarp: 30
+      Wooper: 25
+    rare:
+      Poliwhirl: 5
+    scarce:
+      Quagsire: 5
+      Gyarados: 4
+    elusive:
+      Poliwrath: 5
+    special: {}
+  day: *water-morning
+  evening: *water-morning
+  night: *water-morning

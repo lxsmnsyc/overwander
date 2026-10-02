@@ -1,0 +1,429 @@
+land:
+  morning:
+    base:
+      JangmoO: 22
+      Scatterbug: 24
+      Sandile: 25
+      Tepig: 3
+      Beldum: 2
+      Mankey: 20
+      Geodude: 20
+      Larvitar: 2
+      Whismur: 25
+      Aron: 20
+      Trapinch: 20
+      Gible: 2
+      Roggenrola: 24
+    uncommon:
+      DiglettAlola: 22
+      Salandit: 22
+      Rockruff: 22
+      Helioptile: 24
+      Dwebble: 22
+      Vullaby: 16
+      Darumaka: 22
+      Numel: 20
+      Baltoy: 22
+      Slugma: 20
+      Phanpy: 20
+      Dunsparce: 10
+      Nosepass: 20
+      BurmyTrash: 20
+      Bronzor: 20
+      Hippopotas: 20
+      Drilbur: 16
+    rare:
+      HakamoO: 8
+      Spewpa: 8
+      Krokorok: 10
+      Pignite: 2
+      Metang: 1
+      Graveler: 5
+      Pupitar: 1
+      Loudred: 10
+      Lairon: 10
+      Vibrava: 10
+      Primeape: 10
+      Gabite: 1
+      Boldore: 12
+    scarce:
+      DugtrioAlola: 6
+      Salazzle: 6
+      Lycanroc: 6
+      Heliolisk: 6
+      Crustle: 7
+      Mandibuzz: 6
+      Darmanitan: 7
+      Camerupt: 6
+      Claydol: 6
+      Donphan: 5
+      Magcargo: 5
+      WormadamTrash: 4
+      Bronzong: 6
+      Hippowdon: 6
+      Probopass: 6
+      Magmortar: 6
+      Excadrill: 8
+    elusive:
+      KommoO: 4
+      Turtonator: 5
+      Carbink: 6
+      Klefki: 5
+      Vivillon: 5
+      Durant: 6
+      Druddigon: 5
+      Sigilyph: 6
+      Maractus: 8
+      Krookodile: 5
+      Emboar: 2
+      Metagross: 1
+      Kangaskhan: 5
+      Tyranitar: 2
+      Shuckle: 5
+      Skarmory: 5
+      Exploud: 5
+      Aggron: 5
+      Flygon: 5
+      Mawile: 8
+      Solrock: 5
+      Garchomp: 2
+      Magnezone: 5
+      Rhyperior: 5
+      Gigalith: 6
+    prized:
+      Unown: forms
+    special:
+      Xurkitree: 10
+      Guzzlord: 10
+      Solgaleo: 10
+      Lunala: 10
+      ZygardeTenPercent: 5
+      Zygarde: 5
+      Terrakion: 10
+      Regirock: 10
+      Registeel: 10
+      Giratina: 10
+    mythical:
+      Meltan: 10
+      Jirachi: 10
+  day:
+    base:
+      JangmoO: 22
+      Scatterbug: 24
+      Sandile: 25
+      Tepig: 3
+      Beldum: 2
+      Mankey: 20
+      Geodude: 20
+      Larvitar: 2
+      Rhyhorn: 10
+      Whismur: 25
+      Aron: 20
+      Trapinch: 20
+      Gible: 2
+      Roggenrola: 24
+    uncommon:
+      DiglettAlola: 22
+      Salandit: 22
+      Rockruff: 22
+      Helioptile: 24
+      Dwebble: 22
+      Vullaby: 16
+      Darumaka: 22
+      Numel: 20
+      Baltoy: 22
+      Sandshrew: 20
+      Ekans: 20
+      Slugma: 20
+      Phanpy: 20
+      Dunsparce: 10
+      Nosepass: 20
+      BurmyTrash: 20
+      Bronzor: 20
+      Hippopotas: 20
+      Drilbur: 16
+    rare:
+      HakamoO: 8
+      Spewpa: 8
+      Krokorok: 10
+      Pignite: 2
+      Metang: 1
+      Graveler: 5
+      Pupitar: 1
+      Loudred: 10
+      Lairon: 10
+      Vibrava: 10
+      Primeape: 10
+      Rhydon: 5
+      Gabite: 1
+      Boldore: 12
+    scarce:
+      DugtrioAlola: 6
+      Salazzle: 6
+      Lycanroc: 6
+      Heliolisk: 6
+      Crustle: 7
+      Mandibuzz: 6
+      Darmanitan: 7
+      Camerupt: 6
+      Claydol: 6
+      Sandslash: 10
+      Arbok: 10
+      Donphan: 10
+      Magcargo: 10
+      WormadamTrash: 4
+      Bronzong: 6
+      Hippowdon: 6
+      Probopass: 6
+      Magmortar: 6
+      Excadrill: 8
+    elusive:
+      KommoO: 4
+      Turtonator: 5
+      Carbink: 6
+      Klefki: 5
+      Vivillon: 5
+      Durant: 6
+      Druddigon: 5
+      Sigilyph: 6
+      Maractus: 8
+      Krookodile: 5
+      Emboar: 2
+      Metagross: 1
+      Kangaskhan: 5
+      Tyranitar: 2
+      Shuckle: 5
+      Skarmory: 5
+      Exploud: 5
+      Aggron: 5
+      Flygon: 5
+      Mawile: 8
+      Solrock: 5
+      Garchomp: 2
+      Magnezone: 5
+      Rhyperior: 5
+      Gigalith: 6
+    prized:
+      Unown: forms
+    special:
+      Xurkitree: 10
+      Guzzlord: 10
+      Solgaleo: 10
+      Lunala: 10
+      ZygardeTenPercent: 5
+      Zygarde: 5
+      Terrakion: 10
+      Regirock: 10
+      Registeel: 10
+      Giratina: 10
+    mythical:
+      Meltan: 10
+      Jirachi: 10
+  evening:
+    base:
+      JangmoO: 22
+      Honedge: 24
+      Deino: 2
+      Beldum: 2
+      Zubat: 30
+      Geodude: 20
+      Larvitar: 2
+      Gible: 2
+    uncommon:
+      DiglettAlola: 22
+      Salandit: 22
+      Rockruff: 22
+      Pawniard: 16
+      Golett: 20
+      Trubbish: 22
+      Yamask: 22
+      Scraggy: 22
+      Baltoy: 22
+      Ekans: 20
+      Slugma: 20
+      Houndour: 20
+      Nincada: 25
+      Dunsparce: 10
+      Gligar: 5
+      Nosepass: 20
+      BurmyTrash: 20
+      Bronzor: 20
+      Hippopotas: 20
+    rare:
+      HakamoO: 8
+      Doublade: 8
+      Zweilous: 1
+      Metang: 1
+      Graveler: 5
+      Pupitar: 1
+      Golbat: 10
+      Gabite: 1
+    scarce:
+      DugtrioAlola: 6
+      Salazzle: 6
+      LycanrocDusk: 6
+      Bisharp: 6
+      Golurk: 6
+      Garbodor: 7
+      Cofagrigus: 7
+      Scrafty: 7
+      Claydol: 6
+      Arbok: 10
+      Ninjask: 10
+      Houndoom: 10
+      Magcargo: 10
+      WormadamTrash: 4
+      Bronzong: 6
+      Hippowdon: 6
+      Probopass: 6
+      Gliscor: 6
+      Magmortar: 6
+    elusive:
+      KommoO: 4
+      Turtonator: 5
+      Carbink: 6
+      Aegislash: 5
+      Heatmor: 6
+      Hydreigon: 2
+      Spiritomb: 5
+      Metagross: 1
+      Tyranitar: 2
+      Shuckle: 5
+      Sableye: 8
+      Lunatone: 5
+      Garchomp: 2
+      Magnezone: 5
+      Rhyperior: 5
+    prized:
+      Unown: forms
+    special:
+      Xurkitree: 10
+      Guzzlord: 10
+      Solgaleo: 10
+      Lunala: 10
+      ZygardeTenPercent: 5
+      Zygarde: 5
+      Terrakion: 10
+      Regirock: 10
+      Registeel: 10
+      Giratina: 10
+    mythical:
+      Meltan: 10
+      Jirachi: 10
+  night:
+    base:
+      JangmoO: 22
+      Honedge: 24
+      Deino: 2
+      Beldum: 2
+      Zubat: 30
+      Geodude: 20
+      Larvitar: 2
+      Duskull: 20
+      Gible: 2
+    uncommon:
+      DiglettAlola: 22
+      Salandit: 22
+      Rockruff: 22
+      Pawniard: 16
+      Golett: 20
+      Trubbish: 22
+      Yamask: 22
+      Scraggy: 22
+      Baltoy: 22
+      Ekans: 20
+      Cubone: 20
+      Slugma: 20
+      Houndour: 20
+      Nincada: 25
+      Misdreavus: 5
+      Dunsparce: 10
+      Gligar: 5
+      Nosepass: 20
+      BurmyTrash: 20
+      Bronzor: 20
+      Hippopotas: 20
+    rare:
+      HakamoO: 8
+      Doublade: 8
+      Zweilous: 1
+      Metang: 1
+      Graveler: 5
+      Pupitar: 1
+      Golbat: 10
+      Dusclops: 8
+      Gabite: 1
+    scarce:
+      DugtrioAlola: 6
+      Salazzle: 6
+      LycanrocMidnight: 6
+      Bisharp: 6
+      Golurk: 6
+      Garbodor: 7
+      Cofagrigus: 7
+      Scrafty: 7
+      Claydol: 6
+      Marowak: 10
+      Ninjask: 10
+      Houndoom: 5
+      Magcargo: 5
+      WormadamTrash: 4
+      Bronzong: 6
+      Hippowdon: 6
+      Probopass: 6
+      Mismagius: 6
+      Gliscor: 6
+      Magmortar: 6
+    elusive:
+      KommoO: 4
+      Turtonator: 5
+      Carbink: 6
+      Aegislash: 5
+      Heatmor: 6
+      Hydreigon: 2
+      Spiritomb: 5
+      Metagross: 1
+      Tyranitar: 2
+      Shuckle: 5
+      Sableye: 8
+      Lunatone: 5
+      Garchomp: 2
+      Dusknoir: 5
+      Magnezone: 5
+      Rhyperior: 5
+    prized:
+      Unown: forms
+    special:
+      Xurkitree: 10
+      Guzzlord: 10
+      Solgaleo: 10
+      Lunala: 10
+      ZygardeTenPercent: 5
+      Zygarde: 5
+      Terrakion: 10
+      Regirock: 10
+      Registeel: 10
+      Giratina: 10
+    mythical:
+      Meltan: 10
+      Jirachi: 10
+
+water:
+  morning: &water-morning
+    base: {}
+    uncommon:
+      Magikarp: 30
+      Barboach: 25
+      Corphish: 25
+    rare: {}
+    scarce:
+      Whiscash: 8
+      Crawdaunt: 8
+      Gyarados: 4
+    special: {}
+  day: *water-morning
+  evening: *water-morning
+  night: *water-morning
+
+# The legendaries met wild in the caves under it
+cave-legends: { Regirock: 10, Registeel: 10, Giratina: 10, Terrakion: 10 }

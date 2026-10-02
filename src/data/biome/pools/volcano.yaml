@@ -1,0 +1,155 @@
+land:
+  morning:
+    base:
+      Scatterbug: 24
+      Charmander: 6
+      Geodude: 20
+      Cyndaquil: 6
+      Torchic: 2
+    uncommon:
+      DiglettAlola: 22
+      Salandit: 22
+      Numel: 20
+      Growlithe: 20
+      Slugma: 20
+      Magmar: 10
+    rare:
+      Spewpa: 8
+      Charmeleon: 3
+      Graveler: 5
+      Quilava: 3
+      Combusken: 1
+    scarce:
+      DugtrioAlola: 6
+      Salazzle: 6
+      Camerupt: 6
+      Arcanine: 5
+      Magcargo: 5
+      Magmortar: 6
+    elusive:
+      Turtonator: 5
+      Vivillon: 5
+      Charizard: 3
+      Golem: 5
+      Typhlosion: 3
+      Blaziken: 2
+      Torkoal: 12
+    prized:
+      Unown: forms
+    special:
+      Groudon: 10
+      Moltres: 10
+      Heatran: 10
+    mythical:
+      Volcanion: 10
+  day:
+    base:
+      Scatterbug: 24
+      Charmander: 6
+      Geodude: 20
+      Cyndaquil: 6
+      Torchic: 2
+    uncommon:
+      DiglettAlola: 22
+      Salandit: 22
+      Numel: 20
+      Growlithe: 20
+      Ponyta: 20
+      Slugma: 20
+      Onix: 10
+      Magmar: 10
+    rare:
+      Spewpa: 8
+      Charmeleon: 3
+      Graveler: 5
+      Quilava: 3
+      Combusken: 1
+    scarce:
+      DugtrioAlola: 6
+      Salazzle: 6
+      Camerupt: 6
+      Arcanine: 5
+      Rapidash: 5
+      Magcargo: 5
+      Magmortar: 6
+    elusive:
+      Turtonator: 5
+      Vivillon: 5
+      Charizard: 3
+      Golem: 5
+      Typhlosion: 3
+      Blaziken: 2
+      Torkoal: 12
+    prized:
+      Unown: forms
+    special:
+      Groudon: 10
+      Moltres: 10
+      Heatran: 10
+    mythical:
+      Volcanion: 10
+  evening:
+    base:
+      Deino: 2
+    uncommon:
+      DiglettAlola: 22
+      Salandit: 22
+      Vulpix: 20
+      Slugma: 20
+      Magmar: 10
+    rare:
+      Zweilous: 1
+    scarce:
+      MarowakAlola: 6
+      DugtrioAlola: 6
+      Salazzle: 6
+      Ninetales: 5
+      Magcargo: 10
+      Magmortar: 6
+    elusive:
+      Turtonator: 5
+      Hydreigon: 2
+      Heatmor: 6
+    prized:
+      Unown: forms
+    special:
+      Groudon: 10
+      Moltres: 10
+      Heatran: 10
+    mythical:
+      Volcanion: 10
+  night:
+    base:
+      Deino: 2
+    uncommon:
+      DiglettAlola: 22
+      Salandit: 22
+      Vulpix: 20
+      Koffing: 20
+      Slugma: 20
+      Magmar: 10
+    rare:
+      Zweilous: 1
+    scarce:
+      MarowakAlola: 6
+      DugtrioAlola: 6
+      Salazzle: 6
+      Weezing: 5
+      Ninetales: 5
+      Magcargo: 5
+      Magmortar: 6
+    elusive:
+      Turtonator: 5
+      Hydreigon: 2
+      Heatmor: 6
+    prized:
+      Unown: forms
+    special:
+      Groudon: 10
+      Moltres: 10
+      Heatran: 10
+    mythical:
+      Volcanion: 10
+
+# The legendaries met wild in the caves under it
+cave-legends: { Groudon: 10, Heatran: 10 }

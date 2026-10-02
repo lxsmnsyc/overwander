@@ -1,0 +1,106 @@
+land:
+  morning: &land-morning
+    base:
+      Scatterbug: 24
+    uncommon:
+      Krabby: 20
+      Corphish: 25
+      Wingull: 25
+      Shellos: 25
+      Slowpoke: 20
+    rare:
+      Spewpa: 8
+    scarce:
+      Kingler: 10
+      Crawdaunt: 8
+      Pelipper: 10
+      Gastrodon: 10
+      Slowbro: 10
+    elusive:
+      Vivillon: 5
+      Shuckle: 5
+      Slowking: 5
+    prized:
+      Unown: forms
+    special: {}
+  day: *land-morning
+  evening: &land-evening
+    base: {}
+    uncommon:
+      Krabby: 20
+      Corphish: 25
+      Shellos: 25
+    rare: {}
+    scarce:
+      Kingler: 10
+      Crawdaunt: 8
+      Gastrodon: 10
+    elusive:
+      Shuckle: 5
+    prized:
+      Unown: forms
+    special: {}
+  night: *land-evening
+
+water:
+  morning: &water-morning
+    base:
+      Horsea: 20
+    uncommon:
+      Mareanie: 22
+      Clauncher: 24
+      Skrelp: 24
+      Carvanha: 20
+      Clamperl: 20
+      Remoraid: 20
+      Finneon: 20
+    rare:
+      Seadra: 10
+    scarce:
+      Toxapex: 6
+      Clawitzer: 6
+      Dragalge: 6
+      Sharpedo: 6
+      Octillery: 5
+      Lumineon: 6
+    elusive:
+      Bruxish: 5
+      Wishiwashi: 5
+      Alomomola: 7
+      Mantine: 5
+      Kingdra: 5
+      Corsola: 20
+      Luvdisc: 15
+    prized:
+      Mantyke: prized
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Horsea: 20
+    uncommon:
+      Mareanie: 22
+      Carvanha: 20
+      Clamperl: 20
+      Staryu: 20
+      Remoraid: 20
+      Finneon: 20
+    rare:
+      Seadra: 10
+    scarce:
+      Toxapex: 6
+      Sharpedo: 6
+      Starmie: 10
+      Octillery: 10
+      Lumineon: 6
+    elusive:
+      Bruxish: 5
+      Wishiwashi: 5
+      Alomomola: 7
+      Mantine: 5
+      Kingdra: 5
+      Corsola: 20
+    prized:
+      Mantyke: prized
+    special: {}
+  night: *water-evening

@@ -1,0 +1,82 @@
+land:
+  morning: &land-morning
+    base:
+      Bellsprout: 20
+      Turtwig: 3
+    uncommon:
+      Marill: 20
+      Tangela: 10
+    rare:
+      Weepinbell: 5
+      Grotle: 2
+    scarce:
+      Azumarill: 5
+      Tangrowth: 6
+      Leafeon: 6
+    elusive:
+      Victreebel: 5
+      Torterra: 2
+    prized:
+      Unown: forms
+      Azurill: prized
+    special: {}
+  day: *land-morning
+  evening: &land-evening
+    base: {}
+    uncommon:
+      Venonat: 20
+      Marill: 20
+      Shroomish: 25
+    rare: {}
+    scarce:
+      Venomoth: 10
+      Azumarill: 5
+      Breloom: 10
+      Tangrowth: 6
+    elusive: {}
+    prized:
+      Unown: forms
+      Azurill: prized
+    special: {}
+  night: *land-evening
+
+water:
+  morning: &water-morning
+    base:
+      Poliwag: 20
+      Lotad: 20
+    uncommon:
+      Magikarp: 30
+      Marill: 20
+      Wooper: 25
+      Surskit: 25
+    rare:
+      Poliwhirl: 5
+      Lombre: 10
+    scarce:
+      Azumarill: 5
+      Quagsire: 5
+      Masquerain: 10
+      Gyarados: 4
+    elusive:
+      Politoed: 5
+      Ludicolo: 5
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Poliwag: 20
+    uncommon:
+      Magikarp: 30
+      Marill: 20
+      Wooper: 25
+    rare:
+      Poliwhirl: 5
+    scarce:
+      Azumarill: 5
+      Quagsire: 5
+      Gyarados: 4
+    elusive:
+      Politoed: 5
+    special: {}
+  night: *water-evening

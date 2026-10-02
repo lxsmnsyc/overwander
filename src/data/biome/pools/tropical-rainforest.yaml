@@ -1,0 +1,172 @@
+# The Pikipek line is written but waits on sprites, since the
+# collection has drawn no Trumbeak and no finished Toucannon. Once it
+# does, mornings and days take Pikipek in base at 24, Trumbeak in
+# rare at 8 and Toucannon in elusive at 5.
+
+# The Lush Jungle waits the same way. With no Shiinotic drawn,
+# evenings and nights will take Morelull in uncommon at 22 and
+# Shiinotic in scarce at 6. With no Oranguru drawn, mornings, days and
+# evenings will take both it and its counterpart Passimian in elusive
+# at 5, and so will the tropical seasonal forest
+land:
+  morning: &land-morning
+    base:
+      Bounsweet: 22
+      Grubbin: 22
+      Scatterbug: 24
+      Treecko: 2
+      Slakoth: 20
+    uncommon:
+      MeowthAlola: 22
+      Fomantis: 22
+      Exeggcute: 20
+      Pineco: 20
+      Yanma: 5
+    rare:
+      Steenee: 8
+      Charjabug: 8
+      Spewpa: 8
+      Grovyle: 1
+      Vigoroth: 10
+    scarce:
+      PersianAlola: 6
+      Lurantis: 6
+      Exeggutor: 10
+      Forretress: 5
+      Ambipom: 6
+      Yanmega: 6
+      Tangrowth: 6
+    elusive:
+      Comfey: 5
+      Tsareena: 4
+      OricorioSensu: 5
+      Vikavolt: 4
+      Hawlucha: 6
+      Vivillon: 5
+      Carnivine: 6
+      Sceptile: 2
+      Slaking: 5
+      Kecleon: 10
+      Tropius: 8
+    prized:
+      Unown: forms
+    special:
+      Buzzwole: 10
+      TapuLele: 10
+    mythical:
+      Mew: 10
+  day: *land-morning
+  evening:
+    base:
+      Rowlet: 2
+    uncommon:
+      MeowthAlola: 22
+      RattataAlola: 22
+      Noibat: 24
+      Exeggcute: 20
+      Spinarak: 20
+      Pineco: 20
+      Shroomish: 25
+      Yanma: 5
+    rare:
+      Dartrix: 2
+    scarce:
+      PersianAlola: 6
+      RaticateAlola: 6
+      Noivern: 6
+      Exeggutor: 10
+      Ariados: 8
+      Breloom: 10
+      Forretress: 8
+      Ambipom: 6
+      Yanmega: 6
+      Tangrowth: 6
+    elusive:
+      Decidueye: 2
+      Hawlucha: 6
+      Carnivine: 6
+    prized:
+      Unown: forms
+    special:
+      Buzzwole: 10
+      TapuLele: 10
+    mythical:
+      Mew: 10
+  night:
+    base:
+      Rowlet: 2
+    uncommon:
+      MeowthAlola: 22
+      RattataAlola: 22
+      Noibat: 24
+      Exeggcute: 20
+      Spinarak: 20
+      Pineco: 20
+      Shroomish: 25
+      Yanma: 5
+    rare:
+      Dartrix: 2
+    scarce:
+      PersianAlola: 6
+      RaticateAlola: 6
+      Noivern: 6
+      Exeggutor: 10
+      Ariados: 8
+      Breloom: 10
+      Forretress: 8
+      Ambipom: 6
+      Yanmega: 6
+      Tangrowth: 6
+    elusive:
+      Decidueye: 2
+      Carnivine: 6
+    prized:
+      Unown: forms
+    special:
+      Buzzwole: 10
+      TapuLele: 10
+    mythical:
+      Mew: 10
+
+water:
+  morning: &water-morning
+    base:
+      Poliwag: 20
+      Lotad: 20
+      Mudkip: 2
+    uncommon:
+      Dewpider: 22
+      Magikarp: 30
+      Barboach: 25
+      Surskit: 25
+      Yanma: 5
+    rare:
+      Lombre: 10
+      Marshtomp: 1
+    scarce:
+      Araquanid: 6
+      Whiscash: 8
+      Yanmega: 6
+      Masquerain: 10
+      Gyarados: 4
+    elusive:
+      Ludicolo: 5
+      Swampert: 2
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Poliwag: 20
+    uncommon:
+      Dewpider: 22
+      Magikarp: 30
+      Barboach: 25
+      Yanma: 5
+    rare: {}
+    scarce:
+      Araquanid: 6
+      Whiscash: 8
+      Yanmega: 6
+      Gyarados: 4
+    special: {}
+  night: *water-evening

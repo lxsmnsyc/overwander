@@ -1,0 +1,255 @@
+# The Yungoos line is written but waits on sprites, since the
+# collection has drawn no Gumshoos. Once it does, mornings and days
+# take Yungoos in uncommon at 25 and Gumshoos in scarce at 6
+land:
+  morning:
+    base:
+      GeodudeAlola: 22
+      FlabebeOrange: 24
+      Scatterbug: 24
+      Solosis: 24
+      Snivy: 3
+      Mareep: 25
+      Hoppip: 25
+      Shinx: 25
+    uncommon:
+      Swirlix: 24
+      Skiddo: 24
+      Minccino: 26
+      Spoink: 20
+      Spearow: 20
+      Natu: 20
+      Sunkern: 25
+      Snubbull: 20
+      Skitty: 25
+      Roselia: 20
+      Glameow: 25
+      Cottonee: 24
+    rare:
+      GravelerAlola: 8
+      FloetteOrange: 8
+      Spewpa: 8
+      Duosion: 10
+      Servine: 2
+      Flaaffy: 5
+      Skiploom: 5
+      Luxio: 5
+    scarce:
+      Slurpuff: 6
+      Gogoat: 6
+      Cinccino: 7
+      Grumpig: 6
+      Fearow: 10
+      Flareon: 5
+      Delcatty: 10
+      Xatu: 5
+      Sunflora: 5
+      Granbull: 5
+      Purugly: 8
+      Roserade: 6
+      Whimsicott: 7
+    elusive:
+      GolemAlola: 4
+      Klefki: 5
+      Furfrou: 5
+      FlorgesOrange: 5
+      Vivillon: 5
+      Reuniclus: 5
+      Serperior: 2
+      Smeargle: 5
+      Miltank: 5
+      Ampharos: 5
+      Jumpluff: 5
+      Luxray: 4
+    prized:
+      Unown: forms
+      Budew: prized
+      Happiny: prized
+    special: {}
+  day:
+    base:
+      GeodudeAlola: 22
+      FlabebeOrange: 24
+      Scatterbug: 24
+      Fennekin: 2
+      Solosis: 24
+      Snivy: 3
+      Mareep: 25
+      Hoppip: 25
+      Shinx: 25
+    uncommon:
+      Swirlix: 24
+      Skiddo: 24
+      Minccino: 26
+      Spoink: 20
+      Spearow: 20
+      Natu: 20
+      Sunkern: 25
+      Snubbull: 20
+      Skitty: 25
+      Roselia: 20
+      Glameow: 25
+      Cottonee: 24
+    rare:
+      GravelerAlola: 8
+      FloetteOrange: 8
+      Spewpa: 8
+      Braixen: 2
+      Duosion: 10
+      Servine: 2
+      Flaaffy: 5
+      Skiploom: 5
+      Luxio: 5
+    scarce:
+      Slurpuff: 6
+      Gogoat: 6
+      Cinccino: 7
+      Grumpig: 6
+      Fearow: 10
+      Flareon: 5
+      Delcatty: 10
+      Xatu: 5
+      Sunflora: 5
+      Granbull: 5
+      Purugly: 8
+      Roserade: 6
+      Whimsicott: 7
+    elusive:
+      GolemAlola: 4
+      Klefki: 5
+      Furfrou: 5
+      FlorgesOrange: 5
+      Vivillon: 5
+      Delphox: 2
+      Reuniclus: 5
+      Serperior: 2
+      Smeargle: 5
+      Miltank: 5
+      Ampharos: 5
+      Jumpluff: 5
+      Luxray: 4
+    prized:
+      Unown: forms
+      Budew: prized
+      Happiny: prized
+    special: {}
+  evening:
+    base:
+      GeodudeAlola: 22
+      Fennekin: 2
+      Gothita: 24
+      Seedot: 20
+      Shinx: 25
+    uncommon:
+      Pawniard: 16
+      Vulpix: 10
+      Houndour: 20
+      Poochyena: 20
+      Roselia: 20
+      Glameow: 25
+      Stunky: 22
+      Skorupi: 20
+    rare:
+      GravelerAlola: 8
+      Braixen: 2
+      Gothorita: 10
+      Nuzleaf: 10
+      Luxio: 5
+    scarce:
+      Bisharp: 6
+      Ninetales: 5
+      Flareon: 5
+      Mightyena: 10
+      Houndoom: 5
+      Purugly: 8
+      Skuntank: 8
+      Drapion: 6
+      Roserade: 6
+    elusive:
+      GolemAlola: 4
+      Furfrou: 5
+      Delphox: 2
+      Gothitelle: 5
+      Smeargle: 5
+      Shiftry: 5
+      Luxray: 4
+    prized:
+      Unown: forms
+      Budew: prized
+      Happiny: prized
+    special: {}
+  night:
+    base:
+      GeodudeAlola: 22
+      Gothita: 24
+      Seedot: 20
+      Shinx: 25
+    uncommon:
+      Pawniard: 16
+      Vulpix: 10
+      Houndour: 20
+      Poochyena: 20
+      Roselia: 20
+      Glameow: 25
+      Stunky: 22
+      Skorupi: 20
+    rare:
+      GravelerAlola: 8
+      Gothorita: 10
+      Nuzleaf: 10
+      Luxio: 5
+    scarce:
+      Bisharp: 6
+      Ninetales: 5
+      Flareon: 5
+      Mightyena: 10
+      Houndoom: 5
+      Purugly: 8
+      Skuntank: 8
+      Drapion: 6
+      Roserade: 6
+    elusive:
+      GolemAlola: 4
+      Gothitelle: 5
+      Smeargle: 5
+      Shiftry: 5
+      Luxray: 4
+    prized:
+      Unown: forms
+      Budew: prized
+      Happiny: prized
+    special: {}
+
+water:
+  morning: &water-morning
+    base:
+      Poliwag: 20
+    uncommon:
+      Magikarp: 30
+      Goldeen: 20
+      Surskit: 25
+    rare:
+      Poliwhirl: 5
+    scarce:
+      Seaking: 10
+      Masquerain: 10
+      Gyarados: 4
+    elusive:
+      Poliwrath: 5
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Poliwag: 20
+    uncommon:
+      Magikarp: 30
+      Goldeen: 20
+    rare:
+      Poliwhirl: 5
+    scarce:
+      Seaking: 10
+      Gyarados: 4
+    elusive:
+      Poliwrath: 5
+    special: {}
+  night: *water-evening

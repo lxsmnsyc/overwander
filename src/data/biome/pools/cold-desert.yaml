@@ -1,0 +1,106 @@
+land:
+  morning: &land-morning
+    base:
+      Beldum: 2
+      Geodude: 20
+    uncommon:
+      Cacnea: 20
+      Diglett: 20
+      Onix: 10
+    rare:
+      Metang: 1
+      Graveler: 5
+    scarce:
+      Dugtrio: 10
+      Steelix: 5
+    elusive:
+      Metagross: 1
+      Golem: 5
+    prized:
+      Unown: forms
+    special: {}
+  day: *land-morning
+  evening:
+    base:
+      Beldum: 2
+      Geodude: 20
+    uncommon:
+      Elgyem: 20
+      Diglett: 20
+      Onix: 10
+      Gligar: 5
+    rare:
+      Metang: 1
+      Graveler: 5
+    scarce:
+      Beheeyem: 7
+      Cacturne: 6
+      Dugtrio: 10
+      Steelix: 5
+      Gliscor: 6
+    elusive:
+      Metagross: 1
+      Golem: 5
+      Lunatone: 5
+    prized:
+      Unown: forms
+    special: {}
+  night:
+    base:
+      Beldum: 2
+      Geodude: 20
+    uncommon:
+      Elgyem: 20
+      Diglett: 20
+      Cubone: 20
+      Onix: 10
+      Gligar: 5
+    rare:
+      Metang: 1
+      Graveler: 5
+    scarce:
+      Beheeyem: 7
+      Cacturne: 6
+      Dugtrio: 10
+      Marowak: 10
+      Steelix: 5
+      Gliscor: 6
+    elusive:
+      Metagross: 1
+      Golem: 5
+      Lunatone: 5
+    prized:
+      Unown: forms
+    special: {}
+
+ice:
+  morning: &ice-morning
+    base:
+      Swinub: 25
+    uncommon:
+      Snorunt: 22
+    rare:
+      Piloswine: 5
+    scarce:
+      Glalie: 6
+      Froslass: 6
+    elusive:
+      Mamoswine: 5
+    special: {}
+  day: *ice-morning
+  evening: &ice-evening
+    base:
+      Swinub: 25
+    uncommon:
+      Snorunt: 22
+      Sneasel: 5
+    rare:
+      Piloswine: 5
+    scarce:
+      Glalie: 6
+      Froslass: 6
+      Weavile: 6
+    elusive:
+      Mamoswine: 5
+    special: {}
+  night: *ice-evening

@@ -1,0 +1,157 @@
+land:
+  morning: &land-morning
+    base:
+      Popplio: 2
+      Scatterbug: 24
+      Squirtle: 2
+    uncommon:
+      GrimerAlola: 22
+      Sandygast: 22
+      Wimpod: 22
+      Crabrawler: 24
+      Binacle: 24
+      Psyduck: 20
+      Slowpoke: 20
+      Krabby: 20
+      Wingull: 25
+      Shellos: 25
+      BurmySandy: 20
+      Buizel: 25
+    rare:
+      Brionne: 2
+      Spewpa: 8
+      Wartortle: 1
+    scarce:
+      ExeggutorAlola: 6
+      MukAlola: 6
+      Palossand: 6
+      Golisopod: 6
+      Barbaracle: 6
+      Golduck: 10
+      Slowbro: 10
+      Kingler: 10
+      Vaporeon: 5
+      Slowking: 5
+      Pelipper: 10
+      Gastrodon: 10
+      WormadamSandy: 4
+      Floatzel: 8
+    elusive:
+      RaichuAlola: 4
+      Pyukumuku: 5
+      OricorioPau: 5
+      Primarina: 2
+      Vivillon: 5
+      Blastoise: 2
+    prized:
+      Unown: forms
+      TypeNull: prized
+    special:
+      Silvally: 10
+      Groudon: 10
+      Rayquaza: 10
+    mythical:
+      Deoxys: 10
+  day: *land-morning
+  evening: &land-evening
+    base: {}
+    uncommon:
+      GrimerAlola: 22
+      Sandygast: 22
+      Wimpod: 22
+      Crabrawler: 24
+      Inkay: 24
+      Krabby: 20
+      Shellos: 25
+      BurmySandy: 20
+      Buizel: 25
+    rare: {}
+    scarce:
+      ExeggutorAlola: 6
+      MukAlola: 6
+      Palossand: 6
+      Golisopod: 6
+      Malamar: 6
+      Kingler: 10
+      Vaporeon: 5
+      Gastrodon: 10
+      WormadamSandy: 4
+      Floatzel: 8
+    elusive:
+      RaichuAlola: 4
+      Pyukumuku: 5
+    prized:
+      Unown: forms
+      TypeNull: prized
+    special:
+      Silvally: 10
+      Groudon: 10
+      Rayquaza: 10
+    mythical:
+      Deoxys: 10
+  night: *land-evening
+
+water:
+  morning: &water-morning
+    base:
+      Popplio: 2
+      Horsea: 10
+    uncommon:
+      Mareanie: 22
+      Shellder: 20
+      Krabby: 20
+      Tentacool: 20
+      Shellos: 25
+      Wingull: 25
+      Goldeen: 20
+    rare:
+      Brionne: 2
+      Seadra: 5
+    scarce:
+      Toxapex: 6
+      Cloyster: 10
+      Kingler: 10
+      Tentacruel: 8
+      Gastrodon: 10
+      Pelipper: 10
+      Seaking: 10
+    elusive:
+      Primarina: 2
+      Corsola: 20
+      Kingdra: 2
+      Luvdisc: 15
+    special:
+      Kyogre: 10
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Horsea: 10
+    uncommon:
+      Mareanie: 22
+      Inkay: 24
+      Shellder: 20
+      Krabby: 20
+      Tentacool: 20
+      Shellos: 25
+      Staryu: 20
+      Goldeen: 20
+    rare:
+      Seadra: 5
+    scarce:
+      Toxapex: 6
+      Malamar: 6
+      Cloyster: 10
+      Kingler: 10
+      Tentacruel: 8
+      Gastrodon: 10
+      Starmie: 10
+      Seaking: 10
+    elusive:
+      Corsola: 20
+      Kingdra: 2
+    special:
+      Kyogre: 10
+  night: *water-evening
+
+# The legendaries met wild in the caves under it
+cave-legends: { Kyogre: 10, Groudon: 10, Rayquaza: 10 }

@@ -1,0 +1,156 @@
+# The Pikipek line is written but waits on sprites, since the
+# collection has drawn no Trumbeak and no finished Toucannon. Once it
+# does, mornings and days take Pikipek in base at 24, Trumbeak in
+# rare at 8 and Toucannon in elusive at 5
+land:
+  morning: &land-morning
+    base:
+      Bounsweet: 22
+      Grubbin: 22
+      FlabebeOrange: 24
+      Scatterbug: 24
+      Bellsprout: 20
+      Treecko: 2
+    uncommon:
+      MeowthAlola: 22
+      Stufful: 22
+      Fomantis: 22
+      Cutiefly: 24
+      Pancham: 24
+      Exeggcute: 20
+      Cherubi: 22
+    rare:
+      Steenee: 8
+      Charjabug: 8
+      FloetteOrange: 8
+      Spewpa: 8
+      Weepinbell: 5
+      Grovyle: 1
+    scarce:
+      PersianAlola: 6
+      Bewear: 6
+      Lurantis: 6
+      Ribombee: 6
+      Pangoro: 6
+      Exeggutor: 10
+      Cherrim: 6
+      Lickilicky: 6
+    elusive:
+      Komala: 5
+      RaichuAlola: 4
+      Comfey: 5
+      Tsareena: 4
+      Vikavolt: 4
+      FlorgesOrange: 5
+      Vivillon: 5
+      Chatot: 6
+      Victreebel: 5
+      Sceptile: 2
+      Kecleon: 10
+      Tropius: 8
+    prized:
+      Unown: forms
+    special:
+      Stakataka: 10
+      Blacephalon: 10
+      TapuKoko: 10
+  day: *land-morning
+  evening:
+    base:
+      Rowlet: 2
+    uncommon:
+      MeowthAlola: 22
+      RattataAlola: 22
+      Stufful: 22
+      Pancham: 24
+      Exeggcute: 20
+      Cherubi: 22
+    rare:
+      Dartrix: 2
+    scarce:
+      PersianAlola: 6
+      RaticateAlola: 6
+      Bewear: 6
+      Pangoro: 6
+      Exeggutor: 10
+      Cherrim: 6
+      Lickilicky: 6
+    elusive:
+      Komala: 5
+      RaichuAlola: 4
+      Decidueye: 2
+    prized:
+      Unown: forms
+    special:
+      Stakataka: 10
+      Blacephalon: 10
+      TapuKoko: 10
+  night:
+    base:
+      Rowlet: 2
+    uncommon:
+      MeowthAlola: 22
+      RattataAlola: 22
+      Stufful: 22
+      Exeggcute: 20
+      Cherubi: 22
+    rare:
+      Dartrix: 2
+    scarce:
+      PersianAlola: 6
+      RaticateAlola: 6
+      Bewear: 6
+      Exeggutor: 10
+      Cherrim: 6
+      Lickilicky: 6
+    elusive:
+      Komala: 5
+      RaichuAlola: 4
+      Decidueye: 2
+    prized:
+      Unown: forms
+    special:
+      Stakataka: 10
+      Blacephalon: 10
+      TapuKoko: 10
+
+water:
+  morning: &water-morning
+    base:
+      Poliwag: 20
+      Lotad: 20
+    uncommon:
+      Magikarp: 30
+      Goldeen: 20
+      Corphish: 25
+      Psyduck: 20
+    rare:
+      Poliwhirl: 5
+      Lombre: 10
+    scarce:
+      Seaking: 10
+      Crawdaunt: 8
+      Golduck: 10
+      Gyarados: 4
+    elusive:
+      Politoed: 5
+      Ludicolo: 5
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Poliwag: 20
+    uncommon:
+      Magikarp: 30
+      Goldeen: 20
+      Corphish: 25
+    rare:
+      Poliwhirl: 5
+    scarce:
+      Seaking: 10
+      Crawdaunt: 8
+      Gyarados: 4
+    elusive:
+      Politoed: 5
+    special: {}
+  night: *water-evening

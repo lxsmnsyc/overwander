@@ -1,0 +1,280 @@
+land:
+  morning: &land-morning
+    base:
+      Goomy: 12
+      FlabebeBlue: 24
+      Scatterbug: 24
+      Poliwag: 20
+      Bellsprout: 20
+      Mudkip: 2
+      Lotad: 20
+    uncommon:
+      Ducklett: 20
+      Gulpin: 22
+      Wooper: 25
+      Marill: 20
+      Yanma: 5
+      Bidoof: 25
+      Buizel: 25
+      Croagunk: 20
+    rare:
+      Sliggoo: 5
+      FloetteBlue: 8
+      Spewpa: 8
+      Poliwhirl: 5
+      Weepinbell: 5
+      Marshtomp: 1
+      Lombre: 10
+    scarce:
+      Swanna: 6
+      Swalot: 7
+      Azumarill: 5
+      Masquerain: 10
+      Quagsire: 5
+      Bibarel: 10
+      Floatzel: 8
+      Toxicroak: 6
+      Yanmega: 6
+    elusive:
+      Goodra: 3
+      FlorgesBlue: 5
+      Vivillon: 5
+      Stunfisk: 6
+      Poliwrath: 5
+      Victreebel: 5
+      Swampert: 2
+      Ludicolo: 5
+    prized:
+      Unown: forms
+      Azurill: prized
+    special:
+      Azelf: 10
+      Giratina: 10
+    mythical:
+      Keldeo: 10
+  day: *land-morning
+  evening:
+    base:
+      Goomy: 12
+      Froakie: 2
+      Tynamo: 18
+      Litwick: 22
+      Poliwag: 20
+      Tympole: 25
+    uncommon:
+      Trubbish: 22
+      Gulpin: 22
+      Venonat: 20
+      Wooper: 25
+      Marill: 20
+      Yanma: 5
+      Bidoof: 25
+      Buizel: 25
+      Drifloon: 20
+      Croagunk: 20
+    rare:
+      Sliggoo: 5
+      Frogadier: 2
+      Eelektrik: 7
+      Lampent: 8
+      Poliwhirl: 5
+      Palpitoad: 10
+    scarce:
+      Garbodor: 7
+      Swalot: 7
+      Venomoth: 10
+      Azumarill: 5
+      Quagsire: 5
+      Bibarel: 10
+      Floatzel: 8
+      Drifblim: 6
+      Toxicroak: 6
+      Yanmega: 6
+    elusive:
+      Mimikyu: 5
+      Goodra: 3
+      Greninja: 2
+      Stunfisk: 6
+      Eelektross: 4
+      Chandelure: 5
+      Seismitoad: 5
+      Spiritomb: 5
+      Volbeat: 8
+      Illumise: 8
+    prized:
+      Unown: forms
+      Azurill: prized
+    special:
+      Azelf: 10
+      Giratina: 10
+    mythical:
+      Keldeo: 10
+  night:
+    base:
+      Goomy: 12
+      Froakie: 2
+      Tynamo: 18
+      Litwick: 22
+      Tympole: 25
+      Poliwag: 20
+      Oddish: 20
+      Gastly: 20
+    uncommon:
+      Trubbish: 22
+      Gulpin: 22
+      Grimer: 20
+      Wooper: 25
+      Marill: 20
+      Yanma: 5
+      Bidoof: 25
+      Buizel: 25
+      Drifloon: 20
+      Croagunk: 20
+    rare:
+      Sliggoo: 5
+      Frogadier: 2
+      Eelektrik: 7
+      Lampent: 8
+      Palpitoad: 10
+      Poliwhirl: 5
+      Gloom: 5
+      Haunter: 5
+    scarce:
+      Garbodor: 7
+      Swalot: 7
+      Muk: 10
+      Azumarill: 5
+      Quagsire: 5
+      Bibarel: 10
+      Floatzel: 8
+      Drifblim: 6
+      Toxicroak: 6
+      Yanmega: 6
+    elusive:
+      Mimikyu: 5
+      Goodra: 3
+      Greninja: 2
+      Stunfisk: 6
+      Eelektross: 4
+      Chandelure: 5
+      Seismitoad: 5
+      Spiritomb: 5
+      Poliwrath: 5
+      Vileplume: 5
+      Gengar: 5
+      Volbeat: 8
+      Illumise: 8
+    prized:
+      Unown: forms
+      Azurill: prized
+    special:
+      Azelf: 10
+      Giratina: 10
+    mythical:
+      Keldeo: 10
+
+water:
+  morning: &water-morning
+    base:
+      Goomy: 12
+      Poliwag: 20
+      Mudkip: 2
+      Lotad: 20
+    uncommon:
+      Barboach: 25
+      Feebas: 10
+      Magikarp: 30
+      Wooper: 25
+      Marill: 20
+      Surskit: 25
+      Yanma: 5
+      Buizel: 25
+    rare:
+      Sliggoo: 5
+      Poliwhirl: 5
+      Marshtomp: 1
+      Lombre: 10
+    scarce:
+      Whiscash: 8
+      Azumarill: 5
+      Masquerain: 10
+      Quagsire: 5
+      Bibarel: 10
+      Floatzel: 8
+      Yanmega: 6
+    elusive:
+      Goodra: 3
+      BasculinBlue: 6
+      Basculin: 6
+      Poliwrath: 5
+      Swampert: 2
+      Ludicolo: 5
+    special:
+      Azelf: 10
+  day: *water-morning
+  evening:
+    base:
+      Goomy: 12
+      Froakie: 2
+      Poliwag: 20
+    uncommon:
+      Barboach: 25
+      Feebas: 10
+      Magikarp: 30
+      Wooper: 25
+      Marill: 20
+      Yanma: 5
+      Buizel: 25
+    rare:
+      Sliggoo: 5
+      Frogadier: 2
+      Poliwhirl: 5
+    scarce:
+      Whiscash: 8
+      Azumarill: 5
+      Quagsire: 5
+      Bibarel: 10
+      Floatzel: 8
+      Yanmega: 6
+    elusive:
+      Goodra: 3
+      Greninja: 2
+      BasculinBlue: 6
+      Basculin: 6
+    special:
+      Azelf: 10
+  night:
+    base:
+      Goomy: 12
+      Froakie: 2
+      Poliwag: 20
+    uncommon:
+      Barboach: 25
+      Feebas: 10
+      Magikarp: 30
+      Wooper: 25
+      Marill: 20
+      Yanma: 5
+      Buizel: 25
+    rare:
+      Sliggoo: 5
+      Frogadier: 2
+      Poliwhirl: 5
+    scarce:
+      Whiscash: 8
+      Azumarill: 5
+      Quagsire: 5
+      Bibarel: 10
+      Floatzel: 8
+      Yanmega: 6
+    elusive:
+      Goodra: 3
+      Greninja: 2
+      BasculinBlue: 6
+      Poliwrath: 5
+      Basculin: 6
+    special:
+      Azelf: 10
+
+# The legendaries met wild in the caves under it
+cave-legends: { Giratina: 10 }

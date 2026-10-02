@@ -1,0 +1,123 @@
+land:
+  morning: &land-morning
+    base:
+      Scatterbug: 24
+      Vanillite: 24
+      Spheal: 25
+      Swinub: 25
+      Piplup: 3
+    uncommon:
+      VulpixAlola: 22
+      SandshrewAlola: 22
+      Bergmite: 24
+      Snorunt: 22
+      Cubchoo: 20
+    rare:
+      Spewpa: 8
+      Vanillish: 10
+      Sealeo: 8
+      Piloswine: 5
+      Prinplup: 2
+    scarce:
+      NinetalesAlola: 6
+      SandslashAlola: 6
+      Crabominable: 6
+      Avalugg: 6
+      Beartic: 6
+      Glalie: 6
+      Froslass: 6
+      Glaceon: 6
+    elusive:
+      Vivillon: 5
+      Vanilluxe: 5
+      Walrein: 5
+      Delibird: 5
+      Empoleon: 2
+      Mamoswine: 5
+    prized:
+      Unown: forms
+    special:
+      Kyurem: 10
+      Regigigas: 10
+  day: *land-morning
+  evening: &land-evening
+    base:
+      Spheal: 25
+      Swinub: 25
+    uncommon:
+      VulpixAlola: 22
+      SandshrewAlola: 22
+      Bergmite: 24
+      Snorunt: 22
+      Sneasel: 5
+    rare:
+      Sealeo: 8
+      Piloswine: 5
+    scarce:
+      NinetalesAlola: 6
+      SandslashAlola: 6
+      Crabominable: 6
+      Avalugg: 6
+      Glalie: 6
+      Froslass: 6
+      Weavile: 6
+      Glaceon: 6
+    elusive:
+      Cryogonal: 4
+      Walrein: 5
+      Jynx: 5
+      Delibird: 5
+      Mamoswine: 5
+    prized:
+      Unown: forms
+      Smoochum: prized
+    special:
+      Kyurem: 10
+      Regigigas: 10
+  night: *land-evening
+
+ice:
+  morning: &ice-morning
+    base:
+      Vanillite: 24
+      Spheal: 25
+      Piplup: 3
+    uncommon:
+      Cubchoo: 20
+      Seel: 20
+      Snorunt: 22
+    rare:
+      Vanillish: 10
+      Sealeo: 8
+      Prinplup: 2
+    scarce:
+      Beartic: 6
+      Dewgong: 10
+      Glalie: 6
+      Froslass: 6
+    elusive:
+      Vanilluxe: 5
+      Walrein: 5
+      Empoleon: 2
+    special: {}
+  day: *ice-morning
+  evening: &ice-evening
+    base:
+      Spheal: 25
+    uncommon:
+      Seel: 20
+      Snorunt: 22
+    rare:
+      Sealeo: 8
+    scarce:
+      Dewgong: 10
+      Glalie: 6
+      Froslass: 6
+    elusive:
+      Walrein: 5
+      Cryogonal: 4
+    special: {}
+  night: *ice-evening
+
+# The legendaries met wild in the caves under it
+cave-legends: { Regigigas: 10, Kyurem: 10 }

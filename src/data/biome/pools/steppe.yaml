@@ -1,0 +1,254 @@
+land:
+  morning:
+    base:
+      GeodudeAlola: 22
+      FlabebeYellow: 24
+      Scatterbug: 24
+      Snivy: 3
+      Mareep: 25
+      Magnemite: 20
+      Whismur: 25
+    uncommon:
+      Mudbray: 22
+      Rockruff: 22
+      Skiddo: 24
+      Bunnelby: 26
+      Blitzle: 25
+      Rufflet: 16
+      Spearow: 20
+      Growlithe: 10
+      Ponyta: 10
+      Doduo: 20
+      Sentret: 25
+      Phanpy: 20
+      Voltorb: 20
+      Electrike: 25
+      Dunsparce: 10
+      Girafarig: 5
+      BurmyTrash: 20
+      Patrat: 30
+    rare:
+      GravelerAlola: 8
+      FloetteYellow: 8
+      Spewpa: 8
+      Servine: 2
+      Loudred: 10
+      Magneton: 10
+      Flaaffy: 5
+    scarce:
+      Mudsdale: 6
+      Lycanroc: 6
+      Gogoat: 6
+      Diggersby: 6
+      Zebstrika: 6
+      Braviary: 6
+      Fearow: 10
+      Arcanine: 5
+      Rapidash: 10
+      Dodrio: 10
+      Electrode: 10
+      Furret: 10
+      Manectric: 10
+      Donphan: 10
+      WormadamTrash: 4
+      Electivire: 6
+    elusive:
+      GolemAlola: 4
+      FlorgesYellow: 5
+      Vivillon: 5
+      Bouffalant: 6
+      Serperior: 2
+      Castform: 10
+      Kangaskhan: 5
+      Tauros: 10
+      Miltank: 5
+      Exploud: 5
+      Zangoose: 8
+      Ampharos: 10
+      Magnezone: 5
+      Rhyperior: 5
+      Stoutland: 6
+    prized:
+      Unown: forms
+    special:
+      Zapdos: 10
+  day:
+    base:
+      GeodudeAlola: 22
+      FlabebeYellow: 24
+      Scatterbug: 24
+      Snivy: 3
+      Mareep: 25
+      Magnemite: 20
+      Whismur: 25
+    uncommon:
+      Mudbray: 22
+      Rockruff: 22
+      Skiddo: 24
+      Bunnelby: 26
+      Blitzle: 25
+      Rufflet: 16
+      Spearow: 20
+      Ekans: 20
+      Growlithe: 10
+      Ponyta: 10
+      Doduo: 20
+      Sentret: 25
+      Phanpy: 20
+      Voltorb: 20
+      Electrike: 25
+      Dunsparce: 10
+      Girafarig: 5
+      BurmyTrash: 20
+      Patrat: 30
+    rare:
+      GravelerAlola: 8
+      FloetteYellow: 8
+      Spewpa: 8
+      Servine: 2
+      Loudred: 10
+      Magneton: 10
+      Flaaffy: 5
+    scarce:
+      Mudsdale: 6
+      Lycanroc: 6
+      Gogoat: 6
+      Diggersby: 6
+      Zebstrika: 6
+      Braviary: 6
+      Fearow: 10
+      Arbok: 10
+      Arcanine: 5
+      Rapidash: 10
+      Dodrio: 10
+      Electrode: 10
+      Furret: 10
+      Manectric: 10
+      Donphan: 10
+      WormadamTrash: 4
+      Electivire: 6
+    elusive:
+      GolemAlola: 4
+      FlorgesYellow: 5
+      Vivillon: 5
+      Bouffalant: 6
+      Serperior: 2
+      Castform: 10
+      Kangaskhan: 5
+      Tauros: 10
+      Miltank: 5
+      Exploud: 5
+      Zangoose: 8
+      Ampharos: 10
+      Magnezone: 5
+      Rhyperior: 5
+      Stoutland: 6
+    prized:
+      Unown: forms
+    special:
+      Zapdos: 10
+  evening:
+    base:
+      GeodudeAlola: 22
+      Litten: 2
+      Magnemite: 20
+    uncommon:
+      Mudbray: 22
+      Rockruff: 22
+      Golett: 20
+      Scraggy: 22
+      Ekans: 20
+      Voltorb: 20
+      Dunsparce: 10
+      Girafarig: 5
+      BurmyTrash: 20
+      Drifloon: 20
+      Skorupi: 20
+    rare:
+      GravelerAlola: 8
+      Torracat: 2
+      Magneton: 10
+    scarce:
+      Mudsdale: 6
+      LycanrocDusk: 6
+      Golurk: 6
+      Scrafty: 7
+      Arbok: 10
+      Electrode: 10
+      WormadamTrash: 4
+      Drifblim: 6
+      Drapion: 6
+      Electivire: 6
+      Watchog: 8
+    elusive:
+      GolemAlola: 4
+      Incineroar: 2
+      Castform: 10
+      Seviper: 8
+      Magnezone: 5
+      Rhyperior: 5
+    prized:
+      Unown: forms
+    special:
+      Zapdos: 10
+  night:
+    base:
+      GeodudeAlola: 22
+      Litten: 2
+      Magnemite: 20
+    uncommon:
+      Mudbray: 22
+      Rockruff: 22
+      Golett: 20
+      Scraggy: 22
+      Ekans: 20
+      Voltorb: 20
+      Dunsparce: 10
+      Girafarig: 5
+      BurmyTrash: 20
+      Drifloon: 20
+      Skorupi: 20
+    rare:
+      GravelerAlola: 8
+      Torracat: 2
+      Magneton: 10
+    scarce:
+      Mudsdale: 6
+      LycanrocMidnight: 6
+      Golurk: 6
+      Scrafty: 7
+      Arbok: 10
+      Electrode: 10
+      WormadamTrash: 4
+      Drifblim: 6
+      Drapion: 6
+      Electivire: 6
+      Watchog: 8
+    elusive:
+      GolemAlola: 4
+      Incineroar: 2
+      Castform: 10
+      Seviper: 8
+      Magnezone: 5
+      Rhyperior: 5
+    prized:
+      Unown: forms
+    special:
+      Zapdos: 10
+
+water:
+  morning: &water-morning
+    base: {}
+    uncommon:
+      Magikarp: 30
+      Goldeen: 20
+      Wooper: 25
+    rare: {}
+    scarce:
+      Seaking: 10
+      Quagsire: 5
+      Gyarados: 4
+    special: {}
+  day: *water-morning
+  evening: *water-morning
+  night: *water-morning

@@ -37,6 +37,7 @@
       "src/data/battle/drain.yaml",
       "src/data/battle/heal.yaml"
     ],
-    "./src/data/schema/battle-z-power.json": "src/data/battle/z-power.yaml"
+    "./src/data/schema/battle-z-power.json": "src/data/battle/z-power.yaml",
+    "./src/data/schema/biome-pools.json": "src/data/biome/pools/*.yaml"
   }
 }

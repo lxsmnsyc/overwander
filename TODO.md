@@ -59,8 +59,8 @@ thin slice of it.
       under `text/en/species/`. They still load eagerly; loading each field
       when it is first wanted is the next step.
 - [ ] **Move the other registries to YAML** on the same pipeline. Moves,
-      abilities, items and the per-move battle numbers are done; the biome
-      pools and lairs are next. The Megas and true
+      abilities, items, the per-move battle numbers and the spawn pools are
+      done; the lairs are next. The Megas and true
       shadows can follow once the YAML can say `inherits:`.
 - [ ] **Load moves, abilities and items on demand** in the browser, behind a
       Suspense gate around the panels and the battle view. The server keeps

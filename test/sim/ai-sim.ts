@@ -224,6 +224,10 @@ export function runBattle(
 
   const { alliances } = fieldTeams(battle, teams, null);
 
+  // The units walk on as the fight starts
+  battle.initialize();
+  battle.start();
+
   while (!battle.settled && time < TIME_LIMIT && casts.length < maxCasts) {
     battle.tick(FRAME);
     time += FRAME;

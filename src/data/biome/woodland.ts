@@ -6,6 +6,10 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
  * Woodland spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerWoodlandSpawns(): void {
+  // The Pikipek line is written but waits on sprites, since the
+  // collection has drawn no Trumbeak and no finished Toucannon. Once it
+  // does, mornings and days take Pikipek in base at 24, Trumbeak in
+  // rare at 8 and Toucannon in elusive at 5
   registerSpawnPool(Biome.Woodland, {
     [TimeOfDay.Morning]: {
       base: [

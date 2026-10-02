@@ -64,6 +64,7 @@ import kalosTrio from './kalos-trio';
 import kalosMythicals from './kalos-mythicals';
 import litleoAndSpritzee from './litleo-and-spritzee';
 import rowletToPopplio from './rowlet-to-popplio';
+import pikipekToGrubbin from './pikipek-to-grubbin';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -131,6 +132,7 @@ const setupAbilities = [
   ...kalosMythicals,
   ...litleoAndSpritzee,
   ...rowletToPopplio,
+  ...pikipekToGrubbin,
   ...deerling,
   ...emolga,
   ...tirtougaToBouffalant,

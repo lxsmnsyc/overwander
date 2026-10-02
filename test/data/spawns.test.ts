@@ -341,7 +341,12 @@ describe('where a species lives', () => {
     // Porygon is met on town streets, which no biome pool holds, and
     // what it evolves into is made rather than met. The far shore's
     // shell is staged by the pool its west counterpart sits in, and
-    // swapped for as the world hands it over, so no pool names it either
+    // swapped for as the world hands it over, so no pool names it either.
+    //
+    // The Pikipek and Yungoos lines name where they live, but the
+    // collection has drawn no Trumbeak, finished Toucannon or Gumshoos,
+    // so neither is staged until it does. The pools they are waiting
+    // for are written as comments in the biome files
     const unstaged = new Set<Species>([
       Species.Phione,
       ...ROTOM_FORMS.slice(1),
@@ -358,6 +363,11 @@ describe('where a species lives', () => {
       // no pool names them either
       ...DEERLING_FORMS.slice(1),
       ...SAWSBUCK_FORMS.slice(1),
+      Species.Pikipek,
+      Species.Trumbeak,
+      Species.Toucannon,
+      Species.Yungoos,
+      Species.Gumshoos,
     ]);
     const staged = new Set<Species>();
 

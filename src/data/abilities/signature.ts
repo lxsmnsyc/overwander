@@ -2214,4 +2214,21 @@ export default function registerSignatureAbilities(): void {
     name: 'Aria Audience',
     description: 'Its Special Attack counts 1.1x for each teammate standing, up to 4 of them.',
   });
+
+  // The three the first roads out of Melemele's towns walk past
+  registerSignature(Families.Pikipek, Abilities.Drumroll, {
+    name: 'Drumroll',
+    description: 'Its multi-hit moves strike 1 more time.',
+  });
+
+  registerSignature(Families.Yungoos, Abilities.ScoreToSettle, {
+    name: 'Score to Settle',
+    description: 'Its moves hit 1.3x against whichever enemy last hit it.',
+  });
+
+  registerSignature(Families.Grubbin, Abilities.TrickleCharge, {
+    name: 'Trickle Charge',
+    description:
+      'Its Special Attack rises 10% for each Electric move anybody lands, either side, up to 1.5x.',
+  });
 }

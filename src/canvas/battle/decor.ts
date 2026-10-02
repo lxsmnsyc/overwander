@@ -39,6 +39,13 @@ import { aside } from './moves/lit/shapes';
 
 const TAU = Math.PI * 2;
 
+/**
+ * How far behind its pokemon an aura is judged, in field units. A
+ * hair, so the body hides it while a pokemon standing further off
+ * does not
+ */
+const AURA_BEHIND = 0.1;
+
 /** The dark line round every sparkle shape, so a pale glint still shows on sand */
 const SPARKLE_EDGE = '#5a3c00';
 
@@ -58,8 +65,8 @@ export function litShadowAura(
   seed: number,
   strength: number,
 ): void {
-  // Judged behind the body, as the painted aura is drawn under it: only what reaches past its outline shows
-  kit.near(-radius * 1.5);
+  // Judged just behind the body, as the painted aura is drawn under it: only what reaches past its outline shows
+  kit.flat(floor, AURA_BEHIND);
   const storm = stormOf(elapsed, seed);
   const [ax, az] = kit.across;
   const [wx, wz] = kit.away;
@@ -135,8 +142,8 @@ export function litPurifiedAura(
   seed: number,
   strength: number,
 ): void {
-  // Judged behind the body, as the painted aura is drawn under it: only what reaches past its outline shows
-  kit.near(-radius * 1.5);
+  // Judged just behind the body, as the painted aura is drawn under it: only what reaches past its outline shows
+  kit.flat(floor, AURA_BEHIND);
   const ring = radius * 1.15;
 
   kit.pool(floor, radius * 1.5, '#ffecaa', 0.55 * strength);
